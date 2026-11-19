@@ -5,11 +5,11 @@ import type { ColumnTopic } from "@esposter/db-schema";
 
 import { FilterSite } from "#src/models/realtime/FilterSite";
 import { JoinKind } from "#src/models/realtime/JoinKind";
+import { computeStatementReadSet } from "#src/services/realtime/computeStatementReadSet";
 import { getJoinScopeValues } from "#src/services/realtime/getJoinScopeValues";
 import { getOccurrenceKey } from "#src/services/realtime/getOccurrenceKey";
 import { getReferencedColumns } from "#src/services/realtime/getReferencedColumns";
 import { getScopeColumnTopics } from "#src/services/realtime/getScopeColumnTopics";
-import { getStatementReadSet } from "#src/services/realtime/getStatementReadSet";
 import { getColumnTopic, getTableTopic } from "@esposter/db-schema";
 import { SQLiteDialect } from "drizzle-orm/sqlite-core";
 
@@ -19,7 +19,7 @@ import { SQLiteDialect } from "drizzle-orm/sqlite-core";
 const getNamableOccurrences = (readSet: ReadSet): Set<string> => {
   const keys = readSet.occurrences.map((occurrence) => getOccurrenceKey(occurrence));
   const scopedKeys = new Set(
-    readSet.occurrences.filter(({ scoped }) => scoped).map((occurrence) => getOccurrenceKey(occurrence)),
+    readSet.occurrences.filter(({ isScoped }) => isScoped).map((occurrence) => getOccurrenceKey(occurrence)),
   );
   const blockedKeys = new Set([
     ...readSet.filters.filter(({ site }) => site !== FilterSite.LeftJoinOn).map((filter) => getOccurrenceKey(filter)),
@@ -37,7 +37,7 @@ const getNamableOccurrences = (readSet: ReadSet): Set<string> => {
 // Table-wide table's row topics are dropped, since its table-wide topic covers every row. An empty read names what it named
 // Before, table-wide
 export const getStatementReadTopics = async ({ rows, statement }: RecordedStatement): Promise<ColumnTopic[]> => {
-  const readSet = getStatementReadSet(statement);
+  const readSet = computeStatementReadSet(statement);
   const { sql } = new SQLiteDialect().sqlToQuery(statement.getSQL());
   // A table's watch reads the columns its statement references, under the names and aliases the statement gives the table
   const tableColumnsMap = new Map<string, string[] | undefined>();
@@ -61,7 +61,7 @@ export const getStatementReadTopics = async ({ rows, statement }: RecordedStatem
   const tableWideTables = [
     ...new Set(
       readSet.occurrences
-        .filter((occurrence) => !occurrence.scoped && !namedOccurrences.has(getOccurrenceKey(occurrence)))
+        .filter((occurrence) => !occurrence.isScoped && !namedOccurrences.has(getOccurrenceKey(occurrence)))
         .map(({ table }) => table),
     ),
   ];

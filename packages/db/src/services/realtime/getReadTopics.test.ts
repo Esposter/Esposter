@@ -1,7 +1,7 @@
 import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 
 import { getReadTopics } from "#src/services/realtime/getReadTopics";
-import { MAX_SCOPE_VALUES } from "#src/services/realtime/getStatementReadSet";
+import { MAX_SCOPE_VALUES } from "#src/services/realtime/computeStatementReadSet";
 import { getWokenTopics } from "#src/services/realtime/getWokenTopics";
 import { getWriteTopics } from "#src/services/realtime/getWriteTopics";
 import { insertUser } from "#src/services/realtime/insertUser.test";
@@ -35,8 +35,8 @@ const seedSelfJoinRooms = async () => {
   const aloneRoomId = v7();
   const sharedRoomId = v7();
   await db.insert(roomsInMessage).values([
-    { id: aloneRoomId, name: aloneRoomId, type: RoomType.Room, userId: viewerId },
-    { id: sharedRoomId, name: sharedRoomId, type: RoomType.Room, userId: viewerId },
+    { id: aloneRoomId, name: "name", type: RoomType.Room, userId: viewerId },
+    { id: sharedRoomId, name: "name", type: RoomType.Room, userId: viewerId },
   ]);
   await db.insert(usersToRoomsInMessage).values([
     { roomId: aloneRoomId, userId: viewerId },
@@ -59,7 +59,7 @@ const seedUserRoom = async () => {
   const userId = v7();
   const roomId = v7();
   await insertUser(db, userId);
-  await db.insert(roomsInMessage).values({ id: roomId, name: "room", type: RoomType.Room, userId });
+  await db.insert(roomsInMessage).values({ id: roomId, name: "name", type: RoomType.Room, userId });
   await db.insert(usersToRoomsInMessage).values({ roomId, userId });
   return { db, roomId, userId };
 };
@@ -78,7 +78,9 @@ describe(getReadTopics, () => {
       .from(invitesInMessage)
       .where(eq(invitesInMessage.id, "a".repeat(SECRET_TOKEN_LENGTH)));
 
-    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_invites:id=sha256:66d34fba71f8"]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual([
+      `${getTableName(invitesInMessage)}:id=sha256:66d34fba71f8`,
+    ]);
   });
 
   // A literal list on a scope column names each value it lists, as an equality names its one value
@@ -96,7 +98,10 @@ describe(getReadTopics, () => {
       .where(inArray(usersToRoomsInMessage.roomId, [firstRoomId, secondRoomId]));
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
-      [`message_usersToRooms:roomId=${firstRoomId}`, `message_usersToRooms:roomId=${secondRoomId}`].toSorted(),
+      [
+        `${getTableName(usersToRoomsInMessage)}:roomId=${firstRoomId}`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${secondRoomId}`,
+      ].toSorted(),
     );
   });
 
@@ -137,7 +142,7 @@ describe(getReadTopics, () => {
     await db.delete(roomsInMessage).where(eq(roomsInMessage.userId, userId));
 
     expect(unlistedWoken).toStrictEqual([]);
-    expect(listedWoken).toStrictEqual([`message_usersToRooms:roomId=${firstRoomId}`]);
+    expect(listedWoken).toStrictEqual([`${getTableName(usersToRoomsInMessage)}:roomId=${firstRoomId}`]);
   });
 
   // Under an `or` a list is a condition like any other, so a branch that names no scope of its own leaves its table table-wide
@@ -152,7 +157,7 @@ describe(getReadTopics, () => {
       .from(usersToRoomsInMessage)
       .where(or(inJsonArray(usersToRoomsInMessage.roomId, [v7(), v7()]), eq(usersToRoomsInMessage.isHidden, true)));
 
-    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual([`${getTableName(usersToRoomsInMessage)}:*`]);
   });
 
   // Past the cap a list names no value, so its table is read table-wide, and a write to a row the list does not name still
@@ -164,7 +169,7 @@ describe(getReadTopics, () => {
     const userId = v7();
     await insertUser(db, userId);
     const unlistedRoomId = v7();
-    await db.insert(roomsInMessage).values({ id: unlistedRoomId, name: unlistedRoomId, type: RoomType.Room, userId });
+    await db.insert(roomsInMessage).values({ id: unlistedRoomId, name: "name", type: RoomType.Room, userId });
     await db.insert(usersToRoomsInMessage).values({ roomId: unlistedRoomId, userId });
     const read = recordStatements(db);
     await read.database
@@ -187,7 +192,7 @@ describe(getReadTopics, () => {
     await db.delete(usersToRoomsInMessage).where(eq(usersToRoomsInMessage.userId, userId));
     await db.delete(roomsInMessage).where(eq(roomsInMessage.userId, userId));
 
-    expect(unlistedWoken).toStrictEqual(["message_usersToRooms:*"]);
+    expect(unlistedWoken).toStrictEqual([`${getTableName(usersToRoomsInMessage)}:*`]);
   });
 
   // A table a read joins is named table-wide, whatever the read selects of it. The join's rows would be a narrower name,
@@ -209,7 +214,7 @@ describe(getReadTopics, () => {
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual([
       `app_bookmarks:userId=${userId}`,
-      "resource_resources:*",
+      `${getTableName(resourcesInResource)}:*`,
     ]);
   });
 
@@ -237,8 +242,8 @@ describe(getReadTopics, () => {
       );
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual([
-      "message_usersToRooms:*",
-      `message_usersToRooms:userId=${userId}`,
+      `${getTableName(usersToRoomsInMessage)}:*`,
+      `${getTableName(usersToRoomsInMessage)}:userId=${userId}`,
     ]);
   });
 
@@ -265,9 +270,9 @@ describe(getReadTopics, () => {
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
-        "message_usersToRooms:*",
-        `message_usersToRooms:roomId=${roomId}`,
-        `message_usersToRooms:userId=${userId}`,
+        `${getTableName(usersToRoomsInMessage)}:*`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${roomId}`,
+        `${getTableName(usersToRoomsInMessage)}:userId=${userId}`,
       ].toSorted(),
     );
   });
@@ -281,7 +286,7 @@ describe(getReadTopics, () => {
 
     await database.select().from(roomsInMessage);
 
-    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_rooms:*"]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual([`${getTableName(roomsInMessage)}:*`]);
   });
 
   // A table a read joins on a scope column is named by the values its join key takes in the rows the read returns, when the
@@ -295,8 +300,8 @@ describe(getReadTopics, () => {
     const firstRoomId = v7();
     const secondRoomId = v7();
     await db.insert(roomsInMessage).values([
-      { id: firstRoomId, name: firstRoomId, type: RoomType.Room, userId },
-      { id: secondRoomId, name: secondRoomId, type: RoomType.Room, userId },
+      { id: firstRoomId, name: "name", type: RoomType.Room, userId },
+      { id: secondRoomId, name: "name", type: RoomType.Room, userId },
     ]);
     const { database, statements } = recordStatements(db);
 
@@ -307,9 +312,9 @@ describe(getReadTopics, () => {
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
-        "message_rooms:*",
-        `message_usersToRooms:roomId=${firstRoomId}`,
-        `message_usersToRooms:roomId=${secondRoomId}`,
+        `${getTableName(roomsInMessage)}:*`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${firstRoomId}`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${secondRoomId}`,
       ].toSorted(),
     );
   });
@@ -323,7 +328,7 @@ describe(getReadTopics, () => {
     const userId = v7();
     await insertUser(db, userId);
     const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(roomsInMessage).values({ id: roomId, name: "name", type: RoomType.Room, userId });
     const { database, statements } = recordStatements(db);
 
     await database
@@ -332,7 +337,10 @@ describe(getReadTopics, () => {
       .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
       .where(isNull(usersToRoomsInMessage.lastReadAt));
 
-    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_rooms:*", "message_usersToRooms:*"]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual([
+      `${getTableName(roomsInMessage)}:*`,
+      `${getTableName(usersToRoomsInMessage)}:*`,
+    ]);
   });
 
   // A left join keeps the partner's rows whatever its joined table's own condition in the ON clause removes, so the condition
@@ -347,8 +355,8 @@ describe(getReadTopics, () => {
     const firstRoomId = v7();
     const secondRoomId = v7();
     await db.insert(roomsInMessage).values([
-      { id: firstRoomId, name: firstRoomId, type: RoomType.Room, userId },
-      { id: secondRoomId, name: secondRoomId, type: RoomType.Room, userId },
+      { id: firstRoomId, name: "name", type: RoomType.Room, userId },
+      { id: secondRoomId, name: "name", type: RoomType.Room, userId },
     ]);
     await db.insert(usersToRoomsInMessage).values({ roomId: firstRoomId, userId });
     const { database, statements } = recordStatements(db);
@@ -364,9 +372,9 @@ describe(getReadTopics, () => {
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
-        "message_rooms:*",
-        `message_usersToRooms:roomId=${firstRoomId}`,
-        `message_usersToRooms:roomId=${secondRoomId}`,
+        `${getTableName(roomsInMessage)}:*`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${firstRoomId}`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${secondRoomId}`,
       ].toSorted(),
     );
   });
@@ -387,7 +395,7 @@ describe(getReadTopics, () => {
       .where(eq(roomsInMessage.userId, userId));
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
-      ["message_rooms:*", `message_usersToRooms:roomId=${roomId}`].toSorted(),
+      [`${getTableName(roomsInMessage)}:*`, `${getTableName(usersToRoomsInMessage)}:roomId=${roomId}`].toSorted(),
     );
   });
 
@@ -402,8 +410,8 @@ describe(getReadTopics, () => {
     const firstRoomId = v7();
     const secondRoomId = v7();
     await db.insert(roomsInMessage).values([
-      { id: firstRoomId, name: firstRoomId, type: RoomType.Room, userId },
-      { id: secondRoomId, name: secondRoomId, type: RoomType.Room, userId },
+      { id: firstRoomId, name: "name", type: RoomType.Room, userId },
+      { id: secondRoomId, name: "name", type: RoomType.Room, userId },
     ]);
     const { database, statements } = recordStatements(db);
 
@@ -416,10 +424,10 @@ describe(getReadTopics, () => {
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
-        "auth_users:*",
-        "message_rooms:*",
-        `message_usersToRooms:roomId=${firstRoomId}`,
-        `message_usersToRooms:roomId=${secondRoomId}`,
+        `${getTableName(usersInAuth)}:*`,
+        `${getTableName(roomsInMessage)}:*`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${firstRoomId}`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${secondRoomId}`,
       ].toSorted(),
     );
   });
@@ -436,21 +444,21 @@ describe(getReadTopics, () => {
     await insertUser(db, userId);
     await insertUser(db, otherUserId);
     const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(roomsInMessage).values({ id: roomId, name: "name", type: RoomType.Room, userId });
     await db.insert(usersToRoomsInMessage).values([
       { isHidden: false, roomId, userId },
       { isHidden: false, roomId, userId: otherUserId },
     ]);
     const { database, statements } = recordStatements(db);
-    const participantMemberships = alias(usersToRoomsInMessage, "participantMemberships");
+    const participantUsersToRooms = alias(usersToRoomsInMessage, "participantUsersToRooms");
     const participants = database
-      .select({ roomId: participantMemberships.roomId })
+      .select({ roomId: participantUsersToRooms.roomId })
       .from(roomsInMessage)
       .leftJoin(
-        participantMemberships,
-        and(eq(participantMemberships.roomId, roomsInMessage.id), ne(participantMemberships.userId, userId)),
+        participantUsersToRooms,
+        and(eq(participantUsersToRooms.roomId, roomsInMessage.id), ne(participantUsersToRooms.userId, userId)),
       )
-      .groupBy(participantMemberships.roomId)
+      .groupBy(participantUsersToRooms.roomId)
       .as("participants");
 
     await database
@@ -468,7 +476,11 @@ describe(getReadTopics, () => {
       .where(eq(roomsInMessage.userId, userId));
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
-      ["message_rooms:*", `message_usersToRooms:roomId=${roomId}`, `message_usersToRooms:userId=${userId}`].toSorted(),
+      [
+        `${getTableName(roomsInMessage)}:*`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${roomId}`,
+        `${getTableName(usersToRoomsInMessage)}:userId=${userId}`,
+      ].toSorted(),
     );
   });
 
@@ -488,7 +500,11 @@ describe(getReadTopics, () => {
       .where(eq(roomsInMessage.userId, userId));
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
-      ["auth_users:*", "message_rooms:*", "message_usersToRooms:*"].toSorted(),
+      [
+        `${getTableName(usersInAuth)}:*`,
+        `${getTableName(roomsInMessage)}:*`,
+        `${getTableName(usersToRoomsInMessage)}:*`,
+      ].toSorted(),
     );
   });
 
@@ -501,7 +517,7 @@ describe(getReadTopics, () => {
     const userId = v7();
     await insertUser(db, userId);
     const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(roomsInMessage).values({ id: roomId, name: "name", type: RoomType.Room, userId });
     const { database, statements } = recordStatements(db);
 
     await database
@@ -512,7 +528,11 @@ describe(getReadTopics, () => {
       .where(eq(roomsInMessage.userId, userId));
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
-      ["auth_users:*", "message_rooms:*", `message_usersToRooms:roomId=${roomId}`].toSorted(),
+      [
+        `${getTableName(usersInAuth)}:*`,
+        `${getTableName(roomsInMessage)}:*`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${roomId}`,
+      ].toSorted(),
     );
   });
 
@@ -522,18 +542,18 @@ describe(getReadTopics, () => {
     expect.hasAssertions();
 
     const { db, userId } = await seedUserRoom();
-    const participants = alias(usersToRoomsInMessage, "participants");
+    const participantUsersToRooms = alias(usersToRoomsInMessage, "participantUsersToRooms");
     const { database, statements } = recordStatements(db);
 
     await database
       .select({ id: roomsInMessage.id })
       .from(roomsInMessage)
       .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
-      .leftJoin(participants, eq(participants.roomId, usersToRoomsInMessage.roomId))
+      .leftJoin(participantUsersToRooms, eq(participantUsersToRooms.roomId, usersToRoomsInMessage.roomId))
       .where(eq(roomsInMessage.userId, userId));
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
-      ["message_rooms:*", "message_usersToRooms:*"].toSorted(),
+      [`${getTableName(roomsInMessage)}:*`, `${getTableName(usersToRoomsInMessage)}:*`].toSorted(),
     );
   });
 
@@ -554,8 +574,8 @@ describe(getReadTopics, () => {
       );
 
     const topics = await getReadTopicNames(statements);
-    expect(topics).toContain("message_usersToRooms:*");
-    expect(topics.some((topic) => topic.startsWith("message_usersToRooms:userId="))).toBe(false);
+    expect(topics).toContain(`${getTableName(usersToRoomsInMessage)}:*`);
+    expect(topics.some((topic) => topic.startsWith(`${getTableName(usersToRoomsInMessage)}:userId=`))).toBe(false);
   });
 
   // A negated equality removes the rows it holds, so the rows it leaves are every other value's, and no scope names them
@@ -568,7 +588,7 @@ describe(getReadTopics, () => {
     await insertUser(db, userId);
     await insertUser(db, otherUserId);
     const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(roomsInMessage).values({ id: roomId, name: "name", type: RoomType.Room, userId });
     await db.insert(usersToRoomsInMessage).values({ roomId, userId: otherUserId });
     const { database, statements } = recordStatements(db);
 
@@ -577,7 +597,7 @@ describe(getReadTopics, () => {
       .from(usersToRoomsInMessage)
       .where(not(eq(usersToRoomsInMessage.userId, userId)));
 
-    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual([`${getTableName(usersToRoomsInMessage)}:*`]);
   });
 
   // An equality under an or names no scope: a row the other branch holds is not its value's, so the rows the read returns are
@@ -592,9 +612,9 @@ describe(getReadTopics, () => {
     await database
       .select({ roomId: usersToRoomsInMessage.roomId })
       .from(usersToRoomsInMessage)
-      .where(or(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.displayName, "a")));
+      .where(or(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.displayName, "")));
 
-    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual([`${getTableName(usersToRoomsInMessage)}:*`]);
   });
 
   // A column a read selects or groups by removes no row, so selecting the joined table's key does not filter it. The table
@@ -613,7 +633,7 @@ describe(getReadTopics, () => {
       .groupBy(usersToRoomsInMessage.roomId, roomsInMessage.id);
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
-      ["message_rooms:*", `message_usersToRooms:roomId=${roomId}`].toSorted(),
+      [`${getTableName(roomsInMessage)}:*`, `${getTableName(usersToRoomsInMessage)}:roomId=${roomId}`].toSorted(),
     );
   });
 
@@ -626,7 +646,7 @@ describe(getReadTopics, () => {
     const userId = v7();
     await insertUser(db, userId);
     const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await db.insert(roomsInMessage).values({ id: roomId, name: "name", type: RoomType.Room, userId });
     const { database, statements } = recordStatements(db);
 
     await database
@@ -635,7 +655,10 @@ describe(getReadTopics, () => {
       .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
       .where(ne(usersToRoomsInMessage.userId, userId));
 
-    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_rooms:*", "message_usersToRooms:*"]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual([
+      `${getTableName(roomsInMessage)}:*`,
+      `${getTableName(usersToRoomsInMessage)}:*`,
+    ]);
   });
 
   // An `in` over the table itself keeps the rows its subquery names, since each of the subquery's values is held by a row the
@@ -651,8 +674,8 @@ describe(getReadTopics, () => {
     const firstRoomId = v7();
     const secondRoomId = v7();
     await db.insert(roomsInMessage).values([
-      { id: firstRoomId, name: firstRoomId, type: RoomType.Room, userId },
-      { id: secondRoomId, name: secondRoomId, type: RoomType.Room, userId },
+      { id: firstRoomId, name: "name", type: RoomType.Room, userId },
+      { id: secondRoomId, name: "name", type: RoomType.Room, userId },
     ]);
     await db.insert(usersToRoomsInMessage).values([
       { roomId: firstRoomId, userId },
@@ -676,9 +699,9 @@ describe(getReadTopics, () => {
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
-        `message_usersToRooms:roomId=${firstRoomId}`,
-        `message_usersToRooms:roomId=${secondRoomId}`,
-        `message_usersToRooms:userId=${userId}`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${firstRoomId}`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${secondRoomId}`,
+        `${getTableName(usersToRoomsInMessage)}:userId=${userId}`,
       ].toSorted(),
     );
   });
@@ -689,7 +712,7 @@ describe(getReadTopics, () => {
     expect.hasAssertions();
 
     const { db, roomId, userId } = await seedUserRoom();
-    await db.insert(roomEmojisInMessage).values({ name: "emoji", roomId });
+    await db.insert(roomEmojisInMessage).values({ name: "name", roomId });
     const { database, statements } = recordStatements(db);
 
     await database
@@ -706,7 +729,7 @@ describe(getReadTopics, () => {
       );
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
-      ["message_roomEmojis:*", `message_usersToRooms:userId=${userId}`].toSorted(),
+      [`${getTableName(roomEmojisInMessage)}:*`, `${getTableName(usersToRoomsInMessage)}:userId=${userId}`].toSorted(),
     );
   });
 
@@ -719,19 +742,25 @@ describe(getReadTopics, () => {
 
     const { db, viewerId } = await seedSelfJoinRooms();
     const { database, statements } = recordStatements(db);
-    const partner = alias(usersToRoomsInMessage, "partner");
+    const partnerUsersToRooms = alias(usersToRoomsInMessage, "partnerUsersToRooms");
 
     await database
-      .select({ roomId: partner.roomId })
+      .select({ roomId: partnerUsersToRooms.roomId })
       .from(usersToRoomsInMessage)
       .leftJoin(
-        partner,
-        and(eq(partner.roomId, usersToRoomsInMessage.roomId), ne(partner.userId, usersToRoomsInMessage.userId)),
+        partnerUsersToRooms,
+        and(
+          eq(partnerUsersToRooms.roomId, usersToRoomsInMessage.roomId),
+          ne(partnerUsersToRooms.userId, usersToRoomsInMessage.userId),
+        ),
       )
       .where(eq(usersToRoomsInMessage.userId, viewerId));
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
-      ["message_usersToRooms:*", `message_usersToRooms:userId=${viewerId}`].toSorted(),
+      [
+        `${getTableName(usersToRoomsInMessage)}:*`,
+        `${getTableName(usersToRoomsInMessage)}:userId=${viewerId}`,
+      ].toSorted(),
     );
   });
 
@@ -742,22 +771,25 @@ describe(getReadTopics, () => {
 
     const { aloneRoomId, db, sharedRoomId, viewerId } = await seedSelfJoinRooms();
     const { database, statements } = recordStatements(db);
-    const partner = alias(usersToRoomsInMessage, "partner");
+    const partnerUsersToRooms = alias(usersToRoomsInMessage, "partnerUsersToRooms");
 
     await database
-      .select({ partnerRoomId: partner.roomId, roomId: usersToRoomsInMessage.roomId })
+      .select({ partnerRoomId: partnerUsersToRooms.roomId, roomId: usersToRoomsInMessage.roomId })
       .from(usersToRoomsInMessage)
       .leftJoin(
-        partner,
-        and(eq(partner.roomId, usersToRoomsInMessage.roomId), ne(partner.userId, usersToRoomsInMessage.userId)),
+        partnerUsersToRooms,
+        and(
+          eq(partnerUsersToRooms.roomId, usersToRoomsInMessage.roomId),
+          ne(partnerUsersToRooms.userId, usersToRoomsInMessage.userId),
+        ),
       )
       .where(eq(usersToRoomsInMessage.userId, viewerId));
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
-        `message_usersToRooms:roomId=${aloneRoomId}`,
-        `message_usersToRooms:roomId=${sharedRoomId}`,
-        `message_usersToRooms:userId=${viewerId}`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${aloneRoomId}`,
+        `${getTableName(usersToRoomsInMessage)}:roomId=${sharedRoomId}`,
+        `${getTableName(usersToRoomsInMessage)}:userId=${viewerId}`,
       ].toSorted(),
     );
   });
@@ -857,7 +889,7 @@ describe(getReadTopics, () => {
 
     const { db, roomId, userId } = await seedUserRoom();
     const categoryId = v7();
-    await db.insert(roomCategoriesInMessage).values({ id: categoryId, name: "a", position: 0, userId });
+    await db.insert(roomCategoriesInMessage).values({ id: categoryId, name: "name", position: 0, userId });
     await db.update(usersToRoomsInMessage).set({ categoryId }).where(eq(usersToRoomsInMessage.roomId, roomId));
     const read = recordStatements(db);
     await read.database
@@ -868,7 +900,7 @@ describe(getReadTopics, () => {
     await write.database.delete(roomCategoriesInMessage).where(eq(roomCategoriesInMessage.id, categoryId));
 
     await expect(getWoken(read.statements, write.statements)).resolves.toStrictEqual([
-      `message_usersToRooms:userId=${userId}`,
+      `${getTableName(usersToRoomsInMessage)}:userId=${userId}`,
     ]);
   });
 
@@ -877,7 +909,7 @@ describe(getReadTopics, () => {
 
     const { db, userId } = await seedUserRoom();
     const otherRoomId = v7();
-    await db.insert(roomsInMessage).values({ id: otherRoomId, name: "other", type: RoomType.Room, userId });
+    await db.insert(roomsInMessage).values({ id: otherRoomId, name: "name", type: RoomType.Room, userId });
     const read = recordStatements(db);
     await read.database.select({ roomId: usersToRoomsInMessage.roomId }).from(usersToRoomsInMessage);
     const write = recordStatements(db);

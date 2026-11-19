@@ -1,19 +1,19 @@
 import type { Database } from "@esposter/db-schema";
 import type { SQL, SQLWrapper } from "drizzle-orm";
 
-import { getStatementReadSet, MAX_SCOPE_VALUES } from "#src/services/realtime/getStatementReadSet";
+import { computeStatementReadSet, MAX_SCOPE_VALUES } from "#src/services/realtime/computeStatementReadSet";
 import { recordStatements } from "#src/services/realtime/recordStatements";
 import { inJsonArray } from "#src/services/shared/inJsonArray";
 import { notInJsonArray } from "#src/services/shared/notInJsonArray";
 import { createMockDb } from "@esposter/db-mock";
 import { invitesInMessage, roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
-import { and, eq, inArray, not, or, sql } from "drizzle-orm";
+import { and, eq, getTableName, inArray, not, or, sql } from "drizzle-orm";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const inArrayList = (column: SQLWrapper, values: string[]) => inArray(column, values);
 
-describe(getStatementReadSet, () => {
+describe(computeStatementReadSet, () => {
   // A config of only `false`s is drizzle's exclusion mode: every column it does not name is selected, so a join side on
   // One of them keeps the key it is selected under
   test("names a join side on a column an exclusion-mode config still selects", async () => {
@@ -24,12 +24,18 @@ describe(getStatementReadSet, () => {
 
     await database.query.usersToRoomsInMessage.findFirst({ columns: { displayName: false }, with: { room: true } });
 
-    expect(statements.map(({ statement }) => getStatementReadSet(statement).joins)).toStrictEqual([
+    expect(statements.map(({ statement }) => computeStatementReadSet(statement).joins)).toStrictEqual([
       [
         {
           kind: "inner",
-          left: { column: "roomId", level: 0, occurrence: "d0", selectedAs: "roomId", table: "message_usersToRooms" },
-          right: { column: "id", level: 0, occurrence: "d1", table: "message_rooms" },
+          left: {
+            column: "roomId",
+            level: 0,
+            occurrence: "d0",
+            selectedAs: "roomId",
+            table: getTableName(usersToRoomsInMessage),
+          },
+          right: { column: "id", level: 0, occurrence: "d1", table: getTableName(roomsInMessage) },
         },
       ],
     ]);
@@ -42,7 +48,7 @@ describe(getStatementReadSet, () => {
     expect.hasAssertions();
 
     const { db } = await createMockDb();
-    const readSet = getStatementReadSet(
+    const readSet = computeStatementReadSet(
       db
         .select({ id: roomsInMessage.id })
         .from(roomsInMessage)
@@ -65,7 +71,7 @@ describe(getStatementReadSet, () => {
     const { db } = await createMockDb();
     const firstRoomId = v7();
     const secondRoomId = v7();
-    const { filters, scopes } = getStatementReadSet(
+    const { filters, scopes } = computeStatementReadSet(
       db
         .select()
         .from(usersToRoomsInMessage)
@@ -73,8 +79,8 @@ describe(getStatementReadSet, () => {
     );
 
     expect(scopes).toStrictEqual([
-      { column: "roomId", table: "message_usersToRooms", value: firstRoomId },
-      { column: "roomId", table: "message_usersToRooms", value: secondRoomId },
+      { column: "roomId", table: getTableName(usersToRoomsInMessage), value: firstRoomId },
+      { column: "roomId", table: getTableName(usersToRoomsInMessage), value: secondRoomId },
     ]);
     expect(filters).toStrictEqual([]);
   });
@@ -90,7 +96,7 @@ describe(getStatementReadSet, () => {
       "the null-filled side of a left join",
       (database, inList, values) =>
         database
-          .select()
+          .select({ id: usersInAuth.id, roomId: usersToRoomsInMessage.roomId })
           .from(usersInAuth)
           .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, usersInAuth.id))
           .where(inList(usersToRoomsInMessage.roomId, values)),
@@ -109,8 +115,8 @@ describe(getStatementReadSet, () => {
     const { db } = await createMockDb();
     const values = [v7(), v7()];
 
-    expect(getStatementReadSet(build(db, inJsonArray, values))).toStrictEqual(
-      getStatementReadSet(build(db, inArrayList, values)),
+    expect(computeStatementReadSet(build(db, inJsonArray, values))).toStrictEqual(
+      computeStatementReadSet(build(db, inArrayList, values)),
     );
   });
 
@@ -123,7 +129,7 @@ describe(getStatementReadSet, () => {
     expect.hasAssertions();
 
     const { db } = await createMockDb();
-    const { filters, scopes } = getStatementReadSet(
+    const { filters, scopes } = computeStatementReadSet(
       db
         .select()
         .from(usersToRoomsInMessage)
@@ -132,7 +138,13 @@ describe(getStatementReadSet, () => {
 
     expect(scopes).toStrictEqual([]);
     expect(filters).toStrictEqual([
-      { column: "roomId", level: 0, occurrence: "message_usersToRooms", site: "where", table: "message_usersToRooms" },
+      {
+        column: "roomId",
+        level: 0,
+        occurrence: getTableName(usersToRoomsInMessage),
+        site: "where",
+        table: getTableName(usersToRoomsInMessage),
+      },
     ]);
   });
 
@@ -146,13 +158,19 @@ describe(getStatementReadSet, () => {
 
     const { db } = await createMockDb();
     const values = Array.from({ length: MAX_SCOPE_VALUES + 1 }, () => v7());
-    const { filters, scopes } = getStatementReadSet(
+    const { filters, scopes } = computeStatementReadSet(
       db.select().from(usersToRoomsInMessage).where(inList(usersToRoomsInMessage.roomId, values)),
     );
 
     expect(scopes).toStrictEqual([]);
     expect(filters).toStrictEqual([
-      { column: "roomId", level: 0, occurrence: "message_usersToRooms", site: "where", table: "message_usersToRooms" },
+      {
+        column: "roomId",
+        level: 0,
+        occurrence: getTableName(usersToRoomsInMessage),
+        site: "where",
+        table: getTableName(usersToRoomsInMessage),
+      },
     ]);
   });
 
@@ -165,7 +183,7 @@ describe(getStatementReadSet, () => {
 
     const { db } = await createMockDb();
     const values = Array.from({ length: MAX_SCOPE_VALUES }, () => v7());
-    const { filters, scopes } = getStatementReadSet(
+    const { filters, scopes } = computeStatementReadSet(
       db.select().from(usersToRoomsInMessage).where(inList(usersToRoomsInMessage.roomId, values)),
     );
 

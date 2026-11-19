@@ -35,6 +35,12 @@ interface AliasDeclaration {
   start: number;
   table: Table;
 }
+// The depth in front of each chunk of one flat chunk array, and the alias declarations in it. Computed once per array: the
+// Walk reads them, and a relational query's root alias reads the statement's top level
+interface ChunkScan {
+  declarations: AliasDeclaration[];
+  depths: number[];
+}
 // A table occurrence a level declares, and an occurrence an equality of its own scopes at a level
 interface Declaration {
   level: ReadSetLevel;
@@ -113,23 +119,23 @@ const getSelectedFields = (statement: unknown): Record<string, unknown> => {
   return checkIsRecord(fields) ? fields : {};
 };
 
-const getRelationalTable = (statement: unknown): Table | undefined =>
+const getRelationalTable = (statement: unknown) =>
   checkIsRecord(statement) && is(statement.table, Table) ? statement.table : undefined;
 // A table reached through an alias answers for the base table its first column belongs to
-const getBaseTable = (table: Table): Table => {
+const getBaseTable = (table: Table) => {
   const [firstColumn] = Object.values(getTableColumns(table));
   return firstColumn ? getColumnTable(getOriginalColumnFromAlias(firstColumn)) : table;
 };
 
-const getNameValue = (chunk: unknown): string | undefined =>
+const getNameValue = (chunk: unknown) =>
   chunkKindOf(chunk) === chunkKinds.name && checkIsRecord(chunk) && typeof chunk.value === "string"
     ? chunk.value
     : undefined;
 
-const getOperatorText = (chunk: unknown): string | undefined =>
+const getOperatorText = (chunk: unknown) =>
   is(chunk, StringChunk) ? chunk.value.replaceAll(/[()]/gu, "").trim().toLowerCase() : undefined;
 // The base column a database column name names in a table, as a key of the table's definition
-const getNamedColumns = (table: Table, name: string, occurrence = getTableName(table)): ReadColumn[] => {
+const getNamedColumns = (table: Table, name: string, occurrence = getTableName(table)) => {
   const columns = getTableColumns(table);
   const key = Object.keys(columns).find((candidate) => columns[candidate]?.name === name);
   return key === undefined ? [] : [{ key, occurrence, owner: getBaseTable(table), relation: getTableName(table) }];
@@ -164,15 +170,15 @@ const toReadColumns = (column: Column, derived: DerivedSubqueryMap): ReadColumn[
     : getNamedColumns(owner, baseColumn.name, getTableName(getColumnTable(column)));
 };
 
+// A secret column is one of the scope's columns, so the columns list alone says which columns are scope columns
 const getScopeOf = ({ key, owner }: ReadColumn) => {
   const scope = getTableScope(owner);
-  const isSecret = scope?.secretColumns?.includes(key) === true;
-  return { isScope: scope?.columns.includes(key) === true || isSecret, isSecret };
+  return { isScope: scope?.columns.includes(key) === true, isSecret: scope?.secretColumns?.includes(key) === true };
 };
 // The statement level a column is read in, numbered in the order the walk opens the statement's levels
-const getLevelIndex = ({ level, readSet }: ReadContext): number => readSet.levels.indexOf(level);
+const getLevelIndex = ({ level, readSet }: ReadContext) => readSet.levels.indexOf(level);
 
-const toKey = ({ key, occurrence, owner }: ReadColumn, level: number): ReadSetKey => ({
+const toKey = ({ key, occurrence, owner }: ReadColumn, level: number) => ({
   column: key,
   level,
   occurrence,
@@ -182,7 +188,7 @@ const toKey = ({ key, occurrence, owner }: ReadColumn, level: number): ReadSetKe
 // Without naming the table at this level, which the subquery's own level does
 // A left join keeps the rows of the table it does not null-fill, whatever its ON clause tests, so a condition on that table
 // Removes none of its rows and is a filter on it, not a scope
-const checkIsKeptByLeftJoin = (readColumn: ReadColumn, join: JoinContext | undefined): boolean =>
+const checkIsKeptByLeftJoin = (readColumn: ReadColumn, join: JoinContext | undefined) =>
   join?.isLeft === true && readColumn.relation !== join.relation;
 
 const addScopes = (columns: ReadColumn[], value: unknown, context: ReadContext, isThroughSubquery: boolean) => {
@@ -195,7 +201,7 @@ const addScopes = (columns: ReadColumn[], value: unknown, context: ReadContext, 
 
     const table = getTableName(readColumn.owner);
     const scope: ReadSetScope = { column: readColumn.key, table, value };
-    context.readSet.scopes.push(isSecret ? { ...scope, secret: true } : scope);
+    context.readSet.scopes.push(isSecret ? { ...scope, isSecret: true } : scope);
     if (!isThroughSubquery) context.scopedKeys.push({ level: context.level, occurrence: readColumn.occurrence });
   }
 };
@@ -286,12 +292,12 @@ const addFilters = (columns: ReadColumn[], context: ReadContext) => {
     });
 };
 
-const getParenthesisDelta = (chunk: unknown): number => {
+const getParenthesisDelta = (chunk: unknown) => {
   if (!is(chunk, StringChunk)) return 0;
   return (chunk.value.match(/\(/gu)?.length ?? 0) - (chunk.value.match(/\)/gu)?.length ?? 0);
 };
 // The parenthesis depth in front of each chunk of a flat chunk array
-const computeDepths = (chunks: unknown[]): number[] => {
+const computeDepths = (chunks: unknown[]) => {
   let depth = 0;
   return chunks.map((chunk) => {
     const current = depth;
@@ -315,7 +321,7 @@ const getDeclaredAlias = (chunks: unknown[], index: number): undefined | { alias
   return is(source, Table) ? { alias, table: getBaseTable(source) } : undefined;
 };
 
-const computeAliasDeclarations = (chunks: unknown[], depths: number[]): AliasDeclaration[] =>
+const computeAliasDeclarations = (chunks: unknown[], depths: number[]) =>
   chunks.flatMap((_chunk, index): AliasDeclaration[] => {
     const declared = getDeclaredAlias(chunks, index);
     if (!declared) return [];
@@ -326,9 +332,13 @@ const computeAliasDeclarations = (chunks: unknown[], depths: number[]): AliasDec
     while (end < chunks.length && (depths[end] ?? 0) >= depth) end += 1;
     return [{ ...declared, end, start }];
   });
+const scanChunks = (chunks: unknown[]): ChunkScan => {
+  const depths = computeDepths(chunks);
+  return { declarations: computeAliasDeclarations(chunks, depths), depths };
+};
 // The table an alias names at a chunk: the innermost declaration of it whose region holds the chunk, else the table of
 // That name in the schema, which is how an unaliased reference names its table
-const resolveAlias = (alias: string, index: number, declarations: AliasDeclaration[]): Table | undefined => {
+const resolveAlias = (alias: string, index: number, declarations: AliasDeclaration[]) => {
   let found: AliasDeclaration | undefined;
   for (const declaration of declarations)
     if (
@@ -341,12 +351,7 @@ const resolveAlias = (alias: string, index: number, declarations: AliasDeclarati
   return found?.table ?? tableMap.get(alias);
 };
 // A column a chunk reads: a column object, or an alias and a column name written as text, such as `"alias"."column"`
-const readReferenceAt = (
-  chunks: unknown[],
-  index: number,
-  declarations: AliasDeclaration[],
-  context: ReadContext,
-): ReadReference | undefined => {
+const readReferenceAt = (chunks: unknown[], index: number, declarations: AliasDeclaration[], context: ReadContext) => {
   const chunk = chunks[index];
   let reference: ReadReference | undefined;
   if (is(chunk, Column)) {
@@ -374,7 +379,7 @@ const readReferenceAt = (
   return reference;
 };
 // The first column a subquery selects, which is what an `in` compares its column against
-const getFirstSelectedColumn = (statement: SQLWrapper): Column | undefined =>
+const getFirstSelectedColumn = (statement: SQLWrapper) =>
   Object.values(getSelectedFields(statement)).find((field): field is Column => is(field, Column));
 // A condition is a scope equality, a join or a filter. A `not in` over a subquery removes its rows, so it is a filter, and so
 // Is any other operator the walker has no fact for. Returns the chunks after the operator that the condition read as its
@@ -385,7 +390,7 @@ const readCondition = (
   reference: ReadReference,
   declarations: AliasDeclaration[],
   context: ReadContext,
-): number => {
+) => {
   // A condition under a `not`, or in a branch of an `or`, does not hold the rows its value selects alone, so every column it
   // Names filters its table
   if (context.isNegated || context.isInOr) {
@@ -425,7 +430,7 @@ const readCondition = (
 const JOIN_KINDS = new Set(["cross", "full", "inner", "left", "right"]);
 // The relation a join names: a table, a subquery, or a table under an alias, which the statement writes as the aliased table
 // Itself. An unaliased table is written as its name, so its relation is that name
-const getJoinRelation = (chunk: unknown): string | undefined => {
+const getJoinRelation = (chunk: unknown) => {
   if (is(chunk, Table)) return getTableName(chunk);
   if (is(chunk, Subquery)) return chunk._.alias;
   if (!is(chunk, SQL)) return undefined;
@@ -451,7 +456,7 @@ const computeJoinContexts = (chunks: unknown[]): Map<number, JoinContext> =>
   );
 // Whether a clause keyword's text opens a condition, or a clause that only shapes the rows a statement returns. Text that
 // Opens neither leaves the clause in force as it was
-const getClauseCondition = (text: string): boolean | undefined => {
+const getClauseCondition = (text: string) => {
   if (/\b(?:where|having)\b/iu.test(text)) return true;
   if (/\b(?:select|from|group\s+by|order\s+by|limit|offset)\b/iu.test(text)) return false;
   return undefined;
@@ -460,7 +465,7 @@ const getClauseCondition = (text: string): boolean | undefined => {
 // Sets whether the chunks after it are conditions, so a WHERE's references filter their table and a select list's do not
 // Which chunks a `not` negates. Drizzle writes `not (condition)` for a condition, so the chunks inside the parentheses that follow
 // `not (` are negated, and `not column` for a column, so the chunk after a bare `not` is negated.
-const computeNegatedAt = (chunks: unknown[], depths: number[]): boolean[] => {
+const computeNegatedAt = (chunks: unknown[], depths: number[]) => {
   const groupDepths: number[] = [];
   let negatesNext = false;
   return chunks.map((chunk, index) => {
@@ -475,15 +480,14 @@ const computeNegatedAt = (chunks: unknown[], depths: number[]): boolean[] => {
   });
 };
 // The separator between the branches of an `or`, which drizzle writes into the one flat chunk array its branches are joined in
-const checkIsOrSeparator = (chunk: unknown): boolean => is(chunk, StringChunk) && /\bor\b/iu.test(chunk.value);
+const checkIsOrSeparator = (chunk: unknown) => is(chunk, StringChunk) && /\bor\b/iu.test(chunk.value);
 
-const walkSiblings = (chunks: unknown[], parent: ReadContext) => {
+const walkSiblings = (chunks: unknown[], parent: ReadContext, scan = scanChunks(chunks)) => {
   const context: ReadContext = {
     ...parent,
     isInOr: parent.isInOr || chunks.some((chunk) => checkIsOrSeparator(chunk)),
   };
-  const depths = computeDepths(chunks);
-  const declarations = computeAliasDeclarations(chunks, depths);
+  const { declarations, depths } = scan;
   const negatedAt = computeNegatedAt(chunks, depths);
   const joins = computeJoinContexts(chunks);
   for (const declaration of declarations)
@@ -530,7 +534,7 @@ const enterLevel = (context: ReadContext): ReadContext => {
 };
 // A relational query's nested relation is a parenthesised select written into the query's own text, not a builder, so it
 // Is recognised by the select it opens with
-const checkIsNestedSelect = (chunk: SQL): boolean => {
+const checkIsNestedSelect = (chunk: SQL) => {
   const [first] = chunk.queryChunks;
   return is(first, StringChunk) && /^\s*\(\s*select\b/iu.test(first.value);
 };
@@ -563,7 +567,7 @@ const SELECT_LEVEL = 0;
 export const MAX_SCOPE_VALUES = 64;
 // Drizzle's column config picks its mode from the values in it: any `true` selects only the `true` columns, while a
 // Config of only `false`s selects every other column. A config with no value at all selects none
-const checkIsSelectedColumn = (configured: unknown, key: string): boolean => {
+const checkIsSelectedColumn = (configured: unknown, key: string) => {
   if (!checkIsRecord(configured)) return true;
   const values = Object.values(configured);
   if (values.includes(true)) return configured[key] === true;
@@ -579,18 +583,16 @@ const toSelections = (column: Column, selectedAs: string): ReadSelection[] =>
   }));
 // The alias a relational query gives its root table in its own FROM, such as `from "table" as "alias"`, which its
 // Selected columns are read through. It is the declaration at the statement's top level, not one a nested relation declares
-const getRootAlias = (statement: SQLWrapper, table: Table): string | undefined => {
-  const chunks: unknown[] = statement.getSQL().queryChunks;
-  const depths = computeDepths(chunks);
+const getRootAlias = ({ declarations, depths }: ChunkScan, table: Table) => {
   const tableName = getTableName(getBaseTable(table));
-  return computeAliasDeclarations(chunks, depths).find(
+  return declarations.find(
     ({ start, table: declared }) => (depths[start] ?? 0) === 0 && getTableName(getBaseTable(declared)) === tableName,
   )?.alias;
 };
 // A relational query selects its root table's columns, or the ones its config names. They are read through the root's alias,
 // So a statement that does not declare one names no key
-const getRelationalSelections = (statement: SQLWrapper, table: Table): ReadSelection[] => {
-  const occurrence = getRootAlias(statement, table);
+const getRelationalSelections = (statement: SQLWrapper, table: Table, scan: ChunkScan): ReadSelection[] => {
+  const occurrence = getRootAlias(scan, table);
   if (occurrence === undefined) return [];
   const configured = getStatementConfig(statement)?.columns;
   const tableName = getTableName(getBaseTable(table));
@@ -599,17 +601,17 @@ const getRelationalSelections = (statement: SQLWrapper, table: Table): ReadSelec
     .map((key) => ({ column: key, occurrence, selectedAs: key, table: tableName }));
 };
 
-const getSelections = (statement: SQLWrapper): ReadSelection[] => {
+const getSelections = (statement: SQLWrapper, scan: ChunkScan): ReadSelection[] => {
   const fields = getSelectedFields(statement);
   if (Object.keys(fields).length > 0)
     return Object.entries(fields).flatMap(([selectedAs, field]) =>
       is(field, Column) ? toSelections(field, selectedAs) : [],
     );
   const table = getRelationalTable(statement);
-  return table ? getRelationalSelections(statement, table) : [];
+  return table ? getRelationalSelections(statement, table, scan) : [];
 };
 // The selection of a join side's own column of its own occurrence, at the statement's top level, under the name it returns it by
-const findOwnSelection = (key: ReadSetKey, selections: ReadSelection[]): ReadSelection | undefined =>
+const findOwnSelection = (key: ReadSetKey, selections: ReadSelection[]) =>
   key.level === SELECT_LEVEL
     ? selections.find(
         (candidate) =>
@@ -618,11 +620,7 @@ const findOwnSelection = (key: ReadSetKey, selections: ReadSelection[]): ReadSel
     : undefined;
 // The same column of another top-level occurrence, which names the side when no left join null-fills that occurrence: its value
 // Is then in every row the read returns, where the side's own value is absent for the rows its left join leaves unmatched
-const findBorrowedSelection = (
-  key: ReadSetKey,
-  selections: ReadSelection[],
-  nullFilledKeys: Set<string>,
-): ReadSelection | undefined =>
+const findBorrowedSelection = (key: ReadSetKey, selections: ReadSelection[], nullFilledKeys: Set<string>) =>
   selections.find(
     (candidate) =>
       candidate.table === key.table &&
@@ -647,14 +645,18 @@ const toSelectedJoin = (join: ReadSetJoin, selections: ReadSelection[], nullFill
 };
 // The read set of one statement the handle recorded: the tables it reads, the scope values it tests, the joins whose
 // Rows are named by a scope column, and the columns it tests for null
-export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
+export const computeStatementReadSet = (statement: SQLWrapper): ReadSet => {
   const readSet: ReadSet = { filters: [], joins: [], levels: [], occurrences: [], scopes: [], tables: [] };
   const level: ReadSetLevel = { tables: [] };
   readSet.levels.push(level);
   const declared: Declaration[] = [];
   const scopedKeys: ScopedKey[] = [];
   const nullFilledKeys = new Set<string>();
-  walkChunk(statement.getSQL(), {
+  // The statement's SQL is built and its top level scanned once, for the walk and for a relational query's root alias alike.
+  // The walk enters the top level as walkChunk enters any SQL, so a select that opens with a parenthesis opens a level
+  const sql = statement.getSQL();
+  const scan = scanChunks(sql.queryChunks);
+  const context: ReadContext = {
     declared,
     derived: new Map(),
     isCondition: false,
@@ -665,17 +667,18 @@ export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
     nullFilledKeys,
     readSet,
     scopedKeys,
-  });
+  };
+  walkSiblings(sql.queryChunks, checkIsNestedSelect(sql) ? enterLevel(context) : context, scan);
   // Only a join reads a selection, so a statement with no join skips the walk of its selections
-  const selections = readSet.joins.length > 0 ? getSelections(statement) : [];
+  const selections = readSet.joins.length > 0 ? getSelections(statement, scan) : [];
   readSet.joins = readSet.joins.map((join) => toSelectedJoin(join, selections, nullFilledKeys));
   // Every level the walk opened is kept, an empty one too, so an occurrence's level is its position in `levels`
   const levels = readSet.levels.map(({ tables }) => ({ tables: [...new Set(tables)].toSorted() }));
   // A declaration is scoped by an equality of its own in its level, so the scope is read from the level it was declared in
   const occurrences = declared.map(({ level: declaredLevel, occurrence, table }) => ({
+    isScoped: scopedKeys.some((scopedKey) => scopedKey.level === declaredLevel && scopedKey.occurrence === occurrence),
     level: readSet.levels.indexOf(declaredLevel),
     occurrence,
-    scoped: scopedKeys.some((scopedKey) => scopedKey.level === declaredLevel && scopedKey.occurrence === occurrence),
     table,
   }));
   return { ...readSet, levels, occurrences, tables: [...new Set(levels.flatMap(({ tables }) => tables))].toSorted() };

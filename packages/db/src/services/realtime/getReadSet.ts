@@ -9,7 +9,7 @@ import type {
 import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 
 import { JoinSide } from "#src/models/realtime/JoinSide";
-import { getStatementReadSet } from "#src/services/realtime/getStatementReadSet";
+import { computeStatementReadSet } from "#src/services/realtime/computeStatementReadSet";
 
 const toSideSerial = ({ column, level, occurrence, selectedAs, table }: ReadSetKey) =>
   `${level}:${occurrence}:${table}.${column}${selectedAs === undefined ? "" : `@${selectedAs}`}`;
@@ -18,8 +18,8 @@ const toFilterSerial = ({ column, level, occurrence, site, table }: ReadSetFilte
   `${level}:${occurrence}:${toColumnSerial({ column, table })}@${site}`;
 const toJoinSerial = ({ kind, left, nullFilled, right }: ReadSetJoin) =>
   `${kind}:${nullFilled ?? ""}:${toSideSerial(left)}|${toSideSerial(right)}`;
-const toScopeSerial = ({ column, secret, table, value }: ReadSetScope) =>
-  `${table}.${column}=${JSON.stringify(value)}${secret ? "#secret" : ""}`;
+const toScopeSerial = ({ column, isSecret, table, value }: ReadSetScope) =>
+  `${table}.${column}=${JSON.stringify(value)}${isSecret ? "#secret" : ""}`;
 
 // A join is one fact whichever side a statement reads first, so its sides are ordered by their columns. A left join's
 // Null-filled side moves with its column
@@ -61,7 +61,7 @@ const getShiftedReadSet = (readSet: ReadSet, offset: number): ReadSet => ({
 export const getReadSet = (statements: RecordedStatement[]): ReadSet => {
   let offset = 0;
   const readSets = statements.map(({ statement }) => {
-    const readSet = getShiftedReadSet(getStatementReadSet(statement), offset);
+    const readSet = getShiftedReadSet(computeStatementReadSet(statement), offset);
     offset += readSet.levels.length;
     return readSet;
   });

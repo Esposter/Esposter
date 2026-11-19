@@ -23,6 +23,21 @@ describe(getTableScope, () => {
     expect(missing).toStrictEqual([]);
   });
 
+  // A secret column is one of its scope's columns, so the columns list alone names the columns a read is scoped by, and a
+  // Secret that a read names is only ever scoped by a column the columns list holds
+  test("every secret column is one of its scope's columns", () => {
+    expect.hasAssertions();
+
+    const unlisted = Object.values(schema).flatMap((table) => {
+      const scope = getTableScope(table);
+      return (scope?.secretColumns ?? [])
+        .filter((columnName) => !scope?.columns.includes(columnName))
+        .map((columnName) => `${getTableName(table)}.${columnName}`);
+    });
+
+    expect(unlisted).toStrictEqual([]);
+  });
+
   // The invite's id is the bearer secret its link carries, so a topic over it would send that secret to every
   // Watcher. The scope marks it secret, and the topic it names is a digest
   test("the invite's id is a secret scope column", () => {

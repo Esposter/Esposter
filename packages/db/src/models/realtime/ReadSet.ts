@@ -59,13 +59,13 @@ export interface ReadSetLevel {
 // Table-wide when any of its occurrences is neither scoped nor named by its rows
 export interface ReadSetOccurrence {
   level: number;
+  isScoped: boolean;
   occurrence: string;
-  scoped: boolean;
   table: string;
 }
 
 // A scope fact: a scope column the read tests against one value, secret when the column is a bearer secret
 export interface ReadSetScope extends ReadSetColumn {
-  secret?: true;
+  isSecret?: true;
   value: unknown;
 }
