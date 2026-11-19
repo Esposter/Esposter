@@ -1,7 +1,7 @@
+import type { ObjectInvoker } from "#src/models/realtime/ObjectInvoker";
 import type { ColumnTopic } from "@esposter/db-schema";
 
-import { createObjectStub } from "#server/services/realtime/createObjectStub";
-import { requestObjectReadsStorage } from "#server/services/realtime/requestObjectReads";
+import { createObjectStub } from "#src/services/realtime/createObjectStub";
 import { describe, expect, test, vi } from "vitest";
 
 // A stub as a Durable Object's own class types it: one RPC method, the HTTP entry a socket is forwarded to, and the invoke every
@@ -11,14 +11,13 @@ const createRoomStub = () => {
     Promise.resolve(threadRootIds.map(String)),
   );
   const fetch = vi.fn<(url: string) => Promise<Response>>((url) => Promise.resolve(new Response(url)));
-  const invoke = vi.fn<(method: string, args: unknown[]) => Promise<{ readSet: ColumnTopic[]; result: unknown }>>(
-    (method, args) =>
-      Promise.resolve({ readSet: [{ topic: "messages:*" }], result: `${method}:${JSON.stringify(args)}` }),
+  const invoke = vi.fn<ObjectInvoker["invoke"]>((method, args) =>
+    Promise.resolve({ readSet: [{ topic: "messages:*" }], result: `${method}:${JSON.stringify(args)}`, writeSet: [] }),
   );
   return { fetch, invoke, readThreads };
 };
 
-describe("createObjectStub", () => {
+describe(createObjectStub, () => {
   test("answers an RPC method with the result its object's invoke gives, by the method's name and arguments", async () => {
     expect.hasAssertions();
 
@@ -30,18 +29,20 @@ describe("createObjectStub", () => {
     expect(stub.readThreads).not.toHaveBeenCalled();
   });
 
-  test("records the read set its call reports into the request's read scope", async () => {
+  test("hands the read set its call reports to the callback it is given", async () => {
     expect.hasAssertions();
 
-    const roomObject = createObjectStub(createRoomStub());
-    const reads: ColumnTopic[] = [];
+    const reads: ColumnTopic[][] = [];
+    const roomObject = createObjectStub(createRoomStub(), (readSet) => {
+      reads.push(readSet);
+    });
 
-    await requestObjectReadsStorage.run(reads, () => roomObject.readThreads([7]));
+    await roomObject.readThreads([7]);
 
-    expect(reads).toStrictEqual([{ topic: "messages:*" }]);
+    expect(reads).toStrictEqual([[{ topic: "messages:*" }]]);
   });
 
-  test("answers a call made outside a request, recording nothing", async () => {
+  test("answers a call given no callback, reporting its read set nowhere", async () => {
     expect.hasAssertions();
 
     const roomObject = createObjectStub(createRoomStub());

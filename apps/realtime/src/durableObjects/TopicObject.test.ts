@@ -1,4 +1,5 @@
-import type { Topic, UserObjectRpc } from "@esposter/db-schema";
+import type { ObjectInvoker } from "@esposter/db";
+import type { Topic } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
 import { TopicObject } from "#src/durableObjects/TopicObject";
@@ -10,17 +11,24 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 describe(TopicObject, () => {
   const topic: Topic = `post:${v7()}`;
   // Each subscriber's user object as the topic reaches it, so a test reads which users heard of a change
-  const userIdInvalidateMap = new Map<string, Mock<UserObjectRpc["invalidate"]>>();
+  const userIdInvalidateMap = new Map<string, Mock<(...args: unknown[]) => Promise<void>>>();
   const getInvalidate = (userId: string) => {
     const existingInvalidate = userIdInvalidateMap.get(userId);
     if (existingInvalidate) return existingInvalidate;
 
-    const invalidate = vi.fn<UserObjectRpc["invalidate"]>(() => Promise.resolve());
+    const invalidate = vi.fn<(...args: unknown[]) => Promise<void>>(() => Promise.resolve());
     userIdInvalidateMap.set(userId, invalidate);
     return invalidate;
   };
+  // A subscriber's object answers its invoke, and the one method a topic calls on it is `invalidate`, so the call lands on the mock
+  const createUserStub = (userId: string): ObjectInvoker => ({
+    invoke: async (_method, args) => {
+      await getInvalidate(userId)(...args);
+      return { readSet: [], result: undefined, writeSet: [] };
+    },
+  });
   const environment = {
-    USER: { get: (userId: string) => ({ invalidate: getInvalidate(userId) }), idFromName: (userId: string) => userId },
+    USER: { get: createUserStub, idFromName: (userId: string) => userId },
   } as unknown as Cloudflare.Env;
 
   const createTopicObject = () => {

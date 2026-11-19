@@ -23,6 +23,7 @@ import { getRealtimeKitCredentials } from "#src/services/realtimeKit/getRealtime
 import { getRealtimeKitPresetName } from "#src/services/realtimeKit/getRealtimeKitPresetName";
 import { removeRealtimeKitParticipant } from "#src/services/realtimeKit/removeRealtimeKitParticipant";
 import { requestRealtimeKit } from "#src/services/realtimeKit/requestRealtimeKit";
+import { getObjectStub } from "@esposter/db";
 import {
   admittedSessions,
   callSessionsInMessage,
@@ -453,9 +454,10 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     // A person's last session out of the call takes it off the calls their object closes a revoked session on
     if (this.#readSessionIdsOf(participant.userId).length === 0)
       this.ctx.waitUntil(
-        getResultAsync(() =>
-          this.env.USER.get(this.env.USER.idFromName(participant.userId)).removeJoinedCall(callSessionId),
-        ).match(noop, console.error),
+        getResultAsync(() => getObjectStub(this.env.USER, participant.userId).removeJoinedCall(callSessionId)).match(
+          noop,
+          console.error,
+        ),
       );
     return {
       callDurationSeconds: this.#checkHasParticipants() ? null : this.#endCall(callSessionId),

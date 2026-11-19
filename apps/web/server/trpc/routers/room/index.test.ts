@@ -115,8 +115,6 @@ describe("roomRouter", () => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     roomObjectCalls.length = 0;
     roomObjectFailures.clear();
-    // The object returns the senders of the scheduled messages it removed, and none is removed unless a test says so
-    roomObjectReplies.set("deleteAll", () => []);
     userObjectCalls.length = 0;
   });
 
@@ -536,8 +534,7 @@ describe("roomRouter", () => {
     );
   });
 
-  // The object announces the delete to its online members once its teardown is accepted, so the caller sends no second one.
-  // The scheduled messages it removed were other people's, so each of their senders is told
+  // The object announces the delete to its online members once its teardown is accepted, so the caller sends no second one
   test("empties its object and does not announce the delete itself", async () => {
     expect.hasAssertions();
 

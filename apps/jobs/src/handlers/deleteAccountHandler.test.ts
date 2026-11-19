@@ -1,20 +1,20 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
-import { getMockPublishedTopics, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
+import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
 import { createUser } from "#src/services/shared/createUser.test";
+import { runUnit } from "#src/services/shared/db";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { clearUserObjectCalls, userObjectReplies } from "#src/services/user/getUserObject.test";
-import { getContentBlobName } from "@esposter/db";
+import { getContentBlobName, getMemberRoomIds } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   accountsInAuth,
-  friendsInSocial,
-  getTopic,
+  getScopeTopic,
   getUserProfileImageBlobName,
   likesInPost,
   postsInPost,
@@ -23,12 +23,11 @@ import {
   roomsInMessage,
   StorageBucket,
   storageLedgerInStorage,
-  TopicKind,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { getPostRanking, takeOne } from "@esposter/shared";
-import { eq } from "drizzle-orm";
+import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -37,11 +36,6 @@ let mockDb: Database;
 // A bucket binding is a proxy a spy cannot reach, so the blob sweep is failed at its own step instead
 const blobSweepFailure = vi.hoisted(() => ({ error: undefined as Error | undefined }));
 
-vi.mock(import("#src/services/shared/db"), () => ({
-  getDb() {
-    return mockDb;
-  },
-}));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
@@ -57,6 +51,8 @@ vi.mock(import("#src/services/account/deleteAccountBlobDirectories"), async (imp
 
 const readUserRows = (userId: string) =>
   mockDb.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId));
+// The sweep runs as the queue runs it, in the unit whose writes are published once it settles
+const sweep = (userId: string) => runUnit(() => deleteAccountHandler({ userId }));
 
 describe(deleteAccountHandler, () => {
   const name = "name";
@@ -76,7 +72,6 @@ describe(deleteAccountHandler, () => {
 
   // The beforeEach answers each room and person read a sweep makes with an empty page, so a sweep ends on its first page
   beforeEach(() => {
-    roomObjectReplies.set("deleteAll", () => []);
     roomObjectReplies.set("deleteUserMessages", () => []);
     roomObjectReplies.set("deleteUserReactions", () => []);
     userObjectReplies.set("readScheduledMessages", () => []);
@@ -102,7 +97,7 @@ describe(deleteAccountHandler, () => {
     await mockDb.insert(usersInAuth).values(createUser(userId));
     await mockDb.insert(accountsInAuth).values({ accountId: "accountId", id: v7(), providerId: "providerId", userId });
 
-    await deleteAccountHandler({ userId });
+    await sweep(userId);
 
     await expect(readUserRows(userId)).resolves.toStrictEqual([]);
     await expect(
@@ -117,24 +112,27 @@ describe(deleteAccountHandler, () => {
     await mockDb.insert(usersInAuth).values(createUser(userId));
     blobSweepFailure.error = new Error(" ");
 
-    await expect(deleteAccountHandler({ userId })).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
+    await expect(sweep(userId)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
     await expect(readUserRows(userId)).resolves.toStrictEqual([{ id: userId }]);
   });
 
-  // A friend's list shows the person, and loses the friendship when the row that erases them goes, so the friend's topic
-  // Is published
-  test("publishes the topic of each friend, whose list the erased person leaves", async () => {
+  // A membership the erased person holds is read by their own list of rooms, and the row that erases them takes it out, so the
+  // Read is woken by the write the sweep makes, not by a topic named by hand
+  test("wakes the reader of each membership the erased person's row takes with it", async () => {
     expect.hasAssertions();
 
     const userId = v7();
-    const friendUserId = v7();
-    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(friendUserId)]);
-    await mockDb.insert(friendsInSocial).values({ id: v7(), receiverId: userId, senderId: friendUserId });
+    const otherUserId = v7();
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const memberRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values({ roomId: memberRoom.id, userId });
     MockPublishedTopics.length = 0;
 
-    await deleteAccountHandler({ userId });
+    await sweep(userId);
 
-    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Friend, friendUserId));
+    await expect(getReaderWakes(mockDb, (database) => getMemberRoomIds(database, userId))).resolves.toContain(
+      getScopeTopic(getTableName(usersToRoomsInMessage), "userId", userId),
+    );
   });
 
   // A post's like count is the sum of its likes, so the erased person's like leaves it with the row that holds it, and
@@ -154,7 +152,7 @@ describe(deleteAccountHandler, () => {
       { postId: post.id, userId: friendUserId, value: 1 },
     ]);
 
-    await deleteAccountHandler({ userId });
+    await sweep(userId);
 
     await expect(
       mockDb
@@ -186,27 +184,11 @@ describe(deleteAccountHandler, () => {
       { ancestorIds: [post.id], depth: 1, parentId: post.id, ranking: 0, userId: otherUserId },
     ]);
 
-    await deleteAccountHandler({ userId });
+    await sweep(userId);
 
     await expect(
       mockDb.select({ commentCount: postsInPost.commentCount }).from(postsInPost).where(eq(postsInPost.id, post.id)),
     ).resolves.toStrictEqual([{ commentCount: 1 }]);
-  });
-
-  // A scheduled message is listed by its sender, so the room's removal of one changes that sender's list
-  test("publishes the scheduled-message topic of each sender whose scheduled message the room removed", async () => {
-    expect.hasAssertions();
-
-    const userId = v7();
-    const otherUserId = v7();
-    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
-    await mockDb.insert(roomsInMessage).values({ name, userId });
-    roomObjectReplies.set("deleteAll", () => [otherUserId]);
-    MockPublishedTopics.length = 0;
-
-    await deleteAccountHandler({ userId });
-
-    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.ScheduledMessage, otherUserId));
   });
 
   test("a second run over a finished sweep finds nothing and succeeds", async () => {
@@ -238,8 +220,8 @@ describe(deleteAccountHandler, () => {
       });
     await mockDb.update(usersInAuth).set({ storageBytesUsed: countedBytes }).where(eq(usersInAuth.id, userId));
 
-    await expect(deleteAccountHandler({ userId })).resolves.toBeUndefined();
-    await expect(deleteAccountHandler({ userId })).resolves.toBeUndefined();
+    await expect(sweep(userId)).resolves.toBeUndefined();
+    await expect(sweep(userId)).resolves.toBeUndefined();
 
     await expect(readUserRows(userId)).resolves.toStrictEqual([]);
     await expect(

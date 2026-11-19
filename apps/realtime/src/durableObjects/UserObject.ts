@@ -382,6 +382,12 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     return watchId;
   }
 
+  // A topic is named to its Topic object, which takes subscriptions, not invocations, so no object's invoke answers it
+  #getTopicObject(topic: Topic) {
+    // eslint-disable-next-line no-restricted-syntax -- the one place a Topic object is named in this object; its subscriptions are not invocations
+    return this.env.TOPIC.get(this.env.TOPIC.idFromName(topic));
+  }
+
   // Every watch a live tab holds. A watch whose socket is gone is left out, so a close the object never heard of cannot
   // Keep a topic subscribed
   async #readTopicWatches(): Promise<TopicWatch[]> {
@@ -470,9 +476,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
   // Watch reads of each. A subscribe is a write of the person's id, so repeating it is harmless
   async #subscribeTopics(topics: ColumnTopic[], readAt: number): Promise<void> {
     await Promise.all(
-      topics.map(({ columns, topic }) =>
-        this.env.TOPIC.get(this.env.TOPIC.idFromName(topic)).subscribe(this.#userId, readAt, columns),
-      ),
+      topics.map(({ columns, topic }) => this.#getTopicObject(topic).subscribe(this.#userId, readAt, columns)),
     );
   }
 
@@ -481,7 +485,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     await Promise.all(
       [...before]
         .filter((topic) => !after.has(topic))
-        .map((topic) => this.env.TOPIC.get(this.env.TOPIC.idFromName(topic)).unsubscribe(this.#userId)),
+        .map((topic) => this.#getTopicObject(topic).unsubscribe(this.#userId)),
     );
   }
 }

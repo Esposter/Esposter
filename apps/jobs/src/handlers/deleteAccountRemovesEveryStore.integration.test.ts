@@ -102,7 +102,6 @@ describe(deleteAccountHandler, () => {
 
   // The beforeEach answers each room and person read a sweep makes with an empty page, so a sweep ends on its first page
   beforeEach(() => {
-    roomObjectReplies.set("deleteAll", () => []);
     roomObjectReplies.set("deleteUserMessages", () => []);
     roomObjectReplies.set("deleteUserReactions", () => []);
     userObjectReplies.set("readScheduledMessages", () => []);

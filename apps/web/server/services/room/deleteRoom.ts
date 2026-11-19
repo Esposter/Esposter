@@ -4,11 +4,10 @@ import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { ownedBy } from "#server/services/db/ownedBy";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
-import { publishTopicsBestEffort } from "#server/services/realtime/publishTopicsBestEffort";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { getBucket } from "#server/services/storage/getBucket";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
-import { DatabaseEntityType, getTopic, roomsInMessage, StorageBucket, TopicKind } from "@esposter/db-schema";
+import { DatabaseEntityType, roomsInMessage, StorageBucket } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 
 export const deleteRoom = async ({ db, user }: Pick<AuthedContext, "db" | "user">, id: string) => {
@@ -20,13 +19,7 @@ export const deleteRoom = async ({ db, user }: Pick<AuthedContext, "db" | "user"
 
   // The object is emptied before the row goes. A sender's index that refuses its removal fails the delete with the row
   // Still standing, so the owner's retry finds the room and empties it again, rather than leaving its messages in the object
-  const scheduledMessageSenderIds = await useRoomObject(id).deleteAll({ userId: user.id });
-  // The scheduled messages it removed were other people's, so each sender's list is told as soon as they are gone, before
-  // The row goes: a failure after this still leaves them told
-  await publishTopicsBestEffort(
-    () => scheduledMessageSenderIds.map((senderId) => ({ topic: getTopic(TopicKind.ScheduledMessage, senderId) })),
-    "Failed to publish the topic of a scheduled message removed with its room:",
-  );
+  await useRoomObject(id).deleteAll({ userId: user.id });
   const deletedRooms = await db
     .delete(roomsInMessage)
     .where(ownedBy(roomsInMessage, id, user.id))

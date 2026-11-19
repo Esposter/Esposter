@@ -1,7 +1,7 @@
 import type { useUserObject as useRealUserObject } from "#server/composables/realtime/useUserObject";
-import type { ObjectInvocation } from "#server/services/realtime/createObjectStub";
+import type { ObjectInvocation } from "@esposter/db";
 
-import { createObjectStub } from "#server/services/realtime/createObjectStub";
+import { createObjectStub } from "@esposter/db";
 import { describe, vi } from "vitest";
 
 // Every RPC a person's object was sent, in order, with the person it was sent to. Stands in for the stub, which exists

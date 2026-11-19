@@ -1,4 +1,5 @@
 import type { ObjectInvocationHandles } from "#src/services/durableObject/recordObjectHandle";
+import type { ObjectInvocation } from "@esposter/db";
 import type { ColumnTopic, TopicKind } from "@esposter/db-schema";
 
 import { RESERVED_CLOSE_CODES } from "#src/services/durableObject/constants";
@@ -10,14 +11,6 @@ import { getReadTopics, getWriteTopics, publishTopicsBestEffort } from "@esposte
 import { getDeviceSocketTag, getSessionSocketTag, getUserSocketTag } from "@esposter/db-schema";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { DurableObject } from "cloudflare:workers";
-
-// What the one entry answers: the method's result, and the read set its reads watch, which the caller merges into what it watches
-export interface ObjectInvocation<TResult> {
-  readSet: ColumnTopic[];
-  result: TResult;
-  // The topics the invocation's writes published. An invocation with none wrote nothing
-  writeSet: ColumnTopic[];
-}
 
 // The arguments and the result of one of an object's RPC methods, as its RPC interface declares them
 type MethodArgs<TRpc, TMethod extends keyof TRpc> = TRpc[TMethod] extends (...args: infer TArgs) => unknown

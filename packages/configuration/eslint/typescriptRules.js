@@ -21,6 +21,14 @@ export default {
     ...restrictedDeleteSyntaxes,
     ...restrictedImportSyntaxes,
     {
+      // A Durable Object is named by its namespace only inside `getObjectStub`, so every stub a Worker holds runs its RPC methods
+      // Through the object's invoke, which records the reads of each call and publishes its writes. A stub named any other way
+      // Records nothing and publishes nothing, so a topic's Topic object is named through `publishTopics` alone
+      message:
+        "Name a Durable Object through `getObjectStub` (`@esposter/db`), so its invoke records each call's reads and publishes its writes. See openspec/changes/architecture-inferred-live-topics/design.md (Object invocations).",
+      selector: "MemberExpression[property.name=/^(idFromName|idFromString|newUniqueId)$/]",
+    },
+    {
       // A `catch` swallows the failure into a control-flow branch the type system cannot see, which is what
       // Neverthrow's Result exists to replace; `try`/`finally` is `withFinalizer`/`withFinalizerAsync`. There is
       // No standing exception — the repo holds none — so this rule has no disable convention to learn.

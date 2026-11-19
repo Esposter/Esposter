@@ -1,31 +1,32 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
-import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
+import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
+import { clearRoomObjectCalls, roomObjectCalls } from "#src/services/room/getRoomObject.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { runUnit } from "#src/services/shared/db";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
+import { getMemberRoomIds } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AdminActionType,
+  getScopeTopic,
   moderationLogsInMessage,
   moderationNotesInMessage,
   roomsInMessage,
   StorageBucket,
   usersInAuth,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
-vi.mock(import("#src/services/shared/db"), () => ({
-  getDb() {
-    return mockDb;
-  },
-}));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 
@@ -38,12 +39,8 @@ describe(deleteAccountOwnedRooms, () => {
     await openMockBuckets([StorageBucket.MessageAssets, StorageBucket.PublicUserAssets]);
   });
 
-  // The room's object answers its teardown with the senders whose scheduled messages went with it, and none here
-  beforeEach(() => {
-    roomObjectReplies.set("deleteAll", () => []);
-  });
-
   afterEach(async () => {
+    MockPublishedTopics.length = 0;
     await clearMockBuckets();
     clearRoomObjectCalls();
     await mockDb.delete(usersInAuth);
@@ -76,7 +73,7 @@ describe(deleteAccountOwnedRooms, () => {
     await seedBlob(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/ProfileImage`);
     await seedBlob(StorageBucket.PublicUserAssets, `rooms/${otherRoom.id}/ProfileImage`);
 
-    await deleteAccountOwnedRooms(userId);
+    await runUnit(() => deleteAccountOwnedRooms(userId));
 
     expect(roomObjectCalls).toStrictEqual([{ args: [{ userId }], method: "deleteAll", roomId: ownedRoom.id }]);
     await expect(
@@ -92,5 +89,24 @@ describe(deleteAccountOwnedRooms, () => {
     await expect(mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage)).resolves.toStrictEqual([
       { id: otherRoom.id },
     ]);
+  });
+
+  // A member's membership is a row of the room, so the room's row takes it out with the room, and the member's list of rooms
+  // Is woken by that removal, not by a topic the sweep names
+  test("wakes the membership reader of each member whose membership the owned room's row takes out", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const memberUserId = v7();
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(memberUserId)]);
+    const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values({ roomId: ownedRoom.id, userId: memberUserId });
+    MockPublishedTopics.length = 0;
+
+    await runUnit(() => deleteAccountOwnedRooms(userId));
+
+    await expect(getReaderWakes(mockDb, (database) => getMemberRoomIds(database, memberUserId))).resolves.toContain(
+      getScopeTopic(getTableName(usersToRoomsInMessage), "userId", memberUserId),
+    );
   });
 });

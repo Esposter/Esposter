@@ -47,6 +47,7 @@ import {
   createPageSort,
   createReplyThreadFollows,
   getLinkPreviewResponse,
+  getObjectStub,
   getPageOrderBy,
   getPageWhere,
   incrementMentionCounts,
@@ -208,9 +209,9 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   // Each pending scheduled message leaves its sender's index first, and each sender drops the room's sent messages from
   // Their index, since the rows that name them go with the room. The room's storage goes only once every index has
   // Taken its removal, so a failed one leaves the room whole and the teardown is asked again. Once every index has taken
-  // Its removal, the online members are told it is deleted, while the storage that knows them still stands. It returns the
-  // Senders whose scheduled messages went with the room, read before the storage did, so the caller can tell their readers
-  async deleteAll(actor: RoomActor): Promise<string[]> {
+  // Its removal, the online members are told it is deleted, while the storage that knows them still stands. Each sender's
+  // Index publishes its own removal through its invoke, so the readers of those lists are told by it
+  async deleteAll(actor: RoomActor): Promise<void> {
     const scheduledMessages = this.db
       .select({ id: scheduledMessagesInRoom.id, userId: scheduledMessagesInRoom.userId })
       .from(scheduledMessagesInRoom)
@@ -233,7 +234,6 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     for (const webSocket of this.ctx.getWebSockets()) webSocket.close(1000, "Room deleted");
     await this.ctx.storage.deleteAlarm();
     await this.ctx.storage.deleteAll();
-    return [...new Set(scheduledMessages.map(({ userId }) => userId))];
   }
 
   deleteFile({ fileId, id }: { fileId: string; id: number }, actor: RoomActor): FileEntity | null {
@@ -688,7 +688,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   #getUser(userId: string) {
-    return this.env.USER.get(this.env.USER.idFromName(userId));
+    return getObjectStub(this.env.USER, userId);
   }
 
   // The sender's index takes each message it sent. A write that fails is kept as an unindexed message, which the alarm asks

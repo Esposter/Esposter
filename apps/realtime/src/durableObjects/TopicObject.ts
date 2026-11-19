@@ -8,6 +8,7 @@ import {
   TOPIC_READ_SKEW_MS,
   TOPIC_SUBSCRIBER_KEY_PREFIX,
 } from "#src/services/topic/constants";
+import { getObjectStub } from "@esposter/db";
 import { checkWakes, topicSchema } from "@esposter/db-schema";
 import { DurableObject } from "cloudflare:workers";
 
@@ -69,6 +70,6 @@ export class TopicObject extends DurableObject implements TopicObjectRpc {
 
   // The user's object hears of the topic, and each of the person's tabs watching it refetches
   #invalidate(userId: string): Promise<void> {
-    return this.env.USER.get(this.env.USER.idFromName(userId)).invalidate(this.#topic);
+    return getObjectStub(this.env.USER, userId).invalidate(this.#topic);
   }
 }

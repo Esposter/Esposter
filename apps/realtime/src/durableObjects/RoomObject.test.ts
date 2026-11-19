@@ -1,4 +1,5 @@
 import type { ObservedContract } from "#src/services/durableObject/wakeCheck.test";
+import type { ObjectInvoker } from "@esposter/db";
 import type { ColumnTopic, PageCursor, RoomObjectRpc, RoomReaction, Topic, UserObjectRpc } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
@@ -37,17 +38,20 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 
 vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
 
-type UserStub = Record<
-  | "addScheduledMessage"
-  | "addSentMessage"
-  | "broadcastEvent"
-  | "removeScheduledMessage"
-  | "removeSentMessages"
-  | "removeSentMessagesInRoom"
-  | "roomActivity"
-  | "updateUserToRoom",
-  Mock
->;
+const USER_METHODS = [
+  "addScheduledMessage",
+  "addSentMessage",
+  "broadcastEvent",
+  "removeScheduledMessage",
+  "removeSentMessages",
+  "removeSentMessagesInRoom",
+  "roomActivity",
+  "updateUserToRoom",
+] as const;
+type UserMethod = (typeof USER_METHODS)[number];
+const checkIsUserMethod = (method: string): method is UserMethod => USER_METHODS.some((name) => name === method);
+// A person's object as the room reaches it: each method a mock a test reads, and the invoke every call goes through
+type UserStub = Record<UserMethod, Mock> & { invoke: Mock<ObjectInvoker["invoke"]> };
 
 // The Response the object builds for an upgrade. The test reads no part of it, so the stub builds nothing
 const ResponseStub = function () {};
@@ -123,7 +127,7 @@ describe(RoomObject, () => {
     const existingStub = userStubs.get(userId);
     if (existingStub) return existingStub;
 
-    const stub: UserStub = {
+    const methods: Record<UserMethod, Mock> = {
       addScheduledMessage: vi.fn<UserObjectRpc["addScheduledMessage"]>(),
       addSentMessage: vi.fn<UserObjectRpc["addSentMessage"]>(),
       broadcastEvent: vi.fn<UserObjectRpc["broadcastEvent"]>(),
@@ -132,6 +136,15 @@ describe(RoomObject, () => {
       removeSentMessagesInRoom: vi.fn<UserObjectRpc["removeSentMessagesInRoom"]>(),
       roomActivity: vi.fn<UserObjectRpc["roomActivity"]>(),
       updateUserToRoom: vi.fn<UserObjectRpc["updateUserToRoom"]>(),
+    };
+    // The person's object answers each RPC through its invoke, so a call reaches the method's mock through it, with no write
+    // Set or read set of its own, since the mocks keep no rows
+    const stub: UserStub = {
+      ...methods,
+      invoke: vi.fn<ObjectInvoker["invoke"]>((method, args) => {
+        if (!checkIsUserMethod(method)) throw new Error(`The person's object has no method ${method}`);
+        return Promise.resolve({ readSet: [], result: methods[method](...args), writeSet: [] });
+      }),
     };
     userStubs.set(userId, stub);
     return stub;
@@ -1075,18 +1088,6 @@ describe(RoomObject, () => {
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(scheduledMessage.id);
   });
 
-  test("deleting the room returns the senders of the scheduled messages it removed", async () => {
-    expect.hasAssertions();
-
-    const { object } = createRoomObject();
-    await object.createScheduledMessage(
-      { id: v7(), message: "pending", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
-      otherActor,
-    );
-
-    await expect(object.deleteAll(actor)).resolves.toStrictEqual([otherUserId]);
-  });
-
   test("deleting the room is kept, and asked again, while a sender's index refuses its removal", async () => {
     expect.hasAssertions();
 
@@ -1099,7 +1100,7 @@ describe(RoomObject, () => {
     );
     await expect(object.readMessages(newestPage)).resolves.toHaveLength(1);
 
-    await expect(object.deleteAll(actor)).resolves.toStrictEqual([]);
+    await expect(object.deleteAll(actor)).resolves.toBeUndefined();
   });
 
   test("a refused teardown tells the room's online members nothing, and the accepted one tells each of them once", async () => {

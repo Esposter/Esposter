@@ -1,7 +1,7 @@
 import type { useRoomObject as useRealRoomObject } from "#server/composables/realtime/useRoomObject";
-import type { ObjectInvocation } from "#server/services/realtime/createObjectStub";
+import type { ObjectInvocation } from "@esposter/db";
 
-import { createObjectStub } from "#server/services/realtime/createObjectStub";
+import { createObjectStub } from "@esposter/db";
 import { describe, vi } from "vitest";
 
 // Every RPC a room's object was sent, in order, with the room it was sent to. Stands in for the stub, which exists only
