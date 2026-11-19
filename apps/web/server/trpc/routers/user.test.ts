@@ -26,6 +26,7 @@ import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { userRouter } from "#server/trpc/routers/user";
 import { MimeType } from "#shared/models/file/MimeType";
+import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { deleteDirectory } from "@esposter/db";
@@ -49,6 +50,8 @@ import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, t
 
 const getCallBackgroundErrorMessage = (context: string) =>
   new InvalidOperationError(Operation.Create, DatabaseEntityType.CallBackground, context).message;
+const getFileErrorMessage = (context: string) =>
+  new InvalidOperationError(Operation.Create, DatabaseEntityType.File, context).message;
 const seedSlots = (userId: string, slots: number[], slotSize: number) => {
   const bucket = getBucket(StorageBucket.UserAssets);
   return Promise.all(slots.map((slot) => bucket.put(getCallBackgroundBlobName(userId, slot), Buffer.alloc(slotSize))));
@@ -251,15 +254,36 @@ describe("userRouter", () => {
     expect(userObjectCalls).toStrictEqual([{ args: [upsertedUserStatus], method: "upsertStatus", userId }]);
   });
 
-  test("generates profile image upload url", async () => {
+  test("generates profile image upload url signed to the image's content type", async () => {
     expect.hasAssertions();
 
-    const { presignedUrl, publicUrl } = await caller.generateProfileImageUploadUrl();
+    const { presignedUrl, publicUrl } = await caller.generateProfileImageUploadUrl({ mimetype, size });
     const parsedPresignedUrl = new URL(presignedUrl);
 
     expect(publicUrl).toBe(`${TEST_ORIGIN}/${StorageBucket.PublicUserAssets}/${userId}/ProfileImage`);
     expect(parsedPresignedUrl.pathname).toContain(`/${userId}/ProfileImage`);
     expect(parsedPresignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_PRESIGNED_URL_DURATION_MS / 1000));
+    expect(parsedPresignedUrl.searchParams.get("X-Amz-SignedHeaders")).toBe("content-type;host");
+  });
+
+  test("fails generateProfileImageUploadUrl with a file over the size cap", async () => {
+    expect.hasAssertions();
+
+    const input = { mimetype, size: MAX_FILE_REQUEST_SIZE + 1 };
+
+    await expect(caller.generateProfileImageUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getFileErrorMessage(JSON.stringify(input))}]`,
+    );
+  });
+
+  test("fails generateProfileImageUploadUrl with a file that is not an image", async () => {
+    expect.hasAssertions();
+
+    const input = { mimetype: MimeType.Pdf, size };
+
+    await expect(caller.generateProfileImageUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getFileErrorMessage(JSON.stringify(input))}]`,
+    );
   });
 
   test("updates", async () => {

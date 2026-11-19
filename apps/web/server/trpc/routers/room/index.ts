@@ -39,20 +39,24 @@ import { emojiRouter } from "#server/trpc/routers/room/emoji";
 import { filterRouter } from "#server/trpc/routers/room/filter";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
+import { generateRoomProfileImageUploadUrlInputSchema } from "#shared/models/db/room/GenerateProfileImageUploadUrlInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { readMembersInputSchema, readMembersPageSort } from "#shared/models/db/room/ReadMembersInput";
 import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
 import { readUsersByIdsInputSchema } from "#shared/models/db/room/ReadUsersByIdsInput";
+import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { createPageSort, createPresignedPutUrl, getPageOrderBy, getPageWhere, inJsonArray, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
   DEFAULT_EVERYONE_PERMISSIONS,
   getDisplayNameExpression,
+  getMimeCategory,
   getPublicUserColumns,
   invitesInMessage,
   MessageType,
+  MimeCategory,
   roomIdSchema,
   RoomPermission,
   roomRolesInMessage,
@@ -102,12 +106,21 @@ export const baseRoomRouter = router({
     .input(deleteRoomInputSchema)
     .use(assertIsRoomMiddleware)
     .mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx, input)),
-  generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId")
+  generateProfileImageUploadUrl: getPermissionsProcedure(
+    RoomPermission.ManageRoom,
+    generateRoomProfileImageUploadUrlInputSchema,
+    "roomId",
+  )
     .meta({
       staticReason:
         "Answers a presigned upload url for a blob no reader shows until updateRoom saves it as the room's image",
     })
-    .mutation<{ presignedUrl: string; publicUrl: string }>(async ({ input: { roomId } }) => {
+    .mutation<{ presignedUrl: string; publicUrl: string }>(async ({ input: { mimetype, roomId, size } }) => {
+      // Refused before a write url is signed, as a call background's is: the signed type keeps the object an image, and
+      // The size is the cap the client already checks before it asks
+      if (size > MAX_FILE_REQUEST_SIZE || getMimeCategory(mimetype) !== MimeCategory.Image)
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify({ mimetype, size }));
+
       // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
       // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
       const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${v7()}`;
@@ -115,6 +128,7 @@ export const baseRoomRouter = router({
         getStorageCredentials(),
         StorageBucket.PublicUserAssets,
         blobName,
+        mimetype,
       );
       return { presignedUrl, publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName) };
     }),

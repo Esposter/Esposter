@@ -16,7 +16,9 @@ interface Props {
 const modelValue = defineModel<Row<typeof RowValueType.Image>["value"]>({ required: true });
 defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const { isLoading, uploadImage } = useUploadImage(() => $trpc.user.generateProfileImageUploadUrl.mutate());
+const { isLoading, uploadImage } = useUploadImage((file) =>
+  $trpc.user.generateProfileImageUploadUrl.mutate({ mimetype: file.type, size: file.size }),
+);
 const fileInput = useTemplateRef("fileInput");
 const fileMessage = ref("");
 </script>

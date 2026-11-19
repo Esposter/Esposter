@@ -16,7 +16,9 @@ const modelValue = defineModel<RoomInMessage["image"]>({ required: true });
 const { roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const fileInput = useTemplateRef("fileInput");
-const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfileImageUploadUrl.mutate({ roomId }));
+const { isLoading, uploadImage } = useUploadImage((file) =>
+  $trpc.room.generateProfileImageUploadUrl.mutate({ mimetype: file.type, roomId, size: file.size }),
+);
 </script>
 
 <!-- The room's picture is the button that replaces it, marked with a pencil on its corner -->

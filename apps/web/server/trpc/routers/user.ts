@@ -32,12 +32,14 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
 import { generateDataExportLinkInputSchema } from "#shared/models/db/user/GenerateDataExportLinkInput";
+import { generateProfileImageUploadUrlInputSchema } from "#shared/models/db/user/GenerateProfileImageUploadUrlInput";
 import { readUserInputSchema } from "#shared/models/db/user/ReadUserInput";
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { upsertStatusInputSchema } from "#shared/models/db/user/UpsertStatusInput";
 import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsInput";
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
+import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
 import {
   createPresignedGetUrl,
@@ -162,12 +164,19 @@ export const userRouter = router({
       staticReason:
         "A presigned upload url: the image changes when the client saves it through updateUser, which publishes the topic",
     })
-    .mutation<{ presignedUrl: string; publicUrl: string }>(async ({ ctx }) => {
+    .input(generateProfileImageUploadUrlInputSchema)
+    .mutation<{ presignedUrl: string; publicUrl: string }>(async ({ ctx, input: { mimetype, size } }) => {
+      // Refused before a write url is signed, as a call background's is: the signed type keeps the object an image, and
+      // The size is the cap the client already checks before it asks
+      if (size > MAX_FILE_REQUEST_SIZE || getMimeCategory(mimetype) !== MimeCategory.Image)
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify({ mimetype, size }));
+
       const blobName = getUserProfileImageBlobName(ctx.user.id);
       const presignedUrl = await createPresignedPutUrl(
         getStorageCredentials(),
         StorageBucket.PublicUserAssets,
         blobName,
+        mimetype,
       );
       return { presignedUrl, publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName) };
     }),

@@ -25,6 +25,8 @@ import { roleRouter } from "#server/trpc/routers/role";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
+import { MimeType } from "#shared/models/file/MimeType";
+import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
@@ -92,6 +94,7 @@ describe("roomRouter", () => {
   const expireAfterMinutes = InviteExpireAfterMinutesMap["30 minutes"];
   const updatedName = "updatedName";
   const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
+  const imageUpload = { mimetype: MimeType.Png, size: 1 };
   const publicUserAssetsUrlPrefix = `${TEST_ORIGIN}/${StorageBucket.PublicUserAssets}/`;
   const getBlobName = (publicUrl: string) => publicUrl.slice(publicUserAssetsUrlPrefix.length);
   // A link that never lapses, which is what every test not about expiry or exhaustion joins through
@@ -240,7 +243,10 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { presignedUrl, publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const { presignedUrl, publicUrl } = await roomCaller.generateProfileImageUploadUrl({
+      ...imageUpload,
+      roomId: newRoom.id,
+    });
     // The leaf is a per-upload uuid, so the knowable part is the versioned prefix; the presigned write url names the
     // Public url's blob and lapses one write duration after it is signed. The prefix is spelled out
     // Rather than built from the helper so the documented rooms/ namespace is pinned by the test
@@ -252,6 +258,17 @@ describe("roomRouter", () => {
     expect(parsedPresignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_PRESIGNED_URL_DURATION_MS / 1000));
   });
 
+  test("fails generate profile image upload url with a file over the size cap", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const input = { mimetype: MimeType.Png, roomId: newRoom.id, size: MAX_FILE_REQUEST_SIZE + 1 };
+
+    await expect(roomCaller.generateProfileImageUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify({ mimetype: input.mimetype, size: input.size })).message}]`,
+    );
+  });
+
   test(`fails generate profile image upload url for a member without ${RoomPermission.ManageRoom} permission`, async () => {
     expect.hasAssertions();
 
@@ -260,7 +277,7 @@ describe("roomRouter", () => {
     const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
 
     await expect(
-      memberRoomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id }),
+      memberRoomCaller.generateProfileImageUploadUrl({ ...imageUpload, roomId: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -315,12 +332,15 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ ...imageUpload, roomId: newRoom.id });
     const blobName = getBlobName(publicUrl);
     // Uploaded through the client, so the mock dates it now
     await uploadPublicUserAssetBlob(blobName);
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
-    const { publicUrl: replacementPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const { publicUrl: replacementPublicUrl } = await roomCaller.generateProfileImageUploadUrl({
+      ...imageUpload,
+      roomId: newRoom.id,
+    });
     await roomCaller.updateRoom({ id: newRoom.id, image: replacementPublicUrl });
 
     expect(MockJobQueueDatabase.size).toBe(0);
@@ -333,8 +353,14 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { publicUrl: staleUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
-    const { publicUrl: freshUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const { publicUrl: staleUrl } = await roomCaller.generateProfileImageUploadUrl({
+      ...imageUpload,
+      roomId: newRoom.id,
+    });
+    const { publicUrl: freshUrl } = await roomCaller.generateProfileImageUploadUrl({
+      ...imageUpload,
+      roomId: newRoom.id,
+    });
     const freshBlobName = getBlobName(freshUrl);
     await uploadPublicUserAssetBlob(freshBlobName);
     // The other admin's save landed first, so the row already points at the fresh avatar
@@ -355,7 +381,10 @@ describe("roomRouter", () => {
     // Seeded rather than uploaded, so it is stamped before the in-flight upload and the sweep collects it
     await publicUserAssets.put(blobName, Buffer.alloc(0));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
-    const { publicUrl: inFlightPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const { publicUrl: inFlightPublicUrl } = await roomCaller.generateProfileImageUploadUrl({
+      ...imageUpload,
+      roomId: newRoom.id,
+    });
     const inFlightBlobName = getBlobName(inFlightPublicUrl);
     // Uploaded through the client — the state a second admin's in-flight save is in. R2 stamps it with its own clock,
     // So the clock is set to that stamp plus a write window: the cutoff the sweep applies is then exactly the upload's
@@ -397,7 +426,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ ...imageUpload, roomId: newRoom.id });
     const blobName = getBlobName(publicUrl);
     await uploadPublicUserAssetBlob(blobName);
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
