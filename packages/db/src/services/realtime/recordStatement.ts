@@ -6,7 +6,10 @@ import type { SQLWrapper } from "drizzle-orm";
 import { batchStatements } from "#src/services/realtime/batchStatements";
 import { checkIsStatement } from "#src/services/realtime/checkIsStatement";
 import { getBeforeReads } from "#src/services/realtime/getBeforeReads";
+import { getWriteTable } from "#src/services/realtime/getWriteTable";
 import { toRows } from "#src/services/realtime/toRows";
+import { answerReturned, returnedAnswers, widenReturning } from "#src/services/realtime/widenReturning";
+import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getResultAsync } from "@esposter/shared";
 
 // A query that records itself when it is awaited. `then` is where a query runs from, so the record is made there, and the
@@ -45,7 +48,8 @@ export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(sta
           return getResultAsync(() => runStatement(recorder, target, reads)).match(
             ({ before, result }) => {
               complete(result, before);
-              return onFulfilled ? onFulfilled(result) : result;
+              const answer = answerReturned(recorded, result);
+              return onFulfilled ? onFulfilled(answer) : answer;
             },
             (error) => {
               if (onRejected) return onRejected(error);
@@ -56,14 +60,29 @@ export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(sta
 
       const value: unknown = Reflect.get(target, property, target);
       if (typeof value !== "function") return value;
+      // A write's RETURNING is widened with its table's scope columns before it runs, so the rows it names carry them
+      if (property === "returning")
+        return (...args: unknown[]) => {
+          const table = getWriteTable(target);
+          const widened = table && checkIsRecord(args[0]) ? widenReturning(table, args[0]) : undefined;
+          const result: unknown = Reflect.apply(value, target, widened ? [widened.fields] : args);
+          if (!checkIsStatement(result)) return result;
+          const returned = recordStatement(result, recorder);
+          if (widened?.answer) returnedAnswers.set(returned, widened.answer);
+          return returned;
+        };
       // A synchronous execution, as a Durable Object's SQLite runs its statements: the statement runs when it is called, so it
       // Is recorded there, with the rows it returned. A write answers its run result, which names no row
       if (typeof property === "string" && SYNC_EXECUTE_METHODS.has(property))
         return (...args: unknown[]) => {
           const complete = recorder.record(target);
           const result: unknown = Reflect.apply(value, target, args);
-          complete(property === "run" ? undefined : result, []);
-          return result;
+          if (property === "run") {
+            complete(undefined, []);
+            return result;
+          }
+          complete(result, []);
+          return answerReturned(recorded, result);
         };
       const self = property === "catch" || property === "finally" ? recorded : target;
       return (...args: unknown[]) => {

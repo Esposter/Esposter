@@ -6,6 +6,7 @@ import { batchStatements } from "#src/services/realtime/batchStatements";
 import { checkIsStatement } from "#src/services/realtime/checkIsStatement";
 import { getBeforeReads } from "#src/services/realtime/getBeforeReads";
 import { toRows } from "#src/services/realtime/toRows";
+import { answerReturned } from "#src/services/realtime/widenReturning";
 import { noop } from "@esposter/shared";
 
 // `batch` runs the statements it is handed without awaiting them, so each one is recorded when the batch is made. A write
@@ -19,23 +20,35 @@ export const recordBatch =
     const placed = statements.map((statement: unknown) => {
       if (!checkIsStatement(statement)) {
         items.push(statement);
-        return { complete: noop, index: items.length - 1, reads: [], readStart: 0 };
+        return {
+          answer: (result: unknown) => result,
+          complete: noop,
+          index: items.length - 1,
+          reads: [],
+          readStart: 0,
+        };
       }
       const reads = getBeforeReads(recorder.database, statement);
       const readStart = items.length;
       items.push(...reads.map(({ select }) => select));
       const complete = recorder.record(statement);
       items.push(statement);
-      return { complete, index: items.length - 1, reads, readStart };
+      return {
+        answer: (result: unknown) => answerReturned(statement, result),
+        complete,
+        index: items.length - 1,
+        reads,
+        readStart,
+      };
     });
     const results = await batchStatements(recorder.database, items);
-    return placed.map(({ complete, index, reads, readStart }) => {
+    return placed.map(({ answer, complete, index, reads, readStart }) => {
       const result = results[index];
       const before: RecordedRows[] = reads.map(({ table }, readIndex) => ({
         rows: toRows(results[readStart + readIndex]),
         table,
       }));
       complete(result, before);
-      return result;
+      return answer(result);
     });
   };

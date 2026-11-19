@@ -6,6 +6,7 @@ import { getCascadeRowTopics } from "#src/services/realtime/getCascadeRowTopics"
 import { getRowTopics } from "#src/services/realtime/getRowTopics";
 import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
 import { getWriteTable } from "#src/services/realtime/getWriteTable";
+import { getWrittenRows } from "#src/services/realtime/getWrittenRows";
 import { walkCascade } from "#src/services/realtime/walkCascade";
 import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getColumnTopic, getTableTopic } from "@esposter/db-schema";
@@ -38,7 +39,7 @@ export const getStatementWriteTopics = async ({
   if (returnsRows && rows.length === 0) return [];
   const columns = getWriteColumns(table, statement);
   const tableTopics = [getColumnTopic(getTableTopic(getTableName(table)), columns)];
-  const rowTopics = returnsRows ? await getRowTopics(table, rows, columns) : [];
+  const rowTopics = await getRowTopics(table, returnsRows ? rows : getWrittenRows(statement), columns);
   const beforeTopics = (
     await Promise.all(before.map((recordedRows) => getRowTopics(recordedRows.table, recordedRows.rows, columns)))
   ).flat();

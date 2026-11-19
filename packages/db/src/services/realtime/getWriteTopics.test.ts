@@ -12,6 +12,7 @@ import {
   postsInPost,
   resourcesInResource,
   ResourceType,
+  roomMemberPermissionsInMessage,
   roomRolesInMessage,
   roomsInMessage,
   RoomType,
@@ -90,6 +91,57 @@ describe(getWriteTopics, () => {
   });
 
   // An update names the values its rows hold after it, which is what a reader of the row now reads
+  // The caller's RETURNING names only `userId`, which left out the room that scopes the row, so a write must name the scope values
+  // Of the rows it returns whatever columns the caller asked for, and the caller is answered only the columns it asked for
+  test("a write that returns only some of its columns still names the scope values of the rows it returns", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const roomId = v7();
+    const userId = v7();
+    await insertRoom(db, roomId, userId);
+    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await db.insert(roomMemberPermissionsInMessage).values({ roomId, userId });
+    const { database, statements } = recordStatements(db);
+
+    await expect(
+      database
+        .update(roomMemberPermissionsInMessage)
+        .set({ deny: 2n })
+        .where(eq(roomMemberPermissionsInMessage.userId, userId))
+        .returning({ userId: roomMemberPermissionsInMessage.userId }),
+    ).resolves.toStrictEqual([{ userId }]);
+
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual([
+      "message_roomMemberPermissions:*",
+      `message_roomMemberPermissions:roomId=${roomId}`,
+      `message_roomMemberPermissions:userId=${userId}`,
+    ]);
+  });
+
+  // An insert that asks for no RETURNING, as a role assignment writes its membership, names the scope values of the rows its values
+  // Hold, since those are the rows it writes. A table-wide topic alone would not wake a read that watches one room's rows
+  test("an insert that asks for no RETURNING names the scope values of the rows it writes", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const roomId = v7();
+    const userId = v7();
+    const roleId = v7();
+    await insertRoom(db, roomId, userId);
+    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await db.insert(roomRolesInMessage).values({ id: roleId, name: "a", permissions: 0n, roomId });
+    const { database, statements } = recordStatements(db);
+
+    await database.insert(usersToRoomRolesInMessage).values({ roleId, roomId, userId }).onConflictDoNothing();
+
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual([
+      "message_usersToRoomRoles:*",
+      `message_usersToRoomRoles:roomId=${roomId}`,
+      `message_usersToRoomRoles:userId=${userId}`,
+    ]);
+  });
+
   test("an update names the scope values of the rows it returns", async () => {
     expect.hasAssertions();
 
@@ -295,7 +347,7 @@ describe(getWriteTopics, () => {
 
   // Without RETURNING the values a row holds after the update are not known, but the values it held before are, so a
   // Reader of the old value is still woken
-  test("an update that asks for no RETURNING names the scope values its rows held before it", async () => {
+  test("an update that asks for no RETURNING names the scope values its rows held before it, and the ones it sets", async () => {
     expect.hasAssertions();
 
     const { db } = await createMockDb();
@@ -312,10 +364,12 @@ describe(getWriteTopics, () => {
       .set({ roomId: otherRoomId })
       .where(eq(usersToRoomsInMessage.userId, userId));
 
+    // The row moves from `roomId` to `otherRoomId`, so a read of either room is woken
     await expect(getWriteTopicNames(statements)).resolves.toStrictEqual(
       [
         "message_usersToRooms:*",
         `message_usersToRooms:roomId=${roomId}`,
+        `message_usersToRooms:roomId=${otherRoomId}`,
         `message_usersToRooms:userId=${userId}`,
       ].toSorted(),
     );
