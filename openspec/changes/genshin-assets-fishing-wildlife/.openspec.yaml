@@ -2,7 +2,7 @@ schema: spec-driven
 affected_areas: [genshin]
 x-phase: 0
 x-model: claude-haiku-5-5
-x-waiting: "1.5 and 4.2 to 4.3 need the game install's icon exports, and 3.4 to 3.12 need its clips and meshes, which only the owner exports and fits; no parity compare is run this round"
+x-waiting: "1.5, 3.4 to 3.12, 4.2, 4.3 and 5.3 need the game install's exports, which only the owner runs; 2.5, 3.2 and 4.1 are built and tested but unmounted, each waiting on a region-keyed session load; no parity compare is run this round"
 x-needs: [game-install, game-exports, media-engine]
 x-touches:
   [
