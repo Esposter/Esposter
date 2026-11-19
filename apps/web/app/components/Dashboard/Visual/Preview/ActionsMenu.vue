@@ -7,6 +7,7 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { exportDashboardVisualCsv } from "#src/services/dashboard/export/exportDashboardVisualCsv";
 import { getVisualMoveTargets } from "#src/services/dashboard/visual/getVisualMoveTargets";
+import { getEditDeleteItems } from "#src/services/ui/getEditDeleteItems";
 import { useDashboardDialogStore } from "#src/store/dashboard/dialog";
 import { useVisualStore } from "#src/store/dashboard/visual";
 
@@ -23,16 +24,20 @@ const { visuals } = storeToRefs(visualStore);
 const dashboardDialogStore = useDashboardDialogStore();
 const { deletingVisualId, movingVisualId } = storeToRefs(dashboardDialogStore);
 const moveTargets = computed(() => getVisualMoveTargets(visuals.value, visual.id));
+const [editVisualItem, deleteVisualItem] = getEditDeleteItems({
+  deleteLabel: "Delete visual",
+  editLabel: "Edit visual",
+  onDelete: () => {
+    deletingVisualId.value = visual.id;
+  },
+  onEdit: () => {
+    editItem({ id: visual.id });
+  },
+});
 // The visual's occasional actions, each a row the menu lists. Fit height is offered for a table, whose rows set its height,
 // And for a group, whose height is the rows its grid takes. Move to is offered only where the visual has somewhere to go
 const items = computed<Item[]>(() => [
-  {
-    meaning: UiIconMeaning.Edit,
-    onClick: () => {
-      editItem({ id: visual.id });
-    },
-    title: "Edit visual",
-  },
+  editVisualItem,
   {
     meaning: UiIconMeaning.Copy,
     onClick: () => {
@@ -72,15 +77,7 @@ const items = computed<Item[]>(() => [
         },
       ]
     : []),
-  {
-    isDanger: true,
-    isGroupStart: true,
-    meaning: UiIconMeaning.Delete,
-    onClick: () => {
-      deletingVisualId.value = visual.id;
-    },
-    title: "Delete visual",
-  },
+  { ...deleteVisualItem, isGroupStart: true },
 ]);
 </script>
 

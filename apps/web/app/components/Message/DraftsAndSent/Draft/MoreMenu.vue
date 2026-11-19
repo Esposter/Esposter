@@ -14,14 +14,10 @@ const { draftItem } = defineProps<Props>();
 const emit = defineEmits<{ delete: [] }>();
 const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = draftsAndSentScheduleDialogStore;
+const editDraft = async () => {
+  await navigateTo(getDraftItemRoute(draftItem));
+};
 const items = computed<Item[]>(() => [
-  {
-    meaning: UiIconMeaning.Edit,
-    onClick: async () => {
-      await navigateTo(getDraftItemRoute(draftItem));
-    },
-    title: "Edit draft",
-  },
   {
     meaning: UiIconMeaning.Schedule,
     onClick: () => {
@@ -36,7 +32,9 @@ const items = computed<Item[]>(() => [
   <MessageDraftsAndSentMoreMenu
     :actions="items"
     delete-label="Delete draft"
+    edit-label="Edit draft"
     label="Draft actions"
     @delete="emit('delete')"
+    @edit="editDraft()"
   />
 </template>

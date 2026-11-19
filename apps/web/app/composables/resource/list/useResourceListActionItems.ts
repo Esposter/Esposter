@@ -2,8 +2,7 @@
 import type { Item } from "#src/models/shared/Item";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { getDeleteResourceItem } from "#src/services/resource/getDeleteResourceItem";
-import { getRenameResourceItem } from "#src/services/resource/getRenameResourceItem";
+import { getResourceEditDeleteItems } from "#src/services/resource/getResourceEditDeleteItems";
 import { getResourceLinkItems } from "#src/services/resource/getResourceLinkItems";
 import { useBlueprintCaptureDialogStore } from "#src/store/resource/blueprint/captureDialog";
 import { useListDialogStore } from "#src/store/resource/listDialog";
@@ -16,21 +15,27 @@ export const useResourceListActionItems = () => {
   const { deletingIds, renamingId } = storeToRefs(listDialogStore);
   const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
   const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
-  const getActionItems = (resource: ResourceInResource): Item[] => [
-    ...getResourceLinkItems(resource.id),
-    {
-      icon: "i-mdi:floor-plan",
-      onClick: () => {
-        captureIds.value = [resource.id];
+  const getActionItems = (resource: ResourceInResource): Item[] => {
+    const [renameItem, deleteItem] = getResourceEditDeleteItems({
+      onDelete: () => {
+        deletingIds.value = [resource.id];
       },
-      title: "Save as blueprint",
-    },
-    getRenameResourceItem(() => {
-      renamingId.value = resource.id;
-    }),
-    getDeleteResourceItem(() => {
-      deletingIds.value = [resource.id];
-    }),
-  ];
+      onEdit: () => {
+        renamingId.value = resource.id;
+      },
+    });
+    return [
+      ...getResourceLinkItems(resource.id),
+      {
+        icon: "i-mdi:floor-plan",
+        onClick: () => {
+          captureIds.value = [resource.id];
+        },
+        title: "Save as blueprint",
+      },
+      renameItem,
+      deleteItem,
+    ];
+  };
   return { getActionItems };
 };

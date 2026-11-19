@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { Item } from "#src/models/shared/Item";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getEditDeleteItems } from "#src/services/ui/getEditDeleteItems";
 import { usePostDialogStore } from "#src/store/post/dialog";
 import { RoutePath } from "@esposter/shared";
 
@@ -17,25 +16,18 @@ const { data: session } = await useAuthSession();
 const postDialogStore = usePostDialogStore();
 const { deletingId } = storeToRefs(postDialogStore);
 const isCreator = computed(() => post.userId === session.value?.user.id);
-const items: Item[] = [
-  {
-    meaning: UiIconMeaning.Edit,
-    onClick: async () => {
-      await navigateTo(RoutePath.PostUpdate(post.id));
-    },
-    title: "Edit",
-  },
-  {
-    isDanger: true,
-    meaning: UiIconMeaning.Delete,
-    onClick: () => {
-      deletingId.value = post.id;
-    },
-    title: "Delete",
-  },
-];
+// The overflow button and the context menu draw these labels, so one object names both
+const editDeleteLabels = { deleteLabel: "Delete", editLabel: "Edit" };
+const onDelete = () => {
+  deletingId.value = post.id;
+};
+const onEdit = async () => {
+  await navigateTo(RoutePath.PostUpdate(post.id));
+};
 const { getContextMenuProps } = useContextMenu();
-const contextMenuProps = getContextMenuProps(post.id, () => items);
+const contextMenuProps = getContextMenuProps(post.id, () =>
+  getEditDeleteItems({ ...editDeleteLabels, onDelete, onEdit }),
+);
 </script>
 
 <template>
@@ -45,7 +37,13 @@ const contextMenuProps = getContextMenuProps(post.id, () => items);
     <header flex gap-2 items-center>
       <PostAvatar is-link :post />
       <PostByline is-link :post flex-1 />
-      <UiOverflowMenu v-if="isCreator" :items label="Post actions" />
+      <UiEditDeleteMenu
+        v-if="isCreator"
+        :="editDeleteLabels"
+        label="Post actions"
+        @delete="onDelete()"
+        @edit="onEdit()"
+      />
     </header>
     <h1 v-if="isPage" ui-title>{{ post.title }}</h1>
     <h2 v-else ui-heading>

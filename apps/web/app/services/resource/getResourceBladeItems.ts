@@ -6,8 +6,7 @@ import { checkHasCapability } from "#shared/services/resource/checkHasCapability
 import { PortableFormatKind } from "#src/models/resource/PortableFormatKind";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { createPortableFormatItems } from "#src/services/resource/createPortableFormatItems";
-import { getDeleteResourceItem } from "#src/services/resource/getDeleteResourceItem";
-import { getRenameResourceItem } from "#src/services/resource/getRenameResourceItem";
+import { getResourceEditDeleteItems } from "#src/services/resource/getResourceEditDeleteItems";
 
 // The overflow menu of a resource's blade header, in the order it shows. The header's lead action and its publish
 // Button are not here, so the menu and the right-click of the title are the one list and never disagree
@@ -42,10 +41,11 @@ export const getResourceBladeItems = (
   // A dataset a portable export already covers keeps that export, so the CSV command is for the rest
   const isDatasetExportable =
     checkHasCapability(resource.type, "datasetProvider") && !checkHasCapability(resource.type, "portable");
+  const [renameItem, deleteItem] = getResourceEditDeleteItems({ onDelete: commands.delete, onEdit: commands.rename });
 
   return [
     { disabled: isPending, meaning: UiIconMeaning.Refresh, onClick: commands.read, title: "Refresh" },
-    getRenameResourceItem(commands.rename),
+    renameItem,
     { disabled: isDuplicatePending, meaning: UiIconMeaning.Copy, onClick: commands.duplicate, title: "Duplicate" },
     // Every type has revisions, so the command is unconditional — recovery is core rather than a capability.
     // Taking one is not a command at all: revisions accrue on their own, and a Save beside an editor that
@@ -74,6 +74,6 @@ export const getResourceBladeItems = (
           },
         ]
       : []),
-    { ...getDeleteResourceItem(commands.delete), isGroupStart: true },
+    { ...deleteItem, isGroupStart: true },
   ];
 };

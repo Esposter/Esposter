@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Item } from "#src/models/shared/Item";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { authClient } from "#src/services/auth/authClient";
 import { MAX_COMMENT_INDENT_DEPTH } from "#src/services/post/constants";
+import { getEditDeleteItems } from "#src/services/ui/getEditDeleteItems";
 import { useCommentDialogStore } from "#src/store/post/comment/dialog";
 import { useCommentStore } from "#src/store/post/comment/index";
 import { RoutePath } from "@esposter/shared";
@@ -27,25 +27,18 @@ const commentStore = useCommentStore();
 const { expandedCommentIds } = storeToRefs(commentStore);
 const isExpanded = computed(() => expandedCommentIds.value.has(comment.id));
 const repliesId = useId();
-const items: Item[] = [
-  {
-    meaning: UiIconMeaning.Edit,
-    onClick: () => {
-      isUpdateMode.value = true;
-    },
-    title: "Edit",
-  },
-  {
-    isDanger: true,
-    meaning: UiIconMeaning.Delete,
-    onClick: () => {
-      setDeletingComment(comment);
-    },
-    title: "Delete",
-  },
-];
+// The overflow button and the context menu draw these labels, so one object names both
+const editDeleteLabels = { deleteLabel: "Delete", editLabel: "Edit" };
+const onDelete = () => {
+  setDeletingComment(comment);
+};
+const onEdit = () => {
+  isUpdateMode.value = true;
+};
 const { getContextMenuProps } = useContextMenu();
-const contextMenuProps = getContextMenuProps(comment.id, () => items);
+const contextMenuProps = getContextMenuProps(comment.id, () =>
+  getEditDeleteItems({ ...editDeleteLabels, onDelete, onEdit }),
+);
 </script>
 
 <template>
@@ -69,7 +62,13 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
         <div flex gap-2 items-center>
           <PostLikeSection :post="comment" />
           <PostCommentReplyButton v-if="session.data" :comment-id="comment.id" />
-          <UiOverflowMenu v-if="isCreator" :items label="Comment actions" />
+          <UiEditDeleteMenu
+            v-if="isCreator"
+            :="editDeleteLabels"
+            label="Comment actions"
+            @delete="onDelete()"
+            @edit="onEdit()"
+          />
         </div>
         <PostCommentCreateRichTextEditor v-if="replyingId === comment.id" :parent-id="comment.id" />
         <!-- Past the clamp a thread goes on on its own page rather than further in -->

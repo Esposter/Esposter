@@ -27,17 +27,13 @@ const threadRootId =
   scheduledMessageJob.payload.type === ScheduledMessageJobType.ScheduledMessage
     ? scheduledMessageJob.payload.replyToId || 0
     : 0;
+// The job's text takes the room's composer as the cancel is sent, and the page goes there with it. A cancel the
+// Server refuses gives the job back and the composer its own text
+const editScheduledMessage = () => {
+  cancelScheduledMessageJobToDraft(scheduledMessageJob);
+  navigateToRoom();
+};
 const items = computed<Item[]>(() => [
-  {
-    meaning: UiIconMeaning.Edit,
-    onClick: () => {
-      // The job's text takes the room's composer as the cancel is sent, and the page goes there with it. A cancel the
-      // Server refuses gives the job back and the composer its own text
-      cancelScheduledMessageJobToDraft(scheduledMessageJob);
-      navigateToRoom();
-    },
-    title: "Edit scheduled message",
-  },
   ...(scheduledMessageJob.payload.type === ScheduledMessageJobType.ScheduledMessage
     ? [
         {
@@ -68,7 +64,9 @@ const items = computed<Item[]>(() => [
   <MessageDraftsAndSentMoreMenu
     :actions="items"
     delete-label="Delete message"
+    edit-label="Edit scheduled message"
     label="Scheduled message actions"
     @delete="emit('delete')"
+    @edit="editScheduledMessage()"
   />
 </template>

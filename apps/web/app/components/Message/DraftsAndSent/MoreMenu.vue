@@ -1,29 +1,31 @@
 <script setup lang="ts">
 import type { Item } from "#src/models/shared/Item";
 
-import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { getEditDeleteItems } from "#src/services/ui/getEditDeleteItems";
 
 interface Props {
-  // The actions before Delete, which always closes the menu
+  // The actions between Edit and Delete, which always closes the menu
   actions: Item[];
   deleteLabel: string;
+  editLabel: string;
   label: string;
 }
 
-const { actions, deleteLabel } = defineProps<Props>();
-const emit = defineEmits<{ delete: [] }>();
-const items = computed<Item[]>(() => [
-  ...actions,
-  {
-    isDanger: true,
-    isGroupStart: true,
-    meaning: UiIconMeaning.Delete,
-    onClick: () => {
+const { actions, deleteLabel, editLabel } = defineProps<Props>();
+const emit = defineEmits<{ delete: []; edit: [] }>();
+const items = computed<Item[]>(() => {
+  const [editItem, deleteItem] = getEditDeleteItems({
+    deleteLabel,
+    editLabel,
+    onDelete: () => {
       emit("delete");
     },
-    title: deleteLabel,
-  },
-]);
+    onEdit: () => {
+      emit("edit");
+    },
+  });
+  return [editItem, ...actions, { ...deleteItem, isGroupStart: true }];
+});
 </script>
 
 <template>
