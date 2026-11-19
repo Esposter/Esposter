@@ -38,7 +38,7 @@ flowchart TD
 
 - **The top bar's refill.** The plus on the top bar that opens a refill is unbuilt. The top bar shows the count only.
 
-The top bar's place and type are provisional until a recording measures them. The line is on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s References sought list.
+The top bar's place and type are provisional until a recording measures them. The recording found for them, `captures/map-top-bar.mkv`, is a near match: the map opens after a statue is activated rather than from standing still, and nothing measures it yet.
 
 ## Key files
 
