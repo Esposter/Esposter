@@ -482,6 +482,25 @@ describe("typescriptRules", () => {
         source: `export const a = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");`,
         violations: 0,
       },
+      // A Durable Object is named through getObjectStub, whether its id is made from a name or its name is given directly
+      {
+        filePath: "durableObjectIdFromName.ts",
+        name: "durableObjectIdFromName",
+        source: `export const a = (b: DurableObjectNamespace) => b.get(b.idFromName("a"));`,
+        violations: 1,
+      },
+      {
+        filePath: "durableObjectGetByName.ts",
+        name: "durableObjectGetByName",
+        source: `export const a = (b: DurableObjectNamespace) => b.getByName("a");`,
+        violations: 1,
+      },
+      {
+        filePath: "durableObjectGet.ts",
+        name: "durableObjectGet",
+        source: `export const a = (b: DurableObjectNamespace, id: DurableObjectId) => b.get(id);`,
+        violations: 0,
+      },
     ],
   });
 });

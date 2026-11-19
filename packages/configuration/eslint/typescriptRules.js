@@ -23,10 +23,11 @@ export default {
     {
       // A Durable Object is named by its namespace only inside `getObjectStub`, so every stub a Worker holds runs its RPC methods
       // Through the object's invoke, which records the reads of each call and publishes its writes. A stub named any other way
-      // Records nothing and publishes nothing, so a topic's Topic object is named through `publishTopics` alone
+      // Records nothing and publishes nothing. A topic's Topic object is the one exception, named behind a disable by
+      // `publishTopics` and by a socket's subscriptions in UserObject, since it takes publishes and subscriptions, not invocations
       message:
         "Name a Durable Object through `getObjectStub` (`@esposter/db`), so its invoke records each call's reads and publishes its writes. See openspec/changes/archive/2026-11-20-architecture-inferred-live-topics/design.md (Object invocations).",
-      selector: "MemberExpression[property.name=/^(idFromName|idFromString|newUniqueId)$/]",
+      selector: "MemberExpression[property.name=/^(idFromName|idFromString|newUniqueId|getByName)$/]",
     },
     {
       // A `catch` swallows the failure into a control-flow branch the type system cannot see, which is what
