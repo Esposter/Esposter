@@ -5,4 +5,3 @@ export const RealtimeKitWebhookEvent = {
   ParticipantLeft: "meeting.participantLeft",
 } as const;
 export type RealtimeKitWebhookEvent = (typeof RealtimeKitWebhookEvent)[keyof typeof RealtimeKitWebhookEvent];
-export const RealtimeKitWebhookEvents: readonly RealtimeKitWebhookEvent[] = Object.values(RealtimeKitWebhookEvent);
