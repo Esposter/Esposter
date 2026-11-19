@@ -1068,26 +1068,68 @@ describe(useResourceStore, () => {
     expect(stages).toStrictEqual(["reload", "adopt"]);
   });
 
-  // The user socket names the version and the key only, so every open resource of every type is told of another
-  // Device's save through the same store door
-  test.each([ResourceType.Note, ResourceType.Sheet, ResourceType.TodoList])(
-    "an open resource of any type hears another device's save (%s)",
-    async (type) => {
-      expect.hasAssertions();
+  // The page's watch of the open row re-runs its read when a write publishes that row's topic, and every content write
+  // Updates the row. A refetch of the open row is therefore what a write to the content looks like to the store
+  const serveOpenRow = (row: Partial<ResourceInResource>) => {
+    trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(input.id), ...row, publication: null }));
+  };
+  const otherDeviceHash = "other-device-content-hash";
 
-      trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(input.id, type), publication: null }));
-      const reload = vi.fn<(reloadedType: ResourceType) => void>();
-      const unregisterReload = ResourceContentHookMap.Reload.register(reload);
-      const resourceStore = useResourceStore();
-      await useReadOpenResource().readResource();
-      await withFinalizerAsync(
-        () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: 1 }),
-        unregisterReload,
-      );
+  // The store holds the hash of the content it read or wrote, so the watch's refetch of an editor's own save finds a hash
+  // The store already holds: it reads no blob and applies nothing
+  test("an editor's own save applies nothing when its watch fires for it", async () => {
+    expect.hasAssertions();
 
-      expect(reload).toHaveBeenCalledExactlyOnceWith(type);
-    },
-  );
+    const savedHash = "saved-content-hash";
+    const applyContent = vi.fn<(content: unknown) => void>();
+    const readContentQuery = vi.fn<() => SheetResource>(() => createDefaultSheetResource());
+    trpcMsw.sheet.readResourceContent.query(readContentQuery);
+    trpcMsw.sheet.saveResourceContent.mutation(() => ({
+      ...createResource(resourceId),
+      contentHash: savedHash,
+      contentVersion: 1,
+    }));
+    const resourceStore = useResourceStore();
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    const unregisterReload = ResourceContentHookMap.Reload.register(() => readContent(applyContent));
+    await readResource();
+    await readContent(applyContent);
+    saveContent(createDefaultSheetResource());
+    await settleSave();
+    await withFinalizerAsync(async () => {
+      serveOpenRow({ contentHash: savedHash, contentVersion: 1 });
+      await readResource();
+      await waitForSynchronizedFunctions();
+    }, unregisterReload);
+
+    expect(readContentQuery).toHaveBeenCalledTimes(1);
+    expect(applyContent).toHaveBeenCalledTimes(1);
+  });
+
+  // Another device's save is a row whose hash the store does not hold, so the watch's refetch reads the content and the
+  // Editor adopts it through the two stages a restore runs
+  test("another device's save reaches the open editor through the watch", async () => {
+    expect.hasAssertions();
+
+    const applyContent = vi.fn<(content: unknown) => void>();
+    const readContentQuery = vi.fn<() => SheetResource>(() => createDefaultSheetResource());
+    trpcMsw.sheet.readResourceContent.query(readContentQuery);
+    const resourceStore = useResourceStore();
+    const { readContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    const unregisterReload = ResourceContentHookMap.Reload.register(() => readContent(applyContent));
+    await readResource();
+    await readContent(applyContent);
+    await withFinalizerAsync(async () => {
+      serveOpenRow({ contentHash: otherDeviceHash, contentVersion: 1 });
+      await readResource();
+      await waitForSynchronizedFunctions();
+    }, unregisterReload);
+
+    expect(readContentQuery).toHaveBeenCalledTimes(2);
+    expect(applyContent).toHaveBeenCalledTimes(2);
+  });
 
   // An unwritten edit is the person's, and another device's save must not replace it. The save is held behind the
   // Stale latch, which holds autosave too, until the person answers
@@ -1096,20 +1138,23 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { heldSave, resource, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    await useReadOpenResource().readResource();
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    await readResource();
     assert.exists(resource.value);
     const { contentVersion, id } = resource.value;
     const reload = vi.fn<(type: ResourceType) => void>();
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
+    await readContent(noop);
     unwrittenContentResourceId.value = id;
-    await withFinalizerAsync(
-      () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1 }),
-      unregisterReload,
-    );
-    resourceStore.saveContent(createDefaultSheetResource());
+    await withFinalizerAsync(async () => {
+      serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1 });
+      await readResource();
+    }, unregisterReload);
+    saveContent(createDefaultSheetResource());
 
     expect(reload).not.toHaveBeenCalled();
-    expect(heldSave.value).toStrictEqual({ apiKeyName: "", contentVersion: contentVersion + 1 });
+    expect(heldSave.value).toStrictEqual({ contentVersion: contentVersion + 1 });
     expect(saveState.value).toBe(ResourceSaveState.Stale);
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
@@ -1120,14 +1165,20 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { heldSave, resource, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    await useReadOpenResource().readResource();
+    const { readContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    await readResource();
     assert.exists(resource.value);
     const { contentVersion, id } = resource.value;
     const reload = vi.fn<(type: ResourceType) => void>();
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
+    await readContent(noop);
     unwrittenContentResourceId.value = id;
-    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1 });
-    await withFinalizerAsync(() => resourceStore.takeOtherSave(), unregisterReload);
+    await withFinalizerAsync(async () => {
+      serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1 });
+      await readResource();
+      await resourceStore.takeOtherSave();
+    }, unregisterReload);
 
     expect(reload).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
     expect(heldSave.value).toBeUndefined();
@@ -1142,7 +1193,9 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { heldSave, resource, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    await useReadOpenResource().readResource();
+    const { readContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    await readResource();
     assert.exists(resource.value);
     const { contentVersion, id } = resource.value;
     let contentVersionKept = contentVersion;
@@ -1150,47 +1203,38 @@ describe(useResourceStore, () => {
       contentVersionKept = resource.value?.contentVersion ?? contentVersion;
     });
     const unregisterKeep = ResourceContentHookMap.Keep.register(keep);
+    await readContent(noop);
     unwrittenContentResourceId.value = id;
-    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1 });
-    await withFinalizerAsync(() => resourceStore.keepUnwrittenContent(), unregisterKeep);
+    await withFinalizerAsync(async () => {
+      serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1 });
+      await readResource();
+      await resourceStore.keepUnwrittenContent();
+    }, unregisterKeep);
 
     expect(keep).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
     expect(contentVersionKept).toBe(contentVersion + 1);
     expect(heldSave.value).toBeUndefined();
   });
 
-  // An agent's save names the key it was written with, so the notice can say which agent saved
-  test("a save made with a key is named by that key", async () => {
-    expect.hasAssertions();
-
-    const apiKeyName = "agentKey";
-    const resourceStore = useResourceStore();
-    const { heldSave, resource, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    await useReadOpenResource().readResource();
-    assert.exists(resource.value);
-    const { contentVersion, id } = resource.value;
-    unwrittenContentResourceId.value = id;
-    await resourceStore.storeSaveResourceContent({ apiKeyName, contentVersion: contentVersion + 1 });
-
-    expect(heldSave.value).toStrictEqual({ apiKeyName, contentVersion: contentVersion + 1 });
-  });
-
-  // The user socket names the version and the key only, so an editor with nothing unwritten re-reads the document
-  // Through the reload stage and lets its library adopt it — the same two stages a restore runs
+  // An editor with nothing unwritten adopts another device's save in place, through the same two stages a restore runs
   test("an editor with nothing unsaved adopts a save in place", async () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
-    await useReadOpenResource().readResource();
-    assert.exists(resource.value);
-    const { contentVersion } = resource.value;
+    const { readContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    await readResource();
+    await readContent(noop);
     const reload = vi.fn<(type: ResourceType) => void>();
     const adopt = vi.fn<(type: ResourceType) => void>();
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     const unregisterAdopt = ResourceContentHookMap.Adopt.register(adopt);
     await withFinalizerAsync(
-      () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1 }),
+      async () => {
+        serveOpenRow({ contentHash: otherDeviceHash, contentVersion: 1 });
+        await readResource();
+        await waitForSynchronizedFunctions();
+      },
       () => {
         unregisterReload();
         unregisterAdopt();
@@ -1200,6 +1244,38 @@ describe(useResourceStore, () => {
     expect(reload).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
     expect(adopt).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
   });
+
+  // Every open resource's editor takes another device's save through the same store door, whatever its type
+  test.each([ResourceType.Note, ResourceType.Sheet, ResourceType.TodoList])(
+    "an open resource of any type reloads for another device's save (%s)",
+    async (type) => {
+      expect.hasAssertions();
+
+      trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(input.id, type), publication: null }));
+      trpcMsw.note.readResourceContent.query(() => undefined);
+      trpcMsw.sheet.readResourceContent.query(() => undefined);
+      trpcMsw.todoList.readResourceContent.query(() => undefined);
+      const reload = vi.fn<(reloadedType: ResourceType) => void>();
+      const unregisterReload = ResourceContentHookMap.Reload.register(reload);
+      const resourceStore = useResourceStore();
+      const { readContent } = resourceStore;
+      const { readResource } = useReadOpenResource();
+      await readResource();
+      await readContent(noop);
+      await withFinalizerAsync(async () => {
+        trpcMsw.resource.readResource.query(({ input }) => ({
+          ...createResource(input.id, type),
+          contentHash: otherDeviceHash,
+          contentVersion: 1,
+          publication: null,
+        }));
+        await readResource();
+        await waitForSynchronizedFunctions();
+      }, unregisterReload);
+
+      expect(reload).toHaveBeenCalledExactlyOnceWith(type);
+    },
+  );
 
   // Undo replays onto the document a command was recorded against, and a delta is measured against the bytes this
   // Client last held — both are the document another device's save replaced, so both go with it
@@ -1233,8 +1309,13 @@ describe(useResourceStore, () => {
     await readResource();
     await readContent(noop);
     assert.exists(resource.value);
-    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: resource.value.contentVersion + 1 });
-    await nextTick();
+    serveOpenRow({
+      contentHash: otherDeviceHash,
+      contentSize: loadedContentBytes.byteLength,
+      contentVersion: resource.value.contentVersion + 1,
+    });
+    await readResource();
+    await waitForSynchronizedFunctions();
     const isUndoableAfterAdoption = isUndoable.value;
     saveContent(createLargeSheetResource("a"));
     await settleSave();

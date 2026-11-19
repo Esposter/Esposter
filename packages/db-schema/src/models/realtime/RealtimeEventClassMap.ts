@@ -5,10 +5,8 @@ import type { UserEvent } from "#src/models/realtime/UserEvent";
 import { EventClass } from "#src/models/realtime/EventClass";
 import { RealtimeEventType } from "#src/models/realtime/RealtimeEventType";
 
-// The class of every event type a realtime object sends. Two have none, so they are left out of the keys on purpose.
-// Each is a finding for its owner.
-// `saveResourceContent` makes its subscribers re-read a stored content through a read no topic watches
-// `invalidate` is the topic watch's own frame
+// The class of every event type a realtime object sends. `invalidate` has none, so it is left out of the keys on purpose:
+// It is the topic watch's own frame
 export const RealtimeEventClassMap = {
   [RealtimeEventType.AdminAction]: EventClass.Command,
   [RealtimeEventType.CreateEmoji]: EventClass.MessageStream,
@@ -37,9 +35,6 @@ export const RealtimeEventClassMap = {
   [RealtimeEventType.UpsertStatus]: EventClass.ValuePush,
   [RealtimeEventType.VideoChanged]: EventClass.Ephemeral,
 } as const satisfies Record<
-  Exclude<
-    CallEvent["type"] | RoomEvent["type"] | UserEvent["type"],
-    typeof RealtimeEventType.Invalidate | typeof RealtimeEventType.SaveResourceContent
-  >,
+  Exclude<CallEvent["type"] | RoomEvent["type"] | UserEvent["type"], typeof RealtimeEventType.Invalidate>,
   EventClass
 >;

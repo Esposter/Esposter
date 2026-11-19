@@ -241,22 +241,6 @@ describe(UserObject, () => {
     expect(getRoomStub(room.id).detachMember).toHaveBeenCalledExactlyOnceWith(userId, presenceOf(false));
   });
 
-  test("a save reaches the person's other tabs, the same session's included, and not the tab that made it", async () => {
-    expect.hasAssertions();
-
-    const { object } = createUserObject();
-    const savingSocket = await connect(object, { deviceId, sessionId });
-    const sameSessionSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
-    const otherSessionSocket = await connect(object, { deviceId: v7(), sessionId: otherSessionId });
-    const save = { apiKeyName: "", contentVersion: 0, id: v7() };
-
-    await object.saveResourceContent(save, deviceId);
-
-    expect(readFrames(savingSocket)).toStrictEqual([]);
-    expect(readFrames(sameSessionSocket)).toStrictEqual([{ data: save, type: "saveResourceContent" }]);
-    expect(readFrames(otherSessionSocket)).toStrictEqual([{ data: save, type: "saveResourceContent" }]);
-  });
-
   test("the reminder alarm sends each due reminder once, and re-arms for the one after", async () => {
     expect.hasAssertions();
 

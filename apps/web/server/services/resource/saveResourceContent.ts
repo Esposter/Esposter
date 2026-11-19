@@ -3,8 +3,6 @@ import type { SaveResourceContentInput } from "#server/models/resource/SaveResou
 import type { ResourceInResource, ResourceLinkInResource } from "@esposter/db-schema";
 
 import { ownedBy } from "#server/services/db/ownedBy";
-import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { readDeviceId } from "#server/services/realtime/readDeviceId";
 import { getOwnedLiveResourceWhere } from "#server/services/resource/getOwnedLiveResourceWhere";
 import { getResourceLinkKey } from "#server/services/resource/link/getResourceLinkKey";
 import { ResourceTypeGetLinkTargetsMap } from "#server/services/resource/link/ResourceTypeGetLinkTargetsMap";
@@ -34,8 +32,8 @@ import { TRPCError } from "@trpc/server";
 import { and, eq, exists, sql } from "drizzle-orm";
 import { createHash } from "node:crypto";
 
-// The durable write and everything that must follow it, as one unit: the save event, the activity entry and the
-// Type's after-save hook. Every door — editor save, blueprint deploy, duplicate, restore — writes through here,
+// The durable write and everything that must follow it, as one unit: the activity entry and the Type's after-save
+// Hook. Every door — editor save, blueprint deploy, duplicate, restore — writes through here,
 // So a resource's reminders, schedules and derived state cannot depend on which door its content came through
 export const saveResourceContent = async (
   ctx: AuthedContext,
@@ -242,15 +240,6 @@ export const saveResourceContent = async (
 
   // Best-effort like every release: a failed one leaves a dropped asset stored and charged until a release names it again
   await getResultAsync(() => releaseResourceAssets(ctx.db, id, removedAssetHashes)).match(noop, console.error);
-  // The key an agent wrote with, named so an open editor can say who saved; "" for the person's own save. The owner's
-  // Tabs hear it, all but the tab that saved it, which names itself in the device header
-  const deviceId = readDeviceId(ctx.headers);
-  await callUserObjects([savedResource.userId], (userObject) =>
-    userObject.saveResourceContent(
-      { apiKeyName: ctx.apiKey?.name ?? "", contentVersion: savedResource.contentVersion, id },
-      deviceId,
-    ),
-  );
   // Not awaited — a failure costs one activity row, and the coalescing scan it does would otherwise land on
   // Every write the user is waiting on
   if (activityType) getSynchronizedFunction(writeResourceActivity)(ctx, { activityType, resourceId: id });

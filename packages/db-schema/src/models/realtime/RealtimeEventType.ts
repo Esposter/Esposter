@@ -20,7 +20,6 @@ export const RealtimeEventType = {
   MuteChanged: "muteChanged",
   ReplaceSession: "replaceSession",
   RoomActivity: "roomActivity",
-  SaveResourceContent: "saveResourceContent",
   UpdateAchievement: "updateAchievement",
   UpdateEmoji: "updateEmoji",
   UpdateMessage: "updateMessage",

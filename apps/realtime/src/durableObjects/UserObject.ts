@@ -29,7 +29,6 @@ import { setUserStatusInRooms } from "#src/services/user/setUserStatusInRooms";
 import { createPageSort, getPageOrderBy, getPageWhere } from "@esposter/db";
 import {
   AppNotificationType,
-  getDeviceSocketTag,
   joinedCallsInUser,
   publishNotification,
   QueueJob,
@@ -267,18 +266,6 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
 
   roomActivity(roomId: string, lastMessageAt: Date): void {
     this.broadcast({ data: { id: roomId, lastMessageAt }, type: "roomActivity" });
-  }
-
-  // A save leaves out only the tab that made it, since that tab already shows the change.
-  // The other tabs of the same session still need to hear it.
-  saveResourceContent(
-    content: { apiKeyName: string; contentVersion: number; id: string },
-    deviceId: string,
-  ): Promise<void> {
-    return this.broadcastEvent(
-      { data: content, type: "saveResourceContent" },
-      deviceId ? { excludeTag: getDeviceSocketTag(deviceId) } : {},
-    );
   }
 
   updateAchievement(userAchievements: UserAchievementInAchievementWithRelations[]): Promise<void> {

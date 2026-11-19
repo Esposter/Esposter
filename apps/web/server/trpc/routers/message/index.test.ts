@@ -98,7 +98,6 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
     removeSentMessagesInRoom: vi.fn<UserObjectRpc["removeSentMessagesInRoom"]>(),
     replaceSession: vi.fn<UserObjectRpc["replaceSession"]>(),
     roomActivity: vi.fn<UserObjectRpc["roomActivity"]>(),
-    saveResourceContent: vi.fn<UserObjectRpc["saveResourceContent"]>(),
     updateAchievement: vi.fn<UserObjectRpc["updateAchievement"]>(),
     updateUsage: vi.fn<UserObjectRpc["updateUsage"]>(),
     updateUserToRoom: vi.fn<UserObjectRpc["updateUserToRoom"]>(),

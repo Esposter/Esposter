@@ -30,7 +30,7 @@ import { getRequestBodyByteLength } from "#src/services/trpc/getRequestBodyByteL
 import { useNotificationStore } from "#src/store/notification";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { getSynchronizedFunction, noop, RoutePath, toRawDeep } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction, noop, RoutePath, toRawDeep } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -96,6 +96,10 @@ export const useResourceStore = defineStore("resource", () => {
   // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
   // Content stores seed it after hydrating so the first debounced watch tick has something to compare against
   let persistedContentJson = "";
+  // The hash of the content the store holds: the hash of the row it read the content under, or the one its own save was
+  // Stored as. The open row names the hash of the content its latest write left, so a row that names this one names no
+  // Content the store lacks
+  let persistedContentHash: string | undefined;
   // The stored bytes this client holds — read straight from R2, or sent by a save whose hash the server
   // Confirmed — which is what a large document's next save is compressed against. Not reactive and not persisted:
   // Nothing renders it, and a reload reads the bytes afresh
@@ -149,20 +153,6 @@ export const useResourceStore = defineStore("resource", () => {
     heldSave.value = undefined;
     isSaveContentFailed.value = false;
   };
-  // The page's read lands here. A refresh of the resource already open takes every field but the contentVersion, and
-  // Leaves the content state alone: a content save publishes the topic this row is read under, so a refresh that moved
-  // The version would find it already held when another device's save event arrives, skip adopting that save, and let the
-  // Next autosave write over it. A reset would also drop the notice that save is held behind
-  const applyResource = (newResource: ResourceInResource, newPublication: null | ResourcePublicationInResource) => {
-    const activeResource = getActiveResource(newResource.id);
-    if (!activeResource) {
-      assignResource(newResource, newPublication);
-      return;
-    }
-
-    publication.value = newPublication ?? undefined;
-    mergeResource(newResource.id, { ...newResource, contentVersion: activeResource.contentVersion });
-  };
   // A content reload follows a re-read of the row, so the row it takes is the version the reloaded content is read at.
   // Tracked on its own executor so the page's Refresh shows the read in flight, and one key so repeated clicks queue
   // Rather than overlap
@@ -199,6 +189,7 @@ export const useResourceStore = defineStore("resource", () => {
     opening = Symbol("opening");
     contentResourceId = "";
     persistedContentJson = "";
+    persistedContentHash = undefined;
     contentBaseline = undefined;
     isContentStale.value = false;
     heldSave.value = undefined;
@@ -238,7 +229,7 @@ export const useResourceStore = defineStore("resource", () => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
 
-    const { contentSize, id, type } = resourceValue;
+    const { contentHash, contentSize, id, type } = resourceValue;
     const readOpening = opening;
     const contentRead = Symbol("contentRead");
     latestContentRead = contentRead;
@@ -260,6 +251,9 @@ export const useResourceStore = defineStore("resource", () => {
     if (opening !== readOpening || latestContentRead !== contentRead) return;
 
     contentResourceId = id;
+    // The hash is the row's as it was before the blob was read, so a save that lands during the read leaves the hash behind
+    // The content, and the next refetch of the row reads it again rather than missing it
+    persistedContentHash = contentHash;
     if (storedContent) contentBaseline = storedContent;
     applyContent(content as ResourceContent<TType> | undefined);
   };
@@ -275,20 +269,48 @@ export const useResourceStore = defineStore("resource", () => {
   const setPersistedContent = (content: ResourceContent<ResourceType>) => {
     persistedContentJson = JSON.stringify(content);
   };
-  // Another device saved this resource. Taken through the two stages a restore runs, which the reload leaves to
-  // Adopt the document (openspec/specs/architecture/ai-native-resources/live-edits/design.md)
-  const storeSaveResourceContent = async ({ apiKeyName, contentVersion }: ResourceSave) => {
-    if (!resource.value || contentVersion <= resource.value.contentVersion) return;
+  // Another writer changed the content the store holds: the open row names a hash the store does not hold. The content is
+  // Adopted through the two stages a restore runs, which the reload leaves to adopt the document. Taken through a
+  // Synchronized function, so the adoption is awaited by whatever drains the store's work, and a failed read is logged
+  // Rather than left unhandled
+  const adoptOtherContent = getSynchronizedFunction(() =>
+    getResultAsync(() => adoptResourceContent()).match(noop, console.error),
+  );
+  // The page's watch of the open row brings the row here, and every write to the content publishes that row, so this is
+  // Where another device's save, an agent's and a restore's reach the editor. The blob is read only for a hash the store
+  // Does not hold. A save still in flight is the store's own: its answer sets the hash, so the row it wrote is left to
+  // That answer rather than read back over the edit that is being saved
+  const applyOtherContent = (newResource: ResourceInResource) => {
+    if (
+      !checkIsContentRead() ||
+      newResource.contentHash === persistedContentHash ||
+      checkIsSaveContentPending(newResource.id)
+    )
+      return;
 
-    if (hasUnwrittenContent.value || checkIsSaveContentPending(currentResourceId.value)) {
-      // The unwritten edit is the person's, so the save waits for their answer, and the stale latch holds autosave
-      // Until then
-      heldSave.value = { apiKeyName, contentVersion };
+    // The unwritten edit is the person's, so the other save waits for their answer, and the stale latch holds autosave
+    // Until then
+    if (hasUnwrittenContent.value) {
+      heldSave.value = { contentVersion: newResource.contentVersion };
       isContentStale.value = true;
       return;
     }
 
-    await adoptResourceContent();
+    adoptOtherContent();
+  };
+  // The page's read of the open row lands here. A refresh of the resource already open takes every field but the
+  // The version the store keeps as the one it holds for its unwritten-edit check, and the content is then checked
+  // Against the hash the store holds. A reset would drop the notice another save is held behind
+  const applyResource = (newResource: ResourceInResource, newPublication: null | ResourcePublicationInResource) => {
+    const activeResource = getActiveResource(newResource.id);
+    if (!activeResource) {
+      assignResource(newResource, newPublication);
+      return;
+    }
+
+    publication.value = newPublication ?? undefined;
+    mergeResource(newResource.id, { ...newResource, contentVersion: activeResource.contentVersion });
+    applyOtherContent(newResource);
   };
   // Taking theirs: the other version is adopted and the unwritten edit is dropped with the content it was an edit of
   const takeOtherSave = async () => {
@@ -414,10 +436,12 @@ export const useResourceStore = defineStore("resource", () => {
           if (!getActiveResource(resourceValue.id)) return;
 
           mergeResource(resourceValue.id, {
+            contentHash: newResource.contentHash,
             contentVersion: newResource.contentVersion,
             updatedAt: newResource.updatedAt,
           });
           persistedContentJson = contentJson;
+          persistedContentHash = newResource.contentHash;
           isSaveContentFailed.value = false;
         },
       },
@@ -614,7 +638,6 @@ export const useResourceStore = defineStore("resource", () => {
     saveContent,
     saveState,
     setPersistedContent,
-    storeSaveResourceContent,
     takeOtherSave,
     unpublishResource,
     unwrittenContentResourceId,

@@ -54,10 +54,6 @@ export interface UserObjectRpc {
   replaceSession: (sessionId: string) => Promise<void>;
   // A room a member can see moved to the top of their list, which every tab of theirs hears of
   roomActivity: (roomId: string, lastMessageAt: Date) => void;
-  saveResourceContent: (
-    content: { apiKeyName: string; contentVersion: number; id: string },
-    deviceId: string,
-  ) => Promise<void>;
   updateAchievement: (userAchievements: UserAchievementInAchievementWithRelations[]) => Promise<void>;
   updateUsage: (storageUsage: StorageUsage) => Promise<void>;
   updateUserToRoom: (userToRoom: UserToRoomInMessage) => Promise<void>;

@@ -4,11 +4,9 @@ import { RealtimeEventType } from "#src/models/realtime/RealtimeEventType";
 import { topicSchema } from "#src/models/realtime/Topic";
 import { sessionIdSchema } from "#src/models/shared/SessionId";
 import { storageUsageSchema } from "#src/models/storage/StorageUsage";
-import { createApiKeyInputSchema } from "#src/models/user/CreateApiKeyInput";
 import { publicUserSchema } from "#src/models/user/PublicUser";
 import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
 import { selectUserToRoomInMessageSchema } from "#src/schema/message/usersToRoomsInMessage";
-import { selectResourceInResourceSchema } from "#src/schema/resource/resourcesInResource";
 import { AchievementName } from "#src/services/achievement/AchievementName";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
@@ -27,16 +25,6 @@ const replaceSessionEventSchema = z.object({
   type: z.literal(RealtimeEventType.ReplaceSession),
 });
 const updateUsageEventSchema = z.object({ data: storageUsageSchema, type: z.literal(RealtimeEventType.UpdateUsage) });
-// The content is not carried: a subscriber re-reads it through the type's own read, so a large document crosses by
-// The same path as any read rather than over the socket
-const saveResourceContentEventSchema = z.object({
-  data: z.object({
-    apiKeyName: createApiKeyInputSchema.shape.name,
-    contentVersion: selectResourceInResourceSchema.shape.contentVersion,
-    id: selectResourceInResourceSchema.shape.id,
-  }),
-  type: z.literal(RealtimeEventType.SaveResourceContent),
-});
 // The fields a room edit changes, and the owner a group's departing owner hands it to
 const updateRoomEventSchema = z.object({
   data: updateRoomInputSchema.extend({ userId: selectRoomInMessageSchema.shape.userId.optional() }),
@@ -79,7 +67,6 @@ const userEventSchemas = [
   updateAchievementEventSchema,
   replaceSessionEventSchema,
   updateUsageEventSchema,
-  saveResourceContentEventSchema,
   updateRoomEventSchema,
   roomActivityEventSchema,
   deleteRoomEventSchema,

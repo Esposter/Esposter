@@ -271,7 +271,7 @@ describe(saveResourceContent, () => {
     await expect(readRevisionCount()).resolves.toBe(3);
   });
 
-  test("writes the content, emits the save, records the activity and runs the after-save hook as one unit", async () => {
+  test("writes the content, records the activity and runs the after-save hook as one unit", async () => {
     expect.hasAssertions();
 
     const savedResource = await saveResourceContent(ctx, {
@@ -282,14 +282,9 @@ describe(saveResourceContent, () => {
     });
     await waitForSynchronizedFunctions();
     const storedContent = await readResourceContent(contentSchema, resource.id);
-    const saveEvent = userObjectCalls.find(({ method }) => method === "saveResourceContent")?.args[0];
-    assert.exists(saveEvent);
 
     expect(savedResource.contentVersion).toBe(resource.contentVersion + 1);
     expect(storedContent).toStrictEqual(jsonDateParse(JSON.stringify(content)));
-    // The event carries the version the update returned, so a subscriber's next save is not rejected as stale, and
-    // Names the resource alone: the content is re-read by whoever hears it
-    expect(saveEvent).toStrictEqual({ apiKeyName: "", contentVersion: savedResource.contentVersion, id: resource.id });
     await expect(readActivityTypes()).resolves.toStrictEqual([ResourceActivityType.ContentSaved]);
     expect(getReminderCalls()).toStrictEqual([createReminderCall(resource)]);
   });

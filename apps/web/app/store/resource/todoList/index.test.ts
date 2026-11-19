@@ -30,6 +30,7 @@ describe(useTodoListStore, () => {
   const adoptedItemName = "adoptedItem";
   const itemName = "item";
   const newItemName = "newItem";
+  const otherDeviceHash = "other-device-content-hash";
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.TodoList });
   let content: ToData<TodoListResource>;
@@ -149,9 +150,13 @@ describe(useTodoListStore, () => {
     const { saveTodoList } = todoListStore;
     const { items } = storeToRefs(todoListStore);
     content = { items: [new TodoListItem({ name: newItemName })] };
-    const resourceStore = useResourceStore();
-    const { storeSaveResourceContent } = resourceStore;
-    await storeSaveResourceContent({ apiKeyName: "", contentVersion: 1 });
+    trpcMsw.resource.readResource.query(() => ({
+      ...createResource(1),
+      contentHash: otherDeviceHash,
+      publication: null,
+    }));
+    await useReadOpenResource().readResource();
+    await waitForSynchronizedFunctions();
     saveTodoList();
     await flushPromises();
 
@@ -242,7 +247,12 @@ describe(useTodoListStore, () => {
     trpcMsw.todoList.saveResourceContent.mutation(saveKept);
     items.value = [new TodoListItem({ name: newItemName })];
     unwrittenContentResourceId.value = resourceId;
-    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: 1 });
+    trpcMsw.resource.readResource.query(() => ({
+      ...createResource(1),
+      contentHash: otherDeviceHash,
+      publication: null,
+    }));
+    await useReadOpenResource().readResource();
     await resourceStore.keepUnwrittenContent();
     await isKeptSaveReached;
     await flushPromises();
