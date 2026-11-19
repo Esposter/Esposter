@@ -26,4 +26,4 @@ export const MOCK_ENVIRONMENT_VARIABLES = {
   VAPID_PUBLIC_KEY: "VAPID_PUBLIC_KEY",
 } satisfies WebEnvironmentVariables;
 
-describe.todo("mOCK_ENVIRONMENT_VARIABLES");
+describe.todo("constants");
