@@ -43,6 +43,7 @@ const MIN_VIEW_DISTANCE = 0.001;
 // TRAA resolves the scene's edges before the tone mapping, from a velocity target the scene pass writes beside its
 // Colour; SMAA smooths the graded frame instead, for a tier that pays for neither
 export const createPostPipeline = ({
+  bloomStructure,
   camera,
   fogUniforms,
   godraysLight,
@@ -124,7 +125,7 @@ export const createPostPipeline = ({
   let bloomedNode: Node<"vec4"> = sightedNode;
 
   if (isBloomed && isBloomEnabled) {
-    const bloomNode = new GameBloomNode(sightedNode);
+    const bloomNode = new GameBloomNode(sightedNode, bloomStructure);
     passNodes.push(bloomNode);
     bloomedNode = sightedNode.add(bloomNode);
   }

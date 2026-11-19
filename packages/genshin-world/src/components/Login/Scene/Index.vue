@@ -11,7 +11,7 @@ import type { LoginStoneLight } from "#src/models/login/LoginStoneLight";
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 import type { LoginTowers } from "#src/models/login/LoginTowers";
 import type { LoginWalkway } from "#src/models/login/LoginWalkway";
-import type { CloudLayerTextureProfiles, QualityTier } from "genshin-engine";
+import type { CloudLayerTextureProfiles, GameBloomStructure, QualityTier } from "genshin-engine";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import { useSceneExports } from "#src/composables/useSceneExports";
@@ -133,6 +133,8 @@ import {
 import { MeshBasicNodeMaterial } from "three/webgpu";
 
 interface Props {
+  // The shape of the bloom's chain, where a reference tests one of the game's other shapes, the game's own by default
+  bloomStructure?: GameBloomStructure | undefined;
   // The statistics of the game's cloud layer textures, which our own are synthesized from
   cloudLayerTextures: CloudLayerTextureProfiles;
   // The sky's three cloud bands as their fit traced them
@@ -170,6 +172,7 @@ interface Props {
 }
 
 const {
+  bloomStructure,
   cloudLayerTextures,
   clouds,
   door,
@@ -427,7 +430,7 @@ const cloudSeaGeometryArgs: [number, number] = [LOGIN_CLOUD_SEA_SIZE, LOGIN_CLOU
 // Against its frame without it is opened with `isBloomed` off
 usePostPipeline(
   () => qualityTier,
-  { fogUniforms, isBloomed, postUniforms, stoneLight: loginStoneLight },
+  { bloomStructure, fogUniforms, isBloomed, postUniforms, stoneLight: loginStoneLight },
   () => LoginOcclusionRadiusMap[timeOfDay],
   skyUniforms,
   cloudLayer,

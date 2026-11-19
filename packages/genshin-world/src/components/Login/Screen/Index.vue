@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { LoginData } from "#src/models/login/LoginData";
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
+import type { GameBloomStructure } from "genshin-engine";
 import type { GameLanguage, GameText } from "genshin-text";
 
 import LoginInterface from "#src/components/Login/Interface/Index.vue";
@@ -28,6 +29,8 @@ import { fillLinePlaceholders, GameTextKey } from "genshin-text";
 import { PCFShadowMap } from "three";
 
 interface Props {
+  // The shape of the bloom's chain, where a reference tests one of the game's other shapes, the game's own by default
+  bloomStructure?: GameBloomStructure | undefined;
   // The game's words in the reader's language
   gameText: GameText;
   // The glide held still at this many metres scrolled, for a reference taken at one moment of the title's loop
@@ -61,7 +64,14 @@ interface Props {
 // Says the white is up. Both whites are the interface's, played from the game's own clips. A host pins a stage with
 // `v-model:stage` to show it held, as the parity page does
 const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving });
-const { gameText, isBloomed = true, playerName, progress, qualityTier = QualityTier.High } = defineProps<Props>();
+const {
+  bloomStructure,
+  gameText,
+  isBloomed = true,
+  playerName,
+  progress,
+  qualityTier = QualityTier.High,
+} = defineProps<Props>();
 const emit = defineEmits<{ begin: []; ready: []; retry: [] }>();
 // The name the screen welcomes the player by, the game's own word for the Traveler until they have chosen one
 const shownPlayerName = computed(
@@ -142,6 +152,7 @@ const onClick = (event: MouseEvent): void => {
         :door="loginData.door"
         :held-scrolled
         :hulls="loginData.hulls"
+        :bloom-structure
         :is-bloomed="isBloomed ? undefined : false"
         :is-door-lit="stage === LoginStage.Entering"
         :paving="loginData.paving"

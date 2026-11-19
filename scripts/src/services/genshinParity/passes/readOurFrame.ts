@@ -7,17 +7,20 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { withFinalizerAsync } from "@esposter/shared";
 
 // Our frame of a reference's screen at the display width, drawn with the reference's props and the ones given over them,
-// Its parts our own (no export drawn in place of one, as `readSky` shoots its frame), read as raw RGB
+// Its parts our own (no export drawn in place of one, as `readSky` shoots its frame), read as raw RGB. The page is drawn
+// At `pageWidth`, which is the display width unless a caller draws it larger and resizes it down, and `image` is the
+// Reference at that width, so the caller resizes both sides the same way
 export const readOurFrame = async (
   referenceId: string,
   component: DerivedAssetComponent,
   propOverrides?: Record<string, unknown>,
   pageRoot?: string,
+  pageWidth: number = DISPLAY_WIDTH,
 ): Promise<{ frame: Buffer; height: number; image: Buffer }> => {
   const { close, height, image, page } = await openWitnessPage(
     referenceId,
     component,
-    DISPLAY_WIDTH,
+    pageWidth,
     undefined,
     propOverrides,
     pageRoot,
@@ -25,7 +28,12 @@ export const readOurFrame = async (
   return withFinalizerAsync(
     async () => {
       await setPageWitnessView(page, { families: [] });
-      return { frame: await readRawRgb(await page.screenshot(), DISPLAY_WIDTH, height), height, image };
+      const displayHeight = Math.round((DISPLAY_WIDTH * height) / pageWidth);
+      return {
+        frame: await readRawRgb(await page.screenshot(), DISPLAY_WIDTH, displayHeight),
+        height: displayHeight,
+        image,
+      };
     },
     () => close(),
   );

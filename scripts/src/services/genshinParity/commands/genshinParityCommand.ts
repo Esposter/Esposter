@@ -6,6 +6,7 @@ import { balanceCommand } from "#src/services/genshinParity/commands/balanceComm
 import { bandsCommand } from "#src/services/genshinParity/commands/bandsCommand";
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
 import { blackCommand } from "#src/services/genshinParity/commands/blackCommand";
+import { bloomCommand } from "#src/services/genshinParity/commands/bloomCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { coverCommand } from "#src/services/genshinParity/commands/coverCommand";
@@ -68,6 +69,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     sky: skyCommand,
     black: blackCommand,
     balance: balanceCommand,
+    bloom: bloomCommand,
     fog: fogCommand,
     shadows: shadowsCommand,
     overlay: overlayCommand,

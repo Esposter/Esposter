@@ -1,3 +1,4 @@
+import type { GameBloomStructure } from "#src/models/nodes/GameBloomStructure";
 import type { StoneLightUniforms } from "#src/models/nodes/StoneLightUniforms";
 import type { FogUniforms } from "#src/models/post/FogUniforms";
 import type { PostUniforms } from "#src/models/post/PostUniforms";
@@ -7,6 +8,8 @@ import type { Camera, Data3DTexture, DirectionalLight, Scene } from "three";
 import type { Renderer } from "three/webgpu";
 
 export interface PostPipelineOptions {
+  // The shape of the bloom's chain, where a scene tests one of the game's other shapes; the game's own shape by default
+  bloomStructure?: GameBloomStructure;
   camera: Camera;
   fogUniforms: FogUniforms;
   // The unlit sun the god rays march through, where a scene draws them

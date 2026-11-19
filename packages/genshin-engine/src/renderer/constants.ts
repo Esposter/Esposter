@@ -1,3 +1,4 @@
+import type { GameBloomStructure } from "#src/models/nodes/GameBloomStructure";
 import type { ToneMapping } from "three";
 
 import { NoToneMapping } from "three";
@@ -29,3 +30,17 @@ export const GENSHIN_BLOOM_INTENSITY = 0.75;
 export const GENSHIN_BLOOM_WEIGHTS: readonly number[] = [0.3, 0.3, 0.26, 0.15];
 // Each level's blur takes four taps, two a side, at these distances in texels, as the bloom's program reads them
 export const BLOOM_BLUR_TEXELS: readonly number[] = [0.25, 0.96];
+// The game's rotated blur, one pass of four taps at these offsets in the level's texels (`00000`)
+export const BLOOM_ROTATED_TAPS: readonly (readonly [number, number])[] = [
+  [0.96, 0.25],
+  [0.25, -0.96],
+  [-0.96, -0.25],
+  [-0.25, 0.96],
+];
+// The bloom's structure the engine draws: a one-tap prefilter, taps half a texel out, and the separable pair applied once
+export const GENSHIN_BLOOM_STRUCTURE: GameBloomStructure = {
+  blurForm: "separable",
+  blurPasses: 1,
+  prefilter: "oneTap",
+  tapOffset: 0.5,
+};

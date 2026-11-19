@@ -1,3 +1,4 @@
+import { BloomResize } from "#src/models/genshinParity/passes/BloomResize";
 import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -69,6 +70,10 @@ export const LOST_FULL = 0.5;
 // Light off the plane than the contrast that leaves least: on the login the profile's 0.5 leaves a few hundredths
 // More, and its next value, 0.75, about seven tenths
 export const DISPLAY_WIDTH = 640;
+// The bloom's frames, ours and the reference, are drawn at the reference's own width and resized down to the display width by
+// The same kernel, so neither side is read sharper: `genshin:parity bloom` reads every structure of the bloom chain lower by
+// 0.29 to 0.64 ΔE that way, more than any one structure choice moves it
+export const BLOOM_RESIZE = BloomResize.Source;
 export const DISPLAY_CONTRAST_GATE = 0.1;
 // The bloom's reading covers the reference's pixels within this many of one it shows at the curve's white, and
 // Compares our frame with the bloom drawn and with it off over them
