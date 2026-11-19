@@ -28,7 +28,9 @@ const headingId = useId();
 const root = useTemplateRef("root");
 const { today } = useCalendarClock();
 const { smAndUp } = useUiDisplay();
-const monthCount = computed(() => (isRange && smAndUp.value ? 2 : 1));
+// A range shows two months side by side past the small breakpoint, and one below it; a single day always shows one
+const maxMonthCount = isRange ? 2 : 1;
+const monthCount = computed(() => (smAndUp.value ? maxMonthCount : 1));
 // A day before the minimum or after the maximum is disabled.
 // The grids are not given the bounds, since a grid pages itself into the bound's month.
 // So a month outside would be drawn as that month instead of with its days disabled.
@@ -54,9 +56,9 @@ const selection = computed(() => {
   else if (to.value) return { end: to.value.toString(), start: from.value.toString() };
   else return { start: from.value.toString() };
 });
-// One grid per month a range can show, both made up front so the second month appears without a grid being made mid-press.
+// One grid per month the calendar can show, all made up front so a second month appears without a grid being made mid-press.
 // Each draws its month's six weeks, Monday first, and reads the selection the models hold
-const grids = Array.from({ length: 2 }, (_grid, index) =>
+const grids = Array.from({ length: maxMonthCount }, (_grid, index) =>
   createCalendar({
     disabled: checkIsOutOfBounds,
     firstDayOfWeek: CALENDAR_FIRST_DAY_OF_WEEK,

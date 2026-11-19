@@ -32,12 +32,14 @@ const calendar = createCalendar({
   month: () => month.value.toString(),
 });
 const weeks = computed(() =>
-  calendar.month.value.weeks.map((week) => week.map(({ iso }) => Temporal.PlainDate.from(iso))),
+  calendar.month.value.weeks.map((week) =>
+    week.map(({ iso, outside }) => ({ date: Temporal.PlainDate.from(iso), outside })),
+  ),
 );
 const selectedDay = ref<Temporal.PlainDate>();
 // The day holding the tab stop: the selected one while the month shows it, otherwise the day shown
 const focusedDay = computed(() =>
-  selectedDay.value && weeks.value.flat().some((day) => selectedDay.value?.equals(day))
+  selectedDay.value && weeks.value.flat().some(({ date: day }) => selectedDay.value?.equals(day))
     ? selectedDay.value
     : date.value,
 );
@@ -58,7 +60,7 @@ const onGridKeydown = useGridKeyboard({
     <!-- Each day names its own full date, so the weekdays over them are only for the eye -->
     <div aria-hidden="true" grid cols-7 ui-bar>
       <NuxtTime
-        v-for="weekday of weeks[0]"
+        v-for="{ date: weekday } of weeks[0]"
         :key="weekday.dayOfWeek"
         :datetime="weekday.toString()"
         time-zone="UTC"
@@ -86,15 +88,15 @@ const onGridKeydown = useGridKeyboard({
       min-h-0
       @keydown="onGridKeydown($event)"
     >
-      <div v-for="week of weeks" :key="week[0]?.toString()" role="row" contents>
+      <div v-for="week of weeks" :key="week[0]?.date.toString()" role="row" contents>
         <UiEventCalendarMonthDay
-          v-for="day of week"
+          v-for="{ date: day, outside } of week"
           :key="day.toString()"
           :day
           :events="eventDayMap.get(day.toString()) ?? []"
           :is-creatable
           :is-focused="day.equals(focusedDay)"
-          :is-outside="!day.toPlainYearMonth().equals(month)"
+          :is-outside="outside"
           :is-selected="Boolean(selectedDay?.equals(day))"
           :is-today="day.equals(today)"
           @create="emit('create', day)"
