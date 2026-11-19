@@ -42,6 +42,6 @@ describe(reviewWindows, () => {
     const [outcomes] = await settle();
 
     expect(reviewBatch).toHaveBeenCalledTimes(BATCH_COUNT);
-    expect(outcomes?.every((outcome) => "findings" in outcome)).toBe(true);
+    expect(outcomes).toStrictEqual(Array.from({ length: BATCH_COUNT }, () => ({ findings: [] })));
   });
 });

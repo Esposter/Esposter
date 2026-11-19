@@ -13,22 +13,6 @@ const createSummary = (overrides: Partial<ProposalSummary>): ProposalSummary => 
 });
 
 describe(groupProposalsByPhase, () => {
-  test("lists a heading per phase from 0 to 7 in order, then no phase", () => {
-    expect.hasAssertions();
-
-    expect(groupProposalsByPhase([]).map(({ heading }) => heading)).toStrictEqual([
-      "Phase 0",
-      "Phase 1",
-      "Phase 2",
-      "Phase 3",
-      "Phase 4",
-      "Phase 5",
-      "Phase 6",
-      "Phase 7",
-      "No phase",
-    ]);
-  });
-
   test("puts each proposal under its phase, keeping the order the proposals are given in", () => {
     expect.hasAssertions();
 

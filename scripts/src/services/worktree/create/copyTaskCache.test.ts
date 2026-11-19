@@ -1,4 +1,5 @@
 import { copyTaskCache } from "#src/services/worktree/create/copyTaskCache";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -40,9 +41,13 @@ describe(copyTaskCache, () => {
     createCache(source, []);
     mkdirSync(destination);
 
-    await expect(copyTaskCache(source, destination)).rejects.toMatchObject({
-      message: expect.stringContaining(ARCHIVE_NAME),
-    });
+    await expect(copyTaskCache(source, destination)).rejects.toThrowError(
+      new InvalidOperationError(
+        Operation.Create,
+        destination,
+        `the copied task cache names archives its source no longer holds: ${ARCHIVE_NAME}`,
+      ),
+    );
   });
 
   test("copies the database and each archive beside it", async () => {

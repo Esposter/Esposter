@@ -37,10 +37,7 @@ describe(verifyGameData, () => {
       }),
     ).resolves.toBe(3);
     // Three calls naming three distinct URLs, so each object is fetched exactly once
-    expect(fetch).toHaveBeenCalledTimes(3);
-    expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual(
-      expect.arrayContaining([entry.url, index.url, shared.url]),
-    );
+    expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual([index.url, shared.url, entry.url]);
   });
 
   test("an index that does not hash to its name is refused", async () => {

@@ -48,7 +48,7 @@ describe(resolveFfmpeg, () => {
     expect(resolvePinnedTool).not.toHaveBeenCalled();
   });
 
-  test("a stage ignores a tool of the same name on the PATH", async () => {
+  test("a macos run resolves to the pinned archive's path, not the ffmpeg on the PATH", async () => {
     expect.hasAssertions();
 
     Object.defineProperty(process, "platform", { value: "darwin" });

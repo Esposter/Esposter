@@ -9,7 +9,7 @@ describe(summarizeGameDataChanges, () => {
     vi.restoreAllMocks();
   });
 
-  test("counts an object whose published copy the dev bucket lacks as new, rather than failing to read it", async () => {
+  test("reads a 404 for an object's published copy as no baseline, so its content reports as added rather than failing", async () => {
     expect.hasAssertions();
 
     // The bucket answers 404 for the old object, so there is nothing published to compare the new record against
@@ -22,7 +22,9 @@ describe(summarizeGameDataChanges, () => {
 
     const summary = await summarizeGameDataChanges(currentLock, nextLock, records);
 
-    expect(summary[0]).toBe("  objects +0 -0 ~1, indexes +0 -0 ~0, index entries +0 -0 ~0");
-    expect(summary.slice(1)).toStrictEqual(["  stats/weapons › (root) added ×1"]);
+    expect(summary).toStrictEqual([
+      "  objects +0 -0 ~1, indexes +0 -0 ~0, index entries +0 -0 ~0",
+      "  stats/weapons › (root) added ×1",
+    ]);
   });
 });

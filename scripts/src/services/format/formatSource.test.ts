@@ -2,7 +2,6 @@ import { OUTSIDE_PATH } from "#src/services/format/constants.test";
 import { formatSource } from "#src/services/format/formatSource";
 import { OXFMT_BINARY_RELATIVE_PATH } from "#src/services/shared/constants";
 import { KIBIBYTE } from "@esposter/configuration";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -38,7 +37,7 @@ describe(formatSource, () => {
     expect(() =>
       formatSource("source", OUTSIDE_PATH, root, root, BOUND_MILLISECONDS),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, OUTSIDE_PATH, `oxfmt --stdin-filepath ${OUTSIDE_PATH} ran past ${BOUND_MILLISECONDS} ms and was killed`).message}]`,
+      `[InvalidOperationError: Invalid operation: Read, name: packages/example/src/kit/Map.ts, oxfmt --stdin-filepath packages/example/src/kit/Map.ts ran past 1000 ms and was killed]`,
     );
   });
 
