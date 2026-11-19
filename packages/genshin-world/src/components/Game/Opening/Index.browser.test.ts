@@ -109,7 +109,7 @@ describe("gameOpening", () => {
     });
 
     expect(fetchSpy.mock.calls.map(([url]) => url)).toContainEqual(
-      expect.stringContaining("/preload/characterPackIndex/"),
+      "/preload/characterPackIndex/index/a73caf35dbd9a925b28f9411a7ba8604d0add1ffe10a9e5fe99954587560c9e2.json",
     );
   });
 
