@@ -15,7 +15,7 @@ const IDENTIFIER_REGEX = /[$A-Z_a-z][\w$]*/gu;
 //
 // The hooks go to the Nuxt `defineVitestProject` loads; the plugin reads what they captured once that Nuxt is built, and
 // Refuses to run without them, since a key missing its registry is the stale cache back with nothing to say so
-// @TODO: no upstream issue — @nuxt/test-utils keys no persisted transform on Nuxt's auto-import registry
+// @TODO: https://github.com/nuxt/nuxt/issues/37147
 export const createAutoImportCacheKey = () => {
   let imports: Import[] | undefined;
   let components: Component[] = [];
