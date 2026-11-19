@@ -2,7 +2,8 @@ import { z } from "zod";
 
 // A fish as the generated fish slice holds it: its hit points, the ranges its lure reactions are drawn at, its bite's
 // Timeout in seconds, the feeler range its nibbles run over, the moving zone its tension is held in while reeled, the
-// Item it becomes in the bag, the proficiency it counts toward, its catch's reward row and the skills it fights with
+// Item it becomes in the bag, the proficiency it counts toward, its catch's reward row, the skills it fights with, the
+// Monster it is filed under and the category its table files it in, when the table files it in one
 export interface Fish {
   attractRange: number;
   biteTimeout: number;
@@ -11,10 +12,12 @@ export interface Fish {
   bonusSpeed: number[];
   bonusWidth: number;
   feelerTimes: number[];
+  fishCateId?: number | undefined;
   fleeRange: number;
   hp: number;
   id: number;
   itemId: number;
+  monsterId: number;
   proficientId: number;
   rewardId: number;
   skillId: number[];
@@ -28,10 +31,12 @@ export const fishSchema = z.object({
   bonusSpeed: z.array(z.number()),
   bonusWidth: z.number().nonnegative(),
   feelerTimes: z.array(z.number().nonnegative()),
+  fishCateId: z.int().positive().optional(),
   fleeRange: z.number().nonnegative(),
   hp: z.int().positive(),
   id: z.int().positive(),
   itemId: z.int().positive(),
+  monsterId: z.int().positive(),
   proficientId: z.int().positive(),
   rewardId: z.int().positive(),
   skillId: z.array(z.int().positive()),
