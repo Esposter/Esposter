@@ -8,4 +8,4 @@ x-touches:
     "apps/web/modules/serveGenshinExtractions.test.ts",
     "openspec/changes/genshin-program/**",
   ]
-x-waiting: "Task 4.1 is not ticked: its proof is a browser run of /genshin, since a vitest test of the page would stub its save, packs and opening, and those stubs would be what it proves; the run is not made this round. Task 4.2 is not ticked: its server clause is held by a passing test, but no test inspects the built bundle, so its bundle clause waits on a build's output. Task 6.2 is not ticked: its chrome test waits on genshin-menu-paimon, the first in-world chrome to draw, which must leave out the Battle Pass entry as the design decides."
+x-waiting: "Task 4.1: a browser run of /genshin. Task 4.2: the output of pnpm -C apps/web build. Task 6.2: genshin-menu-paimon."
