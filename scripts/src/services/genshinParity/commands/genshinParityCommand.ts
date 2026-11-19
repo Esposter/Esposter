@@ -46,6 +46,7 @@ import { solosCommand } from "#src/services/genshinParity/commands/solosCommand"
 import { stallsCommand } from "#src/services/genshinParity/commands/stallsCommand";
 import { stillCommand } from "#src/services/genshinParity/commands/stillCommand";
 import { traceCommand } from "#src/services/genshinParity/commands/traceCommand";
+import { trailCommand } from "#src/services/genshinParity/commands/trailCommand";
 import { verifyCommand } from "#src/services/genshinParity/commands/verifyCommand";
 import { viewCommand } from "#src/services/genshinParity/commands/viewCommand";
 import { zoomCommand } from "#src/services/genshinParity/commands/zoomCommand";
@@ -101,6 +102,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     fixtures: fixturesCommand,
     probe: probeCommand,
     frames: framesCommand,
+    trail: trailCommand,
     verify: verifyCommand,
     recordings: recordingsCommand,
     references: referencesCommand,
