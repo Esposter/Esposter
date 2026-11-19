@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Recurrence } from "#shared/models/resource/todoList/Recurrence";
+import type { RecurrenceUnit } from "#shared/models/resource/todoList/RecurrenceUnit";
 import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
 
-import { RecurrenceUnit, RecurrenceUnits } from "#shared/models/resource/todoList/RecurrenceUnit";
+import { RecurrenceUnits } from "#shared/models/resource/todoList/RecurrenceUnit";
 import { TODO_LIST_RECURRENCE_INTERVAL_MAX } from "#shared/services/resource/item/constants";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";

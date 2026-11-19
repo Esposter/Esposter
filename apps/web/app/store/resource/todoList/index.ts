@@ -44,7 +44,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     ["id"],
   );
   // One write path per action: item edits mutate the content blob, then persist it wholesale, and a refused save reverts
-  // the item. The dialog closes as the save is sent, so a refused edit is not held open as a draft for a retry.
+  // The item. The dialog closes as the save is sent, so a refused edit is not held open as a draft for a retry.
   const saveItem = () => {
     if (!editedItem.value) return;
 
@@ -69,8 +69,8 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     });
   };
   // A delete from the dialog. Where an item sits is content in a list the user ordered, so a refused delete puts it back
-  // at the index it held, read before the removal and restored through an insert rather than createItem, which only
-  // appends. Against the list as it stands, so another device's save reloaded mid-flight is kept
+  // At the index it held, read before the removal and restored through an insert rather than createItem, which only
+  // Appends. Against the list as it stands, so another device's save reloaded mid-flight is kept
   const removeItem = () => {
     if (!editedItem.value) return;
 
