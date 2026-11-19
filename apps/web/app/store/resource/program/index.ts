@@ -1,5 +1,5 @@
+import { createEmptyProgram } from "#shared/services/resource/program/createEmptyProgram";
 import { createContentData } from "#src/services/resource/createContentData";
-import { createEmptyProgram } from "#src/services/resource/program/createEmptyProgram";
 import { ResourceType } from "@esposter/db-schema";
 
 export const useProgramStore = defineStore("resource/program", () => {

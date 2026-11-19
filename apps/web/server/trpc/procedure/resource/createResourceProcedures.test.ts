@@ -1,6 +1,12 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
+import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
+import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
+import type { ResourceContent } from "#shared/models/resource/ResourceContent";
+import type { ResourceFile } from "#shared/models/resource/ResourceFile";
+import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 import type { R2Bucket, R2Object } from "@cloudflare/workers-types";
+import type { ResourceInResource, ResourcePublicationInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { authMocks } from "#server/auth.test";
@@ -12,16 +18,27 @@ import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
+import { blueprintRouter } from "#server/trpc/routers/blueprint";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
+import { emailRouter } from "#server/trpc/routers/email";
 import { trpcRouter } from "#server/trpc/routers/index";
+import { noteRouter } from "#server/trpc/routers/note";
+import { programRouter } from "#server/trpc/routers/program";
 import { sheetRouter } from "#server/trpc/routers/sheet";
+import { surveyRouter } from "#server/trpc/routers/survey";
+import { todoListRouter } from "#server/trpc/routers/todoList";
 import { webpageRouter } from "#server/trpc/routers/webpage";
+import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
+import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { MimeType } from "#shared/models/file/MimeType";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
+import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
+import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
+import { createEmptyBlueprint } from "#shared/services/resource/blueprint/createEmptyBlueprint";
 import {
   ASSET_DECISION_CLOCK_MARGIN_MS,
   ASSET_GRACE_MS,
@@ -30,6 +47,12 @@ import {
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
+import { createEmptyNote } from "#shared/services/resource/note/createEmptyNote";
+import { createEmptyProgram } from "#shared/services/resource/program/createEmptyProgram";
+import { createDefaultSheetResource } from "#shared/services/resource/sheet/createDefaultSheetResource";
+import { createEmptySurvey } from "#shared/services/resource/survey/createEmptySurvey";
+import { createEmptyTodoList } from "#shared/services/resource/todoList/createEmptyTodoList";
+import { createEmptyWhiteboard } from "#shared/services/resource/whiteboard/createEmptyWhiteboard";
 import { deleteDirectory, getContentBlobName, readJsonBlob } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
@@ -49,9 +72,58 @@ import { createHash } from "node:crypto";
 import { gzipSync, zstdCompressSync } from "node:zlib";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { PositionedElementType, TextSize } from "vue-block-editor-headless";
 
-// The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
-// Per-type router tests only assert their own wiring (correct ResourceType + content schema round-trip).
+// A caller of a type with the fileAssets capability, and of a publishable one: each adds its group beside the base procedures
+type FileAssetsCaller<TType extends FileAssetsResourceType> = FileAssetsResourceCaller & ResourceTypeCaller<TType>;
+// The procedures a type with the fileAssets capability generates beside the base ones
+interface FileAssetsResourceCaller {
+  deleteFile: (input: { blobPath: string; id: string }) => Promise<void>;
+  readResourceFiles: (input: { id: string }) => Promise<ResourceFile[]>;
+}
+type PublishableCaller<TType extends PublishableResourceType> = PublishableResourceCaller<ResourceContent<TType>> &
+  ResourceTypeCaller<TType>;
+// The procedures a publishable type generates beside the base ones, answering its content as the base reads do
+interface PublishableResourceCaller<TContent> {
+  publishResource: (input: { id: string }) => Promise<ResourcePublicationInResource>;
+  readPublishedResourceContent: (id: string) => Promise<{ content: TContent; name: string }>;
+  readPublishedVersionContent: (input: { id: string; version: number }) => Promise<{ content: TContent; name: string }>;
+  readResourcePublication: (input: { id: string }) => Promise<ResourcePublicationInResource | undefined>;
+  unpublishResource: (input: { id: string }) => Promise<ResourceInResource>;
+}
+// The procedures every type's factory generates, over that type's content. The content is the one thing a type narrows, so the
+// Caller is generic in it: a save takes the content the type holds, and a read answers it. Each type's router is checked against
+// This shape at its own entry in the caller map, so a procedure a router renames or drops fails there
+interface ResourceCaller<TContent> {
+  createResource: (input: { name: string }) => Promise<ResourceInResource>;
+  deleteResource: (input: { id: string }) => Promise<ResourceInResource>;
+  generateUploadContentPresignedUrl: (input: { id: string; size: number }) => Promise<string>;
+  readResourceContent: (input: { id: string }) => Promise<TContent | undefined>;
+  readResources: () => Promise<ResourceListPage>;
+  saveResourceContent: (input: {
+    content: TContent;
+    contentVersion: number;
+    id: string;
+  }) => Promise<ResourceInResource>;
+  saveResourceContentDelta: (input: {
+    baselineHash: string;
+    contentVersion: number;
+    delta: string;
+    id: string;
+  }) => Promise<ResourceInResource>;
+  saveStagedResourceContent: (input: {
+    contentVersion: number;
+    hash: string;
+    id: string;
+  }) => Promise<ResourceInResource>;
+  updateResource: (input: { id: string; name: string }) => Promise<ResourceInResource>;
+}
+// A type's caller: the base procedures over the type's own content, which every type's factory generates
+type ResourceTypeCaller<TType extends ResourceType> = ResourceCaller<ResourceContent<TType>>;
+
+// The generic resource-procedure matrix runs for every type at the foot of this suite, through each type's own router.
+// The tests above it hold what one type decides beyond that matrix: the dashboard's delta and staging conflicts, its
+// Published versions, and the owner guards each procedure shares.
 describe(createResourceProcedures, () => {
   let mockContext: Context;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
@@ -66,17 +138,109 @@ describe(createResourceProcedures, () => {
   const hash = "a".repeat(64);
   const mimetype = MimeType.Png;
   const size = 1;
+  // Each type's caller, made by its own router over the mock context once its row runs. Each entry is checked at its own
+  // Router against the procedures its capabilities generate, so a router that renames or drops one fails at that entry
+  const resourceTypeCallerMap = {
+    [ResourceType.Blueprint]: () =>
+      createCallerFactory(blueprintRouter)(mockContext) satisfies ResourceTypeCaller<typeof ResourceType.Blueprint>,
+    [ResourceType.Dashboard]: () =>
+      createCallerFactory(dashboardRouter)(mockContext) satisfies PublishableCaller<typeof ResourceType.Dashboard>,
+    [ResourceType.Email]: () =>
+      createCallerFactory(emailRouter)(mockContext) satisfies FileAssetsCaller<typeof ResourceType.Email> &
+        PublishableCaller<typeof ResourceType.Email>,
+    [ResourceType.Note]: () =>
+      createCallerFactory(noteRouter)(mockContext) satisfies FileAssetsCaller<typeof ResourceType.Note> &
+        PublishableCaller<typeof ResourceType.Note>,
+    [ResourceType.Program]: () =>
+      createCallerFactory(programRouter)(mockContext) satisfies ResourceTypeCaller<typeof ResourceType.Program>,
+    [ResourceType.Sheet]: () =>
+      createCallerFactory(sheetRouter)(mockContext) satisfies ResourceTypeCaller<typeof ResourceType.Sheet>,
+    [ResourceType.Survey]: () =>
+      createCallerFactory(surveyRouter)(mockContext) satisfies FileAssetsCaller<typeof ResourceType.Survey> &
+        PublishableCaller<typeof ResourceType.Survey>,
+    [ResourceType.TodoList]: () =>
+      createCallerFactory(todoListRouter)(mockContext) satisfies ResourceTypeCaller<typeof ResourceType.TodoList>,
+    [ResourceType.Webpage]: () =>
+      createCallerFactory(webpageRouter)(mockContext) satisfies FileAssetsCaller<typeof ResourceType.Webpage> &
+        PublishableCaller<typeof ResourceType.Webpage>,
+    [ResourceType.Whiteboard]: () =>
+      createCallerFactory(whiteboardRouter)(mockContext) satisfies FileAssetsCaller<typeof ResourceType.Whiteboard>,
+  } satisfies { [TType in ResourceType]: () => ResourceTypeCaller<TType> };
+  // The starting content each type's editor saves on first use. A model's own default where its store builds the model from
+  // Its constructor, and the factory its store starts from everywhere else
+  const resourceTypeCreateContentMap = {
+    [ResourceType.Blueprint]: createEmptyBlueprint,
+    [ResourceType.Dashboard]: () => new Dashboard(),
+    [ResourceType.Email]: () => new EmailEditor(),
+    [ResourceType.Note]: createEmptyNote,
+    [ResourceType.Program]: createEmptyProgram,
+    [ResourceType.Sheet]: createDefaultSheetResource,
+    [ResourceType.Survey]: createEmptySurvey,
+    [ResourceType.TodoList]: createEmptyTodoList,
+    [ResourceType.Webpage]: () => new WebpageEditor(),
+    [ResourceType.Whiteboard]: createEmptyWhiteboard,
+  } satisfies { [TType in ResourceType]: () => ResourceContent<TType> };
+  // The content each type's delta test changes its starting content to: the one field that makes it differ, built through
+  // The type's own factory or constructor, and valid under its content schema
+  const resourceTypeChangedContentMap = {
+    [ResourceType.Blueprint]: () => ({
+      ...createEmptyBlueprint(),
+      parameters: [{ defaultValue: "", description: "", key: "changed", title: "" }],
+    }),
+    [ResourceType.Dashboard]: () => new Dashboard({ visuals: [new Visual()] }),
+    [ResourceType.Email]: () => {
+      const email = new EmailEditor();
+      email.root = { props: { ...email.root.props, title: "changed" } };
+      return email;
+    },
+    [ResourceType.Note]: () => ({
+      ...createEmptyNote(),
+      doc: { content: [{ content: [{ text: "changed", type: "text" }], type: "paragraph" }], type: "doc" },
+    }),
+    [ResourceType.Program]: () => ({ ...createEmptyProgram(), keyColumn: "changed" }),
+    [ResourceType.Sheet]: () => {
+      const sheet = createDefaultSheetResource();
+      return { ...sheet, data: { ...sheet.data, metadata: { ...sheet.data.metadata, name: "changed" } } };
+    },
+    [ResourceType.Survey]: () => ({
+      ...createEmptySurvey(),
+      settings: surveySettingsSchema.parse({ isAcceptingResponses: false }),
+    }),
+    [ResourceType.TodoList]: () => ({ ...createEmptyTodoList(), items: [new TodoListItem({ name: "changed" })] }),
+    [ResourceType.Webpage]: () => new WebpageEditor({ description: "changed" }),
+    [ResourceType.Whiteboard]: () => ({
+      ...createEmptyWhiteboard(),
+      elements: [
+        {
+          color: "",
+          id: v7(),
+          isWrapped: true,
+          text: "changed",
+          textSize: TextSize.Small,
+          type: PositionedElementType.Text,
+          width: 100,
+          x: 0,
+          y: 0,
+        },
+      ],
+    }),
+  } satisfies { [TType in ResourceType]: () => ResourceContent<TType> };
   // Uploads a staged save the way the client does — through the write target its presigned url query reserves — and hands
   // Back the hash its commit names
-  const stageContent = async (id: string, compressedContent: Buffer) => {
-    await dashboardCaller.generateUploadContentPresignedUrl({ id, size: compressedContent.byteLength });
+  const stageContent = async (
+    stagingCaller: Pick<ResourceCaller<ResourceContent<ResourceType>>, "generateUploadContentPresignedUrl">,
+    id: string,
+    compressedContent: Buffer,
+  ) => {
+    await stagingCaller.generateUploadContentPresignedUrl({ id, size: compressedContent.byteLength });
     await bucket.put(getStagingContentBlobName(id), compressedContent);
     return createHash("sha256").update(compressedContent).digest("hex");
   };
 
   // Routes the bucket's `head` through `head` and every other call to the store, for the one call a race has to land between.
   // A spy on the bucket's own method does not reach the call, so the bucket the procedure reads is replaced for the test
-  const interceptHead = (head: (blobName: string) => Promise<null | R2Object>) => {
+  // The commit reads only a staged object's etag and size, so an intercepted measurement names those two
+  const interceptHead = (head: (blobName: string) => Promise<null | Pick<R2Object, "etag" | "size">>) => {
     mockBuckets[StorageBucket.ResourceAssets] = new Proxy(bucket, {
       get: (target, property: keyof R2Bucket) => {
         if (property === "head") return head;
@@ -136,16 +300,6 @@ describe(createResourceProcedures, () => {
     await dispose();
   });
 
-  test("creates resource", async () => {
-    expect.hasAssertions();
-
-    const newResource = await dashboardCaller.createResource({ name });
-
-    expect(newResource.name).toBe(name);
-    expect(newResource.type).toBe(ResourceType.Dashboard);
-    expect(newResource.contentVersion).toBe(0);
-  });
-
   test("reads the type's resources a page at a time, the total with the first page", async () => {
     expect.hasAssertions();
 
@@ -184,15 +338,6 @@ describe(createResourceProcedures, () => {
     expect(items.map(({ id }) => id)).toStrictEqual([publishedResource.id]);
   });
 
-  test("updates resource", async () => {
-    expect.hasAssertions();
-
-    const newResource = await dashboardCaller.createResource({ name });
-    const updatedResource = await dashboardCaller.updateResource({ id: newResource.id, name: updatedName });
-
-    expect(updatedResource.name).toBe(updatedName);
-  });
-
   test("fails update with wrong user", async () => {
     expect.hasAssertions();
 
@@ -205,19 +350,6 @@ describe(createResourceProcedures, () => {
         name: updatedName,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("deletes resource", async () => {
-    expect.hasAssertions();
-
-    const newResource = await dashboardCaller.createResource({ name });
-    const deletedResource = await dashboardCaller.deleteResource({ id: newResource.id });
-
-    expect(deletedResource.id).toBe(newResource.id);
-
-    const { items } = await dashboardCaller.readResources();
-
-    expect(items).toStrictEqual([]);
   });
 
   test("reads undefined content for new resource", async () => {
@@ -301,37 +433,6 @@ describe(createResourceProcedures, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${STALE_CONTENT_VERSION_ERROR_MESSAGE}]`);
   });
 
-  // The delta is a plain zstd frame with the stored bytes as its dictionary, which is what the browser's encoder
-  // Writes; node's own encoder stands in for it here
-  test("saves a delta against the stored content and returns the stored bytes' hash", async () => {
-    expect.hasAssertions();
-
-    const newResource = await dashboardCaller.createResource({ name });
-    const savedResource = await dashboardCaller.saveResourceContent({
-      content: new Dashboard(),
-      contentVersion: 0,
-      id: newResource.id,
-    });
-    const baseline = await readJsonBlob(bucket, getContentBlobName(newResource.id));
-    assert.exists(baseline);
-    const dashboard = new Dashboard({ visuals: [new Visual()] });
-    const delta = zstdCompressSync(JSON.stringify(dashboard), { dictionary: baseline }).toBase64();
-    const updatedResource = await dashboardCaller.saveResourceContentDelta({
-      baselineHash: savedResource.contentHash,
-      contentVersion: savedResource.contentVersion,
-      delta,
-      id: newResource.id,
-    });
-    const content = await dashboardCaller.readResourceContent({ id: newResource.id });
-    const storedContent = await readJsonBlob(bucket, getContentBlobName(newResource.id));
-    assert.exists(storedContent);
-
-    expect(savedResource.contentHash).toBe(createHash("sha256").update(baseline).digest("hex"));
-    expect(updatedResource.contentVersion).toBe(2);
-    expect(updatedResource.contentHash).toBe(createHash("sha256").update(storedContent).digest("hex"));
-    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
-  });
-
   // Another device's save moved the stored bytes, so the client's baseline no longer names them
   test("fails save content delta against a baseline the resource no longer holds", async () => {
     expect.hasAssertions();
@@ -364,7 +465,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await dashboardCaller.createResource({ name });
     const dashboard = new Dashboard({ visuals: [new Visual()] });
-    const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(dashboard)));
+    const stagedHash = await stageContent(dashboardCaller, newResource.id, gzipSync(JSON.stringify(dashboard)));
     const updatedResource = await dashboardCaller.saveStagedResourceContent({
       contentVersion: newResource.contentVersion,
       hash: stagedHash,
@@ -384,8 +485,12 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
-    await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard({ visuals: [new Visual()] }))));
+    const stagedHash = await stageContent(dashboardCaller, newResource.id, gzipSync(JSON.stringify(new Dashboard())));
+    await stageContent(
+      dashboardCaller,
+      newResource.id,
+      gzipSync(JSON.stringify(new Dashboard({ visuals: [new Visual()] }))),
+    );
 
     await expect(
       dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
@@ -399,7 +504,7 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
+    const stagedHash = await stageContent(dashboardCaller, newResource.id, gzipSync(JSON.stringify(new Dashboard())));
     const replacement = gzipSync(JSON.stringify(new Dashboard({ visuals: [new Visual()] })));
     // Another upload lands on the staged name between its measurement and its download
     const measure = bucket.head.bind(bucket);
@@ -425,8 +530,13 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
-    interceptHead(() => Promise.resolve({ etag: '"measured"', size: MAX_RESOURCE_CONTENT_SIZE + 1 } as R2Object));
+    const stagedHash = await stageContent(dashboardCaller, newResource.id, gzipSync(JSON.stringify(new Dashboard())));
+    // The staged object as the bucket measured it, reported at a size past the limit
+    interceptHead(async (blobName) => {
+      const measured = await bucket.head(blobName);
+      assert.exists(measured);
+      return { etag: measured.etag, size: MAX_RESOURCE_CONTENT_SIZE + 1 };
+    });
 
     await expect(
       dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
@@ -440,7 +550,11 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    const stagedHash = await stageContent(newResource.id, gzipSync(Buffer.alloc(MAX_RESOURCE_CONTENT_SIZE + 1)));
+    const stagedHash = await stageContent(
+      dashboardCaller,
+      newResource.id,
+      gzipSync(Buffer.alloc(MAX_RESOURCE_CONTENT_SIZE + 1)),
+    );
 
     await expect(
       dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
@@ -455,7 +569,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await dashboardCaller.createResource({ name });
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
-    const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
+    const stagedHash = await stageContent(dashboardCaller, newResource.id, gzipSync(JSON.stringify(new Dashboard())));
 
     await expect(
       dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
@@ -914,5 +1028,346 @@ describe(createResourceProcedures, () => {
       new Set(["deleteFile", "generateUploadFilePresignedUrlEntities", "readResourceFiles"]),
     );
     expect(nonFileAssetsProcedures.difference(fileAssetsProcedures)).toStrictEqual(new Set());
+  });
+
+  // One type's row of the generic procedures every type's factory generates, run through that type's own caller. The row's
+  // Type is a literal, so its caller and content are that type's own: a save takes the type's content, which no row widens
+  // To the union of every type's content, as a single shared caller would have to accept
+  const createResourceTypeRow = <TType extends ResourceType>(
+    type: TType,
+    createCaller: () => ResourceTypeCaller<TType>,
+    createContent: () => ResourceContent<TType>,
+    createChangedContent: () => ResourceContent<TType>,
+  ) => ({
+    defineTests: () => {
+      test("creates a resource of its type", async () => {
+        expect.hasAssertions();
+
+        const caller = createCaller();
+
+        const newResource = await caller.createResource({ name });
+
+        expect(newResource.name).toBe(name);
+        expect(newResource.type).toBe(type);
+        expect(newResource.contentVersion).toBe(0);
+      });
+
+      test("reads its resources, the one it created among them", async () => {
+        expect.hasAssertions();
+
+        const caller = createCaller();
+
+        const newResource = await caller.createResource({ name });
+        const { items } = await caller.readResources();
+
+        expect(items.map(({ id }) => id)).toStrictEqual([newResource.id]);
+      });
+
+      test("updates the resource's name", async () => {
+        expect.hasAssertions();
+
+        const caller = createCaller();
+
+        const newResource = await caller.createResource({ name });
+        const updatedResource = await caller.updateResource({ id: newResource.id, name: updatedName });
+        const { items } = await caller.readResources();
+
+        expect(updatedResource.name).toBe(updatedName);
+        expect(items.map((item) => item.name)).toStrictEqual([updatedName]);
+      });
+
+      test("deletes the resource", async () => {
+        expect.hasAssertions();
+
+        const caller = createCaller();
+
+        const newResource = await caller.createResource({ name });
+        const deletedResource = await caller.deleteResource({ id: newResource.id });
+        const { items } = await caller.readResources();
+
+        expect(deletedResource.id).toBe(newResource.id);
+        expect(items).toStrictEqual([]);
+      });
+
+      test("saves content and reads it back", async () => {
+        expect.hasAssertions();
+
+        const caller = createCaller();
+
+        const newResource = await caller.createResource({ name });
+        const content = createContent();
+        const savedResource = await caller.saveResourceContent({
+          content,
+          contentVersion: newResource.contentVersion,
+          id: newResource.id,
+        });
+        const storedContent = await caller.readResourceContent({ id: newResource.id });
+
+        expect(savedResource.contentVersion).toBe(1);
+        expect(storedContent).toStrictEqual(jsonDateParse(JSON.stringify(content)));
+      });
+
+      test("saves a content delta that changes the stored content", async () => {
+        expect.hasAssertions();
+
+        const caller = createCaller();
+
+        const newResource = await caller.createResource({ name });
+        const savedResource = await caller.saveResourceContent({
+          content: createContent(),
+          contentVersion: newResource.contentVersion,
+          id: newResource.id,
+        });
+        const baseline = await readJsonBlob(bucket, getContentBlobName(newResource.id));
+        assert.exists(baseline);
+        const changedContent = createChangedContent();
+        // The delta is a plain zstd frame with the stored bytes as its dictionary, which is what the browser's encoder
+        // Writes; node's own encoder stands in for it here
+        const delta = zstdCompressSync(JSON.stringify(changedContent), { dictionary: baseline }).toBase64();
+        const updatedResource = await caller.saveResourceContentDelta({
+          baselineHash: savedResource.contentHash,
+          contentVersion: savedResource.contentVersion,
+          delta,
+          id: newResource.id,
+        });
+        const storedContent = await caller.readResourceContent({ id: newResource.id });
+        const storedBytes = await readJsonBlob(bucket, getContentBlobName(newResource.id));
+        assert.exists(storedBytes);
+
+        expect(savedResource.contentHash).toBe(createHash("sha256").update(baseline).digest("hex"));
+        expect(updatedResource.contentVersion).toBe(2);
+        expect(updatedResource.contentHash).toBe(createHash("sha256").update(storedBytes).digest("hex"));
+        expect(storedContent).toStrictEqual(jsonDateParse(JSON.stringify(changedContent)));
+      });
+
+      test("saves staged content and releases its staging blob", async () => {
+        expect.hasAssertions();
+
+        const caller = createCaller();
+
+        const newResource = await caller.createResource({ name });
+        const content = createContent();
+        const stagedHash = await stageContent(caller, newResource.id, gzipSync(JSON.stringify(content)));
+        const updatedResource = await caller.saveStagedResourceContent({
+          contentVersion: newResource.contentVersion,
+          hash: stagedHash,
+          id: newResource.id,
+        });
+        const storedContent = await caller.readResourceContent({ id: newResource.id });
+
+        expect(updatedResource.contentVersion).toBe(1);
+        expect(storedContent).toStrictEqual(jsonDateParse(JSON.stringify(content)));
+        await expect(bucket.head(getStagingContentBlobName(newResource.id))).resolves.toBeNull();
+      });
+    },
+    type,
+  });
+  // One file-assets type's row: the procedures its fileAssets capability generates beside the base ones
+  const createFileAssetsRow = <TType extends FileAssetsResourceType>(
+    type: TType,
+    createCaller: () => FileAssetsCaller<TType>,
+  ) => ({
+    defineTests: () => {
+      test("reads the files a resource holds, and releases the one it deletes", async () => {
+        expect.hasAssertions();
+
+        const caller = createCaller();
+
+        const newResource = await caller.createResource({ name });
+        const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
+        await bucket.put(blobName, Buffer.alloc(1), { httpMetadata: { contentType: mimetype } });
+
+        await expect(caller.readResourceFiles({ id: newResource.id })).resolves.toStrictEqual([
+          { mimetype, size, url: getResourceAssetUrl(blobName) },
+        ]);
+        // The store stamps the upload with its own clock, so the clock moves to the end of the grace window that stamp
+        // Opens, which is when the release may delete the blob
+        const upload = await bucket.head(blobName);
+        assert.exists(upload);
+        vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(upload.uploaded.getTime() + ASSET_GRACE_MS));
+
+        await caller.deleteFile({ blobPath: hash, id: newResource.id });
+
+        expect(MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion)).toStrictEqual([
+          {
+            blobNames: [blobName],
+            decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
+            storageBucket: StorageBucket.ResourceAssets,
+          },
+        ]);
+      });
+    },
+    type,
+  });
+  // One publishable type's row: the procedures its publishable capability generates beside the base ones
+  const createPublishableRow = <TType extends PublishableResourceType>(
+    type: TType,
+    createCaller: () => PublishableCaller<TType>,
+    createContent: () => ResourceContent<TType>,
+  ) => ({
+    defineTests: () => {
+      test("publishes a resource, and reads its publication and published content back", async () => {
+        expect.hasAssertions();
+
+        const caller = createCaller();
+
+        const newResource = await caller.createResource({ name });
+        await caller.saveResourceContent({
+          content: createContent(),
+          contentVersion: newResource.contentVersion,
+          id: newResource.id,
+        });
+        const publication = await caller.publishResource({ id: newResource.id });
+        const readPublication = await caller.readResourcePublication({ id: newResource.id });
+        const { content: publishedContent, name: publishedName } = await caller.readPublishedResourceContent(
+          newResource.id,
+        );
+        // The view the public read counts is written behind it, drained here so it cannot land after the cleanup
+        await waitForSynchronizedFunctions();
+
+        expect(publication.publishVersion).toBe(1);
+        expect(readPublication?.publishVersion).toBe(1);
+        expect(publishedName).toBe(name);
+        await expect(caller.readPublishedVersionContent({ id: newResource.id, version: 1 })).resolves.toStrictEqual({
+          content: publishedContent,
+          name,
+        });
+      });
+
+      test("unpublishes a resource, which then reads as unpublished", async () => {
+        expect.hasAssertions();
+
+        const caller = createCaller();
+
+        const newResource = await caller.createResource({ name });
+        await caller.saveResourceContent({
+          content: createContent(),
+          contentVersion: newResource.contentVersion,
+          id: newResource.id,
+        });
+        await caller.publishResource({ id: newResource.id });
+        await caller.unpublishResource({ id: newResource.id });
+
+        await expect(caller.readResourcePublication({ id: newResource.id })).resolves.toBeUndefined();
+      });
+    },
+    type,
+  });
+
+  // Each type's row, built from its literal so the row's caller and content are that type's own. The map's satisfies fails at
+  // A type it leaves out, so a type cannot drop out of the matrix unnoticed
+  const resourceTypeRowMap = {
+    [ResourceType.Blueprint]: createResourceTypeRow(
+      ResourceType.Blueprint,
+      resourceTypeCallerMap[ResourceType.Blueprint],
+      resourceTypeCreateContentMap[ResourceType.Blueprint],
+      resourceTypeChangedContentMap[ResourceType.Blueprint],
+    ),
+    [ResourceType.Dashboard]: createResourceTypeRow(
+      ResourceType.Dashboard,
+      resourceTypeCallerMap[ResourceType.Dashboard],
+      resourceTypeCreateContentMap[ResourceType.Dashboard],
+      resourceTypeChangedContentMap[ResourceType.Dashboard],
+    ),
+    [ResourceType.Email]: createResourceTypeRow(
+      ResourceType.Email,
+      resourceTypeCallerMap[ResourceType.Email],
+      resourceTypeCreateContentMap[ResourceType.Email],
+      resourceTypeChangedContentMap[ResourceType.Email],
+    ),
+    [ResourceType.Note]: createResourceTypeRow(
+      ResourceType.Note,
+      resourceTypeCallerMap[ResourceType.Note],
+      resourceTypeCreateContentMap[ResourceType.Note],
+      resourceTypeChangedContentMap[ResourceType.Note],
+    ),
+    [ResourceType.Program]: createResourceTypeRow(
+      ResourceType.Program,
+      resourceTypeCallerMap[ResourceType.Program],
+      resourceTypeCreateContentMap[ResourceType.Program],
+      resourceTypeChangedContentMap[ResourceType.Program],
+    ),
+    [ResourceType.Sheet]: createResourceTypeRow(
+      ResourceType.Sheet,
+      resourceTypeCallerMap[ResourceType.Sheet],
+      resourceTypeCreateContentMap[ResourceType.Sheet],
+      resourceTypeChangedContentMap[ResourceType.Sheet],
+    ),
+    [ResourceType.Survey]: createResourceTypeRow(
+      ResourceType.Survey,
+      resourceTypeCallerMap[ResourceType.Survey],
+      resourceTypeCreateContentMap[ResourceType.Survey],
+      resourceTypeChangedContentMap[ResourceType.Survey],
+    ),
+    [ResourceType.TodoList]: createResourceTypeRow(
+      ResourceType.TodoList,
+      resourceTypeCallerMap[ResourceType.TodoList],
+      resourceTypeCreateContentMap[ResourceType.TodoList],
+      resourceTypeChangedContentMap[ResourceType.TodoList],
+    ),
+    [ResourceType.Webpage]: createResourceTypeRow(
+      ResourceType.Webpage,
+      resourceTypeCallerMap[ResourceType.Webpage],
+      resourceTypeCreateContentMap[ResourceType.Webpage],
+      resourceTypeChangedContentMap[ResourceType.Webpage],
+    ),
+    [ResourceType.Whiteboard]: createResourceTypeRow(
+      ResourceType.Whiteboard,
+      resourceTypeCallerMap[ResourceType.Whiteboard],
+      resourceTypeCreateContentMap[ResourceType.Whiteboard],
+      resourceTypeChangedContentMap[ResourceType.Whiteboard],
+    ),
+  } satisfies { [TType in ResourceType]: { type: TType } };
+  // The file procedures' rows, one for each type with the fileAssets capability
+  const fileAssetsRowMap = {
+    [ResourceType.Email]: createFileAssetsRow(ResourceType.Email, resourceTypeCallerMap[ResourceType.Email]),
+    [ResourceType.Note]: createFileAssetsRow(ResourceType.Note, resourceTypeCallerMap[ResourceType.Note]),
+    [ResourceType.Survey]: createFileAssetsRow(ResourceType.Survey, resourceTypeCallerMap[ResourceType.Survey]),
+    [ResourceType.Webpage]: createFileAssetsRow(ResourceType.Webpage, resourceTypeCallerMap[ResourceType.Webpage]),
+    [ResourceType.Whiteboard]: createFileAssetsRow(
+      ResourceType.Whiteboard,
+      resourceTypeCallerMap[ResourceType.Whiteboard],
+    ),
+  } satisfies { [TType in FileAssetsResourceType]: { type: TType } };
+  // The publish procedures' rows, one for each type with the publishable capability
+  const publishableRowMap = {
+    [ResourceType.Dashboard]: createPublishableRow(
+      ResourceType.Dashboard,
+      resourceTypeCallerMap[ResourceType.Dashboard],
+      resourceTypeCreateContentMap[ResourceType.Dashboard],
+    ),
+    [ResourceType.Email]: createPublishableRow(
+      ResourceType.Email,
+      resourceTypeCallerMap[ResourceType.Email],
+      resourceTypeCreateContentMap[ResourceType.Email],
+    ),
+    [ResourceType.Note]: createPublishableRow(
+      ResourceType.Note,
+      resourceTypeCallerMap[ResourceType.Note],
+      resourceTypeCreateContentMap[ResourceType.Note],
+    ),
+    [ResourceType.Survey]: createPublishableRow(
+      ResourceType.Survey,
+      resourceTypeCallerMap[ResourceType.Survey],
+      resourceTypeCreateContentMap[ResourceType.Survey],
+    ),
+    [ResourceType.Webpage]: createPublishableRow(
+      ResourceType.Webpage,
+      resourceTypeCallerMap[ResourceType.Webpage],
+      resourceTypeCreateContentMap[ResourceType.Webpage],
+    ),
+  } satisfies { [TType in PublishableResourceType]: { type: TType } };
+
+  // The generic procedures, run for every resource type through its own caller
+  describe.each(Object.values(resourceTypeRowMap))("$type", ({ defineTests }) => {
+    defineTests();
+  });
+  // The file procedures, which only the types with the fileAssets capability generate
+  describe.each(Object.values(fileAssetsRowMap))("$type", ({ defineTests }) => {
+    defineTests();
+  });
+  // The publish procedures, which only the types with the publishable capability generate
+  describe.each(Object.values(publishableRowMap))("$type", ({ defineTests }) => {
+    defineTests();
   });
 });

@@ -1,6 +1,6 @@
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
 
-import { createEmptyBlueprint } from "#src/services/resource/blueprint/createEmptyBlueprint";
+import { createEmptyBlueprint } from "#shared/services/resource/blueprint/createEmptyBlueprint";
 import { stringifyBlueprintManifest } from "#src/services/resource/blueprint/stringifyBlueprintManifest";
 import { createContentData } from "#src/services/resource/createContentData";
 import { useResourceStore } from "#src/store/resource/index";

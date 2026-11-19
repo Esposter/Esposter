@@ -4,6 +4,7 @@ import type { WhiteboardHistoryEntry } from "#src/models/whiteboard/WhiteboardHi
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { PositionedDocument, PositionedElementProperty } from "vue-block-editor-headless";
 
+import { createEmptyWhiteboard } from "#shared/services/resource/whiteboard/createEmptyWhiteboard";
 import { createContentData } from "#src/services/resource/createContentData";
 import { MAX_WHITEBOARD_HISTORY_SIZE } from "#src/services/resource/whiteboard/constants";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -24,7 +25,10 @@ export const useWhiteboardStore = defineStore("resource/whiteboard", () => {
     content: whiteboard,
     loadContent,
     saveContent: saveWhiteboard,
-  } = createContentData<typeof ResourceType.Whiteboard>(ResourceType.Whiteboard, (data) => data ?? { elements: [] });
+  } = createContentData<typeof ResourceType.Whiteboard>(
+    ResourceType.Whiteboard,
+    (data) => data ?? createEmptyWhiteboard(),
+  );
   // The session clears the history whenever the content is set from outside a commit, so a read from the server starts afresh
   const { commit, history } = useEditSession<PositionedDocument, WhiteboardHistoryEntry>(
     whiteboard,

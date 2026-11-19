@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
 import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
+import { createEmptyBlueprint } from "#shared/services/resource/blueprint/createEmptyBlueprint";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceBlueprintEditor from "#src/components/Resource/Blueprint/Editor.vue";
 import UiSelect from "#src/components/Ui/Select/Index.vue";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { showOpenFilePicker } from "#src/services/file/showOpenFilePicker";
-import { createEmptyBlueprint } from "#src/services/resource/blueprint/createEmptyBlueprint";
 import { PortableFormatMap } from "#src/services/resource/PortableFormatMap";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBlueprintStore } from "#src/store/resource/blueprint/index";

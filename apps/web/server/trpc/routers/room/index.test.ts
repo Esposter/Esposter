@@ -675,6 +675,26 @@ describe("roomRouter", () => {
     expect(takeOne(rooms.items).id).toBe(newRoom.id);
   });
 
+  test("reads the rooms the caller shares with a user, and none only one of them is in", async () => {
+    expect.hasAssertions();
+
+    const sharedRoom = await roomCaller.createRoom({ name });
+    await roomCaller.createRoom({ name: updatedName });
+    const member = await createRoomMember(mockContext, sharedRoom.id);
+    const mutualRooms = await roomCaller.readMutualRooms({ userId: member.id });
+
+    expect(mutualRooms.map(({ id }) => id)).toStrictEqual([sharedRoom.id]);
+  });
+
+  test("reads no direct message as a room the caller shares with a user", async () => {
+    expect.hasAssertions();
+
+    const { user } = await createDirectMessageWithFriend(mockContext);
+    const mutualRooms = await roomCaller.readMutualRooms({ userId: user.id });
+
+    expect(mutualRooms).toStrictEqual([]);
+  });
+
   test("reads every room to its end across page boundaries, newest first", async () => {
     expect.hasAssertions();
 

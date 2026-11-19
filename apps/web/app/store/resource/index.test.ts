@@ -15,12 +15,12 @@ import {
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { createDefaultSheetResource } from "#shared/services/resource/sheet/createDefaultSheetResource";
 import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useDeleteRow } from "#src/composables/resource/sheet/commands/useDeleteRow";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
 import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
-import { createDefaultSheetResource } from "#src/services/resource/sheet/createDefaultSheetResource";
 import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useNotificationStore } from "#src/store/notification";

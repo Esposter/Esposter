@@ -1,8 +1,8 @@
 import type { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import type { PortableFormat } from "#src/models/resource/PortableFormat";
 
+import { createDefaultSheetSettings } from "#shared/services/resource/sheet/createDefaultSheetSettings";
 import { importFile } from "#src/services/file/importFile";
-import { createDefaultSheetSettings } from "#src/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { DataSourceTypeItemCategoryDefinitionMap } from "#src/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";
 import { useResourceStore } from "#src/store/resource/index";

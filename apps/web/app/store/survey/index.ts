@@ -2,18 +2,17 @@ import type { SurveyResource } from "#shared/models/resource/survey/SurveyResour
 import type { SurveySettings } from "#shared/models/resource/survey/SurveySettings";
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
-import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
+import { createEmptySurvey } from "#shared/services/resource/survey/createEmptySurvey";
 import { createContentData } from "#src/services/resource/createContentData";
 import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
-import { createSurveyDocument } from "vue-survey-engine-headless";
 
 export const useSurveyStore = defineStore("survey", () => {
   const resourceStore = useResourceStore();
   const { saveContent } = resourceStore;
   const { content, getContentWriter, loadContent } = createContentData(
     ResourceType.Survey,
-    (data) => data ?? { document: createSurveyDocument(), settings: surveySettingsSchema.parse({}) },
+    (data) => data ?? createEmptySurvey(),
   );
   // The creator owns its editing state; the resource layer only sees the document in and out
   const document = computed(() => content.value.document);

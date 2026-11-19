@@ -422,6 +422,27 @@ describe("resourceRouter", () => {
     expect(resourceTypeCounts).toStrictEqual([{ count: 1, type: ResourceType.Sheet }]);
   });
 
+  test("counts each tag name across the caller's own resources, most used first", async () => {
+    expect.hasAssertions();
+
+    const otherUserCaller = createCallerFactory(dashboardRouter)(
+      await createMockContext(await createMockAuthSession(mockContext.db)),
+    );
+    const otherUserResource = await otherUserCaller.createResource({ name });
+    await otherUserCaller.updateResource({ id: otherUserResource.id, name, tags: { budget: "", review: "" } });
+    const firstResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.updateResource({ id: firstResource.id, name, tags: { budget: "2026", status: "open" } });
+    const secondResource = await dashboardCaller.createResource({ name: updatedName });
+    await dashboardCaller.updateResource({ id: secondResource.id, name: updatedName, tags: { budget: "2027" } });
+
+    const tagCounts = await caller.readResourceTagCounts();
+
+    expect(tagCounts).toStrictEqual([
+      { count: 2, name: "budget" },
+      { count: 1, name: "status" },
+    ]);
+  });
+
   test("filters resources by published status", async () => {
     expect.hasAssertions();
 
@@ -579,7 +600,7 @@ describe("resourceRouter", () => {
     );
   });
 
-  test("an agent reads the critique of a saved webpage", async () => {
+  test("reads the critique of a saved webpage the same through an agent's key and the owner's caller", async () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
@@ -598,6 +619,7 @@ describe("resourceRouter", () => {
       contentVersion: savedResource.contentVersion,
       findings: [{ kind: CritiqueFindingKind.WideFixedWidth, nodeId: TEST_ID, phoneWidthInPixels: 800 }],
     });
+    await expect(caller.readCritique({ id: webpageResource.id })).resolves.toStrictEqual(critique);
   });
 
   test("an agent reads no findings for a webpage never saved", async () => {
@@ -895,6 +917,22 @@ describe("resourceRouter", () => {
     const favorites = await caller.readFavorites();
 
     expect(favorites).toStrictEqual([]);
+  });
+
+  test("records the latest access to a resource, which the listing reads back", async () => {
+    expect.hasAssertions();
+
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(2));
+    await caller.recordAccess({ id: dashboardResource.id });
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(3));
+    await caller.recordAccess({ id: dashboardResource.id });
+    const { items } = await dashboardCaller.readResources();
+
+    // The second open moves the one access row the first one made, so the listing reads the later time
+    expect(items.map(({ id, lastAccessedAt }) => ({ id, lastAccessedAt }))).toStrictEqual([
+      { id: dashboardResource.id, lastAccessedAt: new Date(3) },
+    ]);
   });
 
   test("filters resources by tag containment", async () => {

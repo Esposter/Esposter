@@ -3,6 +3,7 @@ import type { TodoListResource } from "#shared/models/resource/todoList/TodoList
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
 import { checkRollsOnTick } from "#shared/services/resource/todoList/checkRollsOnTick";
+import { createEmptyTodoList } from "#shared/services/resource/todoList/createEmptyTodoList";
 import { rollRecurringItem } from "#shared/services/resource/todoList/rollRecurringItem";
 import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
 import { createContentData } from "#src/services/resource/createContentData";
@@ -27,7 +28,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     // Shape rather than its class instances. The cast is sound because `toJSON` is the only method these
     // Classes have — pinned by the content schemas' `satisfies z.ZodType<ToData<…>>`, which fails the day a
     // Second one is added
-    (data) => (data as TodoListResource | undefined) ?? { items: [] },
+    (data) => (data as TodoListResource | undefined) ?? createEmptyTodoList(),
   );
   const items = computed({
     get: () => todoList.value.items,

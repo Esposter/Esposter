@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 
-import { createDefaultSheetSettings } from "#src/services/resource/sheet/createDefaultSheetSettings";
+import { createDefaultSheetSettings } from "#shared/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { filterDataSourceColumns } from "#src/services/resource/sheet/dataSource/filterDataSourceColumns";
 import { filterDataSourceRows } from "#src/services/resource/sheet/dataSource/filterDataSourceRows";

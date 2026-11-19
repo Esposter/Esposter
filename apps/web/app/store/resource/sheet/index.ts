@@ -1,7 +1,7 @@
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 
+import { createDefaultSheetResource } from "#shared/services/resource/sheet/createDefaultSheetResource";
 import { createContentData } from "#src/services/resource/createContentData";
-import { createDefaultSheetResource } from "#src/services/resource/sheet/createDefaultSheetResource";
 import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { ResourceType } from "@esposter/db-schema";
 

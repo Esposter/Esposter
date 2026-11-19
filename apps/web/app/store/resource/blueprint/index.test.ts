@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
 
+import { createEmptyBlueprint } from "#shared/services/resource/blueprint/createEmptyBlueprint";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
-import { createEmptyBlueprint } from "#src/services/resource/blueprint/createEmptyBlueprint";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBlueprintStore } from "#src/store/resource/blueprint/index";
 import { ResourceType } from "@esposter/db-schema";

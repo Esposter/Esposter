@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
+import { createDefaultSheetSettings } from "#shared/services/resource/sheet/createDefaultSheetSettings";
 import ResourceSheetSettings from "#src/components/Resource/Sheet/Settings.vue";
-import { createDefaultSheetSettings } from "#src/services/resource/sheet/createDefaultSheetSettings";
 import { useSheetStore } from "#src/store/resource/sheet/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
