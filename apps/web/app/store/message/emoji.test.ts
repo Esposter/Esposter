@@ -3,7 +3,7 @@ import { getMockSession } from "#server/trpc/context.test";
 import { useSession } from "#src/services/auth/authClient.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "#src/store/message/emoji";
-import { noop, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -109,15 +109,12 @@ describe(useEmojiStore, () => {
     useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
     const emojiStore = useEmojiStore();
     const { createEmoji, deleteEmoji, getEmojis } = emojiStore;
-    let resolveAdd: (reaction: ReturnType<typeof createReaction>) => void = noop;
+    const { promise: addResponse, resolve: resolveAdd } = Promise.withResolvers<ReturnType<typeof createReaction>>();
     const addStarted = new Promise<void>((resolveAddStarted) => {
-      trpcMsw.message.emoji.addReaction.mutation(
-        () =>
-          new Promise((resolve) => {
-            resolveAdd = resolve;
-            resolveAddStarted();
-          }),
-      );
+      trpcMsw.message.emoji.addReaction.mutation(() => {
+        resolveAddStarted();
+        return addResponse;
+      });
     });
     trpcMsw.message.emoji.removeReaction.mutation(() => undefined);
     createEmoji({ emojiTag, messageId, roomId });

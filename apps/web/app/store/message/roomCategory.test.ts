@@ -55,6 +55,41 @@ describe(useRoomCategoryStore, () => {
     expect(roomCategories.value.map(({ position }) => position)).toStrictEqual([serverPosition]);
   });
 
+  // A reorder sent beside a create still in flight would move the positions the create is appended at, so it waits for
+  // The create to settle, the way a create waits for the one ahead of it
+  test("a reorder issued while a create is in flight waits for it", async () => {
+    expect.hasAssertions();
+
+    const sentRequests: string[] = [];
+    const { promise: createGate, resolve: releaseCreate } = Promise.withResolvers<void>();
+    useSession.mockReturnValue(ref({ data: { user: { id: getMockSession().user.id } } }));
+    trpcMsw.room.category.createRoomCategory.mutation(async ({ input }) => {
+      sentRequests.push("create");
+      await createGate;
+      return createRoomCategory(input);
+    });
+    trpcMsw.room.category.reorderRoomCategories.mutation(() => {
+      sentRequests.push("reorder");
+      return [];
+    });
+    const roomCategoryStore = useRoomCategoryStore();
+    const { roomCategories } = storeToRefs(roomCategoryStore);
+    const { createRoomCategory: storeCreateRoomCategory, reorderRoomCategories } = roomCategoryStore;
+    const first = { ...createRoomCategory({ id }), position: 0 };
+    const second = { ...createRoomCategory({ id: otherId }), position: 1 };
+    roomCategories.value = [first, second];
+    storeCreateRoomCategory({ name });
+    reorderRoomCategories([second, first]);
+    await flushPromises();
+
+    expect(sentRequests).toStrictEqual(["create"]);
+
+    releaseCreate();
+    await waitForSynchronizedFunctions();
+
+    expect(sentRequests).toStrictEqual(["create", "reorder"]);
+  });
+
   test("a rejected optimistic delete restores the list and shows an error", async () => {
     expect.hasAssertions();
 

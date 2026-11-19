@@ -12,9 +12,10 @@ import { v7 } from "uuid";
 export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const { executeMutation: executeCreateRoomCategoryMutation } = useMutation();
-  const { executeMutation: executeDeleteRoomCategoryMutation } = useMutation();
-  const { executeMutation: executeReorderRoomCategoriesMutation } = useMutation();
+  // One executor for every room category write: a queue lives per key within an executor, so creates and reorders
+  // Share the list's key to queue behind each other
+  const { executeMutation } = useMutation();
+  const roomCategoryListKey = "roomCategoryList";
   const roomCategories = ref<RoomCategoryInMessage[]>([]);
   const {
     createRoomCategory: storeCreateRoomCategory,
@@ -35,27 +36,24 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
       updatedAt: new Date(),
       userId: session.value.data.user.id,
     };
-    executeCreateRoomCategoryMutation(
-      () => $trpc.room.category.createRoomCategory.mutate({ ...input, id: newRoomCategory.id }),
-      {
-        applyOptimistic: () => {
-          storeCreateRoomCategory(newRoomCategory);
-          return () => {
-            storeDeleteRoomCategory({ id: newRoomCategory.id });
-          };
-        },
-        // Creates queue, since each is appended below the last the server stored and two at once would tie
-        key: "createRoomCategory",
-        // The position the server appended at is the one the next read sorts by
-        reconcile: (createdRoomCategory) => {
-          storeUpdateRoomCategory(createdRoomCategory);
-        },
+    executeMutation(() => $trpc.room.category.createRoomCategory.mutate({ ...input, id: newRoomCategory.id }), {
+      applyOptimistic: () => {
+        storeCreateRoomCategory(newRoomCategory);
+        return () => {
+          storeDeleteRoomCategory({ id: newRoomCategory.id });
+        };
       },
-    );
+      // Creates queue on the list, since each is appended below the last the server stored and two at once would tie
+      key: roomCategoryListKey,
+      // The position the server appended at is the one the next read sorts by
+      reconcile: (createdRoomCategory) => {
+        storeUpdateRoomCategory(createdRoomCategory);
+      },
+    });
   };
 
   const deleteRoomCategory = (id: DeleteRoomCategoryInput) => {
-    executeDeleteRoomCategoryMutation(() => $trpc.room.category.deleteRoomCategory.mutate(id), {
+    executeMutation(() => $trpc.room.category.deleteRoomCategory.mutate(id), {
       // Deletes are keyed per room category and never queue against each other. Position drives the rendered
       // Order, so where the restored row lands in the array is not observable
       applyOptimistic: () => {
@@ -72,7 +70,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const reorderRoomCategories = (newRoomCategories: RoomCategoryInMessage[]) => {
     const updates = getRoomCategoryPositionUpdates(newRoomCategories);
     if (updates.length === 0) return;
-    executeReorderRoomCategoriesMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
+    executeMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
       // Only the position of each row this write moves, so a row a concurrent create or event added is left as it is
       applyOptimistic: () => {
         const previousPositions = updates
@@ -84,8 +82,9 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
           for (const previousPosition of previousPositions) storeUpdateRoomCategory(previousPosition);
         };
       },
-      // The whole list is the target, so a stable key: reorders run one after the other against it
-      key: "reorderRoomCategories",
+      // The whole list is the target, so it shares the list's key: a reorder waits for a create in flight, and a create
+      // Waits for a reorder, since both write the positions the other one reads
+      key: roomCategoryListKey,
     });
   };
 
