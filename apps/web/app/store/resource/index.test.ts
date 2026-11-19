@@ -1131,6 +1131,40 @@ describe(useResourceStore, () => {
     expect(applyContent).toHaveBeenCalledTimes(2);
   });
 
+  // Another writer's commit lands on top of this store's own save while that save is still in flight, so the watch's refetch
+  // Of the row lands during it. The row is compared once the save has answered, since the answer sets the hash it is
+  // Compared against, and the other writer's content is adopted
+  test("adopts another writer's commit that lands on top of an own save still in flight", async () => {
+    expect.hasAssertions();
+
+    const ownContentHash = "own-content-hash";
+    const applyContent = vi.fn<(content: unknown) => void>();
+    const readContentQuery = vi.fn<() => SheetResource>(() => createDefaultSheetResource());
+    trpcMsw.sheet.readResourceContent.query(readContentQuery);
+    const { promise: saveAnswered, resolve: answerSave } = Promise.withResolvers<void>();
+    trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+      await saveAnswered;
+      return { ...createResource(input.id), contentHash: ownContentHash, contentVersion: input.contentVersion + 1 };
+    });
+    const resourceStore = useResourceStore();
+    const { readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    const unregisterReload = ResourceContentHookMap.Reload.register(() => readContent(applyContent));
+    await readResource();
+    await readContent(applyContent);
+    saveContent(createDefaultSheetResource());
+    serveOpenRow({ contentHash: otherDeviceHash, contentVersion: 2 });
+    await readResource();
+    answerSave();
+    await withFinalizerAsync(async () => {
+      await settleSave();
+      await waitForSynchronizedFunctions();
+    }, unregisterReload);
+
+    expect(readContentQuery).toHaveBeenCalledTimes(2);
+    expect(applyContent).toHaveBeenCalledTimes(2);
+  });
+
   // An unwritten edit is the person's, and another device's save must not replace it. The save is held behind the
   // Stale latch, which holds autosave too, until the person answers
   test("an unsaved edit stays on screen when another device saves", async () => {

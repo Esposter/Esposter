@@ -81,6 +81,8 @@ export const useResourceStore = defineStore("resource", () => {
   // Read is the moment the content in hand becomes this resource's — and it stays the previous resource's for
   // The whole of a read plus the await that follows it
   let contentResourceId = "";
+  // The open row a save in flight held back from the comparison, until the saves of its resource settle
+  let heldOtherRow: ResourceInResource | undefined;
   // Which opening of the resource the state belongs to. Closing a resource and reopening it loads the same id,
   // So an id cannot tell a content read or a save the first opening issued from one of the reopened blade's —
   // Landed on the reopened one, it would hand that blade content older than the row it just read, and its next
@@ -187,6 +189,7 @@ export const useResourceStore = defineStore("resource", () => {
     resource.value = undefined;
     publication.value = undefined;
     opening = Symbol("opening");
+    heldOtherRow = undefined;
     contentResourceId = "";
     persistedContentJson = "";
     persistedContentHash = undefined;
@@ -258,9 +261,9 @@ export const useResourceStore = defineStore("resource", () => {
     applyContent(content as ResourceContent<TType> | undefined);
   };
   // Every blade of a resource renders the one content, so it is read once per opened resource rather than once
-  // Per blade mount — switching blades renders from the store at once. What changes it after that reaches the
-  // Store without a re-read: the store's own saves, a type's live subscription, and a restore through
-  // `reloadResourceContent`. Closing the resource resets it, so reopening reads afresh
+  // Per blade mount — switching blades renders from the store at once. What changes it after that is the store's own
+  // Saves, the page's watch of the open row, which re-reads the content only for a hash the store does not hold, and a
+  // Restore through `reloadResourceContent`. Closing the resource resets it, so reopening reads afresh
   const checkIsContentRead = () => contentResourceId === resource.value?.id;
   // Every content store calls this once its load has hydrated, and the editors' stores have to: the editor
   // Stores as soon as it finishes loading, so the first save of a session is an echo of what was just read.
@@ -278,15 +281,22 @@ export const useResourceStore = defineStore("resource", () => {
   );
   // The page's watch of the open row brings the row here, and every write to the content publishes that row, so this is
   // Where another device's save, an agent's and a restore's reach the editor. The blob is read only for a hash the store
-  // Does not hold. A save still in flight is the store's own: its answer sets the hash, so the row it wrote is left to
-  // That answer rather than read back over the edit that is being saved
-  const applyOtherContent = (newResource: ResourceInResource) => {
-    if (
-      !checkIsContentRead() ||
-      newResource.contentHash === persistedContentHash ||
-      checkIsSaveContentPending(newResource.id)
-    )
+  // Does not hold. A row that lands while a save of this store's own is in flight waits: that save's answer sets the hash
+  // The row is compared against, and a row another writer committed on top of it is compared once the saves settle, not
+  // Dropped. Only the latest row is held, since it names the newest state
+  const applyOtherContent = (newResource: ResourceInResource): void => {
+    heldOtherRow = undefined;
+    if (!checkIsContentRead() || newResource.contentHash === persistedContentHash) return;
+
+    if (checkIsSaveContentPending(newResource.id)) {
+      heldOtherRow = newResource;
+      getSynchronizedFunction(async () => {
+        await whenContentSaved(newResource.id);
+        // A newer row, or one applied since, has taken the held row's place, and a save issued meanwhile holds it again
+        if (heldOtherRow === newResource) applyOtherContent(newResource);
+      })();
       return;
+    }
 
     // The unwritten edit is the person's, so the other save waits for their answer, and the stale latch holds autosave
     // Until then
