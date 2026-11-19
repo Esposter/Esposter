@@ -52,15 +52,18 @@ export const tallyRadiance = ({
     const familyName = getFamilyName(families, family[pixel] ?? -1);
     const light = (shadow[pixel] ?? 0) > SUN_REACHES ? RadianceLight.Lit : RadianceLight.Shaded;
     const isClipped = [...referenceBytes, ...oursBytes].includes(BYTE);
-    for (const tallyLight of [light, RadianceLight.All]) {
+    const tallyLights = [light, RadianceLight.All];
+    if (isClipped) {
+      for (const tallyLight of tallyLights) getRadianceTally(tallies, familyName, tallyLight).clipped++;
+      continue;
+    }
+    const referenceRadiance = toRadianceTriple(referenceBytes);
+    const oursRadiance = toRadianceTriple(oursBytes);
+    for (const tallyLight of tallyLights) {
       const tally = getRadianceTally(tallies, familyName, tallyLight);
-      if (isClipped) {
-        tally.clipped++;
-        continue;
-      }
       tally.pixels++;
-      tally.reference = addRadianceTriples(tally.reference, toRadianceTriple(referenceBytes));
-      tally.ours = addRadianceTriples(tally.ours, toRadianceTriple(oursBytes));
+      tally.reference = addRadianceTriples(tally.reference, referenceRadiance);
+      tally.ours = addRadianceTriples(tally.ours, oursRadiance);
     }
   }
   return [...tallies.values()];
