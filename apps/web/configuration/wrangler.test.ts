@@ -1,5 +1,5 @@
-import { Environment } from "#shared/models/environment/Environment";
 import { getCloudflareEnvironment } from "#configuration/wrangler";
+import { Environment } from "#shared/models/environment/Environment";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { CloudflareEnvironment } from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";

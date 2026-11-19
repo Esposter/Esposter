@@ -1,5 +1,5 @@
-import { Environment } from "#shared/models/environment/Environment";
 import serveGenshinExtractions from "#modules/serveGenshinExtractions";
+import { Environment } from "#shared/models/environment/Environment";
 import { GENSHIN_SCENE_EXPORT_BASE_URL } from "#shared/services/genshin/constants";
 import { join } from "node:path";
 import { addServerHandler } from "nuxt/kit";
