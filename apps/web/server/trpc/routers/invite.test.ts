@@ -3,7 +3,13 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
-import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
+import {
+  createMockAuthSession,
+  createMockCaller,
+  createMockContext,
+  createMockOtherUserCaller,
+  getMockSession,
+} from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
@@ -80,9 +86,9 @@ describe("inviteRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
-    const joinerRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
+    const joinerRoomCaller = await createMockOtherUserCaller(roomRouter, mockContext.db);
     await joinerRoomCaller.joinRoom(newInvite.id);
-    const strangerInviteCaller = await createMockCaller(inviteRouter, await createMockAuthSession(mockContext.db));
+    const strangerInviteCaller = await createMockOtherUserCaller(inviteRouter, mockContext.db);
     const invite = await strangerInviteCaller.readInvite(newInvite.id);
 
     assert.exists(invite);
