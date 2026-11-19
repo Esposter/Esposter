@@ -1125,7 +1125,7 @@ useWorldSaveSync({
         :frostbearing-tree-places
         :bounty-trail-ends
         :seelies="puzzleSeelies"
-        :fishing-scene="fishingScene"
+        :fishing-scene
         :wildlife-list="kitContext.wildlifeList"
         :windrise-data
         :world-level

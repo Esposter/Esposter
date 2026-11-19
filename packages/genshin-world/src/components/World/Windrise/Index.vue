@@ -9,6 +9,7 @@ import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
+import type { FishingScene } from "#src/models/fishing/FishingScene";
 import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -17,7 +18,6 @@ import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
-import type { FishingScene } from "#src/models/fishing/FishingScene";
 import type { Wildlife } from "#src/models/wildlife/Wildlife";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
@@ -34,6 +34,10 @@ import type {
 import type { Object3D, Vector3 } from "three";
 
 import CharacterModel from "#src/components/Character/Model/Index.vue";
+import FishingSceneFish from "#src/components/Fishing/Scene/Fish/Index.vue";
+import FishingSceneFloat from "#src/components/Fishing/Scene/Float/Index.vue";
+import FishingSceneRod from "#src/components/Fishing/Scene/Rod/Index.vue";
+import FishingSceneSplash from "#src/components/Fishing/Scene/Splash/Index.vue";
 import QuestBeam from "#src/components/Quest/Beam/Index.vue";
 import WorldEnemies from "#src/components/World/Enemies/Index.vue";
 import WorldFrostbearingTree from "#src/components/World/FrostbearingTree/Index.vue";
@@ -43,10 +47,6 @@ import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldPlants from "#src/components/World/Plants/Index.vue";
 import WorldRivers from "#src/components/World/Rivers/Index.vue";
 import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
-import FishingSceneFish from "#src/components/Fishing/Scene/Fish/Index.vue";
-import FishingSceneFloat from "#src/components/Fishing/Scene/Float/Index.vue";
-import FishingSceneRod from "#src/components/Fishing/Scene/Rod/Index.vue";
-import FishingSceneSplash from "#src/components/Fishing/Scene/Splash/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
 import WorldWaterfalls from "#src/components/World/Waterfalls/Index.vue";
@@ -151,6 +151,8 @@ interface Props {
   enemyRespawnMap: ReadonlyMap<string, string>;
   // The game's enemy tables, which the camps spawn their enemies from
   enemyTables: EnemyTables;
+  // The reel's pieces as the cast stands: the fish at the lure, the lure, and a strike's splash
+  fishingScene: FishingScene;
   // The Frostbearing Trees the official map marks, each stood in at its place
   frostbearingTreePlaces: FrostbearingTreePlace[];
   // Where the hosted game data is read from, which each region's palettes are read from as it comes within reach
@@ -202,8 +204,6 @@ interface Props {
   // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport out of its
   // Area comes
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
-  // The reel's pieces as the cast stands: the fish at the lure, the lure, and a strike's splash
-  fishingScene: FishingScene;
   // The animals in the world, each stood at its place or fallen, which the session holds
   wildlifeList: Wildlife[];
   // Windrise's records: its ground, its surfaces, its oak, plants, paving and statue, and its water

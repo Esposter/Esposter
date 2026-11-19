@@ -3,6 +3,7 @@ import type { FishingPointPlace } from "#src/models/fishing/FishingPointPlace";
 import type { LightUniforms } from "genshin-engine";
 
 import { FISHING_POINT_CAPACITY, FISHING_POINT_RING_OPTIONS } from "#src/services/fishing/constants";
+import { watchImmediate } from "@vueuse/core";
 import { createFishingRippleMaterial, createInstancedMesh, createRippleRingGeometry } from "genshin-engine";
 import { Matrix4 } from "three";
 import { float } from "three/tsl";
@@ -22,20 +23,16 @@ const ringMesh = createInstancedMesh(geometry, material, FISHING_POINT_CAPACITY)
 // The rings sit where the points are placed, so the mesh's bounds, measured once at its origin, would cull them
 ringMesh.frustumCulled = false;
 const matrix = new Matrix4();
-watchEffect(() => {
+watchImmediate(
   // The instanced draw holds at most its capacity of rings, so a point past it is not drawn
-  const placed = points.slice(0, FISHING_POINT_CAPACITY);
-  for (const [
-    index,
-    {
-      position: { x, z },
-    },
-  ] of placed.entries())
-    ringMesh.setMatrixAt(index, matrix.makeTranslation(x, getGroundHeight(x, z), z));
+  () => points.slice(0, FISHING_POINT_CAPACITY).map(({ position: { x, z } }) => ({ x, y: getGroundHeight(x, z), z })),
+  (placed) => {
+    for (const [index, { x, y, z }] of placed.entries()) ringMesh.setMatrixAt(index, matrix.makeTranslation(x, y, z));
 
-  ringMesh.count = placed.length;
-  ringMesh.instanceMatrix.needsUpdate = true;
-});
+    ringMesh.count = placed.length;
+    ringMesh.instanceMatrix.needsUpdate = true;
+  },
+);
 
 onUnmounted(() => {
   geometry.dispose();

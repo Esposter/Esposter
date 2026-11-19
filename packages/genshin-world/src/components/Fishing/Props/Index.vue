@@ -3,15 +3,15 @@ import type { FishingPropPlace } from "#src/models/fishing/FishingPropPlace";
 import type { LightUniforms } from "genshin-engine";
 import type { BufferGeometry, DataTexture } from "three";
 
-import { FISHING_PROP_STAND_IN_COLOR } from "#src/services/fishingProps/constants";
 import { computeFishingPropPlacements } from "#src/services/fishingProps/computeFishingPropPlacements";
+import { FISHING_PROP_STAND_IN_COLOR } from "#src/services/fishingProps/constants";
 import { createPropStandInGeometry, createToonMaterial, setObjectSurface } from "genshin-engine";
 import { Group, Mesh } from "three";
 
 interface Props {
+  lightUniforms: LightUniforms;
   // The region's fishing-area props, each drawn as a stand-in at the place, turn and scale its record gives it
   places: FishingPropPlace[];
-  lightUniforms: LightUniforms;
   rampTexture: DataTexture;
 }
 
