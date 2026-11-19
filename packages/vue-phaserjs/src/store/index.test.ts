@@ -33,8 +33,8 @@ describe(usePhaserStore, () => {
     await switchToScene(otherSceneKey);
 
     expect(rootSceneKey.value).toBe(otherSceneKey);
-    expect(stopSpy).toHaveBeenCalledWith(sceneKey);
-    expect(startSpy).toHaveBeenCalledWith(otherSceneKey);
+    expect(stopSpy).toHaveBeenCalledExactlyOnceWith(sceneKey);
+    expect(startSpy).toHaveBeenCalledExactlyOnceWith(otherSceneKey);
 
     removeTestScene(sceneKey);
     removeTestScene(otherSceneKey);
@@ -58,7 +58,7 @@ describe(usePhaserStore, () => {
     launchParallelScene(rootScene, otherSceneKey);
 
     expect(parallelSceneKeys.value).toStrictEqual([otherSceneKey]);
-    expect(launchSpy).toHaveBeenCalledWith(otherSceneKey);
+    expect(launchSpy).toHaveBeenCalledExactlyOnceWith(otherSceneKey);
 
     parallelSceneKeys.value = [];
     removeTestScene(sceneKey);
@@ -85,7 +85,7 @@ describe(usePhaserStore, () => {
     removeParallelScene(rootScene, otherSceneKey);
 
     expect(parallelSceneKeys.value).toStrictEqual([]);
-    expect(stopSpy).toHaveBeenCalledWith(otherSceneKey);
+    expect(stopSpy).toHaveBeenCalledExactlyOnceWith(otherSceneKey);
 
     removeTestScene(sceneKey);
     removeTestScene(otherSceneKey);

@@ -34,7 +34,7 @@ describe("container", () => {
 
     assert.exists(capturedSprite);
 
-    expect(scene.children.list).toContain(capturedSprite.parentContainer);
+    expect(scene.children.list).toStrictEqual([capturedSprite.parentContainer]);
   });
 
   test("does not place an immediate child that unmounted before its scene's next tick", async () => {
@@ -74,6 +74,6 @@ describe("container", () => {
 
     assert.exists(capturedContainer);
 
-    expect(capturedContainer.list).not.toContain(capturedSprite);
+    expect(capturedContainer.list).toStrictEqual([]);
   });
 });

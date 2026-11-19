@@ -137,11 +137,11 @@ describe(useInitializeGameObject, () => {
     const scene = startTestScene(sceneKey);
     assert.exists(capturedSprite);
 
-    expect(scene.children.list).toContain(capturedSprite);
+    expect(scene.children.list).toStrictEqual([capturedSprite]);
 
     unmountGameObject();
 
-    expect(scene.children.list).not.toContain(capturedSprite);
+    expect(scene.children.list).toStrictEqual([]);
   });
 
   test("creates the game object immediately without waiting for onCreate when the immediate flag is set", () => {
@@ -163,7 +163,7 @@ describe(useInitializeGameObject, () => {
 
     assert.exists(capturedSprite);
 
-    expect(scene.children.list).toContain(capturedSprite);
+    expect(scene.children.list).toStrictEqual([capturedSprite]);
   });
 
   test("does not create the game object when it unmounts before its scene creates it", () => {
@@ -186,7 +186,7 @@ describe(useInitializeGameObject, () => {
     expect(capturedSprite).toBeUndefined();
   });
 
-  test("does not apply a value queued for the next tick once the game object has unmounted", async () => {
+  test("a value queued for the next tick does not throw when the scene steps after the game object unmounts", async () => {
     expect.hasAssertions();
 
     let capturedSprite: GameObjects.Sprite | undefined;

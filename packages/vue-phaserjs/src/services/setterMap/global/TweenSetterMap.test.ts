@@ -1,6 +1,7 @@
 import { TweenSetter } from "#src/models/setterMap/global/TweenSetter";
 import { TweenSetterMap } from "#src/services/setterMap/global/TweenSetterMap";
 import { removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
+import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("tweenSetterMap", () => {
@@ -30,10 +31,11 @@ describe("tweenSetterMap", () => {
     const emit = vi.fn<(...args: unknown[]) => void>();
     const onComplete = vi.fn<(...args: unknown[]) => void>();
     TweenSetterMap[TweenSetter.Tween](sprite, emit)({ duration: 1, onComplete, x: 0 });
+    const tween = takeOne(scene.tweens.getTweensOf(sprite));
     sprite.destroy();
-    for (const tween of scene.tweens.getTweensOf(sprite)) tween.update(0);
+    tween.update(0);
 
-    expect(onComplete).toHaveBeenCalledExactlyOnceWith(expect.anything(), [sprite]);
+    expect(onComplete).toHaveBeenCalledExactlyOnceWith(tween, [sprite]);
     expect(emit).toHaveBeenCalledExactlyOnceWith("update:tween", undefined);
   });
 });
