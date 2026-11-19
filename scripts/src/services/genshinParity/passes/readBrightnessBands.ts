@@ -3,40 +3,34 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 
 import { computeBrightnessBands } from "#src/services/genshinParity/passes/computeBrightnessBands";
 import { DISPLAY_WIDTH } from "#src/services/genshinParity/passes/constants";
+import { checkIsScoredPixel } from "#src/services/genshinParity/shared/checkIsScoredPixel";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
+import { readReferenceImage } from "#src/services/genshinParity/shared/readReferenceImage";
 import { shootScreen } from "#src/services/genshinParity/shared/shootScreen";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import sharp from "sharp";
 
 // The pixels of the display frame inside the reference's scored region, the region scaled to the display width, or all
-// of them where the reference names none
+// Of them where the reference names none
 const getScoredMask = (
   region: ParityReference["region"],
   referenceWidth: number,
   displayHeight: number,
 ): Uint8Array => {
   if (!region) return new Uint8Array(DISPLAY_WIDTH * displayHeight).fill(1);
-  const scale = DISPLAY_WIDTH / referenceWidth;
-  return Uint8Array.from({ length: DISPLAY_WIDTH * displayHeight }, (_value, pixel) => {
-    const column = pixel % DISPLAY_WIDTH;
-    const row = Math.floor(pixel / DISPLAY_WIDTH);
-    const isScored =
-      column >= region.x * scale &&
-      column < (region.x + region.width) * scale &&
-      row >= region.y * scale &&
-      row < (region.y + region.height) * scale;
-    return isScored ? 1 : 0;
-  });
+  return Uint8Array.from({ length: DISPLAY_WIDTH * displayHeight }, (_value, pixel) =>
+    Number(checkIsScoredPixel(region, referenceWidth, pixel, DISPLAY_WIDTH)),
+  );
 };
 
 // A reference's brightness bands with the bloom drawn off: our frame of its screen at the reference's own size, as
 // `compare` shoots it (its props, variant and window), with `isBloomed` forced off, against the reference, both resized
-// down to the display width by the same kernel, so neither side is read sharper. Its bands are read over the reference's
-// scored region
+// Down to the display width by the same kernel, so neither side is read sharper. Its bands are read over the reference's
+// Scored region
 export const readBrightnessBands = async (referenceId: string, pageRoot?: string): Promise<BrightnessBandReading[]> => {
   await fetchReferences();
   const reference = ParityReferenceMap[referenceId];
@@ -54,13 +48,9 @@ export const readBrightnessBands = async (referenceId: string, pageRoot?: string
     windowLeft: reference.windowLeft,
   });
   const displayHeight = Math.round((DISPLAY_WIDTH * height) / width);
-  // A WebP reference is shrunk as it loads by default, so the reference is read at its own size first, as
-  // `openWitnessPage` reads it, and the one resize below takes both sides down
-  const image = await sharp(referencePath)
-    .resize(width, height, { fastShrinkOnLoad: false })
-    .removeAlpha()
-    .png()
-    .toBuffer();
+  // The reference is read at its own size first, as `openWitnessPage` reads it, and the one resize below takes both sides
+  // Down
+  const image = await readReferenceImage(referencePath, width, height);
   const [referenceRgb, oursRgb] = await Promise.all([
     readRawRgb(image, DISPLAY_WIDTH, displayHeight),
     readRawRgb(await readFile(shotPath), DISPLAY_WIDTH, displayHeight),

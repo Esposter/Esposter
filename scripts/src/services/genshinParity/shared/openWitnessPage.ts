@@ -1,11 +1,13 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { Page } from "playwright";
 
+import { checkIsScoredPixel } from "#src/services/genshinParity/shared/checkIsScoredPixel";
 import { STRUCTURE_WIDTH, WORLD_SCREEN_PREFIX } from "#src/services/genshinParity/shared/constants";
 import { getPageWidth } from "#src/services/genshinParity/shared/getPageWidth";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { readReferenceImage } from "#src/services/genshinParity/shared/readReferenceImage";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import sharp from "sharp";
 
@@ -46,11 +48,7 @@ export const openWitnessPage = async (
   const height = Math.round((pageWidth / referenceWidth) * referenceHeight);
   // A WebP reference is shrunk as it loads by default, which resamples its pixels differently from its PNG, so the
   // Shrink is left to the resize, and the reference reads as the screenshot it was packed from
-  const image = await sharp(referencePath)
-    .resize(pageWidth, height, { fastShrinkOnLoad: false })
-    .removeAlpha()
-    .png()
-    .toBuffer();
+  const image = await readReferenceImage(referencePath, pageWidth, height);
   const { close, page } = await openParityPage({
     height,
     pageRoot,
@@ -61,16 +59,7 @@ export const openWitnessPage = async (
     witnessMeshes,
   });
   const { region } = reference;
-  const checkIsScored = (pixel: number, targetWidth: number): boolean => {
-    if (!region) return true;
-    const scale = targetWidth / referenceWidth;
-    const [column, row] = [pixel % targetWidth, Math.floor(pixel / targetWidth)];
-    return (
-      column >= region.x * scale &&
-      column < (region.x + region.width) * scale &&
-      row >= region.y * scale &&
-      row < (region.y + region.height) * scale
-    );
-  };
+  const checkIsScored = (pixel: number, targetWidth: number): boolean =>
+    !region || checkIsScoredPixel(region, referenceWidth, pixel, targetWidth);
   return { checkIsScored, close, height, image, page };
 };
