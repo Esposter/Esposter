@@ -46,8 +46,8 @@ export const openWitnessPage = async (
     requestedWidth: width,
   });
   const height = Math.round((pageWidth / referenceWidth) * referenceHeight);
-  // A WebP reference is shrunk as it loads by default, which resamples its pixels differently from its PNG, so the
-  // Shrink is left to the resize, and the reference reads as the screenshot it was packed from
+  // The reference is read at its own size by `readReferenceImage`, which owns why a WebP's shrink is left to the
+  // Resize
   const image = await readReferenceImage(referencePath, pageWidth, height);
   const { close, page } = await openParityPage({
     height,
