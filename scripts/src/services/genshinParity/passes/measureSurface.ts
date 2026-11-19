@@ -6,6 +6,7 @@ import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTarge
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
 import { computeFamilyMask } from "#src/services/genshinParity/passes/computeFamilyMask";
 import { computeStructureError } from "#src/services/genshinParity/passes/computeStructureError";
+import { computeStructureTerms } from "#src/services/genshinParity/passes/computeStructureTerms";
 import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
 import { formatScales } from "#src/services/genshinParity/passes/formatScales";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
@@ -93,6 +94,7 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
                 gate,
                 scales: comparison.scales,
                 structure: computeStructureError(structureReference, structureShot),
+                terms: computeStructureTerms(structureReference, structureShot),
               };
             }),
           ),
@@ -105,6 +107,10 @@ export const measureSurface = (component: DerivedAssetComponent, pageRoot?: stri
           ...measured.map(
             ({ family, scales }) =>
               `${referenceId} ${families[family] ?? family} structure by scale, finest first (pixel-aligned, diagnostic): ${formatScales(scales)}`,
+          ),
+          ...measured.map(
+            ({ family, terms }) =>
+              `${referenceId} ${families[family] ?? family} structure terms, variance then bands finest first (exports | ours | error): ${terms.map(({ error, reference, shot }) => `${reference.toFixed(4)} | ${shot.toFixed(4)} | ${error.toFixed(3)}`).join(", ")}`,
           ),
         ],
         readings: measured.flatMap(({ colour, family, gate, structure }): ParityPassReading[] => {

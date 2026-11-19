@@ -114,3 +114,44 @@ A surface whose exports' normal maps bend its normals SHALL lean its normals by 
 - **GIVEN** the walkway's rims bend its normals more than its exports' normal maps do
 - **WHEN** the login's shape pass is run
 - **THEN** the walkway's surface detail bend reading holds its gate
+
+### Requirement: A surface's structure is matched by its exports' band statistics
+
+A surface's structure SHALL be read term by term, the luminance's variance and each octave band's detail energy, and a family whose albedo is one flat colour or a stand-in SHALL match its exports' terms with a grain of its own fitted to them, never with a pixel score.
+
+#### Scenario: A family's structure loss is read term by term
+
+- **GIVEN** a family's structure is read against its exports'
+- **WHEN** its loss is read
+- **THEN** each statistic the reference holds reads its own relative error
+- **AND** a statistic the reference holds none of is left out
+
+#### Scenario: A family's structure is the root mean square of its terms
+
+- **GIVEN** a family's structure loss is read term by term
+- **WHEN** the family's structure is reported
+- **THEN** it is the root mean square of its terms' relative errors
+
+#### Scenario: Bridges' structure is matched by a grain fitted to its exports' bands
+
+- **GIVEN** the bridges' albedo is one flat colour and the exports' albedo holds band detail
+- **WHEN** the login's surface pass is run
+- **THEN** the bridges' structure holds its gate
+
+#### Scenario: Towers' structure is matched by a grain fitted to its exports' bands
+
+- **GIVEN** the towers' shades hold less band detail than their exports' albedo
+- **WHEN** the login's surface pass is run
+- **THEN** the towers' structure holds its gate
+
+#### Scenario: Walkway's structure is matched by a grain fitted to its exports' bands
+
+- **GIVEN** the walkway's paving holds less band detail than its exports' albedo
+- **WHEN** the login's surface pass is run
+- **THEN** the walkway's structure holds its gate
+
+#### Scenario: Door's structure is matched by a grain fitted to its exports' bands
+
+- **GIVEN** the door's relief holds less band detail than its exports' albedo
+- **WHEN** the login's surface pass is run
+- **THEN** the door's structure holds its gate
