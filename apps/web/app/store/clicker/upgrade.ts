@@ -3,7 +3,7 @@ import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import type { UpgradeId } from "#shared/models/clicker/data/upgrade/UpgradeId";
 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
-import { getUnlockedUpgrades } from "#src/services/clicker/upgrade/getUnlockedUpgrades";
+import { computeUnlockedUpgrades } from "#src/services/clicker/upgrade/computeUnlockedUpgrades";
 import { useClickerStore } from "#src/store/clicker/index";
 import { usePointStore } from "#src/store/clicker/point";
 
@@ -25,7 +25,7 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   // Never be reused while this one is still clean
   const availableUpgrades = computed(() =>
     sortByPrice(
-      getUnlockedUpgrades(
+      computeUnlockedUpgrades(
         upgrades.value,
         clickerStore.clicker.boughtBuildings,
         clickerStore.clicker.boughtUpgrades,

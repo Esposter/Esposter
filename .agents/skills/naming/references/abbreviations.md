@@ -22,6 +22,13 @@ value that crosses the wire, which is never renamed to match its member.
 after its full domain type. The bare word keeps library-owned sites, a dependency's `config` key and the destructure
 that reads it (`names-a-dependency-owns.md`), so it is not on the denylist; those sites keep the library's spelling.
 
+## `init` is the `Partial` override, not an abbreviation
+
+The one-word `init` a factory or constructor takes for its `Partial<T>` overrides (`createClicker(init?)`,
+`constructor(init?: Partial<ClickerSave>)` across the models) is the repo's spelling for that parameter, and `fetch`'s
+`init` is the Web API's own. Renaming one site to `initial` would collide with the `initial*` snapshot prefix, so
+it stays.
+
 ## A stored count is `<singular noun>Count`
 
 `commentCount`, `likeCount`, `mentionCount`, DB columns included. Singular, because the suffix already carries the

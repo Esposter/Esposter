@@ -5,7 +5,7 @@ import { Target } from "#shared/models/clicker/data/Target";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // An upgrade is unlocked once every one of its conditions holds against the buildings owned and the upgrades bought
-export const getUnlockedUpgrades = (
+export const computeUnlockedUpgrades = (
   upgrades: Upgrade[],
   boughtBuildings: BuildingWithStatistics[],
   boughtUpgrades: Upgrade[],

@@ -5,7 +5,7 @@ import { Target } from "#shared/models/clicker/data/Target";
 import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgradeId";
 import { createBuildingWithStatistics } from "#src/services/clicker/createBuildingWithStatistics.test";
 import { createUpgrade } from "#src/services/clicker/upgrade/createUpgrade.test";
-import { getUnlockedUpgrades } from "#src/services/clicker/upgrade/getUnlockedUpgrades";
+import { computeUnlockedUpgrades } from "#src/services/clicker/upgrade/computeUnlockedUpgrades";
 import { describe, expect, test } from "vitest";
 
 const createUpgradeWithConditions = (unlockConditions: UnlockCondition[]) => ({
@@ -13,7 +13,7 @@ const createUpgradeWithConditions = (unlockConditions: UnlockCondition[]) => ({
   unlockConditions,
 });
 
-describe(getUnlockedUpgrades, () => {
+describe(computeUnlockedUpgrades, () => {
   const amount = 10;
   const buildingCondition = { amount, id: BuildingId.Cursor, type: Target.Building } as const;
   const upgradeCondition = { id: CursorUpgradeId.Ambidextrous, type: Target.Upgrade } as const;
@@ -23,7 +23,7 @@ describe(getUnlockedUpgrades, () => {
 
     const upgrade = createUpgradeWithConditions([]);
 
-    expect(getUnlockedUpgrades([upgrade], [], [])).toStrictEqual([upgrade]);
+    expect(computeUnlockedUpgrades([upgrade], [], [])).toStrictEqual([upgrade]);
   });
 
   test("unlocks a building condition once the building is owned in its amount", () => {
@@ -31,11 +31,11 @@ describe(getUnlockedUpgrades, () => {
 
     const upgrade = createUpgradeWithConditions([buildingCondition]);
 
-    expect(getUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Cursor, amount)], [])).toStrictEqual(
-      [upgrade],
-    );
     expect(
-      getUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Cursor, amount - 1)], []),
+      computeUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Cursor, amount)], []),
+    ).toStrictEqual([upgrade]);
+    expect(
+      computeUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Cursor, amount - 1)], []),
     ).toStrictEqual([]);
   });
 
@@ -45,7 +45,7 @@ describe(getUnlockedUpgrades, () => {
     const upgrade = createUpgradeWithConditions([buildingCondition]);
 
     expect(
-      getUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Grandma, amount)], []),
+      computeUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Grandma, amount)], []),
     ).toStrictEqual([]);
   });
 
@@ -55,8 +55,8 @@ describe(getUnlockedUpgrades, () => {
     const upgrade = createUpgradeWithConditions([upgradeCondition]);
     const boughtUpgrade = createUpgrade(CursorUpgradeId.Ambidextrous, []);
 
-    expect(getUnlockedUpgrades([upgrade], [], [boughtUpgrade])).toStrictEqual([upgrade]);
-    expect(getUnlockedUpgrades([upgrade], [], [])).toStrictEqual([]);
+    expect(computeUnlockedUpgrades([upgrade], [], [boughtUpgrade])).toStrictEqual([upgrade]);
+    expect(computeUnlockedUpgrades([upgrade], [], [])).toStrictEqual([]);
   });
 
   // Every condition has to hold, so one that is met does not unlock an upgrade whose other one is not
@@ -65,8 +65,8 @@ describe(getUnlockedUpgrades, () => {
 
     const upgrade = createUpgradeWithConditions([buildingCondition, upgradeCondition]);
 
-    expect(getUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Cursor, amount)], [])).toStrictEqual(
-      [],
-    );
+    expect(
+      computeUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Cursor, amount)], []),
+    ).toStrictEqual([]);
   });
 });
