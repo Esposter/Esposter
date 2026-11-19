@@ -1,3 +1,4 @@
+import type { Attribute } from "#src/models/character/Attribute";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
@@ -50,7 +51,7 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
 
 // The attribute, amount and seconds of each buff in a kit's effects
 export const readBuffTuples = (effects: KitEffectState["effects"]) =>
-  effects.flatMap((effect) =>
+  effects.flatMap((effect): [Attribute, number, number][] =>
     effect.kind === "buff" ? [[effect.attribute, effect.amount, effect.secondsRemaining]] : [],
   );
 
