@@ -132,7 +132,7 @@ A critter of a gather row SHALL stand at each of its map points as one stand-in 
 
 #### Scenario: A butterfly stands at no point
 
-- **GIVEN** butterflies have no gather row
+- **GIVEN** a butterfly is among a region's animal points
 - **WHEN** the region's points are drawn
 - **THEN** no butterfly stands at any point
 
