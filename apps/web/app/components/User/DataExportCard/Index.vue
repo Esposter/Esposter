@@ -47,7 +47,7 @@ const isDownloadable = computed(
       <p>
         {{ dataExport.status === DataExportStatus.Queued ? "Queued, waiting to be built." : "Building the archive." }}
       </p>
-      <UiButton :is-pending="isPending" @click="refresh()">
+      <UiButton :is-pending @click="refresh()">
         <UiIcon :meaning="UiIconMeaning.Refresh" />
         Check status
       </UiButton>
