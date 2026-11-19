@@ -4,7 +4,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
 import { PermissionOverrideState } from "#src/models/message/room/role/PermissionOverrideState";
 import { RoomPermissionCategoryItems } from "#src/services/message/room/role/RoomPermissionCategoryItems";
-import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useUserStore } from "#src/store/message/user/index";
 import { checkHasPermission, RoomPermission } from "@esposter/db-schema";
@@ -15,8 +14,7 @@ interface Props {
 }
 
 const { roomId, userId } = defineProps<Props>();
-const roomStore = useRoomStore();
-const { rooms } = storeToRefs(roomStore);
+const checkIsRoomOwner = useCheckIsRoomOwner();
 const roleStore = useRoleStore();
 const {
   checkHasMyPermission,
@@ -36,7 +34,7 @@ const isManageable = computed(() => {
   if (!myPermissions) return false;
 
   const topPosition = Math.max(-1, ...getMemberRoles(roomId, userId).map(({ position }) => position));
-  const isOwner = rooms.value.find(({ id }) => id === roomId)?.userId === userId;
+  const isOwner = checkIsRoomOwner(roomId, userId);
   return checkIsMemberManageable(
     { isOwner: myPermissions.isRoomOwner, topPosition: myPermissions.topRolePosition },
     { isOwner, topPosition },

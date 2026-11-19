@@ -11,7 +11,6 @@ import { AdminActionIconMap } from "#src/services/message/moderation/AdminAction
 import { useClipboardStore } from "#src/store/clipboard";
 import { useModerationNoteStore } from "#src/store/message/moderation/note";
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
-import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
@@ -34,8 +33,7 @@ export const useMemberActionItems = (
   const { checkHasSentFriendRequest, sendFriendRequest } = friendRequestStore;
   const directMessageStore = useDirectMessageStore();
   const { createDirectMessage } = directMessageStore;
-  const roomStore = useRoomStore();
-  const { rooms } = storeToRefs(roomStore);
+  const checkIsRoomOwner = useCheckIsRoomOwner();
   const roleStore = useRoleStore();
   const { getMemberRoleMap, getMyPermissions } = roleStore;
   const moderationNoteStore = useModerationNoteStore();
@@ -89,7 +87,7 @@ export const useMemberActionItems = (
     const permissions = getMyPermissions(roomIdValue);
     if (!permissions || targetTopPosition.value === undefined) return undefined;
 
-    const isTargetOwner = rooms.value.find(({ id }) => id === roomIdValue)?.userId === toValue(user).id;
+    const isTargetOwner = checkIsRoomOwner(roomIdValue, toValue(user).id);
     const actor = { isOwner: permissions.isRoomOwner, topPosition: permissions.topRolePosition };
     const target = { isOwner: isTargetOwner, topPosition: targetTopPosition.value };
     return checkIsMemberManageable(actor, target) ? permissions : undefined;

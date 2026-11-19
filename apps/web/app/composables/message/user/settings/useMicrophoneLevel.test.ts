@@ -4,6 +4,9 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+// The stream a granted request resolves to, holding the tracks the composable stops
+const createStream = (tracks: { stop: () => void }[] = []) => ({ getTracks: () => tracks }) as unknown as MediaStream;
+
 describe(useMicrophoneLevel, () => {
   let releaseCloses: (() => void)[];
   class AudioContextStub {
@@ -20,6 +23,16 @@ describe(useMicrophoneLevel, () => {
   let microphoneLevel: ReturnType<typeof useMicrophoneLevel>;
   let secondMicrophoneLevel: ReturnType<typeof useMicrophoneLevel>;
   let wrapper: Awaited<ReturnType<typeof mountSuspended>>;
+
+  const mountMicrophoneLevel = () =>
+    mountSuspended(
+      defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          microphoneLevel = useMicrophoneLevel();
+        },
+      }),
+    );
 
   beforeEach(() => {
     resolveRequests = [];
@@ -42,17 +55,10 @@ describe(useMicrophoneLevel, () => {
   test("a start made while one is pending joins it rather than requesting a second stream", async () => {
     expect.hasAssertions();
 
-    wrapper = await mountSuspended(
-      defineComponent({
-        render: () => h("div"),
-        setup: () => {
-          microphoneLevel = useMicrophoneLevel();
-        },
-      }),
-    );
+    wrapper = await mountMicrophoneLevel();
     const starting = Promise.all([microphoneLevel.start(), microphoneLevel.start()]);
     await flushPromises();
-    for (const resolve of resolveRequests) resolve({ getTracks: () => [] } as unknown as MediaStream);
+    for (const resolve of resolveRequests) resolve(createStream());
     await starting;
     await flushPromises();
 
@@ -63,17 +69,10 @@ describe(useMicrophoneLevel, () => {
   test("a stop that lands while a restart closes the context it replaces leaves the test stopped", async () => {
     expect.hasAssertions();
 
-    wrapper = await mountSuspended(
-      defineComponent({
-        render: () => h("div"),
-        setup: () => {
-          microphoneLevel = useMicrophoneLevel();
-        },
-      }),
-    );
+    wrapper = await mountMicrophoneLevel();
     const starting = microphoneLevel.start();
     await flushPromises();
-    for (const resolve of resolveRequests) resolve({ getTracks: () => [] } as unknown as MediaStream);
+    for (const resolve of resolveRequests) resolve(createStream());
     await starting;
     await flushPromises();
     expect(microphoneLevel.isTesting.value).toBe(true);
@@ -81,7 +80,7 @@ describe(useMicrophoneLevel, () => {
     resolveRequests = [];
     const restarting = microphoneLevel.start();
     await flushPromises();
-    for (const resolve of resolveRequests) resolve({ getTracks: () => [] } as unknown as MediaStream);
+    for (const resolve of resolveRequests) resolve(createStream());
     const stopping = microphoneLevel.stop();
     for (const release of releaseCloses) release();
     await Promise.all([restarting, stopping]);
@@ -93,19 +92,12 @@ describe(useMicrophoneLevel, () => {
   test("a stop that lands while a start is pending leaves the test stopped and the stream it resolves closed", async () => {
     expect.hasAssertions();
 
-    wrapper = await mountSuspended(
-      defineComponent({
-        render: () => h("div"),
-        setup: () => {
-          microphoneLevel = useMicrophoneLevel();
-        },
-      }),
-    );
+    wrapper = await mountMicrophoneLevel();
     const track = { stop: vi.fn<() => void>() };
     const starting = microphoneLevel.start();
     await flushPromises();
     const stopping = microphoneLevel.stop();
-    for (const resolve of resolveRequests) resolve({ getTracks: () => [track] } as unknown as MediaStream);
+    for (const resolve of resolveRequests) resolve(createStream([track]));
     await Promise.all([starting, stopping]);
     await flushPromises();
 
@@ -127,7 +119,7 @@ describe(useMicrophoneLevel, () => {
     );
     const starting = Promise.all([microphoneLevel.start(), secondMicrophoneLevel.start()]);
     await flushPromises();
-    for (const resolve of resolveRequests) resolve({ getTracks: () => [] } as unknown as MediaStream);
+    for (const resolve of resolveRequests) resolve(createStream());
     await starting;
     await flushPromises();
 
