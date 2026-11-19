@@ -10,23 +10,6 @@ vi.mock(import("#src/services/genshinParity/witness/readReferenceLandmarks"), ()
   readReferenceLandmarks: vi.fn<typeof readReferenceLandmarks>(),
 }));
 
-const WIDTH = 3100;
-const HEIGHT = 1300;
-// The login's recorded camera, the start its exports are solved from along the glide
-const RECORDED_POSE = [0, 1, -5.433, 180, 5.69, 45];
-// Scene cameras of our own, nothing like the recording's: a change to them must not reach the exports' camera
-const SCENE_POSE_A = [0, 1, -20, 180, 5.69, 45];
-const SCENE_POSE_B = [4, 3, 6, 90, -2, 60];
-const WORLD_POINTS: [number, number, number][] = [
-  [0, 1, 6],
-  [2.5, 3, 9],
-  [-3, 0.5, 12],
-];
-
-// The landmarks a pose sees each world point at, as the witness reads them from a reference
-const projectLandmarks = (pose: readonly number[], points: readonly [number, number, number][]) =>
-  points.map((point) => ({ isEdge: false, pixel: projectWitnessPoint(pose, point, WIDTH, HEIGHT).pixel, point }));
-
 // A page whose scene stands at the camera given; the landmark read is mocked, so only the scene's camera reads it
 const createPage = (scenePose: readonly number[]): Page =>
   ({
@@ -37,6 +20,23 @@ const createPage = (scenePose: readonly number[]): Page =>
   }) as unknown as Page;
 
 describe(solveReferenceCamera, () => {
+  const WIDTH = 3100;
+  const HEIGHT = 1300;
+  // The login's recorded camera, the start its exports are solved from along the glide
+  const RECORDED_POSE = [0, 1, -5.433, 180, 5.69, 45];
+  // Scene cameras of our own, nothing like the recording's: a change to them must not reach the exports' camera
+  const SCENE_POSE_A = [0, 1, -20, 180, 5.69, 45];
+  const SCENE_POSE_B = [4, 3, 6, 90, -2, 60];
+  const WORLD_POINTS: [number, number, number][] = [
+    [0, 1, 6],
+    [2.5, 3, 9],
+    [-3, 0.5, 12],
+  ];
+
+  // The landmarks a pose sees each world point at, as the witness reads them from a reference
+  const projectLandmarks = (pose: readonly number[], points: readonly [number, number, number][]) =>
+    points.map((point) => ({ isEdge: false, pixel: projectWitnessPoint(pose, point, WIDTH, HEIGHT).pixel, point }));
+
   test("a reference's exports stand at its recorded camera whatever the scene's camera is", async () => {
     expect.hasAssertions();
 
