@@ -1,8 +1,3 @@
-import type { Input } from "phaser";
+import type { Types } from "phaser";
 
-export interface BaseCursorKeys {
-  down: Input.Keyboard.Key;
-  left: Input.Keyboard.Key;
-  right: Input.Keyboard.Key;
-  up: Input.Keyboard.Key;
-}
+export type BaseCursorKeys = Pick<Types.Input.Keyboard.CursorKeys, "down" | "left" | "right" | "up">;
