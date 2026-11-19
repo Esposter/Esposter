@@ -14,7 +14,7 @@ const collectNodes = (node: Node, collected = new Set<Node>()): Set<Node> => {
 };
 
 describe(createWaterfallMaterial, () => {
-  test("streaks move across the fall, since its opacity is built from the clock", () => {
+  test("streaks move across the fall", () => {
     expect.hasAssertions();
 
     const { opacityNode } = createWaterfallMaterial(createWaterUniforms());

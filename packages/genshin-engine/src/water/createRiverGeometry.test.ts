@@ -4,7 +4,7 @@ import { Box3 } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(createRiverGeometry, () => {
-  test("spans the water's width and level along the course, with v counting metres downstream", () => {
+  test("a river's ribbon is drawn along its course", () => {
     expect.hasAssertions();
 
     const geometry = createRiverGeometry([
