@@ -17,7 +17,7 @@ import { emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
-import { Operation, RoutePath } from "@esposter/shared";
+import { getOrCreate, Operation, RoutePath } from "@esposter/shared";
 
 // The invite export: the bound email as compiled, and one invite per participant the scope selects, each issued a new
 // Link. A link cannot be read back once issued, so the export issues the links it carries, and the links already sent
@@ -61,7 +61,7 @@ export const issueProgramInvites = async (
   const rowKeyValueMap = new Map<string, Record<string, ColumnValue>>();
   for (const row of audienceDataset.rows) {
     const keyValue = row[keyColumn];
-    if (typeof keyValue === "string" && keyValue && !rowKeyValueMap.has(keyValue)) rowKeyValueMap.set(keyValue, row);
+    if (typeof keyValue === "string" && keyValue) getOrCreate(rowKeyValueMap, keyValue, () => row);
   }
   const scopedParticipants = participants.filter(
     ({ keyValue }) => scope !== ProgramInviteScope.Awaiting || !respondedKeyValues.has(keyValue),

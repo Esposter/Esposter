@@ -10,6 +10,6 @@ import { createEmptySurvey } from "#shared/services/resource/survey/createEmptyS
 export const readSurveySettings = async (id: ResourceInResource["id"]): Promise<SurveySettings> => {
   const content = await readResourceContent(surveyResourceSchema, id);
   // A survey never saved has no content, so it collects on the defaults
-  if (!content) return createEmptySurvey().settings;
-  return content.settings;
+  if (content) return content.settings;
+  else return createEmptySurvey().settings;
 };
