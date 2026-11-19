@@ -289,6 +289,80 @@ A second test, the bridges' colour at 0.96 of its albedo, left the measured brid
 
 **What remains open for the rim.** The walkway's lane (Ground02: strength 1, power 2, cyan) and borders (Edge01: strength 0.5, power 3.88, blue) need a per-piece split of the walkway by material, and the walkway's pieces carry only their outlines and raised curbs, with no material key. The deferred glow path's light relation is not reduced to one term. The bridges' remaining 1.30 is the lit term, and the Light pass owns it.
 
+## The deferred pass, reduced
+
+The lit stone is composed by two programs of `Shader#25` in `extracted/login/shaders/00612967/`: `00101.asm` (142 lines, the sun pass, read whole) and `00000.asm` (1154 lines, the clustered pass with a reflection cube, read whole). Which of the two the login's frame runs is not settled here. The Light record names program 101 as the sun's, and its reads match the stone's writes below. The upward-face term is in 00000. The stone's G-buffer comes from `12903389/Shader#171/00009.hlsl`, and the line numbers below are that file's and the two programs'.
+
+### What the stone writes (`00009.hlsl`)
+
+- **A face whose glow is under `_EmissionRange`, ID 0**: `o0` the normal, encoded; `o1 = albedo · cb2[0] · 0.96 · (1 − metal)` with `o1.w = 0`, so the 0.96 is in the G-buffer's albedo; `o2 = F0 = 0.04 + (albedo · cb2[0] − 0.04) · metal`, with `o2.w = o4 = smoothness = mix(R, 1, 0.5 · cb0[53].z)`, R the SMBE mask's red clamped to [0.001, 0.999]. `_GlossMapScale` is 1 on Bridge01, Ground02, Build01 and Door01, so `fitLoginStone`'s median of R at that scale is R on every family the record holds.
+- **A glowing face, ID 13**: the glow is divided by its largest channel `I = max(1, max(glow))` into `o2`, `o4 = sqrt(saturate(0.05 I))` and `o3 = 13`. Its `o1.w` is 0, so its smoothness is 0.
+
+Only the glowing edges take ID 13. The walkway's faces, the bridges' and the towers' faces take ID 0 and its dielectric highlight.
+
+### The sun pass (`00101.asm`)
+
+Inputs: `t3` normal, `t4` albedo `A` (`.xyz`, with alpha `.w`), `t5` specular or glow colour, `t6` the shading ID, `t7` smoothness or glow root `o4`, `t1` occlusion, `t2` the toon ramp, `t0` the sun's shadow `S`, `cb0[2]` the sun's colour `Lc`, `cb1[0]` the sun's direction `L`, and `cb1[39]` to `cb1[45]` the sky's second-order harmonics. `N = normalize(2 t3 − 1)`, `V` is the direction to the eye, `H = normalize(L + V)`, and `ID = byte(t6)` with bits 6 and 7 cleared. Then:
+
+- Smoothness `s = t4.w` if `ID = 13`, else `t7.x`. `α = (1 − s)²`.
+- Diffuse: `ramp = T_ramp(0.5 + 0.5 · sat(N·L) · S^0.2)`, with `sat(0.6 N·L + 0.9)` for ID 2, times `Lc`; plus `SH⁺(N) · mix`, `mix = A + (1 − A) · occ`, `occ = t1.y` (ID 8 takes `min(1 − 0.7 s, t1.y)`), and `SH⁺ = max(0, ·)` of the nine harmonic terms. The sum is times `A`.
+- Specular, for ID ≠ 3: `F0 = 0.04` for ID 13 else `t5.xyz`; `NH = sat(N·H)`, `LH = sat(L·H)`; `D = min(12, α² / (π (NH² (α² − 1) + 1)²))`; `F = F0 + (1 − F0) · 2(1 − α²) · (1 − LH)⁵`; `spec = F · D · Lc · sat(N·L) · S`.
+- Glow, ID 13 only: `I = 20 · t7.x²`, and `out += t5.xyz · I`.
+- ID 4, 20 to 22 zero the diffuse; the specular is zeroed for ID 3.
+
+Together: `out = (ramp · Lc + SH⁺ · mix) · A + spec + [ID 13] · I · t5`.
+
+### The clustered pass's upward-face term (`00000.asm`)
+
+The upward factor and the cube sample: `u = sat(N.y)`; the reflection cube `t5` (a texturecube) is sampled at `r22 = 2(N·ŝ)N − ŝ`, where `ŝ = normalize(v2)` is the eye-to-surface direction; `r7.w` is mixed toward `r9.w` by `u`; and `out = r7.w · (cube − r2 · r15.y) + r19`. The cube is bound at run time, the reflection probe the Light reference's open items name, so its colour is not in the dumps.
+
+### Our stone model against it
+
+| Term                            | The game                                              | Ours (`StoneLightingModel.ts`, `createStoneGlowNode.ts`)                    | Differs                                                                                               |
+| :------------------------------ | :---------------------------------------------------- | :-------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| Sun ramp                        | `ramp(0.5 + 0.5 NL S^0.2) · Lc · A`                   | `ramp · diffuse · darkening(height)`                                        | Ours multiplies by the height darkening; the game has none here                                       |
+| Sky harmonics                   | `max(0, SH) · mix(A, 1, occ) · A`                     | `SH · diffuse · darkening + heightFade · exp · diffuse · darkening`         | No `max`; no occlusion grade; a fitted height fade stands in for the probes the game runs at run time |
+| Specular, ID 0                  | `F · min(12, D) · Lc · NL · S`, F0 0.04, smoothness R | absent: `smoothness` and `specularColor` are carried in the options, unused | Missing                                                                                               |
+| Glow, ID 13                     | `t5 · 20 · o4²` on glowing faces                      | rim colour `· (1 − N·V)^p · strength`, cut at the range                     | Matches the rim record; the ID switch is applied to every face, since the glow is one emissive        |
+| Upward-face reflection, `00000` | `r7.w · (cube(r22) − …)` with `u = sat(N.y)`          | absent                                                                      | Missing; the cube is run-time                                                                         |
+| Albedo's metal factor           | `0.96 · (1 − metal)` in the G-buffer albedo           | albedo only                                                                 | 4% on metal-free faces                                                                                |
+| Smoothness                      | R mixed toward 1 by `0.5 · cb0[53].z`                 | the fitted median of R (equal to R at `_GlossMapScale` 1), no `cb0[53].z`   | The unknown `cb0[53].z`                                                                               |
+
+What this says about the two families:
+
+- **The walkway at 0.65.** Its shaded class has no sun (`N·L ≤ 0` or `S = 0`), so the specular cannot be its shortfall there, and the ramp is the same in both classes. The shaded deficit, 0.54 pooled, is an up-facing ambient the game adds and ours does not: the reflection cube's `u = sat(N.y)` term is the leading candidate, and it needs the run-time cube's colour fitted. The specular is the lit class's share.
+- **The bridges at 1.35.** They are metal-free and draw no glow, so they take ID 0. Ours is brighter, so the game removes something ours keeps. The candidate is the occlusion grade `mix(A, 1, occ)`: with `occ` below 1 the game's sky term is multiplied by `A` where ours is not. Which G-buffer target the stone's occlusion lands in is not named by any of its writes (`o0.w` and `o1.w` are 0, and `t1` maps to no written target by name), so the grade's source stays open.
+
+### Measured: the specular term alone
+
+The term was implemented as the table's specular row: F0 0.04, the smoothness the family's fit holds, the cap at 12, the sun's shadowed colour and the facing clamped at none, on the families drawn by `createStoneMaterial`. The export path's bridges take no smoothness, so their reading is inconclusive, as the rim test's was. `genshin:parity radiance`, pooled over the six aligned references (ratio, baseline, then with the term):
+
+| Family      | Light  | Baseline | With the specular |
+| :---------- | :----- | -------: | ----------------: |
+| Walkway     | all    |    0.646 |             0.715 |
+| Walkway     | lit    |    0.712 |             0.828 |
+| Walkway     | shaded |    0.543 |             0.543 |
+| Towers      | all    |    0.992 |             1.020 |
+| Door        | all    |    1.010 |             1.041 |
+| Bridges     | all    |    1.361 |             1.360 |
+| every pixel | all    |    1.007 |             1.031 |
+
+The term moves only the lit class, as the analysis predicted, and it does not touch the walkway's shaded deficit. The rest of the table reads worse.
+
+`compare` on each login reference with the term, against its committed row (mean difference, shape, tone, FLIP; the row in brackets):
+
+| Reference            | Mean difference (row) | Shape (row)   | Tone (row)    | FLIP (row)      | Reads worse                      |
+| :------------------- | :-------------------- | :------------ | :------------ | :-------------- | :------------------------------- |
+| login-dawn-title     | 10.94 (10.85)         | 0.484 (0.480) | 7.94 (7.85)   | 0.4453 (0.4432) | mean +0.09, tone                 |
+| login-day-title      | 13.37 (13.31)         | 0.326 (0.321) | 10.51 (10.42) | 0.4843 (0.4841) | mean +0.06, shape, tone          |
+| login-door           | 13.19 (13.40)         | 0.209 (0.205) | 10.86 (11.04) | 0.5086 (0.5123) | none (mean, tone and FLIP lower) |
+| login-door-recording | 17.31 (17.26)         | 0.372 (0.357) | 12.42 (12.37) | 0.6003 (0.6008) | mean +0.05, shape +0.015         |
+| login-door-session   | 15.60 (12.28)         | 0.284 (0.416) | 11.47 (8.42)  | 0.5124 (0.4568) | mean +3.32, tone, FLIP           |
+| login-night-title    | 11.52 (9.42)          | 0.352 (0.369) | 8.92 (7.01)   | 0.4265 (0.3917) | mean +2.10, tone, FLIP           |
+| login-screen-dusk    | 20.44 (20.18)         | 0.391 (0.349) | 15.01 (14.45) | 0.6616 (0.6674) | mean +0.26, shape, tone          |
+
+Six of seven read worse on the mean beyond the noise of about 0.03, and door-session and night-title read far worse, so the term does not ship and the snapshot rows stay as committed. Its radiance gain on the walkway is real, but the same term is larger on the towers and the door, and where it lands on the two references that read worst is not checked here (a per-face read of the highlight would name it). The smoothness it is fed is the fitted median of the mask's red, not one solved against the radiance objective, so fitting that is the first step before the term is judged again. The passes (`Surface`, `Display`, `bloom`) were not rerun on the candidate, since its compare already fails the gate.
+
 ## Scope
 
 Every pass has its measure in `genshin:parity passes` ([parity](../../specs/genshin/parity/README.md)), and each run it owes is an item of the [compute queue](../../specs/genshin/compute/README.md). What the passes still lack is in two of them, the display's bloom and the atmosphere's cloud layer, in this order:
@@ -420,5 +494,8 @@ No row holds. The lowest is four taps at half a texel with the separable pair, m
 - [x] **The normal detail's frequency is the exports' lobe under the cap, and its amplitude is solved at it (Decisions).** The lobe is the dominant lobe of a family's normal-angle field along the rows of the Shape pass's witness at the reference camera, after a box high-pass of 16 pixels (`readSurfaceWavelengths`), within a lag cap of an eighth of the family's pixel width, converted to metres at its median depth. On the reference the towers read 2.5648 m, 36 pixels per cycle at 14 pixels a metre and 3% of their 88.8 m width. The bridges read 21.8913 m under their cap of 25.4 m. A 47 m lobe, a repeat across the family, survives every high-pass radius up to 58 m and falls outside that cap, and the 6.4 m a 60-pixel cap reads is not the rule's, which takes the cap of an eighth of their width. Our render's wavelength has no lobe the measure resolves at 14 pixels a metre, so it is a diagnostic and never a gate. A family whose normals vary less than the normal resolution reads none.
 - [ ] **The surface wavelength's autocorrelation rescans the whole frame at every lag.** `computeAngleAutocorrelation` (`scripts/src/services/genshinParity/passes/computeAngleAutocorrelation.ts`) reads every pixel of a family's frame for each lag from 0 to the cap (an eighth of the family's pixel width), and `readSurfaceWavelengths` runs it for the exports and ours of both families, so one reference costs the frame area times the cap, four times over. A cheaper form, a row autocorrelation by FFT or one pass that accumulates every lag together, changes the floating-point readings the committed parity data is built from, so it must re-baseline the snapshots and the readings above in the same change, and is a design decision rather than a mechanical ripple. Open until a parity run is too slow to iterate on, the cost the runtime-efficiency page asks to be placed and shaped differently.
 - [x] **The motion pass's door lift path was not reproducible on this machine, and its frozen row is compared exactly.** The committed report read 0.0080 m. Two Motion-alone runs read 0.0066 m, a Surface run 0.0085 m, and under load runs read 0.3849 m and 0.1877 m: the installed faked clock flowed with real time, so each sampled frame's moment depended on the machine. The clock is now paused where it is installed (`openParityPage`), and each sample steps it one frame (`createLiftFrameSampler`), so the frames are the clock's. Two runs under load read 0.0066 m, pace 0.0004, over 80 frames, and the frozen row is re-frozen from that read (task 0a's Surface rows follow in their own change).
+- [ ] **The walkway's shaded deficit is an up-facing ambient the engine lacks: the reflection cube's `u = sat(N.y)` term of `00000.asm` (the upward factor and the cube sample, "The deferred pass, reduced").** Its cube is bound at run time, so its colour must be fitted through the solver per hour against the radiance objective, per family, lit and shaded. Not started: the cube is not in the dumps, and a fit is the next unknown.
+- [ ] **The stone's specular (ID 0, the sun pass's specular) does not ship: its term moved the walkway's lit class from 0.712 to 0.828 and the towers and door up, and its compare rows read worse on the mean.** Its smoothness is the fitted median of the mask's red, without the game's `cb0[53].z` boost, so the term is not yet the game's. Task 1.4 stays open.
+- [ ] **The bridges' 1.35 is the occlusion grade `mix(albedo, 1, occ)` or an unmodelled height term, and the source of `occ` (`t1.y`) for the stone is not named by any stone write.** The stone's metal factor (0.96, in its albedo) is the known 4% the bridges' record already holds. Task 1.4 stays open.
 - [ ] **The exported rim does not ship: the towers' 0.725 and the door's 1.1 read worse than their committed rows on six of seven login references, so the fitted 1/8 share stays (The rim term, from the game's stone program).** Task 1.4 stays open with what the rim record leaves: the walkway's lane and borders, which need a per-piece split of the walkway by material, the deferred glow path's light relation, and the bridges' remaining 1.30, which is the lit term. Task 1.1 stays open with its bloom at 0.9746 against a gate of 0.
 - [x] **The door's surface is judged by no gate until its normal detail can be fitted (Decisions: the normal map's wavelength, and the world-to-view transform).** The exports' normal map bends the door 4.7203 degrees, and the Shape pass now holds the door's detail bend at 0.0014 degrees against 0.0198 with its amplitude fitted, so `passes login --pass Shape` holds and `--pass Surface` runs. Its surface structure is red on every family, and `Display` waits on it (tasks 0a.2 to 0a.5, 1.1 and 1.4).
