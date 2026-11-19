@@ -7,6 +7,7 @@ import { z } from "zod";
 // GitHub's answer for each aliased link: an issue or pull request carries its state, anything else carries none, and a
 // Url with no record at all is `null`, GitHub's own absent form kept inside this boundary shape
 const linksResponseSchema = z.object({
+  // eslint-disable-next-line no-restricted-syntax -- GitHub's GraphQL answers a url with no record as `null`, an external boundary's own absent form
   data: z.record(z.string(), z.object({ state: z.enum(["CLOSED", "MERGED", "OPEN"]).optional() }).nullable()),
 });
 const LinkStateMap = { CLOSED: TodoLinkState.Closed, MERGED: TodoLinkState.Merged, OPEN: TodoLinkState.Open } as const;

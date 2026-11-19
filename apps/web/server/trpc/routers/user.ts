@@ -230,7 +230,6 @@ export const userRouter = router({
         // A user with no status row is treated as online: a row is inserted the moment they go offline, so
         // Its absence is the only state left
         return {
-          version: NO_ROW_VERSION,
           createdAt: new Date(),
           deletedAt: null,
           expiresAt: null,
@@ -239,6 +238,7 @@ export const userRouter = router({
           status: UserStatus.Online,
           updatedAt: new Date(),
           userId,
+          version: NO_ROW_VERSION,
         };
       });
     }),
@@ -264,7 +264,6 @@ export const userRouter = router({
     // No row yet — return the defaults without persisting; the first update upserts the row
     else
       return {
-        version: NO_ROW_VERSION,
         autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
         createdAt: new Date(),
         deletedAt: null,
@@ -278,6 +277,7 @@ export const userRouter = router({
         speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
         updatedAt: new Date(),
         userId: ctx.user.id,
+        version: NO_ROW_VERSION,
         virtualBackground: "",
         voiceInputMode: VoiceInputMode.VoiceActivity,
       } satisfies UserSettingsInMessage;

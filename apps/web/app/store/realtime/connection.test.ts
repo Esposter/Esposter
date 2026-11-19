@@ -71,7 +71,6 @@ describe(useConnectionStore, () => {
 
     const createdAt = new Date(0);
     const message: RoomMessage = {
-      version: 0,
       appUserId: null,
       appUserImage: "",
       createdAt,
@@ -89,6 +88,7 @@ describe(useConnectionStore, () => {
       type: MessageType.Message,
       updatedAt: createdAt,
       userId: null,
+      version: 0,
     };
     onFrame?.(JSON.stringify({ data: message, type: "deleteMessage" }));
 

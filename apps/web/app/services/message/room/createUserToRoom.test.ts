@@ -5,7 +5,6 @@ import { v7 } from "uuid";
 import { describe } from "vitest";
 
 export const createUserToRoom = (overrides: Partial<UserToRoomInMessage> = {}): UserToRoomInMessage => ({
-  version: 0,
   categoryId: null,
   createdAt: new Date(0),
   deletedAt: null,
@@ -19,6 +18,7 @@ export const createUserToRoom = (overrides: Partial<UserToRoomInMessage> = {}): 
   timeoutUntil: null,
   updatedAt: new Date(0),
   userId: v7(),
+  version: 0,
   ...overrides,
 });
 

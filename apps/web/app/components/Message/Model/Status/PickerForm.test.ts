@@ -48,7 +48,6 @@ describe("messageModelStatusPickerForm", () => {
     const statusStore = useStatusStore();
     const { getStoredUserStatus, storeStatus } = statusStore;
     storeStatus(userId, {
-      version: 0,
       createdAt: new Date(0),
       deletedAt: null,
       expiresAt: null,
@@ -56,6 +55,7 @@ describe("messageModelStatusPickerForm", () => {
       message,
       status: UserStatus.Online,
       updatedAt: new Date(0),
+      version: 0,
     });
     const messageField = await submitRejectedMessage();
 
@@ -85,7 +85,6 @@ describe("messageModelStatusPickerForm", () => {
     const statusStore = useStatusStore();
     const { storeStatus } = statusStore;
     const storedStatus = {
-      version: 0,
       createdAt: new Date(0),
       deletedAt: null,
       expiresAt: null,
@@ -93,6 +92,7 @@ describe("messageModelStatusPickerForm", () => {
       message,
       status: UserStatus.Online,
       updatedAt: new Date(0),
+      version: 0,
     };
     storeStatus(userId, storedStatus);
     const component = await mountSuspended(MessageModelStatusPickerForm);

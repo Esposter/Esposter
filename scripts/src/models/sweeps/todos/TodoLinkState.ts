@@ -3,10 +3,10 @@
 export const TodoLinkState = {
   Closed: "closed",
   Merged: "merged",
-  // The marker says no upstream issue exists yet
-  Unfiled: "unfiled",
+  Open: "open",
   // A link GitHub has no issue or pull request for, such as a release or a webstatus.dev feature, read by hand
   Unchecked: "unchecked",
-  Open: "open",
+  // The marker says no upstream issue exists yet
+  Unfiled: "unfiled",
 } as const;
 export type TodoLinkState = (typeof TodoLinkState)[keyof typeof TodoLinkState];

@@ -13,7 +13,6 @@ import { describe, expect, test } from "vitest";
 describe("messageModelRoomSettingsTypeRoleEditor", () => {
   const { trpcMsw } = setupMswTrpc();
   const role: RoomRoleInMessage = {
-    version: 0,
     color: "",
     createdAt: new Date(0),
     deletedAt: null,
@@ -24,6 +23,7 @@ describe("messageModelRoomSettingsTypeRoleEditor", () => {
     position: 1,
     roomId: v7(),
     updatedAt: new Date(0),
+    version: 0,
   };
 
   // Another moderator's change to the role reaches an editor the reader has not touched: the switches show the stored

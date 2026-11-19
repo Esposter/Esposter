@@ -28,7 +28,6 @@ describe(useMessageHtml, () => {
   const presignedUrl = "https://example.com/emoji.png";
   const displayName = "displayName";
   const roomEmoji: RoomEmojiWithPresignedUrl = {
-    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     id: roomEmojiId,
@@ -36,6 +35,7 @@ describe(useMessageHtml, () => {
     presignedUrl,
     roomId,
     updatedAt: new Date(0),
+    version: 0,
   };
   const createCustomEmojiNode = (id: string) =>
     `<span ${CUSTOM_EMOJI_ID_ATTRIBUTE}="${id}" ${CUSTOM_EMOJI_NAME_ATTRIBUTE}="${name}">:${name}:</span>`;

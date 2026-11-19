@@ -14,7 +14,6 @@ export const createPost = (
   const createdAt = new Date(0);
   const user = createUser();
   return {
-    version: 0,
     ancestorIds: [],
     commentCount: 0,
     createdAt,
@@ -29,6 +28,7 @@ export const createPost = (
     updatedAt: createdAt,
     user,
     userId: user.id,
+    version: 0,
     ...omitUndefined(overrides),
   };
 };

@@ -12,7 +12,6 @@ import { getUncatalogedManifestDependencies } from "#src/services/outdatedDepend
 import { readNpmProjects } from "#src/services/outdatedDependencies/npm/readNpmProjects";
 import { getRegularOutdatedDependencies } from "#src/services/outdatedDependencies/pnpm/getRegularOutdatedDependencies";
 import { omitDependents } from "#src/services/outdatedDependencies/pnpm/omitDependents";
-import { createColor } from "#src/services/shared/createColor";
 import { printExecutionTime } from "#src/services/outdatedDependencies/print/printExecutionTime";
 import { printHeldDependencies } from "#src/services/outdatedDependencies/print/printHeldDependencies";
 import { printMismatches } from "#src/services/outdatedDependencies/print/printMismatches";
@@ -37,6 +36,7 @@ import {
   RENOVATE_CONFIGURATION_FILE,
   REPOSITORY_ROOT,
 } from "#src/services/shared/constants";
+import { createColor } from "#src/services/shared/createColor";
 import { readManifestFiles } from "#src/services/shared/readManifestFiles";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { timeCommand } from "#src/services/timing/timeCommand";

@@ -14,7 +14,6 @@ describe("resourceActivityLogListItem", () => {
 
     const name = "Assistant";
     const activity: ResourceActivityInResource = {
-      version: 0,
       activityType: ResourceActivityType.ContentSaved,
       apiKeyId: v7(),
       apiKeyName: name,
@@ -27,6 +26,7 @@ describe("resourceActivityLogListItem", () => {
       resourceId: v7(),
       updatedAt: new Date(0),
       userId: v7(),
+      version: 0,
     };
     const component = await mountSuspended(ResourceActivityLogListItem, { props: { activity } });
 

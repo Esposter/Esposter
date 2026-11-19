@@ -93,7 +93,6 @@ export const useCommentStore = defineStore("post/comment", () => {
     const parent = [...allComments.value, ...postStore.items].find(({ id }) => id === input.parentId);
     const createdAt = new Date();
     const newComment: PostInPostWithRelations = {
-      version: NO_ROW_VERSION,
       ancestorIds: parent ? [...parent.ancestorIds, parent.id] : [input.parentId],
       commentCount: 0,
       createdAt,
@@ -116,6 +115,7 @@ export const useCommentStore = defineStore("post/comment", () => {
         updatedAt: user.updatedAt,
       },
       userId: user.id,
+      version: NO_ROW_VERSION,
     };
     executeCreateCommentMutation(() => $trpc.post.createComment.mutate({ ...input, id: newComment.id }), {
       applyOptimistic: () => {

@@ -18,7 +18,6 @@ describe(useBanStore, () => {
   const first = { ...createUser({ name: "first" }), displayName: "first" };
   const second = { ...createUser({ name: "second" }), displayName: "second" };
   const createBan = (user: MemberInRoom, createdAt = new Date(0)): BanInRoom => ({
-    version: 0,
     bannedByUser: null,
     bannedByUserId: null,
     createdAt,
@@ -27,6 +26,7 @@ describe(useBanStore, () => {
     updatedAt: new Date(0),
     user,
     userId: user.id,
+    version: 0,
   });
 
   beforeEach(() => {

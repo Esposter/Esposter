@@ -13,7 +13,6 @@ describe(useRoomEmojiStore, () => {
   const roomId = v7();
   const presignedUrl = "https://example.com/emoji.png";
   const createRoomEmoji = (): RoomEmojiWithPresignedUrl => ({
-    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     id: v7(),
@@ -21,6 +20,7 @@ describe(useRoomEmojiStore, () => {
     presignedUrl,
     roomId,
     updatedAt: new Date(0),
+    version: 0,
   });
 
   // The room's subscription is open while its set is read, so a removal and a creation that land in that window are

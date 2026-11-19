@@ -42,7 +42,6 @@ describe("userDataExportCard", () => {
   const link = "https://example.com";
   const failureReason = "failureReason";
   const baseDataExport: DataExportInUser = {
-    version: 0,
     blobName: "blobName",
     createdAt: epoch,
     deletedAt: null,
@@ -54,6 +53,7 @@ describe("userDataExportCard", () => {
     status: DataExportStatus.Queued,
     updatedAt: epoch,
     userId: "userId",
+    version: 0,
   };
 
   test("requests no export until the reader asks for one", async () => {

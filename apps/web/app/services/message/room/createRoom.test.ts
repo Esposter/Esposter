@@ -7,7 +7,6 @@ import { describe } from "vitest";
 // The room row every room and direct message test stores, removes and rolls back — a direct message is a room
 // Row too, so both suites build their fixtures from here
 export const createRoom = (name: string, type: RoomType = RoomType.Room): RoomInMessage => ({
-  version: 0,
   allowedMimeCategories: [MimeCategory.Image],
   createdAt: new Date(0),
   deletedAt: null,
@@ -24,6 +23,7 @@ export const createRoom = (name: string, type: RoomType = RoomType.Room): RoomIn
   type,
   updatedAt: new Date(0),
   userId: v7(),
+  version: 0,
 });
 
 describe.todo("createRoom");

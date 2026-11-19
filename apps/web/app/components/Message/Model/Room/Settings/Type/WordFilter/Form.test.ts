@@ -12,13 +12,13 @@ describe("messageModelRoomSettingsTypeWordFilterForm", () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   const createFilter = (words: string[]): RoomFilterInMessage => ({
-    version: 0,
     action: WordFilterAction.Reject,
     createdAt: new Date(0),
     deletedAt: null,
     roomId,
     timeoutDurationMs: null,
     updatedAt: new Date(0),
+    version: 0,
     words,
   });
 

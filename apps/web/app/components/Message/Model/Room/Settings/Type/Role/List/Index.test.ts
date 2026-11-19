@@ -14,7 +14,6 @@ describe("messageModelRoomSettingsTypeRoleListIndex", () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   const createRole = (position: number): RoomRoleInMessage => ({
-    version: 0,
     color: "",
     createdAt: new Date(0),
     deletedAt: null,
@@ -25,6 +24,7 @@ describe("messageModelRoomSettingsTypeRoleListIndex", () => {
     position,
     roomId,
     updatedAt: new Date(0),
+    version: 0,
   });
 
   // `deleteRole` refuses a role at or above the reader's top role, so a row above it is listed without its Delete

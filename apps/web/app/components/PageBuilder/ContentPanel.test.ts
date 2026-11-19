@@ -64,7 +64,6 @@ const createSurveyInviteDocument = (surveyId: string): WebpageDocument => ({
 });
 // An email's invite sits in a column, as the email's document schema requires
 const createPublication = (resourceId: string): ResourcePublicationInResource => ({
-  version: 0,
   createdAt: new Date(0),
   deletedAt: null,
   publishedAt: new Date(0),
@@ -72,6 +71,7 @@ const createPublication = (resourceId: string): ResourcePublicationInResource =>
   publishVersion: 1,
   resourceId,
   updatedAt: new Date(0),
+  version: 0,
 });
 // An email's leaf block sits in a column of a section
 const createEmailLeafDocument = (leaf: MjmlColumnNode["props"]["children"][number]): EmailDocument => ({

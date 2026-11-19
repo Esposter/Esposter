@@ -253,7 +253,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const createRole = (input: Except<CreateRoleInput, "id">) => {
     const now = new Date();
     const newRole: RoomRoleInMessage = {
-      version: NO_ROW_VERSION,
       color: input.color ?? "",
       createdAt: now,
       deletedAt: null,
@@ -264,6 +263,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
       position: input.position,
       roomId: input.roomId,
       updatedAt: now,
+      version: NO_ROW_VERSION,
     };
     executeCreateRoleMutation(() => $trpc.role.createRole.mutate({ ...input, id: newRole.id }), {
       applyOptimistic: () => {

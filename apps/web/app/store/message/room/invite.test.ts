@@ -15,7 +15,6 @@ describe(useInviteStore, () => {
   const creator = createUser({ name: "creator" });
   const roomId = v7();
   const invite: InviteInMessage = {
-    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     expiresAt: null,
@@ -25,6 +24,7 @@ describe(useInviteStore, () => {
     updatedAt: new Date(0),
     userId: v7(),
     uses: 0,
+    version: 0,
   };
 
   test("a create whose link only the server mints waits for the server", async () => {

@@ -12,7 +12,6 @@ export const createOptimisticMessage = (input: CreateMessageInput, userId: strin
   const now = new Date();
   optimisticMessageId -= 1;
   return {
-    version: NO_ROW_VERSION,
     appUserId: null,
     appUserImage: "",
     createdAt: now,
@@ -31,5 +30,6 @@ export const createOptimisticMessage = (input: CreateMessageInput, userId: strin
     type: input.type,
     updatedAt: now,
     userId,
+    version: NO_ROW_VERSION,
   };
 };

@@ -5,7 +5,6 @@ import { describe } from "vitest";
 
 // A message as its room's object holds it, with every field a suite does not read at its empty value
 export const createRoomMessage = (overrides: Partial<RoomMessage>): RoomMessage => ({
-  version: 0,
   appUserId: null,
   appUserImage: "",
   createdAt: new Date(0),
@@ -23,6 +22,7 @@ export const createRoomMessage = (overrides: Partial<RoomMessage>): RoomMessage 
   type: MessageType.Message,
   updatedAt: new Date(0),
   userId: null,
+  version: 0,
   ...overrides,
 });
 

@@ -4,7 +4,6 @@ import { v7 } from "uuid";
 import { describe } from "vitest";
 
 export const createRoomRole = (overrides: Partial<RoomRoleInMessage>): RoomRoleInMessage => ({
-  version: 0,
   color: "",
   createdAt: new Date(0),
   deletedAt: null,
@@ -15,6 +14,7 @@ export const createRoomRole = (overrides: Partial<RoomRoleInMessage>): RoomRoleI
   position: 0,
   roomId: v7(),
   updatedAt: new Date(0),
+  version: 0,
   ...overrides,
 });
 

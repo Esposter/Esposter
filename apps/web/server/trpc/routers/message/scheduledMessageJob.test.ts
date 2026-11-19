@@ -124,7 +124,7 @@ describe("scheduledMessageJobRouter", () => {
     userObject.readReminders.mockResolvedValue([reminder]);
     userObject.readScheduledMessages.mockResolvedValue([{ id: scheduledMessageId, roomId, runAt: soonerRunAt }]);
     roomObject.readScheduledMessages.mockResolvedValue([
-      { version: 0, id: scheduledMessageId, message: "later", replyToId: null, runAt: soonerRunAt, userId: v7() },
+      { id: scheduledMessageId, message: "later", replyToId: null, runAt: soonerRunAt, userId: v7(), version: 0 },
     ]);
     const { items, nextCursor } = await scheduledMessageJobCaller.readMyScheduledMessageJobs({ limit: 1 });
 

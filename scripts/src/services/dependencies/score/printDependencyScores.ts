@@ -3,8 +3,8 @@ import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
 import { formatBytes } from "#src/services/dependencies/score/formatBytes";
 import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
-import { printTable } from "#src/services/shared/printTable";
 import { formatAge } from "#src/services/shared/formatAge";
+import { printTable } from "#src/services/shared/printTable";
 
 const YES = "yes";
 

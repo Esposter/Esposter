@@ -1,10 +1,10 @@
 import type { AddReactionInput } from "#shared/models/db/message/reaction/AddReactionInput";
 import type { RemoveReactionInput } from "#shared/models/db/message/reaction/RemoveReactionInput";
 import type { RoomReaction } from "@esposter/db-schema";
-import { NO_ROW_VERSION } from "@esposter/db-schema";
 
 import { authClient } from "#src/services/auth/authClient";
 import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
+import { NO_ROW_VERSION } from "@esposter/db-schema";
 import { getOrCreate, ID_SEPARATOR } from "@esposter/shared";
 
 // A reaction is one emoji on one message, so its identity is the pair, and every write queues on that pair

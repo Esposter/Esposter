@@ -24,13 +24,13 @@ describe(useLikeOperations, () => {
   const postId = v7();
   const userId = v7();
   const createLike = (value: -1 | 1): LikeInPost => ({
-    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     postId,
     updatedAt: new Date(0),
     userId,
     value,
+    version: 0,
   });
 
   // A new vote is drawn for the signed-in viewer, so every test here signs one in

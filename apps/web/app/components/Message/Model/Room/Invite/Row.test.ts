@@ -17,7 +17,6 @@ describe("messageModelRoomInviteRow", () => {
   const roomId = v7();
   const user = createUser();
   const invite: InviteInMessageWithCreator = {
-    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     expiresAt: null,
@@ -28,6 +27,7 @@ describe("messageModelRoomInviteRow", () => {
     user,
     userId: user.id,
     uses: 0,
+    version: 0,
   };
 
   // Editing regenerates the reader's own link, which is minted under ManageInvites, so the Edit is offered to the creator

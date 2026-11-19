@@ -14,13 +14,13 @@ describe(useLikeStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const postId = v7();
   const like: LikeInPost = {
-    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     postId,
     updatedAt: new Date(0),
     userId: v7(),
     value: 1,
+    version: 0,
   };
 
   // The post page reads its post on its own, so the feed holds a second copy of it — a vote cast on the page has to

@@ -8,7 +8,6 @@ import { describe } from "vitest";
 // `Resource` plus the caller's own last-access join, so it stands in wherever a plain `Resource` is wanted
 // Without a cast
 export const createResourceListItem = (overrides: Partial<ResourceListItem> = {}): ResourceListItem => ({
-  version: 0,
   contentHash: "",
   contentSize: 0,
   contentVersion: 0,
@@ -23,6 +22,7 @@ export const createResourceListItem = (overrides: Partial<ResourceListItem> = {}
   type: ResourceType.Sheet,
   updatedAt: new Date(0),
   userId: v7(),
+  version: 0,
   ...overrides,
 });
 

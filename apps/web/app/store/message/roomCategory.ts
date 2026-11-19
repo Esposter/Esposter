@@ -27,7 +27,6 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const createRoomCategory = (input: Except<CreateRoomCategoryInput, "id">) => {
     if (!session.value.data) return;
     const newRoomCategory: RoomCategoryInMessage = {
-      version: NO_ROW_VERSION,
       createdAt: new Date(),
       deletedAt: null,
       id: v7(),
@@ -36,6 +35,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
       position: roomCategories.value.reduce((maxPosition, { position }) => Math.max(maxPosition, position), -1) + 1,
       updatedAt: new Date(),
       userId: session.value.data.user.id,
+      version: NO_ROW_VERSION,
     };
     executeMutation(() => $trpc.room.category.createRoomCategory.mutate({ ...input, id: newRoomCategory.id }), {
       applyOptimistic: () => {

@@ -19,7 +19,6 @@ vi.mock(
 const createRoomMessage = (id: number, message: string): RoomMessage => {
   const now = new Date();
   return {
-    version: 0,
     appUserId: null,
     appUserImage: "",
     createdAt: now,
@@ -37,6 +36,7 @@ const createRoomMessage = (id: number, message: string): RoomMessage => {
     type: MessageType.Message,
     updatedAt: now,
     userId: null,
+    version: 0,
   };
 };
 

@@ -24,13 +24,13 @@ describe(useCreator, () => {
   });
   // The bot a webhook is sent under, as the app user cache holds it
   const cachedAppUser = {
-    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     id: v7(),
     image: "",
     name: "appUserName",
     updatedAt: new Date(0),
+    version: 0,
   };
 
   beforeEach(() => {

@@ -29,7 +29,7 @@ describe(useSelectEmoji, () => {
     const selectEmoji = useSelectEmoji(message);
     selectEmoji(THUMBS_UP);
     emojiStore.setEmojis(message.roomId, message.id, [
-      { version: 0, emojiTag: THUMBS_UP, messageId: message.id, userIds: [userId] },
+      { emojiTag: THUMBS_UP, messageId: message.id, userIds: [userId], version: 0 },
     ]);
     selectEmoji(THUMBS_UP_MEDIUM);
 

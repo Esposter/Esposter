@@ -10,7 +10,6 @@ export const createMessage = (
   message = "",
   type: MessageType = MessageType.Message,
 ): ClientMessage => ({
-  version: 0,
   appUserId: null,
   appUserImage: "",
   createdAt: new Date(0),
@@ -29,6 +28,7 @@ export const createMessage = (
   type,
   updatedAt: new Date(0),
   userId: v7(),
+  version: 0,
 });
 
 describe.todo("createMessage");

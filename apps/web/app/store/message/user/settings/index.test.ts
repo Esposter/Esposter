@@ -19,7 +19,6 @@ import { describe, expect, test, vi } from "vitest";
 describe(useUserSettingsStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const userSettings: UserSettingsInMessage = {
-    version: 0,
     autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
     createdAt: new Date(0),
     deletedAt: null,
@@ -33,6 +32,7 @@ describe(useUserSettingsStore, () => {
     speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
     updatedAt: new Date(0),
     userId: v7(),
+    version: 0,
     virtualBackground: "",
     voiceInputMode: VoiceInputMode.VoiceActivity,
   };

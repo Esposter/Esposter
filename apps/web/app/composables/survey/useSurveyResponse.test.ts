@@ -16,7 +16,6 @@ describe(useSurveyResponse, () => {
   const model = { a: "" };
   const submittedModel = { a: " " };
   const createSurveyResponse = (): SurveyResponseInResource => ({
-    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     id: responseId,
@@ -27,6 +26,7 @@ describe(useSurveyResponse, () => {
     participantTokenHash: "",
     resourceId,
     updatedAt: new Date(0),
+    version: 0,
   });
 
   // A stored resume id outlives a test, and a composable reads it on creation, so each test starts with none
