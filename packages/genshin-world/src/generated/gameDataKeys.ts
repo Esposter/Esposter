@@ -81,6 +81,7 @@ export const GameDataKeys = {
     liyue: "commissions/liyue",
     mondstadt: "commissions/mondstadt",
     natlan: "commissions/natlan",
+    "nod-krai": "commissions/nod-krai",
     snezhnaya: "commissions/snezhnaya",
     sumeru: "commissions/sumeru",
   },
