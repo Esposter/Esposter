@@ -80,6 +80,20 @@ describe("regionData", () => {
     expect(jumpKinds.has(LandmarkKind.TeleportWaypoint)).toBe(true);
   });
 
+  test("tree in a region", async () => {
+    expect.hasAssertions();
+
+    const { landmarks } = regionDataSchema.parse(
+      jsonDateParse(await readFile(join(REGION_DIRECTORY, "mondstadt.json"), "utf8")),
+    );
+    const jumpKinds = new Set(
+      landmarks.filter(({ kind }) => JUMP_LANDMARK_KINDS.includes(kind)).map(({ kind }) => kind),
+    );
+
+    expect(landmarks.some(({ kind }) => kind === LandmarkKind.Tree)).toBe(true);
+    expect(jumpKinds.has(LandmarkKind.Tree)).toBe(false);
+  });
+
   const readRegions = async (): Promise<RegionData[]> => {
     const filenames = (await readdir(REGION_DIRECTORY)).filter((filename) => /^[^.]+\.json$/u.test(filename));
     return Promise.all(
