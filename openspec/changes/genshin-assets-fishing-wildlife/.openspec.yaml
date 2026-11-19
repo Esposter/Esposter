@@ -2,7 +2,7 @@ schema: spec-driven
 affected_areas: [genshin]
 x-phase: 0
 x-model: claude-haiku-5-5
-x-waiting: "1.5 waits on genshin-assets-interface-art task 1.1, the named-icon command, which is open; 3.12 waits on genshin-assets-props tasks 1.3 and 1.4, the outline fit and its dataset member, which are open"
+x-waiting: "1.5 and 4.2 to 4.3 need the game install's icon exports, and 3.4 to 3.12 need its clips and meshes, which only the owner exports and fits; no parity compare is run this round"
 x-needs: [game-install, game-exports, media-engine]
 x-touches:
   [

@@ -20,7 +20,7 @@ The fishing scene and the wildlife reach the screen as a reel overlay, one capsu
 
 ## Waiting on
 
-The icon export waits on the interface-art change's named-icon command (its task 1.1), and the fishing-area prop fit waits on the props change's outline fit and dataset member (its tasks 1.3 and 1.4). Drawing the pets waits on the wildlife change's pet kind, but no task here waits on it.
+The icon export runs the `sprites` command that the interface-art change built (its task 1.1), and the fishing-area prop fit extends the props change's outline fit and dataset member (its tasks 1.3 and 1.4), which are built too, so no task here waits on another change. The exports, clips and fits read the game install and are run by its owner. Drawing the pets waits on the wildlife change's pet kind, but no task here waits on it.
 
 ## Impact
 
