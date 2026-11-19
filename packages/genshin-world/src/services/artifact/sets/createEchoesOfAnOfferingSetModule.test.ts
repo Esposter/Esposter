@@ -53,7 +53,7 @@ describe(createEchoesOfAnOfferingSetModule, () => {
       new Map([[TRAVELER_CHARACTER_ID, wearer]]),
     ) ?? 0;
 
-  test("a Normal Attack that lands and passes the 36% roll adds 70% of its wearer's ATK to its DMG, cleared 0.05 seconds on", () => {
+  test("a Normal Attack that lands and passes the 36% roll adds 70% of its wearer's ATK to its DMG, and is cleared once time passes", () => {
     expect.hasAssertions();
 
     const wearer = createWearer();

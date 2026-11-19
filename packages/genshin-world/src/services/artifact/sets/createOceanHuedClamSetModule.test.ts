@@ -118,17 +118,17 @@ describe(createOceanHuedClamSetModule, () => {
     ).toBeCloseTo(damageFor([{ healthShare: 0.1, sourceCharacterId: TRAVELER_CHARACTER_ID }]));
   });
 
-  test("a foam's burst reaches the enemies within six metres of its wearer, and spares one beyond that", () => {
+  test("a foam's burst reaches an enemy exactly six metres from its wearer, and spares one a hair beyond that", () => {
     expect.hasAssertions();
 
     const wearer = createWearer();
-    const near = createSturdyEnemy("near", { x: 3, z: 0 });
-    const far = createSturdyEnemy("far", { x: 30, z: 0 });
+    const edge = createSturdyEnemy("edge", { x: 6, z: 0 });
+    const beyond = createSturdyEnemy("beyond", { x: 6.01, z: 0 });
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, {
       enemyMap: new Map([
-        [far.id, far],
-        [near.id, near],
+        [beyond.id, beyond],
+        [edge.id, edge],
       ]),
       enemyTables,
       kitEffectState,
@@ -137,9 +137,9 @@ describe(createOceanHuedClamSetModule, () => {
 
     emitKitEvent(createHeal(0.2, TRAVELER_CHARACTER_ID), context);
     stepKitSeconds(context, 3);
-    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, near, undefined));
-    expect(1e9 - near.health).toBeCloseTo(0.9 * 0.2 * wearer.attributes.maxHealth * physicalMultiplier);
-    expect(far.health).toBe(1e9);
+    const physicalMultiplier = getResistanceMultiplier(getEnemyResistance(kind, edge, undefined));
+    expect(1e9 - edge.health).toBeCloseTo(0.9 * 0.2 * wearer.attributes.maxHealth * physicalMultiplier);
+    expect(beyond.health).toBe(1e9);
   });
 
   test("a heal given inside the 3.5-second cooldown after a foam's start is kept for the next foam, which bursts on it", () => {
