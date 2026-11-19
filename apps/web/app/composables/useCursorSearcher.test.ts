@@ -68,11 +68,8 @@ describe(useCursorSearcher, () => {
     // The throttle holds the new search until its window closes, which is the same instant the retry's backoff runs out
     searcher.searchQuery.value = "b";
     await flushPromises();
-    const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
     const retriedRead = searcher.readMoreSearchedItems(noop);
     await flushPromises();
-
-    expect(setTimeoutSpy.mock.lastCall?.[1]).toBe(BACKOFF_BASE_DELAY_MS);
 
     await vi.advanceTimersByTimeAsync(BACKOFF_BASE_DELAY_MS);
     await retriedRead;

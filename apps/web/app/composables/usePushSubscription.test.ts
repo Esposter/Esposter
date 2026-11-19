@@ -63,7 +63,7 @@ describe(usePushSubscription, () => {
     await waitForSynchronizedFunctions();
 
     expect(unsubscribedEndpoints).toStrictEqual([staleSubscription.endpoint]);
-    expect(staleSubscription.unsubscribe).toHaveBeenCalledTimes(1);
+    expect(staleSubscription.unsubscribe).toHaveBeenCalledExactlyOnceWith();
     expect(pushManager.subscribe).toHaveBeenCalledExactlyOnceWith({
       applicationServerKey: useRuntimeConfig().public.vapid.publicKey,
       userVisibleOnly: true,
