@@ -5,42 +5,87 @@
 - [x] 1.3 [phase 0] Read a named clip's length and root translation from the JSON `clips` writes, and print its speed in metres a second, as `genshin:assets motion <component> <pattern>`, beside `timings`. Verify: a test over a fixture clip, written first and seen failing; then `pnpm -C scripts genshin:assets motion animals '^Ani_Animal_Fox_01_Scared$'` prints the length and the speed.
 - [x] 1.4 [phase 0] Add `genshin:parity frame <file> <seconds>`, which cuts one frame at a given second from a local recording into a PNG by calling the existing `cutRecordingFrame` (`scripts/src/services/genshinParity/reference/cutRecordingFrame.ts`), since `recordings` clips only from a URL and `still` captures the running game. Verify: the command at 52.5 seconds of `{data-root}/genshin-parity/captures/yt-iKr-nF1P7xQ-fishing-reel.mkv`, the second `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts` names for the fishing screen, writes a frame 1920 by 1080, the size of `packages/genshin-world/src/components/Fishing/Screen/Index.reference.webp`. The cut is already exercised by `verifyReferences.test.ts`, so this task writes no test.
 - [ ] 1.5 [phase 0] Export the fishing icons by name through the named-icon command, `sprites`, that [interface art](../genshin-assets-interface-art/tasks.md) task 1.1 built: the fish item icons, the bait, the rod, the Use prompt's icon and the animal icons, one PNG each into the references folder. They are local references and are never committed. Verify: the command's dry run over these names prints each icon's status; after a run the references folder holds one PNG per icon found, and the printed count of the rest is the names the index lacks.
+
+  Blocked: the export reads the game install's atlases, which only the owner runs. The dry run `pnpm -C scripts genshin:assets sprites <names> --dry-run` is the next step; the names are the fish item icons, the bait, the rod, the Use prompt's icon and the sixteen animal icons.
+
 - [x] 1.6 [phase 0] Add the fishing-area props' placements to the fishing dataset that `genshin:assets fishing` publishes: each prop's name, place, turn and scale in each of the four regions, from their witness layouts, returned by the builder beside the points and tables. The props' outlines and their dataset member are [props](../genshin-assets-props/tasks.md) tasks 1.3 and 1.4; the props change names none of the fishing-area props, so their placements are this change's. Verify: a test over a fixture layout, written first and seen failing; then `pnpm -C scripts genshin:assets fishing --dry-run` prints the placements per region and makes no request.
 - [x] 1.7 [phase 0] Print an asset's index rows for a name pattern, each row's type, block and path ID, as `genshin:assets find <pattern>`. `ui-find` already matches UI names over its own per-block UI index, so the matching loop is generalised into a helper that both commands call, rather than a second loop over the index. Verify: a test over a fixture index, written first and seen failing; then `pnpm -C scripts genshin:assets find 'Eff_Water_Ripple_03'` prints its rows.
 - [x] 1.8 [phase 0] Carry each fish's monster id and its category into the fish record: `toFish` keeps the `monsterId` that `ExcelFishRow` already reads and the category column the fish table holds, both added to the `Fish` type and `fishSchema` in `genshin-world`, and the fishing dataset is published again. The category's column name is confirmed against the fish table's dump before the test is written. Verify: a test named after 'A fish record keeps its monster id and category', written first and seen failing; then `pnpm -C scripts test src/services/genshinAssets/fishing --run` passes.
 
 ## 2. The fishing scene
 
-- [ ] 2.1 [phase 6] Draw a fish stand-in at the lure while a fish is hooked, one shape per fish category (the category task 1.8 carries into the fish record), built from the engine's kits, standing in for the roadmap's `fish meshes and textures` line. Verify: tests named after 'A hooked fish is drawn at the lure', 'A fish with no codex model is drawn as its category's stand-in' and 'A family asset without fitted parameters is drawn as its stand-in', written first and seen failing.
-- [ ] 2.2 [phase 6] Draw one tapered rod in the character's hand while a line is out, standing in for the roadmap's `fishing rod model and texture` line. Verify: tests named after 'A cast shows the rod and the float' and 'Reeling in clears the rod and the float' check the rod, written first and seen failing.
-- [ ] 2.3 [phase 6] Draw one generated float on the water at the lure point while the line is out, standing in for the roadmap's `fishing float effect` line. Verify: tests named after 'A cast shows the rod and the float' and 'Reeling in clears the rod and the float' check the float, written first and seen failing.
-- [ ] 2.4 [phase 6] Draw a splash and rings at the lure on a strike that catches the bite, from the engine's water ripple node and a particle burst, standing in for the roadmap's `cast and splash effects` line. Verify: tests named after 'A struck bite shows a splash' and 'A strike with no bite shows no splash', written first and seen failing.
+- [x] 2.1 [phase 6] Draw a fish stand-in at the lure while a fish is hooked, one shape per fish category (the category task 1.8 carries into the fish record), built from the engine's kits, standing in for the roadmap's `fish meshes and textures` line. Verify: tests named after 'A hooked fish is drawn at the lure', 'A fish with no codex model is drawn as its category's stand-in' and 'A family asset without fitted parameters is drawn as its stand-in', written first and seen failing.
+- [x] 2.2 [phase 6] Draw one tapered rod in the character's hand while a line is out, standing in for the roadmap's `fishing rod model and texture` line. Verify: tests named after 'A cast shows the rod and the float' and 'Reeling in clears the rod and the float' check the rod, written first and seen failing.
+- [x] 2.3 [phase 6] Draw one generated float on the water at the lure point while the line is out, standing in for the roadmap's `fishing float effect` line. Verify: tests named after 'A cast shows the rod and the float' and 'Reeling in clears the rod and the float' check the float, written first and seen failing.
+- [x] 2.4 [phase 6] Draw a splash and rings at the lure on a strike that catches the bite, from the engine's water ripple node and a particle burst, standing in for the roadmap's `cast and splash effects` line. Verify: tests named after 'A struck bite shows a splash' and 'A strike with no bite shows no splash', written first and seen failing.
 - [ ] 2.5 [phase 6] Draw each fishing point's ripple ring while its region has stock, standing in for the roadmap's `cast and splash effects` line. Verify: tests named after 'A point with fish left shows its ring' and 'A point whose stock is empty shows no ring', written first and seen failing.
+
+  Blocked: built and tested, not mounted. A mount in Windrise would draw every region's fishing point from Windrise's ground, so it waits on a session filter that places each point only in its own region.
+
 - [x] 2.6 [phase 2] Add the reel's challenge panel to the reel screen, with its four strings as game-text keys: 'Catch Moonfins', 'Moonfins Caught', 'Ideal Tension Zone maintained for' and 'Abandon Challenge', read from the English text map. The panel's count comes from the reel that [genshin-fishing](../genshin-fishing/design.md) owns and is not drawn here. Verify: a genshin-text test named after 'The challenge panel shows the game's words in the reader's language', written first and seen failing; then `pnpm -C scripts genshin:text write` writes the keys.
 
 ## 3. Animals, critters, pets and fish bodies
 
-- [ ] 3.1 [phase 6] Draw one generated silhouette per fleeing kind (White Pigeon, Crimson Fox, Squirrel, Boar) in place of its capsule, sized by the bounds task 1.2 reads; a kind with no silhouette stays a capsule, standing in for the roadmap's `animal and critter meshes` line. Verify: tests named after 'A fleeing animal is drawn as its kind' and 'A kind with no silhouette stays a capsule', written first and seen failing.
+- [x] 3.1 [phase 6] Draw one generated silhouette per fleeing kind (White Pigeon, Crimson Fox, Squirrel, Boar) in place of its capsule, sized by the bounds task 1.2 reads; a kind with no silhouette stays a capsule, standing in for the roadmap's `animal and critter meshes` line. Verify: tests named after 'A fleeing animal is drawn as its kind' and 'A kind with no silhouette stays a capsule', written first and seen failing.
 - [ ] 3.2 [phase 6] Draw one stand-in per critter species group at each of its map points, standing in for the roadmap's `animal and critter meshes` line. Verify: tests named after 'A critter stands at each of its points' and 'A butterfly stands at no point', written first and seen failing.
+
+  Blocked: built and tested, not mounted. The critter groups' material sources are held by the pickups store for Mondstadt alone, so the mount waits on a region-keyed load in the session, which also passes the butterfly item id.
+
 - [x] 3.3 [phase 6] Add the other critter groups' labels to the material-source list and join each to its gather row by the name join the crystalflies use, so that each group's pickup gives its item and vanishes. Verify: `pnpm -C scripts genshin:assets materialSources --dry-run` prints the matches per group and the rows that do not join, and a test named after 'A picked critter gives its item and vanishes', written first and seen failing.
 - [ ] 3.4 [phase 7] Write each fleeing kind's escape time and flight speed from its run clip (task 1.3) into the wildlife constants in place of the provisional values, and leave the escape radius provisional. Verify: tests named after 'A startled animal runs at its clip's speed' and 'A clip without root motion keeps the provisional speed', written first and seen failing; the printed motion matches each constant, and `stepWildlife.test.ts` passes.
+
+  Blocked: the run clips are read from the install, which only the owner exports with `pnpm -C scripts genshin:assets clips animals`; then `genshin:assets motion animals '<pattern>'` gives the numbers this task writes.
+
 - [ ] 3.5 [phase 7] Write the fit that reads each fleeing kind's game mesh into our silhouette parameters, register it in the fit map, and publish it under its own key. Verify: `pnpm -C scripts genshin:assets fit animals --dry-run` prints the same counts on a rerun, and `pnpm -C scripts genshin:data verify` passes after `fit animals --only <key>`.
+
+  Blocked: the fit reads the exported animal meshes, which only the owner extracts with `pnpm -C scripts genshin:assets extract animals`; then `genshin:assets fit animals --dry-run`, and publish with `--only <key>`.
+
 - [ ] 3.6 [phase 7] Write the fit that reads each critter species group's game mesh into a stand-in silhouette, and publish it under its own key. Verify: as task 3.5, for the critter keys.
+
+  Blocked: as task 3.5, for the critter groups' meshes.
+
 - [ ] 3.7 [phase 7] Join each fish record to its codex row by the monster id task 1.8 carries, read the model from the row's model path, export that model and fit its silhouette, then publish it under a fish key. Verify: the fit's dry run, `pnpm -C scripts genshin:assets fit animals --dry-run`, prints the joined fish and the unmatched monster ids, and `pnpm -C scripts genshin:data verify` passes after publish.
+
+  Blocked: the codex models are read from the exports the owner makes with `pnpm -C scripts genshin:assets extract animals`; then the fit's dry run and a publish.
+
 - [ ] 3.8 [phase 7] Write the fit that reads the rod's game mesh (the rod models in the fishing component) into one tapered rod's parameters, and publish it under its own key. Verify: `pnpm -C scripts genshin:assets fit fishing --dry-run` prints the same counts on a rerun, and `pnpm -C scripts genshin:data verify` passes.
+
+  Blocked: the rod's mesh is read from the exports the owner makes with `pnpm -C scripts genshin:assets extract fishing`, then the fit and publish.
+
 - [ ] 3.9 [phase 7] Write the fit that reads the float's effect mesh into one generated float's parameters, and publish it under its own key. Verify: as task 3.8, for the float.
+
+  Blocked: as task 3.8, for the float's effect mesh.
+
 - [ ] 3.10 [phase 7] Name the bite and splash effects with `genshin:assets find` (task 1.7), export their meshes and textures, and fit the splash's rings and spray to our parameters. Verify: `pnpm -C scripts genshin:parity compare <reference>` over the strike frame cut by task 1.4 scores under the bar its reference sets, and `pnpm -C scripts genshin:assets fit fishing --dry-run` holds its counts on a rerun.
+
+  Blocked: the bite's meshes and textures come from the owner's `extract fishing`, and the compare over the strike frame is a parity run this round does not take.
+
 - [ ] 3.11 [phase 7] Write the fit and publish for the cat and dog models, which the wildlife change's pet kind draws once its task 5.1 lands. Verify: `pnpm -C scripts genshin:assets fit animals --dry-run` names the pet records, and `pnpm -C scripts genshin:data verify` passes after publish.
+
+  Blocked: the cat and dog models come from the owner's `extract animals`; the pet kind waits on genshin-wildlife task 5.1.
+
 - [ ] 3.12 [phase 7] Fit each fishing-area prop kind's exported mesh into a stand-in outline through the props fit entry of [props](../genshin-assets-props/tasks.md) task 1.3, as a visual hull or a lathe by its shape, and publish its record under the kind's key through the props dataset member of task 1.4. This task adds the fishing kinds to that entry and writes no fit of its own. Verify: `pnpm -C scripts genshin:assets fit props --dry-run` prints each fishing kind's counts on a rerun, and `pnpm -C scripts genshin:data verify` passes after `fit props --only <kind>`.
+
+  Blocked: the fishing kinds' meshes come from the owner's `extract props`; the props fit entry itself is built by props task 1.3.
 
 ## 4. Props and icons
 
 - [ ] 4.1 [phase 6] Draw one stand-in per fishing-area prop at the place the fishing dataset from task 1.6 gives, in every region that holds one, standing in for the roadmap's `fishing-area prop meshes and textures` line. Verify: tests named after 'A prop stands at its layout's place' and 'A prop without a layout place is not drawn', written first and seen failing.
+
+  Blocked: built and tested, not mounted. The props are region-keyed and no session load reads `fishing/props` yet, so the mount waits on that load joining useWorldFishing's Promise.all and a mount per region.
+
 - [ ] 4.2 [phase 6] Trace each exported animal icon at full resolution with `pnpm -C scripts genshin:parity trace <source>` into a path of ours, and draw it beside its codex entry in the archive's Living Beings. Verify: the trace writes a path for each icon, and a test named after 'An untraced icon stays a disc', written first and seen failing.
+
+  Blocked: the animal icons are traced from the exports task 1.5 names, which the owner runs; then `pnpm -C scripts genshin:parity trace <source>` per icon at full resolution.
+
 - [ ] 4.3 [phase 2] Trace the fish, bait, rod and Use prompt icons at full resolution into paths of ours, for the bag and the interaction prompts, in place of the discs that [interaction](../../specs/genshin/interaction/design.md)'s open item names. Verify: `pnpm -C scripts genshin:parity trace <source>` writes a path for each icon, and a test named after 'A traced icon replaces a disc', written first and seen failing.
+
+  Blocked: the fish, bait, rod and Use prompt icons come from task 1.5's export, which the owner runs; then the trace per icon.
 
 ## 5. Roadmap
 
 - [x] 5.1 [phase 6] Record the animal icons' art gap as an `Asset:` line under Phase 6 of the roadmap, in the form the Phase 2 lines use, naming the archive's Living Beings as the entry it is needed by. Verify: the line sits under Phase 6 in `openspec/changes/genshin-roadmap/tasks.md`, and `pnpm -C scripts exec vitest run src/services/openspec` passes.
 - [x] 5.2 [phase 7] Record each world art piece the family cannot ship (the rod, the float, the cast and splash effects, the fish, animal and critter meshes, the props and the pets) as an `Asset:` line under Phase 7 of the roadmap, naming the system it is needed by. Verify: each stand-in task above names the line it stands in for, and `pnpm -C scripts exec vitest run src/services/openspec` passes.
 - [ ] 5.3 [phase 7] Hold the family's no-game-bytes rule on publish: list the datasets the family publishes and the files the world serves for it, and find no mesh, texture, clip or icon of the game among them. Verify: a test named after the scenario 'The published family holds no game asset', written first and seen failing, over the keys `genshin:assets fit animals` and `genshin:assets fishing` publish and the family's served files.
+
+  Blocked: the test reads the keys the fits publish (`fit animals` and `fit fishing`), which wait on the owner's extracts in tasks 3.5 to 3.11.
