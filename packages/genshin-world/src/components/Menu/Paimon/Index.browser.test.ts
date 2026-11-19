@@ -144,7 +144,7 @@ describe("menuPaimon", () => {
   });
 
   // The Battle Pass opens at Adventure Rank 20, and its entry is never drawn even with that rank and the quests finished
-  test("The menu draws no Battle Pass entry at any rank", async () => {
+  test("the menu draws no Battle Pass entry at any rank", async () => {
     expect.hasAssertions();
 
     await render(MenuPaimon, { props: { ...props, adventureRank: 20, finishedMainQuestIds: openedQuestIds } });
