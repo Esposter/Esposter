@@ -1,5 +1,5 @@
 import { compareNumericIdentifiers } from "#src/services/semver/compareNumericIdentifiers";
-import { compareText } from "#src/services/semver/compareText";
+import { compareText } from "@esposter/shared";
 
 const NUMERIC_IDENTIFIER_REGEX = /^\d+$/u;
 

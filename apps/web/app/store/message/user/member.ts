@@ -2,7 +2,6 @@ import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { PublicUser } from "@esposter/db-schema";
 
 import { MemberCounts } from "#src/models/message/user/MemberCounts";
-import { compareText } from "#src/services/message/member/compareText";
 import { foldAsciiCase } from "#src/services/message/member/foldAsciiCase";
 import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
 import { createBatchedRefresh } from "#src/services/shared/createBatchedRefresh";
@@ -11,7 +10,7 @@ import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useUserStore } from "#src/store/message/user/index";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
-import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
+import { compareText, getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useMemberStore = defineStore("message/user/member", () => {
   const { $trpc } = useNuxtApp();
