@@ -147,9 +147,7 @@ const baseMessageRouter = router({
         JSON.stringify(input),
       );
       await publishDeletedMessageFiles(input.roomId, [deletedMessage]);
-      // A webhook's message is never counted, so only a member's deleted message takes its mention counts back
-      if (deletedMessage.userId)
-        await takeBackMentionCounts(ctx.db, input.roomId, { ...deletedMessage, userId: deletedMessage.userId });
+      await takeBackMentionCounts(ctx.db, input.roomId, deletedMessage);
     }),
   // Reclaims blobs that were uploaded against a presigned write url but never reached a message — the composer's revert
   // Path. Nothing else can: every other deletion walks a persisted message's `files`, and an upload the composer threw
@@ -417,9 +415,8 @@ const baseMessageRouter = router({
         DatabaseEntityType.Message,
         JSON.stringify(input),
       );
-      // A webhook's message is never counted, so an edit of one moves no count
-      if (previousMessage?.userId) {
-        await takeBackMentionCounts(ctx.db, input.roomId, { ...previousMessage, userId: previousMessage.userId });
+      if (previousMessage) {
+        await takeBackMentionCounts(ctx.db, input.roomId, previousMessage);
         await addMentionCounts(ctx.db, input.roomId, { message: input.message, userId: previousMessage.userId });
       }
     }),
