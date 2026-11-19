@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { getSurveyChoiceListEditorOptions } from "#src/services/resource/survey/getSurveyChoiceListEditorOptions";
 import { useAlertStore } from "#src/store/alert";
 import { v7 } from "uuid";
@@ -53,7 +54,7 @@ const replaceImage = (id: string, files: File[]) =>
     </template>
     <template #below="{ index, row }">
       <UiFileField
-        accept="image/*"
+        :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
         :label="`Replace image of choice ${index + 1}`"
         :model-value="[]"
         @update:model-value="(files) => replaceImage(row.id, files)"
@@ -61,7 +62,7 @@ const replaceImage = (id: string, files: File[]) =>
     </template>
     <template #add>
       <UiFileField
-        accept="image/*"
+        :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
         label="Add a choice from an image"
         :model-value="[]"
         @update:model-value="(files) => addChoice(files)"

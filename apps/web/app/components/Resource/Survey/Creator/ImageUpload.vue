@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 interface Props {
@@ -20,7 +21,7 @@ const onPick = (files: File[]) => uploadPicked(files, (url) => updateNodeProps({
 <template>
   <div flex flex-col gap-2>
     <UiFileField
-      accept="image/*"
+      :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
       :label="imageLink ? 'Replace image' : 'Upload image'"
       :model-value="[]"
       @update:model-value="(files) => onPick(files)"

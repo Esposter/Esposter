@@ -65,6 +65,7 @@ import { ResourceSortName } from "#shared/models/resource/ResourceSortName";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { ResourceFileMimeTypeMap } from "#shared/services/resource/ResourceFileMimeTypeMap";
 import { ResourceSortNamePageSortMap } from "#shared/services/resource/ResourceSortNamePageSortMap";
 import { createPresignedGetUrl, getContentBlobName, readResourceListPage } from "@esposter/db";
 import {
@@ -249,9 +250,15 @@ export const createResourceProcedures = <TType extends ResourceType>(
       "id",
     )
       .meta({ staticReason: "The upload addresses of a file, which no reader shows until the file is saved" })
-      .query<ResourceFilePresignedUrlEntity[]>(({ ctx, input: { files, id } }) =>
-        generateReservedResourceAssetPresignedUrlEntities(ctx.db, ctx.user.id, id, files),
-      ),
+      .query<ResourceFilePresignedUrlEntity[]>(({ ctx, input: { files, id } }) => {
+        // A file the type's picker does not offer is refused before a write url is signed for it
+        const acceptedMimeTypes: readonly string[] = ResourceFileMimeTypeMap[type];
+        const refusedFile = files.find(({ mimetype }) => !acceptedMimeTypes.includes(mimetype));
+        if (refusedFile)
+          throw getInvalidOperationError(Operation.Read, type, JSON.stringify({ mimetype: refusedFile.mimetype }));
+
+        return generateReservedResourceAssetPresignedUrlEntities(ctx.db, ctx.user.id, id, files);
+      }),
     // A file deleted, and the save that writes an uploaded file's address, publish the resource's topics, so an open listing reads the set again
     readResourceFiles: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceFile[]>(({ input: { id } }) =>
       readResourceFiles(getBucket(StorageBucket.ResourceAssets), id),

@@ -4,6 +4,7 @@ import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsR
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ResourceFile } from "#shared/models/resource/ResourceFile";
+import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 import type { R2Bucket, R2Object } from "@cloudflare/workers-types";
 import type { ResourceInResource, ResourcePublicationInResource } from "@esposter/db-schema";
@@ -63,7 +64,14 @@ import {
   StorageBucket,
   storageLedgerInStorage,
 } from "@esposter/db-schema";
-import { jsonDateParse, noop, NotFoundError, waitForSynchronizedFunctions } from "@esposter/shared";
+import {
+  InvalidOperationError,
+  jsonDateParse,
+  noop,
+  NotFoundError,
+  Operation,
+  waitForSynchronizedFunctions,
+} from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { createHash } from "node:crypto";
 import { gzipSync, zstdCompressSync } from "node:zlib";
@@ -76,6 +84,10 @@ type FileAssetsCaller<TType extends FileAssetsResourceType> = FileAssetsResource
 // The procedures a type with the fileAssets capability generates beside the base ones
 interface FileAssetsResourceCaller {
   deleteFile: (input: { blobPath: string; id: string }) => Promise<void>;
+  generateUploadFilePresignedUrlEntities: (input: {
+    files: { hash: string; mimetype: string; size: number }[];
+    id: string;
+  }) => Promise<ResourceFilePresignedUrlEntity[]>;
   readResourceFiles: (input: { id: string }) => Promise<ResourceFile[]>;
 }
 type PublishableCaller<TType extends PublishableResourceType> = PublishableResourceCaller<ResourceContent<TType>> &
@@ -126,6 +138,7 @@ describe(createResourceProcedures, () => {
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
   let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   // Dashboard is the publishable representative; Webpage is the FileAssets one
+  let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   let bucket: R2Bucket;
   let dispose: () => Promise<void>;
@@ -272,6 +285,7 @@ describe(createResourceProcedures, () => {
     mockContext = await createMockContext();
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
     resourceCaller = createCallerFactory(trpcRouter)(mockContext).resource;
+    surveyCaller = createCallerFactory(surveyRouter)(mockContext);
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
@@ -871,6 +885,55 @@ describe(createResourceProcedures, () => {
     expect(presignedUrlEntities).toStrictEqual([
       { id: hash, isHeld: false, presignedUrl: expect.stringContaining(`/${blobName}?`) },
     ]);
+  });
+
+  // A webpage's media field offers its videos beside its images, so its upload takes them
+  test("generates upload file presigned url entities for a webpage video", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+    const presignedUrlEntities = await webpageCaller.generateUploadFilePresignedUrlEntities({
+      files: [{ hash, mimetype: MimeType.VideoMp4, size }],
+      id: newResource.id,
+    });
+
+    const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
+
+    expect(presignedUrlEntities).toStrictEqual([
+      { id: hash, isHeld: false, presignedUrl: expect.stringContaining(`/${blobName}?`) },
+    ]);
+  });
+
+  // An svg can carry script, so no image a survey takes may be one, and the upload refuses it before a write url is signed
+  test("fails generate upload file presigned url entities with an svg image on a survey", async () => {
+    expect.hasAssertions();
+
+    const newResource = await surveyCaller.createResource({ name });
+
+    await expect(
+      surveyCaller.generateUploadFilePresignedUrlEntities({
+        files: [{ hash, mimetype: MimeType.Svg, size }],
+        id: newResource.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, ResourceType.Survey, JSON.stringify({ mimetype: MimeType.Svg })).message}]`,
+    );
+  });
+
+  // The same refusal on a webpage, whose list holds its videos beside its images, so the svg is refused against the images alone
+  test("fails generate upload file presigned url entities with an svg image on a webpage", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+
+    await expect(
+      webpageCaller.generateUploadFilePresignedUrlEntities({
+        files: [{ hash, mimetype: MimeType.Svg, size }],
+        id: newResource.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, ResourceType.Webpage, JSON.stringify({ mimetype: MimeType.Svg })).message}]`,
+    );
   });
 
   test("fails generate upload file presigned url entities with wrong user", async () => {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
 import { SurveyProgressBarPlacement } from "vue-survey-engine-headless";
@@ -27,11 +28,16 @@ const progressBarItems: UiMenuItem<SurveyProgressBarPlacement>[] = [
 <template>
   <div flex flex-col gap-4>
     <ResourceSurveyCreatorThemeClearRow clear-label="Remove logo" name="logo">
-      <UiFileField accept="image/*" label="Logo" :model-value="[]" @update:model-value="(files) => onPickLogo(files)" />
+      <UiFileField
+        :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
+        label="Logo"
+        :model-value="[]"
+        @update:model-value="(files) => onPickLogo(files)"
+      />
     </ResourceSurveyCreatorThemeClearRow>
     <ResourceSurveyCreatorThemeClearRow clear-label="Remove background picture" name="backgroundImage">
       <UiFileField
-        accept="image/*"
+        :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
         label="Background picture"
         :model-value="[]"
         @update:model-value="(files) => onPickBackground(files)"

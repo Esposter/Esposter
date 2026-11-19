@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { WEBPAGE_DESCRIPTION_MAX_LENGTH } from "#shared/services/resource/constants";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
@@ -58,7 +59,7 @@ await loadContent();
       />
       <FileField
         v-model="shareImageFiles"
-        accept="image/*"
+        :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
         :label="webpageEditor.imageUrl ? 'Replace share image' : 'Share image'"
       />
       <UiButton v-if="webpageEditor.imageUrl" :variant="UiButtonVariant.Quiet" @click="webpageEditor.imageUrl = ''">
