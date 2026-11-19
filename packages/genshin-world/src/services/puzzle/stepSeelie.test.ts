@@ -66,7 +66,7 @@ describe(stepSeelie, () => {
     }).toStrictEqual({ progress: 0, state: SeelieState.Resting, unfollowedSeconds: 0 });
   });
 
-  test("stays settled in its court whatever follows it", () => {
+  test("a settled Seelie stays in its court when left unfollowed", () => {
     expect.hasAssertions();
 
     const seelie = createSeelie(SeelieState.Settled);
