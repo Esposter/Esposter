@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import type { TransitionProps } from "vue";
+
+defineProps<{ mode?: TransitionProps["mode"] }>();
 defineSlots<{ default: () => VNode }>();
 </script>
 
 <template>
-  <Transition name="fade">
+  <Transition name="fade" :mode>
     <slot />
   </Transition>
 </template>
