@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CharacterProps } from "#src/components/Dungeons/World/Character/CharacterProps";
 import type { Position } from "grid-engine";
-import type { Subscription } from "rxjs";
+import type { Observable, Subscription } from "rxjs";
 
 import { omitUndefined } from "@esposter/shared";
 import { Direction } from "grid-engine";
@@ -11,13 +11,21 @@ import { Sprite } from "vue-phaserjs";
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });
 defineProps<CharacterProps>();
-// Every grid-engine stream this character listens on, so a sixth costs a push rather than a ref and a line in
-// The teardown. Grid engine removes the character itself when a new tilemap is created
+// Every grid-engine stream this character listens on, so a stream costs one call rather than a ref and a line in the
+// Teardown. Grid engine removes the character itself when a new tilemap is created
 const subscriptions = ref<Subscription[]>([]);
 
 const unsubscribeAll = () => {
   for (const subscription of subscriptions.value) subscription.unsubscribe();
   subscriptions.value.length = 0;
+};
+// Filters a stream to this character and holds its subscription for the teardown, the two steps every stream takes
+const subscribeToCharacter = <TEvent extends { charId: string }>(
+  id: string,
+  events: Observable<TEvent>,
+  onEvent: (event: TEvent) => void,
+) => {
+  subscriptions.value.push(events.pipe(filter(({ charId }) => charId === id)).subscribe(onEvent));
 };
 
 onUnmounted(unsubscribeAll);
@@ -47,53 +55,32 @@ onUnmounted(unsubscribeAll);
         });
         if (onMovementStarted) {
           const baseOnMovementStarted = onMovementStarted;
-          subscriptions.push(
-            scene.gridEngine
-              .movementStarted()
-              .pipe(filter(({ charId }) => charId === id))
-              .subscribe((movement) => baseOnMovementStarted(scene, movement)),
+          subscribeToCharacter(id, scene.gridEngine.movementStarted(), (movement) =>
+            baseOnMovementStarted(scene, movement),
           );
         }
 
         if (onMovementStopped) {
           const baseOnMovementStopped = onMovementStopped;
-          subscriptions.push(
-            scene.gridEngine
-              .movementStopped()
-              .pipe(filter(({ charId }) => charId === id))
-              .subscribe((movement) => baseOnMovementStopped(scene, movement)),
+          subscribeToCharacter(id, scene.gridEngine.movementStopped(), (movement) =>
+            baseOnMovementStopped(scene, movement),
           );
         }
 
-        subscriptions.push(
-          scene.gridEngine
-            .positionChangeStarted()
-            .pipe(filter(({ charId }) => charId === id))
-            .subscribe((positionChange) => {
-              const { charId } = positionChange;
-              direction = scene.gridEngine.getFacingDirection(charId);
-              onPositionChangeStarted?.(scene, positionChange);
-            }),
-        );
-        subscriptions.push(
-          scene.gridEngine
-            .positionChangeFinished()
-            .pipe(filter(({ charId }) => charId === id))
-            .subscribe((positionChange) => {
-              const { charId, enterTile } = positionChange;
-              position = enterTile;
-              direction = scene.gridEngine.getFacingDirection(charId);
-              onPositionChangeFinished?.(scene, positionChange);
-            }),
-        );
-        subscriptions.push(
-          scene.gridEngine
-            .directionChanged()
-            .pipe(filter(({ charId }) => charId === id))
-            .subscribe(({ direction: newDirection }) => {
-              direction = newDirection;
-            }),
-        );
+        subscribeToCharacter(id, scene.gridEngine.positionChangeStarted(), (positionChange) => {
+          const { charId } = positionChange;
+          direction = scene.gridEngine.getFacingDirection(charId);
+          onPositionChangeStarted?.(scene, positionChange);
+        });
+        subscribeToCharacter(id, scene.gridEngine.positionChangeFinished(), (positionChange) => {
+          const { charId, enterTile } = positionChange;
+          position = enterTile;
+          direction = scene.gridEngine.getFacingDirection(charId);
+          onPositionChangeFinished?.(scene, positionChange);
+        });
+        subscribeToCharacter(id, scene.gridEngine.directionChanged(), ({ direction: newDirection }) => {
+          direction = newDirection;
+        });
         onComplete?.(scene, sprite);
       }
     "
