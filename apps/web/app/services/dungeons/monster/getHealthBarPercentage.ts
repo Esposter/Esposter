@@ -1,4 +1,5 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
-export const getHealthBarPercentage = (monster: Monster) =>
-  (monster.status.health / monster.statistics.maxHealth) * 100;
+import { getHealthRate } from "#src/services/dungeons/monster/getHealthRate";
+
+export const getHealthBarPercentage = (monster: Monster) => getHealthRate(monster) * 100;
