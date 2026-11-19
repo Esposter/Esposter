@@ -43,7 +43,7 @@ describe(plantHomeSeed, () => {
     expect(countInventoryItem(result.inventory.items, SEED_ID)).toBe(1);
   });
 
-  test("a plot already holding a planting takes no other seed", () => {
+  test("a plot already holding a planting takes no other seed, while a free plot still takes one", () => {
     expect.hasAssertions();
     const held: HomePlanting = { plantedAt: EPOCH, plotId: PLOT_ID, seedItemId: SEED_ID };
 
@@ -58,6 +58,6 @@ describe(plantHomeSeed, () => {
         { plotId: OTHER_PLOT_ID, seedItemId: SEED_ID },
         { inventory: bag(2), now: EPOCH, plantings: [held], plants: [plant] },
       )?.plantings,
-    ).toHaveLength(2);
+    ).toStrictEqual([held, { plantedAt: EPOCH, plotId: OTHER_PLOT_ID, seedItemId: SEED_ID }]);
   });
 });
