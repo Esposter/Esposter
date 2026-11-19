@@ -13,19 +13,23 @@ const commentStore = useCommentStore();
 const { commentSortType, currentPost } = storeToRefs(commentStore);
 const { openPost } = commentStore;
 const { executeQuery } = useMutation();
+let isLoaded = false;
 // A comment is a post, so this returns one either way: opening a reply's own id renders it as the root of its
 // Thread with its replies beneath, which is what "continue this thread" is — the same page, one level of
 // Context instead of ten, and no route of its own. The read stays live, and a write's refresh replaces the post
 // Without reopening it, so the reader's expanded replies and sort survive an edit
 // The page exists only for a post that could be read, so the first read's failure is the error page, and its success
-// Opens the post afresh, whatever thread the store still held from an earlier visit. The rethrow is the failure's one
-// Report: the app's `vue:error` plugin logs it and the error page shows it, so the err handler neither logs nor alerts
+// Opens the post afresh, whatever thread the store still held from an earlier visit. The first read's rethrow is its
+// One report: the app's `vue:error` plugin logs it and the error page shows it. A refresh of a page already on screen
+// Is logged here instead, since the watch that runs it drops a rejection
 const outcome = await executeQuery(() => $trpc.post.readPost.query(route.params.id), {
   key: route.params.id,
   onError: (error) => {
-    throw error;
+    if (isLoaded) console.error(error);
+    else throw error;
   },
   onSuccess: (newPost) => {
+    isLoaded = true;
     currentPost.value = newPost;
   },
 });
