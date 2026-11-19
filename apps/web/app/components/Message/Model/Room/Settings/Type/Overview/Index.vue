@@ -24,8 +24,8 @@ const { roomCategories } = storeToRefs(roomCategoryStore);
 const userToRoomStore = useUserToRoomStore();
 const { executeUserToRoomMutation, getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
 const { $trpc } = useNuxtApp();
-// The category is the reader's own, so the field holds the reader's row for this room, resolved against the categories
-// The reader still has
+// The category is the reader's own, so the field holds the reader's row for this room, resolved against the
+// Categories. The reader still has a category deleted elsewhere, which resolves to none
 const myCategoryId = computed(() => resolveRoomCategoryId(roomCategories.value, getMyUserToRoom(room.id)?.categoryId));
 const {
   draft: editedCategoryId,
