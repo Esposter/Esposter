@@ -2,11 +2,11 @@
 import type { PortableFormat } from "#src/models/resource/PortableFormat";
 
 import { MimeType } from "#shared/models/file/MimeType";
+import { JSON_FILE_ACCEPT } from "#src/services/file/constants";
 import { importFile } from "#src/services/file/importFile";
 import { validateFileWithAlert } from "#src/services/file/validateFileWithAlert";
 import { parseBlueprintManifest } from "#src/services/resource/blueprint/parseBlueprintManifest";
 import { stringifyBlueprintManifest } from "#src/services/resource/blueprint/stringifyBlueprintManifest";
-import { BLUEPRINT_MANIFEST_ACCEPT } from "#src/services/resource/constants";
 import { useBlueprintStore } from "#src/store/resource/blueprint/index";
 import { useResourceStore } from "#src/store/resource/index";
 import { useVersionHistoryStore } from "#src/store/resource/versionHistory";
@@ -41,7 +41,7 @@ export const createBlueprintPortableFormat = (): PortableFormat => ({
     await loadContent();
     const versionHistoryStore = useVersionHistoryStore();
     const { saveResourceRevision } = versionHistoryStore;
-    await importFile(MimeType.Json, BLUEPRINT_MANIFEST_ACCEPT, async (file) => {
+    await importFile(MimeType.Json, JSON_FILE_ACCEPT, async (file) => {
       // A file over the app's file limit is refused before it is read, so no text is replaced for it
       if (!validateFileWithAlert(file)) return;
 
