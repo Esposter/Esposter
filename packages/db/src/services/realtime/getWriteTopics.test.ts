@@ -2,6 +2,7 @@ import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 import type { Database } from "@esposter/db-schema";
 
 import { getWriteTopics } from "#src/services/realtime/getWriteTopics";
+import { insertUser } from "#src/services/realtime/insertUser.test";
 import { recordStatements } from "#src/services/realtime/recordStatements";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -16,7 +17,6 @@ import {
   roomRolesInMessage,
   roomsInMessage,
   RoomType,
-  usersInAuth,
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   webhooksInMessage,
@@ -25,19 +25,6 @@ import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
-
-const insertUser = (db: Database, id: string) =>
-  db
-    .insert(usersInAuth)
-    .values({
-      createdAt: new Date(0),
-      email: id,
-      emailVerified: true,
-      id,
-      image: "",
-      name: id,
-      updatedAt: new Date(0),
-    });
 
 // A room and its owner, the rows a membership or an invite names
 const insertRoom = async (db: Database, roomId: string, userId: string) => {
@@ -90,7 +77,6 @@ describe(getWriteTopics, () => {
     ]);
   });
 
-  // An update names the values its rows hold after it, which is what a reader of the row now reads
   // The caller's RETURNING names only `userId`, which left out the room that scopes the row, so a write must name the scope values
   // Of the rows it returns whatever columns the caller asked for, and the caller is answered only the columns it asked for
   test("a write that returns only some of its columns still names the scope values of the rows it returns", async () => {
@@ -166,6 +152,7 @@ describe(getWriteTopics, () => {
     ]);
   });
 
+  // An update names the values its rows hold after it, which is what a reader of the row now reads
   test("an update names the scope values of the rows it returns", async () => {
     expect.hasAssertions();
 

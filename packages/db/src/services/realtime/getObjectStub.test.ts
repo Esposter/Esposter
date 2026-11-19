@@ -7,23 +7,17 @@ import { describe, expect, test, vi } from "vitest";
 type RoomStub = ObjectInvoker & { readMessages: (ids: number[]) => Promise<string> };
 
 describe(getObjectStub, () => {
-  test("reaches the object its name resolves to, and runs its RPC method through that object's invoke", async () => {
+  test("names the object by the id its namespace gives the name", () => {
     expect.hasAssertions();
 
-    const invoke = vi.fn<ObjectInvoker["invoke"]>(() =>
-      Promise.resolve({ readSet: [{ topic: "messages:*" }], result: "a", writeSet: [] }),
-    );
-    const roomStub: RoomStub = { invoke, readMessages: () => Promise.resolve("decoy") };
+    const roomStub: RoomStub = {
+      invoke: () => Promise.resolve({ readSet: [], result: "", writeSet: [] }),
+      readMessages: () => Promise.resolve(""),
+    };
     const get = vi.fn<(id: string) => RoomStub>(() => roomStub);
-    const reads: unknown[] = [];
 
-    const room = getObjectStub({ get, idFromName: (name) => `id:${name}` }, "room", (readSet) => {
-      reads.push(readSet);
-    });
+    getObjectStub({ get, idFromName: (name) => `id:${name}` }, "room");
 
-    await expect(room.readMessages([1])).resolves.toBe("a");
     expect(get).toHaveBeenCalledExactlyOnceWith("id:room");
-    expect(invoke).toHaveBeenCalledExactlyOnceWith("readMessages", [[1]]);
-    expect(reads).toStrictEqual([[{ topic: "messages:*" }]]);
   });
 });

@@ -1,9 +1,9 @@
 import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
-import type { Database } from "@esposter/db-schema";
 
 import { getReadTopics } from "#src/services/realtime/getReadTopics";
 import { getWokenTopics } from "#src/services/realtime/getWokenTopics";
 import { getWriteTopics } from "#src/services/realtime/getWriteTopics";
+import { insertUser } from "#src/services/realtime/insertUser.test";
 import { recordStatements } from "#src/services/realtime/recordStatements";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -22,19 +22,6 @@ import { and, eq, getTableName, inArray, isNull, ne, not, or, sql } from "drizzl
 import { alias } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
-
-const insertUser = (db: Database, id: string) =>
-  db
-    .insert(usersInAuth)
-    .values({
-      createdAt: new Date(0),
-      email: id,
-      emailVerified: true,
-      id,
-      image: "",
-      name: id,
-      updatedAt: new Date(0),
-    });
 
 // A viewer alone in one room and sharing another with a second user, the shape the self-join tests read
 const seedSelfJoinRooms = async () => {

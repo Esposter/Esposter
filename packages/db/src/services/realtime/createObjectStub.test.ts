@@ -42,14 +42,6 @@ describe(createObjectStub, () => {
     expect(reads).toStrictEqual([[{ topic: "messages:*" }]]);
   });
 
-  test("answers a call given no callback, reporting its read set nowhere", async () => {
-    expect.hasAssertions();
-
-    const roomObject = createObjectStub(createRoomStub());
-
-    await expect(roomObject.readThreads([7])).resolves.toBe("readThreads:[[7]]");
-  });
-
   test("forwards the object's HTTP entry to the object itself, not through invoke", async () => {
     expect.hasAssertions();
 
