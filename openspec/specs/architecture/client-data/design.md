@@ -225,7 +225,7 @@ The rule is the same shape as the server-side effects rule above (re-read what o
 
 The primitive's contract, its retry and its owners are specified in [batched refresh](../batched-refresh/design.md), which the stores use through `services/shared/createBatchedRefresh.ts`.
 
-Post counts have one owner, `usePostCountStore`: a write that changes a count asks it to re-read, and the one read is applied to every copy by the stores that hold copies, through `postCountHooks`. Copies in different stores therefore never order their own reads against each other. Every other owner calls the primitive per instance, and writes only the copies it holds.
+Post counts have one owner, `usePostCountStore`: a write that changes a count asks it to re-read, and the one read is applied to every copy by the stores that hold copies, each registered with `registerPostCopies` where its store is built. Copies in different stores therefore never order their own reads against each other. Every other owner calls the primitive per instance, and writes only the copies it holds.
 
 ## Anti-patterns
 
