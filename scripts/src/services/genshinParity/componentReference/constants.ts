@@ -27,6 +27,7 @@ export const PACKAGE_IMPORT_REGEX = /import\s+(?:type\s+)?\{(?<names>[^}]*)\}\s+
 export const BARREL_EXPORT_REGEX = /export \{ default as (?<name>\w+) \} from "\.\/(?<file>[^"]+\.vue)";/gu;
 // A component's top-level template, read off its SFC's own column so a nested `<template>` is not taken for it
 export const TOP_LEVEL_TEMPLATE_REGEX = /^<template>(?<body>[\s\S]*?)^<\/template>/mu;
-// A tag an SFC template opens, and the tags that draw nothing of their own: Vue's template, slot and dynamic component
-export const TEMPLATE_TAG_REGEX = /<(?<tag>[a-z][\w-]*)/gu;
+// A native tag an SFC template opens: a hyphenated tag is a component the template mounts, so it is not matched at all.
+// The tags that draw nothing of their own are Vue's template, slot and dynamic component
+export const TEMPLATE_TAG_REGEX = /<(?<tag>[a-z]\w*)(?![\w-])/gu;
 export const NON_DRAWING_TAGS: ReadonlySet<string> = new Set(["component", "slot", "template"]);
