@@ -2,7 +2,7 @@ import type { RecordedBlobs } from "#src/models/realtime/RecordedBlobs";
 import type { R2Bucket, R2MultipartUpload } from "@cloudflare/workers-types";
 
 import { getBlobListTopic } from "#src/services/realtime/getBlobListTopic";
-import { getBlobWriteTopics } from "#src/services/realtime/getBlobWriteTopics";
+import { recordBlobWrite } from "#src/services/realtime/recordBlobWrite";
 import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getBlobTopic } from "@esposter/db-schema";
 
@@ -22,9 +22,8 @@ const recordCall = (method: string | symbol, args: unknown[], bucket: string, bl
     const prefix = checkIsRecord(first) && typeof first.prefix === "string" ? first.prefix : "";
     blobs.reads.push(getBlobListTopic(bucket, prefix));
   } else if (method === "put") {
-    if (typeof first === "string") blobs.writes.push(...getBlobWriteTopics(bucket, first));
-  } else if (method === "delete")
-    for (const key of getDeletedKeys(first)) blobs.writes.push(...getBlobWriteTopics(bucket, key));
+    if (typeof first === "string") recordBlobWrite(blobs, bucket, first);
+  } else if (method === "delete") for (const key of getDeletedKeys(first)) recordBlobWrite(blobs, bucket, key);
 };
 
 // A multipart upload writes its object when it completes, so the completion is recorded as the write of the key the upload
@@ -41,7 +40,7 @@ const recordUpload = (
       if (typeof value !== "function") return value;
       return (...args: unknown[]) => {
         const blobs = getBlobs();
-        if (blobs && property === "complete") blobs.writes.push(...getBlobWriteTopics(bucket, key));
+        if (property === "complete") recordBlobWrite(blobs, bucket, key);
         return Reflect.apply(value, target, args);
       };
     },

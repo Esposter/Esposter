@@ -19,6 +19,7 @@ import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
+import { confirmBlobUpload } from "#server/services/storage/confirmBlobUpload";
 import { deleteOversizedUpload } from "#server/services/storage/deleteOversizedUpload";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
@@ -76,6 +77,13 @@ import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 export const userRouter = router({
+  // The upload lands in R2 without the bucket binding, so the listing it changes is woken by this confirm, which the client sends
+  // Once the upload has landed. The cap is still checked by the listing, as it was before
+  confirmCallBackgroundUpload: standardAuthedProcedure
+    .input(callBackgroundSlotSchema)
+    .mutation<void>(({ ctx, input: { slot } }) => {
+      confirmBlobUpload(StorageBucket.UserAssets, getCallBackgroundBlobName(ctx.user.id, slot));
+    }),
   // Made here rather than by the plugin's own client call, which may not set a key's permissions: the server is the one
   // Side that can, so the scopes a key holds are the ones its owner ticked. Answers with the whole key, which is stored
   // Only hashed, so the owner is shown it once
@@ -126,7 +134,7 @@ export const userRouter = router({
   generateCallBackgroundUploadUrl: standardAuthedProcedure
     .meta({
       staticReason:
-        "A presigned upload url: the blob changes when the client uploads to it, which no tRPC mutation sees",
+        "A presigned upload url: the blob changes when the client uploads to it, which confirmCallBackgroundUpload publishes",
     })
     .input(generateCallBackgroundUploadUrlInputSchema)
     .mutation<string>(async ({ ctx, input: { mimetype, size, slot } }) => {

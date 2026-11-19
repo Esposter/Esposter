@@ -9,6 +9,7 @@ import { CallVirtualBackgroundDefinitions } from "#src/services/message/room/cal
 import { CALL_BACKGROUND_UPLOAD_KEY } from "#src/services/message/room/call/constants";
 import { getCallBackgroundKey } from "#src/services/message/room/call/getCallBackgroundKey";
 import { getCallBackgroundSelection } from "#src/services/message/room/call/getCallBackgroundSelection";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const useCallBackgroundStore = defineStore("message/user/settings/callBackground", () => {
   const { $trpc } = useNuxtApp();
@@ -45,6 +46,9 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
           files: [file],
           generateUploadFilePresignedUrlEntities: getSingleFilePresignedUrlEntities(presignedUrl),
         });
+        // The upload lands without the bucket binding, so the confirm is what wakes the listing's other watchers. The upload has
+        // Landed by now, so a confirm that fails is logged rather than reported as a failed upload
+        await getResultAsync(() => $trpc.user.confirmCallBackgroundUpload.mutate({ slot })).match(noop, console.error);
       },
       {
         // The upload target is the server's to issue, so the slot is listed once the upload is confirmed

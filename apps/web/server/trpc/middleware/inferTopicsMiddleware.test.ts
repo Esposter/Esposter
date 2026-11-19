@@ -3,6 +3,7 @@ import type { ColumnTopic } from "@esposter/db-schema";
 
 import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { recordObjectReads } from "#server/services/realtime/requestObjectReads";
+import { confirmBlobUpload } from "#server/services/storage/confirmBlobUpload";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockContext, createMockUser } from "#server/trpc/context.test";
@@ -39,6 +40,9 @@ const renameUser = async ({ ctx, input }: { ctx: Pick<Context, "db">; input: z.o
   (await ctx.db.update(usersInAuth).set({ name: input.name }).where(eq(usersInAuth.id, input.id)).returning())[0];
 
 const testRouter = router({
+  confirmUpload: publicProcedure.input(userInputSchema).mutation<void>(({ input }) => {
+    confirmBlobUpload(StorageBucket.UserAssets, input);
+  }),
   putBlob: publicProcedure.input(userInputSchema).mutation<void>(async ({ input }) => {
     await getBucket(StorageBucket.UserAssets).put(input, "written");
   }),
@@ -63,6 +67,11 @@ const testRouter = router({
         .from(usersInAuth)
         .where(and(inJsonArray(usersInAuth.id, input.ids), inJsonArray(usersInAuth.id, input.otherIds))),
     ),
+  // Each room's object reports the read set of its own messages, as the room's stub does through recordObjectReads
+  readRoomMessages: publicProcedure.input(z.array(z.string())).query<null>(({ input }) => {
+    recordObjectReads(input.map((roomId): ColumnTopic => ({ topic: `room/${roomId}:messages:*` })));
+    return null;
+  }),
   readRoomsOf: publicProcedure
     .input(userInputSchema)
     .query<{ id: string }[]>(({ ctx, input }) =>
@@ -72,11 +81,6 @@ const testRouter = router({
         .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
         .where(eq(roomsInMessage.userId, input)),
     ),
-  // Each room's object reports the read set of its own messages, as the room's stub does through recordObjectReads
-  readRoomMessages: publicProcedure.input(z.array(z.string())).query<null>(({ input }) => {
-    recordObjectReads(input.map((roomId): ColumnTopic => ({ topic: `room/${roomId}:messages:*` })));
-    return null;
-  }),
   readStaticUser: publicProcedure
     .meta({ staticReason: "A test read that no topic watches" })
     .input(userInputSchema)
@@ -353,5 +357,21 @@ describe("inferTopicsMiddleware", () => {
     await createTestCaller(context).putBlob(v7());
 
     expect(getWokenTopics(readTopics, MockPublishedTopics)).toStrictEqual([userAssetsRootTopic]);
+  });
+
+  // A presigned upload lands in R2 without its bucket binding, so the PUT itself publishes nothing. The confirm that records the key
+  // Publishes its write as a put's topics do, so a read of the key wakes once the upload is confirmed
+  test("wakes a read of a key once a confirm records the presigned upload that landed there", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const key = v7();
+    await createTestCaller(context).readBlobs([key]);
+    const readTopics = readTopicsHeader(context.responseHeaders, "readBlobs").flatMap(({ topics }) => topics);
+    await createTestCaller(context).confirmUpload(key);
+
+    expect(getWokenTopics(readTopics, MockPublishedTopics)).toStrictEqual([
+      getBlobTopic(getStorageBucketBindingName(StorageBucket.UserAssets), key),
+    ]);
   });
 });
