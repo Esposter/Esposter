@@ -1,5 +1,6 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: the clock moves until the page draws one more frame, and the frame is read after the clock moved; Order is the contract: the page draws one frame after another, and the lift is timed from the last rest frame before it */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: the clock moves one frame, and the frame is read after it moved; Order is the contract: the page draws one frame after another, and the lift is timed from the last rest frame before it */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { LiftFrame } from "#src/models/genshinParity/passes/LiftFrame";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
@@ -16,6 +17,7 @@ import {
   MOTION_WIDTH,
   PART_GATE_METRES,
 } from "#src/services/genshinParity/passes/constants";
+import { createLiftFrameSampler } from "#src/services/genshinParity/passes/createLiftFrameSampler";
 import { interpolatePose } from "#src/services/genshinParity/passes/interpolatePose";
 import { PARITY_FRAME_MS } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
@@ -78,22 +80,22 @@ export const measureMotion = async (
         };
         requestAnimationFrame(window.recordFrame);
       });
-      const readFrameTimes = (): Promise<number[]> => page.evaluate(() => [...window.frameTimes]);
-      // The clock moved a millisecond at a time until the page draws one more frame, so no frame passes unread, and the
-      // Pieces as that frame left them with its time
-      const drawFrame = async (): Promise<{ pieces: number[][]; time: number }> => {
-        const { length } = await readFrameTimes();
-        let frameTimes: number[] = [];
-        while (frameTimes.length <= length) {
-          await page.clock.runFor(1);
-          frameTimes = await readFrameTimes();
-        }
-        const pieces = await page.evaluate((family) => window.getScenePieces(family), DOOR_FAMILY);
-        return { pieces, time: frameTimes.at(-1) ?? 0 };
-      };
+      // The clock moves a fixed step each sample, and the frame read is the one the page drew by then with its pieces, so
+      // The frames sampled are the clock's, whatever the page's speed (`createLiftFrameSampler`)
+      const sampleFrame = createLiftFrameSampler(
+        {
+          advance: (ms) => page.clock.runFor(ms),
+          readFrame: (): Promise<LiftFrame> =>
+            page.evaluate(
+              (family) => ({ pieces: window.getScenePieces(family), time: window.frameTimes.at(-1) ?? 0 }),
+              DOOR_FAMILY,
+            ),
+        },
+        PARITY_FRAME_MS,
+      );
       // Until the lift begins every piece stands where its first sample has it, frame after frame, so the lift's moment
       // Is read off the pieces themselves: from the last frame they stood there, whenever the stage reached the scene
-      const { pieces: startPieces, time: startTime } = await drawFrame();
+      const { pieces: startPieces, time: startTime } = await sampleFrame();
       const startElements = JSON.stringify(startPieces);
       await page.evaluate((stage) => {
         window.setScreenProps({ stage });
@@ -105,7 +107,7 @@ export const measureMotion = async (
       for (let frame = 0; (read.at(-1)?.riseMs ?? 0) <= duration * 1000 + PARITY_FRAME_MS; frame++) {
         if (read.length === 0 && frame > liftFrameCount)
           throw new InvalidOperationError(Operation.Read, DOOR_FAMILY, "never began its lift");
-        const { pieces, time } = await drawFrame();
+        const { pieces, time } = await sampleFrame();
         if (read.length === 0 && JSON.stringify(pieces) === startElements) originTime = time;
         else read.push({ pieces, riseMs: time - originTime });
       }

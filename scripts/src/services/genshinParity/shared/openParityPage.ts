@@ -126,8 +126,13 @@ export const openParityPage = async ({
         return route.fulfill({ path: filePath });
       });
     }
-    // A faked clock runs only as far as the caller moves it, frame by frame, so a motion is shot at exact moments
-    if (isClockFaked) await page.clock.install({ time: 0 });
+    // A faked clock runs only as far as the caller moves it, frame by frame, so a motion is shot at exact moments. Installed
+    // Alone, it flows with real time, so the frames a page draws would depend on how fast the machine runs: it is paused
+    // Where it starts, and the page's loading steps it with `runFor` as it does
+    if (isClockFaked) {
+      await page.clock.install({ time: 0 });
+      await page.clock.pauseAt(0);
+    }
     const pageUrl = pageRoot ?? (await resolveParityPageRoot());
     // Opened at its load event rather than once idle, so a fetch the page issues after ready is not in the readings the
     // Page takes at the ready signal
