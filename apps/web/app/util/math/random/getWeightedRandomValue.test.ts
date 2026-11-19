@@ -1,5 +1,4 @@
 import { getWeightedRandomValue } from "#src/util/math/random/getWeightedRandomValue";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(getWeightedRandomValue, () => {
@@ -36,7 +35,7 @@ describe(getWeightedRandomValue, () => {
     expect.hasAssertions();
 
     expect(() => getWeightedRandomValue([])).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getWeightedRandomValue.name, "cannot pick weighted random value from empty values").message}]`,
+      `[InvalidOperationError: Invalid operation: Read, name: getWeightedRandomValue, cannot pick weighted random value from empty values]`,
     );
   });
 });

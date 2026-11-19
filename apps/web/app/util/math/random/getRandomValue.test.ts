@@ -1,5 +1,4 @@
 import { getRandomValue } from "#src/util/math/random/getRandomValue";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(getRandomValue, () => {
@@ -19,7 +18,7 @@ describe(getRandomValue, () => {
     expect.hasAssertions();
 
     expect(() => getRandomValue("")).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getRandomValue.name, "cannot pick random value from empty values").message}]`,
+      `[InvalidOperationError: Invalid operation: Read, name: getRandomValue, cannot pick random value from empty values]`,
     );
   });
 });
