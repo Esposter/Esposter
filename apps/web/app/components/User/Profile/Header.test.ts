@@ -18,7 +18,7 @@ describe("userProfileHeader", () => {
   test.each([
     ["offers the edit entry point on the reader's own profile", userId, ["Edit profile"]],
     ["offers no edit entry point on another user's profile", v7(), []],
-  ])("%s", async (_, viewerId, links) => {
+  ])("%s", async (_description, viewerId, links) => {
     expect.hasAssertions();
 
     const component = await mountHeader(viewerId, userId);

@@ -96,7 +96,7 @@ describe(useRecentPageStore, () => {
     expect(rankedRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual(
       Array.from(
         { length: RECENT_PAGES_STORED_LIMIT },
-        (_, index) => `${path}${RECENT_PAGES_STORED_LIMIT - 1 - index}`,
+        (_value, index) => `${path}${RECENT_PAGES_STORED_LIMIT - 1 - index}`,
       ),
     );
   });

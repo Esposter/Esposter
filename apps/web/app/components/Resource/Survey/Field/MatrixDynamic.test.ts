@@ -121,7 +121,7 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       const component = mountMatrixDynamic(createNode(1, 0, 2, [createColumn(SurveyMatrixCellType.Rating)]));
 
       expect(component.findAll('[role="radio"]').map((step) => step.text())).toStrictEqual(
-        Array.from({ length: MATRIX_CELL_RATING_COUNT }, (_, index) => String(index + 1)),
+        Array.from({ length: MATRIX_CELL_RATING_COUNT }, (_value, index) => String(index + 1)),
       );
     });
 
