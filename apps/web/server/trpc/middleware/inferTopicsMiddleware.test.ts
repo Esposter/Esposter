@@ -1,6 +1,6 @@
 import type { Context } from "#server/trpc/context";
 
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
@@ -63,9 +63,9 @@ describe("inferTopicsMiddleware", () => {
     const { user } = await createMockAuthSession(context.db);
     await createTestCaller(context).readUser(user.id);
 
-    expect(readTopicsHeader(context.responseHeaders, "readUser").flatMap(({ topics }) => topics)).toStrictEqual([
-      `${userTable}:id=${user.id}`,
-    ]);
+    expect(
+      readTopicsHeader(context.responseHeaders, "readUser").flatMap(({ topics }) => topics.map(({ topic }) => topic)),
+    ).toStrictEqual([`${userTable}:id=${user.id}`]);
   });
 
   // A mutation publishes what its writes changed: the table, and each row's scope values from the rows it returned
@@ -77,9 +77,8 @@ describe("inferTopicsMiddleware", () => {
     await createTestCaller(context).renameUser({ id: user.id, name: "renamed" });
 
     expect(MockPublishedTopics).toStrictEqual([
-      "auth_users.name:*",
-      "auth_users.updatedAt:*",
-      `${userTable}:id=${user.id}`,
+      { columns: ["name", "updatedAt"], topic: `${userTable}:*` },
+      { columns: ["name", "updatedAt"], topic: `${userTable}:id=${user.id}` },
     ]);
   });
 
@@ -91,9 +90,11 @@ describe("inferTopicsMiddleware", () => {
     const { user } = await createMockAuthSession(context.db);
     await createTestCaller(context).readDeclaredUser(user.id);
 
-    expect(readTopicsHeader(context.responseHeaders, "readDeclaredUser").flatMap(({ topics }) => topics)).toStrictEqual(
-      [getTopic(TopicKind.User, user.id)],
-    );
+    expect(
+      readTopicsHeader(context.responseHeaders, "readDeclaredUser").flatMap(({ topics }) =>
+        topics.map(({ topic }) => topic),
+      ),
+    ).toStrictEqual([getTopic(TopicKind.User, user.id)]);
   });
 
   // A procedure with a static reason is watched by no topic, however its statement reads
@@ -118,9 +119,8 @@ describe("inferTopicsMiddleware", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Rename refused]`);
 
     expect(MockPublishedTopics).toStrictEqual([
-      "auth_users.name:*",
-      "auth_users.updatedAt:*",
-      `${userTable}:id=${user.id}`,
+      { columns: ["name", "updatedAt"], topic: `${userTable}:*` },
+      { columns: ["name", "updatedAt"], topic: `${userTable}:id=${user.id}` },
     ]);
   });
 
@@ -133,6 +133,6 @@ describe("inferTopicsMiddleware", () => {
       createTestCaller(await createMockContext()).putBlobThenFail(key),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Write refused]`);
 
-    expect(MockPublishedTopics).toContain(`USER_ASSETS:${key}`);
+    expect(getMockPublishedTopics()).toContain(`USER_ASSETS:${key}`);
   });
 });

@@ -27,7 +27,13 @@ export const useWatchTopics = () => {
     if (!connectionStore || isDisposed) return;
 
     const topics = read?.topics ?? [];
-    const topicsKey = [...new Set(topics)].toSorted().join(ID_SEPARATOR);
+    // A watch is kept while its topics and the columns it reads of them are the same
+    const topicsKey = topics
+      .map(
+        ({ columns, topic }) => `${topic}${columns === undefined ? "" : `[${columns.toSorted().join(ID_SEPARATOR)}]`}`,
+      )
+      .toSorted()
+      .join(ID_SEPARATOR);
     const topicsWatch = topicsWatchMap.get(target);
     if (topicsWatch?.topicsKey === topicsKey) {
       topicsWatch.refetch = refetch;

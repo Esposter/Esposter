@@ -34,7 +34,7 @@ export const runUnit = <T>(run: () => Promise<T>): Promise<T> => {
     () => unitStorage.run(unit, run),
     () =>
       publishTopicsBestEffort(
-        async () => [...(await getWriteTopics(unit.statements)), ...unit.blobs.writes],
+        async () => [...(await getWriteTopics(unit.statements)), ...unit.blobs.writes.map((topic) => ({ topic }))],
         "Failed to publish the topics of a job's writes:",
       ),
   );

@@ -1,7 +1,11 @@
 // @vitest-environment nuxt
 import type { RoomMessage, Topic } from "@esposter/db-schema";
 
-import { MockPublishedTopics, mockTopicNamespace } from "#server/services/realtime/publishTopics.test";
+import {
+  getMockPublishedTopics,
+  MockPublishedTopics,
+  mockTopicNamespace,
+} from "#server/services/realtime/publishTopics.test";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { friendRouter } from "#server/trpc/routers/friend";
@@ -97,8 +101,8 @@ describe(useConnectionStore, () => {
     const topic: Topic = `post:${v7()}`;
     const firstRefetch = vi.fn<() => void>();
     const secondRefetch = vi.fn<() => void>();
-    const unwatchFirst = connectionStore.watchTopics([topic], readAt, firstRefetch);
-    const unwatchSecond = connectionStore.watchTopics([topic], readAt, secondRefetch);
+    const unwatchFirst = connectionStore.watchTopics([{ topic }], readAt, firstRefetch);
+    const unwatchSecond = connectionStore.watchTopics([{ topic }], readAt, secondRefetch);
     onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
     unwatchFirst();
     unwatchSecond();
@@ -106,7 +110,7 @@ describe(useConnectionStore, () => {
     expect(firstRefetch).toHaveBeenCalledTimes(1);
     expect(secondRefetch).toHaveBeenCalledTimes(1);
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      { data: { readAt, topics: [topic] }, type: "watch" },
+      { data: { readAt, topics: [{ topic }] }, type: "watch" },
       { data: { topics: [topic] }, type: "unwatch" },
     ]);
   });
@@ -119,11 +123,15 @@ describe(useConnectionStore, () => {
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
     const topics = Array.from({ length: MAX_FRAME_TOPICS + 1 }, () => getTopic(TopicKind.Post, v7()));
-    connectionStore.watchTopics(topics, readAt, vi.fn<() => void>());
+    connectionStore.watchTopics(
+      topics.map((topic) => ({ topic })),
+      readAt,
+      vi.fn<() => void>(),
+    );
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      { data: { readAt, topics: topics.slice(0, MAX_FRAME_TOPICS) }, type: "watch" },
-      { data: { readAt, topics: topics.slice(MAX_FRAME_TOPICS) }, type: "watch" },
+      { data: { readAt, topics: topics.slice(0, MAX_FRAME_TOPICS).map((topic) => ({ topic })) }, type: "watch" },
+      { data: { readAt, topics: topics.slice(MAX_FRAME_TOPICS).map((topic) => ({ topic })) }, type: "watch" },
     ]);
   });
 
@@ -135,12 +143,12 @@ describe(useConnectionStore, () => {
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
     const topic: Topic = `post:${v7()}`;
-    connectionStore.watchTopics([topic], newerReadAt, vi.fn<() => void>());
-    connectionStore.watchTopics([topic], readAt, vi.fn<() => void>());
+    connectionStore.watchTopics([{ topic }], newerReadAt, vi.fn<() => void>());
+    connectionStore.watchTopics([{ topic }], readAt, vi.fn<() => void>());
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      { data: { readAt: newerReadAt, topics: [topic] }, type: "watch" },
-      { data: { readAt, topics: [topic] }, type: "watch" },
+      { data: { readAt: newerReadAt, topics: [{ topic }] }, type: "watch" },
+      { data: { readAt, topics: [{ topic }] }, type: "watch" },
     ]);
   });
 
@@ -153,14 +161,14 @@ describe(useConnectionStore, () => {
     const options = vi.mocked(openRealtimeSocket).mock.lastCall?.[2];
     const newerTopic: Topic = `post:${v7()}`;
     const olderTopic: Topic = `post:${v7()}`;
-    connectionStore.watchTopics([newerTopic], newerReadAt, vi.fn<() => void>());
-    connectionStore.watchTopics([olderTopic], readAt, vi.fn<() => void>());
+    connectionStore.watchTopics([{ topic: newerTopic }], newerReadAt, vi.fn<() => void>());
+    connectionStore.watchTopics([{ topic: olderTopic }], readAt, vi.fn<() => void>());
     sendRealtimeFrame.mockClear();
     options?.onOpen?.();
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      { data: { readAt: newerReadAt, topics: [newerTopic] }, type: "watch" },
-      { data: { readAt, topics: [olderTopic] }, type: "watch" },
+      { data: { readAt: newerReadAt, topics: [{ topic: newerTopic }] }, type: "watch" },
+      { data: { readAt, topics: [{ topic: olderTopic }] }, type: "watch" },
     ]);
   });
 
@@ -202,7 +210,8 @@ describe(useConnectionStore, () => {
       session: writer.session,
       user: writer.user,
     }).deleteFriend(reader.user.id);
-    for (const topic of MockPublishedTopics) onUserFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
+    for (const topic of getMockPublishedTopics())
+      onUserFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
 
     expect(refetch).toHaveBeenCalledTimes(1);
     await expect(createCallerFactory(friendRouter)(readerContext).readFriends()).resolves.toStrictEqual([]);

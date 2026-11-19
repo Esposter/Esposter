@@ -1,17 +1,20 @@
+import type { ColumnTopic, Topic } from "@esposter/db-schema";
+
 import { publishTopicsBestEffort } from "#src/services/realtime/publishTopicsBestEffort";
-import { getTopic, TopicKind } from "@esposter/db-schema";
+import { getColumnTopic, getTopic, TopicKind, topicSchema } from "@esposter/db-schema";
 import { noop, ZERO_UUID } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-// Each topic's object is named by the topic itself, and its publish records the topic it was named for
-const createTopicNamespace = (published: string[]) => ({
-  get: (id: string) => ({
-    publish: () => {
-      published.push(id);
+// Each topic's object is named by the topic itself, and its publish records the topic it was named for and the columns it
+// Was published with
+const createTopicNamespace = (published: ColumnTopic[]) => ({
+  get: (id: Topic) => ({
+    publish: (columns?: string[]) => {
+      published.push(getColumnTopic(id, columns));
       return Promise.resolve();
     },
   }),
-  idFromName: (name: string) => name,
+  idFromName: (name: string) => topicSchema.parse(name),
 });
 
 describe(publishTopicsBestEffort, () => {
@@ -27,10 +30,38 @@ describe(publishTopicsBestEffort, () => {
   test("publishes each changed topic once, to the object the namespace names it", async () => {
     expect.hasAssertions();
 
-    const published: string[] = [];
-    await publishTopicsBestEffort(createTopicNamespace(published), () => [roomTopic, userTopic, roomTopic], failure);
+    const published: ColumnTopic[] = [];
+    await publishTopicsBestEffort(
+      createTopicNamespace(published),
+      () => [{ topic: roomTopic }, { topic: userTopic }, { topic: roomTopic }],
+      failure,
+    );
 
-    expect(published).toStrictEqual([roomTopic, userTopic]);
+    expect(published).toStrictEqual([{ topic: roomTopic }, { topic: userTopic }]);
+  });
+
+  // A topic a write names with several column lists is published once with all their columns, since its object wakes each
+  // Subscriber that reads any of them. A list that names every column publishes every column
+  test("publishes a topic named with several column lists once, with the columns of all of them", async () => {
+    expect.hasAssertions();
+
+    const scopeTopic = `message_usersToRooms:roomId=${ZERO_UUID}` as const;
+    const published: ColumnTopic[] = [];
+    await publishTopicsBestEffort(
+      createTopicNamespace(published),
+      () => [
+        { columns: ["lastReadAt"], topic: scopeTopic },
+        { columns: ["mentionCount"], topic: scopeTopic },
+        { topic: roomTopic },
+        { columns: ["name"], topic: roomTopic },
+      ],
+      failure,
+    );
+
+    expect(published).toStrictEqual([
+      { columns: ["lastReadAt", "mentionCount"], topic: scopeTopic },
+      { topic: roomTopic },
+    ]);
   });
 
   // The write has already landed, so a failed publish is logged under the caller's message and the write still resolves
@@ -41,21 +72,21 @@ describe(publishTopicsBestEffort, () => {
     const error = new Error(" ");
     const topicNamespace = {
       get: () => ({ publish: () => Promise.reject(error) }),
-      idFromName: (name: string) => name,
+      idFromName: (name: string) => topicSchema.parse(name),
     };
 
-    await publishTopicsBestEffort(topicNamespace, () => [roomTopic], failure);
+    await publishTopicsBestEffort(topicNamespace, () => [{ topic: roomTopic }], failure);
 
     expect(consoleError).toHaveBeenCalledExactlyOnceWith(failure, error);
   });
 
-  // The topics are read inside the same boundary, so a throw from reading them is logged the same way and publishes nothing
+  // The topics are read inside the same boundary, so a throw from reading them is logged the same way and publishes none
   test("logs a throw from reading the topics instead of throwing it, and publishes none", async () => {
     expect.hasAssertions();
 
     const consoleError = vi.spyOn(console, "error").mockImplementation(noop);
     const error = new Error(" ");
-    const published: string[] = [];
+    const published: ColumnTopic[] = [];
 
     await publishTopicsBestEffort(
       createTopicNamespace(published),

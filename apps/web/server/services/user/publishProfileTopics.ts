@@ -13,7 +13,7 @@ export const publishProfileTopics = async (db: Database, userId: UserInAuth["id"
   const [roomIds, readerTopics] = await Promise.all([getMemberRoomIds(db, userId), getPersonReaderTopics(db, userId)]);
   const topics = new Set([...roomIds.map((roomId) => getTopic(TopicKind.Room, roomId)), ...readerTopics]);
   await settleAll(
-    Array.from(topics, (topic) => () => publishTopics([topic])),
+    Array.from(topics, (topic) => () => publishTopics([{ topic }])),
     MAX_CONCURRENT_PROFILE_TOPIC_PUBLISHES,
   );
 };

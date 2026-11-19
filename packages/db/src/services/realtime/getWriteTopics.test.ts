@@ -1,3 +1,4 @@
+import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 import type { Database } from "@esposter/db-schema";
 
 import { getWriteTopics } from "#src/services/realtime/getWriteTopics";
@@ -43,6 +44,10 @@ const insertRoom = async (db: Database, roomId: string, userId: string) => {
   await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
 };
 
+// The names of the topics a write publishes, for a golden that records which topics a write names
+const getWriteTopicNames = async (statements: RecordedStatement[]) =>
+  (await getWriteTopics(statements)).map(({ topic }) => topic);
+
 describe(getWriteTopics, () => {
   // The child tables a resource delete cascades to, transitively: its versions cascade to their assets, so a delete of
   // The resource changes twelve tables its foreign keys name directly and thirteen with that grandchild
@@ -77,7 +82,7 @@ describe(getWriteTopics, () => {
       .values({ notificationType: NotificationType.DirectMessage, roomId, userId })
       .returning();
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual([
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual([
       "message_usersToRooms:*",
       `message_usersToRooms:roomId=${roomId}`,
       `message_usersToRooms:userId=${userId}`,
@@ -101,9 +106,8 @@ describe(getWriteTopics, () => {
       .where(eq(usersToRoomsInMessage.userId, userId))
       .returning();
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual([
-      "message_usersToRooms.displayName:*",
-      "message_usersToRooms.updatedAt:*",
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual([
+      "message_usersToRooms:*",
       `message_usersToRooms:roomId=${roomId}`,
       `message_usersToRooms:userId=${userId}`,
     ]);
@@ -129,7 +133,7 @@ describe(getWriteTopics, () => {
       })
       .returning();
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual([
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual([
       "message_usersToRooms:*",
       `message_usersToRooms:roomId=${roomId}`,
       `message_usersToRooms:userId=${userId}`,
@@ -154,7 +158,7 @@ describe(getWriteTopics, () => {
 
     await database.delete(resourcesInResource).where(eq(resourcesInResource.id, resourceId)).returning();
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual(
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual(
       [
         "resource_resources:*",
         `resource_resources:id=${resourceId}`,
@@ -181,7 +185,7 @@ describe(getWriteTopics, () => {
 
     await database.delete(invitesInMessage).where(eq(invitesInMessage.id, inviteId)).returning();
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual([
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual([
       "message_invites:*",
       "message_invites:id=sha256:66d34fba71f8",
       `message_invites:roomId=${roomId}`,
@@ -213,10 +217,8 @@ describe(getWriteTopics, () => {
         .returning(),
     ]);
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual(
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual(
       [
-        "message_usersToRooms.displayName:*",
-        "message_usersToRooms.updatedAt:*",
         "message_usersToRooms:*",
         `message_usersToRooms:roomId=${roomId}`,
         `message_usersToRooms:userId=${joinerId}`,
@@ -242,10 +244,7 @@ describe(getWriteTopics, () => {
       .set({ displayName: "renamed" })
       .where(eq(usersToRoomsInMessage.userId, userId));
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual([
-      "message_usersToRooms.displayName:*",
-      "message_usersToRooms.updatedAt:*",
-    ]);
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
   });
 
   // A write that matches no row changes nothing, so it publishes nothing
@@ -261,7 +260,7 @@ describe(getWriteTopics, () => {
       .where(eq(usersToRoomsInMessage.userId, v7()))
       .returning();
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual([]);
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual([]);
   });
 
   // An update that moves a row out of a scope value changes what a reader of the old value holds. RETURNING names only
@@ -284,10 +283,9 @@ describe(getWriteTopics, () => {
       .where(eq(usersToRoomsInMessage.userId, userId))
       .returning();
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual(
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual(
       [
-        "message_usersToRooms.roomId:*",
-        "message_usersToRooms.updatedAt:*",
+        "message_usersToRooms:*",
         `message_usersToRooms:roomId=${roomId}`,
         `message_usersToRooms:roomId=${otherRoomId}`,
         `message_usersToRooms:userId=${userId}`,
@@ -314,10 +312,9 @@ describe(getWriteTopics, () => {
       .set({ roomId: otherRoomId })
       .where(eq(usersToRoomsInMessage.userId, userId));
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual(
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual(
       [
-        "message_usersToRooms.roomId:*",
-        "message_usersToRooms.updatedAt:*",
+        "message_usersToRooms:*",
         `message_usersToRooms:roomId=${roomId}`,
         `message_usersToRooms:userId=${userId}`,
       ].toSorted(),
@@ -342,7 +339,7 @@ describe(getWriteTopics, () => {
 
     await database.delete(appUsersInMessage).where(eq(appUsersInMessage.id, appUserId)).returning();
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual(
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual(
       ["message_appUsers:*", "message_webhooks:*", `message_webhooks:roomId=${roomId}`].toSorted(),
     );
   });
@@ -364,7 +361,7 @@ describe(getWriteTopics, () => {
 
     await database.batch([database.delete(appUsersInMessage).where(eq(appUsersInMessage.id, appUserId)).returning()]);
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual(
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual(
       ["message_appUsers:*", "message_webhooks:*", `message_webhooks:roomId=${roomId}`].toSorted(),
     );
   });
@@ -386,7 +383,7 @@ describe(getWriteTopics, () => {
 
     await database.delete(roomsInMessage).where(eq(roomsInMessage.id, roomId)).returning();
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual(
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual(
       [
         "app_bookmarks:*",
         "message_bans:*",
@@ -436,7 +433,7 @@ describe(getWriteTopics, () => {
 
     await database.delete(postsInPost).where(eq(postsInPost.id, postId)).returning();
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual(
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual(
       [
         "post_posts:*",
         `post_posts:id=${postId}`,
@@ -461,6 +458,6 @@ describe(getWriteTopics, () => {
 
     await database.select().from(roomsInMessage);
 
-    await expect(getWriteTopics(statements)).resolves.toStrictEqual([]);
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual([]);
   });
 });

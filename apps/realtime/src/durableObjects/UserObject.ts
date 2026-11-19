@@ -1,5 +1,6 @@
 import type { TopicWatch } from "#src/models/user/TopicWatch";
 import type {
+  ColumnTopic,
   PageCursor,
   ReconcileTodoRemindersInput,
   ScheduledMessageInUser,
@@ -323,7 +324,7 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     if (frame.data.type === "watch") {
       const { readAt, topics } = frame.data.data;
       await Promise.all(
-        topics.map((topic) =>
+        topics.map(({ topic }) =>
           this.ctx.storage.put(getTopicWatchKey(watchId, topic), { topic, watchId } satisfies TopicWatch),
         ),
       );
@@ -456,11 +457,13 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     );
   }
 
-  // The topics a watch asked for, subscribed to on their Topic objects from the time its read began.
-  // A subscribe is a write of the person's id, so repeating it is harmless
-  async #subscribeTopics(topics: Topic[], readAt: number): Promise<void> {
+  // The topics a watch asked for, subscribed to on their Topic objects from the time its read began, with the columns the
+  // Watch reads of each. A subscribe is a write of the person's id, so repeating it is harmless
+  async #subscribeTopics(topics: ColumnTopic[], readAt: number): Promise<void> {
     await Promise.all(
-      topics.map((topic) => this.env.TOPIC.get(this.env.TOPIC.idFromName(topic)).subscribe(this.#userId, readAt)),
+      topics.map(({ columns, topic }) =>
+        this.env.TOPIC.get(this.env.TOPIC.idFromName(topic)).subscribe(this.#userId, readAt, columns),
+      ),
     );
   }
 

@@ -2,7 +2,7 @@ import type { Context } from "#server/trpc/context";
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
 import { executeAutomodAction } from "#server/services/message/moderation/executeAutomodAction";
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import {
@@ -96,7 +96,7 @@ describe(executeAutomodAction, () => {
     MockPublishedTopics.length = 0;
     await executeAutomodAction(mockContext.db, { action: WordFilterAction.Timeout, roomId, timeoutDurationMs, userId });
 
-    expect(MockPublishedTopics).toStrictEqual([getTopic(TopicKind.Room, roomId)]);
+    expect(getMockPublishedTopics()).toStrictEqual([getTopic(TopicKind.Room, roomId)]);
   });
 
   // The member the automod acted on hears what was done to them in the room, sent to their own sockets alone. Every

@@ -5,6 +5,8 @@ import { MAX_READ_LIMIT, SITE_NAME } from "@esposter/shared";
 export const MAX_FRAME_TOPICS = MAX_READ_LIMIT;
 // The longest id a topic names: a UUID, an integer or a short key, with room to spare and no more
 export const TOPIC_ID_MAX_LENGTH = 256;
+// The most columns one table's watch or publish names. A table has a few dozen, so this only bounds a frame
+export const MAX_TABLE_COLUMNS = 256;
 // The longest key a blob topic names whole: R2's key limit, so every key the bucket takes publishes a topic the schema accepts
 export const BLOB_KEY_MAX_LENGTH = 1024;
 // The property a table carries its scope under. `Symbol.for` reads the global symbol registry, which other code

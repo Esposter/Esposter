@@ -2,7 +2,7 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import {
   createMockAuthSession,
   createMockCaller,
@@ -166,8 +166,10 @@ describe("blockRouter", () => {
     MockPublishedTopics.length = 0;
     await blockCaller.createBlock(authorAuthSession.user.id);
 
-    const published = new Set(MockPublishedTopics);
-    const feedTopics = readTopicsHeader(feedContext.responseHeaders, "readPosts").flatMap(({ topics }) => topics);
+    const published = new Set(getMockPublishedTopics());
+    const feedTopics = readTopicsHeader(feedContext.responseHeaders, "readPosts").flatMap(({ topics }) =>
+      topics.map(({ topic }) => topic),
+    );
     expect(feedTopics.some((topic) => published.has(topic))).toBe(true);
   });
 });

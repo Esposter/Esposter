@@ -13,7 +13,7 @@ import {
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -970,7 +970,9 @@ describe("roomRouter", () => {
       path,
       title,
     });
-    expect(readTopicsHeader(dockHeaders, "readBookmarks").flatMap(({ topics }) => topics)).toContain(joinerScopeTopic);
-    expect(MockPublishedTopics).toContain(joinerScopeTopic);
+    expect(
+      readTopicsHeader(dockHeaders, "readBookmarks").flatMap(({ topics }) => topics.map(({ topic }) => topic)),
+    ).toContain(joinerScopeTopic);
+    expect(getMockPublishedTopics()).toContain(joinerScopeTopic);
   });
 });

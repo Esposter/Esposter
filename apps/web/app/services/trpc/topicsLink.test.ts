@@ -16,7 +16,7 @@ describe(topicsLink, () => {
     const path = "post.readPost";
     const topic = getTopic(TopicKind.Post, v7());
     const readAt = 0;
-    const headers = new Headers({ [TOPICS_HEADER]: formatTopicsHeaderValue(path, { readAt, topics: [topic] }) });
+    const headers = new Headers({ [TOPICS_HEADER]: formatTopicsHeaderValue(path, { readAt, topics: [{ topic }] }) });
     const op = { context: {}, id: 1, input: undefined, path, signal: null, type: "query" } satisfies Operation;
     const link = topicsLink({});
     const { read } = await collectTopics(() =>
@@ -32,6 +32,6 @@ describe(topicsLink, () => {
       ),
     );
 
-    expect(read).toStrictEqual({ readAt, topics: [topic] });
+    expect(read).toStrictEqual({ readAt, topics: [{ topic }] });
   });
 });

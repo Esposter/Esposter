@@ -1,4 +1,4 @@
-import type { Database, ScopeTopic } from "@esposter/db-schema";
+import type { Database } from "@esposter/db-schema";
 
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
@@ -7,7 +7,14 @@ import { friendRouter } from "#server/trpc/routers/friend";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { postRouter } from "#server/trpc/routers/post";
 import { roomRouter } from "#server/trpc/routers/room/index";
-import { getReadSet, getReadTopics, getSchemaTables, getWriteTopics, recordStatements } from "@esposter/db";
+import {
+  getReadSet,
+  getReadTopics,
+  getSchemaTables,
+  getWokenTopics,
+  getWriteTopics,
+  recordStatements,
+} from "@esposter/db";
 import {
   bookmarksInApp,
   NotificationType,
@@ -22,11 +29,6 @@ import { and, eq, getTableName } from "drizzle-orm";
 import { SQLiteDialect } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
-
-// The topics a read watches that a write publishes: the ones a write wakes the read through. A read whose topics do not
-// Include one the write publishes is not woken by it
-const getWokenTopics = (readTopics: ScopeTopic[], writeTopics: ScopeTopic[]) =>
-  readTopics.filter((topic) => writeTopics.includes(topic));
 
 // A direct message the viewer and one other member share, which the viewer's sidebar lists
 const createSharedDirectMessage = async (context: Awaited<ReturnType<typeof createMockContext>>) => {
@@ -139,8 +141,35 @@ describe("topicMatch", () => {
     );
   });
 
-  // The dock reads the viewer's own memberships of the rooms it bookmarks, so a change to the viewer's membership wakes it
-  test("a change to the viewer's own room membership wakes the bookmark dock that reads it", async () => {
+  // The dock reads the viewer's own memberships of the rooms it bookmarks, by their room and their user. Removing one is a
+  // Row-set change, which wakes the dock whichever columns it reads
+  test("the viewer leaving a room the bookmark dock reads wakes the dock through the viewer's membership", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const context = await createMockContext();
+    const roomId = v7();
+    await context.db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+    await context.db
+      .insert(usersToRoomsInMessage)
+      .values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await context.db.insert(bookmarksInApp).values({ path: `/${roomId}`, roomId, title: roomId, userId });
+    const read = recordStatements(context.db);
+    await createCallerFactory(bookmarkRouter)({ ...context, db: read.database }).readBookmarks();
+    const write = recordStatements(context.db);
+
+    await write.database
+      .delete(usersToRoomsInMessage)
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
+      .returning();
+
+    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
+      `message_usersToRooms:userId=${userId}`,
+    ]);
+  });
+
+  // The dock does not read a membership's display name, so renaming the viewer's membership wakes it through no topic
+  test("an update to a membership column the bookmark dock does not read wakes no one", async () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
@@ -161,9 +190,9 @@ describe("topicMatch", () => {
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
       .returning();
 
-    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      `message_usersToRooms:userId=${userId}`,
-    ]);
+    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual(
+      [],
+    );
   });
 
   // The landing page counts its room's members, which another member's join changes. The page reads the count through
@@ -228,7 +257,7 @@ describe("topicMatch", () => {
       .returning();
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      "resource_resources.deletedAt:*",
+      `${getTableName(resourcesInResource)}:*`,
     ]);
   });
 
@@ -309,7 +338,7 @@ describe("topicMatch", () => {
     const { items } = await createCallerFactory(roomRouter)({ ...readerContext, db: refetch.database }).readRooms({
       includeDirectMessages: true,
     });
-    const refetchTopics = await getReadTopics(refetch.statements);
+    const refetchTopics = (await getReadTopics(refetch.statements)).map(({ topic }) => topic);
 
     expect(items.map(({ id }) => id)).toContain(directMessageId);
     expect(refetchTopics).toContain(`message_usersToRooms:roomId=${directMessageId}`);
@@ -383,7 +412,7 @@ describe("topicMatch", () => {
       .returning();
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
-      "message_usersToRooms.isHidden:*",
+      "message_usersToRooms:*",
     ]);
   });
 
@@ -426,6 +455,48 @@ describe("topicMatch", () => {
     ]);
   });
 
+  // The sidebar reads a membership's display name and its visibility, not its last read time, so another member's last-read
+  // Update names a column no sidebar read holds, and wakes no sidebar through the room's topic
+  test("another member's last-read update wakes no sidebar that lists the room", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const { directMessageId, joiner, reader } = await createSharedDirectMessage(context);
+    const read = await recordSidebarRead(context, reader);
+    const write = recordStatements(context.db);
+
+    await write.database
+      .update(usersToRoomsInMessage)
+      .set({ lastReadAt: new Date() })
+      .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)))
+      .returning();
+
+    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual(
+      [],
+    );
+  });
+
+  // The sidebar shows each participant by the display name the membership holds, so another member renaming it wakes the
+  // Sidebar through the room's topic that names the membership
+  test("another member's display-name update wakes the sidebar through the room it lists", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const { directMessageId, joiner, reader } = await createSharedDirectMessage(context);
+    const read = await recordSidebarRead(context, reader);
+    const write = recordStatements(context.db);
+
+    await write.database
+      .update(usersToRoomsInMessage)
+      .set({ displayName: "renamed" })
+      .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)))
+      .returning();
+
+    expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
+      `${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`,
+    ]);
+  });
+
   test("a participant's rename wakes the sidebar through the name column its display name reads", async () => {
     expect.hasAssertions();
 
@@ -441,7 +512,7 @@ describe("topicMatch", () => {
       .returning();
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toContain(
-      `${getTableName(usersInAuth)}.name:*`,
+      `${getTableName(usersInAuth)}:*`,
     );
   });
 });

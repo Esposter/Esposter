@@ -1,6 +1,6 @@
 import type { Topic } from "@esposter/db-schema";
 
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory, router } from "#server/trpc/index";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
@@ -42,7 +42,7 @@ describe(getTopicsProcedure, () => {
     const caller = createTestCaller(await createMockContext());
     await caller.updatePost({ id });
 
-    expect(MockPublishedTopics).toStrictEqual([getTopic(TopicKind.Post, id)]);
+    expect(getMockPublishedTopics()).toStrictEqual([getTopic(TopicKind.Post, id)]);
   });
 
   test("sends a query's topics back on its response, and publishes nothing for it", async () => {
@@ -51,10 +51,12 @@ describe(getTopicsProcedure, () => {
     const mockContext = await createMockContext();
     await createTestCaller(mockContext).readPost({ id });
 
-    expect(readTopicsHeader(mockContext.responseHeaders, "readPost").flatMap(({ topics }) => topics)).toStrictEqual([
-      getTopic(TopicKind.Post, id),
-    ]);
-    expect(MockPublishedTopics).toStrictEqual([]);
+    expect(
+      readTopicsHeader(mockContext.responseHeaders, "readPost").flatMap(({ topics }) =>
+        topics.map(({ topic }) => topic),
+      ),
+    ).toStrictEqual([getTopic(TopicKind.Post, id)]);
+    expect(getMockPublishedTopics()).toStrictEqual([]);
   });
 
   // A mutation that fails after its write still publishes its topics, since the write landed before the failure
@@ -67,7 +69,7 @@ describe(getTopicsProcedure, () => {
     );
 
     expect(written).toStrictEqual([id]);
-    expect(MockPublishedTopics).toStrictEqual([getTopic(TopicKind.Post, id)]);
+    expect(getMockPublishedTopics()).toStrictEqual([getTopic(TopicKind.Post, id)]);
   });
 
   test("a mutation whose topics cannot be read still resolves, since its write has committed", async () => {
@@ -82,6 +84,6 @@ describe(getTopicsProcedure, () => {
     vi.spyOn(console, "error").mockImplementation(noop);
 
     await expect(caller.updateUnreadable({ id })).resolves.toBe(true);
-    expect(MockPublishedTopics).toStrictEqual([]);
+    expect(getMockPublishedTopics()).toStrictEqual([]);
   });
 });

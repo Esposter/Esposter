@@ -1,5 +1,5 @@
 import type { TopicNamespace } from "#src/models/realtime/TopicNamespace";
-import type { Topic } from "@esposter/db-schema";
+import type { ColumnTopic } from "@esposter/db-schema";
 
 import { publishTopics } from "#src/services/realtime/publishTopics";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -9,7 +9,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Throw from reading them, or a write set read from the statements a request awaited, is logged the same way
 export const publishTopicsBestEffort = <TId>(
   topicNamespace: TopicNamespace<TId>,
-  getTopics: () => Promise<Topic[]> | Topic[],
+  getTopics: () => ColumnTopic[] | Promise<ColumnTopic[]>,
   failure: string,
 ): Promise<void> =>
   getResultAsync(async () => publishTopics(topicNamespace, await getTopics())).match(noop, (error) => {

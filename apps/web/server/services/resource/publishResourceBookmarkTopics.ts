@@ -19,7 +19,7 @@ export const publishResourceBookmarkTopics = async (
       .selectDistinct({ userId: bookmarksInApp.userId })
       .from(bookmarksInApp)
       .where(inJsonArray(bookmarksInApp.resourceId, resourceIds));
-    await publishTopics(bookmarkers.map(({ userId }) => getTopic(TopicKind.Bookmark, userId)));
+    await publishTopics(bookmarkers.map(({ userId }) => ({ topic: getTopic(TopicKind.Bookmark, userId) })));
   }).match(noop, (error) => {
     console.error("Failed to publish the bookmarks of the changed resources:", error);
   });

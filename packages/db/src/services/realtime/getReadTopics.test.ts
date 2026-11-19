@@ -2,6 +2,7 @@ import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 import type { Database } from "@esposter/db-schema";
 
 import { getReadTopics } from "#src/services/realtime/getReadTopics";
+import { getWokenTopics } from "#src/services/realtime/getWokenTopics";
 import { getWriteTopics } from "#src/services/realtime/getWriteTopics";
 import { recordStatements } from "#src/services/realtime/recordStatements";
 import { createMockDb } from "@esposter/db-mock";
@@ -55,12 +56,13 @@ const seedSelfJoinRooms = async () => {
   return { aloneRoomId, db, sharedRoomId, viewerId };
 };
 
-// The topics a read and a write both name: what the write wakes
-const getWoken = async (read: RecordedStatement[], write: RecordedStatement[]) => {
-  const readTopics = await getReadTopics(read);
-  const writeTopics = await getWriteTopics(write);
-  return readTopics.filter((topic) => writeTopics.includes(topic));
-};
+// The topics a read and a write both name, which the write wakes through the columns it changes and the read reads
+const getWoken = async (read: RecordedStatement[], write: RecordedStatement[]) =>
+  getWokenTopics(await getReadTopics(read), await getWriteTopics(write));
+
+// The names of the topics a read watches, for a golden that records which topics a read names
+const getReadTopicNames = async (statements: RecordedStatement[]) =>
+  (await getReadTopics(statements)).map(({ topic }) => topic);
 
 const seedUserRoom = async () => {
   const { db } = await createMockDb();
@@ -86,7 +88,7 @@ describe(getReadTopics, () => {
       .from(invitesInMessage)
       .where(eq(invitesInMessage.id, "a".repeat(SECRET_TOKEN_LENGTH)));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(["message_invites:id=sha256:66d34fba71f8"]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_invites:id=sha256:66d34fba71f8"]);
   });
 
   // A literal list on a scope column names each value it lists, as an equality names its one value
@@ -103,7 +105,7 @@ describe(getReadTopics, () => {
       .from(usersToRoomsInMessage)
       .where(inArray(usersToRoomsInMessage.roomId, [firstRoomId, secondRoomId]));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [`message_usersToRooms:roomId=${firstRoomId}`, `message_usersToRooms:roomId=${secondRoomId}`].toSorted(),
     );
   });
@@ -125,10 +127,8 @@ describe(getReadTopics, () => {
       .leftJoin(resourcesInResource, eq(resourcesInResource.id, bookmarksInApp.resourceId))
       .where(eq(bookmarksInApp.userId, userId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual([
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual([
       `app_bookmarks:userId=${userId}`,
-      "resource_resources.id:*",
-      "resource_resources.userId:*",
       "resource_resources:*",
     ]);
   });
@@ -156,9 +156,7 @@ describe(getReadTopics, () => {
         ),
       );
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual([
-      "message_usersToRooms.roomId:*",
-      "message_usersToRooms.userId:*",
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual([
       "message_usersToRooms:*",
       `message_usersToRooms:userId=${userId}`,
     ]);
@@ -185,10 +183,8 @@ describe(getReadTopics, () => {
       .innerJoin(memberships, eq(memberships.roomId, usersToRoomsInMessage.roomId))
       .where(eq(memberships.roomId, roomId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
-        "message_usersToRooms.roomId:*",
-        "message_usersToRooms.userId:*",
         "message_usersToRooms:*",
         `message_usersToRooms:roomId=${roomId}`,
         `message_usersToRooms:userId=${userId}`,
@@ -205,7 +201,7 @@ describe(getReadTopics, () => {
 
     await database.select().from(roomsInMessage);
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(["message_rooms:*"]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_rooms:*"]);
   });
 
   // A table a read joins on a scope column is named by the values its join key takes in the rows the read returns, when the
@@ -229,9 +225,8 @@ describe(getReadTopics, () => {
       .from(roomsInMessage)
       .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
-        "message_rooms.id:*",
         "message_rooms:*",
         `message_usersToRooms:roomId=${firstRoomId}`,
         `message_usersToRooms:roomId=${secondRoomId}`,
@@ -257,13 +252,7 @@ describe(getReadTopics, () => {
       .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
       .where(isNull(usersToRoomsInMessage.lastReadAt));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual([
-      "message_rooms.id:*",
-      "message_rooms:*",
-      "message_usersToRooms.lastReadAt:*",
-      "message_usersToRooms.roomId:*",
-      "message_usersToRooms:*",
-    ]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_rooms:*", "message_usersToRooms:*"]);
   });
 
   // A left join keeps the partner's rows whatever its joined table's own condition in the ON clause removes, so the condition
@@ -293,10 +282,8 @@ describe(getReadTopics, () => {
       )
       .where(eq(roomsInMessage.userId, userId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
-        "message_rooms.id:*",
-        "message_rooms.userId:*",
         "message_rooms:*",
         `message_usersToRooms:roomId=${firstRoomId}`,
         `message_usersToRooms:roomId=${secondRoomId}`,
@@ -324,13 +311,8 @@ describe(getReadTopics, () => {
       .leftJoin(memberships, eq(memberships.roomId, roomsInMessage.id))
       .where(eq(roomsInMessage.userId, userId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
-      [
-        "message_rooms.id:*",
-        "message_rooms.userId:*",
-        "message_rooms:*",
-        `message_usersToRooms:roomId=${roomId}`,
-      ].toSorted(),
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
+      ["message_rooms:*", `message_usersToRooms:roomId=${roomId}`].toSorted(),
     );
   });
 
@@ -357,12 +339,9 @@ describe(getReadTopics, () => {
       .leftJoin(usersInAuth, eq(usersInAuth.id, usersToRoomsInMessage.userId))
       .where(eq(roomsInMessage.userId, userId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
-        "auth_users.id:*",
         "auth_users:*",
-        "message_rooms.id:*",
-        "message_rooms.userId:*",
         "message_rooms:*",
         `message_usersToRooms:roomId=${firstRoomId}`,
         `message_usersToRooms:roomId=${secondRoomId}`,
@@ -413,14 +392,8 @@ describe(getReadTopics, () => {
       .leftJoin(participants, eq(participants.roomId, roomsInMessage.id))
       .where(eq(roomsInMessage.userId, userId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
-      [
-        "message_rooms.id:*",
-        "message_rooms.userId:*",
-        "message_rooms:*",
-        `message_usersToRooms:roomId=${roomId}`,
-        `message_usersToRooms:userId=${userId}`,
-      ].toSorted(),
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
+      ["message_rooms:*", `message_usersToRooms:roomId=${roomId}`, `message_usersToRooms:userId=${userId}`].toSorted(),
     );
   });
 
@@ -444,17 +417,8 @@ describe(getReadTopics, () => {
       .innerJoin(usersInAuth, eq(usersInAuth.id, usersToRoomsInMessage.userId))
       .where(eq(roomsInMessage.userId, userId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
-      [
-        "auth_users.id:*",
-        "auth_users:*",
-        "message_rooms.id:*",
-        "message_rooms.userId:*",
-        "message_rooms:*",
-        "message_usersToRooms.roomId:*",
-        "message_usersToRooms.userId:*",
-        "message_usersToRooms:*",
-      ].toSorted(),
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
+      ["auth_users:*", "message_rooms:*", "message_usersToRooms:*"].toSorted(),
     );
   });
 
@@ -477,15 +441,8 @@ describe(getReadTopics, () => {
       .innerJoin(usersInAuth, eq(usersInAuth.id, roomsInMessage.userId))
       .where(eq(roomsInMessage.userId, userId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
-      [
-        "auth_users.id:*",
-        "auth_users:*",
-        "message_rooms.id:*",
-        "message_rooms.userId:*",
-        "message_rooms:*",
-        `message_usersToRooms:roomId=${roomId}`,
-      ].toSorted(),
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
+      ["auth_users:*", "message_rooms:*", `message_usersToRooms:roomId=${roomId}`].toSorted(),
     );
   });
 
@@ -510,15 +467,8 @@ describe(getReadTopics, () => {
       .leftJoin(participants, eq(participants.roomId, usersToRoomsInMessage.roomId))
       .where(eq(roomsInMessage.userId, userId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
-      [
-        "message_rooms.id:*",
-        "message_rooms.userId:*",
-        "message_rooms:*",
-        "message_usersToRooms.roomId:*",
-        "message_usersToRooms.userId:*",
-        "message_usersToRooms:*",
-      ].toSorted(),
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
+      ["message_rooms:*", "message_usersToRooms:*"].toSorted(),
     );
   });
 
@@ -543,7 +493,7 @@ describe(getReadTopics, () => {
         and(eq(roomsInMessage.id, usersToRoomsInMessage.roomId), eq(usersToRoomsInMessage.userId, userId)),
       );
 
-    const topics = await getReadTopics(statements);
+    const topics = await getReadTopicNames(statements);
     expect(topics).toContain("message_usersToRooms:*");
     expect(topics.some((topic) => topic.startsWith("message_usersToRooms:userId="))).toBe(false);
   });
@@ -567,10 +517,7 @@ describe(getReadTopics, () => {
       .from(usersToRoomsInMessage)
       .where(not(eq(usersToRoomsInMessage.userId, userId)));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual([
-      "message_usersToRooms.userId:*",
-      "message_usersToRooms:*",
-    ]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
   });
 
   // A column a read selects or groups by removes no row, so selecting the joined table's key does not filter it. The table
@@ -593,13 +540,8 @@ describe(getReadTopics, () => {
       .where(eq(roomsInMessage.userId, userId))
       .groupBy(usersToRoomsInMessage.roomId, roomsInMessage.id);
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
-      [
-        "message_rooms.id:*",
-        "message_rooms.userId:*",
-        "message_rooms:*",
-        `message_usersToRooms:roomId=${roomId}`,
-      ].toSorted(),
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
+      ["message_rooms:*", `message_usersToRooms:roomId=${roomId}`].toSorted(),
     );
   });
 
@@ -621,14 +563,7 @@ describe(getReadTopics, () => {
       .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
       .where(ne(usersToRoomsInMessage.userId, userId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual([
-      "message_rooms.id:*",
-      "message_rooms.userId:*",
-      "message_rooms:*",
-      "message_usersToRooms.roomId:*",
-      "message_usersToRooms.userId:*",
-      "message_usersToRooms:*",
-    ]);
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_rooms:*", "message_usersToRooms:*"]);
   });
 
   // An `in` over the table itself keeps the rows its subquery names, since each of the subquery's values is held by a row the
@@ -667,7 +602,7 @@ describe(getReadTopics, () => {
         ),
       );
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
         `message_usersToRooms:roomId=${firstRoomId}`,
         `message_usersToRooms:roomId=${secondRoomId}`,
@@ -703,8 +638,8 @@ describe(getReadTopics, () => {
         ),
       );
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
-      ["message_roomEmojis.roomId:*", "message_roomEmojis:*", `message_usersToRooms:userId=${userId}`].toSorted(),
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
+      ["message_roomEmojis:*", `message_usersToRooms:userId=${userId}`].toSorted(),
     );
   });
 
@@ -728,13 +663,8 @@ describe(getReadTopics, () => {
       )
       .where(eq(usersToRoomsInMessage.userId, viewerId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
-      [
-        "message_usersToRooms.roomId:*",
-        "message_usersToRooms.userId:*",
-        "message_usersToRooms:*",
-        `message_usersToRooms:userId=${viewerId}`,
-      ].toSorted(),
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
+      ["message_usersToRooms:*", `message_usersToRooms:userId=${viewerId}`].toSorted(),
     );
   });
 
@@ -756,7 +686,7 @@ describe(getReadTopics, () => {
       )
       .where(eq(usersToRoomsInMessage.userId, viewerId));
 
-    await expect(getReadTopics(statements)).resolves.toStrictEqual(
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
         `message_usersToRooms:roomId=${aloneRoomId}`,
         `message_usersToRooms:roomId=${sharedRoomId}`,
@@ -784,7 +714,7 @@ describe(getReadTopics, () => {
     await expect(getWoken(read.statements, write.statements)).resolves.toStrictEqual([]);
   });
 
-  test("an update to a column a table-wide read names wakes it, by that column's topic", async () => {
+  test("an update to a column a table-wide read names wakes it, through the table's topic", async () => {
     expect.hasAssertions();
 
     const { db, roomId } = await seedUserRoom();
@@ -799,7 +729,39 @@ describe(getReadTopics, () => {
       .set({ isHidden: true })
       .where(eq(usersToRoomsInMessage.roomId, roomId));
 
-    await expect(getWoken(read.statements, write.statements)).resolves.toStrictEqual([`${tableName}.isHidden:*`]);
+    await expect(getWoken(read.statements, write.statements)).resolves.toStrictEqual([`${tableName}:*`]);
+  });
+
+  // The read references only roomId, so an update to isHidden changes no column it reads and wakes it through no topic
+  test("an update to a column a table-wide read does not reference wakes it through no topic", async () => {
+    expect.hasAssertions();
+
+    const { db, roomId } = await seedUserRoom();
+    const read = recordStatements(db);
+    await read.database.select({ roomId: usersToRoomsInMessage.roomId }).from(usersToRoomsInMessage);
+    const write = recordStatements(db);
+    await write.database
+      .update(usersToRoomsInMessage)
+      .set({ isHidden: true })
+      .where(eq(usersToRoomsInMessage.roomId, roomId));
+
+    await expect(getWoken(read.statements, write.statements)).resolves.toStrictEqual([]);
+  });
+
+  // A table-wide read names the columns its statement references of the table, and no other, on its table's topic
+  test("a table-wide read watches the columns its statement references, on its table's topic", async () => {
+    expect.hasAssertions();
+
+    const { db } = await seedUserRoom();
+    const { database, statements } = recordStatements(db);
+    await database
+      .select({ roomId: usersToRoomsInMessage.roomId })
+      .from(usersToRoomsInMessage)
+      .where(eq(usersToRoomsInMessage.isHidden, false));
+
+    await expect(getReadTopics(statements)).resolves.toStrictEqual([
+      { columns: ["isHidden", "roomId"], topic: `${tableName}:*` },
+    ]);
   });
 
   // A raw fragment names its columns in text the walker cannot read, so the read names every column of the table it sits in
@@ -818,7 +780,7 @@ describe(getReadTopics, () => {
       .set({ isHidden: true })
       .where(eq(usersToRoomsInMessage.roomId, roomId));
 
-    await expect(getWoken(read.statements, write.statements)).resolves.toContain(`${tableName}.isHidden:*`);
+    await expect(getWoken(read.statements, write.statements)).resolves.toContain(`${tableName}:*`);
   });
 
   test("an insert wakes a table-wide read through the table's row topic", async () => {

@@ -1,19 +1,37 @@
 import type { TopicRead } from "#shared/models/realtime/TopicRead";
 
-import { TOPICS_HEADER, TOPICS_HEADER_SEPARATOR } from "#shared/services/realtime/constants";
-import { topicSchema } from "@esposter/db-schema";
+import {
+  TOPICS_HEADER,
+  TOPICS_HEADER_COLUMNS_SEPARATOR,
+  TOPICS_HEADER_SEPARATOR,
+} from "#shared/services/realtime/constants";
+import { columnTopicSchema } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";
 import { z } from "zod";
 
 // The header carries the time as text, which is parsed back into the whole number it was taken as
 const readAtSchema = z.coerce.number().pipe(z.int().nonnegative());
 
-// Decodes a topic from its header encoding. A text that does not decode is no topic, as the schema would refuse it
-const decodeTopic = (text: string): string | undefined =>
+// Decodes a text from its header encoding. A text that does not decode is no topic, as the schema would refuse it
+const decodeText = (text: string): string | undefined =>
   getResult(() => decodeURIComponent(text)).match(
     (decoded) => decoded,
     () => undefined,
   );
+
+// Reads one topic entry back: its topic, then the columns it names when the entry carries a separator after the topic. A
+// Column list that names none is an empty list, and an entry with no separator names every column
+const readColumnTopic = (text: string) => {
+  const [topicText = "", ...columnTexts] = text.split(TOPICS_HEADER_COLUMNS_SEPARATOR);
+  const topic = decodeText(topicText);
+  const columns = columnTexts.filter((columnText) => columnText !== "").map((columnText) => decodeText(columnText));
+  if (topic === undefined || columns.includes(undefined)) return undefined;
+
+  const parsedColumnTopic = columnTopicSchema.safeParse(
+    text.includes(TOPICS_HEADER_COLUMNS_SEPARATOR) ? { columns, topic } : { topic },
+  );
+  return parsedColumnTopic.success ? parsedColumnTopic.data : undefined;
+};
 
 // The reads one procedure path's answers made, out of a batch's topics header: each entry's topics, watched from its time
 export const readTopicsHeader = (headers: Headers, path: string): TopicRead[] =>
@@ -24,9 +42,8 @@ export const readTopicsHeader = (headers: Headers, path: string): TopicRead[] =>
     .flatMap(([, readAtText, ...topicTexts]) => {
       const parsedReadAt = readAtSchema.safeParse(readAtText);
       const topics = topicTexts.flatMap((topicText) => {
-        const decoded = decodeTopic(topicText);
-        const parsedTopic = decoded === undefined ? undefined : topicSchema.safeParse(decoded);
-        return parsedTopic?.success ? [parsedTopic.data] : [];
+        const columnTopic = readColumnTopic(topicText);
+        return columnTopic === undefined ? [] : [columnTopic];
       });
       return parsedReadAt.success && topics.length > 0 ? [{ readAt: parsedReadAt.data, topics }] : [];
     });

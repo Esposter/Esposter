@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
-import { MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
 import { createUser } from "#src/services/shared/createUser.test";
@@ -134,7 +134,7 @@ describe(deleteAccountHandler, () => {
 
     await deleteAccountHandler({ userId });
 
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Friend, friendUserId));
+    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Friend, friendUserId));
   });
 
   // A post's like count is the sum of its likes, so the erased person's like leaves it with the row that holds it, and
@@ -206,7 +206,7 @@ describe(deleteAccountHandler, () => {
 
     await deleteAccountHandler({ userId });
 
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.ScheduledMessage, otherUserId));
+    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.ScheduledMessage, otherUserId));
   });
 
   test("a second run over a finished sweep finds nothing and succeeds", async () => {

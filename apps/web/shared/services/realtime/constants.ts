@@ -5,3 +5,5 @@ export const TOPICS_HEADER = `x-${SITE_NAME.toLowerCase()}-topics`;
 // Separates a header value's procedure path from its topics, and its topics from each other. Neither a path nor a topic
 // Holds a space
 export const TOPICS_HEADER_SEPARATOR = " ";
+// Separates a topic from the columns it names, and the columns from each other. An encoded topic or column holds none
+export const TOPICS_HEADER_COLUMNS_SEPARATOR = ";";

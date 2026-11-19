@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
@@ -190,8 +190,10 @@ describe("inviteRouter", () => {
 
     await inviteCaller.readMyInvite({ roomId: newRoom.id });
 
-    expect(readTopicsHeader(listHeaders, "readRoomInvites").flatMap(({ topics }) => topics)).toContain(roomTopic);
-    expect(MockPublishedTopics).toContain(roomTopic);
+    expect(
+      readTopicsHeader(listHeaders, "readRoomInvites").flatMap(({ topics }) => topics.map(({ topic }) => topic)),
+    ).toContain(roomTopic);
+    expect(getMockPublishedTopics()).toContain(roomTopic);
   });
 
   // The usability predicate runs over the page rather than in SQL, so a page can filter down to fewer rows than it

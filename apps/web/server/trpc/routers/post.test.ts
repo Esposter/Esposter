@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { PostInPost } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
@@ -266,9 +266,11 @@ describe("postRouter", () => {
 
     await postCaller.deleteComment(newComment.id);
 
-    const repliesTopics = readTopicsHeader(repliesHeaders, "readPosts").flatMap(({ topics }) => topics);
+    const repliesTopics = readTopicsHeader(repliesHeaders, "readPosts").flatMap(({ topics }) =>
+      topics.map(({ topic }) => topic),
+    );
     expect(repliesTopics).toContain(getScopeTopic(getTableName(postsInPost), "parentId", newComment.id));
-    expect(MockPublishedTopics).toContain(getScopeTopic(getTableName(postsInPost), "parentId", newComment.id));
+    expect(getMockPublishedTopics()).toContain(getScopeTopic(getTableName(postsInPost), "parentId", newComment.id));
   });
 
   test("deletes comment with deleting post", async () => {

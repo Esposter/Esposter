@@ -1,12 +1,19 @@
 import type { Meta } from "#server/models/trpc/Meta";
 import type { Context } from "#server/trpc/context";
 import type { RecordedStatement } from "@esposter/db";
-import type { Topic } from "@esposter/db-schema";
+import type { ColumnTopic, Topic } from "@esposter/db-schema";
 import type { AnyRouter } from "@trpc/server";
 
 import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
-import { getReadSet, getReadTopics, getSchemaTables, getWriteTopics, recordStatements } from "@esposter/db";
+import {
+  getReadSet,
+  getReadTopics,
+  getSchemaTables,
+  getWokenTopics,
+  getWriteTopics,
+  recordStatements,
+} from "@esposter/db";
 import { getTableName } from "drizzle-orm";
 import { SQLiteDialect } from "drizzle-orm/sqlite-core";
 import { expect } from "vitest";
@@ -30,7 +37,7 @@ const compareStrings = (first: string, second: string) => first.localeCompare(se
 interface Read {
   answer: string;
   tables: Set<string>;
-  topics: Topic[];
+  topics: ColumnTopic[];
 }
 type Reads = Map<string, Read>;
 
@@ -47,18 +54,16 @@ const getWatchedPaths = (procedures: AnyRouter["_def"]["procedures"], type: stri
 
 const getPathsOf = (calls: LiveTopicCall[]) => calls.map(({ path }) => path).toSorted(compareStrings);
 
-const getTopicsOf = (headers: Headers, path: string): Topic[] =>
+const getTopicsOf = (headers: Headers, path: string): ColumnTopic[] =>
   readTopicsHeader(headers, path).flatMap(({ topics }) => topics);
 
-// The tables a set of topics names, each the text before its colon and dot. A read's topics and a write's name tables the same way
-// A column's topic names its table before the dot, so a scoped read of a table meets a write to one of its columns
-const getTopicTables = (topics: string[]) =>
-  new Set(topics.map((topic) => topic.slice(0, topic.indexOf(":")).split(".")[0] ?? ""));
+// The tables a set of topics names, each the text before its colon. A read's topics and a write's name tables the same way
+const getTopicTables = (topics: Topic[]) => new Set(topics.map((topic) => topic.slice(0, topic.indexOf(":"))));
 
 // The tables a write touches: those its topics name, which include the rows its cascade removes, so a read of a table the
 // Cascade reached is rerun too
 export const getTouchedTables = async (statements: RecordedStatement[]) =>
-  getTopicTables(await getWriteTopics(statements));
+  getTopicTables((await getWriteTopics(statements)).map(({ topic }) => topic));
 
 // A router's live topics, checked from the procedures it runs rather than from a list of the topics it names. Every
 // Procedure that declares no static reason has a case, every query's read set covers each table its SQL reads, and each
@@ -95,7 +100,7 @@ export const expectLiveTopicCoverage = async (
     const { database, statements } = recordStatements(context.db);
     const responseHeaders = new Headers();
     const answer = await query.call({ ...context, db: database, responseHeaders });
-    const readTables = getTopicTables(await getReadTopics(statements));
+    const readTables = getTopicTables((await getReadTopics(statements)).map(({ topic }) => topic));
     return { answer: JSON.stringify(answer), tables: readTables, topics: getTopicsOf(responseHeaders, query.path) };
   };
 
@@ -110,7 +115,7 @@ export const expectLiveTopicCoverage = async (
     const { database, statements } = recordStatements(context.db);
     MockPublishedTopics.length = 0;
     await write.call({ ...context, db: database, responseHeaders: new Headers() });
-    const published = new Set(MockPublishedTopics);
+    const published = [...MockPublishedTopics];
     const touched = await getTouchedTables(statements);
     const readsAfter: Reads = new Map();
     await Promise.all(
@@ -119,7 +124,10 @@ export const expectLiveTopicCoverage = async (
         const unchanged = before !== undefined && ![...before.tables].some((table) => touched.has(table));
         const after = unchanged ? before : await readQuery(query);
         readsAfter.set(query.path, after);
-        if (after.answer !== before?.answer && !before?.topics.some((topic) => published.has(topic)))
+        if (
+          after.answer !== before?.answer &&
+          (before === undefined || getWokenTopics(before.topics, published).length === 0)
+        )
           unwokenReads.push(`${write.path} -> ${query.path}`);
       }),
     );

@@ -569,7 +569,7 @@ describe(useMutation, () => {
     const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
     const topic = getTopic(TopicKind.Post, v7());
     const query = vi.fn<() => Promise<string>>(() => {
-      readActiveTopicReads()?.push({ readAt: 0, topics: [topic] });
+      readActiveTopicReads()?.push({ readAt: 0, topics: [{ topic }] });
       return Promise.resolve(result);
     });
     const scope = effectScope();

@@ -1,3 +1,5 @@
+import type { ColumnTopic } from "@esposter/db-schema";
+
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
@@ -9,8 +11,8 @@ describe(readTopicsHeader, () => {
   test("reads one path's topics out of a batch's header", () => {
     expect.hasAssertions();
 
-    const postTopic = getTopic(TopicKind.Post, v7());
-    const friendTopic = getTopic(TopicKind.Friend, v7());
+    const postTopic = { topic: getTopic(TopicKind.Post, v7()) };
+    const friendTopic = { topic: getTopic(TopicKind.Friend, v7()) };
     const readAt = 0;
     const headers = new Headers();
     headers.append(TOPICS_HEADER, formatTopicsHeaderValue("post.readPost", { readAt, topics: [postTopic] }));
@@ -24,10 +26,35 @@ describe(readTopicsHeader, () => {
   test("a topic whose key holds a space or a comma reads back whole", () => {
     expect.hasAssertions();
 
-    const blobTopic = getBlobTopic(getStorageBucketBindingName(StorageBucket.UserAssets), "user/a b,c.png");
+    const blobTopic = { topic: getBlobTopic(getStorageBucketBindingName(StorageBucket.UserAssets), "user/a b,c.png") };
     const headers = new Headers();
     headers.append(TOPICS_HEADER, formatTopicsHeaderValue("post.readPost", { readAt: 0, topics: [blobTopic] }));
 
     expect(readTopicsHeader(headers, "post.readPost")).toStrictEqual([{ readAt: 0, topics: [blobTopic] }]);
+  });
+
+  // A scope topic carries the columns its read watches, which an empty set and a set of one or more both read back as
+  // Written, and a topic with no columns names every column
+  test("a topic's columns read back with it, an empty set as an empty set and none as none", () => {
+    expect.hasAssertions();
+
+    const scopeTopic = getTopic(TopicKind.Post, v7());
+    const countTopic: ColumnTopic = { columns: [], topic: `message_usersToRooms:roomId=${v7()}` };
+    const columnTopic: ColumnTopic = {
+      columns: ["isHidden", "displayName"],
+      topic: `message_usersToRooms:userId=${v7()}`,
+    };
+    const headers = new Headers();
+    headers.append(
+      TOPICS_HEADER,
+      formatTopicsHeaderValue("room.readRooms", {
+        readAt: 0,
+        topics: [countTopic, columnTopic, { topic: scopeTopic }],
+      }),
+    );
+
+    expect(readTopicsHeader(headers, "room.readRooms")).toStrictEqual([
+      { readAt: 0, topics: [countTopic, columnTopic, { topic: scopeTopic }] },
+    ]);
   });
 });

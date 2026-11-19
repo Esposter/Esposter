@@ -1,4 +1,4 @@
-import { MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { getDb, runUnit } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { createMockDb } from "@esposter/db-mock";
@@ -24,7 +24,7 @@ describe("runUnit", () => {
 
     await runUnit(() => getDb().update(usersInAuth).set({ name: "a" }).where(eq(usersInAuth.id, v7())));
 
-    expect(MockPublishedTopics).toContain(authTableTopic);
+    expect(getMockPublishedTopics()).toContain(authTableTopic);
   });
 
   // A blob a unit writes is published under its bucket's binding and its key, so a reader of the blob is woken by the unit
@@ -36,7 +36,7 @@ describe("runUnit", () => {
     Object.assign(env, { USER_ASSETS: await getMockBucket(StorageBucket.UserAssets) });
     await runUnit(() => getBucket(StorageBucket.UserAssets).put(key, "a"));
 
-    expect(MockPublishedTopics).toContain(`USER_ASSETS:${key}`);
+    expect(getMockPublishedTopics()).toContain(`USER_ASSETS:${key}`);
   });
 
   test("a unit that fails still publishes the writes that landed before it failed", async () => {
@@ -49,7 +49,7 @@ describe("runUnit", () => {
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: a]`);
 
-    expect(MockPublishedTopics).toContain(authTableTopic);
+    expect(getMockPublishedTopics()).toContain(authTableTopic);
   });
 
   test("a write outside a unit publishes nothing", async () => {
@@ -57,6 +57,6 @@ describe("runUnit", () => {
 
     await getDb().update(usersInAuth).set({ name: "a" }).where(eq(usersInAuth.id, v7()));
 
-    expect(MockPublishedTopics).toStrictEqual([]);
+    expect(getMockPublishedTopics()).toStrictEqual([]);
   });
 });

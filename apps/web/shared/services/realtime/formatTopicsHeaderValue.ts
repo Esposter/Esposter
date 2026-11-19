@@ -1,8 +1,18 @@
 import type { TopicRead } from "#shared/models/realtime/TopicRead";
+import type { ColumnTopic } from "@esposter/db-schema";
 
-import { TOPICS_HEADER_SEPARATOR } from "#shared/services/realtime/constants";
+import { TOPICS_HEADER_COLUMNS_SEPARATOR, TOPICS_HEADER_SEPARATOR } from "#shared/services/realtime/constants";
 
-// One query's entry in the topics header: its procedure path, the time its read began, then the topics its answer read. A
-// Topic is encoded whole, so a blob key's space or comma is not read as the header's own separator
+// A topic is encoded whole, so a blob key's space or comma is not read as the header's own separator. Its columns follow it
+// After a separator no encoded topic holds. That separator stays when the list names no column, since a topic with no list
+// Names every column, so an empty list and no list are told apart
+const formatColumnTopic = ({ columns, topic }: ColumnTopic): string => {
+  const encodedTopic = encodeURIComponent(topic);
+  if (columns === undefined) return encodedTopic;
+  const encodedColumns = columns.map((column) => encodeURIComponent(column)).join(TOPICS_HEADER_COLUMNS_SEPARATOR);
+  return `${encodedTopic}${TOPICS_HEADER_COLUMNS_SEPARATOR}${encodedColumns}`;
+};
+
+// One query's entry in the topics header: its procedure path, the time its read began, then the topics its answer read
 export const formatTopicsHeaderValue = (path: string, { readAt, topics }: TopicRead): string =>
-  [path, String(readAt), ...topics.map((topic) => encodeURIComponent(topic))].join(TOPICS_HEADER_SEPARATOR);
+  [path, String(readAt), ...topics.map((topic) => formatColumnTopic(topic))].join(TOPICS_HEADER_SEPARATOR);

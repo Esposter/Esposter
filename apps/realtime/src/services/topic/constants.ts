@@ -5,6 +5,8 @@ export const TOPIC_COALESCE_MS = 250;
 export const TOPIC_SUBSCRIBER_KEY_PREFIX = "subscriber:";
 // The storage key of the time a topic was last published, which a subscription's read time is checked against
 export const TOPIC_PUBLISHED_AT_KEY = "publishedAt";
+// The storage key of the columns the publishes waiting for the alarm changed, the union of their columns
+export const TOPIC_PENDING_COLUMNS_KEY = "pendingColumns";
 // How far before a read's time a publish may fall and still reach the read. The read is stamped by one Worker and the
 // Publish by another, so a second of clock skew between them must not let a publish the read missed slip past
 export const TOPIC_READ_SKEW_MS = 1000;

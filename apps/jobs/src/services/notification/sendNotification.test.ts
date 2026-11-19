@@ -4,7 +4,7 @@ import { MOCK_ENDPOINT } from "#src/services/notification/constants.test";
 import { sendNotification } from "#src/services/notification/sendNotification";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
-import { MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -163,6 +163,6 @@ describe(sendNotification, () => {
 
     await sendNotification({ path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId });
 
-    expect(MockPublishedTopics).toStrictEqual([getTopic(TopicKind.Notification, subscriberUserId)]);
+    expect(getMockPublishedTopics()).toStrictEqual([getTopic(TopicKind.Notification, subscriberUserId)]);
   });
 });

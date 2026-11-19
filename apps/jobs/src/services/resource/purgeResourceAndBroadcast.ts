@@ -22,7 +22,7 @@ export const purgeResourceAndBroadcast = async (
   await broadcastStorageUsage(releasedUserIds);
   if (resource)
     await publishTopicsBestEffort(
-      () => [getTopic(TopicKind.ResourceList, resource.userId)],
+      () => [{ topic: getTopic(TopicKind.ResourceList, resource.userId) }],
       `Failed to publish the resource list of "${resource.userId}":`,
     );
 };

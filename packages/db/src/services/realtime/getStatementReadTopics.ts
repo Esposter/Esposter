@@ -1,16 +1,17 @@
 import type { ReadSet } from "#src/models/realtime/ReadSet";
 import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 import type { ScopeValue } from "#src/models/realtime/ScopeValue";
-import type { ScopeTopic } from "@esposter/db-schema";
+import type { ColumnTopic } from "@esposter/db-schema";
 
 import { FilterSite } from "#src/models/realtime/FilterSite";
 import { JoinKind } from "#src/models/realtime/JoinKind";
 import { getJoinScopeValues } from "#src/services/realtime/getJoinScopeValues";
 import { getOccurrenceKey } from "#src/services/realtime/getOccurrenceKey";
 import { getReferencedColumns } from "#src/services/realtime/getReferencedColumns";
-import { getScopeTopics } from "#src/services/realtime/getScopeTopics";
+import { getScopeValueTopic } from "#src/services/realtime/getScopeTopics";
 import { getStatementReadSet } from "#src/services/realtime/getStatementReadSet";
-import { getTableColumnTopic, getTableTopic } from "@esposter/db-schema";
+import { getColumnTopic, getTableTopic } from "@esposter/db-schema";
+import { SQLiteDialect } from "drizzle-orm/sqlite-core";
 
 // The table occurrences a left join may name by the rows it returns. An occurrence is named by no equality of its own, and is
 // Neither tested by a filter nor referenced by an inner join's condition: an inner join drops the rows no match reaches, and a
@@ -29,17 +30,34 @@ const getNamableOccurrences = (readSet: ReadSet): Set<string> => {
   return new Set(keys.filter((key) => !scopedKeys.has(key) && !blockedKeys.has(key)));
 };
 
-// The topics one statement a read awaited watches. A scope equality names the rows it selects by its value. An unscoped table
-// Occurrence is named by the rows a left join returns, when the join keeps its rows and returns the partner key: each returned
-// Row names the value the join matches on, so a row of another value does not wake the read. An unscoped occurrence no returned
-// Row names leaves its table table-wide, and a table-wide table's row topics are dropped, since its table-wide topic covers
-// Every row. An empty read names what it named before, table-wide
-export const getStatementReadTopics = async ({ rows, statement }: RecordedStatement): Promise<ScopeTopic[]> => {
+// The topics one statement a read awaited watches, each with the columns the statement references of its table. A scope
+// Equality names the rows it selects by its value. An unscoped table occurrence is named by the rows a left join returns, when
+// The join keeps its rows and returns the partner key: each returned row names the value the join matches on, so a row of
+// Another value does not wake the read. An unscoped occurrence no returned row names leaves its table table-wide, and a
+// Table-wide table's row topics are dropped, since its table-wide topic covers every row. An empty read names what it named
+// Before, table-wide
+export const getStatementReadTopics = async ({ rows, statement }: RecordedStatement): Promise<ColumnTopic[]> => {
   const readSet = getStatementReadSet(statement);
+  const { sql } = new SQLiteDialect().sqlToQuery(statement.getSQL());
+  // A table's watch reads the columns its statement references, under the names and aliases the statement gives the table
+  const tableColumnsMap = new Map<string, string[]>();
+  const getColumns = (tableName: string) => {
+    if (!tableColumnsMap.has(tableName)) {
+      const aliases = readSet.occurrences
+        .filter((occurrence) => occurrence.table === tableName)
+        .map(({ occurrence }) => occurrence);
+      tableColumnsMap.set(tableName, getReferencedColumns(sql, tableName, aliases));
+    }
+    return tableColumnsMap.get(tableName) ?? [];
+  };
   const scopeValues: ScopeValue[] = readSet.scopes
     .filter(({ value }) => value !== undefined && value !== null)
     .map(({ column, table, value }) => ({ column, table, value }));
-  const equalityTopics = await getScopeTopics(scopeValues);
+  const equalityTopics = await Promise.all(
+    scopeValues.map(async (scopeValue) =>
+      getColumnTopic(await getScopeValueTopic(scopeValue), getColumns(scopeValue.table)),
+    ),
+  );
   const occurrenceScopeValuesMap = getJoinScopeValues(readSet.joins, rows, getNamableOccurrences(readSet));
   const namedOccurrences = new Set(
     [...occurrenceScopeValuesMap].filter(([, values]) => values.length > 0).map(([key]) => key),
@@ -54,11 +72,14 @@ export const getStatementReadTopics = async ({ rows, statement }: RecordedStatem
   const joinScopeValues = [...occurrenceScopeValuesMap.values()]
     .flat()
     .filter(({ table }) => !tableWideTables.includes(table));
-  const joinTopics = await getScopeTopics(joinScopeValues);
-  // A table-wide table names its rows, and each column it reads, so an update of a column it does not read wakes it not
-  const tableTopics = tableWideTables.flatMap((tableName) => [
-    getTableTopic(tableName),
-    ...getReferencedColumns(statement, tableName).map((columnName) => getTableColumnTopic(tableName, columnName)),
-  ]);
+  const joinTopics = await Promise.all(
+    joinScopeValues.map(async (scopeValue) =>
+      getColumnTopic(await getScopeValueTopic(scopeValue), getColumns(scopeValue.table)),
+    ),
+  );
+  // A table-wide table names its rows, and the columns its statement reads, so an update of a column it does not read wakes it not
+  const tableTopics = tableWideTables.map((tableName) =>
+    getColumnTopic(getTableTopic(tableName), getColumns(tableName)),
+  );
   return [...equalityTopics, ...tableTopics, ...joinTopics];
 };

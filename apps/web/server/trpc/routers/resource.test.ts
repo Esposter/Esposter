@@ -11,7 +11,7 @@ import type { MjmlColumnNode, MjmlSectionNode } from "mjml-blocks";
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { getBucket } from "#server/services/storage/getBucket";
@@ -1055,7 +1055,7 @@ describe("resourceRouter", () => {
     MockPublishedTopics.length = 0;
     await caller.deleteResources({ ids: [webpageResource.id] });
 
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
+    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
   });
 
   test("publishes the bookmarker's topic when a resource is deleted through its own procedure", async () => {
@@ -1066,7 +1066,7 @@ describe("resourceRouter", () => {
     MockPublishedTopics.length = 0;
     await webpageCaller.deleteResource({ id: webpageResource.id });
 
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
+    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
   });
 
   test("publishes the bookmarker's topic when a binned resource is restored", async () => {
@@ -1078,7 +1078,7 @@ describe("resourceRouter", () => {
     MockPublishedTopics.length = 0;
     await caller.restoreResources({ ids: [webpageResource.id] });
 
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
+    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
   });
 
   test("publishes the bookmarker's topic when a resource is published", async () => {
@@ -1090,7 +1090,7 @@ describe("resourceRouter", () => {
     MockPublishedTopics.length = 0;
     await webpageCaller.publishResource({ id: webpageResource.id });
 
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
+    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
   });
 
   test("publishes the bookmarker's topic when a resource is unpublished", async () => {
@@ -1103,7 +1103,7 @@ describe("resourceRouter", () => {
     MockPublishedTopics.length = 0;
     await webpageCaller.unpublishResource({ id: webpageResource.id });
 
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
+    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Bookmark, bookmarkerId));
   });
 
   test("a resource moved to the bin and restored comes back whole", async () => {

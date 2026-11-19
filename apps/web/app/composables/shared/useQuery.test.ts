@@ -110,7 +110,7 @@ describe(useQuery, () => {
     const scope = effectScope();
     const query = scope.run(() =>
       useQuery(() => {
-        readActiveTopicReads()?.push({ readAt, topics: [topic] });
+        readActiveTopicReads()?.push({ readAt, topics: [{ topic }] });
         return Promise.resolve(value);
       }),
     );
@@ -137,7 +137,7 @@ describe(useQuery, () => {
       useQuery(() => {
         // The topics link reads a read's topics from its response header, which the tRPC mock does not send, so the
         // Read names its topic into the collector directly
-        readActiveTopicReads()?.push({ readAt, topics: [topic] });
+        readActiveTopicReads()?.push({ readAt, topics: [{ topic }] });
         onReadReached();
         return promise;
       }),

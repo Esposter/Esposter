@@ -9,7 +9,7 @@ import { userObjectCalls } from "#server/composables/realtime/useUserObject.test
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
 import { MockJobQueue, MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
@@ -298,7 +298,7 @@ describe("userRouter", () => {
     MockPublishedTopics.length = 0;
     await caller.updateUser({ name });
 
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Room, room.id));
+    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Room, room.id));
   });
 
   // A pending request shows the saver's name on the receiver's list, which names the receiver's own request topic
@@ -310,7 +310,7 @@ describe("userRouter", () => {
     MockPublishedTopics.length = 0;
     await caller.updateUser({ name });
 
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.FriendRequest, receiverSession.user.id));
+    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.FriendRequest, receiverSession.user.id));
   });
 
   // A blocker's list shows the blocked person's name, so the blocker's block topic is published with the save
@@ -324,7 +324,7 @@ describe("userRouter", () => {
     MockPublishedTopics.length = 0;
     await caller.updateUser({ name });
 
-    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Block, blockerSession.user.id));
+    expect(getMockPublishedTopics()).toContain(getTopic(TopicKind.Block, blockerSession.user.id));
   });
 
   test("reads user", async () => {

@@ -53,6 +53,61 @@ describe(TopicObject, () => {
     for (const userId of userIds) expect(getInvalidate(userId)).toHaveBeenCalledExactlyOnceWith(topic);
   });
 
+  // A subscriber reads some of a table's columns, and an update names the columns it sets, so an update to a column one
+  // Subscriber does not read wakes only the subscribers that read it. A count reads no column, so it hears of no update
+  test("a publish of an update wakes a subscriber that reads one of its columns, and no other", async () => {
+    expect.hasAssertions();
+
+    const { object } = createTopicObject();
+    const nameReader = v7();
+    const lastReadAtReader = v7();
+    const countReader = v7();
+    await object.subscribe(nameReader, 0, ["name"]);
+    await object.subscribe(lastReadAtReader, 0, ["lastReadAt"]);
+    await object.subscribe(countReader, 0, []);
+    await object.publish(["lastReadAt"]);
+    await object.alarm();
+
+    expect(getInvalidate(nameReader)).not.toHaveBeenCalled();
+    expect(getInvalidate(countReader)).not.toHaveBeenCalled();
+    expect(getInvalidate(lastReadAtReader)).toHaveBeenCalledExactlyOnceWith(topic);
+  });
+
+  // An insert or a delete changes which rows a read holds, not a column of them, so it names no column and wakes every
+  // Subscriber of the topic, a count among them
+  test("a row-set change wakes every subscriber, whatever columns each reads", async () => {
+    expect.hasAssertions();
+
+    const { object } = createTopicObject();
+    const nameReader = v7();
+    const countReader = v7();
+    await object.subscribe(nameReader, 0, ["name"]);
+    await object.subscribe(countReader, 0, []);
+    await object.publish();
+    await object.alarm();
+
+    expect(getInvalidate(nameReader)).toHaveBeenCalledExactlyOnceWith(topic);
+    expect(getInvalidate(countReader)).toHaveBeenCalledExactlyOnceWith(topic);
+  });
+
+  // The publishes of a burst are told together: a subscriber that reads a column any of them changed hears of the burst
+  // Once, and one that reads none of their columns does not
+  test("a burst of updates to two columns wakes a subscriber that reads either, once", async () => {
+    expect.hasAssertions();
+
+    const { object } = createTopicObject();
+    const nameReader = v7();
+    const unreadReader = v7();
+    await object.subscribe(nameReader, 0, ["name"]);
+    await object.subscribe(unreadReader, 0, ["isHidden"]);
+    await object.publish(["name"]);
+    await object.publish(["lastReadAt"]);
+    await object.alarm();
+
+    expect(getInvalidate(nameReader)).toHaveBeenCalledExactlyOnceWith(topic);
+    expect(getInvalidate(unreadReader)).not.toHaveBeenCalled();
+  });
+
   test("an unsubscribed user no longer hears of a change", async () => {
     expect.hasAssertions();
 

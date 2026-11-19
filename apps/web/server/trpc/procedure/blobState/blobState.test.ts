@@ -1,4 +1,4 @@
-import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory, router } from "#server/trpc/index";
@@ -47,9 +47,9 @@ describe("blob state procedures", () => {
     const context = await createMockContext();
     await createCallerFactory(blobStateRouter)(context).readSave();
 
-    expect(readTopicsHeader(context.responseHeaders, "readSave").flatMap(({ topics }) => topics)).toContain(
-      getSaveTopic(),
-    );
+    expect(
+      readTopicsHeader(context.responseHeaders, "readSave").flatMap(({ topics }) => topics.map(({ topic }) => topic)),
+    ).toContain(getSaveTopic());
   });
 
   test("a save publishes the blob it writes", async () => {
@@ -57,6 +57,6 @@ describe("blob state procedures", () => {
 
     await createCallerFactory(blobStateRouter)(await createMockContext()).saveSave({ data: { value: 1 } });
 
-    expect(MockPublishedTopics).toContain(getSaveTopic());
+    expect(getMockPublishedTopics()).toContain(getSaveTopic());
   });
 });

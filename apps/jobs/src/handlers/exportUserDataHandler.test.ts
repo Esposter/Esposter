@@ -1,7 +1,7 @@
 import type { Database, RoomMessage } from "@esposter/db-schema";
 
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
-import { MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { clearRoomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
@@ -145,7 +145,7 @@ describe(exportUserDataHandler, () => {
     expect(row.expiresAt).toStrictEqual(
       new Date(row.readyAt.getTime() + Temporal.Duration.from({ days: 7 }).total("milliseconds")),
     );
-    expect(MockPublishedTopics).toStrictEqual([getTopic(TopicKind.User, userId)]);
+    expect(getMockPublishedTopics()).toStrictEqual([getTopic(TopicKind.User, userId)]);
   });
 
   test("a replayed event rebuilds the same blob, leaving one archive for the export", async () => {

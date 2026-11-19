@@ -7,6 +7,7 @@ import { t } from "#server/trpc/initTrpc";
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
 import { getReadTopics, getWriteTopics, recordStatements } from "@esposter/db";
+import { mergeColumnTopics } from "@esposter/db-schema";
 
 // The live topics of every procedure that does not declare them, from the statements it awaits and the blobs its buckets read
 // Or write (the live queries design). A query's topics are what its answer was read from, sent back on its response. The writes
@@ -26,13 +27,16 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
   );
   // A query's topics travel back with its answer, so the client watches what the read it rendered came from
   if (type === "query" && result.ok) {
-    const topics = [...new Set([...(await getReadTopics(recorded.statements)), ...blobs.reads])].toSorted();
+    const topics = mergeColumnTopics([
+      ...(await getReadTopics(recorded.statements)),
+      ...blobs.reads.map((topic) => ({ topic })),
+    ]);
     if (topics.length > 0) ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, { readAt, topics }));
   }
   // A write is published whichever procedure makes it and however it ends, since a query may delete the rows it reads (a
   // Lapsed invite) and a write may land before the procedure fails. A published topic only wakes a reader to refetch
   await publishTopicsBestEffort(
-    async () => [...(await getWriteTopics(recorded.statements)), ...blobs.writes],
+    async () => [...(await getWriteTopics(recorded.statements)), ...blobs.writes.map((topic) => ({ topic }))],
     `Failed to publish the topics of "${path}":`,
   );
   return result;

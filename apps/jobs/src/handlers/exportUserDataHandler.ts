@@ -58,7 +58,10 @@ export const exportUserDataHandler = async (body: unknown): Promise<void> => {
   );
   // The owner's open export panel refetches, so it shows the link or the failure without a reload. Best-effort, since
   // The row is already written and a failed publish costs only that refetch
-  await getResultAsync(() => publishTopics([getTopic(TopicKind.User, buildingRow.userId)])).match(noop, (error) => {
-    console.error(`${QueueJob.ExportUserData} failed to publish for ${dataExportId}`, error);
-  });
+  await getResultAsync(() => publishTopics([{ topic: getTopic(TopicKind.User, buildingRow.userId) }])).match(
+    noop,
+    (error) => {
+      console.error(`${QueueJob.ExportUserData} failed to publish for ${dataExportId}`, error);
+    },
+  );
 };

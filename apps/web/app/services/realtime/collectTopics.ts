@@ -1,5 +1,6 @@
 import type { TopicRead } from "#shared/models/realtime/TopicRead";
 
+import { mergeColumnTopics } from "@esposter/db-schema";
 import { withFinalizer } from "@esposter/shared";
 
 // The reads the read in flight is collecting, set while a read starts its calls. A tRPC call runs its first link as
@@ -8,13 +9,14 @@ let activeReads: TopicRead[] | undefined;
 
 export const readActiveTopicReads = (): TopicRead[] | undefined => activeReads;
 
-// The one watch a read's calls make: their topics, watched from the earliest time any of their reads began
+// The one watch a read's calls make: their topics, with the columns each read of them, watched from the earliest time any
+// Of their reads began
 const mergeTopicReads = (reads: TopicRead[]): TopicRead | undefined => {
   if (reads.length === 0) return undefined;
 
   return {
     readAt: Math.min(...reads.map(({ readAt }) => readAt)),
-    topics: [...new Set(reads.flatMap(({ topics }) => topics))],
+    topics: mergeColumnTopics(reads.flatMap(({ topics }) => topics)),
   };
 };
 

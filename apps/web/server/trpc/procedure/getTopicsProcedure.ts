@@ -51,7 +51,7 @@ export const getTopicsProcedure = <
     // Query has no answer to send them with
     if (type === "query") {
       if (result.ok) {
-        const topics = getTopics({ ctx, input, output: result.data });
+        const topics = getTopics({ ctx, input, output: result.data }).map((topic) => ({ topic }));
         if (topics.length > 0)
           ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, { readAt, topics }));
       }
@@ -61,7 +61,7 @@ export const getTopicsProcedure = <
 
     // A failed mutation has no output, so a topic only its output names is left out of its publish, as a best-effort one
     await publishTopicsBestEffort(
-      () => getTopics({ ctx, input, output: result.ok ? result.data : undefined }),
+      () => getTopics({ ctx, input, output: result.ok ? result.data : undefined }).map((topic) => ({ topic })),
       `Failed to publish the topics of "${path}":`,
     );
     return result;
