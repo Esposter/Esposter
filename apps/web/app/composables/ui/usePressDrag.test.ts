@@ -40,10 +40,10 @@ describe(usePressDrag, () => {
     dispatch("pointermove", { clientX: 100 + DRAG_START_DISTANCE, clientY: 100 });
     dispatch("pointerup", { clientX: 120, clientY: 100 });
 
-    expect(handlers.onStart).toHaveBeenCalledTimes(1);
+    expect(handlers.onStart).toHaveBeenCalledExactlyOnceWith();
     expect(handlers.onMove).toHaveBeenCalledWith({ x: 100 + DRAG_START_DISTANCE, y: 100 });
     expect(handlers.onRelease).toHaveBeenCalledWith({ x: 120, y: 100 });
-    expect(handlers.onEnd).toHaveBeenCalledTimes(1);
+    expect(handlers.onEnd).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("a mouse press that never moves is a click, which lands nothing", () => {
@@ -55,7 +55,7 @@ describe(usePressDrag, () => {
 
     expect(handlers.onStart).not.toHaveBeenCalled();
     expect(handlers.onRelease).not.toHaveBeenCalled();
-    expect(handlers.onEnd).toHaveBeenCalledTimes(1);
+    expect(handlers.onEnd).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("a finger that drifts past the tolerance before it rests is scrolling, so its press ends", () => {
@@ -68,7 +68,7 @@ describe(usePressDrag, () => {
     vi.advanceTimersByTime(TOUCH_DRAG_DELAY_MS);
 
     expect(handlers.onStart).not.toHaveBeenCalled();
-    expect(handlers.onEnd).toHaveBeenCalledTimes(1);
+    expect(handlers.onEnd).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("a finger that rests the touch delay starts its drag where it rests", () => {
@@ -79,7 +79,7 @@ describe(usePressDrag, () => {
     trackPress(createPress("touch"), handlers);
     vi.advanceTimersByTime(TOUCH_DRAG_DELAY_MS);
 
-    expect(handlers.onStart).toHaveBeenCalledTimes(1);
+    expect(handlers.onStart).toHaveBeenCalledExactlyOnceWith();
     expect(handlers.onMove).toHaveBeenCalledWith({ x: 100, y: 100 });
   });
 

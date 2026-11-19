@@ -6,7 +6,6 @@ import {
   REORDER_SLIDE_TRANSITION,
   TOUCH_DRAG_DELAY_MS,
 } from "#src/services/ui/constants";
-import { takeOne } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -524,8 +523,16 @@ describe(useDragReorder, () => {
     await flushPromises();
     observer.disconnect();
 
-    expect(styles).toContainEqual([`0 ${-DRAG_START_DISTANCE}px`, "none"]);
-    expect(styles).toContainEqual([`0 ${-DRAG_START_DISTANCE}px`, REORDER_SLIDE_TRANSITION]);
+    const heldTranslate = `0 ${rowHeight * 2 - DRAG_START_DISTANCE}px`;
+    const settledTranslate = `0 ${-DRAG_START_DISTANCE}px`;
+    expect(styles).toStrictEqual([
+      [heldTranslate, "none"],
+      [heldTranslate, "none"],
+      ["", "none"],
+      [settledTranslate, "none"],
+      [settledTranslate, REORDER_SLIDE_TRANSITION],
+      ["", REORDER_SLIDE_TRANSITION],
+    ]);
     expect(getRows().map((element) => element.getAttribute("style") ?? "")).toStrictEqual(["", "", ""]);
   });
 
@@ -613,7 +620,7 @@ describe(useDragReorder, () => {
 
     expect(
       addEventListener.mock.calls.map(({ 2: options }) => typeof options === "object" && options.signal?.aborted),
-    ).toStrictEqual(addEventListener.mock.calls.map(() => true));
+    ).toStrictEqual([true, true, true, true, true, true, true]);
     expect(onReorder).not.toHaveBeenCalled();
   });
 
@@ -645,6 +652,11 @@ describe(useDragReorder, () => {
 
     expect(getRows().map((row) => getTranslate(row))).toStrictEqual([0, 0, 0, 0]);
     expect(onReorder).not.toHaveBeenCalled();
-    expect(takeOne(getRows(), 0).classList.contains(REORDER_GHOST_CLASS)).toBe(false);
+    expect(getRows().map((row) => row.classList.contains(REORDER_GHOST_CLASS))).toStrictEqual([
+      false,
+      false,
+      false,
+      false,
+    ]);
   });
 });
