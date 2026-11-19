@@ -1,8 +1,8 @@
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
 import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
 import { PROGRAM_PARTICIPANT_KEY_VALUE_MAX_LENGTH } from "#src/services/program/constants";
+import { SECRET_TOKEN_HASH_LENGTH } from "#src/services/shared/constants";
 import { sqliteTable } from "#src/sqliteTable";
-import { SECRET_TOKEN_HASH_LENGTH } from "@esposter/shared";
 import { text, unique } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
