@@ -25,7 +25,7 @@ The client's first render reads only what the server rendered from: the payload,
 | The game language, resolved from `Accept-Language` on the server                 | The resolved language and its text chunk ride the payload through `useGameText`                                       | [game text](../../genshin/game-text/design.md)      |
 | An image that loaded before hydration never firing `load` in Vuetify 0's `<img>` | `NuxtImg` as the image part's `as`, with `as="img"` lint-banned                                                       | the `styling` skill                                 |
 
-The Vuetify 0 rows are where its defaults assume a browser-only app: its breakpoints measure the window at mount, its theme adapter writes stylesheets in the browser, and its image part listens for a `load` the server-rendered image already had. Each is configured in `apps/web/app/plugins/ui.ts` or replaced at the component, never patched per page.
+The Vuetify 0 rows are where its defaults assume a browser-only app: its breakpoints measure the window at mount, its theme adapter writes stylesheets in the browser, and its image part listens for a `load` the server-rendered image already had. Each is configured in `apps/web/app/plugins/ui.ts` or replaced at the component, never patched per page. The breakpoints' measure runs on the instance the plugin provides, taken in the plugin's own body: a Nuxt hook callback can run with no injection context, where `useBreakpoints` returns a fallback whose `update` does nothing.
 
 ### A deploy proves it, page by page
 

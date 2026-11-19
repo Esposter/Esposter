@@ -9,6 +9,7 @@ Read when placing a lifecycle hook, or when a component reaches for a browser gl
 - **Blank line between each consecutive hook/watcher** — each is an independent registration.
 - **Order by lifecycle phase** — `watch`, then `onMounted`, then `onUnmounted` (setup-time registrations precede mount-time, which precede teardown). Within a phase keep source order.
 - The callback of a hook is wrapped in an arrow function — the `typescript` skill owns the rule (`references/callbacks.md`).
+- **A Nuxt hook callback runs with no injection context.** A callback on `nuxtApp.hooks` (`app:suspense:resolve`, say) is not run inside the app, so a Vuetify 0 composable that injects — `useBreakpoints` — returns its fallback there, and that fallback's `update` does nothing. Take the instance in the plugin body, where the plugin provides it, and call its method from the callback (`apps/web/app/plugins/ui.ts`).
 
 ## Browser Globals and SSR
 

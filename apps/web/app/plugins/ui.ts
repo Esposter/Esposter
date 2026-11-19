@@ -25,10 +25,13 @@ export default defineNuxtPlugin((nuxtApp) => {
       ssr: { clientWidth: 0 },
     }),
   );
+  // Taken here, where the plugin provides it: a hook can run outside any injection context, where `useBreakpoints` returns
+  // A fallback whose `update` does nothing, so the components' own breakpoints would never measure the screen
+  const breakpoints = useBreakpoints(BREAKPOINTS_NAMESPACE);
   if (nuxtApp.payload.serverRendered) {
     nuxtApp.vueApp.mount = mount;
     nuxtApp.hooks.hookOnce("app:suspense:resolve", () => {
-      useBreakpoints(BREAKPOINTS_NAMESPACE).update();
+      breakpoints.update();
     });
   }
   nuxtApp.vueApp.use(
