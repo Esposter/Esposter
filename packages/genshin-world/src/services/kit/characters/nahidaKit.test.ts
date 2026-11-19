@@ -46,8 +46,6 @@ const createNahidaKit = async (): Promise<Kit> => {
   return buildKit(record, talentMultiplierMap, talentLevelMap, createNahidaKitBehaviour);
 };
 const KIT = await createNahidaKit();
-// The elemental skill's first hit, the one a press strikes with
-const pressHit = takeOne(KIT.elementalSkill.hits);
 const createCombatant = (characterId: number, element: Element, elementMastery = 0, kit: Kit = KIT): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: elementMastery }]),
@@ -130,6 +128,9 @@ describe(createNahidaKitBehaviour, () => {
 });
 
 describe("seeds of Skandha", () => {
+  // The elemental skill's first hit, the one a press strikes with
+  const pressHit = takeOne(KIT.elementalSkill.hits);
+
   test("a cast's press marks each enemy it strikes", () => {
     expect.hasAssertions();
     const combatant = createCombatant(NAHIDA_CHARACTER_ID, Element.Dendro);
@@ -169,6 +170,9 @@ describe("seeds of Skandha", () => {
 });
 
 describe("tri-Karma Purification", () => {
+  // The elemental skill's first hit, the one a press strikes with
+  const pressHit = takeOne(KIT.elementalSkill.hits);
+
   test("a reaction on a marked enemy strikes every marked enemy, and a reaction on an unmarked one strikes nothing", () => {
     expect.hasAssertions();
     const combatant = createCombatant(NAHIDA_CHARACTER_ID, Element.Dendro);

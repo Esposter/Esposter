@@ -9,24 +9,22 @@ import { stepTimeTrialChallenge } from "#src/services/puzzle/stepTimeTrialChalle
 import { strikeTimeTrialTarget } from "#src/services/puzzle/strikeTimeTrialTarget";
 import { describe, expect, test } from "vitest";
 
-const LIMIT_SECONDS = 10;
-const TARGET_COUNT = 2;
-const MARKER_ID = "marker";
-const MARKER_POSITION = { x: 3, z: -4 };
-
-const createChallenge = (): TimeTrialChallenge => ({
-  limitSeconds: LIMIT_SECONDS,
+const createChallenge = (limitSeconds: number, targetCount: number): TimeTrialChallenge => ({
+  limitSeconds,
   remainingSeconds: 0,
   state: TimeTrialChallengeState.Idle,
   struckCount: 0,
-  targetCount: TARGET_COUNT,
+  targetCount,
 });
 
 describe(startTimeTrialChallenge, () => {
+  const LIMIT_SECONDS = 10;
+  const TARGET_COUNT = 2;
+
   test("starts its clock at its limit", () => {
     expect.hasAssertions();
 
-    const challenge = createChallenge();
+    const challenge = createChallenge(LIMIT_SECONDS, TARGET_COUNT);
     startTimeTrialChallenge(challenge);
 
     expect({ remainingSeconds: challenge.remainingSeconds, state: challenge.state }).toStrictEqual({
@@ -37,10 +35,19 @@ describe(startTimeTrialChallenge, () => {
 });
 
 describe(strikeTimeTrialTarget, () => {
+  const LIMIT_SECONDS = 10;
+  const TARGET_COUNT = 2;
+  const MARKER_ID = "marker";
+  const MARKER_POSITION = { x: 3, z: -4 };
+
   test("finishing every target in time spawns the chest", () => {
     expect.hasAssertions();
 
-    const marker = { challenge: createChallenge(), id: MARKER_ID, position: MARKER_POSITION };
+    const marker = {
+      challenge: createChallenge(LIMIT_SECONDS, TARGET_COUNT),
+      id: MARKER_ID,
+      position: MARKER_POSITION,
+    };
     startTimeTrialChallenge(marker.challenge);
     stepTimeTrialChallenge(marker.challenge, LIMIT_SECONDS / 2);
     strikeTimeTrialTarget(marker.challenge);
@@ -54,10 +61,19 @@ describe(strikeTimeTrialTarget, () => {
 });
 
 describe(stepTimeTrialChallenge, () => {
+  const LIMIT_SECONDS = 10;
+  const TARGET_COUNT = 2;
+  const MARKER_ID = "marker";
+  const MARKER_POSITION = { x: 3, z: -4 };
+
   test("a missed target before the timer ends gives no chest", () => {
     expect.hasAssertions();
 
-    const marker = { challenge: createChallenge(), id: MARKER_ID, position: MARKER_POSITION };
+    const marker = {
+      challenge: createChallenge(LIMIT_SECONDS, TARGET_COUNT),
+      id: MARKER_ID,
+      position: MARKER_POSITION,
+    };
     startTimeTrialChallenge(marker.challenge);
     strikeTimeTrialTarget(marker.challenge);
     stepTimeTrialChallenge(marker.challenge, LIMIT_SECONDS);
@@ -72,7 +88,7 @@ describe(stepTimeTrialChallenge, () => {
   test("the timer runs out on the step its seconds do, not one step late", () => {
     expect.hasAssertions();
 
-    const challenge = { ...createChallenge(), limitSeconds: 5 };
+    const challenge = { ...createChallenge(LIMIT_SECONDS, TARGET_COUNT), limitSeconds: 5 };
     startTimeTrialChallenge(challenge);
     for (let step = 0; step < 299; step++) stepTimeTrialChallenge(challenge, FIXED_STEP_SECONDS);
 
@@ -86,7 +102,7 @@ describe(stepTimeTrialChallenge, () => {
   test("leaves an idle challenge's clock alone", () => {
     expect.hasAssertions();
 
-    const challenge = createChallenge();
+    const challenge = createChallenge(LIMIT_SECONDS, TARGET_COUNT);
     stepTimeTrialChallenge(challenge, LIMIT_SECONDS);
 
     expect(challenge.state).toBe(TimeTrialChallengeState.Idle);
