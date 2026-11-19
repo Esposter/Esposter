@@ -8,7 +8,7 @@ const drawingIndex = ref(0);
 
 <template>
   <div h-full ui-body>
-    <Transition name="drawing" mode="out-in">
+    <TransitionFade mode="out-in">
       <!-- A drawing left keeps its calculator, so coming back to it redraws nothing -->
       <KeepAlive>
         <component
@@ -17,18 +17,6 @@ const drawingIndex = ref(0);
           @click-right="drawingIndex = mod(drawingIndex + 1, DRAWINGS.length)"
         />
       </KeepAlive>
-    </Transition>
+    </TransitionFade>
   </div>
 </template>
-
-<style scoped>
-.drawing-enter-active,
-.drawing-leave-active {
-  transition: opacity var(--ui-motion-medium);
-}
-
-.drawing-enter-from,
-.drawing-leave-to {
-  opacity: 0;
-}
-</style>
