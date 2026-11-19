@@ -2,19 +2,20 @@ import type { Context } from "#server/trpc/context";
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
 import { executeAutomodAction } from "#server/services/message/moderation/executeAutomodAction";
-import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
+import { getWriteTopics, recordStatements } from "@esposter/db";
 import {
   AdminActionType,
-  getTopic,
+  getScopeTopic,
   getUserSocketTag,
+  moderationLogsInMessage,
   roomsInMessage,
-  TopicKind,
   usersToRoomsInMessage,
   WordFilterAction,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { getTableName } from "drizzle-orm";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(executeAutomodAction, () => {
@@ -86,17 +87,22 @@ describe(executeAutomodAction, () => {
     await expect(readTimeoutUntil(roomId, userId)).resolves.toStrictEqual(new Date(timeoutDurationMs));
   });
 
-  // The action writes the room's moderation log, which the moderators' log reads. It runs inside a message write that is then
-  // Rejected, and a procedure that declares its topics by hand is not recorded, so no inferred publish names the log for it:
-  // The room's topic is published here, from the action itself
-  test("publishes the room's topic, so an open moderation log refetches", async () => {
+  // The action writes the room's moderation log, which the moderators' log reads. The write runs through the handle it is
+  // Given, so the log it writes is named by its room, and that is the topic an open log watches
+  test("names the moderation log it writes by its room, through the handle it runs through", async () => {
     expect.hasAssertions();
 
     const { roomId, userId } = await setupMembership();
-    MockPublishedTopics.length = 0;
-    await executeAutomodAction(mockContext.db, { action: WordFilterAction.Timeout, roomId, timeoutDurationMs, userId });
+    const recorded = recordStatements(mockContext.db);
+    await executeAutomodAction(recorded.database, {
+      action: WordFilterAction.Timeout,
+      roomId,
+      timeoutDurationMs,
+      userId,
+    });
 
-    expect(getMockPublishedTopics()).toStrictEqual([getTopic(TopicKind.Room, roomId)]);
+    const writeTopics = (await getWriteTopics(recorded.statements)).map(({ topic }) => topic);
+    expect(writeTopics).toContain(getScopeTopic(getTableName(moderationLogsInMessage), "roomId", roomId));
   });
 
   // The member the automod acted on hears what was done to them in the room, sent to their own sockets alone. Every
