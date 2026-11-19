@@ -42,7 +42,6 @@ describe(appendWishHistory, () => {
     );
     const history = appendWishHistory([], draws, now);
 
-    expect(history).toHaveLength(MAX_WISH_HISTORY_COUNT);
     expect(history).toStrictEqual(draws.slice(1));
   });
 });

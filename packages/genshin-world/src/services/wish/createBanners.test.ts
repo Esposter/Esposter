@@ -58,7 +58,7 @@ describe(createBanners, () => {
     expect(eventBanner.featuredFiveStars.map(({ id }) => id)).toStrictEqual([LIMITED_FEATURED_CHARACTER_ID]);
   });
 
-  test("two character banners are offered together and share the character banners' counters", () => {
+  test("two character banners are offered in schedule order, each with its kind number", () => {
     expect.hasAssertions();
 
     const second: WishScheduleEvent = { ...event, id: "Second Event", kindNumber: 2 };
