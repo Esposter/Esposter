@@ -6,6 +6,7 @@ import { getVisibleColumns } from "#src/services/resource/sheet/column/getVisibl
 import { getCellTextRows } from "#src/services/resource/sheet/commands/getCellTextRows";
 import { serializeToHtml } from "#src/services/resource/sheet/commands/serializeToHtml";
 import { serializeToTsv } from "#src/services/resource/sheet/commands/serializeToTsv";
+import { SHEET_CLIPBOARD_MIME_TYPE, SHEET_CLIPBOARD_TYPE } from "#src/services/resource/sheet/constants";
 
 export const copyToClipboard = async (dataSource: DataSource, options: CopyToClipboardOptions = {}) => {
   const { isIncludingHeaders = true, rowIds } = options;
@@ -25,7 +26,11 @@ export const copyToClipboard = async (dataSource: DataSource, options: CopyToCli
   const htmlBlob = new Blob([serializeToHtml(filteredDataSource, isIncludingHeaders, cellTextRows)], {
     type: MimeType.Html,
   });
+  // The values as they were copied, for an in-app paste: the text above is made safe for a spreadsheet, and would not be
+  const headerValues = visibleColumns.map((column) => column.name);
+  const valueRows = isIncludingHeaders ? [headerValues, ...cellTextRows] : cellTextRows;
+  const sheetBlob = new Blob([JSON.stringify(valueRows)], { type: SHEET_CLIPBOARD_MIME_TYPE });
   await window.navigator.clipboard.write([
-    new ClipboardItem({ [MimeType.Html]: htmlBlob, [MimeType.PlainText]: tsvBlob }),
+    new ClipboardItem({ [MimeType.Html]: htmlBlob, [MimeType.PlainText]: tsvBlob, [SHEET_CLIPBOARD_TYPE]: sheetBlob }),
   ]);
 };

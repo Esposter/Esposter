@@ -1,18 +1,30 @@
 ## Purpose
 
-Excel-style cell range selection with keyboard copy/paste — TSV + HTML copy, overwrite and shift-down paste modes, fully undoable.
+Excel-style cell range selection with keyboard copy/paste — TSV, HTML and sheet-format copy, overwrite and shift-down paste modes, fully undoable.
 
 ## Requirements
 
 ### Requirement: Copy places the range on the clipboard as text and as a table
 
-Copying a selected range SHALL place it on the clipboard as tab-separated text and as an HTML table.
+Copying a selected range SHALL place it on the clipboard as tab-separated text and as an HTML table, and SHALL carry its values as copied in the sheet's own format, which an in-app paste reads back.
 
 #### Scenario: Pasting a copied range into a spreadsheet
 
 - **GIVEN** a range of cells is selected
 - **WHEN** the owner presses Ctrl+C and pastes into another spreadsheet
 - **THEN** the rows and columns keep their structure
+
+#### Scenario: A formula-like cell is pasted as text
+
+- **GIVEN** a selected cell holds text starting with `=`, `+`, `-` or `@`
+- **WHEN** the owner copies the range and pastes it into another spreadsheet
+- **THEN** the cell is read as its text, not as a formula, because the copied text carries an apostrophe before it
+
+#### Scenario: An in-app paste returns the value as copied
+
+- **GIVEN** a cell holds `=1+1` and the owner copied it from the sheet
+- **WHEN** the owner pastes into the sheet
+- **THEN** the cell holds `=1+1`
 
 #### Scenario: Browser cannot write the table form
 

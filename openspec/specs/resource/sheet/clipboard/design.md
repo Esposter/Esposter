@@ -6,11 +6,11 @@ Keyboard-driven copy/paste for cell ranges, aligned with Excel selection UX; eve
 
 The grid maintains an anchor/focus cell selection in the cell store. `useSheetCommands` registers the keys as the sheet's commands (`useCommands`), so they are listed in the shortcuts dialog, never fire while a field has focus, and copy, paste and clearing are bound only while cells are selected — the page's own copy works whenever the grid holds no selection. They route to two composables: `useCopyRangeToClipboard` and `usePasteRangeFromClipboard`.
 
-**Copy (`Ctrl+C` / `Cmd+C`)** materializes the selected columns and filtered rows through `filterDataSourceColumns` — so computed columns copy their displayed value, not an empty cell — and hands the sub-DataSource to `copyToClipboard`, which writes both `text/plain` (TSV) and `text/html` (a styled table, so pasting into Excel/Sheets keeps structure) via `ClipboardItem`, falling back to `writeText` where `ClipboardItem` is unavailable (e.g. Firefox). Hidden columns are excluded; the header row is included or not based on the `isCopyIncludingHeaders` toolbar toggle.
+**Copy (`Ctrl+C` / `Cmd+C`)** materializes the selected columns and filtered rows through `filterDataSourceColumns` — so computed columns copy their displayed value, not an empty cell — and hands the sub-DataSource to `copyToClipboard`, which writes `text/plain` (TSV), `text/html` (a styled table, so pasting into Excel/Sheets keeps structure) and the sheet's own format (`SHEET_CLIPBOARD_TYPE`, the values as copied) via `ClipboardItem`, falling back to `writeText` where `ClipboardItem` is unavailable (e.g. Firefox). The TSV and the table write a cell a spreadsheet would read as a formula with an apostrophe before it (`neutralizeFormula`). A tab cannot take that place, since a leading tab opens a new cell in TSV; the CSV export's tab prefix is for quoted CSV only. Hidden columns are excluded; the header row is included or not based on the `isCopyIncludingHeaders` toolbar toggle.
 
 Copy materializes the way export does. `filterDataSourceColumns` binds the full sheet once (`compileSheetColumns`) and resolves every selected cell through that binding, the one pipeline headers, cell render and export share, so there is no copy-specific fork. A cell range indexes the displayed columns, while `compileSheetColumns` reads a computed column's source by id from the columns it is handed, so `filterDataSourceRange` derives both sets from the one `DataSource`: the displayed columns select the cells, and the full column set is the compute context. Hiding the source column of a computed column therefore changes nothing about what copy produces, matching the grid, which passes every column. The selection's row range bounds the clone, while an aggregation still sees every row through the binding, so copying a small range in a large sheet stays cheap. Paste over a computed cell stays a no-op ([computed columns](../computed-columns/design.md)), and the copied value lands wherever it is pasted, in another column, Excel or Sheets.
 
-**Paste** reads TSV from the clipboard, parses it position-based (no header row expected) with `parseClipboardValuesByPosition`, and coerces each value to its target column's type via `coerceValue`. The `Shift` key selects the mode:
+**Paste** reads the sheet's own format first (`parseSheetClipboardRows`), so an in-app copy returns its values as copied. Text from outside the app is read as TSV, parsed position-based (no header row expected) with `parseClipboardValuesByPosition`, and each value is coerced to its target column's type via `coerceValue`. The `Shift` key selects the mode:
 
 | Mode                  | Trigger        | Behaviour                                                                                                                                                                                                    |
 | --------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -30,11 +30,11 @@ sequenceDiagram
 
   U->>T: Ctrl+C
   T->>CP: copy selected range
-  CP->>CB: write ClipboardItem (TSV + HTML)
+  CP->>CB: write ClipboardItem (TSV + HTML + sheet format)
   U->>T: Ctrl+V / Ctrl+Shift+V
   T->>PP: pasteMode = Overwrite | ShiftDown
   PP->>CB: readText()
-  PP->>PP: parseClipboardValuesByPosition → coerceValue
+  PP->>PP: sheet format, else parseClipboardValuesByPosition → coerceValue
   PP->>H: push PasteRangeCommand (overwrite) or CreateRowsCommand (shift down)
   PP->>PP: saveSheet()
 ```
@@ -64,10 +64,12 @@ All paths relative to `apps/web/app`.
 | `models/resource/sheet/commands/PasteMode.ts`                        | `PasteMode` value set (`Overwrite` / `ShiftDown`)                                                                                                  |
 | `models/resource/sheet/commands/PasteRangeCommand.ts`                | Overwrite paste + undo snapshot                                                                                                                    |
 | `services/resource/sheet/commands/parseClipboardValuesByPosition.ts` | TSV → `string[][]` (no header row)                                                                                                                 |
+| `services/resource/sheet/commands/parseSheetClipboardRows.ts`        | The sheet's own format → `string[][]`, shape checked; `undefined` for any other text                                                               |
+| `services/resource/sheet/commands/neutralizeFormula.ts`              | Prefixes a cell a spreadsheet reads as a formula with an apostrophe                                                                                |
 | `services/resource/sheet/dataSource/filterDataSourceRange.ts`        | Derives the range's columns and the compute context                                                                                                |
 | `services/resource/sheet/dataSource/filterDataSourceColumns.ts`      | The shared resolver that materializes computed values                                                                                              |
 | `../shared/services/resource/sheet/column/compileSheetColumns.ts`    | Compile, bind and read shared by render, export, copy and the dataset                                                                              |
-| `services/resource/sheet/commands/copyToClipboard.ts`                | TSV + HTML `ClipboardItem` write with `writeText` fallback                                                                                         |
+| `services/resource/sheet/commands/copyToClipboard.ts`                | TSV, HTML and sheet-format `ClipboardItem` write with `writeText` fallback                                                                         |
 | `composables/resource/sheet/useCopyRangeToClipboard.ts`              | Slices the selected range and writes it to the clipboard                                                                                           |
 | `composables/resource/sheet/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `usePasteRange` or `useCreateRows`                                                                                               |
 | `composables/resource/sheet/commands/usePasteRange.ts`               | The overwrite paste as a `useSheetCommand`, so both modes share one execute/push/save tail                                                         |

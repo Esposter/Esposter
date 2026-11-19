@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import { MimeType } from "#shared/models/file/MimeType";
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
 import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
@@ -9,11 +10,12 @@ import { setupCommandTest } from "#src/composables/resource/sheet/commands/setup
 import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
 import { usePasteRangeFromClipboard } from "#src/composables/resource/sheet/commands/usePasteRangeFromClipboard";
 import { PasteMode } from "#src/models/resource/sheet/commands/PasteMode";
+import { copyToClipboard } from "#src/services/resource/sheet/commands/copyToClipboard";
 import { useResourceStore } from "#src/store/resource/index";
 import { useCellStore } from "#src/store/resource/sheet/cell";
 import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { useSheetStore } from "#src/store/resource/sheet/index";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 const selectAnchor = (rowIndex: number, columnIndex: number) => {
   const cellStore = useCellStore();
@@ -23,6 +25,16 @@ const selectAnchor = (rowIndex: number, columnIndex: number) => {
 
 const createSingleCellDataSource = () => createDataSource([createColumn("a")], [createRow({ a: "1" })]);
 
+// A clipboard item as a paste reads it: its types, and the blob of each type by name
+const createClipboardItem = (blobs: Record<string, Blob>) => ({
+  getType: (type: string) => {
+    const blob = blobs[type];
+    assert.exists(blob);
+    return Promise.resolve(blob);
+  },
+  types: Object.keys(blobs),
+});
+
 describe(usePasteRangeFromClipboard, () => {
   let readTextMock: ReturnType<typeof vi.fn<() => Promise<string>>>;
 
@@ -30,7 +42,12 @@ describe(usePasteRangeFromClipboard, () => {
 
   beforeEach(() => {
     readTextMock = vi.fn<() => Promise<string>>().mockResolvedValue("");
-    vi.stubGlobal("navigator", { clipboard: { readText: readTextMock } });
+    // The text each test mocks is the one plain-text item on the clipboard
+    vi.stubGlobal("navigator", {
+      clipboard: {
+        read: async () => [createClipboardItem({ [MimeType.PlainText]: new Blob([await readTextMock()]) })],
+      },
+    });
   });
 
   afterEach(() => {
@@ -176,5 +193,39 @@ describe(usePasteRangeFromClipboard, () => {
     await pasteRangeFromClipboard();
 
     expect(otherDataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }]);
+  });
+
+  // A copy writes the exact values under the sheet's own format beside its text, and an in-app paste reads that format,
+  // So a value the text is made formula-safe for comes back unchanged
+  test("pastes the exact values an in-app copy wrote, not the formula-safe text", async () => {
+    expect.hasAssertions();
+
+    const { dataSource } = setupWithDataSource(createSingleCellDataSource());
+    const copiedItems: Record<string, Blob>[] = [];
+    vi.stubGlobal(
+      "ClipboardItem",
+      class {
+        items: Record<string, Blob>;
+
+        constructor(items: Record<string, Blob>) {
+          this.items = items;
+          copiedItems.push(items);
+        }
+      },
+    );
+    vi.stubGlobal("navigator", {
+      clipboard: {
+        read: () => Promise.resolve(copiedItems.map((items) => createClipboardItem(items))),
+        write: vi.fn<() => Promise<void>>().mockResolvedValue(undefined),
+      },
+    });
+    await copyToClipboard(createDataSource([createColumn("a")], [createRow({ a: "=1+1" })]), {
+      isIncludingHeaders: false,
+    });
+    selectAnchor(0, 0);
+    const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+    await pasteRangeFromClipboard();
+
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "=1+1" }]);
   });
 });

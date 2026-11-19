@@ -88,4 +88,15 @@ describe(copyToClipboard, () => {
     expect(htmlText).toMatchInlineSnapshot(`"<table><tr><td>0</td></tr></table>"`);
     expect(tsvText).toBe("0");
   });
+
+  // A spreadsheet pasting the text reads a cell that starts with a formula character as a formula, so the copy prefixes
+  // It with an apostrophe, which the spreadsheet hides as the text marker. The in-app paste reads the exact value back
+  test("prefixes a cell a spreadsheet would read as a formula", async () => {
+    expect.hasAssertions();
+
+    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "=1+1" })]);
+    await copyToClipboard(dataSource);
+
+    expect(writtenText).toBe("a\n'=1+1");
+  });
 });
