@@ -66,7 +66,21 @@ Who hears what follows from who holds the state. A person is online while their 
 
 ## Topic publishes
 
-A write publishes the topics it changed once it settles: a web or jobs Worker through its own `publishTopics`, and a realtime object through its `invoke` entry. Each topic goes to its `TopicObject`, which arms one alarm per window, so a burst of writes reaches each watcher once. The alarm invalidates each watcher whose stored columns meet the columns published, by the wake rule in the [live topics design](../../../changes/architecture-inferred-live-topics/design.md) (its Columns section), through that watcher's `UserObject`, which sends an `invalidate` frame to each of the person's tabs watching the topic. A tab then runs its query again.
+No procedure or object declares its live topics. They are inferred from the statements that run. Every statement a request, a job unit or an object awaits is recorded, and each invocation answers two sets:
+
+- **The read set** of a query, from the recorded statements' builders. The walker names the topics each read came from: `table:col=value` for each scope equality and for each row a join reaches through a scope column, and `table:*` for a table no such value names. Each topic carries the columns the statement references in its table, and a blob read names its key. An object's reads come back from its `invoke` in the same form. The set rides the query's topics header with the time the read began.
+- **The write set** of a mutation, a job unit or an object call. The recorder adds `RETURNING` to each write that does not ask for one, so each row the write changes is named by its scope values after it. An update that moves a row out of a scope value also reads the values the row held before it, and a delete reads the rows its foreign-key cascade reaches at every depth, so the children it removes are named too. The cascading child tables publish their table-wide topics. A write's set is published once it settles, whether it succeeded or not, so a write that landed before a failure still reaches its watchers.
+
+Each entry point records its own statements:
+
+- **The web Worker** wraps each request's D1 handle in a recorder. `inferTopicsMiddleware` (`apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`) merges the request's reads into the topics header and publishes its writes through `publishTopicsBestEffort`. The auth instance writes through the request's recorded handle when a recorded procedure runs.
+- **The jobs Worker** runs each queue message, and each nightly purge, as one unit under `runUnit`, which publishes the unit's writes best-effort, including the writes of a unit that failed.
+- **A realtime object** exposes one entry, `invoke(method, args)`, which runs its RPC method and the alarm in an invocation scope with its own handles recorded. It answers `{ readSet, result, writeSet }` and publishes the writes itself, best-effort. Rows an object owns name the object, so `room/<roomId>:messages:*` wakes no watch of another room.
+- **A caller of an object** reaches it only through `getObjectStub` (`packages/db/src/services/realtime/getObjectStub.ts`), which runs each RPC call through `invoke` and returns the call's read set to the caller's request. A lint selector (`packages/configuration/eslint/typescriptRules.js`) bans naming a namespace with `idFromName`, `idFromString` or `newUniqueId` anywhere else, so no call can skip the invocation.
+
+Each topic a write publishes goes to its `TopicObject`, which arms one alarm per window, so a burst of writes reaches each watcher once. The alarm invalidates each watcher whose stored columns meet the columns published, by the wake rule in the [live topics design](../../../changes/architecture-inferred-live-topics/design.md) (its Columns section), through that watcher's `UserObject`, which sends an `invalidate` frame to each of the person's tabs watching the topic. A tab then runs its query again.
+
+A wake check, which runs only in tests, holds this to account. After each write it reruns every recorded read of a suite and fails when the write changed an answer that no topic the write published woke. The web and realtime suites each run it.
 
 ```mermaid
 sequenceDiagram
@@ -149,7 +163,10 @@ The decisions behind this split, and the alternatives they beat, are recorded in
 | `apps/web/server/db/index.ts`                                               | the Drizzle client over the `core` binding                                                                                          |
 | `apps/web/server/routes/ws/`                                                | the three socket routes: user, room and call                                                                                        |
 | `apps/web/server/services/realtime/forwardSocket.ts`                        | authorises an upgrade and forwards it to the owning object                                                                          |
-| `apps/web/server/services/realtime/publishTopics.ts`                        | the web Worker's publish of a write's topics to their topic objects                                                                 |
+| `apps/web/server/services/realtime/publishTopicsBestEffort.ts`              | the web Worker's best-effort publish of a write's topics to their topic objects                                                     |
+| `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`                  | the tRPC middleware that merges a request's reads into its topics header and publishes its writes                                   |
+| `packages/db/src/services/realtime/recordStatements.ts`                     | the recorder a request, a job unit or an object handle awaits its statements through, and the write set it captures                 |
+| `packages/db/src/services/realtime/getObjectStub.ts`                        | the one way a caller reaches a Durable Object, through its `invoke`                                                                 |
 | `apps/realtime/src/worker.ts`                                               | the realtime Worker: exports the four objects, nothing else                                                                         |
 | `apps/jobs/src/worker.ts`                                                   | the jobs Worker: queue handler and Cron Trigger                                                                                     |
 | `apps/realtime/src/durableObjects/RealtimeObject.ts`                        | the socket behaviour the three objects share, and the `invoke` entry that answers each RPC call's read set and publishes its writes |
