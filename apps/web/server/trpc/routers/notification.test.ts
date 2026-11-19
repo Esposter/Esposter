@@ -65,4 +65,36 @@ describe("notificationRouter", () => {
 
     await expect(caller.deleteNotification(firstId)).resolves.toBe(1);
   });
+
+  test("deletes every notification and answers the unread count the delete leaves", async () => {
+    expect.hasAssertions();
+
+    const authSession = await createMockAuthSession(mockContext.db);
+    const caller = await createMockCaller(notificationRouter, authSession);
+    await mockContext.db
+      .insert(notificationsInNotification)
+      .values([
+        createNotificationRow(firstId, authSession.user.id),
+        createNotificationRow(secondId, authSession.user.id, true),
+      ]);
+
+    await expect(caller.deleteNotifications()).resolves.toBe(0);
+    expect((await caller.readNotifications({})).items).toStrictEqual([]);
+  });
+
+  test("marks every unread notification read and answers the unread count the update leaves", async () => {
+    expect.hasAssertions();
+
+    const authSession = await createMockAuthSession(mockContext.db);
+    const caller = await createMockCaller(notificationRouter, authSession);
+    await mockContext.db
+      .insert(notificationsInNotification)
+      .values([
+        createNotificationRow(firstId, authSession.user.id),
+        createNotificationRow(secondId, authSession.user.id),
+      ]);
+
+    await expect(caller.updateNotificationsReadStatus()).resolves.toBe(0);
+    expect((await caller.readNotifications({})).unreadCount).toBe(0);
+  });
 });
