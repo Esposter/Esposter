@@ -3,5 +3,5 @@ affected_areas: [genshin]
 x-model: claude-haiku-5-5
 x-phase: 0
 x-needs: [game-exports, game-install]
-x-touches: ["packages/genshin-engine/src/kits/props/**"]
-x-waiting: "Open: 2.1 (the Windrise statue and oak against the two recordings, not run), 3.1's publish (the main session's go-ahead, as it writes the hosted chests), 3.4 and 4.2 to 4.14 (PC exports), 3.5 (the scene-3 group scripts question), 3.6 (the forge's placement source), and 4.1 (the props kit, after the first record); the Mora chests are data only until the chests change names them, so the Mora requirement is not met yet."
+x-touches: ["packages/genshin-engine/src/kits/props/**", "packages/genshin-engine/src/models/kits/props/**"]
+x-waiting: "Open: 2.1 (the Windrise statue and oak against the two recordings, not run), 3.1's publish (the main session's go-ahead, as it writes the hosted chests), 3.4 and 4.2 to 4.14 (PC exports), 3.5 (the scene-3 group scripts question), 3.6 (the forge's placement source), and 4.1 (the world components' draw of the records, after the first record; the kit is built); the Mora chests are data only until the chests change names them, so the Mora requirement is not met yet."
