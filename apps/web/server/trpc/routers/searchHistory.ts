@@ -15,22 +15,23 @@ export const searchHistoryRouter = router({
   createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId").mutation<SearchHistoryInMessage>(
     async ({ ctx, input }) => {
       const userId = ctx.user.id;
-      // An identical search is recorded once, so running one again, from Enter or from the history, adds no second row
-      const existingSearchHistory = await ctx.db.query.searchHistoriesInMessage.findFirst({
-        where: {
-          filters: { eq: input.filters ?? [] },
-          query: { eq: input.query },
-          roomId: { eq: input.roomId },
-          userId: { eq: userId },
-        },
-      });
-      if (existingSearchHistory) return existingSearchHistory;
-
+      // An identical search is recorded once, so running one again, from Enter or from the history, adds no second row.
+      // The unique index on a search's identity is what refuses the copy, and the conflict sets the row to the values it
+      // Already holds, so the insert hands back the row it met unchanged
       return requireMutation(
         (
           await ctx.db
             .insert(searchHistoriesInMessage)
             .values({ ...input, userId })
+            .onConflictDoUpdate({
+              set: { query: input.query },
+              target: [
+                searchHistoriesInMessage.userId,
+                searchHistoriesInMessage.roomId,
+                searchHistoriesInMessage.query,
+                searchHistoriesInMessage.filters,
+              ],
+            })
             .returning()
         )[0],
         Operation.Create,

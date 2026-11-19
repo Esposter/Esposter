@@ -87,7 +87,7 @@ Each page's hits are read with their authors before the page lands, through `use
 
 A history row therefore records what was searched, not what was on screen — clicking one restores exactly that combination, which is why a pending chip must never reach it.
 
-The history lists each combination once: `createSearchHistory` returns the row an identical search already has rather than inserting another, so running a search again from Enter or from its history entry leaves the list as it was.
+The history lists each combination once: `createSearchHistory` returns the row an identical search already has rather than inserting another, so running a search again from Enter or from its history entry leaves the list as it was. The once is the database's: a unique index on the search's identity (the member, the room, the query and the filters) refuses a second row, so two identical searches sent at the same moment still leave one, where a read ahead of the insert would have let both through.
 
 Browsing a room's attachments is `has: file` and nothing more — a filter like every other narrowing, rather than a second surface asking the same question with its own result slice to keep apart. What those attachments are is [file and media](../file-media/design.md)'s subject.
 

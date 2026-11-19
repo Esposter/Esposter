@@ -116,6 +116,20 @@ describe("searchHistoryRouter", () => {
     expect(searchHistories.items).toHaveLength(1);
   });
 
+  // Two identical searches at the same moment both read before either writes, so the read cannot be what keeps one row:
+  // The unique index on a search's identity is
+  test("two identical searches at the same moment leave one row", async () => {
+    expect.hasAssertions();
+
+    await Promise.all([
+      searchHistoryCaller.createSearchHistory({ query, roomId }),
+      searchHistoryCaller.createSearchHistory({ query, roomId }),
+    ]);
+    const searchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
+
+    expect(searchHistories.items).toHaveLength(1);
+  });
+
   test("creates a search with other filters as its own entry", async () => {
     expect.hasAssertions();
 

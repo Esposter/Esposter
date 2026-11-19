@@ -1,0 +1,3 @@
+-- Duplicates written before the index exists would fail it, so each identical search keeps the row written last
+DELETE FROM `message_searchHistories` WHERE `rowid` NOT IN (SELECT MAX(`rowid`) FROM `message_searchHistories` GROUP BY `userId`, `roomId`, `query`, `filters`);--> statement-breakpoint
+CREATE UNIQUE INDEX `searchHistories_userId_roomId_query_filters_unique` ON `message_searchHistories` (`userId`,`roomId`,`query`,`filters`);
