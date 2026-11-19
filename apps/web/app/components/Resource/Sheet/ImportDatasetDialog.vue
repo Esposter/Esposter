@@ -27,16 +27,7 @@ const { closeSurveyImport } = sheetPortableDialogStore;
 const { $trpc } = useNuxtApp();
 const getDataSourceSetter = useSetDataSource();
 const { checkIsPending, executeMutation, executeQuery } = useMutation();
-const importingResourceId = ref("");
-// The import an answer closes is the one on the sheet it started on, which the reader may have left by the time the
-// Dataset lands
-const isImportOpen = computed({
-  get: () => isOpen.value,
-  set: (newIsImportOpen) => {
-    if (!newIsImportOpen) closeSurveyImport(importingResourceId.value);
-  },
-});
-const { answer, isPending } = useDialogAnswer(isImportOpen);
+const { answer, importingResourceId, isImporting, saveResourceRevision } = useImportPreview(isOpen, closeSurveyImport);
 const surveys = ref<ResourceInResource[]>();
 const surveyItems = computed(() =>
   (surveys.value ?? []).map(({ id, name }) => ({ meaning: UiIconMeaning.Survey, title: name, value: id })),
@@ -73,7 +64,9 @@ watch(isOpen, async (newIsOpen) => {
     title="Import survey responses"
     :size="UiDialogSize.Medium"
   >
-    <p>Replaces the sheet with a survey's responses, one row each. Undo brings the sheet back.</p>
+    <p>
+      Replaces the sheet with a survey's responses, one row each. The sheet it replaces stays in its version history.
+    </p>
     <!-- The surveys are a read: the field's own shape until it settles, then the reason it failed, the reader's
       surveys, or a line on where one comes from -->
     <UiSkeleton v-if="!surveys && checkIsPending('survey/readResources')" h-8 />
@@ -89,7 +82,7 @@ watch(isOpen, async (newIsOpen) => {
       <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
       <UiButton
         :disabled="!selectedSurveyId"
-        :is-pending
+        :is-pending="isImporting"
         :variant="UiButtonVariant.Accent"
         @click="
           answer(async () => {
@@ -100,6 +93,9 @@ watch(isOpen, async (newIsOpen) => {
             if (!survey) return false;
 
             const setDataSource = getDataSourceSetter();
+            // A Sheet import keeps the working copy as a revision before it replaces it, and an import whose revision did
+            // Not land reads nothing and leaves the sheet as it was
+            if (!(await saveResourceRevision())) return false;
             const outcome = await executeMutation(
               async () => {
                 const dataset = await $trpc.dataset.readDataset.query({
