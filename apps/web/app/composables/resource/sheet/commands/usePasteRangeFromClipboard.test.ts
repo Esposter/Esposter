@@ -4,12 +4,15 @@ import { createComputedColumn } from "#shared/models/resource/sheet/column/creat
 import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupCommandTest } from "#src/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
 import { usePasteRangeFromClipboard } from "#src/composables/resource/sheet/commands/usePasteRangeFromClipboard";
 import { PasteMode } from "#src/models/resource/sheet/commands/PasteMode";
+import { useResourceStore } from "#src/store/resource/index";
 import { useCellStore } from "#src/store/resource/sheet/cell";
 import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
+import { useSheetStore } from "#src/store/resource/sheet/index";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const selectAnchor = (rowIndex: number, columnIndex: number) => {
@@ -151,5 +154,27 @@ describe(usePasteRangeFromClipboard, () => {
 
     expect(isUndoable.value).toBe(false);
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }]);
+  });
+
+  // The clipboard read is awaited, and a switch during it moves the open sheet and its selection to another sheet, so
+  // A paste issued for the first sheet must not land on the one that replaced it
+  test("writes nothing to another sheet when the open sheet changes while the clipboard is read", async () => {
+    expect.hasAssertions();
+
+    setupWithDataSource(createSingleCellDataSource());
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    const sheetStore = useSheetStore();
+    const otherDataSource = createSingleCellDataSource();
+    readTextMock.mockImplementationOnce(() => {
+      resource.value = createResourceListItem();
+      sheetStore.sheetResource.data = otherDataSource;
+      return Promise.resolve("2");
+    });
+    selectAnchor(0, 0);
+    const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+    await pasteRangeFromClipboard();
+
+    expect(otherDataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }]);
   });
 });
