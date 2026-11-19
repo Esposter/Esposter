@@ -1,7 +1,7 @@
 ## 0. Surface detail
 
 - [x] 0.1 Give the login's walkway the share of its rims' tilt that its exports' bend allows (`LOGIN_WALKWAY_RIM_TILT_SHARE`, solved from the reading: 4.0000 degrees over its family against 4.3467 at a full share). Verify: "Walkway's rims keep the share its exports' bend allows", the Shape pass's Walkway surface detail bend reading holds its gate, `pnpm -C scripts genshin:parity passes login --pass Shape`. Solved at 0.9100 by a secant over 1.0 and 0.92; the pass reads 0.0006 degrees at 0.91 against its gate of 0.0198.
-- [ ] 0.2 Give the login's towers and bridges a procedural normal detail whose amplitude is solved from the bend their exports' normal maps give them (3.1419 and 1.7607 degrees), once its frequency is solved (Open in `design.md`). Verify: the scenario "Towers and bridges lean by their exports' bend", the Shape pass's Towers and Bridges surface detail bend readings hold their gates, `pnpm -C scripts genshin:parity passes login --pass Shape`.
+- [ ] 0.2 Give the login's towers and bridges a procedural normal detail whose amplitude is solved from the bend their exports' normal maps give them (3.1419 and 1.7607 degrees), once its frequency is solved (Open in `design.md`). Verify: "Towers and bridges lean by their exports' bend", the Shape pass's Towers and Bridges surface detail bend readings hold their gates, `pnpm -C scripts genshin:parity passes login --pass Shape`.
 
 ## 1. Bloom
 
