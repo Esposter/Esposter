@@ -13,7 +13,6 @@ interface Props {
   isEnemy?: true | undefined;
 }
 
-defineSlots<{ default: () => VNode }>();
 const { isEnemy } = defineProps<Props>();
 const battleMonsterStore = useBattleMonsterStore(isEnemy);
 const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(battleMonsterStore);
