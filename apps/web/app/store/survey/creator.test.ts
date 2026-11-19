@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { SurveyPageNode } from "vue-survey-engine-headless";
 
 import { useSurveyCreatorStore } from "#src/store/survey/creator";

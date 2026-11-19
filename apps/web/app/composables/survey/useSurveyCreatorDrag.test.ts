@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import type { SurveyDropSlot } from "#src/models/resource/survey/SurveyDropSlot";
 import type { SurveyPageNode, SurveyPlaceableNode, SurveyTextNode } from "vue-survey-engine-headless";
 

@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type {
   SurveyDocument,
   SurveyPageNode,

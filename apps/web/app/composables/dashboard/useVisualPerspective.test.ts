@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import "apexcharts/features/perspectives";
 import ApexCharts from "apexcharts";
 import { describe, expect, test } from "vitest";

@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import { useSurveyCanvasSelection } from "#src/composables/survey/useSurveyCanvasSelection";
 import { createSurveyOnePageTestDocument } from "#src/services/survey/createSurveyOnePageTestDocument.test";
 import { useSurveyCreatorStore } from "#src/store/survey/creator";
