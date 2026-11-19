@@ -72,9 +72,7 @@ export const useNotificationStore = defineStore("notification", () => {
         key: DatabaseEntityType.Notification,
         // Nobody asked for this read — it rides a push — so a failure is logged rather than put in front of
         // Someone who did nothing to cause it
-        onError: (error) => {
-          console.error(error);
-        },
+        onError: console.error,
       },
     );
   };

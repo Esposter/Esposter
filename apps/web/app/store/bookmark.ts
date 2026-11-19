@@ -22,18 +22,17 @@ export const useBookmarkStore = defineStore("bookmark", () => {
   });
   const toggleBookmark = (input: ToggleBookmarkInput) => {
     const { path } = input;
+    const withoutPath = (list: BookmarkPageLink[]) => list.filter((bookmark) => bookmark.path !== path);
     executeMutation(() => $trpc.bookmark.toggleBookmark.mutate(input), {
       // Read when the write is sent rather than at click time: a second click queues behind the first, and the
       // State it rolls back to has to be the one the write ahead of it left
       applyOptimistic: () => {
         const previousBookmark = bookmarks.value.find((bookmark) => bookmark.path === path);
-        bookmarks.value = previousBookmark
-          ? bookmarks.value.filter((bookmark) => bookmark.path !== path)
-          : [...bookmarks.value, toBookmark(input)];
+        bookmarks.value = previousBookmark ? withoutPath(bookmarks.value) : [...bookmarks.value, toBookmark(input)];
         return () => {
           bookmarks.value = previousBookmark
-            ? [...bookmarks.value.filter((bookmark) => bookmark.path !== path), previousBookmark]
-            : bookmarks.value.filter((bookmark) => bookmark.path !== path);
+            ? [...withoutPath(bookmarks.value), previousBookmark]
+            : withoutPath(bookmarks.value);
         };
       },
       key: path,
@@ -42,7 +41,7 @@ export const useBookmarkStore = defineStore("bookmark", () => {
       reconcile: (isBookmarked) => {
         if (isBookmarked === bookmarkPaths.value.has(path)) return;
 
-        const remainingBookmarks = bookmarks.value.filter((bookmark) => bookmark.path !== path);
+        const remainingBookmarks = withoutPath(bookmarks.value);
         bookmarks.value = isBookmarked ? [...remainingBookmarks, toBookmark(input)] : remainingBookmarks;
       },
     });
