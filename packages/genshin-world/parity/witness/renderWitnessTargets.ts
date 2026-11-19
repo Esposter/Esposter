@@ -4,9 +4,11 @@ import type { Camera, Object3D, Scene } from "three";
 import type GTAONode from "three/examples/jsm/tsl/display/GTAONode.js";
 import type { Node, PassNode } from "three/webgpu";
 
+import { WitnessRole } from "#parity/models/witness/WitnessRole";
 import { WitnessShadowMaterial } from "#parity/models/witness/WitnessShadowMaterial";
 import { WitnessTarget, WitnessTargets } from "#parity/models/witness/WitnessTarget";
-import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
+import { checkIsWitnessDrawn } from "#parity/witness/checkIsWitnessDrawn";
+import { IN_FAMILY_KEY, SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { createOcclusionNode, StoneNodeMaterial } from "genshin-engine";
 import {
@@ -16,6 +18,7 @@ import {
   FloatType,
   Layers,
   Light,
+  Matrix4,
   Mesh,
   RenderTarget,
   Vector2,
@@ -66,6 +69,13 @@ let occlusion:
       scene: Scene;
       scenePass: PassNode;
     };
+// Whether a mesh sits beneath a copy the scene makes of an export (`rideLoginWitnessDoor`), whose root holds the copy's
+// Placement within its family. Every such mesh is the export's geometry drawn a second time
+const checkIsRideCopy = (object: Object3D): boolean => {
+  for (let node: null | Object3D = object; node; node = node.parent)
+    if (node.userData[IN_FAMILY_KEY] instanceof Matrix4) return true;
+  return false;
+};
 // The witness render's G-buffer at its current view, one floating-point target a quantity, each read back from the
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
 // Metres, the light the material adds after lighting, the world normal its normal map bends and the one its geometry
@@ -113,9 +123,14 @@ export const renderWitnessTargets = async (
     const id = parts.length + 1;
     parts.push({ family, id, mesh: part.name });
     part.traverseVisible((object) => {
-      if (object instanceof Mesh) drawnMeshes.push({ familyIndex: families.indexOf(family), id, mesh: object });
+      if (!(object instanceof Mesh)) return;
+      const role = checkIsRideCopy(object) ? WitnessRole.RideCopy : isScene ? WitnessRole.Ours : WitnessRole.Export;
+      if (checkIsWitnessDrawn({ family, isScene, role, viewFamilies: witness.families.value }))
+        drawnMeshes.push({ familyIndex: families.indexOf(family), id, mesh: object });
     });
   };
+  // The export groups the scene hides, since the copies ride them instead, are held visible for this read alone
+  const heldGroups: Object3D[] = [];
   if (isScene)
     scene.traverseVisible((object) => {
       const family = object.userData[SCENE_FAMILY_KEY] as string | undefined;
@@ -123,7 +138,14 @@ export const renderWitnessTargets = async (
     });
   else
     for (const familyGroup of witness.parts.children) {
-      if (!familyGroup.visible) continue;
+      const isDrawn = checkIsWitnessDrawn({
+        family: familyGroup.name,
+        isScene,
+        role: WitnessRole.Export,
+        viewFamilies: witness.families.value,
+      });
+      if (!isDrawn) continue;
+      if (!familyGroup.visible) heldGroups.push(familyGroup);
       for (const part of familyGroup.children) addPart(familyGroup.name, part);
     }
   const getTargetMaterial = (
@@ -216,6 +238,7 @@ export const renderWitnessTargets = async (
   // A failed readback still hands the scene back as it was, so a later render or capture never draws the targets
   await withFinalizerAsync(
     async () => {
+      for (const group of heldGroups) group.visible = true;
       if (sun instanceof DirectionalLight && lightDirection) {
         // Measured before the copy, which moves the light onto its target and would leave the distance at zero
         const distance = sun.position.distanceTo(sun.target.position);
@@ -271,6 +294,7 @@ export const renderWitnessTargets = async (
       for (const { mesh } of drawnMeshes) mesh.layers.disable(TARGET_LAYER);
       for (const light of lights) light.layers.disable(TARGET_LAYER);
       if (sun && sunPosition) sun.position.copy(sunPosition);
+      for (const group of heldGroups) group.visible = false;
     },
   );
   return { families, height, parts, positionLift: POSITION_LIFT, targets, width };
