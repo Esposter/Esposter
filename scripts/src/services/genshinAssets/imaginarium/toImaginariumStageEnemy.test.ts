@@ -53,8 +53,11 @@ describe(toImaginariumStageEnemy, () => {
   test("a stage enemy is the monster its describe entry resolves to", () => {
     expect.hasAssertions();
 
-    expect(toImaginariumStageEnemy(monsterRow, 2, monsterCurveRows)).toMatchObject({
+    expect(toImaginariumStageEnemy(monsterRow, 2, monsterCurveRows)).toStrictEqual({
+      attack: expect.closeTo(22.608 * 2),
+      defense: expect.closeTo(4 * 1.25),
       describeId: 10101,
+      health: expect.closeTo(13.584 * 2.5),
       monsterId: 21010101,
     });
   });
