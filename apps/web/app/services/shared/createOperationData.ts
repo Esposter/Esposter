@@ -1,4 +1,5 @@
 import type { EntityIdKeys } from "#src/models/entity/EntityIdKeys";
+import type { EntityIds } from "#src/models/entity/EntityIds";
 import type { OperationDataKey } from "#src/models/shared/pagination/OperationDataKey";
 import type { EntityTypeKey } from "@esposter/db-schema";
 
@@ -39,7 +40,7 @@ export const createOperationData = <
 
     Object.assign(takeOne(items.value, index), omitUndefined(updatedItem));
   };
-  const deleteItem = (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
+  const deleteItem = (ids: EntityIds<TItem, TIdKeys>) => {
     const checkIsDeletedItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], ids as Partial<TItem>);
     items.value = items.value.filter((item) => !checkIsDeletedItem(item));
   };
