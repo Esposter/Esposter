@@ -21,7 +21,6 @@ describe(createInazumaRoofGeometry, () => {
       });
     });
 
-    expect(outwardFaces.length).toBeGreaterThan(0);
-    expect(outwardFaces).not.toContain(false);
+    expect(outwardFaces).toStrictEqual(Array.from({ length: 16 }, () => true));
   });
 });
