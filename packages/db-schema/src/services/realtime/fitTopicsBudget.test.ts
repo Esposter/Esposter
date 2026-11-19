@@ -2,6 +2,7 @@ import type { ColumnTopic } from "#src/models/realtime/Topic";
 
 import { schema } from "#src/generated/schema";
 import { StorageBucket } from "#src/models/storage/StorageBucket";
+import { messagesInRoom } from "#src/objects/room/schema";
 import { fitTopicsBudget } from "#src/services/realtime/fitTopicsBudget";
 import { getBlobTopic } from "#src/services/realtime/getBlobTopic";
 import { getStorageBucketBindingName } from "#src/services/storage/getStorageBucketBindingName";
@@ -44,5 +45,35 @@ describe(fitTopicsBudget, () => {
         4,
       ).map(({ topic }) => topic),
     ).toStrictEqual([`${roomTable}:*`, ...memberRoomIds.map((roomId) => `${memberTable}:roomId=${roomId}`)].toSorted());
+  });
+
+  // A blob collapses to its bucket's root, the empty key every write to the bucket publishes, so a read past the budget is still
+  // Woken by a write to a key it did not name
+  test("collapses a bucket's blob keys to the bucket's root topic, which every write to the bucket publishes", () => {
+    expect.hasAssertions();
+
+    const bindingName = getStorageBucketBindingName(StorageBucket.UserAssets);
+
+    expect(
+      fitTopicsBudget(
+        Array.from({ length: 3 }, (): ColumnTopic => ({ topic: getBlobTopic(bindingName, v7()) })),
+        1,
+      ),
+    ).toStrictEqual([{ topic: getBlobTopic(bindingName, "") }]);
+  });
+
+  // An object's rows name the object's scope and its table, so they collapse to that table's table-wide topic, which every write
+  // The object makes to the table publishes. The scope alone is published by no write, so a collapse to it would never wake
+  test("collapses an object's rows to its table's table-wide topic, not to the object's scope", () => {
+    expect.hasAssertions();
+
+    const tableTopic = `room/${v7()}:${getTableName(messagesInRoom)}`;
+
+    expect(
+      fitTopicsBudget(
+        Array.from({ length: 3 }, (): ColumnTopic => ({ topic: `${tableTopic}:id=${v7()}` })),
+        1,
+      ),
+    ).toStrictEqual([{ topic: `${tableTopic}:*` }]);
   });
 });

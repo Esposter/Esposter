@@ -2,53 +2,61 @@ import type { ColumnTopic, Topic } from "#src/models/realtime/Topic";
 
 import { blobBindingNames } from "#src/models/realtime/Topic";
 import { TopicKind } from "#src/models/realtime/TopicKind";
+import { getBlobTopic } from "#src/services/realtime/getBlobTopic";
 import { getTableTopic } from "#src/services/realtime/getTableTopic";
 import { mergeColumnTopics } from "#src/services/realtime/mergeColumnTopics";
 
-// The table a row topic names, `table:column=value`. A kind's id and a blob's key are not rows, though either may hold an equals
-// Sign, so the prefix tells them apart: a kind's name, or a bucket's binding name, which is no table
-const getRowTable = (topic: Topic, kindNames: Set<string>): string | undefined => {
+// The coarser topic a topic collapses to, which every write that names the topic also publishes, so a read collapsed to it wakes
+// For each write it would have woken for. A row topic collapses to its table's table-wide topic. An object's rows name the object's
+// Scope and then its table, `room/<id>:messages:col=value`, so they collapse to the table-wide topic of that table, which the
+// Object's writes publish. A blob collapses to its bucket's root, the empty key every write to the bucket publishes. A table-wide
+// Topic is its own coarser topic, and a kind's topic has none. A kind's id and a blob's key may hold an equals sign, so the first
+// Segment, a kind's name or a bucket's binding name, is read before the equals sign is looked for
+const getCoarseTopic = (topic: Topic, kindNames: Set<string>): Topic | undefined => {
   const prefix = topic.slice(0, topic.indexOf(":"));
-  return topic.includes("=") && !kindNames.has(prefix) && !blobBindingNames.has(prefix) ? prefix : undefined;
+  if (blobBindingNames.has(prefix)) return getBlobTopic(prefix, "");
+  if (kindNames.has(prefix)) return undefined;
+  if (!topic.includes("=")) return topic;
+  return getTableTopic(topic.slice(0, topic.lastIndexOf(":", topic.indexOf("="))));
 };
 
-// The topics with the row topics of each table in `tables` replaced by the table's own table-wide topic, which carries the
-// Columns of the rows it replaces. Every write to a row publishes the table-wide topic too, so a read that names the table
-// Wakes for every write the rows it named would have woken it for
-const collapseTables = (topics: ColumnTopic[], tables: Set<string>, kindNames: Set<string>): ColumnTopic[] =>
-  mergeColumnTopics(
-    topics.map(({ columns, topic }) => {
-      const table = getRowTable(topic, kindNames);
-      return table !== undefined && tables.has(table) ? { columns, topic: getTableTopic(table) } : { columns, topic };
-    }),
-  );
-
-// The topics a header names, within `budget`. Past the budget, each table's row topics collapse to the table's table-wide topic,
-// A table at a time: the table holding the most row topics first, then the next, until the count fits. A row topic is the only
-// Kind of topic that collapses, so a kind's topic and a blob's topic stay whole, and a list still names what it names if every
-// Table has collapsed and the count does not fit
+// The topics a header names, within `budget`. Past the budget, the topics that have a coarser form collapse to it, the largest
+// Group first and then the next, until the count fits. A group's topics merge into their coarser topic, which carries the columns
+// Of the topics it replaces, so a read that names it wakes for every write its topics would have woken it for. A kind's topic
+// Has no coarser form and stays whole, and a list still names what it names if every group has collapsed and the count does not fit
 export const fitTopicsBudget = (columnTopics: ColumnTopic[], budget: number): ColumnTopic[] => {
   const topics = mergeColumnTopics(columnTopics);
   if (topics.length <= budget) return topics;
   const kindNames = new Set<string>(Object.values(TopicKind));
-  const rowCounts = new Map<string, number>();
+  const coarseTopicOf = new Map<Topic, Topic>();
+  const groupSizes = new Map<Topic, number>();
   for (const { topic } of topics) {
-    const table = getRowTable(topic, kindNames);
-    if (table !== undefined) rowCounts.set(table, (rowCounts.get(table) ?? 0) + 1);
+    const coarseTopic = getCoarseTopic(topic, kindNames);
+    if (coarseTopic === undefined) continue;
+    coarseTopicOf.set(topic, coarseTopic);
+    groupSizes.set(coarseTopic, (groupSizes.get(coarseTopic) ?? 0) + 1);
   }
-  // A table with one row topic and no table-wide topic of its own gains nothing from collapsing, so it is not collapsed
-  const tablesToCollapse = [...rowCounts]
-    .filter(([table, rowCount]) => rowCount > 1 || topics.some(({ topic }) => topic === getTableTopic(table)))
+  // A group of one gains nothing from collapsing, so only a larger group is taken: the largest first, then by name
+  const groupsToCollapse = [...groupSizes]
+    .filter(([, groupSize]) => groupSize > 1)
     .toSorted(
-      ([firstTable, firstCount], [secondTable, secondCount]) =>
-        secondCount - firstCount || (firstTable < secondTable ? -1 : 1),
+      ([firstTopic, firstSize], [secondTopic, secondSize]) =>
+        secondSize - firstSize || (firstTopic < secondTopic ? -1 : 1),
     );
-  const collapsed = new Set<string>();
-  let fitted = topics;
-  for (const [table] of tablesToCollapse) {
-    if (fitted.length <= budget) break;
-    collapsed.add(table);
-    fitted = collapseTables(topics, collapsed, kindNames);
+  // A group of n topics collapses to one, so taking it removes n - 1 topics, and the groups are taken until the count fits
+  const collapsed = new Set<Topic>();
+  let fittedCount = topics.length;
+  for (const [coarseTopic, groupSize] of groupsToCollapse) {
+    if (fittedCount <= budget) break;
+    collapsed.add(coarseTopic);
+    fittedCount -= groupSize - 1;
   }
-  return fitted;
+  return mergeColumnTopics(
+    topics.map(({ columns, topic }) => {
+      const coarseTopic = coarseTopicOf.get(topic);
+      return coarseTopic !== undefined && collapsed.has(coarseTopic)
+        ? { columns, topic: coarseTopic }
+        : { columns, topic };
+    }),
+  );
 };

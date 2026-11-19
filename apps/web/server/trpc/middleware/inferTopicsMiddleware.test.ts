@@ -9,6 +9,8 @@ import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { getWokenTopics, inJsonArray } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
+  getBlobTopic,
+  getStorageBucketBindingName,
   MAX_READ_TOPICS,
   roomsInMessage,
   RoomType,
@@ -32,9 +34,16 @@ const renameUser = async ({ ctx, input }: { ctx: Pick<Context, "db">; input: z.o
   (await ctx.db.update(usersInAuth).set({ name: input.name }).where(eq(usersInAuth.id, input.id)).returning())[0];
 
 const testRouter = router({
+  putBlob: publicProcedure.input(userInputSchema).mutation<void>(async ({ input }) => {
+    await getBucket(StorageBucket.UserAssets).put(input, "written");
+  }),
   putBlobThenFail: publicProcedure.input(userInputSchema).mutation<void>(async ({ input }) => {
     await getBucket(StorageBucket.UserAssets).put(input, "written");
     throw new TRPCError({ code: "BAD_REQUEST", message: "Write refused" });
+  }),
+  readBlobs: publicProcedure.input(z.array(z.string())).query<null>(async ({ input }) => {
+    await Promise.all(input.map((key) => getBucket(StorageBucket.UserAssets).get(key)));
+    return null;
   }),
   readNamesByIds: publicProcedure
     .input(z.array(z.string()))
@@ -75,6 +84,7 @@ describe("inferTopicsMiddleware", () => {
   const roomTable = getTableName(roomsInMessage);
   const userTable = getTableName(usersInAuth);
   const usersToRoomTable = getTableName(usersToRoomsInMessage);
+  const userAssetsRootTopic = getBlobTopic(getStorageBucketBindingName(StorageBucket.UserAssets), "");
 
   beforeAll(async () => {
     ({ bucket: mockBuckets[StorageBucket.UserAssets] } = await createMockBucket(StorageBucket.UserAssets));
@@ -243,5 +253,30 @@ describe("inferTopicsMiddleware", () => {
     await createTestCaller(context).renameUser({ id: other.id, name: "renamed" });
 
     expect(getWokenTopics(readTopics, MockPublishedTopics)).toStrictEqual([`${userTable}:*`]);
+  });
+
+  // A read names one blob topic per key it reads. Past the header's budget its keys collapse to their bucket's root, which every
+  // Write to the bucket publishes, as a table's rows collapse to its table-wide topic
+  test("collapses a bucket a read names past the header's budget to the bucket's root topic", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    await createTestCaller(context).readBlobs(Array.from({ length: MAX_READ_TOPICS + 1 }, () => v7()));
+
+    expect(
+      readTopicsHeader(context.responseHeaders, "readBlobs").flatMap(({ topics }) => topics.map(({ topic }) => topic)),
+    ).toStrictEqual([userAssetsRootTopic]);
+  });
+
+  // The root is published by a write to any key of the bucket, so a collapsed read is woken by a write to a key it did not name
+  test("wakes a read whose blobs collapsed for a write to a key it did not name", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    await createTestCaller(context).readBlobs(Array.from({ length: MAX_READ_TOPICS + 1 }, () => v7()));
+    const readTopics = readTopicsHeader(context.responseHeaders, "readBlobs").flatMap(({ topics }) => topics);
+    await createTestCaller(context).putBlob(v7());
+
+    expect(getWokenTopics(readTopics, MockPublishedTopics)).toStrictEqual([userAssetsRootTopic]);
   });
 });
