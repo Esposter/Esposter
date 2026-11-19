@@ -127,7 +127,6 @@ export const GameTextKey = {
   BagDetails: "BAG_DETAIL_BUTTON",
   BagFull: "UI_BEYOND_RUNTIME_UI_DROP_PICKTIPS_FAIL",
   BambooShoot: "4238416012",
-  BattlePass: "UI_STC_GAMEENTRYPAGE_BP",
   BerylConch: "1859043748",
   BirdEgg: "2577348708",
   // The label over a character's birthday on their profile

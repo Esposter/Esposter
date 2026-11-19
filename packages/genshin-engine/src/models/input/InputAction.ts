@@ -16,7 +16,6 @@ export const InputAction = {
   Jump: "Jump",
   NormalAttack: "NormalAttack",
   OpenAdventurerHandbook: "OpenAdventurerHandbook",
-  OpenBattlePass: "OpenBattlePass",
   OpenCharacter: "OpenCharacter",
   OpenChat: "OpenChat",
   OpenCoOp: "OpenCoOp",

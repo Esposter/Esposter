@@ -143,14 +143,30 @@ describe("menuPaimon", () => {
     );
   });
 
-  // The Battle Pass opens at Adventure Rank 20, and its entry is never drawn even with that rank and the quests finished
-  test("the menu draws no Battle Pass entry at any rank", async () => {
+  // The Battle Pass draws no entry, even at the rank it opens at with every quest finished
+  test("the menu draws no Battle Pass entry at rank 20 or above", async () => {
     expect.hasAssertions();
 
     await render(MenuPaimon, { props: { ...props, adventureRank: 20, finishedMainQuestIds: openedQuestIds } });
 
-    expect(getContentLabels()).toHaveLength(14);
-    expect(getContentLabels()).not.toContain(ENGLISH_GAME_TEXT[GameTextKey.BattlePass]);
+    expect(getContentLabels()).toStrictEqual(
+      [
+        GameTextKey.PaimonsBargains,
+        GameTextKey.PartySetup,
+        GameTextKey.Friends,
+        GameTextKey.Achievements,
+        GameTextKey.Archive,
+        GameTextKey.CharacterArchive,
+        GameTextKey.Character,
+        GameTextKey.Inventory,
+        GameTextKey.Quests,
+        GameTextKey.Map,
+        GameTextKey.Events,
+        GameTextKey.AdventurerHandbook,
+        GameTextKey.Wish,
+        GameTextKey.CoOp,
+      ].map((key) => ENGLISH_GAME_TEXT[key]),
+    );
   });
 
   test("a player at rank 15 with the quests finished has no Co-Op Mode", async () => {

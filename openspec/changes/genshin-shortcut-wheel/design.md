@@ -14,15 +14,15 @@ flowchart LR
   RELEASE -->|"at the centre"| NONE["Nothing opens"]
 ```
 
-The default entries are the wiki's, in the order the spec's first requirement gives them.
+The default entries are the wiki's, in the order the spec's first requirement gives them, less the Battle Pass, which the world never draws ([Paimon menu](../../specs/genshin/paimon-menu/design.md)).
 
 ## Decisions
 
 - **Gadgets are not on the wheel.** The wiki's Shortcut Wheel lists menus only. Gadgets are used from Z, which `genshin-gadgets` builds, so the wheel does not take `quickSwapItemIds`.
 - **Customization is deferred, and the wheel ships its defaults.** The wiki gates customizing the entries on Adventure Rank 20, not the wheel, so the wheel is open from the start with its defaults. Customizing waits until the wheel is drawn, then opens its own change: [customization](../../deferred/genshin/shortcut-wheel-customization/design.md).
 - **Hold to open, release to choose** is provisional. The wiki gives no hold length, so the wheel opens on a press and the choice is read on release; the same hold rule as the quick swap's is not reused.
-- **The Battle Pass is not on the wheel, which leaves the eight-direction layout one entry short.** The [Paimon menu's change](../genshin-menu-paimon/design.md) never draws the Battle Pass, since its entry is a payment, and offers the wheel only the menu's screens, so the wheel's eighth default, Battle Pass in the wiki's list, has no screen to open. The first requirement still holds eight entries and still lists Battle Pass, which contradicts that decision and is not yet amended. Which screen fills the eighth direction, or whether the eight-direction layout holds seven entries, is open and needs a design decision before the requirement is rewritten.
-- **The wheel's layout is provisional.** The wiki's eight-direction screenshot sits on a CDN that refused the download from this machine, so the wheel is drawn from the wiki's description: eight entries clockwise from the top, four on the other layout. The parity trace of the game's own wheel replaces the drawing (task 3.1). The Tab and bumper hold that opens it is wired (task 2.1): the session passes the held `OpenShortcutWheel` action, bound to Tab and the left bumper, to the wheel's step and mounts the wheel.
+- **The eighth direction is left empty.** The wiki's eighth default is the Battle Pass, which the world never draws, and the wheel draws no slot for an unassigned direction, so the eight-direction layout holds seven entries and its eighth direction is empty. Rejected: giving that direction another screen, since the wiki's list gives no other default for it.
+- **The wheel's layout is provisional.** The wiki's eight-direction screenshot sits on a CDN that refused the download from this machine, so the wheel is drawn from the wiki's description: eight directions clockwise from the top, seven of them with an entry and the eighth left empty, and four on the other layout. The parity trace of the game's own wheel replaces the drawing (task 3.1). The Tab and bumper hold that opens it is wired (task 2.1): the session passes the held `OpenShortcutWheel` action, bound to Tab and the left bumper, to the wheel's step and mounts the wheel.
 
 ## Key files
 

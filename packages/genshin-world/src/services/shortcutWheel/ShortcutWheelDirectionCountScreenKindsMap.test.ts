@@ -14,7 +14,6 @@ describe("shortcutWheelDirectionCountScreenKindsMap", () => {
       ScreenKind.Map,
       ScreenKind.Quests,
       ScreenKind.Events,
-      ScreenKind.BattlePass,
     ]);
   });
 

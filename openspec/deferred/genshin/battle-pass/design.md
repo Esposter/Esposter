@@ -4,7 +4,7 @@ The game's Battle Pass runs a period at a time, opened from Adventure Rank 20. D
 
 **Why deferred:** its periods follow HoYoverse's live version schedule, and its period missions mostly ask for the events active in that period, which the world does not run ([events](../events/design.md)). The community's dump keeps the periods' dates (`BattlePassScheduleExcelConfigData`) only for periods already announced, so a world replaying them would run out of periods, and its missions would point at events that are not there.
 
-**Revisit when:** the world keeps events of its own, so a period's missions have something to ask for. Only the free tier is revisited then: the Gnostic Hymn is bought with money, and nothing in the world is ([Genshin](../../../changes/genshin-program/design.md)).
+**Revisit when:** the world keeps events of its own, so a period's missions have something to ask for. Only the free tier is revisited then: the Gnostic Hymn is bought with money, and nothing in the world is ([Genshin](../../../changes/genshin-program/design.md)). Reopening the Battle Pass reopens the [Paimon menu](../../../specs/genshin/paimon-menu/design.md) decision that a payment entry is never drawn.
 
 ## Sources
 

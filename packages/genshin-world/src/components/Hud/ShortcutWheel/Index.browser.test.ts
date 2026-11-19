@@ -9,7 +9,7 @@ import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
 describe("shortcutWheel", () => {
-  // The eight-direction wheel with no entry picked, so each of its eight defaults is drawn as an option named in English
+  // The eight-direction wheel with no entry picked, so each of its seven defaults is drawn as an option named in English
   test("should draw each default entry as an option", async () => {
     expect.hasAssertions();
 

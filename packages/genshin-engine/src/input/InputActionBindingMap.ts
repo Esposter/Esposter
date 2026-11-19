@@ -19,7 +19,6 @@ export const InputActionBindingMap: Readonly<Record<InputAction, readonly (reado
   [InputAction.Jump]: [["Space"], [GamepadButton.FaceBottom]],
   [InputAction.NormalAttack]: [[MouseButton.Primary], [GamepadButton.FaceRight]],
   [InputAction.OpenAdventurerHandbook]: [["F1"]],
-  [InputAction.OpenBattlePass]: [["F4"]],
   [InputAction.OpenCharacter]: [["KeyC"]],
   [InputAction.OpenChat]: [["Enter"], [GamepadButton.Back]],
   [InputAction.OpenCoOp]: [["F2"], [GamepadButton.LeftBumper, GamepadButton.DirectionalPadRight]],

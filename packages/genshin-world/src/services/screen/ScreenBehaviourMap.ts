@@ -10,7 +10,6 @@ export const ScreenBehaviourMap: Readonly<Record<ScreenKind, Readonly<ScreenBeha
   [ScreenKind.Achievements]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.AdventurerHandbook]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Archive]: MENU_SCREEN_BEHAVIOUR,
-  [ScreenKind.BattlePass]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Blessing]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Character]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.CharacterArchive]: MENU_SCREEN_BEHAVIOUR,

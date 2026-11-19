@@ -135,6 +135,16 @@ describe(createInput, () => {
     });
   });
 
+  test("the F4 key presses no action, so no screen opens", () => {
+    expect.hasAssertions();
+
+    const target = createTarget();
+    const { readInput } = createInput(target);
+    target.dispatchEvent(Object.assign(new Event("keydown"), { code: "F4" }));
+
+    expect(readInput(0).pressedActions).toStrictEqual(new Set());
+  });
+
   test("presses a gamepad bumper's shortcut alone when a face button goes down under it", () => {
     expect.hasAssertions();
 

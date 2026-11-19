@@ -55,7 +55,7 @@ The Paimon menu SHALL draw an entry only once its system is open, at the Adventu
 - **WHEN** the Paimon menu opens
 - **THEN** that entry is drawn disabled
 
-#### Scenario: The menu draws no Battle Pass entry at any rank
+#### Scenario: The menu draws no Battle Pass entry at rank 20 or above
 
 - **GIVEN** the player is at Adventure Rank 20 or above with every main quest the menu's systems open after finished
 - **WHEN** the Paimon menu opens
