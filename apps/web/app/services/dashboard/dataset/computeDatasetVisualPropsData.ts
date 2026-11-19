@@ -6,6 +6,7 @@ import type { VisualPropsData } from "#src/models/dashboard/VisualPropsData";
 import { VisualDatasetShape } from "#src/models/dashboard/VisualDatasetShape";
 import { DatasetAggregationComputeMap } from "#src/services/dashboard/dataset/DatasetAggregationComputeMap";
 import { getCategoryComparator } from "#src/services/dashboard/dataset/getCategoryComparator";
+import { getDatasetSeriesTitle } from "#src/services/dashboard/dataset/getDatasetSeriesTitle";
 import { VisualTypeDatasetShapeMap } from "#src/services/dashboard/dataset/VisualTypeDatasetShapeMap";
 import { exhaustiveGuard, getOrCreate, takeOne } from "@esposter/shared";
 
@@ -24,7 +25,7 @@ export const computeDatasetVisualPropsData = (
       series: [
         {
           data: [DatasetAggregationComputeMap[aggregation](dataset.rows.map((row) => row[column] ?? null))],
-          name: `${aggregation} of ${column}`,
+          name: getDatasetSeriesTitle(aggregation, column),
         },
       ],
     };

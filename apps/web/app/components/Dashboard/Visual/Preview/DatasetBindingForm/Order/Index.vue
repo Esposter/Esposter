@@ -4,6 +4,7 @@ import type { DatasetQuerySeries } from "#shared/models/dataset/DatasetQuerySeri
 
 import { DatasetOrderDirection, DatasetOrderDirections } from "#shared/models/dataset/DatasetOrderDirection";
 import { DASHBOARD_TABLE_CATEGORY_KEY } from "#src/services/dashboard/constants";
+import { getDatasetSeriesTitle } from "#src/services/dashboard/dataset/getDatasetSeriesTitle";
 
 interface Props {
   series: DatasetQuerySeries[];
@@ -16,7 +17,10 @@ const { series } = defineProps<Props>();
 const orderByItems = computed(() => [
   { title: "Row order", value: "" },
   { title: "Category", value: DASHBOARD_TABLE_CATEGORY_KEY },
-  ...series.map(({ aggregation, column }, index) => ({ title: `${aggregation} of ${column}`, value: String(index) })),
+  ...series.map(({ aggregation, column }, index) => ({
+    title: getDatasetSeriesTitle(aggregation, column),
+    value: String(index),
+  })),
 ]);
 const orderByValue = computed(() => {
   if (!order.value) return "";
