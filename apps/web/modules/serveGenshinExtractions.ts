@@ -1,3 +1,4 @@
+import { Environment } from "#shared/models/environment/Environment";
 import { GENSHIN_SCENE_EXPORT_BASE_URL } from "#shared/services/genshin/constants";
 import { join } from "node:path";
 import { addServerHandler, defineNuxtModule } from "nuxt/kit";
@@ -10,7 +11,7 @@ export default defineNuxtModule({
   setup: (_options, nuxt) => {
     if (!nuxt.options.dev) return;
     addServerHandler({
-      handler: join(nuxt.options.serverDir, "development", "genshinSceneExports.ts"),
+      handler: join(nuxt.options.serverDir, Environment.Development, "genshinSceneExports.ts"),
       method: "get",
       route: `${GENSHIN_SCENE_EXPORT_BASE_URL}/**`,
     });

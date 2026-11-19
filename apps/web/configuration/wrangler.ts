@@ -28,7 +28,9 @@ import { getStorageBucketBindingName } from "../../../packages/db-schema/src/ser
 export const getCloudflareEnvironment = (): CloudflareEnvironment => {
   const value =
     process.env.CLOUDFLARE_ENV ??
-    (process.env.NODE_ENV === "development" ? CloudflareEnvironment.Development : CloudflareEnvironment.Production);
+    (process.env.NODE_ENV === Environment.Development
+      ? CloudflareEnvironment.Development
+      : CloudflareEnvironment.Production);
   const environment = CloudflareEnvironments.find((cloudflareEnvironment) => cloudflareEnvironment === value);
   if (!environment)
     // oxlint-disable-next-line error-handling/no-bare-error -- the Nuxt configuration loads before `@esposter/shared` is built

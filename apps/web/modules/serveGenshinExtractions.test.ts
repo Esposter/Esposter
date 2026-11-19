@@ -1,3 +1,4 @@
+import { Environment } from "#shared/models/environment/Environment";
 import serveGenshinExtractions from "#modules/serveGenshinExtractions";
 import { GENSHIN_SCENE_EXPORT_BASE_URL } from "#shared/services/genshin/constants";
 import { join } from "node:path";
@@ -28,7 +29,7 @@ describe("serveGenshinExtractions", () => {
     await serveGenshinExtractions({}, createNuxt(true));
 
     expect(addServerHandler).toHaveBeenCalledExactlyOnceWith({
-      handler: join("development", "genshinSceneExports.ts"),
+      handler: join(Environment.Development, "genshinSceneExports.ts"),
       method: "get",
       route: `${GENSHIN_SCENE_EXPORT_BASE_URL}/**`,
     });

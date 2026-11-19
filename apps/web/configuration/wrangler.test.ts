@@ -1,3 +1,4 @@
+import { Environment } from "#shared/models/environment/Environment";
 import { getCloudflareEnvironment } from "#configuration/wrangler";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -21,7 +22,7 @@ describe(getCloudflareEnvironment, () => {
     expect.hasAssertions();
 
     vi.stubEnv("CLOUDFLARE_ENV", undefined);
-    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("NODE_ENV", Environment.Development);
 
     expect(getCloudflareEnvironment()).toBe(CloudflareEnvironment.Development);
   });
