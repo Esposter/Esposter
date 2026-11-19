@@ -19,8 +19,9 @@ import { GameLanguage } from "genshin-text";
 
 // Each material source label's kind, read off the gather row of the animal the label's name is the English name of: the
 // Item that row gives when picked, and whether a critter stands at the label's points, which it does unless the item is a
-// Chest. A label with no such row gives no item, so it is refused rather than placed as nothing. The notes name each
-// Label's match and each gather row no label joins, which print as unmatched and stay out of the dataset
+// Chest. A label with no such row gives no item, and one whose item the material table lacks has no type to read, so both
+// Are refused rather than placed as nothing or given a stand-in by default. The notes name each label's match and each
+// Gather row no label joins, which print as unmatched and stay out of the dataset
 export const readMaterialSourceItemIdMap = (
   labels: readonly InteractiveMapLabel[],
 ): { kindMap: Map<number, MaterialSourceKind>; notes: string[] } => {
@@ -45,6 +46,8 @@ export const readMaterialSourceItemIdMap = (
       .flatMap(({ gatherItemList }) => gatherItemList)
       .find((entry) => entry.id !== undefined && entry.id > 0)?.id;
     if (itemId === undefined) throw new InvalidOperationError(Operation.Read, name, "has no gather row giving an item");
+    if (!materialTypeMap.has(itemId))
+      throw new InvalidOperationError(Operation.Read, name, `gives item ${itemId}, which the material table lacks`);
     const hasStandIn = materialTypeMap.get(itemId) !== CHEST_MATERIAL_TYPE;
     for (const row of rows) joinedRows.add(row);
     kindMap.set(id, { hasStandIn, itemId });

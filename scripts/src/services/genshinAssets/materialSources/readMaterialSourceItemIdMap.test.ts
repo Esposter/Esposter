@@ -25,19 +25,20 @@ describe(readMaterialSourceItemIdMap, () => {
   // The name text hashes the describe rows give, which the English text map keys
   const CRAB_NAME_HASH = 1;
   const BUTTERFLY_NAME_HASH = 2;
+  let materialRows: { id: number; materialType: string }[] = [];
 
   beforeEach(() => {
+    materialRows = [
+      { id: CRAB_ITEM_ID, materialType: "MATERIAL_EXCHANGE" },
+      { id: BUTTERFLY_ITEM_ID, materialType: "MATERIAL_CHEST" },
+    ];
     vi.mocked(readExcelTable).mockImplementation((name) => {
       if (name === ENV_ANIMAL_GATHER_TABLE_NAME)
         return [
           { animalId: CRAB_ANIMAL_ID, gatherItemList: [{ count: 1, id: CRAB_ITEM_ID }] },
           { animalId: BUTTERFLY_ANIMAL_ID, gatherItemList: [{ count: 1, id: BUTTERFLY_ITEM_ID }] },
         ];
-      if (name === MATERIAL_TABLE_NAME)
-        return [
-          { id: CRAB_ITEM_ID, materialType: "MATERIAL_EXCHANGE" },
-          { id: BUTTERFLY_ITEM_ID, materialType: "MATERIAL_CHEST" },
-        ];
+      if (name === MATERIAL_TABLE_NAME) return materialRows;
       if (name === ANIMAL_DESCRIBE_TABLE_NAME)
         return [
           { id: CRAB_ANIMAL_ID, nameTextMapHash: CRAB_NAME_HASH },
@@ -70,6 +71,17 @@ describe(readMaterialSourceItemIdMap, () => {
 
     expect(readMaterialSourceItemIdMap(labels).kindMap).toStrictEqual(
       new Map([[BUTTERFLY_LABEL_ID, { hasStandIn: false, itemId: BUTTERFLY_ITEM_ID }]]),
+    );
+  });
+
+  test("a critter whose item the material table lacks is refused, not given a stand-in", () => {
+    expect.hasAssertions();
+
+    materialRows = [{ id: BUTTERFLY_ITEM_ID, materialType: "MATERIAL_CHEST" }];
+    const labels: InteractiveMapLabel[] = [{ children: [], id: CRAB_LABEL_ID, name: CRAB_NAME }];
+
+    expect(() => readMaterialSourceItemIdMap(labels)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: Pale Red Crab, gives item 100073, which the material table lacks]`,
     );
   });
 });
