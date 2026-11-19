@@ -1,10 +1,35 @@
 # Products
 
-| Unit                                                                                                                  | Swept | Notes |
-| --------------------------------------------------------------------------------------------------------------------- | ----- | ----- |
-| `Post` + `store/post`, `composables/post`, `services/post`, `pages/post`                                              | —     |       |
-| `Clicker` + `store/clicker`, `composables/clicker`, `services/clicker`, `pages/clicker.vue`                           | —     |       |
-| `User`, `Achievement` + `store/achievement`, the `user`/`achievement`/`room` layers, `pages/user`, `achievements.vue` | —     |       |
-| `error.vue`                                                                                                           | —     |       |
-| `RichTextEditor` + `services/codemirror`                                                                              | —     |       |
-| `Visual`, `Anime`, `About`, `Login`, `Transition` + their composable/service layers and the pages that mount them     | —     |       |
+| Unit                                                                                                                                                                                                           | Swept | Notes |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ----- |
+| `Post`                                                                                                                                                                                                         | —     |       |
+| `store/post`                                                                                                                                                                                                   | —     |       |
+| `composables/post`                                                                                                                                                                                             | —     |       |
+| `services/post`                                                                                                                                                                                                | —     |       |
+| `pages/post`                                                                                                                                                                                                   | —     |       |
+| `Clicker`                                                                                                                                                                                                      | —     |       |
+| `store/clicker`                                                                                                                                                                                                | —     |       |
+| `composables/clicker`                                                                                                                                                                                          | —     |       |
+| `services/clicker/building`, `services/clicker/effect`, `services/clicker/icon`, `services/clicker/properties`, `services/clicker/save`, `services/clicker/upgrade`                                            | —     |       |
+| `services/clicker` — `SoundMap.ts`, `applyGameTick.test.ts`, `applyGameTick.ts`, `constants.ts`, `createBuildingWithStatistics.test.ts`, `createClicker.ts`, `formatNumberLong.test.ts`, `formatNumberLong.ts` | —     |       |
+| `apps/web/app/pages/clicker.vue`                                                                                                                                                                               | —     |       |
+| `User`                                                                                                                                                                                                         | —     |       |
+| `Achievement`                                                                                                                                                                                                  | —     |       |
+| `store/achievement`                                                                                                                                                                                            | —     |       |
+| `store/user`                                                                                                                                                                                                   | —     |       |
+| `achievement`                                                                                                                                                                                                  | —     |       |
+| `room`                                                                                                                                                                                                         | —     |       |
+| `pages/user`                                                                                                                                                                                                   | —     |       |
+| `apps/web/app/pages/achievements.vue`                                                                                                                                                                          | —     |       |
+| `error.vue`                                                                                                                                                                                                    | —     |       |
+| `RichTextEditor` + `services/codemirror`                                                                                                                                                                       | —     |       |
+| `Visual`                                                                                                                                                                                                       | —     |       |
+| `Anime`                                                                                                                                                                                                        | —     |       |
+| `About`                                                                                                                                                                                                        | —     |       |
+| `Login`                                                                                                                                                                                                        | —     |       |
+| `Transition`                                                                                                                                                                                                   | —     |       |
+| `composables/visual`                                                                                                                                                                                           | —     |       |
+| `services/visual`                                                                                                                                                                                              | —     |       |
+| `services/anime`                                                                                                                                                                                               | —     |       |
+| `services/about`                                                                                                                                                                                               | —     |       |
+| `services/login`                                                                                                                                                                                               | —     |       |
