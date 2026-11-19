@@ -8,7 +8,7 @@ import {
   INTERACTIVE_MAP_STATUE_LABEL_ID,
   INTERACTIVE_MAP_WAYPOINT_LABEL_ID,
 } from "#src/services/genshinAssets/points/constants";
-import { JUMP_LANDMARK_KINDS, LandmarkKind } from "genshin-world";
+import { LandmarkKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const createMapPoint = (overrides: Partial<InteractiveMapPoint>): InteractiveMapPoint => ({
@@ -48,12 +48,11 @@ describe(toPairedLandmarks, () => {
       transportPoints: [TRANSPORT_POINT],
     });
 
-  test("a waypoint is listed as a jump target", () => {
+  test("a waypoint's map point is paired with its transport point, in the area it stands in", () => {
     expect.hasAssertions();
 
-    expect({
-      jumpTarget: JUMP_LANDMARK_KINDS.includes(LandmarkKind.TeleportWaypoint),
-      landmarks: toPairedLandmarks({
+    expect(
+      toPairedLandmarks({
         ...WAYPOINT_PAIRING,
         areas: [{ id: "starfell-valley", outline: AREA_OUTLINE }],
         getWorldHeight: () => 5,
@@ -63,28 +62,24 @@ describe(toPairedLandmarks, () => {
         transform: IDENTITY_TRANSFORM,
         transportPoints: [TRANSPORT_POINT],
       }),
-    }).toStrictEqual({
-      jumpTarget: true,
-      landmarks: [
-        {
-          areaId: "starfell-valley",
-          arrival: { heightOffset: 5, position: { x: 50, z: -100 }, rotation: -1.5708 },
-          heightOffset: 5,
-          id: "mondstadt-waypoint-7",
-          kind: LandmarkKind.TeleportWaypoint,
-          position: { x: 50, z: -100 },
-          rotation: -1.5708,
-        },
-      ],
-    });
+    ).toStrictEqual([
+      {
+        areaId: "starfell-valley",
+        arrival: { heightOffset: 5, position: { x: 50, z: -100 }, rotation: -1.5708 },
+        heightOffset: 5,
+        id: "mondstadt-waypoint-7",
+        kind: LandmarkKind.TeleportWaypoint,
+        position: { x: 50, z: -100 },
+        rotation: -1.5708,
+      },
+    ]);
   });
 
-  test("a Statue of the New Moon is paired from the Statue of The Seven's label, and is a jump target", () => {
+  test("a Statue of the New Moon is paired from the Statue of The Seven's label", () => {
     expect.hasAssertions();
 
-    expect({
-      jumpTarget: JUMP_LANDMARK_KINDS.includes(LandmarkKind.StatueOfTheNewMoon),
-      landmarks: toPairedLandmarks({
+    expect(
+      toPairedLandmarks({
         areas: [{ id: "starfell-valley", outline: AREA_OUTLINE }],
         getWorldHeight: () => 5,
         idWord: "new-moon-statue",
@@ -96,20 +91,17 @@ describe(toPairedLandmarks, () => {
         transform: IDENTITY_TRANSFORM,
         transportPoints: [TRANSPORT_POINT],
       }),
-    }).toStrictEqual({
-      jumpTarget: true,
-      landmarks: [
-        {
-          areaId: "starfell-valley",
-          arrival: { heightOffset: 5, position: { x: 50, z: -100 }, rotation: -1.5708 },
-          heightOffset: 5,
-          id: "mondstadt-new-moon-statue-7",
-          kind: LandmarkKind.StatueOfTheNewMoon,
-          position: { x: 50, z: -100 },
-          rotation: -1.5708,
-        },
-      ],
-    });
+    ).toStrictEqual([
+      {
+        areaId: "starfell-valley",
+        arrival: { heightOffset: 5, position: { x: 50, z: -100 }, rotation: -1.5708 },
+        heightOffset: 5,
+        id: "mondstadt-new-moon-statue-7",
+        kind: LandmarkKind.StatueOfTheNewMoon,
+        position: { x: 50, z: -100 },
+        rotation: -1.5708,
+      },
+    ]);
   });
 
   test("a transport point with no paired map waypoint is not a waypoint", () => {

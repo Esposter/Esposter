@@ -21,11 +21,13 @@ describe(traceTextureCell, () => {
       },
     );
 
-    expect(loops).toHaveLength(1);
-    const points = loops.flat();
-    expect(Math.min(...points.map(([x]) => x))).toBe(0);
-    expect(Math.max(...points.map(([x]) => x))).toBe(1);
-    expect(Math.min(...points.map(([, y]) => y))).toBe(0);
-    expect(Math.max(...points.map(([, y]) => y))).toBe(1);
+    expect(loops).toStrictEqual([
+      [
+        [0, 0],
+        [1, 0],
+        [1, 1],
+        [0, 1],
+      ],
+    ]);
   });
 });

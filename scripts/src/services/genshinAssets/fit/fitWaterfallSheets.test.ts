@@ -3,8 +3,9 @@ import type { readVouchedFileProvenance } from "#src/services/provenance/readVou
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitWaterfallSheets } from "#src/services/genshinAssets/fit/fitWaterfallSheets";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("node:fs/promises"), () => ({ readFile: vi.fn<(...args: unknown[]) => Promise<never>>() }));
@@ -15,11 +16,14 @@ vi.mock(import("#src/services/genshinAssets/shared/readGameVersion"), () => ({
 vi.mock(import("#src/services/provenance/readVouchedFileProvenance"), () => ({
   readVouchedFileProvenance: vi.fn<typeof readVouchedFileProvenance>(),
 }));
-vi.mock(import("#src/services/genshinAssets/shared/writeWorldData"), () => ({
-  writeWorldData: vi.fn<typeof writeWorldData>(),
+vi.mock(import("#src/services/genshinAssets/shared/writeRegionData"), () => ({
+  writeRegionData: vi.fn<typeof writeRegionData>(),
 }));
 
 describe(fitWaterfallSheets, () => {
+  const REGION_FILE = join("regions", "liyue.json");
+  const WATERFALL = { across: { x: 1, y: 0, z: 0 }, drop: 5, lip: { x: 0.5, y: 5, z: 10 }, width: 1 };
+
   test("a fall stands at the game's lip", async () => {
     expect.hasAssertions();
 
@@ -41,15 +45,15 @@ describe(fitWaterfallSheets, () => {
         [0, 5, 0],
       ],
     } as Awaited<ReturnType<typeof readObjMesh>>);
-    vi.mocked(writeWorldData).mockResolvedValueOnce("regions/liyue.json");
+    vi.mocked(writeRegionData).mockResolvedValueOnce("regions/liyue.json");
 
     await fitWaterfallSheets(DerivedAssetComponent.Liyue, { isDryRun: false });
 
-    expect(vi.mocked(writeWorldData).mock.calls[0]?.[1]).toStrictEqual({
-      enemyCamps: [],
-      landmarks: [],
-      waterfalls: [{ across: { x: 1, y: 0, z: 0 }, drop: 5, lip: { x: 0.5, y: 5, z: 10 }, width: 1 }],
-    });
+    expect(writeRegionData).toHaveBeenCalledExactlyOnceWith(
+      REGION_FILE,
+      { enemyCamps: [], landmarks: [], waterfalls: [WATERFALL] },
+      { isDryRun: false },
+    );
   });
 
   test("a dry run writes no region data and says nothing was written", async () => {
@@ -73,11 +77,15 @@ describe(fitWaterfallSheets, () => {
         [0, 5, 0],
       ],
     } as Awaited<ReturnType<typeof readObjMesh>>);
-    vi.mocked(writeWorldData).mockResolvedValueOnce("regions/liyue.json");
+    vi.mocked(writeRegionData).mockResolvedValueOnce("regions/liyue.json");
 
     const { notes } = await fitWaterfallSheets(DerivedAssetComponent.Liyue, { isDryRun: true });
 
-    expect(vi.mocked(writeWorldData).mock.calls[0]?.[2]).toStrictEqual({ isDryRun: true });
+    expect(writeRegionData).toHaveBeenCalledExactlyOnceWith(
+      REGION_FILE,
+      { enemyCamps: [], landmarks: [], waterfalls: [WATERFALL] },
+      { isDryRun: true },
+    );
     expect(notes).toStrictEqual(["regions/liyue.json: 1 waterfall sheets, nothing written"]);
   });
 });

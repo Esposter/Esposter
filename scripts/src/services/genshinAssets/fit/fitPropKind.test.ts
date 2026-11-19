@@ -50,7 +50,7 @@ describe(fitPropKind, () => {
     const kind: PropKind = { mesh: "b", name: "a", shape: PropShape.Hull };
     const first = await fitPropKind(kind, assets);
     const second = await fitPropKind(kind, assets);
-    expect(first.notes).toHaveLength(1);
+    expect(first.notes).toStrictEqual(["a: 2 boxes"]);
     expect(second.notes).toStrictEqual(first.notes);
     expect(Object.keys(second.objects)).toStrictEqual(["props/a"]);
   });

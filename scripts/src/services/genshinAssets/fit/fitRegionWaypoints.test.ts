@@ -60,6 +60,6 @@ describe(fitRegionWaypoints, () => {
 
     await fitRegionWaypoints({ isDryRun: false });
 
-    expect(writeRegionData).toHaveBeenCalledWith(LIYUE_FILE, { landmarks: [], residents: [] });
+    expect(writeRegionData).toHaveBeenCalledExactlyOnceWith(LIYUE_FILE, { landmarks: [], residents: [] });
   });
 });

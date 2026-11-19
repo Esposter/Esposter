@@ -2,12 +2,6 @@ import { traceWeaponIcon } from "#src/services/genshinAssets/fit/traceWeaponIcon
 import sharp from "sharp";
 import { describe, expect, test } from "vitest";
 
-// The lowest and highest value a coordinate of a loop reaches, on the x axis (0) or the y axis (1)
-const toBounds = (loops: [number, number][][], axis: 0 | 1): number[] => {
-  const values = loops.flat().map((point) => point[axis]);
-  return [Math.min(...values), Math.max(...values)];
-};
-
 describe(traceWeaponIcon, () => {
   const iconWidth = 64;
   const iconHeight = 32;
@@ -24,8 +18,13 @@ describe(traceWeaponIcon, () => {
       .toBuffer();
     const loops = await traceWeaponIcon(icon);
 
-    expect(loops).toHaveLength(1);
-    expect(toBounds(loops, 0)).toStrictEqual([0, 0.5]);
-    expect(toBounds(loops, 1)).toStrictEqual([0, 1]);
+    expect(loops).toStrictEqual([
+      [
+        [0, 0],
+        [0.5, 0],
+        [0.5, 1],
+        [0, 1],
+      ],
+    ]);
   });
 });

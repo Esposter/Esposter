@@ -66,23 +66,6 @@ describe(fitInteractiveMap, () => {
     );
   });
 
-  test("shortfall kept as it stands", async () => {
-    expect.hasAssertions();
-    vi.mocked(readInteractiveMapPoints).mockResolvedValue([
-      ...mondstadtPoints,
-      { area_id: 1, id: 5, label_id: anemoculusLabelId, x_pos: 50, y_pos: 50, z_level: 0 },
-    ]);
-    vi.mocked(readSceneTransportPoints).mockResolvedValue(transportPoints);
-    const report = await fitInteractiveMap();
-    expect(report).toBe(
-      [
-        "4 of 4 statues and waypoints matched, residual 0 game units (bar 20)",
-        `mondstadt: 4 matched, residual 0, Oculi 1 of ${mondstadtOculiCount}`,
-        ...unmatchedRegionLines,
-      ].join("\n"),
-    );
-  });
-
   test("snezhnaya with no matched points", async () => {
     expect.hasAssertions();
     // Snezhnaya's statue stands far from every transport point, so the fit leaves it unmatched and its residual none

@@ -1,7 +1,7 @@
 import type { Vector } from "#src/models/shared/Vector";
 
 import { fitMeshPieces } from "#src/services/genshinAssets/fit/fitMeshPieces";
-import { STATUE_ANGLE_COUNT, STATUE_BLADE_ANGLE_COUNT } from "#src/services/genshinAssets/shared/constants";
+import { STATUE_BLADE_ANGLE_COUNT } from "#src/services/genshinAssets/shared/constants";
 import { describe, expect, test } from "vitest";
 
 // A box of the given size about the origin: its eight corners and twelve triangles
@@ -45,12 +45,9 @@ describe(fitMeshPieces, () => {
     const [piece, ...others] = fitMeshPieces(vertices, faces, readFaceColour);
 
     expect(others).toHaveLength(0);
-    expect(piece?.stacks.length).toBeGreaterThan(0);
+    expect(piece?.stacks).toHaveLength(4);
     expect(
       piece?.stacks.flatMap(({ sections }) => sections).every(({ radii }) => radii.length === STATUE_BLADE_ANGLE_COUNT),
     ).toBe(true);
-    expect(
-      piece?.stacks.some(({ sections }) => sections.some(({ radii }) => radii.length === STATUE_ANGLE_COUNT)),
-    ).toBe(false);
   });
 });

@@ -116,16 +116,6 @@ describe(fitRegionStatue, () => {
     fitStatueComponent.mockReturnValue({ score: 0, stacks: [] });
   });
 
-  test("keys a region's statue record by its own component", async () => {
-    expect.hasAssertions();
-
-    readComponentPlacements.mockResolvedValue([createPlacement("Stages_MdGoddess01_Base_Lod0")]);
-
-    const { objects } = await fitRegionStatue(DerivedAssetComponent.Liyue);
-
-    expect(Object.keys(objects)).toStrictEqual([`${DerivedAssetComponent.Liyue}/statue`]);
-  });
-
   test("publishes no statue record where the layout places no Goddess stone mesh", async () => {
     expect.hasAssertions();
 

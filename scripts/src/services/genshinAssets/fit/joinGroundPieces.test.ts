@@ -4,7 +4,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(joinGroundPieces, () => {
-  test("covers exactly the samples of its two quarters, in a square over both", () => {
+  test("is inside at a sample of either joined quarter and outside at one of the other two, in a square over both", () => {
     expect.hasAssertions();
 
     const quarters = splitGroundPiece({

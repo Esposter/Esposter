@@ -4,6 +4,7 @@ import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { createCharacterFit } from "#src/services/genshinAssets/fit/createCharacterFit";
 import { GENSHIN_ASSETS_PRODUCER_PATHS } from "#src/services/genshinAssets/shared/constants";
 import { writeProvenance } from "#src/services/provenance/writeProvenance";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -80,9 +81,13 @@ describe(createCharacterFit, () => {
   test("a named run without the portraits' textures fails with its message", async () => {
     expect.hasAssertions();
 
-    await expect(createCharacterFit(["pictureColours"], { isDryRun: true })).rejects.toMatchObject({
-      message: expect.stringContaining("holds no exported portrait texture to measure"),
-    });
+    await expect(createCharacterFit(["pictureColours"], { isDryRun: true })).rejects.toThrow(
+      new InvalidOperationError(
+        Operation.Read,
+        join(root, "assets", AssetType.Texture2D),
+        "holds no exported portrait texture to measure",
+      ),
+    );
   });
 
   // A texture folder that holds no portrait is refused too, rather than publishing an empty record over the published one
@@ -95,9 +100,13 @@ describe(createCharacterFit, () => {
       .png()
       .toFile(join(textureDirectory, "Gcg_CardFace_Fixture.png"));
 
-    await expect(createCharacterFit(["pictureColours"], { isDryRun: true })).rejects.toMatchObject({
-      message: expect.stringContaining("holds no exported portrait texture to measure"),
-    });
+    await expect(createCharacterFit(["pictureColours"], { isDryRun: true })).rejects.toThrow(
+      new InvalidOperationError(
+        Operation.Read,
+        join(root, "assets", AssetType.Texture2D),
+        "holds no exported portrait texture to measure",
+      ),
+    );
   });
 
   test("a named run records each portrait's colour under its name", async () => {

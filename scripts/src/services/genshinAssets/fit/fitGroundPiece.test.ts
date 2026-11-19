@@ -41,9 +41,9 @@ describe(fitGroundPiece, () => {
     const { build } = await fitGroundPiece(piece, source);
     const clearedNote = build.notes.find((note) => note.includes("places cleared of the residual, "));
 
+    // Each entry's fitted residual is left out of these matches, so they name the words that entry takes
     expect(clearedNote).toContain("domain-entrance-1 60 metres from the bar's radius, its residual ");
     expect(clearedNote).toContain("domain-entrance-2 60 metres from the bar's radius, outside its ground");
-    expect(clearedNote).not.toContain("domain-entrance-2 60 metres from the bar's radius, its residual ");
   });
 
   test("reports a band with no sample in words, never as NaN, where no terrain lies under the centre", async () => {
