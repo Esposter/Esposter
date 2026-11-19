@@ -1,5 +1,3 @@
-import type { MovementStarted } from "#src/models/dungeons/gridEngine/MovementStarted";
-import type { MovementStopped } from "#src/models/dungeons/gridEngine/MovementStopped";
 import type { PositionChangeFinished } from "#src/models/dungeons/gridEngine/PositionChangeFinished";
 import type { PositionChangeStarted } from "#src/models/dungeons/gridEngine/PositionChangeStarted";
 import type { Character } from "#src/models/dungeons/scene/world/Character";
@@ -8,8 +6,6 @@ import type { SceneWithPlugins, Sprite } from "vue-phaserjs";
 export interface CharacterProps {
   id: Character["id"];
   onComplete?: InstanceType<typeof Sprite>["$props"]["onComplete"];
-  onMovementStarted?: (scene: SceneWithPlugins, ...args: Parameters<MovementStarted>) => ReturnType<MovementStarted>;
-  onMovementStopped?: (scene: SceneWithPlugins, ...args: Parameters<MovementStopped>) => ReturnType<MovementStopped>;
   onPositionChangeFinished?: (
     scene: SceneWithPlugins,
     ...args: Parameters<PositionChangeFinished>

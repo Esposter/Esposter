@@ -17,20 +17,11 @@ defineProps<Props>();
   <DungeonsWorldCharacter
     :id="npc.id"
     v-model:direction="direction"
+    v-model:is-moving="isMoving"
     :position="takeOne(npc.path, npc.pathIndex)"
     :sprite-configuration="{ texture: npc.asset.key, frame: npc.asset.frame, scale: 4 }"
     :walking-animation-mapping="npc.walkingAnimationMapping"
     :single-sided-spritesheet-direction="npc.singleSidedSpritesheetDirection"
     :speed="2"
-    :on-movement-started="
-      () => {
-        isMoving = true;
-      }
-    "
-    :on-movement-stopped="
-      () => {
-        isMoving = false;
-      }
-    "
   />
 </template>

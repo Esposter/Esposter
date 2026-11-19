@@ -10,6 +10,7 @@ import { Sprite } from "vue-phaserjs";
 
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });
+const isMoving = defineModel<boolean>("isMoving", { required: true });
 defineProps<CharacterProps>();
 // Every grid-engine stream this character listens on, so a stream costs one call rather than a ref and a line in the
 // Teardown. Grid engine removes the character itself when a new tilemap is created
@@ -53,19 +54,12 @@ onUnmounted(unsubscribeAll);
           startPosition: position,
           ...omitUndefined({ facingDirection: direction, speed }),
         });
-        if (onMovementStarted) {
-          const baseOnMovementStarted = onMovementStarted;
-          subscribeToCharacter(id, scene.gridEngine.movementStarted(), (movement) =>
-            baseOnMovementStarted(scene, movement),
-          );
-        }
-
-        if (onMovementStopped) {
-          const baseOnMovementStopped = onMovementStopped;
-          subscribeToCharacter(id, scene.gridEngine.movementStopped(), (movement) =>
-            baseOnMovementStopped(scene, movement),
-          );
-        }
+        subscribeToCharacter(id, scene.gridEngine.movementStarted(), () => {
+          isMoving = true;
+        });
+        subscribeToCharacter(id, scene.gridEngine.movementStopped(), () => {
+          isMoving = false;
+        });
 
         subscribeToCharacter(id, scene.gridEngine.positionChangeStarted(), (positionChange) => {
           const { charId } = positionChange;

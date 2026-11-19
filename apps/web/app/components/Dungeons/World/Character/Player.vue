@@ -87,18 +87,9 @@ onShutdown((scene) => {
     :key="tilemapKey"
     v-model:position="player.position"
     v-model:direction="playerGridDirection"
+    v-model:is-moving="isMoving"
     :sprite-configuration="{ texture: SpritesheetKey.Character, frame }"
     :walking-animation-mapping="PlayerWalkingAnimationMapping"
-    :on-movement-started="
-      () => {
-        isMoving = true;
-      }
-    "
-    :on-movement-stopped="
-      () => {
-        isMoving = false;
-      }
-    "
     :on-position-change-finished="
       (scene, { enterTile }) => {
         const tile = layerMap?.get(LayerName.Encounter)?.getTileAt(enterTile.x, enterTile.y, false);
