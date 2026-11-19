@@ -1,6 +1,7 @@
 import type { TrailFrameStats } from "#src/services/genshinParity/trail/computeTrailFrameStats";
 
 import { TRAIL_FADED_SHARE, TRAIL_PRESENT_SHARE } from "#src/services/genshinParity/trail/constants";
+import { computeMedian } from "#src/services/recreation/statistics/computeMedian";
 
 // A strike's trail as the frames of its region read it: its width in pixels, its mean colour, the first and last frame it
 // Draws, the seconds those frames are shown at, and the seconds from its peak to its fade, absent when it never fades
@@ -11,12 +12,6 @@ export interface TrailMeasure {
   seconds: [number, number];
   width: number;
 }
-
-const computeMedian = (values: readonly number[]): number => {
-  const sorted = values.toSorted((a, b) => a - b);
-  const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 1 ? (sorted[middle] ?? 0) : ((sorted[middle - 1] ?? 0) + (sorted[middle] ?? 0)) / 2;
-};
 
 // The strike is the run of frames around the frame holding the most trail, while each still holds a share of that peak.
 // Its width is the median run of its trail along a row, its colour the mean of its trail, and it fades at the first frame
