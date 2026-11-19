@@ -3,6 +3,7 @@ import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessa
 import type { Filter } from "@esposter/db-schema";
 
 import { fanOutRoomReads } from "#server/services/message/fanOutRoomReads";
+import { getInFilterRoomIds } from "#server/services/message/getInFilterRoomIds";
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { toMergedPage } from "@esposter/db";
 import { FilterType, getRoomSearchPageSort } from "@esposter/db-schema";
@@ -11,9 +12,7 @@ import { FilterType, getRoomSearchPageSort } from "@esposter/db-schema";
 // Caller's own and is bounded at the router, so the fan-out is bounded by what they asked for. A room's object answers
 // The filters that are not `in:`
 const getSearchRoomIds = (filters: Filter[], roomId: string): string[] => {
-  const inRoomIds = filters.flatMap(({ type, value }) =>
-    type === FilterType.In && typeof value === "string" ? [value] : [],
-  );
+  const inRoomIds = getInFilterRoomIds(filters);
   return inRoomIds.length > 0 ? inRoomIds : [roomId];
 };
 

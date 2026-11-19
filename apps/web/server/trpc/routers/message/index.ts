@@ -12,6 +12,7 @@ import { createUserMessage } from "#server/services/message/createUserMessage";
 import { checkIsUploadFileTokenValid } from "#server/services/message/file/checkIsUploadFileTokenValid";
 import { createUploadFileToken } from "#server/services/message/file/createUploadFileToken";
 import { generateReservedMessageFilePresignedUrlEntities } from "#server/services/message/file/generateReservedMessageFilePresignedUrlEntities";
+import { getInFilterRoomIds } from "#server/services/message/getInFilterRoomIds";
 import { publishDeletedMessageFiles } from "#server/services/message/moderation/publishDeletedMessageFiles";
 import { rejectMessageCreation } from "#server/services/message/moderation/rejectMessageCreation";
 import { readMySentMessages } from "#server/services/message/readMySentMessages";
@@ -74,7 +75,6 @@ import {
 } from "@esposter/db";
 import {
   DatabaseEntityType,
-  FilterType,
   getMimeCategory,
   MAX_FOLLOWED_THREADS,
   MessageType,
@@ -381,9 +381,7 @@ const baseMessageRouter = router({
     .meta({ staticReason: "A search answered once for its input, and never kept live" })
     .query<SearchMessagesResult>(async ({ ctx, input }) => {
       // The schema names every `in:` value a room id, so the rooms a search reads are bounded here and checked for membership
-      const inFilterRoomIds = input.filters.flatMap(({ type, value }) =>
-        type === FilterType.In && typeof value === "string" ? [value] : [],
-      );
+      const inFilterRoomIds = getInFilterRoomIds(input.filters);
       if (inFilterRoomIds.length > MAX_SEARCH_ROOMS)
         throw getInvalidOperationError(
           Operation.Read,
