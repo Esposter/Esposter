@@ -17,6 +17,13 @@ import {
 import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getResultAsync } from "@esposter/shared";
 
+// A write that asks for no RETURNING is widened to name its rows, and it runs through `run`, the method its caller awaited.
+// Whatever holds that method holds the write too. D1's `run` answers the rows a RETURNING statement names as `results`
+const runWidenedWrite = async (statement: PromiseLike<unknown> & SQLWrapper): Promise<unknown> => {
+  const run: unknown = await Reflect.apply(Reflect.get(statement, "run", statement), statement, []);
+  return checkIsRecord(run) ? run.results : undefined;
+};
+
 // A query that records itself when it is awaited. `then` is where a query runs from, so the record is made there, and the
 // Rows it resolves to are handed to the record before the awaiting caller sees them. A write that needs reads before it runs
 // Runs them in the same batch, ahead of it, so they see the rows as the write does. The query's other methods run on the
@@ -26,11 +33,15 @@ import { getResultAsync } from "@esposter/shared";
 // Statement awaited alone is run as it is, so its own `then` runs it
 const runStatement = async (
   recorder: Recorder,
-  statement: PromiseLike<unknown> & SQLWrapper,
+  executed: ReturnType<typeof widenUnreturnedWrite>,
   reads: BeforeRead[],
 ): Promise<{ before: RecordedRows[]; result: unknown }> => {
-  if (reads.length === 0) return { before: [], result: await statement };
-  const results = await batchStatements(recorder.database, [...reads.map(({ select }) => select), statement]);
+  if (reads.length === 0)
+    return {
+      before: [],
+      result: executed.answer ? await runWidenedWrite(executed.statement) : await executed.statement,
+    };
+  const results = await batchStatements(recorder.database, [...reads.map(({ select }) => select), executed.statement]);
   return {
     before: reads.map(({ table }, index) => ({ rows: toRows(results[index]), table })),
     result: results[reads.length],
@@ -51,7 +62,7 @@ export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(sta
           const executed = widenUnreturnedWrite(target);
           const complete = recorder.record(executed.statement);
           const reads = getBeforeReads(recorder.database, target);
-          return getResultAsync(() => runStatement(recorder, executed.statement, reads)).match(
+          return getResultAsync(() => runStatement(recorder, executed, reads)).match(
             ({ before, result }) => {
               complete(result, before);
               const answer = executed.answer ? executed.answer(result) : answerReturned(recorded, result);
