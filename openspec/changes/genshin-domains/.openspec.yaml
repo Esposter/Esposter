@@ -3,4 +3,5 @@ affected_areas: [genshin]
 x-phase: 6
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
+x-waiting: "3.2 waits on the domain's scene export, a PC export the build does not hold"
 x-touches: ["scripts/src/services/genshinAssets/domains/**", "packages/genshin-world/src/data/regions/**"]

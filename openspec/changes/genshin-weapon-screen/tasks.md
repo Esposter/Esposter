@@ -11,11 +11,11 @@
 
 ## 3. Look
 
-- [ ] 3.1 Place the frame by its measured rects, and compare its look with the weapon-levelling reference clip. Verify: the comparison is run by the `genshin-parity` loop.
+- [ ] 3.1 Place the frame by its measured rects, and compare its look with the weapon-levelling reference clip. Verify: the comparison is run by the `genshin-parity` loop. Waits on the parity run of `weapon-screen`, which this round does not run.
 
 ## 4. Passive
 
-- [ ] 4.1 [phase 6] Show each passive on the screen once the weapon enhancement's passive data lands and the layout beneath the fodder grid is measured against the game reference, with a weapon that has none showing nothing. The list is drawn on the Refine tab now (the design's Decisions). Verify: the passive display tests that change owns pass when mounted on this screen. Blocked until the layout is measured; the passive's effect waits on the character kits. The Refine tab mounts `getWeaponPassive` (`packages/genshin-world/src/components/Weapon/Screen/Refine/Index.vue`), which the screen mounts, so the service has a production caller; no screen test mounts the passive yet, so this task stays open.
+- [ ] 4.1 [phase 6] Show each passive on the screen with the layout beneath the fodder grid measured against the game reference, and a weapon that has none showing nothing. The list is drawn on the Refine tab now (the design's Decisions). Verify: the passive display tests that change owns pass when mounted on this screen. Waits on the parity run of `weapon-screen` for that layout; the passive's effect waits on the character kits. The Refine tab mounts `getWeaponPassive` (`packages/genshin-world/src/components/Weapon/Screen/Refine/Index.vue`), which the screen mounts, so the service has a production caller; no screen test mounts the passive yet, so this task stays open.
 
 ## 5. The Enhance strip
 

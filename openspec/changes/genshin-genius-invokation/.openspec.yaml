@@ -3,7 +3,7 @@ affected_areas: [genshin]
 x-phase: 6
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
-x-waiting: "the Player Level's slice is published through the hosted game data, not yet built, and the seated challengers wait on the talks system's split"
+x-waiting: "1.2 and 4.3 wait on quest 70665, which the hosted game data does not carry (1.2's publish is the main session's); 3.1 waits on decks 12103, 13001, 14002, 12105 and 13003, which carry no card list in the dump; 4.1 waits on a read of the Player Level from cardGameExp and on victory rewards for the seated duels, which the dump does not give"
 x-touches:
   [
     "scripts/src/services/genshinAssets/gcg/**",

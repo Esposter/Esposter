@@ -3,12 +3,12 @@
 - [x] 1.1 Map each bird and beast kind to its drop, and mark an animal struck so that it gives its drop once. Verify: strikeWildlife.test.ts, written first and seen failing, named after 'A Crimson Fox gives two Raw Meat when struck' and 'A struck animal gives nothing when struck again'.
 - [x] 1.2 Keep a struck animal where it fell, so that stepping it does not flee. Verify: a test named after the scenario 'A struck animal does not flee', in stepWildlife.test.ts.
 - [x] 1.3 Run a startled bird from the player within its escape radius, and stand it idle again once its escape time has passed with the player out of reach. Verify: tests named after 'A White Pigeon flees when approached within its escape radius' and 'A fleeing animal returns to idle after its escape time', in stepWildlife.test.ts.
-- [ ] 1.4 Return a struck or picked up animal on its kind's refresh, as gathering points do. Verify: a test named after 'A defeated animal returns on its kind's refresh' written first and seen failing.
+- [ ] 1.4 Return a struck or picked up animal on its kind's refresh, as gathering points do. Verify: a test named after 'A defeated animal returns on its kind's refresh' written first and seen failing. Waits on the refresh each kind follows: the design names it only as 'their kind's policy', and no dataset the build reads holds one. Its source is the wiki's Wildlife page or the game's animal gather table, and the design's Decisions name the policy before the test is written.
 
 ## 2. Strikes reach the animals
 
 - [x] 2.1 Move the animals into the session's combat beside the enemies, so the strike loop tests each against the attack area. Verify: tests named after 'A hit in the attack area strikes a bird' and 'A hit outside the attack area does not strike a bird'.
-- [ ] 2.2 [phase 6] Trigger a weapon's passive on a hit on wildlife, never an artifact set's. Verify: a test named after 'A weapon passive triggers on wildlife, an artifact set does not'.
+- [x] 2.2 [phase 6] Trigger a weapon's passive on a hit on wildlife, never an artifact set's. Verify: a test named after 'A weapon passive triggers on wildlife, an artifact set does not'. Passes in `getArtifactSetKit.test.ts`: the weapon's kit hears the struck animal and the artifact set hears none. The passive's own effect is genshin-weapon-enhancement 2.2's.
 
 ## 3. Material sources
 
@@ -21,5 +21,5 @@
 
 ## 5. Pets and each region's animals
 
-- [ ] 5.1 [phase 5] Leave pets unable to be struck or picked up, and add each region's own animals when its region lands. Verify: a test named after 'A pet cannot be struck or picked up'. Deferred: no pet kind and no map label yet, see the design.
-- [ ] 5.2 [phase 5] Decide the pets' spawn source, either a label of the official map's Animals subtree or the Serenitea Pot's animal table, and record the choice in the design's Decisions with the source not taken and why. Verify: the design's Decisions name the source the pet kind's spawns read from, the one rejected and its reason, and task 5.1 names that source.
+- [ ] 5.1 [phase 5] Leave pets unable to be struck or picked up, and add each region's own animals when its region lands. Verify: a test named after 'A pet cannot be struck or picked up'. Deferred: no pet kind and no map label yet, see the design. Waits on the official map's Animals subtree carrying a Mondstadt cat or dog label, the source 5.2 names.
+- [x] 5.2 [phase 5] Decide the pets' spawn source, either a label of the official map's Animals subtree or the Serenitea Pot's animal table, and record the choice in the design's Decisions with the source not taken and why. Verify: the design's Decisions name the source the pet kind's spawns read from, the one rejected and its reason, and task 5.1 names that source.

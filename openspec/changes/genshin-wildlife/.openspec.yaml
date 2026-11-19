@@ -3,4 +3,4 @@ affected_areas: [genshin]
 x-phase: 4
 x-model: claude-haiku-5-5
 x-touches: ["packages/genshin-world/src/services/wildlife/**", "packages/genshin-world/src/models/wildlife/**"]
-x-waiting: "2.2: the wildlife side is built, a felled animal sending WildlifeStruck; the weapon passive half waits on genshin-weapon-enhancement 2.2, whose conditional passives are on agent/w6-unblocked and not yet on the integration branch; 5.1 is deferred, not blocked, and each region's own animals wait on their region landing: WildlifeKind holds no pet kind and the official map's Animals subtree has no Mondstadt cat or dog label, so no pet kind is added until the map carries one"
+x-waiting: "1.4 waits on the refresh each kind follows, which no dataset the build reads holds; 5.1 waits on the official map's Animals subtree carrying a Mondstadt cat or dog label, the source the design names"
