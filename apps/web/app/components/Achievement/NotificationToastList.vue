@@ -6,13 +6,14 @@ await useUserSocket();
 
 const { $trpc } = useNuxtApp();
 const achievementStore = useAchievementStore();
-const { recentlyUnlockedUserAchievements, userAchievements } = storeToRefs(achievementStore);
-const { dismissRecentlyUnlockedUserAchievement, initializeAchievementDefinitionMap } = achievementStore;
+const { recentlyUnlockedUserAchievements } = storeToRefs(achievementStore);
+const { dismissRecentlyUnlockedUserAchievement, initializeAchievementDefinitionMap, initializeUserAchievements } =
+  achievementStore;
 // The signed-in surfaces read the map the server masked for this viewer, so a hidden achievement they have
 // Not unlocked keeps its "???" description
 const achievementDefinitionMap = await $trpc.achievement.readAchievementMap.query();
 initializeAchievementDefinitionMap(achievementDefinitionMap);
-userAchievements.value = await useReadUserAchievements(undefined, achievementDefinitionMap);
+initializeUserAchievements(await useReadUserAchievements(undefined, achievementDefinitionMap));
 </script>
 
 <template>

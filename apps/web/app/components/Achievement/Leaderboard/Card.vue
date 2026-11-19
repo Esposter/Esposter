@@ -10,8 +10,8 @@ interface Props {
 const { leaderboard } = defineProps<Props>();
 const isMyEntryAppended = computed(() => {
   const { myEntry } = leaderboard;
-  if (myEntry) return !leaderboard.entries.some(({ user }) => user.id === myEntry.user.id);
-  else return false;
+  if (!myEntry) return false;
+  return !leaderboard.entries.some(({ user }) => user.id === myEntry.user.id);
 });
 </script>
 
