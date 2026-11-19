@@ -9,7 +9,7 @@ import { toXyz } from "#src/services/shared/toXyz";
 import { GENSHIN_BLOOM_THRESHOLD, toneMapGenshin } from "genshin-engine";
 
 // The bloom's threshold as the display shows it: the tone curve takes a scene channel at the threshold to a linear one,
-// which the display encodes to sRGB. A reference channel over that shade is one the bloom's prefilter takes
+// Which the display encodes to sRGB. A reference channel over that shade is one the bloom's prefilter takes
 const [thresholdLinear] = toneMapGenshin([GENSHIN_BLOOM_THRESHOLD, GENSHIN_BLOOM_THRESHOLD, GENSHIN_BLOOM_THRESHOLD]);
 const BLOOM_THRESHOLD_SHADE = toSrgb(thresholdLinear) * BYTE;
 // CIELab lightness runs from 0 to 100, and the shadows, mids and highlights are its thirds
@@ -35,8 +35,8 @@ const checkIsAboveThreshold = (reference: Buffer, pixel: number): boolean =>
   [0, 1, 2].some((channel) => (reference[pixel * 3 + channel] ?? 0) > BLOOM_THRESHOLD_SHADE);
 
 // Each scored pixel's lightness error, ours less the reference, sorted into the lightness band the reference's lightness
-// falls in, and into the above-threshold band too where a reference channel is over the bloom's threshold. The bands
-// are read over the same pixels for both frames, so a pixel moves between them by the reference alone
+// Falls in, and into the above-threshold band too where a reference channel is over the bloom's threshold. The bands
+// Are read over the same pixels for both frames, so a pixel moves between them by the reference alone
 export const computeBrightnessBands = (
   reference: Buffer,
   ours: Buffer,

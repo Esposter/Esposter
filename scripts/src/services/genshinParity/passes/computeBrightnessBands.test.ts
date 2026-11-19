@@ -12,7 +12,7 @@ describe(computeBrightnessBands, () => {
     expect.hasAssertions();
 
     // Shadow, mid and white pixels, each ours a grey the reference shows as itself, except the white, which ours shows as
-    // a mid grey. The mid grey (sRGB 128) is CIELab lightness 53.6, so the white's error is 46.4 less, in the highlights
+    // A mid grey. The mid grey (sRGB 128) is CIELab lightness 53.6, so the white's error is 46.4 less, in the highlights
     const reference = createRow([0, 128, BYTE]);
     const ours = createRow([0, 128, 128]);
     const readings = computeBrightnessBands(reference, ours, 3, 1, SCORED_ALL(3));
@@ -30,7 +30,7 @@ describe(computeBrightnessBands, () => {
     expect.hasAssertions();
 
     // The threshold is 0.75 of the scene, which the curve shows at a display channel of about 208 of 255. A grey of 200
-    // is under it and a grey of 240 over it, so only the second is in the band the bloom takes
+    // Is under it and a grey of 240 over it, so only the second is in the band the bloom takes
     const reference = createRow([200, 240]);
     const ours = createRow([200, 240]);
     const readings = computeBrightnessBands(reference, ours, 2, 1, SCORED_ALL(2));

@@ -3,8 +3,13 @@ import type { TransitionProps } from "vue";
 
 import { omitUndefined } from "@esposter/shared";
 
+interface Props {
+  // How the leaving and entering content take turns, which the transition does at once where it is absent
+  mode?: TransitionProps["mode"] | undefined;
+}
+
 defineSlots<{ default: () => VNode }>();
-defineProps<{ mode?: TransitionProps["mode"] | undefined }>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -11,7 +11,7 @@ import { defineCommand } from "citty";
 const formatError = (error: number | undefined): string => (error === undefined ? "-" : error.toFixed(2));
 
 // The brightness bands of every reference whose screen draws the bloom, with the bloom drawn off: where our frame reads
-// brighter or darker than the reference, by band. Its last line is the rows as JSON
+// Brighter or darker than the reference, by band. Its last line is the rows as JSON
 export const tonesCommand: SubCommandsDef[string] = defineCommand({
   meta: {
     description:
