@@ -90,15 +90,9 @@ A ground laid over another SHALL be lifted onto its own base where its hills sta
 - **WHEN** the composed ground is read
 - **THEN** its features stand on the first ground's base
 
-### Requirement: A region's piece is the surface of its own outline
+### Requirement: A piece is the surface of its own domain alone
 
-A piece laid over a base SHALL be the surface of its own domain alone at every point inside it, and SHALL NOT be summed with the other pieces' levels. Across the seam of each outline shared with another piece, a band of the blend width either side SHALL mix each piece's surface, centred on the seam. At an outline no other piece's band reaches, the piece's surface SHALL hold to the outline and the blend SHALL lie outside it, the base taking what the shares leave, and outside every outline the base SHALL show.
-
-#### Scenario: A sample just inside an outer edge reads that piece's own surface
-
-- **GIVEN** a piece whose outline has no neighbouring piece along the edge
-- **WHEN** the height is read a metre inside that edge
-- **THEN** the height is that piece's surface, not blended toward the base
+A piece laid over a base SHALL be the surface of its own domain alone at every point inside it, and SHALL NOT be summed with the other pieces' levels.
 
 #### Scenario: A point inside one piece's outline reads that piece's surface
 
@@ -106,11 +100,25 @@ A piece laid over a base SHALL be the surface of its own domain alone at every p
 - **WHEN** the height is read at a point inside one piece's outline and deeper than the band
 - **THEN** the height is that piece's surface alone, not the sum of the two
 
+### Requirement: A seam blends the two pieces' surfaces across a band
+
+Across the seam of each outline shared with another piece, a band of the blend width either side SHALL mix each piece's surface, centred on the seam.
+
 #### Scenario: The height is continuous across an outline's seam
 
 - **GIVEN** a piece's outline with a neighbouring piece or the base on its far side
 - **WHEN** the height is read a millimetre either side of the seam
 - **THEN** the two heights differ by no more than the ground's slope over that millimetre
+
+### Requirement: An outline no other piece's band reaches holds its surface
+
+At an outline no other piece's band reaches, the piece's surface SHALL hold to the outline and the blend SHALL lie outside it, the base taking what the shares leave. Outside every outline the base SHALL show.
+
+#### Scenario: A sample just inside an outer edge reads that piece's own surface
+
+- **GIVEN** a piece whose outline has no neighbouring piece along the edge
+- **WHEN** the height is read a metre inside that edge
+- **THEN** the height is that piece's surface, not blended toward the base
 
 #### Scenario: Outside every outline the base shows
 
