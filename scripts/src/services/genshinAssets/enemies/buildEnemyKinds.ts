@@ -84,8 +84,9 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const curves = new Set(
     enemyKinds.flatMap(({ attackCurve, defenseCurve, healthCurve }) => [attackCurve, defenseCurve, healthCurve]),
   );
+  const levelRows = monsterCurveRows.toSorted((firstRow, secondRow) => firstRow.level - secondRow.level);
   const levelCurves = Object.fromEntries(
-    [...curves].toSorted().map((curve) => [curve, toLevelCurve(monsterCurveRows, curve)]),
+    [...curves].toSorted().map((curve) => [curve, toLevelCurve(levelRows, curve)]),
   );
   return { [`${GameDataset.Enemies}/kinds`]: enemyKinds, [`${GameDataset.Enemies}/levelCurves`]: levelCurves };
 };

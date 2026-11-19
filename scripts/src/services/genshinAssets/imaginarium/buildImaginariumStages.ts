@@ -35,7 +35,9 @@ export const buildImaginariumStages = async (): Promise<Record<string, unknown>>
   const monsters = readMonsterNames();
   const monsterRows = readExcelTable<MonsterRow>(MONSTER_TABLE_NAME);
   const animalCodexRows = readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_NAME);
-  const monsterCurveRows = readExcelTable<MonsterCurveRow>(MONSTER_CURVE_TABLE_NAME);
+  const monsterCurveRows = readExcelTable<MonsterCurveRow>(MONSTER_CURVE_TABLE_NAME).toSorted(
+    (firstRow, secondRow) => firstRow.level - secondRow.level,
+  );
   const stages = titles.flatMap((title) => {
     const seasonId = beginDaySeasonIdMap.get(title.slice(-10));
     if (seasonId === undefined)
