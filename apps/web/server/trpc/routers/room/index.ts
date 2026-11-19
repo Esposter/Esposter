@@ -348,16 +348,16 @@ export const baseRoomRouter = router({
         sort,
       );
       let room: (RoomInMessage & { displayName: string }) | undefined;
+      // The route's room and the page are read from the same joins, so each read builds its own statement from this
+      const selectRooms = () =>
+        ctx.db
+          .select({ ...roomColumns, displayName })
+          .from(roomsInMessage)
+          .innerJoin(usersToRoomsInMessage, innerJoinCondition)
+          .leftJoin(directMessageDisplayNames, eq(directMessageDisplayNames.roomId, roomsInMessage.id));
 
       if (roomId) {
-        const routeRoom = (
-          await ctx.db
-            .select({ ...roomColumns, displayName })
-            .from(roomsInMessage)
-            .innerJoin(usersToRoomsInMessage, innerJoinCondition)
-            .leftJoin(directMessageDisplayNames, eq(directMessageDisplayNames.roomId, roomsInMessage.id))
-            .where(eq(roomsInMessage.id, roomId))
-        )[0];
+        const routeRoom = (await selectRooms().where(eq(roomsInMessage.id, roomId)))[0];
         if (!routeRoom) throw getNotFoundError(DatabaseEntityType.Room, roomId);
         if (routeRoom.type === RoomType.Room || (includeDirectMessages && routeRoom.type === RoomType.DirectMessage))
           room = routeRoom;
@@ -372,11 +372,7 @@ export const baseRoomRouter = router({
       if (filter?.name) wheres.push(containsLike(displayName, filter.name));
       if (room) wheres.push(ne(roomsInMessage.id, room.id));
 
-      const rooms = await ctx.db
-        .select({ ...roomColumns, displayName })
-        .from(roomsInMessage)
-        .innerJoin(usersToRoomsInMessage, innerJoinCondition)
-        .leftJoin(directMessageDisplayNames, eq(directMessageDisplayNames.roomId, roomsInMessage.id))
+      const rooms = await selectRooms()
         .where(and(...wheres))
         .orderBy(...getPageOrderBy(boundSort, cursor))
         .limit(limit + 1);
