@@ -8,11 +8,11 @@ import { join, posix } from "node:path";
 // New package with a components folder is a root the day it is added
 export const readComponentRoots = (): Map<string, string> =>
   new Map(
-    readWorkspacePackages(REPOSITORY_ROOT)
-      .filter(({ manifest }) => manifest.name.startsWith(GENSHIN_PACKAGE_PREFIX))
-      .map(
-        ({ directory, manifest, workspaceDirectory }) =>
-          [manifest.name, posix.join(workspaceDirectory, directory, "src", "components")] as const,
-      )
-      .filter(([, directory]) => existsSync(join(REPOSITORY_ROOT, directory))),
+    readWorkspacePackages(REPOSITORY_ROOT).flatMap(({ directory, manifest, workspaceDirectory }) => {
+      const name = manifest.name ?? "";
+      const componentsDirectory = posix.join(workspaceDirectory, directory, "src", "components");
+      return name.startsWith(GENSHIN_PACKAGE_PREFIX) && existsSync(join(REPOSITORY_ROOT, componentsDirectory))
+        ? [[name, componentsDirectory] as const]
+        : [];
+    }),
   );

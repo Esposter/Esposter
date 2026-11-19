@@ -6,7 +6,7 @@ import { join } from "node:path";
 // The text of every spec page of record, read off `openspec/specs`, where a built feature's specification is kept
 export const readSpecTexts = (): string[] => {
   const specsDirectory = join(REPOSITORY_ROOT, OPENSPEC_DIRECTORY, "specs");
-  return readdirSync(specsDirectory, { recursive: true })
+  return readdirSync(specsDirectory, { encoding: "utf8", recursive: true })
     .filter((file) => file.endsWith(".md"))
     .map((file) => readFileSync(join(specsDirectory, file), "utf8"));
 };

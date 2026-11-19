@@ -6,7 +6,7 @@ import { join, posix, sep } from "node:path";
 export const listComponentPaths = (componentDirectories: readonly string[]): string[] =>
   componentDirectories
     .flatMap((directory) =>
-      readdirSync(join(REPOSITORY_ROOT, directory), { recursive: true }).map((file) =>
+      readdirSync(join(REPOSITORY_ROOT, directory), { encoding: "utf8", recursive: true }).map((file) =>
         posix.join(directory, file.replaceAll(sep, "/")),
       ),
     )
