@@ -2,6 +2,7 @@ import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { AffectedCell } from "#src/models/resource/sheet/commands/AffectedCell";
+import type { ToData } from "@esposter/shared";
 
 import { writeCellValue } from "#src/services/resource/sheet/commands/writeCellValue";
 import { takeOne } from "@esposter/shared";
@@ -11,7 +12,7 @@ import { takeOne } from "@esposter/shared";
 export const writeAffectedCells = (
   dataSource: DataSource,
   affectedCells: AffectedCell[],
-  getValue: (affectedCell: AffectedCell, column: Column) => ColumnValue,
+  getValue: (affectedCell: AffectedCell, column: ToData<Column>) => ColumnValue,
 ) => {
   const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
   for (const affectedCell of affectedCells) {

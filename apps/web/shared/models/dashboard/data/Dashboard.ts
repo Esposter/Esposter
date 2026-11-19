@@ -15,7 +15,7 @@ export class Dashboard extends AItemEntity {
   compactType: CompactType = CompactType.Vertical;
   visuals: Visual[] = [];
 
-  constructor(init?: Partial<Dashboard>) {
+  constructor(init?: Partial<ToData<Dashboard>>) {
     super();
     Object.assign(this, init);
   }

@@ -1,4 +1,5 @@
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { useResourceStore } from "#src/store/resource/index";
 
@@ -6,8 +7,8 @@ import { useResourceStore } from "#src/store/resource/index";
 // Re-open the dialog over the copy's same rows
 export const useRowDialogStore = defineStore("resource/sheet/rowDialog", () => {
   const resourceStore = useResourceStore();
-  const { data: editingId } = useDataMap<Row["id"]>(() => resourceStore.currentResourceId, "");
+  const { data: editingId } = useDataMap<ToData<Row>["id"]>(() => resourceStore.currentResourceId, "");
   // One row from its own delete button, or the selection from the toolbar
-  const { data: deletingIds } = useDataMap<Row["id"][]>(() => resourceStore.currentResourceId, []);
+  const { data: deletingIds } = useDataMap<ToData<Row>["id"][]>(() => resourceStore.currentResourceId, []);
   return { deletingIds, editingId };
 });

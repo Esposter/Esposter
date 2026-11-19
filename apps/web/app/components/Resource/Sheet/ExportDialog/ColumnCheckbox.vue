@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/resource/sheet/column/Column";
+import type { ToData } from "@esposter/shared";
 
 interface Props {
-  column: Column;
+  column: ToData<Column>;
 }
 
 const selectedColumnIds = defineModel<string[]>({ required: true });

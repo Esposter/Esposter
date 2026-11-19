@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { EditableColumnValue } from "#shared/models/resource/sheet/column/EditableColumnValue";
+import type { ToData } from "@esposter/shared";
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
@@ -11,7 +12,7 @@ import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface Props {
   column: EditableColumnValue;
-  item: Row;
+  item: ToData<Row>;
   rowIndex: number;
 }
 

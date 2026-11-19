@@ -1,6 +1,7 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { SheetCellReader } from "#shared/models/resource/sheet/column/SheetCellReader";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { ComputedColumn } from "#shared/models/resource/sheet/column/ComputedColumn";
 import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
@@ -65,7 +66,7 @@ const nextColumn = new ComputedColumn({
     variables: [{ name: "r", sourceColumnId: rankColumn.id }],
   },
 });
-const columns: Column[] = [...storedColumns, mathColumn, textColumn, digitColumn, rankColumn, nextColumn];
+const columns: ToData<Column>[] = [...storedColumns, mathColumn, textColumn, digitColumn, rankColumn, nextColumn];
 
 const rows100 = generateBenchRows(100);
 const rows1k = generateBenchRows(1000);
@@ -73,12 +74,17 @@ const rows10k = generateBenchRows(10000);
 const rowIdIndexMap100 = new Map(rows100.map((row, index) => [row.id, index]));
 const rowIdIndexMap1k = new Map(rows1k.map((row, index) => [row.id, index]));
 // One pass compiles the sheet, binds it to the rows and reads each listed column's cell for every row
-const readPass = (rows: Row[], readColumns: Column[]) => {
+const readPass = (rows: ToData<Row>[], readColumns: ToData<Column>[]) => {
   const readCell = compileSheetColumns(columns)(rows);
   for (const [rowIndex, row] of rows.entries()) for (const column of readColumns) readCell(row, column, rowIndex);
 };
 // The grid binds once for its rows and sorts through that binding, so only the comparisons are timed
-const sortRows = (rows: Row[], rowIdIndexMap: Map<string, number>, readCell: SheetCellReader, column: Column) =>
+const sortRows = (
+  rows: ToData<Row>[],
+  rowIdIndexMap: Map<string, number>,
+  readCell: SheetCellReader,
+  column: ToData<Column>,
+) =>
   rows.toSorted((firstRow, secondRow) =>
     compareColumnValues(
       readCell(firstRow, column, rowIdIndexMap.get(firstRow.id)),

@@ -2,6 +2,7 @@ import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { AffectedCell } from "#src/models/resource/sheet/commands/AffectedCell";
+import type { ToData } from "@esposter/shared";
 
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { takeOne } from "@esposter/shared";
@@ -11,8 +12,8 @@ import { takeOne } from "@esposter/shared";
 // Is skipped whatever the caller hands in: its value is never stored, so `row.data` holds nothing a predicate can
 // Judge — an absent cell stringifies to "undefined" and a find would match it — and nothing a command may write
 export const collectAffectedCells = (
-  rows: Row[],
-  columns: Column[],
+  rows: ToData<Row>[],
+  columns: ToData<Column>[],
   checkIsAffected: (value: ColumnValue) => boolean,
   rowRange?: { end: number; start: number },
 ) => {

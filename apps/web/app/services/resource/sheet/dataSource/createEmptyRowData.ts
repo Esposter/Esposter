@@ -1,5 +1,6 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 
@@ -7,5 +8,5 @@ import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/colu
 // Renders a cell for every column it knows about, and a missing key would read as a column the row predates. A
 // Computed column is the exception — its value is never stored, and a null left under its name reads as an empty
 // Cell to anything that walks the row, which is how "drop rows with empty cells" came to drop a filled row
-export const createEmptyRowData = (columns: Column[]): Row["data"] =>
+export const createEmptyRowData = (columns: ToData<Column>[]): ToData<Row>["data"] =>
   Object.fromEntries(columns.filter((column) => checkIsEditableColumnValue(column)).map(({ name }) => [name, null]));

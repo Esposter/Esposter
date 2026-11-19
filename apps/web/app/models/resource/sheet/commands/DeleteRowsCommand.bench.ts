@@ -1,5 +1,6 @@
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { IndexedRow } from "#src/models/resource/sheet/commands/IndexedRow";
+import type { ToData } from "@esposter/shared";
 
 import { benchRows1k, benchRows10k, benchRows100 } from "#src/composables/resource/sheet/commands/constants.bench";
 import { createBenchDataSource } from "#src/composables/resource/sheet/commands/createBenchDataSource.bench";
@@ -9,7 +10,7 @@ import { describe } from "vitest";
 
 // ~50% deletion at each scale, each row paired with the index its undo restores it to. Read-only input to the
 // Command, so it is built once rather than per iteration.
-const createEveryOtherIndexedRows = (rows: Row[]): IndexedRow[] =>
+const createEveryOtherIndexedRows = (rows: ToData<Row>[]): IndexedRow[] =>
   rows.flatMap((row, index) => (index % 2 === 0 ? [{ index, row }] : []));
 const indexedRows50 = createEveryOtherIndexedRows(benchRows100);
 const indexedRows500 = createEveryOtherIndexedRows(benchRows1k);

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { toColumnKey } from "#src/services/resource/sheet/column/toColumnKey";
@@ -8,7 +9,7 @@ import { useColumnStore } from "#src/store/resource/sheet/column";
 
 interface Props {
   columnKey: string;
-  item: Row;
+  item: ToData<Row>;
   rowIndex: number;
 }
 

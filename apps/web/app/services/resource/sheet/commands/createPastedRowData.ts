@@ -1,5 +1,6 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
@@ -10,10 +11,10 @@ import { createEmptyRowData } from "#src/services/resource/sheet/dataSource/crea
 // And a computed column takes nothing: its value is never stored. A target the sheet no longer has is a gap the value
 // At its offset falls into, and a value past the last target is dropped
 export const createPastedRowData = (
-  columns: Column[],
-  targetColumns: (Column | undefined)[],
+  columns: ToData<Column>[],
+  targetColumns: (ToData<Column> | undefined)[],
   pastedValues: string[],
-): Row["data"] => {
+): ToData<Row>["data"] => {
   const data = createEmptyRowData(columns);
   for (const [columnOffset, pastedValue] of pastedValues.entries()) {
     if (columnOffset >= targetColumns.length) break;

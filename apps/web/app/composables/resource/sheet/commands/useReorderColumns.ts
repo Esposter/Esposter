@@ -1,10 +1,11 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
+import type { ToData } from "@esposter/shared";
 
 import { MoveColumnCommand } from "#shared/models/resource/sheet/commands/MoveColumnCommand";
 import { takeOne } from "@esposter/shared";
 
 export const useReorderColumns = () =>
-  useSheetCommand((dataSource, newColumns: Column[]) => {
+  useSheetCommand((dataSource, newColumns: ToData<Column>[]) => {
     const oldColumns = dataSource.columns;
     const newColumnIdIndexMap = new Map(newColumns.map((column, index) => [column.id, index]));
     let fromIndex = -1;

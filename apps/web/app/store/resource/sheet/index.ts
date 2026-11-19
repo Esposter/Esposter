@@ -1,4 +1,5 @@
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
+import type { ToData } from "@esposter/shared";
 
 import { createDefaultSheetResource } from "#shared/services/resource/sheet/createDefaultSheetResource";
 import { createContentData } from "#src/services/resource/createContentData";
@@ -13,14 +14,14 @@ export const useSheetStore = defineStore("resource/sheet", () => {
     getContentWriter,
     loadContent,
     saveContent: saveSheet,
-  } = createContentData<typeof ResourceType.Sheet, SheetResource>(
+  } = createContentData<typeof ResourceType.Sheet, ToData<SheetResource>>(
     ResourceType.Sheet,
     // Content is parsed from the blob with plain JSON.parse, so the loaded value carries the sheet's data
     // Shape rather than its class instances. Reviving them the way the dashboard does would mean walking
     // Every row and column of a sheet on open, and buys nothing: `toJSON` is the only method these classes
     // Have, and it returns what `JSON.stringify` produces without it. The content schemas hold that invariant
     // Through `satisfies z.ZodType<ToData<…>>`, so they stop compiling the day a second method is added
-    (data) => (data as SheetResource | undefined) ?? createDefaultSheetResource(),
+    (data) => data ?? createDefaultSheetResource(),
   );
   // The grid operates on the data section; settings is the parse configuration the Settings blade edits
   const dataSource = computed(() => sheetResource.value.data);

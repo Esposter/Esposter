@@ -1,5 +1,6 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
@@ -14,9 +15,9 @@ export class CreateRowCommand extends ADataSourceCommand<typeof CommandType.Crea
   }
 
   readonly #index: number;
-  readonly #newRow: Row;
+  readonly #newRow: ToData<Row>;
 
-  constructor(index: number, newRow: Row) {
+  constructor(index: number, newRow: ToData<Row>) {
     super();
     this.#index = index;
     this.#newRow = newRow;

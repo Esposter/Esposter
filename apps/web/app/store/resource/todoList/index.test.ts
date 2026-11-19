@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { ResourceInResource } from "@esposter/db-schema";
+import type { ToData } from "@esposter/shared";
 
 import { RecurrenceUnit } from "#shared/models/resource/todoList/RecurrenceUnit";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
@@ -31,7 +32,7 @@ describe(useTodoListStore, () => {
   const newItemName = "newItem";
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.TodoList });
-  let content: TodoListResource;
+  let content: ToData<TodoListResource>;
   let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
 
   beforeEach(async () => {
@@ -62,7 +63,7 @@ describe(useTodoListStore, () => {
   test("reads the content once however many blades load it", async () => {
     expect.hasAssertions();
 
-    const readResourceContent = vi.fn<() => TodoListResource>(() => content);
+    const readResourceContent = vi.fn<() => ToData<TodoListResource>>(() => content);
     trpcMsw.todoList.readResourceContent.query(readResourceContent);
     const { loadContent } = await setupStore();
     await loadContent();

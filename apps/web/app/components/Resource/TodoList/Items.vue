@@ -2,6 +2,7 @@
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import type { Item } from "#src/models/shared/Item";
 import type { UiListItem } from "#src/models/ui/UiListItem";
+import type { ToData } from "@esposter/shared";
 
 import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
@@ -45,7 +46,7 @@ const searchedItems = computed(() => {
       )
     : items.value;
 });
-const toListItem = ({ id, name }: TodoListItem): UiListItem<string> => ({
+const toListItem = ({ id, name }: ToData<TodoListItem>): UiListItem<string> => ({
   hasLeadingSlot: true,
   title: name,
   value: id,

@@ -2,6 +2,7 @@ import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { ColumnFormContext } from "#src/models/resource/sheet/column/ColumnFormContext";
 import type { UiSelectItem } from "#src/models/ui/UiSelectItem";
+import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { columnFormSchema } from "#src/models/resource/sheet/column/ColumnForm";
@@ -11,10 +12,10 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 // The form schema refined so a name another column already has is refused, the column's own current name aside
 export const useColumnForm = (dataSource: MaybeRefOrGetter<DataSource>, currentName: MaybeRefOrGetter<string>) => {
   const context = computed<ColumnFormContext>(() => {
-    const columnItems: UiSelectItem<Column["id"]>[] = [];
-    const columnTypeItemsMap: Partial<Record<ColumnType, UiSelectItem<Column["id"]>[]>> = {};
+    const columnItems: UiSelectItem<ToData<Column>["id"]>[] = [];
+    const columnTypeItemsMap: Partial<Record<ColumnType, UiSelectItem<ToData<Column>["id"]>[]>> = {};
     for (const { id, name, type } of toValue(dataSource).columns) {
-      const item: UiSelectItem<Column["id"]> = { meaning: UiIconMeaning.Columns, title: name, value: id };
+      const item: UiSelectItem<ToData<Column>["id"]> = { meaning: UiIconMeaning.Columns, title: name, value: id };
       columnItems.push(item);
       (columnTypeItemsMap[type] ??= []).push(item);
     }

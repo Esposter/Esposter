@@ -1,4 +1,5 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
+import type { ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { BooleanColumn } from "#shared/models/resource/sheet/column/BooleanColumn";
@@ -17,5 +18,7 @@ export const ColumnTypeCreateMap = {
   [ColumnType.Number]: { create: (init?: Partial<Except<NumberColumn, "type">>) => new NumberColumn({ ...init }) },
   [ColumnType.String]: { create: (init?: Partial<Except<StringColumn, "type">>) => new StringColumn({ ...init }) },
 } as const satisfies {
-  [K in ColumnType]: { create: (init?: Partial<Except<Extract<Column, { type: K }>, "type">>) => Column };
+  [K in ColumnType]: {
+    create: (init?: Partial<Except<Extract<ToData<Column>, { type: K }>, "type">>) => ToData<Column>;
+  };
 };

@@ -1,4 +1,5 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
+import type { ToData } from "@esposter/shared";
 
 import { useResourceStore } from "#src/store/resource/index";
 
@@ -6,9 +7,9 @@ import { useResourceStore } from "#src/store/resource/index";
 // Too, so an app-lifetime target would re-open the dialog over that sheet's same-named column
 export const useColumnDialogStore = defineStore("resource/sheet/columnDialog", () => {
   const resourceStore = useResourceStore();
-  const { data: chartingColumnName } = useDataMap<Column["name"]>(() => resourceStore.currentResourceId, "");
-  const { data: editingColumnName } = useDataMap<Column["name"]>(() => resourceStore.currentResourceId, "");
+  const { data: chartingColumnName } = useDataMap<ToData<Column>["name"]>(() => resourceStore.currentResourceId, "");
+  const { data: editingColumnName } = useDataMap<ToData<Column>["name"]>(() => resourceStore.currentResourceId, "");
   // One column from its commands, or the selection from the toolbar
-  const { data: deletingColumnIds } = useDataMap<Column["id"][]>(() => resourceStore.currentResourceId, []);
+  const { data: deletingColumnIds } = useDataMap<ToData<Column>["id"][]>(() => resourceStore.currentResourceId, []);
   return { chartingColumnName, deletingColumnIds, editingColumnName };
 });

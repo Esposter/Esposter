@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/resource/sheet/column/Column";
+import type { ToData } from "@esposter/shared";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
-  column: Column;
+  column: ToData<Column>;
 }
 
 defineProps<Props>();

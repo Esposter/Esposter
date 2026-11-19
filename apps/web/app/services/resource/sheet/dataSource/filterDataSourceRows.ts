@@ -1,11 +1,12 @@
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { ColumnFilter } from "#src/models/resource/sheet/column/ColumnFilter";
+import type { ToData } from "@esposter/shared";
 
 import { checkIsActiveColumnFilter } from "#src/services/resource/sheet/column/checkIsActiveColumnFilter";
 import { ColumnFilterPredicateMap } from "#src/services/resource/sheet/dataSource/ColumnFilterPredicateMap";
 import { takeOne } from "@esposter/shared";
 
-export const filterDataSourceRows = (rows: Row[], columnFilters: Record<string, ColumnFilter>) => {
+export const filterDataSourceRows = (rows: ToData<Row>[], columnFilters: Record<string, ColumnFilter>) => {
   const activeFilters = Object.entries(columnFilters).filter(([, filter]) => checkIsActiveColumnFilter(filter));
   if (activeFilters.length === 0) return rows;
   return rows.filter((row) =>

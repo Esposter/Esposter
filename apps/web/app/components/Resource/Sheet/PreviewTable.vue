@@ -2,6 +2,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
+import type { ToData } from "@esposter/shared";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { SHEET_IMPORT_PREVIEW_ROW_COUNT } from "#src/services/resource/constants";
@@ -12,9 +13,9 @@ interface Props {
 }
 
 const { dataSource } = defineProps<Props>();
-const previewColumns = computed<UiDataTableColumn<Row>[]>(() =>
+const previewColumns = computed<UiDataTableColumn<ToData<Row>>[]>(() =>
   dataSource.columns.map(({ name }) => ({
-    getValue: (row: Row) => String(takeOne(row.data, name) ?? ""),
+    getValue: (row: ToData<Row>) => String(takeOne(row.data, name) ?? ""),
     isSortable: false,
     key: name,
     title: name,

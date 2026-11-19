@@ -2,6 +2,7 @@ import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
 import type { ColumnStatisticsKey } from "#shared/models/resource/sheet/column/ColumnStatisticsKey";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
+import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { getEffectiveColumnType } from "#shared/services/resource/sheet/column/getEffectiveColumnType";
@@ -12,7 +13,7 @@ import { computeTopFrequencies } from "#src/services/resource/sheet/column/compu
 
 // The values are the column's cells as the compiled sheet reads them, one per row, so a caller that already holds
 // Them does not read every cell a second time
-export const computeColumnStatisticsForColumn = (column: Column, values: ColumnValue[]): ColumnStatistics => {
+export const computeColumnStatisticsForColumn = (column: ToData<Column>, values: ColumnValue[]): ColumnStatistics => {
   const effectiveColumnType = getEffectiveColumnType(column);
   const context = buildColumnStatisticsComputeContext(effectiveColumnType, values);
   const statisticsValues = Object.fromEntries(

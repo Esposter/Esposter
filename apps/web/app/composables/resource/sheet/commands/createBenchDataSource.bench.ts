@@ -1,4 +1,5 @@
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
@@ -20,7 +21,7 @@ import { describe } from "vitest";
 //
 // Rebuilding the rows is O(rows) inside the timing, which the bench conventions accept for a mutating op — and it
 // Is the same order as the row rebuild the commands themselves do, so it does not drown the signal it costs.
-export const createBenchDataSource = (rows: Row[]) =>
+export const createBenchDataSource = (rows: ToData<Row>[]) =>
   createDataSource(
     [...benchColumns],
     rows.map((row) => createRow({ ...row.data })),

@@ -1,10 +1,11 @@
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import type { ToData } from "@esposter/shared";
 
 import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // A view over the list, never a rewrite of it: every sort is stable, so todos it ranks alike keep the list's own order
-export const sortTodoListItems = (items: TodoListItem[], sort: TodoListSort): TodoListItem[] => {
+export const sortTodoListItems = (items: ToData<TodoListItem>[], sort: TodoListSort): ToData<TodoListItem>[] => {
   switch (sort) {
     case TodoListSort.Alphabetical:
       return items.toSorted((firstItem, secondItem) => firstItem.name.localeCompare(secondItem.name));

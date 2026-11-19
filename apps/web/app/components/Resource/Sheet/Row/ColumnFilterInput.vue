@@ -2,13 +2,14 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { BooleanFilterValue } from "#src/models/resource/sheet/column/BooleanFilterValue";
 import type { ColumnFilter } from "#src/models/resource/sheet/column/ColumnFilter";
+import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { BooleanFilterValueItemCategoryDefinitions } from "#src/services/resource/sheet/column/BooleanFilterValueItemCategoryDefinitions";
 
 interface Props {
-  column: Column;
+  column: ToData<Column>;
 }
 
 const modelValue = defineModel<ColumnFilter | undefined>({ required: true });

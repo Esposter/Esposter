@@ -1,5 +1,6 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { getVisibleColumns } from "#src/services/resource/sheet/column/getVisibleColumns";
 import { filterDataSourceColumns } from "#src/services/resource/sheet/dataSource/filterDataSourceColumns";
@@ -8,7 +9,7 @@ import { filterDataSourceColumns } from "#src/services/resource/sheet/dataSource
 // Sets are derived here from the one `DataSource` — so the narrowed set can never be handed in as the context
 export const filterDataSourceRange = (
   dataSource: DataSource,
-  rows: Row[],
+  rows: ToData<Row>[],
   range: { columnEnd: number; columnStart: number; rowEnd: number; rowStart: number },
 ) => {
   const columnIds = getVisibleColumns(dataSource.columns)

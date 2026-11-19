@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { OUTLIER_HIGHLIGHT_CLASS } from "#src/services/resource/sheet/constants";
@@ -11,8 +12,8 @@ import { useOutlierStore } from "#src/store/resource/sheet/outlier";
 import { useRowStore } from "#src/store/resource/sheet/row";
 
 interface Props {
-  column: Column;
-  item: Row;
+  column: ToData<Column>;
+  item: ToData<Row>;
   rowIndex: number;
 }
 

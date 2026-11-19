@@ -1,5 +1,6 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnTransformationBindContext } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationBindContext";
+import type { ToData } from "@esposter/shared";
 
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createDateColumn } from "#shared/models/resource/sheet/column/createDateColumn.test";
@@ -50,7 +51,7 @@ describe("columnTransformationCompileMap", () => {
       sourceColumnId,
       type: ColumnTransformationType.DatePart,
     } as const;
-    const readYear = (sourceColumn: Column | undefined) =>
+    const readYear = (sourceColumn: ToData<Column> | undefined) =>
       ColumnTransformationCompileMap[ColumnTransformationType.DatePart](
         transformation,
         () => sourceColumn,

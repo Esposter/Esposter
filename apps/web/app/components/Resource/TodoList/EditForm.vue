@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import type { ToData } from "@esposter/shared";
 
 import { TODO_LIST_ITEM_NOTES_MAX_LENGTH } from "#shared/services/resource/item/constants";
 import { setDueAt } from "#shared/services/resource/todoList/setDueAt";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
-const modelValue = defineModel<TodoListItem>({ required: true });
+const modelValue = defineModel<ToData<TodoListItem>>({ required: true });
 </script>
 
 <template>

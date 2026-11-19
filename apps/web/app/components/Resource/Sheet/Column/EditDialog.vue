@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
+import type { ToData } from "@esposter/shared";
 
 import { ColumnTypeFormSchemaMap } from "#src/services/resource/sheet/column/ColumnTypeFormSchemaMap";
 import { getEditColumnDescription } from "#src/services/resource/sheet/commands/getEditColumnDescription";
@@ -9,7 +10,7 @@ import { useColumnDialogStore } from "#src/store/resource/sheet/columnDialog";
 import { toRawDeep } from "@esposter/shared";
 
 interface Props {
-  column: Column;
+  column: ToData<Column>;
   dataSource: DataSource;
 }
 

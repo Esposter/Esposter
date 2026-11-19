@@ -1,9 +1,11 @@
+import type { ToData } from "@esposter/shared";
+
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { toRawDeep } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-export const createUpdatedRow = (row: Row, overrides: Partial<Row>): Row =>
+export const createUpdatedRow = (row: ToData<Row>, overrides: Partial<ToData<Row>>): ToData<Row> =>
   new Row(Object.assign(structuredClone(toRawDeep(row)), overrides));
 
 describe(createUpdatedRow, () => {

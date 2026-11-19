@@ -1,4 +1,5 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
+import type { ToData } from "@esposter/shared";
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { compileSheetColumns } from "#shared/services/resource/sheet/column/compileSheetColumns";
@@ -7,8 +8,8 @@ export const filterDataSourceColumns = (
   // The compile context, so always every column of the sheet — a computed column resolves its source by id against
   // These and reads null for a source that is missing. Narrowing happens through `columnIds` alone; hand a
   // Display-narrowed list in here and computed cells whose source is hidden go empty
-  columns: Column[],
-  rows: Row[],
+  columns: ToData<Column>[],
+  rows: ToData<Row>[],
   columnIds: string[],
   // Materializes only the windowed rows, but the columns are bound over every row, so aggregation-transformation
   // Values match what the sheet displays for those rows

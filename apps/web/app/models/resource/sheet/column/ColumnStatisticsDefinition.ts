@@ -3,6 +3,7 @@ import type { ColumnStatistics } from "#shared/models/resource/sheet/column/Colu
 import type { ColumnStatisticsKey } from "#shared/models/resource/sheet/column/ColumnStatisticsKey";
 import type { ApplicableColumnTypes } from "#src/models/resource/sheet/column/ApplicableColumnTypes";
 import type { ColumnStatisticsComputeContext } from "#src/models/resource/sheet/column/ColumnStatisticsComputeContext";
+import type { ToData } from "@esposter/shared";
 
 export interface ColumnStatisticsDefinition<
   T extends ColumnStatisticsKey = ColumnStatisticsKey,
@@ -10,7 +11,7 @@ export interface ColumnStatisticsDefinition<
   compute: (context: ColumnStatisticsComputeContext) => ColumnStatistics[T];
   // The column is passed so a statistic in its units can be shown the way its cells are; the ones that are
   // Dimensionless — counts, percentages — simply declare a one-parameter formatter and ignore it
-  format: (value: ColumnStatistics[T], column: Column) => string;
+  format: (value: ColumnStatistics[T], column: ToData<Column>) => string;
   key: T;
   sortable?: false;
   title: string;

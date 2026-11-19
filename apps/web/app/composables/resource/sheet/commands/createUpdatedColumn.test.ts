@@ -1,13 +1,14 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
+import type { ToData } from "@esposter/shared";
 
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { toRawDeep } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-export const createUpdatedColumn = <TOverrides extends Partial<Column>>(
-  column: Column,
+export const createUpdatedColumn = <TOverrides extends Partial<ToData<Column>>>(
+  column: ToData<Column>,
   overrides: TOverrides,
-): Column & TOverrides => Object.assign(structuredClone(toRawDeep(column)), overrides);
+): ToData<Column> & TOverrides => Object.assign(structuredClone(toRawDeep(column)), overrides);
 
 describe(createUpdatedColumn, () => {
   const name = "a";

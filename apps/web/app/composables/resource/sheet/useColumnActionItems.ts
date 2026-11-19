@@ -1,5 +1,6 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { Item } from "#src/models/shared/Item";
+import type { ToData } from "@esposter/shared";
 
 import { getEffectiveColumnType } from "#shared/services/resource/sheet/column/getEffectiveColumnType";
 import { getToggleColumnVisibilityDescription } from "#shared/services/resource/sheet/commands/getToggleColumnVisibilityDescription";
@@ -16,7 +17,7 @@ export const useColumnActionItems = () => {
   const columnDialogStore = useColumnDialogStore();
   const { chartingColumnName, deletingColumnIds, editingColumnName } = storeToRefs(columnDialogStore);
   const toggleColumnVisibility = useToggleColumnVisibility();
-  const getColumnActionItems = (column: Column): Item[] => {
+  const getColumnActionItems = (column: ToData<Column>): Item[] => {
     const [editColumnItem, deleteColumnItem] = getEditDeleteItems({
       deleteLabel: getDeleteColumnDescription(column.name),
       editLabel: getEditColumnDescription(column.name),

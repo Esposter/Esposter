@@ -1,5 +1,6 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
@@ -14,9 +15,9 @@ export class DeleteRowCommand extends ADataSourceCommand<typeof CommandType.Dele
   }
 
   readonly #index: number;
-  readonly #originalRow: Row;
+  readonly #originalRow: ToData<Row>;
 
-  constructor(index: number, originalRow: Row) {
+  constructor(index: number, originalRow: ToData<Row>) {
     super();
     this.#index = index;
     this.#originalRow = originalRow;

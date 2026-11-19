@@ -94,10 +94,10 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   };
   // One field of one todo written from its row, with no dialog, and a refused save puts back the value it had — unless
   // Another device's content was reloaded mid-flight, which replaces the rows and never held this write
-  const setItemValue = <TKey extends keyof TodoListItem>(
+  const setItemValue = <TKey extends keyof ToData<TodoListItem>>(
     id: TodoListItem["id"],
     key: TKey,
-    getValue: (item: TodoListItem) => TodoListItem[TKey],
+    getValue: (item: ToData<TodoListItem>) => ToData<TodoListItem>[TKey],
   ) => {
     const item = items.value.find((todo) => todo.id === id);
     if (!item) return;

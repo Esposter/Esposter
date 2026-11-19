@@ -1,5 +1,6 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
+import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
@@ -18,7 +19,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 // Compiles the sheet and reads the column's cell on every row, as the grid's statistics do
-const computeStatistics = (dataSource: DataSource, column: Column) => {
+const computeStatistics = (dataSource: DataSource, column: ToData<Column>) => {
   const readCell = compileSheetColumns(dataSource.columns)(dataSource.rows);
   return computeColumnStatisticsForColumn(
     column,

@@ -11,7 +11,7 @@ export const useDashboardStore = defineStore("dashboard", () => {
     ResourceType.Dashboard,
     // Content crosses the wire as plain JSON (the server parses the blob with the content schema, which
     // Strips methods), so the class is rebuilt here rather than assumed — see the ToData note on the schema
-    (data) => new Dashboard(data as Partial<Dashboard> | undefined),
+    (data) => new Dashboard(data),
   );
   // The layout settings are written onto the dashboard they were chosen on, and taken back there if the save is refused.
   // Saves queue, so a refused save takes back only when no later write has set the layout since: comparing values would

@@ -1,6 +1,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { IndexedRow } from "#src/models/resource/sheet/commands/IndexedRow";
+import type { ToData } from "@esposter/shared";
 
 import { KeepDuplicateMode } from "#src/models/resource/sheet/commands/KeepDuplicateMode";
 import { getVisibleEditableColumns } from "#src/services/resource/sheet/column/getVisibleEditableColumns";
@@ -11,7 +12,7 @@ export const findDuplicateRows = (dataSource: DataSource, keepMode: KeepDuplicat
   const sortedKeys = getVisibleEditableColumns(dataSource.columns)
     .map(({ name }) => name)
     .toSorted((firstKey, secondKey) => firstKey.localeCompare(secondKey));
-  const getRowKey = (row: Row) => JSON.stringify(sortedKeys.map((key) => row.data[key]));
+  const getRowKey = (row: ToData<Row>) => JSON.stringify(sortedKeys.map((key) => row.data[key]));
 
   const duplicateRows: IndexedRow[] = [];
   // First mode keeps the earliest of each key, so a row is a duplicate the moment its key has been seen. Last

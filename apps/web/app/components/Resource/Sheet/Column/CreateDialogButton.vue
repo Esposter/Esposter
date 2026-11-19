@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
+import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ColumnTypeCreateMap } from "#shared/services/resource/sheet/column/ColumnTypeCreateMap";
@@ -15,7 +16,7 @@ interface Props {
 const { dataSource } = defineProps<Props>();
 const createColumn = useCreateColumn();
 const initialColumn = structuredClone(ColumnTypeCreateMap[ColumnType.String].create());
-const { cloned: editedColumn, sync: resetForm } = useCloned<Column>(initialColumn, {
+const { cloned: editedColumn, sync: resetForm } = useCloned<ToData<Column>>(initialColumn, {
   clone: (source) => structuredClone(toRawDeep(source)),
   deep: true,
 });

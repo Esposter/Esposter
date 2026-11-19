@@ -2,6 +2,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
+import type { ToData } from "@esposter/shared";
 
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
@@ -80,7 +81,7 @@ const columnKeyWidthMap = computed({
 });
 watchAutosave(() => settings.value.columnIdWidthMap, saveSheet);
 // A data cell starts, extends and shows a range of selected cells, as a spreadsheet's does
-const getCellProps = (tableColumn: UiDataTableColumn<Row>, row: Row) => {
+const getCellProps = (tableColumn: UiDataTableColumn<ToData<Row>>, row: ToData<Row>) => {
   const columnData = columnKeyMap.value.get(tableColumn.key);
   const rowIndex = rowIdIndexMap.value.get(row.id);
   if (!columnData || rowIndex === undefined) return {};
@@ -112,7 +113,7 @@ const getCellProps = (tableColumn: UiDataTableColumn<Row>, row: Row) => {
 const { getColumnActionItems } = useColumnActionItems();
 const { getContextMenuProps } = useContextMenu();
 // A data column's header is the column itself, so a right-click on it opens the column's commands
-const getHeaderProps = (tableColumn: UiDataTableColumn<Row>) => {
+const getHeaderProps = (tableColumn: UiDataTableColumn<ToData<Row>>) => {
   const columnData = columnKeyMap.value.get(tableColumn.key);
   return columnData ? getContextMenuProps(columnData.column.id, () => getColumnActionItems(columnData.column)) : {};
 };

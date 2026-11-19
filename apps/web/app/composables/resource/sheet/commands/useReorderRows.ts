@@ -1,9 +1,10 @@
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { MoveRowCommand } from "#src/models/resource/sheet/commands/MoveRowCommand";
 
 export const useReorderRows = () =>
-  useSheetCommand((dataSource, newRows: Row[]) => {
+  useSheetCommand((dataSource, newRows: ToData<Row>[]) => {
     const oldRows = dataSource.rows;
     const oldRowIdIndexMap = new Map(oldRows.map((row, index) => [row.id, index]));
     const newRowIdRelativePositionMap = new Map(newRows.map((row, index) => [row.id, index]));

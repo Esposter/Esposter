@@ -1,4 +1,5 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
+import type { ToData } from "@esposter/shared";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
@@ -22,8 +23,8 @@ export class PasteRangeCommand extends ADataSourceCommand<typeof CommandType.Pas
   readonly #anchorRowIndex: number;
   // Minted once, so a redo restores the very rows the first execute appended. Newing them per execute hands
   // The grid fresh ids for rows the user never re-created, orphaning selection and every keyed cell on them
-  readonly #appendedRows: Row[];
-  readonly #originalRows: Row[];
+  readonly #appendedRows: ToData<Row>[];
+  readonly #originalRows: ToData<Row>[];
   readonly #pastedValues: string[][];
   readonly #targetColumnNames: string[];
 
@@ -32,7 +33,7 @@ export class PasteRangeCommand extends ADataSourceCommand<typeof CommandType.Pas
     anchorColumnIndex: number,
     pastedValues: string[][],
     targetColumnNames: string[],
-    originalRows: Row[],
+    originalRows: ToData<Row>[],
   ) {
     super();
     this.#anchorRowIndex = anchorRowIndex;
