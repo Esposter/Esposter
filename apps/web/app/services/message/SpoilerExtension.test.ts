@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import { SpoilerExtension } from "#src/services/message/SpoilerExtension";
 import { Editor } from "@tiptap/core";
 import { StarterKit } from "@tiptap/starter-kit";
