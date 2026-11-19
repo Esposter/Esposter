@@ -11,7 +11,6 @@ import { DELETE_USER_MESSAGES_PAGE_LIMIT } from "#server/services/message/consta
 import { createRoomMessage } from "#server/services/message/createRoomMessage.test";
 import {
   createMockAuthSession,
-  createMockCaller,
   createMockContext,
   createMockOtherUserCaller,
   getMockSession,

@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { D1_MAX_BOUND_PARAMETERS } from "#server/services/db/constants";
-import { createMockCaller, createMockOtherUserCaller, createMockUser } from "#server/trpc/context.test";
+import { createMockOtherUserCaller, createMockUser } from "#server/trpc/context.test";
 import { roleRouter } from "#server/trpc/routers/role";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
