@@ -1,7 +1,7 @@
 import { useBattleMonsterStore } from "#src/composables/dungeons/scene/battle/monster/useBattleMonsterStore";
 import { animateOrSkip } from "#src/services/dungeons/animation/animateOrSkip";
 import { getTweenRange } from "#src/services/dungeons/animation/getTweenRange";
-import { useTween } from "vue-phaserjs";
+import { useTween, useTweenAsync } from "vue-phaserjs";
 
 export const animateMonsterDeath = (isEnemy: boolean) => {
   const battleMonsterStore = useBattleMonsterStore(isEnemy);
@@ -24,16 +24,13 @@ export const animateMonsterDeath = (isEnemy: boolean) => {
         x: getTweenRange(monsterInfoContainerPosition.value.x, monsterInfoContainerPositionXEnd),
       });
 
-      return new Promise<void>((resolve) => {
-        useTween(monsterTween, {
-          delay: 0,
-          duration,
-          onComplete: () => {
-            monsterPosition.value.y = monsterPositionYEnd;
-            resolve();
-          },
-          y: getTweenRange(monsterPosition.value.y, monsterPositionYEnd),
-        });
+      return useTweenAsync(monsterTween, {
+        delay: 0,
+        duration,
+        onComplete: () => {
+          monsterPosition.value.y = monsterPositionYEnd;
+        },
+        y: getTweenRange(monsterPosition.value.y, monsterPositionYEnd),
       });
     },
     () => {

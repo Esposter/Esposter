@@ -6,7 +6,7 @@ import { getTweenRange } from "#src/services/dungeons/animation/getTweenRange";
 import { useBallStore } from "#src/store/dungeons/battle/ball";
 import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { Math } from "phaser";
-import { sleepScene, useTween } from "vue-phaserjs";
+import { sleepScene, useTweenAsync } from "vue-phaserjs";
 
 export const animateThrowBall = async (scene: SceneWithPlugins, captureResult: CaptureResult) => {
   const ballStore = useBallStore();
@@ -52,15 +52,10 @@ export const animateThrowBall = async (scene: SceneWithPlugins, captureResult: C
         });
       // The enemy fades out as it is caught, and back in when the ball fails to hold it
       const playEnemyFadeAnimation = (fromAlpha: number, toAlpha: number) =>
-        new Promise<void>((resolve) => {
-          useTween(monsterTween, {
-            alpha: getTweenRange(fromAlpha, toAlpha),
-            duration: 500,
-            ease: Math.Easing.Sine.InOut,
-            onComplete: () => {
-              resolve();
-            },
-          });
+        useTweenAsync(monsterTween, {
+          alpha: getTweenRange(fromAlpha, toAlpha),
+          duration: 500,
+          ease: Math.Easing.Sine.InOut,
         });
 
       await playThrowBallAnimation();
