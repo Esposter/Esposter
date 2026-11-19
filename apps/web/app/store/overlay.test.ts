@@ -4,22 +4,17 @@ import type { WriteResponse } from "#src/models/shared/overlay/WriteResponse";
 
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
+import { createRowTable } from "#src/services/shared/overlay/createRowTable.test";
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { useOverlayStore } from "#src/store/overlay";
 import { flushPromises } from "@vue/test-utils";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const neverSettles = <TResult>() => new Promise<TResult>(() => {});
 
 describe(useOverlayStore, () => {
-  const rowTable = sqliteTable("row", {
-    deletedAt: integer({ mode: "timestamp_ms" }),
-    id: text().primaryKey(),
-    name: text().notNull(),
-    version: integer().notNull(),
-  });
+  const rowTable = createRowTable();
   const table = createTable(rowTable);
   const name = "";
   const otherName = " ";

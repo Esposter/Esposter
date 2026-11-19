@@ -1,18 +1,13 @@
 import type { KeyedView } from "#src/models/shared/overlay/KeyedView";
 
+import { createRowTable } from "#src/services/shared/overlay/createRowTable.test";
 import { createSlotFor } from "#src/services/shared/overlay/createSlotFor";
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { recordTouches } from "#src/services/shared/overlay/recordTouches";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { describe, expect, test } from "vitest";
 
 describe(recordTouches, () => {
-  const rowTable = sqliteTable("row", {
-    deletedAt: integer({ mode: "timestamp_ms" }),
-    id: text().primaryKey(),
-    name: text().notNull(),
-    version: integer().notNull(),
-  });
+  const rowTable = createRowTable();
   const table = createTable(rowTable);
   const name = "";
 
