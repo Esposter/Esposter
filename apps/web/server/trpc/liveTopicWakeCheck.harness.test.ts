@@ -6,8 +6,9 @@ import { eq } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-// The wake check is shown failing for the case it exists to catch: a write that changes a row a read answers, but publishes
-// Only the table, which a read scoped to the row does not watch. The same write returning the row publishes the row's topic
+// A write that changes a row a read answers is woken by the topics the handle names for it: the rows it changes, before and after,
+// Whether or not it returns them. The check's failure path is shown beside the realtime objects' check (wakeCheckSelf.test.ts), so this
+// File shows the write it must not report
 const probeRouter = router({
   readUser: publicProcedure
     .input(z.string())
@@ -19,28 +20,9 @@ const probeRouter = router({
     .mutation<(typeof usersInAuth.$inferSelect)[]>(({ ctx, input }) =>
       ctx.db.update(usersInAuth).set({ name: input.name }).where(eq(usersInAuth.id, input.id)).returning(),
     ),
-  renameUserWithoutReturning: publicProcedure
-    .input(z.object({ id: z.string(), name: z.string() }))
-    .mutation<void>(async ({ ctx, input }) => {
-      await ctx.db.update(usersInAuth).set({ name: input.name }).where(eq(usersInAuth.id, input.id));
-    }),
 });
 
 describe("live topic wake check", () => {
-  test("fails a write that changes a read it does not wake", async () => {
-    expect.hasAssertions();
-
-    const context = await createMockContext();
-    const { user } = await createMockAuthSession(context.db);
-    const caller = createCallerFactory(probeRouter)(context);
-    await caller.readUser(user.id);
-    await caller.renameUserWithoutReturning({ id: user.id, name: "renamed" });
-
-    expect(takeWakeFailures().map((failure) => failure.split(" changed by ")[0])).toStrictEqual([
-      `readUser(${JSON.stringify(user.id)})`,
-    ]);
-  });
-
   test("passes a write whose topics wake the read it changes", async () => {
     expect.hasAssertions();
 
