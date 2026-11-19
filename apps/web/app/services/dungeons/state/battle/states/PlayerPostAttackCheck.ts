@@ -1,24 +1,26 @@
 import type { State } from "#src/models/dungeons/state/State";
 
+import { useEnemyActiveMonster } from "#src/composables/dungeons/scene/battle/monster/useEnemyActiveMonster";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
 import { animateMonsterDeath } from "#src/services/dungeons/scene/battle/monster/animateMonsterDeath";
 import { useActionStore } from "#src/store/dungeons/battle/action";
 import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
-import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { prettify } from "#src/util/text/prettify";
+import { NotFoundError } from "@esposter/shared";
 
 export const PlayerPostAttackCheck: State<typeof StateName.PlayerPostAttackCheck> = {
   name: StateName.PlayerPostAttackCheck,
   onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
-    const enemyStore = useEnemyStore();
-    const { activeMonster } = storeToRefs(enemyStore);
+    const activeMonster = useEnemyActiveMonster(StateName.PlayerPostAttackCheck);
     const actionStore = useActionStore();
     const { attackStatePriorityMap } = storeToRefs(actionStore);
 
+    if (!attackStatePriorityMap.value)
+      throw new NotFoundError(StateName.PlayerPostAttackCheck, "attack state priority map");
     if (checkIsMonsterFainted(activeMonster.value)) {
       await animateMonsterDeath(true);
       await showMessages(scene, [`Wild ${prettify(activeMonster.value.key)} has fainted!`]);

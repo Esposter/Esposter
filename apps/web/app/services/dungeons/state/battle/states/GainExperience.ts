@@ -3,6 +3,7 @@ import type { State } from "#src/models/dungeons/state/State";
 import type { PhaserEvents } from "#src/models/phaser/PhaserEvents";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { useEnemyActiveMonster } from "#src/composables/dungeons/scene/battle/monster/useEnemyActiveMonster";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { getExperienceGain } from "#src/services/dungeons/monster/getExperienceGain";
 import { getLevelExperience } from "#src/services/dungeons/monster/getLevelExperience";
@@ -10,7 +11,6 @@ import { levelUp } from "#src/services/dungeons/monster/levelUp";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
-import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
 import { usePlayerStore } from "#src/store/dungeons/player";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
@@ -24,8 +24,7 @@ export const GainExperience: State<typeof StateName.GainExperience> = {
     const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);
     const battlePlayerStore = useBattlePlayerStore();
     const { activeMonster } = storeToRefs(battlePlayerStore);
-    const enemyStore = useEnemyStore();
-    const { activeMonster: enemyActiveMonster } = storeToRefs(enemyStore);
+    const enemyActiveMonster = useEnemyActiveMonster(StateName.GainExperience);
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
     const experienceBarStore = useExperienceBarStore();

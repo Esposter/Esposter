@@ -7,6 +7,7 @@ import { BarType } from "#src/models/dungeons/UI/bar/BarType";
 import { getHealthBarPercentage } from "#src/services/dungeons/monster/getHealthBarPercentage";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { prettify } from "#src/util/text/prettify";
+import { NotFoundError } from "@esposter/shared";
 import { Container, Image, Text } from "vue-phaserjs";
 
 interface Props {
@@ -16,9 +17,14 @@ interface Props {
 const { isEnemy } = defineProps<Props>();
 const battleMonsterStore = useBattleMonsterStore(isEnemy);
 const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(battleMonsterStore);
-const monsterName = computed(() => prettify(activeMonster.value.key));
+// The container is only shown for a battle with a monster in it, so an unset one is a fault in the battle
+const monster = computed(() => {
+  if (!activeMonster.value) throw new NotFoundError("InfoContainer", "active monster");
+  return activeMonster.value;
+});
+const monsterName = computed(() => prettify(monster.value.key));
 const nameDisplayWidth = ref<number>();
-const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
+const { barPercentage: experienceBarPercentage } = useExperience(monster);
 </script>
 
 <template>
@@ -38,7 +44,7 @@ const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
       :configuration="{
         x: 35 + (nameDisplayWidth ?? 0),
         y: 23,
-        text: `L${activeMonster.statistics.level}`,
+        text: `L${monster.statistics.level}`,
         style: { color: '#ed474b', fontSize: 28 },
       }"
     />
@@ -46,7 +52,7 @@ const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
     <DungeonsUIBarContainer
       :type="BarType.Health"
       :position="{ x: 34, y: 34 }"
-      :bar-percentage="getHealthBarPercentage(activeMonster)"
+      :bar-percentage="getHealthBarPercentage(monster)"
     />
     <template v-if="!isEnemy">
       <Text
@@ -55,7 +61,7 @@ const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
           y: 80,
           originX: 1,
           originY: 0,
-          text: `${activeMonster.status.health}/${activeMonster.statistics.maxHealth}`,
+          text: `${monster.status.health}/${monster.statistics.maxHealth}`,
           style: { color: '#7e3d3f', fontSize: 16 },
         }"
       />
@@ -63,7 +69,7 @@ const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
       <DungeonsUIExperienceBar
         :position="{ x: 34, y: 54 }"
         :bar-percentage="experienceBarPercentage"
-        @level-up="phaserEventEmitter.emit('levelUp', activeMonster, $event)"
+        @level-up="phaserEventEmitter.emit('levelUp', monster, $event)"
       />
     </template>
   </Container>

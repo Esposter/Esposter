@@ -7,6 +7,7 @@ import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { useControlsStore } from "#src/store/dungeons/controls";
 import { useMonsterDetailsSceneStore } from "#src/store/dungeons/monsterDetails/scene";
 import { prettify } from "#src/util/text/prettify";
+import { NotFoundError } from "@esposter/shared";
 import { Image, Text } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();
@@ -14,8 +15,13 @@ const { controls } = storeToRefs(controlsStore);
 const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
 const { onPlayerInput } = monsterDetailsSceneStore;
 const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);
-const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
-const monsterName = computed(() => prettify(selectedMonster.value.key));
+// The scene is only launched with a monster selected, so an unset one is a fault in the launch
+const monster = computed(() => {
+  if (!selectedMonster.value) throw new NotFoundError(SceneKey.MonsterDetails, "selected monster");
+  return selectedMonster.value;
+});
+const { barPercentage, experienceToNextLevel } = useExperience(monster);
+const monsterName = computed(() => prettify(monster.value.key));
 </script>
 
 <template>
@@ -26,12 +32,12 @@ const monsterName = computed(() => prettify(selectedMonster.value.key));
       :configuration="{
         x: 20,
         y: 60,
-        text: `LV. ${selectedMonster.statistics.level}`,
+        text: `LV. ${monster.statistics.level}`,
         style: { ...MenuTextStyle, fontSize: 40 },
       }"
     />
     <Text :configuration="{ x: 200, y: 60, text: monsterName, style: { ...MenuTextStyle, fontSize: 40 } }" />
-    <Image :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: selectedMonster.key, scale: 0.7 }" />
+    <Image :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: monster.key, scale: 0.7 }" />
     <Text :configuration="{ x: 20, y: 340, origin: 0, text: 'Current Exp.', style: MenuExperienceTextStyle }" />
     <Text
       :configuration="{
@@ -39,7 +45,7 @@ const monsterName = computed(() => prettify(selectedMonster.value.key));
         y: 340,
         originX: 1,
         originY: 0,
-        text: selectedMonster.status.experience.toString(),
+        text: monster.status.experience.toString(),
         style: MenuExperienceTextStyle,
       }"
     />

@@ -1,5 +1,6 @@
 import type { State } from "#src/models/dungeons/state/State";
 
+import { useEnemyActiveMonster } from "#src/composables/dungeons/scene/battle/monster/useEnemyActiveMonster";
 import { CaptureResult } from "#src/models/dungeons/item/CaptureResult";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { animateThrowBall } from "#src/services/dungeons/item/animateThrowBall";
@@ -7,7 +8,6 @@ import { createCaptureResult } from "#src/services/dungeons/item/createCaptureRe
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
 import { animateMonsterDeath } from "#src/services/dungeons/scene/battle/monster/animateMonsterDeath";
 import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
-import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { prettify } from "#src/util/text/prettify";
 
@@ -16,8 +16,7 @@ export const CatchMonster: State<typeof StateName.CatchMonster> = {
   onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
-    const enemyStore = useEnemyStore();
-    const { activeMonster } = storeToRefs(enemyStore);
+    const activeMonster = useEnemyActiveMonster(StateName.CatchMonster);
     const captureResult = createCaptureResult(activeMonster.value);
     await animateThrowBall(scene, captureResult);
 

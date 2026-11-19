@@ -3,18 +3,17 @@ import type { Direction } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
+import { useEnemyActiveMonster } from "#src/composables/dungeons/scene/battle/monster/useEnemyActiveMonster";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { activateItem } from "#src/services/dungeons/item/activateItem";
 import { transitionFrom } from "#src/services/dungeons/scene/transitionFrom";
 import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
-import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { useInventorySceneStore } from "#src/store/dungeons/inventory/scene";
 import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 
 export const useInventoryInputStore = defineStore("dungeons/inventory/input", () => {
-  const enemyStore = useEnemyStore();
   const inventorySceneStore = useInventorySceneStore();
   const { itemOptionGrid } = inventorySceneStore;
   const { launchScene, switchToPreviousScene } = transitionFrom(SceneKey.Inventory);
@@ -36,7 +35,9 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
           switch (itemOptionGrid.value.effect.type) {
             // Capture items can only be used in the battle scene (the previous scene).
             case ItemEffectType.Capture: {
-              await activateItem(scene, toRef(itemOptionGrid.value), toRef(enemyStore, "activeMonster"));
+              // Capture items are only used in battle, where the enemy is the monster being caught
+              const enemyMonster = useEnemyActiveMonster(SceneKey.Inventory);
+              await activateItem(scene, toRef(itemOptionGrid.value), enemyMonster);
               break;
             }
             case ItemEffectType.Heal:

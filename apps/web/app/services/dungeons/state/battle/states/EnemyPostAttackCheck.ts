@@ -10,6 +10,7 @@ import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
 import { usePlayerStore } from "#src/store/dungeons/player";
 import { prettify } from "#src/util/text/prettify";
+import { NotFoundError } from "@esposter/shared";
 
 export const EnemyPostAttackCheck: State<typeof StateName.EnemyPostAttackCheck> = {
   name: StateName.EnemyPostAttackCheck,
@@ -23,6 +24,8 @@ export const EnemyPostAttackCheck: State<typeof StateName.EnemyPostAttackCheck> 
     const actionStore = useActionStore();
     const { attackStatePriorityMap } = storeToRefs(actionStore);
 
+    if (!attackStatePriorityMap.value)
+      throw new NotFoundError(StateName.EnemyPostAttackCheck, "attack state priority map");
     if (checkIsMonsterFainted(activeMonster.value)) {
       await animateMonsterDeath(false);
       const hasStandingMonster = checkHasOtherStandingMonster(player.value.monsters, activeMonster.value);

@@ -1,12 +1,12 @@
 import type { State } from "#src/models/dungeons/state/State";
 
+import { useEnemyActiveMonster } from "#src/composables/dungeons/scene/battle/monster/useEnemyActiveMonster";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { getDamage } from "#src/services/dungeons/monster/getDamage";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
 import { takeDamage } from "#src/services/dungeons/scene/battle/takeDamage";
 import { useAttackManagerStore } from "#src/store/dungeons/battle/attackManager";
 import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
-import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
 import { useBattleSceneStore } from "#src/store/dungeons/battle/scene";
 import { prettify } from "#src/util/text/prettify";
@@ -21,8 +21,7 @@ export const PlayerAttack: State<typeof StateName.PlayerAttack> = {
     const { showMessageNoInputRequired } = battleDialogStore;
     const battlePlayerStore = useBattlePlayerStore();
     const { activeMonster } = storeToRefs(battlePlayerStore);
-    const enemyStore = useEnemyStore();
-    const { activeMonster: enemyActiveMonster } = storeToRefs(enemyStore);
+    const enemyActiveMonster = useEnemyActiveMonster(StateName.PlayerAttack);
     const battleSceneStore = useBattleSceneStore();
     const { attackOptionGrid } = battleSceneStore;
     const attack = attackOptionGrid.value;

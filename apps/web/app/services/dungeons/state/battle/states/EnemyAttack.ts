@@ -1,5 +1,6 @@
 import type { State } from "#src/models/dungeons/state/State";
 
+import { useEnemyActiveMonster } from "#src/composables/dungeons/scene/battle/monster/useEnemyActiveMonster";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { getAttack } from "#src/services/dungeons/attack/getAttack";
 import { getDamage } from "#src/services/dungeons/monster/getDamage";
@@ -7,7 +8,6 @@ import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleSt
 import { takeDamage } from "#src/services/dungeons/scene/battle/takeDamage";
 import { useAttackManagerStore } from "#src/store/dungeons/battle/attackManager";
 import { useBattleDialogStore } from "#src/store/dungeons/battle/dialog";
-import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
 import { getRandomValue } from "#src/util/math/random/getRandomValue";
 import { prettify } from "#src/util/text/prettify";
@@ -20,8 +20,7 @@ export const EnemyAttack: State<typeof StateName.EnemyAttack> = {
     const { playAttack } = attackManagerStore;
     const battleDialogStore = useBattleDialogStore();
     const { showMessageNoInputRequired } = battleDialogStore;
-    const enemyStore = useEnemyStore();
-    const { activeMonster } = storeToRefs(enemyStore);
+    const activeMonster = useEnemyActiveMonster(StateName.EnemyAttack);
     const battlePlayerStore = useBattlePlayerStore();
     const { activeMonster: playerActiveMonster } = storeToRefs(battlePlayerStore);
     const randomAttackId = getRandomValue(activeMonster.value.attackIds);
