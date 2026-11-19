@@ -5,6 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getDirectMessageParticipantKey } from "#server/services/room/directMessage/getDirectMessageParticipantKey";
 import { createMockAuthSession, createMockContext, createMockUser, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
@@ -13,6 +14,7 @@ import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { directMessageRouter } from "#server/trpc/routers/room/directMessage";
 import { roomRouter } from "#server/trpc/routers/room/index";
+import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
@@ -23,7 +25,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, getTableName, inArray } from "drizzle-orm";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The participants an add reads before it writes. A test lands a concurrent change in that gap through this hook, taken
@@ -220,7 +222,7 @@ describe("directMessageRouter", () => {
       .update(usersToRoomsInMessage)
       .set({ displayName })
       .where(and(eq(usersToRoomsInMessage.roomId, directMessage.id), eq(usersToRoomsInMessage.userId, user.id)));
-    const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
+    const { participants: participantsData } = await directMessageCaller.readDirectMessages();
 
     expect(participantsData).toHaveLength(1);
 
@@ -259,10 +261,12 @@ describe("directMessageRouter", () => {
       .update(usersToRoomsInMessage)
       .set({ displayName: "Amy" })
       .where(and(eq(usersToRoomsInMessage.roomId, directMessage.id), eq(usersToRoomsInMessage.userId, addedUser.id)));
-    const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
     const directMessages = await directMessageCaller.readDirectMessages();
 
-    expect(takeOne(participantsData).participants.map(({ displayName }) => displayName)).toStrictEqual(["Amy", "Zed"]);
+    expect(takeOne(directMessages.participants).participants.map(({ displayName }) => displayName)).toStrictEqual([
+      "Amy",
+      "Zed",
+    ]);
     expect(takeOne(directMessages.items).participantKey).toBe(
       getDirectMessageParticipantKey([addedUser.id, mainUser.id, user.id]),
     );
@@ -278,7 +282,6 @@ describe("directMessageRouter", () => {
     roomObjectCalls.length = 0;
     userObjectCalls.length = 0;
     await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id });
-    const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
     const directMessages = await directMessageCaller.readDirectMessages();
 
     expect(roomObjectCalls).toContainEqual({ args: [addedUser.id], method: "removeMember", roomId: directMessage.id });
@@ -287,7 +290,7 @@ describe("directMessageRouter", () => {
       method: "broadcastEvent",
       userId: addedUser.id,
     });
-    expect(takeOne(participantsData).participants.map(({ id }) => id)).toStrictEqual([user.id]);
+    expect(takeOne(directMessages.participants).participants.map(({ id }) => id)).toStrictEqual([user.id]);
     expect(takeOne(directMessages.items).participantKey).toBe(getDirectMessageParticipantKey([mainUser.id, user.id]));
   });
 
@@ -487,15 +490,15 @@ describe("directMessageRouter", () => {
     );
   });
 
-  test("excludes a room the caller is not a member of from read participants", async () => {
+  test("reads no participants of a direct message the caller is not in", async () => {
     expect.hasAssertions();
 
-    const { directMessage } = await createDirectMessageWithFriend(mockContext);
+    await createDirectMessageWithFriend(mockContext);
     const nonMemberDirectMessageCaller = createCallerFactory(directMessageRouter)(await createUserContext());
 
-    const participantsData = await nonMemberDirectMessageCaller.readDirectMessageParticipants([directMessage.id]);
+    const { participants } = await nonMemberDirectMessageCaller.readDirectMessages();
 
-    expect(participantsData).toHaveLength(0);
+    expect(participants).toHaveLength(0);
   });
 
   test("fails create direct message with non-friend", async () => {
@@ -543,9 +546,34 @@ describe("directMessageRouter", () => {
   test("filters regular rooms from read participants", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name });
-    const participantsData = await directMessageCaller.readDirectMessageParticipants([newRoom.id]);
+    await roomCaller.createRoom({ name });
+    const { participants } = await directMessageCaller.readDirectMessages();
 
-    expect(participantsData).toHaveLength(0);
+    expect(participants).toHaveLength(0);
+  });
+
+  // A participant who joins publishes the membership of the direct message, and the list's answer names the memberships
+  // Of the direct messages it lists, beside their rows and their participants. So the join wakes the list that shows them
+  test("a participant's join publishes a membership topic that the direct message list's read names", async () => {
+    expect.hasAssertions();
+
+    const { directMessage, mainUser } = await createDirectMessageWithFriend(mockContext);
+    const addedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, addedUser);
+    const listHeaders = new Headers();
+    await createCallerFactory(directMessageRouter)({
+      ...mockContext,
+      responseHeaders: listHeaders,
+    }).readDirectMessages();
+    const listedTopics = new Set(
+      readTopicsHeader(listHeaders, "readDirectMessages").flatMap(({ topics }) => topics.map(({ topic }) => topic)),
+    );
+    MockPublishedTopics.length = 0;
+    await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
+    const publishedMembershipTopics = getMockPublishedTopics().filter((topic) =>
+      topic.startsWith(`${getTableName(usersToRoomsInMessage)}:`),
+    );
+
+    expect(publishedMembershipTopics.some((topic) => listedTopics.has(topic))).toBe(true);
   });
 });

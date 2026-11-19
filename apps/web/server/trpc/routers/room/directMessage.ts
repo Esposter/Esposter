@@ -12,6 +12,7 @@ import { getDirectMessageParticipantKey } from "#server/services/room/directMess
 import { getParticipantKeyUnchangedWhere } from "#server/services/room/directMessage/getParticipantKeyUnchangedWhere";
 import { readAddableDirectMessageParticipants } from "#server/services/room/directMessage/readAddableDirectMessageParticipants";
 import { readDirectMessageParticipantIds } from "#server/services/room/directMessage/readDirectMessageParticipantIds";
+import { readDirectMessageParticipants } from "#server/services/room/directMessage/readDirectMessageParticipants";
 import { runParticipantBatch } from "#server/services/room/directMessage/runParticipantBatch";
 import { updateDirectMessageParticipantKey } from "#server/services/room/directMessage/updateDirectMessageParticipantKey";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
@@ -28,13 +29,11 @@ import { createDirectMessageParticipantsInputSchema } from "#shared/models/db/ro
 import { deleteDirectMessageParticipantInputSchema } from "#shared/models/db/room/DeleteDirectMessageParticipantInput";
 import { hideDirectMessageInputSchema } from "#shared/models/db/room/HideDirectMessageInput";
 import { DIRECT_MESSAGE_SORT, readDirectMessagesInputSchema } from "#shared/models/db/room/ReadDirectMessagesInput";
-import { roomIdsInputSchema } from "#shared/models/db/room/RoomIdsInput";
 import { createPageSort, getPageOrderBy, getPageWhere, inJsonArray, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
   friendsInSocial,
-  getDisplayNameExpression,
   getPublicUserColumns,
   PublicUserColumns,
   roomsInMessage,
@@ -42,10 +41,9 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { chunk, getOrCreate, noop, Operation } from "@esposter/shared";
+import { chunk, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, asc, eq, getColumns, ne, or, sql } from "drizzle-orm";
-import { alias } from "drizzle-orm/sqlite-core";
+import { and, eq, getColumns, or, sql } from "drizzle-orm";
 
 export const directMessageRouter = router({
   createDirectMessage: standardAuthedProcedure
@@ -246,59 +244,36 @@ export const directMessageRouter = router({
         .set({ isHidden: true })
         .where(getRoomMembershipWhere(input, ctx.user.id));
     }),
-  readDirectMessageParticipants: standardAuthedProcedure
-    .input(roomIdsInputSchema)
-    .query<DirectMessageParticipants[]>(async ({ ctx, input: roomIds }) => {
-      const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
-      const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
-      const usersInAuth2 = alias(usersInAuth, "usersInAuth2");
-      const participantDisplayName = getDisplayNameExpression(usersToRoomsInMessage2, usersInAuth2);
-      const rows = await ctx.db
-        .select({
-          displayName: participantDisplayName,
-          roomId: usersToRoomsInMessage2.roomId,
-          user: getPublicUserColumns(usersInAuth2),
-        })
-        .from(usersToRoomsInMessage1)
-        .innerJoin(
-          roomsInMessage,
-          and(eq(roomsInMessage.id, usersToRoomsInMessage1.roomId), eq(roomsInMessage.type, RoomType.DirectMessage)),
-        )
-        .innerJoin(
-          usersToRoomsInMessage2,
-          and(
-            eq(usersToRoomsInMessage2.roomId, usersToRoomsInMessage1.roomId),
-            ne(usersToRoomsInMessage2.userId, ctx.user.id),
-          ),
-        )
-        .innerJoin(usersInAuth2, eq(usersInAuth2.id, usersToRoomsInMessage2.userId))
-        .where(and(eq(usersToRoomsInMessage1.userId, ctx.user.id), inJsonArray(usersToRoomsInMessage1.roomId, roomIds)))
-        .orderBy(asc(sql<string>`${participantDisplayName} collate nocase`), asc(usersInAuth2.id));
-      const roomIdParticipantsMap = new Map<string, DirectMessageParticipants["participants"]>();
-      for (const { displayName, roomId, user } of rows)
-        getOrCreate(roomIdParticipantsMap, roomId, () => []).push({ ...user, displayName });
-      return Array.from(roomIdParticipantsMap, ([roomId, participants]) => ({ participants, roomId }));
-    }),
   readDirectMessages: standardAuthedProcedure
     .input(readDirectMessagesInputSchema)
-    .query<Page<RoomInMessage>>(async ({ ctx, input: { cursor, limit } }) => {
-      const innerJoinCondition = and(
-        eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
-        eq(usersToRoomsInMessage.userId, ctx.user.id),
-        eq(usersToRoomsInMessage.isHidden, false),
-      );
-      // The sort is bound to the room's own columns, so the cursor's values are read off the rows it answers
-      const boundSort = createPageSort(
-        { id: roomsInMessage.id, lastMessageAt: roomsInMessage.lastMessageAt },
-        DIRECT_MESSAGE_SORT,
-      );
-      const rooms = await ctx.db
-        .select(getColumns(roomsInMessage))
-        .from(roomsInMessage)
-        .innerJoin(usersToRoomsInMessage, innerJoinCondition)
-        .where(and(eq(roomsInMessage.type, RoomType.DirectMessage), getPageWhere(boundSort, cursor)))
-        .orderBy(...getPageOrderBy(boundSort, cursor))
-        .limit(limit + 1);
-      return toPage(rooms, DIRECT_MESSAGE_SORT, cursor, limit);
-    }),
+    .query<Page<RoomInMessage> & { participants: DirectMessageParticipants[] }>(
+      async ({ ctx, input: { cursor, limit } }) => {
+        const innerJoinCondition = and(
+          eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
+          eq(usersToRoomsInMessage.userId, ctx.user.id),
+          eq(usersToRoomsInMessage.isHidden, false),
+        );
+        // The sort is bound to the room's own columns, so the cursor's values are read off the rows it answers
+        const boundSort = createPageSort(
+          { id: roomsInMessage.id, lastMessageAt: roomsInMessage.lastMessageAt },
+          DIRECT_MESSAGE_SORT,
+        );
+        const rooms = await ctx.db
+          .select(getColumns(roomsInMessage))
+          .from(roomsInMessage)
+          .innerJoin(usersToRoomsInMessage, innerJoinCondition)
+          .where(and(eq(roomsInMessage.type, RoomType.DirectMessage), getPageWhere(boundSort, cursor)))
+          .orderBy(...getPageOrderBy(boundSort, cursor))
+          .limit(limit + 1);
+        const page = toPage(rooms, DIRECT_MESSAGE_SORT, cursor, limit);
+        // A direct message is named after its participants, so the page is answered with them in the same read: the
+        // Statements of this read are the list's own, so its topics name the participants' memberships too
+        const participants = await readDirectMessageParticipants(
+          ctx.db,
+          ctx.user.id,
+          page.items.map(({ id }) => id),
+        );
+        return { ...page, participants };
+      },
+    ),
 });

@@ -8,18 +8,13 @@ import { getResultAsync, getSynchronizedFunction, noop, RoutePath, takeOne } fro
 // The rooms a person is in, and the direct messages among them, change on the person's own socket: every room event
 // That concerns the list reaches each of the person's tabs, and the room it names is the one written to
 export const useRoomListEvents = () => {
-  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { storeDeleteRoom, storeUpdateRoom } = roomStore;
   const memberStore = useMemberStore();
   const { storeCreateMember, storeDeleteMember } = memberStore;
   const directMessageStore = useDirectMessageStore();
-  const {
-    storeDeleteDirectMessage,
-    storeDeleteDirectMessageParticipant,
-    storeDirectMessageParticipants,
-    storeUpdateDirectMessage,
-  } = directMessageStore;
+  const { storeDeleteDirectMessage, storeDeleteDirectMessageParticipant, storeUpdateDirectMessage } =
+    directMessageStore;
   const { directMessages } = storeToRefs(directMessageStore);
   const session = authClient.useSession();
   const connectionStore = useConnectionStore();
@@ -46,24 +41,11 @@ export const useRoomListEvents = () => {
       ),
     ),
   );
+  // A join's participants reach the direct message list through its membership topic, not from a read made here
   onScopeDispose(
     onUserEvent("joinRoom", ({ displayName, roomId, user }) => {
       storeCreateMember(roomId, { ...user, displayName });
     }),
-  );
-  onScopeDispose(
-    onUserEvent(
-      "joinRoom",
-      getSynchronizedFunction(({ roomId }) =>
-        getResultAsync(async () => {
-          const directMessageParticipants = await $trpc.room.directMessage.readDirectMessageParticipants.query([
-            roomId,
-          ]);
-          const directMessage = directMessageParticipants.find((item) => item.roomId === roomId);
-          if (directMessage) storeDirectMessageParticipants(roomId, directMessage.participants);
-        }).match(noop, console.error),
-      ),
-    ),
   );
   onScopeDispose(
     onUserEvent("leaveRoom", ({ roomId, userId }) => {

@@ -1,19 +1,30 @@
 // @vitest-environment nuxt
+import { useRoomListEvents } from "#src/composables/message/events/useRoomListEvents";
+import { useReadDirectMessages } from "#src/composables/message/room/useReadDirectMessages";
 import { useSession } from "#src/services/auth/authClient.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
+import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
+import { openRealtimeSocket } from "#src/services/realtime/openRealtimeSocket.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { getRouteParam } from "#src/util/router/getRouteParam";
-import { MessageType, RoomType } from "@esposter/db-schema";
+import { getScopeTopic, MessageType, RoomType, usersToRoomsInMessage } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
+
+vi.mock(
+  import("#src/services/realtime/openRealtimeSocket"),
+  () => import("#src/services/realtime/openRealtimeSocket.test"),
+);
 
 describe(useDirectMessageStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -196,5 +207,64 @@ describe(useDirectMessageStore, () => {
     await waitForSynchronizedFunctions();
 
     expect(currentDirectMessageId.value).toBe(hiddenDirectMessage.id);
+  });
+
+  // A participant who joins reaches the list through the room's membership topic, which the list's read names beside its
+  // Rows and its participants. The join itself reads nothing, so the list's refresh is the one read that brings the new
+  // Participant, and the participants come with it rather than from a read of their own
+  test("refreshes a direct message's participants from a join through the list, with no read of the participants of its own", async () => {
+    expect.hasAssertions();
+
+    const directMessage = createRoom("", RoomType.DirectMessage);
+    const membershipTopic = getScopeTopic(getTableName(usersToRoomsInMessage), "roomId", directMessage.id);
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const [, onUserFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    effectScope().run(() => {
+      useRoomListEvents();
+    });
+    let participants = [first, second];
+    let listReads = 0;
+    trpcMsw.room.directMessage.readDirectMessages.query(() => {
+      listReads++;
+      const participantsWithNames = participants.map((participant) => ({
+        ...participant,
+        displayName: participant.name,
+      }));
+      return {
+        items: [directMessage],
+        nextCursor: "",
+        participants: [{ participants: participantsWithNames, roomId: directMessage.id }],
+      };
+    });
+    const directMessageStore = useDirectMessageStore();
+    const { getDirectMessageParticipants, readItems } = directMessageStore;
+    // The list's answer names its topics in a response header, which msw cannot set, so the list's read names them as the
+    // Topics link would hand them over while the read runs: the answer names the membership of the room it lists
+    vi.spyOn(directMessageStore, "readItems").mockImplementation((query, options) =>
+      readItems(() => {
+        readActiveTopicReads()?.push({ readAt: 0, topics: [{ topic: membershipTopic }] });
+        return query();
+      }, options),
+    );
+    const { readDirectMessages } = useReadDirectMessages();
+    await readDirectMessages();
+    participants = [first, second, third];
+    onUserFrame?.(
+      JSON.stringify({ data: { displayName: "", roomId: directMessage.id, user: third }, type: "joinRoom" }),
+    );
+    await waitForSynchronizedFunctions();
+
+    expect(listReads).toBe(1);
+
+    onUserFrame?.(JSON.stringify({ data: { topic: membershipTopic }, type: "invalidate" }));
+    await waitForSynchronizedFunctions();
+
+    expect(listReads).toBe(2);
+    expect(getDirectMessageParticipants(directMessage.id).map(({ id }) => id)).toStrictEqual([
+      first.id,
+      second.id,
+      third.id,
+    ]);
   });
 });

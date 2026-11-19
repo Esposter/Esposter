@@ -1,19 +1,32 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { UserInRoom } from "#shared/models/db/room/UserInRoom";
 import type { RoomRoleInMessage } from "@esposter/db-schema";
 
+import { useUserToRoomSubscribables } from "#src/composables/message/subscribables/useUserToRoomSubscribables";
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
 import { serveMemberRoles } from "#src/services/message/member/serveMemberRoles.test";
+import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
+import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
+import { openRealtimeSocket } from "#src/services/realtime/openRealtimeSocket.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useMemberStore } from "#src/store/message/user/member";
+import { useConnectionStore } from "#src/store/realtime/connection";
+import { getScopeTopic, usersToRoomsInMessage } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(
+  import("#src/services/realtime/openRealtimeSocket"),
+  () => import("#src/services/realtime/openRealtimeSocket.test"),
+);
 
 describe(useMemberStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -236,5 +249,39 @@ describe(useMemberStore, () => {
 
     expect(memberCount.value).toBe(1);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);
+  });
+
+  // Another client renames this member. Its write publishes the room's membership topic, which the list's first page
+  // Watches, and it sends the member the user event of the row it changed. The list re-reads the page on the topic, so
+  // The event needs no read of the user by id, which is the read this test holds the subscribable to. The page is read
+  // Through the store's own watched read, since a topic is named only while the read runs and an msw answer cannot name one
+  test("refreshes a renamed member from another client's write with no read of the user by id", async () => {
+    expect.hasAssertions();
+
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const [, onUserFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    effectScope().run(() => {
+      useUserToRoomSubscribables();
+    });
+    const membershipTopic = getScopeTopic(getTableName(usersToRoomsInMessage), "roomId", roomId);
+    const readUsersByIds = vi.fn<() => UserInRoom[]>(() => []);
+    trpcMsw.room.readUsersByIds.query(readUsersByIds);
+    const memberStore = useMemberStore();
+    const { members } = storeToRefs(memberStore);
+    let displayName = member.displayName;
+    await memberStore.readItems(() => {
+      readActiveTopicReads()?.push({ readAt: 0, topics: [{ topic: membershipTopic }] });
+      return Promise.resolve({ items: [{ ...member, displayName }], nextCursor: "" });
+    });
+    displayName = "renamed";
+    onUserFrame?.(JSON.stringify({ data: { topic: membershipTopic }, type: "invalidate" }));
+    onUserFrame?.(
+      JSON.stringify({ data: createUserToRoom({ displayName, roomId, userId: member.id }), type: "updateUserToRoom" }),
+    );
+    await waitForSynchronizedFunctions();
+
+    expect(readUsersByIds).not.toHaveBeenCalled();
+    expect(members.value).toStrictEqual([{ ...member, displayName }]);
   });
 });

@@ -1,4 +1,4 @@
-import type { RoomInMessage } from "@esposter/db-schema";
+import type { DirectMessageParticipants } from "#shared/models/db/room/DirectMessageParticipants";
 
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 
@@ -6,25 +6,24 @@ export const useReadDirectMessages = () => {
   const { $trpc } = useNuxtApp();
   const directMessageStore = useDirectMessageStore();
   const { readItems, readMoreItems, storeDirectMessageParticipants } = directMessageStore;
-  // A direct message is named after whoever is in it, so every page needs its participants beside it — both
-  // Paths that produce one go through here rather than restating the read
-  const readParticipants = async (roomIds: RoomInMessage["id"][]) => {
-    if (roomIds.length === 0) return;
-
-    const directMessageParticipants = await $trpc.room.directMessage.readDirectMessageParticipants.query(roomIds);
+  // A direct message is named after whoever is in it, so every page answers with its participants beside its rows, and
+  // Both paths that produce one take them from that answer rather than reading them again
+  const storeParticipants = (directMessageParticipants: DirectMessageParticipants[]) => {
     for (const { participants, roomId } of directMessageParticipants)
       storeDirectMessageParticipants(roomId, participants);
   };
   const readDirectMessages = () =>
     readItems(async () => {
-      const cursorPaginationData = await $trpc.room.directMessage.readDirectMessages.query();
-      await readParticipants(cursorPaginationData.items.map(({ id }) => id));
+      const { participants, ...cursorPaginationData } = await $trpc.room.directMessage.readDirectMessages.query();
+      storeParticipants(participants);
       return cursorPaginationData;
     });
   const readMoreDirectMessages = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
-      const cursorPaginationData = await $trpc.room.directMessage.readDirectMessages.query({ cursor });
-      await readParticipants(cursorPaginationData.items.map(({ id }) => id));
+      const { participants, ...cursorPaginationData } = await $trpc.room.directMessage.readDirectMessages.query({
+        cursor,
+      });
+      storeParticipants(participants);
       return cursorPaginationData;
     }, onComplete);
 
