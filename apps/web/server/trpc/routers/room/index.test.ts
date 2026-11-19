@@ -603,7 +603,7 @@ describe("roomRouter", () => {
     await roomCaller.deleteRoom(newRoom.id);
 
     expect(roomObjectCalls).toContainEqual({
-      args: [{ userId: getMockSession().user.id }],
+      args: [{ userId: getMockSession().user.id }, [getMockSession().user.id]],
       method: "deleteAll",
       roomId: newRoom.id,
     });

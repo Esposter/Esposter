@@ -247,6 +247,14 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     return true;
   }
 
+  // A person who leaves a room, or whom the room removes or deletes, takes what they held for it: the reminders set there
+  // And the index entries of the messages scheduled there. The alarm is re-armed for what is left, as a cancel does
+  async removeRoomScheduledItems(roomId: string): Promise<void> {
+    await this.db.delete(remindersInUser).where(eq(remindersInUser.roomId, roomId));
+    await this.db.delete(scheduledMessagesInUser).where(eq(scheduledMessagesInUser.roomId, roomId));
+    await this.#armAlarm();
+  }
+
   async removeScheduledMessage(scheduledId: string): Promise<void> {
     await this.db.delete(scheduledMessagesInUser).where(eq(scheduledMessagesInUser.scheduledId, scheduledId));
   }

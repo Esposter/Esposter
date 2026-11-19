@@ -299,7 +299,7 @@ describe(deleteAccountHandler, () => {
     // The rooms are asked in the order the sweep runs. The owned room is emptied, which tells its online members first.
     // The member room drops the account's messages and reactions, then the account, and tells its online members
     expect(roomObjectCalls).toStrictEqual([
-      { args: [{ userId }], method: "deleteAll", roomId: ownedRoom.id },
+      { args: [{ userId }, [userId]], method: "deleteAll", roomId: ownedRoom.id },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserMessages",

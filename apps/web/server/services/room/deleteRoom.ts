@@ -7,6 +7,7 @@ import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPre
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { getBucket } from "#server/services/storage/getBucket";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { getRoomMemberIds } from "@esposter/db";
 import { DatabaseEntityType, roomsInMessage, StorageBucket } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 
@@ -17,9 +18,10 @@ export const deleteRoom = async ({ db, user }: Pick<AuthedContext, "db" | "user"
     .where(ownedBy(roomsInMessage, id, user.id));
   requireMutation(ownedRooms[0], Operation.Delete, DatabaseEntityType.Room, id);
 
-  // The object is emptied before the row goes. A sender's index that refuses its removal fails the delete with the row
-  // Still standing, so the owner's retry finds the room and empties it again, rather than leaving its messages in the object
-  await useRoomObject(id).deleteAll({ userId: user.id });
+  // The object is emptied before the row goes, and so is each member's object of what it holds for the room. A sender's or
+  // A member's index that refuses its removal fails the delete with the row still standing, so the owner's retry finds the
+  // Room and empties it again, rather than leaving its messages in the object
+  await useRoomObject(id).deleteAll({ userId: user.id }, await getRoomMemberIds(db, id));
   const deletedRooms = await db
     .delete(roomsInMessage)
     .where(ownedBy(roomsInMessage, id, user.id))

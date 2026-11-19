@@ -211,7 +211,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   // Taken its removal, so a failed one leaves the room whole and the teardown is asked again. Once every index has taken
   // Its removal, the online members are told it is deleted, while the storage that knows them still stands. Each sender's
   // Index publishes its own removal through its invoke, so the readers of those lists are told by it
-  async deleteAll(actor: RoomActor): Promise<void> {
+  async deleteAll(actor: RoomActor, memberIds: string[]): Promise<void> {
     const scheduledMessages = this.db
       .select({ id: scheduledMessagesInRoom.id, userId: scheduledMessagesInRoom.userId })
       .from(scheduledMessagesInRoom)
@@ -225,10 +225,14 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     const results = await Promise.allSettled([
       ...scheduledMessages.map(({ id, userId }) => this.#getUser(userId).removeScheduledMessage(id)),
       ...senderIds.map((senderId) => this.#getUser(senderId).removeSentMessagesInRoom(this.#roomId)),
+      ...memberIds.map((memberId) => this.#getUser(memberId).removeRoomScheduledItems(this.#roomId)),
     ]);
     const failures = results.flatMap((result) => (result.status === "rejected" ? [result.reason] : []));
     if (failures.length > 0)
-      throw new AggregateError(failures, `The room is kept, since ${failures.length} sender index removal(s) failed`);
+      throw new AggregateError(
+        failures,
+        `The room is kept, since ${failures.length} index or person removal(s) failed`,
+      );
 
     await this.notifyOnlineMembers({ data: { roomId: this.#roomId, userId: actor.userId }, type: "deleteRoom" });
     for (const webSocket of this.ctx.getWebSockets()) webSocket.close(1000, "Room deleted");
@@ -452,11 +456,15 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     });
   }
 
-  // A member who is no longer in the room is no longer online in it, and their sockets here are dropped
-  removeMember(userId: string): void {
+  // A member who is no longer in the room is no longer online in it, their sockets here are dropped, and what they scheduled
+  // Here is removed. Their object drops what it holds for the room too, so no reminder of theirs for it fires after they left
+  async removeMember(userId: string): Promise<void> {
     this.db.delete(onlineMembersInRoom).where(eq(onlineMembersInRoom.userId, userId)).run();
     for (const webSocket of this.ctx.getWebSockets(getUserSocketTag(userId)))
       webSocket.close(ROOM_MEMBER_REMOVED_CODE, "Removed from the room");
+    this.db.delete(scheduledMessagesInRoom).where(eq(scheduledMessagesInRoom.userId, userId)).run();
+    await this.#armAlarm();
+    await this.#notifyUser(userId, (user) => user.removeRoomScheduledItems(this.#roomId));
   }
 
   removeReaction({ emojiTag, messageId }: { emojiTag: string; messageId: number }, actor: RoomActor): boolean {

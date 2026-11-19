@@ -3,6 +3,7 @@ import type { RoomInMessage, UserInAuth } from "@esposter/db-schema";
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { getDb } from "#src/services/shared/getDb";
 import { deleteStoragePrefix } from "#src/services/storage/deleteStoragePrefix";
+import { getRoomMemberIds } from "@esposter/db";
 import { roomsInMessage, StorageBucket } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
@@ -17,6 +18,6 @@ import { eq } from "drizzle-orm";
 export const deleteAccountOwnedRoom = async (roomId: RoomInMessage["id"], userId: UserInAuth["id"]): Promise<void> => {
   await deleteStoragePrefix(StorageBucket.MessageAssets, `${roomId}/`);
   await deleteStoragePrefix(StorageBucket.PublicUserAssets, `rooms/${roomId}/`);
-  await getRoomObject(roomId).deleteAll({ userId });
+  await getRoomObject(roomId).deleteAll({ userId }, await getRoomMemberIds(getDb(), roomId));
   await getDb().delete(roomsInMessage).where(eq(roomsInMessage.id, roomId));
 };

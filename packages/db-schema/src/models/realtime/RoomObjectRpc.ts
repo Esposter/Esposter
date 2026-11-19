@@ -58,9 +58,10 @@ export interface RoomObjectRpc {
     actor: RoomActor,
   ) => Promise<ScheduledRoomMessage>;
   createWebhookMessage: (input: CreateWebhookRoomMessageInput) => Promise<RoomMessage>;
-  // Empties the room once every sender's index has taken its removal, and tells its online members it is deleted before
-  // The storage goes. The actor is the one who deletes it
-  deleteAll: (actor: RoomActor) => Promise<void>;
+  // Empties the room once every sender's index and every member's object has taken its removal, and tells its online members
+  // It is deleted before the storage goes. The actor is the one who deletes it, and the members are the room's, which the
+  // Caller reads before the room's memberships go
+  deleteAll: (actor: RoomActor, memberIds: string[]) => Promise<void>;
   // Returns the file it removed, so the caller can remove its blob
   deleteFile: (input: { fileId: string; id: number }, actor: RoomActor) => FileEntity | null;
   deleteLinkPreview: (id: number, actor: RoomActor) => null | RoomMessage;
@@ -101,7 +102,9 @@ export interface RoomObjectRpc {
   readThread: (threadRootId: number) => RoomMessage[];
   // The live roots among the named ids, in the order named, each with its live replies counted
   readThreads: (threadRootIds: number[]) => RoomThread[];
-  removeMember: (userId: string) => void;
+  // A member who is no longer in the room is dropped from its online set and sockets, and their scheduled messages in it are
+  // Removed, with their object told to drop what it holds for the room
+  removeMember: (userId: string) => Promise<void>;
   // Takes the actor off the emoji's reactors, deleting the reaction when the actor was its only one. False when the actor
   // Was not a reactor
   removeReaction: (input: { emojiTag: string; messageId: number }, actor: RoomActor) => boolean;

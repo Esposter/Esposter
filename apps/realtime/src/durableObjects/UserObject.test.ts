@@ -383,6 +383,37 @@ describe(UserObject, () => {
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(laterRunAt.getTime());
   });
 
+  // A person who leaves a room takes its reminders and scheduled messages with them, so the one due first in it never fires,
+  // While a reminder in another room is still sent when it is due
+  test("removing a room's scheduled items drops its reminders and index entries, so none of them fires after the person leaves", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createUserObject();
+    const leftRoomId = v7();
+    const roomId = v7();
+    const dueAt = new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
+    const laterRunAt = new Date(dueAt.getTime() + Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
+    await object.addReminder({ id: v7(), roomId: leftRoomId, runAt: dueAt, text: "left" });
+    await object.addReminder({ id: v7(), roomId, runAt: laterRunAt, text: "kept" });
+    await object.addScheduledMessage({ roomId: leftRoomId, runAt: dueAt, scheduledId: v7() });
+    await object.addScheduledMessage({ roomId, runAt: laterRunAt, scheduledId: v7() });
+
+    await object.removeRoomScheduledItems(leftRoomId);
+
+    const reminders = await object.readReminders(firstPage);
+    const scheduledMessages = await object.readScheduledMessages(firstPage);
+    expect(reminders.map(({ text }) => text)).toStrictEqual(["kept"]);
+    expect(scheduledMessages.map(({ roomId: messageRoomId }) => messageRoomId)).toStrictEqual([roomId]);
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(laterRunAt.getTime());
+
+    vi.setSystemTime(laterRunAt);
+    await object.alarm();
+
+    expect(MockJobQueueDatabase.get(QueueJob.ProcessNotification)).toStrictEqual([
+      { roomId, text: "kept", type: AppNotificationType.Reminder, userId },
+    ]);
+  });
+
   test("closing a session closes the sockets of that session and no other", async () => {
     expect.hasAssertions();
 

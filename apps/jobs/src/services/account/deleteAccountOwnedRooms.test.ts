@@ -59,6 +59,7 @@ describe(deleteAccountOwnedRooms, () => {
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values({ roomId: ownedRoom.id, userId: otherUserId });
     // The moderation log and notes are rows of the room, so they go with its row rather than with a partition sweep
     await mockDb.insert(moderationLogsInMessage).values([
       { actorUserId: userId, roomId: ownedRoom.id, targetUserId: otherUserId, type: AdminActionType.Warn },
@@ -75,7 +76,9 @@ describe(deleteAccountOwnedRooms, () => {
 
     await runUnit(() => deleteAccountOwnedRooms(userId));
 
-    expect(roomObjectCalls).toStrictEqual([{ args: [{ userId }], method: "deleteAll", roomId: ownedRoom.id }]);
+    expect(roomObjectCalls).toStrictEqual([
+      { args: [{ userId }, [otherUserId]], method: "deleteAll", roomId: ownedRoom.id },
+    ]);
     await expect(
       mockDb.select({ roomId: moderationLogsInMessage.roomId }).from(moderationLogsInMessage),
     ).resolves.toStrictEqual([{ roomId: otherRoom.id }]);

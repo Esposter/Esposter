@@ -17,10 +17,10 @@ import { and, eq } from "drizzle-orm";
 
 // The Scheduled tab's rows are both kinds of scheduled item, each held where its owner is: the person's reminders and the
 // Index of their scheduled messages, both in their own object. The page is the first rows of the two merged soonest first,
-// Read from each owner's keyset. A reminder is listed while its room exists, and its room's details are read only while
-// The person is still a member of it: a room they have left is listed without them. A scheduled message is listed only
-// While the person is still a member of its room, and its text and time are read from that room. A scheduled message whose
-// Room no longer holds it is pruned from the index, so the list and its count stop naming it
+// Read from each owner's keyset. A row is listed only while the person is still a member of its room, which is where its
+// Room's details are read from, since leaving the room takes its rows out of the person's object. A scheduled message's text
+// And time are read from its room, and a scheduled message whose room no longer holds it is pruned from the index, so the
+// List and its count stop naming it
 export const readMyScheduledMessageJobs = async (
   db: Context["db"],
   userId: string,
@@ -41,22 +41,17 @@ export const readMyScheduledMessageJobs = async (
     limit,
   );
 
-  // Whether a room still exists is read for every room the page names, but its row is read only for the rooms the person
-  // Is a member of, so a room they have left gives its details to nobody
+  // The rooms the page names are read only for the ones the person is still a member of, so a room they have left gives its
+  // Details to nobody
   const roomIds = [...new Set(page.items.map(({ roomId }) => roomId))];
-  const [existingRoomIds, memberRooms] = await Promise.all([
+  const memberRooms =
     roomIds.length > 0
-      ? db.select({ id: roomsInMessage.id }).from(roomsInMessage).where(inJsonArray(roomsInMessage.id, roomIds))
-      : [],
-    roomIds.length > 0
-      ? db
+      ? await db
           .select({ room: roomsInMessage })
           .from(usersToRoomsInMessage)
           .innerJoin(roomsInMessage, eq(roomsInMessage.id, usersToRoomsInMessage.roomId))
           .where(and(eq(usersToRoomsInMessage.userId, userId), inJsonArray(usersToRoomsInMessage.roomId, roomIds)))
-      : [],
-  ]);
-  const existingRoomIdSet = new Set(existingRoomIds.map(({ id }) => id));
+      : [];
   const memberRoomMap = new Map(memberRooms.map(({ room }) => [room.id, room]));
 
   const scheduledItems = page.items.filter((item) => !item.isReminder && memberRoomMap.has(item.roomId));
@@ -81,8 +76,8 @@ export const readMyScheduledMessageJobs = async (
 
   return {
     items: page.items.flatMap((item): ScheduledMessageJobWithRoom[] => {
-      if (!existingRoomIdSet.has(item.roomId)) return [];
       const room = memberRoomMap.get(item.roomId);
+      if (!room) return [];
       if (item.isReminder)
         return [
           {
@@ -95,7 +90,7 @@ export const readMyScheduledMessageJobs = async (
         ];
 
       const scheduledMessage = messageMap.get(item.id);
-      if (!room || !scheduledMessage) return [];
+      if (!scheduledMessage) return [];
       return [
         {
           id: item.id,

@@ -1,11 +1,10 @@
 import type { RoomInMessage, ScheduledMessageJobType } from "@esposter/db-schema";
 
-// A row of the Scheduled tab: a reminder or a scheduled message, with the room it is in. The room is given only while the
-// Person is still a member of it, so a reminder in a room they have left carries no room
+// A row of the Scheduled tab: a reminder or a scheduled message, with the room it is in
 export interface ScheduledMessageJobWithRoom {
   id: string;
   payload: ScheduledMessageJobPayload;
-  room?: RoomInMessage | undefined;
+  room: RoomInMessage;
   roomId: string;
   runAt: Date;
 }

@@ -17,11 +17,13 @@ export type ScheduledMessageInUser = Pick<typeof scheduledMessagesInUser.$inferS
 // A reminder a person set for themselves, held until its alarm sends it. Its deep link is the room it was set in
 export type ScheduledReminder = typeof remindersInUser.$inferSelect;
 
+// What a write names of a reminder: every column but its version, which the database raises
+export type ScheduledReminderInput = Except<ScheduledReminder, "version">;
+
 // A message the person sent, as their index holds it
 export type SentMessageInUser = typeof sentMessagesInUser.$inferSelect;
 
-// What a write names of a reminder or a sent message: every column but its version, which the database raises
-export type ScheduledReminderInput = Except<ScheduledReminder, "version">;
+// What a write names of a sent message: every column but its version, which the database raises
 export type SentMessageInUserInput = Except<SentMessageInUser, "version">;
 
 // The RPC surface of a User object, the one contract its class in the realtime Worker and the web Worker's callers share.
@@ -50,6 +52,8 @@ export interface UserObjectRpc {
   removeJoinedCall: (callSessionId: string) => Promise<void>;
   // Whether a reminder was there to remove, so a cancel of one that already fired or never existed is told so
   removeReminder: (id: string) => Promise<boolean>;
+  // The reminders and scheduled-message index entries the person holds for a room, dropped when they leave it or it is deleted
+  removeRoomScheduledItems: (roomId: string) => Promise<void>;
   removeScheduledMessage: (scheduledId: string) => Promise<void>;
   // The sent messages the person has in a room, by their ids, dropped when those messages are deleted
   removeSentMessages: (input: { messageIds: number[]; roomId: string }) => Promise<void>;

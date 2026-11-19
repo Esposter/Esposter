@@ -14,4 +14,6 @@ The reminder's flow:
 
 How often a delivery can repeat is set out in the [scheduled messages](../../../../openspec/specs/esbabbler/scheduled-messages/design.md) design. The notification's own retries and delivery belong to the notification path ([notifications](../../../../openspec/specs/architecture/notifications/design.md)).
 
-The Scheduled tab reads both kinds through `message.scheduledMessageJob.readMyScheduledMessageJobs` and counts them through `readMyScheduledMessageJobsCount`. Both merge the index with the reminders, and a row whose room no longer exists is left out.
+The Scheduled tab reads both kinds through `message.scheduledMessageJob.readMyScheduledMessageJobs` and counts them through `readMyScheduledMessageJobsCount`. Both merge the index with the reminders, and a row whose room the person is no longer a member of is left out.
+
+Leaving a room (or being removed or banned from it, or its deletion) removes the person's reminders and index entries for that room: `RoomObject.removeMember` and `RoomObject.deleteAll` call `UserObject.removeRoomScheduledItems`, which re-arms the alarm for what is left.

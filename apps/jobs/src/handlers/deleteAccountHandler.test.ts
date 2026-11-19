@@ -229,7 +229,7 @@ describe(deleteAccountHandler, () => {
     ).resolves.toStrictEqual([]);
     // Only the first run sends anything: the second finds no owned room and no membership left
     expect(roomObjectCalls).toStrictEqual([
-      { args: [{ userId }], method: "deleteAll", roomId: ownedRoom.id },
+      { args: [{ userId }, []], method: "deleteAll", roomId: ownedRoom.id },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserMessages",

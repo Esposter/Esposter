@@ -111,6 +111,7 @@ describe(RoomObject, () => {
     "addScheduledMessage",
     "addSentMessage",
     "broadcastEvent",
+    "removeRoomScheduledItems",
     "removeScheduledMessage",
     "removeSentMessages",
     "removeSentMessagesInRoom",
@@ -133,6 +134,7 @@ describe(RoomObject, () => {
       addScheduledMessage: vi.fn<UserObjectRpc["addScheduledMessage"]>(),
       addSentMessage: vi.fn<UserObjectRpc["addSentMessage"]>(),
       broadcastEvent: vi.fn<UserObjectRpc["broadcastEvent"]>(),
+      removeRoomScheduledItems: vi.fn<UserObjectRpc["removeRoomScheduledItems"]>(),
       removeScheduledMessage: vi.fn<UserObjectRpc["removeScheduledMessage"]>(),
       removeSentMessages: vi.fn<UserObjectRpc["removeSentMessages"]>(),
       removeSentMessagesInRoom: vi.fn<UserObjectRpc["removeSentMessagesInRoom"]>(),
@@ -615,6 +617,31 @@ describe(RoomObject, () => {
     expect(getWokenTopics(readSet, topicPublishes)).toStrictEqual([`room/${roomId}:scheduledMessages:*`]);
   });
 
+  // A member who leaves takes what they scheduled in the room with them, and their object drops its items for the room, so
+  // Nothing of theirs is sent there after they have left. The other members' scheduled messages are left as they were
+  test("a member who leaves the room takes their scheduled messages in it, and another member's stay", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const scheduledMessage = await object.createScheduledMessage(
+      { id: v7(), message: "left", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      actor,
+    );
+    const otherScheduledMessage = await object.createScheduledMessage(
+      { id: v7(), message: "kept", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      otherActor,
+    );
+
+    await object.removeMember(userId);
+
+    await expect(object.readScheduledMessages({ ids: [scheduledMessage.id], userId })).resolves.toStrictEqual([]);
+    await expect(
+      object.readScheduledMessages({ ids: [otherScheduledMessage.id], userId: otherUserId }),
+    ).resolves.toStrictEqual([otherScheduledMessage]);
+    expect(getUserStub(userId).removeRoomScheduledItems).toHaveBeenCalledExactlyOnceWith(roomId);
+    expect(getUserStub(otherUserId).removeRoomScheduledItems).not.toHaveBeenCalled();
+  });
+
   test("a scheduled message names the members its text mentions, and counts each one's mention as a live send does", async () => {
     expect.hasAssertions();
 
@@ -1033,10 +1060,21 @@ describe(RoomObject, () => {
     state.ctx.acceptWebSocket(socket, [getUserSocketTag(userId), getDeviceSocketTag(deviceId)]);
     await sendMessage(object, "hello");
 
-    await object.deleteAll(actor);
+    await object.deleteAll(actor, [userId, otherUserId]);
 
     expect(socket.close).toHaveBeenCalledExactlyOnceWith(1000, "Room deleted");
     await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
+  });
+
+  test("deleting the room drops its items from each member's object, the reminders in it included", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+
+    await object.deleteAll(actor, [userId, otherUserId]);
+
+    expect(getUserStub(userId).removeRoomScheduledItems).toHaveBeenCalledExactlyOnceWith(roomId);
+    expect(getUserStub(otherUserId).removeRoomScheduledItems).toHaveBeenCalledExactlyOnceWith(roomId);
   });
 
   test("deleting the room takes its sent messages out of each sender's index", async () => {
@@ -1046,7 +1084,7 @@ describe(RoomObject, () => {
     await sendMessage(object, "hello");
     await sendMessage(object, "reply", otherActor);
 
-    await object.deleteAll(actor);
+    await object.deleteAll(actor, [userId, otherUserId]);
 
     expect(getUserStub(userId).removeSentMessagesInRoom).toHaveBeenCalledExactlyOnceWith(roomId);
     expect(getUserStub(otherUserId).removeSentMessagesInRoom).toHaveBeenCalledExactlyOnceWith(roomId);
@@ -1121,7 +1159,7 @@ describe(RoomObject, () => {
       actor,
     );
 
-    await object.deleteAll(actor);
+    await object.deleteAll(actor, [userId, otherUserId]);
 
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(scheduledMessage.id);
   });
@@ -1133,12 +1171,12 @@ describe(RoomObject, () => {
     await sendMessage(object, "hello");
     getUserStub(userId).removeSentMessagesInRoom.mockRejectedValueOnce(new Error("The index is unreachable"));
 
-    await expect(object.deleteAll(actor)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AggregateError: The room is kept, since 1 sender index removal(s) failed]`,
+    await expect(object.deleteAll(actor, [userId, otherUserId])).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AggregateError: The room is kept, since 1 index or person removal(s) failed]`,
     );
     await expect(object.readMessages(newestPage)).resolves.toHaveLength(1);
 
-    await expect(object.deleteAll(actor)).resolves.toBeUndefined();
+    await expect(object.deleteAll(actor, [userId, otherUserId])).resolves.toBeUndefined();
   });
 
   test("a refused teardown tells the room's online members nothing, and the accepted one tells each of them once", async () => {
@@ -1149,12 +1187,12 @@ describe(RoomObject, () => {
     await sendMessage(object, "hello");
     getUserStub(userId).removeSentMessagesInRoom.mockRejectedValueOnce(new Error("The index is unreachable"));
 
-    await expect(object.deleteAll(actor)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AggregateError: The room is kept, since 1 sender index removal(s) failed]`,
+    await expect(object.deleteAll(actor, [userId, otherUserId])).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AggregateError: The room is kept, since 1 index or person removal(s) failed]`,
     );
     expect(getUserStub(otherUserId).broadcastEvent).not.toHaveBeenCalled();
 
-    await object.deleteAll(actor);
+    await object.deleteAll(actor, [userId, otherUserId]);
     expect(getUserStub(otherUserId).broadcastEvent).toHaveBeenCalledExactlyOnceWith({
       data: { roomId, userId },
       type: "deleteRoom",

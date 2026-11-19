@@ -99,6 +99,7 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
     reconcileTodoReminders: vi.fn<UserObjectRpc["reconcileTodoReminders"]>(),
     removeJoinedCall: vi.fn<UserObjectRpc["removeJoinedCall"]>(),
     removeReminder: vi.fn<UserObjectRpc["removeReminder"]>(),
+    removeRoomScheduledItems: vi.fn<UserObjectRpc["removeRoomScheduledItems"]>(),
     removeScheduledMessage: vi.fn<UserObjectRpc["removeScheduledMessage"]>(),
     removeSentMessages: vi.fn<UserObjectRpc["removeSentMessages"]>(),
     removeSentMessagesInRoom: vi.fn<UserObjectRpc["removeSentMessagesInRoom"]>(),
