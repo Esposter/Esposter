@@ -13,7 +13,7 @@ const sortByPrice = (upgradesToSort: Upgrade[]) =>
 export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const clickerStore = useClickerStore();
   const pointStore = usePointStore();
-  const { checkIsAffordable, decrementPoints } = pointStore;
+  const { trySpendPoints } = pointStore;
   const upgradeMap = ref<typeof UpgradeMap>();
   const upgrades = computed<Upgrade[]>(() => (upgradeMap.value ? parseDictionaryToArray(upgradeMap.value) : []));
   const initializeUpgradeMap = (newUpgradeMap: typeof UpgradeMap) => {
@@ -33,12 +33,12 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     ),
   );
   const boughtUpgrades = computed(() => sortByPrice(clickerStore.clicker.boughtUpgrades));
-  // An upgrade is bought once, and only with the points to pay for it
+  // An upgrade is bought once, and only with the points to pay for it. The bought check runs first, so a repeat
+  // Purchase spends nothing
   const createBoughtUpgrade = (newUpgrade: Upgrade) => {
-    if (!checkIsAffordable(newUpgrade.price) || checkIsBought(newUpgrade.id)) return;
+    if (checkIsBought(newUpgrade.id) || !trySpendPoints(newUpgrade.price)) return;
 
     clickerStore.clicker.boughtUpgrades.push(newUpgrade);
-    decrementPoints(newUpgrade.price);
   };
 
   return { availableUpgrades, boughtUpgrades, createBoughtUpgrade, initializeUpgradeMap, upgrades };
