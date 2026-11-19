@@ -32,10 +32,6 @@ const keyboardExtension = new Extension({
         saveMessage(this.editor);
         return true;
       },
-      Esc: () => {
-        emit("update:update-mode", false);
-        return true;
-      },
     };
   },
 });
