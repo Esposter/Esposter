@@ -1,10 +1,10 @@
 import type { SceneLayout } from "genshin-engine";
 
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
-import { SURFACE_LAG_CAP_SHARE, TEXTURE_HIGH_PASS_RADII_TEXELS } from "#src/services/genshinParity/passes/constants";
 import { chooseHeldLobe } from "#src/services/genshinParity/passes/chooseHeldLobe";
 import { computeMetresPerUv } from "#src/services/genshinParity/passes/computeMetresPerUv";
 import { computeSurfaceLag } from "#src/services/genshinParity/passes/computeSurfaceLag";
+import { SURFACE_LAG_CAP_SHARE, TEXTURE_HIGH_PASS_RADII_TEXELS } from "#src/services/genshinParity/passes/constants";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -69,7 +69,7 @@ const readFamilyTriangles = async (
       ...(await readObjMesh(join(assets, "Mesh", `${mesh}.obj`))),
     })),
   );
-  return meshes.flatMap(({ faceUvs, faces, scale, uvs, vertices }) => {
+  return meshes.flatMap(({ faces, faceUvs, scale, uvs, vertices }) => {
     const world = vertices.map(([x, y, z]): Vec3 => [x * scale[0], y * scale[1], z * scale[2]]);
     return faces.flatMap(([a, b, c], face): { corners: Vec2[]; triangle: { uvArea: number; worldArea: number } }[] => {
       const [first, second, third] = [a, b, c].map((index): Vec3 => world[index] ?? [0, 0, 0]);

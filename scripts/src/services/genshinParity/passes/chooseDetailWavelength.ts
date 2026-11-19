@@ -6,7 +6,7 @@ export const chooseDetailWavelength = ({
 }: {
   frame?: number | undefined;
   texture?: number | undefined;
-}): { isFromTexture: boolean; metres: number } | undefined => {
+}): undefined | { isFromTexture: boolean; metres: number } => {
   if (frame !== undefined) return { isFromTexture: false, metres: frame };
   if (texture !== undefined) return { isFromTexture: true, metres: texture };
   return undefined;

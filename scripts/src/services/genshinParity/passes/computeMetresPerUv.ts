@@ -5,7 +5,7 @@ export const computeMetresPerUv = (triangles: readonly { uvArea: number; worldAr
   const scales = triangles
     .filter(({ uvArea }) => uvArea > 0)
     .map(({ uvArea, worldArea }) => Math.sqrt(worldArea / uvArea))
-    .toSorted((first, second) => first - second);
+    .toSorted((firstScale, secondScale) => firstScale - secondScale);
   if (scales.length === 0) return undefined;
   const middle = Math.floor(scales.length / 2);
   return scales.length % 2 === 1 ? scales[middle] : ((scales[middle - 1] ?? 0) + (scales[middle] ?? 0)) / 2;
