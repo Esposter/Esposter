@@ -25,104 +25,25 @@ const playGcgDuel = (decks: Parameters<typeof createGcgDuel>[0], rule: GcgDuel["
   return duel;
 };
 
-describe("a duel between two copies of the tutorial deck", () => {
-  test("should be played to its end through the engine's public functions", async () => {
-    expect.hasAssertions();
-
-    const tutorialDeck = await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 1);
-    const duel = playGcgDuel([tutorialDeck, tutorialDeck], TEST_RULE);
-
-    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
-      hasOutcome: true,
-      isEnded: true,
-    });
-  });
-});
-
-describe("a duel between opponent decks 3 and 4", () => {
-  test("should be played to its end through the engine's public functions", async () => {
+describe("the duels a player meets, each between two decks read from the game data", () => {
+  // The tutorial deck against itself, the opponent decks 3 and 4, the tutorial's opponent decks 30111 and 30112, the
+  // player's deck 7 against opponent deck 30111, the Oceanid's deck 2, and the Mondstadt challengers' decks 11005 and 11002
+  test.each([
+    [1, 1],
+    [3, 4],
+    [30_111, 30_112],
+    [7, 30_111],
+    [1, 2],
+    [1, 11_005],
+    [1, 11_002],
+  ])("the duel between decks %i and %i should be played to its end", async (firstDeckId, secondDeckId) => {
     expect.hasAssertions();
 
     const duel = playGcgDuel(
-      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 3), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 4)],
-      TEST_RULE,
-    );
-
-    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
-      hasOutcome: true,
-      isEnded: true,
-    });
-  });
-});
-
-describe("the tutorial duels' decks: the player's deck 7 and the opponent decks 30111 and 30112", () => {
-  test("should play opponent deck 30111 against opponent deck 30112 to its end", async () => {
-    expect.hasAssertions();
-
-    const duel = playGcgDuel(
-      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 30_111), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 30_112)],
-      TEST_RULE,
-    );
-
-    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
-      hasOutcome: true,
-      isEnded: true,
-    });
-  });
-
-  test("should play the player's deck 7 against opponent deck 30111 to its end", async () => {
-    expect.hasAssertions();
-
-    const duel = playGcgDuel(
-      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 7), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 30_111)],
-      TEST_RULE,
-    );
-
-    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
-      hasOutcome: true,
-      isEnded: true,
-    });
-  });
-});
-
-describe("the Oceanid duel's deck 2", () => {
-  test("should be played against the tutorial deck to its end", async () => {
-    expect.hasAssertions();
-
-    const duel = playGcgDuel(
-      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 1), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 2)],
-      TEST_RULE,
-    );
-
-    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
-      hasOutcome: true,
-      isEnded: true,
-    });
-  });
-});
-
-describe("the Mondstadt challenger Marjorie's deck 11005", () => {
-  test("should be played against the tutorial deck to its end", async () => {
-    expect.hasAssertions();
-
-    const duel = playGcgDuel(
-      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 1), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 11_005)],
-      TEST_RULE,
-    );
-
-    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
-      hasOutcome: true,
-      isEnded: true,
-    });
-  });
-});
-
-describe("the Mondstadt challenger Ellin's monster deck 11002", () => {
-  test("should be played against the tutorial deck to its end", async () => {
-    expect.hasAssertions();
-
-    const duel = playGcgDuel(
-      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 1), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 11_002)],
+      [
+        await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, firstDeckId),
+        await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, secondDeckId),
+      ],
       TEST_RULE,
     );
 
