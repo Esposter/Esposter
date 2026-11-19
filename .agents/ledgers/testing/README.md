@@ -6,13 +6,17 @@ files changed since.
 
 ## Rules
 
-| Rule                                                       | Owner                                                   |
-| ---------------------------------------------------------- | ------------------------------------------------------- |
-| A test earns its line or is deleted; fixtures written once | `testing` — "What to Test"                              |
-| Constants inside the `describe`, never module scope        | enforced: `scripts/src/workspace/constantScope.test.ts` |
-| Mock cleanup follows how the mock was created              | `testing` — `references/mock-cleanup.md`                |
-| `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                                |
-| The cheapest environment that runs the file (`app` only)   | this ledger — "The environment a suite declares"        |
+| Rule                                                       | Owner                                            |
+| ---------------------------------------------------------- | ------------------------------------------------ |
+| A test earns its line or is deleted; fixtures written once | `testing` — "What to Test"                       |
+| Mock cleanup follows how the mock was created              | `testing` — `references/mock-cleanup.md`         |
+| `expect.hasAssertions()` and no polling                    | `testing` — "Assertions"                         |
+| The cheapest environment that runs the file (`app` only)   | this ledger — "The environment a suite declares" |
+
+Enforced rather than swept, so not in this table:
+
+- constants inside the `describe`: `scripts/src/workspace/constantScope.test.ts`
+- exact assertions: `vitest/prefer-strict-equal`, in `oxlint.config.ts`
 
 A bare zero-argument `vi.fn` is not in this table because
 `packages/configuration/eslint/restrictedTestSyntaxes.js` fails on the line that writes it.

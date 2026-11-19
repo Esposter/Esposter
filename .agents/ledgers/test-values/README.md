@@ -8,14 +8,17 @@ mirrors a production constant, a value further from the least than the case need
 
 ## Rules
 
-| Rule                                                             | Owner                                                               |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------- |
-| The least value that still distinguishes; one canonical per kind | `test-values` — "Canonical values"                                  |
-| Every string literal passes one of three checks                  | `test-values` — "Every string literal …"                            |
-| Shared data declared once; what production owns imported         | `test-values` — "Shared data"                                       |
-| A date read by its shape moves by the smallest step, in 1970     | `test-values` — "Dates and times"                                   |
-| No typed date                                                    | enforced: `test-values/no-typed-date` (the `oxlint` skill)          |
-| The fake clock's moments are `Temporal.Instant`s                 | enforced: `packages/configuration/eslint/restrictedTestSyntaxes.js` |
+| Rule                                                             | Owner                                    |
+| ---------------------------------------------------------------- | ---------------------------------------- |
+| The least value that still distinguishes; one canonical per kind | `test-values` — "Canonical values"       |
+| Every string literal passes one of three checks                  | `test-values` — "Every string literal …" |
+| Shared data declared once; what production owns imported         | `test-values` — "Shared data"            |
+| A date read by its shape moves by the smallest step, in 1970     | `test-values` — "Dates and times"        |
+
+Enforced rather than swept, so not in this table:
+
+- no typed date: `test-values/no-typed-date`, in `oxlint.config.ts`
+- the fake clock's moments are `Temporal.Instant`s: `packages/configuration/eslint/restrictedTestSyntaxes.js`
 
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
 current one, and there is no partially-swept state.
