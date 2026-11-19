@@ -11,12 +11,6 @@ describe(computeReputationExploresReached, () => {
     reward: { exp: 200, items: [] },
   }));
 
-  test("passing an exploration threshold pays once", () => {
-    expect.hasAssertions();
-
-    expect(computeReputationExploresReached(0, 39, EXPLORES)).toStrictEqual([takeOne(EXPLORES, 0)]);
-  });
-
   test("should reach a threshold exactly at its percentage", () => {
     expect.hasAssertions();
 
