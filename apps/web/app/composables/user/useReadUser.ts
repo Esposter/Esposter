@@ -1,4 +1,4 @@
-import { getEntityNotFoundStatusMessage } from "#src/services/shared/error/getEntityNotFoundStatusMessage";
+import { createEntityNotFoundError } from "#src/services/shared/error/createEntityNotFoundError";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { TRPCClientError } from "@trpc/client";
@@ -11,7 +11,7 @@ export const useReadUser = (userId: string) => {
     (newUser) => newUser,
     (error) => {
       if (error instanceof TRPCClientError && error.data?.code === "NOT_FOUND")
-        throw createError({ status: 404, statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User, userId) });
+        throw createEntityNotFoundError(DatabaseEntityType.User, userId);
       throw error;
     },
   );

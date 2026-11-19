@@ -7,7 +7,7 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { RowValueType } from "#src/models/user/ProfileCard/RowValueType";
 import { authClient } from "#src/services/auth/authClient";
 import { requireAuthData } from "#src/services/auth/requireAuthData";
-import { getEntityNotFoundStatusMessage } from "#src/services/shared/error/getEntityNotFoundStatusMessage";
+import { createEntityNotFoundError } from "#src/services/shared/error/createEntityNotFoundError";
 import { PROFILE_MUTATION_KEY } from "#src/services/user/constants";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { checkIsDeepEqual } from "@esposter/shared";
@@ -29,8 +29,7 @@ watch(
   },
 );
 const profileCardRows = computed(() => {
-  if (!session.value)
-    throw createError({ statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User), status: 404 });
+  if (!session.value) throw createEntityNotFoundError(DatabaseEntityType.User);
 
   const { biography, image, name } = savedProfile.value ?? session.value.user;
   return {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getEntityNotFoundStatusMessage } from "#src/services/shared/error/getEntityNotFoundStatusMessage";
+import { createEntityNotFoundError } from "#src/services/shared/error/createEntityNotFoundError";
 import { useCallStore } from "#src/store/message/room/call/index";
 import { useKnockerStore } from "#src/store/message/room/call/knocker";
 import { getRouteParam } from "#src/util/router/getRouteParam";
@@ -23,8 +23,7 @@ const knockerStore = useKnockerStore();
 const { knockingCallSessionId } = storeToRefs(knockerStore);
 const { id } = route.params;
 const callSession = await useCallIdSubscribables(id);
-if (!callSession)
-  throw createError({ status: 404, statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.CallSession, id) });
+if (!callSession) throw createEntityNotFoundError(DatabaseEntityType.CallSession, id);
 
 watch(activeCallSessionId, async (newActiveCallSessionId) => {
   if (!newActiveCallSessionId) await navigateTo(RoutePath.CallsIndex);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { checkIsUuidRouteId } from "#src/services/router/checkIsUuidRouteId";
-import { getEntityNotFoundStatusMessage } from "#src/services/shared/error/getEntityNotFoundStatusMessage";
+import { createEntityNotFoundError } from "#src/services/shared/error/createEntityNotFoundError";
 import { usePostStore } from "#src/store/post/index";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
@@ -13,10 +13,7 @@ const post = await $trpc.post.readPost.query(route.params.id);
 // This form edits a title, and a comment has none — reading one as a root is the thread page's business, not
 // This page's
 if (post.parentId)
-  throw createError({
-    status: 404,
-    statusText: `${getEntityNotFoundStatusMessage(DatabaseEntityType.Post, post.id)}, you might be trying to find a comment`,
-  });
+  throw createEntityNotFoundError(DatabaseEntityType.Post, post.id, "you might be trying to find a comment");
 const postStore = usePostStore();
 const { isUpdatePostPending } = storeToRefs(postStore);
 const { updatePost } = postStore;

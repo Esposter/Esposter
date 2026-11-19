@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { pluralize } from "#shared/util/text/pluralize";
-import { getEntityNotFoundStatusMessage } from "#src/services/shared/error/getEntityNotFoundStatusMessage";
+import { createEntityNotFoundError } from "#src/services/shared/error/createEntityNotFoundError";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 import { DatabaseEntityType, selectInviteInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
@@ -18,8 +18,7 @@ const { $trpc } = useNuxtApp();
 const route = useRoute();
 const { code } = route.params;
 const invite = await $trpc.invite.readInvite.query(code);
-if (!invite)
-  throw createError({ status: 404, statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.Invite, code) });
+if (!invite) throw createEntityNotFoundError(DatabaseEntityType.Invite, code);
 else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));
 </script>
 
