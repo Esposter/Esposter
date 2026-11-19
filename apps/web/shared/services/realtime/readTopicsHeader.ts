@@ -29,17 +29,20 @@ const readColumnTopic = (text: string) => {
   return parsedColumnTopic.success ? parsedColumnTopic.data : undefined;
 };
 
-// The reads one procedure path's answers made, out of a batch's topics header: each entry's topics, watched from its time
+// The reads one procedure path's answers made, out of a batch's topics header: each entry's topics, watched from its time with
+// The signature the server made over them. An empty signature is a read the server signed nothing for, which reads back empty
 export const readTopicsHeader = (headers: Headers, path: string): TopicRead[] =>
   (headers.get(TOPICS_HEADER) ?? "")
     .split(",")
     .map((value) => value.trim().split(TOPICS_HEADER_SEPARATOR))
     .filter(([valuePath]) => valuePath === path)
-    .flatMap(([, readAtText, ...topicTexts]) => {
+    .flatMap(([, readAtText, signature, ...topicTexts]) => {
       const parsedReadAt = readAtSchema.safeParse(readAtText);
       const topics = topicTexts.flatMap((topicText) => {
         const columnTopic = readColumnTopic(topicText);
         return columnTopic === undefined ? [] : [columnTopic];
       });
-      return parsedReadAt.success && topics.length > 0 ? [{ readAt: parsedReadAt.data, topics }] : [];
+      return parsedReadAt.success && signature !== undefined && topics.length > 0
+        ? [{ readAt: parsedReadAt.data, signature, topics }]
+        : [];
     });

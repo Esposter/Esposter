@@ -14,12 +14,40 @@ describe(readTopicsHeader, () => {
     const postTopic = { topic: getTopic(TopicKind.Post, v7()) };
     const friendTopic = { topic: getTopic(TopicKind.Friend, v7()) };
     const readAt = 0;
+    const signature = "signature";
     const headers = new Headers();
-    headers.append(TOPICS_HEADER, formatTopicsHeaderValue("post.readPost", { readAt, topics: [postTopic] }));
-    headers.append(TOPICS_HEADER, formatTopicsHeaderValue("friend.readFriends", { readAt, topics: [friendTopic] }));
+    headers.append(TOPICS_HEADER, formatTopicsHeaderValue("post.readPost", { readAt, signature, topics: [postTopic] }));
+    headers.append(
+      TOPICS_HEADER,
+      formatTopicsHeaderValue("friend.readFriends", { readAt, signature, topics: [friendTopic] }),
+    );
 
-    expect(readTopicsHeader(headers, "post.readPost")).toStrictEqual([{ readAt, topics: [postTopic] }]);
-    expect(readTopicsHeader(headers, "friend.readFriends")).toStrictEqual([{ readAt, topics: [friendTopic] }]);
+    expect(readTopicsHeader(headers, "post.readPost")).toStrictEqual([{ readAt, signature, topics: [postTopic] }]);
+    expect(readTopicsHeader(headers, "friend.readFriends")).toStrictEqual([
+      { readAt, signature, topics: [friendTopic] },
+    ]);
+  });
+
+  // The signature the server made over a read is what its watch carries, so it reads back with the read it signed, and a
+  // Read the server did not sign (no secret set, or a read by a signed-out person) reads back with an empty one
+  test("a read's signature reads back with its topics, and an empty one reads back empty", () => {
+    expect.hasAssertions();
+
+    const postTopic = { topic: getTopic(TopicKind.Post, v7()) };
+    const headers = new Headers();
+    headers.append(
+      TOPICS_HEADER,
+      formatTopicsHeaderValue("post.readPost", { readAt: 0, signature: "signed", topics: [postTopic] }),
+    );
+    headers.append(
+      TOPICS_HEADER,
+      formatTopicsHeaderValue("post.readPost", { readAt: 0, signature: "", topics: [postTopic] }),
+    );
+
+    expect(readTopicsHeader(headers, "post.readPost")).toStrictEqual([
+      { readAt: 0, signature: "signed", topics: [postTopic] },
+      { readAt: 0, signature: "", topics: [postTopic] },
+    ]);
   });
 
   // A blob's key is a file's name, which may hold a space or a comma, the header's own separators
@@ -28,9 +56,14 @@ describe(readTopicsHeader, () => {
 
     const blobTopic = { topic: getBlobTopic(getStorageBucketBindingName(StorageBucket.UserAssets), "user/a b,c.png") };
     const headers = new Headers();
-    headers.append(TOPICS_HEADER, formatTopicsHeaderValue("post.readPost", { readAt: 0, topics: [blobTopic] }));
+    headers.append(
+      TOPICS_HEADER,
+      formatTopicsHeaderValue("post.readPost", { readAt: 0, signature: "", topics: [blobTopic] }),
+    );
 
-    expect(readTopicsHeader(headers, "post.readPost")).toStrictEqual([{ readAt: 0, topics: [blobTopic] }]);
+    expect(readTopicsHeader(headers, "post.readPost")).toStrictEqual([
+      { readAt: 0, signature: "", topics: [blobTopic] },
+    ]);
   });
 
   // A scope topic carries the columns its read watches, which an empty set and a set of one or more both read back as
@@ -49,12 +82,13 @@ describe(readTopicsHeader, () => {
       TOPICS_HEADER,
       formatTopicsHeaderValue("room.readRooms", {
         readAt: 0,
+        signature: "",
         topics: [countTopic, columnTopic, { topic: scopeTopic }],
       }),
     );
 
     expect(readTopicsHeader(headers, "room.readRooms")).toStrictEqual([
-      { readAt: 0, topics: [countTopic, columnTopic, { topic: scopeTopic }] },
+      { readAt: 0, signature: "", topics: [countTopic, columnTopic, { topic: scopeTopic }] },
     ]);
   });
 });

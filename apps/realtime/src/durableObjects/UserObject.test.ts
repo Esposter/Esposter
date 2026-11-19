@@ -2,6 +2,7 @@ import type { RoomObject } from "#src/durableObjects/RoomObject";
 import type { MockSocket } from "#src/services/durableObject/createMockSocket.test";
 import type { ObservedContract } from "#src/services/durableObject/wakeCheck.test";
 import type {
+  ColumnTopic,
   Page,
   PageCursor,
   PageSort,
@@ -25,18 +26,21 @@ import { createMockDb, createMockObjectState } from "@esposter/db-mock";
 import {
   AppNotificationType,
   createPageInputSchema,
-  MAX_FRAME_TOPICS,
+  getTopicWatchPayload,
+  MAX_READ_TOPICS,
   QueueJob,
   roomsInMessage,
   SCHEDULED_MESSAGE_JOB_PAGE_SORT,
   SENT_MESSAGE_PAGE_SORT,
   SOCKET_IDENTITY_HEADER,
   START_PAGE_CURSOR,
+  TOPIC_WATCH_MAX_AGE_MS,
   usersInAuth,
   UserStatus,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { createHmac } from "node:crypto";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -114,6 +118,17 @@ describe(UserObject, () => {
   const otherDeviceId = v7();
   // The time a watch's read began, which its subscribe carries to the topic
   const readAt = 0;
+  // The secret the Worker is given, and the signature the server makes over a read for the person it was read for
+  const topicWatchSecret = "topic-watch-secret";
+  const signTopicWatch = (signedUserId: string, watchReadAt: number, topics: ColumnTopic[]) =>
+    createHmac("sha256", topicWatchSecret)
+      .update(getTopicWatchPayload(signedUserId, watchReadAt, topics))
+      .digest("base64url");
+  // The frame a tab sends for one read the server signed for the person, named by the time it began and its topics
+  const signedWatch = (topics: ColumnTopic[]): UserClientFrame => ({
+    data: { readAt, signature: signTopicWatch(userId, readAt, topics), topics },
+    type: "watch",
+  });
   // Each topic's object as the person's watches reach it, so a test reads what each topic was asked to hold
   const topicStubs = new Map<string, Record<"subscribe" | "unsubscribe", Mock<TopicObjectRpc["subscribe"]>>>();
   const getTopicStub = (topic: string) => {
@@ -178,6 +193,7 @@ describe(UserObject, () => {
 
   beforeEach(async () => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    vi.stubEnv("TOPIC_WATCH_SECRET", topicWatchSecret);
     // Node's Response refuses the 101 an upgrade is answered with, so the stub keeps only the status the object reads
     vi.stubGlobal(
       "Response",
@@ -195,6 +211,7 @@ describe(UserObject, () => {
   afterEach(async () => {
     verifyWakes();
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
     vi.useRealTimers();
     roomStubs.clear();
     topicStubs.clear();
@@ -436,8 +453,8 @@ describe(UserObject, () => {
     const topic: Topic = `post:${v7()}`;
     const firstSocket = await connect(object, { deviceId, sessionId });
     const secondSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
-    await sendFrame(object, firstSocket, { data: { readAt, topics: [{ topic }] }, type: "watch" });
-    await sendFrame(object, secondSocket, { data: { readAt, topics: [{ topic }] }, type: "watch" });
+    await sendFrame(object, firstSocket, signedWatch([{ topic }]));
+    await sendFrame(object, secondSocket, signedWatch([{ topic }]));
     await sendFrame(object, firstSocket, { data: { topics: [topic] }, type: "unwatch" });
 
     // Each watch subscribes the person again, which the topic holds once, and the topic is let go of only by the last tab
@@ -457,9 +474,120 @@ describe(UserObject, () => {
     const { object } = createUserObject();
     const topic: Topic = `message_usersToRooms:roomId=${v7()}`;
     const socket = await connect(object, { deviceId, sessionId });
-    await sendFrame(object, socket, { data: { readAt, topics: [{ columns: ["isHidden"], topic }] }, type: "watch" });
+    await sendFrame(object, socket, signedWatch([{ columns: ["isHidden"], topic }]));
 
     expect(getTopicStub(topic).subscribe).toHaveBeenCalledExactlyOnceWith(userId, readAt, ["isHidden"]);
+  });
+
+  // A signed read names the topics it was given, so a frame that adds a topic the read did not name is refused whole: the
+  // Signature covers the topics it was made over and no others, so neither topic is subscribed or held
+  test("a watch frame naming a topic its signed read did not name subscribes nothing", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const signedTopic: Topic = `post:${v7()}`;
+    const unsignedTopic: Topic = `post:${v7()}`;
+    const signature = signTopicWatch(userId, readAt, [{ topic: signedTopic }]);
+    const socket = await connect(object, { deviceId, sessionId });
+    await sendFrame(object, socket, {
+      data: { readAt, signature, topics: [{ topic: signedTopic }, { topic: unsignedTopic }] },
+      type: "watch",
+    });
+    await object.invalidate(signedTopic);
+    await object.invalidate(unsignedTopic);
+
+    expect(getTopicStub(signedTopic).subscribe).not.toHaveBeenCalled();
+    expect(getTopicStub(unsignedTopic).subscribe).not.toHaveBeenCalled();
+    expect(readFrames(socket)).toStrictEqual([]);
+  });
+
+  // A signature the server made for another person, or one with its first character changed, covers no watch of this person
+  test("a watch whose signature is tampered is refused, and so is one signed for another person", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const topic: Topic = `post:${v7()}`;
+    const topics = [{ topic }];
+    const signature = signTopicWatch(userId, readAt, topics);
+    const tamperedSignature = `${signature.startsWith("A") ? "B" : "A"}${signature.slice(1)}`;
+    const socket = await connect(object, { deviceId, sessionId });
+    await sendFrame(object, socket, { data: { readAt, signature: tamperedSignature, topics }, type: "watch" });
+    await sendFrame(object, socket, {
+      data: { readAt, signature: signTopicWatch(v7(), readAt, topics), topics },
+      type: "watch",
+    });
+    await object.invalidate(topic);
+
+    expect(getTopicStub(topic).subscribe).not.toHaveBeenCalled();
+    expect(readFrames(socket)).toStrictEqual([]);
+  });
+
+  // A signed watch subscribes each of its topics with the columns its read names, a count's empty list told apart from a
+  // Topic that names every column
+  test("a signed watch subscribes each of its topics with the columns its read names", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const countTopic: Topic = `message_usersToRooms:roomId=${v7()}`;
+    const columnTopic: Topic = `message_usersToRooms:userId=${v7()}`;
+    const socket = await connect(object, { deviceId, sessionId });
+    await sendFrame(
+      object,
+      socket,
+      signedWatch([
+        { columns: [], topic: countTopic },
+        { columns: ["isHidden"], topic: columnTopic },
+      ]),
+    );
+
+    expect(getTopicStub(countTopic).subscribe).toHaveBeenCalledExactlyOnceWith(userId, readAt, []);
+    expect(getTopicStub(columnTopic).subscribe).toHaveBeenCalledExactlyOnceWith(userId, readAt, ["isHidden"]);
+  });
+
+  // A signature holds for an hour after its read began, so a stored one cannot re-open a topic for good: a read past the
+  // Bound is refused, whatever the signature says
+  test("a watch whose read began past the bound is refused", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const topic: Topic = `post:${v7()}`;
+    const socket = await connect(object, { deviceId, sessionId });
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(TOPIC_WATCH_MAX_AGE_MS).add({ milliseconds: 1 }));
+    await sendFrame(object, socket, signedWatch([{ topic }]));
+
+    expect(getTopicStub(topic).subscribe).not.toHaveBeenCalled();
+  });
+
+  // A tab still running the client from before signatures sends its watch with no signature, which the frame reads as empty:
+  // Taken unverified while the Worker holds no secret, so the deploy that lands the code before the secret refuses none of it
+  test("a watch from a tab that predates signatures is taken while the Worker holds no secret", async () => {
+    expect.hasAssertions();
+
+    vi.stubEnv("TOPIC_WATCH_SECRET", undefined);
+    const { object } = createUserObject();
+    const topic: Topic = `post:${v7()}`;
+    const socket = await connect(object, { deviceId, sessionId });
+    await object.webSocketMessage(
+      socket as unknown as WebSocket,
+      JSON.stringify({ data: { readAt, topics: [{ topic }] }, type: "watch" }),
+    );
+
+    expect(getTopicStub(topic).subscribe).toHaveBeenCalledExactlyOnceWith(userId, readAt, undefined);
+  });
+
+  // Once the Worker holds the secret, the same stale watch is refused: the enforcement a tab reload is needed to pass
+  test("a watch from a tab that predates signatures is refused once the Worker holds a secret", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const topic: Topic = `post:${v7()}`;
+    const socket = await connect(object, { deviceId, sessionId });
+    await object.webSocketMessage(
+      socket as unknown as WebSocket,
+      JSON.stringify({ data: { readAt, topics: [{ topic }] }, type: "watch" }),
+    );
+
+    expect(getTopicStub(topic).subscribe).not.toHaveBeenCalled();
   });
 
   test("an invalidation reaches the tabs watching its topic and no other", async () => {
@@ -469,7 +597,7 @@ describe(UserObject, () => {
     const topic: Topic = `post:${v7()}`;
     const watchingSocket = await connect(object, { deviceId, sessionId });
     const otherSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
-    await sendFrame(object, watchingSocket, { data: { readAt, topics: [{ topic }] }, type: "watch" });
+    await sendFrame(object, watchingSocket, signedWatch([{ topic }]));
     await object.invalidate(topic);
 
     expect(readFrames(watchingSocket)).toStrictEqual([{ data: { topic }, type: "invalidate" }]);
@@ -485,10 +613,10 @@ describe(UserObject, () => {
     const firstSocket = await connect(object, { deviceId, sessionId });
     const secondSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
     getTopicStub(topic).subscribe.mockRejectedValueOnce(new Error("subscribe failed"));
-    await expect(
-      sendFrame(object, firstSocket, { data: { readAt, topics: [{ topic }] }, type: "watch" }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: subscribe failed]`);
-    await sendFrame(object, secondSocket, { data: { readAt, topics: [{ topic }] }, type: "watch" });
+    await expect(sendFrame(object, firstSocket, signedWatch([{ topic }]))).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: subscribe failed]`,
+    );
+    await sendFrame(object, secondSocket, signedWatch([{ topic }]));
 
     expect(getTopicStub(topic).subscribe).toHaveBeenCalledTimes(2);
     expect(getTopicStub(topic).subscribe).toHaveBeenLastCalledWith(userId, readAt, undefined);
@@ -516,7 +644,7 @@ describe(UserObject, () => {
       resourceId,
     });
     const socket = await connect(object, { deviceId, sessionId });
-    await sendFrame(object, socket, { data: { readAt, topics: [{ topic }] }, type: "watch" });
+    await sendFrame(object, socket, signedWatch([{ topic }]));
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(dueAt.getTime());
 
     await object.erase();
@@ -530,13 +658,14 @@ describe(UserObject, () => {
     expect(getTopicStub(topic).unsubscribe).toHaveBeenCalledExactlyOnceWith(userId);
   });
 
-  test("a tab watching more topics than a socket attachment holds keeps every one, and an invalidation reaches it for any", async () => {
+  test("a tab watching more topics than one read holds keeps every one of its reads' topics, and an invalidation reaches any", async () => {
     expect.hasAssertions();
 
     const { object } = createUserObject();
-    const topics = Array.from({ length: MAX_FRAME_TOPICS }, (): Topic => `post:${v7()}`);
+    const topics = Array.from({ length: MAX_READ_TOPICS * 2 }, (): Topic => `post:${v7()}`);
     const socket = await connect(object, { deviceId, sessionId });
-    await sendFrame(object, socket, { data: { readAt, topics: topics.map((topic) => ({ topic })) }, type: "watch" });
+    await sendFrame(object, socket, signedWatch(topics.slice(0, MAX_READ_TOPICS).map((topic) => ({ topic }))));
+    await sendFrame(object, socket, signedWatch(topics.slice(MAX_READ_TOPICS).map((topic) => ({ topic }))));
     const lastTopic = takeOne(topics, topics.length - 1);
     await object.invalidate(lastTopic);
 

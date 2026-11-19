@@ -1,18 +1,19 @@
 import type { TopicRead } from "#shared/models/realtime/TopicRead";
 
 import { useConnectionStore } from "#src/store/realtime/connection";
-import { ID_SEPARATOR, noop } from "@esposter/shared";
+import { noop } from "@esposter/shared";
 
 interface TopicsWatch {
   refetch: () => void;
-  topicsKey: string;
   unwatch: () => void;
 }
 
-// Keeps the topics a read came from watched for as long as the scope that made the read lives, one watch per target.
-// A scope is the surface or the store the read belongs to: a read made with none has nothing to release its watch,
-// So it takes none. A target read again keeps its watch when it names the same topics, and its newest refetch is the
-// One that runs; a read that answers after its scope has gone takes no watch either
+// Keeps the topics a read came from watched for as long as the scope that made the read lives, one watch per target, of
+// Every read the target's calls made. A scope is the surface or the store the read belongs to: a read made with none has
+// Nothing to release its watch, so it takes none. A target read again takes a watch of the new reads, each signed for it, and
+// Lets go of the ones it replaces after the new ones are taken, so no topic both name is unwatched between them. The connection
+// Store sends a read only when it adds to what the socket holds, so a read of the same topics costs no frame. A read that
+// Answers after its scope has gone takes no watch either
 export const useWatchTopics = () => {
   const connectionStore = import.meta.client && getCurrentScope() ? useConnectionStore() : undefined;
   const topicsWatchMap = new Map<unknown, TopicsWatch>();
@@ -23,33 +24,26 @@ export const useWatchTopics = () => {
       for (const { unwatch } of topicsWatchMap.values()) unwatch();
       topicsWatchMap.clear();
     });
-  return (target: unknown, read: TopicRead | undefined, refetch: () => void) => {
+  return (target: unknown, reads: TopicRead[] | undefined, refetch: () => void) => {
     if (!connectionStore || isDisposed) return;
 
-    const topics = read?.topics ?? [];
-    // A watch is kept while its topics and the columns it reads of them are the same
-    const topicsKey = topics
-      .map(
-        ({ columns, topic }) => `${topic}${columns === undefined ? "" : `[${columns.toSorted().join(ID_SEPARATOR)}]`}`,
-      )
-      .toSorted()
-      .join(ID_SEPARATOR);
-    const topicsWatch = topicsWatchMap.get(target);
-    if (topicsWatch?.topicsKey === topicsKey) {
-      topicsWatch.refetch = refetch;
-      return;
-    }
-
-    topicsWatch?.unwatch();
-    if (!read) {
+    const previousTopicsWatch = topicsWatchMap.get(target);
+    if (!reads?.length) {
+      previousTopicsWatch?.unwatch();
       topicsWatchMap.delete(target);
       return;
     }
 
-    const newTopicsWatch: TopicsWatch = { refetch, topicsKey, unwatch: noop };
-    newTopicsWatch.unwatch = connectionStore.watchTopics(read.topics, read.readAt, () => {
-      newTopicsWatch.refetch();
-    });
+    const newTopicsWatch: TopicsWatch = { refetch, unwatch: noop };
+    const unwatchReads = reads.map((read) =>
+      connectionStore.watchTopics(read, () => {
+        newTopicsWatch.refetch();
+      }),
+    );
+    newTopicsWatch.unwatch = () => {
+      for (const unwatchRead of unwatchReads) unwatchRead();
+    };
+    previousTopicsWatch?.unwatch();
     topicsWatchMap.set(target, newTopicsWatch);
   };
 };

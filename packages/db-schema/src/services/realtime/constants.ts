@@ -18,3 +18,6 @@ export const SCOPE_DIGEST_LENGTH = 12;
 // Encoded, so 5 KB holds 64 of them: a read past this has its topics with a coarser form collapsed to it, the largest group
 // First (`fitTopicsBudget`). That wakes the read for every write to the group, and no less often than the topics it replaces
 export const MAX_READ_TOPICS = (5 * 1024) / 80;
+// How long a watch's signature is honoured after its read began: the hour a presigned write url lasts, so a stored watch
+// Lapses as a write url's grant does. A watch past it is refused, and the refetch a reconnect makes reads the query again
+export const TOPIC_WATCH_MAX_AGE_MS = Temporal.Duration.from({ hours: 1 }).total("milliseconds");

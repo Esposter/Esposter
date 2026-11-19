@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
-import type { RoomMessage, Topic } from "@esposter/db-schema";
+import type { TopicRead } from "#shared/models/realtime/TopicRead";
+import type { ColumnTopic, RoomMessage, Topic } from "@esposter/db-schema";
 
 import {
   getMockPublishedTopics,
@@ -17,18 +18,23 @@ import {
   sendRealtimeFrame,
 } from "#src/services/realtime/openRealtimeSocket.test";
 import { useConnectionStore } from "#src/store/realtime/connection";
-import {
-  CALL_ID_LENGTH,
-  friendsInSocial,
-  getTopic,
-  MAX_FRAME_TOPICS,
-  MessageType,
-  TopicKind,
-} from "@esposter/db-schema";
+import { CALL_ID_LENGTH, friendsInSocial, MessageType } from "@esposter/db-schema";
 import { getFriendshipId, jsonDateParse } from "@esposter/shared";
 import { env } from "cloudflare:workers";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
+
+// A read as a query's header names it, with the signature the server made over it for the person who read it
+const createRead = (topics: ColumnTopic[], begunAt: number): TopicRead => ({
+  readAt: begunAt,
+  signature: `signature-${begunAt}`,
+  topics,
+});
+// The frame a read's watch sends up the user socket, carrying its time, signature and topics as they were signed
+const watchFrame = (read: TopicRead) => ({
+  data: { readAt: read.readAt, signature: read.signature, topics: read.topics },
+  type: "watch",
+});
 
 vi.mock(
   import("#src/services/realtime/openRealtimeSocket"),
@@ -106,8 +112,9 @@ describe(useConnectionStore, () => {
     const topic: Topic = `post:${v7()}`;
     const firstRefetch = vi.fn<() => void>();
     const secondRefetch = vi.fn<() => void>();
-    const unwatchFirst = connectionStore.watchTopics([{ topic }], readAt, firstRefetch);
-    const unwatchSecond = connectionStore.watchTopics([{ topic }], readAt, secondRefetch);
+    const read = createRead([{ topic }], readAt);
+    const unwatchFirst = connectionStore.watchTopics(read, firstRefetch);
+    const unwatchSecond = connectionStore.watchTopics(read, secondRefetch);
     onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
     unwatchFirst();
     unwatchSecond();
@@ -115,28 +122,27 @@ describe(useConnectionStore, () => {
     expect(firstRefetch).toHaveBeenCalledTimes(1);
     expect(secondRefetch).toHaveBeenCalledTimes(1);
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      { data: { readAt, topics: [{ topic }] }, type: "watch" },
+      watchFrame(read),
       { data: { topics: [topic] }, type: "unwatch" },
     ]);
   });
 
-  // A tab that reads more topics than one frame holds watches them over several frames, each within the cap, so a frame
-  // Never fans its socket out past it and no topic is left unwatched
-  test("watches every topic of a tab that reads more topics than one frame holds", () => {
+  // A frame carries one read's topics as that read signed them, so the columns of another read are never merged into it:
+  // A merged frame would name a topic set no single read produced, and the server's signature would not cover it
+  test("sends a read's frame with its own columns, never merged with the columns of another read of its topic", () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
-    const topics = Array.from({ length: MAX_FRAME_TOPICS + 1 }, () => getTopic(TopicKind.Post, v7()));
-    connectionStore.watchTopics(
-      topics.map((topic) => ({ topic })),
-      readAt,
-      vi.fn<() => void>(),
-    );
+    const topic: Topic = `message_usersToRooms:userId=${v7()}`;
+    const nameRead = createRead([{ columns: ["name"], topic }], readAt);
+    const hiddenRead = createRead([{ columns: ["isHidden"], topic }], readAt);
+    connectionStore.watchTopics(nameRead, vi.fn<() => void>());
+    connectionStore.watchTopics(hiddenRead, vi.fn<() => void>());
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      { data: { readAt, topics: topics.slice(0, MAX_FRAME_TOPICS).map((topic) => ({ topic })) }, type: "watch" },
-      { data: { readAt, topics: topics.slice(MAX_FRAME_TOPICS).map((topic) => ({ topic })) }, type: "watch" },
+      watchFrame(nameRead),
+      watchFrame(hiddenRead),
     ]);
   });
 
@@ -148,17 +154,19 @@ describe(useConnectionStore, () => {
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
     const topic: Topic = `post:${v7()}`;
-    connectionStore.watchTopics([{ topic }], newerReadAt, vi.fn<() => void>());
-    connectionStore.watchTopics([{ topic }], readAt, vi.fn<() => void>());
+    const newerRead = createRead([{ topic }], newerReadAt);
+    const olderRead = createRead([{ topic }], readAt);
+    connectionStore.watchTopics(newerRead, vi.fn<() => void>());
+    connectionStore.watchTopics(olderRead, vi.fn<() => void>());
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      { data: { readAt: newerReadAt, topics: [{ topic }] }, type: "watch" },
-      { data: { readAt, topics: [{ topic }] }, type: "watch" },
+      watchFrame(newerRead),
+      watchFrame(olderRead),
     ]);
   });
 
-  // A reconnect subscribes each topic again from the time its own watch was made from, a frame per time
-  test("subscribes each watched topic again from its own time when the socket reconnects", () => {
+  // A reconnect subscribes each watched read again from its own time, as it was signed, a frame per read
+  test("subscribes each watched read again from its own time when the socket reconnects", () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
@@ -166,14 +174,36 @@ describe(useConnectionStore, () => {
     const options = vi.mocked(openRealtimeSocket).mock.lastCall?.[2];
     const newerTopic: Topic = `post:${v7()}`;
     const olderTopic: Topic = `post:${v7()}`;
-    connectionStore.watchTopics([{ topic: newerTopic }], newerReadAt, vi.fn<() => void>());
-    connectionStore.watchTopics([{ topic: olderTopic }], readAt, vi.fn<() => void>());
+    const newerRead = createRead([{ topic: newerTopic }], newerReadAt);
+    const olderRead = createRead([{ topic: olderTopic }], readAt);
+    connectionStore.watchTopics(newerRead, vi.fn<() => void>());
+    connectionStore.watchTopics(olderRead, vi.fn<() => void>());
     sendRealtimeFrame.mockClear();
     options?.onOpen?.();
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      { data: { readAt: newerReadAt, topics: [{ topic: newerTopic }] }, type: "watch" },
-      { data: { readAt, topics: [{ topic: olderTopic }] }, type: "watch" },
+      watchFrame(newerRead),
+      watchFrame(olderRead),
+    ]);
+  });
+
+  // A new socket holds nothing the old one sent, so the first read a query makes after a reconnect is watched again even
+  // When its topic was watched before, since the server may have refused the stored read for its age
+  test("a read taken after a reconnect is watched again", () => {
+    expect.hasAssertions();
+
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const options = vi.mocked(openRealtimeSocket).mock.lastCall?.[2];
+    const topic: Topic = `post:${v7()}`;
+    connectionStore.watchTopics(createRead([{ topic }], readAt), vi.fn<() => void>());
+    options?.onOpen?.();
+    sendRealtimeFrame.mockClear();
+    const refetchedRead = createRead([{ topic }], newerReadAt);
+    connectionStore.watchTopics(refetchedRead, vi.fn<() => void>());
+
+    expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
+      watchFrame(refetchedRead),
     ]);
   });
 
@@ -203,10 +233,10 @@ describe(useConnectionStore, () => {
     const [, onUserFrame] = getLastOpenRealtimeSocketCall();
     const refetch = vi.fn<() => void>();
     sendRealtimeFrame.mockClear();
-    for (const read of reads) connectionStore.watchTopics(read.topics, read.readAt, refetch);
+    for (const read of reads) connectionStore.watchTopics(read, refetch);
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual(
-      reads.map((read) => ({ data: { readAt: read.readAt, topics: read.topics }, type: "watch" })),
+      reads.map((read) => watchFrame(read)),
     );
     MockPublishedTopics.length = 0;
     await createCallerFactory(friendRouter)({

@@ -2,6 +2,7 @@ import type { RecordedBlobs } from "@esposter/db";
 import type { ColumnTopic } from "@esposter/db-schema";
 
 import { requestDbStorage } from "#server/db/requestDb";
+import { createTopicWatchSignature } from "#server/services/realtime/createTopicWatchSignature";
 import { publishTopicsBestEffort } from "#server/services/realtime/publishTopicsBestEffort";
 import { requestObjectReadsStorage } from "#server/services/realtime/requestObjectReads";
 import { requestBlobsStorage } from "#server/services/storage/requestBlobs";
@@ -38,7 +39,16 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
       [...(await computeReadTopics(recorded.statements)), ...blobs.reads.map((topic) => ({ topic })), ...objectReads],
       MAX_READ_TOPICS,
     );
-    if (topics.length > 0) ctx.responseHeaders.append(TOPICS_HEADER, formatTopicsHeaderValue(path, { readAt, topics }));
+    // Signed for the person who read them, so a watch the object takes is one of the reads its person was given
+    if (topics.length > 0)
+      ctx.responseHeaders.append(
+        TOPICS_HEADER,
+        formatTopicsHeaderValue(path, {
+          readAt,
+          signature: createTopicWatchSignature(ctx.user?.id, { readAt, topics }),
+          topics,
+        }),
+      );
   }
   // A mutation that succeeds names each row it changed by its key and the version the write left it at, so its answer settles
   // The entry the client made for that write at those versions. A failed mutation names none: its entry drops, and a write that

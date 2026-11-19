@@ -36,9 +36,11 @@ A signature covers exactly one read, so a frame carries exactly one read's topic
 
 The topics header of a query is `path readAt signature topic…`. A signature is empty when no secret is set, which keeps the header's shape the same either way. A signed-out read names no topics, since only a signed-in person has a user socket that can watch them.
 
+A tab still running the client from before signatures reads the header as it always did. Its parser drops an entry it cannot read as a topic, so the signature entry is ignored and the topics are read as before.
+
 ## Expiry
 
-A watch is honoured for an hour after its read began (`TOPIC_WATCH_MAX_AGE_MS`, the presigned write url's duration). The bound limits what a stored signature can do: a tab that kept one from a read made while it was in a room can re-watch that room's topic on a reconnect only until the hour is out. Past it the watch is refused, and the query that made it is read again by the reconnect's refetch, which answers with a fresh signature if the person may still read it, and none if they may not.
+A watch is honoured for an hour after its read began (`TOPIC_WATCH_MAX_AGE_MS`, the same hour the write url's presign uses). The bound limits what a stored signature can do: a tab that kept one from a read made while it was in a room can re-watch that room's topic on a reconnect only until the hour is out. Past it the watch is refused, and the query that made it is read again by the reconnect's refetch, which answers with a fresh signature if the person may still read it, and none if they may not.
 
 ## The client
 
@@ -46,7 +48,7 @@ The connection store sends a read's frame when the read adds something the socke
 
 ## The user object
 
-`webSocketMessage` takes a `watch` frame only when `isTopicWatchSigned` accepts it for the object's person. With no secret it accepts every watch, so a deploy that has not yet put the secret refuses nothing. With the secret it refuses a signature that does not match the payload, a read older than the bound, and a frame whose signature was made for another person. A refused frame is dropped without a reply, as an invalid frame is today.
+`webSocketMessage` takes a `watch` frame only when `checkTopicWatchSigned` accepts it for the object's person. With no secret set, or an empty one, it accepts every watch, a signature or none. With the secret it refuses a signature that does not match the payload (an empty one included, which a tab from before signatures sends), a read older than the bound, and a frame whose signature was made for another person. A refused frame is dropped without a reply, as an invalid frame is today.
 
 ## Rejected
 
@@ -58,9 +60,11 @@ The connection store sends a read's frame when the read adds something the socke
 
 ## Rollout
 
-- The secret is `TOPIC_WATCH_SECRET`, marked `secret` in the realtime and web environment schemas, listed under `realtime` and `web` in `.github/worker-secrets.json`, and documented in both `.env.example` files. Its values are read from Pulumi ESC under `pulumiConfig.esposter-infra:dev_TOPIC_WATCH_SECRET` and `prod_TOPIC_WATCH_SECRET`, as the environment's other Worker secrets are (`openspec/specs/architecture/environment/design.md`).
-- The Deploy job puts the realtime Worker's secrets right after the realtime Worker deploys, and the web Worker's after it deploys last. While the value is missing the realtime secret step fails, and the job stops there with the web Worker still on its previous version. The realtime Worker's new code runs without a secret, so it takes watches unverified, as before, and nothing breaks.
-- Once the value is set, enforcement begins with the realtime secret step. Until the web Worker deploys in the same run, its old frames are refused. A tab still running the previous client sends unsigned frames, so its watches are refused from then until it reloads.
+- The secret is `TOPIC_WATCH_SECRET`: an optional secret in the realtime and web environment schemas, listed under `realtime` and `web` in `.github/worker-secrets.json`, and documented in both `.env.example` files. Its value is read from Pulumi ESC under `pulumiConfig.esposter-infra:dev_TOPIC_WATCH_SECRET` and `prod_TOPIC_WATCH_SECRET`, as the other Worker secrets are (`openspec/specs/architecture/environment/design.md`).
+- The condition is that verification fails closed only once the secret is present. With no secret, the realtime Worker takes every watch unverified, as it did before signatures, and the web Worker signs nothing, so no watch is refused before the owner sets the value. The landing is not gated on it. The absent-secret branch is a fail-open path, and it is deleted once the value is live in both environments rather than kept as a fallback.
+- The Deploy job puts each Worker's secrets after that Worker deploys: the realtime Worker's right after the realtime deploy, the web Worker's after the web deploy. The put reads each value with `pulumi env get` (`.github/actions/put-worker-secrets/action.yaml`). What `pulumi env get` does for a missing key is not checked here. If it fails, the step stops and the jobs and web Workers do not deploy until the value is set. If it returns nothing, an empty value is uploaded, and the check reads it as absent. Neither refuses a watch.
+- Two windows remain once the value is set. The realtime Worker verifies as soon as its secret is put, but the web Worker signs only once its own secret is put, after its deploy. If the realtime put succeeds and the web put fails, signed-in watches are refused until the web secret is put. A tab still running the client from before signatures sends watches with no signature: they are taken while no secret is set, and refused once the realtime Worker holds one, until the tab reloads.
+- Open: put the web Worker's secret before the realtime Worker can enforce, so the first window closes, and delete the absent-secret branch once the value is live.
 
 ## Key files
 
@@ -68,16 +72,18 @@ The connection store sends a read's frame when the read adds something the socke
 | :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
 | `packages/db-schema/src/services/realtime/getTopicWatchPayload.ts`     | The payload a signature is made over, shared by both Workers                                 |
 | `packages/db-schema/src/services/realtime/constants.ts`                | `TOPIC_WATCH_MAX_AGE_MS`, the bound a watch's read is held to                                |
-| `packages/db-schema/src/models/realtime/UserClientFrame.ts`            | The watch frame: one read's `readAt`, `signature` and topics                                 |
+| `packages/db-schema/src/models/realtime/UserClientFrame.ts`            | The watch frame: one read's `readAt`, its `signature` (empty when absent) and its topics     |
 | `apps/web/server/services/realtime/createTopicWatchSignature.ts`       | Signs one read for the person who made it, empty while the secret is absent                  |
 | `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`             | Signs a signed-in query's topics into its header                                             |
 | `apps/web/shared/services/realtime/formatTopicsHeaderValue.ts`         | Writes the signature into the header entry                                                   |
 | `apps/web/shared/services/realtime/readTopicsHeader.ts`                | Reads the signature back with its read                                                       |
 | `apps/web/shared/models/realtime/TopicRead.ts`                         | The read a client holds, with its signature                                                  |
+| `apps/web/app/services/realtime/collectTopics.ts`                      | Keeps each query's reads whole, unmerged, so each is watched as it was signed                |
 | `apps/web/app/store/realtime/connection.ts`                            | Sends each read's frame once per what it adds, and re-watches every stored read on reconnect |
 | `apps/web/app/composables/shared/useWatchTopics.ts`                    | Registers every read, so each refetch's signature is held                                    |
-| `apps/realtime/src/services/topic/isTopicWatchSigned.ts`               | Verifies a watch for its person: the signature, the payload and the bound                    |
+| `apps/realtime/src/services/topic/checkTopicWatchSigned.ts`            | Verifies a watch for its person: the signature, the payload and the bound                    |
 | `apps/realtime/src/durableObjects/UserObject.ts`                       | Refuses an unverified watch before it stores or subscribes                                   |
 | `apps/realtime/src/models/environment/RealtimeEnvironmentVariables.ts` | Declares `TOPIC_WATCH_SECRET` as an optional secret                                          |
 | `apps/web/shared/models/environment/WebEnvironmentVariables.ts`        | Declares `TOPIC_WATCH_SECRET` as an optional secret                                          |
 | `.github/worker-secrets.json`                                          | Lists `TOPIC_WATCH_SECRET` for the realtime and web Workers                                  |
+| `.github/actions/put-worker-secrets/action.yaml`                       | Puts each Worker's listed secrets from Pulumi ESC                                            |

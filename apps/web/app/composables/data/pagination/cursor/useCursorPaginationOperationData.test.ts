@@ -75,7 +75,10 @@ describe(useCursorPaginationOperationData, () => {
         setup: () => {
           hydratingNuxtApp = useNuxtApp();
           hydratingNuxtApp.isHydrating = true;
-          hydratingNuxtApp.payload.data[key] = { page: serverPage, read: { readAt, topics: [{ topic }] } };
+          hydratingNuxtApp.payload.data[key] = {
+            page: serverPage,
+            reads: [{ readAt, signature: "signature", topics: [{ topic }] }],
+          };
           const cursorPaginationData = ref(createEmptyPage<string>());
           const isLoadedSource = ref(false);
           ({ isLoaded, items, readItems } = useCursorPaginationOperationData(
@@ -97,7 +100,7 @@ describe(useCursorPaginationOperationData, () => {
     expect(isPending.value).toBe(false);
     // The server render's topics are watched, so a page adopted from it stays as live as one read here
     expect(sendRealtimeFrame).toHaveBeenCalledExactlyOnceWith(
-      JSON.stringify({ data: { readAt, topics: [{ topic }] }, type: "watch" }),
+      JSON.stringify({ data: { readAt, signature: "signature", topics: [{ topic }] }, type: "watch" }),
     );
   });
 
@@ -135,7 +138,7 @@ describe(useCursorPaginationOperationData, () => {
     const { items: rowItems, readItems: rowReadItems, readMoreItems: rowReadMoreItems } = rowOperationData;
     let description = firstRow.description;
     await rowReadItems(() => {
-      readActiveTopicReads()?.push({ readAt, topics: [{ topic }] });
+      readActiveTopicReads()?.push({ readAt, signature: "", topics: [{ topic }] });
       return Promise.resolve({ items: [{ ...firstRow, description }], nextCursor });
     });
     await rowReadMoreItems(() => Promise.resolve({ items: [laterRow], nextCursor: "" }));
@@ -181,7 +184,7 @@ describe(useCursorPaginationOperationData, () => {
     let pageRows = [heldRow];
     await rowReadItems(
       () => {
-        readActiveTopicReads()?.push({ readAt, topics: [{ topic }] });
+        readActiveTopicReads()?.push({ readAt, signature: "", topics: [{ topic }] });
         return Promise.resolve({ items: pageRows, nextCursor });
       },
       { onTopicChange: (refreshWithNewRows) => refreshWithNewRows() },

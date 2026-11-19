@@ -134,13 +134,13 @@ export const useMutation = () => {
     // A stale response applies no state and runs no callback, and a later caller joining it would resolve
     // Holding nothing. It issues its own read instead
     keySharedQueryMap.delete(key);
-    let topicRead: TopicRead | undefined;
+    let topicReads: TopicRead[] | undefined;
     const outcome = withFinalizerAsync(
       () =>
         settleOperation(
           async () => {
             const collected = await collectTopics(() => query(checkIsStale));
-            topicRead = collected.read;
+            topicReads = collected.reads;
             return collected.result;
           },
           {
@@ -152,7 +152,7 @@ export const useMutation = () => {
               await onSuccess?.(result);
               watchTopics(
                 key,
-                isUnwatched ? undefined : topicRead,
+                isUnwatched ? undefined : topicReads,
                 getSynchronizedFunction(() => executeQuery(query, options)),
               );
             },

@@ -1,16 +1,10 @@
-import type { ColumnTopic, RoomEvent, Topic, UserClientFrame } from "@esposter/db-schema";
+import type { TopicRead } from "#shared/models/realtime/TopicRead";
+import type { RoomEvent, Topic, UserClientFrame } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { getDeviceId } from "#src/services/realtime/getDeviceId";
 import { openRealtimeSocket } from "#src/services/realtime/openRealtimeSocket";
-import {
-  callEventSchema,
-  getColumnTopic,
-  MAX_FRAME_TOPICS,
-  roomEventSchema,
-  unionColumns,
-  userEventSchema,
-} from "@esposter/db-schema";
+import { callEventSchema, MAX_FRAME_TOPICS, roomEventSchema, unionColumns, userEventSchema } from "@esposter/db-schema";
 import { chunk, getOrCreate, jsonDateParse } from "@esposter/shared";
 
 type EventData<TEvent extends { data: unknown; type: string }, TType extends TEvent["type"]> = Extract<
@@ -47,6 +41,12 @@ const createEventHub = <TEvent extends { data: unknown; type: string }, TContext
 
   return { dispatch, on };
 };
+
+// The frame a read's watch sends up the user socket: the read's time, its signature and its topics, as the server signed them
+const createWatchFrame = ({ readAt, signature, topics }: TopicRead): UserClientFrame => ({
+  data: { readAt, signature, topics },
+  type: "watch",
+});
 
 const createSocketUrl = (path: string, after?: number) => {
   const url = new URL(path, window.location.href);
@@ -127,71 +127,72 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     ));
     return promise;
   };
-  // The topics the mounted queries watch, each with the columns the watching queries read of it, the refetches of those
-  // Queries and the server time its subscription was made from. A read older than that reaches back past the subscription,
-  // So the topic subscribes again from its time. A topic is watched up the user socket as its first query mounts and
-  // Unwatched as its last unmounts. A reconnect subscribes every topic again from its own time, then refetches every watched
-  // Query. An invalidation sent while the socket was closed never arrived
-  const topicWatchMap = new Map<
-    Topic,
-    { columns?: string[] | undefined; readAt: number; refetches: Set<() => void> }
-  >();
+  // The reads the mounted queries watch, each as the server signed it for the person, with the refetch of the query that
+  // Made it. A read is watched up the user socket as its first query mounts and unwatched as its last unmounts, and a frame
+  // Carries one read's topics as that read signed them, never merged with another read's. The socket is sent a read only when
+  // The read adds to what it holds: a topic it does not watch, a column it does not yet name, or a time before the one the
+  // Topic is watched from. A reconnect sends every read again, since a new socket holds nothing, and refetches each query,
+  // Since an invalidation sent while the socket was closed never arrived
+  const watchedReads = new Set<{ read: TopicRead; refetch: () => void }>();
+  // What the socket holds of each topic: the columns the reads sent name together, and the earliest time it is watched from
+  const heldTopics = new Map<Topic, { columns?: string[] | undefined; readAt: number }>();
   const sendUserFrame = (frame: UserClientFrame) => {
     sendUserSocketFrame?.(JSON.stringify(frame));
   };
-  // A frame names at most so many topics, so a tab watching more sends them over several
-  const sendWatchFrames = (topics: ColumnTopic[], readAt: number) => {
-    for (const frameTopics of chunk(topics, MAX_FRAME_TOPICS))
-      sendUserFrame({ data: { readAt, topics: frameTopics }, type: "watch" });
-  };
-  const sendUnwatchFrames = (topics: Topic[]) => {
-    for (const frameTopics of chunk(topics, MAX_FRAME_TOPICS))
-      sendUserFrame({ data: { topics: frameTopics }, type: "unwatch" });
-  };
-  const watchTopics = (topics: ColumnTopic[], readAt: number, refetch: () => void) => {
-    const subscribedTopics = topics.flatMap(({ columns, topic }) => {
-      const topicWatch = topicWatchMap.get(topic);
-      if (!topicWatch) {
-        topicWatchMap.set(topic, { columns, readAt, refetches: new Set([refetch]) });
-        return [getColumnTopic(topic, columns)];
-      }
-
-      topicWatch.refetches.add(refetch);
-      const mergedColumns = unionColumns(topicWatch.columns, columns);
+  // Whether a read adds to what the socket holds: a topic it does not hold, a time before the one it holds it from, or a
+  // Column the held one does not name
+  const checkAddsToHeld = ({ readAt, topics }: TopicRead) =>
+    topics.some(({ columns, topic }) => {
+      const heldTopic = heldTopics.get(topic);
+      if (!heldTopic || readAt < heldTopic.readAt) return true;
       // A union only grows, so a union of the same length holds the same columns
-      const isWidened = mergedColumns?.length !== topicWatch.columns?.length;
-      topicWatch.columns = mergedColumns;
-      if (readAt >= topicWatch.readAt && !isWidened) return [];
-
-      topicWatch.readAt = Math.min(topicWatch.readAt, readAt);
-      return [getColumnTopic(topic, mergedColumns)];
+      return unionColumns(heldTopic.columns, columns)?.length !== heldTopic.columns?.length;
     });
-    sendWatchFrames(subscribedTopics, readAt);
-    return () => {
-      const releasedTopics = topics.filter(({ topic }) => {
-        const topicWatch = topicWatchMap.get(topic);
-        topicWatch?.refetches.delete(refetch);
-        if (topicWatch?.refetches.size !== 0) return false;
-        topicWatchMap.delete(topic);
-        return true;
+  const sendWatchFrame = (read: TopicRead) => {
+    sendUserFrame(createWatchFrame(read));
+    for (const { columns, topic } of read.topics) {
+      const heldTopic = heldTopics.get(topic);
+      heldTopics.set(topic, {
+        columns: heldTopic ? unionColumns(heldTopic.columns, columns) : columns,
+        readAt: Math.min(heldTopic?.readAt ?? read.readAt, read.readAt),
       });
-      sendUnwatchFrames(releasedTopics.map(({ topic }) => topic));
+    }
+  };
+  const watchTopics = (read: TopicRead, refetch: () => void) => {
+    const watchedRead = { read, refetch };
+    watchedReads.add(watchedRead);
+    if (checkAddsToHeld(read)) sendWatchFrame(read);
+    return () => {
+      watchedReads.delete(watchedRead);
+      const watchedTopics = new Set(
+        [...watchedReads].flatMap(({ read: otherRead }) => otherRead.topics.map(({ topic }) => topic)),
+      );
+      const releasedTopics = [...new Set(read.topics.map(({ topic }) => topic))].filter(
+        (topic) => !watchedTopics.has(topic),
+      );
+      for (const topic of releasedTopics) heldTopics.delete(topic);
+      for (const frameTopics of chunk(releasedTopics, MAX_FRAME_TOPICS))
+        sendUserFrame({ data: { topics: frameTopics }, type: "unwatch" });
     };
   };
-  // Each topic is subscribed again from the time its own watch was made from, a frame per time.
-  // A new connection holds nothing, so every watch goes up again
+  // A new socket holds nothing, so each watched read goes up again, once however many queries watch it
   const sendTopicWatchesOnOpen = () => {
-    const readAtTopicsMap = new Map<number, ColumnTopic[]>();
-    for (const [topic, { columns, readAt }] of topicWatchMap)
-      getOrCreate(readAtTopicsMap, readAt, () => []).push(getColumnTopic(topic, columns));
-    for (const [readAt, topics] of readAtTopicsMap) sendWatchFrames(topics, readAt);
+    heldTopics.clear();
+    const sentReads = new Set<string>();
+    for (const { read } of watchedReads) {
+      const sentRead = JSON.stringify(read);
+      if (sentReads.has(sentRead)) continue;
+      sentReads.add(sentRead);
+      sendUserFrame(createWatchFrame(read));
+    }
   };
-  const refetchTopics = (topics: Iterable<Topic>) => {
-    const refetches = new Set([...topics].flatMap((topic) => [...(topicWatchMap.get(topic)?.refetches ?? [])]));
+  // Refetches each query with a watched read that matches, once however many of its reads match
+  const refetchWatches = (checkMatch: (read: TopicRead) => boolean) => {
+    const refetches = new Set([...watchedReads].flatMap(({ read, refetch }) => (checkMatch(read) ? [refetch] : [])));
     for (const refetch of refetches) refetch();
   };
   userHub.on("invalidate", ({ topic }) => {
-    refetchTopics([topic]);
+    refetchWatches((read) => read.topics.some((column) => column.topic === topic));
   });
 
   const openUser = () => {
@@ -206,7 +207,7 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
           sendTopicWatchesOnOpen();
         },
         onReopen: () => {
-          refetchTopics(topicWatchMap.keys());
+          refetchWatches(() => true);
         },
       },
     ));

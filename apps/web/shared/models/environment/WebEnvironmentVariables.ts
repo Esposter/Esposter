@@ -6,7 +6,8 @@ import { z } from "zod";
 
 // Every variable the web Worker reads. A secret is marked by `.meta({ secret: true })`: a deploy uploads each marked one
 // From Pulumi ESC as a Worker secret, and every other one is a wrangler var nitro.ts writes into its environment's block.
-// RealtimeKit is optional — a deployment without it runs calls with no media server — so its two variables may be absent
+// RealtimeKit is optional — a deployment without it runs calls with no media server — so its two variables may be absent, and
+// So may `TOPIC_WATCH_SECRET`, whose absence leaves a read's watch unsigned (`createTopicWatchSignature`)
 export interface WebEnvironmentVariables {
   APP_ENV: Environment;
   BASE_URL: string;
@@ -22,6 +23,7 @@ export interface WebEnvironmentVariables {
   PUBLIC_ASSETS_BASE_URL: string;
   R2_ACCESS_KEY_ID: string;
   R2_SECRET_ACCESS_KEY: string;
+  TOPIC_WATCH_SECRET?: string | undefined;
   VAPID_PUBLIC_KEY: string;
 }
 
@@ -40,5 +42,6 @@ export const webEnvironmentVariablesSchema = z.object({
   PUBLIC_ASSETS_BASE_URL: z.url(),
   R2_ACCESS_KEY_ID: z.string().min(1).meta({ secret: true }),
   R2_SECRET_ACCESS_KEY: z.string().min(1).meta({ secret: true }),
+  TOPIC_WATCH_SECRET: z.string().min(1).optional().meta({ secret: true }),
   VAPID_PUBLIC_KEY: z.string().min(1).meta({ secret: true }),
 }) satisfies z.ZodType<WebEnvironmentVariables>;

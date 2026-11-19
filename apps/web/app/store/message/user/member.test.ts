@@ -271,7 +271,7 @@ describe(useMemberStore, () => {
     const { members } = storeToRefs(memberStore);
     let displayName = member.displayName;
     await memberStore.readItems(() => {
-      readActiveTopicReads()?.push({ readAt: 0, topics: [{ topic: membershipTopic }] });
+      readActiveTopicReads()?.push({ readAt: 0, signature: "", topics: [{ topic: membershipTopic }] });
       return Promise.resolve({ items: [{ ...member, displayName }], nextCursor: "" });
     });
     displayName = "renamed";

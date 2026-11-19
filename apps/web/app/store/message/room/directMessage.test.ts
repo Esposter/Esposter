@@ -243,7 +243,7 @@ describe(useDirectMessageStore, () => {
     // Topics link would hand them over while the read runs: the answer names the membership of the room it lists
     vi.spyOn(directMessageStore, "readItems").mockImplementation((query, options) =>
       readItems(() => {
-        readActiveTopicReads()?.push({ readAt: 0, topics: [{ topic: membershipTopic }] });
+        readActiveTopicReads()?.push({ readAt: 0, signature: "", topics: [{ topic: membershipTopic }] });
         return query();
       }, options),
     );

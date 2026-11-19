@@ -569,7 +569,7 @@ describe(useMutation, () => {
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     const topic = getTopic(TopicKind.Post, v7());
     const query = vi.fn<() => Promise<string>>(() => {
-      readActiveTopicReads()?.push({ readAt: 0, topics: [{ topic }] });
+      readActiveTopicReads()?.push({ readAt: 0, signature: "", topics: [{ topic }] });
       return Promise.resolve(result);
     });
     const scope = effectScope();

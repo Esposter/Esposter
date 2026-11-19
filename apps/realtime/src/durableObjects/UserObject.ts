@@ -24,6 +24,7 @@ import { getJobQueue } from "#src/services/queue/getJobQueue";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { REMINDER_RETRY_DELAY_MS } from "#src/services/reminder/constants";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
+import { checkTopicWatchSigned } from "#src/services/topic/checkTopicWatchSigned";
 import { WATCHED_TOPIC_KEY_PREFIX } from "#src/services/topic/constants";
 import { readSocketWatchId } from "#src/services/topic/readSocketWatchId";
 import { setUserConnectedInRooms } from "#src/services/user/setUserConnectedInRooms";
@@ -312,7 +313,8 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
   // A tab watches or unwatches the topics of its mounted queries.
   // A watch subscribes its topics on every frame, since a subscribe is idempotent and one that failed on an earlier watch is
   // Then retried. An unwatch unsubscribes the topics no other tab of the person's still watches.
-  // So a topic holds each person once, however many tabs they have
+  // So a topic holds each person once, however many tabs they have. A watch is taken only when its signature covers it, so a
+  // Frame naming a topic its read did not name is refused whole, before anything is stored or subscribed
   override async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
     if (typeof message !== "string") return;
     const parsedJson: unknown = getResult(() => jsonDateParse(message)).unwrapOr(undefined);
@@ -321,6 +323,8 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
 
     const watchId = readSocketWatchId(ws) ?? this.#attachWatchId(ws);
     if (frame.data.type === "watch") {
+      if (!checkTopicWatchSigned(this.#userId, frame.data.data, Date.now())) return;
+
       const { readAt, topics } = frame.data.data;
       await Promise.all(
         topics.map(({ topic }) =>

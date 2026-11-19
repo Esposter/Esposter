@@ -15,6 +15,7 @@ import { createMockBucket } from "@esposter/db-mock";
 import {
   getBlobTopic,
   getStorageBucketBindingName,
+  getTopicWatchPayload,
   invitesInMessage,
   MAX_READ_TOPICS,
   roomsInMessage,
@@ -26,8 +27,9 @@ import {
 import { generateSecretToken, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableName } from "drizzle-orm";
+import { createHmac } from "node:crypto";
 import { v7 } from "uuid";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
 type UserRow = typeof usersInAuth.$inferSelect;
@@ -113,6 +115,7 @@ describe("inferTopicsMiddleware", () => {
 
   afterEach(() => {
     MockPublishedTopics.length = 0;
+    vi.unstubAllEnvs();
   });
 
   // A query's topics are the rows its statements selected, named by the scope values of the table, so the answer is
@@ -184,6 +187,36 @@ describe("inferTopicsMiddleware", () => {
     expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)).toBe(
       `useInvite ${encodeURIComponent(JSON.stringify({ key: { id: digest, roomId: room.id }, table: inviteTable, version: 1 }))}`,
     );
+  });
+
+  // A read's topics are watched only by the person who read them, so the header signs them for that person: the realtime
+  // Object takes a watch for them only when the signature covers the topics, the read's time and the person it names
+  test("a signed-in query's topics are signed for the person who read them", async () => {
+    expect.hasAssertions();
+
+    const topicWatchSecret = "topic-watch-secret";
+    vi.stubEnv("TOPIC_WATCH_SECRET", topicWatchSecret);
+    const context = await createMockContext();
+    const { session, user } = await createMockAuthSession(context.db);
+    const signedInContext = { ...context, session, user };
+    await createTestCaller(signedInContext).readUser(user.id);
+    const [read] = readTopicsHeader(signedInContext.responseHeaders, "readUser");
+
+    expect(read?.signature).toBe(
+      createHmac("sha256", topicWatchSecret)
+        .update(getTopicWatchPayload(user.id, read?.readAt ?? 0, read?.topics ?? []))
+        .digest("base64url"),
+    );
+  });
+
+  // A signed-out read has no person a watch could be made for, so its topics carry an empty signature no socket can use
+  test("a signed-out query's topics carry an empty signature", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    await createTestCaller(context).readUser(v7());
+
+    expect(readTopicsHeader(context.responseHeaders, "readUser").map(({ signature }) => signature)).toStrictEqual([""]);
   });
 
   // A procedure with a static reason is watched by no topic, however its statement reads

@@ -1,6 +1,5 @@
 import type { TopicRead } from "#shared/models/realtime/TopicRead";
 
-import { mergeColumnTopics } from "@esposter/db-schema";
 import { withFinalizer } from "@esposter/shared";
 
 // The reads the read in flight is collecting, set while a read starts its calls. A tRPC call runs its first link as
@@ -9,22 +8,10 @@ let activeReads: TopicRead[] | undefined;
 
 export const readActiveTopicReads = (): TopicRead[] | undefined => activeReads;
 
-// The one watch a read's calls make: their topics, with the columns each read of them, watched from the earliest time any
-// Of their reads began
-const mergeTopicReads = (reads: TopicRead[]): TopicRead | undefined => {
-  if (reads.length === 0) return undefined;
-
-  return {
-    readAt: Math.min(...reads.map(({ readAt }) => readAt)),
-    topics: mergeColumnTopics(reads.flatMap(({ topics }) => topics)),
-  };
-};
-
-// Runs a read and collects the topics every tRPC call it starts synchronously answers with. A call started after the
+// Runs a read and collects the reads every tRPC call it starts synchronously answers with. Each read is kept whole, since
+// Its signature covers only its own topics, so the reads are watched one by one rather than merged. A call started after the
 // Read's first await is outside the collection, so a read that must be live starts its calls before awaiting anything
-export const collectTopics = async <T>(
-  read: () => Promise<T>,
-): Promise<{ read?: TopicRead | undefined; result: T }> => {
+export const collectTopics = async <T>(read: () => Promise<T>): Promise<{ reads: TopicRead[]; result: T }> => {
   const reads: TopicRead[] = [];
   const previousReads = activeReads;
   activeReads = reads;
@@ -32,5 +19,5 @@ export const collectTopics = async <T>(
     activeReads = previousReads;
   });
   const result = await readPromise;
-  return { read: mergeTopicReads(reads), result };
+  return { reads, result };
 };

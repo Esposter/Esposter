@@ -13,6 +13,7 @@ const formatColumnTopic = ({ columns, topic }: ColumnTopic): string => {
   return `${encodedTopic}${TOPICS_HEADER_COLUMNS_SEPARATOR}${encodedColumns}`;
 };
 
-// One query's entry in the topics header: its procedure path, the time its read began, then the topics its answer read
-export const formatTopicsHeaderValue = (path: string, { readAt, topics }: TopicRead): string =>
-  [path, String(readAt), ...topics.map((topic) => formatColumnTopic(topic))].join(TOPICS_HEADER_SEPARATOR);
+// One query's entry in the topics header: its procedure path, the time its read began, the signature over the read (empty
+// When it has none, so the entry keeps its shape), then the topics its answer read
+export const formatTopicsHeaderValue = (path: string, { readAt, signature, topics }: TopicRead): string =>
+  [path, String(readAt), signature, ...topics.map((topic) => formatColumnTopic(topic))].join(TOPICS_HEADER_SEPARATOR);
