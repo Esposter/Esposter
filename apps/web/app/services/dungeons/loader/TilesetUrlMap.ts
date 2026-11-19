@@ -1,6 +1,6 @@
-import { getFilename } from "#src/util/file/getFilename";
 import { toXmlBlobUrl } from "#src/util/file/toXmlBlobUrl";
 import { trimFileExtension } from "#src/util/file/trimFileExtension";
+import { getFilename } from "@esposter/shared";
 
 // The external tileset loader reads each tileset's Tiled definition from a url, keyed by the tileset's name, which is
 // Its file's. The definition is read as text and handed over as a blob url, because a `.tsx` url is transformed as

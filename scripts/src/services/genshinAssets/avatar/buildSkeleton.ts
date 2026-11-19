@@ -4,10 +4,9 @@ import type { AvatarBone } from "genshin-world/sceneExport";
 
 import { addedNode } from "#src/services/genshinAssets/avatar/addedNode";
 import { depth } from "#src/services/genshinAssets/avatar/depth";
-import { leafName } from "#src/services/genshinAssets/avatar/leafName";
 import { mirrorAvatarPoint } from "#src/services/genshinAssets/avatar/mirrorAvatarPoint";
 import { mirrorAvatarRotation } from "#src/services/genshinAssets/avatar/mirrorAvatarRotation";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getFilename, InvalidOperationError, Operation } from "@esposter/shared";
 
 // The rig's nodes, then every bone a mesh names that the rig lacks, parents first, each in three's axes. A bone's path is
 // Its parent's path and its own name, so its parent is found by the path it is cut from
@@ -16,7 +15,7 @@ export const buildSkeleton = (
   bones: readonly RendererBone[],
 ): { nodeOfPath: Map<string, number>; nodes: AvatarBone[] } => {
   const nodes: AvatarBone[] = rigNodes.map(({ parent, path, position, rotation, scale }) => ({
-    name: leafName(path),
+    name: getFilename(path),
     parent,
     position: mirrorAvatarPoint(position),
     rotation: mirrorAvatarRotation(rotation),
@@ -29,7 +28,7 @@ export const buildSkeleton = (
     if (nodeOfPath.has(path)) continue;
     const parent = nodeOfPath.get(path.slice(0, Math.max(path.lastIndexOf("/"), 0)));
     if (parent === undefined) throw new InvalidOperationError(Operation.Read, path, "has no ancestor in the rig");
-    nodes.push(addedNode(object, parent, leafName(path)));
+    nodes.push(addedNode(object, parent, getFilename(path)));
     nodeOfPath.set(path, nodes.length - 1);
   }
   return { nodeOfPath, nodes };
