@@ -26,11 +26,11 @@ export const useSurveyChoiceAnswer = (
   const selectedKey = computed(() => {
     const { hasNone, hasOther } = getOptions();
     if (isOtherChosen.value) return SURVEY_OTHER_KEY;
-    if (answer.value === undefined) return undefined;
-    if (hasNone && answer.value === SURVEY_NONE_ANSWER) return SURVEY_NONE_ANSWER;
+    else if (answer.value === undefined) return undefined;
+    else if (hasNone && answer.value === SURVEY_NONE_ANSWER) return SURVEY_NONE_ANSWER;
     const index = orderedChoices.value.findIndex(({ value }) => value === answer.value);
-    if (index !== -1) return String(index);
-    return hasOther ? SURVEY_OTHER_KEY : undefined;
+    if (index === -1) return hasOther ? SURVEY_OTHER_KEY : undefined;
+    else return String(index);
   });
   // The other text is held as it is typed, and is prefilled only from an answer that is one the other option gave
   const otherText = ref(selectedKey.value === SURVEY_OTHER_KEY && typeof answer.value === "string" ? answer.value : "");
