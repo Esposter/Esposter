@@ -1,4 +1,3 @@
-import { publishTopics } from "#src/services/realtime/publishTopics";
 import { getDb } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
@@ -8,12 +7,10 @@ import {
   dataExportsInUser,
   DataExportStatus,
   exportUserDataQueueMessageSchema,
-  getTopic,
   QueueJob,
   StorageBucket,
-  TopicKind,
 } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 // Builds one export's archive into the blob named for its row. The row is marked building with the blob's name.
@@ -54,14 +51,6 @@ export const exportUserDataHandler = async (body: unknown): Promise<void> => {
         .update(dataExportsInUser)
         .set({ failureReason: error.message, status: DataExportStatus.Failed })
         .where(eq(dataExportsInUser.id, dataExportId));
-    },
-  );
-  // The owner's open export panel refetches, so it shows the link or the failure without a reload. Best-effort, since
-  // The row is already written and a failed publish costs only that refetch
-  await getResultAsync(() => publishTopics([{ topic: getTopic(TopicKind.User, buildingRow.userId) }])).match(
-    noop,
-    (error) => {
-      console.error(`${QueueJob.ExportUserData} failed to publish for ${dataExportId}`, error);
     },
   );
 };

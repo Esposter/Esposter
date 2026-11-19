@@ -1,9 +1,10 @@
 import type { Database, RoomMessage } from "@esposter/db-schema";
 
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
-import { getMockPublishedTopics, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
+import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { clearRoomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { runUnit } from "#src/services/shared/db";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
@@ -12,29 +13,23 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   dataExportsInUser,
   DataExportStatus,
-  getTopic,
+  getTableTopic,
   MessageType,
   resourcesInResource,
   ResourceType,
   resourceWorkingAssetsInResource,
   roomsInMessage,
   StorageBucket,
-  TopicKind,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { eq } from "drizzle-orm";
+import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
-vi.mock(import("#src/services/shared/db"), () => ({
-  getDb() {
-    return mockDb;
-  },
-}));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 
@@ -136,7 +131,7 @@ describe(exportUserDataHandler, () => {
     await mockDb.insert(usersInAuth).values(createUser(userId));
     const dataExportId = await seedQueuedExport(userId);
 
-    await exportUserDataHandler({ dataExportId });
+    await runUnit(() => exportUserDataHandler({ dataExportId }));
 
     const row = await readExportRow(dataExportId);
     expect(row.status).toBe(DataExportStatus.Ready);
@@ -145,7 +140,12 @@ describe(exportUserDataHandler, () => {
     expect(row.expiresAt).toStrictEqual(
       new Date(row.readyAt.getTime() + Temporal.Duration.from({ days: 7 }).total("milliseconds")),
     );
-    expect(getMockPublishedTopics()).toStrictEqual([getTopic(TopicKind.User, userId)]);
+    // The owner's export panel reads its export by the row's id, so the unit's write to that row wakes it
+    await expect(
+      getReaderWakes(mockDb, (database) =>
+        database.query.dataExportsInUser.findFirst({ where: { id: { eq: dataExportId }, userId: { eq: userId } } }),
+      ),
+    ).resolves.toContain(getTableTopic(getTableName(dataExportsInUser)));
   });
 
   test("a replayed event rebuilds the same blob, leaving one archive for the export", async () => {

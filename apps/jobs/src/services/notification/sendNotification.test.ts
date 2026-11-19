@@ -4,32 +4,27 @@ import { MOCK_ENDPOINT } from "#src/services/notification/constants.test";
 import { sendNotification } from "#src/services/notification/sendNotification";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
-import { getMockPublishedTopics, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
+import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { getDb, runUnit } from "#src/services/shared/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
-  getTopic,
+  getScopeTopic,
   notificationsInNotification,
   NotificationType,
   pushSubscriptionsInNotification,
   roomsInMessage,
   sessionsInAuth,
-  TopicKind,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { jsonDateParse, RoutePath } from "@esposter/shared";
+import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
-
-vi.mock(import("#src/services/shared/db"), () => ({
-  getDb() {
-    return mockDb;
-  },
-}));
 
 vi.mock(import("#src/services/notification/webpush"), () => import("#src/services/notification/webpush.test"));
 
@@ -126,7 +121,7 @@ describe(sendNotification, () => {
   test("keeps the bell row and does not throw when the retention trim fails", async () => {
     expect.hasAssertions();
 
-    const trim = vi.spyOn(mockDb, "delete").mockImplementationOnce(() => {
+    const trim = vi.spyOn(getDb(), "delete").mockImplementationOnce(() => {
       throw new Error(" ");
     });
 
@@ -158,11 +153,22 @@ describe(sendNotification, () => {
     expect(notification?.type).toBe(AppNotificationType.ResourceOperation);
   });
 
-  test("a bell row tells its recipient's open bell to refetch", async () => {
+  // The bell reads the rows of its recipient, as the web's notification list reads them, so the bell row a unit writes
+  // Is what wakes it
+  test("a bell row wakes its recipient's bell, which reads the rows of that recipient", async () => {
     expect.hasAssertions();
 
-    await sendNotification({ path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId });
+    await runUnit(() =>
+      sendNotification({ path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId }),
+    );
 
-    expect(getMockPublishedTopics()).toStrictEqual([getTopic(TopicKind.Notification, subscriberUserId)]);
+    await expect(
+      getReaderWakes(mockDb, (database) =>
+        database
+          .select()
+          .from(notificationsInNotification)
+          .where(eq(notificationsInNotification.userId, subscriberUserId)),
+      ),
+    ).resolves.toContain(getScopeTopic(getTableName(notificationsInNotification), "userId", subscriberUserId));
   });
 });

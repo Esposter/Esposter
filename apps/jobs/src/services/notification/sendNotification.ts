@@ -3,17 +3,14 @@ import type { NotificationQueueMessage } from "@esposter/db-schema";
 import { getPushNotificationPayload } from "#src/services/notification/getPushNotificationPayload";
 import { resolveNotification } from "#src/services/notification/resolveNotification";
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
-import { publishTopicsBestEffort } from "#src/services/realtime/publishTopicsBestEffort";
 import { getDb } from "#src/services/shared/db";
 import { getPushSubscriptionsForUsers, inJsonArray } from "@esposter/db";
 import {
   AppNotificationTypeChannelMap,
   AppNotificationTypeSeverityMap,
-  getTopic,
   NOTIFICATION_RETENTION_MS,
   NotificationChannel,
   notificationsInNotification,
-  TopicKind,
 } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, lt } from "drizzle-orm";
@@ -59,11 +56,6 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
     ).match(noop, (error) => {
       console.error("Failed to trim delivered notifications:", error);
     });
-    // Each recipient's open bell refetches. Best-effort and past the write, for the same reason as the trim
-    await publishTopicsBestEffort(
-      () => userIds.map((userId) => ({ topic: getTopic(TopicKind.Notification, userId) })),
-      "Failed to publish the bell's topics:",
-    );
   }
   if (!channels.includes(NotificationChannel.Push)) return;
   // A subscription is per-session, so the session that caused the notification is excluded here rather than by

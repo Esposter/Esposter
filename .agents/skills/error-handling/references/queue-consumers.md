@@ -15,12 +15,18 @@ A job's retryable steps — the body's `.parse()`, the persist step — are plai
 Rethrowing here asks for a redelivery that reruns the handler from the top, and a message's fresh time-based `rowKey` makes that rerun a **duplicate** rather than an overwrite. Log and swallow:
 
 ```ts
-await getResultAsync(() => publishTopics([getTopic(TopicKind.User, buildingRow.userId)])).match(noop, (error) => {
-  console.error(`${QueueJob.ExportUserData} failed to publish for ${dataExportId}`, error);
+await getResultAsync(() =>
+  getDb()
+    .delete(notificationsInNotification)
+    .where(
+      and(inJsonArray(notificationsInNotification.userId, userIds), lt(notificationsInNotification.createdAt, cutoff)),
+    ),
+).match(noop, (error) => {
+  console.error("Failed to trim delivered notifications:", error);
 });
 ```
 
-Canonical: `exportUserDataHandler` (the topic publish after its export row is written).
+Canonical: `sendNotification`'s retention trim (`apps/jobs/src/services/notification/sendNotification.ts`). A handler publishes no topic of its own: each queue message runs in a unit (`runUnit`, `apps/jobs/src/services/shared/db.ts`), and the unit publishes the write set its statements made once it settles, whichever way it ends. So a best-effort step here is only ever the write's own follow-up, never a notification of its readers.
 
 ## Past the retries — the dead-letter queue
 
