@@ -158,7 +158,7 @@ describe("registerReserveGate", () => {
     expect(next).toHaveBeenCalledWith({ script: MIXED_SCRIPT });
   });
 
-  test("the refusal gate failing", () => {
+  test("lets a launch through when the refusal gate fails", () => {
     expect.hasAssertions();
 
     const { letLaunchThrough } = register();

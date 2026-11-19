@@ -4,7 +4,7 @@ import type { AddressInfo } from "node:net";
 
 // oxlint-disable-next-line no-restricted-imports -- A mod has no shared-node dependency, so this test's own spawn passes windowsHide, as the other plugins' helpers do
 import { spawn } from "node:child_process";
-import { mkdtempSync } from "node:fs";
+import { existsSync, mkdtempSync } from "node:fs";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -32,13 +32,16 @@ const runScript = (payload: object, key: string, script = SINS_SCRIPT) =>
 describe("sinsScript", () => {
   let server: Server;
   let apiUrl = "";
+  let requests = 0;
   let status = 200;
   let storePath = "";
 
   beforeEach(async () => {
+    requests = 0;
     storePath = join(mkdtempSync(join(tmpdir(), "sins-")), "sins.sqlite");
     const answers = Object.fromEntries(SIN_NAMES.map((name) => [name, { confidence: 0.5, score: 2, type: "score" }]));
     server = createServer((_request, response) => {
+      requests += 1;
       response.writeHead(status, { "Content-Type": "application/json" });
       response.end(JSON.stringify({ answers, model: "jev-latest" }));
     });
@@ -63,6 +66,7 @@ describe("sinsScript", () => {
     expect.hasAssertions();
 
     expect(JSON.parse(await runScript(getPayload(), ""))).toStrictEqual({ result: "no-key" });
+    expect(requests).toBe(0);
   });
 
   test("answers node-too-old where process.getBuiltinModule is missing, before Node 22.3", async () => {
@@ -96,5 +100,6 @@ describe("sinsScript", () => {
       reason: "HTTP 500",
       result: "failed",
     });
+    expect(existsSync(storePath)).toBe(false);
   });
 });

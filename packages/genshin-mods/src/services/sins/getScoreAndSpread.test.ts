@@ -18,8 +18,7 @@ describe(getScoreAndSpread, () => {
   test("narrows its spread as the counts grow", () => {
     expect.hasAssertions();
 
-    const few = getScoreAndSpread({ alpha: 2, beta: 2 }).spread;
-    const many = getScoreAndSpread({ alpha: 40, beta: 40 }).spread;
-    expect(many).toBeLessThan(few);
+    expect(getScoreAndSpread({ alpha: 2, beta: 2 }).spread).toBeCloseTo(0.2236, 4);
+    expect(getScoreAndSpread({ alpha: 40, beta: 40 }).spread).toBeCloseTo(1 / 18, 4);
   });
 });

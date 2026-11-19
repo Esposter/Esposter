@@ -10,9 +10,7 @@ describe(appendSinEvidence, () => {
   test("appends each sin's score as its share of the top level", () => {
     expect.hasAssertions();
 
-    const history = appendSinEvidence({}, answers);
-    expect(history.pride).toStrictEqual([0.5]);
-    expect(history.sloth).toStrictEqual([0.5]);
+    expect(appendSinEvidence({}, answers)).toStrictEqual(Object.fromEntries(SIN_NAMES.map((name) => [name, [0.5]])));
   });
 
   test("keeps only the newest history length of each sin", () => {

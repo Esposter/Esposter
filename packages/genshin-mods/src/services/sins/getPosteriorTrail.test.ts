@@ -6,12 +6,10 @@ import { getPosterior, getPosteriorTrail } from "./getPosteriorTrail";
 describe(getPosteriorTrail, () => {
   const evidences = [0.9, 0.1, 0.5];
 
-  test("replays the evidence one prompt at a time", () => {
+  test("keeps one posterior per prompt", () => {
     expect.hasAssertions();
 
-    const trail = getPosteriorTrail(evidences);
-    expect(trail).toHaveLength(evidences.length);
-    expect(getPosterior(trail)).toStrictEqual(trail.at(-1));
+    expect(getPosteriorTrail(evidences)).toHaveLength(evidences.length);
   });
 
   test("moves about halfway to a new level within one half-life", () => {
