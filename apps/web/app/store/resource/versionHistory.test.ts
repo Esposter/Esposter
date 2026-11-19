@@ -1,12 +1,13 @@
 // @vitest-environment nuxt
 import type { ButtonNodeProps } from "#shared/models/pageBuilder/ButtonNodeProps";
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
+import type { JsonPatchOperation } from "@esposter/shared";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { ButtonTarget } from "#shared/models/pageBuilder/ButtonTarget";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
@@ -19,7 +20,6 @@ import { useVersionHistoryStore } from "#src/store/resource/versionHistory";
 import { useWebpageEditorStore } from "#src/store/webpageEditor/index";
 import { ResourceType, SnapshotChannel } from "@esposter/db-schema";
 import { JsonPatchOperationType, noop } from "@esposter/shared";
-import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { updateBlockNodeProps } from "vue-block-editor-headless";
 
@@ -28,6 +28,14 @@ describe(useVersionHistoryStore, () => {
   const TEST_EDIT_LABEL = "Change label";
   const TEST_EDITED_LABEL = "Edited";
   const TEST_RESTORED_LABEL = "Restored";
+  // The restored draft's label differs from the one the undo would write back, so a surviving entry is visible
+  const restoredContent: WebpageNode[] = [
+    {
+      props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_RESTORED_LABEL, target: ButtonTarget.SameTab },
+      type: WebpageNodeType.Button,
+    },
+  ];
+  const restoredEmail = new EmailEditor({ content: [], root: { props: { lang: "", title: TEST_RESTORED_LABEL } } });
 
   // Reads of two resources are two keys, so neither supersedes the other and the first one issued can land after
   // The second. Filed under whichever resource is open when it lands, it lists the one left behind as this one's
@@ -68,94 +76,80 @@ describe(useVersionHistoryStore, () => {
     expect(versions.value.map(({ summary }) => summary)).toStrictEqual([firstResource.id]);
   });
 
-  // A restore replaces the draft under the open page, so the edits its history holds describe a document that is gone
-  test("restoring a version leaves nothing to undo", async () => {
-    expect.hasAssertions();
-
-    const webpage = createResourceListItem({ type: ResourceType.Webpage });
-    const buttonId = v7();
-    // The restored draft's label differs from the one the undo would write back, so a surviving entry is visible
-    const restoredContent: WebpageNode[] = [
-      {
-        props: {
-          elementId: "",
-          href: TEST_URL,
-          id: buttonId,
-          label: TEST_RESTORED_LABEL,
-          target: ButtonTarget.SameTab,
-        },
-        type: WebpageNodeType.Button,
-      },
-    ];
-    let content = new WebpageEditor({ content: [createButton(buttonId)] });
-    Object.assign(useRouter().currentRoute.value.params, { id: webpage.id });
-    trpcMsw.resource.readResource.query(() => ({ ...webpage, publication: null }));
-    trpcMsw.webpage.readResourceContent.query(() => content);
-    trpcMsw.webpage.readResourcePublication.query(() => undefined);
-    trpcMsw.resource.restoreSnapshotVersion.mutation(() => ({ resource: webpage, undoRevisionVersion: undefined }));
-    trpcMsw.resource.readSnapshotHistory.query(() => []);
-    await useReadOpenResource().readResource();
-    const webpageEditorStore = useWebpageEditorStore();
-    await webpageEditorStore.loadContent();
-    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-    const { applyEdit, getUndoLabel, undo } = pageBuilderHistoryStore;
-    applyEdit(
-      webpage.id,
-      updateBlockNodeProps<ButtonNodeProps>("/content/0", { label: TEST_EDITED_LABEL }),
-      TEST_EDIT_LABEL,
-    ).match(noop, (error) => {
-      throw error;
-    });
-    const undoLabelBeforeRestore = getUndoLabel(webpage.id);
-    content = new WebpageEditor({ content: restoredContent });
-    const versionHistoryStore = useVersionHistoryStore();
-    const { restoreSnapshot } = versionHistoryStore;
-    await restoreSnapshot({ channel: SnapshotChannel.Revisions, version: 1 });
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const { getDocument } = pageBuilderDocumentStore;
-    undo(webpage.id);
-
-    expect(undoLabelBeforeRestore).toBe(TEST_EDIT_LABEL);
-    expect(getUndoLabel(webpage.id)).toBe("");
-    expect(getDocument(webpage.id)?.content).toStrictEqual(restoredContent);
-  });
-
+  // A restore replaces the draft under the open page, so the edits its history holds describe a document that is gone.
   // An email is restored through the same reload, so the draft it replaces takes its undo history with it
-  test("restoring an email version leaves nothing to undo", async () => {
+  test.each([
+    {
+      edit: updateBlockNodeProps<ButtonNodeProps>("/content/0", { label: TEST_EDITED_LABEL }),
+      expected: restoredContent,
+      name: "a webpage",
+      // Loads the webpage's draft, and returns the function that makes the reload read the restored one
+      openDraft: async () => {
+        let content = new WebpageEditor({ content: [createButton(TEST_ID)] });
+        trpcMsw.webpage.readResourceContent.query(() => content);
+        trpcMsw.webpage.readResourcePublication.query(() => undefined);
+        const webpageEditorStore = useWebpageEditorStore();
+        await webpageEditorStore.loadContent();
+
+        return () => {
+          content = new WebpageEditor({ content: restoredContent });
+        };
+      },
+      read: (resourceId: string) => {
+        const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+        return pageBuilderDocumentStore.getDocument(resourceId)?.content;
+      },
+      type: ResourceType.Webpage,
+    },
+    {
+      edit: [
+        { op: JsonPatchOperationType.Add, path: "/root/props/title", value: TEST_EDITED_LABEL },
+      ] satisfies JsonPatchOperation[],
+      expected: restoredEmail.root,
+      name: "an email",
+      openDraft: async () => {
+        let content = new EmailEditor({ content: [], root: { props: { lang: "", title: "" } } });
+        trpcMsw.email.readResourceContent.query(() => content);
+        trpcMsw.email.readResourcePublication.query(() => undefined);
+        const emailEditorStore = useEmailEditorStore();
+        await emailEditorStore.loadContent();
+
+        return () => {
+          content = restoredEmail;
+        };
+      },
+      read: (resourceId: string) => {
+        const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+        return pageBuilderDocumentStore.getEmailDocument(resourceId)?.root;
+      },
+      type: ResourceType.Email,
+    },
+  ])("restoring $name version leaves nothing to undo", async ({ edit, expected, openDraft, read, type }) => {
     expect.hasAssertions();
 
-    const email = createResourceListItem({ type: ResourceType.Email });
-    let content = new EmailEditor({ content: [], root: { props: { lang: "", title: "" } } });
-    Object.assign(useRouter().currentRoute.value.params, { id: email.id });
-    trpcMsw.resource.readResource.query(() => ({ ...email, publication: null }));
-    trpcMsw.email.readResourceContent.query(() => content);
-    trpcMsw.email.readResourcePublication.query(() => undefined);
-    trpcMsw.resource.restoreSnapshotVersion.mutation(() => ({ resource: email, undoRevisionVersion: undefined }));
+    const resource = createResourceListItem({ type });
+    Object.assign(useRouter().currentRoute.value.params, { id: resource.id });
+    trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
+    trpcMsw.resource.restoreSnapshotVersion.mutation(() => ({ resource, undoRevisionVersion: undefined }));
     trpcMsw.resource.readSnapshotHistory.query(() => []);
     await useReadOpenResource().readResource();
-    const emailEditorStore = useEmailEditorStore();
-    await emailEditorStore.loadContent();
+    const setRestoredContent = await openDraft();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, getUndoLabel, undo } = pageBuilderHistoryStore;
-    applyEdit(
-      email.id,
-      [{ op: JsonPatchOperationType.Add, path: "/root/props/title", value: TEST_EDITED_LABEL }],
-      TEST_EDIT_LABEL,
-    ).match(noop, (error) => {
+    applyEdit(resource.id, edit, TEST_EDIT_LABEL).match(noop, (error) => {
       throw error;
     });
-    const undoLabelBeforeRestore = getUndoLabel(email.id);
-    const restoredEmail = new EmailEditor({ content: [], root: { props: { lang: "", title: TEST_RESTORED_LABEL } } });
-    content = restoredEmail;
+    const undoLabelBeforeRestore = getUndoLabel(resource.id);
+    setRestoredContent();
     const versionHistoryStore = useVersionHistoryStore();
     const { restoreSnapshot } = versionHistoryStore;
     await restoreSnapshot({ channel: SnapshotChannel.Revisions, version: 1 });
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const { getEmailDocument } = pageBuilderDocumentStore;
-    undo(email.id);
+    undo(resource.id);
 
     expect(undoLabelBeforeRestore).toBe(TEST_EDIT_LABEL);
-    expect(getUndoLabel(email.id)).toBe("");
-    expect(getEmailDocument(email.id)?.root).toStrictEqual(restoredEmail.root);
+    expect(getUndoLabel(resource.id)).toBe("");
+    expect(read(resource.id)).toStrictEqual(expected);
   });
 });
