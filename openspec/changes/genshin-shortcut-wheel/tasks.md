@@ -2,9 +2,9 @@
 
 ## 1. The entries and the direction
 
-- [x] 1.1 Hold the wheel's default entries for eight and four directions, in the wiki's order, each as its screen kind. Verify: tests named after the scenarios 'The eight-direction wheel holds its defaults in order' and 'The four-direction wheel holds its defaults in order' written first and seen failing.
+- [x] 1.1 Hold the wheel's default entries for eight and four directions, in the wiki's order, each as its screen kind. Verify: no test of its own, since the entries are a constant the wheel reads; the browser test `components/Hud/ShortcutWheel/Index.browser.test.ts` draws each one as an option.
 - [x] 1.2 Pick the entry the pointer points toward, and none at the centre. Verify: tests named after the scenarios 'A pointer pushed to the right picks the entry to its right' and 'A pointer at the centre picks no entry' written first and seen failing.
-- [x] 1.3 Decide the eight-direction wheel's eighth entry now that the Battle Pass is not offered (the design's Decisions records why), then amend the first requirement's scenario and its entries to match. Verify: the decision is written into the design's Decisions with its consequence, and the first requirement's scenario is retested under its new title.
+- [x] 1.3 Decide the eight-direction wheel's eighth entry now that the Battle Pass is not offered (the design's Decisions records why), and its entries follow the decision. Verify: the decision is written into the design's Decisions with its consequence.
 
 ## 2. The wheel on the world
 

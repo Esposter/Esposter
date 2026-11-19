@@ -43,11 +43,12 @@ From level 2 the keeper SHALL offer requests, run as world quests that pay Reput
 
 From level 2 the keeper SHALL offer bounties, whose target spawns when the bounty is taken and is claimed back with the keeper once defeated.
 
-#### Scenario: A bounty's target spawns when the bounty is taken
+#### Scenario: A bounty taken at level two spawns a target the roll draws, and not at level one
 
 - **GIVEN** the player talks to the keeper at level 2
 - **WHEN** the player takes a bounty
-- **THEN** its target spawns at the place the bounty names
+- **THEN** its target spawns at the place the bounty names, as the kind the roll draws
+- **AND** at level 1 the bounty cannot be taken
 
 #### Scenario: A bounty cannot be claimed before its target is defeated
 

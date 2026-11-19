@@ -104,7 +104,7 @@ A city's named shop SHALL take ten percent off its Mora prices at reputation lev
 - **WHEN** the player views the good
 - **THEN** the good costs one hundred five Mora
 
-#### Scenario: A price below reputation level four is not discounted
+#### Scenario: A reputation below the good's discount level leaves its price
 
 - **GIVEN** a player below reputation level four and a city shop good priced at one hundred twenty Mora
 - **WHEN** the player views the good

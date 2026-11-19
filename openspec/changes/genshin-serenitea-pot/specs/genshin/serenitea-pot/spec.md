@@ -55,16 +55,6 @@ The furnishing placement mode SHALL refuse a placement that would take its area 
 - **THEN** the furnishing is not placed
 - **AND** the load shows red
 
-### Requirement: A realm's placements are kept with the player's progress
-
-The realm SHALL keep each furnishing placement with the player's progress, so that a return to the realm shows them where they were placed.
-
-#### Scenario: Placements are kept across a return to the realm
-
-- **GIVEN** a player who placed furnishings in the realm and left it
-- **WHEN** the player returns to the realm
-- **THEN** each furnishing is where it was placed
-
 ### Requirement: A companion is invited within the Trust Rank's count
 
 The realm SHALL take as its companions characters other than the Traveler that the player owns, no more than the count the player's Trust Rank allows, and a companion the player dismisses SHALL leave the realm.

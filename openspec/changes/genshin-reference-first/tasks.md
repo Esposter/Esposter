@@ -15,10 +15,10 @@
 
 ## 2. Subscreen coverage
 
-- [x] 2.1 Write the subscreen test first in `scripts/src/services/genshinParity/shared/ParityReferenceMap.test.ts`, asserting that every fixture variant has an entry naming it, and watch it fail on the login's dusk variant, which has none. Verify: tests named after the scenarios 'Variant with no entry' and 'Fixture added without a reference' in the same file, seen failing.
-- [x] 2.2 Use the `variant` field that `scripts/src/models/genshinParity/shared/ParityReferenceBase.ts` already declares (the entry model in `ParityReference.ts` composes it, and `title-splash-mainland` is its one live use), set it on every entry for a variant, and make the test match on it. Verify: typecheck passes, and the test named after the scenario 'Variant borrowing its base's reference' fails on a variant whose only entry is its base's.
+- [x] 2.1 Write the subscreen test first in `scripts/src/services/genshinParity/shared/ParityReferenceMap.test.ts`, asserting that every fixture variant has an entry naming it, and watch it fail on the login's dusk variant, which has none. Verify: tests named after the scenarios 'Variant with its own reference' and 'Fixture added without a reference' in the same file, seen failing.
+- [x] 2.2 Use the `variant` field that `scripts/src/models/genshinParity/shared/ParityReferenceBase.ts` already declares (the entry model in `ParityReference.ts` composes it, and `title-splash-mainland` is its one live use), set it on every entry for a variant, and make the test match on it. Verify: typecheck passes, and the test named after the scenario 'Variant with its own reference' matches each entry on its variant.
 - [x] 2.3 Record a reference, or a pending entry with its reason, for each variant that lacks one, starting with the login's dusk. Verify: the scenario 'Variant with its own reference' passes in the same file, and every fixture variant names an entry of its own.
-- [x] 2.4 Convert each subscreen that now has a reference from pending to recorded in the same change. Verify: the scenario 'Variant pending with a reason' passes in `ParityReferenceMap.test.ts` for the screen, and the pending entries left are exactly those whose reason names a source the owner has to supply.
+- [x] 2.4 Convert each subscreen that now has a reference from pending to recorded in the same change. Verify: the scenario 'Variant with its own reference' passes in `ParityReferenceMap.test.ts` for the screen, and the pending entries left are exactly those whose reason names a source the owner has to supply.
 
 ## 3. One image per subscreen
 

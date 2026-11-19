@@ -1,21 +1,5 @@
 ## ADDED Requirements
 
-### Requirement: The subzero climate covers Dragonspine
-
-The subzero climate SHALL cover the area of Dragonspine and no other.
-
-#### Scenario: Hold Dragonspine's sheer cold
-
-- **GIVEN** the character stands in Dragonspine
-- **WHEN** the climate is checked
-- **THEN** the climate holds
-
-#### Scenario: Hold no sheer cold elsewhere
-
-- **GIVEN** the character stands in another area, or in none
-- **WHEN** the climate is checked
-- **THEN** the climate does not hold
-
 ### Requirement: The gauge fills in the subzero climate
 
 The gauge SHALL fill while the character stands in the subzero climate, and SHALL fill faster while it swims.

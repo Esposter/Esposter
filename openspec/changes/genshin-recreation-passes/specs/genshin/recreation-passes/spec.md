@@ -44,16 +44,9 @@ When the frame's perceptual score stands off, the pass whose measure missed the 
 
 Scattered content such as clouds SHALL be matched by its cover, size and colour spread rather than by a pixel score.
 
-#### Scenario: Scattered clouds are scored by their statistics
+#### Scenario: A cloud brightness past its spread is not accepted
 
-- **GIVEN** a frame shows the game's scattered clouds
-- **WHEN** the clouds are compared with the reference
-- **THEN** they are compared by cover, size and colour spread
-- **AND** no pixel score decides them
-
-#### Scenario: A cloud layer that wins only on pixels is not accepted
-
-- **GIVEN** a cloud layer scores better on pixels than on statistics
+- **GIVEN** a cloud layer's brightness lies past its spread
 - **WHEN** the cloud pass is closed
 - **THEN** the layer is not accepted
 

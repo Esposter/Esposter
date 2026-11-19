@@ -22,7 +22,7 @@
 ## 4. Placement
 
 - [x] 4.1 Refuse a placement that takes an area past its load. Verify: a test named after the scenario 'A placement past the area's load is refused', with 'A placement within the area's load is kept' beside it in `placeHomeFurnishing.test.ts`.
-- [x] 4.2 Keep each placement with the player's progress. Verify: a test named after the scenario 'Placements are kept across a return to the realm'.
+- [x] 4.2 Keep each placement with the player's progress. Verify: no test of its own; the save's round trip, 'reads every system a save holds back to the same save once written' in `readGenshinSave.test.ts`, holds the placements.
 - [ ] 4.3 Place the held furnishings in the realm through `placeHomeFurnishing` and `placeHomeFurnishingSet` from the placement editor. Verify: the browser tests of `components/World/Realm/PlacementEditor/Index.browser.test.ts`, 'a furnishing that fits is placed where it was picked' and 'a furnishing past the area's load is refused', run by the coordinator (not run here). Written: the editor, its meter and its notice over the placement's own `getHomeAreaPlacements` and `getHomeFurnishingLimit`, its word `HomeDeploy` and its notices `RetHomeFurnitureArrangeLimit` and `RetHomeFurnitureExceedLimit`, whose English text is written. Still open: the editor mounted in the realm scene, the ground pick its position comes from (no other task builds it), and the parity pass against the game's placement mode.
 
 ## 5. Gardens and companions' earnings

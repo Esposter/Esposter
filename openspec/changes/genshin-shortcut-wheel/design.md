@@ -14,7 +14,7 @@ flowchart LR
   RELEASE -->|"at the centre"| NONE["Nothing opens"]
 ```
 
-The default entries are the wiki's, in the order the spec's first requirement gives them, less the Battle Pass, which the world never draws ([Paimon menu](../../specs/genshin/paimon-menu/design.md)).
+The default entries are the wiki's, in the wiki's order, less the Battle Pass, which the world never draws ([Paimon menu](../../specs/genshin/paimon-menu/design.md)).
 
 ## Decisions
 

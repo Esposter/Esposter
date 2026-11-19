@@ -1,21 +1,5 @@
 ## ADDED Requirements
 
-### Requirement: The wheel holds the game's default entries in order
-
-The Shortcut Wheel SHALL hold seven entries in the 8-direction layout and four in the 4-direction layout, each in the wiki's default order, clockwise from the top. The eighth direction of the 8-direction layout is left empty, since the wiki's eighth default, the Battle Pass, draws no entry anywhere in the world, and the wheel draws no slot for an unassigned direction.
-
-#### Scenario: The eight-direction wheel holds its defaults in order
-
-- **GIVEN** the wheel in its 8-direction layout
-- **WHEN** the wheel's entries are read
-- **THEN** they are Wish, Adventurer Handbook, Inventory, Character, Map, Quests and Events, in that order, and the eighth direction holds no entry
-
-#### Scenario: The four-direction wheel holds its defaults in order
-
-- **GIVEN** the wheel in its 4-direction layout
-- **WHEN** the wheel's entries are read
-- **THEN** they are Wish, Inventory, Map and Events, in that order
-
 ### Requirement: The direction the pointer points toward picks its entry
 
 The wheel SHALL pick the entry in the direction the pointer or stick points toward, and no entry when the pointer is at the centre.

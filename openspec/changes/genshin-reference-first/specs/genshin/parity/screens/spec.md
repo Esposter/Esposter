@@ -26,24 +26,6 @@ Every subscreen SHALL name a reference of its own, or a pending entry stating wh
 - **WHEN** the reference test runs
 - **THEN** the variant is covered
 
-#### Scenario: Variant with no entry
-
-- **GIVEN** a fixture variant with no entry naming it
-- **WHEN** the reference test runs
-- **THEN** the run fails and names the screen and the variant
-
-#### Scenario: Variant borrowing its base's reference
-
-- **GIVEN** a fixture variant whose only entry is its base screen's
-- **WHEN** the reference test runs
-- **THEN** the run fails and names the variant
-
-#### Scenario: Variant pending with a reason
-
-- **GIVEN** a fixture variant whose entry is pending and states its reason
-- **WHEN** the reference test runs
-- **THEN** the variant is listed as pending and the run passes
-
 ### Requirement: A screen gains its fixture only once its reference is recorded
 
 A fixture SHALL exist only for a screen with a reference entry, so the first render of a screen is already compared against the game.

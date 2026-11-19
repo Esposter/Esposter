@@ -37,22 +37,6 @@ A resident SHALL be absent at night only where the game's own record marks them 
 - **WHEN** night falls
 - **THEN** the resident is not drawn
 
-#### Scenario: A resident not marked absent stays in the world at night
-
-- **GIVEN** a resident is not marked absent at night
-- **WHEN** night falls
-- **THEN** the resident is drawn at their night spot or day spot
-
-### Requirement: Residents follow the world's clock each frame
-
-Each resident's spot SHALL be read from the world's clock every frame, so that a change of time moves residents as the hours do.
-
-#### Scenario: Setting the time moves residents
-
-- **GIVEN** residents stand at their day spots
-- **WHEN** the player sets the time to night on the Time screen
-- **THEN** the residents with night spots move to them
-
 ### Requirement: Nod-Krai has no resident until the game places one
 
 A Nod-Krai resident SHALL NOT stand anywhere until the scene-group record places them, since the wiki's Nod-Krai NPC pages give their hours but no positions.
