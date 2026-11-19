@@ -58,8 +58,8 @@ export interface ReadSetLevel {
 // In, and whether an equality of its own at that level scopes it. Two occurrences of one table are named apart, so a table is
 // Table-wide when any of its occurrences is neither scoped nor named by its rows
 export interface ReadSetOccurrence {
-  level: number;
   isScoped: boolean;
+  level: number;
   occurrence: string;
   table: string;
 }
