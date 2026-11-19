@@ -8,7 +8,8 @@ import { getOrCreate } from "@esposter/shared";
 // The gate every message-producing path decides with, in precedence order: a timeout outranks everything,
 // Then the sender's `SendMessages`, then the room's read-only flag, its slowmode, and finally the word filter.
 // It returns the decision rather than throwing, so each caller can raise the error its own transport speaks:
-// `TRPCError` in the app, a domain error in the Function worker. The rules themselves exist exactly once.
+// `TRPCError` in the app, a domain error in the room object's alarm that delivers scheduled sends. The rules themselves
+// Exist exactly once.
 // A second copy of these rules is how the live path and the scheduled path come to disagree about what a room allows.
 //
 // The room rules read three rows between them, so this reads them once and together rather than each rule
