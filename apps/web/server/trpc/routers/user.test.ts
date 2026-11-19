@@ -532,8 +532,8 @@ describe("userRouter", () => {
     expect(presignedLink.searchParams.get("X-Amz-Expires")).toBe(String(DATA_EXPORT_LINK_DURATION_MS / 1000));
   });
 
-  // Every row inserts under this one id: an inline snapshot takes its message from its call site, so the rows must
-  // produce the same message, and afterEach deletes each row's export before the next one is inserted
+  // Every row inserts under this one id, since an inline snapshot takes its message from its call site
+  // The rows therefore produce the same message, and afterEach deletes each row's export before the next is inserted
   test.each([DataExportStatus.Building, DataExportStatus.Failed, DataExportStatus.Queued])(
     "generateDataExportLink refuses a %s export",
     async (status) => {
