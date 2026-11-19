@@ -37,7 +37,7 @@ describe(createPresignedPutUrl, () => {
       `/${getCloudflareResourceName(CloudflareEnvironment.Production, CloudflareAssetType.R2Bucket, StorageBucket.MessageAssets)}/room/id%7Ca%23b%3Fc`,
     );
     expect(url.searchParams.get("X-Amz-Expires")).toBe("3600");
-    expect(url.searchParams.get("X-Amz-SignedHeaders")).toContain("content-type");
+    expect(url.searchParams.get("X-Amz-SignedHeaders")).toBe("content-type;host");
   });
 
   // A development account's buckets carry the development environment's name, and the signed url has to name that bucket

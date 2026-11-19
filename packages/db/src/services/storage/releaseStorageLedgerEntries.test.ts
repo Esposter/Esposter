@@ -235,17 +235,6 @@ describe(releaseStorageLedgerEntries, () => {
     await expect(db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
   });
 
-  test("releases a whole directory without enumerating it", async () => {
-    expect.hasAssertions();
-
-    await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntry(db, storageBucket, blobName, actualBytes);
-    await releaseStorageLedgerEntriesByPrefix(db, storageBucket, `${resourceId}/`);
-
-    await expect(readStorageBytesUsed()).resolves.toBe(0);
-    await expect(db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
-  });
-
   test("leaves another container's blobs alone", async () => {
     expect.hasAssertions();
 

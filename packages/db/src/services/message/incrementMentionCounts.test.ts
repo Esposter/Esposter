@@ -179,9 +179,15 @@ describe(incrementMentionCounts, () => {
 
     const message = `${createMention(onlineUserId, MentionType.User)}${createMention(MENTION_EVERYONE_ID)}`;
     const updatedUsersToRooms = await incrementMentionCounts(db, { ...sender, message });
-    const mentionedOnlineUser = updatedUsersToRooms.find(({ userId }) => userId === onlineUserId);
 
-    expect(mentionedOnlineUser?.mentionCount).toBe(1);
+    expect(new Map(updatedUsersToRooms.map(({ mentionCount, userId }) => [userId, mentionCount]))).toStrictEqual(
+      new Map([
+        [nullStatusUserId, 1],
+        [offlineUserId, 1],
+        [onlineUserId, 1],
+        [roleMemberUserId, 1],
+      ]),
+    );
   });
 
   test("a null userId increments every mentioned member without excluding a sender (webhook message)", async () => {

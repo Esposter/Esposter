@@ -9,7 +9,7 @@ describe(refineMessageSchema, () => {
   const message = "message";
   const files: FileEntity[] = [];
 
-  test("refines", () => {
+  test("accepts a message or files, alone or together, and refuses a body with neither", () => {
     expect.hasAssertions();
 
     const schema = refineMessageSchema(

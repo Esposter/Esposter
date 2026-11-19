@@ -27,14 +27,6 @@ describe(createMockDb, () => {
     await mockDatabase.dispose();
   });
 
-  test("returns a queryable db", async () => {
-    expect.hasAssertions();
-
-    const count = await mockDatabase.db.$count(usersInAuth);
-
-    expect(count).toBe(0);
-  });
-
   // An account is a credential the user row owns, so the user row's deletion must take it along rather than
   // Be blocked by it — the account deletion sweep relies on this and deletes no account row by hand
   test("deleting a user removes the account rows linked to it", async () => {

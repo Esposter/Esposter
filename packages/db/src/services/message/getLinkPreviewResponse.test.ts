@@ -15,6 +15,6 @@ describe(getLinkPreviewResponse, () => {
     const href = "https://a.a/";
     await getLinkPreviewResponse(`<a href="${href}"></a>`);
 
-    expect(getLinkPreview).toHaveBeenCalledWith(href);
+    expect(getLinkPreview).toHaveBeenCalledExactlyOnceWith(href);
   });
 });
