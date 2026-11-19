@@ -5,10 +5,9 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { PROGRAM_PARTICIPANT_BATCH_SIZE } from "#server/services/program/constants";
 import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";
 import { readProgramAudienceDataset } from "#server/services/program/readProgramAudienceDataset";
+import { readProgramBinding } from "#server/services/program/readProgramBinding";
 import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
 import { readOwnedResource } from "#server/services/resource/readOwnedResource";
-import { readResourceContent } from "#server/services/resource/readResourceContent";
-import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import {
   PROGRAM_PARTICIPANT_KEY_VALUE_MAX_LENGTH,
@@ -25,13 +24,11 @@ export const generateProgramParticipants = async (
   ctx: AuthedContext,
   programId: ResourceInResource["id"],
 ): Promise<GeneratedProgramParticipants> => {
-  const content = await readResourceContent(programResourceSchema, programId);
-  if (!content?.audience || !content.keyColumn || !content.surveyId) throw getDanglingProgramBindingError();
+  const { audience, keyColumn, surveyId } = await readProgramBinding(programId);
   // An audience whose source is gone reads as NOT_FOUND — surfaced as the program's own dangling-binding error,
   // Whose fix is the same rebind. Every other failure is a real fault and propagates, so a transient storage or
   // Parse error is never mistaken for a permanently broken binding. Every link issued opens the survey, so one
   // That is gone would hand the owner links to nowhere; the two reads are independent, so they overlap
-  const { audience, keyColumn, surveyId } = content;
   const [audienceDataset, survey] = await Promise.all([
     readProgramAudienceDataset(ctx, audience),
     readOwnedResource(ctx, surveyId, ResourceType.Survey),

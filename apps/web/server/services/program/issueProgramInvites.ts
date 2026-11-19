@@ -7,6 +7,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { compileEmailContent } from "#server/services/emailEditor/compileEmailContent";
 import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";
 import { readProgramAudienceDataset } from "#server/services/program/readProgramAudienceDataset";
+import { readProgramBinding } from "#server/services/program/readProgramBinding";
 import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
 import { readProgramStatusRows } from "#server/services/program/readProgramStatusRows";
 import { regenerateProgramParticipantTokens } from "#server/services/program/regenerateProgramParticipantTokens";
@@ -15,7 +16,6 @@ import { readResourceContent } from "#server/services/resource/readResourceConte
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
-import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { getOrCreate, Operation, RoutePath } from "@esposter/shared";
 
@@ -27,10 +27,9 @@ export const issueProgramInvites = async (
   program: ResourceInResource,
   scope: ProgramInviteScope,
 ): Promise<ProgramInvites> => {
-  const content = await readResourceContent(programResourceSchema, program.id);
-  if (!content?.audience || !content.emailId || !content.keyColumn || !content.surveyId)
-    throw getDanglingProgramBindingError();
-  const { audience, emailId, keyColumn, surveyId } = content;
+  const { audience, emailId, keyColumn, surveyId } = await readProgramBinding(program.id);
+  // The invite export also sends the bound email, which a program can be bound without
+  if (!emailId) throw getDanglingProgramBindingError();
   const [email, emailContent, survey] = await Promise.all([
     readOwnedResource(ctx, emailId, ResourceType.Email),
     readResourceContent(emailEditorSchema, emailId),
