@@ -22,7 +22,7 @@ Every subscreen SHALL name a reference of its own, or a pending entry stating wh
 
 #### Scenario: Variant with its own reference
 
-- **GIVEN** a fixture variant with a reference entry naming that variant
+- **GIVEN** a fixture variant with a reference entry whose `variant` field names that variant
 - **WHEN** the reference test runs
 - **THEN** the variant is covered
 
