@@ -8,7 +8,6 @@ export interface ResourceListSourceDefinition {
   emptyState: { description: string; title: string };
   // Merged into every read the view issues — the whole difference between the list routes
   filter: { isAccessed?: true; isFavorite?: true };
-  icon: string;
   // The set's mark where the library draws it, as an empty view's
   meaning: UiIconMeaning;
   // The column this source is ordered by: always rendered, and never offered to the column chooser
