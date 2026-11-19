@@ -23,9 +23,11 @@ describe(useResourceRouter, () => {
   // Every type stores content and is renamable and deletable, so these ride on every resource router — they are
   // What useResource calls for any resource the route names, before it knows which type it opened
   const BASE_PROCEDURE_NAMES = ["deleteResource", "readResourceContent", "saveResourceContent", "updateResource"];
-  const FILE_PROCEDURE_NAMES = ["deleteFile", "generateUploadFilePresignedUrlEntities"];
+  const FILE_PROCEDURE_NAMES = ["deleteFile", "generateUploadFilePresignedUrlEntities", "readResourceFiles"];
   const PUBLISH_PROCEDURE_NAMES = [
     "publishResource",
+    "readPublishedResourceContent",
+    "readPublishedVersionContent",
     "readResourcePublication",
     "readResourceViewCount",
     "unpublishResource",

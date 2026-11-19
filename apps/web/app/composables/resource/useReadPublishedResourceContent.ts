@@ -21,7 +21,7 @@ export const useReadPublishedResourceContent = async <TContent>(
   // Param gets the latest; one with it reads through the owner-only procedure, so anyone else is rejected server-side
   const versionString = getRouteParamString(currentRoute.value.query.version);
   const parsedVersion = Number(versionString);
-  const version = versionString && Number.isInteger(parsedVersion) && parsedVersion > 0 ? parsedVersion : undefined;
+  const version = Number.isInteger(parsedVersion) && parsedVersion > 0 ? parsedVersion : undefined;
   const { data } = await useAsyncData(AsyncDataKey.ReadPublishedResourceContent(type, id, version), () =>
     version ? readVersion(version) : readLatest(),
   );
