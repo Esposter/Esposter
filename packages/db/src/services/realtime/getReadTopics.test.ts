@@ -340,12 +340,7 @@ describe(getReadTopics, () => {
   test("a table a left join reaches under an alias is named by the join key values its rows return", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
-    const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
-    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    const { db, roomId, userId } = await seedUserRoom();
     const { database, statements } = recordStatements(db);
     const memberships = alias(usersToRoomsInMessage, "roomMemberships");
 
@@ -446,12 +441,7 @@ describe(getReadTopics, () => {
   test("a table an inner join after a left join references is named table-wide, though the left join names it", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
-    const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
-    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    const { db, userId } = await seedUserRoom();
     const { database, statements } = recordStatements(db);
 
     await database
@@ -495,12 +485,7 @@ describe(getReadTopics, () => {
   test("a table with one row-named occurrence and one unnamed occurrence keeps its table-wide topic", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
-    const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
-    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    const { db, userId } = await seedUserRoom();
     const participants = alias(usersToRoomsInMessage, "participants");
     const { database, statements } = recordStatements(db);
 
@@ -521,12 +506,7 @@ describe(getReadTopics, () => {
   test("an equality on the preserved side of a left join's ON clause names no scope", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
-    const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
-    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    const { db, userId } = await seedUserRoom();
     const { database, statements } = recordStatements(db);
 
     await database
@@ -586,12 +566,7 @@ describe(getReadTopics, () => {
   test("a column a read selects from a left-joined table does not filter it out of the join's rows", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
-    const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
-    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    const { db, roomId, userId } = await seedUserRoom();
     const { database, statements } = recordStatements(db);
 
     await database
@@ -677,12 +652,7 @@ describe(getReadTopics, () => {
   test("a table an in over another table tests stays table-wide, though its returned rows carry the column", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
-    const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
-    await db.insert(usersToRoomsInMessage).values({ roomId, userId });
+    const { db, roomId, userId } = await seedUserRoom();
     await db.insert(roomEmojisInMessage).values({ name: "emoji", roomId });
     const { database, statements } = recordStatements(db);
 

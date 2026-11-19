@@ -12,7 +12,6 @@ import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const inArrayList = (column: SQLWrapper, values: string[]) => inArray(column, values);
-const inJsonArrayList = (column: SQLWrapper, values: string[]) => inJsonArray(column, values);
 
 describe(getStatementReadSet, () => {
   // A config of only `false`s is drizzle's exclusion mode: every column it does not name is selected, so a join side on
@@ -110,7 +109,7 @@ describe(getStatementReadSet, () => {
     const { db } = await createMockDb();
     const values = [v7(), v7()];
 
-    expect(getStatementReadSet(build(db, inJsonArrayList, values))).toStrictEqual(
+    expect(getStatementReadSet(build(db, inJsonArray, values))).toStrictEqual(
       getStatementReadSet(build(db, inArrayList, values)),
     );
   });
@@ -118,7 +117,7 @@ describe(getStatementReadSet, () => {
   // A list negated by `not` removes the rows it holds, so it filters its table, and `notInJsonArray` is that negation. Neither
   // Names a value the read holds
   test.each<[string, (column: SQLWrapper, values: string[]) => SQL | undefined]>([
-    ["notInJsonArray", (column, values) => notInJsonArray(column, values)],
+    ["notInJsonArray", notInJsonArray],
     ["not(inJsonArray)", (column, values) => not(inJsonArray(column, values))],
   ])("%s filters its table, and names no scope", async (_title, negate) => {
     expect.hasAssertions();
