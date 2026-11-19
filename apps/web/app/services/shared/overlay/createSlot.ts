@@ -1,3 +1,5 @@
+import type { Draft } from "#src/models/shared/overlay/Draft";
+import type { DraftHandle } from "#src/models/shared/overlay/DraftHandle";
 import type { Slot } from "#src/models/shared/overlay/Slot";
 import type { Table } from "#src/models/shared/overlay/Table";
 import type { Versioned } from "#src/models/shared/overlay/Versioned";
@@ -12,6 +14,13 @@ import { writeKeyTrie } from "#src/services/shared/overlay/writeKeyTrie";
 // Every held row reactive
 export const createSlot = <TRow extends Versioned>(table: Table<TRow>): Slot<TRow> => {
   const held = shallowRef(createKeyTrieNode<TRow>());
+  // Rows an entry wrote in the current draft, over held state until the draft ends
+  let overrides = createKeyTrieNode<Draft<TRow>>();
+  const handle: DraftHandle = {
+    clear: () => {
+      overrides = createKeyTrieNode<Draft<TRow>>();
+    },
+  };
   return {
     arrive: (row) => {
       const key = table.keyOf(row);
@@ -24,7 +33,16 @@ export const createSlot = <TRow extends Versioned>(table: Table<TRow>): Slot<TRo
       listKeyTrie(held.value)
         .map(([, row]) => row)
         .filter((row) => !row.deletedAt),
+    read: (draft, key) => {
+      draft.touches.push({ key, table: table.name });
+      return readKeyTrie(overrides, key) ?? readKeyTrie(held.value, key);
+    },
     table,
     versionOf: (key) => readKeyTrie(held.value, key)?.version,
+    write: (draft, key, row) => {
+      draft.touches.push({ key, table: table.name });
+      draft.handles.add(handle);
+      writeKeyTrie(overrides, key, row);
+    },
   };
 };
