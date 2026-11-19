@@ -3,7 +3,7 @@ import type { Item } from "#src/models/shared/Item";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { getResourceBladeItems } from "#src/services/resource/getResourceBladeItems";
 import { ResourceType } from "@esposter/db-schema";
-import { describe, expect, test, vi } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 
 const createCommands = () => ({
   delete: vi.fn<() => void>(),
@@ -34,8 +34,23 @@ describe(getResourceBladeItems, () => {
   test("offers Unpublish only while the resource is published", () => {
     expect.hasAssertions();
 
-    expect(getTitles(getResourceBladeItems(resource, { ...getOptions(), isPublished: true }))).toContain("Unpublish");
-    expect(getTitles(getResourceBladeItems(resource, getOptions()))).not.toContain("Unpublish");
+    expect(getTitles(getResourceBladeItems(resource, { ...getOptions(), isPublished: true }))).toStrictEqual([
+      "Refresh",
+      "Rename",
+      "Duplicate",
+      "Version history",
+      "Unpublish",
+      "Export CSV",
+      "Delete",
+    ]);
+    expect(getTitles(getResourceBladeItems(resource, getOptions()))).toStrictEqual([
+      "Refresh",
+      "Rename",
+      "Duplicate",
+      "Version history",
+      "Export CSV",
+      "Delete",
+    ]);
   });
 
   // A program's dataset is its CSV, so the command is offered for it; a sheet's portable export already covers it
@@ -44,11 +59,24 @@ describe(getResourceBladeItems, () => {
 
     const sheet = createResourceListItem({ type: ResourceType.Sheet });
 
-    expect(getTitles(getResourceBladeItems(resource, getOptions()))).toContain("Export CSV");
-    expect(getTitles(getResourceBladeItems(sheet, getOptions()))).not.toContain("Export CSV");
+    expect(getTitles(getResourceBladeItems(resource, getOptions()))).toStrictEqual([
+      "Refresh",
+      "Rename",
+      "Duplicate",
+      "Version history",
+      "Export CSV",
+      "Delete",
+    ]);
+    expect(getTitles(getResourceBladeItems(sheet, getOptions()))).toStrictEqual([
+      "Refresh",
+      "Rename",
+      "Duplicate",
+      "Version history",
+      "Delete",
+    ]);
   });
 
-  test("names each portable format by its verb and its label", () => {
+  test("clicking a portable format's Export item runs that format's export", () => {
     expect.hasAssertions();
 
     const exportCsv = vi.fn<() => Promise<void>>();
@@ -57,9 +85,10 @@ describe(getResourceBladeItems, () => {
       exportFormats: [{ export: exportCsv, icon: "i-mdi:file", label: "Csv" }],
     });
     const exportItem = items.find(({ title }) => title === "Export Csv");
-    exportItem?.onClick?.();
+    assert.exists(exportItem);
+    exportItem.onClick?.();
 
-    expect(exportCsv).toHaveBeenCalledTimes(1);
+    expect(exportCsv).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("disables Refresh while the resource is pending", () => {

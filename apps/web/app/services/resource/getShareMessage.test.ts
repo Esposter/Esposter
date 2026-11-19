@@ -6,16 +6,10 @@ describe(getShareMessage, () => {
   const note = "note";
   const link = `<p><a href="${url}" rel="noopener noreferrer" target="_blank">${url}</a></p>`;
 
-  test("sends the bare link with no note", () => {
+  test.each(["", " "])("sends the bare link for a blank note %j", (blankNote) => {
     expect.hasAssertions();
 
-    expect(getShareMessage("", url)).toBe(link);
-  });
-
-  test("sends the bare link for a whitespace-only note", () => {
-    expect.hasAssertions();
-
-    expect(getShareMessage(" ", url)).toBe(link);
+    expect(getShareMessage(blankNote, url)).toBe(link);
   });
 
   test("puts the note in its own paragraph above the link", () => {

@@ -71,12 +71,6 @@ describe("portableFormatMap", () => {
     );
   });
 
-  test("the email offers its three exports", () => {
-    expect.hasAssertions();
-
-    expect(emailExportFormats.map(({ label }) => label)).toStrictEqual(["HTML", "MJML source", "Personalized HTML"]);
-  });
-
   test("an unbound email downloads as one HTML file", async () => {
     expect.hasAssertions();
 
@@ -110,7 +104,7 @@ describe("portableFormatMap", () => {
 
     await exportFormat("HTML")();
 
-    expect(takeOne(readDownloads())[1]).toBe("<p>{{name}}</p>");
+    expect(readDownloads().map(([, body]) => body)).toStrictEqual(["<p>{{name}}</p>"]);
   });
 
   test("an image in the HTML file needs a signed-in session", async () => {
@@ -120,7 +114,9 @@ describe("portableFormatMap", () => {
 
     await exportFormat("HTML")();
 
-    expect(takeOne(readDownloads())[1]).toContain(`${window.location.origin}/api/resource-assets/${TEST_ID}`);
+    expect(readDownloads().map(([, body]) => body)).toStrictEqual([
+      `<img src="${window.location.origin}/api/resource-assets/${TEST_ID}">`,
+    ]);
   });
 
   test("a refused save stops the download", async () => {
@@ -135,7 +131,10 @@ describe("portableFormatMap", () => {
 
     const alertStore = useAlertStore();
     expect(readDownloads()).toHaveLength(0);
-    expect(alertStore.alerts.length).toBeGreaterThan(0);
+    expect(alertStore.alerts.map(({ text }) => text)).toStrictEqual([
+      "the email was refused",
+      "The email is not saved, so nothing was exported",
+    ]);
   });
 
   test("the mjml source downloads as one file", async () => {
@@ -143,9 +142,15 @@ describe("portableFormatMap", () => {
 
     await exportFormat("MJML source")();
 
-    const [fileName, source, mimeType] = takeOne(readDownloads());
-    expect([fileName, mimeType]).toStrictEqual([`${TEST_LABEL}.mjml`, "text/plain"]);
-    expect(source).toContain("<mj-text><p>a</p></mj-text>");
+    expect(readDownloads()).toMatchInlineSnapshot(`
+      [
+        [
+          "Go.mjml",
+          "<mjml><mj-body><mj-section><mj-column><mj-text><p>a</p></mj-text></mj-column></mj-section></mj-body></mjml>",
+          "text/plain",
+        ],
+      ]
+    `);
   });
 
   test("the mjml source imports back to the same email", async () => {
