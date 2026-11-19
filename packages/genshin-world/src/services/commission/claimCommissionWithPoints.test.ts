@@ -177,7 +177,7 @@ describe(claimCommissionWithPoints, () => {
     const claimedDay: CommissionDay = {
       claimedCommissionIds: [1, 2, 3, 4],
       dealtAt: NOW,
-      dealtCommissions: [1, 2, 3, 4].map((commissionId) => ({
+      dealtCommissions: [1, 2, 3, 4, 5].map((commissionId) => ({
         commissionId,
         count: FINISH_PROGRESS,
         dealtRank: DEALT_RANK,
