@@ -4,7 +4,7 @@ Read when a test installs fake timers, asserts a timestamp, exercises throttled 
 
 ## Installing the clock
 
-`vi.useFakeTimers({ now: 0 })` in `beforeEach`, `vi.useRealTimers()` in `afterEach`. One call — never `useFakeTimers()` followed by `setSystemTime(0)`, since `now` pins the clock at install instead of leaving it briefly real. `vi.setSystemTime` only _moves_ time inside a test; `vi.advanceTimersByTime` elapses timers.
+`vi.useFakeTimers({ now: 0, toFake: ["Date"] })` in `beforeEach`, `vi.useRealTimers()` in `afterEach`, with `toFake` naming what the code under test runs on ("`toFake` is for faking _less_, not more", on this page). One call — never `useFakeTimers()` followed by `setSystemTime(0)`, since `now` pins the clock at install instead of leaving it briefly real. `vi.setSystemTime` only _moves_ time inside a test; `vi.advanceTimersByTime` elapses timers.
 
 **Even a one-test clock is restored in the suite's `afterEach`**, never beside the assertion. A `vi.useRealTimers()` after an `await expect(...)` is skipped the moment that assertion rejects, and every later test inherits a frozen clock. Cleanup is unconditional, like DB rows and global stubs.
 
@@ -13,6 +13,13 @@ Read when a test installs fake timers, asserts a timestamp, exercises throttled 
 The default set is wide — `performance` is in it — so a test that only wants a fixed `createdAt` also freezes the monotonic clock, and anything keyed on a tick stops advancing with it. `now()` from `@esposter/shared` steps one nanosecond a call from a frozen clock, so a table row's `rowKey` stays distinct either way.
 
 Name what the test actually asserts on — `vi.useFakeTimers({ now: 0, toFake: ["Date"] })` — so a clock it does not read keeps running.
+
+**A suite on Miniflare fakes the clock and nothing else.** Miniflare's bindings reach workerd through Node's own timers,
+so under the default set every D1 call stalls: the suites that faked it cost the better part of an order of magnitude
+more a test than their clock-only neighbours, and one of them held a CI shard for most of its run. The server reads the
+time through `Date.now()` and nothing it runs on a timer is under test, so `toFake: ["Date"]` (with `"Temporal"` where
+the code reads `Temporal.Now`) loses nothing. `testing/fake-clock-only` reports any other list, or none, in a suite
+importing `@esposter/db-mock` or the app's `trpc/context.test`.
 
 **A suite that imports `setupMswTrpc` never fakes `setTimeout`.** The harness's `afterEach` waits one timer boundary for
 msw to answer what is still in flight, and under a frozen clock that boundary never comes, so the suite hangs at its

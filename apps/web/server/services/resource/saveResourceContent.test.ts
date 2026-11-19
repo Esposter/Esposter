@@ -188,7 +188,7 @@ describe(saveResourceContent, () => {
   });
 
   beforeEach(async () => {
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     resource = takeOne(
       await mockContext.db
         .insert(resourcesInResource)

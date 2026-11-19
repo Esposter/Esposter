@@ -28,7 +28,7 @@ describe(executeAutomodAction, () => {
 
   // Pinned at the epoch, so a timeout one step past the automod's stays strictly longer than it
   beforeEach(() => {
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
 
   afterEach(async () => {

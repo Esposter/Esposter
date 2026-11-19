@@ -5,8 +5,7 @@ import { mergeAlias } from "vite";
 
 // `defineVitestProject` builds its own config rather than taking the shared factory's, so the factory's test options
 // Are handed in and only the app's own are written here: the project name every member is addressed by, the
-// Persisted transform cache (which matters most for the app, whose module graph is the largest in the workspace),
-// The Vue worker flags, the env stub reset and a bench run's timeouts all arrive with it. The app's options go
+// Vue worker flags, the env stub reset and a bench run's timeouts all arrive with it. The app's options go
 // Through the factory rather than over its result, which lays them over the shared ones and under a bench run's.
 // Its `resolve` is not taken: how the app reaches its siblings is the Nuxt wiring's, which `defineVitestProject`
 // Resolves

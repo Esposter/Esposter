@@ -16,9 +16,11 @@ The inflation is not marginal, so a duration read off the full run says nothing 
 
 ## Runner settings
 
-`fsModuleCache` stays on: transforming the module graph is the largest share of a run and it persists to `node_modules/.vitest-cache` across reruns and processes. Its key does not cover Nuxt's auto-import registry, so a transform cached while a module's imports were missing keeps failing after the fix (`defineStore is not defined` once `@pinia/nuxt` installs again): delete `node_modules/.vitest-cache` and rerun.
+`fsModuleCache` and `clearMocks` are Vitest's own defaults, so the shared configuration does not restate them. The module cache persists transforms to `node_modules/.vitest-cache` across reruns and processes. Its key does not cover Nuxt's auto-import registry, so a transform cached while a module's imports were missing keeps failing after the fix (`defineStore is not defined` once `@pinia/nuxt` installs again): delete `node_modules/.vitest-cache` and rerun.
 
-**`isolate: false` does not go on, per project or globally** (`SKILL.md`, Settled). Vitest's own hint advertises it on every run and the whole-`packages` saving looks decisive. It is not: measured project by project, the packages that survive it come out level — the entire apparent gain belongs to `vue-phaserjs`, the one that **fails** under it, and fails for the reason isolation exists: it boots one Phaser game per process. Buying the setting back would mean a reset hook per piece of shared state — custom scaffolding in exchange for nothing measurable. Re-propose it only with a per-project measurement showing a win.
+**`isolate: false` does not go on, per project or globally** (`SKILL.md`, Settled). Vitest's own hint advertises it on every run and the whole-`packages` saving looks decisive. It is not: measured project by project, the packages that survive it come out level — the entire apparent gain belongs to `vue-phaserjs`, the one that **fails** under it, and fails for the reason isolation exists: it boots one Phaser game per process. Buying the setting back would mean a reset hook per piece of shared state — custom scaffolding in exchange for nothing measurable. Re-propose it only with a per-project measurement showing a win. Vitest's own estimate in CI's shard logs agrees: a few percent of a shard, against a suite whose long pole is one slow file rather than worker startup.
+
+**A shard is as slow as its slowest file.** The default reporter prints each file's duration in CI's log, and ranking them is the first read on a slow run: one file holding most of a shard is a bug in that file, not a runner setting.
 
 ## Environment
 

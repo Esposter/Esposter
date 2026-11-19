@@ -51,7 +51,7 @@ describe("sessionRouter", () => {
 
   beforeEach(async () => {
     // Pinned so every session's stamps read off the epoch, and an expired one is the epoch itself
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     // The mock context inserts a session row of its own for the default payload, and this file reads the whole
     // Listing back, so it starts from only the rows it wrote
     await mockContext.db.delete(sessionsInAuth);

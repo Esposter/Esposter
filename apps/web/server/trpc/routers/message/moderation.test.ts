@@ -74,10 +74,7 @@ describe("moderationRouter", () => {
   });
 
   beforeEach(() => {
-    vi.useFakeTimers({
-      now: 0,
-      toFake: ["Date", "setTimeout", "clearTimeout", "setInterval", "clearInterval", "setImmediate", "clearImmediate"],
-    });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     roomObject.deleteUserMessages.mockResolvedValue([]);
     roomId = getRoomId();
   });

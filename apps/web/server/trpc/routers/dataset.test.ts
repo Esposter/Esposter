@@ -79,7 +79,7 @@ describe("datasetRouter", () => {
     expect.hasAssertions();
 
     const newSurvey = await setupSurvey();
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     await surveyCaller.createSurveyResponse({
       id: v7(),
       isDraft: false,
@@ -134,7 +134,7 @@ describe("datasetRouter", () => {
     expect.hasAssertions();
 
     const newSurvey = await setupSurvey();
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     await surveyCaller.createSurveyResponse({
       id: v7(),
       isDraft: false,
@@ -158,7 +158,7 @@ describe("datasetRouter", () => {
       ]),
       settings: {},
     });
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     await surveyCaller.createSurveyResponse({
       id: v7(),
       isDraft: false,
@@ -177,7 +177,7 @@ describe("datasetRouter", () => {
 
     const questionDocument = createSurveyDocumentWith([{ name: "submittedAt", type: SurveyNodeType.Text }]);
     const newSurvey = await createPublishedSurvey(surveyCaller, name, { document: questionDocument, settings: {} });
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     await surveyCaller.createSurveyResponse({
       id: v7(),
       isDraft: false,

@@ -59,7 +59,7 @@ describe("inviteRouter", () => {
   });
 
   beforeEach(() => {
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
 
   afterEach(async () => {

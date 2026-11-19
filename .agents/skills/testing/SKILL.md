@@ -88,7 +88,7 @@ Every literal, id, date, path and fixture a test writes is that skill's: the can
 ## Reactive Effects and Timers
 
 - **A `watch` callback and a re-render run on Vue's scheduler, never synchronously** — `await nextTick()` flushes them after the write that queued them; `flushPromises()` from `@vue/test-utils` when the callback itself awaits. With nothing queued, neither is written.
-- **Fake timers, and any promise the test resolves by hand, follow `references/timers-and-hand-resolved-promises.md`** — one `vi.useFakeTimers({ now: 0 })` in `beforeEach` with an unconditional restore in `afterEach`, `toFake` narrowed rather than widened, and `Promise.withResolvers` instead of a `let` closed over by an executor.
+- **Fake timers, and any promise the test resolves by hand, follow `references/timers-and-hand-resolved-promises.md`** — one `vi.useFakeTimers({ now: 0, toFake: ["Date"] })` in `beforeEach` with an unconditional restore in `afterEach`, `toFake` narrowed rather than widened, and `Promise.withResolvers` instead of a `let` closed over by an executor.
 - **Await the real completion signal, never a poll** — the repo-wide ban is `openspec/specs/architecture/no-polling/design.md`, and the test forms are `references/polling.md`.
 
 ## Running Tests

@@ -35,7 +35,7 @@ describe("achievementPlugin", () => {
 
   // `unlockedAt` is stamped from `new Date()`, so a frozen clock makes it exactly assertable
   beforeEach(() => {
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
 
   afterEach(async () => {

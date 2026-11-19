@@ -110,7 +110,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     },
     { files: ["apps/web/server/trpc/**/*.test.ts"], rules: { "trpc-procedure/require-query-verb": "off" } },
     { files: ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"], rules: { "test-values/no-typed-date": "error" } },
-    { files: ["**/*.test.ts"], rules: { "testing/no-faked-set-timeout": "error" } },
+    { files: ["**/*.test.ts"], rules: { "testing/fake-clock-only": "error", "testing/no-faked-set-timeout": "error" } },
     {
       // Nuxt auto-imports Vue into the app tree alone: a package, the Nuxt configuration and `shared/` reach it by import
       files: ["apps/web/app/**"],
