@@ -70,8 +70,7 @@ export const inviteRouter = router({
             // One invite per member per room — creating with new options replaces the old link
             ctx.db
               .delete(invitesInMessage)
-              .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, userId), roomIsOpen))
-              .returning(),
+              .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, userId), roomIsOpen)),
             ctx.db
               .insert(invitesInMessage)
               .select(

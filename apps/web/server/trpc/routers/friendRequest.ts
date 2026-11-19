@@ -47,7 +47,7 @@ export const friendRequestRouter = router({
               .where(getReceivedFriendRequestWhere(friendshipId, userId)),
           )
           .returning(),
-        ctx.db.delete(friendRequestsInSocial).where(getReceivedFriendRequestWhere(friendshipId, userId)).returning(),
+        ctx.db.delete(friendRequestsInSocial).where(getReceivedFriendRequestWhere(friendshipId, userId)),
       ]);
       requireMutation(insertedFriends[0], Operation.Update, DatabaseEntityType.Friend, friendshipId, "NOT_FOUND");
       return senderUser;

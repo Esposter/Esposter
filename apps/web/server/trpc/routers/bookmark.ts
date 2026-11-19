@@ -113,8 +113,7 @@ export const bookmarkRouter = router({
               ),
             ),
         )
-        .onConflictDoNothing()
-        .returning(),
+        .onConflictDoNothing(),
       ctx.db
         .select({ path: bookmarksInApp.path })
         .from(bookmarksInApp)

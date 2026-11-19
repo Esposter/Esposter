@@ -32,13 +32,9 @@ export const blockRouter = router({
       );
       const friendshipId = getFriendshipId(userId, targetUserId);
       await ctx.db.batch([
-        ctx.db.delete(friendRequestsInSocial).where(eq(friendRequestsInSocial.id, friendshipId)).returning(),
-        ctx.db.delete(friendsInSocial).where(eq(friendsInSocial.id, friendshipId)).returning(),
-        ctx.db
-          .insert(blocksInSocial)
-          .values({ blockedId: targetUserId, blockerId: userId })
-          .onConflictDoNothing()
-          .returning(),
+        ctx.db.delete(friendRequestsInSocial).where(eq(friendRequestsInSocial.id, friendshipId)),
+        ctx.db.delete(friendsInSocial).where(eq(friendsInSocial.id, friendshipId)),
+        ctx.db.insert(blocksInSocial).values({ blockedId: targetUserId, blockerId: userId }).onConflictDoNothing(),
       ]);
       return blockedUser;
     }),

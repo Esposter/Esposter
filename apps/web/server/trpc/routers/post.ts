@@ -63,8 +63,7 @@ export const postRouter = router({
         ctx.db
           .update(postsInPost)
           .set({ commentCount: sql`${postsInPost.commentCount} + 1` })
-          .where(inJsonArray(postsInPost.id, ancestorIds))
-          .returning(),
+          .where(inJsonArray(postsInPost.id, ancestorIds)),
       ]);
       const newComment = requireMutation(
         newCommentRows[0],
@@ -131,8 +130,7 @@ export const postRouter = router({
               inJsonArray(postsInPost.id, ancestorIds),
               sql`exists (select 1 from ${postsInPost} where ${ownedComment})`,
             ),
-          )
-          .returning(),
+          ),
         ctx.db.delete(postsInPost).where(ownedComment).returning(),
       ]);
       requireMutation(deletedCommentRows[0], Operation.Delete, DerivedDatabaseEntityType.Comment, input);
