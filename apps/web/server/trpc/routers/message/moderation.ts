@@ -18,7 +18,6 @@ import { publishDeletedMessageFiles } from "#server/services/message/moderation/
 import { readModerationNotesCount } from "#server/services/message/moderation/readModerationNotesCount";
 import { takeBackMentionCounts } from "#server/services/message/takeBackMentionCounts";
 import { announceRoomMemberRemoval } from "#server/services/room/announceRoomMemberRemoval";
-import { getRoomListTopics } from "#server/services/room/getRoomListTopics";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -26,7 +25,6 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
 import { assertIsRoomMiddleware } from "#server/trpc/middleware/assertIsRoomMiddleware";
 import { moderationLogPlugin } from "#server/trpc/plugins/moderationLogPlugin";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
@@ -44,14 +42,12 @@ import {
   DatabaseEntityType,
   getDisplayNameExpression,
   getPublicUserColumns,
-  getTopic,
   MODERATION_LOG_PAGE_SORT,
   MODERATION_NOTE_PAGE_SORT,
   moderationLogsInMessage,
   moderationNotesInMessage,
   PublishSource,
   RoomPermission,
-  TopicKind,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -61,9 +57,10 @@ import { and, eq, getColumns, isNull } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 
 export const moderationRouter = router({
-  createModerationNote: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.KickMembers, createModerationNoteInputSchema, "roomId"),
-    ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
+  createModerationNote: getPermissionsProcedure(
+    RoomPermission.KickMembers,
+    createModerationNoteInputSchema,
+    "roomId",
   ).mutation<ModerationNoteInMessage>(async ({ ctx, input: { note, roomId, targetUserId } }) => {
     const actorUserId = ctx.user.id;
     await assertIsManageable(ctx.db, actorUserId, targetUserId, roomId);
@@ -73,31 +70,28 @@ export const moderationRouter = router({
   }),
   // The delete's own returning() reports whether the ban existed, so there is no separate existence read to
   // Race against a concurrent unban
-  deleteBan: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId"),
-    ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
-  ).mutation<void>(async ({ ctx, input: { roomId, userId } }) => {
-    requireMutation(
-      (
-        await ctx.db
-          .delete(bansInMessage)
-          .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, userId)))
-          .returning()
-      )[0],
-      Operation.Delete,
-      DatabaseEntityType.Ban,
-      userId,
-    );
-  }),
+  deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation<void>(
+    async ({ ctx, input: { roomId, userId } }) => {
+      requireMutation(
+        (
+          await ctx.db
+            .delete(bansInMessage)
+            .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, userId)))
+            .returning()
+        )[0],
+        Operation.Delete,
+        DatabaseEntityType.Ban,
+        userId,
+      );
+    },
+  ),
   // oxlint-disable-next-line prefer-spread -- `concat` is tRPC's procedure-builder merge, not an array's
-  executeAdminAction: getTopicsProcedure(
+  executeAdminAction: getMemberProcedure(executeAdminActionInputSchema, "roomId")
     // A direct message has no roles and no moderators — the pair block each other instead, so an admin action
     // Aimed at one is rejected before it can write a ban row and a log entry nothing will ever read
-    getMemberProcedure(executeAdminActionInputSchema, "roomId").use(assertIsRoomMiddleware),
-    ({ input: { roomId, targetUserId } }) => [getTopic(TopicKind.Room, roomId), ...getRoomListTopics(targetUserId)],
-  )
-    // The topics publish after the log plugin, which runs inside them, has written its entry, so a reader refetching the
-    // Room's log finds the entry the topic announced
+    .use(assertIsRoomMiddleware)
+    // The writes publish after the log plugin, which runs inside the procedure, has written its entry, so a reader
+    // Refetching the room's log finds the entry the publish announced
     .concat(moderationLogPlugin)
     .mutation<void>(async ({ ctx, input }) => {
       const { roomId, targetUserId } = input;
@@ -198,84 +192,81 @@ export const moderationRouter = router({
         type: input.type,
       });
     }),
-  readBans: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId"),
-    ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
-  ).query<Page<BanInRoom>>(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
-    // A ban has no id of its own: it is paged newest-first on creation, tied on the banned user, which with the room is its key
-    const sort = createPageSort({ createdAt: bansInMessage.createdAt, userId: bansInMessage.userId }, BAN_PAGE_SORT);
-    const wheres: (SQL | undefined)[] = [
-      eq(bansInMessage.roomId, roomId),
-      isNull(bansInMessage.deletedAt),
-      getPageWhere(sort, cursor),
-    ];
-    // The join below already brings the banned user's name into scope, so the predicate costs nothing extra
-    if (filter?.name) wheres.push(containsLike(usersInAuth.name, filter.name));
+  readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<Page<BanInRoom>>(
+    async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
+      // A ban has no id of its own: it is paged newest-first on creation, tied on the banned user, which with the room is its key
+      const sort = createPageSort({ createdAt: bansInMessage.createdAt, userId: bansInMessage.userId }, BAN_PAGE_SORT);
+      const wheres: (SQL | undefined)[] = [
+        eq(bansInMessage.roomId, roomId),
+        isNull(bansInMessage.deletedAt),
+        getPageWhere(sort, cursor),
+      ];
+      // The join below already brings the banned user's name into scope, so the predicate costs nothing extra
+      if (filter?.name) wheres.push(containsLike(usersInAuth.name, filter.name));
 
-    const bannedByUsers = alias(usersInAuth, "bannedByUsers");
-    const bannedByMemberships = alias(usersToRoomsInMessage, "bannedByMemberships");
-    const userMemberships = alias(usersToRoomsInMessage, "userMemberships");
-    const bannedUserFieldColumnMap = {
-      ...getPublicUserColumns(bannedByUsers),
-      displayName: getDisplayNameExpression(bannedByMemberships, bannedByUsers),
-    };
-    const bans = await ctx.db
-      .select({
-        ...getColumns(bansInMessage),
-        bannedByUser: bannedUserFieldColumnMap,
-        user: {
-          ...getPublicUserColumns(usersInAuth),
-          displayName: getDisplayNameExpression(userMemberships, usersInAuth),
-        },
-      })
-      .from(bansInMessage)
-      .innerJoin(usersInAuth, eq(bansInMessage.userId, usersInAuth.id))
-      .leftJoin(userMemberships, and(eq(userMemberships.userId, usersInAuth.id), eq(userMemberships.roomId, roomId)))
-      .leftJoin(bannedByUsers, eq(bansInMessage.bannedByUserId, bannedByUsers.id))
-      .leftJoin(
-        bannedByMemberships,
-        and(eq(bannedByMemberships.userId, bannedByUsers.id), eq(bannedByMemberships.roomId, roomId)),
-      )
-      .where(and(...wheres))
-      .orderBy(...getPageOrderBy(sort, cursor))
-      .limit(limit + 1);
-    return toPage(bans, BAN_PAGE_SORT, cursor, limit);
-  }),
-  readModerationLog: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId"),
-    ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
-  ).query<Page<ModerationLogInRoom>>(
-    async ({ ctx, input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
-      const sort = createPageSort({ id: moderationLogsInMessage.id }, MODERATION_LOG_PAGE_SORT);
-      const wheres: (SQL | undefined)[] = [eq(moderationLogsInMessage.roomId, roomId), getPageWhere(sort, cursor)];
-      if (actorUserId) wheres.push(eq(moderationLogsInMessage.actorUserId, actorUserId));
-      if (targetUserId) wheres.push(eq(moderationLogsInMessage.targetUserId, targetUserId));
-      if (type) wheres.push(eq(moderationLogsInMessage.type, type));
-      const logs = await ctx.db
-        .select()
-        .from(moderationLogsInMessage)
+      const bannedByUsers = alias(usersInAuth, "bannedByUsers");
+      const bannedByMemberships = alias(usersToRoomsInMessage, "bannedByMemberships");
+      const userMemberships = alias(usersToRoomsInMessage, "userMemberships");
+      const bannedUserFieldColumnMap = {
+        ...getPublicUserColumns(bannedByUsers),
+        displayName: getDisplayNameExpression(bannedByMemberships, bannedByUsers),
+      };
+      const bans = await ctx.db
+        .select({
+          ...getColumns(bansInMessage),
+          bannedByUser: bannedUserFieldColumnMap,
+          user: {
+            ...getPublicUserColumns(usersInAuth),
+            displayName: getDisplayNameExpression(userMemberships, usersInAuth),
+          },
+        })
+        .from(bansInMessage)
+        .innerJoin(usersInAuth, eq(bansInMessage.userId, usersInAuth.id))
+        .leftJoin(userMemberships, and(eq(userMemberships.userId, usersInAuth.id), eq(userMemberships.roomId, roomId)))
+        .leftJoin(bannedByUsers, eq(bansInMessage.bannedByUserId, bannedByUsers.id))
+        .leftJoin(
+          bannedByMemberships,
+          and(eq(bannedByMemberships.userId, bannedByUsers.id), eq(bannedByMemberships.roomId, roomId)),
+        )
         .where(and(...wheres))
         .orderBy(...getPageOrderBy(sort, cursor))
         .limit(limit + 1);
-      const page = toPage(logs, MODERATION_LOG_PAGE_SORT, cursor, limit);
-      const displayNameMap = await getRoomDisplayNameMap(
-        ctx.db,
-        roomId,
-        page.items.flatMap((item) => (item.actorUserId ? [item.actorUserId, item.targetUserId] : [item.targetUserId])),
-      );
-      return {
-        items: page.items.map((item) => ({
-          ...item,
-          actorDisplayName: item.actorUserId ? (displayNameMap.get(item.actorUserId) ?? "") : "",
-          targetDisplayName: displayNameMap.get(item.targetUserId) ?? "",
-        })),
-        nextCursor: page.nextCursor,
-      };
+      return toPage(bans, BAN_PAGE_SORT, cursor, limit);
     },
   ),
-  readModerationNotes: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.KickMembers, readModerationNotesInputSchema, "roomId"),
-    ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
+  readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query<
+    Page<ModerationLogInRoom>
+  >(async ({ ctx, input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
+    const sort = createPageSort({ id: moderationLogsInMessage.id }, MODERATION_LOG_PAGE_SORT);
+    const wheres: (SQL | undefined)[] = [eq(moderationLogsInMessage.roomId, roomId), getPageWhere(sort, cursor)];
+    if (actorUserId) wheres.push(eq(moderationLogsInMessage.actorUserId, actorUserId));
+    if (targetUserId) wheres.push(eq(moderationLogsInMessage.targetUserId, targetUserId));
+    if (type) wheres.push(eq(moderationLogsInMessage.type, type));
+    const logs = await ctx.db
+      .select()
+      .from(moderationLogsInMessage)
+      .where(and(...wheres))
+      .orderBy(...getPageOrderBy(sort, cursor))
+      .limit(limit + 1);
+    const page = toPage(logs, MODERATION_LOG_PAGE_SORT, cursor, limit);
+    const displayNameMap = await getRoomDisplayNameMap(
+      ctx.db,
+      roomId,
+      page.items.flatMap((item) => (item.actorUserId ? [item.actorUserId, item.targetUserId] : [item.targetUserId])),
+    );
+    return {
+      items: page.items.map((item) => ({
+        ...item,
+        actorDisplayName: item.actorUserId ? (displayNameMap.get(item.actorUserId) ?? "") : "",
+        targetDisplayName: displayNameMap.get(item.targetUserId) ?? "",
+      })),
+      nextCursor: page.nextCursor,
+    };
+  }),
+  readModerationNotes: getPermissionsProcedure(
+    RoomPermission.KickMembers,
+    readModerationNotesInputSchema,
+    "roomId",
   ).query<Page<ModerationNoteInRoom>>(async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
     await assertIsManageable(ctx.db, ctx.user.id, targetUserId, roomId);
 
@@ -307,9 +298,10 @@ export const moderationRouter = router({
       nextCursor: page.nextCursor,
     };
   }),
-  readModerationNotesCount: getTopicsProcedure(
-    getPermissionsProcedure(RoomPermission.KickMembers, readModerationNotesCountInputSchema, "roomId"),
-    ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
+  readModerationNotesCount: getPermissionsProcedure(
+    RoomPermission.KickMembers,
+    readModerationNotesCountInputSchema,
+    "roomId",
   ).query<number>(async ({ ctx, input: { roomId, targetUserId } }) => {
     await assertIsManageable(ctx.db, ctx.user.id, targetUserId, roomId);
     return readModerationNotesCount(ctx.db, roomId, targetUserId);

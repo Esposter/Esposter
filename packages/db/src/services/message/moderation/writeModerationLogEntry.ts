@@ -8,5 +8,6 @@ export const writeModerationLogEntry = async (
   db: Database,
   entry: Pick<ModerationLogInMessage, "actorUserId" | "durationMs" | "targetUserId" | "type"> & { roomId: string },
 ): Promise<void> => {
-  await db.insert(moderationLogsInMessage).values(entry);
+  // The row comes back, so the room's log readers, which watch the room's scope, are woken by it
+  await db.insert(moderationLogsInMessage).values(entry).returning();
 };

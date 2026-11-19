@@ -11,7 +11,8 @@ export const banRoomMember = async (db: Context["db"], actorUserId: string, room
     db
       .insert(bansInMessage)
       .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
-      .onConflictDoNothing(),
+      .onConflictDoNothing()
+      .returning(),
   ]);
   return deletedMembers[0];
 };
