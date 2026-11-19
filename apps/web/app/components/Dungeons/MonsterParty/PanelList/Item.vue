@@ -4,6 +4,7 @@ import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { HealthLabelTextStyle } from "#src/assets/dungeons/styles/HealthLabelTextStyle";
 import { BarType } from "#src/models/dungeons/UI/bar/BarType";
+import { getHealthBarPercentage } from "#src/services/dungeons/monster/getHealthBarPercentage";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { prettify } from "#src/util/text/prettify";
 import { checkIsDeepEqual } from "@esposter/shared";
@@ -53,7 +54,7 @@ const monsterName = computed(() => prettify(monster.key));
       :type="BarType.Health"
       :position="{ x: 100, y: 40 }"
       :width="252"
-      :bar-percentage="(monster.status.health / monster.statistics.maxHealth) * 100"
+      :bar-percentage="getHealthBarPercentage(monster)"
     />
     <Text
       :configuration="{

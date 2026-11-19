@@ -42,12 +42,12 @@ export const useMonsterPartyMenuStore = defineStore("dungeons/monsterParty/menu"
   const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel) return false;
-    else if (monsterPartySceneStore.sceneMode === SceneMode.Default)
-      if (justDownInput === PlayerSpecialInput.Enter) {
-        monsterPartySceneStore.sceneMode = SceneMode.Menu;
-        return true;
-      } else return false;
-    else if (monsterPartySceneStore.sceneMode !== SceneMode.Menu) return false;
+    else if (monsterPartySceneStore.sceneMode === SceneMode.Default) {
+      if (justDownInput !== PlayerSpecialInput.Enter) return false;
+
+      monsterPartySceneStore.sceneMode = SceneMode.Menu;
+      return true;
+    } else if (monsterPartySceneStore.sceneMode !== SceneMode.Menu) return false;
 
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (monsterPartyMenuOptionGrid.value) {

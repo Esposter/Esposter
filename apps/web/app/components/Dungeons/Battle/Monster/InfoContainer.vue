@@ -4,6 +4,7 @@ import { ExperienceLabelTextStyle } from "#src/assets/dungeons/styles/Experience
 import { HealthLabelTextStyle } from "#src/assets/dungeons/styles/HealthLabelTextStyle";
 import { useBattleMonsterStore } from "#src/composables/dungeons/scene/battle/monster/useBattleMonsterStore";
 import { BarType } from "#src/models/dungeons/UI/bar/BarType";
+import { getHealthBarPercentage } from "#src/services/dungeons/monster/getHealthBarPercentage";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { prettify } from "#src/util/text/prettify";
 import { Container, Image, Text } from "vue-phaserjs";
@@ -46,7 +47,7 @@ const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
     <DungeonsUIBarContainer
       :type="BarType.Health"
       :position="{ x: 34, y: 34 }"
-      :bar-percentage="(activeMonster.status.health / activeMonster.statistics.maxHealth) * 100"
+      :bar-percentage="getHealthBarPercentage(activeMonster)"
     />
     <template v-if="!isEnemy">
       <Text
