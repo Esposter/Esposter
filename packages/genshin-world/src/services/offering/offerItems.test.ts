@@ -24,7 +24,7 @@ describe(offerItems, () => {
     },
   ];
 
-  test("offering fewer items than the next threshold changes nothing", () => {
+  test("offering fewer items than the next threshold reaches no level, and holds them", () => {
     expect.hasAssertions();
 
     expect(
