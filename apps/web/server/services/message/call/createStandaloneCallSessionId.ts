@@ -15,10 +15,5 @@ export const createStandaloneCallSessionId = async (db: Context["db"], userId: s
     if (callSessionId) return callSessionId;
   }
 
-  throw getInvalidOperationError(
-    Operation.Create,
-    DatabaseEntityType.CallSession,
-    createStandaloneCallSessionId.name,
-    "UNPROCESSABLE_CONTENT",
-  );
+  throw getInvalidOperationError(Operation.Create, DatabaseEntityType.CallSession, userId, "UNPROCESSABLE_CONTENT");
 };
