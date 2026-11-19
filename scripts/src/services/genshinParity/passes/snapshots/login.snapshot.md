@@ -37,11 +37,9 @@
 | Shape | login-door-session Towers surface detail wavelength, ours | 8.5495 | - | m | - |
 | Motion | door lift path | 0.0066 | 0.0200 | m | yes |
 | Motion | door lift pace | 0.0004 | 0.0100 | share | yes |
-| Surface | login-door-session Door colour | 0.3250 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Door structure | 0.2768 | 0.0194 | share | no |
-| Surface | login-door-session Bridges colour | 1.0674 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Bridges structure | 1.0000 | 0.3359 | share | no |
-| Surface | login-door-session Towers colour | 0.1170 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Towers structure | 0.4704 | 0.0202 | share | no |
-| Surface | login-door-session Walkway colour | 0.1288 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Walkway structure | 0.5846 | 0.0272 | share | no |
+| Surface | login-door-session Walkway colour | 0.1529 | 2.3000 | ΔE | yes |
+| Surface | login-door-session Walkway structure | 0.5824 | 0.0266 | share | no |
+| Surface | login-door-session Bridges colour | 1.0721 | 2.3000 | ΔE | yes |
+| Surface | login-door-session Bridges structure | 1.0000 | 0.4555 | share | no |
+| Surface | login-door-session Towers colour | 0.1333 | 2.3000 | ΔE | yes |
+| Surface | login-door-session Towers structure | 0.4702 | 0.0236 | share | no |
