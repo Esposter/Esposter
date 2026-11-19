@@ -31,14 +31,13 @@ export const recordBundleSizes = (): BundleSizeRecordOutcome => {
   const rendered = renderBundleSizes(bundleSizes);
   if (rendered === committed) return { isCurrent: true, isPushed: false, lines: [] };
 
-  const parent = head;
   const previous = parseBundleSizes(committed);
   const subject = checkIsPureSizeUpdate(previous, bundleSizes)
     ? `${BUNDLE_SIZE_COMMIT_PREFIX} the record follows the build`
     : `${BUNDLE_SIZE_COMMIT_PREFIX} rows added or removed, read the body`;
   const changes = renderBundleSizeChanges(previous, bundleSizes);
   const body = [
-    `The record of ${parent}'s build, written by the review that found the committed one stale.`,
+    `The record of ${head}'s build, written by the review that found the committed one stale.`,
     "",
     ...(changes.length > 0 ? changes : ["No row changed size, so the record's rendering changed."]),
   ].join("\n");
@@ -54,7 +53,7 @@ export const recordBundleSizes = (): BundleSizeRecordOutcome => {
     },
   );
   // A record not pushed is dropped from the checkout, so a manual run leaves no commit of its own behind
-  if (!isPushed) runGit(["reset", "--hard", parent]);
+  if (!isPushed) runGit(["reset", "--hard", head]);
   return {
     isCurrent: false,
     isPushed,
