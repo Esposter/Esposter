@@ -4,7 +4,7 @@ Read when a store keys state by an id, holds a list of entities, or paginates on
 
 ## `useDataMap`
 
-`useDataMap<T>(currentId, defaultValue)` (`apps/web/app/composables/data/useDataMap.ts`) — its return is the inventory. `useCursorPaginationDataMap` is a thin wrapper that passes a factory default for its `Page`.
+`useDataMap<T>(currentId, defaultValue)` (`apps/web/app/composables/data/useDataMap.ts`) — its return is the inventory. `useCursorPaginationDataMap` is a thin wrapper that passes a factory default for its `Page`. A field keyed by the open resource is `useCurrentResourceDataMap<T>(defaultValue)` (`apps/web/app/composables/resource/useCurrentResourceDataMap.ts`), which owns that key; a key is never restated as `() => resourceStore.currentResourceId`.
 
 Which of the three views you take is the whole of the keying rule ("Every field is keyed, and a write names its key", on this page):
 

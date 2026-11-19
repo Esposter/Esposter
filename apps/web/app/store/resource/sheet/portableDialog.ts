@@ -1,7 +1,6 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { useResourceStore } from "#src/store/resource/index";
 
 // The import/export commands live on the blade command bar, which is reachable from every blade, so the
 // Dialogs they open cannot live in the Data blade alone. This holds what each one is opened with, and
@@ -10,19 +9,14 @@ import { useResourceStore } from "#src/store/resource/index";
 // Sheet is that sheet's import, and filed ambiently its preview would open over — and import into — the next one.
 // Every open names its sheet, resolved where the command started rather than when its await lands
 export const useSheetPortableDialogStore = defineStore("resource/sheet/portableDialog", () => {
-  const resourceStore = useResourceStore();
-  const getResourceId = () => resourceStore.currentResourceId;
-  const { data: previewDataSource, getDataRef: getPreviewDataSourceRef } = useDataMap<DataSource | undefined>(
-    getResourceId,
-    undefined,
-  );
-  const { data: previewName, getDataRef: getPreviewNameRef } = useDataMap(getResourceId, "");
-  const { data: exportDataSourceType, getDataRef: getExportDataSourceTypeRef } = useDataMap<DataSourceType>(
-    getResourceId,
-    DataSourceType.Csv,
-  );
-  const { data: isExportOpen, getDataRef: getIsExportOpenRef } = useDataMap(getResourceId, false);
-  const { data: isSurveyImportOpen, getDataRef: getIsSurveyImportOpenRef } = useDataMap(getResourceId, false);
+  const { data: previewDataSource, getDataRef: getPreviewDataSourceRef } = useCurrentResourceDataMap<
+    DataSource | undefined
+  >(undefined);
+  const { data: previewName, getDataRef: getPreviewNameRef } = useCurrentResourceDataMap("");
+  const { data: exportDataSourceType, getDataRef: getExportDataSourceTypeRef } =
+    useCurrentResourceDataMap<DataSourceType>(DataSourceType.Csv);
+  const { data: isExportOpen, getDataRef: getIsExportOpenRef } = useCurrentResourceDataMap(false);
+  const { data: isSurveyImportOpen, getDataRef: getIsSurveyImportOpenRef } = useCurrentResourceDataMap(false);
   const isPreviewOpen = computed({
     get: () => Boolean(previewDataSource.value),
     set: (newIsPreviewOpen) => {

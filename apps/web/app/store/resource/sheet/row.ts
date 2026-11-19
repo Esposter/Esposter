@@ -32,10 +32,10 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   // Where they are in the rows and which ones they picked is the sheet's own, so it is keyed by the sheet: carried
   // Over, the next sheet would open searched for and sorted by what the last one was, with row ids selected that
   // Are not its own
-  const { data: page } = useDataMap(() => resourceStore.currentResourceId, 1);
-  const { data: search } = useDataMap(() => resourceStore.currentResourceId, "");
-  const { data: sortBy } = useDataMap<SortItem<string>[]>(() => resourceStore.currentResourceId, []);
-  const { data: selectedRowIds } = useDataMap<string[]>(() => resourceStore.currentResourceId, []);
+  const { data: page } = useCurrentResourceDataMap(1);
+  const { data: search } = useCurrentResourceDataMap("");
+  const { data: sortBy } = useCurrentResourceDataMap<SortItem<string>[]>([]);
+  const { data: selectedRowIds } = useCurrentResourceDataMap<string[]>([]);
   const displayRows = computed(() => filterDataSourceRows(sheetStore.dataSource.rows, filterStore.columnFilters));
   const rowIdIndexMap = computed(() => new Map(displayRows.value.map((row, index) => [row.id, index])));
   // A computed column keeps nothing in `row.data`, so every cell — displayed, searched or sorted — has to come

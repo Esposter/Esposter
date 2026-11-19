@@ -23,10 +23,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
   // Keyed by the resource the history was read for. Reads of two resources are two keys and do not supersede
   // Each other, so one issued before a switch can land after it — and held once for the store, that resource's
   // Versions would be listed, previewed and restored as the one on screen
-  const { data: versions, getDataRef: getVersionsRef } = useDataMap<SnapshotVersion[]>(
-    () => resourceStore.currentResourceId,
-    [],
-  );
+  const { data: versions, getDataRef: getVersionsRef } = useCurrentResourceDataMap<SnapshotVersion[]>([]);
   // Asked of the resource on screen rather than of the executor, for the same reason: another resource's read
   // Still in flight is not this one's list loading
   const isPending = computed(() => checkIsPending(resourceStore.currentResourceId));

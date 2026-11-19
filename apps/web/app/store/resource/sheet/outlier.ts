@@ -4,14 +4,12 @@ import { getEffectiveColumnType } from "#shared/services/resource/sheet/column/g
 import { computeColumnStatisticsForColumn } from "#src/services/resource/sheet/column/computeColumnStatisticsForColumn";
 import { OUTLIER_STANDARD_DEVIATION_MULTIPLIER } from "#src/services/resource/sheet/constants";
 import { getItemId } from "#src/services/resource/sheet/getItemId";
-import { useResourceStore } from "#src/store/resource/index";
 import { useSheetStore } from "#src/store/resource/sheet/index";
 import { takeOne } from "@esposter/shared";
 
 export const useOutlierStore = defineStore("resource/sheet/outlier", () => {
-  const resourceStore = useResourceStore();
   const sheetStore = useSheetStore();
-  const { data: isOutlierHighlightEnabled } = useDataMap(() => resourceStore.currentResourceId, false);
+  const { data: isOutlierHighlightEnabled } = useCurrentResourceDataMap(false);
   const outlierCells = computed<Set<string>>(() => {
     if (!isOutlierHighlightEnabled.value) return new Set();
     const { dataSource } = sheetStore;

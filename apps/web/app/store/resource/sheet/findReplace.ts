@@ -7,10 +7,10 @@ export const useFindReplaceStore = defineStore("resource/sheet/findReplace", () 
   const { checkIsContentRead } = resourceStore;
   const sheetStore = useSheetStore();
   // A search is the sheet's own, so every field of it is keyed by the sheet it was typed into
-  const { data: isFindReplaceOpen } = useDataMap(() => resourceStore.currentResourceId, false);
-  const { data: currentOccurrenceIndex } = useDataMap(() => resourceStore.currentResourceId, 0);
-  const { data: storedFindValue } = useDataMap(() => resourceStore.currentResourceId, "");
-  const { data: replaceValue } = useDataMap(() => resourceStore.currentResourceId, "");
+  const { data: isFindReplaceOpen } = useCurrentResourceDataMap(false);
+  const { data: currentOccurrenceIndex } = useCurrentResourceDataMap(0);
+  const { data: storedFindValue } = useCurrentResourceDataMap("");
+  const { data: replaceValue } = useCurrentResourceDataMap("");
   // A new search starts from its first occurrence. Done by the write rather than a watch on the value, which would
   // Also fire on a switch to another sheet and throw away the occurrence that sheet's search was left on
   const findValue = computed({
