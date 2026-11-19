@@ -55,4 +55,30 @@ describe(useWorldHomeRealm, () => {
     expect(homeRealmVisit.value).toBeUndefined();
     expect(jumpTo).toHaveBeenLastCalledWith(visit?.pose);
   });
+
+  test("a teleport leaves the realm", () => {
+    expect.hasAssertions();
+
+    const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
+    const { homeRealmVisit, teleport, toggleHomeRealm } = useWorldHomeRealm();
+    toggleHomeRealm({ getGroundHeight: () => 2, jumpTo, standing });
+    const visit = homeRealmVisit.value;
+
+    teleport({ heightOffset: 0, point: { x: 100, z: 100 }, yaw: 0 }, jumpTo);
+
+    expect(homeRealmVisit.value).toBeUndefined();
+    expect(jumpTo).toHaveBeenLastCalledWith(visit?.pose);
+  });
+
+  test("a teleport outside the realm goes where it was sent", () => {
+    expect.hasAssertions();
+
+    const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
+    const destination = { heightOffset: 0, point: { x: 100, z: 100 }, yaw: 0 };
+    const { homeRealmVisit, teleport } = useWorldHomeRealm();
+    teleport(destination, jumpTo);
+
+    expect(homeRealmVisit.value).toBeUndefined();
+    expect(jumpTo).toHaveBeenLastCalledWith(destination);
+  });
 });

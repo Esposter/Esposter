@@ -416,7 +416,7 @@ onUnmounted(() => {
 // The world's origin, owned here so the cameras read the ground through it before the floating origin shifts it
 const origin = new Vector3();
 // The Serenitea Pot on the open world and the realm the player goes into from it
-const { homePotPoint, homeRealmVisit, placeUsedGadget, toggleHomeRealm } = useWorldHomeRealm();
+const { homePotPoint, homeRealmVisit, placeUsedGadget, teleport, toggleHomeRealm } = useWorldHomeRealm();
 // The world's one ground, which everything in the world stands on
 const worldGroundStore = useWorldGroundStore();
 const { getGroundHeight, start: startGround, stop: stopGround } = worldGroundStore;
@@ -461,7 +461,10 @@ onUnmounted(stopPuzzles);
 const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySources });
 const { campLockSources, openedChestIds } = storeToRefs(worldChestsStore);
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
-const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse } = useWorldGadgets();
+const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse } = useWorldGadgets({
+  getRegionChestPlaces: (regionId) => windrise.value?.regionChestMap.get(regionId) ?? [],
+  openedChestIds,
+});
 // The Oculi not found, those near the camera and the one the body touches, with the levels the statues have reached
 const {
   foundOculusIds,
@@ -1267,7 +1270,7 @@ useWorldSaveSync({
           @jump="
             (pose) => {
               closeScreen();
-              jumpTo(pose);
+              teleport(pose, jumpTo);
             }
           "
         />

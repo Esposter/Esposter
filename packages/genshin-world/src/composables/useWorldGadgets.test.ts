@@ -8,6 +8,7 @@ import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
+import { shallowRef } from "vue";
 
 vi.mock(import("#src/services/gadget/readGadgetRows"));
 
@@ -26,11 +27,12 @@ describe(useWorldGadgets, () => {
     maxPoints: 0,
     region: "",
   };
+  const position = { x: 0, z: 0 };
   // A press shorter than the quick swap's hold, held for one frame and released on the next
   const tap = (stepQuickUse: ReturnType<typeof useWorldGadgets>["stepQuickUse"]) => {
     const seconds = QUICK_SWAP_HOLD_SECONDS / 2;
-    stepQuickUse({ isActive: true, isHeld: true, now: epoch, seconds });
-    return stepQuickUse({ isActive: true, isHeld: false, now: epoch, seconds });
+    stepQuickUse({ isActive: true, isHeld: true, now: epoch, position, seconds });
+    return stepQuickUse({ isActive: true, isHeld: false, now: epoch, position, seconds });
   };
 
   test("z reports the equipped gadget as used once, and nothing while its cooldown runs", async () => {
@@ -41,7 +43,7 @@ describe(useWorldGadgets, () => {
       {},
       { inventory: { ...EMPTY_INVENTORY, equippedGadgetItemId: GADGET.id }, wallet: { ...EMPTY_WALLET } },
     );
-    const { stepQuickUse } = useWorldGadgets();
+    const { stepQuickUse } = useWorldGadgets({ getRegionChestPlaces: () => [], openedChestIds: shallowRef(new Set()) });
     await flushReads();
 
     expect(tap(stepQuickUse)).toStrictEqual(GADGET);

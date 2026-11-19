@@ -155,6 +155,7 @@ export const useWorldFrame = ({
         inputState.heldActions.has(InputAction.QuickUseGadget) ||
         inputState.pressedActions.has(InputAction.QuickUseGadget),
       now: getWorldNow(),
+      position: characterBody.position,
       seconds: delta,
     });
     placeUsedGadget(usedGadget, characterBody.position);

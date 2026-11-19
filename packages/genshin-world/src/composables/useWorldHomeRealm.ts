@@ -1,6 +1,7 @@
 import type { GadgetRow } from "#src/models/gadget/GadgetRow";
 import type { HomeRealmToggleOptions } from "#src/models/home/HomeRealmToggleOptions";
 import type { HomeRealmVisit } from "#src/models/home/HomeRealmVisit";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 
 import { computeHomeRealmVisit } from "#src/services/home/computeHomeRealmVisit";
 import { HOME_POT_GADGET_ID, HOME_REALM_SPAWN, HOME_STAND_IN_POT_REGION_ID } from "#src/services/home/constants";
@@ -21,12 +22,16 @@ export const useWorldHomeRealm = () => {
     if (usedGadget?.id === HOME_POT_GADGET_ID && !homeRealmVisit.value)
       homePotPoint.value = placeHomePot(usedGadget, homePotPoint.value, feet);
   };
+  // The realm is left to the place the player went in from, by the gadget or a teleport, so a teleport's own destination
+  // Never takes them elsewhere
+  const leaveRealm = (visit: HomeRealmVisit, jumpTo: (pose: WorldJumpPose) => void) => {
+    jumpTo(leaveHomeRealm(visit).pose);
+    homeRealmVisit.value = undefined;
+  };
   // The pot's gadget takes the player into the realm from where they stand, and out of it to the place they went in from
   const toggleHomeRealm = ({ getGroundHeight, jumpTo, standing }: HomeRealmToggleOptions) => {
-    if (homeRealmVisit.value) {
-      jumpTo(leaveHomeRealm(homeRealmVisit.value).pose);
-      homeRealmVisit.value = undefined;
-    } else {
+    if (homeRealmVisit.value) leaveRealm(homeRealmVisit.value, jumpTo);
+    else {
       homeRealmVisit.value = computeHomeRealmVisit(
         standing,
         getGroundHeight(standing.position.x, standing.position.z),
@@ -35,5 +40,10 @@ export const useWorldHomeRealm = () => {
       jumpTo(HOME_REALM_SPAWN);
     }
   };
-  return { homePotPoint, homeRealmVisit, placeUsedGadget, toggleHomeRealm };
+  // A teleport in the open world leaves the realm in place of its destination, and goes where it was sent outside it
+  const teleport = (pose: WorldJumpPose, jumpTo: (pose: WorldJumpPose) => void) => {
+    if (homeRealmVisit.value) leaveRealm(homeRealmVisit.value, jumpTo);
+    else jumpTo(pose);
+  };
+  return { homePotPoint, homeRealmVisit, placeUsedGadget, teleport, toggleHomeRealm };
 };

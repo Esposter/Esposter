@@ -1,6 +1,6 @@
 ## 1. Gadgets in the bag
 
-- [ ] 1.1 Make each gadget a bag item of the widget material type, filed under the gadget category. Verify: a test named after the scenario 'A gadget appears in the gadget tab' written first and seen failing. Open: nothing tests the category a gadget is filed under, so the tab's listing is unproven.
+- [x] 1.1 Make each gadget a bag item of the widget material type, filed under the gadget category. Verify: a test named after the scenario 'A gadget appears in the gadget tab' in `packages/genshin-world/src/services/inventory/toItemDefinition.test.ts`, which files a widget material under the gadget tab through `computeInventoryTab`. The mapping already filed it, so the test passes on its first run rather than failing first; `buildItems.test.ts` holds the material's publish under the same title.
 - [x] 1.2 Equip an equipable gadget from its tab and refuse one the game does not mark equipable. Verify: tests named after the scenarios 'An equipable gadget is equipped from its tab' and 'A gadget the game does not mark equipable is refused' written first and seen failing.
 
 ## 2. The quick-use slot
@@ -10,7 +10,7 @@
 
 ## 3. Detectors
 
-- [ ] 3.1 Point a Treasure Compass to the nearest treasure box once its city joins a region's chest slice. Verify: a test named after the scenario 'A compass points to the nearest box in its city' written first and seen failing. Open: no code calls the finder yet, so no compass points at a box.
+- [ ] 3.1 Point a Treasure Compass to the nearest treasure box once its city joins a region's chest slice. Verify: a test named after the scenario 'A compass points to the nearest box in its city' in `packages/genshin-world/src/services/gadget/computeDetectorTarget.test.ts`, written first and seen failing. Built: a used compass's target is the nearest unopened box of its region, held as `detectorTarget` in `useWorldGadgets`. Open: the HUD pointer that draws the target, since its look has no reference yet; the pointer waits on a recording of a compass pointing, and the clip `gadget-cooldown-pause.mkv` shows a menu, not a pointer.
 - [ ] 3.2 Point a Seelie detector to the nearest Seelie crystal in its region. Verify: a test named after the scenario 'A Seelie detector points to the nearest crystal in its region', seen failing first. Open: no code calls the finder yet, so no detector points at a crystal.
 - [x] 3.3 Decide the Oculus Resonance Stone's detector. Options: read its target from a table other than the config, or leave the stone without a detector until a target is found. Decides nothing here; the choice is recorded before the stone's detector is built.
 

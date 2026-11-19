@@ -1,7 +1,11 @@
+import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { CooldownGroupReadyAtMap } from "#src/models/gadget/CooldownGroupReadyAtMap";
 import type { GadgetRow } from "#src/models/gadget/GadgetRow";
+import type { GroundPoint } from "genshin-engine";
+import type { Ref } from "vue";
 
 import { checkIsQuickSwapOpen } from "#src/services/gadget/checkIsQuickSwapOpen";
+import { computeDetectorTarget } from "#src/services/gadget/computeDetectorTarget";
 import { getGadgetCooldownSeconds } from "#src/services/gadget/getGadgetCooldownSeconds";
 import { quickUseGadget } from "#src/services/gadget/quickUseGadget";
 import { readGadgetRows } from "#src/services/gadget/readGadgetRows";
@@ -13,8 +17,15 @@ import { computed, shallowRef } from "vue";
 
 // The widget config's gadgets, fetched by their key as the world opens, and the gadget equipped to the quick-use slot,
 // Which Z uses once its cooldown group is ready. A load that fails is logged and left off, so no gadget is used rather
-// Than a wrong one
-export const useWorldGadgets = () => {
+// Than a wrong one. A used detector's target is read from the chests of the region it names, which the world holds once
+// The region is in reach
+export const useWorldGadgets = ({
+  getRegionChestPlaces,
+  openedChestIds,
+}: {
+  getRegionChestPlaces: (regionId: string) => readonly ChestPlace[];
+  openedChestIds: Readonly<Ref<ReadonlySet<string>>>;
+}) => {
   const worldSessionStore = useWorldSessionStore();
   const { inventory } = storeToRefs(worldSessionStore);
   const gadgetRows = shallowRef<GadgetRow[]>([]);
@@ -47,15 +58,20 @@ export const useWorldGadgets = () => {
   // Opens the quick swap instead. A frame outside the world drops the hold, so a release there is never a use
   let quickUseHeldSeconds = 0;
   const isQuickSwapOpen = shallowRef(false);
+  // The chest the last used gadget points to, from the position it was used at, the pointer the HUD draws once its look is
+  // Read. A use that points to no box, as any gadget but a compass does, clears it
+  const detectorTarget = shallowRef<ChestPlace>();
   const stepQuickUse = ({
     isActive,
     isHeld,
     now,
+    position,
     seconds,
   }: {
     isActive: boolean;
     isHeld: boolean;
     now: Temporal.Instant;
+    position: GroundPoint;
     seconds: number;
   }): GadgetRow | undefined => {
     const previousHeldSeconds = quickUseHeldSeconds;
@@ -63,8 +79,15 @@ export const useWorldGadgets = () => {
     let usedGadget: GadgetRow | undefined;
     if (isActive && !isHeld && previousHeldSeconds > 0 && !checkIsQuickSwapOpen(previousHeldSeconds))
       usedGadget = quickUseEquippedGadget(now);
+    if (usedGadget)
+      detectorTarget.value = computeDetectorTarget(
+        usedGadget,
+        getRegionChestPlaces(usedGadget.region),
+        openedChestIds.value,
+        position,
+      );
     isQuickSwapOpen.value = checkIsQuickSwapOpen(quickUseHeldSeconds);
     return usedGadget;
   };
-  return { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse };
+  return { detectorTarget, equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse };
 };
