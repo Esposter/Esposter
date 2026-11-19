@@ -36,6 +36,10 @@ import { noop, Operation } from "@esposter/shared";
 import { and, eq, notExists, sql } from "drizzle-orm";
 import { v7 } from "uuid";
 
+const assertIsNotUnicodeEmojiSlug = (operation: Operation, name: string) => {
+  if (checkIsUnicodeEmojiSlug(name)) throw getInvalidOperationError(operation, DatabaseEntityType.RoomEmoji, name);
+};
+
 export const emojiRouter = router({
   createRoomEmoji: getPermissionsProcedure(
     RoomPermission.ManageEmojis,
@@ -52,8 +56,7 @@ export const emojiRouter = router({
     if (!uploadedObject || uploadedObject.size > MAX_ROOM_EMOJI_SIZE_BYTES)
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, id);
 
-    if (checkIsUnicodeEmojiSlug(name))
-      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, name);
+    assertIsNotUnicodeEmojiSlug(Operation.Create, name);
 
     const roomEmojiContext = JSON.stringify({ name, roomId });
     // The cap and the name are checked by the insert itself: the row is only selected while the room holds fewer emoji
@@ -163,8 +166,7 @@ export const emojiRouter = router({
     updateRoomEmojiInputSchema,
     "roomId",
   ).mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, name, roomId } }) => {
-    if (checkIsUnicodeEmojiSlug(name))
-      throw getInvalidOperationError(Operation.Update, DatabaseEntityType.RoomEmoji, name);
+    assertIsNotUnicodeEmojiSlug(Operation.Update, name);
 
     const updatedRoomEmoji = requireMutation(
       (
