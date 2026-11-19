@@ -6,11 +6,11 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
+import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
-import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
 import { getGcsimNamedHitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
-import { CombatTalent, Element, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, WeaponType } from "genshin-world";
+import { CombatTalent, Element, SKILL_TARGETING_AREA, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const multiplierMap = (proudSkillGroupId: number) =>
@@ -149,7 +149,10 @@ describe(getGcsimNamedHitCandidates, () => {
     expect.hasAssertions();
 
     expect(readLunarReaction("attacks.AttackTagDirectLunarCharged")).toStrictEqual([
-      { provenance: { file: "internal/characters/amber/burst.go", line: 9, source: "Gcsim" }, value: "LunarCharged" },
+      {
+        provenance: { file: "internal/characters/amber/burst.go", line: 9, source: KitSource.Gcsim },
+        value: "LunarCharged",
+      },
     ]);
     expect(readLunarReaction("attacks.AttackTagElementalBurst")).toBeUndefined();
   });
@@ -178,14 +181,12 @@ describe(getGcsimNamedHitCandidates, () => {
       getGcsimNamedHitCandidates(arrayGcsim, arrayTables),
     );
 
-    expect(joined.get("hits.kick.0.multiplier")?.map(({ value }) => value)).toStrictEqual([
-      { index: 1, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
+    expect(joined.get("hits.kick.0.multiplier")).toStrictEqual([
+      {
+        provenance: { file: "internal/characters/amber/amber.go", line: 7, source: KitSource.Gcsim },
+        value: { index: 1, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
+      },
     ]);
-    expect(joined.get("hits.kick.0.multiplier")?.[0]?.provenance).toStrictEqual({
-      file: "internal/characters/amber/amber.go",
-      line: 7,
-      source: "Gcsim",
-    });
   });
 
   test("takes a named list's calls in the order they land, whatever order the source calls them in", () => {
@@ -309,10 +310,10 @@ describe(getGcsimNamedHitCandidates, () => {
         ?.map(({ value }) => value);
 
     expect(readArea(GcsimTalentType.Attack, NORMAL_PROUD_SKILL_GROUP_ID)).toStrictEqual([
-      createTargetedHitArea(STRIKE_TARGETING_AREA, radius),
+      { angle: 2 * Math.PI, height: 2, radius: 5.8 },
     ]);
     expect(readArea(GcsimTalentType.Burst, BURST_PROUD_SKILL_GROUP_ID)).toStrictEqual([
-      createTargetedHitArea(SKILL_TARGETING_AREA, radius),
+      { angle: 2 * Math.PI, height: 2, radius: 15.8 },
     ]);
   });
 
@@ -333,10 +334,19 @@ describe(getGcsimNamedHitCandidates, () => {
       namedHitCandidateMap,
     );
 
-    expect([...joined.keys()].filter((path) => path.endsWith(".element"))).toStrictEqual([
+    expect([...joined.keys()]).toStrictEqual([
+      "hitFields.dragonBreath.multiplier",
       "hitFields.dragonBreath.element",
+      "hitFields.dragonBreath.internalCooldownTag",
+      "hitFields.dragonBreath.poiseDamage",
+      "skillHolds.0.action.hits.0.multiplier",
       "skillHolds.0.action.hits.0.element",
+      "skillHolds.0.action.hits.0.internalCooldownTag",
+      "skillHolds.0.action.hits.0.poiseDamage",
+      "stances.windfavored.normalAttacks.0.hits.0.multiplier",
       "stances.windfavored.normalAttacks.0.hits.0.element",
+      "stances.windfavored.normalAttacks.0.hits.0.internalCooldownTag",
+      "stances.windfavored.normalAttacks.0.hits.0.poiseDamage",
     ]);
     expect(joined.get("hitFields.dragonBreath.element")?.map(({ value }) => value)).toStrictEqual([Element.Pyro]);
   });

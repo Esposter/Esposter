@@ -6,7 +6,8 @@ import { getBluntKitCandidates } from "#src/services/genshinAssets/kits/candidat
 import { Element, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-const getValue = (candidateMap: Map<string, KitCandidate[]>, path: string) => candidateMap.get(path)?.[0]?.value;
+const getValues = (candidateMap: Map<string, KitCandidate[]>, path: string) =>
+  candidateMap.get(path)?.map(({ value }) => value);
 
 describe(getBluntKitCandidates, () => {
   const CLAYMORE_CHARACTER_ID = 10_000_003;
@@ -19,8 +20,10 @@ describe(getBluntKitCandidates, () => {
     const claymore = { characterId: CLAYMORE_CHARACTER_ID, weaponType: WeaponType.Claymore };
     const sword = { characterId: CLAYMORE_CHARACTER_ID, weaponType: WeaponType.Sword };
 
-    expect(getValue(getBluntKitCandidates(valueMap, claymore), "normalAttacks.0.hits.0.isBlunt")).toBe(true);
-    expect(getValue(getBluntKitCandidates(valueMap, sword), "normalAttacks.0.hits.0.isBlunt")).toBe(false);
+    expect(getValues(getBluntKitCandidates(valueMap, claymore), "normalAttacks.0.hits.0.isBlunt")).toStrictEqual([
+      true,
+    ]);
+    expect(getValues(getBluntKitCandidates(valueMap, sword), "normalAttacks.0.hits.0.isBlunt")).toStrictEqual([false]);
   });
 
   test("a melee plunge is blunt, a catalyst's is not", () => {
@@ -29,17 +32,17 @@ describe(getBluntKitCandidates, () => {
     const valueMap = new Map<string, unknown>([["plunges.low.hits.0.hitmarkFrames", HITMARK_FRAMES]]);
 
     expect(
-      getValue(
+      getValues(
         getBluntKitCandidates(valueMap, { characterId: CLAYMORE_CHARACTER_ID, weaponType: WeaponType.Polearm }),
         "plunges.low.hits.0.isBlunt",
       ),
-    ).toBe(true);
+    ).toStrictEqual([true]);
     expect(
-      getValue(
+      getValues(
         getBluntKitCandidates(valueMap, { characterId: CLAYMORE_CHARACTER_ID, weaponType: WeaponType.Catalyst }),
         "plunges.low.hits.0.isBlunt",
       ),
-    ).toBe(false);
+    ).toStrictEqual([false]);
   });
 
   test("a Geo character's excepted plunge is non-blunt, and names its Geo", () => {
@@ -55,11 +58,10 @@ describe(getBluntKitCandidates, () => {
       weaponType: WeaponType.Catalyst,
     });
 
-    expect(getValue(candidateMap, "plunges.low.hits.0.isBlunt")).toBe(false);
-    expect(candidateMap.get("plunges.low.hits.0.element")?.[0]?.provenance).toStrictEqual({
-      rule: KitRule.NonBluntGeoElement,
-      source: KitSource.Rule,
-    });
+    expect(getValues(candidateMap, "plunges.low.hits.0.isBlunt")).toStrictEqual([false]);
+    expect(candidateMap.get("plunges.low.hits.0.element")).toStrictEqual([
+      { provenance: { rule: KitRule.NonBluntGeoElement, source: KitSource.Rule }, value: Element.Geo },
+    ]);
   });
 
   test("the override names the second normal attack's hit of a character, and not the first", () => {
@@ -75,8 +77,8 @@ describe(getBluntKitCandidates, () => {
       weaponType: WeaponType.Polearm,
     });
 
-    expect(getValue(candidateMap, "normalAttacks.0.hits.0.isBlunt")).toBe(false);
-    expect(getValue(candidateMap, "normalAttacks.1.hits.0.isBlunt")).toBe(true);
+    expect(getValues(candidateMap, "normalAttacks.0.hits.0.isBlunt")).toStrictEqual([false]);
+    expect(getValues(candidateMap, "normalAttacks.1.hits.0.isBlunt")).toStrictEqual([true]);
   });
 
   test("the traveler's skill names its element, so it is not blunt and takes no Geo from the rule", () => {
@@ -89,7 +91,7 @@ describe(getBluntKitCandidates, () => {
     ]);
     const candidateMap = getBluntKitCandidates(valueMap, { characterId: 10_000_007, weaponType: WeaponType.Sword });
 
-    expect(getValue(candidateMap, "skill.hits.0.isBlunt")).toBe(false);
+    expect(getValues(candidateMap, "skill.hits.0.isBlunt")).toStrictEqual([false]);
     expect(candidateMap.has("skill.hits.0.element")).toBe(false);
   });
 });

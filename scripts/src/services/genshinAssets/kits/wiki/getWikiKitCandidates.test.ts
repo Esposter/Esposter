@@ -119,12 +119,9 @@ describe(getWikiKitCandidates, () => {
         ].map(([path, value]) => [path, [value]]),
       ),
     );
-    expect(candidateMap.get("burst.hits.3.poiseDamage")?.[0]?.provenance).toStrictEqual({
-      page: "Pyronado",
-      revisionId: 2066383,
-      row: 2,
-      source: KitSource.Wiki,
-    });
+    expect(candidateMap.get("burst.hits.3.poiseDamage")).toStrictEqual([
+      { provenance: { page: "Pyronado", revisionId: 2066383, row: 2, source: KitSource.Wiki }, value: 30 },
+    ]);
   });
 
   test("reads a catalyst's collision gauge, as the collision is elemental by its slot", () => {

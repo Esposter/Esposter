@@ -8,8 +8,7 @@ import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalen
 import { GCSIM_CONFIG_FILE, GCSIM_NO_INTERNAL_COOLDOWN_TAG } from "#src/services/genshinAssets/kits/constants";
 import { addGcsimMoondewCleanseCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
-import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
-import { CombatTalent, Element, LunarReactionType, STRIKE_TARGETING_AREA, WeaponType } from "genshin-world";
+import { CombatTalent, Element, LunarReactionType, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 // Columbina's charge.go: the Moondew Cleanse's three hitmarks, its frames, and its Lunar-Bloom attack, whose hitbox the
@@ -103,7 +102,7 @@ describe(addGcsimMoondewCleanseCandidates, () => {
     expect(valuesAt("chargedAttackVariant.hits.0.element")).toStrictEqual([Element.Dendro]);
     expect(valuesAt("chargedAttackVariant.hits.0.lunarReactionType")).toStrictEqual([LunarReactionType.LunarBloom]);
     expect(valuesAt("chargedAttackVariant.hits.2.area")).toStrictEqual([
-      createTargetedHitArea(STRIKE_TARGETING_AREA, 3.3),
+      { angle: 2 * Math.PI, height: 2, radius: 8.3 },
     ]);
     expect(valuesAt("chargedAttackVariant.hits.0.multiplier")).toStrictEqual([{ index: 3, proudSkillGroupId: 11031 }]);
   });

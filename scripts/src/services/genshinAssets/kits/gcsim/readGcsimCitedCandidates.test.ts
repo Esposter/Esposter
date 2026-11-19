@@ -5,21 +5,10 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { GCSIM_CHARACTERS_PATH, GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";
 import { TALENT_GROUP_ID_MAP } from "#src/services/genshinAssets/kits/constants.test";
-import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
-import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
 import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
-import {
-  AttackTag,
-  Attribute,
-  CombatTalent,
-  Element,
-  expandKitOverlay,
-  InternalCooldownTag,
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-} from "genshin-world";
+import { AttackTag, Attribute, CombatTalent, Element, expandKitOverlay, InternalCooldownTag } from "genshin-world";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -105,15 +94,15 @@ describe("readGcsimCitedCandidates", () => {
     const overlay: KitOverlay = {
       "frames.waterBallInterval": { file: "asc.go", line: 4, source: KitSource.Gcsim, value: 90 },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
       "frames.waterBallInterval",
-    )?.[0];
-    expect(candidate?.value).toBe(90);
-    expect(candidate?.provenance).toStrictEqual({
-      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/asc.go`,
-      line: 4,
-      source: KitSource.Gcsim,
-    });
+    );
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/asc.go`, line: 4, source: KitSource.Gcsim },
+        value: 90,
+      },
+    ]);
   });
 
   test("a cited durability line gives the gauge in units of U, gcsim's durability over 25", () => {
@@ -121,15 +110,15 @@ describe("readGcsimCitedCandidates", () => {
     const overlay: KitOverlay = {
       "hits.storm.gauge": { file: "durability.go", line: 5, source: KitSource.Gcsim, value: 2 },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
       "hits.storm.gauge",
-    )?.[0];
-    expect(candidate?.value).toBe(2);
-    expect(candidate?.provenance).toStrictEqual({
-      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/durability.go`,
-      line: 5,
-      source: KitSource.Gcsim,
-    });
+    );
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/durability.go`, line: 5, source: KitSource.Gcsim },
+        value: 2,
+      },
+    ]);
   });
 
   test("a cited line that does not give the value gives its first value, which compare names as DiffersFromSource", () => {
@@ -141,7 +130,7 @@ describe("readGcsimCitedCandidates", () => {
       readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
         "frames.waterBallInterval",
       ) ?? [];
-    expect(candidates[0]?.value).toBe(90);
+    expect(candidates.map(({ value }) => value)).toStrictEqual([90]);
     expect(classifyKitValue(100, candidates, [], false, {})).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: 100,
@@ -153,15 +142,15 @@ describe("readGcsimCitedCandidates", () => {
     const overlay: KitOverlay = {
       "frames.blossomHitmarks": { file: "loop.go", line: 5, source: KitSource.Gcsim, value: [10, 15, 20] },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
       "frames.blossomHitmarks",
-    )?.[0];
-    expect(candidate?.value).toStrictEqual([10, 15, 20]);
-    expect(candidate?.provenance).toStrictEqual({
-      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/loop.go`,
-      line: 5,
-      source: KitSource.Gcsim,
-    });
+    );
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/loop.go`, line: 5, source: KitSource.Gcsim },
+        value: [10, 15, 20],
+      },
+    ]);
   });
 
   test("a cited scalar inside a loop gives the loop's value equal to it, not the loop's array", () => {
@@ -172,7 +161,7 @@ describe("readGcsimCitedCandidates", () => {
     const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
       "frames.blossomHitmark",
     );
-    expect(candidates?.[0]?.value).toBe(15);
+    expect(candidates?.map(({ value }) => value)).toStrictEqual([15]);
     expect(classifyKitValue(15, candidates ?? [], [], false, {})).toBeUndefined();
   });
 
@@ -185,7 +174,7 @@ describe("readGcsimCitedCandidates", () => {
       readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
         "frames.blossomHitmarks",
       ) ?? [];
-    expect(candidates[0]?.value).toStrictEqual([10, 15, 20]);
+    expect(candidates.map(({ value }) => value)).toStrictEqual([[10, 15, 20]]);
     expect(classifyKitValue([10, 15, 21], candidates, [], false, {})).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: [10, 15, 21],
@@ -194,7 +183,7 @@ describe("readGcsimCitedCandidates", () => {
 
   test("a cited area whose constructor's radius and fan angle equal the object's gives the cited area", () => {
     expect.hasAssertions();
-    const angle = (120 * Math.PI) / 180;
+    const angle = 2.0943951023931953;
     const overlay: KitOverlay = {
       "burst.hits.0.area": {
         file: "area.go",
@@ -203,20 +192,20 @@ describe("readGcsimCitedCandidates", () => {
         value: { angle, height: 2, radius: 8 },
       },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
       "burst.hits.0.area",
-    )?.[0];
-    expect(candidate?.value).toStrictEqual({ angle, height: 2, radius: 8 });
-    expect(candidate?.provenance).toStrictEqual({
-      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/area.go`,
-      line: 4,
-      source: KitSource.Gcsim,
-    });
+    );
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/area.go`, line: 4, source: KitSource.Gcsim },
+        value: { angle, height: 2, radius: 8 },
+      },
+    ]);
   });
 
   test("a cited area whose radius the constructor does not give reads as DiffersFromSource, with the constructor's area", () => {
     expect.hasAssertions();
-    const angle = (120 * Math.PI) / 180;
+    const angle = 2.0943951023931953;
     const overlay: KitOverlay = {
       "burst.hits.0.area": {
         file: "area.go",
@@ -228,7 +217,7 @@ describe("readGcsimCitedCandidates", () => {
     const candidates =
       readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get("burst.hits.0.area") ??
       [];
-    expect(candidates[0]?.value).toStrictEqual({ angle, height: 2, radius: 8 });
+    expect(candidates.map(({ value }) => value)).toStrictEqual([{ angle, height: 2, radius: 8 }]);
     expect(classifyKitValue({ angle, height: 2, radius: 9 }, candidates, [], false, {})).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: { angle, height: 2, radius: 9 },
@@ -240,15 +229,15 @@ describe("readGcsimCitedCandidates", () => {
     const overlay: KitOverlay = {
       "hits.burst.hitmarkFrames": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 145 },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
       "hits.burst.hitmarkFrames",
-    )?.[0];
-    expect(candidate?.value).toBe(145);
-    expect(candidate?.provenance).toStrictEqual({
-      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/queue.go`,
-      line: 5,
-      source: KitSource.Gcsim,
-    });
+    );
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/queue.go`, line: 5, source: KitSource.Gcsim },
+        value: 145,
+      },
+    ]);
   });
 
   test("a cited hitmark the queued block does not give reads as DiffersFromSource, with the block's own hitmark", () => {
@@ -260,7 +249,7 @@ describe("readGcsimCitedCandidates", () => {
       readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
         "hits.burst.hitmarkFrames",
       ) ?? [];
-    expect(candidates[0]?.value).toBe(145);
+    expect(candidates.map(({ value }) => value)).toStrictEqual([145]);
     expect(classifyKitValue(150, candidates, [], false, {})).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
       value: 150,
@@ -273,10 +262,10 @@ describe("readGcsimCitedCandidates", () => {
       "frames.burstDuration": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 70 },
     };
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "frames.burstDuration",
-      )?.[0]?.value,
-    ).toBe(70);
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("frames.burstDuration")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([70]);
   });
 
   test("a cited run of hits matches the loop's element at each hit's index", () => {
@@ -285,8 +274,8 @@ describe("readGcsimCitedCandidates", () => {
       "hits.blossom.0-2.poiseDamage": { file: "loop.go", line: 5, source: KitSource.Gcsim, value: [10, 15, 20] },
     });
     const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP);
-    expect(candidates.get("hits.blossom.1.poiseDamage")?.[0]?.value).toBe(15);
-    expect(candidates.get("hits.blossom.2.poiseDamage")?.[0]?.value).toBe(20);
+    expect(candidates.get("hits.blossom.1.poiseDamage")?.map(({ value }) => value)).toStrictEqual([15]);
+    expect(candidates.get("hits.blossom.2.poiseDamage")?.map(({ value }) => value)).toStrictEqual([20]);
   });
 
   test("a cited run of hits whose element a hit does not give reads as DiffersFromSource for that hit", () => {
@@ -309,10 +298,10 @@ describe("readGcsimCitedCandidates", () => {
       "hits.blossom.0-2.poiseDamage": { file: "multiline.go", line: 6, source: KitSource.Gcsim, value: [10, 15, 20] },
     });
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "hits.blossom.1.poiseDamage",
-      )?.[0]?.value,
-    ).toBe(15);
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.blossom.1.poiseDamage")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([15]);
   });
 
   test("a cited struct field's element gives the element its gcsim name maps to, with that line", () => {
@@ -320,15 +309,15 @@ describe("readGcsimCitedCandidates", () => {
     const overlay: KitOverlay = {
       "hits.burst.element": { file: "fields.go", line: 5, source: KitSource.Gcsim, value: Element.Cryo },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
       "hits.burst.element",
-    )?.[0];
-    expect(candidate?.value).toStrictEqual(Element.Cryo);
-    expect(candidate?.provenance).toStrictEqual({
-      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/fields.go`,
-      line: 5,
-      source: KitSource.Gcsim,
-    });
+    );
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/fields.go`, line: 5, source: KitSource.Gcsim },
+        value: Element.Cryo,
+      },
+    ]);
   });
 
   test("a cited assignment's internal cooldown tag gives the tag its gcsim name maps to", () => {
@@ -341,10 +330,11 @@ describe("readGcsimCitedCandidates", () => {
         value: InternalCooldownTag.NormalAttack,
       },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-      "hits.burst.internalCooldownTag",
-    )?.[0];
-    expect(candidate?.value).toStrictEqual(InternalCooldownTag.NormalAttack);
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.burst.internalCooldownTag")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([InternalCooldownTag.NormalAttack]);
   });
 
   test("a cited struct field's attack tag gives the kit's attack tag its gcsim name maps to", () => {
@@ -352,10 +342,11 @@ describe("readGcsimCitedCandidates", () => {
     const overlay: KitOverlay = {
       "hits.burst.attackTag": { file: "fields.go", line: 7, source: KitSource.Gcsim, value: AttackTag.ElementalBurst },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-      "hits.burst.attackTag",
-    )?.[0];
-    expect(candidate?.value).toStrictEqual(AttackTag.ElementalBurst);
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.burst.attackTag")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([AttackTag.ElementalBurst]);
   });
 
   test("a cited UseDef gives the Defense scaling attribute, the stat the hit scales by", () => {
@@ -363,10 +354,11 @@ describe("readGcsimCitedCandidates", () => {
     const overlay: KitOverlay = {
       "hits.burst.scalingAttribute": { file: "fields.go", line: 6, source: KitSource.Gcsim, value: Attribute.Defense },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-      "hits.burst.scalingAttribute",
-    )?.[0];
-    expect(candidate?.value).toStrictEqual(Attribute.Defense);
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.burst.scalingAttribute")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([Attribute.Defense]);
   });
 
   test("a cited line naming attributes.NoElement writes no candidate, as a hit of no element has no element", () => {
@@ -391,10 +383,10 @@ describe("readGcsimCitedCandidates", () => {
       },
     };
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "hits.stormeyeTicks.0.area",
-      )?.[0]?.value,
-    ).toStrictEqual({ angle, height: 2, radius: 4 });
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.stormeyeTicks.0.area")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([{ angle, height: 2, radius: 4 }]);
   });
 
   test("a cited circle centred on the player's position through a local adds its forward offset to its radius", () => {
@@ -409,10 +401,10 @@ describe("readGcsimCitedCandidates", () => {
       },
     };
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "burst.hits.1.area",
-      )?.[0]?.value,
-    ).toStrictEqual({ angle, height: 2, radius: 9 });
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("burst.hits.1.area")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([{ angle, height: 2, radius: 9 }]);
   });
 
   test("a cited circle centred on a local the code computes is priced as a circle round the body, as the mechanical path prices a place", () => {
@@ -427,10 +419,10 @@ describe("readGcsimCitedCandidates", () => {
       },
     };
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "hits.pressStele.0.area",
-      )?.[0]?.value,
-    ).toStrictEqual({ angle, height: 2, radius: 2 });
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.pressStele.0.area")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([{ angle, height: 2, radius: 2 }]);
   });
 
   test("a cited circle centred on the player's position with its .Pos() gives its own radius", () => {
@@ -445,28 +437,29 @@ describe("readGcsimCitedCandidates", () => {
       },
     };
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "hits.frostfallStorm.area",
-      )?.[0]?.value,
-    ).toStrictEqual({ angle, height: 2, radius: 6 });
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.frostfallStorm.area")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([{ angle, height: 2, radius: 6 }]);
   });
 
   test("a cited circle centred on the primary target gives the reach of its action's targeting area, as the mechanical path does", () => {
     expect.hasAssertions();
-    const skillArea = createTargetedHitArea(SKILL_TARGETING_AREA, 3);
-    const strikeArea = createTargetedHitArea(STRIKE_TARGETING_AREA, 3);
+    // The reach of a skill's and a strike's targeting area, each with a radius of 3 on the target
+    const skillArea = { angle: 2 * Math.PI, height: 2, radius: 18 };
+    const strikeArea = { angle: 2 * Math.PI, height: 2, radius: 8 };
     const overlay: KitOverlay = {
       "hits.riptideSlash.area": { file: "target.go", line: 4, source: KitSource.Gcsim, value: skillArea },
       "normalAttacks.0.hits.0.area": { file: "target.go", line: 4, source: KitSource.Gcsim, value: strikeArea },
     };
     const candidateMap = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP);
-    expect(candidateMap.get("hits.riptideSlash.area")?.[0]?.value).toStrictEqual(skillArea);
-    expect(candidateMap.get("normalAttacks.0.hits.0.area")?.[0]?.value).toStrictEqual(strikeArea);
+    expect(candidateMap.get("hits.riptideSlash.area")?.map(({ value }) => value)).toStrictEqual([skillArea]);
+    expect(candidateMap.get("normalAttacks.0.hits.0.area")?.map(({ value }) => value)).toStrictEqual([strikeArea]);
   });
 
   test("a cited hit whose multiplier is in the normal attack's group gives the strikes' targeting area", () => {
     expect.hasAssertions();
-    const strikeArea = createTargetedHitArea(STRIKE_TARGETING_AREA, 3);
+    const strikeArea = { angle: 2 * Math.PI, height: 2, radius: 8 };
     const overlay: KitOverlay = {
       "hits.riptideSlash.area": { file: "target.go", line: 4, source: KitSource.Gcsim, value: strikeArea },
       "hits.riptideSlash.multiplier": {
@@ -475,35 +468,37 @@ describe("readGcsimCitedCandidates", () => {
       },
     };
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "hits.riptideSlash.area",
-      )?.[0]?.value,
-    ).toStrictEqual(strikeArea);
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.riptideSlash.area")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([strikeArea]);
   });
 
   test("a cited charged attack variant gives the strikes' targeting area", () => {
     expect.hasAssertions();
-    const strikeArea = createTargetedHitArea(STRIKE_TARGETING_AREA, 3);
+    const strikeArea = { angle: 2 * Math.PI, height: 2, radius: 8 };
     const overlay: KitOverlay = {
       "chargedAttackVariant.hits.0.area": { file: "target.go", line: 4, source: KitSource.Gcsim, value: strikeArea },
     };
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "chargedAttackVariant.hits.0.area",
-      )?.[0]?.value,
-    ).toStrictEqual(strikeArea);
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("chargedAttackVariant.hits.0.area")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([strikeArea]);
   });
 
   test("a cited box centred on the player is priced as the circle to its far corner, as createBoxReach gives", () => {
     expect.hasAssertions();
+    // The circle to the far corner of a box sixteen wide and six long, offset by one: the hypotenuse of five and eight
+    const boxArea = { angle: 2 * Math.PI, height: 2, radius: 9.433981132056603 };
     const overlay: KitOverlay = {
-      "burst.hits.0.area": { file: "box.go", line: 4, source: KitSource.Gcsim, value: createBoxReach(-1, 16, 6) },
+      "burst.hits.0.area": { file: "box.go", line: 4, source: KitSource.Gcsim, value: boxArea },
     };
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "burst.hits.0.area",
-      )?.[0]?.value,
-    ).toStrictEqual(createBoxReach(-1, 16, 6));
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("burst.hits.0.area")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([boxArea]);
   });
 
   test("a cited line of Klee's burst gives the circle of its radius round the player", () => {
@@ -518,10 +513,10 @@ describe("readGcsimCitedCandidates", () => {
       },
     };
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "hits.sparklyExplosion.area",
-      )?.[0]?.value,
-    ).toStrictEqual({ angle, height: 2, radius: 5 });
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.sparklyExplosion.area")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([{ angle, height: 2, radius: 5 }]);
   });
 
   test("a cited line of Qiqi's skill gives the circle of its radius round the player", () => {
@@ -536,10 +531,10 @@ describe("readGcsimCitedCandidates", () => {
       },
     };
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "hits.herald.0.area",
-      )?.[0]?.value,
-    ).toStrictEqual({ angle, height: 2, radius: 2.5 });
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.herald.0.area")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([{ angle, height: 2, radius: 2.5 }]);
   });
 
   test("a cited run of hits whose expression names a constant gives the expression's value at each hit's index", () => {
@@ -548,10 +543,10 @@ describe("readGcsimCitedCandidates", () => {
       "hits.blossom.0-2.poiseDamage": { file: "run.go", line: 5, source: KitSource.Gcsim, value: [100, 124, 148] },
     });
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "hits.blossom.2.poiseDamage",
-      )?.[0]?.value,
-    ).toBe(148);
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.blossom.2.poiseDamage")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([148]);
   });
 
   test("a cited assignment naming the loop's index and a constant gives their sum at each hit's index", () => {
@@ -560,24 +555,24 @@ describe("readGcsimCitedCandidates", () => {
       "hits.blossom.0-2.poiseDamage": { file: "progress.go", line: 5, source: KitSource.Gcsim, value: [20, 21, 22] },
     });
     expect(
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "hits.blossom.1.poiseDamage",
-      )?.[0]?.value,
-    ).toBe(21);
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.blossom.1.poiseDamage")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([21]);
   });
 
   test("a cited assignment of the action's own frame plus a constant gives the sum with the frame at zero", () => {
     expect.hasAssertions();
     const overlay: KitOverlay = { "frames.icd": { file: "icd.go", line: 4, source: KitSource.Gcsim, value: 60 } };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
       "frames.icd",
-    )?.[0];
-    expect(candidate?.value).toBe(60);
-    expect(candidate?.provenance).toStrictEqual({
-      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/icd.go`,
-      line: 4,
-      source: KitSource.Gcsim,
-    });
+    );
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/icd.go`, line: 4, source: KitSource.Gcsim },
+        value: 60,
+      },
+    ]);
   });
 
   test("a cited hitmark on a queue call's line gives the hitmark that call reads, with its block's delay", () => {
@@ -585,15 +580,15 @@ describe("readGcsimCitedCandidates", () => {
     const overlay: KitOverlay = {
       "burst.hits.0.hitmarkFrames": { file: "queued.go", line: 5, source: KitSource.Gcsim, value: 50 },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
       "burst.hits.0.hitmarkFrames",
-    )?.[0];
-    expect(candidate?.value).toBe(50);
-    expect(candidate?.provenance).toStrictEqual({
-      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/queued.go`,
-      line: 5,
-      source: KitSource.Gcsim,
-    });
+    );
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/queued.go`, line: 5, source: KitSource.Gcsim },
+        value: 50,
+      },
+    ]);
   });
 
   test("a cited hitmark on a named hit's line gives the line's own value, not the delay of the tasks around it", () => {
@@ -601,10 +596,11 @@ describe("readGcsimCitedCandidates", () => {
     const overlay: KitOverlay = {
       "hits.x.hitmarkFrames": { file: "named.go", line: 5, source: KitSource.Gcsim, value: 2 },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-      "hits.x.hitmarkFrames",
-    )?.[0];
-    expect(candidate?.value).toBe(2);
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.x.hitmarkFrames")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([2]);
   });
 
   test("a cited hitmark on a line of a multi-line queue call gives the queued hitmark of that call", () => {
@@ -612,21 +608,22 @@ describe("readGcsimCitedCandidates", () => {
     const overlay: KitOverlay = {
       "hits.x.hitmarkFrames": { file: "queueAttackMultiline.go", line: 7, source: KitSource.Gcsim, value: 115 },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-      "hits.x.hitmarkFrames",
-    )?.[0];
-    expect(candidate?.value).toBe(115);
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.x.hitmarkFrames")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([115]);
   });
 
-  test("a cited hitmark on a named hit's queue call that is the queued hitmark gives that hitmark", () => {
+  test("a cited hitmark on a named hit's or an action's hit line that is the queued hitmark gives that hitmark", () => {
     expect.hasAssertions();
     const overlay: KitOverlay = {
       "hits.x.hitmarkFrames": { file: "named.go", line: 5, source: KitSource.Gcsim, value: 115 },
+      "skill.hits.0.hitmarkFrames": { file: "named.go", line: 5, source: KitSource.Gcsim, value: 115 },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-      "hits.x.hitmarkFrames",
-    )?.[0];
-    expect(candidate?.value).toBe(115);
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP);
+    expect(candidates.get("hits.x.hitmarkFrames")?.map(({ value }) => value)).toStrictEqual([115]);
+    expect(candidates.get("skill.hits.0.hitmarkFrames")?.map(({ value }) => value)).toStrictEqual([115]);
   });
 
   test("a cited hitmark on a named hit's queue call that neither value equals gives the queued hitmark first", () => {
@@ -634,36 +631,26 @@ describe("readGcsimCitedCandidates", () => {
     const overlay: KitOverlay = {
       "hits.x.hitmarkFrames": { file: "named.go", line: 5, source: KitSource.Gcsim, value: 999 },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-      "hits.x.hitmarkFrames",
-    )?.[0];
-    expect(candidate?.value).toBe(115);
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP)
+        .get("hits.x.hitmarkFrames")
+        ?.map(({ value }) => value),
+    ).toStrictEqual([115]);
   });
 
-  test("a cited hitmark on an action's hit line gives the hitmark its queue call reads, with the tasks' delay", () => {
-    expect.hasAssertions();
-    const overlay: KitOverlay = {
-      "skill.hits.0.hitmarkFrames": { file: "named.go", line: 5, source: KitSource.Gcsim, value: 115 },
-    };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-      "skill.hits.0.hitmarkFrames",
-    )?.[0];
-    expect(candidate?.value).toBe(115);
-  });
-
-  test("a cited seconds field gives its frames over the frame rate, its frames also offered as a candidate", () => {
+  test("a cited seconds field gives its frames over the frame rate, as the only candidate at its path", () => {
     expect.hasAssertions();
     const overlay: KitOverlay = {
       "skillChain.windowSeconds": { file: "status.go", line: 4, source: KitSource.Gcsim, value: 320 / 60 },
     };
-    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+    const candidates = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
       "skillChain.windowSeconds",
-    )?.[0];
-    expect(candidate?.value).toBe(320 / 60);
-    expect(candidate?.provenance).toStrictEqual({
-      file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/status.go`,
-      line: 4,
-      source: KitSource.Gcsim,
-    });
+    );
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: `${GCSIM_CHARACTERS_PATH}/${FOLDER}/status.go`, line: 4, source: KitSource.Gcsim },
+        value: 5.333333333333333,
+      },
+    ]);
   });
 });

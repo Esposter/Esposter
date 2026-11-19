@@ -78,10 +78,12 @@ describe("readGcsimCitedCandidates table cells", () => {
         createCharacter(TABLE_GO),
         TALENT_GROUP_ID_MAP,
       ).get("normalAttacks.0.hits.0.area") ?? [];
-    expect(candidates[0]).toStrictEqual({
-      provenance: { file: "internal/characters/aino/attack.go", line: 4, source: KitSource.Gcsim },
-      value: { angle: 2 * Math.PI, height: 2, radius: 2.5 },
-    });
+    expect(candidates).toStrictEqual([
+      {
+        provenance: { file: "internal/characters/aino/attack.go", line: 4, source: KitSource.Gcsim },
+        value: { angle: 2 * Math.PI, height: 2, radius: 2.5 },
+      },
+    ]);
   });
 
   test("an index that is neither a literal nor the counter gives no area, so nothing is guessed", () => {

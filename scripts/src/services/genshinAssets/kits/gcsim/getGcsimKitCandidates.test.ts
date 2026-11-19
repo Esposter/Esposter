@@ -6,7 +6,6 @@ import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
-import { GcsimElement } from "#src/models/genshinAssets/kits/gcsim/GcsimElement";
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
@@ -17,13 +16,9 @@ import {
   GCSIM_ROSARIA_FIXTURE_DIRECTORY,
   GCSIM_SARA_FIXTURE_DIRECTORY,
 } from "#src/services/genshinAssets/kits/gcsim/constants.test";
-import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
-import { createCircleReach } from "#src/services/genshinAssets/kits/gcsim/createCircleReach";
-import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
-import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
-import { CombatTalent, Element, InternalCooldownTag, SKILL_TARGETING_AREA, WeaponType } from "genshin-world";
+import { CombatTalent, Element, InternalCooldownTag, WeaponType } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -213,7 +208,7 @@ describe(getGcsimKitCandidates, () => {
     ).toStrictEqual([[2], [40], [1]]);
   });
 
-  test("reads a burst's hits from its queue calls, each at the damage delay its call passes, where it has no hitmark constant", () => {
+  test("reads a burst's hits from its queue calls, each at the damage delay its call passes where it has no hitmark constant, and cites each at its own line", () => {
     expect.hasAssertions();
 
     const gcsim: GcsimCharacter = {
@@ -235,7 +230,7 @@ describe(getGcsimKitCandidates, () => {
       folder: "jean",
       goSources: [],
       holdCooldowns: [],
-      queuedAttacks: [{ attackName: "ai", delay: 55, delayLine: 7, file: "burst.go", lastLine: 7, line: 7 }],
+      queuedAttacks: [{ attackName: "ai", delay: 55, delayLine: 9, file: "burst.go", lastLine: 7, line: 7 }],
       talentArrayMap: new Map(),
       talentFile: "zz_jean.go",
       talentParameterMap: new Map(),
@@ -255,60 +250,11 @@ describe(getGcsimKitCandidates, () => {
     };
     const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
 
-    expect(
-      ["burst.hits.length", "burst.hits.0.hitmarkFrames"].map((path) =>
-        candidateMap.get(path)?.map(({ value }) => value),
-      ),
-    ).toStrictEqual([[1], [55]]);
-  });
-
-  test("cites a burst's hit count at its queue call's line and its hit at the line of the damage delay the call passes", () => {
-    expect.hasAssertions();
-
-    const gcsim: GcsimCharacter = {
-      animationFrameNameMap: new Map(),
-      attacks: [
-        {
-          attackTag: "attacks.AttackTagElementalBurst",
-          fieldLineMap: {},
-          file: "burst.go",
-          line: 6,
-          siteLine: 6,
-          variableName: "ai",
-        },
-      ],
-      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
-      configFile: "config.yml",
-      constantMap: new Map([["burstFrames", { elementLines: {}, file: "burst.go", line: 1, value: 90 }]]),
-      filePaths: [],
-      folder: "jean",
-      goSources: [],
-      holdCooldowns: [],
-      queuedAttacks: [{ attackName: "ai", delay: 92, delayLine: 9, file: "burst.go", lastLine: 7, line: 7 }],
-      talentArrayMap: new Map(),
-      talentFile: "zz_jean.go",
-      talentParameterMap: new Map(),
-      travelMap: new Map(),
-    };
-    const tables: KitTables = {
-      characterId: 0,
-      labelMap: new Map(),
-      name: "Jean",
-      talentGroupIdMap: {
-        [CombatTalent.ElementalBurst]: 0,
-        [CombatTalent.ElementalSkill]: 0,
-        [CombatTalent.NormalAttack]: 0,
-      },
-      talentMultiplierMap: {},
-      weaponType: WeaponType.Sword,
-    };
-    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
-
-    expect(
-      ["burst.hits.length", "burst.hits.0.hitmarkFrames"].map((path) => candidateMap.get(path)?.[0]?.provenance),
-    ).toStrictEqual([
-      { file: "internal/characters/jean/burst.go", line: 7, source: KitSource.Gcsim },
-      { file: "internal/characters/jean/burst.go", line: 9, source: KitSource.Gcsim },
+    expect(candidateMap.get("burst.hits.length")).toStrictEqual([
+      { provenance: { file: "internal/characters/jean/burst.go", line: 7, source: KitSource.Gcsim }, value: 1 },
+    ]);
+    expect(candidateMap.get("burst.hits.0.hitmarkFrames")).toStrictEqual([
+      { provenance: { file: "internal/characters/jean/burst.go", line: 9, source: KitSource.Gcsim }, value: 55 },
     ]);
   });
 
@@ -373,9 +319,9 @@ describe(getGcsimKitCandidates, () => {
     };
     const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
 
-    expect(
-      candidateMap.get("burst.hits.0.area")?.map(({ value }) => (value as { radius: number }).radius),
-    ).toStrictEqual([SKILL_TARGETING_AREA.radius + 8.5]);
+    expect(candidateMap.get("burst.hits.0.area")?.map(({ value }) => value)).toStrictEqual([
+      { angle: 2 * Math.PI, height: 2, radius: 23.5 },
+    ]);
   });
 
   test("reads no single-hit burst's area where two queue calls fire the hit's talent variable, one hit's alternatives", () => {
@@ -951,7 +897,7 @@ describe(getGcsimKitCandidates, () => {
       [InternalCooldownTag.XilonenSkate],
     ]);
     expect(candidateMap.get("stances.blessing.normalAttacks.1.hits.0.area")?.map(({ value }) => value)).toStrictEqual([
-      createBoxReach(-0.5, 5, 3.7),
+      { angle: 2 * Math.PI, height: 2, radius: 4.060788100849391 },
     ]);
   });
 
@@ -1003,7 +949,9 @@ describe(getGcsimKitCandidates, () => {
     expect(valuesAt("stances.blessing.normalAttacks.0.hits.0.hitmarkFrames")).toStrictEqual([30]);
     expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.hitmarkFrames")).toStrictEqual([31]);
     expect(valuesAt("stances.blessing.normalAttacks.1.hits.1.hitmarkFrames")).toStrictEqual([38]);
-    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.area")).toStrictEqual([createCircleReach(0, 0.5)]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.area")).toStrictEqual([
+      { angle: 2 * Math.PI, height: 2, radius: 0.5 },
+    ]);
     expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.multiplier")).toStrictEqual([
       { index: 0, proudSkillGroupId: 2 },
     ]);
@@ -1075,14 +1023,14 @@ describe(getGcsimKitCandidates, () => {
       [147],
       [103],
       [{ index: 1, proudSkillGroupId: 1 }],
-      [GcsimElementMap[GcsimElement.Anemo]],
+      [Element.Anemo],
       [{ index: 2, proudSkillGroupId: 1 }],
       undefined,
       [1],
       [InternalCooldownTag.ChascaBurst],
       [InternalCooldownTag.ChascaBurst],
     ]);
-    expect(valuesAt("hits.soulseekerShell.area")).toStrictEqual([createTargetedHitArea(SKILL_TARGETING_AREA, 6)]);
+    expect(valuesAt("hits.soulseekerShell.area")).toStrictEqual([{ angle: 2 * Math.PI, height: 2, radius: 21 }]);
   });
 
   test("gives a cloud its explosion on the target and its timings as frames, its first hit landing after its travel", () => {
@@ -1131,7 +1079,7 @@ describe(getGcsimKitCandidates, () => {
       valuesAt("hits.cloud.hitmarkFrames"),
       valuesAt("hits.cloud.multiplier"),
     ]).toStrictEqual([[30], [18], [45], [18], [{ index: 0, proudSkillGroupId: 2 }]]);
-    expect(valuesAt("hits.cloud.area")).toStrictEqual([createTargetedHitArea(SKILL_TARGETING_AREA, 4)]);
+    expect(valuesAt("hits.cloud.area")).toStrictEqual([{ angle: 2 * Math.PI, height: 2, radius: 19 }]);
   });
 
   test("gives Fiery Passion's skill the rush's frames and multiplier, and its flying kick the burst variant's", () => {

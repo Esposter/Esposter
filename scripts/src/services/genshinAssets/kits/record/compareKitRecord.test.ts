@@ -80,7 +80,12 @@ describe(compareKitRecord, () => {
         new Map(),
         tables,
       ),
-    ).toStrictEqual({ failures: [expect.stringContaining("which character 1 lacks")], overlay: {} });
+    ).toStrictEqual({
+      failures: [
+        "Invalid operation: Read, name: burstVariant.hits.0.poiseDamage, borrows burstVariant.hits.0.poiseDamage, which character 1 lacks",
+      ],
+      overlay: {},
+    });
   });
 
   test("leaves no entry for a plunge path its donor stands in at, so the wiki value the build reads is reported", () => {
@@ -135,6 +140,6 @@ describe(compareKitRecord, () => {
       tables,
     );
 
-    expect(Object.keys(overlay).filter((path) => path.endsWith(".isBlunt"))).toStrictEqual([]);
+    expect(overlay).toStrictEqual({});
   });
 });

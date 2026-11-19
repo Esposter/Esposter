@@ -15,6 +15,8 @@ describe("gcsimInternalCooldownTagMap", () => {
       (match) => match.groups?.name,
     ).filter((name): name is string => name !== undefined && name !== "None");
 
+    // The enum's size is gcsim's, not the map's, so only that the pattern found a tag is pinned: an empty match would pass
+    // the check below vacuously
     expect(gcsimTags.length).toBeGreaterThan(0);
     const unmappedTags = gcsimTags.filter(
       (name) => !(`${GCSIM_COOLDOWN_TAG_PREFIX}${name}` in GcsimInternalCooldownTagMap),

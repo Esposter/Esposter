@@ -110,14 +110,14 @@ describe(addGcsimChargedAttackCandidates, () => {
     );
     addGcsimChargedAttackVariantCandidates(createGcsimKitCandidateWriter(candidateMap, gcsim, tables), gcsim);
 
-    const valueOf = (path: string) => candidateMap.get(path)?.[0]?.value;
-    expect(valueOf("chargedAttackVariant.hits.length")).toBe(1);
-    expect(valueOf("chargedAttackVariant.animationFrames")).toBe(33);
-    expect(valueOf("chargedAttackVariant.hits.0.hitmarkFrames")).toBe(25);
-    expect(valueOf("chargedAttackVariant.hits.0.element")).toBe("Electric");
-    expect(valueOf("chargedAttackVariant.hits.0.gauge")).toBe(1);
-    expect(valueOf("chargedAttackVariant.hits.0.poiseDamage")).toBe(120);
-    expect(valueOf("chargedAttackVariant.hits.0.multiplier")).toStrictEqual({ index: 4, proudSkillGroupId: 11031 });
+    const valuesAt = (path: string) => candidateMap.get(path)?.map(({ value }) => value);
+    expect(valuesAt("chargedAttackVariant.hits.length")).toStrictEqual([1]);
+    expect(valuesAt("chargedAttackVariant.animationFrames")).toStrictEqual([33]);
+    expect(valuesAt("chargedAttackVariant.hits.0.hitmarkFrames")).toStrictEqual([25]);
+    expect(valuesAt("chargedAttackVariant.hits.0.element")).toStrictEqual(["Electric"]);
+    expect(valuesAt("chargedAttackVariant.hits.0.gauge")).toStrictEqual([1]);
+    expect(valuesAt("chargedAttackVariant.hits.0.poiseDamage")).toStrictEqual([120]);
+    expect(valuesAt("chargedAttackVariant.hits.0.multiplier")).toStrictEqual([{ index: 4, proudSkillGroupId: 11031 }]);
   });
 
   test("a charged attack with no hitmark constant takes no queue call the variant claims, even where its own call has no delay", () => {
@@ -143,8 +143,8 @@ describe(addGcsimChargedAttackCandidates, () => {
       fallbackGcsim,
     );
 
-    const valueOf = (path: string) => candidateMap.get(path)?.[0]?.value;
-    expect(valueOf("chargedAttack.hits.length")).toBeUndefined();
-    expect(valueOf("chargedAttackVariant.hits.0.hitmarkFrames")).toBe(25);
+    const valuesAt = (path: string) => candidateMap.get(path)?.map(({ value }) => value);
+    expect(valuesAt("chargedAttack.hits.length")).toBeUndefined();
+    expect(valuesAt("chargedAttackVariant.hits.0.hitmarkFrames")).toStrictEqual([25]);
   });
 });

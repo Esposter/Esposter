@@ -107,57 +107,35 @@ describe(getKitHitLabelMap, () => {
     );
   });
 
-  test("takes a skill's label from its overlay's multiplier over its gcsim candidate's, where both give one", () => {
-    expect.hasAssertions();
+  test.each(["skill", "burst"])(
+    "takes a %s hit's label from its overlay's multiplier over its gcsim candidate's, where both give one",
+    (talent) => {
+      expect.hasAssertions();
 
-    const candidateMap = new Map<string, KitCandidate[]>([
-      [
-        "skill.hits.0.multiplier",
+      const path = `${talent}.hits.0`;
+      const candidateMap = new Map<string, KitCandidate[]>([
         [
-          {
-            provenance: { file: "skill.go", line: 1, source: KitSource.Gcsim },
-            value: { index: 0, proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID },
-          },
+          `${path}.multiplier`,
+          [
+            {
+              provenance: { file: `${talent}.go`, line: 1, source: KitSource.Gcsim },
+              value: { index: 0, proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID },
+            },
+          ],
         ],
-      ],
-    ]);
-    const overlay: KitOverlay = {
-      "skill.hits.0.multiplier": {
-        cause: KitProvisionalCause.Unclassified,
-        value: { index: 1, proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID },
-      },
-    };
+      ]);
+      const overlay: KitOverlay = {
+        [`${path}.multiplier`]: {
+          cause: KitProvisionalCause.Unclassified,
+          value: { index: 1, proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID },
+        },
+      };
 
-    expect(getKitHitLabelMap(candidateMap, createTables(pressAndHoldLabelMap), overlay)).toStrictEqual(
-      new Map([["skill.hits.0", { label: "Hold DMG", proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID }]]),
-    );
-  });
-
-  test("labels a burst hit by its overlay's multiplier where that differs from its gcsim candidate's", () => {
-    expect.hasAssertions();
-
-    const candidateMap = new Map<string, KitCandidate[]>([
-      [
-        "burst.hits.0.multiplier",
-        [
-          {
-            provenance: { file: "burst.go", line: 1, source: KitSource.Gcsim },
-            value: { index: 0, proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID },
-          },
-        ],
-      ],
-    ]);
-    const overlay: KitOverlay = {
-      "burst.hits.0.multiplier": {
-        cause: KitProvisionalCause.Unclassified,
-        value: { index: 1, proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID },
-      },
-    };
-
-    expect(getKitHitLabelMap(candidateMap, createTables(pressAndHoldLabelMap), overlay)).toStrictEqual(
-      new Map([["burst.hits.0", { label: "Hold DMG", proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID }]]),
-    );
-  });
+      expect(getKitHitLabelMap(candidateMap, createTables(pressAndHoldLabelMap), overlay)).toStrictEqual(
+        new Map([[path, { label: "Hold DMG", proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID }]]),
+      );
+    },
+  );
 
   test("takes no label for a burst hit at or past the length its list's overlay sets", () => {
     expect.hasAssertions();

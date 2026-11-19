@@ -46,9 +46,9 @@ describe(seedKitOverlay, () => {
       "frames.burstDuration": { cause: KitProvisionalCause.Unclassified, value: 70 },
     };
     writeJsonFile(savedPath, seedKitOverlay(COMMITTED, seeded));
-    const saved = readFileSync(savedPath, "utf8");
-    expect(saved).toContain('"frames.burstDuration"');
-    expect(saved).toContain('"hits.fatalBlossoms.0-6.hitmarkFrames"');
-    expect(saved).not.toContain('"index"');
+    expect(parseMachineJson(readFileSync(savedPath, "utf8"))).toStrictEqual({
+      ...COMMITTED,
+      "frames.burstDuration": { cause: KitProvisionalCause.Unclassified, value: 70 },
+    });
   });
 });

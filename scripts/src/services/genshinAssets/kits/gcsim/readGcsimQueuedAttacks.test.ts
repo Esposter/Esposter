@@ -303,36 +303,44 @@ describe(readGcsimQueuedAttacks, () => {
     );
   });
 
-  test("repeats a queue call in a loop bounded by a local a constellation branch raises, once per value at the base bound", () => {
-    expect.hasAssertions();
+  test.each([
+    ["at the base bound", undefined, [5, 9, 13]],
+    ["up to a constellation's value", 4, [5, 9, 13, 17]],
+  ])(
+    "repeats a queue call in a loop bounded by a local a constellation branch raises, once per value %s",
+    (_bound, constellation, expected) => {
+      expect.hasAssertions();
 
-    const sources = [
-      {
-        path: "burst.go",
-        source: [
-          GO_PACKAGE_CLAUSE,
-          "",
-          "func (c *char) burst() {",
-          "\tc.QueueCharTask(func() {",
-          "\t\tmaxDuration := 10",
-          "\t\tif c.Base.Cons >= 4 {",
-          "\t\t\tmaxDuration = 14",
-          "\t\t}",
-          "\t\tfor delay := 0; delay <= maxDuration; delay += 4 {",
-          "\t\t\tc.Core.Tasks.Add(func() {",
-          "\t\t\t\tc.Core.QueueAttackWithSnap(burstHit, snap, ap, 0)",
-          "\t\t\t}, delay)",
-          "\t\t}",
-          "\t}, 5)",
-          "}",
-        ].join("\n"),
-      },
-    ];
+      const sources = [
+        {
+          path: "burst.go",
+          source: [
+            GO_PACKAGE_CLAUSE,
+            "",
+            "func (c *char) burst() {",
+            "\tc.QueueCharTask(func() {",
+            "\t\tmaxDuration := 10",
+            "\t\tif c.Base.Cons >= 4 {",
+            "\t\t\tmaxDuration = 14",
+            "\t\t}",
+            "\t\tfor delay := 0; delay <= maxDuration; delay += 4 {",
+            "\t\t\tc.Core.Tasks.Add(func() {",
+            "\t\t\t\tc.Core.QueueAttackWithSnap(burstHit, snap, ap, 0)",
+            "\t\t\t}, delay)",
+            "\t\t}",
+            "\t}, 5)",
+            "}",
+          ].join("\n"),
+        },
+      ];
 
-    expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
-    ).toStrictEqual([5, 9, 13]);
-  });
+      expect(
+        readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG, constellation).map(
+          ({ delay }) => delay,
+        ),
+      ).toStrictEqual(expected);
+    },
+  );
 
   test("reads a loop whose step is a local a call gives as its first iteration alone, its variable at the initial value", () => {
     expect.hasAssertions();
@@ -358,37 +366,6 @@ describe(readGcsimQueuedAttacks, () => {
     expect(
       readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
     ).toStrictEqual([9]);
-  });
-
-  test("repeats a queue call at a constellation in a loop bounded by a local the constellation branch raises, up to that constellation's value", () => {
-    expect.hasAssertions();
-
-    const sources = [
-      {
-        path: "burst.go",
-        source: [
-          GO_PACKAGE_CLAUSE,
-          "",
-          "func (c *char) burst() {",
-          "\tc.QueueCharTask(func() {",
-          "\t\tmaxDuration := 10",
-          "\t\tif c.Base.Cons >= 4 {",
-          "\t\t\tmaxDuration = 14",
-          "\t\t}",
-          "\t\tfor delay := 0; delay <= maxDuration; delay += 4 {",
-          "\t\t\tc.Core.Tasks.Add(func() {",
-          "\t\t\t\tc.Core.QueueAttackWithSnap(burstHit, snap, ap, 0)",
-          "\t\t\t}, delay)",
-          "\t\t}",
-          "\t}, 5)",
-          "}",
-        ].join("\n"),
-      },
-    ];
-
-    expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG, 4).map(({ delay }) => delay),
-    ).toStrictEqual([5, 9, 13, 17]);
   });
 
   test("reads a parameter's delay from each call's argument, and none where a caller's argument is a local a branch may change", () => {
@@ -748,7 +725,7 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
-  test("repeats a queue call in a loop ranging over a constant slice once per element, with the element as its delay", () => {
+  test("repeats a queue call in a loop ranging over a constant slice once per element, with the element as its delay and the index and element as its iterations", () => {
     expect.hasAssertions();
 
     const sources = [
@@ -775,30 +752,6 @@ describe(readGcsimQueuedAttacks, () => {
       ["aiCopy", 128, 7],
       ["aiCopy", 140, 7],
     ]);
-  });
-
-  test("gives each call a constant loop repeats the loop's variables as its iterations, the index and element of a slice", () => {
-    expect.hasAssertions();
-
-    const sources = [
-      {
-        path: "burst.go",
-        source: [
-          GO_PACKAGE_CLAUSE,
-          "",
-          "var burstHitmarks = []int{112, 112 + 16, 112 + 16 + 12}",
-          "",
-          "func (c *char) burst() {",
-          "\tfor i, delay := range burstHitmarks {",
-          "\t\tc.QueueCharTask(func() { c.Core.QueueAttack(aiCopy, ap, 0, 0) }, delay)",
-          "\t}",
-          "}",
-        ].join("\n"),
-      },
-    ];
-
-    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG);
-
     expect(queuedAttacks.map(({ iterations }) => iterations)).toStrictEqual([
       { delay: 112, i: 0 },
       { delay: 128, i: 1 },

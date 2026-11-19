@@ -57,13 +57,17 @@ describe(readGcsimConfig, () => {
       },
       { leaves: [createLeaf([], "Pyronado DMG", GcsimTalentType.Burst)], line: 30, name: "pyronadoSpin" },
     ]);
-    expect(abilityHitboxesMap.get("attack")?.[0]).toStrictEqual({
-      box: [1.2, 3],
-      center: GcsimHitboxCenter.Player,
-      line: 50,
-      name: "N1",
-      shape: GcsimHitboxShape.Box,
-    });
+    expect(abilityHitboxesMap.get("attack")).toStrictEqual([
+      { box: [1.2, 3], center: GcsimHitboxCenter.Player, line: 50, name: "N1", shape: GcsimHitboxShape.Box },
+      { box: [1.6, 3.3], center: GcsimHitboxCenter.Player, line: 56, name: "N2", shape: GcsimHitboxShape.Box },
+      { box: [1.6, 3.3], center: GcsimHitboxCenter.Player, line: 62, name: "N3-1", shape: GcsimHitboxShape.Box },
+      { box: [1.2, 3.3], center: GcsimHitboxCenter.Player, line: 68, name: "N3-2", shape: GcsimHitboxShape.Box },
+      { box: [1.2, 3.3], center: GcsimHitboxCenter.Player, line: 74, name: "N4-1", shape: GcsimHitboxShape.Box },
+      { box: [1.2, 3.3], center: GcsimHitboxCenter.Player, line: 80, name: "N4-2", shape: GcsimHitboxShape.Box },
+      { box: [1.2, 3.3], center: GcsimHitboxCenter.Player, line: 86, name: "N4-3", shape: GcsimHitboxShape.Box },
+      { box: [1.2, 3.3], center: GcsimHitboxCenter.Player, line: 92, name: "N4-4", shape: GcsimHitboxShape.Box },
+      { box: [1.6, 3.3], center: GcsimHitboxCenter.Player, line: 98, name: "N5", shape: GcsimHitboxShape.Box },
+    ]);
     expect(abilityHitboxesMap.get("charge")).toStrictEqual([
       { center: GcsimHitboxCenter.PrimaryTarget, line: 107, name: "CA", radius: 0.8, shape: GcsimHitboxShape.Circle },
     ]);

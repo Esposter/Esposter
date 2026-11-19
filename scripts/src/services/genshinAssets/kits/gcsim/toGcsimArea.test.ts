@@ -21,16 +21,16 @@ describe(toGcsimArea, () => {
     expect.hasAssertions();
 
     expect(toGcsimArea(targetCircle({ offset: [0, 1] }), SKILL_TARGETING_AREA)).toStrictEqual({
-      area: { angle: 2 * Math.PI, height: 2, radius: SKILL_TARGETING_AREA.radius + 1 + 7.5 },
+      area: { angle: 2 * Math.PI, height: 2, radius: 23.5 },
       cause: KitProvisionalCause.TargetCentred,
     });
   });
 
-  test("prices a circle on the target with no offset as before, from the targeting zone's edge", () => {
+  test("prices a circle on the target with no offset from the targeting zone's edge", () => {
     expect.hasAssertions();
 
     expect(toGcsimArea(targetCircle({}), SKILL_TARGETING_AREA)).toStrictEqual({
-      area: { angle: 2 * Math.PI, height: 2, radius: SKILL_TARGETING_AREA.radius + 7.5 },
+      area: { angle: 2 * Math.PI, height: 2, radius: 22.5 },
       cause: KitProvisionalCause.TargetCentred,
     });
   });

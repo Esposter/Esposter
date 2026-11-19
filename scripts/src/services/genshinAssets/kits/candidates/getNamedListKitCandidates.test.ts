@@ -27,21 +27,7 @@ describe(getNamedListKitCandidates, () => {
     ]);
 
     expect(getNamedListKitCandidates(valueMap, talentGroupIdMap)).toStrictEqual(
-      new Map([
-        [
-          "burst.hits.length",
-          [
-            {
-              provenance: {
-                cause: KitProvisionalCause.NamedHitList,
-                rule: KitRule.NamedHitList,
-                source: KitSource.Rule,
-              },
-              value: 0,
-            },
-          ],
-        ],
-      ]),
+      new Map([["burst.hits.length", [{ provenance: namedListProvenance, value: 0 }]]]),
     );
   });
 

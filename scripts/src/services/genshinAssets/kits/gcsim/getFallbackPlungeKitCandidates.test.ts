@@ -9,7 +9,6 @@ import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { KitProvisionalCause } from "#src/models/shared/KitProvisionalCause";
 import { GCSIM_CHARACTERS_PATH } from "#src/services/genshinAssets/kits/constants";
-import { createCircleReach } from "#src/services/genshinAssets/kits/gcsim/createCircleReach";
 import { getFallbackPlungeKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getFallbackPlungeKitCandidates";
 import { CombatTalent, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
@@ -118,8 +117,10 @@ describe(getFallbackPlungeKitCandidates, () => {
       collisionArea: candidateMap.get("plungeCollision.area"),
       lowArea: candidateMap.get("plunges.low.hits.0.area"),
     }).toStrictEqual({
-      collisionArea: [{ provenance: { ...noActionFile, line: 6 }, value: createCircleReach(1, 1) }],
-      lowArea: [{ provenance: { ...noActionFile, line: 5 }, value: createCircleReach(1, 3) }],
+      collisionArea: [
+        { provenance: { ...noActionFile, line: 6 }, value: { angle: 2 * Math.PI, height: 2, radius: 2 } },
+      ],
+      lowArea: [{ provenance: { ...noActionFile, line: 5 }, value: { angle: 2 * Math.PI, height: 2, radius: 4 } }],
     });
   });
 });
