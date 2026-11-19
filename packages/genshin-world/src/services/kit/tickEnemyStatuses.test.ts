@@ -1,6 +1,7 @@
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -26,7 +27,7 @@ describe(tickEnemyStatuses, () => {
     addEnemyStatus(enemy, { ...baseStatus });
 
     expect(tickCounts).toStrictEqual([0, 1, 2]);
-    expect(enemy.statuses[0]?.nextTickSeconds).toBe(0.5);
+    expect(enemy.statuses).toStrictEqual([{ ...baseStatus, nextTickSeconds: 0.5 }]);
   });
 
   test("a status that has run out falls due no more", () => {
@@ -47,6 +48,12 @@ describe(tickEnemyStatuses, () => {
     const outbox: KitEvent[] = [];
     for (let step = 0; step < 300; step++) tickEnemyStatuses([enemy], FIXED_STEP_SECONDS, outbox);
 
-    expect(outbox).toHaveLength(1);
+    expect(outbox).toStrictEqual([
+      {
+        enemy,
+        kind: KitEventKind.StatusTicked,
+        status: { damageTakenBonus: 0, id: "", nextTickSeconds: 100, secondsRemaining: 100, tickIntervalSeconds: 100 },
+      },
+    ]);
   });
 });

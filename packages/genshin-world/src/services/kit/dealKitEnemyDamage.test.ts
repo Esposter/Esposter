@@ -69,14 +69,14 @@ describe(dealKitEnemyDamage, () => {
     expect.hasAssertions();
     const { bursts, context, striker } = createNatlanTeam();
     dealKitEnemyDamage(createSturdyEnemy(), { damage: 100, poiseDamage: 0 }, false, striker, context);
-    expect(bursts).toHaveLength(0);
+    expect(bursts).toStrictEqual([]);
   });
 
   test("elemental damage that deals no health sets off no Nightsoul burst", () => {
     expect.hasAssertions();
     const { bursts, context, striker } = createNatlanTeam();
     dealKitEnemyDamage(createSturdyEnemy(), { damage: 0, poiseDamage: 0 }, true, striker, context);
-    expect(bursts).toHaveLength(0);
+    expect(bursts).toStrictEqual([]);
   });
 
   test("elemental damage a shield takes whole sets off the team's Nightsoul burst", () => {
@@ -84,7 +84,7 @@ describe(dealKitEnemyDamage, () => {
     const { bursts, context, striker } = createNatlanTeam();
     const enemy = { ...createSturdyEnemy(), shield: { health: 2, maxHealth: 2 } };
     dealKitEnemyDamage(enemy, { damage: 1, poiseDamage: 0 }, true, striker, context);
-    expect(bursts).toHaveLength(1);
+    expect(bursts).toStrictEqual([{ enemy, kind: KitEventKind.NightsoulBurst, striker }]);
   });
 
   test("elemental damage on an enemy already Dead sets off no Nightsoul burst", () => {
@@ -92,14 +92,14 @@ describe(dealKitEnemyDamage, () => {
     const { bursts, context, striker } = createNatlanTeam();
     const enemy = { ...createSturdyEnemy(), health: 0, state: EnemyState.Dead };
     dealKitEnemyDamage(enemy, { damage: 100, poiseDamage: 0 }, true, striker, context);
-    expect(bursts).toHaveLength(0);
+    expect(bursts).toStrictEqual([]);
   });
 
   test("damage no party member dealt sets off no Nightsoul burst", () => {
     expect.hasAssertions();
     const { bursts, context } = createNatlanTeam();
     dealKitEnemyDamage(createSturdyEnemy(), { damage: 100, poiseDamage: 0 }, true, undefined, context);
-    expect(bursts).toHaveLength(0);
+    expect(bursts).toStrictEqual([]);
   });
 
   test("a defeated enemy's energy drops fly to the party", () => {

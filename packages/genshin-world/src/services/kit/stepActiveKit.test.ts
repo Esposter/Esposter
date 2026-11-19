@@ -215,10 +215,10 @@ describe(stepActiveKit, () => {
     const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
     stepActiveKit(createKitState(), { ...IDLE_INPUT, isSkillPressed: true }, 0.1, context, createControls());
 
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      characterId: TRAVELER_CHARACTER_ID,
-      kind: KitEventKind.SkillUsed,
-    });
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
+      { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: undefined },
+      { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed },
+    ]);
   });
 
   test("sends the team's kits a skill as it starts, for a press that ends the state the skill holds", () => {
@@ -232,10 +232,10 @@ describe(stepActiveKit, () => {
     const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, kit)]);
     stepActiveKit(createKitState(), { ...IDLE_INPUT, isSkillPressed: true }, 0.1, context, createControls());
 
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      characterId: TRAVELER_CHARACTER_ID,
-      kind: KitEventKind.SkillUsed,
-    });
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
+      { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: undefined },
+      { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed },
+    ]);
   });
 
   test("sends the team's kits a charged attack that lands, with the action it landed", () => {
@@ -249,10 +249,9 @@ describe(stepActiveKit, () => {
     stepActiveKit(kitState, { ...IDLE_INPUT, isAttackHeld: true }, 2, context, controls);
     stepActiveKit(kitState, IDLE_INPUT, 1, context, controls);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      action: TRAVELER_KIT.chargedAttack,
-      kind: KitEventKind.ChargedAttackLanded,
-    });
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.ChargedAttackLanded),
+    ).toStrictEqual([{ action: TRAVELER_KIT.chargedAttack, kind: KitEventKind.ChargedAttackLanded }]);
   });
 
   test("hands a burst's start a copy of the body, so a field it casts keeps the place it began from", () => {
@@ -275,7 +274,7 @@ describe(stepActiveKit, () => {
     const castX = position.x;
     position.x += 10;
 
-    expect(startBodies[0]?.position.x).toBe(castX);
+    expect(startBodies.map(({ position }) => position.x)).toStrictEqual([castX]);
   });
 
   test("sends the team's kits each change to a member's HP since the last step, once", () => {
@@ -415,7 +414,7 @@ describe(stepActiveKit, () => {
     const context = createContext([createKitCombatant(BEIDOU_CHARACTER_ID, BEIDOU_KIT)]);
     BEIDOU_KIT.elementalBurst.onStart?.(context);
 
-    expect(context.kitEffectState.effects).toHaveLength(1);
+    expect(context.kitEffectState.effects.map(({ kind }) => kind)).toStrictEqual(["summon"]);
 
     damagePartyMember(context.party, BEIDOU_CHARACTER_ID, 1);
     const kitState = createKitState();

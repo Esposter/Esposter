@@ -70,14 +70,13 @@ describe(strikeLunarChargedCloud, () => {
     const electroCharged = createChargedEnemy(0, false);
     const context = createContext([near, far, electroCharged]);
     startPartyLunarReactions(context.party, [{ reactionType: ReactionType.LunarCharged }]);
-    const nearHealths = Array.from({ length: 3 }, () => {
+    const isStruck = Array.from({ length: 3 }, () => {
+      const { health } = near;
       strikeLunarChargedCloud(STEP_SECONDS, { x: 0, z: 0 }, context);
-      return near.health;
+      return near.health !== health;
     });
 
-    expect(nearHealths[0]).toBe(STURDY_HEALTH);
-    expect(nearHealths[1]).toBeLessThan(STURDY_HEALTH);
-    expect(nearHealths[2]).toBe(nearHealths[1]);
+    expect(isStruck).toStrictEqual([false, true, false]);
     expect([far.health, electroCharged.health]).toStrictEqual([STURDY_HEALTH, STURDY_HEALTH]);
     expect(context.party.lunarChargedCloud.secondsRemaining).toBeCloseTo(
       LUNAR_CHARGED_CLOUD_SECONDS - 3 * STEP_SECONDS,
@@ -90,11 +89,13 @@ describe(strikeLunarChargedCloud, () => {
     const near = createChargedEnemy(8.4, true);
     const context = createContext([near]);
     startPartyLunarReactions(context.party, [{ reactionType: ReactionType.LunarCharged }]);
-    for (let frame = 0; frame < 8; frame++) strikeLunarChargedCloud(FIXED_STEP_SECONDS, { x: 0, z: 0 }, context);
-    expect(near.health).toBe(STURDY_HEALTH);
+    const isStruck = Array.from({ length: 9 }, () => {
+      const { health } = near;
+      strikeLunarChargedCloud(FIXED_STEP_SECONDS, { x: 0, z: 0 }, context);
+      return near.health !== health;
+    });
 
-    strikeLunarChargedCloud(FIXED_STEP_SECONDS, { x: 0, z: 0 }, context);
-    expect(near.health).toBeLessThan(STURDY_HEALTH);
+    expect(isStruck).toStrictEqual([false, false, false, false, false, false, false, false, true]);
   });
 
   test("ends its 5.5 seconds on the 330th frame of a sixtieth of a second, not a frame later", () => {

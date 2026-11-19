@@ -211,7 +211,7 @@ describe(landReactionReach, () => {
   test.each([
     [Element.Pyro, AuraType.Pyro, true],
     [Element.Hydro, AuraType.Hydro, false],
-  ])("spreads a %s Swirl's element at its gauge, dealing its damage: %s", (element, auraType, isDealt) => {
+  ])("spreads a %s Swirl's %s aura at its gauge, dealing its damage: %s", (element, auraType, isDealt) => {
     expect.hasAssertions();
 
     const origin = createSturdyEnemy(0);

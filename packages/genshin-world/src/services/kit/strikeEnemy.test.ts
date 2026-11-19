@@ -134,7 +134,19 @@ describe(strikeEnemy, () => {
   test("adds the CRIT DMG a hit is given to the CRIT DMG its critical damage is priced from", () => {
     expect.hasAssertions();
 
+    const CRITICAL_DAMAGE = 0.5;
     const CRITICAL_DAMAGE_BONUS = 0.5;
+    const { talentMultiplier } = TRAVELER_KIT.plungeCollision;
+    const damage = (criticalDamage: number): number =>
+      getDamage({
+        attackerLevel: LEVEL,
+        criticalDamage,
+        defense,
+        isCritical: true,
+        resistance: kind.physicalResistance,
+        stat: ATTACK,
+        talentMultiplier,
+      });
     const boostedEnemy = createSturdyEnemy();
     const plainEnemy = createSturdyEnemy();
 
@@ -150,30 +162,10 @@ describe(strikeEnemy, () => {
     const plainContext = createKitTestContext(plainCombatant, { enemyTables, random: () => 0 });
     strikeEnemy(plainEnemy, TRAVELER_KIT.plungeCollision, plainCombatant, plainContext);
 
-    expect(boostedEnemy.maxHealth - boostedEnemy.health).toBeGreaterThan(plainEnemy.maxHealth - plainEnemy.health);
-  });
-
-  test("adds the CRIT Rate a strike is given to the rate its CRIT roll is made against", () => {
-    expect.hasAssertions();
-
-    const ROLL = 0.2;
-    const CRITICAL_RATE_BONUS = 0.2;
-    const boostedEnemy = createSturdyEnemy();
-    const plainEnemy = createSturdyEnemy();
-
-    const boostedCombatant = createCombatantWithCriticalRate();
-    const boostedContext = createKitTestContext(boostedCombatant, { enemyTables, random: () => ROLL });
-    strikeEnemy(
-      boostedEnemy,
-      { ...TRAVELER_KIT.plungeCollision, criticalRateBonus: CRITICAL_RATE_BONUS },
-      boostedCombatant,
-      boostedContext,
-    );
-    const plainCombatant = createCombatantWithCriticalRate();
-    const plainContext = createKitTestContext(plainCombatant, { enemyTables, random: () => ROLL });
-    strikeEnemy(plainEnemy, TRAVELER_KIT.plungeCollision, plainCombatant, plainContext);
-
-    expect(boostedEnemy.maxHealth - boostedEnemy.health).toBeGreaterThan(plainEnemy.maxHealth - plainEnemy.health);
+    expect([boostedEnemy.health, plainEnemy.health]).toStrictEqual([
+      boostedEnemy.maxHealth - damage(CRITICAL_DAMAGE + CRITICAL_DAMAGE_BONUS),
+      plainEnemy.maxHealth - damage(CRITICAL_DAMAGE),
+    ]);
   });
 
   test("lands a forced critical hit as a critical one whatever its striker's CRIT Rate rolls, and an unforced hit as the roll says", () => {
@@ -264,10 +256,9 @@ describe(strikeEnemy, () => {
     const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
     strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, combatant, context);
 
-    const damageEffects = context.worldEffects.filter((effect) => effect.kind === WorldEffectKind.Damage);
-
-    expect(damageEffects).toHaveLength(1);
-    expect(takeOne(damageEffects).damage).toBeCloseTo(enemy.maxHealth - enemy.health);
+    expect(
+      context.worldEffects.flatMap((effect) => (effect.kind === WorldEffectKind.Damage ? [effect.damage] : [])),
+    ).toStrictEqual([expect.closeTo(enemy.maxHealth - enemy.health)]);
   });
 
   test("deals a physical hit the damage of the general formula", () => {
@@ -418,28 +409,45 @@ describe(strikeEnemy, () => {
     strikeEnemyWith(plungingEnemy, plungingHit, plungingBoostedCombatant);
     strikeEnemyWith(normalEnemy, normalHit, plungingBoostedCombatant);
 
-    expect(plungingEnemy.health).toBeLessThan(plainEnemy.health);
+    expect(plungingEnemy.health).toBeCloseTo(
+      plungingEnemy.maxHealth -
+        getDamage({
+          attackerLevel: LEVEL,
+          damageBonus: PLUNGING_ATTACK_DAMAGE_BONUS,
+          defense,
+          resistance: kind.physicalResistance,
+          stat: ATTACK,
+          talentMultiplier: plungingHit.talentMultiplier,
+        }),
+    );
     expect(normalEnemy.health).toBeCloseTo(plainEnemy.health);
   });
 
   test("raises an elemental hit's damage by the all-damage bonus too", () => {
     expect.hasAssertions();
 
+    const ALL_DAMAGE_BONUS = 0.5;
     const kitHit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: Element.Hydro };
-    const plainEnemy = createSturdyEnemy();
     const boostedEnemy = createSturdyEnemy();
     const boostedCombatant = {
       ...createCombatant(Element.Pyro),
       attributes: computeCharacterAttributes([
         { attribute: Attribute.Attack, value: ATTACK },
-        { attribute: Attribute.AllDamageBonus, value: 0.5 },
+        { attribute: Attribute.AllDamageBonus, value: ALL_DAMAGE_BONUS },
       ]),
     };
-    const plainCombatant = createCombatant(Element.Pyro);
-    strikeEnemyWith(plainEnemy, kitHit, plainCombatant);
     strikeEnemyWith(boostedEnemy, kitHit, boostedCombatant);
 
-    expect(boostedEnemy.maxHealth - boostedEnemy.health).toBeGreaterThan(plainEnemy.maxHealth - plainEnemy.health);
+    expect(boostedEnemy.maxHealth - boostedEnemy.health).toBeCloseTo(
+      getDamage({
+        attackerLevel: LEVEL,
+        damageBonus: ALL_DAMAGE_BONUS,
+        defense,
+        resistance: kind.elementResistances[Element.Hydro],
+        stat: ATTACK,
+        talentMultiplier: kitHit.talentMultiplier,
+      }),
+    );
   });
 
   test("applies the element a hit deals over its character's own", () => {

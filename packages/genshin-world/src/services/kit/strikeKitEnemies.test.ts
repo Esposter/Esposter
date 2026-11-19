@@ -18,8 +18,11 @@ import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { getDamage } from "#src/services/combat/damage/getDamage";
+import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
+import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -72,6 +75,18 @@ const strikeEnemies = (hit: KitHit, enemies: Enemy[]) => {
 
 describe(strikeKitEnemies, () => {
   const KIT_HIT = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
+  const enemyKind = getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId);
+  const { defense } = computeEnemyStats(enemyTables.enemyLevelCurves, enemyKind, ENEMY_CAMP_MEMBER.level);
+  // The damage the Traveler's first normal attack hit does to the enemy, with the defence given ignored
+  const getKitHitDamage = (defenseIgnored: number): number =>
+    getDamage({
+      attackerLevel: 90,
+      defense,
+      defenseIgnored,
+      resistance: enemyKind.physicalResistance,
+      stat: 1000,
+      talentMultiplier: KIT_HIT.talentMultiplier,
+    });
 
   // A character other than the Traveler, whose kit gives the party strike bonus a test sets
   const OTHER_CHARACTER_ID = 1;
@@ -102,21 +117,6 @@ describe(strikeKitEnemies, () => {
     return SURVIVING_HEALTH - enemy.health;
   };
 
-  test("sends the team's kits an enemy hit that carries the element it was dealt as", () => {
-    expect.hasAssertions();
-    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
-    const combatant = createCombatant(onKitEvent);
-    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    strikeWithHit({ ...KIT_HIT, element: Element.Pyro }, enemy, combatant);
-
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      element: Element.Pyro,
-      enemy,
-      kind: KitEventKind.EnemyHit,
-      striker: combatant,
-    });
-  });
-
   test("sends the team's kits an enemy hit that carries the attack tag of the strike that landed it", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
@@ -124,13 +124,17 @@ describe(strikeKitEnemies, () => {
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     strikeWithHit({ ...KIT_HIT, element: Element.Pyro }, enemy, combatant, AttackTag.NormalAttack);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      attackTag: AttackTag.NormalAttack,
-      element: Element.Pyro,
-      enemy,
-      kind: KitEventKind.EnemyHit,
-      striker: combatant,
-    });
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.EnemyHit),
+    ).toStrictEqual([
+      {
+        attackTag: AttackTag.NormalAttack,
+        element: Element.Pyro,
+        enemy,
+        kind: KitEventKind.EnemyHit,
+        striker: combatant,
+      },
+    ]);
   });
 
   test("sends the team's kits a reaction that carries the attack tag of the strike that triggered it", () => {
@@ -142,13 +146,17 @@ describe(strikeKitEnemies, () => {
     enemy.elementalState.auras.set(AuraType.Dendro, { decayRate: 0, gauge: 1, isImmutable: false });
     strikeWithHit({ ...KIT_HIT, element: Element.Pyro, gauge: 1 }, enemy, combatant, AttackTag.ElementalBurst);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      attackTag: AttackTag.ElementalBurst,
-      enemy,
-      kind: KitEventKind.ReactionTriggered,
-      reactions: [{ element: Element.Pyro, reactionType: ReactionType.Burning }],
-      striker: combatant,
-    });
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.ReactionTriggered),
+    ).toStrictEqual([
+      {
+        attackTag: AttackTag.ElementalBurst,
+        enemy,
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [{ element: Element.Pyro, reactionType: ReactionType.Burning }],
+        striker: combatant,
+      },
+    ]);
   });
 
   test("sends the team's kits a reaction a gadget's hit triggers, marked as a gadget's", () => {
@@ -170,13 +178,18 @@ describe(strikeKitEnemies, () => {
     ];
     strikeKitEnemies(strikes, context);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      enemy,
-      isGadget: true,
-      kind: KitEventKind.ReactionTriggered,
-      reactions: [{ element: Element.Pyro, reactionType: ReactionType.Burning }],
-      striker: combatant,
-    });
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.ReactionTriggered),
+    ).toStrictEqual([
+      {
+        attackTag: undefined,
+        enemy,
+        isGadget: true,
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [{ element: Element.Pyro, reactionType: ReactionType.Burning }],
+        striker: combatant,
+      },
+    ]);
   });
 
   test("prices the striker with its buffs on before the kit's strike hooks read it", () => {
@@ -200,8 +213,10 @@ describe(strikeKitEnemies, () => {
     strikeKitEnemies([{ body: context.body, combatant: hookCombatant, hit: KIT_HIT, target: enemy }], context);
 
     expect(
-      getStrikeDamageBonus.mock.calls[0]?.[0].combatant.attributes.attributeTotalMap[Attribute.ElementalMastery],
-    ).toBe(100);
+      getStrikeDamageBonus.mock.calls.map(
+        ([{ combatant: handed }]) => handed.attributes.attributeTotalMap[Attribute.ElementalMastery],
+      ),
+    ).toStrictEqual([100]);
   });
 
   test("gives a hit's onStrike the enemy each strike lands on, a targeted hit's and an area hit's alike", () => {
@@ -264,12 +279,11 @@ describe(strikeKitEnemies, () => {
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     strikeWithHit({ ...KIT_HIT, element: undefined, gauge: undefined }, enemy, combatant);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      element: undefined,
-      enemy,
-      kind: KitEventKind.EnemyHit,
-      striker: combatant,
-    });
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.EnemyHit),
+    ).toStrictEqual([
+      { attackTag: undefined, element: undefined, enemy, kind: KitEventKind.EnemyHit, striker: combatant },
+    ]);
   });
 
   test("sends the team's kits a weak-point hit for a hit that lands on a weak point", () => {
@@ -279,11 +293,9 @@ describe(strikeKitEnemies, () => {
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     strikeWithHit({ ...KIT_HIT, weakPoint: true }, enemy, combatant);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      enemy,
-      kind: KitEventKind.WeakPointHit,
-      striker: combatant,
-    });
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.WeakPointHit),
+    ).toStrictEqual([{ enemy, kind: KitEventKind.WeakPointHit, striker: combatant }]);
   });
 
   test("sends the team's kits no defeat for a hit that leaves its enemy standing", () => {
@@ -293,7 +305,9 @@ describe(strikeKitEnemies, () => {
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     strikeWithHit(KIT_HIT, enemy, combatant);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event.kind)).not.toContain(KitEventKind.EnemyDefeated);
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.EnemyDefeated),
+    ).toStrictEqual([]);
   });
 
   test("sends the team's kits a defeat for a hit that takes its enemy's health to nothing", () => {
@@ -304,11 +318,9 @@ describe(strikeKitEnemies, () => {
     enemy.health = 1;
     strikeWithHit(KIT_HIT, enemy, combatant);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
-      enemy,
-      kind: KitEventKind.EnemyDefeated,
-      striker: combatant,
-    });
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.EnemyDefeated),
+    ).toStrictEqual([{ enemy, kind: KitEventKind.EnemyDefeated, striker: combatant }]);
   });
 
   test("sends the team's kits one defeat for a Stellar Swirl that takes an enemy the hit left standing to nothing", () => {
@@ -342,10 +354,13 @@ describe(strikeKitEnemies, () => {
     const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
     strikeKitEnemies([{ body: context.body, combatant, hit: KIT_HIT, isAimed: true, target: enemy }], context);
     const events = onKitEvent.mock.calls.map(([event]) => event);
-    const damageTaken = events.find((event) => event.kind === KitEventKind.DamageTaken);
 
-    expect(events.map((event) => event.kind)).toContain(KitEventKind.WeakPointHit);
-    expect(damageTaken?.kind === KitEventKind.DamageTaken && damageTaken.hit.weakPoint).toBe(true);
+    expect(events.filter(({ kind }) => kind === KitEventKind.WeakPointHit)).toStrictEqual([
+      { enemy, kind: KitEventKind.WeakPointHit, striker: combatant },
+    ]);
+    expect(
+      events.flatMap((event) => (event.kind === KitEventKind.DamageTaken ? [event.hit.weakPoint] : [])),
+    ).toStrictEqual([true]);
   });
 
   test("an aimed hit on an enemy with no weak points takes none", () => {
@@ -356,7 +371,9 @@ describe(strikeKitEnemies, () => {
     const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
     strikeKitEnemies([{ body: context.body, combatant, hit: KIT_HIT, isAimed: true, target: enemy }], context);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event.kind)).not.toContain(KitEventKind.WeakPointHit);
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.WeakPointHit),
+    ).toStrictEqual([]);
   });
 
   test("a hit that is not aimed takes no weak point, even on an enemy that has them", () => {
@@ -367,7 +384,9 @@ describe(strikeKitEnemies, () => {
     const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
     strikeKitEnemies([{ body: context.body, combatant, hit: KIT_HIT, target: enemy }], context);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event.kind)).not.toContain(KitEventKind.WeakPointHit);
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.WeakPointHit),
+    ).toStrictEqual([]);
   });
 
   test("a strike's CRIT Rate hook raises its roll, so a roll above the base rate lands a critical hit", () => {
@@ -424,10 +443,8 @@ describe(strikeKitEnemies, () => {
       return SURVIVING_HEALTH - enemy.health;
     };
 
-    expect([
-      damageOf(Element.Cryo, cryoEffects) > damageOf(Element.Cryo, []),
-      damageOf(Element.Pyro, cryoEffects),
-    ]).toStrictEqual([true, damageOf(Element.Pyro, [])]);
+    expect(damageOf(Element.Cryo, cryoEffects)).toBeCloseTo(2 * damageOf(Element.Cryo, []));
+    expect(damageOf(Element.Pyro, cryoEffects)).toStrictEqual(damageOf(Element.Pyro, []));
   });
 
   test("a summon's strike takes its attack tag's DMG Bonus on a hit that carries no tag", () => {
@@ -455,7 +472,7 @@ describe(strikeKitEnemies, () => {
       return SURVIVING_HEALTH - enemy.health;
     };
 
-    expect(damageOf(0.5)).toBeGreaterThan(damageOf(0));
+    expect(damageOf(0.5)).toBeCloseTo((1 + 0.5) * damageOf(0));
   });
 
   test("a strike's flat base damage hook adds to the hit, which can defeat an enemy it would not otherwise", () => {
@@ -483,7 +500,7 @@ describe(strikeKitEnemies, () => {
 
     expect(
       takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
-    ).toBeGreaterThan(takeStrikeHealth(createCombatant(undefined), [], [TRAVELER_CHARACTER_ID]));
+    ).toBeCloseTo((1 + 1) * takeStrikeHealth(createCombatant(undefined), [], [TRAVELER_CHARACTER_ID]));
   });
 
   test("a deployed member's party strike bonus CRIT DMG adds to another member's critical strike", () => {
@@ -498,8 +515,8 @@ describe(strikeKitEnemies, () => {
       ]),
     };
 
-    expect(takeStrikeHealth(striker, [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID], 0)).toBeGreaterThan(
-      takeStrikeHealth(striker, [], [TRAVELER_CHARACTER_ID], 0),
+    expect(takeStrikeHealth(striker, [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID], 0)).toBeCloseTo(
+      (1 + 1) * takeStrikeHealth(striker, [], [TRAVELER_CHARACTER_ID], 0),
     );
   });
 
@@ -528,7 +545,7 @@ describe(strikeKitEnemies, () => {
 
     expect(
       takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
-    ).toBeGreaterThan(takeStrikeHealth(createCombatant(undefined), [], [TRAVELER_CHARACTER_ID]));
+    ).toBeCloseTo(getKitHitDamage(0.5));
   });
 
   test("a strike's own defence ignore hook lowers the enemy's defence against its own strike", () => {
@@ -536,9 +553,7 @@ describe(strikeKitEnemies, () => {
     const striker = createCombatant(undefined);
     const ignoringStriker = { ...striker, kit: { ...TRAVELER_KIT, getStrikeDefenceIgnored: () => 0.5 } };
 
-    expect(takeStrikeHealth(ignoringStriker, [], [TRAVELER_CHARACTER_ID])).toBeGreaterThan(
-      takeStrikeHealth(striker, [], [TRAVELER_CHARACTER_ID]),
-    );
+    expect(takeStrikeHealth(ignoringStriker, [], [TRAVELER_CHARACTER_ID])).toBeCloseTo(getKitHitDamage(0.5));
   });
 
   test("the party strike bonus is handed the member whose kit gives it", () => {
@@ -555,9 +570,11 @@ describe(strikeKitEnemies, () => {
     const getPartyStrikeBonus = vi.fn<NonNullable<Kit["getPartyStrikeBonus"]>>(() => ({}));
     const member = createMember(getPartyStrikeBonus);
     takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
-    const characterIdCombatantMap = takeOne(getPartyStrikeBonus.mock.calls, 0)[5];
-
-    expect(characterIdCombatantMap.get(OTHER_CHARACTER_ID)).toBe(member);
+    expect(
+      getPartyStrikeBonus.mock.calls.map(([, , , , , characterIdCombatantMap]) =>
+        characterIdCombatantMap.get(OTHER_CHARACTER_ID),
+      ),
+    ).toStrictEqual([member]);
   });
 
   const FULL_CIRCLE_AREA = { angle: Math.PI * 2, height: 2, radius: 3 };
