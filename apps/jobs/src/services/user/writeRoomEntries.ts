@@ -4,7 +4,7 @@ import type { RoomMessage, UserInAuth } from "@esposter/db-schema";
 
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { readPages } from "#src/services/shared/readPages";
 import { readPagesToEnd } from "#src/services/shared/readPagesToEnd";
 import { writeRoomFileEntries } from "#src/services/user/writeRoomFileEntries";

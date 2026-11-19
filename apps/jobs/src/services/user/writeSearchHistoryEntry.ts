@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 
 // The person's own search queries across rooms, each with the filters it ran with and the room it searched.
 // Each also carries the time it ran.

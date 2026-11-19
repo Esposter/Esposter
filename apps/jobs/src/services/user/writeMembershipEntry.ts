@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 
 // The person's memberships in rooms they do not own, each with the person's own settings there.
 // Each also carries the time they joined, the time they last read the room, the category they filed it under, and the

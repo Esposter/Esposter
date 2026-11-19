@@ -2,7 +2,7 @@ import type { PushSubscriptionInNotification } from "@esposter/db-schema";
 
 import { DEAD_PUSH_SUBSCRIPTION_STATUS_CODES, MAX_CONCURRENT_PUSH_SENDS } from "#src/services/notification/constants";
 import { webpush } from "#src/services/notification/webpush";
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { pushSubscriptionsInNotification } from "@esposter/db-schema";
 import { getResultAsync, noop, settleAll } from "@esposter/shared";
 import { eq } from "drizzle-orm";

@@ -11,7 +11,7 @@ import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
-vi.mock(import("#src/services/shared/db"), () => ({
+vi.mock(import("#src/services/shared/getDb"), () => ({
   getDb() {
     return mockDb;
   },

@@ -2,7 +2,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { getBucket } from "#src/services/storage/getBucket";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
 import { FILES_DIRECTORY_SEGMENT, getResourceFileBlobName, StorageBucket } from "@esposter/db-schema";

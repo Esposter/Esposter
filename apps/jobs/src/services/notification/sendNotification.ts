@@ -3,7 +3,8 @@ import type { NotificationQueueMessage } from "@esposter/db-schema";
 import { getPushNotificationPayload } from "#src/services/notification/getPushNotificationPayload";
 import { resolveNotification } from "#src/services/notification/resolveNotification";
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
-import { getDb, runUnit } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
+import { runUnit } from "#src/services/shared/runUnit";
 import { getPushSubscriptionsForUsers, inJsonArray } from "@esposter/db";
 import {
   AppNotificationTypeChannelMap,

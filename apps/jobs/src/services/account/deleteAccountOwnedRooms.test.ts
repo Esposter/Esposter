@@ -4,7 +4,7 @@ import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwne
 import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { clearRoomObjectCalls, roomObjectCalls } from "#src/services/room/getRoomObject.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { runUnit } from "#src/services/shared/db";
+import { runUnit } from "#src/services/shared/runUnit";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";

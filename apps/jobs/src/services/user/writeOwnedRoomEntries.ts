@@ -2,7 +2,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { writeRoomEmojiEntries } from "#src/services/user/writeRoomEmojiEntries";
 import { writeRoomImageEntries } from "#src/services/user/writeRoomImageEntries";
 

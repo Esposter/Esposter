@@ -1,4 +1,4 @@
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
 import { verifyResourceAssetBlob } from "#src/services/storage/verifyResourceAssetBlob";
 import { reconcileStorageLedgerEntry } from "@esposter/db";

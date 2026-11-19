@@ -1,7 +1,7 @@
 import type { CloudflareEnvironment } from "@esposter/db-schema";
 
 import { getQueueMessageHandler } from "#src/services/queue/getQueueMessageHandler";
-import { runUnit } from "#src/services/shared/db";
+import { runUnit } from "#src/services/shared/runUnit";
 import { getResultAsync } from "@esposter/shared";
 
 // A batch names its queue in this environment's spelling, and that name finds the handler for the batch.

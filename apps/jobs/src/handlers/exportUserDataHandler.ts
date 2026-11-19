@@ -1,4 +1,4 @@
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { getBucket } from "#src/services/storage/getBucket";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";

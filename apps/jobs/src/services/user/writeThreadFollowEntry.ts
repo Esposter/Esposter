@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 
 // The person's own decisions about threads, each with its room and thread, and whether it is an unfollow.
 // Each also carries the time of the first decision.

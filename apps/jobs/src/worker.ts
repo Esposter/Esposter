@@ -3,7 +3,7 @@ import "temporal-polyfill/global";
 import { validateJobsEnvironment } from "#src/services/environment/validateJobsEnvironment";
 import { handleQueueBatch } from "#src/services/queue/handleQueueBatch";
 import { purgeExpiredResources } from "#src/services/resource/purgeExpiredResources";
-import { runUnit } from "#src/services/shared/db";
+import { runUnit } from "#src/services/shared/runUnit";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // The jobs Worker is a queue consumer for every job and for each job's dead-letter queue.

@@ -1,7 +1,7 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { getLikedPostIds } from "#src/services/account/getLikedPostIds";
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { postsInPost } from "@esposter/db-schema";
 import { getPostRanking } from "@esposter/shared";
 import { and, eq, inArray } from "drizzle-orm";

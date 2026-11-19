@@ -39,7 +39,7 @@ import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } fr
 
 let mockDb: Database;
 
-vi.mock(import("#src/services/shared/db"), () => ({
+vi.mock(import("#src/services/shared/getDb"), () => ({
   getDb() {
     return mockDb;
   },

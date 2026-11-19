@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 
 // Each of the person's posts as its text, its placement and the time it was written.
 // A post's like and comment counts and its ranking are other people's activity on it, so they are left out

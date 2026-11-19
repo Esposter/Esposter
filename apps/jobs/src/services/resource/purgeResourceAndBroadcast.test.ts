@@ -3,7 +3,7 @@ import type { Database } from "@esposter/db-schema";
 import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
 import { createUser } from "#src/services/shared/createUser.test";
-import { runUnit } from "#src/services/shared/db";
+import { runUnit } from "#src/services/shared/runUnit";
 import { getBucket } from "#src/services/storage/getBucket";
 import { disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readDeletedResourcePage } from "@esposter/db";

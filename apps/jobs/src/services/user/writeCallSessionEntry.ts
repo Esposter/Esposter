@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 
 // The calls the person started, each with the room and thread it belongs to and the time it started.
 // A call's id is the key a knocker presents to join it, so it is left out.

@@ -1,7 +1,7 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { deleteAccountOwnedRoom } from "#src/services/account/deleteAccountOwnedRoom";
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { roomsInMessage } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 

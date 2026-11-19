@@ -1,7 +1,7 @@
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { StorageBucket } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
 import { deleteStorageBlobs } from "@esposter/db";
 

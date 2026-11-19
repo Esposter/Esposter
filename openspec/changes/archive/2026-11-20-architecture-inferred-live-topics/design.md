@@ -119,7 +119,7 @@ A client that awaits a second procedure after the first is a separate request wi
 
 The write capture belongs to the database handle, not to the request. A queue job or a Durable Object's SQLite writes through the same handle wrapper, so each handle that writes needs the wrapper: the web context, the jobs' handle, and each object's drizzle handle. A write through a handle that is not wrapped publishes nothing. Every such handle carries the wrapper.
 
-The jobs' handle is `getDb()` in `apps/jobs/src/services/shared/db.ts`. A job statement reads it, and outside a unit of work it is the D1 handle itself. `runUnit` opens a unit for each queue message (`handleQueueBatch`) and for the nightly purge (`worker.ts`), records the unit's statements in an `AsyncLocalStorage` scope, and publishes the write set best-effort once the unit settles, whether it succeeded or not, since a write that landed before a failure still changed rows. The hand publishes are gone (task 2.4): each job's writes are published by its unit, and each object's by its own invoke.
+The jobs' handle is `getDb()` in `apps/jobs/src/services/shared/getDb.ts`. A job statement reads it, and outside a unit of work it is the D1 handle itself. `runUnit` opens a unit for each queue message (`handleQueueBatch`) and for the nightly purge (`worker.ts`), records the unit's statements in an `AsyncLocalStorage` scope, and publishes the write set best-effort once the unit settles, whether it succeeded or not, since a write that landed before a failure still changed rows. The hand publishes are gone (task 2.4): each job's writes are published by its unit, and each object's by its own invoke.
 
 The auth instance writes outside `ctx.db`: it is built once, over the module's handle, so a session revoke bypassed the request's recorder. Its handle is `requestDatabase` in `apps/web/server/db/requestDb.ts`, a proxy that reads the request's handle from an `AsyncLocalStorage` scope (`requestDbStorage`) each time a call runs. The web Worker runs with `nodejs_compat`, since Nitro's `nodeCompat` is on, so the scope is available. `inferTopicsMiddleware` runs a recorded procedure inside that scope. The session router infers its topics like every other router, so its revoke is recorded (task 3.2).
 
@@ -257,67 +257,68 @@ The wrapper, the walker and the write capture are built and tested against the f
 
 ## Key files
 
-| Path                                                                           | Role                                                                                                    |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`                     | The inferred topics middleware every public procedure runs                                              |
-| `apps/web/server/trpc/initTrpc.ts`                                             | The one tRPC instance the public procedure and its middleware are built on                              |
-| `apps/web/server/trpc/liveTopicWakeCheck.test.ts`                              | The per-suite wake check: each recorded read asked again after a write, and the rerun's verdict         |
-| `apps/web/server/trpc/indexWithWakeCheck.test.ts`                              | The router index every suite runs through, wrapped by the wake check                                    |
-| `apps/web/server/trpc/liveTopicWakeCheckGlobal.ts`                             | The global setup that fails a watched procedure no suite calls                                          |
-| `apps/web/server/models/trpc/Meta.ts`                                          | The `staticReason` meta, which marks a procedure no topic watches                                       |
-| `apps/web/server/trpc/context.ts`                                              | The request context whose `db` the request's handle wraps                                               |
-| `apps/web/server/db/index.ts`                                                  | The D1 handle the context shares                                                                        |
-| `packages/db-schema/src/sqliteTable.ts`                                        | The table definition that carries the scope declaration                                                 |
-| `packages/db-schema/src/services/realtime/getBlobTopic.ts`                     | The topic a blob takes in its bucket, `<binding>:<key>`                                                 |
-| `packages/db-schema/src/services/realtime/getTableScope.ts`                    | Reads a table's scope declaration back from its symbol                                                  |
-| `packages/db/src/services/realtime/recordStatements.ts`                        | The request-scoped handle that records each awaited statement                                           |
-| `packages/db/src/services/realtime/recordBucket.ts`                            | The R2 binding's proxy that records a call's blob reads and writes into the scope                       |
-| `packages/db/src/services/realtime/getBlobWriteTopics.ts`                      | The topics a write publishes: its key, each directory above it, and the root                            |
-| `packages/db/src/services/realtime/getBlobListTopic.ts`                        | The topic a listing names: the directory its prefix lies in                                             |
-| `packages/db-schema/src/services/realtime/checkWakes.ts`                       | The wake rule: whether a publish's columns reach a watch's                                              |
-| `packages/db-schema/src/services/realtime/mergeColumnTopics.ts`                | Merges a list's entries per topic, with the union of their columns                                      |
-| `packages/db-schema/src/services/realtime/unionColumns.ts`                     | The union of two column lists, where no list names every column                                         |
-| `packages/db/src/services/realtime/getWokenTopics.ts`                          | The topics a read reaches through a write, by the wake rule                                             |
-| `packages/db/src/services/realtime/getReadSet.ts`                              | Merges the statements' read sets into the facts a read names                                            |
-| `packages/db/src/services/realtime/getStatementReadSet.ts`                     | Walks one built statement's chunks into its read set                                                    |
-| `packages/db/src/services/realtime/getJoinScopeValues.ts`                      | The row policy: the values a returned row names a joined scope table by                                 |
-| `packages/db/src/models/realtime/FilterSite.ts`                                | Where a read's filter sits: a left join's ON clause, another ON clause, or the WHERE clause             |
-| `packages/db/src/services/realtime/getOccurrenceKey.ts`                        | The key a table occurrence (its table and the alias or name the statement gives it) is named by         |
-| `packages/db-schema/src/models/realtime/Topic.ts`                              | The kind topic type, and `ScopeTopic` for the inferred names                                            |
-| `packages/db/src/services/realtime/getWriteTopics.ts`                          | The write set a request's statements publish, from RETURNING rows                                       |
-| `packages/db/src/services/realtime/getReadTopics.ts`                           | The topics a request's reads watch: scope equalities and table-wide topics                              |
-| `packages/db/src/services/realtime/walkCascade.ts`                             | The cascade walk: the tables a delete removes rows from, and changes                                    |
-| `packages/db/src/services/realtime/getBeforeReads.ts`                          | The reads a write makes before it runs: an update's old scope, a delete's cascades and changed children |
-| `packages/db/src/services/realtime/getRemovalConditions.ts`                    | Each removed table's rows as a subquery over its parent's, and the self-reference closure               |
-| `packages/db/src/services/realtime/batchStatements.ts`                         | The one batch call the recorder's reads and writes go through                                           |
-| `packages/db/src/services/realtime/getScopeValue.ts`                           | The name a scope value takes, a secret's by its digest, both sides                                      |
-| `apps/web/server/trpc/routers/topicMatch.test.ts`                              | The match of reads to writes, and the five reads' table coverage                                        |
-| `packages/db-schema/src/services/realtime/getTopic.ts`                         | Builds a kind topic from its kind and id, for the tests that name one                                   |
-| `packages/db/src/services/realtime/publishTopics.ts`                           | The publish the write set feeds                                                                         |
-| `apps/web/server/services/realtime/publishTopicsBestEffort.ts`                 | The web app's binding of that publish                                                                   |
-| `apps/realtime/src/durableObjects/TopicObject.ts`                              | The Topic object the publishes fan out through                                                          |
-| `packages/db-schema/src/schema/app/bookmarksInApp.ts`                          | A scope declaration case: the bookmark dock's table                                                     |
-| `apps/web/server/trpc/routers/bookmark.ts`                                     | The dock read the spike measured                                                                        |
-| `apps/web/server/trpc/routers/post.ts`                                         | The feed read the spike measured                                                                        |
-| `apps/web/server/trpc/routers/room/index.ts`                                   | The sidebar read the spike measured                                                                     |
-| `apps/web/server/trpc/routers/invite.ts`                                       | The landing page read whose member count the spike found unwatched                                      |
-| `apps/web/server/trpc/routers/friend.ts`                                       | The name search declared `staticReason`                                                                 |
-| `apps/web/server/trpc/routers/block.ts`                                        | The block write that publishes the feed by hand                                                         |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`          | The resource content reads and saves the editor section covers                                          |
-| `apps/web/app/composables/message/subscribables/useUserToRoomSubscribables.ts` | The `updateUserToRoom` handler whose member re-read goes                                                |
-| `apps/web/app/composables/message/events/useRoomListEvents.ts`                 | The `joinRoom` handler whose participant re-read goes                                                   |
-| `apps/web/app/composables/message/room/useReadDirectMessages.ts`               | The direct-message list's second request, folded into its procedure                                     |
-| `apps/web/server/trpc/routers/room/directMessage.ts`                           | The participant read, folded into the direct-message list procedure                                     |
-| `apps/jobs/src/services/account/takeBackErasedMentionCounts.ts`                | A job write to `usersToRooms` that needs the wrapper on its handle                                      |
-| `apps/jobs/src/services/shared/db.ts`                                          | The jobs' handle: `getDb()` inside a unit, which `runUnit` records and publishes                        |
-| `apps/web/server/services/storage/requestBlobs.ts`                             | The request's blob scope, opened by `inferTopicsMiddleware` beside its database scope                   |
-| `apps/web/server/db/requestDb.ts`                                              | The auth instance's handle, read from the request scope each time a call runs                           |
-| `apps/web/server/services/realtime/requestObjectReads.ts`                      | The request's object read scope, opened by `inferTopicsMiddleware` beside its blob scope                |
-| `packages/db/src/services/realtime/getObjectStub.ts`                           | The one way a Worker names a Durable Object: each RPC method runs through the object's `invoke`         |
-| `packages/db/src/services/realtime/createObjectStub.ts`                        | The stub wrapper `getObjectStub` applies, handing each call's read set to the caller's callback         |
-| `apps/realtime/src/services/durableObject/createObjectHandle.ts`               | The object handles that record each invocation's statements into its own recorder                       |
-| `apps/realtime/src/durableObjects/RealtimeObject.ts`                           | The base object's `invoke` entry, which answers the read set and publishes the writes of a call         |
-| `apps/realtime/src/services/durableObject/scopeColumnTopic.ts`                 | Scopes an owned table's topic by its object, `<kind>/<id>:` before the table topic                      |
+| Path                                                                           | Role                                                                                                        |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`                     | The inferred topics middleware every public procedure runs                                                  |
+| `apps/web/server/trpc/initTrpc.ts`                                             | The one tRPC instance the public procedure and its middleware are built on                                  |
+| `apps/web/server/trpc/liveTopicWakeCheck.test.ts`                              | The per-suite wake check: each recorded read asked again after a write, and the rerun's verdict             |
+| `apps/web/server/trpc/indexWithWakeCheck.test.ts`                              | The router index every suite runs through, wrapped by the wake check                                        |
+| `apps/web/server/trpc/liveTopicWakeCheckGlobal.ts`                             | The global setup that fails a watched procedure no suite calls                                              |
+| `apps/web/server/models/trpc/Meta.ts`                                          | The `staticReason` meta, which marks a procedure no topic watches                                           |
+| `apps/web/server/trpc/context.ts`                                              | The request context whose `db` the request's handle wraps                                                   |
+| `apps/web/server/db/index.ts`                                                  | The D1 handle the context shares                                                                            |
+| `packages/db-schema/src/sqliteTable.ts`                                        | The table definition that carries the scope declaration                                                     |
+| `packages/db-schema/src/services/realtime/getBlobTopic.ts`                     | The topic a blob takes in its bucket, `<binding>:<key>`                                                     |
+| `packages/db-schema/src/services/realtime/getTableScope.ts`                    | Reads a table's scope declaration back from its symbol                                                      |
+| `packages/db/src/services/realtime/recordStatements.ts`                        | The request-scoped handle that records each awaited statement                                               |
+| `packages/db/src/services/realtime/recordBucket.ts`                            | The R2 binding's proxy that records a call's blob reads and writes into the scope                           |
+| `packages/db/src/services/realtime/getBlobWriteTopics.ts`                      | The topics a write publishes: its key, each directory above it, and the root                                |
+| `packages/db/src/services/realtime/getBlobListTopic.ts`                        | The topic a listing names: the directory its prefix lies in                                                 |
+| `packages/db-schema/src/services/realtime/checkWakes.ts`                       | The wake rule: whether a publish's columns reach a watch's                                                  |
+| `packages/db-schema/src/services/realtime/mergeColumnTopics.ts`                | Merges a list's entries per topic, with the union of their columns                                          |
+| `packages/db-schema/src/services/realtime/unionColumns.ts`                     | The union of two column lists, where no list names every column                                             |
+| `packages/db/src/services/realtime/getWokenTopics.ts`                          | The topics a read reaches through a write, by the wake rule                                                 |
+| `packages/db/src/services/realtime/getReadSet.ts`                              | Merges the statements' read sets into the facts a read names                                                |
+| `packages/db/src/services/realtime/getStatementReadSet.ts`                     | Walks one built statement's chunks into its read set                                                        |
+| `packages/db/src/services/realtime/getJoinScopeValues.ts`                      | The row policy: the values a returned row names a joined scope table by                                     |
+| `packages/db/src/models/realtime/FilterSite.ts`                                | Where a read's filter sits: a left join's ON clause, another ON clause, or the WHERE clause                 |
+| `packages/db/src/services/realtime/getOccurrenceKey.ts`                        | The key a table occurrence (its table and the alias or name the statement gives it) is named by             |
+| `packages/db-schema/src/models/realtime/Topic.ts`                              | The kind topic type, and `ScopeTopic` for the inferred names                                                |
+| `packages/db/src/services/realtime/getWriteTopics.ts`                          | The write set a request's statements publish, from RETURNING rows                                           |
+| `packages/db/src/services/realtime/getReadTopics.ts`                           | The topics a request's reads watch: scope equalities and table-wide topics                                  |
+| `packages/db/src/services/realtime/walkCascade.ts`                             | The cascade walk: the tables a delete removes rows from, and changes                                        |
+| `packages/db/src/services/realtime/getBeforeReads.ts`                          | The reads a write makes before it runs: an update's old scope, a delete's cascades and changed children     |
+| `packages/db/src/services/realtime/getRemovalConditions.ts`                    | Each removed table's rows as a subquery over its parent's, and the self-reference closure                   |
+| `packages/db/src/services/realtime/batchStatements.ts`                         | The one batch call the recorder's reads and writes go through                                               |
+| `packages/db/src/services/realtime/getScopeValue.ts`                           | The name a scope value takes, a secret's by its digest, both sides                                          |
+| `apps/web/server/trpc/routers/topicMatch.test.ts`                              | The match of reads to writes, and the five reads' table coverage                                            |
+| `packages/db-schema/src/services/realtime/getTopic.ts`                         | Builds a kind topic from its kind and id, for the tests that name one                                       |
+| `packages/db/src/services/realtime/publishTopics.ts`                           | The publish the write set feeds                                                                             |
+| `apps/web/server/services/realtime/publishTopicsBestEffort.ts`                 | The web app's binding of that publish                                                                       |
+| `apps/realtime/src/durableObjects/TopicObject.ts`                              | The Topic object the publishes fan out through                                                              |
+| `packages/db-schema/src/schema/app/bookmarksInApp.ts`                          | A scope declaration case: the bookmark dock's table                                                         |
+| `apps/web/server/trpc/routers/bookmark.ts`                                     | The dock read the spike measured                                                                            |
+| `apps/web/server/trpc/routers/post.ts`                                         | The feed read the spike measured                                                                            |
+| `apps/web/server/trpc/routers/room/index.ts`                                   | The sidebar read the spike measured                                                                         |
+| `apps/web/server/trpc/routers/invite.ts`                                       | The landing page read whose member count the spike found unwatched                                          |
+| `apps/web/server/trpc/routers/friend.ts`                                       | The name search declared `staticReason`                                                                     |
+| `apps/web/server/trpc/routers/block.ts`                                        | The block write that publishes the feed by hand                                                             |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`          | The resource content reads and saves the editor section covers                                              |
+| `apps/web/app/composables/message/subscribables/useUserToRoomSubscribables.ts` | The `updateUserToRoom` handler whose member re-read goes                                                    |
+| `apps/web/app/composables/message/events/useRoomListEvents.ts`                 | The `joinRoom` handler whose participant re-read goes                                                       |
+| `apps/web/app/composables/message/room/useReadDirectMessages.ts`               | The direct-message list's second request, folded into its procedure                                         |
+| `apps/web/server/trpc/routers/room/directMessage.ts`                           | The participant read, folded into the direct-message list procedure                                         |
+| `apps/jobs/src/services/account/takeBackErasedMentionCounts.ts`                | A job write to `usersToRooms` that needs the wrapper on its handle                                          |
+| `apps/jobs/src/services/shared/getDb.ts`                                       | The jobs' handle: `getDb()` inside a unit, which `runUnit` records and publishes                            |
+| `apps/jobs/src/services/shared/runUnit.ts`                                     | The jobs' unit of work: records its statements and blob writes, then publishes their topics once it settles |
+| `apps/web/server/services/storage/requestBlobs.ts`                             | The request's blob scope, opened by `inferTopicsMiddleware` beside its database scope                       |
+| `apps/web/server/db/requestDb.ts`                                              | The auth instance's handle, read from the request scope each time a call runs                               |
+| `apps/web/server/services/realtime/requestObjectReads.ts`                      | The request's object read scope, opened by `inferTopicsMiddleware` beside its blob scope                    |
+| `packages/db/src/services/realtime/getObjectStub.ts`                           | The one way a Worker names a Durable Object: each RPC method runs through the object's `invoke`             |
+| `packages/db/src/services/realtime/createObjectStub.ts`                        | The stub wrapper `getObjectStub` applies, handing each call's read set to the caller's callback             |
+| `apps/realtime/src/services/durableObject/createObjectHandle.ts`               | The object handles that record each invocation's statements into its own recorder                           |
+| `apps/realtime/src/durableObjects/RealtimeObject.ts`                           | The base object's `invoke` entry, which answers the read set and publishes the writes of a call             |
+| `apps/realtime/src/services/durableObject/scopeColumnTopic.ts`                 | Scopes an owned table's topic by its object, `<kind>/<id>:` before the table topic                          |
 
 ## Open items
 

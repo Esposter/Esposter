@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { readModerationRecordsByTarget } from "#src/services/user/readModerationRecordsByTarget";
 
 // The moderation records that name the person as their target, from both moderation tables.

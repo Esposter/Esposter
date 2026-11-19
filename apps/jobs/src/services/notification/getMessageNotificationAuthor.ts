@@ -1,4 +1,4 @@
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 
 // Who a message notification is shown as. Resolved here rather than by each publisher, so the per-room display name
 // ([display names](openspec/specs/esbabbler/display-names/design.md)) is applied once and never on the request path a member is waiting on.

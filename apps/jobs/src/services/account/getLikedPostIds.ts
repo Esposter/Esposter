@@ -1,6 +1,6 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { likesInPost } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 

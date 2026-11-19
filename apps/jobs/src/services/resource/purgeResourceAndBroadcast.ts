@@ -1,7 +1,7 @@
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
 import { purgeResource } from "@esposter/db";
 

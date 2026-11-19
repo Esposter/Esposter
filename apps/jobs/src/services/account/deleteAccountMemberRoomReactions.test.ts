@@ -13,7 +13,7 @@ import { z } from "zod";
 
 let mockDb: Database;
 
-vi.mock(import("#src/services/shared/db"), () => ({
+vi.mock(import("#src/services/shared/getDb"), () => ({
   getDb() {
     return mockDb;
   },

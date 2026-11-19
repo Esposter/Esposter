@@ -1,7 +1,7 @@
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { StorageBucket } from "@esposter/db-schema";
 
-import { getUnitBlobs } from "#src/services/shared/db";
+import { getUnitBlobs } from "#src/services/shared/getUnitBlobs";
 import { recordStorageBucket } from "@esposter/db";
 import { getStorageBucketBindingName } from "@esposter/db-schema";
 import { env } from "cloudflare:workers";

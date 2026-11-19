@@ -1,7 +1,7 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { getBucket } from "#src/services/storage/getBucket";
 import { resourcesInResource, StorageBucket } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";

@@ -26,7 +26,7 @@ await getResultAsync(() =>
 });
 ```
 
-Canonical: `sendNotification`'s retention trim (`apps/jobs/src/services/notification/sendNotification.ts`). A handler publishes no topic of its own: each queue message runs in a unit (`runUnit`, `apps/jobs/src/services/shared/db.ts`), and the unit publishes the write set its statements made once it settles, whichever way it ends. So a best-effort step here is only ever the write's own follow-up, never a notification of its readers.
+Canonical: `sendNotification`'s retention trim (`apps/jobs/src/services/notification/sendNotification.ts`). A handler publishes no topic of its own: each queue message runs in a unit (`runUnit`, `apps/jobs/src/services/shared/runUnit.ts`), and the unit publishes the write set its statements made once it settles, whichever way it ends. So a best-effort step here is only ever the write's own follow-up, never a notification of its readers.
 
 ## Past the retries — the dead-letter queue
 

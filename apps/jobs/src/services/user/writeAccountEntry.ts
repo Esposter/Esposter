@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The account.json entry: the user row, the sign-in providers by name and the push subscriptions by endpoint.

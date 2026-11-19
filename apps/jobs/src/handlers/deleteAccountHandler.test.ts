@@ -5,7 +5,7 @@ import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publ
 import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
 import { createUser } from "#src/services/shared/createUser.test";
-import { runUnit } from "#src/services/shared/db";
+import { runUnit } from "#src/services/shared/runUnit";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";

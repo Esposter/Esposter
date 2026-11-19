@@ -1,5 +1,5 @@
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { getBucket } from "#src/services/storage/getBucket";
 import { RECYCLE_BIN_RETENTION_MS, resourcesInResource, StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

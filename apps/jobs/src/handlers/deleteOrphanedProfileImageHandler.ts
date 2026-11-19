@@ -1,4 +1,4 @@
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { getBucket } from "#src/services/storage/getBucket";
 import { deleteBlobs } from "@esposter/db";
 import { getUserProfileImageBlobName, r2ObjectCreatedQueueMessageSchema, StorageBucket } from "@esposter/db-schema";

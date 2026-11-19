@@ -1,6 +1,6 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { getUserObject } from "#src/services/user/getUserObject";
 import { StorageTierQuotaMap } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

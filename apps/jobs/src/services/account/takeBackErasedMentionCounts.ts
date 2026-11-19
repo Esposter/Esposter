@@ -1,6 +1,6 @@
 import type { RoomMessage } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { getUserObject } from "#src/services/user/getUserObject";
 import { decrementMentionCounts } from "@esposter/db";
 import { getResultAsync, noop } from "@esposter/shared";

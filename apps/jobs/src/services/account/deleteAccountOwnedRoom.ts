@@ -1,7 +1,7 @@
 import type { RoomInMessage, UserInAuth } from "@esposter/db-schema";
 
 import { getRoomObject } from "#src/services/room/getRoomObject";
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { deleteStoragePrefix } from "#src/services/storage/deleteStoragePrefix";
 import { roomsInMessage, StorageBucket } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";

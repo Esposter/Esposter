@@ -3,7 +3,7 @@ import type { RoomReaction, UserInAuth } from "@esposter/db-schema";
 
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { readPagesToEnd } from "#src/services/shared/readPagesToEnd";
 import { getMemberRoomIds } from "@esposter/db";
 import { noop } from "@esposter/shared";

@@ -1,6 +1,7 @@
 import { getMockPublishedTopics, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { getDb, runUnit } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
+import { runUnit } from "#src/services/shared/runUnit";
 import { getBucket } from "#src/services/storage/getBucket";
 import { createMockDb } from "@esposter/db-mock";
 import { getTableTopic, StorageBucket, usersInAuth } from "@esposter/db-schema";
@@ -16,7 +17,7 @@ const insertUser = async () => {
   return userId;
 };
 
-describe("runUnit", () => {
+describe(runUnit, () => {
   const authTableTopic = getTableTopic(getTableName(usersInAuth));
 
   beforeAll(async () => {

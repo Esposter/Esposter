@@ -2,7 +2,7 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { getRoomObject } from "#src/services/room/getRoomObject";
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { getMemberRoomIds } from "@esposter/db";
 
 // The account is taken out of each room it is still a member of before its row goes.

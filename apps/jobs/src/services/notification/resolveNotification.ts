@@ -3,7 +3,7 @@ import type { NotificationQueueMessage } from "@esposter/db-schema";
 
 import { getMessageNotificationAuthor } from "#src/services/notification/getMessageNotificationAuthor";
 import { getMessageNotificationBody } from "#src/services/notification/getMessageNotificationBody";
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { getMessageRecipientUserIds } from "@esposter/db";
 import { AppNotificationType } from "@esposter/db-schema";
 import { exhaustiveGuard, RoutePath } from "@esposter/shared";

@@ -3,7 +3,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { getLikedPostIds } from "#src/services/account/getLikedPostIds";
 import { getOtherLikeTotal } from "#src/services/account/getOtherLikeTotal";
 import { getPostRankingUpdates } from "#src/services/account/getPostRankingUpdates";
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { postsInPost, usersInAuth } from "@esposter/db-schema";
 import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";

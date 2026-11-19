@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { readRoomModerationActionsByUser } from "#src/services/user/readRoomModerationActionsByUser";
 
 // The moderation actions the person took as moderator or admin in rooms they own.

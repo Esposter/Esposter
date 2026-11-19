@@ -1,4 +1,4 @@
-import { getDb } from "#src/services/shared/db";
+import { getDb } from "#src/services/shared/getDb";
 import { moderationLogsInMessage } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
