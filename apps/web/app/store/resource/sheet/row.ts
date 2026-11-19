@@ -12,6 +12,7 @@ import { compareColumnValues } from "#src/services/resource/sheet/column/compare
 import { getDisplayText } from "#src/services/resource/sheet/column/getDisplayText";
 import { toColumnKey } from "#src/services/resource/sheet/column/toColumnKey";
 import { filterDataSourceRows } from "#src/services/resource/sheet/dataSource/filterDataSourceRows";
+import { DATA_TABLE_ALL_ROWS } from "#src/services/ui/constants";
 import { useResourceStore } from "#src/store/resource/index";
 import { useColumnStore } from "#src/store/resource/sheet/column";
 import { useFilterStore } from "#src/store/resource/sheet/filter";
@@ -88,7 +89,7 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   );
 
   watch([itemsPerPage, () => findReplaceStore.currentOccurrenceIndex, () => findReplaceStore.occurrences], () => {
-    if (itemsPerPage.value === -1) return;
+    if (itemsPerPage.value === DATA_TABLE_ALL_ROWS) return;
     const occurrence = findReplaceStore.occurrences.at(findReplaceStore.currentOccurrenceIndex);
     if (!occurrence) return;
     page.value = Math.floor(occurrence.rowIndex / itemsPerPage.value) + 1;
