@@ -25,4 +25,4 @@ export const TilesetAssetMap = {
   [TilesetKey.House]: houseUrl,
   [TilesetKey.HouseInterior]: { frameHeight: 64, frameWidth: 64, url: houseInteriorUrl },
   [TilesetKey.Teleport]: teleportUrl,
-} as const satisfies Record<TilesetKey, string | SpritesheetAsset>;
+} as const satisfies Record<TilesetKey, SpritesheetAsset | string>;
