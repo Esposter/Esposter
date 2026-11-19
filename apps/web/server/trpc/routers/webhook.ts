@@ -8,6 +8,7 @@ import type {
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
+import { pickColumns } from "#server/services/db/pickColumns";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
@@ -34,8 +35,9 @@ import { generateSecretToken, hashSecretToken, Operation } from "@esposter/share
 import { and, eq, getColumns, sql } from "drizzle-orm";
 import { v7 } from "uuid";
 
-// Every column of a webhook a response carries: all of them but the hash of its credential
-const { tokenHash: _tokenHash, ...publicWebhookColumns } = getColumns(webhooksInMessage);
+// Every column of a webhook a response carries: the allowlist a relational read takes, so a write answers with the
+// Columns a read does
+const publicWebhookColumns = pickColumns(getColumns(webhooksInMessage), PublicWebhookColumns);
 
 export const webhookRouter = router({
   createWebhook: getPermissionsProcedure(
