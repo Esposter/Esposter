@@ -30,8 +30,8 @@ await runCommand(
       }
 
       // Both logs read the committer date, the one a Rebase onto the Queue moves and an author date never does, so
-      // only the committer date follows history. Archiving a Change is a move, so the ship log reads it with renames off,
-      // as the deletion it is from the changes root.
+      // Only the committer date follows history. Archiving a Change is a move, so the ship log reads it with renames off,
+      // As the deletion it is from the changes root.
       const shipLog = runGit([
         "log",
         "--no-renames",

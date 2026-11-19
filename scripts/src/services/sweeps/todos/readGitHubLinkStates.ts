@@ -1,3 +1,4 @@
+import { GitHubLinkState } from "#src/models/sweeps/todos/GitHubLinkState";
 import { TodoLinkState } from "#src/models/sweeps/todos/TodoLinkState";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { runGh } from "#src/services/shared/runGh";
@@ -8,9 +9,13 @@ import { z } from "zod";
 // Url with no record at all is `null`, GitHub's own absent form kept inside this boundary shape
 const linksResponseSchema = z.object({
   // eslint-disable-next-line no-restricted-syntax -- GitHub's GraphQL answers a url with no record as `null`, an external boundary's own absent form
-  data: z.record(z.string(), z.object({ state: z.enum(["CLOSED", "MERGED", "OPEN"]).optional() }).nullable()),
+  data: z.record(z.string(), z.object({ state: z.enum(GitHubLinkState).optional() }).nullable()),
 });
-const LinkStateMap = { CLOSED: TodoLinkState.Closed, MERGED: TodoLinkState.Merged, OPEN: TodoLinkState.Open } as const;
+const LinkStateMap = {
+  [GitHubLinkState.Closed]: TodoLinkState.Closed,
+  [GitHubLinkState.Merged]: TodoLinkState.Merged,
+  [GitHubLinkState.Open]: TodoLinkState.Open,
+} as const satisfies Record<GitHubLinkState, TodoLinkState>;
 // Every GitHub link's state in one GraphQL request, each url aliased by its index, since a request per link would cost
 // A round trip each. A link with no issue or pull request behind it is unchecked
 export const readGitHubLinkStates = (urls: string[]): Map<string, TodoLinkState> => {
