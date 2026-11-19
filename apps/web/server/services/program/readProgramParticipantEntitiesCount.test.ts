@@ -1,10 +1,10 @@
 import type { MockDatabase } from "@esposter/db-mock";
 
+import { insertRows } from "#server/services/db/insertRows.test";
 import { readProgramParticipantEntitiesCount } from "#server/services/program/readProgramParticipantEntitiesCount";
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { createMockDb } from "@esposter/db-mock";
 import { programParticipantsInResource, resourcesInResource, ResourceType, usersInAuth } from "@esposter/db-schema";
-import { chunk } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -17,19 +17,12 @@ describe(readProgramParticipantEntitiesCount, () => {
   const userId = v7();
   let mockDatabase: MockDatabase;
 
-  // Rows go in statements of ten, since a D1 statement binds at most a hundred parameters and each row binds five. The
-  // Statements go in batches of a hundred, one request each, since a statement per request overruns a test's timeout
-  const insertParticipants = async (count: number) => {
-    const statements = chunk(
+  const insertParticipants = (count: number) =>
+    insertRows(
+      mockDatabase.db,
+      programParticipantsInResource,
       Array.from({ length: count }, () => ({ keyValue: v7(), publicId: v7(), resourceId: programId, tokenHash: v7() })),
-      10,
-    ).map((values) => mockDatabase.db.insert(programParticipantsInResource).values(values));
-    for (const group of chunk(statements, 100)) {
-      const [firstStatement, ...restStatements] = group;
-      // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a failed batch stops the groups behind it, and the groups before it stay committed
-      if (firstStatement) await mockDatabase.db.batch([firstStatement, ...restStatements]);
-    }
-  };
+    );
 
   beforeAll(async () => {
     mockDatabase = await createMockDb();
