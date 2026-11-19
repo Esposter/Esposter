@@ -20,7 +20,7 @@ import { findMonsterCodexRow } from "#src/services/genshinAssets/enemies/findMon
 import { getGrowCurve } from "#src/services/genshinAssets/enemies/getGrowCurve";
 import { readMonsterCurveRows } from "#src/services/genshinAssets/enemies/readMonsterCurveRows";
 import { readRegionCampsData } from "#src/services/genshinAssets/enemies/readRegionCampsData";
-import { toLevelCurve } from "#src/services/genshinAssets/enemies/toLevelCurve";
+import { toLevelCurves } from "#src/services/genshinAssets/enemies/toLevelCurves";
 import { MONDSTADT_BOUNTY_TARGET_NAMES } from "#src/services/genshinAssets/reputation/constants";
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
 import { toBountyTargetIds } from "#src/services/genshinAssets/reputation/toBountyTargetIds";
@@ -89,8 +89,14 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const curves = new Set(
     enemyKinds.flatMap(({ attackCurve, defenseCurve, healthCurve }) => [attackCurve, defenseCurve, healthCurve]),
   );
+  const levelCurveMap = toLevelCurves(monsterCurveRows);
   const levelCurves = Object.fromEntries(
-    [...curves].toSorted().map((curve) => [curve, toLevelCurve(monsterCurveRows, curve)]),
+    [...curves].toSorted().map((curve) => {
+      const levelCurve = levelCurveMap.get(curve);
+      if (levelCurve === undefined)
+        throw new InvalidOperationError(Operation.Read, curve, "is in no monster curve of the game's table");
+      return [curve, levelCurve];
+    }),
   );
   return { [`${GameDataset.Enemies}/kinds`]: enemyKinds, [`${GameDataset.Enemies}/levelCurves`]: levelCurves };
 };

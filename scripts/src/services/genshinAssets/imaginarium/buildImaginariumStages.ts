@@ -9,6 +9,7 @@ import { fetchEnemyWikiPages } from "#src/services/genshinAssets/enemies/fetchEn
 import { findCanonicalMonsterRow } from "#src/services/genshinAssets/enemies/findCanonicalMonsterRow";
 import { readMonsterCurveRows } from "#src/services/genshinAssets/enemies/readMonsterCurveRows";
 import { readWikiPageContent } from "#src/services/genshinAssets/enemies/readWikiPageContent";
+import { toLevelCurves } from "#src/services/genshinAssets/enemies/toLevelCurves";
 import { ROLE_COMBAT_SCHEDULE_TABLE_NAME } from "#src/services/genshinAssets/imaginarium/constants";
 import { ExcelRoleCombatScheduleRowFieldDumpKeyMap } from "#src/services/genshinAssets/imaginarium/ExcelRoleCombatScheduleRowFieldDumpKeyMap";
 import { fetchImaginariumSeasonTitles } from "#src/services/genshinAssets/imaginarium/fetchImaginariumSeasonTitles";
@@ -35,7 +36,7 @@ export const buildImaginariumStages = async (): Promise<Record<string, unknown>>
   const monsters = readMonsterNames();
   const monsterRows = readExcelTable<MonsterRow>(MONSTER_TABLE_NAME);
   const animalCodexRows = readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_NAME);
-  const monsterCurveRows = readMonsterCurveRows();
+  const levelCurves = toLevelCurves(readMonsterCurveRows());
   const stages = titles.flatMap((title) => {
     const seasonId = beginDaySeasonIdMap.get(title.slice(-10));
     if (seasonId === undefined)
@@ -44,7 +45,7 @@ export const buildImaginariumStages = async (): Promise<Record<string, unknown>>
       toImaginariumStage(stage, seasonId, monsters, (describeId) => {
         const monsterRow = findCanonicalMonsterRow(animalCodexRows, monsterRows, describeId);
         return monsterRow && checkHasBaseCurves(monsterRow)
-          ? toImaginariumStageEnemy(monsterRow, stage.easyLevel, monsterCurveRows)
+          ? toImaginariumStageEnemy(monsterRow, stage.easyLevel, levelCurves)
           : undefined;
       }),
     );
