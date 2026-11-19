@@ -9,7 +9,7 @@ const NON_RPC_MEMBERS = new Set(["fetch", "then"]);
 // Set itself, so the stub only unwraps the result, and hands the read set to `onReadSet` where a caller watches its reads.
 // The stub keeps its own type, so a caller types the object's methods as before
 export const createObjectStub = <T extends object>(stub: T, onReadSet?: (readSet: ColumnTopic[]) => void): T =>
-  new Proxy({} as T, {
+  new Proxy(stub, {
     get: (_target, member) => {
       if (typeof member !== "string" || NON_RPC_MEMBERS.has(member)) {
         const value: unknown = Reflect.get(stub, member, stub);
