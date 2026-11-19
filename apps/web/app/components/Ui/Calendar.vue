@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { getCalendarWeeks } from "#src/services/ui/getCalendarWeeks";
+import { CALENDAR_FIRST_DAY_OF_WEEK } from "#src/services/ui/constants";
 import { getNextGridDate } from "#src/util/date/getNextGridDate";
+import { createCalendar } from "@vuetify/v0";
 
 interface Props {
   // A span of days in the from and to models rather than one day: the first press sets its start and the second its
@@ -28,9 +29,10 @@ const root = useTemplateRef("root");
 const { today } = useCalendarClock();
 const { smAndUp } = useUiDisplay();
 const monthCount = computed(() => (isRange && smAndUp.value ? 2 : 1));
-const checkIsDisabled = (date: Temporal.PlainDate) =>
-  (min !== undefined && Temporal.PlainDate.compare(date, min) < 0) ||
-  (max !== undefined && Temporal.PlainDate.compare(date, max) > 0);
+// A day before the minimum or after the maximum is disabled. The grids are not given the bounds: a grid pages itself into
+// Them, so a month outside would be drawn as the bound's month instead of with its days disabled
+const checkIsOutOfBounds = (iso: string) =>
+  (min !== undefined && iso < min.toString()) || (max !== undefined && iso > max.toString());
 const clamp = (date: Temporal.PlainDate) => {
   if (min && Temporal.PlainDate.compare(date, min) < 0) return min;
   else if (max && Temporal.PlainDate.compare(date, max) > 0) return max;
@@ -42,15 +44,43 @@ const focusedDate = ref(clamp(modelValue.value ?? from.value ?? today.value));
 // Rather than turning the page, while the buttons turn the page under the focus
 const focusedMonthIndex = ref(0);
 const shownMonthIndex = computed(() => Math.min(focusedMonthIndex.value, monthCount.value - 1));
-// Six weeks a month, so the buttons never jump under the pointer
-const months = computed(() => {
-  const firstMonth = focusedDate.value.toPlainYearMonth().subtract({ months: shownMonthIndex.value });
-  return Array.from({ length: monthCount.value }, (_month, monthIndex) => {
-    const month = firstMonth.add({ months: monthIndex });
-    const weeks = getCalendarWeeks(month);
-    return { month, weeks };
-  });
+const firstMonth = computed(() => focusedDate.value.toPlainYearMonth().subtract({ months: shownMonthIndex.value }));
+// The days the grids draw as selected: one day, or a range's two ends, each as the ISO day a grid reads. The span out to
+// A day under the pointer is not among them, so it is a preview and never selected
+const selection = computed(() => {
+  if (!isRange) return modelValue.value?.toString();
+  else if (!from.value) return undefined;
+  else if (to.value) return { end: to.value.toString(), start: from.value.toString() };
+  else return { start: from.value.toString() };
 });
+// One grid per month a range can show, both made up front so the second month appears without a grid being made mid-press.
+// Each draws its month's six weeks, Monday first, and reads the selection the models hold
+const grids = Array.from({ length: 2 }, (_grid, index) =>
+  createCalendar({
+    disabled: checkIsOutOfBounds,
+    firstDayOfWeek: CALENDAR_FIRST_DAY_OF_WEEK,
+    fixedWeeks: true,
+    mode: () => (isRange ? "range" : "single"),
+    month: () => firstMonth.value.add({ months: index }).toString(),
+    value: selection,
+  }),
+);
+// Each month shown with its six weeks as plain days, beside what its grid says of each one
+const months = computed(() =>
+  grids
+    .slice(0, monthCount.value)
+    .map((grid, index) => ({
+      month: firstMonth.value.add({ months: index }),
+      weeks: grid.month.value.weeks.map((week) =>
+        week.map(({ disabled, iso, outside, selected }) => ({
+          date: Temporal.PlainDate.from(iso),
+          disabled,
+          outside,
+          selected,
+        })),
+      ),
+    })),
+);
 const weekdays = computed(() => months.value[0]?.weeks[0] ?? []);
 // The day the pointer or the focus is on, which a range still waiting for its end is drawn out to
 const previewDate = ref<Temporal.PlainDate>();
@@ -67,15 +97,8 @@ const checkIsInSpan = (date: Temporal.PlainDate) =>
   Temporal.PlainDate.compare(date, span.value.end) <= 0;
 const checkIsPreviewed = (date: Temporal.PlainDate) =>
   !to.value && previewDate.value !== undefined && checkIsInSpan(date);
-// Only a range's picked days are selected; the span out to a day under the pointer is a preview
-const checkIsSelected = (date: Temporal.PlainDate) => {
-  if (!isRange) return Boolean(modelValue.value?.equals(date));
-  else if (to.value) return checkIsInSpan(date);
-  else return Boolean(from.value?.equals(date));
-};
 // Months side by side leave their edges empty, so each day is drawn once, in its own month
-const checkIsShown = (date: Temporal.PlainDate, month: Temporal.PlainYearMonth) =>
-  monthCount.value === 1 || date.toPlainYearMonth().equals(month);
+const checkIsShown = (outside: boolean) => monthCount.value === 1 || !outside;
 const checkIsEnd = (date: Temporal.PlainDate) =>
   isRange ? Boolean(from.value?.equals(date) || to.value?.equals(date)) : Boolean(modelValue.value?.equals(date));
 // The tab stop moves to the day, and the months shown move only as far as they must to hold it
@@ -159,30 +182,30 @@ watch(from, (newFrom) => {
       >
         <thead>
           <tr>
-            <th v-for="weekday of weekdays" :key="weekday.dayOfWeek" scope="col" ui-body>
-              <NuxtTime :datetime="weekday.toString()" time-zone="UTC" weekday="short" text-muted />
+            <th v-for="{ date } of weekdays" :key="date.dayOfWeek" scope="col" ui-body>
+              <NuxtTime :datetime="date.toString()" time-zone="UTC" weekday="short" text-muted />
             </th>
           </tr>
         </thead>
         <!-- A new month's days fade in over the old one's place, so a jump reads as a turn of the page -->
         <tbody :key="month.toString()" class="month">
-          <tr v-for="week of weeks" :key="week[0]?.toString()">
+          <tr v-for="week of weeks" :key="week[0]?.date.toString()">
             <td
-              v-for="date of week"
+              v-for="{ date, disabled, outside, selected } of week"
               :key="date.toString()"
-              :aria-selected="checkIsShown(date, month) ? checkIsSelected(date) : undefined"
+              :aria-selected="checkIsShown(outside) ? selected : undefined"
               role="gridcell"
               p-0
             >
               <button
-                v-if="checkIsShown(date, month)"
+                v-if="checkIsShown(outside)"
                 :aria-current="date.equals(today) ? 'date' : undefined"
-                :aria-disabled="checkIsDisabled(date) || undefined"
+                :aria-disabled="disabled || undefined"
                 class="day aria-disabled:line-through aria-disabled:cursor-default aria-disabled:op-disabled"
                 :data-date="date.toString()"
                 :data-end="checkIsEnd(date) || undefined"
                 :data-in-span="checkIsInSpan(date) || undefined"
-                :data-outside="!date.toPlainYearMonth().equals(month) || undefined"
+                :data-outside="outside || undefined"
                 :data-marked="markedDates.includes(date.toString()) || undefined"
                 :data-preview="checkIsPreviewed(date) || undefined"
                 :data-variant="UiButtonVariant.Quiet"
@@ -194,7 +217,7 @@ watch(from, (newFrom) => {
                 @click="
                   () => {
                     setFocusedDate(date);
-                    if (!checkIsDisabled(date)) choose(date);
+                    if (!disabled) choose(date);
                   }
                 "
                 @focus="previewDate = date"

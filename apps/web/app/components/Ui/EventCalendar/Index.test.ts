@@ -240,5 +240,16 @@ describe("uiEventCalendar", () => {
       expect(component.emitted("move")).toStrictEqual([[event.id, start]]);
       expect(getAnnouncedStart(component)).toBe(start.toISOString());
     });
+
+    test("starts each week of the month on Monday, so the first row opens on the Monday before the month's first day", async () => {
+      expect.hasAssertions();
+
+      const monday = date.subtract({ days: date.dayOfWeek - 1 });
+      const component = await mountEventCalendar();
+
+      expect(component.get('[role="grid"][aria-label="Month"] [role="gridcell"]').attributes("data-date")).toBe(
+        monday.toString(),
+      );
+    });
   });
 });

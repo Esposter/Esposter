@@ -3,14 +3,19 @@ import UiCalendar from "#src/components/Ui/Calendar.vue";
 import { getDaySelector } from "#src/components/Ui/getDaySelector.test";
 import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
 import { UiStyles } from "#src/models/ui/UiStyle";
+import { CALENDAR_CLOCK_INTERVAL_MS } from "#src/services/ui/constants";
 import { TEST_EPOCH_DATE } from "#src/services/ui/constants.test";
+import { getZonedDateTime } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("uiCalendar", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
+    afterEach(() => {
+      vi.useRealTimers();
+    });
 
     const label = "label";
     const epoch = TEST_EPOCH_DATE;
@@ -171,6 +176,47 @@ describe("uiCalendar", () => {
 
       expect(day.attributes("aria-disabled")).toBe("true");
       expect(component.emitted("update:modelValue")).toBeUndefined();
+    });
+
+    test("starts each week on Monday, so the first row opens on the Monday before the month's first day", async () => {
+      expect.hasAssertions();
+
+      const monday = epoch.subtract({ days: epoch.dayOfWeek - 1 });
+      const component = await mountSuspended(UiCalendar, { props: { label, modelValue: epoch } });
+
+      expect(component.get("tbody [data-date]").attributes("data-date")).toBe(monday.toString());
+    });
+
+    test("chooses a day of the month before on click, turning the page to its month", async () => {
+      expect.hasAssertions();
+
+      const previousDay = epoch.subtract({ days: 1 });
+      const component = await mountSuspended(UiCalendar, { props: { label, modelValue: epoch } });
+
+      expect(component.get(getDaySelector(previousDay.toString())).attributes("data-outside")).toBe("true");
+
+      await component.get(getDaySelector(previousDay.toString())).trigger("click");
+
+      expect(
+        component.emitted<[Temporal.PlainDate]>("update:modelValue")?.map(([date]) => date.toString()),
+      ).toStrictEqual([previousDay.toString()]);
+      expect(component.get(getDaySelector(previousDay.toString())).attributes("data-outside")).toBeUndefined();
+    });
+
+    test("moves today's ring on to the next day as the clock passes midnight while the calendar is open", async () => {
+      expect.hasAssertions();
+
+      vi.useFakeTimers({ now: 0, toFake: ["Date", "setInterval", "clearInterval"] });
+      const epochDay = getZonedDateTime(new Date(0)).toPlainDate();
+      const component = await mountSuspended(UiCalendar, { props: { label } });
+
+      expect(component.get('[aria-current="date"]').attributes("data-date")).toBe(epochDay.toString());
+
+      vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 24 }));
+      vi.advanceTimersByTime(CALENDAR_CLOCK_INTERVAL_MS);
+      await flushPromises();
+
+      expect(component.get('[aria-current="date"]').attributes("data-date")).toBe(epochDay.add({ days: 1 }).toString());
     });
   });
 });

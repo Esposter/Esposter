@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 
-import { getCalendarWeeks } from "#src/services/ui/getCalendarWeeks";
+import { CALENDAR_FIRST_DAY_OF_WEEK } from "#src/services/ui/constants";
 import { getNextGridDate } from "#src/util/date/getNextGridDate";
+import { createCalendar } from "@vuetify/v0";
 
 interface Props {
   eventDayMap: Map<string, UiCalendarEvent[]>;
@@ -24,7 +25,15 @@ const emit = defineEmits<{
 }>();
 const grid = useTemplateRef("grid");
 const month = computed(() => date.value.toPlainYearMonth());
-const weeks = computed(() => getCalendarWeeks(month.value));
+// The month's six weeks, Monday first, from a grid with no value: the selected day is the view's own, not the grid's
+const calendar = createCalendar({
+  firstDayOfWeek: CALENDAR_FIRST_DAY_OF_WEEK,
+  fixedWeeks: true,
+  month: () => month.value.toString(),
+});
+const weeks = computed(() =>
+  calendar.month.value.weeks.map((week) => week.map(({ iso }) => Temporal.PlainDate.from(iso))),
+);
 const selectedDay = ref<Temporal.PlainDate>();
 // The day holding the tab stop: the selected one while the month shows it, otherwise the day shown
 const focusedDay = computed(() =>
