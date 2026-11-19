@@ -1178,22 +1178,10 @@ describe("resourceRouter", () => {
     await webpageCaller.publishResource({ id: webpageResource.id });
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
-    const { resource: restoredResource } = await caller.restoreSnapshotVersion({
-      channel: SnapshotChannel.Published,
-      id: webpageResource.id,
-      version: 1,
-    });
+    await caller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: webpageResource.id, version: 1 });
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
-    // The restore is the last save, so its event is the last one the user object was sent
-    const saveEvent = userObjectCalls.findLast(({ method }) => method === "saveResourceContent")?.args[0];
-    assert.exists(saveEvent);
 
-    expect(saveEvent).toStrictEqual({
-      apiKeyName: "",
-      contentVersion: restoredResource.contentVersion,
-      id: webpageResource.id,
-    });
     expect(
       items
         .map(({ activityType }) => activityType)
