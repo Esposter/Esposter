@@ -8,6 +8,7 @@ import { ActivePanel } from "#src/models/dungeons/scene/battle/menu/ActivePanel"
 import { PlayerOption } from "#src/models/dungeons/scene/battle/menu/PlayerOption";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { ATTACK_DISPLAY_LIMIT, ATTACK_ROW_SIZE } from "#src/services/dungeons/attack/constants";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
 import { checkIsPlayerSpecialInput } from "#src/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { useBattlePlayerStore } from "#src/store/dungeons/battle/player";
@@ -20,11 +21,17 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const battlePlayerStore = useBattlePlayerStore();
   // Held by the store rather than at module scope, so each Pinia instance starts with its own cursor
   const attackOptionGrid = markRaw(
-    new Grid<[[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]>({
-      grid: computed(() => [
-        [battlePlayerStore.attacks[0], battlePlayerStore.attacks[1]],
-        [battlePlayerStore.attacks[2], battlePlayerStore.attacks[3]],
-      ]),
+    new Grid<(Attack | undefined)[][]>({
+      grid: computed(() => {
+        const attacks = battlePlayerStore.attacks.slice(0, ATTACK_DISPLAY_LIMIT);
+        // A slot the monster has no attack for is a hole, which the cursor does not land on
+        return Array.from({ length: ATTACK_DISPLAY_LIMIT / ATTACK_ROW_SIZE }, (_row, rowIndex) =>
+          Array.from(
+            { length: ATTACK_ROW_SIZE },
+            (_column, columnIndex) => attacks[rowIndex * ATTACK_ROW_SIZE + columnIndex],
+          ),
+        );
+      }),
     }),
   );
   const playerBattleMenuOptionGrid = markRaw(
