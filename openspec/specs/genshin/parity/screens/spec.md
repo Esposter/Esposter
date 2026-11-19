@@ -79,6 +79,22 @@ The game's opening SHALL show its first screens in turn, and SHALL own every han
 - **THEN** the splashes, the login screen and the startup screen are shown in turn
 - **AND** each handoff between them follows its own timing
 
+### Requirement: Every element a screen draws is one the game shows
+
+Every element a Genshin screen draws SHALL be one the game shows, and its owning spec SHALL cite the game's reference for it: a recording, a capture, or the game's own UI tree or text. An element the game does not show SHALL NOT be drawn, not even disabled. An element with no reference yet SHALL NOT be built, and its spec's Open row SHALL name the reference sought.
+
+#### Scenario: A component no reference holds fails the check
+
+- **GIVEN** a component under a genshin package's components folder draws an element of its own
+- **WHEN** no referenced parity screen reaches it, no spec names it beside its reference, and no ledger row covers its folder
+- **THEN** the workspace test fails, naming the component
+
+#### Scenario: A piece drawn inside a referenced screen is held by that screen's reference
+
+- **GIVEN** a component a referenced parity screen imports, directly or through the components it imports
+- **WHEN** the workspace test runs
+- **THEN** the component is held by that screen's reference and is not named
+
 ## Open
 
 - [ ] **A window narrower than 16 by 9 keeps its text inside its boxes** — no source yet: no test or screenshot of a narrow window is cited for the scaling.
