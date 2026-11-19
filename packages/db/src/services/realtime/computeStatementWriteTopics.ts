@@ -26,7 +26,7 @@ const getWriteColumns = (table: Table, statement: SQLWrapper): string[] | undefi
 // Scope values of the rows it returned, so one that returned none changed nothing. A write that asks for none names the rows
 // It read before it ran, if it made any: an update's old values, and a delete's cascaded and changed rows. Every changed table
 // Names its table-wide topic, and a delete's cascaded and changed tables are named table-wide, since RETURNING does not report them
-export const getStatementWriteTopics = async ({
+export const computeStatementWriteTopics = async ({
   before,
   rows,
   statement,

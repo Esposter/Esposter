@@ -36,7 +36,7 @@ const getNamableOccurrences = (readSet: ReadSet): Set<string> => {
 // Another value does not wake the read. An unscoped occurrence no returned row names leaves its table table-wide, and a
 // Table-wide table's row topics are dropped, since its table-wide topic covers every row. An empty read names what it named
 // Before, table-wide
-export const getStatementReadTopics = async ({ rows, statement }: RecordedStatement): Promise<ColumnTopic[]> => {
+export const computeStatementReadTopics = async ({ rows, statement }: RecordedStatement): Promise<ColumnTopic[]> => {
   const readSet = computeStatementReadSet(statement);
   const { sql } = new SQLiteDialect().sqlToQuery(statement.getSQL());
   // A table's watch reads the columns its statement references, under the names and aliases the statement gives the table

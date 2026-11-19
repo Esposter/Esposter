@@ -10,9 +10,9 @@ import { roomRouter } from "#server/trpc/routers/room/index";
 import {
   computeReadSet,
   computeReadTopics,
+  computeWriteTopics,
   getSchemaTables,
   getWokenTopics,
-  computeWriteTopics,
   recordStatements,
 } from "@esposter/db";
 import {
