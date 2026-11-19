@@ -11,7 +11,7 @@ Each offering SHALL take its items, thresholds and rewards from the rule the Fro
 - **THEN** the offering reaches that level
 - **AND** the level's reward is granted
 
-#### Scenario: Offering fewer items than the next threshold reaches no level, and holds them
+#### Scenario: Offering fewer items than the next threshold reaches no level, and grants no reward
 
 - **GIVEN** the player holds fewer items than the next threshold asks for
 - **WHEN** the player offers them
