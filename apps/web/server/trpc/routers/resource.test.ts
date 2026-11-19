@@ -219,23 +219,11 @@ describe("resourceRouter", () => {
     const sheetResource = await sheetCaller.createResource({ name });
     const { items } = await caller.readResources();
 
-    expect(
-      items
-        .map(({ id }) => id)
-        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
-    ).toStrictEqual(
-      [dashboardResource.id, sheetResource.id].toSorted((firstValue, secondValue) =>
-        EN_US_COMPARATOR.compare(firstValue, secondValue),
-      ),
+    expect(items.map(({ id }) => id).toSorted(EN_US_COMPARATOR.compare)).toStrictEqual(
+      [dashboardResource.id, sheetResource.id].toSorted(EN_US_COMPARATOR.compare),
     );
-    expect(
-      items
-        .map(({ type }) => type)
-        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
-    ).toStrictEqual(
-      [ResourceType.Dashboard, ResourceType.Sheet].toSorted((firstValue, secondValue) =>
-        EN_US_COMPARATOR.compare(firstValue, secondValue),
-      ),
+    expect(items.map(({ type }) => type).toSorted(EN_US_COMPARATOR.compare)).toStrictEqual(
+      [ResourceType.Dashboard, ResourceType.Sheet].toSorted(EN_US_COMPARATOR.compare),
     );
   });
 
@@ -480,14 +468,8 @@ describe("resourceRouter", () => {
     const deletedResources = await caller.deleteResources({ ids: [dashboardResource.id, sheetResource.id] });
     const { count } = await caller.readResources();
 
-    expect(
-      deletedResources
-        .map(({ id }) => id)
-        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
-    ).toStrictEqual(
-      [dashboardResource.id, sheetResource.id].toSorted((firstValue, secondValue) =>
-        EN_US_COMPARATOR.compare(firstValue, secondValue),
-      ),
+    expect(deletedResources.map(({ id }) => id).toSorted(EN_US_COMPARATOR.compare)).toStrictEqual(
+      [dashboardResource.id, sheetResource.id].toSorted(EN_US_COMPARATOR.compare),
     );
     expect(count).toBe(0);
   });
@@ -1182,17 +1164,13 @@ describe("resourceRouter", () => {
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
 
-    expect(
-      items
-        .map(({ activityType }) => activityType)
-        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
-    ).toStrictEqual(
+    expect(items.map(({ activityType }) => activityType).toSorted(EN_US_COMPARATOR.compare)).toStrictEqual(
       [
         ResourceActivityType.ContentSaved,
         ResourceActivityType.Created,
         ResourceActivityType.Published,
         ResourceActivityType.Restored,
-      ].toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
+      ].toSorted(EN_US_COMPARATOR.compare),
     );
   });
 
@@ -1380,14 +1358,8 @@ describe("resourceRouter", () => {
     const { items } = await caller.readActivities({ id: dashboardResource.id });
     const renamedActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Renamed);
 
-    expect(
-      items
-        .map(({ activityType }) => activityType)
-        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
-    ).toStrictEqual(
-      [ResourceActivityType.Renamed, ResourceActivityType.Created].toSorted((firstValue, secondValue) =>
-        EN_US_COMPARATOR.compare(firstValue, secondValue),
-      ),
+    expect(items.map(({ activityType }) => activityType).toSorted(EN_US_COMPARATOR.compare)).toStrictEqual(
+      [ResourceActivityType.Renamed, ResourceActivityType.Created].toSorted(EN_US_COMPARATOR.compare),
     );
     expect(renamedActivity?.oldName).toBe(name);
     expect(renamedActivity?.newName).toBe(updatedName);
@@ -1436,14 +1408,8 @@ describe("resourceRouter", () => {
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
 
-    expect(
-      items
-        .map(({ activityType }) => activityType)
-        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
-    ).toStrictEqual(
-      [ResourceActivityType.ContentSaved, ResourceActivityType.Created].toSorted((firstValue, secondValue) =>
-        EN_US_COMPARATOR.compare(firstValue, secondValue),
-      ),
+    expect(items.map(({ activityType }) => activityType).toSorted(EN_US_COMPARATOR.compare)).toStrictEqual(
+      [ResourceActivityType.ContentSaved, ResourceActivityType.Created].toSorted(EN_US_COMPARATOR.compare),
     );
   });
 
@@ -1495,13 +1461,9 @@ describe("resourceRouter", () => {
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
 
-    expect(
-      items
-        .map(({ activityType }) => activityType)
-        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
-    ).toStrictEqual(
+    expect(items.map(({ activityType }) => activityType).toSorted(EN_US_COMPARATOR.compare)).toStrictEqual(
       [ResourceActivityType.ContentSaved, ResourceActivityType.ContentSaved, ResourceActivityType.Created].toSorted(
-        (firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue),
+        EN_US_COMPARATOR.compare,
       ),
     );
   });

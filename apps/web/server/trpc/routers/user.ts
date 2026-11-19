@@ -280,7 +280,7 @@ export const userRouter = router({
       });
       return insertedDataExport;
     } else {
-      const activeDataExport = readActiveDataExport(ctx.db, ctx.user.id);
+      const activeDataExport = readActiveDataExport(ctx.db, userId);
       return requireEntity(activeDataExport, DatabaseEntityType.DataExport, userId);
     }
   }),
