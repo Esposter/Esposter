@@ -95,7 +95,7 @@ describe(useMonsterPartyInputStore, () => {
 
     expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe("Selected monster is fainted.");
     expect(transitionFrom(SceneKey.MonsterParty).switchToPreviousScene).not.toHaveBeenCalled();
-    expect(emitSpy).not.toHaveBeenCalledWith("switchMonster", expect.anything());
+    expect(emitSpy).not.toHaveBeenCalled();
   });
 
   test("a battle switch to the monster already fighting is refused with the reason shown", async () => {
@@ -109,7 +109,7 @@ describe(useMonsterPartyInputStore, () => {
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
 
     expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe("Selected monster is already battling.");
-    expect(emitSpy).not.toHaveBeenCalledWith("switchMonster", expect.anything());
+    expect(emitSpy).not.toHaveBeenCalled();
   });
 
   test("a battle switch to a standing monster returns to the battle and switches to it", async () => {
