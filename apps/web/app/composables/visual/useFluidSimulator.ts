@@ -89,7 +89,6 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     renderer.toneMapping = ACESFilmicToneMapping;
     renderer.toneMappingExposure = parameters.exposure;
     const inspector = new Inspector();
-    renderer.inspector = inspector;
     containerValue.append(renderer.domElement);
 
     const scene = new Scene();
@@ -190,6 +189,10 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
       water,
     };
     await renderer.init();
+    // Attached only once the renderer is up: the inspector's own init awaits the renderer's, and attached before a refused
+    // Init, that await's rejection would go unhandled. Attached before the unmount check, so a renderer the unmount
+    // Released disposes the inspector it holds
+    renderer.inspector = inspector;
     // The unmount has already released what exists, and waited for this init to settle, so nothing more is set up
     if (isUnmounted) return;
 
