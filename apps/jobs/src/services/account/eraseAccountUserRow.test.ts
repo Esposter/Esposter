@@ -19,7 +19,7 @@ const rankingHook = vi.hoisted(() => ({
 }));
 
 vi.mock(import("#src/services/shared/db"), () => ({
-  get db() {
+  getDb() {
     return mockDb;
   },
 }));
