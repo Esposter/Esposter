@@ -11,7 +11,11 @@ import { createCallerFactory } from "#server/trpc/index";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { createId } from "#shared/util/math/random/createId";
-import { openRealtimeSocket, sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
+import {
+  getLastOpenRealtimeSocketCall,
+  openRealtimeSocket,
+  sendRealtimeFrame,
+} from "#src/services/realtime/openRealtimeSocket.test";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import {
   CALL_ID_LENGTH,
@@ -63,7 +67,7 @@ describe(useConnectionStore, () => {
       () => undefined,
       () => undefined,
     );
-    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const [, onFrame] = getLastOpenRealtimeSocketCall();
 
     const createdAt = new Date(0);
     const message: RoomMessage = {
@@ -97,7 +101,7 @@ describe(useConnectionStore, () => {
 
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
-    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const [, onFrame] = getLastOpenRealtimeSocketCall();
     const topic: Topic = `post:${v7()}`;
     const firstRefetch = vi.fn<() => void>();
     const secondRefetch = vi.fn<() => void>();
@@ -195,7 +199,7 @@ describe(useConnectionStore, () => {
 
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
-    const [, onUserFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const [, onUserFrame] = getLastOpenRealtimeSocketCall();
     const refetch = vi.fn<() => void>();
     sendRealtimeFrame.mockClear();
     for (const read of reads) connectionStore.watchTopics(read.topics, read.readAt, refetch);

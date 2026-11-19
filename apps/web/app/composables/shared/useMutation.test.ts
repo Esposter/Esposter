@@ -2,7 +2,7 @@
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
-import { openRealtimeSocket } from "#src/services/realtime/openRealtimeSocket.test";
+import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
 import { useAlertStore } from "#src/store/alert";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { getTopic, TopicKind } from "@esposter/db-schema";
@@ -566,7 +566,7 @@ describe(useMutation, () => {
 
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
-    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const [, onFrame] = getLastOpenRealtimeSocketCall();
     const topic = getTopic(TopicKind.Post, v7());
     const query = vi.fn<() => Promise<string>>(() => {
       readActiveTopicReads()?.push({ readAt: 0, topics: [{ topic }] });

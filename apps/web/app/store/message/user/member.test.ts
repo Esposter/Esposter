@@ -11,7 +11,7 @@ import { createUserToRoom } from "#src/services/message/room/createUserToRoom.te
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
-import { openRealtimeSocket } from "#src/services/realtime/openRealtimeSocket.test";
+import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useMemberStore } from "#src/store/message/user/member";
@@ -260,7 +260,7 @@ describe(useMemberStore, () => {
 
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
-    const [, onUserFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const [, onUserFrame] = getLastOpenRealtimeSocketCall();
     effectScope().run(() => {
       useUserToRoomSubscribables();
     });

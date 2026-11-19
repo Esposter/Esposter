@@ -7,7 +7,7 @@ import { createRoom } from "#src/services/message/room/createRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
-import { openRealtimeSocket } from "#src/services/realtime/openRealtimeSocket.test";
+import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
@@ -219,7 +219,7 @@ describe(useDirectMessageStore, () => {
     const membershipTopic = getScopeTopic(getTableName(usersToRoomsInMessage), "roomId", directMessage.id);
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
-    const [, onUserFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const [, onUserFrame] = getLastOpenRealtimeSocketCall();
     effectScope().run(() => {
       useRoomListEvents();
     });

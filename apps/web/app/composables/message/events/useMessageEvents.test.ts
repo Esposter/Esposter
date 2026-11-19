@@ -2,7 +2,7 @@
 import type { RoomMessage } from "@esposter/db-schema";
 
 import { useMessageEvents } from "#src/composables/message/events/useMessageEvents";
-import { openRealtimeSocket } from "#src/services/realtime/openRealtimeSocket.test";
+import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
 import { useDataStore } from "#src/store/message/data";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { MessageType } from "@esposter/db-schema";
@@ -59,7 +59,7 @@ describe(useMessageEvents, () => {
       () => undefined,
       () => undefined,
     );
-    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const [, onFrame] = getLastOpenRealtimeSocketCall();
 
     onFrame?.(JSON.stringify({ data: [createRoomMessage(messageId, message)], type: "createMessage" }));
     await flushPromises();
@@ -87,7 +87,7 @@ describe(useMessageEvents, () => {
       () => undefined,
       () => undefined,
     );
-    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const [, onFrame] = getLastOpenRealtimeSocketCall();
     onFrame?.(JSON.stringify({ data: [createRoomMessage(messageId, "message")], type: "createMessage" }));
     await flushPromises();
 

@@ -18,5 +18,7 @@ export const openRealtimeSocket = vi.fn<
   options?.onOpen?.();
   return { close: () => undefined, send: sendRealtimeFrame };
 });
+// The arguments of the latest open the code under test made: its frame handler and its options, or none before any open
+export const getLastOpenRealtimeSocketCall = () => openRealtimeSocket.mock.lastCall ?? [];
 
 describe.todo("openRealtimeSocket");

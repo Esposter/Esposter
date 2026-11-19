@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
-import { openRealtimeSocket, sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
+import { getLastOpenRealtimeSocketCall, sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
 import { useAlertStore } from "#src/store/alert";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { getTopic, TopicKind } from "@esposter/db-schema";
@@ -104,7 +104,7 @@ describe(useQuery, () => {
 
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
-    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const [, onFrame] = getLastOpenRealtimeSocketCall();
     const topic = getTopic(TopicKind.Post, v7());
     let value = result;
     const scope = effectScope();

@@ -5,7 +5,7 @@ import { BACKOFF_BASE_DELAY_MS } from "#shared/services/pagination/constants";
 import { createPendingQuery } from "#src/composables/data/pagination/createPendingQuery.test";
 import { goOffline, goOnline } from "#src/composables/shared/network.test";
 import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
-import { openRealtimeSocket, sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
+import { getLastOpenRealtimeSocketCall, sendRealtimeFrame } from "#src/services/realtime/openRealtimeSocket.test";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { createEmptyPage, getTopic, TopicKind } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
@@ -116,7 +116,7 @@ describe(useCursorPaginationOperationData, () => {
     const laterRow: Row = { description: "later", id: "later" };
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
-    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const [, onFrame] = getLastOpenRealtimeSocketCall();
     let rowOperationData: ReturnType<typeof useCursorPaginationOperationData<Row>> | undefined;
     await mountSuspended(
       defineComponent({
@@ -161,7 +161,7 @@ describe(useCursorPaginationOperationData, () => {
     const laterRow: Row = { id: "later" };
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
-    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+    const [, onFrame] = getLastOpenRealtimeSocketCall();
     let rowOperationData: ReturnType<typeof useCursorPaginationOperationData<Row>> | undefined;
     await mountSuspended(
       defineComponent({
