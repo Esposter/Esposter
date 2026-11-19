@@ -12,7 +12,7 @@ const doubles = vi.hoisted(() => ({
 
 // The renderer's GPU device is refused, so its init rejects: everything built before that await is left for the unmount
 vi.mock("three/webgpu", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<object>();
   class RefusedRenderer {
     domElement = document.createElement("canvas");
     toneMapping = 0;

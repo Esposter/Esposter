@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { TransitionProps } from "vue";
 
+import { omitUndefined } from "@esposter/shared";
+
 defineSlots<{ default: () => VNode }>();
-defineProps<{ mode?: TransitionProps["mode"] }>();
+defineProps<{ mode?: TransitionProps["mode"] | undefined }>();
 </script>
 
 <template>
-  <Transition name="fade" :mode>
+  <Transition name="fade" :="omitUndefined({ mode })">
     <slot />
   </Transition>
 </template>

@@ -9,7 +9,7 @@ import type { Renderer } from "three/webgpu";
 
 export interface PostPipelineOptions {
   // The shape of the bloom's chain, where a scene tests one of the game's other shapes; the game's own shape by default
-  bloomStructure?: GameBloomStructure;
+  bloomStructure?: GameBloomStructure | undefined;
   camera: Camera;
   fogUniforms: FogUniforms;
   // The unlit sun the god rays march through, where a scene draws them

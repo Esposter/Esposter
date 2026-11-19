@@ -10,7 +10,7 @@ export const transitionFrom = (currentSceneKey: SceneKey) => {
   const { launchParallelScene, removeParallelScene } = phaserStore;
   const sceneStore = useSceneStore();
   const { popSceneKeysAbove } = sceneStore;
-  const { previousSceneKeyStack } = storeToRefs(sceneStore);
+  const { previousSceneKey, previousSceneKeyStack } = storeToRefs(sceneStore);
 
   const launchScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
     previousSceneKeyStack.value.push(currentSceneKey);
@@ -34,5 +34,5 @@ export const transitionFrom = (currentSceneKey: SceneKey) => {
     scene.scene.resume(poppedSceneKey);
   };
 
-  return { launchScene, removeScenesAbove, switchToPreviousScene };
+  return { launchScene, previousSceneKey, removeScenesAbove, switchToPreviousScene };
 };
