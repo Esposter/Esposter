@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
+import type { UiCalendarSlotEmits } from "#src/models/ui/UiCalendarSlotEmits";
 
 import { CALENDAR_FIRST_DAY_OF_WEEK } from "#src/services/ui/constants";
 import { getNextGridDate } from "#src/util/date/getNextGridDate";
@@ -15,14 +16,13 @@ interface Props {
 // Day shown, so a step off the month turns the page
 const date = defineModel<Temporal.PlainDate>("date", { required: true });
 defineProps<Props>();
-const emit = defineEmits<{
-  create: [day: Temporal.PlainDate];
-  dragStart: [id: string];
-  drop: [day: Temporal.PlainDate];
-  nudge: [id: string, duration: Temporal.Duration];
-  open: [id: string];
-  showDay: [day: Temporal.PlainDate];
-}>();
+const emit = defineEmits<
+  Pick<UiCalendarSlotEmits, "dragStart" | "nudge" | "open"> & {
+    create: [day: Temporal.PlainDate];
+    drop: [day: Temporal.PlainDate];
+    showDay: [day: Temporal.PlainDate];
+  }
+>();
 const grid = useTemplateRef("grid");
 const month = computed(() => date.value.toPlainYearMonth());
 // The month's six weeks, Monday first, from a grid with no value: the selected day is the view's own, not the grid's

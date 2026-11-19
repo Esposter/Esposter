@@ -2,6 +2,7 @@
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDataTableDensity } from "#src/models/ui/UiDataTableDensity";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { DATA_TABLE_ALL_ROWS } from "#src/services/ui/constants";
 
 interface Props {
   // The page sizes the reader picks from, -1 for every row
@@ -19,7 +20,7 @@ const page = defineModel<number>("page", { required: true });
 const { itemsPerPageOptions, totalLength } = defineProps<Props>();
 const rangeText = computed(() => {
   if (totalLength === 0) return "0 of 0";
-  else if (itemsPerPage.value === -1) return `1–${totalLength} of ${totalLength}`;
+  else if (itemsPerPage.value === DATA_TABLE_ALL_ROWS) return `1–${totalLength} of ${totalLength}`;
   const start = (page.value - 1) * itemsPerPage.value + 1;
   const stop = Math.min(page.value * itemsPerPage.value, totalLength);
   return `${start}–${stop} of ${totalLength}`;
@@ -27,7 +28,7 @@ const rangeText = computed(() => {
 const itemsPerPageItems = computed(() =>
   itemsPerPageOptions.map((option) => ({
     meaning: UiIconMeaning.Rows,
-    title: option === -1 ? "All" : String(option),
+    title: option === DATA_TABLE_ALL_ROWS ? "All" : String(option),
     value: String(option),
   })),
 );

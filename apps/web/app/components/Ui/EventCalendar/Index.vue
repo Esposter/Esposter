@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
+import type { UiCalendarSlotEmits } from "#src/models/ui/UiCalendarSlotEmits";
 import type { UiCommand } from "#src/models/ui/UiCommand";
 import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 
@@ -33,8 +34,8 @@ interface Props {
 const view = defineModel<UiCalendarView>("view", { default: UiCalendarView.Month });
 const date = defineModel<Temporal.PlainDate>("date", { default: () => Temporal.Now.plainDateISO() });
 const { events, onCreate } = defineProps<Props>();
-const emit = defineEmits<{ move: [id: string, start: Date]; open: [id: string] }>();
-const { today } = useCalendarClock();
+const emit = defineEmits<Pick<UiCalendarSlotEmits, "open"> & { move: [id: string, start: Date] }>();
+const { now, today } = useCalendarClock();
 const viewItems: UiMenuItem<UiCalendarView>[] = UiCalendarViews.map((value) => ({ title: value, value }));
 const step = computed(() => UiCalendarViewStepMap[view.value]);
 const days = computed(() => {
@@ -55,15 +56,19 @@ const section = useTemplateRef("section");
 const draggedId = ref("");
 // The event last moved, read out in a polite live region as its new time, so a move from the keyboard is heard
 const movedEvent = ref<Pick<UiCalendarEvent, "start" | "title">>();
+// The instant a day or a slot of the hours is in the reader's zone: a day takes the time of day it is given, and a slot
+// Is already at its own time
+const getZonedStart = (target: Temporal.PlainDate | Temporal.PlainDateTime, plainTime: Temporal.PlainTime) => {
+  const timeZone = Temporal.Now.timeZoneId();
+  return target instanceof Temporal.PlainDate
+    ? target.toZonedDateTime({ plainTime, timeZone })
+    : target.toZonedDateTime(timeZone);
+};
 // A day keeps the event's own time; a slot of the hours is the new time whole
 const move = (id: string, target: Temporal.PlainDate | Temporal.PlainDateTime) => {
   const event = events.find((calendarEvent) => calendarEvent.id === id);
   if (!event) return;
-  const timeZone = Temporal.Now.timeZoneId();
-  const zonedDateTime =
-    target instanceof Temporal.PlainDate
-      ? target.toZonedDateTime({ plainTime: getZonedDateTime(event.start).toPlainTime(), timeZone })
-      : target.toZonedDateTime(timeZone);
+  const zonedDateTime = getZonedStart(target, getZonedDateTime(event.start).toPlainTime());
   const start = new Date(zonedDateTime.epochMilliseconds);
   if (start.getTime() === event.start.getTime()) return;
   emit("move", event.id, start);
@@ -97,16 +102,22 @@ const nudge = async (id: string, duration: Temporal.Duration) => {
 };
 // A day of the month has no time of its own, so what is made on one starts with the working day
 const create = (target: Temporal.PlainDate | Temporal.PlainDateTime) => {
-  const timeZone = Temporal.Now.timeZoneId();
-  const zonedDateTime =
-    target instanceof Temporal.PlainDate
-      ? target.toZonedDateTime({ plainTime: { hour: CALENDAR_OPENING_HOUR }, timeZone })
-      : target.toZonedDateTime(timeZone);
+  const zonedDateTime = getZonedStart(target, Temporal.PlainTime.from({ hour: CALENDAR_OPENING_HOUR }));
   onCreate?.(new Date(zonedDateTime.epochMilliseconds));
 };
 const showDay = (day: Temporal.PlainDate) => {
   date.value = day;
   view.value = UiCalendarView.Day;
+};
+// The navigator's steps and today, which its buttons and its commands share
+const goToToday = () => {
+  date.value = today.value;
+};
+const stepBack = (duration: Temporal.DurationLike) => {
+  date.value = date.value.subtract(duration);
+};
+const stepForward = (duration: Temporal.DurationLike) => {
+  date.value = date.value.add(duration);
 };
 // Outlook numbers its views from the shortest; stepping and today are Google Calendar's single keys, which Outlook has
 // No equivalent of
@@ -125,9 +136,7 @@ useCommands((): UiCommand[] => [
     group: CALENDAR_COMMAND_GROUP,
     id: "calendar-today",
     meaning: UiIconMeaning.Date,
-    run: () => {
-      date.value = today.value;
-    },
+    run: goToToday,
     shortcut: "t",
     title: "Go to today",
   },
@@ -136,7 +145,7 @@ useCommands((): UiCommand[] => [
     id: "calendar-next",
     meaning: UiIconMeaning.Next,
     run: () => {
-      date.value = date.value.add(step.value);
+      stepForward(step.value);
     },
     shortcut: "j",
     title: `Next ${view.value.toLowerCase()}`,
@@ -146,7 +155,7 @@ useCommands((): UiCommand[] => [
     id: "calendar-previous",
     meaning: UiIconMeaning.Previous,
     run: () => {
-      date.value = date.value.subtract(step.value);
+      stepBack(step.value);
     },
     shortcut: "k",
     title: `Previous ${view.value.toLowerCase()}`,
@@ -184,28 +193,28 @@ useCommands((): UiCommand[] => [
             label="Previous year"
             :meaning="UiIconMeaning.SkipBackward"
             :variant="UiButtonVariant.Quiet"
-            @click="date = date.subtract({ years: 1 })"
+            @click="stepBack({ years: 1 })"
           />
           <UiIconButton
             :label="`Previous ${view.toLowerCase()}`"
             :meaning="UiIconMeaning.Previous"
             :variant="UiButtonVariant.Quiet"
-            @click="date = date.subtract(step)"
+            @click="stepBack(step)"
           />
-          <UiButton :disabled="date.equals(today)" :variant="UiButtonVariant.Quiet" @click="date = today">
+          <UiButton :disabled="date.equals(today)" :variant="UiButtonVariant.Quiet" @click="goToToday()">
             Today
           </UiButton>
           <UiIconButton
             :label="`Next ${view.toLowerCase()}`"
             :meaning="UiIconMeaning.Next"
             :variant="UiButtonVariant.Quiet"
-            @click="date = date.add(step)"
+            @click="stepForward(step)"
           />
           <UiIconButton
             label="Next year"
             :meaning="UiIconMeaning.SkipForward"
             :variant="UiButtonVariant.Quiet"
-            @click="date = date.add({ years: 1 })"
+            @click="stepForward({ years: 1 })"
           />
         </div>
         <UiToggleGroup v-model="view" :items="viewItems" label="View" />
@@ -232,6 +241,7 @@ useCommands((): UiCommand[] => [
             :days
             :event-day-map
             :is-creatable="Boolean(onCreate)"
+            :now
             :step
             :today
             @create="create($event)"

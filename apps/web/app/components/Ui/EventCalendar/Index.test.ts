@@ -5,12 +5,7 @@ import UiEventCalendar from "#src/components/Ui/EventCalendar/Index.vue";
 import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
 import { UiCalendarView } from "#src/models/ui/UiCalendarView";
 import { UiStyles } from "#src/models/ui/UiStyle";
-import {
-  CALENDAR_DAY_EVENT_LIMIT,
-  CALENDAR_OPENING_HOUR,
-  CALENDAR_SLOT_DURATION,
-  CALENDAR_WORK_WEEK_DAY_COUNT,
-} from "#src/services/ui/constants";
+import { CALENDAR_DAY_EVENT_LIMIT, CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION } from "#src/services/ui/constants";
 import { getZonedDateTime, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -101,7 +96,7 @@ describe("uiEventCalendar", () => {
       expect(component.emitted("move")).toBeUndefined();
     });
 
-    test("draws a column per day of the week, and the working days alone in a work week", async () => {
+    test("draws a column per day of the week, and the working days, Monday to Friday, alone in a work week", async () => {
       expect.hasAssertions();
 
       const component = await mountEventCalendar({ view: UiCalendarView.Week });
@@ -111,7 +106,36 @@ describe("uiEventCalendar", () => {
       await component.setProps({ view: UiCalendarView.WorkWeek });
       await flushPromises();
 
-      expect(component.findAll(".column")).toHaveLength(CALENDAR_WORK_WEEK_DAY_COUNT);
+      const monday = date.subtract({ days: date.dayOfWeek - 1 });
+
+      expect(component.findAll(".column").map((column) => column.attributes("data-date"))).toStrictEqual(
+        [0, 1, 2, 3, 4].map((offset) => monday.add({ days: offset }).toString()),
+      );
+    });
+
+    test("shades the Saturday and the Sunday of a week, and no weekday", async () => {
+      expect.hasAssertions();
+
+      const component = await mountEventCalendar({ view: UiCalendarView.Week });
+      const monday = date.subtract({ days: date.dayOfWeek - 1 });
+
+      expect(component.findAll(".column[data-weekend]").map((column) => column.attributes("data-date"))).toStrictEqual([
+        monday.add({ days: 5 }).toString(),
+        monday.add({ days: 6 }).toString(),
+      ]);
+    });
+
+    test("shades every Saturday and Sunday of the month's grid, and no other day", async () => {
+      expect.hasAssertions();
+
+      const component = await mountEventCalendar();
+      const monthGrid = component.get('[role="grid"][aria-label="Month"]');
+      const isoDates = monthGrid.findAll('[role="gridcell"]').map((day) => String(day.attributes("data-date")));
+      const weekendDates = isoDates.filter((isoDate) => [6, 7].includes(Temporal.PlainDate.from(isoDate).dayOfWeek));
+
+      expect(
+        monthGrid.findAll('[role="gridcell"][data-weekend]').map((day) => String(day.attributes("data-date"))),
+      ).toStrictEqual(weekendDates);
     });
 
     test("selects the day a click on its empty space lands on, one day at a time", async () => {

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
+import type { UiCalendarSlotEmits } from "#src/models/ui/UiCalendarSlotEmits";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
-import { CALENDAR_DAY_EVENT_LIMIT, CALENDAR_WORK_WEEK_DAY_COUNT } from "#src/services/ui/constants";
+import { CALENDAR_DAY_EVENT_LIMIT } from "#src/services/ui/constants";
+import { checkIsWeekend } from "#src/util/date/checkIsWeekend";
 
 interface Props {
   day: Temporal.PlainDate;
@@ -20,20 +22,18 @@ interface Props {
 // One day of a month, a cell of the month's grid: its number, which opens the day, the first of its events and a count
 // Of the rest, which opens it too. A click on its empty space selects it, and an event dragged over it tints it and
 // Dropped there moves onto it. A weekend is shaded, as Outlook shades the days outside the work week
-const { events } = defineProps<Props>();
-const emit = defineEmits<{
-  create: [];
-  dragStart: [id: string];
-  drop: [];
-  nudge: [id: string, duration: Temporal.Duration];
-  open: [id: string];
-  select: [];
-  showDay: [];
-}>();
+const { events, isCreatable } = defineProps<Props>();
+const emit = defineEmits<
+  Pick<UiCalendarSlotEmits, "dragStart" | "nudge" | "open"> & { create: []; drop: []; select: []; showDay: [] }
+>();
 // The events the cell draws, held as a computed so a drag over the cell, which re-renders it without moving its events,
 // Does not take the slice again
 const visibleEvents = computed(() => events.slice(0, CALENDAR_DAY_EVENT_LIMIT));
 const isDropTarget = ref(false);
+// A double click on the day's empty space, or Enter on the day, makes something on it where the calendar can create
+const create = () => {
+  if (isCreatable) emit("create");
+};
 </script>
 
 <template>
@@ -46,7 +46,7 @@ const isDropTarget = ref(false);
     :data-outside="isOutside || undefined"
     :data-selected="isSelected || undefined"
     :data-today="isToday || undefined"
-    :data-weekend="day.dayOfWeek > CALENDAR_WORK_WEEK_DAY_COUNT || undefined"
+    :data-weekend="checkIsWeekend(day) || undefined"
     :class="{ 'cursor-cell': isCreatable }"
     role="gridcell"
     :tabindex="isFocused ? 0 : -1"
@@ -58,16 +58,8 @@ const isDropTarget = ref(false);
     min-h-0
     of-hidden
     @click.self="emit('select')"
-    @dblclick.self="
-      () => {
-        if (isCreatable) emit('create');
-      }
-    "
-    @keydown.enter.self.prevent="
-      () => {
-        if (isCreatable) emit('create');
-      }
-    "
+    @dblclick.self="create()"
+    @keydown.enter.self.prevent="create()"
     @dragover.prevent="isDropTarget = true"
     @dragleave="isDropTarget = false"
     @drop.prevent="

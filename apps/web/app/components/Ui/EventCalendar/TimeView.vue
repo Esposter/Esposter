@@ -4,12 +4,15 @@ import type { UiCalendarSlotEmits } from "#src/models/ui/UiCalendarSlotEmits";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION } from "#src/services/ui/constants";
+import { checkHasChordModifier } from "#src/util/dom/checkHasChordModifier";
 import { takeOne } from "@esposter/shared";
 
 interface Props {
   days: Temporal.PlainDate[];
   eventDayMap: Map<string, UiCalendarEvent[]>;
   isCreatable: boolean;
+  // The clock's reading, which draws the current-time line on today
+  now: Temporal.ZonedDateTime;
   // How far the view steps, which Page Up and Page Down step it too
   step: Temporal.DurationLike;
   today: Temporal.PlainDate;
@@ -45,7 +48,7 @@ const midnight = Temporal.PlainTime.from({ hour: 0 });
 const lastSlotStart = midnight.subtract(CALENDAR_SLOT_DURATION);
 // A key held with Alt, Ctrl or Meta moves nowhere, left to whatever binds that chord — Alt+Left is the browser's Back
 const getNextSlot = (event: KeyboardEvent, slot: Temporal.PlainDateTime) => {
-  if (event.altKey || event.ctrlKey || event.metaKey) return undefined;
+  if (checkHasChordModifier(event)) return undefined;
   const day = slot.toPlainDate();
   const firstDay = takeOne(days, 0);
   const lastDay = takeOne(days, days.length - 1);
@@ -157,6 +160,7 @@ onMounted(() => {
           :focused-slot
           :is-creatable
           :is-today="day.equals(today)"
+          :now
           :selected-slot
           @create="emit('create', $event)"
           @drag-start="emit('dragStart', $event)"

@@ -6,6 +6,8 @@ import type { UiDataTableColumn } from "#src/models/ui/UiDataTableColumn";
 import { UiDataTableDensity } from "#src/models/ui/UiDataTableDensity";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import {
+  DATA_TABLE_ALL_ROWS,
+  DATA_TABLE_COLLATOR,
   DATA_TABLE_SKELETON_ROW_COUNT,
   MAX_DATA_TABLE_COLUMN_WIDTH,
   MIN_DATA_TABLE_COLUMN_WIDTH,
@@ -72,7 +74,7 @@ defineSlots<{
   header?: (props: { column: UiDataTableColumn<T, TSortKey> }) => VNode;
 }>();
 const page = defineModel<number>("page", { default: 1 });
-const itemsPerPage = defineModel<number>("itemsPerPage", { default: -1 });
+const itemsPerPage = defineModel<number>("itemsPerPage", { default: DATA_TABLE_ALL_ROWS });
 const sortBy = defineModel<SortItem<TSortKey>[]>("sortBy", { default: () => [] });
 const selectedIds = defineModel<string[]>("selectedIds", { default: () => [] });
 // Each column's width by its key, a column without one sized by its content, so a call site keeps what the reader
@@ -84,6 +86,7 @@ const activeCell = defineModel<UiDataTableCell>("activeCell");
 const {
   columns,
   groupBy,
+  isFirstColumnSticky,
   isMultiSort,
   isPending = false,
   isReorderable,
@@ -112,7 +115,7 @@ const sortedItems = computed(() => {
     const compare =
       column.compare ??
       ((firstItem: T, secondItem: T) =>
-        getCellValue(column, firstItem).localeCompare(getCellValue(column, secondItem), undefined, { numeric: true }));
+        DATA_TABLE_COLLATOR.compare(getCellValue(column, firstItem), getCellValue(column, secondItem)));
     const direction = order === SortOrder.Desc ? -1 : 1;
     return [(firstItem: T, secondItem: T) => compare(firstItem, secondItem) * direction];
   });
@@ -127,14 +130,14 @@ const sortedItems = computed(() => {
 });
 // The rows drawn: the server's page as it came, or this page of every row
 const pageItems = computed(() => {
-  if (itemsLength !== undefined || itemsPerPage.value === -1) return sortedItems.value;
+  if (itemsLength !== undefined || itemsPerPage.value === DATA_TABLE_ALL_ROWS) return sortedItems.value;
   const start = (page.value - 1) * itemsPerPage.value;
   return sortedItems.value.slice(start, start + itemsPerPage.value);
 });
 const totalLength = computed(() => itemsLength ?? sortedItems.value.length);
 const columnCount = computed(() => columns.length + (isSelectable ? 1 : 0));
 const pageCount = computed(() =>
-  itemsPerPage.value === -1 ? 1 : Math.max(1, Math.ceil(totalLength.value / itemsPerPage.value)),
+  itemsPerPage.value === DATA_TABLE_ALL_ROWS ? 1 : Math.max(1, Math.ceil(totalLength.value / itemsPerPage.value)),
 );
 // A removal can leave the reader past the last page, so it steps back to it rather than show a false empty state. A
 // Count of none is the one before the first read too, which must leave a page from the address alone
@@ -142,7 +145,9 @@ watch(totalLength, (newTotalLength) => {
   if (newTotalLength > 0 && page.value > pageCount.value) page.value = pageCount.value;
 });
 const pageIds = computed(() => pageItems.value.map(({ id }) => id));
-const selectedPageIdCount = computed(() => pageIds.value.filter((id) => selectedIds.value.includes(id)).length);
+// The selection as a set, so a row asks whether it is selected in constant time rather than by searching every selected id
+const selectedIdSet = computed(() => new Set(selectedIds.value));
+const selectedPageIdCount = computed(() => pageIds.value.filter((id) => selectedIdSet.value.has(id)).length);
 const isPageSelected = computed(() => pageIds.value.length > 0 && selectedPageIdCount.value === pageIds.value.length);
 // Without a group every row sits under one that has no header
 const groups = computed(() => {
@@ -213,6 +218,10 @@ useResizeObserver(
     measuredColumnKeyWidthMap.value = newMeasuredColumnKeyWidthMap;
   },
 );
+// A sticky first column pins its cells in every row: the selection column pins beside it, and the first data column
+// Pins too, with the edge its shade sits on
+const selectionPinClass = computed(() => ({ pinned: isFirstColumnSticky }));
+const getColumnPinClass = (columnIndex: number) => ({ "pinned pinned-edge": isFirstColumnSticky && columnIndex === 0 });
 const getColumnWidth = (key: string) =>
   columnKeyWidthMap.value[key] ??
   Math.min(
@@ -265,7 +274,7 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
               v-if="isSelectable"
               ref="selectionHeaderCell"
               class="header cell selection"
-              :class="{ pinned: isFirstColumnSticky }"
+              :class="selectionPinClass"
               px-3
               w-0
             >
@@ -281,7 +290,7 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
               :key="column.key"
               ref="headerCells"
               class="header cell"
-              :class="{ 'pinned pinned-edge': isFirstColumnSticky && columnIndex === 0 }"
+              :class="getColumnPinClass(columnIndex)"
               :aria-sort="getAriaSort(column.key)"
               :data-column-key="column.key"
               :style="columnKeyWidthMap[column.key] ? { width: `${columnKeyWidthMap[column.key]}px` } : undefined"
@@ -372,7 +381,7 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
                 :key="item.id"
                 class="row"
                 :data-reorder-id="isReorderActive ? item.id : undefined"
-                :data-selected="selectedIds.includes(item.id) || undefined"
+                :data-selected="selectedIdSet.has(item.id) || undefined"
                 :="getRowProps?.(item)"
                 :class="{ 'cursor-pointer': onOpen }"
                 :tabindex="isCellNavigable ? undefined : 0"
@@ -390,13 +399,13 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
                 <td
                   v-if="isSelectable"
                   class="cell selection"
-                  :class="{ pinned: isFirstColumnSticky }"
+                  :class="selectionPinClass"
                   data-nested-interaction="true"
                   px-3
                 >
                   <UiCheckbox
                     :label="`Select ${getItemTitle(item)}`"
-                    :model-value="selectedIds.includes(item.id)"
+                    :model-value="selectedIdSet.has(item.id)"
                     @update:model-value="toggleSelection(item.id)"
                   />
                 </td>
@@ -404,7 +413,7 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
                   v-for="(column, columnIndex) of columns"
                   :key="column.key"
                   class="cell"
-                  :class="{ 'pinned pinned-edge': isFirstColumnSticky && columnIndex === 0 }"
+                  :class="getColumnPinClass(columnIndex)"
                   :data-column-key="isCellNavigable ? column.key : undefined"
                   :data-item-id="isCellNavigable ? item.id : undefined"
                   :role="isCellNavigable ? 'gridcell' : undefined"
@@ -441,12 +450,12 @@ const { onGridKeydown, tabStopCell } = useDataTableGrid<T, TSortKey>(
         </template>
         <tfoot v-if="$slots.foot && pageItems.length > 0">
           <tr>
-            <td v-if="isSelectable" class="cell" :class="{ pinned: isFirstColumnSticky }" />
+            <td v-if="isSelectable" class="cell" :class="selectionPinClass" />
             <td
               v-for="(column, columnIndex) of columns"
               :key="column.key"
               class="cell"
-              :class="{ 'pinned pinned-edge': isFirstColumnSticky && columnIndex === 0 }"
+              :class="getColumnPinClass(columnIndex)"
               px-3
             >
               <slot name="foot" :column />

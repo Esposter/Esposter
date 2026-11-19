@@ -2,12 +2,8 @@
 import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 import type { UiCalendarSlotEmits } from "#src/models/ui/UiCalendarSlotEmits";
 
-import {
-  CALENDAR_CLOSING_HOUR,
-  CALENDAR_OPENING_HOUR,
-  CALENDAR_SLOT_DURATION,
-  CALENDAR_WORK_WEEK_DAY_COUNT,
-} from "#src/services/ui/constants";
+import { CALENDAR_CLOSING_HOUR, CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION } from "#src/services/ui/constants";
+import { checkIsWeekend } from "#src/util/date/checkIsWeekend";
 import { getZonedDateTime } from "@esposter/shared";
 
 interface Props {
@@ -18,13 +14,15 @@ interface Props {
   // Whether a double click on an empty slot, or Enter on one, makes something at its time
   isCreatable: boolean;
   isToday: boolean;
+  // The clock's reading, which draws the current-time line on today
+  now: Temporal.ZonedDateTime;
   // The slot a click last picked, on whichever day it is
   selectedSlot?: Temporal.PlainDateTime | undefined;
 }
 // One day of hours: a slot per half hour to select, or to drop an event on, each event an hour tall at its time, events
 // In the same slot side by side, and on today a line in the accent at the current time. The hours outside the working
 // Day and the whole of a weekend are shaded, as Outlook shades them
-const { day, events, focusedSlot, selectedSlot } = defineProps<Props>();
+const { day, events, focusedSlot, isCreatable, now, selectedSlot } = defineProps<Props>();
 const emit = defineEmits<UiCalendarSlotEmits & { select: [start: Temporal.PlainDateTime] }>();
 const midnight = Temporal.PlainTime.from({ hour: 0 });
 const slotMinutes = CALENDAR_SLOT_DURATION.total("minutes");
@@ -37,6 +35,10 @@ const slots = computed(() =>
   slotStarts.map((slotStart) => ({ slotName: day.toPlainDateTime(slotStart).toString(), slotStart })),
 );
 const dropTargetIndex = ref(-1);
+// A double click on an empty slot, or Enter on one, makes something at its time, where the calendar can create
+const create = (slotStart: Temporal.PlainTime) => {
+  if (isCreatable) emit("create", day.toPlainDateTime(slotStart));
+};
 // How many slots into the day a time is, a fraction of one past the slot it falls in
 const getSlotOffset = (plainTime: Temporal.PlainTime) => plainTime.since(midnight).total("minutes") / slotMinutes;
 // Where each event sits: its slot, and its place among the others that share the slot
@@ -53,15 +55,14 @@ const getSlotIndex = (slot?: Temporal.PlainDateTime) =>
   slot?.toPlainDate().equals(day) ? Math.floor(getSlotOffset(slot.toPlainTime())) : -1;
 const selectedIndex = computed(() => getSlotIndex(selectedSlot));
 const focusedIndex = computed(() => getSlotIndex(focusedSlot));
-const { now } = useCalendarClock();
-const nowSlotOffset = computed(() => getSlotOffset(now.value.toPlainTime()));
+const nowSlotOffset = computed(() => getSlotOffset(now.toPlainTime()));
 </script>
 
 <template>
   <div
     class="column"
     :data-date="day.toString()"
-    :data-weekend="day.dayOfWeek > CALENDAR_WORK_WEEK_DAY_COUNT || undefined"
+    :data-weekend="checkIsWeekend(day) || undefined"
     role="row"
     ui-guide
     relative
@@ -82,16 +83,8 @@ const nowSlotOffset = computed(() => getSlotOffset(now.value.toPlainTime()));
       :tabindex="focusedIndex === index ? 0 : -1"
       hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
       @click="emit('select', day.toPlainDateTime(slotStart))"
-      @dblclick="
-        () => {
-          if (isCreatable) emit('create', day.toPlainDateTime(slotStart));
-        }
-      "
-      @keydown.enter.prevent="
-        () => {
-          if (isCreatable) emit('create', day.toPlainDateTime(slotStart));
-        }
-      "
+      @dblclick="create(slotStart)"
+      @keydown.enter.prevent="create(slotStart)"
       @dragover.prevent="dropTargetIndex = index"
       @dragleave="dropTargetIndex = -1"
       @drop.prevent="

@@ -17,8 +17,12 @@ export const DIALOG_BODY_TRANSITION_DURATION = { enter: 0, leave: DIALOG_CLOSE_D
 export const TOAST_DURATION_MS = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 // How many voxel blocks the loading bar is made of
 export const LOADING_BAR_BLOCK_COUNT = 16;
-// The page sizes a table that holds every row offers, -1 for all of them
-export const DATA_TABLE_ITEMS_PER_PAGE_OPTIONS: [number, ...number[]] = [10, 25, 50, 100, -1];
+// The page size that shows every row, named All by a table's footer and the size its page starts at
+export const DATA_TABLE_ALL_ROWS = -1;
+// How a data table's sort compares cell text: numbers as numbers, and one collator for every comparison rather than one each
+export const DATA_TABLE_COLLATOR = new Intl.Collator(undefined, { numeric: true });
+// The page sizes a table that holds every row offers, the last of them every row
+export const DATA_TABLE_ITEMS_PER_PAGE_OPTIONS: [number, ...number[]] = [10, 25, 50, 100, DATA_TABLE_ALL_ROWS];
 // How many rows a data table's skeleton stands in with while its first page is on its way
 export const DATA_TABLE_SKELETON_ROW_COUNT = 5;
 // How far a column's handle drags or steps its width, in the px the width model is kept in: from a column just wide
