@@ -40,14 +40,14 @@ A new feature picks D1 when it holds relational or queryable data. It picks an o
 
 Four Durable Objects, exported by the realtime Worker, hold live state. The first three each own the sockets viewing it, and `TopicObject` holds the watchers of a topic and reaches them through their user objects:
 
-| Object        | One per                     | Owns                                                                                                                           | Its sockets                                                           |
-| :------------ | :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `RoomObject`  | room                        | messages, reactions and search in its SQLite; scheduled messages; the members online in the room                               | everyone viewing the room                                             |
-| `CallObject`  | call session                | participants, knockers and admitted maps; the call's start time; the RealtimeKit participant map                               | everyone joined to or knocking on the call                            |
-| `UserObject`  | person                      | the person's sockets across devices; their sent and scheduled indexes; their TodoList reminders; their online status           | every signed-in tab of the person                                     |
-| `TopicObject` | topic, a `<kind>:<id>` name | the users watching it, as storage keys; its last publish time; and the invalidations a publish or a late subscription triggers | none; it invalidates each watcher through that watcher's `UserObject` |
+| Object        | One per                                                                                                                 | Owns                                                                                                                                                                                                 | Its sockets                                                           |
+| :------------ | :---------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `RoomObject`  | room                                                                                                                    | messages, reactions and search in its SQLite; scheduled messages; the members online in the room                                                                                                     | everyone viewing the room                                             |
+| `CallObject`  | call session                                                                                                            | participants, knockers and admitted maps; the call's start time; the RealtimeKit participant map                                                                                                     | everyone joined to or knocking on the call                            |
+| `UserObject`  | person                                                                                                                  | the person's sockets across devices; their sent and scheduled indexes; their TodoList reminders; their online status                                                                                 | every signed-in tab of the person                                     |
+| `TopicObject` | one topic, named as the [live topics design](../../../changes/architecture-inferred-live-topics/design.md) names topics | the users watching it with the columns each reads, as storage keys; its last publish time and the columns published since its alarm; and the invalidations a publish or a late subscription triggers | none; it invalidates each watcher through that watcher's `UserObject` |
 
-A socket is accepted with the WebSocket hibernation API under tags for its user, session and device, and one carrying its session's expiry: a socket idle past that expiry is closed with code 1008 when a write next reaches it, since no read deletes the session row to close it. An object is evicted while no message is in flight, so an idle socket costs no duration, and a broadcast is a loop over the sockets a tag names, writing one JSON frame each. Every frame is a member of a discriminated union declared once in `packages/db-schema/src/models/realtime/`: `RoomEvent`, `CallEvent` or `UserEvent`. The objects write those types and the client reads them. Queries and mutations stay on tRPC over HTTP; there are no tRPC subscriptions and no in-process emitters. A tab's mounted queries are watched through `watch` and `unwatch` frames it sends up its own user socket, each naming the topics it reads: a frame names at most `MAX_FRAME_TOPICS` of them, each id at most `TOPIC_ID_MAX_LENGTH` long, and a larger set goes over several frames. A `watch` also names the server time its read began, which the topic's object checks against its last publish before it waits for the next one.
+A socket is accepted with the WebSocket hibernation API under tags for its user, session and device, and one carrying its session's expiry: a socket idle past that expiry is closed with code 1008 when a write next reaches it, since no read deletes the session row to close it. An object is evicted while no message is in flight, so an idle socket costs no duration, and a broadcast is a loop over the sockets a tag names, writing one JSON frame each. Every frame is a member of a discriminated union declared once in `packages/db-schema/src/models/realtime/`: `RoomEvent`, `CallEvent` or `UserEvent`. The objects write those types and the client reads them. Queries and mutations stay on tRPC over HTTP; there are no tRPC subscriptions and no in-process emitters. A tab's mounted queries are watched through `watch` and `unwatch` frames it sends up its own user socket, each naming the topics its read watches and the columns it reads in each: a frame names at most `MAX_FRAME_TOPICS` of them, each id at most `TOPIC_ID_MAX_LENGTH` long, and a larger set goes over several frames. A `watch` also names the server time its read began, which the topic's object checks against its last publish before it waits for the next one.
 
 A client holds at most three sockets: the user socket on every signed-in page, a room socket while a room is open, and a call socket while in a call. The web Worker opens each at `/ws/user`, `/ws/room/:roomId` or `/ws/call/:callSessionId`:
 
@@ -63,6 +63,23 @@ flowchart TD
 The Worker authorises against D1, because the relational tables live there, and then forwards the upgrade with the verified identity in headers only the object reads. The object trusts the identity its caller passes, and only the two Workers can reach it.
 
 Who hears what follows from who holds the state. A person is online while their `UserObject` holds a socket. Its first socket attaches the person to each of their rooms' objects, and its last close detaches them, so a room knows its online members without a query and fans room-level events out only to them. A room's events reach its viewers, and the room-level events (renames, joins, leaves, mention counts) reach the online members' tabs through their user objects. A call's events reach the call's sockets. A revoked session closes its sockets on every object it reached.
+
+## Topic publishes
+
+A write publishes the topics it changed once it settles: a web or jobs Worker through its own `publishTopics`, and a realtime object through its `invoke` entry. Each topic goes to its `TopicObject`, which arms one alarm per window, so a burst of writes reaches each watcher once. The alarm invalidates each watcher whose stored columns meet the columns published, by the wake rule in the [live topics design](../../../changes/architecture-inferred-live-topics/design.md) (its Columns section), through that watcher's `UserObject`, which sends an `invalidate` frame to each of the person's tabs watching the topic. A tab then runs its query again.
+
+```mermaid
+sequenceDiagram
+  participant W as writing Worker or object
+  participant T as TopicObject
+  participant U as UserObject
+  participant C as client tab
+  W->>T: publish the topic with the columns the write changed
+  T->>T: one alarm per window, wakes each watcher whose columns meet them
+  T->>U: invalidate the topic, for each woken watcher
+  U-->>C: invalidate frame to each tab watching it
+  C->>C: the watching query runs again
+```
 
 ## A message's path
 
@@ -125,31 +142,32 @@ The decisions behind this split, and the alternatives they beat, are recorded in
 
 ## Key files
 
-| File                                                                        | Role                                                             |
-| :-------------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `apps/web/configuration/nitro.ts`                                           | the web Worker's Nitro build                                     |
-| `apps/web/configuration/wrangler.ts`                                        | the web Worker's wrangler configuration, from its bindings       |
-| `apps/web/server/db/index.ts`                                               | the Drizzle client over the `core` binding                       |
-| `apps/web/server/routes/ws/`                                                | the three socket routes: user, room and call                     |
-| `apps/web/server/services/realtime/forwardSocket.ts`                        | authorises an upgrade and forwards it to the owning object       |
-| `apps/realtime/src/worker.ts`                                               | the realtime Worker: exports the four objects, nothing else      |
-| `apps/jobs/src/worker.ts`                                                   | the jobs Worker: queue handler and Cron Trigger                  |
-| `apps/realtime/src/durableObjects/RealtimeObject.ts`                        | the socket behaviour the three objects share                     |
-| `apps/realtime/src/durableObjects/RoomObject.ts`                            | a room's messages, search, scheduled messages and online members |
-| `apps/realtime/src/durableObjects/CallObject.ts`                            | a call's participants, knockers and admissions                   |
-| `apps/realtime/src/durableObjects/UserObject.ts`                            | a person's sockets, indexes, reminders and online status         |
-| `apps/realtime/src/durableObjects/TopicObject.ts`                           | a topic's watchers, its last publish, and the invalidations      |
-| `apps/jobs/src/handlers/`                                                   | the handler each queue job runs                                  |
-| `apps/realtime/wrangler.jsonc`                                              | the realtime Worker's bindings and object classes                |
-| `apps/jobs/wrangler.jsonc`                                                  | the jobs Worker's bindings, queues and Cron Trigger              |
-| `packages/db-schema/src/models/queue/QueueJob.ts`                           | the job names, one queue each                                    |
-| `packages/db-schema/src/models/storage/StorageBucket.ts`                    | the bucket names, one R2 bucket each                             |
-| `packages/db-schema/src/models/realtime/`                                   | the `RoomEvent`, `CallEvent` and `UserEvent` unions              |
-| `packages/db-schema/src/services/cloudflare/CloudflareCoreDatabaseIdMap.ts` | each environment's D1 database id                                |
-| `packages/db-mock/src/createMockDb.ts`                                      | Miniflare's D1 for tests                                         |
-| `apps/infra/src/cloudflare/`                                                | the Cloudflare resources the Pulumi program declares             |
-| `.github/workflows/CI.yaml`                                                 | the checks                                                       |
-| `.github/workflows/Deploy.yaml`                                             | the deploy that runs on `main` and `ai/queue`                    |
+| File                                                                        | Role                                                                                                                                |
+| :-------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/configuration/nitro.ts`                                           | the web Worker's Nitro build                                                                                                        |
+| `apps/web/configuration/wrangler.ts`                                        | the web Worker's wrangler configuration, from its bindings                                                                          |
+| `apps/web/server/db/index.ts`                                               | the Drizzle client over the `core` binding                                                                                          |
+| `apps/web/server/routes/ws/`                                                | the three socket routes: user, room and call                                                                                        |
+| `apps/web/server/services/realtime/forwardSocket.ts`                        | authorises an upgrade and forwards it to the owning object                                                                          |
+| `apps/web/server/services/realtime/publishTopics.ts`                        | the web Worker's publish of a write's topics to their topic objects                                                                 |
+| `apps/realtime/src/worker.ts`                                               | the realtime Worker: exports the four objects, nothing else                                                                         |
+| `apps/jobs/src/worker.ts`                                                   | the jobs Worker: queue handler and Cron Trigger                                                                                     |
+| `apps/realtime/src/durableObjects/RealtimeObject.ts`                        | the socket behaviour the three objects share, and the `invoke` entry that answers each RPC call's read set and publishes its writes |
+| `apps/realtime/src/durableObjects/RoomObject.ts`                            | a room's messages, search, scheduled messages and online members                                                                    |
+| `apps/realtime/src/durableObjects/CallObject.ts`                            | a call's participants, knockers and admissions                                                                                      |
+| `apps/realtime/src/durableObjects/UserObject.ts`                            | a person's sockets, indexes, reminders and online status                                                                            |
+| `apps/realtime/src/durableObjects/TopicObject.ts`                           | a topic's watchers and the columns each reads, its last publish, and the invalidations                                              |
+| `apps/jobs/src/handlers/`                                                   | the handler each queue job runs                                                                                                     |
+| `apps/realtime/wrangler.jsonc`                                              | the realtime Worker's bindings and object classes                                                                                   |
+| `apps/jobs/wrangler.jsonc`                                                  | the jobs Worker's bindings, queues and Cron Trigger                                                                                 |
+| `packages/db-schema/src/models/queue/QueueJob.ts`                           | the job names, one queue each                                                                                                       |
+| `packages/db-schema/src/models/storage/StorageBucket.ts`                    | the bucket names, one R2 bucket each                                                                                                |
+| `packages/db-schema/src/models/realtime/`                                   | the `RoomEvent`, `CallEvent` and `UserEvent` unions                                                                                 |
+| `packages/db-schema/src/services/cloudflare/CloudflareCoreDatabaseIdMap.ts` | each environment's D1 database id                                                                                                   |
+| `packages/db-mock/src/createMockDb.ts`                                      | Miniflare's D1 for tests                                                                                                            |
+| `apps/infra/src/cloudflare/`                                                | the Cloudflare resources the Pulumi program declares                                                                                |
+| `.github/workflows/CI.yaml`                                                 | the checks                                                                                                                          |
+| `.github/workflows/Deploy.yaml`                                             | the deploy that runs on `main` and `ai/queue`                                                                                       |
 
 ## Sources
 
