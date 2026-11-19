@@ -354,6 +354,7 @@ const {
   closeFishing,
   fishingCatchAts,
   fishingPointPlaces,
+  fishingProps,
   fishingScene,
   isFishingOpen,
   openFishingPoint,
@@ -1125,6 +1126,7 @@ useWorldSaveSync({
         :frostbearing-tree-places
         :bounty-trail-ends
         :seelies="puzzleSeelies"
+        :fishing-props
         :fishing-scene
         :wildlife-list="kitContext.wildlifeList"
         :windrise-data

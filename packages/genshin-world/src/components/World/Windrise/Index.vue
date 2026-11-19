@@ -9,6 +9,7 @@ import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
+import type { FishingPropPlace } from "#src/models/fishing/FishingPropPlace";
 import type { FishingScene } from "#src/models/fishing/FishingScene";
 import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import type { Interactable } from "#src/models/interaction/Interactable";
@@ -34,6 +35,7 @@ import type {
 import type { Object3D, Vector3 } from "three";
 
 import CharacterModel from "#src/components/Character/Model/Index.vue";
+import FishingProps from "#src/components/Fishing/Props/Index.vue";
 import FishingSceneFish from "#src/components/Fishing/Scene/Fish/Index.vue";
 import FishingSceneFloat from "#src/components/Fishing/Scene/Float/Index.vue";
 import FishingSceneRod from "#src/components/Fishing/Scene/Rod/Index.vue";
@@ -151,6 +153,8 @@ interface Props {
   enemyRespawnMap: ReadonlyMap<string, string>;
   // The game's enemy tables, which the camps spawn their enemies from
   enemyTables: EnemyTables;
+  // The fishing-area props of each region, by its id, each drawn as a stand-in once its region is in reach
+  fishingProps: Readonly<Record<string, FishingPropPlace[]>>;
   // The reel's pieces as the cast stands: the fish at the lure, the lure, and a strike's splash
   fishingScene: FishingScene;
   // The Frostbearing Trees the official map marks, each stood in at its place
@@ -224,6 +228,7 @@ const {
   devRegistry,
   elementalSight,
   enemyMap,
+  fishingProps,
   gameDataBaseUrl,
   getAntiColdRatio,
   getCharacter,
@@ -327,6 +332,9 @@ const checkIsOwnFamilyDrawn = (family: WindrisePartFamily): boolean =>
 // Terrain is bounded by widens to hold each one as it arrives
 const laidGrounds = computed<LaidGround[]>(() => [...regionGroundMap.values()]);
 watch(laidGrounds, (grounds) => Object.assign(terrainOptions, createWindriseTerrainOptions(baseGrounds, grounds)));
+// The fishing-area props of the regions in reach, each region's drawn once its data is in reach, as its ground is laid
+// Over the same reach
+const loadedFishingProps = computed(() => Object.entries(fishingProps).filter(([region]) => regionDataMap.has(region)));
 const fogUniforms = createFogUniforms();
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
@@ -636,6 +644,17 @@ onUnmounted(() => {
       :places="frostbearingTreePlaces"
       :ramp-texture
     />
+    <!-- The fishing-area props are stood in as well, once per region in reach, which a witness render draws none of -->
+    <template v-if="!witness">
+      <FishingProps
+        v-for="[region, places] of loadedFishingProps"
+        :key="region"
+        :get-ground-height
+        :light-uniforms
+        :places
+        :ramp-texture
+      />
+    </template>
     <PlaceStandIns
       v-if="!witness"
       :get-ground-height

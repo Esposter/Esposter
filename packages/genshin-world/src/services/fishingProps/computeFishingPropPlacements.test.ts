@@ -12,15 +12,17 @@ describe(computeFishingPropPlacements, () => {
     scale: [1, 0.1, 1],
   };
 
-  test("a prop stands at its layout's place", () => {
+  test("a prop stands at its layout's place, on the ground beneath it", () => {
     expect.hasAssertions();
 
-    expect(computeFishingPropPlacements(PROP_NAME, [place])).toStrictEqual([place]);
+    expect(computeFishingPropPlacements(PROP_NAME, [place], () => 2)).toStrictEqual([
+      { ...place, position: [0.1, 2, -1] },
+    ]);
   });
 
   test("a prop without a layout place is not drawn", () => {
     expect.hasAssertions();
 
-    expect(computeFishingPropPlacements("", [place])).toStrictEqual([]);
+    expect(computeFishingPropPlacements("", [place], () => 2)).toStrictEqual([]);
   });
 });

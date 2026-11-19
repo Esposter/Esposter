@@ -149,13 +149,13 @@ A critter of a material group SHALL give its gather item when the player picks i
 
 ### Requirement: A fishing-area prop stands where its region's layout places it
 
-A fishing-area prop SHALL stand at the place its region's layout gives, drawn as one of our stand-ins.
+A fishing-area prop SHALL stand at the place its region's layout gives, on the world's ground beneath that place, drawn as one of our stand-ins. The layout's own height is not kept, as it does not match the ground at every place.
 
-#### Scenario: A prop stands at its layout's place
+#### Scenario: A prop stands at its layout's place, on the ground
 
 - **GIVEN** a region's layout places a fishing prop
 - **WHEN** the region loads
-- **THEN** the prop stands at that place
+- **THEN** the prop stands at that place, its height the world's ground beneath it
 
 #### Scenario: A prop without a layout place is not drawn
 

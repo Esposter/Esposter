@@ -3,6 +3,7 @@ import type { FishBait } from "#src/models/fishing/FishBait";
 import type { FishingCast } from "#src/models/fishing/FishingCast";
 import type { FishingPointPlace } from "#src/models/fishing/FishingPointPlace";
 import type { FishingPool } from "#src/models/fishing/FishingPool";
+import type { FishingPropPlace } from "#src/models/fishing/FishingPropPlace";
 import type { FishProficient } from "#src/models/fishing/FishProficient";
 import type { FishReward } from "#src/models/fishing/FishReward";
 import type { FishRod } from "#src/models/fishing/FishRod";
@@ -26,6 +27,7 @@ import { readFish } from "#src/services/fishing/readFish";
 import { readFishBaits } from "#src/services/fishing/readFishBaits";
 import { readFishingPoints } from "#src/services/fishing/readFishingPoints";
 import { readFishingPools } from "#src/services/fishing/readFishingPools";
+import { readFishingProps } from "#src/services/fishing/readFishingProps";
 import { readFishProficiencies } from "#src/services/fishing/readFishProficiencies";
 import { readFishRewards } from "#src/services/fishing/readFishRewards";
 import { readFishRods } from "#src/services/fishing/readFishRods";
@@ -57,6 +59,7 @@ export const useWorldFishing = ({
   const { inventory, worldNow } = storeToRefs(worldSessionStore);
   const { getWorldNow, setInventory } = worldSessionStore;
   const fishingPoints = shallowRef<Readonly<Record<string, FishingPointPlace[]>>>({});
+  const fishingProps = shallowRef<Readonly<Record<string, FishingPropPlace[]>>>({});
   const pools = shallowRef<Readonly<Record<string, FishingPool[]>>>({});
   const fishMap = shallowRef<ReadonlyMap<number, Fish>>(new Map());
   const baits = shallowRef<FishBait[]>([]);
@@ -75,10 +78,12 @@ export const useWorldFishing = ({
         readFishRods(worldSessionStore.gameDataBaseUrl),
         readFishProficiencies(worldSessionStore.gameDataBaseUrl),
         readFishRewards(worldSessionStore.gameDataBaseUrl),
+        readFishingProps(worldSessionStore.gameDataBaseUrl),
       ]),
     ).match(
-      ([points, regionPools, fishes, fishBaits, fishRods, proficiencies, rewards]) => {
+      ([points, regionPools, fishes, fishBaits, fishRods, proficiencies, rewards, props]) => {
         fishingPoints.value = points;
+        fishingProps.value = props;
         pools.value = regionPools;
         fishMap.value = new Map(fishes.map((fish) => [fish.id, fish]));
         baits.value = fishBaits;
@@ -222,6 +227,7 @@ export const useWorldFishing = ({
     closeFishing,
     fishingCatchAts: caughtAtMap,
     fishingPointPlaces,
+    fishingProps,
     fishingScene,
     isFishingOpen,
     openFishingPoint,

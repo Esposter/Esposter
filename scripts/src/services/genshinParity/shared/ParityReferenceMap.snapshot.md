@@ -22,7 +22,7 @@ committed.
 | `character-weapons`                    | `CharacterScreen`           |                                                                          2.45% | 0.920 |  1.29% | 0.1043 |
 | `character-weapons-tabs`               | `CharacterScreen`           |                                                                          0.89% | 0.976 |  0.30% | 0.0453 |
 | `cooking-screen`                       | `CookingScreen`             |                                                                          1.17% | 0.938 |  0.53% | 0.0540 |
-| `court-of-fontaine-location`           | `WorldScreen`               |                                                                         21.14% | 0.227 | 16.60% | 0.6788 |
+| `court-of-fontaine-location`           | `WorldScreen`               |                                                                         21.15% | 0.224 | 16.61% | 0.6791 |
 | `crafting-strongbox`                   | `CraftingStrongbox`         |                                       pending: no screenshot of the screen yet |       |        |        |
 | `crafting-table`                       | `CraftingScreen`            |                                          pending: its recording is not on disk |       |        |        |
 | `dialogue-choices-line`                | `DialogueTalk`              |                                                                          8.70% | 0.925 |  1.94% | 0.2502 |
@@ -30,7 +30,7 @@ committed.
 | `dialogue-choices-speaker`             | `DialogueTalk`              |                                                                          6.37% | 0.798 |  4.63% | 0.2878 |
 | `dialogue-line`                        | `DialogueTalk`              |                                                                          8.52% | 0.987 |  1.64% | 0.2789 |
 | `dialogue-paimon-line`                 | `DialogueTalk`              |                                                                          8.56% | 0.962 |  1.36% | 0.2339 |
-| `everfrozen-earth-location`            | `WorldScreen`               |                                                                         21.38% | 0.242 | 19.17% | 0.6960 |
+| `everfrozen-earth-location`            | `WorldScreen`               |                                                                         21.38% | 0.243 | 19.17% | 0.6961 |
 | `exit-prompt`                          | `MenuExit`                  |                                                                          1.59% | 0.999 |  1.24% | 0.1205 |
 | `expedition-screen`                    | `ExpeditionScreen`          |                                                                          1.56% | 0.934 |  0.44% | 0.0674 |
 | `fishing-screen`                       | `FishingScreen`             |                                                                          0.05% | 0.998 |  0.03% | 0.0035 |
@@ -48,12 +48,12 @@ committed.
 | `hud-stamina-climb`                    | `HudScreen`                 |                                                                          0.62% | 0.787 |  0.75% | 0.0629 |
 | `hud-world-keys`                       | `HudScreen`                 |                                                                          2.07% | 0.983 |  1.52% | 0.1296 |
 | `hud-world-pickup`                     | `HudScreen`                 |                                                                          2.69% | 0.864 |  1.34% | 0.1277 |
-| `inazuma-city-location`                | `WorldScreen`               |                                                                         18.59% | 0.212 | 16.71% | 0.6035 |
+| `inazuma-city-location`                | `WorldScreen`               |                                                                         18.59% | 0.212 | 16.73% | 0.6035 |
 | `interaction-prompts-jueyun-chili`     | `InteractionPromptList`     |                                                                          4.63% | 0.954 |  1.79% | 0.2034 |
 | `interaction-prompts-pickup`           | `InteractionPromptList`     |                                                                          5.07% | 0.937 |  2.64% | 0.2181 |
 | `inventory-food`                       | `InventoryScreen`           |                                                                          3.00% | 0.994 |  1.96% | 0.1851 |
 | `inventory-weapons`                    | `InventoryScreen`           |                                                                          5.48% | 0.813 |  2.25% | 0.2414 |
-| `liyue-harbor-location`                | `WorldScreen`               |                                                                         19.83% | 0.392 | 17.24% | 0.6757 |
+| `liyue-harbor-location`                | `WorldScreen`               |                                                                         19.84% | 0.391 | 17.24% | 0.6757 |
 | `loading-startup`                      | `LoadingStartup`            |                                                                          0.07% | 0.765 |  0.04% | 0.0027 |
 | `login-dawn-title`                     | `LoginScreen`               |                                                                         10.85% | 0.480 |  7.85% | 0.4432 |
 | `login-day-title`                      | `LoginScreen`               |                                                                         13.31% | 0.321 | 10.42% | 0.4841 |
@@ -83,11 +83,11 @@ committed.
 | `menu-world-level-prompt-pressed`      | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-world-level-prompt-revert`       | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
 | `mondstadt-city-location`              | `WorldScreen`               |                                                                         22.94% | 0.313 | 20.87% | 0.6846 |
-| `nasha-town-location`                  | `WorldScreen`               |                                                                         32.69% | 0.293 | 27.58% | 0.7918 |
+| `nasha-town-location`                  | `WorldScreen`               |                                                                         32.68% | 0.291 | 27.56% | 0.7918 |
 | `paimon-menu`                          | `MenuPaimon`                |                                                                          3.73% | 0.930 |  1.92% | 0.2058 |
 | `paimons-bargains-screen`              | `PaimonsBargainsScreen`     |                                                                          6.12% | 0.633 |  3.57% | 0.2770 |
 | `party-screen`                         | `PartyScreen`               |                                                                          4.26% | 0.366 |  2.51% | 0.1582 |
-| `people-of-the-springs-location`       | `WorldScreen`               |                                                                         22.30% | 0.222 | 17.64% | 0.7110 |
+| `people-of-the-springs-location`       | `WorldScreen`               |                                                                         22.29% | 0.222 | 17.64% | 0.7110 |
 | `props-fixture`                        | `PropsFixture`              |                                                                          0.00% | 1.000 |  0.00% | 0.0000 |
 | `publisher-splash`                     | `SplashPublisher`           |                                                                          0.07% | 1.000 |  0.01% | 0.0036 |
 | `quest-screen`                         | `QuestScreen`               |                                                                          2.11% | 0.941 |  1.02% | 0.1004 |
@@ -106,7 +106,7 @@ committed.
 | `splash-title-korean`                  | `SplashTitle`               |                                     pending: no screenshot of this variant yet |       |        |        |
 | `statue-blessing`                      | `StatueScreen`              |                                                                          4.95% | 0.939 |  4.01% | 0.2340 |
 | `statue-worship`                       | `StatueWorship`             |                                                                          2.31% | 0.756 |  1.36% | 0.1500 |
-| `sumeru-city-location`                 | `WorldScreen`               |                                                                         23.89% | 0.273 | 21.35% | 0.6947 |
+| `sumeru-city-location`                 | `WorldScreen`               |                                                                         23.87% | 0.271 | 21.33% | 0.6945 |
 | `title-splash`                         | `SplashTitle`               |                                                                          0.20% | 1.000 |  0.01% | 0.0089 |
 | `title-splash-mainland`                | `SplashTitle`               |                                                                          1.89% | 0.991 |  0.89% | 0.0807 |
 | `weapon-screen`                        | `WeaponScreen`              |                                                                          2.00% | 0.897 |  0.94% | 0.0832 |
@@ -116,7 +116,7 @@ committed.
 | `weapon-screen-rank-five`              | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
 | `weapon-screen-refine`                 | `WeaponScreen`              |                                                                          2.40% | 0.941 |  0.59% | 0.0875 |
 | `weapon-screen-two-star`               | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
-| `windrise-statue-day`                  | `WorldScreen`               |                                                                         26.00% | 0.317 | 26.37% | 0.7572 |
+| `windrise-statue-day`                  | `WorldScreen`               |                                                                         25.98% | 0.317 | 26.36% | 0.7570 |
 | `wish-screen`                          | `WishScreen`                |                                                                          9.02% | 0.627 |  6.18% | 0.2759 |
 | `world-level-dialog`                   | `MenuWorldLevelDialog`      |                                                                          5.74% | 0.864 |  1.72% | 0.1914 |
 | `world-level-dialog-lowered`           | `MenuWorldLevelDialog`      |                                     pending: no screenshot of this variant yet |       |        |        |
@@ -132,14 +132,14 @@ drawn away from the reference shows on its own row.
 
 | Layer                                  | Coverage | Colour |   Tone |   FLIP |
 | :------------------------------------- | -------: | -----: | -----: | -----: |
-| `court-of-fontaine-location/frame`     |   100.0% |  15.36 | 16.60% | 0.6788 |
-| `court-of-fontaine-location/sky`       |   100.0% |  15.36 | 16.60% | 0.6788 |
-| `everfrozen-earth-location/frame`      |   100.0% |  25.24 | 19.17% | 0.6960 |
-| `everfrozen-earth-location/sky`        |   100.0% |  25.24 | 19.17% | 0.6960 |
-| `inazuma-city-location/frame`          |   100.0% |  12.18 | 16.71% | 0.6035 |
-| `inazuma-city-location/sky`            |   100.0% |  12.18 | 16.71% | 0.6035 |
-| `liyue-harbor-location/frame`          |   100.0% |  10.58 | 17.24% | 0.6757 |
-| `liyue-harbor-location/sky`            |   100.0% |  10.58 | 17.24% | 0.6757 |
+| `court-of-fontaine-location/frame`     |   100.0% |  15.37 | 16.61% | 0.6791 |
+| `court-of-fontaine-location/sky`       |   100.0% |  15.37 | 16.61% | 0.6791 |
+| `everfrozen-earth-location/frame`      |   100.0% |  25.24 | 19.17% | 0.6961 |
+| `everfrozen-earth-location/sky`        |   100.0% |  25.24 | 19.17% | 0.6961 |
+| `inazuma-city-location/frame`          |   100.0% |  12.18 | 16.73% | 0.6035 |
+| `inazuma-city-location/sky`            |   100.0% |  12.18 | 16.73% | 0.6035 |
+| `liyue-harbor-location/frame`          |   100.0% |  10.56 | 17.24% | 0.6757 |
+| `liyue-harbor-location/sky`            |   100.0% |  10.56 | 17.24% | 0.6757 |
 | `login-dawn-title/frame`               |   100.0% |   7.03 |  7.85% | 0.4432 |
 | `login-dawn-title/Door`                |     3.1% |   7.27 |  8.86% | 0.5277 |
 | `login-dawn-title/Walkway`             |    12.7% |  10.60 | 10.40% | 0.5904 |
@@ -178,15 +178,15 @@ drawn away from the reference shows on its own row.
 | `login-night-title/sky`                |    48.3% |   6.40 |  5.80% | 0.3223 |
 | `mondstadt-city-location/frame`        |   100.0% |  17.86 | 20.87% | 0.6846 |
 | `mondstadt-city-location/sky`          |   100.0% |  17.86 | 20.87% | 0.6846 |
-| `nasha-town-location/frame`            |   100.0% |  21.40 | 27.58% | 0.7918 |
-| `nasha-town-location/sky`              |   100.0% |  21.40 | 27.58% | 0.7918 |
-| `people-of-the-springs-location/frame` |   100.0% |  16.45 | 17.64% | 0.7110 |
-| `people-of-the-springs-location/sky`   |   100.0% |  16.45 | 17.64% | 0.7110 |
-| `sumeru-city-location/frame`           |   100.0% |  14.46 | 21.35% | 0.6947 |
-| `sumeru-city-location/sky`             |   100.0% |  14.46 | 21.35% | 0.6947 |
-| `windrise-statue-day/frame`            |   100.0% |  25.91 | 26.37% | 0.7572 |
-| `windrise-statue-day/Statue`           |     0.8% |  36.59 | 14.29% | 0.6810 |
-| `windrise-statue-day/Oak`              |    32.5% |  24.74 | 25.18% | 0.7257 |
-| `windrise-statue-day/Paving`           |     0.5% |  44.11 | 14.31% | 0.7556 |
-| `windrise-statue-day/Ground`           |    58.8% |  29.95 | 25.32% | 0.7615 |
-| `windrise-statue-day/sky`              |     7.4% |  41.92 | 41.97% | 0.8697 |
+| `nasha-town-location/frame`            |   100.0% |  21.40 | 27.56% | 0.7918 |
+| `nasha-town-location/sky`              |   100.0% |  21.40 | 27.56% | 0.7918 |
+| `people-of-the-springs-location/frame` |   100.0% |  16.47 | 17.64% | 0.7110 |
+| `people-of-the-springs-location/sky`   |   100.0% |  16.47 | 17.64% | 0.7110 |
+| `sumeru-city-location/frame`           |   100.0% |  14.45 | 21.33% | 0.6945 |
+| `sumeru-city-location/sky`             |   100.0% |  14.45 | 21.33% | 0.6945 |
+| `windrise-statue-day/frame`            |   100.0% |  25.89 | 26.36% | 0.7570 |
+| `windrise-statue-day/Statue`           |     0.8% |  36.96 | 14.37% | 0.6789 |
+| `windrise-statue-day/Oak`              |    32.5% |  24.72 | 25.16% | 0.7256 |
+| `windrise-statue-day/Paving`           |     0.5% |  44.08 | 14.29% | 0.7552 |
+| `windrise-statue-day/Ground`           |    58.8% |  29.90 | 25.32% | 0.7613 |
+| `windrise-statue-day/sky`              |     7.4% |  41.86 | 41.92% | 0.8691 |
