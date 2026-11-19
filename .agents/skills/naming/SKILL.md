@@ -31,7 +31,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 | Naming something that mirrors a library — its option, key, method or wire value           | `references/names-a-dependency-owns.md` |
 | A concept has a prose word and an identifier word, and a sibling needs naming             | `references/concept-words.md`           |
 | Naming a map, a record, or a function that looks one up                                   | `references/map-names.md`               |
-| A call's result is about to be nested into the next call                                  | `references/named-intermediates.md`     |
+| A named function's result is about to be nested into the next call                        | `references/named-intermediates.md`     |
 | Naming the session user's id, or a read scoped to the caller                              | `references/session-user.md`            |
 | Naming a local editable copy of a prop or store field                                     | `references/edited-copies.md`           |
 | A parameter or a loop binding nothing reads                                               | `references/unused-bindings.md`         |
@@ -69,7 +69,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 - **A name carries its type, never a bare generic** like `parsed` (`id-denylist`) — `parsedDate`, `parsedResult`
 - **A map or record is `<key><value>Map`**, never `<value>By<key>` or `<key>To<value>`; a function keeps its `By<Selector>` (`references/map-names.md`)
 - **Name variables after their full domain type, dropping only the schema `InMessage` suffix** — a value typed as `Ban` (table `bansInMessage`) is `const ban`, never `const bannedUser` nor `const banInMessage`. Where the suffix is kept it is the table's own name and never pluralised — `InMessages` is a `no-restricted-syntax` error
-- **A call's result gets a name rather than being nested into the next call**, named after the function with `get`/`read` dropped (`references/named-intermediates.md`)
+- **A named function's result gets a name rather than being nested into the next call**, named after the function with `get`/`read` dropped; a method chain nested in a call stays inline (`references/named-intermediates.md`)
 - **No `current*` prefix** for reactive refs/computeds — they are always the current value. Exception: global store identifiers distinguishing the active item from a collection: `currentRoomId`
 - `userId` for the session user's ID — never `me`, `myId` or `self`; `my*` on a read scopes it to the caller (`references/session-user.md`)
 - A comparator's pair is named for what it compares — `(firstRoom, secondRoom)`, never `(a, b)` or a bare `(first, second)` (`no-restricted-syntax` on a `sort`/`toSorted` callback)
