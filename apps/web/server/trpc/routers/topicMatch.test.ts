@@ -30,8 +30,11 @@ import { SQLiteDialect } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
-// A direct message the viewer and one other member share, which the viewer's sidebar lists
-const createSharedDirectMessage = async (context: Awaited<ReturnType<typeof createMockContext>>) => {
+// A direct message the viewer and one other member share, which the viewer's sidebar lists unless the viewer has hidden it
+const createSharedDirectMessage = async (
+  context: Awaited<ReturnType<typeof createMockContext>>,
+  { isHidden = false }: { isHidden?: boolean } = {},
+) => {
   const reader = await createMockAuthSession(context.db);
   const joiner = await createMockAuthSession(context.db);
   const directMessageId = v7();
@@ -45,7 +48,7 @@ const createSharedDirectMessage = async (context: Awaited<ReturnType<typeof crea
       userId: reader.user.id,
     });
   await context.db.insert(usersToRoomsInMessage).values([
-    { notificationType: NotificationType.DirectMessage, roomId: directMessageId, userId: reader.user.id },
+    { isHidden, notificationType: NotificationType.DirectMessage, roomId: directMessageId, userId: reader.user.id },
     { notificationType: NotificationType.DirectMessage, roomId: directMessageId, userId: joiner.user.id },
   ]);
   return { directMessageId, joiner, reader };
@@ -114,8 +117,8 @@ describe("topicMatch", () => {
     expect(uncoveredTables).toStrictEqual([]);
   });
 
-  // The dock reads a bookmarked resource through a join, which names the resource table table-wide, so renaming the resource
-  // Wakes the dock through that table topic. Without the join the dock would name no resource topic and the rename would not reach it
+  // The dock reads a bookmarked resource's owner, type and recycle-bin state through a join, never its name, so a rename of
+  // The resource changes no column the dock reads and wakes it through no topic
   test("a rename of a bookmarked resource wakes no one, since the bookmark dock does not read the resource's name", async () => {
     expect.hasAssertions();
 
@@ -196,7 +199,7 @@ describe("topicMatch", () => {
   });
 
   // The landing page counts its room's members, which another member's join changes. The page reads the count through
-  // Its room's memberships, so the join wakes it, which the page's own declaration never did
+  // Its room's memberships, so the join wakes it
   test("another member joining the invite's room wakes the invite's landing page", async () => {
     expect.hasAssertions();
 
@@ -291,38 +294,10 @@ describe("topicMatch", () => {
     expect.hasAssertions();
 
     const context = await createMockContext();
-    const reader = await createMockAuthSession(context.db);
+    const { directMessageId, reader } = await createSharedDirectMessage(context, { isHidden: true });
     const readerContext = { ...context, session: reader.session, user: reader.user };
     await createCallerFactory(roomRouter)(readerContext).createRoom({ name: "room" });
-    const joiner = await createMockAuthSession(context.db);
-    const directMessageId = v7();
-    await context.db
-      .insert(roomsInMessage)
-      .values({
-        id: directMessageId,
-        name: "",
-        participantKey: directMessageId,
-        type: RoomType.DirectMessage,
-        userId: reader.user.id,
-      });
-    await context.db.insert(usersToRoomsInMessage).values([
-      {
-        isHidden: true,
-        notificationType: NotificationType.DirectMessage,
-        roomId: directMessageId,
-        userId: reader.user.id,
-      },
-      {
-        isHidden: false,
-        notificationType: NotificationType.DirectMessage,
-        roomId: directMessageId,
-        userId: joiner.user.id,
-      },
-    ]);
-    const read = recordStatements(context.db);
-    await createCallerFactory(roomRouter)({ ...readerContext, db: read.database }).readRooms({
-      includeDirectMessages: true,
-    });
+    const read = await recordSidebarRead(context, reader);
     const write = recordStatements(context.db);
 
     await write.database
