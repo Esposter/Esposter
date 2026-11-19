@@ -34,9 +34,9 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
 
     const newVolumePercentage =
       direction === Direction.LEFT && volumePercentage.value > 0
-        ? Math.max(volumePercentage.value - increment, 0)
+        ? volumePercentage.value - increment
         : direction === Direction.RIGHT && volumePercentage.value < 100
-          ? Math.min(volumePercentage.value + increment, 100)
+          ? volumePercentage.value + increment
           : undefined;
     if (newVolumePercentage === undefined) return;
     setVolume(newVolumePercentage);
