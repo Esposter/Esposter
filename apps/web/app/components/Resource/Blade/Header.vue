@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ResourceInResource } from "@esposter/db-schema";
+import type { Promisable } from "type-fest";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -12,7 +13,7 @@ import { useResourceStore } from "#src/store/resource/index";
 interface Props {
   // The page's read of the open resource, which Refresh runs, and whether that read is in flight
   isPending: boolean;
-  read: () => void;
+  read: () => Promisable<void>;
   resource: ResourceInResource;
 }
 

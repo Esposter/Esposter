@@ -1,6 +1,7 @@
 import type { PortableFormat } from "#src/models/resource/PortableFormat";
 import type { Item } from "#src/models/shared/Item";
 import type { ResourceInResource } from "@esposter/db-schema";
+import type { Promisable } from "type-fest";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { PortableFormatKind } from "#src/models/resource/PortableFormatKind";
@@ -22,13 +23,13 @@ export const getResourceBladeItems = (
     isPublished,
   }: {
     commands: {
-      delete: () => void;
-      duplicate: () => void;
-      exportDatasetCsv: () => void;
-      read: () => void;
-      rename: () => void;
-      unpublish: () => void;
-      versionHistory: () => void;
+      delete: () => Promisable<void>;
+      duplicate: () => Promisable<void>;
+      exportDatasetCsv: () => Promisable<void>;
+      read: () => Promisable<void>;
+      rename: () => Promisable<void>;
+      unpublish: () => Promisable<void>;
+      versionHistory: () => Promisable<void>;
     };
     exportFormats: PortableFormat[];
     importFormats: PortableFormat[];
