@@ -31,7 +31,7 @@ describe(toHandbookDayCommissions, () => {
   const tasks = [createCommission(2, "liyue"), createCommission(3, "natlan"), createCommission(4, "mondstadt")];
   const slice = { bonuses: [], rewardTiers: [], tasks };
 
-  test("the Commissions tab lists the day's four with the preferred region", () => {
+  test("the Commissions tab lists the dealt commissions in dealt order with their preferred region", () => {
     expect.hasAssertions();
     const day = {
       claimedCommissionIds: [],
