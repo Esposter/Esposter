@@ -368,7 +368,7 @@ describe(CallObject, () => {
     const leave = await callObject.participantLeft({ callSessionId, leftAt: kickedAt, sessionId: participant.id });
 
     expect(leave).toBeNull();
-    expect(await callObject.readParticipantMap()).toStrictEqual(
+    await expect(callObject.readParticipantMap()).resolves.toStrictEqual(
       new Map([[participant.id, { ...participant, isCameraEnabled: false }]]),
     );
   });
