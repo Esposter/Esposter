@@ -5,7 +5,7 @@ import { messageHolderRegistry } from "#src/services/message/messageHolderRegist
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
-import { Operation } from "@esposter/shared";
+import { getResultAsync, noop, Operation } from "@esposter/shared";
 
 export const useReplyStore = defineStore("message/input/reply", () => {
   const roomStore = useRoomStore();
@@ -21,17 +21,28 @@ export const useReplyStore = defineStore("message/input/reply", () => {
   });
 
   const dataStore = useDataStore();
+  const { $trpc } = useNuxtApp();
   // These are all the messages that have been replied to. Every read and write names the room the message is in —
   // A hook or a read response can land after a switch, and the thread pane renders a room beside the one on screen
   const { getDataRef: getReplyMapRef } = useDataMap(
     () => roomStore.currentRoomId,
     new Map<ClientMessage["id"], ClientMessage>(),
   );
-  MessageHookMap[Operation.Create].register(({ replyToId: repliedMessageId, roomId }) => {
+  MessageHookMap[Operation.Create].register(async ({ replyToId: repliedMessageId, roomId }) => {
     if (!repliedMessageId) return;
     const reply = dataStore.getSlice(roomId).items.value.find(({ id }) => id === repliedMessageId);
-    if (!reply) return;
-    getReplyMapRef(roomId).value.set(repliedMessageId, reply);
+    if (reply) {
+      getReplyMapRef(roomId).value.set(repliedMessageId, reply);
+      return;
+    }
+
+    // A target the room has not loaded is read from the server, in the room the reply is in. It is awaited before the
+    // Reply lands, so the reply never renders as deleted while its target is in flight. A failed read is logged rather
+    // Than thrown, since a throwing hook keeps the message out of the list
+    await getResultAsync(async () => {
+      const [repliedMessage] = await $trpc.message.readMessagesByIds.query({ messageIds: [repliedMessageId], roomId });
+      if (repliedMessage) getReplyMapRef(roomId).value.set(repliedMessageId, { ...repliedMessage, roomId });
+    }).match(noop, console.error);
   });
   MessageHookMap[Operation.Delete].register(({ id: messageId, roomId }) => {
     getReplyMapRef(roomId).value.delete(messageId);

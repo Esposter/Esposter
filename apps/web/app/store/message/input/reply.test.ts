@@ -2,6 +2,7 @@
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDataStore } from "#src/store/message/data";
 import { useReplyStore } from "#src/store/message/input/reply";
 import { MessageType } from "@esposter/db-schema";
@@ -10,6 +11,7 @@ import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useReplyStore, () => {
+  const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   const otherRoomId = v7();
   const userId = v7();
@@ -30,6 +32,22 @@ describe(useReplyStore, () => {
     const repliedMessage = createOptimisticMessage({ roomId, type: MessageType.Message }, userId);
     getSlice(roomId).items.value.push(repliedMessage);
     setCurrentRoomId(otherRoomId);
+    await MessageHookMap[Operation.Create].run(
+      createOptimisticMessage({ replyToId: repliedMessage.id, roomId, type: MessageType.Message }, userId),
+    );
+
+    expect(getReplyMapRef(roomId).value.get(repliedMessage.id)?.id).toBe(repliedMessage.id);
+  });
+
+  // A live reply can name a message the room has not loaded, so the target is read from the server. Left unread, the
+  // Reply would show as one whose original was deleted
+  test("reads a reply's target from the server when the room has not loaded it", async () => {
+    expect.hasAssertions();
+
+    const repliedMessage = { ...createOptimisticMessage({ roomId, type: MessageType.Message }, userId), id: 1 };
+    trpcMsw.message.readMessagesByIds.query(() => [repliedMessage]);
+    const replyStore = useReplyStore();
+    const { getReplyMapRef } = replyStore;
     await MessageHookMap[Operation.Create].run(
       createOptimisticMessage({ replyToId: repliedMessage.id, roomId, type: MessageType.Message }, userId),
     );
