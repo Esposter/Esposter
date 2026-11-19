@@ -67,15 +67,22 @@ describe("regionData", () => {
     );
   });
 
-  test("a waypoint is listed as a jump target", async () => {
-    expect.hasAssertions();
-
+  // Mondstadt's landmarks, and the kinds among them that a jump may land on
+  const readMondstadtLandmarks = async () => {
     const { landmarks } = regionDataSchema.parse(
       jsonDateParse(await readFile(join(REGION_DIRECTORY, "mondstadt.json"), "utf8")),
     );
     const jumpKinds = new Set(
       landmarks.filter(({ kind }) => JUMP_LANDMARK_KINDS.includes(kind)).map(({ kind }) => kind),
     );
+
+    return { jumpKinds, landmarks };
+  };
+
+  test("a waypoint is listed as a jump target", async () => {
+    expect.hasAssertions();
+
+    const { jumpKinds } = await readMondstadtLandmarks();
 
     expect(jumpKinds.has(LandmarkKind.TeleportWaypoint)).toBe(true);
   });
@@ -83,12 +90,7 @@ describe("regionData", () => {
   test("tree in a region", async () => {
     expect.hasAssertions();
 
-    const { landmarks } = regionDataSchema.parse(
-      jsonDateParse(await readFile(join(REGION_DIRECTORY, "mondstadt.json"), "utf8")),
-    );
-    const jumpKinds = new Set(
-      landmarks.filter(({ kind }) => JUMP_LANDMARK_KINDS.includes(kind)).map(({ kind }) => kind),
-    );
+    const { jumpKinds, landmarks } = await readMondstadtLandmarks();
 
     expect(landmarks.some(({ kind }) => kind === LandmarkKind.Tree)).toBe(true);
     expect(jumpKinds.has(LandmarkKind.Tree)).toBe(false);
