@@ -106,15 +106,15 @@ catalog:
   "@vite-pwa/workbox-build": ^8.0.15
   "@vite-pwa/workbox-swkit": ^8.0.15
   "@vite-pwa/workbox-window": ^8.0.15
-  "@vitest/browser": ^5.1.0
+  "@vitest/browser": ^5.1.1
   "@vitest/browser-playwright": ^5.1.1
-  "@vitest/browser-preview": ^5.1.0
+  "@vitest/browser-preview": ^5.1.1
   "@vitest/coverage-v8": ^5.1.1
-  "@vitest/mocker": ^5.1.0
-  "@vitest/pretty-format": ^5.1.0
-  "@vitest/snapshot": ^5.1.0
-  "@vitest/spy": ^5.1.0
-  "@vitest/utils": ^5.1.0
+  "@vitest/mocker": ^5.1.1
+  "@vitest/pretty-format": ^5.1.1
+  "@vitest/snapshot": ^5.1.1
+  "@vitest/spy": ^5.1.1
+  "@vitest/utils": ^5.1.1
   "@vizejs/native": ^0.782.0
   "@vizejs/unplugin": ^0.782.0
   "@vizejs/vite-plugin": ^0.782.0
