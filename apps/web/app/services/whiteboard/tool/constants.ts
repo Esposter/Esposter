@@ -1,6 +1,6 @@
 import type { EditorToolbarItem } from "#src/models/editor/EditorToolbarItem";
 
-import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { GestureTool } from "#src/models/whiteboard/GestureTool";
 import { WhiteboardShapeItemMap } from "#src/services/whiteboard/tool/WhiteboardShapeItemMap";
@@ -13,6 +13,6 @@ export const WHITEBOARD_SHAPE_TOOL_ITEM: EditorToolbarItem = {
   variants: Object.values(WhiteboardShapeItemMap),
 };
 // The image files the picker offers, the same kinds a paste takes
-export const WHITEBOARD_IMAGE_ACCEPT = NOTE_IMAGE_MIME_TYPES.join(",");
+export const WHITEBOARD_IMAGE_ACCEPT = IMAGE_UPLOAD_MIME_TYPES.join(",");
 // The key that toggles the tool lock, which the lock button in the toolbar lists and the keyboard binds
 export const WHITEBOARD_TOOL_LOCK_SHORTCUT = "q";

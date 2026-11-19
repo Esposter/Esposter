@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { useNoteStore } from "#src/store/resource/note/index";
 import { ResourceType } from "@esposter/db-schema";
@@ -21,7 +21,7 @@ const editor = useEditor({
     ...getNoteExtensions(),
     // A pasted or dropped image file is inserted where it lands, through the same upload the menu's Image button uses
     FileHandler.configure({
-      allowedMimeTypes: NOTE_IMAGE_MIME_TYPES,
+      allowedMimeTypes: IMAGE_UPLOAD_MIME_TYPES,
       onDrop: (noteEditor, files, position) => insertNoteImages(noteEditor, files, position),
       onPaste: (noteEditor, files) => insertNoteImages(noteEditor, files),
     }),

@@ -41,8 +41,8 @@ import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsIn
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
-import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import {
   createPresignedGetUrl,
   createPresignedPutUrl,
@@ -129,7 +129,7 @@ export const userRouter = router({
     })
     .input(generateCallBackgroundUploadUrlInputSchema)
     .mutation<string>(async ({ ctx, input: { mimetype, size, slot } }) => {
-      if (size > MAX_CALL_BACKGROUND_SIZE_BYTES || !NOTE_IMAGE_MIME_TYPES.includes(mimetype))
+      if (size > MAX_CALL_BACKGROUND_SIZE_BYTES || !IMAGE_UPLOAD_MIME_TYPES.includes(mimetype))
         throw getInvalidOperationError(
           Operation.Create,
           DatabaseEntityType.CallBackground,
@@ -168,7 +168,7 @@ export const userRouter = router({
     .mutation<{ presignedUrl: string; publicUrl: string }>(async ({ ctx, input: { mimetype, size } }) => {
       // Refused before a write url is signed, as a call background's is: the signed type keeps the object an image, and
       // The size is the cap the client already checks before it asks
-      if (size > MAX_FILE_REQUEST_SIZE || !NOTE_IMAGE_MIME_TYPES.includes(mimetype))
+      if (size > MAX_FILE_REQUEST_SIZE || !IMAGE_UPLOAD_MIME_TYPES.includes(mimetype))
         throw getInvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify({ mimetype, size }));
 
       const blobName = getUserProfileImageBlobName(ctx.user.id);

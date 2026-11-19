@@ -2,7 +2,7 @@
 import type { MenuItem } from "#src/models/shared/MenuItem";
 import type { Editor } from "@tiptap/core";
 
-import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { getNoteBlockMenuItems } from "#src/services/resource/note/getNoteBlockMenuItems";
 import { getListMenuItems } from "#src/services/richTextEditor/getListMenuItems";
 import { getTextFormatMenuItems } from "#src/services/richTextEditor/getTextFormatMenuItems";
@@ -13,7 +13,10 @@ interface Props {
 
 const { editor } = defineProps<Props>();
 const insertNoteImages = useInsertNoteImages();
-const { onChange, open: openImagePicker } = useFileDialog({ accept: NOTE_IMAGE_MIME_TYPES.join(","), multiple: true });
+const { onChange, open: openImagePicker } = useFileDialog({
+  accept: IMAGE_UPLOAD_MIME_TYPES.join(","),
+  multiple: true,
+});
 onChange((pickedFiles) => {
   if (editor && pickedFiles) insertNoteImages(editor, [...pickedFiles]);
 });

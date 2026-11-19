@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { validateFileWithAlert } from "#src/services/file/validateFileWithAlert";
@@ -48,7 +48,7 @@ const { isLoading, uploadImage } = useUploadImage((file) =>
     </UiTooltip>
     <UiHiddenFileInput
       ref="fileInput"
-      :accept="NOTE_IMAGE_MIME_TYPES.join(',')"
+      :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
       @select="
         async (file) => {
           if (!file) return;

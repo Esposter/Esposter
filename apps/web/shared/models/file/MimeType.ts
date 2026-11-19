@@ -1,5 +1,6 @@
 export const MimeType = {
   AudioWebm: "audio/webm",
+  Avif: "image/avif",
   Csv: "text/csv",
   Gif: "image/gif",
   Gzip: "application/gzip",

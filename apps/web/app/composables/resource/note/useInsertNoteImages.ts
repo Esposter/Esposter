@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/core";
 
-import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
@@ -14,7 +14,7 @@ export const useInsertNoteImages = () => {
   const { currentResourceId } = storeToRefs(resourceStore);
   const uploadFile = useUploadResourceFile(ResourceType.Note, () => currentResourceId.value);
   return async (editor: Editor, files: File[], position?: number) => {
-    const imageFiles = files.filter((file) => NOTE_IMAGE_MIME_TYPES.includes(file.type));
+    const imageFiles = files.filter((file) => IMAGE_UPLOAD_MIME_TYPES.includes(file.type));
     const uploadResults = await Promise.all(imageFiles.map((file) => getResultAsync(() => uploadFile(file))));
     const chain = editor.chain().focus();
     if (position !== undefined) chain.setTextSelection(position);

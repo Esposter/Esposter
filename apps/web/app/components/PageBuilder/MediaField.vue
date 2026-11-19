@@ -2,8 +2,8 @@
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 
 import { MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { WEBPAGE_VIDEO_MIME_TYPES } from "#shared/services/pageBuilder/constants";
-import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useAlertStore } from "#src/store/alert";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
@@ -21,7 +21,7 @@ const { category, resourceId, type } = defineProps<Props>();
 // The picked file's address goes to the node that was selected when the file was picked, since an upload can land after
 // The selection has moved on. A file the field does not take, or one over the upload limit, is refused before it is sent
 const emit = defineEmits<{ update: [src: string, nodeId: string] }>();
-const acceptedMimetypes = category === MimeCategory.Video ? WEBPAGE_VIDEO_MIME_TYPES : NOTE_IMAGE_MIME_TYPES;
+const acceptedMimetypes = category === MimeCategory.Video ? WEBPAGE_VIDEO_MIME_TYPES : IMAGE_UPLOAD_MIME_TYPES;
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getSelectedNodeId } = pageBuilderCanvasStore;
 const alertStore = useAlertStore();

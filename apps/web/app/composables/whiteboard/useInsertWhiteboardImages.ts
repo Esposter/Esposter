@@ -1,6 +1,6 @@
 import type { Point } from "vue-block-editor-headless";
 
-import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
+import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { createWhiteboardImageElement } from "#src/services/whiteboard/createWhiteboardImageElement";
@@ -23,7 +23,7 @@ export const useInsertWhiteboardImages = () => {
   const whiteboardEditorStore = useWhiteboardEditorStore();
   const { getCentrePoint } = whiteboardEditorStore;
   return async (files: File[], point?: Point) => {
-    const imageFiles = files.filter((file) => NOTE_IMAGE_MIME_TYPES.includes(file.type));
+    const imageFiles = files.filter((file) => IMAGE_UPLOAD_MIME_TYPES.includes(file.type));
     const uploadResults = await Promise.all(
       imageFiles.map(async (imageFile) => {
         // The file is addressed by the hash of its bytes, the id the element holds
