@@ -17,6 +17,7 @@ import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
+import type { FishingScene } from "#src/models/fishing/FishingScene";
 import type { Wildlife } from "#src/models/wildlife/Wildlife";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
@@ -42,6 +43,10 @@ import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldPlants from "#src/components/World/Plants/Index.vue";
 import WorldRivers from "#src/components/World/Rivers/Index.vue";
 import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
+import FishingSceneFish from "#src/components/Fishing/Scene/Fish/Index.vue";
+import FishingSceneFloat from "#src/components/Fishing/Scene/Float/Index.vue";
+import FishingSceneRod from "#src/components/Fishing/Scene/Rod/Index.vue";
+import FishingSceneSplash from "#src/components/Fishing/Scene/Splash/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
 import WorldWaterfalls from "#src/components/World/Waterfalls/Index.vue";
@@ -197,6 +202,8 @@ interface Props {
   // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport out of its
   // Area comes
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
+  // The reel's pieces as the cast stands: the fish at the lure, the lure, and a strike's splash
+  fishingScene: FishingScene;
   // The animals in the world, each stood at its place or fallen, which the session holds
   wildlifeList: Wildlife[];
   // Windrise's records: its ground, its surfaces, its oak, plants, paving and statue, and its water
@@ -590,6 +597,36 @@ onUnmounted(() => {
       :target="characterBody?.position"
       :wildlife-list
       @charge="emit('charge')"
+    />
+    <!-- The reel's pieces are drawn while a cast is out, which a witness render draws none of -->
+    <FishingSceneFish
+      v-if="!witness && fishingScene.fish"
+      :fish="fishingScene.fish"
+      :get-ground-height
+      :light-uniforms
+      :ramp-texture
+    />
+    <FishingSceneRod
+      v-if="!witness && fishingScene.lure && characterBody"
+      :get-ground-height
+      :light-uniforms
+      :lure="fishingScene.lure"
+      :ramp-texture
+      :target="characterBody.position"
+    />
+    <FishingSceneFloat
+      v-if="!witness && fishingScene.lure"
+      :get-ground-height
+      :light-uniforms
+      :lure="fishingScene.lure"
+      :ramp-texture
+    />
+    <FishingSceneSplash
+      v-if="!witness && fishingScene.lure && fishingScene.splash"
+      :get-ground-height
+      :light-uniforms
+      :lure="fishingScene.lure"
+      :splash="fishingScene.splash"
     />
     <!-- The Frostbearing Trees are stood in as well, which a witness render draws none of -->
     <WorldFrostbearingTree

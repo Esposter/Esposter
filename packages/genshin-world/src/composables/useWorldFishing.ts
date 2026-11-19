@@ -11,6 +11,10 @@ import { FishingPhase } from "#src/models/fishing/FishingPhase";
 import { addFishingCatch } from "#src/services/fishing/addFishingCatch";
 import { checkIsFishingOpen } from "#src/services/fishing/checkIsFishingOpen";
 import { computeFishingCatchAts } from "#src/services/fishing/computeFishingCatchAts";
+import { computeFishingFish } from "#src/services/fishing/computeFishingFish";
+import { computeFishingLure } from "#src/services/fishing/computeFishingLure";
+import { computeFishingPointPlaces } from "#src/services/fishing/computeFishingPointPlaces";
+import { computeFishingSplash } from "#src/services/fishing/computeFishingSplash";
 import { computeFishingZone } from "#src/services/fishing/computeFishingZone";
 import { computeStandingFishingStocks } from "#src/services/fishing/computeStandingFishingStocks";
 import { SERENITEA_POT_ITEM_ID, SERENITEA_POT_QUEST_ID } from "#src/services/fishing/constants";
@@ -104,9 +108,11 @@ export const useWorldFishing = ({
   // The hour, the ripple the wiki's Fishing page puts on the spot as the fish are caught
   const fishingPointPlaces = computed(() => {
     const now = worldNow.value;
-    return getRegionIds()
-      .filter((region) => getStandingStocks(region, now).length > 0)
-      .flatMap((region) => fishingPoints.value[region] ?? []);
+    return computeFishingPointPlaces(
+      fishingPoints.value,
+      getRegionIds(),
+      (region) => getStandingStocks(region, now).length > 0,
+    );
   });
   // The region each fishing point lies in, by the point's id, which its pools are drawn from
   const fishingPointRegionMap = computed(
@@ -188,6 +194,19 @@ export const useWorldFishing = ({
           zone: computeFishingZone(cast.value.travel, cast.value.reelSeconds),
         },
   );
+  // The point the line is out to, which holds the cast whatever the stock of its region is now
+  const fishingPoint = computed(() =>
+    fishingRegion.value === undefined
+      ? undefined
+      : fishingPoints.value[fishingRegion.value]?.find(({ id }) => id === pointId.value),
+  );
+  // The pieces the scene draws as the cast stands: the fish hooked at the lure, the lure the line is out to, and the
+  // Splash of a strike that caught the bite
+  const fishingScene = computed(() => ({
+    fish: computeFishingFish({ cast: cast.value, point: fishingPoint.value }),
+    lure: computeFishingLure({ isLineOut: cast.value !== undefined, point: fishingPoint.value }),
+    splash: computeFishingSplash(cast.value),
+  }));
   const checkIsFishingPoint = (id: string): boolean => fishingPointRegionMap.value.has(id);
   const openFishingPoint = (id: string) => {
     pointId.value = id;
@@ -203,6 +222,7 @@ export const useWorldFishing = ({
     closeFishing,
     fishingCatchAts: caughtAtMap,
     fishingPointPlaces,
+    fishingScene,
     isFishingOpen,
     openFishingPoint,
     stepFishing,
