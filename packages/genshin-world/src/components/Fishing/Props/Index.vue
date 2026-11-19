@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import type { FishingPropPlace } from "#src/models/fishing/FishingPropPlace";
 import type { LightUniforms } from "genshin-engine";
-import type { BufferGeometry, DataTexture } from "three";
+import type { DataTexture } from "three";
 
-import { computeFishingPropPlacements } from "#src/services/fishingProps/computeFishingPropPlacements";
-import { FISHING_PROP_STAND_IN_COLOR } from "#src/services/fishingProps/constants";
-import { createPropStandInGeometry, createToonMaterial, setObjectSurface } from "genshin-engine";
-import { Group, Mesh } from "three";
+import { createFishingPropGroup } from "#src/services/fishingProps/createFishingPropGroup";
+import { createToonMaterial } from "genshin-engine";
 
 interface Props {
   lightUniforms: LightUniforms;
@@ -16,26 +14,10 @@ interface Props {
 }
 
 const { lightUniforms, places, rampTexture } = defineProps<Props>();
-// One geometry per prop name, shared by each place the name holds, and one material for every stand-in, each mesh
-// Carrying the colour the stand-ins share. The places are the region's, so the parent mounts this once per region
+// One material for every stand-in, and one geometry per prop name, each made once for the region the parent mounts this
+// For, and disposed with the component that holds them
 const partMaterial = createToonMaterial({ isObjectSurface: true, lightUniforms, rampTexture });
-const propsGroup = new Group();
-const geometries: BufferGeometry[] = [];
-
-for (const name of new Set(places.map((place) => place.name))) {
-  const geometry = createPropStandInGeometry(name);
-  geometries.push(geometry);
-  for (const { position, rotation, scale } of computeFishingPropPlacements(name, places)) {
-    const propMesh = new Mesh(geometry, partMaterial);
-    propMesh.position.set(...position);
-    propMesh.quaternion.set(...rotation);
-    propMesh.scale.set(...scale);
-    propMesh.castShadow = true;
-    propMesh.receiveShadow = true;
-    setObjectSurface(propMesh, FISHING_PROP_STAND_IN_COLOR);
-    propsGroup.add(propMesh);
-  }
-}
+const { geometries, group: propsGroup } = createFishingPropGroup(places, partMaterial);
 
 onUnmounted(() => {
   for (const geometry of geometries) geometry.dispose();
