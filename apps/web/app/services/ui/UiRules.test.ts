@@ -3,13 +3,16 @@ import { describe, expect, test } from "vitest";
 
 describe("uiRules", () => {
   // An empty field is left to `required`, so a field that may stay empty is never told off before anything is typed
-  test.each([UiRules.isNotProfanity(), UiRules.maxLength(0), UiRules.minValue(1), UiRules.pattern(/^a$/u)])(
-    "passes an empty field",
-    (rule) => {
-      expect.hasAssertions();
-      expect(rule("")).toBe(true);
-    },
-  );
+  test.each([
+    UiRules.isNotProfanity(),
+    UiRules.maxLength(0),
+    UiRules.maxValue(1),
+    UiRules.minValue(1),
+    UiRules.pattern(/^a$/u),
+  ])("passes an empty field", (rule) => {
+    expect.hasAssertions();
+    expect(rule("")).toBe(true);
+  });
 
   test("refuses an empty field it requires", () => {
     expect.hasAssertions();
