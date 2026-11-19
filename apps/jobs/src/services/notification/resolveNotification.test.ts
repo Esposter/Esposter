@@ -4,7 +4,7 @@ import { resolveNotification } from "#src/services/notification/resolveNotificat
 import { createUser } from "#src/services/shared/createUser.test";
 import { createMockDb } from "@esposter/db-mock";
 import { AppNotificationType, roomsInMessage, usersInAuth } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { RoutePath, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -38,7 +38,7 @@ describe(resolveNotification, () => {
 
     await expect(
       resolveNotification({ roomId: room.id, text, type: AppNotificationType.Reminder, userId }),
-    ).resolves.toMatchObject({ body: text, userIds: [userId] });
+    ).resolves.toStrictEqual({ body: text, path: RoutePath.Messages(room.id), title: "Reminder", userIds: [userId] });
   });
 
   // A reminder outlives the room it was set in when the room is deleted, and its deep link would lead nowhere

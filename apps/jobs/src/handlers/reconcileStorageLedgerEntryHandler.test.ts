@@ -10,6 +10,7 @@ import { userObjectCalls } from "#src/services/user/getUserObject.test";
 import { getBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
+  QueueJob,
   StorageBucket,
   storageLedgerInStorage,
   StorageTier,
@@ -77,6 +78,8 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   const matchingResourceAssetName = `${resourceId}/files/${hashOf(resourceAssetContent)}`;
   // The hash of the other canonical value, so the name describes bytes the blob does not hold
   const mismatchedResourceAssetName = `${resourceId}/files/${hashOf("")}`;
+  // The log names the hash of the bytes the blob holds, which is the name's hash of the other value
+  const mismatchedResourceAssetLog = `${QueueJob.ReconcileStorageLedgerEntry} found a mismatched resource asset: ${JSON.stringify({ actualHash: hashOf(resourceAssetContent), blobName: mismatchedResourceAssetName })}`;
   const seedResourceAsset = async (name: string) => {
     const bucket = getBucket(StorageBucket.ResourceAssets);
     await bucket.put(name, resourceAssetContent);
@@ -174,7 +177,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(mismatchedResourceAssetName));
 
     await expect(readResourceAssetNames()).resolves.toStrictEqual([]);
-    expect(errorSpy).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(mismatchedResourceAssetName));
+    expect(errorSpy).toHaveBeenCalledExactlyOnceWith(mismatchedResourceAssetLog);
   });
 
   test("a redelivered message for a deleted resource asset is a no-op", async () => {
@@ -187,7 +190,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await expect(reconcileStorageLedgerEntryHandler(message)).resolves.toBeUndefined();
 
     await expect(readResourceAssetNames()).resolves.toStrictEqual([]);
-    expect(errorSpy).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(mismatchedResourceAssetName));
+    expect(errorSpy).toHaveBeenCalledExactlyOnceWith(mismatchedResourceAssetLog);
   });
 
   // A failed read proves nothing about the bytes, so the blob is left for the redelivery rather than deleted on a guess

@@ -7,6 +7,7 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
+import { getFileBlobNames } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   dataExportsInUser,
@@ -93,13 +94,14 @@ describe(exportUserDataHandler, () => {
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
     // The room answers with one message that attaches a file whose blob was never written, so reading it fails
+    const file = { filename, hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "mimetype", size: 0 };
     const message: RoomMessage = {
       appUserId: null,
       appUserImage: "",
       createdAt: new Date(0),
       deletedAt: null,
       editedAt: null,
-      files: [{ filename, hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "mimetype", size: 0 }],
+      files: [file],
       id: 1,
       isForward: false,
       isPinned: false,
@@ -121,7 +123,7 @@ describe(exportUserDataHandler, () => {
     await expect(readExportRow(dataExportId)).resolves.toStrictEqual({
       blobName: getDataExportBlobName(dataExportId),
       expiresAt: null,
-      failureReason: expect.stringContaining("is not in the bucket to stream into the archive"),
+      failureReason: `Invalid operation: Read, name: ${getFileBlobNames(room.id, file.id, filename).blobName}, is not in the bucket to stream into the archive`,
       readyAt: null,
       status: DataExportStatus.Failed,
     });

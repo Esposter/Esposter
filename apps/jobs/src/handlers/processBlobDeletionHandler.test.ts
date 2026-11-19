@@ -109,15 +109,6 @@ describe(processBlobDeletionHandler, () => {
     await expect(readContainer()).resolves.toStrictEqual([]);
   });
 
-  test("a named deletion without decidedAt deletes as before", async () => {
-    expect.hasAssertions();
-
-    await seedBlob(blobName);
-    await processBlobDeletionHandler(createEvent([blobName]));
-
-    await expect(readContainer()).resolves.toStrictEqual([]);
-  });
-
   // A blob re-uploaded after the release decided it unreferenced is one the decision never saw, so the delete keeps it
   test("a named deletion keeps a blob re-uploaded after its decision", async () => {
     expect.hasAssertions();

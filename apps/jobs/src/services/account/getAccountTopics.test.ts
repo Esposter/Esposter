@@ -45,9 +45,10 @@ describe(getAccountTopics, () => {
       .insert(bookmarksInApp)
       .values({ path: "/resource", resourceId: resource.id, title: "title", userId: readerId });
 
-    const topics = await getAccountTopics(userId);
-
-    expect(topics).toContain(getTopic(TopicKind.Bookmark, readerId));
-    expect(topics.filter((topic) => topic === getTopic(TopicKind.Resource, resource.id))).toHaveLength(1);
+    await expect(getAccountTopics(userId)).resolves.toStrictEqual([
+      getTopic(TopicKind.Bookmark, readerId),
+      getTopic(TopicKind.Resource, resource.id),
+      getTopic(TopicKind.Feed, "posts"),
+    ]);
   });
 });
