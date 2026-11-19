@@ -20,12 +20,13 @@ export const LOGIN_PAVING_PIXELS_PER_METRE = 256;
 // Share, read by the Shape pass's surface detail reading: the secant through 1.0 (4.3467) and 0.92 (4.0385) lands at
 // 0.9100, and the pass reads 0.0006 degrees there, inside its gate of 0.0198. Detail on top would only raise the bend
 export const LOGIN_WALKWAY_RIM_TILT_SHARE = 0.91;
-// The walkway's grain over its paving: their exports' structure less the paving's own over their pixels (the surface
-// Pass's terms, variance then bands finest first), each divided by their mean lightness of 0.6089 squared, and by the
-// Share of a target a reading realised (0.22, as the other families' first fits did). At a pixel's 0.0069 metres at the
-// Walkway's depth. The octave amplitudes that reproduce these are solved by `computeSurfaceOctaves`
+// The walkway's grain over its paving: the targets `genshin:parity grain login --family Walkway` settles, a damped Newton over
+// The structure terms the walkway's own render reads (`fitSurfaceGrain`, `solveResidualsByNewton`). The paving already
+// Overfills the band of the fourth octave past its exports, so that target stands at its floor of zero, and the terms
+// Settle at a structure root mean square of 0.0214 against the surface pass's gate of 0.0268. At a pixel's 0.0069 metres
+// At the walkway's depth. The octave amplitudes that reproduce these are solved by `computeSurfaceOctaves`
 export const LOGIN_WALKWAY_SURFACE_DETAIL: SurfaceDetail = {
-  bands: [0.00045306, 0.00039089, 0.00037788, 0.00026216],
+  bands: [0.000068039907, 0.00011268381, 0, 0.0012071159],
   metresPerTexel: 0.0069,
-  variance: 0.00407392,
+  variance: 0.0031098199,
 };
