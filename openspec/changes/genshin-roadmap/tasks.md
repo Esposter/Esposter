@@ -303,6 +303,10 @@ The References sought are the items below that name a clip or still file (a `.mk
 - [ ] **Is Linnea's charged shot's clip Tighnari's?** [Linnea](../../specs/genshin/kits/linnea/design.md): the charged shot takes Tighnari's 94 frames and has no clip of its own, her strike hitmarks match no donor (design.md:15), and Lumi is not summoned (design.md:22).
 - [ ] **The duel board's raised opponent card: a pointer hover the entry does not record, and a lift the board does not draw.** [Gcg compute](../../specs/genshin/compute/gcg/design.md) — in the `gcg-duel-board` reference the opponent's third character card sits about 42 pixels higher than the board draws it, its flame HP disc and pips rising with it, which is a pointer hover; the entry's `pointer` field would record the hover and the board has no lift for a character the player cannot choose. Done when the `gcg-duel-board` entry of `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts` records the pointer, the board lifts a hovered unchoosable character by the measured amount, and the id's compare falls.
 
+- [ ] **The animal icons are discs.** [Fishing and wildlife assets](../genshin-assets-fishing-wildlife/design.md) — the archive's Living Beings draws no animal icon, and the game's animal icon textures cannot ship. Each one is traced into a path of ours once it is exported (task 4.2 of that change).
+
+  Asset: animal icons (the icon each animal wears in the archive's Living Beings) | needed by: Archive, Living Beings | form: mark | seen in: archive-screen, the Living Beings list | source: the game's `UI_AnimalIcon_*` textures, exported by `genshin:assets sprites`; cannot be shipped (game art) | note: a disc stands in until the trace
+
 ## Phase 7: Fidelity
 
 - [ ] `opening-korean.mkv` — **Korean launch to the title**: the recording [localized opening](../genshin-localized-opening/design.md) names, which task 1.2 of [its tasks](../genshin-localized-opening/tasks.md) searches for.
@@ -315,3 +319,19 @@ The References sought are the items below that name a clip or still file (a `.mk
 - [ ] **The mist and foam at a waterfall's foot, judged by a recording of the game's falls.** [Flowing water](../../specs/genshin/flowing-water/design.md) — the pool's particles are not built; their emitter is judged by the spread, density and colour of its mist and foam against a recording of a fall, never pixel for pixel, so a recording of the game's falls is needed before it is built.
 - [ ] **Character voice-over, recorded as a missing asset.** [Sound effects](../../specs/genshin/sound-effects/design.md) — nothing in the world plays a voice, and the game's voice audio cannot be shipped.
       Asset: character voice-over | needed by: no screen yet; the dialogue a world plays (none today) | form: audio | seen in: any voiced line the game plays | source: the install's language packages; cannot be shipped | note: the persona's references are absent on this Mac, so spoken lines are text only
+
+- [ ] **The fishing and wildlife family's world art cannot ship.** [Fishing and wildlife assets](../genshin-assets-fishing-wildlife/design.md) — each piece the family draws as a stand-in, which its own shape replaces once fitted, as that change's "Not shippable" table records.
+
+  Asset: fishing rod model and texture | needed by: Fishing, the rod in the character's hand while a line is out | form: mesh | seen in: the reel screen and the cast | source: the install's blocks, about ten rod models and their textures; cannot be shipped (game art) | note: a tapered rod stands in until task 3.8 of that change
+
+  Asset: fishing float effect | needed by: Fishing, the float on the water at the lure | form: mesh | seen in: the cast | source: the install's blocks, one float effect; cannot be shipped (game art) | note: a generated float stands in until task 3.9
+
+  Asset: cast and splash effects (the cast effect, the ripple and splash names) | needed by: Fishing, the cast, the strike's splash and the fishing points' rings | form: texture, mesh | seen in: the cast and the strike | source: the asset index's effect names and the install's blocks; cannot be shipped (game art) | note: the engine's water ripple stands in until task 3.10
+
+  Asset: fish meshes and textures (the fishable models, each reached through its codex row) | needed by: Fishing, the hooked fish at the lure | form: mesh | seen in: the reel screen | source: the install's blocks, reached through the codex rows' model paths; cannot be shipped (game art) | note: a fish stand-in per category stands in until task 3.7
+
+  Asset: animal and critter meshes (the fleeing kinds and the critter groups) | needed by: Wildlife, the fleeing animals and the critters at their points | form: mesh | seen in: the world's animals and critters | source: the asset index's animal model names, about a hundred and fifty; cannot be shipped (game art) | note: capsules and stand-ins stand in until tasks 3.5 and 3.6
+
+  Asset: fishing-area prop meshes and textures | needed by: Fishing, the fishing-area props in each region | form: mesh, texture | seen in: the four regions' fishing points | source: each region's exported witness-layout meshes; cannot be shipped (game art) | note: a generated stand-in per prop stands in until task 3.12
+
+  Asset: pet meshes (the cat and the dog) | needed by: Wildlife's pet kind, genshin-wildlife task 5.1 | form: mesh | seen in: the world's pets | source: the asset index's cat and dog model names; cannot be shipped (game art) | note: none drawn until the pet kind lands
