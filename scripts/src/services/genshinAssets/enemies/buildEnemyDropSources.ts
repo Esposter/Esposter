@@ -119,7 +119,6 @@ export const buildEnemyDropSources = <T extends Pick<EnemyKind, "enemyType" | "i
   const kindArticleSources = enemyKinds.map((enemyKind) => {
     const name = toEnemyKindName(enemyKind, englishTextMap);
     const articleSource = toArticleDropSource(name, readWikiPageContent(name, cacheDirectory));
-    // A boss's article gives its reward or none, and a kind that is no boss gives a family, a template or none
     const isBossSource = articleSource.type === "bossReward" || articleSource.type === "none";
     if (enemyKind.enemyType === EnemyType.Boss && !isBossSource)
       throw new InvalidOperationError(
