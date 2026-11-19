@@ -24,7 +24,7 @@ interface StyledApexOptionsInput {
 export const getStyledApexOptions = ({ isDark, options, series, type }: StyledApexOptionsInput): ApexOptions => {
   const resolvedType = type ?? options.chart?.type ?? "line";
   // The y tooltips are escaped whole in getTooltipOptions, so the merge takes the tooltip options without them: defu
-  // would concatenate an array of y tooltips with the escaped one rather than replace it
+  // Would concatenate an array of y tooltips with the escaped one rather than replace it
   const { y: _yTooltips, ...tooltip }: NonNullable<ApexOptions["tooltip"]> = options.tooltip ?? {};
   const styledOptions = defu(
     {
@@ -77,6 +77,6 @@ const getTooltipOptions = (options: ApexOptions): NonNullable<ApexOptions["toolt
           ),
         ),
     },
-    y: Array.isArray(y) ? y.map(getYTooltip) : getYTooltip(y),
+    y: Array.isArray(y) ? y.map((yTooltip) => getYTooltip(yTooltip)) : getYTooltip(y),
   };
 };
