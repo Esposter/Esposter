@@ -4,6 +4,7 @@ import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { CALENDAR_SLOT_DURATION } from "#src/services/ui/constants";
 import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
+import { sanitizeTextHtml } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 interface Props {
@@ -19,6 +20,10 @@ const emit = defineEmits<{ dragStart: []; nudge: [duration: Temporal.Duration]; 
 // Faded once it has started, as Outlook fades what is behind the current time. Read once as the event draws, which
 // Only the browser does, so the fade never has to agree with a server render
 const isPast = computed(() => event.start.getTime() < Date.now());
+// The description is rich text from whichever caller passes it, so it is sanitized where it is drawn rather than trusted
+// To have been sanitized at its source
+const hasDescription = computed(() => Boolean(event.description && !EMPTY_TEXT_REGEX.test(event.description)));
+const descriptionHtml = computed(() => sanitizeTextHtml(event.description ?? ""));
 // Alt and an arrow move the event a day across, and down or up a slot of the hours or a week of the month
 const getNudgeDuration = (key: string) => {
   const downDuration = isBlock ? CALENDAR_SLOT_DURATION : Temporal.Duration.from({ weeks: 1 });
@@ -91,12 +96,8 @@ const getNudgeDuration = (key: string) => {
     </template>
     <template #content>
       <div text-heading-color>{{ event.title }}</div>
-      <div
-        v-if="event.description && !EMPTY_TEXT_REGEX.test(event.description)"
-        class="rich-text-content"
-        pt-2
-        v-html="event.description"
-      />
+      <!-- eslint-disable-next-line vue/no-v-html -- the description, sanitized by sanitizeTextHtml above where it is drawn -->
+      <div v-if="hasDescription" class="rich-text-content" pt-2 v-html="descriptionHtml" />
     </template>
   </UiTooltip>
 </template>
