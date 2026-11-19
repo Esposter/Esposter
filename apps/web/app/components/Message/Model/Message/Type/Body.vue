@@ -24,6 +24,7 @@ const toggleSpoiler = (event: Event) => {
     <!-- The default slot is the inline editor, which replaces the rendered text while a message is being edited -->
     <slot>
       <div v-if="!EMPTY_TEXT_REGEX.test(messageHtml) || message.editedAt !== null" flex gap-1 items-end>
+        <!-- The v-html is a message or webhook body, sanitized at its Zod boundary and rewritten by useMessageHtml -->
         <div
           v-if="!EMPTY_TEXT_REGEX.test(messageHtml)"
           class="rich-text-content"

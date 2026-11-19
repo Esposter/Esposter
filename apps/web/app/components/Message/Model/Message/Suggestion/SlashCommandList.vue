@@ -23,8 +23,9 @@ const selectItem = (index: number) => {
 const { onKeyDown: baseOnKeyDown, selectedIndex } = useSuggestionListNavigation(() => items, selectItem);
 const onKeyDown = ({ event }: Pick<SuggestionKeyDownProps, "event">) => {
   if (event.key === " ") {
+    const normalizedQuery = query.toLowerCase();
     const matchedItemIndex = items.findIndex(
-      (item) => item.title.toLowerCase() === query.toLowerCase() || item.type.toLowerCase() === query.toLowerCase(),
+      (item) => item.title.toLowerCase() === normalizedQuery || item.type.toLowerCase() === normalizedQuery,
     );
     if (matchedItemIndex !== -1) {
       event.preventDefault();
@@ -46,17 +47,13 @@ defineExpose({ onKeyDown });
     :selected-index
     :title="getSuggestionListTitle('COMMANDS', SuggestionTrigger.Slash, query)"
   >
-    <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- focus stays in the editor, which walks the options -->
-    <div
+    <MessageModelMessageSuggestionOption
       v-for="(
         { description, icon, optionalParameterCount, requiredParameters, title: commandTitle, type }, index
       ) of commandItems"
       :key="type"
-      :aria-selected="selectedIndex === index"
-      role="option"
-      ui-item
-      @click="selectItem(index)"
-      @mousedown.prevent
+      :is-selected="selectedIndex === index"
+      @select="selectItem(index)"
     >
       <UiItemContent :description :icon :title="commandTitle">
         <template #append>
@@ -66,6 +63,6 @@ defineExpose({ onKeyDown });
           </span>
         </template>
       </UiItemContent>
-    </div>
+    </MessageModelMessageSuggestionOption>
   </MessageModelMessageSuggestionList>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-// One surface for all three suggestion lists — the composer's chrome is the same whether the trigger opened emoji, slash
-// Commands or mentions. Only the width differs, and each consumer sets that as a passthrough attribute on this component
+// One surface for every suggestion list — the composer's chrome is the same whether the trigger opened emoji, slash
+// Commands, mentions, merge fields or note blocks. Only the width differs, and each consumer sets that as a passthrough
+// Attribute on this component
 interface Props {
   isVisible: boolean;
   selectedIndex?: number | undefined;

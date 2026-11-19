@@ -40,15 +40,11 @@ defineExpose({ onKeyDown });
     :selected-index
     :title="getSuggestionListTitle('MEMBERS', SuggestionTrigger.Mention, query)"
   >
-    <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- focus stays in the editor, which walks the options -->
-    <div
+    <MessageModelMessageSuggestionOption
       v-for="(item, index) of items"
       :key="item.id"
-      :aria-selected="selectedIndex === index"
-      role="option"
-      ui-item
-      @click="selectItem(index)"
-      @mousedown.prevent
+      :is-selected="selectedIndex === index"
+      @select="selectItem(index)"
     >
       <UiItemContent v-if="checkIsRoleMentionItem(item)" :title="item.name">
         <!-- A role is marked in its own colour, which its owners chose -->
@@ -71,6 +67,6 @@ defineExpose({ onKeyDown });
         :meaning="UiIconMeaning.Mention"
         :title="getItemTitle(item)"
       />
-    </div>
+    </MessageModelMessageSuggestionOption>
   </MessageModelMessageSuggestionList>
 </template>
