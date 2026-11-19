@@ -31,8 +31,6 @@ import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-let mockDb: Database;
-
 // A bucket binding is a proxy a spy cannot reach, so the blob sweep is failed at its own step instead
 const blobSweepFailure = vi.hoisted(() => ({ error: undefined as Error | undefined }));
 
@@ -49,12 +47,14 @@ vi.mock(import("#src/services/account/deleteAccountBlobDirectories"), async (imp
   };
 });
 
-const readUserRows = (userId: string) =>
-  mockDb.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId));
 // The sweep runs as the queue runs it, in the unit whose writes are published once it settles
 const sweep = (userId: string) => runUnit(() => deleteAccountHandler({ userId }));
 
 describe(deleteAccountHandler, () => {
+  let mockDb: Database;
+
+  const readUserRows = (userId: string) =>
+    mockDb.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId));
   const name = "name";
   const countedBytes = 1;
 

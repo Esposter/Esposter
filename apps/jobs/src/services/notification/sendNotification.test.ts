@@ -27,14 +27,14 @@ import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-let mockDb: Database;
-
 vi.mock(import("#src/services/notification/webpush"), () => import("#src/services/notification/webpush.test"));
 
 // The generic web-push send/expiry matrix lives in sendWebPushNotifications.test.ts; what this one owns is the
 // Fan-out AppNotificationTypeChannelMap decides — which types write a bell row, which reach a device, and which session
 // A notification skips because it caused it.
 describe(sendNotification, () => {
+  let mockDb: Database;
+
   const message = "<p>a</p>";
   const name = "name";
   const path = "path";

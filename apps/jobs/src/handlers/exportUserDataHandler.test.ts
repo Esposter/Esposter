@@ -28,32 +28,31 @@ import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
-let mockDb: Database;
-
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 
-const readExportRow = async (dataExportId: string) =>
-  takeOne(
-    await mockDb
-      .select({
-        blobName: dataExportsInUser.blobName,
-        expiresAt: dataExportsInUser.expiresAt,
-        failureReason: dataExportsInUser.failureReason,
-        readyAt: dataExportsInUser.readyAt,
-        status: dataExportsInUser.status,
-      })
-      .from(dataExportsInUser)
-      .where(eq(dataExportsInUser.id, dataExportId)),
-  );
-
-const seedQueuedExport = async (userId: string) => {
-  const dataExportId = v7();
-  await mockDb.insert(dataExportsInUser).values({ id: dataExportId, status: DataExportStatus.Queued, userId });
-  return dataExportId;
-};
-
 describe(exportUserDataHandler, () => {
+  let mockDb: Database;
+
+  const readExportRow = async (dataExportId: string) =>
+    takeOne(
+      await mockDb
+        .select({
+          blobName: dataExportsInUser.blobName,
+          expiresAt: dataExportsInUser.expiresAt,
+          failureReason: dataExportsInUser.failureReason,
+          readyAt: dataExportsInUser.readyAt,
+          status: dataExportsInUser.status,
+        })
+        .from(dataExportsInUser)
+        .where(eq(dataExportsInUser.id, dataExportId)),
+    );
+  const seedQueuedExport = async (userId: string) => {
+    const dataExportId = v7();
+    await mockDb.insert(dataExportsInUser).values({ id: dataExportId, status: DataExportStatus.Queued, userId });
+    return dataExportId;
+  };
+
   const filename = "filename";
   const name = "name";
 

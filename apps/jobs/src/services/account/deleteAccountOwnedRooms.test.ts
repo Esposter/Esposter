@@ -25,12 +25,12 @@ import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-let mockDb: Database;
-
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 
 describe(deleteAccountOwnedRooms, () => {
+  let mockDb: Database;
+
   const name = "name";
   const note = "note";
 
