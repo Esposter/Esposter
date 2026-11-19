@@ -8,5 +8,5 @@ export const computeFishingLure = ({
   point,
 }: {
   isLineOut: boolean;
-  point: FishingPointPlace | undefined;
+  point?: FishingPointPlace | undefined;
 }): GroundPoint | undefined => (isLineOut ? point?.position : undefined);

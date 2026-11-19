@@ -4,6 +4,6 @@ import type { FishingPointPlace } from "#src/models/fishing/FishingPointPlace";
 export const computeFishingPointPlaces = (
   fishingPoints: Readonly<Record<string, FishingPointPlace[]>>,
   regionIds: string[],
-  hasStock: (region: string) => boolean,
+  checkHasStock: (region: string) => boolean,
 ): FishingPointPlace[] =>
-  regionIds.filter((region) => hasStock(region)).flatMap((region) => fishingPoints[region] ?? []);
+  regionIds.filter((region) => checkHasStock(region)).flatMap((region) => fishingPoints[region] ?? []);

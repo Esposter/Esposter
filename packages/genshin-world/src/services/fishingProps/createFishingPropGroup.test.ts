@@ -1,8 +1,8 @@
 import type { FishingPropPlace } from "#src/models/fishing/FishingPropPlace";
 
 import { createFishingPropGroup } from "#src/services/fishingProps/createFishingPropGroup";
-import { describe, expect, test } from "vitest";
 import { MeshBasicMaterial } from "three";
+import { describe, expect, test } from "vitest";
 
 describe(createFishingPropGroup, () => {
   const places: FishingPropPlace[] = [
