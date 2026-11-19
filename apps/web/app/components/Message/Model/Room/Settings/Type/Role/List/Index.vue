@@ -2,6 +2,7 @@
 import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
+import { checkIsAssignableRole } from "#shared/services/room/rbac/checkIsAssignableRole";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useUserStore } from "#src/store/message/user/index";
 
@@ -20,7 +21,7 @@ const roleMap = computed(() => new Map(roles.map((role) => [role.id, role])));
 // `deleteRole` refuses a role at or above the reader's top role, so a row offers Delete only for one they outrank
 const isDeletable = (roleId: string) => {
   const role = roleMap.value.get(roleId);
-  return Boolean(role && !role.isEveryone && checkIsRoleManageable(roomId, role.position));
+  return Boolean(role && checkIsAssignableRole(role) && checkIsRoleManageable(roomId, role.position));
 };
 // Each row is marked by the role's own colour, which the mark's slot draws
 const roleItems = computed(() =>

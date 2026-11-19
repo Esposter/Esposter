@@ -1,5 +1,6 @@
 import type { RoleMentionItem } from "#src/models/message/RoleMentionItem";
 
+import { checkIsAssignableRole } from "#shared/services/room/rbac/checkIsAssignableRole";
 import { useRoleStore } from "#src/store/message/room/role";
 import { MentionType } from "@esposter/shared";
 
@@ -8,6 +9,9 @@ export const getRoleMentionItems = (query: string, roomId: string): RoleMentionI
   const { getRoles } = roleStore;
   const normalizedQuery = query.toLowerCase();
   return getRoles(roomId)
-    .filter((role) => !role.isEveryone && (!normalizedQuery || role.name.toLowerCase().startsWith(normalizedQuery)))
+    .filter(
+      (role) =>
+        checkIsAssignableRole(role) && (!normalizedQuery || role.name.toLowerCase().startsWith(normalizedQuery)),
+    )
     .map(({ color, id, name }) => ({ color, id, name, type: MentionType.Role }));
 };

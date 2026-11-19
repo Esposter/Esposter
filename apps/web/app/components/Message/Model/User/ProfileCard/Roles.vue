@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
+import { checkIsAssignableRole } from "#shared/services/room/rbac/checkIsAssignableRole";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useRoleStore } from "#src/store/message/room/role";
@@ -16,10 +17,10 @@ const roleStore = useRoleStore();
 const { checkHasMyPermission, getMemberRoles, getRoles } = roleStore;
 const memberRoles = computed(() =>
   getMemberRoles(roomId, userId)
-    .filter(({ isEveryone }) => !isEveryone)
+    .filter((role) => checkIsAssignableRole(role))
     .toSorted((firstRole, secondRole) => secondRole.position - firstRole.position),
 );
-const assignableRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
+const assignableRoles = computed(() => getRoles(roomId).filter((role) => checkIsAssignableRole(role)));
 // Discord assigns a role from the member themselves rather than only from a settings list, which is where the want
 // Happens: reading who someone is is the moment you notice what they should be able to do
 const isEditable = computed(

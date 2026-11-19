@@ -2,6 +2,7 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { checkIsAssignableRole } from "#shared/services/room/rbac/checkIsAssignableRole";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useRoleStore } from "#src/store/message/room/role";
 
@@ -14,7 +15,7 @@ const { member, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { getRoles } = roleStore;
 const readMemberRoles = useReadMemberRoles();
-const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
+const allRoles = computed(() => getRoles(roomId).filter((role) => checkIsAssignableRole(role)));
 
 await readMemberRoles({ roomId, userIds: [member.id] });
 </script>
