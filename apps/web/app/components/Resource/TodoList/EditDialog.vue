@@ -3,7 +3,7 @@ import { todoListItemSchema } from "#shared/models/resource/todoList/TodoListIte
 import { useTodoListStore } from "#src/store/resource/todoList/index";
 
 const todoListStore = useTodoListStore();
-const { resetItem, saveItem } = todoListStore;
+const { removeItem, resetItem, saveItem } = todoListStore;
 const { editedItem, isDirty, isEditFormDialogOpen, isEditFormValid, isSavable, originalItem } =
   storeToRefs(todoListStore);
 </script>
@@ -16,7 +16,7 @@ const { editedItem, isDirty, isEditFormDialogOpen, isEditFormValid, isSavable, o
     :name="originalItem?.name || ''"
     :edited-item
     :original-item
-    :remove="() => saveItem(true)"
+    :remove="() => removeItem()"
     :save="() => saveItem()"
     :is-dirty
     :schema="todoListItemSchema"

@@ -43,9 +43,9 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     computed(() => items.value),
     ["id"],
   );
-  // One write path: item edits mutate the content blob, then persist it wholesale, and a refused save reverts the item.
-  // The dialog closes as the save is sent, so a refused edit is not held open as a draft for a retry.
-  const saveItem = (isDeleteAction?: true) => {
+  // One write path per action: item edits mutate the content blob, then persist it wholesale, and a refused save reverts
+  // the item. The dialog closes as the save is sent, so a refused edit is not held open as a draft for a retry.
+  const saveItem = () => {
     if (!editedItem.value) return;
 
     const { id } = editedItem.value;
@@ -54,24 +54,32 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     // Content along with the rejected edit. Cloned before the write because updateItem assigns onto the live
     // Item, and read before it because originalItem is a computed over items
     const previousItem = originalItem.value ? structuredClone(toRawDeep(originalItem.value)) : undefined;
-    // Where an item sits is content in a list the user ordered, so the unwind owes its index back too. Read
-    // Before the removal, and used through a re-created insert rather than createItem, which only appends
-    const previousIndex = items.value.findIndex((item) => item.id === id);
     const writtenTodoList = todoList.value;
     // Whether this is an edit or an add is the list's own answer to "is that item already here?", read from
     // The item in hand — a separately tracked index would still hold the previous edit's row when the dialog
     // Opens straight from the add button, routing that add into an update
-    if (isDeleteAction) deleteItem({ id });
-    else if (previousItem) updateItem(editedItem.value);
+    if (previousItem) updateItem(editedItem.value);
     else createItem(editedItem.value);
 
     saveTodoList(() => {
       // A refused create takes its row back out, and a refused edit puts the item back as it was
       if (!previousItem) deleteItem({ id });
-      // Against the list as it stands — another device's save reloads the list mid-flight, and that content is kept
-      else if (isDeleteAction) items.value = getRestoredItems(items.value, previousItem, previousIndex);
       // Reloaded content never held this edit, so its copy of the item is left as that device saved it
       else if (todoList.value === writtenTodoList) updateItem(previousItem);
+    });
+  };
+  // A delete from the dialog. Where an item sits is content in a list the user ordered, so a refused delete puts it back
+  // at the index it held, read before the removal and restored through an insert rather than createItem, which only
+  // appends. Against the list as it stands, so another device's save reloaded mid-flight is kept
+  const removeItem = () => {
+    if (!editedItem.value) return;
+
+    const { id } = editedItem.value;
+    const previousItem = originalItem.value ? structuredClone(toRawDeep(originalItem.value)) : undefined;
+    const previousIndex = items.value.findIndex((item) => item.id === id);
+    deleteItem({ id });
+    saveTodoList(() => {
+      if (previousItem) items.value = getRestoredItems(items.value, previousItem, previousIndex);
     });
   };
   // A todo added by its name alone, from the field above the list, at the foot of the list as the dialog's add is. A
@@ -169,6 +177,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     originalItem,
     reorderItems,
     ...restEditFormData,
+    removeItem,
     saveItem,
     saveTodoList,
     searchQuery,
