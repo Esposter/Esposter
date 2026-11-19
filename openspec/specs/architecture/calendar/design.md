@@ -14,7 +14,7 @@ A day on a calendar has no time zone: the 25th is the 25th wherever the reader i
 - **An event** starts at an instant. The event calendar files it under the day it starts on in the reader's zone, which only the browser knows, so the views render on the client alone behind a skeleton — a server render would file an evening event under the wrong day for half the world.
 - **A rendered date** follows [date and time display](../date-time-display/design.md), which covers a plain date with no instant of its own.
 
-Vuetify 0 ships a date adapter rather than a date picker, and that adapter is written against a Temporal polyfill of its own — a second copy of Temporal in the bundle beside the platform's, for arithmetic a plain date already does. The components use the platform's instead. Where the platform has none — Safari, and so every browser on iOS, until Temporal is [Baseline](https://webstatus.dev/features/temporal) — `temporal-polyfill` installs it ahead of the bundle, per [polyfills](../polyfills/design.md).
+The month grid is Vuetify 0's `createCalendar`, on the plain adapter it brings for `Date`s, which imports no Temporal. Vuetify 0's date adapter is not installed: it is written against a Temporal polyfill of its own, a second copy of Temporal beside the platform's. The components use the platform's Temporal for their days. Where the platform has none — Safari, and so every browser on iOS, until Temporal is [Baseline](https://webstatus.dev/features/temporal) — `temporal-polyfill` installs it ahead of the bundle, per [polyfills](../polyfills/design.md).
 
 Weeks start on Monday, ISO 8601's first day. The reader's locale could say otherwise, but only the browser knows it, and a grid the server rendered with Sunday first would be redrawn under the reader's pointer.
 
@@ -134,20 +134,20 @@ A range field is the date field's trigger holding both days, read with a dash be
 
 ## Key files
 
-| File                                                      | Role                                                                                                                              |
-| :-------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Ui/Calendar.vue`                 | The date grid: six weeks of plain days, one tab stop, walked by the WAI-ARIA grid's keys; one day or a range, in one month or two |
-| `apps/web/app/components/Ui/DateRangeField.vue`           | A span of plain days, picked from a range grid in a popover                                                                       |
-| `apps/web/app/components/Ui/DateField.vue`                | A day or a moment in the reader's zone, picked from the grid in a popover                                                         |
-| `apps/web/app/components/Ui/EventCalendar/Index.vue`      | The event calendar: views, navigator, header, shortcuts, and the move and create gestures                                         |
-| `apps/web/app/components/Ui/EventCalendar/MonthView.vue`  | The month: weekday headings over six weeks of days, which day is selected, and the keys that walk the days                        |
-| `apps/web/app/components/Ui/EventCalendar/MonthDay.vue`   | One day of the month: its lines, today's bar, hover, selection, and its first events                                              |
-| `apps/web/app/components/Ui/EventCalendar/TimeView.vue`   | The hours as one grid: the sticky headings, the gutter, which slot is selected, and the keys that walk the slots                  |
-| `apps/web/app/components/Ui/EventCalendar/TimeColumn.vue` | One day of hours: the slots, events placed at their time, the current-time line                                                   |
-| `apps/web/app/components/Ui/EventCalendar/Event.vue`      | One event, a line in a day of the month or a block in the hours, its notes in a peek on hover, moved by Alt and an arrow          |
-| `apps/web/app/models/ui/UiCalendarView.ts`                | The views, in Outlook's order                                                                                                     |
-| `apps/web/app/util/date/getStartOfWeek.ts`                | Monday of a day's week, which every grid starts its rows on                                                                       |
-| `apps/web/app/services/ui/getCalendarWeeks.ts`            | A month's six weeks of days from the start of its first week, which the date grid and the month share                             |
-| `apps/web/app/composables/ui/useGridKeyboard.ts`          | One tab stop in a grid: a key mapped to another cell moves the stop there and focuses it                                          |
-| `apps/web/app/util/date/getNextGridDate.ts`               | The day a key walks a grid of days to, which the date grid and the month share                                                    |
-| `apps/web/app/components/Resource/TodoList/Calendar.vue`  | The todo list's Calendar blade: todos by due date, moved by a drag, created by a double click                                     |
+| File                                                      | Role                                                                                                                                                    |
+| :-------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apps/web/app/components/Ui/Calendar.vue`                 | The date grid: six weeks of plain days from `createCalendar`, one tab stop, walked by the WAI-ARIA grid's keys; one day or a range, in one month or two |
+| `apps/web/app/components/Ui/DateRangeField.vue`           | A span of plain days, picked from a range grid in a popover                                                                                             |
+| `apps/web/app/components/Ui/DateField.vue`                | A day or a moment in the reader's zone, picked from the grid in a popover                                                                               |
+| `apps/web/app/components/Ui/EventCalendar/Index.vue`      | The event calendar: views, navigator, header, shortcuts, and the move and create gestures                                                               |
+| `apps/web/app/components/Ui/EventCalendar/MonthView.vue`  | The month: weekday headings over six weeks of days from `createCalendar`, which day is selected, and the keys that walk the days                        |
+| `apps/web/app/components/Ui/EventCalendar/MonthDay.vue`   | One day of the month: its lines, today's bar, hover, selection, and its first events                                                                    |
+| `apps/web/app/components/Ui/EventCalendar/TimeView.vue`   | The hours as one grid: the sticky headings, the gutter, which slot is selected, and the keys that walk the slots                                        |
+| `apps/web/app/components/Ui/EventCalendar/TimeColumn.vue` | One day of hours: the slots, events placed at their time, the current-time line                                                                         |
+| `apps/web/app/components/Ui/EventCalendar/Event.vue`      | One event, a line in a day of the month or a block in the hours, its notes in a peek on hover, moved by Alt and an arrow                                |
+| `apps/web/app/models/ui/UiCalendarView.ts`                | The views, in Outlook's order                                                                                                                           |
+| `apps/web/app/util/date/getStartOfWeek.ts`                | Monday of a day's week, which the week view's days and the grid's Home and End keys start from                                                          |
+| `apps/web/app/services/ui/constants.ts`                   | `CALENDAR_FIRST_DAY_OF_WEEK`, the Monday every grid's rows start on                                                                                     |
+| `apps/web/app/composables/ui/useGridKeyboard.ts`          | One tab stop in a grid: a key mapped to another cell moves the stop there and focuses it                                                                |
+| `apps/web/app/util/date/getNextGridDate.ts`               | The day a key walks a grid of days to, which the date grid and the month share                                                                          |
+| `apps/web/app/components/Resource/TodoList/Calendar.vue`  | The todo list's Calendar blade: todos by due date, moved by a drag, created by a double click                                                           |

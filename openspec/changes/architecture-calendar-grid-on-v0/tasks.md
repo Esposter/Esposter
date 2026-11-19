@@ -12,4 +12,4 @@
 
 ## 3. The record
 
-- [ ] 3.1 Rewrite the calendar page's Vuetify 0 paragraph and its Key files rows for the grid's new source. Verify: `pnpm -C scripts exec vitest run src/services/openspec` and the workspace's citation tests pass.
+- [x] 3.1 Rewrite the calendar page's Vuetify 0 paragraph and its Key files rows for the grid's new source. Verify: `pnpm -C scripts exec vitest run src/services/openspec` and the workspace's citation tests pass.
