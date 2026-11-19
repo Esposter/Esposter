@@ -7,9 +7,6 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const INVARIANTS_LEDGER = "invariants";
-const COPY_LEDGERS = ["quality", "security", "write-once"];
-
 const readAreaUnits = (ledger: string, area: string): string[] =>
   readLedgerUnits(readFileSync(join(REPOSITORY_ROOT, LEDGER_DIRECTORY, ledger, `${area}.md`), "utf8"))
     .map((unit) => normalizeLedgerUnit(unit))
@@ -21,6 +18,8 @@ const readAreaUnits = (ledger: string, area: string): string[] =>
  * part of the tree under the same area name, and the sweep's coverage for the area stops meaning one thing.
  */
 describe("ledgerAreaUnits", () => {
+  const INVARIANTS_LEDGER = "invariants";
+  const COPY_LEDGERS = ["quality", "security", "write-once"];
   const areas = readdirSync(join(REPOSITORY_ROOT, LEDGER_DIRECTORY, INVARIANTS_LEDGER))
     .filter((filename) => filename.endsWith(".md") && filename !== "README.md")
     .map((filename) => filename.slice(0, -".md".length));
