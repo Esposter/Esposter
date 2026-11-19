@@ -8,7 +8,7 @@ import { toClickerSave } from "#src/services/clicker/save/toClickerSave";
 import { describe, expect, test } from "vitest";
 
 describe(toClicker, () => {
-  const upgradeId = CursorUpgradeId["Reinforced Index Finger"];
+  const upgradeId = CursorUpgradeId.ReinforcedIndexFinger;
   const clicker = createClicker({
     boughtBuildings: [{ ...BuildingMap[BuildingId.Cursor], amount: 1, id: BuildingId.Cursor, producedValue: 0 }],
     boughtUpgrades: [{ ...UpgradeMap[upgradeId], id: upgradeId }],

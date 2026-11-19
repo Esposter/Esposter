@@ -19,7 +19,7 @@ describe(applyBuildingUpgrade, () => {
     const targetingUpgrade = createUpgrade(CursorUpgradeId.Ambidextrous, [
       { configuration: { type: EffectType.Multiplicative }, targets: [BuildingId.Cursor], value: 3 },
     ]);
-    const otherUpgrade = createUpgrade(GrandmaUpgradeId["Forwards From Grandma"], [
+    const otherUpgrade = createUpgrade(GrandmaUpgradeId.ForwardsFromGrandma, [
       { configuration: { type: EffectType.Multiplicative }, targets: [BuildingId.Grandma], value: 3 },
     ]);
 

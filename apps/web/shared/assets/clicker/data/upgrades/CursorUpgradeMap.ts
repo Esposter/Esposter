@@ -10,25 +10,25 @@ import { pluralize } from "#shared/util/text/pluralize";
 // Each fingers upgrade multiplies the gain from the Thousand Fingers by its own value, so its description and effect are
 // Written once from that value
 const getFingersMultiplier = (value: number): Pick<Upgrade<CursorUpgradeId>, "description" | "effects"> => ({
-  description: `Multiplies the gain from ${CursorUpgradeId["Thousand Fingers"]} by **${value}**.`,
+  description: `Multiplies the gain from ${CursorUpgradeId.ThousandFingers} by **${value}**.`,
   effects: [
     {
       value,
-      targets: [CursorUpgradeId["Thousand Fingers"]],
+      targets: [CursorUpgradeId.ThousandFingers],
       configuration: { type: EffectType.Multiplicative, itemType: Target.Upgrade },
     },
   ],
 });
 
 export const CursorUpgradeMap = {
-  [CursorUpgradeId["Reinforced Index Finger"]]: {
+  [CursorUpgradeId.ReinforcedIndexFinger]: {
     description: `The ${Target.Mouse} and ${pluralize(Target.Cursor)} are **twice** as efficient.`,
     flavorDescription: "prod prod",
     price: 1e2,
     effects: [{ value: 2, targets: [Target.Mouse, Target.Cursor], configuration: { type: EffectType.Multiplicative } }],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 1 }],
   },
-  [CursorUpgradeId["Carpal Tunnel Prevention Cream"]]: {
+  [CursorUpgradeId.CarpalTunnelPreventionCream]: {
     description: `The ${Target.Mouse} and ${pluralize(Target.Cursor)} are **twice** as efficient.`,
     flavorDescription: "it... it hurts to click...",
     price: 5e2,
@@ -42,7 +42,7 @@ export const CursorUpgradeMap = {
     effects: [{ value: 2, targets: [Target.Mouse, Target.Cursor], configuration: { type: EffectType.Multiplicative } }],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 10 }],
   },
-  [CursorUpgradeId["Thousand Fingers"]]: {
+  [CursorUpgradeId.ThousandFingers]: {
     description: "The mouse and cursors gain **+0.1** cookies for each non-cursor object owned.",
     flavorDescription: "clickity",
     price: 1e5,
@@ -55,61 +55,61 @@ export const CursorUpgradeMap = {
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 25 }],
   },
-  [CursorUpgradeId["Million Fingers"]]: {
+  [CursorUpgradeId.MillionFingers]: {
     ...getFingersMultiplier(5),
     flavorDescription: "clickityclickity",
     price: 1e7,
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 50 }],
   },
-  [CursorUpgradeId["Billion Fingers"]]: {
+  [CursorUpgradeId.BillionFingers]: {
     ...getFingersMultiplier(10),
     flavorDescription: "clickityclickityclickity",
     price: 1e8,
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 100 }],
   },
-  [CursorUpgradeId["Trillion Fingers"]]: {
+  [CursorUpgradeId.TrillionFingers]: {
     ...getFingersMultiplier(20),
     flavorDescription: "clickityclickityclickityclickity",
     price: 1e9,
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 150 }],
   },
-  [CursorUpgradeId["Quadrillion Fingers"]]: {
+  [CursorUpgradeId.QuadrillionFingers]: {
     ...getFingersMultiplier(20),
     flavorDescription: "clickityclickityclickityclickityclick",
     price: 1e10,
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 200 }],
   },
-  [CursorUpgradeId["Quintillion Fingers"]]: {
+  [CursorUpgradeId.QuintillionFingers]: {
     ...getFingersMultiplier(20),
     flavorDescription: "man, just go click click click click click, it's real easy, man.",
     price: 1e13,
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 250 }],
   },
-  [CursorUpgradeId["Sextillion Fingers"]]: {
+  [CursorUpgradeId.SextillionFingers]: {
     ...getFingersMultiplier(20),
     flavorDescription: "sometimes things just click",
     price: 1e16,
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 300 }],
   },
-  [CursorUpgradeId["Septillion Fingers"]]: {
+  [CursorUpgradeId.SeptillionFingers]: {
     ...getFingersMultiplier(20),
     flavorDescription: "[cursory flavor text]",
     price: 1e19,
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 350 }],
   },
-  [CursorUpgradeId["Octillion Fingers"]]: {
+  [CursorUpgradeId.OctillionFingers]: {
     ...getFingersMultiplier(20),
     flavorDescription: "Turns out you **can** quite put your finger on it.",
     price: 1e22,
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 400 }],
   },
-  [CursorUpgradeId["Nonillion Fingers"]]: {
+  [CursorUpgradeId.NonillionFingers]: {
     ...getFingersMultiplier(20),
     flavorDescription: "Only for the freakiest handshakes.",
     price: 1e25,
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 450 }],
   },
-  [CursorUpgradeId["Decillion Fingers"]]: {
+  [CursorUpgradeId.DecillionFingers]: {
     ...getFingersMultiplier(20),
     flavorDescription: "If you still can't quite put your finger on it, you must not be trying very hard.",
     price: 1e28,

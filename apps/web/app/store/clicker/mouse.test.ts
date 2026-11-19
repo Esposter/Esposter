@@ -6,7 +6,7 @@ import { useMouseStore } from "#src/store/clicker/mouse";
 import { describe, expect, test } from "vitest";
 
 describe(useMouseStore, () => {
-  const upgradeId = CursorUpgradeId["Reinforced Index Finger"];
+  const upgradeId = CursorUpgradeId.ReinforcedIndexFinger;
   const upgrade = { ...UpgradeMap[upgradeId], id: upgradeId };
 
   // A click is worth one point until a bought upgrade reaches the mouse, and then it is worth what the upgrade makes it

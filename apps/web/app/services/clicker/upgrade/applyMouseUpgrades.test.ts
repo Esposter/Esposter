@@ -14,7 +14,7 @@ describe(applyMouseUpgrades, () => {
     const mouseUpgrade = createUpgrade(CursorUpgradeId.Ambidextrous, [
       { configuration: { type: EffectType.Additive }, targets: [Target.Mouse], value: 2 },
     ]);
-    const buildingUpgrade = createUpgrade(CursorUpgradeId["Billion Fingers"], [
+    const buildingUpgrade = createUpgrade(CursorUpgradeId.BillionFingers, [
       { configuration: { type: EffectType.Multiplicative }, targets: [BuildingId.Cursor], value: 5 },
     ]);
 
@@ -28,7 +28,7 @@ describe(applyMouseUpgrades, () => {
     const mouseUpgrade = createUpgrade(CursorUpgradeId.Ambidextrous, [
       { configuration: { type: EffectType.Additive }, targets: [Target.Mouse], value: 1 },
     ]);
-    const enhancingUpgrade = createUpgrade(CursorUpgradeId["Billion Fingers"], [
+    const enhancingUpgrade = createUpgrade(CursorUpgradeId.BillionFingers, [
       {
         configuration: { itemType: Target.Upgrade, type: EffectType.Multiplicative },
         targets: [CursorUpgradeId.Ambidextrous],

@@ -9,7 +9,7 @@ describe("clickerSaveSchema", () => {
   // Zod outputs plain objects and toStrictEqual is prototype-sensitive, so compare against a plain clone
   const baseClickerSave: ToData<ClickerSave> = structuredClone(new ClickerSave());
   const boughtBuilding = { amount: 1, id: BuildingId.Cursor, producedValue: 0 };
-  const upgradeId = CursorUpgradeId["Reinforced Index Finger"];
+  const upgradeId = CursorUpgradeId.ReinforcedIndexFinger;
   const unknownId = "-1";
 
   test("parses the id-based save shape", () => {

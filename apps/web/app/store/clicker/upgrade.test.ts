@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
 // The store is the purchase's only gate: the buttons that disable on the price are one caller each, and a purchase
 // That reached the store past them would spend points the player does not have
 describe(useUpgradeStore, () => {
-  const upgradeId = CursorUpgradeId["Reinforced Index Finger"];
+  const upgradeId = CursorUpgradeId.ReinforcedIndexFinger;
   const upgrade = { ...UpgradeMap[upgradeId], id: upgradeId };
 
   test("refuses an upgrade the player cannot pay for", () => {
