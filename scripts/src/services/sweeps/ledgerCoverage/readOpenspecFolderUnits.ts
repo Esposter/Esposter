@@ -14,7 +14,8 @@ export const readOpenspecFolderUnits = (): string[] => [
     OPENSPEC_ROOTS.flatMap((root) =>
       readdirSync(join(REPOSITORY_ROOT, OPENSPEC_DIRECTORY, root), { recursive: true, withFileTypes: true })
         .filter((entry) => entry.isFile() && OPENSPEC_DOCUMENTS.has(entry.name))
-        .map(({ parentPath }) => `\`${relative(REPOSITORY_ROOT, parentPath)}\``),
+        // Windows' separator is read as the repository's, which every ledger row and pathspec is written in
+        .map(({ parentPath }) => `\`${relative(REPOSITORY_ROOT, parentPath).replaceAll("\\", "/")}\``),
     ),
   ),
 ];
