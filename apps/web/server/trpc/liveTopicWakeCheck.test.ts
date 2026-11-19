@@ -117,12 +117,13 @@ const readOnlyDatabase = <T extends object>(database: T): T =>
 
 // Asks every read the test answered again, after a write published `published`. A read whose answer changed must be one a
 // Topic the write published wakes, by the topics the read watched before the write. A read that tried to write is no read, so
-// It is dropped rather than compared
-const rerunReads = async (published: ColumnTopic[], writePath: string, writeArgs: unknown) => {
-  for (const [key, read] of reads) {
+// It is dropped rather than compared. The reads are asked one after another: a rerun's refused writes are counted in one shared
+// Counter, and its publishes are sliced from one shared record, so two reruns in flight would count each other's
+const rerunReads = async (published: ColumnTopic[], writePath: string, writeArgs: unknown) =>
+  [...reads].reduce<Promise<void>>(async (previous, [key, read]) => {
+    await previous;
     const watched = read.topics;
     const refusedBefore = refusedWrites;
-    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: a read asked later sees the rows the earlier ones left
     const outcome = await callProcedure(
       read.createCaller,
       read.router,
@@ -133,7 +134,7 @@ const rerunReads = async (published: ColumnTopic[], writePath: string, writeArgs
     counts.reruns++;
     if (refusedWrites !== refusedBefore) {
       reads.delete(key);
-      continue;
+      return;
     }
     const answer = getAnswer(outcome);
     if (answer !== read.answer) {
@@ -147,8 +148,7 @@ const rerunReads = async (published: ColumnTopic[], writePath: string, writeArgs
     // A read that now answers an error, or names no topic, keeps the topics it watched, since no write it watched is gone
     const topics = getTopicsOf(outcome.headers, read.path);
     if (outcome.ok && topics.length > 0) read.topics = topics;
-  }
-};
+  }, Promise.resolve());
 
 // Calls a procedure through its caller and, if it published anything or is a mutation, asks every read again. A query that
 // Published nothing is a read, kept for the rerun; a call that published is a write, which a query can be, and is never asked

@@ -1,4 +1,5 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
+import type { ToData } from "@esposter/shared";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
@@ -22,13 +23,11 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     content: todoList,
     loadContent,
     saveContent: saveTodoList,
-  } = createContentData<typeof ResourceType.TodoList, TodoListResource>(
+  } = createContentData<typeof ResourceType.TodoList, ToData<TodoListResource>>(
     ResourceType.TodoList,
-    // Content is parsed from the blob with plain JSON.parse, so the loaded value carries the list's data
-    // Shape rather than its class instances. The cast is sound because `toJSON` is the only method these
-    // Classes have — pinned by the content schemas' `satisfies z.ZodType<ToData<…>>`, which fails the day a
-    // Second one is added
-    (data) => (data as TodoListResource | undefined) ?? createEmptyTodoList(),
+    // Content is parsed from the blob with plain JSON.parse, so the store holds the list's data shape, which is what
+    // The blob carries
+    (data) => data ?? createEmptyTodoList(),
   );
   const items = computed({
     get: () => todoList.value.items,
