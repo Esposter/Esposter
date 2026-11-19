@@ -15,6 +15,7 @@ import { takeOne, toRawDeep } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 interface UndoRedoInvariantCase {
+  command: string;
   dataSource: DataSource;
   invoke: () => void;
   name: string;
@@ -33,7 +34,13 @@ const createReorderInvariantDataSource = () =>
   createDataSource([createColumn("a")], [createRow({ a: "0" }), createRow({ a: "1" }), createRow({ a: "2" })]);
 // The case calls its own composable rather than handing over an argument list — an array literal standing in
 // For a parameter tuple widens (`[[firstId, secondId]]` becomes `string[][]`) and stops matching the one-tuple
-const createCase = (name: string, dataSource: DataSource, invoke: (dataSource: DataSource) => void) => ({
+const createCase = (
+  command: string,
+  name: string,
+  dataSource: DataSource,
+  invoke: (dataSource: DataSource) => void,
+): UndoRedoInvariantCase => ({
+  command,
   dataSource,
   invoke: () => {
     invoke(dataSource);
@@ -46,75 +53,94 @@ describe("undoRedoInvariants", () => {
   // Post-execute one. A move command whose undo repeats its own execute only holds for adjacent moves,
   // So the reorder cases below deliberately displace by more than one position
   const cases: UndoRedoInvariantCase[] = [
-    createCase("useCreateColumn: appends a column", createInvariantDataSource(), () => {
+    createCase("useCreateColumn", "appends a column", createInvariantDataSource(), () => {
       useCreateColumn()(createColumn("d"));
     }),
-    createCase("useCreateRow: appends a row", createInvariantDataSource(), () => {
+    createCase("useCreateRow", "appends a row", createInvariantDataSource(), () => {
       useCreateRow()();
     }),
-    createCase("useCreateRows: inserts rows at an index", createInvariantDataSource(), () => {
+    createCase("useCreateRows", "inserts rows at an index", createInvariantDataSource(), () => {
       useCreateRows()([createRow({ a: " ", b: " ", c: " " })], 1);
     }),
-    createCase("useDeleteColumns: removes a column", createInvariantDataSource(), ({ columns }) => {
+    createCase("useDeleteColumns", "removes a column", createInvariantDataSource(), ({ columns }) => {
       useDeleteColumns()([takeOne(columns, 1).id]);
     }),
-    createCase("useDeleteColumns: removes non-adjacent columns", createInvariantDataSource(), ({ columns }) => {
+    createCase("useDeleteColumns", "removes non-adjacent columns", createInvariantDataSource(), ({ columns }) => {
       useDeleteColumns()([takeOne(columns).id, takeOne(columns, 2).id]);
     }),
-    createCase("useDeleteDuplicateRows: removes duplicate rows", createInvariantDataSource(), () => {
+    createCase("useDeleteDuplicateRows", "removes duplicate rows", createInvariantDataSource(), () => {
       useDeleteDuplicateRows()();
     }),
-    createCase("useDeleteRows: removes one row", createInvariantDataSource(), ({ rows }) => {
+    createCase("useDeleteRows", "removes one row", createInvariantDataSource(), ({ rows }) => {
       useDeleteRows()([takeOne(rows).id]);
     }),
-    createCase("useDeleteRows: removes every row", createInvariantDataSource(), ({ rows }) => {
+    createCase("useDeleteRows", "removes every row", createInvariantDataSource(), ({ rows }) => {
       useDeleteRows()([takeOne(rows).id, takeOne(rows, 1).id]);
     }),
-    createCase("useFindReplace: replaces every match", createInvariantDataSource(), () => {
+    createCase("useFindReplace", "replaces every match", createInvariantDataSource(), () => {
       useFindReplace()(" ", "");
     }),
     createCase(
-      `useNullStrategy: ${NullStrategy.ReplaceWithNA} rewrites empty cells`,
+      "useNullStrategy",
+      `${NullStrategy.ReplaceWithNA} rewrites empty cells`,
       createNullInvariantDataSource(),
       () => {
         useNullStrategy()(NullStrategy.ReplaceWithNA);
       },
     ),
-    createCase(`useNullStrategy: ${NullStrategy.DropRow} drops empty rows`, createNullInvariantDataSource(), () => {
+    createCase("useNullStrategy", `${NullStrategy.DropRow} drops empty rows`, createNullInvariantDataSource(), () => {
       useNullStrategy()(NullStrategy.DropRow);
     }),
     // Three pasted rows over a two-row source, so the case covers the appended row as well as the overwritten
     // Ones — an appended row only round-trips if the command minted it once instead of once per execute
-    createCase("usePasteRange: overwrites a range and appends past the last row", createInvariantDataSource(), () => {
+    createCase("usePasteRange", "overwrites a range and appends past the last row", createInvariantDataSource(), () => {
       usePasteRange()(0, 0, [[""], [""], [""]], ["a", "b", "c"]);
     }),
-    createCase("useReorderColumns: moves a column two positions", createInvariantDataSource(), ({ columns }) => {
+    createCase("useReorderColumns", "moves a column two positions", createInvariantDataSource(), ({ columns }) => {
       useReorderColumns()([takeOne(columns, 1), takeOne(columns, 2), takeOne(columns)]);
     }),
-    createCase("useReorderRows: moves a row two positions", createReorderInvariantDataSource(), ({ rows }) => {
+    createCase("useReorderRows", "moves a row two positions", createReorderInvariantDataSource(), ({ rows }) => {
       useReorderRows()([takeOne(rows, 1), takeOne(rows, 2), takeOne(rows)]);
     }),
     createCase(
-      `useStringTransformation: ${StringTransformationType.Trim} rewrites every string cell`,
+      "useStringTransformation",
+      `${StringTransformationType.Trim} rewrites every string cell`,
       createInvariantDataSource(),
       () => {
         useStringTransformation()(StringTransformationType.Trim);
       },
     ),
-    createCase("useToggleColumnVisibility: hides a column", createInvariantDataSource(), ({ columns }) => {
+    createCase("useToggleColumnVisibility", "hides a column", createInvariantDataSource(), ({ columns }) => {
       useToggleColumnVisibility()(takeOne(columns).id);
     }),
-    createCase("useUpdateColumn: renames a column", createInvariantDataSource(), ({ columns }) => {
+    createCase("useUpdateColumn", "renames a column", createInvariantDataSource(), ({ columns }) => {
       useUpdateColumn()("a", createUpdatedColumn(takeOne(columns), { name: "d" }));
     }),
-    createCase("useUpdateRow: changes a cell", createInvariantDataSource(), ({ rows }) => {
+    createCase("useUpdateRow", "changes a cell", createInvariantDataSource(), ({ rows }) => {
       useUpdateRow()(createUpdatedRow(takeOne(rows), { data: { a: "", b: " ", c: " " } }));
     }),
   ];
 
+  // A command is a composable built on useSheetCommand, so the folder's commands are the files whose source builds one.
+  // Read from the source the glob hands over, the list needs no roster, and a new command without a case fails below
+  const commandSources = import.meta.glob(["./use*.ts", "!**/*.test.ts"], {
+    eager: true,
+    import: "default",
+    query: "?raw",
+  });
+  const commandNames = Object.entries(commandSources)
+    .filter(([, source]) => source.includes("useSheetCommand("))
+    .map(([path]) => path.replaceAll(/^\.\/|\.ts$/gu, ""));
+
   setupCommandTest();
 
-  test.each(cases)("$name", ({ dataSource: initialDataSource, invoke }) => {
+  test.each(commandNames)("%s has an invariant case", (commandName) => {
+    expect.hasAssertions();
+
+    expect(cases.map(({ command }) => command)).toContain(commandName);
+  });
+
+  test.each(cases)("$command: $name", ({ dataSource: initialDataSource, invoke }) => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource(initialDataSource);
