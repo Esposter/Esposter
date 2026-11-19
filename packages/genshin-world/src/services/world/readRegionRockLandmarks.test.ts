@@ -14,15 +14,15 @@ const readInazumaRockRecord = async (): Promise<RockRecord> => {
 };
 
 describe(readRegionRockLandmarks, () => {
-  test("a rock stands at its placed position", async () => {
+  test("every rock stands at its placed position, turn and scale", async () => {
     expect.hasAssertions();
 
     const { placements } = await readInazumaRockRecord();
-    const [rock] = await readRegionRockLandmarks(GAME_DATA_LOCAL_BASE_URL, "inazuma");
+    const rocks = await readRegionRockLandmarks(GAME_DATA_LOCAL_BASE_URL, "inazuma");
 
-    expect(rock?.place).toStrictEqual(placements[0]?.position);
-    expect(rock?.turn).toStrictEqual(placements[0]?.rotation);
-    expect(rock?.scale).toStrictEqual(placements[0]?.scale);
+    expect(rocks.map(({ place, scale, turn }) => ({ place, scale, turn }))).toStrictEqual(
+      placements.map(({ position, rotation, scale }) => ({ place: position, scale, turn: rotation })),
+    );
   });
 
   test("a rock the game does not place is not drawn", async () => {
