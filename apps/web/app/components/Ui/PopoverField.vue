@@ -3,6 +3,8 @@ import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
+  // The ids of the text that describes the trigger after its value, such as a question's description and error
+  describedBy?: string | undefined;
   // Whether a button beside the field empties it, shown while the field holds something
   isClearable: boolean;
   // Whether the field is disabled, so it cannot be opened
@@ -47,7 +49,7 @@ defineExpose({ element });
         ref="popover"
         v-model:is-open="isOpen"
         :="$attrs"
-        :aria-describedby="valueId"
+        :aria-describedby="[valueId, describedBy].filter(Boolean).join(' ')"
         :aria-labelledby="labelledBy"
         :disabled="isDisabled"
         is-label-shown

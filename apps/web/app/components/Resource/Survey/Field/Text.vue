@@ -13,7 +13,10 @@ interface Props {
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { node } = defineProps<Props>();
+const { error, node } = defineProps<Props>();
+const id = useId();
+const descriptionId = `${id}-description`;
+const errorId = `${id}-error`;
 const isDate = computed(
   () => node.props.inputType === SurveyTextInputType.Date || node.props.inputType === SurveyTextInputType.DatetimeLocal,
 );
@@ -30,6 +33,10 @@ const updateText = (value: string) => {
   text.value = value;
   answer.value = toAnswer(value);
 };
+// The description and the error a date field is described by, which its own label does not draw
+const describedBy = computed(
+  () => [node.props.description && descriptionId, error && errorId].filter(Boolean).join(" ") || undefined,
+);
 // A date is held as the ISO text of its instant, which the picker reads back as the same moment
 const date = computed<Date | undefined>({
   get: () => (typeof answer.value === "string" ? new Date(answer.value) : undefined),
@@ -44,6 +51,7 @@ const date = computed<Date | undefined>({
     <UiDateField
       v-if="isDate"
       v-model="date"
+      :described-by
       :is-required="node.props.isRequired || undefined"
       :aria-invalid="error ? true : undefined"
       is-clearable
@@ -65,8 +73,8 @@ const date = computed<Date | undefined>({
       @update:model-value="(value) => updateText(value)"
     />
     <template v-if="isDate">
-      <span v-if="node.props.description" text-sm text-muted>{{ node.props.description }}</span>
-      <span v-if="error" role="alert" text-sm text-error>{{ error }}</span>
+      <span v-if="node.props.description" :id="descriptionId" text-sm text-muted>{{ node.props.description }}</span>
+      <span v-if="error" :id="errorId" role="alert" text-sm text-error>{{ error }}</span>
     </template>
   </div>
 </template>

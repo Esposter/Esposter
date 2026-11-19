@@ -28,5 +28,20 @@ describe("resourceSurveyFieldSlider", () => {
       expect(required.text()).toBe(`${title} * required0`);
       expect(optional.text()).toBe(`${title} 0`);
     });
+
+    test("describes the thumb by the description and the error, in that order", () => {
+      expect.hasAssertions();
+
+      const description = "description";
+      const error = "message";
+      const node: SurveySliderNode = {
+        props: { ...surveySliderNodePropsSchema.parse({ description, name: "a", title }), id: v7() },
+        type: SurveyNodeType.Slider,
+      };
+      const component = mount(SurveyFieldSlider, { props: { error, isDisabled: false, node } });
+      const describedBy = component.get('[role="slider"]').attributes("aria-describedby")?.split(" ") ?? [];
+
+      expect(describedBy.map((id) => component.get(`[id="${id}"]`).text())).toStrictEqual([description, error]);
+    });
   });
 });

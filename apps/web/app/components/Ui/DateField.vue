@@ -4,6 +4,8 @@ import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { getZonedDateTime } from "@esposter/shared";
 
 interface Props {
+  // The ids of the text that describes the field, which speech reads after its value
+  describedBy?: string | undefined;
   // A field that may be left empty, which draws a button that empties it
   isClearable?: true | undefined;
   // A field that cannot be changed, so it cannot be opened and offers no button that empties it
@@ -68,6 +70,7 @@ defineExpose({ element });
   <UiPopoverField
     ref="field"
     v-model:is-open="isOpen"
+    :described-by
     :is-clearable="Boolean(isClearable && modelValue && !isDisabled)"
     :is-disabled
     :is-empty="!modelValue"

@@ -2,6 +2,8 @@
 import { Slider } from "@vuetify/v0";
 
 interface Props {
+  // The ids of the text that describes the thumb, which speech reads with its value
+  describedBy?: string | undefined;
   // Held at the disabled opacity, where the thumb takes no press and no key
   isDisabled?: true | undefined;
   // Marks the thumb invalid for assistive technology and tints the track in the error colour, as an invalid text field is
@@ -109,6 +111,7 @@ useEventListener(["pointerup", "pointercancel"], () => {
         </Slider.Track>
         <Slider.Thumb
           class="thumb"
+          :aria-describedby="describedBy"
           :aria-label="label"
           :aria-invalid="isInvalid || undefined"
           :aria-labelledby="isRequired ? labelId : undefined"
