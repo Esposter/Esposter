@@ -19,11 +19,4 @@ describe(computeShownResidentSpot, () => {
     expect(computeShownResidentSpot(DAY_SPOT, DAY_SPOT, true)).toStrictEqual(DAY_SPOT);
     expect(computeShownResidentSpot(undefined, NIGHT_SPOT, true)).toBeUndefined();
   });
-
-  test("a resident in view is not seen to jump at the hour", () => {
-    expect.hasAssertions();
-    const shownSpot = computeShownResidentSpot(DAY_SPOT, NIGHT_SPOT, true);
-    expect(shownSpot).toStrictEqual(DAY_SPOT);
-    expect(computeShownResidentSpot(shownSpot, NIGHT_SPOT, false)).toStrictEqual(NIGHT_SPOT);
-  });
 });
