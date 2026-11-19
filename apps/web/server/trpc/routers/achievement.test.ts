@@ -22,6 +22,21 @@ import { takeOne } from "@esposter/shared";
 import { count } from "drizzle-orm";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+// A field every definition carries that the client never takes, standing for a predicate or schema one may add
+vi.mock(import("#shared/services/achievement/AchievementDefinitionMap"), async (importOriginal) => {
+  const actual = await importOriginal();
+
+  return {
+    ...actual,
+    AchievementDefinitionMap: Object.fromEntries(
+      Object.entries(actual.AchievementDefinitionMap).map(([name, definition]) => [
+        name,
+        { ...definition, serverOnlyField: true },
+      ]),
+    ) as typeof actual.AchievementDefinitionMap,
+  };
+});
+
 describe("achievementRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(trpcRouter);
   let mockContext: Context;
@@ -77,6 +92,15 @@ describe("achievementRouter", () => {
     expect(achievementMap[SpecialAchievementName.EmojiLover].description).toBe(
       AchievementDefinitionMap[SpecialAchievementName.EmojiLover].description,
     );
+  });
+
+  // The map ships the fields a client takes, named one by one, so a field a definition gains stays on the server
+  test("readAchievementMap ships only the fields a client takes", async () => {
+    expect.hasAssertions();
+
+    const achievementMap = await caller.achievement.readAchievementMap();
+
+    expect(Object.values(achievementMap).filter((view) => "serverOnlyField" in view)).toStrictEqual([]);
   });
 
   // The map is sent as JSON, and a trigger's zod schema is circular, so the payload must not carry it

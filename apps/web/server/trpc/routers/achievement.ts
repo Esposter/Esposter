@@ -17,7 +17,7 @@ import {
   userAchievementsInAchievement,
   usersInAuth,
 } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { omitUndefined, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { count, eq, isNotNull } from "drizzle-orm";
 
@@ -30,25 +30,27 @@ export const achievementRouter = router({
         where: { unlockedAt: { isNotNull: true }, userId: { eq: userId } },
         with: UserAchievementInAchievementRelations,
       });
-      // The trigger's zod schema and the predicates are server-only, and the schema's cycles cannot be sent as JSON, so
-      // The map ships its client fields alone
+      // The map ships the fields a client takes, named one by one: the trigger's zod schema and the predicates are
+      // Server-only, and the schema's cycles cannot be sent as JSON. A field a definition gains is withheld until it is named
+      // Here, so it cannot reach the client by omission
       return Object.fromEntries(
-        Object.entries(AchievementDefinitionMap).map(
-          ([
-            achievementName,
-            { check: _check, condition: _condition, inputSchema: _inputSchema, ...achievementDefinition },
-          ]) => [
-            achievementName,
-            {
-              ...achievementDefinition,
-              description:
-                achievementDefinition.isHidden &&
-                !unlockedUserAchievements.some(({ achievement }) => achievement.name === achievementName)
-                  ? HIDDEN_ACHIEVEMENT_DESCRIPTION
-                  : achievementDefinition.description,
-            },
-          ],
-        ),
+        Object.entries(AchievementDefinitionMap).map(([achievementName, definition]) => [
+          achievementName,
+          omitUndefined({
+            amount: definition.amount,
+            category: definition.category,
+            description:
+              definition.isHidden &&
+              !unlockedUserAchievements.some(({ achievement }) => achievement.name === achievementName)
+                ? HIDDEN_ACHIEVEMENT_DESCRIPTION
+                : definition.description,
+            icon: definition.icon,
+            incrementAmount: definition.incrementAmount,
+            isHidden: definition.isHidden,
+            points: definition.points,
+            triggerPath: definition.triggerPath,
+          }),
+        ]),
       );
     }),
   // The share of registered users who have unlocked each achievement, as a percentage. Every definition is keyed, so

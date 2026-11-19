@@ -21,10 +21,10 @@ The achievement router sits in the one root router beside the others. Each trigg
 
 ## Procedures
 
-| Procedure                          | Auth         | Input            | Purpose                                                                                                       |
-| ---------------------------------- | ------------ | ---------------- | ------------------------------------------------------------------------------------------------------------- |
-| `achievement.readAchievementMap`   | authed       | —                | all definitions without their trigger schema (a hidden, still-locked one has its description masked as `???`) |
-| `achievement.readUserAchievements` | rate-limited | optional user id | a user's progress rows (defaults to caller)                                                                   |
+| Procedure                          | Auth         | Input            | Purpose                                                                                                                                                                                                                                                 |
+| ---------------------------------- | ------------ | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `achievement.readAchievementMap`   | authed       | —                | every definition's client fields, by an allowlist naming each one, so the trigger schema and condition stay on the server and a field a definition gains is withheld until it is named (a hidden, still-locked one has its description masked as `???`) |
+| `achievement.readUserAchievements` | rate-limited | optional user id | a user's progress rows (defaults to caller)                                                                                                                                                                                                             |
 
 ## Key files
 
