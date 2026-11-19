@@ -1,3 +1,4 @@
+import type { ImaginariumCompanionEvent } from "#src/models/imaginarium/ImaginariumCompanionEvent";
 import type { ImaginariumStats } from "#src/models/imaginarium/ImaginariumStats";
 
 // The characters that perform each stage of a run, its Principal Cast, each spending one of its Vigor on the stage
@@ -28,6 +29,11 @@ export const IMAGINARIUM_BATTLE_CHOICE_COUNT = 2;
 // The Fantasia Flowers a Companion: Select or Companion: Random event costs. Select's 80 is the dump's two Companion effect rows'
 // Price, and Random's is the wiki's
 export const IMAGINARIUM_COMPANION_FLOWER_PRICE = 80;
+// The Invite event: six characters of any element, offered for 100 Fantasia Flowers
+export const IMAGINARIUM_INVITE_COMPANION_EVENT: ImaginariumCompanionEvent = {
+  flowerPrice: 100,
+  pool: { offerCount: 6 },
+};
 // The chances to reroll the events a Mystery Cache's Surprise: Reroll! option gives, and the rerolls one reroll spends. The
 // Wiki gives no base count of rerolls and no price of one, so both are provisional
 export const IMAGINARIUM_REROLL_CHANCES = 2;
