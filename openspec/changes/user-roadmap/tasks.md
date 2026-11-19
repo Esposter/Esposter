@@ -1,7 +1,0 @@
-# Roadmap
-
-Open work, each item linking its proposal. Rationale lives in [account deletion](../../specs/user/account-deletion/design.md).
-
-## Next
-
-- [ ] [Erasure ranking window](../../specs/user/account-deletion/design.md) — `getPostRankingUpdates` reads each liked post's count ahead of the erasure's batch and writes the post's `ranking` for that count after the batch's recount, guarded by it. A vote that lands between the read and the batch moves the count and writes its own ranking, but the recount then sets the count to the sum of the likes that remain, which the vote's count does not match, so the guard fails and the vote's ranking stays. Worked case: a post stored at count 1 from the erased person's like of value 1, read at 0, then a vote of +1 by another person before the batch. The stored ranking is `ranking(2)` while the stored count is 1, and the correct ranking is `ranking(1)`. The design's claim that the last write always carries the final count does not hold here. The ranking cannot be computed in the batch, since D1 does not authorise `log10` in SQL, so a fix is a design decision: either the ranking is read after the batch and written under a guard on that read, which reaches the final count but gives up the in-batch crash guarantee the account-deletion design states, or the erasure takes a lock the vote path honours. Decide which, then make the account-deletion design's ranking paragraph, `getPostRankingUpdates`, and `eraseAccountUserRow`'s comment agree in the same change

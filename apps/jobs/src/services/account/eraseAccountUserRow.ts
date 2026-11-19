@@ -8,18 +8,17 @@ import { postsInPost, usersInAuth } from "@esposter/db-schema";
 import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 
-// The user row goes last, in one batch with the recount of each stored count the erased rows feed, and the ranking that
-// Follows a like count. Its cascade is what removes those rows, so each count is recounted from the rows that remain:
-// Every row the cascade takes is excluded from the sum or the tally here, which is the state the cascade leaves. The
-// Rankings are read ahead of the batch, since D1 does not authorise the logarithm the formula takes in SQL, and each is
-// Written after the like recount in the batch, only while its count stands. A batch is one transaction, so no reader
-// Sees a count ahead of its rows, and a replay that fails before the batch finds every count where it was
+// The like counts are recounted first, from the rows that remain, since the rankings are read from them. The erased
+// Person's likes and replies are still present here, and every sum and tally excludes them by predicate, so a replay that
+// Runs a recount again sets each count from the rows that remain, which is right whichever run it is. The comment counts,
+// The rankings and the user row's delete are one batch with the delete as its last statement, so they commit together. A
+// Crash before that batch commits leaves the likes that name the affected posts for the queue's retry to read
 export const eraseAccountUserRow = async (userId: UserInAuth["id"]): Promise<void> => {
+  await recountPostLikes(userId);
   const rankingUpdates = await getPostRankingUpdates(userId);
   await db.batch([
-    recountPostLikes(userId),
-    ...rankingUpdates,
     recountPostComments(userId),
+    ...rankingUpdates,
     db.delete(usersInAuth).where(eq(usersInAuth.id, userId)),
   ]);
 };
