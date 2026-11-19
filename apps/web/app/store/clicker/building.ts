@@ -35,16 +35,11 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     if (!boughtBuilding) return [];
 
     const buildingPower = getBoughtBuildingPower(boughtBuilding);
+    const { pluralName } = clickerStore.clickerItemProperties;
     return [
-      `- Each ${boughtBuilding.id} produces **${formatNumberLong(buildingPower / boughtBuilding.amount)} ${
-        clickerStore.clickerItemProperties.pluralName
-      }** per second`,
-      `- ${boughtBuilding.amount} ${boughtBuilding.id}s producing **${formatNumberLong(buildingPower)} ${
-        clickerStore.clickerItemProperties.pluralName
-      }** per second (**${formatNumberLong((buildingPower / allBuildingPower.value) * 100)}%** of total ${getInitials(
-        clickerStore.clickerItemProperties.pluralName,
-      )}pS)`,
-      `- **${formatNumberLong(boughtBuilding.producedValue, 3)}** ${clickerStore.clickerItemProperties.pluralName} produced so far`,
+      `- Each ${boughtBuilding.id} produces **${formatNumberLong(buildingPower / boughtBuilding.amount)} ${pluralName}** per second`,
+      `- ${boughtBuilding.amount} ${boughtBuilding.id}s producing **${formatNumberLong(buildingPower)} ${pluralName}** per second (**${formatNumberLong((buildingPower / allBuildingPower.value) * 100)}%** of total ${getInitials(pluralName)}pS)`,
+      `- **${formatNumberLong(boughtBuilding.producedValue, 3)}** ${pluralName} produced so far`,
     ];
   };
   // Summing the per-unit prices over the loop stays exact under any price formula.
