@@ -16,13 +16,8 @@ describe(sortMails, () => {
   test("pinned mail is listed first and the rest newest first", () => {
     expect.hasAssertions();
 
-    expect(sortMails([mail(2, 0), mail(3, 1000), mail(1, 0, true)]).map(({ id }) => id)).toStrictEqual([1, 3, 2]);
-  });
-
-  test("an unpinned mail is listed by its delivery among the rest", () => {
-    expect.hasAssertions();
-
-    // Unpinned mail, delivered oldest, takes its place between the other two by delivery
-    expect(sortMails([mail(1, 2000), mail(2, 3000), mail(3, 1000)]).map(({ id }) => id)).toStrictEqual([2, 1, 3]);
+    expect(sortMails([mail(2, 0), mail(3, 1000), mail(4, 500), mail(1, 0, true)]).map(({ id }) => id)).toStrictEqual([
+      1, 3, 4, 2,
+    ]);
   });
 });
