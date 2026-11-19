@@ -23,7 +23,7 @@ flowchart TD
 
 The game-data mirror is keyed on the lock's hash, and `build-packages` fills it and saves it under that key. The vp task cache is keyed per run, so it is the one cache that changes on every executed run; it is small, and its save is gated the same way as the others.
 
-Each coverage shard restores and saves Vitest's module cache, its persisted transforms, keyed on the shard, the lockfile and the commit, and restored from the newest entry under the same shard and lockfile. An entry inside it is keyed on what its transform read, so one written for an earlier commit is reused as it stands. The app's key also carries the Nuxt auto-import entries a module names (`apps/web/configuration/createAutoImportCacheKey.ts`), without which a moved composable left its callers importing the old file. A lockfile change starts the cache over, which is also what keeps entries no file names any more from accumulating. The save runs whether the suite passed or failed, since a failing suite transformed its modules all the same.
+Each coverage shard restores and saves Vitest's module cache, its persisted transforms, keyed on the shard, the lockfile and the commit, and restored from the newest entry under the same shard and lockfile. An entry inside it is keyed on what its transform read, so one written for an earlier commit is reused as it stands. Nuxt adds its auto-imports and components to the key, without which a moved composable left its callers importing the old file. A lockfile change starts the cache over, which is also what keeps entries no file names any more from accumulating. The save runs whether the suite passed or failed, since a failing suite transformed its modules all the same.
 
 ## What the regression test checks
 
