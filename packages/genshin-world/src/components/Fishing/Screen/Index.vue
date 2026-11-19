@@ -4,7 +4,7 @@ import type { GameText } from "genshin-text";
 
 import { REEL_BAR_MAX } from "#src/services/fishing/constants";
 import { GameScreen } from "genshin-interface";
-import { GameTextKey } from "genshin-text";
+import { GameTextKey, getGameTextWords } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
@@ -16,7 +16,7 @@ interface Props {
 const props = defineProps<Props>();
 const percent = (value: number) => `${(value / REEL_BAR_MAX) * 100}%`;
 // The line's words before its count, which the reel that genshin-fishing owns fills and this panel does not draw
-const getChallengeWords = (key: GameTextKey) => props.gameText[key].replace(/:?\s*#\d#.*$/u, "");
+const getChallengeWords = (key: GameTextKey) => getGameTextWords(props.gameText[key]);
 </script>
 
 <template>
