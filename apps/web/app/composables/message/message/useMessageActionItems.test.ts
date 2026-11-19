@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { Item } from "#src/models/shared/Item";
 
@@ -9,11 +10,12 @@ import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.te
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { MessageType } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { assert, beforeAll, describe, expect, test } from "vitest";
+import { assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The menu is built per mounted message, so a message on screen in both the timeline and the pinned panel has
 // Two of them over the one entity — each with its own write, neither queueing behind the other. It reaches
@@ -87,7 +89,7 @@ describe(useMessageActionItems, () => {
       if (!input.lastReadAt || input.lastReadAt >= nextDay)
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       acceptedLastReadAt = input.lastReadAt;
-      return { ...userToRoom, lastReadAt: input.lastReadAt };
+      return userToRoom;
     });
     // The menus mount into the nuxt app's pinia, so seed the store they read rather than a local one
     const userToRoomStore = useUserToRoomStore();
@@ -101,5 +103,32 @@ describe(useMessageActionItems, () => {
 
     expect(acceptedLastReadAt).toBeDefined();
     expect(getMyUserToRoom(roomId)?.lastReadAt).toStrictEqual(acceptedLastReadAt);
+  });
+
+  // The viewer's row is one executor's to write, so a mark-unread waits behind a write to the same room already queued
+  // On it, rather than racing it to the server from a queue of its own
+  test("a mark-unread waits behind a viewer-row write already queued for its room", async () => {
+    expect.hasAssertions();
+
+    const userToRoomStore = useUserToRoomStore();
+    const { executeUserToRoomMutation, setMyUserToRoom } = userToRoomStore;
+    setMyUserToRoom(roomId, userToRoom);
+    const updateUserToRoom = vi.fn<(input: UpdateUserToRoomInput) => void>();
+    trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
+      updateUserToRoom(input);
+      return userToRoom;
+    });
+    const { promise: queued, resolve: releaseQueued } = Promise.withResolvers<void>();
+    executeUserToRoomMutation(() => queued, { applyOptimistic: () => noop, key: roomId });
+    const item = await mountActionItem(createMessage(nextDay), "Mark Unread From Here");
+    item.onClick?.(new MouseEvent("click"));
+    await flushPromises();
+
+    expect(updateUserToRoom).not.toHaveBeenCalled();
+
+    releaseQueued();
+    await flushPromises();
+
+    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({ lastReadAt: new Date(nextDay.getTime() - 1), roomId });
   });
 });

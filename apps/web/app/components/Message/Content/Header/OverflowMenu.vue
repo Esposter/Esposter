@@ -30,27 +30,29 @@ const { openRightDrawer } = messageLayoutStore;
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
-const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
+const { executeUserToRoomMutation, getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
 const { myUserToRoom } = storeToRefs(userToRoomStore);
-const { executeMutation } = useMutation();
 const updateNotificationType = (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
   if (!roomId || !myUserToRoom.value) return;
-  executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ notificationType: newNotificationType, roomId }), {
-    applyOptimistic: () => {
-      const previousUserToRoom = getMyUserToRoom(roomId);
-      if (!previousUserToRoom) return noop;
+  executeUserToRoomMutation(
+    () => $trpc.userToRoom.updateUserToRoom.mutate({ notificationType: newNotificationType, roomId }),
+    {
+      applyOptimistic: () => {
+        const previousUserToRoom = getMyUserToRoom(roomId);
+        if (!previousUserToRoom) return noop;
 
-      const { notificationType: previousNotificationType } = previousUserToRoom;
-      setMyUserToRoom(roomId, { ...previousUserToRoom, notificationType: newNotificationType });
-      return () => {
-        const currentUserToRoom = getMyUserToRoom(roomId);
-        if (currentUserToRoom)
-          setMyUserToRoom(roomId, { ...currentUserToRoom, notificationType: previousNotificationType });
-      };
+        const { notificationType: previousNotificationType } = previousUserToRoom;
+        setMyUserToRoom(roomId, { ...previousUserToRoom, notificationType: newNotificationType });
+        return () => {
+          const currentUserToRoom = getMyUserToRoom(roomId);
+          if (currentUserToRoom)
+            setMyUserToRoom(roomId, { ...currentUserToRoom, notificationType: previousNotificationType });
+        };
+      },
+      key: roomId,
     },
-    key: roomId,
-  });
+  );
 };
 // On a phone the header leaves the call and its toggles to this menu, so they lead it
 const headerItems = computed<Item[]>(() =>

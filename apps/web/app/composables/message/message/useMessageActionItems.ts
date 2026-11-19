@@ -19,7 +19,6 @@ import { parse } from "node-html-parser";
 export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
   const { $trpc } = useNuxtApp();
   const { executeMutation: executeUnpinMessageMutation } = useMutation();
-  const { executeMutation: executeMarkUnreadMutation } = useMutation();
   const clipboardStore = useClipboardStore();
   const { copy } = clipboardStore;
   const messageStore = useMessageStore();
@@ -32,7 +31,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
   const { forwardMessageId } = storeToRefs(forwardStore);
   const copyMessageLink = useCopyMessageLink();
   const userToRoomStore = useUserToRoomStore();
-  const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
+  const { executeUserToRoomMutation, getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
   const openThread = useOpenThread();
   const roleStore = useRoleStore();
   const { checkHasMyPermission } = roleStore;
@@ -130,7 +129,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
     onClick: () => {
       const lastReadAt = new Date(message.createdAt.getTime() - 1);
       const roomId = message.roomId;
-      executeMarkUnreadMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastReadAt, roomId }), {
+      executeUserToRoomMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastReadAt, roomId }), {
         // Read as the write is sent, so a rejected mark-unread restores the marker the write ahead of it stored
         // Rather than the one on screen when the user clicked
         applyOptimistic: () => {
