@@ -41,7 +41,10 @@ export const GainExperience: State<typeof StateName.GainExperience> = {
       await battleStateMachine.setState(StateName.Finished);
     };
 
-    if (experienceGain - experienceToNextLevel.value >= 0) {
+    // The gain is credited before the threshold is read, so the threshold is the monster as it now stands
+    // The gain has reached its next level once nothing is left to it
+    activeMonster.value.status.experience += experienceGain;
+    if (experienceToNextLevel.value <= 0) {
       // The experience bar is what fires the level-up event, once its fill reaches 100%
       const levelUpListener: PhaserEvents["levelUp"] = getSynchronizedFunction(
         async ({ key, statistics }, onLevelUpComplete) => {
@@ -66,11 +69,7 @@ export const GainExperience: State<typeof StateName.GainExperience> = {
           await onComplete();
         }),
       );
-      activeMonster.value.status.experience += experienceGain;
-    } else {
-      activeMonster.value.status.experience += experienceGain;
-      await onComplete();
-    }
+    } else await onComplete();
   },
 };
 
