@@ -10,8 +10,8 @@ describe("uiEditDeleteMenu", () => {
     setupUiStyle(uiStyle);
 
     const label = "label";
-    const editLabel = "a";
-    const deleteLabel = "b";
+    const editLabel = "editLabel";
+    const deleteLabel = "deleteLabel";
 
     test("lists Edit above a Delete drawn in the error colour, under the trigger's label", async () => {
       expect.hasAssertions();
