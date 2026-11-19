@@ -50,6 +50,14 @@ const resourceCallers = {
 
 const publishCallers: Record<PublishableResourceType, (ctx: Context) => PublishCaller> = resourceCallers;
 
+// The one publish refusal: a type that does not publish is refused in words, and one that does is given its own router's
+// Caller, so the type's publish transform runs
+const getPublishCaller = (type: ResourceType, ctx: Context): PublishCaller => {
+  if (!checkHasCapability(type, "publishable"))
+    throw getInvalidOperationError(Operation.Update, type, "does not publish");
+  return publishCallers[type](ctx);
+};
+
 const fileCallers: Record<FileAssetsResourceType, (ctx: Context) => FileCaller> = {
   [ResourceType.Email]: resourceCallers[ResourceType.Email],
   [ResourceType.Note]: resourceCallers[ResourceType.Note],
@@ -104,12 +112,9 @@ export const resourceDispatchRouter = router({
       },
       staticReason: "Dispatches to the type's own procedure, which publishes the resource's topics",
     })
-    .mutation<ResourcePublicationInResource>(({ ctx, input }) => {
-      const { type } = ctx.resource;
-      if (!checkHasCapability(type, "publishable"))
-        throw getInvalidOperationError(Operation.Update, type, "does not publish");
-      return publishCallers[type](ctx).publishResource(input);
-    }),
+    .mutation<ResourcePublicationInResource>(({ ctx, input }) =>
+      getPublishCaller(ctx.resource.type, ctx).publishResource(input),
+    ),
   unpublishResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
     .meta({
       mcp: {
@@ -119,10 +124,7 @@ export const resourceDispatchRouter = router({
       },
       staticReason: "Dispatches to the type's own procedure, which publishes the resource's topics",
     })
-    .mutation<ResourceInResource>(({ ctx, input }) => {
-      const { type } = ctx.resource;
-      if (!checkHasCapability(type, "publishable"))
-        throw getInvalidOperationError(Operation.Update, type, "does not publish");
-      return publishCallers[type](ctx).unpublishResource(input);
-    }),
+    .mutation<ResourceInResource>(({ ctx, input }) =>
+      getPublishCaller(ctx.resource.type, ctx).unpublishResource(input),
+    ),
 });
