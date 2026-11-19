@@ -1,10 +1,23 @@
 #!/bin/sh
 # Each staged entry is recorded before formatting, under the committing git process's id, so the post-commit hook can
 # tell the unformatted copy a commit by pathspec leaves in the real index from an entry another session staged
+#
+# A staged file with no unstaged change is formatted in place and staged again, which is the whole of its staged
+# content. A file with an unstaged change is formatted from its staged blob alone: the formatted blob replaces the staged
+# entry, and the same change is merged into the working copy, so the unstaged hunks stay unstaged and out of the commit
 set -e
 export GIT_LITERAL_PATHSPECS=1
+export OXFMT_UNSUPPORTED_MESSAGE="Unsupported file type for stdin-filepath"
 STAGED_FILE=$(mktemp)
-trap 'rm -f "$STAGED_FILE"' EXIT
+CLEAN_FILE=$(mktemp)
+PARTIAL_FILE=$(mktemp)
+BASE_FILE=$(mktemp)
+FORMATTED_FILE=$(mktemp)
+MERGED_FILE=$(mktemp)
+ERROR_FILE=$(mktemp)
+UPDATES_FILE=$(mktemp)
+export CLEAN_FILE PARTIAL_FILE BASE_FILE FORMATTED_FILE MERGED_FILE ERROR_FILE UPDATES_FILE
+trap 'rm -f "$STAGED_FILE" "$CLEAN_FILE" "$PARTIAL_FILE" "$BASE_FILE" "$FORMATTED_FILE" "$MERGED_FILE" "$ERROR_FILE" "$UPDATES_FILE"' EXIT
 git diff --cached --name-only --diff-filter=ACMR -z > "$STAGED_FILE"
 [ -s "$STAGED_FILE" ] || exit 0
 # A worktree with no install of its own borrows the main checkout's tools: pnpm there would install the whole workspace first
@@ -13,7 +26,36 @@ TOOLS_ROOT=.
 # The physical path: through a symlinked folder the config's ignore patterns match none of the files, and a snapshot is
 # formatted out of the form its writer gives it
 TOOLS_ROOT=$(cd "$TOOLS_ROOT" && pwd -P)
+export OXFMT="$TOOLS_ROOT/node_modules/.bin/oxfmt"
+export CONFIGURATION="$TOOLS_ROOT/oxfmt.config.ts"
 xargs -0 git ls-files -s -- < "$STAGED_FILE" > "$(git rev-parse --git-path "pre-commit-entries-$PPID")"
+xargs -0 sh -c 'for path; do
+  if git diff --quiet -- "$path"; then printf "%s\000" "$path" >> "$CLEAN_FILE"; else printf "%s\000" "$path" >> "$PARTIAL_FILE"; fi
+done' sh < "$STAGED_FILE"
 # The list is already NUL-separated, as git diff -z wrote it, and -0 is the form both GNU and macOS's BSD xargs read
-xargs -0 -n 50 "$TOOLS_ROOT/node_modules/.bin/oxfmt" --config "$TOOLS_ROOT/oxfmt.config.ts" --no-error-on-unmatched-pattern < "$STAGED_FILE"
-xargs -0 -n 50 git add < "$STAGED_FILE"
+if [ -s "$CLEAN_FILE" ]; then
+  xargs -0 -n 50 "$OXFMT" --config "$CONFIGURATION" --no-error-on-unmatched-pattern < "$CLEAN_FILE"
+  xargs -0 -n 50 git add < "$CLEAN_FILE"
+fi
+if [ -s "$PARTIAL_FILE" ]; then
+  xargs -0 sh -c 'for path; do
+    entry=$(git ls-files -s -- "$path")
+    mode=$(printf "%s" "$entry" | cut -d" " -f1)
+    case $mode in 100644|100755) ;; *) continue ;; esac
+    git cat-file blob "$(printf "%s" "$entry" | cut -d" " -f2)" > "$BASE_FILE"
+    if "$OXFMT" --config "$CONFIGURATION" --stdin-filepath "$path" < "$BASE_FILE" > "$FORMATTED_FILE" 2> "$ERROR_FILE"; then
+      :
+    elif grep -qF "$OXFMT_UNSUPPORTED_MESSAGE" "$ERROR_FILE"; then
+      continue
+    else
+      cat "$ERROR_FILE" >&2
+      exit 1
+    fi
+    cmp -s "$BASE_FILE" "$FORMATTED_FILE" && continue
+    printf "%s %s\t%s\000" "$mode" "$(git hash-object -w "$FORMATTED_FILE")" "$path" >> "$UPDATES_FILE"
+    if [ -f "$path" ] && git merge-file -p "$path" "$BASE_FILE" "$FORMATTED_FILE" > "$MERGED_FILE"; then
+      cat "$MERGED_FILE" > "$path"
+    fi
+  done' sh < "$PARTIAL_FILE"
+  if [ -s "$UPDATES_FILE" ]; then git update-index -z --index-info < "$UPDATES_FILE"; fi
+fi
