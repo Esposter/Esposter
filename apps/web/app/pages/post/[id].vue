@@ -17,16 +17,18 @@ const { executeQuery } = useMutation();
 // Thread with its replies beneath, which is what "continue this thread" is — the same page, one level of
 // Context instead of ten, and no route of its own. The read stays live, and a write's refresh replaces the post
 // Without reopening it, so the reader's expanded replies and sort survive an edit
+// The page exists only for a post that could be read, so the first read's failure is the error page, and its success
+// Opens the post afresh, whatever thread the store still held from an earlier visit. The rethrow is the failure's one
+// Report: the app's `vue:error` plugin logs it and the error page shows it, so the err handler neither logs nor alerts
 const outcome = await executeQuery(() => $trpc.post.readPost.query(route.params.id), {
   key: route.params.id,
-  onError: console.error,
+  onError: (error) => {
+    throw error;
+  },
   onSuccess: (newPost) => {
     currentPost.value = newPost;
   },
 });
-// The page exists only for a post that could be read, so the first read's failure is the error page, and its success
-// Opens the post afresh, whatever thread the store still held from an earlier visit
-if (outcome.status === MutationStatus.Failed) throw outcome.error;
 if (outcome.status === MutationStatus.Succeeded) openPost(outcome.result);
 </script>
 
