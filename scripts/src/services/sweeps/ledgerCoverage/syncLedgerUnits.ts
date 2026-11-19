@@ -16,12 +16,19 @@ export const syncLedgerUnits = (text: string, units: string[]): string => {
     .slice(1, -1)
     .map(({ length }) => length - CELL_PADDING);
   const rows = new Map(table.body.map((line) => [normalizeLedgerUnit(readLedgerRowCell(line)), line]));
+  // A unit the listing names twice is one row, spelled as the spelling that sorts first. The table must not depend on
+  // The order the listing came in, which is the filesystem's own order and differs from one machine to the next
+  const spellings = new Map<string, string>();
+  for (const unit of units) {
+    const key = normalizeLedgerUnit(unit);
+    const spelling = spellings.get(key);
+    if (spelling === undefined || unit < spelling) spellings.set(key, unit);
+  }
   // The cell is backticked, and the backtick sorts after a hyphen — so the order is the bare name's, where a
-  // Name precedes its own prefix-extensions the way a directory listing reads
-  const synced = units
-    .map((unit) => ({ key: normalizeLedgerUnit(unit), unit }))
-    .toSorted((firstEntry, secondEntry) => (firstEntry.key < secondEntry.key ? -1 : 1))
-    .map(({ key, unit }) => {
+  // Name precedes its own prefix-extensions the way a directory listing reads. The keys are distinct, so it is total
+  const synced = [...spellings]
+    .toSorted(([firstKey], [secondKey]) => (firstKey < secondKey ? -1 : 1))
+    .map(([key, unit]) => {
       const row = rows.get(key);
       if (row) return row;
       const cells = [unit, OPEN_CELL, ...widths.slice(2).map(() => "")];

@@ -55,4 +55,21 @@ describe(syncLedgerUnits, () => {
 
     expect(syncLedgerUnits(`${header}${getRow("a", date)}`, ["`a`"])).toBe(`${header}${getRow("a", date)}`);
   });
+
+  test("holds one row for a unit the listing names twice", () => {
+    expect.hasAssertions();
+
+    expect(syncLedgerUnits(header, ["`a`", "`b`", "`a`"])).toBe(
+      `${header}${getRow("`a`", OPEN_CELL)}${getRow("`b`", OPEN_CELL)}`,
+    );
+  });
+
+  test("spells a unit listed under two spellings the same whatever order they arrive in", () => {
+    expect.hasAssertions();
+
+    const row = getRow("`a`", OPEN_CELL);
+
+    expect(syncLedgerUnits(header, ["`a`", "a"])).toBe(`${header}${row}`);
+    expect(syncLedgerUnits(header, ["a", "`a`"])).toBe(`${header}${row}`);
+  });
 });
