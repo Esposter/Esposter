@@ -150,8 +150,10 @@ const rerunReads = async (published: ColumnTopic[], writePath: string, writeArgs
   }
 };
 
-// Calls a procedure through its caller and, if it published anything, asks every read again. A query that published
-// Nothing is a read, kept for the rerun; a call that published is a write, which a query can be, and is never asked again
+// Calls a procedure through its caller and, if it published anything or is a mutation, asks every read again. A query that
+// Published nothing is a read, kept for the rerun; a call that published is a write, which a query can be, and is never asked
+// Again. A mutation is asked whether or not it published: a write made outside the recorder publishes nothing, and that miss
+// Is what the check exists to find
 const invokeProcedure = async (
   createCaller: RawCallerFactory,
   router: AnyRouter,
@@ -163,14 +165,15 @@ const invokeProcedure = async (
   calledProcedures.add(router._def.procedures[path]);
   for (const [name, value] of outcome.headers) context.responseHeaders.append(name, value);
   const publishes = outcome.published.length;
-  if (publishes > 0) {
-    counts.writes++;
+  const type = router._def.procedures[path]?._def.type;
+  if (publishes > 0) counts.writes++;
+  if (publishes > 0 || type === "mutation") {
     const mark = MockPublishedTopics.length;
     await rerunReads(outcome.published, path, args);
     // A reread's own publishes are not the call's, so they leave the record of what the call published
     MockPublishedTopics.length = mark;
   }
-  if (outcome.ok && publishes === 0 && router._def.procedures[path]?._def.type === "query") {
+  if (outcome.ok && publishes === 0 && type === "query") {
     const topics = getTopicsOf(outcome.headers, path);
     if (topics.length > 0)
       reads.set(JSON.stringify([path, args, context.user?.id ?? null]), {
