@@ -103,6 +103,12 @@ export const measureMotion = async (
         },
         PARITY_FRAME_MS,
       );
+      // The page's loading steps the clock a frame at a time, a count that varies with the machine's speed, so the clock would
+      // Stand at a different phase of the page's 16 ms frames each run and every sample would read a frame a tick off. It is
+      // Moved to the next frame boundary first, so the moments the samples read are the same whatever the loading took
+      const elapsedMs = await page.evaluate(() => performance.now());
+      const toBoundaryMs = (PAGE_FRAME_MS - (elapsedMs % PAGE_FRAME_MS)) % PAGE_FRAME_MS;
+      if (toBoundaryMs > 0) await page.clock.runFor(toBoundaryMs);
       // Until the lift begins every piece stands where its first sample has it, frame after frame, so the lift's moment
       // Is read off the pieces themselves: from the last frame they stood there, whenever the stage reached the scene
       const { pieces: startPieces, time: startTime } = await sampleFrame();
