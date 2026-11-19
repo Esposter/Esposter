@@ -24,13 +24,6 @@ const kitMap = await readCharacterKits(
   new Map(PERFORMER_IDS.map((characterId) => [characterId, TALENT_START_LEVELS])),
 );
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-// A stage's time limit, long enough for the four performers to clear the stage's enemy
-const TIME_LIMIT_MILLISECONDS = 60000;
-// A stage's time limit an enemy far above the performers outlasts
-const SHORT_TIME_LIMIT_MILLISECONDS = 5000;
-// The level the stage's enemy is fought at, and one far above the performers' that outlasts the short time limit
-const STAGE_LEVEL = 1;
-const FAR_ABOVE_LEVEL = 90;
 
 // The stage's one enemy, a Hilichurl Fighter spawned from its kind at the level given
 const createStageEnemies = (level: number) =>
@@ -56,6 +49,14 @@ const createPerformers = (): Combatant[] =>
   }));
 
 describe(fightImaginariumKitStage, () => {
+  // A stage's time limit, long enough for the four performers to clear the stage's enemy
+  const TIME_LIMIT_MILLISECONDS = 60000;
+  // A stage's time limit an enemy far above the performers outlasts
+  const SHORT_TIME_LIMIT_MILLISECONDS = 5000;
+  // The level the stage's enemy is fought at, and one far above the performers' that outlasts the short time limit
+  const STAGE_LEVEL = 1;
+  const FAR_ABOVE_LEVEL = 90;
+
   test("a stage is fought by four performers with Vigor", () => {
     expect.hasAssertions();
 

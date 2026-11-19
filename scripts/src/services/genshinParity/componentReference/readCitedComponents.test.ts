@@ -2,10 +2,10 @@ import { readCitedComponents } from "#src/services/genshinParity/componentRefere
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { describe, expect, test } from "vitest";
 
-const CITED = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}/Index.vue`;
-const BARE = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}b/Index.vue`;
-
 describe(readCitedComponents, () => {
+  const CITED = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}/Index.vue`;
+  const BARE = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}b/Index.vue`;
+
   test("names a component only on a line that also names its reference", () => {
     expect.hasAssertions();
 

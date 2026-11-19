@@ -2,12 +2,12 @@ import { findHeldComponents } from "#src/services/genshinParity/componentReferen
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { describe, expect, test } from "vitest";
 
-const SCREEN = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}/Index.vue`;
-const CHILD = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}/${TEST_FILENAME}/Index.vue`;
-const ORPHAN = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}b/Index.vue`;
-const OTHER_SCREEN = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}c/Index.vue`;
-
 describe(findHeldComponents, () => {
+  const SCREEN = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}/Index.vue`;
+  const CHILD = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}/${TEST_FILENAME}/Index.vue`;
+  const ORPHAN = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}b/Index.vue`;
+  const OTHER_SCREEN = `packages/${TEST_FILENAME}/src/components/${TEST_FILENAME}c/Index.vue`;
+
   test("holds what a referenced screen imports, and stops at another screen it mounts", () => {
     expect.hasAssertions();
 
