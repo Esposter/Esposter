@@ -7,3 +7,4 @@ export const TodoListSort = {
   MyOrder: "MyOrder",
 } as const;
 export type TodoListSort = (typeof TodoListSort)[keyof typeof TodoListSort];
+export const TodoListSorts = Object.values(TodoListSort);

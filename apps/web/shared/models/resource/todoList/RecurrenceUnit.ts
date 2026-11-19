@@ -5,3 +5,4 @@ export const RecurrenceUnit = { Day: "Day", Month: "Month", Week: "Week", Weekda
 export type RecurrenceUnit = (typeof RecurrenceUnit)[keyof typeof RecurrenceUnit];
 
 export const recurrenceUnitSchema = z.enum(RecurrenceUnit) satisfies z.ZodType<RecurrenceUnit>;
+export const RecurrenceUnits = Object.values(RecurrenceUnit);

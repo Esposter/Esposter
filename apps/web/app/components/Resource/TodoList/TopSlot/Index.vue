@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Item } from "#src/models/shared/Item";
 
-import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
+import { TodoListSorts } from "#src/models/resource/todoList/TodoListSort";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
@@ -14,7 +14,7 @@ const { searchQuery, sort } = storeToRefs(todoListStore);
 const isSearchOpen = ref(false);
 // The sorts as a group of radios, so the one the viewer has shows as soon as the menu opens
 const sortItems = computed<Item[]>(() =>
-  Object.values(TodoListSort).map((todoListSort) => ({
+  TodoListSorts.map((todoListSort) => ({
     isSelected: todoListSort === sort.value,
     meaning: TodoListSortMeaningMap[todoListSort],
     onClick: () => {
