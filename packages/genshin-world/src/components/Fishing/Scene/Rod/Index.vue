@@ -2,10 +2,11 @@
 import type { GroundPoint, LightUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
+import { useDisposedMesh } from "#src/composables/useDisposedMesh";
 import { FISHING_ROD_COLOR, FISHING_ROD_HAND_HEIGHT, FISHING_ROD_OPTIONS } from "#src/services/fishing/constants";
 import { watchImmediate } from "@vueuse/core";
 import { createRodGeometry, createToonMaterial } from "genshin-engine";
-import { Group, Mesh, Vector3 } from "three";
+import { Group, Vector3 } from "three";
 
 interface Props {
   // The world's ground at a point in its own coordinates, which the character stands on and the lure lies on
@@ -23,7 +24,7 @@ const material = createToonMaterial({ color: FISHING_ROD_COLOR, lightUniforms, r
 const geometry = createRodGeometry(FISHING_ROD_OPTIONS);
 // The rod stands on its butt, so its group is set at the hand and turned to lie along the line toward the lure
 const rodGroup = new Group();
-rodGroup.add(new Mesh(geometry, material));
+rodGroup.add(useDisposedMesh(geometry, material));
 const up = new Vector3(0, 1, 0);
 watchImmediate(
   [
@@ -41,11 +42,6 @@ watchImmediate(
     rodGroup.quaternion.setFromUnitVectors(up, tip.sub(hand).normalize());
   },
 );
-
-onUnmounted(() => {
-  geometry.dispose();
-  material.dispose();
-});
 </script>
 
 <template>

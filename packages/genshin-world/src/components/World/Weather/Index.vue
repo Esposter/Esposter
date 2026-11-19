@@ -11,6 +11,7 @@ import type {
 } from "genshin-engine";
 import type { HemisphereLight, Vector3 } from "three";
 
+import { useDisposedMesh } from "#src/composables/useDisposedMesh";
 import { useLoop, useTres } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
 import {
@@ -37,7 +38,7 @@ import {
   WEATHER_SETTINGS_MAP,
   WEATHER_TRANSITION_SECONDS,
 } from "genshin-engine";
-import { Color, MathUtils, Mesh } from "three";
+import { Color, MathUtils } from "three";
 import { uniform } from "three/tsl";
 
 interface Props {
@@ -78,18 +79,18 @@ const { camera } = useTres();
 const { onBeforeRender } = useLoop();
 const precipitationUniforms = createPrecipitationUniforms();
 const weatherTargets = { fogUniforms, lightUniforms, precipitationUniforms, skyUniforms };
-const precipitationMesh = new Mesh(
+const precipitationMesh = useDisposedMesh(
   createPrecipitationGeometry(PRECIPITATION_COUNT),
   createPrecipitationMaterial({ lightUniforms, precipitationUniforms, windUniforms }),
 );
 precipitationMesh.frustumCulled = false;
-const splashMesh = new Mesh(
+const splashMesh = useDisposedMesh(
   createPrecipitationGeometry(SPLASH_COUNT),
   createSplashMaterial({ groundCapture, lightUniforms, precipitationUniforms, waterUniforms }),
 );
 splashMesh.frustumCulled = false;
 const boltFlash = uniform(0);
-const boltMesh = new Mesh(
+const boltMesh = useDisposedMesh(
   createLightningBoltGeometry(computeLightningBolt({ ...LIGHTNING_BOLT_OPTIONS, seed: 0 })),
   createLightningBoltMaterial(boltFlash),
 );
@@ -165,15 +166,6 @@ onBeforeRender(({ delta }) => {
   boltMesh.rotation.y = Math.random() * Math.PI * 2;
   boltMesh.visible = true;
   strikeSeconds = 0;
-});
-
-onUnmounted(() => {
-  precipitationMesh.geometry.dispose();
-  precipitationMesh.material.dispose();
-  splashMesh.geometry.dispose();
-  splashMesh.material.dispose();
-  boltMesh.geometry.dispose();
-  boltMesh.material.dispose();
 });
 </script>
 
