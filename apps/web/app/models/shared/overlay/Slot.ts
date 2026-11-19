@@ -7,7 +7,7 @@ import type { Versioned } from "#src/models/shared/overlay/Versioned";
 // The held rows of one table, typed by its row. `read` and `write` go through a draft, which records the key touched
 export interface Slot<TRow extends Versioned> {
   arrive: (row: TRow) => void;
-  list: () => TRow[];
+  list: () => Draft<TRow>[];
   read: (draft: OverlayDraft, key: RowKey) => Draft<TRow> | undefined;
   table: Table<TRow>;
   versionOf: (key: RowKey) => number | undefined;

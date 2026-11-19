@@ -29,10 +29,14 @@ export const createSlot = <TRow extends Versioned>(table: Table<TRow>): Slot<TRo
       writeKeyTrie(held.value, key, row);
       triggerRef(held);
     },
-    list: () =>
-      listKeyTrie(held.value)
-        .map(([, row]) => row)
-        .filter((row) => !row.deletedAt),
+    list: () => {
+      // The held rows as the draft has written them, then the rows only the draft created
+      const heldRows = listKeyTrie(held.value).map(([key, row]) => readKeyTrie(overrides, key) ?? row);
+      const createdRows = listKeyTrie(overrides)
+        .filter(([key]) => readKeyTrie(held.value, key) === undefined)
+        .map(([, row]) => row);
+      return [...heldRows, ...createdRows].filter((row) => !row.deletedAt);
+    },
     read: (draft, key) => {
       draft.touches.push({ key, table: table.name });
       return readKeyTrie(overrides, key) ?? readKeyTrie(held.value, key);

@@ -1,7 +1,10 @@
 import type { KeyedView } from "#src/models/shared/overlay/KeyedView";
 import type { Table } from "#src/models/shared/overlay/Table";
 import type { Versioned } from "#src/models/shared/overlay/Versioned";
+import type { WriteResponse } from "#src/models/shared/overlay/WriteResponse";
 
+import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
 import { useOverlayStore } from "#src/store/overlay";
 import { flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
@@ -12,10 +15,17 @@ interface TestRow extends Versioned {
   name: string;
 }
 
+const neverSettles = <TResult>() => new Promise<TResult>(() => {});
+
 describe(useOverlayStore, () => {
   const table: Table<TestRow> = { keyOf: (row) => [row.id], name: "row" };
   const name = "";
   const otherName = " ";
+  const serverName = "  ";
+  const noChange: WriteResponse = { arrivals: [], confirmed: [] };
+  const setRowName = (view: KeyedView, value: string) => {
+    view.set(table, ["a"], { id: "a", name: value, version: 1 });
+  };
   const writeFirstRow = (view: KeyedView) => {
     view.set(table, ["a"], { id: "a", name, version: 0 });
   };
@@ -107,16 +117,16 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    const { promise: firstWritten, resolve: resolveFirst } = Promise.withResolvers<void>();
-    const firstMutate = vi.fn<() => Promise<void>>(() => firstWritten);
-    const secondMutate = vi.fn<() => Promise<void>>(() => Promise.resolve());
+    const { promise: firstWritten, resolve: resolveFirst } = Promise.withResolvers<WriteResponse>();
+    const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => firstWritten);
+    const secondMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.resolve(noChange));
     overlayStore.writeOptimistic(firstMutate, { entry: writeFirstRow });
     overlayStore.writeOptimistic(secondMutate, { entry: writeFirstRow });
     await flushPromises();
 
     expect(secondMutate).not.toHaveBeenCalled();
 
-    resolveFirst();
+    resolveFirst(noChange);
     await flushPromises();
 
     expect(secondMutate).toHaveBeenCalledExactlyOnceWith();
@@ -126,8 +136,8 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    const firstMutate = vi.fn<() => Promise<void>>(() => new Promise<void>(() => {}));
-    const secondMutate = vi.fn<() => Promise<void>>(() => new Promise<void>(() => {}));
+    const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
+    const secondMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
     overlayStore.writeOptimistic(firstMutate, { entry: writeFirstRow });
     overlayStore.writeOptimistic(secondMutate, { entry: writeOtherRow });
     await flushPromises();
@@ -140,8 +150,8 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    const firstMutate = vi.fn<() => Promise<void>>(() => new Promise<void>(() => {}));
-    const readMutate = vi.fn<() => Promise<void>>(() => Promise.resolve());
+    const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
+    const readMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.resolve(noChange));
     overlayStore.writeOptimistic(firstMutate, { entry: writeFirstRow });
     overlayStore.writeOptimistic(readMutate, { entry: readFirstRow });
     await flushPromises();
@@ -154,12 +164,96 @@ describe(useOverlayStore, () => {
 
     const overlayStore = useOverlayStore();
     const onError = vi.fn<(error: Error) => void>();
-    const failingMutate = vi.fn<() => Promise<void>>(() => Promise.reject(new Error(name)));
-    const nextMutate = vi.fn<() => Promise<void>>(() => Promise.resolve());
+    const failingMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.reject(new Error(name)));
+    const nextMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.resolve(noChange));
     overlayStore.writeOptimistic(failingMutate, { entry: writeFirstRow, onError });
     overlayStore.writeOptimistic(nextMutate, { entry: writeFirstRow });
     await flushPromises();
 
     expect(nextMutate).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  test("pending entries show over held state, the later one over the earlier one", () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(table, { id: "a", name, version: 1 });
+    overlayStore.writeOptimistic(() => neverSettles(), {
+      entry: (view) => {
+        setRowName(view, otherName);
+      },
+    });
+    overlayStore.writeOptimistic(() => neverSettles(), {
+      entry: (view) => {
+        setRowName(view, serverName);
+      },
+    });
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ id: "a", name: serverName, version: 1 }]);
+  });
+
+  test("a failed write drops its entry, leaving the view as held state was", async () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    const onError = vi.fn<(error: Error) => void>();
+    overlayStore.arrive(table, { id: "a", name, version: 1 });
+    overlayStore.writeOptimistic(() => Promise.reject(new Error(name)), {
+      entry: (view) => {
+        setRowName(view, otherName);
+      },
+      onError,
+    });
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ id: "a", name: otherName, version: 1 }]);
+
+    await flushPromises();
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ id: "a", name, version: 1 }]);
+    expect(onError).toHaveBeenCalledExactlyOnceWith(new Error(name));
+  });
+
+  test("a confirmed entry stays until the row arrives at the version the response named", async () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(table, { id: "a", name, version: 1 });
+    overlayStore.writeOptimistic(
+      () => Promise.resolve({ arrivals: [], confirmed: [createConfirmation(table, ["a"], 2)] }),
+      {
+        entry: (view) => {
+          setRowName(view, otherName);
+        },
+      },
+    );
+    await flushPromises();
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ id: "a", name: otherName, version: 1 }]);
+
+    overlayStore.arrive(table, { id: "a", name: serverName, version: 2 });
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ id: "a", name: serverName, version: 2 }]);
+  });
+
+  test("a response that carries its row settles the entry at once", async () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(table, { id: "a", name, version: 1 });
+    overlayStore.writeOptimistic(
+      () =>
+        Promise.resolve({
+          arrivals: [createArrival(table, { id: "a", name: serverName, version: 2 })],
+          confirmed: [createConfirmation(table, ["a"], 2)],
+        }),
+      {
+        entry: (view) => {
+          setRowName(view, otherName);
+        },
+      },
+    );
+    await flushPromises();
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ id: "a", name: serverName, version: 2 }]);
   });
 });
