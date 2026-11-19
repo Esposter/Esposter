@@ -2,6 +2,7 @@ import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
+import { parsePositiveInteger } from "#src/services/shared/parsePositiveInteger";
 import { getRouteParamString } from "#src/util/router/getRouteParamString";
 
 // Shared fetch-or-404 for the published view pages. The SSR result rides the payload to the client so
@@ -19,9 +20,7 @@ export const useReadPublishedResourceContent = async <TContent>(
   const { currentRoute } = useRouter();
   // An owner-only preview param — the view loads that published version instead of the latest. A url with no valid
   // Param gets the latest; one with it reads through the owner-only procedure, so anyone else is rejected server-side
-  const versionString = getRouteParamString(currentRoute.value.query.version);
-  const parsedVersion = Number(versionString);
-  const version = Number.isInteger(parsedVersion) && parsedVersion > 0 ? parsedVersion : undefined;
+  const version = parsePositiveInteger(getRouteParamString(currentRoute.value.query.version));
   const { data } = await useAsyncData(AsyncDataKey.ReadPublishedResourceContent(type, id, version), () =>
     version ? readVersion(version) : readLatest(),
   );

@@ -9,6 +9,7 @@ import { ResourceUpdatedFilters } from "#src/models/resource/list/ResourceUpdate
 import { createUpdatedBound } from "#src/services/resource/list/createUpdatedBound";
 import { deserializeResourceSortBy } from "#src/services/resource/list/deserializeResourceSortBy";
 import { serializeResourceSortBy } from "#src/services/resource/list/serializeResourceSortBy";
+import { parsePositiveInteger } from "#src/services/shared/parsePositiveInteger";
 import { resourceTypeSchema } from "@esposter/db-schema";
 
 // The list workbench's filter state, mirrored to query params so the list is deep-linkable, refresh-safe and
@@ -26,10 +27,7 @@ export const useResourceListFilters = (defaultSortBy: readonly SortItem<keyof Re
   });
   const status = useEnumRouteQuery<"" | ResourceStatusFilter>("status", ResourceStatusFilters, "");
   const page = useRouteQuery<null | number | string | string[], number>("page", 1, {
-    transform: (value) => {
-      const parsedPage = Number(value);
-      return Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-    },
+    transform: (value) => parsePositiveInteger(String(value)) ?? 1,
   });
   // Objects can't round-trip through a query param directly, so sortBy serializes to "key:order,..."
   const sortByQuery = useRouteQuery("sortBy", "", { transform: String });

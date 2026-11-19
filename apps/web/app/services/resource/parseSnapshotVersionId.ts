@@ -1,5 +1,6 @@
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 
+import { parsePositiveInteger } from "#src/services/shared/parsePositiveInteger";
 import { SnapshotChannels } from "@esposter/db-schema";
 import { ID_SEPARATOR } from "@esposter/shared";
 
@@ -11,7 +12,7 @@ export const parseSnapshotVersionId = (
 ): Pick<SnapshotVersion, "channel" | "version"> | undefined => {
   const [channelSegment, versionSegment] = snapshotVersionId.split(ID_SEPARATOR);
   const channel = SnapshotChannels.find((snapshotChannel) => snapshotChannel === channelSegment);
-  const version = Number(versionSegment);
-  if (channel && Number.isInteger(version) && version > 0) return { channel, version };
+  const version = parsePositiveInteger(versionSegment);
+  if (channel && version !== undefined) return { channel, version };
   else return undefined;
 };
