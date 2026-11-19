@@ -10,7 +10,7 @@ Server truth is held per table row, every row carries a version the database rai
 
 **Infrastructure.** No new service, queue or Durable Object. The version increment is a Drizzle update value that the database evaluates, so the version is raised inside each statement. The migration adds one column per table, group by group.
 
-**Failure and retry.** A failed write drops its entry and changes no held state, and nothing retries, as today. A write the server applied whose response was lost is still published to its watchers, so the watched read brings the changed rows at their new versions and held state takes them. Until that arrives the view shows held state, which may briefly read as the old value. A rejected write restores nothing, so an older value cannot come back.
+**Failure and retry.** A failed write drops its entry and changes no held state, and nothing retries, as today. A write the server applied whose response was lost is still published to its watchers, so the watched read brings the changed rows at their new versions and held state takes them. Until that arrives the view shows held state, which may briefly read as the old value. A rejected write restores nothing, so an older value cannot come back. An entry that throws never reaches the screen: one that throws while the view is computed takes the view to held state and reports its error to its own write, and one that throws as it is issued sends nothing and reports the same way.
 
 ## The model
 
@@ -87,7 +87,7 @@ sequenceDiagram
 
 A store builds its collections from the primitive, which holds the held state and the entries. The registry is a Pinia store, because it holds shared reactive state, which the `pinia` skill keeps in a store and never at module scope. The store returns only its view under its own name, and held state never leaves the primitive, so no component can write it and no store rebuilds the view by hand. A store's public names are the view, the functions that issue writes, and the functions that ingest reads. Components read the view.
 
-Truth is held per table row: friendship rows, user rows and membership rows are separate collections, and a list item is a join of them. The friend store holds one list of users today, and under this design it holds friendship rows and user rows, with the view joining them. That change of shape belongs to the pilot.
+Truth is held per table row: friendship rows, user rows and membership rows are separate collections, and a list item is a join of them. A collection reaches the primitive as a `Table` made by `createTable` over its Drizzle table object, and the slot that holds its rows is kept by that object, so two `Table` objects over one table share the rows held for it. The friend store holds one list of users today, and under this design it holds friendship rows and user rows, with the view joining them. That change of shape belongs to the pilot.
 
 ## Settling
 

@@ -1,13 +1,14 @@
 import type { Arrival } from "#src/models/shared/overlay/Arrival";
 import type { KeyedView } from "#src/models/shared/overlay/KeyedView";
-import type { Table } from "#src/models/shared/overlay/Table";
 import type { Versioned } from "#src/models/shared/overlay/Versioned";
 import type { WriteResponse } from "#src/models/shared/overlay/WriteResponse";
 
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
+import { createTable } from "#src/services/shared/overlay/createTable";
 import { useOverlayStore } from "#src/store/overlay";
 import { flushPromises } from "@vue/test-utils";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -19,7 +20,12 @@ interface TestRow extends Versioned {
 const neverSettles = <TResult>() => new Promise<TResult>(() => {});
 
 describe(useOverlayStore, () => {
-  const table: Table<TestRow> = { keyOf: (row) => [row.id], name: "row" };
+  const rowTable = sqliteTable("row", {
+    id: text().primaryKey(),
+    name: text().notNull(),
+    version: integer().notNull(),
+  });
+  const table = createTable<TestRow>(rowTable, (row) => [row.id]);
   const name = "";
   const otherName = " ";
   const serverName = "  ";
@@ -112,6 +118,73 @@ describe(useOverlayStore, () => {
     overlayStore.arrive(table, { id: "a", name, version: 0 });
 
     expect(overlayStore.view(table).value).toStrictEqual([{ id: "a", name, version: 0 }]);
+  });
+
+  test("two Table objects over one table share the rows held for it", () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    const sameTable = createTable<TestRow>(rowTable, (row) => [row.id]);
+    overlayStore.arrive(table, { id: "a", name, version: 1 });
+    overlayStore.arrive(sameTable, { id: "b", name, version: 1 });
+
+    expect(overlayStore.view(table).value).toStrictEqual([
+      { id: "a", name, version: 1 },
+      { id: "b", name, version: 1 },
+    ]);
+  });
+
+  test("an entry that throws in the view leaves the view equal to held state and reports its error once to its write", async () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    const onError = vi.fn<(error: Error) => void>();
+    const thrown = new Error(" ");
+    overlayStore.arrive(table, { id: "a", name, version: 1 });
+    overlayStore.arrive(table, { id: "b", name, version: 1 });
+    overlayStore.writeOptimistic(() => neverSettles(), {
+      entry: (view) => {
+        setRowName(view, otherName);
+        if (view.get(table, ["b"])?.deletedAt) throw thrown;
+      },
+      onError,
+    });
+    overlayStore.arrive(table, { deletedAt: new Date(0), id: "b", name, version: 2 });
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ id: "a", name, version: 1 }]);
+    await flushPromises();
+    expect(onError).toHaveBeenCalledExactlyOnceWith(thrown);
+
+    // The entry stays pending, so each recomputation runs it again, and its error is still reported once
+    overlayStore.arrive(table, { id: "c", name, version: 1 });
+
+    expect(overlayStore.view(table).value).toStrictEqual([
+      { id: "a", name, version: 1 },
+      { id: "c", name, version: 1 },
+    ]);
+    await flushPromises();
+    expect(onError).toHaveBeenCalledExactlyOnceWith(thrown);
+  });
+
+  test("an entry that throws as it is issued sends nothing and reports its error to its write", () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    const onError = vi.fn<(error: Error) => void>();
+    const mutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
+    const thrown = new Error(" ");
+    overlayStore.arrive(table, { id: "a", name, version: 1 });
+    overlayStore.writeOptimistic(mutate, {
+      entry: (view) => {
+        setRowName(view, otherName);
+        throw thrown;
+      },
+      onError,
+    });
+
+    expect(mutate).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledExactlyOnceWith(thrown);
+    expect(overlayStore.view(table).value).toStrictEqual([{ id: "a", name, version: 1 }]);
   });
 
   test("a write to one row waits for the earlier write to that row, whichever caller issues it", async () => {

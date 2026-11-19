@@ -11,7 +11,7 @@ import { createSlotFor } from "#src/services/shared/overlay/createSlotFor";
 import { createWriteQueue } from "#src/services/shared/overlay/createWriteQueue";
 import { listOverlayRows } from "#src/services/shared/overlay/listOverlayRows";
 import { recordTouches } from "#src/services/shared/overlay/recordTouches";
-import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { getResult, getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 
 // The write registry of one Pinia instance: the held server rows of every table, the pending entries and the write
 // Queue. It is the only writer of held state, and a store reads its rows through the view it returns
@@ -33,32 +33,33 @@ export const useOverlayStore = defineStore("overlay", () => {
     settlePendingEntries();
   };
   const view = <TRow extends Versioned>(table: Table<TRow>) =>
-    computed(() =>
-      listOverlayRows(
-        slotFor,
-        table,
-        pendingEntries.value.map(({ entry }) => entry),
-      ),
-    );
-  // The write's entry is applied at once and its queue key comes from the rows it touches, found by running it now
+    computed(() => listOverlayRows(slotFor, table, pendingEntries.value));
+  // The write's entry is applied at once and its queue key comes from the rows it touches, found by running it now. An
+  // Entry that throws here cannot name its keys, so the write sends nothing and its error goes to the write
   const writeOptimistic = (mutate: () => Promise<WriteResponse>, { entry, onError }: OptimisticWriteOptions) => {
-    const touches = recordTouches(slotFor, entry);
-    const pendingEntry: PendingEntry = { entry };
-    pendingEntries.value = [...pendingEntries.value, pendingEntry];
-    getSynchronizedFunction(() =>
-      enqueue(touches, () =>
-        getResultAsync(mutate).match(
-          (response) => {
-            pendingEntry.confirmed = response.confirmed;
-            applyArrivals(response.arrivals);
-          },
-          (error) => {
-            pendingEntries.value = pendingEntries.value.filter((other) => other !== pendingEntry);
-            onError?.(error);
-          },
-        ),
-      ),
-    )();
+    getResult(() => recordTouches(slotFor, entry)).match(
+      (touches) => {
+        const pendingEntry: PendingEntry = { entry, onError };
+        pendingEntries.value = [...pendingEntries.value, pendingEntry];
+        getSynchronizedFunction(() =>
+          enqueue(touches, () =>
+            getResultAsync(mutate).match(
+              (response) => {
+                pendingEntry.confirmed = response.confirmed;
+                applyArrivals(response.arrivals);
+              },
+              (error) => {
+                pendingEntries.value = pendingEntries.value.filter((other) => other !== pendingEntry);
+                onError?.(error);
+              },
+            ),
+          ),
+        )();
+      },
+      (error) => {
+        onError?.(error);
+      },
+    );
   };
   // A write with no entry shows nothing until its answer, so it takes no queue key: the version gate orders its
   // Responses, and it is issued at once

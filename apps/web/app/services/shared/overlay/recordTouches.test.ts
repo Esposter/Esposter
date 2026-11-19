@@ -1,8 +1,9 @@
 import type { KeyedView } from "#src/models/shared/overlay/KeyedView";
-import type { Table } from "#src/models/shared/overlay/Table";
 
 import { createSlotFor } from "#src/services/shared/overlay/createSlotFor";
+import { createTable } from "#src/services/shared/overlay/createTable";
 import { recordTouches } from "#src/services/shared/overlay/recordTouches";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { describe, expect, test } from "vitest";
 
 interface TestRow {
@@ -12,7 +13,12 @@ interface TestRow {
 }
 
 describe(recordTouches, () => {
-  const table: Table<TestRow> = { keyOf: (row) => [row.id], name: "row" };
+  const rowTable = sqliteTable("row", {
+    id: text().primaryKey(),
+    name: text().notNull(),
+    version: integer().notNull(),
+  });
+  const table = createTable<TestRow>(rowTable, (row) => [row.id]);
   const name = "";
 
   test("records the keys of the rows an entry reads and writes", () => {
