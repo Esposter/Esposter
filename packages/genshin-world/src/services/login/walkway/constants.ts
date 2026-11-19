@@ -1,3 +1,5 @@
+import type { SurfaceDetail } from "genshin-engine";
+
 // The walkway assembling itself ahead of the camera as it glides, each piece rising from under the cloud into place:
 // Settled up to 13.5 metres ahead and still rising out to 17.5, the rows where the English recording's walkway settles
 // And ends at the camera's pose (745 and 730 of its 1080), each piece's rise staggered by up to 2 metres of its
@@ -18,3 +20,12 @@ export const LOGIN_PAVING_PIXELS_PER_METRE = 256;
 // Share, read by the Shape pass's surface detail reading: the secant through 1.0 (4.3467) and 0.92 (4.0385) lands at
 // 0.9100, and the pass reads 0.0006 degrees there, inside its gate of 0.0198. Detail on top would only raise the bend
 export const LOGIN_WALKWAY_RIM_TILT_SHARE = 0.91;
+// The walkway's grain over its paving: their exports' structure less the paving's own over their pixels (the surface
+// Pass's terms, variance then bands finest first), each divided by their mean lightness of 0.6089 squared, and by the
+// Share of a target a reading realised (0.22, as the other families' first fits did). At a pixel's 0.0069 metres at the
+// Walkway's depth. The octave amplitudes that reproduce these are solved by `computeSurfaceOctaves`
+export const LOGIN_WALKWAY_SURFACE_DETAIL: SurfaceDetail = {
+  bands: [0.00045306, 0.00039089, 0.00037788, 0.00026216],
+  metresPerTexel: 0.0069,
+  variance: 0.00407392,
+};

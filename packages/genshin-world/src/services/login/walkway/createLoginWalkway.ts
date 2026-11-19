@@ -6,12 +6,16 @@ import type { StoneMaterialOptions } from "genshin-engine";
 
 import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
-import { LOGIN_WALKWAY_RIM_TILT_SHARE, LOGIN_WALKWAY_RISE_DEPTH } from "#src/services/login/walkway/constants";
+import {
+  LOGIN_WALKWAY_RIM_TILT_SHARE,
+  LOGIN_WALKWAY_RISE_DEPTH,
+  LOGIN_WALKWAY_SURFACE_DETAIL,
+} from "#src/services/login/walkway/constants";
 import { createLoginPaving } from "#src/services/login/walkway/createLoginPaving";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { getLoginWalkwaySink } from "#src/services/login/walkway/getLoginWalkwaySink";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
-import { createStoneMaterial } from "genshin-engine";
+import { createMaterialDetailNode, createStoneMaterial } from "genshin-engine";
 import { BatchedMesh, Matrix4 } from "three";
 import { color } from "three/tsl";
 
@@ -27,7 +31,9 @@ export const createLoginWalkway = (
   const material = createStoneMaterial(stone, loginStoneLight);
   // The walkway's tops painted in its textures' tones and carved with its paving, its rims tilted to the light
   const walkwayPaving = createLoginPaving(paving, LOGIN_WALKWAY_RIM_TILT_SHARE);
-  material.colorNode = walkwayPaving.shade.mul(color(stone.albedo));
+  material.colorNode = walkwayPaving.shade
+    .mul(color(stone.albedo))
+    .mul(createMaterialDetailNode(LOGIN_WALKWAY_SURFACE_DETAIL));
   material.normalNode = walkwayPaving.normalNode;
   const pieces = createLoginWalkwayPieces(walkway);
   const batch = new BatchedMesh(
