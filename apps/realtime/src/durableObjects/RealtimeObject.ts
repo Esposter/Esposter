@@ -123,7 +123,7 @@ export abstract class RealtimeObject<
   protected runInvocation<TResult>(label: string, run: () => TResult): Promise<ObjectInvocation<Awaited<TResult>>> {
     const handles: ObjectInvocationHandles = new Map();
     let writeSet: Promise<ColumnTopic[]> | undefined;
-    const getWriteSet = () => (writeSet ??= this.#getTopics(handles, computeWriteTopics));
+    const getWriteSet = () => (writeSet ??= this.#getTopics(handles, computeWriteTopics, true));
     return runRecordedWrites(
       objectInvocationStorage,
       handles,
@@ -152,10 +152,13 @@ export abstract class RealtimeObject<
   }
 
   // The topics of an invocation's statements. The object's own tables name the object, since each object holds its own rows,
-  // So a write in one object reaches no watch of another. The core's tables are shared, so they are named as they are
+  // So a write in one object reaches no watch of another. The core's tables are shared, so they are named as they are. A write
+  // Also publishes each table-wide topic of its own tables under the kind, `<kind>/*:<table>:*`, which every object of the kind
+  // Publishes beside its own, so a read that the budget collapses across many objects' tables is woken by a write in any of them
   async #getTopics(
     handles: ObjectInvocationHandles,
     computeStatementTopics: typeof computeReadTopics,
+    publishesKindTopics = false,
   ): Promise<ColumnTopic[]> {
     const statementsOf = (owned: boolean) =>
       [...handles.values()].filter((record) => record.owned === owned).flatMap(({ recorder }) => recorder.statements);
@@ -164,7 +167,12 @@ export abstract class RealtimeObject<
     if (ownedStatements.length === 0) return sharedTopics;
     const scope = `${this.topicKind}/${getObjectName(this.ctx, this.topicKind)}`;
     const ownedTopics = await computeStatementTopics(ownedStatements);
-    return [...sharedTopics, ...ownedTopics.map((topic) => scopeColumnTopic(topic, scope))];
+    const kindTopics = publishesKindTopics
+      ? ownedTopics
+          .filter(({ topic }) => topic.endsWith(":*"))
+          .map((columnTopic) => scopeColumnTopic(columnTopic, `${this.topicKind}/*`))
+      : [];
+    return [...sharedTopics, ...ownedTopics.map((topic) => scopeColumnTopic(topic, scope)), ...kindTopics];
   }
 
   // Records the revoke, then drops records past the TTL, so an object that outlives many revokes keeps only recent ones

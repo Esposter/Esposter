@@ -20,18 +20,30 @@ const getCoarseTopic = (topic: Topic, kindNames: Set<string>): Topic | undefined
   return getTableTopic(topic.slice(0, topic.lastIndexOf(":", topic.indexOf("="))));
 };
 
-// The topics a header names, within `budget`. Past the budget, the topics that have a coarser form collapse to it, the largest
-// Group first and then the next, until the count fits. A group's topics merge into their coarser topic, which carries the columns
-// Of the topics it replaces, so a read that names it wakes for every write its topics would have woken it for. A kind's topic
-// Has no coarser form and stays whole, and a list still names what it names if every group has collapsed and the count does not fit
-export const fitTopicsBudget = (columnTopics: ColumnTopic[], budget: number): ColumnTopic[] => {
-  const topics = mergeColumnTopics(columnTopics);
-  if (topics.length <= budget) return topics;
-  const kindNames = new Set<string>(Object.values(TopicKind));
+// An object's own topic, `<kind>/<id>:<table>:<rest>`, where the rest is the table's topic or one of its rows. Every object of a
+// Kind writes its own table and publishes the kind's table topic, `<kind>/*:<table>:*`, beside its own, so the object's topic
+// Collapses to it: a read that names many objects' tables is then woken by a write in any of them. A shared topic has no kind
+// In front of its table, so it has no such form
+const getKindTableTopic = (topic: Topic): Topic | undefined => {
+  const kindEnd = topic.indexOf("/");
+  const scopeEnd = topic.indexOf(":");
+  if (kindEnd === -1 || kindEnd > scopeEnd) return undefined;
+  const tableEnd = topic.indexOf(":", scopeEnd + 1);
+  if (tableEnd === -1) return undefined;
+  return `${topic.slice(0, kindEnd)}/*:${topic.slice(scopeEnd + 1, tableEnd)}:*`;
+};
+
+// Collapses the topics `getCoarse` gives a coarser form, a group at a time, the largest group first and then the next, until the
+// Count fits. A group's topics merge into their coarser topic, which carries the columns of the topics it replaces
+const collapseGroups = (
+  topics: ColumnTopic[],
+  getCoarse: (topic: Topic) => Topic | undefined,
+  budget: number,
+): ColumnTopic[] => {
   const coarseTopicOf = new Map<Topic, Topic>();
   const groupSizes = new Map<Topic, number>();
   for (const { topic } of topics) {
-    const coarseTopic = getCoarseTopic(topic, kindNames);
+    const coarseTopic = getCoarse(topic);
     if (coarseTopic === undefined) continue;
     coarseTopicOf.set(topic, coarseTopic);
     groupSizes.set(coarseTopic, (groupSizes.get(coarseTopic) ?? 0) + 1);
@@ -59,4 +71,17 @@ export const fitTopicsBudget = (columnTopics: ColumnTopic[], budget: number): Co
         : { columns, topic };
     }),
   );
+};
+
+// The topics a header names, within `budget`. Past the budget, the topics that have a coarser form collapse to it, the largest
+// Group first and then the next, until the count fits. A kind's topic has no coarser form and stays whole, and a list still names
+// What it names if every group has collapsed and the count does not fit. The objects' own tables collapse first, and only then,
+// Past the budget still, do the objects of a kind collapse to the kind's table topic, the last step
+export const fitTopicsBudget = (columnTopics: ColumnTopic[], budget: number): ColumnTopic[] => {
+  const topics = mergeColumnTopics(columnTopics);
+  if (topics.length <= budget) return topics;
+  const kindNames = new Set<string>(Object.values(TopicKind));
+  const collapsedTopics = collapseGroups(topics, (topic) => getCoarseTopic(topic, kindNames), budget);
+  if (collapsedTopics.length <= budget) return collapsedTopics;
+  return collapseGroups(collapsedTopics, getKindTableTopic, budget);
 };

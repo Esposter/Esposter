@@ -247,7 +247,7 @@ describe(RoomObject, () => {
   });
 
   // A write's topics are published from the entry, once the write has run. An insert changes which rows the table holds, so
-  // It publishes no columns, and every watch of the topic hears it
+  // It publishes no columns, and every watch of the topic hears it. Its tables are also published under the kind, for every room
   test("invoke publishes the topics its insert names, with no columns, since it changes which rows exist", async () => {
     expect.hasAssertions();
 
@@ -255,6 +255,8 @@ describe(RoomObject, () => {
     await object.invoke("createMessage", [{ message: "a", type: MessageType.Message }, actor]);
 
     expect(topicPublishes).toStrictEqual([
+      { columns: undefined, topic: "room/*:messages:*" },
+      { columns: undefined, topic: "room/*:roomState:*" },
       { columns: undefined, topic: `room/${roomId}:messages:*` },
       { columns: undefined, topic: `room/${roomId}:roomState:*` },
     ]);
@@ -278,6 +280,19 @@ describe(RoomObject, () => {
 
     expect(getWokenTopics(otherReadSet, topicPublishes)).toStrictEqual([]);
     expect(getWokenTopics(ownReadSet, topicPublishes)).toStrictEqual([`room/${roomId}:messages:*`]);
+  });
+
+  // A read over many rooms collapses to the room kind's table topic, so a write in a room no read names must still reach it: every
+  // Room's write publishes that topic beside its own
+  test("a write in a room no read names wakes a read collapsed to the room kind's table topic", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    topicPublishes.length = 0;
+
+    await object.invoke("createMessage", [{ message: "a", type: MessageType.Message }, actor]);
+
+    expect(getWokenTopics([{ topic: "room/*:messages:*" }], topicPublishes)).toStrictEqual(["room/*:messages:*"]);
   });
 
   test("a topic that cannot be published leaves the invocation's result standing", async () => {

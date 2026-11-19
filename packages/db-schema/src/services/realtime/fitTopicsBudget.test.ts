@@ -3,6 +3,7 @@ import type { ColumnTopic } from "#src/models/realtime/Topic";
 import { schema } from "#src/generated/schema";
 import { StorageBucket } from "#src/models/storage/StorageBucket";
 import { messagesInRoom } from "#src/objects/room/schema";
+import { MAX_READ_TOPICS } from "#src/services/realtime/constants";
 import { fitTopicsBudget } from "#src/services/realtime/fitTopicsBudget";
 import { getBlobTopic } from "#src/services/realtime/getBlobTopic";
 import { getStorageBucketBindingName } from "#src/services/storage/getStorageBucketBindingName";
@@ -75,5 +76,18 @@ describe(fitTopicsBudget, () => {
         1,
       ),
     ).toStrictEqual([{ topic: `${tableTopic}:*` }]);
+  });
+
+  // Once each object's rows have collapsed to its table-wide topic, those topics are still one per object. Past the budget they
+  // Collapse to the kind's table topic, which every object's write publishes beside its own, so a read over many objects fits
+  test("collapses the table-wide topics of many objects of one kind to the kind's table topic", () => {
+    expect.hasAssertions();
+
+    const tableName = getTableName(messagesInRoom);
+    const objectTopics = Array.from({ length: MAX_READ_TOPICS + 1 }, (): ColumnTopic => ({
+      topic: `room/${v7()}:${tableName}:*`,
+    }));
+
+    expect(fitTopicsBudget(objectTopics, MAX_READ_TOPICS)).toStrictEqual([{ topic: `room/*:${tableName}:*` }]);
   });
 });

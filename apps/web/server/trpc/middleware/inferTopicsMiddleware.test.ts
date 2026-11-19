@@ -1,6 +1,8 @@
 import type { Context } from "#server/trpc/context";
+import type { ColumnTopic } from "@esposter/db-schema";
 
 import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
+import { recordObjectReads } from "#server/services/realtime/requestObjectReads";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockContext, createMockUser } from "#server/trpc/context.test";
@@ -70,6 +72,11 @@ const testRouter = router({
         .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
         .where(eq(roomsInMessage.userId, input)),
     ),
+  // Each room's object reports the read set of its own messages, as the room's stub does through recordObjectReads
+  readRoomMessages: publicProcedure.input(z.array(z.string())).query<null>(({ input }) => {
+    recordObjectReads(input.map((roomId): ColumnTopic => ({ topic: `room/${roomId}:messages:*` })));
+    return null;
+  }),
   readStaticUser: publicProcedure
     .meta({ staticReason: "A test read that no topic watches" })
     .input(userInputSchema)
@@ -287,6 +294,21 @@ describe("inferTopicsMiddleware", () => {
         topics.map(({ topic }) => topic),
       ),
     ).toStrictEqual([`${roomTable}:*`, `${usersToRoomTable}:*`]);
+  });
+
+  // A read names one topic per room it reads, each the room's own messages. Past the header's budget those collapse to the room
+  // Kind's table topic, which every room's write publishes, so the read still fits and is woken by a write in any room
+  test("collapses a read over more rooms than the header's budget to the room kind's table topic", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    await createTestCaller(context).readRoomMessages(Array.from({ length: MAX_READ_TOPICS + 1 }, () => v7()));
+
+    expect(
+      readTopicsHeader(context.responseHeaders, "readRoomMessages").flatMap(({ topics }) =>
+        topics.map(({ topic }) => topic),
+      ),
+    ).toStrictEqual(["room/*:messages:*"]);
   });
 
   // A write to a row a collapsed read does not name wakes the read through its table's topic, which the write publishes
