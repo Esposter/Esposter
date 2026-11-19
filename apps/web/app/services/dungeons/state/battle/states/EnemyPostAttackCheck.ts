@@ -1,6 +1,7 @@
 import type { State } from "#src/models/dungeons/state/State";
 
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { checkHasOtherStandingMonster } from "#src/services/dungeons/monster/checkHasOtherStandingMonster";
 import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
 import { animateMonsterDeath } from "#src/services/dungeons/scene/battle/monster/animateMonsterDeath";
@@ -24,9 +25,7 @@ export const EnemyPostAttackCheck: State<typeof StateName.EnemyPostAttackCheck> 
 
     if (checkIsMonsterFainted(activeMonster.value)) {
       await animateMonsterDeath(false);
-      const hasStandingMonster = player.value.monsters.some(
-        (monster) => monster.id !== activeMonster.value.id && !checkIsMonsterFainted(monster),
-      );
+      const hasStandingMonster = checkHasOtherStandingMonster(player.value.monsters, activeMonster.value);
       await showMessages(scene, [
         `${prettify(activeMonster.value.key)} has fainted!`,
         hasStandingMonster

@@ -2,6 +2,7 @@ import type { State } from "#src/models/dungeons/state/State";
 
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
+import { checkHasOtherStandingMonster } from "#src/services/dungeons/monster/checkHasOtherStandingMonster";
 import { checkIsMonsterFainted } from "#src/services/dungeons/monster/checkIsMonsterFainted";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
 import { animateMonsterDeath } from "#src/services/dungeons/scene/battle/monster/animateMonsterDeath";
@@ -25,9 +26,7 @@ export const SwitchAttempt: State<typeof StateName.SwitchAttempt> = {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
 
-    if (
-      !player.value.monsters.some((monster) => monster.id !== activeMonster.value.id && !checkIsMonsterFainted(monster))
-    ) {
+    if (!checkHasOtherStandingMonster(player.value.monsters, activeMonster.value)) {
       await showMessages(scene, ["You have no other monsters in your party..."]);
       await battleStateMachine.setState(StateName.PlayerInput);
       return;
