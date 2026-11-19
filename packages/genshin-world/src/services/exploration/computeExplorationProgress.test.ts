@@ -23,7 +23,7 @@ describe(computeExplorationProgress, () => {
   test("should floor the done weight's share of the total", () => {
     expect.hasAssertions();
 
-    expect(computeExplorationProgress(area, new Set(["40"]))).toBe(Math.floor((WEIGHT * 100) / TOTAL));
+    expect(computeExplorationProgress(area, new Set(["40"]))).toBe(66);
   });
 
   test("should read 100 once the done weight passes the total", () => {
@@ -69,8 +69,6 @@ describe(computeExplorationProgress, () => {
       rotation: 0,
     };
 
-    expect(computeExplorationProgress(area, computeExploredDoingIds(area, [statue, statue], new Set()))).toBe(
-      Math.floor((WEIGHT * 100) / TOTAL),
-    );
+    expect(computeExplorationProgress(area, computeExploredDoingIds(area, [statue, statue], new Set()))).toBe(66);
   });
 });
