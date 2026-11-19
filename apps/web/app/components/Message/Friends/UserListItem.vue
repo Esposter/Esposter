@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { User } from "better-auth";
+import type { PublicUser } from "@esposter/db-schema";
 
 interface Props {
-  image?: undefined | User["image"];
-  name: User["name"];
+  image?: PublicUser["image"] | undefined;
+  name: PublicUser["name"];
 }
 
 defineSlots<{ append?: () => VNode }>();

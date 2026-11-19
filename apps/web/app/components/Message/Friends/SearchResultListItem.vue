@@ -1,13 +1,15 @@
 <script setup lang="ts">
+import type { PublicUser } from "@esposter/db-schema";
+
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useBlockStore } from "#src/store/message/user/block";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 
 interface Props {
-  id: string;
-  image: null | string;
-  name: string;
+  id: PublicUser["id"];
+  image: PublicUser["image"];
+  name: PublicUser["name"];
 }
 
 const { id } = defineProps<Props>();
