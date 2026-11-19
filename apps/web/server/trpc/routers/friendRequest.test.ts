@@ -6,6 +6,7 @@ import {
   createMockAuthSession,
   createMockCaller,
   createMockContext,
+  createMockOtherUserCaller,
   createMockUser,
   getMockSession,
 } from "#server/trpc/context.test";
@@ -43,7 +44,7 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const senderCaller = await createMockCaller(friendRequestRouter, await createMockAuthSession(mockContext.db));
+    const senderCaller = await createMockOtherUserCaller(friendRequestRouter, mockContext.db);
     const friendRequest = await senderCaller.sendFriendRequest(userId);
 
     expect(friendRequest.receiverId).toBe(userId);
@@ -53,7 +54,7 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const senderCaller = await createMockCaller(friendRequestRouter, await createMockAuthSession(mockContext.db));
+    const senderCaller = await createMockOtherUserCaller(friendRequestRouter, mockContext.db);
     const firstFriendRequest = await senderCaller.sendFriendRequest(userId);
     const secondFriendRequest = await senderCaller.sendFriendRequest(userId);
 

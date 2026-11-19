@@ -9,7 +9,13 @@ import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
 import { DELETE_USER_MESSAGES_PAGE_LIMIT } from "#server/services/message/constants";
 import { createRoomMessage } from "#server/services/message/createRoomMessage.test";
-import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
+import {
+  createMockAuthSession,
+  createMockCaller,
+  createMockContext,
+  createMockOtherUserCaller,
+  getMockSession,
+} from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
@@ -124,7 +130,7 @@ describe("moderationRouter", () => {
 
     const ownerId = getMockSession().user.id;
     const { member } = await setupMemberWithRole(RoomPermission.BanMembers, position);
-    const memberCaller = await createMockCaller(moderationRouter, await createMockAuthSession(mockContext.db, member));
+    const memberCaller = await createMockOtherUserCaller(moderationRouter, mockContext.db, member);
 
     await expect(
       memberCaller.executeAdminAction({ roomId, targetUserId: ownerId, type: AdminActionType.CreateBan }),
@@ -517,7 +523,7 @@ describe("moderationRouter", () => {
     // A separate target, because moderating yourself is rejected before any permission is read
     const target = await createMember();
     const member = await createMember();
-    const memberCaller = await createMockCaller(moderationRouter, await createMockAuthSession(mockContext.db, member));
+    const memberCaller = await createMockOtherUserCaller(moderationRouter, mockContext.db, member);
 
     await expect(moderate(memberCaller, target.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -537,7 +543,7 @@ describe("moderationRouter", () => {
 
       const { member: actor } = await setupMemberWithRole(permission, position);
       const { member: target } = await setupMemberWithRole(0n, position);
-      const actorCaller = await createMockCaller(moderationRouter, await createMockAuthSession(mockContext.db, actor));
+      const actorCaller = await createMockOtherUserCaller(moderationRouter, mockContext.db, actor);
 
       await expect(moderate(actorCaller, target.id)).rejects.toThrowErrorMatchingInlineSnapshot(
         `[TRPCError: UNAUTHORIZED]`,

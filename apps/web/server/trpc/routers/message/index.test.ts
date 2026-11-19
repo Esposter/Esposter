@@ -9,7 +9,13 @@ import { MAX_FORWARD_ROOMS, MAX_SEARCH_ROOMS } from "#server/services/message/co
 import { createRoomMessage as baseCreateRoomMessage } from "#server/services/message/createRoomMessage.test";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
-import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
+import {
+  createMockAuthSession,
+  createMockCaller,
+  createMockContext,
+  createMockOtherUserCaller,
+  getMockSession,
+} from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
@@ -307,7 +313,7 @@ describe("messageRouter", () => {
     // The member is in the room, so the guard that refuses them is authorship and not membership
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage()]);
     const member = await createMember();
-    const memberCaller = await createMockCaller(messageRouter, await createMockAuthSession(mockContext.db, member));
+    const memberCaller = await createMockOtherUserCaller(messageRouter, mockContext.db, member);
 
     await expect(
       memberCaller.updateMessage({ id: messageId, message: updatedText, roomId }),
@@ -603,7 +609,7 @@ describe("messageRouter", () => {
     // Each join writes a line to its room, which is not the forward this test is about
     useRoomObjectMock.mockClear();
     roomObject.createMessage.mockClear();
-    const memberCaller = await createMockCaller(messageRouter, await createMockAuthSession(mockContext.db, member));
+    const memberCaller = await createMockOtherUserCaller(messageRouter, mockContext.db, member);
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ message: filteredMessage })]);
     roomObject.createMessage.mockResolvedValue(createRoomMessage());

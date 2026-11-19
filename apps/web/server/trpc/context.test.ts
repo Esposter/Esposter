@@ -79,6 +79,14 @@ export const createMockCaller = async <TRecord extends TRPCRouterRecord>(
   authSession?: AuthSession | null,
 ) => createCallerFactory(router)(await createMockContext(authSession));
 
+// A router's caller acting as a second user of the test's own: a new one unless an existing user is named, as
+// `createMockAuthSession` makes them. The person a test acts on the data of, beside the caller it acts as
+export const createMockOtherUserCaller = async <TRecord extends TRPCRouterRecord>(
+  router: TRPCBuiltRouter<TRPCRouter["_def"]["_config"]["$types"], TRecord>,
+  db: Context["db"],
+  existingUser?: AuthSession["user"],
+) => createMockCaller(router, await createMockAuthSession(db, existingUser));
+
 const seedMockDb = async () => {
   const { db } = await baseCreateMockDb();
   authMocks.state.insert = db.insert.bind(db);

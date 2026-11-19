@@ -3,7 +3,12 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { PostInPost } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
+import {
+  createMockAuthSession,
+  createMockCaller,
+  createMockContext,
+  createMockOtherUserCaller,
+} from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
 import { likeRouter } from "#server/trpc/routers/like";
@@ -85,7 +90,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const wrongUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
+    const wrongUserCaller = await createMockOtherUserCaller(postRouter, mockContext.db);
 
     await expect(
       wrongUserCaller.updatePost({ description, id: newPost.id }),
@@ -134,7 +139,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const wrongUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
+    const wrongUserCaller = await createMockOtherUserCaller(postRouter, mockContext.db);
 
     await expect(wrongUserCaller.deletePost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Post, newPost.id).message}]`,
@@ -183,7 +188,7 @@ describe("postRouter", () => {
 
     const newPost = await postCaller.createPost({ title });
     const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
-    const wrongUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
+    const wrongUserCaller = await createMockOtherUserCaller(postRouter, mockContext.db);
 
     await expect(
       wrongUserCaller.updateComment({ description, id: newComment.id }),
@@ -282,7 +287,7 @@ describe("postRouter", () => {
 
     const newPost = await postCaller.createPost({ title });
     const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
-    const wrongUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
+    const wrongUserCaller = await createMockOtherUserCaller(postRouter, mockContext.db);
 
     await expect(wrongUserCaller.deleteComment(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, newComment.id).message}]`,
@@ -316,7 +321,7 @@ describe("postRouter", () => {
 
     const newPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: newPost.id, value });
-    const otherUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
+    const otherUserCaller = await createMockOtherUserCaller(postRouter, mockContext.db);
     const post = await otherUserCaller.readPost(newPost.id);
 
     expect(post.viewerLike).toBeUndefined();

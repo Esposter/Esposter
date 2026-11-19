@@ -2,7 +2,12 @@ import type { Context } from "#server/trpc/context";
 
 import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { createParticipant } from "#server/services/message/call/createParticipant";
-import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
+import {
+  createMockAuthSession,
+  createMockCaller,
+  createMockContext,
+  createMockOtherUserCaller,
+} from "#server/trpc/context.test";
 import { callRouter } from "#server/trpc/routers/call/index";
 import { callSessionsInMessage } from "@esposter/db-schema";
 import { v7 } from "uuid";
@@ -47,9 +52,9 @@ describe("knockerRouter", () => {
   test("admitKnocker refuses a caller who is not in the call", async () => {
     expect.hasAssertions();
 
-    const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const creatorCaller = await createMockOtherUserCaller(callRouter, mockContext.db);
     const { callSessionId } = await creatorCaller.createCall();
-    const outsiderCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const outsiderCaller = await createMockOtherUserCaller(callRouter, mockContext.db);
     const readAccess = vi.fn<(input: unknown) => unknown>(() => ({
       isAdmitted: false,
       isJoined: false,
@@ -65,7 +70,7 @@ describe("knockerRouter", () => {
   test("admitKnocker lets the creator in the call admit a knocker through the call object", async () => {
     expect.hasAssertions();
 
-    const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const creatorCaller = await createMockOtherUserCaller(callRouter, mockContext.db);
     const { callSessionId } = await creatorCaller.createCall();
     const readAccess = vi.fn<(input: unknown) => unknown>(() => ({
       isAdmitted: false,
@@ -87,9 +92,9 @@ describe("knockerRouter", () => {
   test("dismissKnocker refuses a joined participant who did not create the call", async () => {
     expect.hasAssertions();
 
-    const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const creatorCaller = await createMockOtherUserCaller(callRouter, mockContext.db);
     const { callSessionId } = await creatorCaller.createCall();
-    const participantCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const participantCaller = await createMockOtherUserCaller(callRouter, mockContext.db);
     const readAccess = vi.fn<(input: unknown) => unknown>(() => ({
       isAdmitted: false,
       isJoined: true,

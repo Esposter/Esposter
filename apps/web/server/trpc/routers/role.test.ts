@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { D1_MAX_BOUND_PARAMETERS } from "#server/services/db/constants";
-import { createMockAuthSession, createMockCaller, createMockUser } from "#server/trpc/context.test";
+import { createMockCaller, createMockOtherUserCaller, createMockUser } from "#server/trpc/context.test";
 import { roleRouter } from "#server/trpc/routers/role";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
@@ -42,7 +42,7 @@ describe("roleRouter", () => {
   test("fails readRoles for a non-member", async () => {
     expect.hasAssertions();
 
-    const nonMemberCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db));
+    const nonMemberCaller = await createMockOtherUserCaller(roleRouter, mockContext.db);
 
     await expect(nonMemberCaller.readRoles({ roomIds: [roomId] })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -103,7 +103,7 @@ describe("roleRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    const memberCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, member));
+    const memberCaller = await createMockOtherUserCaller(roleRouter, mockContext.db, member);
 
     await expect(memberCaller.createRole({ id: v7(), name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -165,7 +165,7 @@ describe("roleRouter", () => {
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
     const peerRole = await roleCaller.createRole({ id: v7(), name, position, roomId });
     const targetMember = await createMember();
-    const actorCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, actor));
+    const actorCaller = await createMockOtherUserCaller(roleRouter, mockContext.db, actor);
 
     await expect(
       actorCaller.assignRole({ roleId: peerRole.id, roomId, userId: targetMember.id }),
@@ -178,7 +178,7 @@ describe("roleRouter", () => {
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
     const lowRole = await roleCaller.createRole({ id: v7(), name, roomId });
     const { member: targetMember } = await setupMemberWithRole(0n, position);
-    const actorCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, actor));
+    const actorCaller = await createMockOtherUserCaller(roleRouter, mockContext.db, actor);
 
     await expect(
       actorCaller.assignRole({ roleId: lowRole.id, roomId, userId: targetMember.id }),
@@ -211,7 +211,7 @@ describe("roleRouter", () => {
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
     const { member: targetMember, role: peerRole } = await setupMemberWithRole(0n, position);
-    const actorCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, actor));
+    const actorCaller = await createMockOtherUserCaller(roleRouter, mockContext.db, actor);
 
     await expect(
       actorCaller.revokeRole({ roleId: peerRole.id, roomId, userId: targetMember.id }),
@@ -223,7 +223,7 @@ describe("roleRouter", () => {
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
     const lowRole = await roleCaller.createRole({ id: v7(), name, roomId });
-    const actorCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, actor));
+    const actorCaller = await createMockOtherUserCaller(roleRouter, mockContext.db, actor);
 
     await expect(
       actorCaller.updateRole({ id: lowRole.id, position, roomId }),
@@ -234,7 +234,7 @@ describe("roleRouter", () => {
     expect.hasAssertions();
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
-    const actorCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, actor));
+    const actorCaller = await createMockOtherUserCaller(roleRouter, mockContext.db, actor);
 
     await expect(
       actorCaller.createRole({ id: v7(), name, position, roomId }),
@@ -246,7 +246,7 @@ describe("roleRouter", () => {
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
     const peerRole = await roleCaller.createRole({ id: v7(), name, position, roomId });
-    const actorCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, actor));
+    const actorCaller = await createMockOtherUserCaller(roleRouter, mockContext.db, actor);
 
     await expect(actorCaller.deleteRole({ id: peerRole.id, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -260,7 +260,7 @@ describe("roleRouter", () => {
       RoomPermission.ManageRoles | RoomPermission.ReadMessages,
       position,
     );
-    const actorCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, actor));
+    const actorCaller = await createMockOtherUserCaller(roleRouter, mockContext.db, actor);
 
     await expect(
       actorCaller.createRole({ id: v7(), name, permissions: RoomPermission.ManageRoom, roomId }),
@@ -275,7 +275,7 @@ describe("roleRouter", () => {
       position,
     );
     const lowRole = await roleCaller.createRole({ id: v7(), name, roomId });
-    const actorCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, actor));
+    const actorCaller = await createMockOtherUserCaller(roleRouter, mockContext.db, actor);
 
     await expect(
       actorCaller.updateRole({ id: lowRole.id, permissions: RoomPermission.ManageRoom, roomId }),
@@ -312,7 +312,7 @@ describe("roleRouter", () => {
     expect.hasAssertions();
 
     const { member } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
-    const memberCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, member));
+    const memberCaller = await createMockOtherUserCaller(roleRouter, mockContext.db, member);
     const myPermissions = await memberCaller.readMyPermissions({ roomIds: [roomId] });
     const memberPermissions = takeOne(myPermissions);
 
@@ -422,7 +422,7 @@ describe("roleRouter", () => {
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
     const targetMember = await createMember();
-    const actorCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, actor));
+    const actorCaller = await createMockOtherUserCaller(roleRouter, mockContext.db, actor);
 
     await expect(
       actorCaller.upsertMemberPermissionOverride({

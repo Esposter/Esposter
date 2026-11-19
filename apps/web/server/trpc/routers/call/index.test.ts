@@ -3,7 +3,12 @@ import type { Context } from "#server/trpc/context";
 import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createParticipant } from "#server/services/message/call/createParticipant";
-import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
+import {
+  createMockAuthSession,
+  createMockCaller,
+  createMockContext,
+  createMockOtherUserCaller,
+} from "#server/trpc/context.test";
 import { callRouter } from "#server/trpc/routers/call/index";
 import { callSessionsInMessage, DatabaseEntityType } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
@@ -28,9 +33,9 @@ describe("callRouter", () => {
   test("joinCall refuses a joiner the call object does not admit", async () => {
     expect.hasAssertions();
 
-    const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const creatorCaller = await createMockOtherUserCaller(callRouter, mockContext.db);
     const { callSessionId } = await creatorCaller.createCall();
-    const joinerCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const joinerCaller = await createMockOtherUserCaller(callRouter, mockContext.db);
     const joinCall = vi.fn<(input: unknown) => Promise<null>>(() => Promise.resolve(null));
     vi.mocked(useCallObject).mockReturnValueOnce({ joinCall } as unknown as ReturnType<typeof useCallObject>);
 
@@ -43,7 +48,7 @@ describe("callRouter", () => {
   test("joinCall records an admitted joiner's call on the joiner's object", async () => {
     expect.hasAssertions();
 
-    const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const creatorCaller = await createMockOtherUserCaller(callRouter, mockContext.db);
     const { callSessionId } = await creatorCaller.createCall();
     const joinerAuthSession = await createMockAuthSession(mockContext.db);
     const joinerCaller = await createMockCaller(callRouter, joinerAuthSession);
@@ -98,7 +103,7 @@ describe("callRouter", () => {
   test("leaveCall reports a call the caller is not in as not found", async () => {
     expect.hasAssertions();
 
-    const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const creatorCaller = await createMockOtherUserCaller(callRouter, mockContext.db);
     const { callSessionId } = await creatorCaller.createCall();
     const leaveCall = vi.fn<(input: unknown) => Promise<null>>(() => Promise.resolve(null));
     vi.mocked(useCallObject).mockReturnValueOnce({ leaveCall } as unknown as ReturnType<typeof useCallObject>);
@@ -111,7 +116,7 @@ describe("callRouter", () => {
   test("setMuted refuses a caller whose participant the call object does not hold", async () => {
     expect.hasAssertions();
 
-    const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const creatorCaller = await createMockOtherUserCaller(callRouter, mockContext.db);
     const { callSessionId } = await creatorCaller.createCall();
     const setMuted = vi.fn<(input: unknown) => Promise<boolean>>(() => Promise.resolve(false));
     vi.mocked(useCallObject).mockReturnValueOnce({ setMuted } as unknown as ReturnType<typeof useCallObject>);
