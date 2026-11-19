@@ -43,7 +43,7 @@ describe(useUserSettingsStore, () => {
 
     const storedUserSettings = { ...userSettings };
     trpcMsw.user.readUserSettings.query(() => userSettings);
-    trpcMsw.user.updateUserSettings.mutation(({ input }) => ({ ...Object.assign(storedUserSettings, input) }));
+    trpcMsw.user.updateUserSettings.mutation(({ input }) => Object.assign(storedUserSettings, input));
     const userSettingsStore = useUserSettingsStore();
     const { readUserSettings, updateUserSettings } = userSettingsStore;
     await readUserSettings();

@@ -6,6 +6,10 @@ import { createOperationData } from "#src/services/shared/createOperationData";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
+// A request is with a party when that party is either end of it, so the read and the removal name the pair one way
+const checkIsWithUser = (friendRequest: FriendRequestInSocialWithRelations, targetUserId: PublicUser["id"]) =>
+  [friendRequest.receiverId, friendRequest.senderId].includes(targetUserId);
+
 export const useFriendRequestStore = defineStore("message/user/friendRequest", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
@@ -45,14 +49,14 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   // The subscription only yields those — so naming the other party identifies the pair on its own, and the
   // Removal never has to wait on a session that has not resolved yet
   const getFriendRequestsByUser = (targetUserId: PublicUser["id"]) =>
-    friendRequests.value.filter(({ receiverId, senderId }) => [receiverId, senderId].includes(targetUserId));
+    friendRequests.value.filter((friendRequest) => checkIsWithUser(friendRequest, targetUserId));
   const storeDeleteFriendRequestsByUser = (targetUserId: PublicUser["id"]) => {
     recordReadingPush(friendRequestsReadKey, {
-      checkIsRemoved: ({ receiverId, senderId }) => [receiverId, senderId].includes(targetUserId),
+      checkIsRemoved: (friendRequest) => checkIsWithUser(friendRequest, targetUserId),
       type: "remove",
     });
     friendRequests.value = friendRequests.value.filter(
-      ({ receiverId, senderId }) => ![receiverId, senderId].includes(targetUserId),
+      (friendRequest) => !checkIsWithUser(friendRequest, targetUserId),
     );
   };
   const storeAcceptFriendRequest = (friendUser: PublicUser) => {
