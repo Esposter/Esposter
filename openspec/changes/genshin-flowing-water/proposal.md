@@ -18,7 +18,7 @@ The capitals' waterfalls are drawn where the game places them, and the rivers fo
 ## Waiting on
 
 - The rivers outside Liyue (task 4.2): no other region's witness holds a water surface, so there is no course to fit.
-- The turn's sign waits on a reference frame of a fall or the game's own fall direction (task 4.1). Liyue's four ribbon values wait on a recording of a river (task 4.3). The rivers' flow and the bend foam wait on the game's water material fields or a recording of a river, and on a recording of a bending river (tasks 4.4 and 4.5). `x-waiting` names each.
+- The turn's sign waits on a reference frame of a fall or the game's own fall direction (task 4.1). Liyue's four ribbon values wait on a recording of a river (task 4.3). The rivers' flow waits on a recording of a river, or on the river surfaces' materials, which the export does not hold (its one water material is a still pond's), and the bend foam waits on a recording of a bending river (tasks 4.4 and 4.5). `x-waiting` names each.
 - Swimming waits for the phase-three character controller, and is not part of this change.
 
 ## Impact
