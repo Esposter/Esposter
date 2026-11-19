@@ -78,6 +78,35 @@ describe(useBlockStore, () => {
     expect(blockedUsers.value).toStrictEqual([first]);
   });
 
+  // An unfriend and a block of the same user are two writes to one friend row, so they run one after the other. On an
+  // Executor each they only read as if they did: the block landed while the unfriend was still out, and the unfriend's
+  // Rollback then put the friend back in the list the block had just removed it from
+  test("does not bring back a friend when a rejected unfriend overlaps a block", async () => {
+    expect.hasAssertions();
+
+    const { promise: unfriendReleased, resolve: releaseUnfriend } = Promise.withResolvers<void>();
+    trpcMsw.friend.deleteFriend.mutation(async () => {
+      await unfriendReleased;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.block.createBlock.mutation(() => first);
+    const friendStore = useFriendStore();
+    const { friends } = storeToRefs(friendStore);
+    const { deleteFriend } = friendStore;
+    const blockStore = useBlockStore();
+    const { createBlock } = blockStore;
+    friends.value = [first];
+    deleteFriend(first.id);
+    const block = createBlock(first.id);
+    // Long enough for a block that was never held back to land, which is what the queue has to prevent
+    await flushPromises();
+    releaseUnfriend();
+    await block;
+    await flushPromises();
+
+    expect(friends.value).toStrictEqual([]);
+  });
+
   // A block and an unblock made while the blocked list is read are not in the answer's favour: the answer may predate
   // Them, so each is replayed over it rather than the answer overwriting the list without them
   test("replays a block and an unblock that land during the read over its answer", async () => {

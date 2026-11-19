@@ -8,17 +8,12 @@ import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 export const useBlockStore = defineStore("message/user/block", () => {
   const { $trpc } = useNuxtApp();
   const friendStore = useFriendStore();
-  const { storeCreateFriend, storeDeleteFriend } = friendStore;
+  const { executeUserPairMutation, storeCreateFriend, storeDeleteFriend } = friendStore;
   const friendRequestStore = useFriendRequestStore();
-  // A block removes the requests between the two users, so it queues on the pair's executor that the friend request
-  // Store owns, beside the accept and decline of those requests. An unblock of the same user shares it too, so the
+  // A block removes the requests between the two users, so it queues on the pair's executor that the friend store
+  // Owns, beside the unfriend, accept and decline of the same user. An unblock of the same user shares it too, so the
   // Two cannot race over the same lists
-  const {
-    executeUserPairMutation,
-    getFriendRequestsByUser,
-    storeCreateFriendRequest,
-    storeDeleteFriendRequestsByUser,
-  } = friendRequestStore;
+  const { getFriendRequestsByUser, storeCreateFriendRequest, storeDeleteFriendRequestsByUser } = friendRequestStore;
   const blockedUsers = ref<PublicUser[]>([]);
   const blockedUsersReadKey = "blockedUsers";
   const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<PublicUser>();

@@ -5,7 +5,10 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation } = useMutation();
+  // Unfriending, accepting, declining, blocking and unblocking all write the one other party's rows, so they share one
+  // Executor keyed by that party. A queue lives on the instance and not on the key, so on two instances a rejected
+  // Write's rollback could put back a row another write had already removed on the server
+  const { executeMutation: executeUserPairMutation } = useMutation();
   const friends = ref<PublicUser[]>([]);
   const friendsReadKey = "friends";
   const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<PublicUser>();
@@ -31,8 +34,8 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   // Results end up disagreeing about the same pair
   const checkIsFriend = (userId: PublicUser["id"]) => friends.value.some(({ id }) => id === userId);
   const deleteFriend = (friendId: PublicUser["id"]) => {
-    executeMutation(() => $trpc.friend.deleteFriend.mutate(friendId), {
-      // The one row this write removes — removals are keyed per friend and never queue against each other
+    executeUserPairMutation(() => $trpc.friend.deleteFriend.mutate(friendId), {
+      // The one row this write removes, and a block of the same user queues behind it on the pair's executor
       applyOptimistic: () => {
         const deletedFriend = friends.value.find(({ id }) => id === friendId);
         storeDeleteFriend(friendId);
@@ -43,5 +46,13 @@ export const useFriendStore = defineStore("message/user/friend", () => {
       key: friendId,
     });
   };
-  return { checkIsFriend, deleteFriend, friends, readFriends, storeCreateFriend, storeDeleteFriend };
+  return {
+    checkIsFriend,
+    deleteFriend,
+    executeUserPairMutation,
+    friends,
+    readFriends,
+    storeCreateFriend,
+    storeDeleteFriend,
+  };
 });
