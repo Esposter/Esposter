@@ -20,7 +20,7 @@ flowchart TD
   ROWS --> ATT["Read each kind's attacks and Animator states"]
   ATT --> ATTGATE{"gate: the dry run prints each placed kind's<br/>attacks and each state's clip"}
   ATTGATE -->|"yes"| STRIKE["A strike reads its attack's damage"]
-  WIKI["Fetch the drops modules and each kind's article into the wiki cache"] --> DROPS["Join each kind to its drop family<br/>and publish the families from the wiki"]
+  WIKI["Fetch the drops modules, templates and articles<br/>into the wiki cache"] --> DROPS["Join each kind to its drop family<br/>and publish the families from the wiki"]
   DROPS --> DROPGATE{"gate: every kind's article gives one drop source, in the dry run"}
   DROPGATE -->|"yes"| PUB
 ```
