@@ -35,6 +35,6 @@ export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefi
     );
   };
   // A reference is read when its identity changes, so one emitted again unchanged is not read a second time
-  watch([() => toValue(reference)?.type, () => toValue(reference)?.id], refresh, { immediate: true });
+  watchImmediate([() => toValue(reference)?.type, () => toValue(reference)?.id], refresh);
   return { dataset, error, isPending, refresh };
 };

@@ -42,7 +42,7 @@ watch(dataset, (newDataset) => {
     reference,
   };
 });
-const pickReference = (newReference: undefined | DatasetReference) => {
+const pickReference = (newReference: DatasetReference | undefined) => {
   if (!newReference) {
     pickedReference.value = undefined;
     modelValue.value = undefined;
@@ -55,7 +55,11 @@ const pickReference = (newReference: undefined | DatasetReference) => {
 
 <template>
   <template v-if="session.data">
-    <DatasetReferencePicker :error :model-value="modelValue?.reference" @update:model-value="pickReference" />
+    <DatasetReferencePicker
+      :error
+      :model-value="modelValue?.reference"
+      @update:model-value="(newReference) => pickReference(newReference)"
+    />
     <template v-if="modelValue">
       <div flex flex-col gap-1 w-64>
         <span text-sm text-muted>X column</span>
