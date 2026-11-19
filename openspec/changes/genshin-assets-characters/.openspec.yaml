@@ -10,9 +10,10 @@ x-touches:
     "packages/genshin-world/src/services/character/**",
     "packages/genshin-world/src/services/resident/**",
     "packages/genshin-world/src/components/Character/**",
+    "packages/genshin-world/src/components/World/Character/**",
     "packages/genshin-world/src/components/World/Interactables/**",
     "packages/genshin-world/src/generated/**",
     "packages/genshin-engine/src/character/**",
     "openspec/changes/genshin-characters/design.md",
   ]
-x-waiting: "Tasks 2.1, 2.2 and 3.1 wait on the ACL database decode of the Traveler's clips, which this Mac's build cannot run; 1.2 waits on the main session's publish of characterModels/scale; 6.1 waits on the owner's further official packs; and 3.2, 4.x, 5.1 to 5.4, 6.2, 7.1, 7.2 and 8.1 were not reached in this run."
+x-waiting: "Tasks 2.1, 2.2, 3.1, 3.2, 5.3 and 5.4's keys wait on the ACL database decode of the clips, which this Mac's build cannot run; 4.1's mouth waits on a speaking input; 4.2 and 6.2 wait on PC exports; 5.1 is not built and 5.2 waits on it; 6.1 waits on the owner's further official packs; 7.1 waits on a parity run; and 8.1 waits on a rendered frame. Done: 1.1, 1.2 and 7.2, and the blink of 4.1."
