@@ -37,7 +37,8 @@ export const createTerrainPiecesHeight = (
 ): ((x: number, z: number) => number) => {
   const getPieces = fileByCell(pieces, ({ domain }) => getTerrainPieceBounds(domain, blendWidth));
   return (x, z) => {
-    // Each piece's distance is read once here, then its neighbours take the others' seam shares, so the total is read first and each piece's own removed
+    // Each piece's distance is read once here, and the seam shares are totalled first
+    // Then each piece's own is removed from the total, leaving its neighbours' shares
     const reads = getPieces(x, z).map((piece) => {
       const signedDistance = getTerrainPieceSignedDistance(piece.domain, x, z);
       return { piece, seamShare: getTerrainSeamShare(signedDistance, blendWidth), signedDistance };
