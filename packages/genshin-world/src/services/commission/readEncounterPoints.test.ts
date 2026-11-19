@@ -9,7 +9,7 @@ describe(readEncounterPoints, () => {
   const now = dailyReset.add({ hours: 12 });
   const pointsBeforeReset = { earnedOn: dailyReset.subtract({ minutes: 1 }), halfPoints: 6 };
 
-  test("encounter Points earned before the daily reset are gone, and the day counts from that reset", () => {
+  test("encounter Points earned before the daily reset are gone", () => {
     expect.hasAssertions();
     const points = readEncounterPoints(pointsBeforeReset, now);
     expect(points.halfPoints).toBe(0);

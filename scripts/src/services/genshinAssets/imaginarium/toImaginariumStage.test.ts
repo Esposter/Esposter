@@ -22,6 +22,22 @@ describe(toImaginariumStage, () => {
     variant: 1,
   };
 
+  test("a name whose monsters share one describe entry resolves to that entry's canonical monster", () => {
+    expect.hasAssertions();
+
+    expect(
+      toImaginariumStage({ ...stage, enemyNames: ["Battle-Hardened Samachurl"] }, 7, monsters, toEnemy),
+    ).toStrictEqual({
+      act: "Act 1",
+      battle: "Normal",
+      easyLevel: 75,
+      enemies: [samachurl],
+      refusals: [],
+      seasonId: 7,
+      variant: 1,
+    });
+  });
+
   test("a stage's names resolve to their codex entries' enemies, and a name whose entries span several, or whose codex names no monster, is listed as refused", () => {
     expect.hasAssertions();
 

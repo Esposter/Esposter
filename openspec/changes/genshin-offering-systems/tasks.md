@@ -1,6 +1,6 @@
 ## 1. Data
 
-- [x] 1.1 Read each offering's levels, thresholds and rewards from its level table or the wiki's page, into the published data. Verify: tests named after the scenarios 'Offering the items for a level raises the offering' and 'Offering fewer items than the next threshold changes nothing', written first and seen failing.
+- [x] 1.1 Read each offering's levels, thresholds and rewards from its level table or the wiki's page, into the published data. Verify: tests named after the scenarios 'Offering the items for a level raises the offering' and 'Offering fewer items than the next threshold reaches no level, and holds them', written first and seen failing.
 - [x] 1.2 Publish each region's offering points beside the Frostbearing Tree's places, from the official map's points. Verify: a test named 'an offering's label is placed at its map point' in `placeMapPoints.test.ts`.
 - [x] 1.3 Stand each offering at its published point in the world, and offer to it from there. Verify: a test named after the scenario 'An offering appears at its map point', written first and seen failing.
 

@@ -94,7 +94,6 @@ describe(createTrialCharacter, () => {
   test("the trial character is at the trial's level", () => {
     expect.hasAssertions();
     expect(createTrialCharacter(TRIAL, TABLES, DATA)).toStrictEqual({
-      // The template names three reliquaries and the table holds two of them
       artifacts: ARTIFACTS,
       ascension: 6,
       constellationCount: 0,
@@ -109,6 +108,12 @@ describe(createTrialCharacter, () => {
       },
       weapon: { ascension: 6, experience: 0, id: WEAPON_ID, level: 90, refinement: 3 },
     });
+  });
+
+  test("the trial character takes its template's artifacts", () => {
+    expect.hasAssertions();
+    // The template names three reliquaries and the table holds two of them
+    expect(createTrialCharacter(TRIAL, TABLES, DATA)?.artifacts.map(({ itemId }) => itemId)).toStrictEqual([91, 92]);
   });
 
   test("a trial whose character has no cited build has no party member", () => {

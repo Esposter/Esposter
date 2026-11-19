@@ -402,6 +402,20 @@ describe(buyShopGood, () => {
     itemId: CARD_ITEM_ID,
   };
 
+  test("a card the player cannot afford is not sold", () => {
+    expect.hasAssertions();
+
+    const inventory = {
+      items: [{ definition: getCardShopItemDefinition(LUCKY_COIN_ITEM_ID), id: 0, quantity: 1 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
+
+    expect(
+      buyShopGood(EMPTY_WALLET, inventory, getCardShopItemDefinition, [], cardShopGood, ADVENTURE_RANK, NOW),
+    ).toBeUndefined();
+  });
+
   test("a card is bought with Lucky Coins", () => {
     expect.hasAssertions();
 

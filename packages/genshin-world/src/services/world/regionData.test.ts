@@ -3,7 +3,12 @@ import type { RegionData } from "#src/models/world/RegionData";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { DomainKind } from "#src/models/domains/DomainKind";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
-import { checkIsJumpKind, REGION_LANDMARKS_SUFFIX, regionLandmarksSchema } from "#src/models/world/JumpLandmark";
+import {
+  checkIsJumpKind,
+  JUMP_LANDMARK_KINDS,
+  REGION_LANDMARKS_SUFFIX,
+  regionLandmarksSchema,
+} from "#src/models/world/JumpLandmark";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { regionDataSchema } from "#src/models/world/RegionData";
 import { readGameData } from "#src/services/data/readGameData";
@@ -60,6 +65,20 @@ describe("regionData", () => {
         expect(regionLandmarks.landmarks).toStrictEqual(landmarks.filter(({ kind }) => checkIsJumpKind(kind)));
       }),
     );
+  });
+
+  test("tree in a region", async () => {
+    expect.hasAssertions();
+
+    const { landmarks } = regionDataSchema.parse(
+      jsonDateParse(await readFile(join(REGION_DIRECTORY, "mondstadt.json"), "utf8")),
+    );
+    const jumpKinds = new Set(
+      landmarks.filter(({ kind }) => JUMP_LANDMARK_KINDS.includes(kind)).map(({ kind }) => kind),
+    );
+
+    expect(landmarks.some(({ kind }) => kind === LandmarkKind.Tree)).toBe(true);
+    expect(jumpKinds.has(LandmarkKind.Tree)).toBe(false);
   });
 
   const readRegions = async (): Promise<RegionData[]> => {

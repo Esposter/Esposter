@@ -16,9 +16,9 @@ The Constellation tab SHALL activate the next constellation when the player pres
 - **WHEN** the Constellation tab is shown
 - **THEN** Activate is disabled and no constellation is activated
 
-#### Scenario: Activate is disabled when all six constellations are active
+#### Scenario: Activate is disabled when all of the set's constellations are active
 
-- **GIVEN** a character with all six constellations active
+- **GIVEN** a character with all of its set's constellations active
 - **WHEN** the Constellation tab is shown
 - **THEN** Activate is disabled
 

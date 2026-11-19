@@ -25,7 +25,7 @@ describe(claimTrialStageReward, () => {
   const materialDataMap = new Map<number, MaterialData>();
   const names = {};
 
-  test("a stage pays its reward on its first clear and nothing on a later one", () => {
+  test("the first clear gives the reward", () => {
     expect.hasAssertions();
 
     const firstClear = claimTrialStageReward(
@@ -42,19 +42,21 @@ describe(claimTrialStageReward, () => {
       inventory: EMPTY_INVENTORY,
       wallet: { ...EMPTY_WALLET, [Currency.Primogem]: PRIMOGEM_COUNT },
     });
+  });
 
-    // The second clear, from the state the first left, pays nothing more
+  test("a later clear gives no reward", () => {
+    expect.hasAssertions();
+
     expect(
-      firstClear &&
-        claimTrialStageReward(
-          STAGE_ID,
-          tables,
-          firstClear.claimedStageIds,
-          firstClear.inventory,
-          firstClear.wallet,
-          names,
-          materialDataMap,
-        ),
-    ).toStrictEqual(firstClear);
+      claimTrialStageReward(
+        STAGE_ID,
+        tables,
+        new Set([STAGE_ID]),
+        EMPTY_INVENTORY,
+        EMPTY_WALLET,
+        names,
+        materialDataMap,
+      ),
+    ).toStrictEqual({ claimedStageIds: new Set([STAGE_ID]), inventory: EMPTY_INVENTORY, wallet: EMPTY_WALLET });
   });
 });

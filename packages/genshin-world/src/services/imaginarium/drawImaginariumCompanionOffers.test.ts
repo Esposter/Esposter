@@ -28,6 +28,21 @@ describe(drawImaginariumCompanionOffers, () => {
     { characterId: 10000004, element: Element.Pyro, level: 50 },
   ];
 
+  test("a Companion event offers characters of its pool's element", () => {
+    expect.hasAssertions();
+
+    const offers = drawImaginariumCompanionOffers(
+      { element: Element.Pyro, offerCount: 2 },
+      season,
+      difficulty,
+      candidates,
+      createSeededRandom(1),
+    );
+
+    expect(offers).toHaveLength(2);
+    expect(offers.every(({ element }) => element === Element.Pyro)).toBe(true);
+  });
+
   test("a Companion event offers only characters the season admits at the difficulty", () => {
     expect.hasAssertions();
 

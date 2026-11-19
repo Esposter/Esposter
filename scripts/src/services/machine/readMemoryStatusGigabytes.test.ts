@@ -10,7 +10,7 @@ vi.mock(import("#src/services/machine/runMachineCommand"), () => ({
 vi.mock(import("node:os"), async (importOriginal) => ({ ...(await importOriginal()), totalmem: () => 16 * GIBIBYTE }));
 
 describe(readMemoryStatusGigabytes, () => {
-  test("the system's sysctl runs from /usr/sbin on macos, and its share reads as gigabytes of total RAM", async () => {
+  test("the system's sysctl runs from /usr/sbin on macos", async () => {
     expect.hasAssertions();
 
     vi.mocked(runMachineCommand).mockResolvedValue("50");

@@ -12,7 +12,17 @@ describe(getReactionParticleDrops, () => {
   const elementalResonances = [Element.Electro];
   const particle = { count: 1, element: Element.Electro, energyDropKind: EnergyDropKind.Particle };
 
-  test("a listed reaction drops a particle once the cooldown has passed, and none within it", () => {
+  test("a listed reaction drops a particle once the cooldown has passed", () => {
+    expect.hasAssertions();
+    const party = createParty([TRAVELER_CHARACTER_ID]);
+
+    expect(getReactionParticleDrops(party, reactions, elementalResonances)).toStrictEqual([particle]);
+    stepPartyCooldowns(party, 5);
+
+    expect(getReactionParticleDrops(party, reactions, elementalResonances)).toStrictEqual([particle]);
+  });
+
+  test("a reaction within the cooldown drops no particle", () => {
     expect.hasAssertions();
     const party = createParty([TRAVELER_CHARACTER_ID]);
 
@@ -20,8 +30,5 @@ describe(getReactionParticleDrops, () => {
     stepPartyCooldowns(party, 4);
 
     expect(getReactionParticleDrops(party, reactions, elementalResonances)).toStrictEqual([]);
-    stepPartyCooldowns(party, 1);
-
-    expect(getReactionParticleDrops(party, reactions, elementalResonances)).toStrictEqual([particle]);
   });
 });
