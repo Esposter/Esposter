@@ -9,6 +9,7 @@ import { LoginButtonItems } from "#src/services/login/LoginButtonItems";
 import { applyOptimisticReplacement } from "#src/services/shared/applyOptimisticReplacement";
 import { LINKED_ACCOUNTS_MUTATION_KEY } from "#src/services/user/constants";
 import { useAlertStore } from "#src/store/alert";
+import { useUserLinkedAccountDialogStore } from "#src/store/user/linkedAccountDialog";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
@@ -22,6 +23,13 @@ const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const { checkIsPending, executeMutation } = useMutation();
 const { data: accounts, error, refresh } = useQuery(() => requireAuthData(listAccounts()), { isInlineError: true });
+const userLinkedAccountDialogStore = useUserLinkedAccountDialogStore();
+const { unlinkingProvider } = storeToRefs(userLinkedAccountDialogStore);
+// Resolved through the primitive rather than a computed of our own, so a target whose account has left the listing
+// — a refresh after another device unlinked it — is dropped with it instead of re-opening this dialog
+const { item: unlinkingAccount } = useSingletonDialog(unlinkingProvider, () =>
+  accounts.value?.find(({ providerId }) => providerId === unlinkingProvider.value),
+);
 // Keyed by provider because that is what a row knows about itself, valued with the account row's own id
 // Because that is what unlinking takes. One provider holds at most one row here: linking keys on the identity
 // The provider issued and `allowDifferentEmails` is off, so a second account of the same provider would have to
@@ -30,6 +38,18 @@ const providerIdAccountIdMap = computed(() => new Map(accounts.value?.map(({ id,
 // The account leaves the list as its unlink is sent, and comes back if the server refuses it
 const removeAccount = (accountId: string) =>
   applyOptimisticReplacement(accounts, (previousAccounts) => previousAccounts.filter(({ id }) => id !== accountId));
+// Read as the confirm is answered rather than as the button was pressed, so the account it unlinks is the one listed then
+const unlinkSelectedAccount = () => {
+  const account = unlinkingAccount.value;
+  if (!account) return;
+
+  const { id } = account;
+  return executeMutation(() => requireAuthData(unlinkAccount({ accountId: id })), {
+    applyOptimistic: () => removeAccount(id),
+    // Unlinks share one queue, so the server's check that one account is left reads the one before it
+    key: LINKED_ACCOUNTS_MUTATION_KEY,
+  });
+};
 // A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its outcome never
 // Reaches the write that issued it
 const linkError = router.currentRoute.value.query.error;
@@ -75,19 +95,14 @@ if (typeof linkError === "string") {
               { awaitedBecause: AwaitedReason.ServerIssuedValue, key: loginButtonProps.provider },
             )
           "
-          @unlink="
-            () => {
-              const accountId = providerIdAccountIdMap.get(loginButtonProps.provider);
-              if (!accountId) return;
-              executeMutation(() => requireAuthData(unlinkAccount({ accountId })), {
-                applyOptimistic: () => removeAccount(accountId),
-                // Unlinks share one queue, so the server's check that one account is left reads the one before it
-                key: LINKED_ACCOUNTS_MUTATION_KEY,
-              });
-            }
-          "
+          @unlink="unlinkingProvider = loginButtonProps.provider"
         />
       </ul>
     </UiAsyncBody>
   </UserSettingsSection>
+  <UserLinkedAccountsCardConfirmUnlinkDialog
+    v-if="unlinkingAccount"
+    :provider="unlinkingAccount.providerId"
+    :unlink="unlinkSelectedAccount"
+  />
 </template>
