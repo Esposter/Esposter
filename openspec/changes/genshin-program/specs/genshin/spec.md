@@ -38,9 +38,9 @@ The app's bundle and its own server SHALL ship no model, texture, sound or image
 
 A character SHALL be drawn only from an official HoYoverse model, which the startup loading screen downloads from the published packs before the world shows.
 
-#### Scenario: A pack that fails to download draws no capsule
+#### Scenario: Missing pack stops the loading and draws no capsule
 
-- **GIVEN** the character's pack could not be downloaded after its attempts
+- **GIVEN** the character's pack is missing or could not be downloaded after its attempts
 - **WHEN** the loading stops
 - **THEN** the failure is shown
 - **AND** no capsule is drawn in its place
