@@ -96,8 +96,8 @@ describe(useLikeOperations, () => {
     expect(post.likeCount).toBe(0);
   });
 
-  // A second click while the first create is still in flight is dropped by the single-flight guard, so the likes
-  // Primary key never sees a second create
+  // A second click while the first create is still in flight is dropped by the single-flight guard, so the
+  // `likes` primary-key never sees a second create
   test("a rapid second click on a like creates only one like", async () => {
     expect.hasAssertions();
 
