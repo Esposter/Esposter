@@ -1,8 +1,6 @@
 import type { NuxtHooks } from "nuxt/schema";
 import type { Plugin } from "vite";
 
-import { InvalidOperationError, Operation } from "@esposter/shared";
-
 type Component = Parameters<NuxtHooks["components:extend"]>[0][number];
 type Unimport = Parameters<NuxtHooks["imports:context"]>[0];
 
@@ -28,12 +26,14 @@ export const createAutoImportCacheKey = () => {
       unimport = context;
     },
   } satisfies Partial<NuxtHooks>;
-  const plugin: Plugin = {
+  const plugin = {
+    // @TODO: no upstream issue — Vitest types configureVitest as returning void, yet awaits every one (`Promise.all` over
+    // The sorted hooks in its cli-api chunk), so the async hook the cache key needs reads as misused
+    // oxlint-disable-next-line typescript/no-misused-promises, typescript/strict-void-return -- Vitest awaits this hook
     async configureVitest({ defineCacheKeyGenerator }) {
       if (!unimport)
-        throw new InvalidOperationError(
-          Operation.Read,
-          "imports:context",
+        // oxlint-disable-next-line error-handling/no-bare-error -- the Nuxt configuration loads before `@esposter/shared` is built
+        throw new Error(
           "Nuxt never handed over its auto-import context, so a persisted transform could not be keyed on it",
         );
       const sourceMap = new Map<string, string>();
@@ -51,7 +51,7 @@ export const createAutoImportCacheKey = () => {
         return [...entries].toSorted().join(";");
       });
     },
-    name: "esposter:auto-import-cache-key",
-  };
+    name: "auto-import-cache-key",
+  } satisfies Plugin;
   return { hooks, plugin };
 };

@@ -12,13 +12,11 @@ const getGenerator = async (imports: { from: string; name: string }[]) => {
   let generator: CacheKeyGenerator | undefined;
   hooks["imports:context"]({ getImports: () => Promise.resolve(imports) } as unknown as Unimport);
   hooks["components:extend"]([]);
-  await Promise.resolve(
-    plugin.configureVitest?.({
-      defineCacheKeyGenerator: (newGenerator: CacheKeyGenerator) => {
-        generator = newGenerator;
-      },
-    } as unknown as VitestPluginContext),
-  );
+  await plugin.configureVitest({
+    defineCacheKeyGenerator: (newGenerator: CacheKeyGenerator) => {
+      generator = newGenerator;
+    },
+  } as unknown as VitestPluginContext);
   return (code: string) => generator?.({ id: "", sourceCode: code } as Parameters<CacheKeyGenerator>[0]);
 };
 
@@ -53,10 +51,8 @@ describe(createAutoImportCacheKey, () => {
 
     const { plugin } = createAutoImportCacheKey();
 
-    await expect(
-      Promise.resolve().then(() => plugin.configureVitest?.({} as VitestPluginContext)),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: imports:context, Nuxt never handed over its auto-import context, so a persisted transform could not be keyed on it]`,
+    await expect(plugin.configureVitest({} as VitestPluginContext)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Nuxt never handed over its auto-import context, so a persisted transform could not be keyed on it]`,
     );
   });
 });
