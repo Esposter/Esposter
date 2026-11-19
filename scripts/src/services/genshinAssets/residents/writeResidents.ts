@@ -15,7 +15,7 @@ import {
   RESIDENT_NIGHT_SPOT_MAP,
   RESIDENT_WEEK_GAME_MAP,
 } from "#src/services/genshinAssets/residents/constants";
-import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents/findNearestLandmarkAreaId";
+import { findResidentAreaId } from "#src/services/genshinAssets/residents/findResidentAreaId";
 import { joinResidents } from "#src/services/genshinAssets/residents/joinResidents";
 import { mapSpeakerTalkIds } from "#src/services/genshinAssets/residents/mapSpeakerTalkIds";
 import { readDialogSpeakers } from "#src/services/genshinAssets/residents/readDialogSpeakers";
@@ -23,6 +23,7 @@ import { readFittedRegions } from "#src/services/genshinAssets/residents/readFit
 import { toResidentPlace } from "#src/services/genshinAssets/residents/toResidentPlace";
 import { SCENE_GROUPS_KEY } from "#src/services/genshinAssets/sceneGroups/constants";
 import { REGION_MAX_DISTANCE } from "#src/services/genshinAssets/shared/constants";
+import { readCatalogueRegions } from "#src/services/genshinAssets/shared/readCatalogueRegions";
 import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { NPC_TABLE_NAME } from "#src/services/genshinText/constants";
 import { mapNpcStandingTalkIds } from "#src/services/genshinText/mapNpcStandingTalkIds";
@@ -73,12 +74,13 @@ export const writeResidents = async ({ isDryRun }: DryRunOptions): Promise<strin
   const talkConfigs = await readTalkConfigs();
   const talkIdMap = new Map([...mapSpeakerTalkIds(speakers), ...mapNpcStandingTalkIds(talkConfigs)]);
   const landmarksMap = new Map(regionFiles.map(({ data, region }) => [region, data.landmarks] as const));
+  const catalogue = { regions: await readCatalogueRegions() };
   const craftingBenchNpcIds = new Set(craftingBench ? [craftingBench.objectId] : []);
   const residentJoin = joinResidents(
     placements,
     nameTextIdMap,
     talkIdMap,
-    (region, position) => findNearestLandmarkAreaId(region, landmarksMap.get(region) ?? [], position),
+    (region, position) => findResidentAreaId(region, catalogue, landmarksMap.get(region) ?? [], position),
     craftingBenchNpcIds,
     RESIDENT_NIGHT_SPOT_MAP,
   );

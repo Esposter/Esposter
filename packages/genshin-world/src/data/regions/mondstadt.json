@@ -15831,14 +15831,14 @@
   ],
   "residents": [
     {
-      "areaId": "windwail-highland",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -315.68, "z": -233.07 }, "rotation": 1.5708 },
       "id": "1002",
       "nameTextId": "2219684877",
       "talkId": "30603"
     },
     {
-      "areaId": "windwail-highland",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -316.54, "z": -233.71 }, "rotation": -3.0457 },
       "id": "1029",
       "nameTextId": "3833498965",
@@ -15978,7 +15978,7 @@
       "talkId": "4008076"
     },
     {
-      "areaId": "windwail-highland",
+      "areaId": "starfell-valley",
       "day": { "position": { "x": 234.58, "z": -402.59 }, "rotation": 1.6552 },
       "id": "30264",
       "nameTextId": "1844246776",

@@ -4,10 +4,11 @@ import type { SceneGroups } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { CRAFTING_KEEPER_BENCH_OFFSET_METRES } from "#src/services/genshinAssets/crafting/constants";
-import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents/findNearestLandmarkAreaId";
+import { findResidentAreaId } from "#src/services/genshinAssets/residents/findResidentAreaId";
 import { readDialogSpeakers } from "#src/services/genshinAssets/residents/readDialogSpeakers";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
 import { writeResidents } from "#src/services/genshinAssets/residents/writeResidents";
+import { readCatalogueRegions } from "#src/services/genshinAssets/shared/readCatalogueRegions";
 import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTalkConfigs } from "#src/services/genshinText/readTalkConfigs";
@@ -15,10 +16,11 @@ import { SceneGroupSource } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/gameData/readPublishedGameData"));
-vi.mock(import("#src/services/genshinAssets/residents/findNearestLandmarkAreaId"));
+vi.mock(import("#src/services/genshinAssets/residents/findResidentAreaId"));
 vi.mock(import("#src/services/genshinAssets/residents/readDialogSpeakers"));
 vi.mock(import("#src/services/genshinAssets/residents/readFittedRegions"));
 vi.mock(import("#src/services/genshinAssets/shared/writeRegionData"));
+vi.mock(import("#src/services/genshinAssets/shared/readCatalogueRegions"));
 vi.mock(import("#src/services/genshinText/readExcelTable"));
 vi.mock(import("#src/services/genshinText/readTalkConfigs"));
 
@@ -43,6 +45,7 @@ describe(writeResidents, () => {
       transform: IDENTITY_TRANSFORM,
     });
     vi.mocked(readPublishedGameData).mockResolvedValue({ buildings: {}, groups: {} } satisfies SceneGroups);
+    vi.mocked(readCatalogueRegions).mockResolvedValue([]);
     vi.mocked(readDialogSpeakers).mockReturnValue([]);
     vi.mocked(readExcelTable).mockReturnValue([]);
     vi.mocked(readTalkConfigs).mockResolvedValue([]);
@@ -71,7 +74,7 @@ describe(writeResidents, () => {
     const BLANCHE_NPC_ID = 1423;
     const BLANCHE_NAME_TEXT_HASH = 1;
     const BLANCHE_TALK_ID = 46406;
-    vi.mocked(findNearestLandmarkAreaId).mockReturnValue(AREA_ID);
+    vi.mocked(findResidentAreaId).mockReturnValue(AREA_ID);
     vi.mocked(readFittedRegions).mockResolvedValueOnce({
       origin: [0, 0, 0],
       points: [],
@@ -120,7 +123,7 @@ describe(writeResidents, () => {
 
   // A challenger the scene places at a building point, with the talk the dialog names for the NPC
   const seatChallenger = (buildingId: string, npcId: number, nameTextHash: number, talkId: number): void => {
-    vi.mocked(findNearestLandmarkAreaId).mockReturnValue(AREA_ID);
+    vi.mocked(findResidentAreaId).mockReturnValue(AREA_ID);
     vi.mocked(readFittedRegions).mockResolvedValueOnce({
       origin: [0, 0, 0],
       points: [],

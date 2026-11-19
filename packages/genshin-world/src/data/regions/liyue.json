@@ -20611,7 +20611,7 @@
       "talkId": "7165807"
     },
     {
-      "areaId": "minlin",
+      "areaId": "bishui-plain",
       "day": { "position": { "x": -446.72, "z": -2553.24 }, "rotation": 1.6008 },
       "id": "20036",
       "nameTextId": "1340641421",
@@ -20653,49 +20653,49 @@
       "talkId": "7101302"
     },
     {
-      "areaId": "minlin",
+      "areaId": "chenyu-vale-southern-mountain",
       "day": { "position": { "x": -5.52, "z": -2850.94 }, "rotation": 0.7995 },
       "id": "2284",
       "nameTextId": "797729880",
       "talkId": "6228401"
     },
     {
-      "areaId": "minlin",
+      "areaId": "chenyu-vale-southern-mountain",
       "day": { "position": { "x": -316.36, "z": -2750.23 }, "rotation": -0.2863 },
       "id": "2239",
       "nameTextId": "3390375016",
       "talkId": "6223901"
     },
     {
-      "areaId": "minlin",
+      "areaId": "chenyu-vale-southern-mountain",
       "day": { "position": { "x": -304.39, "z": -2767.38 }, "rotation": 0 },
       "id": "2243",
       "nameTextId": "3057881320",
       "talkId": "6224301"
     },
     {
-      "areaId": "minlin",
+      "areaId": "chenyu-vale-southern-mountain",
       "day": { "position": { "x": -277.3, "z": -2754.54 }, "rotation": 0 },
       "id": "2242",
       "nameTextId": "2774916600",
       "talkId": "6224201"
     },
     {
-      "areaId": "minlin",
+      "areaId": "chenyu-vale-upper-vale",
       "day": { "position": { "x": 108.42, "z": -2873.32 }, "rotation": 2.5376 },
       "id": "2326",
       "nameTextId": "2467430840",
       "talkId": "6232601"
     },
     {
-      "areaId": "minlin",
+      "areaId": "chenyu-vale-southern-mountain",
       "day": { "position": { "x": -77.02, "z": -2860.91 }, "rotation": -2.3539 },
       "id": "2237",
       "nameTextId": "3039678792",
       "talkId": "6223701"
     },
     {
-      "areaId": "minlin",
+      "areaId": "chenyu-vale-upper-vale",
       "day": { "position": { "x": 408.97, "z": -3592.7 }, "rotation": -1.6143 },
       "id": "2327",
       "nameTextId": "2757549184",
@@ -21038,7 +21038,7 @@
       "talkId": "100993"
     },
     {
-      "areaId": "qiongji-estuary",
+      "areaId": "bishui-plain",
       "day": { "position": { "x": -954.28, "z": -1575.39 }, "rotation": 0.1098 },
       "id": "20029",
       "nameTextId": "2285149533",
@@ -21052,7 +21052,7 @@
       "talkId": "2102000"
     },
     {
-      "areaId": "minlin",
+      "areaId": "qiongji-estuary",
       "day": { "position": { "x": -1639.43, "z": -1790 }, "rotation": -3.0287 },
       "id": "20046",
       "nameTextId": "1925635469",
@@ -21066,7 +21066,7 @@
       "talkId": "2102501"
     },
     {
-      "areaId": "minlin",
+      "areaId": "qiongji-estuary",
       "day": { "position": { "x": -1645.67, "z": -1780.92 }, "rotation": 0 },
       "id": "20081",
       "nameTextId": "136504341",
@@ -21094,21 +21094,21 @@
       "talkId": "7100512"
     },
     {
-      "areaId": "qiongji-estuary",
+      "areaId": "bishui-plain",
       "day": { "position": { "x": -982.9, "z": -1593.42 }, "rotation": -2.4943 },
       "id": "20104",
       "nameTextId": "2067999189",
       "talkId": "50101"
     },
     {
-      "areaId": "sea-of-clouds",
+      "areaId": "qiongji-estuary",
       "day": { "position": { "x": -1855.27, "z": -2000.95 }, "rotation": -2.0151 },
       "id": "20110",
       "nameTextId": "4163511525",
       "talkId": "7100603"
     },
     {
-      "areaId": "minlin",
+      "areaId": "qiongji-estuary",
       "day": { "position": { "x": -1833.64, "z": -2041.28 }, "rotation": -1.9706 },
       "id": "20111",
       "nameTextId": "1688533157",
@@ -21164,7 +21164,7 @@
       "talkId": "34761"
     },
     {
-      "areaId": "sea-of-clouds",
+      "areaId": "qiongji-estuary",
       "day": { "position": { "x": -1795.72, "z": -1562.7 }, "rotation": 0 },
       "id": "20151",
       "nameTextId": "3898665197",
@@ -21262,49 +21262,49 @@
       "talkId": "30309"
     },
     {
-      "areaId": "sea-of-clouds",
+      "areaId": "lisha",
       "day": { "position": { "x": -2513.24, "z": -2321.26 }, "rotation": 2.2711 },
       "id": "20057",
       "nameTextId": "3255716949",
       "talkId": "2100604"
     },
     {
-      "areaId": "the-chasm",
+      "areaId": "lisha",
       "day": { "position": { "x": -2543.52, "z": -2550.7 }, "rotation": -0.0917 },
       "id": "20056",
       "nameTextId": "4011512037",
       "talkId": "2100603"
     },
     {
-      "areaId": "sea-of-clouds",
+      "areaId": "lisha",
       "day": { "position": { "x": -2425.1, "z": -2328.45 }, "rotation": 0 },
       "id": "20084",
       "nameTextId": "759690533",
       "talkId": "7155503"
     },
     {
-      "areaId": "the-chasm",
+      "areaId": "lisha",
       "day": { "position": { "x": -2737.03, "z": -2557.3 }, "rotation": 1.582 },
       "id": "20139",
       "nameTextId": "2594141605",
       "talkId": "2100606"
     },
     {
-      "areaId": "sea-of-clouds",
+      "areaId": "lisha",
       "day": { "position": { "x": -2123.14, "z": -2302.81 }, "rotation": 0 },
       "id": "20152",
       "nameTextId": "1362215021",
       "talkId": "34769"
     },
     {
-      "areaId": "the-chasm",
+      "areaId": "lisha",
       "day": { "position": { "x": -2403.21, "z": -2473.76 }, "rotation": 0 },
       "id": "20153",
       "nameTextId": "2825832797",
       "talkId": "34764"
     },
     {
-      "areaId": "sea-of-clouds",
+      "areaId": "lisha",
       "day": { "position": { "x": -2640.86, "z": -2303.63 }, "rotation": 0 },
       "id": "20154",
       "nameTextId": "1268743581",
@@ -21493,7 +21493,7 @@
       "talkId": "30307"
     },
     {
-      "areaId": "sea-of-clouds",
+      "areaId": "lisha",
       "day": { "position": { "x": -2235.71, "z": -2254.43 }, "rotation": -0.4314 },
       "id": "1208",
       "nameTextId": "560733621",
@@ -21514,7 +21514,7 @@
       "talkId": "100022"
     },
     {
-      "areaId": "sea-of-clouds",
+      "areaId": "lisha",
       "day": { "position": { "x": -2009.46, "z": -2235 }, "rotation": -2.0562 },
       "id": "20058",
       "nameTextId": "1792746877",
@@ -21682,7 +21682,7 @@
       "talkId": "34767"
     },
     {
-      "areaId": "sea-of-clouds",
+      "areaId": "lisha",
       "day": { "position": { "x": -2179.59, "z": -2136.65 }, "rotation": 0 },
       "id": "20155",
       "nameTextId": "2793146469",
@@ -21766,7 +21766,7 @@
       "talkId": "101004"
     },
     {
-      "areaId": "sea-of-clouds",
+      "areaId": "lisha",
       "day": { "position": { "x": -2666.24, "z": -1990.85 }, "rotation": 0.3724 },
       "id": "30124",
       "nameTextId": "3880716309",
@@ -22116,28 +22116,28 @@
       "talkId": "200223"
     },
     {
-      "areaId": "minlin",
+      "areaId": "chenyu-vale-upper-vale",
       "day": { "position": { "x": 182.81, "z": -3026.69 }, "rotation": 0 },
       "id": "2319",
       "nameTextId": "89831556",
       "talkId": "6231901"
     },
     {
-      "areaId": "minlin",
+      "areaId": "chenyu-vale-upper-vale",
       "day": { "position": { "x": 287.65, "z": -2810.29 }, "rotation": 0 },
       "id": "2285",
       "nameTextId": "2085900448",
       "talkId": "6228501"
     },
     {
-      "areaId": "minlin",
+      "areaId": "chenyu-vale-upper-vale",
       "day": { "position": { "x": 734.61, "z": -3521.06 }, "rotation": 1.9362 },
       "id": "2236",
       "nameTextId": "3244245344",
       "talkId": "7111701"
     },
     {
-      "areaId": "minlin",
+      "areaId": "chenyu-vale-upper-vale",
       "day": { "position": { "x": -39.11, "z": -3432.43 }, "rotation": 0 },
       "id": "2286",
       "nameTextId": "3133331616",
@@ -22186,28 +22186,28 @@
       "talkId": "6202607"
     },
     {
-      "areaId": "qiongji-estuary",
+      "areaId": "bishui-plain",
       "day": { "position": { "x": -964.86, "z": -1547.47 }, "rotation": 1.1676 },
       "id": "30005",
       "nameTextId": "1272977557",
       "talkId": "4111208"
     },
     {
-      "areaId": "qiongji-estuary",
+      "areaId": "bishui-plain",
       "day": { "position": { "x": -1010.87, "z": -1535.96 }, "rotation": -0.747 },
       "id": "30006",
       "nameTextId": "412954717",
       "talkId": "4111517"
     },
     {
-      "areaId": "qiongji-estuary",
+      "areaId": "bishui-plain",
       "day": { "position": { "x": -1012.95, "z": -1547.55 }, "rotation": -2.3946 },
       "id": "30007",
       "nameTextId": "2368521685",
       "talkId": "4111515"
     },
     {
-      "areaId": "qiongji-estuary",
+      "areaId": "bishui-plain",
       "day": { "position": { "x": -1010.39, "z": -1532.35 }, "rotation": -0.3302 },
       "id": "30023",
       "nameTextId": "1001067757",
@@ -22242,21 +22242,21 @@
       "talkId": "4111314"
     },
     {
-      "areaId": "qiongji-estuary",
+      "areaId": "bishui-plain",
       "day": { "position": { "x": -962.71, "z": -1549.42 }, "rotation": 1.6738 },
       "id": "30020",
       "nameTextId": "1806451021",
       "talkId": "4111518"
     },
     {
-      "areaId": "qiongji-estuary",
+      "areaId": "bishui-plain",
       "day": { "position": { "x": -1004.4, "z": -1533.3 }, "rotation": 0 },
       "id": "30021",
       "nameTextId": "2558240989",
       "talkId": "4111519"
     },
     {
-      "areaId": "qiongji-estuary",
+      "areaId": "bishui-plain",
       "day": { "position": { "x": -1011.32, "z": -1549.54 }, "rotation": 2.8681 },
       "id": "30022",
       "nameTextId": "1084332269",
@@ -22305,7 +22305,7 @@
       "talkId": "4100101"
     },
     {
-      "areaId": "sea-of-clouds",
+      "areaId": "qiongji-estuary",
       "day": { "position": { "x": -1829, "z": -1647.57 }, "rotation": 1.9824 },
       "id": "20172",
       "nameTextId": "3120577005",
