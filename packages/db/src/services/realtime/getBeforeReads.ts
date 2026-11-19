@@ -18,8 +18,8 @@ export interface BeforeRead {
 
 // The reads a write needs before it runs, so the values its rows hold before it are named with the values they hold after
 // It. An update reads the rows its WHERE matches, when its SET writes a scope column. A delete reads the rows each table it
-// Cascades to holds, so the children that RETURNING does not report are named by their own scope values. A statement that is
-// Not a write needs none
+// Cascades to holds, and the rows of each table a key sets null or to its default changes, so the children that RETURNING
+// Does not report are named by their own scope values. A statement that is not a write needs none
 export const getBeforeReads = (database: Database, statement: SQLWrapper): BeforeRead[] => {
   if (is(statement, SQLiteUpdateBase)) return getUpdateBeforeReads(database, statement);
   if (is(statement, SQLiteDeleteBase)) return getDeleteBeforeReads(database, statement);
@@ -39,14 +39,21 @@ const getUpdateBeforeReads = (database: Database, statement: SQLWrapper): Before
 const getDeleteBeforeReads = (database: Database, statement: SQLWrapper): BeforeRead[] => {
   const table = getWriteTable(statement);
   if (!table) return [];
-  const { conditionOf, removedTables } = getRemovalConditions(database, table, getWhere(getStatementConfig(statement)));
-  return removedTables.flatMap((removedTable) => {
-    const condition = conditionOf(removedTable);
-    const scopeKeys = getScopeKeys(removedTable);
+  const { changedConditions, conditionOf, removedTables } = getRemovalConditions(
+    database,
+    table,
+    getWhere(getStatementConfig(statement)),
+  );
+  const removedReads = removedTables.map((removedTable) => ({
+    condition: conditionOf(removedTable),
+    table: removedTable,
+  }));
+  return [...removedReads, ...changedConditions].flatMap(({ condition, table: readTable }) => {
+    const scopeKeys = getScopeKeys(readTable);
     // A table with no condition is not walked, and one with no scope column holds nothing a topic names
     return condition === undefined || scopeKeys.length === 0
       ? []
-      : [{ select: selectScope(database, removedTable, scopeKeys, condition), table: removedTable }];
+      : [{ select: selectScope(database, readTable, scopeKeys, condition), table: readTable }];
   });
 };
 

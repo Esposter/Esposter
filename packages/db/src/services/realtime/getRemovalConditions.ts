@@ -1,10 +1,11 @@
+import type { ChangedCondition } from "#src/models/realtime/ChangedCondition";
 import type { ReferencingColumn, ReferencingKey } from "#src/models/realtime/ReferencingKey";
 import type { Database } from "@esposter/db-schema";
 import type { SQL, Table } from "drizzle-orm";
 
 import { tableNameReferencingKeysMap } from "#src/services/realtime/tableNameReferencingKeysMap";
 import { walkCascade } from "#src/services/realtime/walkCascade";
-import { getOrCreate } from "@esposter/shared";
+import { getOrCreate, takeOne } from "@esposter/shared";
 import { getTableName, or, sql } from "drizzle-orm";
 
 // A cascading key from a table a delete removes rows from, into the table that holds it
@@ -27,10 +28,14 @@ export const getRemovalConditions = (database: Database, table: Table, where: SQ
   const { removedTables } = walkCascade(table);
   const removedNames = new Set(removedTables.map((removedTable) => getTableName(removedTable)));
   const tableNameIncomingKeysMap = new Map<string, IncomingKey[]>();
+  const tableNameChangedKeysMap = new Map<string, IncomingKey[]>();
   for (const parent of removedTables)
-    for (const key of tableNameReferencingKeysMap.get(getTableName(parent)) ?? [])
+    for (const key of tableNameReferencingKeysMap.get(getTableName(parent)) ?? []) {
       if (key.action === "cascade" && removedNames.has(getTableName(key.table)))
         getOrCreate(tableNameIncomingKeysMap, getTableName(key.table), () => []).push({ key, parent });
+      if ((key.action === "set null" || key.action === "set default") && !removedNames.has(getTableName(key.table)))
+        getOrCreate(tableNameChangedKeysMap, getTableName(key.table), () => []).push({ key, parent });
+    }
 
   const conditions = new Map<string, RemovalCondition>();
   const visiting = new Set<string>();
@@ -53,7 +58,14 @@ export const getRemovalConditions = (database: Database, table: Table, where: SQ
     conditions.set(name, condition);
     return condition;
   };
-  return { conditionOf, removedTables };
+  // A changed child's rows are those its changing keys reach from a removed parent, so each key's condition is over the parent's
+  const changedConditions: ChangedCondition[] = Array.from(tableNameChangedKeysMap.values(), (incomingKeys) => ({
+    condition: or(
+      ...incomingKeys.map(({ key, parent }) => getKeyCondition(database, key, parent, conditionOf(parent))),
+    ),
+    table: takeOne(incomingKeys, 0).key.table,
+  }));
+  return { changedConditions, conditionOf, removedTables };
 };
 
 // The rows of a child table whose key columns hold the referenced columns of a removed parent row

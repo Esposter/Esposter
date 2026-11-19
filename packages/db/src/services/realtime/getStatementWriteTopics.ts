@@ -2,7 +2,6 @@ import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 import type { ColumnTopic } from "@esposter/db-schema";
 import type { SQLWrapper, Table } from "drizzle-orm";
 
-import { getCascadeRowTopics } from "#src/services/realtime/getCascadeRowTopics";
 import { getRowTopics } from "#src/services/realtime/getRowTopics";
 import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
 import { getWriteTable } from "#src/services/realtime/getWriteTable";
@@ -25,8 +24,8 @@ const getWriteColumns = (table: Table, statement: SQLWrapper): string[] | undefi
 
 // The topics one statement publishes, each with the columns the write changed. A write that asks for RETURNING names the
 // Scope values of the rows it returned, so one that returned none changed nothing. A write that asks for none names the rows
-// It read before it ran, if it made any: an update's old values, and a delete's cascaded rows. Every changed table names its
-// Table-wide topic, and a delete's cascaded tables are named table-wide, since RETURNING does not report the rows they lose
+// It read before it ran, if it made any: an update's old values, and a delete's cascaded and changed rows. Every changed table
+// Names its table-wide topic, and a delete's cascaded and changed tables are named table-wide, since RETURNING does not report them
 export const getStatementWriteTopics = async ({
   before,
   rows,
@@ -46,8 +45,5 @@ export const getStatementWriteTopics = async ({
   const cascadedTopics = walkCascade(table).changedTables.map((cascadedTable) =>
     getColumnTopic(getTableTopic(getTableName(cascadedTable)), undefined),
   );
-  // A set null or set default key changes its child's value in place, so the child's old value is named from the rows the
-  // Delete returned, since the child was not read
-  const cascadeRowTopics = returnsRows ? await getCascadeRowTopics(table, rows) : [];
-  return [...tableTopics, ...rowTopics, ...cascadedTopics, ...cascadeRowTopics, ...beforeTopics];
+  return [...tableTopics, ...rowTopics, ...cascadedTopics, ...beforeTopics];
 };

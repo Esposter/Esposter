@@ -10,6 +10,7 @@ import {
   bookmarksInApp,
   invitesInMessage,
   resourcesInResource,
+  roomCategoriesInMessage,
   roomEmojisInMessage,
   roomsInMessage,
   RoomType,
@@ -798,6 +799,28 @@ describe(getReadTopics, () => {
       .where(eq(usersToRoomsInMessage.roomId, roomId));
 
     await expect(getWoken(read.statements, write.statements)).resolves.toContain(`${tableName}:*`);
+  });
+
+  // A category's deletion sets each member's category to null, which changes a column a member's scope does not name. A read
+  // Scoped by that member and selecting the category is woken through the member's scope topic, which the delete names
+  test("a delete that sets a member's category to null wakes a read scoped by that member that selects the category", async () => {
+    expect.hasAssertions();
+
+    const { db, roomId, userId } = await seedUserRoom();
+    const categoryId = v7();
+    await db.insert(roomCategoriesInMessage).values({ id: categoryId, name: "a", position: 0, userId });
+    await db.update(usersToRoomsInMessage).set({ categoryId }).where(eq(usersToRoomsInMessage.roomId, roomId));
+    const read = recordStatements(db);
+    await read.database
+      .select({ categoryId: usersToRoomsInMessage.categoryId })
+      .from(usersToRoomsInMessage)
+      .where(eq(usersToRoomsInMessage.userId, userId));
+    const write = recordStatements(db);
+    await write.database.delete(roomCategoriesInMessage).where(eq(roomCategoriesInMessage.id, categoryId));
+
+    await expect(getWoken(read.statements, write.statements)).resolves.toStrictEqual([
+      `message_usersToRooms:userId=${userId}`,
+    ]);
   });
 
   test("an insert wakes a table-wide read through the table's row topic", async () => {
