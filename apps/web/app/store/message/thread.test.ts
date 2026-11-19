@@ -10,7 +10,7 @@ import { useLayoutStore } from "#src/store/layout";
 import { useFileStore } from "#src/store/message/file/index";
 import { useThreadStore } from "#src/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
-import { noop, Operation } from "@esposter/shared";
+import { Operation } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -33,6 +33,17 @@ describe(useThreadStore, () => {
     ...createReply(replyToId),
     id: roomReplyId,
   });
+  // The read is held in flight until the test resolves it. `readStarted` resolves once the handler has the request, so a
+  // Test that acts on the read acts while it is genuinely out rather than before the request has reached the handler
+  const holdThreadRead = () => {
+    const read = Promise.withResolvers<ClientMessage[]>();
+    const readStarted = Promise.withResolvers<void>();
+    trpcMsw.message.readThread.query(() => {
+      readStarted.resolve();
+      return read.promise;
+    });
+    return { readStarted: readStarted.promise, resolveRead: read.resolve };
+  };
 
   beforeEach(() => {
     // Every read that returns replies reads their authors, the root they quote and their reactions too, which no
@@ -66,18 +77,7 @@ describe(useThreadStore, () => {
   test("drops a thread read the user closed while it was loading", async () => {
     expect.hasAssertions();
 
-    let resolveRead: (replies: ClientMessage[]) => void = noop;
-    // Resolved by the handler itself, so the close lands while the read is genuinely in flight rather than
-    // Before the request has even reached it
-    const readStarted = new Promise<void>((resolveReadStarted) => {
-      trpcMsw.message.readThread.query(
-        () =>
-          new Promise<ClientMessage[]>((resolve) => {
-            resolveRead = resolve;
-            resolveReadStarted();
-          }),
-      );
-    });
+    const { readStarted, resolveRead } = holdThreadRead();
     await mountThreadDrawer();
     const layoutStore = useLayoutStore();
     const { isRightDrawerOpen } = storeToRefs(layoutStore);
@@ -156,16 +156,7 @@ describe(useThreadStore, () => {
   test("keeps a reply that landed while the thread read was in flight", async () => {
     expect.hasAssertions();
 
-    let resolveRead: (replies: ClientMessage[]) => void = noop;
-    const readStarted = new Promise<void>((resolveReadStarted) => {
-      trpcMsw.message.readThread.query(
-        () =>
-          new Promise<ClientMessage[]>((resolve) => {
-            resolveRead = resolve;
-            resolveReadStarted();
-          }),
-      );
-    });
+    const { readStarted, resolveRead } = holdThreadRead();
     await mountThreadDrawer();
     const threadStore = useThreadStore();
     const { threadMessages } = storeToRefs(threadStore);

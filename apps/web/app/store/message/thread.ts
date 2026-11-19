@@ -107,7 +107,7 @@ export const useThreadStore = defineStore("message/thread", () => {
   MessageHookMap[Operation.Delete].register(({ id: messageId, roomId }) => {
     if (roomId !== activeRoomId.value) return;
     // The thread is named by its root, so a deleted root leaves nothing for the pane to be about
-    else if (messageId === activeThreadRootId.value) {
+    if (messageId === activeThreadRootId.value) {
       closeThread();
       return;
     }

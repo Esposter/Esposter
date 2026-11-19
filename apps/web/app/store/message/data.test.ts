@@ -32,6 +32,12 @@ interface MockSessionValue {
   data?: undefined | { user: { id: string } };
 }
 
+// The composer's preview urls are incidental to every test that stubs them
+const stubObjectUrls = () => {
+  vi.spyOn(URL, "createObjectURL").mockReturnValue("");
+  vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
+};
+
 describe(useDataStore, () => {
   const { trpcMsw } = setupMswTrpc();
   let router: Router;
@@ -184,8 +190,7 @@ describe(useDataStore, () => {
     const uploadFileStore = useUploadFileStore();
     const { sendMessage } = dataStore;
     const { getComposerFiles } = uploadFileStore;
-    vi.spyOn(URL, "createObjectURL").mockReturnValue("");
-    vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
+    stubObjectUrls();
     const sentFileId = v7();
     let heldFileIds: string[] = [];
     trpcMsw.message.createMessage.mutation(() => {
@@ -214,8 +219,7 @@ describe(useDataStore, () => {
     const uploadFileStore = useUploadFileStore();
     const { sendMessage } = dataStore;
     const { getComposerFiles } = uploadFileStore;
-    vi.spyOn(URL, "createObjectURL").mockReturnValue("");
-    vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
+    stubObjectUrls();
     const sentFileId = v7();
     trpcMsw.message.createMessage.mutation(() => {
       throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
@@ -281,8 +285,7 @@ describe(useDataStore, () => {
     );
     // The preview url the composer mints per attachment is incidental here, and the environment's
     // `createObjectURL` rejects the runtime's own `File` on an instanceof check
-    vi.spyOn(URL, "createObjectURL").mockReturnValue("");
-    vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
+    stubObjectUrls();
     const sentFileId = v7();
     const nextFileId = v7();
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
@@ -309,8 +312,7 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
     const { createMessage } = dataStore;
-    vi.spyOn(URL, "createObjectURL").mockReturnValue("");
-    vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
+    stubObjectUrls();
     const sentFileId = v7();
     const nextFileId = v7();
     let payloadFileIds: string[] = [];
@@ -332,8 +334,6 @@ describe(useDataStore, () => {
     expect(payloadFileIds).toStrictEqual([sentFileId]);
   });
 
-  // A successful create also mirrors the server's thread auto-follow, so the reply's root is followed locally
-  // Without the round trip the drawer would otherwise need
   test("a sent message keeps its place when the server confirms it", async () => {
     expect.hasAssertions();
 
@@ -354,6 +354,8 @@ describe(useDataStore, () => {
     expect(placeholder.id).toBe(roomMessageId);
   });
 
+  // A successful create also mirrors the server's thread auto-follow, so the reply's root is followed locally
+  // Without the round trip the drawer would otherwise need
   test("createMessage mirrors the thread auto-follow of a reply", async () => {
     expect.hasAssertions();
 
