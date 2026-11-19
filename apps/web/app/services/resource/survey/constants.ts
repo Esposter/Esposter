@@ -13,6 +13,7 @@ import {
   SurveyImageFit,
   SurveyNodeType,
   SurveyTextInputType,
+  surveyNodeTypeDefinitionMap,
 } from "vue-survey-engine-headless";
 
 // The conditions a node's editor shows, each under its label, in the order the editor lists them
@@ -103,14 +104,11 @@ export const SURVEY_CALCULATED_VALUES_POINTER = "/root/props/calculatedValues";
 export const SURVEY_CALCULATED_VALUE_NAME = "value";
 export const SURVEY_CALCULATED_VALUE_EXPRESSION = "0";
 
-// The kinds that order their choices by the session's seed, so each takes the seed the runner passes down
-export const SURVEY_SEEDED_NODE_TYPES: ReadonlySet<SurveyNodeType> = new Set([
-  SurveyNodeType.Checkbox,
-  SurveyNodeType.Dropdown,
-  SurveyNodeType.PanelDynamic,
-  SurveyNodeType.RadioGroup,
-  SurveyNodeType.TagBox,
-]);
+// The kinds that order their choices by the session's seed, so each takes the seed the runner passes down. Read off
+// Each kind's form, where a choice order is declared, so a kind that gains one takes the seed without a list to add it to
+export const SURVEY_SEEDED_NODE_TYPES: ReadonlySet<SurveyNodeType> = new Set(
+  Object.values(SurveyNodeType).filter((type) => "choicesOrder" in surveyNodeTypeDefinitionMap[type].formSchema.shape),
+);
 
 export const SURVEY_FOCUSABLE_SELECTOR = "input, select, textarea, button";
 
