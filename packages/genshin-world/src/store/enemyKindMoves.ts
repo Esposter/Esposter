@@ -7,11 +7,16 @@ import { getResultAsync } from "@esposter/shared";
 import { defineStore } from "pinia";
 import { shallowRef } from "vue";
 
+// How many times a kind's moves are asked for before a failure is final, so a persistent failure is never re-asked forever
+const ENEMY_KIND_MOVES_ATTEMPTS = 3;
+
 // The moves of each boss kind, held once its module has loaded. The camps that spawn a kind ask for its moves, and a camp
 // Waits for them, so a boss is never on the field without its moves. Each kind loads once, and a failed load is logged and
-// Asked for again by the next camp that waits on it
+// Counted: the count is a change the camps waiting on the kind re-run on, so the kind is asked for again until its attempts
+// Run out, and then its camps wait for good
 export const useWorldEnemyKindMovesStore = defineStore("world/enemyKindMoves", () => {
   const enemyKindMovesMap = shallowRef<Partial<Record<EnemyKindId, readonly BossMove[]>>>({});
+  const enemyKindMovesFailureMap = shallowRef<Partial<Record<EnemyKindId, number>>>({});
   const requestedEnemyKindIds = new Set<EnemyKindId>();
   // Asks for the moves of the kinds given that are not held, and reports whether any of them is still on its way
   const loadEnemyKindMoves = (enemyKindIds: readonly number[]) => {
@@ -29,12 +34,14 @@ export const useWorldEnemyKindMovesStore = defineStore("world/enemyKindMoves", (
           enemyKindMovesMap.value = { ...enemyKindMovesMap.value, [enemyKindId]: moves };
         },
         (error) => {
-          requestedEnemyKindIds.delete(enemyKindId);
           console.error(error);
+          const failures = (enemyKindMovesFailureMap.value[enemyKindId] ?? 0) + 1;
+          enemyKindMovesFailureMap.value = { ...enemyKindMovesFailureMap.value, [enemyKindId]: failures };
+          if (failures < ENEMY_KIND_MOVES_ATTEMPTS) requestedEnemyKindIds.delete(enemyKindId);
         },
       );
     }
     return isLoading;
   };
-  return { enemyKindMovesMap, loadEnemyKindMoves };
+  return { enemyKindMovesFailureMap, enemyKindMovesMap, loadEnemyKindMoves };
 });

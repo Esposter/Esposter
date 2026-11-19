@@ -60,11 +60,18 @@ export const useEnemySpawns = ({
   const getEnemyCamps = () => [...toValue(regionDataMap).values()].flatMap(({ enemyCamps }) => enemyCamps);
   const loadedCampIds = new Set<string>();
   const worldEnemyKindMovesStore = useWorldEnemyKindMovesStore();
-  const { enemyKindMovesMap } = storeToRefs(worldEnemyKindMovesStore);
+  const { enemyKindMovesFailureMap, enemyKindMovesMap } = storeToRefs(worldEnemyKindMovesStore);
   const { loadEnemyKindMoves } = worldEnemyKindMovesStore;
   let spawnedWorldLevel = toValue(worldLevel);
   watchImmediate(
-    () => [toValue(worldLevel), getEnemyCamps(), toValue(outcropCamps), enemyKindMovesMap.value] as const,
+    () =>
+      [
+        toValue(worldLevel),
+        getEnemyCamps(),
+        toValue(outcropCamps),
+        enemyKindMovesMap.value,
+        enemyKindMovesFailureMap.value,
+      ] as const,
     ([currentWorldLevel, enemyCamps, fightingCamps]) => {
       onLoad();
       if (currentWorldLevel !== spawnedWorldLevel) {

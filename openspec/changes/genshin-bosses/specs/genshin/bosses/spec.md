@@ -117,3 +117,19 @@ A weekly boss's claim SHALL pay its talent materials, Mora and experience for th
 - **GIVEN** a weekly boss whose highest difficulty has not been cleared before
 - **WHEN** the player claims the first-clear reward in the handbook
 - **THEN** the player receives one of each of that boss's materials
+
+### Requirement: Failed Boss Moves Load Is Asked Again
+
+A camp waiting on a boss whose moves failed to load SHALL ask for them again, up to three attempts, and a boss whose moves keep failing SHALL stay unspawned.
+
+#### Scenario: A failed boss-moves load is asked for again
+
+- **GIVEN** a boss kind whose moves fail to load once
+- **WHEN** a camp waiting on its moves asks again
+- **THEN** the moves load and the boss spawns
+
+#### Scenario: A boss whose moves keep failing stays unspawned
+
+- **GIVEN** a boss kind whose moves fail to load on each of three attempts
+- **WHEN** a camp waiting on its moves asks again
+- **THEN** no fourth request is made and the boss does not spawn
