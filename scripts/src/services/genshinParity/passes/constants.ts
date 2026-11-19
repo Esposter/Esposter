@@ -22,7 +22,7 @@ export const PARITY_PASS_ORDER: readonly ParityPass[] = [
 export const PART_GATE_METRES = 0.02;
 // The login's families whose surface wavelength the Shape pass reads from their normal angles in the frame, the families a
 // Normal detail would lean their normals by
-export const SURFACE_WAVELENGTH_FAMILIES: readonly string[] = ["Bridges", "Towers"];
+export const SURFACE_WAVELENGTH_FAMILIES: readonly string[] = ["Bridges", "Door", "Towers"];
 // The high-pass box the surface wavelength reads its normal angles through, in pixels: a variation longer than it is shape.
 // On the reference's own angles the towers' lobe holds for boxes of 4 to 32 pixels and the bridges' for 16 to 128, so 16,
 // So where both hold, 16 is used for both families

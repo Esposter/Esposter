@@ -29,6 +29,8 @@ import { applyLoginDoorLift } from "#src/services/login/door/applyLoginDoorLift"
 import { computeLoginDoorLiftMs } from "#src/services/login/door/computeLoginDoorLiftMs";
 import {
   LOGIN_DOOR_GLOW_COLOR,
+  LOGIN_DOOR_NORMAL_DETAIL_AMPLITUDE,
+  LOGIN_DOOR_NORMAL_DETAIL_WAVELENGTH,
   LOGIN_DOOR_PANEL_MATERIAL,
   LOGIN_DOOR_PANEL_STRENGTH,
   LOGIN_DOOR_SLIT_STRENGTH,
@@ -331,6 +333,15 @@ bridgesMaterial.normalNode = createNormalDetailNode(
 );
 const doorFrameMaterial = createStoneMaterial(stone.door, loginStoneLight);
 const doorMaterial = createStoneMaterial(stone.doorPanel, loginStoneLight, doorLightNode);
+// The door's frame and panel lean their normals by the detail their exports' normal map gives them (`LOGIN_DOOR_NORMAL_DETAIL_*`)
+doorFrameMaterial.normalNode = createNormalDetailNode(
+  LOGIN_DOOR_NORMAL_DETAIL_WAVELENGTH,
+  LOGIN_DOOR_NORMAL_DETAIL_AMPLITUDE,
+);
+doorMaterial.normalNode = createNormalDetailNode(
+  LOGIN_DOOR_NORMAL_DETAIL_WAVELENGTH,
+  LOGIN_DOOR_NORMAL_DETAIL_AMPLITUDE,
+);
 // The door's front painted with its panel's raised bands and its feet's gilding over its stone
 const doorAlbedo = createLoginDoorRelief(door).mul(color(stone.door.albedo));
 doorFrameMaterial.colorNode = doorAlbedo;

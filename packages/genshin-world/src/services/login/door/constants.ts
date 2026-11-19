@@ -8,3 +8,8 @@ export const LOGIN_DOOR_SLIT_STRENGTH = 4;
 export const LOGIN_DOOR_PANEL_STRENGTH = 0.6;
 // The game's material for the door's panel, which lights as ours does where the exports draw the door
 export const LOGIN_DOOR_PANEL_MATERIAL = "LoginScene_Door02";
+// The procedural normal detail the door's frame and panel lean their normals by: a cell as wide as the exports' normal
+// Map reads where the frame resolves no lobe (`readTextureWavelength`, 0.1061 metres), and the amplitude that brings our
+// Mean lean to the exports' bend of 4.7203 degrees, solved at that wavelength (design.md)
+export const LOGIN_DOOR_NORMAL_DETAIL_WAVELENGTH = 0.1061;
+export const LOGIN_DOOR_NORMAL_DETAIL_AMPLITUDE = 0.00946;

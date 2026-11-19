@@ -51,11 +51,9 @@ export const readSurfaceWavelengths = ({
       ? undefined
       : computeSurfaceWavelength({
           angles,
-          depth: medianDepth,
-          fovDegrees,
-          height,
           highPassRadius: SURFACE_HIGH_PASS_RADIUS_PIXELS,
           maxLag,
+          metresPerSample: metresPerPixel,
           width,
         });
   return { exportsWavelength: measure(exportsAngles), metresPerPixel, oursWavelength: measure(oursAngles) };

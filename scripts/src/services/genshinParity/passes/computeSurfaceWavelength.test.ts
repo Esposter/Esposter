@@ -1,3 +1,4 @@
+import { computeMetresPerPixel } from "#src/services/genshinParity/passes/computeMetresPerPixel";
 import { computeSurfaceWavelength } from "#src/services/genshinParity/passes/computeSurfaceWavelength";
 import { describe, expect, test } from "vitest";
 
@@ -12,16 +13,9 @@ describe(computeSurfaceWavelength, () => {
       { length: WIDTH * HEIGHT },
       (_value, pixel) => 2 + amplitude * Math.sin((2 * Math.PI * (pixel % WIDTH)) / period),
     );
+  const metresPerSample = computeMetresPerPixel({ depth: DEPTH, fovDegrees: FOV_DEGREES, height: HEIGHT });
   const measure = (angles: Float64Array, maxLag = WIDTH / 4) =>
-    computeSurfaceWavelength({
-      angles,
-      depth: DEPTH,
-      fovDegrees: FOV_DEGREES,
-      height: HEIGHT,
-      highPassRadius: RADIUS,
-      maxLag,
-      width: WIDTH,
-    });
+    computeSurfaceWavelength({ angles, highPassRadius: RADIUS, maxLag, metresPerSample, width: WIDTH });
 
   test("the spacing of a family's normal angles reads its wavelength in metres at its depth", () => {
     expect.hasAssertions();

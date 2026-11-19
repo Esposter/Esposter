@@ -1,28 +1,24 @@
 import { computeAngleAutocorrelation } from "#src/services/genshinParity/passes/computeAngleAutocorrelation";
-import { computeMetresPerPixel } from "#src/services/genshinParity/passes/computeMetresPerPixel";
 import { SHAPE_NORMAL_RESOLUTION_DEGREES } from "#src/services/genshinParity/passes/constants";
 import { findDominantLag } from "#src/services/genshinParity/passes/findDominantLag";
 import { highPassAngles } from "#src/services/genshinParity/passes/highPassAngles";
 
-// The dominant wavelength of a family's normal angles in a frame, in metres: the strongest lobe of their autocorrelation
-// Along the rows, after a high-pass that takes out variation longer than `highPassRadius` pixels as shape, and within
-// `maxLag` pixels, past which a variation is the object's own size and not its detail. The lag is converted at the
-// Family's depth by the frame's vertical field of view. A family whose angles resolve no lobe reads none
+// The dominant wavelength of a family's normal angles, in metres: the strongest lobe of their autocorrelation along the
+// Rows, after a high-pass that takes out variation longer than `highPassRadius` samples as shape, and within `maxLag`
+// Samples, past which a variation is the object's own size and not its detail. A sample is a pixel of a frame, which
+// `metresPerSample` converts at the family's depth, or a texel of its normal map. A family whose angles resolve no lobe
+// Reads none
 export const computeSurfaceWavelength = ({
   angles,
-  depth,
-  fovDegrees,
-  height,
   highPassRadius,
   maxLag,
+  metresPerSample,
   width,
 }: {
   angles: Float64Array;
-  depth: number;
-  fovDegrees: number;
-  height: number;
   highPassRadius: number;
   maxLag: number;
+  metresPerSample: number;
   width: number;
 }): number | undefined => {
   const detail = highPassAngles(angles, width, highPassRadius);
@@ -40,5 +36,5 @@ export const computeSurfaceWavelength = ({
     return undefined;
   const lag = findDominantLag(computeAngleAutocorrelation(detail, width, maxLag));
   if (lag === undefined) return undefined;
-  return lag * computeMetresPerPixel({ depth, fovDegrees, height });
+  return lag * metresPerSample;
 };

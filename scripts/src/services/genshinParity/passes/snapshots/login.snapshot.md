@@ -31,19 +31,23 @@
 | Shape | login-door-session Towers outline | 0.4234 | 1 | px | yes |
 | Shape | login-door-session Towers depth | 0.0033 | 0.0100 | share | yes |
 | Shape | login-door-session Towers normal | 6.7282 | 10 | degrees | yes |
-| Shape | login-door-session Door surface detail bend | 4.7203 | 0.0198 | degrees | no |
+| Shape | login-door-session Door surface detail bend | 0.0014 | 0.0198 | degrees | yes |
 | Shape | login-door-session Walkway surface detail bend | 0.0006 | 0.0198 | degrees | yes |
 | Shape | login-door-session Bridges surface detail bend | 0.0000 | 0.1320 | degrees | yes |
 | Shape | login-door-session Towers surface detail bend | 0.0005 | 0.0198 | degrees | yes |
+| Shape | login-door-session Door surface detail wavelength, exports | no detail lobe resolved | - |  | - |
+| Shape | login-door-session Door surface detail wavelength, ours | 0.1993 | - | m | - |
 | Shape | login-door-session Bridges surface detail wavelength, exports | 21.8913 | - | m | - |
 | Shape | login-door-session Bridges surface detail wavelength, ours | 23.2595 | - | m | - |
 | Shape | login-door-session Towers surface detail wavelength, exports | 2.5648 | - | m | - |
 | Shape | login-door-session Towers surface detail wavelength, ours | 8.5494 | - | m | - |
 | Motion | door lift path | 0.0066 | 0.0200 | m | yes |
 | Motion | door lift pace | 0.0004 | 0.0100 | share | yes |
+| Surface | login-door-session Door colour | 0.3216 | 2.3000 | ΔE | yes |
+| Surface | login-door-session Door structure | 0.2866 | 0.0194 | share | no |
 | Surface | login-door-session Walkway colour | 0.1529 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Walkway structure | 0.5824 | 0.0266 | share | no |
+| Surface | login-door-session Walkway structure | 0.5824 | 0.0268 | share | no |
 | Surface | login-door-session Bridges colour | 1.0721 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Bridges structure | 1.0000 | 0.4555 | share | no |
+| Surface | login-door-session Bridges structure | 1.0000 | 0.3425 | share | no |
 | Surface | login-door-session Towers colour | 0.1333 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Towers structure | 0.4702 | 0.0236 | share | no |
+| Surface | login-door-session Towers structure | 0.4702 | 0.0216 | share | no |

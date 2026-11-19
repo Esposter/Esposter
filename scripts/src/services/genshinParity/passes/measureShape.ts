@@ -2,6 +2,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
+import { chooseDetailWavelength } from "#src/services/genshinParity/passes/chooseDetailWavelength";
 import { compareFamilyTargets } from "#src/services/genshinParity/passes/compareFamilyTargets";
 import { computeSurfaceBend } from "#src/services/genshinParity/passes/computeSurfaceBend";
 import {
@@ -13,6 +14,7 @@ import {
 import { getSurfaceBendReading } from "#src/services/genshinParity/passes/getSurfaceBendReading";
 import { measureEnvelope } from "#src/services/genshinParity/passes/measureEnvelope";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
+import { readFamilyMapWavelength } from "#src/services/genshinParity/passes/readFamilyMapWavelength";
 import { readSurfaceWavelengths } from "#src/services/genshinParity/passes/readSurfaceWavelengths";
 import { toShapeReading } from "#src/services/genshinParity/passes/toShapeReading";
 import { toSurfaceWavelengthDiagnostics } from "#src/services/genshinParity/passes/toSurfaceWavelengthDiagnostics";
@@ -96,6 +98,7 @@ export const measureShape = (component: DerivedAssetComponent, pageRoot?: string
         SURFACE_WAVELENGTH_FAMILIES.includes(family)
           ? [
               {
+                family,
                 index,
                 ...readSurfaceWavelengths({
                   depth: exportsTargets.depth,
@@ -110,9 +113,24 @@ export const measureShape = (component: DerivedAssetComponent, pageRoot?: string
             ]
           : [],
       );
+      // The wavelength a family's detail is fitted at: its frame's lobe, and its normal map's where the frame resolves none
+      const detailWavelengths = await Promise.all(
+        wavelengths.map(async ({ exportsWavelength, family, index }) => ({
+          detail: chooseDetailWavelength({
+            frame: exportsWavelength,
+            texture: exportsWavelength === undefined ? await readFamilyMapWavelength(component, family) : undefined,
+          }),
+          index,
+        })),
+      );
       const wavelengthNotes = wavelengths.map(
         ({ index, metresPerPixel }) =>
           `${familyName(index)} surface detail wavelength: a pixel ${metresPerPixel.toFixed(4)} m at the family's depth`,
+      );
+      const detailNotes = detailWavelengths.map(({ detail, index }) =>
+        detail
+          ? `${familyName(index)} surface detail wavelength to fit at: ${detail.metres.toFixed(4)} m, ${detail.isFromTexture ? "read from its normal map" : "the frame's lobe"}`
+          : `${familyName(index)} surface detail wavelength: none, the frame resolves no lobe and its normal map none`,
       );
       const envelopeReadings = await measureEnvelope(referenceId, exportsRead, oursRead, page, camera);
       return {
@@ -124,6 +142,7 @@ export const measureShape = (component: DerivedAssetComponent, pageRoot?: string
           ...partNotes,
           ...bendNotes,
           ...wavelengthNotes,
+          ...detailNotes,
           ...mapNotes,
         ],
         readings: [
