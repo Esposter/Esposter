@@ -15,9 +15,10 @@ const directMessageName = useDirectMessageName(() => room);
 const directMessageStore = useDirectMessageStore();
 const { hideDirectMessage } = directMessageStore;
 const { currentDirectMessageId } = storeToRefs(directMessageStore);
+const closeConversation = () => hideDirectMessage(room.id);
 // The one action a conversation has, which its close button and its context menu share
 const contextMenuItems: Item[] = [
-  { meaning: UiIconMeaning.Close, onClick: () => hideDirectMessage(room.id), title: "Close conversation" },
+  { meaning: UiIconMeaning.Close, onClick: closeConversation, title: "Close conversation" },
 ];
 </script>
 
@@ -33,7 +34,7 @@ const contextMenuItems: Item[] = [
         label="Close conversation"
         :meaning="UiIconMeaning.Close"
         :variant="UiButtonVariant.Quiet"
-        @click="hideDirectMessage(room.id)"
+        @click="closeConversation()"
       />
     </template>
   </MessageModelRoomBaseListItem>

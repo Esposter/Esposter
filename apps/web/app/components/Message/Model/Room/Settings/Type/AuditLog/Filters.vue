@@ -7,9 +7,9 @@ import { AdminActionIconMap } from "#src/services/message/moderation/AdminAction
 import { useMemberStore } from "#src/store/message/user/member";
 import { AdminActionTypes } from "@esposter/db-schema";
 
-const type = defineModel<"" | AdminActionType>("type", { default: "", required: true });
-const actorUserId = defineModel<string>("actorUserId", { default: "", required: true });
-const targetUserId = defineModel<string>("targetUserId", { default: "", required: true });
+const type = defineModel<"" | AdminActionType>("type", { required: true });
+const actorUserId = defineModel<string>("actorUserId", { required: true });
+const targetUserId = defineModel<string>("targetUserId", { required: true });
 const emit = defineEmits<{ update: [] }>();
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
