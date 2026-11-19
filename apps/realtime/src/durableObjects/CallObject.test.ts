@@ -3,6 +3,7 @@ import type { CallParticipant } from "@esposter/db-schema";
 
 import { CallObject } from "#src/durableObjects/CallObject";
 import { createSocket, readFrames } from "#src/services/durableObject/createMockSocket.test";
+import { observeWakes, verifyWakes } from "#src/services/durableObject/wakeCheck.test";
 import { REALTIMEKIT_API_ORIGIN } from "#src/services/realtimeKit/constants";
 import { createMockObjectState } from "@esposter/db-mock";
 import {
@@ -40,7 +41,7 @@ describe(CallObject, () => {
   const environment = { CORE: {} } as unknown as Cloudflare.Env;
 
   const createCallObject = (state: MockObjectState) =>
-    new CallObject(state.ctx as unknown as DurableObjectState, environment);
+    observeWakes(new CallObject(state.ctx as unknown as DurableObjectState, environment));
 
   // The meeting the call's first join would make, seeded so the join reads it rather than creating one
   const seedMeeting = (state: MockObjectState) => {
@@ -68,6 +69,7 @@ describe(CallObject, () => {
   });
 
   afterEach(() => {
+    verifyWakes();
     vi.unstubAllGlobals();
     vi.useRealTimers();
   });
@@ -110,7 +112,7 @@ describe(CallObject, () => {
     state.ctx.acceptWebSocket(leaverSocket, [getUserSocketTag(leaver.userId), getSessionSocketTag(leaver.id)]);
     state.ctx.acceptWebSocket(remainerSocket, [getUserSocketTag(remainer.userId), getSessionSocketTag(remainer.id)]);
 
-    const leave = callObject.leaveCall({ callSessionId, sessionId: leaver.id });
+    const leave = await callObject.leaveCall({ callSessionId, sessionId: leaver.id });
 
     expect(leave).toStrictEqual({ callDurationSeconds: null, sessionId: leaver.id, userId: leaver.userId });
     expect(readFrames(remainerSocket)).toStrictEqual([{ data: { callSessionId, id: leaver.id }, type: "leaveCall" }]);
@@ -118,8 +120,8 @@ describe(CallObject, () => {
     expect(leaverSocket.close).toHaveBeenCalledExactlyOnceWith(1000, "Left the call");
 
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add(callDuration));
-    const lastLeave = callObject.leaveCall({ callSessionId, sessionId: remainer.id });
-    const repeatedLeave = callObject.leaveCall({ callSessionId, sessionId: remainer.id });
+    const lastLeave = await callObject.leaveCall({ callSessionId, sessionId: remainer.id });
+    const repeatedLeave = await callObject.leaveCall({ callSessionId, sessionId: remainer.id });
 
     expect(lastLeave).toStrictEqual({
       callDurationSeconds: callDuration.total("seconds"),
@@ -151,14 +153,14 @@ describe(CallObject, () => {
     const appUrl = `${REALTIMEKIT_API_ORIGIN}/accounts/${CLOUDFLARE_ACCOUNT_ID}/realtime/kit/${credentials.appId}`;
     expect(revokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
     expect(readFrames(remainerSocket)).toStrictEqual([{ data: { callSessionId, id: revoked.id }, type: "leaveCall" }]);
-    expect(callObject.readAccess({ sessionId: revoked.id }).isJoined).toBe(false);
+    expect((await callObject.readAccess({ sessionId: revoked.id })).isJoined).toBe(false);
     expect(leave).toStrictEqual({ callDurationSeconds: null, sessionId: revoked.id, userId: revoked.userId });
     expect(fetchMock.mock.calls.map(([input]) => input)).toStrictEqual([
       `${appUrl}/meetings/${meetingId}/active-session/kick`,
     ]);
   });
 
-  test("a knock reaches only the doorkeeper, and the admission only the knocker", () => {
+  test("a knock reaches only the doorkeeper, and the admission only the knocker", async () => {
     expect.hasAssertions();
 
     const state = createMockObjectState(callSessionId);
@@ -176,10 +178,10 @@ describe(CallObject, () => {
     state.ctx.acceptWebSocket(knockerSocket, [getUserSocketTag(knocker.userId), getSessionSocketTag(knocker.id)]);
     state.ctx.acceptWebSocket(bystanderSocket, [getUserSocketTag(bystander.userId), getSessionSocketTag(bystander.id)]);
 
-    callObject.knockCall({ callSessionId, doorkeeperUserId: doorkeeper.userId, knocker });
-    const knockingAccess = callObject.readAccess({ sessionId: knocker.id });
-    callObject.admitKnocker({ callSessionId, knockerSessionId: knocker.id });
-    const admittedAccess = callObject.readAccess({ sessionId: knocker.id });
+    await callObject.knockCall({ callSessionId, doorkeeperUserId: doorkeeper.userId, knocker });
+    const knockingAccess = await callObject.readAccess({ sessionId: knocker.id });
+    await callObject.admitKnocker({ callSessionId, knockerSessionId: knocker.id });
+    const admittedAccess = await callObject.readAccess({ sessionId: knocker.id });
 
     expect(knockingAccess).toStrictEqual({ isAdmitted: false, isJoined: false, isKnocking: true });
     expect(admittedAccess).toStrictEqual({ isAdmitted: true, isJoined: false, isKnocking: false });
@@ -190,7 +192,7 @@ describe(CallObject, () => {
     expect(bystanderSocket.send).not.toHaveBeenCalled();
   });
 
-  test("a dismissed knock tells only the knocker's own session", () => {
+  test("a dismissed knock tells only the knocker's own session", async () => {
     expect.hasAssertions();
 
     const state = createMockObjectState(callSessionId);
@@ -205,17 +207,17 @@ describe(CallObject, () => {
     ]);
     state.ctx.acceptWebSocket(knockerSocket, [getUserSocketTag(knocker.userId), getSessionSocketTag(knocker.id)]);
 
-    callObject.knockCall({ callSessionId, doorkeeperUserId: doorkeeper.userId, knocker });
-    callObject.dismissKnocker({ callSessionId, knockerSessionId: knocker.id });
+    await callObject.knockCall({ callSessionId, doorkeeperUserId: doorkeeper.userId, knocker });
+    await callObject.dismissKnocker({ callSessionId, knockerSessionId: knocker.id });
 
-    expect(callObject.readAccess({ sessionId: knocker.id }).isKnocking).toBe(false);
+    expect((await callObject.readAccess({ sessionId: knocker.id })).isKnocking).toBe(false);
     expect(readFrames(knockerSocket)).toStrictEqual([
       { data: { callSessionId, knockerSessionId: knocker.id }, type: "knockerDismissed" },
     ]);
     expect(readFrames(doorkeeperSocket)).toStrictEqual([{ data: { callSessionId, knocker }, type: "knockCall" }]);
   });
 
-  test("the call ending dismisses each knock on its own session", () => {
+  test("the call ending dismisses each knock on its own session", async () => {
     expect.hasAssertions();
 
     const state = createMockObjectState(callSessionId);
@@ -224,12 +226,12 @@ describe(CallObject, () => {
     const knocker = createParticipant();
     const knockerSocket = createSocket();
 
-    callObject.participantJoined({ callSessionId, participant: member });
+    await callObject.participantJoined({ callSessionId, participant: member });
     state.ctx.acceptWebSocket(knockerSocket, [getUserSocketTag(knocker.userId), getSessionSocketTag(knocker.id)]);
-    callObject.knockCall({ callSessionId, doorkeeperUserId: member.userId, knocker });
-    callObject.leaveCall({ callSessionId, sessionId: member.id });
+    await callObject.knockCall({ callSessionId, doorkeeperUserId: member.userId, knocker });
+    await callObject.leaveCall({ callSessionId, sessionId: member.id });
 
-    expect(callObject.readAccess({ sessionId: knocker.id }).isKnocking).toBe(false);
+    expect((await callObject.readAccess({ sessionId: knocker.id })).isKnocking).toBe(false);
     expect(readFrames(knockerSocket)).toStrictEqual([
       { data: { callSessionId, id: member.id }, type: "leaveCall" },
       { data: { callSessionId, knockerSessionId: knocker.id }, type: "knockerDismissed" },
@@ -316,7 +318,7 @@ describe(CallObject, () => {
 
     const reloadedCallObject = createCallObject(state);
 
-    expect(reloadedCallObject.readParticipantMap()).toStrictEqual(
+    await expect(reloadedCallObject.readParticipantMap()).resolves.toStrictEqual(
       new Map([
         [first.id, { ...first, isCameraEnabled: false }],
         [second.id, { ...second, isCameraEnabled: false }],
@@ -335,10 +337,14 @@ describe(CallObject, () => {
     await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant });
     setRejoining(state, participant.id, true);
 
-    const replacedLeave = callObject.participantLeft({ callSessionId, leftAt: new Date(), sessionId: participant.id });
-    const participantMap = callObject.readParticipantMap();
+    const replacedLeave = await callObject.participantLeft({
+      callSessionId,
+      leftAt: new Date(),
+      sessionId: participant.id,
+    });
+    const participantMap = await callObject.readParticipantMap();
     setRejoining(state, participant.id, false);
-    const leave = callObject.participantLeft({ callSessionId, leftAt: new Date(), sessionId: participant.id });
+    const leave = await callObject.participantLeft({ callSessionId, leftAt: new Date(), sessionId: participant.id });
 
     expect(replacedLeave).toBeNull();
     expect(participantMap).toStrictEqual(new Map([[participant.id, { ...participant, isCameraEnabled: false }]]));
@@ -359,10 +365,10 @@ describe(CallObject, () => {
       .prepare("UPDATE realtimeKitParticipants SET connectedAt = ? WHERE sessionId = ?")
       .run(kickedAt.getTime() + 1, participant.id);
 
-    const leave = callObject.participantLeft({ callSessionId, leftAt: kickedAt, sessionId: participant.id });
+    const leave = await callObject.participantLeft({ callSessionId, leftAt: kickedAt, sessionId: participant.id });
 
     expect(leave).toBeNull();
-    expect(callObject.readParticipantMap()).toStrictEqual(
+    expect(await callObject.readParticipantMap()).toStrictEqual(
       new Map([[participant.id, { ...participant, isCameraEnabled: false }]]),
     );
   });

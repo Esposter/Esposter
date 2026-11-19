@@ -1,5 +1,6 @@
 import type { RoomObject } from "#src/durableObjects/RoomObject";
 import type { MockSocket } from "#src/services/durableObject/createMockSocket.test";
+import type { ObservedContract } from "#src/services/durableObject/wakeCheck.test";
 import type {
   Page,
   PageCursor,
@@ -14,6 +15,7 @@ import type { Mock } from "vitest";
 
 import { UserObject } from "#src/durableObjects/UserObject";
 import { createSocket, readFrames } from "#src/services/durableObject/createMockSocket.test";
+import { observeWakes, verifyWakes } from "#src/services/durableObject/wakeCheck.test";
 import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { createOnlineStatus } from "#src/services/room/createOnlineStatus.test";
 import { createUser } from "#src/services/shared/createUser.test";
@@ -76,7 +78,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 
 // A frame a tab sends up its user socket, as the runtime hands it to the object
-const sendFrame = (object: UserObject, socket: MockSocket, frame: UserClientFrame) =>
+const sendFrame = (object: ObservedContract<UserObject>, socket: MockSocket, frame: UserClientFrame) =>
   object.webSocketMessage(socket as unknown as WebSocket, JSON.stringify(frame));
 
 // Every item a keyset read answers, read a page at a time, each page from the cursor the one before it answered
@@ -126,11 +128,11 @@ describe(UserObject, () => {
 
   const createUserObject = () => {
     const state = createMockObjectState(userId);
-    return { object: new UserObject(state.ctx as unknown as DurableObjectState, environment), state };
+    return { object: observeWakes(new UserObject(state.ctx as unknown as DurableObjectState, environment)), state };
   };
 
   // A tab opens its user socket: the runtime's socket pair, whose server end the object accepts. Returns that end
-  const connect = async (object: UserObject, tab: { deviceId: string; sessionId: string }) => {
+  const connect = async (object: ObservedContract<UserObject>, tab: { deviceId: string; sessionId: string }) => {
     const socket = createSocket();
     const WebSocketPair = function () {
       return [createSocket(), socket];
@@ -185,6 +187,7 @@ describe(UserObject, () => {
   });
 
   afterEach(async () => {
+    verifyWakes();
     vi.unstubAllGlobals();
     vi.useRealTimers();
     roomStubs.clear();
@@ -528,9 +531,9 @@ describe(UserObject, () => {
       ["00000000-0000-7000-8000-000000000004", new Date(1)],
       ["00000000-0000-7000-8000-000000000005", new Date(1)],
     ] as const;
-    await Promise.all(reminders.map(([id, runAt]) => object.addReminder({ id, roomId, runAt, text: id })));
+    await Promise.all(reminders.map(async ([id, runAt]) => object.addReminder({ id, roomId, runAt, text: id })));
 
-    const ids = await readAll(SCHEDULED_MESSAGE_JOB_PAGE_SORT, (input) => object.readReminders(input), 2);
+    const ids = await readAll(SCHEDULED_MESSAGE_JOB_PAGE_SORT, async (input) => object.readReminders(input), 2);
 
     expect(ids.map(({ id }) => id)).toStrictEqual(reminders.map(([id]) => id));
   });
@@ -548,10 +551,14 @@ describe(UserObject, () => {
       ["00000000-0000-7000-8000-000000000005", new Date(1)],
     ] as const;
     await Promise.all(
-      scheduledMessages.map(([scheduledId, runAt]) => object.addScheduledMessage({ roomId, runAt, scheduledId })),
+      scheduledMessages.map(async ([scheduledId, runAt]) => object.addScheduledMessage({ roomId, runAt, scheduledId })),
     );
 
-    const items = await readAll(SCHEDULED_MESSAGE_JOB_PAGE_SORT, (input) => object.readScheduledMessages(input), 2);
+    const items = await readAll(
+      SCHEDULED_MESSAGE_JOB_PAGE_SORT,
+      async (input) => object.readScheduledMessages(input),
+      2,
+    );
 
     expect(items).toStrictEqual(scheduledMessages.map(([id, runAt]) => ({ id, roomId, runAt })));
   });
@@ -572,10 +579,10 @@ describe(UserObject, () => {
       { createdAt: new Date(0), messageId: 2, roomId: firstRoomId },
     ];
     await Promise.all(
-      [newest, ...tiedInFirstRoom, ...tiedInSecondRoom].map((sentMessage) => object.addSentMessage(sentMessage)),
+      [newest, ...tiedInFirstRoom, ...tiedInSecondRoom].map(async (sentMessage) => object.addSentMessage(sentMessage)),
     );
 
-    const items = await readAll(SENT_MESSAGE_PAGE_SORT, (input) => object.readSentMessages(input), 2);
+    const items = await readAll(SENT_MESSAGE_PAGE_SORT, async (input) => object.readSentMessages(input), 2);
 
     // Newest first, then the later room of a tie before the earlier one, then the later message of a room
     expect(items).toStrictEqual([newest, ...tiedInSecondRoom.toReversed(), ...tiedInFirstRoom.toReversed()]);
@@ -592,7 +599,7 @@ describe(UserObject, () => {
       { createdAt: new Date(0), messageId: 2, roomId: firstRoomId },
       { createdAt: new Date(0), messageId: 1, roomId: secondRoomId },
     ];
-    await Promise.all(sentMessages.map((sentMessage) => object.addSentMessage(sentMessage)));
+    await Promise.all(sentMessages.map(async (sentMessage) => object.addSentMessage(sentMessage)));
 
     await object.removeSentMessages({ messageIds: [2], roomId: firstRoomId });
     await expect(object.readSentMessages(firstPage)).resolves.toStrictEqual([sentMessages[2], sentMessages[0]]);

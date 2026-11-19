@@ -1,8 +1,10 @@
+import type { ObservedContract } from "#src/services/durableObject/wakeCheck.test";
 import type { ColumnTopic, PageCursor, RoomObjectRpc, RoomReaction, Topic, UserObjectRpc } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
 import { RoomObject } from "#src/durableObjects/RoomObject";
 import { createSocket, readFrames } from "#src/services/durableObject/createMockSocket.test";
+import { observeWakes, verifyWakes } from "#src/services/durableObject/wakeCheck.test";
 import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { ROOM_ACTIVITY_DELAY_MS, ROOM_MEMBER_REMOVED_CODE, WRITE_RETRY_DELAY_MS } from "#src/services/room/constants";
 import { createUser } from "#src/services/shared/createUser.test";
@@ -70,17 +72,24 @@ const createStatus = (statusUserId: string, isConnected: boolean) => ({
 });
 
 // A search read as the web merges it: each room answers its matches after the cursor, and the merged page keeps `limit`
-const readSearchPage = (
-  rooms: { object: RoomObjectRpc; roomId: string }[],
+const readSearchPage = async (
+  rooms: { object: ObservedContract<RoomObjectRpc> | RoomObjectRpc; roomId: string }[],
   query: string,
   cursor: PageCursor,
   limit: number,
 ) =>
   toMergedPage(
-    rooms.map((room) =>
-      room.object
-        .searchMessages({ cursor, filters: [], isCounted: false, limit: limit + 1, query })
-        .messages.map((message) => ({ ...message, roomId: room.roomId })),
+    await Promise.all(
+      rooms.map(async (room) => {
+        const { messages } = await room.object.searchMessages({
+          cursor,
+          filters: [],
+          isCounted: false,
+          limit: limit + 1,
+          query,
+        });
+        return messages.map((message) => ({ ...message, roomId: room.roomId }));
+      }),
     ),
     getRoomSearchPageSort(query),
     cursor,
@@ -88,13 +97,18 @@ const readSearchPage = (
   );
 
 // Every match of a search, read a page at a time from the cursor each page answered
-const readSearchIds = (rooms: { object: RoomObjectRpc; roomId: string }[], query: string, limit: number) => {
+const readSearchIds = async (
+  rooms: { object: ObservedContract<RoomObjectRpc> | RoomObjectRpc; roomId: string }[],
+  query: string,
+  limit: number,
+) => {
   const sort = getRoomSearchPageSort(query);
   const matches: { id: number; roomId: string }[] = [];
   let encodedCursor = "";
   do {
     const cursor = createPageInputSchema(sort).parse({ cursor: encodedCursor, limit }).cursor;
-    const page = readSearchPage(rooms, query, cursor, limit);
+    // oxlint-disable-next-line no-await-in-loop -- Pagination: each page answers the cursor the one before it left, so the pages are read in turn
+    const page = await readSearchPage(rooms, query, cursor, limit);
     matches.push(...page.items.map(({ id, roomId: matchRoomId }) => ({ id, roomId: matchRoomId })));
     encodedCursor = page.nextCursor;
   } while (encodedCursor);
@@ -151,11 +165,14 @@ describe(RoomObject, () => {
   // A room object over a fresh state, named for the seeded room as the web Worker names it
   const createRoomObject = () => {
     const state = createMockObjectState(roomId);
-    return { object: new RoomObject(state.ctx as unknown as DurableObjectState, environment), state };
+    return { object: observeWakes(new RoomObject(state.ctx as unknown as DurableObjectState, environment)), state };
   };
 
-  const sendMessage = (object: RoomObjectRpc, message: string, sender = actor) =>
-    object.createMessage({ message, type: MessageType.Message }, sender);
+  const sendMessage = async (
+    object: ObservedContract<RoomObjectRpc> | RoomObjectRpc,
+    message: string,
+    sender = actor,
+  ) => object.createMessage({ message, type: MessageType.Message }, sender);
   const readMentionCount = async (mentionedUserId: string) => {
     const [row] = await mockDatabase.db
       .select({ mentionCount: usersToRoomsInMessage.mentionCount })
@@ -189,6 +206,7 @@ describe(RoomObject, () => {
   });
 
   afterEach(async () => {
+    verifyWakes();
     vi.unstubAllGlobals();
     vi.useRealTimers();
     userStubs.clear();
@@ -292,7 +310,7 @@ describe(RoomObject, () => {
     });
 
     expect(message.appUserImage).toBe("https://example.com/hook.png");
-    expect(object.readMessages(newestPage)).toStrictEqual([message]);
+    await expect(object.readMessages(newestPage)).resolves.toStrictEqual([message]);
   });
 
   test("a webhook message keeps the avatar its push names, over its identity's image", async () => {
@@ -306,7 +324,7 @@ describe(RoomObject, () => {
       message: "from a hook",
     });
 
-    expect(object.readMessages(newestPage)[0]?.appUserImage).toBe("https://example.com/avatar.png");
+    expect((await object.readMessages(newestPage))[0]?.appUserImage).toBe("https://example.com/avatar.png");
   });
 
   test("a webhook message is notified once, however many times its delivery is made", async () => {
@@ -390,19 +408,22 @@ describe(RoomObject, () => {
     const { object, state } = createRoomObject();
     const message = await sendMessage(object, "hello");
 
-    expect(object.searchMessages({ ...searchAll, query: "hello" })).toStrictEqual({
+    await expect(object.searchMessages({ ...searchAll, query: "hello" })).resolves.toStrictEqual({
       count: 1,
       messages: [{ ...message, rank: 1 }],
     });
 
-    object.updateMessage({ id: message.id, message: "goodbye" }, actor);
+    await object.updateMessage({ id: message.id, message: "goodbye" }, actor);
 
-    expect(object.searchMessages({ ...searchAll, query: "hello" }).count).toBe(0);
-    expect(object.searchMessages({ ...searchAll, query: "goodbye" }).count).toBe(1);
+    expect((await object.searchMessages({ ...searchAll, query: "hello" })).count).toBe(0);
+    expect((await object.searchMessages({ ...searchAll, query: "goodbye" })).count).toBe(1);
 
     await object.deleteMessage(message.id, actor);
 
-    expect(object.searchMessages({ ...searchAll, query: "goodbye" })).toStrictEqual({ count: 0, messages: [] });
+    await expect(object.searchMessages({ ...searchAll, query: "goodbye" })).resolves.toStrictEqual({
+      count: 0,
+      messages: [],
+    });
     // The row is filtered out of a search by its tombstone, so the index itself is read to see that it forgot the words
     expect(
       state.database
@@ -419,17 +440,17 @@ describe(RoomObject, () => {
     const emojiTag = v7();
     const reaction = { emojiTag, messageId: message.id };
 
-    object.addReaction(reaction, actor);
-    object.addReaction(reaction, otherActor);
+    await object.addReaction(reaction, actor);
+    await object.addReaction(reaction, otherActor);
 
-    expect(object.readReactions([message.id])).toStrictEqual([
+    await expect(object.readReactions([message.id])).resolves.toStrictEqual([
       { emojiTag, messageId: message.id, userIds: [userId, otherUserId] },
     ]);
 
-    object.removeReaction(reaction, actor);
-    object.removeReaction(reaction, otherActor);
+    await object.removeReaction(reaction, actor);
+    await object.removeReaction(reaction, otherActor);
 
-    expect(object.readReactions([message.id])).toStrictEqual([]);
+    await expect(object.readReactions([message.id])).resolves.toStrictEqual([]);
   });
 
   test("a vote is recorded on the poll's stored body, and withdrawn when no option is named", async () => {
@@ -447,11 +468,11 @@ describe(RoomObject, () => {
       actor,
     );
 
-    expect(object.votePoll({ id: poll.id, optionId }, otherActor)?.message).toBe(
+    expect((await object.votePoll({ id: poll.id, optionId }, otherActor))?.message).toBe(
       JSON.stringify({ options: [{ id: optionId, label }], question: "question", votes: { [otherUserId]: optionId } }),
     );
 
-    expect(object.votePoll({ id: poll.id }, otherActor)?.message).toBe(
+    expect((await object.votePoll({ id: poll.id }, otherActor))?.message).toBe(
       JSON.stringify({ options: [{ id: optionId, label }], question: "question", votes: {} }),
     );
   });
@@ -470,10 +491,10 @@ describe(RoomObject, () => {
     );
 
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS));
-    expect(object.pinMessage(poll.id, actor)?.updatedAt).toStrictEqual(new Date(ROOM_ACTIVITY_DELAY_MS));
+    expect((await object.pinMessage(poll.id, actor))?.updatedAt).toStrictEqual(new Date(ROOM_ACTIVITY_DELAY_MS));
 
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS * 2));
-    expect(object.votePoll({ id: poll.id, optionId }, otherActor)?.updatedAt).toStrictEqual(
+    expect((await object.votePoll({ id: poll.id, optionId }, otherActor))?.updatedAt).toStrictEqual(
       new Date(ROOM_ACTIVITY_DELAY_MS * 2),
     );
   });
@@ -486,7 +507,7 @@ describe(RoomObject, () => {
     expect(message.editedAt).toBeNull();
 
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS));
-    const editedMessage = object.updateMessage({ id: message.id, message: "edited" }, actor);
+    const editedMessage = await object.updateMessage({ id: message.id, message: "edited" }, actor);
     expect(editedMessage?.editedAt).toStrictEqual(new Date(ROOM_ACTIVITY_DELAY_MS));
     expect(editedMessage?.updatedAt).toStrictEqual(new Date(ROOM_ACTIVITY_DELAY_MS));
   });
@@ -497,9 +518,9 @@ describe(RoomObject, () => {
     const { object } = createRoomObject();
     const message = await sendMessage(object, "hello");
 
-    object.updateMessage({ id: message.id, message: mentioning(otherUserId) }, actor);
+    await object.updateMessage({ id: message.id, message: mentioning(otherUserId) }, actor);
 
-    expect(object.readMessages(newestPage)[0]?.mentions).toStrictEqual([otherUserId]);
+    expect((await object.readMessages(newestPage))[0]?.mentions).toStrictEqual([otherUserId]);
   });
 
   test("an edit of a webhook message names nobody, as its send names nobody", async () => {
@@ -513,9 +534,9 @@ describe(RoomObject, () => {
       message: "from a hook",
     });
 
-    object.updateMessage({ id: message.id, message: mentioning(otherUserId) }, actor);
+    await object.updateMessage({ id: message.id, message: mentioning(otherUserId) }, actor);
 
-    expect(object.readMessages(newestPage)[0]?.mentions).toStrictEqual([]);
+    expect((await object.readMessages(newestPage))[0]?.mentions).toStrictEqual([]);
   });
 
   test("a scheduled message is sent once when it comes due, and the alarm is armed for the one after", async () => {
@@ -536,9 +557,9 @@ describe(RoomObject, () => {
     await object.alarm();
 
     expect(
-      object.readMessages(newestPage).map(({ message, userId: sender }) => ({ message, userId: sender })),
+      (await object.readMessages(newestPage)).map(({ message, userId: sender }) => ({ message, userId: sender })),
     ).toStrictEqual([{ message: "due", userId }]);
-    expect(object.readScheduledMessages({ ids: [later.id], userId })).toStrictEqual([later]);
+    await expect(object.readScheduledMessages({ ids: [later.id], userId })).resolves.toStrictEqual([later]);
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(due.id);
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(later.runAt.getTime());
   });
@@ -555,7 +576,7 @@ describe(RoomObject, () => {
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(scheduledMessage.runAt.getTime()));
     await object.alarm();
 
-    expect(object.readMessages(newestPage)[0]?.mentions).toStrictEqual([otherUserId]);
+    expect((await object.readMessages(newestPage))[0]?.mentions).toStrictEqual([otherUserId]);
     await expect(readMentionCount(otherUserId)).resolves.toBe(1);
     expect(getUserStub(otherUserId).updateUserToRoom).toHaveBeenCalledTimes(1);
     expect(getUserStub(otherUserId).updateUserToRoom.mock.lastCall?.[0]?.mentionCount).toBe(1);
@@ -607,7 +628,7 @@ describe(RoomObject, () => {
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(reply.runAt.getTime()));
     await object.alarm();
 
-    const sentReply = takeOne(object.readMessages({ cursor: START_PAGE_CURSOR, limit: 1 }));
+    const sentReply = takeOne(await object.readMessages({ cursor: START_PAGE_CURSOR, limit: 1 }));
     expect(MockJobQueueDatabase.get(QueueJob.ProcessNotification)).toStrictEqual([
       {
         appUserId: undefined,
@@ -633,8 +654,8 @@ describe(RoomObject, () => {
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(scheduledMessage.runAt.getTime()));
     await object.alarm();
 
-    expect(object.readMessages(newestPage)).toStrictEqual([]);
-    expect(object.readScheduledMessages({ ids: [scheduledMessage.id], userId })).toStrictEqual([]);
+    await expect(object.readMessages(newestPage)).resolves.toStrictEqual([]);
+    await expect(object.readScheduledMessages({ ids: [scheduledMessage.id], userId })).resolves.toStrictEqual([]);
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(scheduledMessage.id);
   });
 
@@ -654,8 +675,8 @@ describe(RoomObject, () => {
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(scheduledMessage.runAt.getTime()));
     await object.alarm();
 
-    expect(object.readMessages(newestPage)).toStrictEqual([]);
-    expect(object.readScheduledMessages({ ids: [scheduledMessage.id], userId })).toStrictEqual([]);
+    await expect(object.readMessages(newestPage)).resolves.toStrictEqual([]);
+    await expect(object.readScheduledMessages({ ids: [scheduledMessage.id], userId })).resolves.toStrictEqual([]);
   });
 
   test("a scheduled message is dropped, not sent, when its sender no longer holds the permission to send", async () => {
@@ -672,16 +693,18 @@ describe(RoomObject, () => {
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(scheduledMessage.runAt.getTime()));
     await object.alarm();
 
-    expect(object.readMessages(newestPage)).toStrictEqual([]);
-    expect(object.readScheduledMessages({ ids: [scheduledMessage.id], userId: otherUserId })).toStrictEqual([]);
+    await expect(object.readMessages(newestPage)).resolves.toStrictEqual([]);
+    await expect(
+      object.readScheduledMessages({ ids: [scheduledMessage.id], userId: otherUserId }),
+    ).resolves.toStrictEqual([]);
   });
 
   test("the room-activity wave reaches only the members online, once per window, and writes the room's lastMessageAt", async () => {
     expect.hasAssertions();
 
     const { object, state } = createRoomObject();
-    object.attachMember(userId, createStatus(userId, true));
-    object.attachMember(otherUserId, createStatus(otherUserId, true));
+    await object.attachMember(userId, createStatus(userId, true));
+    await object.attachMember(otherUserId, createStatus(otherUserId, true));
     await sendMessage(object, "first");
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ milliseconds: ROOM_ACTIVITY_DELAY_MS / 4 }));
     const last = await sendMessage(object, "second");
@@ -737,7 +760,9 @@ describe(RoomObject, () => {
         },
       }),
     };
-    const { object } = createRoomObject();
+    // The wave and the send are held in flight on purpose, and the check reads each write back before the write returns, which a
+    // Held write cannot allow, so this test's room is not observed
+    const object = new RoomObject(createMockObjectState(roomId).ctx as unknown as DurableObjectState, environment);
     object.attachMember(userId, createStatus(userId, true));
     const first = await sendMessage(object, "first");
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS));
@@ -759,7 +784,7 @@ describe(RoomObject, () => {
     expect.hasAssertions();
 
     const { object } = createRoomObject();
-    object.attachMember(userId, createStatus(userId, true));
+    await object.attachMember(userId, createStatus(userId, true));
     const leaveEvent = { data: { roomId, userId: otherUserId }, type: "leaveRoom" } as const;
     await object.notifyOnlineMembers(leaveEvent);
 
@@ -777,18 +802,16 @@ describe(RoomObject, () => {
     const third = await sendMessage(object, "third");
     await object.deleteMessage(deleted.id, actor);
 
-    expect(object.readMessages(newestPage)).toStrictEqual([third, second, first]);
-    expect(object.readMessages({ cursor: { isBackward: false, values: [third.id] }, limit: 10 })).toStrictEqual([
-      second,
-      first,
-    ]);
-    expect(object.readMessages({ cursor: { isBackward: false, values: [second.id] }, limit: 1 })).toStrictEqual([
-      first,
-    ]);
-    expect(object.readMessages({ cursor: { isBackward: true, values: [first.id] }, limit: 10 })).toStrictEqual([
-      second,
-      third,
-    ]);
+    await expect(object.readMessages(newestPage)).resolves.toStrictEqual([third, second, first]);
+    await expect(
+      object.readMessages({ cursor: { isBackward: false, values: [third.id] }, limit: 10 }),
+    ).resolves.toStrictEqual([second, first]);
+    await expect(
+      object.readMessages({ cursor: { isBackward: false, values: [second.id] }, limit: 1 }),
+    ).resolves.toStrictEqual([first]);
+    await expect(
+      object.readMessages({ cursor: { isBackward: true, values: [first.id] }, limit: 10 }),
+    ).resolves.toStrictEqual([second, third]);
   });
 
   test("a thread is read back as its root and then its replies in the order they were sent, and a message outside it is left out", async () => {
@@ -807,7 +830,7 @@ describe(RoomObject, () => {
       actor,
     );
 
-    expect(object.readThread(root.id)).toStrictEqual([root, firstReply, secondReply]);
+    await expect(object.readThread(root.id)).resolves.toStrictEqual([root, firstReply, secondReply]);
   });
 
   test("threads are read back as their live roots with their live replies counted, and a deleted root or a reply is left out", async () => {
@@ -828,7 +851,7 @@ describe(RoomObject, () => {
     await object.deleteMessage(deletedReply.id, actor);
     await object.deleteMessage(deletedRoot.id, actor);
 
-    expect(object.readThreads([unrepliedRoot.id, deletedRoot.id, reply.id, root.id])).toStrictEqual([
+    await expect(object.readThreads([unrepliedRoot.id, deletedRoot.id, reply.id, root.id])).resolves.toStrictEqual([
       { ...unrepliedRoot, replyCount: 0 },
       { ...root, lastReplyAt: reply.createdAt, replyCount: 1 },
     ]);
@@ -843,8 +866,8 @@ describe(RoomObject, () => {
     const bystander = await sendMessage(object, "bystander", otherActor);
     const third = await sendMessage(object, "third");
 
-    expect(object.exportUserMessages({ limit: 1, userId })).toStrictEqual([first]);
-    expect(object.exportUserMessages({ after: first.id, limit: 1, userId })).toStrictEqual([second]);
+    await expect(object.exportUserMessages({ limit: 1, userId })).resolves.toStrictEqual([first]);
+    await expect(object.exportUserMessages({ after: first.id, limit: 1, userId })).resolves.toStrictEqual([second]);
 
     await expect(object.deleteUserMessages({ limit: 2, userId })).resolves.toStrictEqual([first, second]);
     expect(getUserStub(userId).removeSentMessages).toHaveBeenCalledExactlyOnceWith({
@@ -855,8 +878,8 @@ describe(RoomObject, () => {
     await expect(object.deleteUserMessages({ after: second.id, limit: 2, userId })).resolves.toStrictEqual([third]);
     expect(getUserStub(userId).removeSentMessages).toHaveBeenLastCalledWith({ messageIds: [third.id], roomId });
 
-    expect(object.readMessages(newestPage)).toStrictEqual([bystander]);
-    expect(object.searchMessages({ ...searchAll, query: "first" }).count).toBe(0);
+    await expect(object.readMessages(newestPage)).resolves.toStrictEqual([bystander]);
+    expect((await object.searchMessages({ ...searchAll, query: "first" })).count).toBe(0);
   });
 
   test("a person's reactions are read and erased a page at a time, in the order of their message and emoji", async () => {
@@ -865,26 +888,30 @@ describe(RoomObject, () => {
     const { object } = createRoomObject();
     const message = await sendMessage(object, "hello");
     const otherMessage = await sendMessage(object, "again");
-    object.addReaction({ emojiTag: "a", messageId: message.id }, actor);
-    object.addReaction({ emojiTag: "b", messageId: message.id }, actor);
+    await object.addReaction({ emojiTag: "a", messageId: message.id }, actor);
+    await object.addReaction({ emojiTag: "b", messageId: message.id }, actor);
     // Another reactor on the first emoji keeps its reaction when the person leaves it
-    object.addReaction({ emojiTag: "a", messageId: message.id }, otherActor);
-    object.addReaction({ emojiTag: "a", messageId: otherMessage.id }, actor);
+    await object.addReaction({ emojiTag: "a", messageId: message.id }, otherActor);
+    await object.addReaction({ emojiTag: "a", messageId: otherMessage.id }, actor);
 
-    expect(object.exportUserReactions({ limit: 2, userId }).map((reaction) => toReactionKey(reaction))).toStrictEqual([
-      { emojiTag: "a", messageId: message.id },
-      { emojiTag: "b", messageId: message.id },
-    ]);
-    expect(object.deleteUserReactions({ limit: 2, userId }).map((reaction) => toReactionKey(reaction))).toStrictEqual([
+    expect(
+      (await object.exportUserReactions({ limit: 2, userId })).map((reaction) => toReactionKey(reaction)),
+    ).toStrictEqual([
       { emojiTag: "a", messageId: message.id },
       { emojiTag: "b", messageId: message.id },
     ]);
     expect(
-      object
-        .deleteUserReactions({ after: { emojiTag: "b", messageId: message.id }, limit: 2, userId })
-        .map((reaction) => toReactionKey(reaction)),
+      (await object.deleteUserReactions({ limit: 2, userId })).map((reaction) => toReactionKey(reaction)),
+    ).toStrictEqual([
+      { emojiTag: "a", messageId: message.id },
+      { emojiTag: "b", messageId: message.id },
+    ]);
+    expect(
+      (await object.deleteUserReactions({ after: { emojiTag: "b", messageId: message.id }, limit: 2, userId })).map(
+        (reaction) => toReactionKey(reaction),
+      ),
     ).toStrictEqual([{ emojiTag: "a", messageId: otherMessage.id }]);
-    expect(object.readReactions([message.id, otherMessage.id])).toStrictEqual([
+    await expect(object.readReactions([message.id, otherMessage.id])).resolves.toStrictEqual([
       { emojiTag: "a", messageId: message.id, userIds: [otherUserId] },
     ]);
   });
@@ -902,7 +929,7 @@ describe(RoomObject, () => {
       await sendMessage(object, "fifth"),
     ];
 
-    expect(readSearchIds([{ object, roomId }], "", 2)).toStrictEqual(
+    await expect(readSearchIds([{ object, roomId }], "", 2)).resolves.toStrictEqual(
       messages.toReversed().map(({ id }) => ({ id, roomId })),
     );
   });
@@ -917,10 +944,10 @@ describe(RoomObject, () => {
     await sendMessage(object, "tie tie tie tie");
     await sendMessage(object, "other");
 
-    const whole = readSearchIds([{ object, roomId }], "tie", 10);
+    const whole = await readSearchIds([{ object, roomId }], "tie", 10);
     expect(whole).toHaveLength(4);
-    expect(readSearchIds([{ object, roomId }], "tie", 1)).toStrictEqual(whole);
-    expect(object.searchMessages({ ...searchAll, limit: 1, query: "tie" }).count).toBe(4);
+    await expect(readSearchIds([{ object, roomId }], "tie", 1)).resolves.toStrictEqual(whole);
+    expect((await object.searchMessages({ ...searchAll, limit: 1, query: "tie" })).count).toBe(4);
   });
 
   test("a search with text across two rooms reads every match to its end, rooms tied on rank taking the room id's order", async () => {
@@ -936,7 +963,7 @@ describe(RoomObject, () => {
     await sendMessage(otherObject, "tie", otherActor);
 
     // Each room ranks its one match first, so the two tie on rank, and the room id orders them
-    const matches = readSearchIds(
+    const matches = await readSearchIds(
       [
         { object, roomId },
         { object: otherObject, roomId: otherRoomId },
@@ -1070,7 +1097,7 @@ describe(RoomObject, () => {
     await expect(object.deleteAll(actor)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AggregateError: The room is kept, since 1 sender index removal(s) failed]`,
     );
-    expect(object.readMessages(newestPage)).toHaveLength(1);
+    await expect(object.readMessages(newestPage)).resolves.toHaveLength(1);
 
     await expect(object.deleteAll(actor)).resolves.toStrictEqual([]);
   });
@@ -1079,7 +1106,7 @@ describe(RoomObject, () => {
     expect.hasAssertions();
 
     const { object } = createRoomObject();
-    object.attachMember(otherUserId, createStatus(otherUserId, true));
+    await object.attachMember(otherUserId, createStatus(otherUserId, true));
     await sendMessage(object, "hello");
     getUserStub(userId).removeSentMessagesInRoom.mockRejectedValueOnce(new Error("The index is unreachable"));
 
@@ -1095,7 +1122,7 @@ describe(RoomObject, () => {
     });
   });
 
-  test("a member coming online and going offline is sent to the room as its status, once for each change", () => {
+  test("a member coming online and going offline is sent to the room as its status, once for each change", async () => {
     expect.hasAssertions();
 
     const { object, state } = createRoomObject();
@@ -1104,8 +1131,8 @@ describe(RoomObject, () => {
     const connectedStatus = createStatus(otherUserId, true);
     const disconnectedStatus = createStatus(otherUserId, false);
 
-    object.attachMember(otherUserId, connectedStatus);
-    object.detachMember(otherUserId, disconnectedStatus);
+    await object.attachMember(otherUserId, connectedStatus);
+    await object.detachMember(otherUserId, disconnectedStatus);
 
     expect(readFrames(socket)).toStrictEqual([
       { data: structuredClone(connectedStatus), type: "upsertStatus" },
@@ -1113,7 +1140,7 @@ describe(RoomObject, () => {
     ]);
   });
 
-  test("removing a member closes that member's sockets and no other", () => {
+  test("removing a member closes that member's sockets and no other", async () => {
     expect.hasAssertions();
 
     const { object, state } = createRoomObject();
@@ -1122,13 +1149,13 @@ describe(RoomObject, () => {
     state.ctx.acceptWebSocket(memberSocket, [getUserSocketTag(otherUserId), getDeviceSocketTag(otherDeviceId)]);
     state.ctx.acceptWebSocket(bystanderSocket, [getUserSocketTag(userId), getDeviceSocketTag(deviceId)]);
 
-    object.removeMember(otherUserId);
+    await object.removeMember(otherUserId);
 
     expect(memberSocket.close).toHaveBeenCalledExactlyOnceWith(ROOM_MEMBER_REMOVED_CODE, "Removed from the room");
     expect(bystanderSocket.close).not.toHaveBeenCalled();
   });
 
-  test("closing a session closes the room's sockets of that session and no other", () => {
+  test("closing a session closes the room's sockets of that session and no other", async () => {
     expect.hasAssertions();
 
     const { object, state } = createRoomObject();
@@ -1152,7 +1179,7 @@ describe(RoomObject, () => {
       getDeviceSocketTag(v7()),
     ]);
 
-    object.closeSession(revokedSessionId);
+    await object.closeSession(revokedSessionId);
 
     expect(revokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
     expect(revokedOtherDeviceSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");

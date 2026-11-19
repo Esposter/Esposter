@@ -15,6 +15,8 @@ import { DurableObject } from "cloudflare:workers";
 export interface ObjectInvocation<TResult> {
   readSet: ColumnTopic[];
   result: TResult;
+  // The topics the invocation's writes published. An invocation with none wrote nothing
+  writeSet: ColumnTopic[];
 }
 
 // The arguments and the result of one of an object's RPC methods, as its RPC interface declares them
@@ -69,8 +71,9 @@ export abstract class RealtimeObject<
   }
 
   // The one entry a caller reaches the object's RPC methods through. The method runs in an invocation scope, so the statements
-  // It awaits are recorded: its reads come back as the read set its result watches, and its writes are published best-effort
-  // Once it settles, whether it succeeded or not, since a write that landed before a failure still changed rows
+  // It awaits are recorded: its reads come back as the read set its result watches, and its writes come back as the write set
+  // They are published as, best-effort once it settles, whether it succeeded or not, since a write that landed before a failure
+  // Still changed rows
   async invoke<TMethod extends keyof TRpc & string>(
     method: TMethod,
     args: MethodArgs<TRpc, TMethod>,
@@ -128,22 +131,18 @@ export abstract class RealtimeObject<
   protected onSocketAccepted(_server: WebSocket, _request: Request): void {}
 
   // Runs one invocation of the object, its entry or its alarm, under the scope its handles record into. Its reads come back as
-  // The read set, and its writes are published best-effort once it settles, whether it succeeded or not
-  // Runs one invocation of the object, its entry or its alarm, under the scope its handles record into. Its reads come back as
-  // The read set, and its writes are published best-effort once it settles, whether it succeeded or not
+  // The read set and its writes as the write set, which is published best-effort once the invocation settles, whether it
+  // Succeeded or not
   protected runInvocation<TResult>(label: string, run: () => TResult): Promise<ObjectInvocation<Awaited<TResult>>> {
     const handles: ObjectInvocationHandles = new Map();
+    let writeSet: Promise<ColumnTopic[]> | undefined;
+    const getWriteSet = () => (writeSet ??= this.#getTopics(handles, getWriteTopics));
     return withFinalizerAsync(
       async () => {
         const result = await objectInvocationStorage.run(handles, run);
-        return { readSet: await this.#getTopics(handles, getReadTopics), result };
+        return { readSet: await this.#getTopics(handles, getReadTopics), result, writeSet: await getWriteSet() };
       },
-      () =>
-        publishTopicsBestEffort(
-          this.env.TOPIC,
-          () => this.#getTopics(handles, getWriteTopics),
-          `Failed to publish the topics of ${label}:`,
-        ),
+      () => publishTopicsBestEffort(this.env.TOPIC, getWriteSet, `Failed to publish the topics of ${label}:`),
     );
   }
 
