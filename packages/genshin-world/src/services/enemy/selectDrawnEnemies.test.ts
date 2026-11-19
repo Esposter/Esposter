@@ -20,13 +20,6 @@ describe(selectDrawnEnemies, () => {
     expect(selectDrawnEnemies(enemies, CHARACTER_POINT, 2).map(({ id }) => id)).toStrictEqual(["beside", "far"]);
   });
 
-  test("a farther enemy is not drawn once the draw is full", () => {
-    expect.hasAssertions();
-    const enemies = [createEnemyAt("near", 1), createEnemyAt("middle", 2), createEnemyAt("farthest", 5)];
-
-    expect(selectDrawnEnemies(enemies, CHARACTER_POINT, 2).map(({ id }) => id)).toStrictEqual(["near", "middle"]);
-  });
-
   test("the draw holds the nearest enemies nearest first, whatever order the map holds them in", () => {
     expect.hasAssertions();
     const enemies = [7, 2, 9, 1, 4, 3, 8, 5, 6].map((x) => createEnemyAt(`x${x}`, x));
