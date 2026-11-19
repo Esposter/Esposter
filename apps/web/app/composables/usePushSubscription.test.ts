@@ -21,11 +21,13 @@ describe(usePushSubscription, () => {
     expect.hasAssertions();
 
     const staleSubscription = {
-      endpoint: "https://stale.",
+      endpoint: "https://fcm.googleapis.com/stale",
       options: { applicationServerKey: new Uint8Array([1]).buffer },
       unsubscribe: vi.fn<() => Promise<boolean>>(),
     };
-    const freshSubscription = { toJSON: () => ({ endpoint: "https://fresh.", keys: { auth: "", p256dh: "" } }) };
+    const freshSubscription = {
+      toJSON: () => ({ endpoint: "https://fcm.googleapis.com/fresh", keys: { auth: "", p256dh: "" } }),
+    };
     const pushManager = {
       getSubscription: vi.fn<() => Promise<typeof staleSubscription>>(() => Promise.resolve(staleSubscription)),
       subscribe: vi.fn<(options: PushSubscriptionOptionsInit) => Promise<typeof freshSubscription>>(() =>
@@ -68,6 +70,6 @@ describe(usePushSubscription, () => {
       applicationServerKey: useRuntimeConfig().public.vapid.publicKey,
       userVisibleOnly: true,
     });
-    expect(subscribedEndpoints).toStrictEqual(["https://fresh."]);
+    expect(subscribedEndpoints).toStrictEqual(["https://fcm.googleapis.com/fresh"]);
   });
 });

@@ -87,6 +87,19 @@ describe(sendWebPushNotifications, () => {
     expect(peakInFlight).toBe(MAX_CONCURRENT_PUSH_SENDS);
   });
 
+  // A stored endpoint off the push services is never POSTed to, whatever row it came from, so the worker cannot be made to
+  // Send a request to an arbitrary host
+  test("never POSTs to an endpoint whose host is not a browser's push service", async () => {
+    expect.hasAssertions();
+
+    await sendWebPushNotifications(
+      [{ auth: "", endpoint: "https://attacker.example", expirationTime: null, id: v7(), p256dh: "" }],
+      payload,
+    );
+
+    expect(vi.mocked(webpush.sendNotification)).not.toHaveBeenCalled();
+  });
+
   test("keeps subscription when send fails with any other error", async () => {
     expect.hasAssertions();
 
