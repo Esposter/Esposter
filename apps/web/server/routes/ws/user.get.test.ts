@@ -1,6 +1,7 @@
 import type { RequestEvent } from "nuxt/server";
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
+import { createSessionPayload } from "#server/routes/ws/createSessionPayload.test";
 import userSocket from "#server/routes/ws/user.get";
 import { readSession } from "#server/services/auth/readSession";
 import { describe, expect, test, vi } from "vitest";
@@ -27,12 +28,6 @@ describe("ws/user", () => {
     ]);
   });
 });
-
-const createSessionPayload = () =>
-  ({
-    session: { expiresAt: new Date(0), id: "session-abcdefghijklmnop" },
-    user: { id: "22222222-2222-7222-8222-222222222222" },
-  }) as Awaited<ReturnType<typeof readSession>>;
 
 const createEvent = () => {
   const url = "https://esposter.com/ws/user?deviceId=33333333-3333-7333-8333-333333333333";

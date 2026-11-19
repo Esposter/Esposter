@@ -2,6 +2,7 @@ import type { db } from "#server/db/index";
 import type { RequestEvent } from "nuxt/server";
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
+import { createSessionPayload } from "#server/routes/ws/createSessionPayload.test";
 import roomSocket from "#server/routes/ws/room/[roomId].get";
 import { readSession } from "#server/services/auth/readSession";
 import { assertIsMember } from "#server/services/room/assertIsMember";
@@ -41,12 +42,6 @@ describe("ws/room/[roomId]", () => {
     ]);
   });
 });
-
-const createSessionPayload = () =>
-  ({
-    session: { expiresAt: new Date(0), id: "session-abcdefghijklmnop" },
-    user: { id: "22222222-2222-7222-8222-222222222222" },
-  }) as Awaited<ReturnType<typeof readSession>>;
 
 const createEvent = () => {
   const url =

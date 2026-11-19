@@ -3,6 +3,7 @@ import type { RequestEvent } from "nuxt/server";
 
 import { callObjectCalls } from "#server/composables/realtime/useCallObject.test";
 import callSocket from "#server/routes/ws/call/[callSessionId].get";
+import { createSessionPayload } from "#server/routes/ws/createSessionPayload.test";
 import { readSession } from "#server/services/auth/readSession";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
 import { describe, expect, test, vi } from "vitest";
@@ -42,12 +43,6 @@ describe("ws/call/[callSessionId]", () => {
     ]);
   });
 });
-
-const createSessionPayload = () =>
-  ({
-    session: { expiresAt: new Date(0), id: "session-abcdefghijklmnop" },
-    user: { id: "22222222-2222-7222-8222-222222222222" },
-  }) as Awaited<ReturnType<typeof readSession>>;
 
 const createEvent = () => {
   const url = "https://esposter.com/ws/call/abcdefghijkl?deviceId=33333333-3333-7333-8333-333333333333";
