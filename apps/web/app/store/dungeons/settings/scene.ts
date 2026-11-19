@@ -33,13 +33,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const { updateThemeModeSetting } = colorPickerStore;
   // Held by the store rather than at module scope, so each Pinia instance starts with its own cursor
   const settingsOptionGrid = markRaw(
-    new Grid({
-      grid: SettingsOptionRows,
-      isWrapping: false,
-      position: ref({ x: 2, y: 0 }),
-      // Column 0 is the option's own name, so the cursor only lands on its values
-      validate: ({ x }) => x !== 0,
-    }),
+    new Grid({ grid: SettingsOptionRows, isWrapping: false, position: ref({ x: 2, y: 0 }) }),
   );
   const selectedSettingsOption = computed(() => getSettingsOption(settingsOptionGrid.position.value.y));
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);

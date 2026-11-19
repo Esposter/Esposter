@@ -53,6 +53,19 @@ describe(useSettingsOnGridClick, () => {
     expect(controls.setInput).not.toHaveBeenCalled();
   });
 
+  // An option's name is a row to select, not a value to save, so a click on it moves the cursor to that row's resting cell
+  test("a click on an option's name selects its row and saves nothing", () => {
+    expect.hasAssertions();
+
+    const settingsSceneStore = useSettingsSceneStore();
+    const { settingsOptionGrid } = settingsSceneStore;
+    const soundRow = getRowPosition(settingsOptionGrid, SettingsOption.Sound);
+    useSettingsOnGridClick(soundRow)();
+
+    expect(settingsOptionGrid.position.value.y).toBe(soundRow.y);
+    expect(saveDungeons).not.toHaveBeenCalled();
+  });
+
   test("a second press on Close confirms and saves nothing", () => {
     expect.hasAssertions();
 
