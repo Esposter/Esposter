@@ -28,29 +28,25 @@ watch(
     savedProfile.value = undefined;
   },
 );
-const profileCardRows = computed(() => {
+const profileCardValues = computed(() => {
   if (!session.value) throw createEntityNotFoundError(DatabaseEntityType.User);
 
   const { biography, image, name } = savedProfile.value ?? session.value.user;
+  return { biography, image, name };
+});
+const profileCardRows = computed(() => {
+  const { biography, image, name } = profileCardValues.value;
   return {
     name: { type: RowValueType.Text, value: name },
     biography: { type: RowValueType.Textarea, value: biography },
     image: { type: RowValueType.Image, value: image },
   } as const;
 });
-// `Object.fromEntries` types its result as a plain record, so the key-to-value correspondence the rows
-// Already carry is restated here rather than lost
-const profileCardRowValues = computed(
-  () =>
-    Object.fromEntries(Object.entries(profileCardRows.value).map(([property, row]) => [property, row.value])) as {
-      [P in keyof typeof profileCardRows.value]: (typeof profileCardRows.value)[P]["value"];
-    },
-);
-const editedProfileCardRows = ref(structuredClone(profileCardRowValues.value));
+const editedProfileCardRows = ref(structuredClone(profileCardValues.value));
 const isEditMode = ref(false);
 const isEditFormValid = ref(true);
 const disabled = computed(
-  () => !isEditFormValid.value || checkIsDeepEqual(profileCardRowValues.value, editedProfileCardRows.value),
+  () => !isEditFormValid.value || checkIsDeepEqual(profileCardValues.value, editedProfileCardRows.value),
 );
 // The form closes as the save is sent, and the card shows what it sent. A refused save puts the session's profile back
 // And reopens the form on the edits it could not persist

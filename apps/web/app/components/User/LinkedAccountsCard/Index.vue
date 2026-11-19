@@ -30,11 +30,10 @@ const { unlinkingProvider } = storeToRefs(userLinkedAccountDialogStore);
 const { item: unlinkingAccount } = useSingletonDialog(unlinkingProvider, () =>
   accounts.value?.find(({ providerId }) => providerId === unlinkingProvider.value),
 );
-// Keyed by provider because that is what a row knows about itself, valued with the account row's own id
-// Because that is what unlinking takes. One provider holds at most one row here: linking keys on the identity
-// The provider issued and `allowDifferentEmails` is off, so a second account of the same provider would have to
-// Carry the same verified address as the first — which no provider issues twice
-const providerIdAccountIdMap = computed(() => new Map(accounts.value?.map(({ id, providerId }) => [providerId, id])));
+// Keyed by provider because that is what a row knows about itself. One provider holds at most one row here: linking
+// Keys on the identity the provider issued and `allowDifferentEmails` is off, so a second account of the same provider
+// Would have to carry the same verified address as the first — which no provider issues twice
+const linkedProviders = computed(() => new Set(accounts.value?.map(({ providerId }) => providerId)));
 // The account leaves the list as its unlink is sent, and comes back if the server refuses it
 const removeAccount = (accountId: string) =>
   applyOptimisticReplacement(accounts, (previousAccounts) => previousAccounts.filter(({ id }) => id !== accountId));
@@ -77,7 +76,7 @@ if (typeof linkError === "string") {
           v-for="loginButtonProps of LoginButtonItems"
           :key="loginButtonProps.provider"
           :="loginButtonProps"
-          :is-linked="providerIdAccountIdMap.has(loginButtonProps.provider) ? true : undefined"
+          :is-linked="linkedProviders.has(loginButtonProps.provider) ? true : undefined"
           :is-pending="checkIsPending(loginButtonProps.provider) ? true : undefined"
           :linked-account-count="accounts?.length ?? 0"
           @link="
