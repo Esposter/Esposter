@@ -181,6 +181,20 @@ describe("emojiRouter", () => {
     );
   });
 
+  // A replayed create names an id the room already holds, so it is refused as the name the room uses, not left to the
+  // Primary key to refuse as a raw constraint error
+  test("fails createRoomEmoji replayed with the id of an emoji the room already holds", async () => {
+    expect.hasAssertions();
+
+    const { id } = await roomEmojiCaller.generateUploadRoomEmojiPresignedUrlEntity({ mimetype, roomId, size });
+    await uploadRoomEmojiBlob(id);
+    await roomEmojiCaller.createRoomEmoji({ id, name, roomId });
+
+    await expect(roomEmojiCaller.createRoomEmoji({ id, name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ name, roomId }))}]`,
+    );
+  });
+
   test(`fails generateUploadRoomEmojiPresignedUrlEntity for a member without ${RoomPermission.ManageEmojis}`, async () => {
     expect.hasAssertions();
 

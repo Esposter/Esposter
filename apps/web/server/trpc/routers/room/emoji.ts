@@ -77,12 +77,7 @@ export const emojiRouter = router({
                 and(
                   eq(roomsInMessage.id, roomId),
                   sql`(select count(*) from ${roomEmojisInMessage} where ${eq(roomEmojisInMessage.roomId, roomId)}) < ${MAX_ROOM_EMOJIS}`,
-                  notExists(
-                    ctx.db
-                      .select({ _: sql`1` })
-                      .from(roomEmojisInMessage)
-                      .where(and(eq(roomEmojisInMessage.roomId, roomId), eq(roomEmojisInMessage.name, name))),
-                  ),
+                  notExists(getRoomEmojiNameQuery(ctx.db, roomId, name)),
                 ),
               ),
           )
@@ -175,7 +170,7 @@ export const emojiRouter = router({
           // The room's other emoji are the ones this name may not already belong to, and the unique index is
           // What makes that true — matching here is what turns a taken name into a stated refusal
           .where(
-            and(inRoom(roomEmojisInMessage, id, roomId), notExists(getRoomEmojiNameQuery(ctx.db, id, name, roomId))),
+            and(inRoom(roomEmojisInMessage, id, roomId), notExists(getRoomEmojiNameQuery(ctx.db, roomId, name, id))),
           )
           .returning()
       )[0],
