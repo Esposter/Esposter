@@ -2,6 +2,7 @@
 import UiStyleField from "#src/components/PageBuilder/StylePanel/Field.vue";
 import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
 import { UiStyles } from "#src/models/ui/UiStyle";
+import { STYLE_BORDER_WIDTH_UNITS } from "#src/services/pageBuilder/constants";
 import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -122,7 +123,7 @@ describe("pageBuilderStylePanelField", () => {
       const component = mount(UiStyleField, { props: { label: "a", modelValue: "2px", property: "border-width" } });
 
       expect(component.findComponent({ name: "UiSelect" }).props("items")).toStrictEqual(
-        ["px", "rem", "em", "vw", "vh"].map((lengthUnit) => ({ title: lengthUnit, value: lengthUnit })),
+        STYLE_BORDER_WIDTH_UNITS.map((lengthUnit) => ({ title: lengthUnit, value: lengthUnit })),
       );
     });
   });

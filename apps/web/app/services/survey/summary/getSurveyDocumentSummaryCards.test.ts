@@ -3,7 +3,6 @@ import type { SurveyQuestionNode } from "vue-survey-engine-headless";
 import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
 import { SurveySummaryCardType } from "#src/models/resource/survey/SurveySummaryCardType";
 import { getSurveyDocumentSummaryCards } from "#src/services/survey/summary/getSurveyDocumentSummaryCards";
-import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
@@ -74,57 +73,55 @@ describe(getSurveyDocumentSummaryCards, () => {
     expect.hasAssertions();
 
     expect(
-      takeOne(
-        getSurveyDocumentSummaryCards(
-          [createRatingQuestion(0, 3)],
-          [
-            { rating: 0, responseId },
-            { rating: 2, responseId },
-            { rating: 2, responseId },
-          ],
-        ),
-        0,
+      getSurveyDocumentSummaryCards(
+        [createRatingQuestion(0, 3)],
+        [
+          { rating: 0, responseId },
+          { rating: 2, responseId },
+          { rating: 2, responseId },
+        ],
       ),
-    ).toStrictEqual({
-      answeredCount: 3,
-      average: 4 / 3,
-      choices: [
-        { count: 1, label: "0" },
-        { count: 0, label: "1" },
-        { count: 2, label: "2" },
-      ],
-      name: "rating",
-      title: "rating",
-      type: SurveySummaryCardType.Choice,
-    });
+    ).toStrictEqual([
+      {
+        answeredCount: 3,
+        average: 4 / 3,
+        choices: [
+          { count: 1, label: "0" },
+          { count: 0, label: "1" },
+          { count: 2, label: "2" },
+        ],
+        name: "rating",
+        title: "rating",
+        type: SurveySummaryCardType.Choice,
+      },
+    ]);
   });
 
-  test("a rating that starts at one is counted as before", () => {
+  test("a rating that starts at one counts its answers from one up to the top of its range", () => {
     expect.hasAssertions();
 
     expect(
-      takeOne(
-        getSurveyDocumentSummaryCards(
-          [createRatingQuestion(1, 3)],
-          [
-            { rating: 1, responseId },
-            { rating: 3, responseId },
-          ],
-        ),
-        0,
+      getSurveyDocumentSummaryCards(
+        [createRatingQuestion(1, 3)],
+        [
+          { rating: 1, responseId },
+          { rating: 3, responseId },
+        ],
       ),
-    ).toStrictEqual({
-      answeredCount: 2,
-      average: 2,
-      choices: [
-        { count: 1, label: "1" },
-        { count: 0, label: "2" },
-        { count: 1, label: "3" },
-      ],
-      name: "rating",
-      title: "rating",
-      type: SurveySummaryCardType.Choice,
-    });
+    ).toStrictEqual([
+      {
+        answeredCount: 2,
+        average: 2,
+        choices: [
+          { count: 1, label: "1" },
+          { count: 0, label: "2" },
+          { count: 1, label: "3" },
+        ],
+        name: "rating",
+        title: "rating",
+        type: SurveySummaryCardType.Choice,
+      },
+    ]);
   });
 
   // A skipped question is left out of its own count, and a question taking several choices counts each one it holds

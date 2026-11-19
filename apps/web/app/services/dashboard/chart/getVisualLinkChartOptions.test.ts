@@ -3,7 +3,6 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { getVisualLinkChartOptions } from "#src/services/dashboard/chart/getVisualLinkChartOptions";
-import { ID_SEPARATOR } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -22,8 +21,10 @@ describe(getVisualLinkChartOptions, () => {
   test("groups visuals by the dataset and the column it is categorised by", () => {
     expect.hasAssertions();
 
-    expect(getVisualLinkChartOptions(createBoundVisual(), "bar")).toStrictEqual({
-      group: [DatasetProviderType.Sheet, id, xColumn].join(ID_SEPARATOR),
+    const { group } = getVisualLinkChartOptions(createBoundVisual(), "bar") ?? {};
+
+    expect(getVisualLinkChartOptions(createBoundVisual(xColumn, VisualType.Bar), "bar")).toStrictEqual({
+      group,
       link: { enabled: true },
       selection: { enabled: true },
     });

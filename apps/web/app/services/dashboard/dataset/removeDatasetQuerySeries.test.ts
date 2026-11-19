@@ -29,11 +29,6 @@ describe(removeDatasetQuerySeries, () => {
   test("removing the series an order ranks by drops the order", () => {
     expect.hasAssertions();
 
-    const removedQuery = removeDatasetQuerySeries(query, 1);
-
-    expect({ order: removedQuery.order, series: removedQuery.series }).toStrictEqual({
-      order: undefined,
-      series: [count],
-    });
+    expect(removeDatasetQuerySeries(query, 1)).toStrictEqual({ order: undefined, series: [count], xColumn: "x" });
   });
 });

@@ -8,7 +8,7 @@ import { emailKind } from "#src/services/pageBuilder/emailKind";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { v7 } from "uuid";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const createDocument = (href: string | undefined): EmailDocument => ({
   content: [createEmailButtonSection(href)],
@@ -16,6 +16,14 @@ const createDocument = (href: string | undefined): EmailDocument => ({
 });
 
 describe("useEmailCritique", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   test("the findings follow an unsaved edit", async () => {
     expect.hasAssertions();
 
@@ -27,10 +35,8 @@ describe("useEmailCritique", () => {
 
     expect(findings.value).toStrictEqual([]);
 
-    vi.useFakeTimers({ now: 0 });
     setEmailDocument(resourceId, emailKind, createDocument(undefined));
     await vi.advanceTimersByTimeAsync(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
-    vi.useRealTimers();
 
     expect(findings.value.map(({ nodeId, severity }) => ({ nodeId, severity }))).toStrictEqual([
       { nodeId: TEST_ID, severity: EditorFindingSeverity.Warning },

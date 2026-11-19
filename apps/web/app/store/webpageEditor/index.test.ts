@@ -71,15 +71,17 @@ describe(useWebpageEditorStore, () => {
     saveWebpage(resourceId);
     await flushPromises();
 
-    expect(savedContents[0]).toStrictEqual({
-      content: [
-        {
-          props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
-          type: WebpageNodeType.Button,
-        },
-      ],
-      id: content.id,
-    });
+    expect(savedContents).toStrictEqual([
+      {
+        content: [
+          {
+            props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
+            type: WebpageNodeType.Button,
+          },
+        ],
+        id: content.id,
+      },
+    ]);
   });
 
   test("carries the share preview across a page save", async () => {

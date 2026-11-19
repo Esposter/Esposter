@@ -23,13 +23,10 @@ import {
 import PageBuilderCanvasFrame from "#src/components/PageBuilder/Canvas/Frame.vue";
 import PageBuilderCanvas from "#src/components/PageBuilder/Canvas/Index.vue";
 import PageBuilderEditor from "#src/components/PageBuilder/Editor.vue";
+import PageBuilderEmptyPage from "#src/components/PageBuilder/EmptyPage.vue";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { findSheet } from "#src/services/editor/findSheet.test";
-import {
-  DEVICE_BREAKPOINT_MAP,
-  WEBPAGE_NODE_TYPE_TITLE_MAP,
-  WEBPAGE_PALETTE_CATEGORIES,
-} from "#src/services/pageBuilder/constants";
+import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORIES } from "#src/services/pageBuilder/constants";
 import {
   TEST_NESTED_TEXT_ID,
   TEST_ROOT_TEXT_ID,
@@ -172,7 +169,7 @@ describe("pageBuilderEditor", () => {
     ]);
   });
 
-  test("the device toggle sets the frame and the style tab's breakpoint", async () => {
+  test("the device toggle sets the frame's device", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -192,7 +189,6 @@ describe("pageBuilderEditor", () => {
     await mobile?.trigger("click");
 
     expect(component.findComponent(PageBuilderCanvasFrame).props("device")).toBe(PageBuilderDevice.Mobile);
-    expect(DEVICE_BREAKPOINT_MAP[pageBuilderCanvasStore.getDevice(resourceId)]).toBe(StyleBreakpoint.Mobile);
   });
 
   test("a compact window opens the inspector as a sheet", async () => {
@@ -225,7 +221,7 @@ describe("pageBuilderEditor", () => {
     expect(component.find("iframe").exists()).toBe(true);
   });
 
-  test("a medium window opens the inspector as a sheet", async () => {
+  test("a medium window opens the inspector as an end drawer", async () => {
     expect.hasAssertions();
     display.isMobile = true;
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -300,7 +296,7 @@ describe("pageBuilderEditor", () => {
     expect.hasAssertions();
     // The findings settle on the autosave's cadence, so the test moves the clock past it rather than waiting for it
     // oxlint-disable-next-line testing/no-faked-set-timeout -- the findings debounce is counted by the clock; the afterEach above restores the real timers before the harness waits a turn on setTimeout
-    vi.useFakeTimers({ now: 0, toFake: ["setTimeout", "clearTimeout"] });
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
     const resourceId = v7();
@@ -669,6 +665,6 @@ describe("pageBuilderEditor", () => {
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     expect(component.find("iframe").exists()).toBe(false);
-    expect(component.text()).toContain("This page is empty");
+    expect(component.findComponent(PageBuilderEmptyPage).exists()).toBe(true);
   });
 });

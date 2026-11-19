@@ -73,14 +73,9 @@ describe("dashboardPaletteTile", () => {
     const visualStore = useVisualStore();
     const { visuals } = storeToRefs(visualStore);
 
-    expect(visuals.value).toHaveLength(1);
-    const [visual] = visuals.value;
-    expect({ type: visual?.type, w: visual?.w, x: visual?.x, y: visual?.y }).toStrictEqual({
-      type: VisualType.Bar,
-      w: 4,
-      x: 0,
-      y: 0,
-    });
+    expect(visuals.value.map(({ type, w, x, y }) => ({ type, w, x, y }))).toStrictEqual([
+      { type: VisualType.Bar, w: 4, x: 0, y: 0 },
+    ]);
     tile.unmount();
   });
 
@@ -117,8 +112,9 @@ describe("dashboardPaletteTile", () => {
     const visualStore = useVisualStore();
     const { visuals } = storeToRefs(visualStore);
 
-    const [visual] = visuals.value;
-    expect({ type: visual?.type, x: visual?.x, y: visual?.y }).toStrictEqual({ type: VisualType.Bar, x: 2, y: 0 });
+    expect(visuals.value.map(({ type, x, y }) => ({ type, x, y }))).toStrictEqual([
+      { type: VisualType.Bar, x: 2, y: 0 },
+    ]);
     tile.unmount();
   });
 
@@ -201,6 +197,10 @@ describe("dashboardPaletteTile", () => {
     const child = takeOne(cappedGroup.visuals ?? []);
     Object.assign(child, { h: 2, w: 2, x: 2, y: 0 });
     loadDashboard(chain);
+    const visualStore = useVisualStore();
+    const { visuals } = storeToRefs(visualStore);
+    const getCells = () => listVisuals(visuals.value).map(({ h, id, w, x, y }) => ({ h, id, w, x, y }));
+    const cellsBefore = getCells();
     const groupGrid = await mountSuspended(DashboardGrid, {
       attachTo: document.body,
       attrs: { "data-group-id": cappedGroup.id },
@@ -221,11 +221,9 @@ describe("dashboardPaletteTile", () => {
       props: { title: "Group", type: VisualType.Group },
     });
     await dragTileTo(tile, cellPoint, groupGrid.element);
-    const visualStore = useVisualStore();
-    const { visuals } = storeToRefs(visualStore);
 
     expect(groupGrid.emitted("commit")).toBeUndefined();
-    expect(listVisuals(visuals.value)).toHaveLength(MAX_VISUAL_GROUP_DEPTH + 2);
+    expect(getCells()).toStrictEqual(cellsBefore);
     tile.unmount();
   });
 });

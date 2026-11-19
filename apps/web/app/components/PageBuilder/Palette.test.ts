@@ -91,7 +91,7 @@ describe("pageBuilderPalette", () => {
 
   // The webpage has no form nodes, so a survey invite is how a published page collects answers. A survey's input kinds
   // Are the only form nodes there are, and none of them is in the palette's categories
-  test("owner browses the webpage editor's nodes", () => {
+  test("the webpage palette offers no survey input", () => {
     expect.hasAssertions();
 
     const surveyNodeTypes: string[] = Object.values(SurveyNodeType);

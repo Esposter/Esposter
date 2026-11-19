@@ -56,7 +56,7 @@ describe(useEmailEditorStore, () => {
     saveEmail(resourceId);
     await flushPromises();
 
-    expect(savedContents[0]).toStrictEqual({ content: [], id: content.id });
+    expect(savedContents).toStrictEqual([{ content: [], id: content.id }]);
   });
 
   test("a critique warning does not refuse an email save", async () => {
@@ -92,7 +92,7 @@ describe(useEmailEditorStore, () => {
     saveEmail(resourceId);
     await flushPromises();
 
-    expect(savedContents[0]).toStrictEqual({ content: document.content, id: content.id });
+    expect(savedContents).toStrictEqual([{ content: document.content, id: content.id }]);
   });
 
   test("carries the dataset binding across an email save", async () => {

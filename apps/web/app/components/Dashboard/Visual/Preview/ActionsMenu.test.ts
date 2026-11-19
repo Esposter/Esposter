@@ -63,16 +63,6 @@ describe("dashboardVisualPreviewActionsMenu", () => {
     await loadContent();
   };
 
-  test("a table's menu offers fit height to content", async () => {
-    expect.hasAssertions();
-
-    const table = new Visual({ type: VisualType.Table });
-    await loadDashboard([table]);
-    const menu = await mountMenu(table);
-
-    await expect(openMenu(menu)).resolves.toContain("Fit height to content");
-  });
-
   test("opening a visual's menu", async () => {
     expect.hasAssertions();
 
@@ -105,7 +95,7 @@ describe("dashboardVisualPreviewActionsMenu", () => {
     await loadDashboard([chart]);
     const menu = await mountMenu(chart);
 
-    await expect(openMenu(menu)).resolves.not.toContain("Fit height to content");
+    await expect(openMenu(menu)).resolves.toStrictEqual(["Edit visual", "Duplicate visual", "Delete visual"]);
   });
 
   test("a bound visual's menu offers its rows as an export", async () => {
@@ -124,7 +114,12 @@ describe("dashboardVisualPreviewActionsMenu", () => {
     await loadDashboard([bound]);
     const menu = await mountMenu(bound, dataset);
 
-    await expect(openMenu(menu)).resolves.toContain("Export CSV");
+    await expect(openMenu(menu)).resolves.toStrictEqual([
+      "Edit visual",
+      "Duplicate visual",
+      "Export CSV",
+      "Delete visual",
+    ]);
   });
 
   // Fit height is a write of its own, so it saves the flag onto the visual the menu was opened on
@@ -160,7 +155,7 @@ describe("dashboardVisualPreviewActionsMenu", () => {
     const visualStore = useVisualStore();
     const { visuals } = storeToRefs(visualStore);
 
-    expect(items).toContain("Delete visual");
+    expect(items).toStrictEqual(["Edit visual", "Duplicate visual", "Fit height to content", "Delete visual"]);
     expect(deletingVisualId.value).toBe(table.id);
     expect(visuals.value).toHaveLength(1);
   });
@@ -191,9 +186,9 @@ describe("dashboardVisualPreviewActionsMenu", () => {
     const cardItems = await openMenu(await mountMenu(card));
     const groupItems = await openMenu(await mountMenu(group));
 
-    expect({ card: cardItems.includes("Move to…"), group: groupItems.includes("Move to…") }).toStrictEqual({
-      card: true,
-      group: false,
+    expect({ card: cardItems, group: groupItems }).toStrictEqual({
+      card: ["Edit visual", "Duplicate visual", "Move to…", "Delete visual"],
+      group: ["Edit visual", "Duplicate visual", "Fit height to content", "Delete visual"],
     });
   });
 });

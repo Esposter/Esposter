@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { useSurveyFiles } from "#src/composables/survey/useSurveyFiles";
 import { v7 } from "uuid";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
@@ -29,10 +29,6 @@ const createDocument = (imageLink: string, logo: string) =>
   });
 
 describe(useSurveyFiles, () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("a picture the editor opened on is deleted at the close once the document drops it", () => {
     expect.hasAssertions();
 

@@ -52,7 +52,8 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
     releaseRead();
     await flushPromises();
     await boundReadReached;
-    const emittedBindings = wrapper.emitted<[undefined | VisualDatasetBinding]>("update:modelValue") ?? [];
+    const emittedBindings = wrapper.emitted<[undefined | VisualDatasetBinding]>("update:modelValue");
+    assert.exists(emittedBindings);
 
     expect(emittedBindings.map(([binding]) => binding?.reference)).toStrictEqual([secondReference]);
   });

@@ -109,7 +109,7 @@ describe(renderEmailCanvasVNodes, () => {
     expect(styleOf(hero)).not.toHaveProperty("height");
   });
 
-  test("a navbar draws each link as its own words, in a row", () => {
+  test("a navbar draws each link as its own words", () => {
     expect.hasAssertions();
 
     const section = takeOne(

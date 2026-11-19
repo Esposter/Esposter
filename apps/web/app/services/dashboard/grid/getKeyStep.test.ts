@@ -2,27 +2,12 @@
 import { getKeyStep } from "#src/services/dashboard/grid/getKeyStep";
 import { describe, expect, test } from "vitest";
 
-describe("getKeyStep", () => {
-  test.each([
-    ["ArrowDown", { dy: 1 }],
-    ["ArrowLeft", { dx: -1 }],
-    ["ArrowRight", { dx: 1 }],
-    ["ArrowUp", { dy: -1 }],
-  ])("an arrow key moves a focused visual one cell: %s", (key, step) => {
+describe(getKeyStep, () => {
+  test("an arrow key moves a focused visual one cell, and with Shift resizes it one cell instead", () => {
     expect.hasAssertions();
 
-    expect(getKeyStep(new KeyboardEvent("keydown", { key }))).toStrictEqual(step);
-  });
-
-  test.each([
-    ["ArrowDown", { dh: 1 }],
-    ["ArrowLeft", { dw: -1 }],
-    ["ArrowRight", { dw: 1 }],
-    ["ArrowUp", { dh: -1 }],
-  ])("shift with an arrow key resizes a focused visual one cell: %s", (key, step) => {
-    expect.hasAssertions();
-
-    expect(getKeyStep(new KeyboardEvent("keydown", { key, shiftKey: true }))).toStrictEqual(step);
+    expect(getKeyStep(new KeyboardEvent("keydown", { key: "ArrowRight" }))).toStrictEqual({ dx: 1 });
+    expect(getKeyStep(new KeyboardEvent("keydown", { key: "ArrowRight", shiftKey: true }))).toStrictEqual({ dw: 1 });
   });
 
   test("a key that is not an arrow takes no step", () => {

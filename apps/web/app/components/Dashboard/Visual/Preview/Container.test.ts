@@ -79,7 +79,11 @@ describe("dashboardVisualPreviewContainer", () => {
     await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
     await flushPromises();
 
-    expect(wrapper.findAll('[role="menuitem"]').map((item) => item.text())).not.toContain("Export CSV");
+    expect(wrapper.findAll('[role="menuitem"]').map((item) => item.text())).toStrictEqual([
+      "Edit visual",
+      "Duplicate visual",
+      "Delete visual",
+    ]);
   });
 
   // A visual whose source is gone shows its error state, and there are no rows left to export
@@ -101,6 +105,10 @@ describe("dashboardVisualPreviewContainer", () => {
     await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
     await flushPromises();
 
-    expect(wrapper.findAll('[role="menuitem"]').map((item) => item.text())).not.toContain("Export CSV");
+    expect(wrapper.findAll('[role="menuitem"]').map((item) => item.text())).toStrictEqual([
+      "Edit visual",
+      "Duplicate visual",
+      "Delete visual",
+    ]);
   });
 });

@@ -17,9 +17,9 @@ describe("dashboardEditorVisualFormFields", () => {
       props: { modelValue: new Visual({ type: VisualType.Card }) },
     });
 
-    expect(wrapper.findAllComponents({ name: "UiSelect" }).map((select) => select.props("label"))).not.toContain(
-      "Chart type",
-    );
+    expect(wrapper.findAllComponents({ name: "UiSelect" }).map((select) => select.props("label"))).toStrictEqual([
+      "Visual type",
+    ]);
     expect(wrapper.findComponent(UiSchemaForm).exists()).toBe(false);
     expect(wrapper.findAllComponents(UiTextField).map((field) => field.props("label"))).toStrictEqual([
       "Label",
@@ -34,9 +34,9 @@ describe("dashboardEditorVisualFormFields", () => {
       props: { modelValue: new Visual({ type: VisualType.Table }) },
     });
 
-    expect(wrapper.findAllComponents({ name: "UiSelect" }).map((select) => select.props("label"))).not.toContain(
-      "Chart type",
-    );
+    expect(wrapper.findAllComponents({ name: "UiSelect" }).map((select) => select.props("label"))).toStrictEqual([
+      "Visual type",
+    ]);
     expect(wrapper.findComponent(UiSchemaForm).exists()).toBe(false);
     expect(wrapper.findAllComponents(UiTextField).map((field) => field.props("label"))).toStrictEqual([
       "Alternative text",

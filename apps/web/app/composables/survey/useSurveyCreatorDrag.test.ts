@@ -42,22 +42,28 @@ const setup = (content: SurveyPageNode[]) => {
 };
 
 describe(useSurveyCreatorDrag, () => {
-  test("a release inserts once", () => {
+  test("a release inserts the dragged node once between the existing children, which keep their ids", () => {
     expect.hasAssertions();
 
+    const questionOne = createQuestion("question1");
+    const questionTwo = createQuestion("question2");
     const { document, original, registerSlots, startPaletteDrag, undo } = setup([
-      createPage([createQuestion("question1"), createQuestion("question2")]),
+      createPage([questionOne, questionTwo]),
     ]);
     registerSlots(() => [createPageSlot()]);
     startPaletteDrag(SurveyNodeType.Rating, createPointerEvent("pointerdown", 200, 10));
     window.dispatchEvent(createPointerEvent("pointermove", 200, 30));
     window.dispatchEvent(createPointerEvent("pointerup", 200, 30));
 
-    expect(document.value.content[0]?.props.children.map(({ type }) => type)).toStrictEqual([
+    const children = document.value.content[0]?.props.children ?? [];
+
+    expect(children.map(({ type }) => type)).toStrictEqual([
       SurveyNodeType.Text,
       SurveyNodeType.Rating,
       SurveyNodeType.Text,
     ]);
+    expect(children[0]?.props.id).toBe(questionOne.props.id);
+    expect(children[2]?.props.id).toBe(questionTwo.props.id);
 
     undo();
 
@@ -98,24 +104,5 @@ describe(useSurveyCreatorDrag, () => {
 
     expect(document.value).toStrictEqual(original);
     expect(isUndoable.value).toBe(false);
-  });
-
-  test("a question is dragged from the palette", () => {
-    expect.hasAssertions();
-
-    const questionOne = createQuestion("question1");
-    const questionTwo = createQuestion("question2");
-    const { document, registerSlots, startPaletteDrag } = setup([createPage([questionOne, questionTwo])]);
-    registerSlots(() => [createPageSlot()]);
-    startPaletteDrag(SurveyNodeType.Text, createPointerEvent("pointerdown", 200, 10));
-    window.dispatchEvent(createPointerEvent("pointermove", 200, 30));
-    window.dispatchEvent(createPointerEvent("pointerup", 200, 30));
-
-    const children = document.value.content[0]?.props.children ?? [];
-
-    expect(children).toHaveLength(3);
-    expect(children[0]?.props.id).toBe(questionOne.props.id);
-    expect(children[1]?.type).toBe(SurveyNodeType.Text);
-    expect(children[2]?.props.id).toBe(questionTwo.props.id);
   });
 });

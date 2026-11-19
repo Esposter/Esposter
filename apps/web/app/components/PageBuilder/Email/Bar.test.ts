@@ -2,8 +2,8 @@
 import type { EditorFinding } from "#src/models/editor/EditorFinding";
 
 import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
-import { MAX_EMAIL_PREVIEW_LENGTH } from "#shared/services/pageBuilder/email/constants";
 import PageBuilderEmailBar from "#src/components/PageBuilder/Email/Bar.vue";
+import UiTextField from "#src/components/Ui/TextField.vue";
 import { EditorFindingSeverity } from "#src/models/editor/EditorFindingSeverity";
 import { EmailView } from "#src/models/pageBuilder/EmailView";
 import { emailKind } from "#src/services/pageBuilder/emailKind";
@@ -28,7 +28,6 @@ const mountBar = async (findings: EditorFinding[] = []) => {
 };
 
 describe("pageBuilderEmailBar", () => {
-  const importLabel = "Import MJML";
   const overflowLabel = "More email actions";
   const message = "a";
 
@@ -43,7 +42,16 @@ describe("pageBuilderEmailBar", () => {
       .filter((control) => control.element.closest('[role="menu"]') === null)
       .map((control) => control.text());
 
-    expect(barControlTitles).not.toContain(importLabel);
+    expect(barControlTitles).toMatchInlineSnapshot(`
+      [
+        "Design",
+        "Preview",
+        "Desktop",
+        "Tablet",
+        "Mobile",
+        "",
+      ]
+    `);
 
     await component.get(`[aria-label="${overflowLabel}"]`).trigger("keydown", { key: "ArrowDown" });
     await flushPromises();
@@ -52,7 +60,11 @@ describe("pageBuilderEmailBar", () => {
       item.textContent.trim(),
     );
 
-    expect(menuItemTitles).toContain(importLabel);
+    expect(menuItemTitles).toMatchInlineSnapshot(`
+      [
+        "Import MJML",
+      ]
+    `);
   });
 
   test("choosing an email finding selects its node", async () => {
@@ -90,6 +102,8 @@ describe("pageBuilderEmailBar", () => {
     });
     const component = await mountBar();
 
-    expect(component.text()).toContain(`0 / ${MAX_EMAIL_PREVIEW_LENGTH}`);
+    expect(component.findComponent(UiTextField).text()).toMatchInlineSnapshot(
+      `"Preview text The line an inbox shows beside the subject0 / 140"`,
+    );
   });
 });

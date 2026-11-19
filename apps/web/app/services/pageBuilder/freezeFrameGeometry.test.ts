@@ -23,7 +23,7 @@ describe(freezeFrameGeometry, () => {
     );
     rects.text = { height: 20, left: 0, top: 140, width: 800 };
 
-    expect(frozen.getChildRect("text")?.top).toBe(100);
+    expect(frozen.getChildRect("text")).toStrictEqual({ height: 20, left: 0, top: 100, width: 800 });
   });
 
   test("a frozen frame moves its boxes by what the frame has scrolled since", () => {

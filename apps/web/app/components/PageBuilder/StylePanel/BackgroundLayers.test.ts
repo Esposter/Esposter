@@ -14,7 +14,7 @@ describe("pageBuilderBackgroundLayers", () => {
     const removeButton = component.findAll("button").find((button) => button.text() === "Remove");
     await removeButton?.trigger("click");
 
-    expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([TEST_GRADIENT]);
+    expect(component.emitted("update:modelValue")).toStrictEqual([[TEST_GRADIENT]]);
   });
 
   // A refused draft stays in its field, unsaved, and must stay there when an earlier layer is removed above it

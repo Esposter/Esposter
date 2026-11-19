@@ -28,6 +28,7 @@ import PageBuilderContentPanel from "#src/components/PageBuilder/ContentPanel.vu
 import PageBuilderFilePicker from "#src/components/PageBuilder/FilePicker/Index.vue";
 import PageBuilderMediaField from "#src/components/PageBuilder/MediaField.vue";
 import ResourceLinkSelect from "#src/components/Resource/Link/Select.vue";
+import UiEmptyState from "#src/components/Ui/EmptyState.vue";
 import UiFileField from "#src/components/Ui/FileField.vue";
 import UiSchemaForm from "#src/components/Ui/SchemaForm/Index.vue";
 import UiSelect from "#src/components/Ui/Select/Index.vue";
@@ -187,7 +188,7 @@ describe("pageBuilderContentPanel", () => {
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
 
-    expect(component.getComponent(UiSchemaForm).props()).toHaveProperty("modelValue", { content: "a" });
+    expect(component.getComponent(UiSchemaForm).props("modelValue")).toStrictEqual({ content: "a" });
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { content: "b" });
 
@@ -209,8 +210,10 @@ describe("pageBuilderContentPanel", () => {
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
 
     expect(component.findComponent(UiSchemaForm).exists()).toBe(false);
-    expect(component.text()).toContain("No content settings");
-    expect(component.text()).toContain("Style tab");
+    expect(component.getComponent(UiEmptyState).props("title")).toBe("No content settings");
+    expect(component.getComponent(UiEmptyState).props("description")).toBe(
+      "Edit this block on the canvas, or change how it looks in the Style tab.",
+    );
 
     component.unmount();
   });
@@ -254,7 +257,7 @@ describe("pageBuilderContentPanel", () => {
     return { component, pageBuilderDocumentStore, published, resourceId };
   };
 
-  test("owner binds a published survey", async () => {
+  test("a webpage's invite offers only the published surveys, and binds the one chosen", async () => {
     expect.hasAssertions();
 
     const { component, pageBuilderDocumentStore, published, resourceId } = await mountInvitePicker(webpageKind);
@@ -268,19 +271,6 @@ describe("pageBuilderContentPanel", () => {
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(
       createSurveyInviteDocument(published.id).content,
     );
-
-    component.unmount();
-  });
-
-  test("an unpublished survey is not offered", async () => {
-    expect.hasAssertions();
-
-    const { component, published } = await mountInvitePicker(webpageKind);
-
-    expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
-      items: [{ meaning: UiIconMeaning.Survey, title: published.name, value: published.id }],
-      nextCursor: "",
-    });
 
     component.unmount();
   });

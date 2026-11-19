@@ -1,16 +1,14 @@
+import { DASHBOARD_BREAKPOINTS } from "#src/services/dashboard/constants";
 import { getBreakpointColumnNumber } from "#src/services/dashboard/grid/getBreakpointColumnNumber";
 import { describe, expect, test } from "vitest";
 
 describe(getBreakpointColumnNumber, () => {
-  test.each([
-    [1200, 12],
-    [1199, 10],
-    [996, 10],
-    [479, 2],
-    [0, 2],
-  ])("takes the columns of the widest breakpoint a %i pixel width reaches, %i", (width, columnNumber) => {
-    expect.hasAssertions();
+  test.each(DASHBOARD_BREAKPOINTS)(
+    "takes the columns of the widest breakpoint a $minimumWidth pixel width reaches",
+    ({ columnNumber, minimumWidth }) => {
+      expect.hasAssertions();
 
-    expect(getBreakpointColumnNumber(width)).toBe(columnNumber);
-  });
+      expect(getBreakpointColumnNumber(minimumWidth)).toBe(columnNumber);
+    },
+  );
 });

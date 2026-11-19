@@ -34,7 +34,7 @@ describe("dashboardVisualTable", () => {
     type: VisualType.Table,
   });
 
-  test("a table lists each category as a row", async () => {
+  test("a table lists each category as a row, and a second press on a header sorts it descending", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(DashboardVisualTable, { props: { data, visual } });

@@ -61,7 +61,58 @@ describe("pageBuilderStylePanel", () => {
     const component = await mountSuspended(PageBuilderStylePanel, { props: { resourceId } });
 
     // A mandatory toggle group may pick its first choice on mount, which an edit would then record against the node
-    expect(component.text()).toContain("column");
+    await flushPromises();
+
+    expect(component.findAll("button").map((button) => button.text())).toMatchInlineSnapshot(`
+      [
+        "Default",
+        "Hover",
+        "Layout",
+        "row",
+        "column",
+        "flex-start",
+        "center",
+        "flex-end",
+        "space-between",
+        "flex-start",
+        "center",
+        "flex-end",
+        "stretch",
+        "px",
+        "Spacing",
+        "px",
+        "px",
+        "px",
+        "px",
+        "px",
+        "px",
+        "px",
+        "px",
+        "Size",
+        "px",
+        "px",
+        "px",
+        "px",
+        "Position",
+        "px",
+        "px",
+        "px",
+        "px",
+        "Typography",
+        "px",
+        "px",
+        "left",
+        "center",
+        "right",
+        "justify",
+        "Background",
+        "Add a layer",
+        "Border",
+        "px",
+        "px",
+        "Effects",
+      ]
+    `);
     expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
   });
 

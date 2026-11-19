@@ -194,7 +194,7 @@ describe(useVisualStore, () => {
 
   // The rollback lands after the save's await, and by then the blade may hold another dashboard — put back through
   // Whichever dashboard is open, the deleted visual would appear in that one and be saved into it by its next edit
-  test("puts a visual whose delete failed back into its own dashboard only", async () => {
+  test("a failed delete's rollback leaves the dashboard open by then without the visual", async () => {
     expect.hasAssertions();
 
     const otherResourceId = v7();

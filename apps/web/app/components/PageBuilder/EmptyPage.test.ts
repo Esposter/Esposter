@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import PageBuilderEmptyPage from "#src/components/PageBuilder/EmptyPage.vue";
+import UiEmptyState from "#src/components/Ui/EmptyState.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
@@ -9,7 +10,9 @@ describe("pageBuilderEmptyPage", () => {
 
     const component = await mountSuspended(PageBuilderEmptyPage);
 
-    expect(component.text()).toContain("Add a block from the palette on the left to start.");
+    expect(component.getComponent(UiEmptyState).props("description")).toBe(
+      "Add a block from the palette on the left to start.",
+    );
     expect(component.findAll("button")).toHaveLength(0);
 
     component.unmount();

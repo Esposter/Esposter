@@ -111,7 +111,27 @@ describe("pageBuilderEmailStylePanel", () => {
 
     expect(component.text()).not.toContain("Style state");
     expect(component.text()).not.toContain("Hover");
-    expect(labels).toStrictEqual(expect.arrayContaining(["padding", "color", "font-family"]));
+    expect(labels).toMatchInlineSnapshot(`
+      [
+        "padding",
+        "padding-bottom",
+        "padding-left",
+        "padding-right",
+        "padding-top",
+        "height",
+        "color",
+        "font-family",
+        "font-size",
+        "font-style",
+        "font-weight",
+        "letter-spacing",
+        "line-height",
+        "text-decoration",
+        "text-transform",
+        "background-color",
+        "container-background-color",
+      ]
+    `);
   });
 
   test("clearing a field restores the root's default", async () => {
@@ -144,28 +164,8 @@ describe("pageBuilderEmailStylePanel", () => {
     const resourceId = v7();
     trpcMsw.email.readResourceFiles.query(() => []);
 
-    const imageDocument: MjmlDocument = {
-      content: [
-        {
-          props: {
-            children: [
-              {
-                props: {
-                  children: [{ props: { alt: "a", id: TEST_OTHER_ID, src: "" }, type: MjmlNodeType.Image }],
-                  id: TEST_THIRD_ID,
-                },
-                type: MjmlNodeType.Column,
-              },
-            ],
-            id: v7(),
-          },
-          type: MjmlNodeType.Section,
-        },
-      ],
-      root: { props: { lang: "", title: "" } },
-    };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, imageDocument);
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createImageDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
 
@@ -206,8 +206,21 @@ describe("pageBuilderEmailStylePanel", () => {
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
     const sectorTitles = component.findAll("button").map((button) => button.text());
 
-    expect(sectorTitles).toContain("Spacing");
-    expect(sectorTitles).not.toContain("Position");
+    expect(sectorTitles).toMatchInlineSnapshot(`
+      [
+        "Layout",
+        "center",
+        "middle",
+        "Spacing",
+        "Size",
+        "Typography",
+        "text-align",
+        "Background",
+        "Border",
+        "Other",
+        "Reset",
+      ]
+    `);
   });
 
   test("a field no sector names is grouped under Other", async () => {
@@ -239,13 +252,12 @@ describe("pageBuilderEmailStylePanel", () => {
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId } });
     await flushPromises();
 
-    expect(
-      (
-        component.findComponent(PageBuilderFilePicker).findComponent(UiSelect).props() as {
-          items: UiMenuItem<string>[];
-        }
-      ).items,
-    ).toHaveLength(2);
+    const select = component.findComponent(PageBuilderFilePicker).findComponent(UiSelect);
+
+    expect((select.props() as { items: UiMenuItem<string>[] }).items).toStrictEqual([
+      { title: "image/png, 2 KB", value: TEST_URL },
+      { title: "image/gif, 1 KB", value: TEST_URL },
+    ]);
   });
 
   test("choosing a listed email image sets the picked node source", async () => {

@@ -112,7 +112,7 @@ describe(usePageBuilderStyle, () => {
 
     setField("opacity", "0.4");
 
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).not.toBe("");
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("Edit style");
     expect(pageBuilderHistoryStore.getPreview(resourceId)).toBeUndefined();
     pageBuilderHistoryStore.undo(resourceId);
 

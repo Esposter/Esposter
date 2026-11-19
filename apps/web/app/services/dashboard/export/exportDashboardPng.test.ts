@@ -4,7 +4,7 @@ import { createElementSvg } from "#src/services/capture/createElementSvg";
 import { rasterizeSvg } from "#src/services/capture/rasterizeSvg";
 import { exportDashboardPng } from "#src/services/dashboard/export/exportDashboardPng";
 import { useAlertStore } from "#src/store/alert";
-import { downloadFile, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { downloadFile, InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
@@ -65,9 +65,7 @@ describe(exportDashboardPng, () => {
 
     await exportDashboardPng(dashboardName);
 
-    const [, width, height] = takeOne(vi.mocked(rasterizeSvg).mock.calls);
-
-    expect([width, height]).toStrictEqual([640, 480]);
+    expect(vi.mocked(rasterizeSvg).mock.calls.map(([, width, height]) => [width, height])).toStrictEqual([[640, 480]]);
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(`${dashboardName}.png`, png, MimeType.Png);
   });
 

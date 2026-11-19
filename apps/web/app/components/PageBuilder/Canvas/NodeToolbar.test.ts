@@ -16,7 +16,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
 
 describe("pageBuilderCanvasNodeToolbar", () => {
-  test("the toolbar offers the node's moves", async () => {
+  test("the toolbar offers the node's moves, and Duplicate copies the node after itself", async () => {
     expect.hasAssertions();
 
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -136,6 +136,6 @@ describe("pageBuilderCanvasNodeToolbar", () => {
 
     component.unmount();
 
-    expect(onUpdateIsDeleteOpen).toHaveBeenLastCalledWith(false);
+    expect(onUpdateIsDeleteOpen).toHaveBeenCalledExactlyOnceWith(false);
   });
 });

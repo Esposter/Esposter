@@ -9,7 +9,7 @@ import { usePageBuilderMoves } from "#src/composables/pageBuilder/usePageBuilder
 import { PageBuilderEditor } from "#src/models/pageBuilder/PageBuilderEditor";
 import { CANNOT_GO_HERE_MESSAGE } from "#src/services/pageBuilder/constants";
 import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "#src/services/pageBuilder/constants.test";
-import { refuseClipboardPaste } from "#src/services/pageBuilder/refuseClipboardPaste";
+import { emailKind } from "#src/services/pageBuilder/emailKind";
 import { serializeClipboardNodes } from "#src/services/pageBuilder/serializeClipboardNodes";
 import { webpageKind } from "#src/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
@@ -17,11 +17,6 @@ import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
-vi.mock(import("#src/services/pageBuilder/refuseClipboardPaste"), async (importOriginal) => {
-  const { refuseClipboardPaste: original } = await importOriginal();
-  return { refuseClipboardPaste: vi.fn<typeof original>(original) };
-});
 
 const createTextNode = (id: string): TextNode => ({
   props: { content: TEST_TEXT_CONTENT, elementId: "", id },
@@ -108,26 +103,28 @@ describe(usePageBuilderClipboard, () => {
     expect(pastedNode?.props.id).not.toBe(TEST_ROOT_TEXT_ID);
   });
 
-  test("pasting a webpage node into an email is refused", async () => {
+  test("a clipboard copied from the webpage editor is refused in an email", async () => {
     expect.hasAssertions();
-    stubClipboard();
-    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    // A webpage's node types never parse as an email's, so the paste is refused on the editor the clipboard was copied from
+    const clipboard = stubClipboard();
+    clipboard.text = serializeClipboardNodes({ editor: PageBuilderEditor.Webpage, nodes: [] });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const sourceId = openResource([createTextNode(TEST_ROOT_TEXT_ID)]);
-    pageBuilderCanvasStore.setSelectedNodeId(sourceId, TEST_ROOT_TEXT_ID);
-    await createClipboard(
-      sourceId,
-      vi.fn<(message: string) => void>(),
-      vi.fn<(nodeId: string) => boolean>(),
-    ).copySelected();
-
-    const targetId = openResource([]);
+    const targetId = v7();
+    pageBuilderDocumentStore.setEmailDocument(targetId, emailKind, {
+      content: [],
+      root: { props: { lang: "", title: "" } },
+    });
     const announce = vi.fn<(message: string) => void>();
-    vi.mocked(refuseClipboardPaste).mockReturnValueOnce(REFUSAL_MESSAGE);
-    await createClipboard(targetId, announce, vi.fn<(nodeId: string) => boolean>()).pasteSelected();
+    await usePageBuilderClipboard(
+      emailKind,
+      () => pageBuilderDocumentStore.getEmailDocument(targetId),
+      targetId,
+      announce,
+      vi.fn<(nodeId: string) => boolean>(),
+    ).pasteSelected();
 
     expect(announce.mock.calls).toStrictEqual([[REFUSAL_MESSAGE]]);
-    expect(pageBuilderDocumentStore.getDocument(targetId)?.content).toStrictEqual([]);
+    expect(pageBuilderDocumentStore.getEmailDocument(targetId)?.content).toStrictEqual([]);
   });
 
   test("empty clipboard text is announced as a block that cannot go here on paste", async () => {

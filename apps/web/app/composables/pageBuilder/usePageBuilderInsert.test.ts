@@ -39,7 +39,7 @@ const setup = (selectedNodeId: string, content: WebpageDocument["content"]) => {
   return { announce, insert, insertedId, pageBuilderCanvasStore, pageBuilderDocumentStore, resourceId };
 };
 
-describe("usePageBuilderInsert", () => {
+describe(usePageBuilderInsert, () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });

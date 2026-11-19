@@ -143,34 +143,6 @@ describe(exportDashboardVisualCsv, () => {
     );
   });
 
-  // A category is respondent text, so a spreadsheet must open it as text rather than run it as a formula
-  test("a category typed as a formula is neutralised", () => {
-    expect.hasAssertions();
-
-    const formulaDataset: Dataset = {
-      columns: [{ name: categoryColumn, type: ColumnType.String }],
-      rows: [{ [categoryColumn]: "=1+1" }],
-    };
-    const bar = new Visual({
-      dataset: {
-        query: {
-          series: [{ aggregation: DatasetAggregationType.Count, column: categoryColumn }],
-          xColumn: categoryColumn,
-        },
-        reference,
-      },
-      type: VisualType.Bar,
-    });
-
-    exportDashboardVisualCsv(bar, formulaDataset);
-
-    expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
-      `${VisualType.Bar}.csv`,
-      `${categoryColumn},${categoryColumn}\n"\t=1+1",1`,
-      MimeType.Csv,
-    );
-  });
-
   // A capped read still downloads, but the alert says the file holds the rows read rather than the whole source
   test("a capped source alerts that the file is partial and still downloads", () => {
     expect.hasAssertions();

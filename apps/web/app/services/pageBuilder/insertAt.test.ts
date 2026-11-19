@@ -7,7 +7,7 @@ import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { v7 } from "uuid";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("uuid"), async (importOriginal) => {
   const actual = await importOriginal();
@@ -24,26 +24,23 @@ const insertIntoResource = (resourceId: string, slotPointer: string, index: numb
   );
 };
 
-// The id the insert gives its new node is fixed, so a test reads it exactly
 const setup = () => {
   setActivePinia(createPinia());
   const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
-  const insertedId = v7();
-  vi.mocked<() => string>(v7).mockReturnValueOnce(insertedId);
-  return { insertedId, resourceId };
+  return resourceId;
 };
 
 describe(insertAt, () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   test("an insert places the new node at the index of the slot and selects it", () => {
     expect.hasAssertions();
 
-    const { insertedId, resourceId } = setup();
+    const resourceId = setup();
+    // The id the insert gives its new node is fixed, so the test reads it exactly. Queued here, the one test that
+    // Consumes it, so no other case inherits an unused once-value
+    const insertedId = v7();
+    vi.mocked<() => string>(v7).mockReturnValueOnce(insertedId);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 
@@ -59,7 +56,7 @@ describe(insertAt, () => {
   test("a slot that refuses the type applies nothing", () => {
     expect.hasAssertions();
 
-    const { resourceId } = setup();
+    const resourceId = setup();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const before = pageBuilderDocumentStore.getDocument(resourceId);
 

@@ -70,7 +70,7 @@ describe(usePageBuilderContent, () => {
     setFormValue({ elementId: "", href: TEST_URL, label: "O", target: ButtonTarget.SameTab });
     setFormValue({ elementId: "", href: TEST_URL, label: "Op", target: ButtonTarget.SameTab });
 
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).not.toBe("");
+    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("Edit block");
     pageBuilderHistoryStore.undo(resourceId);
 
     expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
@@ -83,7 +83,9 @@ describe(usePageBuilderContent, () => {
 
     setSettings({ title: "Hi" });
 
-    expect(compile()).toContain("<mj-title>Hi</mj-title>");
+    expect(compile()).toMatchInlineSnapshot(
+      `"<mjml><mj-head><mj-title>Hi</mj-title></mj-head><mj-body></mj-body></mjml>"`,
+    );
   });
 
   test("the language setting sets the language of the email", () => {
@@ -93,7 +95,7 @@ describe(usePageBuilderContent, () => {
 
     setSettings({ lang: "fr" });
 
-    expect(compile()).toContain('lang="fr"');
+    expect(compile()).toMatchInlineSnapshot(`"<mjml lang="fr"><mj-body></mj-body></mjml>"`);
   });
 
   test("the direction setting turns the email right to left", () => {
@@ -103,7 +105,7 @@ describe(usePageBuilderContent, () => {
 
     setSettings({ direction: "rtl" });
 
-    expect(compile()).toContain('dir="rtl"');
+    expect(compile()).toMatchInlineSnapshot(`"<mjml dir="rtl"><mj-body></mj-body></mjml>"`);
   });
 
   test("a font added to the list loads in the compiled email", () => {
@@ -113,7 +115,9 @@ describe(usePageBuilderContent, () => {
 
     setSettings({ fonts: [{ href: TEST_URL, name: "Fancy" }] });
 
-    expect(compile()).toContain(`<mj-font href="${TEST_URL}" name="Fancy"`);
+    expect(compile()).toMatchInlineSnapshot(
+      `"<mjml><mj-head><mj-font href="https://example.com/" name="Fancy"></mj-font></mj-head><mj-body></mj-body></mjml>"`,
+    );
   });
 
   test("clearing a settings field removes it from the email", () => {
@@ -124,7 +128,7 @@ describe(usePageBuilderContent, () => {
 
     setSettings({ title: "" });
 
-    expect(compile()).not.toContain("mj-title");
+    expect(compile()).toMatchInlineSnapshot(`"<mjml><mj-body></mj-body></mjml>"`);
   });
 
   test("a settings change is one undo step", () => {

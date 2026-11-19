@@ -237,7 +237,7 @@ describe(usePageBuilderDrag, () => {
 
   test("a second pointer neither moves nor lands a drag its press started", async () => {
     expect.hasAssertions();
-    const { drag, pageBuilderDocumentStore } = await setup(COLUMN_DOCUMENT);
+    const { drag, pageBuilderCanvasStore, pageBuilderDocumentStore } = await setup(COLUMN_DOCUMENT);
 
     drag.vm.startPaletteDrag(WebpageNodeType.Text, pressedWith("pointerdown", 0, 0, 1), () => createGeometry(TEXT_ONE));
     window.dispatchEvent(pressedWith("pointermove", 100, 30, 2));
@@ -249,12 +249,17 @@ describe(usePageBuilderDrag, () => {
     window.dispatchEvent(pressedWith("pointermove", 100, 30, 1));
     window.dispatchEvent(pressedWith("pointerup", 100, 30, 1));
 
+    const insertedId = pageBuilderCanvasStore.getSelectedNodeId(RESOURCE_ID);
     const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
 
-    expect(document && getSlotChildIds(webpageKind, document, COLUMN_SLOT)).toHaveLength(3);
+    expect(document && getSlotChildIds(webpageKind, document, COLUMN_SLOT)).toStrictEqual([
+      TEXT_ONE,
+      insertedId,
+      TEXT_TWO,
+    ]);
   });
 
-  test("owner drops a survey invite", async () => {
+  test("a survey invite dropped into a column is inserted with no survey chosen", async () => {
     expect.hasAssertions();
     const { drag, pageBuilderCanvasStore, pageBuilderDocumentStore } = await setup(COLUMN_DOCUMENT);
 
@@ -345,7 +350,7 @@ describe(usePageBuilderDrag, () => {
   test("a finger that moves before it rests does not start a drag", async () => {
     expect.hasAssertions();
     const { drag } = await setup(ROOT_DOCUMENT);
-    vi.useFakeTimers();
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     onTestFinished(() => {
       vi.useRealTimers();
     });
@@ -360,7 +365,7 @@ describe(usePageBuilderDrag, () => {
   test("a finger that rests starts its drag, which is drawn where it rests", async () => {
     expect.hasAssertions();
     const { drag } = await setup(ROOT_DOCUMENT);
-    vi.useFakeTimers();
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     onTestFinished(() => {
       vi.useRealTimers();
     });
@@ -377,7 +382,7 @@ describe(usePageBuilderDrag, () => {
   test("a finger that rests and lifts without moving has started a drag, so its control is not clicked", async () => {
     expect.hasAssertions();
     const { drag } = await setup(ROOT_DOCUMENT);
-    vi.useFakeTimers();
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     onTestFinished(() => {
       vi.useRealTimers();
     });
