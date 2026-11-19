@@ -1,5 +1,5 @@
 import { MEBIBYTE } from "#src/services/shared/constants";
-import { KIBIBYTE } from "@esposter/configuration";
+import { KIBIBYTE } from "@esposter/configuration/constants";
 import { SITE_NAME } from "@esposter/shared";
 import { STATE_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";

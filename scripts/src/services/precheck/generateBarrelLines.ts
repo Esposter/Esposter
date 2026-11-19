@@ -4,7 +4,7 @@ import type { ExportsGeneration } from "@esposter/configuration";
 import { SOURCE_DIRECTORY_NAME } from "#src/services/precheck/constants";
 import { readBarrelLines } from "#src/services/precheck/readBarrelLines";
 import { spawnGenerateExports } from "#src/services/precheck/spawnGenerateExports";
-import { BARREL_FILE, COMPONENTS_DIRECTORY } from "@esposter/configuration";
+import { BARREL_FILE, COMPONENTS_DIRECTORY } from "@esposter/configuration/constants";
 import { withFinalizer } from "@esposter/shared";
 import { cpSync, mkdtempSync, rmSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";

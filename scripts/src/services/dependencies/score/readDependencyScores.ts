@@ -29,7 +29,7 @@ import { getSection } from "#src/services/outdatedDependencies/workspace/getSect
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readManifestFiles } from "#src/services/shared/readManifestFiles";
-import { WORKSPACE_FILE } from "@esposter/configuration";
+import { WORKSPACE_FILE } from "@esposter/configuration/constants";
 import { getOrCreate } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";

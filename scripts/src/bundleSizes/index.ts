@@ -2,15 +2,25 @@ import { BUNDLE_SIZES_FILENAME } from "#src/services/bundleSizes/constants";
 import { readBundleSizes } from "#src/services/bundleSizes/readBundleSizes";
 import { renderBundleSizes } from "#src/services/bundleSizes/renderBundleSizes";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { timeCommand } from "#src/services/timing/timeCommand";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-timeCommand("bundle-sizes:gen");
+await runCommand(
+  defineCommand({
+    meta: {
+      description:
+        "Write the size of every file a workspace package's build emits to the bundle sizes record, largest first",
+      name: "bundle-sizes:gen",
+    },
+    run: () => {
+      const bundleSizes = readBundleSizes(REPOSITORY_ROOT);
 
-const bundleSizes = readBundleSizes(REPOSITORY_ROOT);
-
-writeFileSync(resolve(REPOSITORY_ROOT, BUNDLE_SIZES_FILENAME), renderBundleSizes(bundleSizes));
-console.info(
-  `${BUNDLE_SIZES_FILENAME}: ${bundleSizes.length} files in ${new Set(bundleSizes.map(({ packageName }) => packageName)).size} packages`,
+      writeFileSync(resolve(REPOSITORY_ROOT, BUNDLE_SIZES_FILENAME), renderBundleSizes(bundleSizes));
+      console.info(
+        `${BUNDLE_SIZES_FILENAME}: ${bundleSizes.length} files in ${new Set(bundleSizes.map(({ packageName }) => packageName)).size} packages`,
+      );
+    },
+  }),
 );

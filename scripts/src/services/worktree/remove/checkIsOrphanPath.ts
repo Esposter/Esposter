@@ -1,4 +1,4 @@
-import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
+import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration/constants";
 import { dirname, join } from "node:path";
 
 // A folder under the worktrees folder that git no longer lists, given as a resolved path. Only this checkout's worktrees

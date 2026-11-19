@@ -1,5 +1,5 @@
 import { resolveCheckoutRoot } from "#src/services/format/resolveCheckoutRoot";
-import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
+import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration/constants";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 

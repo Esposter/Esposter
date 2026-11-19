@@ -12,7 +12,6 @@ import { getUncatalogedManifestDependencies } from "#src/services/outdatedDepend
 import { readNpmProjects } from "#src/services/outdatedDependencies/npm/readNpmProjects";
 import { getRegularOutdatedDependencies } from "#src/services/outdatedDependencies/pnpm/getRegularOutdatedDependencies";
 import { omitDependents } from "#src/services/outdatedDependencies/pnpm/omitDependents";
-import { printExecutionTime } from "#src/services/outdatedDependencies/print/printExecutionTime";
 import { printHeldDependencies } from "#src/services/outdatedDependencies/print/printHeldDependencies";
 import { printMismatches } from "#src/services/outdatedDependencies/print/printMismatches";
 import { printOutdatedDependencies } from "#src/services/outdatedDependencies/print/printOutdatedDependencies";
@@ -39,120 +38,131 @@ import {
 import { createColor } from "#src/services/shared/createColor";
 import { readManifestFiles } from "#src/services/shared/readManifestFiles";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
-import { timeCommand } from "#src/services/timing/timeCommand";
+import { runCommand } from "#src/services/timing/runCommand";
 import { NODE_VERSION_FILENAME } from "#src/services/updateNode/constants";
-import { WORKSPACE_FILE } from "@esposter/configuration";
+import { WORKSPACE_FILE } from "@esposter/configuration/constants";
+import { defineCommand } from "citty";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-timeCommand("outdated:dependencies");
+await runCommand(
+  defineCommand({
+    meta: {
+      description:
+        "List the dependencies with a newer version, the ones Renovate holds back, and each mismatch and unpinned reference; exits 1 on a blocking issue",
+      name: "outdated:dependencies",
+    },
+    run: async () => {
+      const color = createColor(!process.env.NO_COLOR);
+      // Started ahead of the synchronous reads below, which it does not depend on, so its child runs while they do
+      const regularChecksPromise = getRegularOutdatedDependencies(REPOSITORY_ROOT);
 
-const startedAt = performance.now();
-const color = createColor(!process.env.NO_COLOR);
-// Started ahead of the synchronous reads below, which it does not depend on, so its child runs while they do
-const regularChecksPromise = getRegularOutdatedDependencies(REPOSITORY_ROOT);
+      const workspaceYaml = readFileSync(resolve(REPOSITORY_ROOT, WORKSPACE_FILE), "utf8");
+      const lockYaml = readFileSync(LOCKFILE_PATH, "utf8");
+      const renovateJson = readFileSync(resolve(REPOSITORY_ROOT, RENOVATE_CONFIGURATION_FILE), "utf8");
 
-const workspaceYaml = readFileSync(resolve(REPOSITORY_ROOT, WORKSPACE_FILE), "utf8");
-const lockYaml = readFileSync(LOCKFILE_PATH, "utf8");
-const renovateJson = readFileSync(resolve(REPOSITORY_ROOT, RENOVATE_CONFIGURATION_FILE), "utf8");
+      const catalogEntries = parseWorkspaceEntries(
+        DependencyGroup.Catalog,
+        getSection(DependencyGroup.Catalog, workspaceYaml),
+      );
+      const configDependencyEntries = parseWorkspaceEntries(
+        DependencyGroup.ConfigDependencies,
+        getSection(DependencyGroup.ConfigDependencies, workspaceYaml),
+      );
+      const overrideEntries = getOverrideEntries(
+        parseWorkspaceEntries(DependencyGroup.Overrides, getSection(DependencyGroup.Overrides, workspaceYaml)),
+        catalogEntries,
+      );
+      const nodeVersionEntry = {
+        group: DependencyGroup.NodeVersion,
+        packageName: "node",
+        specifier: readFileSync(resolve(REPOSITORY_ROOT, NODE_VERSION_FILENAME), "utf8").trim(),
+      };
+      // One listing for every file the report reads by path, since each `git ls-files` walks the whole tree
+      const filePaths = readSweepFilePaths(`*${NPM_LOCKFILE}`, `${GITHUB_DIRECTORY}*.yaml`, `${GITHUB_DIRECTORY}*.yml`);
+      const referenceScan = readReferenceScan(filePaths);
+      const manifests = readManifestFiles(REPOSITORY_ROOT);
+      const npmProjects = readNpmProjects(
+        REPOSITORY_ROOT,
+        filePaths.filter((path) => path.endsWith(NPM_LOCKFILE)),
+      );
+      const npmManifestPaths = new Set(npmProjects.map(({ manifestPath }) => manifestPath));
+      const npmManifestNames = new Set(npmProjects.map(({ manifestName }) => manifestName));
+      const engineEntries = getEngineEntries(manifests);
+      const packageManagerEntries = getPackageManagerEntries(manifests);
+      const manifestDependencies = getManifestDependencies(manifests);
+      const uncatalogedManifestDependencies = getUncatalogedManifestDependencies(
+        manifestDependencies,
+        npmManifestPaths,
+      );
+      // A catalog entry reached through an override alone has no `catalogs:` row, so its one resolved version is read from
+      // The packages, and a `catalogs:` row wins wherever both have one
+      const lockCatalogVersions = new Map([...getLockPackageVersions(lockYaml), ...getLockCatalogVersions(lockYaml)]);
+      const lockConfigDependencyVersions = getLockConfigDependencyVersions(lockYaml);
+      const mismatches = [
+        ...getMismatches(catalogEntries, lockCatalogVersions),
+        ...getMismatches(configDependencyEntries, lockConfigDependencyVersions),
+        ...npmProjects.flatMap(({ entries, resolvedVersions }) => getMismatches(entries, resolvedVersions)),
+      ];
 
-const catalogEntries = parseWorkspaceEntries(
-  DependencyGroup.Catalog,
-  getSection(DependencyGroup.Catalog, workspaceYaml),
-);
-const configDependencyEntries = parseWorkspaceEntries(
-  DependencyGroup.ConfigDependencies,
-  getSection(DependencyGroup.ConfigDependencies, workspaceYaml),
-);
-const overrideEntries = getOverrideEntries(
-  parseWorkspaceEntries(DependencyGroup.Overrides, getSection(DependencyGroup.Overrides, workspaceYaml)),
-  catalogEntries,
-);
-const nodeVersionEntry = {
-  group: DependencyGroup.NodeVersion,
-  packageName: "node",
-  specifier: readFileSync(resolve(REPOSITORY_ROOT, NODE_VERSION_FILENAME), "utf8").trim(),
-};
-// One listing for every file the report reads by path, since each `git ls-files` walks the whole tree
-const filePaths = readSweepFilePaths(`*${NPM_LOCKFILE}`, `${GITHUB_DIRECTORY}*.yaml`, `${GITHUB_DIRECTORY}*.yml`);
-const referenceScan = readReferenceScan(filePaths);
-const manifests = readManifestFiles(REPOSITORY_ROOT);
-const npmProjects = readNpmProjects(
-  REPOSITORY_ROOT,
-  filePaths.filter((path) => path.endsWith(NPM_LOCKFILE)),
-);
-const npmManifestPaths = new Set(npmProjects.map(({ manifestPath }) => manifestPath));
-const npmManifestNames = new Set(npmProjects.map(({ manifestName }) => manifestName));
-const engineEntries = getEngineEntries(manifests);
-const packageManagerEntries = getPackageManagerEntries(manifests);
-const manifestDependencies = getManifestDependencies(manifests);
-const uncatalogedManifestDependencies = getUncatalogedManifestDependencies(manifestDependencies, npmManifestPaths);
-// A catalog entry reached through an override alone has no `catalogs:` row, so its one resolved version is read from
-// The packages, and a `catalogs:` row wins wherever both have one
-const lockCatalogVersions = new Map([...getLockPackageVersions(lockYaml), ...getLockCatalogVersions(lockYaml)]);
-const lockConfigDependencyVersions = getLockConfigDependencyVersions(lockYaml);
-const mismatches = [
-  ...getMismatches(catalogEntries, lockCatalogVersions),
-  ...getMismatches(configDependencyEntries, lockConfigDependencyVersions),
-  ...npmProjects.flatMap(({ entries, resolvedVersions }) => getMismatches(entries, resolvedVersions)),
-];
+      const renovateRules = getRenovateRules(renovateJson);
+      // A reference `renovate.json` switches off is one the bot never pins either — the review's own workflow at a branch
+      const unpinnedReferences = referenceScan.unpinned.filter(
+        ({ packageName }) => !getDisablingRule(packageName, renovateRules),
+      );
 
-const renovateRules = getRenovateRules(renovateJson);
-// A reference `renovate.json` switches off is one the bot never pins either — the review's own workflow at a branch
-const unpinnedReferences = referenceScan.unpinned.filter(
-  ({ packageName }) => !getDisablingRule(packageName, renovateRules),
-);
+      printUncatalogedManifestDependencies(uncatalogedManifestDependencies, color);
+      printMismatches(mismatches, color);
+      printUnpinnedReferences(unpinnedReferences, color);
 
-printUncatalogedManifestDependencies(uncatalogedManifestDependencies, color);
-printMismatches(mismatches, color);
-printUnpinnedReferences(unpinnedReferences, color);
-
-// `pnpm outdated` compares against `latest`, which is neither what Renovate proposes for a package a rule follows
-// A dist-tag for nor what a specifier naming a dist-tag installs — a nightly line's `5x` is ahead of the stable
-// `latest` and would never be reported — so those catalog entries are asked of the registry under their tag
-// Instead, each once. pnpm reports an alias under its target's name, so that is the name skipped.
-const distTagCatalogEntries = applyDistTags(catalogEntries, lockCatalogVersions);
-const followedTagEntries = getFollowedTagEntries(distTagCatalogEntries, renovateRules);
-const followedPackages = new Set(followedTagEntries.map((entry) => getRegistryPackageName(entry)));
-const [regularChecks, registryChecks, referenceChecks] = await Promise.all([
-  regularChecksPromise,
-  readRegistryOutdatedDependencies([
-    ...applyDistTags(configDependencyEntries, lockConfigDependencyVersions),
-    ...engineEntries,
-    nodeVersionEntry,
-    ...overrideEntries,
-    ...packageManagerEntries,
-    ...followedTagEntries,
-    ...npmProjects.flatMap(({ entries, resolvedVersions }) => applyDistTags(entries, resolvedVersions)),
-  ]),
-  // Each is a different repository, and each costs a whole handshake (`git ls-remote`, a GitHub API request), so all
-  // Of them run at once rather than queueing behind the npm registry's bound
-  readRegistryOutdatedDependencies(referenceScan.entries, referenceScan.entries.length),
-]);
-// A version Renovate would not propose is not a bump to take by hand either: the two readers share one policy.
-const { held, outdated } = partitionHeldDependencies(
-  [
-    ...omitDependents(
-      regularChecks.outdatedDependencies.filter(({ packageName }) => !followedPackages.has(packageName)),
-      npmManifestNames,
-    ),
-    ...registryChecks.outdatedDependencies,
-    ...referenceChecks.outdatedDependencies,
-  ],
-  renovateRules,
+      // `pnpm outdated` compares against `latest`, which is neither what Renovate proposes for a package a rule follows
+      // A dist-tag for nor what a specifier naming a dist-tag installs — a nightly line's `5x` is ahead of the stable
+      // `latest` and would never be reported — so those catalog entries are asked of the registry under their tag
+      // Instead, each once. pnpm reports an alias under its target's name, so that is the name skipped.
+      const distTagCatalogEntries = applyDistTags(catalogEntries, lockCatalogVersions);
+      const followedTagEntries = getFollowedTagEntries(distTagCatalogEntries, renovateRules);
+      const followedPackages = new Set(followedTagEntries.map((entry) => getRegistryPackageName(entry)));
+      const [regularChecks, registryChecks, referenceChecks] = await Promise.all([
+        regularChecksPromise,
+        readRegistryOutdatedDependencies([
+          ...applyDistTags(configDependencyEntries, lockConfigDependencyVersions),
+          ...engineEntries,
+          nodeVersionEntry,
+          ...overrideEntries,
+          ...packageManagerEntries,
+          ...followedTagEntries,
+          ...npmProjects.flatMap(({ entries, resolvedVersions }) => applyDistTags(entries, resolvedVersions)),
+        ]),
+        // Each is a different repository, and each costs a whole handshake (`git ls-remote`, a GitHub API request), so all
+        // Of them run at once rather than queueing behind the npm registry's bound
+        readRegistryOutdatedDependencies(referenceScan.entries, referenceScan.entries.length),
+      ]);
+      // A version Renovate would not propose is not a bump to take by hand either: the two readers share one policy.
+      const { held, outdated } = partitionHeldDependencies(
+        [
+          ...omitDependents(
+            regularChecks.outdatedDependencies.filter(({ packageName }) => !followedPackages.has(packageName)),
+            npmManifestNames,
+          ),
+          ...registryChecks.outdatedDependencies,
+          ...referenceChecks.outdatedDependencies,
+        ],
+        renovateRules,
+      );
+      // A held package's newest version inside its cap is still a bump to take, listed beside the outdated ones
+      const withinRangeChecks = await readWithinRangeBumps(held, catalogEntries, renovateRules);
+      const errors = [
+        ...regularChecks.errors,
+        ...registryChecks.errors,
+        ...referenceChecks.errors,
+        ...withinRangeChecks.errors,
+      ];
+      const hasBlockingIssues =
+        uncatalogedManifestDependencies.length > 0 || unpinnedReferences.length > 0 || errors.length > 0;
+      printOutdatedDependencies([...outdated, ...withinRangeChecks.outdatedDependencies], color);
+      printHeldDependencies(held, color);
+      printRegistryErrors(errors, color);
+      if (hasBlockingIssues) process.exitCode = 1;
+    },
+  }),
 );
-// A held package's newest version inside its cap is still a bump to take, listed beside the outdated ones
-const withinRangeChecks = await readWithinRangeBumps(held, catalogEntries, renovateRules);
-const errors = [
-  ...regularChecks.errors,
-  ...registryChecks.errors,
-  ...referenceChecks.errors,
-  ...withinRangeChecks.errors,
-];
-const hasBlockingIssues =
-  uncatalogedManifestDependencies.length > 0 || unpinnedReferences.length > 0 || errors.length > 0;
-printOutdatedDependencies([...outdated, ...withinRangeChecks.outdatedDependencies], color);
-printHeldDependencies(held, color);
-printRegistryErrors(errors, color);
-printExecutionTime(startedAt);
-if (hasBlockingIssues) process.exitCode = 1;

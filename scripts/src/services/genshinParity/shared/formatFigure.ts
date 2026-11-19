@@ -1,5 +1,5 @@
 import { LoadFigureUnit } from "#src/models/genshinParity/page/LoadFigureUnit";
-import { KIBIBYTE } from "@esposter/configuration";
+import { KIBIBYTE } from "@esposter/configuration/constants";
 
 export const formatFigure = (value: number, unit: LoadFigureUnit): string => {
   if (unit === LoadFigureUnit.Milliseconds) return `${value.toFixed(0)} ms`;

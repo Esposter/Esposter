@@ -1,5 +1,5 @@
 import { MEBIBYTE } from "#src/services/shared/constants";
-import { KIBIBYTE } from "@esposter/configuration";
+import { KIBIBYTE } from "@esposter/configuration/constants";
 
 // A byte count in the largest binary unit it reaches, one decimal place past the bytes
 export const formatBytes = (bytes: number): string => {

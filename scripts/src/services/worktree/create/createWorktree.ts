@@ -2,7 +2,7 @@ import { QUEUE_BRANCH, REMOTE_NAME, REMOTE_QUEUE_REF } from "#src/services/share
 import { runGit } from "#src/services/shared/runGit";
 import { timePhase } from "#src/services/timing/timePhase";
 import { LOCKED_REF_REGEX, WORKTREE_NAME_REGEX } from "#src/services/worktree/create/constants";
-import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
+import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration/constants";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { join } from "node:path";
 

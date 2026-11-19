@@ -5,7 +5,7 @@ import {
   REVIEW_HEARTBEAT_PROCESS_COUNT,
 } from "#src/services/review/constants";
 import { MEBIBYTE } from "#src/services/shared/constants";
-import { KIBIBYTE } from "@esposter/configuration";
+import { KIBIBYTE } from "@esposter/configuration/constants";
 import { getResult, noop } from "@esposter/shared";
 import { execFileSync } from "@esposter/shared-node/child-process";
 import { statfsSync } from "node:fs";

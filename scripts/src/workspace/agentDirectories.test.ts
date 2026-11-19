@@ -1,6 +1,6 @@
 /* oxlint-disable no-restricted-imports -- the repo-root linter config, which no `#` map can reach */
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { AGENT_ALIAS_DIRECTORY, AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
+import { AGENT_ALIAS_DIRECTORY, AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";

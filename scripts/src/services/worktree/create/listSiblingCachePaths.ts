@@ -1,5 +1,5 @@
 import { TASK_CACHE_DATABASE_NAME, TASK_CACHE_PATH } from "#src/services/worktree/create/constants";
-import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
+import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration/constants";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 

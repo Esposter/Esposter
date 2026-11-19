@@ -3,7 +3,7 @@ import type { BundleSize } from "#src/models/bundleSizes/BundleSize";
 import { BUNDLE_SIZES_FILENAME } from "#src/services/bundleSizes/constants";
 import { formatSource } from "#src/services/format/formatSource";
 import { MEBIBYTE, REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { KIBIBYTE } from "@esposter/configuration";
+import { KIBIBYTE } from "@esposter/configuration/constants";
 
 // The largest file first, and equal sizes in the order of their package and file, so the order is the build's alone
 const compareBundleSizes = (a: BundleSize, b: BundleSize) =>

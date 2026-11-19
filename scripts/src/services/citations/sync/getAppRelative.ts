@@ -1,5 +1,5 @@
 import { APP_DIRECTORY } from "#src/services/shared/constants";
-import { APP_RELATIVE_PREFIXES } from "@esposter/configuration";
+import { APP_RELATIVE_PREFIXES } from "@esposter/configuration/constants";
 
 export const getAppRelative = (path: string): string | undefined => {
   const appPrefix = `${APP_DIRECTORY}/`;

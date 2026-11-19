@@ -1,7 +1,7 @@
 import { OUTSIDE_PATH } from "#src/services/format/constants.test";
 import { formatSource } from "#src/services/format/formatSource";
 import { OXFMT_BINARY_RELATIVE_PATH } from "#src/services/shared/constants";
-import { KIBIBYTE } from "@esposter/configuration";
+import { KIBIBYTE } from "@esposter/configuration/constants";
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";

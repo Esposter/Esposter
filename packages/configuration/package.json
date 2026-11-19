@@ -24,6 +24,10 @@
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json",
+    "./constants": {
+      "default": "./dist/services/constants.js",
+      "source": "./src/services/constants.ts"
+    },
     "./eslint/*": "./eslint/*",
     "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
     "./types/global.d.ts": "./types/global.d.ts",
@@ -33,6 +37,10 @@
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json",
+      "./constants": {
+        "default": "./dist/services/constants.js",
+        "source": "./src/services/constants.ts"
+      },
       "./eslint/*": "./eslint/*",
       "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
       "./types/global.d.ts": "./types/global.d.ts",

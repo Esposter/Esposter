@@ -2,7 +2,7 @@
 import type { Vector } from "#src/models/shared/Vector";
 
 import { findRepositoryRoot } from "#src/services/shared/findRepositoryRoot";
-import { KIBIBYTE } from "@esposter/configuration";
+import { KIBIBYTE } from "@esposter/configuration/constants";
 import { homedir } from "node:os";
 import { join } from "node:path";
 

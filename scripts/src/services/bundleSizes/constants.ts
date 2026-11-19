@@ -1,4 +1,4 @@
-import { KIBIBYTE } from "@esposter/configuration";
+import { KIBIBYTE } from "@esposter/configuration/constants";
 
 export const BUNDLE_SIZES_FILENAME = "bundle-sizes.md";
 // The subject every record commit opens with, which the review names its own by (`checkIsRecordCommit`)

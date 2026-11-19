@@ -1,4 +1,4 @@
-import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
+import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration/constants";
 import { join, relative, sep } from "node:path";
 
 // The checkout an absolute path lies in: the worktree folder under the main checkout's worktrees folder that holds it, or

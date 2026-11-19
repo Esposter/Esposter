@@ -5,17 +5,18 @@ import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
 /**
- * Every CLI entry is a command line, and its run is timed by the shared wrapper (`cli` skill). A new entry is covered
- * with no opt-in because the wrapper is the one way an entry starts; an entry that calls `runMain` directly, or
- * reaches citty around the wrapper, leaves its runs out of `{state-root}/timings` and is what this test names.
+ * Every CLI entry is a citty command started by the shared wrapper (`cli` skill), which times it, prints the time and
+ * renders `--help`. A new entry is covered with no opt-in because the wrapper is the one way an entry starts; an entry
+ * that calls `runMain` directly, or runs as a plain script, leaves its runs out of `{state-root}/timings` and is what
+ * this test names.
  */
 describe("commandEntries", () => {
   const ENTRY_PATHSPEC = "scripts/src/**/index.ts";
-  const TIMED_REGEX = /\b(?:runCommand|timeCommand)\(/u;
+  const TIMED_REGEX = /\brunCommand\(/u;
   const RUN_MAIN_REGEX = /\brunMain\b/u;
   const entryPaths = readSweepFilePaths(ENTRY_PATHSPEC);
 
-  test("every CLI entry starts through the timing wrapper, never runMain", () => {
+  test("every CLI entry starts through runCommand, never runMain", () => {
     expect.hasAssertions();
 
     const unwrappedPaths = entryPaths.filter((entryPath) => {

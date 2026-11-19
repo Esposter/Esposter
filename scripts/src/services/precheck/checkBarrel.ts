@@ -10,7 +10,7 @@ import { getLazyDirectories } from "#src/services/precheck/getLazyDirectories";
 import { readBarrelLines } from "#src/services/precheck/readBarrelLines";
 import { spawnGenerateExports } from "#src/services/precheck/spawnGenerateExports";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { BARREL_FILE, COMPONENTS_DIRECTORY } from "@esposter/configuration";
+import { BARREL_FILE, COMPONENTS_DIRECTORY } from "@esposter/configuration/constants";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 

@@ -4,7 +4,7 @@ import { SupersededPackageMap } from "#src/services/dependencyAdmission/Supersed
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { WORKSPACE_FILE } from "@esposter/configuration";
+import { WORKSPACE_FILE } from "@esposter/configuration/constants";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";

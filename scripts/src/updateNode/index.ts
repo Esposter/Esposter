@@ -9,7 +9,7 @@ import { setCatalogTypesNode } from "#src/services/updateNode/setCatalogTypesNod
 import { setLockfileNodeVersion } from "#src/services/updateNode/setLockfileNodeVersion";
 import { setManifestNodeVersion } from "#src/services/updateNode/setManifestNodeVersion";
 import { updateNodeFloorFile } from "#src/services/updateNode/updateNodeFloorFile";
-import { WORKSPACE_FILE } from "@esposter/configuration";
+import { WORKSPACE_FILE } from "@esposter/configuration/constants";
 import { defineCommand } from "citty";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";

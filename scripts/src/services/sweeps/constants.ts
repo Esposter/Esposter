@@ -1,5 +1,5 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer */
-import { AGENT_DIRECTORY } from "@esposter/configuration";
+import { AGENT_DIRECTORY } from "@esposter/configuration/constants";
 
 // Where every ledger lives, relative to the repository root: the coverage sweep rewrites them, the prose scan
 // Sets them aside as template-shaped, and the workspace suites hold their rows and scopes to the tree.

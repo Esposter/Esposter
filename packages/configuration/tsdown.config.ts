@@ -22,6 +22,9 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
   // The only way it can name the file without counting directories, so that file is the only one exported.
   exports: {
     customExports: {
+      // The constants alone, for a script that needs one and would otherwise load every build and test helper the root
+      // Barrel imports — most of a tooling script's startup
+      "./constants": { default: "./dist/services/constants.js", source: "./src/services/constants.ts" },
       "./eslint/*": "./eslint/*",
       "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
       "./types/global.d.ts": "./types/global.d.ts",

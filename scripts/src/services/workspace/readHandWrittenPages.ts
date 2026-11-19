@@ -1,5 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { AGENT_DIRECTORY } from "@esposter/configuration";
+import { AGENT_DIRECTORY } from "@esposter/configuration/constants";
 import { glob, readFile } from "node:fs/promises";
 import { join } from "node:path";
 

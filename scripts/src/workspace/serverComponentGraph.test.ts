@@ -5,7 +5,7 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
-import { SOURCE_CONDITION } from "@esposter/configuration";
+import { SOURCE_CONDITION } from "@esposter/configuration/constants";
 import { readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { describe, expect, test } from "vitest";

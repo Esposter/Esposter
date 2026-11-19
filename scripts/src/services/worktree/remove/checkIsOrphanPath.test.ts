@@ -1,6 +1,6 @@
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { checkIsOrphanPath } from "#src/services/worktree/remove/checkIsOrphanPath";
-import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
+import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration/constants";
 import { join, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
