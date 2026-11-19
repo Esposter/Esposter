@@ -18,11 +18,10 @@ export function useCreator(message: MaybeRefOrGetter<ClientMessage | undefined>)
     const messageValue = toValue(message);
     if (!messageValue) return undefined;
 
-    if (messageValue.appUserId)
     // An app user is not a member of the room, so it has no room display name to resolve. The identity its message
     // Carries wins over the cache, so a webhook the cache never held is still named, and a delivery that carried none
     // Falls back to the bot's stored name and image
-    {
+    if (messageValue.appUserId) {
       const appUser = appUserMap.value.get(messageValue.appUserId);
       return {
         ...UNKNOWN_CREATOR,
