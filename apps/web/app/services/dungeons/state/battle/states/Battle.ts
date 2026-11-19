@@ -1,6 +1,5 @@
 import type { State } from "#src/models/dungeons/state/State";
 
-import { PlayerOption } from "#src/models/dungeons/scene/battle/menu/PlayerOption";
 import { StateName } from "#src/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "#src/services/dungeons/scene/battle/battleStateMachine";
 import { getAttackStatePriorityMap } from "#src/services/dungeons/scene/battle/getAttackStatePriorityMap";
@@ -22,10 +21,7 @@ export const Battle: State<typeof StateName.Battle> = {
     const { playerBattleMenuOptionGrid } = battleSceneStore;
     attackStatePriorityMap.value = getAttackStatePriorityMap(playerBattleMenuOptionGrid.value);
 
-    if (
-      playerBattleMenuOptionGrid.value === PlayerOption.Fight &&
-      attackStatePriorityMap.value[StateName.Battle] === StateName.PlayerAttack
-    )
+    if (attackStatePriorityMap.value[StateName.Battle] === StateName.PlayerAttack)
       await battleStateMachine.setState(StateName.PlayerAttack);
     else await battleStateMachine.setState(StateName.EnemyAttack);
   },

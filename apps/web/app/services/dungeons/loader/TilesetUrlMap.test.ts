@@ -1,4 +1,4 @@
-import { TilesetKey } from "#src/models/dungeons/keys/TilesetKey";
+import { BaseTilesetKey } from "#shared/generated/tiled/propertyTypes/enum/BaseTilesetKey";
 import { TilesetUrlMap } from "#src/services/dungeons/loader/TilesetUrlMap";
 import { describe, expect, test } from "vitest";
 
@@ -7,10 +7,6 @@ describe("tilesetUrlMap", () => {
   test("holds a definition for every tileset but the dungeon spritesheet", () => {
     expect.hasAssertions();
 
-    expect(Object.keys(TilesetUrlMap).toSorted()).toStrictEqual(
-      Object.values(TilesetKey)
-        .filter((tilesetKey) => tilesetKey !== TilesetKey.Dungeon)
-        .toSorted(),
-    );
+    expect(Object.keys(TilesetUrlMap).toSorted()).toStrictEqual(Object.values(BaseTilesetKey).toSorted());
   });
 });
