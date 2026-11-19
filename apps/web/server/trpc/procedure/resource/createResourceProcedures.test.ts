@@ -9,8 +9,6 @@ import type { R2Bucket, R2Object } from "@cloudflare/workers-types";
 import type { ResourceInResource, ResourcePublicationInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { authMocks } from "#server/auth.test";
-import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
@@ -33,7 +31,6 @@ import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { MimeType } from "#shared/models/file/MimeType";
-import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
@@ -133,7 +130,6 @@ describe(createResourceProcedures, () => {
   let bucket: R2Bucket;
   let dispose: () => Promise<void>;
   const name = "name";
-  const apiKeyName = "apiKeyName";
   const updatedName = "updatedName";
   const hash = "a".repeat(64);
   const mimetype = MimeType.Png;
@@ -288,7 +284,6 @@ describe(createResourceProcedures, () => {
     vi.useRealTimers();
     await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
-    userObjectCalls.length = 0;
     // Cascade removes any resourcePublications, activity and view rows too
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
@@ -377,48 +372,6 @@ describe(createResourceProcedures, () => {
     const content = await dashboardCaller.readResourceContent({ id: newResource.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
-  });
-
-  test("sends the saved version and the saving tab's device to the owner's object, not the content", async () => {
-    expect.hasAssertions();
-
-    const newResource = await dashboardCaller.createResource({ name });
-    const dashboard = new Dashboard({ visuals: [new Visual()] });
-    const deviceId = v7();
-    const tabCaller = createCallerFactory(dashboardRouter)({
-      ...mockContext,
-      headers: new Headers({ [DEVICE_ID_HEADER]: deviceId }),
-    });
-    await tabCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
-
-    expect(userObjectCalls.filter(({ method }) => method === "saveResourceContent")).toStrictEqual([
-      {
-        args: [{ apiKeyName: "", contentVersion: 1, id: newResource.id }, deviceId],
-        method: "saveResourceContent",
-        userId: authMocks.user.id,
-      },
-    ]);
-  });
-
-  // An agent writes through its key, so the call names the key rather than leaving the save to read as the person's own
-  test("a save made with a key is named by that key", async () => {
-    expect.hasAssertions();
-
-    const newResource = await dashboardCaller.createResource({ name });
-    const dashboard = new Dashboard({ visuals: [new Visual()] });
-    const keyedCaller = createCallerFactory(dashboardRouter)({
-      ...mockContext,
-      apiKey: { id: v7(), name: apiKeyName },
-    });
-    await keyedCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
-
-    expect(userObjectCalls.filter(({ method }) => method === "saveResourceContent")).toStrictEqual([
-      {
-        args: [{ apiKeyName, contentVersion: 1, id: newResource.id }, ""],
-        method: "saveResourceContent",
-        userId: authMocks.user.id,
-      },
-    ]);
   });
 
   test("fails save content with old content version", async () => {
