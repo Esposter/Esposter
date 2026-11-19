@@ -28,3 +28,5 @@
 | `scripts/src/services/genshinAssets` — `scene`, `interface`, `materials`, `blocks`, `witness`; `scripts/src/models/genshinAssets` — `scene`, `interface`, `witness` | —                      |       |
 | `scripts/src/services/genshinText`, `scripts/src/genshinText`                                                                                                       | —                      |       |
 | `scripts/src/services` — `identifiers`, `jev`, `proposals`, `queue`, `skills`, `triage`, `voiceMatch`                                                               | —                      |       |
+| the repository root — config and Markdown                                                                                                                           | —                      |       |
+| the app's root config files                                                                                                                                         | —                      |       |

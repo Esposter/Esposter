@@ -29,3 +29,4 @@
 | `scripts/src/services/genshinAssets` — `scene`, `interface`, `materials`, `blocks`, `witness`; `scripts/src/models/genshinAssets` — `scene`, `interface`, `witness` | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/services/genshinText`, `scripts/src/genshinText`                                                                                                       | 2026-10-05 · Opus 5.5 |       |
 | `scripts/src/services` — `identifiers`, `jev`, `proposals`, `queue`, `skills`, `triage`, `voiceMatch`                                                               | 2026-10-05 · Opus 5.5 |       |
+| `scripts/src` — the entrypoints                                                                                                                                     | 2026-10-05 · Opus 5.5 |       |

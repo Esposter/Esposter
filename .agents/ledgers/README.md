@@ -60,6 +60,8 @@ are the `sweeps` skill's `references/standing-resume.md`.
 | [vue-phaserjs](vue-phaserjs.md)                       | `vue-phaserjs` skill                                                                               | one game tree                   | `packages/vue-phaserjs` `apps/web/app/components/Dungeons` `apps/web/app/store/dungeons` `apps/web/app/composables/dungeons` `apps/web/app/services/dungeons` `apps/web/app/models/dungeons`                                                                                                                                                        |
 | [write-once](write-once/)                             | `openspec/specs/architecture/write-once/design.md` and its red flags                               | one package or tree             | `apps` `packages` `scripts`                                                                                                                                                                                                                                                                                                                         |
 
+`naming`, `typescript`, `file-organization`, `testing` and `test-values` keep their own area tables rather than `invariants`' list, since each sizes its units to its own question, a package, a directory or a file.
+
 Some scopes are deliberately not a directory list. The quality and security lanes read any code, so narrowing them
 would only hide the areas nobody has looked at; `testing` is scoped by filename because a suite sits beside
 whatever it tests rather than in a tree of its own — as do `test-values` and `bench`, which read the same files for

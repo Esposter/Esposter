@@ -13,7 +13,7 @@
 | `app/composables/resource` + `app/services/resource`, less the `sheet` and list units above       | —     |       |
 | `app/store/resource`, less the `sheet` unit above                                                 | —     |       |
 | `Dashboard`, `Dataset` + their store, composable and service layers                               | —     |       |
-| `emailEditor`, `pageBuilder`, `survey` — store, composables, services; `webpageEditor` — store    | —     |       |
+| `emailEditor`, `webpageEditor`, `pageBuilder`, `survey` — store, composables, services            | —     |       |
 | `Resource/` root files less `Overview.vue`                                                        | —     |       |
 | `Resource/Create`, `Home`, `RecycleBin`, `Search`, `VersionHistory`                               | —     |       |
 | `app/models/resource/sheet`                                                                       | —     |       |
