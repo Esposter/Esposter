@@ -6,9 +6,16 @@ import { recordObjectReads } from "#server/services/realtime/requestObjectReads"
 // `then`, by which a stub awaited as a value is asked whether it is a promise
 const NON_RPC_MEMBERS = new Set(["fetch", "then"]);
 
-// What an object answers each of its RPC methods with: the method's result, and the read set its reads watch
+// What an object's `invoke` answers an RPC call with: the method's result, the read set its reads watch, and the write set
+// The object publishes. The stub unwraps the result and records the read set, and the object publishes its own write set
+export interface ObjectInvocation {
+  readSet: ColumnTopic[];
+  result: unknown;
+  writeSet: ColumnTopic[];
+}
+
 interface ObjectInvoker {
-  invoke: (method: string, args: unknown[]) => Promise<{ readSet: ColumnTopic[]; result: unknown }>;
+  invoke: (method: string, args: unknown[]) => Promise<ObjectInvocation>;
 }
 
 // The stub of a Durable Object, each RPC method of which runs through the object's `invoke`, so the read set it reports is
