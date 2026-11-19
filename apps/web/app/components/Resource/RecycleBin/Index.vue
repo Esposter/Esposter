@@ -15,7 +15,7 @@ import {
   RETENTION_ERROR_PERCENTAGE,
   RETENTION_WARNING_PERCENTAGE,
 } from "#src/services/resource/constants";
-import { DeletedResourceHeaders } from "#src/services/resource/DeletedResourceHeaders";
+import { DeletedResourceColumnKey, DeletedResourceHeaders } from "#src/services/resource/DeletedResourceHeaders";
 import { getPurgesInText } from "#src/services/resource/getPurgesInText";
 import { getRetentionElapsedPercentage } from "#src/services/resource/getRetentionElapsedPercentage";
 import { NO_ACTION_ITEMS } from "#src/services/shared/constants";
@@ -107,7 +107,7 @@ watchImmediate([page, itemsPerPage, sortBy], async () => {
           :="RESOURCE_DATE_TIME_ATTRIBUTES"
           :datetime="item.deletedAt"
         />
-        <div v-else-if="column.key === 'retention'" flex gap-2 items-center>
+        <div v-else-if="column.key === DeletedResourceColumnKey.Retention" flex gap-2 items-center>
           <UiMeter
             :high="RETENTION_ERROR_PERCENTAGE"
             :label="`Retention of ${item.name}`"
@@ -118,7 +118,7 @@ watchImmediate([page, itemsPerPage, sortBy], async () => {
           <span text-muted text-nowrap aria-hidden="true">{{ getPurgesInText(item.deletedAt) }}</span>
         </div>
         <UiOverflowMenu
-          v-else-if="column.key === 'actions'"
+          v-else-if="column.key === DeletedResourceColumnKey.Actions"
           :items="resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS"
           :label="`Actions for ${item.name}`"
         />
