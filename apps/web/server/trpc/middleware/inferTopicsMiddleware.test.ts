@@ -3,13 +3,22 @@ import type { Context } from "#server/trpc/context";
 import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
-import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext, createMockUser } from "#server/trpc/context.test";
 import { createCallerFactory, publicProcedure, router } from "#server/trpc/index";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
+import { getWokenTopics, inJsonArray } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
-import { StorageBucket, usersInAuth } from "@esposter/db-schema";
+import {
+  MAX_READ_TOPICS,
+  RoomType,
+  roomsInMessage,
+  StorageBucket,
+  usersInAuth,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { eq, getTableName } from "drizzle-orm";
+import { and, eq, getTableName } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -27,6 +36,28 @@ const testRouter = router({
     await getBucket(StorageBucket.UserAssets).put(input, "written");
     throw new TRPCError({ code: "BAD_REQUEST", message: "Write refused" });
   }),
+  readNamesByIds: publicProcedure
+    .input(z.array(z.string()))
+    .query<{ name: string }[]>(({ ctx, input }) =>
+      ctx.db.select({ name: usersInAuth.name }).from(usersInAuth).where(inJsonArray(usersInAuth.id, input)),
+    ),
+  readNamesInBothLists: publicProcedure
+    .input(z.object({ ids: z.array(z.string()), otherIds: z.array(z.string()) }))
+    .query<{ name: string }[]>(({ ctx, input }) =>
+      ctx.db
+        .select({ name: usersInAuth.name })
+        .from(usersInAuth)
+        .where(and(inJsonArray(usersInAuth.id, input.ids), inJsonArray(usersInAuth.id, input.otherIds))),
+    ),
+  readRoomsOf: publicProcedure
+    .input(userInputSchema)
+    .query<{ id: string }[]>(({ ctx, input }) =>
+      ctx.db
+        .select({ id: roomsInMessage.id })
+        .from(roomsInMessage)
+        .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+        .where(eq(roomsInMessage.userId, input)),
+    ),
   readStaticUser: publicProcedure
     .meta({ staticReason: "A test read that no topic watches" })
     .input(userInputSchema)
@@ -41,7 +72,9 @@ const testRouter = router({
 
 describe("inferTopicsMiddleware", () => {
   const createTestCaller = createCallerFactory(testRouter);
+  const roomTable = getTableName(roomsInMessage);
   const userTable = getTableName(usersInAuth);
+  const usersToRoomTable = getTableName(usersToRoomsInMessage);
 
   beforeAll(async () => {
     ({ bucket: mockBuckets[StorageBucket.UserAssets] } = await createMockBucket(StorageBucket.UserAssets));
@@ -116,5 +149,99 @@ describe("inferTopicsMiddleware", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Write refused]`);
 
     expect(getMockPublishedTopics()).toContain(`USER_ASSETS:${key}`);
+  });
+
+  // A read under the budget names each row it read, as it always has
+  test("names each row a read under the budget read, unchanged", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const firstUserId = v7();
+    const secondUserId = v7();
+    await createTestCaller(context).readNamesByIds([firstUserId, secondUserId]);
+
+    expect(
+      readTopicsHeader(context.responseHeaders, "readNamesByIds").flatMap(({ topics }) =>
+        topics.map(({ topic }) => topic),
+      ),
+    ).toStrictEqual([`${userTable}:id=${firstUserId}`, `${userTable}:id=${secondUserId}`].toSorted());
+  });
+
+  // A list past the budget names no row of its own: its table's row topics collapse to the table-wide topic, which every write
+  // To the table publishes, so the read is still woken by a write to any of its rows
+  test("collapses a table a list names past the header's budget to its table-wide topic", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const ids = Array.from({ length: MAX_READ_TOPICS + 1 }, () => v7());
+    await createTestCaller(context).readNamesByIds(ids);
+
+    expect(
+      readTopicsHeader(context.responseHeaders, "readNamesByIds").flatMap(({ topics }) =>
+        topics.map(({ topic }) => topic),
+      ),
+    ).toStrictEqual([`${userTable}:*`]);
+  });
+
+  // Two lists in one `and` count together, so each can be under the budget and the pair still past it
+  test("collapses a table two lists in one and name together past the header's budget", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const halfLength = MAX_READ_TOPICS / 2 + 1;
+    const ids = Array.from({ length: halfLength }, () => v7());
+    const otherIds = Array.from({ length: halfLength }, () => v7());
+    await createTestCaller(context).readNamesInBothLists({ ids, otherIds });
+
+    expect(
+      readTopicsHeader(context.responseHeaders, "readNamesInBothLists").flatMap(({ topics }) =>
+        topics.map(({ topic }) => topic),
+      ),
+    ).toStrictEqual([`${userTable}:*`]);
+  });
+
+  // A join returns a row per membership, and each row names the room its membership is in. A join past the budget's rows
+  // Collapses the table it reads, which is the table holding the most row topics
+  test("collapses a table a join returns more rows of than the header's budget", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const user = await createMockUser(context.db);
+    const roomIds = Array.from({ length: MAX_READ_TOPICS + 1 }, () => v7());
+    // One statement a room, since a multi-row insert of this many rooms binds more parameters than D1 takes in one statement
+    await Promise.all(
+      roomIds.map((id) =>
+        context.db.insert(roomsInMessage).values({ id, name: "name", type: RoomType.Room, userId: user.id }),
+      ),
+    );
+    await Promise.all(
+      roomIds.map((roomId) => context.db.insert(usersToRoomsInMessage).values({ roomId, userId: user.id })),
+    );
+    await createTestCaller(context).readRoomsOf(user.id);
+
+    expect(
+      readTopicsHeader(context.responseHeaders, "readRoomsOf").flatMap(({ topics }) =>
+        topics.map(({ topic }) => topic),
+      ),
+    ).toStrictEqual([`${roomTable}:*`, `${usersToRoomTable}:*`]);
+  });
+
+  // A write to a row a collapsed read does not name wakes the read through its table's topic, which the write publishes
+  test("wakes a read whose table collapsed for a write to a row it did not name", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const other = await createMockUser(context.db);
+    const halfLength = MAX_READ_TOPICS / 2 + 1;
+    await createTestCaller(context).readNamesInBothLists({
+      ids: Array.from({ length: halfLength }, () => v7()),
+      otherIds: Array.from({ length: halfLength }, () => v7()),
+    });
+    const readTopics = readTopicsHeader(context.responseHeaders, "readNamesInBothLists").flatMap(
+      ({ topics }) => topics,
+    );
+    await createTestCaller(context).renameUser({ id: other.id, name: "renamed" });
+
+    expect(getWokenTopics(readTopics, MockPublishedTopics)).toStrictEqual([`${userTable}:*`]);
   });
 });

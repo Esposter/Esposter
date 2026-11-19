@@ -38,10 +38,12 @@ const scopeTopicSchema = z
   .refine((topic) => !topic.slice(0, topic.indexOf(":")).includes("."));
 
 // The bucket part of a blob topic is a binding a storage bucket names, derived from the buckets rather than listed here
-const bindingNames = new Set(StorageBuckets.map((storageBucket) => getStorageBucketBindingName(storageBucket)));
+export const blobBindingNames = new Set(
+  StorageBuckets.map((storageBucket) => getStorageBucketBindingName(storageBucket)),
+);
 const blobTopicSchema = z
   .templateLiteral([z.string().min(1), ":", z.string().max(BLOB_KEY_MAX_LENGTH)])
-  .refine((topic) => bindingNames.has(topic.slice(0, topic.indexOf(":"))));
+  .refine((topic) => blobBindingNames.has(topic.slice(0, topic.indexOf(":"))));
 
 export const topicSchema = z.union([kindTopicSchema, scopeTopicSchema, blobTopicSchema]) satisfies z.ZodType<Topic>;
 export const columnTopicSchema = z.object({

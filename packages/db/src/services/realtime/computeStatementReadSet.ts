@@ -206,11 +206,9 @@ const addScopes = (columns: ReadColumn[], value: unknown, context: ReadContext, 
   }
 };
 
-// A list names a scope per value it holds, up to MAX_SCOPE_VALUES. Past the cap it names none and filters its table instead, so
-// The table is read table-wide, as it was before a list was read as its scopes
+// A list names a scope per value it holds, however long: the header's budget collapses the topics of a read that names too many
 const addScopeList = (reference: ReadReference, values: readonly unknown[], context: ReadContext) => {
-  if (values.length > MAX_SCOPE_VALUES) addFilters(reference.columns, context);
-  else for (const value of values) addScopes(reference.columns, value, context, reference.isThroughSubquery);
+  for (const value of values) addScopes(reference.columns, value, context, reference.isThroughSubquery);
 };
 
 // A left join null-fills the side that reads its joined relation, when only that side does. Neither side, or both, is no
@@ -560,11 +558,6 @@ const walkChunk = (chunk: unknown, context: ReadContext): void => {
 // The statement's own select is its top level, which the walk opens first, so a selection's level is zero
 const SELECT_LEVEL = 0;
 
-// The most values one condition may name for a scope column. A response's topics header has a budget of a few KB, and a topic
-// Is about 60 to 80 bytes encoded, so 64 topics take about 5 KB and stay well inside it. A list past the cap names no value:
-// Its table is read table-wide, as it was before a list was read as its scopes, so a write to any row of it still wakes the
-// Read, only more often
-export const MAX_SCOPE_VALUES = 64;
 // Drizzle's column config picks its mode from the values in it: any `true` selects only the `true` columns, while a
 // Config of only `false`s selects every other column. A config with no value at all selects none
 const checkIsSelectedColumn = (configured: unknown, key: string) => {

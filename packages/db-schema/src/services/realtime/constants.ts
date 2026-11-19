@@ -14,3 +14,7 @@ export const BLOB_KEY_MAX_LENGTH = 1024;
 export const TABLE_SCOPE_KEY = Symbol.for(`${SITE_NAME.toLowerCase()}.tableScope`);
 // The hex characters of a secret's digest a scope topic names, which is what a topic carries in place of the secret
 export const SCOPE_DIGEST_LENGTH = 12;
+// The most topics one query's response header names. The header has a budget of about 5 KB, and a topic is about 80 bytes
+// Encoded, so 5 KB holds 64 of them: a read past this has its row topics collapsed to their tables' table-wide topics, a
+// Table at a time, which wakes the read for every write to those rows, and no less often
+export const MAX_READ_TOPICS = (5 * 1024) / 80;

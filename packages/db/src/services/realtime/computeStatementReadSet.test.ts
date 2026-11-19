@@ -1,12 +1,18 @@
 import type { Database } from "@esposter/db-schema";
 import type { SQL, SQLWrapper } from "drizzle-orm";
 
-import { computeStatementReadSet, MAX_SCOPE_VALUES } from "#src/services/realtime/computeStatementReadSet";
+import { computeStatementReadSet } from "#src/services/realtime/computeStatementReadSet";
 import { recordStatements } from "#src/services/realtime/recordStatements";
 import { inJsonArray } from "#src/services/shared/inJsonArray";
 import { notInJsonArray } from "#src/services/shared/notInJsonArray";
 import { createMockDb } from "@esposter/db-mock";
-import { invitesInMessage, roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
+import {
+  invitesInMessage,
+  MAX_READ_TOPICS,
+  roomsInMessage,
+  usersInAuth,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { and, eq, getTableName, inArray, not, or, sql } from "drizzle-orm";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -148,46 +154,21 @@ describe(computeStatementReadSet, () => {
     ]);
   });
 
-  // A list past the cap names no value: its table is read table-wide, as a filter over it, which is the read the walker made.
-  // Before a list was read as its scopes. An IN list and a JSON array list take the same cap
+  // A list longer than a header's budget still names a scope per value: the walker does not cut it short, since the budget
+  // Collapses a read that names too many topics once every read's topics are merged
   test.each<[string, (column: SQLWrapper, values: string[]) => SQL]>([
     ["an IN list", inArrayList],
     ["a JSON array list", inJsonArray],
-  ])("%s past the cap filters its table, and names no scope", async (_title, inList) => {
+  ])("%s longer than the budget names a scope per value", async (_title, inList) => {
     expect.hasAssertions();
 
     const { db } = await createMockDb();
-    const values = Array.from({ length: MAX_SCOPE_VALUES + 1 }, () => v7());
+    const values = Array.from({ length: MAX_READ_TOPICS + 1 }, () => v7());
     const { filters, scopes } = computeStatementReadSet(
       db.select().from(usersToRoomsInMessage).where(inList(usersToRoomsInMessage.roomId, values)),
     );
 
-    expect(scopes).toStrictEqual([]);
-    expect(filters).toStrictEqual([
-      {
-        column: "roomId",
-        level: 0,
-        occurrence: getTableName(usersToRoomsInMessage),
-        site: "where",
-        table: getTableName(usersToRoomsInMessage),
-      },
-    ]);
-  });
-
-  // The cap is inclusive: a list of exactly the cap still names each of its values
-  test.each<[string, (column: SQLWrapper, values: string[]) => SQL]>([
-    ["an IN list", inArrayList],
-    ["a JSON array list", inJsonArray],
-  ])("%s of exactly the cap names a scope per value", async (_title, inList) => {
-    expect.hasAssertions();
-
-    const { db } = await createMockDb();
-    const values = Array.from({ length: MAX_SCOPE_VALUES }, () => v7());
-    const { filters, scopes } = computeStatementReadSet(
-      db.select().from(usersToRoomsInMessage).where(inList(usersToRoomsInMessage.roomId, values)),
-    );
-
-    expect(scopes).toHaveLength(MAX_SCOPE_VALUES);
+    expect(scopes).toHaveLength(values.length);
     expect(filters).toStrictEqual([]);
   });
 });
