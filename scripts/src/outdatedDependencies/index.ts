@@ -4,6 +4,7 @@ import { getMismatches } from "#src/services/outdatedDependencies/getMismatches"
 import { getRegistryPackageName } from "#src/services/outdatedDependencies/getRegistryPackageName";
 import { getLockCatalogVersions } from "#src/services/outdatedDependencies/lock/getLockCatalogVersions";
 import { getLockConfigDependencyVersions } from "#src/services/outdatedDependencies/lock/getLockConfigDependencyVersions";
+import { getLockPackageVersions } from "#src/services/outdatedDependencies/lock/getLockPackageVersions";
 import { getEngineEntries } from "#src/services/outdatedDependencies/manifest/getEngineEntries";
 import { getManifestDependencies } from "#src/services/outdatedDependencies/manifest/getManifestDependencies";
 import { getPackageManagerEntries } from "#src/services/outdatedDependencies/manifest/getPackageManagerEntries";
@@ -86,7 +87,9 @@ const engineEntries = getEngineEntries(manifests);
 const packageManagerEntries = getPackageManagerEntries(manifests);
 const manifestDependencies = getManifestDependencies(manifests);
 const uncatalogedManifestDependencies = getUncatalogedManifestDependencies(manifestDependencies, npmManifestPaths);
-const lockCatalogVersions = getLockCatalogVersions(lockYaml);
+// A catalog entry reached through an override alone has no `catalogs:` row, so its one resolved version is read from
+// The packages, and a `catalogs:` row wins wherever both have one
+const lockCatalogVersions = new Map([...getLockPackageVersions(lockYaml), ...getLockCatalogVersions(lockYaml)]);
 const lockConfigDependencyVersions = getLockConfigDependencyVersions(lockYaml);
 const mismatches = [
   ...getMismatches(catalogEntries, lockCatalogVersions),

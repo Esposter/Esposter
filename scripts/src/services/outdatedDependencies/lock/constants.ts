@@ -7,6 +7,10 @@ export const CATALOGS_SECTION_ENDS: string[] = ["\npackages:", "\nsnapshots:", "
 
 export const CATALOG_PACKAGE_INDENT = 4;
 
+export const PACKAGES_SECTION_START = "\npackages:";
+
+export const PACKAGES_SECTION_ENDS: string[] = ["\nsnapshots:"];
+
 export const IMPORTERS_SECTION_START = "\nimporters:";
 
 export const IMPORTERS_SECTION_ENDS: string[] = ["\npackages:"];
