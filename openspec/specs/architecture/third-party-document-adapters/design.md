@@ -50,5 +50,5 @@ Register before the first `await` in an async composable. Past it the caller's s
 
 ## Notes
 
-- Real-time content sync is the same shape arriving from a different direction — another device's save streams `{ content, contentVersion, id }` and subscribers adopt both ([resources](../resource/design.md)). Only TodoList wires it, and it is Vue-rendered, so it needs no second stage; a third-party editor opting in would route its subscription through its adopt rather than a second replace path.
+- Real-time content sync is the same shape arriving from a different direction — another device's save wakes the open row's watch, and the store adopts the content through the reload and adopt stages ([live edits](../ai-native-resources/live-edits/design.md)). The store runs those stages for every type, so a third-party editor opting in takes the document at its adopt stage rather than through a second replace path.
 - Nothing derives "is this type editor-owned" from a map. Only the place that constructs the editor knows, so a registry keyed by `ResourceType` would be a second list to keep in step with the blades, and the [capability admission rule](../resource/design.md) refuses exactly that.

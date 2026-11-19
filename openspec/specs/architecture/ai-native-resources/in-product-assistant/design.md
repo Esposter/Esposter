@@ -18,7 +18,7 @@ sequenceDiagram
   P->>A: pastes it
   A->>M: read the content, then update it, with the person's own key
   M->>D: the patch, saved as the owner from the key's device
-  D-->>E: the saveResourceContent user event, and the editor adopts the edit
+  D-->>E: the open row's watch names the new content hash, and the editor adopts the edit
 ```
 
 ## The command

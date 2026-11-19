@@ -20,7 +20,7 @@ flowchart LR
   DRAIN -->|"readFollowUps · completeFollowUp · handBackFollowUp"| MCP
   DRAIN -->|"a new follow-up found mid-drain"| CAP
   MCP --> SAVE
-  SAVE -->|"saveResourceContent UserEvent, to the owner's sockets"| PAGE["the open Items blade, live"]
+  SAVE -->|"the open row's watch names the new hash"| PAGE["the open Items blade, live"]
   SAVE -->|"after-save hook"| REM["due reminders, web push"]
 ```
 
