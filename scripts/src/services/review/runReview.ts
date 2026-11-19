@@ -6,6 +6,7 @@ import { ReviewMode } from "#src/models/review/ReviewMode";
 import { ReviewWindowStatus } from "#src/models/review/ReviewWindowStatus";
 import { checkIsBacklogOwed } from "#src/services/review/checkIsBacklogOwed";
 import { checkIsMainAncestor } from "#src/services/review/checkIsMainAncestor";
+import { checkIsRecordVerified } from "#src/services/review/checkIsRecordVerified";
 import {
   REVIEW_FIX_MATRIX_CAP,
   REVIEW_ISSUE_LABEL,
@@ -27,6 +28,7 @@ import { fetchRemote } from "#src/services/review/git/fetchRemote";
 import { mergeMain } from "#src/services/review/git/mergeMain";
 import { openReviewIssues } from "#src/services/review/issues/openReviewIssues";
 import { readReviewWindows } from "#src/services/review/readReviewWindows";
+import { recordBundleSizes } from "#src/services/review/recordBundleSizes";
 import { reviewWindows } from "#src/services/review/reviewWindows";
 import { writeFixIssues } from "#src/services/review/writeFixIssues";
 import { writeReviewIssueFindings } from "#src/services/review/writeReviewIssueFindings";
@@ -35,17 +37,15 @@ import { MAIN_BRANCH, QUEUE_BRANCH, REMOTE_MAIN_REF, REMOTE_QUEUE_REF } from "#s
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, noop, takeOne } from "@esposter/shared";
 
-// Plans every window owed, reviews all of their batches in one pool, and acts on each window as it joins the passed prefix:
-// Its findings open their issues, and in steady mode `main` advances to the prefix's end once that end holds `main`. A
-// Window that did not pass stops the prefix, so `main` never moves past a window no review read in full. A deadline leaves
-// The windows past it for the next run, which the run dispatches once when nothing else stopped it.
+// Checks the queue's bundle-size record first, then plans every window owed, reviews all of their batches in one pool, and
+// Acts on each window as it joins the passed prefix: its findings open their issues, and in steady mode `main` advances to
+// The prefix's end once that end holds `main` and a current record. A window that did not pass stops the prefix, so `main`
+// Never moves past a window no review read in full. A deadline leaves the windows past it for the next run, which the run
+// Dispatches once when nothing else stopped it.
 export const runReview = async ({ findingsDirectory, from, isDryRun, to }: ReviewRunInput): Promise<void> => {
   const mode = getMode(from, to);
   fetchRemote();
-  if (!isDryRun) {
-    assertCheckoutIsDisposable();
-    checkoutQueue();
-  }
+  if (!isDryRun) assertCheckoutIsDisposable();
   const range: ReviewRange =
     mode === ReviewMode.Steady
       ? { from: REMOTE_MAIN_REF, mode, to: REMOTE_QUEUE_REF }
@@ -61,6 +61,7 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
       console.info(`${MAIN_BRANCH} has diverged from ${QUEUE_BRANCH}: a run merges ${REMOTE_MAIN_REF} into it first`);
       return;
     }
+    checkoutQueue();
     mergeMain();
     runGit(["push", "origin", `HEAD:${QUEUE_BRANCH}`]);
     writeFixIssues([]);
@@ -68,6 +69,33 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
     return;
   }
 
+  // The bundle-size record is checked on the checkout the workflow built, before that checkout moves to the queue's tip. A
+  // Stale record that landed ends the run, since its push starts the run that reviews it. One that did not land, or could not
+  // Be checked, leaves `main` where it is: `verifiedTip` is set only when the record is current.
+  let verifiedTip: string | undefined;
+  const recordNotices: string[] = [];
+  if (mode === ReviewMode.Steady && !isDryRun) {
+    const record = getResult(recordBundleSizes).match(
+      (outcome) => outcome,
+      (error) => {
+        console.error(`the bundle-size record was not checked: ${error.message}`);
+        process.exitCode = 1;
+        recordNotices.push(
+          `The bundle-size record was not checked, so ${MAIN_BRANCH} does not move to this tip: ${error.message}`,
+        );
+        return undefined;
+      },
+    );
+    if (record?.isPushed) {
+      writeFixIssues([]);
+      writeReviewSummary(["## Bundle sizes", "", ...record.lines]);
+      return;
+    }
+    if (record?.isCurrent) verifiedTip = runGit(["rev-parse", "HEAD"]).trim();
+    else if (record) recordNotices.push(...record.lines);
+  }
+
+  if (!isDryRun) checkoutQueue();
   const owedWindows = readReviewWindows(range);
   const windows = owedWindows.slice(0, REVIEW_RUN_WINDOW_CAP);
   const hasWindowsPastCap = owedWindows.length > windows.length;
@@ -116,10 +144,15 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
     );
   };
 
-  // In steady mode `main` moves only to a window's end that holds it. Once `main` was merged into the queue, the windows
-  // Before the merge do not, so they wait for the window that does. A range run never moves `main`, so nothing waits.
-  const checkIsAdvanceable = (index: number): boolean =>
-    mode !== ReviewMode.Steady || checkIsMainAncestor(takeOne(windows, index).end);
+  // In steady mode `main` moves only to a window's end that holds it and a current record. Once `main` was merged into the
+  // Queue, the windows before the merge do not hold it, so they wait for the window that does. A window whose end holds a
+  // Stale record waits the same way, for a window that ends on a current one. A range run never moves `main`, so nothing waits.
+  const checkIsAdvanceable = (index: number): boolean => {
+    if (mode !== ReviewMode.Steady) return true;
+
+    const { end } = takeOne(windows, index);
+    return checkIsMainAncestor(end) && checkIsRecordVerified(end, verifiedTip);
+  };
 
   // The one place the run acts on windows, called as each window settles. The pool's callbacks are synchronous, so the
   // Issues and advances run one at a time in window order without a queue of their own. A window's issues open before
@@ -192,7 +225,9 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
   ];
   if (mode === ReviewMode.Range) summary.push(`A range review never moves ${MAIN_BRANCH}.`);
   else if (mainNotices.length === 0)
-    summary.push(`${MAIN_BRANCH} did not move, because no window passed with its issues opened.`);
+    summary.push(
+      `${MAIN_BRANCH} did not move, because no window passed with its issues opened and its end holding a current record.`,
+    );
   else summary.push(...mainNotices);
   summary.push(
     issueNumbers.length > 0
@@ -221,7 +256,7 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
           : `window ${passedCount} did not pass`;
     summary.push("", `${cause}, so the windows after it did not pass.${resume}`);
   }
-  summary.push(...batchErrors, ...issueErrors.map((error) => `- ${error}`));
+  summary.push(...recordNotices, ...batchErrors, ...issueErrors.map((error) => `- ${error}`));
   writeReviewSummary(summary);
 
   // Set after the outputs and files are written, so the run shows red while the passed prefix still advanced and its

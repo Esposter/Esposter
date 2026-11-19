@@ -32,7 +32,7 @@ Each finding SHALL be held in an open review issue until its settlement closes t
 
 ### Requirement: Main advances only through fully reviewed windows
 
-The review SHALL advance main by fast-forward only through windows whose findings were all opened as issues, and SHALL stop advancing for the run when a push is rejected.
+The review SHALL advance main by fast-forward only through windows whose findings were all opened as issues and whose end holds a current bundle-size record, and SHALL stop advancing for the run when a push is rejected.
 
 #### Scenario: Window passed and its issues opened
 
@@ -235,3 +235,25 @@ Every review session SHALL receive only its own Claude credential, with every ot
 - **GIVEN** a review session is launched
 - **WHEN** its environment is prepared
 - **THEN** no credential-like variable is passed to it other than its own Claude credential
+
+### Requirement: The review writes a stale bundle-size record on the queue's tip
+
+A steady run SHALL compare the bundle-size record with a fresh build of the queue's tip before it plans any window. A stale record SHALL be written as one commit on the tip and pushed, and the run SHALL end there, since the push starts the run that reviews it.
+
+#### Scenario: a stale record is written on the tip
+
+- **GIVEN** the committed record differs from a fresh build of the queue's tip
+- **WHEN** a steady run starts
+- **THEN** one record commit lands on the tip and the run ends without reviewing a window
+
+#### Scenario: a current record is left alone
+
+- **GIVEN** the committed record equals a fresh build of the queue's tip
+- **WHEN** a steady run starts
+- **THEN** no commit is made and the run reviews its windows
+
+#### Scenario: the record commit lists the rows that moved
+
+- **GIVEN** the record commit is written for a tip whose build moved rows
+- **WHEN** its body is read
+- **THEN** it lists every row that moved, and marks each one that grew by a KiB or more, and each row added or removed

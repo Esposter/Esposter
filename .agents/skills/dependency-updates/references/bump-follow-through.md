@@ -12,9 +12,9 @@ A rebuild that rewrites a version the repo commits is drift, not a result: the m
 
 Any bump that reaches a `dist/` is finished only by this sequence, all of it in the bump's own commit:
 
-1. Run the build gate `build`'s `references/dist-size.md` names, from the repo root — it rebuilds every library package, so tsdown rewrites each `inlinedDependencies` and the `dist/` the size record reads, and it builds `apps/realtime`, `apps/jobs` and `apps/infra` too, since `apps/realtime` and `apps/jobs` inline the bumped package. Skipping it leaves the record written from the stale `dist/`.
+1. Run the build gate `build`'s `references/dist-size.md` names, from the repo root — it rebuilds every library package, so tsdown rewrites each `inlinedDependencies` and the `dist/` the size record reads, and it builds `apps/realtime`, `apps/jobs` and `apps/infra` too, since `apps/realtime` and `apps/jobs` inline the bumped package. The build must pass: the review writes the record from its own build of the tip.
 2. Read the `package.json` diff of every package the rebuild touched: the `inlinedDependencies` entries the bump moved, and nothing else.
-3. Run `pnpm bundle-sizes:gen`, which rewrites `bundle-sizes.md`, whose diff is the bump's size. On Windows its `genshin-world` rows and the total come out a few bytes off CI's, so those are restored to the committed values unless the bump moved them, and CI's failing diff settles it (`build`'s `references/dist-size.md`).
-4. Run `src/workspace/bundleSizes.test.ts` of `scripts` again — it must pass against the file just written (`testing`'s `references/bundle-size.md`).
+3. Land the bump. The review writes `bundle-sizes.md` after it lands, and the body of that record commit is the bump's size (`build`'s `references/dist-size.md`).
+4. Once the record commit lands, `src/workspace/bundleSizes.test.ts` of `scripts` passes on `main`, since the record then matches a fresh build (`testing`'s `references/bundle-size.md`).
 
 A growth the bump does not explain is read before the record is committed (`build`'s `references/dist-size.md`), and the record is never written from a stale `dist/`.

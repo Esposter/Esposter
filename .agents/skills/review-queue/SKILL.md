@@ -25,11 +25,11 @@ Every agent works on **one permanent branch, `ai/queue`**, in the main checkout,
 
 ## The refs
 
-| Ref          | Written by                                                         | How                                                                          |
-| :----------- | :----------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| `ai/queue`   | every session, and Renovate's automerge                            | a plain push, after `git pull --rebase`; never force-pushed, never rewritten |
-| `main`       | the review, a session's sync, the nightly release's version commit | a fast-forward to the end of the last window that passed                     |
-| other `ai/*` | the one session that owns it                                       | a plain push                                                                 |
+| Ref          | Written by                                                               | How                                                                          |
+| :----------- | :----------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
+| `ai/queue`   | every session, Renovate's automerge, and the review's bundle-size record | a plain push, after `git pull --rebase`; never force-pushed, never rewritten |
+| `main`       | the review, a session's sync, the nightly release's version commit       | a fast-forward to the end of the last window that passed                     |
+| other `ai/*` | the one session that owns it                                             | a plain push                                                                 |
 
 The `main` row moves only as the review's fast-forward, the nightly release's version commit, or the "Settled" bullet on pushing `main` by hand allows. A session lands on `ai/queue` itself; the only other branch it ever holds is a concurrent change's worktree branch, which gives that worktree's pull a fork point.
 

@@ -45,19 +45,28 @@ jobs:
           token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
           persist-credentials: false
 
+      # The bundle-size record is checked against the build of this checkout's commit, so the commit is named before the build
+      - name: 🧾 Name the built commit
+        run: echo "REVIEW_BUILT_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
       - name: 📦 Install the packages and scripts
         uses: ./.github/actions/install-projects
         with:
-          filter: ./{packages/*,scripts}
+          filter: ./{packages/*,scripts,apps/infra}
 
       - name: 🏗️ Build packages
         uses: ./.github/actions/run-cached-task
         with:
           task: build:packages
           save: false
+
+      # The run reads the bundle-size record's rows from these builds before it plans a window, and the infrastructure
+      # program is the one app the record holds (`services/review/recordBundleSizes`)
+      - name: 🏗️ Build the infrastructure program
+        run: pnpm --filter "@esposter/infra" build
 
       - name: 🆔 Identify the reviewer
         run: |
