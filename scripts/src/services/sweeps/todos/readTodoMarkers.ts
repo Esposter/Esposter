@@ -1,19 +1,30 @@
 import type { TodoMarker } from "#src/models/sweeps/todos/TodoMarker";
 
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { BINARY_BYTE } from "#src/services/sweeps/constants";
-import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { runGit } from "#src/services/shared/runGit";
 import { TODO_EXCLUDED_PATHSPECS } from "#src/services/sweeps/todos/constants";
 import { getTodoMarkers } from "#src/services/sweeps/todos/getTodoMarkers";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { getResult } from "@esposter/shared";
 
 const TODO_MARKER = "@TODO";
-// Every marker in a tracked text file, read once for each question asked of them: the `todos` skill's test and the
-// Report on what their links say now
+// `git grep` exits 1 when nothing matches, which for the markers is the tree with no workaround left
+const NO_MATCH_EXIT_STATUS = 1;
+const GREP_LINE_REGEX = /^(?<path>[^:]+):(?<line>\d+):(?<text>.*)$/u;
+// Every marker in a tracked or untracked text file, read off `git grep`'s matching lines alone, so the cost follows the
+// Markers rather than the size of the tree
 export const readTodoMarkers = (): TodoMarker[] =>
-  readSweepFilePaths(...TODO_EXCLUDED_PATHSPECS).flatMap((path) => {
-    const contents = readFileSync(resolve(REPOSITORY_ROOT, path));
-    if (!contents.includes(TODO_MARKER) || contents.includes(BINARY_BYTE)) return [];
-    return getTodoMarkers(contents.toString("utf8")).map((marker) => ({ ...marker, path }));
-  });
+  getResult(() =>
+    runGit(["grep", "--untracked", "-I", "-n", "--fixed-strings", TODO_MARKER, "--", ".", ...TODO_EXCLUDED_PATHSPECS]),
+  ).match(
+    (output) =>
+      getNonEmptyLines(output).flatMap((grepLine) => {
+        const groups = GREP_LINE_REGEX.exec(grepLine)?.groups;
+        if (!groups) return [];
+        const { line, path, text } = groups;
+        return getTodoMarkers(text).map((marker) => ({ ...marker, line: Number(line), path }));
+      }),
+    (error) => {
+      if (error instanceof Error && "status" in error && error.status === NO_MATCH_EXIT_STATUS) return [];
+      throw error;
+    },
+  );

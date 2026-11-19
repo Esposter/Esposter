@@ -1,3 +1,4 @@
+import { TodoLinkState } from "#src/models/sweeps/todos/TodoLinkState";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { runGh } from "#src/services/shared/runGh";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -8,10 +9,11 @@ import { z } from "zod";
 const linksResponseSchema = z.object({
   data: z.record(z.string(), z.object({ state: z.enum(["CLOSED", "MERGED", "OPEN"]).optional() }).nullable()),
 });
-// The links whose issue or pull request upstream has closed or merged, read in one GraphQL request with each url
-// Aliased by its index, since a request per link would cost a round trip each
-export const readClosedGitHubLinks = (urls: string[]): Set<string> => {
-  if (urls.length === 0) return new Set();
+const LinkStateMap = { CLOSED: TodoLinkState.Closed, MERGED: TodoLinkState.Merged, OPEN: TodoLinkState.Open } as const;
+// Every GitHub link's state in one GraphQL request, each url aliased by its index, since a request per link would cost
+// A round trip each. A link with no issue or pull request behind it is unchecked
+export const readGitHubLinkStates = (urls: string[]): Map<string, TodoLinkState> => {
+  if (urls.length === 0) return new Map();
 
   const fields = urls.map(
     (url, index) =>
@@ -27,10 +29,10 @@ export const readClosedGitHubLinks = (urls: string[]): Set<string> => {
       `the response does not parse: ${response.error.message}`,
     );
 
-  return new Set(
-    urls.filter((_url, index) => {
+  return new Map(
+    urls.map((url, index) => {
       const state = response.data.data[`link${index}`]?.state;
-      return state === "CLOSED" || state === "MERGED";
+      return [url, state === undefined ? TodoLinkState.Unchecked : LinkStateMap[state]];
     }),
   );
 };

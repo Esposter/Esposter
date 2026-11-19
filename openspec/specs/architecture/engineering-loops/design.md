@@ -70,7 +70,7 @@ flowchart TD
 
 ## Where tracked work lives
 
-Work waiting to be done is never one generic tracker, and never a list kept by hand beside the tree. Each kind has one record, kept where the work itself lives, a done signal read from evidence rather than ticked by hand, and one read-only command that prints only what can be acted on now, so its output tracks the work outstanding rather than the size of the code or its history. A new kind of tracked work adds a row here with all four, and reuses the shared table printer (`scripts/src/services/shared/printTable.ts`) when it prints one.
+Work waiting to be done is never one generic tracker, and never a list kept by hand beside the tree. Each kind has one record, kept where the work itself lives, a done signal read from evidence rather than ticked by hand, and one read-only command that prints what is outstanding, what can be acted on now first, so its output tracks the work left rather than the size of the code or its history. A new kind of tracked work adds a row here with all four, and reuses the shared table printer (`scripts/src/services/shared/printTable.ts`) when it prints one.
 
 | The work                  | Its one record                         | Done when                                            | Read by                           |
 | ------------------------- | -------------------------------------- | ---------------------------------------------------- | --------------------------------- |
@@ -101,7 +101,7 @@ A session that finishes a unit of work does not stop to ask whether to go on. It
 3. **This repository's follow-ups**, when the follow-ups plugin is installed: the owner wrote each one down, or accepted a session writing it, so it outranks work a session would pick for itself. The plugin's drain skill works them one change at a time to its own stop rule ([TodoList agent follow-ups](../../resource/todolist-agent-follow-ups/design.md)).
 4. **An area owed a product-review pass**, as `pnpm ai:proposals:report` lists it, so the specs match the shipped surface before anything is built from them.
 5. **The cheapest valuable proposal** that the same report lists (`building-proposals` skill).
-6. **A workaround upstream has finished with**, as `pnpm ai:todos:report` lists it: removed once the fix is in the version the catalog resolves (`todos` skill, `references/revisiting.md`).
+6. **A workaround upstream has finished with**, as `pnpm ai:todos:report` lists it first: removed once the fix is in the version the catalog resolves (`todos` skill, `references/revisiting.md`).
 7. **An open ledger row**, as `pnpm ai:sweep:ledger-coverage` dates them (`sweeps` skill); the skills' own rows are the skill sweep.
 
 Beside every step, never one of them: **the machine's compute queue.** Once the leftovers are clear, the session claims entries with `pnpm ai:fleet:next`, and a `haiku` agent takes each one it claims, claiming again as each agent reports, until the closing pass below. The runners keep going through every later step, and a pause the session takes for any of them, a usage window's end or a stop on one lane, leaves them running: only the user stops the queue (`.agents/skills/genshin-parity/references/compute-queue.md`, "Keeping it busy").
@@ -125,4 +125,4 @@ No step on this list waits for approval, since each one ends in a queue push, wh
 | `scripts/src/proposals/report/index.ts`      | sizes and groups open proposals, lists the areas owed a pass         |
 | `scripts/src/sweeps/ledgerCoverage/index.ts` | dates every ledger row from commit trailers                          |
 | `scripts/src/triage/index.ts`                | labels an issue with its triage role                                 |
-| `scripts/src/todos/report/index.ts`          | lists the `@TODO` markers that are work now                          |
+| `scripts/src/todos/report/index.ts`          | lists every `@TODO` by its link's state                              |
