@@ -11,6 +11,8 @@ import { describe, expect, test } from "vitest";
 describe(pickUpMaterialSource, () => {
   const ITEM_ID = 1001;
   const NAME_TEXT_ID = "1";
+  const CRITTER_ITEM_ID = 1002;
+  const CRITTER_NAME_TEXT_ID = "2";
   const materialDataMap = new Map<number, MaterialData>([
     [
       ITEM_ID,
@@ -23,10 +25,22 @@ describe(pickUpMaterialSource, () => {
         stackLimit: 99,
       },
     ],
+    [
+      CRITTER_ITEM_ID,
+      {
+        id: CRITTER_ITEM_ID,
+        materialType: MaterialType.Exchange,
+        nameTextId: CRITTER_NAME_TEXT_ID,
+        rank: 1,
+        rarity: 1,
+        stackLimit: 99,
+      },
+    ],
   ]);
-  const names = { [NAME_TEXT_ID]: "Test Crystalfly" };
+  const names = { [CRITTER_NAME_TEXT_ID]: "Test Critter", [NAME_TEXT_ID]: "Test Crystalfly" };
   const crystalfly: MaterialSourcePlace = { id: "crystalfly", kind: ITEM_ID, position: { x: 1, z: 2 } };
   const otherCrystalfly: MaterialSourcePlace = { id: "other", kind: ITEM_ID, position: { x: 3, z: 4 } };
+  const critter: MaterialSourcePlace = { id: "critter", kind: CRITTER_ITEM_ID, position: { x: 5, z: 6 } };
 
   test("a crystalfly picked up gives its item and vanishes", () => {
     expect.hasAssertions();
@@ -60,5 +74,33 @@ describe(pickUpMaterialSource, () => {
     expect(pickUp.inventory).toStrictEqual(expectedInventory);
     expect(pickUp.overflow).toBe(0);
     expect(pickUp.materialSources).toStrictEqual([otherCrystalfly]);
+  });
+
+  test("a picked critter gives its item and vanishes", () => {
+    expect.hasAssertions();
+
+    const pickUp = pickUpMaterialSource([critter, crystalfly], critter.id, EMPTY_INVENTORY, names, materialDataMap);
+    const expectedInventory: Inventory = {
+      items: [
+        {
+          definition: {
+            category: MaterialTypeItemCategoryMap[MaterialType.Exchange],
+            id: CRITTER_ITEM_ID,
+            name: "Test Critter",
+            rank: 1,
+            rarity: 1,
+            stackLimit: 99,
+          },
+          id: 0,
+          quantity: 1,
+        },
+      ],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
+
+    expect(pickUp.inventory).toStrictEqual(expectedInventory);
+    expect(pickUp.overflow).toBe(0);
+    expect(pickUp.materialSources).toStrictEqual([crystalfly]);
   });
 });

@@ -10,7 +10,7 @@ export const materialSourcesCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish each crystalfly the official map marks, which gives its item when picked, as one slice per region to the game data",
+      "Publish each critter the official map marks under Animals that gives its item when picked, as one slice per region to the game data",
     name: "materialSources",
   },
   run: async ({ args }) => {

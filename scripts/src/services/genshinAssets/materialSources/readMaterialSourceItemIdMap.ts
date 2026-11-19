@@ -14,8 +14,11 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
 
 // Each material source label's item id, read off the gather row of the animal the label's name is the English name of. A
-// Label with no such row gives no item, so it is refused rather than placed as nothing
-export const readMaterialSourceItemIdMap = (labels: readonly InteractiveMapLabel[]): Map<number, number> => {
+// Label with no such row gives no item, so it is refused rather than placed as nothing. The notes name each label's match
+// And each gather row no label joins, which print as unmatched and stay out of the dataset
+export const readMaterialSourceItemIdMap = (
+  labels: readonly InteractiveMapLabel[],
+): { itemIdMap: Map<number, number>; notes: string[] } => {
   const envAnimalGatherRows = readExcelTable<EnvAnimalGatherRow>(ENV_ANIMAL_GATHER_TABLE_NAME);
   const englishText = readTextMap(GameLanguage.English);
   const animalNameMap = new Map(
@@ -24,15 +27,23 @@ export const readMaterialSourceItemIdMap = (labels: readonly InteractiveMapLabel
       englishText.get(String(nameTextMapHash)),
     ]),
   );
-  const labelItemIdMap = new Map<number, number>();
+  const itemIdMap = new Map<number, number>();
+  const joinedRows = new Set<EnvAnimalGatherRow>();
+  const notes: string[] = [];
   for (const { id, name } of flattenLabelTree(labels)) {
     if (!MATERIAL_SOURCE_LABEL_IDS.includes(id)) continue;
-    const itemId = envAnimalGatherRows
-      .filter(({ animalId }) => animalNameMap.get(animalId) === name)
+    const rows = envAnimalGatherRows.filter(({ animalId }) => animalNameMap.get(animalId) === name);
+    const itemId = rows
       .flatMap(({ gatherItemList }) => gatherItemList)
       .find((entry) => entry.id !== undefined && entry.id > 0)?.id;
     if (itemId === undefined) throw new InvalidOperationError(Operation.Read, name, "has no gather row giving an item");
-    labelItemIdMap.set(id, itemId);
+    for (const row of rows) joinedRows.add(row);
+    itemIdMap.set(id, itemId);
+    notes.push(`${name} (${id}): ${rows.length} gather row${rows.length === 1 ? "" : "s"}, gives item ${itemId}`);
   }
-  return labelItemIdMap;
+  for (const row of envAnimalGatherRows) {
+    if (joinedRows.has(row)) continue;
+    notes.push(`unmatched: animal ${row.animalId} (${animalNameMap.get(row.animalId) ?? "no English name"}), left out`);
+  }
+  return { itemIdMap, notes };
 };
