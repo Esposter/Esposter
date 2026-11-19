@@ -6,6 +6,7 @@ import type { RoomMessage, RoomObjectRpc, UserObjectRpc } from "@esposter/db-sch
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { MAX_FORWARD_ROOMS, MAX_SEARCH_ROOMS } from "#server/services/message/constants";
+import { createRoomMessage as baseCreateRoomMessage } from "#server/services/message/createRoomMessage.test";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
@@ -143,26 +144,8 @@ describe("messageRouter", () => {
   const pollOptionId = v7();
   const userId = getMockSession().user.id;
   // The message a room object holds, sent by the caller unless a test says otherwise
-  const createRoomMessage = (overrides: Partial<RoomMessage> = {}): RoomMessage => ({
-    appUserId: null,
-    appUserImage: "",
-    createdAt: new Date(0),
-    deletedAt: null,
-    editedAt: null,
-    files: [],
-    id: messageId,
-    isForward: false,
-    isPinned: false,
-    linkPreviewResponse: null,
-    mentions: [],
-    message: text,
-    replyToId: null,
-    senderName: null,
-    type: MessageType.Message,
-    updatedAt: new Date(0),
-    userId,
-    ...overrides,
-  });
+  const createRoomMessage = (overrides: Partial<RoomMessage> = {}): RoomMessage =>
+    baseCreateRoomMessage({ id: messageId, message: text, userId, ...overrides });
 
   beforeAll(async () => {
     mockContext = getMockContext();

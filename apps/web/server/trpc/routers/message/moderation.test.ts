@@ -487,15 +487,18 @@ describe("moderationRouter", () => {
     );
   });
 
+  // The calls both permission tables below aim at a target member, each through the procedure that holds its check
+  const banMember = (caller: ModerationCaller, targetUserId: string) =>
+    caller.executeAdminAction({ roomId, targetUserId, type: AdminActionType.CreateBan });
+  const writeNote = (caller: ModerationCaller, targetUserId: string) =>
+    caller.createModerationNote({ note, roomId, targetUserId });
+  const readNotes = (caller: ModerationCaller, targetUserId: string) =>
+    caller.readModerationNotes({ roomId, targetUserId });
+
   // Every procedure here is permission-gated and a plain member holds none of them
   test.each([
     [RoomPermission.BanMembers, "readBans", (caller: ModerationCaller) => caller.readBans({ roomId })],
-    [
-      RoomPermission.BanMembers,
-      "executeAdminAction",
-      (caller: ModerationCaller, targetUserId: string) =>
-        caller.executeAdminAction({ roomId, targetUserId, type: AdminActionType.CreateBan }),
-    ],
+    [RoomPermission.BanMembers, "executeAdminAction", banMember],
     [
       RoomPermission.BanMembers,
       "deleteBan",
@@ -506,16 +509,8 @@ describe("moderationRouter", () => {
       "readModerationLog",
       (caller: ModerationCaller) => caller.readModerationLog({ ...emptyFilters, roomId }),
     ],
-    [
-      RoomPermission.KickMembers,
-      "createModerationNote",
-      (caller: ModerationCaller, targetUserId: string) => caller.createModerationNote({ note, roomId, targetUserId }),
-    ],
-    [
-      RoomPermission.KickMembers,
-      "readModerationNotes",
-      (caller: ModerationCaller, targetUserId: string) => caller.readModerationNotes({ roomId, targetUserId }),
-    ],
+    [RoomPermission.KickMembers, "createModerationNote", writeNote],
+    [RoomPermission.KickMembers, "readModerationNotes", readNotes],
   ])("member without %s permission cannot %s — throws UNAUTHORIZED", async (_permission, _procedureName, moderate) => {
     expect.hasAssertions();
 
@@ -532,22 +527,9 @@ describe("moderationRouter", () => {
   // Holding the permission is not enough: the target has to sit below the actor, and equal is not below. Each row
   // Reaches `isManageable` down a different procedure's path, which is the part that is not shared
   test.each([
-    [
-      RoomPermission.BanMembers,
-      "executeAdminAction",
-      (caller: ModerationCaller, targetUserId: string) =>
-        caller.executeAdminAction({ roomId, targetUserId, type: AdminActionType.CreateBan }),
-    ],
-    [
-      RoomPermission.KickMembers,
-      "createModerationNote",
-      (caller: ModerationCaller, targetUserId: string) => caller.createModerationNote({ note, roomId, targetUserId }),
-    ],
-    [
-      RoomPermission.KickMembers,
-      "readModerationNotes",
-      (caller: ModerationCaller, targetUserId: string) => caller.readModerationNotes({ roomId, targetUserId }),
-    ],
+    [RoomPermission.BanMembers, "executeAdminAction", banMember],
+    [RoomPermission.KickMembers, "createModerationNote", writeNote],
+    [RoomPermission.KickMembers, "readModerationNotes", readNotes],
   ])(
     "isManageable: %s cannot %s against a member at equal position — throws UNAUTHORIZED",
     async (permission, _procedureName, moderate) => {
