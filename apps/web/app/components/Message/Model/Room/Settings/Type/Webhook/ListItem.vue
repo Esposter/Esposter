@@ -16,10 +16,9 @@ const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;
 const { draft: editedName, isDirty, settle } = useStoredDraft(() => webhook.name);
 // The name is judged by the schema the server takes it by, so a blank or over-long one says so rather than being sent
+const checkIsNameValid = (name: string) => selectWebhookInMessageSchema.shape.name.safeParse(name).success;
 const nameRules = [
-  (value: string) =>
-    selectWebhookInMessageSchema.shape.name.safeParse(value).success ||
-    `You must enter between 1 and ${WEBHOOK_NAME_MAX_LENGTH} characters`,
+  (value: string) => checkIsNameValid(value) || `You must enter between 1 and ${WEBHOOK_NAME_MAX_LENGTH} characters`,
 ];
 </script>
 
@@ -38,7 +37,7 @@ const nameRules = [
       :rules="nameRules"
       @focusout="
         () => {
-          if (!isDirty || !selectWebhookInMessageSchema.shape.name.safeParse(editedName).success) return;
+          if (!isDirty || !checkIsNameValid(editedName)) return;
 
           updateWebhook(roomId, { id: webhook.id, name: editedName });
           settle();
