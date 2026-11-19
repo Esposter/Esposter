@@ -8,7 +8,7 @@ import { BASE_TILESET_KEYS, OBJECTGROUP_NAMES } from "#src/services/dungeons/til
 import { createLayer } from "#src/services/dungeons/tilemap/createLayer";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 
-const debugLayerNames: string[] = [LayerName.Collision, LayerName.Encounter];
+const debugLayerNames = new Set<string>([LayerName.Collision, LayerName.Encounter]);
 
 export const createTilemapMetadata = (layerNameEnum: Record<string, string>) => {
   const worldSceneStore = useWorldSceneStore();
@@ -23,7 +23,7 @@ export const createTilemapMetadata = (layerNameEnum: Record<string, string>) => 
       tilesets.push(tileset);
     }
     const layer = createLayer(tilemap.value, layerName, tilesets);
-    if (debugLayerNames.includes(layerName)) layer.setAlpha(IS_PRODUCTION ? 0 : 0.7);
+    if (debugLayerNames.has(layerName)) layer.setAlpha(IS_PRODUCTION ? 0 : 0.7);
     // A layer holds its scene, so it enters the store raw like the tilemap it belongs to
     rawLayerMap.set(layerName, markRaw(layer));
   }
