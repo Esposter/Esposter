@@ -5,7 +5,8 @@ import { createPresignedGetUrl } from "@esposter/db";
 import { getRoomEmojiBlobName } from "@esposter/db-schema";
 
 // Every surface renders an emoji from its row plus a presigned read url for the blob the row's id names, so the two
-// Travel together everywhere a row leaves the router
+// Travel together everywhere a row leaves the router. The uploader chose the blob's type, so the url answers as an
+// Attachment: a navigation to it downloads, and an <img> still embeds it, since that ignores Content-Disposition
 export const getRoomEmojiWithPresignedUrl = async (
   bucketName: StorageBucket,
   roomEmoji: RoomEmojiInMessage,
@@ -15,5 +16,6 @@ export const getRoomEmojiWithPresignedUrl = async (
     getStorageCredentials(),
     bucketName,
     getRoomEmojiBlobName(roomEmoji.roomId, roomEmoji.id),
+    { contentDisposition: "attachment" },
   ),
 });
