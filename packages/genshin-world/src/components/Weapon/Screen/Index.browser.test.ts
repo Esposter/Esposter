@@ -40,13 +40,13 @@ describe("weaponScreen", () => {
   const heldRequiredExp =
     getRarityRequiredExps(props.rarityRequiredExpsMap, weaponData.rarity)[heldWeapon.level - 1] ?? 0;
   const heldExperienceText = `${heldWeapon.experience}/${heldRequiredExp}`;
-  // The weapon an Enhance of one largest ore and the fodder weapon leaves, levelled by the service the screen calls
+  // The weapon and wallet an Enhance of one largest ore and the fodder weapon leaves, from the service the screen calls
   // On the same data the fixture holds
   const fodder = getBagWeapon(props.inventory.items, FODDER_ENTRY_ID);
-  const enhancedWeapon = enhanceWeapon(heldWeapon, weaponData, props.rarityRequiredExpsMap, props.wallet, {
+  const enhanced = enhanceWeapon(heldWeapon, weaponData, props.rarityRequiredExpsMap, props.wallet, {
     fodders: [{ data: getWeaponData(props.weaponDataMap, fodder.id), weapon: fodder }],
     ores: [{ count: 1, id: ORE_ID }],
-  }).weapon;
+  });
 
   // The weapon's name, rarity, level in the game's own format, EXP, phase and refinement rank
   test("the weapon screen opens on a held weapon", async () => {
@@ -134,9 +134,9 @@ describe("weaponScreen", () => {
     expect(onUpdateInventory).toHaveBeenCalledTimes(1);
     expect(writtenInventory?.items.some((item) => item.id === FODDER_ENTRY_ID)).toBe(false);
     expect(countInventoryItem(writtenInventory?.items ?? [], ORE_ID)).toBe(2);
-    expect(getBagWeapon(writtenInventory?.items ?? [], OPEN_ENTRY_ID).level).toBe(enhancedWeapon.level);
+    expect(getBagWeapon(writtenInventory?.items ?? [], OPEN_ENTRY_ID).level).toBe(enhanced.weapon.level);
     expect(onUpdateWallet).toHaveBeenCalledTimes(1);
-    expect(onUpdateWallet.mock.calls[0]?.[0][Currency.Mora]).toBeLessThan(props.wallet[Currency.Mora]);
+    expect(onUpdateWallet.mock.calls[0]?.[0][Currency.Mora]).toBe(enhanced.wallet[Currency.Mora]);
   });
 
   // The Enhance strip holds seven candidates in view, so the eighth fodder weapon scrolls into reach inside the strip and is picked there
