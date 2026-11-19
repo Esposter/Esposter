@@ -1,19 +1,12 @@
-import type { LandMask } from "#src/models/visual/LandMask";
-
+import { TEST_LAND_MASK } from "#src/services/visual/globe/constants.test";
 import { createLandDots } from "#src/services/visual/globe/createLandDots";
 import { describe, expect, test } from "vitest";
 
 describe(createLandDots, () => {
-  // One cell per degree, with land only in the square from 0 to 1 degree north and east
-  const landMask: LandMask = {
-    cellsPerDegree: 1,
-    rows: Array.from({ length: 180 }, (_value, i) => (i === 89 ? [180, 181] : [])),
-  };
-
   test("dots stand on land only", () => {
     expect.hasAssertions();
 
-    expect(createLandDots(landMask, 0.25)).toMatchInlineSnapshot(`
+    expect(createLandDots(TEST_LAND_MASK, 0.25)).toMatchInlineSnapshot(`
       [
         {
           "lat": 0.125,
@@ -86,7 +79,7 @@ describe(createLandDots, () => {
   test("a wider spacing draws fewer dots", () => {
     expect.hasAssertions();
 
-    expect(createLandDots(landMask, 0.5)).toHaveLength(4);
-    expect(createLandDots(landMask, 0.25)).toHaveLength(16);
+    expect(createLandDots(TEST_LAND_MASK, 0.5)).toHaveLength(4);
+    expect(createLandDots(TEST_LAND_MASK, 0.25)).toHaveLength(16);
   });
 });

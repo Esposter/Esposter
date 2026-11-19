@@ -2,15 +2,15 @@ import type { CardStackGeometry } from "#src/models/visual/CardStackGeometry";
 import type { CardStyleVariables } from "#src/models/visual/CardStyleVariables";
 
 import { getInactiveCardScaleY } from "#src/services/visual/getInactiveCardScaleY";
+import { getStackedCardCount } from "#src/services/visual/getStackedCardCount";
 import { takeOne } from "@esposter/shared";
 
 // Generate CSS card styling for smooth, non-jumping animations.
 // Each card from right -> left gains margin, multiplied by the breakpoint-dependent scale.
 // The cards shrink towards the back of the stack.
 export const getNormalCardStyles = (geometry: CardStackGeometry) => {
-  const { cardCount, cardScaleYRatioLoss, maxShownCards, scale } = geometry;
-  // Count the cards we care about, ignoring the moving card.
-  const numberOfCards = Math.min(maxShownCards, cardCount - 1);
+  const { cardScaleYRatioLoss, maxShownCards, scale } = geometry;
+  const numberOfCards = getStackedCardCount(geometry);
   const inactiveScaleY = getInactiveCardScaleY(geometry);
   const items: CardStyleVariables[] = [];
   // Walk from the right-most card leftwards so each card reuses its right neighbour's margin and scale.
