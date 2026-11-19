@@ -36,24 +36,19 @@ describe(applyLedgerEvents, () => {
       `${earlier}${FIELD_SEPARATOR}${LedgerEventType.Ledger}: ${ledger}${TRAILER_VALUE_SEPARATOR}${trailerUnit}${RECORD_SEPARATOR}`,
     );
 
-  test("dates an open row from its sweep trailer", () => {
+  // A blank cell records no sweep, so it is an open row, and the trailer naming that row still finds it
+  test.each([
+    ["an open row", OPEN_CELL],
+    ["a row whose Swept cell is blank", ""],
+  ])("dates %s from its sweep trailer", (_description, swept) => {
     expect.hasAssertions();
 
     const event = getEvent(LedgerEventType.Ledger, earlier, bareUnit);
 
-    expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
+    expect(applyLedgerEvents(getText(swept), ledger, [event])).toStrictEqual({
       matched: [event],
       text: getText(earlier),
     });
-  });
-
-  // A blank cell records no sweep, so it is an open row, and the trailer naming that row still finds it
-  test("dates a row whose Swept cell is blank from its sweep trailer", () => {
-    expect.hasAssertions();
-
-    const event = getEvent(LedgerEventType.Ledger, earlier, bareUnit);
-
-    expect(applyLedgerEvents(getText(""), ledger, [event])).toStrictEqual({ matched: [event], text: getText(earlier) });
   });
 
   test("names the model the sweep commit was co-authored by", () => {
@@ -114,22 +109,14 @@ describe(applyLedgerEvents, () => {
     });
   });
 
-  test("reopens a row from a reopen naming the whole ledger", () => {
-    expect.hasAssertions();
-
-    const event = getEvent(LedgerEventType.Reopens, later);
-
-    expect(applyLedgerEvents(getText(earlier), ledger, [event])).toStrictEqual({
-      matched: [event],
-      text: getText(OPEN_CELL),
-    });
-  });
-
   // A promoted ledger is a folder of area files, and a rule change names the folder
-  test("reopens a row from a reopen naming the folder above the ledger", () => {
+  test.each([
+    ["the whole ledger", ledger],
+    ["the folder above the ledger", "a"],
+  ])("reopens a row from a reopen naming %s", (_description, reopenedLedger) => {
     expect.hasAssertions();
 
-    const event = { ...getEvent(LedgerEventType.Reopens, later), ledger: "a" };
+    const event = { ...getEvent(LedgerEventType.Reopens, later), ledger: reopenedLedger };
 
     expect(applyLedgerEvents(getText(earlier), ledger, [event])).toStrictEqual({
       matched: [event],

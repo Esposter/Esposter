@@ -66,22 +66,14 @@ describe(getDeclarationLines, () => {
     ).toStrictEqual(new Set([1, 2, 3, 4]));
   });
 
-  test("keeps a composable's call with an options object holding a computed value as code", () => {
+  test.each([
+    ["call with an options object", "useWorldFrame({\n  b: () => c,\n});"],
+    ["destructured call", "const {\n  name: value + 1,\n} = useWorldSave({ events });"],
+    ["return", "return {\n  name: value + 1,\n};"],
+  ])("keeps a composable's %s holding a computed value as code", (_shape, source) => {
     expect.hasAssertions();
 
-    expect(getDeclarationLines("useWorldFrame({\n  b: () => c,\n});")).toStrictEqual(new Set());
-  });
-
-  test("keeps a composable's destructured call holding a computed value as code", () => {
-    expect.hasAssertions();
-
-    expect(getDeclarationLines("const {\n  name: value + 1,\n} = useWorldSave({ events });")).toStrictEqual(new Set());
-  });
-
-  test("keeps a composable's return holding a computed value as code", () => {
-    expect.hasAssertions();
-
-    expect(getDeclarationLines("return {\n  name: value + 1,\n};")).toStrictEqual(new Set());
+    expect(getDeclarationLines(source)).toStrictEqual(new Set());
   });
 
   test("reads a comment between two composable calls, a JSDoc included, as part of their run", () => {

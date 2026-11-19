@@ -1,5 +1,4 @@
 import { spawnGit } from "#src/services/shared/spawnGit";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdtempSync, realpathSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -26,7 +25,7 @@ describe(spawnGit, () => {
     vi.stubEnv("GIT_SSH_COMMAND", "sleep 10 #");
 
     expect(() => spawnGit(["ls-remote", "ssh://a/"], directory, timeout)).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Update, "git ls-remote ssh://a/", `ran past ${timeout} ms and was killed`).message}]`,
+      `[InvalidOperationError: Invalid operation: Update, name: git ls-remote ssh://a/, ran past 1000 ms and was killed]`,
     );
   });
 });

@@ -1,7 +1,6 @@
 import type { MockInstance } from "vitest";
 
 import { printDirectoryFiles } from "#src/services/fleet/data/commands/printDirectoryFiles";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -35,7 +34,7 @@ describe(printDirectoryFiles, () => {
     expect.hasAssertions();
 
     await expect(printDirectoryFiles(parityDirectory, [EXTRACTED, OUTSIDE])).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, OUTSIDE, "is not a directory inside the parity directory").message}]`,
+      `[InvalidOperationError: Invalid operation: Read, name: ../outside, is not a directory inside the parity directory]`,
     );
     expect(printed()).toStrictEqual([]);
   });

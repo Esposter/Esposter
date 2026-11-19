@@ -7,7 +7,7 @@ describe(forEachConcurrently, () => {
   const items = ["a", "b", "c", "d", "e"];
   const limit = 2;
 
-  test("runs every item with no more than the limit in flight", async () => {
+  test("runs every item with the limit in flight, and never more", async () => {
     expect.hasAssertions();
     const started: string[] = [];
     let inFlight = 0;
@@ -17,15 +17,15 @@ describe(forEachConcurrently, () => {
       started.push(item);
       inFlight += 1;
       maxInFlight = Math.max(maxInFlight, inFlight);
-      await Promise.resolve();
+      await setImmediate();
       inFlight -= 1;
     });
 
     expect(started.toSorted()).toStrictEqual(items);
-    expect(maxInFlight).toBeLessThanOrEqual(limit);
+    expect(maxInFlight).toBe(limit);
   });
 
-  test("streams an async iterable without collecting it first", async () => {
+  test("runs every item of an async iterable", async () => {
     expect.hasAssertions();
     const started: string[] = [];
 
@@ -57,7 +57,7 @@ describe(forEachConcurrently, () => {
     await expect(run).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Create, name: a, failed]`,
     );
-    expect(settled).toContain("b");
+    expect(settled).toStrictEqual(["b"]);
   });
 
   test("rejects with a call's failure ahead of a listing failure that came after it", async () => {

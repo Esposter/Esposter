@@ -30,7 +30,7 @@ describe(readQueueFiles, () => {
     publish(QUEUE_BRANCH, "HEAD");
     switchTo(staleSha);
 
-    expect(readFileSync(join(getCwd(), PAGE_PATH), "utf8")).toContain(DONE_LINE);
+    expect(readFileSync(join(getCwd(), PAGE_PATH), "utf8")).toBe(`## Queue\n\n${DONE_LINE}\n${OPEN_LINE}\n`);
     expect(
       readComputeQueue(readQueueFiles("compute", REMOTE_QUEUE_REF, getCwd())).entries.map(({ id }) => id),
     ).toStrictEqual(["open-run"]);

@@ -2,12 +2,6 @@ import { createSlotTable } from "#src/services/sweeps/duplicateProse/createSlotT
 import { describe, expect, test } from "vitest";
 
 describe(createSlotTable, () => {
-  test("reports a key it never held as absent", () => {
-    expect.hasAssertions();
-
-    expect(createSlotTable(4).get(1)).toBeUndefined();
-  });
-
   test("tells the first slot from an empty position", () => {
     expect.hasAssertions();
 

@@ -20,20 +20,13 @@ describe(getSweptKitsHoldingUnclassified, () => {
     "a.c": { source: KitSource.Gcsim, value: 1 },
   };
 
-  test("names a dated row whose overlay still holds an Unclassified entry", () => {
+  test.each([
+    ["backticked", getRow("a", date)],
+    ["bare", `| a | ${date} | |\n`],
+  ])("names a dated row whose overlay still holds an Unclassified entry, its unit %s", (_form, row) => {
     expect.hasAssertions();
 
-    expect(getSweptKitsHoldingUnclassified(`${header}${getRow("a", date)}`, () => unclassifiedOverlay)).toStrictEqual([
-      "a",
-    ]);
-  });
-
-  test("names a dated row written without its backticks", () => {
-    expect.hasAssertions();
-
-    expect(getSweptKitsHoldingUnclassified(`${header}| a | ${date} | |\n`, () => unclassifiedOverlay)).toStrictEqual([
-      "a",
-    ]);
+    expect(getSweptKitsHoldingUnclassified(`${header}${row}`, () => unclassifiedOverlay)).toStrictEqual(["a"]);
   });
 
   test("passes a dated row whose entries all have a cause or a source", () => {

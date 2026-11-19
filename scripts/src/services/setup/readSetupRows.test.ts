@@ -29,7 +29,7 @@ describe(readSetupRows, () => {
 
     const rows = readSetupRows({ install: true, verify: false }, environment);
 
-    expect(environment.runVisibly).toHaveBeenCalledWith(PNPM_FILE, [...PNPM_ARGS, "i"]);
+    expect(environment.runVisibly).toHaveBeenCalledExactlyOnceWith(PNPM_FILE, [...PNPM_ARGS, "i"]);
     expect(stepRow(rows, "dependencies")?.status).toBe(SetupStatus.Done);
   });
 
@@ -42,7 +42,7 @@ describe(readSetupRows, () => {
 
     const rows = readSetupRows({ install: false, verify: true }, environment);
 
-    expect(environment.runVisibly).toHaveBeenCalledWith(PNPM_FILE, [...PNPM_ARGS, ...DATA_VERIFY_ARGS]);
+    expect(environment.runVisibly).toHaveBeenCalledExactlyOnceWith(PNPM_FILE, [...PNPM_ARGS, ...DATA_VERIFY_ARGS]);
     expect(stepRow(rows, "game data lock")?.status).toBe(SetupStatus.NeedsYou);
   });
 

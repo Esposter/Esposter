@@ -193,29 +193,17 @@ describe(getUnterminatedResults, () => {
     expect(getUnterminatedResults("handle(getResult(fn));")).toStrictEqual([]);
   });
 
-  test("reads a binding through its type annotation", () => {
-    expect.hasAssertions();
-
-    expect(
-      getUnterminatedResults(`const result: Result<void, Error> = getResult(fn);\nreadSomethingElse();`),
-    ).toStrictEqual([{ after: "; readSomethingElse();", line: 1 }]);
-  });
-
   // The two characters the annotation is skipped by excluding are the two a type may still spell
-  test("reads a binding through a function type annotation", () => {
+  test.each([
+    ["generic", "Result<void, Error>"],
+    ["function", "() => Result<void, Error>"],
+    ["object", "{ isOk: boolean; value: string }"],
+  ])("reads a binding through a %s type annotation", (_description, annotation) => {
     expect.hasAssertions();
 
-    expect(
-      getUnterminatedResults(`const result: () => Result<void, Error> = getResult(fn);\nreadSomethingElse();`),
-    ).toStrictEqual([{ after: "; readSomethingElse();", line: 1 }]);
-  });
-
-  test("reads a binding through an object type annotation", () => {
-    expect.hasAssertions();
-
-    expect(
-      getUnterminatedResults(`const result: { isOk: boolean; value: string } = getResult(fn);\nreadSomethingElse();`),
-    ).toStrictEqual([{ after: "; readSomethingElse();", line: 1 }]);
+    expect(getUnterminatedResults(`const result: ${annotation} = getResult(fn);\nreadSomethingElse();`)).toStrictEqual([
+      { after: "; readSomethingElse();", line: 1 },
+    ]);
   });
 
   // An identifier is not ASCII, so a name matched with `\w` reads a longer one as the binding it is only the

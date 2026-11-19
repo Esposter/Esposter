@@ -11,7 +11,7 @@ describe(getUnguardedHovers, () => {
     ]);
   });
 
-  test("reports each selector of a list that names a hover", () => {
+  test("reports a selector list that names a hover as one finding", () => {
     expect.hasAssertions();
 
     expect(getUnguardedHovers(".a:hover,\n.b:focus-visible {\n  color: blue;\n}")).toStrictEqual([
@@ -25,20 +25,13 @@ describe(getUnguardedHovers, () => {
     expect(getUnguardedHovers("@media (hover: hover) {\n  .a:hover {\n    color: blue;\n  }\n}")).toStrictEqual([]);
   });
 
-  test("reports a hover rule inside a negated hover media query, which applies to touch-only screens", () => {
+  test.each([
+    ["a negated hover query, which applies to touch-only screens", "@media not (hover: hover)"],
+    ["a media query that is not the hover one", "@media (min-width: 600px)"],
+  ])("reports a hover rule inside %s", (_description, query) => {
     expect.hasAssertions();
 
-    expect(getUnguardedHovers("@media not (hover: hover) {\n  .a:hover {\n    color: blue;\n  }\n}")).toStrictEqual([
-      "2: .a:hover",
-    ]);
-  });
-
-  test("reports a hover rule inside a media query that is not the hover one", () => {
-    expect.hasAssertions();
-
-    expect(getUnguardedHovers("@media (min-width: 600px) {\n  .a:hover {\n    color: blue;\n  }\n}")).toStrictEqual([
-      "2: .a:hover",
-    ]);
+    expect(getUnguardedHovers(`${query} {\n  .a:hover {\n    color: blue;\n  }\n}`)).toStrictEqual(["2: .a:hover"]);
   });
 
   test("skips the focus and forced Hover selectors, which draw unguarded", () => {

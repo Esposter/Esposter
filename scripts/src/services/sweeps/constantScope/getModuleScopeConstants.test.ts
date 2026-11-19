@@ -150,14 +150,14 @@ describe("suite", () => {
     ).toStrictEqual([{ line: 2, name }]);
   });
 
-  // A function can move into the describe alongside what it captures, so it pins nothing
-  test("reports a constant only a module-scope arrow function reads", () => {
+  // A function or a declaration can move into the describe alongside what it captures, so it pins nothing
+  test.each([
+    ["arrow function", `const ${name} = /a/u;\nconst check = (token: string) => ${name}.test(token);`],
+    ["function declaration", `const ${name} = "";\nfunction check() { return ${name}; }`],
+  ])("reports a constant only a module-scope %s reads", (_shape, source) => {
     expect.hasAssertions();
 
-    expect(
-      getModuleScopeConstants(`const ${name} = /a/u;
-const check = (token: string) => ${name}.test(token);`),
-    ).toStrictEqual([{ line: 1, name }]);
+    expect(getModuleScopeConstants(source)).toStrictEqual([{ line: 1, name }]);
   });
 
   // A pinned site calls the function at module scope, so what the function's body reads stays there too
@@ -180,15 +180,6 @@ const check = (token: string) => ${name}.test(token);`),
         `const a = "";\nfunction helper() { return a; }\nvi.mock("x", () => ({ get db() { return helper(); } }));\n`,
       ),
     ).toStrictEqual([]);
-  });
-
-  // A declaration moves into the describe alongside what it captures, so an unpinned one pins nothing either
-  test("reports a constant only a module-scope function declaration reads", () => {
-    expect.hasAssertions();
-
-    expect(getModuleScopeConstants(`const ${name} = "";\nfunction check() { return ${name}; }`)).toStrictEqual([
-      { line: 1, name },
-    ]);
   });
 
   test("skips a vi.hoisted block, which is lifted above the imports", () => {
