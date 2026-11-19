@@ -67,7 +67,7 @@ describe(downloadCharacterPackFiles, () => {
     expect(retryPlan.files.map(({ path }) => path)).toStrictEqual([CHARACTER_TERMS_PATH]);
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy.mock.calls[0]?.[0]).toBe(termsUrl);
-    expect(fetchSpy.mock.calls[0]?.[1]).toStrictEqual({ signal: expect.any(AbortSignal) });
+    expect(Object.keys(fetchSpy.mock.calls[0]?.[1] ?? {})).toStrictEqual(["signal"]);
     expect(retryError).toBeUndefined();
   });
 

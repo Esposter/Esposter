@@ -9,6 +9,37 @@ import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"));
 
+const createGoodRow = (goodsId: number, shopType: number, subTabId: number): ExcelShopGoodsRow => ({
+  beginTime: "1970-01-01 00:00:00",
+  buyLimit: 0,
+  costHcoin: 0,
+  costItems: [],
+  costMcoin: 0,
+  costScoin: 100,
+  endTime: "1970-01-01 00:00:00",
+  goodsId,
+  itemCount: 1,
+  itemId: 1,
+  minPlayerLevel: 1,
+  rotateId: 0,
+  shopType,
+  subTabId,
+});
+
+// The good as the shops dataset holds it, its dates with the game's offset and the sub tab it is shown on
+const createPublishedGood = (goodsId: number, tabId: number) => ({
+  beginTime: "1970-01-01T00:00:00+08:00",
+  buyLimit: 0,
+  costs: [{ count: 100, itemId: MORA_ITEM_ID }],
+  endTime: "1970-01-01T00:00:00+08:00",
+  goodsId,
+  itemCount: 1,
+  itemId: 1,
+  minPlayerLevel: 1,
+  refresh: ShopRefresh.None,
+  tabId,
+});
+
 describe(buildRealmDepotGoods, () => {
   // Made-up good ids, and a sub tab of the depot each good is filed under, which the test reads back
   const TREASURE_GOOD_ID = 1;
@@ -17,35 +48,6 @@ describe(buildRealmDepotGoods, () => {
   const TREASURE_SUB_TAB_ID = 1;
   const FURNISHING_SUB_TAB_ID = 2;
   const OTHER_SHOP_TYPE = 1001;
-  const createGoodRow = (goodsId: number, shopType: number, subTabId: number): ExcelShopGoodsRow => ({
-    beginTime: "1970-01-01 00:00:00",
-    buyLimit: 0,
-    costHcoin: 0,
-    costItems: [],
-    costMcoin: 0,
-    costScoin: 100,
-    endTime: "1970-01-01 00:00:00",
-    goodsId,
-    itemCount: 1,
-    itemId: 1,
-    minPlayerLevel: 1,
-    rotateId: 0,
-    shopType,
-    subTabId,
-  });
-  // The good as the shops dataset holds it, its dates with the game's offset and the sub tab it is shown on
-  const createPublishedGood = (goodsId: number, tabId: number) => ({
-    beginTime: "1970-01-01T00:00:00+08:00",
-    buyLimit: 0,
-    costs: [{ count: 100, itemId: MORA_ITEM_ID }],
-    endTime: "1970-01-01T00:00:00+08:00",
-    goodsId,
-    itemCount: 1,
-    itemId: 1,
-    minPlayerLevel: 1,
-    refresh: ShopRefresh.None,
-    tabId,
-  });
 
   test("each depot good is in its own sub tab's record and names that tab, and another shop's goods are left out", () => {
     expect.hasAssertions();

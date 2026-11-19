@@ -138,7 +138,7 @@ describe(buildEnemyDropSources, () => {
     await rm(cacheDirectory, { force: true, recursive: true });
   });
 
-  test("Hilichurl Fighter and Dendro Samachurl each take the drop family their articles' Drops Tables name", async () => {
+  test("hilichurl Fighter and Dendro Samachurl each take the drop family their articles' Drops Tables name", async () => {
     expect.hasAssertions();
     await writeWikiPage(cacheDirectory, "Hilichurl Fighter", HILICHURL_FIGHTER_ARTICLE);
     await writeWikiPage(cacheDirectory, "Dendro Samachurl", DENDRO_SAMACHURL_ARTICLE);

@@ -26,6 +26,7 @@ describe(toSkyReadings, () => {
     spread: SPREAD,
     ...spread,
   });
+
   test("each hour's cloud layer matches its reference", () => {
     expect.hasAssertions();
 

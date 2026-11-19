@@ -285,6 +285,7 @@ describe("the skills whose damage is parsed from their effect name", () => {
     id: 2,
     kind: GcgSkillKind.ElementalSkill,
   };
+
   test("kamisato Art: Kabuki deals 2 Physical DMG, with no aura", () => {
     expect.hasAssertions();
     const duel = createDuel([

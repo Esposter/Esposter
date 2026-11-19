@@ -80,7 +80,7 @@ describe(exportSpritesByName, () => {
       for (const name of names) writeFileSync(join(directory, `${name}.png`), PNG_BYTES);
     });
 
-    await expect(exportSpritesByName(["UI_FixtureIcon"])).resolves.toStrictEqual(
+    await expect(exportSpritesByName(["UI_FixtureIcon"])).resolves.toBe(
       `1 of 1 names exported into ${spriteDirectory}; 0 not in the asset index: `,
     );
   });

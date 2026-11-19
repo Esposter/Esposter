@@ -110,6 +110,7 @@ describe(createTrialCharacter, () => {
       weapon: { ascension: 6, experience: 0, id: WEAPON_ID, level: 90, refinement: 3 },
     });
   });
+
   test("a trial whose character has no cited build has no party member", () => {
     expect.hasAssertions();
     expect(createTrialCharacter(TRIAL, { ...TABLES, builds: {} }, DATA)).toBeUndefined();

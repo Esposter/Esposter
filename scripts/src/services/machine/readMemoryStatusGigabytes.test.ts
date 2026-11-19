@@ -16,7 +16,7 @@ describe(readMemoryStatusGigabytes, () => {
     vi.mocked(runMachineCommand).mockResolvedValue("50");
 
     // A 50 percent share of 16 GiB
-    expect(await readMemoryStatusGigabytes()).toBe(8);
+    await expect(readMemoryStatusGigabytes()).resolves.toBe(8);
     expect(runMachineCommand).toHaveBeenCalledExactlyOnceWith("/usr/sbin/sysctl", ["-n", "kern.memorystatus_level"]);
   });
 });

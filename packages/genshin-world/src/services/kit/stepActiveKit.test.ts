@@ -274,7 +274,7 @@ describe(stepActiveKit, () => {
     const castX = position.x;
     position.x += 10;
 
-    expect(startBodies.map(({ position }) => position.x)).toStrictEqual([castX]);
+    expect(startBodies.map((body) => body.position.x)).toStrictEqual([castX]);
   });
 
   test("sends the team's kits each change to a member's HP since the last step, once", () => {

@@ -571,9 +571,7 @@ describe(strikeKitEnemies, () => {
     const member = createMember(getPartyStrikeBonus);
     takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
     expect(
-      getPartyStrikeBonus.mock.calls.map(([, , , , , characterIdCombatantMap]) =>
-        characterIdCombatantMap.get(OTHER_CHARACTER_ID),
-      ),
+      getPartyStrikeBonus.mock.calls.map((callArguments) => callArguments[5].get(OTHER_CHARACTER_ID)),
     ).toStrictEqual([member]);
   });
 
