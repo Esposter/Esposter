@@ -76,7 +76,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 - `new{PropName}` for `onUpdate:*` handler parameters: `(newItemsPerPage) =>`, `(newModelValue) =>`
 - `edited{PropName}` for a **local editable copy** of a prop or store field — never `{prop}Value` (`references/edited-copies.md`)
 - **Unused params keep the `_` prefix _and_ a readable name** — `_event`, never bare `_`, except a loop binding (`references/unused-bindings.md`)
-- `display*` for presentation-layer computed that sorts/filters raw store data: `displayFoos`. Never `sorted*` or `filtered*`
+- `display*` for any value derived for display from raw data — sorted, filtered, sliced or formatted: `displayFoos`, `displayRecentPages`. Never `sorted*` or `filtered*`
 - A composite key is joined with `ID_SEPARATOR`, never a hand-written delimiter — `references/composite-keys.md`
 
 ## Environment Variables
