@@ -15,9 +15,9 @@
 | Layout | Bridges row up | 0 | 0.0200 | m | yes |
 | Layout | Towers row across | 0 | 0.0200 | m | yes |
 | Layout | Towers row up | 0 | 0.0200 | m | yes |
-| Layout | login-door-session Towers | 0.0658 | 2 | px | yes |
-| Layout | login-door-session Bridges | 0.0640 | 2 | px | yes |
-| Layout | login-door-session Door | 0.3361 | 2 | px | yes |
+| Layout | login-door-session Towers | 0.0645 | 2 | px | yes |
+| Layout | login-door-session Bridges | 0.0629 | 2 | px | yes |
+| Layout | login-door-session Door | 0.2732 | 2 | px | yes |
 | Camera | login-door-session | 1.2470 | 2 | px | yes |
 | Shape | login-door-session Door outline | 0.1071 | 1 | px | yes |
 | Shape | login-door-session Door depth | 0.0001 | 0.0100 | share | yes |

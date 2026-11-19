@@ -1,4 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 
 import { getLandmarkMeshes } from "#src/services/genshinAssets/witness/getLandmarkMeshes";
 import { PARITY_DIRECTORY, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
@@ -14,6 +15,12 @@ import { withFinalizerAsync } from "@esposter/shared";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
+
+declare global {
+  interface Window {
+    getSceneCamera: () => NonNullable<WitnessView["camera"]>;
+  }
+}
 
 const MARKER_RADIUS = 6;
 // A reference's camera pose solved from its component's landmarks (`readReferenceLandmarks`): the pose in closed form,

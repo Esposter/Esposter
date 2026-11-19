@@ -2,7 +2,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 import type { Vector } from "#src/models/shared/Vector";
-import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 
 import { checkArrangement } from "#src/services/genshinAssets/scene/checkArrangement";
 import { checkLandmarkRoots } from "#src/services/genshinAssets/scene/checkLandmarkRoots";
@@ -14,26 +13,20 @@ import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/
 import { openComponentWitnessPage } from "#src/services/genshinParity/passes/openComponentWitnessPage";
 import { readFamilyOffsets } from "#src/services/genshinParity/passes/readFamilyOffsets";
 import { shift } from "#src/services/genshinParity/passes/shift";
-import { fromPageCamera } from "#src/services/genshinParity/shared/fromPageCamera";
+import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { withFinalizerAsync } from "@esposter/shared";
 import sharp from "sharp";
-
-declare global {
-  interface Window {
-    getSceneCamera: () => NonNullable<WitnessView["camera"]>;
-  }
-}
 
 // The layout pass: each ratio its references show between parts that meet against the fitted data's, each fitted
 // Family's furthest part from the exports' objects it stands for, and how far across and up the scene stands each
 // Family of the witness off its laid-out place past what the game's own data explains (along the glide is its motion);
 // Then at each current build's reference, each fitted part and the export it stands for carried as the scene carries
 // Their family in the reference's state, at every copy of a row it repeats the family along, and projected from the
-// Scene's camera there, the furthest apart in the reference's own pixels (`computeLayoutFrameMeasure`). The camera is
-// The next pass's, but both points of a pair move alike under a pose a little off, so their gap reads the placement
-// Alone
+// Reference's own camera there (`solveReferenceCamera`), and the furthest apart they stand in the reference's own pixels,
+// Which `computeLayoutFrameMeasure` reads. The camera is solved from the reference alone, never the scene's, so a change to
+// Our camera cannot move a placement's gate
 export const measureLayout = async (
   component: DerivedAssetComponent,
   pageRoot?: string,
@@ -57,12 +50,11 @@ export const measureLayout = async (
     );
     const referenceFamilies = await withFinalizerAsync(
       async () => {
-        const [camera, offsets, { height, width }] = await Promise.all([
-          referencePage.evaluate(() => window.getSceneCamera()),
+        const [{ pose }, offsets, { height, width }] = await Promise.all([
+          solveReferenceCamera(referencePage, referenceId, component),
           readFamilyOffsets(referencePage),
           sharp(await getReferencePath(referenceId)).metadata(),
         ]);
-        const pose = fromPageCamera(camera);
         return families.map(({ name, pairs, row: { count, length } }) => {
           const [x, y, z] = offsets[name] ?? [0, 0, 0];
           const shifted = Array.from({ length: count }, (_value, copy): Vector => [x, y, z + copy * length]).flatMap(

@@ -1,12 +1,17 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityApproval } from "#src/models/genshinParity/shared/ParityApproval";
 import type { ParitySilhouette } from "#src/models/genshinParity/shared/ParitySilhouette";
+import type { referenceCameraPoseSchema } from "#src/models/genshinParity/shared/ReferenceCameraPose";
 import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
+import type { z } from "zod";
 
 export interface ParityReferenceBase {
   // The measure and bar the screen's compare is set against, where the screen records its own; one that records none is
   // Set against the global default bar
   approval?: ParityApproval;
+  // The camera the reference was drawn from, as `pose --write` records it, where its screen holds its camera in its own
+  // Constants rather than as a prop: the start its exports' camera is solved from (`getReferenceCameraPose`)
+  cameraPose?: z.infer<typeof referenceCameraPoseSchema>;
   // The component whose witness the passes judge the reference by: a screen several components share is measured by
   // Each over the references naming it alone, and a reference naming none is read by no component's passes
   component?: DerivedAssetComponent;

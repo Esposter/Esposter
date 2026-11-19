@@ -1001,6 +1001,9 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The door at night on the current build (7.1) at 21.5:9, this machine's own recording of the client, its last frame
   // Before the prompt, the camera still easing toward its rest; scored clear of the corner buttons and the build string
   "login-door-session": {
+    // The camera the login's own constants draw (`LOGIN_CAMERA_*`), recorded as the start its exports solve from, so a change to
+    // Those constants moves nothing the passes read: the glide's eye at 1 metre up, pitched 5.69 under a 45 degree field
+    cameraPose: { fov: 45, heading: 180, pitch: 5.69, position: [0, 1, -5.433] },
     component: DerivedAssetComponent.Login,
     // Read off the frame: the arch's apex and the dais's front feet on the walkway's top
     landmarks: { doorApex: [1717, 575], doorFootLeft: [1585, 1028], doorFootRight: [1855, 1028] },
