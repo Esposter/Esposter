@@ -21,7 +21,7 @@ flowchart TD
 
 NPC dialog and effects come from the `NpcMap` content map (`assets/dungeons/data/npcs.ts`); chest opened-state is per-map in `save.world[tilemapKey].chestMap`; doors read a typed `TeleportTarget` property and fade-switch tilemaps, spawning the player at the matching door id.
 
-**Random encounters** — each step on an encounter layer increments `stepsSinceLastEncounter`, and the encounter chance is `steps / MAX_STEPS_BEFORE_NEXT_ENCOUNTER` (guaranteed at the cap). The layer's Tiled `area` property selects an `EncounterAreaMap` entry, a weighted random pick chooses the monster, `createEncounteredMonster` spawns it at the entry's level (replaying the normal level-up rolls above the species base, so rare picks arrive stronger), and the scene fade-switches to [battle](../battle/design.md). A settings toggle (`isSkipEncounters`, dev convenience) bypasses the roll.
+**Random encounters** — each step on an encounter layer increments `stepsSinceLastEncounter`, and the encounter chance is `steps / MAX_STEPS_BEFORE_NEXT_ENCOUNTER` (guaranteed at the cap). The layer's Tiled `area` property selects an `EncounterAreaMap` entry, a weighted random pick chooses the monster, `createEncounteredMonster` spawns it at the entry's level (replaying the normal level-up rolls above the species base, so rare picks arrive stronger), and the scene fade-switches to [battle](../battle/design.md).
 
 ## Key files
 

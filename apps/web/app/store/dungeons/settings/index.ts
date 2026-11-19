@@ -23,6 +23,5 @@ export const useSettingsStore = defineStore("dungeons/settings", () => {
     saveDungeons();
   };
   const isSkipAnimations = computed(() => settings.value[SettingsOption.Animations] === AnimationsSetting.Off);
-  const isSkipEncounters = ref(false);
-  return { isSkipAnimations, isSkipEncounters, setSettings, settings };
+  return { isSkipAnimations, setSettings, settings };
 });

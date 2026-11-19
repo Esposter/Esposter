@@ -10,7 +10,6 @@ import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "#src/services/dungeons/scene/wo
 import { getTiledObjectProperty } from "#src/services/dungeons/tilemap/getTiledObjectProperty";
 import { useEnemyStore } from "#src/store/dungeons/battle/enemy";
 import { useDungeonsStore } from "#src/store/dungeons/index";
-import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { useEncounterStore } from "#src/store/dungeons/world/encounter";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { createRandomBoolean } from "#src/util/math/random/createRandomBoolean";
@@ -20,10 +19,6 @@ import { NotFoundError } from "@esposter/shared";
 export const rollRandomEncounter = (scene: SceneWithPlugins) => {
   const dungeonsStore = useDungeonsStore();
   const { fadeSwitchToScene } = dungeonsStore;
-  const settingsStore = useSettingsStore();
-  const { isSkipEncounters } = storeToRefs(settingsStore);
-  if (isSkipEncounters.value) return;
-
   const encounterStore = useEncounterStore();
   const { stepsSinceLastEncounter } = storeToRefs(encounterStore);
   stepsSinceLastEncounter.value++;
