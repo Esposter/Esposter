@@ -192,9 +192,9 @@ A season's opening characters SHALL each have the trial version the season names
 - **THEN** the run fails
 - **AND** no season is written
 
-### Requirement: A stage's enemy names resolve to the canonical monster of one codex entry, with its stats at the stage's level
+### Requirement: A stage's enemy name resolves to its codex entry's canonical monster
 
-A wiki enemy name of a stage SHALL resolve to a codex entry only when every monster whose English name is that name shares one describe id. The entry's enemy SHALL be the monster its codex row names, filed under that entry, with health, attack and defense at the stage's Easy level as their bases times their grow curves' multipliers at that level. A name whose monsters span several describe entries or that no monster holds, and an entry whose codex names no such monster, SHALL be refused and listed on its stage.
+A wiki enemy name of a stage SHALL resolve to a codex entry only when every monster whose English name is that name shares one describe id. The entry's enemy SHALL be the monster its codex row names, filed under that entry.
 
 #### Scenario: A name whose monsters share one describe entry resolves to that entry's canonical monster
 
@@ -202,11 +202,19 @@ A wiki enemy name of a stage SHALL resolve to a codex entry only when every mons
 - **WHEN** the stage is joined to the game's monsters
 - **THEN** the name resolves to that monster, with its health, attack and defense at the stage's level
 
+### Requirement: A stage enemy's stats at the stage's level are its bases times its grow curves
+
+A stage enemy's health, attack and defense SHALL be their bases at the stage's Easy level, each times its grow curve's multiplier at that level.
+
 #### Scenario: A stage enemy's health at a level equals its base times the health curve at that level
 
 - **GIVEN** a monster whose health base and health grow curve are given
 - **WHEN** its stats are read at a level
 - **THEN** its health is the base times the curve's multiplier at that level
+
+### Requirement: A stage's enemy name that cannot resolve is refused and listed on its stage
+
+A name whose monsters span several describe entries or that no monster holds, and an entry whose codex names no such monster, SHALL be refused and listed on its stage.
 
 #### Scenario: A name whose monsters span several describe entries is refused with their count
 
