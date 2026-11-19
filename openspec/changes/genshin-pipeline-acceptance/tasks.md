@@ -9,8 +9,8 @@
 
 ## 3. Owning pages
 
-- [ ] 3.1 Carry the owning pages with the code they describe: the derived assets page and its spec (the producer requirement is replaced), the AnimeStudio macOS page, the hosted game data page, the recoverability page, the scene derivation page, the game text page, and the genshin-data and genshin-parity skills (after genshin-pipeline-hygiene task 4.3, whose code they describe). Verify: `pnpm -C scripts exec vitest run src/services/openspec src/workspace/openspecLinks.test.ts src/workspace/citations.test.ts` passes.
+- [ ] 3.1 Carry the owning pages with the code they describe: the derived assets page and its spec (the producer requirement is replaced), the AnimeStudio macOS page, the hosted game data page, the recoverability page, the scene derivation page, the game text page, and the genshin-data and genshin-parity skills (the genshin-data and genshin-parity skills describe the code genshin-pipeline-hygiene built). Verify: `pnpm -C scripts exec vitest run src/services/openspec src/workspace/openspecLinks.test.ts src/workspace/citations.test.ts` passes.
 
 ## 4. Reproduction
 
-- [ ] 4.1 Run the pipeline on a fresh PC and a fresh Mac, each holding the install, and compare the two generated locks (needs the PC and a Mac with the install, after genshin-pipeline-hygiene task 4.3). Verify: the run's output shows the two lock files are the same file, as 'A fresh pair publishes the same lock from one install' requires.
+- [ ] 4.1 Run the pipeline on a fresh PC and a fresh Mac, each holding the install, and compare the two generated locks (needs the PC and a Mac with the install). Verify: the run's output shows the two lock files are the same file, as 'A fresh pair publishes the same lock from one install' requires.

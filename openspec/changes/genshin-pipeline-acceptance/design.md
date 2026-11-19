@@ -36,7 +36,7 @@ The rows below are the gaps that the decoders and the measured values leave open
 
 ## Scope and order
 
-The decoder record and the macOS guard need a machine with the install, and the measured values are independent of the rest. Task 1.1 waits on [genshin-pipeline-provenance](../genshin-pipeline-provenance/design.md) tasks 2.4 and 3.1, which pin the decoder constants and build the Windows archive. The reproduction run comes last: task 4.1 waits on task 4.3 of [genshin-pipeline-hygiene](../genshin-pipeline-hygiene/design.md), and the owning pages in task 3.1 wait on the same task.
+The decoder record and the macOS guard need a machine with the install, and the measured values are independent of the rest. Task 1.1 waits on [genshin-pipeline-provenance](../genshin-pipeline-provenance/design.md) tasks 2.4 and 3.1, which pin the decoder constants and build the Windows archive. The reproduction run comes last, and task 4.1 needs the PC and a Mac with the install.
 
 ## Key files
 
