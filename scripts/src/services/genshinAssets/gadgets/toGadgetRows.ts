@@ -3,7 +3,6 @@ import type { GadgetRow } from "genshin-world";
 
 import { ConfigWidgetTypeGadgetKindMap } from "#src/services/genshinAssets/gadgets/ConfigWidgetTypeGadgetKindMap";
 import { toGatherItemId } from "#src/services/genshinAssets/gadgets/toGatherItemId";
-import { CityIdRegionMap } from "#src/services/genshinAssets/shared/CityIdRegionMap";
 
 // The config's widgets of a kind the gadgets build, one row each by its id. A field the config omits reads as zero, or as
 // Not equipable, and a widget naming no city, or a city in no region, has an empty region. A widget of another kind has no
@@ -11,11 +10,12 @@ import { CityIdRegionMap } from "#src/services/genshinAssets/shared/CityIdRegion
 export const toGadgetRows = (
   widgets: Record<string, ConfigWidgetRow>,
   pointTypeItemIdMap: ReadonlyMap<number, number>,
+  cityRegionMap: ReadonlyMap<number, string>,
 ): GadgetRow[] =>
   Object.entries(widgets)
     .flatMap(([id, widget]) => {
       const kind = ConfigWidgetTypeGadgetKindMap[widget.$type];
-      const cityRegion = widget.allowCityId === undefined ? undefined : CityIdRegionMap[widget.allowCityId];
+      const cityRegion = widget.allowCityId === undefined ? undefined : cityRegionMap.get(widget.allowCityId);
       return kind === undefined
         ? []
         : [

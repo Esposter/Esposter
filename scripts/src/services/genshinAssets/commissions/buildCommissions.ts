@@ -8,7 +8,6 @@ import type { RewardItem } from "genshin-world";
 import { checkLevelBands } from "#src/services/genshinAssets/commissions/checkLevelBands";
 import { toCommissionTask } from "#src/services/genshinAssets/commissions/toCommissionTask";
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
-import { CityIdRegionMap } from "#src/services/genshinAssets/shared/CityIdRegionMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { COMMISSION_RANK_BAND_COUNT, commissionSliceSchema, GameDataset } from "genshin-world";
@@ -18,7 +17,7 @@ import { COMMISSION_RANK_BAND_COUNT, commissionSliceSchema, GameDataset } from "
 // Band's items are the preview's items with a count drawn from its range, so the world's claim draws them. Published as
 // One record a region, each task filed under the region its city is named for, with the main quest its city opens with
 // When the dump names one, and a city no region is named for left out
-export const buildCommissions = (): Record<string, unknown> => {
+export const buildCommissions = (cityRegionMap: ReadonlyMap<number, string>): Record<string, unknown> => {
   const previews = new Map(
     readExcelTable<ExcelRewardPreviewRow>("RewardPreviewExcelConfigData").map((preview) => [preview.id, preview]),
   );
@@ -55,15 +54,15 @@ export const buildCommissions = (): Record<string, unknown> => {
     .toSorted((firstTier, secondTier) => firstTier.tier - secondTier.tier);
   const openingQuestIdMap = new Map(
     readExcelTable<ExcelCityTaskOpenRow>("CityTaskOpenExcelConfigData").map(({ cityId, questId }) => [
-      CityIdRegionMap[cityId],
+      cityRegionMap.get(cityId),
       questId,
     ]),
   );
   const rows = readExcelTable<ExcelDailyTaskRow>("DailyTaskExcelConfigData");
   return Object.fromEntries(
-    Object.values(CityIdRegionMap).map((region) => {
+    Array.from(new Set(cityRegionMap.values()), (region) => {
       const tasks = rows
-        .filter((row) => CityIdRegionMap[row.cityId] === region)
+        .filter((row) => cityRegionMap.get(row.cityId) === region)
         .map((row) => toCommissionTask(row, region))
         .toSorted((firstTask, secondTask) => firstTask.id - secondTask.id);
       const openingQuestId = openingQuestIdMap.get(region);

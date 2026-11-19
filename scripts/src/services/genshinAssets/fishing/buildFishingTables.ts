@@ -8,37 +8,26 @@ import type { ExcelFishRow } from "#src/models/genshinAssets/fishing/ExcelFishRo
 import type { ExcelFishSkillRow } from "#src/models/genshinAssets/fishing/ExcelFishSkillRow";
 import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelFishStockRow";
 import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
-import type { FishingPool } from "genshin-world";
 
 import { toFish } from "#src/services/genshinAssets/fishing/toFish";
 import { toFishingBait } from "#src/services/genshinAssets/fishing/toFishingBait";
-import { toFishingPool } from "#src/services/genshinAssets/fishing/toFishingPool";
 import { toFishingPoolFishIds } from "#src/services/genshinAssets/fishing/toFishingPoolFishIds";
+import { toFishingPoolsByRegion } from "#src/services/genshinAssets/fishing/toFishingPoolsByRegion";
 import { toFishReward } from "#src/services/genshinAssets/fishing/toFishReward";
 import { toFishRod } from "#src/services/genshinAssets/fishing/toFishRod";
 import { toFishSkill } from "#src/services/genshinAssets/fishing/toFishSkill";
-import { CityIdRegionMap } from "#src/services/genshinAssets/shared/CityIdRegionMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The fish, their rods, skills, baits, proficiency and each fish's catch reward, and each region's pools built as the
-// Fishing dataset's records, the pools filed by the city they are fished in. A pool filed under no region named here is
+// Fishing dataset's records, the pools filed by the region their city lies in. A pool whose city no region holds is
 // Left out and counted in the notes. A bait's fish are joined from the dump, its pools' fish or its tags' fish
-export const buildFishingTables = (): GameDataBuild => {
+export const buildFishingTables = (cityRegionMap: ReadonlyMap<number, string>): GameDataBuild => {
   const stocks = new Map(
     readExcelTable<ExcelFishStockRow>("FishStockExcelConfigData").map((stock) => [stock.id, stock]),
   );
   const poolRows = readExcelTable<ExcelFishPoolRow>("FishPoolExcelConfigData");
-  const regionPools: Record<string, FishingPool[]> = {};
-  let skippedPools = 0;
-  for (const row of poolRows) {
-    const region = CityIdRegionMap[row.cityId];
-    if (region === undefined) {
-      skippedPools++;
-      continue;
-    }
-    regionPools[region] = [...(regionPools[region] ?? []), toFishingPool(row, stocks)];
-  }
+  const { regionPools, skippedPools } = toFishingPoolsByRegion(poolRows, stocks, cityRegionMap);
   const poolIdFishIdsMap = new Map(poolRows.map((row) => [row.id, toFishingPoolFishIds(row, stocks)]));
   const fishRows = readExcelTable<ExcelFishRow>("FishExcelConfigData");
   const fish = fishRows.map((row) => toFish(row));

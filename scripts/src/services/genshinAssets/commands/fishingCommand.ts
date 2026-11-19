@@ -5,6 +5,7 @@ import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds"
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildFishingPoints } from "#src/services/genshinAssets/fishing/buildFishingPoints";
 import { buildFishingTables } from "#src/services/genshinAssets/fishing/buildFishingTables";
+import { readCityRegionMap } from "#src/services/genshinAssets/shared/readCityRegionMap";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 
@@ -16,7 +17,10 @@ export const fishingCommand: SubCommandsDef[string] = defineCommand({
     name: "fishing",
   },
   run: async ({ args }) => {
-    const { notes, objects } = mergeGameDataBuilds([await buildFishingPoints(), buildFishingTables()]);
+    const { notes, objects } = mergeGameDataBuilds([
+      await buildFishingPoints(),
+      buildFishingTables(await readCityRegionMap()),
+    ]);
     console.log(notes.join("\n"));
     console.log(
       await publishGameDataStep({

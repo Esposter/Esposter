@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildCommissions } from "#src/services/genshinAssets/commissions/buildCommissions";
+import { readCityRegionMap } from "#src/services/genshinAssets/shared/readCityRegionMap";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 
@@ -17,7 +18,7 @@ export const commissionsCommand: SubCommandsDef[string] = defineCommand({
     console.log(
       await publishGameDataStep({
         isDryRun: args["dry-run"],
-        publication: { indexes: {}, objects: buildCommissions() },
+        publication: { indexes: {}, objects: buildCommissions(await readCityRegionMap()) },
         scopes: [GameDataset.Commissions],
       }),
     );

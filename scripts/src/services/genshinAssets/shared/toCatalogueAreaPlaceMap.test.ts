@@ -1,8 +1,8 @@
 import type { WorldArea } from "#src/models/genshinAssets/world/WorldArea";
 
 import { WorldAreaType } from "#src/models/genshinAssets/world/WorldAreaType";
-import { toCatalogueAreaPlaceMap } from "#src/services/genshinAssets/domains/toCatalogueAreaPlaceMap";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
+import { toCatalogueAreaPlaceMap } from "#src/services/genshinAssets/shared/toCatalogueAreaPlaceMap";
 import { describe, expect, test } from "vitest";
 
 const createArea = (

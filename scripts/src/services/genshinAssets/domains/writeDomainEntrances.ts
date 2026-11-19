@@ -4,12 +4,12 @@ import type { DomainEntranceLandmark } from "genshin-world";
 
 import { DUNGEON_ENTRY_TABLE_NAME } from "#src/services/genshinAssets/domains/constants";
 import { getDomainEntryKind } from "#src/services/genshinAssets/domains/getDomainEntryKind";
-import { readCatalogueAreaPlaceMap } from "#src/services/genshinAssets/domains/readCatalogueAreaPlaceMap";
 import { readDomainEntrancePoints } from "#src/services/genshinAssets/domains/readDomainEntrancePoints";
 import { toDomainEntrance } from "#src/services/genshinAssets/domains/toDomainEntrance";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { orderLandmarks } from "#src/services/genshinAssets/shared/orderLandmarks";
+import { readCatalogueAreaPlaceMap } from "#src/services/genshinAssets/shared/readCatalogueAreaPlaceMap";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
 import { toHeightOffset } from "#src/services/genshinAssets/shared/toHeightOffset";
 import { writeRegionData } from "#src/services/genshinAssets/shared/writeRegionData";

@@ -801,7 +801,6 @@
 | `scripts/src/services/genshinAssets/scene`                                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/sceneGroups`                                          | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/sceneNpcBorn`                                         | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/shared/CityIdRegionMap.ts`                            | 2026-11-17 · Opus 5.5   |       |
 | `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.test.ts`              | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`                   | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/applySpawns.test.ts`                           | 2026-11-01 · Haiku 5.5  |       |

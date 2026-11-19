@@ -3,11 +3,11 @@ import type { RegionDataFile } from "#src/models/genshinAssets/residents/RegionD
 import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedScenePoint";
 import type { DomainEntranceLandmark } from "genshin-world";
 
-import { readCatalogueAreaPlaceMap } from "#src/services/genshinAssets/domains/readCatalogueAreaPlaceMap";
 import { readDomainEntrancePoints } from "#src/services/genshinAssets/domains/readDomainEntrancePoints";
 import { writeDomainEntrances } from "#src/services/genshinAssets/domains/writeDomainEntrances";
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
+import { readCatalogueAreaPlaceMap } from "#src/services/genshinAssets/shared/readCatalogueAreaPlaceMap";
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
@@ -15,7 +15,7 @@ import { GameTextKey } from "genshin-text";
 import { DomainKind, LandmarkKind } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/genshinAssets/domains/readCatalogueAreaPlaceMap"));
+vi.mock(import("#src/services/genshinAssets/shared/readCatalogueAreaPlaceMap"));
 vi.mock(import("#src/services/genshinAssets/domains/readDomainEntrancePoints"));
 vi.mock(import("#src/services/genshinAssets/residents/readFittedRegions"));
 vi.mock(import("#src/services/genshinAssets/shared/readWorldGroundHeight"));

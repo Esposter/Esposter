@@ -13,7 +13,7 @@ describe(toGadgetRows, () => {
       "220017": { $type: "ConfigWidgetGadgetBuilder", coolDown: 120, maxCountByPlayer: 1, maxCountInScene: 5 },
     };
 
-    expect(toGadgetRows(widgets, new Map())).toStrictEqual([
+    expect(toGadgetRows(widgets, new Map(), new Map())).toStrictEqual([
       {
         cooldownGroup: 0,
         cooldownOnFailSeconds: 0,
@@ -51,7 +51,9 @@ describe(toGadgetRows, () => {
       "220013": { $type: "ConfigWidgetTreasureMapDetector", coolDown: 30 },
     };
 
-    expect(toGadgetRows(widgets, new Map()).map(({ id, region }) => ({ id, region }))).toStrictEqual([
+    expect(
+      toGadgetRows(widgets, new Map(), new Map([[2, "liyue"]])).map(({ id, region }) => ({ id, region })),
+    ).toStrictEqual([
       { id: 220003, region: "liyue" },
       { id: 220013, region: "" },
     ]);
@@ -64,7 +66,9 @@ describe(toGadgetRows, () => {
       "1": { $type: "ConfigWidgetOneoffGatherPointDetector", coolDown: 300, gatherPointType: 7, isEquipable: true },
     };
 
-    expect(toGadgetRows(widgets, new Map([[7, 101]])).map(({ gatherItemId }) => gatherItemId)).toStrictEqual([101]);
+    expect(toGadgetRows(widgets, new Map([[7, 101]]), new Map()).map(({ gatherItemId }) => gatherItemId)).toStrictEqual(
+      [101],
+    );
   });
 
   test("a gather point finder whose gather point type gives no item is refused", () => {
@@ -74,7 +78,7 @@ describe(toGadgetRows, () => {
       "1": { $type: "ConfigWidgetOneoffGatherPointDetector", gatherPointType: 7 },
     };
 
-    expect(() => toGadgetRows(widgets, new Map())).toThrowErrorMatchingInlineSnapshot(
+    expect(() => toGadgetRows(widgets, new Map(), new Map())).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: widget 1, names gather point type 7, which the gather table gives no item]`,
     );
   });

@@ -13,7 +13,7 @@ import { readFileSync } from "node:fs";
 
 // The gadgets of the widget config, one row each by its id, and the Serenitea Pot's row built from its material row,
 // Published as one record of the gadgets dataset. Each gather point type is read from the gather table as the item it gives
-export const buildGadgetRows = (): Record<string, unknown> => {
+export const buildGadgetRows = (cityRegionMap: ReadonlyMap<number, string>): Record<string, unknown> => {
   const { widgets } = parseMachineJson<ConfigWidgetFile>(readFileSync(CONFIG_WIDGET_PATH, "utf8"));
   const pointTypeItemIdMap = new Map(
     readExcelTable<GatherRow>(GATHER_TABLE_NAME).map(({ itemId, pointType }) => [pointType, itemId]),
@@ -23,7 +23,7 @@ export const buildGadgetRows = (): Record<string, unknown> => {
     SERENITEA_POT_ITEM_ID,
   );
   return {
-    [`${GameDataset.Gadgets}/gadgets`]: [...toGadgetRows(widgets, pointTypeItemIdMap), potRow].toSorted(
+    [`${GameDataset.Gadgets}/gadgets`]: [...toGadgetRows(widgets, pointTypeItemIdMap, cityRegionMap), potRow].toSorted(
       (firstGadget, secondGadget) => firstGadget.id - secondGadget.id,
     ),
   };
