@@ -65,7 +65,7 @@ describe("styledEditFormDialog", () => {
   });
 
   // A close resets the item once the dialog has left, so a reopen inside the leave would otherwise lose it
-  test("a reopen inside the close keeps the item", async () => {
+  test("a reopen inside the close does not emit close", async () => {
     expect.hasAssertions();
 
     const component = mountDialog(false);

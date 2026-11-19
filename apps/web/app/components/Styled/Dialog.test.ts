@@ -146,45 +146,7 @@ describe("styledFormDialog", () => {
   const confirmLabel = "confirmLabel";
   const title = "title";
 
-  test.each([
-    { description: "Medium when no size is given", expected: UiDialogSize.Medium, props: {} },
-    { description: "the size it is given", expected: UiDialogSize.Large, props: { size: UiDialogSize.Large } },
-  ])("a named size sets the width, $description", async ({ expected, props }) => {
-    expect.hasAssertions();
-
-    const component = mount(StyledFormDialog, {
-      attachTo: document.body,
-      props: { confirmLabel, modelValue: true, submit: noop, title, ...props },
-      slots: { default: "<p>a</p>" },
-    });
-    await flushPromises();
-    const dialogClasses = component.get("dialog").classes();
-
-    expect(Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass))).toStrictEqual([
-      UiDialogSizeClassMap[expected],
-    ]);
-  });
-
-  test.each([
-    { description: "Accent when none is given", expected: UiButtonVariant.Accent, props: {} },
-    {
-      description: "the variant it is given",
-      expected: UiButtonVariant.Danger,
-      props: { confirmVariant: UiButtonVariant.Danger },
-    },
-  ])("a confirm variant restyles the confirm button, $description", async ({ expected, props }) => {
-    expect.hasAssertions();
-
-    const component = mount(StyledFormDialog, {
-      attachTo: document.body,
-      props: { confirmLabel, modelValue: true, submit: noop, title, ...props },
-      slots: { default: "<p>a</p>" },
-    });
-    await flushPromises();
-
-    expect(component.get("footer button:last-child").attributes("data-variant")).toBe(expected);
-  });
-
+  // The size and confirm-variant matrix lives in Dialog.test.ts: the form only passes both through to the shell
   // The confirm is the form's submit, so it goes through the form's own validation
   test("the footer's submit submits the body's form", async () => {
     expect.hasAssertions();

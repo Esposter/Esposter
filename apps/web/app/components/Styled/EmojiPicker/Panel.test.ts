@@ -129,7 +129,7 @@ describe("styledEmojiPickerPanel", () => {
     await component.setProps({ customEmojis: [] });
     const categoryTitles = component.findAll(RAIL_BUTTON_SELECTOR).map((button) => button.attributes("aria-label"));
 
-    expect(categoryTitles).not.toContain(ROOM_EMOJI_CATEGORY_TITLE);
+    expect(categoryTitles).toStrictEqual(EmojiGroups);
     expect(component.find(`${RAIL_BUTTON_SELECTOR}[aria-checked="true"]`).attributes("aria-label")).toBe(
       EmojiGroup.SmileysAndEmotion,
     );
