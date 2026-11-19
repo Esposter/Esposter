@@ -4,6 +4,7 @@ import type { WaterFlow } from "#src/models/water/WaterFlow";
 import type { WaterUniforms } from "#src/models/water/WaterUniforms";
 import type { Node } from "three/webgpu";
 
+import { createWaterRippleNormal } from "#src/nodes/createWaterRippleNormal";
 import { DoubleSide } from "three";
 import {
   cameraFar,
@@ -20,16 +21,12 @@ import {
   screenUV,
   smoothstep,
   time,
-  vec2,
   vec3,
   viewportDepthTexture,
   viewportSharedTexture,
 } from "three/tsl";
 import { MeshBasicNodeMaterial } from "three/webgpu";
 
-const RIPPLE_SCALE = 0.08;
-const RIPPLE_SPEED = 0.05;
-const RIPPLE_SLOPE = 0.35;
 const REFRACTION_STRENGTH = 0.015;
 const GLINT_POWER = 180;
 // Glints are brighter than white, so bloom lifts them
@@ -51,30 +48,9 @@ export const createWaterMaterial = (
   bendFoam: Node<"float"> = float(0),
 ): MeshBasicNodeMaterial => {
   const waterMaterial = new MeshBasicNodeMaterial({ side: DoubleSide, transparent: true });
-  // Two layers of noise drifting apart, whose slopes, read by finite differences, tilt the surface normal
   // The pattern is sampled upstream of each point, so it is carried downstream; still water has no flow and samples in place
   const flowedPosition = positionWorld.xz.sub(direction.mul(speed).mul(time));
-  const ripplePosition = flowedPosition.mul(RIPPLE_SCALE);
-  const drift = time.mul(RIPPLE_SPEED);
-  const sampleRipples = (offset: Node<"vec2">) =>
-    mx_fractal_noise_float(vec3(ripplePosition.add(offset).add(vec2(drift, drift.mul(0.6))), 0), 3)
-      .add(
-        mx_fractal_noise_float(
-          vec3(
-            ripplePosition
-              .add(offset)
-              .mul(1.9)
-              .sub(vec2(drift.mul(0.8), drift)),
-            1,
-          ),
-          2,
-        ),
-      )
-      .mul(0.5);
-  const ripple = sampleRipples(vec2(0, 0));
-  const slopeX = sampleRipples(vec2(0.02, 0)).sub(ripple);
-  const slopeZ = sampleRipples(vec2(0, 0.02)).sub(ripple);
-  const normal = vec3(slopeX.mul(-RIPPLE_SLOPE / 0.02), 1, slopeZ.mul(-RIPPLE_SLOPE / 0.02)).normalize();
+  const normal = createWaterRippleNormal(flowedPosition);
   const refractedUV = screenUV.add(normal.xz.mul(REFRACTION_STRENGTH));
   const floorViewZ = perspectiveDepthToViewZ(viewportDepthTexture(refractedUV), cameraNear, cameraFar);
   // Water behind a nearer object would pull it into the refraction, so there the unbent floor is read instead
