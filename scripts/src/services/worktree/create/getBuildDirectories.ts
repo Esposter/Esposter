@@ -1,5 +1,6 @@
 import type { WorkspacePackage } from "#src/models/shared/WorkspacePackage";
 
+import { DEPENDENCY_FIELDS } from "#src/models/shared/DependencyField";
 import { APPS_DIRECTORY, PACKAGES_DIRECTORY } from "#src/services/package/new/constants";
 import { SCRIPTS_PACKAGE_NAME, WORKSPACE_PROTOCOL } from "#src/services/worktree/create/constants";
 
@@ -23,13 +24,11 @@ export const getBuildDirectories = (workspacePackages: WorkspacePackage[], packa
   const visit = (workspacePackage: WorkspacePackage): void => {
     if (visited.has(workspacePackage)) return;
     visited.add(workspacePackage);
-    const { dependencies, devDependencies, optionalDependencies, peerDependencies } = workspacePackage.manifest;
-    for (const [name, specifier] of [dependencies, devDependencies, optionalDependencies, peerDependencies].flatMap(
-      (fields) => Object.entries(fields ?? {}),
-    )) {
-      const dependency = workspacePackageMap.get(name);
-      if (dependency !== undefined && specifier.startsWith(WORKSPACE_PROTOCOL)) visit(dependency);
-    }
+    for (const field of DEPENDENCY_FIELDS)
+      for (const [name, specifier] of Object.entries(workspacePackage.manifest[field] ?? {})) {
+        const dependency = workspacePackageMap.get(name);
+        if (dependency !== undefined && specifier.startsWith(WORKSPACE_PROTOCOL)) visit(dependency);
+      }
     dependencyOrder.push(workspacePackage);
   };
   const scriptsPackage = workspacePackages.find(({ manifest }) => manifest.name === SCRIPTS_PACKAGE_NAME);
