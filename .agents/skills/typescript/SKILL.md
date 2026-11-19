@@ -65,7 +65,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 
 - **`try`, `.then`/`.catch`/`.finally` and `new Error` are banned** — the `error-handling` skill owns all three and their exceptions.
 - **Code-splitting is a static top-level `import`**, enforced by `no-restricted-syntax`; the exceptions and their disable comment are `references/dynamic-imports.md`'s.
-- **A promise is awaited, never discarded** — `no-void` enforces it, and the replacement ladder (make the caller `async`, widen the callback to `Promisable<void>`, `satisfies` plus one disable where a library types an awaited hook `void`, `getSynchronizedFunction` as the last resort) is `references/floating-promises.md`.
+- **A promise is awaited, never discarded** — `no-void` enforces it, and the replacement ladder (make the caller `async`, widen the callback to `Promisable<void>`, a hook typed `void` kept synchronous, `getSynchronizedFunction` as the last resort) is `references/floating-promises.md`.
 
 ## Control Flow
 
