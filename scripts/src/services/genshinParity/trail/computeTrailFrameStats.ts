@@ -16,7 +16,7 @@ const BLUE_WEIGHT = 0.114;
 
 // A pixel is trail when it is pale and close to grey, which separates the swing's arc from the rock, the sky and the
 // Electro bolts, which are saturated
-const isTrailPixel = (red: number, green: number, blue: number): boolean => {
+const checkIsTrailPixel = (red: number, green: number, blue: number): boolean => {
   const luminance = RED_WEIGHT * red + GREEN_WEIGHT * green + BLUE_WEIGHT * blue;
   return (
     luminance >= TRAIL_LUMINANCE_THRESHOLD &&
@@ -41,7 +41,7 @@ export const computeTrailFrameStats = (
       const red = pixels[offset] ?? 0;
       const green = pixels[offset + 1] ?? 0;
       const blue = pixels[offset + 2] ?? 0;
-      if (isTrailPixel(red, green, blue)) {
+      if (checkIsTrailPixel(red, green, blue)) {
         run++;
         area++;
         sum[0] += red;

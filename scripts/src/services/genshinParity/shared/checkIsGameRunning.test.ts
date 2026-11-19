@@ -1,6 +1,7 @@
+import type { execFileSync } from "@esposter/shared-node/child-process";
+
 import { checkIsGameRunning } from "#src/services/genshinParity/shared/checkIsGameRunning";
 import { GAME_EXECUTABLE_NAME } from "#src/services/genshinParity/shared/constants";
-import type { execFileSync } from "@esposter/shared-node/child-process";
 import { describe, expect, test, vi } from "vitest";
 
 const { mockedExecFileSync } = vi.hoisted(() => ({
