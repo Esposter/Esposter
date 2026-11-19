@@ -1,0 +1,21 @@
+import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
+import { readNameTextIds } from "#src/services/genshinText/readNameTextIds";
+import { GameLanguage } from "genshin-text";
+import { GameDataset } from "genshin-world";
+import { describe, expect, test } from "vitest";
+
+// The guard the writer's own discovery feeds: a record republished without a names republish cites a text id the English
+// Name chunk does not hold, and this fails on it. The cited ids and the chunk are both read from the lock on disk, so the
+// Discovery is the writer's, never a copy of it. A cold machine downloads each published record once, past a default timeout
+describe(readNameTextIds, () => {
+  test("the English name chunk holds every nameTextId the world cites", async () => {
+    expect.hasAssertions();
+
+    const textIds = await readNameTextIds();
+    const names = await readPublishedGameData<Readonly<Record<string, string>>>(
+      `${GameDataset.NameText}/${GameLanguage.English}`,
+    );
+
+    expect(textIds.filter((textId) => names[textId] === undefined)).toStrictEqual([]);
+  }, 120_000);
+});
