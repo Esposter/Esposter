@@ -19,6 +19,7 @@ import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
+import { deleteOversizedUpload } from "#server/services/storage/deleteOversizedUpload";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
@@ -293,16 +294,23 @@ export const userRouter = router({
     }
   }),
   // A save's row names the person, so the rooms, requests, blocks and posts that show them are woken by the write itself
-  updateUser: standardAuthedProcedure
-    .input(updateUserInputSchema)
-    .mutation<UserInAuth>(async ({ ctx, input }) =>
-      requireMutation(
-        (await ctx.db.update(usersInAuth).set(input).where(eq(usersInAuth.id, ctx.user.id)).returning())[0],
-        Operation.Update,
-        DatabaseEntityType.User,
-        ctx.user.id,
-      ),
-    ),
+  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation<UserInAuth>(async ({ ctx, input }) => {
+    // A save naming the profile image checks the bytes it holds, since the presigned PUT bounds none of them: an object over the
+    // Cap is deleted and the save refused, so the row never names an image the cap does not allow
+    const profileImageBlobName = getUserProfileImageBlobName(ctx.user.id);
+    if (
+      input.image === getPublicAssetUrl(StorageBucket.PublicUserAssets, profileImageBlobName) &&
+      (await deleteOversizedUpload(StorageBucket.PublicUserAssets, profileImageBlobName, MAX_FILE_REQUEST_SIZE))
+    )
+      throw getInvalidOperationError(Operation.Update, DatabaseEntityType.User, ctx.user.id);
+
+    return requireMutation(
+      (await ctx.db.update(usersInAuth).set(input).where(eq(usersInAuth.id, ctx.user.id)).returning())[0],
+      Operation.Update,
+      DatabaseEntityType.User,
+      ctx.user.id,
+    );
+  }),
   updateUserSettings: standardAuthedProcedure
     .input(updateUserSettingsInputSchema)
     .mutation<UserSettingsInMessage>(async ({ ctx, input }) =>

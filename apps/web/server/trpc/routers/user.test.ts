@@ -35,6 +35,7 @@ import {
   DatabaseEntityType,
   dataExportsInUser,
   DataExportStatus,
+  getUserProfileImageBlobName,
   McpScope,
   QueueJob,
   sessionsInAuth,
@@ -62,6 +63,8 @@ describe("userRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["user"]>;
   let bucket: R2Bucket;
   let dispose: () => Promise<void>;
+  let publicUserAssets: R2Bucket;
+  let disposePublicUserAssets: () => Promise<void>;
   const biography = "biography";
   const blobName = "a";
   const expiredAt = new Date(-1);
@@ -126,6 +129,10 @@ describe("userRouter", () => {
   beforeAll(async () => {
     ({ bucket, dispose } = await createMockBucket(StorageBucket.UserAssets));
     mockBuckets[StorageBucket.UserAssets] = bucket;
+    ({ bucket: publicUserAssets, dispose: disposePublicUserAssets } = await createMockBucket(
+      StorageBucket.PublicUserAssets,
+    ));
+    mockBuckets[StorageBucket.PublicUserAssets] = publicUserAssets;
     mockContext = await createMockContext();
     caller = createCallerFactory(userRouter)(mockContext);
   });
@@ -139,6 +146,7 @@ describe("userRouter", () => {
     vi.restoreAllMocks();
     getMockRevokeSession().mockReset();
     await deleteDirectory(bucket);
+    await deleteDirectory(publicUserAssets);
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(dataExportsInUser);
     await mockContext.db.delete(userStatusesInMessage);
@@ -147,6 +155,7 @@ describe("userRouter", () => {
 
   afterAll(async () => {
     await dispose();
+    await disposePublicUserAssets();
   });
 
   // The plugin takes a key's permissions only from the server, so this is the one place they are set: to the scopes the
@@ -295,6 +304,21 @@ describe("userRouter", () => {
     await expect(caller.generateProfileImageUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${getFileErrorMessage(JSON.stringify(input))}]`,
     );
+  });
+
+  // The client's PUT lands the bytes the presigned url could not bound, so a save naming the profile image checks them
+  test("fails updateUser with a profile image over the size cap, and deletes it", async () => {
+    expect.hasAssertions();
+
+    const profileImageBlobName = getUserProfileImageBlobName(userId);
+    await publicUserAssets.put(profileImageBlobName, Buffer.alloc(MAX_FILE_REQUEST_SIZE + 1));
+
+    await expect(
+      caller.updateUser({ image: `${TEST_ORIGIN}/${StorageBucket.PublicUserAssets}/${profileImageBlobName}` }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.User, userId).message}]`,
+    );
+    await expect(publicUserAssets.head(profileImageBlobName)).resolves.toBeNull();
   });
 
   test("updates", async () => {

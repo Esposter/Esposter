@@ -16,9 +16,11 @@ import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMes
 import { getLiveInviteWhere } from "#server/services/room/getLiveInviteWhere";
 import { getRoomMemberJoinCondition } from "#server/services/room/getRoomMemberJoinCondition";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
+import { getRoomProfileImageBlobNameFromUrl } from "#server/services/room/getRoomProfileImageBlobNameFromUrl";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
+import { deleteOversizedUpload } from "#server/services/storage/deleteOversizedUpload";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
@@ -412,6 +414,14 @@ export const baseRoomRouter = router({
     ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
     const { image } = rest;
+    // A save naming one of this room's own uploads checks the bytes it holds, since the presigned PUT bounds none of them: an
+    // Object over the cap is deleted and the save refused, ahead of the update, so the row never names an oversized image
+    const uploadedImageBlobName = image === undefined ? undefined : getRoomProfileImageBlobNameFromUrl(id, image);
+    if (
+      uploadedImageBlobName !== undefined &&
+      (await deleteOversizedUpload(StorageBucket.PublicUserAssets, uploadedImageBlobName, MAX_FILE_REQUEST_SIZE))
+    )
+      throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Room, id);
     // The previous row is read in the batch ahead of the update, so the sweep below knows which version the room is
     // Dropping and the rename line knows whether the name moved. Both statements are one batch, so two admins renaming
     // It at once cannot both read the old name: the second one's read lands after the first one's write

@@ -310,6 +310,22 @@ describe("roomRouter", () => {
     });
   });
 
+  // The client's PUT lands the bytes the presigned url could not bound, so a save naming the room image checks them
+  test("fails updateRoom with a room image over the size cap, and deletes it", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const blobName = `rooms/${newRoom.id}/ProfileImage/${v7()}`;
+    await publicUserAssets.put(blobName, Buffer.alloc(MAX_FILE_REQUEST_SIZE + 1));
+
+    await expect(
+      roomCaller.updateRoom({ id: newRoom.id, image: `${publicUserAssetsUrlPrefix}${blobName}` }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, newRoom.id).message}]`,
+    );
+    await expect(publicUserAssets.head(blobName)).resolves.toBeNull();
+  });
+
   test("publishes profile image deletion on clear", async () => {
     expect.hasAssertions();
 
