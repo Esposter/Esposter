@@ -49,7 +49,7 @@ const createFixture = () => {
   return { buffer, manifest };
 };
 
-describe("createCharacterAvatar", () => {
+describe(createCharacterAvatar, () => {
   test("names the humanoid bones for the pose and reads the mesh over the binary without a copy", () => {
     expect.hasAssertions();
 

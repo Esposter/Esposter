@@ -2,7 +2,7 @@ import { createAvatarShadingInputs } from "#src/services/character/avatar/create
 import { CharacterMaterialKind } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-describe("createAvatarShadingInputs", () => {
+describe(createAvatarShadingInputs, () => {
   // Every region at white, the shading's own default for a region a material holds no colour for
   const WHITE_REGIONS = { five: [1, 1, 1], four: [1, 1, 1], one: [1, 1, 1], three: [1, 1, 1], two: [1, 1, 1] };
 
