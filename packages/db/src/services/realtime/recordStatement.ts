@@ -85,7 +85,10 @@ export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(sta
           const widened = property === "run" ? widenUnreturnedWrite(target) : undefined;
           if (widened?.answer) {
             const complete = recorder.record(widened.statement);
-            complete((widened.statement as unknown as { all: () => unknown }).all(), []);
+            complete(
+              Reflect.apply(Reflect.get(widened.statement, "all", widened.statement), widened.statement, []),
+              [],
+            );
             return undefined;
           }
           const complete = recorder.record(target);
