@@ -26,7 +26,7 @@ describe(useUpdateColumn, () => {
     const column = takeOne(dataSource.columns);
     updateColumn("", createUpdatedColumn(column, { description: " " }));
 
-    expect(takeOne(dataSource.columns).description).toBe(" ");
+    expect(dataSource.columns.map(({ description }) => description)).toStrictEqual([" ", ""]);
   });
 
   test("renames column and updates row keys", () => {
@@ -58,11 +58,11 @@ describe(useUpdateColumn, () => {
     const column = takeOne(dataSource.columns, 1);
     updateColumn("b", createUpdatedColumn(column, { name: "d" }));
 
-    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "d", "c"]);
+    expect(dataSource.rows.map((row) => Object.keys(row.data))).toStrictEqual([["a", "d", "c"]]);
 
     undo(dataSource);
 
-    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c"]);
+    expect(dataSource.rows.map((row) => Object.keys(row.data))).toStrictEqual([["a", "b", "c"]]);
   });
 
   test("reformats date values when format changes", () => {
@@ -83,7 +83,7 @@ describe(useUpdateColumn, () => {
     updateColumn("", createUpdatedColumn(column, { format: DateFormat["DD/MM/YYYY"] }));
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "01/01/1970" }, { "": "02/01/1970" }]);
-    expect(takeOne(dataSource.columns).size).toBe(24);
+    expect(dataSource.columns.map(({ size }) => size)).toStrictEqual([24]);
 
     undo(dataSource);
     const restoredColumn = takeOne(dataSource.columns);
@@ -110,7 +110,7 @@ describe(useUpdateColumn, () => {
     undo(dataSource);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "0" }, { a: "1" }]);
-    expect(takeOne(dataSource.columns).type).toBe(ColumnType.String);
+    expect(dataSource.columns.map(({ type }) => type)).toStrictEqual([ColumnType.String]);
   });
 
   // A computed column stores nothing, so a column turned into one keeps no values under its name — and turned back,
@@ -176,7 +176,7 @@ describe(useUpdateColumn, () => {
     updateColumn("a", createUpdatedColumn(column, { description: " " }));
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: 0 }]);
-    expect(takeOne(dataSource.columns).size).toBe(originalSize);
+    expect(dataSource.columns.map(({ size }) => size)).toStrictEqual([originalSize]);
   });
 
   test("snapshot immutability - mutating passed object after call does not affect undo history", () => {

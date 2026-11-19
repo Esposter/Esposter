@@ -46,6 +46,6 @@ describe(useDeleteColumns, () => {
     deleteColumns([takeOne(dataSource.columns, 1).id, takeOne(dataSource.columns, 3).id]);
     undo(dataSource);
 
-    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c", "d"]);
+    expect(dataSource.rows.map((row) => Object.keys(row.data))).toStrictEqual([["a", "b", "c", "d"]]);
   });
 });

@@ -17,7 +17,7 @@ describe(useToggleColumnVisibility, () => {
     const toggleColumnVisibility = useToggleColumnVisibility();
     toggleColumnVisibility(takeOne(dataSource.columns).id);
 
-    expect(takeOne(dataSource.columns).isHidden).toBe(true);
+    expect(dataSource.columns.map(({ isHidden }) => isHidden)).toStrictEqual([true, false]);
   });
 
   test("shows a hidden column", () => {
@@ -28,6 +28,6 @@ describe(useToggleColumnVisibility, () => {
     const toggleColumnVisibility = useToggleColumnVisibility();
     toggleColumnVisibility(hiddenColumn.id);
 
-    expect(takeOne(dataSource.columns).isHidden).toBe(false);
+    expect(dataSource.columns.map(({ isHidden }) => isHidden)).toStrictEqual([false]);
   });
 });
