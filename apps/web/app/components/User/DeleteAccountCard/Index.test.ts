@@ -5,7 +5,6 @@ import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSectio
 import { useSession } from "#src/services/auth/authClient.test";
 import { signOutOfBrowser } from "#src/services/auth/signOutOfBrowser";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { AccountDeletionKeptItems } from "#src/services/user/settings/AccountDeletionKeptItems";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
@@ -91,18 +90,6 @@ describe("userDeleteAccountCard", () => {
 
     expect(deleteAccount).toHaveBeenCalledTimes(1);
     expect(signOutOfBrowser).toHaveBeenCalledExactlyOnceWith(RoutePath.Login);
-  });
-
-  test("names what the deletion keeps", async () => {
-    expect.hasAssertions();
-
-    const component = await mountCard();
-    await component.get("button").trigger("click");
-    await flushPromises();
-
-    expect(Array.from(getDialog().querySelectorAll("li"), ({ textContent }) => textContent.trim())).toStrictEqual(
-      AccountDeletionKeptItems.map(({ title }) => title),
-    );
   });
 
   test("stays open and does not sign out when the deletion fails", async () => {

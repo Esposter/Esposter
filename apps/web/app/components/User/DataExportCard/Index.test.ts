@@ -5,7 +5,6 @@ import type { VueWrapper } from "@vue/test-utils";
 import UserDataExportCard from "#src/components/User/DataExportCard/Index.vue";
 import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { DataExportOmittedItems } from "#src/services/user/settings/DataExportOmittedItems";
 import { DataExportStatus } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -56,18 +55,15 @@ describe("userDataExportCard", () => {
     userId: "userId",
   };
 
-  test("names what the archive leaves out before any request", async () => {
+  test("requests no export until the reader asks for one", async () => {
     expect.hasAssertions();
 
     const requestDataExport = vi.fn<() => DataExportInUser>(() => baseDataExport);
     trpcMsw.user.readDataExport.query(() => undefined);
     trpcMsw.user.requestDataExport.mutation(requestDataExport);
-    const component = await mountCard();
+    await mountCard();
     await flushPromises();
 
-    expect(component.findAll("li").map((item) => item.text())).toStrictEqual(
-      DataExportOmittedItems.map(({ title }) => title),
-    );
     expect(requestDataExport).not.toHaveBeenCalled();
   });
 

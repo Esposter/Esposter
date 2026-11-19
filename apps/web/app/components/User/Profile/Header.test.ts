@@ -15,19 +15,14 @@ describe("userProfileHeader", () => {
 
   // The edit entry point is the one thing on this header that is about the reader rather than about the profile,
   // So it is the one thing that must not render on someone else's
-  test("offers the edit entry point on the reader's own profile", async () => {
+  test.each([
+    ["offers the edit entry point on the reader's own profile", userId, ["Edit profile"]],
+    ["offers no edit entry point on another user's profile", v7(), []],
+  ])("%s", async (_, viewerId, links) => {
     expect.hasAssertions();
 
-    const component = await mountHeader(userId, userId);
+    const component = await mountHeader(viewerId, userId);
 
-    expect(component.text()).toContain("Edit profile");
-  });
-
-  test("offers no edit entry point on another user's profile", async () => {
-    expect.hasAssertions();
-
-    const component = await mountHeader(v7(), userId);
-
-    expect(component.text()).not.toContain("Edit profile");
+    expect(component.findAll("a").map((link) => link.text())).toStrictEqual(links);
   });
 });

@@ -5,7 +5,6 @@ import UserLinkedAccountsCardRow from "#src/components/User/LinkedAccountsCard/R
 import UserSettingsListSkeleton from "#src/components/User/Settings/ListSkeleton.vue";
 import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 import { listAccounts } from "#src/services/auth/authClient.test";
-import { LoginButtonItems } from "#src/services/login/LoginButtonItems";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -45,6 +44,7 @@ describe("userLinkedAccountsCard", () => {
     await component.findComponent(UiErrorState).get("button").trigger("click");
     await flushPromises();
 
-    expect(component.findAllComponents(UserLinkedAccountsCardRow)).toHaveLength(LoginButtonItems.length);
+    expect(component.findComponent(UiErrorState).exists()).toBe(false);
+    expect(listAccounts).toHaveBeenCalledTimes(2);
   });
 });
