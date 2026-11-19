@@ -1,14 +1,15 @@
 import type { Meta } from "#server/models/trpc/Meta";
 import type { Context } from "#server/trpc/context";
 import type { ColumnTopic } from "@esposter/db-schema";
+import type { WakeRecord } from "@esposter/shared-node/wake-check";
 import type { AnyRouter } from "@trpc/server";
 
 import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
-import { wakeRecordDirectory } from "#server/trpc/liveTopicWakeCheckGlobal";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { transformer } from "#shared/services/trpc/transformer";
 import { getWokenTopics } from "@esposter/db";
 import { getResultAsync } from "@esposter/shared";
+import { getWakeRecordDirectory } from "@esposter/shared-node/wake-check";
 import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -222,18 +223,17 @@ export const writeWakeRecord = async () => {
   if (calledProcedures.size === 0 && counts.writes === 0) return;
   const appProcedures = await getAppProcedures();
   const called = appProcedures.filter(({ procedure }) => calledProcedures.has(procedure)).map(({ path }) => path);
-  mkdirSync(wakeRecordDirectory, { recursive: true });
+  const directory = getWakeRecordDirectory(process.cwd());
+  mkdirSync(directory, { recursive: true });
   const { testPath } = expect.getState();
   const file = createHash("sha256").update(String(testPath)).digest("hex").slice(0, 16);
-  writeFileSync(
-    join(wakeRecordDirectory, `${file}.json`),
-    JSON.stringify({
-      called: called.toSorted((firstPath, secondPath) => firstPath.localeCompare(secondPath)),
-      counts,
-      file: testPath,
-      watched: appProcedures.filter(({ watched }) => watched).map(({ path }) => path),
-    }),
-  );
+  const record: WakeRecord = {
+    called: called.toSorted((firstPath, secondPath) => firstPath.localeCompare(secondPath)),
+    counts,
+    file: String(testPath),
+    watched: appProcedures.filter(({ watched }) => watched).map(({ path }) => path),
+  };
+  writeFileSync(join(directory, `${file}.json`), JSON.stringify(record));
 };
 
 // Describes nothing: the check is imported by the setup file and the caller factory, which its self-test runs beside

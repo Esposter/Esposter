@@ -46,6 +46,10 @@
       "source": "./src/services/BenchmarkMarkdownReporter.ts",
       "default": "./dist/reporter.js"
     },
+    "./wake-check": {
+      "source": "./src/wakeCheck.ts",
+      "default": "./dist/wake-check.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -54,6 +58,7 @@
       "./cache": "./dist/cache.js",
       "./child-process": "./dist/child-process.js",
       "./reporter": "./dist/reporter.js",
+      "./wake-check": "./dist/wake-check.js",
       "./package.json": "./package.json"
     },
     "access": "public"
