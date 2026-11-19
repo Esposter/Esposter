@@ -31,9 +31,7 @@ describe(computeCookingStoveInteractables, () => {
 
     const prompts = computeInteractionPrompts(interactables, body, NO_SELECTION).interactables;
 
-    expect(prompts).toHaveLength(2);
-    expect(prompts).toContainEqual(stove);
-    expect(prompts).toContainEqual(processing);
+    expect(prompts).toStrictEqual([processing, stove]);
   });
 
   test("a city with no stove offers none", () => {
