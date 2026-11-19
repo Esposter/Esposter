@@ -4,10 +4,8 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { captureBlueprint } from "#server/services/blueprint/captureBlueprint";
 import { deployBlueprint } from "#server/services/blueprint/deployBlueprint";
 import { getInvalidBlueprintError } from "#server/services/blueprint/getInvalidBlueprintError";
-import { getResourceListTopics } from "#server/services/resource/getResourceListTopics";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { router } from "#server/trpc/index";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
@@ -19,31 +17,28 @@ import { McpScope, ResourceType } from "@esposter/db-schema";
 export const blueprintRouter = router({
   ...createResourceProcedures(ResourceType.Blueprint),
   // Owner-gated capture reads other resources' content, so ownership of every id is verified in the service
-  captureBlueprint: getTopicsProcedure(
-    standardAuthedProcedure
-      .input(captureBlueprintInputSchema)
-      .meta({
-        mcp: {
-          description:
-            "Capture a new blueprint of the given name from the owner's resources, by their ids. Answers the blueprint.",
-          scope: McpScope.Resources,
-        },
-      }),
-    ({ ctx }) => getResourceListTopics(ctx.user.id),
-  ).mutation<ResourceInResource>(({ ctx, input: { ids, name } }) => captureBlueprint(ctx, ids, name)),
-  deployBlueprint: getTopicsProcedure(
-    getOwnerProcedure(ResourceType.Blueprint, deployBlueprintInputSchema, "id").meta({
+  captureBlueprint: standardAuthedProcedure
+    .input(captureBlueprintInputSchema)
+    .meta({
+      mcp: {
+        description:
+          "Capture a new blueprint of the given name from the owner's resources, by their ids. Answers the blueprint.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<ResourceInResource>(({ ctx, input: { ids, name } }) => captureBlueprint(ctx, ids, name)),
+  deployBlueprint: getOwnerProcedure(ResourceType.Blueprint, deployBlueprintInputSchema, "id")
+    .meta({
       mcp: {
         description:
           "Deploy a blueprint with its parameter values, which creates the resources it describes. Answers what was deployed.",
         scope: McpScope.Resources,
       },
-    }),
-    ({ ctx }) => getResourceListTopics(ctx.user.id),
-  ).mutation<BlueprintDeployment[]>(async ({ ctx, input: { parameterValues } }) => {
-    const content = await readResourceContent(blueprintResourceSchema, ctx.resource.id);
-    if (content === undefined) throw getInvalidBlueprintError("cannot deploy blueprint without content");
+    })
+    .mutation<BlueprintDeployment[]>(async ({ ctx, input: { parameterValues } }) => {
+      const content = await readResourceContent(blueprintResourceSchema, ctx.resource.id);
+      if (content === undefined) throw getInvalidBlueprintError("cannot deploy blueprint without content");
 
-    return deployBlueprint(ctx, content, parameterValues);
-  }),
+      return deployBlueprint(ctx, content, parameterValues);
+    }),
 });

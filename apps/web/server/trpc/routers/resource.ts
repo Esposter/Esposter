@@ -12,7 +12,6 @@ import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestor
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
 import type { Page, ResourceActivityInResource, ResourceInResource } from "@esposter/db-schema";
-import type { User } from "better-auth";
 
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
@@ -20,14 +19,10 @@ import { applyResourceContentPatches } from "#server/services/resource/applyReso
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
 import { DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
-import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
 import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
-import { getResourceListTopics } from "#server/services/resource/getResourceListTopics";
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
-import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { omitDerivedContent } from "#server/services/resource/omitDerivedContent";
-import { publishResourceBookmarkTopics } from "#server/services/resource/publishResourceBookmarkTopics";
 import { readContentAtPointer } from "#server/services/resource/readContentAtPointer";
 import { readResourceConsumers } from "#server/services/resource/readResourceConsumers";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
@@ -54,7 +49,6 @@ import { getBucket } from "#server/services/storage/getBucket";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { router } from "#server/trpc/index";
-import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { createResourceOfTypeInputSchema } from "#shared/models/db/resource/CreateResourceOfTypeInput";
@@ -77,7 +71,6 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { createPageSort, getPageOrderBy, getPageWhere, inJsonArray, purgeResource, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
-  getTopic,
   McpScope,
   RESOURCE_NAME_MAX_LENGTH,
   resourceAccessesInResource,
@@ -88,43 +81,31 @@ import {
   SnapshotChannel,
   SnapshotReason,
   StorageBucket,
-  TopicKind,
 } from "@esposter/db-schema";
 import { getSynchronizedFunction, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
 import { and, count, desc, eq, isNotNull, isNull } from "drizzle-orm";
 
-// The topics of a procedure that changes many resources at once: each resource and its owner's list of resources
-const getChangedResourcesTopics = ({ ctx, input: { ids } }: { ctx: { user: User }; input: { ids: string[] } }) => [
-  ...ids.map((id) => getTopic(TopicKind.Resource, id)),
-  ...getResourceListTopics(ctx.user.id),
-];
-
 export const resourceRouter = router({
   // Typeless: the type is named in the input, so one tool creates a resource of any type
-  createResource: getTopicsProcedure(
-    standardAuthedProcedure
-      .input(createResourceOfTypeInputSchema)
-      .meta({
-        mcp: {
-          description:
-            "Create a resource of a named type with a name, as a new draft with no content. Answers the resource, its id included, which the other tools take.",
-          scope: McpScope.Resources,
-        },
-      }),
-    ({ ctx }) => getResourceListTopics(ctx.user.id),
-  ).mutation<ResourceInResource>(({ ctx, input }) => createResourceRow(ctx, input)),
-  deleteResources: getTopicsProcedure(
-    standardAuthedProcedure
-      .input(deleteResourcesInputSchema)
-      .meta({
-        mcp: {
-          description:
-            "Move resources to the recycle bin by their ids, where each waits whole to be restored. Answers the resources moved.",
-          scope: McpScope.Resources,
-        },
-      }),
-    getChangedResourcesTopics,
-  )
+  createResource: standardAuthedProcedure
+    .input(createResourceOfTypeInputSchema)
+    .meta({
+      mcp: {
+        description:
+          "Create a resource of a named type with a name, as a new draft with no content. Answers the resource, its id included, which the other tools take.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<ResourceInResource>(({ ctx, input }) => createResourceRow(ctx, input)),
+  deleteResources: standardAuthedProcedure
+    .input(deleteResourcesInputSchema)
+    .meta({
+      mcp: {
+        description:
+          "Move resources to the recycle bin by their ids, where each waits whole to be restored. Answers the resources moved.",
+        scope: McpScope.Resources,
+      },
+    })
     // Owner-scoped where so callers can only ever soft-delete their own rows
     .mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
       const deletedResources = await softDeleteResources(
@@ -134,10 +115,6 @@ export const resourceRouter = router({
           inJsonArray(resourcesInResource.id, ids),
           isNull(resourcesInResource.deletedAt),
         ),
-      );
-      await publishResourceBookmarkTopics(
-        ctx.db,
-        deletedResources.map(({ id }) => id),
       );
       if (deletedResources.length > 0)
         await publishResourceOperation(ctx, {
@@ -149,119 +126,111 @@ export const resourceRouter = router({
         });
       return deletedResources;
     }),
-  duplicateResource: getTopicsProcedure(
-    getOwnerProcedure(undefined, resourceIdInputSchema, "id").meta({
+  duplicateResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({
       mcp: {
         description:
           "Copy a resource into a new draft beside it, with its tags and its draft content, named as a copy. Answers the copy, whose id the other tools take.",
         scope: McpScope.Resources,
       },
-    }),
-    ({ ctx }) => getResourceListTopics(ctx.user.id),
-  ).mutation<ResourceInResource>(async ({ ctx }) => {
-    const { name, tags, type } = ctx.resource;
-    const newResource = await createResourceRow(
-      ctx,
-      {
-        name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - DUPLICATE_NAME_SUFFIX.length)}${DUPLICATE_NAME_SUFFIX}`,
-        tags,
-        type,
-      },
-      ResourceActivityType.Duplicated,
-    );
-    // A copy starts as Draft, so only the draft content is copied — never the publication. The copy holds its own
-    // Object for every asset it references, under its own files directory, so deleting or unpublishing the original
-    // Never strands it. Never leave a content-less orphan copy behind when the content clone fails
-    await withResourceRollback(ctx, [newResource.id], async () => {
-      const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
-      // The blob is written on first save, so missing content just means there is nothing to copy yet
-      if (content === undefined) return;
+    })
+    .mutation<ResourceInResource>(async ({ ctx }) => {
+      const { name, tags, type } = ctx.resource;
+      const newResource = await createResourceRow(
+        ctx,
+        {
+          name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - DUPLICATE_NAME_SUFFIX.length)}${DUPLICATE_NAME_SUFFIX}`,
+          tags,
+          type,
+        },
+        ResourceActivityType.Duplicated,
+      );
+      // A copy starts as Draft, so only the draft content is copied — never the publication. The copy holds its own
+      // Object for every asset it references, under its own files directory, so deleting or unpublishing the original
+      // Never strands it. Never leave a content-less orphan copy behind when the content clone fails
+      await withResourceRollback(ctx, [newResource.id], async () => {
+        const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
+        // The blob is written on first save, so missing content just means there is nothing to copy yet
+        if (content === undefined) return;
 
-      const clonedContent = await cloneContentAssets(ctx.db, ctx.user.id, content, ctx.resource.id, newResource.id);
-      // The one content-write path, so the copy fires the same after-save hook the editor's save does — a
-      // Duplicated TodoList's future due dates get their reminders scheduled rather than silently lost.
-      // No activityType: createResourceRow has already opened the copy's trail with its Duplicated entry, and
-      // A ContentSaved beside it would claim the owner edited a copy they have not opened yet
-      await saveResourceContent(ctx, { content: clonedContent, resource: newResource });
-    });
-    await publishResourceOperation(ctx, {
-      path: RoutePath.Resource(newResource.id),
-      title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
-    });
-    return newResource;
-  }),
-  purgeResource: getTopicsProcedure(
-    getOwnerProcedure(undefined, resourceIdInputSchema, "id", true).meta({
-      humanOnly: "The one delete nothing restores, so the owner alone performs it",
+        const clonedContent = await cloneContentAssets(ctx.db, ctx.user.id, content, ctx.resource.id, newResource.id);
+        // The one content-write path, so the copy fires the same after-save hook the editor's save does — a
+        // Duplicated TodoList's future due dates get their reminders scheduled rather than silently lost.
+        // No activityType: createResourceRow has already opened the copy's trail with its Duplicated entry, and
+        // A ContentSaved beside it would claim the owner edited a copy they have not opened yet
+        await saveResourceContent(ctx, { content: clonedContent, resource: newResource });
+      });
+      await publishResourceOperation(ctx, {
+        path: RoutePath.Resource(newResource.id),
+        title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
+      });
+      return newResource;
     }),
-    getChangedResourceTopics,
-  ).mutation<ResourceInResource>(async ({ ctx, input: { id } }) => {
-    const bucket = getBucket(StorageBucket.ResourceAssets);
-    // Purge is the only place a resource is destroyed, since delete is soft. Its trail and counters go with the row
-    await purgeResource(ctx.db, bucket, id);
-    // The other half of the counter: a purge is the one delete that gives bytes back from this process, so
-    // It is the one delete whose owner is here to be told. See openspec/specs/resource/storage-quotas/design.md
-    await emitStorageUsage(ctx.db, ctx.resource.userId);
-    await publishResourceOperation(ctx, {
-      path: RoutePath.ResourceExplorerRecycleBin,
-      title: ResourceOperationTitleMap[ResourceOperationType.Purged](ctx.resource.name),
-    });
-    return ctx.resource;
-  }),
-  readActivities: getTopicsProcedure(
-    getOwnerProcedure(undefined, readActivitiesInputSchema, "id").meta({
+  purgeResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true)
+    .meta({ humanOnly: "The one delete nothing restores, so the owner alone performs it" })
+    .mutation<ResourceInResource>(async ({ ctx, input: { id } }) => {
+      const bucket = getBucket(StorageBucket.ResourceAssets);
+      // Purge is the only place a resource is destroyed, since delete is soft. Its trail and counters go with the row
+      await purgeResource(ctx.db, bucket, id);
+      // The other half of the counter: a purge is the one delete that gives bytes back from this process, so
+      // It is the one delete whose owner is here to be told. See openspec/specs/resource/storage-quotas/design.md
+      await emitStorageUsage(ctx.db, ctx.resource.userId);
+      await publishResourceOperation(ctx, {
+        path: RoutePath.ResourceExplorerRecycleBin,
+        title: ResourceOperationTitleMap[ResourceOperationType.Purged](ctx.resource.name),
+      });
+      return ctx.resource;
+    }),
+  readActivities: getOwnerProcedure(undefined, readActivitiesInputSchema, "id")
+    .meta({
       mcp: {
         description:
           "Read a resource's activity trail a page at a time, newest first: each save, rename, restore and the rest, with the cursor for the next page. Answers the entries.",
         scope: McpScope.Resources,
       },
+    })
+    .query<Page<ResourceActivityInResource>>(async ({ ctx, input: { cursor, id, limit } }) => {
+      const boundSort = createPageSort({ id: resourceActivitiesInResource.id }, RESOURCE_ACTIVITY_SORT);
+      const activities = await ctx.db
+        .select()
+        .from(resourceActivitiesInResource)
+        .where(and(eq(resourceActivitiesInResource.resourceId, id), getPageWhere(boundSort, cursor)))
+        .orderBy(...getPageOrderBy(boundSort, cursor))
+        .limit(limit + 1);
+      return toPage(activities, RESOURCE_ACTIVITY_SORT, cursor, limit);
     }),
-    getResourceTopics,
-  ).query<Page<ResourceActivityInResource>>(async ({ ctx, input: { cursor, id, limit } }) => {
-    const boundSort = createPageSort({ id: resourceActivitiesInResource.id }, RESOURCE_ACTIVITY_SORT);
-    const activities = await ctx.db
-      .select()
-      .from(resourceActivitiesInResource)
-      .where(and(eq(resourceActivitiesInResource.resourceId, id), getPageWhere(boundSort, cursor)))
-      .orderBy(...getPageOrderBy(boundSort, cursor))
-      .limit(limit + 1);
-    return toPage(activities, RESOURCE_ACTIVITY_SORT, cursor, limit);
-  }),
   // The critique the owner's editor shows as its problems, answered beside the content version it was read at. A type that declares
   // No critique is refused by name, so an empty list is never read as a clean page
-  readCritique: getTopicsProcedure(
-    getOwnerProcedure(undefined, resourceIdInputSchema, "id").meta({
+  readCritique: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({
       mcp: {
         description:
           "Read the critique of a resource's saved content: each finding of its checks with the node it names, and the contentVersion it was read at. A colour this read cannot see is listed as unchecked, never as passing. A type with no critique is refused by name.",
         scope: McpScope.Resources,
       },
-    }),
-    getResourceTopics,
-  ).query<ReadCritiqueResult>(async ({ ctx }) => {
-    const readFindings = ResourceCritiqueMap[ctx.resource.type];
-    if (!readFindings)
-      throw getInvalidOperationError(Operation.Read, ctx.resource.type, "the type declares no critique");
+    })
+    .query<ReadCritiqueResult>(async ({ ctx }) => {
+      const readFindings = ResourceCritiqueMap[ctx.resource.type];
+      if (!readFindings)
+        throw getInvalidOperationError(Operation.Read, ctx.resource.type, "the type declares no critique");
 
-    const findings = await readFindings(ctx.db, ctx.user.id, ctx.resource.id);
-    return { contentVersion: ctx.resource.contentVersion, findings };
-  }),
-  readDeletedResources: getTopicsProcedure(standardAuthedProcedure.input(readDeletedResourcesInputSchema), ({ ctx }) =>
-    getResourceListTopics(ctx.user.id),
-  ).query<ResourceListPage>(({ ctx, input: { cursor, limit, sort } }) =>
-    readResourceListPage(ctx.db, {
-      cursor,
-      limit,
-      sort,
-      userId: ctx.user.id,
-      where: getResourcesWhere(ctx.db, ctx.user.id, {}, true),
+      const findings = await readFindings(ctx.db, ctx.user.id, ctx.resource.id);
+      return { contentVersion: ctx.resource.contentVersion, findings };
     }),
-  ),
+  readDeletedResources: standardAuthedProcedure
+    .input(readDeletedResourcesInputSchema)
+    .query<ResourceListPage>(({ ctx, input: { cursor, limit, sort } }) =>
+      readResourceListPage(ctx.db, {
+        cursor,
+        limit,
+        sort,
+        userId: ctx.user.id,
+        where: getResourcesWhere(ctx.db, ctx.user.id, {}, true),
+      }),
+    ),
   // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
   // Star's own timestamp is not a column any list shows
-  readFavorites: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => getResourceListTopics(ctx.user.id)).query<
-    ResourceListItem[]
-  >(({ ctx }) => {
+  readFavorites: standardAuthedProcedure.query<ResourceListItem[]>(({ ctx }) => {
     const userId = ctx.user.id;
     return ctx.db
       .select(resourceListSelection)
@@ -274,37 +243,33 @@ export const resourceRouter = router({
   }),
   // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
   // For every type, so this cross-type read resolves it whatever the resource turns out to be
-  readResource: getTopicsProcedure(
-    getOwnerProcedure(undefined, resourceIdInputSchema, "id").meta({
+  readResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({
       mcp: {
         description:
           "Read one of the owner's resources by its id, with its name, type, tags and publication, and a deleted one not at all. Answers the resource.",
         scope: McpScope.Resources,
       },
-    }),
-    getResourceTopics,
-  ).query<ResourceWithPublication>(async ({ ctx }) => ({
-    ...ctx.resource,
-    publication:
-      (await ctx.db.query.resourcePublicationsInResource.findFirst({
-        where: { resourceId: { eq: ctx.resource.id } },
-      })) ?? null,
-  })),
+    })
+    .query<ResourceWithPublication>(async ({ ctx }) => ({
+      ...ctx.resource,
+      publication:
+        (await ctx.db.query.resourcePublicationsInResource.findFirst({
+          where: { resourceId: { eq: ctx.resource.id } },
+        })) ?? null,
+    })),
   // What a delete leaves dangling, named in its confirmation
-  readResourceConsumers: getTopicsProcedure(
-    standardAuthedProcedure.input(readResourceConsumersInputSchema),
-    ({ ctx }) => getResourceListTopics(ctx.user.id),
-  ).query<LinkedResource[]>(({ ctx, input: { ids } }) => readResourceConsumers(ctx, ids)),
-  readResourceContent: getTopicsProcedure(
-    getOwnerProcedure(undefined, readResourceContentInputSchema, "id").meta({
+  readResourceConsumers: standardAuthedProcedure
+    .input(readResourceConsumersInputSchema)
+    .query<LinkedResource[]>(({ ctx, input: { ids } }) => readResourceConsumers(ctx, ids)),
+  readResourceContent: getOwnerProcedure(undefined, readResourceContentInputSchema, "id")
+    .meta({
       mcp: {
         description:
           "Read a resource's content as JSON at a JSON Pointer, the empty pointer for the whole document, with the contentVersion it was read at. An array is answered a page at a time beside its length. Past a size cap the content is left out and the size of each member answered instead; a leaf has no members, so its own size is answered, and a narrower pointer cannot be read. Content never saved reads as null.",
         scope: McpScope.Resources,
       },
-    }),
-    getResourceTopics,
-  )
+    })
     // The row was read before the blob, so the version answered is never newer than the content: a patch pinned to it
     // Is at worst refused as stale, never applied over a save the agent did not read
     .query<ReadResourceContentResult>(async ({ ctx, input }) => {
@@ -326,149 +291,140 @@ export const resourceRouter = router({
       contentSchema: getAgentJsonSchema(ResourceDefinitionMap[type].contentSchema),
     })),
   // Both directions of the link index around one resource for its Overview, in one round trip
-  readResourceReferences: getTopicsProcedure(
-    getOwnerProcedure(undefined, resourceIdInputSchema, "id").meta({
+  readResourceReferences: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({
       mcp: {
         description:
           "Read what a resource links to and what links to it, among the owner's own resources. A link written into a document is a reference once the document is saved. Answers the consumers, the dependencies and how many links point at a missing resource.",
         scope: McpScope.Resources,
       },
+    })
+    .query<ResourceReferences>(async ({ ctx }) => {
+      const [consumers, dependencyReferences] = await Promise.all([
+        readResourceConsumers(ctx, [ctx.resource.id]),
+        readResourceDependencies(ctx, ctx.resource.id),
+      ]);
+      return { consumers, ...dependencyReferences };
     }),
-    getChangedResourceTopics,
-  ).query<ResourceReferences>(async ({ ctx }) => {
-    const [consumers, dependencyReferences] = await Promise.all([
-      readResourceConsumers(ctx, [ctx.resource.id]),
-      readResourceDependencies(ctx, ctx.resource.id),
-    ]);
-    return { consumers, ...dependencyReferences };
-  }),
-  readResources: getTopicsProcedure(
-    standardAuthedProcedure
-      .input(readResourceListInputSchema.prefault({}))
-      .meta({
-        mcp: {
-          description:
-            "Find the owner's resources a page at a time, most recently updated first unless a sort names another order, or by relevance for a search. Each page answers its cursor for the next and, on the first page, how many resources match. Answers each one's id, name and type, which the content tools take.",
-          scope: McpScope.Resources,
-        },
-      }),
-    ({ ctx }) => getResourceListTopics(ctx.user.id),
-  ).query<ResourceListPage>(({ ctx, input: { cursor, limit, sort, ...filter } }) =>
-    readResourceList(ctx.db, ctx.user.id, filter, sort, cursor, limit),
-  ),
+  readResources: standardAuthedProcedure
+    .input(readResourceListInputSchema.prefault({}))
+    .meta({
+      mcp: {
+        description:
+          "Find the owner's resources a page at a time, most recently updated first unless a sort names another order, or by relevance for a search. Each page answers its cursor for the next and, on the first page, how many resources match. Answers each one's id, name and type, which the content tools take.",
+        scope: McpScope.Resources,
+      },
+    })
+    .query<ResourceListPage>(({ ctx, input: { cursor, limit, sort, ...filter } }) =>
+      readResourceList(ctx.db, ctx.user.id, filter, sort, cursor, limit),
+    ),
   // The Tags list. Tag names live inside one JSON column rather than their own table, so the breakdown is a
   // Grouped count over the expanded keys — the expansion is a subquery because a table-valued json_each cannot
   // Sit beside an aggregate in one select list. Values are deliberately not part of the grouping: the
   // Tags entry answers "which tags do I use", and the /all Tag pill is where a value narrows it further
-  readResourceTagCounts: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) =>
-    getResourceListTopics(ctx.user.id),
-  ).query<ResourceTagCount[]>(({ ctx }) => readResourceTagCounts(ctx.db, ctx.user.id)),
+  readResourceTagCounts: standardAuthedProcedure.query<ResourceTagCount[]>(({ ctx }) =>
+    readResourceTagCounts(ctx.db, ctx.user.id),
+  ),
   // The summary cards own the type breakdown, so `types` is the one filter they cannot pass — a card is
   // The affordance for setting it
-  readResourceTypeCounts: getTopicsProcedure(
-    standardAuthedProcedure.input(resourceFilterInputSchema.omit({ types: true }).prefault({})),
-    ({ ctx }) => getResourceListTopics(ctx.user.id),
-  ).query<ResourceTypeCount[]>(({ ctx, input }) =>
-    ctx.db
-      .select({ count: count(), type: resourcesInResource.type })
-      .from(resourcesInResource)
-      .where(getResourcesWhere(ctx.db, ctx.user.id, input))
-      .groupBy(resourcesInResource.type)
-      .orderBy(desc(count())),
-  ),
+  readResourceTypeCounts: standardAuthedProcedure
+    .input(resourceFilterInputSchema.omit({ types: true }).prefault({}))
+    .query<ResourceTypeCount[]>(({ ctx, input }) =>
+      ctx.db
+        .select({ count: count(), type: resourcesInResource.type })
+        .from(resourcesInResource)
+        .where(getResourcesWhere(ctx.db, ctx.user.id, input))
+        .groupBy(resourcesInResource.type)
+        .orderBy(desc(count())),
+    ),
   // Which versions exist comes from the version rows. Which published one is LIVE comes from the publication
   // Row instead, because a row answers what is live and the listing answers what can be returned to.
   //
   // Both channels in one time-ordered list, because the owner has one question — where can I go back to — and
   // The channels are an address space rather than two things to make them choose between. Every type is asked
   // For both: a non-publishable one simply has no published rows
-  readSnapshotHistory: getTopicsProcedure(
-    getOwnerProcedure(undefined, resourceIdInputSchema, "id").meta({
+  readSnapshotHistory: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({
       mcp: {
         description:
           "Read a resource's version history, its revisions and its published versions together, newest first. Answers each version's channel and number, which restoreSnapshotVersion takes.",
         scope: McpScope.Resources,
       },
+    })
+    .query<SnapshotVersion[]>(async ({ ctx }) => {
+      const publication = await ctx.db.query.resourcePublicationsInResource.findFirst({
+        where: { resourceId: { eq: ctx.resource.id } },
+      });
+      const channelHistories = await Promise.all([
+        readSnapshotHistory(ctx.db, ctx.resource.id, SnapshotChannel.Revisions),
+        readSnapshotHistory(ctx.db, ctx.resource.id, SnapshotChannel.Published, publication?.publishVersion),
+      ]);
+      // Newest first, and by time rather than by version: the two channels number independently, so an
+      // Ordinal says nothing about where a row belongs once they share a list
+      return channelHistories
+        .flat()
+        .toSorted(
+          (firstChannelHistory, secondChannelHistory) =>
+            secondChannelHistory.takenAt.getTime() - firstChannelHistory.takenAt.getTime(),
+        );
     }),
-    getResourceTopics,
-  ).query<SnapshotVersion[]>(async ({ ctx }) => {
-    const publication = await ctx.db.query.resourcePublicationsInResource.findFirst({
-      where: { resourceId: { eq: ctx.resource.id } },
-    });
-    const channelHistories = await Promise.all([
-      readSnapshotHistory(ctx.db, ctx.resource.id, SnapshotChannel.Revisions),
-      readSnapshotHistory(ctx.db, ctx.resource.id, SnapshotChannel.Published, publication?.publishVersion),
-    ]);
-    // Newest first, and by time rather than by version: the two channels number independently, so an
-    // Ordinal says nothing about where a row belongs once they share a list
-    return channelHistories
-      .flat()
-      .toSorted(
-        (firstChannelHistory, secondChannelHistory) =>
-          secondChannelHistory.takenAt.getTime() - firstChannelHistory.takenAt.getTime(),
-      );
-  }),
   // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to
   // Compare. Owner-scoped, like every other resource write
-  recordAccess: getTopicsProcedure(getOwnerProcedure(undefined, resourceIdInputSchema, "id"), ({ ctx }) =>
-    getResourceListTopics(ctx.user.id),
-  ).mutation<void>(async ({ ctx, input: { id } }) => {
-    const userId = ctx.user.id;
-    await ctx.db
-      .insert(resourceAccessesInResource)
-      .values({ resourceId: id, userId })
-      .onConflictDoUpdate({
-        set: { accessedAt: new Date() },
-        target: [resourceAccessesInResource.userId, resourceAccessesInResource.resourceId],
-      });
-  }),
+  recordAccess: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<void>(
+    async ({ ctx, input: { id } }) => {
+      const userId = ctx.user.id;
+      await ctx.db
+        .insert(resourceAccessesInResource)
+        .values({ resourceId: id, userId })
+        .onConflictDoUpdate({
+          set: { accessedAt: new Date() },
+          target: [resourceAccessesInResource.userId, resourceAccessesInResource.resourceId],
+        });
+    },
+  ),
   // A batch, as the delete is, so the toast a bulk delete leaves undoes all of it in one write. Owner-scoped where,
   // Over the bin only; names are not unique, so a restore can never conflict
-  restoreResources: getTopicsProcedure(
-    standardAuthedProcedure
-      .input(restoreResourcesInputSchema)
-      .meta({
-        mcp: {
-          description:
-            "Restore resources out of the recycle bin by their ids, each back whole with the content and tags it had. Answers the resources restored.",
-          scope: McpScope.Resources,
-        },
-      }),
-    getChangedResourcesTopics,
-  ).mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
-    const userId = ctx.user.id;
-    const restoredResources = await ctx.db
-      .update(resourcesInResource)
-      .set({ deletedAt: null })
-      .where(
-        and(
-          eq(resourcesInResource.userId, userId),
-          inJsonArray(resourcesInResource.id, ids),
-          isNotNull(resourcesInResource.deletedAt),
-        ),
-      )
-      .returning();
-    await publishResourceBookmarkTopics(
-      ctx.db,
-      restoredResources.map(({ id }) => id),
-    );
-    // Best-effort: a failed write loses the trail entries of this restore, never the restore.
-    getSynchronizedFunction(writeResourceActivities)(ctx, {
-      activityType: ResourceActivityType.Restored,
-      resourceIds: restoredResources.map(({ id }) => id),
-    });
-    const firstRestoredResource = restoredResources[0];
-    if (firstRestoredResource)
-      await publishResourceOperation(ctx, {
-        path:
-          restoredResources.length === 1 ? RoutePath.Resource(firstRestoredResource.id) : RoutePath.ResourceExplorerAll,
-        title: ResourceOperationTitleMap[ResourceOperationType.Restored](
-          firstRestoredResource.name,
-          restoredResources.length,
-        ),
+  restoreResources: standardAuthedProcedure
+    .input(restoreResourcesInputSchema)
+    .meta({
+      mcp: {
+        description:
+          "Restore resources out of the recycle bin by their ids, each back whole with the content and tags it had. Answers the resources restored.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
+      const userId = ctx.user.id;
+      const restoredResources = await ctx.db
+        .update(resourcesInResource)
+        .set({ deletedAt: null })
+        .where(
+          and(
+            eq(resourcesInResource.userId, userId),
+            inJsonArray(resourcesInResource.id, ids),
+            isNotNull(resourcesInResource.deletedAt),
+          ),
+        )
+        .returning();
+      // Best-effort: a failed write loses the trail entries of this restore, never the restore.
+      getSynchronizedFunction(writeResourceActivities)(ctx, {
+        activityType: ResourceActivityType.Restored,
+        resourceIds: restoredResources.map(({ id }) => id),
       });
-    return restoredResources;
-  }),
+      const firstRestoredResource = restoredResources[0];
+      if (firstRestoredResource)
+        await publishResourceOperation(ctx, {
+          path:
+            restoredResources.length === 1
+              ? RoutePath.Resource(firstRestoredResource.id)
+              : RoutePath.ResourceExplorerAll,
+          title: ResourceOperationTitleMap[ResourceOperationType.Restored](
+            firstRestoredResource.name,
+            restoredResources.length,
+          ),
+        });
+      return restoredResources;
+    }),
   // Restore copies a snapshot's content into the working copy through saveResourceContent semantics
   // (contentVersion++). The publication is never re-pointed — a restore produces a Draft to review and
   // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule.
@@ -478,112 +434,107 @@ export const resourceRouter = router({
   // Referenced where they sit, exactly as the duplicate path does: a published url lives under {id}/published,
   // Which unpublish wipes wholesale, so a verbatim copy would hand the draft urls a later unpublish deletes —
   // And re-publishing that draft would ship the same dead urls, with re-uploading every asset the only recovery
-  restoreSnapshotVersion: getTopicsProcedure(
-    getOwnerProcedure(undefined, restoreSnapshotVersionInputSchema, "id").meta({
+  restoreSnapshotVersion: getOwnerProcedure(undefined, restoreSnapshotVersionInputSchema, "id")
+    .meta({
       mcp: {
         description:
           "Restore a version of a resource into its working draft, which the restore replaces. The draft it replaced is kept as a revision, named in the answer, so restoring that revision undoes the restore. Answers the restored resource and that revision's version.",
         scope: McpScope.Resources,
       },
+    })
+    .mutation<SnapshotRestoration>(async ({ ctx, input: { channel, id, version } }) => {
+      const snapshotContent = await requireEntity(
+        readSnapshotVersionContent(ctx.db, ctx.resource, { channel, version }),
+        DatabaseEntityType.Resource,
+        `${id}/${channel}/${version}`,
+      );
+      // The undo, taken before a single byte of the working copy is written and allowed to fail the whole
+      // Restore: a restore is the one operation that destroys draft work on purpose, and one whose undo silently
+      // Did not happen is the defect this mechanism exists to close. Taken after the snapshot is known to exist,
+      // So a restore that was never going to land does not spend a ring-buffer slot and evict the oldest
+      // Recovery point on its way to failing
+      const undoRevisionVersion = await takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeRestore);
+      // Reconstitution, not a raw copy: a snapshot froze whatever the type declares live, and writing that back
+      // Over the working copy would silently reopen a closed survey or flip its response mode — a setting the
+      // Write boundary makes authorization decisions on, with nothing in the restore or its confirmation saying
+      // It would happen. The declaration is `ResourceLiveContentMap`, and it is the same one the public read and
+      // The version preview reconstitute through
+      const reappliedContent = omitDerivedContent(
+        ctx.resource,
+        await reapplyLiveResourceContent(ctx.resource, snapshotContent),
+      );
+      // Nothing is copied: the save below reserves the objects the restored content names, so they stay alive, and they
+      // Are this Resource's own objects, so a restore holds no second copy of any asset. A version's asset an eviction
+      // Above released is not refused: the save reserves it like any other name, so the working copy names a gone file,
+      // Which reads as a broken image rather than a failed restore.
+      // The one content-write path, so a restore is a content write like any other: the version bump and the blob
+      // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
+      // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:
+      // The subscription filters the emitting device out, and no publishable type subscribes to it client-side, so
+      // An editor left open on this resource keeps the pre-restore draft and the version it cached, and its next
+      // Autosave is rejected as stale until it reloads
+      const restoredResource = await saveResourceContent(ctx, {
+        activityType: ResourceActivityType.Restored,
+        content: reappliedContent,
+        // The bump and the write stay in one transaction so a failed write rolls the contentVersion back —
+        // A restore that did not land must never advance the version every client caches against
+        contentVersion: ctx.resource.contentVersion,
+        resource: ctx.resource,
+      });
+      return { resource: restoredResource, undoRevisionVersion };
     }),
-    getChangedResourceTopics,
-  ).mutation<SnapshotRestoration>(async ({ ctx, input: { channel, id, version } }) => {
-    const snapshotContent = await requireEntity(
-      readSnapshotVersionContent(ctx.db, ctx.resource, { channel, version }),
-      DatabaseEntityType.Resource,
-      `${id}/${channel}/${version}`,
-    );
-    // The undo, taken before a single byte of the working copy is written and allowed to fail the whole
-    // Restore: a restore is the one operation that destroys draft work on purpose, and one whose undo silently
-    // Did not happen is the defect this mechanism exists to close. Taken after the snapshot is known to exist,
-    // So a restore that was never going to land does not spend a ring-buffer slot and evict the oldest
-    // Recovery point on its way to failing
-    const undoRevisionVersion = await takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeRestore);
-    // Reconstitution, not a raw copy: a snapshot froze whatever the type declares live, and writing that back
-    // Over the working copy would silently reopen a closed survey or flip its response mode — a setting the
-    // Write boundary makes authorization decisions on, with nothing in the restore or its confirmation saying
-    // It would happen. The declaration is `ResourceLiveContentMap`, and it is the same one the public read and
-    // The version preview reconstitute through
-    const reappliedContent = omitDerivedContent(
-      ctx.resource,
-      await reapplyLiveResourceContent(ctx.resource, snapshotContent),
-    );
-    // Nothing is copied: the save below reserves the objects the restored content names, so they stay alive, and they
-    // Are this Resource's own objects, so a restore holds no second copy of any asset. A version's asset an eviction
-    // Above released is not refused: the save reserves it like any other name, so the working copy names a gone file,
-    // Which reads as a broken image rather than a failed restore.
-    // The one content-write path, so a restore is a content write like any other: the version bump and the blob
-    // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
-    // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:
-    // The subscription filters the emitting device out, and no publishable type subscribes to it client-side, so
-    // An editor left open on this resource keeps the pre-restore draft and the version it cached, and its next
-    // Autosave is rejected as stale until it reloads
-    const restoredResource = await saveResourceContent(ctx, {
-      activityType: ResourceActivityType.Restored,
-      content: reappliedContent,
-      // The bump and the write stay in one transaction so a failed write rolls the contentVersion back —
-      // A restore that did not land must never advance the version every client caches against
-      contentVersion: ctx.resource.contentVersion,
-      resource: ctx.resource,
-    });
-    return { resource: restoredResource, undoRevisionVersion };
-  }),
   // The safety net an import takes before it replaces a draft wholesale. Returns the version it wrote, or
   // Undefined when the resource has no content blob to take one from — a resource created and never saved has
   // No state worth keeping, which is an answer rather than a failure
-  saveResourceRevision: getTopicsProcedure(
-    getOwnerProcedure(undefined, resourceIdInputSchema, "id"),
-    getResourceTopics,
-  ).mutation<number | undefined>(({ ctx }) => takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeImport)),
-  toggleFavorite: getTopicsProcedure(
-    getOwnerProcedure(undefined, resourceIdInputSchema, "id"),
-    getChangedResourceTopics,
-  ).mutation<boolean>(async ({ ctx, input: { id } }) => {
-    const userId = ctx.user.id;
-    // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports
-    // Whether the star was set, so the toggle can never race with itself
-    const deletedFavorites = await ctx.db
-      .delete(resourceFavoritesInResource)
-      .where(and(eq(resourceFavoritesInResource.resourceId, id), eq(resourceFavoritesInResource.userId, userId)))
-      .returning();
-    if (deletedFavorites.length > 0) return false;
+  saveResourceRevision: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<number | undefined>(
+    ({ ctx }) => takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeImport),
+  ),
+  toggleFavorite: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<boolean>(
+    async ({ ctx, input: { id } }) => {
+      const userId = ctx.user.id;
+      // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports
+      // Whether the star was set, so the toggle can never race with itself
+      const deletedFavorites = await ctx.db
+        .delete(resourceFavoritesInResource)
+        .where(and(eq(resourceFavoritesInResource.resourceId, id), eq(resourceFavoritesInResource.userId, userId)))
+        .returning();
+      if (deletedFavorites.length > 0) return false;
 
-    await ctx.db.insert(resourceFavoritesInResource).values({ resourceId: id, userId }).onConflictDoNothing();
-    return true;
-  }),
+      await ctx.db.insert(resourceFavoritesInResource).values({ resourceId: id, userId }).onConflictDoNothing();
+      return true;
+    },
+  ),
   // Typeless: the factory's rename-and-tag body, which names no type, so one tool serves every resource
-  updateResource: getTopicsProcedure(
-    getOwnerProcedure(undefined, updateResourceInputSchema, "id").meta({
+  updateResource: getOwnerProcedure(undefined, updateResourceInputSchema, "id")
+    .meta({
       mcp: {
         description:
           "Rename a resource or replace its tags, leaving its content as it is. Tags replace the whole record, so send every tag the resource keeps. Answers the updated resource.",
         scope: McpScope.Resources,
       },
-    }),
-    getChangedResourceTopics,
-  ).mutation<ResourceInResource>(({ ctx, input: { name, tags } }) =>
-    updateResourceRow(ctx, ctx.resource, { name, tags }),
-  ),
-  updateResourceContent: getTopicsProcedure(
-    getOwnerProcedure(undefined, updateResourceContentInputSchema, "id").meta({
+    })
+    .mutation<ResourceInResource>(({ ctx, input: { name, tags } }) =>
+      updateResourceRow(ctx, ctx.resource, { name, tags }),
+    ),
+  updateResourceContent: getOwnerProcedure(undefined, updateResourceContentInputSchema, "id")
+    .meta({
       mcp: {
         description:
           "Edit a resource's content with RFC 6902 JSON Patch operations — add, remove, replace, move, copy and test — applied all or none and saved through the type's own schema. Append to an array with the - index. Pass the contentVersion you read and the edit is refused if the content changed since; left out, the edit applies to the latest content with its test operations the only guard. Answers the new contentVersion and the operations that undo the edit.",
         scope: McpScope.Resources,
       },
+    })
+    .mutation<UpdateResourceContentResult>(async ({ ctx, input: { contentVersion, operations } }) => {
+      requireAgentWritableOperations(ctx.resource.type, operations);
+      const { resource, result: inverseOperations } = await updateResourceContent(
+        ctx,
+        ctx.resource,
+        (storedContent) => {
+          const { document, inverses } = applyResourceContentPatches(ctx.resource.type, storedContent, operations);
+          return { content: document, result: inverses };
+        },
+        contentVersion,
+      );
+      return { contentVersion: resource.contentVersion, inverseOperations };
     }),
-    getChangedResourceTopics,
-  ).mutation<UpdateResourceContentResult>(async ({ ctx, input: { contentVersion, operations } }) => {
-    requireAgentWritableOperations(ctx.resource.type, operations);
-    const { resource, result: inverseOperations } = await updateResourceContent(
-      ctx,
-      ctx.resource,
-      (storedContent) => {
-        const { document, inverses } = applyResourceContentPatches(ctx.resource.type, storedContent, operations);
-        return { content: document, result: inverses };
-      },
-      contentVersion,
-    );
-    return { contentVersion: resource.contentVersion, inverseOperations };
-  }),
 });
