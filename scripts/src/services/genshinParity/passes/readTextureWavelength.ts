@@ -1,9 +1,10 @@
 import type { SceneLayout } from "genshin-engine";
 
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
-import { SURFACE_HIGH_PASS_RADIUS_PIXELS, SURFACE_LAG_CAP_SHARE } from "#src/services/genshinParity/passes/constants";
+import { SURFACE_LAG_CAP_SHARE, TEXTURE_HIGH_PASS_RADII_TEXELS } from "#src/services/genshinParity/passes/constants";
+import { chooseHeldLobe } from "#src/services/genshinParity/passes/chooseHeldLobe";
 import { computeMetresPerUv } from "#src/services/genshinParity/passes/computeMetresPerUv";
-import { computeSurfaceWavelength } from "#src/services/genshinParity/passes/computeSurfaceWavelength";
+import { computeSurfaceLag } from "#src/services/genshinParity/passes/computeSurfaceLag";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -82,10 +83,11 @@ const readFamilyTriangles = async (
   });
 };
 // The dominant wavelength of a family's normal detail read off its exported normal map, in metres, for a family whose
-// Frame resolves no lobe. The map's tilt angles are read over the texels the family's UV triangles cover, the lobe is
-// Found as the frame's is (`computeSurfaceWavelength`), and a texel spans the family's metres per UV unit over the map's
-// Width (`computeMetresPerUv`). A family's map is the one its materials reference most, since a triangle does not name the
-// Material it is drawn with. None where the family's meshes or map are not exported
+// Frame resolves no lobe. The map's tilt angles are read over the texels the family's UV triangles cover, a lobe is found
+// Through each high-pass box (`computeSurfaceLag`) and the one that holds across most boxes is kept (`chooseHeldLobe`), and
+// A texel spans the family's metres per UV unit over the map's width (`computeMetresPerUv`). A family's map is the one its
+// Materials reference most, since a triangle does not name the material it is drawn with. None where the family's meshes
+// Or map are not exported
 export const readTextureWavelength = async ({
   assets,
   checkIsFamilyMesh,
@@ -120,12 +122,11 @@ export const readTextureWavelength = async ({
     coverage[texel] ? getTiltDegrees(data, texel, channels) : Number.NaN,
   );
   const us = triangles.flatMap(({ corners }) => corners.map(([u]) => u));
-  return computeSurfaceWavelength({
-    angles,
-    // The frame's own box, in texels: a map's tilt varies at its texels, and this is the box the frame's lobe is read through
-    highPassRadius: SURFACE_HIGH_PASS_RADIUS_PIXELS,
-    maxLag: Math.floor((Math.max(...us) - Math.min(...us)) * width * SURFACE_LAG_CAP_SHARE),
-    metresPerSample: metresPerUv / width,
-    width,
-  });
+  const maxLag = Math.floor((Math.max(...us) - Math.min(...us)) * width * SURFACE_LAG_CAP_SHARE);
+  const lobe = chooseHeldLobe(
+    TEXTURE_HIGH_PASS_RADII_TEXELS.map((highPassRadius) =>
+      computeSurfaceLag({ angles, highPassRadius, maxLag, width }),
+    ),
+  );
+  return lobe === undefined ? undefined : lobe * (metresPerUv / width);
 };

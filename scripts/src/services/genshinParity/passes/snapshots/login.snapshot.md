@@ -31,12 +31,12 @@
 | Shape | login-door-session Towers outline | 0.4234 | 1 | px | yes |
 | Shape | login-door-session Towers depth | 0.0033 | 0.0100 | share | yes |
 | Shape | login-door-session Towers normal | 6.7282 | 10 | degrees | yes |
-| Shape | login-door-session Door surface detail bend | 0.0014 | 0.0198 | degrees | yes |
+| Shape | login-door-session Door surface detail bend | 0.0039 | 0.0198 | degrees | yes |
 | Shape | login-door-session Walkway surface detail bend | 0.0006 | 0.0198 | degrees | yes |
 | Shape | login-door-session Bridges surface detail bend | 0.0000 | 0.1320 | degrees | yes |
 | Shape | login-door-session Towers surface detail bend | 0.0005 | 0.0198 | degrees | yes |
 | Shape | login-door-session Door surface detail wavelength, exports | no detail lobe resolved | - |  | - |
-| Shape | login-door-session Door surface detail wavelength, ours | 0.1993 | - | m | - |
+| Shape | login-door-session Door surface detail wavelength, ours | 0.1395 | - | m | - |
 | Shape | login-door-session Bridges surface detail wavelength, exports | 21.8913 | - | m | - |
 | Shape | login-door-session Bridges surface detail wavelength, ours | 23.2595 | - | m | - |
 | Shape | login-door-session Towers surface detail wavelength, exports | 2.5648 | - | m | - |

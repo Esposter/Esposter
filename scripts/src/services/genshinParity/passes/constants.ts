@@ -32,6 +32,10 @@ export const SURFACE_HIGH_PASS_RADIUS_PIXELS = 16;
 // Falls inside it, and is the bridges' detail wavelength (design.md, Decisions). The cap is set before the bridges were
 // Read, and is not tuned past that reading
 export const SURFACE_LAG_CAP_SHARE = 1 / 8;
+// The high-pass boxes a normal map's wavelength is read through, in texels: its lobe shifts with the box, and the one that
+// Holds across most of these boxes is the map's (`chooseHeldLobe`). On the door's map 13 texels hold at boxes of 4, 8 and
+// 32, and 39, 96 and 123 at 16, 64 and 128 each
+export const TEXTURE_HIGH_PASS_RADII_TEXELS: readonly number[] = [4, 8, 16, 32, 64, 128];
 // The gate a landmark's root is held to, the scene's where it stands against its export's, both in metres: a fifth of
 // The 0.97 metres a hand offset once stood the statue under its export's root, which read as most of its outline
 export const LANDMARK_ROOT_GATE_METRES = 0.05;
