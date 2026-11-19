@@ -7,6 +7,7 @@ import { createMockAuthSession, createMockCaller, createMockContext } from "#ser
 import { callRouter } from "#server/trpc/routers/call/index";
 import { callSessionsInMessage, DatabaseEntityType } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The call object answers for the call's state, so the router's guards are tested against what it reports
@@ -64,11 +65,13 @@ describe("callRouter", () => {
     const creatorAuthSession = await createMockAuthSession(mockContext.db);
     const creatorCaller = await createMockCaller(callRouter, creatorAuthSession);
     const { callSessionId } = await creatorCaller.createCall();
+    const participantId = v7();
     const joinCall = vi.fn<(input: unknown) => Promise<unknown>>(() =>
       Promise.resolve({
         authToken: "auth-token",
         isFirstJoiner: true,
         meetingId: "meeting-id",
+        participantId,
         participantMap: new Map(),
       }),
     );
@@ -79,13 +82,15 @@ describe("callRouter", () => {
     expect(joinCall).toHaveBeenCalledExactlyOnceWith({
       callSessionId,
       isAdmissionRequired: false,
-      participant: createParticipant(creatorAuthSession.session, creatorAuthSession.user),
+      participant: createParticipant(creatorAuthSession.user),
+      sessionId: creatorAuthSession.session.id,
     });
     expect(result).toStrictEqual({
       authToken: "auth-token",
       callSessionId,
       isDoorkeeper: true,
       meetingId: "meeting-id",
+      participantId,
       participantMap: new Map(),
     });
   });

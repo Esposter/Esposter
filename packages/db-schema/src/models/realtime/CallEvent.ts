@@ -1,27 +1,21 @@
 import { callParticipantSchema } from "#src/models/message/call/CallParticipant";
 import { RealtimeEventType } from "#src/models/realtime/RealtimeEventType";
 import { callSessionIdSchema } from "#src/models/shared/CallSessionId";
-import { sessionIdSchema } from "#src/models/shared/SessionId";
 import { CALL_AUTH_TOKEN_MAX_LENGTH } from "#src/services/message/constants";
 import { z } from "zod";
 
-// The events a call's socket carries, one frame each. The participant's id is the session it joined under
+// The events a call's socket carries, one frame each. No frame names an auth session: a connection is named by its
+// Participant or knocker id alone
 const callSessionId = callSessionIdSchema.shape.callSessionId;
 const participantId = callParticipantSchema.shape.id;
 
 const joinCallPayloadSchema = z.union([
-  z.object({
-    callSessionId,
-    participant: callParticipantSchema,
-    sessionId: sessionIdSchema.shape.sessionId,
-    type: z.literal("join"),
-  }),
+  z.object({ callSessionId, participant: callParticipantSchema, type: z.literal("join") }),
   // A revoke that narrows a connection replaces it, and hands only the connection's own user the token to rejoin with
   z.object({
     authToken: z.string().min(1).max(CALL_AUTH_TOKEN_MAX_LENGTH),
     callSessionId,
     canPublishMicrophone: z.boolean(),
-    sessionId: sessionIdSchema.shape.sessionId,
     type: z.literal("rejoin"),
   }),
 ]);
@@ -47,11 +41,11 @@ const knockCallEventSchema = z.object({
   type: z.literal(RealtimeEventType.KnockCall),
 });
 const knockerAdmittedEventSchema = z.object({
-  data: z.object({ callSessionId, knockerSessionId: sessionIdSchema.shape.sessionId }),
+  data: z.object({ callSessionId }),
   type: z.literal(RealtimeEventType.KnockerAdmitted),
 });
 const knockerDismissedEventSchema = z.object({
-  data: z.object({ callSessionId, knockerSessionId: sessionIdSchema.shape.sessionId }),
+  data: z.object({ callSessionId }),
   type: z.literal(RealtimeEventType.KnockerDismissed),
 });
 

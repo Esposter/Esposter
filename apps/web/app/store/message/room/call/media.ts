@@ -22,12 +22,13 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   const activeScreenShareParticipantId = computed(
     () =>
       pinnedParticipantId.value ||
-      (localScreenShareStream.value ? participantStore.sessionId : undefined) ||
+      (localScreenShareStream.value ? participantStore.participantId : undefined) ||
       screenSharingParticipantIds.value[0],
   );
   const activeScreenShareStream = computed(() => {
     if (!activeScreenShareParticipantId.value) return undefined;
-    else if (activeScreenShareParticipantId.value === participantStore.sessionId) return localScreenShareStream.value;
+    else if (activeScreenShareParticipantId.value === participantStore.participantId)
+      return localScreenShareStream.value;
     else return remoteScreenShareStreams.value.get(activeScreenShareParticipantId.value);
   });
   // One presenter list, maintained the same way for the local share and every remote one — and the pin follows,
@@ -41,9 +42,9 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   };
   const setLocalScreenShareStream = (stream: MediaStream | undefined) => {
     localScreenShareStream.value = stream;
-    if (!participantStore.sessionId) return;
+    if (!participantStore.participantId) return;
 
-    setParticipantScreenSharing(participantStore.sessionId, Boolean(stream));
+    setParticipantScreenSharing(participantStore.participantId, Boolean(stream));
   };
   const setParticipantVolumePercentage = (participantId: string, volumePercentage: number) => {
     participantVolumePercentageMap.value.set(participantId, volumePercentage);

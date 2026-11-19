@@ -9,5 +9,7 @@ export interface JoinCallResult {
   isDoorkeeper: boolean;
   // The RealtimeKit meeting this call's participants join, empty when RealtimeKit is not configured
   meetingId: string;
+  // The id this participant is named by in the call, which is how its client tells its own participant from the others
+  participantId: string;
   participantMap: Map<string, CallParticipant>;
 }

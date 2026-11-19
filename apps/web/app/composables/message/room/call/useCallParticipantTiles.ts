@@ -1,6 +1,5 @@
 import type { CallParticipantTileProps } from "#src/models/message/room/call/CallParticipantTileProps";
 
-import { authClient } from "#src/services/auth/authClient";
 import { getCallParticipantMap } from "#src/services/message/room/call/getCallParticipantMap";
 import { useCallStore } from "#src/store/message/room/call/index";
 import { useMediaStore } from "#src/store/message/room/call/media";
@@ -8,8 +7,6 @@ import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { useUserStore } from "#src/store/message/user/index";
 
 export const useCallParticipantTiles = () => {
-  const session = authClient.useSession();
-  const sessionId = computed(() => session.value.data?.session.id);
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
   const userStore = useUserStore();
@@ -23,7 +20,7 @@ export const useCallParticipantTiles = () => {
     screenSharingParticipantIds,
   } = storeToRefs(mediaStore);
   const participantStore = useParticipantStore();
-  const { callSessionParticipantsMap, speakingIds } = storeToRefs(participantStore);
+  const { callSessionParticipantsMap, participantId, speakingIds } = storeToRefs(participantStore);
   // A room call names each participant as the room knows them; a standalone call has no room, so the account's own
   // Name is the one there is
   const callParticipantMap = computed(() =>
@@ -37,7 +34,7 @@ export const useCallParticipantTiles = () => {
     const participant = activeScreenShareParticipantId.value
       ? callParticipantMap.value.get(activeScreenShareParticipantId.value)
       : undefined;
-    if (participant) return participant.id === sessionId.value ? `${participant.name} (You)` : participant.name;
+    if (participant) return participant.id === participantId.value ? `${participant.name} (You)` : participant.name;
     else return "Someone";
   });
   // Built once per render rather than per tile: the stage renders the same participants in two lists, and each
@@ -47,7 +44,7 @@ export const useCallParticipantTiles = () => {
     const speakingIdSet = new Set(speakingIds.value);
     return new Map<string, CallParticipantTileProps>(
       Array.from(callParticipantMap.value.values(), (participant) => {
-        const isSelf = participant.id === sessionId.value;
+        const isSelf = participant.id === participantId.value;
         return [
           participant.id,
           {

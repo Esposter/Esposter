@@ -6,7 +6,8 @@ import { requestRealtimeKit } from "#src/services/realtimeKit/requestRealtimeKit
 import { z } from "zod";
 
 // Adds a connection to the meeting with the preset that matches what it may publish, and returns the token.
-// The client joins with it. The connection is identified by its session id, which is what the webhook reports back
+// The client joins with it. The connection is identified by its participant id, the custom id the webhook reports back.
+// That id names it to the call's members, which RealtimeKit shows them, so it is never the auth session it joined under
 export const addRealtimeKitParticipant = async (
   credentials: RealtimeKitCredentials,
   meetingId: string,

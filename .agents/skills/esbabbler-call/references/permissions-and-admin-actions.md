@@ -17,7 +17,8 @@ Admin action hooks in `useCallStore` receive `roomId`. Compare it against `callR
 ```ts
 AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
   if (callRoomId.value !== roomId) return;
-  if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, true);
+  if (participantStore.participantId)
+    setParticipantMuted(activeCallSessionId.value, participantStore.participantId, true);
   await setMicrophone(false);
   mediaStore.isForceMuted = true;
 });

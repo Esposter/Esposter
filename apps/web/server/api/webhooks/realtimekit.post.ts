@@ -1,7 +1,6 @@
 import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { db } from "#server/db/index";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
-import { createParticipant } from "#server/services/message/call/createParticipant";
 import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
 import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAddressRateLimit";
 import { verifyRealtimeKitWebhook } from "#server/services/realtimeKit/verifyRealtimeKitWebhook";
@@ -41,7 +40,8 @@ export default defineEventHandler(async (event) => {
         columns: { id: true },
         where: { meetingId: { eq: webhookEvent.meeting.id } },
       });
-      const sessionId = webhookEvent.participant.customParticipantId;
+      // RealtimeKit reports the participant id a connection was added with, which the call holds it by
+      const participantId = webhookEvent.participant.customParticipantId;
       if (!callSession) return { ok: true };
       const callSessionId = callSession.id;
       const callObject = useCallObject(callSessionId);
@@ -50,26 +50,17 @@ export default defineEventHandler(async (event) => {
         const leave = await callObject.participantLeft({
           callSessionId,
           leftAt: webhookEvent.participant.leftAt ?? new Date(),
-          sessionId,
+          participantId,
         });
         if (leave) await writeCallSummary(db, callSessionId, leave);
         return { ok: true };
       }
 
-      const session = await db.query.sessionsInAuth.findFirst({
-        where: { id: { eq: sessionId } },
-        with: { usersInAuth: true },
-      });
-      if (!session) return { ok: true };
-      else if (!(await checkIsCallConnectionAdmitted(db, callSessionId, session.userId))) {
-        await callObject.removeConnection({ sessionId });
-        return { ok: true };
-      }
-
-      await callObject.participantJoined({
-        callSessionId,
-        participant: createParticipant(session, session.usersInAuth),
-      });
+      // A connection the call holds for a user who is still admitted stays. One it does not hold, or whose user is no
+      // Longer admitted, is dropped at RealtimeKit
+      const userId = await callObject.readParticipantUserId({ participantId });
+      if (!userId || !(await checkIsCallConnectionAdmitted(db, callSessionId, userId)))
+        await callObject.removeConnection({ participantId });
       return { ok: true };
     },
     (error) => {

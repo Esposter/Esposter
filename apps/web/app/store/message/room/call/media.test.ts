@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { getMockSession } from "#server/trpc/context.test";
 import { useMediaStore } from "#src/store/message/room/call/media";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useMediaStore, () => {
@@ -8,7 +8,7 @@ describe(useMediaStore, () => {
     expect.hasAssertions();
 
     const stream = new MediaStream();
-    const participantId = getMockSession().session.id;
+    const participantId = v7();
     const mediaStore = useMediaStore();
     const { setRemoteScreenShareStream } = mediaStore;
     const { hasScreenShare, remoteScreenShareStreams, screenSharingParticipantIds } = storeToRefs(mediaStore);
@@ -23,7 +23,7 @@ describe(useMediaStore, () => {
     expect.hasAssertions();
 
     const stream = new MediaStream();
-    const participantId = getMockSession().session.id;
+    const participantId = v7();
     const mediaStore = useMediaStore();
     const { setRemoteScreenShareStream } = mediaStore;
     const { hasScreenShare, pinnedParticipantId, remoteScreenShareStreams, screenSharingParticipantIds } =
@@ -41,7 +41,7 @@ describe(useMediaStore, () => {
   test("setParticipantVolumePercentage stores the participant volume percentage", () => {
     expect.hasAssertions();
 
-    const participantId = getMockSession().session.id;
+    const participantId = v7();
     const mediaStore = useMediaStore();
     const { setParticipantVolumePercentage } = mediaStore;
     const { participantVolumePercentageMap } = storeToRefs(mediaStore);
@@ -53,7 +53,7 @@ describe(useMediaStore, () => {
   test("deleteParticipantVolumePercentage removes the participant volume percentage", () => {
     expect.hasAssertions();
 
-    const participantId = getMockSession().session.id;
+    const participantId = v7();
     const mediaStore = useMediaStore();
     const { deleteParticipantVolumePercentage, setParticipantVolumePercentage } = mediaStore;
     const { participantVolumePercentageMap } = storeToRefs(mediaStore);
@@ -66,7 +66,7 @@ describe(useMediaStore, () => {
   test("resetCallMedia clears the participant volume percentages", () => {
     expect.hasAssertions();
 
-    const participantId = getMockSession().session.id;
+    const participantId = v7();
     const mediaStore = useMediaStore();
     const { resetCallMedia, setParticipantVolumePercentage } = mediaStore;
     const { participantVolumePercentageMap } = storeToRefs(mediaStore);

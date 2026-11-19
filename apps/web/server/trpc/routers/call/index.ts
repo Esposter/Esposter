@@ -52,7 +52,8 @@ const baseCallRouter = router({
       const join = await useCallObject(id).joinCall({
         callSessionId: id,
         isAdmissionRequired: !isCreator,
-        participant: createParticipant(session, user),
+        participant: createParticipant(user),
+        sessionId: session.id,
       });
       if (!join) throw getForbiddenError("Must be admitted to join this call");
       // No D1 row names who was admitted to a call without a room, so the person's object keeps it for a revoked session
@@ -63,6 +64,7 @@ const baseCallRouter = router({
         callSessionId: id,
         isDoorkeeper: isCreator,
         meetingId: join.meetingId,
+        participantId: join.participantId,
         participantMap: join.participantMap,
       };
     }),
@@ -80,7 +82,8 @@ const baseCallRouter = router({
       const join = await useCallObject(callSessionId).joinCall({
         callSessionId,
         isAdmissionRequired: false,
-        participant: createParticipant(session, user),
+        participant: createParticipant(user),
+        sessionId: session.id,
       });
       if (!join) throw getForbiddenError("You are timed out of this room");
       // A call's first join announces it in the thread the call is in, or the room, as a line with no duration yet
@@ -95,6 +98,7 @@ const baseCallRouter = router({
         callSessionId,
         isDoorkeeper: false,
         meetingId: join.meetingId,
+        participantId: join.participantId,
         participantMap: join.participantMap,
       };
     }),
@@ -143,10 +147,12 @@ const baseCallRouter = router({
   setHandRaised: standardAuthedProcedure
     .input(setHandRaisedInputSchema)
     .meta({ staticReason: "The call object pushes the hand change to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input: { callSessionId, isHandRaised, participantId: targetSessionId } }) => {
+    .mutation<void>(async ({ ctx, input: { callSessionId, isHandRaised, participantId } }) => {
       const callSession = await requireJoinedCallSession(ctx, callSessionId);
-      const sessionId = ctx.session.id;
-      if (targetSessionId !== sessionId) {
+      const { participantId: ownParticipantId } = await useCallObject(callSessionId).readAccess({
+        sessionId: ctx.session.id,
+      });
+      if (participantId !== ownParticipantId) {
         if (isHandRaised) throw getForbiddenError("Cannot raise another hand");
         else if (!callSession.roomId) throw getForbiddenError("Only room call moderators can lower another hand");
 
@@ -162,7 +168,7 @@ const baseCallRouter = router({
       const isUpdated = await useCallObject(callSessionId).setHandRaised({
         callSessionId,
         isHandRaised,
-        sessionId: targetSessionId,
+        participantId,
       });
       if (!isUpdated) throw getForbiddenError("Must join call first");
     }),

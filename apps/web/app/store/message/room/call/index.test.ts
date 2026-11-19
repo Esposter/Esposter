@@ -76,34 +76,19 @@ describe(useCallStore, () => {
   test("ignores a force mute from a room whose call the user is not in", async () => {
     expect.hasAssertions();
 
-    const { session, user } = getMockSession();
+    const participantId = v7();
     const participantStore = useParticipantStore();
-    const { setParticipantMap } = participantStore;
+    const { setParticipantId, setParticipantMap } = participantStore;
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
     const callStore = useCallStore();
     const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
     activeCallSessionId.value = callSessionId;
     callRoomId.value = roomId;
-    setParticipantMap(
-      callSessionId,
-      new Map([
-        [
-          session.id,
-          {
-            id: session.id,
-            image: user.image ?? "",
-            isCameraEnabled: false,
-            isHandRaised: false,
-            isMuted: false,
-            name: user.name,
-            userId: user.id,
-          },
-        ],
-      ]),
-    );
+    setParticipantId(participantId);
+    setParticipantMap(callSessionId, new Map([[participantId, createParticipant(participantId)]]));
     await AdminActionHookMap[AdminActionType.ForceMute].run(v7());
 
-    expect(callSessionParticipantsMap.value.get(callSessionId)?.get(session.id)?.isMuted).toBe(false);
+    expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participantId)?.isMuted).toBe(false);
   });
 
   // A thread call carries the room it belongs to, so a route keyed on the room alone lands in the room with the
@@ -191,17 +176,18 @@ describe(useCallStore, () => {
   // Meantime were lost and the leaver stayed listed
   test.each<{
     join: (callStore: ReturnType<typeof useCallStore>) => Promise<unknown>;
-    registerJoin: (participantMap: Map<string, CallParticipant>) => void;
+    registerJoin: (participantId: string, participantMap: Map<string, CallParticipant>) => void;
     title: string;
   }>([
     {
       join: (callStore) => callStore.joinCall(callSessionId),
-      registerJoin: (participantMap) => {
+      registerJoin: (participantId, participantMap) => {
         trpcMsw.callSession.joinCall.mutation(() => ({
           authToken: "",
           callSessionId,
           isDoorkeeper: false,
           meetingId: "",
+          participantId,
           participantMap,
         }));
       },
@@ -209,12 +195,13 @@ describe(useCallStore, () => {
     },
     {
       join: (callStore) => callStore.joinCallByRoomId(roomId),
-      registerJoin: (participantMap) => {
+      registerJoin: (participantId, participantMap) => {
         trpcMsw.callSession.joinCallByRoomId.mutation(() => ({
           authToken: "",
           callSessionId,
           isDoorkeeper: false,
           meetingId: "",
+          participantId,
           participantMap,
         }));
       },
@@ -223,13 +210,14 @@ describe(useCallStore, () => {
   ])("keeps the participant events a join's connect delivers, by $title", async ({ join, registerJoin }) => {
     expect.hasAssertions();
 
-    const { session } = getMockSession();
+    const selfId = v7();
     const leavingId = v7();
     const joiningId = v7();
     registerJoin(
+      selfId,
       new Map([
         [leavingId, createParticipant(leavingId)],
-        [session.id, createParticipant(session.id)],
+        [selfId, createParticipant(selfId)],
       ]),
     );
     const participantStore = useParticipantStore();
@@ -250,10 +238,29 @@ describe(useCallStore, () => {
     connectEnded.resolve();
     await joining;
 
-    expect([...(callSessionParticipantsMap.value.get(callSessionId)?.keys() ?? [])]).toStrictEqual([
-      session.id,
-      joiningId,
-    ]);
+    expect([...(callSessionParticipantsMap.value.get(callSessionId)?.keys() ?? [])]).toStrictEqual([selfId, joiningId]);
+  });
+
+  // The join names the caller's own participant, which is the one every self write and the self tile are keyed by
+  test("names the caller's own participant by the id the join gave it", async () => {
+    expect.hasAssertions();
+
+    const selfId = v7();
+    trpcMsw.callSession.joinCall.mutation(() => ({
+      authToken: "",
+      callSessionId,
+      isDoorkeeper: false,
+      meetingId: "",
+      participantId: selfId,
+      participantMap: new Map([[selfId, createParticipant(selfId)]]),
+    }));
+    const participantStore = useParticipantStore();
+    const realtimeStore = useRealtimeStore();
+    vi.spyOn(realtimeStore, "connect").mockResolvedValue();
+    const callStore = useCallStore();
+    await callStore.joinCall(callSessionId);
+
+    expect(participantStore.participantId).toBe(selfId);
   });
 
   test("routes to the call's own page when the call belongs to no room", () => {

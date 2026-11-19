@@ -1,13 +1,11 @@
 import type { CallParticipant } from "@esposter/db-schema";
 
-import { authClient } from "#src/services/auth/authClient";
-
 export const useParticipantStore = defineStore("message/room/call/participant", () => {
-  const session = authClient.useSession();
   const callSessionParticipantsMap = ref(new Map<string, Map<string, CallParticipant>>());
   const joinNoticeParticipant = ref<CallParticipant>();
+  // The id the joined call names this client's own connection by, the one source of it: empty while not joined
+  const participantId = ref("");
   const speakingIds = ref<string[]>([]);
-  const sessionId = computed(() => session.value.data?.session.id);
   const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<CallParticipant, string>();
   const createCallParticipant = (callSessionId: string, participant: CallParticipant) => {
     recordReadingPush(callSessionId, { item: participant, type: "set" });
@@ -16,7 +14,7 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
     if (existingParticipantMap) existingParticipantMap.set(participant.id, participant);
     else callSessionParticipantsMap.value.set(callSessionId, new Map([[participant.id, participant]]));
 
-    if (participant.id !== sessionId.value) joinNoticeParticipant.value = participant;
+    if (participant.id !== participantId.value) joinNoticeParticipant.value = participant;
   };
   const deleteCallParticipant = (callSessionId: string, id: string) => {
     recordReadingPush(callSessionId, { checkIsRemoved: (participant) => participant.id === id, type: "remove" });
@@ -67,6 +65,9 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
   const clearJoinNotice = () => {
     joinNoticeParticipant.value = undefined;
   };
+  const setParticipantId = (id: string) => {
+    participantId.value = id;
+  };
 
   return {
     callSessionParticipantsMap,
@@ -76,10 +77,11 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
     deleteCallParticipant,
     deleteSpeaker,
     joinNoticeParticipant,
+    participantId,
     readCallParticipants,
-    sessionId,
     setParticipantCameraEnabled,
     setParticipantHandRaised,
+    setParticipantId,
     setParticipantMap,
     setParticipantMuted,
     speakingIds,

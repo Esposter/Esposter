@@ -8,5 +8,7 @@ export interface CallJoin {
   isFirstJoiner: boolean;
   // Empty when RealtimeKit is not configured
   meetingId: string;
+  // The id the joining connection is named by in the call, so its client knows which participant is itself
+  participantId: string;
   participantMap: Map<string, CallParticipant>;
 }

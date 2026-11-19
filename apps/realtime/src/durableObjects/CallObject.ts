@@ -7,8 +7,10 @@ import type {
   CallLeave,
   CallObjectRpc,
   CallParticipant,
+  CallParticipantProfile,
   PublishSource,
 } from "@esposter/db-schema";
+import type { SQL } from "drizzle-orm";
 
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import { HttpMethod } from "#src/models/realtimeKit/HttpMethod";
@@ -41,13 +43,30 @@ import callMigrations from "@esposter/db-schema/objects/call/migrations/migratio
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 // The one row the call keeps about itself
 const CALL_STATE_ID = 1;
 
+// A participant as a member is shown it: its columns, without the session it joined under
+const participantColumns = {
+  id: participants.id,
+  image: participants.image,
+  isCameraEnabled: participants.isCameraEnabled,
+  isHandRaised: participants.isHandRaised,
+  isMuted: participants.isMuted,
+  name: participants.name,
+  userId: participants.userId,
+};
+
+// A joined connection as the server knows it, its session included
+type Connection = Pick<typeof participants.$inferSelect, "id" | "sessionId" | "userId">;
+
 // One Call object per call session. It holds who is in the call and who is knocking.
 // It also holds who has been let in and each joined connection's RealtimeKit participant, all in its own SQLite.
+// A connection is named to the members by its participant or knocker id, a fresh one per join or knock, and is held
+// By its auth session, which never leaves this object.
 // The web Worker authorises a call operation against D1 and then calls the method for it here.
 // Each method broadcasts the call's events to the sockets they concern
 export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> implements CallObjectRpc {
@@ -56,18 +75,19 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   });
   protected readonly topicKind = TopicKind.Call;
   readonly #callSessionId = getObjectName(this.ctx, "CallObject");
-  // The preset update in flight for each connection, so the next one starts from what the last one wrote
-  readonly #connectionUpdates = new Map<string, Promise<void>>();
   readonly #core = createObjectHandle(drizzle(this.env.CORE, { relations }));
   // The meeting being made, shared by every join that arrives while the first one is still creating it
   #meetingCreation?: Promise<string> | undefined;
+  // The work in flight for each key, a session's join or a connection's preset update, so the next for that key starts after it
+  readonly #serialized = new Map<string, Promise<unknown>>();
 
-  admitKnocker({ callSessionId, knockerSessionId }: { callSessionId: string; knockerSessionId: string }): boolean {
-    if (!this.#removeKnocker(knockerSessionId)) return false;
-    this.db.insert(admittedSessions).values({ sessionId: knockerSessionId }).onConflictDoNothing().run();
+  admitKnocker({ callSessionId, knockerId }: { callSessionId: string; knockerId: string }): boolean {
+    const knocker = this.#removeKnocker(knockerId);
+    if (!knocker) return false;
+    this.db.insert(admittedSessions).values({ sessionId: knocker.sessionId }).onConflictDoNothing().run();
     this.broadcast(
-      { data: { callSessionId, knockerSessionId }, type: "knockerAdmitted" },
-      { tag: getSessionSocketTag(knockerSessionId) },
+      { data: { callSessionId }, type: "knockerAdmitted" },
+      { tag: getSessionSocketTag(knocker.sessionId) },
     );
     return true;
   }
@@ -77,14 +97,18 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   // Leave is handed back, so the departure that ends a room call writes its summary as every other departure does
   async closeSession(sessionId: string): Promise<CallLeave | null> {
     this.closeRevokedSession(sessionId);
-    const leave = this.#removeParticipant(this.#callSessionId, sessionId);
-    if (leave) await this.removeConnection({ sessionId });
+    const participant = this.#readParticipantBySession(sessionId);
+    if (!participant) return null;
+
+    const leave = this.#removeParticipant(this.#callSessionId, participant);
+    await this.removeConnection({ participantId: participant.id });
     return leave;
   }
 
-  dismissKnocker({ callSessionId, knockerSessionId }: { callSessionId: string; knockerSessionId: string }): boolean {
-    if (!this.#removeKnocker(knockerSessionId)) return false;
-    this.#broadcastKnockerDismissed(callSessionId, knockerSessionId);
+  dismissKnocker({ callSessionId, knockerId }: { callSessionId: string; knockerId: string }): boolean {
+    const knocker = this.#removeKnocker(knockerId);
+    if (!knocker) return false;
+    this.#broadcastKnockerDismissed(callSessionId, knocker.sessionId);
     return true;
   }
 
@@ -92,12 +116,9 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   // Each connection is then dropped at RealtimeKit, best-effort.
   // A failed kick is logged rather than failing the eviction
   async evictUser({ callSessionId, userId }: { callSessionId: string; userId: string }): Promise<CallLeave[]> {
-    const sessionIds = this.#readSessionIdsOf(userId);
-    const leaves = sessionIds.flatMap((sessionId) => {
-      const leave = this.#removeParticipant(callSessionId, sessionId);
-      return leave ? [leave] : [];
-    });
-    await Promise.all(sessionIds.map((sessionId) => this.removeConnection({ sessionId })));
+    const evicted = this.#readConnectionsOf(userId);
+    const leaves = evicted.map((connection) => this.#removeParticipant(callSessionId, connection));
+    await Promise.all(evicted.map(({ id }) => this.removeConnection({ participantId: id })));
     return leaves;
   }
 
@@ -113,81 +134,100 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     callSessionId,
     isAdmissionRequired,
     participant,
+    sessionId,
   }: {
     callSessionId: string;
     isAdmissionRequired: boolean;
-    participant: CallParticipant;
+    participant: CallParticipantProfile;
+    sessionId: string;
   }): Promise<CallJoin | null> {
-    return this.#joinCallAs(callSessionId, participant, isAdmissionRequired);
+    // A session's joins run one at a time, so a join that overlaps another finds the participant the first one recorded
+    return this.#serialize(sessionId, () =>
+      this.#joinCallAs(callSessionId, sessionId, participant, isAdmissionRequired),
+    );
   }
 
   knockCall({
     callSessionId,
     doorkeeperUserId,
     knocker,
+    sessionId,
   }: {
     callSessionId: string;
     doorkeeperUserId: string;
-    knocker: CallParticipant;
+    knocker: CallParticipantProfile;
+    sessionId: string;
   }): void {
-    this.db.insert(knockers).values(knocker).onConflictDoUpdate({ set: knocker, target: knockers.id }).run();
+    // A session knocks under one id however often it knocks, so the doorkeeper's lobby holds it once
+    const id = this.#readKnockerBySession(sessionId)?.id ?? v7();
+    this.db
+      .insert(knockers)
+      .values({ ...knocker, id, sessionId })
+      .onConflictDoUpdate({ set: { ...knocker, sessionId }, target: knockers.id })
+      .run();
     // Only the doorkeeper hears of a knock: the knocker hears of its own admission or dismissal on its own socket
     this.broadcast(
-      { data: { callSessionId, knocker }, type: "knockCall" },
+      { data: { callSessionId, knocker: { ...knocker, id } }, type: "knockCall" },
       { tag: getUserSocketTag(doorkeeperUserId) },
     );
   }
 
   leaveCall({ callSessionId, sessionId }: { callSessionId: string; sessionId: string }): CallLeave | null {
-    return this.#removeParticipant(callSessionId, sessionId);
-  }
-
-  participantJoined({ callSessionId, participant }: { callSessionId: string; participant: CallParticipant }): void {
-    if (!this.#readParticipant(participant.id)) this.#addParticipant(callSessionId, participant);
+    const participant = this.#readParticipantBySession(sessionId);
+    return participant ? this.#removeParticipant(callSessionId, participant) : null;
   }
 
   // A connection a revoke is replacing is kicked by that revoke, and the kick is not its user leaving.
-  // The replacement is added under the same session, so the participant stays in the call. The kick's webhook can land
+  // The replacement is added under the same participant, so the participant stays in the call. The kick's webhook can land
   // After the replacement is added, so a leave from before the current connection was added is the kicked one's too
   participantLeft({
     callSessionId,
     leftAt,
-    sessionId,
+    participantId,
   }: {
     callSessionId: string;
     leftAt: Date;
-    sessionId: string;
+    participantId: string;
   }): CallLeave | null {
-    const realtimeKitParticipant = this.#readRealtimeKitParticipant(sessionId);
+    const realtimeKitParticipant = this.#readRealtimeKitParticipant(participantId);
     if (realtimeKitParticipant?.isRejoining || (realtimeKitParticipant && leftAt < realtimeKitParticipant.connectedAt))
       return null;
-    return this.#removeParticipant(callSessionId, sessionId);
+    const participant = this.#readParticipant(participantId);
+    return participant ? this.#removeParticipant(callSessionId, participant) : null;
   }
 
   readAccess({ sessionId }: { sessionId: string }): CallAccess {
+    const participant = this.#readParticipantBySession(sessionId);
     return {
       isAdmitted: Boolean(
         this.db.select().from(admittedSessions).where(eq(admittedSessions.sessionId, sessionId)).get(),
       ),
-      isJoined: this.#readParticipant(sessionId) !== undefined,
-      isKnocking: this.#readKnocker(sessionId) !== undefined,
+      isJoined: participant !== undefined,
+      isKnocking: this.#readKnockerBySession(sessionId) !== undefined,
+      participantId: participant?.id ?? "",
     };
   }
 
   readParticipantMap(): Map<string, CallParticipant> {
     return new Map(
       this.db
-        .select()
+        .select(participantColumns)
         .from(participants)
         .all()
         .map((participant) => [participant.id, participant]),
     );
   }
 
+  // The user a participant is a connection of, read for the webhook that checks its admission. Empty when the call holds no
+  // Such participant, which is a connection the call no longer admits
+  readParticipantUserId({ participantId }: { participantId: string }): string {
+    return this.#readParticipant(participantId)?.userId ?? "";
+  }
+
   // Drops one connection at RealtimeKit, for a connection the call does not admit
-  async removeConnection({ sessionId }: { sessionId: string }): Promise<void> {
+  async removeConnection({ participantId }: { participantId: string }): Promise<void> {
     const { meetingId } = this.#readCallState();
-    await getResultAsync(() => removeRealtimeKitParticipant(meetingId, sessionId)).match(noop, console.error);
+    await getResultAsync(() => removeRealtimeKitParticipant(meetingId, participantId)).match(noop, console.error);
   }
 
   setCameraEnabled({
@@ -199,27 +239,25 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     isCameraEnabled: boolean;
     sessionId: string;
   }): boolean {
-    return this.#updateFlag(
-      sessionId,
-      { isCameraEnabled },
-      { data: { callSessionId, id: sessionId, isCameraEnabled }, type: "videoChanged" },
-    );
+    return this.#updateFlag(eq(participants.sessionId, sessionId), { isCameraEnabled }, (id) => ({
+      data: { callSessionId, id, isCameraEnabled },
+      type: "videoChanged",
+    }));
   }
 
   setHandRaised({
     callSessionId,
     isHandRaised,
-    sessionId,
+    participantId,
   }: {
     callSessionId: string;
     isHandRaised: boolean;
-    sessionId: string;
+    participantId: string;
   }): boolean {
-    return this.#updateFlag(
-      sessionId,
-      { isHandRaised },
-      { data: { callSessionId, id: sessionId, isHandRaised }, type: "handRaisedChanged" },
-    );
+    return this.#updateFlag(eq(participants.id, participantId), { isHandRaised }, (id) => ({
+      data: { callSessionId, id, isHandRaised },
+      type: "handRaisedChanged",
+    }));
   }
 
   setMuted({
@@ -231,11 +269,10 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     isMuted: boolean;
     sessionId: string;
   }): boolean {
-    return this.#updateFlag(
-      sessionId,
-      { isMuted },
-      { data: { callSessionId, id: sessionId, isMuted }, type: "muteChanged" },
-    );
+    return this.#updateFlag(eq(participants.sessionId, sessionId), { isMuted }, (id) => ({
+      data: { callSessionId, id, isMuted },
+      type: "muteChanged",
+    }));
   }
 
   // Takes publishing away from, or gives it back to, every connection a user holds in the call.
@@ -265,9 +302,17 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     if (!credentials || !meetingId) return;
 
     await Promise.all(
-      this.#readSessionIdsOf(userId).map((sessionId) =>
-        this.#serializeConnection(sessionId, () =>
-          this.#updateConnection({ callSessionId, credentials, isGranted, meetingId, sessionId, sources }),
+      this.#readConnectionsOf(userId).map(({ id, sessionId }) =>
+        this.#serialize(id, () =>
+          this.#updateConnection({
+            callSessionId,
+            credentials,
+            isGranted,
+            meetingId,
+            participantId: id,
+            sessionId,
+            sources,
+          }),
         ),
       ),
     );
@@ -275,6 +320,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
 
   #addJoinedParticipant(
     callSessionId: string,
+    sessionId: string,
     participant: CallParticipant,
     {
       authToken,
@@ -282,7 +328,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       realtimeKit,
     }: { authToken: string; meetingId: string; realtimeKit?: { id: string; publishSources: PublishSource[] } },
   ): CallJoin {
-    const isFirstJoiner = this.#addParticipant(callSessionId, participant);
+    const isFirstJoiner = this.#addParticipant(callSessionId, sessionId, participant);
     if (realtimeKit) {
       const realtimeKitRow = {
         connectedAt: new Date(),
@@ -292,39 +338,39 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       };
       this.db
         .insert(realtimeKitParticipants)
-        .values({ ...realtimeKitRow, sessionId: participant.id })
-        .onConflictDoUpdate({ set: realtimeKitRow, target: realtimeKitParticipants.sessionId })
+        .values({ ...realtimeKitRow, participantId: participant.id })
+        .onConflictDoUpdate({ set: realtimeKitRow, target: realtimeKitParticipants.participantId })
         .run();
     }
-    return { authToken, isFirstJoiner, meetingId, participantMap: this.readParticipantMap() };
+    return {
+      authToken,
+      isFirstJoiner,
+      meetingId,
+      participantId: participant.id,
+      participantMap: this.readParticipantMap(),
+    };
   }
 
-  // Adds a connection as a participant and announces it, unless it is already one. Returns whether it started the call
-  #addParticipant(callSessionId: string, participant: CallParticipant): boolean {
+  // Adds a connection as a participant and announces it. Returns whether it started the call
+  #addParticipant(callSessionId: string, sessionId: string, participant: CallParticipant): boolean {
     const joinedParticipant = { ...participant, isCameraEnabled: false };
     const isFirstJoiner = !this.#checkHasParticipants();
     this.db
       .insert(participants)
-      .values(joinedParticipant)
-      .onConflictDoUpdate({ set: joinedParticipant, target: participants.id })
+      .values({ ...joinedParticipant, sessionId })
+      .onConflictDoUpdate({ set: { ...joinedParticipant, sessionId }, target: participants.id })
       .run();
     if (isFirstJoiner) this.#writeCallState({ startedAt: new Date() });
     this.broadcast(
-      {
-        data: { callSessionId, participant: joinedParticipant, sessionId: participant.id, type: "join" },
-        type: "joinCall",
-      },
-      { excludeTag: getSessionSocketTag(participant.id) },
+      { data: { callSessionId, participant: joinedParticipant, type: "join" }, type: "joinCall" },
+      { excludeTag: getSessionSocketTag(sessionId) },
     );
     return isFirstJoiner;
   }
 
   // A dismissed knocker hears of it on its own session's socket, the one it knocked with
-  #broadcastKnockerDismissed(callSessionId: string, knockerSessionId: string): void {
-    this.broadcast(
-      { data: { callSessionId, knockerSessionId }, type: "knockerDismissed" },
-      { tag: getSessionSocketTag(knockerSessionId) },
-    );
+  #broadcastKnockerDismissed(callSessionId: string, sessionId: string): void {
+    this.broadcast({ data: { callSessionId }, type: "knockerDismissed" }, { tag: getSessionSocketTag(sessionId) });
   }
 
   #checkHasParticipants(): boolean {
@@ -332,7 +378,9 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   }
 
   #checkIsConnected(sessionId: string): boolean {
-    return this.#readParticipant(sessionId) !== undefined || this.#readKnocker(sessionId) !== undefined;
+    return (
+      this.#readParticipantBySession(sessionId) !== undefined || this.#readKnockerBySession(sessionId) !== undefined
+    );
   }
 
   #consumeAdmission(sessionId: string): boolean {
@@ -356,8 +404,8 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   #endCall(callSessionId: string): number {
     const { startedAt } = this.#readCallState();
     const callDurationSeconds = startedAt ? Math.round((Date.now() - startedAt.getTime()) / 1000) : 0;
-    for (const { id } of this.db.delete(knockers).returning({ id: knockers.id }).all())
-      this.#broadcastKnockerDismissed(callSessionId, id);
+    for (const { sessionId } of this.db.delete(knockers).returning({ sessionId: knockers.sessionId }).all())
+      this.#broadcastKnockerDismissed(callSessionId, sessionId);
     this.db.delete(admittedSessions).run();
     this.#writeCallState({ startedAt: null });
     return callDurationSeconds;
@@ -365,15 +413,19 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
 
   async #joinCallAs(
     callSessionId: string,
-    participant: CallParticipant,
+    sessionId: string,
+    profile: CallParticipantProfile,
     isAdmissionRequired: boolean,
   ): Promise<CallJoin | null> {
     // Consumed before the first await, so a second join by the same connection finds nothing to consume
-    if (isAdmissionRequired && !this.#consumeAdmission(participant.id)) return null;
+    if (isAdmissionRequired && !this.#consumeAdmission(sessionId)) return null;
 
+    // A connection that is already in the call keeps its participant id, and a join after a leave is named afresh
+    const participant: CallParticipant = { ...profile, id: this.#readParticipantBySession(sessionId)?.id ?? v7() };
     const credentials = getRealtimeKitCredentials();
     // A deployment without RealtimeKit joins the call with no media server, as it did before any media server was set up
-    if (!credentials) return this.#addJoinedParticipant(callSessionId, participant, { authToken: "", meetingId: "" });
+    if (!credentials)
+      return this.#addJoinedParticipant(callSessionId, sessionId, participant, { authToken: "", meetingId: "" });
 
     const meetingId = await this.#readOrCreateMeetingId(callSessionId, credentials);
     const realtimeKitParticipant = await addRealtimeKitParticipant(
@@ -382,7 +434,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       participant,
       getRealtimeKitPresetName(JOIN_PUBLISH_SOURCES),
     );
-    return this.#addJoinedParticipant(callSessionId, participant, {
+    return this.#addJoinedParticipant(callSessionId, sessionId, participant, {
       authToken: realtimeKitParticipant.token,
       meetingId,
       realtimeKit: { id: realtimeKitParticipant.id, publishSources: [...JOIN_PUBLISH_SOURCES] },
@@ -398,8 +450,16 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     );
   }
 
-  #readKnocker(sessionId: string) {
-    return this.db.select().from(knockers).where(eq(knockers.id, sessionId)).get();
+  #readConnectionsOf(userId: string): Connection[] {
+    return this.db
+      .select({ id: participants.id, sessionId: participants.sessionId, userId: participants.userId })
+      .from(participants)
+      .where(eq(participants.userId, userId))
+      .all();
+  }
+
+  #readKnockerBySession(sessionId: string) {
+    return this.db.select().from(knockers).where(eq(knockers.sessionId, sessionId)).get();
   }
 
   // The meeting is made by the first join.
@@ -419,40 +479,40 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return this.#meetingCreation;
   }
 
-  #readParticipant(sessionId: string) {
-    return this.db.select().from(participants).where(eq(participants.id, sessionId)).get();
+  #readParticipant(participantId: string) {
+    return this.db.select().from(participants).where(eq(participants.id, participantId)).get();
   }
 
-  #readRealtimeKitParticipant(sessionId: string) {
-    return this.db.select().from(realtimeKitParticipants).where(eq(realtimeKitParticipants.sessionId, sessionId)).get();
+  #readParticipantBySession(sessionId: string) {
+    return this.db.select().from(participants).where(eq(participants.sessionId, sessionId)).get();
   }
 
-  #readSessionIdsOf(userId: string): string[] {
+  #readRealtimeKitParticipant(participantId: string) {
     return this.db
-      .select({ id: participants.id })
-      .from(participants)
-      .where(eq(participants.userId, userId))
-      .all()
-      .map(({ id }) => id);
+      .select()
+      .from(realtimeKitParticipants)
+      .where(eq(realtimeKitParticipants.participantId, participantId))
+      .get();
   }
 
-  #removeKnocker(sessionId: string): boolean {
-    return this.db.delete(knockers).where(eq(knockers.id, sessionId)).returning().all().length > 0;
+  #removeKnocker(knockerId: string) {
+    return this.db
+      .delete(knockers)
+      .where(eq(knockers.id, knockerId))
+      .returning({ sessionId: knockers.sessionId })
+      .all()[0];
   }
 
-  #removeParticipant(callSessionId: string, sessionId: string): CallLeave | null {
-    const participant = this.#readParticipant(sessionId);
-    if (!participant) return null;
-
-    this.db.delete(participants).where(eq(participants.id, sessionId)).run();
-    this.db.delete(realtimeKitParticipants).where(eq(realtimeKitParticipants.sessionId, sessionId)).run();
+  #removeParticipant(callSessionId: string, participant: Connection): CallLeave {
+    this.db.delete(participants).where(eq(participants.id, participant.id)).run();
+    this.db.delete(realtimeKitParticipants).where(eq(realtimeKitParticipants.participantId, participant.id)).run();
     this.broadcast(
-      { data: { callSessionId, id: sessionId }, type: "leaveCall" },
-      { excludeTag: getSessionSocketTag(sessionId) },
+      { data: { callSessionId, id: participant.id }, type: "leaveCall" },
+      { excludeTag: getSessionSocketTag(participant.sessionId) },
     );
-    this.closeSockets(getSessionSocketTag(sessionId), 1000, "Left the call");
+    this.closeSockets(getSessionSocketTag(participant.sessionId), 1000, "Left the call");
     // A person's last session out of the call takes it off the calls their object closes a revoked session on
-    if (this.#readSessionIdsOf(participant.userId).length === 0)
+    if (this.#readConnectionsOf(participant.userId).length === 0)
       this.ctx.waitUntil(
         getResultAsync(() => getObjectStub(this.env.USER, participant.userId).removeJoinedCall(callSessionId)).match(
           noop,
@@ -461,24 +521,26 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       );
     return {
       callDurationSeconds: this.#checkHasParticipants() ? null : this.#endCall(callSessionId),
-      sessionId,
+      sessionId: participant.sessionId,
       userId: participant.userId,
     };
   }
 
-  // One update per connection at a time, each waiting for the one before it, and a failure is thrown to the caller
-  async #serializeConnection(sessionId: string, update: () => Promise<void>): Promise<void> {
-    const previousUpdate = this.#connectionUpdates.get(sessionId);
-    const currentUpdate = (async () => {
-      await Promise.allSettled([previousUpdate]);
-      await update();
-    })();
-    this.#connectionUpdates.set(sessionId, currentUpdate);
-    const result = await getResultAsync(() => currentUpdate);
-    if (this.#connectionUpdates.get(sessionId) === currentUpdate) this.#connectionUpdates.delete(sessionId);
-    result.match(noop, (error) => {
-      throw error;
-    });
+  // One piece of work per key at a time, each starting once the one before it for that key has settled. Its own result
+  // Or failure is what the caller gets back
+  #serialize<T>(key: string, work: () => Promise<T>): Promise<T> {
+    const previous = this.#serialized.get(key) ?? Promise.resolve();
+    const current = withFinalizerAsync(
+      async () => {
+        await getResultAsync(() => previous);
+        return work();
+      },
+      () => {
+        if (this.#serialized.get(key) === current) this.#serialized.delete(key);
+      },
+    );
+    this.#serialized.set(key, current);
+    return current;
   }
 
   async #updateConnection({
@@ -486,6 +548,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     credentials,
     isGranted,
     meetingId,
+    participantId,
     sessionId,
     sources,
   }: {
@@ -493,10 +556,11 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     credentials: RealtimeKitCredentials;
     isGranted: boolean;
     meetingId: string;
+    participantId: string;
     sessionId: string;
     sources: PublishSource[];
   }): Promise<void> {
-    const realtimeKitParticipant = this.#readRealtimeKitParticipant(sessionId);
+    const realtimeKitParticipant = this.#readRealtimeKitParticipant(participantId);
     if (!realtimeKitParticipant) return;
 
     const { publishSources: currentSources, realtimeKitParticipantId } = realtimeKitParticipant;
@@ -510,16 +574,16 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
         path: `/meetings/${meetingId}/participants/${realtimeKitParticipantId}`,
         schema: z.unknown().optional(),
       });
-      this.#updateRealtimeKitParticipant(sessionId, { publishSources });
+      this.#updateRealtimeKitParticipant(participantId, { publishSources });
     } else if (publishSources.length < currentSources.length) {
       // Flagged while the kick is in flight.
       // The webhook reads that kick as this connection being replaced rather than its participant leaving
-      this.#updateRealtimeKitParticipant(sessionId, { isRejoining: true });
+      this.#updateRealtimeKitParticipant(participantId, { isRejoining: true });
       await withFinalizerAsync(
         async () => {
-          await removeRealtimeKitParticipant(meetingId, sessionId);
+          await removeRealtimeKitParticipant(meetingId, participantId);
           // A participant who left while the kick was in flight has no call left to rejoin
-          const participant = this.#readParticipant(sessionId);
+          const participant = this.#readParticipant(participantId);
           if (!participant) return;
 
           const addedParticipant = await addRealtimeKitParticipant(
@@ -528,7 +592,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
             participant,
             getRealtimeKitPresetName(publishSources),
           );
-          this.#updateRealtimeKitParticipant(sessionId, {
+          this.#updateRealtimeKitParticipant(participantId, {
             connectedAt: new Date(),
             isRejoining: false,
             publishSources,
@@ -540,7 +604,6 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
                 authToken: addedParticipant.token,
                 callSessionId,
                 canPublishMicrophone: publishSources.includes(PublishSourceEnum.Microphone),
-                sessionId,
                 type: "rejoin",
               },
               type: "joinCall",
@@ -549,25 +612,35 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
           );
         },
         () => {
-          this.#updateRealtimeKitParticipant(sessionId, { isRejoining: false });
+          this.#updateRealtimeKitParticipant(participantId, { isRejoining: false });
         },
       );
     }
   }
 
   // Writes one of a participant's flags, and broadcasts the event for it only when a participant was updated
-  #updateFlag(sessionId: string, values: ParticipantFlags, event: CallEvent): boolean {
-    const isUpdated = this.#updateParticipant(sessionId, values);
-    if (isUpdated) this.broadcast(event);
-    return isUpdated;
+  #updateFlag(where: SQL, values: ParticipantFlags, toEvent: (participantId: string) => CallEvent): boolean {
+    const [updatedParticipant] = this.db
+      .update(participants)
+      .set(values)
+      .where(where)
+      .returning({ id: participants.id })
+      .all();
+    if (!updatedParticipant) return false;
+
+    this.broadcast(toEvent(updatedParticipant.id));
+    return true;
   }
 
-  #updateParticipant(sessionId: string, values: ParticipantFlags): boolean {
-    return this.db.update(participants).set(values).where(eq(participants.id, sessionId)).returning().all().length > 0;
-  }
-
-  #updateRealtimeKitParticipant(sessionId: string, values: Partial<typeof realtimeKitParticipants.$inferInsert>): void {
-    this.db.update(realtimeKitParticipants).set(values).where(eq(realtimeKitParticipants.sessionId, sessionId)).run();
+  #updateRealtimeKitParticipant(
+    participantId: string,
+    values: Partial<typeof realtimeKitParticipants.$inferInsert>,
+  ): void {
+    this.db
+      .update(realtimeKitParticipants)
+      .set(values)
+      .where(eq(realtimeKitParticipants.participantId, participantId))
+      .run();
   }
 
   #writeCallState(values: Partial<typeof callState.$inferInsert>): void {

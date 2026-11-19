@@ -8,23 +8,20 @@ import { createRealtimeKitWebhookSigner } from "#server/services/realtimeKit/cre
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-const { callObject, findCallSession, findSession } = vi.hoisted(() => ({
+const { callObject, findCallSession } = vi.hoisted(() => ({
   callObject: {
-    participantJoined: vi.fn<(input: unknown) => Promise<void>>(),
+    readParticipantUserId: vi.fn<(input: unknown) => string>(),
     removeConnection: vi.fn<(input: unknown) => Promise<void>>(),
   },
   findCallSession: vi.fn<(query: unknown) => Promise<unknown>>(),
-  findSession: vi.fn<(query: unknown) => Promise<unknown>>(),
 }));
 
 vi.mock(
   import("#server/db/index"),
   () =>
-    ({
-      db: {
-        query: { callSessionsInMessage: { findFirst: findCallSession }, sessionsInAuth: { findFirst: findSession } },
-      },
-    }) as unknown as Partial<{ db: typeof db }>,
+    ({ db: { query: { callSessionsInMessage: { findFirst: findCallSession } } } }) as unknown as Partial<{
+      db: typeof db;
+    }>,
 );
 vi.mock(import("#server/services/message/call/checkIsCallConnectionAdmitted"), () => ({
   checkIsCallConnectionAdmitted: vi.fn<(...args: unknown[]) => Promise<boolean>>(),
@@ -46,7 +43,7 @@ const createEvent = (body: ArrayBuffer, signature: string) =>
 describe("api/webhooks/realtimekit", () => {
   const callSessionId = v7();
   const meetingId = v7();
-  const sessionId = v7();
+  const participantId = v7();
   const userId = v7();
   let signer: Awaited<ReturnType<typeof createRealtimeKitWebhookSigner>>;
 
@@ -55,35 +52,59 @@ describe("api/webhooks/realtimekit", () => {
   });
 
   afterEach(() => {
+    vi.clearAllMocks();
     vi.unstubAllGlobals();
   });
 
-  test("removes a correctly signed participant the call does not admit, and never joins it", async () => {
-    expect.hasAssertions();
-
+  // A signed join of a connection, under the participant id RealtimeKit was given it with
+  const sendJoin = async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(() => Promise.resolve(Response.json({ data: { publicKey: signer.publicKeyPem } }))),
     );
     findCallSession.mockResolvedValueOnce({ id: callSessionId });
-    findSession.mockResolvedValueOnce({
-      id: sessionId,
-      userId,
-      usersInAuth: { id: userId, image: null, name: "name" },
-    });
-    vi.mocked(checkIsCallConnectionAdmitted).mockResolvedValueOnce(false);
     const body = new TextEncoder().encode(
       JSON.stringify({
         event: "meeting.participantJoined",
         meeting: { id: meetingId },
-        participant: { customParticipantId: sessionId },
+        participant: { customParticipantId: participantId },
       }),
     ).buffer;
 
     await callWebhook(createEvent(body, await signer.sign(body)));
+  };
 
-    expect(callObject.removeConnection).toHaveBeenCalledExactlyOnceWith({ sessionId });
-    expect(callObject.participantJoined).not.toHaveBeenCalled();
+  test("removes a participant whose user the call does not admit", async () => {
+    expect.hasAssertions();
+
+    callObject.readParticipantUserId.mockReturnValueOnce(userId);
+    vi.mocked(checkIsCallConnectionAdmitted).mockResolvedValueOnce(false);
+
+    await sendJoin();
+
+    expect(callObject.removeConnection).toHaveBeenCalledExactlyOnceWith({ participantId });
+  });
+
+  test("keeps a participant the call holds for a user it still admits", async () => {
+    expect.hasAssertions();
+
+    callObject.readParticipantUserId.mockReturnValueOnce(userId);
+    vi.mocked(checkIsCallConnectionAdmitted).mockResolvedValueOnce(true);
+
+    await sendJoin();
+
+    expect(callObject.removeConnection).not.toHaveBeenCalled();
+  });
+
+  test("removes a connection the call holds no participant for", async () => {
+    expect.hasAssertions();
+
+    callObject.readParticipantUserId.mockReturnValueOnce("");
+
+    await sendJoin();
+
+    expect(callObject.removeConnection).toHaveBeenCalledExactlyOnceWith({ participantId });
+    expect(checkIsCallConnectionAdmitted).not.toHaveBeenCalled();
   });
 
   test("answers 401 to a signature that is not base64, rather than failing the request", async () => {

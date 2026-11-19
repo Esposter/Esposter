@@ -1,6 +1,6 @@
-import { callSessionIdSchema, sessionIdSchema } from "@esposter/db-schema";
+import { callParticipantSchema, callSessionIdSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-// The knocker is addressed by their session id, which is the participant id every call surface already holds
-export const knockerInputSchema = z.object({ ...callSessionIdSchema.shape, ...sessionIdSchema.shape });
+// The knocker is addressed by the id the lobby holds it under, the one its knock was named by
+export const knockerInputSchema = z.object({ ...callSessionIdSchema.shape, knockerId: callParticipantSchema.shape.id });
 export type KnockerInput = z.infer<typeof knockerInputSchema>;

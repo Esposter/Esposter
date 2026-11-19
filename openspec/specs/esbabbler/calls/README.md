@@ -13,7 +13,7 @@ A call is anchored to a `callSessionsInMessage` row, not a route:
 - A standalone call has no D1 row naming who was admitted to it, so each admitted joiner's `UserObject` keeps the call in `joinedCallsInUser` until their last session leaves it (the `CallObject` removes the row), and a revoked session is closed on each call listed there as well as on the calls D1 names (`closeSessionSockets`).
 - The session row is the persistent 1:1 anchor per room and survives restarts, and so do the participants: the call's own `CallObject` keeps them in its storage, so an eviction of the object loses nothing.
 
-`CallParticipant.id` is the **auth `session.id`, not `user.id`** — the custom participant id RealtimeKit is given is `session.id`, so each device is its own participant (separate tracks, separate mute state). Using `user.id` would make multi-device join last-write-wins and let device A's leave evict device B.
+`CallParticipant.id` is a **fresh id minted by each join**, not the auth `session.id` and not `user.id`. The call object names every connection to its members by that id, and the RealtimeKit custom participant id is the same one — RealtimeKit shows its peers each other's custom ids, so a session id there would hand a member every other member's sign-in session. Each device is its own participant (separate tracks, separate mute state). A session has one participant at a time: its joins are taken one after another, so a join that overlaps another finds the participant the first recorded and names it. The auth session a participant joined under stays in the object's `sessionId` column, which the guards and kicks read and no frame, participant read or webhook carries. Using `user.id` would make multi-device join last-write-wins and let device A's leave evict device B.
 
 ## The call lifetime boundary
 
@@ -77,7 +77,7 @@ The creator's lobby list is optimistic: admitting or dismissing removes that kno
 
 Everything about a live call except its anchor row lives in its `CallObject`'s storage, keyed by the call session. The storage holds four things, kept apart because they end at different times:
 
-- The participant map — the joined connections, keyed by auth session id. Created by a join and deleted by a leave; a call is live while it has an entry. `requireJoinedCallSession` reads it for everyone but the call's creator, who is admitted from the stored session row.
+- The participant map — the joined connections, keyed by participant id, each held beside the auth session it joined under. Created by a join and deleted by a leave; a call is live while it has an entry. `requireJoinedCallSession` reads it for everyone but the call's creator, who is admitted from the stored session row.
 - The knocker and admitted sets — the standalone waiting room. They are cleared with the participant map, because a call nobody is in has nobody left to admit anyone.
 - The call's start time — set by the first joiner and read by the last leaver, after the participants are already gone, to word the call-duration system message. It outlives the teardown on purpose, which is exactly why it cannot be a field of a record deleted as a unit.
 - The RealtimeKit participant map and each participant's publish sources, which a moderation's kick and rejoin reads.
@@ -116,7 +116,7 @@ All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the wai
 | `setHandRaised`                                                                                                                   | authed / moderator | raise own hand; lowering another's needs `MuteMembers` on the call's room            |
 | `knocker.knockCall` / `knocker.admitKnocker` / `knocker.dismissKnocker`                                                           | authed / creator   | standalone waiting room — admitting and dismissing need the creator, in the call     |
 | the call socket `/ws/call/:callSessionId`, frames `joinCall` / `leaveCall` / `muteChanged` / `videoChanged` / `handRaisedChanged` | joined or knocking | the object broadcasts each frame to the call's sockets                               |
-| frames `knockCall` (creator's sockets), `knockerAdmitted` / `knockerDismissed` (the knocker's own session)                        | creator / knocker  | the call socket                                                                      |
+| frames `knockCall` (creator's sockets), `knockerAdmitted` / `knockerDismissed` (the knocker's own connection)                     | creator / knocker  | the call socket                                                                      |
 
 A call's events reach a socket only while its session is joined or knocking on the call: the call object refuses any other socket when it opens, and a leave closes that session's sockets. In a room, a member removed from the room leaves the call the same way a kick or a ban does, through `evictUser`. A standalone call ends for a participant when its own session leaves, by `leaveCall` or by the RealtimeKit webhook that reports the disconnect.
 
@@ -129,7 +129,7 @@ Each participant joins the call's meeting with the preset that names its publish
 | Store                 | Owns                                                                                                                                          |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `call/index.ts`       | `activeCallSessionId`, `currentRoomCallSessionId`, `callRoomId` (admin-action room checks)                                                    |
-| `call/participant.ts` | `callSessionParticipantsMap` (keyed by session id), `speakingIds`, join notice                                                                |
+| `call/participant.ts` | `callSessionParticipantsMap` (keyed by participant id), `participantId` (the caller's own, from its join), `speakingIds`, join notice         |
 | `call/media.ts`       | deafen, force-mute, camera, screenshare + pin state, virtual background, `isPoppedOut`, streams, [per-user volume](per-user-volume/design.md) |
 | `call/knocker.ts`     | `knockingCallSessionId`, pre-join options, knocker queue                                                                                      |
 | `realtime.ts`         | the RealtimeKit meeting bridge: connect, track events, device switching, mic processor, [blocked audio](blocked-audio/design.md)              |

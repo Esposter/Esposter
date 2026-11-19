@@ -1,11 +1,8 @@
-import type { CallParticipant } from "@esposter/db-schema";
-import type { Session, User } from "better-auth";
+import type { CallParticipantProfile } from "@esposter/db-schema";
+import type { User } from "better-auth";
 
-export const createParticipant = (
-  session: Pick<Session, "id">,
-  user: Pick<User, "id" | "image" | "name">,
-): CallParticipant => ({
-  id: session.id,
+// A connection's profile in a call. The call object names the connection by an id of its own, minted by its join or knock
+export const createParticipant = (user: Pick<User, "id" | "image" | "name">): CallParticipantProfile => ({
   image: user.image ?? "",
   isCameraEnabled: false,
   isHandRaised: false,

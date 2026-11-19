@@ -48,30 +48,30 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   };
   // Admitting and dismissing differ only in the write they send: both take one knocker out of the lobby, and
   // Both put back that one knocker where it stood if the write is rejected
-  const getResolveKnockerOptions = (sessionId: string) => ({
+  const getResolveKnockerOptions = (knockerId: string) => ({
     applyOptimistic: () => {
-      const deletedIndex = knockers.value.findIndex(({ id }) => id === sessionId);
+      const deletedIndex = knockers.value.findIndex(({ id }) => id === knockerId);
       const deletedKnocker = knockers.value[deletedIndex];
-      deleteKnocker(sessionId);
+      deleteKnocker(knockerId);
       return () => {
         if (deletedKnocker) knockers.value = getRestoredItems(knockers.value, deletedKnocker, deletedIndex);
       };
     },
-    key: sessionId,
+    key: knockerId,
   });
   const { executeMutation: executeAdmitKnockerMutation } = useMutation();
   // Admitting is the server's decision: it can refuse a knocker the room no longer holds, so the lobby waits on it
-  const admitKnocker = async (callSessionId: string, sessionId: string) => {
+  const admitKnocker = async (callSessionId: string, knockerId: string) => {
     await executeAdmitKnockerMutation(
-      () => $trpc.callSession.knocker.admitKnocker.mutate({ callSessionId, sessionId }),
-      { ...getResolveKnockerOptions(sessionId), awaitedBecause: AwaitedReason.ServerDecidedOutcome },
+      () => $trpc.callSession.knocker.admitKnocker.mutate({ callSessionId, knockerId }),
+      { ...getResolveKnockerOptions(knockerId), awaitedBecause: AwaitedReason.ServerDecidedOutcome },
     );
   };
   const { executeMutation: executeDismissKnockerMutation } = useMutation();
-  const dismissKnocker = (callSessionId: string, sessionId: string) => {
+  const dismissKnocker = (callSessionId: string, knockerId: string) => {
     executeDismissKnockerMutation(
-      () => $trpc.callSession.knocker.dismissKnocker.mutate({ callSessionId, sessionId }),
-      getResolveKnockerOptions(sessionId),
+      () => $trpc.callSession.knocker.dismissKnocker.mutate({ callSessionId, knockerId }),
+      getResolveKnockerOptions(knockerId),
     );
   };
   const resetKnockerState = () => {

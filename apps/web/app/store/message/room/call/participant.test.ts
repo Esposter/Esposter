@@ -9,11 +9,11 @@ import { CALL_ID_LENGTH } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
-// The session user as a participant row — the shape every write here addresses
-const createSessionParticipant = (): CallParticipant => {
-  const { session, user } = getMockSession();
+// The caller's own participant, under the id its join would mint for it, the shape every write here addresses
+const createOwnParticipant = (): CallParticipant => {
+  const { user } = getMockSession();
   return {
-    id: session.id,
+    id: v7(),
     image: user.image ?? "",
     isCameraEnabled: false,
     isHandRaised: false,
@@ -43,9 +43,9 @@ describe(useParticipantStore, () => {
     const participantStore = useParticipantStore();
     const { deleteSpeaker } = participantStore;
     const { speakingIds } = storeToRefs(participantStore);
-    const sessionId = getMockSession().session.id;
-    speakingIds.value = [sessionId];
-    deleteSpeaker(sessionId);
+    const participantId = v7();
+    speakingIds.value = [participantId];
+    deleteSpeaker(participantId);
 
     expect(speakingIds.value).toStrictEqual([]);
   });
@@ -53,7 +53,7 @@ describe(useParticipantStore, () => {
   test("setParticipantHandRaised sets the raised hand state", () => {
     expect.hasAssertions();
 
-    const participant = createSessionParticipant();
+    const participant = createOwnParticipant();
     const participantStore = useParticipantStore();
     const { createCallParticipant, setParticipantHandRaised } = participantStore;
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
@@ -67,10 +67,10 @@ describe(useParticipantStore, () => {
     expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participant.id)?.isHandRaised).toBe(false);
   });
 
-  test("createCallParticipant adds the participant to the session", () => {
+  test("createCallParticipant adds the participant to the call", () => {
     expect.hasAssertions();
 
-    const participant = createSessionParticipant();
+    const participant = createOwnParticipant();
     const participantStore = useParticipantStore();
     const { createCallParticipant } = participantStore;
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
@@ -85,7 +85,7 @@ describe(useParticipantStore, () => {
   test("createCallParticipant is idempotent", () => {
     expect.hasAssertions();
 
-    const participant = createSessionParticipant();
+    const participant = createOwnParticipant();
     const participantStore = useParticipantStore();
     const { createCallParticipant } = participantStore;
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
@@ -98,7 +98,7 @@ describe(useParticipantStore, () => {
   test("setParticipantMuted updates the participant mute state", () => {
     expect.hasAssertions();
 
-    const participant = createSessionParticipant();
+    const participant = createOwnParticipant();
     const participantStore = useParticipantStore();
     const { createCallParticipant, setParticipantMuted } = participantStore;
     const { callSessionParticipantsMap } = storeToRefs(participantStore);

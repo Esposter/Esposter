@@ -3,4 +3,6 @@ export interface CallAccess {
   isAdmitted: boolean;
   isJoined: boolean;
   isKnocking: boolean;
+  // The participant id the connection joined under, empty while it is not joined
+  participantId: string;
 }

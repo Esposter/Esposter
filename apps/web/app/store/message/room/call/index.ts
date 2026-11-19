@@ -29,6 +29,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     deleteCallParticipant,
     setParticipantCameraEnabled,
     setParticipantHandRaised,
+    setParticipantId,
     setParticipantMap,
     setParticipantMuted,
   } = participantStore;
@@ -58,8 +59,8 @@ export const useCallStore = defineStore("message/room/call", () => {
   const isCallViewOpen = ref(false);
   const isConnecting = ref(false);
   const selfParticipant = computed(() =>
-    participantStore.sessionId
-      ? participantStore.callSessionParticipantsMap.get(activeCallSessionId.value)?.get(participantStore.sessionId)
+    participantStore.participantId
+      ? participantStore.callSessionParticipantsMap.get(activeCallSessionId.value)?.get(participantStore.participantId)
       : undefined,
   );
   const isInCall = computed(() => Boolean(selfParticipant.value));
@@ -67,38 +68,38 @@ export const useCallStore = defineStore("message/room/call", () => {
   usePushToTalk(isInCall);
   const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
   const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
-  const setHandRaised = (newIsHandRaised: boolean, targetSessionId?: string) => {
+  const setHandRaised = (newIsHandRaised: boolean, targetParticipantId?: string) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionId = participantStore.sessionId;
-    const participantSessionId = targetSessionId ?? sessionId;
-    if (!callSessionId || !sessionId || !participantSessionId) return;
+    const participantId = participantStore.participantId;
+    const handParticipantId = targetParticipantId ?? participantId;
+    if (!callSessionId || !participantId || !handParticipantId) return;
 
     executeSetHandRaisedMutation(
       () =>
         $trpc.callSession.setHandRaised.mutate({
           callSessionId,
           isHandRaised: newIsHandRaised,
-          participantId: participantSessionId,
+          participantId: handParticipantId,
         }),
       {
         applyOptimistic: () => {
           const oldIsHandRaised =
-            participantStore.callSessionParticipantsMap.get(callSessionId)?.get(participantSessionId)?.isHandRaised ??
+            participantStore.callSessionParticipantsMap.get(callSessionId)?.get(handParticipantId)?.isHandRaised ??
             false;
-          setParticipantHandRaised(callSessionId, participantSessionId, newIsHandRaised);
+          setParticipantHandRaised(callSessionId, handParticipantId, newIsHandRaised);
           return () => {
-            setParticipantHandRaised(callSessionId, participantSessionId, oldIsHandRaised);
+            setParticipantHandRaised(callSessionId, handParticipantId, oldIsHandRaised);
           };
         },
         // Keyed per participant so a moderator lowering several hands never queues behind the other
-        key: participantSessionId,
+        key: handParticipantId,
       },
     );
   };
   const setCameraEnabled = (newIsCameraEnabled: boolean) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionId = participantStore.sessionId;
-    if (!callSessionId || !sessionId) return;
+    const participantId = participantStore.participantId;
+    if (!callSessionId || !participantId) return;
 
     executeSetCameraMutation(
       () => $trpc.callSession.setCameraEnabled.mutate({ callSessionId, isCameraEnabled: newIsCameraEnabled }),
@@ -106,30 +107,30 @@ export const useCallStore = defineStore("message/room/call", () => {
         applyOptimistic: () => {
           const oldIsCameraEnabled = mediaStore.isCameraEnabled;
           mediaStore.isCameraEnabled = newIsCameraEnabled;
-          setParticipantCameraEnabled(callSessionId, sessionId, newIsCameraEnabled);
+          setParticipantCameraEnabled(callSessionId, participantId, newIsCameraEnabled);
           return () => {
             mediaStore.isCameraEnabled = oldIsCameraEnabled;
-            setParticipantCameraEnabled(callSessionId, sessionId, oldIsCameraEnabled);
+            setParticipantCameraEnabled(callSessionId, participantId, oldIsCameraEnabled);
           };
         },
-        key: sessionId,
+        key: participantId,
       },
     );
   };
   const setMuted = (newIsMuted: boolean) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionId = participantStore.sessionId;
-    if (!callSessionId || !sessionId) return;
+    const participantId = participantStore.participantId;
+    if (!callSessionId || !participantId) return;
 
     executeSetMuteMutation(() => $trpc.callSession.setMuted.mutate({ callSessionId, isMuted: newIsMuted }), {
       applyOptimistic: () => {
         const oldIsMuted = isMuted.value;
-        setParticipantMuted(callSessionId, sessionId, newIsMuted);
+        setParticipantMuted(callSessionId, participantId, newIsMuted);
         return () => {
-          setParticipantMuted(callSessionId, sessionId, oldIsMuted);
+          setParticipantMuted(callSessionId, participantId, oldIsMuted);
         };
       },
-      key: sessionId,
+      key: participantId,
     });
   };
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
@@ -150,6 +151,7 @@ export const useCallStore = defineStore("message/room/call", () => {
       callRoomId.value = "";
       callThreadRootId.value = 0;
       activeCallSessionId.value = "";
+      setParticipantId("");
       // The teardown reports rather than propagates: it is unwinding an attempt that already failed, and a
       // Rejected disconnect must not take the join's own error off screen or strand the connecting flag
       await getResultAsync(() => disconnect()).match(noop, console.error);
@@ -171,10 +173,12 @@ export const useCallStore = defineStore("message/room/call", () => {
         authToken,
         callSessionId,
         isDoorkeeper: newIsDoorkeeper,
+        participantId,
         participantMap,
       } = await $trpc.callSession.joinCall.mutate({ id });
       // Seeded before the connect rather than after it: the participant events delivered while the connect is open
       // Land in this map in place, and a snapshot written once the connect resolves would discard them
+      setParticipantId(participantId);
       setParticipantMap(callSessionId, participantMap);
       const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
       await connect(authToken, leaveCall, isMicrophoneEnabled);
@@ -209,12 +213,11 @@ export const useCallStore = defineStore("message/room/call", () => {
     callThreadRootId.value = threadRootId;
     let isJoined = false;
     await getResultAsync(async () => {
-      const { authToken, callSessionId, participantMap } = await $trpc.callSession.joinCallByRoomId.mutate({
-        roomId,
-        threadRootId,
-      });
+      const { authToken, callSessionId, participantId, participantMap } =
+        await $trpc.callSession.joinCallByRoomId.mutate({ roomId, threadRootId });
       // Seeded before the connect, as in `joinCall`: the room's participant events that arrive while it is open
       // Would otherwise be overwritten by this snapshot once it resolves
+      setParticipantId(participantId);
       setParticipantMap(callSessionId, participantMap);
       await connect(authToken, leaveCall, true);
       await openCall(callSessionId);
@@ -251,7 +254,8 @@ export const useCallStore = defineStore("message/room/call", () => {
         ),
       {
         applyOptimistic: () => {
-          if (participantStore.sessionId) deleteCallParticipant(callSessionId, participantStore.sessionId);
+          if (participantStore.participantId) deleteCallParticipant(callSessionId, participantStore.participantId);
+          setParticipantId("");
           callRoomId.value = "";
           callThreadRootId.value = 0;
           isDoorkeeper.value = false;
@@ -332,12 +336,14 @@ export const useCallStore = defineStore("message/room/call", () => {
   // The participant map is keyed by the call the user is actually in, which is the thread's session during a
   // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here
   registerCallAdminActionHook(AdminActionType.ForceMute, async () => {
-    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, true);
+    if (participantStore.participantId)
+      setParticipantMuted(activeCallSessionId.value, participantStore.participantId, true);
     await setMicrophone(false);
     mediaStore.isForceMuted = true;
   });
   registerCallAdminActionHook(AdminActionType.ForceUnmute, async () => {
-    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, false);
+    if (participantStore.participantId)
+      setParticipantMuted(activeCallSessionId.value, participantStore.participantId, false);
     await setMicrophone(true);
     mediaStore.isForceMuted = false;
   });

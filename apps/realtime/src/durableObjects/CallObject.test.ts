@@ -1,5 +1,6 @@
+import type { ObservedContract } from "#src/services/durableObject/wakeCheck.test";
 import type { MockObjectState } from "@esposter/db-mock";
-import type { CallParticipant } from "@esposter/db-schema";
+import type { CallParticipantProfile } from "@esposter/db-schema";
 
 import { CallObject } from "#src/durableObjects/CallObject";
 import { createSocket, readFrames } from "#src/services/durableObject/createMockSocket.test";
@@ -14,24 +15,29 @@ import {
   SOCKET_IDENTITY_HEADER,
 } from "@esposter/db-schema";
 import { v7 } from "uuid";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-const createParticipant = (): CallParticipant => ({
-  id: v7(),
-  image: "",
-  isCameraEnabled: false,
-  isHandRaised: false,
-  isMuted: false,
-  name: "name",
-  userId: v7(),
+// A connection as the server holds it: the auth session it joins or knocks under, and the profile the call shows of it
+const createConnection = () => ({
+  profile: {
+    image: "",
+    isCameraEnabled: false,
+    isHandRaised: false,
+    isMuted: false,
+    name: "name",
+    userId: v7(),
+  } satisfies CallParticipantProfile,
+  sessionId: v7(),
 });
+
+type Connection = ReturnType<typeof createConnection>;
 
 const respondWith = (data: unknown) => Response.json({ data });
 
-const setRejoining = (state: MockObjectState, sessionId: string, isRejoining: boolean) => {
+const setRejoining = (state: MockObjectState, participantId: string, isRejoining: boolean) => {
   state.database
-    .prepare("UPDATE realtimeKitParticipants SET isRejoining = ? WHERE sessionId = ?")
-    .run(Number(isRejoining), sessionId);
+    .prepare("UPDATE realtimeKitParticipants SET isRejoining = ? WHERE participantId = ?")
+    .run(Number(isRejoining), participantId);
 };
 
 describe(CallObject, () => {
@@ -52,7 +58,7 @@ describe(CallObject, () => {
   const stubRealtimeKit = () => {
     vi.stubEnv("REALTIMEKIT_API_TOKEN", credentials.apiToken);
     vi.stubEnv("REALTIMEKIT_APP_ID", credentials.appId);
-    const fetchMock = vi.fn<(input: string) => Promise<Response>>((input) =>
+    const fetchMock = vi.fn<(input: string, init?: RequestInit) => Promise<Response>>((input) =>
       Promise.resolve(
         respondWith(input.endsWith("/participants") ? { id: "rtk-participant", token: "rtk-token" } : null),
       ),
@@ -60,6 +66,14 @@ describe(CallObject, () => {
     vi.stubGlobal("fetch", fetchMock);
     return fetchMock;
   };
+
+  const joinConnection = (callObject: ObservedContract<CallObject>, connection: Connection) =>
+    callObject.joinCall({
+      callSessionId,
+      isAdmissionRequired: false,
+      participant: connection.profile,
+      sessionId: connection.sessionId,
+    });
 
   beforeEach(() => {
     // RealtimeKit is off unless a test stubs it on, whatever the shell running the suite exports
@@ -79,22 +93,110 @@ describe(CallObject, () => {
 
     const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
-    const joiner = createParticipant();
-    const bystander = createParticipant();
+    const joiner = createConnection();
+    const bystander = createConnection();
     const joinerSocket = createSocket();
     const bystanderSocket = createSocket();
-    state.ctx.acceptWebSocket(joinerSocket, [getUserSocketTag(joiner.userId), getSessionSocketTag(joiner.id)]);
-    state.ctx.acceptWebSocket(bystanderSocket, [getUserSocketTag(bystander.userId), getSessionSocketTag(bystander.id)]);
+    state.ctx.acceptWebSocket(joinerSocket, [
+      getUserSocketTag(joiner.profile.userId),
+      getSessionSocketTag(joiner.sessionId),
+    ]);
+    state.ctx.acceptWebSocket(bystanderSocket, [
+      getUserSocketTag(bystander.profile.userId),
+      getSessionSocketTag(bystander.sessionId),
+    ]);
 
-    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: joiner });
+    const join = await joinConnection(callObject, joiner);
+    assert.exists(join);
 
     expect(joinerSocket.send).not.toHaveBeenCalled();
     expect(readFrames(bystanderSocket)).toStrictEqual([
       {
-        data: { callSessionId, participant: { ...joiner, isCameraEnabled: false }, sessionId: joiner.id, type: "join" },
+        data: {
+          callSessionId,
+          participant: { ...joiner.profile, id: join.participantId, isCameraEnabled: false },
+          type: "join",
+        },
         type: "joinCall",
       },
     ]);
+  });
+
+  test("no member's view of the call names a participant's auth session", async () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const joiner = createConnection();
+    const bystander = createConnection();
+    const bystanderSocket = createSocket();
+    state.ctx.acceptWebSocket(bystanderSocket, [
+      getUserSocketTag(bystander.profile.userId),
+      getSessionSocketTag(bystander.sessionId),
+    ]);
+
+    await joinConnection(callObject, joiner);
+
+    const memberViews = JSON.stringify([
+      readFrames(bystanderSocket),
+      [...(await callObject.readParticipantMap()).values()],
+    ]);
+    expect(memberViews).not.toContain(joiner.sessionId);
+  });
+
+  test("a connection's RealtimeKit custom id is its participant id, never its auth session", async () => {
+    expect.hasAssertions();
+
+    const fetchMock = stubRealtimeKit();
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    seedMeeting(state);
+    const joiner = createConnection();
+
+    const join = await joinConnection(callObject, joiner);
+    const [, init] = fetchMock.mock.calls[0] ?? [];
+
+    assert.exists(join);
+    expect(JSON.stringify(init?.body)).toContain(join.participantId);
+    expect(JSON.stringify(init?.body)).not.toContain(joiner.sessionId);
+  });
+
+  // Two joins by one session that overlap on RealtimeKit's answers both read the session before either records it, so each
+  // Would mint its own participant id and the second record would clash with the first on the session. The session has
+  // One participant, so both joins name it and neither fails
+  test("two overlapping joins by one session name it one participant", async () => {
+    expect.hasAssertions();
+
+    stubRealtimeKit();
+    let releaseAdds!: () => void;
+    const addsReleased = new Promise<void>((resolve) => {
+      releaseAdds = resolve;
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: string) => {
+        await addsReleased;
+        return respondWith(input.endsWith("/participants") ? { id: "rtk-participant", token: "rtk-token" } : null);
+      }),
+    );
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    seedMeeting(state);
+    const joiner = createConnection();
+
+    const firstJoin = joinConnection(callObject, joiner);
+    const secondJoin = joinConnection(callObject, joiner);
+    // Both joins are under way, each holding its RealtimeKit add, before either is released to record its participant
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+    releaseAdds();
+    const [first, second] = await Promise.all([firstJoin, secondJoin]);
+
+    assert.exists(first);
+    assert.exists(second);
+    expect(second.participantId).toBe(first.participantId);
+    expect([...(await callObject.readParticipantMap()).keys()]).toStrictEqual([first.participantId]);
   });
 
   test("a leave tells the others and closes the leaver's sockets, and the last one reports the length", async () => {
@@ -103,30 +205,43 @@ describe(CallObject, () => {
     const callDuration = Temporal.Duration.from({ minutes: 1, seconds: 30 });
     const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
-    const leaver = createParticipant();
-    const remainer = createParticipant();
-    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: leaver });
-    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: remainer });
+    const leaver = createConnection();
+    const remainer = createConnection();
+    const leaverJoin = await joinConnection(callObject, leaver);
+    await joinConnection(callObject, remainer);
+    assert.exists(leaverJoin);
     const leaverSocket = createSocket();
     const remainerSocket = createSocket();
-    state.ctx.acceptWebSocket(leaverSocket, [getUserSocketTag(leaver.userId), getSessionSocketTag(leaver.id)]);
-    state.ctx.acceptWebSocket(remainerSocket, [getUserSocketTag(remainer.userId), getSessionSocketTag(remainer.id)]);
+    state.ctx.acceptWebSocket(leaverSocket, [
+      getUserSocketTag(leaver.profile.userId),
+      getSessionSocketTag(leaver.sessionId),
+    ]);
+    state.ctx.acceptWebSocket(remainerSocket, [
+      getUserSocketTag(remainer.profile.userId),
+      getSessionSocketTag(remainer.sessionId),
+    ]);
 
-    const leave = await callObject.leaveCall({ callSessionId, sessionId: leaver.id });
+    const leave = await callObject.leaveCall({ callSessionId, sessionId: leaver.sessionId });
 
-    expect(leave).toStrictEqual({ callDurationSeconds: null, sessionId: leaver.id, userId: leaver.userId });
-    expect(readFrames(remainerSocket)).toStrictEqual([{ data: { callSessionId, id: leaver.id }, type: "leaveCall" }]);
+    expect(leave).toStrictEqual({
+      callDurationSeconds: null,
+      sessionId: leaver.sessionId,
+      userId: leaver.profile.userId,
+    });
+    expect(readFrames(remainerSocket)).toStrictEqual([
+      { data: { callSessionId, id: leaverJoin.participantId }, type: "leaveCall" },
+    ]);
     expect(leaverSocket.send).not.toHaveBeenCalled();
     expect(leaverSocket.close).toHaveBeenCalledExactlyOnceWith(1000, "Left the call");
 
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add(callDuration));
-    const lastLeave = await callObject.leaveCall({ callSessionId, sessionId: remainer.id });
-    const repeatedLeave = await callObject.leaveCall({ callSessionId, sessionId: remainer.id });
+    const lastLeave = await callObject.leaveCall({ callSessionId, sessionId: remainer.sessionId });
+    const repeatedLeave = await callObject.leaveCall({ callSessionId, sessionId: remainer.sessionId });
 
     expect(lastLeave).toStrictEqual({
       callDurationSeconds: callDuration.total("seconds"),
-      sessionId: remainer.id,
-      userId: remainer.userId,
+      sessionId: remainer.sessionId,
+      userId: remainer.profile.userId,
     });
     expect(repeatedLeave).toBeNull();
   });
@@ -138,23 +253,36 @@ describe(CallObject, () => {
     const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
     seedMeeting(state);
-    const revoked = createParticipant();
-    const remainer = createParticipant();
-    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: revoked });
-    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: remainer });
+    const revoked = createConnection();
+    const remainer = createConnection();
+    const revokedJoin = await joinConnection(callObject, revoked);
+    await joinConnection(callObject, remainer);
+    assert.exists(revokedJoin);
     const revokedSocket = createSocket();
     const remainerSocket = createSocket();
-    state.ctx.acceptWebSocket(revokedSocket, [getUserSocketTag(revoked.userId), getSessionSocketTag(revoked.id)]);
-    state.ctx.acceptWebSocket(remainerSocket, [getUserSocketTag(remainer.userId), getSessionSocketTag(remainer.id)]);
+    state.ctx.acceptWebSocket(revokedSocket, [
+      getUserSocketTag(revoked.profile.userId),
+      getSessionSocketTag(revoked.sessionId),
+    ]);
+    state.ctx.acceptWebSocket(remainerSocket, [
+      getUserSocketTag(remainer.profile.userId),
+      getSessionSocketTag(remainer.sessionId),
+    ]);
     fetchMock.mockClear();
 
-    const leave = await callObject.closeSession(revoked.id);
+    const leave = await callObject.closeSession(revoked.sessionId);
 
     const appUrl = `${REALTIMEKIT_API_ORIGIN}/accounts/${CLOUDFLARE_ACCOUNT_ID}/realtime/kit/${credentials.appId}`;
     expect(revokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
-    expect(readFrames(remainerSocket)).toStrictEqual([{ data: { callSessionId, id: revoked.id }, type: "leaveCall" }]);
-    expect((await callObject.readAccess({ sessionId: revoked.id })).isJoined).toBe(false);
-    expect(leave).toStrictEqual({ callDurationSeconds: null, sessionId: revoked.id, userId: revoked.userId });
+    expect(readFrames(remainerSocket)).toStrictEqual([
+      { data: { callSessionId, id: revokedJoin.participantId }, type: "leaveCall" },
+    ]);
+    expect((await callObject.readAccess({ sessionId: revoked.sessionId })).isJoined).toBe(false);
+    expect(leave).toStrictEqual({
+      callDurationSeconds: null,
+      sessionId: revoked.sessionId,
+      userId: revoked.profile.userId,
+    });
     expect(fetchMock.mock.calls.map(([input]) => input)).toStrictEqual([
       `${appUrl}/meetings/${meetingId}/active-session/kick`,
     ]);
@@ -165,31 +293,64 @@ describe(CallObject, () => {
 
     const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
-    const doorkeeper = createParticipant();
-    const knocker = createParticipant();
-    const bystander = createParticipant();
+    const doorkeeper = createConnection();
+    const knocker = createConnection();
+    const bystander = createConnection();
     const doorkeeperSocket = createSocket();
     const knockerSocket = createSocket();
     const bystanderSocket = createSocket();
     state.ctx.acceptWebSocket(doorkeeperSocket, [
-      getUserSocketTag(doorkeeper.userId),
-      getSessionSocketTag(doorkeeper.id),
+      getUserSocketTag(doorkeeper.profile.userId),
+      getSessionSocketTag(doorkeeper.sessionId),
     ]);
-    state.ctx.acceptWebSocket(knockerSocket, [getUserSocketTag(knocker.userId), getSessionSocketTag(knocker.id)]);
-    state.ctx.acceptWebSocket(bystanderSocket, [getUserSocketTag(bystander.userId), getSessionSocketTag(bystander.id)]);
-
-    await callObject.knockCall({ callSessionId, doorkeeperUserId: doorkeeper.userId, knocker });
-    const knockingAccess = await callObject.readAccess({ sessionId: knocker.id });
-    await callObject.admitKnocker({ callSessionId, knockerSessionId: knocker.id });
-    const admittedAccess = await callObject.readAccess({ sessionId: knocker.id });
-
-    expect(knockingAccess).toStrictEqual({ isAdmitted: false, isJoined: false, isKnocking: true });
-    expect(admittedAccess).toStrictEqual({ isAdmitted: true, isJoined: false, isKnocking: false });
-    expect(readFrames(doorkeeperSocket)).toStrictEqual([{ data: { callSessionId, knocker }, type: "knockCall" }]);
-    expect(readFrames(knockerSocket)).toStrictEqual([
-      { data: { callSessionId, knockerSessionId: knocker.id }, type: "knockerAdmitted" },
+    state.ctx.acceptWebSocket(knockerSocket, [
+      getUserSocketTag(knocker.profile.userId),
+      getSessionSocketTag(knocker.sessionId),
     ]);
+    state.ctx.acceptWebSocket(bystanderSocket, [
+      getUserSocketTag(bystander.profile.userId),
+      getSessionSocketTag(bystander.sessionId),
+    ]);
+
+    await callObject.knockCall({
+      callSessionId,
+      doorkeeperUserId: doorkeeper.profile.userId,
+      knocker: knocker.profile,
+      sessionId: knocker.sessionId,
+    });
+    const knockerId: string = readFrames(doorkeeperSocket)[0].data.knocker.id;
+    const knockingAccess = await callObject.readAccess({ sessionId: knocker.sessionId });
+    await callObject.admitKnocker({ callSessionId, knockerId });
+    const admittedAccess = await callObject.readAccess({ sessionId: knocker.sessionId });
+
+    expect(knockingAccess).toStrictEqual({ isAdmitted: false, isJoined: false, isKnocking: true, participantId: "" });
+    expect(admittedAccess).toStrictEqual({ isAdmitted: true, isJoined: false, isKnocking: false, participantId: "" });
+    expect(readFrames(doorkeeperSocket)).toStrictEqual([
+      { data: { callSessionId, knocker: { ...knocker.profile, id: knockerId } }, type: "knockCall" },
+    ]);
+    expect(readFrames(knockerSocket)).toStrictEqual([{ data: { callSessionId }, type: "knockerAdmitted" }]);
     expect(bystanderSocket.send).not.toHaveBeenCalled();
+  });
+
+  test("a session knocking again keeps the one lobby entry it holds", async () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const doorkeeper = createConnection();
+    const knocker = createConnection();
+    const doorkeeperSocket = createSocket();
+    state.ctx.acceptWebSocket(doorkeeperSocket, [
+      getUserSocketTag(doorkeeper.profile.userId),
+      getSessionSocketTag(doorkeeper.sessionId),
+    ]);
+
+    const knock = { callSessionId, doorkeeperUserId: doorkeeper.profile.userId, knocker: knocker.profile };
+    await callObject.knockCall({ ...knock, sessionId: knocker.sessionId });
+    await callObject.knockCall({ ...knock, sessionId: knocker.sessionId });
+    const [firstKnock, secondKnock] = readFrames(doorkeeperSocket);
+
+    expect(secondKnock.data.knocker.id).toBe(firstKnock.data.knocker.id);
   });
 
   test("a dismissed knock tells only the knocker's own session", async () => {
@@ -197,24 +358,33 @@ describe(CallObject, () => {
 
     const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
-    const doorkeeper = createParticipant();
-    const knocker = createParticipant();
+    const doorkeeper = createConnection();
+    const knocker = createConnection();
     const doorkeeperSocket = createSocket();
     const knockerSocket = createSocket();
     state.ctx.acceptWebSocket(doorkeeperSocket, [
-      getUserSocketTag(doorkeeper.userId),
-      getSessionSocketTag(doorkeeper.id),
+      getUserSocketTag(doorkeeper.profile.userId),
+      getSessionSocketTag(doorkeeper.sessionId),
     ]);
-    state.ctx.acceptWebSocket(knockerSocket, [getUserSocketTag(knocker.userId), getSessionSocketTag(knocker.id)]);
-
-    await callObject.knockCall({ callSessionId, doorkeeperUserId: doorkeeper.userId, knocker });
-    await callObject.dismissKnocker({ callSessionId, knockerSessionId: knocker.id });
-
-    expect((await callObject.readAccess({ sessionId: knocker.id })).isKnocking).toBe(false);
-    expect(readFrames(knockerSocket)).toStrictEqual([
-      { data: { callSessionId, knockerSessionId: knocker.id }, type: "knockerDismissed" },
+    state.ctx.acceptWebSocket(knockerSocket, [
+      getUserSocketTag(knocker.profile.userId),
+      getSessionSocketTag(knocker.sessionId),
     ]);
-    expect(readFrames(doorkeeperSocket)).toStrictEqual([{ data: { callSessionId, knocker }, type: "knockCall" }]);
+
+    await callObject.knockCall({
+      callSessionId,
+      doorkeeperUserId: doorkeeper.profile.userId,
+      knocker: knocker.profile,
+      sessionId: knocker.sessionId,
+    });
+    const knockerId: string = readFrames(doorkeeperSocket)[0].data.knocker.id;
+    await callObject.dismissKnocker({ callSessionId, knockerId });
+
+    expect((await callObject.readAccess({ sessionId: knocker.sessionId })).isKnocking).toBe(false);
+    expect(readFrames(knockerSocket)).toStrictEqual([{ data: { callSessionId }, type: "knockerDismissed" }]);
+    expect(readFrames(doorkeeperSocket)).toStrictEqual([
+      { data: { callSessionId, knocker: { ...knocker.profile, id: knockerId } }, type: "knockCall" },
+    ]);
   });
 
   test("the call ending dismisses each knock on its own session", async () => {
@@ -222,19 +392,27 @@ describe(CallObject, () => {
 
     const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
-    const member = createParticipant();
-    const knocker = createParticipant();
+    const member = createConnection();
+    const knocker = createConnection();
     const knockerSocket = createSocket();
+    const memberJoin = await joinConnection(callObject, member);
+    state.ctx.acceptWebSocket(knockerSocket, [
+      getUserSocketTag(knocker.profile.userId),
+      getSessionSocketTag(knocker.sessionId),
+    ]);
+    await callObject.knockCall({
+      callSessionId,
+      doorkeeperUserId: member.profile.userId,
+      knocker: knocker.profile,
+      sessionId: knocker.sessionId,
+    });
+    await callObject.leaveCall({ callSessionId, sessionId: member.sessionId });
 
-    await callObject.participantJoined({ callSessionId, participant: member });
-    state.ctx.acceptWebSocket(knockerSocket, [getUserSocketTag(knocker.userId), getSessionSocketTag(knocker.id)]);
-    await callObject.knockCall({ callSessionId, doorkeeperUserId: member.userId, knocker });
-    await callObject.leaveCall({ callSessionId, sessionId: member.id });
-
-    expect((await callObject.readAccess({ sessionId: knocker.id })).isKnocking).toBe(false);
+    assert.exists(memberJoin);
+    expect((await callObject.readAccess({ sessionId: knocker.sessionId })).isKnocking).toBe(false);
     expect(readFrames(knockerSocket)).toStrictEqual([
-      { data: { callSessionId, id: member.id }, type: "leaveCall" },
-      { data: { callSessionId, knockerSessionId: knocker.id }, type: "knockerDismissed" },
+      { data: { callSessionId, id: memberJoin.participantId }, type: "leaveCall" },
+      { data: { callSessionId }, type: "knockerDismissed" },
     ]);
   });
 
@@ -265,13 +443,19 @@ describe(CallObject, () => {
     const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
     seedMeeting(state);
-    const participant = createParticipant();
-    const bystander = createParticipant();
-    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant });
+    const participant = createConnection();
+    const bystander = createConnection();
+    await joinConnection(callObject, participant);
     const userSocket = createSocket();
     const bystanderSocket = createSocket();
-    state.ctx.acceptWebSocket(userSocket, [getUserSocketTag(participant.userId), getSessionSocketTag(participant.id)]);
-    state.ctx.acceptWebSocket(bystanderSocket, [getUserSocketTag(bystander.userId), getSessionSocketTag(bystander.id)]);
+    state.ctx.acceptWebSocket(userSocket, [
+      getUserSocketTag(participant.profile.userId),
+      getSessionSocketTag(participant.sessionId),
+    ]);
+    state.ctx.acceptWebSocket(bystanderSocket, [
+      getUserSocketTag(bystander.profile.userId),
+      getSessionSocketTag(bystander.sessionId),
+    ]);
     // The kick answers with no data, and the participant added back answers with the token it rejoins with
     fetchMock
       .mockResolvedValueOnce(respondWith(null))
@@ -281,7 +465,7 @@ describe(CallObject, () => {
       callSessionId,
       isGranted: false,
       sources: [PublishSource.Screenshare],
-      userId: participant.userId,
+      userId: participant.profile.userId,
     });
 
     const appUrl = `${REALTIMEKIT_API_ORIGIN}/accounts/${CLOUDFLARE_ACCOUNT_ID}/realtime/kit/${credentials.appId}`;
@@ -293,13 +477,7 @@ describe(CallObject, () => {
     ]);
     expect(readFrames(userSocket)).toStrictEqual([
       {
-        data: {
-          authToken: "rtk-rejoined-token",
-          callSessionId,
-          canPublishMicrophone: true,
-          sessionId: participant.id,
-          type: "rejoin",
-        },
+        data: { authToken: "rtk-rejoined-token", callSessionId, canPublishMicrophone: true, type: "rejoin" },
         type: "joinCall",
       },
     ]);
@@ -311,17 +489,19 @@ describe(CallObject, () => {
 
     const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
-    const first = createParticipant();
-    const second = createParticipant();
-    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: first });
-    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: second });
+    const first = createConnection();
+    const second = createConnection();
+    const firstJoin = await joinConnection(callObject, first);
+    const secondJoin = await joinConnection(callObject, second);
+    assert.exists(firstJoin);
+    assert.exists(secondJoin);
 
     const reloadedCallObject = createCallObject(state);
 
     await expect(reloadedCallObject.readParticipantMap()).resolves.toStrictEqual(
       new Map([
-        [first.id, { ...first, isCameraEnabled: false }],
-        [second.id, { ...second, isCameraEnabled: false }],
+        [firstJoin.participantId, { ...first.profile, id: firstJoin.participantId }],
+        [secondJoin.participantId, { ...second.profile, id: secondJoin.participantId }],
       ]),
     );
   });
@@ -333,22 +513,33 @@ describe(CallObject, () => {
     const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
     seedMeeting(state);
-    const participant = createParticipant();
-    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant });
-    setRejoining(state, participant.id, true);
+    const participant = createConnection();
+    const join = await joinConnection(callObject, participant);
+    assert.exists(join);
+    setRejoining(state, join.participantId, true);
 
     const replacedLeave = await callObject.participantLeft({
       callSessionId,
       leftAt: new Date(),
-      sessionId: participant.id,
+      participantId: join.participantId,
     });
     const participantMap = await callObject.readParticipantMap();
-    setRejoining(state, participant.id, false);
-    const leave = await callObject.participantLeft({ callSessionId, leftAt: new Date(), sessionId: participant.id });
+    setRejoining(state, join.participantId, false);
+    const leave = await callObject.participantLeft({
+      callSessionId,
+      leftAt: new Date(),
+      participantId: join.participantId,
+    });
 
     expect(replacedLeave).toBeNull();
-    expect(participantMap).toStrictEqual(new Map([[participant.id, { ...participant, isCameraEnabled: false }]]));
-    expect(leave).toStrictEqual({ callDurationSeconds: 0, sessionId: participant.id, userId: participant.userId });
+    expect(participantMap).toStrictEqual(
+      new Map([[join.participantId, { ...participant.profile, id: join.participantId }]]),
+    );
+    expect(leave).toStrictEqual({
+      callDurationSeconds: 0,
+      sessionId: participant.sessionId,
+      userId: participant.profile.userId,
+    });
   });
 
   test("a leave from before the current connection was added is ignored and its participant stays", async () => {
@@ -358,18 +549,23 @@ describe(CallObject, () => {
     const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
     seedMeeting(state);
-    const participant = createParticipant();
+    const participant = createConnection();
     const kickedAt = new Date();
-    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant });
+    const join = await joinConnection(callObject, participant);
+    assert.exists(join);
     state.database
-      .prepare("UPDATE realtimeKitParticipants SET connectedAt = ? WHERE sessionId = ?")
-      .run(kickedAt.getTime() + 1, participant.id);
+      .prepare("UPDATE realtimeKitParticipants SET connectedAt = ? WHERE participantId = ?")
+      .run(kickedAt.getTime() + 1, join.participantId);
 
-    const leave = await callObject.participantLeft({ callSessionId, leftAt: kickedAt, sessionId: participant.id });
+    const leave = await callObject.participantLeft({
+      callSessionId,
+      leftAt: kickedAt,
+      participantId: join.participantId,
+    });
 
     expect(leave).toBeNull();
     await expect(callObject.readParticipantMap()).resolves.toStrictEqual(
-      new Map([[participant.id, { ...participant, isCameraEnabled: false }]]),
+      new Map([[join.participantId, { ...participant.profile, id: join.participantId }]]),
     );
   });
 });

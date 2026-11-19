@@ -5,6 +5,7 @@ import { createParticipant } from "#server/services/message/call/createParticipa
 import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
 import { callRouter } from "#server/trpc/routers/call/index";
 import { callSessionsInMessage } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The call object answers for the call's state, so the router's guards are tested against what it reports
@@ -38,7 +39,8 @@ describe("knockerRouter", () => {
     expect(knockCall).toHaveBeenCalledExactlyOnceWith({
       callSessionId,
       doorkeeperUserId: doorkeeperAuthSession.user.id,
-      knocker: createParticipant(knockerAuthSession.session, knockerAuthSession.user),
+      knocker: createParticipant(knockerAuthSession.user),
+      sessionId: knockerAuthSession.session.id,
     });
   });
 
@@ -56,7 +58,7 @@ describe("knockerRouter", () => {
     vi.mocked(useCallObject).mockReturnValueOnce({ readAccess } as unknown as ReturnType<typeof useCallObject>);
 
     await expect(
-      outsiderCaller.knocker.admitKnocker({ callSessionId, sessionId: "knocker-session" }),
+      outsiderCaller.knocker.admitKnocker({ callSessionId, knockerId: v7() }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Must be in call to admit knockers]`);
   });
 
@@ -75,9 +77,11 @@ describe("knockerRouter", () => {
       typeof useCallObject
     >);
 
-    await creatorCaller.knocker.admitKnocker({ callSessionId, sessionId: "knocker-session" });
+    const knockerId = v7();
 
-    expect(admitKnocker).toHaveBeenCalledExactlyOnceWith({ callSessionId, knockerSessionId: "knocker-session" });
+    await creatorCaller.knocker.admitKnocker({ callSessionId, knockerId });
+
+    expect(admitKnocker).toHaveBeenCalledExactlyOnceWith({ callSessionId, knockerId });
   });
 
   test("dismissKnocker refuses a joined participant who did not create the call", async () => {
@@ -94,7 +98,7 @@ describe("knockerRouter", () => {
     vi.mocked(useCallObject).mockReturnValueOnce({ readAccess } as unknown as ReturnType<typeof useCallObject>);
 
     await expect(
-      participantCaller.knocker.dismissKnocker({ callSessionId, sessionId: "knocker-session" }),
+      participantCaller.knocker.dismissKnocker({ callSessionId, knockerId: v7() }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Must be call creator to dismiss knockers]`);
   });
 });

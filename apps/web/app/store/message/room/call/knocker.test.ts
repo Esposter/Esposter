@@ -54,8 +54,8 @@ describe(useKnockerStore, () => {
   test("puts back only the knocker whose admission was rejected, where they stood", async () => {
     expect.hasAssertions();
 
-    trpcMsw.callSession.knocker.admitKnocker.mutation(({ input: { sessionId } }) => {
-      if (sessionId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.callSession.knocker.admitKnocker.mutation(({ input: { knockerId } }) => {
+      if (knockerId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const knockerStore = useKnockerStore();
     const { admitKnocker, createKnocker } = knockerStore;

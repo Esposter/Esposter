@@ -45,7 +45,7 @@ When any participant publishes a screen track, the shared `MessageContentCallSta
 
 - Clicking the stage requests **native fullscreen of the whole `MessageContentCallView` root** (Google Meet model), not the `<video>` — the Fullscreen API isolates rendering to the target's subtree, so fullscreening the video alone would drop the tiles and controls. `MessageContentCallScreenShareStage` emits `fullscreen`; `MessageContentCallView` owns the root ref and calls `requestFullscreen()`. In the PiP window the stage is non-interactive (no click-to-fullscreen), matching Meet.
 - Multiple simultaneous sharers: tabs above the main area; the active tab is the focused share.
-- **Pin/spotlight**: clicking any tile pins it (`pinnedParticipantId` in `call/media.ts`, values are RealtimeKit custom participant ids = auth session ids); local-only, not broadcast. With nothing pinned, `activeScreenShareParticipantId` prefers your own share and otherwise takes the first sharer in the presenter list.
+- **Pin/spotlight**: clicking any tile pins it (`pinnedParticipantId` in `call/media.ts`, values are participant ids, which are also the RealtimeKit custom participant ids); local-only, not broadcast. With nothing pinned, `activeScreenShareParticipantId` prefers your own share and otherwise takes the first sharer in the presenter list.
 
 ## Moderation
 

@@ -12,16 +12,16 @@ export const knockerRouter = router({
   admitKnocker: standardAuthedProcedure
     .input(knockerInputSchema)
     .meta({ staticReason: "The call object pushes the admission to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
+    .mutation<void>(async ({ ctx, input: { callSessionId, knockerId } }) => {
       await requireCallDoorkeeper(ctx, callSessionId, "admit");
-      await useCallObject(callSessionId).admitKnocker({ callSessionId, knockerSessionId });
+      await useCallObject(callSessionId).admitKnocker({ callSessionId, knockerId });
     }),
   dismissKnocker: standardAuthedProcedure
     .input(knockerInputSchema)
     .meta({ staticReason: "The call object pushes the dismissal to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
+    .mutation<void>(async ({ ctx, input: { callSessionId, knockerId } }) => {
       await requireCallDoorkeeper(ctx, callSessionId, "dismiss");
-      await useCallObject(callSessionId).dismissKnocker({ callSessionId, knockerSessionId });
+      await useCallObject(callSessionId).dismissKnocker({ callSessionId, knockerId });
     }),
   knockCall: standardAuthedProcedure
     .input(callSessionInputSchema)
@@ -34,7 +34,8 @@ export const knockerRouter = router({
       await useCallObject(id).knockCall({
         callSessionId: id,
         doorkeeperUserId: callSession.userId,
-        knocker: createParticipant(session, user),
+        knocker: createParticipant(user),
+        sessionId: session.id,
       });
     }),
 });
