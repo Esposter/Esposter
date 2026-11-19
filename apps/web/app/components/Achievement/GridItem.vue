@@ -8,7 +8,8 @@ import { prettify } from "#src/util/text/prettify";
 
 interface Props {
   achievementDefinition: AchievementDefinitionEntry;
-  // The share of registered users who have unlocked it, as a percentage, once the rarity read has landed
+  // The share of registered users who have unlocked it, as a percentage. The rarity read stays live, so the share
+  // Moves as users unlock it, and it is undefined until that read holds one for this achievement
   rarity?: number | undefined;
   userAchievement?: undefined | UserAchievementWithDefinition;
 }
