@@ -12,6 +12,12 @@ import { MAX_READ_LIMIT, Operation, takeOne, waitForSynchronizedFunctions } from
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+// The sweep's interval and the clock it compares against, never `setTimeout`: tRPC's batch link dispatches on
+// One, and a dispatch armed under a frozen clock never fires for any call in the file after it
+const fakeSweepClock = () => {
+  vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
+};
+
 describe(useFileStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
@@ -45,9 +51,7 @@ describe(useFileStore, () => {
     expect.hasAssertions();
 
     trpcMsw.message.generateDownloadFilePresignedUrls.query(() => [freshUrl]);
-    // The sweep's interval and the clock it compares against, never `setTimeout`: tRPC's batch link dispatches on
-    // One, and a dispatch armed under a frozen clock never fires for any call in the file after it
-    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
+    fakeSweepClock();
     const dataStore = useDataStore();
     const fileStore = useFileStore();
     const { fileUrlMap } = storeToRefs(fileStore);
@@ -154,9 +158,7 @@ describe(useFileStore, () => {
       ({ input }) => input.files.map(() => freshUrl),
     );
     trpcMsw.message.generateDownloadFilePresignedUrls.query(generateDownloadFilePresignedUrls);
-    // The sweep's interval and the clock it compares against, never `setTimeout`: tRPC's batch link dispatches on
-    // One, and a dispatch armed under a frozen clock never fires for any call in the file after it
-    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
+    fakeSweepClock();
     const dataStore = useDataStore();
     const fileStore = useFileStore();
     const { fileUrlMap } = storeToRefs(fileStore);
@@ -231,9 +233,7 @@ describe(useFileStore, () => {
 
     const generateDownloadFilePresignedUrls = vi.fn<() => string[]>(() => [freshUrl]);
     trpcMsw.message.generateDownloadFilePresignedUrls.query(generateDownloadFilePresignedUrls);
-    // The sweep's interval and the clock it compares against, never `setTimeout`: tRPC's batch link dispatches on
-    // One, and a dispatch armed under a frozen clock never fires for any call in the file after it
-    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
+    fakeSweepClock();
     const fileStore = useFileStore();
     const { fileUrlMap } = storeToRefs(fileStore);
     fileUrlMap.value.set(fileId, {
