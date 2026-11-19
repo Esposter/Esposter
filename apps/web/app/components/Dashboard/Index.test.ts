@@ -2,17 +2,16 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
-import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { MimeType } from "#shared/models/file/MimeType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import DashboardIndex from "#src/components/Dashboard/Index.vue";
+import { createBoundVisual } from "#src/services/dashboard/createBoundVisual.test";
 import { readTileRectangles } from "#src/services/dashboard/grid/readTileRectangles.test";
 import { stubGridWidth } from "#src/services/dashboard/grid/stubGridWidth.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { downloadFile } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
@@ -29,16 +28,12 @@ describe("dashboardIndex", () => {
   const responseColumn = "response";
   // A card bound to a snapshot of two rows, so the published page offers its export and the export reads the snapshot
   const createSnapshotCard = () =>
-    new Visual({
-      dataset: {
-        query: { series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }], xColumn: "team" },
-        reference: { id: v7(), type: DatasetProviderType.Sheet },
-        snapshot: {
-          columns: [{ name: responseColumn, type: ColumnType.String }],
-          rows: [{ [responseColumn]: "a" }, { [responseColumn]: "b" }],
-        },
+    createBoundVisual({
+      query: { series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }], xColumn: "team" },
+      snapshot: {
+        columns: [{ name: responseColumn, type: ColumnType.String }],
+        rows: [{ [responseColumn]: "a" }, { [responseColumn]: "b" }],
       },
-      type: VisualType.Card,
     });
 
   beforeEach(() => {

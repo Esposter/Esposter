@@ -3,18 +3,16 @@ import type { VueWrapper } from "@vue/test-utils";
 
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
-import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { MimeType } from "#shared/models/file/MimeType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import DashboardVisualPreviewContainer from "#src/components/Dashboard/Visual/Preview/Container.vue";
 import UiErrorState from "#src/components/Ui/ErrorState.vue";
+import { createBoundVisual } from "#src/services/dashboard/createBoundVisual.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { downloadFile } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
@@ -28,17 +26,6 @@ describe("dashboardVisualPreviewContainer", () => {
   const { trpcMsw } = setupMswTrpc();
   const menuLabel = '[aria-label="Visual actions"]';
   const responseColumn = "response";
-  const createBoundVisual = () =>
-    new Visual({
-      dataset: {
-        query: {
-          series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }],
-          xColumn: responseColumn,
-        },
-        reference: { id: v7(), type: DatasetProviderType.Sheet },
-      },
-      type: VisualType.Card,
-    });
   // The menu opens from the keyboard, as the overflow menu's own test opens it, and its rows are read once it is open
   const openMenu = async (wrapper: VueWrapper) => {
     await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });

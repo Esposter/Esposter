@@ -5,11 +5,10 @@ import type { VueWrapper } from "@vue/test-utils";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
-import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import DashboardVisualPreviewActionsMenu from "#src/components/Dashboard/Visual/Preview/ActionsMenu.vue";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
+import { createBoundVisual } from "#src/services/dashboard/createBoundVisual.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDashboardDialogStore } from "#src/store/dashboard/dialog";
 import { useDashboardStore } from "#src/store/dashboard/index";
@@ -37,20 +36,7 @@ describe("dashboardVisualPreviewActionsMenu", () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = v7();
   const menuLabel = '[aria-label="Visual actions"]';
-  const responseColumn = "response";
   const dataset: Dataset = { columns: [], rows: [] };
-  // A visual bound to a count of the response column, so its menu has the rows it draws to export
-  const createBoundVisual = (type: VisualType) =>
-    new Visual({
-      dataset: {
-        query: {
-          series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }],
-          xColumn: responseColumn,
-        },
-        reference: { id: v7(), type: DatasetProviderType.Sheet },
-      },
-      type,
-    });
   // The menu's rows are listed once it is opened from the keyboard, the way the overflow menu's own test opens it
   const openMenu = async (wrapper: VueWrapper) => {
     await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
@@ -78,7 +64,7 @@ describe("dashboardVisualPreviewActionsMenu", () => {
   test("opening a visual's menu", async () => {
     expect.hasAssertions();
 
-    const table = createBoundVisual(VisualType.Table);
+    const table = createBoundVisual({ type: VisualType.Table });
     await loadDashboard([table]);
     const menu = await mountMenu(table, dataset);
 
@@ -104,7 +90,7 @@ describe("dashboardVisualPreviewActionsMenu", () => {
   test("a bound visual's menu offers its rows as an export", async () => {
     expect.hasAssertions();
 
-    const bound = createBoundVisual(VisualType.Card);
+    const bound = createBoundVisual({ type: VisualType.Card });
     await loadDashboard([bound]);
     const menu = await mountMenu(bound, dataset);
 

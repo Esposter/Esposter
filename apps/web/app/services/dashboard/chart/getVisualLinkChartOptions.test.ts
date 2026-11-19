@@ -3,27 +3,27 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { getVisualLinkChartOptions } from "#src/services/dashboard/chart/getVisualLinkChartOptions";
+import { createBoundVisual } from "#src/services/dashboard/createBoundVisual.test";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getVisualLinkChartOptions, () => {
   const id = v7();
   const xColumn = "xColumn";
-  const createBoundVisual = (visualXColumn = xColumn, type: VisualType = VisualType.Area) =>
-    new Visual({
-      dataset: {
-        query: { series: [{ aggregation: DatasetAggregationType.Sum, column: "column" }], xColumn: visualXColumn },
-        reference: { id, type: DatasetProviderType.Sheet },
-      },
+  // Every visual here reads the one sheet, so the ones categorised alike share a group and the rest do not
+  const createVisual = (visualXColumn = xColumn, type: VisualType = VisualType.Area) =>
+    createBoundVisual({
+      query: { series: [{ aggregation: DatasetAggregationType.Sum, column: "column" }], xColumn: visualXColumn },
+      reference: { id, type: DatasetProviderType.Sheet },
       type,
     });
 
   test("groups visuals by the dataset and the column it is categorised by", () => {
     expect.hasAssertions();
 
-    const { group } = getVisualLinkChartOptions(createBoundVisual(), "bar") ?? {};
+    const { group } = getVisualLinkChartOptions(createVisual(), "bar") ?? {};
 
-    expect(getVisualLinkChartOptions(createBoundVisual(xColumn, VisualType.Bar), "bar")).toStrictEqual({
+    expect(getVisualLinkChartOptions(createVisual(xColumn, VisualType.Bar), "bar")).toStrictEqual({
       group,
       link: { enabled: true },
       selection: { enabled: true },
@@ -35,8 +35,8 @@ describe(getVisualLinkChartOptions, () => {
   test("keeps two visuals over one dataset apart when they are categorised by different columns", () => {
     expect.hasAssertions();
 
-    const { group } = getVisualLinkChartOptions(createBoundVisual(), "bar") ?? {};
-    const { group: otherGroup } = getVisualLinkChartOptions(createBoundVisual("otherXColumn"), "bar") ?? {};
+    const { group } = getVisualLinkChartOptions(createVisual(), "bar") ?? {};
+    const { group: otherGroup } = getVisualLinkChartOptions(createVisual("otherXColumn"), "bar") ?? {};
 
     expect(group).not.toBe(otherGroup);
   });
@@ -47,7 +47,7 @@ describe(getVisualLinkChartOptions, () => {
     (chartType) => {
       expect.hasAssertions();
 
-      expect(getVisualLinkChartOptions(createBoundVisual(), chartType)).toStrictEqual({});
+      expect(getVisualLinkChartOptions(createVisual(), chartType)).toStrictEqual({});
     },
   );
 
