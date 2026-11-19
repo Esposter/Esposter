@@ -8,12 +8,7 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
   const getFirstStandingIndex = () =>
     monsterPartySceneStore.monsters.findIndex((monster) => !checkIsMonsterFainted(monster));
   const activeMonsterIndex = ref(getFirstStandingIndex());
-  const activeMonster = computed({
-    get: () => takeOne(monsterPartySceneStore.monsters, activeMonsterIndex.value),
-    set: (newActiveMonster) => {
-      monsterPartySceneStore.monsters[activeMonsterIndex.value] = newActiveMonster;
-    },
-  });
+  const activeMonster = computed(() => takeOne(monsterPartySceneStore.monsters, activeMonsterIndex.value));
   const switchActiveMonster = (id: string) => {
     activeMonsterIndex.value = monsterPartySceneStore.monsters.findIndex((monster) => monster.id === id);
   };
