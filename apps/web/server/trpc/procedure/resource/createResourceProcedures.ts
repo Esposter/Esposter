@@ -380,9 +380,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
         if (!resource.publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, input);
 
         const content = await readPublishedContent(ctx.db, resource, resource.publication.publishVersion);
-        // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
-        // Best-effort: a failed increment loses one view, never the page.
-        getSynchronizedFunction(incrementResourceViewCount)(ctx.db, input);
+        // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets. Awaited, so the write is recorded
+        // and published before the read returns; a failed increment still loses only one view, never the page.
+        await incrementResourceViewCount(ctx.db, input);
         return { content, name: resource.name };
       }),
     // An owner-only read of a retained snapshot, backing the view route's `version` query param. Anonymous
@@ -398,12 +398,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
     >(({ ctx }) =>
       ctx.db.query.resourcePublicationsInResource.findFirst({ where: { resourceId: { eq: ctx.resource.id } } }),
     ),
-    readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id")
-      .meta({
-        staticReason:
-          "Every public read moves the count and publishes nothing, so a page view never refetches what its owner has open",
-      })
-      .query<number>(({ ctx }) => readResourceViewCount(ctx.db, ctx.resource.id)),
+    readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id").query<number>(({ ctx }) =>
+      readResourceViewCount(ctx.db, ctx.resource.id),
+    ),
     unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourceInResource>(
       async ({ ctx }) => {
         const { id } = ctx.resource;

@@ -27,6 +27,7 @@ export const resourceViewsInResource = sqliteTable(
       unique("resourceViews_resourceId_utcDate_unique").on(resourceId, utcDate),
     ],
     schema: resourceSchema,
+    scope: { columns: ["resourceId"] },
   },
 );
 

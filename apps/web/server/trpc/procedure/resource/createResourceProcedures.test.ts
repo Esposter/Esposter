@@ -12,6 +12,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { authMocks } from "#server/auth.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -820,6 +821,19 @@ describe(createResourceProcedures, () => {
     expect(publishableProcedures.difference(nonPublishableProcedures)).toStrictEqual(publishProcedures);
   });
 
+  test("publishes a public read's view before the read returns, so the owner's count read is woken by it", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+    MockPublishedTopics.length = 0;
+
+    await dashboardCaller.readPublishedResourceContent(newResource.id);
+
+    expect(getMockPublishedTopics()).toContain(`resource_resourceViews:resourceId=${newResource.id}`);
+  });
+
   test("counts each public read", async () => {
     expect.hasAssertions();
 
@@ -832,7 +846,6 @@ describe(createResourceProcedures, () => {
 
     await dashboardCaller.readPublishedResourceContent(newResource.id);
     await dashboardCaller.readPublishedResourceContent(newResource.id);
-    await waitForSynchronizedFunctions();
     const viewCount = await dashboardCaller.readResourceViewCount({ id: newResource.id });
 
     // One person refreshing counts twice — these are views, never visitors
@@ -868,7 +881,6 @@ describe(createResourceProcedures, () => {
     });
     vi.spyOn(console, "error").mockImplementation(noop);
     const { content } = await dashboardCaller.readPublishedResourceContent(newResource.id);
-    await waitForSynchronizedFunctions();
 
     // Telemetry must never break serving the page
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
@@ -882,8 +894,6 @@ describe(createResourceProcedures, () => {
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
     await dashboardCaller.readPublishedResourceContent(newResource.id);
-    // Drained here so the view write can never land after the purge sweep below
-    await waitForSynchronizedFunctions();
     const viewsBeforePurge = await readResourceViews(newResource.id);
     // Delete is soft, so view history survives the Recycle bin window — purge is what sweeps it
     await dashboardCaller.deleteResource({ id: newResource.id });
