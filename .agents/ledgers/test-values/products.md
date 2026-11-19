@@ -1,6 +1,28 @@
 # Products
 
-| Unit                                                                               | Swept | Notes |
-| ---------------------------------------------------------------------------------- | ----- | ----- |
-| `Post`, `Clicker`, `Achievement` + their `store`, `composables`, `services`        | —     |       |
-| `Visual`, `About`, `Anime`, `Login`, `desmos` + their `services` and `composables` | —     |       |
+| Unit                                                                                                                                                                                                           | Swept | Notes |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ----- |
+| `store/post`                                                                                                                                                                                                   | —     |       |
+| `composables/post`                                                                                                                                                                                             | —     |       |
+| `services/post`                                                                                                                                                                                                | —     |       |
+| `store/clicker`                                                                                                                                                                                                | —     |       |
+| `composables/clicker`                                                                                                                                                                                          | —     |       |
+| `services/clicker/building`, `services/clicker/effect`, `services/clicker/icon`, `services/clicker/properties`, `services/clicker/save`, `services/clicker/upgrade`                                            | —     |       |
+| `services/clicker` — `SoundMap.ts`, `applyGameTick.test.ts`, `applyGameTick.ts`, `constants.ts`, `createBuildingWithStatistics.test.ts`, `createClicker.ts`, `formatNumberLong.test.ts`, `formatNumberLong.ts` | —     |       |
+| `store/achievement`                                                                                                                                                                                            | —     |       |
+| `composables/achievement`                                                                                                                                                                                      | —     |       |
+| `services/achievement`                                                                                                                                                                                         | —     |       |
+| `Post`                                                                                                                                                                                                         | —     |       |
+| `Clicker`                                                                                                                                                                                                      | —     |       |
+| `Achievement`                                                                                                                                                                                                  | —     |       |
+| `services/visual`                                                                                                                                                                                              | —     |       |
+| `composables/visual`                                                                                                                                                                                           | —     |       |
+| `services/about`                                                                                                                                                                                               | —     |       |
+| `services/anime`                                                                                                                                                                                               | —     |       |
+| `services/login`                                                                                                                                                                                               | —     |       |
+| `services/desmos`                                                                                                                                                                                              | —     |       |
+| `composables/desmos`                                                                                                                                                                                           | —     |       |
+| `Visual`                                                                                                                                                                                                       | —     |       |
+| `About`                                                                                                                                                                                                        | —     |       |
+| `Anime`                                                                                                                                                                                                        | —     |       |
+| `Login`                                                                                                                                                                                                        | —     |       |
