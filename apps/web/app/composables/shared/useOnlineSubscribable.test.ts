@@ -93,7 +93,7 @@ describe(useOnlineSubscribable, () => {
 
   // The call page establishes its subscriptions after an await, where no scope is active: the online listeners belong
   // To the scope it hands over, so stopping that scope removes them
-  test("removes its online listener with the supplied scope when established outside it", async () => {
+  test("removes its listeners with the supplied scope when established outside it", async () => {
     expect.hasAssertions();
 
     await mountSubscribable();
@@ -103,7 +103,7 @@ describe(useOnlineSubscribable, () => {
     useOnlineSubscribable(source, callback, { instance, scope });
     scope.stop();
 
-    expect(removeEventListener.mock.calls.map(([type]) => type)).toContain("online");
+    expect(removeEventListener.mock.calls.map(([type]) => type)).toStrictEqual(["offline", "online"]);
   });
 
   test("calls cleanup on unmount", async () => {
@@ -143,7 +143,7 @@ describe(useOnlineSubscribable, () => {
     await flushPromises();
 
     expect(asyncCleanup).toHaveBeenCalledExactlyOnceWith();
-    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledExactlyOnceWith("");
 
     resolveCleanup();
     await flushPromises();

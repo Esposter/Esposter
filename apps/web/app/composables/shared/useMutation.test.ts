@@ -31,7 +31,7 @@ describe(useMutation, () => {
     executeMutation(() => Promise.resolve(), { applyOptimistic, key });
     await flushPromises();
 
-    expect(applyOptimistic).toHaveBeenCalledTimes(1);
+    expect(applyOptimistic).toHaveBeenCalledExactlyOnceWith();
     expect(rollback).not.toHaveBeenCalled();
   });
 
@@ -76,7 +76,7 @@ describe(useMutation, () => {
     executeMutation(() => Promise.reject(error), { applyOptimistic, key });
     await flushPromises();
 
-    expect(rollback).toHaveBeenCalledTimes(1);
+    expect(rollback).toHaveBeenCalledExactlyOnceWith();
     expect(alerts.value).toHaveLength(1);
   });
 
@@ -162,7 +162,7 @@ describe(useMutation, () => {
     resolveFirst();
     await flushPromises();
 
-    expect(rollback).toHaveBeenCalledTimes(1);
+    expect(rollback).toHaveBeenCalledExactlyOnceWith();
     expect(alerts.value).toHaveLength(1);
   });
 
@@ -175,11 +175,10 @@ describe(useMutation, () => {
     executeMutation(() => firstPromise, { applyOptimistic: () => noop, key, onError: noop });
     executeMutation(mutate, { applyOptimistic: () => noop, key });
     await flushPromises();
-    const isSecondStartedWhileFirstInFlight = mutate.mock.calls.length > 0;
+    expect(mutate).not.toHaveBeenCalled();
     rejectFirst(error);
     await flushPromises();
 
-    expect(isSecondStartedWhileFirstInFlight).toBe(false);
     expect(mutate).toHaveBeenCalledTimes(1);
   });
 
@@ -225,7 +224,7 @@ describe(useMutation, () => {
     rejectSuperseded(error);
     await flushPromises();
 
-    expect(rollback).toHaveBeenCalledTimes(1);
+    expect(rollback).toHaveBeenCalledExactlyOnceWith();
     expect(alerts.value).toHaveLength(1);
   });
 

@@ -79,7 +79,7 @@ describe(useSave, () => {
     saveState();
     await flushPromises();
 
-    expect(reload).toHaveBeenCalledTimes(1);
+    expect(reload).toHaveBeenCalledExactlyOnceWith();
   });
 
   // A save that fails for any other reason is not a conflict, so the user is told rather than left with a silent loss
@@ -89,15 +89,16 @@ describe(useSave, () => {
     const reload = vi.fn<() => void>();
     vi.stubGlobal("location", { reload });
     const state = ref(createCounter());
+    const error = new Error("network");
     const save = vi.fn<(value: Counter, etag: string | undefined) => Promise<{ etag: string }>>(() =>
-      Promise.reject(new Error("network")),
+      Promise.reject(error),
     );
     const { save: saveState } = useSave(state, { auth: { save } });
     state.value.count = 1;
     saveState();
     await flushPromises();
 
-    expect(createErrorAlert).toHaveBeenCalledTimes(1);
+    expect(createErrorAlert).toHaveBeenCalledExactlyOnceWith(error);
     expect(reload).not.toHaveBeenCalled();
   });
 });

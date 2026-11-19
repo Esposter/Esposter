@@ -31,11 +31,11 @@ describe(useWorkerInterval, () => {
     );
     vi.advanceTimersByTime(intervalMs);
 
-    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledExactlyOnceWith();
 
     wrapper.unmount();
     vi.advanceTimersByTime(intervalMs);
 
-    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledExactlyOnceWith();
   });
 });

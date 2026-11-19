@@ -19,7 +19,7 @@ describe(useCachedRead, () => {
     await Promise.all([read(), read()]);
     await read();
 
-    expect(query).toHaveBeenCalledTimes(1);
+    expect(query).toHaveBeenCalledExactlyOnceWith("");
     expect(onSuccess).toHaveBeenCalledExactlyOnceWith(result, "");
   });
 
@@ -28,13 +28,14 @@ describe(useCachedRead, () => {
 
     const query = vi.fn<(cacheKey: string) => Promise<string>>();
     const onError = vi.fn<(error: Error) => void>();
-    query.mockRejectedValueOnce(new Error(" ")).mockResolvedValue(result);
+    const error = new Error(" ");
+    query.mockRejectedValueOnce(error).mockResolvedValue(result);
     const { read } = useCachedRead(query, { onError, onSuccess: noop });
     await read();
     await read();
 
     expect(query).toHaveBeenCalledTimes(2);
-    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onError).toHaveBeenCalledExactlyOnceWith(error);
   });
 
   test("hands onSuccess the key the read was issued for", async () => {
@@ -148,7 +149,7 @@ describe(useCachedRead, () => {
     useCachedRead(query, { isRefetchOnInvalidate: true, onSuccess: noop, tags: [CacheTag.Resources] });
     await invalidateTags([CacheTag.Resources]);
 
-    expect(query).toHaveBeenCalledTimes(1);
+    expect(query).toHaveBeenCalledExactlyOnceWith("");
   });
 
   test("leaves an untagged cache alone when tags are invalidated", async () => {
@@ -162,7 +163,7 @@ describe(useCachedRead, () => {
     await invalidateTags([CacheTag.Recents, CacheTag.Resources]);
     await read();
 
-    expect(query).toHaveBeenCalledTimes(1);
+    expect(query).toHaveBeenCalledExactlyOnceWith("");
   });
 
   // What the threads drawer calls on open: the re-read re-caches, so the next mount still reads nothing
