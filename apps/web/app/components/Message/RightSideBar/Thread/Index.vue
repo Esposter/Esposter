@@ -11,9 +11,7 @@ const { activeThreadRootId, isReadThreadPending, threadMessages } = storeToRefs(
 const actionItems = useThreadActionItems();
 // Oldest first, so the thread reads top-down into the composer below it — the root is the earliest message in
 // Its own thread, so it needs no special case to stay at the top
-const displayThreadMessages = computed(() =>
-  threadMessages.value.toSorted((firstMessage, secondMessage) => compareCreatedAt(firstMessage, secondMessage)),
-);
+const displayThreadMessages = computed(() => threadMessages.value.toSorted(compareCreatedAt));
 </script>
 
 <!-- `contents` so the marker adds no box of its own to the pane's flex column — it exists only so a file
