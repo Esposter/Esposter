@@ -24,7 +24,7 @@ describe(getDirectMessageDisplayNames, () => {
       { roomId, userId: viewer.id },
       { roomId, userId: other.id },
     ]);
-    const directMessageDisplayNames = await getDirectMessageDisplayNames(context.db, viewer.id);
+    const directMessageDisplayNames = getDirectMessageDisplayNames(context.db, viewer.id);
     const query = context.db
       .select({ displayName: directMessageDisplayNames.displayName, roomId: directMessageDisplayNames.roomId })
       .from(directMessageDisplayNames);
@@ -56,15 +56,15 @@ describe(getDirectMessageDisplayNames, () => {
       { roomId: withOtherId, userId: other.id },
       { roomId: aloneId, userId: viewer.id },
     ]);
-    const directMessageDisplayNames = await getDirectMessageDisplayNames(context.db, viewer.id);
+    const directMessageDisplayNames = getDirectMessageDisplayNames(context.db, viewer.id);
     const rows = await context.db.select({ roomId: directMessageDisplayNames.roomId }).from(directMessageDisplayNames);
 
     expect(rows.map(({ roomId }) => roomId).toSorted()).toStrictEqual([aloneId, withOtherId].toSorted());
   });
 
-  // A viewer with more direct messages than D1 binds in one statement is still named in full, since the room list is bound
-  // As one value rather than a parameter per room
-  test("names every direct message of a viewer past D1's parameter cap, binding their ids as one list", async () => {
+  // A viewer with more direct messages than D1 binds in one statement is still named in full: the viewer's rooms are a
+  // Subquery, so no parameter is bound per room
+  test("names every direct message of a viewer past D1's parameter cap", async () => {
     expect.hasAssertions();
 
     const context = await createMockContext();
@@ -92,7 +92,7 @@ describe(getDirectMessageDisplayNames, () => {
         context.db.insert(usersToRoomsInMessage).values(roomIdChunk.map((roomId) => ({ roomId, userId: viewer.id }))),
       ),
     );
-    const directMessageDisplayNames = await getDirectMessageDisplayNames(context.db, viewer.id);
+    const directMessageDisplayNames = getDirectMessageDisplayNames(context.db, viewer.id);
     const query = context.db.select({ roomId: directMessageDisplayNames.roomId }).from(directMessageDisplayNames);
     const rows = await query;
 
