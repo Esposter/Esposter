@@ -4,6 +4,7 @@ import { checkBarrel } from "#src/services/precheck/checkBarrel";
 import { checkGraph } from "#src/services/precheck/checkGraph";
 import { checkHasGraphInput } from "#src/services/precheck/checkHasGraphInput";
 import { checkLedgerTrailers } from "#src/services/precheck/checkLedgerTrailers";
+import { checkLedgerUnits } from "#src/services/precheck/checkLedgerUnits";
 import { CONFIGURATION_DISTRIBUTION_PATH } from "#src/services/precheck/constants";
 import { readBarrelPackages } from "#src/services/precheck/readBarrelPackages";
 import { readUnformattedPaths } from "#src/services/precheck/readUnformattedPaths";
@@ -16,8 +17,8 @@ import { join } from "node:path";
 
 // The cheap checks CI would otherwise be the first to run on a push: the formatter over each changed file, each changed
 // Package's barrel against what its generator writes, after a manifest change the dependency graph against what its
-// Generator draws, and each ledger trailer of the commits being landed against the rows it names. Typecheck, lint and the
-// Tests stay CI's
+// Generator draws, each derived ledger's rows against the tree they are derived from, and each ledger trailer of the
+// Commits being landed against the rows it names. Typecheck, lint and the tests stay CI's
 export const runPrecheck = async (fix: boolean): Promise<PrecheckReport> => {
   const mainCheckoutRoot = readMainCheckoutRoot();
   const changedFiles = readChangedFiles();
@@ -36,6 +37,7 @@ export const runPrecheck = async (fix: boolean): Promise<PrecheckReport> => {
       ...unformattedPaths.map((path) => `unformatted ${path}`),
       ...(unformattedPaths.length === 0 ? [] : [`fix: pnpm ai:format ${unformattedPaths.join(" ")}`]),
       ...checks.flatMap(({ findings }) => findings),
+      ...checkLedgerUnits(),
       ...checkLedgerTrailers(),
     ],
     regenerated: checks.flatMap(({ regenerated }) => regenerated),
