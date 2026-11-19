@@ -28,7 +28,7 @@ import {
 } from "#src/services/inventory/constants.test";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
-import { FRAGILE_RESIN_ITEM_ID, FRAGILE_RESIN_RESTORE } from "#src/services/originalResin/constants";
+import { FRAGILE_RESIN_ITEM_ID } from "#src/services/originalResin/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { grantQuestRewards } from "#src/services/quest/grantQuestRewards";
@@ -266,7 +266,7 @@ describe(useInventoryEntry, () => {
       ),
     ).toStrictEqual({
       inventory: { items: [{ ...fragileResinItem, quantity: 1 }], nextId: 2, quickSwapItemIds: [] },
-      wallet: { ...wallet, [Currency.OriginalResin]: 100 + FRAGILE_RESIN_RESTORE },
+      wallet: { ...wallet, [Currency.OriginalResin]: 160 },
     });
   });
 });
