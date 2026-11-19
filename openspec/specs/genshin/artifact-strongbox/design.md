@@ -51,10 +51,10 @@ flowchart TD
 
 ## Sources
 
-- [Mystic Offering](https://genshin-impact.fandom.com/wiki/Mystic_Offering), Genshin Impact Wiki: the offering is a Crafting Bench method open from Adventure Rank 45, and three five-star artifacts give one Artifact Strongbox. The Adventure Rank 45 gate is the wiki's, as the Artifact Strongbox page (`{data-root}/cache/genshin-wiki/Page_Artifact_Strongbox.json` line 6) and the Adventure Rank page (`{data-root}/cache/genshin-wiki/Page_Adventure_Rank.json` lines 214 and 215) give it.
-- [Artifact Strongbox](https://genshin-impact.fandom.com/wiki/Artifact_Strongbox), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Artifact_Strongbox.json`: a strongbox holds a random Artifact of the selected set, and a maximum of 39 Artifacts can be sacrificed at once (line 8). The page does not say how the piece is weighted (see Open).
+- [Mystic Offering](https://genshin-impact.fandom.com/wiki/Mystic_Offering), Genshin Impact Wiki: the offering is a Crafting Bench method open from Adventure Rank 45, and three five-star artifacts give one Artifact Strongbox. The Adventure Rank 45 gate is the wiki's, as the Artifact Strongbox page (`{cache-root}/genshin-wiki/Page_Artifact_Strongbox.json` line 6) and the Adventure Rank page (`{cache-root}/genshin-wiki/Page_Adventure_Rank.json` lines 214 and 215) give it.
+- [Artifact Strongbox](https://genshin-impact.fandom.com/wiki/Artifact_Strongbox), Genshin Impact Wiki, cached at `{cache-root}/genshin-wiki/Page_Artifact_Strongbox.json`: a strongbox holds a random Artifact of the selected set, and a maximum of 39 Artifacts can be sacrificed at once (line 8). The page does not say how the piece is weighted (see Open).
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the decompose, display item and offer tables the record is joined from.
 
 ## Open
 
-- [ ] **the game draws a strongbox's piece evenly from the offer row's pieces** — no source yet: the cached Artifact Strongbox page gives only a random Artifact of the selected set (`{data-root}/cache/genshin-wiki/Page_Artifact_Strongbox.json` line 8), not the weights, and no recording shows a roll.
+- [ ] **the game draws a strongbox's piece evenly from the offer row's pieces** — no source yet: the cached Artifact Strongbox page gives only a random Artifact of the selected set (`{cache-root}/genshin-wiki/Page_Artifact_Strongbox.json` line 8), not the weights, and no recording shows a roll.

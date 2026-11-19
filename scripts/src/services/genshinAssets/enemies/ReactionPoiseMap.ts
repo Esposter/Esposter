@@ -4,10 +4,10 @@ import type { Except } from "type-fest";
 import { TransformativeReactionType } from "genshin-world";
 
 // The poise each transformative reaction deals, as the wiki's Interruption Resistance page gives it under Elemental
-// Reactions (`{data-root}/cache/genshin-wiki/Page_Interruption_Resistance%2FData.json`): poiseDamage on the enemy a
+// Reactions (`{cache-root}/genshin-wiki/Page_Interruption_Resistance%2FData.json`): poiseDamage on the enemy a
 // Reaction lands on, and reachPoiseDamage on each enemy it reaches. The page gives one figure for every reaction but
 // Swirl, whose primary target takes 130 and each enemy it spreads to takes 30. Only Overloaded is blunt, the one
-// Reaction the wiki's Blunt Attack list names (`{data-root}/cache/genshin-wiki/Page_Blunt_Attack.json`)
+// Reaction the wiki's Blunt Attack list names (`{cache-root}/genshin-wiki/Page_Blunt_Attack.json`)
 export const ReactionPoiseMap: Partial<Record<TransformativeReactionType, Except<ReactionPoise, "reactionType">>> = {
   [TransformativeReactionType.Bloom]: { isBlunt: false, poiseDamage: 25, reachPoiseDamage: 25 },
   [TransformativeReactionType.Burgeon]: { isBlunt: false, poiseDamage: 50, reachPoiseDamage: 50 },

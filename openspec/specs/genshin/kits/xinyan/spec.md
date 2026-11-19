@@ -36,7 +36,7 @@ Xinyan's skill SHALL set a shield at its press when none stands, and the shield 
 #### Scenario: Breaking the shield ends its level
 
 - **WHEN** the shield breaks
-- **THEN** its level goes with it, back to 1 as gcsim resets it on a break (`{data-root}/cache/gcsim-v2.47.2/internal/characters/xinyan/shield.go` line 36)
+- **THEN** its level goes with it, back to 1 as gcsim resets it on a break (`{cache-root}/gcsim-v2.47.2/internal/characters/xinyan/shield.go` line 36)
 
 #### Scenario: Ascension 1 lowers each threshold
 

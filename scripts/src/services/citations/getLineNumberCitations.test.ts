@@ -90,7 +90,7 @@ describe(getLineNumberCitations, () => {
       getLineNumberCitations(
         PAGE_PATH,
         [
-          "The page says so (`{data-root}/cache/genshin-wiki/Page_Fatui.json`, wikitext line 13).",
+          "The page says so (`{cache-root}/genshin-wiki/Page_Fatui.json`, wikitext line 13).",
           "The burst is `burst.go` lines 20 and 27 of the pinned gcsim.",
           "Its row is `Category_Lisa_Talents.json` line 1.",
           "The table is `Dump.sql`, lines 3 and 4 of the pinned dump.",

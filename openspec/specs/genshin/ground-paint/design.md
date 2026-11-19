@@ -33,7 +33,7 @@ flowchart TD
 ## What it costs to run
 
 - **A bilinear read, a few rules and a noise per vertex, in the worker `packages/genshin-engine/src/terrain/createGroundLayerWeights.ts`, `packages/genshin-engine/src/terrain/sampleGroundLayerField.ts`.** The field is four nodes' shares a layer, a band one smoothstep, a path one segment measure per path in the vertex's cell, and the patches one simplex sample.
-- **A field held as data.** Windrise's is a grid over its two-kilometre square, each layer its cells hold to the hundredth: its published record is 64 by 64 nodes, 4,096 a layer, 70,065 bytes, with no share written to more than two decimals (`{data-root}/cache/content/fdea76ec911e840878bff3970065a868f545aff7098012c052251a68358449d3`, a single line of JSON) `packages/genshin-world/src/services/windrise/readWindriseData.ts`, `packages/genshin-world/src/generated/gameDataLock.json` (`windrise/ground-layers`, a hash only).
+- **A field held as data.** Windrise's is a grid over its two-kilometre square, each layer its cells hold to the hundredth: its published record is 64 by 64 nodes, 4,096 a layer, 70,065 bytes, with no share written to more than two decimals (`{cache-root}/content/fdea76ec911e840878bff3970065a868f545aff7098012c052251a68358449d3`, a single line of JSON) `packages/genshin-world/src/services/windrise/readWindriseData.ts`, `packages/genshin-world/src/generated/gameDataLock.json` (`windrise/ground-layers`, a hash only).
 - **Nothing on the GPU.** The paint is the vertex colour the terrain already carried, so the ground's material and its draw are unchanged `packages/genshin-engine/src/terrain/createGroundPaintColor.ts`.
 
 ## Key files

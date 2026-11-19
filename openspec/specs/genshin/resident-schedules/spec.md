@@ -104,4 +104,4 @@ An operator generating the residents SHALL place each named NPC that has a talk 
 
 ## Open
 
-- [ ] **Residents keep their day spot from six in the morning to seven at night, the game's own hours** — no source yet beyond two residents: Draff's and Brook's wiki pages give 06:00 – 19:00 (`{data-root}/cache/genshin-wiki/Page_Draff.json` line 20, `{data-root}/cache/genshin-wiki/Page_Brook.json` line 13), and no other resident's hours are checked.
+- [ ] **Residents keep their day spot from six in the morning to seven at night, the game's own hours** — no source yet beyond two residents: Draff's and Brook's wiki pages give 06:00 – 19:00 (`{cache-root}/genshin-wiki/Page_Draff.json` line 20, `{cache-root}/genshin-wiki/Page_Brook.json` line 13), and no other resident's hours are checked.

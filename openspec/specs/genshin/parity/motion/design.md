@@ -23,6 +23,6 @@ flowchart LR
 ## Open
 
 - [ ] **Window capture takes a frame only when the window changes** — no source yet: `scripts/src/services/genshinParity/game/captureGame.ts` was not traced for frame skipping.
-- [ ] **When the window delivers a frame** — no source yet: the ffmpeg gfxcapture section (`{data-root}/cache/ffmpeg/ffmpeg-9.0.2-essentials_build/doc/ffmpeg-filters.html`) gives the rate but not when a frame is sent, and `scripts/src/services/genshinParity/game/captureGame.ts` is repo code, not a source for the timing.
+- [ ] **When the window delivers a frame** — no source yet: the ffmpeg gfxcapture section (`{cache-root}/ffmpeg/ffmpeg-9.0.2-essentials_build/doc/ffmpeg-filters.html`) gives the rate but not when a frame is sent, and `scripts/src/services/genshinParity/game/captureGame.ts` is repo code, not a source for the timing.
 - [ ] **A curve from a window that delivers fewer frames jitters by a frame or two** — no source yet: `captureGame.ts` requests `max_framerate` (`RECORD_FRAME_RATE`, sixty, in `scripts/src/services/genshinParity/game/constants.ts`) and has no fallback for a slower window, so the jitter was not measured; a luma plot of one moment taken at two delivered rates would settle it.
 - [ ] **A still and the visual suite show the fixture's first state** — no source yet: `packages/genshin-world/parity/main.ts` starts `props` from `screen.props` and applies `motionProps` only in `props` mode, but how a still is captured and what the visual suite shoots were not traced.

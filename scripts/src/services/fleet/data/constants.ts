@@ -1,7 +1,5 @@
 import { PARITY_FOLDER_NAME } from "#src/services/shared/constants";
-import { SITE_NAME } from "@esposter/shared";
-import { DATA_ROOT } from "@esposter/shared-node/cache";
-import { homedir } from "node:os";
+import { DATA_ROOT, STATE_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";
 
 // The folders a copy takes by default; frames and tmp are never copied, since frames are cut by hand per motion.md
@@ -20,6 +18,6 @@ export const STAT_CONCURRENCY = 64;
 // The stamps read at once, so a list of paths of any length never holds a read open for each one
 export const STAMP_CONCURRENCY = 16;
 export const DEFAULT_PARITY_DIRECTORY: string = join(DATA_ROOT, PARITY_FOLDER_NAME);
-export const PEERS_FILE_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "peers.json");
+export const PEERS_FILE_PATH: string = join(STATE_ROOT, "peers.json");
 export const SUCCESS_EXIT_CODE = 0;
 export const FAILURE_EXIT_CODE = 1;

@@ -57,4 +57,4 @@ Mining outcrops SHALL not be placed, drawn, mined or marked in the world yet.
 
 ## Open
 
-- [ ] **Adventure Rank 30 opens the mining outcrops** — no source yet for the outcrops below the rank: the wiki's Unlocking section (`{data-root}/cache/genshin-wiki/Page_Mining_Outcrop.json`, wikitext line 17) withholds only the Magical Crystal Chunks before 30, and a capture of an outcrop at Adventure Rank 29 would show whether it stands without them.
+- [ ] **Adventure Rank 30 opens the mining outcrops** — no source yet for the outcrops below the rank: the wiki's Unlocking section (`{cache-root}/genshin-wiki/Page_Mining_Outcrop.json`, wikitext line 17) withholds only the Magical Crystal Chunks before 30, and a capture of an outcrop at Adventure Rank 29 would show whether it stands without them.

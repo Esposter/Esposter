@@ -44,5 +44,5 @@ flowchart TD
 ## Open
 
 - [ ] **the flame stands at the height `TORCH_HEIGHT` gives, at the brazier's rim, as the game's torch does** — no source yet: a measure of the game's Kresnik's Torch mesh, which the witness export does not name; its gadget "SceneObj_Area_Zd_Property_Ani_Prop_ZDTorch_01" has no extracted mesh (`{data-root}/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, line 345669), so `scripts/src/services/genshinAssets/measure/measureVerticalExtent.ts` needs its export.
-- [ ] **The wiki's Snezhnaya image shows a few faint flakes** — no source yet: the "File:Snezhnaya.png" wiki image is not on disk, and no file of that name is under `{data-root}/cache` or `{data-root}/genshin-parity`; a copy of that image settles it.
+- [ ] **The wiki's Snezhnaya image shows a few faint flakes** — no source yet: the "File:Snezhnaya.png" wiki image is not on disk, and no file of that name is under `{cache-root}` or `{data-root}/genshin-parity`; a copy of that image settles it.
 - [ ] **The snowfall's density is measured in a clip** — no source yet: `world-snow.mkv` is not in `{data-root}/genshin-parity/captures/`.

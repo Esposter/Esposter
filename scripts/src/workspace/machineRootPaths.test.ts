@@ -24,7 +24,7 @@ describe("getMachineRootPaths", () => {
   });
 
   test.each([
-    ["a placeholder for the root", "Name the root `{data-root}`, then write `{data-root}/cache`."],
+    ["a placeholder for the root", "Name the root `{data-root}`, then write `{cache-root}`."],
     ["a placeholder for the user", "Open `C:\\Users\\<user>\\` first."],
     ["the Nuxt import alias", "Import the router from `~~/server/trpc/router`."],
     ["a repository path from the root", "Keys live in `packages/genshin-world/src/data`."],

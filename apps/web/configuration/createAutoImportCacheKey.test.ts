@@ -7,22 +7,25 @@ import { describe, expect, test } from "vitest";
 type CacheKeyGenerator = Parameters<VitestPluginContext["defineCacheKeyGenerator"]>[0];
 type Unimport = Parameters<NuxtHooks["imports:context"]>[0];
 
+const getGenerator = async (imports: { from: string; name: string }[]) => {
+  const { hooks, plugin } = createAutoImportCacheKey();
+  let generator: CacheKeyGenerator | undefined;
+  hooks["imports:context"]({ getImports: () => Promise.resolve(imports) } as unknown as Unimport);
+  hooks["components:extend"]([]);
+  await Promise.resolve(
+    plugin.configureVitest?.({
+      defineCacheKeyGenerator: (newGenerator: CacheKeyGenerator) => {
+        generator = newGenerator;
+      },
+    } as unknown as VitestPluginContext),
+  );
+  return (code: string) => generator?.({ id: "", sourceCode: code } as Parameters<CacheKeyGenerator>[0]);
+};
+
 describe(createAutoImportCacheKey, () => {
   const name = "useName";
   const from = "/composables/from.ts";
   const sourceCode = `${name}();`;
-  const getGenerator = async (imports: { from: string; name: string }[]) => {
-    const { hooks, plugin } = createAutoImportCacheKey();
-    let generator: CacheKeyGenerator | undefined;
-    hooks["imports:context"]({ getImports: () => Promise.resolve(imports) } as unknown as Unimport);
-    hooks["components:extend"]([]);
-    await plugin.configureVitest?.({
-      defineCacheKeyGenerator: (newGenerator: CacheKeyGenerator) => {
-        generator = newGenerator;
-      },
-    } as unknown as VitestPluginContext);
-    return (code: string) => generator?.({ id: "", sourceCode: code } as Parameters<CacheKeyGenerator>[0]);
-  };
 
   test("an export moved to another file re-keys the module that names it", async () => {
     expect.hasAssertions();
@@ -51,7 +54,7 @@ describe(createAutoImportCacheKey, () => {
     const { plugin } = createAutoImportCacheKey();
 
     await expect(
-      plugin.configureVitest?.({} as VitestPluginContext) as Promise<void>,
+      Promise.resolve().then(() => plugin.configureVitest?.({} as VitestPluginContext)),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: imports:context, Nuxt never handed over its auto-import context, so a persisted transform could not be keyed on it]`,
     );

@@ -49,7 +49,7 @@ The maximum stamina SHALL never exceed two hundred and forty.
 
 - **GIVEN** the reached levels would raise the maximum past two hundred and forty
 - **WHEN** the maximum stamina is computed
-- **THEN** the maximum is two hundred and forty (the wiki's Statue of The Seven page gives the same cap, `{data-root}/cache/genshin-wiki/Page_Statue_of_The_Seven.json`, wikitext lines 27 and 129)
+- **THEN** the maximum is two hundred and forty (the wiki's Statue of The Seven page gives the same cap, `{cache-root}/genshin-wiki/Page_Statue_of_The_Seven.json`, wikitext lines 27 and 129)
 
 ### Requirement: Restorative Power pool refills over time
 
@@ -59,7 +59,7 @@ The Restorative Power SHALL hold five thousand for each unlocked statue as its m
 
 - **GIVEN** the pool is below its maximum
 - **WHEN** fifteen seconds pass
-- **THEN** one percent of the maximum is added to the pool (the wiki gives the same 1% every 15 seconds, on 5,000 for each unlocked statue, `{data-root}/cache/genshin-wiki/Page_Statue_of_The_Seven.json`, wikitext line 37)
+- **THEN** one percent of the maximum is added to the pool (the wiki gives the same 1% every 15 seconds, on 5,000 for each unlocked statue, `{cache-root}/genshin-wiki/Page_Statue_of_The_Seven.json`, wikitext line 37)
 
 #### Scenario: Full pool stops refilling
 

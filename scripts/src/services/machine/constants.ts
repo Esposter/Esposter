@@ -1,7 +1,7 @@
 import { MEBIBYTE } from "#src/services/shared/constants";
 import { KIBIBYTE } from "@esposter/configuration";
 import { SITE_NAME } from "@esposter/shared";
-import { homedir } from "node:os";
+import { STATE_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";
 
 // The thresholds the watcher decides a state by, and the output it wakes the session with
@@ -31,7 +31,7 @@ export const LAUNCHD_PROCESS_ID = 1;
 export const SECONDS_PER_DAY: number = Temporal.Duration.from({ hours: 24 }).total("seconds");
 // The watcher's latest reading, written each minute for the genshin-mods pulse and `pnpm ai:resume` to read. It is
 // Written beside its file and renamed over it, and a reading older than the stale line is one the watcher missed
-export const MACHINE_STATE_DIRECTORY: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "machine");
+export const MACHINE_STATE_DIRECTORY: string = join(STATE_ROOT, "machine");
 export const MACHINE_STATE_PATH: string = join(MACHINE_STATE_DIRECTORY, "state.json");
 export const MACHINE_STATE_NEXT_PATH: string = join(MACHINE_STATE_DIRECTORY, "state.next.json");
 export const MACHINE_STATE_STALE_MILLISECONDS: number = Temporal.Duration.from({ minutes: 3 }).total("milliseconds");

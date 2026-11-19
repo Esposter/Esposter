@@ -65,5 +65,5 @@ The steps for recreating a piece, and the rules each step keeps, are the `genshi
 ## Sources
 
 - [wwiser](https://github.com/bnnm/wwiser), the reference parser for Wwise's banks, read to confirm the track's clips and the playlist's items at the banks' version.
-- [vgmstream](https://github.com/vgmstream/vgmstream), the decoder for Wwise's Vorbis, pinned in the tool cache under `{data-root}/cache/vgmstream`.
+- [vgmstream](https://github.com/vgmstream/vgmstream), the decoder for Wwise's Vorbis, pinned in the tool cache under `{cache-root}/vgmstream`.
 - [Autoplay guide for media and Web Audio APIs](https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay), MDN: when a browser starts an audio context suspended until the page's first click or key.

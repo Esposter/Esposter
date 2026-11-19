@@ -31,8 +31,8 @@ The book is scored over what the page draws against `handbook-experience`, the w
 
 ## Sources
 
-- [Adventurer Handbook](https://genshin-impact.fandom.com/wiki/Adventurer_Handbook), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Adventurer_Handbook.json`: the Experience, Commissions, Domains, Enemies, Guide and Embattle tabs and what each shows, the features the handbook tracks being its opening lines (wikitext lines 7 to 13, and 16 to 121 for the tabs).
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Controls.json`: F1 opens the Adventurer Handbook (wikitext lines 170 and 171).
+- [Adventurer Handbook](https://genshin-impact.fandom.com/wiki/Adventurer_Handbook), Genshin Impact Wiki, cached at `{cache-root}/genshin-wiki/Page_Adventurer_Handbook.json`: the Experience, Commissions, Domains, Enemies, Guide and Embattle tabs and what each shows, the features the handbook tracks being its opening lines (wikitext lines 7 to 13, and 16 to 121 for the tabs).
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, cached at `{cache-root}/genshin-wiki/Page_Controls.json`: F1 opens the Adventurer Handbook (wikitext lines 170 and 171).
 - Requirement "Six tabs listed in the English client's order", scenario "Tabs read top to bottom": `{data-root}/genshin-parity/references/handbook-experience.png`
 - Requirement "The Experience page shows the chapter and its commissions", scenario "Layout of the Experience page": `{data-root}/genshin-parity/references/handbook-experience.png`
 - Requirement "The Experience page shows the chapter and its commissions", scenario "Reward tile takes its rarity's colours" (tile colours): `{data-root}/genshin-parity/references/handbook-experience.png`

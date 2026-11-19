@@ -41,7 +41,7 @@ A new artifact's minor affixes SHALL be drawn from its rarity's pool, never repe
 
 - **GIVEN** a minor affix is drawn
 - **WHEN** its value is set
-- **THEN** the value is one of the tiers of that affix, and each tier is as likely as the next (`{data-root}/cache/genshin-wiki/Page_Artifact%2FDistribution.json`, wikitext lines 11 and 137 to 168)
+- **THEN** the value is one of the tiers of that affix, and each tier is as likely as the next (`{cache-root}/genshin-wiki/Page_Artifact%2FDistribution.json`, wikitext lines 11 and 137 to 168)
 
 ### Requirement: Enhancing costs Mora per EXP point and the recovered share is free
 
@@ -250,6 +250,6 @@ The Adventurer's four-piece restoration SHALL apply only to the character wearin
 
 ## Open
 
-- [ ] **A locked artifact is never fodder** — no source yet: the wiki's Artifact page bars locked artifacts from salvage (`{data-root}/cache/genshin-wiki/Page_Artifact.json`, wikitext line 94) and names no fodder rule; a capture of the enhancement's fodder list with a locked artifact selected would settle it.
-- [ ] **Traveling Doctor's restore is raised by the Healing Bonuses** — no source yet: the Healing Bonus page defines only outgoing healing (`{data-root}/cache/genshin-wiki/Page_Healing%2FHealing_Bonus.json`, wikitext line 11), gcsim has no module for the set, and the Traveling Doctor page is not in the cache.
-- [ ] **Mora is charged on the EXP before the bonus is applied** — no source yet: the wiki's Artifact EXP page charges "the EXP value gained" (`{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 175) and does not say whether the bonus is in it; a recording of an enhancement that draws the two- or five-times bonus, with the Mora before and after, would settle it.
+- [ ] **A locked artifact is never fodder** — no source yet: the wiki's Artifact page bars locked artifacts from salvage (`{cache-root}/genshin-wiki/Page_Artifact.json`, wikitext line 94) and names no fodder rule; a capture of the enhancement's fodder list with a locked artifact selected would settle it.
+- [ ] **Traveling Doctor's restore is raised by the Healing Bonuses** — no source yet: the Healing Bonus page defines only outgoing healing (`{cache-root}/genshin-wiki/Page_Healing%2FHealing_Bonus.json`, wikitext line 11), gcsim has no module for the set, and the Traveling Doctor page is not in the cache.
+- [ ] **Mora is charged on the EXP before the bonus is applied** — no source yet: the wiki's Artifact EXP page charges "the EXP value gained" (`{cache-root}/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 175) and does not say whether the bonus is in it; a recording of an enhancement that draws the two- or five-times bonus, with the Mora before and after, would settle it.

@@ -408,4 +408,4 @@ Auto Cook SHALL be offered on the cooking screen once a dish's proficiency is fu
 ## Open
 
 - [ ] **A stove offers no prompt out of reach** — no source yet: a capture or game table of the stove's prompt range; the cached Cooking page names no range.
-- [ ] **A campfire is left as it was by Dendro** — no source yet for an unlit campfire: the Fire page names Dendro only on a lit one (`{data-root}/cache/genshin-wiki/Page_Fire.json` line 21), and no recording of an unlit campfire under Dendro was captured.
+- [ ] **A campfire is left as it was by Dendro** — no source yet for an unlit campfire: the Fire page names Dendro only on a lit one (`{cache-root}/genshin-wiki/Page_Fire.json` line 21), and no recording of an unlit campfire under Dendro was captured.

@@ -98,7 +98,7 @@ A click on the world SHALL lock the pointer, and Left Alt SHALL release it to sh
 
 - **GIVEN** the pointer is locked
 - **WHEN** the player presses Left Alt
-- **THEN** the cursor shows and the menu does not open (`{data-root}/cache/genshin-wiki/Page_Controls.json` lines 235 and 236 give Left Alt as Show Cursor, and line 369 gives Esc for the Paimon Menu)
+- **THEN** the cursor shows and the menu does not open (`{cache-root}/genshin-wiki/Page_Controls.json` lines 235 and 236 give Left Alt as Show Cursor, and line 369 gives Esc for the Paimon Menu)
 
 #### Scenario: Escape releases the lock and opens the menu
 
@@ -132,7 +132,7 @@ Photo mode SHALL hold the character where it stands and keep the camera orbiting
 
 - **GIVEN** the player is in photo mode
 - **WHEN** time passes
-- **THEN** the world clock keeps running (`{data-root}/cache/genshin-wiki/Page_Time.json` line 29 pauses time for the Paimon Menu "except for Photo Mode")
+- **THEN** the world clock keeps running (`{cache-root}/genshin-wiki/Page_Time.json` line 29 pauses time for the Paimon Menu "except for Photo Mode")
 
 #### Scenario: Tuning panel hands the view to the free camera
 
@@ -143,4 +143,4 @@ Photo mode SHALL hold the character where it stands and keep the camera orbiting
 ## Open
 
 - [ ] **The camera's nearest and furthest distances are the game's** — no source yet: the game's follow-camera distances, not read from a table or a recording; `pnpm -C scripts genshin:assets camera` must print `MIN_CAMERA_ZOOM_RADIUS` and `MAX_RADIUS_MOVING`.
-- [ ] **A click locks the pointer, as the game's controls do** — no source yet for the click: the Controls wiki page gives Left Alt as Show Cursor (`{data-root}/cache/genshin-wiki/Page_Controls.json` lines 235 and 236) but no pointer lock; a recording of a click in play with the cursor gone would settle it.
+- [ ] **A click locks the pointer, as the game's controls do** — no source yet for the click: the Controls wiki page gives Left Alt as Show Cursor (`{cache-root}/genshin-wiki/Page_Controls.json` lines 235 and 236) but no pointer lock; a recording of a click in play with the cursor gone would settle it.

@@ -89,7 +89,7 @@ An enemy immune to Air staggers SHALL stay on the ground when a launching hit st
 
 #### Scenario: A launching hit that staggers an enemy leaves it launched while the stagger lasts
 
-- **GIVEN** a launching hit, one whose stagger level is Air (the wiki's common impulse types 5 to 9 are Air, `{data-root}/cache/genshin-wiki/Page_Interruption_Resistance%2FStagger.json`, wikitext lines 123 to 131, and the `isLaunching` field of `packages/genshin-world/src/models/kit/KitHit.ts` names them too), whose poise damage breaks an enemy's poise
+- **GIVEN** a launching hit, one whose stagger level is Air (the wiki's common impulse types 5 to 9 are Air, `{cache-root}/genshin-wiki/Page_Interruption_Resistance%2FStagger.json`, wikitext lines 123 to 131, and the `isLaunching` field of `packages/genshin-world/src/models/kit/KitHit.ts` names them too), whose poise damage breaks an enemy's poise
 - **WHEN** the hit lands
 - **THEN** the enemy carries the launched status for the stagger's seconds
 
@@ -142,7 +142,7 @@ An enemy whose health reaches zero SHALL be defeated and drop Character EXP by i
 
 - **GIVEN** a common enemy at a level whose kind is on a drop family
 - **WHEN** it is defeated
-- **THEN** it drops Character EXP and the Mora and materials its family's table gives, by its level's band (the family is the first Drops Table the kind's wiki article lists, and the family's table is its row of the wiki's Enemies table, `{data-root}/cache/genshin-wiki/Page_Module:Drops_Table%2Fdata.json`, both published as `enemies/dropFamilies` and `enemies/dropFamilyKinds`; `packages/genshin-world/src/services/enemy/constants.ts`'s `COMMON_ENEMY_MORA_SHARES` through `ELITE_ENEMY_CHARACTER_EXPERIENCES` hold the band shares, and `computeEnemyDrops` in `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts` takes the band)
+- **THEN** it drops Character EXP and the Mora and materials its family's table gives, by its level's band (the family is the first Drops Table the kind's wiki article lists, and the family's table is its row of the wiki's Enemies table, `{cache-root}/genshin-wiki/Page_Module:Drops_Table%2Fdata.json`, both published as `enemies/dropFamilies` and `enemies/dropFamilyKinds`; `packages/genshin-world/src/services/enemy/constants.ts`'s `COMMON_ENEMY_MORA_SHARES` through `ELITE_ENEMY_CHARACTER_EXPERIENCES` hold the band shares, and `computeEnemyDrops` in `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts` takes the band)
 
 #### Scenario: A defeated enemy with no drop family drops no Mora or materials
 
@@ -189,19 +189,19 @@ A defeated enemy SHALL NOT return before its respawn time, which depends on its 
 
 - **GIVEN** a camp of common enemies with a member defeated
 - **WHEN** twelve hours pass
-- **THEN** the member returns (`{data-root}/cache/genshin-wiki/Page_Reset.json`, wikitext lines 36 and 40, under a stub banner at line 1 that asks for these timers to be verified)
+- **THEN** the member returns (`{cache-root}/genshin-wiki/Page_Reset.json`, wikitext lines 36 and 40, under a stub banner at line 1 that asks for these timers to be verified)
 
 #### Scenario: An elite camp member returns at the next daily reset
 
 - **GIVEN** a camp with an elite and a member defeated
-- **WHEN** the next daily reset at 04:00 on the server's clock arrives (`{data-root}/cache/genshin-wiki/Page_Reset.json`, line 2; the Asia server's clock is GMT+8, which is UTC+8, as `{data-root}/cache/genshin-wiki/Category_Escoffier_Talents.json` line 5 gives, naming its weekly reset at 4:00 AM GMT+8)
-- **THEN** the member returns (`{data-root}/cache/genshin-wiki/Page_Reset.json`, lines 14 and 40)
+- **WHEN** the next daily reset at 04:00 on the server's clock arrives (`{cache-root}/genshin-wiki/Page_Reset.json`, line 2; the Asia server's clock is GMT+8, which is UTC+8, as `{cache-root}/genshin-wiki/Category_Escoffier_Talents.json` line 5 gives, naming its weekly reset at 4:00 AM GMT+8)
+- **THEN** the member returns (`{cache-root}/genshin-wiki/Page_Reset.json`, lines 14 and 40)
 
 #### Scenario: A boss camp returns five seconds after its reward is claimed
 
 - **GIVEN** a camp with a normal boss whose reward is claimed
 - **WHEN** five seconds pass after the claim
-- **THEN** the boss's camp is spawned again (`{data-root}/cache/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16, which gives roughly 5 seconds; its Normal Bosses title redirects to it)
+- **THEN** the boss's camp is spawned again (`{cache-root}/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16, which gives roughly 5 seconds; its Normal Bosses title redirects to it)
 
 ### Requirement: A camp wakes together
 
@@ -268,7 +268,7 @@ An enemy SHALL drop its energy at each health threshold it falls to, once for it
 
 - **GIVEN** an enemy falling to a health threshold
 - **WHEN** the threshold is passed
-- **THEN** its energy drops (`{data-root}/cache/genshin-wiki/Page_Energy%2FData.json`, wikitext line 390, which counts an HP% threshold once per instance of an enemy, healed or not; `damageEnemy`'s loop over its energy drops in `packages/genshin-world/src/services/enemy/damageEnemy.ts` takes each threshold once)
+- **THEN** its energy drops (`{cache-root}/genshin-wiki/Page_Energy%2FData.json`, wikitext line 390, which counts an HP% threshold once per instance of an enemy, healed or not; `damageEnemy`'s loop over its energy drops in `packages/genshin-world/src/services/enemy/damageEnemy.ts` takes each threshold once)
 
 #### Scenario: Falling to the same threshold again drops no energy
 
@@ -321,4 +321,4 @@ Each enemy SHALL be tinted white with a small flash at its middle for a moment a
 
 ## Open
 
-- [ ] **The Unusual Hilichurl gives 18 Adventure EXP a defeat** — no kind to give it yet: the wiki's Adventure EXP page gives each defeated Unusual Hilichurl 18 AR EXP (`{data-root}/cache/genshin-wiki/Page_Adventure_EXP.json` wikitext line 77), but no region places it, and `{data-root}/genshin-parity/text/ExcelBinOutput/MonsterExcelConfigData.json` has its one row, id 21011501 ("Hili_Wei_NoWeapon_01"), whose kill drop 22010010 is in no table the dump holds, so the 18 rests on the wiki alone. A recording of a defeat, or a reward table giving the 18, would settle it.
+- [ ] **The Unusual Hilichurl gives 18 Adventure EXP a defeat** — no kind to give it yet: the wiki's Adventure EXP page gives each defeated Unusual Hilichurl 18 AR EXP (`{cache-root}/genshin-wiki/Page_Adventure_EXP.json` wikitext line 77), but no region places it, and `{data-root}/genshin-parity/text/ExcelBinOutput/MonsterExcelConfigData.json` has its one row, id 21011501 ("Hili_Wei_NoWeapon_01"), whose kill drop 22010010 is in no table the dump holds, so the 18 rests on the wiki alone. A recording of a defeat, or a reward table giving the 18, would settle it.

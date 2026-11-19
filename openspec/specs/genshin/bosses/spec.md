@@ -66,4 +66,4 @@ Every later claim SHALL cost 60 resin, and the count SHALL cover all weekly boss
 
 ## Open
 
-- [ ] **A claimed normal boss returns five seconds after its claim** — no source yet: the wiki's Normal Boss page says the boss returns "in roughly 5 seconds" (`{data-root}/cache/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16), and no respawn row in the game's exports holds a figure; a recording of a claimed boss's respawn would settle the exact five seconds.
+- [ ] **A claimed normal boss returns five seconds after its claim** — no source yet: the wiki's Normal Boss page says the boss returns "in roughly 5 seconds" (`{cache-root}/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16), and no respawn row in the game's exports holds a figure; a recording of a claimed boss's respawn would settle the exact five seconds.

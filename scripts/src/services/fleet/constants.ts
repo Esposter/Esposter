@@ -1,5 +1,5 @@
 import { SITE_NAME } from "@esposter/shared";
-import { homedir } from "node:os";
+import { STATE_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";
 
 export const CLAIM_REF_PREFIX = "refs/claims/";
@@ -26,9 +26,9 @@ export const STALE_MILLISECONDS: number = Temporal.Duration.from({ minutes: 30 }
 export const FLEET_REF_TIMEOUT_MILLISECONDS: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
 // A renewal's load line samples the machine over this window, so a renewal is quick
 export const LOAD_SAMPLE_MILLISECONDS: number = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
-export const MACHINE_PROFILE_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "machine.json");
+export const MACHINE_PROFILE_PATH: string = join(STATE_ROOT, "machine.json");
 // A running hold has one file per entry here, which a release deletes to stop the hold on this machine at once
-export const HOLDS_DIRECTORY: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "holds");
+export const HOLDS_DIRECTORY: string = join(STATE_ROOT, "holds");
 // The areas a machine holds when its profile is new: every area, until the user lends it fewer
 export const ALL_AREAS: readonly string[] = ["*"];
 // The one area the owner works in, which every machine is lent for until the owner decides otherwise

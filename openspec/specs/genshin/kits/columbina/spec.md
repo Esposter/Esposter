@@ -135,7 +135,7 @@ Columbina SHALL turn her team's Electro-Charged, Bloom and Hydro-Crystallize rea
 
 - **GIVEN** Columbina is in the party and a party member's Bloom forms
 - **WHEN** the reaction is recorded
-- **THEN** it is Lunar-Bloom, consuming as Bloom does (`{data-root}/cache/gcsim-v2.47.2/pkg/reactable/bloom.go` lines 13 to 49, where the Lunar flag only adds a call and an event)
+- **THEN** it is Lunar-Bloom, consuming as Bloom does (`{cache-root}/gcsim-v2.47.2/pkg/reactable/bloom.go` lines 13 to 49, where the Lunar flag only adds a call and an event)
 
 ### Requirement: Her Moonsign Benediction adds Base DMG from her max HP
 

@@ -13,13 +13,13 @@ Enhancing a weapon SHALL spend one Mora for every ten points of paid EXP, and SH
 - **GIVEN** a weapon is enhanced with an ore and a fodder weapon
 - **WHEN** the enhancement is applied
 - **THEN** the paid EXP is the ore's EXP plus the fodder weapon's base EXP
-- **AND** Mora is spent at one per ten points of that EXP (the wiki's Weapon EXP page, `{data-root}/cache/genshin-wiki/Page_Weapon_EXP.json`, wikitext line 23)
+- **AND** Mora is spent at one per ten points of that EXP (the wiki's Weapon EXP page, `{cache-root}/genshin-wiki/Page_Weapon_EXP.json`, wikitext line 23)
 
 #### Scenario: Fodder weapon's invested EXP recovered
 
 - **GIVEN** a fodder weapon was levelled before
 - **WHEN** it is used as fodder
-- **THEN** it gives its base EXP plus eighty percent of the EXP it was levelled with (`FODDER_EXP_SHARE`; the wiki's Weapon EXP page, `{data-root}/cache/genshin-wiki/Page_Weapon_EXP.json`, wikitext line 18, which says the recovered share costs no extra Mora)
+- **THEN** it gives its base EXP plus eighty percent of the EXP it was levelled with (`FODDER_EXP_SHARE`; the wiki's Weapon EXP page, `{cache-root}/genshin-wiki/Page_Weapon_EXP.json`, wikitext line 18, which says the recovered share costs no extra Mora)
 
 #### Scenario: Wallet short of Mora refused
 
@@ -84,13 +84,13 @@ A copy or a refinement material SHALL add its ranks, each rank gained costing th
 
 - **GIVEN** a weapon at rank two
 - **WHEN** it is refined with a copy at rank two, or with a refinement material
-- **THEN** the copy adds its own rank, so the weapon reaches rank four, and the material adds one (the wiki's Refinement Rank page, `{data-root}/cache/genshin-wiki/Page_Refinement_Rank.json`, wikitext line 8, and its Refinement Material page, `{data-root}/cache/genshin-wiki/Page_Refinement_Material.json`, wikitext line 21, whose Trivia says several materials used at once raise several ranks)
+- **THEN** the copy adds its own rank, so the weapon reaches rank four, and the material adds one (the wiki's Refinement Rank page, `{cache-root}/genshin-wiki/Page_Refinement_Rank.json`, wikitext line 8, and its Refinement Material page, `{cache-root}/genshin-wiki/Page_Refinement_Material.json`, wikitext line 21, whose Trivia says several materials used at once raise several ranks)
 
 #### Scenario: Ranks past five lost
 
 - **GIVEN** a refinement would take a weapon past rank five
 - **WHEN** it is refined
-- **THEN** the ranks past five are lost (the wiki's Refinement Rank page says an exceeded material is not refunded at the maximum, `{data-root}/cache/genshin-wiki/Page_Refinement_Rank.json`, wikitext line 8)
+- **THEN** the ranks past five are lost (the wiki's Refinement Rank page says an exceeded material is not refunded at the maximum, `{cache-root}/genshin-wiki/Page_Refinement_Rank.json`, wikitext line 8)
 - **AND** the result counts the ranks lost
 
 #### Scenario: Weapon at rank five refused

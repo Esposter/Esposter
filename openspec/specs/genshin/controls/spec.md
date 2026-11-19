@@ -191,6 +191,6 @@ The world SHALL leave unbound the keys of places and modes it does not have (whi
 
 ## Open
 
-- [ ] **A pad's bumper turns the face buttons into the shortcut wheel's while held** — contradicted by `{data-root}/cache/genshin-wiki/Page_Controls.json` lines 96 and 147 to 149: the bumper alone opens the shortcut wheel, and held with a face button it gives Quick-Use Gadget and other chords of the game, not the wheel's actions.
+- [ ] **A pad's bumper turns the face buttons into the shortcut wheel's while held** — contradicted by `{cache-root}/genshin-wiki/Page_Controls.json` lines 96 and 147 to 149: the bumper alone opens the shortcut wheel, and held with a face button it gives Quick-Use Gadget and other chords of the game, not the wheel's actions.
 - [ ] **The browser keeps Escape for a pointer lock and takes no lock from it** — no source yet: the Pointer Lock and user-activation specs, which are not on disk and not in the wiki cache.
 - [ ] **Chromium reports one spurious, very large pointer move after a lock** — no source yet: a recording of the first move after a lock, not taken here, or a logged "movementX" and "movementY" sequence from the events after `requestPointerLock`.

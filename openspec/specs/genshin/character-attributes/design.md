@@ -71,7 +71,7 @@ A new character is `createCharacter` over the roster: level 1 in its first phase
 - `{data-root}/genshin-parity/text/ExcelBinOutput/WeaponCurveExcelConfigData.json`, alike the avatar tables; grounds "Base attributes grow along the level curve and rise with ascension".
 - `{data-root}/genshin-parity/text/ExcelBinOutput/WeaponPromoteExcelConfigData.json`, alike the avatar tables; grounds "Base attributes grow along the level curve and rise with ascension".
 - `{data-root}/genshin-parity/text/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, the Traveler's default depots 501 and 701, whose skills carry no `energySkill`; grounds "The Traveler has no element until it resonates with a statue".
-- `{data-root}/cache/genshin-wiki/Page_Fatui.json`, wikitext line 13: the faction infobox's "region = Snezhnaya"; grounds the Fatui counted as Snezhnaya's under "A character's region is the catalogue's".
+- `{cache-root}/genshin-wiki/Page_Fatui.json`, wikitext line 13: the faction infobox's "region = Snezhnaya"; grounds the Fatui counted as Snezhnaya's under "A character's region is the catalogue's".
 
 ## Open
 
@@ -81,4 +81,4 @@ The open items the [spec](spec.md) also holds are listed there, not here.
 - [ ] **Every attribute's name is filed under its id in the game's text** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json`: a few of the Attribute ids have no row there.
 - [ ] **The crossbow rows are the Traveler's discarded shooter forms, from 7.1** — no source yet: the five rows' depots and bodies are the Traveler's, but the English text names no Traveler shooter form, the avatar table holds no patch version, and their name hashes have no English text in `{data-root}/genshin-dump-backup-6.6/TextMap/TextMapEN.json`.
 - [ ] **The tables run to hundreds of kilobytes** — no source yet: the published stats files are not in the checkout, so only the build of `pnpm -C scripts genshin:assets stats`, measured before its publish, gives their size.
-- [ ] **The Traveler's base HP, ATK and DEF match the wiki at each level and phase** — no source yet: the wiki's Traveler page is cached, but its stats are the transcluded "Character Ascensions and Stats" template (`{data-root}/cache/genshin-wiki/Page_Traveler.json`, wikitext line 47), which the cache does not hold.
+- [ ] **The Traveler's base HP, ATK and DEF match the wiki at each level and phase** — no source yet: the wiki's Traveler page is cached, but its stats are the transcluded "Character Ascensions and Stats" template (`{cache-root}/genshin-wiki/Page_Traveler.json`, wikitext line 47), which the cache does not hold.

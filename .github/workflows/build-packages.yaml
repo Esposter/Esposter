@@ -56,7 +56,7 @@ jobs:
         id: game-data-mirror
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: ~/Esposter/cache/content
+          path: ~/.cache/workspace-data/content
           key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
           restore-keys: game-data-mirror-
       # Every object is named by its hash, so whatever an earlier lock's mirror holds is still valid, and the fill
@@ -69,7 +69,7 @@ jobs:
         if: steps.game-data-mirror.outputs.cache-hit != 'true' && (github.ref_name == 'main' || github.ref_name == 'ai/queue')
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: ~/Esposter/cache/content
+          path: ~/.cache/workspace-data/content
           key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
       # `*/dist` is the build output, and the generated barrels and the `src/generated` files a build hook writes
       # (gitignored) sit beside the sources; libraries only, so their common ancestor `packages` is where the artifact

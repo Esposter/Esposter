@@ -110,6 +110,6 @@ Every colour the world is lit by SHALL be read from the sky at the current minut
 ## Open
 
 - [ ] **A region opens at its reference hour** — no source yet: the in-game hours of the reference screenshots were not read here, and no file under `packages/genshin-world/src` or `packages/genshin-engine/src` names a reference hour.
-- [ ] **The sun rises due east at dawn and sets due west at dusk** — no source yet: the cached Time page gives no bearing (`{data-root}/cache/genshin-wiki/Page_Time.json`), and no frame's sun bearing was read; a 06:00 and an 18:00 frame with the camera's heading would settle it.
+- [ ] **The sun rises due east at dawn and sets due west at dusk** — no source yet: the cached Time page gives no bearing (`{cache-root}/genshin-wiki/Page_Time.json`), and no frame's sun bearing was read; a 06:00 and an 18:00 frame with the camera's heading would settle it.
 - [ ] **The light passes from the sun to the moon at dawn and dusk without a visible jump** — no source yet: no dawn or dusk handover frame was compared; the time clip's stills under `{data-root}/genshin-parity/frames/yt-a4_J84iMqR0-time/` have not been read for it.
 - [ ] **The sky shows a gradient, sun, moon, stars and stepped clouds in the region's colours** — no source yet: no in-world frame was compared for these elements; a still of the sky at midnight and at noon would settle them.

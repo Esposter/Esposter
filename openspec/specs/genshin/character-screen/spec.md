@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's character screen on C (the wiki's Controls page, `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext line 159) or from the Paimon menu's Character entry (`{data-root}/cache/genshin-wiki/Page_Paimon_Menu.json`, wikitext line 46), its layout measured off the English client's own frame at 21:9 — the player's characters across the top, the six tabs down the left in the game's words (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`), and the chosen character's Attributes panel down the right with its level and attributes by group from the game's own sums.
+The game's character screen on C (the wiki's Controls page, `{cache-root}/genshin-wiki/Page_Controls.json`, wikitext line 159) or from the Paimon menu's Character entry (`{cache-root}/genshin-wiki/Page_Paimon_Menu.json`, wikitext line 46), its layout measured off the English client's own frame at 21:9 — the player's characters across the top, the six tabs down the left in the game's words (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`), and the chosen character's Attributes panel down the right with its level and attributes by group from the game's own sums.
 
 ## Requirements
 

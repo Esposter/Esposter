@@ -16,7 +16,7 @@ The map SHALL draw an area's label, with its exploration line, only once a landm
 
 #### Scenario: Area with an unlocked statue shows its percentage line
 
-- **GIVEN** a statue in an area is unlocked (the wikitext in `{data-root}/cache/genshin-wiki/Page_Area.json` line 7 unlocks each area's part of the map upon its statue's activation, and `{data-root}/cache/genshin-wiki/Page_Statue_of_The_Seven.json` line 17 says a statue fills in its area of the map)
+- **GIVEN** a statue in an area is unlocked (the wikitext in `{cache-root}/genshin-wiki/Page_Area.json` line 7 unlocks each area's part of the map upon its statue's activation, and `{cache-root}/genshin-wiki/Page_Statue_of_The_Seven.json` line 17 says a statue fills in its area of the map)
 - **WHEN** the map draws the area's label
 - **THEN** the label shows the game's exploration line under the area's name with its percentage
 - **AND** no count is shown beside the percentage
@@ -66,7 +66,7 @@ The progress SHALL count an unlocked statue as completing the waypoint doing of 
 
 - **GIVEN** a statue in an area is unlocked
 - **WHEN** the area's progress is computed
-- **THEN** the area's waypoint doing is done (the Windrise statue is scene point 4, the `DerivedAssetComponent.Windrise` entry of `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`; the Windrise place needs point 4 in `{data-root}/genshin-parity/text/ExcelBinOutput/ExpeditionDataExcelConfigData.json` lines 76 to 79; Galesong Hill's statue is in Windrise, `{data-root}/cache/genshin-wiki/Page_Statue_of_The_Seven.json` line 106; event 40, the only waypoint event of area 2, names point 4 at `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/WorldAreaExploreEventConfigData.json` lines 471 to 476, and `computeExploredDoingIds` in `packages/genshin-world/src/services/exploration/computeExploredDoingIds.ts` completes it on the statue's unlock)
+- **THEN** the area's waypoint doing is done (the Windrise statue is scene point 4, the `DerivedAssetComponent.Windrise` entry of `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`; the Windrise place needs point 4 in `{data-root}/genshin-parity/text/ExcelBinOutput/ExpeditionDataExcelConfigData.json` lines 76 to 79; Galesong Hill's statue is in Windrise, `{cache-root}/genshin-wiki/Page_Statue_of_The_Seven.json` line 106; event 40, the only waypoint event of area 2, names point 4 at `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/WorldAreaExploreEventConfigData.json` lines 471 to 476, and `computeExploredDoingIds` in `packages/genshin-world/src/services/exploration/computeExploredDoingIds.ts` completes it on the statue's unlock)
 
 #### Scenario: Opening a chest leaves progress unchanged
 

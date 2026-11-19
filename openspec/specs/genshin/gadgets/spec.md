@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's tools are the widget config's entries: the Wind Catcher, the Treasure Compasses, the gather point finders and the devices, each a kind with its own cooldowns (`{data-root}/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`). This page is the first part of the gadgets proposal, its data and its cooldowns. Z is bound to the quick-use gadget and uses the equipped one; equipping, the quick swap and their requirements are the open gadgets change's, merged here when it is archived. The wiki's Gadget page says gadget cooldowns keep decreasing while the game is paused, unlike combat cooldowns (`{data-root}/cache/genshin-wiki/Page_Gadget.json`, wikitext line 14).
+The game's tools are the widget config's entries: the Wind Catcher, the Treasure Compasses, the gather point finders and the devices, each a kind with its own cooldowns (`{data-root}/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`). This page is the first part of the gadgets proposal, its data and its cooldowns. Z is bound to the quick-use gadget and uses the equipped one; equipping, the quick swap and their requirements are the open gadgets change's, merged here when it is archived. The wiki's Gadget page says gadget cooldowns keep decreasing while the game is paused, unlike combat cooldowns (`{cache-root}/genshin-wiki/Page_Gadget.json`, wikitext line 14).
 
 ## Requirements
 
@@ -82,4 +82,4 @@ A cooldown SHALL keep counting down while the world is paused, since it is kept 
 
 - **GIVEN** a cooldown started before the player opened a menu
 - **WHEN** the menu is open and the ready moment comes
-- **THEN** the gadget is ready once that moment has come (`{data-root}/cache/genshin-wiki/Page_Gadget.json` line 14: gadget cooldowns "will continue to decrease even while the game is paused")
+- **THEN** the gadget is ready once that moment has come (`{cache-root}/genshin-wiki/Page_Gadget.json` line 14: gadget cooldowns "will continue to decrease even while the game is paused")

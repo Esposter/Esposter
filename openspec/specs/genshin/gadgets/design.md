@@ -54,4 +54,4 @@ The rest of the config's widgets, the cameras, the avatar attachments, the water
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `{data-root}/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, the widget config with each widget's type, cooldowns and cooldown group, and `{data-root}/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, which names each spawned gadget. Both are read from the dump outside the repository and nothing from them is committed.
-- [Gadget](https://genshin-impact.fandom.com/wiki/Gadget), Genshin Impact Wiki, cached as `{data-root}/cache/genshin-wiki/Page_Gadget.json`: the cooldowns that keep decreasing while the game is paused (wikitext line 14).
+- [Gadget](https://genshin-impact.fandom.com/wiki/Gadget), Genshin Impact Wiki, cached as `{cache-root}/genshin-wiki/Page_Gadget.json`: the cooldowns that keep decreasing while the game is paused (wikitext line 14).

@@ -77,5 +77,5 @@ The Achievements screen is judged against its reference (`achievement-screen`: a
 
 ## Sources
 
-- [Achievements](https://genshin-impact.fandom.com/wiki/Achievements), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Achievement.json`: the Primogems each pays, a namecard for a category done, open-ended categories, and tiers shown as stars, the stars in an achievement's icon being its tiers (wikitext line 9).
+- [Achievements](https://genshin-impact.fandom.com/wiki/Achievements), Genshin Impact Wiki, cached at `{cache-root}/genshin-wiki/Page_Achievement.json`: the Primogems each pays, a namecard for a category done, open-ended categories, and tiers shown as stars, the stars in an achievement's icon being its tiers (wikitext line 9).
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the achievement table with each one's category, trigger, count, reward and tier, the category table, and the quest table whose sub-quest ids the quest triggers name.

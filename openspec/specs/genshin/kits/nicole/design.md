@@ -17,7 +17,7 @@ flowchart TD
   D -- "yes" --> E["Projection lands 30 frames on, with any Hexerei bonus"]
 ```
 
-- **Her plunges borrow Bennett's plunge file, with the wiki's poise.** gcsim gives Nicole no plunge file (`nicole/` has no `plunge.go`), so her two plunges take Bennett's timings and reaches, and their poise is the wiki's 100 high and 50 low (Low Plunge 50 and High Plunge 100 on the Allegoria page of `{data-root}/cache/genshin-wiki/Category_Nicole_Talents.json`).
+- **Her plunges borrow Bennett's plunge file, with the wiki's poise.** gcsim gives Nicole no plunge file (`nicole/` has no `plunge.go`), so her two plunges take Bennett's timings and reaches, and their poise is the wiki's 100 high and 50 low (Low Plunge 50 and High Plunge 100 on the Allegoria page of `{cache-root}/genshin-wiki/Category_Nicole_Talents.json`).
 - **The burst's hit is her record's.** Her burst is a circle of 6.5 metres on her primary target (`burst.go:109`); the 21.5-metre area that would price it round the targeting zone is contradicted by the dump's 15-metre circle, see Open.
 - **The skill's hit is a circle of 5 metres round her body** (`skill.go:46`), recorded by hand, as its hitbox has no name in gcsim's press list, so it names no cause for it.
 - **The skill's shield and team buff come on at frame 8, one frame before its hitmark (`skill.go` line 17, `skillHitmark` 9).** gcsim queues both on her task at `skillHitmark-1` (`skill.go:76`), so they land together, and a recast removes the buff it gave at cast, before its own snapshot, as gcsim deletes it there.
@@ -57,25 +57,25 @@ Her third and fifth constellations raise her skill and burst levels from the con
 - The proud skill groups 13131, 13132 and 13139 in the hosted game data: the multipliers, the shield and buff parameters, the cooldowns, the burst's energy and the charged stamina, read at talent level 1.
 - The cached Genshin wiki's "Category_Nicole_Talents.json" (the Allegoria page): the plunge poise rows, 50 low and 100 high.
 - No YouTube or Bilibili reference snapshot for Nicole is in the repo, so no claim here rests on video.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/attack.go` line 17, grounding the requirement Nicole's three strikes.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/charge.go` line 47, grounding the requirement Nicole's charged attack and plunges.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/skill.go` line 46, grounding the requirement Nicole's Pyro skill.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/skill.go` line 78, grounding the requirement Nicole's Pyro skill.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/burst.go` line 109, grounding the requirement Nicole's Pyro burst.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/nicole.go` line 24, grounding the requirement Nicole's Pyro burst.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/burst.go` line 106, grounding the requirement Nicole's Pyro burst.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/skill.go` lines 17 and 76, grounding the requirements Nicole's skill shields the team and Nicole's skill buffs the team's ATK.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/skill.go` lines 61 to 64, grounding the requirement Nicole's skill buff reads her attack with the buffs on her.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/skill.go` line 20, grounding the requirements Nicole's skill shields the team and Nicole's skill buffs the team's ATK.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/burst.go` lines 17, 137 and 149, grounding the requirement Nicole's burst projections.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/asc.go` lines 22, 36 to 38 and 72 to 85, grounding the requirements Nicole's first ascension and Nicole's fourth ascension.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 213 to 218, grounding the requirement Nicole's fourth ascension.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 42 and 55, grounding the requirement Nicole's first constellation.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/burst.go` line 17, grounding the requirement Nicole's first constellation.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 71, 84 to 88, 122 and 132, grounding the requirements Nicole's second constellation gives the team ATK and Nicole's second constellation lowers RES.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 170 and 195, grounding the requirement Nicole's fourth constellation hit bonus.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 190 to 193, grounding the requirement Nicole's fourth constellation stack refresh.
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 209, 213 to 218 and 220, grounding the requirements Nicole's sixth constellation ignores defence and Nicole's sixth constellation holds her upgrades.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/attack.go` line 17, grounding the requirement Nicole's three strikes.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/charge.go` line 47, grounding the requirement Nicole's charged attack and plunges.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/skill.go` line 46, grounding the requirement Nicole's Pyro skill.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/skill.go` line 78, grounding the requirement Nicole's Pyro skill.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/burst.go` line 109, grounding the requirement Nicole's Pyro burst.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/nicole.go` line 24, grounding the requirement Nicole's Pyro burst.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/burst.go` line 106, grounding the requirement Nicole's Pyro burst.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/skill.go` lines 17 and 76, grounding the requirements Nicole's skill shields the team and Nicole's skill buffs the team's ATK.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/skill.go` lines 61 to 64, grounding the requirement Nicole's skill buff reads her attack with the buffs on her.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/skill.go` line 20, grounding the requirements Nicole's skill shields the team and Nicole's skill buffs the team's ATK.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/burst.go` lines 17, 137 and 149, grounding the requirement Nicole's burst projections.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/asc.go` lines 22, 36 to 38 and 72 to 85, grounding the requirements Nicole's first ascension and Nicole's fourth ascension.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 213 to 218, grounding the requirement Nicole's fourth ascension.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 42 and 55, grounding the requirement Nicole's first constellation.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/burst.go` line 17, grounding the requirement Nicole's first constellation.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 71, 84 to 88, 122 and 132, grounding the requirements Nicole's second constellation gives the team ATK and Nicole's second constellation lowers RES.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 170 and 195, grounding the requirement Nicole's fourth constellation hit bonus.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 190 to 193, grounding the requirement Nicole's fourth constellation stack refresh.
+- `{cache-root}/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 209, 213 to 218 and 220, grounding the requirements Nicole's sixth constellation ignores defence and Nicole's sixth constellation holds her upgrades.
 
 ## Open
 

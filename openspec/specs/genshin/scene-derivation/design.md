@@ -165,7 +165,7 @@ Each other region's open world is derived by `extract` from its capital's catalo
 
 ## Sources
 
-- [AnimeStudio](https://github.com/Escartem/AnimeStudio): the exporter the inventory reads (`{data-root}/cache/animestudio-db860e1f`), and the shader, texture and raw script assets it can dump.
+- [AnimeStudio](https://github.com/Escartem/AnimeStudio): the exporter the inventory reads (`{cache-root}/animestudio-db860e1f`), and the shader, texture and raw script assets it can dump.
 - [FLIP](https://github.com/NVlabs/flip), NVIDIA: the perceptual difference between a rendered image and its reference, as an error map and a mean, the score a scene is approved by.
 - Zhenzhong Yi's [Console platform development in Genshin Impact](https://docswell.com/s/UnityJapan/KWRPQ5-210617-unity-dojo20211mihoyozhenzhongyi) (miHoYo, Unity Dojo 2021): the game's own account of its shadows, fog and god rays, read before the frame is calibrated.
 

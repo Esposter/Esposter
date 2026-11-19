@@ -44,12 +44,15 @@ describe(getDiskScanRefusal, () => {
 
   test.each([
     ["a find inside the repo", "find /c/Users/jimmy/Desktop/Software/Esposter/packages -name x"],
-    ["a find inside the game's folder", "find ~/Esposter/genshin-parity -name capture.mp4"],
-    ["a find inside the game's folder through the variable", 'find "$HOME/Esposter/genshin-parity" -name x'],
+    ["a find inside the game's folder", "find ~/.local/share/workspace-data/genshin-parity -name capture.mp4"],
+    [
+      "a find inside the game's folder through the variable",
+      'find "$HOME/.local/share/workspace-data/genshin-parity" -name x',
+    ],
     ["a find from the working directory", "find . -name x -maxdepth 2"],
     ["a du over a package", "du -sh packages/genshin-world"],
     ["a grep -r over the repo", "grep -rn needle packages"],
-    ["a grep -r over the game's folder", "grep -r needle ~/Esposter/genshin-parity"],
+    ["a grep -r over the game's folder", "grep -r needle ~/.local/share/workspace-data/genshin-parity"],
     ["a grep -r with no path", "grep -r needle"],
     ["a grep with the root but no recursion", "grep needle /"],
     ["a grep -r with the root as its pattern", "grep -r / src"],

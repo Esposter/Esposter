@@ -62,10 +62,10 @@ flowchart TD
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the offering level-up table with each offering's items and rewards, the offering open-state table, and the reward table the rewards are joined from.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the map's point for the Frostbearing Tree, read into the references folder and carried through the fit.
-- [Offering System](https://genshin-impact.fandom.com/wiki/Offering_System), Genshin Impact Wiki: the player offers all of the bag's items at once, where a statue takes one at a time (`{data-root}/cache/genshin-wiki/Page_Offering_System.json`, wikitext line 5). Its list is checked against the open-state table (see Open).
+- [Offering System](https://genshin-impact.fandom.com/wiki/Offering_System), Genshin Impact Wiki: the player offers all of the bag's items at once, where a statue takes one at a time (`{cache-root}/genshin-wiki/Page_Offering_System.json`, wikitext line 5). Its list is checked against the open-state table (see Open).
 - `{data-root}/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json` grounds the requirement "Each level the held count covers is reached once".
 - `{data-root}/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`, offering 1 level 1 holds no items, grounds the requirement "The first offer starts the tree".
 
 ## Open
 
-- [ ] **The wiki's Offering System page matches the rule's level thresholds and lists the published offerings one for one** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/OfferingOpenStateConfigData.json`, which holds 22 offering ids, against the wiki's eleven offerings (`{data-root}/cache/genshin-wiki/Page_Offering_System.json`, wikitext lines 7 to 57); the thresholds sit on the tree's own wiki page, which is not cached.
+- [ ] **The wiki's Offering System page matches the rule's level thresholds and lists the published offerings one for one** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/OfferingOpenStateConfigData.json`, which holds 22 offering ids, against the wiki's eleven offerings (`{cache-root}/genshin-wiki/Page_Offering_System.json`, wikitext lines 7 to 57); the thresholds sit on the tree's own wiki page, which is not cached.

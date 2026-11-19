@@ -27,7 +27,7 @@ The heads-up display SHALL hide while a menu, the map, a talk or photo mode is o
 #### Scenario: The backslash key hides and shows the HUD
 
 - **GIVEN** the heads-up display is shown in the world
-- **WHEN** the player presses the backslash key (the wiki's Controls page binds "Hide UI" to it, `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext line 246)
+- **WHEN** the player presses the backslash key (the wiki's Controls page binds "Hide UI" to it, `{cache-root}/genshin-wiki/Page_Controls.json`, wikitext line 246)
 - **THEN** the heads-up display hides
 - **AND** pressing the backslash key again shows it
 
@@ -45,13 +45,13 @@ The Paimon button and the minimap SHALL each open the screen the game opens from
 
 - **GIVEN** the heads-up display is shown
 - **WHEN** the player presses the Paimon button
-- **THEN** the Paimon menu opens (the wiki's Paimon Menu page puts its icon at the top left of the screen, `{data-root}/cache/genshin-wiki/Page_Paimon_Menu.json`, wikitext line 10)
+- **THEN** the Paimon menu opens (the wiki's Paimon Menu page puts its icon at the top left of the screen, `{cache-root}/genshin-wiki/Page_Paimon_Menu.json`, wikitext line 10)
 
 #### Scenario: Pressing the minimap opens the map
 
 - **GIVEN** the heads-up display is shown
 - **WHEN** the player presses the minimap
-- **THEN** the map opens (the wiki's Map page opens it from the minimap at the top left, `{data-root}/cache/genshin-wiki/Page_Map.json`, wikitext line 7)
+- **THEN** the map opens (the wiki's Map page opens it from the minimap at the top left, `{cache-root}/genshin-wiki/Page_Map.json`, wikitext line 7)
 
 ### Requirement: A shortcut opens the screen its key opens
 
@@ -61,7 +61,7 @@ Each shortcut in the top right SHALL open the screen that its own key opens when
 
 - **GIVEN** the heads-up display is shown
 - **WHEN** the player presses a shortcut
-- **THEN** the screen opens as its key would open it (the wiki's Controls page gives B for the Inventory, C for the Character screen, F1 for the Adventurer Handbook and F3 for the Wish screen, `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext lines 154, 158, 170 and 178)
+- **THEN** the screen opens as its key would open it (the wiki's Controls page gives B for the Inventory, C for the Character screen, F1 for the Adventurer Handbook and F3 for the Wish screen, `{cache-root}/genshin-wiki/Page_Controls.json`, wikitext lines 154, 158, 170 and 178)
 
 ### Requirement: A portrait press switches to that member
 
@@ -76,7 +76,7 @@ Pressing a portrait in the deployed team SHALL switch to that member as the memb
 #### Scenario: Other portraits darken during the switch cooldown
 
 - **GIVEN** the player has just switched members
-- **WHEN** the cooldown is still running (the cooldown is one second, `{data-root}/cache/genshin-wiki/Page_Party.json`, wikitext line 8)
+- **WHEN** the cooldown is still running (the cooldown is one second, `{cache-root}/genshin-wiki/Page_Party.json`, wikitext line 8)
 - **THEN** every other portrait is darkened by the share of the cooldown left
 
 ### Requirement: The member on the field shows its level and health
@@ -131,13 +131,13 @@ The stamina meter SHALL stand beside the character while the stamina pool is not
 - **GIVEN** the stamina pool is not full
 - **WHEN** the character is on screen
 - **THEN** the meter stands beside the character
-- **AND** the meter is divided into sections, each representing 100 Stamina (`{data-root}/cache/genshin-wiki/Page_Stamina.json`, wikitext line 5)
+- **AND** the meter is divided into sections, each representing 100 Stamina (`{cache-root}/genshin-wiki/Page_Stamina.json`, wikitext line 5)
 
 #### Scenario: The meter fades out when the pool is full
 
 - **GIVEN** the meter is shown
 - **WHEN** the stamina pool becomes full
-- **THEN** the meter fades out where it stood (the wiki's Stamina page says only that the meter hides itself once fully charged, `{data-root}/cache/genshin-wiki/Page_Stamina.json`, wikitext line 5)
+- **THEN** the meter fades out where it stood (the wiki's Stamina page says only that the meter hides itself once fully charged, `{cache-root}/genshin-wiki/Page_Stamina.json`, wikitext line 5)
 
 #### Scenario: The meter pulses red once stamina runs low
 
@@ -153,9 +153,9 @@ The quest tracker SHALL show the quest that V navigates to, with its step and ho
 #### Scenario: Pressing V navigates to the tracked quest
 
 - **GIVEN** a quest is in progress
-- **WHEN** the player presses V in the world or presses the tracker (V is "Quest Navigation" on the wiki's Controls page, `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext line 109)
+- **WHEN** the player presses V in the world or presses the tracker (V is "Quest Navigation" on the wiki's Controls page, `{cache-root}/genshin-wiki/Page_Controls.json`, wikitext line 109)
 - **THEN** the tracker's quest is navigated to
-- **AND** a beam rises over its first objective once the character is 50 metres or more from it (`onBeforeRender` in `packages/genshin-world/src/components/Quest/Beam/Index.vue`, which sets it from `QUEST_BEAM_MIN_DISTANCE`; the wiki's Quest page gives the same distance, `{data-root}/cache/genshin-wiki/Page_Quest.json`, wikitext line 33)
+- **AND** a beam rises over its first objective once the character is 50 metres or more from it (`onBeforeRender` in `packages/genshin-world/src/components/Quest/Beam/Index.vue`, which sets it from `QUEST_BEAM_MIN_DISTANCE`; the wiki's Quest page gives the same distance, `{cache-root}/genshin-wiki/Page_Quest.json`, wikitext line 33)
 
 #### Scenario: With no quest loaded the tracker stays empty
 
