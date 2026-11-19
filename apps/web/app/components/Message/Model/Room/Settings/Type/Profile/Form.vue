@@ -11,15 +11,14 @@ interface Props {
 const { roomId, userToRoom } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const userToRoomStore = useUserToRoomStore();
-const { setMyUserToRoom } = userToRoomStore;
-const { executeMutation } = useMutation();
+const { executeUserToRoomMutation, setMyUserToRoom } = userToRoomStore;
 const editedDisplayName = ref(userToRoom.displayName);
 const save = () => {
   // The field emits save from both blur and Enter, so the same value would otherwise be written twice
   if (editedDisplayName.value === userToRoom.displayName) return;
 
   const newDisplayName = editedDisplayName.value;
-  executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ displayName: newDisplayName, roomId }), {
+  executeUserToRoomMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ displayName: newDisplayName, roomId }), {
     applyOptimistic: () => {
       const oldDisplayName = userToRoom.displayName;
       setMyUserToRoom(roomId, { ...userToRoom, displayName: newDisplayName });

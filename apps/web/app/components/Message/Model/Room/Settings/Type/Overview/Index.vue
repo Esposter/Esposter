@@ -22,9 +22,8 @@ await readRoomCategories();
 const roomCategoryStore = useRoomCategoryStore();
 const { roomCategories } = storeToRefs(roomCategoryStore);
 const userToRoomStore = useUserToRoomStore();
-const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
+const { executeUserToRoomMutation, getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
 const { $trpc } = useNuxtApp();
-const { executeMutation } = useMutation();
 // The category is the reader's own, so the field holds the reader's row for this room, resolved against the categories
 // The reader still has
 const myCategoryId = computed(() => resolveRoomCategoryId(roomCategories.value, getMyUserToRoom(room.id)?.categoryId));
@@ -61,7 +60,7 @@ const categoryItems = computed<UiSelectItem<string>[]>(() =>
 // The category is written to the reader's own membership, which the room's shared row does not carry
 const saveCategory = () => {
   const categoryId = editedCategoryId.value;
-  executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ categoryId, roomId: room.id }), {
+  executeUserToRoomMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ categoryId, roomId: room.id }), {
     applyOptimistic: () => {
       const previousUserToRoom = getMyUserToRoom(room.id);
       if (!previousUserToRoom) return noop;
