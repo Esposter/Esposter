@@ -28,13 +28,13 @@ describe(useSetDataSource, () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
-    const deleteRow = useDeleteRow();
+    const deleteRows = useDeleteRows();
     const getDataSourceSetter = useSetDataSource();
     const setDataSource = getDataSourceSetter();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(sheetHistoryStore);
     const { undo } = sheetHistoryStore;
-    deleteRow(takeOne(dataSource.rows).id);
+    deleteRows([takeOne(dataSource.rows).id]);
 
     expect(isUndoable.value).toBe(true);
 

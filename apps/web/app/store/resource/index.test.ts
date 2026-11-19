@@ -17,7 +17,7 @@ import {
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { createDefaultSheetResource } from "#shared/services/resource/sheet/createDefaultSheetResource";
 import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
-import { useDeleteRow } from "#src/composables/resource/sheet/commands/useDeleteRow";
+import { useDeleteRows } from "#src/composables/resource/sheet/commands/useDeleteRows";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
 import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
@@ -1317,8 +1317,8 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
-    const deleteRow = useDeleteRow();
-    deleteRow(takeOne(dataSource.rows, 0).id);
+    const deleteRows = useDeleteRows();
+    deleteRows([takeOne(dataSource.rows, 0).id]);
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
     const resourceStore = useResourceStore();

@@ -36,8 +36,8 @@ describe(useSheetCommand, () => {
     const saveSheet = vi.spyOn(sheetStore, "saveSheet");
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
-    const deleteRow = useDeleteRow();
-    deleteRow("-1");
+    const deleteRows = useDeleteRows();
+    deleteRows(["-1"]);
 
     expect(isUndoable.value).toBe(false);
     expect(saveSheet).not.toHaveBeenCalled();

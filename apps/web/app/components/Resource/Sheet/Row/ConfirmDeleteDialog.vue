@@ -11,7 +11,6 @@ interface Props {
 const { dataSource } = defineProps<Props>();
 const rowDialogStore = useRowDialogStore();
 const { deletingIds } = storeToRefs(rowDialogStore);
-const deleteRow = useDeleteRow();
 const deleteRows = useDeleteRows();
 // The rows still in the sheet, so one an edit elsewhere removed meanwhile is not counted
 const { isOpen, item: deletingRowIds } = useSingletonDialog(deletingIds, () =>
@@ -28,8 +27,7 @@ const { isOpen, item: deletingRowIds } = useSingletonDialog(deletingIds, () =>
     :confirm="
       () => {
         if (!deletingRowIds) return;
-        const [firstId] = deletingRowIds;
-        return deletingRowIds.length === 1 && firstId ? deleteRow(firstId) : deleteRows(deletingRowIds);
+        return deleteRows(deletingRowIds);
       }
     "
   >

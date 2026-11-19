@@ -64,8 +64,8 @@ describe("undoRedoInvariants", () => {
     createCase("useDeleteDuplicateRows: removes duplicate rows", createInvariantDataSource(), () => {
       useDeleteDuplicateRows()();
     }),
-    createCase("useDeleteRow: removes a row", createInvariantDataSource(), ({ rows }) => {
-      useDeleteRow()(takeOne(rows).id);
+    createCase("useDeleteRows: removes one row", createInvariantDataSource(), ({ rows }) => {
+      useDeleteRows()([takeOne(rows).id]);
     }),
     createCase("useDeleteRows: removes every row", createInvariantDataSource(), ({ rows }) => {
       useDeleteRows()([takeOne(rows).id, takeOne(rows, 1).id]);

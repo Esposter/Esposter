@@ -8,9 +8,9 @@ import { describe, expect, test } from "vitest";
 
 const setupWithDeletedRow = (index = 0) => {
   const { dataSource } = setupWithDataSource();
-  const deleteRow = useDeleteRow();
-  deleteRow(takeOne(dataSource.rows, index).id);
-  return { dataSource, deleteRow };
+  const deleteRows = useDeleteRows();
+  deleteRows([takeOne(dataSource.rows, index).id]);
+  return { dataSource, deleteRows };
 };
 
 describe(useSheetHistoryStore, () => {
@@ -52,7 +52,7 @@ describe(useSheetHistoryStore, () => {
   test("new operation after undo clears redo history", () => {
     expect.hasAssertions();
 
-    const { dataSource, deleteRow } = setupWithDeletedRow();
+    const { dataSource, deleteRows } = setupWithDeletedRow();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isRedoable } = storeToRefs(sheetHistoryStore);
     const { undo } = sheetHistoryStore;
@@ -60,7 +60,7 @@ describe(useSheetHistoryStore, () => {
 
     expect(isRedoable.value).toBe(true);
 
-    deleteRow(takeOne(dataSource.rows).id);
+    deleteRows([takeOne(dataSource.rows).id]);
 
     expect(isRedoable.value).toBe(false);
   });
@@ -84,20 +84,20 @@ describe(useSheetHistoryStore, () => {
     const { redoDescription, undoDescription } = storeToRefs(sheetHistoryStore);
     const { undo } = sheetHistoryStore;
 
-    expect(undoDescription.value).toBe("Delete Row 1");
+    expect(undoDescription.value).toBe("Delete 1 Row");
 
     undo(dataSource);
 
-    expect(redoDescription.value).toBe("Delete Row 1");
+    expect(redoDescription.value).toBe("Delete 1 Row");
   });
 
   test("multiple undo operations reverse in order", () => {
     expect.hasAssertions();
 
-    const { dataSource, deleteRow } = setupWithDeletedRow(1);
+    const { dataSource, deleteRows } = setupWithDeletedRow(1);
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
-    deleteRow(takeOne(dataSource.rows).id);
+    deleteRows([takeOne(dataSource.rows).id]);
 
     expect(dataSource.rows).toStrictEqual([]);
 
@@ -166,11 +166,11 @@ describe(useSheetHistoryStore, () => {
   test("clear resets undo and redo state", () => {
     expect.hasAssertions();
 
-    const { dataSource, deleteRow } = setupWithDeletedRow();
+    const { dataSource, deleteRows } = setupWithDeletedRow();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isRedoable, isUndoable, redoDescription, undoDescription } = storeToRefs(sheetHistoryStore);
     const { clear, undo } = sheetHistoryStore;
-    deleteRow(takeOne(dataSource.rows).id);
+    deleteRows([takeOne(dataSource.rows).id]);
     undo(dataSource);
     clear();
 

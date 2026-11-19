@@ -4,7 +4,6 @@ export const CommandType = {
   CreateRow: "CreateRow",
   CreateRows: "CreateRows",
   DeleteColumns: "DeleteColumns",
-  DeleteRow: "DeleteRow",
   DeleteRows: "DeleteRows",
   FindReplace: "FindReplace",
   MoveColumn: "MoveColumn",
