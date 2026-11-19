@@ -24,7 +24,7 @@ const valueRules = [UiRules.maxLength(MAX_TAG_VALUE_LENGTH)];
 // An empty trailing row means the first thing the user sees is somewhere to type.
 // A row is keyed by its own id rather than its place, so removing one leaves each remaining row's field, and the error
 // Its field shows, with the row it belongs to
-const createRow = (row: TagRow = { name: "", value: "" }) => ({ ...row, id: v7() });
+const createRow = (row: TagRow = { name: "", value: "" }) => Object.assign(structuredClone(row), { id: v7() });
 const rows = ref(Object.keys(tags).length > 0 ? getTagRows(tags).map((row) => createRow(row)) : [createRow()]);
 </script>
 
