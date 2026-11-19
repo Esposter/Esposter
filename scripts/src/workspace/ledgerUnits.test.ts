@@ -24,10 +24,10 @@ describe("ledgerUnits", () => {
 
   // The kits README sweeps a kit's row only once none of its entries is `Unclassified`, which dating it by hand or by a
   // Trailer on a pass that left some would otherwise claim
-  test("kit-records dates no row whose kit's overlay still holds an Unclassified entry", () => {
+  test("kit-differs-from-source dates no row whose kit's overlay still holds an Unclassified entry", () => {
     expect.hasAssertions();
 
-    const text = readFileSync(join(REPOSITORY_ROOT, LEDGER_DIRECTORY, "kit-records.md"), "utf8");
+    const text = readFileSync(join(REPOSITORY_ROOT, LEDGER_DIRECTORY, "kit-differs-from-source.md"), "utf8");
 
     expect(getSweptKitsHoldingUnclassified(text, readKitOverlayFile)).toStrictEqual([]);
   });
