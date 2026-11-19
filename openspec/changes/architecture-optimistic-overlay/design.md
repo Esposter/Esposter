@@ -1,12 +1,12 @@
 # Optimistic overlay
 
-Server truth is held per table row, every row carries a version the database raises on each change, and an arrival applies only when its version is newer than the one held. A pending write is an entry the screen reads on top of that truth, dropped once the server's version of each row it changed has arrived. No write restores an older value, no caller orders its own async work, and no caller checks whether its result is stale.
+Server truth is held per table row, every row carries a version the database raises on each change, and an arrival applies only when its version is newer than the one held. A pending write is an entry the screen reads on top of that truth, dropped once the server's version of each row it changed has arrived. No write restores an older value, no caller orders its own async work, no caller names a queue key, and no caller checks whether its result is stale.
 
 ## Scope
 
 **Works today.** Each `useMutation()` instance owns its own queue. Every optimistic write carries a hand-written rollback closure, over a hundred `applyOptimistic` sites, and each rollback compares before it restores. Replay pushes sit over reads (`readWithReplayedPushes` and `recordReadingPush`). Reads and writes are ordered by call ids and by supersede. Three hand-moved executors serialise writers: the pair executor, the room category executor and the membership executor.
 
-**Adds.** One app-scoped write registry keyed by typed entity keys. A `version` column in the shared metadata definition. Soft delete with revival on the pair tables. Write responses that name the version of every tracked row the write changed. An arrival gate in the primitive, and a view per store. Run scopes for local work that has no version.
+**Adds.** One app-scoped write registry that queues each write by the keys its optimistic entry touches, found by running the entry once. A `version` column in the shared metadata definition. Soft delete with revival on the pair tables. Write responses that name the version of every tracked row the write changed. An arrival gate in the primitive, and a view per store. Run scopes for local work that has no version.
 
 **Infrastructure.** No new service, queue or Durable Object. The version increment is a Drizzle update value that the database evaluates, so the version is raised inside each statement. The migration adds one column per table, group by group.
 
@@ -14,16 +14,17 @@ Server truth is held per table row, every row carries a version the database rai
 
 ## The model
 
-Eight rules hold the design together. Every store, every read and every write follows them.
+Nine rules hold the design together. Every store, every read and every write follows them.
 
 1. Every row the server holds has a version, a non-negative integer the database raises on every change and never lowers. A row that is soft-deleted and revived keeps climbing, so its version never restarts while its key exists.
 2. An arrival is a row with its version, from a read, a write response or an event. Held state keeps, per row key, the newest version it has applied, tombstones included. An arrival applies when nothing is held for its key or its version is greater than the held one. An equal or lower version is discarded in the primitive, so no caller branches on it.
 3. A tombstone is a row whose deletion has set `deletedAt` and raised its version. It hides the row from the view and is kept as held state, so an older arrival for that key loses.
 4. Absence never removes. A read that omits a held row says nothing about that row.
-5. A write becomes an entry in the write registry: its entity keys and its apply over the view. The entry is pending until the write's response or failure. The response names the version of every tracked row the write changed, and the entry is then confirmed at those versions. It drops once held state for each confirmed key is at or above its confirmed version. A failed entry drops at once and changes no held state.
+5. A write with an optimistic entry becomes a pending entry in the write registry. The entry is a pure function over the held state, and the registry infers its touched keys by running it once. The entry stays pending until the write's response or failure. The response names the version of every tracked row the write changed, and the entry is then confirmed at those versions. It drops once held state for each confirmed key is at or above its confirmed version. A failed entry drops at once and changes no held state.
 6. The view is held state with the pending entries applied over it in issue order. It is a computed value, so it recomputes when held state or the entries change, and a read of it costs nothing more.
-7. A write queues behind the earlier writes that share any of its keys, across every store of the app. Reads never queue. Queueing orders what the server applies, and no rollback depends on it any more.
+7. A write queues behind the earlier writes whose touched keys overlap its own, across every store of the app. Reads never queue. Queueing orders what the server applies, and no rollback depends on it any more.
 8. Client-side work that has no version runs in a run scope. A newer run of the same scope aborts the signal of the run before it, and the primitive commits only the newest run's result.
+9. A write without an optimistic entry, an awaited write, has no entry and so no queue key. Its response is an arrival like any other, and the arrival gate orders it.
 
 A row created on the client holds no version, below every version, so the server's first arrival for it applies even at version zero.
 
@@ -33,7 +34,7 @@ flowchart TD
   G -->|no| X["Discarded in the primitive"]
   G -->|yes| H["Held state takes the row and its version"]
   H --> V["View: held state with the pending entries applied in issue order"]
-  W["A write is issued with its entity keys"] --> P["Pending entry applies over the view"]
+  W["A write with an entry is issued"] --> P["Pending entry applies over the view"]
   P -->|"write fails"| D["Entry dropped, held state unchanged"]
   P -->|"response names the versions of its tracked rows"| C["Entry confirmed at those versions"]
   C --> S{"Is each confirmed key held at its version or newer?"}
@@ -49,8 +50,8 @@ sequenceDiagram
   participant R as Write registry
   participant W as Web Worker
   participant U as User object
-  S->>R: issue the write with its entity keys
-  R->>R: queue behind earlier writes that share a key
+  S->>R: issue the write with its entry
+  R->>R: run the entry once and queue behind writes that touch a shared key
   R->>W: send the mutation
   W-->>R: response, with the versions of each tracked row it changed
   R->>S: confirm the entry at those versions
@@ -74,7 +75,7 @@ sequenceDiagram
 
 **A write's response names every tracked row it changed.** The write recorder already adds `RETURNING` to each write, so each changed row comes back by its scope values. The middleware that appends the topics header only answers queries today, and it is extended to mutations, so the header carries each tracked row's key and version. Chosen: every changed row settles by version, including rows the response's own value does not carry, such as the friend row an accept inserts. Rejected: settling on the returned row alone, which misses the side rows. Rejected: settling on the topic re-read alone, which waits for the topic object's alarm window and cannot tell whether a re-read was issued before the write landed. Rejected: settling on echoes, since the pair tables have no typed event and an event carries no write identity.
 
-**Queues are per key across the app, and writes do not supersede.** Rejected: per-field keys, under which commuting field writes on one row would run in parallel. Each field would become a key to remember, and the row is the owner's rule, so the latency of commuting writes is measured in the pilot instead. `isSupersede` has one consumer, the virtual background pipeline, which is local work. A superseded server write still sends, and with versions its response applies in order, so latest-wins has nothing to drop.
+**Queues follow the keys an entry touches, across the app, and writes do not supersede.** The keys come from the entry, not from the writer, and the entity keys section gives the inference. Rejected: one app-wide queue, which would make every write wait for every other. Rejected: per-field keys, under which commuting field writes on one row would run in parallel. Each field would become a key to remember, and the row is the owner's rule, so the latency of commuting writes is measured in the pilot instead. `isSupersede` has one consumer, the virtual background pipeline, which is local work. A superseded server write still sends, and with versions its response applies in order, so latest-wins has nothing to drop.
 
 **Local work runs in a run scope.** Rejected: keeping `isSupersede` with a predicate the callee checks, because the callee has to remember the check, and the pipeline's commit is side effects spread across its awaits.
 
@@ -104,7 +105,7 @@ A paged read returns tombstones within its page's scope, so a page can hold fewe
 
 A create with a client id puts a placeholder at the position its list's sort key gives. Identifiers made with `uuidv7` sort by creation time, so an id-ordered list places the placeholder exactly. The server's response names the row's version and confirms the entry, and the placeholder holds no version until then.
 
-A server-placed create, such as a room category, appends its placeholder at the tail until the response's row arrives with the position the server chose. Creates on one key still queue, since two in flight would tie on the position the server picks. Messages keep their own send path, as the client data design says.
+A server-placed create, such as a room category, has a placeholder that sorts after the server's rows in issue order, with no position of its own, because the client never computes one. The response's row carries the position the server chose. The server computes that position inside the insert statement itself, so two concurrent creates get distinct positions with no client ordering. The Decisions above state why the client queue for these creates goes, and the entity keys section gives the evidence. Messages keep their own send path, as the client data design says.
 
 ## Offline cache
 
@@ -129,29 +130,44 @@ The version facts were checked against the installed Drizzle release and with a 
 - A write that names a version sets it, so no writer may name one.
 - The D1 driver and the Durable Object driver both build their SQL with the same SQLite dialect, so the increment reaches the realtime objects too.
 
-The migration adds `version` as a not-null integer with a default of zero, one table group at a time, through the drizzle skill. SQLite requires a default to add a not-null column. Existing rows read zero, which is their true value, since no row has yet been changed through a versioned writer. The backfills skill keeps a default where a current writer produces the absence, and the insert path omits the column and receives zero from the same default, so the default stays. Live pair rows need no backfill. The pair tables had no tombstones before this change, because their deletes were hard, so there is nothing to backfill for removals already made. A tab that was open across the deploy runs the old client against the new server, and it shows tombstones unfiltered until it reloads. That is the tradeoff the backfills skill accepts for latest-shape-only code.
+The migration adds `version` as a not-null integer with a default of zero, one table group at a time, through the drizzle skill. The default is the insert value: a row written without a version starts at zero, and that is what an omitted column receives. It is not a fill for a stored field that is missing, so the backfills rule does not apply to it. SQLite requires a default to add a not-null column, and this is the same value. Existing rows read zero, since no row has yet been changed through a versioned writer, and that is their true value. Live pair rows need no backfill. The pair tables had no tombstones before this change, because their deletes were hard, so nothing is owed for removals already made.
 
 The object tables migrate through the object configurations, and the object database applies its migrations when it starts. A raw statement that updates a tracked table would skip the increment, so the migration task scans for raw writes, and each one routes through the builder.
 
 ## Entity keys
 
-An entity key is a table and its primary key value. The primitive holds keys in a map keyed by the table object and then by the key value, so no key is built as a string and two tables cannot collide. The key's type comes from the table's select model narrowed to its primary key columns. A composite key that the table declares in its extra configuration, as the blocks table does, has to name its columns, because a column's type does not carry a composite key. The first pilot task verifies that Drizzle's types behave as this assumes.
+A write's queue key is a row the write's optimistic entry touches, and no writer names one. The held state is a keyed view: a table, then the row's primary key value. A composite key is one map level per key column, so no key is ever built as a string. The view an entry applies to reads and writes rows by key, and it offers no way to iterate, count or search. An entry whose outcome depends on other rows has to name them.
 
-The key cannot be derived from a procedure's input, and the evidence is specific. Six procedures take one bare user id schema: `createBlock`, `deleteBlock`, `deleteFriend`, `acceptFriendRequest`, `declineFriendRequest` and `sendFriendRequest`. They write three tables. The friendship row's key is the pair helper applied to the session user and the input, so the input alone is not the key and the session is needed. An accept writes two tables under one pair, so one input names two rows. A tRPC procedure's metadata lives on the server, the client cannot read it, and a per-procedure table would be the manual list the owner has ruled out.
+When a write is queued, the primitive runs its entry once against a recording view of the held state. The recording view answers every read and write from that state and records each table and key it is asked for. The recorded keys are the write's queue keys. The entry's result is discarded, because the view recomputes the entry at each change. An entry's keys come from its input and the session rather than from row contents, so they are the same at every recompute. The recording counts reads as touches as well as writes, since a write whose outcome depends on a row another write changes has to follow that write.
 
-The smallest typed declaration is at the write's call site: one entity key for each row the write changes. The pair writes build their keys with the same helper the server uses, which is `getFriendshipId` on the session user and the other party. A write's keys are checked against the server's recorded write set in the wake-check suite, so an omitted key fails a test instead of racing in production. A multi-row write passes a list of keys and queues behind any in-flight write that shares one of them. Reads keep their per-instance keys, since reads are not ordered by entity.
+The pair entries address the friendship row with the pair helper, `getFriendshipId`, over the session user and the other party. That is the only place a pair key is built. Call sites name no key, and the entries live in a module under the shared folder, so the server's wake check can import the same entry and run it against seeded rows.
+
+**The cross-check.** The wake check runs each optimistic write's entry against the state its server test seeds, and asserts that every row the server's recorded write set names, by table and primary key from the recorder's returned rows, is among the touched keys. A gap is a finding: the write changes a row its entry does not show. The fix is to show the row in the entry or to await the write. It is never to declare a key by hand.
+
+**Awaited writes take no key.** A write without an entry shows nothing until the server answers, so the client has no state to order it against. Its response is an arrival, and the version gate orders the responses of two awaited writes to one row: the response with the higher version holds, whatever order they arrive in. The server orders what it applies. Two cases were checked and neither needs client order. A block and a request send commute, because the server inserts a request only while no block stands between the two users. A second write issued before the first's response that names the first's row cannot be issued, because the row is on screen only after that response. If a case that needs order turns up, the smallest mechanism is to give the write an entry, which makes its keys inferable. A declaration is not the mechanism.
+
+**The one server race found.** A server-placed create reads the maximum position and then inserts in a separate statement. Two concurrent creates read the same maximum and insert the same next position. The old room category executor queued creates on one key to prevent that tie. The fix belongs on the server, which computes the position inside the insert statement, as the reorder already does with a single-statement subquery. Once it does, two creates need no client order, and the executor goes.
+
+**Rejected alternatives for the keys.** Each one lost for the reason given.
+
+- Declaring a key at each call site. It is the manual declaration a writer gets wrong, and the wake check would catch it only after the fact, where construction catches it before.
+- Deriving the key from the procedure's input. Six procedures (`createBlock`, `deleteBlock`, `deleteFriend`, `acceptFriendRequest`, `declineFriendRequest` and `sendFriendRequest`) share one bare user id schema and write three tables, and the friendship key needs the session user as well as the input.
+- Inferring the keys from the server's recorded write set. The set is known only after the response, so it cannot order the send.
+- A table of keys per procedure. It is the manual list the owner ruled out, and the client cannot read a server-side procedure's metadata anyway.
+- Per-field keys. Each field would become a key to remember.
+- Queuing awaited writes on keys. No entry exists before the response, so no key can be inferred for them, and the arrival gate orders them.
 
 ## Enforcement
 
 The enforcement ladder is applied rung by rung, and each rule names the rung that holds it.
 
-| Rung               | What holds the rule                                                                                                                                               | What it costs               |
-| :----------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------- |
-| 1. By construction | A write's options take entity keys and an entry, with no rollback member. A read without a version does not typecheck where it is ingested. The view is readonly. | Nothing                     |
-| 2. Structural      | One primitive is the only writer of held state, and one registry is the only queue.                                                                               | One review of the primitive |
-| 3. Lint            | A selector fails an entry's apply when its body assigns a ref. The lint retires with the call-id names it no longer needs to catch.                               | One rule over every file    |
-| 4. Test            | The wake check fails a write whose declared keys miss a row it changed. The primitive's tests pin the gate, the settle rule and the run scope.                    | Upkeep of fixtures          |
-| 5. Remembered      | The owning sections of the client data, async operations and friends design pages, and the pinia and drizzle skills, state the rules.                             | Every reader                |
+| Rung               | What holds the rule                                                                                                                                                                                                                                                               | What it costs               |
+| :----------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------- |
+| 1. By construction | A write's options take an entry and no key and no rollback member, so a writer cannot name a queue key. The keyed view has no iteration, so an entry cannot touch a row it does not name. A read without a version does not typecheck where it is ingested. The view is readonly. | Nothing                     |
+| 2. Structural      | One primitive is the only writer of held state, and one registry is the only queue, keyed by the touched keys its recording view finds.                                                                                                                                           | One review of the primitive |
+| 3. Lint            | A selector fails an entry that iterates the keyed view or assigns a ref. The lint retires with the call-id names it no longer needs to catch.                                                                                                                                     | One rule over every file    |
+| 4. Test            | The wake check fails a write whose touched keys miss a row its recorded write set names. A stability test runs each entry on two states and fails on a key set that changes. The primitive's tests pin the gate, the settle rule and the run scope.                               | Upkeep of fixtures          |
+| 5. Remembered      | The owning sections of the client data, async operations and friends design pages, and the pinia and drizzle skills, state the rules.                                                                                                                                             | Every reader                |
 
 ## Costs
 
@@ -164,10 +180,12 @@ The enforcement ladder is applied rung by rung, and each rule names the rung tha
 
 ## Tests
 
-- The primitive's suite covers the gate (an older arrival is ignored, a newer one applies, an equal one is ignored, a placeholder accepts version zero), tombstones, absence, the view, confirmation, failure, the queue per key across two instances, and an aborted run committing nothing.
+- The primitive's suite covers the gate (an older arrival is ignored, a newer one applies, an equal one is ignored, a placeholder accepts version zero), tombstones, absence, the view, confirmation, failure, the queue by touched key across two instances, an awaited pair of responses arriving in reverse order, and an aborted run committing nothing.
+- The stability test runs each optimistic entry on two states that differ in other rows, and fails when its touched keys differ.
 - The three pilot races each get a regression test written first and seen failing against the current rollback, which is the proof run. The unfriend-after-block race is one of them.
-- The wake check asserts that a write's declared keys cover the rows its recorded write set names.
-- A type test asserts that a write option carrying a rollback fails typecheck, and that a read without a version fails where it is ingested.
+- The wake check's cross-check asserts that each optimistic write's touched keys cover the rows its recorded write set names, run against the state its server test seeds.
+- The category create's regression test runs two creates concurrently and asserts distinct positions, written first and seen failing against the read-then-insert form.
+- A type test asserts that a write option carrying a key or a rollback fails typecheck, and that a read without a version fails where it is ingested.
 - The rollback closure assertions, the supersede and stale tests in the primitive's test file and the cache's test file, and the merge test go with the code they pin.
 
 ## Deleted sites
@@ -181,10 +199,11 @@ Each site below is deleted by the change that replaces it. None of them is alias
 | `apps/web/app/models/shared/OperationContext.ts` `checkIsStale` and `isSilentWhenStale`                                                                                                                  | Carries the stale check into settlement                                    | Primitive task                                                               |
 | `apps/web/app/models/shared/MutationStatus.ts` the `Stale` status                                                                                                                                        | Reports a superseded result                                                | Primitive task                                                               |
 | `apps/web/app/composables/shared/useReadingPushes.ts`, with `apps/web/app/services/shared/mergeSnapshot.ts` and `apps/web/app/models/shared/SnapshotPush.ts`                                             | Replays pushes over an in-flight read                                      | Room group, when its last caller moves                                       |
-| `apps/web/app/store/message/user/friend.ts`, `block.ts` and `friendRequest.ts` replay calls, their `store*` mirror functions and the pair executor export                                                | Replays and mirrors writes into three stores                               | Pilot                                                                        |
+| `apps/web/app/store/message/user/friend.ts`, `block.ts` and `friendRequest.ts` replay calls, their `store*` mirror functions, the pair executor export and each call site's hand key                     | Replays and mirrors writes into three stores, and names a key by hand      | Pilot                                                                        |
 | The rollback closures in `friend.ts` (unfriend), `block.ts` (block and unblock) and `friendRequest.ts` (accept and decline)                                                                              | Restore rows after a rejected write                                        | Pilot                                                                        |
-| `apps/web/app/store/message/room/userToRoom.ts` and its membership executor                                                                                                                              | Serialises membership writes by hand                                       | Room group                                                                   |
-| The room category executor in `apps/web/app/store/message/roomCategory.ts`                                                                                                                               | Serialises category creates and moves by hand                              | Room group                                                                   |
+| `apps/web/app/store/message/user/friendRequest.ts` and `block.ts` pair imports of the pair executor                                                                                                      | Share one hand-moved executor across stores                                | Pilot                                                                        |
+| `apps/web/app/store/message/room/userToRoom.ts` and its membership executor                                                                                                                              | Serialises membership writes by hand, with a named key                     | Room group                                                                   |
+| The room category executor in `apps/web/app/store/message/roomCategory.ts`                                                                                                                               | Serialises category creates on one key to stop the position tie            | Room group, once the server computes the position in the insert statement    |
 | The replay calls in `apps/web/app/store/message/room/emoji.ts` and `apps/web/app/store/message/room/call/participant.ts`                                                                                 | Replays emoji and participant pushes over reads                            | Room group                                                                   |
 | `apps/web/app/composables/shared/useCachedRead.ts` supersede method and its use of the primitive's supersede                                                                                             | Marks a pushed value as newer than an in-flight read                       | Root group, when `apps/web/app/store/storage.ts` moves to a user row arrival |
 | `apps/web/app/composables/message/room/useRefreshRoomUsers.ts` `checkIsStale` parameter and guard, and the whole-map replacement                                                                         | Drops a refresh a newer one superseded, and replaces the room's member map | Room group, after membership gains tombstones                                |
@@ -195,75 +214,77 @@ Each site below is deleted by the change that replaces it. None of them is alias
 
 ## Alternatives and their reasons
 
-Each alternative that lost is recorded in the decisions above, beside the choice it lost to. The rejected alternatives for the entity key are in the entity key section.
+Each alternative that lost is recorded in the decisions above, beside the choice it lost to. The rejected alternatives for the queue keys are in the entity keys section.
 
 ## Key files
 
-| File                                                                            | Role after the change                                                                                   |
-| :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------ |
-| `apps/web/app/composables/shared/useMutation.ts`                                | The primitive: the registry, the arrival gate, the view's entries and the run scope                     |
-| `apps/web/app/composables/shared/useMutation.test.ts`                           | The primitive's suite, rewritten around the gate, the settle rule and the run scope                     |
-| `apps/web/app/composables/shared/useReadingPushes.ts`                           | Deleted: replaced by arrivals                                                                           |
-| `apps/web/app/services/shared/mergeSnapshot.ts`                                 | Deleted: replaced by the arrival gate                                                                   |
-| `apps/web/app/models/shared/SnapshotPush.ts`                                    | Deleted: the push forms are the entries' applies                                                        |
-| `apps/web/app/services/shared/settleOperation.ts`                               | Settles a write or a read without the stale branches                                                    |
-| `apps/web/app/models/shared/OperationContext.ts`                                | The settlement context without the stale fields                                                         |
-| `apps/web/app/models/shared/MutationStatus.ts`                                  | The outcome set without the stale status                                                                |
-| `apps/web/app/composables/shared/useCachedRead.ts`                              | The cache gate, with no supersede                                                                       |
-| `apps/web/app/composables/shared/useWatchTopics.ts`                             | The watch a read takes, unchanged: it delivers the invalidations that bring rows back at their versions |
-| `apps/web/app/services/shared/createBatchedRefresh.ts`                          | The count re-read, unchanged, one read at a time                                                        |
-| `apps/web/app/services/shared/createOperationData.ts`                           | Row helpers used by the pair stores, retired with them                                                  |
-| `apps/web/app/store/message/user/friend.ts`                                     | The friend store: friendship and user rows with an entry-based unfriend                                 |
-| `apps/web/app/store/message/user/block.ts`                                      | The block store: entry-based block and unblock                                                          |
-| `apps/web/app/store/message/user/friendRequest.ts`                              | The request store: entry-based send, accept and decline                                                 |
-| `apps/web/app/store/message/room/userToRoom.ts`                                 | The membership store, on entries and arrivals                                                           |
-| `apps/web/app/store/message/roomCategory.ts`                                    | The category store, creates by placeholder and server position                                          |
-| `apps/web/app/store/message/room/emoji.ts`                                      | The emoji store, on row arrivals from events                                                            |
-| `apps/web/app/store/message/room/call/participant.ts`                           | The participant store, on row arrivals from events                                                      |
-| `apps/web/app/store/message/room/realtime.ts`                                   | The virtual background pipeline as a run scope with one commit                                          |
-| `apps/web/app/composables/message/room/useRefreshRoomUsers.ts`                  | The refresh applies user rows as arrivals                                                               |
-| `apps/web/app/composables/message/subscribables/useRoomUserSubscribables.ts`    | The room user subscription, without a stale argument                                                    |
-| `apps/web/app/components/Dashboard/Visual/Preview/DatasetBindingForm/Index.vue` | The binding pick as a run scope                                                                         |
-| `apps/web/app/store/storage.ts`                                                 | The storage meter, storing the user row's arrival                                                       |
-| `apps/web/app/services/message/room/setRoomUsers.ts`                            | Applies user rows one by one, not as a whole map                                                        |
-| `packages/db-schema/src/createMetadataSchema.ts`                                | The version definition, with the timestamps and deletion column                                         |
-| `packages/db-schema/src/sqliteTable.ts`                                         | The wrapper that spreads the metadata into every D1 table                                               |
-| `packages/db-schema/src/models/SqliteTable.ts`                                  | The wrapper's type, which names the metadata columns                                                    |
-| `packages/db-schema/src/schema/auth/usersInAuth.ts`                             | The user row whose storage total arrives with its version                                               |
-| `packages/db-schema/src/schema/social/friendsInSocial.ts`                       | The friendship table, soft-deleted with revival                                                         |
-| `packages/db-schema/src/schema/social/friendRequestsInSocial.ts`                | The request table, soft-deleted with revival                                                            |
-| `packages/db-schema/src/schema/social/blocksInSocial.ts`                        | The block table, soft-deleted with revival and a composite key                                          |
-| `packages/db-schema/src/objects/call/schema.ts`                                 | The call object tables, given the version definition                                                    |
-| `packages/db-schema/src/objects/room/schema.ts`                                 | The room object tables, given the version definition                                                    |
-| `packages/db-schema/src/objects/user/schema.ts`                                 | The user object tables, given the version definition                                                    |
-| `packages/db-schema/drizzle.room.config.ts`                                     | The room object's migration configuration                                                               |
-| `packages/db-schema/drizzle.call.config.ts`                                     | The call object's migration configuration                                                               |
-| `packages/db-schema/src/models/realtime/RealtimeEventClassMap.ts`               | The class of each event, now carrying rows with versions                                                |
-| `apps/web/server/trpc/routers/friend.ts`                                        | Soft delete of a friendship, and live filters on the server statements that decide                      |
-| `apps/web/server/trpc/routers/block.ts`                                         | Soft delete of a block and its friendship and request, with revival                                     |
-| `apps/web/server/trpc/routers/friendRequest.ts`                                 | Soft delete of a request, accept on the live request, and revival on send                               |
-| `apps/web/server/trpc/routers/storage.ts`                                       | The usage read, unchanged in its query and carried by the user row's event                              |
-| `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`                      | The header of each mutation: the tracked rows it changed, with their keys and versions                  |
-| `apps/web/server/trpc/middleware/inferTopicsMiddleware.test.ts`                 | The header test, extended to mutations                                                                  |
-| `apps/web/server/trpc/routers/friend.test.ts`                                   | The pair router tests, extended to tombstones and revival                                               |
-| `apps/web/app/store/message/user/friend.test.ts`                                | The unfriend regression tests                                                                           |
-| `apps/web/app/store/message/user/block.test.ts`                                 | The block regression tests                                                                              |
-| `apps/web/app/store/message/user/friendRequest.test.ts`                         | The request regression tests                                                                            |
-| `apps/web/app/services/shared/mergeSnapshot.test.ts`                            | Deleted with its code                                                                                   |
-| `apps/web/app/services/cache/indexedDb/writeIndexedDb.ts`                       | The cache writes held state with versions                                                               |
-| `apps/web/app/composables/cache/indexedDb/`                                     | The pagination cache that persists held state for a partition                                           |
-| `packages/configuration/eslint/restrictedSyntaxes.js`                           | The selector that fails an entry's apply when it assigns a ref                                          |
-| `openspec/specs/architecture/client-data/design.md`                             | The rollback, concurrency and live-read sections, rewritten to the overlay                              |
-| `openspec/specs/architecture/async-operations/design.md`                        | The outcome, write and read sections, rewritten without call ids                                        |
-| `openspec/specs/architecture/cloudflare-services/design.md`                     | The version column, tombstones and the write header                                                     |
-| `openspec/specs/esbabbler/friends-and-dms/design.md`                            | The replay paragraph, rewritten to versions and tombstones                                              |
-| `openspec/specs/esbabbler/offline-cache/design.md`                              | The cache persists held state with versions                                                             |
+| File                                                                            | Role after the change                                                                                             |
+| :------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/composables/shared/useMutation.ts`                                | The primitive: the registry, the recording view that infers each entry's keys, the arrival gate and the run scope |
+| `apps/web/app/composables/shared/useMutation.test.ts`                           | The primitive's suite, rewritten around the gate, the settle rule, the touched keys and the run scope             |
+| `apps/web/app/composables/shared/useReadingPushes.ts`                           | Deleted: replaced by arrivals                                                                                     |
+| `apps/web/app/services/shared/mergeSnapshot.ts`                                 | Deleted: replaced by the arrival gate                                                                             |
+| `apps/web/app/models/shared/SnapshotPush.ts`                                    | Deleted: the push forms are the entries' applies                                                                  |
+| `apps/web/app/services/shared/settleOperation.ts`                               | Settles a write or a read without the stale branches                                                              |
+| `apps/web/app/models/shared/OperationContext.ts`                                | The settlement context without the stale fields                                                                   |
+| `apps/web/app/models/shared/MutationStatus.ts`                                  | The outcome set without the stale status                                                                          |
+| `apps/web/app/composables/shared/useCachedRead.ts`                              | The cache gate, with no supersede                                                                                 |
+| `apps/web/app/composables/shared/useWatchTopics.ts`                             | The watch a read takes, unchanged: it delivers the invalidations that bring rows back at their versions           |
+| `apps/web/app/services/shared/createBatchedRefresh.ts`                          | The count re-read, unchanged, one read at a time                                                                  |
+| `apps/web/app/services/shared/createOperationData.ts`                           | Row helpers used by the pair stores, retired with them                                                            |
+| `apps/web/app/store/message/user/friend.ts`                                     | The friend store: friendship and user rows, with an unfriend that names no key                                    |
+| `apps/web/app/store/message/user/block.ts`                                      | The block store: block and unblock that name no key                                                               |
+| `apps/web/app/store/message/user/friendRequest.ts`                              | The request store: send, accept and decline that name no key                                                      |
+| `apps/web/app/store/message/room/userToRoom.ts`                                 | The membership store, on entries and arrivals                                                                     |
+| `apps/web/app/store/message/roomCategory.ts`                                    | The category store: a placeholder that sorts after the server's rows, with no position of its own                 |
+| `apps/web/app/store/message/room/emoji.ts`                                      | The emoji store, on row arrivals from events                                                                      |
+| `apps/web/app/store/message/room/call/participant.ts`                           | The participant store, on row arrivals from events                                                                |
+| `apps/web/app/store/message/room/realtime.ts`                                   | The virtual background pipeline as a run scope with one commit                                                    |
+| `apps/web/app/composables/message/room/useRefreshRoomUsers.ts`                  | The refresh applies user rows as arrivals                                                                         |
+| `apps/web/app/composables/message/subscribables/useRoomUserSubscribables.ts`    | The room user subscription, without a stale argument                                                              |
+| `apps/web/app/components/Dashboard/Visual/Preview/DatasetBindingForm/Index.vue` | The binding pick as a run scope                                                                                   |
+| `apps/web/app/store/storage.ts`                                                 | The storage meter, storing the user row's arrival                                                                 |
+| `apps/web/app/services/message/room/setRoomUsers.ts`                            | Applies user rows one by one, not as a whole map                                                                  |
+| `apps/web/shared/`                                                              | The shared folder that holds each pair entry's pure function, which the store and the wake check both import      |
+| `packages/db-schema/src/createMetadataSchema.ts`                                | The version definition, with the timestamps and deletion column                                                   |
+| `packages/db-schema/src/sqliteTable.ts`                                         | The wrapper that spreads the metadata into every D1 table                                                         |
+| `packages/db-schema/src/models/SqliteTable.ts`                                  | The wrapper's type, which names the metadata columns                                                              |
+| `packages/db-schema/src/schema/auth/usersInAuth.ts`                             | The user row whose storage total arrives with its version                                                         |
+| `packages/db-schema/src/schema/social/friendsInSocial.ts`                       | The friendship table, soft-deleted with revival                                                                   |
+| `packages/db-schema/src/schema/social/friendRequestsInSocial.ts`                | The request table, soft-deleted with revival                                                                      |
+| `packages/db-schema/src/schema/social/blocksInSocial.ts`                        | The block table, soft-deleted with revival and a composite key                                                    |
+| `packages/db-schema/src/objects/call/schema.ts`                                 | The call object tables, given the version definition                                                              |
+| `packages/db-schema/src/objects/room/schema.ts`                                 | The room object tables, given the version definition                                                              |
+| `packages/db-schema/src/objects/user/schema.ts`                                 | The user object tables, given the version definition                                                              |
+| `packages/db-schema/drizzle.room.config.ts`                                     | The room object's migration configuration                                                                         |
+| `packages/db-schema/drizzle.call.config.ts`                                     | The call object's migration configuration                                                                         |
+| `packages/db-schema/src/models/realtime/RealtimeEventClassMap.ts`               | The class of each event, now carrying rows with versions                                                          |
+| `apps/web/server/trpc/routers/friend.ts`                                        | Soft delete of a friendship, and live filters on the server statements that decide                                |
+| `apps/web/server/trpc/routers/block.ts`                                         | Soft delete of a block and its friendship and request, with revival                                               |
+| `apps/web/server/trpc/routers/friendRequest.ts`                                 | Soft delete of a request, accept on the live request, revival on send, and the send's block check                 |
+| `apps/web/server/trpc/routers/room/category.ts`                                 | The create computes its position inside its insert statement, so concurrent creates get distinct positions        |
+| `apps/web/server/trpc/routers/storage.ts`                                       | The usage read, unchanged in its query and carried by the user row's event                                        |
+| `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`                      | The header of each mutation: the tracked rows it changed, with their keys and versions                            |
+| `apps/web/server/trpc/middleware/inferTopicsMiddleware.test.ts`                 | The header test, extended to mutations                                                                            |
+| `apps/web/server/trpc/routers/friend.test.ts`                                   | The pair router tests, extended to tombstones and revival                                                         |
+| `apps/web/app/store/message/user/friend.test.ts`                                | The unfriend regression tests                                                                                     |
+| `apps/web/app/store/message/user/block.test.ts`                                 | The block regression tests                                                                                        |
+| `apps/web/app/store/message/user/friendRequest.test.ts`                         | The request regression tests                                                                                      |
+| `apps/web/app/services/shared/mergeSnapshot.test.ts`                            | Deleted with its code                                                                                             |
+| `apps/web/app/services/cache/indexedDb/writeIndexedDb.ts`                       | The cache writes held state with versions                                                                         |
+| `apps/web/app/composables/cache/indexedDb/`                                     | The pagination cache that persists held state for a partition                                                     |
+| `packages/configuration/eslint/restrictedSyntaxes.js`                           | The selector that fails an entry that iterates the view or assigns a ref                                          |
+| `openspec/specs/architecture/client-data/design.md`                             | The rollback, concurrency and live-read sections, rewritten to the overlay                                        |
+| `openspec/specs/architecture/async-operations/design.md`                        | The outcome, write and read sections, rewritten without call ids                                                  |
+| `openspec/specs/architecture/cloudflare-services/design.md`                     | The version column, tombstones and the write header                                                               |
+| `openspec/specs/esbabbler/friends-and-dms/design.md`                            | The replay paragraph, rewritten to versions and tombstones                                                        |
+| `openspec/specs/esbabbler/offline-cache/design.md`                              | The cache persists held state with versions                                                                       |
 
-The new files, in the tree form the design template asks for, are the registry's module and its test. Their paths follow the file-organisation skill once the pilot is written, and they are not listed as existing files here.
+The new files, in the tree form the design template asks for, are the registry's recording view, the shared pair entries and their tests. Their paths follow the file-organisation skill once the pilot is written, and they are not listed as existing files here.
 
 ```text
-apps/web/app/composables/shared/                  the registry and the run scope, in the primitive's folder
-apps/web/app/services/shared/                     the arrival gate's apply, one function per form
+apps/web/app/composables/shared/                  the registry, the recording view and the run scope, in the primitive's folder
+apps/web/shared/                                  the pair entries as pure functions over the keyed view, imported by the store and the wake check
 ```
 
 ## Sources
@@ -275,7 +296,8 @@ apps/web/app/services/shared/                     the arrival gate's apply, one 
 
 - A failed write's entry is dropped, so the view can show the held value again for a moment. The server may still have applied the write, and the watched read brings its row back at the new version. This is the one place the view can read older than the server, and it lasts until that arrival.
 - The primitive keeps the registry per Pinia instance. Nuxt renders each request with its own instance, so no queue or entry crosses a request, and the tests get a fresh queue each time.
-- Read keys stay per instance, since a read is not ordered by an entity. Only writes take entity keys.
+- Read keys stay per instance, since a read is not ordered by an entity. Only writes take queue keys, and those keys come from their entries.
+- The owner accepted two consequences, and both stand as written. Tombstone revival is accepted on the pilot tables. Tabs that were open across a deploy run the old client against the new server until they reload.
 
 ## Open questions
 
