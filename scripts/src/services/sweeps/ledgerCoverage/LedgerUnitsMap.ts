@@ -43,6 +43,7 @@ export const LedgerUnitsMap: Record<string, () => string[]> = {
       )
       .map(({ name }) => `\`${name}\``);
   },
+  "genshin-evidence": () => readOpenspecFolderUnits().filter((unit) => unit.startsWith("`openspec/specs/genshin/")),
   "kit-differs-from-source": readKitOverlayRows,
   "kit-records": readKitOverlayRows,
   "quality/tooling": () => [...readInvariantsToolingUnits(), ...readOpenspecFolderUnits()],
