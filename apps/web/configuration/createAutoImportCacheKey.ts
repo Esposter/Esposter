@@ -27,8 +27,7 @@ export const createAutoImportCacheKey = () => {
     },
   } satisfies Partial<NuxtHooks>;
   const plugin = {
-    // @TODO: no upstream issue — Vitest types configureVitest as returning void, yet awaits every one (`Promise.all` over
-    // The sorted hooks in its cli-api chunk), so the async hook the cache key needs reads as misused
+    // @TODO: https://github.com/vitest-dev/vitest/issues/12034
     // oxlint-disable-next-line typescript/no-misused-promises, typescript/strict-void-return -- Vitest awaits this hook
     async configureVitest({ defineCacheKeyGenerator }) {
       if (!unimport)
