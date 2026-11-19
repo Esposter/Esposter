@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
+import { UserSettingsPageSections } from "#src/models/user/UserSettingsPageSection";
 import { UserSettingsPageLinkItem } from "#src/services/app/UserSettingsPageLinkItem";
+import { UserSettingsPageCardMap } from "#src/services/user/settings/UserSettingsPageCardMap";
 
 definePageMeta({ middleware: "auth" });
 </script>
@@ -15,12 +16,12 @@ definePageMeta({ middleware: "auth" });
       <div flex flex-col gap-8 md:flex-row md:items-start>
         <UserSettingsSideBar shrink-0 md:top-4 md:sticky />
         <div flex flex-1 flex-col gap-10 min-w-0>
-          <UserProfileCard :section="UserSettingsPageSection.Profile" />
-          <UserLinkedAccountsCard :section="UserSettingsPageSection.LinkedAccounts" />
-          <UserSessionsCard :section="UserSettingsPageSection.Sessions" />
-          <UserApiKeysCard :section="UserSettingsPageSection.ApiKeys" />
-          <UserDataExportCard :section="UserSettingsPageSection.DataExport" />
-          <UserDeleteAccountCard :section="UserSettingsPageSection.DeleteAccount" />
+          <component
+            :is="UserSettingsPageCardMap[section]"
+            v-for="section of UserSettingsPageSections"
+            :key="section"
+            :section
+          />
         </div>
       </div>
     </div>
