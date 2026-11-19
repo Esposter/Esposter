@@ -4,6 +4,7 @@
 export const TopicKind = {
   Block: "block",
   Bookmark: "bookmark",
+  Call: "call",
   Feed: "feed",
   Friend: "friend",
   FriendRequest: "friendRequest",

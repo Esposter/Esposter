@@ -1,8 +1,10 @@
 import type { ObjectInvocationHandles } from "#src/services/durableObject/recordObjectHandle";
-import type { ColumnTopic } from "@esposter/db-schema";
+import type { ColumnTopic, TopicKind } from "@esposter/db-schema";
 
 import { RESERVED_CLOSE_CODES } from "#src/services/durableObject/constants";
+import { getObjectName } from "#src/services/durableObject/getObjectName";
 import { objectInvocationStorage } from "#src/services/durableObject/recordObjectHandle";
+import { scopeColumnTopic } from "#src/services/durableObject/scopeColumnTopic";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { getReadTopics, getWriteTopics, publishTopicsBestEffort } from "@esposter/db";
 import { getDeviceSocketTag, getSessionSocketTag, getUserSocketTag } from "@esposter/db-schema";
@@ -42,6 +44,9 @@ export abstract class RealtimeObject<
   TEvent extends { type: string } = { type: string },
   TRpc = object,
 > extends DurableObject {
+  // The kind an object's own topics are named by, so its id scopes them: `room/<roomId>:messages:*`
+  protected abstract readonly topicKind: TopicKind;
+
   override async fetch(request: Request): Promise<Response> {
     if (request.headers.get("Upgrade") !== "websocket")
       return new Response("Expected a WebSocket upgrade", { status: 426 });
@@ -124,18 +129,19 @@ export abstract class RealtimeObject<
 
   // Runs one invocation of the object, its entry or its alarm, under the scope its handles record into. Its reads come back as
   // The read set, and its writes are published best-effort once it settles, whether it succeeded or not
+  // Runs one invocation of the object, its entry or its alarm, under the scope its handles record into. Its reads come back as
+  // The read set, and its writes are published best-effort once it settles, whether it succeeded or not
   protected runInvocation<TResult>(label: string, run: () => TResult): Promise<ObjectInvocation<Awaited<TResult>>> {
     const handles: ObjectInvocationHandles = new Map();
-    const statements = () => [...handles.values()].flatMap((recorded) => recorded.statements);
     return withFinalizerAsync(
       async () => {
         const result = await objectInvocationStorage.run(handles, run);
-        return { readSet: await getReadTopics(statements()), result };
+        return { readSet: await this.#getTopics(handles, getReadTopics), result };
       },
       () =>
         publishTopicsBestEffort(
           this.env.TOPIC,
-          () => getWriteTopics(statements()),
+          () => this.#getTopics(handles, getWriteTopics),
           `Failed to publish the topics of ${label}:`,
         ),
     );
@@ -155,6 +161,19 @@ export abstract class RealtimeObject<
       return false;
     ws.close(SESSION_ENDED_CLOSE_CODE, "Session expired");
     return true;
+  }
+
+  // The topics of an invocation's statements. The object's own tables name the object, since each object holds its own rows,
+  // So a write in one object reaches no watch of another. The core's tables are shared, so they are named as they are
+  async #getTopics(handles: ObjectInvocationHandles, getStatementTopics: typeof getReadTopics): Promise<ColumnTopic[]> {
+    const statementsOf = (owned: boolean) =>
+      [...handles.values()].filter((record) => record.owned === owned).flatMap(({ recorder }) => recorder.statements);
+    const sharedTopics = await getStatementTopics(statementsOf(false));
+    const ownedStatements = statementsOf(true);
+    if (ownedStatements.length === 0) return sharedTopics;
+    const scope = `${this.topicKind}/${getObjectName(this.ctx, this.topicKind)}`;
+    const ownedTopics = await getStatementTopics(ownedStatements);
+    return [...sharedTopics, ...ownedTopics.map((topic) => scopeColumnTopic(topic, scope))];
   }
 
   // Records the revoke, then drops records past the TTL, so an object that outlives many revokes keeps only recent ones

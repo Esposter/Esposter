@@ -1,12 +1,14 @@
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import { createSocket } from "#src/services/durableObject/createMockSocket.test";
 import { createMockObjectState } from "@esposter/db-mock";
-import { SOCKET_IDENTITY_HEADER } from "@esposter/db-schema";
+import { SOCKET_IDENTITY_HEADER, TopicKind } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 // An object that revokes a session the way each object's `closeSession` does, so a test drives the revoke the object runs
 class SessionObject extends RealtimeObject {
+  protected readonly topicKind = TopicKind.Session;
+
   announce() {
     this.broadcast({ type: "announce" });
   }

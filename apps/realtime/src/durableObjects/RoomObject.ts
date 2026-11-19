@@ -72,6 +72,7 @@ import {
   scheduledMessagesInRoom,
   SortOrder,
   START_PAGE_CURSOR,
+  TopicKind,
   unindexedMessagesInRoom,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -99,7 +100,10 @@ const REACTION_PAGE_SORT = { keys: ["messageId", "emojiTag"], order: SortOrder.A
 // The caller authorises each write against D1 and names the actor.
 // The write is applied in one synchronous turn and broadcasts exactly what it wrote
 export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> implements RoomObjectRpc {
-  protected readonly db = createObjectHandle(createDurableObjectDatabase(this.ctx, roomMigrations.migrations));
+  protected readonly db = createObjectHandle(createDurableObjectDatabase(this.ctx, roomMigrations.migrations), {
+    owned: true,
+  });
+  protected readonly topicKind = TopicKind.Room;
   readonly #core = createObjectHandle(drizzle(this.env.CORE, { relations }));
   readonly #roomId = getObjectName(this.ctx, "RoomObject");
 

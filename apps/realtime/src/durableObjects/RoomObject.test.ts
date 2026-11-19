@@ -1,4 +1,4 @@
-import type { PageCursor, RoomObjectRpc, RoomReaction, UserObjectRpc } from "@esposter/db-schema";
+import type { ColumnTopic, PageCursor, RoomObjectRpc, RoomReaction, Topic, UserObjectRpc } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
 import { RoomObject } from "#src/durableObjects/RoomObject";
@@ -6,7 +6,7 @@ import { createSocket, readFrames } from "#src/services/durableObject/createMock
 import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { ROOM_ACTIVITY_DELAY_MS, ROOM_MEMBER_REMOVED_CODE, WRITE_RETRY_DELAY_MS } from "#src/services/room/constants";
 import { createUser } from "#src/services/shared/createUser.test";
-import { toMergedPage } from "@esposter/db";
+import { getWokenTopics, toMergedPage } from "@esposter/db";
 import { createMockDb, createMockObjectState } from "@esposter/db-mock";
 import {
   AppNotificationType,
@@ -24,6 +24,7 @@ import {
   SOCKET_IDENTITY_HEADER,
   START_PAGE_CURSOR,
   threadFollowsInMessage,
+  topicSchema,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -123,15 +124,15 @@ describe(RoomObject, () => {
   };
   const userNamespace = { get: getUserStub, idFromName: (userId: string) => userId };
   // Every topic a write published, with the columns it changed, read as the topic objects receive them
-  const topicPublishes: { columns?: string[] | undefined; topic: string }[] = [];
+  const topicPublishes: ColumnTopic[] = [];
   const topicNamespace = {
-    get: (topic: string) => ({
+    get: (topic: Topic) => ({
       publish: (columns?: string[]) => {
         topicPublishes.push({ columns, topic });
         return Promise.resolve();
       },
     }),
-    idFromName: (topic: string) => topic,
+    idFromName: (topic: string) => topicSchema.parse(topic),
   };
 
   const userId = v7();
@@ -209,7 +210,7 @@ describe(RoomObject, () => {
     const { readSet, result } = await object.invoke("readMessagesByIds", [[message.id]]);
 
     expect(result).toStrictEqual([message]);
-    expect(readSet).toStrictEqual([{ topic: "messages:*" }]);
+    expect(readSet).toStrictEqual([{ topic: `room/${roomId}:messages:*` }]);
   });
 
   // A write's topics are published from the entry, once the write has run. An insert changes which rows the table holds, so
@@ -221,9 +222,29 @@ describe(RoomObject, () => {
     await object.invoke("createMessage", [{ message: "a", type: MessageType.Message }, actor]);
 
     expect(topicPublishes).toStrictEqual([
-      { columns: undefined, topic: "messages:*" },
-      { columns: undefined, topic: "roomState:*" },
+      { columns: undefined, topic: `room/${roomId}:messages:*` },
+      { columns: undefined, topic: `room/${roomId}:roomState:*` },
     ]);
+  });
+
+  // A room's tables are its own, so its topics name its id: a message written in one room reaches no watch of another room
+  test("a message written in one room wakes no watch of another room", async () => {
+    expect.hasAssertions();
+
+    const otherRoomId = v7();
+    const { object } = createRoomObject();
+    const otherRoom = new RoomObject(
+      createMockObjectState(otherRoomId).ctx as unknown as DurableObjectState,
+      environment,
+    );
+    const { readSet: otherReadSet } = await otherRoom.invoke("readMessagesByIds", [[1]]);
+    const { readSet: ownReadSet } = await object.invoke("readMessagesByIds", [[1]]);
+    topicPublishes.length = 0;
+
+    await object.invoke("createMessage", [{ message: "a", type: MessageType.Message }, actor]);
+
+    expect(getWokenTopics(otherReadSet, topicPublishes)).toStrictEqual([]);
+    expect(getWokenTopics(ownReadSet, topicPublishes)).toStrictEqual([`room/${roomId}:messages:*`]);
   });
 
   test("a topic that cannot be published leaves the invocation's result standing", async () => {

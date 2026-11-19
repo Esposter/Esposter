@@ -39,6 +39,7 @@ import {
   SENT_MESSAGE_PAGE_SORT,
   sentMessagesInUser,
   todoRemindersInUser,
+  TopicKind,
   userClientFrameSchema,
 } from "@esposter/db-schema";
 import userMigrations from "@esposter/db-schema/objects/user/migrations/migrations";
@@ -55,7 +56,10 @@ const getWatchedTopics = (watches: TopicWatch[]) => new Set(watches.map(({ topic
 // Its reminders and TodoList reminders are held there too.
 // Its one alarm is set to the earliest of them still ahead, or a retry for one that failed.
 export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> implements UserObjectRpc {
-  protected readonly db = createObjectHandle(createDurableObjectDatabase(this.ctx, userMigrations.migrations));
+  protected readonly db = createObjectHandle(createDurableObjectDatabase(this.ctx, userMigrations.migrations), {
+    owned: true,
+  });
+  protected readonly topicKind = TopicKind.User;
   readonly #userId = getObjectName(this.ctx, "UserObject");
 
   // A reminder armed again under its id replaces the one it names, so a re-run of the step that armed it converges

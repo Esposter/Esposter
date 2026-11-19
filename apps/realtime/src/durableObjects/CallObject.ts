@@ -34,6 +34,7 @@ import {
   PublishSource as PublishSourceEnum,
   realtimeKitParticipants,
   relations,
+  TopicKind,
 } from "@esposter/db-schema";
 import callMigrations from "@esposter/db-schema/objects/call/migrations/migrations";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
@@ -49,7 +50,10 @@ const CALL_STATE_ID = 1;
 // The web Worker authorises a call operation against D1 and then calls the method for it here.
 // Each method broadcasts the call's events to the sockets they concern
 export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> implements CallObjectRpc {
-  protected readonly db = createObjectHandle(createDurableObjectDatabase(this.ctx, callMigrations.migrations));
+  protected readonly db = createObjectHandle(createDurableObjectDatabase(this.ctx, callMigrations.migrations), {
+    owned: true,
+  });
+  protected readonly topicKind = TopicKind.Call;
   readonly #callSessionId = getObjectName(this.ctx, "CallObject");
   // The preset update in flight for each connection, so the next one starts from what the last one wrote
   readonly #connectionUpdates = new Map<string, Promise<void>>();
