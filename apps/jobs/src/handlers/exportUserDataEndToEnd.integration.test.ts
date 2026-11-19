@@ -113,11 +113,11 @@ describe(exportUserDataHandler, () => {
       mentions: [],
       message: "message",
       replyToId: null,
-      version: 0,
       senderName: null,
       type: MessageType.Message,
       updatedAt: new Date(0),
       userId,
+      version: 0,
     };
     roomObjectReplies.set("exportUserReactions", () => []);
     roomObjectReplies.set("exportUserMessages", () => [message]);

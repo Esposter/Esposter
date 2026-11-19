@@ -22,19 +22,23 @@ describe(useRunScope, () => {
     expect(commit).toHaveBeenCalledExactlyOnceWith(newerResult);
   });
 
-  test("a new run aborts the signal of the run before it", () => {
+  test("a new run aborts the signal of the run before it", async () => {
     expect.hasAssertions();
 
     const runScope = effectScope().run(useRunScope);
     assert.exists(runScope);
+    const { promise: pending, resolve } = Promise.withResolvers<string>();
     let firstSignal: AbortSignal | undefined;
-    runScope.run((signal) => {
+    const firstRun = runScope.run((signal) => {
       firstSignal = signal;
-      return new Promise<string>(() => {});
+      return pending;
     }, vi.fn<(value: string) => void>());
-    runScope.run(() => new Promise<string>(() => {}), vi.fn<(value: string) => void>());
+    const secondRun = runScope.run(() => pending, vi.fn<(value: string) => void>());
 
     expect(firstSignal?.aborted).toBe(true);
+
+    resolve(result);
+    await Promise.all([firstRun, secondRun]);
   });
 
   test("disposing the scope aborts its live run and commits nothing", async () => {
