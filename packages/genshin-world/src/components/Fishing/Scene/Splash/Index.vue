@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GroundPoint, LightUniforms } from "genshin-engine";
 
-import { useDisposedMesh } from "#src/composables/useDisposedMesh";
+import { useLureMesh } from "#src/composables/useLureMesh";
 import { FISHING_SPLASH_OPTIONS } from "#src/services/fishing/constants";
 import { watchImmediate } from "@vueuse/core";
 import { createFishingRippleMaterial, createSplashGeometry } from "genshin-engine";
@@ -21,16 +21,13 @@ const { getGroundHeight, lightUniforms, lure, splash } = defineProps<Props>();
 const age = uniform(0);
 const material = createFishingRippleMaterial({ age, lightUniforms });
 const geometry = createSplashGeometry(FISHING_SPLASH_OPTIONS);
-const mesh = useDisposedMesh(geometry, material);
+const mesh = useLureMesh(geometry, material, () => lure, getGroundHeight);
 watchImmediate(
   () => splash.age,
   (newAge) => {
     age.value = newAge;
   },
 );
-watchImmediate([() => lure.x, () => lure.z, () => getGroundHeight(lure.x, lure.z)], ([x, z, height]) => {
-  mesh.position.set(x, height, z);
-});
 </script>
 
 <template>

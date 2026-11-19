@@ -2,9 +2,8 @@
 import type { GroundPoint, LightUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
-import { useDisposedMesh } from "#src/composables/useDisposedMesh";
+import { useLureMesh } from "#src/composables/useLureMesh";
 import { FISHING_FLOAT_COLOR, FISHING_FLOAT_OPTIONS } from "#src/services/fishing/constants";
-import { watchImmediate } from "@vueuse/core";
 import { createFloatGeometry, createToonMaterial } from "genshin-engine";
 
 interface Props {
@@ -19,10 +18,7 @@ interface Props {
 const { getGroundHeight, lightUniforms, lure, rampTexture } = defineProps<Props>();
 const material = createToonMaterial({ color: FISHING_FLOAT_COLOR, lightUniforms, rampTexture });
 const geometry = createFloatGeometry(FISHING_FLOAT_OPTIONS);
-const mesh = useDisposedMesh(geometry, material);
-watchImmediate([() => lure.x, () => lure.z, () => getGroundHeight(lure.x, lure.z)], ([x, z, height]) => {
-  mesh.position.set(x, height, z);
-});
+const mesh = useLureMesh(geometry, material, () => lure, getGroundHeight);
 </script>
 
 <template>

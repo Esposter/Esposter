@@ -72,7 +72,7 @@
 
 - [ ] 4.1 [phase 6] Draw one stand-in per fishing-area prop at the place the fishing dataset from task 1.6 gives, in every region that holds one, standing in for the roadmap's `fishing-area prop meshes and textures` line. Verify: tests named after 'A prop stands at its layout's place' and 'A prop without a layout place is not drawn', written first and seen failing.
 
-  Blocked: built and tested, not mounted. The props are region-keyed and no session load reads `fishing/props` yet, so the mount waits on that load joining useWorldFishing's Promise.all and a mount per region.
+  Blocked: the stand-in and its placements are built and tested, not mounted. Each region's props are read off its witness layout, laid out round that layout's own origin rather than in the world's coordinates, so the four regions would stack at one spot. The mount waits on a move from each layout's frame into the world's; the reader of `fishing/props` is written then, joining useWorldFishing's Promise.all, since a reader nothing calls is dead code knip fails.
 
 - [ ] 4.2 [phase 6] Trace each exported animal icon at full resolution with `pnpm -C scripts genshin:parity trace <source>` into a path of ours, and draw it beside its codex entry in the archive's Living Beings. Verify: the trace writes a path for each icon, and a test named after 'An untraced icon stays a disc', written first and seen failing.
 
