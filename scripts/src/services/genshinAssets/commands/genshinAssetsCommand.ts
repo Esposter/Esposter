@@ -6,6 +6,7 @@ import { assetFindCommand } from "#src/services/genshinAssets/commands/assetFind
 import { assetIndexCommand } from "#src/services/genshinAssets/commands/assetIndexCommand";
 import { avatarCommand } from "#src/services/genshinAssets/commands/avatarCommand";
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
+import { boundsCommand } from "#src/services/genshinAssets/commands/boundsCommand";
 import { cameraCommand } from "#src/services/genshinAssets/commands/cameraCommand";
 import { characterPacksCommand } from "#src/services/genshinAssets/commands/characterPacksCommand";
 import { characterTrialsCommand } from "#src/services/genshinAssets/commands/characterTrialsCommand";
@@ -49,6 +50,7 @@ import { measureCommand } from "#src/services/genshinAssets/commands/measureComm
 import { miningOutcropsCommand } from "#src/services/genshinAssets/commands/miningOutcropsCommand";
 import { missingTilesCommand } from "#src/services/genshinAssets/commands/missingTilesCommand";
 import { monstersCommand } from "#src/services/genshinAssets/commands/monstersCommand";
+import { motionCommand } from "#src/services/genshinAssets/commands/motionCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
 import { oculiCommand } from "#src/services/genshinAssets/commands/oculiCommand";
@@ -98,6 +100,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     extract: extractCommand,
     tree: treeCommand,
     behaviours: behavioursCommand,
+    bounds: boundsCommand,
     clearance: clearanceCommand,
     shaders: shadersCommand,
     "effect-shaders": effectShadersCommand,
@@ -111,6 +114,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     locomotion: locomotionCommand,
     camera: cameraCommand,
     timings: timingsCommand,
+    motion: motionCommand,
     avatar: avatarCommand,
     measure: measureCommand,
     witness: witnessCommand,
