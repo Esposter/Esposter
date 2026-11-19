@@ -23,16 +23,13 @@ const readGitignorePatterns = (): string[] =>
 describe("agentDirectories", () => {
   // Only a tool that follows directory symlinks enumerates the tree a second time under the alias, which is why
   // The alias is absent from the two below: oxfmt and git.
-  test("excludes the alias from the oxlint ignore patterns the shared eslint config bridges", () => {
+  test.each([
+    ["the alias", AGENT_ALIAS_DIRECTORY],
+    ["the worktrees", AGENT_WORKTREES_DIRECTORY],
+  ])("excludes %s from the oxlint ignore patterns the shared eslint config bridges", (_label, directory) => {
     expect.hasAssertions();
 
-    expect(oxlintConfiguration.ignorePatterns).toContain(AGENT_ALIAS_DIRECTORY);
-  });
-
-  test("excludes the worktrees from the oxlint ignore patterns the shared eslint config bridges", () => {
-    expect.hasAssertions();
-
-    expect(oxlintConfiguration.ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
+    expect(oxlintConfiguration.ignorePatterns).toContain(directory);
   });
 
   // The agent harness writes `.git/info/exclude`, which is machine-local — no clone or CI runner has it, so the

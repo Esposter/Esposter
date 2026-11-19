@@ -23,13 +23,21 @@ describe("getTextCloseGlyphs", () => {
     );
 
   test.each([
-    ["a literal cross", '<p class="close">✕</p>'],
-    ["a multiplication sign as a button's only text", '<button class="close" type="button">×</button>'],
-    ["a multiplication sign alone across a button's lines", '<button class="close">\n  ×\n</button>'],
-  ])("flags %s", (_label, text) => {
+    ["a literal cross", '<p class="close">✕</p>', "✕"],
+    [
+      "a multiplication sign as a button's only text",
+      '<button class="close" type="button">×</button>',
+      '<button class="close" type="button">×</button>',
+    ],
+    [
+      "a multiplication sign alone across a button's lines",
+      '<button class="close">\n  ×\n</button>',
+      '<button class="close">\n  ×\n</button>',
+    ],
+  ])("flags %s", (_label, text, glyph) => {
     expect.hasAssertions();
 
-    expect(getTextCloseGlyphs([{ path: "a.vue", text }])).toHaveLength(1);
+    expect(getTextCloseGlyphs([{ path: "a.vue", text }])).toStrictEqual([`a.vue:1 → ${glyph}`]);
   });
 
   test.each([

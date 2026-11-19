@@ -28,7 +28,7 @@ describe("headlessPackages", () => {
       });
   };
 
-  test("follow the package shape", () => {
+  test("every headless package is named for Vue, peers on it, exports only its entry and imports no Pinia", () => {
     expect.hasAssertions();
 
     const failures = readWorkspacePackages(REPOSITORY_ROOT)
