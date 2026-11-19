@@ -44,12 +44,12 @@ defineProps<Props>();
 }
 
 .scene {
-  --buff: 3rem;
+  --buffer: 3rem;
   /* The rotated and skewed grid's corners reach past the scene's box, and the mask only fades them */
   overflow: clip;
   mask:
-    linear-gradient(transparent, black var(--buff) calc(100% - var(--buff)), transparent),
-    linear-gradient(90deg, transparent, black var(--buff) calc(100% - var(--buff)), transparent);
+    linear-gradient(transparent, black var(--buffer) calc(100% - var(--buffer)), transparent),
+    linear-gradient(90deg, transparent, black var(--buffer) calc(100% - var(--buffer)), transparent);
   mask-composite: intersect;
 }
 

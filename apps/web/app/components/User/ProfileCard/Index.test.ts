@@ -13,7 +13,7 @@ describe("userProfileCard", () => {
     expect.hasAssertions();
 
     const { promise: heldUpdate, resolve: releaseUpdate } = Promise.withResolvers<void>();
-    const { promise: isUpdateReceived, resolve: onUpdateReceived } = Promise.withResolvers<void>();
+    const { promise: updateReceived, resolve: onUpdateReceived } = Promise.withResolvers<void>();
     updateUser.mockImplementation(async () => {
       onUpdateReceived();
       await heldUpdate;
@@ -24,7 +24,7 @@ describe("userProfileCard", () => {
     await wrapper.get("button").trigger("click");
     await wrapper.get("input").setValue("b");
     await wrapper.get('button[type="submit"]').trigger("click");
-    await isUpdateReceived;
+    await updateReceived;
     await flushPromises();
     await wrapper.get("button").trigger("click");
     await wrapper.get("input").setValue("c");

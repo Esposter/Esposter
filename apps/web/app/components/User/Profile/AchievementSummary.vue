@@ -21,7 +21,7 @@ const unlockedAchievementDefinitions = computed(() =>
 const totalPoints = computed(() =>
   unlockedUserAchievements.value.reduce((total, { achievement }) => total + achievement.points, 0),
 );
-const recentUserAchievements = computed(() =>
+const displayRecentUserAchievements = computed(() =>
   unlockedUserAchievements.value
     .toSorted(
       (firstUserAchievement, secondUserAchievement) =>
@@ -49,9 +49,9 @@ const isOpen = ref(false);
         <UiIcon :meaning="UiIconMeaning.Next" />
       </UiButton>
     </div>
-    <ul v-if="recentUserAchievements.length > 0" gap-4 grid cols-1 lg:cols-4 md:cols-3 sm:cols-2>
+    <ul v-if="displayRecentUserAchievements.length > 0" gap-4 grid cols-1 lg:cols-4 md:cols-3 sm:cols-2>
       <AchievementGridItem
-        v-for="userAchievement of recentUserAchievements"
+        v-for="userAchievement of displayRecentUserAchievements"
         :key="userAchievement.achievementId"
         :achievement-definition="userAchievement.achievement"
         :user-achievement

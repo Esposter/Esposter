@@ -64,7 +64,7 @@ describe("userDeleteAccountCard", () => {
   test("deletes only once the typed name matches the display name", async () => {
     expect.hasAssertions();
 
-    const { promise: isSignedOut, resolve: onSignedOut } = Promise.withResolvers<void>();
+    const { promise: signedOutGate, resolve: onSignedOut } = Promise.withResolvers<void>();
     const deleteAccount = vi.fn<() => void>();
     trpcMsw.user.deleteAccount.mutation(deleteAccount);
     vi.mocked(signOutOfBrowser).mockImplementation(() => {
@@ -86,7 +86,7 @@ describe("userDeleteAccountCard", () => {
     typeName(name);
     await flushPromises();
     getConfirmButton().click();
-    await isSignedOut;
+    await signedOutGate;
 
     expect(deleteAccount).toHaveBeenCalledTimes(1);
     expect(signOutOfBrowser).toHaveBeenCalledExactlyOnceWith(RoutePath.Login);

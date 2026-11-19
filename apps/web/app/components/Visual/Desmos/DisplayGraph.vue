@@ -52,7 +52,7 @@ const { isFailed, loaded: calculator } = useLazyLoad(async (signal) => {
 });
 
 // Created at setup, where its teardown registers with the component, and started by an animation rather than by mounting
-const drawingTime = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
+const drawingTimeMs = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 let expressionIndex = 0;
 const { pause, resume } = useIntervalFn(
   () => {
@@ -63,7 +63,7 @@ const { pause, resume } = useIntervalFn(
       isAnimating.value = false;
     }
   },
-  () => drawingTime / expressions.length,
+  () => drawingTimeMs / expressions.length,
   { immediate: false },
 );
 

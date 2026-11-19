@@ -85,8 +85,8 @@ const { answer } = useDialogAnswer(isOpen);
             :label="McpScopeTitleMap[mcpScope]"
             :model-value="mcpScopes.includes(mcpScope)"
             @update:model-value="
-              (isChecked) => {
-                mcpScopes = isChecked
+              (newModelValue) => {
+                mcpScopes = newModelValue
                   ? McpScopes.filter((scope) => scope === mcpScope || mcpScopes.includes(scope))
                   : mcpScopes.filter((scope) => scope !== mcpScope);
               }

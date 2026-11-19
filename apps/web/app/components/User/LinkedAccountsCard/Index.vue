@@ -28,7 +28,7 @@ const { data: accounts, error, refresh } = useQuery(() => requireAuthData(listAc
 // Carry the same verified address as the first — which no provider issues twice
 const providerIdAccountIdMap = computed(() => new Map(accounts.value?.map(({ id, providerId }) => [providerId, id])));
 // The account leaves the list as its unlink is sent, and comes back if the server refuses it
-const omitAccount = (accountId: string) =>
+const removeAccount = (accountId: string) =>
   applyOptimisticReplacement(accounts, (previousAccounts) => previousAccounts.filter(({ id }) => id !== accountId));
 // A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its outcome never
 // Reaches the write that issued it
@@ -80,7 +80,7 @@ if (typeof linkError === "string") {
               const accountId = providerIdAccountIdMap.get(loginButtonProps.provider);
               if (!accountId) return;
               executeMutation(() => requireAuthData(unlinkAccount({ accountId })), {
-                applyOptimistic: () => omitAccount(accountId),
+                applyOptimistic: () => removeAccount(accountId),
                 // Unlinks share one queue, so the server's check that one account is left reads the one before it
                 key: LINKED_ACCOUNTS_MUTATION_KEY,
               });

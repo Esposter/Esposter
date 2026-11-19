@@ -14,10 +14,10 @@ vi.mock(
 );
 
 describe("visualCardCarousel", () => {
-  const DURATION = 1000;
+  const DURATION_MS = 1000;
   const cards: Card[] = [{ text: "a" }, { text: "b" }, { text: "c" }];
   // The cards are the root's children in the order given, so each card's classes are read where it sits
-  const mountCarousel = () => mountSuspended(VisualCardCarousel, { props: { cards, durationMs: DURATION } });
+  const mountCarousel = () => mountSuspended(VisualCardCarousel, { props: { cards, durationMs: DURATION_MS } });
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -42,7 +42,7 @@ describe("visualCardCarousel", () => {
     expect.hasAssertions();
 
     const component = await mountCarousel();
-    vi.advanceTimersByTime(DURATION);
+    vi.advanceTimersByTime(DURATION_MS);
     await flushPromises();
     const [first, second] = [...(component.element as HTMLElement).children];
 

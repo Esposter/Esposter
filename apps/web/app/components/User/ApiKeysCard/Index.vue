@@ -23,11 +23,11 @@ const { $trpc } = useNuxtApp();
 const { executeMutation } = useMutation();
 const userApiKeyDialogStore = useUserApiKeyDialogStore();
 const { deletingId } = storeToRefs(userApiKeyDialogStore);
-const { data, error, refresh } = useQuery(() => requireAuthData(list()), { isInlineError: true });
-const apiKeys = computed(() => data.value?.apiKeys ?? []);
+const { data: apiKeyList, error, refresh } = useQuery(() => requireAuthData(list()), { isInlineError: true });
+const apiKeys = computed(() => apiKeyList.value?.apiKeys ?? []);
 // The key leaves the list as its delete is sent, and comes back if the server refuses it
 const removeApiKey = (id: string) =>
-  applyOptimisticReplacement(data, (previousData) => ({
+  applyOptimisticReplacement(apiKeyList, (previousData) => ({
     ...previousData,
     apiKeys: previousData.apiKeys.filter((apiKey) => apiKey.id !== id),
   }));
@@ -38,7 +38,7 @@ const emptyState = {
 };
 // Resolved through the primitive, so a key another device deleted is dropped with its row rather than re-opening
 const { item: deletingApiKey } = useSingletonDialog(deletingId, () =>
-  data.value?.apiKeys.find(({ id }) => id === deletingId.value),
+  apiKeyList.value?.apiKeys.find(({ id }) => id === deletingId.value),
 );
 </script>
 
@@ -65,7 +65,7 @@ const { item: deletingApiKey } = useSingletonDialog(deletingId, () =>
       :empty-state
       :error
       :is-empty="apiKeys.length === 0 ? true : undefined"
-      :is-pending="data ? undefined : true"
+      :is-pending="apiKeyList ? undefined : true"
       @retry="refresh()"
     >
       <template #loading>
