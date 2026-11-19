@@ -5,6 +5,7 @@ import type { ToData } from "@esposter/shared";
 
 import { updateResourceContent } from "#server/services/resource/updateResourceContent";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { createEmptyTodoList } from "#shared/services/resource/todoList/createEmptyTodoList";
 import { ResourceType } from "@esposter/db-schema";
 
 // The list parsed with its type's schema, or empty if it was never saved, handed to `update` to change in place
@@ -16,7 +17,7 @@ export const updateTodoListContent = async <T>(
   const { result } = await updateResourceContent(ctx, resource, (storedContent) => {
     const todoList =
       storedContent === null
-        ? { items: [] }
+        ? createEmptyTodoList()
         : ResourceDefinitionMap[ResourceType.TodoList].contentSchema.parse(storedContent);
     return { content: todoList, result: update(todoList) };
   });

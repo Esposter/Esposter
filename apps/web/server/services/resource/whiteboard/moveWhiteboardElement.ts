@@ -7,6 +7,7 @@ import { applyResourceContentPatches } from "#server/services/resource/applyReso
 import { updateResourceContent } from "#server/services/resource/updateResourceContent";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { whiteboardResourceSchema } from "#shared/models/resource/whiteboard/WhiteboardResource";
+import { createEmptyWhiteboard } from "#shared/services/resource/whiteboard/createEmptyWhiteboard";
 import { ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { movePositionedElement } from "vue-block-editor-headless";
@@ -22,7 +23,7 @@ export const moveWhiteboardElement = async (
     ctx,
     resource,
     (storedContent) => {
-      const document = whiteboardResourceSchema.parse(storedContent ?? { elements: [] });
+      const document = whiteboardResourceSchema.parse(storedContent ?? createEmptyWhiteboard());
       const operations = movePositionedElement(document, index, point);
       if (operations.length === 0)
         throw getInvalidOperationError(Operation.Update, "whiteboard", `element ${index} is not one that moves`);

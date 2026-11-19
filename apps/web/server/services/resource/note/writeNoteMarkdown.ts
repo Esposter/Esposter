@@ -8,7 +8,7 @@ import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperatio
 import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
 import { NoteMarkdownWriteMode } from "#shared/models/resource/note/NoteMarkdownWriteMode";
 import { noteResourceSchema } from "#shared/models/resource/note/NoteResource";
-import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
+import { createEmptyNote } from "#shared/services/resource/note/createEmptyNote";
 import { deserializeNoteMarkdown } from "#shared/services/resource/note/deserializeNoteMarkdown";
 import { Operation } from "@esposter/shared";
 
@@ -24,7 +24,7 @@ export const writeNoteMarkdown = async (
     ctx,
     resource,
     (storedContent) => {
-      const { doc } = storedContent === null ? { doc: EMPTY_NOTE_DOC } : noteResourceSchema.parse(storedContent);
+      const { doc } = storedContent === null ? createEmptyNote() : noteResourceSchema.parse(storedContent);
       const imported = deserializeNoteMarkdown(markdown).content ?? [];
       const content = mode === NoteMarkdownWriteMode.Replace ? imported : [...(doc.content ?? []), ...imported];
       const nextDoc: JSONContent = { content, type: "doc" };

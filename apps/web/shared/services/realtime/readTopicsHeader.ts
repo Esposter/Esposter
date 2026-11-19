@@ -5,26 +5,22 @@ import {
   TOPICS_HEADER_COLUMNS_SEPARATOR,
   TOPICS_HEADER_SEPARATOR,
 } from "#shared/services/realtime/constants";
+import { getDecodedUriComponent } from "#shared/util/text/getDecodedUriComponent";
 import { columnTopicSchema } from "@esposter/db-schema";
-import { getResult } from "@esposter/shared";
 import { z } from "zod";
 
 // The header carries the time as text, which is parsed back into the whole number it was taken as
 const readAtSchema = z.coerce.number().pipe(z.int().nonnegative());
 
-// Decodes a text from its header encoding. A text that does not decode is no topic, as the schema would refuse it
-const decodeText = (text: string): string | undefined =>
-  getResult(() => decodeURIComponent(text)).match(
-    (decoded) => decoded,
-    () => undefined,
-  );
-
 // Reads one topic entry back: its topic, then the columns it names when the entry carries a separator after the topic. A
-// Column list that names none is an empty list, and an entry with no separator names every column
+// Column list that names none is an empty list, and an entry with no separator names every column. A text that does not
+// Decode is no topic, as the schema would refuse it
 const readColumnTopic = (text: string) => {
   const [topicText = "", ...columnTexts] = text.split(TOPICS_HEADER_COLUMNS_SEPARATOR);
-  const topic = decodeText(topicText);
-  const columns = columnTexts.filter((columnText) => columnText !== "").map((columnText) => decodeText(columnText));
+  const topic = getDecodedUriComponent(topicText, undefined);
+  const columns = columnTexts
+    .filter((columnText) => columnText !== "")
+    .map((columnText) => getDecodedUriComponent(columnText, undefined));
   if (topic === undefined || columns.includes(undefined)) return undefined;
 
   const parsedColumnTopic = columnTopicSchema.safeParse(

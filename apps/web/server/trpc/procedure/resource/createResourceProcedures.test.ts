@@ -1232,7 +1232,7 @@ describe(createResourceProcedures, () => {
         const { content: publishedContent, name: publishedName } = await caller.readPublishedResourceContent(
           newResource.id,
         );
-        // The view the public read counts is written behind it, drained here so it cannot land after the cleanup
+        // The publish's activity write is best-effort and not awaited, so it is drained here before the cleanup
         await waitForSynchronizedFunctions();
 
         expect(publication.publishVersion).toBe(1);

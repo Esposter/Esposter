@@ -4,5 +4,5 @@ import { getResult } from "@esposter/shared";
 // User-chosen text that reaches us through a url. Every caller wants a value back rather than an exception —
 // The raw form where that is still meaningful, or a rejected sentinel where it is not — so the fallback is the
 // Caller's, and the throw never escapes to fail a whole batch over one name.
-export const getDecodedUriComponent = (value: string, fallback: string): string =>
+export const getDecodedUriComponent = <TFallback>(value: string, fallback: TFallback): string | TFallback =>
   getResult(() => decodeURIComponent(value)).unwrapOr(fallback);
