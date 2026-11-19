@@ -1,17 +1,12 @@
-import type { SQLInputValue } from "node:sqlite";
+import type { MockObjectCursor } from "#src/models/MockObjectCursor";
+import type { MockObjectSocket } from "#src/models/MockObjectSocket";
+import type { MockObjectState } from "#src/models/MockObjectState";
 
+import { getResult } from "@esposter/shared";
 import { DatabaseSync } from "node:sqlite";
 
-// A socket the runtime accepted, as the object and the registry see it: the object sends and closes it, and the socket reports
-// Its close, so the registry drops it
-export interface MockObjectSocket {
-  close: (code: number, reason: string) => void;
-  onClose: (listener: () => void) => void;
-  send: (frame: string) => void;
-}
-
 // The rows of a statement as the driver reads them: one at a time, whole, or as arrays of column values
-const createCursor = (rows: unknown[]) => {
+const createCursor = (rows: unknown[]): MockObjectCursor => {
   const iterator = rows[Symbol.iterator]();
   return { next: () => iterator.next(), toArray: () => rows };
 };
@@ -21,26 +16,26 @@ const createCursor = (rows: unknown[]) => {
 // Object over the same state reads back the first's writes. A closed socket leaves the registry, so a close handler sees
 // Only the sockets still open. The alarm and the key-value storage are held as the runtime holds them, and deleteAll starts
 // Both again empty
-export const createMockObjectState = (name: string) => {
+export const createMockObjectState = (name: string): MockObjectState => {
   let database = new DatabaseSync(":memory:");
   const keyValues = new Map<string, unknown>();
   const socketTags = new Map<MockObjectSocket, string[]>();
   let pendingWork: Promise<unknown>[] = [];
   let alarm: null | number = null;
-  const ctx = {
-    acceptWebSocket: (socket: MockObjectSocket, tags: string[]) => {
+  const ctx: MockObjectState["ctx"] = {
+    acceptWebSocket: (socket, tags) => {
       socketTags.set(socket, tags);
       socket.onClose(() => {
         socketTags.delete(socket);
       });
     },
-    blockConcurrencyWhile: <T>(closure: () => Promise<T>) => closure(),
-    getTags: (socket: MockObjectSocket) => socketTags.get(socket) ?? [],
-    getWebSockets: (tag?: string) =>
+    blockConcurrencyWhile: (closure) => closure(),
+    getTags: (socket) => socketTags.get(socket) ?? [],
+    getWebSockets: (tag) =>
       [...socketTags].filter(([, tags]) => tag === undefined || tags.includes(tag)).map(([socket]) => socket),
     id: { name },
     storage: {
-      delete: (key: string) => Promise.resolve(keyValues.delete(key)),
+      delete: (key) => Promise.resolve(keyValues.delete(key)),
       deleteAlarm: () => {
         alarm = null;
         return Promise.resolve();
@@ -51,32 +46,39 @@ export const createMockObjectState = (name: string) => {
         alarm = null;
         return Promise.resolve();
       },
-      get: (key: string) => Promise.resolve(keyValues.get(key)),
+      get: (key) => Promise.resolve(keyValues.get(key)),
       getAlarm: () => Promise.resolve(alarm),
-      list: ({ prefix }: { prefix: string }) =>
-        Promise.resolve(new Map([...keyValues].filter(([key]) => key.startsWith(prefix)))),
-      put: (key: string, value: unknown) => {
+      list: ({ prefix }) => Promise.resolve(new Map([...keyValues].filter(([key]) => key.startsWith(prefix)))),
+      put: (key, value) => {
         keyValues.set(key, value);
         return Promise.resolve();
       },
-      setAlarm: (time: number) => {
+      setAlarm: (time) => {
         alarm = time;
         return Promise.resolve();
       },
       sql: {
-        exec: (query: string, ...bindings: SQLInputValue[]) => {
+        exec: (query, ...bindings) => {
           const rows = database.prepare(query).all(...bindings) as Record<string, unknown>[];
           return { ...createCursor(rows), raw: () => createCursor(rows.map((row) => Object.values(row))) };
         },
       },
-      transactionSync: <T>(closure: () => T) => {
+      // As the runtime does, a closure that throws rolls its writes back and rethrows, and one that returns commits them
+      transactionSync: (closure) => {
         database.exec("BEGIN");
-        const result = closure();
-        database.exec("COMMIT");
-        return result;
+        return getResult(closure).match(
+          (result) => {
+            database.exec("COMMIT");
+            return result;
+          },
+          (error) => {
+            database.exec("ROLLBACK");
+            throw error;
+          },
+        );
       },
     },
-    waitUntil: (promise: Promise<unknown>) => {
+    waitUntil: (promise) => {
       pendingWork.push(promise);
     },
   };
@@ -85,7 +87,6 @@ export const createMockObjectState = (name: string) => {
     get database() {
       return database;
     },
-    // Settles the work an object handed to waitUntil, which the runtime keeps running past the response it answered
     settleWaitUntil: () => {
       const settling = pendingWork;
       pendingWork = pendingWork.toSpliced(0);
@@ -93,5 +94,3 @@ export const createMockObjectState = (name: string) => {
     },
   };
 };
-
-export type MockObjectState = ReturnType<typeof createMockObjectState>;
