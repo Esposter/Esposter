@@ -19,11 +19,13 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const { executeUserPairMutation, storeCreateFriend, storeDeleteFriend } = friendStore;
   const friendRequests = ref<FriendRequestInSocialWithRelations[]>([]);
   const userId = computed(() => session.value.data?.user.id ?? "");
+  // The read returns answered requests as tombstones, which are no request still pending on either side
+  const pendingFriendRequests = computed(() => friendRequests.value.filter(({ deletedAt }) => deletedAt === null));
   const receivedFriendRequests = computed(() =>
-    friendRequests.value.filter((friendRequest) => friendRequest.receiverId === userId.value),
+    pendingFriendRequests.value.filter((friendRequest) => friendRequest.receiverId === userId.value),
   );
   const sentFriendRequests = computed(() =>
-    friendRequests.value.filter((friendRequest) => friendRequest.senderId === userId.value),
+    pendingFriendRequests.value.filter((friendRequest) => friendRequest.senderId === userId.value),
   );
   const friendRequestsReadKey = "friendRequests";
   const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<FriendRequestInSocialWithRelations>();

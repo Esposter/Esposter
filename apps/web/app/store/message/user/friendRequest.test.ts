@@ -60,6 +60,24 @@ describe(useFriendRequestStore, () => {
     expect(friends.value).toStrictEqual([first]);
   });
 
+  // The read returns a request the other party already answered as a tombstone, so the overlay can remove it: a
+  // Tombstone is no pending request on either side
+  test("lists no answered request as pending", () => {
+    expect.hasAssertions();
+
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: appUser.id } } }));
+    const friendRequestStore = useFriendRequestStore();
+    const { friendRequests, receivedFriendRequests } = storeToRefs(friendRequestStore);
+    const { checkHasSentFriendRequest } = friendRequestStore;
+    friendRequests.value = [
+      { ...firstFriendRequest, deletedAt: new Date(0) },
+      { ...firstFriendRequest, deletedAt: new Date(0), receiverId: second.id, sender: appUser, senderId: appUser.id },
+    ];
+
+    expect(receivedFriendRequests.value).toStrictEqual([]);
+    expect(checkHasSentFriendRequest(second.id)).toBe(false);
+  });
+
   // The predicate hides the add-friend affordance wherever a user is offered, so counting a request the app user
   // Received as one it sent would hide the button on exactly the person waiting to be added back
   test("counts only the requests the app user sent", () => {
