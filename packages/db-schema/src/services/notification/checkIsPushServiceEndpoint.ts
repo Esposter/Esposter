@@ -2,7 +2,7 @@ import { PUSH_SERVICE_HOSTS } from "#src/services/notification/constants";
 
 // Whether an endpoint is an https url on one of the browsers' push services. The subscribe input refuses an endpoint that
 // Fails it, and the jobs worker checks each stored endpoint against it before a request is sent to that endpoint
-export const isPushServiceEndpoint = (endpoint: string): boolean => {
+export const checkIsPushServiceEndpoint = (endpoint: string): boolean => {
   if (!URL.canParse(endpoint)) return false;
   const { hostname, protocol } = new URL(endpoint);
   return (

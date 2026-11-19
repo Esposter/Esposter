@@ -62,7 +62,7 @@ A device is pushed only once its browser holds a subscription the server stored,
 
 `usePushSubscription` follows the permission live (`usePermission`), so a grant from that line or from the browser's site settings subscribes the device as it happens, and a revoke unsubscribes it. A subscription is bound to the VAPID key it was made under, and a push signed with any other is refused, so one whose key is not the deployment's is replaced rather than registered again — the one case where a device would otherwise stay subscribed and never be reached. `unsubscribe` is idempotent, since the row may already be pruned ([notifications](../../architecture/notifications/design.md)).
 
-The endpoint is the one url the server stores and the jobs worker later POSTs to, so it must be an `https` url on a browser's push service: `PUSH_SERVICE_HOSTS` in `@esposter/db-schema` names them, one per browser, and `isPushServiceEndpoint` is the one check. The subscribe input refuses any other endpoint as an error, and the worker checks each stored endpoint against the same check before it sends, so a row written around the rule is never POSTed to. A signed-in user cannot point the worker at another host.
+The endpoint is the one url the server stores and the jobs worker later POSTs to, so it must be an `https` url on a browser's push service: `PUSH_SERVICE_HOSTS` in `@esposter/db-schema` names them, one per browser, and `checkIsPushServiceEndpoint` is the one check. The subscribe input refuses any other endpoint as an error, and the worker checks each stored endpoint against the same check before it sends, so a row written around the rule is never POSTed to. A signed-in user cannot point the worker at another host.
 
 ## Key files
 

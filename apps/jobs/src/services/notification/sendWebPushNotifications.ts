@@ -3,7 +3,7 @@ import type { PushSubscriptionInNotification } from "@esposter/db-schema";
 import { DEAD_PUSH_SUBSCRIPTION_STATUS_CODES, MAX_CONCURRENT_PUSH_SENDS } from "#src/services/notification/constants";
 import { webpush } from "#src/services/notification/webpush";
 import { getDb } from "#src/services/shared/getDb";
-import { isPushServiceEndpoint, pushSubscriptionsInNotification } from "@esposter/db-schema";
+import { checkIsPushServiceEndpoint, pushSubscriptionsInNotification } from "@esposter/db-schema";
 import { getResultAsync, noop, settleAll } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { WebPushError } from "web-push";
@@ -16,7 +16,7 @@ export const sendWebPushNotifications = async (
     subscriptions.map(({ auth, endpoint, expirationTime, id, p256dh }) => async () => {
       // A stored endpoint off the push services is never POSTed to. The subscribe input refuses one, so a row that fails
       // Here was written before the rule or around it, and the request it would make is not the worker's to send
-      if (!isPushServiceEndpoint(endpoint)) {
+      if (!checkIsPushServiceEndpoint(endpoint)) {
         console.error(`Refusing to send to ${endpoint}: it is not a browser's push service.`);
         return;
       }
