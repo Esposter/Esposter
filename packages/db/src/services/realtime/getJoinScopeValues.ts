@@ -21,17 +21,17 @@ const getSideScopeValues = (side: ReadSetKey, partner: ReadSetKey, rows: unknown
   });
 };
 
-// A join keeps the partner's rows whatever the named side holds when the side is the one a left join null-fills, so the
-// Partner's rows are in the read whether or not the named side has a row for their value. An `in` over the table itself
-// Keeps the rows its subquery names too, since each of the subquery's values is held by a row of the outer read
+// A join keeps the partner's rows whatever the named side holds, when the side is the one a left join null-fills.
+// The partner's rows are in the read whether or not the named side has a row for their value.
+// An `in` over the table itself keeps its subquery's rows too, since each value it names is held by an outer row
 const checkIsPreservingJoin = (join: ReadSetJoin, side: JoinSide): boolean =>
   join.kind === JoinKind.Left
     ? join.nullFilled === side
     : join.kind === JoinKind.Subquery && join.left.table === join.right.table;
 
-// The scope values the rows a read returned name for each table occurrence it joins on a scope column through a join that
-// keeps the partner's rows, keyed by the occurrence. Only an occurrence in `namable` is named this way: a side's value is the
-// One its partner key holds in each row, so a row of another value is not named
+// The scope values the rows a read returned name for each table occurrence that a preserving join keeps.
+// Only an occurrence in `namable` is named this way. A side's value is the one its partner key holds in each row.
+// A row holding another value is not named by that side
 export const getJoinScopeValues = (
   joins: ReadSetJoin[],
   rows: unknown[],
