@@ -54,11 +54,13 @@ export const SETUP_TOOLS: readonly SetupTool[] = [
 // The tools read on macOS alone: the AnimeStudio build's, since a Mac is the one machine that builds the CLI and its
 // Natives from source while Windows unpacks a released CLI, and the shaders step's disassembler, which Windows replaces
 // With its own compiler library. Homebrew has no vkd3d, so it is built from WineHQ's source with brew's keg-only bison
+// And flex first on PATH, brew's headers and MoltenVK named to configure, and installed under the home folder's
+// `.local`, so no step asks for a password
 export const SETUP_MACOS_TOOLS: readonly SetupTool[] = [
   {
     install: {
       darwin:
-        "brew install bison flex spirv-headers vulkan-headers, then with $(brew --prefix bison)/bin first on PATH, in the unpacked https://dl.winehq.org/vkd3d/source/vkd3d-2.1.tar.xz run ./configure --disable-doxygen-doc --disable-tests --without-ncurses && make && sudo make install",
+        'brew install bison flex spirv-headers vulkan-headers molten-vk, then with $(brew --prefix bison)/bin and $(brew --prefix flex)/bin first on PATH, in the unpacked https://dl.winehq.org/vkd3d/source/vkd3d-2.1.tar.xz run ./configure --prefix="$HOME/.local" --disable-doxygen-doc --disable-tests --without-ncurses CPPFLAGS="-I$(brew --prefix)/include" LDFLAGS="-L$(brew --prefix)/lib" && make && make install, with ~/.local/bin on PATH',
     },
     name: VKD3D_COMPILER_NAME,
     probe: { args: ["--version"], file: resolveVkd3dCompiler() },
