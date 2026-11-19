@@ -14,7 +14,7 @@ The macOS AnimeStudio build is accepted only when its file count for each refere
 
 ## Waiting on
 
-Task 1.1 waits on tasks 2.4 and 3.1 of [genshin-pipeline-provenance](../genshin-pipeline-provenance/proposal.md). The owning pages and the reproduction run wait on the last task of each sister change, task 3.4 of the provenance change and task 4.3 of [genshin-pipeline-hygiene](../genshin-pipeline-hygiene/proposal.md).
+Task 1.1 waits on tasks 2.4 and 3.1 of [genshin-pipeline-provenance](../genshin-pipeline-provenance/proposal.md). The owning pages and the reproduction run wait on task 4.3 of [genshin-pipeline-hygiene](../genshin-pipeline-hygiene/proposal.md), and the reproduction run also needs the PC.
 
 ## Impact
 
