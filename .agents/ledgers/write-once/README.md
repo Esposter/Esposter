@@ -32,7 +32,6 @@ The first lists the hand-kept lists a test holds, the second the prose that name
 
 ## Exclusions
 
-- **The live-read topics.** A query procedure names the topics its answer came from (the client-data design's Live reads). The change that infers them from the reads owns that copy, so a pass leaves it.
 - **Generated output.** `apps/web/shared/generated` and the other generated folders are their generator's copy, and the generator is what changes them.
 - **Literal values in a test.** The `test-values` ledger owns the literals a test writes. This ledger reads a test only for a copy it holds.
 
