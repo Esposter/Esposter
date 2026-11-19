@@ -2,23 +2,19 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { StorageBucket } from "@esposter/db-schema";
 
 import { deleteDirectory } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
+import { createMockBuckets } from "@esposter/db-mock";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe } from "vitest";
 
-// The buckets a suite has opened, each served by its own Miniflare instance so the suite can dispose it.
+// The buckets a suite has opened, all served by one Miniflare instance that the suite disposes.
 // A suite opens the buckets it touches in its beforeAll, because the binding this stands in for is read synchronously
 const mockBuckets = new Map<StorageBucket, R2Bucket>();
 let disposers: (() => Promise<void>)[] = [];
 
 export const openMockBuckets = async (storageBuckets: StorageBucket[]): Promise<void> => {
-  const openedBuckets = await Promise.all(
-    storageBuckets.map(async (storageBucket) => ({ storageBucket, ...(await createMockBucket(storageBucket)) })),
-  );
-  for (const { bucket, dispose, storageBucket } of openedBuckets) {
-    mockBuckets.set(storageBucket, bucket);
-    disposers.push(dispose);
-  }
+  const { buckets, dispose } = await createMockBuckets(storageBuckets);
+  for (const [storageBucket, bucket] of buckets) mockBuckets.set(storageBucket, bucket);
+  disposers.push(dispose);
 };
 
 export const clearMockBuckets = async (): Promise<void> => {
