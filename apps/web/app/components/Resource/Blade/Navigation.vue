@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ResourceBlade } from "#src/models/resource/ResourceBlade";
 import type { UiTabLink } from "#src/models/ui/UiTabLink";
 import type { ResourceInResource } from "@esposter/db-schema";
 
@@ -6,7 +7,7 @@ import { getResourceBladeDefinitions } from "#src/services/resource/getResourceB
 import { getResourceBladePath } from "#src/services/resource/getResourceBladePath";
 
 interface Props {
-  activeBlade: string;
+  activeBlade: ResourceBlade;
   resource: ResourceInResource;
 }
 

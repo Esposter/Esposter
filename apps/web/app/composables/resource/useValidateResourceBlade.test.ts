@@ -34,6 +34,23 @@ describe(useValidateResourceBlade, () => {
     scope.stop();
   });
 
+  // A segment no blade is named by 404s on every type, so a typo never opens a blade by falling back to Overview
+  test("404s a segment no blade is named by", () => {
+    expect.hasAssertions();
+
+    Object.assign(useRouter().currentRoute.value.params, { id: resource.id });
+    const scope = effectScope();
+    scope.run(() => {
+      useValidateResourceBlade(ref<ResourceInResource | undefined>(resource), ref("calender"));
+    });
+
+    expect(showErrorMock).toHaveBeenCalledExactlyOnceWith(
+      createError({ status: 404, statusText: "Resource blade not found" }),
+    );
+
+    scope.stop();
+  });
+
   // Swapping to another resource keeps the page it leaves mounted until the next one resolves, while the route
   // Already names the next resource's blade — a todo list's Items judged against the note still loaded
   test("leaves a blade alone while the route names another resource", () => {

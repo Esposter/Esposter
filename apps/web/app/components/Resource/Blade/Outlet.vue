@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ResourceBlade } from "#src/models/resource/ResourceBlade";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import ResourceOverview from "#src/components/Resource/Overview.vue";
@@ -9,7 +10,7 @@ import { ResourceOverviewComponentMap } from "#src/services/resource/ResourceOve
 import { ID_SEPARATOR } from "@esposter/shared";
 
 interface Props {
-  activeBlade: string;
+  activeBlade: ResourceBlade;
   isPending: boolean;
   resource: ResourceInResource;
 }

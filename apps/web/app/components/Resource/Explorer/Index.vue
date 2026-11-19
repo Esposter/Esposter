@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { ResourceBlade } from "#src/models/resource/ResourceBlade";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceDialogsComponentMap } from "#src/services/resource/ResourceDialogsComponentMap";
 
 interface Props {
-  activeBlade: string;
+  activeBlade: ResourceBlade;
   // Whether the page's read of the open resource is in flight, passed on to the blade's overview
   isPending: boolean;
   resource: ResourceInResource;

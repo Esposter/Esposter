@@ -2,6 +2,7 @@
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { ResourceBladeType } from "#src/models/resource/ResourceBladeType";
+import { parseResourceBlade } from "#src/services/resource/parseResourceBlade";
 import { checkIsUuidRouteId } from "#src/services/router/checkIsUuidRouteId";
 import { useFavoriteStore } from "#src/store/resource/favorite";
 import { useResourceStore } from "#src/store/resource/index";
@@ -27,7 +28,8 @@ const { isPending: isReadPending, readResource } = useReadOpenResource();
 const isPending = computed(() => isReadPending.value || isReloadPending.value);
 await readResource();
 if (!resource.value) throw createError({ status: 404, statusText: "Resource not found" });
-const activeBlade = computed(() => route.params.blade || ResourceBladeType.Overview);
+const routeBlade = computed(() => getRouteParam(route.params, "blade") || ResourceBladeType.Overview);
+const activeBlade = computed(() => parseResourceBlade(routeBlade.value));
 // Opening a resource is what Recent is a list of — the Recent route, Home's Recent tab and the palette
 // Scope's "Recently opened" group all read the rows this writes
 useRecordResourceAccess(resource);
@@ -46,7 +48,7 @@ onMounted(async () => {
 onUnmounted(() => {
   clearResource(id);
 });
-useValidateResourceBlade(resource, activeBlade);
+useValidateResourceBlade(resource, routeBlade);
 </script>
 
 <!-- The resource heads the page itself, its commands beside its name and its blades as tabs under it -->
