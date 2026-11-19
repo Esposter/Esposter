@@ -220,6 +220,75 @@ Four references read worse on one measure or more, so the share is not shipped, 
 
 The limits of the reading: the dawn, day and night title frames and the dusk are drawn at the scene's camera, so their alignment is approximate; the door recording is an older build at the scene's camera; each reference carries the game's bloom while ours is drawn bloom-off, which the Display notes measure as small over the brightest pixels; and a byte below about 30 reads at the curve's floor, so shaded ratios carry more noise than lit ones. The table was read with nothing else moved, and `passes login --pass Display` still reads its bloom at 1.1762 against a gate of 0 (task 1.1 stays open), so task 1.4 stays open with it.
 
+## The rim term, from the game's stone program
+
+The towers, bridges, walkway and door are the stone shader `miHoYo/Scene/Login Base`, the login's `Shader#171` in block `00/12903389` (its path id `-8796901447730824398`). Its lit pixel programs are `00009` and `00010` (`extracted/login/shaders/12903389/Shader#171`, decompiled to `.hlsl`); `00010` differs from `00009` only by an instance-id input, so the rim is the same in both. Read line by line from `00009.hlsl`, the rim is:
+
+| Term      | Game (`00009.hlsl`)                                                                                    | Engine (`createStoneGlowNode.ts`)                                          |
+| :-------- | :----------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| Normal    | The bump map's normal (`t2`) in the tangent basis, once the bump map is read                           | `normalView`, which carries the material's normal node (our normal detail) |
+| View      | normalize(`_WorldSpaceCameraPos` minus the position)                                                   | `positionViewDirection`                                                    |
+| Facing    | `NdotV = saturate(dot(N, V))`                                                                          | the same                                                                   |
+| Fresnel   | `min(1, (1 - NdotV + 1e-4)^p)` with `p = cb2[6].x`                                                     | `(1 - NdotV)^rimPower`, clamped to 1 (the 1e-4 is below any reading)       |
+| Colour    | `cb2[5].xyz`, in the glow's `lerp`                                                                     | `rimColor`                                                                 |
+| Strength  | `cb2[6].y`, in the glow's `lerp`                                                                       | `rimStrength`                                                              |
+| Glow      | `lerp(emission, colour * strength, fresnel)`                                                           | `colour * fresnel * strength`; the emission is zero on every stone family  |
+| Albedo    | `r6 = 1 + _MulAlbedo (albedo - 1)`; `_MulAlbedo` is 0 on every stone, so no factor                     | none                                                                       |
+| Cut       | Written only where `length(glow) >= cb2[9].x` (`_EmissionRange`, 0.1), before any glow is written      | `step(glowRange, length)`                                                  |
+| Intensity | The glow's largest channel `I` (at least 1) goes to `o4` as `sqrt(saturate(0.05 I))`; `o3` holds ID 13 | The glow is HDR and unencoded; the deferred pass decodes it                |
+
+The cb2 slots are named by the material's properties (`_RGColor`, `_RGPower`, `_RGStrength`, `_EmissionRange`) and by how each is used; the shader's headers annotate only `cb0`, so the naming is an inference from the material. The engine's term is already the game's fresnel, power, strength, colour and cut, with the emission at zero, so the difference from the game is not in the stone's own write.
+
+The deferred pass reads the glow on ID 13 (`00612967/Shader#25`, `00000.asm`: the ID compare, the glow flag and the intensity `I = 20 o4^2`). Its glow path multiplies the G-buffer colour by `I`, mixes in a reflection-cube sample (`t5`) and a Fresnel-like factor (`r7.w`), and adds the result to the lit colour (the glow's multiply and add, and the output's blend). It is not a plain emission, and its light or shadow mask is not reduced to one term here. The deferred output is HDR, graded before the post chain's tone curve (`Shader#88`), so the glow enters before the tone curve.
+
+The exported rim values, from `Material/*.json` (`_RGStrength`, `_RGPower`, `_RGColor`):
+
+| Material               | Family                 | Strength | Power | Colour                |
+| :--------------------- | :--------------------- | -------: | ----: | :-------------------- |
+| `LoginScene_Build01`   | Towers                 |        1 |     3 | (0.331, 0.596, 1)     |
+| `LoginScene_Build03`   | Towers                 |      0.5 |   5.5 | (0.346, 0.605, 1)     |
+| `LoginScene_Build04`   | Towers                 |      0.7 |     3 | (0.233, 0.446, 0.772) |
+| `LoginScene_Build05`   | Towers                 |      0.7 |     5 | (0.357, 0.560, 0.868) |
+| `LoginScene_Door01`    | Door frame             |      1.1 |     3 | (0.275, 0.540, 0.945) |
+| `LoginScene_Door02`    | Door panel             |      1.1 |     6 | not compiled          |
+| `LoginScene_Bridge01`  | Walkway's stone record |        0 |   1.5 | (1, 0.890, 0)         |
+| `LoginScene_Ground02`  | Walkway's middle lane  |        1 |     2 | (0.699, 0.963, 1)     |
+| `LoginScene_Edge01`    | Walkway's borders      |      0.5 |  3.88 | (0.275, 0.540, 0.945) |
+| Bridge02 to 04, Pillar | Bridges                |        0 |   1.5 | (1, 0.890, 0)         |
+| `LoginScene_Broken01`  | Bridges (broken)       |        0 |     5 | (1, 1, 1)             |
+
+The towers' 0.725 is the mean of their four strengths, and their power 4.125 the mean of their four powers, as `fitLoginStone` takes them; the shipped share, `GLOW_SCALES`, is 1/8 of each. A door panel with no `ENABLE_RIM_GLOW_ON` compiles no glow, as the fit already counts it.
+
+**The bridges' brightness is not set by any exported term but the albedo.** The stone program reads three textures: the albedo (`t0`), the SMBE mask (`t1`) and the normal (`t2`). It reads no ambient-occlusion texture and no lightmap, and it declares the vertex colour (`COLOR0`) without reading it. The mask's green channel is the metal term that multiplies the diffuse by `0.96 (1 - G)`; on the bridges `G` is 0, so the diffuse is `0.96` times the albedo. The albedo the family takes, the upper median of the sRGB bytes decoded, sits within 3 per cent of each texture's linear mean (ours over the mean: Bridge01 0.974, Bridge02 1.006, Broken01 1.001, Build01 0.998, Build03 1.006, Build04 1.029, Build05 0.998, Door01 1.017, Edge01 0.977, Ground01 0.999, Ground02 1.013). So the exported 0.96 lowers the bridges' excess from 1.35 to about 1.30, and the rest is the lit term, which the exports do not hold per material.
+
+**The rim experiment, and why it is not shipped.** The towers and the door were drawn at their exported family strengths, 0.725 and 1.1, with nothing else moved (`LOGIN_RIM_STRENGTH` is the toon rim, a different term, and stays). The radiance table, ours over the reference (before, then after):
+
+| Family           | Before | After | Note                                      |
+| :--------------- | -----: | ----: | :---------------------------------------- |
+| Towers, all      |  0.995 | 1.000 | shaded 0.901 to 0.917, lit 1.045 to 1.043 |
+| Door, all        |  1.012 | 1.017 |                                           |
+| Bridges, all     |  1.355 | 1.358 | untouched                                 |
+| Walkway, all     |  0.645 | 0.646 | untouched (its lane is not built)         |
+| Every pixel, all |  1.008 | 1.011 |                                           |
+
+`compare` against the committed snapshot (mean difference, shape, tone, FLIP), as the run wrote them:
+
+| Reference            | Committed                   | Exported rim                | Reads worse on          |
+| :------------------- | :-------------------------- | :-------------------------- | :---------------------- |
+| login-dawn-title     | 10.85, 0.480, 7.85, 0.4432  | 10.87, 0.467, 7.88, 0.4428  | mean, shape, tone       |
+| login-day-title      | 13.31, 0.321, 10.42, 0.4841 | 13.33, 0.321, 10.45, 0.4842 | mean, tone, FLIP        |
+| login-door           | 13.40, 0.205, 11.04, 0.5123 | 13.45, 0.229, 11.07, 0.5134 | mean, tone, FLIP        |
+| login-door-recording | 17.26, 0.357, 12.37, 0.6008 | 17.30, 0.359, 12.46, 0.6000 | mean, tone              |
+| login-door-session   | 12.28, 0.416, 8.42, 0.4568  | 12.87, 0.377, 8.76, 0.4706  | mean, shape, tone, FLIP |
+| login-night-title    | 9.42, 0.369, 7.01, 0.3917   | 9.77, 0.357, 7.16, 0.4008   | mean, shape, tone, FLIP |
+| login-screen-dusk    | 20.18, 0.349, 14.45, 0.6674 | 20.06, 0.385, 14.71, 0.6646 | tone                    |
+
+The dusk improves on mean and shape and reads worse on tone. The passes: `Surface` holds every row; `Display` holds its contrast (0.0610 against 0.1000) and fails its bloom reading, which reads 0.9746 against 0, down from 1.1762 before the change. `bloom` holds no one of its 32 combinations, the lowest being 0.9746 (one tap, separable, one pass, half a texel). Several compare rows read worse, so the render change is not shipped and the snapshot rows stay as committed. This record is the change that lands.
+
+A second test, the bridges' colour at 0.96 of its albedo, left the measured bridges where they were (1.355 to 1.360, ours mean 0.971 to 0.972). The login scene draws the bridges from the export path when a page provides a witness, so `bridgesMaterial` does not reach the measured frame. That test is inconclusive, not a null result, and the path is the next thing to trace.
+
+**What remains open for the rim.** The walkway's lane (Ground02: strength 1, power 2, cyan) and borders (Edge01: strength 0.5, power 3.88, blue) need a per-piece split of the walkway by material, and the walkway's pieces carry only their outlines and raised curbs, with no material key. The deferred glow path's light relation is not reduced to one term. The bridges' remaining 1.30 is the lit term, and the Light pass owns it.
+
 ## Scope
 
 Every pass has its measure in `genshin:parity passes` ([parity](../../specs/genshin/parity/README.md)), and each run it owes is an item of the [compute queue](../../specs/genshin/compute/README.md). What the passes still lack is in two of them, the display's bloom and the atmosphere's cloud layer, in this order:
@@ -351,4 +420,5 @@ No row holds. The lowest is four taps at half a texel with the separable pair, m
 - [x] **The normal detail's frequency is the exports' lobe under the cap, and its amplitude is solved at it (Decisions).** The lobe is the dominant lobe of a family's normal-angle field along the rows of the Shape pass's witness at the reference camera, after a box high-pass of 16 pixels (`readSurfaceWavelengths`), within a lag cap of an eighth of the family's pixel width, converted to metres at its median depth. On the reference the towers read 2.5648 m, 36 pixels per cycle at 14 pixels a metre and 3% of their 88.8 m width. The bridges read 21.8913 m under their cap of 25.4 m. A 47 m lobe, a repeat across the family, survives every high-pass radius up to 58 m and falls outside that cap, and the 6.4 m a 60-pixel cap reads is not the rule's, which takes the cap of an eighth of their width. Our render's wavelength has no lobe the measure resolves at 14 pixels a metre, so it is a diagnostic and never a gate. A family whose normals vary less than the normal resolution reads none.
 - [ ] **The surface wavelength's autocorrelation rescans the whole frame at every lag.** `computeAngleAutocorrelation` (`scripts/src/services/genshinParity/passes/computeAngleAutocorrelation.ts`) reads every pixel of a family's frame for each lag from 0 to the cap (an eighth of the family's pixel width), and `readSurfaceWavelengths` runs it for the exports and ours of both families, so one reference costs the frame area times the cap, four times over. A cheaper form, a row autocorrelation by FFT or one pass that accumulates every lag together, changes the floating-point readings the committed parity data is built from, so it must re-baseline the snapshots and the readings above in the same change, and is a design decision rather than a mechanical ripple. Open until a parity run is too slow to iterate on, the cost the runtime-efficiency page asks to be placed and shaped differently.
 - [x] **The motion pass's door lift path was not reproducible on this machine, and its frozen row is compared exactly.** The committed report read 0.0080 m. Two Motion-alone runs read 0.0066 m, a Surface run 0.0085 m, and under load runs read 0.3849 m and 0.1877 m: the installed faked clock flowed with real time, so each sampled frame's moment depended on the machine. The clock is now paused where it is installed (`openParityPage`), and each sample steps it one frame (`createLiftFrameSampler`), so the frames are the clock's. Two runs under load read 0.0066 m, pace 0.0004, over 80 frames, and the frozen row is re-frozen from that read (task 0a's Surface rows follow in their own change).
+- [ ] **The exported rim does not ship: the towers' 0.725 and the door's 1.1 read worse than their committed rows on six of seven login references, so the fitted 1/8 share stays (The rim term, from the game's stone program).** Task 1.4 stays open with what the rim record leaves: the walkway's lane and borders, which need a per-piece split of the walkway by material, the deferred glow path's light relation, and the bridges' remaining 1.30, which is the lit term. Task 1.1 stays open with its bloom at 0.9746 against a gate of 0.
 - [x] **The door's surface is judged by no gate until its normal detail can be fitted (Decisions: the normal map's wavelength, and the world-to-view transform).** The exports' normal map bends the door 4.7203 degrees, and the Shape pass now holds the door's detail bend at 0.0014 degrees against 0.0198 with its amplitude fitted, so `passes login --pass Shape` holds and `--pass Surface` runs. Its surface structure is red on every family, and `Display` waits on it (tasks 0a.2 to 0a.5, 1.1 and 1.4).
