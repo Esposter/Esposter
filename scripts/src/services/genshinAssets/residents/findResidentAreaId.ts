@@ -2,7 +2,7 @@ import type { GroundPoint } from "genshin-engine";
 import type { Catalogue } from "genshin-world";
 
 import { findNearest } from "#src/services/genshinAssets/shared/findNearest";
-import { checkIsOutlineInReach, findAreaAt } from "genshin-world";
+import { checkIsOutlineInReach, findAreaAt, findLandmarkArea } from "genshin-world";
 
 // The catalogue area a resident belongs to: the area whose outline holds its place, since the game's records give a place
 // And no area. A place no outline holds belongs to the area of its nearest landmark only when that area's outline is in
@@ -19,7 +19,7 @@ export const findResidentAreaId = (
     Math.hypot(landmark.position.x - position.x, landmark.position.z - position.z),
   );
   if (!nearest) return undefined;
-  const landmarkArea = catalogue.regions.flatMap(({ areas }) => areas).find(({ id }) => id === nearest.areaId);
+  const landmarkArea = findLandmarkArea(catalogue, nearest);
   return landmarkArea && checkIsOutlineInReach(landmarkArea.outline, position.x, position.z)
     ? nearest.areaId
     : undefined;

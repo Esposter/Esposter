@@ -4,5 +4,7 @@ import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 
 // The area a landmark stands in, as the teleport panel names it: the catalogue's area its areaId names, and none where
 // The catalogue has no such area
-export const findLandmarkArea = (catalogue: Catalogue, { areaId }: PlaceLandmark): CatalogueArea | undefined =>
-  catalogue.regions.flatMap(({ areas }) => areas).find(({ id }) => id === areaId);
+export const findLandmarkArea = (
+  catalogue: Catalogue,
+  { areaId }: Pick<PlaceLandmark, "areaId">,
+): CatalogueArea | undefined => catalogue.regions.flatMap(({ areas }) => areas).find(({ id }) => id === areaId);
