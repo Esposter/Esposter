@@ -7,13 +7,10 @@ import { recordInvestigation } from "#src/services/investigation/recordInvestiga
 import { describe, expect, test } from "vitest";
 
 describe(recordInvestigation, () => {
+  const ninetyNinth: InvestigationDay = { count: INVESTIGATION_DAILY_CAP - 1, dayKey: DAILY_RESET.add({ minutes: 1 }) };
+
   test("recording an investigation counts the day up to its daily cap", () => {
     expect.hasAssertions();
-
-    const ninetyNinth: InvestigationDay = {
-      count: INVESTIGATION_DAILY_CAP - 1,
-      dayKey: DAILY_RESET.add({ minutes: 1 }),
-    };
 
     expect(recordInvestigation(ninetyNinth, NOW).count).toBe(INVESTIGATION_DAILY_CAP);
   });
@@ -21,10 +18,6 @@ describe(recordInvestigation, () => {
   test("the hundredth investigation stops new spawns", () => {
     expect.hasAssertions();
 
-    const ninetyNinth: InvestigationDay = {
-      count: INVESTIGATION_DAILY_CAP - 1,
-      dayKey: DAILY_RESET.add({ minutes: 1 }),
-    };
     const hundredth = recordInvestigation(ninetyNinth, NOW);
 
     expect(hundredth.count).toBe(INVESTIGATION_DAILY_CAP);
