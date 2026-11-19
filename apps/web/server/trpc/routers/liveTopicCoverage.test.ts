@@ -79,10 +79,15 @@ export const expectLiveTopicCoverage = async (
 
   const schemaTableNames = getSchemaTables().map((table) => getTableName(table));
   const uncoveredTables: string[] = [];
-  await Promise.all(
-    queries.map(async (query) => {
-      const { database, statements } = recordStatements(context.db);
-      await query.call({ ...context, db: database, responseHeaders: new Headers() });
+
+  // Each write is checked against the reads it follows, and the reads it leaves are the ones the next write follows. A read
+  // Reruns only when the write touched a table it reads, since no other write can change its answer. The first read of each
+  // Query is also its coverage check, since it runs over the same rows the check would read them over
+  const readQuery = async (query: LiveTopicCall, checkCoverage: boolean): Promise<Read> => {
+    const { database, statements } = recordStatements(context.db);
+    const responseHeaders = new Headers();
+    const answer = await query.call({ ...context, db: database, responseHeaders });
+    if (checkCoverage) {
       const readTableNames = new Set(getReadSet(statements).tables);
       for (const { statement } of statements) {
         const sql = new SQLiteDialect().sqlToQuery(statement.getSQL()).sql;
@@ -90,23 +95,14 @@ export const expectLiveTopicCoverage = async (
           if (sql.includes(`"${tableName}"`) && !readTableNames.has(tableName))
             uncoveredTables.push(`${query.path}: ${tableName}`);
       }
-    }),
-  );
-  expect(uncoveredTables.toSorted(compareStrings).join(", ")).toBe("");
-
-  // Each write is checked against the reads it follows, and the reads it leaves are the ones the next write follows. A read
-  // Reruns only when the write touched a table it reads, since no other write can change its answer
-  const readQuery = async (query: LiveTopicCall): Promise<Read> => {
-    const { database, statements } = recordStatements(context.db);
-    const responseHeaders = new Headers();
-    const answer = await query.call({ ...context, db: database, responseHeaders });
+    }
     const readTables = getTopicTables((await getReadTopics(statements)).map(({ topic }) => topic));
     return { answer: JSON.stringify(answer), tables: readTables, topics: getTopicsOf(responseHeaders, query.path) };
   };
 
-  const readQueries = async (): Promise<Reads> => {
+  const readQueries = async (checkCoverage: boolean): Promise<Reads> => {
     const reads: Reads = new Map();
-    await Promise.all(queries.map(async (query) => reads.set(query.path, await readQuery(query))));
+    await Promise.all(queries.map(async (query) => reads.set(query.path, await readQuery(query, checkCoverage))));
     return reads;
   };
 
@@ -122,7 +118,7 @@ export const expectLiveTopicCoverage = async (
       queries.map(async (query) => {
         const before = readsBefore.get(query.path);
         const unchanged = before !== undefined && ![...before.tables].some((table) => touched.has(table));
-        const after = unchanged ? before : await readQuery(query);
+        const after = unchanged ? before : await readQuery(query, false);
         readsAfter.set(query.path, after);
         if (
           after.answer !== before?.answer &&
@@ -134,7 +130,8 @@ export const expectLiveTopicCoverage = async (
     return readsAfter;
   };
 
-  let reads = await readQueries();
+  let reads = await readQueries(true);
+  expect(uncoveredTables.toSorted(compareStrings).join(", ")).toBe("");
   // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each write runs after the one before it, and reads the rows that one left
   for (const write of writes) reads = await checkWrite(write, reads);
   expect(unwokenReads.toSorted(compareStrings).join(", ")).toBe("");
