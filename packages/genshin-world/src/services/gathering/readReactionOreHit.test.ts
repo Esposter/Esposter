@@ -19,7 +19,7 @@ describe(readReactionOreHit, () => {
     const crystalChunkRequirement = OreItemIdBreakPoiseMap[CRYSTAL_CHUNK_ITEM_ID];
 
     expect(strikeOreTimes(1, hit, OreItemIdBreakPoiseMap[IRON_CHUNK_ITEM_ID])).toBe(1);
-    expect(strikeOreTimes(3, hit, crystalChunkRequirement)).toBeLessThan(1);
+    expect(strikeOreTimes(3, hit, crystalChunkRequirement)).toBe(0.9440559440559441);
     expect(strikeOreTimes(4, hit, crystalChunkRequirement)).toBe(1);
   });
 

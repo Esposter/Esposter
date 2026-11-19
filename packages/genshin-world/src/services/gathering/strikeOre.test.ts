@@ -13,7 +13,7 @@ describe(strikeOre, () => {
     const bluntHit: OreHit = { hitArea, isBlunt: true, isMelee: false, poiseDamage: 4.2 };
     const sixHitShare = strikeOreTimes(6, bluntHit, ironChunkRequirement);
 
-    expect(sixHitShare).toBeLessThan(1);
+    expect(sixHitShare).toBe(0.8689655172413795);
     expect(strikeOre(sixHitShare, bluntHit, ironChunkRequirement)).toBe(1);
   });
 
