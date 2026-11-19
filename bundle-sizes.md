@@ -4,27 +4,27 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                     |   Bytes |    KiB |
 | :------------------------- | :----------------------- | ------: | -----: |
-| genshin-world              | **/*.js                  | 4133609 | 4036.7 |
+| genshin-world              | **/*.js                  | 4133624 | 4036.7 |
 | genshin-world              | **/*.d.ts                | 2833665 | 2767.3 |
 | @esposter/db               | **/*.js                  |  825908 |  806.6 |
 | genshin-text               | **/*.js                  |  695701 |  679.4 |
 | genshin-engine             | **/*.js                  |  356127 |  347.8 |
 | genshin-interface          | **/*.d.ts                |  316498 |  309.1 |
-| vue-phaserjs               | **/*.d.ts                |  315055 |  307.7 |
+| vue-phaserjs               | **/*.d.ts                |  315060 |  307.7 |
 | genshin-world              | index.d.ts               |  283862 |  277.2 |
 | genshin-world              | style.css                |  272869 |  266.5 |
 | genshin-interface          | **/*.js                  |  267668 |  261.4 |
 | genshin-world              | index.js                 |  232471 |  227.0 |
-| @esposter/db-schema        | **/*.js                  |  211929 |  207.0 |
+| @esposter/db-schema        | **/*.js                  |  213991 |  209.0 |
 | genshin-interface          | style.css                |  194226 |  189.7 |
 | genshin-engine             | **/*.d.ts                |  134030 |  130.9 |
-| @esposter/shared           | **/*.js                  |  128008 |  125.0 |
+| @esposter/shared           | **/*.js                  |  128133 |  125.1 |
 | math-expression-compiler   | **/*.js                  |  111982 |  109.4 |
 | vue-survey-engine-headless | **/*.js                  |  108878 |  106.3 |
-| vue-phaserjs               | **/*.js                  |   92635 |   90.5 |
+| vue-phaserjs               | **/*.js                  |   92660 |   90.5 |
 | vue-block-editor-headless  | **/*.js                  |   86836 |   84.8 |
 | mjml-blocks                | **/*.js                  |   80633 |   78.7 |
-| @esposter/shared           | **/*.d.ts                |   79060 |   77.2 |
+| @esposter/shared           | **/*.d.ts                |   79119 |   77.3 |
 | vue-survey-engine-headless | **/*.d.ts                |   74241 |   72.5 |
 | mjml-blocks                | **/*.d.ts                |   72461 |   70.8 |
 | survey-expression          | **/*.js                  |   72155 |   70.5 |
@@ -39,12 +39,12 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | vue-pdfjs-headless         | **/*.js                  |   32405 |   31.6 |
 | survey-expression          | **/*.d.ts                |   32318 |   31.6 |
 | parse-tmx                  | **/*.js                  |   30782 |   30.1 |
-| @esposter/shared           | index.d.ts               |   27236 |   26.6 |
+| @esposter/shared           | index.d.ts               |   27307 |   26.7 |
 | vue-phaserjs               | index.d.ts               |   27075 |   26.4 |
 | vue-survey-engine-headless | index.d.ts               |   25061 |   24.5 |
 | vue-grid-layout-headless   | **/*.js                  |   23279 |   22.7 |
 | @esposter/db-mock          | **/*.js                  |   22159 |   21.6 |
-| @esposter/shared           | index.js                 |   21775 |   21.3 |
+| @esposter/shared           | index.js                 |   21846 |   21.3 |
 | genshin-interface          | index.d.ts               |   21627 |   21.1 |
 | math-expression-compiler   | index.d.ts               |   21212 |   20.7 |
 | vue-survey-engine-headless | index.js                 |   19851 |   19.4 |
@@ -157,4 +157,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts           |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts   |       9 |    0.0 |
 
-**Total:** 152 files, 13118968 bytes, 12811.5 KiB, 12.51 MiB
+**Total:** 152 files, 13121401 bytes, 12813.9 KiB, 12.51 MiB
