@@ -12,13 +12,7 @@ import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-// The dungeons store imports Phaser, so only its state and its save are faked, and the save shape is kept real
-vi.mock("#src/store/dungeons/index", async () => {
-  const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
-  const { reactive } = await import("vue");
-  const dungeons = reactive(new Dungeons());
-  return { useDungeonsStore: () => ({ dungeons, saveDungeons: vi.fn<() => void>() }) };
-});
+vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 // The throw's easing and tweens are Phaser's, and the skip path plays none of them
 vi.mock("phaser", () => ({}));

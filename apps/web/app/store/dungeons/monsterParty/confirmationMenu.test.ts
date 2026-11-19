@@ -12,20 +12,9 @@ import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scen
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-// The dungeons store imports Phaser, which cannot initialise under the test environment. Only its save is read here, so
-// The fake keeps the real save shape and holds one save for every reader
-vi.mock("#src/store/dungeons/index", async () => {
-  const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
-  const { Save: DungeonsSave } = await import("#shared/models/dungeons/data/Save");
-  const { reactive } = await import("vue");
-  const dungeonsStore = reactive({
-    dungeons: new Dungeons(),
-    fadeSwitchToScene: vi.fn<() => void>(),
-    save: new DungeonsSave(),
-    saveDungeons: vi.fn<() => void>(),
-  });
-  return { useDungeonsStore: () => dungeonsStore };
-});
+// The dungeons store imports Phaser, which cannot initialise under the test environment
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 // Text animation drives Phaser's scene, and the dialog store only reaches it once a message is shown, which these tests
 // Never do

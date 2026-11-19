@@ -16,15 +16,9 @@ const { showMessages } = vi.hoisted(() => ({
   showMessages: vi.fn<(scene: SceneWithPlugins, messages: { text: string }[]) => Promise<void>>(),
 }));
 
-// The dungeons store imports Phaser, which cannot initialise under the test environment. Only its save is read here, so
-// The fake keeps the real save shape and holds one save for every reader
-vi.mock("#src/store/dungeons/index", async () => {
-  const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
-  const { Save } = await import("#shared/models/dungeons/data/Save");
-  const { reactive } = await import("vue");
-  const dungeonsStore = reactive({ dungeons: new Dungeons(), save: new Save() });
-  return { useDungeonsStore: () => dungeonsStore };
-});
+// The dungeons store imports Phaser, which cannot initialise under the test environment
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 // The dialog is UI over the scene, so only the messages it is asked to show are recorded
 vi.mock("#src/store/dungeons/world/dialog", () => ({ useWorldDialogStore: () => ({ showMessages }) }));

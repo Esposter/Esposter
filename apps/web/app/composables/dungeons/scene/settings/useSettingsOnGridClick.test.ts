@@ -6,24 +6,18 @@ import { TextSpeedSetting } from "#shared/models/dungeons/data/settings/TextSpee
 import { useSettingsOnGridClick } from "#src/composables/dungeons/scene/settings/useSettingsOnGridClick";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { useControlsStore } from "#src/store/dungeons/controls";
+import { useDungeonsStore } from "#src/store/dungeons/index";
 import { getRowPosition } from "#src/store/dungeons/settings/getRowPosition.test";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { useSettingsSceneStore } from "#src/store/dungeons/settings/scene";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { saveDungeons } = vi.hoisted(() => ({ saveDungeons: vi.fn<() => void>() }));
-
-// Only the store's state and its save are read here, so the fake keeps the real save shape and records each save
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
-vi.mock("#src/store/dungeons/index", async () => {
-  const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
-  const { reactive } = await import("vue");
-  const dungeons = reactive(new Dungeons());
-  return { useDungeonsStore: () => ({ dungeons, fadeSwitchToScene: vi.fn<() => void>(), saveDungeons }) };
-});
+vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 describe(useSettingsOnGridClick, () => {
+  const dungeonsStore = useDungeonsStore();
   let controls: Controls;
 
   beforeEach(() => {
@@ -49,7 +43,7 @@ describe(useSettingsOnGridClick, () => {
     settingsOptionGrid.position.value = fastCell;
     useSettingsOnGridClick(fastCell)();
 
-    expect(saveDungeons).not.toHaveBeenCalled();
+    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
     expect(controls.setInput).not.toHaveBeenCalled();
   });
 
@@ -63,7 +57,7 @@ describe(useSettingsOnGridClick, () => {
     useSettingsOnGridClick(soundRow)();
 
     expect(settingsOptionGrid.position.value.y).toBe(soundRow.y);
-    expect(saveDungeons).not.toHaveBeenCalled();
+    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
   });
 
   test("a second press on Close confirms and saves nothing", () => {
@@ -76,6 +70,6 @@ describe(useSettingsOnGridClick, () => {
     useSettingsOnGridClick(closeRow)();
 
     expect(controls.setInput).toHaveBeenCalledExactlyOnceWith(PlayerSpecialInput.Confirm);
-    expect(saveDungeons).not.toHaveBeenCalled();
+    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
   });
 });

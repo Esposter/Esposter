@@ -25,15 +25,9 @@ const { setState, showMessages } = vi.hoisted(() => ({
 vi.mock("#src/services/dungeons/scene/battle/battleStateMachine", () => ({ battleStateMachine: { setState } }));
 vi.mock("#src/store/dungeons/battle/dialog", () => ({ useBattleDialogStore: () => ({ showMessages }) }));
 
-// The dungeons store imports Phaser, which cannot initialise under the test environment. Only its save is read here, so
-// The fake keeps the real save shape and holds one save for every reader
-vi.mock("#src/store/dungeons/index", async () => {
-  const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
-  const saveModule = await import("#shared/models/dungeons/data/Save");
-  const { reactive } = await import("vue");
-  const dungeonsStore = reactive({ dungeons: new Dungeons(), save: new saveModule.Save() });
-  return { useDungeonsStore: () => dungeonsStore };
-});
+// The dungeons store imports Phaser, which cannot initialise under the test environment
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 describe("gainExperience", () => {
   const scene = {} as SceneWithPlugins;

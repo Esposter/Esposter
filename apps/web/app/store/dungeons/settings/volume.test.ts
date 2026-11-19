@@ -1,30 +1,24 @@
 import { getInitialSettings } from "#shared/models/dungeons/data/settings/Settings";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
+import { useDungeonsStore } from "#src/store/dungeons/index";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { useVolumeStore } from "#src/store/dungeons/settings/volume";
 import { Direction } from "grid-engine";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { saveDungeons } = vi.hoisted(() => ({ saveDungeons: vi.fn<() => void>() }));
-
-// The dungeons store imports Phaser, which cannot initialise under the test environment. Only its state and its save
-// Are read here, so the fake keeps the real save shape and records each save
+// The dungeons store imports Phaser, which cannot initialise under the test environment
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
-vi.mock("#src/store/dungeons/index", async () => {
-  const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
-  const { reactive } = await import("vue");
-  const dungeons = reactive(new Dungeons());
-  return { useDungeonsStore: () => ({ dungeons, fadeSwitchToScene: vi.fn<() => void>(), saveDungeons }) };
-});
+vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 describe(useVolumeStore, () => {
+  const dungeonsStore = useDungeonsStore();
   beforeEach(() => {
     setActivePinia(createPinia());
     const settingsStore = useSettingsStore();
     settingsStore.settings = getInitialSettings();
     settingsStore.settings[SettingsOption.VolumePercentage] = 40;
-    saveDungeons.mockClear();
+    vi.mocked(dungeonsStore.saveDungeons).mockClear();
   });
 
   test("setVolume clamps the volume to the range it can take and saves it", () => {
@@ -39,7 +33,7 @@ describe(useVolumeStore, () => {
     volumeStore.setVolume(-5);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(0);
-    expect(saveDungeons).toHaveBeenCalledTimes(2);
+    expect(dungeonsStore.saveDungeons).toHaveBeenCalledTimes(2);
   });
 
   test("a held direction changes the volume once per cooldown, not once per call", () => {
@@ -65,7 +59,7 @@ describe(useVolumeStore, () => {
     volumeStore.updateVolume(Direction.LEFT, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(0);
-    expect(saveDungeons).not.toHaveBeenCalled();
+    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
 
     volumeStore.updateVolume(Direction.RIGHT, 0);
 
@@ -81,7 +75,7 @@ describe(useVolumeStore, () => {
     volumeStore.updateVolume(Direction.RIGHT, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(100);
-    expect(saveDungeons).not.toHaveBeenCalled();
+    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
   });
 
   test("up and down leave the volume alone", () => {
@@ -93,7 +87,7 @@ describe(useVolumeStore, () => {
     volumeStore.updateVolume(Direction.DOWN, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(40);
-    expect(saveDungeons).not.toHaveBeenCalled();
+    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
   });
 
   test("lifting the key starts the next hold at once rather than waiting out the old cooldown", () => {

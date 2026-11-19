@@ -11,20 +11,9 @@ import { NotFoundError } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-// The dungeons store imports Phaser, which cannot initialise under the test environment. Only its saves and the scene
-// Switch are read here, so the fake keeps the real save fields and records each switch
+// The dungeons store imports Phaser, which cannot initialise under the test environment
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
-vi.mock("#src/store/dungeons/index", async () => {
-  const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
-  const saveModule = await import("#shared/models/dungeons/data/Save");
-  const { reactive } = await import("vue");
-  const dungeonsStore = reactive({
-    dungeons: new Dungeons(),
-    fadeSwitchToScene: vi.fn<() => void>(),
-    save: new saveModule.Save(),
-  });
-  return { useDungeonsStore: () => dungeonsStore };
-});
+vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.test"));
 
 const getOptionPosition = (option: PlayerTitleMenuOption) => {
   const titleSceneStore = useTitleSceneStore();
