@@ -11,21 +11,13 @@ describe(computeExpeditionBonusChance, () => {
     { avatarLevel: 81, probability: 0.9 },
   ];
 
-  test("a level 1 character has a 20 percent bonus chance", () => {
+  test.each([
+    [1, 0.2],
+    [21, 0.4],
+    [81, 0.9],
+  ])("a level %i character has a %f bonus chance", (avatarLevel, probability) => {
     expect.hasAssertions();
 
-    expect(computeExpeditionBonusChance(1, BONUSES)).toBe(0.2);
-  });
-
-  test("a level 21 character has a 40 percent bonus chance", () => {
-    expect.hasAssertions();
-
-    expect(computeExpeditionBonusChance(21, BONUSES)).toBe(0.4);
-  });
-
-  test("a level 81 character has a 90 percent bonus chance", () => {
-    expect.hasAssertions();
-
-    expect(computeExpeditionBonusChance(81, BONUSES)).toBe(0.9);
+    expect(computeExpeditionBonusChance(avatarLevel, BONUSES)).toBe(probability);
   });
 });
