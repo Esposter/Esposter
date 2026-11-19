@@ -16,7 +16,7 @@ Ordered by dependency: the primitive first, then the schema the pilot needs, the
 ## 2. Schema (architecture cloud services)
 
 - [x] 2.1 Version definition: one function spread by the D1 wrapper and by each object schema, so every table gets the column. Verified: generating the migration with the drizzle skill's command prints one add-column statement per table, and no other change.
-- [ ] 2.2 Migration: the version column is added to every table, as a not-null integer with a default of zero, which is the insert value. Verified: the migration's guard query, run on dev, returns zero rows with no version, and the run output names every table it changed.
+- [x] 2.2 Migration: the version column is added to every table, as a not-null integer with a default of zero, which is the insert value. Verified: the migration's guard query, run on dev, returns zero rows with no version, and the run output names every table it changed.
 - [ ] 2.3 Raw write scan: no statement writes a tracked table outside the Drizzle builder. Verified: a grep of the server and package sources for raw update and delete statements on the tracked tables prints nothing, or each hit is routed through the builder in the same task.
 - [ ] 2.4 Mutation header: the middleware that appends the topics header also answers mutations, with the key and version of each tracked row the write changed. Verified: a case in the middleware's test file, written first and seen failing, that a mutation's header names the versions of the rows it changed.
 
