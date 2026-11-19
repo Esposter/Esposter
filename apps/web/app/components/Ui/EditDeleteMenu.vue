@@ -11,7 +11,7 @@ interface Props {
 }
 // The Edit and Delete of one thing behind one quiet mark. Its items come from the same builder a context menu over that
 // Thing reads, so the overflow button and the context menu never disagree
-const { deleteLabel, editLabel, label } = defineProps<Props>();
+const { deleteLabel, editLabel } = defineProps<Props>();
 const emit = defineEmits<{ delete: []; edit: [] }>();
 const items = computed(() =>
   getEditDeleteItems({

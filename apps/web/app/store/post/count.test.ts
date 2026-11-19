@@ -7,7 +7,6 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { usePostCountStore } from "#src/store/post/count";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
-import { effectScope } from "vue";
 
 describe(usePostCountStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -30,6 +29,7 @@ describe(usePostCountStore, () => {
       1,
     ]);
   });
+
   // A store's copies take each read's counts for as long as the store's scope lives, so a read after that scope is
   // Gone leaves the copy as it was
   test("a store's copies stop taking counts once its scope is disposed", async () => {

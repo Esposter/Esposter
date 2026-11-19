@@ -5,7 +5,6 @@ import { flushPromises } from "@vue/test-utils";
 import { Inspector } from "three/examples/jsm/inspector/Inspector.js";
 import { WebGPURenderer } from "three/webgpu";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { defineComponent, h } from "vue";
 
 describe(useFluidSimulator, () => {
   afterEach(() => {
@@ -40,7 +39,7 @@ describe(useFluidSimulator, () => {
       },
     );
 
-    expect(await isInitFailureReported.promise).toBe(initError);
+    await expect(isInitFailureReported.promise).resolves.toBe(initError);
     expect(container.children).toHaveLength(1);
 
     component.unmount();

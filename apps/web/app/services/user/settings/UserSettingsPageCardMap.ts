@@ -1,5 +1,3 @@
-import type { Component } from "vue";
-
 import UserApiKeysCard from "#src/components/User/ApiKeysCard/Index.vue";
 import UserDataExportCard from "#src/components/User/DataExportCard/Index.vue";
 import UserDeleteAccountCard from "#src/components/User/DeleteAccountCard/Index.vue";
