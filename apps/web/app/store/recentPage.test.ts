@@ -93,7 +93,11 @@ describe(useRecentPageStore, () => {
       visitPage(`${path}${index}`);
     }
 
-    expect(rankedRecentPages.value).toHaveLength(RECENT_PAGES_STORED_LIMIT);
-    expect(rankedRecentPages.value.some((recentPage) => recentPage.path === path)).toBe(false);
+    expect(rankedRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual(
+      Array.from(
+        { length: RECENT_PAGES_STORED_LIMIT },
+        (_, index) => `${path}${RECENT_PAGES_STORED_LIMIT - 1 - index}`,
+      ),
+    );
   });
 });
