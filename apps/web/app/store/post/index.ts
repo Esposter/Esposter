@@ -6,8 +6,6 @@ import type { PostInPostWithRelations } from "@esposter/db-schema";
 import { PostSortType } from "#shared/models/post/PostSortType";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
-import { applyPostCounts } from "#src/services/post/applyPostCounts";
-import { postCountHooks } from "#src/services/post/postCountHooks";
 import { createOperationData } from "#src/services/shared/createOperationData";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { usePostCountStore } from "#src/store/post/count";
@@ -16,7 +14,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const usePostStore = defineStore("post", () => {
   const { $trpc } = useNuxtApp();
   const postCountStore = usePostCountStore();
-  const { refreshPostCounts } = postCountStore;
+  const { refreshPostCounts, registerPostCopies } = postCountStore;
   const sortType = ref<PostSortType>(PostSortType.Hot);
   const { hasMore, items, readItems, readMoreItems, resetCursorPaginationData } =
     useCursorPaginationData<PostInPostWithRelations>();
@@ -85,9 +83,7 @@ export const usePostStore = defineStore("post", () => {
     });
   };
   // The feed's own copies take the counts the server returns, so a vote or a reply on a post's page reaches its card here
-  postCountHooks.register((postCounts) => {
-    applyPostCounts(items.value, postCounts);
-  });
+  registerPostCopies(() => items.value);
 
   return {
     createPost,

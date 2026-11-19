@@ -6,8 +6,6 @@ import type { Except } from "type-fest";
 
 import { PostSortType } from "#shared/models/post/PostSortType";
 import { authClient } from "#src/services/auth/authClient";
-import { applyPostCounts } from "#src/services/post/applyPostCounts";
-import { postCountHooks } from "#src/services/post/postCountHooks";
 import { createOperationData } from "#src/services/shared/createOperationData";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { usePostCountStore } from "#src/store/post/count";
@@ -22,7 +20,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   const session = authClient.useSession();
   const postStore = usePostStore();
   const postCountStore = usePostCountStore();
-  const { refreshPostCounts } = postCountStore;
+  const { refreshPostCounts, registerPostCopies } = postCountStore;
   const currentPost = ref<PostInPostWithRelations>();
   const commentSortType = ref<PostSortType>(PostSortType.Hot);
   // Held here rather than in each card, so a card a re-read remounts comes back open
@@ -37,9 +35,7 @@ export const useCommentStore = defineStore("post/comment", () => {
     return comments;
   });
   // The thread's copies take the counts the server returns, so a reply here reaches the post and the replies it sits under
-  postCountHooks.register((postCounts) => {
-    applyPostCounts(allComments.value, postCounts);
-  });
+  registerPostCopies(() => allComments.value);
   // Only branches that already exist are descended into: asking the map for one that does not creates it, so a
   // Walk over the rows themselves would leave an empty partition behind for every reply it passed
   const deleteBranch = (parentId: string) => {
