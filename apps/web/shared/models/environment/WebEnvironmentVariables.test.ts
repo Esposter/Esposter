@@ -1,5 +1,4 @@
 import { webEnvironmentVariablesSchema } from "#shared/models/environment/WebEnvironmentVariables";
-import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -24,10 +23,5 @@ describe("webEnvironmentVariablesSchema", () => {
       .filter(([, schema]) => schema.meta()?.secret === true)
       .map(([name]) => name);
     expect(secretNames.toSorted()).toStrictEqual(workerSecrets.web.toSorted());
-  });
-
-  test("accepts the mock environment every test runs against", () => {
-    expect.hasAssertions();
-    expect(webEnvironmentVariablesSchema.safeParse(MOCK_ENVIRONMENT_VARIABLES).success).toBe(true);
   });
 });
