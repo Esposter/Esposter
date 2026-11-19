@@ -85,7 +85,7 @@ sequenceDiagram
 
 ## Store surface
 
-A store builds its collections from the primitive, which holds the held state and the entries. The store returns only its view under its own name, and held state never leaves the primitive, so no component can write it and no store rebuilds the view by hand. A store's public names are the view, the functions that issue writes, and the functions that ingest reads. Components read the view.
+A store builds its collections from the primitive, which holds the held state and the entries. The registry is a Pinia store, because it holds shared reactive state, which the `pinia` skill keeps in a store and never at module scope. The store returns only its view under its own name, and held state never leaves the primitive, so no component can write it and no store rebuilds the view by hand. A store's public names are the view, the functions that issue writes, and the functions that ingest reads. Components read the view.
 
 Truth is held per table row: friendship rows, user rows and membership rows are separate collections, and a list item is a join of them. The friend store holds one list of users today, and under this design it holds friendship rows and user rows, with the view joining them. That change of shape belongs to the pilot.
 
@@ -218,72 +218,78 @@ Each alternative that lost is recorded in the decisions above, beside the choice
 
 ## Key files
 
-| File                                                                            | Role after the change                                                                                             |
-| :------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------- |
-| `apps/web/app/composables/shared/useMutation.ts`                                | The primitive: the registry, the recording view that infers each entry's keys, the arrival gate and the run scope |
-| `apps/web/app/composables/shared/useMutation.test.ts`                           | The primitive's suite, rewritten around the gate, the settle rule, the touched keys and the run scope             |
-| `apps/web/app/composables/shared/useReadingPushes.ts`                           | Deleted: replaced by arrivals                                                                                     |
-| `apps/web/app/services/shared/mergeSnapshot.ts`                                 | Deleted: replaced by the arrival gate                                                                             |
-| `apps/web/app/models/shared/SnapshotPush.ts`                                    | Deleted: the push forms are the entries' applies                                                                  |
-| `apps/web/app/services/shared/settleOperation.ts`                               | Settles a write or a read without the stale branches                                                              |
-| `apps/web/app/models/shared/OperationContext.ts`                                | The settlement context without the stale fields                                                                   |
-| `apps/web/app/models/shared/MutationStatus.ts`                                  | The outcome set without the stale status                                                                          |
-| `apps/web/app/composables/shared/useCachedRead.ts`                              | The cache gate, with no supersede                                                                                 |
-| `apps/web/app/composables/shared/useWatchTopics.ts`                             | The watch a read takes, unchanged: it delivers the invalidations that bring rows back at their versions           |
-| `apps/web/app/services/shared/createBatchedRefresh.ts`                          | The count re-read, unchanged, one read at a time                                                                  |
-| `apps/web/app/services/shared/createOperationData.ts`                           | Row helpers used by the pair stores, retired with them                                                            |
-| `apps/web/app/store/message/user/friend.ts`                                     | The friend store: friendship and user rows, with an unfriend that names no key                                    |
-| `apps/web/app/store/message/user/block.ts`                                      | The block store: block and unblock that name no key                                                               |
-| `apps/web/app/store/message/user/friendRequest.ts`                              | The request store: send, accept and decline that name no key                                                      |
-| `apps/web/app/store/message/room/userToRoom.ts`                                 | The membership store, on entries and arrivals                                                                     |
-| `apps/web/app/store/message/roomCategory.ts`                                    | The category store: a placeholder that sorts after the server's rows, with no position of its own                 |
-| `apps/web/app/store/message/room/emoji.ts`                                      | The emoji store, on row arrivals from events                                                                      |
-| `apps/web/app/store/message/room/call/participant.ts`                           | The participant store, on row arrivals from events                                                                |
-| `apps/web/app/store/message/room/realtime.ts`                                   | The virtual background pipeline as a run scope with one commit                                                    |
-| `apps/web/app/composables/message/room/useRefreshRoomUsers.ts`                  | The refresh applies user rows as arrivals                                                                         |
-| `apps/web/app/composables/message/subscribables/useRoomUserSubscribables.ts`    | The room user subscription, without a stale argument                                                              |
-| `apps/web/app/components/Dashboard/Visual/Preview/DatasetBindingForm/Index.vue` | The binding pick as a run scope                                                                                   |
-| `apps/web/app/store/storage.ts`                                                 | The storage meter, storing the user row's arrival                                                                 |
-| `apps/web/app/services/message/room/setRoomUsers.ts`                            | Applies user rows one by one, not as a whole map                                                                  |
-| `apps/web/shared/`                                                              | The shared folder that holds each pair entry's pure function, which the store and the wake check both import      |
-| `packages/db-schema/src/createMetadataSchema.ts`                                | The version definition, with the timestamps and deletion column                                                   |
-| `packages/db-schema/src/sqliteTable.ts`                                         | The wrapper that spreads the metadata into every D1 table                                                         |
-| `packages/db-schema/src/models/SqliteTable.ts`                                  | The wrapper's type, which names the metadata columns                                                              |
-| `packages/db-schema/src/schema/auth/usersInAuth.ts`                             | The user row whose storage total arrives with its version                                                         |
-| `packages/db-schema/src/schema/social/friendsInSocial.ts`                       | The friendship table, soft-deleted with revival                                                                   |
-| `packages/db-schema/src/schema/social/friendRequestsInSocial.ts`                | The request table, soft-deleted with revival                                                                      |
-| `packages/db-schema/src/schema/social/blocksInSocial.ts`                        | The block table, soft-deleted with revival and a composite key                                                    |
-| `packages/db-schema/src/objects/call/schema.ts`                                 | The call object tables, given the version definition                                                              |
-| `packages/db-schema/src/objects/room/schema.ts`                                 | The room object tables, given the version definition                                                              |
-| `packages/db-schema/src/objects/user/schema.ts`                                 | The user object tables, given the version definition                                                              |
-| `packages/db-schema/drizzle.room.config.ts`                                     | The room object's migration configuration                                                                         |
-| `packages/db-schema/drizzle.call.config.ts`                                     | The call object's migration configuration                                                                         |
-| `packages/db-schema/src/models/realtime/RealtimeEventClassMap.ts`               | The class of each event, now carrying rows with versions                                                          |
-| `apps/web/server/trpc/routers/friend.ts`                                        | Soft delete of a friendship, and live filters on the server statements that decide                                |
-| `apps/web/server/trpc/routers/block.ts`                                         | Soft delete of a block and its friendship and request, with revival                                               |
-| `apps/web/server/trpc/routers/friendRequest.ts`                                 | Soft delete of a request, accept on the live request, revival on send, and the send's block check                 |
-| `apps/web/server/trpc/routers/room/category.ts`                                 | The create computes its position inside its insert statement, so concurrent creates get distinct positions        |
-| `apps/web/server/trpc/routers/storage.ts`                                       | The usage read, unchanged in its query and carried by the user row's event                                        |
-| `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`                      | The header of each mutation: the tracked rows it changed, with their keys and versions                            |
-| `apps/web/server/trpc/middleware/inferTopicsMiddleware.test.ts`                 | The header test, extended to mutations                                                                            |
-| `apps/web/server/trpc/routers/friend.test.ts`                                   | The pair router tests, extended to tombstones and revival                                                         |
-| `apps/web/app/store/message/user/friend.test.ts`                                | The unfriend regression tests                                                                                     |
-| `apps/web/app/store/message/user/block.test.ts`                                 | The block regression tests                                                                                        |
-| `apps/web/app/store/message/user/friendRequest.test.ts`                         | The request regression tests                                                                                      |
-| `apps/web/app/services/shared/mergeSnapshot.test.ts`                            | Deleted with its code                                                                                             |
-| `apps/web/app/services/cache/indexedDb/writeIndexedDb.ts`                       | The cache writes held state with versions                                                                         |
-| `apps/web/app/composables/cache/indexedDb/`                                     | The pagination cache that persists held state for a partition                                                     |
-| `packages/configuration/eslint/restrictedSyntaxes.js`                           | The selector that fails an entry that iterates the view or assigns a ref                                          |
-| `openspec/specs/architecture/client-data/design.md`                             | The rollback, concurrency and live-read sections, rewritten to the overlay                                        |
-| `openspec/specs/architecture/async-operations/design.md`                        | The outcome, write and read sections, rewritten without call ids                                                  |
-| `openspec/specs/architecture/cloudflare-services/design.md`                     | The version column, tombstones and the write header                                                               |
-| `openspec/specs/esbabbler/friends-and-dms/design.md`                            | The replay paragraph, rewritten to versions and tombstones                                                        |
-| `openspec/specs/esbabbler/offline-cache/design.md`                              | The cache persists held state with versions                                                                       |
+| File                                                                            | Role after the change                                                                                                                       |
+| :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apps/web/app/store/overlay.ts`                                                 | The primitive's registry, one Pinia store per app: held rows per table, the pending entries, the write queue, the arrival gate and the view |
+| `apps/web/app/services/shared/overlay/`                                         | The gate, the trie of held rows, the recording view, the keyed view and the slot each table's rows are read and written through             |
+| `apps/web/app/composables/shared/useRunScope.ts`                                | The run scope: a new run aborts the run before it, and only the newest run commits                                                          |
+| `apps/web/app/composables/shared/useMutation.ts`                                | The old write path, kept beside the primitive until task 5.1 deletes it                                                                     |
+| `apps/web/app/store/overlay.test.ts`                                            | The primitive's suite: the gate, the settle rule, the touched keys, the queue and the run scope                                             |
+| `apps/web/app/composables/shared/useMutation.test.ts`                           | The old write path's suite, deleted with it in task 5.1                                                                                     |
+| `apps/web/app/composables/shared/useReadingPushes.ts`                           | Deleted: replaced by arrivals                                                                                                               |
+| `apps/web/app/services/shared/mergeSnapshot.ts`                                 | Deleted: replaced by the arrival gate                                                                                                       |
+| `apps/web/app/models/shared/SnapshotPush.ts`                                    | Deleted: the push forms are the entries' applies                                                                                            |
+| `apps/web/app/services/shared/settleOperation.ts`                               | Settles a write or a read without the stale branches                                                                                        |
+| `apps/web/app/models/shared/OperationContext.ts`                                | The settlement context without the stale fields                                                                                             |
+| `apps/web/app/models/shared/MutationStatus.ts`                                  | The outcome set without the stale status                                                                                                    |
+| `apps/web/app/composables/shared/useCachedRead.ts`                              | The cache gate, with no supersede                                                                                                           |
+| `apps/web/app/composables/shared/useWatchTopics.ts`                             | The watch a read takes, unchanged: it delivers the invalidations that bring rows back at their versions                                     |
+| `apps/web/app/services/shared/createBatchedRefresh.ts`                          | The count re-read, unchanged, one read at a time                                                                                            |
+| `apps/web/app/services/shared/createOperationData.ts`                           | Row helpers used by the pair stores, retired with them                                                                                      |
+| `apps/web/app/store/message/user/friend.ts`                                     | The friend store: friendship and user rows, with an unfriend that names no key                                                              |
+| `apps/web/app/store/message/user/block.ts`                                      | The block store: block and unblock that name no key                                                                                         |
+| `apps/web/app/store/message/user/friendRequest.ts`                              | The request store: send, accept and decline that name no key                                                                                |
+| `apps/web/app/store/message/room/userToRoom.ts`                                 | The membership store, on entries and arrivals                                                                                               |
+| `apps/web/app/store/message/roomCategory.ts`                                    | The category store: a placeholder that sorts after the server's rows, with no position of its own                                           |
+| `apps/web/app/store/message/room/emoji.ts`                                      | The emoji store, on row arrivals from events                                                                                                |
+| `apps/web/app/store/message/room/call/participant.ts`                           | The participant store, on row arrivals from events                                                                                          |
+| `apps/web/app/store/message/room/realtime.ts`                                   | The virtual background pipeline as a run scope with one commit                                                                              |
+| `apps/web/app/composables/message/room/useRefreshRoomUsers.ts`                  | The refresh applies user rows as arrivals                                                                                                   |
+| `apps/web/app/composables/message/subscribables/useRoomUserSubscribables.ts`    | The room user subscription, without a stale argument                                                                                        |
+| `apps/web/app/components/Dashboard/Visual/Preview/DatasetBindingForm/Index.vue` | The binding pick as a run scope                                                                                                             |
+| `apps/web/app/store/storage.ts`                                                 | The storage meter, storing the user row's arrival                                                                                           |
+| `apps/web/app/services/message/room/setRoomUsers.ts`                            | Applies user rows one by one, not as a whole map                                                                                            |
+| `apps/web/shared/`                                                              | The shared folder that holds each pair entry's pure function, which the store and the wake check both import                                |
+| `packages/db-schema/src/createMetadataSchema.ts`                                | The version definition, with the timestamps and deletion column                                                                             |
+| `packages/db-schema/src/sqliteTable.ts`                                         | The wrapper that spreads the metadata into every D1 table                                                                                   |
+| `packages/db-schema/src/models/SqliteTable.ts`                                  | The wrapper's type, which names the metadata columns                                                                                        |
+| `packages/db-schema/src/schema/auth/usersInAuth.ts`                             | The user row whose storage total arrives with its version                                                                                   |
+| `packages/db-schema/src/schema/social/friendsInSocial.ts`                       | The friendship table, soft-deleted with revival                                                                                             |
+| `packages/db-schema/src/schema/social/friendRequestsInSocial.ts`                | The request table, soft-deleted with revival                                                                                                |
+| `packages/db-schema/src/schema/social/blocksInSocial.ts`                        | The block table, soft-deleted with revival and a composite key                                                                              |
+| `packages/db-schema/src/objects/call/schema.ts`                                 | The call object tables, given the version definition                                                                                        |
+| `packages/db-schema/src/objects/room/schema.ts`                                 | The room object tables, given the version definition                                                                                        |
+| `packages/db-schema/src/objects/user/schema.ts`                                 | The user object tables, given the version definition                                                                                        |
+| `packages/db-schema/drizzle.room.config.ts`                                     | The room object's migration configuration                                                                                                   |
+| `packages/db-schema/drizzle.call.config.ts`                                     | The call object's migration configuration                                                                                                   |
+| `packages/db-schema/src/models/realtime/RealtimeEventClassMap.ts`               | The class of each event, now carrying rows with versions                                                                                    |
+| `apps/web/server/trpc/routers/friend.ts`                                        | Soft delete of a friendship, and live filters on the server statements that decide                                                          |
+| `apps/web/server/trpc/routers/block.ts`                                         | Soft delete of a block and its friendship and request, with revival                                                                         |
+| `apps/web/server/trpc/routers/friendRequest.ts`                                 | Soft delete of a request, accept on the live request, revival on send, and the send's block check                                           |
+| `apps/web/server/trpc/routers/room/category.ts`                                 | The create computes its position inside its insert statement, so concurrent creates get distinct positions                                  |
+| `apps/web/server/trpc/routers/storage.ts`                                       | The usage read, unchanged in its query and carried by the user row's event                                                                  |
+| `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`                      | The header of each mutation: the tracked rows it changed, with their keys and versions                                                      |
+| `apps/web/server/trpc/middleware/inferTopicsMiddleware.test.ts`                 | The header test, extended to mutations                                                                                                      |
+| `apps/web/server/trpc/routers/friend.test.ts`                                   | The pair router tests, extended to tombstones and revival                                                                                   |
+| `apps/web/app/store/message/user/friend.test.ts`                                | The unfriend regression tests                                                                                                               |
+| `apps/web/app/store/message/user/block.test.ts`                                 | The block regression tests                                                                                                                  |
+| `apps/web/app/store/message/user/friendRequest.test.ts`                         | The request regression tests                                                                                                                |
+| `apps/web/app/services/shared/mergeSnapshot.test.ts`                            | Deleted with its code                                                                                                                       |
+| `apps/web/app/services/cache/indexedDb/writeIndexedDb.ts`                       | The cache writes held state with versions                                                                                                   |
+| `apps/web/app/composables/cache/indexedDb/`                                     | The pagination cache that persists held state for a partition                                                                               |
+| `packages/configuration/eslint/restrictedSyntaxes.js`                           | The selector that fails an entry that iterates the view or assigns a ref                                                                    |
+| `openspec/specs/architecture/client-data/design.md`                             | The rollback, concurrency and live-read sections, rewritten to the overlay                                                                  |
+| `openspec/specs/architecture/async-operations/design.md`                        | The outcome, write and read sections, rewritten without call ids                                                                            |
+| `openspec/specs/architecture/cloudflare-services/design.md`                     | The version column, tombstones and the write header                                                                                         |
+| `openspec/specs/esbabbler/friends-and-dms/design.md`                            | The replay paragraph, rewritten to versions and tombstones                                                                                  |
+| `openspec/specs/esbabbler/offline-cache/design.md`                              | The cache persists held state with versions                                                                                                 |
 
 The new files, in the tree form the design template asks for, are the registry's recording view, the shared pair entries and their tests. Their paths follow the file-organisation skill once the pilot is written, and they are not listed as existing files here.
 
 ```text
-apps/web/app/composables/shared/                  the registry, the recording view and the run scope, in the primitive's folder
+apps/web/app/store/overlay.ts                         the registry: the held rows, the pending entries and the write queue, one store per Pinia instance
+apps/web/app/services/shared/overlay/                 the gate, the held trie, the recording view and the keyed view
+apps/web/app/composables/shared/useRunScope.ts        the run scope, a composable that aborts the run before it
 apps/web/shared/                                  the pair entries as pure functions over the keyed view, imported by the store and the wake check
 ```
 
