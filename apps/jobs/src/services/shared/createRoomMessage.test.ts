@@ -21,6 +21,7 @@ export const createRoomMessage = (fields: Partial<RoomMessage> & Pick<RoomMessag
   type: MessageType.Message,
   updatedAt: new Date(0),
   userId: null,
+  version: 0,
   ...fields,
 });
 

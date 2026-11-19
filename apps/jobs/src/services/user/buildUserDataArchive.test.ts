@@ -280,6 +280,7 @@ describe(buildUserDataArchive, () => {
       expect(rows[0]).not.toHaveProperty("createdAt");
       expect(rows[0]).not.toHaveProperty("updatedAt");
       expect(rows[0]).not.toHaveProperty("deletedAt");
+      expect(rows[0]).not.toHaveProperty("version");
     }
   });
 

@@ -16,6 +16,7 @@ describe(getDetectedUserStatus, () => {
     status: UserStatus.DoNotDisturb,
     updatedAt: createdAt,
     userId: v7(),
+    version: 0,
     ...overrides,
   });
 

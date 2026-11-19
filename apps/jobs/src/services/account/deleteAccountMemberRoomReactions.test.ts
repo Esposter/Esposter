@@ -77,6 +77,7 @@ describe(deleteAccountMemberRoomReactions, () => {
       emojiTag: `${emojiTag}${String(index).padStart(3, "0")}`,
       messageId: 1,
       userIds: [userId],
+      version: 0,
     }));
     roomObjectReplies.set("deleteUserReactions", (args) => {
       const { after } = z

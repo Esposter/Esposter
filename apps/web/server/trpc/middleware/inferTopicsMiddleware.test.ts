@@ -117,8 +117,8 @@ describe("inferTopicsMiddleware", () => {
     await createTestCaller(context).renameUser({ id: user.id, name: "renamed" });
 
     expect(MockPublishedTopics).toStrictEqual([
-      { columns: ["name", "updatedAt"], topic: `${userTable}:*` },
-      { columns: ["name", "updatedAt"], topic: `${userTable}:id=${user.id}` },
+      { columns: ["name", "updatedAt", "version"], topic: `${userTable}:*` },
+      { columns: ["name", "updatedAt", "version"], topic: `${userTable}:id=${user.id}` },
     ]);
   });
 
@@ -144,8 +144,8 @@ describe("inferTopicsMiddleware", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Rename refused]`);
 
     expect(MockPublishedTopics).toStrictEqual([
-      { columns: ["name", "updatedAt"], topic: `${userTable}:*` },
-      { columns: ["name", "updatedAt"], topic: `${userTable}:id=${user.id}` },
+      { columns: ["name", "updatedAt", "version"], topic: `${userTable}:*` },
+      { columns: ["name", "updatedAt", "version"], topic: `${userTable}:id=${user.id}` },
     ]);
   });
 

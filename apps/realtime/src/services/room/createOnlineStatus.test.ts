@@ -12,6 +12,7 @@ export const createOnlineStatus = (userId: string): UserStatusInMessage => ({
   status: null,
   updatedAt: new Date(0),
   userId,
+  version: 0,
 });
 
 describe.todo("createOnlineStatus");

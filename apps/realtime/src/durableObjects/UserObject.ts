@@ -5,7 +5,9 @@ import type {
   ReconcileTodoRemindersInput,
   ScheduledMessageInUser,
   ScheduledReminder,
+  ScheduledReminderInput,
   SentMessageInUser,
+  SentMessageInUserInput,
   StorageUsage,
   Topic,
   UserAchievementInAchievementWithRelations,
@@ -66,7 +68,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     await this.db.insert(joinedCallsInUser).values({ callSessionId }).onConflictDoNothing();
   }
 
-  async addReminder(reminder: ScheduledReminder): Promise<void> {
+  async addReminder(reminder: ScheduledReminderInput): Promise<void> {
     await this.db
       .insert(remindersInUser)
       .values(reminder)
@@ -81,7 +83,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
       .onConflictDoUpdate({ set: { runAt: scheduledMessage.runAt }, target: scheduledMessagesInUser.scheduledId });
   }
 
-  async addSentMessage(sentMessage: SentMessageInUser): Promise<void> {
+  async addSentMessage(sentMessage: SentMessageInUserInput): Promise<void> {
     await this.db.insert(sentMessagesInUser).values(sentMessage).onConflictDoNothing();
   }
 

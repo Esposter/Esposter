@@ -101,6 +101,10 @@ const readAll = async <TItem extends Record<TKey, unknown>, TKey extends string>
   return items;
 };
 
+// The sent messages a read answers, each written once and so at version zero
+const atVersionZero = <T extends object>(sentMessages: T[]) =>
+  sentMessages.map((sentMessage) => ({ ...sentMessage, version: 0 }));
+
 describe(UserObject, () => {
   const userId = v7();
   const firstPage = { cursor: START_PAGE_CURSOR, limit: 10 };
@@ -164,6 +168,8 @@ describe(UserObject, () => {
     ...createOnlineStatus(userId),
     isConnected,
     status: isConnected ? UserStatus.Online : UserStatus.Offline,
+    // The row is first written online at version zero, and going offline is the one change after it
+    version: isConnected ? 0 : 1,
   });
 
   beforeAll(async () => {
@@ -265,13 +271,18 @@ describe(UserObject, () => {
     await object.alarm();
     await object.alarm();
 
-    expect(sendTodoReminder).toHaveBeenCalledExactlyOnceWith({ dueAt, itemId: dueItemId, resourceId });
+    expect(sendTodoReminder).toHaveBeenCalledExactlyOnceWith({ dueAt, itemId: dueItemId, resourceId, version: 0 });
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(laterDueAt.getTime());
 
     vi.setSystemTime(laterDueAt);
     await object.alarm();
 
-    expect(sendTodoReminder).toHaveBeenLastCalledWith({ dueAt: laterDueAt, itemId: laterItemId, resourceId });
+    expect(sendTodoReminder).toHaveBeenLastCalledWith({
+      dueAt: laterDueAt,
+      itemId: laterItemId,
+      resourceId,
+      version: 0,
+    });
     expect(sendTodoReminder).toHaveBeenCalledTimes(2);
     await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
   });
@@ -569,7 +580,9 @@ describe(UserObject, () => {
     const items = await readAll(SENT_MESSAGE_PAGE_SORT, async (input) => object.readSentMessages(input), 2);
 
     // Newest first, then the later room of a tie before the earlier one, then the later message of a room
-    expect(items).toStrictEqual([newest, ...tiedInSecondRoom.toReversed(), ...tiedInFirstRoom.toReversed()]);
+    expect(items).toStrictEqual(
+      atVersionZero([newest, ...tiedInSecondRoom.toReversed(), ...tiedInFirstRoom.toReversed()]),
+    );
   });
 
   test("a room's sent messages leave the index by their ids, and all of them when the room is deleted, and no other room's", async () => {
@@ -586,9 +599,11 @@ describe(UserObject, () => {
     await Promise.all(sentMessages.map(async (sentMessage) => object.addSentMessage(sentMessage)));
 
     await object.removeSentMessages({ messageIds: [2], roomId: firstRoomId });
-    await expect(object.readSentMessages(firstPage)).resolves.toStrictEqual([sentMessages[2], sentMessages[0]]);
+    await expect(object.readSentMessages(firstPage)).resolves.toStrictEqual(
+      atVersionZero([takeOne(sentMessages, 2), takeOne(sentMessages, 0)]),
+    );
 
     await object.removeSentMessagesInRoom(firstRoomId);
-    await expect(object.readSentMessages(firstPage)).resolves.toStrictEqual([sentMessages[2]]);
+    await expect(object.readSentMessages(firstPage)).resolves.toStrictEqual(atVersionZero([takeOne(sentMessages, 2)]));
   });
 });

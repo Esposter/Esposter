@@ -58,6 +58,8 @@ const createStatus = (statusUserId: string, isConnected: boolean) => ({
   status: null,
   updatedAt: new Date(0),
   userId: statusUserId,
+  // The row is first written online at version zero, and going offline is the one change after it
+  version: isConnected ? 0 : 1,
 });
 
 // A search read as the web merges it: each room answers its matches after the cursor, and the merged page keeps `limit`
@@ -380,6 +382,8 @@ describe(RoomObject, () => {
           linkPreviewResponse: null,
           message: "",
           updatedAt: new Date(0),
+          // The erase is the one change after the message's creation
+          version: 1,
         },
         type: "deleteMessage",
       },
@@ -457,7 +461,7 @@ describe(RoomObject, () => {
     await object.addReaction(reaction, otherActor);
 
     await expect(object.readReactions([message.id])).resolves.toStrictEqual([
-      { emojiTag, messageId: message.id, userIds: [userId, otherUserId] },
+      { emojiTag, messageId: message.id, userIds: [userId, otherUserId], version: 1 },
     ]);
 
     await object.removeReaction(reaction, actor);
@@ -944,7 +948,7 @@ describe(RoomObject, () => {
       ),
     ).toStrictEqual([{ emojiTag: "a", messageId: otherMessage.id }]);
     await expect(object.readReactions([message.id, otherMessage.id])).resolves.toStrictEqual([
-      { emojiTag: "a", messageId: message.id, userIds: [otherUserId] },
+      { emojiTag: "a", messageId: message.id, userIds: [otherUserId], version: 2 },
     ]);
   });
 

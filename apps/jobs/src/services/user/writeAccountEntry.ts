@@ -7,7 +7,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // The account.json entry: the user row, the sign-in providers by name and the push subscriptions by endpoint.
 // Each is without its tokens or keys, beside the account's own block, notification, achievement and game-setting rows.
 // Friends are in their own entry, where each other party is named.
-// No row carries its update or delete time.
+// No row carries its update time, its delete time or its version, which counts the changes made to the row and means nothing to the person.
 // A row carries its creation time only where it records the person's own act.
 // Those are the account's creation, a block, a bookmark.
 // A notification, an achievement, a setting and a status are written by the system or are the account's current state
@@ -34,27 +34,27 @@ export const writeAccountEntry = async (archive: UserDataArchive, userId: UserIn
         where: { userId: { eq: userId } },
       }),
       getDb().query.blocksInSocial.findMany({
-        columns: { deletedAt: false, updatedAt: false },
+        columns: { deletedAt: false, updatedAt: false, version: false },
         where: { blockerId: { eq: userId } },
       }),
       getDb().query.notificationsInNotification.findMany({
-        columns: { createdAt: false, deletedAt: false, updatedAt: false },
+        columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
         where: { userId: { eq: userId } },
       }),
       getDb().query.userAchievementsInAchievement.findMany({
-        columns: { createdAt: false, deletedAt: false, updatedAt: false },
+        columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
         where: { userId: { eq: userId } },
       }),
       getDb().query.bookmarksInApp.findMany({
-        columns: { deletedAt: false, updatedAt: false },
+        columns: { deletedAt: false, updatedAt: false, version: false },
         where: { userId: { eq: userId } },
       }),
       getDb().query.userSettingsInMessage.findMany({
-        columns: { createdAt: false, deletedAt: false, updatedAt: false },
+        columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
         where: { userId: { eq: userId } },
       }),
       getDb().query.userStatusesInMessage.findMany({
-        columns: { createdAt: false, deletedAt: false, updatedAt: false },
+        columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
         where: { userId: { eq: userId } },
       }),
     ]);

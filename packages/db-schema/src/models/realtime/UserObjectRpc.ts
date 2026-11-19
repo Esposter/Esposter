@@ -7,7 +7,7 @@ import type { ReconcileTodoRemindersInput } from "#src/models/todoReminder/Recon
 import type { remindersInUser, scheduledMessagesInUser, sentMessagesInUser } from "#src/objects/user/schema";
 import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
 import type { UserToRoomInMessage } from "#src/schema/message/usersToRoomsInMessage";
-import type { SetNonNullable } from "type-fest";
+import type { Except, SetNonNullable } from "type-fest";
 
 // A scheduled message the person's index names: its id is the scheduled message's, and its body is read from its room
 export type ScheduledMessageInUser = Pick<typeof scheduledMessagesInUser.$inferSelect, "roomId" | "runAt"> & {
@@ -20,13 +20,17 @@ export type ScheduledReminder = typeof remindersInUser.$inferSelect;
 // A message the person sent, as their index holds it
 export type SentMessageInUser = typeof sentMessagesInUser.$inferSelect;
 
+// What a write names of a reminder or a sent message: every column but its version, which the database raises
+export type ScheduledReminderInput = Except<ScheduledReminder, "version">;
+export type SentMessageInUserInput = Except<SentMessageInUser, "version">;
+
 // The RPC surface of a User object, the one contract its class in the realtime Worker and the web Worker's callers share.
 // A personal event is sent by the write that raised it, and reaches every tab the person has open
 export interface UserObjectRpc {
   addJoinedCall: (callSessionId: string) => Promise<void>;
-  addReminder: (reminder: ScheduledReminder) => Promise<void>;
+  addReminder: (reminder: ScheduledReminderInput) => Promise<void>;
   addScheduledMessage: (scheduledMessage: { roomId: string; runAt: Date; scheduledId: string }) => Promise<void>;
-  addSentMessage: (sentMessage: SentMessageInUser) => Promise<void>;
+  addSentMessage: (sentMessage: SentMessageInUserInput) => Promise<void>;
   // A room-list event, sent to every tab the person has open, or to every tab but the sockets carrying `excludeTag`
   broadcastEvent: (event: UserEvent, options?: { excludeTag?: string }) => Promise<void>;
   closeSession: (sessionId: string) => Promise<void>;

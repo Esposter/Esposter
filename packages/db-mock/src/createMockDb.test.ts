@@ -2,6 +2,7 @@ import type { MockDatabase } from "#src/models/MockDatabase";
 
 import { createMockDb } from "#src/createMockDb";
 import { accountsInAuth, StorageBucket, usersInAuth } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -43,6 +44,34 @@ describe(createMockDb, () => {
     await expect(
       mockDatabase.db.query.accountsInAuth.findMany({ where: { userId: { eq: userId } } }),
     ).resolves.toStrictEqual([]);
+  });
+
+  // The version is the database's count of a row's changes: an insert starts it at zero, an update raises it, and an upsert
+  // That updates the existing row raises it too, so a write that names no version still moves it
+  test("raises a row's version on each update, from zero on insert and through an upsert's update branch", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    await insertUser(userId);
+    const readVersion = async () =>
+      takeOne(
+        await mockDatabase.db
+          .select({ version: usersInAuth.version })
+          .from(usersInAuth)
+          .where(eq(usersInAuth.id, userId)),
+        0,
+      ).version;
+    const initialVersion = await readVersion();
+
+    await mockDatabase.db.update(usersInAuth).set({ name: "renamed" }).where(eq(usersInAuth.id, userId));
+    const updatedVersion = await readVersion();
+
+    await mockDatabase.db
+      .insert(usersInAuth)
+      .values({ email: `${userId}@example.com`, emailVerified: false, id: userId, name: "upserted" })
+      .onConflictDoUpdate({ set: { name: "upserted" }, target: usersInAuth.id });
+
+    expect([initialVersion, updatedVersion, await readVersion()]).toStrictEqual([0, 1, 2]);
   });
 
   // A reset is what every test starts from, so it has to empty the full-text table as well: an FTS5 table keeps shadow

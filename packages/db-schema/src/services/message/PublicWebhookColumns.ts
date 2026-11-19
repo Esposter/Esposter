@@ -12,4 +12,5 @@ export const PublicWebhookColumns = {
   roomId: true,
   updatedAt: true,
   userId: true,
+  version: true,
 } as const satisfies Record<keyof PublicWebhookInMessage, true>;

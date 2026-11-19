@@ -2,6 +2,7 @@ import type { LinkPreviewResponse } from "#src/models/message/linkPreview/LinkPr
 import type { MessageType } from "#src/models/message/MessageType";
 import type { FileEntity } from "#src/models/streams/FileEntity";
 
+import { createVersionSchema } from "#src/createMetadataSchema";
 import { sql } from "drizzle-orm";
 import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
@@ -41,6 +42,7 @@ export const messagesInRoom = sqliteTable(
     userId: text(),
     // The id a webhook push was accepted under. Unique, so a redelivered push finds the message it already wrote
     webhookDeliveryId: text(),
+    ...createVersionSchema(),
   },
   // A thread is read by its root and a member's messages by their author, each in id order, so neither scans the room.
   // The newest-first search without text reads by time, then id, so its keyset is served by the same pair.
@@ -63,13 +65,17 @@ export const messageEmojisInRoom = sqliteTable(
     emojiTag: text().notNull(),
     messageId: integer().notNull(),
     userIds: text({ mode: "json" }).$type<string[]>().notNull().default([]),
+    ...createVersionSchema(),
   },
   (table) => [primaryKey({ columns: [table.messageId, table.emojiTag] })],
 );
 
 // The members of this room who have a socket open to it, one row each. A member is online while a row exists.
 // So the room's fan-out reads its online members without a query to the database that holds the room's members
-export const onlineMembersInRoom = sqliteTable("onlineMembers", { userId: text().primaryKey() });
+export const onlineMembersInRoom = sqliteTable("onlineMembers", {
+  userId: text().primaryKey(),
+  ...createVersionSchema(),
+});
 
 // The room's own state that is not a message, in one row.
 // It holds the room-activity fan-out still owed. A message schedules the fan-out for two seconds on, and every message in
@@ -78,6 +84,7 @@ export const roomState = sqliteTable("roomState", {
   // The time the fan-out is due, or null when none is owed
   bumpDueAt: integer({ mode: "timestamp_ms" }),
   id: integer().primaryKey(),
+  ...createVersionSchema(),
 });
 
 // A sent message whose sender's index does not yet hold it. The object retries each one from its alarm until the index takes
@@ -88,6 +95,7 @@ export const unindexedMessagesInRoom = sqliteTable("unindexedMessages", {
   // The next time the index is asked again
   retryAt: integer({ mode: "timestamp_ms" }).notNull(),
   userId: text().notNull(),
+  ...createVersionSchema(),
 });
 
 // A message a member scheduled to send here, one row until the alarm sends it or the member cancels it.
@@ -100,6 +108,7 @@ export const scheduledMessagesInRoom = sqliteTable(
     replyToId: integer(),
     runAt: integer({ mode: "timestamp_ms" }).notNull(),
     userId: text().notNull(),
+    ...createVersionSchema(),
   },
   (table) => [index("scheduledMessagesRunAtIndex").on(table.runAt)],
 );
