@@ -25,8 +25,7 @@ describe(pulseElementalNode, () => {
       gauge: ELEMENTAL_NODE_PULSE_GAUGE,
       isImmutable: false,
     });
-    expect(enemy.statuses).toHaveLength(1);
-    expect(enemy.statuses[0]?.secondsRemaining).toBe(Infinity);
+    expect(enemy.statuses.map(({ secondsRemaining }) => secondsRemaining)).toStrictEqual([Infinity]);
   });
 
   test("a buffed enemy gains 1.2 more gauge, up to 3.6", () => {
