@@ -15,4 +15,4 @@ export const createThreadFollow = (
 ): PromiseLike<unknown> =>
   isSelfInitiated
     ? upsertThreadFollow(db, { roomId, threadRootId, userId }, false)
-    : db.insert(threadFollowsInMessage).values({ roomId, threadRootId, userId }).onConflictDoNothing();
+    : db.insert(threadFollowsInMessage).values({ roomId, threadRootId, userId }).onConflictDoNothing().returning();
