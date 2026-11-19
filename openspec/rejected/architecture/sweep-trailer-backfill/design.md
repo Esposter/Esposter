@@ -1,6 +1,6 @@
 # Sweep trailer backfill
 
-A ledger-only commit carrying a `Ledger:` trailer for each unit of `.agents/ledgers/genshin-spec-evidence.md` (since merged into `genshin-evidence.md`) whose sweep commit carried none, or a coverage script that dates a unit from the newest commit changing it.
+A ledger-only commit carrying a `Ledger:` trailer for each unit of `.agents/ledgers/genshin-evidence.md` (the ledger `genshin-spec-evidence` was merged into) whose sweep commit carried none, or a coverage script that dates a unit from the newest commit changing it.
 
 ## Why not
 
