@@ -79,7 +79,7 @@ GitHub's folder listing is the index of either tree.
 
 ## Roadmaps
 
-An area's roadmap is the change `<area>-roadmap`, with `skip_specs: true`. Its `tasks.md` is prioritized top-down and checkbox-driven (`- [ ]` with nested sub-steps), grouped by horizon (`## In progress`, `## Next`, `## Later`), each item linking the change that designs it.
+An area's roadmap is the change `<area>-roadmap`, with `skip_specs: true`. Its `tasks.md` is prioritized top-down and checkbox-driven (`- [ ]` with nested sub-steps), grouped by horizon (`## In progress`, `## Next`, `## Later`), each item linking the change that designs it. Open work a spec's Open row holds is not repeated on a roadmap; the roadmap lists only work no spec owns yet.
 
 A roadmap exists only while its area has open work. When the last item is built, moved to a change or decided against, the `<area>-roadmap` folder is deleted in the same change, never kept with an empty `## Later`.
 
