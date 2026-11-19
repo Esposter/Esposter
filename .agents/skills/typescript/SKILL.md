@@ -71,7 +71,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 
 - **Guard clauses first, one guard per outcome, and a chain runs `if/else if/else` from its first branch to its last** — a balanced `if/else` stays balanced, and no negated test sits before a terminal `else` (`no-negated-condition`). Where each shape stops being right: `references/control-flow.md`.
 - **`switch` for type-based branching, every one on a value set ending in `default: exhaustiveGuard(value)`**; per-case logic is a map keyed by the discriminant (`references/control-flow.md`).
-- **Use `.includes()` for 2+ equality checks** — `[A, B].includes(x)` not `x === A || x === B`. Extract to a named constant only if reused.
+- **Use `.includes()` for 2+ equality checks** — `[A, B].includes(x)` not `x === A || x === B`. Extract to a named constant only if reused. It does not hold where the subject is a whole `as const` value set and the pair is two of its members: the array infers the pair's own literal union, so a subject of the full set is TS2345 (an enum's pair widens and does hold). Nor does it hold for an optional subject or a null-or-undefined pair, which fail the same way, so those keep `===`.
 
 ## Loops and Iteration
 
