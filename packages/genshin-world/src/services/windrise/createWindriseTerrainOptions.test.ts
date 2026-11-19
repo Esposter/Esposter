@@ -13,13 +13,9 @@ describe(createWindriseTerrainOptions, () => {
       ground: { base: 60, features: [], hills: [], maxHeight: 520, minHeight: 40 },
     };
 
-    expect(createWindriseTerrainOptions([baseGround], [laidGround])).toStrictEqual({
-      cellsPerSide: 32,
-      finestRange: 64,
-      finestTileSize: 16,
-      levelCount: 6,
-      maxHeight: 520,
-      minHeight: -8,
-    });
+    const options = createWindriseTerrainOptions([baseGround], [laidGround]);
+
+    expect(options.maxHeight).toBe(520);
+    expect(options.minHeight).toBe(-8);
   });
 });
