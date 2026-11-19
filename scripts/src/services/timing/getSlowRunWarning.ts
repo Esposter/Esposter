@@ -1,5 +1,6 @@
 import { getPercentile } from "#src/services/shared/getPercentile";
 import { MIN_HISTORY, SLOW_RUN_FACTOR } from "#src/services/timing/constants";
+import { formatSeconds } from "#src/services/timing/formatSeconds";
 
 const MEDIAN_FRACTION = 0.5;
 
@@ -11,8 +12,6 @@ export const getSlowRunWarning = (command: string, milliseconds: number, history
   const median = getPercentile(history, MEDIAN_FRACTION);
   if (milliseconds <= median * SLOW_RUN_FACTOR) return undefined;
 
-  const seconds = (milliseconds / 1000).toFixed(1);
-  const usualSeconds = (median / 1000).toFixed(1);
   const ratio = (milliseconds / median).toFixed(1);
-  return `${command} took ${seconds}s, ${ratio}× its usual ${usualSeconds}s`;
+  return `${command} took ${formatSeconds(milliseconds)}, ${ratio}× its usual ${formatSeconds(median)}`;
 };

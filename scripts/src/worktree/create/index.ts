@@ -2,12 +2,16 @@ import { withInstallLock } from "#src/services/machine/withInstallLock";
 import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { runCommand } from "#src/services/timing/runCommand";
+import { timePhase } from "#src/services/timing/timePhase";
+import { timePhaseAsync } from "#src/services/timing/timePhaseAsync";
 import { buildDistributions } from "#src/services/worktree/create/buildDistributions";
 import { copyEslintConfiguration } from "#src/services/worktree/create/copyEslintConfiguration";
 import { createWorktree } from "#src/services/worktree/create/createWorktree";
 import { getBuildDirectories } from "#src/services/worktree/create/getBuildDirectories";
 import { installWorktree } from "#src/services/worktree/create/installWorktree";
 import { readMemoryGateShortfall } from "#src/services/worktree/create/readMemoryGateShortfall";
+import { seedTaskCache } from "#src/services/worktree/create/seedTaskCache";
+import { getResultAsync } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 // `pnpm ai:worktree:create <name> [package...]` — a worktree on ai/queue, installed for the scripts package and the packages
@@ -28,7 +32,7 @@ await runCommand(
       name: "ai:worktree:create",
     },
     run: async ({ args }) => {
-      const shortfall = await readMemoryGateShortfall();
+      const shortfall = await timePhaseAsync("memory gate", readMemoryGateShortfall);
       if (shortfall !== undefined) {
         console.info(shortfall);
         process.exitCode = 4;
@@ -37,13 +41,33 @@ await runCommand(
       const packageNames = args._.slice(1).map(String);
       const mainCheckoutRoot = readMainCheckoutRoot();
       const worktreePath = createWorktree(args.name, mainCheckoutRoot);
-      // Under the machine's install lock, since every install writes the pnpm store that the others read and write
-      await withInstallLock(() => {
-        installWorktree(worktreePath, packageNames);
-      });
-      buildDistributions(worktreePath, getBuildDirectories(readWorkspacePackages(worktreePath), packageNames));
+      // Under the machine's install lock, since every install writes the pnpm store that the others read and write. Its
+      // Phase line counts the wait for the lock too, where the two install lines above it count only the installs
+      await timePhaseAsync("installs, lock wait included", () =>
+        withInstallLock(() => {
+          installWorktree(worktreePath, packageNames);
+        }),
+      );
+      // After the installs, so the layout the copy matches is the installed one, and before the builds, which replay from
+      // It. A seed that fails costs the builds their replays, never the create
+      const buildDirectories = getBuildDirectories(readWorkspacePackages(worktreePath), packageNames);
+      (
+        await timePhaseAsync("seed task cache", () =>
+          getResultAsync(() => seedTaskCache(mainCheckoutRoot, worktreePath, buildDirectories)),
+        )
+      ).match(
+        (seededFrom) => {
+          if (seededFrom !== undefined) console.error(`task cache seeded from ${seededFrom}`);
+        },
+        (error) => {
+          console.error(`task cache not seeded: ${error.message}`);
+        },
+      );
+      buildDistributions(worktreePath, buildDirectories);
       // Last, since an install prunes whatever it did not select, and the copied file imports packages it did
-      copyEslintConfiguration(mainCheckoutRoot, worktreePath);
+      timePhase("eslint configuration", () => {
+        copyEslintConfiguration(mainCheckoutRoot, worktreePath);
+      });
       console.info(worktreePath);
     },
   }),
