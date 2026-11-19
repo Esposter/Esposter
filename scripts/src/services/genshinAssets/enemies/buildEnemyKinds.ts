@@ -1,6 +1,5 @@
 import type { AnimalCodexRow } from "#src/models/genshinAssets/enemies/AnimalCodexRow";
 import type { ExcelMonsterDescribeRow } from "#src/models/genshinAssets/enemies/ExcelMonsterDescribeRow";
-import type { MonsterCurveRow } from "#src/models/genshinAssets/enemies/MonsterCurveRow";
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
 
 import { ANIMAL_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
@@ -11,13 +10,13 @@ import {
   BASE_HEALTH_PROPERTY,
   DEFAULT_CODEX_SUBTYPE,
   DEFAULT_SECURITY_LEVEL,
-  MONSTER_CURVE_TABLE_NAME,
   MONSTER_DESCRIBE_TABLE_NAME,
   MONSTER_TABLE_NAME,
   WEEKLY_BOSS_KIND_IDS,
 } from "#src/services/genshinAssets/enemies/constants";
 import { findMonsterCodexRow } from "#src/services/genshinAssets/enemies/findMonsterCodexRow";
 import { getGrowCurve } from "#src/services/genshinAssets/enemies/getGrowCurve";
+import { readMonsterCurveRows } from "#src/services/genshinAssets/enemies/readMonsterCurveRows";
 import { readRegionCampsData } from "#src/services/genshinAssets/enemies/readRegionCampsData";
 import { toLevelCurve } from "#src/services/genshinAssets/enemies/toLevelCurve";
 import { MONDSTADT_BOUNTY_TARGET_NAMES } from "#src/services/genshinAssets/reputation/constants";
@@ -39,7 +38,7 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const regionDatas = await readRegionCampsData();
   const monsterRows = readExcelTable<MonsterRow>(MONSTER_TABLE_NAME);
   const monsterDescribeRows = readExcelTable<ExcelMonsterDescribeRow>(MONSTER_DESCRIBE_TABLE_NAME);
-  const monsterCurveRows = readExcelTable<MonsterCurveRow>(MONSTER_CURVE_TABLE_NAME);
+  const monsterCurveRows = readMonsterCurveRows();
   const animalCodexRows = readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_NAME);
   const monsterNames = readMonsterNames();
   const bountyKindIds = Object.values(MONDSTADT_BOUNTY_TARGET_NAMES).flatMap((names) =>
@@ -84,9 +83,8 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const curves = new Set(
     enemyKinds.flatMap(({ attackCurve, defenseCurve, healthCurve }) => [attackCurve, defenseCurve, healthCurve]),
   );
-  const levelRows = monsterCurveRows.toSorted((firstRow, secondRow) => firstRow.level - secondRow.level);
   const levelCurves = Object.fromEntries(
-    [...curves].toSorted().map((curve) => [curve, toLevelCurve(levelRows, curve)]),
+    [...curves].toSorted().map((curve) => [curve, toLevelCurve(monsterCurveRows, curve)]),
   );
   return { [`${GameDataset.Enemies}/kinds`]: enemyKinds, [`${GameDataset.Enemies}/levelCurves`]: levelCurves };
 };

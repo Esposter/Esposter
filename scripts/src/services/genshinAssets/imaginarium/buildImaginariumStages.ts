@@ -1,13 +1,13 @@
 import type { AnimalCodexRow } from "#src/models/genshinAssets/enemies/AnimalCodexRow";
-import type { MonsterCurveRow } from "#src/models/genshinAssets/enemies/MonsterCurveRow";
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
 import type { ExcelRoleCombatScheduleRow } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatScheduleRow";
 
 import { ANIMAL_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { checkHasBaseCurves } from "#src/services/genshinAssets/enemies/checkHasBaseCurves";
-import { MONSTER_CURVE_TABLE_NAME, MONSTER_TABLE_NAME } from "#src/services/genshinAssets/enemies/constants";
+import { MONSTER_TABLE_NAME } from "#src/services/genshinAssets/enemies/constants";
 import { fetchEnemyWikiPages } from "#src/services/genshinAssets/enemies/fetchEnemyWikiPages";
 import { findCanonicalMonsterRow } from "#src/services/genshinAssets/enemies/findCanonicalMonsterRow";
+import { readMonsterCurveRows } from "#src/services/genshinAssets/enemies/readMonsterCurveRows";
 import { readWikiPageContent } from "#src/services/genshinAssets/enemies/readWikiPageContent";
 import { ROLE_COMBAT_SCHEDULE_TABLE_NAME } from "#src/services/genshinAssets/imaginarium/constants";
 import { ExcelRoleCombatScheduleRowFieldDumpKeyMap } from "#src/services/genshinAssets/imaginarium/ExcelRoleCombatScheduleRowFieldDumpKeyMap";
@@ -35,9 +35,7 @@ export const buildImaginariumStages = async (): Promise<Record<string, unknown>>
   const monsters = readMonsterNames();
   const monsterRows = readExcelTable<MonsterRow>(MONSTER_TABLE_NAME);
   const animalCodexRows = readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_NAME);
-  const monsterCurveRows = readExcelTable<MonsterCurveRow>(MONSTER_CURVE_TABLE_NAME).toSorted(
-    (firstRow, secondRow) => firstRow.level - secondRow.level,
-  );
+  const monsterCurveRows = readMonsterCurveRows();
   const stages = titles.flatMap((title) => {
     const seasonId = beginDaySeasonIdMap.get(title.slice(-10));
     if (seasonId === undefined)
