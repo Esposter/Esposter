@@ -36,6 +36,11 @@ const updateDisplayWidth = (newDisplayWidth: number) => {
   syncDisplayWidths(newDisplayWidth);
   emit("update:display-width", newDisplayWidth);
 };
+const completeWithoutAnimation = (newDisplayWidth: number) => {
+  barDisplayWidth.value = newDisplayWidth;
+  updateDisplayWidth(newDisplayWidth);
+  emit("complete:display-width");
+};
 const tween = ref<TweenBuilderConfiguration>();
 
 watch(
@@ -43,20 +48,15 @@ watch(
   (newIsSkipAnimations) => {
     if (!newIsSkipAnimations) return;
 
-    barDisplayWidth.value = barWidth.value;
-    updateDisplayWidth(barWidth.value);
-    emit("complete:display-width");
+    completeWithoutAnimation(barWidth.value);
   },
 );
 
 watch(barWidth, (newBarWidth) => {
   if (isSkipAnimations) return;
 
-  if (isSettingsSkipAnimations.value) {
-    barDisplayWidth.value = newBarWidth;
-    updateDisplayWidth(newBarWidth);
-    emit("complete:display-width");
-  } else
+  if (isSettingsSkipAnimations.value) completeWithoutAnimation(newBarWidth);
+  else
     useTween(tween, {
       displayWidth: newBarWidth,
       duration: Temporal.Duration.from({ seconds: 1 }).total("milliseconds"),
