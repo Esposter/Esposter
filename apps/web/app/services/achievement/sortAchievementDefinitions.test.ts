@@ -25,7 +25,7 @@ describe(sortAchievementDefinitions, () => {
     );
   });
 
-  test("keeps the category order for rarest first until the rarity read lands", () => {
+  test("keeps the category order for rarest first without a rarity map", () => {
     expect.hasAssertions();
 
     expect(sortAchievementDefinitions(definitions, AchievementSort.RarestFirst)).toStrictEqual(definitions);

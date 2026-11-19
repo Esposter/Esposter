@@ -3,7 +3,7 @@ import type { AchievementName } from "@esposter/db-schema";
 
 import { AchievementSort } from "#src/models/achievement/AchievementSort";
 
-// Until the rarity read lands every rarity is 0, and toSorted keeps equal elements in their category order
+// Without a rarity map every rarity is 0, and toSorted keeps equal elements in their category order
 export const sortAchievementDefinitions = (
   achievementDefinitions: AchievementDefinitionEntry[],
   sort: AchievementSort,
