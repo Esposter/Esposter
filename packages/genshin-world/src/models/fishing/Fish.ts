@@ -3,7 +3,7 @@ import { z } from "zod";
 // A fish as the generated fish slice holds it: its hit points, the ranges its lure reactions are drawn at, its bite's
 // Timeout in seconds, the feeler range its nibbles run over, the moving zone its tension is held in while reeled, the
 // Item it becomes in the bag, the proficiency it counts toward, its catch's reward row, the skills it fights with, the
-// Monster it is filed under and the category its table files it in, when the table files it in one
+// Monster it is filed under and the category its bait tags give it, when they give one
 export interface Fish {
   attractRange: number;
   biteTimeout: number;

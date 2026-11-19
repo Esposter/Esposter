@@ -25,12 +25,9 @@ export const SERENITEA_POT_ITEM_ID = 220026;
 export const SERENITEA_POT_QUEST_ID = "70661";
 // Provisional: how long a strike's splash shows, in seconds, from the moment the strike hooks the fish
 export const FISHING_SPLASH_SECONDS = 1;
-// The bodies a fish stand-in is drawn as, in turn by its category, the standard body first. Each is in metres
-export const FISH_STAND_IN_SHAPES: FishGeometryOptions[] = [
-  { bodyDepth: 0.3, bodyLength: 0.9, tailSpread: 0.35 },
-  { bodyDepth: 0.2, bodyLength: 1.1, tailSpread: 0.3 },
-  { bodyDepth: 0.45, bodyLength: 0.8, tailSpread: 0.4 },
-];
+// The body a hooked fish is drawn as until a fit gives it one, in metres. Every fish without a fitted body takes this one:
+// The table names no body per category, so a fish's category does not choose its shape
+export const FISH_STAND_IN_OPTIONS: FishGeometryOptions = { bodyDepth: 0.3, bodyLength: 0.9, tailSpread: 0.35 };
 // The stand-ins of the rod, the float, the splash and a point's ring, each in metres, and their colours
 export const FISHING_ROD_OPTIONS: RodGeometryOptions = { baseRadius: 0.02, length: 2.4, tipRadius: 0.004 };
 export const FISHING_ROD_COLOR = "#8a6a4a";

@@ -1,6 +1,6 @@
 import type { Fish } from "genshin-world";
 
-export const toFish = (row: Fish): Fish => ({
+export const toFish = (row: Fish, fishCateId: number | undefined): Fish => ({
   attractRange: row.attractRange,
   biteTimeout: row.biteTimeout,
   bonusDuration: row.bonusDuration,
@@ -8,7 +8,7 @@ export const toFish = (row: Fish): Fish => ({
   bonusSpeed: row.bonusSpeed,
   bonusWidth: row.bonusWidth,
   feelerTimes: row.feelerTimes,
-  fishCateId: row.fishCateId,
+  fishCateId,
   fleeRange: row.fleeRange,
   hp: row.hp,
   id: row.id,

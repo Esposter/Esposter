@@ -3,7 +3,7 @@ import type { FishingPointPlace } from "#src/models/fishing/FishingPointPlace";
 
 import { FishingPhase } from "#src/models/fishing/FishingPhase";
 import { computeFishingFish } from "#src/services/fishing/computeFishingFish";
-import { computeFishStandIn } from "#src/services/fishing/computeFishStandIn";
+import { FISH_STAND_IN_OPTIONS } from "#src/services/fishing/constants";
 import { describe, expect, test } from "vitest";
 
 const createFish = (fishCateId?: number): Fish => ({
@@ -34,16 +34,16 @@ describe(computeFishingFish, () => {
 
     expect(computeFishingFish({ cast: { fish: createFish(), phase: FishingPhase.Reeling }, point })).toStrictEqual({
       position: point.position,
-      shape: computeFishStandIn(undefined),
+      shape: FISH_STAND_IN_OPTIONS,
     });
     expect(computeFishingFish({ cast: { fish: createFish(), phase: FishingPhase.Biting }, point })).toBeUndefined();
   });
 
-  test("a fish with no codex model is drawn as its category's stand-in", () => {
+  test("a fish with no codex model is drawn as the standard stand-in", () => {
     expect.hasAssertions();
 
     expect(
       computeFishingFish({ cast: { fish: createFish(CATEGORY_ID), phase: FishingPhase.Reeling }, point }),
-    ).toStrictEqual({ position: point.position, shape: computeFishStandIn(CATEGORY_ID) });
+    ).toStrictEqual({ position: point.position, shape: FISH_STAND_IN_OPTIONS });
   });
 });

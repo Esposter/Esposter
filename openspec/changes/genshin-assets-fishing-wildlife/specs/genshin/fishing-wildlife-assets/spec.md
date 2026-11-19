@@ -26,17 +26,17 @@ While a fish is hooked, the scene SHALL draw one fish body at the lure's point, 
 - **WHEN** the reel's scene is shown
 - **THEN** one fish body stands at the lure's point
 
-#### Scenario: A fish with no codex model is drawn as its category's stand-in
+#### Scenario: A fish with no codex model is drawn as the standard stand-in
 
 - **GIVEN** a fish's record names a codex row that has no model
 - **WHEN** the fish is hooked
-- **THEN** the stand-in fish of its category stands at the lure instead
+- **THEN** the standard fish stand-in stands at the lure instead, whatever the fish's category
 
 #### Scenario: A fish record keeps its monster id and category
 
 - **GIVEN** a fish is in the fishing dataset
 - **WHEN** its record is read
-- **THEN** the record names the fish's monster id and its category
+- **THEN** the record names the fish's monster id and its category, the feature tag its monster holds that a fishing bait weights
 
 ### Requirement: A cast shows a rod and a float until the line is reeled in
 

@@ -18,7 +18,6 @@ describe(toFish, () => {
       bonusSpeed: [],
       bonusWidth: 0,
       feelerTimes: [],
-      fishCateId: FISH_CATEGORY_ID,
       fleeRange: 0,
       hp: 0,
       id: 0,
@@ -29,6 +28,6 @@ describe(toFish, () => {
       skillId: [],
     };
 
-    expect(toFish(row)).toStrictEqual(row);
+    expect(toFish(row, FISH_CATEGORY_ID)).toStrictEqual({ ...row, fishCateId: FISH_CATEGORY_ID });
   });
 });

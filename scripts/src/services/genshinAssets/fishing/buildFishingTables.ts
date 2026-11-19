@@ -6,16 +6,19 @@ import type { ExcelFishRewardRow } from "#src/models/genshinAssets/fishing/Excel
 import type { ExcelFishRodRow } from "#src/models/genshinAssets/fishing/ExcelFishRodRow";
 import type { ExcelFishSkillRow } from "#src/models/genshinAssets/fishing/ExcelFishSkillRow";
 import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelFishStockRow";
+import type { ExcelMonsterRow } from "#src/models/genshinAssets/fishing/ExcelMonsterRow";
 import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { Fish } from "genshin-world";
 
 import { toFish } from "#src/services/genshinAssets/fishing/toFish";
+import { toFishCategory } from "#src/services/genshinAssets/fishing/toFishCategory";
 import { toFishingBait } from "#src/services/genshinAssets/fishing/toFishingBait";
 import { toFishingPoolFishIds } from "#src/services/genshinAssets/fishing/toFishingPoolFishIds";
 import { toFishingPoolsByRegion } from "#src/services/genshinAssets/fishing/toFishingPoolsByRegion";
 import { toFishReward } from "#src/services/genshinAssets/fishing/toFishReward";
 import { toFishRod } from "#src/services/genshinAssets/fishing/toFishRod";
 import { toFishSkill } from "#src/services/genshinAssets/fishing/toFishSkill";
+import { toFishTagMap } from "#src/services/genshinAssets/fishing/toFishTagMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
@@ -30,19 +33,22 @@ export const buildFishingTables = (cityRegionMap: ReadonlyMap<number, string>): 
   const { regionPools, skippedPools } = toFishingPoolsByRegion(poolRows, stocks, cityRegionMap);
   const poolIdFishIdsMap = new Map(poolRows.map((row) => [row.id, toFishingPoolFishIds(row, stocks)]));
   const fishRows = readExcelTable<Fish>("FishExcelConfigData");
-  const fish = fishRows.map((row) => toFish(row));
-  const groupIdTagsMap = new Map(
-    readExcelTable<ExcelFeatureTagGroupRow>("FeatureTagGroupExcelConfigData").map((group) => [
-      group.groupID,
-      new Set(group.tagIDs.filter((tag) => tag !== 0)),
-    ]),
+  const fishTagsMap = toFishTagMap(
+    fishRows,
+    readExcelTable<ExcelMonsterRow>("MonsterExcelConfigData"),
+    readExcelTable<ExcelFeatureTagGroupRow>("FeatureTagGroupExcelConfigData"),
   );
-  const fishIdTagsMap = new Map(
-    fishRows.map((row) => [row.id, groupIdTagsMap.get(row.monsterId) ?? new Set<number>()]),
+  const baitRows = readExcelTable<ExcelFishBaitRow>("FishBaitExcelConfigData");
+  // The tags the baits that draw by tags weight: a bait naming pools draws their fish instead, so its tags file no fish
+  const weightedTags = new Set(
+    baitRows
+      .filter(({ poolIdList }) => poolIdList.length === 0)
+      .flatMap(({ featureList }) => featureList.filter(({ weight }) => weight > 0).map(({ featureTag }) => featureTag)),
   );
-  const baits = readExcelTable<ExcelFishBaitRow>("FishBaitExcelConfigData").map((row) =>
-    toFishingBait(row, fishIdTagsMap, poolIdFishIdsMap),
+  const fish = fishRows.map((row) =>
+    toFish(row, toFishCategory(row.monsterId, fishTagsMap.get(row.id) ?? new Set(), weightedTags)),
   );
+  const baits = baitRows.map((row) => toFishingBait(row, fishTagsMap, poolIdFishIdsMap));
   const joinedFishCount = new Set(baits.flatMap((bait) => bait.fishIds)).size;
   const rods = readExcelTable<ExcelFishRodRow>("FishRodExcelConfigData").map((row) => toFishRod(row));
   const skills = readExcelTable<ExcelFishSkillRow>("FishSkillExcelConfigData").map((row) => toFishSkill(row));
