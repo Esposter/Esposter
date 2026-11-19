@@ -369,6 +369,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     leaveCall,
     selectVirtualBackground,
     setCurrentRoomCallSessionId,
+    setHandRaised,
     toggleCamera,
     toggleDeafen,
     toggleHandRaised,

@@ -4,6 +4,7 @@ import type { CallParticipant } from "@esposter/db-schema";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { createId } from "#shared/util/math/random/createId";
+import { useCallParticipantActions } from "#src/composables/message/room/call/useCallParticipantActions";
 import { useSession } from "#src/services/auth/authClient.test";
 import { AdminActionHookMap } from "#src/services/message/moderation/AdminActionHookMap";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -12,8 +13,9 @@ import { useCallStore } from "#src/store/message/room/call/index";
 import { useMediaStore } from "#src/store/message/room/call/media";
 import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { useRealtimeStore } from "#src/store/message/room/realtime";
+import { useRoleStore } from "#src/store/message/room/role";
 import { AdminActionType, CALL_ID_LENGTH } from "@esposter/db-schema";
-import { RoutePath, takeOne } from "@esposter/shared";
+import { RoutePath, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -329,5 +331,43 @@ describe(useCallStore, () => {
     await flushPromises();
 
     expect(isLeaving.value).toBe(false);
+  });
+
+  // A lower is the same row's hand as a raise, so it waits behind the raise still in flight: sent at once, the server
+  // Could apply the two in either order and keep whichever arrived last
+  test("sends a lower of a participant's hand behind that participant's raise still in flight", async () => {
+    expect.hasAssertions();
+
+    const participantId = v7();
+    const raiseGate = Promise.withResolvers<void>();
+    const handRaisedSent: boolean[] = [];
+    trpcMsw.callSession.setHandRaised.mutation(async ({ input }) => {
+      handRaisedSent.push(input.isHandRaised);
+      if (input.isHandRaised) await raiseGate.promise;
+    });
+    const participantStore = useParticipantStore();
+    const { setParticipantId, setParticipantMap } = participantStore;
+    setParticipantId(participantId);
+    setParticipantMap(callSessionId, new Map([[participantId, createParticipant(participantId)]]));
+    const roleStore = useRoleStore();
+    vi.spyOn(roleStore, "checkHasMyPermission").mockReturnValue(true);
+    const callStore = useCallStore();
+    const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    callRoomId.value = roomId;
+    callStore.toggleHandRaised();
+    await flushPromises();
+    const { getActions } = useCallParticipantActions();
+    const lowerHand = takeOne(
+      getActions(participantId, "userId", false, true).filter(({ title }) => title === "Lower Hand"),
+    );
+    await lowerHand.onClick?.();
+    await flushPromises();
+    const sentWhileRaiseInFlight = [...handRaisedSent];
+    raiseGate.resolve();
+    await waitForSynchronizedFunctions();
+
+    expect(sentWhileRaiseInFlight).toStrictEqual([true]);
+    expect(handRaisedSent).toStrictEqual([true, false]);
   });
 });

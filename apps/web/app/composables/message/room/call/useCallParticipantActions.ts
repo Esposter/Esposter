@@ -3,20 +3,17 @@ import type { UnparameterizedAdminActionInput } from "#shared/models/db/moderati
 import type { Item } from "#src/models/shared/Item";
 
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
+import { AdminActionIconMap } from "#src/services/message/moderation/AdminActionIconMap";
 import { useCallStore } from "#src/store/message/room/call/index";
-import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { useRoleStore } from "#src/store/message/room/role";
 import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 
 export const useCallParticipantActions = () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation: executeLowerHandMutation } = useMutation();
   const { executeMutation: executeAdminActionMutation } = useMutation();
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
-  const participantStore = useParticipantStore();
-  const { callSessionParticipantsMap } = storeToRefs(participantStore);
-  const { setParticipantHandRaised } = participantStore;
+  const { setHandRaised } = callStore;
   const roleStore = useRoleStore();
   const { checkHasMyPermission } = roleStore;
   const isForceMuteable = computed(() => checkHasMyPermission(callRoomId.value, RoomPermission.MuteMembers));
@@ -47,28 +44,19 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "i-mdi:hand-back-right-off",
         onClick: () => {
-          executeLowerHandMutation(
-            () => $trpc.callSession.setHandRaised.mutate({ callSessionId, isHandRaised: false, participantId }),
-            {
-              applyOptimistic: () => {
-                const previousIsHandRaised =
-                  callSessionParticipantsMap.value.get(callSessionId)?.get(participantId)?.isHandRaised ?? false;
-                setParticipantHandRaised(callSessionId, participantId, false);
-                return () => {
-                  setParticipantHandRaised(callSessionId, participantId, previousIsHandRaised);
-                };
-              },
-              key: participantId,
-            },
-          );
+          setHandRaised(false, participantId);
         },
         title: "Lower Hand",
       });
     if (isForceMuteable.value)
       items.push(
         isParticipantMuted
-          ? getAdminActionItem(AdminActionType.ForceUnmute, "i-mdi:microphone", "Force Unmute")
-          : getAdminActionItem(AdminActionType.ForceMute, "i-mdi:microphone-off", "Force Mute"),
+          ? getAdminActionItem(
+              AdminActionType.ForceUnmute,
+              AdminActionIconMap[AdminActionType.ForceUnmute],
+              "Force Unmute",
+            )
+          : getAdminActionItem(AdminActionType.ForceMute, AdminActionIconMap[AdminActionType.ForceMute], "Force Mute"),
       );
     if (isKickableFromCall.value)
       items.push(getAdminActionItem(AdminActionType.KickFromCall, "i-mdi:account-remove", "Kick from Call"));
