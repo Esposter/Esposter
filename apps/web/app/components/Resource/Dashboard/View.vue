@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ToData } from "@esposter/shared";
+
 // Aliased so the auto-imported <Dashboard> component isn't shadowed by the model class
 import { Dashboard as BaseDashboard } from "#shared/models/dashboard/data/Dashboard";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
@@ -12,7 +14,7 @@ interface Props {
 
 const { id } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const { content, name } = await useReadPublishedResourceContent(
+const { content, name } = await useReadPublishedResourceContent<ToData<BaseDashboard>>(
   ResourceType.Dashboard,
   id,
   () => $trpc.dashboard.readPublishedResourceContent.query(id),
@@ -20,7 +22,7 @@ const { content, name } = await useReadPublishedResourceContent(
 );
 // The published content is the data form of the class — `visuals` carries plain rows where the constructor's
 // `Partial<Dashboard>` declares class instances, and the class is what rebuilds them
-const dashboard = new BaseDashboard(content as never);
+const dashboard = new BaseDashboard(content);
 </script>
 
 <template>
