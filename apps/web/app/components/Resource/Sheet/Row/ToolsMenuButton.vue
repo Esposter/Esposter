@@ -18,13 +18,13 @@ const isStatisticsOpen = ref(false);
 const isDeduplicateOpen = ref(false);
 // Each family of cleanup is one flat group, its first option starting it, as a Data menu lists them rather than a
 // Submenu each
-const getCategoryItems = <TValue>(
+const getCategoryItems = function <TValue>(
   definitions: SelectItemCategoryDefinition<TValue>[],
   prefix: string,
   icon: string,
   apply: (value: TValue) => void,
-): Item[] =>
-  definitions.map(({ title, value }, index) => ({
+): Item[] {
+  return definitions.map(({ title, value }, index) => ({
     icon,
     isGroupStart: index === 0,
     onClick: () => {
@@ -32,6 +32,7 @@ const getCategoryItems = <TValue>(
     },
     title: `${prefix}: ${title}`,
   }));
+};
 const items = computed<Item[]>(() => [
   {
     icon: "i-mdi:sigma",

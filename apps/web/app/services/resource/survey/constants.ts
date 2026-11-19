@@ -12,8 +12,8 @@ import {
   checkIsSurveyAnsweringType,
   SurveyImageFit,
   SurveyNodeType,
-  SurveyTextInputType,
   surveyNodeTypeDefinitionMap,
+  SurveyTextInputType,
 } from "vue-survey-engine-headless";
 
 // The conditions a node's editor shows, each under its label, in the order the editor lists them

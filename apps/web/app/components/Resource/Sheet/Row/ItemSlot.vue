@@ -7,7 +7,7 @@ import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/colu
 import { useCellStore } from "#src/store/resource/sheet/cell";
 
 interface Props {
-  column: ToData<Column> | undefined;
+  column?: ToData<Column> | undefined;
   item: ToData<Row>;
   rowIndex: number;
 }

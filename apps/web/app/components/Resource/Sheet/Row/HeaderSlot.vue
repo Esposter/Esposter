@@ -6,7 +6,7 @@ import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/colu
 import { useFilterStore } from "#src/store/resource/sheet/filter";
 
 interface Props {
-  column: ToData<Column> | undefined;
+  column?: ToData<Column> | undefined;
 }
 
 const { column } = defineProps<Props>();
