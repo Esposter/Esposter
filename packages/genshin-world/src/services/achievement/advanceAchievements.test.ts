@@ -118,7 +118,7 @@ describe(advanceAchievements, () => {
     ).toStrictEqual({ primogems: PRIMOGEMS, progressMap: new Map([[COUNTED_ID, { count: 1, finishedAt: EPOCH }]]) });
   });
 
-  test("an exploring trigger counts a doing once its rule is called", () => {
+  test("an exploring trigger counts a chest its trigger names once", () => {
     expect.hasAssertions();
     const chest: Achievement = {
       ...counted,
@@ -319,7 +319,7 @@ describe(advanceAchievements, () => {
     ).toStrictEqual({ primogems: 0, progressMap: new Map() });
   });
 
-  test("a server-fired achievement advances when its own doing happens", () => {
+  test("an item obtained counts the quantity it gains, for the item id its trigger names", () => {
     expect.hasAssertions();
 
     const ITEM_ID = "41";
