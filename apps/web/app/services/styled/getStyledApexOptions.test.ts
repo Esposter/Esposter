@@ -57,6 +57,23 @@ describe(getStyledApexOptions, () => {
     expect(formatter("<b>")).toBe("&lt;b&gt;: ");
   });
 
+  // An array of y tooltips holds one per series, and each row's name is written the same way, so every title is escaped
+  test("escapes each series' row title in an array of y tooltips, which keeps its length", () => {
+    expect.hasAssertions();
+
+    const { tooltip } = getStyledApexOptions({
+      isDark: false,
+      options: { tooltip: { y: [{}, { title: { formatter: (seriesName: string) => `${seriesName}%` } }] } },
+      series: [],
+    });
+    const y = tooltip?.y;
+    assert(Array.isArray(y));
+
+    expect(y).toHaveLength(2);
+    expect(y[0]?.title?.formatter?.("<b>")).toBe("&lt;b&gt;: ");
+    expect(y[1]?.title?.formatter?.("<b>")).toBe("&lt;b&gt;%");
+  });
+
   test("keeps the chart height the options name", () => {
     expect.hasAssertions();
 

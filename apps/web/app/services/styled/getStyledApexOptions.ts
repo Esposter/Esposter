@@ -5,6 +5,7 @@ import { ApexChartMarkerShapes } from "#src/services/styled/ApexChartMarkerShape
 import { defu } from "defu";
 
 type ApexFormatterOpts = Parameters<NonNullable<NonNullable<NonNullable<ApexOptions["tooltip"]>["x"]>["formatter"]>>[1];
+type ApexYTooltip = Exclude<NonNullable<NonNullable<ApexOptions["tooltip"]>["y"]>, unknown[]>;
 
 interface StyledApexOptionsInput {
   isDark: boolean;
@@ -22,6 +23,9 @@ interface StyledApexOptionsInput {
 // Since defu would concatenate it with any series the options carry
 export const getStyledApexOptions = ({ isDark, options, series, type }: StyledApexOptionsInput): ApexOptions => {
   const resolvedType = type ?? options.chart?.type ?? "line";
+  // The y tooltips are escaped whole in getTooltipOptions, so the merge takes the tooltip options without them: defu
+  // would concatenate an array of y tooltips with the escaped one rather than replace it
+  const { y: _yTooltips, ...tooltip }: NonNullable<ApexOptions["tooltip"]> = options.tooltip ?? {};
   const styledOptions = defu(
     {
       chart: { type: resolvedType },
@@ -32,7 +36,7 @@ export const getStyledApexOptions = ({ isDark, options, series, type }: StyledAp
       theme: { mode: isDark ? "dark" : "light" },
       tooltip: getTooltipOptions(options),
     } satisfies ApexOptions,
-    options,
+    { ...options, tooltip },
     {
       markers: {
         shape: ApexChartMarkerShapes,
@@ -46,9 +50,22 @@ export const getStyledApexOptions = ({ isDark, options, series, type }: StyledAp
 // Apex writes a formatter's output raw whenever it differs from the value it formatted, and a line's title is the one
 // Case that differs: its x value is an index, which the chart formats into its category's name. So the title is escaped
 // Whatever formatter produced it, Apex's own included. A series row's name is escaped the same way, after the default
-// Separator Apex adds to it. An array of y tooltips is left to its caller, since the object here would replace it
+// Separator Apex adds to it. Each y tooltip is escaped on its own, so an array holds one escaped tooltip per series
+const getYTooltip = (yTooltip: ApexYTooltip | undefined): ApexYTooltip => ({
+  ...yTooltip,
+  title: {
+    formatter: (seriesName: string, formatterOptions?: ApexFormatterOpts) =>
+      escapeHtml(
+        yTooltip?.title?.formatter
+          ? yTooltip.title.formatter(seriesName, formatterOptions)
+          : seriesName
+            ? `${seriesName}: `
+            : "",
+      ),
+  },
+});
 const getTooltipOptions = (options: ApexOptions): NonNullable<ApexOptions["tooltip"]> => {
-  const yTooltip = Array.isArray(options.tooltip?.y) ? undefined : options.tooltip?.y;
+  const y = options.tooltip?.y;
   return {
     x: {
       formatter: (value, formatterOptions?: ApexFormatterOpts) =>
@@ -60,21 +77,6 @@ const getTooltipOptions = (options: ApexOptions): NonNullable<ApexOptions["toolt
           ),
         ),
     },
-    ...(Array.isArray(options.tooltip?.y)
-      ? {}
-      : {
-          y: {
-            title: {
-              formatter: (seriesName: string, formatterOptions?: ApexFormatterOpts) =>
-                escapeHtml(
-                  yTooltip?.title?.formatter
-                    ? yTooltip.title.formatter(seriesName, formatterOptions)
-                    : seriesName
-                      ? `${seriesName}: `
-                      : "",
-                ),
-            },
-          },
-        }),
+    y: Array.isArray(y) ? y.map(getYTooltip) : getYTooltip(y),
   };
 };
