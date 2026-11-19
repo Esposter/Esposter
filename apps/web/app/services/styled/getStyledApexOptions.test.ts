@@ -19,6 +19,44 @@ describe(getStyledApexOptions, () => {
     expect(formatter("<b>", { seriesIndex: 0, w: { config: {}, globals: {} } })).toBe("&lt;b&gt;%");
   });
 
+  // ApexCharts writes a tooltip's title with innerHTML, and a line's x value is its category's index: the title is the
+  // Category's name, looked up by the index, which Apex writes raw because it differs from the index it formatted
+  test("escapes a tooltip title the chart looked up by index", () => {
+    expect.hasAssertions();
+
+    const { tooltip } = getStyledApexOptions({ isDark: false, options: {}, series: [] });
+    const formatter = tooltip?.x?.formatter;
+    assert.exists(formatter);
+
+    expect(formatter(0, { w: { formatters: { xLabelFormatter: () => "<b>" } } } as never)).toBe("&lt;b&gt;");
+  });
+
+  test("escapes a tooltip title after the caller's formatter", () => {
+    expect.hasAssertions();
+
+    const { tooltip } = getStyledApexOptions({
+      isDark: false,
+      options: { tooltip: { x: { formatter: (value: number | string) => `${value}%` } } },
+      series: [],
+    });
+    const formatter = tooltip?.x?.formatter;
+    assert.exists(formatter);
+
+    expect(formatter("<b>")).toBe("&lt;b&gt;%");
+  });
+
+  test("escapes a series name's row title", () => {
+    expect.hasAssertions();
+
+    const { tooltip } = getStyledApexOptions({ isDark: false, options: {}, series: [] });
+    const y = tooltip?.y;
+    assert(y !== undefined && !Array.isArray(y));
+    const formatter = y.title?.formatter;
+    assert.exists(formatter);
+
+    expect(formatter("<b>")).toBe("&lt;b&gt;: ");
+  });
+
   test("keeps the chart height the options name", () => {
     expect.hasAssertions();
 

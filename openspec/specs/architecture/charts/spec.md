@@ -67,6 +67,16 @@ A legend entry SHALL be shown as the text it holds, after any formatter the call
 - **WHEN** the chart draws its legend
 - **THEN** the legend shows the markup as text
 
+### Requirement: A tooltip is shown as text
+
+A tooltip's title and the name on each of its rows SHALL be shown as the text they hold, after any formatter the caller passes, including the title Apex looks up from a line's index.
+
+#### Scenario: A tooltip title holding markup
+
+- **GIVEN** a line whose category is named with markup
+- **WHEN** a reader hovers one of its points
+- **THEN** the tooltip shows the markup as text
+
 ### Requirement: A chart follows the app's theme
 
 A chart SHALL take the app's light or dark mode, and SHALL redraw in the new mode when the reader switches it.
