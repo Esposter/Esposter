@@ -1,6 +1,6 @@
 import type { PublicUser } from "@esposter/db-schema";
 
-import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { assertIsNotSelf } from "#server/services/friend/assertIsNotSelf";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
@@ -23,7 +23,7 @@ export const blockRouter = router({
     .input(friendUserIdInputSchema)
     .mutation<PublicUser>(async ({ ctx, input: targetUserId }) => {
       const userId = ctx.user.id;
-      if (userId === targetUserId) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Block, userId);
+      assertIsNotSelf(Operation.Create, DatabaseEntityType.Block, userId, targetUserId);
 
       const blockedUser = await requireEntity(
         ctx.db.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: targetUserId } } }),
@@ -42,7 +42,7 @@ export const blockRouter = router({
     .input(friendUserIdInputSchema)
     .mutation<PublicUser["id"]>(async ({ ctx, input: blockedUserId }) => {
       const userId = ctx.user.id;
-      if (userId === blockedUserId) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Block, userId);
+      assertIsNotSelf(Operation.Delete, DatabaseEntityType.Block, userId, blockedUserId);
 
       requireMutation(
         (

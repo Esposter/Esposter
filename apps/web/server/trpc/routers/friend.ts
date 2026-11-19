@@ -1,7 +1,7 @@
 import type { PublicUser } from "@esposter/db-schema";
 
 import { containsLike } from "#server/services/db/containsLike";
-import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { assertIsNotSelf } from "#server/services/friend/assertIsNotSelf";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
@@ -22,7 +22,7 @@ export const friendRouter = router({
     .input(friendUserIdInputSchema)
     .mutation<void>(async ({ ctx, input: friendId }) => {
       const userId = ctx.user.id;
-      if (userId === friendId) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, userId);
+      assertIsNotSelf(Operation.Delete, DatabaseEntityType.Friend, userId, friendId);
 
       const friendshipId = getFriendshipId(userId, friendId);
       requireMutation(

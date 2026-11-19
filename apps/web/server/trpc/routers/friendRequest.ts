@@ -1,6 +1,7 @@
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
+import { assertIsNotSelf } from "#server/services/friend/assertIsNotSelf";
 import { getReceivedFriendRequestWhere } from "#server/services/friend/getReceivedFriendRequestWhere";
 import { readUserPair } from "#server/services/friend/readUserPair";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
@@ -56,8 +57,7 @@ export const friendRequestRouter = router({
     .input(friendUserIdInputSchema)
     .mutation<void>(async ({ ctx, input: senderId }) => {
       const userId = ctx.user.id;
-      if (userId === senderId)
-        throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, userId);
+      assertIsNotSelf(Operation.Delete, DatabaseEntityType.FriendRequest, userId, senderId);
 
       const friendshipId = getFriendshipId(senderId, userId);
       requireMutation(
@@ -84,7 +84,7 @@ export const friendRequestRouter = router({
     .input(friendUserIdInputSchema)
     .mutation<FriendRequestInSocialWithRelations>(async ({ ctx, input: receiverId }) => {
       const userId = ctx.user.id;
-      if (userId === receiverId) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId);
+      assertIsNotSelf(Operation.Create, DatabaseEntityType.Friend, userId, receiverId);
       const [, senderUser] = await readUserPair(ctx.db, receiverId, userId);
       const friendshipId = getFriendshipId(userId, receiverId);
       // The request is only inserted while no block or friendship stands between the two users, so the check and the
