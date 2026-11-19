@@ -8,10 +8,12 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+type SubscribeCallback = (value: string) => Promisable<(() => Promisable<void>) | undefined>;
+
 describe(useOnlineSubscribable, () => {
   let wrapper: VueWrapper;
   let source: Ref<string>;
-  let callback: ReturnType<typeof vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>>;
+  let callback: ReturnType<typeof vi.fn<SubscribeCallback>>;
   let cleanup: ReturnType<typeof vi.fn<() => void>>;
   const mountSubscribable = async () => {
     wrapper = await mountSuspended(
@@ -27,7 +29,7 @@ describe(useOnlineSubscribable, () => {
   beforeEach(() => {
     source = ref("");
     cleanup = vi.fn<() => void>();
-    callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>();
+    callback = vi.fn<SubscribeCallback>();
     goOnline();
   });
 
@@ -69,7 +71,7 @@ describe(useOnlineSubscribable, () => {
   test("calls cleanup when going offline", async () => {
     expect.hasAssertions();
 
-    callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>(() => cleanup);
+    callback = vi.fn<SubscribeCallback>(() => cleanup);
     await mountSubscribable();
     await flushPromises();
     goOffline();
@@ -109,7 +111,7 @@ describe(useOnlineSubscribable, () => {
   test("calls cleanup on unmount", async () => {
     expect.hasAssertions();
 
-    callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>(() => cleanup);
+    callback = vi.fn<SubscribeCallback>(() => cleanup);
     await mountSubscribable();
     await flushPromises();
     wrapper.unmount();
@@ -120,9 +122,7 @@ describe(useOnlineSubscribable, () => {
   test("calls cleanup from async callback on unmount", async () => {
     expect.hasAssertions();
 
-    callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>(() =>
-      Promise.resolve(cleanup),
-    );
+    callback = vi.fn<SubscribeCallback>(() => Promise.resolve(cleanup));
     await mountSubscribable();
     await flushPromises();
     wrapper.unmount();
@@ -135,7 +135,7 @@ describe(useOnlineSubscribable, () => {
 
     const { promise, resolve: resolveCleanup }: PromiseWithResolvers<void> = Promise.withResolvers();
     const asyncCleanup = vi.fn<() => Promise<void>>(() => promise);
-    callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>(() => asyncCleanup);
+    callback = vi.fn<SubscribeCallback>(() => asyncCleanup);
     await mountSubscribable();
     await flushPromises();
 
@@ -158,7 +158,7 @@ describe(useOnlineSubscribable, () => {
     expect.hasAssertions();
 
     vi.spyOn(console, "error").mockImplementation(noop);
-    callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>();
+    callback = vi.fn<SubscribeCallback>();
     callback.mockRejectedValueOnce(new Error(" "));
     await mountSubscribable();
     await flushPromises();
@@ -190,7 +190,7 @@ describe(useOnlineSubscribable, () => {
   test("calls cleanup on unmount when called after an async operation with pre-captured context", async () => {
     expect.hasAssertions();
 
-    callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>(() => cleanup);
+    callback = vi.fn<SubscribeCallback>(() => cleanup);
     wrapper = await mountSuspended(
       defineComponent({
         render: () => h("div"),

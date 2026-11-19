@@ -7,6 +7,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/trpc/createErrorAlert"));
 
+type AuthSave = (value: Counter, etag: string | undefined) => Promise<{ etag: string }>;
+
 interface Counter {
   count: number;
   updatedAt: Date;
@@ -52,9 +54,7 @@ describe(useSave, () => {
     expect.hasAssertions();
 
     const state = ref(createCounter());
-    const save = vi.fn<(value: Counter, etag: string | undefined) => Promise<{ etag: string }>>(() =>
-      Promise.resolve({ etag: "next" }),
-    );
+    const save = vi.fn<AuthSave>(() => Promise.resolve({ etag: "next" }));
     const { save: saveState, setState } = useSave(state, { auth: { save } });
     const loaded = { ...createCounter(), count: 5 };
     setState(loaded, "read");
@@ -71,9 +71,7 @@ describe(useSave, () => {
     const reload = vi.fn<() => void>();
     vi.stubGlobal("location", { reload });
     const state = ref(createCounter());
-    const save = vi.fn<(value: Counter, etag: string | undefined) => Promise<{ etag: string }>>(() =>
-      Promise.reject(createConflictError()),
-    );
+    const save = vi.fn<AuthSave>(() => Promise.reject(createConflictError()));
     const { save: saveState } = useSave(state, { auth: { save } });
     state.value.count = 1;
     saveState();
@@ -90,9 +88,7 @@ describe(useSave, () => {
     vi.stubGlobal("location", { reload });
     const state = ref(createCounter());
     const error = new Error("network");
-    const save = vi.fn<(value: Counter, etag: string | undefined) => Promise<{ etag: string }>>(() =>
-      Promise.reject(error),
-    );
+    const save = vi.fn<AuthSave>(() => Promise.reject(error));
     const { save: saveState } = useSave(state, { auth: { save } });
     state.value.count = 1;
     saveState();
