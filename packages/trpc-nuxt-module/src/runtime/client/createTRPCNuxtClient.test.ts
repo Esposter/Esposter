@@ -73,7 +73,7 @@ describe(createTRPCNuxtClient, () => {
     expect(error.value?.data?.code).toBe("BAD_REQUEST");
   });
 
-  test("a mutate resolves with its own call's result, though a later call cancels the earlier call's request", async () => {
+  test("a mutate resolves with its own call's result when a later call is made before it settles", async () => {
     expect.hasAssertions();
 
     const { mutate } = client.echo.useMutation();
