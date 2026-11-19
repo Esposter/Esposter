@@ -1,7 +1,7 @@
 import type { CanvasRect } from "#src/models/whiteboard/CanvasRect";
 import type { Viewport } from "#src/models/whiteboard/Viewport";
 import type { WhiteboardGesture } from "#src/models/whiteboard/WhiteboardGesture";
-import type { Bounds, Point, PositionedDocument, PositionedElement } from "vue-block-editor-headless";
+import type { Bounds, PositionedDocument, PositionedElement } from "vue-block-editor-headless";
 
 import { GestureTool } from "#src/models/whiteboard/GestureTool";
 import { getWorldPoint } from "#src/services/whiteboard/gesture/getWorldPoint";
@@ -23,7 +23,7 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   const textEditElementId = ref("");
   const tool = ref<GestureTool>(GestureTool.Select);
   const viewport = ref<Viewport>({ scale: 1, x: 0, y: 0 });
-  const getCentreScreen = (): Point => ({ x: canvasRect.value.width / 2, y: canvasRect.value.height / 2 });
+  const getCentreScreen = () => ({ x: canvasRect.value.width / 2, y: canvasRect.value.height / 2 });
   // The document point at the middle of the canvas, where a picked image is placed
   const getCentrePoint = () => getWorldPoint(getCentreScreen(), viewport.value);
   const setCanvasRect = (rect: CanvasRect) => {
@@ -59,7 +59,6 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   return {
     canvasRect,
     chooseShape,
-    fitTo,
     fitToElements,
     gesture,
     getCentrePoint,
