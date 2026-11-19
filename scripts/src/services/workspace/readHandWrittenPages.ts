@@ -9,8 +9,9 @@ import { join } from "node:path";
 // The record of what shipped, which ages with the code by design. Every check over the repo's prose reads this one
 // Set, so a page added to it is checked by all of them
 const ROOT_PAGES = ["AGENTS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "SCORE.md", "SECURITY.md"];
-const ARCHIVE_PATH_PREFIX = "openspec/changes/archive/";
+const ARCHIVE_DIRECTORY = "openspec/changes/archive";
 
+// The walk skips the archive itself, rather than listing its pages and dropping them after
 export const readHandWrittenPages = async (): Promise<{ markdown: string; path: string }[]> => {
   const globbedPaths = await Array.fromAsync(
     glob(
@@ -22,13 +23,10 @@ export const readHandWrittenPages = async (): Promise<{ markdown: string; path: 
         "scripts/README.md",
         "openspec/**/*.md",
       ],
-      { cwd: REPOSITORY_ROOT },
+      { cwd: REPOSITORY_ROOT, exclude: (path) => path.replaceAll("\\", "/") === ARCHIVE_DIRECTORY },
     ),
   );
-  const paths = [
-    ...ROOT_PAGES,
-    ...globbedPaths.map((path) => path.replaceAll("\\", "/")).filter((path) => !path.startsWith(ARCHIVE_PATH_PREFIX)),
-  ];
+  const paths = [...ROOT_PAGES, ...globbedPaths.map((path) => path.replaceAll("\\", "/"))];
   return Promise.all(
     paths.map(async (path) => ({ markdown: await readFile(join(REPOSITORY_ROOT, path), "utf8"), path })),
   );
