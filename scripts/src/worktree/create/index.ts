@@ -1,11 +1,12 @@
 import { withInstallLock } from "#src/services/machine/withInstallLock";
 import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
+import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { runCommand } from "#src/services/timing/runCommand";
 import { buildDistributions } from "#src/services/worktree/create/buildDistributions";
 import { copyEslintConfiguration } from "#src/services/worktree/create/copyEslintConfiguration";
 import { createWorktree } from "#src/services/worktree/create/createWorktree";
+import { getBuildDirectories } from "#src/services/worktree/create/getBuildDirectories";
 import { installWorktree } from "#src/services/worktree/create/installWorktree";
-import { readBuildDirectories } from "#src/services/worktree/create/readBuildDirectories";
 import { readMemoryGateShortfall } from "#src/services/worktree/create/readMemoryGateShortfall";
 import { defineCommand } from "citty";
 
@@ -40,7 +41,7 @@ await runCommand(
       await withInstallLock(() => {
         installWorktree(worktreePath, packageNames);
       });
-      buildDistributions(worktreePath, readBuildDirectories(worktreePath, packageNames));
+      buildDistributions(worktreePath, getBuildDirectories(readWorkspacePackages(worktreePath), packageNames));
       // Last, since an install prunes whatever it did not select, and the copied file imports packages it did
       copyEslintConfiguration(mainCheckoutRoot, worktreePath);
       console.info(worktreePath);
