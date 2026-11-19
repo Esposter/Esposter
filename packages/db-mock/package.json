@@ -61,5 +61,8 @@
   "peerDependencies": {
     "@esposter/db-schema": "workspace:*",
     "drizzle-orm": "catalog:"
+  },
+  "inlinedDependencies": {
+    "neverthrow": "8.2.0"
   }
 }
