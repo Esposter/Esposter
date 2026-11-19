@@ -2,6 +2,7 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { ToData } from "@esposter/shared";
 
 import { MoveRowCommand } from "#src/models/resource/sheet/commands/MoveRowCommand";
+import { findLargestDisplacement } from "#src/services/resource/sheet/commands/findLargestDisplacement";
 
 export const useReorderRows = () =>
   useSheetCommand((dataSource, newRows: ToData<Row>[]) => {
@@ -13,21 +14,17 @@ export const useReorderRows = () =>
       const actualRelativePosition = newRowIdRelativePositionMap.get(row.id);
       return actualRelativePosition === undefined ? [] : [{ actualRelativePosition, oldIndex }];
     });
+    const movedRow = findLargestDisplacement(
+      pagePositions.map(({ actualRelativePosition, oldIndex }, expectedRelativePosition) => ({
+        actualIndex: actualRelativePosition,
+        expectedIndex: expectedRelativePosition,
+        sourceIndex: oldIndex,
+      })),
+    );
+    if (!movedRow) return undefined;
 
-    let movedRelativePosition = -1;
-    let fromIndex = -1;
-    let maxDisplacement = 0;
-    for (const [expectedRelativePosition, { actualRelativePosition, oldIndex }] of pagePositions.entries()) {
-      const displacement = Math.abs(actualRelativePosition - expectedRelativePosition);
-      if (displacement > maxDisplacement) {
-        maxDisplacement = displacement;
-        fromIndex = oldIndex;
-        movedRelativePosition = actualRelativePosition;
-      }
-    }
-
-    if (fromIndex === -1 || movedRelativePosition === -1 || maxDisplacement === 0) return undefined;
-
+    const fromIndex = movedRow.sourceIndex;
+    const movedRelativePosition = movedRow.actualIndex;
     let toIndex: number;
     if (movedRelativePosition === 0) {
       const nextRow = newRows.at(1);
