@@ -18,7 +18,7 @@ const isNumber = computed(() => control.value.schema.type === "number" || contro
     :error="issue"
     :is-disabled="!control.enabled || undefined"
     :label="control.label"
-    :model-value="control.data === undefined || control.data === null ? '' : String(control.data)"
+    :model-value="String(control.data ?? '')"
     :rows="layout.isMultiline ? 3 : undefined"
     :type="isNumber ? UiTextFieldType.Number : undefined"
     @update:model-value="(value) => change(isNumber ? (value === '' ? undefined : Number(value)) : value)"
