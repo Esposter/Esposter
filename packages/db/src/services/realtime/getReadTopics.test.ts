@@ -17,7 +17,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
-import { and, eq, getTableName, inArray, isNull, ne, not, sql } from "drizzle-orm";
+import { and, eq, getTableName, inArray, isNull, ne, not, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -516,6 +516,23 @@ describe(getReadTopics, () => {
       .select({ roomId: usersToRoomsInMessage.roomId })
       .from(usersToRoomsInMessage)
       .where(not(eq(usersToRoomsInMessage.userId, userId)));
+
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
+  });
+
+  // An equality under an or names no scope: a row the other branch holds is not its value's, so the rows the read returns are
+  // Not all of the scope's, and the table is named table-wide
+  test("an equality under an or names no scope, whichever branch the other one is", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .select({ roomId: usersToRoomsInMessage.roomId })
+      .from(usersToRoomsInMessage)
+      .where(or(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.displayName, "a")));
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
   });

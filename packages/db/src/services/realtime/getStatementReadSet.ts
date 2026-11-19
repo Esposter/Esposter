@@ -74,6 +74,9 @@ interface ReadContext {
   // Every table occurrence the statement declares, and each one an equality scopes
   declared: Declaration[];
   derived: DerivedSubqueryMap;
+  // Whether the chunks walked are a branch of an `or`. A row another branch holds is not this branch's value, so a condition
+  // In it filters its table, as one under a `not` does
+  inOr: boolean;
   join?: JoinContext | undefined;
   level: ReadSetLevel;
   // Whether the chunks walked sit under a `not`, so a condition in them removes the rows it holds, and filters its table
@@ -384,8 +387,9 @@ const readCondition = (
   declarations: AliasDeclaration[],
   context: ReadContext,
 ): number => {
-  // A condition under a `not` removes the rows it holds, so every column it names filters its table
-  if (context.negated) {
+  // A condition under a `not`, or in a branch of an `or`, does not hold the rows its value selects alone, so every column it
+  // Names filters its table
+  if (context.negated || context.inOr) {
     addFilters(reference.columns, context);
     return 0;
   }
@@ -469,7 +473,11 @@ const getNegatedAt = (chunks: unknown[], depths: number[]): boolean[] => {
   });
 };
 
-const walkSiblings = (chunks: unknown[], context: ReadContext) => {
+// The separator between the branches of an `or`, which drizzle writes into the one flat chunk array its branches are joined in
+const checkIsOrSeparator = (chunk: unknown): boolean => is(chunk, StringChunk) && /\bor\b/iu.test(chunk.value);
+
+const walkSiblings = (chunks: unknown[], parent: ReadContext) => {
+  const context: ReadContext = { ...parent, inOr: parent.inOr || chunks.some((chunk) => checkIsOrSeparator(chunk)) };
   const depths = getDepths(chunks);
   const declarations = getAliasDeclarations(chunks, depths);
   const negatedAt = getNegatedAt(chunks, depths);
@@ -657,6 +665,7 @@ export const getStatementReadSet = (statement: SQLWrapper): ReadSet => {
     condition: false,
     declared,
     derived: new Map(),
+    inOr: false,
     join: undefined,
     level,
     negated: false,
