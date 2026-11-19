@@ -1,6 +1,8 @@
 // @vitest-environment nuxt
 import MessageContentHeaderOverflowMenu from "#src/components/Message/Content/Header/OverflowMenu.vue";
 import UiOverflowMenu from "#src/components/Ui/OverflowMenu.vue";
+import { NotificationTypeLabelMap } from "#src/services/message/NotificationTypeLabelMap";
+import { NotificationType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -21,9 +23,12 @@ describe("messageContentHeaderOverflowMenu", () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(MessageContentHeaderOverflowMenu);
-    const [firstItem] = component.findComponent(UiOverflowMenu).props("items");
+    const items = component.findComponent(UiOverflowMenu).props("items");
 
-    expect(firstItem?.title).toBe("Pinned Messages");
+    expect(items.map(({ title }) => title)).toStrictEqual([
+      "Pinned Messages",
+      ...Object.values(NotificationType).map((type) => NotificationTypeLabelMap[type]),
+    ]);
   });
 
   test("a phone's menu carries the header's toggles as rows", async () => {
@@ -33,14 +38,17 @@ describe("messageContentHeaderOverflowMenu", () => {
     const component = await mountSuspended(MessageContentHeaderOverflowMenu);
     const items = component.findComponent(UiOverflowMenu).props("items");
 
-    expect(
-      items.slice(0, 5).map(({ isChecked, isGroupStart, title }) => ({ isChecked, isGroupStart, title })),
-    ).toStrictEqual([
+    expect(items.map(({ isChecked, isGroupStart, title }) => ({ isChecked, isGroupStart, title }))).toStrictEqual([
       { isChecked: undefined, isGroupStart: undefined, title: "Start Call" },
       { isChecked: false, isGroupStart: undefined, title: "Followed Threads" },
       { isChecked: false, isGroupStart: undefined, title: "Search" },
       { isChecked: false, isGroupStart: undefined, title: "Member List" },
       { isChecked: undefined, isGroupStart: true, title: "Pinned Messages" },
+      ...Object.values(NotificationType).map((type, index) => ({
+        isChecked: undefined,
+        isGroupStart: index === 0,
+        title: NotificationTypeLabelMap[type],
+      })),
     ]);
   });
 });

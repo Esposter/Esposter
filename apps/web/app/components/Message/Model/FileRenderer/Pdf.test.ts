@@ -52,7 +52,7 @@ describe("messageModelFileRendererPdf", () => {
 
   // The viewer is the whole body, so the dialog is action-less — it has nothing to confirm and nothing to cancel, and
   // Its title bar still gives it a title and a way out that is not clicking the backdrop
-  test("opening the viewer", async () => {
+  test("opens the viewer as a dialog with no footer and a close button", async () => {
     expect.hasAssertions();
 
     const component = await mountPdf(false);
@@ -117,6 +117,12 @@ describe("messageModelFileRendererPdf", () => {
     await component.setProps({ url: `${url}?sig=` });
     await flushPromises();
 
-    expect(getDocument).toHaveBeenCalledTimes(1);
+    expect(getDocument).toHaveBeenCalledExactlyOnceWith({
+      cMapPacked: true,
+      cMapUrl: "",
+      standardFontDataUrl: "",
+      url,
+      wasmUrl: "",
+    });
   });
 });

@@ -36,10 +36,13 @@ describe("messageModelRoomSettingsTypeRoleListIndex", () => {
     const roleStore = useRoleStore();
     const { readMyPermissions } = roleStore;
     await readMyPermissions({ roomIds: [roomId] });
+    const outrankedRole = createRole(1);
     const component = await mountSuspended(MessageModelRoomSettingsTypeRoleListIndex, {
-      props: { roles: [createRole(1), createRole(5)], roomId },
+      props: { roles: [outrankedRole, createRole(5)], roomId },
     });
 
-    expect(component.findAllComponents(MessageModelRoomSettingsTypeRoleDeleteButton)).toHaveLength(1);
+    expect(
+      component.findAllComponents(MessageModelRoomSettingsTypeRoleDeleteButton).map((button) => button.props("roleId")),
+    ).toStrictEqual([outrankedRole.id]);
   });
 });

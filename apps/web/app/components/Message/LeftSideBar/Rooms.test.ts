@@ -27,8 +27,9 @@ describe("messageLeftSideBarRooms", () => {
     const component = await mountSuspended(MessageLeftSideBarRooms, { attachTo: document.body });
     await flushPromises();
 
-    expect(component.text()).toContain("The rooms could not be loaded.");
-    expect(component.text()).not.toContain("No rooms yet");
+    expect(component.text()).toMatchInlineSnapshot(
+      `"Rooms Create categoryNew categoryCloseCreate roomSomething went wrongThe rooms could not be loaded.Try again"`,
+    );
   });
 
   // A failed read of the categories is not a failed read of the rooms, and the rooms still list
@@ -44,7 +45,8 @@ describe("messageLeftSideBarRooms", () => {
     const component = await mountSuspended(MessageLeftSideBarRooms, { attachTo: document.body });
     await flushPromises();
 
-    expect(component.text()).toContain("The room categories could not be loaded.");
-    expect(component.text()).not.toContain("The rooms could not be loaded.");
+    expect(component.text()).toMatchInlineSnapshot(
+      `"Rooms Create categoryNew categoryCloseCreate roomNo rooms yetCreate a room or join one with an invite link.Something went wrongThe room categories could not be loaded.Try again"`,
+    );
   });
 });

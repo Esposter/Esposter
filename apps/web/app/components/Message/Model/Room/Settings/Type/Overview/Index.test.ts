@@ -42,7 +42,9 @@ describe("messageModelRoomSettingsTypeOverviewIndex", () => {
     const component = await mountSuspended(MessageModelRoomSettingsTypeOverviewIndex, { props: { room } });
     await flushPromises();
 
-    expect(component.text()).toContain("The room categories could not be loaded.");
+    expect(component.text()).toMatchInlineSnapshot(
+      `"Something went wrongThe room categories could not be loaded.Try againCategoryNone (uncategorized) Assign this room to a category to group it in the sidebar.Topic Visible below the room name. Use /topic to update from chat.0 / 500Slowmode Seconds between messages. Leave empty to disable.Read-onlyOnly members with Manage Messages permission can post."`,
+    );
   });
 
   // A save writes the field the reader edited and no other. The topic another admin set since the panel opened is

@@ -24,7 +24,6 @@ describe("messageModelUserProfileCard", () => {
     setCurrentRoomId(roomId);
     await flushPromises();
 
-    expect(component.text()).toContain(displayName);
-    expect(component.text()).not.toContain(user.name);
+    expect(component.text()).toMatchInlineSnapshot(`"DAdd frienddisplayName actionsCopy user ID displayNameOnline"`);
   });
 });
