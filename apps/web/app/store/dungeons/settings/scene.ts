@@ -6,6 +6,8 @@ import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOp
 import { Grid } from "#src/models/dungeons/Grid";
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
+import { checkIsSettingCellValue } from "#src/services/dungeons/scene/settings/checkIsSettingCellValue";
+import { checkIsSettingsOptionWithValue } from "#src/services/dungeons/scene/settings/checkIsSettingsOptionWithValue";
 import { getSettingsOption } from "#src/services/dungeons/scene/settings/getSettingsOption";
 import { InfoContainerTextMap } from "#src/services/dungeons/scene/settings/InfoContainerTextMap";
 import { SettingsOptionRows } from "#src/services/dungeons/scene/settings/SettingsOptionRows";
@@ -46,19 +48,23 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   // A row with value cells rests on the cell holding its current setting, so the cursor's column always shows the value.
   // A row without them rests on its name
   const getRestingPosition = (rowIndex: number): Position => {
-    if (!checkHasValueCells(rowIndex)) return { x: 0, y: rowIndex };
-
     const option = getSettingsOption(rowIndex);
-    const restingX = settingsOptionGrid.getPositionX(
-      settingsStore.settings[option as keyof typeof settingsStore.settings],
-      rowIndex,
-    );
+    if (!checkHasValueCells(rowIndex) || !checkIsSettingsOptionWithValue(option)) return { x: 0, y: rowIndex };
+
+    const savedValue = settingsStore.settings[option];
+    const restingX = checkIsSettingCellValue(savedValue)
+      ? settingsOptionGrid.getPositionX(savedValue, rowIndex)
+      : undefined;
     // A saved value that matches no cell rests on the first, so the cursor stays on a value cell
     return { x: restingX ?? 1, y: rowIndex };
   };
   // The one place a value is saved: only the cursor's own value cell calls it, so an option with no cells cannot write
   const saveSelectedValue = () => {
-    setSettings(selectedSettingsOption.value, settingsOptionGrid.value);
+    const option = selectedSettingsOption.value;
+    const value = settingsOptionGrid.value;
+    if (!checkIsSettingsOptionWithValue(option) || !checkIsSettingCellValue(value)) return;
+
+    setSettings(option, value);
   };
 
   const moveSettingsRow = (direction: Direction) => {
