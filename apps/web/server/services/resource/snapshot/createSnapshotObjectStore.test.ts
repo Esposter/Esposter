@@ -2,14 +2,11 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { createSnapshotObjectStore } from "#server/services/resource/snapshot/createSnapshotObjectStore";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket } from "@esposter/db-schema";
 import { v7 } from "uuid";
-import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-
-const { bucketMock } = vi.hoisted(() => ({ bucketMock: {} as { current: R2Bucket } }));
-
-vi.mock(import("#server/services/storage/getBucket"), () => ({ getBucket: () => bucketMock.current }));
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(createSnapshotObjectStore, () => {
   const resourceId: ResourceInResource["id"] = v7();
@@ -23,7 +20,7 @@ describe(createSnapshotObjectStore, () => {
   });
 
   beforeEach(() => {
-    bucketMock.current = bucket;
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
 
   afterAll(async () => {
@@ -44,7 +41,7 @@ describe(createSnapshotObjectStore, () => {
     expect.hasAssertions();
 
     const uploadError = new Error("upload failed");
-    bucketMock.current = { put: () => Promise.reject(uploadError) } as unknown as R2Bucket;
+    mockBuckets[StorageBucket.ResourceAssets] = { put: () => Promise.reject(uploadError) } as unknown as R2Bucket;
     const objectStore = await createSnapshotObjectStore(resourceId);
 
     await expect(objectStore.write(hash, bytes)).rejects.toBe(uploadError);

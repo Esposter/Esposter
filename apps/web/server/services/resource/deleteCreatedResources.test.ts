@@ -3,6 +3,7 @@ import type { Context } from "#server/trpc/context";
 import type { R2Bucket } from "@cloudflare/workers-types";
 
 import { deleteCreatedResources } from "#server/services/resource/deleteCreatedResources";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createMockBucket } from "@esposter/db-mock";
 import {
@@ -15,10 +16,6 @@ import {
 import { noop, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-
-const { bucketMock } = vi.hoisted(() => ({ bucketMock: {} as { current: R2Bucket } }));
-
-vi.mock(import("#server/services/storage/getBucket"), () => ({ getBucket: () => bucketMock.current }));
 
 describe(deleteCreatedResources, () => {
   const name = "name";
@@ -53,7 +50,7 @@ describe(deleteCreatedResources, () => {
   });
 
   beforeEach(() => {
-    bucketMock.current = bucket;
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
 
   afterEach(async () => {
@@ -84,7 +81,7 @@ describe(deleteCreatedResources, () => {
     expect.hasAssertions();
 
     vi.spyOn(console, "error").mockImplementation(noop);
-    bucketMock.current = {
+    mockBuckets[StorageBucket.ResourceAssets] = {
       list: () => {
         throw new Error(" ");
       },

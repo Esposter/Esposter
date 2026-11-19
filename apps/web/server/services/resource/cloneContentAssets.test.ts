@@ -2,6 +2,7 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { Database } from "@esposter/db-schema";
 
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { deleteDirectory, listBlobNames } from "@esposter/db";
 import { createMockBucket, createMockDb } from "@esposter/db-mock";
@@ -18,10 +19,6 @@ import {
 } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-
-const { bucketMock } = vi.hoisted(() => ({ bucketMock: {} as { current: R2Bucket } }));
-
-vi.mock(import("#server/services/storage/getBucket"), () => ({ getBucket: () => bucketMock.current }));
 
 // The charge every clone makes is asserted where a real database exists, in the duplicate router test, rather than
 // Faked into this one
@@ -80,7 +77,7 @@ describe(cloneContentAssets, () => {
   });
 
   beforeEach(async () => {
-    bucketMock.current = bucket;
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     await Promise.all(
       [sourceBlobName, otherSourceBlobName, thirdBlobName].map((blobName) => bucket.put(blobName, new Uint8Array(1))),
     );

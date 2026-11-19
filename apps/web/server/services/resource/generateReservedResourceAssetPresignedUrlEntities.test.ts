@@ -5,6 +5,7 @@ import type { StorageCredentials } from "@esposter/db";
 
 import { generateReservedResourceAssetPresignedUrlEntities } from "#server/services/resource/generateReservedResourceAssetPresignedUrlEntities";
 import { readResourceFiles } from "#server/services/resource/readResourceFiles";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createMockBucket } from "@esposter/db-mock";
 import { FILES_DIRECTORY_SEGMENT, StorageBucket } from "@esposter/db-schema";
@@ -13,12 +14,9 @@ import { createHash } from "node:crypto";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { bucketMock, reserveStorageBytesMock } = vi.hoisted(() => ({
-  bucketMock: {} as { current: R2Bucket },
+const { reserveStorageBytesMock } = vi.hoisted(() => ({
   reserveStorageBytesMock: vi.fn<typeof reserveStorageBytes>(),
 }));
-
-vi.mock(import("#server/services/storage/getBucket"), () => ({ getBucket: () => bucketMock.current }));
 
 vi.mock(import("#server/services/storage/reserveStorageBytes"), () => ({
   reserveStorageBytes: reserveStorageBytesMock,
@@ -52,7 +50,7 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
   });
 
   beforeEach(() => {
-    bucketMock.current = bucket;
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
 
   afterEach(async () => {
@@ -132,7 +130,7 @@ describe(generateReservedResourceAssetPresignedUrlEntities, () => {
 
     // The hash check reads the blob, and the touch that follows finds it gone
     let reads = 0;
-    bucketMock.current = {
+    mockBuckets[StorageBucket.ResourceAssets] = {
       get: () => Promise.resolve(reads++ === 0 ? { body: new Response(bytes).body } : null),
     } as unknown as R2Bucket;
     const entity = takeOne(await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]));

@@ -2,6 +2,7 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { createSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
 import { trpcRouter } from "#server/trpc/routers/index";
@@ -20,12 +21,6 @@ import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
-const { buckets } = vi.hoisted(() => ({ buckets: {} as Record<StorageBucket, R2Bucket> }));
-
-vi.mock(import("#server/services/storage/getBucket"), () => ({
-  getBucket: (storageBucket: StorageBucket) => buckets[storageBucket],
-}));
-
 describe("webpageRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(webpageRouter);
   let caller: DecorateRouterRecord<TRPCRouter["webpage"]>;
@@ -38,7 +33,7 @@ describe("webpageRouter", () => {
 
   beforeAll(async () => {
     ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    buckets[StorageBucket.ResourceAssets] = bucket;
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     caller = getCaller();
     resourceCaller = createCallerFactory(trpcRouter)(getMockContext()).resource;
     surveyCaller = createCallerFactory(surveyRouter)(getMockContext());

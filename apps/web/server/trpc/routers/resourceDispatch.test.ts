@@ -6,6 +6,7 @@ import type { ResourcePublicationInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { resourceDispatchRouter } from "#server/trpc/routers/resourceDispatch";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
@@ -25,12 +26,6 @@ import { takeOne } from "@esposter/shared";
 import { createHash } from "node:crypto";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-const { buckets } = vi.hoisted(() => ({ buckets: {} as Record<StorageBucket, R2Bucket> }));
-
-vi.mock(import("#server/services/storage/getBucket"), () => ({
-  getBucket: (storageBucket: StorageBucket) => buckets[storageBucket],
-}));
-
 describe("resourceDispatchRouter", () => {
   const { getMockContext } = setupResourceSuite(resourceDispatchRouter);
   let mockContext: Context;
@@ -48,7 +43,7 @@ describe("resourceDispatchRouter", () => {
 
   beforeAll(async () => {
     ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    buckets[StorageBucket.ResourceAssets] = bucket;
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     mockContext = getMockContext();
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);

@@ -6,6 +6,7 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "#server/services/survey/constants";
 import { createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
@@ -28,14 +29,8 @@ import { createMockBucket } from "@esposter/db-mock";
 import { DatabaseEntityType, resourcesInResource, StorageBucket, SurveyResponseMode } from "@esposter/db-schema";
 import { generateSecretToken, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
-import { afterAll, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
-
-const { buckets } = vi.hoisted(() => ({ buckets: {} as Record<StorageBucket, R2Bucket> }));
-
-vi.mock(import("#server/services/storage/getBucket"), () => ({
-  getBucket: (storageBucket: StorageBucket) => buckets[storageBucket],
-}));
 
 // The composition test for the whole funnel — the per-router suites own the units. Exactly one
 // Scenario lives here on purpose; more scenarios belong in those suites.
@@ -60,7 +55,7 @@ describe("surveyFunnel", () => {
 
   beforeAll(async () => {
     ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
-    buckets[StorageBucket.ResourceAssets] = bucket;
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     mockContext = await createMockContext();
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
     datasetCaller = createCallerFactory(datasetRouter)(mockContext);

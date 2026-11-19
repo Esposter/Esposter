@@ -3,6 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { trpcRouter } from "#server/trpc/routers/index";
@@ -14,12 +15,6 @@ import { achievementsInAchievement, ClickerAchievementName, StorageBucket } from
 import { noop } from "@esposter/shared";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { buckets } = vi.hoisted(() => ({ buckets: {} as Record<StorageBucket, R2Bucket> }));
-
-vi.mock(import("#server/services/storage/getBucket"), () => ({
-  getBucket: (storageBucket: StorageBucket) => buckets[storageBucket],
-}));
-
 describe("achievementPlugin", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
@@ -28,7 +23,7 @@ describe("achievementPlugin", () => {
 
   beforeAll(async () => {
     ({ bucket, dispose } = await createMockBucket(StorageBucket.ClickerAssets));
-    buckets[StorageBucket.ClickerAssets] = bucket;
+    mockBuckets[StorageBucket.ClickerAssets] = bucket;
     mockContext = await createMockContext();
     caller = createCallerFactory(trpcRouter)(mockContext);
   });
