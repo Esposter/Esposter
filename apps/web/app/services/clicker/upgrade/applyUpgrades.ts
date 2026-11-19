@@ -7,7 +7,7 @@ import { applyUpgradeEffects } from "#src/services/clicker/effect/applyUpgradeEf
 
 export const applyUpgrades = (
   basePower: number,
-  upgradeFilterPredicate: (upgrade: Upgrade) => boolean,
+  checkIsUpgradeApplicable: (upgrade: Upgrade) => boolean,
   boughtUpgrades: Upgrade[],
   boughtBuildings: BuildingWithStatistics[],
 ) => {
@@ -23,7 +23,7 @@ export const applyUpgrades = (
         boughtBuildings,
       ),
     )
-    .filter((upgrade) => upgradeFilterPredicate(upgrade));
+    .filter((upgrade) => checkIsUpgradeApplicable(upgrade));
   const allUpgradedEffects = resultUpgrades.flatMap(({ effects }) => effects);
   return applyEffects(basePower, allUpgradedEffects, boughtBuildings);
 };

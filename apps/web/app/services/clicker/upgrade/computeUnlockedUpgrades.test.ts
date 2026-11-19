@@ -31,12 +31,11 @@ describe(computeUnlockedUpgrades, () => {
 
     const upgrade = createUpgradeWithConditions([buildingCondition]);
 
-    expect(
-      computeUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Cursor, amount)], []),
-    ).toStrictEqual([upgrade]);
-    expect(
-      computeUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Cursor, amount - 1)], []),
-    ).toStrictEqual([]);
+    const boughtBuildings = [createBuildingWithStatistics(BuildingId.Cursor, amount)];
+    const fewerBoughtBuildings = [createBuildingWithStatistics(BuildingId.Cursor, amount - 1)];
+
+    expect(computeUnlockedUpgrades([upgrade], boughtBuildings, [])).toStrictEqual([upgrade]);
+    expect(computeUnlockedUpgrades([upgrade], fewerBoughtBuildings, [])).toStrictEqual([]);
   });
 
   test("keeps an upgrade with a building condition locked while that building is not owned", () => {
@@ -44,9 +43,9 @@ describe(computeUnlockedUpgrades, () => {
 
     const upgrade = createUpgradeWithConditions([buildingCondition]);
 
-    expect(
-      computeUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Grandma, amount)], []),
-    ).toStrictEqual([]);
+    const boughtBuildings = [createBuildingWithStatistics(BuildingId.Grandma, amount)];
+
+    expect(computeUnlockedUpgrades([upgrade], boughtBuildings, [])).toStrictEqual([]);
   });
 
   test("unlocks an upgrade condition once the upgrade is bought", () => {
@@ -64,9 +63,8 @@ describe(computeUnlockedUpgrades, () => {
     expect.hasAssertions();
 
     const upgrade = createUpgradeWithConditions([buildingCondition, upgradeCondition]);
+    const boughtBuildings = [createBuildingWithStatistics(BuildingId.Cursor, amount)];
 
-    expect(
-      computeUnlockedUpgrades([upgrade], [createBuildingWithStatistics(BuildingId.Cursor, amount)], []),
-    ).toStrictEqual([]);
+    expect(computeUnlockedUpgrades([upgrade], boughtBuildings, [])).toStrictEqual([]);
   });
 });
