@@ -23,18 +23,20 @@ flowchart TD
 
 The game-data mirror is keyed on the lock's hash, and `build-packages` fills it and saves it under that key. The vp task cache is keyed per run, so it is the one cache that changes on every executed run; it is small, and its save is gated the same way as the others.
 
+Each coverage shard restores and saves Vitest's module cache, its persisted transforms, keyed on the shard, the lockfile and the commit, and restored from the newest entry under the same shard and lockfile. An entry inside it is keyed on what its transform read, so one written for an earlier commit is reused as it stands. The app's key also carries the Nuxt auto-import entries a module names (`apps/web/configuration/createAutoImportCacheKey.ts`), without which a moved composable left its callers importing the old file. A lockfile change starts the cache over, which is also what keeps entries no file names any more from accumulating. The save runs whether the suite passed or failed, since a failing suite transformed its modules all the same.
+
 ## What the regression test checks
 
 `scripts/src/workspace/ciCaches.test.ts` scans every workflow and composite action. It fails if a file uses the combined cache action, which saves on every run, or if a cache save step lacks the default-branch-and-`ai/queue` condition. It names the file, so a new save added without the condition fails the workspace suite.
 
 ## Key files
 
-| File                                          | Role                                                                    |
-| --------------------------------------------- | ----------------------------------------------------------------------- |
-| `.github/actions/run-cached-task/action.yaml` | restores and saves the vp task cache; the save is gated                 |
-| `.github/workflows/build-packages.yaml`       | restores the game-data mirror everywhere; fills and saves it on the two |
-| `.github/workflows/CI.yaml`                   | the coverage shards restore the mirror and never save it                |
-| `scripts/src/workspace/ciCaches.test.ts`      | the guard: no combined cache action, gated saves                        |
+| File                                          | Role                                                                                                   |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `.github/actions/run-cached-task/action.yaml` | restores and saves the vp task cache; the save is gated                                                |
+| `.github/workflows/build-packages.yaml`       | restores the game-data mirror everywhere; fills and saves it on the two                                |
+| `.github/workflows/CI.yaml`                   | the coverage shards restore the mirror and never save it, and restore and save the Vitest module cache |
+| `scripts/src/workspace/ciCaches.test.ts`      | the guard: no combined cache action, gated saves                                                       |
 
 ## Notes
 

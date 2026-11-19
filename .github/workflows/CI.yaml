@@ -80,11 +80,27 @@ jobs:
           path: ~/Esposter/cache/content
           key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
           restore-keys: game-data-mirror-
+      # Vitest's persisted transforms, per shard, since a shard transforms its own files. An entry is keyed on what the
+      # transform read, so one from an earlier commit is reused as it stands; the lockfile in the key starts the cache
+      # over on a dependency change, which is also what keeps entries no file names any more from piling up
+      - name: ♻️ Restore the Vitest module cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: node_modules/.vitest-cache
+          key: vitest-module-cache-${{ matrix.shard }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: vitest-module-cache-${{ matrix.shard }}-${{ hashFiles('pnpm-lock.yaml') }}-
       # `default` beside `blob`, on purpose (monorepo-tooling.md → ## CI job shape)
       - name: 🧪 Test
         env:
           SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
         run: pnpm coverage --reporter=default --reporter=blob --shard="$SHARD"
+      # Saved whether the suite passed or failed, since a failing test transformed its modules all the same
+      - name: 💾 Save the Vitest module cache
+        if: ${{ !cancelled() && (github.ref_name == 'main' || github.ref_name == 'ai/queue') }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: node_modules/.vitest-cache
+          key: vitest-module-cache-${{ matrix.shard }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
 
       - name: 📤 Upload blob report
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

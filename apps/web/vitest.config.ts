@@ -1,3 +1,4 @@
+import { createAutoImportCacheKey } from "#configuration/createAutoImportCacheKey";
 import { getNuxtEnvironmentOptions } from "#configuration/nuxtEnvironmentOptions";
 import { getVitestConfiguration } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
@@ -9,8 +10,13 @@ import { mergeAlias } from "vite";
 // Through the factory rather than over its result, which lays them over the shared ones and under a bench run's.
 // Its `resolve` is not taken: how the app reaches its siblings is the Nuxt wiring's, which `defineVitestProject`
 // Resolves
+const autoImportCacheKey = createAutoImportCacheKey();
+const nuxtEnvironmentOptions = getNuxtEnvironmentOptions(import.meta.dirname);
 const { test } = getVitestConfiguration(import.meta.dirname, {
-  environmentOptions: getNuxtEnvironmentOptions(import.meta.dirname),
+  environmentOptions: {
+    ...nuxtEnvironmentOptions,
+    nuxt: { ...nuxtEnvironmentOptions.nuxt, overrides: { hooks: autoImportCacheKey.hooks } },
+  },
   // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
   // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
   hookTimeout: Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),
@@ -33,6 +39,10 @@ const vitestConfig = await defineVitestProject({ test });
 // Intact, so per-file directives still resolve the nuxt environment.
 vitestConfig.test ??= {};
 vitestConfig.test.environment = "node";
+// The hooks have run by now, in the Nuxt `defineVitestProject` built, and a worker cannot be sent a function, so they
+// Leave the environment options every worker receives
+delete vitestConfig.test.environmentOptions?.nuxt?.overrides?.hooks;
+vitestConfig.plugins = [...(vitestConfig.plugins ?? []), autoImportCacheKey.plugin];
 // `cloudflare:workers` exists only in the Workers runtime, so the server's imports of it resolve to the package whose
 // `env` `createMockDb` fills with the file's Miniflare bindings
 vitestConfig.resolve = {
