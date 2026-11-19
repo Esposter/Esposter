@@ -45,6 +45,8 @@ interface Props {
   interfaceRects: LoginInterfaceRects;
   // Whether the door is still rising, which the door's prompt and corner buttons wait on, as the game's do
   isDoorWaiting: boolean;
+  // Whether a pack's download stopped on a file that failed its attempts, which the foot says with a retry
+  isDownloadFailed: boolean;
   isSpinnerShown: boolean;
   isWelcomeShown: boolean;
   // The reader's language, whose client's build string and age rating the screen shows
@@ -58,7 +60,7 @@ interface Props {
 
 const { gameText, interfaceClips, isDoorWaiting, language, playerName, stage } = defineProps<Props>();
 // The white is up as the screen enters, the moment the screen hands on
-const emit = defineEmits<{ whiten: [] }>();
+const emit = defineEmits<{ retry: []; whiten: [] }>();
 const client = computed(() => GameLanguageGameClientMap[language]);
 // The account kit's greeting, which places the player's name where its language puts it
 const welcome = computed(() => gameText[GameTextKey.LoginWelcome].replace("%s", () => playerName));
@@ -183,7 +185,14 @@ const { isStartShown } = useLoginStageClips({
           :rect="interfaceRects[LoginInterfaceRectName.Bottom]"
           :data-clip-target="LoginInterfaceClipTarget.Bottom"
         >
-          <LoginStatus v-if="stage === LoginStage.Preparing" :game-text :progress :step="statusStep" />
+          <LoginStatus
+            v-if="stage === LoginStage.Preparing"
+            :game-text
+            :is-download-failed
+            :progress
+            :step="statusStep"
+            @retry="emit('retry')"
+          />
           <GameRect
             #default="{ rect: currentAccountRect }"
             :parent="bottomRect"

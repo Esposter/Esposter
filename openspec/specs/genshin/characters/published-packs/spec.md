@@ -87,27 +87,38 @@ The opening SHALL, when it mounts, plan the download from the index against the 
 - **WHEN** the opening mounts
 - **THEN** that file is fetched and the older copy is no longer read
 
-### Requirement: The startup loading screen shows the download
+### Requirement: Downloads are shown on the launch loading bar
 
-The startup loading screen SHALL show the bytes downloaded and the bytes to download in the reader's language, and its bar SHALL move with the bytes while any are pending.
+The packs' download SHALL run from the moment the opening mounts, and the launch loading bar, the game's plain bar on its login screen, SHALL show the share of the download held, whole once every file is held. The bar SHALL show that share alone, as the game's bar does, and no bytes or size.
 
-#### Scenario: Size shows beside the bar while bytes are pending
+#### Scenario: Downloads are shown on the launch loading bar
 
-- **GIVEN** files remain to download
-- **WHEN** the startup loading screen is shown
-- **THEN** the game's downloading line and the bytes loaded over the bytes to load are shown in the reader's language
-- **AND** the bar's first share advances with the bytes loaded
+- **GIVEN** files remain to download when the opening mounts
+- **WHEN** the login screen's bar shows
+- **THEN** the bar's share is the bytes held over the bytes pending
+- **AND** the bar is whole once every file is held
 
-#### Scenario: Nothing pending shows no size
+#### Scenario: Nothing pending shows a whole bar
 
 - **GIVEN** the browser keeps every file
-- **WHEN** the startup loading screen is shown
-- **THEN** no size is shown
-- **AND** the bar follows the world's own steps alone
+- **WHEN** the login screen's bar shows
+- **THEN** the bar is whole
+- **AND** no size is shown
+
+### Requirement: The elemental loading screen shows no download progress
+
+The elemental loading screen SHALL show only the world's own loading, its bar the share of the world's steps, and SHALL show no words, so no download's bytes, line or retry reach it.
+
+#### Scenario: The elemental loading screen shows no download progress
+
+- **GIVEN** files remain to download, or a download has failed
+- **WHEN** the elemental loading screen is shown
+- **THEN** its bar is the share of the world's steps alone
+- **AND** no download's bytes, line or retry is shown on it
 
 ### Requirement: A failed download stops the loading and can be retried
 
-A pack file SHALL be attempted three times, and when the third fails the loading SHALL stop with the game's failure line and a retry that fetches only the files not yet kept.
+A pack file SHALL be attempted three times, and when the third fails the launch loading bar SHALL stop with the game's failure line and a retry that fetches only the files not yet kept.
 
 #### Scenario: Retry fetches only what is missing
 
@@ -119,7 +130,7 @@ A pack file SHALL be attempted three times, and when the third fails the loading
 
 - **GIVEN** a file failed all three attempts
 - **WHEN** the loading stops
-- **THEN** the failure line is shown
+- **THEN** the failure line and the retry are shown on the launch loading bar
 - **AND** the world is not shown until the download completes
 
 ### Requirement: The world's tables load under the opening

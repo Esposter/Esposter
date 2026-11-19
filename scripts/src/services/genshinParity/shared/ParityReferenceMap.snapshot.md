@@ -55,8 +55,6 @@ committed.
 | `inventory-weapons`                    | `InventoryScreen`           |                                                                          5.48% | 0.813 |  2.25% | 0.2414 |
 | `liyue-harbor-location`                | `WorldScreen`               |                                                                         19.83% | 0.392 | 17.24% | 0.6757 |
 | `loading-startup`                      | `LoadingStartup`            |                                                                          0.07% | 0.765 |  0.04% | 0.0027 |
-| `loading-startup-failed`               | `LoadingStartup`            |  pending: the game's download state of the startup screen has no sampled frame |       |        |        |
-| `loading-startup-none`                 | `LoadingStartup`            |  pending: the game's download state of the startup screen has no sampled frame |       |        |        |
 | `login-dawn-title`                     | `LoginScreen`               |                                                                         10.85% | 0.477 |  7.84% | 0.4432 |
 | `login-day-title`                      | `LoginScreen`               |                                                                         13.31% | 0.320 | 10.42% | 0.4842 |
 | `login-door`                           | `LoginScreen`               |                                                                         13.40% | 0.205 | 11.04% | 0.5123 |

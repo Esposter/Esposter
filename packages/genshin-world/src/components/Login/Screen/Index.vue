@@ -34,6 +34,8 @@ interface Props {
   heldScrolled?: number | undefined;
   // Whether the scene draws the game's bloom, which a reference of the frame without it turns off to read the bloom by
   isBloomed?: false | undefined;
+  // Whether a pack's download stopped on a file that failed its attempts, which the bar's foot says with a retry
+  isDownloadFailed: boolean;
   // The scene alone, as the recordings idling with no interface show it, for a reference to be scored against, and
   // Silent
   isInterfaceHidden: boolean;
@@ -44,8 +46,8 @@ interface Props {
   // Where the music's recordings are served from
   musicRecordingBaseUrl: string;
   playerName: string;
-  // How far loading has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a fixed time
-  // After it is done
+  // How far the packs' download has gone, from 0 to 1, which the bar shows and the flight to the door follows, ending a
+  // Fixed time after it is done
   progress: number;
   // The tier the scene draws at, the client's own: the phone's draws no screen-space occlusion where the computer's does
   qualityTier?: QualityTier | undefined;
@@ -60,7 +62,7 @@ interface Props {
 // `v-model:stage` to show it held, as the parity page does
 const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving });
 const { gameText, isBloomed = true, playerName, progress, qualityTier = QualityTier.High } = defineProps<Props>();
-const emit = defineEmits<{ begin: []; ready: [] }>();
+const emit = defineEmits<{ begin: []; ready: []; retry: [] }>();
 // The name the screen welcomes the player by, the game's own word for the Traveler until they have chosen one
 const shownPlayerName = computed(
   () => playerName || fillLinePlaceholders(gameText[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER),
@@ -172,12 +174,14 @@ const onClick = (event: MouseEvent): void => {
       :interface-rects="loginData.interfaceRects"
       :language
       :is-door-waiting="stage === LoginStage.Door && !isDoorFormed"
+      :is-download-failed
       :is-spinner-shown
       :is-welcome-shown="false"
       :player-name="shownPlayerName"
       :progress="shownProgress"
       :stage
       :status-step
+      @retry="emit('retry')"
       @whiten="emit('begin')"
     />
   </GameScreen>

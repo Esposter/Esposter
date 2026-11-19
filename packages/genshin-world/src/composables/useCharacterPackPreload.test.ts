@@ -51,6 +51,27 @@ describe(useCharacterPackPreload, () => {
     expect(onHeld).not.toHaveBeenCalled();
   });
 
+  test("downloads are shown on the launch loading bar as the share held, whole once every pack is held", async () => {
+    expect.hasAssertions();
+
+    const cache = createCharacterPackCacheStub();
+    await cache.put(
+      getCharacterPackCacheUrl(`${gameDataBaseUrl}/`, 1, CHARACTER_MODEL_PATH, sha256),
+      new Response(null),
+    );
+    vi.stubGlobal("caches", { open: () => Promise.resolve(cache) });
+
+    const { downloadProgress, preload } = useCharacterPackPreload(gameDataBaseUrl, vi.fn<() => void>());
+
+    expect(downloadProgress.value).toBe(0);
+
+    const run = preload();
+    await vi.runAllTimersAsync();
+    await run;
+
+    expect(downloadProgress.value).toBe(1);
+  });
+
   test("every pack already held is ready without a fetch", async () => {
     expect.hasAssertions();
 

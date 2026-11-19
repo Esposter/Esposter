@@ -6,6 +6,7 @@ import LoadingStartup from "#src/components/Loading/Startup/Index.vue";
 import LoginScreen from "#src/components/Login/Screen/Index.vue";
 import SplashSequence from "#src/components/Splash/Sequence/Index.vue";
 import { useCharacterPackPreload } from "#src/composables/useCharacterPackPreload";
+import { CharacterPackPreloadStatus } from "#src/models/character/CharacterPackPreloadStatus";
 import { OpeningPhase } from "#src/models/game/OpeningPhase";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { getLoginTimeOfDay } from "#src/services/login/getLoginTimeOfDay";
@@ -37,10 +38,9 @@ const { gameDataBaseUrl, language } = defineProps<Props>();
 const emit = defineEmits<{ begin: []; finish: []; held: [] }>();
 // The game's opening as one sequence: its splashes on white, then the login screen under the sky of the player's
 // Hour, its title waiting for a click, its flight and its door waiting for another, then the startup loading screen,
-// Which loads the world and whose white the world cuts in from. The login screen's bar is the game's own checks,
-// Which have nothing left to wait on once the page has loaded, so it sweeps at its fastest. Each phase says when it is
-// Done, so the handoffs are the screens' own timings rather than a host's, and `begin` tells the host the door has been
-// Opened
+// Which loads the world and whose white the world cuts in from. The login screen's bar is the character packs' download,
+// Which the door waits on as the game's does on its bar. Each phase says when it is done, so the handoffs are the
+// Screens' own timings rather than a host's, and `begin` tells the host the door has been opened
 const phase = ref<OpeningPhase>(OpeningPhase.Splash);
 const timeOfDay = getLoginTimeOfDay(Temporal.Now.plainTimeISO());
 // The title logo is read before the first splash and the login screen's records while the splashes play, so on a warm
@@ -66,11 +66,10 @@ getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl)))
     console.error(error);
   },
 );
-// The published character packs download from the moment the opening mounts, so the splashes and the login play while
-// The bytes arrive, and the startup loading screen shows them
-const { loadedBytes, pendingBytes, preload, status } = useCharacterPackPreload(gameDataBaseUrl, () => emit("held"));
+// The published character packs download from the moment the opening mounts, so the splashes and the title play while
+// The bytes arrive, and the launch loading bar reports them once the game starts preparing
+const { downloadProgress, preload, status } = useCharacterPackPreload(gameDataBaseUrl, () => emit("held"));
 onMounted(preload);
-defineExpose({ loadedBytes, pendingBytes });
 </script>
 
 <template>
@@ -84,30 +83,22 @@ defineExpose({ loadedBytes, pendingBytes });
   <LoginScreen
     v-else-if="phase === OpeningPhase.Login && loginData"
     :game-text
+    :is-download-failed="status === CharacterPackPreloadStatus.Failed"
     :is-interface-hidden="false"
     :language
     :login-data
     :music-recording-base-url
     :player-name
-    :progress="1"
+    :progress="downloadProgress"
     :scene-export-base-url
     :time-of-day
     @begin="
       phase = OpeningPhase.Loading;
       emit('begin');
     "
-  />
-  <LoadingStartup
-    v-else-if="phase === OpeningPhase.Loading"
-    :game-text
-    :language
-    :loaded-bytes
-    :pending-bytes
-    :progress
-    :status
-    @finish="emit('finish')"
     @retry="preload()"
   />
+  <LoadingStartup v-else-if="phase === OpeningPhase.Loading" :game-text :progress @finish="emit('finish')" />
   <GameScreen v-else class="waiting" />
 </template>
 

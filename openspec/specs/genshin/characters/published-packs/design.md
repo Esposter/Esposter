@@ -31,6 +31,10 @@ Both accounts upload in parallel, and each file replaces the account's copy unde
 
 How the world reads the packs, from the index through the cache to each pack's reader, is set out in [the characters index](../README.md#how-the-world-reads-a-pack).
 
+## The launch bar shows the download
+
+The game's first bar is the plain bar on its login screen, which follows the title's click: the English recording's status reads "Checking for updates...", then "Loading game..." at 0.00%, then "Preparing to load data" over the bar, which fills to full before the door rises (`{data-root}/genshin-parity/captures/yt-rBnfA4pXw6U.mp4`). The elemental loading screen is the scene's own load after the door, and the game's shows no download on it. So the packs download from the opening's mount, under the splashes and the title, and the launch bar reports their share once the game starts preparing, with the door waiting on the bar's full share as the game's does. A failed file puts the game's failure line and a retry on that bar, in the words' and the share's places. The elemental screen takes the world's steps alone.
+
 ## Not built
 
 - An upload does not compare content first, so an unchanged file uploads again on a rerun.
@@ -56,7 +60,7 @@ How the world reads the packs, from the index through the cache to each pack's r
 | `packages/genshin-world/src/services/character/createCharacterPackReader.ts`   | A pack's model, terms and textures, each found by the pack's own names                     |
 | `scripts/src/models/genshinAssets/characterPacks/CharacterPackFile.ts`         | One file read from disk, with its object key and size                                      |
 | `scripts/src/services/gameData/createGameDataBucketClientMap.ts`               | The bucket client each environment is published through, shared with the game data publish |
-| `packages/genshin-text/src/models/GameTextKey.ts`                              | The startup loading screen's download and failure lines, by their text ids                 |
+| `packages/genshin-text/src/models/GameTextKey.ts`                              | The launch loading bar's failure line and retry, by their text ids                         |
 
 ## Sources
 

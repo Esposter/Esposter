@@ -3,22 +3,32 @@ import type { GameText } from "genshin-text";
 
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 import { LoginStatusStepGameTextKeyMap } from "#src/services/login/LoginStatusStepGameTextKeyMap";
-import { ORNAMENT_MIDDLE_PATH, ProgressBar } from "genshin-interface";
+import { GameButton, GameButtonKind, ORNAMENT_MIDDLE_PATH, ProgressBar } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // Whether a pack's download stopped on a file that failed its attempts, which the foot says with a retry in place of
+  // The bar's share
+  isDownloadFailed: boolean;
   // How far loading has gone, from 0 to 1
   progress: number;
   step: LoginStatusStep;
 }
 
-const { progress, step } = defineProps<Props>();
+const { gameText, isDownloadFailed, progress, step } = defineProps<Props>();
+const emit = defineEmits<{ retry: [] }>();
 // The game's status at the foot of its login screen as it prepares: a line of text, then from loading on its share
 // Done to two places, over the ornament's double diamond while the game loads and over the progress bar while data
 // Does. Once loading is done the words go, the bar folds into its diamond under the full share, and then the whole row
-// Fades, leaving the flight's last stretch bare before the door rises, as the English recording's does
+// Fades, leaving the flight's last stretch bare before the door rises, as the English recording's does. A download that
+// Stopped puts its line in the words' place and its retry where the share is, and the bar stays at the share it reached
 const isDone = computed(() => step === LoginStatusStep.LoadingData && progress >= 1);
+const text = computed(() => {
+  if (isDownloadFailed) return gameText[GameTextKey.ResourceDownloadFailed];
+  return isDone.value ? "" : gameText[LoginStatusStepGameTextKeyMap[step]];
+});
 const percentText = computed(() =>
   step === LoginStatusStep.LoadingGame ? "0.00%" : `${(Math.min(progress, 1) * 100).toFixed(2)}%`,
 );
@@ -26,9 +36,12 @@ const percentText = computed(() =>
 
 <template>
   <div :class="['login-status', { done: isDone }]" role="status">
-    <p class="text">{{ isDone ? "" : gameText[LoginStatusStepGameTextKeyMap[step]] }}</p>
+    <p class="text">{{ text }}</p>
+    <GameButton v-if="isDownloadFailed" class="retry" :kind="GameButtonKind.Pill" tip="" @click="emit('retry')">
+      {{ gameText[GameTextKey.Retry] }}
+    </GameButton>
     <template v-if="step === LoginStatusStep.LoadingGame || step === LoginStatusStep.LoadingData">
-      <p class="percent">{{ percentText }}</p>
+      <p v-if="!isDownloadFailed" class="percent">{{ percentText }}</p>
       <svg v-if="step === LoginStatusStep.LoadingGame" class="mark" viewBox="0 0 480 320" aria-hidden="true">
         <path :d="ORNAMENT_MIDDLE_PATH" />
       </svg>
@@ -59,10 +72,17 @@ const percentText = computed(() =>
 .text,
 .percent,
 .mark,
-.bar {
+.bar,
+.retry {
   position: absolute;
   left: 50%;
   translate: -50% 50%;
+}
+
+/* The row lets clicks through, so the retry takes its own clicks where the share would sit */
+.retry {
+  bottom: calc(var(--unit) * 83);
+  pointer-events: auto;
 }
 
 .text,

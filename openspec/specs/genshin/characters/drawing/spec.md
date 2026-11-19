@@ -166,7 +166,7 @@ The player's character SHALL be drawn on the character body from its published p
 
 - **GIVEN** the character's pack could not be downloaded after its attempts
 - **WHEN** the download gives up
-- **THEN** the startup loading screen shows the download failure with a retry
+- **THEN** the launch loading bar shows the download failure with a retry
 - **AND** the world does not mount, so no model is drawn
 
 ### Requirement: A model that fails to read is drawn in the Traveler's place
