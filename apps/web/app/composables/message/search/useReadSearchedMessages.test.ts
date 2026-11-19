@@ -81,7 +81,7 @@ describe(useReadSearchedMessages, () => {
     setCurrentRoomId(roomId);
 
     expect(count.value).toBe(newCount);
-    expect(createSearchHistory).toHaveBeenCalledTimes(1);
+    expect(createSearchHistory).toHaveBeenCalledExactlyOnceWith({ filters: undefined, query, roomId });
   });
 
   // Pending belongs to the search that raised it, not to the composable: the paginator hands every read the same
@@ -236,7 +236,7 @@ describe(useReadSearchedMessages, () => {
     searchQuery.value = query;
     await readSearchedMessages();
 
-    expect(useCreator(() => hit).value?.id).toBe(author.id);
+    expect(useCreator(() => hit).value?.name).toBe("displayName");
   });
 
   // The waypoint reads the next page of the results on screen after the reader has typed a new search, so that page

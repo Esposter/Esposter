@@ -81,7 +81,7 @@ describe(useMemberActionItems, () => {
     await setupTargetRole(member.id);
     const { moderationItems } = useMemberActionItems(member, roomId, vi.fn<() => void>());
 
-    expect(moderationItems.value.map(({ title }) => title)).toContain(displayNameTitle);
+    expect(moderationItems.value.map(({ title }) => title)).toStrictEqual([displayNameTitle]);
   });
 
   test("hides the display name action from a member who holds no room permission", async () => {
@@ -91,7 +91,7 @@ describe(useMemberActionItems, () => {
     await setupTargetRole(member.id);
     const { moderationItems } = useMemberActionItems(member, roomId, vi.fn<() => void>());
 
-    expect(moderationItems.value.map(({ title }) => title)).not.toContain(displayNameTitle);
+    expect(moderationItems.value.map(({ title }) => title)).toStrictEqual([]);
   });
 
   // The owner holds no role row, so a holder outranks them on position alone. Owner immunity is what hides the item
@@ -105,7 +105,7 @@ describe(useMemberActionItems, () => {
     await setupActor(RoomPermission.ManageDisplayNames);
     const { moderationItems } = useMemberActionItems(owner, roomId, vi.fn<() => void>());
 
-    expect(moderationItems.value.map(({ title }) => title)).not.toContain(displayNameTitle);
+    expect(moderationItems.value.map(({ title }) => title)).toStrictEqual([]);
   });
 
   test("hides the display name action from the holder's own row", async () => {
@@ -119,6 +119,6 @@ describe(useMemberActionItems, () => {
       vi.fn<() => void>(),
     );
 
-    expect(moderationItems.value.map(({ title }) => title)).not.toContain(displayNameTitle);
+    expect(moderationItems.value.map(({ title }) => title)).toStrictEqual([]);
   });
 });

@@ -65,19 +65,6 @@ describe(useCreator, () => {
     expect(creator.value?.name).toBe(user.name);
   });
 
-  // An app user is not a member of the room, so there is no member row to take its name from
-  test("names a webhook creator from its app user", () => {
-    expect.hasAssertions();
-
-    const appUserStore = useAppUserStore();
-    const { appUserMap } = storeToRefs(appUserStore);
-    appUserMap.value.set(cachedAppUser.id, cachedAppUser);
-    const message = createWebhookMessage(cachedAppUser.id, cachedAppUser.name);
-    const creator = useCreator(() => message);
-
-    expect(creator.value?.name).toBe(cachedAppUser.name);
-  });
-
   // A delivery that carries no sender name of its own is named by the bot it was sent under, as the cache holds it
   test("falls back to the app user's name for a webhook with no sender name", () => {
     expect.hasAssertions();

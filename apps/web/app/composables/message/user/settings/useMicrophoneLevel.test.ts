@@ -55,7 +55,7 @@ describe(useMicrophoneLevel, () => {
     await starting;
     await flushPromises();
 
-    expect(getUserMedia).toHaveBeenCalledTimes(1);
+    expect(getUserMedia).toHaveBeenCalledExactlyOnceWith({ audio: {}, video: false });
     expect(microphoneLevel.isTesting.value).toBe(true);
   });
 

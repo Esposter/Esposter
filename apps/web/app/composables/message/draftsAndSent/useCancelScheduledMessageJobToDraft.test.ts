@@ -21,9 +21,9 @@ describe(useCancelScheduledMessageJobToDraft, () => {
     const { drafts } = storeToRefs(inputStore);
     useCancelScheduledMessageJobToDraft()(scheduledMessageJob);
 
-    expect(drafts.value.has(scheduledMessageJob.roomId)).toBe(true);
+    expect(drafts.value.get(scheduledMessageJob.roomId)?.content).toBe(getScheduledMessageJobText(scheduledMessageJob));
     await flushPromises();
-    expect(drafts.value.has(scheduledMessageJob.roomId)).toBe(true);
+    expect(drafts.value.get(scheduledMessageJob.roomId)?.content).toBe(getScheduledMessageJobText(scheduledMessageJob));
   });
 
   // A rejected cancel leaves the job scheduled, so the composer must not keep its text: a send from it would post

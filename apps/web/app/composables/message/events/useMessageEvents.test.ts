@@ -71,7 +71,7 @@ describe(useMessageEvents, () => {
     scope.stop();
   });
 
-  test("removes a deleted message from the room its socket was opened for only", async () => {
+  test("removes a deleted message from the room its socket was opened for", async () => {
     expect.hasAssertions();
 
     const roomId = v7();
@@ -91,6 +91,7 @@ describe(useMessageEvents, () => {
     onFrame?.(JSON.stringify({ data: [createRoomMessage(messageId, "message")], type: "createMessage" }));
     await flushPromises();
 
+    expect(dataStore.getSlice(roomId).items.value.map(({ id }) => id)).toStrictEqual([messageId]);
     onFrame?.(
       JSON.stringify({
         data: { ...createRoomMessage(messageId, "message"), deletedAt: new Date(0) },
