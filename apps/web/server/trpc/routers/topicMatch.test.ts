@@ -136,8 +136,7 @@ describe("topicMatch", () => {
     await write.database
       .update(resourcesInResource)
       .set({ name: "renamed" })
-      .where(eq(resourcesInResource.id, resourceId))
-      .returning();
+      .where(eq(resourcesInResource.id, resourceId));
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual(
       [],
@@ -163,8 +162,7 @@ describe("topicMatch", () => {
 
     await write.database
       .delete(usersToRoomsInMessage)
-      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
-      .returning();
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
       `message_usersToRooms:userId=${userId}`,
@@ -190,8 +188,7 @@ describe("topicMatch", () => {
     await write.database
       .update(usersToRoomsInMessage)
       .set({ displayName: "renamed" })
-      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
-      .returning();
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual(
       [],
@@ -223,8 +220,7 @@ describe("topicMatch", () => {
 
     await write.database
       .insert(usersToRoomsInMessage)
-      .values({ notificationType: NotificationType.DirectMessage, roomId: room.id, userId: joiner.user.id })
-      .returning();
+      .values({ notificationType: NotificationType.DirectMessage, roomId: room.id, userId: joiner.user.id });
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
       `message_usersToRooms:roomId=${room.id}`,
@@ -256,8 +252,7 @@ describe("topicMatch", () => {
     await write.database
       .update(resourcesInResource)
       .set({ deletedAt: null })
-      .where(eq(resourcesInResource.id, binnedResourceId))
-      .returning();
+      .where(eq(resourcesInResource.id, binnedResourceId));
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
       `${getTableName(resourcesInResource)}:*`,
@@ -280,8 +275,7 @@ describe("topicMatch", () => {
 
     await write.database
       .insert(usersToRoomsInMessage)
-      .values({ notificationType: NotificationType.DirectMessage, roomId: room.id, userId: joiner.user.id })
-      .returning();
+      .values({ notificationType: NotificationType.DirectMessage, roomId: room.id, userId: joiner.user.id });
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
       `message_usersToRooms:roomId=${room.id}`,
@@ -303,8 +297,7 @@ describe("topicMatch", () => {
     await write.database
       .update(usersToRoomsInMessage)
       .set({ isHidden: false })
-      .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, reader.user.id)))
-      .returning();
+      .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, reader.user.id)));
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
       `message_usersToRooms:userId=${reader.user.id}`,
@@ -346,8 +339,7 @@ describe("topicMatch", () => {
 
     await write.database
       .insert(usersToRoomsInMessage)
-      .values({ notificationType: NotificationType.DirectMessage, roomId: emptyRoomId, userId })
-      .returning();
+      .values({ notificationType: NotificationType.DirectMessage, roomId: emptyRoomId, userId });
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
       "message_usersToRooms:*",
@@ -383,8 +375,7 @@ describe("topicMatch", () => {
     await write.database
       .update(usersToRoomsInMessage)
       .set({ isHidden: false })
-      .where(and(eq(usersToRoomsInMessage.roomId, hiddenRoomId), eq(usersToRoomsInMessage.userId, userId)))
-      .returning();
+      .where(and(eq(usersToRoomsInMessage.roomId, hiddenRoomId), eq(usersToRoomsInMessage.userId, userId)));
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
       "message_usersToRooms:*",
@@ -404,8 +395,7 @@ describe("topicMatch", () => {
 
     await write.database
       .insert(usersToRoomsInMessage)
-      .values({ notificationType: NotificationType.DirectMessage, roomId: directMessageId, userId: newcomer.user.id })
-      .returning();
+      .values({ notificationType: NotificationType.DirectMessage, roomId: directMessageId, userId: newcomer.user.id });
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
       `${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`,
@@ -422,8 +412,7 @@ describe("topicMatch", () => {
 
     await write.database
       .delete(usersToRoomsInMessage)
-      .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)))
-      .returning();
+      .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)));
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
       `${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`,
@@ -443,8 +432,7 @@ describe("topicMatch", () => {
     await write.database
       .update(usersToRoomsInMessage)
       .set({ lastReadAt: new Date() })
-      .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)))
-      .returning();
+      .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)));
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual(
       [],
@@ -464,8 +452,7 @@ describe("topicMatch", () => {
     await write.database
       .update(usersToRoomsInMessage)
       .set({ displayName: "renamed" })
-      .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)))
-      .returning();
+      .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)));
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toStrictEqual([
       `${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`,
@@ -480,11 +467,7 @@ describe("topicMatch", () => {
     const read = await recordSidebarRead(context, reader);
     const write = recordStatements(context.db);
 
-    await write.database
-      .update(usersInAuth)
-      .set({ name: "renamed" })
-      .where(eq(usersInAuth.id, joiner.user.id))
-      .returning();
+    await write.database.update(usersInAuth).set({ name: "renamed" }).where(eq(usersInAuth.id, joiner.user.id));
 
     expect(getWokenTopics(await getReadTopics(read.statements), await getWriteTopics(write.statements))).toContain(
       `${getTableName(usersInAuth)}:*`,
