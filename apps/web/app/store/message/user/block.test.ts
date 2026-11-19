@@ -1,8 +1,10 @@
 // @vitest-environment nuxt
+import { createFriendRequest } from "#src/services/message/user/createFriendRequest.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBlockStore } from "#src/store/message/user/block";
 import { useFriendStore } from "#src/store/message/user/friend";
+import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -11,6 +13,8 @@ describe(useBlockStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
+  const appUser = createUser({ name: "appUser" });
+  const firstFriendRequest = createFriendRequest(first, appUser);
 
   // Each blocked user is its own target, so two blocks overlap on the friend list and the failing one must put
   // Back only the friend it removed
@@ -78,33 +82,30 @@ describe(useBlockStore, () => {
     expect(blockedUsers.value).toStrictEqual([first]);
   });
 
-  // An unfriend and a block of the same user are two writes to one friend row, so they run one after the other. On an
-  // Executor each they only read as if they did: the block landed while the unfriend was still out, and the unfriend's
-  // Rollback then put the friend back in the list the block had just removed it from
-  test("does not bring back a friend when a rejected unfriend overlaps a block", async () => {
+  // A block removes the pending requests between the two users, as a decline does, so the two queue on the pair. Run
+  // Beside a block, the decline finds the request already gone, and the rejected block's rollback puts it back after it
+  test("a rejected block does not bring back a request a decline removed", async () => {
     expect.hasAssertions();
 
-    const { promise: unfriendReleased, resolve: releaseUnfriend } = Promise.withResolvers<void>();
-    trpcMsw.friend.deleteFriend.mutation(async () => {
-      await unfriendReleased;
+    const { promise: blockReleased, resolve: releaseBlock } = Promise.withResolvers<void>();
+    trpcMsw.block.createBlock.mutation(async () => {
+      await blockReleased;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    trpcMsw.block.createBlock.mutation(() => first);
-    const friendStore = useFriendStore();
-    const { friends } = storeToRefs(friendStore);
-    const { deleteFriend } = friendStore;
+    trpcMsw.friendRequest.declineFriendRequest.mutation(() => {});
+    const friendRequestStore = useFriendRequestStore();
+    const { friendRequests } = storeToRefs(friendRequestStore);
+    const { declineFriendRequest } = friendRequestStore;
     const blockStore = useBlockStore();
     const { createBlock } = blockStore;
-    friends.value = [first];
-    deleteFriend(first.id);
+    friendRequests.value = [firstFriendRequest];
     const block = createBlock(first.id);
-    // Long enough for a block that was never held back to land, which is what the queue has to prevent
-    await flushPromises();
-    releaseUnfriend();
+    declineFriendRequest(first.id);
+    releaseBlock();
     await block;
     await flushPromises();
 
-    expect(friends.value).toStrictEqual([]);
+    expect(friendRequests.value).toStrictEqual([]);
   });
 
   // A block and an unblock made while the blocked list is read are not in the answer's favour: the answer may predate

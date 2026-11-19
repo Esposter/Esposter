@@ -2,6 +2,7 @@
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
+import { useBlockStore } from "#src/store/message/user/block";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { getFriendshipId } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -44,6 +45,34 @@ describe(useFriendStore, () => {
 
     expect(friends.value).toStrictEqual([failedFriend]);
     expect(alertStore.alerts).toHaveLength(1);
+  });
+
+  // An unfriend and a block of one user write the same friend row, so the block queues behind the unfriend. Run beside
+  // It, the block found the friend already gone, and the rejected unfriend's rollback put the friend back after it
+  test("a rejected unfriend does not bring back a friend a block removed", async () => {
+    expect.hasAssertions();
+
+    const { promise: unfriendReleased, resolve: releaseUnfriend } = Promise.withResolvers<void>();
+    trpcMsw.friend.deleteFriend.mutation(async () => {
+      await unfriendReleased;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.block.createBlock.mutation(() => first);
+    const friendStore = useFriendStore();
+    const { friends } = storeToRefs(friendStore);
+    const { deleteFriend } = friendStore;
+    const blockStore = useBlockStore();
+    const { createBlock } = blockStore;
+    friends.value = [first];
+    deleteFriend(first.id);
+    const block = createBlock(first.id);
+    // Long enough for a block that was never held back to land, which is what the queue has to prevent
+    await flushPromises();
+    releaseUnfriend();
+    await block;
+    await flushPromises();
+
+    expect(friends.value).toStrictEqual([]);
   });
 
   // The accept echo reaches the accepting client as well as the accepted one, so the same friend arrives twice

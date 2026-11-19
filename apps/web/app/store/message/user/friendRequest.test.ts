@@ -1,11 +1,9 @@
 // @vitest-environment nuxt
-import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
-
 import { useSession } from "#src/services/auth/authClient.test";
+import { createFriendRequest } from "#src/services/message/user/createFriendRequest.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
-import { useBlockStore } from "#src/store/message/user/block";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 import { TRPCError } from "@trpc/server";
@@ -21,18 +19,8 @@ describe(useFriendRequestStore, () => {
   const appUser = createUser({ name: "appUser" });
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
-  const createFriendRequest = (sender: PublicUser): FriendRequestInSocialWithRelations => ({
-    createdAt: new Date(0),
-    deletedAt: null,
-    id: `${sender.id}-${appUser.id}`,
-    receiverId: appUser.id,
-    sender,
-    senderId: sender.id,
-    updatedAt: new Date(0),
-    version: 0,
-  });
-  const firstFriendRequest = createFriendRequest(first);
-  const secondFriendRequest = createFriendRequest(second);
+  const firstFriendRequest = createFriendRequest(first, appUser);
+  const secondFriendRequest = createFriendRequest(second, appUser);
 
   beforeEach(() => {
     useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
@@ -125,7 +113,7 @@ describe(useFriendRequestStore, () => {
     declineFriendRequest(second.id);
     await flushPromises();
 
-    expect(friendRequests.value).toStrictEqual([createFriendRequest(failedSender)]);
+    expect(friendRequests.value).toStrictEqual([createFriendRequest(failedSender, appUser)]);
     expect(alertStore.alerts).toHaveLength(1);
   });
 
@@ -152,10 +140,10 @@ describe(useFriendRequestStore, () => {
     expect(friends.value).toStrictEqual([]);
   });
 
-  // An accept and a decline of one request end the same row, so the decline queues behind the accept. Run beside it,
-  // The decline removed nothing from the list, and the accept's rollback then put the request back although the
-  // Decline had deleted it on the server
-  test("declines a request only once the accept of that request has settled", async () => {
+  // An accept and a decline of one request end the same row, so the decline queues behind the accept. Run beside it, the
+  // Decline found nothing left to remove, and the rejected accept's rollback put the request back after the decline had
+  // Deleted it on the server
+  test("a rejected accept does not bring back a request a decline removed", async () => {
     expect.hasAssertions();
 
     trpcMsw.friendRequest.acceptFriendRequest.mutation(() => {
@@ -171,31 +159,5 @@ describe(useFriendRequestStore, () => {
     await flushPromises();
 
     expect(friendRequests.value).toStrictEqual([secondFriendRequest]);
-  });
-
-  // A block removes the pending requests between the two users, as a decline does, so the two queue on the pair: a
-  // Rejected block puts back the request it removed before the decline runs, and the decline then removes it for good
-  test("does not bring back a declined request when an overlapping block is rejected", async () => {
-    expect.hasAssertions();
-
-    const { promise: blockReleased, resolve: releaseBlock } = Promise.withResolvers<void>();
-    trpcMsw.block.createBlock.mutation(async () => {
-      await blockReleased;
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    trpcMsw.friendRequest.declineFriendRequest.mutation(() => {});
-    const friendRequestStore = useFriendRequestStore();
-    const { friendRequests } = storeToRefs(friendRequestStore);
-    const { declineFriendRequest } = friendRequestStore;
-    const blockStore = useBlockStore();
-    const { createBlock } = blockStore;
-    friendRequests.value = [firstFriendRequest];
-    const block = createBlock(first.id);
-    declineFriendRequest(first.id);
-    releaseBlock();
-    await block;
-    await flushPromises();
-
-    expect(friendRequests.value).toStrictEqual([]);
   });
 });
