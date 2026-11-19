@@ -18,12 +18,13 @@ const { isOpen: isDeleteOpen, item: deletingScheduledMessageJob } = useSingleton
   deletingScheduledMessageJobId,
   () => items.value.find(({ id }) => id === deletingScheduledMessageJobId.value),
 );
-// A job leads with what it will do, post a message or remind, and opens the room it runs in
+// A job leads with what it will do, post a message or remind, and opens the room it runs in. A room the person has left
+// Gives no name and opens nothing, since they are no longer in it
 const getRow = (scheduledMessageJob: ScheduledMessageJobWithRoom): UiListItem<string> => ({
   description: getScheduledMessageJobText(scheduledMessageJob),
   icon: ScheduledMessageJobIconMap[scheduledMessageJob.payload.type],
-  title: scheduledMessageJob.room.name,
-  to: RoutePath.Messages(scheduledMessageJob.roomId),
+  title: scheduledMessageJob.room?.name ?? "A room you left",
+  ...(scheduledMessageJob.room ? { to: RoutePath.Messages(scheduledMessageJob.roomId) } : {}),
   value: scheduledMessageJob.id,
 });
 const getDate = ({ runAt }: ScheduledMessageJobWithRoom) => runAt;

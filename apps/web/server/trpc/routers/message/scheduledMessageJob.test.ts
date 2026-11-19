@@ -92,7 +92,7 @@ describe("scheduledMessageJobRouter", () => {
     const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledMessageJobs();
 
     const scheduledMessageJob = takeOne(scheduledMessageJobs.items);
-    expect(scheduledMessageJob.room.id).toBe(roomId);
+    expect(scheduledMessageJob.room?.id).toBe(roomId);
     expect(scheduledMessageJob).toStrictEqual({
       id: reminder.id,
       payload: { text, type: ScheduledMessageJobType.Reminder },
@@ -150,6 +150,23 @@ describe("scheduledMessageJobRouter", () => {
 
     expect(items).toStrictEqual([]);
     expect(roomObject.readScheduledMessages).not.toHaveBeenCalled();
+  });
+
+  // A reminder is the person's own, so it outlives their membership and stays listed. The room's name and image are its
+  // Members' to see, so a room the person has left is listed without them
+  test("lists a reminder in a room I have left without the room's name or image", async () => {
+    expect.hasAssertions();
+
+    const reminder = { id: v7(), roomId, runAt, text };
+    userObject.readReminders.mockResolvedValue([reminder]);
+    await mockContext.db
+      .delete(usersToRoomsInMessage)
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, getMockSession().user.id)));
+    const { items } = await scheduledMessageJobCaller.readMyScheduledMessageJobs({ limit: 10 });
+
+    expect(items).toStrictEqual([
+      { id: reminder.id, payload: { text, type: ScheduledMessageJobType.Reminder }, room: undefined, roomId, runAt },
+    ]);
   });
 
   // The index names a scheduled message its room no longer holds only when its send or cancel missed the index, so the
