@@ -2,12 +2,10 @@
 import { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
 import { formatDate } from "#shared/util/date/formatDate";
 import ResourceSheetRowFieldInputDate from "#src/components/Resource/Sheet/Row/Field/Input/Date.vue";
+import { getDaySelector } from "#src/components/Ui/getDaySelector.test";
 import { getZonedDateTime } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
-
-// A day of the grid, found by the ISO date it carries
-const getDaySelector = (isoDate: string) => `[data-date="${isoDate}"]`;
 
 describe("resourceSheetRowFieldInputDate", () => {
   const column = new DateColumn();
