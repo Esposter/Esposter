@@ -1,7 +1,7 @@
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { readWeaponRoots } from "#src/services/genshinAssets/weapons/readWeaponRoots";
-import { describe, expect, test, vi } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 
 describe("derived asset component map", () => {
   const windriseStreamedPrefabs =
@@ -72,5 +72,41 @@ describe("derived asset component map", () => {
       roots: [],
       screen: "WorldScreen",
     });
+  });
+
+  test("names the animals: the `Animal_` models and the `Ani_Animal_` clips, fish and pets among them", () => {
+    expect.hasAssertions();
+
+    const { clipPattern, namePattern } = DerivedAssetComponentMap[DerivedAssetComponent.Animals];
+
+    assert.exists(clipPattern);
+    assert.exists(namePattern);
+    const nameRegExp = new RegExp(namePattern, "u");
+    const clipRegExp = new RegExp(clipPattern, "u");
+
+    expect("Animal_Squirrel_01_Model").toMatch(nameRegExp);
+    expect("Animal_Fish_Model").toMatch(nameRegExp);
+    expect("Animal_Cat_Cassiodo_Scarf_Model").toMatch(nameRegExp);
+    expect("Ani_Animal_Fox_01_Scared").toMatch(clipRegExp);
+    expect("Ani_Animal_Fish_01_Run").toMatch(clipRegExp);
+    expect("FishingRod_Normal_Ukai_01_Model").not.toMatch(nameRegExp);
+  });
+
+  test("names the fishing scene: the rod, the float, the cast and the rod's clips, never the animals", () => {
+    expect.hasAssertions();
+
+    const { clipPattern, namePattern } = DerivedAssetComponentMap[DerivedAssetComponent.Fishing];
+
+    assert.exists(clipPattern);
+    assert.exists(namePattern);
+    const nameRegExp = new RegExp(namePattern, "u");
+    const clipRegExp = new RegExp(clipPattern, "u");
+
+    expect("FishingRod_Normal_Ukai_01_Model").toMatch(nameRegExp);
+    expect("Eff_Avatar_Fishing_Cork").toMatch(nameRegExp);
+    expect("SkillObj_Fishing_Cast").toMatch(nameRegExp);
+    expect("Ani_FishingRod_Normal_Cast_AS").toMatch(clipRegExp);
+    expect("Animal_Fishable_Maritime_EffectMesh").not.toMatch(nameRegExp);
+    expect("Ani_Animal_Fish_01_Run").not.toMatch(clipRegExp);
   });
 });

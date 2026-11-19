@@ -1,5 +1,6 @@
 // A part of the game whose assets are exported and fitted together, named by the folder its exports go in
 export const DerivedAssetComponent = {
+  Animals: "animals",
   ArdraviValley: "ardravi-valley",
   AshavanRealm: "ashavan-realm",
   AshveilPeak: "ashveil-peak",
@@ -20,6 +21,7 @@ export const DerivedAssetComponent = {
   EasybreezeHolidayResort: "easybreeze-holiday-resort",
   ErinnyesForest: "erinnyes-forest",
   EverfrozenEarth: "everfrozen-earth",
+  Fishing: "fishing",
   Fontaine: "fontaine",
   FontaineResearchInstituteOfKineticEnergyEngineeringRegion:
     "fontaine-research-institute-of-kinetic-energy-engineering-region",

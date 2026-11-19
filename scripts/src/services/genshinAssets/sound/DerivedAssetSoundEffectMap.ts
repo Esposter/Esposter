@@ -7,6 +7,7 @@ import { LOGIN_DOOR_SOUNDS, MINIMUM_PACKAGE_NAME } from "#src/services/genshinAs
 // `genshin:assets sounds` matched for it, in the packages a pattern names, which `fit` reads its levels from and the
 // Audio pass scores it against
 export const DerivedAssetSoundEffectMap: Record<DerivedAssetComponent, Record<string, DerivedAssetSoundEffect>> = {
+  [DerivedAssetComponent.Animals]: {},
   // Each sub-area with a catalogued extent has no sound effects of its own
   [DerivedAssetComponent.ArdraviValley]: {},
   [DerivedAssetComponent.AshavanRealm]: {},
@@ -28,6 +29,7 @@ export const DerivedAssetSoundEffectMap: Record<DerivedAssetComponent, Record<st
   [DerivedAssetComponent.EasybreezeHolidayResort]: {},
   [DerivedAssetComponent.ErinnyesForest]: {},
   [DerivedAssetComponent.EverfrozenEarth]: {},
+  [DerivedAssetComponent.Fishing]: {},
   [DerivedAssetComponent.Fontaine]: {},
   [DerivedAssetComponent.FontaineResearchInstituteOfKineticEnergyEngineeringRegion]: {},
   [DerivedAssetComponent.GalesongHill]: {},

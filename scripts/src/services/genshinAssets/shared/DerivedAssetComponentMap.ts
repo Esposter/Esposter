@@ -19,6 +19,14 @@ const DERIVED_WORLD_OPTIONS: DerivedAssetComponentOptions = { isCapitalWorld: tr
 // And the door's; `Start` and `End`, a name the whole game reuses, are left to its reference. Its music is the playlist
 // `genshin:assets music` found over a recording of its title: two pieces with a rest after each, looping forever
 export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAssetComponentOptions> = {
+  // The animals: their `Animal_` models, fish and pets among them, and the `Ani_Animal_` clips that move them. No pointer
+  // Roots them, so the asset index's names find them
+  [DerivedAssetComponent.Animals]: {
+    clipPattern: "^Ani_Animal_",
+    namePattern: "^Animal_",
+    roots: [],
+    screen: "WorldScreen",
+  },
   // Each sub-area with a catalogued extent: a catalogue area the game outlines, derived the way a capital is, from the centre
   // Of its outline's box (`readDerivedWorldPlace`) and the terrain tiles its outline reaches. An area with no outline is no
   // Component, so it keeps its region's ground
@@ -50,6 +58,14 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   [DerivedAssetComponent.EasybreezeHolidayResort]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.ErinnyesForest]: DERIVED_WORLD_OPTIONS,
   [DerivedAssetComponent.EverfrozenEarth]: DERIVED_WORLD_OPTIONS,
+  // The fishing scene: the rod models and the rod's clips, the float (`Eff_Avatar_Fishing_Cork`) and the cast effect
+  // (`SkillObj_Fishing_Cast`), named by the index. Its names are anchored, so no animal's name reaches them
+  [DerivedAssetComponent.Fishing]: {
+    clipPattern: "^Ani_FishingRod_",
+    namePattern: "^(FishingRod_Normal_|Eff_(Ani_)?Avatar_Fishing_(Cork|Cast)|SkillObj_Fishing_Cast)",
+    roots: [],
+    screen: "WorldScreen",
+  },
   // A region's open world is derived from its capital's place (`deriveCapitalWorld`), so no region is rooted at its
   // Capital's index. Each `Area_<code>_City_Index` is the StreamGen chunk index of the capital's own area blob, a
   // MonoBehaviour holding a blob's chunk offsets and no game object: a root that is one walks to nothing, since the
