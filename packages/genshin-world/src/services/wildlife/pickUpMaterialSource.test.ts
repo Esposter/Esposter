@@ -1,4 +1,3 @@
-import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 
@@ -54,23 +53,33 @@ describe(pickUpMaterialSource, () => {
     position: { x: 5, z: 6 },
   };
 
-  test("a crystalfly picked up gives its item and vanishes", () => {
+  test.each([
+    {
+      itemId: ITEM_ID,
+      materialSources: [otherCrystalfly],
+      name: "Test Crystalfly",
+      pickedId: crystalfly.id,
+      sources: [crystalfly, otherCrystalfly],
+    },
+    {
+      itemId: CRITTER_ITEM_ID,
+      materialSources: [crystalfly],
+      name: "Test Critter",
+      pickedId: critter.id,
+      sources: [critter, crystalfly],
+    },
+  ])("a picked $name gives its item and vanishes", ({ itemId, materialSources, name, pickedId, sources }) => {
     expect.hasAssertions();
 
-    const pickUp = pickUpMaterialSource(
-      [crystalfly, otherCrystalfly],
-      crystalfly.id,
-      EMPTY_INVENTORY,
-      names,
-      materialDataMap,
-    );
-    const expectedInventory: Inventory = {
+    const pickUp = pickUpMaterialSource(sources, pickedId, EMPTY_INVENTORY, names, materialDataMap);
+
+    expect(pickUp.inventory).toStrictEqual({
       items: [
         {
           definition: {
             category: MaterialTypeItemCategoryMap[MaterialType.Exchange],
-            id: ITEM_ID,
-            name: "Test Crystalfly",
+            id: itemId,
+            name,
             rank: 1,
             rarity: 1,
             stackLimit: 99,
@@ -81,38 +90,8 @@ describe(pickUpMaterialSource, () => {
       ],
       nextId: 1,
       quickSwapItemIds: [],
-    };
-
-    expect(pickUp.inventory).toStrictEqual(expectedInventory);
+    });
     expect(pickUp.overflow).toBe(0);
-    expect(pickUp.materialSources).toStrictEqual([otherCrystalfly]);
-  });
-
-  test("a picked critter gives its item and vanishes", () => {
-    expect.hasAssertions();
-
-    const pickUp = pickUpMaterialSource([critter, crystalfly], critter.id, EMPTY_INVENTORY, names, materialDataMap);
-    const expectedInventory: Inventory = {
-      items: [
-        {
-          definition: {
-            category: MaterialTypeItemCategoryMap[MaterialType.Exchange],
-            id: CRITTER_ITEM_ID,
-            name: "Test Critter",
-            rank: 1,
-            rarity: 1,
-            stackLimit: 99,
-          },
-          id: 0,
-          quantity: 1,
-        },
-      ],
-      nextId: 1,
-      quickSwapItemIds: [],
-    };
-
-    expect(pickUp.inventory).toStrictEqual(expectedInventory);
-    expect(pickUp.overflow).toBe(0);
-    expect(pickUp.materialSources).toStrictEqual([crystalfly]);
+    expect(pickUp.materialSources).toStrictEqual(materialSources);
   });
 });

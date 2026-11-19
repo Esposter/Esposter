@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
 describe(getWildlifeShape, () => {
   const SILHOUETTE_SIZE: SilhouetteSize = { depth: 0.3, height: 0.2, width: 0.1 };
 
-  test("a fleeing animal is drawn as its kind", () => {
+  test("a kind with a silhouette size is drawn as a silhouette", () => {
     expect.hasAssertions();
 
     const silhouetteSizes = { [WildlifeKind.CrimsonFox]: SILHOUETTE_SIZE };
