@@ -80,6 +80,7 @@ describe(measureCamera, () => {
   test("opens each reference's witness page on the run's parity page root", async () => {
     expect.hasAssertions();
 
+    openWitnessPage.mockClear();
     openWitnessPage.mockResolvedValue({
       checkIsScored: () => false,
       close: () => Promise.resolve(),
@@ -91,13 +92,9 @@ describe(measureCamera, () => {
 
     await measureCamera(DerivedAssetComponent.Windrise, "http://localhost:3013/parity/");
 
-    expect(openWitnessPage).toHaveBeenCalledWith(
-      "own-bar",
-      DerivedAssetComponent.Windrise,
-      undefined,
-      undefined,
-      undefined,
-      "http://localhost:3013/parity/",
-    );
+    expect(openWitnessPage.mock.calls).toStrictEqual([
+      ["own-bar", DerivedAssetComponent.Windrise, undefined, undefined, undefined, "http://localhost:3013/parity/"],
+      ["global-bar", DerivedAssetComponent.Windrise, undefined, undefined, undefined, "http://localhost:3013/parity/"],
+    ]);
   });
 });

@@ -20,7 +20,7 @@ describe(computeBloomReading, () => {
     const bloomed = createRow([BYTE, glow, ...middle, BYTE]);
     const overGlown = createRow([BYTE, BYTE, ...middle, 0]);
 
-    expect(computeBloomReading(reference, bloomed, unbloomed, width, height)).toBeLessThan(0);
-    expect(computeBloomReading(reference, overGlown, unbloomed, width, height)).toBeGreaterThan(0);
+    expect(computeBloomReading(reference, bloomed, unbloomed, width, height)).toBeCloseTo(-0.488315, 6);
+    expect(computeBloomReading(reference, overGlown, unbloomed, width, height)).toBeCloseTo(2.053673, 6);
   });
 });

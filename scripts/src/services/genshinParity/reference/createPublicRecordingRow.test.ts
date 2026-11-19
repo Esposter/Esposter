@@ -27,7 +27,7 @@ describe(createPublicRecordingRow, () => {
     });
   });
 
-  test("names a Bilibili recording's public page by its id, av or BV alike", () => {
+  test("names a Bilibili recording's public page by its id", () => {
     expect.hasAssertions();
 
     expect(

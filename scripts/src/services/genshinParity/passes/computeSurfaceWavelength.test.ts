@@ -7,7 +7,6 @@ describe(computeSurfaceWavelength, () => {
   const DEPTH = 10;
   const FOV_DEGREES = 45;
   const RADIUS = 16;
-  const metresPerPixel = (2 * DEPTH * Math.tan((FOV_DEGREES * Math.PI) / 360)) / HEIGHT;
   const wave = (period: number, amplitude: number) =>
     Float64Array.from(
       { length: WIDTH * HEIGHT },
@@ -27,7 +26,7 @@ describe(computeSurfaceWavelength, () => {
   test("the spacing of a family's normal angles reads its wavelength in metres at its depth", () => {
     expect.hasAssertions();
 
-    expect(measure(wave(16, 1))).toBeCloseTo(16 * metresPerPixel, 6);
+    expect(measure(wave(16, 1))).toBeCloseTo(2.071068, 6);
   });
 
   test("a family whose normal angles do not vary reads no wavelength", () => {
@@ -56,6 +55,6 @@ describe(computeSurfaceWavelength, () => {
       return 2 + Math.sin((2 * Math.PI * x) / 12) + 3 * Math.sin((2 * Math.PI * x) / 120);
     });
 
-    expect(measure(detailAndShape, 40)).toBeCloseTo(12 * metresPerPixel, 6);
+    expect(measure(detailAndShape, 40)).toBeCloseTo(1.553301, 6);
   });
 });

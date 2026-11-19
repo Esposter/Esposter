@@ -1,6 +1,7 @@
 import type { WikiImagesResponse } from "#src/models/genshinParity/WikiImagesResponse";
 
 import { readWholeScreenImages } from "#src/services/genshinParity/shared/readWholeScreenImages";
+import { WIKI_ORIGIN } from "genshin-persona/src/services/constants.ts";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(readWholeScreenImages, () => {
@@ -30,7 +31,9 @@ describe(readWholeScreenImages, () => {
       { height: 1730, title: "File:Handbook.png", url: "https://wiki/handbook", width: 3130 },
       { height: 1440, title: "File:Menu.png", url: "https://wiki/menu", width: 2560 },
     ]);
-    expect(fetchSpy.mock.calls[1]?.[0]).toContain(`&${new URLSearchParams(continuation)}`);
+    expect(fetchSpy.mock.calls[1]?.[0]).toBe(
+      `${WIKI_ORIGIN}/api.php?action=query&generator=images&gimlimit=max&titles=a&prop=imageinfo&iiprop=size|url&format=json&continue=gimcontinue%7C%7C&gimcontinue=2%7CMenu.png`,
+    );
   });
 
   test("fails on a batch the API answers with an error, rather than returning the batches before it", async () => {

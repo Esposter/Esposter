@@ -24,5 +24,6 @@ describe(solveWhiteBalance, () => {
     const { whiteBalance: solved } = await solveWhiteBalance(samples);
 
     expect(solved.temperature).toBeCloseTo(whiteBalance.temperature, 0);
+    expect(solved.tint).toBeCloseTo(whiteBalance.tint, 0);
   });
 });

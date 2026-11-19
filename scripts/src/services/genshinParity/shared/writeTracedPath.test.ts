@@ -1,7 +1,7 @@
 /* oxlint-disable no-await-in-loop -- Each step reads the last: each write reads the map the one before it wrote, so the scales go in turn */
 import { traceInk } from "#src/services/genshinParity/shared/traceImage";
 import { writeTracedPath } from "#src/services/genshinParity/shared/writeTracedPath";
-import { InvalidOperationError } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -92,20 +92,26 @@ describe(writeTracedPath, () => {
       'export const Commented: Record<string, string> = {\n  // kept by hand\n  [First]: "m0 0h1v1z",\n};\n';
     await writeFile(commentedPath, commentedSource);
 
-    await expect(writeTracedPath(commentedPath, "Second", "m0 0h2v2z", 1)).rejects.toMatchObject({
-      name: InvalidOperationError.name,
-    });
+    await expect(writeTracedPath(commentedPath, "Second", "m0 0h2v2z", 1)).rejects.toStrictEqual(
+      new InvalidOperationError(
+        Operation.Update,
+        commentedPath,
+        "holds content other than keyed entries, which a write drops",
+      ),
+    );
     await expect(readFile(commentedPath, "utf8")).resolves.toBe(commentedSource);
   });
 
   test("replaces the entry of a key it has already written", async () => {
     expect.hasAssertions();
 
-    await writeTracedPath(mapPath, "Replaced", "m0 0h1v1z", 1);
-    await writeTracedPath(mapPath, "Replaced", "m0 0h2v2z", 1);
+    const replacedPath = join(directory, "Replaced.ts");
+    await writeFile(replacedPath, "export const Replaced: Record<string, string> = {\n};\n");
+    await writeTracedPath(replacedPath, "Replaced", "m0 0h1v1z", 1);
+    await writeTracedPath(replacedPath, "Replaced", "m0 0h2v2z", 1);
 
-    const source = await readFile(mapPath, "utf8");
-    expect(source.match(/\[Replaced\]:/gu)).toHaveLength(1);
-    expect(source).toContain('[Replaced]: "m0 0h2v2z",');
+    await expect(readFile(replacedPath, "utf8")).resolves.toBe(
+      'export const Replaced: Record<string, string> = { [Replaced]: "m0 0h2v2z" };\n',
+    );
   });
 });

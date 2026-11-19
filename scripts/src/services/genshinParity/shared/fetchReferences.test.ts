@@ -33,12 +33,12 @@ describe(fetchReferences, () => {
     vi.restoreAllMocks();
   });
 
-  test("creates the scratch folder before it writes a fetched reference into it", async () => {
+  test("creates the scratch folder recursively, though no reference is fetched", async () => {
     expect.hasAssertions();
 
     await fetchReferences();
 
-    expect(mkdir).toHaveBeenCalledWith(REFERENCE_SCRATCH_DIRECTORY, { recursive: true });
+    expect(mkdir).toHaveBeenCalledExactlyOnceWith(REFERENCE_SCRATCH_DIRECTORY, { recursive: true });
   });
 
   test("names a missing reference on stderr and writes nothing to stdout", async () => {

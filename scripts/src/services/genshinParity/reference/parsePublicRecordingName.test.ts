@@ -23,7 +23,7 @@ describe(parsePublicRecordingName, () => {
     });
   });
 
-  test("reads a Bilibili recording's id, av or BV, from its file name", () => {
+  test("reads a Bilibili recording's BV id and clip name from its file name", () => {
     expect.hasAssertions();
 
     expect(parsePublicRecordingName("bili-BV1xx411c7mD-world.mkv")).toStrictEqual({

@@ -51,12 +51,12 @@ describe(computeHazeResidual, () => {
   test("leaves nothing under the haze the stone was seen through, however each part's light differs", () => {
     expect.hasAssertions();
 
-    expect(computeHazeResidual(drawSamples(true))).toBeLessThan(1e-3);
+    expect(computeHazeResidual(drawSamples(true))).toBeCloseTo(0, 3);
   });
 
   test("leaves the haze's depth unexplained under none", () => {
     expect.hasAssertions();
 
-    expect(computeHazeResidual(drawSamples(false))).toBeGreaterThan(0.01);
+    expect(computeHazeResidual(drawSamples(false))).toBeCloseTo(0.071682, 6);
   });
 });

@@ -4,8 +4,6 @@ import { FixtureReferenceStatus } from "#src/models/genshinParity/fixtures/Fixtu
 import { COMPONENT_FILE_NAME, FIXTURE_FILE_NAME } from "#src/services/genshinParity/fixtures/constants";
 import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
 import { DEFAULT_APPROVAL } from "#src/services/genshinParity/reference/constants";
-import { planReferenceFiles } from "#src/services/genshinParity/reference/planReferenceFiles";
-import { getFixtureReferenceFilePath } from "#src/services/genshinParity/shared/getFixtureReferenceFilePath";
 import { FIXTURE_IMAGE_NAME } from "genshin-interface/constants";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -16,7 +14,7 @@ describe(listFixtureScreens, () => {
   const SCREEN_NAME = "FooScreen";
   const SCREEN_DIRECTORY = join("Foo", "Screen");
   const REFERENCE_ID = "foo-screen";
-  // Sorts before REFERENCE_ID, so a region listed first is the first entry the planner could take
+  // Sorts before REFERENCE_ID, so a region listed first is the first entry a pick by listing order alone would take
   const REGION_REFERENCE_ID = "bar-region";
   const REGION = { height: 0, width: 0, x: 0, y: 0 };
   const REPORTED_MEAN = 2.5;
@@ -71,7 +69,7 @@ describe(listFixtureScreens, () => {
     ]);
   });
 
-  test("should name a variant's primary reference, the one the planner places beside its snapshot, over a region listed before it", async () => {
+  test("should name a variant's primary reference as its whole-screen one, over a region listed before it", async () => {
     expect.hasAssertions();
 
     // Built from entries, not an object literal, since the lint's key sort would list REFERENCE_ID first and undo the order
@@ -80,12 +78,7 @@ describe(listFixtureScreens, () => {
       [REFERENCE_ID, { screen: SCREEN_NAME, source: "recording.mp4", variant: VARIANT }],
     ]);
     const rows = await listFixtureScreens(componentsDirectory, referenceMap, new Map());
-    const besideSnapshot = getFixtureReferenceFilePath(join(componentsDirectory, SCREEN_DIRECTORY), VARIANT);
-    const besideId = planReferenceFiles(referenceMap, rows, componentsDirectory, new Map()).find(
-      ({ path }) => path === besideSnapshot,
-    )?.id;
 
-    expect(rows.find(({ variant }) => variant === VARIANT)?.referenceId).toBe(besideId);
-    expect(besideId).toBe(REFERENCE_ID);
+    expect(rows.find(({ variant }) => variant === VARIANT)?.referenceId).toBe(REFERENCE_ID);
   });
 });

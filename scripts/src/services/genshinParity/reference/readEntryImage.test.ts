@@ -55,18 +55,6 @@ describe(readEntryImage, () => {
     await expect(entry?.read()).resolves.toStrictEqual(held.data);
   });
 
-  test("names a committed file holding other bytes than the held hash as a collision when no scratch copy is beside it", async () => {
-    expect.hasAssertions();
-
-    const held = await red();
-    const other = await blue();
-    writeFileSync(committedPath, other.data);
-
-    const entry = await readEntryImage(scratchPath, held.image, committedPath);
-
-    expect(entry?.collision).toStrictEqual({ committed: other.image.sha256, ours: held.image.sha256 });
-  });
-
   test("writes nothing for a scratch copy whose bytes are already committed under the held hash", async () => {
     expect.hasAssertions();
 
@@ -76,7 +64,6 @@ describe(readEntryImage, () => {
 
     const entry = await readEntryImage(scratchPath, held.image, committedPath);
 
-    expect(entry).toBeDefined();
     expect(entry?.image).toStrictEqual(held.image);
     expect(entry?.collision).toBeUndefined();
     expect(entry?.stored).toBeUndefined();

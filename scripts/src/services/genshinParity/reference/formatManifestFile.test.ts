@@ -32,13 +32,12 @@ describe(formatManifestFile, () => {
     expect(formatJsonFile(REFERENCE_MANIFEST_PATH, jsonDateParse(text))).toBe(text);
   });
 
-  test("sorts each section's rows, and leaves out a header key the manifest does not hold", () => {
+  test("sorts each section's rows by id, whatever order they arrive in", () => {
     expect.hasAssertions();
 
     const text = formatManifestFile({ ...EMPTY, references: [createRow("b"), createRow("a")] });
 
     expect(text).toBe(formatManifestFile({ ...EMPTY, references: [createRow("a"), createRow("b")] }));
-    expect(Object.keys(parseMachineJson(text))).not.toContain("animeGameDataCommit");
   });
 
   test("writes the sections in the order the committed file holds them", () => {

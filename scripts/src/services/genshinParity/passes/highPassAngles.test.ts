@@ -13,7 +13,7 @@ describe(highPassAngles, () => {
     expect(highPassAngles(angles, WIDTH, 8).every((value) => Math.abs(value) < 1e-9)).toBe(true);
   });
 
-  test("a wave shorter than the radius passes the high-pass, and one longer than it is removed", () => {
+  test("a wave shorter than the radius passes the high-pass, and one longer than it is cut down", () => {
     expect.hasAssertions();
 
     const short = Float64Array.from({ length: WIDTH * HEIGHT }, (_value, pixel) =>
@@ -26,8 +26,8 @@ describe(highPassAngles, () => {
     const shortAmplitude = Math.max(...highPassAngles(short, WIDTH, radius).slice(WIDTH * 4, WIDTH * 4 + WIDTH));
     const longAmplitude = Math.max(...highPassAngles(long, WIDTH, radius).slice(WIDTH * 4, WIDTH * 4 + WIDTH));
 
-    expect(shortAmplitude).toBeGreaterThan(0.8);
-    expect(longAmplitude).toBeLessThan(0.3);
+    expect(shortAmplitude).toBeCloseTo(1.032141, 6);
+    expect(longAmplitude).toBeCloseTo(0.183202, 6);
   });
 
   test("a pixel outside the family stays outside it, and counts toward no neighbour's mean", () => {
@@ -38,6 +38,6 @@ describe(highPassAngles, () => {
     const result = highPassAngles(angles, WIDTH, 4);
 
     expect(Number.isNaN(result[1])).toBe(true);
-    expect(Math.abs(result[2] ?? 1)).toBeLessThan(1e-9);
+    expect(result[2]).toBeCloseTo(0, 9);
   });
 });

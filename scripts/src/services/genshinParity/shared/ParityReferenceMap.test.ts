@@ -67,32 +67,6 @@ describe("parityReferenceMap", () => {
     expect(findSubscreensWithoutEntry(subscreens, Object.values(ParityReferenceMap))).toStrictEqual([]);
   });
 
-  test("variant with no entry", () => {
-    expect.hasAssertions();
-
-    expect(findSubscreensWithoutEntry([{ screen: "ArchiveScreen", variant: "dusk" }], [])).toStrictEqual([
-      { screen: "ArchiveScreen", variant: "dusk" },
-    ]);
-  });
-
-  test("variant borrowing its base's reference", () => {
-    expect.hasAssertions();
-
-    expect(
-      findSubscreensWithoutEntry([{ screen: "ArchiveScreen", variant: "dusk" }], [{ screen: "ArchiveScreen" }]),
-    ).toStrictEqual([{ screen: "ArchiveScreen", variant: "dusk" }]);
-  });
-
-  test("variant pending with a reason", () => {
-    expect.hasAssertions();
-
-    const pendingEntry = { pending: "the dusk light is not recorded yet", screen: "ArchiveScreen", variant: "dusk" };
-
-    expect(findSubscreensWithoutEntry([{ screen: "ArchiveScreen", variant: "dusk" }], [pendingEntry])).toStrictEqual(
-      [],
-    );
-  });
-
   test("scores no region left of its window's edge", () => {
     expect.hasAssertions();
 

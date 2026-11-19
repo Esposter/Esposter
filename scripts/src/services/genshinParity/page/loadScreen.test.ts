@@ -23,7 +23,7 @@ describe(loadScreen, () => {
     totalBytes: 7,
   } satisfies LoadBench;
 
-  test("opens the page at its load event and reads back the reading it took at ready", async () => {
+  test("opens the screen's page at its size with its frame rate capped, and reads back the reading it took at ready", async () => {
     expect.hasAssertions();
 
     const evaluate = vi.fn<() => Promise<unknown>>().mockResolvedValue({ bench: BENCH, readyMs: 250 });
@@ -32,14 +32,14 @@ describe(loadScreen, () => {
 
     const reading = await loadScreen({ height: 1080, screen: "WorldScreen", width: 1920 });
 
-    expect(vi.mocked(openParityPage).mock.lastCall?.[0]).toStrictEqual({
+    expect(openParityPage).toHaveBeenCalledExactlyOnceWith({
       height: 1080,
       isFrameRateUnlimited: false,
       screen: "WorldScreen",
       width: 1920,
     });
     expect(evaluate).toHaveBeenCalledTimes(1);
-    expect(close).toHaveBeenCalledTimes(1);
+    expect(close).toHaveBeenCalledExactlyOnceWith();
     expect(reading).toStrictEqual({ bench: BENCH, readyMs: 250 });
   });
 });

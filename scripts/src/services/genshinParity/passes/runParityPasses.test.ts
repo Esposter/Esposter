@@ -129,11 +129,12 @@ describe(runParityPasses, () => {
     const unbuiltResults = await runParityPasses(DerivedAssetComponent.Login);
 
     expect(emptyResults).toStrictEqual([{ isHeld: false, measure: empty, pass: ParityPass.Inventory }]);
-    expect(unbuiltResults.at(-1)).toStrictEqual({
-      isHeld: false,
-      measure: { notes: ["no measure yet"], readings: [] },
-      pass: ParityPass.Shape,
-    });
+    expect(unbuiltResults).toStrictEqual([
+      { isHeld: true, measure: held, pass: ParityPass.Inventory },
+      { isHeld: true, measure: held, pass: ParityPass.Layout },
+      { isHeld: true, measure: held, pass: ParityPass.Camera },
+      { isHeld: false, measure: { notes: ["no measure yet"], readings: [] }, pass: ParityPass.Shape },
+    ]);
   });
 
   test("a pass waits for the gates of the passes before it", async () => {

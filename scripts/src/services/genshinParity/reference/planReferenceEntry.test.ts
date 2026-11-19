@@ -5,6 +5,7 @@ import type { readEntryImage as baseReadEntryImage } from "#src/services/genshin
 
 import { ParityReferenceKind } from "#src/models/genshinParity/reference/ParityReferenceKind";
 import { planReferenceEntry } from "#src/services/genshinParity/reference/planReferenceEntry";
+import { getReferencePlateFilePath } from "#src/services/genshinParity/shared/getReferencePlateFilePath";
 import { getScratchPlatePath } from "#src/services/genshinParity/shared/getScratchPlatePath";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -64,7 +65,7 @@ describe(planReferenceEntry, () => {
     const { files, row } = await planReferenceEntry(ID, REFERENCE, MAIN_PATH, undefined, createCommittedRow());
 
     expect(row?.plate).toStrictEqual(LOCAL_PLATE_IMAGE);
-    expect(files.map(({ path }) => path)).toStrictEqual([MAIN_PATH, expect.stringContaining(`${ID}.plate.webp`)]);
+    expect(files.map(({ path }) => path)).toStrictEqual([MAIN_PATH, getReferencePlateFilePath(ID)]);
   });
 
   test("a replace whose local plate is absent keeps the committed plate that is on disk, and writes none", async () => {
@@ -84,7 +85,7 @@ describe(planReferenceEntry, () => {
     expect(readEntryImage).toHaveBeenCalledWith(
       getScratchPlatePath(ID),
       COMMITTED_PLATE_IMAGE,
-      expect.stringContaining(`${ID}.plate.webp`),
+      getReferencePlateFilePath(ID),
     );
     expect(row?.plate).toStrictEqual(COMMITTED_PLATE_IMAGE);
     expect(missing).toStrictEqual([]);
@@ -108,7 +109,7 @@ describe(planReferenceEntry, () => {
 
     expect({ files, missing, packed, refused, row }).toStrictEqual({
       files: [],
-      missing: [{ id: ID, path: expect.stringContaining(`${ID}.plate`) }],
+      missing: [{ id: ID, path: getReferencePlateFilePath(ID) }],
       packed: [],
       refused: true,
       row: undefined,
@@ -142,7 +143,7 @@ describe(planReferenceEntry, () => {
 
     expect({ collisions, missing, refused, row }).toStrictEqual({
       collisions: [{ committed: LOCAL_PLATE_IMAGE.sha256, id: ID, ours: COMMITTED_PLATE_IMAGE.sha256 }],
-      missing: [{ id: ID, path: expect.stringContaining(`${ID}.plate`) }],
+      missing: [{ id: ID, path: getReferencePlateFilePath(ID) }],
       refused: true,
       row: undefined,
     });
@@ -166,7 +167,7 @@ describe(planReferenceEntry, () => {
 
     expect({ files, missing, packed, refused, row }).toStrictEqual({
       files: [],
-      missing: [{ id: ID, path: expect.stringContaining(`${ID}.plate`) }],
+      missing: [{ id: ID, path: getReferencePlateFilePath(ID) }],
       packed: [],
       refused: true,
       row: undefined,
@@ -183,7 +184,7 @@ describe(planReferenceEntry, () => {
     expect({ missing, refused }).toStrictEqual({
       missing: [
         { id: ID, path: MAIN_PATH },
-        { id: ID, path: expect.stringContaining(`${ID}.plate`) },
+        { id: ID, path: getReferencePlateFilePath(ID) },
       ],
       refused: false,
     });
@@ -210,11 +211,11 @@ describe(planReferenceEntry, () => {
     );
 
     expect({ files: files.map(({ path }) => path), held, restored }).toStrictEqual({
-      files: [MAIN_PATH, expect.stringContaining(`${ID}.plate`)],
+      files: [MAIN_PATH, getReferencePlateFilePath(ID)],
       held: [],
       restored: [
         { id: ID, path: MAIN_PATH },
-        { id: ID, path: expect.stringContaining(`${ID}.plate`) },
+        { id: ID, path: getReferencePlateFilePath(ID) },
       ],
     });
   });

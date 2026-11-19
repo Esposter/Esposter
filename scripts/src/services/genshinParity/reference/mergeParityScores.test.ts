@@ -286,7 +286,19 @@ describe(mergeParityScores, () => {
   test("writes no layers table where no reference has layers", () => {
     expect.hasAssertions();
 
-    expect(mergeParityScores([], { a: createScore([]) }, ["a"], {}, ParityReportRun.Subset)).not.toContain("## Layers");
+    expect(mergeParityScores([], { a: createScore([]) }, ["a"], {}, ParityReportRun.Subset)).toMatchInlineSnapshot(`
+      "# Parity scores
+
+      Every reference's last \`pnpm -C scripts genshin:parity compare\`, which rewrites its own row (\`--all\` rewrites them
+      all). The mean difference, the tone and FLIP's perceptual error run from 0 (identical) up; the shape is the share of
+      the reference's edges the shot shares, 1 identical. Commit it with the change that moved it, as a bench's report is
+      committed.
+
+      | Reference | Screen | Mean difference | Shape |  Tone |   FLIP |
+      | :-------- | :----- | --------------: | ----: | ----: | -----: |
+      | \`a\`       | \`\`     |           0.00% | 0.000 | 0.00% | 0.0000 |
+      "
+    `);
   });
 
   test("a full run lists a pending reference in its place with its reason, over the row it held when it was scored", () => {
