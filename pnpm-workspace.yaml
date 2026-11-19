@@ -34,7 +34,7 @@ catalog:
   "@better-auth/drizzle-adapter": ^1.7.26
   "@cloudflare/realtimekit": ^2.1.0
   "@cloudflare/realtimekit-virtual-background": ^0.0.3
-  "@cloudflare/workers-types": ^5.20261118.1
+  "@cloudflare/workers-types": ^5.20261119.1
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.13.1
   "@codemirror/language-data": ^6.5.2
@@ -115,12 +115,12 @@ catalog:
   "@vitest/snapshot": ^5.1.0
   "@vitest/spy": ^5.1.0
   "@vitest/utils": ^5.1.0
-  "@vizejs/native": ^0.781.0
-  "@vizejs/unplugin": ^0.781.0
-  "@vizejs/vite-plugin": ^0.781.0
+  "@vizejs/native": ^0.782.0
+  "@vizejs/unplugin": ^0.782.0
+  "@vizejs/vite-plugin": ^0.782.0
   "@vue/compiler-core": ^3.5.45
   "@vue/test-utils": ^2.6.0
-  "@vuetify/v0": ^1.3.3
+  "@vuetify/v0": ^1.4.0
   "@vueuse/core": ^15.0.0
   "@vueuse/nuxt": ^15.0.0
   "@vueuse/router": ^15.0.0
@@ -149,7 +149,7 @@ catalog:
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
   jscpd: ^5.4.3
-  knip: ^6.46.0
+  knip: ^6.46.1
   link-preview-js: ^6.0.0
   linkifyjs: ^4.4.0
   lowlight: ^3.3.0
@@ -206,12 +206,12 @@ catalog:
   vite-plus: ^1.7.0
   vitest: ^5.1.1
   vitest-browser-vue: ^3.1.0
-  vize: ^0.781.0
+  vize: ^0.782.0
   vue: ^3.5.45
   vue-eslint-parser: ^10.4.2
   vue-router: ^5.5.1
   web-push: ^4.0.0
-  wrangler: ^4.164.0
+  wrangler: ^4.165.0
   write-excel-file: ^4.1.1
   zod: ^4.6.7
 
