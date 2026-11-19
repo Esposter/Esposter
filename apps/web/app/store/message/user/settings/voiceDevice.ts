@@ -44,6 +44,7 @@ export const useVoiceDeviceSettingsStore = defineStore("message/user/settings/vo
     microphoneHolders.delete(holder);
     if (microphoneHolders.size === 0 && isMicrophoneSettled) closeMicrophone();
   };
+  const isMicrophoneHeldBy = (holder: symbol) => microphoneHolders.has(holder);
   return {
     audioInputs,
     audioOutputs,
@@ -51,6 +52,7 @@ export const useVoiceDeviceSettingsStore = defineStore("message/user/settings/vo
     ensurePermissions,
     holdMicrophone,
     inputDeviceId,
+    isMicrophoneHeldBy,
     outputDeviceId,
     permissionGranted,
     releaseMicrophone,

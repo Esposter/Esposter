@@ -9,7 +9,7 @@ import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared"
 // The stream itself is the store's: every panel reading a level holds the one microphone, so two panels open it once.
 export const useMicrophoneLevel = () => {
   const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
-  const { holdMicrophone, releaseMicrophone } = voiceDeviceSettingsStore;
+  const { holdMicrophone, isMicrophoneHeldBy, releaseMicrophone } = voiceDeviceSettingsStore;
   const holder = Symbol("microphone level");
   const isTesting = ref(false);
   const level = ref(MIN_INPUT_SENSITIVITY_DECIBELS);
@@ -27,7 +27,6 @@ export const useMicrophoneLevel = () => {
     },
     { immediate: false },
   );
-  let isDisposed = false;
   const { executeQuery } = useMutation();
   // A start that lands while one is pending joins it, so a double click cannot open a second stream beside the first
   const start = async () => {
@@ -40,10 +39,9 @@ export const useMicrophoneLevel = () => {
         console.error(error);
       },
       onSuccess: async (stream) => {
-        if (!stream) return;
-        // A dispose can land while the request is still pending, and the store closes the stream once no panel holds it,
-        // So there is nothing left for this panel to tear down
-        if (isDisposed) return;
+        // A stop or a dispose that lands while the request is pending releases this panel's hold, and the store closes
+        // The stream it resolves once no panel holds it, so a stream this panel no longer holds starts nothing
+        if (!stream || !isMicrophoneHeldBy(holder)) return;
         // A start that lands on a running test reuses its stream, so the context it replaces is taken out here
         const previousAudioContext = audioContext;
         audioContext = new window.AudioContext();
@@ -72,14 +70,7 @@ export const useMicrophoneLevel = () => {
     await previousAudioContext?.close();
   };
 
-  onScopeDispose(
-    getSynchronizedFunction(() =>
-      getResultAsync(async () => {
-        isDisposed = true;
-        await stop();
-      }).match(noop, console.error),
-    ),
-  );
+  onScopeDispose(getSynchronizedFunction(() => getResultAsync(() => stop()).match(noop, console.error)));
 
   return { isTesting, level, start, stop };
 };

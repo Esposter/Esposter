@@ -90,6 +90,29 @@ describe(useMicrophoneLevel, () => {
     expect(microphoneLevel.isTesting.value).toBe(false);
   });
 
+  test("a stop that lands while a start is pending leaves the test stopped and the stream it resolves closed", async () => {
+    expect.hasAssertions();
+
+    wrapper = await mountSuspended(
+      defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          microphoneLevel = useMicrophoneLevel();
+        },
+      }),
+    );
+    const track = { stop: vi.fn<() => void>() };
+    const starting = microphoneLevel.start();
+    await flushPromises();
+    const stopping = microphoneLevel.stop();
+    for (const resolve of resolveRequests) resolve({ getTracks: () => [track] } as unknown as MediaStream);
+    await Promise.all([starting, stopping]);
+    await flushPromises();
+
+    expect(microphoneLevel.isTesting.value).toBe(false);
+    expect(track.stop).toHaveBeenCalledTimes(1);
+  });
+
   test("two panels reading the level share one microphone stream rather than asking for a second", async () => {
     expect.hasAssertions();
 
