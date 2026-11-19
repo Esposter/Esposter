@@ -26,7 +26,7 @@ describe(stepAbyssArena, () => {
     });
   });
 
-  test("clearing a chamber with time left earns its stars, and its clock stops at the clear", () => {
+  test("a cleared chamber's clock stops at the clear and the arena stays as it was", () => {
     expect.hasAssertions();
     const cleared: AbyssArena = {
       ...enterArenaChamber(),
