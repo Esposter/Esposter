@@ -2,8 +2,10 @@ import { glob, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// A store's id is the one name it carries into the SSR payload and the devtools tree, and nothing derives it —
-// It is typed out beside a path that already says the same thing, so the two drift silently
+// A store's id is the one name it carries into the SSR payload and the devtools tree. Nothing can derive it: a helper
+// Cannot read it from the file, since `import.meta.url` in a built bundle is the chunk's URL, and a build transform or
+// A cast would stand in for the literal `defineStore` types. So each id is typed beside its path, and this test is
+// What stops the two drifting apart
 const DEFINE_STORE_ID_REGEX = /defineStore\("(?<id>[^"]+)"/u;
 const storeDirectory = import.meta.dirname;
 const storePaths = (await Array.fromAsync(glob("**/*.ts", { cwd: storeDirectory })))
