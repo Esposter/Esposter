@@ -40,8 +40,8 @@ The first lists the hand-kept lists a test holds, the second the prose that name
 
 A copy an outside reader must hold is not removed. Each keeps the test that holds it equal to its source, as the enforcer:
 
-- **GitHub workflows** cannot read TypeScript, so the cache path in `CI.yaml` and `build-packages.yaml` is spelled out (`siteNameLiterals.test.ts`).
-- **The disk-scan mod** ships without `@esposter/shared`, so its refusal spells the game's folder itself (same test).
+- **GitHub workflows** cannot read TypeScript, so the cache path in `CI.yaml` and `build-packages.yaml` is spelled out (`pathLiterals.test.ts`).
+- **The disk-scan mod** ships without `@esposter/shared`, so its refusal spells the parity folder under the data root itself (same test).
 - **lerna-lite** reads only `lerna.json`, so its workspace globs repeat `pnpm-workspace.yaml` (`lernaPackages.test.ts`).
 - **Configs loaded outside the import map** — `.gitignore` and the oxlint config repeat the agent directories (`agentDirectories.test.ts`).
 - **pnpm's and npm's vocabulary** — their command names and dependency fields (`packageScripts.test.ts`, `publishedDependencies.test.ts`).
