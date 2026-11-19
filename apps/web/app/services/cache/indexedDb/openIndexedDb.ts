@@ -1,6 +1,8 @@
 import type { IndexedDbDatabaseSchema } from "#src/models/cache/indexedDb/IndexedDbDatabaseSchema";
+import type { IndexedDbStoreConfiguration } from "#src/models/cache/indexedDb/IndexedDbStoreConfiguration";
 import type { Database } from "@esposter/shared";
 
+import { IndexedDbStoreName } from "#src/models/cache/indexedDb/IndexedDbStoreName";
 import { RESET_DATABASE_TIMEOUT_MS } from "#src/services/cache/constants";
 import { MemberIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
@@ -39,15 +41,16 @@ export const openIndexedDb = () => {
     // The next read or write opens a fresh one, queued behind that request
     blocking: getSynchronizedFunction(releaseDatabase),
     upgrade: (database, oldVersion) => {
-      const configurations = [
-        MemberIndexedDbStoreConfiguration,
-        MessageIndexedDbStoreConfiguration,
-        RoomIndexedDbStoreConfiguration,
-      ];
+      const configurations = {
+        [IndexedDbStoreName.Members]: MemberIndexedDbStoreConfiguration,
+        [IndexedDbStoreName.Messages]: MessageIndexedDbStoreConfiguration,
+        [IndexedDbStoreName.Rooms]: RoomIndexedDbStoreConfiguration,
+      } satisfies Record<IndexedDbStoreName, IndexedDbStoreConfiguration<IndexedDbStoreName>>;
+      const storeConfigurations = Object.values(configurations);
       // A store an earlier version created was keyed by a different key path.
       // A cache is refilled from the server, so it is cleared rather than migrated
-      if (oldVersion > 0) for (const { storeName } of configurations) database.deleteObjectStore(storeName);
-      for (const { indexName, keyPath, storeName } of configurations) {
+      if (oldVersion > 0) for (const { storeName } of storeConfigurations) database.deleteObjectStore(storeName);
+      for (const { indexName, keyPath, storeName } of storeConfigurations) {
         const objectStore = database.createObjectStore(storeName, { keyPath });
         objectStore.createIndex(indexName, indexName);
       }
