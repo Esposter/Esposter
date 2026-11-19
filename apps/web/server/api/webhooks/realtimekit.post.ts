@@ -4,13 +4,13 @@ import { checkIsCallConnectionAdmitted } from "#server/services/message/call/che
 import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
 import { consumeRequestAddressRateLimit } from "#server/services/rateLimiter/consumeRequestAddressRateLimit";
 import { verifyRealtimeKitWebhook } from "#server/services/realtimeKit/verifyRealtimeKitWebhook";
-import { getResultAsync, jsonDateParse } from "@esposter/shared";
+import { getResultAsync, jsonDateParse, RealtimeKitWebhookEvent } from "@esposter/shared";
 import { defineEventHandler } from "nuxt/server";
 import { z } from "zod";
 
 // The two events this route is subscribed to; RealtimeKit delivers no other to it
 const realtimeKitWebhookSchema = z.object({
-  event: z.enum(["meeting.participantJoined", "meeting.participantLeft"]),
+  event: z.enum(RealtimeKitWebhookEvent),
   meeting: z.object({ id: z.string() }),
   participant: z.object({ customParticipantId: z.string(), leftAt: z.coerce.date().optional() }),
 });

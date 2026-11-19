@@ -10,8 +10,6 @@ export const WEB_ORIGIN_MAP: Readonly<Record<CloudflareEnvironment, string>> = {
   [CloudflareEnvironment.Production]: "https://esposter.com",
 };
 export const REALTIMEKIT_WEBHOOK_PATH = "/api/webhooks/realtimekit";
-// The two events the webhook route is subscribed to. RealtimeKit delivers no other to it
-export const REALTIMEKIT_WEBHOOK_EVENTS: string[] = ["meeting.participantJoined", "meeting.participantLeft"];
 // The four presets the calls code joins a participant with, named as its REALTIMEKIT_PRESET_NAME names them
 // (apps/web/server/services/realtimeKit/constants.ts). A preset is created only when it is missing, so a change to one of
 // These is made by hand in RealtimeKit and not here

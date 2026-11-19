@@ -4,7 +4,7 @@ import type { RealtimeKitExisting } from "#src/models/realtimeKit/RealtimeKitExi
 import type { RealtimeKitWebhook } from "#src/models/realtimeKit/RealtimeKitWebhook";
 
 // A webhook is current when it is enabled and subscribed to exactly the events the route is subscribed to
-const checkIsWebhookCurrent = (webhook: RealtimeKitWebhook, events: string[]): boolean =>
+const checkIsWebhookCurrent = (webhook: RealtimeKitWebhook, events: readonly string[]): boolean =>
   webhook.enabled && webhook.events.length === events.length && events.every((event) => webhook.events.includes(event));
 
 // The changes that take an environment's RealtimeKit from what exists to what is desired, in the order they run:
