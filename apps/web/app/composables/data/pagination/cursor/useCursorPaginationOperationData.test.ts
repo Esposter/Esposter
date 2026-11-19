@@ -252,7 +252,7 @@ describe(useCursorPaginationOperationData, () => {
     await readMoreItems(query, onComplete);
 
     expect(query).not.toHaveBeenCalled();
-    expect(onComplete).toHaveBeenCalledTimes(1);
+    expect(onComplete).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("paces retries with exponential backoff after a failing query", async () => {
@@ -271,7 +271,7 @@ describe(useCursorPaginationOperationData, () => {
 
     await expect(readMoreItems(query, onComplete)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
-    expect(query).toHaveBeenCalledTimes(1);
+    expect(query).toHaveBeenCalledExactlyOnceWith(nextCursor);
     expect(setTimeoutSpy).not.toHaveBeenCalled();
 
     await expect(readMoreItems(query, onComplete)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
