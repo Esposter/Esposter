@@ -1,6 +1,7 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { PublicUser } from "@esposter/db-schema";
 
+import { getResolvedDisplayName } from "#shared/services/room/getResolvedDisplayName";
 import { useRoomStore } from "#src/store/message/room/index";
 
 export const useUserStore = defineStore("message/user", () => {
@@ -12,10 +13,10 @@ export const useUserStore = defineStore("message/user", () => {
     () => roomStore.currentRoomId,
     () => new Map<string, MemberInRoom>(),
   );
-  // The one rule for a name shown in a room: the room's display name, else the account name.
-  // A caller that already has the account name passes it; a caller that omits it reads the name from the user map
+  // A name shown in a room follows getResolvedDisplayName. A caller that already has the account name passes it;
+  // A caller that omits it reads the name from the user map
   const getRoomMemberName = (roomId: string, userId: string, accountName = userMap.value.get(userId)?.name ?? "") =>
-    getRoomMemberMap(roomId)?.get(userId)?.displayName ?? accountName;
+    getResolvedDisplayName(getRoomMemberMap(roomId)?.get(userId)?.displayName, accountName);
   const storeUser = (user: PublicUser) => {
     userMap.value.set(user.id, user);
   };

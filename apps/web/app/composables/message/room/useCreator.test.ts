@@ -65,6 +65,20 @@ describe(useCreator, () => {
     expect(creator.value?.name).toBe(user.name);
   });
 
+  // The room's row holds a blank display name until the member sets one, and a blank one names the creator by the
+  // Global name rather than an empty label
+  test("names the creator by the global name when the room's display name is blank", () => {
+    expect.hasAssertions();
+
+    const userStore = useUserStore();
+    const { storeRoomMembers } = userStore;
+    storeRoomMembers(roomId, [{ ...user, displayName: "" }]);
+    const message = createOptimisticMessage({ roomId, type: MessageType.Message }, user.id);
+    const creator = useCreator(() => message);
+
+    expect(creator.value?.name).toBe(user.name);
+  });
+
   // A delivery that carries no sender name of its own is named by the bot it was sent under, as the cache holds it
   test("falls back to the app user's name for a webhook with no sender name", () => {
     expect.hasAssertions();

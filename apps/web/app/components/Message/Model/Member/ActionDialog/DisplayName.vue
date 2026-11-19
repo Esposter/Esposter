@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { MemberActionDialogProps } from "#src/models/message/member/MemberActionDialogProps";
 
+import { getResolvedDisplayName } from "#shared/services/room/getResolvedDisplayName";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
-import { getResolvedDisplayName } from "#src/services/message/member/getResolvedDisplayName";
 import { useUserStore } from "#src/store/message/user/index";
 import { useMemberStore } from "#src/store/message/user/member";
 import { ID_SEPARATOR, noop } from "@esposter/shared";

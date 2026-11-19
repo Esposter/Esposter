@@ -61,6 +61,7 @@ import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
 import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCreateMessageInput";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
+import { getResolvedDisplayName } from "#shared/services/room/getResolvedDisplayName";
 import {
   claimMessageSendSlot,
   cloneFiles,
@@ -105,7 +106,10 @@ const baseMessageRouter = router({
         where: { roomId: { eq: roomId }, userId: { eq: user.id } },
       });
       await useRoomObject(roomId).broadcastEvent(
-        { data: { roomId, userId: user.id, username: userToRoom?.displayName || user.name }, type: "createTyping" },
+        {
+          data: { roomId, userId: user.id, username: getResolvedDisplayName(userToRoom?.displayName, user.name) },
+          type: "createTyping",
+        },
         getRoomEventOptions(getRoomActor(ctx)),
       );
     }),
