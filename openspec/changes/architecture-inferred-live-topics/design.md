@@ -49,7 +49,7 @@ The columns a statement references are the golden read sets' record: `readSets.t
 
 ## Spike evidence
 
-The spike ran in a scratch worktree and committed nothing to the app. It used the schema's real migrations and drizzle's D1 driver over an in-memory SQLite that emulates the D1 binding (the same SQLite engine family); it did not use D1 or Miniflare. Each of the five reads was copied verbatim from its router, with the same real helper modules imported, and run against seeded data where a list has 50 rows. The counts below are measured at the change's base commit.
+The spike ran in a scratch worktree and committed nothing to the app. It used the schema's real migrations and drizzle's D1 driver over an in-memory SQLite that emulates the D1 binding (the same SQLite engine family); it did not use D1 or Miniflare. Each of the five reads was copied verbatim from its router, with the same real helper modules imported, and run against seeded data where a list has 50 rows. Its topic counts are not kept here: the read-set goldens name the topics each read watches, and task 6.1 measures the cost.
 
 ### 1. Read sets come from the builders, not from the emitted SQL
 
@@ -58,18 +58,6 @@ The spike ran in a scratch worktree and committed nothing to the app. It used th
 - The spike did not build a parser for the emitted SQL. It would re-derive what the builder already holds, from `?` placeholders mapped to parameters by position, and it would still not know which columns are scope columns. See the alternatives.
 
 ### 2. The five reads, inferred against declared
-
-**The counts in this section and the next two were measured before the column rule** (a table-wide read named `table:*` only, and an update published `table:*`). They are stale wherever a table-wide read or an update is counted, and are re-measured on the seed when the rule lands in the measurement task.
-
-Topic counts per read. "Table" is the table-wide policy for every unscoped table. "Row" is the row policy, which names joined rows by their values. The declared count is today's, and the sidebar's includes one topic per listed room.
-
-| Read                                        | Declared today      | Table policy | Row policy | Row policy by table                                                     |
-| ------------------------------------------- | ------------------- | ------------ | ---------- | ----------------------------------------------------------------------- |
-| `readBookmarks` (dock)                      | 1 (`Bookmark:user`) | 4            | 62         | bookmarks 1, room memberships 1, resources 30, resource publications 30 |
-| `readPosts` (feed)                          | 1 (`Feed:posts`)    | 3            | 3          | post likes 1, blocks 1, posts (table-wide) 1                            |
-| `readRooms` (sidebar, 50 rooms)             | 51                  | 3            | 52         | room memberships 1, rooms 50, users 1                                   |
-| `searchUsers` (name search, `staticReason`) | 0, never watched    | 3            | 52         | blocks 2, users 50                                                      |
-| `readInvite` (landing page)                 | 1 (`RoomList:user`) | 7            | 6          | invites 1, bans 1, rooms 1, users 1, room memberships 2                 |
 
 The gaps are topics the read depends on that its declared list does not name:
 
@@ -90,15 +78,11 @@ Findings that limit the design:
 
 ### 3. Cost
 
-Measured on the host, not in a Worker. The figures are the baseline the migration measures against.
+Not measured here. Task 6.1 measures these in a deployed Worker, against a baseline taken at the base commit on the same seed, and the numbers are recorded in this section then.
 
-- **Page load** (dock, sidebar and feed together), the distinct topics a page subscribes: 53 declared; 9 under the table policy; 116 under the row policy.
-- **A bookmark toggle** (one row with a resource, scope values for the user and the resource): 1 publish declared (`Bookmark:user`); 3 inferred (two scope topics and the table-wide topic).
-- **A room rename**: 2 inferred (the room's id topic and its table-wide topic).
 - **A resource delete**: the resource's topics plus the table-wide topic of each of the twelve cascading child tables.
-- **The walk's CPU**, averaged over 200 repeats on the host, building a read's topic set on each call: bookmarks 0.43 ms, sidebar 0.84 ms, feed 0.93 ms.
 
-The row policy multiplies subscriptions by a page's size: 62 for the dock, against 1 declared. The table policy multiplies fan-out instead. Neither is free, and the trade is decided per join from the migration's measurements, not from this table.
+The row policy multiplies subscriptions by a page's size, against one declared topic per read, and the table policy multiplies fan-out instead. Neither is free, and the trade is decided per join from task 6.1's measurements, not from this section.
 
 ### 4. Client re-reads a watch would replace (code reading at the base commit)
 
@@ -133,18 +117,7 @@ A table a statement names table-wide is named by the rows the statement returns 
 - **No filter or inner join references the occurrence.** A condition on one of its columns, other than a scope equality or a join, is a filter the walker records with the clause it sits in (`FilterSite`): `where`, `joinOn` (the ON clause of an inner join, or of a left join on its partner), or `leftJoinOn` (the ON clause of a left join, on the table that join brings). A filter in `where` or `joinOn` is a null test, a comparison, a pattern or a `not in`, and a write that makes a filtered row pass brings back a row no returned row carries, so the table is read whole. A filter in `leftJoinOn` removes only the joined table's matches, never the partner's rows, so the table is still named by the partner's key values. The filter rule covers the bookmark dock's recycle-bin test, which is in `where`. A condition under a `not` removes the rows it holds, so every column it names is a filter, never a scope: `not(eq(userId, V))` leaves every other value's rows, and no scope names them. A `not` written by hand through the sql template (``sql`not ${condition}` ``) is not read as a negation, since the condition is walked as its own chunk, so a scope equality under it names its value. The app's negations use drizzle's `not()` helper, which is read. The one hand-written `not` the app holds, in `apps/jobs/src/services/account/eraseAccountUserRow.ts`, negates an `exists` over `json_each.value`, which names no scope column, so the limit holds nothing today; a hand-written `not` over a scope column is a known limit, open. An equality on the table a left join keeps (the partner, not the null-filled side) in that join's ON clause is a filter too, since the join returns all of that table's rows whatever the ON clause tests. The sidebar's direct-message participant query moved its `userId <> viewer` into the ON clause of a left join on its memberships (see the sidebar bullet below). An inner join whose condition references the occurrence blocks its naming the same way, since an inner join drops each row no match reaches. A filter or an inner join on another occurrence of the table, or on another table, leaves the occurrence named.
 - **Only conditions filter.** A column in the select list, a group clause or an order clause removes no row, so the walker records it as no filter. A column that a join's condition compares on its right side is read once, as that join's operand, and not again as a filter of its own. An aliased table the join brings is read as the join it is: before this rule its join was read as inner, so its partner's rows were not preserved.
 
-Counts on the same seeded data (the reader, three direct messages with another member each, three bookmarked resources, one invite room), the topic count of each read at HEAD, after the first row-policy build (`756f043c65`), and after the sound rule:
-
-| Read                                  | HEAD | First build | Sound rule | ON-clause and walker fixes |
-| ------------------------------------- | ---- | ----------- | ---------- | -------------------------- |
-| `readBookmarks` (dock)                | 4    | 6           | 4          | 4                          |
-| `readRooms` (sidebar, default)        | 4    | 4           | 4          | 4                          |
-| `readRooms` (`includeDirectMessages`) | 4    | 7           | 4          | 7                          |
-| `searchUsers` (name search)           | 3    | 3           | 3          | 3                          |
-| `readInvite` (landing page)           | 7    | 6           | 7          | 7                          |
-| `readPosts` (feed)                    | 4    | 4           | 4          | 4                          |
-
-Re-measured with the ON-clause rule, the walker fixes and per-occurrence naming (the last column), on the seed the table above describes, rebuilt for this measurement: the reader, three direct messages with another member each, three bookmarked resources, one invite room, and one room of the reader's own. The dock is 4, the feed 4, the name search 3 and the landing page 7, as before. The sidebar's default read is 4: the viewer's `userId` scope and its listed room, `message_usersToRooms:roomId=<room>`, in place of the table-wide topic. The sidebar with direct messages is 7: the viewer's scope, the listed room, and each of the three direct messages' memberships by its room, where it was 4 with the table-wide topic. The first build's 7 is the same set, reached by the per-occurrence rule without the table-wide topic that the statement-wide filter kept.
+The sidebar's default read names its viewer's scope and its listed room, `message_usersToRooms:roomId=<room>`, in place of the table-wide topic. With direct messages, each listed direct message's memberships are named by its room. The read-set goldens (`readSets.test.ts`, `getReadTopics.test.ts`) pin these topics, and the counts are not kept here.
 
 Filters and naming are kept per table occurrence, the alias or name a statement gives a table (`getOccurrenceKey`). The DM sidebar's viewer membership (scoped by `userId = viewer`, filtered by `isHidden = false`) is a different occurrence from the participants' memberships (a left join's partner in a subquery, named by each room's key), so the filter does not stop the participants being named by their room. Unhiding a direct message is a write to the viewer's own membership, which publishes the viewer's scope topic (`message_usersToRooms:userId=<viewer>`) and wakes the sidebar; its refetch names the room it now shows by that room. A filter, and an inner join's condition, still blocks row naming on the occurrence it references, and on no other occurrence of its table. An occurrence is told apart by its table, its alias or name, and its statement level, so a name a subquery reuses is a different occurrence from the outer one. The rule is the main session's and the coordinator's decision, applied as given.
 
@@ -191,7 +164,7 @@ Phase 1 (tasks 1.1 to 1.3) settled the following, which the later phases build o
 - **Relational SQL.** Drizzle writes a relational query's aliases and column references as text, so a reference is read against the alias declared in its own parenthesised group.
 - **Join key names (task 6.19).** A join side's `selectedAs` is the name the read's top-level select returns the side's column under. The side's own column of its own occurrence is that name when the select returns it. Otherwise the same column of another top-level occurrence serves, provided no left join null-fills that occurrence, since a null-filled side's value is absent from the rows its join leaves unmatched. The walk records each left join's null-filled occurrence when the join is read, and a derived table's column records none, since it names its base table and no occurrence the statement declares. A self-join's partner is therefore named table-wide when the select returns only the partner's own room, and by the viewer's rooms when the select also returns the viewer's room. A subquery's selected column takes the outer column's own name, and no borrowed one, because the two are equal in every row the outer read returns. A relational query's columns are read through the alias its own FROM declares for the root table, `"d0"` in `from "message_usersToRooms" as "d0"`, and a statement that declares none names no key.
 - **Known limits.** A later operand of a set operator names its column in the emitted SQL, not as a column, so its join is not read. Its scope equality is, and that equality covers every row the join would name; `searchUsers` is the case. A relation's nested select is not the read's select, so a join key only a relation selects is not a selected key.
-- **Against the spike's counts.** The `readPosts` read set names a join the table counts above do not list: a post's author, through the `user` relation. Whether that topic is per author or table-wide is for the naming step, and task 6.1 measures its fan-out.
+- **Against the spike's findings.** The `readPosts` read set names a join the spike's findings do not list: a post's author, through the `user` relation. Whether that topic is per author or table-wide is for the naming step, and task 6.1 measures its fan-out.
 - **Known gaps from review.** The table-wide exclusion was keyed by table name across the whole statement, so a scope equality in a subquery also excluded the outer select's unscoped read of the same table, and that read missed another member's join. Task 6.2 names each table per statement level (Statement levels above). A write that moved a row out of a scope value published only the post-image's values, so a reader of the old value was not woken. The before-image closes it (task 6.3, under Before-image reads).
 
 Phase 2 (tasks 2.1 and 2.2) settled the following.
@@ -234,7 +207,7 @@ A bucket binding's reads and writes are topics too. A blob topic is `<bucket bin
 ## Alternatives considered
 
 - **Keep hand declaration and fix each gap.** This is the status quo. It was lost because the gaps recur, as the commit history shows, and each fix adds a test that only pins the list it names.
-- **Table-level topics only.** Cheap: a page subscribes 9 topics against 116. It was lost as the only policy because a joined table's table-wide topic fans out to every reader of the list, as the users and resources examples show. It stays as the fallback.
+- **Table-level topics only.** Cheap: a page subscribes one topic per table it reads, not one per row. It was lost as the only policy because a joined table's table-wide topic fans out to every reader of the list, as the users and resources examples show. It stays as the fallback.
 - **Row-level topics only.** Exact, but a dock and a sidebar subscribe a topic per listed row, and a join whose key is not selected cannot be named at all. It was lost as the only policy, and it stays for joins whose key is selected.
 - **Parsing the emitted SQL.** The statement's text carries `?` placeholders that map to parameters by position, and drizzle's aliases, subqueries and set operators would all need re-deriving. Parsing would also not know which columns are scope columns. It was lost because the builder already holds the structure and the parameters' columns.
 - **Row-delta subscriptions, in the style of SpacetimeDB.** Here the server keeps each subscribed query's predicate, and each write evaluates its changed rows against those predicates and pushes row deltas, with no refetch. On this stack it would take four things. The predicates would live in the Topic objects' or the user objects' storage, compiled from the same builder walk. Every write would evaluate its changed rows against every predicate on its table, so the cost per write grows with the subscriptions. Each subscriber's result set would be held in storage so a delta can be applied, which for a 50-row list is 50 stored rows per subscriber. And every client store would have to apply deltas, where today the stores apply by id for some lists and refetch the rest. What it saves is the refetch, one indexed D1 read per invalidation per watcher, which the stores already make and which is cheap. It was not chosen for the general case. It is deferred for named hot lists: the feed is the first candidate, because its table-wide topic is the one every post write fans out to. The revisit trigger is the migration's measurement (task 6.1) showing one list's refetch reads, summed over its watchers, dominating the page's cost. The threshold is set from that measurement, not now.
@@ -252,7 +225,7 @@ Until the guard ships, the content read is a documented exception: its topic is 
 
 Maintenance is O(1) in the number of procedures: one scope declaration per table, no declaration per procedure, and no topic assertion per procedure. The router-wide coverage test (task 2.2) replaces the per-procedure assertions: every query procedure's read set must cover every table its query touches, and every write's publish set must match the read sets of the queries it changes.
 
-Runtime cost is not assumed. The walk, the subscriptions per page, the publishes per write and the fan-out of each table-wide topic are measured in a deployed Worker against the baseline above (task 6.1), and the join and table policies are decided from those measurements. Until the measurement, the numbers in this design are the only evidence.
+Runtime cost is not assumed. The walk, the subscriptions per page, the publishes per write and the fan-out of each table-wide topic are measured in a deployed Worker against the baseline above (task 6.1), and the join and table policies are decided from those measurements. Until the measurement, the read-set goldens are the only evidence, and they pin what each read names, not what it costs.
 
 ## Migration
 
