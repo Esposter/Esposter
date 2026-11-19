@@ -5,7 +5,7 @@ import { schema } from "@esposter/db-schema";
 // Shared with the adapter's test so a join better-auth issues is exercised against the same options the app runs
 export const drizzleAdapterConfiguration: DrizzleAdapterConfig = {
   camelCase: true,
-  provider: "pg",
+  provider: "sqlite",
   schema,
   // Every model names its own key (`authModelOptions`), so no name is derived by pluralising
   usePlural: false,
