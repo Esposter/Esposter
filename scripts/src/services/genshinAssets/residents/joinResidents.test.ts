@@ -26,6 +26,7 @@ describe(joinResidents, () => {
       ),
     ).toStrictEqual({
       craftingBench: 0,
+      noArea: 0,
       noName: 0,
       noTalk: 1,
       regions: new Map([
@@ -50,7 +51,22 @@ describe(joinResidents, () => {
         new Set(),
         new Map(),
       ),
-    ).toStrictEqual({ craftingBench: 0, noName: 1, noTalk: 0, regions: new Map(), repeated: 0 });
+    ).toStrictEqual({ craftingBench: 0, noArea: 0, noName: 1, noTalk: 0, regions: new Map(), repeated: 0 });
+  });
+
+  test("leaves out an NPC no area is in reach of, and counts it", () => {
+    expect.hasAssertions();
+
+    expect(
+      joinResidents(
+        [{ npcId: 1002, position: { x: 1, z: 2 }, region: "mondstadt", rotation: 0 }],
+        new Map([[1002, "101"]]),
+        new Map([[1002, 7]]),
+        () => undefined,
+        new Set(),
+        new Map(),
+      ),
+    ).toStrictEqual({ craftingBench: 0, noArea: 1, noName: 0, noTalk: 0, regions: new Map(), repeated: 0 });
   });
 
   test("leaves out the NPC a crafting bench stands for, since a bench is an interaction point rather than a person", () => {
@@ -76,6 +92,7 @@ describe(joinResidents, () => {
       ),
     ).toStrictEqual({
       craftingBench: 1,
+      noArea: 0,
       noName: 0,
       noTalk: 0,
       regions: new Map([
@@ -102,6 +119,7 @@ describe(joinResidents, () => {
       ),
     ).toStrictEqual({
       craftingBench: 0,
+      noArea: 0,
       noName: 0,
       noTalk: 0,
       regions: new Map([
@@ -137,6 +155,7 @@ describe(joinResidents, () => {
       ),
     ).toStrictEqual({
       craftingBench: 0,
+      noArea: 0,
       noName: 0,
       noTalk: 0,
       regions: new Map([

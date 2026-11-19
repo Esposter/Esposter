@@ -61,7 +61,7 @@ describe(writeResidents, () => {
     expect(report).toStrictEqual(
       [
         `${REGION}: 0 placed with talks, 0 with a day spot only, 0 with a night spot`,
-        "0 at a crafting bench, 0 with no name, 0 with no talk, 0 repeat placements of a resident already placed, and 0 of 0 placed NPCs in no fitted region",
+        "0 at a crafting bench, 0 with no name, 0 with no talk, 0 with no area in reach, 0 repeat placements of a resident already placed, and 0 of 0 placed NPCs in no fitted region",
         "nothing written",
       ].join("\n"),
     );
@@ -213,6 +213,25 @@ describe(writeResidents, () => {
         },
       ],
     ]);
+  });
+
+  test("a resident no area is in reach of is not written, and the report counts it", async () => {
+    expect.hasAssertions();
+    // Ellin's place is the Knights' headquarters point, as the seated challenger's test places it, but no outline holds it
+    const KNIGHTS_HEADQUARTERS_POINT_ID = "54";
+    const ELLIN_NPC_ID = 9704;
+    seatChallenger(KNIGHTS_HEADQUARTERS_POINT_ID, ELLIN_NPC_ID, 2, 6970401);
+    vi.mocked(findResidentAreaId).mockReturnValue(undefined);
+
+    const report = await writeResidents({ isDryRun: false });
+
+    expect(writeRegionData).toHaveBeenCalledExactlyOnceWith(REGION_FILE, { ...region, residents: [] });
+    expect(report).toStrictEqual(
+      [
+        `${REGION}: 0 placed with talks, 0 with a day spot only, 0 with a night spot`,
+        "0 at a crafting bench, 0 with no name, 0 with no talk, 1 with no area in reach, 0 repeat placements of a resident already placed, and 0 of 1 placed NPCs in no fitted region",
+      ].join("\n"),
+    );
   });
 
   test("a run writes a region whose residents changed", async () => {

@@ -80,7 +80,7 @@ export const writeResidents = async ({ isDryRun }: DryRunOptions): Promise<strin
     placements,
     nameTextIdMap,
     talkIdMap,
-    (region, position) => findResidentAreaId(region, catalogue, landmarksMap.get(region) ?? [], position),
+    (region, position) => findResidentAreaId(catalogue, landmarksMap.get(region) ?? [], position),
     craftingBenchNpcIds,
     RESIDENT_NIGHT_SPOT_MAP,
   );
@@ -105,7 +105,7 @@ export const writeResidents = async ({ isDryRun }: DryRunOptions): Promise<strin
   );
   return [
     ...reports,
-    `${residentJoin.craftingBench} at a crafting bench, ${residentJoin.noName} with no name, ${residentJoin.noTalk} with no talk, ${residentJoin.repeated} repeat placements of a resident already placed, and ${npcPlaces.length - placements.length} of ${npcPlaces.length} placed NPCs in no fitted region`,
+    `${residentJoin.craftingBench} at a crafting bench, ${residentJoin.noName} with no name, ${residentJoin.noTalk} with no talk, ${residentJoin.noArea} with no area in reach, ${residentJoin.repeated} repeat placements of a resident already placed, and ${npcPlaces.length - placements.length} of ${npcPlaces.length} placed NPCs in no fitted region`,
     ...(isDryRun ? ["nothing written"] : []),
   ].join("\n");
 };

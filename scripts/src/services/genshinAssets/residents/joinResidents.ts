@@ -7,16 +7,17 @@ import type { Resident, ResidentSpot } from "genshin-world";
 // Its night spot is the one the map gives it, and none otherwise, since the game's records give no second place to tell the
 // Day's from the night's. Its name and
 // The talk F begins with it are the game's, and an NPC with no name or no talk is left out, since the schema takes
-// Neither empty. An NPC a crafting bench stands for is left out first, since the bench is its interaction, not a person
+// Neither empty. An NPC a crafting bench stands for is left out first, since the bench is its interaction, not a person.
+// An NPC no catalogued area is in reach of is left out too, rather than filed under a guess
 export const joinResidents = (
   placements: readonly ResidentPlacement[],
   nameTextIdMap: ReadonlyMap<number, string>,
   talkIdMap: ReadonlyMap<number, number>,
-  getAreaId: (region: string, position: GroundPoint) => string,
+  getAreaId: (region: string, position: GroundPoint) => string | undefined,
   craftingBenchNpcIds: ReadonlySet<number>,
   nightSpotMap: ReadonlyMap<number, ResidentSpot>,
 ): ResidentJoin => {
-  const join: ResidentJoin = { craftingBench: 0, noName: 0, noTalk: 0, regions: new Map(), repeated: 0 };
+  const join: ResidentJoin = { craftingBench: 0, noArea: 0, noName: 0, noTalk: 0, regions: new Map(), repeated: 0 };
   const placedKeys = new Set<string>();
   for (const { npcId, position, region, rotation } of placements) {
     const placedKey = `${region}:${npcId}`;
@@ -39,9 +40,14 @@ export const joinResidents = (
       join.noTalk++;
       continue;
     }
+    const areaId = getAreaId(region, position);
+    if (areaId === undefined) {
+      join.noArea++;
+      continue;
+    }
     const night = nightSpotMap.get(npcId);
     const resident: Resident = {
-      areaId: getAreaId(region, position),
+      areaId,
       day: { position, rotation },
       id: String(npcId),
       nameTextId,
