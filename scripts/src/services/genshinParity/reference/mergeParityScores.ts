@@ -74,10 +74,11 @@ export const mergeParityScores = (
     const row = rowMap.get(referenceId);
     return row ? [row] : [];
   });
-  // A reference scored again replaces every layer row it had, so a family it no longer draws leaves none behind
+  // A reference scored again replaces every layer row it had, so a family it no longer draws leaves none behind, and a scene
+  // Whose layers were not measured keeps the rows it had
   const layerRows = order.flatMap((referenceId) => {
-    const score = scores[referenceId];
-    if (score) return score.layers.map((layer) => toLayerRow(`${referenceId}${LAYER_SEPARATOR}${layer.name}`, layer));
+    const layers = scores[referenceId]?.layers;
+    if (layers) return layers.map((layer) => toLayerRow(`${referenceId}${LAYER_SEPARATOR}${layer.name}`, layer));
     if (isFullRun && checkIsPending(referenceId)) return [];
     return [...rowMap].flatMap(([key, line]) => (key.startsWith(`${referenceId}${LAYER_SEPARATOR}`) ? [line] : []));
   });

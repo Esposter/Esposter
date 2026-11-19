@@ -8,4 +8,6 @@ The one-line rule is in `SKILL.md`; this page is its reasoning.
 
 Target a mean of hundredths of a percent, with any remainder explained (antialiasing along an edge). The run rewrites its row of the committed `ParityReferenceMap.snapshot.md` and leaves every other row as it was (`--all` rewrites every row and drops the rows of references the map no longer holds), which is committed with the change that moved it and is the only score a session quotes.
 
+A scene's layers come from a witness page of its whole component, so one that draws a large capital can run the machine out of memory, and the OS then closes the page. The screen's score is measured before that pass, so a layer pass that cannot run keeps the score: its layer rows stay as the report last had them, and the run prints `layers not measured` with the reason.
+
 A reference whose `plateSource` screenshot is not on disk, or whose plate is not the reference's size, fails its compare with the reason rather than scoring against the reference's own frame. `compare --all` prints that reference as `failed` and goes on.

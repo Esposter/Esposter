@@ -23,7 +23,7 @@ import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityRef
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readReferenceGbuffer } from "#src/services/genshinParity/shared/readReferenceGbuffer";
 import { shootScreen } from "#src/services/genshinParity/shared/shootScreen";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -155,14 +155,29 @@ export const compareScreen = async (
       `under the curve's black: reference ${formatUnderBlackShare(referenceUnderBlack)}, ours ${formatUnderBlackShare(shotUnderBlack)}`,
     );
   const layerComponent = getLayerComponent(referenceId, witness);
-  let layers: LayerScore[] = [];
+  // A scene's layers come from a witness page of its whole component, which the machine can run out of memory under (Mondstadt's
+  // Witness draws its capital's 101,731 placements), and the OS then closes the page. The screen's score is already measured, so
+  // A layer pass that cannot run leaves the layers unmeasured, their rows kept as the report last had them, rather than voiding it
+  let layers: LayerScore[] | undefined;
   if (layerComponent) {
-    const { gbuffer } = await readReferenceGbuffer(referenceId, layerComponent);
-    layers = await scoreLayers(referenceRegion, shotRegion, gbuffer, region, { height, width });
-    for (const layer of layers.toSorted((firstLayer, secondLayer) => getCeiling(secondLayer) - getCeiling(firstLayer)))
-      console.error(
-        `${layer.name}: ${(layer.coverage * 100).toFixed(1)}% of the frame, colour ${layer.colour.toFixed(2)} ΔE, shape ${layer.shape.toFixed(3)}, tone ${layer.tone.toFixed(2)}%, detail ${layer.detail.toFixed(2)}%, FLIP ${layer.flip.toFixed(4)}, ceiling ${getCeiling(layer).toFixed(4)}`,
-      );
+    const layersResult = await getResultAsync(async () => {
+      const { gbuffer } = await readReferenceGbuffer(referenceId, layerComponent);
+      return scoreLayers(referenceRegion, shotRegion, gbuffer, region, { height, width });
+    });
+    layersResult.match(
+      (scoredLayers) => {
+        layers = scoredLayers;
+        for (const layer of scoredLayers.toSorted(
+          (firstLayer, secondLayer) => getCeiling(secondLayer) - getCeiling(firstLayer),
+        ))
+          console.error(
+            `${layer.name}: ${(layer.coverage * 100).toFixed(1)}% of the frame, colour ${layer.colour.toFixed(2)} ΔE, shape ${layer.shape.toFixed(3)}, tone ${layer.tone.toFixed(2)}%, detail ${layer.detail.toFixed(2)}%, FLIP ${layer.flip.toFixed(4)}, ceiling ${getCeiling(layer).toFixed(4)}`,
+          );
+      },
+      (error) => {
+        console.error(`layers not measured, their rows kept as the report last had them: ${error.message}`);
+      },
+    );
   }
   const panelWidth = Math.round((region.width / region.height) * COMPARISON_HEIGHT);
   const panels = await Promise.all(

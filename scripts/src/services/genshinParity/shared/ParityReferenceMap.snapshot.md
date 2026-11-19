@@ -82,7 +82,7 @@ committed.
 | `menu-world-level-prompt-hover`        | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-world-level-prompt-pressed`      | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
 | `menu-world-level-prompt-revert`       | `MenuWorldLevelPrompt`      |                                     pending: no screenshot of this variant yet |       |        |        |
-| `mondstadt-city-location`              | `WorldScreen`               |                                                                         22.94% | 0.313 | 20.87% | 0.6846 |
+| `mondstadt-city-location`              | `WorldScreen`               |                                                                         22.94% | 0.314 | 20.86% | 0.6845 |
 | `nasha-town-location`                  | `WorldScreen`               |                                                                         32.68% | 0.291 | 27.56% | 0.7918 |
 | `paimon-menu`                          | `MenuPaimon`                |                                                                          3.73% | 0.930 |  1.92% | 0.2058 |
 | `paimons-bargains-screen`              | `PaimonsBargainsScreen`     |                                                                          6.12% | 0.633 |  3.57% | 0.2770 |

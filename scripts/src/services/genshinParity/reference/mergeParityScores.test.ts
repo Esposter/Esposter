@@ -130,6 +130,37 @@ describe(mergeParityScores, () => {
     );
   });
 
+  test("a scored reference whose layers were not measured keeps its layer rows as the report had them", () => {
+    expect.hasAssertions();
+
+    const report = mergeParityScores(
+      committedReport.split("\n"),
+      {
+        "court-of-fontaine-location": {
+          edgeScore: 0.202,
+          flip: 0.8417,
+          layers: undefined,
+          meanDifference: 31.8,
+          screen: "WorldScreen",
+          toneDifference: 27.65,
+        },
+      },
+      REPORT_IDS,
+      {},
+      ParityReportRun.Subset,
+    );
+
+    expect(report).toBe(
+      formatReport(
+        REPORT_LINES.map((line) =>
+          line.startsWith("| `court-of-fontaine-location` |")
+            ? "| `court-of-fontaine-location` | `WorldScreen` | 31.80% | 0.202 | 27.65% | 0.8417 |"
+            : line,
+        ),
+      ),
+    );
+  });
+
   test("a subset run rewrites a scored reference's layers whole and keeps every other row in the report's own order", () => {
     expect.hasAssertions();
 
