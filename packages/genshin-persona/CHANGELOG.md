@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Features
+
+* **genshin-world:** the reel's challenge panel shows its four words from the game's text, without the count the reel fills ([94ff0b8](https://github.com/Esposter/Esposter/commit/94ff0b892b63985d117d79bf79615884f265ae10))
+* **genshin-world:** the world draws no Battle Pass, so its wheel slice, its F4 key and its screen go ([449311c](https://github.com/Esposter/Esposter/commit/449311c4a207135906b6417f79afb519ffb543c5))
+* **genshin:** each placed offering is named by its game text ([e157272](https://github.com/Esposter/Esposter/commit/e157272ec436432ba0164162d450329c78ed913c))
+* **genshin:** the Time screen labels the hour Tomorrow or Day After Tomorrow ([6d36ddf](https://github.com/Esposter/Esposter/commit/6d36ddf23abaee10de86b020bb7534f080f827fd))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Features

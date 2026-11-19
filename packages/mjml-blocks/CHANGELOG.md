@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Features
+
+* **email:** the email exports one HTML file, its MJML source and its personalized HTML, each after the save of the open email ([5a48b81](https://github.com/Esposter/Esposter/commit/5a48b81b893176536ae653bca2f1e8dcb8b8feba))
+* **email:** with nothing selected the inspector offers the email's settings beside its prompt, for its language, direction, title, fonts, and body width and background ([b3f5b82](https://github.com/Esposter/Esposter/commit/b3f5b824210f53ccbe04c5930a90e2e7df126b01))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Features

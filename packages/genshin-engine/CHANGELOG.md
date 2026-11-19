@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Bug Fixes
+
+* **ci:** the cursor pagination test typechecks, genshin-engine drops its unused vite, and the size record follows the tip ([ffc6f16](https://github.com/Esposter/Esposter/commit/ffc6f162ab1e3388b38e214d91e1fb1e94d2fd26))
+* **genshin-engine:** a normal detail's leaned normal goes to view space by the camera alone ([f1e3f85](https://github.com/Esposter/Esposter/commit/f1e3f85897ea5c23d79cd0735a7e2635c2d650db))
+* **genshin-engine:** a terrain feature kind without bounds fails typecheck, rather than falling through to the ridge's bounds ([68eb07f](https://github.com/Esposter/Esposter/commit/68eb07ff83865872551418f0bb9991e7ab31dc60))
+* **genshin:** each piece owns its outline, and the box follows the laid grounds ([4a047c1](https://github.com/Esposter/Esposter/commit/4a047c15f59ff4e97059e629f8aeb4d438dd9994))
+* **lint:** the files the head touches pass oxlint and ESLint again, with the bloom's forms as value sets ([0a0380d](https://github.com/Esposter/Esposter/commit/0a0380d494f51e2307df9e772c5352c4e33c8b97))
+* **lint:** the fishing and wildlife kits, the clip motion model and the oxlint testing suite pass lint ([35223af](https://github.com/Esposter/Esposter/commit/35223afc48b09ae127eae01c2a687b92daf54cb2))
+* **web:** the typecheck is green again, with absent props typed as absent and the scene transition's previous key returned ([bcb0a98](https://github.com/Esposter/Esposter/commit/bcb0a98b44a378ea583746de99a1270032e244c3))
+
+### Features
+
+* **genshin-engine:** the fishing kits draw a fish, a rod, a float, a splash and a point's ring from shapes of ours, and the water's ripple normal is one node both the water and the ring use ([e84a1f9](https://github.com/Esposter/Esposter/commit/e84a1f9b1986190ce513581eee029747753ade0a))
+* **genshin-engine:** the props kit draws a fitted outline as its hull's boxes or its lathe, and the change names what the kit leaves open ([4bb429b](https://github.com/Esposter/Esposter/commit/4bb429b80dd0a7918753c1f0f0521130b6c61ab2))
+* **genshin-engine:** the world's character blinks on its pack's blink morph, its mouth waits on a speaking input ([70564cc](https://github.com/Esposter/Esposter/commit/70564ccd434f3b0c5f46443cd85558855a705093))
+* **genshin-parity:** a family's grain is fitted by a damped Newton over its own structure terms on the render ([78622e3](https://github.com/Esposter/Esposter/commit/78622e3c550b84ca4d056846245a4340361d7242))
+* **genshin-world:** a fleeing kind with a silhouette is drawn as it, and each critter point stands a stand-in, with the butterfly kinds left out ([27db5cb](https://github.com/Esposter/Esposter/commit/27db5cb8491b2e93842b7c3baca87549ea4aa5cc))
+* **genshin-world:** each fishing-area prop stands at its place in the fishing dataset, as a generated stand-in ([cc55c80](https://github.com/Esposter/Esposter/commit/cc55c80d8df82d2eb221082f32bd4b0e6f39a88f))
+* **genshin-world:** the world draws no Battle Pass, so its wheel slice, its F4 key and its screen go ([449311c](https://github.com/Esposter/Esposter/commit/449311c4a207135906b6417f79afb519ffb543c5))
+* **genshin:** the bloom's structure is an input, and an ablation reads each one ([d3bd560](https://github.com/Esposter/Esposter/commit/d3bd5608a0b3bcd3f0c1c75a83554595053ce430))
+* **genshin:** the login's towers and bridges lean their normals by a procedural detail at the exports' surface wavelength, and the Shape pass's wavelengths are diagnostics ([e4efa67](https://github.com/Esposter/Esposter/commit/e4efa67a86da06a3a95585a02e10d828844dd598))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 **Note:** Version bump only for package genshin-engine

@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
+
+### Bug Fixes
+
+* **build:** a Vue package's style.css keeps its rules in module-id order ([4ae7152](https://github.com/Esposter/Esposter/commit/4ae71523ddd67e08bdcfc9e9948029a984ff4c45))
+* **scripts:** a new worktree builds every package the scripts commands load, read off the scripts manifest ([6258909](https://github.com/Esposter/Esposter/commit/62589095b25538ef4e8561622437d82fbc80fa8d))
+
+### Features
+
+* **genshin:** the world's entry leaves out the card game, which loads when a duel opens ([e322126](https://github.com/Esposter/Esposter/commit/e322126e5366be00971da396e8720effe3992b23))
+
+### Performance Improvements
+
+* **test:** Miniflare suites fake the clock only, so D1 calls stop stalling on frozen timers ([05c430a](https://github.com/Esposter/Esposter/commit/05c430abde67f2a2bec3251b3617c13eead9035a))
+
 # [4.12.0](https://github.com/Esposter/Esposter/compare/v4.11.0...v4.12.0) (2026-11-16)
 
 ### Bug Fixes
