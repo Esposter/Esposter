@@ -649,7 +649,6 @@ onUnmounted(() => {
       <FishingProps
         v-for="[region, places] of loadedFishingProps"
         :key="region"
-        :get-ground-height
         :light-uniforms
         :places
         :ramp-texture
