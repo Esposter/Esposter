@@ -73,4 +73,4 @@ flowchart TD
 
 ## Open
 
-- [x] **The rows name the city ids 1 to 8, and city 8 is Snezhnaya** — settled: the dump's `CityConfigData.json` names city 7 Nod-Krai and city 8 Snezhnaya by text ids that resolve in `TextMap_MediumEN.json` (the names are not in `TextMapEN.json`), and city 8's level-one areas 55 to 59 are Snezhnaya's catalogue areas. `readCityRegionMap` files each city by its areas, so no hand map names them. The 6.6 dump names city 7 Nod-Krai too, where the map had filed it under snezhnaya since the fishing builder was written.
+- [x] **The rows name the city ids 1 to 8, and city 8 is Snezhnaya** — settled: the dump's `CityConfigData.json` names city 7 Nod-Krai and city 8 Snezhnaya by text ids that resolve in `TextMap_MediumEN.json` (the names are not in `{data-root}/genshin-parity/text/TextMap/TextMapEN.json`), and city 8's level-one areas 55 to 59 are Snezhnaya's catalogue areas. `readCityRegionMap` files each city by its areas, so no hand map names them. The 6.6 dump names city 7 Nod-Krai too, where the map had filed it under snezhnaya since the fishing builder was written.
