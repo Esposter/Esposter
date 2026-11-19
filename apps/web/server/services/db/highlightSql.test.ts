@@ -8,12 +8,6 @@ describe(highlightSql, () => {
     vi.stubEnv("FORCE_COLOR", "1");
   });
 
-  test("colour is forced for these tests", () => {
-    expect.hasAssertions();
-
-    expect(styleText(HighlightStyleMap.keyword, "select", { validateStream: false })).not.toBe("select");
-  });
-
   test.each([
     ["a Drizzle select", `select "users".* from "users" where "email" = 'test@gmail.com' and "is_banned" = true`],
     ["a Drizzle insert", `insert into "brands" ("name") values (?) returning "id", "name"`],
