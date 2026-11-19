@@ -15,4 +15,4 @@ export const UserSettingsPageCardMap = {
   [UserSettingsPageSection.LinkedAccounts]: UserLinkedAccountsCard,
   [UserSettingsPageSection.Profile]: UserProfileCard,
   [UserSettingsPageSection.Sessions]: UserSessionsCard,
-} as const satisfies Record<UserSettingsPageSection, Component>;
+} as const satisfies Record<UserSettingsPageSection, Component<{ section: UserSettingsPageSection }>>;
