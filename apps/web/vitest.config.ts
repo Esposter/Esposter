@@ -43,6 +43,9 @@ vitestConfig.test.environment = "node";
 // Leave the environment options every worker receives
 delete vitestConfig.test.environmentOptions?.nuxt?.overrides?.hooks;
 vitestConfig.plugins = [...(vitestConfig.plugins ?? []), autoImportCacheKey.plugin];
+// The live topic wake check's run-level half: it clears the records of an earlier run, then fails a full run that leaves a
+// Watched procedure uncalled by every suite (`server/trpc/liveTopicWakeCheckGlobal.ts`)
+vitestConfig.test.globalSetup = ["./server/trpc/liveTopicWakeCheckGlobal.ts"];
 // `cloudflare:workers` exists only in the Workers runtime, so the server's imports of it resolve to the package whose
 // `env` `createMockDb` fills with the file's Miniflare bindings
 vitestConfig.resolve = {

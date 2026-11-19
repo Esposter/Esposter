@@ -3,6 +3,7 @@
 import type { Pinia } from "pinia";
 
 import { mockTopicNamespace } from "#server/services/realtime/publishTopics.test";
+import { verifyWakes, writeWakeRecord } from "#server/trpc/liveTopicWakeCheck.test";
 import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
 import { checkIsServer } from "@esposter/shared";
 import { env } from "cloudflare:workers";
@@ -75,6 +76,9 @@ vi.mock(import("#server/auth"), () => import("#server/auth.test"));
 // The global database reads its Worker binding when its module loads, before a suite has made the mock database that
 // Fills the binding, so it is registered over a double that reads the binding on first use
 vi.mock(import("#server/db/index"), () => import("#server/db/index.test"));
+// Every suite's caller runs through the live topic wake check, which asks each read again after a write and fails a read
+// Whose answer a write changed without a topic the write published waking it (`liveTopicWakeCheck.test.ts`)
+vi.mock(import("#server/trpc/index"), () => import("#server/trpc/indexWithWakeCheck.test"));
 // The dungeon page passes GridEngine to Phaser only as a plugin, so an empty constructor stands in for it
 const EmptyGridEngine = function () {};
 // `grid-engine` re-exports Phaser, which touches `window` and a canvas context at import. Every dungeon suite that
@@ -151,13 +155,19 @@ if (!checkIsServer()) {
 // oxlint-disable-next-line vitest/no-duplicate-hooks -- the nuxt environment's hook above is registered only inside its own guard, so this one cannot join it
 beforeEach(() => {
   for (const [name, value] of Object.entries(MOCK_ENVIRONMENT_VARIABLES)) vi.stubEnv(name, value);
+  // A server test's clock is frozen at the instant it starts, so an answer that holds a presigned address, or any time it reads
+  // From the clock, is the same when the wake check asks it again. Only `Date` is faked, so timers run as they do
+  if (checkIsServer()) vi.useFakeTimers({ now: Date.now(), toFake: ["Date"] });
 });
 
 afterEach(() => {
   globalThis.localStorage.clear();
   globalThis.sessionStorage.clear();
+  verifyWakes();
+  if (checkIsServer()) vi.useRealTimers();
 });
 
-afterAll(() => {
+afterAll(async () => {
   vi.restoreAllMocks();
+  await writeWakeRecord();
 });
