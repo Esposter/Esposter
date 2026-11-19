@@ -1,8 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { ResourceFilterInput } from "#shared/models/db/resource/ResourceFilterInput";
-import type { ResourceListColumnKey } from "#shared/models/resource/ResourceListColumnKey";
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
-import type { PageCursor, PageSort } from "@esposter/db-schema";
+import type { PageCursor, PageSort, ResourceListColumnKey } from "@esposter/db-schema";
 
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { getResourceSearchHits, readResourceListPage } from "@esposter/db";

@@ -1,5 +1,4 @@
-import type { ResourceListColumnKey } from "#shared/models/resource/ResourceListColumnKey";
-import type { PageSort } from "@esposter/db-schema";
+import type { PageSort, ResourceListColumnKey } from "@esposter/db-schema";
 
 import { ResourceSortName } from "#shared/models/resource/ResourceSortName";
 import { SortOrder } from "@esposter/db-schema";

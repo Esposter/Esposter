@@ -1,5 +1,4 @@
-import type { ResourceListColumnKey } from "#src/models/resource/ResourceListColumnKey";
-import type { Database, PageCursor, PageSort } from "@esposter/db-schema";
+import type { Database, PageCursor, PageSort, ResourceListColumnKey } from "@esposter/db-schema";
 
 import { readResourceListPage } from "#src/services/resource/readResourceListPage";
 import { resourcesInResource } from "@esposter/db-schema";

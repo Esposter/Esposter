@@ -1,6 +1,5 @@
-import type { ResourceListColumnKey } from "#src/models/resource/ResourceListColumnKey";
 import type { getResourceSearchHits } from "#src/services/resource/getResourceSearchHits";
-import type { Database, PageCursor, PageSort } from "@esposter/db-schema";
+import type { Database, PageCursor, PageSort, ResourceListColumnKey } from "@esposter/db-schema";
 import type { SQL, SQLWrapper } from "drizzle-orm";
 
 import { createPageSort } from "#src/services/pagination/createPageSort";
