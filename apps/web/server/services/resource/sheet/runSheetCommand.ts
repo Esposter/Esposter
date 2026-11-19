@@ -9,7 +9,8 @@ import { CommandType } from "#shared/models/resource/sheet/commands/CommandType"
 import { UpdateColumnCommand } from "#shared/models/resource/sheet/commands/UpdateColumnCommand";
 import { UpdateRowCommand } from "#shared/models/resource/sheet/commands/UpdateRowCommand";
 import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource";
-import { exhaustiveGuard, Operation, takeOne, toRawDeep } from "@esposter/shared";
+import { cloneRow } from "#shared/services/resource/sheet/commands/cloneRow";
+import { exhaustiveGuard, Operation, takeOne } from "@esposter/shared";
 
 // Runs the editor's own command over the Sheet as `updateResourceContent` hands it, so a command naming a column or
 // A row by id lands on the content the owner has now. A pinned version refuses it once the Sheet has moved past it.
@@ -46,7 +47,7 @@ export const runSheetCommand = async (
           for (const columnName of Object.keys(command.data))
             if (!sheet.data.columns.some(({ name }) => name === columnName))
               throw getNotFoundError("Column", columnName);
-          const originalRow = structuredClone(toRawDeep(takeOne(sheet.data.rows, index)));
+          const originalRow = cloneRow(takeOne(sheet.data.rows, index));
           const updatedRow = { ...originalRow, data: { ...originalRow.data, ...command.data } };
           new UpdateRowCommand(index, originalRow, updatedRow).execute(sheet.data);
           break;
