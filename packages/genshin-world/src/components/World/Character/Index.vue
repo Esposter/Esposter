@@ -40,6 +40,7 @@ import { WINDRISE_START_POINT } from "#src/services/windrise/constants";
 import { useLoop, useTres } from "@tresjs/core";
 import { useEventListener } from "@vueuse/core";
 import {
+  applyBlink,
   createCharacterController,
   createCharacterPoser,
   createFixedStepLoop,
@@ -130,6 +131,8 @@ let followCamera: FollowCamera | undefined;
 // The poser of the body's model, which is found again once the model arrives or is taken away, as a pack switch does
 let poser: CharacterPoser | undefined;
 let posedMesh: SkinnedMesh | undefined;
+// The seconds the body has been drawn for, which times its blink
+let elapsed = 0;
 const skinnedMeshFinder = createSkinnedMeshFinder(body);
 // The kit of the character on the field, which starts over when a switch brings another on
 let kitState = createKitState();
@@ -226,6 +229,8 @@ onBeforeRender(({ delta }) => {
   }
   // The model is posed from the body's state, whether it moves, stands or is held, before it is drawn
   poser?.update({ delta, locomotion, phase: characterController.phase });
+  elapsed += delta;
+  if (skinnedMesh) applyBlink(skinnedMesh, elapsed);
   const activeCamera = camera.value;
   const isFollowing = (!isHeld || isOrbiting) && activeCamera instanceof PerspectiveCamera;
   if (isFollowing) {
