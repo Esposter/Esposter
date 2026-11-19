@@ -14,8 +14,8 @@ flowchart TD
   put -->|"createRoomEmoji — id, name"| guard{"object landed, name free, under the cap?"}
   guard -->|no| reject["Invalid operation — nothing is stored"]
   guard -->|yes| row[("roomEmojis row")]
-  row --> emit["the write publishes the room's topic"]
-  emit --> subscription["room:{id} topic — every viewer of the room re-reads the set"]
+  row --> emit["the write publishes the rows it changed"]
+  emit --> subscription["every viewer of the room watches the emoji rows and re-reads the set"]
   subscription --> store["roomEmoji store — the row plus a presigned GET"]
   read["readRoomEmojis — on entering the room"] --> store
   store --> picker["Picker category, ':' autocomplete, reaction chips"]
@@ -75,7 +75,7 @@ Both are keyed by **id**, which is the one deliberate divergence from Discord's 
 
 ## Resolution, and what a deleted emoji does
 
-A room's set is read when the room is entered and kept current by the room's topic: `readRoomEmojis` names `room:{roomId}`, and every emoji write publishes it, so every surface resolves an id through one store map. The read is watched once it answers, and every write this client makes while the read is in flight is replayed over its answer by `apps/web/app/composables/shared/useReadingPushes.ts` (merged by `apps/web/app/services/shared/mergeSnapshot.ts`) rather than overwritten by it, so an emoji this client removed or added in the gap is neither lost nor written back. Another device's write in that gap reaches the set only at the topic's next publish, the one window [client data](../../architecture/client-data/design.md) "Live reads" records. Rendering follows [content token rewriting](../../architecture/content-token-rewriting/design.md): the message is parsed once, and each custom-emoji node is replaced in that same tree with an `<img>` sized in `em` so it follows the line's own text size.
+A room's set is read when the room is entered and kept current by the rows it reads: `readRoomEmojis` watches them, and every emoji write publishes the rows it changes, so every surface resolves an id through one store map. The read is watched once it answers, and every write this client makes while the read is in flight is replayed over its answer by `apps/web/app/composables/shared/useReadingPushes.ts` (merged by `apps/web/app/services/shared/mergeSnapshot.ts`) rather than overwritten by it, so an emoji this client removed or added in the gap is neither lost nor written back. Another device's write in that gap reaches the set through the read's start time, which [client data](../../architecture/client-data/design.md) "Live reads" records. Rendering follows [content token rewriting](../../architecture/content-token-rewriting/design.md): the message is parsed once, and each custom-emoji node is replaced in that same tree with an `<img>` sized in `em` so it follows the line's own text size.
 
 An id that resolves to nothing is **data, not an error**. A reaction to a deleted emoji still counts and renders a placeholder rather than disappearing; a content node keeps the shortcode it was authored with; and one unresolvable emoji never fails the render of the message around it.
 

@@ -30,7 +30,7 @@ flowchart TD
   LOCAL["This tab's own action"] -->|createNotification| ST
   PUSH["Delivered push"] --> SW["service worker postMessage"]
   SW -->|type reaches the bell, no bell read has landed| RE["read page 1"]
-  TOPIC["the push's write publishes the bell's topic"] -->|a landed bell read is watching it| RE
+  TOPIC["the push's write publishes the notification rows"] -->|a landed bell read is watching them| RE
   RE --> ST["store/notification"]
   OPEN["Panel opened / dock mounted"] --> RE
   ST --> PANEL["bell panel — merged, newest first<br/>StyledWaypoint pages the delivered half"]
@@ -39,7 +39,7 @@ flowchart TD
   PANEL -->|closed| READ["updateNotificationsReadStatus"]
 ```
 
-The service worker has always posted every delivered push to each open tab before showing the OS notification; the tab end of that wire is `plugins/pushNotification.client.ts`. It **re-reads** rather than rendering the payload it was handed — the row the Function wrote is the one the panel dismisses and marks read, so adopting the wire copy would put an entry in the list with an id the server would not recognise. Pushes whose type never asked for the bell are ignored there, which is what stops a query per chat message received. The read is the bell's own where one has landed: its first page watches the notification topic the push publishes, and that read brings the push in and toasts what the tab did not hold, so a push is read once. The plugin reads only in a tab whose list has never loaded.
+The service worker has always posted every delivered push to each open tab before showing the OS notification; the tab end of that wire is `plugins/pushNotification.client.ts`. It **re-reads** rather than rendering the payload it was handed — the row the Function wrote is the one the panel dismisses and marks read, so adopting the wire copy would put an entry in the list with an id the server would not recognise. Pushes whose type never asked for the bell are ignored there, which is what stops a query per chat message received. The read is the bell's own where one has landed: its first page watches the notification rows the push writes, and that read brings the push in and toasts what the tab did not hold, so a push is read once. The plugin reads only in a tab whose list has never loaded.
 
 ## UI
 

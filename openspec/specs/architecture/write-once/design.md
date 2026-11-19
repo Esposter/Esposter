@@ -6,7 +6,7 @@ Esposter is written for **zero maintenance and zero churn**: code that, once wri
 
 - **Derive from the source of truth; never restate it.** Every case already describes itself somewhere: a tRPC procedure has a name, a Zod input schema and the guards that authorise it; a resource type has its entry in `ResourceDefinitionMap`; a form has the schema it validates. A mechanism reads that description. An adapter that restates it per case — a second schema, a second name, a second permission check — is the copy that drifts.
 - **A new case is one declaration at its source.** Adding a case is a line where the case is defined — a key in a definition map, a flag in a procedure's meta — and never a file in the mechanism, an entry in a list the mechanism keeps, or a branch in its body.
-- **Infer what the code already does; a declaration of it is the copy.** When the code already does the thing a declaration describes, the mechanism infers it from that behaviour, and even one declaration at the source is a smell there: a query already reads the tables a topic list names, and a write already returns the rows it changed. The live-read topics are the worked case: a query procedure lists by hand the topics its answer came from, though the reads it makes already name them ([Live reads](../client-data/design.md#live-reads)).
+- **Infer what the code already does; a declaration of it is the copy.** When the code already does the thing a declaration describes, the mechanism infers it from that behaviour, and even one declaration at the source is a smell there: a query already reads the tables a topic list names, and a write already returns the rows it changed. The live-read topics are the worked case: no procedure lists the topics its query watches, since the reads it makes already name them ([Live reads](../client-data/design.md#live-reads)).
 - **The mechanism has no per-case branch.** A case the mechanism cannot serve uniformly is a case whose source has the wrong shape. The source is fixed, for example with a procedure shaped for the new consumer, and the mechanism stays as it is.
 - **What is security-shaped or tracks an outside spec is a library's**, never the mechanism's own code: authentication, key storage and a wire protocol are kept and bumped, per the stop list in [dependency admission](../dependency-admission/design.md). The mechanism is the thin seam between the source and the library.
 
@@ -24,7 +24,7 @@ flowchart TD
 Each shape below is a restatement the mechanism could read instead. The `over-engineering` skill's catalogue holds a row for each one that has an owner there, and a review cites that row rather than re-arguing the shape.
 
 - **A list held equal to the code by a test** — a second copy of names a declaration already holds, kept in step by a test that fails on drift.
-- **A per-case declaration restating its body** — a procedure's topics, a type's permission or a flag beside a body that already implies it.
+- **A per-case declaration restating its body** — a type's permission or a flag beside a body that already implies it.
 - **A registry a new case must remember to join** — a map or list each case is added to by hand, the `remembered` rung the `invariants` skill ranks last.
 - **An allowlist of exceptions** — a list of paths, names or suffixes a guard skips, which the enforcement ladder's "No roster" rule keeps off the lint rung.
 

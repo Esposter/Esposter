@@ -117,6 +117,6 @@ sequenceDiagram
 
 ## Notes
 
-- **A rename reaches the room on screen at once.** Every display-name write publishes the room's topic, and the room on screen re-reads the members and message authors it holds (`useRefreshRoomUsers`), so every member viewing the room sees the new name without a reload. The `updateUserToRoom` event carries the row to the renamed member's own sockets only.
+- **A rename reaches the room on screen at once.** Every display-name write publishes the user rows it changes, and the room on screen, which watches the members and message authors it holds, re-reads them (`useRefreshRoomUsers`), so every member viewing the room sees the new name without a reload. The `updateUserToRoom` event carries the row to the renamed member's own sockets only.
 - **A rename is in neither the moderation log nor the audit log.** A display name is not a sanction, and a moderation action type would be enumerated across the [moderation design](../moderation/design.md). An audit entry is a follow-up for the moderation owner if the room asks for one.
 - **Last write wins.** The field holds one name, so a moderator's rename and the member's own edit overwrite each other, and the later save is the one the room sees.

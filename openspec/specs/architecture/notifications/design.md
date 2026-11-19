@@ -19,7 +19,7 @@ flowchart TD
   WP --> SW["service worker"]
   SW --> OS["OS notification"]
   SW -->|"postMessage, if no bell read has landed"| TAB["the tab reads the bell and toasts what is new"]
-  ROW -->|"each recipient's bell topic"| TAB["an open bell reads its page and toasts what is new"]
+  ROW -->|"each recipient's bell rows"| TAB["an open bell reads its page and toasts what is new"]
   FN -->|"throws past the retry count"| DLQ["dead-letter queue"]
 ```
 
@@ -60,7 +60,7 @@ Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the rec
 
 A subscription is per-session, which is what lets a resource operation exclude the session that caused it: that tab showed the toast synchronously, and every other device of the same user is still owed the push.
 
-A push is read once per tab. The bell's first page watches the notification topic, and the read that topic drives lands the rows the push wrote and toasts those the tab did not hold (`getToastedNotificationIds`), so the tab end of the wire, `pushNotification.client.ts`, reads only while no bell read has landed. A tab whose list never loaded has no watch, so the push's own read does the toasting there, and a tab holding nothing toasts the newest row, which is the row the push wrote.
+A push is read once per tab. The bell's first page watches the notification rows, and the read a push wakes lands the rows the push wrote and toasts those the tab did not hold (`getToastedNotificationIds`), so the tab end of the wire, `pushNotification.client.ts`, reads only while no bell read has landed. A tab whose list never loaded has no watch, so the push's own read does the toasting there, and a tab holding nothing toasts the newest row, which is the row the push wrote.
 
 Failure is the queue's once it has the message, not the publisher's. A notification is a queue job like every other: when its handler throws, the queue redelivers it up to the job's retry count, and then the message waits in the `ProcessNotification` dead-letter queue. `handleDeadLetterMessage` republishes it to the source queue with its attempt raised, until `MAX_DEAD_LETTER_ATTEMPTS` is reached, and then quarantines it: its raw body is written once to the private `UserAssets` bucket under `quarantine/<source queue>/<message id>.json`, where a person can read what failed. A body the schema rejects is quarantined at once. The reminder is among them — it publishes a message like every other notification rather than calling `web-push` inline, and an inline send would have neither a retry nor a dead-letter queue. That covers accepted messages only: a publish the queue rejects has no message to retry or dead-letter, and is logged by the publisher as [persist then notify](../persist-then-notify/design.md) sets out. Publishes sit after the write they report and never fail it ([persist then notify](../persist-then-notify/design.md)).
 
