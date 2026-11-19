@@ -21,7 +21,7 @@ export const layoutTopic: ReferenceTopic = {
     },
     {
       method:
-        "Each line's ink width off the still against the stand-in face's at the same capitals, the face letter-spaced out to the still's width (interface.md): the details' title, journal, objective and first description line measured by eye at 1:1 against the fixture's render",
+        "Each line's ink width off the still against the stand-in face's at the same capitals, the face letter-spaced out to the still's width (interface.md): the details' title, journal, objective and first description line measured at 1:1 against the fixture's render, and held by the `quest-screen-details` compare row",
       outcome: InvestigationOutcome.Adopted,
       result:
         "The title spaced 2.17 units, the journal 1.15 and set 61 in from the right (63 left its line 2 units short of the still's end), the objective 1.4 and the description 0.96. The description's measure is 880 units, not the 899 its box holds, so its first line breaks after Graeae as the still does: at 899 it broke after so, and at 860 the same 0.96 spacing wraps Graeae onto the next line. With these spacings the details' mean falls from 21.34 to 20.96. A title at 2.5 lowered the mean but lost shape, so it stays near 2",

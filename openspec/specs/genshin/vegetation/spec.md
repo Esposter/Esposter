@@ -104,5 +104,5 @@ Blade density SHALL be the first detail a lower quality tier reduces, before the
 
 ## Open
 
-- [ ] **Vegetation: the grass fades into the ground's colour with no visible seam** — no source yet: a visual check of the seam on a recording, which no record holds.
+- [ ] **Vegetation: the grass fades into the ground's colour with no visible seam** — no source yet: no measurement of the seam over a recording's frames, which no record holds.
 - [ ] **Vegetation: a wet meadow darkens and glints as one surface** — no source yet: a game recording of a wet meadow, since the wet branch in `packages/genshin-engine/src/vegetation/createGrassMaterial.ts` is repo code.

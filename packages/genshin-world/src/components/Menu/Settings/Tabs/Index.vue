@@ -76,8 +76,8 @@ defineProps<Props>();
   letter-spacing: calc(var(--unit) * 2.4);
 }
 
-/* The last two tabs, Resources and Other, are dimmer than the rest: set by eye off the clip's tab column
-   (`yt-5EmJX_RyuY8-menu-settings`, 1920 wide), where they are barely above the sand behind them */
+/* The last two tabs, Resources and Other, are dimmer than the rest: estimated off the clip's tab column
+   (`yt-5EmJX_RyuY8-menu-settings`, 1920 wide), where they are barely above the sand behind them, and their opacity waits on a measurement of that column */
 .tab.dimmed {
   opacity: 0.5;
 }

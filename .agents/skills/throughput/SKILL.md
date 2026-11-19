@@ -5,13 +5,13 @@ description: Apply when a solve, a fit, a build, a CI run or a subagent will tak
 
 # Throughput — Nothing Idles While Work Is Ready
 
-Time and effort are the limit, so every resource the session holds works at once: the main session, `haiku` subagents, background commands, and the user's ear and eye. A solve that runs half an hour is half an hour of the session's own work done beside it, never half an hour waited. Who runs which kind of work is the `llm-delegation` skill; how a check runs and is waited on is the `running-checks` skill.
+Time and effort are the limit, so every resource the session holds works at once: the main session, `haiku` subagents, background commands, and the user's answers. A solve that runs half an hour is half an hour of the session's own work done beside it, never half an hour waited. Who runs which kind of work is the `llm-delegation` skill; how a check runs and is waited on is the `running-checks` skill.
 
 ## Settled — do not re-propose
 
 - **Waiting on a run with nothing else started** — a foreground solve, a sleep loop, a turn spent watching an agent. Its completion notifies the session; the time before it belongs to the next unit.
 - **Ending a turn to report while independent work is still ready.** The report goes out with the work still running, and names what runs and what is queued.
-- **A question to the user that blocks the rest of the turn.** Asks of the user's ear or eye are batched at the end of a reply, and everything not waiting on the answer carries on.
+- **A question to the user that blocks the rest of the turn.** Asks of the user are batched at the end of a reply, and everything not waiting on the answer carries on.
 
 ## Rules
 
@@ -31,7 +31,7 @@ The user judges results, not method. A choice the repo's skills or specs already
 Asking first is for the short user-only list, and nothing else:
 
 - a fact only the user holds: an address, a key, a password, or a permission they have not granted (SSH access to another machine is the owner's call per machine, `references/game-data.md`);
-- a recording, a look at the game, or any act only the user's eyes or hands can do;
+- a recording, or any act only the user's hands can do;
 - a delete, overwrite or publish outside the repo that cannot be regenerated, or a transfer of game files to a machine the owner has not set up.
 
 An ask is one line, sent at the end of a reply with the default already taken. It never holds a unit that does not depend on its answer.

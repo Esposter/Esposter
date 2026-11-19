@@ -35,7 +35,7 @@ const formatTrackValue = (trackRow: SettingsTrackRow): string =>
 
 <style scoped>
 /* A volume's speaker, its number in a faint box and its slider, the knob a diamond at its share of the line. Provisional:
-   Their sizes and places, read by eye off the clip's Audio tab at 178 seconds */
+   Their sizes and places are estimated off the clip's Audio tab at 178 seconds, and wait on a measurement of that frame */
 .speaker {
   position: absolute;
   top: calc(var(--unit) * 11.5);

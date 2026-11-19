@@ -20,8 +20,7 @@ export const towersTopic: ReferenceTopic = {
         "Each tower unrolled round its axis and traced into band tones, paint, raised faces, recesses at two depths, gilding and openings, on lathes standing on the walls, now carries the game's gold bands, the lantern tower's windows and the fluting where the exports do, by eye. Against the exports it scores a little worse than the bare lathes on most frames (night 0.077 to 0.085) and the day's better (0.140 to 0.128); a blurred difference over the near towers falls from 19.0 to 17.7. The gilding as metal read darker still at every hour, with nothing reflecting the sky into it, and three's bump map over the atlas changed no frame, so both are dropped",
     },
     {
-      method:
-        "rank's second table with scoreLabelSimilarity at every hour, its stand-in sheet read by eye, then the recesses' occlusion swept",
+      method: "rank's second table with scoreLabelSimilarity at every hour, then the recesses' occlusion swept",
       outcome: InvestigationOutcome.Found,
       result:
         "Against the exports, the towers' multi-scale structural similarity reads 0.70 on the phone's door frame, 0.60 at dawn, 0.70 by day and 0.71 at night; the walkway's 0.61, 0.45, 0.86 and 0.48, its far end standing at full height in the exports where ours assembles; the bridges' over 0.8 everywhere. Side by side, the near lantern tower's arched windows read dark in the exports and pale orange in ours, but every darker recess (0.8 to 0.6 a unit of depth in place of 0.9) scored the towers worse by both measures",

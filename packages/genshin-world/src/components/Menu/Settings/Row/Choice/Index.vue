@@ -102,7 +102,7 @@ const languageValue = computed(() => getLanguageDisplayName(settings.value.langu
   letter-spacing: inherit;
 }
 
-/* The star the value's panel begins at, and a fainter one before it. Provisional: the second's strength, read by eye */
+/* The star the value's panel begins at, and a fainter one before it. Provisional: the second's strength is estimated, and waits on a measurement of it from the settings still */
 .star {
   position: absolute;
   top: calc(var(--unit) * 4);

@@ -72,7 +72,7 @@ const shortcuts = HUD_SHORTCUTS.map(({ icon, inputAction, labelKey }) => ({
 }
 
 /* Each icon the menu's trace at 0.585 of a pixel of the 1920 by 1080 screen to a pixel of the menu's 2560 wide
-   Reference, as the two stills' icons measure against the traces. Provisional: the faint shadow round it, by eye */
+   Reference, as the two stills' icons measure against the traces. Provisional: the faint shadow round it is estimated, and waits on a measurement of it from the two stills */
 .glyph {
   width: calc(var(--unit) * 0.585 * var(--glyph-width));
   height: calc(var(--unit) * 0.585 * var(--glyph-height));

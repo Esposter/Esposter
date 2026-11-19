@@ -50,7 +50,7 @@ flowchart TD
   Seam --> Lint
   Lint --> Test[Vitest over the pure modules]
   Test --> Load[claude --plugin-dir, the installed copy disabled]
-  Load --> Eyes[The person's eyes on the band]
+  Load --> Live[The band is held by no check yet, until a test reads its state back]
 ```
 
 Validation comes before the typecheck because it is the engine's own reading and costs a second; a module the engine refuses is restructured, and a restructure moves more than any type error does.

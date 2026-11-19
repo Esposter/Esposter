@@ -1,6 +1,6 @@
 # UI Library
 
-Each unit read against the `ui-library` skill, its design pass walked, and checked by eye. Ordered by reach — the first units settle the library, the later ones reach the most readers.
+Each unit read against the `ui-library` skill, its design pass walked, and its states driven in a browser where no test reaches (the `run-app` skill). Ordered by reach — the first units settle the library, the later ones reach the most readers.
 
 | Unit                                                                                                                     | Swept                   | Notes                                                                                                 |
 | ------------------------------------------------------------------------------------------------------------------------ | ----------------------- | ----------------------------------------------------------------------------------------------------- |
