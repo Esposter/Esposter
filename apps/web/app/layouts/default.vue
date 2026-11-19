@@ -67,69 +67,28 @@ onMounted(() => {
     grid
     rows="[minmax(0,1fr)]"
   >
-    <template v-if="hasLeftDrawer">
-      <aside
-        v-if="isDesktop"
-        :class="{ '[overflow-clip-margin:var(--ui-step)]': isLeftDrawerOpen }"
-        :inert="!isLeftDrawerOpen"
-        h="[calc(100dvh-var(--dock-inset-block-end))]"
-        flex
-        col-start-1
-        row-start-1
-        self-start
-        top-0
-        sticky
-        of-clip
-        ui-frame
-      >
-        <div :style="{ width: `${leftDrawerWidth}px` }" flex shrink-0 flex-col>
-          <slot name="left" />
-        </div>
-      </aside>
-      <UiDialog
-        v-else
-        v-model="isLeftDrawerOpen"
-        is-body-bare
-        :placement="UiDialogPlacement.DrawerStart"
-        :title="leftTitle"
-      >
-        <slot name="left" />
-      </UiDialog>
-    </template>
+    <AppDrawer
+      v-if="hasLeftDrawer"
+      v-model="isLeftDrawerOpen"
+      :placement="UiDialogPlacement.DrawerStart"
+      :title="leftTitle"
+      :width="leftDrawerWidth"
+    >
+      <slot name="left" />
+    </AppDrawer>
     <main col-start-2 row-start-1 min-h-0 min-w-0 of-y-auto>
       <slot />
     </main>
-    <template v-if="hasRightDrawer">
-      <aside
-        v-if="isDesktop"
-        :class="{ '[overflow-clip-margin:var(--ui-step)]': isRightDrawerOpen }"
-        :inert="!isRightDrawerOpen"
-        h="[calc(100dvh-var(--dock-inset-block-end))]"
-        flex
-        col-start-3
-        row-start-1
-        self-start
-        top-0
-        justify-end
-        sticky
-        of-clip
-        ui-frame
-      >
-        <div :style="{ width: `${rightDrawerWidth}px` }" flex shrink-0 flex-col>
-          <slot name="right" />
-        </div>
-      </aside>
-      <UiDialog
-        v-else
-        v-model="isRightDrawerOpen"
-        is-body-bare
-        :is-title-hidden="isRightTitleHidden"
-        :placement="UiDialogPlacement.DrawerEnd"
-        :title="rightTitle"
-      >
-        <slot name="right" />
-      </UiDialog>
-    </template>
+    <AppDrawer
+      v-if="hasRightDrawer"
+      v-model="isRightDrawerOpen"
+      :is-title-hidden="isRightTitleHidden"
+      :placement="UiDialogPlacement.DrawerEnd"
+      :title="rightTitle"
+      :width="rightDrawerWidth"
+    >
+      <slot name="right" />
+    </AppDrawer>
   </div>
 </template>
 
