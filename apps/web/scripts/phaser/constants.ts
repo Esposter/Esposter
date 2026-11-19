@@ -7,4 +7,4 @@ export const ContentTypePhaserMethodMap = {
   [ContentTypePhaserMethod.Audio]: "audio",
   [ContentTypePhaserMethod.Font]: "font",
   [ContentTypePhaserMethod.Image]: "image",
-} as const;
+} as const satisfies Record<ContentTypePhaserMethod, string>;
