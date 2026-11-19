@@ -31,4 +31,4 @@
 
 ## 7. The save's backfill, owed to the main session
 
-- [ ] 7.1 Set the quick swap slots of every saved bag to none, dev then prod, with the rule in `design.md`. Blocked: the session does not run a backfill or publish from this worktree; the main session runs it. Verify: the backfill's dry run prints no changed document on its second pass.
+- [x] 7.1 Set the quick swap slots of every saved bag to none, dev then prod, with the rule in `design.md`. Verify: the backfill's dry run on dev and on prod reported no changed document (every stored bag already holds its quick swap slots, and no current writer omits them), so no write was owed and the script was deleted.

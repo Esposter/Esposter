@@ -3,5 +3,5 @@ affected_areas: [genshin]
 x-phase: 6
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
-x-waiting: "3.1 waits on an assertion of an opened mail's text and items in the browser suite, not written yet; 3.2 waits on the PC export's client scripts; 3.5 waits on the main session's isPinned backfill and on the Gift Mail Box cap's number, which the dump does not give"
+x-waiting: "3.1 waits on an assertion of an opened mail's text and items in the browser suite, not written yet; 3.2 waits on the PC export's client scripts; 3.5 waits on the Gift Mail Box cap's number (its isPinned backfill was dry-run on dev and prod with nothing to change), which the dump does not give"
 x-touches: ["packages/genshin-world/src/services/mail/**", "packages/genshin-world/src/models/mail/**"]

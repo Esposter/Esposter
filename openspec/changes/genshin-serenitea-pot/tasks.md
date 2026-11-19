@@ -32,4 +32,4 @@
 
 ## 6. Save
 
-- [ ] 6.1 Backfill each save written before `homePlacements`, `homePlantings` and `homeProgress` with an empty list, an empty list and a fresh progress (design Decisions), on dev and then on prod. Verify: none; the backfills run reports nothing to change on each store, and its script is not committed. Blocked: the main session runs it once this schema reaches dev (design Decisions).
+- [x] 6.1 Backfill each save written before `homePlacements`, `homePlantings` and `homeProgress` with an empty list, an empty list and a fresh progress (design Decisions), on dev and then on prod. Verify: none; the backfill's dry run on dev and on prod reported nothing to change (every stored save already parses against the current schema, and no current writer omits the fields), so no write was owed and the script was deleted.
