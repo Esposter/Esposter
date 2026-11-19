@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { UserSettingsPageSections } from "#src/models/user/UserSettingsPageSection";
-import { UserSettingsPageSectionMap } from "#src/services/user/settings/UserSettingsPageSectionMap";
+import { UserSettingsPageSectionHeadingMap } from "#src/services/user/settings/UserSettingsPageSectionHeadingMap";
 
 const visibleIds = useVisibleSectionIds(UserSettingsPageSections);
 </script>
@@ -22,7 +22,7 @@ const visibleIds = useVisibleSectionIds(UserSettingsPageSections);
           block
           transition-colors
         >
-          {{ UserSettingsPageSectionMap[section].title }}
+          {{ UserSettingsPageSectionHeadingMap[section].title }}
         </NuxtLink>
       </li>
     </ul>

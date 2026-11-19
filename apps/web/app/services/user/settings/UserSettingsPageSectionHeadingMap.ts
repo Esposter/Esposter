@@ -2,7 +2,7 @@ import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSectio
 
 // The enum value is the anchor a link scrolls to, so the heading text lives here rather than doubling as the id —
 // One place naming each section for both the sidebar and the section it heads
-export const UserSettingsPageSectionMap = {
+export const UserSettingsPageSectionHeadingMap = {
   [UserSettingsPageSection.ApiKeys]: { subtitle: "The keys an agent reaches this account with", title: "API Keys" },
   [UserSettingsPageSection.DataExport]: {
     subtitle: "A zip archive of the data this account holds",

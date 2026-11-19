@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
-import { UserSettingsPageSectionMap } from "#src/services/user/settings/UserSettingsPageSectionMap";
+import { UserSettingsPageSectionHeadingMap } from "#src/services/user/settings/UserSettingsPageSectionHeadingMap";
 
 interface Props {
   // Absent where a surface of its own already heads the card, as the room's user settings do
@@ -19,8 +19,8 @@ defineProps<Props>();
     <header v-if="section || slots.actions" flex gap-2 min-h-8 items-center>
       <div flex flex-1 gap-2 min-w-0 items-baseline>
         <template v-if="section">
-          <h2 shrink-0 ui-heading>{{ UserSettingsPageSectionMap[section].title }}</h2>
-          <p text-sm text-muted truncate>{{ UserSettingsPageSectionMap[section].subtitle }}</p>
+          <h2 shrink-0 ui-heading>{{ UserSettingsPageSectionHeadingMap[section].title }}</h2>
+          <p text-sm text-muted truncate>{{ UserSettingsPageSectionHeadingMap[section].subtitle }}</p>
         </template>
       </div>
       <slot name="actions" />

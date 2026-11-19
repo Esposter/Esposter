@@ -66,16 +66,16 @@ Merging two user rows that already exist. This prevents the split going forward,
 
 Paths relative to `apps/web`.
 
-| File                                                       | Role                                                                 |
-| ---------------------------------------------------------- | -------------------------------------------------------------------- |
-| `server/auth.ts`                                           | the explicit `account.accountLinking` block                          |
-| `app/components/User/LinkedAccountsCard/Index.vue`         | the settings section — lists accounts, links and unlinks             |
-| `app/components/User/LinkedAccountsCard/Row.vue`           | one provider row and its Link / Unlink action                        |
-| `app/services/auth/AccountLinkErrorMessageMap.ts`          | redirect error codes translated into readable text                   |
-| `app/services/auth/requireAuthData.ts`                     | raises an auth rejection from the payload, keeping its message       |
-| `shared/models/auth/SocialProvider.ts`                     | the one provider list the server config and the buttons key on       |
-| `app/services/login/LoginButtonItems.ts`                   | one button per listed provider, its logo, shared with the login page |
-| `app/services/user/settings/UserSettingsPageSectionMap.ts` | the section's heading and its sidebar entry                          |
+| File                                                              | Role                                                                 |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `server/auth.ts`                                                  | the explicit `account.accountLinking` block                          |
+| `app/components/User/LinkedAccountsCard/Index.vue`                | the settings section — lists accounts, links and unlinks             |
+| `app/components/User/LinkedAccountsCard/Row.vue`                  | one provider row and its Link / Unlink action                        |
+| `app/services/auth/AccountLinkErrorMessageMap.ts`                 | redirect error codes translated into readable text                   |
+| `app/services/auth/requireAuthData.ts`                            | raises an auth rejection from the payload, keeping its message       |
+| `shared/models/auth/SocialProvider.ts`                            | the one provider list the server config and the buttons key on       |
+| `app/services/login/LoginButtonItems.ts`                          | one button per listed provider, its logo, shared with the login page |
+| `app/services/user/settings/UserSettingsPageSectionHeadingMap.ts` | the section's heading and its sidebar entry                          |
 
 ## Notes
 
