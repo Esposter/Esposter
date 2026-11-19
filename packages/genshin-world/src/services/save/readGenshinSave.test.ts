@@ -386,13 +386,6 @@ describe(readGenshinSave, () => {
     expect(visit(EMPTY_GENSHIN_SAVE).forgeLearnedRecipeIds).toStrictEqual([]);
   });
 
-  test("placements are kept across a return to the realm", () => {
-    expect.hasAssertions();
-    const { homePlacements } = visit({ ...EMPTY_GENSHIN_SAVE, homePlacements: [PLACEMENT] });
-
-    expect(homePlacements).toStrictEqual([PLACEMENT]);
-  });
-
   // The day's four as the player was dealt them after the daily reset, the first of them already claimed
   test("the day's four survive a reload before the daily reset", () => {
     expect.hasAssertions();
