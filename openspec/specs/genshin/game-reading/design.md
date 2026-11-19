@@ -113,7 +113,7 @@ Both machines hold an install, under `{data-root}/genshin-parity/game` on the Ma
 | HLSL                                                          | None: the assembly stands   | 3Dmigoto's `cmd_Decompiler` 1.3.16, pinned |
 | The parity page, witness and passes                           | Yes                         | Yes                                        |
 
-The table's rows are read from `scripts/src/services/recreation/animeStudio/runAnimeStudio.ts` (the Mac's QoS clamp), `scripts/src/services/genshinParity/shared/checkIsGameRunning.ts` (the PC's refusal), `scripts/src/services/genshinAssets/materials/disassembleDxbcDirectory.ts` (DXBC and DXIL by platform) and `scripts/src/services/genshinAssets/materials/decompileDxbcDirectory.ts` (HLSL, pinned in `scripts/src/services/genshinAssets/shared/constants.ts`).
+The table's rows are read from `scripts/src/services/recreation/animeStudio/runAnimeStudio.ts` (the Mac's QoS clamp), `scripts/src/services/genshinParity/shared/checkIsGameRunning.ts` (the refusal while the game runs), `scripts/src/services/genshinAssets/materials/disassembleDxbcDirectory.ts` (DXBC and DXIL by platform) and `scripts/src/services/genshinAssets/materials/decompileDxbcDirectory.ts` (HLSL, pinned in `scripts/src/services/genshinAssets/shared/constants.ts`).
 
 The PC runs no SSH server, so a transfer between the two runs from the PC to the Mac only, by `ai:fleet:data push` (`scripts/src/fleet/data/index.ts`). The Mac cannot pull from the PC.
 
@@ -140,7 +140,7 @@ The PC runs no SSH server, so a transfer between the two runs from the PC to the
 | `scripts/src/services/genshinAssets/materials/decompileDxbcDirectory.ts`   | Each DXBC program's HLSL through the pinned 3Dmigoto decompiler             |
 | `scripts/src/services/genshinAssets/materials/annotateProgramConstants.ts` | A program headed by what its constant registers hold, DXBC or DXIL          |
 | `scripts/src/services/recreation/animeStudio/assertAnimeStudioReady.ts`    | Refuses a read of the blocks while the game runs                            |
-| `scripts/src/services/genshinParity/shared/checkIsGameRunning.ts`          | Whether the game is running, by Windows' process list                       |
+| `scripts/src/services/genshinParity/shared/checkIsGameRunning.ts`          | Whether the game is running, by the process list of Windows and macOS       |
 
 ## Sources
 
