@@ -15,6 +15,7 @@ describe(useInviteStore, () => {
   const creator = createUser({ name: "creator" });
   const roomId = v7();
   const invite: InviteInMessage = {
+    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     expiresAt: null,

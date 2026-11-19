@@ -13,6 +13,7 @@ import { describe, expect, test } from "vitest";
 describe("messageModelRoomSettingsTypeRoleEditor", () => {
   const { trpcMsw } = setupMswTrpc();
   const role: RoomRoleInMessage = {
+    version: 0,
     color: "",
     createdAt: new Date(0),
     deletedAt: null,

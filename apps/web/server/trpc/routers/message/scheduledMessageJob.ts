@@ -1,5 +1,6 @@
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
 import type { Page, ScheduledReminder } from "@esposter/db-schema";
+import type { Except } from "type-fest";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { useUserObject } from "#server/composables/realtime/useUserObject";
@@ -38,11 +39,11 @@ export const scheduledMessageJobRouter = router({
   ),
   // A reminder is written to its owner's object, which the alarm sends at `runAt`. Its room is what the notification links
   // To, so only a member of that room can set one
-  scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<ScheduledReminder>(
-    async ({ ctx, input }) => {
-      const reminder = { id: v7(), roomId: input.roomId, runAt: input.runAt, text: input.text };
-      await useUserObject(ctx.user.id).addReminder(reminder);
-      return reminder;
-    },
-  ),
+  scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<
+    Except<ScheduledReminder, "version">
+  >(async ({ ctx, input }) => {
+    const reminder = { id: v7(), roomId: input.roomId, runAt: input.runAt, text: input.text };
+    await useUserObject(ctx.user.id).addReminder(reminder);
+    return reminder;
+  }),
 });

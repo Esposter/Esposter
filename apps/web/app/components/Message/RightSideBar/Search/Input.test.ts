@@ -48,6 +48,7 @@ describe("messageRightSideBarSearchInput", () => {
     trpcMsw.searchHistory.createSearchHistory.mutation(({ input }) => {
       onSearchHistoryCreated();
       return {
+        version: 0,
         ...input,
         createdAt: new Date(0),
         deletedAt: null,

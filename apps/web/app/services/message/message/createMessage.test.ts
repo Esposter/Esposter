@@ -10,6 +10,7 @@ export const createMessage = (
   message = "",
   type: MessageType = MessageType.Message,
 ): ClientMessage => ({
+  version: 0,
   appUserId: null,
   appUserImage: "",
   createdAt: new Date(0),

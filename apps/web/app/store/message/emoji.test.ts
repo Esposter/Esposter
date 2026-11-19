@@ -18,7 +18,7 @@ describe(useEmojiStore, () => {
   const roomId = v7();
   const messageId = 1;
   const emojiTag = "👍";
-  const createReaction = (userIds: string[] = []) => ({ emojiTag, messageId, userIds });
+  const createReaction = (userIds: string[] = []) => ({ emojiTag, messageId, userIds, version: 0 });
 
   beforeEach(() => {
     useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));

@@ -11,6 +11,10 @@ export const createVersionSchema = () => ({
     .$onUpdateFn(() => sql`${sql.identifier("version")} + 1`),
 });
 
+// The version of a row the server does not hold yet: a default answered for an absent row, or a placeholder a client creates
+// Before the server answers. Stored versions are never negative, so this is below every one, and the row's first arrival applies
+export const NO_ROW_VERSION = -1;
+
 export const createMetadataSchema = () => ({
   createdAt: integer({ mode: "timestamp_ms" })
     .notNull()

@@ -14,6 +14,7 @@ describe("messageModelRoomSettingsTypeRoleListIndex", () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   const createRole = (position: number): RoomRoleInMessage => ({
+    version: 0,
     color: "",
     createdAt: new Date(0),
     deletedAt: null,

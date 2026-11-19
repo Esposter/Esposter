@@ -88,7 +88,7 @@ describe("scheduledMessageJobRouter", () => {
     expect.hasAssertions();
 
     const reminder = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
-    userObject.readReminders.mockResolvedValue([reminder]);
+    userObject.readReminders.mockResolvedValue([{ ...reminder, version: 0 }]);
     const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledMessageJobs();
 
     const scheduledMessageJob = takeOne(scheduledMessageJobs.items);
@@ -120,11 +120,11 @@ describe("scheduledMessageJobRouter", () => {
     const scheduledMessageId = v7();
     const soonerRunAt = new Date(0);
     const laterRunAt = new Date(1);
-    const reminder = { id: v7(), roomId, runAt: laterRunAt, text };
+    const reminder = { id: v7(), roomId, runAt: laterRunAt, text, version: 0 };
     userObject.readReminders.mockResolvedValue([reminder]);
     userObject.readScheduledMessages.mockResolvedValue([{ id: scheduledMessageId, roomId, runAt: soonerRunAt }]);
     roomObject.readScheduledMessages.mockResolvedValue([
-      { id: scheduledMessageId, message: "later", replyToId: null, runAt: soonerRunAt, userId: v7() },
+      { version: 0, id: scheduledMessageId, message: "later", replyToId: null, runAt: soonerRunAt, userId: v7() },
     ]);
     const { items, nextCursor } = await scheduledMessageJobCaller.readMyScheduledMessageJobs({ limit: 1 });
 

@@ -48,6 +48,7 @@ describe("messageModelStatusPickerForm", () => {
     const statusStore = useStatusStore();
     const { getStoredUserStatus, storeStatus } = statusStore;
     storeStatus(userId, {
+      version: 0,
       createdAt: new Date(0),
       deletedAt: null,
       expiresAt: null,
@@ -84,6 +85,7 @@ describe("messageModelStatusPickerForm", () => {
     const statusStore = useStatusStore();
     const { storeStatus } = statusStore;
     const storedStatus = {
+      version: 0,
       createdAt: new Date(0),
       deletedAt: null,
       expiresAt: null,

@@ -16,6 +16,7 @@ describe(useSurveyResponse, () => {
   const model = { a: "" };
   const submittedModel = { a: " " };
   const createSurveyResponse = (): SurveyResponseInResource => ({
+    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     id: responseId,

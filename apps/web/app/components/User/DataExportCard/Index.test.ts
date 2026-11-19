@@ -42,6 +42,7 @@ describe("userDataExportCard", () => {
   const link = "https://example.com";
   const failureReason = "failureReason";
   const baseDataExport: DataExportInUser = {
+    version: 0,
     blobName: "blobName",
     createdAt: epoch,
     deletedAt: null,

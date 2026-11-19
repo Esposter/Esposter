@@ -17,6 +17,7 @@ describe(useRoomInviteStore, () => {
   const user = createUser({ id: "userId" });
   const otherUser = createUser({ id: "otherUserId" });
   const createRoomInvite = (id: string, creator = user): InviteInMessageWithCreator => ({
+    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     expiresAt: null,

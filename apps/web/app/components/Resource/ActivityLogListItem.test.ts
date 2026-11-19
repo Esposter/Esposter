@@ -14,6 +14,7 @@ describe("resourceActivityLogListItem", () => {
 
     const name = "Assistant";
     const activity: ResourceActivityInResource = {
+      version: 0,
       activityType: ResourceActivityType.ContentSaved,
       apiKeyId: v7(),
       apiKeyName: name,

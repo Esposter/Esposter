@@ -29,7 +29,7 @@ describe(useSelectEmoji, () => {
     const selectEmoji = useSelectEmoji(message);
     selectEmoji(THUMBS_UP);
     emojiStore.setEmojis(message.roomId, message.id, [
-      { emojiTag: THUMBS_UP, messageId: message.id, userIds: [userId] },
+      { version: 0, emojiTag: THUMBS_UP, messageId: message.id, userIds: [userId] },
     ]);
     selectEmoji(THUMBS_UP_MEDIUM);
 
@@ -39,7 +39,7 @@ describe(useSelectEmoji, () => {
   test("toggles the existing reaction when the same emoji comes back", () => {
     expect.hasAssertions();
 
-    const foundEmoji = { emojiTag: THUMBS_UP, messageId: message.id, userIds: [userId] };
+    const foundEmoji = { emojiTag: THUMBS_UP, messageId: message.id, userIds: [userId], version: 0 };
     const emojiStore = useEmojiStore();
     emojiStore.setEmojis(message.roomId, message.id, [foundEmoji]);
     const createEmoji = vi.spyOn(emojiStore, "createEmoji").mockImplementation(noop);

@@ -4,6 +4,7 @@ import { v7 } from "uuid";
 import { describe } from "vitest";
 
 export const createRoomCategory = (overrides: Partial<RoomCategoryInMessage> = {}): RoomCategoryInMessage => ({
+  version: 0,
   createdAt: new Date(0),
   deletedAt: null,
   id: v7(),

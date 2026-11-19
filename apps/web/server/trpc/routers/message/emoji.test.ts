@@ -48,7 +48,7 @@ describe("emojiRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const reaction = { emojiTag, messageId, userIds: [userId] };
+    const reaction = { emojiTag, messageId, userIds: [userId], version: 0 };
     roomObject.addReaction.mockResolvedValue(reaction);
 
     const newReaction = await emojiCaller.addReaction({ emojiTag, messageId, roomId });
@@ -93,7 +93,7 @@ describe("emojiRouter", () => {
   test("reads the reactions of the messages it names from the room", async () => {
     expect.hasAssertions();
 
-    const reaction = { emojiTag, messageId, userIds: [getMockSession().user.id] };
+    const reaction = { emojiTag, messageId, userIds: [getMockSession().user.id], version: 0 };
     roomObject.readReactions.mockResolvedValue([reaction]);
 
     const reactions = await emojiCaller.readReactions({ messageIds: [messageId], roomId });

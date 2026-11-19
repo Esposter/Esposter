@@ -71,6 +71,7 @@ describe(useConnectionStore, () => {
 
     const createdAt = new Date(0);
     const message: RoomMessage = {
+      version: 0,
       appUserId: null,
       appUserImage: "",
       createdAt,

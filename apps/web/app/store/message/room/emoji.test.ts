@@ -13,6 +13,7 @@ describe(useRoomEmojiStore, () => {
   const roomId = v7();
   const presignedUrl = "https://example.com/emoji.png";
   const createRoomEmoji = (): RoomEmojiWithPresignedUrl => ({
+    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     id: v7(),

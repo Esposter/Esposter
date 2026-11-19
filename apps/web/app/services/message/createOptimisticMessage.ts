@@ -1,6 +1,8 @@
 import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
+import { NO_ROW_VERSION } from "@esposter/db-schema";
+
 // The optimistic bubble a send renders before the server answers. It holds what the server stores under the timestamps.
 // This client gives it until the answer replaces them. The room has not assigned it an id yet.
 // So it takes a negative one, which no room-assigned id can be, counted down so two sends in the same tick never share it.
@@ -10,6 +12,7 @@ export const createOptimisticMessage = (input: CreateMessageInput, userId: strin
   const now = new Date();
   optimisticMessageId -= 1;
   return {
+    version: NO_ROW_VERSION,
     appUserId: null,
     appUserImage: "",
     createdAt: now,

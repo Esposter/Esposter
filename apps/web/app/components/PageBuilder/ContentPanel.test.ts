@@ -64,6 +64,7 @@ const createSurveyInviteDocument = (surveyId: string): WebpageDocument => ({
 });
 // An email's invite sits in a column, as the email's document schema requires
 const createPublication = (resourceId: string): ResourcePublicationInResource => ({
+  version: 0,
   createdAt: new Date(0),
   deletedAt: null,
   publishedAt: new Date(0),

@@ -22,6 +22,7 @@ describe(useFriendRequestStore, () => {
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
   const createFriendRequest = (sender: PublicUser): FriendRequestInSocialWithRelations => ({
+    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     id: `${sender.id}-${appUser.id}`,

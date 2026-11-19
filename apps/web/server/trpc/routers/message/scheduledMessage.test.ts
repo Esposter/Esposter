@@ -55,7 +55,14 @@ describe("scheduledMessageRouter", () => {
   test("schedules a message in its room's object", async () => {
     expect.hasAssertions();
 
-    const scheduledMessage = { id: v7(), message, replyToId: null, runAt, userId: getMockSession().user.id };
+    const scheduledMessage = {
+      id: v7(),
+      message,
+      replyToId: null,
+      runAt,
+      userId: getMockSession().user.id,
+      version: 0,
+    };
     roomObject.createScheduledMessage.mockResolvedValue(scheduledMessage);
 
     await expect(
@@ -67,7 +74,7 @@ describe("scheduledMessageRouter", () => {
     expect.hasAssertions();
 
     const id = v7();
-    const updatedMessage = { id, message, replyToId: null, runAt, userId: getMockSession().user.id };
+    const updatedMessage = { id, message, replyToId: null, runAt, userId: getMockSession().user.id, version: 0 };
     roomObject.updateScheduledMessage.mockResolvedValue(updatedMessage);
 
     await expect(

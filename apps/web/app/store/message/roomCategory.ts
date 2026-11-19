@@ -6,7 +6,7 @@ import type { Except } from "type-fest";
 import { authClient } from "#src/services/auth/authClient";
 import { getRoomCategoryPositionUpdates } from "#src/services/message/roomCategory/getRoomCategoryPositionUpdates";
 import { createOperationData } from "#src/services/shared/createOperationData";
-import { DatabaseEntityType } from "@esposter/db-schema";
+import { DatabaseEntityType, NO_ROW_VERSION } from "@esposter/db-schema";
 import { v7 } from "uuid";
 
 export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
@@ -27,6 +27,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const createRoomCategory = (input: Except<CreateRoomCategoryInput, "id">) => {
     if (!session.value.data) return;
     const newRoomCategory: RoomCategoryInMessage = {
+      version: NO_ROW_VERSION,
       createdAt: new Date(),
       deletedAt: null,
       id: v7(),

@@ -19,7 +19,7 @@ import { getRestoredItems } from "#src/services/shared/getRestoredItems";
 import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useUserStore } from "#src/store/message/user/index";
-import { checkHasPermission } from "@esposter/db-schema";
+import { checkHasPermission, NO_ROW_VERSION } from "@esposter/db-schema";
 import { getResultAsync, ID_SEPARATOR, noop, omitUndefined } from "@esposter/shared";
 import { v7 } from "uuid";
 
@@ -253,6 +253,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const createRole = (input: Except<CreateRoleInput, "id">) => {
     const now = new Date();
     const newRole: RoomRoleInMessage = {
+      version: NO_ROW_VERSION,
       color: input.color ?? "",
       createdAt: now,
       deletedAt: null,

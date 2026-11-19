@@ -11,7 +11,7 @@ import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { usePostCountStore } from "#src/store/post/count";
 import { usePostStore } from "#src/store/post/index";
 import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
-import { DerivedDatabaseEntityType } from "@esposter/db-schema";
+import { DerivedDatabaseEntityType, NO_ROW_VERSION } from "@esposter/db-schema";
 import { getPostRanking } from "@esposter/shared";
 import { v7 } from "uuid";
 
@@ -93,6 +93,7 @@ export const useCommentStore = defineStore("post/comment", () => {
     const parent = [...allComments.value, ...postStore.items].find(({ id }) => id === input.parentId);
     const createdAt = new Date();
     const newComment: PostInPostWithRelations = {
+      version: NO_ROW_VERSION,
       ancestorIds: parent ? [...parent.ancestorIds, parent.id] : [input.parentId],
       commentCount: 0,
       createdAt,

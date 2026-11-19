@@ -17,6 +17,7 @@ describe("messageModelRoomInviteRow", () => {
   const roomId = v7();
   const user = createUser();
   const invite: InviteInMessageWithCreator = {
+    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     expiresAt: null,

@@ -14,6 +14,7 @@ describe(useLikeStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const postId = v7();
   const like: LikeInPost = {
+    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     postId,

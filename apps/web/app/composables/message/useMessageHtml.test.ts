@@ -28,6 +28,7 @@ describe(useMessageHtml, () => {
   const presignedUrl = "https://example.com/emoji.png";
   const displayName = "displayName";
   const roomEmoji: RoomEmojiWithPresignedUrl = {
+    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     id: roomEmojiId,

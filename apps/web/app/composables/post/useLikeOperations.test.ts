@@ -24,6 +24,7 @@ describe(useLikeOperations, () => {
   const postId = v7();
   const userId = v7();
   const createLike = (value: -1 | 1): LikeInPost => ({
+    version: 0,
     createdAt: new Date(0),
     deletedAt: null,
     postId,

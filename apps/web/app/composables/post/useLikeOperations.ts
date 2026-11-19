@@ -2,6 +2,7 @@ import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
 import type { DeleteLikeInput } from "#shared/models/db/post/DeleteLikeInput";
 import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
 import type { LikeInPost, PostInPostWithRelations } from "@esposter/db-schema";
+import { NO_ROW_VERSION } from "@esposter/db-schema";
 
 import { authClient } from "#src/services/auth/authClient";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -84,6 +85,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelat
         // The row's times are the client's estimate until the server's copy replaces it in `reconcile`
         const now = new Date();
         return applyOptimisticNewLike(getPosts(input.postId), {
+          version: NO_ROW_VERSION,
           createdAt: now,
           deletedAt: null,
           postId: input.postId,

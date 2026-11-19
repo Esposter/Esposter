@@ -70,9 +70,9 @@ describe(readMySentMessages, () => {
     await insertUserAndRooms();
     const messages = [createRoomMessage({ id: 1, userId }), createRoomMessage({ id: 2, userId })];
     userObject.readSentMessages.mockResolvedValue([
-      { createdAt, messageId: 1, roomId },
-      { createdAt, messageId: 2, roomId: otherRoomId },
-      { createdAt, messageId: 3, roomId },
+      { version: 0, createdAt, messageId: 1, roomId },
+      { version: 0, createdAt, messageId: 2, roomId: otherRoomId },
+      { version: 0, createdAt, messageId: 3, roomId },
     ]);
     roomObject.readMessagesByIds.mockImplementation((ids) => messages.filter(({ id }) => ids.includes(id)));
 
@@ -96,8 +96,8 @@ describe(readMySentMessages, () => {
 
     await insertUserAndRooms();
     userObject.readSentMessages.mockResolvedValue([
-      { createdAt, messageId: 1, roomId },
-      { createdAt, messageId: 2, roomId },
+      { version: 0, createdAt, messageId: 1, roomId },
+      { version: 0, createdAt, messageId: 2, roomId },
     ]);
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ id: 1, userId })]);
 
@@ -113,8 +113,8 @@ describe(readMySentMessages, () => {
 
     await insertUserAndRooms();
     userObject.readSentMessages.mockResolvedValue([
-      { createdAt, messageId: 1, roomId },
-      { createdAt, messageId: 2, roomId },
+      { version: 0, createdAt, messageId: 1, roomId },
+      { version: 0, createdAt, messageId: 2, roomId },
     ]);
     roomObject.readMessagesByIds.mockReturnValue([]);
 
@@ -131,8 +131,8 @@ describe(readMySentMessages, () => {
     await insertUserAndRooms();
     await db.delete(usersToRoomsInMessage).where(eq(usersToRoomsInMessage.roomId, otherRoomId));
     userObject.readSentMessages.mockResolvedValue([
-      { createdAt, messageId: 1, roomId: otherRoomId },
-      { createdAt, messageId: 2, roomId },
+      { version: 0, createdAt, messageId: 1, roomId: otherRoomId },
+      { version: 0, createdAt, messageId: 2, roomId },
     ]);
     roomObject.readMessagesByIds.mockImplementation((ids) => ids.map((id) => createRoomMessage({ id, userId })));
 

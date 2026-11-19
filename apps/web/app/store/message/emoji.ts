@@ -1,6 +1,7 @@
 import type { AddReactionInput } from "#shared/models/db/message/reaction/AddReactionInput";
 import type { RemoveReactionInput } from "#shared/models/db/message/reaction/RemoveReactionInput";
 import type { RoomReaction } from "@esposter/db-schema";
+import { NO_ROW_VERSION } from "@esposter/db-schema";
 
 import { authClient } from "#src/services/auth/authClient";
 import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
@@ -46,11 +47,12 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     userId: string,
     isReactor: boolean,
   ) => {
-    const userIds = (findEmoji(roomId, { emojiTag, messageId })?.userIds ?? []).filter(
-      (reactorId) => reactorId !== userId,
-    );
+    // The reaction keeps the version it held, since this changes the row as held until the server's answer lands
+    const previousEmoji = findEmoji(roomId, { emojiTag, messageId });
+    const userIds = (previousEmoji?.userIds ?? []).filter((reactorId) => reactorId !== userId);
     if (isReactor) userIds.push(userId);
-    if (userIds.length > 0) storeEmoji(roomId, { emojiTag, messageId, userIds });
+    if (userIds.length > 0)
+      storeEmoji(roomId, { emojiTag, messageId, userIds, version: previousEmoji?.version ?? NO_ROW_VERSION });
     else storeDeleteEmoji(roomId, { emojiTag, messageId });
   };
   const createEmoji = (input: AddReactionInput) => {

@@ -4,6 +4,7 @@ import { v7 } from "uuid";
 import { describe } from "vitest";
 
 export const createWebhook = (overrides: Partial<PublicWebhookInMessage> = {}): PublicWebhookInMessage => ({
+  version: 0,
   createdAt: new Date(0),
   creatorId: v7(),
   deletedAt: null,

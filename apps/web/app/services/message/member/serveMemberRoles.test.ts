@@ -12,6 +12,7 @@ export const serveMemberRoles = (
 ) => {
   trpcMsw.role.readMemberRoles.query(() =>
     memberRoles.map((memberRole) => ({
+      version: 0,
       createdAt: memberRole.createdAt,
       deletedAt: memberRole.deletedAt,
       role: memberRole,
