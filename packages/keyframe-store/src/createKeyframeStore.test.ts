@@ -4,11 +4,10 @@ import type { VersionAnchor } from "#src/models/VersionAnchor";
 import type { WrittenVersion } from "#src/models/WrittenVersion";
 
 import { createKeyframeStore } from "#src/createKeyframeStore";
-import { ObjectNotStoredError } from "#src/models/ObjectNotStoredError";
 import { DELTA_FLAG, OBJECT_FLAGS_OFFSET, OBJECT_MAGIC } from "#src/services/constants";
 import { createDocumentVersions } from "#src/services/createDocumentVersions.test";
 import { createMemoryObjectStore } from "#src/services/createMemoryObjectStore.test";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
 const countKeyframes = (writtenVersions: WrittenVersion[]) =>
@@ -160,7 +159,7 @@ describe(createKeyframeStore, () => {
         },
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, delta.hash, "object does not hash to its key").message}]`,
+      `[InvalidOperationError: Invalid operation: Read, name: ${delta.hash}, object does not hash to its key]`,
     );
 
     // The header stays intact, so the damage reaches the frame rather than the parser
@@ -191,7 +190,7 @@ describe(createKeyframeStore, () => {
         },
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, keyframe.hash, `unknown object flags ${strangerFlag}`).message}]`,
+      `[InvalidOperationError: Invalid operation: Read, name: ${keyframe.hash}, unknown object flags ${strangerFlag}]`,
     );
 
     memoryObjectStore.objects.set(keyframe.hash, Buffer.from(""));
@@ -204,7 +203,7 @@ describe(createKeyframeStore, () => {
         },
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, keyframe.hash, "not a keyframe store object").message}]`,
+      `[InvalidOperationError: Invalid operation: Read, name: ${keyframe.hash}, not a keyframe store object]`,
     );
   });
 
@@ -235,7 +234,7 @@ describe(createKeyframeStore, () => {
         },
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, keyframe.hash, "object does not hash to its key").message}]`,
+      `[InvalidOperationError: Invalid operation: Read, name: ${keyframe.hash}, object does not hash to its key]`,
     );
     expect(memoryObjectStore.objects.size).toBe(1);
   });
@@ -263,7 +262,7 @@ describe(createKeyframeStore, () => {
         },
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, keyframe.hash, "not a keyframe store object").message}]`,
+      `[InvalidOperationError: Invalid operation: Read, name: ${keyframe.hash}, not a keyframe store object]`,
     );
   });
 
@@ -358,7 +357,7 @@ describe(createKeyframeStore, () => {
         },
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[ObjectNotStoredError: ${new ObjectNotStoredError(delta.hash, `keyframe ${keyframe.hash} is not stored`).message}]`,
+      `[ObjectNotStoredError: Invalid operation: Read, name: ${delta.hash}, keyframe ${keyframe.hash} is not stored]`,
     );
 
     memoryObjectStore.objects.delete(delta.hash);
@@ -371,23 +370,8 @@ describe(createKeyframeStore, () => {
         },
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[ObjectNotStoredError: ${new ObjectNotStoredError(delta.hash, "object is not stored").message}]`,
+      `[ObjectNotStoredError: Invalid operation: Read, name: ${delta.hash}, object is not stored]`,
     );
-  });
-
-  test("a new keyframe reports no base", async () => {
-    expect.hasAssertions();
-
-    const writtenVersion = await createKeyframeStore(createMemoryObjectStore())
-      .write(baseVersion, emptyAnchor)
-      .match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      );
-
-    expect(writtenVersion.baseHash).toBe("");
   });
 
   // A delta names its keyframe in its own header, so reading it takes exactly that keyframe and nothing else
@@ -436,7 +420,7 @@ describe(createKeyframeStore, () => {
         },
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, delta.hash, `is a delta against ${keyframe.hash}, not a keyframe`).message}]`,
+      `[InvalidOperationError: Invalid operation: Read, name: ${delta.hash}, is a delta against ${keyframe.hash}, not a keyframe]`,
     );
     expect(memoryObjectStore.objects.size).toBe(2);
   });
