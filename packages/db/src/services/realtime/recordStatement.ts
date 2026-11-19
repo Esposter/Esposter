@@ -8,7 +8,12 @@ import { checkIsStatement } from "#src/services/realtime/checkIsStatement";
 import { getBeforeReads } from "#src/services/realtime/getBeforeReads";
 import { getWriteTable } from "#src/services/realtime/getWriteTable";
 import { toRows } from "#src/services/realtime/toRows";
-import { answerReturned, returnedAnswers, widenReturning } from "#src/services/realtime/widenReturning";
+import {
+  answerReturned,
+  returnedAnswers,
+  widenReturning,
+  widenUnreturnedWrite,
+} from "#src/services/realtime/widenReturning";
 import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getResultAsync } from "@esposter/shared";
 
@@ -43,12 +48,13 @@ export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(sta
           onFulfilled?: ((value: unknown) => unknown) | null,
           onRejected?: ((reason: unknown) => unknown) | null,
         ) => {
-          const complete = recorder.record(target);
+          const executed = widenUnreturnedWrite(target);
+          const complete = recorder.record(executed.statement);
           const reads = getBeforeReads(recorder.database, target);
-          return getResultAsync(() => runStatement(recorder, target, reads)).match(
+          return getResultAsync(() => runStatement(recorder, executed.statement, reads)).match(
             ({ before, result }) => {
               complete(result, before);
-              const answer = answerReturned(recorded, result);
+              const answer = executed.answer ? executed.answer(result) : answerReturned(recorded, result);
               return onFulfilled ? onFulfilled(answer) : answer;
             },
             (error) => {
@@ -75,6 +81,13 @@ export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(sta
       // Is recorded there, with the rows it returned. A write answers its run result, which names no row
       if (typeof property === "string" && SYNC_EXECUTE_METHODS.has(property))
         return (...args: unknown[]) => {
+          // A write `run()` executes asks for no rows, so it runs as the rows it changes and answers none
+          const widened = property === "run" ? widenUnreturnedWrite(target) : undefined;
+          if (widened?.answer) {
+            const complete = recorder.record(widened.statement);
+            complete((widened.statement as unknown as { all: () => unknown }).all(), []);
+            return undefined;
+          }
           const complete = recorder.record(target);
           const result: unknown = Reflect.apply(value, target, args);
           if (property === "run") {

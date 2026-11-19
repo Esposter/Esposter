@@ -1,6 +1,8 @@
-import type { Table } from "drizzle-orm";
+import type { SQLWrapper, Table } from "drizzle-orm";
 
 import { getScopeKeys } from "#src/services/realtime/getScopeKeys";
+import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
+import { getWriteTable } from "#src/services/realtime/getWriteTable";
 import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getTableColumns } from "drizzle-orm";
 
@@ -22,6 +24,24 @@ export const widenReturning = (
   return {
     answer: (result) => (Array.isArray(result) ? result.map((row) => pick(row)) : pick(result)),
     fields: { ...fields, ...Object.fromEntries(added.map((key) => [key, columns[key]])) },
+  };
+};
+
+// A write that asks for no RETURNING runs as one that returns its table's scope columns, so the rows it changes are named by the
+// Values they hold after it, whatever its WHERE matched. Its caller asked for no rows, so it is answered none. A statement that is
+// Not a write, or a table with no scope column, runs as it is
+export const widenUnreturnedWrite = <T extends SQLWrapper>(
+  statement: T,
+): { answer?: (result: unknown) => unknown; statement: T } => {
+  const table = getWriteTable(statement);
+  if (!table || getStatementConfig(statement)?.returning !== undefined) return { statement };
+  const columns = getTableColumns(table);
+  const scopeKeys = getScopeKeys(table).filter((key) => columns[key] !== undefined);
+  if (scopeKeys.length === 0) return { statement };
+  const fields = Object.fromEntries(scopeKeys.map((key) => [key, columns[key]]));
+  return {
+    answer: () => undefined,
+    statement: Reflect.apply(Reflect.get(statement, "returning", statement), statement, [fields]) as T,
   };
 };
 

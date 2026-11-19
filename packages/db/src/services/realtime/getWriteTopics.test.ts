@@ -119,6 +119,30 @@ describe(getWriteTopics, () => {
     ]);
   });
 
+  // An update names the scope values of the rows its WHERE matches, whatever its SET writes and whatever RETURNING its caller
+  // Asked for. A caller that remembered no RETURNING must not leave a reader of one room's rows unwoken by the room's update
+  test("an update that asks for no RETURNING and writes no scope column names the scope values of the rows it changes", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const roomId = v7();
+    const userId = v7();
+    await insertRoom(db, roomId, userId);
+    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    const { database, statements } = recordStatements(db);
+
+    await database
+      .update(usersToRoomsInMessage)
+      .set({ isHidden: true })
+      .where(eq(usersToRoomsInMessage.userId, userId));
+
+    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual([
+      "message_usersToRooms:*",
+      `message_usersToRooms:roomId=${roomId}`,
+      `message_usersToRooms:userId=${userId}`,
+    ]);
+  });
+
   // An insert that asks for no RETURNING, as a role assignment writes its membership, names the scope values of the rows its values
   // Hold, since those are the rows it writes. A table-wide topic alone would not wake a read that watches one room's rows
   test("an insert that asks for no RETURNING names the scope values of the rows it writes", async () => {
@@ -277,26 +301,6 @@ describe(getWriteTopics, () => {
         `message_usersToRooms:userId=${userId}`,
       ].toSorted(),
     );
-  });
-
-  // A write that asks for no RETURNING reports no rows, so it cannot name the values it changed. It still names its
-  // Table-wide topic, which every reader of the table watches, rather than publishing nothing
-  test("a write that returns no rows names its table's topic alone", async () => {
-    expect.hasAssertions();
-
-    const { db } = await createMockDb();
-    const roomId = v7();
-    const userId = v7();
-    await insertRoom(db, roomId, userId);
-    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
-    const { database, statements } = recordStatements(db);
-
-    await database
-      .update(usersToRoomsInMessage)
-      .set({ displayName: "renamed" })
-      .where(eq(usersToRoomsInMessage.userId, userId));
-
-    await expect(getWriteTopicNames(statements)).resolves.toStrictEqual(["message_usersToRooms:*"]);
   });
 
   // A write that matches no row changes nothing, so it publishes nothing

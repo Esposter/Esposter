@@ -59,13 +59,8 @@ export const notificationRouter = router({
       return unreadRows ? { ...page, unreadCount: takeOne(unreadRows).count } : page;
     }),
   updateNotificationsReadStatus: standardAuthedProcedure.mutation<number>(async ({ ctx }) => {
-    // The set holds no user, so RETURNING is what names the lists of the viewer's notifications to wake
     const [, unreadRows] = await ctx.db.batch([
-      ctx.db
-        .update(notificationsInNotification)
-        .set({ isRead: true })
-        .where(getUnreadNotificationsWhere(ctx.user.id))
-        .returning(),
+      ctx.db.update(notificationsInNotification).set({ isRead: true }).where(getUnreadNotificationsWhere(ctx.user.id)),
       selectUnreadNotificationCount(ctx.db, ctx.user.id),
     ]);
     return takeOne(unreadRows).count;
