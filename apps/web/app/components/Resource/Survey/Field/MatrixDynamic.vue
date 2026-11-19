@@ -151,10 +151,10 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
                   :label="getSurveyChoiceText(choice)"
                   :model-value="isChosen(row[column.name], choice.value)"
                   @update:model-value="
-                    (isChecked) =>
+                    (newModelValue) =>
                       setRow(
                         rowIndex,
-                        withSurveyAnswer(row, column.name, toggleChoice(row[column.name], choice.value, isChecked)),
+                        withSurveyAnswer(row, column.name, toggleChoice(row[column.name], choice.value, newModelValue)),
                       )
                   "
                 />

@@ -16,8 +16,8 @@ defineProps<Props>();
     :label="column.name"
     :model-value="selectedColumnIds.includes(column.id)"
     @update:model-value="
-      (isChecked) => {
-        selectedColumnIds = isChecked
+      (newModelValue) => {
+        selectedColumnIds = newModelValue
           ? [...selectedColumnIds, column.id]
           : selectedColumnIds.filter((selectedColumnId) => selectedColumnId !== column.id);
       }

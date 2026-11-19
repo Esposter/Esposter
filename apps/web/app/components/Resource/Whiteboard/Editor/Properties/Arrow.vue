@@ -38,7 +38,7 @@ const setArrowhead = (arrowEndKey: ArrowEndKey, arrowhead?: ArrowheadKind) =>
       is-label-shown
       label="Arrowhead at start"
       @update:model-value="
-        (isChecked) => setArrowhead(ArrowEndKey.Start, isChecked ? WHITEBOARD_DEFAULT_ARROWHEAD : undefined)
+        (newModelValue) => setArrowhead(ArrowEndKey.Start, newModelValue ? WHITEBOARD_DEFAULT_ARROWHEAD : undefined)
       "
     />
     <UiToggleGroup
@@ -53,7 +53,7 @@ const setArrowhead = (arrowEndKey: ArrowEndKey, arrowhead?: ArrowheadKind) =>
       is-label-shown
       label="Arrowhead at end"
       @update:model-value="
-        (isChecked) => setArrowhead(ArrowEndKey.End, isChecked ? WHITEBOARD_DEFAULT_ARROWHEAD : undefined)
+        (newModelValue) => setArrowhead(ArrowEndKey.End, newModelValue ? WHITEBOARD_DEFAULT_ARROWHEAD : undefined)
       "
     />
     <UiToggleGroup
