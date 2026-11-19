@@ -269,6 +269,19 @@ describe("roomRouter", () => {
     );
   });
 
+  test("fails generate profile image upload url with an svg image", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const input = { mimetype: MimeType.Svg, size: imageUpload.size };
+
+    await expect(
+      roomCaller.generateProfileImageUploadUrl({ ...input, roomId: newRoom.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify(input)).message}]`,
+    );
+  });
+
   test(`fails generate profile image upload url for a member without ${RoomPermission.ManageRoom} permission`, async () => {
     expect.hasAssertions();
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
+import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { validateFileWithAlert } from "#src/services/file/validateFileWithAlert";
 import { CallVirtualBackgroundDefinitions } from "#src/services/message/room/call/CallVirtualBackgroundDefinitions";
@@ -93,7 +94,7 @@ onMounted(async () => {
       </UiTooltip>
       <UiHiddenFileInput
         ref="fileInput"
-        accept="image/*"
+        :accept="NOTE_IMAGE_MIME_TYPES.join(',')"
         @select="
           async (file) => {
             fileInput?.reset();

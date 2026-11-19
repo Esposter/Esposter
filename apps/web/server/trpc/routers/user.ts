@@ -41,6 +41,7 @@ import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/Up
 import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
+import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import {
   createPresignedGetUrl,
   createPresignedPutUrl,
@@ -59,9 +60,7 @@ import {
   DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
   DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
   getDetectedUserStatus,
-  getMimeCategory,
   getUserProfileImageBlobName,
-  MimeCategory,
   NoiseSuppressionMode,
   QueueJob,
   StorageBucket,
@@ -129,7 +128,7 @@ export const userRouter = router({
     })
     .input(generateCallBackgroundUploadUrlInputSchema)
     .mutation<string>(async ({ ctx, input: { mimetype, size, slot } }) => {
-      if (size > MAX_CALL_BACKGROUND_SIZE_BYTES || getMimeCategory(mimetype) !== MimeCategory.Image)
+      if (size > MAX_CALL_BACKGROUND_SIZE_BYTES || !NOTE_IMAGE_MIME_TYPES.includes(mimetype))
         throw getInvalidOperationError(
           Operation.Create,
           DatabaseEntityType.CallBackground,
@@ -168,7 +167,7 @@ export const userRouter = router({
     .mutation<{ presignedUrl: string; publicUrl: string }>(async ({ ctx, input: { mimetype, size } }) => {
       // Refused before a write url is signed, as a call background's is: the signed type keeps the object an image, and
       // The size is the cap the client already checks before it asks
-      if (size > MAX_FILE_REQUEST_SIZE || getMimeCategory(mimetype) !== MimeCategory.Image)
+      if (size > MAX_FILE_REQUEST_SIZE || !NOTE_IMAGE_MIME_TYPES.includes(mimetype))
         throw getInvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify({ mimetype, size }));
 
       const blobName = getUserProfileImageBlobName(ctx.user.id);

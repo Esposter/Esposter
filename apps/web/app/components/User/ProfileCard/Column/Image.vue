@@ -2,6 +2,7 @@
 import type { Row } from "#src/models/user/ProfileCard/Row";
 import type { RowValueType } from "#src/models/user/ProfileCard/RowValueType";
 
+import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { validateFile } from "#src/services/file/validateFile";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -33,7 +34,7 @@ const fileMessage = ref("");
         <input
           ref="fileInput"
           type="file"
-          accept="image/*"
+          :accept="NOTE_IMAGE_MIME_TYPES.join(',')"
           hidden
           @change="
             async () => {

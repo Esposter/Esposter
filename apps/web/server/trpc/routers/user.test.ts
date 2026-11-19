@@ -286,6 +286,17 @@ describe("userRouter", () => {
     );
   });
 
+  // An svg is an image type that can carry script, and it is served from the public assets host, so a profile never takes one
+  test("fails generateProfileImageUploadUrl with an svg image", async () => {
+    expect.hasAssertions();
+
+    const input = { mimetype: MimeType.Svg, size };
+
+    await expect(caller.generateProfileImageUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getFileErrorMessage(JSON.stringify(input))}]`,
+    );
+  });
+
   test("updates", async () => {
     expect.hasAssertions();
 
@@ -465,6 +476,16 @@ describe("userRouter", () => {
     expect.hasAssertions();
 
     const input = { mimetype: MimeType.Pdf, size, slot: 0 };
+
+    await expect(caller.generateCallBackgroundUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify({ mimetype: input.mimetype, size: input.size }))}]`,
+    );
+  });
+
+  test("fails generateCallBackgroundUploadUrl with an svg image", async () => {
+    expect.hasAssertions();
+
+    const input = { mimetype: MimeType.Svg, size, slot: 0 };
 
     await expect(caller.generateCallBackgroundUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify({ mimetype: input.mimetype, size: input.size }))}]`,

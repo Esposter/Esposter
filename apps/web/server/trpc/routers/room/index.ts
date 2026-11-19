@@ -47,16 +47,15 @@ import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
 import { readUsersByIdsInputSchema } from "#shared/models/db/room/ReadUsersByIdsInput";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
+import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { createPageSort, createPresignedPutUrl, getPageOrderBy, getPageWhere, inJsonArray, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
   DEFAULT_EVERYONE_PERMISSIONS,
   getDisplayNameExpression,
-  getMimeCategory,
   getPublicUserColumns,
   invitesInMessage,
   MessageType,
-  MimeCategory,
   roomIdSchema,
   RoomPermission,
   roomRolesInMessage,
@@ -118,7 +117,7 @@ export const baseRoomRouter = router({
     .mutation<{ presignedUrl: string; publicUrl: string }>(async ({ input: { mimetype, roomId, size } }) => {
       // Refused before a write url is signed, as a call background's is: the signed type keeps the object an image, and
       // The size is the cap the client already checks before it asks
-      if (size > MAX_FILE_REQUEST_SIZE || getMimeCategory(mimetype) !== MimeCategory.Image)
+      if (size > MAX_FILE_REQUEST_SIZE || !NOTE_IMAGE_MIME_TYPES.includes(mimetype))
         throw getInvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify({ mimetype, size }));
 
       // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup

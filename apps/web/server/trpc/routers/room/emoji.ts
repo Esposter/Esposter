@@ -20,12 +20,11 @@ import { deleteRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/DeleteRo
 import { generateUploadRoomEmojiPresignedUrlEntityInputSchema } from "#shared/models/db/roomEmoji/GenerateUploadRoomEmojiPresignedUrlEntityInput";
 import { updateRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/UpdateRoomEmojiInput";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
+import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { createPresignedPutUrl } from "@esposter/db";
 import {
   DatabaseEntityType,
-  getMimeCategory,
   getRoomEmojiBlobName,
-  MimeCategory,
   roomEmojisInMessage,
   roomIdSchema,
   RoomPermission,
@@ -130,7 +129,7 @@ export const emojiRouter = router({
         "Answers a write url and an id for an emoji no reader shows until createRoomEmoji names the blob it uploaded",
     })
     .query<{ id: string; presignedUrl: string }>(async ({ ctx, input: { mimetype, roomId, size } }) => {
-      if (size > MAX_ROOM_EMOJI_SIZE_BYTES || getMimeCategory(mimetype) !== MimeCategory.Image)
+      if (size > MAX_ROOM_EMOJI_SIZE_BYTES || !NOTE_IMAGE_MIME_TYPES.includes(mimetype))
         throw getInvalidOperationError(
           Operation.Create,
           DatabaseEntityType.RoomEmoji,

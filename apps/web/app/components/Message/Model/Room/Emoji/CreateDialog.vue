@@ -2,6 +2,7 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
+import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { pluralize } from "#shared/util/text/pluralize";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiToken } from "#src/models/ui/UiToken";
@@ -63,7 +64,7 @@ const isNameValid = computed(() => selectRoomEmojiInMessageSchema.shape.name.saf
           Square images with transparent backgrounds work best. It has to be under
           {{ getFileSize(MAX_ROOM_EMOJI_SIZE_BYTES) }} — we won't resize it for you.
         </p>
-        <UiFileField v-model="files" accept="image/*" label="Image" />
+        <UiFileField v-model="files" :accept="NOTE_IMAGE_MIME_TYPES.join(',')" label="Image" />
         <p v-if="fileValidation && !fileValidation.isValid" role="alert" text-sm text-error>
           {{ fileValidation.message }}
         </p>

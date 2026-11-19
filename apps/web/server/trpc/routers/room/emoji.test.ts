@@ -84,6 +84,16 @@ describe("emojiRouter", () => {
     );
   });
 
+  test("fails generateUploadRoomEmojiPresignedUrlEntity with an svg image", async () => {
+    expect.hasAssertions();
+
+    await expect(
+      roomEmojiCaller.generateUploadRoomEmojiPresignedUrlEntity({ mimetype: MimeType.Svg, roomId, size }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ mimetype: MimeType.Svg, size }))}]`,
+    );
+  });
+
   test("fails generateUploadRoomEmojiPresignedUrlEntity with a file past the emoji size cap", async () => {
     expect.hasAssertions();
 
