@@ -7,7 +7,6 @@ import { CSV_MIME_TYPE, CSV_SEMICOLON_SETTINGS, CSV_SETTINGS } from "#src/servic
 import { createCsvFile } from "#src/services/resource/sheet/csv/createCsvFile.test";
 import { deserializeCsv } from "#src/services/resource/sheet/csv/deserializeCsv";
 import { serializeCsv } from "#src/services/resource/sheet/csv/serializeCsv";
-import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const serializeText = async (dataSource: DataSource, settings = CSV_SETTINGS) => {
@@ -40,19 +39,6 @@ describe(serializeCsv, () => {
     await expect(serializeText(dataSource, CSV_SEMICOLON_SETTINGS)).resolves.toBe("a;b\n0;1");
   });
 
-  test.each([
-    ["0,1", '"0,1"'],
-    ['"', '""""'],
-    ["0\n1", '"0\n1"'],
-    ["0\r1", '"0\r1"'],
-  ])("quotes a cell holding %j", async (value, expected) => {
-    expect.hasAssertions();
-
-    const dataSource = createDataSource([createColumn("a")], [createRow({ a: value })]);
-
-    await expect(serializeText(dataSource)).resolves.toBe(`a\n${expected}`);
-  });
-
   test("writes an empty field for a null or missing cell", async () => {
     expect.hasAssertions();
 
@@ -78,8 +64,7 @@ describe(serializeCsv, () => {
     );
     const { rows } = await roundTrip(dataSource);
 
-    expect(rows).toHaveLength(1);
-    expect(takeOne(rows).data).toStrictEqual({ a: "0,1", b: '"', c: null });
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: "0,1", b: '"', c: null }]);
   });
 
   test("a cell containing a newline round trips as one row", async () => {
@@ -88,8 +73,7 @@ describe(serializeCsv, () => {
     const dataSource = createDataSource([createColumn("a")], [createRow({ a: "0\n1" })]);
     const { rows } = await roundTrip(dataSource);
 
-    expect(rows).toHaveLength(1);
-    expect(takeOne(rows).data).toStrictEqual({ a: "0\n1" });
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: "0\n1" }]);
   });
 
   test("a whitespace-only cell round trips as null", async () => {
@@ -98,6 +82,6 @@ describe(serializeCsv, () => {
     const dataSource = createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: " ", b: "0,1" })]);
     const { rows } = await roundTrip(dataSource);
 
-    expect(takeOne(rows).data).toStrictEqual({ a: null, b: "0,1" });
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: null, b: "0,1" }]);
   });
 });

@@ -109,7 +109,7 @@ describe(deserializeXlsx, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ a: "Invalid Date" }]);
   });
 
-  test("only header row returns columns with no rows", async () => {
+  test("only header row returns an xlsx DataSource with columns and no rows", async () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a"), createColumn("b")]);

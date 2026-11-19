@@ -40,7 +40,7 @@ describe(deserializeJson, () => {
     ]);
   });
 
-  test("empty array returns DataSource with no columns and rows", async () => {
+  test("empty array returns a JSON DataSource with no columns and rows", async () => {
     expect.hasAssertions();
 
     const file = createJsonFile("[]");

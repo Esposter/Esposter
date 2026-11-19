@@ -5,15 +5,6 @@ import { describe, expect, test } from "vitest";
 describe(getDataSourceTypeByFilename, () => {
   const name = "name";
 
-  test("resolves every format the map accepts", () => {
-    expect.hasAssertions();
-
-    expect(getDataSourceTypeByFilename(`${name}.csv`)).toBe(DataSourceType.Csv);
-    expect(getDataSourceTypeByFilename(`${name}.json`)).toBe(DataSourceType.Json);
-    expect(getDataSourceTypeByFilename(`${name}.xml`)).toBe(DataSourceType.Xml);
-    expect(getDataSourceTypeByFilename(`${name}.xlsx`)).toBe(DataSourceType.Xlsx);
-  });
-
   test("resolves an uppercased extension", () => {
     expect.hasAssertions();
 

@@ -30,7 +30,7 @@ describe(deserializeCsv, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ a: 0, b: 1 }]);
   });
 
-  test("empty file returns DataSource with no columns and rows", async () => {
+  test("empty file returns a CSV DataSource with no columns and rows", async () => {
     expect.hasAssertions();
 
     const { columns, metadata, rows } = await deserializeCsv(createCsvFile(""), CSV_SETTINGS);

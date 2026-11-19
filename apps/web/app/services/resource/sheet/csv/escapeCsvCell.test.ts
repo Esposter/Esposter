@@ -14,6 +14,7 @@ describe(escapeCsvCell, () => {
     expect(escapeCsvCell("a,b", ",")).toBe('"a,b"');
     expect(escapeCsvCell('say "hi"', ",")).toBe('"say ""hi"""');
     expect(escapeCsvCell("a\nb", ",")).toBe('"a\nb"');
+    expect(escapeCsvCell("a\rb", ",")).toBe('"a\rb"');
   });
 
   test("a formula trigger gets a tab ahead of it, inside the quotes", () => {
