@@ -119,4 +119,21 @@ describe(useVolumeStore, () => {
     expect(volumeStore.checkIsUpdateVolume(Direction.RIGHT, SettingsOption.VolumePercentage)).toBe(true);
     expect(volumeStore.checkIsUpdateVolume(Direction.LEFT, SettingsOption["Text Speed"])).toBe(false);
   });
+
+  test("shutting the slider down destroys it and lets go of it, so a later volume change does not reach it", () => {
+    expect.hasAssertions();
+
+    const settingsStore = useSettingsStore();
+    const volumeStore = useVolumeStore();
+    const destroy = vi.fn<() => void>();
+    const slider = { destroy, value: 0.4 };
+    volumeStore.volumeSlider = slider;
+    volumeStore.destroyVolumeSlider();
+    volumeStore.setVolume(70);
+
+    expect(destroy).toHaveBeenCalledExactlyOnceWith();
+    expect(slider.value).toBe(0.4);
+    expect(volumeStore.volumeSlider).toBeUndefined();
+    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(70);
+  });
 });

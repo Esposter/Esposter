@@ -19,12 +19,10 @@ import { Input } from "phaser";
 import { onShutdown, Rectangle, Text } from "vue-phaserjs";
 
 const volumeStore = useVolumeStore();
-const { setVolume } = volumeStore;
+const { destroyVolumeSlider, setVolume } = volumeStore;
 const { volumePercentage, volumeSlider } = storeToRefs(volumeStore);
 // The slider belongs to the scene, so a shutdown destroys it rather than this component unmounting
-onShutdown(() => {
-  volumeSlider.value?.destroy();
-});
+onShutdown(destroyVolumeSlider);
 const baseY = getSettingsOptionY(SettingsOption.VolumePercentage);
 const baseSliderBarConfiguration: Partial<RectangleConfiguration> = {
   originX: 0,

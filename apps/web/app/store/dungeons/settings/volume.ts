@@ -13,13 +13,19 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const volumePercentage = computed(() => settingsStore.settings[SettingsOption.VolumePercentage]);
   const volumeDelta = ref(0);
   const volumeIncrementCooldown = ref(0);
-  const volumeSlider = ref<Slider>();
+  // Only what the store reads of the slider, so a test can hand it a slider without the rest of the plugin's type
+  const volumeSlider = ref<Pick<Slider, "destroy" | "value">>();
   const setVolume = (baseVolumePercentage: number, isUpdateSlider = true) => {
     const clampedVolumePercentage = clamp(baseVolumePercentage, 0, 100);
     setSettings(SettingsOption.VolumePercentage, clampedVolumePercentage);
 
     if (!(volumeSlider.value && isUpdateSlider)) return;
     volumeSlider.value.value = clampedVolumePercentage / 100;
+  };
+  // The slider belongs to the scene that draws it, so the scene's shutdown destroys it and the store lets go of it too
+  const destroyVolumeSlider = () => {
+    volumeSlider.value?.destroy();
+    volumeSlider.value = undefined;
   };
   const updateVolume = (direction: Direction, delta: number) => {
     volumeDelta.value += delta / Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
@@ -53,5 +59,5 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     return isUpdateVolume;
   };
 
-  return { checkIsUpdateVolume, setVolume, updateVolume, volumePercentage, volumeSlider };
+  return { checkIsUpdateVolume, destroyVolumeSlider, setVolume, updateVolume, volumePercentage, volumeSlider };
 });
