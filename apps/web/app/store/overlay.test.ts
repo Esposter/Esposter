@@ -7,9 +7,10 @@ import { createConfirmation } from "#src/services/shared/overlay/createConfirmat
 import { createRowTable } from "#src/services/shared/overlay/createRowTable.test";
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { useOverlayStore } from "#src/store/overlay";
+import { TOMBSTONE_RETENTION_MS } from "@esposter/db-schema";
 import { flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const neverSettles = <TResult>() => new Promise<TResult>(() => {});
 
@@ -32,9 +33,18 @@ describe(useOverlayStore, () => {
   const readFirstRow = (view: KeyedView) => {
     view.get(table, ["a"]);
   };
+  // The clock is two retentions past the epoch, so a tombstone deleted at the epoch is past the retention, and one
+  // Deleted a retention and a half past the epoch is still inside it
+  const clockNow = Temporal.Instant.fromEpochMilliseconds(TOMBSTONE_RETENTION_MS * 2);
+  const expiredDeletedAt = new Date(0);
+  const freshDeletedAt = new Date(TOMBSTONE_RETENTION_MS * 1.5);
 
   beforeEach(() => {
     setActivePinia(createPinia());
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   test("an older arrival after a newer one leaves the newer row held", () => {
@@ -85,6 +95,51 @@ describe(useOverlayStore, () => {
     overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
 
     expect(overlayStore.view(table).value).toStrictEqual([]);
+  });
+
+  test("a revived row at version zero arrives as new once the tombstone held for its key is past the retention", () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: clockNow, toFake: ["Date"] });
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(table, { deletedAt: expiredDeletedAt, id: "a", name, version: 5 });
+    overlayStore.arrive(table, { deletedAt: null, id: "a", name: serverName, version: 0 });
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 0 }]);
+  });
+
+  test("a revived row at version zero is still rejected while the tombstone held for its key is inside the retention", () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: clockNow, toFake: ["Date"] });
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(table, { deletedAt: freshDeletedAt, id: "a", name, version: 5 });
+    overlayStore.arrive(table, { deletedAt: null, id: "a", name: serverName, version: 0 });
+
+    expect(overlayStore.view(table).value).toStrictEqual([]);
+  });
+
+  test("a revived row's write stays pending until the row arrives, though its answer names version zero", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: clockNow, toFake: ["Date"] });
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(table, { deletedAt: expiredDeletedAt, id: "a", name, version: 5 });
+    overlayStore.writeOptimistic(
+      () => Promise.resolve({ arrivals: [], confirmed: [createConfirmation(table, ["a"], 0)] }),
+      {
+        entry: (view) => {
+          setRowName(view, otherName);
+        },
+      },
+    );
+    await flushPromises();
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 1 }]);
+
+    overlayStore.arrive(table, { deletedAt: null, id: "a", name: serverName, version: 0 });
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 0 }]);
   });
 
   test("absence removes nothing: a row a later arrival does not name stays held", () => {
