@@ -1,5 +1,4 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { ResourceInResource } from "@esposter/db-schema";
 
 import { CacheTag } from "#src/models/cache/CacheTag";
 import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
@@ -7,6 +6,7 @@ import { RECENT_RESOURCES_LIMIT } from "#src/services/resource/constants";
 import { getResourceListSortName } from "#src/services/resource/list/getResourceListSortName";
 import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
 import { resourceTable } from "#src/services/resource/overlay/constants";
+import { getHeldResource } from "#src/services/resource/overlay/getHeldResource";
 import { useOverlayStore } from "#src/store/overlay";
 
 // Recent means recently *opened*, and the set is the caller's own server-side access rows, so it follows them
@@ -26,9 +26,7 @@ export const useRecentStore = defineStore("resource/recent", () => {
   // A deleted resource's row is held as a tombstone, so it drops out of the list here without a re-read
   const recents = computed(() =>
     recentIds.value.flatMap((id) => {
-      const resource = resourceRows.value.find(
-        (row): row is ResourceInResource => row.id === id && row.version !== undefined,
-      );
+      const resource = getHeldResource(resourceRows.value, id);
       return resource && !resource.deletedAt
         ? [{ ...resource, lastAccessedAt: lastAccessedAts.value.get(id) ?? null }]
         : [];

@@ -20,6 +20,7 @@ import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
 import { getFileSize } from "#src/services/file/getFileSize";
 import { copyLinkToClipboard } from "#src/services/resource/copyLinkToClipboard";
 import { publicationTable, resourceTable } from "#src/services/resource/overlay/constants";
+import { getHeldResource } from "#src/services/resource/overlay/getHeldResource";
 import { getPublicationPatchEntry } from "#src/services/resource/overlay/getPublicationPatchEntry";
 import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
 import { getSaveResourceEntry } from "#src/services/resource/overlay/getSaveResourceEntry";
@@ -69,12 +70,8 @@ export const useResourceStore = defineStore("resource", () => {
   });
   // The open resource is its id. Its row and its publication are held on the overlay, so the blade keeps no copy of either
   const resourceId = ref("");
-  // The row of a resource the overlay holds. A client-created row has no version, and none is held as one, so only a row a
-  // Read or write has landed is taken, which is what the guard states
-  const getHeldResource = (id: string) =>
-    resourceRows.value.find((row): row is ResourceInResource => row.id === id && row.version !== undefined);
   // The open resource's row. It is absent until its read lands
-  const resource = computed(() => getHeldResource(resourceId.value));
+  const resource = computed(() => getHeldResource(resourceRows.value, resourceId.value));
   // The key a view's state is filed under — a sheet's page, a panel's list — so it is the loaded resource's own
   // And a switch to another reads that one's instead of carrying this one's across
   const currentResourceId = computed(() => resource.value?.id ?? "");
@@ -422,7 +419,7 @@ export const useResourceStore = defineStore("resource", () => {
             // Read when the write is sent rather than when it was issued: a save that queued behind another carries the version
             // That one answered. The loaded resource's version is the one its content was read or saved at, since a read of its
             // Row can land before the other device's save is adopted, and a save sent with that row's version would overwrite it
-            const target = getHeldResource(id) ?? resourceValue;
+            const target = getHeldResource(resourceRows.value, id) ?? resourceValue;
             const resourceRouter = getResourceRouter(target.type);
             // The version the content it sends was read or saved at, which is what the server compares. A large save takes the
             // Same pair, so a delta or a staged save never sends a version the row it reads from has not yet been told of
