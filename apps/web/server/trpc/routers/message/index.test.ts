@@ -272,7 +272,7 @@ describe("messageRouter", () => {
 
     const updatedMessage = createRoomMessage({ editedAt: new Date(), message: updatedText, version: 1 });
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage()]);
-    roomObject.updateMessage.mockReturnValue(updatedMessage);
+    roomObject.updateMessage.mockReturnValue({ message: updatedMessage, previousMessage: createRoomMessage() });
 
     const answer = await messageCaller.updateMessage({ id: messageId, message: updatedText, roomId });
 
@@ -319,15 +319,39 @@ describe("messageRouter", () => {
     await setMembership(member.id, 0);
     const mentionedText = createMentionMessage(member.id);
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ message: text })]);
-    roomObject.updateMessage.mockReturnValue(createRoomMessage({ editedAt: new Date(), message: mentionedText }));
+    roomObject.updateMessage.mockReturnValue({
+      message: createRoomMessage({ editedAt: new Date(), message: mentionedText }),
+      previousMessage: createRoomMessage({ message: text }),
+    });
 
     await messageCaller.updateMessage({ id: messageId, message: mentionedText, roomId });
     await expect(getMentionCount(member.id)).resolves.toBe(1);
 
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ message: mentionedText })]);
-    roomObject.updateMessage.mockReturnValue(createRoomMessage({ editedAt: new Date(), message: text }));
+    roomObject.updateMessage.mockReturnValue({
+      message: createRoomMessage({ editedAt: new Date(), message: text }),
+      previousMessage: createRoomMessage({ message: mentionedText }),
+    });
 
     await messageCaller.updateMessage({ id: messageId, message: text, roomId });
+    await expect(getMentionCount(member.id)).resolves.toBe(0);
+  });
+
+  // Two edits of one message can both be read before either is written. The text an edit replaces is the one the room
+  // Held at its own write, so this edit takes back the mention the other edit left, not the text its own read saw
+  test("takes back the mention an edit replaced as the room held it at the write, not as the request read it", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await setMembership(member.id, 1);
+    roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ message: text })]);
+    roomObject.updateMessage.mockReturnValue({
+      message: createRoomMessage({ editedAt: new Date(), message: text }),
+      previousMessage: createRoomMessage({ message: createMentionMessage(member.id) }),
+    });
+
+    await messageCaller.updateMessage({ id: messageId, message: text, roomId });
+
     await expect(getMentionCount(member.id)).resolves.toBe(0);
   });
 
@@ -340,7 +364,10 @@ describe("messageRouter", () => {
     await setMembership(member.id, 0, joinedAt);
     const mentionedText = createMentionMessage(member.id);
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ message: text })]);
-    roomObject.updateMessage.mockReturnValue(createRoomMessage({ editedAt, message: mentionedText }));
+    roomObject.updateMessage.mockReturnValue({
+      message: createRoomMessage({ editedAt, message: mentionedText }),
+      previousMessage: createRoomMessage({ message: text }),
+    });
 
     await messageCaller.updateMessage({ id: messageId, message: mentionedText, roomId });
     await expect(getMentionCount(member.id)).resolves.toBe(1);

@@ -571,9 +571,23 @@ describe(RoomObject, () => {
     expect(message.editedAt).toBeNull();
 
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS));
-    const editedMessage = await object.updateMessage({ id: message.id, message: "edited" }, actor);
-    expect(editedMessage?.editedAt).toStrictEqual(new Date(ROOM_ACTIVITY_DELAY_MS));
-    expect(editedMessage?.updatedAt).toStrictEqual(new Date(ROOM_ACTIVITY_DELAY_MS));
+    const edit = await object.updateMessage({ id: message.id, message: "edited" }, actor);
+    expect(edit?.message.editedAt).toStrictEqual(new Date(ROOM_ACTIVITY_DELAY_MS));
+    expect(edit?.message.updatedAt).toStrictEqual(new Date(ROOM_ACTIVITY_DELAY_MS));
+  });
+
+  test("an edit answers the message it stored beside the message it replaced, so each edit replaces the text the one before it left", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const message = await sendMessage(object, "hello");
+
+    const firstEdit = await object.updateMessage({ id: message.id, message: "edited" }, actor);
+    const secondEdit = await object.updateMessage({ id: message.id, message: "edited again" }, actor);
+
+    expect(firstEdit?.previousMessage.message).toBe("hello");
+    expect(secondEdit?.previousMessage.message).toBe("edited");
+    expect(secondEdit?.message.message).toBe("edited again");
   });
 
   test("an edit names the members its new text names, when its caller names none", async () => {

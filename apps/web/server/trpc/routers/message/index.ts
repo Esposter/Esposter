@@ -408,20 +408,16 @@ const baseMessageRouter = router({
   updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update)
     .meta({ staticReason: "The room object pushes the edited message to its sockets as a typed event" })
     .mutation<RoomMessage>(async ({ ctx, input }) => {
-      // The message as it was is read first, so the mention counts its old text made can be taken back and the new text's added
-      const roomObject = useRoomObject(input.roomId);
-      const [previousMessage] = await roomObject.readMessagesByIds([input.id]);
-      // The object stamps the message as edited and names the members its new text names. The message it stores
-      // Is the answer, since the object sends the edit to every socket but this device's own
-      const updatedMessage = await requireEntity(
-        roomObject.updateMessage({ id: input.id, message: input.message }, getRoomActor(ctx)),
+      // The object stamps the message as edited and names the members its new text names. It answers the message as it
+      // Stood inside that write, so the mention counts its old text made are taken back, and the message it stores is the
+      // Answer, since the object sends the edit to every socket but this device's own
+      const { message: updatedMessage, previousMessage } = await requireEntity(
+        useRoomObject(input.roomId).updateMessage({ id: input.id, message: input.message }, getRoomActor(ctx)),
         DatabaseEntityType.Message,
         JSON.stringify(input),
       );
-      if (previousMessage) {
-        await takeBackMentionCounts(ctx.db, input.roomId, previousMessage);
-        await addMentionCounts(ctx.db, input.roomId, { message: input.message, userId: previousMessage.userId });
-      }
+      await takeBackMentionCounts(ctx.db, input.roomId, previousMessage);
+      await addMentionCounts(ctx.db, input.roomId, { message: input.message, userId: previousMessage.userId });
       return updatedMessage;
     }),
   // Casting a vote is not editing the poll: any member may vote, while editing or deleting the poll stays with its

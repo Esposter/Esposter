@@ -118,7 +118,10 @@ export interface RoomObjectRpc {
   setMemberStatus: (status: UserStatusInMessage) => void;
   unpinMessage: (id: number, actor: RoomActor) => null | RoomMessage;
   // The members the new text names are read from it by the object, as a send reads them
-  updateMessage: (input: { id: number; message: string }, actor: RoomActor) => null | RoomMessage;
+  updateMessage: (
+    input: { id: number; message: string },
+    actor: RoomActor,
+  ) => null | { message: RoomMessage; previousMessage: RoomMessage };
   updateScheduledMessage: (
     input: { id: string; message: string; replyToId?: number | undefined; runAt: Date },
     actor: RoomActor,

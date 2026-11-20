@@ -568,15 +568,20 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // The edit names the members its new text names, as a send does. The message's type is read first, since a webhook's
-  // Edit names nobody
-  updateMessage({ id, message }: { id: number; message: string }, actor: RoomActor): null | RoomMessage {
-    const existingMessage = this.#readLiveMessage(id);
-    if (!existingMessage) return null;
+  // Edit names nobody. The message as it stood is read inside this same write, so the answer carries the text the edit
+  // Replaced, and a caller takes back that text's mention counts rather than a read made before another edit landed
+  updateMessage(
+    { id, message }: { id: number; message: string },
+    actor: RoomActor,
+  ): null | { message: RoomMessage; previousMessage: RoomMessage } {
+    const previousMessage = this.#readLiveMessage(id);
+    if (!previousMessage) return null;
 
     const now = new Date();
-    const mentions = getMessageMentions(message, existingMessage.type);
+    const mentions = getMessageMentions(message, previousMessage.type);
     const updatedMessage = this.#updateLiveMessage(id, { editedAt: now, mentions, message }, now);
-    return this.#broadcastMessageUpdate(updatedMessage, getSendOptions(actor));
+    const answer = this.#broadcastMessageUpdate(updatedMessage, getSendOptions(actor));
+    return answer ? { message: answer, previousMessage } : null;
   }
 
   async updateScheduledMessage(
