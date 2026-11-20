@@ -11,7 +11,7 @@ import { useFavoriteStore } from "#src/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useFavoriteStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -19,6 +19,14 @@ describe(useFavoriteStore, () => {
   setupSession(appUserId);
   const resource = createResourceListItem();
   const otherResource = createResourceListItem();
+  // The clock starts at the epoch, so a removal dated the epoch is still inside the tombstone retention
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
   const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
   // A star a removal left as a tombstone: the read still joins its resource, so a star set again shows it at once
   const createRemovedStar = (starred: typeof resource) =>

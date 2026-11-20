@@ -9,7 +9,7 @@ import { useBanStore } from "#src/store/message/user/ban";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useBanStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -28,8 +28,14 @@ describe(useBanStore, () => {
     version: 0,
   });
 
+  // The clock starts at the epoch, so a removal dated the epoch is still inside the tombstone retention
   beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     setCurrentRoomId(roomId);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   // The panel's list is the page's keys, and the rows are the overlay's, so an unban the list draws is the row's removal

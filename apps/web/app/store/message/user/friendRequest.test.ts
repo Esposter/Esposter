@@ -12,7 +12,7 @@ import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useFriendRequestStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -38,8 +38,14 @@ describe(useFriendRequestStore, () => {
     await readFriendRequests(() => $trpc.friendRequest.readFriendRequests.query());
   };
 
+  // The clock starts at the epoch, so a removal dated the epoch is still inside the tombstone retention
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   // The read returns a request the other party already answered as a tombstone, which is no request still pending

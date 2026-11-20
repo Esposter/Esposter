@@ -32,7 +32,7 @@ import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { http, HttpResponse } from "msw";
 import { v7 } from "uuid";
-import { assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 // A worker has no place in the test environment, and what it encodes is the generated module's own test to prove
 vi.mock(import("#src/services/resource/encodeContentDelta"), () => ({
@@ -124,7 +124,9 @@ describe(useResourceStore, () => {
     await flushPromises();
   };
 
+  // The clock starts at the epoch, so a removal dated the epoch is still inside the tombstone retention
   beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     setRouteId(resourceId);
     readResourceQuery = vi.fn<(options: { input: { id: string } }) => ReadResourceResult>(({ input }) => ({
       ...createResource(input.id),
@@ -134,6 +136,10 @@ describe(useResourceStore, () => {
     trpcMsw.resource.readResource.query(readResourceQuery);
     trpcMsw.sheet.readResourceContent.query(() => createDefaultSheetResource());
     trpcMsw.sheet.saveResourceContent.mutation(saveResourceContent);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   // `readResource()` swaps the loaded resource an await before the content store re-seeds its content ref from
