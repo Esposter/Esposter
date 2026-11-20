@@ -7,6 +7,6 @@ import { spawnSync } from "@esposter/shared-node/child-process";
 // Caller's to read, because what a non-zero one means differs per call — a red check, a failed install. A `timeout`
 // Kills the child past it and leaves `status` null, which every caller already reads as a failure.
 export const spawnPnpm = (
-  args: string[],
+  args: readonly string[],
   options: Pick<SpawnSyncOptions, "cwd" | "env" | "input" | "maxBuffer" | "stdio" | "timeout">,
 ): SpawnSyncReturns<string> => spawnSync(PNPM_FILE, [...PNPM_ARGS, ...args], { ...options, encoding: "utf8" });
