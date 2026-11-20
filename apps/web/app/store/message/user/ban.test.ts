@@ -14,7 +14,6 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe(useBanStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
-  const otherRoomId = v7();
   const first = { ...createUser({ name: "first" }), displayName: "first" };
   const second = { ...createUser({ name: "second" }), displayName: "second" };
   const createBan = (user: MemberInRoom, createdAt = new Date(0)): BanInRoom => ({
@@ -33,64 +32,62 @@ describe(useBanStore, () => {
     setCurrentRoomId(roomId);
   });
 
-  // Each ban is its own target, so two unbans overlap on one list and the failing one must put back only the
-  // Ban it lifted — someone re-banned locally stays that way until the list is read again
-  test("puts back only the ban whose unban was rejected", async () => {
+  // The panel's list is the page's keys, and the rows are the overlay's, so an unban the list draws is the row's removal
+  test("drops an unbanned ban from the list before the server answers", async () => {
     expect.hasAssertions();
 
-    trpcMsw.message.moderation.deleteBan.mutation(({ input }) => {
-      if (input.userId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
+    const { promise, resolve } = Promise.withResolvers<BanInRoom>();
+    trpcMsw.message.moderation.deleteBan.mutation(() => promise);
     const banStore = useBanStore();
     const { items } = storeToRefs(banStore);
-    const { deleteBan, getSlice } = banStore;
-    getSlice(roomId).items.value = [createBan(first), createBan(second)];
+    const { deleteBan, getSliceOperationData, readBanPage } = banStore;
+    await getSliceOperationData(roomId).readItems(() =>
+      Promise.resolve(readBanPage({ items: [createBan(first), createBan(second)], nextCursor: "" })),
+    );
     deleteBan({ roomId, userId: first.id });
-    deleteBan({ roomId, userId: second.id });
+    await flushPromises();
+    const listedWhileInFlight = items.value.map(({ userId }) => userId);
+    resolve({ ...createBan(first), deletedAt: new Date(1), version: 1 });
     await flushPromises();
 
-    expect(items.value.map(({ userId }) => userId)).toStrictEqual([first.id]);
+    expect(listedWhileInFlight).toStrictEqual([second.id]);
   });
 
-  // The Bans panel can load another room's bans while an unban is in flight, so a rejected unban goes back under the
-  // Room it lifted the ban from, and the room on screen since then keeps only its own bans
-  test("puts a rejected unban back under its own room, not the room scoped since", async () => {
+  // A refused unban restores nothing: the ban the server still holds comes back as the list read it
+  test("shows a ban again when its unban is refused", async () => {
     expect.hasAssertions();
 
     trpcMsw.message.moderation.deleteBan.mutation(() => {
-      setCurrentRoomId(otherRoomId);
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const banStore = useBanStore();
     const { items } = storeToRefs(banStore);
-    const { deleteBan, getSlice } = banStore;
-    getSlice(roomId).items.value = [createBan(first)];
+    const { deleteBan, getSliceOperationData, readBanPage } = banStore;
+    await getSliceOperationData(roomId).readItems(() =>
+      Promise.resolve(readBanPage({ items: [createBan(first), createBan(second)], nextCursor: "" })),
+    );
     deleteBan({ roomId, userId: first.id });
     await flushPromises();
 
-    expect(items.value).toStrictEqual([]);
-    expect(getSlice(roomId).items.value).toStrictEqual([createBan(first)]);
+    expect(items.value.map(({ userId }) => userId)).toStrictEqual([first.id, second.id]);
   });
 
-  // The bans are paged newest first, so a rejected unban goes back between the bans it sat between, not to the end
-  test("puts a rejected unban back in the place the page order gives its ban", async () => {
+  // The page returns a removed ban as a tombstone, so the list reads the removal and the panel never draws the row
+  test("hides a ban the page returns as a tombstone", async () => {
     expect.hasAssertions();
 
-    const third = { ...createUser({ name: "third" }), displayName: "third" };
-    trpcMsw.message.moderation.deleteBan.mutation(({ input }) => {
-      if (input.userId === second.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
     const banStore = useBanStore();
     const { items } = storeToRefs(banStore);
-    const { deleteBan, getSlice } = banStore;
-    getSlice(roomId).items.value = [
-      createBan(first, new Date(3)),
-      createBan(second, new Date(2)),
-      createBan(third, new Date(1)),
-    ];
-    deleteBan({ roomId, userId: second.id });
-    await flushPromises();
+    const { getSliceOperationData, readBanPage } = banStore;
+    await getSliceOperationData(roomId).readItems(() =>
+      Promise.resolve(
+        readBanPage({
+          items: [{ ...createBan(first), deletedAt: new Date(1), version: 1 }, createBan(second)],
+          nextCursor: "",
+        }),
+      ),
+    );
 
-    expect(items.value.map(({ userId }) => userId)).toStrictEqual([first.id, second.id, third.id]);
+    expect(items.value.map(({ userId }) => userId)).toStrictEqual([second.id]);
   });
 });

@@ -4,4 +4,5 @@
 export interface CompositeKeyColumns {
   blocks: readonly ["blockerId", "blockedId"];
   threadFollows: readonly ["roomId", "threadRootId", "userId"];
+  bans: readonly ["roomId", "userId"];
 }

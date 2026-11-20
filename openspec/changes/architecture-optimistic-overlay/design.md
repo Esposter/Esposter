@@ -101,6 +101,8 @@ A list holds its rows by id with their versions, and its view is those rows in t
 
 A paged read returns tombstones within its page's scope, so a page can hold fewer live rows than its size, and its cursor advances over the tombstones. That is an accepted cost. A first-page read still updates rows by id as it does today, and the later pages keep their rows.
 
+A paged list holds its membership by key, and its rows are the overlay's. The cursor machinery's page holds the keys of the rows the server named, in the server's order, and each row is read into the overlay as the page arrives, so a row another read returns is updated wherever the list shows it. An unban is a tombstone the list hides, and the page returns the tombstones it holds, so a removal reaches the list as a row rather than as an absence. The bans are the first such list (group 4.4), and a search replaces the keys without removing a row from the overlay.
+
 A followed-thread list (group 4.4) is a computed over two things. The first is the follow rows the member holds, which the view applies the entries to. The second is each room's followed roots, which is the message cache holding the room's messages, so the drawer holds no copy of the list. A follow is one row keyed by room, root and member, so an unfollow is a row change that keeps the decision and its version, not a delete, and the room's read returns every follow row, unfollowed ones included. A follow that fails leaves no row, so the list drops it with no rollback.
 
 ## Creates

@@ -2,6 +2,7 @@ import type { Context } from "#server/trpc/context";
 
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { bansInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
+import { isNotNull } from "drizzle-orm";
 
 // A ban revokes membership and records the ban in one batch — both the ban and the soft ban start here.
 // The membership row comes back so the caller can announce the removal, which is not part of the batch
@@ -11,7 +12,12 @@ export const banRoomMember = async (db: Context["db"], actorUserId: string, room
     db
       .insert(bansInMessage)
       .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
-      .onConflictDoNothing(),
+      // A ban made again revives the tombstone an unban left, taking the new moderator and time. A live ban is left as it is
+      .onConflictDoUpdate({
+        set: { bannedByUserId: actorUserId, createdAt: new Date(), deletedAt: null },
+        setWhere: isNotNull(bansInMessage.deletedAt),
+        target: [bansInMessage.roomId, bansInMessage.userId],
+      }),
   ]);
   return deletedMembers[0];
 };
