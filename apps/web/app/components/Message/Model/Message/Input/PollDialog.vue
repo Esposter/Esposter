@@ -3,7 +3,7 @@ import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessag
 import { pollOptionSchema } from "#shared/models/message/poll/PollOption";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#src/services/message/poll/constants";
+import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#shared/services/message/constants";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useDataStore } from "#src/store/message/data";
 import { usePollDialogStore } from "#src/store/message/input/pollDialog";

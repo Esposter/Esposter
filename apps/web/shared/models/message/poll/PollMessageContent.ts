@@ -1,6 +1,7 @@
 import type { PollOption } from "#shared/models/message/poll/PollOption";
 
 import { pollOptionSchema } from "#shared/models/message/poll/PollOption";
+import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#shared/services/message/constants";
 import { createUniqueArraySchema, normalizeString } from "@esposter/shared";
 import { z } from "zod";
 
@@ -14,7 +15,7 @@ export interface PollMessageContent {
 // The whole-body cap does not, and would put a second number in the way of a long single-option poll
 export const pollMessageContentSchema = z
   .object({
-    options: createUniqueArraySchema(pollOptionSchema, "id").min(1),
+    options: createUniqueArraySchema(pollOptionSchema, "id").min(POLL_MIN_OPTIONS).max(POLL_MAX_OPTIONS),
     question: z.string().transform(normalizeString).pipe(z.string().min(1)),
     votes: z.record(z.string().min(1), z.string().min(1)),
   })
