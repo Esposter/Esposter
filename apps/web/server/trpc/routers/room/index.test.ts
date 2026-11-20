@@ -1008,6 +1008,25 @@ describe("roomRouter", () => {
     expect(removedMembership.version).toBe(joinedMembership.version + 1);
   });
 
+  // The member list reads a removed member back as a row, so a list holding it drops the row at the version it left
+  test("reads a removed member as a tombstone at the version the removal left", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    vi.advanceTimersByTime(1);
+    const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
+    await memberRoomCaller.leaveRoom(newRoom.id);
+    const removedMembership = await readMembership(newRoom.id, member.id);
+    const { items } = await roomCaller.readMembers({ roomId: newRoom.id });
+
+    assert.exists(removedMembership);
+    expect(items.find(({ id }) => id === member.id)).toMatchObject({
+      deletedAt: expect.any(Date),
+      version: removedMembership.version,
+    });
+  });
+
   test("a rejoin revives the membership at a higher version, with the values a fresh membership gets", async () => {
     expect.hasAssertions();
 
