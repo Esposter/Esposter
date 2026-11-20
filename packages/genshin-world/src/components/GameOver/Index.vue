@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { GAME_CREAM, GameButton, GameButtonKind } from "genshin-interface";
+import { GameButton, GameButtonKind } from "genshin-interface";
+import { GAME_CREAM } from "genshin-interface/constants";
 
 interface Props {
   // The button's words in the reader's language

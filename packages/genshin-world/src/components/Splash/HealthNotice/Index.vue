@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { GAME_FONT_FAMILY, GameScreen, OrnamentDivider } from "genshin-interface";
+import { GameScreen, OrnamentDivider } from "genshin-interface";
+import { GAME_FONT_FAMILY } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

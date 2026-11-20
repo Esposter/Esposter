@@ -19,15 +19,8 @@ import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
 import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
 import { useEventListener, useRafFn } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
-import {
-  DialogueChoiceIcon,
-  DialogueScreen,
-  GAME_CREAM,
-  GAME_REPLY_HOVER_INK,
-  GameButton,
-  GameButtonKind,
-  GameScreen,
-} from "genshin-interface";
+import { DialogueChoiceIcon, DialogueScreen, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GAME_CREAM, GAME_REPLY_HOVER_INK } from "genshin-interface/constants";
 import { fillLinePlaceholders, GameTextKey } from "genshin-text";
 
 interface Props {

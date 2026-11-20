@@ -3,7 +3,7 @@ import type { AchievementCategory } from "#src/models/achievement/AchievementCat
 
 import { AchievementMark } from "#src/models/achievement/AchievementMark";
 import { AchievementMarkPathMap } from "#src/services/achievement/AchievementMarkPathMap";
-import { GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface";
+import { GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface/constants";
 
 interface Props {
   // The category the row names, which the list selects when the row is pressed

@@ -3,15 +3,8 @@ import type { CurrencyCount, ShopGoodCell } from "genshin-interface";
 
 import ShopScreenListDetail from "#src/components/Shop/Screen/List/Detail/Index.vue";
 import ShopScreenListGood from "#src/components/Shop/Screen/List/Good/Index.vue";
-import {
-  GAME_CREAM,
-  GAME_INK,
-  GameButton,
-  GameButtonKind,
-  ScreenTitle,
-  ShopScreenCloseButton,
-  useShopGoodPick,
-} from "genshin-interface";
+import { GameButton, GameButtonKind, ScreenTitle, ShopScreenCloseButton, useShopGoodPick } from "genshin-interface";
+import { GAME_CREAM, GAME_INK } from "genshin-interface/constants";
 
 interface Props {
   // The currencies the player holds, shown across the head

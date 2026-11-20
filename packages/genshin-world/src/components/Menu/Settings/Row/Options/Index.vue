@@ -6,7 +6,7 @@ import {
   GAME_ROW_PRESS,
   INTERACTION_HOVER_DURATION,
   INTERACTION_REST_DURATION,
-} from "genshin-interface";
+} from "genshin-interface/constants";
 
 interface Props {
   // The label of the row the list opens under, which names the list

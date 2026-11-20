@@ -5,12 +5,11 @@ import { capitalize, getResultAsync } from "@esposter/shared";
 import {
   assertSettledRender,
   createVisualComparisonRecord,
-  FIXTURE_IMAGE_NAME,
-  FIXTURE_VARIANT_SEPARATOR,
-  getFixtureImageName,
   holdAnimations,
   recordConsoleWarnings,
 } from "genshin-interface";
+import { FIXTURE_IMAGE_NAME, FIXTURE_VARIANT_SEPARATOR } from "genshin-interface/constants";
+import { getFixtureImageName } from "genshin-interface/getFixtureImageName";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";

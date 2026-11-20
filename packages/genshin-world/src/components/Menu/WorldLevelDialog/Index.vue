@@ -13,7 +13,8 @@ import { MENU_DIALOG_CORNER_SCALES } from "#src/services/menu/constants";
 import { MenuDialogGlyphMap } from "#src/services/menu/MenuDialogGlyphMap";
 import { MenuPromptGlyphMap } from "#src/services/menu/MenuPromptGlyphMap";
 import { useIntervalFn, useNow } from "@vueuse/core";
-import { GAME_GOLD, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GAME_GOLD } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

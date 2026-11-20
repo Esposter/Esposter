@@ -23,15 +23,8 @@ import CharacterScreenTalents from "#src/components/Character/Screen/Talents/Ind
 import CharacterScreenWeapons from "#src/components/Character/Screen/Weapons/Index.vue";
 import { useCharacterArtifactPicker } from "#src/composables/useCharacterArtifactPicker";
 import { useCharacterMenuLabels } from "#src/composables/useCharacterMenuLabels";
-import {
-  CharacterMenu,
-  CharacterMenuTab,
-  CloseButton,
-  CloseButtonMark,
-  GAME_CREAM,
-  GAME_REPLY_HOVER_INK,
-  GameScreen,
-} from "genshin-interface";
+import { CharacterMenu, CharacterMenuTab, CloseButton, CloseButtonMark, GameScreen } from "genshin-interface";
+import { GAME_CREAM, GAME_REPLY_HOVER_INK } from "genshin-interface/constants";
 import { GameLanguage, GameTextKey } from "genshin-text";
 
 interface Props {

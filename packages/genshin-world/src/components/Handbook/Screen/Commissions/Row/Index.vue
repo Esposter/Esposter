@@ -3,7 +3,7 @@ import type { HandbookDayCommission } from "#src/models/handbook/HandbookDayComm
 import type { GameText } from "genshin-text";
 
 import { toCommissionRowTop } from "#src/services/handbook/toCommissionRowTop";
-import { CHECK_MARK_PATH } from "genshin-interface";
+import { CHECK_MARK_PATH } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

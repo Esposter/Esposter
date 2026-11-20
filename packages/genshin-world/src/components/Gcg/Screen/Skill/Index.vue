@@ -2,7 +2,7 @@
 import type { GcgCost } from "#src/models/gcg/GcgCost";
 
 import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
-import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface/constants";
 
 interface Props {
   // The costs the skill takes to use, whose dice its token shows

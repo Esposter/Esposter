@@ -3,7 +3,7 @@ import type { Element } from "#src/models/Element";
 import type { GcgAura } from "#src/models/gcg/GcgAura";
 
 import { formatGcgNumberLabel } from "#src/services/gcg/formatGcgNumberLabel";
-import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface/constants";
 
 interface Props {
   // The aura the character holds: an element, or none

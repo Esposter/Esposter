@@ -15,7 +15,7 @@ import {
   TITLE_SPLASH_TIMING,
 } from "#src/services/splash/constants";
 import { GameLanguageGameClientMap } from "#src/services/splash/GameLanguageGameClientMap";
-import { GAME_WHITE } from "genshin-interface";
+import { GAME_WHITE } from "genshin-interface/constants";
 
 interface Props {
   // The game's words in the reader's language

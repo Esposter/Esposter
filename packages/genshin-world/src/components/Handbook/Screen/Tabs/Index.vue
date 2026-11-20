@@ -4,7 +4,7 @@ import type { GameText } from "genshin-text";
 
 import { HANDBOOK_TABS } from "#src/services/handbook/constants";
 import { HandbookTabGameTextKeyMap } from "#src/services/handbook/HandbookTabGameTextKeyMap";
-import { GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface";
+import { GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

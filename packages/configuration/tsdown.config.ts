@@ -13,6 +13,9 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
   // So the gate would reject every import it makes. `mergeConfig` replaces a colliding array outright rather
   // Than merging it — `plugins` is the one exception — so the whole list is stated here.
   deps: { neverBundle: true, onlyImport: getPackagePatterns(Object.keys(devDependencies ?? {})) },
+  // The constants are an entry of their own, so every one of them stays in the subpath's build. A module only the
+  // Subpath names is otherwise left with the names the package itself uses, which drops the rest from the file
+  entry: { constants: "src/services/constants.ts", index: "src/index.ts" },
   // The `eslint/`, `oxfmt/`, `types/` and `vitest/` trees are published surface no bundle produces, and generating an
   // `exports` field is what encapsulates a package: without these, every `@esposter/configuration/eslint/*.js`
   // Import — the shared flat config each package symlinks — the formatter's settings the root config and every
@@ -24,7 +27,7 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
     customExports: {
       // The constants alone, for a script that needs one and would otherwise load every build and test helper the root
       // Barrel imports — most of a tooling script's startup
-      "./constants": { default: "./dist/services/constants.js", source: "./src/services/constants.ts" },
+      "./constants": { default: "./dist/constants.js", source: "./src/services/constants.ts" },
       "./eslint/*": "./eslint/*",
       "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
       "./types/global.d.ts": "./types/global.d.ts",

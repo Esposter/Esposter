@@ -22,7 +22,8 @@ import {
 } from "#src/services/menu/constants";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
-import { GAME_SMOOTHSTEP_EASING, GameScreen } from "genshin-interface";
+import { GameScreen } from "genshin-interface";
+import { GAME_SMOOTHSTEP_EASING } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

@@ -4,7 +4,7 @@ import type { GameText } from "genshin-text";
 
 import { AbyssBenedictionIcon } from "#src/models/spiralAbyss/AbyssBenedictionIcon";
 import { SCOPE_TEXT_KEYS } from "#src/services/spiralAbyss/constants";
-import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface/constants";
 
 interface Props {
   // The game's words in the reader's language, which the tag of the card's scope is read from

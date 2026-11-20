@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GAME_WHITE } from "genshin-interface";
+import { GAME_WHITE } from "genshin-interface/constants";
 
 interface Props {
   // The key's physical code, whose letter or digit the cap reads

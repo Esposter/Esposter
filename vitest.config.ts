@@ -1,6 +1,7 @@
 import type { ViteUserConfig } from "vitest/config";
 
-import { getVitestConfiguration, parseWorkspacePackageGlobs, WORKSPACE_FILE } from "@esposter/configuration";
+import { getVitestConfiguration, parseWorkspacePackageGlobs } from "@esposter/configuration";
+import { WORKSPACE_FILE } from "@esposter/configuration/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";

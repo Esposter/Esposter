@@ -9,7 +9,7 @@ import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
 import { getMailExpiry } from "#src/services/mail/getMailExpiry";
 import { MailExpiryUnitGameTextKeyMap } from "#src/services/mail/MailExpiryUnitGameTextKeyMap";
 import { MailMarkPathMap } from "#src/services/mail/MailMarkPathMap";
-import { GAME_INK, GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface";
+import { GAME_INK, GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface/constants";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {

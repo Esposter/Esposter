@@ -5,7 +5,7 @@ import type { Camera } from "three";
 
 import { EFFECT_HEIGHT } from "#src/services/effects/constants";
 import { useRafFn } from "@vueuse/core";
-import { GAME_FONT_FAMILY } from "genshin-interface";
+import { GAME_FONT_FAMILY } from "genshin-interface/constants";
 import { Vector3 } from "three";
 
 interface Props {

@@ -140,7 +140,8 @@ import {
   GENSHIN_TONE_MAPPING,
   QualityTierSettingsMap,
 } from "genshin-engine";
-import { CharacterMenuTab, GAME_CREAM, InventorySort, ItemCategory } from "genshin-interface";
+import { CharacterMenuTab, InventorySort, ItemCategory } from "genshin-interface";
+import { GAME_CREAM } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 import { Group, PCFShadowMap, Vector3 } from "three";
 

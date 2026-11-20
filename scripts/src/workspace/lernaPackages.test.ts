@@ -1,7 +1,8 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
-import { parseWorkspacePackageGlobs, WORKSPACE_FILE } from "@esposter/configuration";
+import { parseWorkspacePackageGlobs } from "@esposter/configuration";
+import { WORKSPACE_FILE } from "@esposter/configuration/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";

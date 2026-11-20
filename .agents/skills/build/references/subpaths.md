@@ -17,14 +17,14 @@ The consumers that still need a subpath are the ones with no bundler to prune. N
 
 ## What never earns one
 
-- **A re-export of what the root already exports.** A second bundle of the same functions is a second copy in every consumer that reaches both the subpath and the root.
+- **A re-export of what the root already exports.** A second bundle of the same functions is a second copy in every consumer that reaches both the subpath and the root. The root barrel never carries a subpath's module, which the build's own derivation enforces (`getSubpathExclusions`, reading each subpath arm's `source` in the manifest, `references/barrels.md`, "A subpath is a hand-written barrel"), so a subpath that the root also names is caught in the barrel's own diff, not in review.
 - **"Framework-free" with no consumer that lacks the framework.** The wish to keep Vue out of a bundle is not a consumer. Name the consumer that needs it or leave the functions in the barrel.
 - **A program exposed as an export.** A module with a top-level side effect (a `runMain` call, a server start) runs on import, so exporting it turns importing the package into running it. `generateExports.ts` already refuses to list a module with no export for this reason. A program is reached through a `bin` entry, which runs the built file by path, so its build entry stays while no export names it.
 
 ## What a kept subpath owes
 
-- **An entry in `tsdown.config.ts`**, named for the `dist/<entry>.js` it builds to, a hand-written barrel at `src/<entry>.ts` or `src/<dir>/index.ts` (`references/barrels.md`, "A subpath entry is a hand-written barrel").
-- **An export arm in `package.json`** — `source` and `default`, mirrored in `publishConfig.exports` — unless the entry is loaded by path (rule 2), in which case the arm may be absent.
+- **An entry in `tsdown.config.ts`**, named for the `dist/<entry>.js` it builds to, a hand-written barrel at `src/<entry>.ts` or `src/<dir>/index.ts` (`references/barrels.md`, "A subpath is a hand-written barrel").
+- **An export arm in `package.json`** — `source` and `default`, mirrored in `publishConfig.exports` — unless the entry is loaded by path (rule 2), in which case the arm may be absent. The arm's `source` is also what the root barrel leaves out, so adding an arm to a module the root exports moves that module's names to the subpath.
 - **A README line** naming the subpath and what a consumer gets from it.
 - **A test for any "loads nothing from X" claim.** `pitch-transcription`'s `index.test.ts` asserts the `notes` subpath's graph has no `onnxruntime` specifier. A claim with no test is a claim the next import can break.
 - **A size the entry can move**, which `bundle-sizes.md` records (`references/dist-size.md`).

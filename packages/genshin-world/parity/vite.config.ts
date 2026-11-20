@@ -2,7 +2,8 @@ import { regionDataPlugin } from "#parity/regionDataPlugin";
 import { screenNamesPlugin } from "#parity/screenNamesPlugin";
 import { gameDataMirrorPlugin } from "#scripts/gameData/mirror/gameDataMirrorPlugin";
 import { tresCustomElements } from "#scripts/tres/tresCustomElements";
-import { dynamicJsonImportPlugin, getVuePlugins, SOURCE_CONDITION } from "@esposter/configuration";
+import { dynamicJsonImportPlugin, getVuePlugins } from "@esposter/configuration";
+import { SOURCE_CONDITION } from "@esposter/configuration/constants";
 import { dirname, resolve } from "node:path";
 import { defaultClientConditions, defineConfig } from "vite";
 

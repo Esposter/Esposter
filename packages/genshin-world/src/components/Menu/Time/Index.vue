@@ -7,7 +7,8 @@ import { TIME_DIAL_ORNAMENT_POSITIONS } from "#src/services/menu/constants";
 import { getTimeDayLabelKey } from "#src/services/menu/getTimeDayLabelKey";
 import { getTimeTargetDaysAhead } from "#src/services/menu/getTimeTargetDaysAhead";
 import { getTimeTargetMinutes } from "#src/services/menu/getTimeTargetMinutes";
-import { CloseButtonMark, GAME_CREAM, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { CloseButtonMark, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GAME_CREAM } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

@@ -19,7 +19,8 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GCG_SKILL_KIND_DISPLAY_ORDER } from "#src/services/gcg/constants";
 import { listGcgActiveSkills } from "#src/services/gcg/effects/listGcgActiveSkills";
 import { takeOne } from "@esposter/shared";
-import { GameScreen, INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
+import { GameScreen } from "genshin-interface";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface/constants";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {

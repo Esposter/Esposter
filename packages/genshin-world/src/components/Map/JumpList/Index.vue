@@ -4,7 +4,7 @@ import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { GameText } from "genshin-text";
 
 import MapJumpListItem from "#src/components/Map/JumpList/Item/Index.vue";
-import { GAME_CREAM } from "genshin-interface";
+import { GAME_CREAM } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

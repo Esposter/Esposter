@@ -11,7 +11,7 @@ import { checkIsNextMemberAsked } from "#src/services/party/checkIsNextMemberAsk
 import { PARTY_MEMBER_INPUT_ACTIONS, PARTY_SWITCH_COOLDOWN_SECONDS } from "#src/services/party/constants";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
-import { GAME_CREAM } from "genshin-interface";
+import { GAME_CREAM } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

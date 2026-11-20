@@ -11,7 +11,7 @@ import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { selectLaidGroundKeys } from "#src/services/world/selectLaidGroundKeys";
 import { toLaidGround } from "#src/services/world/toLaidGround";
-import { SOURCE_CONDITION } from "@esposter/configuration";
+import { SOURCE_CONDITION } from "@esposter/configuration/constants";
 import { getTerrainTileKey, TerrainFeatureKind } from "genshin-engine";
 import { isAbsolute, resolve } from "node:path";
 import { scan } from "rolldown/experimental";

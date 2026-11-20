@@ -30,7 +30,8 @@ import { PAIMON_BARGAINS_TABS } from "#src/services/shop/constants";
 import { getPaimonsBargainsGoods } from "#src/services/shop/getPaimonsBargainsGoods";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { GAME_CREAM, GameScreen, ShopScreen } from "genshin-interface";
+import { GameScreen, ShopScreen } from "genshin-interface";
+import { GAME_CREAM } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 // What buying one offer leaves in the player's hands and in the shop's record

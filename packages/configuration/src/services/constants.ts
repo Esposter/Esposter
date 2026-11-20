@@ -63,6 +63,8 @@ export const BROWSER_TEST_GLOB = "**/*.browser.test.ts";
 export const WORKSPACE_FILE = "pnpm-workspace.yaml";
 // The barrel every package with a source tree writes at the top of `src`, and the folder of Vue components it reads from
 export const BARREL_FILE = "index.ts";
+// The folder under a package holding its source, which every `source` arm of its exports map starts in
+export const SOURCE_DIRECTORY_NAME = "src";
 export const COMPONENTS_DIRECTORY = "components";
 // The app's migrations, one folder per database under it, from the repository root. The Drizzle config writes them there,
 // And the mock database and the dev seed read them from there, so the three cannot disagree on where a migration is

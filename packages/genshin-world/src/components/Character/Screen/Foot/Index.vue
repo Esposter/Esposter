@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { CharacterMenuTab, GAME_CREAM, GAME_REPLY_HOVER_INK } from "genshin-interface";
+import { CharacterMenuTab } from "genshin-interface";
+import { GAME_CREAM, GAME_REPLY_HOVER_INK } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

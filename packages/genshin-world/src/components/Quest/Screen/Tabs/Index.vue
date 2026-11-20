@@ -9,7 +9,7 @@ import { QuestCategoryGameTextKeyMap } from "#src/services/quest/QuestCategoryGa
 import { QuestCategoryGlyphMap } from "#src/services/quest/QuestCategoryGlyphMap";
 import { QuestCategoryShadeGlyphMap } from "#src/services/quest/QuestCategoryShadeGlyphMap";
 import { QuestGlyphMap } from "#src/services/quest/QuestGlyphMap";
-import { GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface";
+import { GAME_ROW_HOVER, GAME_ROW_PRESS } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

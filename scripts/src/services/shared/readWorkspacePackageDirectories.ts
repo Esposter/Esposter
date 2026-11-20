@@ -1,5 +1,6 @@
 import { PACKAGE_JSON_FILENAME } from "#src/services/shared/constants";
-import { parseWorkspacePackageGlobs, WORKSPACE_FILE } from "@esposter/configuration";
+import { parseWorkspacePackageGlobs } from "@esposter/configuration";
+import { WORKSPACE_FILE } from "@esposter/configuration/constants";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 

@@ -10,7 +10,7 @@ import { QuestGlyph } from "#src/models/quest/QuestGlyph";
 import { QuestCategoryGameTextKeyMap } from "#src/services/quest/QuestCategoryGameTextKeyMap";
 import { QuestCategoryGlyphMap } from "#src/services/quest/QuestCategoryGlyphMap";
 import { QuestGlyphMap } from "#src/services/quest/QuestGlyphMap";
-import { GAME_CREAM } from "genshin-interface";
+import { GAME_CREAM } from "genshin-interface/constants";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {

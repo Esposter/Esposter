@@ -6,6 +6,7 @@ import { HIDDEN_FOLDER_REGEX, PNPM_PEER_SUFFIX_REGEX, SOURCE_CONDITION } from "#
 import { dropModulePathCommentsPlugin } from "#src/services/dropModulePathCommentsPlugin";
 import { generateExports } from "#src/services/generateExports";
 import { getPackagePatterns } from "#src/services/getPackagePatterns";
+import { getSubpathExclusions } from "#src/services/getSubpathExclusions";
 import { mapGlobalStorePath } from "#src/services/mapGlobalStorePath";
 import { readPackageManifest } from "#src/services/readPackageManifest";
 import { mergeConfig } from "tsdown";
@@ -81,10 +82,11 @@ export const getTsdownConfiguration = ({
     // Differ between the node packages and the neutral ones.
     fixedExtension: false,
     // Barrel generation belongs to the build rather than to a line in front of it — one definition here
-    // Instead of the same command repeated in every manifest.
+    // Instead of the same command repeated in every manifest. The root barrel leaves out each subpath's `source` arm the
+    // Manifest names, so a subpath is declared once, where its consumers read it, and no config is loaded to find it.
     hooks: {
       "build:prepare": ({ options: { cwd } }) => {
-        generateExports(cwd, exportsGeneration);
+        generateExports(cwd, exportsGeneration, getSubpathExclusions(readPackageManifest(cwd)));
       },
     },
     // A consumer's bundler treats one file as one module, so a package built into one `dist/index.js` keeps every

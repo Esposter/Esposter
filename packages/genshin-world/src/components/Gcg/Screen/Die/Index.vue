@@ -2,7 +2,7 @@
 import type { Element } from "#src/models/Element";
 import type { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 
-import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface/constants";
 
 interface Props {
   // The face the die shows: one of the seven elements, or Omni

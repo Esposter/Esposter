@@ -5,7 +5,8 @@ import type { VNode } from "vue";
 
 import ScreenHeader from "#src/components/Menu/ScreenHeader/Index.vue";
 import { LIST_SCREEN_WIDTH } from "#src/services/menu/constants";
-import { GAME_WHITE, GameScreen } from "genshin-interface";
+import { GameScreen } from "genshin-interface";
+import { GAME_WHITE } from "genshin-interface/constants";
 
 interface Props {
   // The game's words in the reader's language

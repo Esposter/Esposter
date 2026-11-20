@@ -3,7 +3,8 @@ import type { GameText } from "genshin-text";
 
 import { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 import { LoginStatusStepGameTextKeyMap } from "#src/services/login/LoginStatusStepGameTextKeyMap";
-import { GameButton, GameButtonKind, ORNAMENT_MIDDLE_PATH, ProgressBar } from "genshin-interface";
+import { GameButton, GameButtonKind, ProgressBar } from "genshin-interface";
+import { ORNAMENT_MIDDLE_PATH } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

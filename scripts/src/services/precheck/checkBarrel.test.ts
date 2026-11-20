@@ -1,5 +1,3 @@
-import type { ExportsGeneration } from "@esposter/configuration";
-
 import { checkBarrel } from "#src/services/precheck/checkBarrel";
 import { generateExports } from "@esposter/configuration";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -16,12 +14,6 @@ const { repositoryRoot } = await vi.hoisted(async () => {
 vi.mock(import("#src/services/shared/constants"), async (importOriginal) => ({
   ...(await importOriginal()),
   REPOSITORY_ROOT: repositoryRoot,
-}));
-// The precheck spawns the generator from the main checkout's build, which this test runs in process instead
-vi.mock(import("#src/services/precheck/spawnGenerateExports"), () => ({
-  spawnGenerateExports: (packageDirectory: string, exportsGeneration: ExportsGeneration, lazyDirectories: string[]) => {
-    generateExports(packageDirectory, exportsGeneration, lazyDirectories);
-  },
 }));
 
 describe(checkBarrel, () => {
@@ -40,13 +32,15 @@ describe(checkBarrel, () => {
     const sourceDirectory = join(packageRoot, "src");
     const componentsDirectory = join(sourceDirectory, "components");
     mkdirSync(componentsDirectory, { recursive: true });
+    // A fixture with no exports arms, so no subpath leaves anything out of its barrels
+    writeFileSync(join(packageRoot, "package.json"), "{}");
     writeFileSync(join(sourceDirectory, "util.ts"), "export const util = 0;");
     writeFileSync(join(componentsDirectory, "Foo.vue"), "<template />");
     generateExports(packageRoot, "vue");
     writeFileSync(join(componentsDirectory, "Bar.vue"), "<template />");
     rmSync(join(componentsDirectory, "Foo.vue"));
 
-    expect(checkBarrel(PACKAGE_DIRECTORY, repositoryRoot, false).findings).toStrictEqual([
+    expect(checkBarrel(PACKAGE_DIRECTORY, false).findings).toStrictEqual([
       `${PACKAGE_DIRECTORY}/src/components/index.ts missing export { default as Bar } from "./Bar.vue";`,
       `${PACKAGE_DIRECTORY}/src/components/index.ts extra export { default as Foo } from "./Foo.vue";`,
     ]);
@@ -62,10 +56,11 @@ describe(checkBarrel, () => {
     const componentsDirectory = join(packageRoot, "src", "components");
     mkdirSync(join(componentsDirectory, "Kept"), { recursive: true });
     mkdirSync(join(componentsDirectory, "Lazy"), { recursive: true });
+    writeFileSync(join(packageRoot, "package.json"), "{}");
     writeFileSync(join(componentsDirectory, "Kept", "Index.vue"), "<template />");
     writeFileSync(join(componentsDirectory, "Lazy", "Index.vue"), "<template />");
     generateExports(packageRoot, "vue", ["components/Lazy"]);
 
-    expect(checkBarrel(PACKAGE_WITH_LAZY_COMPONENTS, repositoryRoot, false).findings).toStrictEqual([]);
+    expect(checkBarrel(PACKAGE_WITH_LAZY_COMPONENTS, false).findings).toStrictEqual([]);
   });
 });

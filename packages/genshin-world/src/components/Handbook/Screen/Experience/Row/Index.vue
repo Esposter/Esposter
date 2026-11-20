@@ -3,7 +3,8 @@ import type { HandbookCommission } from "#src/models/handbook/HandbookCommission
 import type { GameText } from "genshin-text";
 
 import { toCommissionRowTop } from "#src/services/handbook/toCommissionRowTop";
-import { CHECK_MARK_PATH, ItemTile } from "genshin-interface";
+import { ItemTile } from "genshin-interface";
+import { CHECK_MARK_PATH } from "genshin-interface/constants";
 
 interface Props {
   // The commission this row shows

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { CHECK_MARK_PATH } from "genshin-interface";
+import { CHECK_MARK_PATH } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {

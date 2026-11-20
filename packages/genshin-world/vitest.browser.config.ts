@@ -2,12 +2,8 @@ import { regionDataPlugin } from "#parity/regionDataPlugin";
 import { screenNamesPlugin } from "#parity/screenNamesPlugin";
 import { gameDataMirrorPlugin } from "#scripts/gameData/mirror/gameDataMirrorPlugin";
 import { tresCustomElements } from "#scripts/tres/tresCustomElements";
-import {
-  dynamicJsonImportPlugin,
-  getVitestBrowserConfiguration,
-  getVuePlugins,
-  SOURCE_CONDITION,
-} from "@esposter/configuration";
+import { dynamicJsonImportPlugin, getVitestBrowserConfiguration, getVuePlugins } from "@esposter/configuration";
+import { SOURCE_CONDITION } from "@esposter/configuration/constants";
 import { APPROVE_ENVIRONMENT_VARIABLE } from "genshin-interface/constants";
 import { defaultClientConditions } from "vite";
 import { defineConfig } from "vitest/config";

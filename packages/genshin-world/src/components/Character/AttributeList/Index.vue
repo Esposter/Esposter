@@ -12,7 +12,8 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { formatWholeNumber } from "#src/services/character/formatWholeNumber";
 import { getAttributeDetailGroups } from "#src/services/character/getAttributeDetailGroups";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
-import { GAME_CREAM, GameButton, GameButtonKind } from "genshin-interface";
+import { GameButton, GameButtonKind } from "genshin-interface";
+import { GAME_CREAM } from "genshin-interface/constants";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {

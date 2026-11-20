@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { GAME_CREAM, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GAME_CREAM } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
