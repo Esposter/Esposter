@@ -106,8 +106,9 @@ export default withNuxt(plugins)
   })
   // A test file carries the script-side bans plus its own — a typed `vi.fn` — the same carry-the-base-over
   // Shape the date bans use above, the watch aliases included since this override replaces the `.ts` one.
+  // A test setup file mocks modules and re-imports after mocking, as a test does, so it takes the test bans
   .append({
-    files: ["**/*.test.ts"],
+    files: ["**/*.test.ts", "**/test/setup.ts"],
     rules: {
       "no-restricted-syntax": [
         "error",

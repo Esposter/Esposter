@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax -- an empty constructor shares no members with the real one, so no single cast is accepted; the dungeon page passes it to Phaser only as a plugin; only a client-env file loads @vue/test-utils, so the import sits behind the client guard and a node-env file never pulls it in */
 /* oxlint-disable no-underscore-dangle -- marker property name is owned by @nuxt/test-utils; Pinia's store registry has no public accessor, and `$dispose` removes each entry */
 import type { Pinia } from "pinia";
 
