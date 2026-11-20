@@ -47,7 +47,7 @@ const { count, createResourcesPageReader, error, isPending, items, readResources
   { searchQuery: search, status, tagName, tagValue, types, updatedAfter, updatedBefore, updatedFilter },
   source,
 );
-const deleteResources = useDeleteResources(items, refresh);
+const deleteResources = useDeleteResources(refresh);
 const { getActionItems } = useResourceListActionItems();
 const resourceIdActionItemsMap = computed(() => new Map(items.value.map((item) => [item.id, getActionItems(item)])));
 const { exportAllResourcesCsv } = useExportResourcesCsv();

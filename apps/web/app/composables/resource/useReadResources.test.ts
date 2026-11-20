@@ -5,7 +5,9 @@ import type { PageCursor } from "@esposter/db-schema";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useReadResources } from "#src/composables/resource/useReadResources";
 import { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
+import { resourceTable } from "#src/services/resource/overlay/constants";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useOverlayStore } from "#src/store/overlay";
 import { encodePageCursor, START_PAGE_CURSOR } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -46,6 +48,25 @@ describe(useReadResources, () => {
     await readResources(secondOptions);
 
     expect(sentCursors).toStrictEqual([START_PAGE_CURSOR, nextPageCursor]);
+  });
+
+  // The page names its rows, and each row is the overlay's, so an edit or a removal the overlay takes reaches the list
+  // Without another read
+  test("shows each row as the overlay holds it, and leaves out one the overlay holds as removed", async () => {
+    expect.hasAssertions();
+
+    const item = createResourceListItem();
+    trpcMsw.resource.readResources.query(() => ({ count: 1, items: [item], nextCursor: "" }));
+    const { items: listItems, readResources } = useReadResources();
+    await readResources(firstOptions);
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(resourceTable, { ...item, name: "renamed", version: 1 });
+
+    expect(listItems.value.map(({ name }) => name)).toStrictEqual(["renamed"]);
+
+    overlayStore.arrive(resourceTable, { ...item, deletedAt: new Date(0), version: 2 });
+
+    expect(listItems.value).toStrictEqual([]);
   });
 
   test("reads the first page again when the search changes", async () => {

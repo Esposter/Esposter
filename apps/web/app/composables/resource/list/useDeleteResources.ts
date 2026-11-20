@@ -3,14 +3,18 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CacheTag } from "#src/models/cache/CacheTag";
+import { resourceTable } from "#src/services/resource/overlay/constants";
+import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
 import { sendIdsInChunks } from "#src/services/resource/sendIdsInChunks";
+import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
 import { useCacheStore } from "#src/store/cache";
 import { useNotificationStore } from "#src/store/notification";
+import { useOverlayStore } from "#src/store/overlay";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { getSynchronizedFunction, RoutePath, takeOne } from "@esposter/shared";
+import { getSynchronizedFunction, RoutePath, takeOne, withFinalizerAsync } from "@esposter/shared";
 
-export const useDeleteResources = (items: Ref<ResourceInResource[]>, refresh: () => Promise<void>) => {
+export const useDeleteResources = (refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
   const router = useRouter();
   const navigateToExplorer = getSynchronizedFunction(async () => {
@@ -20,74 +24,67 @@ export const useDeleteResources = (items: Ref<ResourceInResource[]>, refresh: ()
   const { invalidateTags } = cacheStore;
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
-  const { executeMutation: executeDeleteResourcesMutation } = useMutation();
+  const overlayStore = useOverlayStore();
+  const { writeOptimistic } = overlayStore;
   const { restoreResources } = useRestoreResources(refresh);
   // Owned by the list rather than by whatever triggers it — a row's menu, the selection, a context menu — because the
   // Rows it removes and puts back are the list's, and the write outlives the menu that fired it
   const deleteResources = (resources: ResourceInResource[]) => {
     const ids = resources.map(({ id }) => id);
-    // Read up front — the optimistic removal drops the rows before the notification fires
     const deletedNotificationTitle = ResourceOperationTitleMap[ResourceOperationType.Deleted](
       takeOne(resources).name,
       resources.length,
     );
+    const notificationId = createNotification({
+      // The undo toast: a delete of one resource or of a whole selection is one click away from coming back, no
+      // Bin trip needed. Single-use: once the restore lands, a second fire from the bell would target resources
+      // No longer in the bin, so the action consumes itself on success
+      action: {
+        handler: () => {
+          restoreResources(resources);
+        },
+        isSingleUse: true,
+        title: "Restore",
+      },
+      severity: NotificationSeverity.Success,
+      title: deletedNotificationTitle,
+    });
+    // This list also drives the blade's Explorer, so deleting the resource the blade is open on has to
+    // Leave it — every later blade action hits requireOwnedResource with deletedAt isNull and throws,
+    // So the user sits in an editor that error-toasts on every autosave. The blade's own delete already
+    // Routes here, and a delete must not navigate from one entry point and not the other
+    if (ids.includes(getRouteParam(router.currentRoute.value.params, "id"))) navigateToExplorer();
+    // Each resource is held as a tombstone until its answer arrives, so the list drops it as the write is sent
+    const removals = ids.map((id) => getResourcePatchEntry(id, { deletedAt: new Date() }));
     // The batch procedure with one id shares the exact cleanup path (row + publication + blob directory).
     // Selection accumulates across pages, so the ids are chunked to the server's per-call cap and sent in order
-    executeDeleteResourcesMutation(
-      () => sendIdsInChunks(ids, (chunkIds) => $trpc.resource.deleteResources.mutate({ ids: chunkIds })),
+    writeOptimistic(
+      () =>
+        withFinalizerAsync(
+          async () =>
+            createRowsResponse(
+              resourceTable,
+              await sendIdsInChunks(ids, (chunkIds) => $trpc.resource.deleteResources.mutate({ ids: chunkIds })),
+            ),
+          async () => {
+            // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure still leaves
+            // Earlier chunks deleted server-side. The stars and the Recent rows go with those rows, so the tag is
+            // Invalidated whether the write was kept or refused
+            await invalidateTags([CacheTag.Resources]);
+            // The total is the server's count over the whole filter, so it is read again rather than moved by the rows
+            // This write removed. The read also refills the page the removal left short, and puts back any row a
+            // Refused chunk never removed, since the page's membership is the server's again
+            await refresh();
+          },
+        ),
       {
-        // Read here rather than at call time, since this runs when the write is sent: rows captured when the
-        // User clicked are the ones from before whatever landed in between
-        applyOptimistic: () => {
-          const deletedItems = items.value.filter(({ id }) => ids.includes(id));
-          items.value = items.value.filter(({ id }) => !ids.includes(id));
-          const notificationId = createNotification({
-            // The undo toast: a delete of one resource or of a whole selection is one click away from coming back, no
-            // Bin trip needed. Single-use: once the restore lands, a second fire from the bell would target resources
-            // No longer in the bin, so the action consumes itself on success
-            action: {
-              handler: () => {
-                restoreResources(resources);
-              },
-              isSingleUse: true,
-              title: "Restore",
-            },
-            severity: NotificationSeverity.Success,
-            title: deletedNotificationTitle,
-          });
-          // This list also drives the blade's Explorer, so deleting the resource the blade is open on has to
-          // Leave it — every later blade action hits requireOwnedResource with deletedAt isNull and throws,
-          // So the user sits in an editor that error-toasts on every autosave. The blade's own delete already
-          // Routes here, and a delete must not navigate from one entry point and not the other
-          if (ids.includes(getRouteParam(router.currentRoute.value.params, "id"))) navigateToExplorer();
-          return () => {
-            dismissNotification(notificationId);
-            // Only this write's own rows are put back. A refresh, a page turn or a delete running beside this one
-            // Replaces `items` wholesale, so reinstating a copy of the list would undo it — and a mid-flight
-            // Refresh has already re-read the rows this failed delete never removed, so only the ones still
-            // Missing come back, at the end rather than in their sorted place
-            const missingItems = deletedItems.filter(({ id }) => !items.value.some((item) => item.id === id));
-            items.value = [...items.value, ...missingItems];
-          };
+        entry: (view) => {
+          for (const removal of removals) removal(view);
         },
-        // A star or a recently-opened row only resolves while its resource is live
-        invalidates: [CacheTag.Resources],
-        // A batch delete spans an arbitrary selection with no single entity id, so each gets a per-call symbol
-        key: Symbol("deleteResources"),
-        onError: async (error) => {
+        onError: (error) => {
+          dismissNotification(notificationId);
           createErrorNotification(error);
-          // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure
-          // Still leaves earlier chunks deleted server-side — the one write that has to invalidate even
-          // Though it failed. The rollback restores every row, so re-read to reconcile the list, and the
-          // Stars with it, since an earlier chunk's rows are gone for good
-          await invalidateTags([CacheTag.Resources]);
-          await refresh();
         },
-        // The total is the server's count over the whole filter, not this page's length, so it is only ever
-        // Written by a read: nudged by the rows this write removed it would land on top of a refresh that had
-        // Already re-counted, and the rollback would add back rows that count never held. The re-read also
-        // Refills the page the optimistic removal left short
-        reconcile: refresh,
       },
     );
   };

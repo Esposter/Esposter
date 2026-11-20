@@ -10,6 +10,9 @@ import { ResourceListSource } from "#src/models/resource/list/ResourceListSource
 import { getResourceFilterInput } from "#src/services/resource/list/getResourceFilterInput";
 import { getResourceFilterKey } from "#src/services/resource/list/getResourceFilterKey";
 import { getResourceListSortName } from "#src/services/resource/list/getResourceListSortName";
+import { resourceTable } from "#src/services/resource/overlay/constants";
+import { getHeldResource } from "#src/services/resource/overlay/getHeldResource";
+import { useOverlayStore } from "#src/store/overlay";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
 export const useReadResources = (
@@ -50,13 +53,38 @@ export const useReadResources = (
       sortName: getResourceListSortName(sortBy, filterInput),
       ...filterInput,
     });
-  const { count, error, getLastSortBy, isPending, items, read, refresh } = useReadResourcesPage({
+  const overlayStore = useOverlayStore();
+  const { arrive, view } = overlayStore;
+  const resourceRows = view(resourceTable);
+  const {
+    count,
+    error,
+    getLastSortBy,
+    isPending,
+    items: pageItems,
+    read,
+    refresh,
+  } = useReadResourcesPage({
     getFilterInput,
     // The total depends on the filter alone, so the filter the user picked is exactly what it is keyed by
     getFilterKey: () => getResourceFilterKey(getFilterValues()),
-    readPage: (cursor, filterInput, { itemsPerPage, sortBy }) =>
-      readListPage({ cursor, limit: itemsPerPage, sortBy }, filterInput),
+    // Each row a page answers is held on the overlay as it arrives, so an edit or a removal of the row, by this list or
+    // Any other surface, reaches the list without a patch of its own. The last access is the read's, not the row's, so
+    // It is left off the held row and kept on the page beside it
+    readPage: async (cursor, filterInput, { itemsPerPage, sortBy }) => {
+      const page = await readListPage({ cursor, limit: itemsPerPage, sortBy }, filterInput);
+      for (const { lastAccessedAt: _lastAccessedAt, ...row } of page.items) arrive(resourceTable, row);
+      return page;
+    },
   });
+  // The page's rows in the order the page named them, each as the overlay holds it. A row the overlay holds as removed
+  // Is not held live, so it leaves the page at once
+  const items = computed(() =>
+    pageItems.value.flatMap(({ id, lastAccessedAt }) => {
+      const row = getHeldResource(resourceRows.value, id);
+      return row ? [{ ...row, lastAccessedAt }] : [];
+    }),
+  );
   // Snapshots the filter + sort at call time so a chunked consumer (CSV export) pages one consistent query
   // Even if the filters change mid-export
   const createResourcesPageReader = () => {

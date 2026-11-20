@@ -4,9 +4,12 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { createResourceFavoriteListItem } from "#shared/services/resource/list/createResourceFavoriteListItem.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useRenameResource } from "#src/composables/resource/list/useRenameResource";
+import { resourceTable } from "#src/services/resource/overlay/constants";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useOverlayStore } from "#src/store/overlay";
 import { useFavoriteStore } from "#src/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
@@ -20,34 +23,48 @@ const createRefresh = () => {
   return { isCalled, refresh };
 };
 
+// The row the overlay holds for a resource, which is the one the list renders and the rename applies to
+const getHeldRow = (id: string) => {
+  const overlayStore = useOverlayStore();
+  const { view } = overlayStore;
+  return view(resourceTable).value.find((row) => row.id === id);
+};
+
 describe(useRenameResource, () => {
   const { trpcMsw } = setupMswTrpc();
   const name = "name";
   const newName = "newName";
   const createResource = () => ref<ResourceInResource>(createResourceListItem({ name }));
 
-  test("renames the row optimistically and keeps the server's answer on success", async () => {
+  test("shows the new name as the rename is sent, and holds the server's answer once it lands", async () => {
     expect.hasAssertions();
 
     const resource = createResource();
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(resourceTable, resource.value);
     const { isCalled, refresh } = createRefresh();
-    trpcMsw.sheet.updateResource.mutation(() => ({ ...resource.value, name: newName }));
+    trpcMsw.sheet.updateResource.mutation(() => ({ ...resource.value, name: newName, version: 1 }));
     useRenameResource(resource, refresh)(newName);
 
+    expect(getHeldRow(resource.value.id)?.name).toBe(newName);
+
+    // The refresh runs before the answer is applied, so the row is checked for the answer's version once it has landed
     await isCalled;
-    expect(resource.value.name).toBe(newName);
-    // Called once, not called with nothing: the success path is `reconcile: refresh`, so the mutation hands it
-    // The server row that `refresh` ignores
+    await flushPromises();
+    const heldRow = getHeldRow(resource.value.id);
+    expect(heldRow?.name).toBe(newName);
+    expect(heldRow?.version).toBe(1);
+    // Called once, not called with nothing: the mutation hands the refresh the settled rename, which it ignores
     expect(refresh).toHaveBeenCalledTimes(1);
   });
 
-  // The name a local rollback would restore is whatever this call read, which for a second rename of the same row
-  // Is itself the first call's optimistic value — and only the newest call's handlers run, so restoring it leaves
-  // A name the server never accepted on the row. The server's answer is the only true name
-  test("re-reads for the server's name instead of restoring one it never accepted", async () => {
+  // A refused rename drops its entry and changes nothing held, so the list shows the name the server last answered
+  test("keeps the name the server holds when a rename is refused", async () => {
     expect.hasAssertions();
 
     const resource = createResource();
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(resourceTable, resource.value);
     const { isCalled, refresh } = createRefresh();
     trpcMsw.sheet.updateResource.mutation(() => {
       throw new TRPCError({ code: "BAD_REQUEST", message: " " });
@@ -55,6 +72,8 @@ describe(useRenameResource, () => {
     useRenameResource(resource, refresh)(newName);
 
     await isCalled;
+    await flushPromises();
+    expect(getHeldRow(resource.value.id)?.name).toBe(name);
     expect(refresh).toHaveBeenCalledExactlyOnceWith();
   });
 
