@@ -34,7 +34,7 @@ When retries are exhausted, the message goes to its job's dead-letter queue, aft
 
 - **Validates before sending again.** A payload that fails its schema can never succeed — quarantine it at once instead of spending the attempt budget on it.
 - **Carries the attempt count in the body.** A re-sent message is a new message whose attempts restart at zero, so a counter kept only on the message restarts at zero every cycle and loops forever. The count is the `attempt` field of the shared queue envelope (`queueMessageEnvelopeSchema`, `packages/db-schema/src/models/queue/QueueMessageEnvelope.ts`), which every job's message schema spreads and which defaults to 0.
-- **Quarantines past the cap** — a payload that has exhausted its attempts, or whose delivery reaches the dead-letter consumer's retry count, is written once as its raw body to R2's quarantine prefix, and `console.error` names it on the delivery that wrote it. Never re-send a poison payload to a queue a consumer reads. The replay is `apps/jobs/src/services/queue/handleDeadLetterMessage.ts`.
+- **Quarantines past the cap** — a payload that has exhausted its attempts, or whose delivery reaches the dead-letter consumer's retry count, is written once as its raw body to R2's quarantine prefix, and `console.error` names it on the delivery that wrote it. The nightly Cron purges it past `QUARANTINE_RETENTION_MS`. Never re-send a poison payload to a queue a consumer reads. The replay is `apps/jobs/src/services/queue/handleDeadLetterMessage.ts`.
 
 ## A handler that enumerates its own work bounds it in time and in width
 

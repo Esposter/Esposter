@@ -2,3 +2,5 @@
 // Every message is counted on its own, so one that keeps failing is quarantined alone.
 // The transient failures delivered beside it are not held back.
 export const MAX_DEAD_LETTER_ATTEMPTS = 3;
+// The prefix every quarantined dead letter's raw body is written under: quarantine/<queue>/<message id>.json
+export const QUARANTINE_PREFIX = "quarantine/";

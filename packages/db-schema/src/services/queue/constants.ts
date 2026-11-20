@@ -23,3 +23,7 @@ export const MAX_CONCURRENT_BLOB_DELETIONS = 100;
 // Dead-letter consumer's maxRetries, and the replay quarantines a dead letter on the delivery that reaches it rather than
 // Republishing, so the last delivery always lands somewhere durable. Both read it here, so they cannot disagree.
 export const DEAD_LETTER_CONSUMER_MAX_RETRIES = 5;
+// How long a quarantined dead letter's raw body is kept. The nightly purge removes it past this age. A body can carry
+// Message text and names no owner, so an account erasure cannot find it: this retention is what bounds it instead.
+// Design: openspec/specs/architecture/cloudflare-services/design.md
+export const QUARANTINE_RETENTION_MS = Temporal.Duration.from({ days: 30 }).total("milliseconds");
