@@ -1,6 +1,5 @@
 /* oxlint-disable no-await-in-loop -- Each step reads the last: a send's slowmode check reads the clock an earlier send in the loop wrote, and messages enter the list in run order */
 import type { MessageUpdate } from "#src/models/room/MessageUpdate";
-import type { NewMessage } from "#src/models/room/NewMessage";
 import type { NotifyUser } from "#src/models/room/NotifyUser";
 import type { SendOptions } from "#src/models/room/SendOptions";
 import type {
@@ -720,7 +719,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // A message is written and broadcast in one synchronous turn, and marks the room active for the fan-out it owes
-  #insertMessage(values: NewMessage, now: Date, sendOptions: SendOptions): RoomMessage {
+  #insertMessage(values: typeof messagesInRoom.$inferInsert, now: Date, sendOptions: SendOptions): RoomMessage {
     const message = this.db.insert(messagesInRoom).values(values).returning(messageColumns).get();
     this.#announceMessage(message, now, sendOptions);
     return message;

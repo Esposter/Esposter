@@ -1,5 +1,5 @@
 import type { MessageFields } from "#src/models/room/MessageFields";
-import type { NewMessage } from "#src/models/room/NewMessage";
+import type { messagesInRoom } from "@esposter/db-schema";
 
 import { getFilenames } from "#src/services/room/getFilenames";
 import { getMessageMentions } from "#src/services/room/getMessageMentions";
@@ -21,7 +21,7 @@ export const getMessageRow = (
     webhookDeliveryId,
   }: MessageFields,
   now: Date,
-): NewMessage => ({
+): typeof messagesInRoom.$inferInsert => ({
   appUserId: appUserId ?? null,
   appUserImage,
   createdAt: now,
