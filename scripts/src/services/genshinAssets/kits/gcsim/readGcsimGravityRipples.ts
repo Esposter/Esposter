@@ -1,23 +1,30 @@
 import type { GcsimGravityRipple } from "#src/models/genshinAssets/kits/gcsim/GcsimGravityRipple";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
+import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
+
+import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
+import { checkIsCaseClause } from "#src/services/genshinAssets/kits/gcsim/checkIsCaseClause";
+import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
+import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
+import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 // The gravity tick's switch over the reaction that fires the ripple, and each case's assignments within it
-const SWITCH_REGEX = /switch maxReaction \{/u;
-const CASE_REGEX = /^\s*case (?<reaction>\w+):/gmu;
-const ABIL_REGEX = /\babil = "(?<abil>[^"]*)"/u;
-const ELEMENT_REGEX = /\belem = (?<element>attributes\.\w+)/u;
-const TALENT_REGEX = /\bmult = (?<talentVariable>\w+)\[/u;
-const TRAVEL_REGEX = /\btravel = (?<travelName>\w+)/u;
-// The hitmark constant each reaction's hits are named by in `init`, as a slice literal or a constant of a slice
+const SWITCH_NAME = "switch";
+const SWITCH_SUBJECT = "maxReaction";
 const HITMARK_REGEX = /skillHitmarks\[(?<reaction>\w+)\] = (?:\[\]int\{(?<listName>\w+)\}|(?<name>\w+))/gu;
 
-// The index of the brace closing the one at an index, counting the braces between
-const findClosingBrace = (source: string, openIndex: number): number => {
-  let depth = 0;
-  for (let index = openIndex; index < source.length; index++)
-    if (source[index] === "{") depth++;
-    else if (source[index] === "}" && --depth === 0) return index;
-  return source.length;
+// The position of the first identifier named a name in a segment followed by `=`, or -1
+const findAssignment = (segment: readonly GoToken[], name: string): number =>
+  segment.findIndex(
+    (token, index) =>
+      token.kind === GoTokenKind.Identifier && token.text === name && checkIsGoPunctuation(segment[index + 1], "="),
+  );
+
+// The identifier the assignment to a name in a segment takes its value from, else undefined
+const readAssignedName = (segment: readonly GoToken[], name: string): string | undefined => {
+  const assignment = findAssignment(segment, name);
+  const value = segment[assignment + 2];
+  return assignment === -1 || value?.kind !== GoTokenKind.Identifier ? undefined : value.text;
 };
 
 const readHitmarkNames = (source: string): Map<string, string> => {
@@ -30,21 +37,53 @@ const readHitmarkNames = (source: string): Map<string, string> => {
   return hitmarkNames;
 };
 
+// The string literal the `abil` assignment in a segment takes its value from, without its quotes, else undefined
+const readAbil = (segment: readonly GoToken[]): string | undefined => {
+  const assignment = findAssignment(segment, "abil");
+  const value = segment[assignment + 2];
+  return value?.kind === GoTokenKind.String && value.text.startsWith('"') ? value.text.slice(1, -1) : undefined;
+};
+
+// The `attributes` constant the `elem` assignment in a segment takes its value from, as `attributes.Electro`, else undefined
+const readElement = (segment: readonly GoToken[]): string | undefined => {
+  const assignment = findAssignment(segment, "elem");
+  const [attributes, dot, element] = segment.slice(assignment + 2, assignment + 5);
+  return attributes?.text === "attributes" && checkIsGoPunctuation(dot, ".") && element?.kind === GoTokenKind.Identifier
+    ? `attributes.${element.text}`
+    : undefined;
+};
+
 // The ripples a file's gravity tick switch sets, one per case that names its label, element, talent variable and hitmark
 const readFileRipples = (file: string, source: string): GcsimGravityRipple[] => {
-  const switchMatch = SWITCH_REGEX.exec(source);
-  if (switchMatch === null) return [];
+  const tokens = tokenizeGo(source);
+  const switchIndex = tokens.findIndex(
+    (token, index) =>
+      token.text === SWITCH_NAME &&
+      tokens[index + 1]?.text === SWITCH_SUBJECT &&
+      checkIsGoPunctuation(tokens[index + 2], "{"),
+  );
+  if (switchIndex === -1) return [];
+  const openIndex = switchIndex + 2;
+  const closeIndex = findClosing(tokens, openIndex, "{", "}") ?? tokens.length;
+  // A case names its reaction with a label, where a default names none
+  const caseIndices = tokens.flatMap((token, index) =>
+    index > openIndex &&
+    index < closeIndex &&
+    checkIsCaseClause(token) &&
+    tokens[index + 1]?.kind === GoTokenKind.Identifier &&
+    checkIsGoPunctuation(tokens[index + 2], ":")
+      ? [index]
+      : [],
+  );
   const hitmarkNames = readHitmarkNames(source);
-  const bodyStart = switchMatch.index + switchMatch[0].length;
-  const body = source.slice(bodyStart, findClosingBrace(source, bodyStart - 1));
-  const cases = [...body.matchAll(CASE_REGEX)];
   const ripples: GcsimGravityRipple[] = [];
-  for (const [index, caseMatch] of cases.entries()) {
-    const reaction = caseMatch.groups?.reaction;
-    const segment = body.slice(caseMatch.index, cases[index + 1]?.index ?? body.length);
-    const abil = ABIL_REGEX.exec(segment)?.groups?.abil;
-    const element = ELEMENT_REGEX.exec(segment)?.groups?.element;
-    const talentVariable = TALENT_REGEX.exec(segment)?.groups?.talentVariable;
+  for (const [caseOrder, caseIndex] of caseIndices.entries()) {
+    const reaction = tokens[caseIndex + 1]?.text;
+    const end = caseIndices[caseOrder + 1] ?? closeIndex;
+    const segment = tokens.slice(caseIndex, end);
+    const abil = readAbil(segment);
+    const element = readElement(segment);
+    const talentVariable = readAssignedName(segment, "mult");
     const hitmarkName = reaction === undefined ? undefined : hitmarkNames.get(reaction);
     if (
       reaction === undefined ||
@@ -54,16 +93,13 @@ const readFileRipples = (file: string, source: string): GcsimGravityRipple[] => 
       hitmarkName === undefined
     )
       continue;
-    const travelName = TRAVEL_REGEX.exec(segment)?.groups?.travelName;
-    // The match's leading whitespace may start on the line before, so the line is the one the keyword sits on
-    const caseStart = bodyStart + caseMatch.index + caseMatch[0].indexOf("case");
-    const line = source.slice(0, caseStart).split("\n").length;
+    const travelName = readAssignedName(segment, "travel");
     ripples.push({
       abil,
       element,
       file,
       hitmarkName,
-      line,
+      line: tokens[caseIndex]?.line ?? 0,
       reaction,
       talentVariable,
       ...(travelName === undefined ? {} : { travelName }),
