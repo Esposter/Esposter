@@ -5,7 +5,6 @@ import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
@@ -15,7 +14,7 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import { getRowsPerStatement } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
+import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   getRoomEmojiBlobName,

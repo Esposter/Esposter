@@ -4,7 +4,6 @@ import type { TodoListResource } from "#shared/models/resource/todoList/TodoList
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
@@ -27,7 +26,7 @@ import {
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { deleteDirectory, getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
+import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   getResourceFileBlobName,
   QueueJob,

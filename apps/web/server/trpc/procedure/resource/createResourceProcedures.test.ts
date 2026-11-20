@@ -10,7 +10,6 @@ import type { R2Bucket, R2Object } from "@cloudflare/workers-types";
 import type { ResourceInResource, ResourcePublicationInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -52,7 +51,7 @@ import { createEmptySurvey } from "#shared/services/resource/survey/createEmptyS
 import { createEmptyTodoList } from "#shared/services/resource/todoList/createEmptyTodoList";
 import { createEmptyWhiteboard } from "#shared/services/resource/whiteboard/createEmptyWhiteboard";
 import { deleteDirectory, getContentBlobName, readJsonBlob } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
+import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   getResourceFilesDirectoryName,

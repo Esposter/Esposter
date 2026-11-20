@@ -2,7 +2,6 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { Context } from "#server/trpc/context";
 import type { BlobDeletionQueueMessage, ResourceInResource } from "@esposter/db-schema";
 
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { getSnapshotSummary } from "#server/services/resource/snapshot/getSnapshotSummary";
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
@@ -13,7 +12,7 @@ import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { deleteDirectory, getContentBlobName, writeJsonBlob } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
+import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   QueueJob,
   resourcesInResource,

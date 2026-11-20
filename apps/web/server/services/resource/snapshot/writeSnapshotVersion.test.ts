@@ -2,13 +2,12 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { deleteDirectory, listBlobNames } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
+import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   getResourceFileBlobName,
   resourcesInResource,

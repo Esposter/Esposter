@@ -7,9 +7,9 @@ import { createRoomMessage } from "#server/services/message/createRoomMessage.te
 import { createUserMessage } from "#server/services/message/createUserMessage";
 import { readThreadFollows } from "#server/services/message/thread/readThreadFollows";
 import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThreadUnfollow";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createThreadFollow } from "@esposter/db";
+import { MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   MessageType,
   RoomPermission,

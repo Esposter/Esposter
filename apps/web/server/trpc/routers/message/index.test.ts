@@ -7,7 +7,6 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { MAX_FORWARD_ROOMS, MAX_SEARCH_ROOMS } from "#server/services/message/constants";
 import { createRoomMessage as baseCreateRoomMessage } from "#server/services/message/createRoomMessage.test";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import {
   createMockAuthSession,
@@ -30,7 +29,7 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { createPollMessageContent } from "#shared/models/message/poll/createPollMessageContent.test";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
+import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   encodePageCursor,

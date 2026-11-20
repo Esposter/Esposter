@@ -1,9 +1,9 @@
 import { createQueueMessage } from "#src/services/queue/createQueueMessage.test";
-import { MockJobQueue, MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { handleQueueBatch } from "#src/services/queue/handleQueueBatch";
 import { QueueJobHandlerMap } from "#src/services/queue/QueueJobHandlerMap";
 import { getBucket } from "#src/services/storage/getBucket";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock/workers";
+import { MockJobQueueDatabase } from "@esposter/db-mock";
+import { clearMockBuckets, disposeMockBuckets, MockJobQueue, openMockBuckets } from "@esposter/db-mock/workers";
 import {
   CloudflareAssetType,
   CloudflareEnvironment,
@@ -14,7 +14,7 @@ import {
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("@esposter/db-mock/workers"));
 vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
 
 const createBatch = (messages: ReturnType<typeof createQueueMessage>[], queue: string): MessageBatch => ({

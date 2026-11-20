@@ -1,8 +1,8 @@
 import { MAX_DEAD_LETTER_ATTEMPTS } from "#src/services/queue/constants";
 import { createQueueMessage } from "#src/services/queue/createQueueMessage.test";
-import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { handleDeadLetterMessage } from "#src/services/queue/handleDeadLetterMessage";
 import { getBucket } from "#src/services/storage/getBucket";
+import { MockJobQueueDatabase } from "@esposter/db-mock";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock/workers";
 import {
   CloudflareAssetType,
@@ -15,7 +15,7 @@ import {
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("@esposter/db-mock/workers"));
 vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
 
 describe(handleDeadLetterMessage, () => {

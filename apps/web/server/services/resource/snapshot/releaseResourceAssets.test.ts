@@ -2,7 +2,6 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getSnapshotVersionDeletes } from "#server/services/resource/snapshot/getSnapshotVersionDeletes";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
@@ -11,7 +10,7 @@ import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { ASSET_DECISION_CLOCK_MARGIN_MS, ASSET_GRACE_MS } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { deleteDirectory } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
+import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   getResourceFileBlobName,
   QueueJob,

@@ -26,7 +26,7 @@ flowchart LR
 3. Copies the instance's bindings into `env`, the `cloudflare:workers` stand-in that app code reads.
 4. Returns `db` (the core database as `Database`), `getBucket`, `getQueue`, `reset` and `dispose`.
 
-The Workers test doubles (the object stubs, the bucket and queue doubles, `createUser` and the wrangler reader) are the `@esposter/db-mock/workers` entry, which only `apps/jobs` and `apps/realtime` import. Their types are the Workers globals, which `apps/web` does not load while it compiles this package's main entry through its source condition, so the main entry never reaches them.
+The Workers test doubles (the object stubs, the bucket and queue doubles, `createUser` and the wrangler reader) are the `@esposter/db-mock/workers` entry, which only `apps/jobs` and `apps/realtime` import. Their types are the Workers globals, which `apps/web`'s browser and shared programs never load, so they live on their own entry.
 
 **Why Miniflare instead of an in-process database?** It is the runtime's own D1, R2 and Queues, so a test exercises the SQL and bindings production runs, and nothing outlives the test file that started it.
 

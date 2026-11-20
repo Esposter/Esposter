@@ -8,7 +8,7 @@ import { createMockSession } from "#server/auth.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
-import { MockJobQueue, MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
+import { MockJobQueue } from "#server/services/queue/getJobQueue.test";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
@@ -32,7 +32,7 @@ import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { deleteDirectory } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
+import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   dataExportsInUser,

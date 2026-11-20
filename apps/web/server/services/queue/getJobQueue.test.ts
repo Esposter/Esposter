@@ -1,12 +1,12 @@
 import type { QueueJob, QueueProducer } from "@esposter/db-schema";
 
+import { MockJobQueueDatabase } from "@esposter/db-mock";
 import { getOrCreate } from "@esposter/shared";
 import { describe } from "vitest";
 
-// Every message sent to each job's queue, in send order. Stands in for the producer bindings, which only exist inside
-// The Worker, so a test reads what a publisher sent without a Workers runtime
-export const MockJobQueueDatabase: Map<QueueJob, unknown[]> = new Map<QueueJob, unknown[]>();
-
+// This double is the send-only `QueueProducer` the shared schema states, which is what the app's getJobQueue returns.
+// The Workers double in `@esposter/db-mock/workers` is the whole binding, and only apps/jobs and apps/realtime import that entry.
+// So this one stays beside its only consumer, and its messages land in the map every job's test reads.
 export class MockJobQueue implements QueueProducer<unknown> {
   readonly job: QueueJob;
 

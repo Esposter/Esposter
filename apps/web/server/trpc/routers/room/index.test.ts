@@ -12,7 +12,6 @@ import {
 } from "#server/composables/realtime/useRoomObject.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -33,7 +32,7 @@ import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants"
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { readAllResourcePages } from "#src/services/resource/readAllResourcePages";
 import { deleteDirectory } from "@esposter/db";
-import { createMockBucket } from "@esposter/db-mock";
+import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   appUsersInMessage,
   bansInMessage,
