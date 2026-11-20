@@ -70,6 +70,20 @@ describe(usePinStore, () => {
     ]);
   });
 
+  // A pin answer older than the room's copy of its message is a late echo of a change already past, so it places nothing
+  test("does not pin a message from an answer older than the copy it would pin", async () => {
+    expect.hasAssertions();
+
+    const dataStore = useDataStore();
+    const pinStore = usePinStore();
+    const { items } = storeToRefs(pinStore);
+    const unpinnedMessage = { ...createMessage(), version: 1 };
+    dataStore.getSlice(roomId).items.value = [unpinnedMessage];
+    await MessageHookMap[Operation.Update].run({ id: unpinnedMessage.id, isPinned: true, roomId, version: 0 });
+
+    expect(items.value).toStrictEqual([]);
+  });
+
   // The pinned list holds its own rows, read past what the room has loaded, so a deletion reaches it through the hook
   test("drops a pinned message the moment it is deleted", async () => {
     expect.hasAssertions();

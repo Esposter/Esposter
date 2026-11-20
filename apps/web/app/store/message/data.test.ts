@@ -535,6 +535,31 @@ describe(useDataStore, () => {
     expect(takeOne(items.value).message).toBe(laterMessage);
   });
 
+  // A copy the room's answer is newer than takes it, whatever the other copies hold. The thread pane already holds the
+  // Answer's version, so the window's stale copy must still take it rather than wait behind the pane's newer one
+  test("an answer lands on each copy it is newer than, so a copy already at its version does not hold back a stale one", async () => {
+    expect.hasAssertions();
+
+    const threadStore = useThreadStore();
+    const { threadMessages } = storeToRefs(threadStore);
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { getSlice, storeUpdateMessage } = dataStore;
+    const staleCopy = {
+      ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
+      id: roomMessageId,
+      version: 0,
+    };
+    getSlice(roomId).items.value = [staleCopy];
+    threadStore.activeRoomId = roomId;
+    threadMessages.value = [{ ...staleCopy, message: updatedMessage, version: 1 }];
+    await storeUpdateMessage({ id: roomMessageId, message: updatedMessage, roomId, version: 1 });
+    threadStore.activeRoomId = "";
+    threadMessages.value = [];
+
+    expect(takeOne(items.value).message).toBe(updatedMessage);
+  });
+
   // The room answers with the files it keeps. A removal it refuses changes nothing, so the attachment it named stays
   test("an attachment leaves when the room answers and stays when it refuses", async () => {
     expect.hasAssertions();

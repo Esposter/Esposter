@@ -3,6 +3,7 @@ import type { ClientMessage } from "#src/models/message/ClientMessage";
 import { MessageHook } from "#src/models/message/MessageHook";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { updateMessageCopy } from "#src/services/message/updateMessageCopy";
 import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
@@ -49,8 +50,7 @@ export const useReplyStore = defineStore("message/input/reply", () => {
   });
   // A quoted message read from the server is its own copy, so an edit of it reaches the quote through this hook
   MessageHookMap[Operation.Update].register((input) => {
-    const quotedMessage = getReplyMapRef(input.roomId).value.get(input.id);
-    if (quotedMessage) Object.assign(quotedMessage, input);
+    updateMessageCopy(getReplyMapRef(input.roomId).value.get(input.id), input);
   });
   messageHolderRegistry.register((roomId, hold) => {
     hold([...getReplyMapRef(roomId).value.values()]);

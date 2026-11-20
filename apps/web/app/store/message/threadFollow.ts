@@ -4,6 +4,7 @@ import type { Entry } from "#src/models/shared/overlay/Entry";
 
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { updateMessageCopy } from "#src/services/message/updateMessageCopy";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -60,8 +61,10 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     hold(getFollowedRoots(roomId) ?? []);
   });
   MessageHookMap[Operation.Update].register((input) => {
-    const followedRoot = getFollowedRoots(input.roomId)?.find(({ id }) => id === input.id);
-    if (followedRoot) Object.assign(followedRoot, input);
+    updateMessageCopy(
+      getFollowedRoots(input.roomId)?.find(({ id }) => id === input.id),
+      input,
+    );
   });
   MessageHookMap[Operation.Delete].register(({ id, roomId }) => {
     const roots = getFollowedRoots(roomId);

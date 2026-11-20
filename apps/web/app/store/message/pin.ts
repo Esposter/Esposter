@@ -1,8 +1,10 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
+import { checkIsNewerThanCopy } from "#src/services/message/checkIsNewerThanCopy";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { updateMessageCopy } from "#src/services/message/updateMessageCopy";
 import { createOperationData } from "#src/services/shared/createOperationData";
 import { getInsertedItems } from "#src/services/shared/getInsertedItems";
 import { useDataStore } from "#src/store/message/data";
@@ -28,27 +30,25 @@ export const usePinStore = defineStore("message/pin", () => {
   messageHolderRegistry.register((roomId, hold) => {
     hold(getSlice(roomId).items.value);
   });
+  // An answer older than the copy it would change is a late echo of a change already past, so it changes nothing here
   MessageHookMap[Operation.Update].register((input) => {
-    const { deleteMessage, updateMessage } = createOperationData(
-      getSlice(input.roomId).items,
-      ["id"],
-      DatabaseEntityType.Message,
-    );
+    const { deleteMessage } = createOperationData(getSlice(input.roomId).items, ["id"], DatabaseEntityType.Message);
+    const pinnedMessage = getSlice(input.roomId).items.value.find(({ id }) => id === input.id);
     if ("isPinned" in input && !input.isPinned) {
-      deleteMessage(input);
+      if (checkIsNewerThanCopy(pinnedMessage, input)) deleteMessage(input);
       return;
     }
 
-    updateMessage(input);
+    updateMessageCopy(pinnedMessage, input);
     if (!input.isPinned) return;
 
     // The source message is read from its own room's slice: `dataStore.items` is the room on screen, so a pin toggled from
     // A search result or a thread in another room would find nothing there. The window takes this update after the hooks,
-    // So the copy is the message with the pin applied to it
+    // So the copy is the message with the pin applied to it, and a pin older than that copy places nothing
     const message = getDataSlice(input.roomId).items.value.find(
       getEntityIdEqualComparator<ClientMessage>(["id"], input),
     );
-    if (message) placePin(input.roomId, { ...message, ...input });
+    if (message && checkIsNewerThanCopy(message, input)) placePin(input.roomId, { ...message, ...input });
   });
   MessageHookMap[Operation.Delete].register(({ id, roomId }) => {
     createOperationData(getSlice(roomId).items, ["id"], DatabaseEntityType.Message).deleteMessage({ id });

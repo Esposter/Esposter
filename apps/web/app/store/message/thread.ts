@@ -4,6 +4,7 @@ import type { ClientThread } from "#src/models/message/ClientThread";
 import { RightDrawer } from "#src/models/message/RightDrawer";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { updateMessageCopy } from "#src/services/message/updateMessageCopy";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useLayoutStore } from "#src/store/layout";
 import { useThreadFollowStore } from "#src/store/message/threadFollow";
@@ -113,8 +114,10 @@ export const useThreadStore = defineStore("message/thread", () => {
   MessageHookMap[Operation.Update].register((input) => {
     if (!checkIsActiveThreadMessage(input)) return;
 
-    const message = threadMessages.value.find(({ id }) => id === input.id);
-    if (message) Object.assign(message, input);
+    updateMessageCopy(
+      threadMessages.value.find(({ id }) => id === input.id),
+      input,
+    );
   });
   MessageHookMap[Operation.Delete].register(({ id: messageId, roomId }) => {
     if (roomId !== activeRoomId.value) return;

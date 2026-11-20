@@ -6,7 +6,6 @@ import type { VotePollInput } from "#shared/models/db/message/VotePollInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { ComposerTarget } from "#src/models/message/ComposerTarget";
-import type { Versioned } from "#src/models/shared/overlay/Versioned";
 import type { Page, RoomMessage, Typing } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
@@ -16,8 +15,8 @@ import { authClient } from "#src/services/auth/authClient";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { updateMessageCopy } from "#src/services/message/updateMessageCopy";
 import { createOperationData } from "#src/services/shared/createOperationData";
-import { checkIsNewerArrival } from "#src/services/shared/overlay/checkIsNewerArrival";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useThreadFollowStore } from "#src/store/message/threadFollow";
@@ -220,18 +219,15 @@ export const useDataStore = defineStore("message/data", () => {
       });
     return heldMessages;
   };
-  // An arrival that names a version applies only when it is newer than every copy held of its message. The answer to a
-  // Write and the room's echo of the same change name the same version, so the second changes nothing, and an older answer
-  // That lands last loses to the newer copy. An update that names no version, such as a poll's optimistic apply, is not gated
-  const checkIsNewerThanHeld = ({ id, roomId, version }: MessageEvents["updateMessage"][0][0]) =>
-    version === undefined ||
-    listHeldMessages(roomId).every((copy) => copy.id !== id || checkIsNewerArrival<Versioned>(copy, { version }));
+  // The hooks take the update into each holder's copy, and the window's copy last, each through `updateMessageCopy`. So
+  // The answer to a write and the room's echo of the same change, which name the same version, land once and change
+  // Nothing the second time, and an older answer that lands last loses to each copy already newer than it
   const storeUpdateMessage = async (input: MessageEvents["updateMessage"][0][0]) => {
-    if (!checkIsNewerThanHeld(input)) return;
-
-    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(input.roomId);
     await MessageHookMap[Operation.Update].run(input);
-    baseStoreUpdateMessage(input);
+    updateMessageCopy(
+      getSlice(input.roomId).items.value.find(({ id }) => id === input.id),
+      input,
+    );
   };
   const storeDeleteMessage = async (input: DeleteMessageInput) => {
     const { deleteMessage: baseStoreDeleteMessage } = getRoomOperationData(input.roomId);
