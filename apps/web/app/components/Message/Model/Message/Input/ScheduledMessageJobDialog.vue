@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getEarliestScheduledAt } from "#src/services/message/getEarliestScheduledAt";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useScheduledMessageJobDialogStore } from "#src/store/message/input/scheduledMessageJobDialog";
 import { useRoomStore } from "#src/store/message/room/index";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 import { marked } from "marked";
 
 const textRules = [UiRules.required()];
@@ -22,28 +24,34 @@ const setDefaultScheduledAt = () => {
   scheduledAt.value = getEarliestScheduledAt();
   minScheduledAt.value = new Date(scheduledAt.value);
 };
-const { executeMutation } = useMutation();
-// The dialog closes as the job is sent. A refused schedule is the write's alert, and the text stays in the dialog, so
-// Opening it again retries from the earliest time
-const scheduleJob = () => {
+// The dialog stays open on its text until the server keeps the job, so a refused schedule is sent again from the same
+// Text, and a kept one empties it for the next
+const scheduleJob = async () => {
   const roomId = currentRoomId.value;
-  if (!roomId) return;
+  if (!roomId) return false;
 
-  executeMutation(
-    async () =>
-      isReminder.value
-        ? await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
-            roomId,
-            runAt: scheduledAt.value,
-            text: text.value,
-          })
-        : await $trpc.message.scheduledMessage.createScheduledMessage.mutate({
-            message: marked.parse(text.value, { async: false }),
-            replyToId: null,
-            roomId,
-            runAt: scheduledAt.value,
-          }),
-    { applyOptimistic: () => noop, key: Symbol("scheduleJob") },
+  return getResultAsync(() =>
+    isReminder.value
+      ? $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
+          roomId,
+          runAt: scheduledAt.value,
+          text: text.value,
+        })
+      : $trpc.message.scheduledMessage.createScheduledMessage.mutate({
+          message: marked.parse(text.value, { async: false }),
+          replyToId: null,
+          roomId,
+          runAt: scheduledAt.value,
+        }),
+  ).match(
+    () => {
+      text.value = "";
+      return true;
+    },
+    (error) => {
+      createErrorAlert(error);
+      return false;
+    },
   );
 };
 
@@ -55,6 +63,7 @@ watch(isOpen, (newIsOpen) => {
 <template>
   <StyledFormDialog
     v-model="isOpen"
+    :awaited-because="AwaitedReason.ServerIssuedValue"
     :confirm-label="title"
     :is-confirm-disabled="!scheduledAt || undefined"
     :title
