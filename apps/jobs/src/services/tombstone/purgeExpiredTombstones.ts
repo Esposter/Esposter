@@ -4,17 +4,19 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { and, getTableName, isNotNull, lt } from "drizzle-orm";
 
 // The nightly purge of the overlay's tombstones: every row soft-deleted past the tombstone retention, in each table the
-// overlay soft-deletes. A tombstone is hidden from every read and from the view, so its removal changes no view and
-// publishes no topic, and no reader is woken to fetch it. A table that fails is logged and the next one still runs.
+// Overlay soft-deletes. A tombstone is hidden from every read and from the view, so its removal changes no view and
+// Publishes no topic, and no reader is woken to fetch it. A table that fails is logged, and the others still run
 export const purgeExpiredTombstones = async (): Promise<void> => {
   const cutoff = new Date(Date.now() - TOMBSTONE_RETENTION_MS);
-  for (const table of OVERLAY_TOMBSTONE_TABLES)
-    // oxlint-disable-next-line no-await-in-loop -- One table at a time, each delete one indexed statement, so a table's failure is its own
-    await getResultAsync(() =>
-      getDb()
-        .delete(table)
-        .where(and(isNotNull(table.deletedAt), lt(table.deletedAt, cutoff))),
-    ).match(noop, (error) => {
-      console.error(`purgeExpiredTombstones failed for ${getTableName(table)}:`, error);
-    });
+  await Promise.all(
+    OVERLAY_TOMBSTONE_TABLES.map((table) =>
+      getResultAsync(() =>
+        getDb()
+          .delete(table)
+          .where(and(isNotNull(table.deletedAt), lt(table.deletedAt, cutoff))),
+      ).match(noop, (error) => {
+        console.error(`purgeExpiredTombstones failed for ${getTableName(table)}:`, error);
+      }),
+    ),
+  );
 };

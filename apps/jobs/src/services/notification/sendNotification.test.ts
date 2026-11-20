@@ -150,7 +150,7 @@ describe(sendNotification, () => {
   });
 
   // A dismissal is a tombstone the purge removes on its own retention. The trim takes only live rows, so a dismissal past the
-  // notification retention is left to the purge rather than removed here as well
+  // Notification retention is left to the purge rather than removed here as well
   test("leaves a dismissed notification to the purge, though its dismissal is past the notification retention", async () => {
     expect.hasAssertions();
 

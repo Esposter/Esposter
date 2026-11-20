@@ -5,8 +5,8 @@ import { purgeExpiredTombstones } from "#src/services/tombstone/purgeExpiredTomb
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
-  notificationsInNotification,
   NotificationSeverity,
+  notificationsInNotification,
   usersInAuth,
 } from "@esposter/db-schema";
 import { v7 } from "uuid";
@@ -40,7 +40,7 @@ describe(purgeExpiredTombstones, () => {
   });
 
   // A notification stands in for every overlay table: each is a row a soft delete tombstones, and its purge is the same
-  // statement. The row is created at the epoch, so its age is never the reason it is kept or removed
+  // Statement. The row is created at the epoch, so its age is never the reason it is kept or removed
   const insertNotification = async (deletedAt: Date | null) => {
     const id = v7();
     await mockDb
