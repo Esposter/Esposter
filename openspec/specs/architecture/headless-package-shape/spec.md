@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Holds every headless package to one shape: named `vue-<thing>-headless`, declaring Vue as a peer and importing it, exporting only its entry and manifest, and never importing Pinia. A consumer takes a function and a composable from the same import, and each store stays the app's.
+Holds every headless package to the shape its name claims. A `vue-<thing>-headless` package is a Vue package: it declares Vue as a peer and imports it, exports only its entry and manifest, and never imports Pinia. A `<thing>-headless` package is a framework-free engine: it declares no framework as a peer, imports no framework, and exports only its entry and manifest. A consumer takes a function and a composable from the same import, and each store stays the app's.
 
 ## Requirements
 
-### Requirement: A headless package is a named Vue package
+### Requirement: A headless package is named for its kind
 
-A headless package SHALL be named vue-, then what it is, then -headless, and SHALL declare Vue as a peer dependency.
+A headless package with the vue- prefix SHALL be named vue-, then what it is, then -headless, and SHALL declare Vue as a peer dependency. A headless package with no vue- prefix SHALL be named what it is, then -headless, as a framework-free engine.
 
 #### Scenario: A package that follows the convention passes the check
 
@@ -24,23 +24,45 @@ A headless package SHALL be named vue-, then what it is, then -headless, and SHA
 
 #### Scenario: A headless package with the wrong name fails the check
 
-- **GIVEN** a headless package named headless-grid-layout
+- **GIVEN** a headless package named headless-grid-layout, which is named for neither kind
 - **WHEN** the package check runs
 - **THEN** the check fails and names the package
 
-### Requirement: A headless package ships a Vue abstraction
+### Requirement: A Vue headless package ships a Vue abstraction
 
-A headless package SHALL import Vue in its source, so a name that says Vue is never claimed by a package with no composable or component logic of its own.
+A headless package with the vue- prefix SHALL import Vue in its source, so a name that says Vue is never claimed by a package with no composable or component logic of its own.
 
 #### Scenario: A headless package that never imports Vue fails the check
 
-- **GIVEN** a headless package whose source files import no Vue
+- **GIVEN** a headless package with the vue- prefix whose source files import no Vue
 - **WHEN** the package check runs
 - **THEN** the check fails and names the package
 
+### Requirement: A framework-free headless package imports no framework
+
+A headless package with no vue- prefix SHALL declare no framework as a peer dependency and SHALL import no framework in its source, the frameworks being Vue, Pinia, Phaser, three and React, so its name is the only claim it makes.
+
+#### Scenario: A framework-free headless package that imports no framework passes the check
+
+- **GIVEN** a package named grid-engine-headless that declares no framework as a peer and whose source imports no framework
+- **WHEN** the package check runs
+- **THEN** the check passes
+
+#### Scenario: A framework-free headless package that declares a framework peer fails the check
+
+- **GIVEN** a package named grid-engine-headless that declares vue as a peer dependency
+- **WHEN** the package check runs
+- **THEN** the check fails and names the peer
+
+#### Scenario: A framework-free headless package that imports a framework or its subpath fails the check
+
+- **GIVEN** a package named grid-engine-headless with one source file that imports phaser and another that imports a subpath of three
+- **WHEN** the package check runs
+- **THEN** the check fails and names each file
+
 ### Requirement: A headless package has one entry
 
-A headless package SHALL export its package entry and its manifest only, so a function and a composable come from the same import.
+A headless package SHALL export its package entry and its manifest only, so a consumer imports everything from the one place.
 
 #### Scenario: A package with a subpath export fails the check
 

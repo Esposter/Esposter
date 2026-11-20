@@ -9,9 +9,10 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 /**
- * A headless package is a Vue package with one entry, and it leaves its stores to the app. The rule is stated once, in
- * `getHeadlessPackageFailures`, and this holds every package that calls itself headless to it. Which packages those
- * are is decided by their own name or keyword, never by a list kept here.
+ * A headless package is either a Vue package named `vue-<thing>-headless`, or a framework-free engine named
+ * `<thing>-headless` that imports no framework. Both export one entry and leave their stores to the app. The rule is
+ * stated once, in `getHeadlessPackageFailures`, and this holds every package that calls itself headless to it. Which
+ * packages those are is decided by their own name or keyword, never by a list kept here.
  */
 describe("headlessPackages", () => {
   const SOURCE_DIRECTORY = "src";
@@ -28,7 +29,7 @@ describe("headlessPackages", () => {
       });
   };
 
-  test("every headless package is named for Vue, peers on it, exports only its entry and imports no Pinia", () => {
+  test("every headless package keeps to the shape its name claims", () => {
     expect.hasAssertions();
 
     const failures = readWorkspacePackages(REPOSITORY_ROOT)

@@ -1,6 +1,6 @@
 # Headless package shape
 
-The one shape a headless package takes: a Vue package named `vue-<thing>-headless` that declares Vue as a peer and imports it, with one entry holding its functions and its composables together. It is a repo-wide standard, so it sits under the architecture area, and the [editor layout package](../../vue-editor-layout-headless/layout-engine/design.md) is built to it.
+The shape a headless package takes, in one of two kinds the name tells apart. A Vue package is named `vue-<thing>-headless`, declares Vue as a peer and imports it, with one entry holding its functions and its composables together, and the [editor layout package](../../vue-editor-layout-headless/layout-engine/design.md) is built to it. A framework-free engine is named `<thing>-headless`, declares no framework and imports none, with one entry holding its functions. Both are repo-wide standards, so they sit under the architecture area.
 
 ## How it works
 
@@ -62,6 +62,7 @@ A session holds one document and one history, so a store that edits one document
 - **The name follows the abstraction.** A package takes the convention's name only after its abstraction is built and its consumers use it, so the name never runs ahead of the code. Rejected: renaming first, which commits every consumer to a name before the abstraction behind it is proven, and moves every consumer twice if the abstraction changes the package's surface.
 - **No old name is kept.** A package that takes a new name deletes its old name, its spec area and its inventory rows in the same change, and updates every consumer with it, as the repo's no-compatibility-debt rule asks. Rejected: a re-exporting package under the old name for a release.
 - **No headless package imports Pinia.** A store is the app's, and a shared shape is a composable the app's store calls. The shape check holds it. Rejected: a rule in a skill alone, which is the [enforcement ladder](../enforcement-ladder/design.md)'s last rung when a test can hold it.
+- **A headless engine with no framework is named `<thing>-headless`.** An engine that no framework consumer needs takes no framework peer and imports none, so its name is the only claim it makes, and the check holds that: a framework peer, a framework import, or a subpath beyond the entry fails it. The grid engine is the first such package. Rejected: a framework-free core with an optional Vue subpath, which the first decision still rejects, since this is a whole package with no Vue half and so no subpath to hold; and a Vue peer nothing imports, given to the engine only to fit the prefix, which the name rule demanded until this decision.
 - **The editing session is one shared composable.** The document, history, commit, load and selection are business logic repeated across editor stores, which the repo's rule extracts, and a generic composable carries it with no store involved. Rejected: leaving each store its own copy because each is short, which is how a history-clearing watcher ends up in one store only; and a store factory taking a type parameter, which would give each instance an id the store-id test cannot read from the path.
 - **The math expression compiler keeps its name.** It has no state and one consumer. Rejected: renaming it for uniformity, which adds a peer dependency and a prefix to a package with nothing for Vue to do.
 - **A single layout engine for the grid and the editor chrome is not built.** The grid places items inside a canvas, and the editor engine places regions around it. They are separate packages that may share a size class and nothing else.
@@ -88,15 +89,16 @@ A session holds one document and one history, so a store that edits one document
 | `packages/survey-expression/package.json`                                     | the manifest of a package with no Vue abstraction, so it keeps its name                  |
 | `packages/mjml-blocks/package.json`                                           | the manifest of a package with no Vue abstraction, so it keeps its name                  |
 | `packages/vue-grid-layout-headless/package.json`                              | the reference manifest for a headless package with Vue as a peer                         |
+| `packages/grid-engine-headless/package.json`                                  | the first framework-free headless package: no framework peer, one entry                  |
 | `apps/web/app/store/survey/creator.ts`                                        | the survey creator's store, which calls the session                                      |
 | `apps/web/app/store/pageBuilder/history.ts`                                   | the page builder's keyed history, one per open resource, which does not call the session |
 | `apps/web/app/store/resource/whiteboard/index.ts`                             | the whiteboard's store, which calls the session without a selection port                 |
-| `scripts/src/services/workspace/getHeadlessPackageFailures.ts`                | the shape check: name, Vue peer, Vue import, one entry and no Pinia import               |
+| `scripts/src/services/workspace/getHeadlessPackageFailures.ts`                | the shape check: each kind's name, peers and imports, and one entry for both             |
 | `scripts/src/services/workspace/getHeadlessPackageFailures.test.ts`           | the check's scenarios over fixture manifests and sources                                 |
 | `scripts/src/workspace/headlessPackages.test.ts`                              | holds every headless package in the tree to the check                                    |
 | `scripts/src/services/workspace/checkIsHeadlessPackage.ts`                    | which packages the shape check applies to: a headless name or keyword                    |
 | `scripts/src/services/workspace/checkIsHeadlessPackage.test.ts`               | the cases of which packages count as headless                                            |
-| `scripts/src/services/workspace/constants.ts`                                 | the headless keyword, the name rule and the Vue and Pinia import rules                   |
+| `scripts/src/services/workspace/constants.ts`                                 | the headless keyword, each kind's name rule and the import rules                         |
 | `scripts/src/models/workspace/PackageShapeManifest.ts`                        | the manifest fields the check reads beyond PackageManifest                               |
 
 ## Sources
