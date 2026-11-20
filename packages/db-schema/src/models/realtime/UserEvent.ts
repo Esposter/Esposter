@@ -36,7 +36,7 @@ const updateRoomEventSchema = z.object({
   type: z.literal(RealtimeEventType.UpdateRoom),
 });
 // A room's last message moved it to the top of the list, which is what the room list sorts by. The room as its row stands
-// after the write, at the version the write left it, so the list applies it as a row
+// After the write, at the version the write left it, so the list applies it as a row
 const roomActivityEventSchema = z.object({
   data: selectRoomInMessageSchema,
   type: z.literal(RealtimeEventType.RoomActivity),
