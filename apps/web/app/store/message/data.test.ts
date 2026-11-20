@@ -610,6 +610,28 @@ describe(useDataStore, () => {
     ]);
   });
 
+  // A reconnect takes a row by its version, which the database raises on every change. Two changes in one millisecond
+  // Share a time, so a row whose version is newer at the same time is an edit the reconnect still has to apply
+  test("a reconnect refresh applies a newer version whose time ties the held copy", async () => {
+    expect.hasAssertions();
+
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { getSlice, refreshLoadedMessages } = dataStore;
+    const heldMessage = {
+      ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
+      id: roomMessageId,
+      updatedAt: new Date(0),
+      version: 1,
+    };
+    getSlice(roomId).items.value = [heldMessage];
+    trpcMsw.message.readMessagesByIds.query(() => [{ ...heldMessage, message: updatedMessage, version: 2 }]);
+    refreshLoadedMessages(roomId);
+    await waitForSynchronizedFunctions();
+
+    expect(takeOne(items.value).message).toBe(updatedMessage);
+  });
+
   test("storeUpdateMessage is idempotent", async () => {
     expect.hasAssertions();
 

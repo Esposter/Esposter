@@ -5,7 +5,10 @@ import { useVotePoll } from "#src/composables/message/poll/useVotePoll";
 import { useSession } from "#src/services/auth/authClient.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useDataStore } from "#src/store/message/data";
 import { MessageType } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -14,6 +17,7 @@ describe(useVotePoll, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   const userId = v7();
+  const otherUserId = v7();
   const optionId = v7();
   const pollContent: PollMessageContent = {
     options: [{ id: optionId, label: "label" }],
@@ -81,5 +85,65 @@ describe(useVotePoll, () => {
     await flushPromises();
 
     expect(isVoting.value).toBe(false);
+  });
+
+  // A refused vote changes nothing. The optimistic apply used to restore the poll as it stood before the vote, and that
+  // Restore landed over a newer poll the room had sent while the vote was in flight
+  test("a refused vote leaves a newer poll the room sent in place", async () => {
+    expect.hasAssertions();
+
+    const { promise: refusalReleased, resolve: releaseRefusal } = Promise.withResolvers<void>();
+    trpcMsw.message.votePoll.mutation(async () => {
+      await refusalReleased;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const dataStore = useDataStore();
+    const { getSlice, storeUpdateMessage } = dataStore;
+    const message = { ...createPollMessage(1), version: 1 };
+    getSlice(roomId).items.value = [message];
+    const { vote } = await useVotePoll(
+      () => message,
+      () => pollContent,
+      false,
+    );
+    vote(optionId);
+    const newerPoll = JSON.stringify({ ...pollContent, votes: { [otherUserId]: optionId } });
+    await storeUpdateMessage({ id: message.id, message: newerPoll, roomId, version: 2 });
+    releaseRefusal();
+    await flushPromises();
+
+    expect(takeOne(getSlice(roomId).items.value).message).toBe(newerPoll);
+  });
+
+  // The room answers a vote with the poll it stores. A newer poll can reach the screen before that answer lands, and an
+  // Answer that names the older version must not put its poll back over it
+  test("a vote answer naming an older version that lands last keeps the newer poll", async () => {
+    expect.hasAssertions();
+
+    const { promise: answerReleased, resolve: releaseAnswer } = Promise.withResolvers<void>();
+    trpcMsw.message.votePoll.mutation(async () => {
+      await answerReleased;
+      return {
+        ...createPollMessage(1),
+        message: JSON.stringify({ ...pollContent, votes: { [userId]: optionId } }),
+        version: 2,
+      };
+    });
+    const dataStore = useDataStore();
+    const { getSlice, storeUpdateMessage } = dataStore;
+    const message = { ...createPollMessage(1), version: 1 };
+    getSlice(roomId).items.value = [message];
+    const { vote } = await useVotePoll(
+      () => message,
+      () => pollContent,
+      false,
+    );
+    vote(optionId);
+    const newerPoll = JSON.stringify({ ...pollContent, votes: { [otherUserId]: optionId } });
+    await storeUpdateMessage({ id: message.id, message: newerPoll, roomId, version: 3 });
+    releaseAnswer();
+    await flushPromises();
+
+    expect(takeOne(getSlice(roomId).items.value).message).toBe(newerPoll);
   });
 });
