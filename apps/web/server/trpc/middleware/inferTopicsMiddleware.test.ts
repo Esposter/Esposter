@@ -19,6 +19,7 @@ import {
   getTopicWatchPayload,
   invitesInMessage,
   MAX_READ_TOPICS,
+  MAX_WRITE_ROW_VERSIONS,
   roomsInMessage,
   RoomType,
   StorageBucket,
@@ -97,6 +98,11 @@ const testRouter = router({
     await ctx.db.update(usersInAuth).set({ name: input.name }).where(eq(usersInAuth.id, input.id));
   }),
   renameUser: publicProcedure.input(renameInputSchema).mutation<undefined | UserRow>(renameUser),
+  renameUsers: publicProcedure
+    .input(z.object({ ids: z.array(z.string()), name: z.string() }))
+    .mutation<void>(async ({ ctx, input }) => {
+      await ctx.db.update(usersInAuth).set({ name: input.name }).where(inJsonArray(usersInAuth.id, input.ids));
+    }),
   useInvite: publicProcedure.input(z.string()).mutation<void>(async ({ ctx, input }) => {
     await ctx.db.update(invitesInMessage).set({ uses: 1 }).where(eq(invitesInMessage.id, input)).returning();
   }),
@@ -171,6 +177,39 @@ describe("inferTopicsMiddleware", () => {
     expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)).toBe(
       `renameUnreturned ${encodeURIComponent(JSON.stringify({ key: { id: user.id }, table: userTable, version: 1 }))}`,
     );
+  });
+
+  // A write names its rows in the header only while they fit it: one that changed more rows than the header's budget names none,
+  // So the header never grows with the write. Its entry drops on the answer, and its rows come back through the topic refetch
+  test("names none of a mutation's rows once it changed more than the header can name", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const ids = Array.from({ length: MAX_WRITE_ROW_VERSIONS + 1 }, () => v7());
+    await insertRows(
+      context.db,
+      usersInAuth,
+      ids.map((id) => ({ email: id, emailVerified: true, id, name: "name" })),
+    );
+    await createTestCaller(context).renameUsers({ ids, name: "renamed" });
+
+    expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)).toBeNull();
+  });
+
+  // The rows a write names are as many as the header's budget holds, each at its own version
+  test("names every row of a mutation that changed no more than the header can name", async () => {
+    expect.hasAssertions();
+
+    const context = await createMockContext();
+    const ids = Array.from({ length: MAX_WRITE_ROW_VERSIONS }, () => v7());
+    await insertRows(
+      context.db,
+      usersInAuth,
+      ids.map((id) => ({ email: id, emailVerified: true, id, name: "name" })),
+    );
+    await createTestCaller(context).renameUsers({ ids, name: "renamed" });
+
+    expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)?.split(", ")).toHaveLength(MAX_WRITE_ROW_VERSIONS);
   });
 
   // An invite's code is a credential, so its row is named by the digest its topic names, never by the code itself
