@@ -905,11 +905,12 @@ describe(RoomObject, () => {
       new Proxy(statement, {
         get: (target, key) => {
           if (key === "bind") return (...values: unknown[]) => holdStatement(target.bind(...values));
-          if (key === "run")
+          // A write that returns its row runs through `raw` or `all`, and one that does not runs through `run`
+          if (key === "run" || key === "all" || key === "raw")
             return async () => {
               writeStarted.resolve();
               await writeReleased.promise;
-              return target.run();
+              return Reflect.apply(target[key], target, []);
             };
           const value: unknown = Reflect.get(target, key);
           return typeof value === "function" ? value.bind(target) : value;
