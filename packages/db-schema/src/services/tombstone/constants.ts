@@ -1,4 +1,5 @@
 import { bookmarksInApp } from "#src/schema/app/bookmarksInApp";
+import { appUsersInMessage } from "#src/schema/message/appUsersInMessage";
 import { bansInMessage } from "#src/schema/message/bansInMessage";
 import { invitesInMessage } from "#src/schema/message/invitesInMessage";
 import { roomCategoriesInMessage } from "#src/schema/message/roomCategoriesInMessage";
@@ -7,6 +8,7 @@ import { roomMemberPermissionsInMessage } from "#src/schema/message/roomMemberPe
 import { roomRolesInMessage } from "#src/schema/message/roomRolesInMessage";
 import { usersToRoomRolesInMessage } from "#src/schema/message/usersToRoomRolesInMessage";
 import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
+import { webhooksInMessage } from "#src/schema/message/webhooksInMessage";
 import { notificationsInNotification } from "#src/schema/notification/notificationsInNotification";
 import { likesInPost } from "#src/schema/post/likesInPost";
 import { resourceFavoritesInResource } from "#src/schema/resource/resourceFavoritesInResource";
@@ -25,6 +27,7 @@ export const TOMBSTONE_RETENTION_MS = Temporal.Duration.from({ days: 7 }).total(
 // Table is soft-deleted too, but its own purge destroys it on its own retention, so it is not listed here. The registry test
 // Fails when a server statement soft-deletes a table this list does not name
 export const OVERLAY_TOMBSTONE_TABLES = [
+  appUsersInMessage,
   bansInMessage,
   blocksInSocial,
   bookmarksInApp,
@@ -41,4 +44,5 @@ export const OVERLAY_TOMBSTONE_TABLES = [
   roomRolesInMessage,
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
+  webhooksInMessage,
 ] as const;
