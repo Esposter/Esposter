@@ -8,6 +8,6 @@ export const parseEnumAttribute = <T extends string>(
   value: string | undefined,
 ): T | undefined => {
   if (value === undefined) return undefined;
-  if (checkIsEnumValue(enumObject, value)) return value;
-  throw new InvalidOperationError(Operation.Read, operation, `${value} is not a supported ${label}`);
+  else if (checkIsEnumValue(enumObject, value)) return value;
+  else throw new InvalidOperationError(Operation.Read, operation, `${value} is not a supported ${label}`);
 };
