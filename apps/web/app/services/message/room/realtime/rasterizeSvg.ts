@@ -2,13 +2,10 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { FULL_HD_RESOLUTION } from "#src/services/message/room/call/constants";
 import { getResultAsync, InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 
-const rasterizedSvgCache = new Map<string, string>();
+const rasterizedSvgCache = new Map<string, Promise<string | undefined>>();
 
-export const rasterizeSvg = (svgUrl: string) =>
+const rasterizeSvgFile = (svgUrl: string) =>
   getResultAsync(async () => {
-    const cachedRasterizedSvgUrl = rasterizedSvgCache.get(svgUrl);
-    if (cachedRasterizedSvgUrl) return cachedRasterizedSvgUrl;
-
     const svgResponse = await fetch(svgUrl);
     const svgBlob = await svgResponse.blob();
     const svgObjectUrl = URL.createObjectURL(svgBlob);
@@ -47,8 +44,20 @@ export const rasterizeSvg = (svgUrl: string) =>
       }, MimeType.Png);
     });
 
-    rasterizedSvgCache.set(svgUrl, rasterizedSvgBlobUrl);
     return rasterizedSvgBlobUrl;
   })
     .orTee(console.error)
     .unwrapOr(undefined);
+
+// The rasterization in flight is what is cached, so picks that overlap share one fetch and one canvas. A failure is
+// Evicted, so the next pick reads the preset again rather than being handed the failure
+export const rasterizeSvg = async (svgUrl: string) => {
+  const cachedRasterization = rasterizedSvgCache.get(svgUrl);
+  if (cachedRasterization) return cachedRasterization;
+
+  const rasterization = rasterizeSvgFile(svgUrl);
+  rasterizedSvgCache.set(svgUrl, rasterization);
+  const rasterizedSvgBlobUrl = await rasterization;
+  if (!rasterizedSvgBlobUrl) rasterizedSvgCache.delete(svgUrl);
+  return rasterizedSvgBlobUrl;
+};
