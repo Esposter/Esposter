@@ -1,17 +1,18 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { DAMAGE_BONUS_ATTRIBUTES } from "#src/services/combat/damage/constants";
 import {
   createIansanKitBehaviour,
   IANSAN_CHARACTER_ID,
   IANSAN_WARMING_UP_ID,
 } from "#src/services/kit/characters/iansanKit";
-import { DAMAGE_BONUS_ATTRIBUTES } from "#src/services/combat/damage/constants";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
@@ -60,7 +61,7 @@ const withFieldCharacter = (context: KitContext, characterId: number) => {
 const OTHER_CHARACTER_ID = 10_000_002;
 const extremeForceBuffs = (context: KitContext) =>
   context.kitEffectState.effects.filter(
-    (effect) =>
+    (effect): effect is KitBuff =>
       effect.kind === "buff" && effect.characterId === OTHER_CHARACTER_ID && effect.source === "iansan-constellation-6",
   );
 

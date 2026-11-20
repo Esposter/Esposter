@@ -1,6 +1,5 @@
-import type { GroundPoint } from "genshin-engine";
-
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { GroundPoint } from "genshin-engine";
 
 // The effects on the deployed team, held on one owner so each write a kit makes reassigns the list rather than changing
 // It in place, and a walk over the list runs on the list it started with whatever a call it makes writes. The step

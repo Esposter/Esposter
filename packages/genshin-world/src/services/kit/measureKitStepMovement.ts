@@ -9,7 +9,7 @@ export const measureKitStepMovement = ({
   to,
 }: {
   characterId: number;
-  fieldCharacterId: number | undefined;
+  fieldCharacterId?: number | undefined;
   from: GroundPoint;
   to: GroundPoint;
 }): number => (fieldCharacterId === characterId ? Math.hypot(to.x - from.x, to.z - from.z) : 0);

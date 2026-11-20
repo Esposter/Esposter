@@ -214,13 +214,6 @@ const addExtremeForce = (kitEffectState: KitEffectState, activeCharacterId: numb
 // Ascension 1's Precise Movement is built on the Stormflight's strikes, and gives its points on the burst's restore
 // Ascension 4's Warming Up is built: a nearby Nightsoul burst gives it, and the restore's points heal the active character on it
 export const createIansanKitBehaviour = (): KitBehaviour => ({
-  // Gcsim's OnMovement does for her burst's restore: the field character's movement is logged on the Kinetic Energy Scale
-  // While it is up, but none of Iansan's own, as she is not the active character then
-  onStep: ({ kitEffectState }, { characterId }, _stepSeconds, movement = 0) => {
-    if (movement <= 0 || kitEffectState.fieldCharacterId === characterId) return;
-    const scale = findKitStatus(kitEffectState.effects, characterId, KINETIC_ENERGY_SCALE_ID);
-    if (scale && scale.secondsRemaining > 0) scale.stacks = (scale.stacks ?? 0) + movement;
-  },
   burst: {
     onStart: ({ activeCombatant, kitEffectState, party }) => {
       const { ascension, characterId, constellationCount } = activeCombatant;
@@ -373,6 +366,13 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
     });
     startKitCooldown(kitEffectState, characterId, CONSTELLATION_1_COOLDOWN_ID, CONSTELLATION_1_COOLDOWN_SECONDS);
     gainPartyMemberEnergy(party, combatant, CONSTELLATION_1_ENERGY);
+  },
+  // Gcsim's OnMovement does for her burst's restore: the field character's movement is logged on the Kinetic Energy Scale
+  // While it is up, but none of Iansan's own, as she is not the active character then
+  onStep: ({ kitEffectState }, { characterId }, _stepSeconds, movement = 0) => {
+    if (movement <= 0 || kitEffectState.fieldCharacterId === characterId) return;
+    const scale = findKitStatus(kitEffectState.effects, characterId, KINETIC_ENERGY_SCALE_ID);
+    if (scale && scale.secondsRemaining > 0) scale.stacks = (scale.stacks ?? 0) + movement;
   },
   skill: {
     onStart: ({ activeCombatant, kitEffectState }) => {

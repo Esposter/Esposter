@@ -168,7 +168,7 @@ export interface Kit {
   // Kit's state, or to drain a sprint's points on the step it starts
   onSprint?: ((context: KitContext, kitState: KitState, stepSeconds: number) => void) | undefined;
   // Run on each step while the character is in the deployed team, on the field or off it, given its own Combatant, the
-  // step's seconds and the field body's movement across it, which is none across a swap, for a clock a constellation or a
+  // Step's seconds and the field body's movement across it, which is none across a swap, for a clock a constellation or a
   // Weapon's passive keeps while its character stands in the team, or a scale that logs movement
   onStep?: ((context: KitContext, combatant: Combatant, stepSeconds: number, movement?: number) => void) | undefined;
   plungeCollision: KitHit;
