@@ -8,7 +8,7 @@
   "editor.formatOnSave": true,
   "editor.gotoLocation.multipleDefinitions": "goto",
   "files.associations": { ".env": "env", ".env.example": "env", ".tsx": "xml" },
-  // Keeps the file watcher (and therefore tsserver's project reloads) out of generated trees.
+  // Keeps the file watcher (and therefore the language server's project reloads) out of generated trees.
   "files.watcherExclude": {
     "**/.git/objects/**": true,
     "**/.nuxt/**": true,
@@ -16,14 +16,12 @@
     "**/dist/**": true,
     "**/node_modules/**": true
   },
-  "js/ts.tsdk.path": "node_modules/typescript/lib",
-  "js/ts.tsserver.maxMemory": 16384,
+  "js/ts.contentMappers.enabled": true,
+  "js/ts.experimental.useTsgo": true,
+  "js/ts.tsdk.path": "./node_modules/tsrs/tsdk",
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "oxc.enable": true,
   "search.followSymlinks": false,
-  "vize.ecosystem.enable": true,
-  "vize.editor.enable": true,
-  "vize.enable": true,
   "vize.lint.enable": false,
-  "vize.typecheck.enable": true
+  "vize.typecheck.enable": false
 }

@@ -30,6 +30,7 @@ Install these VS Code extensions, in alphabetical order:
 | Oxc                      | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode                    |
 | Powershell               | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell              |
 | Pulumi                   | https://marketplace.visualstudio.com/items?itemName=pulumi.pulumi-vscode-tools        |
+| TypeScript 7             | https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.native-preview     |
 | UnoCSS                   | https://marketplace.visualstudio.com/items?itemName=antfu.unocss                      |
 | Vite Plus Extension Pack | https://marketplace.visualstudio.com/items?itemName=VoidZero.vite-plus-extension-pack |
 | Vitest                   | https://marketplace.visualstudio.com/items?itemName=vitest.explorer                   |
