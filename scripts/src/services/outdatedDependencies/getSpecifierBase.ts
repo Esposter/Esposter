@@ -1,6 +1,3 @@
-import { parseAliasSpecifier } from "#src/services/outdatedDependencies/parseAliasSpecifier";
+import { getSpecifierRange } from "#src/services/outdatedDependencies/getSpecifierRange";
 
-export const getSpecifierBase = (specifier: string): string => {
-  const range = parseAliasSpecifier(specifier)?.range ?? specifier;
-  return range.replace(/^[\^~>=< ]+/u, "");
-};
+export const getSpecifierBase = (specifier: string): string => getSpecifierRange(specifier).replace(/^[\^~>=< ]+/u, "");
