@@ -108,7 +108,7 @@ grid-engine's source is not in the installed package, which ships minified bundl
 
 ## Upstream audit
 
-The tracker was read whole on 2026-11-21, read-only, through `gh api`: 542 items, 267 issues and 275 pull requests, with 842 issue comments and 20 review comments. The installed copy read alongside is grid-engine 2.54.0. Every item has one verdict with its proof, typed by hand, and the counts count each item once. A proof is the item's body and comments where they say something. Where a body and its comments are empty, the proof is the change that closed the item (a commit, a pull request or a label), the app's survey table, or the installed package. 226 items have neither a body nor a comment, and each proof states the basis it rests on. A pull request that closes an issue takes that issue's verdict, and a dependabot bump is checked against the installed manifest.
+The tracker was read whole, read-only, through `gh api`: 542 items, 267 issues and 275 pull requests, with 842 issue comments and 20 review comments. The installed copy read alongside is grid-engine 2.54.0. Every item has one verdict with its proof, typed by hand, and the counts count each item once. A proof is the item's body and comments where they say something. Where a body and its comments are empty, the proof is the change that closed the item (a commit, a pull request or a label), the app's survey table, or the installed package. 226 items have neither a body nor a comment, and each proof states the basis it rests on. A pull request that closes an issue takes that issue's verdict, and a dependabot bump is checked against the installed manifest.
 
 The classes are the triage classes of `dependency-admission`, with the cases this audit needed:
 
