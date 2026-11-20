@@ -2,7 +2,8 @@ import { setMemberPermissionOverride } from "#server/services/room/rbac/setMembe
 import { getMockSession } from "#server/trpc/context.test";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { checkHasPermission } from "@esposter/db";
-import { RoomPermission } from "@esposter/db-schema";
+import { roomMemberPermissionsInMessage, RoomPermission } from "@esposter/db-schema";
+import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -81,5 +82,44 @@ describe(checkHasPermission, () => {
     expect(hasReadPermission).toBe(true);
     expect(hasSendPermission).toBe(false);
     expect(hasManagePermission).toBe(true);
+  });
+
+  // A revoked override is a tombstone the server keeps, so the permission it allowed stops counting once the tombstone is
+  // Written, and the member's roles decide again
+  test("a revoked override stops counting for permissions on the server", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await setMemberPermissionOverride(getMockContext().db, {
+      allow: RoomPermission.ManageMessages,
+      deny: 0n,
+      inherit: 0n,
+      roomId: getRoomId(),
+      userId: member.id,
+    });
+    const hasManageBeforeRevoke = await checkHasPermission(
+      getMockContext().db,
+      member.id,
+      getRoomId(),
+      RoomPermission.ManageMessages,
+    );
+    await getMockContext()
+      .db.update(roomMemberPermissionsInMessage)
+      .set({ deletedAt: new Date(0) })
+      .where(
+        and(
+          eq(roomMemberPermissionsInMessage.roomId, getRoomId()),
+          eq(roomMemberPermissionsInMessage.userId, member.id),
+        ),
+      );
+    const hasManageAfterRevoke = await checkHasPermission(
+      getMockContext().db,
+      member.id,
+      getRoomId(),
+      RoomPermission.ManageMessages,
+    );
+
+    expect(hasManageBeforeRevoke).toBe(true);
+    expect(hasManageAfterRevoke).toBe(false);
   });
 });

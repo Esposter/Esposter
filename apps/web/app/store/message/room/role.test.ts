@@ -2,9 +2,12 @@
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
 import { serveMemberRoles } from "#src/services/message/member/serveMemberRoles.test";
 import { createUser } from "#src/services/message/user/createUser.test";
+import { appendRowVersions } from "#src/services/trpc/appendRowVersions.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useUserStore } from "#src/store/message/user/index";
+import { usersToRoomRolesInMessage } from "@esposter/db-schema";
+import { getTableName } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -110,6 +113,44 @@ describe(useRoleStore, () => {
     assignRole({ roleId: first.id, roomId, userId });
     revokeRole({ roleId: first.id, roomId, userId });
     await flushPromises();
+
+    expect(getMemberRoles(roomId, userId)).toStrictEqual([]);
+  });
+
+  // A read answered before a revocation still holds the member's role. The revocation's answer lands first at a higher
+  // Version, so the read's older copy is discarded and the revoked role stays off the member
+  test("a read answered before a revocation does not bring the revoked role back", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const memberRole = (isRevoked: boolean) => ({
+      createdAt: new Date(0),
+      deletedAt: isRevoked ? new Date(0) : null,
+      role: first,
+      roleId: first.id,
+      roomId,
+      updatedAt: new Date(0),
+      userId,
+      version: isRevoked ? 1 : 0,
+    });
+    const { promise: readAnswered, resolve: releaseRead } = Promise.withResolvers<void>();
+    trpcMsw.role.readMemberRoles.query(async () => {
+      await readAnswered;
+      return [memberRole(false)];
+    });
+    trpcMsw.role.revokeRole.mutation(({ ctx, path }) => {
+      appendRowVersions(ctx.responseHeaders, path, [
+        { key: { roleId: first.id, roomId, userId }, table: getTableName(usersToRoomRolesInMessage), version: 1 },
+      ]);
+      return [memberRole(true)];
+    });
+    const roleStore = useRoleStore();
+    const { getMemberRoles, revokeRole } = roleStore;
+    const read = useReadMemberRoles()({ roomId, userIds: [userId] });
+    revokeRole({ roleId: first.id, roomId, userId });
+    await flushPromises();
+    releaseRead();
+    await read;
 
     expect(getMemberRoles(roomId, userId)).toStrictEqual([]);
   });
