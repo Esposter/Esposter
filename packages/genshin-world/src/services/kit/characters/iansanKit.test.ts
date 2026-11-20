@@ -9,6 +9,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { DAMAGE_BONUS_ATTRIBUTES } from "#src/services/combat/damage/constants";
 import {
+  CONSTELLATION_6_SOURCE,
   createIansanKitBehaviour,
   IANSAN_CHARACTER_ID,
   IANSAN_WARMING_UP_ID,
@@ -62,7 +63,7 @@ const OTHER_CHARACTER_ID = 10_000_002;
 const extremeForceBuffs = (context: KitContext) =>
   context.kitEffectState.effects.filter(
     (effect): effect is KitBuff =>
-      effect.kind === "buff" && effect.characterId === OTHER_CHARACTER_ID && effect.source === "iansan-constellation-6",
+      effect.kind === "buff" && effect.characterId === OTHER_CHARACTER_ID && effect.source === CONSTELLATION_6_SOURCE,
   );
 
 const healthShareOf = (context: KitContext) => getPartyMember(context.party, IANSAN_CHARACTER_ID).healthShare;

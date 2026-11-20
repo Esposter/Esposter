@@ -92,7 +92,7 @@ const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_BURST_BONUS_SECONDS = 3;
 const CONSTELLATION_6_DAMAGE_BONUS = 0.25;
 const CONSTELLATION_6_SECONDS = 3;
-const CONSTELLATION_6_SOURCE = "iansan-constellation-6";
+export const CONSTELLATION_6_SOURCE = "iansan-constellation-6";
 
 // Ascension 1's Precise Movement, as gcsim (MIT) iansan/asc.go gives it: the Stormflight's first strike on an enemy gives
 // Her 20% ATK for 15 seconds. Every strike of the Stormflight lands at its one hitmark, so giving it on each strike is the
@@ -189,10 +189,10 @@ const restoreConstellationFourPoints = (
 };
 
 // Constellation 6's Extreme Force, as gcsim's c6OnOverflow gives it: the active character takes 25% DMG Bonus on every element
-// And the Physical DMG Bonus for 3 seconds, the overflow that set it off on the restore tick
-const addExtremeForce = (kitEffectState: KitEffectState, activeCharacterId: number): void => {
+// And the Physical DMG Bonus for 3 seconds, the overflow that set it off on the restore tick, given to the field character
+const addExtremeForce = (kitEffectState: KitEffectState, fieldCharacterId: number): void => {
   for (const attribute of DAMAGE_BONUS_ATTRIBUTES)
-    buffKitMember(kitEffectState, activeCharacterId, {
+    buffKitMember(kitEffectState, fieldCharacterId, {
       amount: CONSTELLATION_6_DAMAGE_BONUS,
       attribute,
       secondsRemaining: CONSTELLATION_6_SECONDS,
@@ -258,7 +258,7 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
               secondsRemaining: Number.POSITIVE_INFINITY,
               stacks: overflow,
             });
-          // The overflow gives the field character Extreme Force, as the spec says, and none while no character is on the field
+          // The overflow gives the field character Extreme Force, and none while no character is on the field
           const { fieldCharacterId } = context.kitEffectState;
           if (overflow > 0 && constellationCount >= CONSTELLATION_6 && fieldCharacterId !== undefined)
             addExtremeForce(context.kitEffectState, fieldCharacterId);
