@@ -258,18 +258,26 @@ export interface GridEngineEvents {
   positionChangeFinished: { id: string; exitTile: Position; enterTile: Position; direction: Direction };
 }
 
+// The reader's view of a character: the tile it stands on, its facing, and its step's progress, zero when no step is under way
+export interface CharacterState {
+  facingDirection: Direction;
+  position: Position;
+  progress: number;
+}
+
 export interface GridEngine {
   addCharacter: (config: CharacterConfig) => Result<void, GridEngineError>;
-  hasCharacter: (id: string) => boolean;
+  checkHasCharacter: (id: string) => boolean;
+  checkIsBlocked: (position: Position) => boolean;
   move: (id: string, direction: Direction) => Result<void, GridEngineError>;
-  turnTowards: (id: string, direction: Direction) => Result<void, GridEngineError>;
-  setPosition: (id: string, position: Position) => Result<void, GridEngineError>;
-  isBlocked: (position: Position) => boolean;
-  update: (delta: number) => void;
   on: <TEvent extends keyof GridEngineEvents>(
     event: TEvent,
     listener: (payload: GridEngineEvents[TEvent]) => void,
   ) => () => void;
+  readCharacter: (id: string) => Result<CharacterState, GridEngineError>;
+  setPosition: (id: string, position: Position) => Result<void, GridEngineError>;
+  turnTowards: (id: string, direction: Direction) => Result<void, GridEngineError>;
+  update: (delta: number) => void;
 }
 
 export const createGridEngine: (config: GridEngineConfig) => Result<GridEngine, GridEngineError>;
@@ -300,6 +308,7 @@ The binding's folder is the one feature that consumes it, which is the world, an
 - **`Direction` is a value set, not a TypeScript enum.** Alternative: a TypeScript enum, as grid-engine exports. Rejected: two enums with the same members are still two types, which is the reason the mirror exists.
 - **The no-direction value stays.** Alternative: the absent form, undefined. Rejected: the saved respawn location holds a direction, so changing the value is a stored-data change that this swap does not own.
 - **No character layers, containers, pathfinding, queues, labels, collision groups or tile caches.** Alternative: the full surface, for later use. Rejected: none is called, and each is a feature the rejected and deferred pages would have to justify first.
+- **The engine exposes a read of a character's tile, facing and progress.** The binding draws a sprite between two tiles, so it needs the step's progress on every frame, and no event carries it. Alternative: the binding keeps its own copy of each step from the events. Rejected: the copy drifts from the engine's step at the first listener's move. The first Public API block left this read out, and the build added it: `readCharacter` returns a copy of the tile, the facing and the progress, and is pinned by the test that reads a step's progress at the midpoint and after its commit.
 - **Events are typed and carry `id` and `direction`.** Alternative: the streams and a facing getter. Rejected: the app's type extraction from stream signatures is the cost, and the facing getter is the read-back the payload removes.
 - **Each `create` makes a new engine.** Alternative: clear the old one in place. Rejected: a new instance has no state to clear, and its listeners are dropped with the old one, so a stale character or listener cannot survive a tilemap change.
 - **A listener's call applies from the next update.** Alternative: apply it at once within the commit. Rejected: a second step inside the same update is the defect #528 reports, and at once would make the commit's event and the step disagree.

@@ -1,4 +1,5 @@
 import type { CharacterConfig } from "#src/models/CharacterConfig";
+import type { CharacterState } from "#src/models/CharacterState";
 import type { Direction } from "#src/models/Direction";
 import type { GridEngineError } from "#src/models/GridEngineError";
 import type { GridEngineEvents } from "#src/models/GridEngineEvents";
@@ -15,6 +16,7 @@ export interface GridEngine {
     event: TEvent,
     listener: (payload: GridEngineEvents[TEvent]) => void,
   ) => () => void;
+  readCharacter: (id: string) => Result<CharacterState, GridEngineError>;
   setPosition: (id: string, position: Position) => Result<void, GridEngineError>;
   turnTowards: (id: string, direction: Direction) => Result<void, GridEngineError>;
   update: (delta: number) => void;

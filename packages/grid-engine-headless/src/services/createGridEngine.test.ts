@@ -128,6 +128,28 @@ describe(createGridEngine, () => {
     expect(engine.checkIsBlocked({ x: 0, y: 0 })).toBe(false);
   });
 
+  test("readCharacter reports the tile a step left, its facing and its progress until the step is committed", () => {
+    expect.hasAssertions();
+
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false]] });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+    engine.update(STEP_DURATION_MS / 2);
+
+    expect(unwrap(engine.readCharacter(FIRST_ID))).toStrictEqual({
+      facingDirection: Direction.Right,
+      position: { x: 0, y: 0 },
+      progress: 500,
+    });
+
+    engine.update(STEP_DURATION_MS / 2);
+
+    expect(unwrap(engine.readCharacter(FIRST_ID))).toStrictEqual({
+      facingDirection: Direction.Right,
+      position: { x: 1, y: 0 },
+      progress: 0,
+    });
+  });
+
   test("a move while moving is ignored", () => {
     expect.hasAssertions();
 
