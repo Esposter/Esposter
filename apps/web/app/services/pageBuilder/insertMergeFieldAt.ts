@@ -1,6 +1,5 @@
 import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
-import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { PageBuilderHelper } from "#src/models/pageBuilder/PageBuilderHelper";
 
 import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
 import { appendMergeFieldToText } from "#src/services/pageBuilder/email/appendMergeFieldToText";
@@ -12,19 +11,15 @@ import { getBlockNode, getBlockPropValue } from "vue-block-editor-headless";
 
 // Appends a merge field to the text under a point of the frame, as one edit, and reports whether the edit applied. A point
 // Over no text, or a text whose content does not parse, applies nothing, as a drop anywhere else does
-export const insertMergeFieldAt = <
-  TNode extends BlockNode,
-  TRoot extends object,
-  TDefinition extends BlockTypeDefinition<TNode>,
-  TDocument extends BlockDocument<TNode, TRoot>,
->(
-  kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
-  document: TDocument,
-  resourceId: string,
-  framePoint: { x: number; y: number },
-  getChildRect: (nodeId: string) => OverlayBox | undefined,
-  columnName: string,
-): boolean => {
+export const insertMergeFieldAt: PageBuilderHelper<
+  boolean,
+  [
+    resourceId: string,
+    framePoint: { x: number; y: number },
+    getChildRect: (nodeId: string) => OverlayBox | undefined,
+    columnName: string,
+  ]
+> = (kind, document, resourceId, framePoint, getChildRect, columnName) => {
   const nodeId = getTextNodeIdAt(kind, document, framePoint, getChildRect);
   const nodePointer = nodeId && getNodePointer(kind, document, nodeId);
   const textNode = nodePointer && getBlockNode(document, nodePointer, kind.children);

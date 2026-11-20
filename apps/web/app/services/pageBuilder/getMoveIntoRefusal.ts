@@ -15,8 +15,7 @@ export const getMoveIntoRefusal: PageBuilderHelper<string | undefined, [nodePoin
   if (moveIntoPreviousSibling(document, kind.registry, kind.children, nodePointer).length > 0) return undefined;
 
   const segments = parseJsonPointer(nodePointer);
-  const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
+  const index = parseArrayIndex(segments.at(-1) ?? "");
   if (index === 0) return FIRST_IN_SLOT_MESSAGE;
-
-  return `The block before it takes no ${getNodeTitle(kind, document, segments)}`;
+  else return `The block before it takes no ${getNodeTitle(kind, document, segments)}`;
 };

@@ -6,9 +6,8 @@ import { styleValueSchema } from "#shared/models/pageBuilder/StyleValue";
 // It sets no declaration. The browser's own check decides whether the property takes the value
 export const getStyleValueError = (property: StyleProperty, value: string): string | undefined => {
   if (value === "") return undefined;
-  if (!styleValueSchema.safeParse(value).success)
+  else if (!styleValueSchema.safeParse(value).success)
     return "Keep out braces, angle brackets and comment delimiters, and keep it short";
-  if (!CSS.supports(property, value)) return `${property} does not take this value`;
-
-  return undefined;
+  else if (CSS.supports(property, value)) return undefined;
+  else return `${property} does not take this value`;
 };

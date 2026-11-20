@@ -12,6 +12,5 @@ export const getStyleOperations = (
 ): JsonPatchOperation[] => {
   const path = `${pointer}/props/style`;
   if (Object.keys(next).length > 0) return [{ op: JsonPatchOperationType.Add, path, value: next }];
-
-  return current === undefined ? [] : [{ op: JsonPatchOperationType.Remove, path }];
+  else return current === undefined ? [] : [{ op: JsonPatchOperationType.Remove, path }];
 };

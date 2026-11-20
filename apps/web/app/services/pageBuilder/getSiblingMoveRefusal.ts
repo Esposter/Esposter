@@ -13,6 +13,5 @@ export const getSiblingMoveRefusal: PageBuilderHelper<string | undefined, [nodeP
 ) => {
   if (getSiblingMoveOperations(document, kind.registry, kind.children, nodePointer, offset).length > 0)
     return undefined;
-
-  return offset < 0 ? FIRST_IN_SLOT_MESSAGE : LAST_IN_SLOT_MESSAGE;
+  else return offset < 0 ? FIRST_IN_SLOT_MESSAGE : LAST_IN_SLOT_MESSAGE;
 };

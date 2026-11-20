@@ -8,7 +8,7 @@ import { getBlockNode } from "vue-block-editor-headless";
 export const getNodeTitle: PageBuilderHelper<string, [nodeSegments: string[]]> = (kind, document, nodeSegments) => {
   const node = getBlockNode(document, toJsonPointer(nodeSegments), kind.children);
   const nodeType = node?.type;
-  const index = parseArrayIndex(nodeSegments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
+  const index = parseArrayIndex(nodeSegments.at(-1) ?? "");
   const parentSegments = nodeSegments.slice(0, -1);
   const siblings = readJsonValue(document, parentSegments);
   if (!nodeType || index === undefined || !Array.isArray(siblings)) return "";

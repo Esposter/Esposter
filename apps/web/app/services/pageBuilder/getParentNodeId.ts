@@ -13,6 +13,5 @@ export const getParentNodeId: PageBuilderHelper<string | undefined, [nodeId: str
 
   const slotPointer = getNodeSlotPointer(nodePointer);
   if (parseJsonPointer(slotPointer).length <= 1) return "";
-
-  return getSlotOwnerId(kind, document, slotPointer);
+  else return getSlotOwnerId(kind, document, slotPointer);
 };

@@ -15,8 +15,7 @@ export const getMoveOutRefusal: PageBuilderHelper<string | undefined, [nodePoint
   if (moveOutAfterParent(document, kind.registry, kind.children, nodePointer).length > 0) return undefined;
 
   const segments = parseJsonPointer(nodePointer);
-  const parentIndex = parseArrayIndex(segments.at(-4) ?? "", Number.MAX_SAFE_INTEGER);
+  const parentIndex = parseArrayIndex(segments.at(-4) ?? "");
   if (parentIndex === undefined) return TOP_LEVEL_MESSAGE;
-
-  return `Its parent's slot takes no ${getNodeTitle(kind, document, segments)}`;
+  else return `Its parent's slot takes no ${getNodeTitle(kind, document, segments)}`;
 };
