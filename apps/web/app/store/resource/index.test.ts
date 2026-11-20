@@ -20,10 +20,12 @@ import { setupWithDataSource } from "#src/composables/resource/sheet/commands/se
 import { useDeleteRows } from "#src/composables/resource/sheet/commands/useDeleteRows";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
 import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
+import { resourceTable } from "#src/services/resource/overlay/constants";
 import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
 import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useNotificationStore } from "#src/store/notification";
+import { useOverlayStore } from "#src/store/overlay";
 import { useResourceStore } from "#src/store/resource/index";
 import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { ResourceType } from "@esposter/db-schema";
@@ -614,6 +616,75 @@ describe(useResourceStore, () => {
     expect(serverContentVersion).toBe(2);
     expect(saveState.value).toBe(ResourceSaveState.Saved);
     expect(notificationStore.notifications).toHaveLength(0);
+  });
+
+  // A save queued behind an in-flight one carries the version its content was read at, not the held row's. Another
+  // Device's save moves the row, so a save sent with that version is accepted over its content, with no stale notice
+  test("A queued save of a closed resource is refused after another device saved", async () => {
+    expect.hasAssertions();
+
+    const { promise: isFirstSaveReleased, resolve: releaseFirstSave } = Promise.withResolvers<void>();
+    const contentVersions: number[] = [];
+    let serverContentVersion = 0;
+    trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+      contentVersions.push(input.contentVersion);
+      if (contentVersions.length === 1) await isFirstSaveReleased;
+
+      if (input.contentVersion !== serverContentVersion)
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
+
+      serverContentVersion++;
+      return { ...createResource(input.id), contentVersion: serverContentVersion };
+    });
+    const notificationStore = useNotificationStore();
+    const resourceStore = useResourceStore();
+    const { clearResource, readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    await readResource();
+    await readContent(noop);
+    saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    clearResource(resourceId);
+    // Another device saves the resource at version 1 while the first save is still in flight
+    serverContentVersion = 1;
+    useOverlayStore().arrive(resourceTable, { ...createResource(resourceId), contentVersion: 1, version: 1 });
+    releaseFirstSave();
+    await settleSave();
+
+    expect(contentVersions).toStrictEqual([0, 0]);
+    expect(serverContentVersion).toBe(1);
+    expect(notificationStore.notifications.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
+  });
+
+  // The row another device's read brings does not move the version the content was read at. A save queued behind a
+  // Refused one is sent with that content version, so the server holds it to the version the content carries
+  test("A row read from another device does not raise the version a save carries", async () => {
+    expect.hasAssertions();
+
+    const { promise: isFirstSaveReleased, resolve: releaseFirstSave } = Promise.withResolvers<void>();
+    const contentVersions: number[] = [];
+    trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+      contentVersions.push(input.contentVersion);
+      if (contentVersions.length === 1) {
+        await isFirstSaveReleased;
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }
+
+      return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
+    });
+    const resourceStore = useResourceStore();
+    const { clearResource, readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    await readResource();
+    await readContent(noop);
+    saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    clearResource(resourceId);
+    useOverlayStore().arrive(resourceTable, { ...createResource(resourceId), contentVersion: 1, version: 1 });
+    releaseFirstSave();
+    await settleSave();
+
+    expect(contentVersions).toStrictEqual([0, 0]);
   });
 
   // Records the name of each content the server receives, and holds the first save until the test releases it, so a
