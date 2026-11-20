@@ -3,10 +3,7 @@ import type { TRPCMswRoot } from "#src/models/TRPCMswRoot";
 import type { UnhandledProcedureAction } from "#src/models/UnhandledProcedureAction";
 import type { AnyTRPCRouter } from "@trpc/server";
 import type { FetchHandlerRequestOptions } from "@trpc/server/adapters/fetch";
-import type { Promisable } from "type-fest";
-
-// tRPC's response-meta callback for the fetch adapter, with its context typed by `TContext` rather than by a router
-type ResponseMetaFn = NonNullable<FetchHandlerRequestOptions<AnyTRPCRouter>["responseMeta"]>;
+import type { Except, Promisable } from "type-fest";
 
 export interface TRPCMswOptions<TContext extends object> {
   // A query sent as a POST, as `httpLink` and `httpBatchLink` do with `methodOverride: "POST"`
@@ -17,7 +14,7 @@ export interface TRPCMswOptions<TContext extends object> {
   onUnhandledProcedure?: UnhandledProcedureAction;
   // The response headers a call's answer carries, which a test sets through its context
   responseMeta?: (
-    options: Omit<Parameters<ResponseMetaFn>[0], "ctx"> & { ctx?: TContext },
+    options: Except<Parameters<ResponseMetaFn>[0], "ctx"> & { ctx?: TContext },
   ) => ReturnType<ResponseMetaFn>;
   // The real router, whose procedures' input parsers run before each resolver, so a call the server would reject
   // With BAD_REQUEST is rejected here too rather than answered. Without it any input reaches the resolver
@@ -26,3 +23,6 @@ export interface TRPCMswOptions<TContext extends object> {
   // The url the client's `wsLink` connects to; no WebSocket handler is created without it
   webSocketUrl?: string;
 }
+// The response-meta callback the fetch adapter takes from tRPC, whose context `responseMeta` above types by `TContext`
+// Rather than by a router
+type ResponseMetaFn = NonNullable<FetchHandlerRequestOptions<AnyTRPCRouter>["responseMeta"]>;
