@@ -16,6 +16,13 @@ import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
+// The row the member list draws for the member
+const getMemberRow = () => {
+  const memberStore = useMemberStore();
+  const { members } = storeToRefs(memberStore);
+  return takeOne(members.value);
+};
+
 describe("messageModelMemberActionDialogDisplayName", () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
@@ -32,17 +39,12 @@ describe("messageModelMemberActionDialogDisplayName", () => {
   // Page held. The list is the room's, so the room is made current here, after the dialog mounts, since a mount resets the route
   const seedMember = async () => {
     setCurrentRoomId(roomId);
-    const { storeUser } = useUserStore();
+    const userStore = useUserStore();
+    const { storeUser } = userStore;
     storeUser(user);
     const memberStore = useMemberStore();
     const { arriveMemberPage, readItems } = memberStore;
     await readItems(() => Promise.resolve(arriveMemberPage({ items: [memberRow], nextCursor: "" })));
-  };
-  // The row the member list draws for the member
-  const getMemberRow = () => {
-    const memberStore = useMemberStore();
-    const { members } = storeToRefs(memberStore);
-    return takeOne(members.value);
   };
 
   // The write is the save's only request, and the test awaits its arrival rather than a flush, since a test that ends
