@@ -5,6 +5,7 @@ import { useSession } from "#src/services/auth/authClient.test";
 import { createPost } from "#src/services/post/createPost.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useCommentStore } from "#src/store/post/comment/index";
+import { usePostCountStore } from "#src/store/post/count";
 import { usePostStore } from "#src/store/post/index";
 import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -18,138 +19,150 @@ describe(useCommentStore, () => {
   const otherComment = createPost({ depth: 1, parentId: postId });
   const newDescription = "a";
   const failingDescription = " ";
+  // A count read answers at the version after the post's own row, which is how a count the server moved is told apart
+  // from the row the store already holds
+  const countVersion = 1;
 
-  // Two edits of one comment queue under the same key, so the second's rollback has to undo its own edit rather
-  // Than restore the branch as it read at submit time — which predates the edit ahead of it
-  test("rolls a failed edit back to the edit ahead of it", async () => {
+  // Holds a branch's replies on the overlay, and lists them under their parent the way a page of the branch does
+  const seedBranch = (parentId: string, replies: ReturnType<typeof createPost>[]) => {
+    const commentStore = useCommentStore();
+    commentStore
+      .getSlice(parentId)
+      .initializeCursorPaginationData(commentStore.readCommentPage({ items: replies, nextCursor: "" }));
+  };
+
+  // An edit is answered with whether the server kept it, and a refused one alerts and leaves the stored text as it was
+  test("answers an edit with whether the server kept it", async () => {
     expect.hasAssertions();
 
-    const isFailingEditReceived = Promise.withResolvers<void>();
     trpcMsw.post.updateComment.mutation(({ input }) => {
-      if (input.description === failingDescription) {
-        isFailingEditReceived.resolve();
+      if (input.description === failingDescription)
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+
+      return createPost({ ...input, depth: 1, parentId: postId, version: 1 });
+    });
+    const commentStore = useCommentStore();
+    const { getBranchItems, updateComment } = commentStore;
+    seedBranch(postId, [comment]);
+    const branchComments = getBranchItems(postId);
+
+    await expect(updateComment({ description: newDescription, id: comment.id })).resolves.toBe(true);
+    expect(takeOne(branchComments.value).description).toBe(newDescription);
+    await expect(updateComment({ description: failingDescription, id: comment.id })).resolves.toBe(false);
+    expect(takeOne(branchComments.value).description).toBe(newDescription);
+  });
+
+  // Two edits of one comment are written to its row in issue order, so a refused edit drops its own entry and leaves the
+  // row at the edit the server kept
+  test("leaves the branch on the edit the server kept when a later edit is refused", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.post.updateComment.mutation(({ input }) => {
+      if (input.description === failingDescription)
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+
+      return createPost({ ...input, depth: 1, parentId: postId, version: 1 });
+    });
+    const commentStore = useCommentStore();
+    const { getBranchItems, updateComment } = commentStore;
+    seedBranch(postId, [comment]);
+    const branchComments = getBranchItems(postId);
+    updateComment({ description: newDescription, id: comment.id });
+    updateComment({ description: failingDescription, id: comment.id });
+
+    await until(() => takeOne(branchComments.value).description).toBe(newDescription);
+    expect(takeOne(branchComments.value).description).toBe(newDescription);
+  });
+
+  // A refused delete leaves its reply in the branch, and an accepted one leaves with every reply the server removed
+  test("keeps a reply whose delete is refused, and drops one whose delete the server kept", async () => {
+    expect.hasAssertions();
+
+    const isRefusedDeleteReceived = Promise.withResolvers<void>();
+    trpcMsw.post.deleteComment.mutation(({ input }) => {
+      if (input === comment.id) {
+        isRefusedDeleteReceived.resolve();
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }
 
-      return createPost({ ...input, depth: 1, parentId: postId });
+      return { ancestorIds: [postId], removedIds: [otherComment.id] };
     });
-    // The edit ahead of it reads the counts back once the server keeps it, so that read needs an answer too
-    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: comment.id, likeCount: 0 }]);
-    const commentStore = useCommentStore();
-    const { getSlice, updateComment } = commentStore;
-    getSlice(postId).items.value = [createPost({ depth: 1, id: comment.id, parentId: postId })];
-    updateComment({ description: newDescription, id: comment.id }, postId);
-    updateComment({ description: failingDescription, id: comment.id }, postId);
-
-    // The edit ahead of it already shows the same description, so the wait is for the refused edit's rollback to restore it
-    await isFailingEditReceived.promise;
-    await until(() => takeOne(getSlice(postId).items.value).description).toBe(newDescription);
-    expect(takeOne(getSlice(postId).items.value).description).toBe(newDescription);
-  });
-
-  // Deletes of different comments carry different keys, so they run beside each other
-  test("rolls a failed delete back without resurrecting a comment deleted beside it", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.post.deleteComment.mutation(({ input }) => {
-      if (input === comment.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-
-      return { ancestorIds: [postId], removedIds: [postId] };
-    });
-    // The rollback restores the comment with the count it held when the delete was sent.
-    // The count the server holds is read back over it: a count that moved while the comment was out of the thread
-    // Reached no copy
-    const readCount = ref(0);
+    // The accepted delete reads the counts it moved, and the test waits for that read so it does not end before it
+    const isCountRead = Promise.withResolvers<void>();
     trpcMsw.post.readPostCounts.query(() => {
-      readCount.value += 1;
-      return [
-        { commentCount: 1, id: postId, likeCount: 0 },
-        { commentCount: 0, id: comment.id, likeCount: 3 },
-      ];
+      isCountRead.resolve();
+      return [{ commentCount: 0, id: postId, likeCount: 0, version: countVersion }];
     });
-    const parentPost = createPost({ commentCount: 2, id: postId });
     const commentStore = useCommentStore();
-    const { currentPost } = storeToRefs(commentStore);
-    const { deleteComment, getSlice } = commentStore;
-    currentPost.value = parentPost;
-    getSlice(postId).items.value = [comment, otherComment];
-    deleteComment(comment.id, postId);
-    deleteComment(otherComment.id, postId);
+    const { deleteComment, getBranchItems } = commentStore;
+    seedBranch(postId, [comment, otherComment]);
+    const branchComments = getBranchItems(postId);
+    deleteComment(comment.id);
+    deleteComment(otherComment.id);
 
-    // Each delete reads the counts back once it is answered, and the restored comment takes its count from the read
-    // That follows the rejected delete's rollback, so the wait is for both reads and then for that count
-    await until(readCount).toBe(2);
-    await until(() => takeOne(getSlice(postId).items.value).likeCount).toBe(3);
-    expect(getSlice(postId).items.value).toStrictEqual([comment]);
-    expect(parentPost.commentCount).toBe(1);
+    await isRefusedDeleteReceived.promise;
+    await until(() => branchComments.value.length).toBe(1);
+    await isCountRead.promise;
+    expect(takeOne(branchComments.value).id).toBe(comment.id);
   });
 
-  // A delete cascades, so the rows beneath the one removed are gone server-side whether or not anybody had
-  // Expanded them. A store that dropped the row alone leaves its replies rendering under a parent that is not
-  // There, and the branch they sit in is still keyed by it
+  // A delete cascades, so the rows beneath the one removed are gone server-side whether or not anybody had expanded them.
+  // A store that dropped the row alone would leave its replies rendering under a parent that is not there
   test("drops every loaded reply beneath a deleted comment", async () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 2, parentId: comment.id });
-    trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], removedIds: [postId] }));
-    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: 0 }]);
-    const parentPost = createPost({ commentCount: 2, id: postId });
+    trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], removedIds: [comment.id, reply.id] }));
+    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: 0, version: countVersion }]);
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
-    const { deleteComment, getSlice } = commentStore;
-    currentPost.value = parentPost;
-    getSlice(postId).items.value = [comment];
-    getSlice(comment.id).items.value = [reply];
+    const { deleteComment, getBranchItems, getSlice, openPost } = commentStore;
+    openPost(createPost({ commentCount: 2, id: postId }));
+    seedBranch(postId, [comment]);
+    seedBranch(comment.id, [reply]);
+    const branchComments = getBranchItems(postId);
 
-    deleteComment(comment.id, postId);
+    deleteComment(comment.id);
 
-    // The rows go at once, and the post's count is only known once the server has answered the delete
     await until(() => currentPost.value?.commentCount).toBe(0);
-    expect(getSlice(postId).items.value).toStrictEqual([]);
+    expect(branchComments.value).toStrictEqual([]);
     expect(getSlice(comment.id).items.value).toStrictEqual([]);
-    expect(parentPost.commentCount).toBe(0);
   });
 
-  // The rows beneath a deleted comment go optimistically, and a branch that still claims to be loaded is one a
-  // Re-expansion will not read again — so a rejected delete has to leave those branches unread rather than merely
-  // Empty, or the replies stay invisible while they are still there
+  // The rows beneath a deleted comment go with it at once, and a branch that still claims to be loaded is one a
+  // re-expansion will not read again. So a rejected delete leaves those branches unread rather than merely empty
   test("leaves the branches under a rejected delete unread", async () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 2, parentId: comment.id });
+    const isRefusedDeleteReceived = Promise.withResolvers<void>();
     trpcMsw.post.deleteComment.mutation(() => {
+      isRefusedDeleteReceived.resolve();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    // The rejected delete reads the comment's counts back once its rollback has put the comment in the thread
-    const readCount = ref(0);
-    trpcMsw.post.readPostCounts.query(() => {
-      readCount.value += 1;
-      return [{ commentCount: 0, id: comment.id, likeCount: 0 }];
-    });
     const commentStore = useCommentStore();
-    const { currentPost } = storeToRefs(commentStore);
-    const { deleteComment, getSlice } = commentStore;
-    currentPost.value = createPost({ commentCount: 2, id: postId });
-    getSlice(postId).items.value = [comment];
+    const { deleteComment, getBranchItems, getSlice, openPost } = commentStore;
+    openPost(createPost({ commentCount: 2, id: postId }));
+    seedBranch(postId, [comment]);
+    seedBranch(comment.id, [reply]);
+    const branchComments = getBranchItems(postId);
     const replyBranch = getSlice(comment.id);
-    replyBranch.initializeCursorPaginationData({ items: [reply], nextCursor: "" });
 
-    deleteComment(comment.id, postId);
+    deleteComment(comment.id);
 
-    // The comment is out of the thread until the rejected delete is answered, and its rollback is what sends the read
-    await until(readCount).toBe(1);
-    expect(getSlice(postId).items.value).toStrictEqual([comment]);
+    await isRefusedDeleteReceived.promise;
+    await until(() => branchComments.value.length).toBe(1);
     expect(replyBranch.items.value).toStrictEqual([]);
     expect(replyBranch.isLoaded.value).toBe(false);
   });
 
-  // The counters the server moved are the ones on screen, so a reply has to reach the post above its own parent
-  // As well — a root card reporting only its direct children under-reports its whole thread
+  // The counters the server moved are the ones on screen, so a reply reaches the post above its own parent as well: a
+  // root card reporting only its direct children under-reports its whole thread
   test("counts a reply against every post the server named", async () => {
     expect.hasAssertions();
 
-    // Built here rather than at describe scope: the counters are what this asserts, and the store writes them
-    // Into the rows it is handed
+    // Built here rather than at describe scope: the counters are what this asserts, and the store writes them into the
+    // rows it is handed
     const repliedToComment = createPost({ commentCount: 0, depth: 1, parentId: postId });
     const reply = createPost({ depth: 2, parentId: repliedToComment.id });
     useSession.mockReturnValue(ref({ data: { user: getMockSession().user } }));
@@ -158,25 +171,24 @@ describe(useCommentStore, () => {
       comment: { ...reply, id: input.id },
     }));
     trpcMsw.post.readPostCounts.query(() => [
-      { commentCount: 2, id: postId, likeCount: 0 },
-      { commentCount: 1, id: repliedToComment.id, likeCount: 0 },
+      { commentCount: 2, id: postId, likeCount: 0, version: countVersion },
+      { commentCount: 1, id: repliedToComment.id, likeCount: 0, version: countVersion },
     ]);
-    const parentPost = createPost({ commentCount: 1, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
-    const { createComment, getSlice } = commentStore;
-    currentPost.value = parentPost;
-    getSlice(postId).items.value = [repliedToComment];
+    const { createComment, getBranchItems, openPost } = commentStore;
+    openPost(createPost({ commentCount: 1, id: postId }));
+    seedBranch(postId, [repliedToComment]);
+    const repliedToBranch = getBranchItems(repliedToComment.id);
 
     createComment({ description: "a", parentId: repliedToComment.id });
-    await waitForSynchronizedFunctions();
 
-    expect(getSlice(repliedToComment.id).items.value).toHaveLength(1);
-    expect(takeOne(getSlice(postId).items.value).commentCount).toBe(1);
-    expect(parentPost.commentCount).toBe(2);
+    await until(() => currentPost.value?.commentCount).toBe(2);
+    await until(() => takeOne(getBranchItems(postId).value).commentCount).toBe(1);
+    expect(repliedToBranch.value).toHaveLength(1);
   });
 
-  // The feed holds its own copy of a post the thread also shows, so a reply has to reach that copy as well
+  // The feed holds the same post the thread shows, so a reply reaches the feed's copy as well
   test("counts a reply on the feed's copy of its parent post", async () => {
     expect.hasAssertions();
 
@@ -186,54 +198,52 @@ describe(useCommentStore, () => {
       ancestorIds: [postId],
       comment: { ...reply, id: input.id },
     }));
-    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 1, id: postId, likeCount: 0 }]);
-    const feedPost = createPost({ commentCount: 0, id: postId });
+    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 1, id: postId, likeCount: 0, version: countVersion }]);
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
-    items.value = [feedPost];
+    const { readItems, readPostPage } = postStore;
+    await readItems(async () => readPostPage({ items: [createPost({ commentCount: 0, id: postId })], nextCursor: "" }));
 
     const commentStore = useCommentStore();
     commentStore.createComment({ description: "a", parentId: postId });
     await waitForSynchronizedFunctions();
 
-    expect(feedPost.commentCount).toBe(1);
+    await until(() => takeOne(items.value).commentCount).toBe(1);
+    expect(takeOne(items.value).id).toBe(postId);
   });
 
-  // An edit's response can be older than a read that already landed, so the count the owner reads back is kept
-  test("keeps the count the owner reads back over an edit's older response", async () => {
+  // A count is held at the version it was read at, so an edit answered at an older version does not put back the count a
+  // newer read already holds
+  test("keeps a count a newer read holds over an edit's older answer", async () => {
     expect.hasAssertions();
 
-    const editedComment = createPost({ commentCount: 1, depth: 1, parentId: postId });
+    const editedComment = createPost({ commentCount: 0, depth: 1, parentId: postId });
     trpcMsw.post.updateComment.mutation(({ input }) =>
-      createPost({ ...input, commentCount: 0, depth: 1, parentId: postId }),
+      createPost({ ...input, commentCount: 0, depth: 1, parentId: postId, version: 1 }),
     );
-    const readCount = ref(0);
-    trpcMsw.post.readPostCounts.query(() => {
-      readCount.value += 1;
-      return [{ commentCount: 1, id: editedComment.id, likeCount: 0 }];
-    });
+    const { setPostCounts } = usePostCountStore();
+    setPostCounts([{ commentCount: 1, id: editedComment.id, likeCount: 0, version: 2 }]);
     const commentStore = useCommentStore();
-    const { getSlice, updateComment } = commentStore;
-    getSlice(postId).items.value = [editedComment];
+    const { getBranchItems, updateComment } = commentStore;
+    seedBranch(postId, [editedComment]);
+    const branchComments = getBranchItems(postId);
 
-    updateComment({ description: "a", id: editedComment.id }, postId);
+    updateComment({ description: newDescription, id: editedComment.id });
 
-    // The server's copy reads 0 here, so the wait is for the read after it to land its 1 on the comment
-    await until(readCount).toBe(1);
-    await until(() => takeOne(getSlice(postId).items.value).commentCount).toBe(1);
-    expect(takeOne(getSlice(postId).items.value).commentCount).toBe(1);
+    await until(() => takeOne(branchComments.value).description).toBe(newDescription);
+    expect(takeOne(branchComments.value).commentCount).toBe(1);
   });
 
-  // A new sort orders every branch afresh, so each open branch has to drop the rows the old order read and read its
-  // First page again when it is shown
+  // A new sort orders every branch afresh, so each open branch drops the rows the old order read and reads its first
+  // page again when it is shown
   test("changing the comment sort re-reads every open branch from page one", () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 2, parentId: comment.id });
     const commentStore = useCommentStore();
     const { getSlice, setCommentSortType } = commentStore;
-    getSlice(postId).initializeCursorPaginationData({ items: [comment], nextCursor: "cursor" });
-    getSlice(comment.id).initializeCursorPaginationData({ items: [reply], nextCursor: "cursor" });
+    getSlice(postId).initializeCursorPaginationData({ items: [{ id: comment.id }], nextCursor: "cursor" });
+    getSlice(comment.id).initializeCursorPaginationData({ items: [{ id: reply.id }], nextCursor: "cursor" });
 
     setCommentSortType(PostSortType.New);
 

@@ -5,6 +5,7 @@ export interface CompositeKeyColumns {
   bans: readonly ["roomId", "userId"];
   blocks: readonly ["blockerId", "blockedId"];
   bookmarks: readonly ["userId", "path"];
+  likes: readonly ["userId", "postId"];
   resourceFavorites: readonly ["userId", "resourceId"];
   threadFollows: readonly ["roomId", "threadRootId", "userId"];
   usersToRooms: readonly ["userId", "roomId"];

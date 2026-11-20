@@ -1,10 +1,70 @@
-import { useCommentStore } from "#src/store/post/comment/index";
-import { usePostStore } from "#src/store/post/index";
+import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
+import type { DeleteLikeInput } from "#shared/models/db/post/DeleteLikeInput";
+import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
 
-// The one write path for a vote, over every list a post can be on screen in: the feed and a post page's thread, whose
-// Root is its own read of a post the feed may also hold
+import { useSessionUserId } from "#src/composables/auth/useSessionUserId";
+import { likeTable } from "#src/services/post/overlay/constants";
+import { getLikePatchEntry } from "#src/services/post/overlay/getLikePatchEntry";
+import { getSetLikeEntry } from "#src/services/post/overlay/getSetLikeEntry";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useOverlayStore } from "#src/store/overlay";
+import { usePostCountStore } from "#src/store/post/count";
+import { NO_ROW_VERSION } from "@esposter/db-schema";
+
+// The one write path for a vote, over every copy of its post on screen: the feed, a thread and the post page read the
+// vote from the overlay, so a vote is drawn once and reaches each of them. A vote's count is the server's, and it is read
+// back once the vote is kept
 export const useLikeStore = defineStore("post/like", () => {
-  const postStore = usePostStore();
-  const commentStore = useCommentStore();
-  return useLikeOperations(() => [...postStore.items, ...commentStore.allComments]);
+  const { $trpc } = useNuxtApp();
+  const userId = useSessionUserId();
+  const { writeOptimistic } = useOverlayStore();
+  const { refreshPostCounts } = usePostCountStore();
+  // A vote's row is drawn at once, with no version until the server names one. A second vote on one post is queued
+  // behind the first, since both write the one row, so a rapid second click cannot send a second create
+  const createLike = (input: CreateLikeInput) => {
+    const now = new Date();
+    writeOptimistic(
+      async () => {
+        const like = await $trpc.like.createLike.mutate(input);
+        void refreshPostCounts([input.postId]);
+        return createRowResponse(likeTable, like);
+      },
+      {
+        entry: getSetLikeEntry({
+          createdAt: now,
+          deletedAt: null,
+          postId: input.postId,
+          updatedAt: now,
+          userId: userId.value,
+          value: input.value,
+          version: NO_ROW_VERSION,
+        }),
+        onError: createErrorAlert,
+      },
+    );
+  };
+  const updateLike = (input: UpdateLikeInput) => {
+    writeOptimistic(
+      async () => {
+        const like = await $trpc.like.updateLike.mutate(input);
+        void refreshPostCounts([input.postId]);
+        return createRowResponse(likeTable, like);
+      },
+      { entry: getLikePatchEntry(userId.value, input.postId, { value: input.value }), onError: createErrorAlert },
+    );
+  };
+  // A removed vote is the tombstone the server answers, which the overlay keeps at its version
+  const deleteLike = (postId: DeleteLikeInput) => {
+    writeOptimistic(
+      async () => {
+        const removedLike = await $trpc.like.deleteLike.mutate(postId);
+        void refreshPostCounts([postId]);
+        return createRowResponse(likeTable, removedLike);
+      },
+      { entry: getLikePatchEntry(userId.value, postId, { deletedAt: new Date() }), onError: createErrorAlert },
+    );
+  };
+
+  return { createLike, deleteLike, updateLike };
 });

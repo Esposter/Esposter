@@ -17,8 +17,8 @@ type ReadPostsQuery = NonNullable<z.input<typeof readPostsInputSchema>>;
 
 const createPagedRead = () => {
   const postStore = usePostStore();
-  const { readItems, readMoreItems } = postStore;
-  return usePagedPostRead({ readItems, readMoreItems });
+  const { readItems, readMoreItems, readPostPage } = postStore;
+  return usePagedPostRead({ readItems, readMoreItems, readPage: readPostPage });
 };
 
 describe(usePagedPostRead, () => {

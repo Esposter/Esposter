@@ -3,9 +3,9 @@ import { usePostStore } from "#src/store/post/index";
 
 export const useReadPosts = (userId?: string) => {
   const postStore = usePostStore();
-  const { readItems, readMoreItems } = postStore;
+  const { readItems, readMoreItems, readPostPage } = postStore;
   const { sortType } = storeToRefs(postStore);
-  const { readFirstPage, readMorePages } = usePagedPostRead({ readItems, readMoreItems });
+  const { readFirstPage, readMorePages } = usePagedPostRead({ readItems, readMoreItems, readPage: readPostPage });
   const getQuery = () => ({ sortName: sortType.value, userId });
   // The feed and the profile both render server-side, so the first page rides the payload into hydration
   const readPosts = () => readFirstPage(getQuery(), AsyncDataKey.ReadPosts(sortType.value, userId));

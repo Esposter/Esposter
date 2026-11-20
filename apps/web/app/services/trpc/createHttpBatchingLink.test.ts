@@ -9,7 +9,7 @@ import { createTRPCClient } from "@trpc/client";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
-const serveCounts = (ids: string[]) => ids.map((id) => ({ commentCount: 0, id, likeCount: 0 }));
+const serveCounts = (ids: string[]) => ids.map((id) => ({ commentCount: 0, id, likeCount: 0, version: 0 }));
 
 describe(createHttpBatchingLink, () => {
   const { server, trpcMsw } = setupMswTrpc();

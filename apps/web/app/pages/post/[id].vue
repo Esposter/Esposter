@@ -11,7 +11,7 @@ const { $trpc } = useNuxtApp();
 const route = useRoute();
 const commentStore = useCommentStore();
 const { commentSortType, currentPost } = storeToRefs(commentStore);
-const { openPost } = commentStore;
+const { arrivePost, openPost } = commentStore;
 const { executeQuery } = useMutation();
 let isLoaded = false;
 // A comment is a post, so this returns one either way: opening a reply's own id renders it as the root of its
@@ -30,7 +30,7 @@ const outcome = await executeQuery(() => $trpc.post.readPost.query(route.params.
   },
   onSuccess: (newPost) => {
     isLoaded = true;
-    currentPost.value = newPost;
+    arrivePost(newPost);
   },
 });
 if (outcome.status === MutationStatus.Succeeded) openPost(outcome.result);

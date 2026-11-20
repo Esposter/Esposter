@@ -1,8 +1,7 @@
 // @vitest-environment nuxt
-import type { PostCounts } from "#src/services/post/applyPostCounts";
+import type { PostCountFields } from "#src/models/post/PostCountFields";
 
 import { MAX_POST_COUNTS_PER_READ } from "#shared/models/db/post/ReadPostCountsInput";
-import { createPost } from "#src/services/post/createPost.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { usePostCountStore } from "#src/store/post/count";
 import { v7 } from "uuid";
@@ -16,11 +15,10 @@ describe(usePostCountStore, () => {
   test("reads a set larger than one read takes in chunks", async () => {
     expect.hasAssertions();
 
-    const readPostCounts = vi.fn<(postIds: string[]) => PostCounts>(() => []);
+    const readPostCounts = vi.fn<(postIds: string[]) => PostCountFields[]>(() => []);
     trpcMsw.post.readPostCounts.query(({ input }) => readPostCounts(input));
     const postIds = Array.from({ length: MAX_POST_COUNTS_PER_READ + 1 }, () => v7());
-    const postCountStore = usePostCountStore();
-    const { refreshPostCounts } = postCountStore;
+    const { refreshPostCounts } = usePostCountStore();
 
     await refreshPostCounts(postIds);
 
@@ -30,31 +28,18 @@ describe(usePostCountStore, () => {
     ]);
   });
 
-  // A store's copies take each read's counts for as long as the store's scope lives, so a read after that scope is
-  // Gone leaves the copy as it was
-  test("a store's copies stop taking counts once its scope is disposed", async () => {
+  // A count moves in the write that raises its post's version, so a read that was answered before a newer count landed
+  // holds an older version, and it does not put that count back
+  test("a read answered at an older version does not replace the count a newer one holds", async () => {
     expect.hasAssertions();
 
-    let likeCount = 1;
-    trpcMsw.post.readPostCounts.query(({ input }) =>
-      input.map((postId) => ({ commentCount: 0, id: postId, likeCount })),
-    );
     const postId = v7();
-    const copy = createPost({ id: postId });
-    const postCountStore = usePostCountStore();
-    const { refreshPostCounts, registerPostCopies } = postCountStore;
-    const scope = effectScope();
-    scope.run(() => {
-      registerPostCopies(() => [copy]);
-    });
+    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: 1, version: 1 }]);
+    const { postCounts, refreshPostCounts, setPostCounts } = usePostCountStore();
+    setPostCounts([{ commentCount: 0, id: postId, likeCount: 2, version: 2 }]);
+
     await refreshPostCounts([postId]);
 
-    expect(copy.likeCount).toBe(1);
-
-    scope.stop();
-    likeCount = 2;
-    await refreshPostCounts([postId]);
-
-    expect(copy.likeCount).toBe(1);
+    expect(postCounts.get(postId)?.likeCount).toBe(2);
   });
 });

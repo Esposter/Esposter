@@ -3,13 +3,13 @@ import { useCommentDialogStore } from "#src/store/post/comment/dialog";
 import { useCommentStore } from "#src/store/post/comment/index";
 
 const commentStore = useCommentStore();
-const { deleteComment, getSlice } = commentStore;
+const { deleteComment, getBranchComment } = commentStore;
 const commentDialogStore = useCommentDialogStore();
 const { deletingId, deletingParentId } = storeToRefs(commentDialogStore);
 // Resolved through the primitive rather than a computed of our own, so a target whose comment has left the
 // Tree is dropped with it instead of re-opening this dialog when a later read brings it back
 const { isOpen, item: comment } = useSingletonDialog(deletingId, () =>
-  getSlice(deletingParentId.value).items.value.find(({ id }) => id === deletingId.value),
+  getBranchComment(deletingParentId.value, deletingId.value),
 );
 </script>
 
@@ -19,7 +19,7 @@ const { isOpen, item: comment } = useSingletonDialog(deletingId, () =>
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete comment"
-    :confirm="() => comment && deleteComment(comment.id, deletingParentId)"
+    :confirm="() => comment && deleteComment(comment.id)"
   >
     <p>
       {{

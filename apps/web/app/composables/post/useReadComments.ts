@@ -5,9 +5,10 @@ import { useCommentStore } from "#src/store/post/comment/index";
 export const useReadComments = (parentId: string) => {
   const commentStore = useCommentStore();
   const { commentSortType } = storeToRefs(commentStore);
-  const { getSliceOperationData } = commentStore;
-  const { hasMore, isLoaded, items, readItems, readMoreItems } = getSliceOperationData(parentId);
-  const { readFirstPage, readMorePages } = usePagedPostRead({ readItems, readMoreItems });
+  const { getBranchItems, getSliceOperationData, readCommentPage } = commentStore;
+  const { hasMore, isLoaded, readItems, readMoreItems } = getSliceOperationData(parentId);
+  const items = getBranchItems(parentId);
+  const { readFirstPage, readMorePages } = usePagedPostRead({ readItems, readMoreItems, readPage: readCommentPage });
   const getQuery = () => ({ parentId, sortName: commentSortType.value });
   const readComments = () => readFirstPage(getQuery(), AsyncDataKey.ReadComments(parentId));
   const readMoreComments = (onComplete: () => void) => readMorePages(getQuery(), onComplete);

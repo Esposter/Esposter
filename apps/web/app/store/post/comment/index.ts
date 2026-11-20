@@ -1,41 +1,73 @@
 import type { CreateCommentInput } from "#shared/models/db/post/CreateCommentInput";
 import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInput";
 import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
-import type { PostInPostWithRelations } from "@esposter/db-schema";
+import type { PostKey } from "#src/models/post/PostKey";
+import type { Page, PostInPost, PostInPostWithRelations, PublicUser } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { PostSortType } from "#shared/models/post/PostSortType";
+import { usePostRows } from "#src/composables/post/usePostRows";
 import { authClient } from "#src/services/auth/authClient";
-import { createOperationData } from "#src/services/shared/createOperationData";
+import { postTable } from "#src/services/post/overlay/constants";
+import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry";
+import { getSetPostEntry } from "#src/services/post/overlay/getSetPostEntry";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useOverlayStore } from "#src/store/overlay";
 import { usePostCountStore } from "#src/store/post/count";
-import { usePostStore } from "#src/store/post/index";
+import { useUserStore } from "#src/store/message/user/index";
 import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
-import { DerivedDatabaseEntityType, NO_ROW_VERSION } from "@esposter/db-schema";
-import { getPostRanking } from "@esposter/shared";
+import { NO_ROW_VERSION } from "@esposter/db-schema";
+import { getPostRanking, getResultAsync } from "@esposter/shared";
 import { v7 } from "uuid";
 
 export const useCommentStore = defineStore("post/comment", () => {
   const { $trpc } = useNuxtApp();
   const session = authClient.useSession();
-  const postStore = usePostStore();
-  const postCountStore = usePostCountStore();
-  const { refreshPostCounts, registerPostCopies } = postCountStore;
-  const currentPost = ref<PostInPostWithRelations>();
+  const overlayStore = useOverlayStore();
+  const { arrive, writeOptimistic } = overlayStore;
+  const { refreshPostCounts } = usePostCountStore();
+  const { storeUser } = useUserStore();
+  const { getPostWithRelations, postMap, storePostRelations } = usePostRows();
+  const currentPostId = ref<string>();
+  const currentPost = computed(() => (currentPostId.value ? getPostWithRelations(currentPostId.value) : undefined));
   const commentSortType = ref<PostSortType>(PostSortType.Hot);
   // Held here rather than in each card, so a card a re-read remounts comes back open
   const expandedCommentIds = ref(new Set<string>());
-  // Keyed by the post whose replies the partition holds, the route's own post included
-  const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostInPostWithRelations>();
-  const getCommentOperationData = (parentId: string) =>
-    createOperationData(getSlice(parentId).items, ["id"], DerivedDatabaseEntityType.Comment);
-  const allComments = computed(() => {
-    const comments = currentPost.value ? [currentPost.value] : [];
-    for (const key of keys.value) comments.push(...getSlice(key).items.value);
-    return comments;
-  });
-  // The thread's copies take the counts the server returns, so a reply here reaches the post and the replies it sits under
-  registerPostCopies(() => allComments.value);
+  // Keyed by the post whose replies the partition holds, the route's own post included. A partition holds the ids of its
+  // replies in the order its pages named them, and the rows are the overlay's
+  const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostKey>();
+  const toBranchPosts = (branchKeys: PostKey[]) =>
+    branchKeys.flatMap(({ id }) => {
+      const post = getPostWithRelations(id);
+      return post ? [post] : [];
+    });
+  // A branch's replies in the order its page named them
+  const getBranchItems = (parentId: string) => computed(() => toBranchPosts(getSlice(parentId).items.value));
+  // The branch's reply the dialog names, while the branch still lists it
+  const getBranchComment = (parentId: string, commentId: string) =>
+    getSlice(parentId).items.value.some(({ id }) => id === commentId) ? getPostWithRelations(commentId) : undefined;
+  const readCommentPage = ({ items: pageComments, ...page }: Page<PostInPostWithRelations>): Page<PostKey> => {
+    for (const comment of pageComments) arrive(postTable, storePostRelations(comment));
+    return { ...page, items: pageComments.map(({ id }) => ({ id })) };
+  };
+  // Drops the ids a removal names from every partition that lists them, so the removed replies leave every branch
+  const dropBranchKeys = (removedIds: string[]) => {
+    const removedIdSet = new Set(removedIds);
+    for (const key of keys.value) {
+      const branch = getSlice(key);
+      branch.items.value = branch.items.value.filter(({ id }) => !removedIdSet.has(id));
+    }
+  };
+  // Every loaded branch is read again under the new order, from its first page, so none keeps the rows the old order read
+  const setCommentSortType = (sortType: PostSortType) => {
+    commentSortType.value = sortType;
+    for (const key of keys.value) getSlice(key).resetCursorPaginationData();
+  };
+  const toggleCommentExpanded = (commentId: string) => {
+    if (expandedCommentIds.value.has(commentId)) expandedCommentIds.value.delete(commentId);
+    else expandedCommentIds.value.add(commentId);
+  };
   // Only branches that already exist are descended into: asking the map for one that does not creates it, so a
   // Walk over the rows themselves would leave an empty partition behind for every reply it passed
   const deleteBranch = (parentId: string) => {
@@ -52,28 +84,21 @@ export const useCommentStore = defineStore("post/comment", () => {
     };
     deleteLoadedBranch(parentId);
   };
-  // Every loaded branch is read again under the new order, from its first page, so none keeps the rows the old order read
-  const setCommentSortType = (sortType: PostSortType) => {
-    commentSortType.value = sortType;
-    for (const key of keys.value) getSlice(key).resetCursorPaginationData();
-  };
-  const toggleCommentExpanded = (commentId: string) => {
-    if (expandedCommentIds.value.has(commentId)) expandedCommentIds.value.delete(commentId);
-    else expandedCommentIds.value.add(commentId);
-  };
   // A visit starts at Hot with nothing open, whatever the last post was read under
   const openPost = (post: PostInPostWithRelations) => {
-    currentPost.value = post;
+    arrive(postTable, storePostRelations(post));
+    currentPostId.value = post.id;
     expandedCommentIds.value.clear();
     setCommentSortType(PostSortType.Hot);
   };
+  // A read of the open post refreshes its row without reopening it, so the reader's expanded replies and sort survive
+  const arrivePost = (post: PostInPostWithRelations) => {
+    arrive(postTable, storePostRelations(post));
+  };
 
-  const { executeMutation: executeCreateCommentMutation } = useMutation();
-  const { executeMutation: executeUpdateCommentMutation } = useMutation();
-  const { executeMutation: executeDeleteCommentMutation } = useMutation();
-  // The comment is created under the id the client gives it and drawn at once: the reader is its author, it inherits
-  // Its parent's chain, and a new reply has no votes or replies of its own. The counts it moves on the posts above it
-  // Are the server's, so they are read back once it lands. `onRefused` hands the composer its text back
+  // The comment is drawn as it is sent: the reader is its author, it inherits its parent's chain, and a new reply has no
+  // votes or replies of its own. The counts it moves on the posts above it are the server's, so they are read back once
+  // it lands. `onRefused` hands the composer its text back
   const createComment = (input: Except<CreateCommentInput, "id">, onRefused?: () => void) => {
     if (EMPTY_TEXT_REGEX.test(input.description)) return;
 
@@ -83,16 +108,18 @@ export const useCommentStore = defineStore("post/comment", () => {
       onRefused?.();
       return;
     }
-    // Bound when the write is issued, so a reply landing after the reader opened another thread is filed under
-    // The comment it was written against rather than under whatever is on screen
-    const {
-      createComment: storeCreateComment,
-      deleteComment: storeDeleteComment,
-      updateComment: storeUpdateComment,
-    } = getCommentOperationData(input.parentId);
-    const parent = [...allComments.value, ...postStore.items].find(({ id }) => id === input.parentId);
+    const parent = postMap.value.get(input.parentId);
     const createdAt = new Date();
-    const newComment: PostInPostWithRelations = {
+    const publicUser: PublicUser = {
+      biography: user.biography,
+      createdAt: user.createdAt,
+      deletedAt: null,
+      id: user.id,
+      image: user.image ?? "",
+      name: user.name,
+      updatedAt: user.updatedAt,
+    };
+    const newComment: PostInPost = {
       ancestorIds: parent ? [...parent.ancestorIds, parent.id] : [input.parentId],
       commentCount: 0,
       createdAt,
@@ -105,96 +132,71 @@ export const useCommentStore = defineStore("post/comment", () => {
       ranking: getPostRanking(0, createdAt),
       title: "",
       updatedAt: createdAt,
-      user: {
-        biography: user.biography,
-        createdAt: user.createdAt,
-        deletedAt: null,
-        id: user.id,
-        image: user.image ?? "",
-        name: user.name,
-        updatedAt: user.updatedAt,
-      },
       userId: user.id,
       version: NO_ROW_VERSION,
     };
-    executeCreateCommentMutation(() => $trpc.post.createComment.mutate({ ...input, id: newComment.id }), {
-      applyOptimistic: () => {
-        storeCreateComment(newComment);
-        return () => {
-          storeDeleteComment({ id: newComment.id });
+    storeUser(publicUser);
+    // The branch lists the reply at once, where its entry draws it. A refused reply stays listed as an id with no row,
+    // which the branch draws as nothing
+    const branch = getSlice(input.parentId);
+    branch.items.value = [...branch.items.value, { id: newComment.id }];
+    writeOptimistic(
+      async () => {
+        const { ancestorIds, comment } = await $trpc.post.createComment.mutate({ ...input, id: newComment.id });
+        void refreshPostCounts(ancestorIds);
+        return createRowResponse(postTable, storePostRelations(comment));
+      },
+      {
+        entry: getSetPostEntry(newComment),
+        onError: (error) => {
+          createErrorAlert(error);
           onRefused?.();
-        };
+        },
       },
-      key: newComment.id,
-      reconcile: async ({ ancestorIds, comment }) => {
-        storeUpdateComment(comment);
-        await refreshPostCounts(ancestorIds);
-      },
-    });
+    );
   };
-  const updateComment = (input: UpdateCommentInput, parentId: string) => {
-    const { items: branchItems } = getSlice(parentId);
-    const { updateComment: storeUpdateComment } = getCommentOperationData(parentId);
-    executeUpdateCommentMutation(() => $trpc.post.updateComment.mutate(input), {
-      // Scoped to the one comment this write edits: a second edit of it queues behind the first, so its rollback
-      // Has to restore what that one stored, and a whole-list restore would undo the branch's own paging
-      applyOptimistic: () => {
-        const comment = branchItems.value.find(({ id }) => id === input.id);
-        const previousComment = comment ? { description: comment.description, id: comment.id } : undefined;
-        storeUpdateComment(input);
-        return () => {
-          if (previousComment) storeUpdateComment(previousComment);
-        };
+  // The edit waits for the server's answer, since the editor that holds the draft stays open until it lands, and the
+  // branch then shows the stored text the server kept. A refused edit alerts and answers false
+  const updateComment = (input: UpdateCommentInput) =>
+    getResultAsync(() => $trpc.post.updateComment.mutate(input)).match(
+      (comment) => {
+        arrive(postTable, storePostRelations(comment));
+        return true;
       },
-      key: input.id,
-      // The server's copy of the row replaces the edit once it is kept, and the counts are read back beside it
-      reconcile: async (updatedComment) => {
-        storeUpdateComment(updatedComment);
-        await refreshPostCounts([updatedComment.id]);
-      },
-    });
-  };
-  const deleteComment = (input: DeleteCommentInput, parentId: string) => {
-    const { items: branchItems } = getSlice(parentId);
-    const { createComment: storeCreateComment, deleteComment: storeDeleteComment } = getCommentOperationData(parentId);
-    executeDeleteCommentMutation(() => $trpc.post.deleteComment.mutate(input), {
-      // The rows go at once and the counters when the server answers: a delete cascades, so how many rows it
-      // Takes is only knowable there — whatever happens to be expanded here is short by every reply nobody opened
-      applyOptimistic: () => {
-        // The one row this write removes, read when the write is sent — deletes of different comments do not
-        // Queue against each other
-        const deletedComment = branchItems.value.find(({ id }) => id === input);
-        deleteBranch(input);
-        storeDeleteComment({ id: input });
-        return () => {
-          // Its own replies are not restored: `deleteBranch` left every branch beneath it unread, so re-opening
-          // One reads it again
-          if (deletedComment) storeCreateComment(deletedComment);
-        };
-      },
-      key: input,
-      onError: async (error) => {
+      (error) => {
         createErrorAlert(error);
-        // The rollback put this comment back with the counts it held when the delete was sent.
-        // A count that moved since reached no copy, because the comment was not in the thread then
-        await refreshPostCounts([input]);
+        return false;
       },
-      reconcile: async ({ ancestorIds }) => {
-        await refreshPostCounts(ancestorIds);
+    );
+  const deleteComment = (input: DeleteCommentInput) => {
+    // The replies beneath the comment are not read again until their branch is opened, so none keeps a row a removal
+    // has left behind
+    deleteBranch(input);
+    writeOptimistic(
+      async () => {
+        // The counters and the replies a removal takes are only knowable here, so they move when the server answers
+        const { ancestorIds, removedIds } = await $trpc.post.deleteComment.mutate(input);
+        void refreshPostCounts(ancestorIds);
+        dropBranchKeys(removedIds);
+        return { arrivals: [], confirmed: [] };
       },
-    });
+      { entry: getPostPatchEntry(input, { deletedAt: new Date() }), onError: createErrorAlert },
+    );
   };
 
   return {
-    allComments,
     commentSortType,
+    getSlice,
     createComment,
     currentPost,
     deleteComment,
     expandedCommentIds,
-    getSlice,
+    getBranchComment,
+    getBranchItems,
     getSliceOperationData,
     openPost,
+    arrivePost,
+    readCommentPage,
     setCommentSortType,
     toggleCommentExpanded,
     updateComment,
