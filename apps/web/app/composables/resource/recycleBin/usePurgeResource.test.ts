@@ -13,24 +13,23 @@ describe(usePurgeResource, () => {
 
   // The bin's page is a plain read, so the row it shows stays until the purge is answered, and the re-read that follows
   // The answer is what takes it away
-  test("keeps the bin's row while the purge is in flight", async () => {
+  test("re-reads the bin only once the purge is answered", async () => {
     expect.hasAssertions();
 
     const resource = createResourceListItem();
-    const items = ref<ResourceListItem[]>([resource]);
     const { promise: isReleased, resolve: releasePurge } = Promise.withResolvers<void>();
     trpcMsw.resource.purgeResource.mutation(async () => {
       await isReleased;
       return resource;
     });
     const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
-    usePurgeResource(items, refresh)(resource);
+    usePurgeResource(refresh)(resource);
     await flushPromises();
-    const rowsInFlight = [...items.value];
+    const refreshCallsInFlight = refresh.mock.calls.length;
     releasePurge();
     await waitForSynchronizedFunctions();
 
-    expect(rowsInFlight).toStrictEqual([resource]);
+    expect(refreshCallsInFlight).toBe(0);
     expect(refresh).toHaveBeenCalledExactlyOnceWith();
   });
 });
