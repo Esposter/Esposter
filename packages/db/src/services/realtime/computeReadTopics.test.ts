@@ -19,7 +19,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
-import { and, eq, getTableName, inArray, isNull, ne, not, or, sql } from "drizzle-orm";
+import { and, count, eq, getTableName, inArray, isNull, ne, not, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -88,6 +88,26 @@ describe(computeReadTopics, () => {
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual([
       `${getTableName(invitesInMessage)}:id=sha256:66d34fba71f8`,
+    ]);
+  });
+
+  // A capped count selects a raw `sql\`1\`` with no alias inside its subquery, which the subquery's selection refuses to read
+  test("a count over a subquery that selects a raw SQL field names the rows the subquery reads", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const roomId = v7();
+    const { database, statements } = recordStatements(db);
+    const matchedRows = database
+      .select({ matched: sql`1` })
+      .from(usersToRoomsInMessage)
+      .where(eq(usersToRoomsInMessage.roomId, roomId))
+      .as("matchedRows");
+
+    await database.select({ count: count() }).from(matchedRows);
+
+    await expect(getReadTopicNames(statements)).resolves.toStrictEqual([
+      `${getTableName(usersToRoomsInMessage)}:roomId=${roomId}`,
     ]);
   });
 

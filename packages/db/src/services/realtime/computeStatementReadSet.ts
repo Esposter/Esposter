@@ -166,6 +166,12 @@ const findFirstTable = (chunk: unknown): Table | undefined => {
 
   return undefined;
 };
+// A subquery's selection is a proxy that throws on reading a raw SQL field with no alias, such as a count's `sql\`1\``,
+// Which no column reference can name anyway. Its descriptors read the fields it was built from, past the proxy's get
+const readSelectedFields = (selectedFields: Record<string, unknown>): Record<string, unknown> =>
+  Object.fromEntries(
+    Object.keys(selectedFields).map((name) => [name, Object.getOwnPropertyDescriptor(selectedFields, name)?.value]),
+  );
 // A column a subquery selects reads the base column its selection names. A selection the subquery's own alias owns
 // Reads the table the subquery selects from, since the alias is the subquery's name, not a table's
 const getDerivedColumns = (subquery: DerivedSubquery, name: string, derived: DerivedSubqueryMap): ReadColumn[] =>
@@ -599,7 +605,7 @@ const walkChunk = (chunk: unknown, context: ReadContext): void => {
     const base = findFirstTable(chunk._.sql);
     const subquery: DerivedSubquery = {
       alias: chunk._.alias,
-      selectedFields: chunk._.selectedFields,
+      selectedFields: readSelectedFields(chunk._.selectedFields),
       sources: [],
       ...(base ? { base } : {}),
     };
