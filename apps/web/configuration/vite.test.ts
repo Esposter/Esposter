@@ -1,7 +1,24 @@
 import type { Nuxt, ViteConfig } from "nuxt/schema";
 
-import { viteHooks } from "#configuration/vite";
+import { vite, viteHooks } from "#configuration/vite";
 import { assert, describe, expect, test, vi } from "vitest";
+
+describe("vite", () => {
+  test.each([
+    ["fails the build on", "INEFFECTIVE_DYNAMIC_IMPORT", "error"],
+    ["passes through", "CIRCULAR_DEPENDENCY", "warn"],
+  ] as const)("%s %s", (_name, code, expectedLevel) => {
+    expect.hasAssertions();
+
+    const onLog = vite.build?.rolldownOptions?.onLog;
+    assert.exists(onLog);
+    const handler = vi.fn<Parameters<typeof onLog>[2]>();
+    const log = { code, message: "" };
+    onLog("warn", log, handler);
+
+    expect(handler).toHaveBeenCalledExactlyOnceWith(expectedLevel, log);
+  });
+});
 
 describe("viteHooks", () => {
   const filename = "_nuxt/Cursor.DfOkTuEE.png";

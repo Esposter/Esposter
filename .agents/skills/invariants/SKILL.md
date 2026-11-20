@@ -35,7 +35,9 @@ A third follows: the guard makes the wrong shape _survivable_, so the pressure t
 
 ## The ladder
 
-Take the highest rung that fits: by construction, structural, lint, test, then remembered. Each rung down costs more forever. The rungs' definitions, the decision flow and the worked example are `openspec/specs/architecture/enforcement-ladder/design.md`.
+Take the highest rung that fits: by construction, structural, build, lint, test, then remembered. Each rung down costs more forever. The rungs' definitions, the decision flow and the worked example are `openspec/specs/architecture/enforcement-ladder/design.md`.
+
+**A build check before lint.** When the bundler already diagnoses the wrong version — a lazy import a static one defeats, say — the web build's config promotes that diagnostic to an error, and it covers the whole module graph, which no file's syntax shows.
 
 **Lint before a test.** A lint rule covers every file in the monorepo in one pass, including files that do not exist yet, and needs nothing when the repo changes; a test covers the paths someone wrote it for and moves with them. A test comes second, for what one file's syntax cannot show. Prose comes last, and every rung above it still keeps its why in prose.
 

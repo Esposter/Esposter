@@ -4,15 +4,16 @@ A convention that holds only while someone remembers it is a bug with a delay. E
 
 ## The rungs
 
-| Rung               | What holds the rule                                                                     | What it costs forever                                                           |
-| :----------------- | :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
-| 1. By construction | The wrong version does not typecheck or cannot be expressed                             | Nothing                                                                         |
-| 2. Structural      | One primitive does the job, and every caller goes through it                            | One review of the primitive                                                     |
-| 3. Lint            | A stock rule, a `no-restricted-syntax` selector, or a custom oxlint plugin fails it     | Nothing per file: one pass covers the whole monorepo, and new files are covered |
-| 4. Test            | A test of the primitive itself, or a sweep script under `scripts/src/sweeps/`, fails it | Upkeep: fixtures and assertions move with the code they pin                     |
-| 5. Remembered      | A rule in the owning skill and the owning spec, read by review and sweeps               | Every reader, on every change, forever                                          |
+| Rung               | What holds the rule                                                                     | What it costs forever                                                            |
+| :----------------- | :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| 1. By construction | The wrong version does not typecheck or cannot be expressed                             | Nothing                                                                          |
+| 2. Structural      | One primitive does the job, and every caller goes through it                            | One review of the primitive                                                      |
+| 3. Build           | The bundler fails on a diagnostic the config promotes from a warning to an error        | Nothing per file: every build reads the whole module graph, new modules included |
+| 4. Lint            | A stock rule, a `no-restricted-syntax` selector, or a custom oxlint plugin fails it     | Nothing per file: one pass covers the whole monorepo, and new files are covered  |
+| 5. Test            | A test of the primitive itself, or a sweep script under `scripts/src/sweeps/`, fails it | Upkeep: fixtures and assertions move with the code they pin                      |
+| 6. Remembered      | A rule in the owning skill and the owning spec, read by review and sweeps               | Every reader, on every change, forever                                           |
 
-Lint sits above a test because it needs nothing when the repo changes: a new file is linted the moment it exists, where a test covers only the paths someone wrote it for. A test sits above prose because it fails on its own, where prose is only as good as the last person who read it.
+A build check sits above lint because it reads what no single file shows — the module graph, the chunks it splits into — and every build runs it whether or not anyone remembers. Lint sits above a test because it needs nothing when the repo changes: a new file is linted the moment it exists, where a test covers only the paths someone wrote it for. A test sits above prose because it fails on its own, where prose is only as good as the last person who read it.
 
 ## Choosing a rung
 
@@ -22,15 +23,18 @@ flowchart TD
   C -->|yes| T1["1. By construction — change the shape"]
   C -->|no| P{"Can one primitive own the job, so callers only pass data?"}
   P -->|yes| T2["2. Structural — one primitive"]
-  P -->|no| L{"Visible in one file's syntax, with no growing exception list?"}
-  T2 --> L
-  L -->|yes| T3["3. Lint — stock rule, then a selector, then a plugin"]
+  P -->|no| B{"Does the bundler already diagnose the wrong version?"}
+  T2 --> B
+  B -->|yes| T3["3. Build — promote the diagnostic to an error"]
+  B -->|no| L{"Visible in one file's syntax, with no growing exception list?"}
+  T3 --> L
+  L -->|yes| T4["4. Lint — stock rule, then a selector, then a plugin"]
   L -->|no| X{"Can a test fail on the wrong version — the primitive's unit test, or a whole-repo scan?"}
-  T3 --> X
-  X -->|yes| T4["4. Test"]
-  X -->|no| T5["5. Remembered — the owning skill and spec"]
-  T4 --> W["Every rung: the why lives in its owning skill or page"]
-  T5 --> W
+  T4 --> X
+  X -->|yes| T5["5. Test"]
+  X -->|no| T6["6. Remembered — the owning skill and spec"]
+  T5 --> W["Every rung: the why lives in its owning skill or page"]
+  T6 --> W
 ```
 
 The rungs stack rather than replace each other. A primitive is usually backed by a lint rule that bans the old way of doing its job, and by a unit test on the primitive itself; what lint and tests cannot state — why the rule exists, and which shapes are its honest exceptions — is written once, in the skill or page that owns it, so a disable comment has something to name.
@@ -44,15 +48,16 @@ The rungs stack rather than replace each other. A primitive is usually backed by
 
 ## A worked example
 
-[Nested interactions](../nested-interactions/design.md) moves a rule from rung 5 to rung 2. Where each clickable row relies on `@click.stop` walls someone has to remember around each control, a link in a todo's notes opens a new tab and the todo's dialog, and a wall can never reach a link inside rendered HTML. The structural form is one guard, `checkIsNestedInteraction`, asked by the table row and the drag-aware click composable, so every control inside is covered without being named. Lint bans the bare `@click.stop` wall so the pattern cannot return, and unit tests pin the guard and the table's wiring. Only the why is prose.
+[Nested interactions](../nested-interactions/design.md) moves a rule from rung 6 to rung 2. Where each clickable row relies on `@click.stop` walls someone has to remember around each control, a link in a todo's notes opens a new tab and the todo's dialog, and a wall can never reach a link inside rendered HTML. The structural form is one guard, `checkIsNestedInteraction`, asked by the table row and the drag-aware click composable, so every control inside is covered without being named. Lint bans the bare `@click.stop` wall so the pattern cannot return, and unit tests pin the guard and the table's wiring. Only the why is prose.
 
 ## Key files
 
-| File                                                         | Role                                                          |
-| :----------------------------------------------------------- | :------------------------------------------------------------ |
-| `.agents/skills/invariants/SKILL.md`                         | The ladder as the rule a session follows                      |
-| `.agents/skills/oxlint/references/custom-js-plugins.md`      | When a lint rule earns a custom plugin, and the roster gate   |
-| `.agents/skills/sweeps/references/handing-to-an-enforcer.md` | Turning a repeated finding into an enforcer                   |
-| `packages/configuration/eslint/`                             | The `no-restricted-syntax` lists, each with its fixture suite |
-| `scripts/src/oxlint/`                                        | The custom oxlint plugins                                     |
-| `scripts/src/sweeps/`                                        | Whole-repo scans for what one file's syntax cannot decide     |
+| File                                                         | Role                                                           |
+| :----------------------------------------------------------- | :------------------------------------------------------------- |
+| `.agents/skills/invariants/SKILL.md`                         | The ladder as the rule a session follows                       |
+| `.agents/skills/oxlint/references/custom-js-plugins.md`      | When a lint rule earns a custom plugin, and the roster gate    |
+| `.agents/skills/sweeps/references/handing-to-an-enforcer.md` | Turning a repeated finding into an enforcer                    |
+| `apps/web/configuration/vite.ts`                             | The build rung: the bundler diagnostics the web build fails on |
+| `packages/configuration/eslint/`                             | The `no-restricted-syntax` lists, each with its fixture suite  |
+| `scripts/src/oxlint/`                                        | The custom oxlint plugins                                      |
+| `scripts/src/sweeps/`                                        | Whole-repo scans for what one file's syntax cannot decide      |

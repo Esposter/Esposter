@@ -7,6 +7,13 @@ export const vite: NonNullable<NuxtConfig["vite"]> = {
     // Fix phaser "Local data URIs are not supported"
     // https://www.andrewzigler.com/blog/using-phaser-3-with-nuxt
     assetsInlineLimit: 0,
+    rolldownOptions: {
+      // A module both lazily and statically imported stays in its static importer's chunk, so the lazy import splits
+      // Nothing off: the build fails on it, as the enforcement ladder's build rung
+      onLog: (level, log, handler) => {
+        handler(log.code === "INEFFECTIVE_DYNAMIC_IMPORT" ? "error" : level, log);
+      },
+    },
   },
   environments: {
     // @TODO: https://github.com/unjs/env-runner/issues/110 — the dev server runs Nitro in Miniflare, whose module
