@@ -50,17 +50,16 @@ The service worker has always posted every delivered push to each open tab befor
 
 ## Key files
 
-| File                                                   | Role                                                 |
-| ------------------------------------------------------ | ---------------------------------------------------- |
-| `app/store/notification.ts`                            | the merged list, the toast queue, the two dismissals |
-| `app/composables/notification/useReadNotifications.ts` | the paged read of the delivered half                 |
-| `server/trpc/routers/notification.ts`                  | read page, dismiss one, dismiss all, mark all read   |
-| `app/components/App/Notification/Bell.vue`             | the dock's bell + panel                              |
-| `app/components/App/Notification/Toast.vue`            | the one toast rendering the store's queue head       |
-| `app/components/App/Notification/BellItem.vue`         | one panel row (severity icon, time, action, dismiss) |
-| `app/models/notification/AppNotification.ts`           | client model                                         |
-| `app/plugins/pushNotification.client.ts`               | service-worker bridge into the running tab           |
-| `app/plugins/appBadge.client.ts`                       | mirrors the unread count onto the PWA icon badge     |
+| File                                           | Role                                                                                       |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `app/store/notification.ts`                    | the paged read of the delivered half, the merged list, the toast queue, the two dismissals |
+| `server/trpc/routers/notification.ts`          | read page, dismiss one, dismiss all, mark all read                                         |
+| `app/components/App/Notification/Bell.vue`     | the dock's bell + panel                                                                    |
+| `app/components/App/Notification/Toast.vue`    | the one toast rendering the store's queue head                                             |
+| `app/components/App/Notification/BellItem.vue` | one panel row (severity icon, time, action, dismiss)                                       |
+| `app/models/notification/AppNotification.ts`   | client model                                                                               |
+| `app/plugins/pushNotification.client.ts`       | service-worker bridge into the running tab                                                 |
+| `app/plugins/appBadge.client.ts`               | mirrors the unread count onto the PWA icon badge                                           |
 
 ## Notes
 
