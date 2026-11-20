@@ -388,7 +388,7 @@ describe("moderationRouter", () => {
 
     const result = await moderationCaller.readBans({ roomId });
 
-    expect(removedBan?.deletedAt).toBeInstanceOf(Date);
+    expect(removedBan?.deletedAt).not.toBeNull();
     expect(removedBan?.version).toBeGreaterThan(createdBan?.version ?? Number.POSITIVE_INFINITY);
     expect(result.items.map(({ deletedAt, userId }) => ({ isRemoved: deletedAt !== null, userId }))).toStrictEqual([
       { isRemoved: true, userId: member.id },

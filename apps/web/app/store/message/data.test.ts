@@ -370,7 +370,18 @@ describe(useDataStore, () => {
       createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
     );
     trpcMsw.message.readFollowedThreads.query(() => ({
-      follows: [{ isUnfollowed: false, roomId, threadRootId: replyToId, userId, version: 0 }],
+      follows: [
+        {
+          createdAt: new Date(0),
+          deletedAt: null,
+          isUnfollowed: false,
+          roomId,
+          threadRootId: replyToId,
+          updatedAt: new Date(0),
+          userId,
+          version: 0,
+        },
+      ],
       threads: [],
     }));
     const isCreated = await createMessage({ files: [], message, replyToId, roomId, type: MessageType.Message });

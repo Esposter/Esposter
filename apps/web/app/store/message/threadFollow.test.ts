@@ -2,9 +2,9 @@
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 import type { ThreadFollowInMessage } from "@esposter/db-schema";
 
+import { useSession } from "#src/services/auth/authClient.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
-import { useSession } from "#src/services/auth/authClient.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -24,7 +24,16 @@ describe(useThreadFollowStore, () => {
     id: threadRootId,
     replyCount: 0,
   };
-  const follow: ThreadFollowInMessage = { isUnfollowed: false, roomId, threadRootId, userId, version: 0 };
+  const follow: ThreadFollowInMessage = {
+    createdAt: new Date(0),
+    deletedAt: null,
+    isUnfollowed: false,
+    roomId,
+    threadRootId,
+    updatedAt: new Date(0),
+    userId,
+    version: 0,
+  };
 
   beforeEach(() => {
     useSession.mockReturnValue(ref({ data: { user: { id: userId } } }));

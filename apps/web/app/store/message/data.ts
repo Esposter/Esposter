@@ -133,7 +133,7 @@ export const useDataStore = defineStore("message/data", () => {
         // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread. Best-effort, since
         // The message already exists on the server and a failed read of the follows is no reason to fail the send
         const { replyToId } = input;
-        if (replyToId) getResultAsync(() => refetchFollowedThreads(input.roomId)).match(noop, console.error);
+        if (replyToId) await getResultAsync(() => refetchFollowedThreads(input.roomId)).match(noop, console.error);
         return true;
       },
       async (error) => {

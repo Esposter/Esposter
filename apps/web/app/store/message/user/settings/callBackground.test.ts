@@ -68,7 +68,7 @@ describe(useCallBackgroundStore, () => {
   });
 
   // The blob is reclaimed by a worker after the delete answers, so the listing keeps the slot until its topic changes:
-  // the slot leaves the picker when the server says so, not when the user clicks
+  // The slot leaves the picker when the server says so, not when the user clicks
   test("keeps a slot listed while its delete is in flight", async () => {
     expect.hasAssertions();
 
@@ -78,11 +78,11 @@ describe(useCallBackgroundStore, () => {
     const callBackgroundStore = useCallBackgroundStore();
     const { deleteCallBackground, readCallBackgrounds } = callBackgroundStore;
     await readCallBackgrounds();
-    deleteCallBackground(callBackground.slot);
+    const deleting = deleteCallBackground(callBackground.slot);
     await flushPromises();
     const listedWhileInFlight = callBackgroundStore.callBackgrounds;
     resolve();
-    await flushPromises();
+    await deleting;
 
     expect(listedWhileInFlight).toStrictEqual([callBackground]);
   });

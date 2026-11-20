@@ -5,7 +5,7 @@ import type { RoomObjectRpc } from "@esposter/db-schema";
 
 import { createRoomMessage } from "#server/services/message/createRoomMessage.test";
 import { createUserMessage } from "#server/services/message/createUserMessage";
-import { readFollowedThreadRootIds } from "#server/services/message/thread/readFollowedThreadRootIds";
+import { readThreadFollows } from "#server/services/message/thread/readThreadFollows";
 import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThreadUnfollow";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
@@ -35,6 +35,11 @@ vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
   useRoomObject: () => roomObject as unknown as ReturnType<typeof useRoomObject>,
 }));
 describe(createUserMessage, () => {
+  // The roots a member follows, newest first, which is the list a reply's follow decides on: the live rows only
+  const readFollowedThreadRootIds = async (roomId: string, userId: string) =>
+    (await readThreadFollows(mockContext.db, roomId, userId)).flatMap(({ isUnfollowed, threadRootId }) =>
+      isUnfollowed ? [] : [threadRootId],
+    );
   let mockContext: Context;
   let rootAuthor: AuthSession;
   let replier: AuthSession;
@@ -126,8 +131,8 @@ describe(createUserMessage, () => {
     const root = await postRoot(room.id);
     roomObject.readMessagesByIds.mockResolvedValue([root]);
     await createReply(room.id, root.id);
-    const rootAuthorFollows = await readFollowedThreadRootIds(mockContext.db, room.id, rootAuthor.user.id);
-    const replierFollows = await readFollowedThreadRootIds(mockContext.db, room.id, replier.user.id);
+    const rootAuthorFollows = await readFollowedThreadRootIds(room.id, rootAuthor.user.id);
+    const replierFollows = await readFollowedThreadRootIds(room.id, replier.user.id);
 
     expect(rootAuthorFollows).toStrictEqual([root.id]);
     expect(replierFollows).toStrictEqual([root.id]);
@@ -145,7 +150,7 @@ describe(createUserMessage, () => {
     await createReply(room.id, root.id);
     await upsertThreadUnfollow(mockContext.db, { roomId: room.id, threadRootId: root.id, userId: rootAuthor.user.id });
     await createReply(room.id, root.id);
-    const rootAuthorFollows = await readFollowedThreadRootIds(mockContext.db, room.id, rootAuthor.user.id);
+    const rootAuthorFollows = await readFollowedThreadRootIds(room.id, rootAuthor.user.id);
 
     expect(rootAuthorFollows).toStrictEqual([]);
     // The bell still turns it back on: that IS the author's own decision, so it clears what they recorded
@@ -155,9 +160,7 @@ describe(createUserMessage, () => {
       true,
     );
 
-    await expect(readFollowedThreadRootIds(mockContext.db, room.id, rootAuthor.user.id)).resolves.toStrictEqual([
-      root.id,
-    ]);
+    await expect(readFollowedThreadRootIds(room.id, rootAuthor.user.id)).resolves.toStrictEqual([root.id]);
   });
 
   // A webhook message has no author at all, and the follow row's userId is NOT NULL — so the root-author follow
@@ -170,7 +173,7 @@ describe(createUserMessage, () => {
     const webhookRoot = createRoomMessage({ appUserId: v7(), type: MessageType.Webhook });
     roomObject.readMessagesByIds.mockResolvedValue([webhookRoot]);
     await createReply(room.id, webhookRoot.id);
-    const replierFollows = await readFollowedThreadRootIds(mockContext.db, room.id, replier.user.id);
+    const replierFollows = await readFollowedThreadRootIds(room.id, replier.user.id);
 
     expect(replierFollows).toStrictEqual([webhookRoot.id]);
     expect(consoleErrorSpy).not.toHaveBeenCalled();

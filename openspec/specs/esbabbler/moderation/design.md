@@ -61,12 +61,12 @@ The **Bans** tab searches by the banned user's name, over the join that already 
 
 `moderation` router (`server/trpc/routers/message/moderation.ts`):
 
-| Procedure                                                                   | Auth (permission)           | Purpose                                         |
-| :-------------------------------------------------------------------------- | :-------------------------- | :---------------------------------------------- |
-| `executeAdminAction({ roomId, targetUserId, type, durationMs? })`           | per-action gate + hierarchy | Execute any admin action                        |
-| `readBans({ roomId, cursor, filter, limit })`                               | `BanMembers`                | Cursor-paginated ban list, searchable by name   |
-| `deleteBan({ roomId, userId })`                                             | `BanMembers`                | Unban                                           |
-| `readModerationLog({ roomId, cursor, type?, actorUserId?, targetUserId? })` | `ManageRoom`                | Cursor-paginated audit log, optionally filtered |
+| Procedure                                                                   | Auth (permission)           | Purpose                                                                                                                 |
+| :-------------------------------------------------------------------------- | :-------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| `executeAdminAction({ roomId, targetUserId, type, durationMs? })`           | per-action gate + hierarchy | Execute any admin action                                                                                                |
+| `readBans({ roomId, cursor, filter, limit })`                               | `BanMembers`                | Cursor-paginated ban list, searchable by name                                                                           |
+| `deleteBan({ roomId, userId })`                                             | `BanMembers`                | Unban: the ban row stays as a tombstone at a higher version, which `readBans` returns; a ban made again revives the row |
+| `readModerationLog({ roomId, cursor, type?, actorUserId?, targetUserId? })` | `ManageRoom`                | Cursor-paginated audit log, optionally filtered                                                                         |
 
 ## Key files
 

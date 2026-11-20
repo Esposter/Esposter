@@ -31,7 +31,7 @@ Which follows may clear that tombstone is decided by whose action the follow is,
 | the replier's own reply          | yes            | cleared — Discord parity      |
 | the root author, someone replies | no             | left alone                    |
 
-Both reads — `readFollowedThreadRootIds` (follow state) and `getThreadFollowerUserIds` (the notification recipients) — skip unfollowed rows, so a tombstone is neither a follow nor a notification.
+`readThreadFollows` returns every follow row a member holds, unfollowed rows included, each with its version, so the client applies a removal rather than reading its absence; the router's list of followed roots and `getThreadFollowerUserIds` (the notification recipients) skip unfollowed rows, so a tombstone is neither a follow nor a notification.
 
 A root message with no author at all (a webhook message carries none) contributes no root-author follow: `userId` is `NOT NULL`, so the reply would otherwise fail its insert on every reply to a webhook message.
 
@@ -49,11 +49,11 @@ D1 table `threadFollowsInMessage`: `userId`, `roomId`, and `threadRootId` (the r
 
 All under `message.` in `server/trpc/routers/message/index.ts`, member-gated:
 
-| Procedure                                  | Purpose                                                                                                                                                                                       |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `followThread({ roomId, threadRootId })`   | explicit follow (idempotent)                                                                                                                                                                  |
-| `unfollowThread({ roomId, threadRootId })` | record the unfollow (idempotent; written even where no follow row exists)                                                                                                                     |
-| `readFollowedThreads({ roomId })`          | `{ threadRootIds, threads }` — every followed root id (including deleted roots, the follow-state source of truth) beside the newest-first roots the drawer lists, each with its reply summary |
+| Procedure                                  | Purpose                                                                                                                                                                                                              |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `followThread({ roomId, threadRootId })`   | explicit follow (idempotent)                                                                                                                                                                                         |
+| `unfollowThread({ roomId, threadRootId })` | record the unfollow (idempotent; written even where no follow row exists)                                                                                                                                            |
+| `readFollowedThreads({ roomId })`          | `{ follows, threads }` — every follow row the member holds in the room, with its version (unfollowed rows included), beside the newest-first roots of the live follows the drawer lists, each with its reply summary |
 
 ## Key files
 

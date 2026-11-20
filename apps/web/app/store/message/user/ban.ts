@@ -40,8 +40,10 @@ export const useBanStore = defineStore("message/user/ban", () => {
   // The live rows the keys name, in the keys' order. A removed ban stays held as a tombstone, so it is left out here
   const toLiveBans = (keys: readonly BanKey[]) =>
     keys.flatMap(({ roomId, userId }) => {
-      const ban = bans.value.find((row) => row.roomId === roomId && row.userId === userId);
-      return ban && ban.deletedAt === null ? [ban] : [];
+      const ban = bans.value.find(
+        (row): row is BanInRoom => row.roomId === roomId && row.userId === userId && row.version !== undefined,
+      );
+      return ban?.deletedAt === null ? [ban] : [];
     });
   // A page of a room's bans arrives row by row, and the list keeps the keys the page named, in the order the server gave them
   const readBanPage = ({ items: pageBans, ...page }: Page<BanInRoom>): Page<BanKey> => {

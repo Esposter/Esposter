@@ -22,19 +22,20 @@ const getThreadFollowRowKey = (
   userId: string,
 ): [string, number, string] => [roomId, threadRootId, userId];
 
-// The member's decision about a thread, set over the row held for it, or over no row yet. A decision is one row, so an
-// Unfollow is a row change, not a delete, and the server's row names the version the decision holds at
+// The member's decision about a thread, set over the row held for it, or over a row the client creates with no version yet.
+// A decision is one row, so an unfollow is a row change, not a delete, and the server's row names the version it holds at
 const getThreadFollowEntry =
-  (roomId: string, threadRootId: ClientMessage["id"], userId: string, isUnfollowed: boolean): Entry =>
+  (roomId: string, threadRootId: ClientMessage["id"], userId: string, isUnfollowed: boolean, now: Date): Entry =>
   (view) => {
     const key = getThreadFollowRowKey(roomId, threadRootId, userId);
-    view.set(threadFollowTable, key, {
-      ...view.get(threadFollowTable, key),
-      isUnfollowed,
-      roomId,
-      threadRootId,
-      userId,
-    });
+    const threadFollow = view.get(threadFollowTable, key);
+    view.set(
+      threadFollowTable,
+      key,
+      threadFollow
+        ? { ...threadFollow, isUnfollowed }
+        : { createdAt: now, deletedAt: null, isUnfollowed, roomId, threadRootId, updatedAt: now, userId },
+    );
   };
 
 export const useThreadFollowStore = defineStore("message/threadFollow", () => {
@@ -136,7 +137,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
           ],
         };
       },
-      { entry: getThreadFollowEntry(roomId, threadRootId, userId.value, false), onError: createErrorAlert },
+      { entry: getThreadFollowEntry(roomId, threadRootId, userId.value, false, new Date()), onError: createErrorAlert },
     );
   };
   const unfollowThread = (roomId: string, threadRootId: ClientMessage["id"]) => {
@@ -154,7 +155,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
           ],
         };
       },
-      { entry: getThreadFollowEntry(roomId, threadRootId, userId.value, true), onError: createErrorAlert },
+      { entry: getThreadFollowEntry(roomId, threadRootId, userId.value, true, new Date()), onError: createErrorAlert },
     );
   };
 

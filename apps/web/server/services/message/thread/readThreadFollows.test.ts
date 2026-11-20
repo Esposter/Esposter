@@ -1,14 +1,14 @@
 import type { MockDatabase } from "@esposter/db-mock";
 import type { Database } from "@esposter/db-schema";
 
-import { readFollowedThreadRootIds } from "#server/services/message/thread/readFollowedThreadRootIds";
+import { readThreadFollows } from "#server/services/message/thread/readThreadFollows";
 import { getRowsPerStatement } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { MAX_FOLLOWED_THREADS, roomsInMessage, threadFollowsInMessage, usersInAuth } from "@esposter/db-schema";
 import { chunk } from "@esposter/shared";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-describe(readFollowedThreadRootIds, () => {
+describe(readThreadFollows, () => {
   const userId = "8f1c6a2e-4b7d-7e9a-8c31-2d5f7a9b0c11";
   const roomId = "3a9e0d4c-6b2f-7a7e-9d15-7c8b1e2f3a22";
 
@@ -42,7 +42,9 @@ describe(readFollowedThreadRootIds, () => {
       { roomId, threadRootId: 7, userId },
     ]);
 
-    await expect(readFollowedThreadRootIds(db, roomId, userId)).resolves.toStrictEqual([12, 7, 4]);
+    const follows = await readThreadFollows(db, roomId, userId);
+
+    expect(follows.map(({ threadRootId }) => threadRootId)).toStrictEqual([12, 7, 4]);
   });
 
   test("returns every followed root past the drawer's cap, so an older thread keeps its follow state", async () => {
@@ -60,7 +62,9 @@ describe(readFollowedThreadRootIds, () => {
       ),
     );
 
-    await expect(readFollowedThreadRootIds(db, roomId, userId)).resolves.toStrictEqual(
+    const readFollows = await readThreadFollows(db, roomId, userId);
+
+    expect(readFollows.map(({ threadRootId }) => threadRootId)).toStrictEqual(
       Array.from({ length: followCount }, (_value, index) => followCount - index),
     );
   });

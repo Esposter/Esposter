@@ -38,7 +38,7 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
     isUploadingCallBackground.value = true;
     // The upload target is the server's to issue, so the slot is listed once the upload is confirmed, and a refetch is
     // The re-read rather than an append: the listing is the index, and it is also where the size a presigned write url
-    // could not bound is checked, so a slot that landed over the cap never reaches the picker
+    // Could not bound is checked, so a slot that landed over the cap never reaches the picker
     await withFinalizerAsync(
       () =>
         getResultAsync(async () => {
