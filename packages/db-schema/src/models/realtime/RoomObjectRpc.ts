@@ -71,7 +71,8 @@ export interface RoomObjectRpc {
   deleteLinkPreview: (id: number, actor: RoomActor) => null | RoomMessage;
   // Returns the message as it was before the delete, so the caller can remove the blobs its files named
   deleteMessage: (id: number, actor: RoomActor) => Promise<null | RoomMessage>;
-  deleteScheduledMessage: (id: string, actor: RoomActor) => Promise<boolean>;
+  // The scheduled message as its cancel leaves it, a tombstone, or nothing when the sender holds no live one under the id
+  deleteScheduledMessage: (id: string, actor: RoomActor) => Promise<ScheduledRoomMessage | undefined>;
   // One page of a person's erase in this room: their live messages after the id named, oldest first, each tombstoned.
   // Returns the page as it was before the delete, so the caller can remove the blobs its files named. A page shorter
   // Than the limit is the last one

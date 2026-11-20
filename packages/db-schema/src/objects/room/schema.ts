@@ -3,6 +3,7 @@ import type { MessageType } from "#src/models/message/MessageType";
 import type { FileEntity } from "#src/models/streams/FileEntity";
 
 import { createVersionSchema } from "#src/createMetadataSchema";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sql } from "drizzle-orm";
 import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
@@ -98,11 +99,13 @@ export const unindexedMessagesInRoom = sqliteTable("unindexedMessages", {
   ...createVersionSchema(),
 });
 
-// A message a member scheduled to send here, one row until the alarm sends it or the member cancels it.
-// Its runAt is what the alarm sorts by, so the next one due is the first row of that index
+// A message a member scheduled to send here, one row until the alarm sends it or the member cancels it. Either leaves a
+// Tombstone with its text cleared, which no read returns and the alarm never sends, until the purge removes it.
+// Its runAt is what the alarm sorts by, so the next one due is the first live row of that index
 export const scheduledMessagesInRoom = sqliteTable(
   "scheduledMessages",
   {
+    deletedAt: integer({ mode: "timestamp_ms" }),
     id: text().primaryKey(),
     message: text().notNull(),
     replyToId: integer(),
@@ -110,5 +113,8 @@ export const scheduledMessagesInRoom = sqliteTable(
     userId: text().notNull(),
     ...createVersionSchema(),
   },
-  (table) => [index("scheduledMessagesRunAtIndex").on(table.runAt)],
+  (table) => [
+    index("scheduledMessagesRunAtIndex").on(table.runAt),
+    createTombstoneIndex("scheduledMessages", table.deletedAt),
+  ],
 );

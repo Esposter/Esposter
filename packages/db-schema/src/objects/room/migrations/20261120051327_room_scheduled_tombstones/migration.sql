@@ -1,0 +1,2 @@
+ALTER TABLE `scheduledMessages` ADD `deletedAt` integer;--> statement-breakpoint
+CREATE INDEX `scheduledMessages_deletedAt_index` ON `scheduledMessages` (`deletedAt`) WHERE "scheduledMessages"."deletedAt" IS NOT NULL;

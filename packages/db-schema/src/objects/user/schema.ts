@@ -1,4 +1,5 @@
 import { createVersionSchema } from "#src/createMetadataSchema";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 // The messages a person sent, one row each, appended by the room that stored the message and removed when it is deleted.
@@ -24,32 +25,41 @@ export const joinedCallsInUser = sqliteTable("joinedCallsInUser", {
   ...createVersionSchema(),
 });
 
-// The scheduled messages a person has pending, one row each until the room delivers or cancels them.
+// The scheduled messages a person has pending, one row each until the room delivers or cancels them. A delivery or a cancel
+// Leaves the row as a tombstone, which no read returns and the alarm never sends, until the purge removes it.
 // Ordered by when they run, then by id, which is what their list shows and what its keyset reads by
 export const scheduledMessagesInUser = sqliteTable(
   "scheduledMessagesInUser",
   {
+    deletedAt: integer({ mode: "timestamp_ms" }),
     roomId: text().notNull(),
     runAt: integer({ mode: "timestamp_ms" }).notNull(),
     scheduledId: text().primaryKey(),
     ...createVersionSchema(),
   },
-  (table) => [index("scheduledMessagesInUserRunAtScheduledIdIndex").on(table.runAt, table.scheduledId)],
+  (table) => [
+    index("scheduledMessagesInUserRunAtScheduledIdIndex").on(table.runAt, table.scheduledId),
+    createTombstoneIndex("scheduledMessagesInUser", table.deletedAt),
+  ],
 );
 
-// A reminder a person set for themselves, one row until the alarm sends it.
+// A reminder a person set for themselves, one row until the alarm sends it, and a tombstone after that or a cancel.
 // The room it was set in is what its notification links to.
 // The index on runAt then id is what the alarm reads for the next one due, and what the list's keyset reads by
 export const remindersInUser = sqliteTable(
   "remindersInUser",
   {
+    deletedAt: integer({ mode: "timestamp_ms" }),
     id: text().primaryKey(),
     roomId: text().notNull(),
     runAt: integer({ mode: "timestamp_ms" }).notNull(),
     text: text().notNull(),
     ...createVersionSchema(),
   },
-  (table) => [index("remindersInUserRunAtIdIndex").on(table.runAt, table.id)],
+  (table) => [
+    index("remindersInUserRunAtIdIndex").on(table.runAt, table.id),
+    createTombstoneIndex("remindersInUser", table.deletedAt),
+  ],
 );
 
 // A TodoList item's reminder, one row per item with a due date still ahead.

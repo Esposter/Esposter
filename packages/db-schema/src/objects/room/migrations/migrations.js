@@ -6,6 +6,7 @@ import m0004 from "#src/objects/room/migrations/20261115014940_room_message_inde
 import m0005 from "#src/objects/room/migrations/20261115072720_room_created_at_index/migration.sql";
 import m0006 from "#src/objects/room/migrations/20261115083142_room_edited_at_and_unindexed_messages/migration.sql";
 import m0007 from "#src/objects/room/migrations/20261119213722_room_row_version/migration.sql";
+import m0008 from "#src/objects/room/migrations/20261120051327_room_scheduled_tombstones/migration.sql";
 
 export default {
   migrations: {
@@ -17,5 +18,6 @@ export default {
     "20261115072720_room_created_at_index": m0005,
     "20261115083142_room_edited_at_and_unindexed_messages": m0006,
     "20261119213722_room_row_version": m0007,
+    "20261120051327_room_scheduled_tombstones": m0008,
   },
 };

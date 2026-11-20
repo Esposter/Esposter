@@ -3,6 +3,7 @@ import m0001 from "#src/objects/user/migrations/20261114102921_user_reminders/mi
 import m0002 from "#src/objects/user/migrations/20261115011307_user_joined_calls/migration.sql";
 import m0003 from "#src/objects/user/migrations/20261115072721_user_keyset_indexes/migration.sql";
 import m0004 from "#src/objects/user/migrations/20261119213723_user_row_version/migration.sql";
+import m0005 from "#src/objects/user/migrations/20261120051338_user_scheduled_tombstones/migration.sql";
 
 export default {
   migrations: {
@@ -11,5 +12,6 @@ export default {
     "20261115011307_user_joined_calls": m0002,
     "20261115072721_user_keyset_indexes": m0003,
     "20261119213723_user_row_version": m0004,
+    "20261120051338_user_scheduled_tombstones": m0005,
   },
 };
