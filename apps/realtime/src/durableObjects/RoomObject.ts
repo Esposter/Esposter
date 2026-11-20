@@ -457,7 +457,9 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   }
 
   // A member who is no longer in the room is no longer online in it, their sockets here are dropped, and what they scheduled
-  // Here is removed. Their object drops what it holds for the room too, so no reminder of theirs for it fires after they left
+  // Here is removed. Their object drops what it holds for the room too, best-effort and not thrown: every caller has deleted the
+  // Membership before it calls, so a throw would fail a leave that landed and nothing could retry it. A reminder whose drop
+  // Failed is held back at its send, which reads the membership (`apps/jobs` `resolveNotification`)
   async removeMember(userId: string): Promise<void> {
     this.db.delete(onlineMembersInRoom).where(eq(onlineMembersInRoom.userId, userId)).run();
     for (const webSocket of this.ctx.getWebSockets(getUserSocketTag(userId)))

@@ -60,12 +60,14 @@ export const resolveNotification = async (
       };
     }
     case AppNotificationType.Reminder: {
-      // A reminder in a room that does not exist has no room to open, so it is dropped rather than sent to a dead link
-      const room = await getDb().query.roomsInMessage.findFirst({
-        columns: { id: true },
-        where: { id: { eq: data.roomId } },
+      // A reminder is sent only while its owner is still a member of its room: a room that is gone has no room to open, and an
+      // Owner who left has no place to read it. The owner's object keeps a reminder whose removal failed, so this is the check
+      // That holds at the one place a reminder is delivered. A membership cascades with its room, so one read answers both
+      const membership = await getDb().query.usersToRoomsInMessage.findFirst({
+        columns: { userId: true },
+        where: { roomId: { eq: data.roomId }, userId: { eq: data.userId } },
       });
-      if (!room) return undefined;
+      if (!membership) return undefined;
 
       return { body: data.text, path: RoutePath.Messages(data.roomId), title: "Reminder", userIds: [data.userId] };
     }
