@@ -1150,18 +1150,19 @@ describe(RoomObject, () => {
     });
   });
 
+  // The sender of a pending message is a member, so the room's removal from the member's index takes the message out with the reminders
   test("deleting the room takes each pending scheduled message out of its sender's index", async () => {
     expect.hasAssertions();
 
     const { object } = createRoomObject();
-    const scheduledMessage = await object.createScheduledMessage(
+    await object.createScheduledMessage(
       { id: v7(), message: "pending", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
       actor,
     );
 
     await object.deleteAll(actor, [userId, otherUserId]);
 
-    expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(scheduledMessage.id);
+    expect(getUserStub(userId).removeRoomScheduledItems).toHaveBeenCalledExactlyOnceWith(roomId);
   });
 
   test("deleting the room is kept, and asked again, while a sender's index refuses its removal", async () => {

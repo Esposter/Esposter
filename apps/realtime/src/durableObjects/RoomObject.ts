@@ -206,16 +206,13 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     return insertedMessage;
   }
 
-  // Each pending scheduled message leaves its sender's index first, and each sender drops the room's sent messages from
-  // Their index, since the rows that name them go with the room. The room's storage goes only once every index has
-  // Taken its removal, so a failed one leaves the room whole and the teardown is asked again. Once every index has taken
-  // Its removal, the online members are told it is deleted, while the storage that knows them still stands. Each sender's
-  // Index publishes its own removal through its invoke, so the readers of those lists are told by it
+  // Each member drops the room's reminders and pending scheduled messages from their index, and each sender drops the room's
+  // Sent messages from theirs, since the rows that name them go with the room. A pending message's sender is a member, since a
+  // Departure removes that sender's pending messages here, so the member removals reach every one of them. The room's storage
+  // Goes only once every index has taken its removal, so a failed one leaves the room whole and the teardown is asked again.
+  // Once every index has taken its removal, the online members are told it is deleted, while the storage that knows them still
+  // Stands. Each sender's index publishes its own removal through its invoke, so the readers of those lists are told by it
   async deleteAll(actor: RoomActor, memberIds: string[]): Promise<void> {
-    const scheduledMessages = this.db
-      .select({ id: scheduledMessagesInRoom.id, userId: scheduledMessagesInRoom.userId })
-      .from(scheduledMessagesInRoom)
-      .all();
     const senderIds = this.db
       .selectDistinct({ userId: messagesInRoom.userId })
       .from(messagesInRoom)
@@ -223,7 +220,6 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
       .all()
       .flatMap(({ userId }) => (userId === null ? [] : [userId]));
     const results = await Promise.allSettled([
-      ...scheduledMessages.map(({ id, userId }) => this.#getUser(userId).removeScheduledMessage(id)),
       ...senderIds.map((senderId) => this.#getUser(senderId).removeSentMessagesInRoom(this.#roomId)),
       ...memberIds.map((memberId) => this.#getUser(memberId).removeRoomScheduledItems(this.#roomId)),
     ]);
