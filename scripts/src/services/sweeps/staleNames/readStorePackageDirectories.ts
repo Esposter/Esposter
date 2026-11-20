@@ -1,6 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getContainingModulesDirectory } from "#src/services/shared/getContainingModulesDirectory";
 import { getPackageJsonPaths } from "#src/services/shared/getPackageJsonPaths";
-import { getContainingModulesDirectory } from "#src/services/sweeps/staleNames/getContainingModulesDirectory";
 import { readLinkedDirectories } from "#src/services/sweeps/staleNames/readLinkedDirectories";
 import { dirname, join } from "node:path";
 
