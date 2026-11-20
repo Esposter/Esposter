@@ -297,15 +297,27 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     const heldTransformer = videoBackgroundTransformer;
     const transformer = heldTransformer ?? (await RealtimeKitVideoBackgroundTransformer.init({ meeting }));
     const createdTransformer = heldTransformer ? undefined : transformer;
-    const imagePath = await readVirtualBackgroundImagePath(virtualBackground);
-    // A slot that has been deleted resolves to nothing, which lands here as the same no-background the None entry
-    // Selects - a missing image must never leave a call with a broken video track
-    if (!imagePath) return { createdTransformer, meeting, videoChange: {} };
-    // Only the presets are SVGs; an uploaded slot arrives as a signed url the middleware can take directly
-    const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
-    if (!resolvedPath) return { createdTransformer, meeting };
-    const middleware = await transformer.createStaticBackgroundVideoMiddleware(resolvedPath);
-    return { createdTransformer, meeting, videoChange: { middleware } };
+    // A run that fails returns no pick for its release to take, so a transformer this pick built is let go here
+    return getResultAsync(async () => {
+      const imagePath = await readVirtualBackgroundImagePath(virtualBackground);
+      // A slot that has been deleted resolves to nothing, which lands here as the same no-background the None entry
+      // Selects - a missing image must never leave a call with a broken video track
+      if (!imagePath) return { createdTransformer, meeting, videoChange: {} };
+      // Only the presets are SVGs; an uploaded slot arrives as a signed url the middleware can take directly
+      const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
+      if (!resolvedPath) return { createdTransformer, meeting };
+      const middleware = await transformer.createStaticBackgroundVideoMiddleware(resolvedPath);
+      return { createdTransformer, meeting, videoChange: { middleware } };
+    })
+      .orTee(() => {
+        createdTransformer?.destruct();
+      })
+      .match(
+        (pick) => pick,
+        (error) => {
+          throw error;
+        },
+      );
   };
   // The one commit of a pick. A pick made for a meeting that has since been left releases what it built instead
   const commitVirtualBackgroundPick = (pick: undefined | VirtualBackgroundPick) => {

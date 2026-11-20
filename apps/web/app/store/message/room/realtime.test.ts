@@ -109,6 +109,29 @@ describe(useRealtimeStore, () => {
     expect(secondTransformer.destruct).not.toHaveBeenCalled();
   });
 
+  // A pick that fails after building its transformer lets that transformer go, as a superseded pick does
+  test("releases the transformer a pick built when the pick fails", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(RealtimeKitVideoBackgroundTransformer, "isSupported").mockReturnValue(true);
+    const transformer = createTransformer();
+    vi.spyOn(RealtimeKitVideoBackgroundTransformer, "init").mockResolvedValue(
+      transformer as unknown as RealtimeKitVideoBackgroundTransformer,
+    );
+    const callBackgroundStore = useCallBackgroundStore();
+    vi.spyOn(callBackgroundStore, "readVirtualBackgroundImagePath").mockRejectedValue(new Error(" "));
+    const { meeting } = createMeeting();
+    spyOnMeetingInit(meeting);
+    const realtimeStore = useRealtimeStore();
+    const { connect, setCamera, setVirtualBackground } = realtimeStore;
+    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await setCamera(true);
+    setVirtualBackground(imagePath);
+    await waitForSynchronizedFunctions();
+
+    expect(transformer.destruct).toHaveBeenCalledExactlyOnceWith();
+  });
+
   // The browser keeps the call's sound quiet until the reader's own press, so a refused play raises the notice and
   // The press that answers it clears it
   test("clears the blocked-sound notice once the reader's press lets the sound play", async () => {
