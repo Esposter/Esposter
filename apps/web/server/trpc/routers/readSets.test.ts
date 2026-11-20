@@ -25,6 +25,13 @@ describe(computeReadSet, () => {
       filters: [
         {
           column: "deletedAt",
+          level: 0,
+          occurrence: "message_usersToRooms",
+          site: "leftJoinOn",
+          table: "message_usersToRooms",
+        },
+        {
+          column: "deletedAt",
           level: 1,
           occurrence: "resource_resourcePublications",
           site: "where",
@@ -162,6 +169,20 @@ describe(computeReadSet, () => {
       filters: [
         { column: "type", level: 0, occurrence: "message_rooms", site: "where", table: "message_rooms" },
         {
+          column: "deletedAt",
+          level: 0,
+          occurrence: "message_usersToRooms",
+          site: "joinOn",
+          table: "message_usersToRooms",
+        },
+        {
+          column: "deletedAt",
+          level: 1,
+          occurrence: "participantMembership",
+          site: "leftJoinOn",
+          table: "message_usersToRooms",
+        },
+        {
           column: "userId",
           level: 1,
           occurrence: "participantMembership",
@@ -169,6 +190,13 @@ describe(computeReadSet, () => {
           table: "message_usersToRooms",
         },
         { column: "type", level: 2, occurrence: "message_rooms", site: "where", table: "message_rooms" },
+        {
+          column: "deletedAt",
+          level: 2,
+          occurrence: "message_usersToRooms",
+          site: "where",
+          table: "message_usersToRooms",
+        },
       ],
       joins: [
         {
@@ -286,6 +314,14 @@ describe(computeReadSet, () => {
       filters: [
         { column: "isInvitePaused", level: 1, occurrence: "message_rooms", site: "where", table: "message_rooms" },
         { column: "deletedAt", level: 2, occurrence: "message_bans", site: "where", table: "message_bans" },
+        { column: "deletedAt", level: 5, occurrence: "d0", site: "where", table: "message_usersToRooms" },
+        {
+          column: "deletedAt",
+          level: 6,
+          occurrence: "message_usersToRooms",
+          site: "where",
+          table: "message_usersToRooms",
+        },
       ],
       joins: [
         {
