@@ -86,6 +86,51 @@ describe("likeRouter", () => {
     expect(deletedLike.postId).toBe(newPost.id);
   });
 
+  // A removal keeps the vote as a tombstone, so the version it leaves is the one a later arrival of the row is ordered against
+  test("deletes as a tombstone at a higher version", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    await likeCaller.createLike({ postId: newPost.id, value });
+    const tombstone = await likeCaller.deleteLike(newPost.id);
+
+    expect(tombstone.deletedAt).not.toBeNull();
+    expect(tombstone.version).toBe(1);
+  });
+
+  // A vote made again revives the tombstone, so the version keeps climbing and the count is moved by the new vote alone
+  test("revives a removed like at a higher version and counts it once", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    await likeCaller.createLike({ postId: newPost.id, value });
+    const tombstone = await likeCaller.deleteLike(newPost.id);
+    const revivedLike = await likeCaller.createLike({ postId: newPost.id, value });
+    const post = await postCaller.readPost(newPost.id);
+
+    expect(revivedLike.deletedAt).toBeNull();
+    expect(revivedLike.version).toBe(tombstone.version + 1);
+    expect(post.likeCount).toBe(value);
+  });
+
+  // The tombstone is no vote: it cannot be updated or removed again, and the post's count does not hold it
+  test("refuses to update or remove a removed like, and leaves the count at zero", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    await likeCaller.createLike({ postId: newPost.id, value });
+    await likeCaller.deleteLike(newPost.id);
+    const post = await postCaller.readPost(newPost.id);
+
+    await expect(likeCaller.updateLike({ postId: newPost.id, value: updatedValue })).rejects.toThrowError(
+      new NotFoundError(DatabaseEntityType.Like, newPost.id),
+    );
+    await expect(likeCaller.deleteLike(newPost.id)).rejects.toThrowError(
+      new InvalidOperationError(Operation.Delete, DatabaseEntityType.Like, newPost.id),
+    );
+    expect(post.likeCount).toBe(0);
+  });
+
   test("fails delete with wrong user", async () => {
     expect.hasAssertions();
 
