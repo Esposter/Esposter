@@ -8,8 +8,9 @@ import { getDeclineFriendRequestEntry } from "#src/services/message/user/pair/ge
 import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
-import { useOverlayStore } from "#src/store/overlay";
 import { useUserStore } from "#src/store/message/user/index";
+import { useOverlayStore } from "#src/store/overlay";
+import { withFinalizerAsync } from "@esposter/shared";
 
 export const useFriendRequestStore = defineStore("message/user/friendRequest", () => {
   const session = authClient.useSession();
@@ -17,9 +18,10 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const userId = computed(() => session.value.data?.user.id ?? "");
   const { executeQuery } = useMutation();
   const overlayStore = useOverlayStore();
+  const { arrive, view, writeAwaited, writeOptimistic } = overlayStore;
   const userStore = useUserStore();
   const { storeUser } = userStore;
-  const friendRequests = overlayStore.view(friendRequestTable);
+  const friendRequests = view(friendRequestTable);
   // The list only holds the requests the app user received, each with its sender's row. A request whose sender is not
   // Held yet shows nothing
   const receivedFriendRequests = computed(() =>
@@ -44,27 +46,29 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
       onSuccess: (friendRequestRows) => {
         for (const { sender, ...friendRequest } of friendRequestRows) {
           storeUser(sender);
-          overlayStore.arrive(friendRequestTable, friendRequest);
+          arrive(friendRequestTable, friendRequest);
         }
       },
     });
   const sendFriendRequest = async (receiverId: PublicUser["id"]) => {
     sendingReceiverIds.value.add(receiverId);
-    try {
-      await overlayStore.writeAwaited(
-        async () => {
-          const { sender, ...friendRequest } = await $trpc.friendRequest.sendFriendRequest.mutate(receiverId);
-          storeUser(sender);
-          return [createArrival(friendRequestTable, friendRequest)];
-        },
-        { onError: createErrorAlert },
-      );
-    } finally {
-      sendingReceiverIds.value.delete(receiverId);
-    }
+    await withFinalizerAsync(
+      () =>
+        writeAwaited(
+          async () => {
+            const { sender, ...friendRequest } = await $trpc.friendRequest.sendFriendRequest.mutate(receiverId);
+            storeUser(sender);
+            return [createArrival(friendRequestTable, friendRequest)];
+          },
+          { onError: createErrorAlert },
+        ),
+      () => {
+        sendingReceiverIds.value.delete(receiverId);
+      },
+    );
   };
   const acceptFriendRequest = (sender: PublicUser) => {
-    overlayStore.writeOptimistic(
+    writeOptimistic(
       async () => {
         const { result: senderUser, rowVersions } = await collectRowVersions(() =>
           $trpc.friendRequest.acceptFriendRequest.mutate(sender.id),
@@ -76,7 +80,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     );
   };
   const declineFriendRequest = (senderId: PublicUser["id"]) => {
-    overlayStore.writeOptimistic(
+    writeOptimistic(
       async () => {
         const { rowVersions } = await collectRowVersions(() =>
           $trpc.friendRequest.declineFriendRequest.mutate(senderId),

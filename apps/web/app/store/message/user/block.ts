@@ -8,8 +8,8 @@ import { getBlockEntry } from "#src/services/message/user/pair/getBlockEntry";
 import { getUnblockEntry } from "#src/services/message/user/pair/getUnblockEntry";
 import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
-import { useOverlayStore } from "#src/store/overlay";
 import { useUserStore } from "#src/store/message/user/index";
+import { useOverlayStore } from "#src/store/overlay";
 
 export const useBlockStore = defineStore("message/user/block", () => {
   const { $trpc } = useNuxtApp();
@@ -17,9 +17,10 @@ export const useBlockStore = defineStore("message/user/block", () => {
   const userId = computed(() => session.value.data?.user.id ?? "");
   const { executeQuery } = useMutation();
   const overlayStore = useOverlayStore();
+  const { arrive, view, writeOptimistic } = overlayStore;
   const userStore = useUserStore();
   const { storeUser } = userStore;
-  const blocks = overlayStore.view(blockTable);
+  const blocks = view(blockTable);
   // A block names the user it blocks, whose row the block's answer or the read stored, so a block whose user is not held
   // Yet shows nothing
   const blockedUsers = computed(() =>
@@ -29,7 +30,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
     }),
   );
   const createBlock = (targetUserId: FriendUserIdInput) => {
-    overlayStore.writeOptimistic(
+    writeOptimistic(
       async () => {
         const { result, rowVersions } = await collectRowVersions(() => $trpc.block.createBlock.mutate(targetUserId));
         storeUser(result);
@@ -40,7 +41,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
   };
 
   const deleteBlock = (blockedUserId: FriendUserIdInput) => {
-    overlayStore.writeOptimistic(
+    writeOptimistic(
       async () => {
         const { rowVersions } = await collectRowVersions(() => $trpc.block.deleteBlock.mutate(blockedUserId));
         return { arrivals: [], confirmed: createPairConfirmations(rowVersions) };
@@ -55,7 +56,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
       onSuccess: (blockRows) => {
         for (const { blocked, ...block } of blockRows) {
           storeUser(blocked);
-          overlayStore.arrive(blockTable, block);
+          arrive(blockTable, block);
         }
       },
     });

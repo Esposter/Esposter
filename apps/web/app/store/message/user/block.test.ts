@@ -25,12 +25,9 @@ describe(useBlockStore, () => {
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
   const added = createUser({ name: "added" });
-  const firstFriend = createFriend(appUser, first);
-  const secondFriend = createFriend(appUser, second);
-  const firstFriendRequest = createFriendRequest(first, appUser);
   const createBlockPath = "block.createBlock";
   const deleteBlockPath = "block.deleteBlock";
-  const declineFriendRequestPath = "friendRequest.declineFriendRequest";
+  const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
   // The block rows the read answers with: each one a block the app user made, the blocked user included
   const createBlockRow = (blocked: typeof first, deletedAt: Date | null = null) => ({
     blocked,
@@ -41,6 +38,11 @@ describe(useBlockStore, () => {
     updatedAt: new Date(0),
     version: 0,
   });
+  const secondBlockRowVersion = {
+    key: { blockedId: second.id, blockerId: appUser.id },
+    table: blockTable.name,
+    version: 1,
+  };
 
   const seedFriends = async (friendships: FriendInSocialWithRelations[]) => {
     const { $trpc } = useNuxtApp();
@@ -71,11 +73,11 @@ describe(useBlockStore, () => {
     expect.hasAssertions();
 
     trpcMsw.block.createBlock.mutation(({ ctx, input: targetUserId }) => {
-      if (targetUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      if (targetUserId === first.id) throw trpcError;
 
       appendRowVersions(ctx.responseHeaders, createBlockPath, [
         { key: { receiverId: second.id, senderId: appUser.id }, table: friendTable.name, version: 1 },
-        { key: { blockedId: second.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
+        secondBlockRowVersion,
       ]);
       return second;
     });
@@ -83,7 +85,7 @@ describe(useBlockStore, () => {
     const { friends } = storeToRefs(friendStore);
     const blockStore = useBlockStore();
     const { createBlock } = blockStore;
-    await seedFriends([firstFriend, secondFriend]);
+    await seedFriends([createFriend(appUser, first), createFriend(appUser, second)]);
     createBlock(first.id);
     createBlock(second.id);
     await flushPromises();
@@ -96,11 +98,9 @@ describe(useBlockStore, () => {
     expect.hasAssertions();
 
     trpcMsw.block.deleteBlock.mutation(({ ctx, input: blockedUserId }) => {
-      if (blockedUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      if (blockedUserId === first.id) throw trpcError;
 
-      appendRowVersions(ctx.responseHeaders, deleteBlockPath, [
-        { key: { blockedId: second.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
-      ]);
+      appendRowVersions(ctx.responseHeaders, deleteBlockPath, [secondBlockRowVersion]);
       return blockedUserId;
     });
     const blockStore = useBlockStore();
@@ -122,7 +122,7 @@ describe(useBlockStore, () => {
     const { promise: unblockReleased, resolve: releaseUnblock } = Promise.withResolvers<void>();
     trpcMsw.block.deleteBlock.mutation(async () => {
       await unblockReleased;
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     trpcMsw.block.createBlock.mutation(({ ctx }) => {
       appendRowVersions(ctx.responseHeaders, createBlockPath, [
@@ -152,10 +152,10 @@ describe(useBlockStore, () => {
     const { promise: blockReleased, resolve: releaseBlock } = Promise.withResolvers<void>();
     trpcMsw.block.createBlock.mutation(async () => {
       await blockReleased;
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx }) => {
-      appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [
+      appendRowVersions(ctx.responseHeaders, "friendRequest.declineFriendRequest", [
         { key: { receiverId: appUser.id, senderId: first.id }, table: friendRequestTable.name, version: 1 },
       ]);
     });
@@ -165,7 +165,7 @@ describe(useBlockStore, () => {
     const blockStore = useBlockStore();
     const { createBlock } = blockStore;
     const { $trpc } = useNuxtApp();
-    trpcMsw.friendRequest.readFriendRequests.query(() => [firstFriendRequest]);
+    trpcMsw.friendRequest.readFriendRequests.query(() => [createFriendRequest(first, appUser)]);
     await readFriendRequests(() => $trpc.friendRequest.readFriendRequests.query());
     createBlock(first.id);
     declineFriendRequest(first.id);

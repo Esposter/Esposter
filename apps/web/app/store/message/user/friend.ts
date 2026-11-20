@@ -7,8 +7,8 @@ import { getUnfriendEntry } from "#src/services/message/user/pair/getUnfriendEnt
 import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
-import { useOverlayStore } from "#src/store/overlay";
 import { useUserStore } from "#src/store/message/user/index";
+import { useOverlayStore } from "#src/store/overlay";
 
 export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
@@ -16,9 +16,10 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   const userId = computed(() => session.value.data?.user.id ?? "");
   const { executeQuery } = useMutation();
   const overlayStore = useOverlayStore();
+  const { arrive, view, writeOptimistic } = overlayStore;
   const userStore = useUserStore();
   const { storeUsers } = userStore;
-  const friendships = overlayStore.view(friendTable);
+  const friendships = view(friendTable);
   // A friendship names its other party by the id the other side holds, and the friend's row is the user row the read
   // Stored with it, so a friendship whose user is not held yet shows nothing
   const friends = computed(() =>
@@ -32,7 +33,7 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   // Results end up disagreeing about the same pair
   const checkIsFriend = (targetUserId: PublicUser["id"]) => friends.value.some(({ id }) => id === targetUserId);
   const deleteFriend = (friendId: PublicUser["id"]) => {
-    overlayStore.writeOptimistic(
+    writeOptimistic(
       async () => {
         const { result, rowVersions } = await collectRowVersions(() => $trpc.friend.deleteFriend.mutate(friendId));
         return { arrivals: [createArrival(friendTable, result)], confirmed: createPairConfirmations(rowVersions) };
@@ -47,7 +48,7 @@ export const useFriendStore = defineStore("message/user/friend", () => {
       onSuccess: (friendshipRows) => {
         for (const { receiver, sender, ...friendship } of friendshipRows) {
           storeUsers([receiver, sender]);
-          overlayStore.arrive(friendTable, friendship);
+          arrive(friendTable, friendship);
         }
       },
     });

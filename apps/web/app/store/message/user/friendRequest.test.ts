@@ -27,6 +27,12 @@ describe(useFriendRequestStore, () => {
   const secondFriendRequest = createFriendRequest(second, appUser);
   const sentFriendRequest = createFriendRequest(appUser, second);
   const declineFriendRequestPath = "friendRequest.declineFriendRequest";
+  const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+  const firstFriendRequestRowVersion = {
+    key: { receiverId: appUser.id, senderId: first.id },
+    table: friendRequestTable.name,
+    version: 1,
+  };
 
   const seedFriendRequests = async (friendRequests: FriendRequestInSocialWithRelations[]) => {
     const { $trpc } = useNuxtApp();
@@ -98,9 +104,7 @@ describe(useFriendRequestStore, () => {
     expect.hasAssertions();
 
     trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx }) => {
-      appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [
-        { key: { receiverId: appUser.id, senderId: first.id }, table: friendRequestTable.name, version: 1 },
-      ]);
+      appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [firstFriendRequestRowVersion]);
     });
     const friendRequestStore = useFriendRequestStore();
     const { receivedFriendRequests } = storeToRefs(friendRequestStore);
@@ -117,7 +121,7 @@ describe(useFriendRequestStore, () => {
     expect.hasAssertions();
 
     trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx, input: senderId }) => {
-      if (senderId === failedSender.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      if (senderId === failedSender.id) throw trpcError;
 
       appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [
         { key: { receiverId: appUser.id, senderId }, table: friendRequestTable.name, version: 1 },
@@ -141,7 +145,7 @@ describe(useFriendRequestStore, () => {
     expect.hasAssertions();
 
     trpcMsw.friendRequest.acceptFriendRequest.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx }) => {
       appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [
@@ -168,12 +172,10 @@ describe(useFriendRequestStore, () => {
     expect.hasAssertions();
 
     trpcMsw.friendRequest.acceptFriendRequest.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx }) => {
-      appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [
-        { key: { receiverId: appUser.id, senderId: first.id }, table: friendRequestTable.name, version: 1 },
-      ]);
+      appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [firstFriendRequestRowVersion]);
     });
     const friendRequestStore = useFriendRequestStore();
     const { receivedFriendRequests } = storeToRefs(friendRequestStore);

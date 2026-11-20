@@ -25,8 +25,7 @@ describe(useFriendStore, () => {
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
   const firstFriend = createFriend(appUser, first);
-  const secondFriend = createFriend(appUser, second);
-  const createBlockPath = "block.createBlock";
+  const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
   // The row an unfriend answers with: the friendship between the app user and the friend, tombstoned at the version its
   // Removal left
   const createRemovedFriendship = (friendId: string) => ({
@@ -62,7 +61,7 @@ describe(useFriendStore, () => {
     expect.hasAssertions();
 
     trpcMsw.friend.deleteFriend.mutation(({ input: friendId }) => {
-      if (friendId === failedFriend.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      if (friendId === failedFriend.id) throw trpcError;
 
       return createRemovedFriendship(friendId);
     });
@@ -70,7 +69,7 @@ describe(useFriendStore, () => {
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
     const { deleteFriend } = friendStore;
-    await seedFriends([firstFriend, secondFriend]);
+    await seedFriends([firstFriend, createFriend(appUser, second)]);
     deleteFriend(first.id);
     deleteFriend(second.id);
     await flushPromises();
@@ -88,10 +87,10 @@ describe(useFriendStore, () => {
     const { promise: unfriendReleased, resolve: releaseUnfriend } = Promise.withResolvers<void>();
     trpcMsw.friend.deleteFriend.mutation(async () => {
       await unfriendReleased;
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     trpcMsw.block.createBlock.mutation(({ ctx }) => {
-      appendRowVersions(ctx.responseHeaders, createBlockPath, [
+      appendRowVersions(ctx.responseHeaders, "block.createBlock", [
         { key: { receiverId: first.id, senderId: appUser.id }, table: friendTable.name, version: 1 },
         { key: { blockedId: first.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
       ]);
