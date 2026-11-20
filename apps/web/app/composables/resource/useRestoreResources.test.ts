@@ -3,14 +3,43 @@ import type { ResourceFavoriteListItem } from "#shared/models/resource/ResourceF
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useRestoreResources } from "#src/composables/resource/useRestoreResources";
+import { resourceTable } from "#src/services/resource/overlay/constants";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useFavoriteStore } from "#src/store/resource/favorite";
-import { MAX_READ_LIMIT } from "@esposter/shared";
+import { useOverlayStore } from "#src/store/overlay";
+import { MAX_READ_LIMIT, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useRestoreResources, () => {
   const { trpcMsw } = setupMswTrpc();
+  const getLiveRows = () => useOverlayStore().view(resourceTable).value;
+
+  // The held tombstone is read against the clock, and one past the retention counts as nothing held, so the clock is
+  // Pinned at the epoch the tombstone is dated from
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // The blade's undo of a delete restores a row the overlay holds as a tombstone, and nothing reads it again, so the row
+  // Comes back into the view from the restore alone: as the restore is sent, and at the version its answer names
+  test("shows a deleted resource in the view once it is restored, with no read", async () => {
+    expect.hasAssertions();
+
+    const resource = createResourceListItem();
+    // The row as the delete's answer left it: a tombstone, one version on
+    useOverlayStore().arrive(resourceTable, { ...resource, deletedAt: new Date(0), version: resource.version + 1 });
+    trpcMsw.resource.restoreResources.mutation(() => [{ ...resource, deletedAt: null, version: resource.version + 2 }]);
+    useRestoreResources().restoreResources([resource]);
+
+    expect(getLiveRows()).toStrictEqual([{ ...resource, deletedAt: null, version: resource.version + 1 }]);
+    await waitForSynchronizedFunctions();
+    expect(getLiveRows()).toStrictEqual([{ ...resource, deletedAt: null, version: resource.version + 2 }]);
+  });
 
   // The ids go out chunk-by-chunk and each chunk commits independently, so a later chunk's failure still leaves the
   // Earlier ones restored server-side — the one write that has to invalidate even though it reports as failed, as the
