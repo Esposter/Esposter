@@ -4,7 +4,7 @@ import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 import { PolygonSetter } from "#src/models/setterMap/PolygonSetter";
-import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
+import { TweenSetterMap } from "#src/services/setterMap/global/TweenSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
 
 export const PolygonSetterMap: SetterMap<PolygonConfiguration, GameObjects.Polygon, PolygonEventEmitsOptions> = {
@@ -13,5 +13,5 @@ export const PolygonSetterMap: SetterMap<PolygonConfiguration, GameObjects.Polyg
     gameObject.setTo(value);
   },
   ...ShapeSetterMap,
-  ...GlobalSetterMap,
+  ...TweenSetterMap,
 };

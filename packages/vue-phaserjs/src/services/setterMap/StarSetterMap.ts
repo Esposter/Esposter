@@ -4,7 +4,7 @@ import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 import { StarSetter } from "#src/models/setterMap/StarSetter";
-import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
+import { TweenSetterMap } from "#src/services/setterMap/global/TweenSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
 
 export const StarSetterMap: SetterMap<StarConfiguration, GameObjects.Star, StarEventEmitsOptions> = {
@@ -21,5 +21,5 @@ export const StarSetterMap: SetterMap<StarConfiguration, GameObjects.Star, StarE
     gameObject.setPoints(value);
   },
   ...ShapeSetterMap,
-  ...GlobalSetterMap,
+  ...TweenSetterMap,
 };

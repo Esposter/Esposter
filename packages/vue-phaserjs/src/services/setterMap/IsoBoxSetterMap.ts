@@ -3,12 +3,12 @@ import type { IsoBoxEventEmitsOptions } from "#src/models/emit/IsoBoxEventEmitsO
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
+import { TweenSetterMap } from "#src/services/setterMap/global/TweenSetterMap";
 import { IsoSetterMap } from "#src/services/setterMap/shared/IsoSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
 
 export const IsoBoxSetterMap: SetterMap<IsoBoxConfiguration, GameObjects.IsoBox, IsoBoxEventEmitsOptions> = {
   ...IsoSetterMap,
   ...ShapeSetterMap,
-  ...GlobalSetterMap,
+  ...TweenSetterMap,
 };

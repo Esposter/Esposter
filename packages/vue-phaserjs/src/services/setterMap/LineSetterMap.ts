@@ -4,7 +4,7 @@ import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 import { LineSetter } from "#src/models/setterMap/LineSetter";
-import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
+import { TweenSetterMap } from "#src/services/setterMap/global/TweenSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
 
 export const LineSetterMap: SetterMap<LineConfiguration, GameObjects.Line, LineEventEmitsOptions> = {
@@ -17,5 +17,5 @@ export const LineSetterMap: SetterMap<LineConfiguration, GameObjects.Line, LineE
     gameObject.setTo(...value);
   },
   ...ShapeSetterMap,
-  ...GlobalSetterMap,
+  ...TweenSetterMap,
 };

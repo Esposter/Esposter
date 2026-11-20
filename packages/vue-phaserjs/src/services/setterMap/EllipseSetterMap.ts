@@ -6,7 +6,7 @@ import type { GameObjects } from "phaser";
 import { ComputedSizeSetter } from "#src/models/setterMap/components/ComputedSizeSetter";
 import { EllipseSetter } from "#src/models/setterMap/EllipseSetter";
 import { ComputedSizeSetterMap } from "#src/services/setterMap/components/ComputedSizeSetterMap";
-import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
+import { TweenSetterMap } from "#src/services/setterMap/global/TweenSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
 
 export const EllipseSetterMap: SetterMap<EllipseConfiguration, GameObjects.Ellipse, EllipseEventEmitsOptions> = {
@@ -17,5 +17,5 @@ export const EllipseSetterMap: SetterMap<EllipseConfiguration, GameObjects.Ellip
     gameObject.setSmoothness(value);
   },
   ...ShapeSetterMap,
-  ...GlobalSetterMap,
+  ...TweenSetterMap,
 };
