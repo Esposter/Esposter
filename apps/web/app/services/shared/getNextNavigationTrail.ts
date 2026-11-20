@@ -4,6 +4,8 @@ import type { NavigationTrailPage } from "#src/models/shared/NavigationTrailPage
 import { NavigationTrailPageMap } from "#src/services/shared/NavigationTrailPageMap";
 import { RoutePath } from "@esposter/shared";
 
+// Object.entries widens the keys to string, but the map is `satisfies Record<NavigationTrailPage, ...>`, so its keys are
+// The pages themselves, which the compiler cannot carry through Object.entries
 const NAVIGATION_TRAIL_PAGE_ENTRIES = Object.entries(NavigationTrailPageMap) as [
   NavigationTrailPage,
   NavigationTrailCrumb,
