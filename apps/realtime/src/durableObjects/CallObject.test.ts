@@ -452,7 +452,10 @@ describe(CallObject, () => {
     expect(knockingAccess).toStrictEqual({ isAdmitted: false, isJoined: false, isKnocking: true, participantId: "" });
     expect(admittedAccess).toStrictEqual({ isAdmitted: true, isJoined: false, isKnocking: false, participantId: "" });
     expect(readFrames(doorkeeperSocket)).toStrictEqual([
-      { data: { callSessionId, knocker: { ...knocker.profile, id: knockerId } }, type: "knockCall" },
+      {
+        data: { callSessionId, knocker: { ...knocker.profile, deletedAt: null, id: knockerId, version: 0 } },
+        type: "knockCall",
+      },
     ]);
     expect(readFrames(knockerSocket)).toStrictEqual([{ data: { callSessionId }, type: "knockerAdmitted" }]);
     expect(bystanderSocket.send).not.toHaveBeenCalled();
@@ -509,7 +512,10 @@ describe(CallObject, () => {
     expect((await callObject.readAccess({ sessionId: knocker.sessionId })).isKnocking).toBe(false);
     expect(readFrames(knockerSocket)).toStrictEqual([{ data: { callSessionId }, type: "knockerDismissed" }]);
     expect(readFrames(doorkeeperSocket)).toStrictEqual([
-      { data: { callSessionId, knocker: { ...knocker.profile, id: knockerId } }, type: "knockCall" },
+      {
+        data: { callSessionId, knocker: { ...knocker.profile, deletedAt: null, id: knockerId, version: 0 } },
+        type: "knockCall",
+      },
     ]);
   });
 
