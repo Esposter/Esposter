@@ -36,7 +36,9 @@ export const measureRoster = async (language: VoiceLanguage, names: string[], is
   });
   console.info(`engine on ${synthesizer.device}`);
   const roster = names.length > 0 ? wholeRoster.filter(({ name }) => names.includes(name)) : wholeRoster;
-  const references = new Map<string, PersonaReference>(names.length > 0 ? Object.entries(PersonaReferenceMap) : []);
+  const characterNamePersonaReferenceMap = new Map<string, PersonaReference>(
+    names.length > 0 ? Object.entries(PersonaReferenceMap) : [],
+  );
   const unmeasured: string[] = [];
   for (const { name } of roster) {
     // oxlint-disable-next-line no-await-in-loop -- One device: every measurement synthesizes on the one model session
@@ -47,7 +49,7 @@ export const measureRoster = async (language: VoiceLanguage, names: string[], is
     }
 
     const { clipCount, reference, referenceSeconds, referenceSignalToNoiseDb } = measurement;
-    references.set(name, reference);
+    characterNamePersonaReferenceMap.set(name, reference);
     console.info(
       `${name}: ${reference.stem} — likeness ${reference.likeness} (${clipCount} clips; reference ${referenceSeconds.toFixed(1)} s, ${referenceSignalToNoiseDb.toFixed(0)} dB)`,
     );
@@ -57,7 +59,7 @@ export const measureRoster = async (language: VoiceLanguage, names: string[], is
   console.info(`${roster.length - unmeasured.length} of ${roster.length} characters measured in ${language}`);
   if (unmeasured.length > 0) console.info(`too few usable clips: ${unmeasured.join(", ")}`);
   if (isWriting) {
-    writeFileSync(PERSONA_REFERENCE_MAP_PATH, getPersonaReferenceMapSource(references));
+    writeFileSync(PERSONA_REFERENCE_MAP_PATH, getPersonaReferenceMapSource(characterNamePersonaReferenceMap));
     console.info(`map generated to ${PERSONA_REFERENCE_MAP_PATH}`);
   }
 };

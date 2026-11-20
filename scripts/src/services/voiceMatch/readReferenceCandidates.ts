@@ -5,8 +5,8 @@ import type { ClipDecoder } from "genshin-persona/src/models/ClipDecoder.ts";
 import type { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
 
 import { MAX_WIKI_TITLES_PER_QUERY } from "#src/services/shared/constants";
+import { computeClipProfile } from "#src/services/voiceMatch/computeClipProfile";
 import { MIN_CLIP_SECONDS, MODEL_SAMPLE_RATE } from "#src/services/voiceMatch/constants";
-import { getClipProfile } from "#src/services/voiceMatch/getClipProfile";
 import { chunk } from "@esposter/shared";
 import { MAX_REFERENCE_SECONDS, VOICE_SAMPLE_RATE } from "genshin-persona/src/services/constants.ts";
 import { cutReferenceClip } from "genshin-persona/src/services/cutReferenceClip.ts";
@@ -33,11 +33,11 @@ export const readReferenceCandidates = async (
       readWikiFileUrls(batch.map(({ stem }) => getWikiFileTitle(stem, language))),
     ),
   );
-  const urls = new Map<string, string>();
-  for (const urlPage of urlPages) for (const [title, url] of urlPage) urls.set(title, url);
+  const titleUrlMap = new Map<string, string>();
+  for (const urlPage of urlPages) for (const [title, url] of urlPage) titleUrlMap.set(title, url);
   const lineBytes = await Promise.all(
     lines.map(async ({ stem }) => {
-      const url = urls.get(getWikiFileTitle(stem, language));
+      const url = titleUrlMap.get(getWikiFileTitle(stem, language));
       return { bytes: url ? await readWikiFile(url) : undefined, stem };
     }),
   );
@@ -53,9 +53,9 @@ export const readReferenceCandidates = async (
     if (modelClip.samples.length < MODEL_SAMPLE_RATE * MIN_CLIP_SECONDS) continue;
 
     const { samples } = resampleClip(clip, VOICE_SAMPLE_RATE);
-    const profile = await getClipProfile(modelClip, embed);
+    const clipProfile = await computeClipProfile(modelClip, embed);
     candidates.push({
-      ...profile,
+      ...clipProfile,
       clip: { sampleRate: VOICE_SAMPLE_RATE, samples: samples.subarray(0, VOICE_SAMPLE_RATE * MAX_REFERENCE_SECONDS) },
       stem,
     });

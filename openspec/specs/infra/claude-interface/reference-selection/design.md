@@ -67,8 +67,8 @@ The runner reads the plugin's source — its wiki reading, its decoder, its engi
 | `scripts/src/services/voiceMatch/measureCharacterReference.ts`    | Profile, reference, clone, likeness for one character           |
 | `scripts/src/services/voiceMatch/readReferenceCandidates.ts`      | Every story line of one character fetched, decoded and measured |
 | `scripts/src/services/voiceMatch/readMissingReferences.ts`        | Every reference asked of the wiki in every dub                  |
-| `scripts/src/services/voiceMatch/getClipProfile.ts`               | Embedding, speech seconds and signal to noise off one clip      |
-| `scripts/src/services/voiceMatch/getMeanEmbedding.ts`             | Clips pooled into one centre                                    |
+| `scripts/src/services/voiceMatch/computeClipProfile.ts`           | Embedding, speech seconds and signal to noise off one clip      |
+| `scripts/src/services/voiceMatch/computeMeanEmbedding.ts`         | Clips pooled into one centre                                    |
 | `scripts/src/services/voiceMatch/getPersonaReferenceMapSource.ts` | The map's source in the formatter's own shape                   |
 | `scripts/src/services/voiceMatch/constants.ts`                    | Every floor, the carrier and the model id                       |
 | `packages/genshin-persona/src/services/parseWikiStoryLines.ts`    | The story template's titles, texts and file stems               |

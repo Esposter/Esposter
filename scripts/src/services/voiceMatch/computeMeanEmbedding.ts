@@ -1,6 +1,6 @@
 // The centre of a speaker's voice: the renormalised mean of their clips' unit vectors, which is what averaging a
 // Reference over several clips means
-export const getMeanEmbedding = (embeddings: Float32Array[]): Float32Array => {
+export const computeMeanEmbedding = (embeddings: Float32Array[]): Float32Array => {
   const [first] = embeddings;
   const mean = new Float32Array(first?.length ?? 0);
   for (const embedding of embeddings)

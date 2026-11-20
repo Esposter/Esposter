@@ -4,6 +4,7 @@ import type { ClipDecoder } from "genshin-persona/src/models/ClipDecoder.ts";
 import type { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
 import type { VoiceSynthesizer } from "genshin-persona/src/models/VoiceSynthesizer.ts";
 
+import { computeMeanEmbedding } from "#src/services/voiceMatch/computeMeanEmbedding";
 import {
   CARRIER_TEXT,
   LIKENESS_DECIMALS,
@@ -14,7 +15,6 @@ import {
   MODEL_SAMPLE_RATE,
 } from "#src/services/voiceMatch/constants";
 import { getCosineSimilarity } from "#src/services/voiceMatch/getCosineSimilarity";
-import { getMeanEmbedding } from "#src/services/voiceMatch/getMeanEmbedding";
 import { readReferenceCandidates } from "#src/services/voiceMatch/readReferenceCandidates";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { resampleClip } from "genshin-persona/src/services/resampleClip.ts";
@@ -33,8 +33,8 @@ export const measureCharacterReference = async (
   const candidates = await readReferenceCandidates(name, language, decoder, embed);
   if (candidates.length < MIN_PROFILE_CLIPS) return undefined;
 
-  const profile = getMeanEmbedding(candidates.map(({ embedding }) => embedding));
-  const [reference] = candidates
+  const profile = computeMeanEmbedding(candidates.map(({ embedding }) => embedding));
+  const [referenceCandidate] = candidates
     .filter(
       ({ signalToNoiseDb, speechSeconds }) =>
         speechSeconds >= MIN_REFERENCE_SECONDS && signalToNoiseDb >= MIN_REFERENCE_SIGNAL_TO_NOISE_DB,
@@ -44,9 +44,9 @@ export const measureCharacterReference = async (
         getCosineSimilarity(secondCandidate.embedding, profile) -
         getCosineSimilarity(firstCandidate.embedding, profile),
     );
-  if (!reference) return undefined;
+  if (!referenceCandidate) return undefined;
 
-  const speaker = await synthesizer.encodeReference(reference.clip);
+  const speaker = await synthesizer.encodeReference(referenceCandidate.clip);
   const carrier = await synthesizer.synthesize(CARRIER_TEXT, speaker);
   // A run that scores silence scores nothing, so an engine with no rung left that speaks ends it
   if (!carrier) throw new InvalidOperationError(Operation.Read, "voice-match", `${name}: silence on every device rung`);
@@ -58,9 +58,9 @@ export const measureCharacterReference = async (
     clipCount: candidates.length,
     reference: {
       likeness: Number(getCosineSimilarity(carrierEmbedding, profile).toFixed(LIKENESS_DECIMALS)),
-      stem: reference.stem,
+      stem: referenceCandidate.stem,
     },
-    referenceSeconds: reference.speechSeconds,
-    referenceSignalToNoiseDb: reference.signalToNoiseDb,
+    referenceSeconds: referenceCandidate.speechSeconds,
+    referenceSignalToNoiseDb: referenceCandidate.signalToNoiseDb,
   };
 };
