@@ -13,8 +13,8 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
   getScopeTopic,
-  notificationsInNotification,
   NotificationSeverity,
+  notificationsInNotification,
   NotificationType,
   pushSubscriptionsInNotification,
   roomsInMessage,
