@@ -17,6 +17,7 @@ const checkIsRecord = (value: unknown): value is Record<string, unknown> => type
 const { cwd, session_id: sessionId }: Record<string, unknown> = checkIsRecord(hookInput) ? hookInput : {};
 if (listId && typeof sessionId === "string" && typeof cwd === "string") {
   const { stdout } = spawnSync("git", ["remote", "get-url", "origin"], { cwd, encoding: "utf8", windowsHide: true });
+  // A git that cannot be spawned leaves stdout null, which the string type does not show, so it reads as no remote
   const additionalContext = getSessionContext({
     listId,
     repository: getRepository(stdout ?? ""),
