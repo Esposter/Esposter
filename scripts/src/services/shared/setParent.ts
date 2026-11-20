@@ -1,7 +1,7 @@
-import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
+import type { Node } from "oxc-parser";
 
 import { parents } from "#src/services/shared/parents";
 
-export const setParent = (node: SyntaxNode, parent: SyntaxNode): void => {
+export const setParent = (node: Node, parent: Node): void => {
   parents.set(node, parent);
 };

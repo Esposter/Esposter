@@ -1,5 +1,4 @@
-import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
-import type { Program } from "oxc-parser";
+import type { Node, Program } from "oxc-parser";
 
 import { getChildren } from "#src/services/shared/getChildren";
 import { parseSourceUnlinked } from "#src/services/shared/parseSourceUnlinked";
@@ -10,7 +9,7 @@ import { setParent } from "#src/services/shared/setParent";
 // Links them
 export const parseSource = (text: string): Program => {
   const program = parseSourceUnlinked(text);
-  const link = (node: SyntaxNode) => {
+  const link = (node: Node) => {
     for (const child of getChildren(node)) {
       setParent(child, node);
       link(child);

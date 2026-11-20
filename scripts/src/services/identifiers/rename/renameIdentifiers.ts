@@ -1,5 +1,5 @@
 import type { RenameMap } from "#src/models/identifiers/rename/RenameMap";
-import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
+import type { Node } from "oxc-parser";
 
 import { checkIsName } from "#src/services/identifiers/rename/checkIsName";
 import { computeBoundNames } from "#src/services/identifiers/rename/computeBoundNames";
@@ -32,7 +32,7 @@ export const renameIdentifiers = (text: string, renameMap: RenameMap, isSource: 
   let renamedText = aliasedText;
   if (boundNames.size > 0 || accessors.some((accessor) => aliasedText.includes(`${accessor}.`))) {
     const program = parseSource(aliasedText);
-    const getReplacement = (identifier: Extract<SyntaxNode, { type: "Identifier" }>): string | undefined => {
+    const getReplacement = (identifier: Extract<Node, { type: "Identifier" }>): string | undefined => {
       const { name } = identifier;
       const parent = parents.get(identifier);
       if (parent?.type === "MemberExpression" && !parent.computed && parent.property === identifier) {
@@ -59,7 +59,7 @@ export const renameIdentifiers = (text: string, renameMap: RenameMap, isSource: 
     renamedText = "";
     // A comment is trivia the tree never visits, and a string or a template literal's text is never an identifier. A
     // Shorthand property lists its key and its value at one position, so a position already rewritten is skipped
-    const visit = (node: SyntaxNode): void => {
+    const visit = (node: Node): void => {
       if (node.type === "Identifier" && node.start >= last) {
         const replacement = getReplacement(node);
         if (replacement !== undefined) {

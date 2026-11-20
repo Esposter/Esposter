@@ -1,9 +1,9 @@
-import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
+import type { Node } from "oxc-parser";
 
 import { parents } from "#src/services/shared/parents";
 
 // The nearest block a node sits in, which is where a binding it declares can be read from
-export const getScope = (node: SyntaxNode): SyntaxNode => {
+export const getScope = (node: Node): Node => {
   const parent = parents.get(node);
   if (parent?.type === "BlockStatement" || parent?.type === "Program") return parent;
   return parent === undefined ? node : getScope(parent);

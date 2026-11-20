@@ -1,5 +1,5 @@
 import type { ModuleScopeConstant } from "#src/models/sweeps/constantScope/ModuleScopeConstant";
-import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
+import type { Node } from "oxc-parser";
 
 import { parseSourceUnlinked } from "#src/services/shared/parseSourceUnlinked";
 import { checkIsCallTo } from "#src/services/sweeps/constantScope/checkIsCallTo";
@@ -20,9 +20,9 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
 
   const candidates: ModuleScopeConstant[] = [];
   // What each module-scope name reads, its initializer or a function declaration's body, keyed by the name
-  const initializerMap = new Map<string, SyntaxNode>();
+  const initializerMap = new Map<string, Node>();
   // The nodes whose identifiers pin what they name at module scope
-  const pinningNodes: SyntaxNode[] = [];
+  const pinningNodes: Node[] = [];
   for (const statement of statements)
     if (checkIsCallTo(statement, MOCK_CALLEE, text)) pinningNodes.push(statement);
     else if (statement.type === "VariableDeclaration")

@@ -1,4 +1,4 @@
-import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
+import type { Node } from "oxc-parser";
 
 import { getImportedPackageName } from "#src/services/dependencies/score/getImportedPackageName";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -29,7 +29,7 @@ describe("typeOnlyDependencies", () => {
 
   // Records, per package name, whether the source loads it as a value (a static import, a re-export or a dynamic
   // `import()`) or only names its types
-  const collectUsage = (node: SyntaxNode, valueNames: Set<string>, typeNames: Set<string>): void => {
+  const collectUsage = (node: Node, valueNames: Set<string>, typeNames: Set<string>): void => {
     const note = (specifier: unknown, isType: boolean) => {
       const name = typeof specifier === "string" ? getLoadablePackageName(specifier) : undefined;
       if (name) (isType ? typeNames : valueNames).add(name);

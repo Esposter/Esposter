@@ -1,4 +1,4 @@
-import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
+import type { Node } from "oxc-parser";
 
 import { parents } from "#src/services/shared/parents";
 import { getDescendants } from "#src/services/sweeps/getDescendants";
@@ -9,7 +9,7 @@ import { getValueChain } from "#src/services/sweeps/unterminatedResults/getValue
 // Element or object property of a call, `new`, array or object. A value bound to a new name is not followed, so it
 // Does not count. A longer property name, or another object's field spelled the same, is not the binding, so only
 // The identifier itself is read
-export const checkIsBindingTerminated = (call: SyntaxNode, bindingName: string, scope: SyntaxNode): boolean =>
+export const checkIsBindingTerminated = (call: Node, bindingName: string, scope: Node): boolean =>
   getDescendants(scope).some((node) => {
     if (node.type !== "MemberExpression" || node.computed || node.start < call.end) return false;
     if (node.object.type !== "Identifier" || node.object.name !== bindingName) return false;

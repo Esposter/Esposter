@@ -1,4 +1,4 @@
-import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
+import type { Node } from "oxc-parser";
 
 const NAMED_NODE_TYPES = new Set([
   "AccessorProperty",
@@ -11,7 +11,7 @@ const NAMED_NODE_TYPES = new Set([
 
 // Whether the identifier is the name a declaration or a key gives, rather than a reference to a binding. A computed
 // Key is a reference, so `{ [users]: … }` is renamed
-export const checkIsName = (parent: SyntaxNode | undefined, identifier: SyntaxNode): boolean => {
+export const checkIsName = (parent: Node | undefined, identifier: Node): boolean => {
   if (parent?.type === "TSEnumMember") return parent.id === identifier;
   if (parent?.type === "TSQualifiedName") return parent.right === identifier;
   return (
