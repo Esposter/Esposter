@@ -797,6 +797,7 @@ declare namespace Desmos {
     yAxisStep?: number;
   }
 
+  // eslint-disable-next-line no-restricted-syntax -- GraphState is the Desmos API's own name for the state a graph serialises to, which its methods are typed by; the declaration keeps that name
   type GraphState = unknown;
 
   /**

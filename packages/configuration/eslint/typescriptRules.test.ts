@@ -546,6 +546,17 @@ describe("typescriptRules", () => {
         source: `export const a = (b: DurableObjectNamespace, id: DurableObjectId) => b.get(id);`,
         violations: 0,
       },
+      { filePath: "typeAlias.ts", name: "typeAlias", source: "export type A = B;", violations: 1 },
+      { filePath: "keywordTypeAlias.ts", name: "keywordTypeAlias", source: "export type A = string;", violations: 1 },
+      {
+        filePath: "qualifiedTypeAlias.ts",
+        name: "qualifiedTypeAlias",
+        source: "export type A = z.core.JSONSchema.JSONSchema;",
+        violations: 1,
+      },
+      // A generic or a union names a type with something added, so it is not a second name for one
+      { filePath: "genericTypeAlias.ts", name: "genericTypeAlias", source: "export type A = B<C>;", violations: 0 },
+      { filePath: "unionTypeAlias.ts", name: "unionTypeAlias", source: "export type A = B | C;", violations: 0 },
     ],
   });
 });

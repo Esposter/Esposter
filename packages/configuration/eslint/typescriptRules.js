@@ -155,6 +155,16 @@ export default {
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
     },
     {
+      // A bare alias is a second name for one type, so two names hold it and a reader cannot tell they are the same.
+      // The type is written at each use, and a name that carried a meaning the type lacks moves to the type's owner.
+      // Only a reference with no type arguments and a keyword are matched: a generic, a union or an object literal says
+      // Something its name does not repeat, and a `typeof` query is not a second name for a type.
+      message:
+        "No type aliases — `type X = Y` is a second name for `Y`, a duplicate. Write `Y` at each use and name its meaning on the type that owns it. See the typescript skill.",
+      selector:
+        "TSTypeAliasDeclaration > :matches(TSTypeReference:not([typeArguments]), [type=/^TS[A-Za-z]+Keyword$/])",
+    },
+    {
       // The child combinators are load-bearing — they match only the property's own annotation, so
       // `Ref<T | undefined>`, `(T | undefined)[]`, tuple members and function params are untouched. Only a required
       // Property is matched, since under `exactOptionalPropertyTypes` an optional one a value may hand `undefined` is
