@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 describe("uiRules", () => {
   // An empty field is left to `required`, so a field that may stay empty is never told off before anything is typed
   test.each([
-    UiRules.isNotProfanity(),
+    UiRules.notProfanity(),
     UiRules.maxLength(0),
     UiRules.maxValue(1),
     UiRules.minValue(1),

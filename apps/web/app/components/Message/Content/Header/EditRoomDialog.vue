@@ -22,7 +22,7 @@ const roomName = useRoomName(() => room.id);
 const placeholder = useRoomPlaceholder(() => room);
 const { cloned: editedName } = useCloned(() => room.name);
 const { cloned: editedImage } = useCloned(() => room.image);
-const nameRules = [UiRules.maxLength(ROOM_NAME_MAX_LENGTH), UiRules.isNotProfanity()];
+const nameRules = [UiRules.maxLength(ROOM_NAME_MAX_LENGTH), UiRules.notProfanity()];
 // The name is compared as the server would store it, so a trailing space alone is not an edit
 const isUnchanged = computed(
   () =>

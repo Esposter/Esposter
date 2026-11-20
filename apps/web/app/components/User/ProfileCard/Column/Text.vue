@@ -13,7 +13,7 @@ interface Props {
 
 const modelValue = defineModel<Row<typeof RowValueType.Text>["value"]>({ required: true });
 defineProps<Props>();
-const valueRules = [UiRules.required(), UiRules.maxLength(USER_NAME_MAX_LENGTH), UiRules.isNotProfanity()];
+const valueRules = [UiRules.required(), UiRules.maxLength(USER_NAME_MAX_LENGTH), UiRules.notProfanity()];
 </script>
 
 <template>

@@ -13,7 +13,7 @@ interface Props {
 
 const { initialValues = { description: "", title: "" } } = defineProps<Props>();
 const emit = defineEmits<{ submit: [values: NonNullable<Props["initialValues"]>] }>();
-const titleRules = [UiRules.required(), UiRules.maxLength(POST_TITLE_MAX_LENGTH), UiRules.isNotProfanity()];
+const titleRules = [UiRules.required(), UiRules.maxLength(POST_TITLE_MAX_LENGTH), UiRules.notProfanity()];
 // A copy, so typing edits the form's own values rather than the object the caller passed in
 const editedInitialValues = ref({ ...initialValues });
 const isValid = ref(true);
