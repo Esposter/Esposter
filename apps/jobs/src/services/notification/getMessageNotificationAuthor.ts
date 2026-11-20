@@ -1,5 +1,5 @@
 import { getDb } from "#src/services/shared/getDb";
-import { getLiveRowWhere, getLiveWebhookWhere } from "@esposter/db-schema";
+import { getLiveRowWhere } from "@esposter/db-schema";
 
 // Who a message notification is shown as. Resolved here rather than by each publisher, so the per-room display name
 // ([display names](openspec/specs/esbabbler/display-names/design.md)) is applied once and never on the request path a member is waiting on.
@@ -27,7 +27,7 @@ export const getMessageNotificationAuthor = async ({
     // The bot's name is its webhook's, so a rename shows on the bot's messages that were posted before it
     const webhook = await getDb().query.webhooksInMessage.findFirst({
       columns: { name: true },
-      where: { RAW: getLiveWebhookWhere, userId: { eq: appUserId } },
+      where: { RAW: getLiveRowWhere, userId: { eq: appUserId } },
       with: { appUser: { columns: { image: true } } },
     });
     return { icon: webhook?.appUser.image, title: webhook?.name ?? "" };

@@ -24,7 +24,7 @@ import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/mes
 import { createPresignedPutUrl } from "@esposter/db";
 import {
   DatabaseEntityType,
-  getLiveRoomEmojiWhere,
+  getLiveRowWhere,
   getRoomEmojiBlobName,
   roomEmojisInMessage,
   roomIdSchema,
@@ -77,7 +77,7 @@ export const emojiRouter = router({
               .where(
                 and(
                   eq(roomsInMessage.id, roomId),
-                  sql`(select count(*) from ${roomEmojisInMessage} where ${and(eq(roomEmojisInMessage.roomId, roomId), getLiveRoomEmojiWhere(roomEmojisInMessage))}) < ${MAX_ROOM_EMOJIS}`,
+                  sql`(select count(*) from ${roomEmojisInMessage} where ${and(eq(roomEmojisInMessage.roomId, roomId), getLiveRowWhere(roomEmojisInMessage))}) < ${MAX_ROOM_EMOJIS}`,
                   notExists(getRoomEmojiNameQuery(ctx.db, roomId, name)),
                 ),
               ),
@@ -102,7 +102,7 @@ export const emojiRouter = router({
         await ctx.db
           .update(roomEmojisInMessage)
           .set({ deletedAt: new Date() })
-          .where(and(inRoom(roomEmojisInMessage, id, roomId), getLiveRoomEmojiWhere(roomEmojisInMessage)))
+          .where(and(inRoom(roomEmojisInMessage, id, roomId), getLiveRowWhere(roomEmojisInMessage)))
           .returning()
       )[0],
       Operation.Delete,
@@ -177,7 +177,7 @@ export const emojiRouter = router({
           .where(
             and(
               inRoom(roomEmojisInMessage, id, roomId),
-              getLiveRoomEmojiWhere(roomEmojisInMessage),
+              getLiveRowWhere(roomEmojisInMessage),
               notExists(getRoomEmojiNameQuery(ctx.db, roomId, name, id)),
             ),
           )

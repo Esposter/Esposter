@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { getLiveRoomEmojiWhere, roomEmojisInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, roomEmojisInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { and, count, eq } from "drizzle-orm";
 
@@ -12,5 +12,5 @@ export const readRoomEmojiCount = async (db: Context["db"], roomId: RoomInMessag
     await db
       .select({ count: count() })
       .from(roomEmojisInMessage)
-      .where(and(eq(roomEmojisInMessage.roomId, roomId), getLiveRoomEmojiWhere(roomEmojisInMessage))),
+      .where(and(eq(roomEmojisInMessage.roomId, roomId), getLiveRowWhere(roomEmojisInMessage))),
   ).count;

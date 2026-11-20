@@ -3,13 +3,14 @@ import type { getJobQueue } from "#server/services/queue/getJobQueue";
 import type { RequestEvent } from "nuxt/server";
 
 import callWebhook from "#server/api/webhooks/[id]/[token].post";
+import { getLiveRowWhere } from "@esposter/db-schema";
 import { generateSecretToken, hashSecretToken, takeOne } from "@esposter/shared";
 import { env } from "cloudflare:workers";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 interface LookupQuery {
-  where: { id: { eq: string }; isActive: { eq: boolean }; tokenHash: { eq: string } };
+  where: { id: { eq: string }; isActive: { eq: boolean }; RAW: typeof getLiveRowWhere; tokenHash: { eq: string } };
 }
 interface StoredWebhook {
   id: string;
@@ -95,7 +96,12 @@ describe("api/webhooks/[id]/[token]", () => {
 
     expect(findFirst).toHaveBeenCalledExactlyOnceWith({
       columns: { roomId: true, userId: true },
-      where: { id: { eq: webhookId }, isActive: { eq: true }, tokenHash: { eq: await hashSecretToken(storedToken) } },
+      where: {
+        id: { eq: webhookId },
+        isActive: { eq: true },
+        RAW: getLiveRowWhere,
+        tokenHash: { eq: await hashSecretToken(storedToken) },
+      },
     });
   });
 

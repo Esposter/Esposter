@@ -6,7 +6,6 @@ import { ownedBy } from "#server/services/db/ownedBy";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { getLiveInviteRowWhere } from "#server/services/room/getLiveInviteRowWhere";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { getBucket } from "#server/services/storage/getBucket";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
@@ -15,9 +14,7 @@ import {
   appUsersInMessage,
   bansInMessage,
   DatabaseEntityType,
-  getLiveRoomEmojiWhere,
   getLiveRowWhere,
-  getLiveWebhookWhere,
   invitesInMessage,
   roomEmojisInMessage,
   roomMemberPermissionsInMessage,
@@ -73,21 +70,21 @@ export const deleteRoom = async (
           db
             .select({ userId: webhooksInMessage.userId })
             .from(webhooksInMessage)
-            .where(and(eq(webhooksInMessage.roomId, id), getLiveWebhookWhere(webhooksInMessage))),
+            .where(and(eq(webhooksInMessage.roomId, id), getLiveRowWhere(webhooksInMessage))),
         ),
       ),
     db
       .update(webhooksInMessage)
       .set({ deletedAt: new Date() })
-      .where(and(eq(webhooksInMessage.roomId, id), getLiveWebhookWhere(webhooksInMessage))),
+      .where(and(eq(webhooksInMessage.roomId, id), getLiveRowWhere(webhooksInMessage))),
     db
       .update(invitesInMessage)
       .set({ deletedAt: new Date() })
-      .where(and(eq(invitesInMessage.roomId, id), getLiveInviteRowWhere(invitesInMessage))),
+      .where(and(eq(invitesInMessage.roomId, id), getLiveRowWhere(invitesInMessage))),
     db
       .update(roomEmojisInMessage)
       .set({ deletedAt: new Date() })
-      .where(and(eq(roomEmojisInMessage.roomId, id), getLiveRoomEmojiWhere(roomEmojisInMessage))),
+      .where(and(eq(roomEmojisInMessage.roomId, id), getLiveRowWhere(roomEmojisInMessage))),
     db
       .update(bansInMessage)
       .set({ deletedAt: new Date() })

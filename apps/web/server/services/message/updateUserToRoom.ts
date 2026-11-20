@@ -4,7 +4,6 @@ import type { UserInAuth, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { ownedBy } from "#server/services/db/ownedBy";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { getLiveRoomCategoryWhere } from "#server/services/room/category/getLiveRoomCategoryWhere";
 import { requireRoomCategory } from "#server/services/room/category/requireRoomCategory";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
@@ -12,6 +11,7 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { checkHasPermission } from "@esposter/db";
 import {
   DatabaseEntityType,
+  getLiveRowWhere,
   roomCategoriesInMessage,
   RoomPermission,
   usersToRoomsInMessage,
@@ -48,9 +48,7 @@ export const updateUserToRoom = async (
       await db
         .select()
         .from(roomCategoriesInMessage)
-        .where(
-          and(ownedBy(roomCategoriesInMessage, categoryId, userId), getLiveRoomCategoryWhere(roomCategoriesInMessage)),
-        )
+        .where(and(ownedBy(roomCategoriesInMessage, categoryId, userId), getLiveRowWhere(roomCategoriesInMessage)))
     )[0];
     requireRoomCategory(ownedRoomCategory, Operation.Update, categoryId, "NOT_FOUND");
   }

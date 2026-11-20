@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { RoomEmojiInMessage } from "@esposter/db-schema";
 
-import { getLiveRoomEmojiWhere, roomEmojisInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, roomEmojisInMessage } from "@esposter/db-schema";
 import { and, eq, ne } from "drizzle-orm";
 
 // The room's emoji answering to a name, as a subquery so the check and the write are one statement. An update leaves out
@@ -20,7 +20,7 @@ export const getRoomEmojiNameQuery = (
       and(
         eq(roomEmojisInMessage.roomId, roomId),
         eq(roomEmojisInMessage.name, name),
-        getLiveRoomEmojiWhere(roomEmojisInMessage),
+        getLiveRowWhere(roomEmojisInMessage),
         exceptId === undefined ? undefined : ne(roomEmojisInMessage.id, exceptId),
       ),
     );

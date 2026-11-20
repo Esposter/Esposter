@@ -2,14 +2,13 @@ import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { ownedBy } from "#server/services/db/ownedBy";
-import { getLiveRoomCategoryWhere } from "#server/services/room/category/getLiveRoomCategoryWhere";
 import { requireRoomCategory } from "#server/services/room/category/requireRoomCategory";
 import { router } from "#server/trpc/index";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { createRoomCategoryInputSchema } from "#shared/models/db/roomCategory/CreateRoomCategoryInput";
 import { deleteRoomCategoryInputSchema } from "#shared/models/db/roomCategory/DeleteRoomCategoryInput";
 import { reorderRoomCategoriesInputSchema } from "#shared/models/db/roomCategory/ReorderRoomCategoriesInput";
-import { roomCategoriesInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, roomCategoriesInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, eq, isNotNull, sql } from "drizzle-orm";
 
@@ -32,7 +31,7 @@ export const categoryRouter = router({
                   id: sql`${input.id}`.as("id"),
                   name: sql`${input.name}`.as("name"),
                   position:
-                    sql`(select coalesce(max(${roomCategoriesInMessage.position}), -1) + 1 from ${roomCategoriesInMessage} where ${and(eq(roomCategoriesInMessage.userId, userId), getLiveRoomCategoryWhere(roomCategoriesInMessage))})`.as(
+                    sql`(select coalesce(max(${roomCategoriesInMessage.position}), -1) + 1 from ${roomCategoriesInMessage} where ${and(eq(roomCategoriesInMessage.userId, userId), getLiveRowWhere(roomCategoriesInMessage))})`.as(
                       "position",
                     ),
                   userId: sql`${userId}`.as("userId"),
@@ -66,12 +65,7 @@ export const categoryRouter = router({
         ctx.db
           .update(roomCategoriesInMessage)
           .set({ deletedAt: new Date() })
-          .where(
-            and(
-              ownedBy(roomCategoriesInMessage, input, ctx.user.id),
-              getLiveRoomCategoryWhere(roomCategoriesInMessage),
-            ),
-          )
+          .where(and(ownedBy(roomCategoriesInMessage, input, ctx.user.id), getLiveRowWhere(roomCategoriesInMessage)))
           .returning(),
       ]);
       return requireRoomCategory(deletedRoomCategories[0], Operation.Delete, input, "NOT_FOUND");
@@ -103,8 +97,8 @@ export const categoryRouter = router({
           and(
             sql`${roomCategoriesInMessage.id} in ${reorderedIds}`,
             eq(roomCategoriesInMessage.userId, userId),
-            getLiveRoomCategoryWhere(roomCategoriesInMessage),
-            sql`(select count(*) from ${roomCategoriesInMessage} where ${roomCategoriesInMessage.userId} = ${userId} and ${getLiveRoomCategoryWhere(roomCategoriesInMessage)} and ${roomCategoriesInMessage.id} in ${reorderedIds}) = ${input.length}`,
+            getLiveRowWhere(roomCategoriesInMessage),
+            sql`(select count(*) from ${roomCategoriesInMessage} where ${roomCategoriesInMessage.userId} = ${userId} and ${getLiveRowWhere(roomCategoriesInMessage)} and ${roomCategoriesInMessage.id} in ${reorderedIds}) = ${input.length}`,
           ),
         )
         .returning();
@@ -119,7 +113,7 @@ export const categoryRouter = router({
               .where(
                 and(
                   eq(roomCategoriesInMessage.userId, userId),
-                  getLiveRoomCategoryWhere(roomCategoriesInMessage),
+                  getLiveRowWhere(roomCategoriesInMessage),
                   sql`${roomCategoriesInMessage.id} in ${reorderedIds}`,
                 ),
               );

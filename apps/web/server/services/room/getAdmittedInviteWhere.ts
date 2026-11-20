@@ -1,8 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { SQL } from "drizzle-orm";
 
-import { getLiveInviteRowWhere } from "#server/services/room/getLiveInviteRowWhere";
-import { bansInMessage, invitesInMessage, roomsInMessage } from "@esposter/db-schema";
+import { bansInMessage, getLiveRowWhere, invitesInMessage, roomsInMessage } from "@esposter/db-schema";
 import { and, eq, exists, isNull, notExists, sql } from "drizzle-orm";
 
 // The row of a link while its room is open to invites and holds no active ban for the user. A link's own expiry and uses
@@ -10,7 +9,7 @@ import { and, eq, exists, isNull, notExists, sql } from "drizzle-orm";
 export const getAdmittedInviteWhere = (db: Context["db"], code: string, userId: string): SQL | undefined =>
   and(
     eq(invitesInMessage.id, code),
-    getLiveInviteRowWhere(invitesInMessage),
+    getLiveRowWhere(invitesInMessage),
     exists(
       db
         .select({ _: sql`1` })

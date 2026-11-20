@@ -23,7 +23,7 @@ import { inJsonArray } from "@esposter/db";
 import {
   appUsersInMessage,
   DatabaseEntityType,
-  getLiveWebhookWhere,
+  getLiveRowWhere,
   PublicWebhookColumns,
   roomIdSchema,
   RoomPermission,
@@ -57,7 +57,7 @@ export const webhookRouter = router({
     const tokenHash = await hashSecretToken(token);
     const isUnderWebhookCap = and(
       eq(roomsInMessage.id, roomId),
-      sql`(select count(*) from ${webhooksInMessage} where ${and(eq(webhooksInMessage.roomId, roomId), getLiveWebhookWhere(webhooksInMessage))}) < ${WEBHOOK_MAX_LENGTH}`,
+      sql`(select count(*) from ${webhooksInMessage} where ${and(eq(webhooksInMessage.roomId, roomId), getLiveRowWhere(webhooksInMessage))}) < ${WEBHOOK_MAX_LENGTH}`,
     );
     const [, webhookRows] = await ctx.db.batch([
       ctx.db.insert(appUsersInMessage).select(
@@ -108,13 +108,13 @@ export const webhookRouter = router({
             ctx.db
               .select({ userId: webhooksInMessage.userId })
               .from(webhooksInMessage)
-              .where(and(inRoom(webhooksInMessage, id, roomId), getLiveWebhookWhere(webhooksInMessage))),
+              .where(and(inRoom(webhooksInMessage, id, roomId), getLiveRowWhere(webhooksInMessage))),
           ),
         ),
       ctx.db
         .update(webhooksInMessage)
         .set({ deletedAt: new Date() })
-        .where(and(inRoom(webhooksInMessage, id, roomId), getLiveWebhookWhere(webhooksInMessage)))
+        .where(and(inRoom(webhooksInMessage, id, roomId), getLiveRowWhere(webhooksInMessage)))
         .returning(publicWebhookColumns),
     ]);
     return requireMutation(deletedWebhooks[0], Operation.Delete, DatabaseEntityType.Webhook, id);
@@ -129,7 +129,7 @@ export const webhookRouter = router({
         .where(
           and(
             eq(webhooksInMessage.roomId, roomId),
-            getLiveWebhookWhere(webhooksInMessage),
+            getLiveRowWhere(webhooksInMessage),
             inJsonArray(appUsersInMessage.id, ids),
           ),
         ),
@@ -155,7 +155,7 @@ export const webhookRouter = router({
           await ctx.db
             .update(webhooksInMessage)
             .set({ tokenHash })
-            .where(and(inRoom(webhooksInMessage, id, roomId), getLiveWebhookWhere(webhooksInMessage)))
+            .where(and(inRoom(webhooksInMessage, id, roomId), getLiveRowWhere(webhooksInMessage)))
             .returning(publicWebhookColumns)
         )[0],
         Operation.Update,
@@ -174,7 +174,7 @@ export const webhookRouter = router({
         await ctx.db
           .update(webhooksInMessage)
           .set(rest)
-          .where(and(inRoom(webhooksInMessage, id, roomId), getLiveWebhookWhere(webhooksInMessage)))
+          .where(and(inRoom(webhooksInMessage, id, roomId), getLiveRowWhere(webhooksInMessage)))
           .returning(publicWebhookColumns)
       )[0],
       Operation.Update,

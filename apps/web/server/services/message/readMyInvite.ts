@@ -1,9 +1,8 @@
 import type { Context } from "#server/trpc/context";
 import type { InviteInMessage } from "@esposter/db-schema";
 
-import { getLiveInviteRowWhere } from "#server/services/room/getLiveInviteRowWhere";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
-import { invitesInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, invitesInMessage } from "@esposter/db-schema";
 import { and, asc, desc, eq } from "drizzle-orm";
 
 // The member's own link in the room: a live one before any tombstone, and the newest of those. A lapsed link is tombstoned
@@ -26,7 +25,7 @@ export const readMyInvite = async (
   const [lapsedInvite] = await db
     .update(invitesInMessage)
     .set({ deletedAt: new Date() })
-    .where(and(eq(invitesInMessage.id, invite.id), getLiveInviteRowWhere(invitesInMessage)))
+    .where(and(eq(invitesInMessage.id, invite.id), getLiveRowWhere(invitesInMessage)))
     .returning();
   if (lapsedInvite) return lapsedInvite;
 

@@ -6,7 +6,6 @@ import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolati
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { readMyInvite } from "#server/services/message/readMyInvite";
 import { MAX_INVITE_ID_RETRIES } from "#server/services/room/constants";
-import { getLiveInviteRowWhere } from "#server/services/room/getLiveInviteRowWhere";
 import { resolveLiveInvite } from "#server/services/room/resolveLiveInvite";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -79,7 +78,7 @@ export const inviteRouter = router({
                 and(
                   eq(invitesInMessage.roomId, roomId),
                   eq(invitesInMessage.userId, userId),
-                  getLiveInviteRowWhere(invitesInMessage),
+                  getLiveRowWhere(invitesInMessage),
                   roomIsOpen,
                 ),
               )
@@ -190,7 +189,7 @@ export const inviteRouter = router({
           await ctx.db
             .update(invitesInMessage)
             .set({ deletedAt: new Date() })
-            .where(and(...wheres, getLiveInviteRowWhere(invitesInMessage)))
+            .where(and(...wheres, getLiveRowWhere(invitesInMessage)))
             .returning()
         )[0],
         Operation.Delete,
