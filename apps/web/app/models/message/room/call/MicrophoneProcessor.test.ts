@@ -1,18 +1,9 @@
 import { MicrophoneProcessor } from "#src/models/message/room/call/MicrophoneProcessor";
+import { MICROPHONE_GATE_URL } from "#src/services/message/room/call/constants";
 import { DEFAULT_INPUT_SENSITIVITY_DECIBELS, VoiceInputMode } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(MicrophoneProcessor, () => {
-  const microphoneGateUrl = takeOne(
-    Object.values(
-      import.meta.glob<string>("#src/workers/message/room/call/microphoneGate.worklet", {
-        eager: true,
-        import: "default",
-        query: "?worker&url",
-      }),
-    ),
-  );
   let addModule: ReturnType<typeof vi.fn<(moduleUrl: string) => Promise<void>>>;
   class AudioWorkletNodeStub {
     disconnect = vi.fn<() => void>();
@@ -46,7 +37,7 @@ describe(MicrophoneProcessor, () => {
 
     await processor.audioMiddleware(createAudioContext());
 
-    expect(addModule).toHaveBeenCalledExactlyOnceWith(microphoneGateUrl);
+    expect(addModule).toHaveBeenCalledExactlyOnceWith(MICROPHONE_GATE_URL);
   });
 
   test("a graph built after the page's settings change starts with them, and a later change reaches the same node", async () => {

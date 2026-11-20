@@ -1,18 +1,8 @@
 import type { MicrophoneGateSettings } from "#src/models/message/room/call/MicrophoneGateSettings";
 
-import { MICROPHONE_GATE_PROCESSOR_NAME } from "#src/services/message/room/call/constants";
+import { MICROPHONE_GATE_PROCESSOR_NAME, MICROPHONE_GATE_URL } from "#src/services/message/room/call/constants";
 import { MIN_INPUT_SENSITIVITY_DECIBELS, VoiceInputMode } from "@esposter/db-schema";
-import { exhaustiveGuard, takeOne } from "@esposter/shared";
-
-const microphoneGateUrl = takeOne(
-  Object.values(
-    import.meta.glob<string>("#src/workers/message/room/call/microphoneGate.worklet", {
-      eager: true,
-      import: "default",
-      query: "?worker&url",
-    }),
-  ),
-);
+import { exhaustiveGuard } from "@esposter/shared";
 
 // The mic's Web Audio stage, handed to RealtimeKit as an audio middleware. It applies the user's mic volume as gain
 // And gates transmission below the voice-activity threshold (Voice Activity) or while the push-to-talk key is up
@@ -68,7 +58,7 @@ export class MicrophoneProcessor {
   readonly audioMiddleware = async (audioContext: AudioContext) => {
     // Each run builds a graph in a new context, so the previous run's graph and its context close here
     await this.destroy();
-    await audioContext.audioWorklet.addModule(microphoneGateUrl);
+    await audioContext.audioWorklet.addModule(MICROPHONE_GATE_URL);
     // Mono in and out, so the gate's one channel is the microphone's and the browser does not up-mix it to stereo
     const processor = new AudioWorkletNode(audioContext, MICROPHONE_GATE_PROCESSOR_NAME, {
       channelCount: 1,

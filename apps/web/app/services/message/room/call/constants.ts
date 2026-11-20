@@ -1,3 +1,5 @@
+import { takeOne } from "@esposter/shared";
+
 // Client-only per-remote-participant volume multiplier — no stored default, dies with the call.
 export const DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE = 100;
 // The prefix of every call background key, the per-slot keys and the upload key alike, so they share one namespace
@@ -22,3 +24,13 @@ export const SCREEN_SHARE_CONSTRAINTS = {
 export const PICTURE_IN_PICTURE_WINDOW_OPTIONS = { height: 320, width: 420 } as const;
 // The name the microphone gate is registered under in its AudioWorklet, which the page and the worklet both name
 export const MICROPHONE_GATE_PROCESSOR_NAME = "microphone-gate";
+// The address the gate's worklet module is served from, which the audio middleware adds to each new context
+export const MICROPHONE_GATE_URL = takeOne(
+  Object.values(
+    import.meta.glob<string>("#src/workers/message/room/call/microphoneGate.worklet", {
+      eager: true,
+      import: "default",
+      query: "?worker&url",
+    }),
+  ),
+);
