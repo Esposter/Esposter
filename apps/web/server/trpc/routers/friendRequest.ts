@@ -2,6 +2,8 @@ import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/d
 
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { assertIsNotSelf } from "#server/services/friend/assertIsNotSelf";
+import { getLiveBlockWhere } from "#server/services/friend/getLiveBlockWhere";
+import { getLiveFriendshipWhere } from "#server/services/friend/getLiveFriendshipWhere";
 import { getReceivedFriendRequestWhere } from "#server/services/friend/getReceivedFriendRequestWhere";
 import { readUserPair } from "#server/services/friend/readUserPair";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
@@ -22,7 +24,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, getResultAsync, noop, Operation } from "@esposter/shared";
-import { and, eq, isNotNull, isNull, notExists, or, sql } from "drizzle-orm";
+import { and, eq, isNotNull, notExists, or, sql } from "drizzle-orm";
 
 export const friendRequestRouter = router({
   acceptFriendRequest: standardAuthedProcedure
@@ -123,12 +125,9 @@ export const friendRequestRouter = router({
                     .select({ _: sql`1` })
                     .from(blocksInSocial)
                     .where(
-                      and(
-                        or(
-                          and(eq(blocksInSocial.blockedId, receiverId), eq(blocksInSocial.blockerId, userId)),
-                          and(eq(blocksInSocial.blockedId, userId), eq(blocksInSocial.blockerId, receiverId)),
-                        ),
-                        isNull(blocksInSocial.deletedAt),
+                      or(
+                        getLiveBlockWhere({ blockedId: receiverId, blockerId: userId }),
+                        getLiveBlockWhere({ blockedId: userId, blockerId: receiverId }),
                       ),
                     ),
                 ),
@@ -136,7 +135,7 @@ export const friendRequestRouter = router({
                   ctx.db
                     .select({ _: sql`1` })
                     .from(friendsInSocial)
-                    .where(and(eq(friendsInSocial.id, friendshipId), isNull(friendsInSocial.deletedAt))),
+                    .where(getLiveFriendshipWhere(friendshipId)),
                 ),
               ),
             ),

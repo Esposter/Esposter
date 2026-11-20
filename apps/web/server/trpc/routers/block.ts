@@ -1,6 +1,9 @@
 import type { BlockInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
 import { assertIsNotSelf } from "#server/services/friend/assertIsNotSelf";
+import { getLiveBlockWhere } from "#server/services/friend/getLiveBlockWhere";
+import { getLiveFriendRequestWhere } from "#server/services/friend/getLiveFriendRequestWhere";
+import { getLiveFriendshipWhere } from "#server/services/friend/getLiveFriendshipWhere";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
@@ -15,7 +18,7 @@ import {
   PublicUserColumns,
 } from "@esposter/db-schema";
 import { getFriendshipId, Operation } from "@esposter/shared";
-import { and, eq, isNotNull, isNull } from "drizzle-orm";
+import { isNotNull } from "drizzle-orm";
 
 export const blockRouter = router({
   // The pair's friendship and request go with the block, and the blocked user's posts leave the blocker's feed
@@ -35,14 +38,8 @@ export const blockRouter = router({
       // The block revives its own tombstone by the conflict branch, which clears the deletion and raises the version. A live
       // Block is left as it is, since the set-where names only a tombstone
       await ctx.db.batch([
-        ctx.db
-          .update(friendRequestsInSocial)
-          .set({ deletedAt })
-          .where(and(eq(friendRequestsInSocial.id, friendshipId), isNull(friendRequestsInSocial.deletedAt))),
-        ctx.db
-          .update(friendsInSocial)
-          .set({ deletedAt })
-          .where(and(eq(friendsInSocial.id, friendshipId), isNull(friendsInSocial.deletedAt))),
+        ctx.db.update(friendRequestsInSocial).set({ deletedAt }).where(getLiveFriendRequestWhere(friendshipId)),
+        ctx.db.update(friendsInSocial).set({ deletedAt }).where(getLiveFriendshipWhere(friendshipId)),
         ctx.db
           .insert(blocksInSocial)
           .values({ blockedId: targetUserId, blockerId: userId })
@@ -65,13 +62,7 @@ export const blockRouter = router({
           await ctx.db
             .update(blocksInSocial)
             .set({ deletedAt: new Date() })
-            .where(
-              and(
-                eq(blocksInSocial.blockerId, userId),
-                eq(blocksInSocial.blockedId, blockedUserId),
-                isNull(blocksInSocial.deletedAt),
-              ),
-            )
+            .where(getLiveBlockWhere({ blockedId: blockedUserId, blockerId: userId }))
             .returning()
         )[0],
         Operation.Delete,

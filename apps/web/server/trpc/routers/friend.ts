@@ -2,6 +2,8 @@ import type { FriendInSocial, FriendInSocialWithRelations, PublicUser } from "@e
 
 import { containsLike } from "#server/services/db/containsLike";
 import { assertIsNotSelf } from "#server/services/friend/assertIsNotSelf";
+import { getLiveBlockWhere } from "#server/services/friend/getLiveBlockWhere";
+import { getLiveFriendshipWhere } from "#server/services/friend/getLiveFriendshipWhere";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
@@ -32,7 +34,7 @@ export const friendRouter = router({
           await ctx.db
             .update(friendsInSocial)
             .set({ deletedAt: new Date() })
-            .where(and(eq(friendsInSocial.id, friendshipId), isNull(friendsInSocial.deletedAt)))
+            .where(getLiveFriendshipWhere(friendshipId))
             .returning()
         )[0],
         Operation.Delete,
@@ -61,12 +63,12 @@ export const friendRouter = router({
       const blockedSubquery = ctx.db
         .select({ id: blocksInSocial.blockedId })
         .from(blocksInSocial)
-        .where(and(eq(blocksInSocial.blockerId, userId), isNull(blocksInSocial.deletedAt)))
+        .where(getLiveBlockWhere({ blockerId: userId }))
         .union(
           ctx.db
             .select({ id: blocksInSocial.blockerId })
             .from(blocksInSocial)
-            .where(and(eq(blocksInSocial.blockedId, userId), isNull(blocksInSocial.deletedAt))),
+            .where(getLiveBlockWhere({ blockedId: userId })),
         )
         .as("blocked_users");
       return ctx.db
