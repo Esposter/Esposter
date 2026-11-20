@@ -82,6 +82,48 @@ describe("notificationRouter", () => {
     expect((await caller.readNotifications({})).items).toStrictEqual([]);
   });
 
+  // A dismissal leaves the row as a tombstone the read returns, so a read that lands later cannot bring it back, and the
+  // Answer names the row it left
+  test("keeps a dismissed notification as a tombstone the read returns, and answers the row with the unread count", async () => {
+    expect.hasAssertions();
+
+    const authSession = await createMockAuthSession(mockContext.db);
+    const caller = await createMockCaller(notificationRouter, authSession);
+    await mockContext.db
+      .insert(notificationsInNotification)
+      .values([
+        createNotificationRow(firstId, authSession.user.id),
+        createNotificationRow(secondId, authSession.user.id),
+      ]);
+    const { notification, unreadCount } = await caller.deleteNotification(firstId);
+    const { items } = await caller.readNotifications({});
+
+    expect(notification.deletedAt).toBeInstanceOf(Date);
+    expect(unreadCount).toBe(1);
+    expect(items.map(({ deletedAt, id }) => ({ id, isDismissed: deletedAt instanceof Date }))).toStrictEqual([
+      { id: secondId, isDismissed: false },
+      { id: firstId, isDismissed: true },
+    ]);
+  });
+
+  test("dismisses every notification as a tombstone the read returns, and answers a count of zero", async () => {
+    expect.hasAssertions();
+
+    const authSession = await createMockAuthSession(mockContext.db);
+    const caller = await createMockCaller(notificationRouter, authSession);
+    await mockContext.db
+      .insert(notificationsInNotification)
+      .values([
+        createNotificationRow(firstId, authSession.user.id),
+        createNotificationRow(secondId, authSession.user.id, true),
+      ]);
+
+    await expect(caller.deleteNotifications()).resolves.toBe(0);
+    const { items } = await caller.readNotifications({});
+
+    expect(items.map(({ deletedAt }) => deletedAt instanceof Date)).toStrictEqual([true, true]);
+  });
+
   test("marks every unread notification read and answers the unread count the update leaves", async () => {
     expect.hasAssertions();
 

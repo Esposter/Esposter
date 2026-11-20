@@ -184,6 +184,39 @@ describe(useNotificationStore, () => {
     expect(unreadCount.value).toBe(5);
   });
 
+  // A read issued before a dismissal answers the page as it stood then, so the answer must not bring back the row the
+  // Dismissal removed
+  test("does not bring back a notification a read answers after it was dismissed", async () => {
+    expect.hasAssertions();
+
+    const notification = createDeliveredNotification(v7(), epoch);
+    const { readItems, dismissNotification } = notificationStore;
+    await readItems(() => Promise.resolve({ items: [notification], nextCursor: "" }));
+    const { promise: readResponse, resolve: completeRead } = Promise.withResolvers<{
+      items: AppNotification[];
+      nextCursor: string;
+    }>();
+    const inFlightRead = readItems(() => readResponse);
+    trpcMsw.notification.deleteNotification.mutation(() => 0);
+    dismissNotification(notification.id);
+    await flushPromises();
+    completeRead({ items: [notification], nextCursor: "" });
+    await inFlightRead;
+
+    expect(notifications.value).toStrictEqual([]);
+  });
+
+  // A read answers a dismissed notification as a tombstone, and the list leaves it out
+  test("does not list a notification a read answers as dismissed", async () => {
+    expect.hasAssertions();
+
+    const dismissedNotification = { ...createDeliveredNotification(v7(), epoch), deletedAt: nextDay };
+    const { readItems } = notificationStore;
+    await readItems(() => Promise.resolve({ items: [dismissedNotification], nextCursor: "" }));
+
+    expect(notifications.value).toStrictEqual([]);
+  });
+
   test("marks all notifications as read", () => {
     expect.hasAssertions();
 

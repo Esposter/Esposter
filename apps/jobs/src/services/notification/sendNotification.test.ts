@@ -14,6 +14,7 @@ import {
   AppNotificationType,
   getScopeTopic,
   notificationsInNotification,
+  NotificationSeverity,
   NotificationType,
   pushSubscriptionsInNotification,
   roomsInMessage,
@@ -46,6 +47,19 @@ describe(sendNotification, () => {
   const replyId = 2;
   const bellPageLimit = 10;
   const actingSessionId = v7();
+  const dismissedNotificationId = v7();
+  const epoch = new Date(0);
+  // The clock the trim reads, 60 days after the epoch: a dismissal at the epoch is past the retention, and one 59 days after
+  // The epoch is inside it
+  const clockNow = new Date(Temporal.Duration.from({ days: 60 }).total("milliseconds"));
+  const recentDeletion = new Date(Temporal.Duration.from({ days: 59 }).total("milliseconds"));
+  const createNotificationRow = (id: string) => ({
+    id,
+    severity: NotificationSeverity.Info,
+    title,
+    type: AppNotificationType.ResourceOperation,
+    userId: subscriberUserId,
+  });
   const standardMessage = { id: messageId, message, roomId, userId: senderUserId };
   const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, subscriberUserId);
 
@@ -72,6 +86,7 @@ describe(sendNotification, () => {
   afterEach(async () => {
     await mockDb.delete(notificationsInNotification);
     MockPublishedTopics.length = 0;
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -134,6 +149,33 @@ describe(sendNotification, () => {
     ).resolves.toBeUndefined();
     await expect(mockDb.select().from(notificationsInNotification)).resolves.toHaveLength(1);
     expect(trim).toHaveBeenCalledTimes(1);
+  });
+
+  // A dismissal is a tombstone the trim keeps for the retention counted from the dismissal, not from the creation
+  test("trims a dismissed notification once its dismissal is past the retention, though it was created just now", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: clockNow, toFake: ["Date"] });
+    await mockDb
+      .insert(notificationsInNotification)
+      .values({ ...createNotificationRow(dismissedNotificationId), deletedAt: epoch });
+    await sendNotification({ path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId });
+
+    const rows = await mockDb.select().from(notificationsInNotification);
+    expect(rows.filter(({ id }) => id === dismissedNotificationId)).toStrictEqual([]);
+  });
+
+  test("keeps a dismissed notification inside the retention, though it was created before it", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: clockNow, toFake: ["Date"] });
+    await mockDb
+      .insert(notificationsInNotification)
+      .values({ ...createNotificationRow(dismissedNotificationId), createdAt: epoch, deletedAt: recentDeletion });
+    await sendNotification({ path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId });
+
+    const rows = await mockDb.select().from(notificationsInNotification);
+    expect(rows.map(({ id }) => id)).toContain(dismissedNotificationId);
   });
 
   test("a resource operation writes a bell row and skips the session that caused it", async () => {

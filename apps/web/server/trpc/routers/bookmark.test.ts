@@ -104,6 +104,24 @@ describe("bookmarkRouter", () => {
     await expect(memberCaller.readBookmarks()).resolves.toStrictEqual([{ isAvailable: false, path, title }]);
   });
 
+  // A removal leaves the row as a tombstone the read returns, so a read that lands later cannot restore the bookmark, and a
+  // Bookmark made again revives that row at a higher version
+  test("keeps a removed bookmark as a tombstone the read returns, and revives it at a higher version", async () => {
+    expect.hasAssertions();
+
+    await caller.toggleBookmark({ path, title });
+    const removedBookmark = await caller.toggleBookmark({ path, title });
+    const tombstones = await caller.readBookmarks();
+    const revivedBookmark = await caller.toggleBookmark({ path, title });
+
+    expect(removedBookmark.deletedAt).toBeInstanceOf(Date);
+    expect(
+      tombstones.map(({ deletedAt, path: bookmarkPath }) => ({ bookmarkPath, isRemoved: deletedAt instanceof Date })),
+    ).toStrictEqual([{ bookmarkPath: path, isRemoved: true }]);
+    expect(revivedBookmark.deletedAt).toBeNull();
+    expect(revivedBookmark.version).toBeGreaterThan(removedBookmark.version);
+  });
+
   test("fails to bookmark past the limit", async () => {
     expect.hasAssertions();
 
