@@ -200,6 +200,110 @@ describe(createGridEngine, () => {
     expect(finishedCount).toBe(2);
   });
 
+  test("a stop from a position listener stops on that tile (#528)", () => {
+    expect.hasAssertions();
+
+    const finishedTiles: Position[] = [];
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false, false, false]] });
+    engine.on("positionChangeFinished", ({ enterTile }) => {
+      finishedTiles.push(enterTile);
+      if (enterTile.x === 1) unwrap(engine.move(FIRST_ID, Direction.Right));
+    });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+
+    engine.update(STEP_DURATION_MS);
+    engine.update(STEP_DURATION_MS);
+    engine.update(STEP_DURATION_MS);
+
+    expect(finishedTiles).toStrictEqual([
+      { x: 1, y: 0 },
+      { x: 2, y: 0 },
+    ]);
+    expect(engine.checkIsBlocked({ x: 3, y: 0 })).toBe(false);
+  });
+
+  test("movementStarted brackets a run of steps, not each tile (#97, #121)", () => {
+    expect.hasAssertions();
+
+    const started: Direction[] = [];
+    const stoppedAt: Position[] = [];
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false, false, false]] });
+    engine.on("movementStarted", ({ direction }) => {
+      started.push(direction);
+    });
+    engine.on("movementStopped", ({ position }) => {
+      stoppedAt.push(position);
+    });
+    engine.on("positionChangeFinished", ({ enterTile }) => {
+      if (enterTile.x < 3) unwrap(engine.move(FIRST_ID, Direction.Right));
+    });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+
+    for (let index = 0; index < 4; index += 1) engine.update(STEP_DURATION_MS);
+
+    expect(started).toStrictEqual([Direction.Right]);
+    expect(stoppedAt).toStrictEqual([{ x: 3, y: 0 }]);
+  });
+
+  test("a turn during a step is ignored and the facing stays the step's direction", () => {
+    expect.hasAssertions();
+
+    const directionChanges: Direction[] = [];
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false]] });
+    engine.on("directionChanged", ({ direction }) => {
+      directionChanges.push(direction);
+    });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+    engine.update(STEP_DURATION_MS / 2);
+
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Down));
+    engine.update(STEP_DURATION_MS / 2);
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Right));
+
+    expect(directionChanges).toStrictEqual([]);
+  });
+
+  test("a teleport mid-step places the character at once and stops its step (#109, #111)", () => {
+    expect.hasAssertions();
+
+    const finishedTiles: Position[] = [];
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false, false, false]] });
+    engine.on("positionChangeFinished", ({ enterTile }) => {
+      finishedTiles.push(enterTile);
+    });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+    engine.update(STEP_DURATION_MS / 2);
+
+    unwrap(engine.setPosition(FIRST_ID, { x: 3, y: 0 }));
+
+    expect(finishedTiles).toStrictEqual([{ x: 3, y: 0 }]);
+
+    engine.update(STEP_DURATION_MS * 2);
+
+    expect(finishedTiles).toStrictEqual([{ x: 3, y: 0 }]);
+    expect(engine.checkIsBlocked({ x: 2, y: 0 })).toBe(false);
+    expect(engine.checkIsBlocked({ x: 3, y: 0 })).toBe(true);
+  });
+
+  test("a character added without a sprite is placed and blocks (#107)", () => {
+    expect.hasAssertions();
+
+    const exitTiles: Position[] = [];
+    const engine = readEngine({ tiles: [[false, false]] });
+    engine.on("positionChangeStarted", ({ exitTile }) => {
+      exitTiles.push(exitTile);
+    });
+    unwrap(engine.addCharacter({ id: FIRST_ID, startPosition: { x: 1, y: 0 } }));
+
+    expect(engine.checkHasCharacter(FIRST_ID)).toBe(true);
+    expect(engine.checkIsBlocked({ x: 1, y: 0 })).toBe(true);
+
+    unwrap(engine.move(FIRST_ID, Direction.Left));
+    engine.update(STEP_DURATION_MS);
+
+    expect(exitTiles).toStrictEqual([{ x: 1, y: 0 }]);
+  });
+
   test("a diagonal move fails", () => {
     expect.hasAssertions();
 

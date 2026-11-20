@@ -7,12 +7,13 @@ import { faceCharacter } from "#src/services/faceCharacter";
 import { readCharacter } from "#src/services/readCharacter";
 import { ok } from "neverthrow";
 
+// A turn while a step is under way is ignored: the step's direction is the facing the character keeps until it stops
 export const turnCharacter = (
   state: GridEngineState,
   id: string,
   direction: Direction,
 ): Result<void, GridEngineError> =>
   readCharacter(state, id).andThen((character) => {
-    faceCharacter(state, character, direction);
+    if (character.step === undefined) faceCharacter(state, character, direction);
     return ok();
   });
