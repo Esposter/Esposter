@@ -20,11 +20,22 @@ const findAssignment = (segment: readonly GoToken[], name: string): number =>
       token.kind === GoTokenKind.Identifier && token.text === name && checkIsGoPunctuation(segment[index + 1], "="),
   );
 
+// The up to three tokens after the `=` of a name's assignment in a segment, its value first, or none when it has no assignment
+const readAssignedTokens = (segment: readonly GoToken[], name: string): readonly GoToken[] => {
+  const assignment = findAssignment(segment, name);
+  return assignment === -1 ? [] : segment.slice(assignment + 2, assignment + 5);
+};
+
 // The identifier the assignment to a name in a segment takes its value from, else undefined
 const readAssignedName = (segment: readonly GoToken[], name: string): string | undefined => {
-  const assignment = findAssignment(segment, name);
-  const value = segment[assignment + 2];
-  return assignment === -1 || value?.kind !== GoTokenKind.Identifier ? undefined : value.text;
+  const [value] = readAssignedTokens(segment, name);
+  return value?.kind === GoTokenKind.Identifier ? value.text : undefined;
+};
+
+// The identifier the assignment to a name in a segment indexes, as `name[`, else undefined
+const readIndexedName = (segment: readonly GoToken[], name: string): string | undefined => {
+  const [value, bracket] = readAssignedTokens(segment, name);
+  return value?.kind === GoTokenKind.Identifier && checkIsGoPunctuation(bracket, "[") ? value.text : undefined;
 };
 
 const readHitmarkNames = (source: string): Map<string, string> => {
@@ -39,15 +50,13 @@ const readHitmarkNames = (source: string): Map<string, string> => {
 
 // The string literal the `abil` assignment in a segment takes its value from, without its quotes, else undefined
 const readAbil = (segment: readonly GoToken[]): string | undefined => {
-  const assignment = findAssignment(segment, "abil");
-  const value = segment[assignment + 2];
+  const [value] = readAssignedTokens(segment, "abil");
   return value?.kind === GoTokenKind.String && value.text.startsWith('"') ? value.text.slice(1, -1) : undefined;
 };
 
 // The `attributes` constant the `elem` assignment in a segment takes its value from, as `attributes.Electro`, else undefined
 const readElement = (segment: readonly GoToken[]): string | undefined => {
-  const assignment = findAssignment(segment, "elem");
-  const [attributes, dot, element] = segment.slice(assignment + 2, assignment + 5);
+  const [attributes, dot, element] = readAssignedTokens(segment, "elem");
   return attributes?.text === "attributes" && checkIsGoPunctuation(dot, ".") && element?.kind === GoTokenKind.Identifier
     ? `attributes.${element.text}`
     : undefined;
@@ -83,7 +92,7 @@ const readFileRipples = (file: string, source: string): GcsimGravityRipple[] => 
     const segment = tokens.slice(caseIndex, end);
     const abil = readAbil(segment);
     const element = readElement(segment);
-    const talentVariable = readAssignedName(segment, "mult");
+    const talentVariable = readIndexedName(segment, "mult");
     const hitmarkName = reaction === undefined ? undefined : hitmarkNames.get(reaction);
     if (
       reaction === undefined ||

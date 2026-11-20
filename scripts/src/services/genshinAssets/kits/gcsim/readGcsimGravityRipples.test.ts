@@ -82,4 +82,25 @@ describe(readGcsimGravityRipples, () => {
       },
     ]);
   });
+
+  test("skips a case whose multiplier is a call rather than a talent array indexed by the talent level", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "func init() {",
+      "\tskillHitmarks[LunarCharge] = []int{skillHitmarksLC}",
+      "}",
+      "",
+      "func (c *char) gravityTick(clearGravity bool) {",
+      "\tswitch maxReaction {",
+      "\tcase LunarCharge:",
+      "\t\tmult = calc(c)",
+      "\t\telem = attributes.Electro",
+      '\t\tabil = "Gravity Interference (Lunar-Charged)"',
+      "\t}",
+      "}",
+    ];
+
+    expect(readGcsimGravityRipples([{ path: "skill.go", source: source.join("\n") }])).toStrictEqual([]);
+  });
 });
