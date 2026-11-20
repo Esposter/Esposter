@@ -20,6 +20,8 @@ export const createEditFormData = <TItem extends ToData<AItemEntity>, TIdKeys ex
     const editedItemValue = editedItem.value;
     if (!editedItemValue) return undefined;
 
+    // The compiler cannot see that a caller's id keys name keys of TItem, since EntityIdKeys stays a deferred conditional
+    // For a generic TItem, so the one cast here states it
     const checkIsOriginalItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue);
     return items.value.find((item) => checkIsOriginalItem(item));
   });
@@ -36,6 +38,8 @@ export const createEditFormData = <TItem extends ToData<AItemEntity>, TIdKeys ex
   const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 
   const editItem = async (ids: EntityIds<TItem, TIdKeys>) => {
+    // Object.keys widens the ids' keys to string, and ids holds only EntityIds' keys, which the compiler cannot relate
+    // To TItem for a generic TItem
     const checkIsEntityIdEqual = getEntityIdEqualComparator(
       Object.keys(ids) as (keyof TItem & string)[],
       ids as Partial<TItem>,
@@ -63,6 +67,8 @@ export const createEditFormData = <TItem extends ToData<AItemEntity>, TIdKeys ex
       return typeof value === "string" ? [[key, value] as const] : [];
     });
     if (queryIdEntries.length !== idKeys.length) return;
+    // Object.fromEntries types its keys as string, but the entries are the id keys read off the query, which are the
+    // EntityIds' keys
     await editItem(Object.fromEntries(queryIdEntries) as EntityIds<TItem, TIdKeys>);
   });
 
