@@ -2,7 +2,6 @@ import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { ClientThread } from "#src/models/message/ClientThread";
 import type { Entry } from "#src/models/shared/overlay/Entry";
 
-import { authClient } from "#src/services/auth/authClient";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
@@ -40,8 +39,7 @@ const getThreadFollowEntry =
 
 export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   const { $trpc } = useNuxtApp();
-  const session = authClient.useSession();
-  const userId = computed(() => session.value.data?.user.id ?? "");
+  const userId = useSessionUserId();
   const roomStore = useRoomStore();
   const readMessageCreators = useReadMessageCreators();
   const overlayStore = useOverlayStore();
