@@ -192,7 +192,7 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     for (const refetch of refetches) refetch();
   };
   userHub.on("invalidate", ({ topic }) => {
-    refetchWatches((read) => read.topics.some((column) => column.topic === topic));
+    refetchWatches((read) => read.topics.some((columnTopic) => columnTopic.topic === topic));
   });
 
   const openUser = () => {
