@@ -15,7 +15,7 @@ interface TopicsWatch {
 // Answers after its scope has gone takes no watch either
 export const useWatchTopics = () => {
   const connectionStore = import.meta.client && getCurrentScope() ? useConnectionStore() : undefined;
-  const topicsWatchMap = new Map<unknown, TopicsWatch>();
+  const topicsWatchMap = new Map<PropertyKey, TopicsWatch>();
   let isDisposed = false;
   if (connectionStore)
     onScopeDispose(() => {
@@ -23,7 +23,7 @@ export const useWatchTopics = () => {
       for (const { unwatch } of topicsWatchMap.values()) unwatch();
       topicsWatchMap.clear();
     });
-  return (target: unknown, reads: TopicRead[] | undefined, refetch: () => void) => {
+  return (target: PropertyKey, reads: TopicRead[] | undefined, refetch: () => void) => {
     if (!connectionStore || isDisposed) return;
 
     const previousTopicsWatch = topicsWatchMap.get(target);

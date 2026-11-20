@@ -29,6 +29,17 @@ interface BaseMutationOptions {
   onError?: ((error: Error) => Promisable<void>) | undefined;
 }
 
+interface ExecuteMutation {
+  <TResult>(
+    mutate: (checkIsStale: () => boolean) => Promise<TResult>,
+    options: AwaitedMutationOptions<TResult>,
+  ): Promise<MutationOutcome<TResult>>;
+  <TResult>(
+    mutate: (checkIsStale: () => boolean) => Promise<TResult>,
+    options: OptimisticMutationOptions<TResult>,
+  ): void;
+}
+
 // A write the screen shows when it is sent. `reconcile` takes what only the server issues, such as a version token the
 // Next write reads, and is never where a dialog closes or a row moves
 interface OptimisticMutationOptions<TResult> extends BaseMutationOptions {
@@ -220,21 +231,13 @@ export const useMutation = () => {
   // Wait on its answer: the write still runs on its key's queue, and whatever the answer brings is the rollback's,
   // The alert's or `reconcile`'s. It floats as a synchronized function, so a test or a shutdown that needs every write
   // Landed drains it with the rest
-  function executeMutation<TResult>(
-    mutate: (checkIsStale: () => boolean) => Promise<TResult>,
-    options: AwaitedMutationOptions<TResult>,
-  ): Promise<MutationOutcome<TResult>>;
-  function executeMutation<TResult>(
-    mutate: (checkIsStale: () => boolean) => Promise<TResult>,
-    options: OptimisticMutationOptions<TResult>,
-  ): void;
-  function executeMutation<TResult>(
+  const executeMutation = (<TResult>(
     mutate: (checkIsStale: () => boolean) => Promise<TResult>,
     options: AwaitedMutationOptions<TResult> | OptimisticMutationOptions<TResult>,
-  ) {
+  ): Promise<MutationOutcome<TResult>> | void => {
     if (options.awaitedBecause) return runMutation(mutate, options);
     getSynchronizedFunction(() => runMutation(mutate, { ...options, onSuccess: options.reconcile }))();
     return undefined;
-  }
+  }) as ExecuteMutation;
   return { checkIsPending, executeMutation, executeQuery, isPending, supersedeKey, whenSettled };
 };

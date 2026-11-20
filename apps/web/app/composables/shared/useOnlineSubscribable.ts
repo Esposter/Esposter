@@ -6,22 +6,25 @@ import type { MultiWatchSources, WatchSource } from "vue";
 
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
-export function useOnlineSubscribable<const TSources extends readonly OnlineSubscribableSource[]>(
-  source: TSources,
-  callback: (value: OnlineSubscribableValues<TSources>) => Promisable<(() => Promisable<void>) | undefined>,
-  context?: OnlineSubscribableContext,
-): void;
-export function useOnlineSubscribable<TSource>(
-  source: WatchSource<TSource>,
-  callback: (value: TSource) => Promisable<(() => Promisable<void>) | undefined>,
-  context?: OnlineSubscribableContext,
-): void;
-export function useOnlineSubscribable(
+interface UseOnlineSubscribable {
+  <const TSources extends readonly OnlineSubscribableSource[]>(
+    source: TSources,
+    callback: (value: OnlineSubscribableValues<TSources>) => Promisable<(() => Promisable<void>) | undefined>,
+    context?: OnlineSubscribableContext,
+  ): void;
+  <TSource>(
+    source: WatchSource<TSource>,
+    callback: (value: TSource) => Promisable<(() => Promisable<void>) | undefined>,
+    context?: OnlineSubscribableContext,
+  ): void;
+}
+
+export const useOnlineSubscribable: UseOnlineSubscribable = (
   source: MultiWatchSources | WatchSource,
   // oxlint-disable-next-line typescript/no-explicit-any -- the implementation signature behind the overloads, which carry the types
   callback: (value: any) => Promisable<(() => Promisable<void>) | undefined>,
   context?: OnlineSubscribableContext,
-) {
+) => {
   const instance = context?.instance ?? getCurrentInstance();
   const scope = context?.scope ?? getCurrentScope();
   // One subscription is one target, so tearing the previous one down and establishing the next run as a single
@@ -84,4 +87,4 @@ export function useOnlineSubscribable(
 
   if (scope) scope.run(setup);
   else setup();
-}
+};
