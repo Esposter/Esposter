@@ -76,13 +76,13 @@ const readArchiveEntries = async (blobName: string) => {
   assert.exists(archiveObject);
   return unzipSync(new Uint8Array(await archiveObject.arrayBuffer()));
 };
-const computeEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string) => {
+const getEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string) => {
   const entry = entries[entryName];
   assert.exists(entry);
   return strFromU8(entry);
 };
-const computeEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) => {
-  const entryText = computeEntryText(entries, entryName);
+const getEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) => {
+  const entryText = getEntryText(entries, entryName);
   return jsonDateParse(entryText);
 };
 const joinRoom = (roomId: string, ...userIds: string[]) =>
@@ -232,7 +232,7 @@ describe(buildUserDataArchive, () => {
         "searches.json",
       ].toSorted(),
     );
-    const messagesText = computeEntryText(entries, `rooms/${room.id}/messages.json`);
+    const messagesText = getEntryText(entries, `rooms/${room.id}/messages.json`);
     const messages = jsonDateParse<RoomMessage[]>(messagesText);
     expect(messages.map(({ message: text }) => text)).toStrictEqual([message]);
   });
@@ -263,7 +263,7 @@ describe(buildUserDataArchive, () => {
 
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
-    const account = computeEntryJson(entries, "account.json");
+    const account = getEntryJson(entries, "account.json");
 
     expect(account.user).toStrictEqual({
       biography: user.biography,
@@ -306,8 +306,8 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
 
-    expect(computeEntryJson(entries, "account.json").blocks).toStrictEqual([]);
-    expect(computeEntryJson(entries, "friends.json").friends).toStrictEqual([]);
+    expect(getEntryJson(entries, "account.json").blocks).toStrictEqual([]);
+    expect(getEntryJson(entries, "friends.json").friends).toStrictEqual([]);
   });
 
   test("writes a person's own posts, likes and friends, leaving out other people's counts and records", async () => {
@@ -359,7 +359,7 @@ describe(buildUserDataArchive, () => {
         .filter((entryName) => entryName.startsWith("posts/"))
         .toSorted(),
     ).toStrictEqual([`posts/${post.id}.json`]);
-    expect(computeEntryJson(entries, `posts/${post.id}.json`)).toStrictEqual({
+    expect(getEntryJson(entries, `posts/${post.id}.json`)).toStrictEqual({
       createdAt: post.createdAt,
       depth: 0,
       description,
@@ -369,13 +369,13 @@ describe(buildUserDataArchive, () => {
     });
     // A post like carries the time it was made. A reaction carries none: its row is shared by its reactors, so its time is
     // The first reactor's, not the person's, and the exact shape leaves it out
-    expect(computeEntryJson(entries, "likes.json")).toStrictEqual([
+    expect(getEntryJson(entries, "likes.json")).toStrictEqual([
       { createdAt: like.createdAt, kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
       { emojiTag, kind: ArchiveLikeKind.Emoji, roomId: room.id, targetId: messageId },
     ]);
     // A request the person sent carries the time it was sent. One they received is the sender's act, and a friendship is one
     // Row for the pair, made when the receiver accepted it, so neither carries a time
-    expect(computeEntryJson(entries, "friends.json")).toStrictEqual({
+    expect(getEntryJson(entries, "friends.json")).toStrictEqual({
       friends: [{ id: friendUserId, name }],
       received: [{ id: receivedUserId, name }],
       sent: [{ createdAt: sentRequest.createdAt, id: otherUserId, name }],
@@ -413,7 +413,7 @@ describe(buildUserDataArchive, () => {
         `rooms/${room.id}/room.json`,
       ].toSorted(),
     );
-    expect(computeEntryJson(entries, `rooms/${room.id}/room.json`)).toStrictEqual({
+    expect(getEntryJson(entries, `rooms/${room.id}/room.json`)).toStrictEqual({
       createdAt: room.createdAt,
       emoji: [{ id: roomEmoji.id, name }],
       id: room.id,
@@ -448,7 +448,7 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // A search carries the time it ran
-    expect(computeEntryJson(entries, "searches.json")).toStrictEqual([
+    expect(getEntryJson(entries, "searches.json")).toStrictEqual([
       { createdAt: searchHistory.createdAt, filters: [], query: message, roomId: room.id },
     ]);
   });
@@ -477,7 +477,7 @@ describe(buildUserDataArchive, () => {
 
     // The publication is the draft version it was taken at, the time it began, which a republish does not move, and the time
     // It was last published, all as the row stores them
-    expect(computeEntryJson(entries, `resources/${publishedResource.id}/publications.json`)).toStrictEqual({
+    expect(getEntryJson(entries, `resources/${publishedResource.id}/publications.json`)).toStrictEqual({
       createdAt: resourcePublication.createdAt,
       publishedAt: resourcePublication.publishedAt,
       publishedContentVersion: 3,
@@ -501,7 +501,7 @@ describe(buildUserDataArchive, () => {
 
     // The hashes, sizes and revision counters are the store's bookkeeping, and the update and delete times are not the
     // Person's, so the record holds what the person wrote and when it was created
-    expect(computeEntryJson(entries, `resources/${resource.id}/resource.json`)).toStrictEqual({
+    expect(getEntryJson(entries, `resources/${resource.id}/resource.json`)).toStrictEqual({
       contentVersion: 0,
       createdAt: resource.createdAt,
       id: resource.id,
@@ -534,7 +534,7 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // A link holds no token, so nothing is withheld from it, and the record is written as the row stores it
-    expect(computeEntryJson(entries, `resources/${linkingResource.id}/links.json`)).toStrictEqual([
+    expect(getEntryJson(entries, `resources/${linkingResource.id}/links.json`)).toStrictEqual([
       { sourceId: linkingResource.id, targetId: linkedResource.id, type: ResourceLinkType.Email },
     ]);
     expect(Object.keys(entries)).not.toContain(`resources/${unlinkedResource.id}/links.json`);
@@ -571,7 +571,7 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // The action is written with its type, time and the id it was taken against, and no content of the target's
-    expect(computeEntryJson(entries, "moderation-actions.json")).toStrictEqual([
+    expect(getEntryJson(entries, "moderation-actions.json")).toStrictEqual([
       { roomId: ownedRoom.id, targetUserId: otherUserId, time: actionTime, type: AdminActionType.Warn },
     ]);
   });
@@ -606,7 +606,7 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // A record carries its actor, its room and the time it was made beside what it did or said, and no update or delete time
-    expect(computeEntryJson(entries, "moderation.json")).toStrictEqual({
+    expect(getEntryJson(entries, "moderation.json")).toStrictEqual({
       logs: [
         {
           actorUserId: otherUserId,
@@ -643,7 +643,7 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // A call carries the time it started. Its id is the key a knocker presents to join, so the exact shape leaves it out
-    expect(computeEntryJson(entries, "calls.json")).toStrictEqual([
+    expect(getEntryJson(entries, "calls.json")).toStrictEqual([
       { createdAt: callSession.createdAt, roomId: room.id, threadRootId: 0 },
     ]);
   });
@@ -673,7 +673,7 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // A follow carries the time of the person's first decision about the thread
-    expect(computeEntryJson(entries, "follows.json")).toStrictEqual([
+    expect(getEntryJson(entries, "follows.json")).toStrictEqual([
       { createdAt: threadFollow.createdAt, isUnfollowed: true, roomId: room.id, threadRootId },
     ]);
   });
@@ -710,7 +710,7 @@ describe(buildUserDataArchive, () => {
 
     // The membership keeps the person's own settings, the category they filed it under, the time they joined and the
     // Time they last read the room, and the roles they hold there
-    expect(computeEntryJson(entries, "memberships.json")).toStrictEqual([
+    expect(getEntryJson(entries, "memberships.json")).toStrictEqual([
       {
         categoryId: roomCategory.id,
         createdAt: membership.createdAt,
@@ -751,10 +751,10 @@ describe(buildUserDataArchive, () => {
 
     // A favorite carries the time it was starred. An access carries the time it was first opened, as the row stores it
     // Beside the time it was last opened
-    expect(computeEntryJson(entries, "favorites.json")).toStrictEqual([
+    expect(getEntryJson(entries, "favorites.json")).toStrictEqual([
       { createdAt: resourceFavorite.createdAt, resourceId: resource.id },
     ]);
-    expect(computeEntryJson(entries, "accesses.json")).toStrictEqual([
+    expect(getEntryJson(entries, "accesses.json")).toStrictEqual([
       { accessedAt: resourceAccess.accessedAt, createdAt: resourceAccess.createdAt, resourceId: resource.id },
     ]);
   });
@@ -782,7 +782,7 @@ describe(buildUserDataArchive, () => {
 
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
-    const messagesText = computeEntryText(entries, `rooms/${room.id}/messages.json`);
+    const messagesText = getEntryText(entries, `rooms/${room.id}/messages.json`);
     const messages = jsonDateParse<RoomMessage[]>(messagesText);
 
     // The reactions are asked first, then the messages are read in two pages, the first from no cursor and the second from the
@@ -846,7 +846,7 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
 
-    expect(computeEntryJson(entries, "likes.json")).toStrictEqual(
+    expect(getEntryJson(entries, "likes.json")).toStrictEqual(
       reactions.map(({ emojiTag: tag }) => ({
         emojiTag: tag,
         kind: ArchiveLikeKind.Emoji,
