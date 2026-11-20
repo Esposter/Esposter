@@ -10,7 +10,7 @@ Publish state lives in its own `resource_publications` table ([resources](../res
 
 - **Publish = snapshot copy.** `publishResource` stores the content as a content-addressed object first ([resource version store](../../resource/resource-version-store/design.md)), then in one batch writes the published version's row and upserts the `resource_publications` row (bumping `publishVersion` in SQL), so a failed store claims nothing. The version's files are not copied: its reference rows name the files its content embeds, and those are the working copy's own files, addressed by content ([content-addressed assets](../../resource/content-addressed-assets/design.md)). Edits after publish are invisible until re-publish — that is the feature (a stable public artifact), not a limitation.
 - **Public reads serve only the publish copy**, never the working copy, and are rate-limited with no auth. A resource with no publication row 404s publicly.
-- **Unpublish** removes the publication row and the published versions, releasing the files they named; the public URL 404s. A file the working copy or a revision still names stays.
+- **Unpublish** tombstones the publication row (`deletedAt`, at a raised version) and removes the published versions, releasing the files they named; the public URL 404s, since every statement that decides what is published reads only live rows. A file the working copy or a revision still names stays. A republish revives the same row at a higher version, so a client's removal reaches the row it already holds.
 
 ```mermaid
 sequenceDiagram
@@ -33,14 +33,14 @@ sequenceDiagram
 
 ## Procedures
 
-| Procedure                      | Auth                 | Purpose                                                          |
-| ------------------------------ | -------------------- | ---------------------------------------------------------------- |
-| `publishResource`              | owner                | upsert publication + snapshot copy → `ResourcePublication`       |
-| `unpublishResource`            | owner                | delete publication row + published versions, release their files |
-| `readResourcePublication`      | owner                | current publish state (for editor UI), or undefined              |
-| `readPublishedResourceContent` | public, rate-limited | serve the publish copy                                           |
-| `readPublishedVersionContent`  | owner                | serve a **retained** snapshot by version number                  |
-| `readResourceViewCount`        | owner                | total public views of the resource                               |
+| Procedure                      | Auth                 | Purpose                                                                           |
+| ------------------------------ | -------------------- | --------------------------------------------------------------------------------- |
+| `publishResource`              | owner                | upsert publication + snapshot copy → `ResourcePublication`                        |
+| `unpublishResource`            | owner                | tombstone the publication row, delete its published versions, release their files |
+| `readResourcePublication`      | owner                | current publish state (for editor UI), or undefined                               |
+| `readPublishedResourceContent` | public, rate-limited | serve the publish copy                                                            |
+| `readPublishedVersionContent`  | owner                | serve a **retained** snapshot by version number                                   |
+| `readResourceViewCount`        | owner                | total public views of the resource                                                |
 
 Publish state is also carried by the cross-type `resource.readResource`, whose `publication` field is the row or `null` — `resource_publications` is one table for every type, so the generic read resolves it whatever the resource turns out to be, and the ownership a separate publication read would resolve is the ownership that request already resolved. `null` is the answer "not published" rather than a missing one, so a surface opening a resource learns its publish state from that one response instead of following it with a second round trip. `readResourcePublication` remains the targeted re-read for a caller that wants publish state on its own.
 
