@@ -237,7 +237,10 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     await this.ctx.storage.deleteAll();
   }
 
-  deleteFile({ fileId, id }: { fileId: string; id: number }, actor: RoomActor): FileEntity | null {
+  deleteFile(
+    { fileId, id }: { fileId: string; id: number },
+    actor: RoomActor,
+  ): { deletedFile: FileEntity; message: RoomMessage } | null {
     const message = this.#readLiveMessage(id);
     if (!message || message.isForward) return null;
 
@@ -246,8 +249,8 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
 
     const files = message.files.filter((file) => file !== deletedFile);
     const updatedMessage = this.#updateLiveMessage(id, { filenames: getFilenames(files), files }, new Date());
-    this.#broadcastMessageUpdate(updatedMessage, getSendOptions(actor));
-    return deletedFile;
+    const answer = this.#broadcastMessageUpdate(updatedMessage, getSendOptions(actor));
+    return answer ? { deletedFile, message: answer } : null;
   }
 
   deleteLinkPreview(id: number, actor: RoomActor): null | RoomMessage {

@@ -5,17 +5,18 @@ import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessage
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { ComposerTarget } from "#src/models/message/ComposerTarget";
-import type { Page, Typing } from "@esposter/db-schema";
+import type { Versioned } from "#src/models/shared/overlay/Versioned";
+import type { Page, RoomMessage, Typing } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
 import { MessageHook } from "#src/models/message/MessageHook";
 import { authClient } from "#src/services/auth/authClient";
-import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { createOperationData } from "#src/services/shared/createOperationData";
+import { checkIsNewerArrival } from "#src/services/shared/overlay/checkIsNewerArrival";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useThreadFollowStore } from "#src/store/message/threadFollow";
@@ -34,7 +35,6 @@ import {
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const { executeMutation } = useMutation();
   const roomStore = useRoomStore();
   const threadFollowStore = useThreadFollowStore();
   const { refetchFollowedThreads } = threadFollowStore;
@@ -155,47 +155,25 @@ export const useDataStore = defineStore("message/data", () => {
       },
     );
   };
-  const updateMessage = (input: UpdateMessageInput) => {
-    const { items: roomItems } = getSlice(input.roomId);
-    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(input.roomId);
-    executeMutation(() => $trpc.message.updateMessage.mutate(input), {
-      // Apply only the raw reactive field change — the subscription echo re-runs MessageHookMap on success,
-      // So calling storeUpdateMessage here would double-fire the update hooks. Read as the write is sent, so a
-      // Rejected edit restores the body the edit ahead of it stored rather than the one on screen at the click
-      applyOptimistic: () => {
-        const previousMessage = roomItems.value.find(getEntityIdEqualComparator(["id"], input))?.message;
-        baseStoreUpdateMessage(input);
-        return () => {
-          if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
-        };
+  // An edit and an attachment removal are awaited. The room object decides the row it stores: the members the new text
+  // Names, the time of the edit, the files it keeps and the version that orders it. The object sends each change to every
+  // Socket but this device's own, so the answer is the only copy this device gets, and it goes through the funnel the room's
+  // Event goes through, so every copy of the message takes it. A refused write changes nothing on screen, and the alert says why
+  const awaitMessageAnswer = (write: () => Promise<RoomMessage>, roomId: ClientMessage["roomId"]) =>
+    getResultAsync(write).match(
+      async (updatedMessage) => {
+        await storeUpdateMessage({ ...updatedMessage, roomId });
+        return true;
       },
-      // `deleteFile` writes through this same executor, so the key is what stops an edit queueing behind an
-      // Unrelated attachment removal
-      key: input.id,
-    });
-  };
-  const deleteFile = ({ fileId, ...messageKey }: DeleteFileInput) => {
-    const { items: roomItems } = getSlice(messageKey.roomId);
-    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(messageKey.roomId);
-    const message = roomItems.value.find(getEntityIdEqualComparator(["id"], messageKey));
-    if (!message) return;
-
-    executeMutation(() => $trpc.message.deleteFile.mutate({ fileId, ...messageKey }), {
-      // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. Read as the
-      // Write is sent, and unwound one attachment at a time
-      applyOptimistic: () => {
-        const deletedFile = message.files.find((file) => file.id === fileId);
-        baseStoreUpdateMessage({ ...messageKey, files: message.files.filter((file) => file.id !== fileId) });
-        return () => {
-          if (!deletedFile) return;
-
-          baseStoreUpdateMessage({ ...messageKey, files: [...message.files, deletedFile] });
-        };
+      (error) => {
+        createErrorAlert(error);
+        return false;
       },
-      // Keyed per file so concurrent deletions never swallow each other's rollbacks
-      key: fileId,
-    });
-  };
+    );
+  const updateMessage = (input: UpdateMessageInput) =>
+    awaitMessageAnswer(() => $trpc.message.updateMessage.mutate(input), input.roomId);
+  const deleteFile = ({ fileId, ...messageKey }: DeleteFileInput) =>
+    awaitMessageAnswer(() => $trpc.message.deleteFile.mutate({ fileId, ...messageKey }), messageKey.roomId);
   // The sender's own message is pushed first (our list is reversed — most recent at the front) so the bubble
   // Renders immediately in its loading state, THEN the Create hooks run: one of them fetches attachment download
   // Urls over the network, and running it before the push would gate the "optimistic" render behind a round trip.
@@ -211,7 +189,25 @@ export const useDataStore = defineStore("message/data", () => {
       baseStoreCreateMessage(message, true);
     }
   };
+  // Every copy of a message the client holds for a room: the window's, and each holder's. An arrival is judged against all
+  // Of them, since a thread pane holds replies the window does not
+  const listHeldMessages = (roomId: ClientMessage["roomId"]) => {
+    const heldMessages = [...getSlice(roomId).items.value];
+    for (const holder of messageHolderRegistry.hooks)
+      holder(roomId, (messages) => {
+        heldMessages.push(...messages);
+      });
+    return heldMessages;
+  };
+  // An arrival that names a version applies only when it is newer than every copy held of its message. The answer to a
+  // Write and the room's echo of the same change name the same version, so the second changes nothing, and an older answer
+  // That lands last loses to the newer copy. An update that names no version, such as a poll's optimistic apply, is not gated
+  const checkIsNewerThanHeld = ({ id, roomId, version }: MessageEvents["updateMessage"][0][0]) =>
+    version === undefined ||
+    listHeldMessages(roomId).every((copy) => copy.id !== id || checkIsNewerArrival<Versioned>(copy, { version }));
   const storeUpdateMessage = async (input: MessageEvents["updateMessage"][0][0]) => {
+    if (!checkIsNewerThanHeld(input)) return;
+
     const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(input.roomId);
     await MessageHookMap[Operation.Update].run(input);
     baseStoreUpdateMessage(input);
@@ -227,13 +223,8 @@ export const useDataStore = defineStore("message/data", () => {
   // Same funnel its live event would have, so every copy is written at once
   const refreshLoadedMessages = getSynchronizedFunction((roomId: ClientMessage["roomId"]) =>
     getResultAsync(async () => {
-      const heldMessages = [...getSlice(roomId).items.value];
-      for (const holder of messageHolderRegistry.hooks)
-        holder(roomId, (messages) => {
-          heldMessages.push(...messages);
-        });
       const copiesById = Map.groupBy(
-        heldMessages.filter(({ isLoading }) => !isLoading),
+        listHeldMessages(roomId).filter(({ isLoading }) => !isLoading),
         ({ id }) => id,
       );
       if (copiesById.size === 0) return;

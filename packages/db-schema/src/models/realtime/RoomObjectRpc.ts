@@ -62,8 +62,12 @@ export interface RoomObjectRpc {
   // It is deleted before the storage goes. The actor is the one who deletes it, and the members are the room's, which the
   // Caller reads before the room's memberships go
   deleteAll: (actor: RoomActor, memberIds: string[]) => Promise<void>;
-  // Returns the file it removed, so the caller can remove its blob
-  deleteFile: (input: { fileId: string; id: number }, actor: RoomActor) => FileEntity | null;
+  // Returns the file it removed, so the caller can remove its blob, and the message as the object now stores it
+  // Which the caller hands back to its client as the answer
+  deleteFile: (
+    input: { fileId: string; id: number },
+    actor: RoomActor,
+  ) => { deletedFile: FileEntity; message: RoomMessage } | null;
   deleteLinkPreview: (id: number, actor: RoomActor) => null | RoomMessage;
   // Returns the message as it was before the delete, so the caller can remove the blobs its files named
   deleteMessage: (id: number, actor: RoomActor) => Promise<null | RoomMessage>;

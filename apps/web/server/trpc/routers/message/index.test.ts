@@ -267,18 +267,20 @@ describe("messageRouter", () => {
     );
   });
 
-  test("updates the message as its sender, with the text it is given", async () => {
+  test("updates the message as its sender, with the text it is given, and answers the message the room stores", async () => {
     expect.hasAssertions();
 
+    const updatedMessage = createRoomMessage({ editedAt: new Date(), message: updatedText, version: 1 });
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage()]);
-    roomObject.updateMessage.mockReturnValue(createRoomMessage({ editedAt: new Date(), message: updatedText }));
+    roomObject.updateMessage.mockReturnValue(updatedMessage);
 
-    await messageCaller.updateMessage({ id: messageId, message: updatedText, roomId });
+    const answer = await messageCaller.updateMessage({ id: messageId, message: updatedText, roomId });
 
     expect(roomObject.updateMessage).toHaveBeenCalledExactlyOnceWith(
       { id: messageId, message: updatedText },
       { userId },
     );
+    expect(answer).toStrictEqual(updatedMessage);
   });
 
   // A count a message made stands only for a member who was in the room when the message was sent. A member joins at the

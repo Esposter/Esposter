@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useDataStore } from "#src/store/message/data";
 import { useFileDialogStore } from "#src/store/message/file/dialog";
 
@@ -17,6 +18,7 @@ const { isOpen, item: file } = useSingletonDialog(deletingFileId, () =>
   <UiConfirmDialog
     v-if="file"
     v-model="isOpen"
+    :awaited-because="AwaitedReason.ServerDecidedOutcome"
     confirm-label="Remove"
     title="Remove attachment"
     :confirm="

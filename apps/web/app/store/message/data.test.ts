@@ -469,56 +469,74 @@ describe(useDataStore, () => {
     expect(items.value).toHaveLength(1);
   });
 
-  // Both edits name the same message, so the second runs behind the first and applies on top of what it stored.
-  // A body captured when the caller invoked it — before the write ahead of it had even been sent — unwinds the
-  // Bubble past that write, back to text the user replaced two edits ago
-  test("rolls a queued edit back to the body the edit ahead of it stored", async () => {
+  // The edit's text reaches the screen as the room's answer, the row it stores, and not before
+  test("an edit draws the message the room answers", async () => {
     expect.hasAssertions();
 
-    trpcMsw.message.updateMessage.mutation(({ input }) => {
-      if (input.message === rejectedMessage) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
-    });
+    trpcMsw.message.updateMessage.mutation(({ input }) => createRoomMessage(roomId, input.message));
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice, updateMessage } = dataStore;
-    const newMessage = {
-      ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
-      id: roomMessageId,
-    };
-    getSlice(newMessage.roomId).items.value = [newMessage];
-    const messageKey = { id: newMessage.id, roomId: newMessage.roomId };
-    updateMessage({ ...messageKey, message: updatedMessage });
-    updateMessage({ ...messageKey, message: rejectedMessage });
-    await flushPromises();
+    getSlice(roomId).items.value = [
+      { ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), id: roomMessageId },
+    ];
+    await updateMessage({ id: roomMessageId, message: updatedMessage, roomId });
 
     expect(takeOne(items.value).message).toBe(updatedMessage);
   });
 
-  // An attachments-only message stores an empty body, so a rollback reading that body for truth never fires and
-  // Leaves the rejected edit's text on the bubble
-  test("rolls a rejected edit back to an empty body", async () => {
+  // A refused edit has changed nothing, so the stored text stays on screen and the alert says why
+  test("a refused edit leaves the stored message as it was", async () => {
     expect.hasAssertions();
 
-    trpcMsw.message.updateMessage.mutation(({ input }) => {
-      if (input.message === rejectedMessage) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+    trpcMsw.message.updateMessage.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
     });
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice, updateMessage } = dataStore;
-    const newMessage = {
-      ...createOptimisticMessage({ message: "", roomId, type: MessageType.Message }, userId),
-      id: roomMessageId,
-    };
-    getSlice(newMessage.roomId).items.value = [newMessage];
-    updateMessage({ id: newMessage.id, message: rejectedMessage, roomId: newMessage.roomId });
-    await flushPromises();
+    getSlice(roomId).items.value = [
+      { ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), id: roomMessageId },
+    ];
+    const isUpdated = await updateMessage({ id: roomMessageId, message: rejectedMessage, roomId });
 
-    expect(takeOne(items.value).message).toBe("");
+    expect(isUpdated).toBe(false);
+    expect(takeOne(items.value).message).toBe(message);
   });
 
-  // Each attachment is its own target, so two removals from one message overlap: reading the list the call was
-  // Issued with makes the second removal write back the file the first one took off
-  test("removes and restores one attachment at a time", async () => {
+  // Two edits of one message are answered in whatever order they land. The room's answer to the first names the older
+  // Version, and it lands after the answer to the second, which names the newer one: the second's text stays on screen
+  test("an answer naming an older version that lands last keeps the newer text", async () => {
+    expect.hasAssertions();
+
+    const laterMessage = "laterMessage";
+    const firstAnswer = Promise.withResolvers<void>();
+    trpcMsw.message.updateMessage.mutation(async ({ input }) => {
+      const isFirstEdit = input.message === updatedMessage;
+      if (isFirstEdit) await firstAnswer.promise;
+
+      return { ...createRoomMessage(roomId, input.message), version: isFirstEdit ? 1 : 2 };
+    });
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { getSlice, updateMessage } = dataStore;
+    getSlice(roomId).items.value = [
+      {
+        ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
+        id: roomMessageId,
+        version: 0,
+      },
+    ];
+    const firstEdit = updateMessage({ id: roomMessageId, message: updatedMessage, roomId });
+    await updateMessage({ id: roomMessageId, message: laterMessage, roomId });
+    firstAnswer.resolve();
+    await firstEdit;
+
+    expect(takeOne(items.value).message).toBe(laterMessage);
+  });
+
+  // The room answers with the files it keeps. A removal it refuses changes nothing, so the attachment it named stays
+  test("an attachment leaves when the room answers and stays when it refuses", async () => {
     expect.hasAssertions();
 
     const rejectedFileId = v7();
@@ -526,6 +544,14 @@ describe(useDataStore, () => {
     const keptFileId = v7();
     trpcMsw.message.deleteFile.mutation(({ input }) => {
       if (input.fileId === rejectedFileId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+
+      return {
+        ...createRoomMessage(roomId, message),
+        files: [
+          { ...baseFile, id: rejectedFileId },
+          { ...baseFile, id: keptFileId },
+        ],
+      };
     });
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
@@ -548,11 +574,10 @@ describe(useDataStore, () => {
     };
     getSlice(newMessage.roomId).items.value = [newMessage];
     const messageKey = { id: newMessage.id, roomId: newMessage.roomId };
-    deleteFile({ ...messageKey, fileId: acceptedFileId });
-    deleteFile({ ...messageKey, fileId: rejectedFileId });
-    await flushPromises();
+    await deleteFile({ ...messageKey, fileId: acceptedFileId });
+    await deleteFile({ ...messageKey, fileId: rejectedFileId });
 
-    expect(takeOne(items.value).files.map(({ id }) => id)).toStrictEqual([keptFileId, rejectedFileId]);
+    expect(takeOne(items.value).files.map(({ id }) => id)).toStrictEqual([rejectedFileId, keptFileId]);
   });
 
   // The thread pane holds replies the room's window does not, so a reconnect reads them back with the window: a reply
@@ -570,11 +595,12 @@ describe(useDataStore, () => {
     const editedReply = {
       ...createOptimisticMessage({ replyToId: roomMessageId, roomId, type: MessageType.Message }, userId),
       id: 3,
+      version: 0,
     };
     threadStore.activeRoomId = roomId;
     threadMessages.value = [deletedReply, editedReply];
     trpcMsw.message.readMessagesByIds.query(() => [
-      { ...editedReply, message: updatedMessage, updatedAt: new Date(1) },
+      { ...editedReply, message: updatedMessage, updatedAt: new Date(1), version: 1 },
     ]);
     dataStore.refreshLoadedMessages(roomId);
     await waitForSynchronizedFunctions();

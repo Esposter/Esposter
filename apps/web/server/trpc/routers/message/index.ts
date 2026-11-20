@@ -115,20 +115,22 @@ const baseMessageRouter = router({
       );
     }),
   // Removing one file rewrites the whole files array inside the room's object, which applies the removal to the version
-  // It holds and returns the file it removed, so the blob deleted is the one that version named
+  // It holds and returns the file it removed, so the blob deleted is the one that version named. The message it stored
+  // Is the answer, since the object sends the change to every socket but this device's own
   deleteFile: getMessageProcedure(deleteFileInputSchema, MessageOperation.Update)
     .meta({ staticReason: "The room object pushes the message with the file removed to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input: { fileId, id, roomId } }) => {
+    .mutation<RoomMessage>(async ({ ctx, input: { fileId, id, roomId } }) => {
       if (ctx.message.isForward || ctx.message.files.length === 0)
         throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Message, JSON.stringify({ fileId, id }));
 
-      const deletedFile = await useRoomObject(roomId).deleteFile({ fileId, id }, getRoomActor(ctx));
-      if (!deletedFile) throw getNotFoundError(DatabaseEntityType.File, fileId);
+      const removal = await useRoomObject(roomId).deleteFile({ fileId, id }, getRoomActor(ctx));
+      if (!removal) throw getNotFoundError(DatabaseEntityType.File, fileId);
       // A dropped publish leaves an orphaned blob, never the file the user asked to remove
       await publishBlobDeletion(
         StorageBucket.MessageAssets,
-        Object.values(getFileBlobNames(roomId, fileId, deletedFile.filename)),
+        Object.values(getFileBlobNames(roomId, fileId, removal.deletedFile.filename)),
       ).match(noop, console.error);
+      return removal.message;
     }),
   // Clearing the preview is the room object's write, which replaces the whole row's preview rather than merging a field
   deleteLinkPreviewResponse: getMessageProcedure(deleteLinkPreviewResponseInputSchema, MessageOperation.Update)
@@ -405,12 +407,13 @@ const baseMessageRouter = router({
     }),
   updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update)
     .meta({ staticReason: "The room object pushes the edited message to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input }) => {
+    .mutation<RoomMessage>(async ({ ctx, input }) => {
       // The message as it was is read first, so the mention counts its old text made can be taken back and the new text's added
       const roomObject = useRoomObject(input.roomId);
       const [previousMessage] = await roomObject.readMessagesByIds([input.id]);
-      // The object stamps the message as edited and names the members its new text names
-      await requireEntity(
+      // The object stamps the message as edited and names the members its new text names. The message it stores
+      // Is the answer, since the object sends the edit to every socket but this device's own
+      const updatedMessage = await requireEntity(
         roomObject.updateMessage({ id: input.id, message: input.message }, getRoomActor(ctx)),
         DatabaseEntityType.Message,
         JSON.stringify(input),
@@ -419,6 +422,7 @@ const baseMessageRouter = router({
         await takeBackMentionCounts(ctx.db, input.roomId, previousMessage);
         await addMentionCounts(ctx.db, input.roomId, { message: input.message, userId: previousMessage.userId });
       }
+      return updatedMessage;
     }),
   // Casting a vote is not editing the poll: any member may vote, while editing or deleting the poll stays with its
   // Author. The client names the option it picked and the object applies it to the stored poll, so a member can never
