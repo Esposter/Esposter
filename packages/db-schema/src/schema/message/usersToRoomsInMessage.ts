@@ -7,6 +7,7 @@ import { DISPLAY_NAME_MAX_LENGTH } from "#src/services/room/constants";
 import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
@@ -50,10 +51,7 @@ export const usersToRoomsInMessage = sqliteTable(
       index("usersToRooms_timeoutUntil_index")
         .on(timeoutUntil)
         .where(sql`${timeoutUntil} IS NOT NULL`),
-      // The purge reads a membership's tombstone by its deletion, and the partial index holds only those rows
-      index("usersToRooms_deletedAt_index")
-        .on(deletedAt)
-        .where(sql`${deletedAt} IS NOT NULL`),
+      createTombstoneIndex("usersToRooms", deletedAt),
     ],
     schema: messageSchema,
     scope: { columns: ["userId", "roomId"] },

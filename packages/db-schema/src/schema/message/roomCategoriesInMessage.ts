@@ -4,8 +4,8 @@ import { ROOM_CATEGORY_NAME_MAX_LENGTH } from "#src/services/room/constants";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
-import { sql } from "drizzle-orm";
 import { check, index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
@@ -29,10 +29,7 @@ export const roomCategoriesInMessage = sqliteTable(
       check("roomCategories_position_check", createMinimumCheckSql(position, 0)),
       // A reader's categories are read by owner, and a user's deletion cascades through it
       index("roomCategories_userId_index").on(userId),
-      // The purge reads a category's tombstone by its deletion, and the partial index holds only those rows
-      index("roomCategories_deletedAt_index")
-        .on(deletedAt)
-        .where(sql`${deletedAt} IS NOT NULL`),
+      createTombstoneIndex("roomCategories", deletedAt),
     ],
     schema: messageSchema,
     scope: { columns: ["userId"] },
