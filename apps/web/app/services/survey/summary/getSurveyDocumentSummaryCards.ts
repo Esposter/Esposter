@@ -18,11 +18,9 @@ import {
   SurveyTextInputType,
 } from "vue-survey-engine-headless";
 
-type Answer = NonNullable<ColumnValue>;
-
 interface ChoiceOption {
   label: string;
-  value: Answer;
+  value: NonNullable<ColumnValue>;
 }
 
 // What a choice card counts: its options, whether an answer lists several of them, and the label of its other option
@@ -80,7 +78,7 @@ const getChoiceSource = (question: SurveyQuestionNode): ChoiceSource | undefined
 };
 
 // A question whose answers are numbers is summarised by their range and average rather than listed
-const checkIsNumberQuestion = (question: SurveyQuestionNode): boolean => {
+const checkIsNumberQuestion = (question: SurveyQuestionNode) => {
   switch (question.type) {
     case SurveyNodeType.Expression:
       return question.props.displayFormat !== SurveyExpressionDisplayFormat.None;
@@ -94,12 +92,12 @@ const checkIsNumberQuestion = (question: SurveyQuestionNode): boolean => {
 };
 
 // The longest choice value the rest of a multiple answer starts with, as its whole or as one segment of it
-const getLeadingChoiceValue = (rest: string, longestFirst: string[]): string | undefined =>
+const getLeadingChoiceValue = (rest: string, longestFirst: string[]) =>
   longestFirst.find((value) => rest === value || rest.startsWith(`${value}${CHECKBOX_ANSWER_SEPARATOR}`));
 
 // A choice's value may hold the separator, so a multiple answer is read against the choice values, not split on it.
 // A segment that starts no choice value is an other answer, read up to the next separator
-const getMultipleAnswerValues = (answer: string, longestFirst: string[]): string[] => {
+const getMultipleAnswerValues = (answer: string, longestFirst: string[]) => {
   const answeredValues: string[] = [];
   let rest = answer;
   while (rest.length > 0) {
@@ -117,7 +115,7 @@ const getMultipleAnswerValues = (answer: string, longestFirst: string[]): string
 };
 
 // The values an answer holds: a multiple answer's segments, or the one value of any other answer
-const getAnswerValues = (answer: Answer, isMultiple: boolean, longestFirst: string[]): string[] =>
+const getAnswerValues = (answer: NonNullable<ColumnValue>, isMultiple: boolean, longestFirst: string[]) =>
   isMultiple && typeof answer === "string" ? getMultipleAnswerValues(answer, longestFirst) : [String(answer)];
 
 // Each option is counted by the answers holding its value, and the other option by the answers holding a value that no
@@ -125,7 +123,7 @@ const getAnswerValues = (answer: Answer, isMultiple: boolean, longestFirst: stri
 const getChoiceCard = (
   base: BaseSurveySummaryCard,
   source: ChoiceSource,
-  answers: Answer[],
+  answers: NonNullable<ColumnValue>[],
   average: number | undefined,
 ): SurveySummaryCard => {
   const optionValues = source.options.map(({ value }) => String(value));
@@ -150,7 +148,7 @@ const getChoiceCard = (
 const getQuestionCard = (
   question: SurveyQuestionNode,
   base: BaseSurveySummaryCard,
-  answers: Answer[],
+  answers: NonNullable<ColumnValue>[],
 ): SurveySummaryCard => {
   const choiceSource = getChoiceSource(question);
   if (choiceSource) {

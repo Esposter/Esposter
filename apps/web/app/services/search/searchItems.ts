@@ -9,7 +9,7 @@ export const searchItems = <TItem>(
   query: string,
   getFields: (item: TItem) => Record<string, string>,
   boost: Record<string, number> = {},
-): TItem[] => {
+) => {
   const [firstItem] = items;
   if (!query || firstItem === undefined) return [...items];
 

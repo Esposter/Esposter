@@ -6,7 +6,7 @@ import { withFinalizer } from "@esposter/shared";
 // It is made, so the topics link takes this collector then and adds each read its answer names
 let activeReads: TopicRead[] | undefined;
 
-export const readActiveTopicReads = (): TopicRead[] | undefined => activeReads;
+export const readActiveTopicReads = () => activeReads;
 
 // Runs a read and collects the reads every tRPC call it starts synchronously answers with. Each read is kept whole, since
 // Its signature covers only its own topics, so the reads are watched one by one rather than merged. A call started after the

@@ -6,7 +6,7 @@ import { withFinalizer } from "@esposter/shared";
 // As it is made, so the row versions link takes this collector then and adds each row its answer names
 let activeRowVersions: RowVersion[] | undefined;
 
-export const readActiveRowVersions = (): RowVersion[] | undefined => activeRowVersions;
+export const readActiveRowVersions = () => activeRowVersions;
 
 // Runs a mutation and collects the row versions every tRPC call it starts synchronously answers with. A call started
 // After the mutation's first await is outside the collection, so a mutation that must be watched starts its calls

@@ -4,9 +4,6 @@ import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { ApexChartMarkerShapes } from "#src/services/styled/ApexChartMarkerShapes";
 import { defu } from "defu";
 
-type ApexFormatterOpts = Parameters<NonNullable<NonNullable<NonNullable<ApexOptions["tooltip"]>["x"]>["formatter"]>>[1];
-type ApexYTooltip = Exclude<NonNullable<NonNullable<ApexOptions["tooltip"]>["y"]>, unknown[]>;
-
 interface StyledApexOptionsInput {
   isDark: boolean;
   options: ApexOptions;
@@ -40,7 +37,7 @@ export const getStyledApexOptions = ({ isDark, options, series, type }: StyledAp
     {
       markers: {
         shape: ApexChartMarkerShapes,
-        ...(resolvedType === "area" || resolvedType === "line" || resolvedType === "rangeArea" ? { size: 4 } : {}),
+        ...(["area", "line", "rangeArea"].includes(resolvedType) ? { size: 4 } : {}),
       },
     },
   );
@@ -51,10 +48,15 @@ export const getStyledApexOptions = ({ isDark, options, series, type }: StyledAp
 // Case that differs: its x value is an index, which the chart formats into its category's name. So the title is escaped
 // Whatever formatter produced it, Apex's own included. A series row's name is escaped the same way, after the default
 // Separator Apex adds to it. Each y tooltip is escaped on its own, so an array holds one escaped tooltip per series
-const getYTooltip = (yTooltip: ApexYTooltip | undefined): ApexYTooltip => ({
+const getYTooltip = (
+  yTooltip: Exclude<NonNullable<NonNullable<ApexOptions["tooltip"]>["y"]>, unknown[]> | undefined,
+): Exclude<NonNullable<NonNullable<ApexOptions["tooltip"]>["y"]>, unknown[]> => ({
   ...yTooltip,
   title: {
-    formatter: (seriesName: string, formatterOptions?: ApexFormatterOpts) =>
+    formatter: (
+      seriesName: string,
+      formatterOptions?: Parameters<NonNullable<NonNullable<NonNullable<ApexOptions["tooltip"]>["x"]>["formatter"]>>[1],
+    ) =>
       escapeHtml(
         yTooltip?.title?.formatter
           ? yTooltip.title.formatter(seriesName, formatterOptions)
@@ -68,7 +70,12 @@ const getTooltipOptions = (options: ApexOptions): NonNullable<ApexOptions["toolt
   const y = options.tooltip?.y;
   return {
     x: {
-      formatter: (value, formatterOptions?: ApexFormatterOpts) =>
+      formatter: (
+        value,
+        formatterOptions?: Parameters<
+          NonNullable<NonNullable<NonNullable<ApexOptions["tooltip"]>["x"]>["formatter"]>
+        >[1],
+      ) =>
         escapeHtml(
           String(
             options.tooltip?.x?.formatter

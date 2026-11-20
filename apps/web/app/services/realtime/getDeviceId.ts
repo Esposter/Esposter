@@ -4,7 +4,7 @@ import { v7 } from "uuid";
 // The tab out of the echo of its own write
 let deviceId = "";
 
-export const getDeviceId = (): string => {
+export const getDeviceId = () => {
   deviceId ||= v7();
   return deviceId;
 };
