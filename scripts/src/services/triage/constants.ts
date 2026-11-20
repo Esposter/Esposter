@@ -3,7 +3,7 @@ import { TriageLabel } from "#src/models/triage/TriageLabel";
 // What each label means to the person reading the tracker, written for a reader that has the issue in front of
 // It and nothing else — no repository, no history. `needs-triage` is also where an undecided issue lands, so its
 // Description says what leaves it there rather than what puts it there.
-export const TriageLabelCriteriaMap: Record<TriageLabel, string> = {
+export const TRIAGE_LABEL_CRITERIA_MAP: Record<TriageLabel, string> = {
   [TriageLabel.NeedsInfo]:
     "Something is missing that only the reporter can supply: a repro, a version, a log, which of two things they meant.",
   [TriageLabel.NeedsTriage]:

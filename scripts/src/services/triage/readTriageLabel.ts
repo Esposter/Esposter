@@ -3,7 +3,7 @@ import type { TriageIssue } from "#src/models/triage/TriageIssue";
 import { TriageLabel } from "#src/models/triage/TriageLabel";
 import { HIGH_STAKES_CONFIDENCE } from "#src/services/jev/constants";
 import { readAnswers } from "#src/services/jev/readAnswers";
-import { TriageLabelCriteriaMap } from "#src/services/triage/constants";
+import { TRIAGE_LABEL_CRITERIA_MAP } from "#src/services/triage/constants";
 import { choice } from "@typesafe-ai/sdk";
 
 // Which of the tracker's five roles an issue is in, read off what the issue says. A label is written to someone
@@ -13,7 +13,7 @@ import { choice } from "@typesafe-ai/sdk";
 export const readTriageLabel = async ({ body, title }: Pick<TriageIssue, "body" | "title">): Promise<TriageLabel> => {
   const answers = await readAnswers(
     { body, title },
-    { label: choice("Which triage role is this issue in?", TriageLabelCriteriaMap) },
+    { label: choice("Which triage role is this issue in?", TRIAGE_LABEL_CRITERIA_MAP) },
   );
   if (answers === undefined) return TriageLabel.NeedsTriage;
 
