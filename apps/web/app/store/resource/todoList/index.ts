@@ -8,13 +8,12 @@ import { createEmptyTodoList } from "#shared/services/resource/todoList/createEm
 import { rollRecurringItem } from "#shared/services/resource/todoList/rollRecurringItem";
 import { TodoListSort } from "#src/models/resource/todoList/TodoListSort";
 import { createContentData } from "#src/services/resource/createContentData";
-import { createOperationData } from "#src/services/shared/createOperationData";
 import { createEditFormData } from "#src/services/shared/editForm/createEditFormData";
 import { getReorderedItems } from "#src/services/shared/getReorderedItems";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
-import { normalizeString } from "@esposter/shared";
+import { normalizeString, omitUndefined } from "@esposter/shared";
 
 export const useTodoListStore = defineStore("resource/todoList", () => {
   const resourceStore = useResourceStore();
@@ -37,29 +36,33 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   // The search is a view over the open list, so it is keyed by that list as the sort is, and a search typed in one list
   // Does not carry into another
   const { data: searchQuery } = useCurrentResourceDataMap("");
-  const { createItem, deleteItem, updateItem } = createOperationData(items, ["id"], "Item");
   const { editedItem, isEditFormDialogOpen, originalItem, ...restEditFormData } = createEditFormData(
     computed(() => items.value),
     ["id"],
   );
+  // A confirmed delete from outside the dialog — one todo's context menu, or Delete completed
+  const deleteItems = (ids: TodoListItem["id"][]) => {
+    items.value = items.value.filter(({ id }) => !ids.includes(id));
+    saveTodoList();
+  };
   // One write path per action: item edits mutate the content blob, then persist it wholesale. A refused save leaves the
   // Edit on screen, and the dialog closes as the save is sent
   const saveItem = () => {
-    if (!editedItem.value) return;
+    const editedValue = editedItem.value;
+    if (!editedValue) return;
 
     // Whether this is an edit or an add is the list's own answer to "is that item already here?", read from the item in
     // Hand — a separately tracked index would still hold the previous edit's row when the dialog opens straight from the
-    // Add button, routing that add into an update
-    if (originalItem.value) updateItem(editedItem.value);
-    else createItem(editedItem.value);
+    // Add button, routing that add into an update. A field the dialog left undefined keeps the stored value
+    if (originalItem.value) Object.assign(originalItem.value, omitUndefined(editedValue));
+    else items.value.push(editedValue);
     saveTodoList();
   };
   // A delete from the dialog, persisted with the list as it stands
   const removeItem = () => {
     if (!editedItem.value) return;
 
-    deleteItem({ id: editedItem.value.id });
-    saveTodoList();
+    deleteItems([editedItem.value.id]);
   };
   // A todo added by its name alone, from the field above the list, at the foot of the list as the dialog's add is. A
   // Name of only whitespace, or past the limit the dialog's name field holds, adds nothing and hands the field its text
@@ -71,7 +74,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
       return;
     }
 
-    createItem(new TodoListItem({ name: normalizedName }));
+    items.value.push(new TodoListItem({ name: normalizedName }));
     saveTodoList();
   };
   // One field of one todo written from its row, with no dialog
@@ -112,11 +115,6 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     () => LocalStorageKey.TodoListSort(resourceStore.currentResourceId),
     TodoListSort.MyOrder,
   );
-  // A confirmed delete from outside the dialog — one todo's context menu, or Delete completed
-  const deleteItems = (ids: TodoListItem["id"][]) => {
-    items.value = items.value.filter(({ id }) => !ids.includes(id));
-    saveTodoList();
-  };
   return {
     addItem,
     checkIsCompleted,
