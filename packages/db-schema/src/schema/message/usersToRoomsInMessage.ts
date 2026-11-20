@@ -36,7 +36,7 @@ export const usersToRoomsInMessage = sqliteTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ categoryId, displayName, mentionCount, roomId, timeoutUntil, userId }) => [
+    extraConfig: ({ categoryId, deletedAt, displayName, mentionCount, roomId, timeoutUntil, userId }) => [
       primaryKey({ columns: [userId, roomId] }),
       check("usersToRooms_displayName_length_check", createMaxLengthCheckSql(displayName, DISPLAY_NAME_MAX_LENGTH)),
       check("usersToRooms_mentionCount_check", createMinimumCheckSql(mentionCount, 0)),
@@ -50,6 +50,10 @@ export const usersToRoomsInMessage = sqliteTable(
       index("usersToRooms_timeoutUntil_index")
         .on(timeoutUntil)
         .where(sql`${timeoutUntil} IS NOT NULL`),
+      // The purge reads a membership's tombstone by its deletion, and the partial index holds only those rows
+      index("usersToRooms_deletedAt_index")
+        .on(deletedAt)
+        .where(sql`${deletedAt} IS NOT NULL`),
     ],
     schema: messageSchema,
     scope: { columns: ["userId", "roomId"] },

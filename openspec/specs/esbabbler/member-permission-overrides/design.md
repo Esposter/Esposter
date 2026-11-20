@@ -32,7 +32,7 @@ The fold happens in `getPermissions`, so `checkHasPermission`, `readMyPermission
 
 Each write publishes the rows it changes, which the override map's read and each member's own permissions read watch, so every viewer re-reads the state the write left. The member whose override changed re-reads their own permissions through the same watch, since every permission gate reads that bitfield. No socket event carries the state.
 
-Leaving a room deletes the row with the membership, through the composite foreign key's cascade.
+Leaving a room tombstones the membership and deletes the override rows it holds in the same batch, since the composite foreign key's cascade does not run for a tombstone.
 
 ## The Roles panel
 

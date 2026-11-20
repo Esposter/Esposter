@@ -5,6 +5,7 @@ import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSq
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { sqliteTable } from "#src/sqliteTable";
+import { sql } from "drizzle-orm";
 import { check, index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
@@ -23,11 +24,15 @@ export const roomCategoriesInMessage = sqliteTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name, position, userId }) => [
+    extraConfig: ({ deletedAt, name, position, userId }) => [
       check("roomCategories_name_length_check", createNameCheckSql(name, ROOM_CATEGORY_NAME_MAX_LENGTH)),
       check("roomCategories_position_check", createMinimumCheckSql(position, 0)),
       // A reader's categories are read by owner, and a user's deletion cascades through it
       index("roomCategories_userId_index").on(userId),
+      // The purge reads a category's tombstone by its deletion, and the partial index holds only those rows
+      index("roomCategories_deletedAt_index")
+        .on(deletedAt)
+        .where(sql`${deletedAt} IS NOT NULL`),
     ],
     schema: messageSchema,
     scope: { columns: ["userId"] },
