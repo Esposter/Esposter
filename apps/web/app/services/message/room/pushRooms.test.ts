@@ -7,8 +7,8 @@ import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { useOverlayStore } from "#src/store/overlay";
 import { describe } from "vitest";
 
-// Holds rooms the way a read does, with the signed-in reader's live membership of each, so the list shows them. Read in
-// A test that has signed no one in, the reader is the empty id, which is the id the membership is written under
+// Holds rooms the way a read does, with the signed-in reader's live membership of each, so the list shows them.
+// In a test that has signed no one in, the reader is the empty id, which is the id the membership is written under
 export const pushRooms = (...rooms: RoomInMessage[]) => {
   const overlayStore = useOverlayStore();
   const { arrive } = overlayStore;
