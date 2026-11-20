@@ -9,7 +9,13 @@ import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { userObjectCalls } from "#src/services/user/getUserObject.test";
 import { getBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import { QueueJob, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import {
+  getResourceFileBlobName,
+  QueueJob,
+  StorageBucket,
+  storageLedgerInStorage,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { createHash } from "node:crypto";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -69,9 +75,9 @@ describe(reconcileStorageLedgerEntryHandler, () => {
 
   const resourceId = v7();
   const resourceAssetContent = " ";
-  const matchingResourceAssetName = `${resourceId}/files/${hashOf(resourceAssetContent)}`;
+  const matchingResourceAssetName = getResourceFileBlobName(resourceId, hashOf(resourceAssetContent));
   // The hash of the other canonical value, so the name describes bytes the blob does not hold
-  const mismatchedResourceAssetName = `${resourceId}/files/${hashOf("")}`;
+  const mismatchedResourceAssetName = getResourceFileBlobName(resourceId, hashOf(""));
   // The log names the hash of the bytes the blob holds, which is the name's hash of the other value
   const mismatchedResourceAssetLog = `${QueueJob.ReconcileStorageLedgerEntry} found a mismatched resource asset: ${JSON.stringify({ actualHash: hashOf(resourceAssetContent), blobName: mismatchedResourceAssetName })}`;
   const seedResourceAsset = async (name: string) => {
@@ -102,7 +108,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   test("charges a message attachment's uploader what storage reported", async () => {
     expect.hasAssertions();
 
-    const messageBlobName = getBlobName(`${resourceId}/${v7()}`, "filename");
+    const messageBlobName = getBlobName(`${resourceId}/${v7()}`, "a");
     const messageStorageBucket = StorageBucket.MessageAssets;
     await createStorageLedgerEntry({ blobName: messageBlobName, storageBucket: messageStorageBucket });
     await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(messageBlobName, messageStorageBucket));
@@ -182,13 +188,11 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     expect.hasAssertions();
 
     await seedResourceAsset(mismatchedResourceAssetName);
-    vi.mocked(getBucket).mockReturnValueOnce(
-      createBucketWith({ get: () => Promise.reject(new Error("service unavailable")) }),
-    );
+    vi.mocked(getBucket).mockReturnValueOnce(createBucketWith({ get: () => Promise.reject(new Error(" ")) }));
 
     await expect(
       reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(mismatchedResourceAssetName)),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: service unavailable]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
     await expect(readResourceAssetNames()).resolves.toStrictEqual([mismatchedResourceAssetName]);
   });
 });
