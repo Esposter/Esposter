@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { CallParticipant } from "@esposter/db-schema";
+import type { CallParticipant, CallParticipantRow } from "@esposter/db-schema";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { createId } from "#shared/util/math/random/createId";
@@ -33,6 +33,20 @@ const createParticipant = (): CallParticipant => ({
   userId: v7(),
 });
 
+// A participant's row as the call object holds it: live, at the version it was written at
+const createRow = (participant: CallParticipant, version: number): CallParticipantRow => ({
+  ...participant,
+  deletedAt: null,
+  version,
+});
+
+// The same row after its participant left, one version on, as the leave's frame and the object both carry it
+const createTombstone = (row: CallParticipantRow): CallParticipantRow => ({
+  ...row,
+  deletedAt: new Date(0),
+  version: row.version + 1,
+});
+
 describe(useParticipantStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const callSessionId = createId(CALL_ID_LENGTH);
@@ -50,78 +64,42 @@ describe(useParticipantStore, () => {
     expect(speakingIds.value).toStrictEqual([]);
   });
 
-  test("setParticipantHandRaised sets the raised hand state", () => {
+  test("a hand raise arrives as the participant's row at its new version", () => {
     expect.hasAssertions();
 
     const participant = createOwnParticipant();
     const participantStore = useParticipantStore();
-    const { createCallParticipant, setParticipantHandRaised } = participantStore;
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
-    createCallParticipant(callSessionId, participant);
-    setParticipantHandRaised(callSessionId, participant.id, true);
+    participantStore.storeCallParticipants(callSessionId, [createRow(participant, 1)]);
+    participantStore.storeCallParticipant(callSessionId, { ...createRow(participant, 2), isHandRaised: true });
 
     expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participant.id)?.isHandRaised).toBe(true);
-
-    setParticipantHandRaised(callSessionId, participant.id, false);
-
-    expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participant.id)?.isHandRaised).toBe(false);
   });
 
-  test("createCallParticipant adds the participant to the call", () => {
+  test("a participant's row is held once, however often its arrival repeats", () => {
     expect.hasAssertions();
 
     const participant = createOwnParticipant();
     const participantStore = useParticipantStore();
-    const { createCallParticipant } = participantStore;
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
-    createCallParticipant(callSessionId, participant);
-
-    const sessionMap = callSessionParticipantsMap.value.get(callSessionId);
-
-    expect(sessionMap?.size).toBe(1);
-    expect(sessionMap?.get(participant.id)).toStrictEqual(participant);
-  });
-
-  test("createCallParticipant is idempotent", () => {
-    expect.hasAssertions();
-
-    const participant = createOwnParticipant();
-    const participantStore = useParticipantStore();
-    const { createCallParticipant } = participantStore;
-    const { callSessionParticipantsMap } = storeToRefs(participantStore);
-    createCallParticipant(callSessionId, participant);
-    createCallParticipant(callSessionId, participant);
+    participantStore.storeCallParticipants(callSessionId, [createRow(participant, 1)]);
+    participantStore.storeCallParticipants(callSessionId, [createRow(participant, 1)]);
 
     expect(callSessionParticipantsMap.value.get(callSessionId)?.size).toBe(1);
   });
 
-  test("setParticipantMuted updates the participant mute state", () => {
-    expect.hasAssertions();
-
-    const participant = createOwnParticipant();
-    const participantStore = useParticipantStore();
-    const { createCallParticipant, setParticipantMuted } = participantStore;
-    const { callSessionParticipantsMap } = storeToRefs(participantStore);
-    createCallParticipant(callSessionId, participant);
-    setParticipantMuted(callSessionId, participant.id, true);
-
-    expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participant.id)?.isMuted).toBe(true);
-  });
-
-  // The session is subscribed while its participants are read, so a leave and a join that land in that window are not
-  // In the answer's favour: the answer may still list the leaver and not the joiner
-  test("replays a leave and a join that land during the read over its answer", async () => {
+  // The read is in flight when the leave lands, so the leave arrives first and the read answers with the leaver's
+  // Row as it stood before it. That older row must lose to the tombstone, or the leaver is back in the call
+  test("a late read does not re-add a participant who left", async () => {
     expect.hasAssertions();
 
     const { $trpc } = useNuxtApp();
     const participantStore = useParticipantStore();
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
-    const kept = createParticipant();
-    const left = createParticipant();
-    const joined = createParticipant();
+    const kept = createRow(createParticipant(), 1);
+    const left = createRow(createParticipant(), 1);
     trpcMsw.callSession.readCallParticipantMap.query(() => {
-      participantStore.deleteCallParticipant(callSessionId, left.id);
-      participantStore.createCallParticipant(callSessionId, joined);
+      participantStore.storeCallParticipant(callSessionId, createTombstone(left));
       return new Map([
         [kept.id, kept],
         [left.id, left],
@@ -131,9 +109,6 @@ describe(useParticipantStore, () => {
       $trpc.callSession.readCallParticipantMap.query({ callSessionId }),
     );
 
-    expect([...(callSessionParticipantsMap.value.get(callSessionId)?.keys() ?? [])]).toStrictEqual([
-      kept.id,
-      joined.id,
-    ]);
+    expect([...(callSessionParticipantsMap.value.get(callSessionId)?.keys() ?? [])]).toStrictEqual([kept.id]);
   });
 });

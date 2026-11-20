@@ -13,6 +13,7 @@ import {
   getUserSocketTag,
   PublishSource,
   SOCKET_IDENTITY_HEADER,
+  TOMBSTONE_RETENTION_MS,
 } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
@@ -244,6 +245,139 @@ describe(CallObject, () => {
       userId: remainer.profile.userId,
     });
     expect(repeatedLeave).toBeNull();
+  });
+
+  // A leave keeps the participant's row as a tombstone at a higher version, so a read that answered before the leave
+  // cannot bring the participant back over it
+  test("a leave keeps the participant as a tombstone at a higher version, so an older read cannot bring it back", async () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const leaver = createConnection();
+    const join = await joinConnection(callObject, leaver);
+    assert.exists(join);
+
+    await callObject.leaveCall({ callSessionId, sessionId: leaver.sessionId });
+
+    expect(await callObject.readParticipantMap()).toStrictEqual(
+      new Map([
+        [join.participantId, { ...leaver.profile, deletedAt: new Date(0), id: join.participantId, version: 1 }],
+      ]),
+    );
+  });
+
+  // A connection that joins again is named afresh, and its session's row is revived above the tombstone it leaves
+  test("a rejoin after a leave is named afresh and revives the session's row at a higher version", async () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const connection = createConnection();
+    const firstJoin = await joinConnection(callObject, connection);
+    assert.exists(firstJoin);
+    await callObject.leaveCall({ callSessionId, sessionId: connection.sessionId });
+    const secondJoin = await joinConnection(callObject, connection);
+    assert.exists(secondJoin);
+
+    expect(secondJoin.participantId).not.toBe(firstJoin.participantId);
+    expect(await callObject.readParticipantMap()).toStrictEqual(
+      new Map([
+        [
+          secondJoin.participantId,
+          { ...connection.profile, deletedAt: null, id: secondJoin.participantId, version: 2 },
+        ],
+      ]),
+    );
+  });
+
+  // The leave's frame is the tombstone itself, so a member's view applies the leave at the version the object holds
+  test("a leave tells the others the participant's row, tombstone and version included", async () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const leaver = createConnection();
+    const remainer = createConnection();
+    const leaverJoin = await joinConnection(callObject, leaver);
+    await joinConnection(callObject, remainer);
+    assert.exists(leaverJoin);
+    const remainerSocket = createSocket();
+    state.ctx.acceptWebSocket(remainerSocket, [
+      getUserSocketTag(remainer.profile.userId),
+      getSessionSocketTag(remainer.sessionId),
+    ]);
+
+    await callObject.leaveCall({ callSessionId, sessionId: leaver.sessionId });
+
+    expect(readFrames(remainerSocket)).toStrictEqual([
+      {
+        data: {
+          callSessionId,
+          participant: {
+            ...leaver.profile,
+            deletedAt: new Date(0).toISOString(),
+            id: leaverJoin.participantId,
+            version: 1,
+          },
+        },
+        type: "leaveCall",
+      },
+    ]);
+  });
+
+  // A flag change answers with the row it wrote, at the version the database left it, and carries that row to the others
+  test("a flag change answers with its row at the version it left, and carries that row to the others", async () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const member = createConnection();
+    const bystander = createConnection();
+    const join = await joinConnection(callObject, member);
+    await joinConnection(callObject, bystander);
+    assert.exists(join);
+    const bystanderSocket = createSocket();
+    state.ctx.acceptWebSocket(bystanderSocket, [
+      getUserSocketTag(bystander.profile.userId),
+      getSessionSocketTag(bystander.sessionId),
+    ]);
+
+    const row = await callObject.setMuted({ callSessionId, isMuted: true, sessionId: member.sessionId });
+
+    expect(row).toStrictEqual({
+      ...member.profile,
+      deletedAt: null,
+      id: join.participantId,
+      isMuted: true,
+      version: 1,
+    });
+    expect(readFrames(bystanderSocket)).toStrictEqual([
+      { data: { callSessionId, participant: JSON.parse(JSON.stringify(row)) }, type: "muteChanged" },
+    ]);
+  });
+
+  // A tombstone is purged by the call's next write once its retention has passed, so the object keeps no leaver forever
+  test("a tombstone past its retention is purged by the call's next write", async () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const leaver = createConnection();
+    const join = await joinConnection(callObject, leaver);
+    assert.exists(join);
+    await callObject.leaveCall({ callSessionId, sessionId: leaver.sessionId });
+
+    expect([...(await callObject.readParticipantMap()).keys()]).toStrictEqual([join.participantId]);
+
+    vi.setSystemTime(
+      Temporal.Instant.fromEpochMilliseconds(0).add(
+        Temporal.Duration.from({ milliseconds: TOMBSTONE_RETENTION_MS + 1 }),
+      ),
+    );
+    await joinConnection(callObject, createConnection());
+
+    expect([...(await callObject.readParticipantMap()).keys()]).not.toContain(join.participantId);
   });
 
   test("closing a session closes its sockets and leaves the call as a leave does, kicking its media at RealtimeKit", async () => {

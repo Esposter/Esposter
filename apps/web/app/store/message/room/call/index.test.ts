@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { ClientMessage } from "#src/models/message/ClientMessage";
-import type { CallParticipant } from "@esposter/db-schema";
+import type { CallParticipant, CallParticipantRow } from "@esposter/db-schema";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { createId } from "#shared/util/math/random/createId";
@@ -26,7 +26,8 @@ vi.mock(
   () => import("#src/services/realtime/openRealtimeSocket.test"),
 );
 
-const createParticipant = (id: string): CallParticipant => ({
+const createParticipant = (id: string): CallParticipantRow => ({
+  deletedAt: null,
   id,
   image: "image",
   isCameraEnabled: false,
@@ -34,6 +35,7 @@ const createParticipant = (id: string): CallParticipant => ({
   isMuted: false,
   name: "name",
   userId: "userId",
+  version: 1,
 });
 
 describe(useCallStore, () => {
@@ -80,17 +82,50 @@ describe(useCallStore, () => {
 
     const participantId = v7();
     const participantStore = useParticipantStore();
-    const { setParticipantId, setParticipantMap } = participantStore;
+    const { setParticipantId, storeCallParticipants } = participantStore;
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
     const callStore = useCallStore();
     const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
     activeCallSessionId.value = callSessionId;
     callRoomId.value = roomId;
     setParticipantId(participantId);
-    setParticipantMap(callSessionId, new Map([[participantId, createParticipant(participantId)]]));
+    storeCallParticipants(callSessionId, [createParticipant(participantId)]);
     await AdminActionHookMap[AdminActionType.ForceMute].run(v7());
 
     expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participantId)?.isMuted).toBe(false);
+  });
+
+  // A toggle the server refuses is revoked: its entry drops, and the row shows what the server last held. The server's own
+  // Arrival of the row at a newer version is what the screen shows then, and an older arrival of it does not
+  test("a revoked toggle's arrival wins over the toggle, and an older arrival does not", async () => {
+    expect.hasAssertions();
+
+    const participantId = v7();
+    trpcMsw.callSession.setMuted.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const participantStore = useParticipantStore();
+    participantStore.setParticipantId(participantId);
+    participantStore.storeCallParticipants(callSessionId, [createParticipant(participantId)]);
+    const callStore = useCallStore();
+    const { activeCallSessionId, isMuted } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    await callStore.toggleMute();
+    await flushPromises();
+
+    expect(isMuted.value).toBe(false);
+
+    participantStore.storeCallParticipant(callSessionId, {
+      ...createParticipant(participantId),
+      isMuted: true,
+      version: 2,
+    });
+
+    expect(isMuted.value).toBe(true);
+
+    participantStore.storeCallParticipant(callSessionId, createParticipant(participantId));
+
+    expect(isMuted.value).toBe(true);
   });
 
   // A thread call carries the room it belongs to, so a route keyed on the room alone lands in the room with the
@@ -178,7 +213,7 @@ describe(useCallStore, () => {
   // Meantime were lost and the leaver stayed listed
   test.each<{
     join: (callStore: ReturnType<typeof useCallStore>) => Promise<unknown>;
-    registerJoin: (participantId: string, participantMap: Map<string, CallParticipant>) => void;
+    registerJoin: (participantId: string, participantMap: Map<string, CallParticipantRow>) => void;
     title: string;
   }>([
     {
@@ -224,7 +259,7 @@ describe(useCallStore, () => {
     );
     const participantStore = useParticipantStore();
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
-    participantStore.setParticipantMap(callSessionId, new Map([[leavingId, createParticipant(leavingId)]]));
+    participantStore.storeCallParticipants(callSessionId, [createParticipant(leavingId)]);
     const realtimeStore = useRealtimeStore();
     const connectStarted = Promise.withResolvers<void>();
     const connectEnded = Promise.withResolvers<void>();
@@ -235,8 +270,12 @@ describe(useCallStore, () => {
     const callStore = useCallStore();
     const joining = join(callStore);
     await connectStarted.promise;
-    participantStore.deleteCallParticipant(callSessionId, leavingId);
-    participantStore.createCallParticipant(callSessionId, createParticipant(joiningId));
+    participantStore.storeCallParticipant(callSessionId, {
+      ...createParticipant(leavingId),
+      deletedAt: new Date(0),
+      version: 2,
+    });
+    participantStore.storeJoinedCallParticipant(callSessionId, createParticipant(joiningId));
     connectEnded.resolve();
     await joining;
 
@@ -346,9 +385,9 @@ describe(useCallStore, () => {
       if (input.isHandRaised) await raiseGate.promise;
     });
     const participantStore = useParticipantStore();
-    const { setParticipantId, setParticipantMap } = participantStore;
+    const { setParticipantId, storeCallParticipants } = participantStore;
     setParticipantId(participantId);
-    setParticipantMap(callSessionId, new Map([[participantId, createParticipant(participantId)]]));
+    storeCallParticipants(callSessionId, [createParticipant(participantId)]);
     const roleStore = useRoleStore();
     vi.spyOn(roleStore, "checkHasMyPermission").mockReturnValue(true);
     const callStore = useCallStore();
@@ -381,11 +420,9 @@ describe(useCallStore, () => {
       handRaisedSent.push(input);
     });
     const participantStore = useParticipantStore();
-    const { setParticipantMap } = participantStore;
-    setParticipantMap(
-      callSessionId,
-      new Map([[participantId, { ...createParticipant(participantId), isHandRaised: true }]]),
-    );
+    participantStore.storeCallParticipants(callSessionId, [
+      { ...createParticipant(participantId), isHandRaised: true },
+    ]);
     const roleStore = useRoleStore();
     vi.spyOn(roleStore, "checkHasMyPermission").mockReturnValue(true);
     const callStore = useCallStore();
