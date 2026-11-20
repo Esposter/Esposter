@@ -6,7 +6,7 @@ import { evaluateStreamedCurve } from "#src/services/genshinAssets/interface/eva
 import { parseStreamedClipKeys } from "#src/services/genshinAssets/interface/parseStreamedClipKeys";
 
 // A Transform's properties by the attribute its binding names them with, and the components each takes one curve for
-const TransformPropertyMap: Record<number, { components: string[]; property: string }> = {
+const AttributeTransformPropertyMap: Record<number, { components: string[]; property: string }> = {
   1: { components: ["x", "y", "z"], property: "position" },
   2: { components: ["x", "y", "z", "w"], property: "rotation" },
   3: { components: ["x", "y", "z"], property: "scale" },
@@ -48,7 +48,7 @@ export const decodeAnimationClip = (
   };
   const curves: DecodedCurve[] = [];
   for (const { attribute, path, typeID } of clip.m_ClipBindingConstant.genericBindings) {
-    const transformProperty = typeID === AssetType.Transform ? TransformPropertyMap[attribute] : undefined;
+    const transformProperty = typeID === AssetType.Transform ? AttributeTransformPropertyMap[attribute] : undefined;
     const components = transformProperty?.components ?? [""];
     const property = transformProperty?.property ?? resolveName(attribute);
     for (const component of components)

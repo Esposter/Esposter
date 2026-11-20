@@ -12,11 +12,11 @@ export const composeInterfaceTree = (
   // oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands this annotation
   depth: number = Infinity,
 ): InterfaceNode => {
-  const childrenByFatherId = Map.groupBy(entries, ({ fatherId }) => fatherId);
+  const fatherIdChildrenMap = Map.groupBy(entries, ({ fatherId }) => fatherId);
   const toNode = (entry: UiIndexEntry, remainingDepth: number): InterfaceNode => {
     const children =
       remainingDepth > 0 && entry.transformId
-        ? orderInterfaceChildren(childrenByFatherId.get(entry.transformId) ?? [], entry.childIds).map((child) =>
+        ? orderInterfaceChildren(fatherIdChildrenMap.get(entry.transformId) ?? [], entry.childIds).map((child) =>
             toNode(child, remainingDepth - 1),
           )
         : [];

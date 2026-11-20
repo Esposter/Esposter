@@ -41,18 +41,20 @@ export const extractComponentClips = async (component: DerivedAssetComponent): P
   if (blocks.length === 0) throw new InvalidOperationError(Operation.Read, clipPattern, "in no indexed block");
   await exportClipBlocks(clipPattern, blocks, directory);
   const interfacePath = join(root, "interface", "interface.json");
-  const interfacePaths = existsSync(interfacePath)
-    ? collectInterfacePaths(parseMachineJson<InterfaceNode>(await readFile(interfacePath, "utf8")))
-    : [];
+  const interfaceTree = existsSync(interfacePath)
+    ? parseMachineJson<InterfaceNode>(await readFile(interfacePath, "utf8"))
+    : undefined;
+  const interfacePaths = interfaceTree ? collectInterfacePaths(interfaceTree) : [];
   const sceneLayout = existsSync(layout) ? await readComponentLayout(component) : undefined;
   const scenePaths = sceneLayout
     ? composeSceneTree(sceneLayout.objects, sceneLayout.gameObjectDrawingMap).flatMap((top) => collectScenePaths(top))
     : [];
   const skeletonPaths = clipSkeleton ? await readSkeletonPaths(clipSkeleton) : [];
   const resolveName = createClipNameResolver([...interfacePaths, ...scenePaths, ...skeletonPaths]);
-  const clips: DecodedClip[] = (await readExportedClips<ExportedAnimationClip>(directory)).map((clip) =>
-    Object.assign(decodeAnimationClip(clip, CLIP_SAMPLE_RATE, resolveName), { name: clip.m_Name }),
-  );
+  const clips: DecodedClip[] = (await readExportedClips<ExportedAnimationClip>(directory)).map((clip) => ({
+    ...decodeAnimationClip(clip, CLIP_SAMPLE_RATE, resolveName),
+    name: clip.m_Name,
+  }));
   await writeFile(join(directory, "clips.json"), JSON.stringify(clips));
   await writeProvenance(directory, {
     command: `clips ${component}`,
