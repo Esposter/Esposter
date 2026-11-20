@@ -5,6 +5,7 @@ import { assertIsNotSelf } from "#server/services/friend/assertIsNotSelf";
 import { getLiveBlockWhere } from "#server/services/friend/getLiveBlockWhere";
 import { getLiveFriendshipWhere } from "#server/services/friend/getLiveFriendshipWhere";
 import { getReceivedFriendRequestWhere } from "#server/services/friend/getReceivedFriendRequestWhere";
+import { getReviveConflict } from "#server/services/friend/getReviveConflict";
 import { readUserPair } from "#server/services/friend/readUserPair";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -24,7 +25,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, getResultAsync, noop, Operation } from "@esposter/shared";
-import { and, eq, isNotNull, notExists, or, sql } from "drizzle-orm";
+import { and, eq, notExists, or, sql } from "drizzle-orm";
 
 export const friendRequestRouter = router({
   acceptFriendRequest: standardAuthedProcedure
@@ -50,15 +51,7 @@ export const friendRequestRouter = router({
               .from(friendRequestsInSocial)
               .where(getReceivedFriendRequestWhere(friendshipId, userId)),
           )
-          .onConflictDoUpdate({
-            set: {
-              deletedAt: null,
-              receiverId: sql`excluded.${sql.identifier(friendsInSocial.receiverId.name)}`,
-              senderId: sql`excluded.${sql.identifier(friendsInSocial.senderId.name)}`,
-            },
-            setWhere: isNotNull(friendsInSocial.deletedAt),
-            target: friendsInSocial.id,
-          })
+          .onConflictDoUpdate(getReviveConflict(friendsInSocial))
           .returning(),
         ctx.db
           .update(friendRequestsInSocial)
@@ -140,15 +133,7 @@ export const friendRequestRouter = router({
               ),
             ),
         )
-        .onConflictDoUpdate({
-          set: {
-            deletedAt: null,
-            receiverId: sql`excluded.${sql.identifier(friendRequestsInSocial.receiverId.name)}`,
-            senderId: sql`excluded.${sql.identifier(friendRequestsInSocial.senderId.name)}`,
-          },
-          setWhere: isNotNull(friendRequestsInSocial.deletedAt),
-          target: friendRequestsInSocial.id,
-        })
+        .onConflictDoUpdate(getReviveConflict(friendRequestsInSocial))
         .returning();
       if (!newFriendRequest) {
         // Nothing was inserted, so the refusal is read back in the order the insert's conditions were checked
