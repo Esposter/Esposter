@@ -5,9 +5,7 @@ import { checkIsRuinMesh } from "#src/services/genshinAssets/fit/checkIsRuinMesh
 import { toHullPlacements } from "#src/services/genshinAssets/fit/toHullPlacements";
 import { describe, expect, test } from "vitest";
 
-type WitnessPlacement = SceneLayout["placements"][number];
-
-const witness = (mesh: string, position: [number, number, number]): WitnessPlacement => ({
+const witness = (mesh: string, position: [number, number, number]): SceneLayout["placements"][number] => ({
   materials: [],
   mesh,
   position,

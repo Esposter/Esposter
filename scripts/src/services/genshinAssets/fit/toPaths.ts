@@ -1,7 +1,7 @@
 import type { PathPoint } from "#src/models/genshinAssets/fit/PathPoint";
 import type { SkeletonNode } from "#src/models/genshinAssets/fit/SkeletonNode";
 
-import { toDistance } from "#src/services/genshinAssets/fit/toDistance";
+import { getPointDistance } from "#src/services/genshinAssets/fit/getPointDistance";
 import { toPathPoint } from "#src/services/genshinAssets/fit/toPathPoint";
 
 // A skeleton's nodes as the paths a tube is swept along, each a node's centre and radius: from its start, each path
@@ -16,7 +16,8 @@ export const toPaths = (nodes: readonly SkeletonNode[]): PathPoint[][] => {
   for (let index = nodes.length - 1; index > 0; index--) {
     const node = nodes[index];
     const parent = node?.parent ?? 0;
-    const reach = (reaches[index] ?? 0) + toDistance(node?.centre ?? [0, 0, 0], nodes[parent]?.centre ?? [0, 0, 0]);
+    const reach =
+      (reaches[index] ?? 0) + getPointDistance(node?.centre ?? [0, 0, 0], nodes[parent]?.centre ?? [0, 0, 0]);
     reaches[parent] = Math.max(reaches[parent] ?? 0, reach);
   }
   const paths: PathPoint[][] = [];

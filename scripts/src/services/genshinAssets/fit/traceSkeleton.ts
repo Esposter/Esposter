@@ -1,8 +1,8 @@
 import type { SkeletonNode } from "#src/models/genshinAssets/fit/SkeletonNode";
 import type { Vector } from "#src/models/shared/Vector";
 
+import { getPointDistance } from "#src/services/genshinAssets/fit/getPointDistance";
 import { toCrossSection } from "#src/services/genshinAssets/fit/toCrossSection";
-import { toDistance } from "#src/services/genshinAssets/fit/toDistance";
 import { toEdgeKey } from "#src/services/genshinAssets/fit/toEdgeKey";
 import { toFaceEdges } from "#src/services/genshinAssets/fit/toFaceEdges";
 
@@ -38,7 +38,7 @@ export const traceSkeleton = (
     unsettled.delete(nearest);
     const nearestDistance = vertexDistanceMap.get(nearest) ?? 0;
     for (const neighbour of vertexNeighbourMap.get(nearest) ?? []) {
-      const distance = nearestDistance + toDistance(getVertex(nearest), getVertex(neighbour));
+      const distance = nearestDistance + getPointDistance(getVertex(nearest), getVertex(neighbour));
       if (distance < (vertexDistanceMap.get(neighbour) ?? 0)) vertexDistanceMap.set(neighbour, distance);
     }
   }
@@ -85,8 +85,8 @@ export const traceSkeleton = (
       });
       const crossSection = toCrossSection(points);
       const parent = previousLevel.reduce((nearest, candidate) =>
-        toDistance(nodes[candidate]?.centre ?? crossSection.centre, crossSection.centre) <
-        toDistance(nodes[nearest]?.centre ?? crossSection.centre, crossSection.centre)
+        getPointDistance(nodes[candidate]?.centre ?? crossSection.centre, crossSection.centre) <
+        getPointDistance(nodes[nearest]?.centre ?? crossSection.centre, crossSection.centre)
           ? candidate
           : nearest,
       );
