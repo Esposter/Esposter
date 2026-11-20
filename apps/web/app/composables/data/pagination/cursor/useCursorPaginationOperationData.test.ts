@@ -197,6 +197,44 @@ describe(useCursorPaginationOperationData, () => {
     expect(rowItems.value).toStrictEqual([addedRow, heldRow, laterRow]);
   });
 
+  // Two reads of one first page that name one topic are the one query watching it, so a change to the topic refetches the
+  // Query once, not once per read
+  test("refetches once when two reads of its first page name one topic", async () => {
+    expect.hasAssertions();
+
+    const topic = getTopic(TopicKind.Feed, "posts");
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const [, onFrame] = getLastOpenRealtimeSocketCall();
+    let itemOperationData: ReturnType<typeof useCursorPaginationOperationData<string>> | undefined;
+    await mountSuspended(
+      defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          const cursorPaginationData = ref(createEmptyPage<string>());
+          const isLoadedSource = ref(false);
+          itemOperationData = useCursorPaginationOperationData(
+            () => cursorPaginationData,
+            () => isLoadedSource,
+          );
+        },
+      }),
+    );
+    assert.exists(itemOperationData);
+    const { readItems: itemReadItems } = itemOperationData;
+    const query = vi.fn<() => Promise<Page<string>>>(() => {
+      readActiveTopicReads()?.push({ readAt, signature: "", topics: [{ topic }] });
+      readActiveTopicReads()?.push({ readAt, signature: "", topics: [{ topic }] });
+      return Promise.resolve({ items: [item], nextCursor: "" });
+    });
+    await itemReadItems(query);
+    query.mockClear();
+    onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
+    await waitForSynchronizedFunctions();
+
+    expect(query).toHaveBeenCalledTimes(1);
+  });
+
   test("says a failed read failed without throwing, and clears it once a refresh lands", async () => {
     expect.hasAssertions();
 

@@ -4,7 +4,6 @@ import { useConnectionStore } from "#src/store/realtime/connection";
 import { noop } from "@esposter/shared";
 
 interface TopicsWatch {
-  refetch: () => void;
   unwatch: () => void;
 }
 
@@ -34,12 +33,9 @@ export const useWatchTopics = () => {
       return;
     }
 
-    const newTopicsWatch: TopicsWatch = { refetch, unwatch: noop };
-    const unwatchReads = reads.map((read) =>
-      connectionStore.watchTopics(read, () => {
-        newTopicsWatch.refetch();
-      }),
-    );
+    const newTopicsWatch: TopicsWatch = { unwatch: noop };
+    // Every read hands the same refetch, which the connection store dedupes by identity, so a change refetches the query once
+    const unwatchReads = reads.map((read) => connectionStore.watchTopics(read, refetch));
     newTopicsWatch.unwatch = () => {
       for (const unwatchRead of unwatchReads) unwatchRead();
     };
