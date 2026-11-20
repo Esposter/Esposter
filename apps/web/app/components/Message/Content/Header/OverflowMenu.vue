@@ -18,7 +18,6 @@ interface Props {
 }
 
 const { isToolsInHeader } = defineProps<Props>();
-const { $trpc } = useNuxtApp();
 const callStore = useCallStore();
 const { isConnecting, isInCall } = storeToRefs(callStore);
 const { joinCallByRoomId, leaveCall } = callStore;
@@ -33,15 +32,13 @@ const { openRightDrawer } = messageLayoutStore;
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
-const { applyMyUserToRoomField, executeUserToRoomMutation } = userToRoomStore;
+const { updateMyUserToRoom } = userToRoomStore;
 const { myUserToRoom } = storeToRefs(userToRoomStore);
 const updateNotificationType = (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
   if (!roomId || !myUserToRoom.value) return;
-  executeUserToRoomMutation(
-    () => $trpc.userToRoom.updateUserToRoom.mutate({ notificationType: newNotificationType, roomId }),
-    { applyOptimistic: () => applyMyUserToRoomField(roomId, "notificationType", newNotificationType), key: roomId },
-  );
+
+  updateMyUserToRoom({ notificationType: newNotificationType, roomId });
 };
 // On a phone the header leaves the call and its toggles to this menu, so they lead it
 const headerItems = computed<Item[]>(() =>

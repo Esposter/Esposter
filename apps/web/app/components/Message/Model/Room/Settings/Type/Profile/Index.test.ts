@@ -1,5 +1,7 @@
 // @vitest-environment nuxt
+import { getMockSession } from "#server/trpc/context.test";
 import MessageModelRoomSettingsTypeProfileIndex from "#src/components/Message/Model/Room/Settings/Type/Profile/Index.vue";
+import { setupSession } from "#src/services/auth/setupSession.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -10,8 +12,9 @@ import { describe, expect, test } from "vitest";
 
 describe("messageModelRoomSettingsTypeProfileIndex", () => {
   const { trpcMsw } = setupMswTrpc();
+  setupSession(getMockSession().user.id);
   const room = createRoom("name");
-  const userToRoom = createUserToRoom({ roomId: room.id, userId: room.userId });
+  const userToRoom = createUserToRoom({ roomId: room.id, userId: getMockSession().user.id });
 
   // The field emits save from blur and from Enter, so a displayName committed with Enter and then blurred writes
   // The same value twice — every one of those writes is a round trip the queue now runs one after the other
@@ -22,11 +25,12 @@ describe("messageModelRoomSettingsTypeProfileIndex", () => {
     let updateCount = 0;
     trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
       updateCount += 1;
-      return { ...userToRoom, displayName: input.displayName ?? userToRoom.displayName };
+      // The server answers with a version above the held row's, so the answer is an arrival that applies
+      return { ...userToRoom, displayName: input.displayName ?? userToRoom.displayName, version: 1 };
     });
     const userToRoomStore = useUserToRoomStore();
-    const { setMyUserToRoom } = userToRoomStore;
-    setMyUserToRoom(room.id, userToRoom);
+    const { arriveUserToRooms } = userToRoomStore;
+    arriveUserToRooms([userToRoom]);
 
     const component = await mountSuspended(MessageModelRoomSettingsTypeProfileIndex, { props: { room } });
     const input = component.get("input");

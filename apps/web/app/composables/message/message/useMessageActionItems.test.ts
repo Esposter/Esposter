@@ -4,13 +4,13 @@ import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { Item } from "#src/models/shared/Item";
 
 import { getMockSession } from "#server/trpc/context.test";
+import { setupSession } from "#src/services/auth/setupSession.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { MessageType } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -37,6 +37,7 @@ const mountActionItem = async (messageEntity: ClientMessage, title: string) => {
 
 describe(useMessageActionItems, () => {
   const { trpcMsw } = setupMswTrpc();
+  setupSession(getMockSession().user.id);
   const roomId = v7();
   const message = "message";
   const epoch = new Date(0);
@@ -78,9 +79,9 @@ describe(useMessageActionItems, () => {
     expect(messageEntity.isPinned).toBe(false);
   });
 
-  // Two mark-unreads move one read marker, so the rejected one owes back the marker the write beside it stored —
-  // Restoring the row as it read when the user clicked drops that marker and marks the room read again
-  test("rolls a rejected mark-unread back to the marker the write beside it stored", async () => {
+  // Two mark-unreads move one read marker. The rejected one restores nothing, so the marker the accepted write set is
+  // The one the row keeps
+  test("a rejected mark-unread leaves the marker the accepted one set", async () => {
     expect.hasAssertions();
 
     // The accepted click marks the earlier message unread, so the later one's marker is the write refused
@@ -89,12 +90,12 @@ describe(useMessageActionItems, () => {
       if (!input.lastReadAt || input.lastReadAt >= nextDay)
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       acceptedLastReadAt = input.lastReadAt;
-      return userToRoom;
+      return { ...userToRoom, lastReadAt: input.lastReadAt, version: 1 };
     });
     // The menus mount into the nuxt app's pinia, so seed the store they read rather than a local one
     const userToRoomStore = useUserToRoomStore();
-    const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
-    setMyUserToRoom(roomId, userToRoom);
+    const { arriveUserToRooms, getMyUserToRoom } = userToRoomStore;
+    arriveUserToRooms([userToRoom]);
     const item = await mountActionItem(createMessage(nextDay), "Mark Unread From Here");
     const rejectedItem = await mountActionItem(createMessage(dayAfter), "Mark Unread From Here");
     item.onClick?.(new MouseEvent("click"));
@@ -105,30 +106,31 @@ describe(useMessageActionItems, () => {
     expect(getMyUserToRoom(roomId)?.lastReadAt).toStrictEqual(acceptedLastReadAt);
   });
 
-  // The viewer's row is one executor's to write, so a mark-unread waits behind a write to the same room already queued
-  // On it, rather than racing it to the server from a queue of its own
-  test("a mark-unread waits behind a viewer-row write already queued for its room", async () => {
+  // The viewer's row is one row, so a mark-unread waits behind a write to the same row that has not answered yet
+  test("a mark-unread waits behind a viewer-row write not yet answered for its room", async () => {
     expect.hasAssertions();
 
     const userToRoomStore = useUserToRoomStore();
-    const { executeUserToRoomMutation, setMyUserToRoom } = userToRoomStore;
-    setMyUserToRoom(roomId, userToRoom);
+    const { arriveUserToRooms, updateMyUserToRoom } = userToRoomStore;
+    arriveUserToRooms([userToRoom]);
     const updateUserToRoom = vi.fn<(input: UpdateUserToRoomInput) => void>();
-    trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
+    const { promise: queued, resolve: releaseQueued } = Promise.withResolvers<void>();
+    trpcMsw.userToRoom.updateUserToRoom.mutation(async ({ input }) => {
       updateUserToRoom(input);
+      if (input.displayName !== undefined) await queued;
+
       return userToRoom;
     });
-    const { promise: queued, resolve: releaseQueued } = Promise.withResolvers<void>();
-    executeUserToRoomMutation(() => queued, { applyOptimistic: () => noop, key: roomId });
+    updateMyUserToRoom({ displayName: "queued", roomId });
     const item = await mountActionItem(createMessage(nextDay), "Mark Unread From Here");
     item.onClick?.(new MouseEvent("click"));
     await flushPromises();
 
-    expect(updateUserToRoom).not.toHaveBeenCalled();
+    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({ displayName: "queued", roomId });
 
     releaseQueued();
     await flushPromises();
 
-    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({ lastReadAt: new Date(nextDay.getTime() - 1), roomId });
+    expect(updateUserToRoom).toHaveBeenLastCalledWith({ lastReadAt: new Date(nextDay.getTime() - 1), roomId });
   });
 });

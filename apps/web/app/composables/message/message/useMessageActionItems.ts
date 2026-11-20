@@ -31,7 +31,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
   const { forwardMessageId } = storeToRefs(forwardStore);
   const copyMessageLink = useCopyMessageLink();
   const userToRoomStore = useUserToRoomStore();
-  const { applyMyUserToRoomField, executeUserToRoomMutation } = userToRoomStore;
+  const { updateMyUserToRoom } = userToRoomStore;
   const openThread = useOpenThread();
   const roleStore = useRoleStore();
   const { checkHasMyPermission } = roleStore;
@@ -128,13 +128,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
     meaning: UiIconMeaning.Unread,
     onClick: () => {
       const lastReadAt = new Date(message.createdAt.getTime() - 1);
-      const roomId = message.roomId;
-      executeUserToRoomMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastReadAt, roomId }), {
-        // Read as the write is sent, so a rejected mark-unread restores the marker the write ahead of it stored
-        // Rather than the one on screen when the user clicked
-        applyOptimistic: () => applyMyUserToRoomField(roomId, "lastReadAt", lastReadAt),
-        key: roomId,
-      });
+      updateMyUserToRoom({ lastReadAt, roomId: message.roomId });
     },
     title: "Mark Unread From Here",
   };

@@ -5,11 +5,11 @@ import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 export const useReadMyUsersToRooms = () => {
   const { $trpc } = useNuxtApp();
   const userToRoomStore = useUserToRoomStore();
-  const { setMyUserToRoom } = userToRoomStore;
+  const { arriveUserToRooms } = userToRoomStore;
   return async (roomIds: RoomInMessage["id"][]) => {
     if (roomIds.length === 0) return;
 
     const myUsersToRooms = await $trpc.userToRoom.readMyUsersToRooms.query({ roomIds });
-    for (const userToRoom of myUsersToRooms) setMyUserToRoom(userToRoom.roomId, userToRoom);
+    arriveUserToRooms(myUsersToRooms);
   };
 };

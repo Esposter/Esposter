@@ -4,13 +4,13 @@ import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateU
 import { getMockSession } from "#server/trpc/context.test";
 import MessageContentHeaderOverflowMenu from "#src/components/Message/Content/Header/OverflowMenu.vue";
 import UiOverflowMenu from "#src/components/Ui/OverflowMenu.vue";
+import { setupSession } from "#src/services/auth/setupSession.test";
 import { NotificationTypeLabelMap } from "#src/services/message/NotificationTypeLabelMap";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { NotificationType } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -18,6 +18,7 @@ import { describe, expect, test, vi } from "vitest";
 
 describe("messageContentHeaderOverflowMenu", () => {
   const { trpcMsw } = setupMswTrpc();
+  setupSession(getMockSession().user.id);
 
   test("from sm up, the menu leaves the call and the toggles to the header", async () => {
     expect.hasAssertions();
@@ -51,24 +52,25 @@ describe("messageContentHeaderOverflowMenu", () => {
     ]);
   });
 
-  // The viewer's row is one executor's to write, so a notification change waits behind a write to the same room that is
-  // Already queued on it, the way a mark-unread does
-  test("a notification change waits behind a viewer-row write already queued for its room", async () => {
+  // The viewer's row is one row, so a notification change waits behind a write to the same row that has not answered
+  test("a notification change waits behind a viewer-row write not yet answered for its room", async () => {
     expect.hasAssertions();
 
     const roomId = v7();
     const userId = getMockSession().user.id;
     const userToRoom = createUserToRoom({ roomId, userId });
     const userToRoomStore = useUserToRoomStore();
-    const { executeUserToRoomMutation, setMyUserToRoom } = userToRoomStore;
-    setMyUserToRoom(roomId, userToRoom);
+    const { arriveUserToRooms, updateMyUserToRoom } = userToRoomStore;
+    arriveUserToRooms([userToRoom]);
     const updateUserToRoom = vi.fn<(input: UpdateUserToRoomInput) => void>();
-    trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
-      updateUserToRoom(input);
-      return { ...userToRoom, notificationType: input.notificationType ?? userToRoom.notificationType };
-    });
     const { promise: queued, resolve: releaseQueued } = Promise.withResolvers<void>();
-    executeUserToRoomMutation(() => queued, { applyOptimistic: () => noop, key: roomId });
+    trpcMsw.userToRoom.updateUserToRoom.mutation(async ({ input }) => {
+      updateUserToRoom(input);
+      if (input.displayName !== undefined) await queued;
+
+      return { ...userToRoom, notificationType: input.notificationType ?? userToRoom.notificationType, version: 1 };
+    });
+    updateMyUserToRoom({ displayName: "queued", roomId });
     const component = await mountSuspended(MessageContentHeaderOverflowMenu, { props: { isToolsInHeader: true } });
     // Set after mounting, which resets the route the room is read from
     setCurrentRoomId(roomId);
@@ -79,11 +81,11 @@ describe("messageContentHeaderOverflowMenu", () => {
     item?.onClick?.(new MouseEvent("click"));
     await flushPromises();
 
-    expect(updateUserToRoom).not.toHaveBeenCalled();
+    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({ displayName: "queued", roomId });
 
     releaseQueued();
     await flushPromises();
 
-    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({ notificationType: NotificationType.Never, roomId });
+    expect(updateUserToRoom).toHaveBeenLastCalledWith({ notificationType: NotificationType.Never, roomId });
   });
 });

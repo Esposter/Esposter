@@ -21,8 +21,7 @@ await readRoomCategories();
 const roomCategoryStore = useRoomCategoryStore();
 const { roomCategories } = storeToRefs(roomCategoryStore);
 const userToRoomStore = useUserToRoomStore();
-const { applyMyUserToRoomField, executeUserToRoomMutation, getMyUserToRoom } = userToRoomStore;
-const { $trpc } = useNuxtApp();
+const { getMyUserToRoom, updateMyUserToRoom } = userToRoomStore;
 // The category is the reader's own, so the field holds the reader's row for this room, resolved against the
 // Categories. The reader still has a category deleted elsewhere, which resolves to none
 const myCategoryId = computed(() => resolveRoomCategoryId(roomCategories.value, getMyUserToRoom(room.id)?.categoryId));
@@ -58,11 +57,7 @@ const categoryItems = computed<UiSelectItem<string>[]>(() =>
 );
 // The category is written to the reader's own membership, which the room's shared row does not carry
 const saveCategory = () => {
-  const categoryId = editedCategoryId.value;
-  executeUserToRoomMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ categoryId, roomId: room.id }), {
-    applyOptimistic: () => applyMyUserToRoomField(room.id, "categoryId", categoryId),
-    key: room.id,
-  });
+  updateMyUserToRoom({ categoryId: editedCategoryId.value, roomId: room.id });
   settleCategory();
 };
 // Each write goes to the procedure that owns its field, and only when that field moved. The room row is sent with the
