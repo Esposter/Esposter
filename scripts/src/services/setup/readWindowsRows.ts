@@ -2,6 +2,7 @@ import type { SetupEnvironment } from "#src/models/setup/SetupEnvironment";
 import type { SetupRow } from "#src/models/setup/SetupRow";
 
 import { readAnimeStudioRow } from "#src/services/setup/readAnimeStudioRow";
+import { readDevDriveRow } from "#src/services/setup/readDevDriveRow";
 import { readFleetPeersRow } from "#src/services/setup/readFleetPeersRow";
 import { readFleetProfileRow } from "#src/services/setup/readFleetProfileRow";
 import { readLongPathsRow } from "#src/services/setup/readLongPathsRow";
@@ -15,6 +16,7 @@ export const readWindowsRows = (environment: SetupEnvironment): SetupRow[] =>
     ? [
         readSymlinksRow(environment),
         readLongPathsRow(environment),
+        readDevDriveRow(environment),
         readAnimeStudioRow(environment),
         readOodlePatchRow(),
         readSshKeyRow(environment),

@@ -6,6 +6,7 @@ import { describe, expect, test } from "vitest";
 
 describe(readWindowsRows, () => {
   const LONG_PATHS_ON = "LongPathsEnabled    REG_DWORD    0x1\r\n";
+  const DEV_DRIVE_ON = "This is a trusted developer volume.\r\n";
   const GENSHIN_PROFILE = JSON.stringify({ areas: [GENSHIN_FLEET_AREA], capabilities: ["windows"], id: "pc" });
 
   test("prints what to do for each Windows fact that is not in place", () => {
@@ -16,6 +17,7 @@ describe(readWindowsRows, () => {
     expect(rows.map(({ status, step }) => [step, status])).toStrictEqual([
       ["git symlinks", SetupStatus.NeedsYou],
       ["long paths", SetupStatus.NeedsYou],
+      ["dev drive", SetupStatus.NeedsYou],
       ["AnimeStudio CLI", SetupStatus.NeedsYou],
       ["AnimeStudio Oodle hook", SetupStatus.Info],
       ["fleet SSH key", SetupStatus.NeedsYou],
@@ -31,12 +33,18 @@ describe(readWindowsRows, () => {
       exists: () => true,
       platform: "win32",
       readText: () => GENSHIN_PROFILE,
-      run: (file) => (file === "reg" ? { status: 0, stdout: LONG_PATHS_ON } : { status: 0, stdout: "true\n" }),
+      run: (file) =>
+        file === "reg"
+          ? { status: 0, stdout: LONG_PATHS_ON }
+          : file === "fsutil"
+            ? { status: 0, stdout: DEV_DRIVE_ON }
+            : { status: 0, stdout: "true\n" },
     });
 
     const rows = readWindowsRows(environment);
 
     expect(rows.map(({ status }) => status)).toStrictEqual([
+      SetupStatus.Ok,
       SetupStatus.Ok,
       SetupStatus.Ok,
       SetupStatus.Ok,
