@@ -239,6 +239,7 @@ const writeWakeRecord = async () => {
 // Registered as the check loads, which is during the collection of a file whose caller reaches it, so a file that builds
 // No caller never loads the check
 afterEach(verifyWakes);
+
 afterAll(writeWakeRecord);
 
 // Describes nothing: the check is imported by the caller factory, which its self-test runs beside
