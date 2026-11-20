@@ -2,9 +2,9 @@ import type { UserAchievementInAchievementWithRelations } from "#src/models/achi
 import type { PageCursor } from "#src/models/pagination/PageCursor";
 import type { Topic } from "#src/models/realtime/Topic";
 import type { UserEvent } from "#src/models/realtime/UserEvent";
-import type { StorageUsage } from "#src/models/storage/StorageUsage";
 import type { ReconcileTodoRemindersInput } from "#src/models/todoReminder/ReconcileTodoRemindersInput";
 import type { remindersInUser, scheduledMessagesInUser, sentMessagesInUser } from "#src/objects/user/schema";
+import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
 import type { UserToRoomInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import type { Except, SetNonNullable } from "type-fest";
@@ -63,7 +63,8 @@ export interface UserObjectRpc {
   // A room a member can see moved to the top of their list, which every tab of theirs hears of
   roomActivity: (roomId: string, lastMessageAt: Date) => void;
   updateAchievement: (userAchievements: UserAchievementInAchievementWithRelations[]) => Promise<void>;
-  updateUsage: (storageUsage: StorageUsage) => Promise<void>;
+  // The owner's user row, which carries the storage total and the version the counter wrote it at
+  updateUsage: (user: UserInAuth) => Promise<void>;
   updateUserToRoom: (userToRoom: UserToRoomInMessage) => Promise<void>;
   upsertStatus: (status: SetNonNullable<UserStatusInMessage, "status">) => Promise<void>;
 }

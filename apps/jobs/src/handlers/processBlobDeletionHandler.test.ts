@@ -8,14 +8,7 @@ import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/serv
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { userObjectCalls } from "#src/services/user/getUserObject.test";
 import { createMockDb } from "@esposter/db-mock";
-import {
-  MAX_CONCURRENT_BLOB_DELETIONS,
-  StorageBucket,
-  storageLedgerInStorage,
-  StorageTier,
-  StorageTierQuotaMap,
-  usersInAuth,
-} from "@esposter/db-schema";
+import { MAX_CONCURRENT_BLOB_DELETIONS, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -77,6 +70,7 @@ describe(processBlobDeletionHandler, () => {
         storageBucket: StorageBucket.MessageAssets,
         userId,
       });
+  const readStorageUser = () => mockDb.query.usersInAuth.findFirst({ where: { id: { eq: userId } } });
   const readStorageBytesUsed = async () =>
     (await mockDb.query.usersInAuth.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
       ?.storageBytesUsed;
@@ -150,13 +144,8 @@ describe(processBlobDeletionHandler, () => {
     await processBlobDeletionHandler(createEvent([blobName]));
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
-    expect(userObjectCalls).toStrictEqual([
-      {
-        args: [{ bytesUsed: 0, quotaBytes: StorageTierQuotaMap[StorageTier.Free], tier: StorageTier.Free }],
-        method: "updateUsage",
-        userId,
-      },
-    ]);
+    const storageUser = await readStorageUser();
+    expect(userObjectCalls).toStrictEqual([{ args: [storageUser], method: "updateUsage", userId }]);
   });
 
   // A deletion whose blobs were never charged to anyone releases nothing, so there is no meter to tell

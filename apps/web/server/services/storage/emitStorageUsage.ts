@@ -1,7 +1,6 @@
 import type { Database, UserInAuth } from "@esposter/db-schema";
 
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { StorageTierQuotaMap } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Best-effort by construction, and it has to be: everything this announces is already durable by the time it
@@ -10,18 +9,8 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Read — the counter itself is right either way, since this only reports it.
 export const emitStorageUsage = (db: Database, userId: UserInAuth["id"]): Promise<void> =>
   getResultAsync(async () => {
-    const user = await db.query.usersInAuth.findFirst({
-      columns: { storageBytesUsed: true, storageTier: true },
-      where: { id: { eq: userId } },
-    });
+    const user = await db.query.usersInAuth.findFirst({ where: { id: { eq: userId } } });
     if (!user) return;
 
-    const { storageBytesUsed, storageTier } = user;
-    await callUserObjects([userId], (userObject) =>
-      userObject.updateUsage({
-        bytesUsed: storageBytesUsed,
-        quotaBytes: StorageTierQuotaMap[storageTier],
-        tier: storageTier,
-      }),
-    );
+    await callUserObjects([userId], (userObject) => userObject.updateUsage(user));
   }).match(noop, console.error);

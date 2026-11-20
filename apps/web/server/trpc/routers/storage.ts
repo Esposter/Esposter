@@ -1,27 +1,24 @@
-import type { StorageUsage } from "@esposter/db-schema";
+import type { UserInAuth } from "@esposter/db-schema";
 
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { router } from "#server/trpc/index";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, StorageTierQuotaMap } from "@esposter/db-schema";
+import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const storageRouter = router({
-  // Only the usage is stored — the quota is derived from the tier on every read, so moving a user to another
-  // Tier changes what they see and what the gate enforces in the same instant. See openspec/specs/resource/storage-quotas/design.md
+  // The owner's user row, whose total is stored and whose quota is derived from its tier on the client, so moving a user to
+  // Another tier changes what they see and what the gate enforces in the same instant. See openspec/specs/resource/storage-quotas/design.md
   readUsage: standardAuthedProcedure
     .meta({
-      staticReason: "The user object pushes the usage to the owner's sockets as a typed event whenever it changes",
+      staticReason:
+        "The user object pushes the owner's user row to their sockets as a typed event whenever the total changes",
     })
-    .query<StorageUsage>(async ({ ctx }) => {
+    .query<UserInAuth>(({ ctx }) => {
       const userId = ctx.user.id;
-      const { storageBytesUsed, storageTier } = await requireEntity(
-        ctx.db.query.usersInAuth.findFirst({
-          columns: { storageBytesUsed: true, storageTier: true },
-          where: { id: { eq: userId } },
-        }),
+      return requireEntity(
+        ctx.db.query.usersInAuth.findFirst({ where: { id: { eq: userId } } }),
         DatabaseEntityType.User,
         userId,
       );
-      return { bytesUsed: storageBytesUsed, quotaBytes: StorageTierQuotaMap[storageTier], tier: storageTier };
     }),
 });

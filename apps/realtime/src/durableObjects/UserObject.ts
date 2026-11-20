@@ -8,10 +8,10 @@ import type {
   ScheduledReminderInput,
   SentMessageInUser,
   SentMessageInUserInput,
-  StorageUsage,
   Topic,
   UserAchievementInAchievementWithRelations,
   UserEvent,
+  UserInAuth,
   UserObjectRpc,
   UserToRoomInMessage,
 } from "@esposter/db-schema";
@@ -283,8 +283,8 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     return this.broadcastEvent({ data: userAchievements, type: "updateAchievement" });
   }
 
-  updateUsage(storageUsage: StorageUsage): Promise<void> {
-    return this.broadcastEvent({ data: storageUsage, type: "updateUsage" });
+  updateUsage(user: UserInAuth): Promise<void> {
+    return this.broadcastEvent({ data: user, type: "updateUsage" });
   }
 
   updateUserToRoom(userToRoom: UserToRoomInMessage): Promise<void> {

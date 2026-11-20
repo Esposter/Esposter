@@ -3,8 +3,8 @@ import { updateRoomInputSchema } from "#src/models/message/UpdateRoomInput";
 import { RealtimeEventType } from "#src/models/realtime/RealtimeEventType";
 import { topicSchema } from "#src/models/realtime/Topic";
 import { sessionIdSchema } from "#src/models/shared/SessionId";
-import { storageUsageSchema } from "#src/models/storage/StorageUsage";
 import { publicUserSchema } from "#src/models/user/PublicUser";
+import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
 import { selectUserToRoomInMessageSchema } from "#src/schema/message/usersToRoomsInMessage";
 import { AchievementName } from "#src/services/achievement/AchievementName";
@@ -24,7 +24,12 @@ const replaceSessionEventSchema = z.object({
   data: z.object({ sessionId: sessionIdSchema.shape.sessionId }),
   type: z.literal(RealtimeEventType.ReplaceSession),
 });
-const updateUsageEventSchema = z.object({ data: storageUsageSchema, type: z.literal(RealtimeEventType.UpdateUsage) });
+// The owner's user row as the counter last wrote it, at the version that write left it. The meter applies it as a row, so a
+// Total that arrives after a newer one for the same row loses to it
+const updateUsageEventSchema = z.object({
+  data: selectUserInAuthSchema,
+  type: z.literal(RealtimeEventType.UpdateUsage),
+});
 // The fields a room edit changes, and the owner a group's departing owner hands it to
 const updateRoomEventSchema = z.object({
   data: updateRoomInputSchema.extend({ userId: selectRoomInMessageSchema.shape.userId.optional() }),

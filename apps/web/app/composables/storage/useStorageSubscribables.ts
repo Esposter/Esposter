@@ -9,10 +9,10 @@ export const useStorageSubscribables = () => {
   const { storeUpdateStorageUsage } = storageStore;
   const connectionStore = useConnectionStore();
   const { onUserEvent } = connectionStore;
-  // Every change to the counter, whichever process made it, arrives carrying the figure, so the meter moves
-  // Without a re-read. The server derives the quota from the tier, so the figure is computed in one place
-  const unregister = onUserEvent("updateUsage", (newStorageUsage) => {
-    storeUpdateStorageUsage(newStorageUsage);
+  // Every change to the counter, whichever process made it, arrives as the owner's user row at the version it was written
+  // At, so the meter moves without a re-read and a row that lands out of order loses to the newer one already held
+  const unregister = onUserEvent("updateUsage", (user) => {
+    storeUpdateStorageUsage(user);
   });
   onScopeDispose(unregister);
 };

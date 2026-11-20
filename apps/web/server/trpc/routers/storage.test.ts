@@ -6,7 +6,7 @@ import { getMockSession } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers/index";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { StorageTier, StorageTierQuotaMap } from "@esposter/db-schema";
+import { StorageTier } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("storageRouter", () => {
@@ -25,13 +25,10 @@ describe("storageRouter", () => {
   test("readUsage reads the initial storage usage for the authed user", async () => {
     expect.hasAssertions();
 
-    const storageUsage = await caller.storage.readUsage();
+    const { storageBytesUsed, storageTier } = await caller.storage.readUsage();
 
-    expect(storageUsage).toStrictEqual({
-      bytesUsed: 0,
-      quotaBytes: StorageTierQuotaMap[StorageTier.Free],
-      tier: StorageTier.Free,
-    });
+    expect(storageBytesUsed).toBe(0);
+    expect(storageTier).toBe(StorageTier.Free);
   });
 
   test("sends the updated storage usage to the owner's object when resource content is saved", async () => {
@@ -43,13 +40,13 @@ describe("storageRouter", () => {
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
-    const storageUsage = await caller.storage.readUsage();
+    const user = await caller.storage.readUsage();
 
     // The exact figure is the serialized size of an empty editor, which moves with that model rather than with
     // The metering under test — so what is asserted is that the usage moved off zero
-    expect(storageUsage.bytesUsed).toBeGreaterThan(0);
+    expect(user.storageBytesUsed).toBeGreaterThan(0);
     expect(userObjectCalls.filter(({ method }) => method === "updateUsage")).toStrictEqual([
-      { args: [storageUsage], method: "updateUsage", userId: getMockSession().user.id },
+      { args: [user], method: "updateUsage", userId: getMockSession().user.id },
     ]);
   });
 });

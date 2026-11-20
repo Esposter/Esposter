@@ -21,7 +21,7 @@ export const useCachedRead = <TResult>(
 ) => {
   const cacheStore = useCacheStore();
   const { registerCache } = cacheStore;
-  const { executeQuery, isPending, supersedeKey } = useMutation();
+  const { executeQuery, isPending } = useMutation();
   const loadedKeys = new Set<string>();
   const executeRead = async (key: string, isExclusive?: true) => {
     await executeQuery(() => query(key), {
@@ -49,14 +49,6 @@ export const useCachedRead = <TResult>(
     loadedKeys.delete(key);
     await executeRead(key);
   };
-  // A value the caller got from somewhere other than this cache — a subscription push carrying the whole
-  // Entry — supersedes any read still in flight for that key, through the same latest-wins two reads settle
-  // By. The entry counts as loaded from then on: the caller is holding the current value, so the next mount
-  // Would spend a round trip to be told what it already knows
-  const supersede = (key = DEFAULT_CACHE_KEY) => {
-    loadedKeys.add(key);
-    supersedeKey(key);
-  };
   if (tags.length > 0)
     registerCache(tags, async () => {
       const invalidatedKeys = [...loadedKeys];
@@ -68,5 +60,5 @@ export const useCachedRead = <TResult>(
         (invalidatedKeys.length > 0 ? invalidatedKeys : [DEFAULT_CACHE_KEY]).map((key) => executeRead(key)),
       );
     });
-  return { isPending, read, refetch, supersede };
+  return { isPending, read, refetch };
 };

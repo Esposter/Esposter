@@ -9,14 +9,7 @@ import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { userObjectCalls } from "#src/services/user/getUserObject.test";
 import { getBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import {
-  QueueJob,
-  StorageBucket,
-  storageLedgerInStorage,
-  StorageTier,
-  StorageTierQuotaMap,
-  usersInAuth,
-} from "@esposter/db-schema";
+import { QueueJob, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { createHash } from "node:crypto";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -51,6 +44,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   const eventTime = new Date(0).toISOString();
   const createObjectCreatedMessage = (key: string, bucket: StorageBucket = storageBucket) =>
     ({ bucket, eventTime, object: { key, size: contentLength } }) satisfies R2ObjectCreatedQueueMessage;
+  const readStorageUser = () => mockDb.query.usersInAuth.findFirst({ where: { id: { eq: userId } } });
   const readStorageBytesUsed = async () =>
     (await mockDb.query.usersInAuth.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
       ?.storageBytesUsed;
@@ -99,13 +93,8 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(blobName));
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
-    expect(userObjectCalls).toStrictEqual([
-      {
-        args: [{ bytesUsed: contentLength, quotaBytes: StorageTierQuotaMap[StorageTier.Free], tier: StorageTier.Free }],
-        method: "updateUsage",
-        userId,
-      },
-    ]);
+    const storageUser = await readStorageUser();
+    expect(userObjectCalls).toStrictEqual([{ args: [storageUser], method: "updateUsage", userId }]);
   });
 
   // A message attachment is named by its room and its id, with the filename after the separator.
@@ -119,13 +108,8 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(messageBlobName, messageStorageBucket));
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
-    expect(userObjectCalls).toStrictEqual([
-      {
-        args: [{ bytesUsed: contentLength, quotaBytes: StorageTierQuotaMap[StorageTier.Free], tier: StorageTier.Free }],
-        method: "updateUsage",
-        userId,
-      },
-    ]);
+    const storageUser = await readStorageUser();
+    expect(userObjectCalls).toStrictEqual([{ args: [storageUser], method: "updateUsage", userId }]);
     expect(getBucket).not.toHaveBeenCalled();
   });
 
