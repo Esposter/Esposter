@@ -47,10 +47,12 @@ const editorExtensions = [keyboardExtension, MentionExtension, CustomEmojiExtens
     placeholder="Edit message"
     :extensions="editorExtensions"
     :limit="MESSAGE_MAX_LENGTH"
-    @keydown.esc="emit('update:update-mode', false)"
+    @keydown.esc="!isSaving && emit('update:update-mode', false)"
   >
     <template #append-footer="{ editor }">
-      <UiButton :variant="UiButtonVariant.Quiet" @click="emit('update:update-mode', false)">Cancel</UiButton>
+      <UiButton :disabled="isSaving" :variant="UiButtonVariant.Quiet" @click="emit('update:update-mode', false)">
+        Cancel
+      </UiButton>
       <UiButton v-if="editor" :variant="UiButtonVariant.Accent" :is-pending="isSaving" @click="saveMessage(editor)">
         Save
       </UiButton>
