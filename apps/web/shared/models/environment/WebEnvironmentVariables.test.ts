@@ -24,4 +24,12 @@ describe("webEnvironmentVariablesSchema", () => {
       .map(([name]) => name);
     expect(secretNames.toSorted()).toStrictEqual(workerSecrets.web.toSorted());
   });
+
+  test("reads an unset or empty TOPIC_WATCH_SECRET as the one absent form, the empty string", () => {
+    expect.hasAssertions();
+
+    const { TOPIC_WATCH_SECRET } = webEnvironmentVariablesSchema.shape;
+    expect(TOPIC_WATCH_SECRET.parse(undefined)).toBe("");
+    expect(TOPIC_WATCH_SECRET.parse("")).toBe("");
+  });
 });
