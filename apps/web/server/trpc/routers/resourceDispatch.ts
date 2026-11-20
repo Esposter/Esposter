@@ -5,7 +5,7 @@ import type { ResourceIdInput } from "#shared/models/db/resource/ResourceIdInput
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
-import type { ResourceInResource, ResourcePublicationInResource } from "@esposter/db-schema";
+import type { ResourcePublicationInResource } from "@esposter/db-schema";
 
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { createCallerFactory, router } from "#server/trpc/index";
@@ -35,7 +35,7 @@ interface FileCaller {
 // Router calls them, so the type's publish transform runs unchanged
 interface PublishCaller {
   publishResource: (input: ResourceIdInput) => Promise<ResourcePublicationInResource>;
-  unpublishResource: (input: ResourceIdInput) => Promise<ResourceInResource>;
+  unpublishResource: (input: ResourceIdInput) => Promise<ResourcePublicationInResource | undefined>;
 }
 
 // The one record of every router the dispatch reaches, keyed by resource type; each router is named once, here
@@ -119,12 +119,12 @@ export const resourceDispatchRouter = router({
     .meta({
       mcp: {
         description:
-          "Take a published resource down, leaving its draft as it is. A type that does not publish is refused. Answers the resource.",
+          "Take a published resource down, leaving its draft as it is. A type that does not publish is refused. Answers the removed publication, or nothing when the resource was not published.",
         scope: McpScope.Resources,
       },
       staticReason: "Dispatches to the type's own procedure, which publishes the resource's topics",
     })
-    .mutation<ResourceInResource>(({ ctx, input }) =>
+    .mutation<ResourcePublicationInResource | undefined>(({ ctx, input }) =>
       getPublishCaller(ctx.resource.type, ctx).unpublishResource(input),
     ),
 });

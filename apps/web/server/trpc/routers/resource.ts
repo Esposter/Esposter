@@ -2,7 +2,7 @@ import type { LinkedResource } from "#shared/models/resource/LinkedResource";
 import type { ReadCritiqueResult } from "#shared/models/resource/ReadCritiqueResult";
 import type { ReadResourceContentResult } from "#shared/models/resource/ReadResourceContentResult";
 import type { ReadResourceContentSchemaResult } from "#shared/models/resource/ReadResourceContentSchemaResult";
-import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
+import type { ResourceFavoriteListItem } from "#shared/models/resource/ResourceFavoriteListItem";
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
@@ -11,7 +11,12 @@ import type { ResourceWithPublication } from "#shared/models/resource/ResourceWi
 import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
-import type { Page, ResourceActivityInResource, ResourceInResource } from "@esposter/db-schema";
+import type {
+  Page,
+  ResourceActivityInResource,
+  ResourceFavoriteInResource,
+  ResourceInResource,
+} from "@esposter/db-schema";
 
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
@@ -19,7 +24,6 @@ import { applyResourceContentPatches } from "#server/services/resource/applyReso
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
 import { DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
-import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { omitDerivedContent } from "#server/services/resource/omitDerivedContent";
 import { readContentAtPointer } from "#server/services/resource/readContentAtPointer";
@@ -45,6 +49,7 @@ import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
+import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
@@ -68,6 +73,7 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import {
   createPageSort,
   getLastAccessedJoin,
+  getLivePublicationWhere,
   getPageOrderBy,
   getPageWhere,
   inJsonArray,
@@ -84,13 +90,14 @@ import {
   resourceActivitiesInResource,
   ResourceActivityType,
   resourceFavoritesInResource,
+  resourcePublicationsInResource,
   resourcesInResource,
   SnapshotChannel,
   SnapshotReason,
   StorageBucket,
 } from "@esposter/db-schema";
 import { getSynchronizedFunction, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
-import { and, count, desc, eq, isNotNull, isNull } from "drizzle-orm";
+import { and, count, desc, eq, isNotNull, isNull, sql } from "drizzle-orm";
 
 export const resourceRouter = router({
   // Typeless: the type is named in the input, so one tool creates a resource of any type
@@ -231,15 +238,23 @@ export const resourceRouter = router({
     ),
   // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
   // Star's own timestamp is not a column any list shows
-  readFavorites: standardAuthedProcedure.query<ResourceListItem[]>(({ ctx }) => {
+  // A removed star comes back as a tombstone, so the client applies its removal. Live stars are listed first, so tombstones
+  // Only fill what the live ones leave of the page
+  readFavorites: standardAuthedProcedure.query<ResourceFavoriteListItem[]>(({ ctx }) => {
     const userId = ctx.user.id;
     return ctx.db
-      .select(resourceListSelection)
-      .from(resourcesInResource)
-      .innerJoin(resourceFavoritesInResource, getFavoriteJoin(userId))
+      .select({ favorite: resourceFavoritesInResource, resource: resourceListSelection })
+      .from(resourceFavoritesInResource)
+      .innerJoin(resourcesInResource, eq(resourcesInResource.id, resourceFavoritesInResource.resourceId))
       .leftJoin(resourceAccessesInResource, getLastAccessedJoin(userId))
-      .where(getResourcesWhere(ctx.db, userId, {}))
-      .orderBy(desc(resourceFavoritesInResource.createdAt))
+      .where(
+        and(
+          eq(resourceFavoritesInResource.userId, userId),
+          eq(resourcesInResource.userId, userId),
+          isNull(resourcesInResource.deletedAt),
+        ),
+      )
+      .orderBy(sql`${resourceFavoritesInResource.deletedAt} is null desc`, desc(resourceFavoritesInResource.createdAt))
       .limit(MAX_READ_LIMIT);
   }),
   // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
@@ -353,9 +368,12 @@ export const resourceRouter = router({
       },
     })
     .query<SnapshotVersion[]>(async ({ ctx }) => {
-      const publication = await ctx.db.query.resourcePublicationsInResource.findFirst({
-        where: { resourceId: { eq: ctx.resource.id } },
-      });
+      // The live publication decides which published versions are current, so a tombstoned one names none
+      const [publication] = await ctx.db
+        .select()
+        .from(resourcePublicationsInResource)
+        .where(getLivePublicationWhere(eq(resourcePublicationsInResource.resourceId, ctx.resource.id)))
+        .limit(1);
       const channelHistories = await Promise.all([
         readSnapshotHistory(ctx.db, ctx.resource.id, SnapshotChannel.Revisions),
         readSnapshotHistory(ctx.db, ctx.resource.id, SnapshotChannel.Published, publication?.publishVersion),
@@ -490,19 +508,34 @@ export const resourceRouter = router({
   saveResourceRevision: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<number | undefined>(
     ({ ctx }) => takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeImport),
   ),
-  toggleFavorite: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<boolean>(
+  // The row it answers is the star's own, so a client reads whether the star is set from its deletedAt. A removal keeps the
+  // Row as a tombstone at the version the removal left, and a star made again revives that row with the new time, which is
+  // Where the list places it
+  toggleFavorite: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<ResourceFavoriteInResource>(
     async ({ ctx, input: { id } }) => {
       const userId = ctx.user.id;
-      // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports
-      // Whether the star was set, so the toggle can never race with itself
-      const deletedFavorites = await ctx.db
-        .delete(resourceFavoritesInResource)
-        .where(and(eq(resourceFavoritesInResource.resourceId, id), eq(resourceFavoritesInResource.userId, userId)))
+      const [removedFavorite] = await ctx.db
+        .update(resourceFavoritesInResource)
+        .set({ deletedAt: new Date() })
+        .where(
+          and(
+            eq(resourceFavoritesInResource.resourceId, id),
+            eq(resourceFavoritesInResource.userId, userId),
+            isNull(resourceFavoritesInResource.deletedAt),
+          ),
+        )
         .returning();
-      if (deletedFavorites.length > 0) return false;
+      if (removedFavorite) return removedFavorite;
 
-      await ctx.db.insert(resourceFavoritesInResource).values({ resourceId: id, userId }).onConflictDoNothing();
-      return true;
+      const [favorite] = await ctx.db
+        .insert(resourceFavoritesInResource)
+        .values({ resourceId: id, userId })
+        .onConflictDoUpdate({
+          set: { createdAt: new Date(), deletedAt: null },
+          target: [resourceFavoritesInResource.userId, resourceFavoritesInResource.resourceId],
+        })
+        .returning();
+      return requireMutation(favorite, Operation.Create, DatabaseEntityType.ResourceFavorite, id);
     },
   ),
   // Typeless: the factory's rename-and-tag body, which names no type, so one tool serves every resource

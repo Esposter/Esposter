@@ -99,7 +99,7 @@ interface PublishableResourceCaller<TContent> {
   readPublishedVersionContent: (input: { id: string; version: number }) => Promise<{ content: TContent; name: string }>;
   readResourcePublication: (input: { id: string }) => Promise<ResourcePublicationInResource | undefined>;
   readResourceViewCount: (input: { id: string }) => Promise<number>;
-  unpublishResource: (input: { id: string }) => Promise<ResourceInResource>;
+  unpublishResource: (input: { id: string }) => Promise<ResourcePublicationInResource | undefined>;
 }
 // The procedures every type's factory generates, over that type's content. The content is the one thing a type narrows, so the
 // Caller is generic in it: a save takes the content the type holds, and a read answers it. Each type's router is checked against
@@ -652,7 +652,8 @@ describe(createResourceProcedures, () => {
 
     await dashboardCaller.unpublishResource({ id: newResource.id });
 
-    await expect(dashboardCaller.readResourcePublication({ id: newResource.id })).resolves.toBeUndefined();
+    const removedPublication = await dashboardCaller.readResourcePublication({ id: newResource.id });
+    expect(removedPublication?.deletedAt).not.toBeNull();
     await expect(
       dashboardCaller.readPublishedResourceContent(newResource.id),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -665,7 +666,7 @@ describe(createResourceProcedures, () => {
     expect(blobDeletionEvents).toStrictEqual([]);
   });
 
-  test("unpublishing removes the publication and its version rows in one transaction", async () => {
+  test("unpublishing tombstones the publication and removes its version rows in one transaction", async () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
@@ -674,16 +675,17 @@ describe(createResourceProcedures, () => {
 
     await dashboardCaller.unpublishResource({ id: newResource.id });
 
-    await expect(
-      mockContext.db.query.resourcePublicationsInResource.findFirst({ where: { resourceId: { eq: newResource.id } } }),
-    ).resolves.toBeUndefined();
+    const removedPublication = await mockContext.db.query.resourcePublicationsInResource.findFirst({
+      where: { resourceId: { eq: newResource.id } },
+    });
+    expect(removedPublication?.deletedAt).not.toBeNull();
     await expect(
       mockContext.db.query.resourceVersionsInResource.findMany({ where: { resourceId: { eq: newResource.id } } }),
     ).resolves.toStrictEqual([]);
   });
 
   // An unpublish keeps the publication as a tombstone at the version its removal left, so a client still holding the live
-  // publication loses to the removal, and a republish revives the same row at the next version
+  // Publication loses to the removal, and a republish revives the same row at the next version
   test("a removed publication is a tombstone that a republish revives at a higher version", async () => {
     expect.hasAssertions();
 
@@ -693,12 +695,15 @@ describe(createResourceProcedures, () => {
 
     await dashboardCaller.unpublishResource({ id: newResource.id });
 
-    expect(await dashboardCaller.readResourcePublication({ id: newResource.id })).toStrictEqual(
-      expect.objectContaining({ deletedAt: expect.any(Date), version: 1 }),
-    );
-    expect(await dashboardCaller.publishResource({ id: newResource.id })).toStrictEqual(
-      expect.objectContaining({ deletedAt: null, publishVersion: 2, version: 2 }),
-    );
+    const removedPublication = await dashboardCaller.readResourcePublication({ id: newResource.id });
+    expect(removedPublication?.deletedAt).not.toBeNull();
+    expect(removedPublication?.version).toBe(1);
+    const republication = await dashboardCaller.publishResource({ id: newResource.id });
+    expect({
+      deletedAt: republication.deletedAt,
+      publishVersion: republication.publishVersion,
+      version: republication.version,
+    }).toStrictEqual({ deletedAt: null, publishVersion: 2, version: 2 });
   });
 
   // A sweep is bounded at the instant it is decided, so one published for a resource that has nothing published
@@ -1282,7 +1287,8 @@ describe(createResourceProcedures, () => {
         await caller.publishResource({ id: newResource.id });
         await caller.unpublishResource({ id: newResource.id });
 
-        await expect(caller.readResourcePublication({ id: newResource.id })).resolves.toBeUndefined();
+        const removedPublication = await caller.readResourcePublication({ id: newResource.id });
+        expect(removedPublication?.deletedAt).not.toBeNull();
       });
     },
     type,

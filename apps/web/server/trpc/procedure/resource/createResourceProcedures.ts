@@ -68,7 +68,7 @@ import { checkHasCapability } from "#shared/services/resource/checkHasCapability
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceFileMimeTypeMap } from "#shared/services/resource/ResourceFileMimeTypeMap";
 import { ResourceSortNamePageSortMap } from "#shared/services/resource/ResourceSortNamePageSortMap";
-import { createPresignedGetUrl, getContentBlobName, readResourceListPage } from "@esposter/db";
+import { createPresignedGetUrl, getContentBlobName, getLivePublicationWhere, readResourceListPage } from "@esposter/db";
 import {
   DatabaseEntityType,
   ResourceActivityType,
@@ -346,8 +346,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
                     .from(resourcesInResource)
                     .where(getOwnedLiveResourceWhere(ctx.user.id, id)),
                 )
+                // A republish after an unpublish revives the tombstone, so the row keeps its count and its version climbs
                 .onConflictDoUpdate({
                   set: {
+                    deletedAt: null,
                     publishedAt: new Date(now),
                     publishedContentVersion,
                     publishVersion: sql`${resourcePublicationsInResource.publishVersion} + 1`,
@@ -407,14 +409,18 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const resource = await requireEntity(
           ctx.db.query.resourcesInResource.findFirst({
             where: { deletedAt: { isNull: true }, id: { eq: input }, type: { eq: type } },
-            with: { publication: true },
           }),
           DatabaseEntityType.Resource,
           input,
         );
-        if (!resource.publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, input);
+        const [publication] = await ctx.db
+          .select()
+          .from(resourcePublicationsInResource)
+          .where(getLivePublicationWhere(eq(resourcePublicationsInResource.resourceId, input)))
+          .limit(1);
+        if (!publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, input);
 
-        const content = await readPublishedContent(ctx.db, resource, resource.publication.publishVersion);
+        const content = await readPublishedContent(ctx.db, resource, publication.publishVersion);
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets. Awaited, so the write is recorded
         // And published before the read returns; a failed increment still loses only one view, never the page.
         await incrementResourceViewCount(ctx.db, input);
@@ -436,29 +442,31 @@ export const createResourceProcedures = <TType extends ResourceType>(
     readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id").query<number>(({ ctx }) =>
       readResourceViewCount(ctx.db, ctx.resource.id),
     ),
-    unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourceInResource>(
-      async ({ ctx }) => {
-        const { id } = ctx.resource;
-        // The publication row and the published channel's versions go in one batch, and the versions are selected only while
-        // The publication exists, so a publish landing between them cannot have its new version deleted by this unpublish
-        // While its publication row survives
-        const [referenceRows, unpublishedVersions, deletedPublications] = await ctx.db.batch([
-          ...getSnapshotVersionDeletes(
-            ctx.db,
-            and(
-              eq(resourceVersionsInResource.resourceId, id),
-              eq(resourceVersionsInResource.channel, SnapshotChannel.Published),
-              exists(
-                ctx.db
-                  .select({ one: sql`1` })
-                  .from(resourcePublicationsInResource)
-                  .where(eq(resourcePublicationsInResource.resourceId, id)),
-              ),
+    unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<
+      ResourcePublicationInResource | undefined
+    >(async ({ ctx }) => {
+      const { id } = ctx.resource;
+      // The publication's tombstone and the published channel's versions go in one batch, and the versions are selected only
+      // While the publication is live, so a publish landing between them cannot have its new version deleted by this unpublish
+      const [referenceRows, unpublishedVersions, tombstonedPublications] = await ctx.db.batch([
+        ...getSnapshotVersionDeletes(
+          ctx.db,
+          and(
+            eq(resourceVersionsInResource.resourceId, id),
+            eq(resourceVersionsInResource.channel, SnapshotChannel.Published),
+            exists(
+              ctx.db
+                .select({ one: sql`1` })
+                .from(resourcePublicationsInResource)
+                .where(getLivePublicationWhere(eq(resourcePublicationsInResource.resourceId, id))),
             ),
           ),
-          ctx.db
-            .delete(resourcePublicationsInResource)
-            .where(
+        ),
+        ctx.db
+          .update(resourcePublicationsInResource)
+          .set({ deletedAt: new Date() })
+          .where(
+            getLivePublicationWhere(
               and(
                 eq(resourcePublicationsInResource.resourceId, id),
                 exists(
@@ -468,30 +476,32 @@ export const createResourceProcedures = <TType extends ResourceType>(
                     .where(getOwnedLiveResourceWhere(ctx.user.id, id)),
                 ),
               ),
-            )
-            .returning(),
-        ]);
-        // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything, so every
-        // Effect below it is a phantom, and an activity entry or a push to the owner's other devices would report a state
-        // Change that never happened
-        if (deletedPublications.length === 0) return ctx.resource;
-        // The published channel's versions go with the publication, and the objects nothing else names go to the
-        // Deletion path — the working copy's revisions may still share a keyframe with one, which collection keeps
-        const assetHashes = [...new Set(referenceRows.map(({ assetHash }) => assetHash))];
-        await getResultAsync(() => collectSnapshotObjects(ctx.db, id, unpublishedVersions)).match(noop, console.error);
-        await getResultAsync(() => releaseResourceAssets(ctx.db, id, assetHashes)).match(noop, console.error);
-        // Best-effort: a failed write loses one trail entry, never the unpublish.
-        getSynchronizedFunction(writeResourceActivity)(ctx, {
-          activityType: ResourceActivityType.Unpublished,
-          resourceId: id,
-        });
-        await publishResourceOperation(ctx, {
-          path: RoutePath.Resource(id),
-          title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](ctx.resource.name),
-        });
-        return ctx.resource;
-      },
-    ),
+            ),
+          )
+          .returning(),
+      ]);
+      // Only when a row was actually tombstoned: an unpublish that changes nothing was never publishing anything, so every
+      // Effect below it is a phantom, and an activity entry or a push to the owner's other devices would report a state
+      // Change that never happened. The answer is the row as it stands, so a client holding a live copy takes the removal
+      const [tombstone] = tombstonedPublications;
+      if (!tombstone)
+        return ctx.db.query.resourcePublicationsInResource.findFirst({ where: { resourceId: { eq: id } } });
+      // The published channel's versions go with the publication, and the objects nothing else names go to the
+      // Deletion path — the working copy's revisions may still share a keyframe with one, which collection keeps
+      const assetHashes = [...new Set(referenceRows.map(({ assetHash }) => assetHash))];
+      await getResultAsync(() => collectSnapshotObjects(ctx.db, id, unpublishedVersions)).match(noop, console.error);
+      await getResultAsync(() => releaseResourceAssets(ctx.db, id, assetHashes)).match(noop, console.error);
+      // Best-effort: a failed write loses one trail entry, never the unpublish.
+      getSynchronizedFunction(writeResourceActivity)(ctx, {
+        activityType: ResourceActivityType.Unpublished,
+        resourceId: id,
+      });
+      await publishResourceOperation(ctx, {
+        path: RoutePath.Resource(id),
+        title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](ctx.resource.name),
+      });
+      return tombstone;
+    }),
   } satisfies Record<(typeof PUBLISH_PROCEDURE_NAMES)[number], unknown>;
   return {
     ...baseProcedures,

@@ -879,19 +879,18 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    const isFavoriteAfterStar = await caller.toggleFavorite({ id: dashboardResource.id });
+    await caller.toggleFavorite({ id: dashboardResource.id });
     const favoritesAfterStar = await caller.readFavorites();
-    const isFavoriteAfterUnstar = await caller.toggleFavorite({ id: dashboardResource.id });
+    await caller.toggleFavorite({ id: dashboardResource.id });
     const favoritesAfterUnstar = await caller.readFavorites();
 
-    expect(isFavoriteAfterStar).toBe(true);
-    expect(favoritesAfterStar.map(({ id }) => id)).toStrictEqual([dashboardResource.id]);
-    expect(isFavoriteAfterUnstar).toBe(false);
-    expect(favoritesAfterUnstar).toStrictEqual([]);
+    expect(favoritesAfterStar.map(({ resource }) => resource.id)).toStrictEqual([dashboardResource.id]);
+    expect(favoritesAfterUnstar).toHaveLength(1);
+    expect(favoritesAfterUnstar[0]?.favorite.deletedAt).not.toBeNull();
   });
 
   // An unstar leaves its favorite as a tombstone at the version the removal left, so a read still holding the star loses to
-  // the removal, and a star made again revives the same row at the next version
+  // The removal, and a star made again revives the same row at the next version
   test("an unstar leaves a tombstone that a re-star revives at a higher version", async () => {
     expect.hasAssertions();
 
@@ -900,8 +899,9 @@ describe("resourceRouter", () => {
     const unstar = await caller.toggleFavorite({ id: dashboardResource.id });
     const restar = await caller.toggleFavorite({ id: dashboardResource.id });
 
-    expect(unstar).toStrictEqual(expect.objectContaining({ deletedAt: expect.any(Date), version: 1 }));
-    expect(restar).toStrictEqual(expect.objectContaining({ deletedAt: null, version: 2 }));
+    expect(unstar.deletedAt).not.toBeNull();
+    expect(unstar.version).toBe(1);
+    expect({ deletedAt: restar.deletedAt, version: restar.version }).toStrictEqual({ deletedAt: null, version: 2 });
   });
 
   test("does not read a soft-deleted resource as a favorite", async () => {
@@ -1048,7 +1048,7 @@ describe("resourceRouter", () => {
     // Restore returns a Draft — silently resurrecting a public URL would be surprising
     const publication = await webpageCaller.readResourcePublication({ id: webpageResource.id });
 
-    expect(publication).toBeUndefined();
+    expect(publication?.deletedAt).not.toBeNull();
   });
 
   test("restores a resource out of the bin", async () => {

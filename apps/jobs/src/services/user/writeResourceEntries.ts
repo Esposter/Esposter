@@ -4,8 +4,14 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { getDb } from "#src/services/shared/getDb";
 import { getBucket } from "#src/services/storage/getBucket";
-import { getContentBlobName, readJsonBlob } from "@esposter/db";
-import { FILES_DIRECTORY_SEGMENT, getResourceFileBlobName, StorageBucket } from "@esposter/db-schema";
+import { getContentBlobName, getLivePublicationWhere, readJsonBlob } from "@esposter/db";
+import {
+  FILES_DIRECTORY_SEGMENT,
+  getResourceFileBlobName,
+  resourcePublicationsInResource,
+  StorageBucket,
+} from "@esposter/db-schema";
+import { eq } from "drizzle-orm";
 
 // Each resource the person owns is written as its record, its working copy and the assets that copy embeds.
 // Its publication, when it is published, and the links it holds are written too.
@@ -22,10 +28,17 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
     const entryDirectory = `resources/${resource.id}`;
     await archive.addJsonEntry(`${entryDirectory}/resource.json`, resource);
     const [publication, links, content, workingAssets] = await Promise.all([
-      getDb().query.resourcePublicationsInResource.findFirst({
-        columns: { createdAt: true, publishedAt: true, publishedContentVersion: true, publishVersion: true },
-        where: { resourceId: { eq: resource.id } },
-      }),
+      getDb()
+        .select({
+          createdAt: resourcePublicationsInResource.createdAt,
+          publishedAt: resourcePublicationsInResource.publishedAt,
+          publishedContentVersion: resourcePublicationsInResource.publishedContentVersion,
+          publishVersion: resourcePublicationsInResource.publishVersion,
+        })
+        .from(resourcePublicationsInResource)
+        .where(getLivePublicationWhere(eq(resourcePublicationsInResource.resourceId, resource.id)))
+        .limit(1)
+        .then(([livePublication]) => livePublication),
       getDb().query.resourceLinksInResource.findMany({
         columns: { sourceId: true, targetId: true, type: true },
         where: { sourceId: { eq: resource.id } },

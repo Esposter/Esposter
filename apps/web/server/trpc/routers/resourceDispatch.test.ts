@@ -92,7 +92,8 @@ describe("resourceDispatchRouter", () => {
 
     expect(publication.resourceId).toStrictEqual(webpageResource.id);
     expect(publishedAfterPublish).toBeDefined();
-    expect(publishedAfterUnpublish).toBeUndefined();
+    // The removal is kept as a tombstone, which is what a client reads its own removal from
+    expect(publishedAfterUnpublish?.deletedAt).not.toBeNull();
   });
 
   test("an agent is given a write address for the file's hash, and the store holds nothing until the bytes are sent", async () => {

@@ -3,19 +3,23 @@ import type { ResourceInResource, ResourcePublicationInResource } from "@esposte
 
 import { getLiveSurveyWhere } from "#server/services/survey/getLiveSurveyWhere";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
-import { DatabaseEntityType } from "@esposter/db-schema";
+import { getLivePublicationWhere } from "@esposter/db";
+import { DatabaseEntityType, resourcePublicationsInResource } from "@esposter/db-schema";
+import { eq } from "drizzle-orm";
 
 // A survey in the Recycle bin accepts no response and reads none: deleting it kills its participant links immediately,
 // Even though the row and blob survive for restore, so every response read and write resolves the survey through here
-// The publication rides along, since a write is checked against the snapshot the respondent was served
+// The live publication rides along, since a write is checked against the snapshot the respondent was served
 export const readLiveSurvey = async (
   db: Context["db"],
   surveyId: ResourceInResource["id"],
 ): Promise<ResourceInResource & { publication: null | ResourcePublicationInResource }> => {
-  const survey = await db.query.resourcesInResource.findFirst({
-    where: getLiveSurveyWhere(surveyId),
-    with: { publication: true },
-  });
+  const survey = await db.query.resourcesInResource.findFirst({ where: getLiveSurveyWhere(surveyId) });
   if (!survey) throw getNotFoundError(DatabaseEntityType.Resource, surveyId);
-  return survey;
+  const [publication] = await db
+    .select()
+    .from(resourcePublicationsInResource)
+    .where(getLivePublicationWhere(eq(resourcePublicationsInResource.resourceId, surveyId)))
+    .limit(1);
+  return { ...survey, publication: publication ?? null };
 };
