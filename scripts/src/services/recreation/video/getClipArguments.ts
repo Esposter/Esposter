@@ -1,4 +1,4 @@
-import { CLIP_NAME_REGEX } from "#src/services/recreation/video/constants";
+import { WORD_AND_HYPHEN_NAME_REGEX } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { isAbsolute, join } from "node:path";
 
@@ -16,7 +16,8 @@ export const getClipArguments = (
 ): string[] => {
   if (!Number.isFinite(fromSeconds) || !Number.isFinite(toSeconds) || fromSeconds < 0 || toSeconds <= fromSeconds)
     throw new InvalidOperationError(Operation.Read, url, `has no section from ${fromSeconds} to ${toSeconds}`);
-  if (!CLIP_NAME_REGEX.test(name)) throw new InvalidOperationError(Operation.Read, name, "is not a clip name");
+  if (!WORD_AND_HYPHEN_NAME_REGEX.test(name))
+    throw new InvalidOperationError(Operation.Read, name, "is not a clip name");
   return [
     "--no-playlist",
     "--no-simulate",

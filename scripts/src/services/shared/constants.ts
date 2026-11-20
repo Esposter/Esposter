@@ -67,6 +67,9 @@ export const PACKAGE_JSON_FILENAME = "package.json";
 // `pnpm`'s `packageManager` pin is `<name>@<version>`, with an optional `+sha512.<hex>` suffix.
 // Corepack verifies the download against that suffix, which is no part of the version the registry is asked about.
 export const PACKAGE_MANAGER_REGEX: RegExp = /^(?<packageName>[^@]+)@(?<version>[^+]+)/u;
+// A name of word characters and hyphens, so no dot, slash or space: a folder, file, skill, worker or clip name, each read
+// As one token of a path or a command rather than as a piece of one
+export const WORD_AND_HYPHEN_NAME_REGEX: RegExp = /^[\w-]+$/u;
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
 // Npm's lockfile, beside every manifest that is installed by `npm ci` rather than by the workspace — a Claude Code

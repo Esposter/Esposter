@@ -1,4 +1,4 @@
-import { WORKER_NAME_REGEX } from "#src/services/fleet/constants";
+import { WORD_AND_HYPHEN_NAME_REGEX } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The worker a command acts for: its `--worker`, else FLEET_WORKER. A claim or a hold names one, so neither may run
@@ -6,7 +6,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Digits and dashes only: a slash made a hold write its pid under a missing folder and crash, leaving its claim unrenewed
 export const requireFleetWorker = (argument: string): string => {
   const worker = argument || process.env.FLEET_WORKER || "";
-  if (!WORKER_NAME_REGEX.test(worker))
+  if (!WORD_AND_HYPHEN_NAME_REGEX.test(worker))
     throw new InvalidOperationError(
       Operation.Read,
       "worker",

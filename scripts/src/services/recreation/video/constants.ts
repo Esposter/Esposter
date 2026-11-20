@@ -41,6 +41,3 @@ export const YT_DLP_PINNED_TOOL: PinnedTool = {
 };
 // The most a search's output may run to: the fields it prints for each result, read whole as one string
 export const SEARCH_MAX_BUFFER_BYTES: number = 64 * 1024 * 1024;
-// A clip's name is a file name's part of letters, digits and dashes
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
-export const CLIP_NAME_REGEX: RegExp = /^[\w-]+$/u;
