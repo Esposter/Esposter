@@ -60,6 +60,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   let pushToTalkReleaseTimeoutId: number | undefined;
   let videoBackgroundTransformer: RealtimeKitVideoBackgroundTransformer | undefined;
   const { run: runVirtualBackground } = useRunScope();
+  const { executeMutation: executeVirtualBackgroundMutation } = useMutation();
   const mediaStore = useMediaStore();
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
   const participantStore = useParticipantStore();
@@ -273,19 +274,30 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     else if (isScreenSharing) await activeMeeting.self.enableScreenShare();
     else await activeMeeting.self.disableScreenShare();
   };
-  // Applies a pick's change to the meeting's video. The middleware is replaced rather than stacked, so one pick never
-  // Composites over another. `onApplied` runs once the video has taken the change, so a background the video refused is
-  // Never saved. A failure alerts, as a failed write does
-  const applyVirtualBackgroundChange = getSynchronizedFunction(
-    (meeting: RealtimeKitClient, { middleware }: VideoChange, onApplied: () => void) =>
-      getResultAsync(async () => {
+  // Applies a pick's change to the meeting's video. The applies queue on one key, so each remove-and-add completes before
+  // The next starts and one pick never composites over another. `onApplied` runs once the video has taken the change, so a
+  // Background the video refused is never saved. A failure alerts, as a failed write does
+  const applyVirtualBackgroundChange = (
+    meeting: RealtimeKitClient,
+    { middleware }: VideoChange,
+    onApplied: () => void,
+  ) => {
+    executeVirtualBackgroundMutation(
+      async () => {
         await meeting.self.removeAllVideoMiddlewares();
         if (middleware) await meeting.self.addVideoMiddleware(middleware);
         hasVirtualBackground = Boolean(middleware);
         setLocalVideo(meeting.self);
         onApplied();
-      }).match(noop, createErrorAlert),
-  );
+      },
+      {
+        // The pick is drawn as it is made, so the apply has nothing of its own to show ahead of its answer
+        applyOptimistic: () => noop,
+        key: "virtualBackground",
+        onError: createErrorAlert,
+      },
+    );
+  };
   // The pipeline's awaits, which change nothing on their own: what it resolves is the commit's to apply. A transformer it
   // Builds goes out with the pick, so the commit keeps it and a run that does not commit releases it
   const readVirtualBackgroundPick = async (virtualBackground: string): Promise<undefined | VirtualBackgroundPick> => {

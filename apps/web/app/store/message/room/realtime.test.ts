@@ -205,6 +205,39 @@ describe(useRealtimeStore, () => {
     expect(saveUserSettings).not.toHaveBeenCalled();
   });
 
+  // Two picks committed close together apply one after the other: the second pick's remove waits for the first's add,
+  // So one pick never composites over another
+  test("applies a pick only once the pick before it has finished applying", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(RealtimeKitVideoBackgroundTransformer, "isSupported").mockReturnValue(true);
+    vi.spyOn(RealtimeKitVideoBackgroundTransformer, "init").mockResolvedValue(
+      createTransformer() as unknown as RealtimeKitVideoBackgroundTransformer,
+    );
+    const callBackgroundStore = useCallBackgroundStore();
+    vi.spyOn(callBackgroundStore, "readVirtualBackgroundImagePath").mockResolvedValue(imagePath);
+    const { meeting } = createMeeting();
+    const firstAdd = Promise.withResolvers<{ message: string; success: boolean }>();
+    meeting.self.addVideoMiddleware.mockReturnValueOnce(firstAdd.promise);
+    spyOnMeetingInit(meeting);
+    const realtimeStore = useRealtimeStore();
+    const { connect, setCamera, setVirtualBackground } = realtimeStore;
+    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await setCamera(true);
+    setVirtualBackground("first");
+    await flushPromises();
+    setVirtualBackground("second");
+    await flushPromises();
+
+    const removesBeforeFirstAddSettled = meeting.self.removeAllVideoMiddlewares.mock.calls.length;
+    firstAdd.resolve({ message: "", success: true });
+    await waitForSynchronizedFunctions();
+
+    expect(removesBeforeFirstAddSettled).toBe(1);
+    expect(meeting.self.removeAllVideoMiddlewares).toHaveBeenCalledTimes(2);
+    expect(meeting.self.addVideoMiddleware).toHaveBeenCalledTimes(2);
+  });
+
   // The browser keeps the call's sound quiet until the reader's own press, so a refused play raises the notice and
   // The press that answers it clears it
   test("clears the blocked-sound notice once the reader's press lets the sound play", async () => {
