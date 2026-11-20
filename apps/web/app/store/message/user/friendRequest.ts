@@ -47,6 +47,9 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     },
   );
   const sendFriendRequest = async (receiverId: PublicUser["id"]) => {
+    // A call while a send to this receiver is out sends nothing, so the set's removal ends the one send in flight
+    if (sendingReceiverIds.value.has(receiverId)) return;
+
     sendingReceiverIds.value.add(receiverId);
     await withFinalizerAsync(
       () =>
