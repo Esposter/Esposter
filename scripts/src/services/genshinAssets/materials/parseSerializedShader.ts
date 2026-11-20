@@ -62,7 +62,7 @@ export const parseSerializedShader = (data: Buffer): SerializedShader => {
   };
   const resolveSubProgram = (
     record: SerializedSubProgramRecord,
-    keywordNames: Map<number, string>,
+    keywordIndexNameMap: Map<number, string>,
   ): SerializedSubProgram => {
     const program = readBlobPrograms(record.gpuProgramType)[record.blobIndex];
     if (!program)
@@ -77,7 +77,7 @@ export const parseSerializedShader = (data: Buffer): SerializedShader => {
       gpuProgramType: program.gpuProgramType,
       keywordIndices: record.keywordIndices,
       keywords: record.keywordIndices.map((index) => {
-        const keyword = keywordNames.get(index);
+        const keyword = keywordIndexNameMap.get(index);
         if (keyword === undefined)
           throw new InvalidOperationError(
             Operation.Read,
@@ -88,18 +88,18 @@ export const parseSerializedShader = (data: Buffer): SerializedShader => {
       }),
     };
   };
-  const resolveStage = (records: SerializedSubProgramRecord[], keywordNames: Map<number, string>) =>
-    records.map((record) => resolveSubProgram(record, keywordNames));
+  const resolveStage = (records: SerializedSubProgramRecord[], keywordIndexNameMap: Map<number, string>) =>
+    records.map((record) => resolveSubProgram(record, keywordIndexNameMap));
   const resolvePass = (pass: SerializedPassRecord): SerializedPass => {
-    const { keywordNames } = pass;
+    const { keywordIndexNameMap } = pass;
     const stageSubProgramsMap: Record<ShaderProgramStage, SerializedSubProgram[]> = {
-      [ShaderProgramStage.Domain]: resolveStage(pass.subPrograms[ShaderProgramStage.Domain], keywordNames),
-      [ShaderProgramStage.Fragment]: resolveStage(pass.subPrograms[ShaderProgramStage.Fragment], keywordNames),
-      [ShaderProgramStage.Geometry]: resolveStage(pass.subPrograms[ShaderProgramStage.Geometry], keywordNames),
-      [ShaderProgramStage.Hull]: resolveStage(pass.subPrograms[ShaderProgramStage.Hull], keywordNames),
-      [ShaderProgramStage.Vertex]: resolveStage(pass.subPrograms[ShaderProgramStage.Vertex], keywordNames),
+      [ShaderProgramStage.Domain]: resolveStage(pass.subPrograms[ShaderProgramStage.Domain], keywordIndexNameMap),
+      [ShaderProgramStage.Fragment]: resolveStage(pass.subPrograms[ShaderProgramStage.Fragment], keywordIndexNameMap),
+      [ShaderProgramStage.Geometry]: resolveStage(pass.subPrograms[ShaderProgramStage.Geometry], keywordIndexNameMap),
+      [ShaderProgramStage.Hull]: resolveStage(pass.subPrograms[ShaderProgramStage.Hull], keywordIndexNameMap),
+      [ShaderProgramStage.Vertex]: resolveStage(pass.subPrograms[ShaderProgramStage.Vertex], keywordIndexNameMap),
     };
-    return { keywordNames, name: pass.name, state: pass.state, subPrograms: stageSubProgramsMap };
+    return { keywordIndexNameMap, name: pass.name, state: pass.state, subPrograms: stageSubProgramsMap };
   };
   const resolveSubShader = (subShader: SerializedSubShaderRecord): SerializedSubShader => ({
     passes: subShader.passes.map((pass) => resolvePass(pass)),

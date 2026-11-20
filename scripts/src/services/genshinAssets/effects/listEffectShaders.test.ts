@@ -23,7 +23,7 @@ const createShader = (source: number, destination: number, zWrite: number): Seri
     depth: { cull: literal(0), zTest: literal(4), zWrite: literal(zWrite) },
   };
   const pass: SerializedPass = {
-    keywordNames: new Map(),
+    keywordIndexNameMap: new Map(),
     name: "",
     state,
     subPrograms: {

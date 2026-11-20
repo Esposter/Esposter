@@ -4,7 +4,7 @@ import type { ShaderProgramStage } from "#src/models/genshinAssets/materials/Sha
 
 // One pass of a subshader: its name, its render state, its keyword names keyed by their index, and each stage's variants
 export interface SerializedPass {
-  keywordNames: Map<number, string>;
+  keywordIndexNameMap: Map<number, string>;
   name: string;
   state: SerializedShaderState;
   subPrograms: Record<ShaderProgramStage, SerializedSubProgram[]>;

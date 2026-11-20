@@ -234,7 +234,7 @@ describe(parseSerializedShader, () => {
         {
           passes: [
             {
-              keywordNames: new Map([
+              keywordIndexNameMap: new Map([
                 [0, "$Globals"],
                 [1, "BACK_FACE_ON"],
                 [2, "TOON_LIGHTMAP_ON"],

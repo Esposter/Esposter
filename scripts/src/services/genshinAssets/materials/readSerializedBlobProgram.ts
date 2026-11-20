@@ -13,13 +13,13 @@ const HEADER_CHECKSUM_BYTES = 12;
 const HEADER_FIELD_BYTES = 4;
 
 export const readSerializedBlobProgram = (chunk: Buffer, offset: number): SerializedBlobProgram => {
-  const program = new BinaryCursor(chunk, offset);
-  const version = Math.min(program.int32(), VERSION_CLAMP);
-  const gpuProgramType = program.int32();
-  program.skip(HEADER_CHECKSUM_BYTES);
-  if (version >= VERSION_WITH_HEADER_FIELD) program.skip(HEADER_FIELD_BYTES);
-  program.list(() => program.string());
+  const cursor = new BinaryCursor(chunk, offset);
+  const version = Math.min(cursor.int32(), VERSION_CLAMP);
+  const gpuProgramType = cursor.int32();
+  cursor.skip(HEADER_CHECKSUM_BYTES);
+  if (version >= VERSION_WITH_HEADER_FIELD) cursor.skip(HEADER_FIELD_BYTES);
+  cursor.list(() => cursor.string());
   if (version >= VERSION_WITH_LOCAL_KEYWORDS_MIN && version < VERSION_WITH_LOCAL_KEYWORDS_MAX)
-    program.list(() => program.string());
-  return { code: readContainer(program.uint8List()), gpuProgramType };
+    cursor.list(() => cursor.string());
+  return { code: readContainer(cursor.uint8List()), gpuProgramType };
 };

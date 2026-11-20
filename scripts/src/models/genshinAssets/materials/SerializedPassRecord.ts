@@ -4,7 +4,7 @@ import type { ShaderProgramStage } from "#src/models/genshinAssets/materials/Sha
 
 // A pass as it serializes, its variants still unresolved against the blob that follows the shader's subshaders
 export interface SerializedPassRecord {
-  keywordNames: Map<number, string>;
+  keywordIndexNameMap: Map<number, string>;
   name: string;
   state: SerializedShaderState;
   subPrograms: Record<ShaderProgramStage, SerializedSubProgramRecord[]>;

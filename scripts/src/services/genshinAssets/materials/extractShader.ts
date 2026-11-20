@@ -1,9 +1,9 @@
 import { annotateProgramConstants } from "#src/services/genshinAssets/materials/annotateProgramConstants";
 import { decompileDxbcDirectory } from "#src/services/genshinAssets/materials/decompileDxbcDirectory";
 import { disassembleDxbcDirectory } from "#src/services/genshinAssets/materials/disassembleDxbcDirectory";
+import { getProgramName } from "#src/services/genshinAssets/materials/getProgramName";
 import { parseShaderConstantLayouts } from "#src/services/genshinAssets/materials/parseShaderConstantLayouts";
 import { parseShaderProperties } from "#src/services/genshinAssets/materials/parseShaderProperties";
-import { programName } from "#src/services/genshinAssets/materials/programName";
 import { readShaderPrograms } from "#src/services/genshinAssets/materials/readShaderPrograms";
 import { getResultAsync } from "@esposter/shared";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
@@ -30,10 +30,10 @@ export const extractShader = async (
     writeFile(
       join(programDirectory, "programs.tsv"),
       programs
-        .map(({ keywords, pass, stage }, index) => [programName(index), pass, stage, keywords.join(" ")].join("\t"))
+        .map(({ keywords, pass, stage }, index) => [getProgramName(index), pass, stage, keywords.join(" ")].join("\t"))
         .join("\n"),
     ),
-    ...programs.map(({ code }, index) => writeFile(join(programDirectory, `${programName(index)}.dxbc`), code)),
+    ...programs.map(({ code }, index) => writeFile(join(programDirectory, `${getProgramName(index)}.dxbc`), code)),
   ]);
   const count = disassembleDxbcDirectory(programDirectory);
   // And decompiled to HLSL beside it where the pinned decompiler can be had, the annotated assembly the source
@@ -54,9 +54,10 @@ export const extractShader = async (
   await Promise.all(
     assemblyNames.map(async (name) => {
       const path = join(programDirectory, name);
-      await writeFile(path, annotateProgramConstants(await readFile(path, "utf8"), layouts));
+      const annotatedText = annotateProgramConstants(await readFile(path, "utf8"), layouts);
+      await writeFile(path, annotatedText);
     }),
   );
-  await Promise.all(programs.map((_value, index) => rm(join(programDirectory, `${programName(index)}.dxbc`))));
+  await Promise.all(programs.map((_value, index) => rm(join(programDirectory, `${getProgramName(index)}.dxbc`))));
   return `${blockName}/${basename(file, ".dat")}: ${count} of ${programs.length} programs disassembled, ${decompiledCount} decompiled, ${named ? "each named by pass, stage and keywords" : "unnamed, its serialized form not read"}, ${propertyNames.slice(0, SUMMARY_PROPERTY_COUNT).join(" ")}`;
 };

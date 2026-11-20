@@ -9,7 +9,7 @@ import { skipTagMap } from "#src/services/genshinAssets/materials/skipTagMap";
 // Reads a pass: its keyword names keyed by index, its name, its state, its stage programs, then its use name, name and
 // Texture name, which are read past, and its tags
 export const readSerializedPass = (cursor: BinaryCursor): SerializedPassRecord => {
-  const keywordNames = new Map(
+  const keywordIndexNameMap = new Map(
     cursor.list(() => {
       const name = cursor.string();
       const index = cursor.int32();
@@ -43,7 +43,7 @@ export const readSerializedPass = (cursor: BinaryCursor): SerializedPassRecord =
     cursor.rewind(subShaderTagCount === 0 && subShaderLod !== 0 ? 12 : 8);
   } else cursor.rewind(4);
   return {
-    keywordNames,
+    keywordIndexNameMap,
     name,
     state,
     subPrograms: {
