@@ -13,10 +13,12 @@ export const useInviteStore = defineStore("message/room/invite", () => {
   const { checkIsPending: checkIsCreateInvitePending, executeMutation } = useMutation();
   // The server keeps one live invite per member per room, so every mount of the Invite People dialog reads this
   // Shared map — regenerating a link in one keeps the others current
-  const invites = ref(new Map<string, InviteInMessage | undefined>());
+  // A room with no link holds no entry, so absence has one form and `has` answers only for a link that exists
+  const invites = ref(new Map<string, InviteInMessage>());
 
   const setInvite = (roomId: string, invite: InviteInMessage | undefined) => {
-    invites.value.set(roomId, invite);
+    if (invite) invites.value.set(roomId, invite);
+    else invites.value.delete(roomId);
   };
   // Reads seed only when absent so a createInvite that raced ahead of a slow readMyInvite
   // Keeps the freshly regenerated link — the map is source of truth once any surface populated it

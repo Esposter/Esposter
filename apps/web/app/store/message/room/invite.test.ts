@@ -72,6 +72,20 @@ describe(useInviteStore, () => {
     expect(invites.value.get(roomId)).toStrictEqual(invite);
   });
 
+  // An absent link is no entry at all, so a read that finds one later still fills the slot rather than being refused by
+  // An undefined value the map would otherwise hold
+  test("seeds a link over a stored absence", () => {
+    expect.hasAssertions();
+
+    const inviteStore = useInviteStore();
+    const { seedInvite, setInvite } = inviteStore;
+    const { invites } = storeToRefs(inviteStore);
+    setInvite(roomId, undefined);
+    seedInvite(roomId, invite);
+
+    expect(invites.value.get(roomId)).toStrictEqual(invite);
+  });
+
   const room = { id: roomId, isInvitePaused: false };
 
   test("hands out the link the member holds without minting one", async () => {
