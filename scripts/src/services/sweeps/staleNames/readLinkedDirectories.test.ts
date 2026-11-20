@@ -40,4 +40,15 @@ describe(readLinkedDirectories, () => {
       realpathSync(packageStoreDirectory),
     ]);
   });
+
+  // A link that loops back on itself resolves nowhere, and must be dropped rather than abort the walk
+  test("drops a self-referential link instead of throwing", () => {
+    expect.hasAssertions();
+
+    const modulesDirectory = join(directory, "node_modules");
+    mkdirSync(modulesDirectory, { recursive: true });
+    symlinkSync(join(modulesDirectory, TEST_FILENAME), join(modulesDirectory, TEST_FILENAME));
+
+    expect(readLinkedDirectories(modulesDirectory)).toStrictEqual([]);
+  });
 });
