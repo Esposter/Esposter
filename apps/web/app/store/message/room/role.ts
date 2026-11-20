@@ -14,11 +14,11 @@ import type { Except } from "type-fest";
 import { checkIsManageable as baseCheckIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { mergeMemberPermissionOverride } from "#shared/services/room/rbac/mergeMemberPermissionOverride";
 import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
+import { setRoomUsers } from "#src/services/message/room/setRoomUsers";
 import { MANAGEMENT_PERMISSIONS } from "#src/services/room/rbac/constants";
 import { getRestoredItems } from "#src/services/shared/getRestoredItems";
 import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
 import { useRoomStore } from "#src/store/message/room/index";
-import { useUserStore } from "#src/store/message/user/index";
 import { checkHasPermission, NO_ROW_VERSION } from "@esposter/db-schema";
 import { getResultAsync, ID_SEPARATOR, noop, omitUndefined } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -34,8 +34,6 @@ const notifyMemberRoleChange = (roomId: string) => {
 export const useRoleStore = defineStore("message/room/role", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const userStore = useUserStore();
-  const { storeRoomMembers } = userStore;
   const {
     data: roles,
     getData: baseGetRoles,
@@ -211,7 +209,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
           await getResultAsync(() =>
             $trpc.room.readUsersByIds.query({ roomId: input.roomId, userIds: overrides.map(({ userId }) => userId) }),
           ).match((users) => {
-            storeRoomMembers(input.roomId, users);
+            setRoomUsers(input.roomId, users);
           }, console.error);
         },
       }),

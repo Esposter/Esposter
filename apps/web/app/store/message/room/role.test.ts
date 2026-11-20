@@ -1,8 +1,10 @@
 // @vitest-environment nuxt
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
 import { serveMemberRoles } from "#src/services/message/member/serveMemberRoles.test";
+import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
+import { useUserStore } from "#src/store/message/user/index";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -110,5 +112,21 @@ describe(useRoleStore, () => {
     await flushPromises();
 
     expect(getMemberRoles(roomId, userId)).toStrictEqual([]);
+  });
+
+  // An override names the members it changes, and the read takes their rows alongside it. A user who has left the room
+  // Is read with their row but is not one of its members, so the read must not make them one
+  test("does not make a user who has left the room one of its members", async () => {
+    expect.hasAssertions();
+
+    const leftUser = createUser();
+    trpcMsw.role.readMemberPermissionOverrides.query(() => [{ allow: 0n, deny: 0n, userId: leftUser.id }]);
+    trpcMsw.room.readUsersByIds.query(() => [{ ...leftUser, displayName: leftUser.name, isMember: false }]);
+    const roleStore = useRoleStore();
+    const userStore = useUserStore();
+    await roleStore.readMemberPermissionOverrides({ roomId });
+    await flushPromises();
+
+    expect(userStore.getRoomMemberMap(roomId)?.get(leftUser.id)).toBeUndefined();
   });
 });
