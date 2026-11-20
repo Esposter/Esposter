@@ -1,9 +1,9 @@
-import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import {
   FILE_MAX_LENGTH,
   fileEntitySchema,
   MESSAGE_MAX_LENGTH,
   MessageType,
+  pollMessageContentSchema,
   refineMessageSchema,
   roomIdSchema,
   roomMessageSchema,

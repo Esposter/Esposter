@@ -6,11 +6,9 @@ import type { Mock } from "vitest";
 import { RoomObject } from "#src/durableObjects/RoomObject";
 import { createSocket, readFrames } from "#src/services/durableObject/createMockSocket.test";
 import { observeWakes, verifyWakes } from "#src/services/durableObject/wakeCheck.test";
-import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
+import { MockJobQueueDatabase, createUser, createMockDb, createMockObjectState } from "@esposter/db-mock";
 import { ROOM_ACTIVITY_DELAY_MS, ROOM_MEMBER_REMOVED_CODE, WRITE_RETRY_DELAY_MS } from "#src/services/room/constants";
-import { createUser } from "#src/services/shared/createUser.test";
 import { getWokenTopics, toMergedPage } from "@esposter/db";
-import { createMockDb, createMockObjectState } from "@esposter/db-mock";
 import {
   AppNotificationType,
   appUsersInMessage,
@@ -37,7 +35,7 @@ import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("@esposter/db-mock"));
 
 // The Response the object builds for an upgrade. The test reads no part of it, so the stub builds nothing
 const ResponseStub = function () {};
@@ -493,22 +491,44 @@ describe(RoomObject, () => {
 
     const { object } = createRoomObject();
     const optionId = v7();
+    const otherOptionId = v7();
     // A label is free text, so one shaped like a timestamp is written back as it was typed rather than as a Date
     const label = "1970-01-01T00:00:00Z";
     const poll = await object.createMessage(
       {
-        message: JSON.stringify({ options: [{ id: optionId, label }], question: "question", votes: {} }),
+        message: JSON.stringify({
+          options: [
+            { id: optionId, label },
+            { id: otherOptionId, label: "a" },
+          ],
+          question: "question",
+          votes: {},
+        }),
         type: MessageType.Poll,
       },
       actor,
     );
 
     expect((await object.votePoll({ id: poll.id, optionId }, otherActor))?.message).toBe(
-      JSON.stringify({ options: [{ id: optionId, label }], question: "question", votes: { [otherUserId]: optionId } }),
+      JSON.stringify({
+        options: [
+          { id: optionId, label },
+          { id: otherOptionId, label: "a" },
+        ],
+        question: "question",
+        votes: { [otherUserId]: optionId },
+      }),
     );
 
     expect((await object.votePoll({ id: poll.id }, otherActor))?.message).toBe(
-      JSON.stringify({ options: [{ id: optionId, label }], question: "question", votes: {} }),
+      JSON.stringify({
+        options: [
+          { id: optionId, label },
+          { id: otherOptionId, label: "a" },
+        ],
+        question: "question",
+        votes: {},
+      }),
     );
   });
 
@@ -517,9 +537,17 @@ describe(RoomObject, () => {
 
     const { object } = createRoomObject();
     const optionId = v7();
+    const otherOptionId = v7();
     const poll = await object.createMessage(
       {
-        message: JSON.stringify({ options: [{ id: optionId, label: "label" }], question: "question", votes: {} }),
+        message: JSON.stringify({
+          options: [
+            { id: optionId, label: "label" },
+            { id: otherOptionId, label: "a" },
+          ],
+          question: "question",
+          votes: {},
+        }),
         type: MessageType.Poll,
       },
       actor,

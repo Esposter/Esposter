@@ -1,29 +1,18 @@
+import { pollMessageContentSchema } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";
 
-interface PollBody {
-  options: { id: string }[];
-  votes: Record<string, string>;
-}
-
-const checkPollBody = (value: unknown): value is PollBody =>
-  typeof value === "object" &&
-  value !== null &&
-  "options" in value &&
-  Array.isArray(value.options) &&
-  "votes" in value &&
-  typeof value.votes === "object" &&
-  value.votes !== null;
-
-// The poll body with the actor's vote applied, or undefined when the body is not a poll or names no option of its own.
-// Only the votes change: every other field of the poll is written back exactly as it was read
+// The poll body with the actor's vote applied, or undefined when the body is not a poll the schema accepts or names no option
+// Of its own. Only the votes change: the rest of the poll is written back as the schema reads it, which for a stored poll is
+// The text it was stored as, since the schema wrote it
 export const applyPollVote = (message: string, userId: string, optionId: string | undefined): string | undefined => {
   // oxlint-disable-next-line no-restricted-properties -- an option label is free text, and reviving an ISO-shaped one would turn it into a Date
   const body = getResult<unknown>(() => JSON.parse(message)).unwrapOr(undefined);
-  if (!checkPollBody(body) || (optionId !== undefined && !body.options.some(({ id }) => id === optionId)))
+  const poll = pollMessageContentSchema.safeParse(body);
+  if (!poll.success || (optionId !== undefined && !poll.data.options.some(({ id }) => id === optionId)))
     return undefined;
 
-  const votes = { ...body.votes };
+  const votes = { ...poll.data.votes };
   if (optionId === undefined) delete votes[userId];
   else votes[userId] = optionId;
-  return JSON.stringify({ ...body, votes });
+  return JSON.stringify({ ...poll.data, votes });
 };

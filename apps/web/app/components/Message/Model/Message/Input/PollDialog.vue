@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
-import { pollOptionSchema } from "#shared/models/message/poll/PollOption";
-import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#shared/services/message/constants";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useDataStore } from "#src/store/message/data";
 import { usePollDialogStore } from "#src/store/message/input/pollDialog";
 import { useRoomStore } from "#src/store/message/room/index";
-import { MessageType } from "@esposter/db-schema";
+import {
+  MessageType,
+  POLL_MAX_OPTIONS,
+  POLL_MIN_OPTIONS,
+  pollMessageContentSchema,
+  pollOptionSchema,
+} from "@esposter/db-schema";
 import { v7 } from "uuid";
 
 const requiredRules = [UiRules.required()];

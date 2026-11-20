@@ -19,6 +19,3 @@ export const MAX_ROOM_EMOJI_SIZE_BYTES = 256 * KIBIBYTE;
 // See openspec/specs/esbabbler/calls/virtual-backgrounds/design.md
 export const MAX_CALL_BACKGROUNDS = 5;
 export const MAX_CALL_BACKGROUND_SIZE_BYTES = 2 * MEGABYTE;
-
-export const POLL_MAX_OPTIONS = 10;
-export const POLL_MIN_OPTIONS = 2;

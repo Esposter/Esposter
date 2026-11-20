@@ -29,7 +29,6 @@ import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
 import { MimeType } from "#shared/models/file/MimeType";
 import { createPollMessageContent } from "#shared/models/message/poll/createPollMessageContent.test";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
-import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#shared/services/message/constants";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
@@ -37,6 +36,8 @@ import {
   encodePageCursor,
   FilterType,
   MessageType,
+  POLL_MAX_OPTIONS,
+  POLL_MIN_OPTIONS,
   QueueJob,
   StorageBucket,
   usersToRoomsInMessage,

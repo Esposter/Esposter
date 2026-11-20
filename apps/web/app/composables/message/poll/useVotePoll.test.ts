@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
+import type { PollMessageContent } from "@esposter/db-schema";
 
 import { useVotePoll } from "#src/composables/message/poll/useVotePoll";
 import { useSession } from "#src/services/auth/authClient.test";

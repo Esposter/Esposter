@@ -1,4 +1,4 @@
-import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
+import type { PollMessageContent } from "@esposter/db-schema";
 
 import { v7 } from "uuid";
 

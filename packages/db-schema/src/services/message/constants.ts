@@ -16,6 +16,8 @@ export const MODERATION_NOTE_MAX_LENGTH = 2000;
 export const MAX_SLOWMODE_MS = 2_147_483_647;
 // Matches the longest client-selectable timeout, which fits well inside a 32-bit signed integer.
 export const MAX_TIMEOUT_DURATION_MS = Temporal.Duration.from({ days: 7 }).total("milliseconds");
+export const POLL_MAX_OPTIONS = 10;
+export const POLL_MIN_OPTIONS = 2;
 export const PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH = 100;
 
 // A room event that carries messages carries one send's worth: a message, or a forward and the note sent with it

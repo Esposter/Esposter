@@ -1,7 +1,7 @@
-import type { PollOption } from "#shared/models/message/poll/PollOption";
+import type { PollOption } from "#src/models/message/poll/PollOption";
 
-import { pollOptionSchema } from "#shared/models/message/poll/PollOption";
-import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#shared/services/message/constants";
+import { pollOptionSchema } from "#src/models/message/poll/PollOption";
+import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#src/services/message/constants";
 import { createUniqueArraySchema, normalizeString } from "@esposter/shared";
 import { z } from "zod";
 
