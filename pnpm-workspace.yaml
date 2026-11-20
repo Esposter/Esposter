@@ -260,6 +260,100 @@ overrides:
   vite-plus>tsrs: "catalog:"
   vite-plus>vitest: "catalog:"
 
+packageExtensions:
+  # Each package below has types that import a package it does not declare. The hoisted layout hid that; in the global
+  # Virtual store a package sees only what it declares, so those types fell to `any` until each names its peer
+  # @TODO: no upstream issue — cloudflare/workers-sdk: miniflare's types import @cloudflare/workers-types, which it
+  # Declares only as a devDependency
+  miniflare:
+    peerDependencies:
+      "@cloudflare/workers-types": "*"
+  # @TODO: no upstream issue — nuxt/nuxt: @nuxt/schema's types import the packages its options configure and declare
+  # None of them. Each is optional, so it is linked only where the checkout installs it
+  "@nuxt/schema-nightly":
+    peerDependencies:
+      "@unhead/vue": "*"
+      "h3": "*"
+      "unctx": "*"
+      "unimport": "*"
+      "vite": "*"
+      "vue": "*"
+      "vue-router": "*"
+    peerDependenciesMeta:
+      "@unhead/vue":
+        optional: true
+      "h3":
+        optional: true
+      "unctx":
+        optional: true
+      "unimport":
+        optional: true
+      "vite":
+        optional: true
+      "vue":
+        optional: true
+      "vue-router":
+        optional: true
+  # Nitro's nightly is installed under the `nitro` alias, and its types import themselves by that name (`nitro/types`),
+  # Which its own folder in the store, named `nitro-nightly`, cannot resolve until the alias is linked beside it
+  nitro-nightly:
+    peerDependencies:
+      nitro: "*"
+  # @TODO: no upstream issue — pmndrs/xr: its types import `three`, which ships no types, and it does not declare
+  # `@types/three`
+  "@pmndrs/pointer-events":
+    peerDependencies:
+      "@types/three": "*"
+  # @TODO: no upstream issue — Tresjs/cientos: its types import `three`, which ships no types, and it does not declare
+  # `@types/three`
+  "@tresjs/cientos":
+    peerDependencies:
+      "@types/three": "*"
+  # @TODO: no upstream issue — Tresjs/tres: its types import `three`, which ships no types, and it does not declare
+  # `@types/three`
+  "@tresjs/core":
+    peerDependencies:
+      "@types/three": "*"
+  # @TODO: no upstream issue — yomotsu/camera-controls: its types import `three`, which ships no types, and it does not declare
+  # `@types/three`
+  "camera-controls":
+    peerDependencies:
+      "@types/three": "*"
+  # @TODO: no upstream issue — vasturiano/three-conic-polygon-geometry: its types import `three`, which ships no types, and it does not declare
+  # `@types/three`
+  "three-conic-polygon-geometry":
+    peerDependencies:
+      "@types/three": "*"
+  # @TODO: no upstream issue — FarazzShaikh/THREE-CustomShaderMaterial: its types import `three`, which ships no types, and it does not declare
+  # `@types/three`
+  "three-custom-shader-material":
+    peerDependencies:
+      "@types/three": "*"
+  # @TODO: no upstream issue — vasturiano/three-geojson-geometry: its types import `three`, which ships no types, and it does not declare
+  # `@types/three`
+  "three-geojson-geometry":
+    peerDependencies:
+      "@types/three": "*"
+  # @TODO: no upstream issue — vasturiano/three-globe: its types import `three`, which ships no types, and it does not declare
+  # `@types/three`
+  "three-globe":
+    peerDependencies:
+      "@types/three": "*"
+  # @TODO: no upstream issue — gkjohnson/three-mesh-bvh: its types import `three`, which ships no types, and it does not declare
+  # `@types/three`
+  "three-mesh-bvh":
+    peerDependencies:
+      "@types/three": "*"
+  # @TODO: no upstream issue — vasturiano/three-slippy-map-globe: its types import `three`, which ships no types, and it does not declare
+  # `@types/three`
+  "three-slippy-map-globe":
+    peerDependencies:
+      "@types/three": "*"
+  # @TODO: no upstream issue — pmndrs/three-stdlib: its types import `three`, which ships no types, and it does not declare
+  # `@types/three`
+  "three-stdlib":
+    peerDependencies:
+      "@types/three": "*"
 permissions:
   "@nuxtjs/seo":
     skills: true
