@@ -1,7 +1,7 @@
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { StorageBucket } from "@esposter/db-schema";
 
-import { mockBuckets } from "#src/services/mockBuckets";
+import { mockBuckets } from "#src/workers/services/mockBuckets";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Registered per suite, so a suite that never opens the bucket it reads fails at the read.

@@ -6,15 +6,15 @@ import { getBucket } from "#src/services/storage/getBucket";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
+import { createMockDb } from "@esposter/db-mock";
 import {
   clearMockBuckets,
   clearRoomObjectCalls,
-  createMockDb,
   createUser,
   disposeMockBuckets,
   openMockBuckets,
   roomObjectReplies,
-} from "@esposter/db-mock";
+} from "@esposter/db-mock/workers";
 import {
   AdminActionType,
   dataExportsInUser,
@@ -49,8 +49,8 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock/workers"));
 
 describe(exportUserDataHandler, () => {
   const content = JSON.stringify({});

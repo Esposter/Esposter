@@ -8,7 +8,8 @@ import { getMockPublishedTopics, getReaderWakes, MockPublishedTopics } from "#sr
 import { getDb } from "#src/services/shared/getDb";
 import { runUnit } from "#src/services/shared/runUnit";
 import { readNotificationRows } from "@esposter/db";
-import { createMockDb, createUser } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { createUser } from "@esposter/db-mock/workers";
 import {
   AppNotificationType,
   getScopeTopic,

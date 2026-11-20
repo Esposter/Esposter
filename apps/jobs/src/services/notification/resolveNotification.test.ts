@@ -1,7 +1,8 @@
 import type { Database } from "@esposter/db-schema";
 
 import { resolveNotification } from "#src/services/notification/resolveNotification";
-import { createMockDb, createUser } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { createUser } from "@esposter/db-mock/workers";
 import { AppNotificationType, roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";

@@ -3,14 +3,8 @@ import type { Database } from "@esposter/db-schema";
 import { getBucket } from "#src/services/storage/getBucket";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
-import {
-  clearMockBuckets,
-  createMockDb,
-  createUser,
-  disposeMockBuckets,
-  MockJobQueueDatabase,
-  openMockBuckets,
-} from "@esposter/db-mock";
+import { createMockDb, MockJobQueueDatabase } from "@esposter/db-mock";
+import { clearMockBuckets, createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock/workers";
 import {
   AppNotificationType,
   QueueJob,
@@ -30,9 +24,9 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/queue/getJobQueue"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("@esposter/db-mock/workers"));
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
 
 const seedContent = async (
   resourceId: string,

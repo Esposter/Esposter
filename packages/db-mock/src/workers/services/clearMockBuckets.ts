@@ -1,5 +1,5 @@
 import { emptyR2Bucket } from "#src/services/emptyR2Bucket";
-import { mockBuckets } from "#src/services/mockBuckets";
+import { mockBuckets } from "#src/workers/services/mockBuckets";
 
 // Empties every bucket a suite opened, so each test starts with nothing in them
 export const clearMockBuckets = async (): Promise<void> => {

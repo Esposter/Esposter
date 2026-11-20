@@ -5,7 +5,8 @@ import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceA
 import { runUnit } from "#src/services/shared/runUnit";
 import { getBucket } from "#src/services/storage/getBucket";
 import { readDeletedResourcePage } from "@esposter/db";
-import { createMockDb, createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock/workers";
 import {
   getScopeTopic,
   resourcesInResource,
@@ -20,7 +21,7 @@ import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
 
 describe(purgeResourceAndBroadcast, () => {
   let mockDb: Database;

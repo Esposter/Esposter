@@ -7,15 +7,15 @@ import { runUnit } from "#src/services/shared/runUnit";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { getFileBlobNames, readDataExport } from "@esposter/db";
+import { createMockDb } from "@esposter/db-mock";
 import {
   clearMockBuckets,
   clearRoomObjectCalls,
-  createMockDb,
   createUser,
   disposeMockBuckets,
   openMockBuckets,
   roomObjectReplies,
-} from "@esposter/db-mock";
+} from "@esposter/db-mock/workers";
 import {
   dataExportsInUser,
   DataExportStatus,
@@ -33,8 +33,8 @@ import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock/workers"));
 
 describe(exportUserDataHandler, () => {
   let mockDb: Database;

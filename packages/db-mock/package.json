@@ -31,12 +31,17 @@
       "source": "./src/cloudflareWorkers.ts",
       "default": "./dist/cloudflare-workers.js"
     },
+    "./workers": {
+      "source": "./src/workers/index.ts",
+      "default": "./dist/workers.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
       "./cloudflare-workers": "./dist/cloudflare-workers.js",
+      "./workers": "./dist/workers.js",
       "./package.json": "./package.json"
     }
   },

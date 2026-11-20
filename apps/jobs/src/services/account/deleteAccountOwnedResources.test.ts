@@ -4,7 +4,8 @@ import { deleteAccountOwnedResources } from "#src/services/account/deleteAccount
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { getContentBlobName } from "@esposter/db";
-import { clearMockBuckets, createMockDb, createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { clearMockBuckets, createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock/workers";
 import {
   resourceActivitiesInResource,
   ResourceActivityType,
@@ -24,7 +25,7 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
 
 describe(deleteAccountOwnedResources, () => {
   const name = "name";

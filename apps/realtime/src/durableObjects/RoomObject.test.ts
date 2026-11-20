@@ -8,7 +8,8 @@ import { createSocket, readFrames } from "#src/services/durableObject/createMock
 import { observeWakes, verifyWakes } from "#src/services/durableObject/wakeCheck.test";
 import { ROOM_ACTIVITY_DELAY_MS, ROOM_MEMBER_REMOVED_CODE, WRITE_RETRY_DELAY_MS } from "#src/services/room/constants";
 import { getWokenTopics, toMergedPage } from "@esposter/db";
-import { createMockDb, createMockObjectState, createUser, MockJobQueueDatabase } from "@esposter/db-mock";
+import { createMockDb, createMockObjectState, MockJobQueueDatabase } from "@esposter/db-mock";
+import { createUser } from "@esposter/db-mock/workers";
 import {
   AppNotificationType,
   appUsersInMessage,
@@ -35,7 +36,7 @@ import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/queue/getJobQueue"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("@esposter/db-mock/workers"));
 
 // The Response the object builds for an upgrade. The test reads no part of it, so the stub builds nothing
 const ResponseStub = function () {};

@@ -7,18 +7,18 @@ import { runUnit } from "#src/services/shared/runUnit";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { getContentBlobName, getMemberRoomIds } from "@esposter/db";
+import { createMockDb } from "@esposter/db-mock";
 import {
   clearMockBuckets,
   clearRoomObjectCalls,
   clearUserObjectCalls,
-  createMockDb,
   createUser,
   disposeMockBuckets,
   openMockBuckets,
   roomObjectCalls,
   roomObjectReplies,
   userObjectReplies,
-} from "@esposter/db-mock";
+} from "@esposter/db-mock/workers";
 import {
   accountsInAuth,
   getScopeTopic,
@@ -41,9 +41,9 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 // A bucket binding is a proxy a spy cannot reach, so the blob sweep is failed at its own step instead
 const blobSweepFailure = vi.hoisted(() => ({ error: undefined as Error | undefined }));
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
-vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock/workers"));
+vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock/workers"));
 vi.mock(import("#src/services/account/deleteAccountBlobDirectories"), async (importOriginal) => {
   const { deleteAccountBlobDirectories } = await importOriginal();
   return {

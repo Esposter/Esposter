@@ -7,18 +7,18 @@ import { getBucket } from "#src/services/storage/getBucket";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { chargeStorageLedgerEntry, getContentBlobName, writeJsonBlob } from "@esposter/db";
+import { createMockDb } from "@esposter/db-mock";
 import {
   clearMockBuckets,
   clearRoomObjectCalls,
   clearUserObjectCalls,
-  createMockDb,
   createUser,
   disposeMockBuckets,
   openMockBuckets,
   roomObjectCalls,
   roomObjectReplies,
   userObjectReplies,
-} from "@esposter/db-mock";
+} from "@esposter/db-mock/workers";
 import {
   accountsInAuth,
   AdminActionType,
@@ -53,9 +53,9 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
-vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock/workers"));
+vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock/workers"));
 
 const readBlobNamesUnder = async (storageBucket: StorageBucket, prefix: string) =>
   (await readBlobNames(storageBucket)).filter((blobName) => blobName.startsWith(prefix));

@@ -2,7 +2,8 @@ import { getMockPublishedTopics, MockPublishedTopics } from "#src/services/realt
 import { getDb } from "#src/services/shared/getDb";
 import { runUnit } from "#src/services/shared/runUnit";
 import { getBucket } from "#src/services/storage/getBucket";
-import { createMockDb, createUser } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { createUser } from "@esposter/db-mock/workers";
 import { getTableTopic, StorageBucket, usersInAuth } from "@esposter/db-schema";
 import { env } from "cloudflare:workers";
 import { eq, getTableName } from "drizzle-orm";

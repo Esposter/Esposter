@@ -1,7 +1,8 @@
 import type { Database } from "@esposter/db-schema";
 
 import { removeAccountFromMemberRooms } from "#src/services/account/removeAccountFromMemberRooms";
-import { clearRoomObjectCalls, createMockDb, createUser, roomObjectCalls } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { clearRoomObjectCalls, createUser, roomObjectCalls } from "@esposter/db-mock/workers";
 import { roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -14,7 +15,7 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock/workers"));
 
 describe(removeAccountFromMemberRooms, () => {
   const name = "name";

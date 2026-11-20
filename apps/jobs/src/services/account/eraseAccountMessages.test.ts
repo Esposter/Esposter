@@ -6,11 +6,11 @@ import { createRoomMessage } from "#src/services/shared/createRoomMessage.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { getFileBlobNames } from "@esposter/db";
+import { createMockDb } from "@esposter/db-mock";
 import {
   clearMockBuckets,
   clearRoomObjectCalls,
   clearUserObjectCalls,
-  createMockDb,
   createUser,
   disposeMockBuckets,
   openMockBuckets,
@@ -18,7 +18,7 @@ import {
   roomObjectReplies,
   userObjectCalls,
   userObjectReplies,
-} from "@esposter/db-mock";
+} from "@esposter/db-mock/workers";
 import {
   roomsInMessage,
   START_PAGE_CURSOR,
@@ -43,9 +43,9 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
-vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock/workers"));
+vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock/workers"));
 
 describe(eraseAccountMessages, () => {
   const filename = "filename";

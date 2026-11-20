@@ -6,15 +6,15 @@ import { runUnit } from "#src/services/shared/runUnit";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { getMemberRoomIds } from "@esposter/db";
+import { createMockDb } from "@esposter/db-mock";
 import {
   clearMockBuckets,
   clearRoomObjectCalls,
-  createMockDb,
   createUser,
   disposeMockBuckets,
   openMockBuckets,
   roomObjectCalls,
-} from "@esposter/db-mock";
+} from "@esposter/db-mock/workers";
 import {
   AdminActionType,
   getScopeTopic,
@@ -30,8 +30,8 @@ import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock/workers"));
 
 describe(deleteAccountOwnedRooms, () => {
   let mockDb: Database;

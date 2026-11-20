@@ -2,7 +2,8 @@ import type { Database } from "@esposter/db-schema";
 
 import { purgeExpiredResources } from "#src/services/resource/purgeExpiredResources";
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
-import { createMockDb, createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock/workers";
 import {
   RECYCLE_BIN_RETENTION_MS,
   resourcesInResource,
@@ -21,7 +22,7 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
 vi.mock(import("#src/services/resource/purgeResourceAndBroadcast"), () => ({
   purgeResourceAndBroadcast: vi.fn<typeof purgeResourceAndBroadcast>(),
 }));

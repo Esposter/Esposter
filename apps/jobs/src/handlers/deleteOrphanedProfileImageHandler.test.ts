@@ -3,7 +3,8 @@ import type { Database, R2ObjectCreatedQueueMessage } from "@esposter/db-schema"
 import { deleteOrphanedProfileImageHandler } from "#src/handlers/deleteOrphanedProfileImageHandler";
 import { getBucket } from "#src/services/storage/getBucket";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
-import { clearMockBuckets, createMockDb, createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { clearMockBuckets, createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock/workers";
 import { getUserProfileImageBlobName, StorageBucket, usersInAuth } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -16,7 +17,7 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
   },
 }));
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
 
 const createObjectCreatedMessage = (key: string) =>
   ({

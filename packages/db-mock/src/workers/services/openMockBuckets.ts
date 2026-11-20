@@ -1,7 +1,7 @@
 import type { StorageBucket } from "@esposter/db-schema";
 
 import { createMockBuckets } from "#src/createMockBuckets";
-import { mockBucketDisposers, mockBuckets } from "#src/services/mockBuckets";
+import { mockBucketDisposers, mockBuckets } from "#src/workers/services/mockBuckets";
 
 export const openMockBuckets = async (storageBuckets: StorageBucket[]): Promise<void> => {
   const { buckets, dispose } = await createMockBuckets(storageBuckets);

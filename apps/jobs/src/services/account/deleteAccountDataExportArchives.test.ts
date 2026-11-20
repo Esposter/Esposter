@@ -4,7 +4,8 @@ import { deleteAccountDataExportArchives } from "#src/services/account/deleteAcc
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
-import { clearMockBuckets, createMockDb, createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { clearMockBuckets, createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock/workers";
 import { dataExportsInUser, DataExportStatus, StorageBucket, usersInAuth } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -16,7 +17,7 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
 
 describe(deleteAccountDataExportArchives, () => {
   beforeAll(async () => {

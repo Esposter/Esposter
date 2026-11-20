@@ -1,7 +1,8 @@
 import type { Database } from "@esposter/db-schema";
 
 import { getMessageNotificationAuthor } from "#src/services/notification/getMessageNotificationAuthor";
-import { createMockDb, createUser } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { createUser } from "@esposter/db-mock/workers";
 import { appUsersInMessage, roomsInMessage, usersInAuth, webhooksInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";

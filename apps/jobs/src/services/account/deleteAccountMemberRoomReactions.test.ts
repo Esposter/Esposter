@@ -2,7 +2,8 @@ import type { Database, RoomReaction } from "@esposter/db-schema";
 
 import { deleteAccountMemberRoomReactions } from "#src/services/account/deleteAccountMemberRoomReactions";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
-import { clearRoomObjectCalls, createMockDb, createUser, roomObjectCalls, roomObjectReplies } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { clearRoomObjectCalls, createUser, roomObjectCalls, roomObjectReplies } from "@esposter/db-mock/workers";
 import { roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -16,7 +17,7 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock/workers"));
 
 describe(deleteAccountMemberRoomReactions, () => {
   const emojiTag = "emojiTag";

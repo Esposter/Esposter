@@ -16,13 +16,18 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
+| Export         | Kind     | Purpose                                                                                                                                          |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `createMockDb` | function | Starts the file's Miniflare instance, applies the database's migrations and returns a `MockDatabase`. Calls in one file share the instance       |
+| `env`          | const    | The `cloudflare:workers` stand-in. `createMockDb` copies the instance's bindings into it, so code reached through a test reads the same bindings |
+
+The Workers test doubles are the `@esposter/db-mock/workers` entry, not the main one. Their types are the Workers globals, which only the packages that load the Workers types have, so the main entry stays free of them:
+
 | Export                           | Kind     | Purpose                                                                                                                                              |
 | -------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `createMockDb`                   | function | Starts the file's Miniflare instance, applies the database's migrations and returns a `MockDatabase`. Calls in one file share the instance           |
-| `env`                            | const    | The `cloudflare:workers` stand-in. `createMockDb` copies the instance's bindings into it, so code reached through a test reads the same bindings     |
 | `openMockBuckets`                | function | Opens the R2 buckets a suite touches in one Miniflare instance. `clearMockBuckets` empties them between tests and `disposeMockBuckets` disposes them |
 | `getBucket`                      | function | The R2 bucket a suite opened for a storage bucket, as the Worker binding would read it. Throws when the suite never opened it                        |
-| `getJobQueue`                    | function | A job queue double that records each message sent to it in `MockJobQueueDatabase`                                                                    |
+| `getJobQueue`                    | function | A job queue double that records each message sent to it in `MockJobQueueDatabase`, which the main entry exports                                      |
 | `getRoomObject`, `getUserObject` | function | A room or person object stub that records each RPC in `roomObjectCalls` or `userObjectCalls` and answers from the scripted replies                   |
 | `createUser`                     | function | A user row for a suite that seeds one                                                                                                                |
 | `readWranglerConfiguration`      | function | A Worker's `wrangler.jsonc` as an object, read through the trailing commas the formatter keeps                                                       |

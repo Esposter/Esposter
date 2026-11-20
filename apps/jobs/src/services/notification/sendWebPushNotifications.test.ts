@@ -4,7 +4,8 @@ import { DEAD_PUSH_SUBSCRIPTION_STATUS_CODES, MAX_CONCURRENT_PUSH_SENDS } from "
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
-import { createMockDb, createUser } from "@esposter/db-mock";
+import { createMockDb } from "@esposter/db-mock";
+import { createUser } from "@esposter/db-mock/workers";
 import { pushSubscriptionsInNotification, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";

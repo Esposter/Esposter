@@ -26,6 +26,8 @@ flowchart LR
 3. Copies the instance's bindings into `env`, the `cloudflare:workers` stand-in that app code reads.
 4. Returns `db` (the core database as `Database`), `getBucket`, `getQueue`, `reset` and `dispose`.
 
+The Workers test doubles (the object stubs, the bucket and queue doubles, `createUser` and the wrangler reader) are the `@esposter/db-mock/workers` entry, which only `apps/jobs` and `apps/realtime` import. Their types are the Workers globals, which `apps/web` does not load while it compiles this package's main entry through its source condition, so the main entry never reaches them.
+
 **Why Miniflare instead of an in-process database?** It is the runtime's own D1, R2 and Queues, so a test exercises the SQL and bindings production runs, and nothing outlives the test file that started it.
 
 **Environment cost.** Server tests — including almost every tRPC router test — run in the default `node` environment. They get **no DOM** — happy-dom is built by the nuxt environment only, so there is no manual happy-dom registration and node-env tests run without a `window`. A server test pays only the Miniflare boot + the auth `vi.mock` (plus the cheap global `fake-indexeddb/auto` polyfill). The one exception is a router that calls a Nuxt composable neither `context.test.ts` nor `shared/test/setup.ts` mocks, and such a router declares `// @vitest-environment nuxt` and pays the Nuxt environment build.

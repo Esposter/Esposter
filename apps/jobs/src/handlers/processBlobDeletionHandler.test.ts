@@ -5,14 +5,14 @@ import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHan
 import { getBucket } from "#src/services/storage/getBucket";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
+import { createMockDb } from "@esposter/db-mock";
 import {
   clearMockBuckets,
-  createMockDb,
   createUser,
   disposeMockBuckets,
   openMockBuckets,
   userObjectCalls,
-} from "@esposter/db-mock";
+} from "@esposter/db-mock/workers";
 import { MAX_CONCURRENT_BLOB_DELETIONS, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -29,12 +29,12 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
 
 // Handed out as a spy so one call can be given a bucket whose delete fails: Miniflare's bucket takes no spy on its methods
 vi.mock(import("#src/services/storage/getBucket"), async () => {
-  const actual = await import("@esposter/db-mock");
+  const actual = await import("@esposter/db-mock/workers");
   return { ...actual, getBucket: vi.fn<typeof actual.getBucket>(actual.getBucket) };
 });
 
 // The owner's meter lives in the app process, so the figure reaches it through the owner's User object
-vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock/workers"));
 
 const readContainer = () => readBlobNames(StorageBucket.MessageAssets);
 

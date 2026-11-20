@@ -1,4 +1,4 @@
-import { readWranglerConfiguration } from "@esposter/db-mock";
+import { readWranglerConfiguration } from "@esposter/db-mock/workers";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,

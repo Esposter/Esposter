@@ -1,6 +1,6 @@
+import type { ObjectCall } from "#src/workers/models/ObjectCall";
+import type { ObjectReply } from "#src/workers/models/ObjectReply";
 import type { Rpc } from "@cloudflare/workers-types";
-import type { ObjectCall } from "#src/models/ObjectCall";
-import type { ObjectReply } from "#src/models/ObjectReply";
 
 // An object as the Worker that calls it reaches it. Each RPC is recorded, and resolves to the answer scripted for its method, if any.
 // The stub exists only inside the Worker that owns the object, so this stands in for it

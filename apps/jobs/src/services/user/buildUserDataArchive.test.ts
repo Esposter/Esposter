@@ -6,16 +6,16 @@ import { createRoomMessage } from "#src/services/shared/createRoomMessage.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import { getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
+import { createMockDb } from "@esposter/db-mock";
 import {
   clearMockBuckets,
   clearRoomObjectCalls,
-  createMockDb,
   createUser,
   disposeMockBuckets,
   openMockBuckets,
   roomObjectCalls,
   roomObjectReplies,
-} from "@esposter/db-mock";
+} from "@esposter/db-mock/workers";
 import {
   accountsInAuth,
   achievementsInAchievement,
@@ -73,8 +73,8 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock/workers"));
 
 const readArchiveEntries = async (blobName: string) => {
   const archiveBucket = getBucket(StorageBucket.UserAssets);

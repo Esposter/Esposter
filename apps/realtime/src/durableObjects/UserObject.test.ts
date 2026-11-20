@@ -20,7 +20,8 @@ import { observeWakes, verifyWakes } from "#src/services/durableObject/wakeCheck
 import { createOnlineStatus } from "#src/services/room/createOnlineStatus.test";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
 import { toPage } from "@esposter/db";
-import { createMockDb, createMockObjectState, createUser, MockJobQueueDatabase } from "@esposter/db-mock";
+import { createMockDb, createMockObjectState, MockJobQueueDatabase } from "@esposter/db-mock";
+import { createUser } from "@esposter/db-mock/workers";
 import {
   AppNotificationType,
   createPageInputSchema,
@@ -66,7 +67,7 @@ vi.mock(import("#src/services/room/getRoomObject"), () => ({
   getRoomObject: (roomId: string) => getRoomStub(roomId) as unknown as DurableObjectStub<RoomObject>,
 }));
 
-vi.mock(import("#src/services/queue/getJobQueue"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("@esposter/db-mock/workers"));
 
 vi.mock(import("#src/services/todoReminder/sendTodoReminder"), () => ({
   sendTodoReminder: vi.fn<(reminder: TodoReminder) => Promise<void>>(() => Promise.resolve()),
