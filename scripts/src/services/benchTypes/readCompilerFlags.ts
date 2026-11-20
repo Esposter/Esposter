@@ -1,6 +1,6 @@
 import type { TypeBenchShowConfig } from "#src/models/benchTypes/TypeBenchShowConfig";
 
-import { EMPTY_TYPE_ROOTS_DIRECTORY, TSC_PATH } from "#src/services/benchTypes/constants";
+import { EMPTY_TYPE_ROOTS_DIRECTORY, TSRS_PATH } from "#src/services/benchTypes/constants";
 import { toCompilerFlags } from "#src/services/benchTypes/toCompilerFlags";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { spawnSync } from "@esposter/shared-node/child-process";
@@ -8,8 +8,7 @@ import { mkdirSync } from "node:fs";
 
 // The package's resolved options, read from `--showConfig` so an extends chain is followed rather than re-read here
 export const readCompilerFlags = (packageTsconfigPath: string): string[] => {
-  // @TODO: https://github.com/oxc-project/tsrs/issues/938 — read the options through tsrs and drop the typescript bridge's tsc once tsrs supports --showConfig
-  const { stdout } = spawnSync(process.execPath, [TSC_PATH, "-p", packageTsconfigPath, "--showConfig"], {
+  const { stdout } = spawnSync(process.execPath, [TSRS_PATH, "-p", packageTsconfigPath, "--showConfig"], {
     encoding: "utf8",
   });
   const { compilerOptions } = parseMachineJson<TypeBenchShowConfig>(stdout);

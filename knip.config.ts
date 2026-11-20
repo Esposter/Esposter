@@ -16,15 +16,11 @@ const knipConfiguration: KnipConfig = {
   workspaces: {
     ".": {
       // The composite action runs `wrangler` in a Worker app's directory, whose devDependency provides it
-      ignoreBinaries: ["wrangler"],
-      // The `lint:workflows` task in `vite/checkTasks.ts` runs this package's binary, which no script names
+      // The `lint` and `typecheck` tasks are `vp run` tasks with no root script of that name, so knip reads a
+      // Recursive `pnpm -r --parallel lint`'s bare script name as a binary
+      ignoreBinaries: ["wrangler", "lint", "typecheck"],
       // The OpenSpec skill invokes this CLI with `pnpm exec`, which Knip does not trace from skill prose
-      ignoreDependencies: [
-        "@esposter/shared-node",
-        "@fission-ai/openspec",
-        "@kjanat/actionlint",
-        "@lerna-lite/publish",
-      ],
+      ignoreDependencies: ["@esposter/shared-node", "@fission-ai/openspec", "@lerna-lite/publish"],
     },
     "apps/infra": { entry: ["src/**/*.ts"] },
     "apps/jobs": { entry: ["src/**/*.ts"] },

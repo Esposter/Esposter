@@ -56,7 +56,7 @@
   "scripts": {
     "build": "pnpm registry:gen && tsdown",
     "db:gen": "pnpm registry:gen && drizzle-kit generate && drizzle-kit generate --config drizzle.room.config.ts && drizzle-kit generate --config drizzle.call.config.ts && drizzle-kit generate --config drizzle.user.config.ts && node scripts/rewriteObjectMigrations.ts && pnpm -w exec vp fmt packages/db-schema/src/objects/call/migrations/migrations.js packages/db-schema/src/objects/room/migrations/migrations.js packages/db-schema/src/objects/user/migrations/migrations.js",
-    "db:migrate": "node --env-file-if-exists=../../apps/web/.env node_modules/drizzle-kit/bin.cjs migrate",
+    "db:migrate": "node --env-file-if-exists=../../apps/web/.env node_modules/drizzle-kit/bin.js migrate",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
     "db:up": "drizzle-kit up",
@@ -79,8 +79,5 @@
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
     "zod": "catalog:"
-  },
-  "scriptsComments": {
-    "db:migrate": "@TODO: https://github.com/drizzle-team/drizzle-orm/pull/6543 — point at node_modules/drizzle-kit/bin.js once it is released"
   }
 }

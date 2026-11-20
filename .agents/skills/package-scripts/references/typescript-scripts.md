@@ -23,6 +23,5 @@ relative paths with their extensions, and the persona plugin's copy of `genshin-
 only its alias re-aimed.
 
 The `db:*` scripts call the `drizzle-kit` bin, which loads `drizzle.config.ts` and the schema itself — there is no
-loader to choose. `db:migrate` names `node_modules/drizzle-kit/bin.cjs`, the only bin the installed drizzle-kit ships. The path
-moves to `bin.js` in the release that ships drizzle-orm PR #6543, which builds drizzle-kit as ESM only (the manifest's
-`"scriptsComments"` TODO carries the link).
+loader to choose. `db:migrate` names `node_modules/drizzle-kit/bin.js`, the ESM bin drizzle-kit ships from 1.0.0-rc.6: drizzle-orm
+PR #6543 built drizzle-kit as ESM only, so the `bin.cjs` of earlier releases is gone.
