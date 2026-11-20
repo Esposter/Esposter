@@ -269,9 +269,6 @@ describe("inviteRouter", () => {
     expect(secondInvite).toStrictEqual({ ...myInvite, user: secondInvite.user });
   });
 
-  // The insert that finds the collision aborts the transaction it runs in, so a retry that is not its own
-  // Savepoint fails as "transaction aborted" and the create reports an id-allocation failure for a room whose
-  // Next id was free
   test("creating again answers the replaced invite as a tombstone at a higher version", async () => {
     expect.hasAssertions();
 
@@ -291,6 +288,9 @@ describe("inviteRouter", () => {
     expect(replacedInvite.version).toBe(firstInvite.version + 1);
   });
 
+  // The insert that finds the collision aborts the transaction it runs in, so a retry that is not its own
+  // Savepoint fails as "transaction aborted" and the create reports an id-allocation failure for a room whose
+  // Next id was free
   test("re-rolls an invite id that collides with another member's link", async () => {
     expect.hasAssertions();
 
