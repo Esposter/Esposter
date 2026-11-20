@@ -9,9 +9,9 @@ import { blocksInSocial } from "#src/schema/social/blocksInSocial";
 import { friendRequestsInSocial } from "#src/schema/social/friendRequestsInSocial";
 import { friendsInSocial } from "#src/schema/social/friendsInSocial";
 
-// How long a soft delete's tombstone is kept before the nightly purge removes it. Past it, a client that still holds the
-// Tombstone keeps it, and a key the purge removed starts again at version zero if it is revived (the overlay design's
-// Tombstones decision names both)
+// How long a soft delete's tombstone is kept. The nightly purge removes it past this age, and a client forgets its own copy
+// At the same age, so a key the purge removed starts again at version zero on the client too (the overlay design's
+// Tombstones decision)
 export const TOMBSTONE_RETENTION_MS = Temporal.Duration.from({ days: 7 }).total("milliseconds");
 
 // The tables whose soft deletes the overlay reads back as tombstones, so the purge removes their tombstones. Every D1 table
