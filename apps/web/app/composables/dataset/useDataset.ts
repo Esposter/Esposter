@@ -6,7 +6,7 @@ import { getDatasetErrorMessage } from "#src/services/dataset/getDatasetErrorMes
 import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 
 // The outcome of one read: the dataset it found, or the error it failed with
-type DatasetRead = { dataset: Dataset | undefined } | { error: Error };
+type DatasetRead = { dataset?: Dataset } | { error: Error };
 
 // A read of a reference is local work with no version, so it runs in a run scope. A reference read after it aborts the
 // Read in flight, and only the newest read's answer is shown, so one instance shows one dataset
@@ -27,9 +27,9 @@ export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefi
             // Cannot land on an empty selection
             getResultAsync(async (): Promise<DatasetRead> => {
               const referenceValue = toValue(reference);
-              return {
-                dataset: referenceValue ? await $trpc.dataset.readDataset.query(referenceValue, { signal }) : undefined,
-              };
+              return referenceValue
+                ? { dataset: await $trpc.dataset.readDataset.query(referenceValue, { signal }) }
+                : {};
             }).match<DatasetRead>(
               (read) => read,
               (readError) => ({ error: readError }),
