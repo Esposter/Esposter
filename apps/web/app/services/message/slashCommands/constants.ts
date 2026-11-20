@@ -15,3 +15,6 @@ export const MENU_SLASH_COMMANDS: SlashCommandMenuCommand[] = [
   { title: "Schedule Message", type: SlashCommandType.Schedule },
   { title: "Set Reminder", type: SlashCommandType.Remind },
 ];
+// The faces the shrug and the table flip post, which their descriptions also name, so each is written once
+export const SHRUG_FACE = String.raw`¯\_(ツ)_/¯`;
+export const TABLE_FLIP_FACE = "(╯°□°）╯︵ ┻━┻";

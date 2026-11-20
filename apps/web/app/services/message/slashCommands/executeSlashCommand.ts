@@ -1,6 +1,7 @@
 import type { SlashCommandParameters } from "#src/models/message/slashCommands/SlashCommandParameters";
 
 import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
+import { SHRUG_FACE, TABLE_FLIP_FACE } from "#src/services/message/slashCommands/constants";
 import { useDataStore } from "#src/store/message/data";
 import { usePollDialogStore } from "#src/store/message/input/pollDialog";
 import { useReplyStore } from "#src/store/message/input/reply";
@@ -8,6 +9,7 @@ import { useScheduledMessageJobDialogStore } from "#src/store/message/input/sche
 import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
 import { useRoomStore } from "#src/store/message/room/index";
 import { createRandomBoolean } from "#src/util/math/random/createRandomBoolean";
+import { createRandomInteger } from "#src/util/math/random/createRandomInteger";
 import { MessageType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 import { marked } from "marked";
@@ -51,13 +53,13 @@ export const executeSlashCommand = async (
       open(ScheduledMessageJobType.Reminder);
       break;
     case SlashCommandType.Roll:
-      message = `🎲 Rolled a **${Math.floor(Math.random() * 100) + 1}**`;
+      message = `🎲 Rolled a **${createRandomInteger(101, 1)}**`;
       break;
     case SlashCommandType.Schedule:
       open(ScheduledMessageJobType.ScheduledMessage);
       break;
     case SlashCommandType.Shrug:
-      message = `${command.parameterValues.text}¯\\_(ツ)_/¯`;
+      message = `${command.parameterValues.text}${SHRUG_FACE}`;
       break;
     case SlashCommandType.Spoiler:
       // Every ASCII punctuation mark is escaped, so the text reaches the reader as typed and the one parse after the
@@ -65,7 +67,7 @@ export const executeSlashCommand = async (
       message = `<span data-spoiler>${command.parameterValues.text.replaceAll(/[!-/:-@[-`{-~]/gu, String.raw`\$&`)}</span>`;
       break;
     case SlashCommandType.TableFlip:
-      message = `(╯°□°）╯︵ ┻━┻`;
+      message = TABLE_FLIP_FACE;
       break;
     case SlashCommandType.Topic: {
       // An omitted text clears the topic, so it is sent as the column's empty value: a missing topic leaves it unchanged

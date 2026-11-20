@@ -2,6 +2,7 @@
 import type { SlashCommand } from "#src/models/message/slashCommands/SlashCommand";
 
 import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
+import { SHRUG_FACE, TABLE_FLIP_FACE } from "#src/services/message/slashCommands/constants";
 
 export const SlashCommandDefinitionMap = {
   [SlashCommandType.Flip]: {
@@ -47,7 +48,7 @@ export const SlashCommandDefinitionMap = {
     type: SlashCommandType.Schedule,
   },
   [SlashCommandType.Shrug]: {
-    description: String.raw`Appends ¯\_(ツ)_/¯ to your message`,
+    description: `Appends ${SHRUG_FACE} to your message`,
     icon: "i-mdi:emoticon-confused-outline",
     parameters: [{ description: "Optional text to prepend before the shrug", isRequired: false, name: "text" }],
     title: "Shrug",
@@ -61,7 +62,7 @@ export const SlashCommandDefinitionMap = {
     type: SlashCommandType.Spoiler,
   },
   [SlashCommandType.TableFlip]: {
-    description: "Appends (╯°□°）╯︵ ┻━┻ to your message",
+    description: `Appends ${TABLE_FLIP_FACE} to your message`,
     icon: "i-mdi:emoticon-angry-outline",
     parameters: [],
     title: "TableFlip",
@@ -81,6 +82,6 @@ export const SlashCommandDefinitionMap = {
     title: "Unflip",
     type: SlashCommandType.Unflip,
   },
-} as const satisfies Record<SlashCommandType, SlashCommand>;
+} as const satisfies { [P in SlashCommandType]: SlashCommand & { type: P } };
 
 export const SlashCommandDefinitions = Object.values(SlashCommandDefinitionMap);
