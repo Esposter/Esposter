@@ -266,6 +266,9 @@ export const useDataStore = defineStore("message/data", () => {
     // Everything that composes outside a composer — a slash command, a poll, a draft sent from the drafts page —
     // Is the room's own send, and its reset finds nothing of the thread pane's to clear
     target: ComposerTarget = { roomId: input.roomId, threadRootId: 0 },
+    // A send that takes text no editor holds (a draft sent from the drafts page) clears that text here, behind the
+    // Bubble for the same reason the reset does
+    onOptimisticCreate?: () => Promise<void> | void,
   ) => {
     // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor and the reply
     // Target, so a send that fails before the bubble exists would take the text the user just typed with it.
@@ -276,7 +279,10 @@ export const useDataStore = defineStore("message/data", () => {
     // Store no longer holds
     await createMessage(
       input,
-      (sentFileIds) => MessageHookMap[MessageHook.ResetSend].run(target, sentFileIds, editor),
+      async (sentFileIds) => {
+        await MessageHookMap[MessageHook.ResetSend].run(target, sentFileIds, editor);
+        await onOptimisticCreate?.();
+      },
       target,
     );
   };

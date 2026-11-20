@@ -11,11 +11,28 @@ interface Props {
   draftItem: DraftItem;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 const dataStore = useDataStore();
 const { sendMessage } = dataStore;
 const inputStore = useInputStore();
 const { clearComposer } = inputStore;
+// The draft is the composer's copy of its text until the send has its bubble, which then holds the text instead
+const sendDraft = () => {
+  const { room, threadRootId } = props.draftItem;
+  const target = { roomId: room.id, threadRootId };
+  sendMessage(
+    {
+      files: [],
+      message: props.draftItem.content,
+      replyToId: threadRootId || null,
+      roomId: room.id,
+      type: MessageType.Message,
+    },
+    undefined,
+    target,
+    () => clearComposer(target),
+  );
+};
 </script>
 
 <template>
@@ -23,17 +40,6 @@ const { clearComposer } = inputStore;
     label="Send message"
     :meaning="UiIconMeaning.Send"
     :variant="UiButtonVariant.Quiet"
-    @click="
-      () => {
-        sendMessage({
-          files: [],
-          message: draftItem.content,
-          replyToId: draftItem.threadRootId || null,
-          roomId: draftItem.room.id,
-          type: MessageType.Message,
-        });
-        clearComposer({ roomId: draftItem.room.id, threadRootId: draftItem.threadRootId });
-      }
-    "
+    @click="sendDraft()"
   />
 </template>
