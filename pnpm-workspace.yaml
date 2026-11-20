@@ -164,6 +164,7 @@ catalog:
   msw: ^3.0.7
   natural-orderby: ^5.0.0
   neverthrow: ^8.2.0
+  # @TODO: https://github.com/nitrojs/nitro/releases/tag/v3.0.0 — back to a range once Nitro 3 reaches `latest`
   nitro: npm:nitro-nightly@latest
   node-html-parser: ^9.0.7
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to a range once Nuxt 5 reaches `latest`
@@ -234,6 +235,7 @@ overrides:
   # Arborist, lerna-lite's publish, sigstore's tuf and js-beautify's editorconfig still declare minimatch 10, below the
   # patched 11.0.1 of GHSA-g3hv-75wg-m249, which glob and map-workspaces already take: drop once those declare 11
   "minimatch@<11.0.1": ^11.0.9
+  # @TODO: https://github.com/nitrojs/nitro/releases/tag/v3.0.0 — back to a range once Nitro 3 reaches `latest`
   nitro: npm:nitro-nightly@latest
   # Nuxt's and its tools' optional `oxc-parser` peers resolve per subtree, so the stable and nightly stacks each took their
   # own 0.140, 0.153, 0.154 or 0.155 copy, and `nuxt-nightly` split into peer variants that each declare a separate `NuxtApp`.
@@ -294,6 +296,7 @@ packageExtensions:
         optional: true
       "vue-router":
         optional: true
+  # @TODO: https://github.com/nitrojs/nitro/releases/tag/v3.0.0 — drop with the `nitro` alias, once Nitro 3 reaches `latest`
   # Nitro's nightly is installed under the `nitro` alias, and its types import themselves by that name (`nitro/types`),
   # Which its own folder in the store, named `nitro-nightly`, cannot resolve until the alias is linked beside it
   nitro-nightly:
