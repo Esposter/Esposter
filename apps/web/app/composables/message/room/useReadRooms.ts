@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { requirePartitionKey } from "#src/services/message/requirePartitionKey";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 
 export const useReadRooms = async () => {
   const { $trpc } = useNuxtApp();
@@ -11,6 +12,8 @@ export const useReadRooms = async () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const roleStore = useRoleStore();
   const { readMyPermissions, readRoles } = roleStore;
+  const userToRoomStore = useUserToRoomStore();
+  const { markMyUserToRoomsLoaded } = userToRoomStore;
   const readMyUsersToRooms = useReadMyUsersToRooms();
   const { data: session } = await useAuthSession();
   // A room row is not a room: the sidebar renders a displayName, the reader's own standing and the room's roles
@@ -28,6 +31,7 @@ export const useReadRooms = async () => {
     const page = await readPage();
     arriveRooms(page.items.map(({ displayName: _displayName, ...room }) => room));
     await readRoomMetadata(page.items.map(({ id }) => id));
+    markMyUserToRoomsLoaded();
     return { ...page, items: page.items.map(({ id }) => ({ id })) };
   };
   const readRooms = () => {

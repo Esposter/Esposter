@@ -1,4 +1,5 @@
 import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
+import type { CursorPaginationSlice } from "#src/models/pagination/cursor/CursorPaginationSlice";
 import type { UserToRoomInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
@@ -38,6 +39,27 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   const arriveUserToRooms = (rows: UserToRoomInMessage[]) => {
     for (const row of rows) arrive(userToRoomTable, row);
   };
+  // The memberships are cached beside the rooms, and they are loaded by the room list's pages. Their readiness is their
+  // Own: a hydration of the rooms sets the room list's, and the memberships' hydration must not bail on that flag
+  const isLoaded = ref(false);
+  const myUserToRooms = computed(() => [...myMembershipMap.value.values()]);
+  // The memberships are overlay rows, so the slice holds the viewer's live ones, and a restore arrives each at its version.
+  // A reset only marks them unloaded, since the rows are the overlay's
+  const getSlice = (): CursorPaginationSlice<UserToRoomInMessage> => ({
+    initializeCursorPaginationData: ({ items }) => {
+      arriveUserToRooms(items);
+      isLoaded.value = true;
+    },
+    isLoaded,
+    items: myUserToRooms,
+    resetCursorPaginationData: () => {
+      isLoaded.value = false;
+    },
+  });
+  // A room list page has answered, so its memberships have landed, including when the page held no room to bring any
+  const markMyUserToRoomsLoaded = () => {
+    isLoaded.value = true;
+  };
   // The viewer's row takes the fields the write sets at once. The server's row and its header confirm it, and a
   // Rejected write leaves the row as it was
   const updateMyUserToRoom = (input: Except<UpdateUserToRoomInput, "targetUserId">) => {
@@ -54,5 +76,5 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
     );
   };
 
-  return { arriveUserToRooms, getMyUserToRoom, myUserToRoom, updateMyUserToRoom };
+  return { arriveUserToRooms, getMyUserToRoom, getSlice, markMyUserToRoomsLoaded, myUserToRoom, updateMyUserToRoom };
 });

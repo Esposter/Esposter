@@ -7,6 +7,7 @@ import { RESET_DATABASE_TIMEOUT_MS } from "#src/services/cache/constants";
 import { MemberIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
+import { UserToRoomIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/UserToRoomIndexedDbStoreConfiguration";
 import {
   getResultAsync,
   getSynchronizedFunction,
@@ -19,7 +20,7 @@ import {
 } from "@esposter/shared";
 
 export const DATABASE_NAME = SITE_NAME.toLowerCase();
-export const DATABASE_VERSION = 5;
+export const DATABASE_VERSION = 6;
 
 let databasePromise: Promise<Database<IndexedDbDatabaseSchema>> | undefined;
 
@@ -40,16 +41,17 @@ export const openIndexedDb = () => {
     // A delete or upgrade from another tab waits until this connection closes, so the connection gives way when asked.
     // The next read or write opens a fresh one, queued behind that request
     blocking: getSynchronizedFunction(releaseDatabase),
-    upgrade: (database, oldVersion) => {
+    upgrade: (database) => {
       const configurations = {
         [IndexedDbStoreName.Members]: MemberIndexedDbStoreConfiguration,
         [IndexedDbStoreName.Messages]: MessageIndexedDbStoreConfiguration,
         [IndexedDbStoreName.Rooms]: RoomIndexedDbStoreConfiguration,
+        [IndexedDbStoreName.UserToRooms]: UserToRoomIndexedDbStoreConfiguration,
       } satisfies Record<IndexedDbStoreName, IndexedDbStoreConfiguration<IndexedDbStoreName>>;
       const storeConfigurations = Object.values(configurations);
-      // A store an earlier version created was keyed by a different key path.
-      // A cache is refilled from the server, so it is cleared rather than migrated
-      if (oldVersion > 0) for (const { storeName } of storeConfigurations) database.deleteObjectStore(storeName);
+      // A store an earlier version created was keyed by a different key path, and a store this version adds does not exist
+      // Yet. A cache is refilled from the server, so every store that exists is cleared rather than migrated
+      for (const storeName of database.objectStoreNames) database.deleteObjectStore(storeName);
       for (const { indexName, keyPath, storeName } of storeConfigurations) {
         const objectStore = database.createObjectStore(storeName, { keyPath });
         objectStore.createIndex(indexName, indexName);

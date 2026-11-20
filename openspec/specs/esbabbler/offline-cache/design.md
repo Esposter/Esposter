@@ -18,7 +18,7 @@ flowchart LR
 
 One generic composable, `usePaginationCache`, owns the whole lifecycle: it persists on change, clears on empty, hydrates on mount, on a partition switch and on going offline. It reads and writes the store through the `CursorPaginationSlice` that the store's `getSlice` returns.
 
-Feature wiring is a thin wrapper supplying partition key, store refs, and hooks: `useMessageCache` (room partition, filters loading messages), `useMemberCache` (room partition, hydrates the user store and the room's member map, never the totals), `useRoomCache` (user partition).
+Feature wiring is a thin wrapper supplying partition key, store refs, and hooks: `useMessageCache` (room partition, filters loading messages), `useMemberCache` (room partition, hydrates the user store and the room's member map, never the totals), `useRoomCache` (user partition, the rooms and the viewer's memberships beside them).
 
 ### partitionKey is always required
 
@@ -27,8 +27,9 @@ Every object store is partitioned; `readIndexedDb` / `writeIndexedDb` always tak
 - **Messages** → `roomId` (the row already carries `roomId`; key path `[roomId, id]`, limit 50)
 - **Members** → `roomId` (injected as `roomId`; key path `[roomId, id]`)
 - **Rooms** → the viewing user, injected as `viewerId` (key path `[viewerId, id]`). A room's own `userId` is its creator, so it is not the partition
+- **Memberships** → the viewing user, which a membership row carries as its own `userId` (key path `[userId, roomId]`, the table's key)
 
-Each store's index is named for the field it partitions on, and `writeIndexedDb` stamps that field onto every record it writes. A change to a store's keys bumps `DATABASE_VERSION`, and an upgrade clears the stores rather than migrating them: the cache is refilled from the server.
+Each store's index is named for the field it partitions on, and `writeIndexedDb` stamps that field onto every record it writes. A change to a store's keys bumps `DATABASE_VERSION`, and an upgrade clears every store the database holds rather than migrating them, since a store the new version adds does not exist yet: the cache is refilled from the server.
 
 ### Sign-out clears the whole database
 
@@ -63,6 +64,8 @@ Both halves of the cache read that one flag, and neither keeps a copy:
 - **Persistence** happens only for a loaded partition, and readiness is watched beside the rows rather than only reacting to them: a first load that lands empty changes nothing in the list, so without that the previous session's rows would stay cached — and reachable on the next offline open — for a partition the server reports as empty.
 
 That flag only means anything while **the store's list cannot outlive its partition**, so a store whose partition key can change while it is alive keys its list per partition (below). Guards added inside the cache to compensate for a list that is shared across partitions are guesses over ambiguous state; fix the store's scoping instead.
+
+The memberships are a second list over the same partition, so they keep a flag of their own. The room list's flag is set by its own hydration, and a hydration of the rooms must not bail the memberships' or the reverse, since the two restore in the same tick. The `userToRoom` store holds the memberships' flag and sets it when the room list's first page has answered, because that page's reads are what load the memberships, including on a page that held no rooms. Its hydration sets it too.
 
 ### The store list must be partition-scoped too
 
