@@ -33,14 +33,16 @@ describe(useOverlayStore, () => {
   const readFirstRow = (view: KeyedView) => {
     view.get(table, ["a"]);
   };
-  // The clock is two retentions past the epoch, so a tombstone deleted at the epoch is past the retention, and one
-  // Deleted a retention and a half past the epoch is still inside it
+  // The clock starts at the epoch, so a tombstone deleted at the epoch is inside the retention. The retention tests move
+  // The clock two retentions on, where a tombstone deleted at the epoch is past it, and one deleted a retention and a
+  // Half past the epoch is still inside it
   const clockNow = Temporal.Instant.fromEpochMilliseconds(TOMBSTONE_RETENTION_MS * 2);
   const expiredDeletedAt = new Date(0);
   const freshDeletedAt = new Date(TOMBSTONE_RETENTION_MS * 1.5);
 
   beforeEach(() => {
     setActivePinia(createPinia());
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
 
   afterEach(() => {
@@ -100,7 +102,7 @@ describe(useOverlayStore, () => {
   test("a revived row at version zero arrives as new once the tombstone held for its key is past the retention", () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ now: clockNow, toFake: ["Date"] });
+    vi.setSystemTime(clockNow);
     const overlayStore = useOverlayStore();
     overlayStore.arrive(table, { deletedAt: expiredDeletedAt, id: "a", name, version: 5 });
     overlayStore.arrive(table, { deletedAt: null, id: "a", name: serverName, version: 0 });
@@ -111,7 +113,7 @@ describe(useOverlayStore, () => {
   test("a revived row at version zero is still rejected while the tombstone held for its key is inside the retention", () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ now: clockNow, toFake: ["Date"] });
+    vi.setSystemTime(clockNow);
     const overlayStore = useOverlayStore();
     overlayStore.arrive(table, { deletedAt: freshDeletedAt, id: "a", name, version: 5 });
     overlayStore.arrive(table, { deletedAt: null, id: "a", name: serverName, version: 0 });
@@ -122,7 +124,7 @@ describe(useOverlayStore, () => {
   test("a revived row's write stays pending until the row arrives, though its answer names version zero", async () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ now: clockNow, toFake: ["Date"] });
+    vi.setSystemTime(clockNow);
     const overlayStore = useOverlayStore();
     overlayStore.arrive(table, { deletedAt: expiredDeletedAt, id: "a", name, version: 5 });
     overlayStore.writeOptimistic(

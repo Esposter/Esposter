@@ -12,7 +12,7 @@ import { useFriendStore } from "#src/store/message/user/friend";
 import { getFriendshipId } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useFriendStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -34,8 +34,14 @@ describe(useFriendStore, () => {
     version: 1,
   });
 
+  // The clock starts at the epoch, so a removal dated the epoch is still inside the tombstone retention
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   // Each friend is its own target, so two removals overlap on one list, and the failing one is the friend that stays

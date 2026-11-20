@@ -10,7 +10,7 @@ import { ResourceType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useBookmarkStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -18,6 +18,15 @@ describe(useBookmarkStore, () => {
   const path = "/";
   const title = "title";
   const epoch = new Date(0);
+
+  // The clock starts at the epoch, so a removal dated the epoch is still inside the tombstone retention
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
   setupSession(userId);
   // A bookmark row as the server answers it, at the version its write left it
   const createBookmarkRow = (version: number, deletedAt: Date | null = null): BookmarkInApp => ({

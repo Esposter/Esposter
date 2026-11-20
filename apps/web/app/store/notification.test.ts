@@ -8,7 +8,7 @@ import { useNotificationStore } from "#src/store/notification";
 import { AppNotificationType, NotificationSeverity } from "@esposter/db-schema";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { assert, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useNotificationStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -37,8 +37,14 @@ describe(useNotificationStore, () => {
   let unreadCount: ComputedRef<number>;
 
   beforeEach(() => {
+    // The clock starts at the epoch, so a dismissal dated the epoch or a day after it is still inside the tombstone retention
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     notificationStore = useNotificationStore();
     ({ notifications, snackbarNotification, unreadCount } = storeToRefs(notificationStore));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   test("creates notifications newest first with a queued snackbar", () => {
