@@ -1,4 +1,4 @@
-import type { FriendInSocial, PublicUser } from "@esposter/db-schema";
+import type { FriendInSocial, FriendInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
 import { containsLike } from "#server/services/db/containsLike";
 import { assertIsNotSelf } from "#server/services/friend/assertIsNotSelf";
@@ -10,12 +10,13 @@ import { searchUsersInputSchema } from "#shared/models/db/friend/SearchUsersInpu
 import {
   blocksInSocial,
   DatabaseEntityType,
+  FriendInSocialRelations,
   friendsInSocial,
   getPublicUserColumns,
   usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, MAX_READ_LIMIT, Operation } from "@esposter/shared";
-import { and, eq, isNull, ne, or } from "drizzle-orm";
+import { and, eq, isNull, ne } from "drizzle-orm";
 
 export const friendRouter = router({
   deleteFriend: standardAuthedProcedure
@@ -40,20 +41,14 @@ export const friendRouter = router({
         "NOT_FOUND",
       );
     }),
-  // A friend's name and image are on their user row, which the join reads table-wide, so a rename reaches the list
-  readFriends: standardAuthedProcedure.query<PublicUser[]>(({ ctx }) => {
+  // A friend's name and image are on their user row, which the relation reads on each call, so a rename reaches the
+  // List. A removed friendship stays in this read as a tombstone, so the client applies its removal
+  readFriends: standardAuthedProcedure.query<FriendInSocialWithRelations[]>(({ ctx }) => {
     const userId = ctx.user.id;
-    return ctx.db
-      .select(getPublicUserColumns(usersInAuth))
-      .from(friendsInSocial)
-      .innerJoin(
-        usersInAuth,
-        or(
-          and(eq(friendsInSocial.senderId, userId), eq(usersInAuth.id, friendsInSocial.receiverId)),
-          and(eq(friendsInSocial.receiverId, userId), eq(usersInAuth.id, friendsInSocial.senderId)),
-        ),
-      )
-      .where(isNull(friendsInSocial.deletedAt));
+    return ctx.db.query.friendsInSocial.findMany({
+      where: { OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }] },
+      with: FriendInSocialRelations,
+    });
   }),
   searchUsers: standardAuthedProcedure
     .meta({

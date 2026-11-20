@@ -388,7 +388,7 @@ describe("userRouter", () => {
     await caller.updateUser({ name: savedName });
 
     const blockedUsers = await blockerCaller.readBlockedUsers();
-    expect(blockedUsers.map((blockedUser) => blockedUser.name)).toStrictEqual([savedName]);
+    expect(blockedUsers.map(({ blocked }) => blocked.name)).toStrictEqual([savedName]);
   });
 
   test("updates settings and reads them back", async () => {

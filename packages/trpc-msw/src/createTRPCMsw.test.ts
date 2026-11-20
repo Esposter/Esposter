@@ -16,7 +16,7 @@ import { z } from "zod";
 describe(createTRPCMsw, () => {
   const endpoint = "http://localhost/trpc";
   const webSocketUrl = "ws://localhost/trpc";
-  const t = initTRPC.context<{ authorization: string }>().create({
+  const t = initTRPC.context<{ authorization: string; responseHeaders: Headers }>().create({
     // Visible in every rejection below, which is what proves the real formatter ran rather than a copy of its shape. The
     // Stack is the call site of each host, so it is dropped to let a mock body equal the real server body
     errorFormatter: ({ shape }) => {
@@ -73,12 +73,14 @@ describe(createTRPCMsw, () => {
     upload: t.procedure.input(z.instanceof(FormData)).mutation(() => ""),
     write: t.procedure.mutation(() => undefined),
   });
-  const { handlers, reset, trpc } = createTRPCMsw<typeof router, { authorization: string }>({
+  const { handlers, reset, trpc } = createTRPCMsw<typeof router, { authorization: string; responseHeaders: Headers }>({
     allowMethodOverride: true,
     createContext: ({ req }) => ({
       authorization: req instanceof Request ? (req.headers.get("authorization") ?? "") : "",
+      responseHeaders: new Headers(),
     }),
     endpoint,
+    responseMeta: ({ ctx }) => ({ headers: ctx?.responseHeaders ?? new Headers() }),
     router,
     t,
     webSocketUrl,
@@ -150,7 +152,7 @@ describe(createTRPCMsw, () => {
     trpc.pair.query(() => "");
     const url = `${endpoint}/pair?input=${encodeURIComponent(JSON.stringify({ json: { a: 0, b: "" } }))}`;
     const realResponse = await fetchRequestHandler({
-      createContext: () => ({ authorization: "" }),
+      createContext: () => ({ authorization: "", responseHeaders: new Headers() }),
       endpoint: "/trpc",
       req: new Request(url),
       router,
@@ -293,6 +295,23 @@ describe(createTRPCMsw, () => {
     trpc.readAuthorization.query(({ ctx }) => ctx.authorization);
 
     await expect(client.readAuthorization.query()).resolves.toBe("a");
+  });
+
+  test("sends the headers a mutation's resolver appends to its context on the response", async () => {
+    expect.hasAssertions();
+
+    trpc.write.mutation(({ ctx }) => {
+      ctx.responseHeaders.append("a", "a");
+      ctx.responseHeaders.append("a", "b");
+      return undefined;
+    });
+    const response = await fetch(`${endpoint}/write`, {
+      body: JSON.stringify({ json: null }),
+      headers: { "content-type": "application/json" },
+      method: "POST",
+    });
+
+    expect(response.headers.get("a")).toBe("a, b");
   });
 
   test("#46 answers a query sent as a POST", async () => {

@@ -1,5 +1,11 @@
 // @vitest-environment nuxt
+import type { FriendInSocialWithRelations } from "@esposter/db-schema";
+
+import { useSession } from "#src/services/auth/authClient.test";
+import { createFriend } from "#src/services/message/user/createFriend.test";
 import { createUser } from "#src/services/message/user/createUser.test";
+import { blockTable, friendTable } from "#src/services/message/user/pair/constants";
+import { appendRowVersions } from "#src/services/trpc/appendRowVersions.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useBlockStore } from "#src/store/message/user/block";
@@ -7,38 +13,64 @@ import { useFriendStore } from "#src/store/message/user/friend";
 import { getFriendshipId } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+interface MockSessionValue {
+  data?: undefined | { user: { id: string } };
+}
 
 describe(useFriendStore, () => {
   const { trpcMsw } = setupMswTrpc();
+  const appUser = createUser({ name: "appUser" });
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
-  // The row an unfriend answers with: the friendship between the two, tombstoned at the version its removal left
-  const removedFriendship = {
+  const firstFriend = createFriend(appUser, first);
+  const secondFriend = createFriend(appUser, second);
+  const createBlockPath = "block.createBlock";
+  // The row an unfriend answers with: the friendship between the app user and the friend, tombstoned at the version its
+  // Removal left
+  const createRemovedFriendship = (friendId: string) => ({
     createdAt: new Date(0),
     deletedAt: new Date(0),
-    id: getFriendshipId(first.id, second.id),
-    receiverId: second.id,
-    senderId: first.id,
+    id: getFriendshipId(appUser.id, friendId),
+    receiverId: friendId,
+    senderId: appUser.id,
     updatedAt: new Date(0),
     version: 1,
+  });
+
+  // The friends are read the way the page reads them, so the store holds the friendships and their users as the server
+  // Sent them
+  const seedFriends = async (friendships: FriendInSocialWithRelations[]) => {
+    const { $trpc } = useNuxtApp();
+    trpcMsw.friend.readFriends.query(() => friendships);
+    const friendStore = useFriendStore();
+    const { readFriends } = friendStore;
+    await readFriends(() => $trpc.friend.readFriends.query());
   };
 
-  // Each friend is its own target, so two removals overlap on one list, and the failing one unwinds to the list the
-  // Removal ahead of it left, whichever of the two was the one rejected
-  test.each([first, second])("puts back only the friend whose removal was rejected: $name", async (failedFriend) => {
+  beforeEach(() => {
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: appUser.id } } }));
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  // Each friend is its own target, so two removals overlap on one list, and the failing one is the friend that stays
+  test.each([first, second])("keeps only the friend whose removal was rejected: $name", async (failedFriend) => {
     expect.hasAssertions();
 
     trpcMsw.friend.deleteFriend.mutation(({ input: friendId }) => {
       if (friendId === failedFriend.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-      return removedFriendship;
+      return createRemovedFriendship(friendId);
     });
     const alertStore = useAlertStore();
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
     const { deleteFriend } = friendStore;
-    friends.value = [first, second];
+    await seedFriends([firstFriend, secondFriend]);
     deleteFriend(first.id);
     deleteFriend(second.id);
     await flushPromises();
@@ -47,8 +79,9 @@ describe(useFriendStore, () => {
     expect(alertStore.alerts).toHaveLength(1);
   });
 
-  // An unfriend and a block of one user write the same friend row, so the block queues behind the unfriend. Run beside
-  // It, the block found the friend already gone, and the rejected unfriend's rollback put the friend back after it
+  // An unfriend and a block of one user write the same friendship row, so the block queues behind the unfriend. Its
+  // Answer names the friendship it tombstoned, so the block's entry keeps the friend off the list after the rejected
+  // Unfriend has dropped its own entry
   test("a rejected unfriend does not bring back a friend a block removed", async () => {
     expect.hasAssertions();
 
@@ -57,54 +90,61 @@ describe(useFriendStore, () => {
       await unfriendReleased;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    trpcMsw.block.createBlock.mutation(() => first);
+    trpcMsw.block.createBlock.mutation(({ ctx }) => {
+      appendRowVersions(ctx.responseHeaders, createBlockPath, [
+        { key: { receiverId: first.id, senderId: appUser.id }, table: friendTable.name, version: 1 },
+        { key: { blockedId: first.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
+      ]);
+      return first;
+    });
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
     const { deleteFriend } = friendStore;
     const blockStore = useBlockStore();
     const { createBlock } = blockStore;
-    friends.value = [first];
+    await seedFriends([firstFriend]);
     deleteFriend(first.id);
-    const block = createBlock(first.id);
-    // Long enough for a block that was never held back to land, which is what the queue has to prevent
+    createBlock(first.id);
     await flushPromises();
     releaseUnfriend();
-    await block;
     await flushPromises();
 
     expect(friends.value).toStrictEqual([]);
   });
 
-  // The accept echo reaches the accepting client as well as the accepted one, so the same friend arrives twice
-  test("stores a repeated friend delivery once", () => {
+  // The server answers a repeated delivery with the row it already sent, which the arrival gate discards
+  test("stores a repeated friend delivery once", async () => {
     expect.hasAssertions();
 
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
-    const { storeCreateFriend } = friendStore;
-    storeCreateFriend(first);
-    storeCreateFriend(first);
+    await seedFriends([firstFriend, firstFriend]);
 
     expect(friends.value).toStrictEqual([first]);
   });
 
-  // A friend added or removed while the list is being read is not in the answer's favour: the answer may predate the
-  // Push, so the push is replayed over it rather than the answer overwriting the list without it
-  test("replays a removal and an addition that land during the read over its answer", async () => {
+  // A read taken before a removal answers with the friendship still live. The removal's answer lands first at a higher
+  // Version, so the read's older copy is discarded and the removed friend stays off the list
+  test("a read answered before a removal does not bring the removed friend back", async () => {
     expect.hasAssertions();
 
     const { $trpc } = useNuxtApp();
+    await seedFriends([firstFriend]);
+    const { promise: readAnswered, resolve: releaseRead } = Promise.withResolvers<void>();
+    trpcMsw.friend.readFriends.query(async () => {
+      await readAnswered;
+      return [firstFriend];
+    });
+    trpcMsw.friend.deleteFriend.mutation(({ input: friendId }) => createRemovedFriendship(friendId));
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
-    const added = createUser();
-    const removed = createUser();
-    trpcMsw.friend.readFriends.query(() => {
-      friendStore.storeDeleteFriend(removed.id);
-      friendStore.storeCreateFriend(added);
-      return [first, removed];
-    });
-    await friendStore.readFriends(() => $trpc.friend.readFriends.query());
+    const { deleteFriend, readFriends } = friendStore;
+    const read = readFriends(() => $trpc.friend.readFriends.query());
+    deleteFriend(first.id);
+    await flushPromises();
+    releaseRead();
+    await read;
 
-    expect(friends.value).toStrictEqual([first, added]);
+    expect(friends.value).toStrictEqual([]);
   });
 });

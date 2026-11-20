@@ -1,16 +1,24 @@
 // @vitest-environment nuxt
 import MessageModelRoomCreateDirectMessageDialog from "#src/components/Message/Model/Room/Create/DirectMessageDialog.vue";
+import { useSession } from "#src/services/auth/authClient.test";
+import { createFriend } from "#src/services/message/user/createFriend.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 
 describe("messageModelRoomCreateDirectMessageDialog", () => {
   const { trpcMsw } = setupMswTrpc();
   const friends = [createUser(), createUser()];
+  const appUser = createUser();
+
+  // The friends are the other party of each friendship, so the session is the app user the rows pair them with
+  beforeEach(() => {
+    useSession.mockReturnValue(ref({ data: { user: { id: appUser.id } } }));
+  });
 
   // The create's arrival is awaited rather than a flush, since a call still on its way when the test ends is never
   // Answered in time to be asserted on
@@ -18,7 +26,7 @@ describe("messageModelRoomCreateDirectMessageDialog", () => {
     expect.hasAssertions();
 
     trpcMsw.block.readBlockedUsers.query(() => []);
-    trpcMsw.friend.readFriends.query(() => friends);
+    trpcMsw.friend.readFriends.query(() => friends.map((friend) => createFriend(appUser, friend)));
     trpcMsw.friendRequest.readFriendRequests.query(() => []);
     const { promise: requestedUserIds, resolve: onCreateRequested } = Promise.withResolvers<unknown>();
     trpcMsw.room.directMessage.createDirectMessage.mutation(({ input }) => {

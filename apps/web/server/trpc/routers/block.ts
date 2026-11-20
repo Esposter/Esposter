@@ -1,4 +1,4 @@
-import type { PublicUser } from "@esposter/db-schema";
+import type { BlockInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
 import { assertIsNotSelf } from "#server/services/friend/assertIsNotSelf";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -81,12 +81,9 @@ export const blockRouter = router({
       );
       return blockedUserId;
     }),
-  readBlockedUsers: standardAuthedProcedure.query<PublicUser[]>(async ({ ctx }) => {
+  // Unblocked users stay in this read as tombstones, so the client applies their removal
+  readBlockedUsers: standardAuthedProcedure.query<BlockInSocialWithRelations[]>(({ ctx }) => {
     const userId = ctx.user.id;
-    const blockedRows = await ctx.db.query.blocksInSocial.findMany({
-      where: { blockerId: { eq: userId }, deletedAt: { isNull: true } },
-      with: BlockInSocialRelations,
-    });
-    return blockedRows.map(({ blocked }) => blocked);
+    return ctx.db.query.blocksInSocial.findMany({ where: { blockerId: { eq: userId } }, with: BlockInSocialRelations });
   }),
 });

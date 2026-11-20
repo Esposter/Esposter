@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "app/store/overlay.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.023574900000221534,
+              "name": "without pending entries",
+              "p99": 0.027789940000266144,
+              "rme": 7.017875128932493,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.034104099999876784,
+              "name": "with 3 pending entries",
+              "p99": 0.046333219999742145,
+              "rme": 10.114300544019411,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "useStore > recompute a page of 50 friend rows with 3 pending entries"
+        }
+      ]
+    }
+  ]
+}

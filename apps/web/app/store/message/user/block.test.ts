@@ -1,53 +1,112 @@
 // @vitest-environment nuxt
+import type { BlockInSocialWithRelations, FriendInSocialWithRelations } from "@esposter/db-schema";
+
+import { useSession } from "#src/services/auth/authClient.test";
+import { createFriend } from "#src/services/message/user/createFriend.test";
 import { createFriendRequest } from "#src/services/message/user/createFriendRequest.test";
 import { createUser } from "#src/services/message/user/createUser.test";
+import { blockTable, friendRequestTable, friendTable } from "#src/services/message/user/pair/constants";
+import { appendRowVersions } from "#src/services/trpc/appendRowVersions.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBlockStore } from "#src/store/message/user/block";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+interface MockSessionValue {
+  data?: undefined | { user: { id: string } };
+}
 
 describe(useBlockStore, () => {
   const { trpcMsw } = setupMswTrpc();
+  const appUser = createUser({ name: "appUser" });
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
-  const appUser = createUser({ name: "appUser" });
+  const added = createUser({ name: "added" });
+  const firstFriend = createFriend(appUser, first);
+  const secondFriend = createFriend(appUser, second);
   const firstFriendRequest = createFriendRequest(first, appUser);
+  const createBlockPath = "block.createBlock";
+  const deleteBlockPath = "block.deleteBlock";
+  const declineFriendRequestPath = "friendRequest.declineFriendRequest";
+  // The block rows the read answers with: each one a block the app user made, the blocked user included
+  const createBlockRow = (blocked: typeof first, deletedAt: Date | null = null) => ({
+    blocked,
+    blockedId: blocked.id,
+    blockerId: appUser.id,
+    createdAt: new Date(0),
+    deletedAt,
+    updatedAt: new Date(0),
+    version: 0,
+  });
 
-  // Each blocked user is its own target, so two blocks overlap on the friend list and the failing one must put
-  // Back only the friend it removed
-  test("puts back only the friend whose block was rejected", async () => {
+  const seedFriends = async (friendships: FriendInSocialWithRelations[]) => {
+    const { $trpc } = useNuxtApp();
+    trpcMsw.friend.readFriends.query(() => friendships);
+    const friendStore = useFriendStore();
+    const { readFriends } = friendStore;
+    await readFriends(() => $trpc.friend.readFriends.query());
+  };
+
+  const seedBlocks = async (blocks: BlockInSocialWithRelations[]) => {
+    const { $trpc } = useNuxtApp();
+    trpcMsw.block.readBlockedUsers.query(() => blocks);
+    const blockStore = useBlockStore();
+    const { readBlockedUsers } = blockStore;
+    await readBlockedUsers(() => $trpc.block.readBlockedUsers.query());
+  };
+
+  beforeEach(() => {
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: appUser.id } } }));
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  // Each blocked user is its own target, so two blocks overlap on the friend list and the failing one keeps its friend
+  test("keeps only the friend whose block was rejected", async () => {
     expect.hasAssertions();
 
-    trpcMsw.block.createBlock.mutation(({ input: targetUserId }) => {
+    trpcMsw.block.createBlock.mutation(({ ctx, input: targetUserId }) => {
       if (targetUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+
+      appendRowVersions(ctx.responseHeaders, createBlockPath, [
+        { key: { receiverId: second.id, senderId: appUser.id }, table: friendTable.name, version: 1 },
+        { key: { blockedId: second.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
+      ]);
       return second;
     });
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
     const blockStore = useBlockStore();
     const { createBlock } = blockStore;
-    friends.value = [first, second];
-    await Promise.all([createBlock(first.id), createBlock(second.id)]);
+    await seedFriends([firstFriend, secondFriend]);
+    createBlock(first.id);
+    createBlock(second.id);
+    await flushPromises();
 
     expect(friends.value).toStrictEqual([first]);
   });
 
-  // Same rule for the blocked list an unblock writes: only the user this write removed comes back
-  test("puts back only the user whose unblock was rejected", async () => {
+  // Same rule for the blocked list an unblock writes: only the user this write removed leaves the list
+  test("keeps only the user whose unblock was rejected", async () => {
     expect.hasAssertions();
 
-    trpcMsw.block.deleteBlock.mutation(({ input: blockedUserId }) => {
+    trpcMsw.block.deleteBlock.mutation(({ ctx, input: blockedUserId }) => {
       if (blockedUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
+      appendRowVersions(ctx.responseHeaders, deleteBlockPath, [
+        { key: { blockedId: second.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
+      ]);
       return blockedUserId;
     });
     const blockStore = useBlockStore();
     const { blockedUsers } = storeToRefs(blockStore);
     const { deleteBlock } = blockStore;
-    blockedUsers.value = [first, second];
+    await seedBlocks([createBlockRow(first), createBlockRow(second)]);
     deleteBlock(first.id);
     deleteBlock(second.id);
     await flushPromises();
@@ -55,35 +114,38 @@ describe(useBlockStore, () => {
     expect(blockedUsers.value).toStrictEqual([first]);
   });
 
-  // Blocking and unblocking one user are two writes to the same row, so they run one after the other. On an
-  // Executor each they only read as if they did: the block landed while the unblock was still out, and the
-  // Unblock's rollback then put its copy of the row back on top of the one the block had just added
+  // Blocking and unblocking one user write the same block row, so the block queues behind the unblock. The block's answer
+  // Holds the row live again, so the user is listed once, and the rejected unblock drops its entry without undoing it
   test("does not list a user twice when a rejected unblock overlaps a block", async () => {
     expect.hasAssertions();
 
     const { promise: unblockReleased, resolve: releaseUnblock } = Promise.withResolvers<void>();
-    trpcMsw.block.createBlock.mutation(() => first);
     trpcMsw.block.deleteBlock.mutation(async () => {
       await unblockReleased;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
+    trpcMsw.block.createBlock.mutation(({ ctx }) => {
+      appendRowVersions(ctx.responseHeaders, createBlockPath, [
+        { key: { blockedId: first.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
+      ]);
+      return first;
+    });
     const blockStore = useBlockStore();
     const { blockedUsers } = storeToRefs(blockStore);
     const { createBlock, deleteBlock } = blockStore;
-    blockedUsers.value = [first];
+    await seedBlocks([createBlockRow(first)]);
     deleteBlock(first.id);
-    const block = createBlock(first.id);
-    // Long enough for a block that was never held back to land, which is what the queue has to prevent
+    createBlock(first.id);
     await flushPromises();
     releaseUnblock();
-    await block;
     await flushPromises();
 
     expect(blockedUsers.value).toStrictEqual([first]);
   });
 
-  // A block removes the pending requests between the two users, as a decline does, so the two queue on the pair. Run
-  // Beside a block, the decline finds the request already gone, and the rejected block's rollback puts it back after it
+  // A block removes the pending requests between the two users, as a decline does, so the two queue on the pair. The
+  // Decline runs after the block that rejects, and its answer names the request it removed, so the request stays off
+  // The received list
   test("a rejected block does not bring back a request a decline removed", async () => {
     expect.hasAssertions();
 
@@ -92,41 +154,61 @@ describe(useBlockStore, () => {
       await blockReleased;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    trpcMsw.friendRequest.declineFriendRequest.mutation(() => {});
+    trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx }) => {
+      appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [
+        { key: { receiverId: appUser.id, senderId: first.id }, table: friendRequestTable.name, version: 1 },
+      ]);
+    });
     const friendRequestStore = useFriendRequestStore();
-    const { friendRequests } = storeToRefs(friendRequestStore);
-    const { declineFriendRequest } = friendRequestStore;
+    const { receivedFriendRequests } = storeToRefs(friendRequestStore);
+    const { declineFriendRequest, readFriendRequests } = friendRequestStore;
     const blockStore = useBlockStore();
     const { createBlock } = blockStore;
-    friendRequests.value = [firstFriendRequest];
-    const block = createBlock(first.id);
+    const { $trpc } = useNuxtApp();
+    trpcMsw.friendRequest.readFriendRequests.query(() => [firstFriendRequest]);
+    await readFriendRequests(() => $trpc.friendRequest.readFriendRequests.query());
+    createBlock(first.id);
     declineFriendRequest(first.id);
     releaseBlock();
-    await block;
     await flushPromises();
 
-    expect(friendRequests.value).toStrictEqual([]);
+    expect(receivedFriendRequests.value).toStrictEqual([]);
   });
 
   // A block and an unblock made while the blocked list is read are not in the answer's favour: the answer may predate
-  // Them, so each is replayed over it rather than the answer overwriting the list without them
-  test("replays a block and an unblock that land during the read over its answer", async () => {
+  // Them, so the entries they wrote keep showing over it
+  test("keeps a block and an unblock made while the blocked list is read", async () => {
     expect.hasAssertions();
 
     const { $trpc } = useNuxtApp();
+    trpcMsw.block.createBlock.mutation(({ ctx }) => {
+      appendRowVersions(ctx.responseHeaders, createBlockPath, [
+        { key: { blockedId: added.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
+      ]);
+      return added;
+    });
+    trpcMsw.block.deleteBlock.mutation(({ ctx, input: blockedUserId }) => {
+      appendRowVersions(ctx.responseHeaders, deleteBlockPath, [
+        { key: { blockedId: blockedUserId, blockerId: appUser.id }, table: blockTable.name, version: 1 },
+      ]);
+      return blockedUserId;
+    });
     const blockStore = useBlockStore();
     const { blockedUsers } = storeToRefs(blockStore);
-    const added = createUser();
-    const removed = createUser();
-    trpcMsw.block.createBlock.mutation(() => added);
-    trpcMsw.block.deleteBlock.mutation(({ input: blockedUserId }) => blockedUserId);
+    const { createBlock, deleteBlock, readBlockedUsers } = blockStore;
+    await seedBlocks([createBlockRow(second)]);
+    const { promise: readAnswered, resolve: releaseRead } = Promise.withResolvers<void>();
     trpcMsw.block.readBlockedUsers.query(async () => {
-      await blockStore.createBlock(added.id);
-      blockStore.deleteBlock(removed.id);
-      return [first, removed];
+      await readAnswered;
+      return [createBlockRow(second)];
     });
-    await blockStore.readBlockedUsers(() => $trpc.block.readBlockedUsers.query());
+    const read = readBlockedUsers(() => $trpc.block.readBlockedUsers.query());
+    createBlock(added.id);
+    deleteBlock(second.id);
+    await flushPromises();
+    releaseRead();
+    await read;
 
-    expect(blockedUsers.value).toStrictEqual([first, added]);
+    expect(blockedUsers.value).toStrictEqual([added]);
   });
 });

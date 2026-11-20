@@ -26,6 +26,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
   createContext,
   endpoint,
   onUnhandledProcedure = UnhandledProcedureAction.Error,
+  responseMeta,
   router,
   t,
   webSocketUrl,
@@ -48,7 +49,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
 
       httpRouter ??= createMockRouter(t, procedureTypes, registrations, router);
       return fetchRequestHandler({
-        ...omitUndefined({ allowMethodOverride, createContext }),
+        ...omitUndefined({ allowMethodOverride, createContext, responseMeta }),
         endpoint: endpointPathname,
         req: request,
         router: httpRouter,

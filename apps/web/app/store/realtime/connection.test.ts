@@ -19,7 +19,7 @@ import {
 } from "#src/services/realtime/openRealtimeSocket.test";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { CALL_ID_LENGTH, friendsInSocial, MessageType } from "@esposter/db-schema";
-import { getFriendshipId, jsonDateParse } from "@esposter/shared";
+import { getFriendshipId, jsonDateParse, takeOne } from "@esposter/shared";
 import { env } from "cloudflare:workers";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
@@ -247,8 +247,10 @@ describe(useConnectionStore, () => {
     }).deleteFriend(reader.user.id);
     for (const topic of getMockPublishedTopics())
       onUserFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
+    const friendships = await createCallerFactory(friendRouter)(readerContext).readFriends();
 
     expect(refetch).toHaveBeenCalledTimes(1);
-    await expect(createCallerFactory(friendRouter)(readerContext).readFriends()).resolves.toStrictEqual([]);
+    expect(friendships).toHaveLength(1);
+    expect(takeOne(friendships).deletedAt).not.toBeNull();
   });
 });

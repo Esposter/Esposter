@@ -1,107 +1,90 @@
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
-import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { authClient } from "#src/services/auth/authClient";
-import { createOperationData } from "#src/services/shared/createOperationData";
-import { useFriendStore } from "#src/store/message/user/friend";
-import { DatabaseEntityType } from "@esposter/db-schema";
-
-// A request is with a party when that party is either end of it, so the read and the removal name the pair one way
-const checkIsWithUser = (friendRequest: FriendRequestInSocialWithRelations, targetUserId: PublicUser["id"]) =>
-  [friendRequest.receiverId, friendRequest.senderId].includes(targetUserId);
+import { friendRequestTable } from "#src/services/message/user/pair/constants";
+import { createPairConfirmations } from "#src/services/message/user/pair/createPairConfirmations";
+import { getAcceptFriendRequestEntry } from "#src/services/message/user/pair/getAcceptFriendRequestEntry";
+import { getDeclineFriendRequestEntry } from "#src/services/message/user/pair/getDeclineFriendRequestEntry";
+import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
+import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useOverlayStore } from "#src/store/overlay";
+import { useUserStore } from "#src/store/message/user/index";
 
 export const useFriendRequestStore = defineStore("message/user/friendRequest", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const { checkIsPending: checkIsSendFriendRequestPending, executeMutation: executeSendFriendRequestMutation } =
-    useMutation();
-  const friendStore = useFriendStore();
-  const { executeUserPairMutation, storeCreateFriend, storeDeleteFriend } = friendStore;
-  const friendRequests = ref<FriendRequestInSocialWithRelations[]>([]);
   const userId = computed(() => session.value.data?.user.id ?? "");
-  // The read returns answered requests as tombstones, which are no request still pending on either side
-  const pendingFriendRequests = computed(() => friendRequests.value.filter(({ deletedAt }) => deletedAt === null));
+  const { executeQuery } = useMutation();
+  const overlayStore = useOverlayStore();
+  const userStore = useUserStore();
+  const { storeUser } = userStore;
+  const friendRequests = overlayStore.view(friendRequestTable);
+  // The list only holds the requests the app user received, each with its sender's row. A request whose sender is not
+  // Held yet shows nothing
   const receivedFriendRequests = computed(() =>
-    pendingFriendRequests.value.filter((friendRequest) => friendRequest.receiverId === userId.value),
+    friendRequests.value.flatMap((friendRequest) => {
+      const sender =
+        friendRequest.receiverId === userId.value ? userStore.userMap.get(friendRequest.senderId) : undefined;
+      return sender ? [{ ...friendRequest, sender }] : [];
+    }),
   );
-  const sentFriendRequests = computed(() =>
-    pendingFriendRequests.value.filter((friendRequest) => friendRequest.senderId === userId.value),
-  );
-  const friendRequestsReadKey = "friendRequests";
-  const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<FriendRequestInSocialWithRelations>();
-  const { createFriendRequest: baseStoreCreateFriendRequest } = createOperationData(
-    friendRequests,
-    ["id"],
-    DatabaseEntityType.FriendRequest,
-  );
-  const storeCreateFriendRequest = (friendRequest: FriendRequestInSocialWithRelations) => {
-    recordReadingPush(friendRequestsReadKey, { item: friendRequest, type: "set" });
-    baseStoreCreateFriendRequest(friendRequest);
-  };
+  // A send is awaited, since its row is the server's, so no entry shows it while it is in flight. The button reads its
+  // Own receiver's entry from this set, which is added before the write and removed once it settles
+  const sendingReceiverIds = ref(new Set<PublicUser["id"]>());
+  const checkIsSendFriendRequestPending = (receiverId: PublicUser["id"]) => sendingReceiverIds.value.has(receiverId);
   // Single source of truth for "has the app user already asked this user" — the counterpart to the friend
   // Store's checkIsFriend, and asked by the same surfaces
   const checkHasSentFriendRequest = (targetUserId: PublicUser["id"]) =>
-    sentFriendRequests.value.some(({ receiverId }) => receiverId === targetUserId);
-  // Accepting, declining and blocking all resolve the same thing: the pending requests between the app user and
-  // One other party. The list only ever holds requests the app user is a party to — the read filters on it and
-  // The subscription only yields those — so naming the other party identifies the pair on its own, and the
-  // Removal never has to wait on a session that has not resolved yet
-  const getFriendRequestsByUser = (targetUserId: PublicUser["id"]) =>
-    friendRequests.value.filter((friendRequest) => checkIsWithUser(friendRequest, targetUserId));
-  const storeDeleteFriendRequestsByUser = (targetUserId: PublicUser["id"]) => {
-    recordReadingPush(friendRequestsReadKey, {
-      checkIsRemoved: (friendRequest) => checkIsWithUser(friendRequest, targetUserId),
-      type: "remove",
-    });
-    friendRequests.value = friendRequests.value.filter(
-      (friendRequest) => !checkIsWithUser(friendRequest, targetUserId),
-    );
-  };
-  const storeAcceptFriendRequest = (friendUser: PublicUser) => {
-    storeDeleteFriendRequestsByUser(friendUser.id);
-    storeCreateFriend(friendUser);
-  };
+    friendRequests.value.some(({ receiverId, senderId }) => senderId === userId.value && receiverId === targetUserId);
+  // Answered requests come back as tombstones, which the arrival keeps, so an older copy of a request cannot bring it back
   const readFriendRequests = (read: () => Promise<FriendRequestInSocialWithRelations[]>) =>
-    readWithReplayedPushes(friendRequestsReadKey, read, (newFriendRequests) => {
-      friendRequests.value = newFriendRequests;
-    });
-  // Awaited because the row is the server's: it carries the sender's user, which the client cannot faithfully fabricate,
-  // And a temp-id placeholder would race the echo's server-id row into a transient duplicate.
-  const sendFriendRequest = async (receiverId: PublicUser["id"]) => {
-    await executeSendFriendRequestMutation(() => $trpc.friendRequest.sendFriendRequest.mutate(receiverId), {
-      awaitedBecause: AwaitedReason.ServerIssuedValue,
-      key: receiverId,
-      // No socket event carries a newly created request to the caller, and the already-exists conflict path returns
-      // The existing row WITHOUT emitting, so this write is the caller's only one
-      onSuccess: (friendRequest) => {
-        storeCreateFriendRequest(friendRequest);
+    executeQuery(read, {
+      key: "friendRequests",
+      onSuccess: (friendRequestRows) => {
+        for (const { sender, ...friendRequest } of friendRequestRows) {
+          storeUser(sender);
+          overlayStore.arrive(friendRequestTable, friendRequest);
+        }
       },
     });
+  const sendFriendRequest = async (receiverId: PublicUser["id"]) => {
+    sendingReceiverIds.value.add(receiverId);
+    try {
+      await overlayStore.writeAwaited(
+        async () => {
+          const { sender, ...friendRequest } = await $trpc.friendRequest.sendFriendRequest.mutate(receiverId);
+          storeUser(sender);
+          return [createArrival(friendRequestTable, friendRequest)];
+        },
+        { onError: createErrorAlert },
+      );
+    } finally {
+      sendingReceiverIds.value.delete(receiverId);
+    }
   };
   const acceptFriendRequest = (sender: PublicUser) => {
-    executeUserPairMutation(() => $trpc.friendRequest.acceptFriendRequest.mutate(sender.id), {
-      applyOptimistic: () => {
-        const resolvedFriendRequests = getFriendRequestsByUser(sender.id);
-        storeAcceptFriendRequest(sender);
-        return () => {
-          storeDeleteFriend(sender.id);
-          for (const resolvedFriendRequest of resolvedFriendRequests) storeCreateFriendRequest(resolvedFriendRequest);
-        };
+    overlayStore.writeOptimistic(
+      async () => {
+        const { result: senderUser, rowVersions } = await collectRowVersions(() =>
+          $trpc.friendRequest.acceptFriendRequest.mutate(sender.id),
+        );
+        storeUser(senderUser);
+        return { arrivals: [], confirmed: createPairConfirmations(rowVersions) };
       },
-      key: sender.id,
-    });
+      { entry: getAcceptFriendRequestEntry(userId.value, sender.id, new Date()), onError: createErrorAlert },
+    );
   };
   const declineFriendRequest = (senderId: PublicUser["id"]) => {
-    executeUserPairMutation(() => $trpc.friendRequest.declineFriendRequest.mutate(senderId), {
-      applyOptimistic: () => {
-        const resolvedFriendRequests = getFriendRequestsByUser(senderId);
-        storeDeleteFriendRequestsByUser(senderId);
-        return () => {
-          for (const resolvedFriendRequest of resolvedFriendRequests) storeCreateFriendRequest(resolvedFriendRequest);
-        };
+    overlayStore.writeOptimistic(
+      async () => {
+        const { rowVersions } = await collectRowVersions(() =>
+          $trpc.friendRequest.declineFriendRequest.mutate(senderId),
+        );
+        return { arrivals: [], confirmed: createPairConfirmations(rowVersions) };
       },
-      key: senderId,
-    });
+      { entry: getDeclineFriendRequestEntry(userId.value, senderId, new Date()), onError: createErrorAlert },
+    );
   };
 
   return {
@@ -109,13 +92,8 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     checkHasSentFriendRequest,
     checkIsSendFriendRequestPending,
     declineFriendRequest,
-    friendRequests,
-    getFriendRequestsByUser,
     readFriendRequests,
     receivedFriendRequests,
     sendFriendRequest,
-    storeAcceptFriendRequest,
-    storeCreateFriendRequest,
-    storeDeleteFriendRequestsByUser,
   };
 });

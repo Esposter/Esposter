@@ -1,12 +1,13 @@
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
+import { getFriendshipId } from "@esposter/shared";
 import { describe } from "vitest";
 
 // The pending request one user sends another, as the friend request store holds it
 export const createFriendRequest = (sender: PublicUser, receiver: PublicUser): FriendRequestInSocialWithRelations => ({
   createdAt: new Date(0),
   deletedAt: null,
-  id: `${sender.id}-${receiver.id}`,
+  id: getFriendshipId(sender.id, receiver.id),
   receiverId: receiver.id,
   sender,
   senderId: sender.id,

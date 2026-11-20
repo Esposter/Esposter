@@ -39,10 +39,10 @@ describe("friendRouter", () => {
     expect.hasAssertions();
 
     const { user } = await createFriendship(mockContext);
-    const friendUsers = await friendCaller.readFriends();
+    const friendships = await friendCaller.readFriends();
 
-    expect(friendUsers).toHaveLength(1);
-    expect(takeOne(friendUsers).id).toBe(user.id);
+    expect(friendships).toHaveLength(1);
+    expect(takeOne(friendships).sender.id).toBe(user.id);
   });
 
   test("reads friends as receiver", async () => {
@@ -51,21 +51,24 @@ describe("friendRouter", () => {
     const { user, userId } = await createFriendship(mockContext);
     const receiverAuthSession = await createMockAuthSession(mockContext.db, user);
     const receiverCaller = createCallerFactory(friendRouter)(await createMockContext(receiverAuthSession));
-    const friendUsers = await receiverCaller.readFriends();
+    const friendships = await receiverCaller.readFriends();
 
-    expect(friendUsers).toHaveLength(1);
-    expect(takeOne(friendUsers).id).toBe(userId);
+    expect(friendships).toHaveLength(1);
+    expect(takeOne(friendships).receiver.id).toBe(userId);
   });
 
   test("deletes friend", async () => {
     expect.hasAssertions();
 
     const { user } = await createFriendship(mockContext);
-    await friendCaller.deleteFriend(user.id);
+    const tombstone = await friendCaller.deleteFriend(user.id);
 
-    const friendUsers = await friendCaller.readFriends();
+    const friendships = await friendCaller.readFriends();
 
-    expect(friendUsers).toStrictEqual([]);
+    expect(friendships).toHaveLength(1);
+    expect(takeOne(friendships).id).toBe(tombstone.id);
+    expect(takeOne(friendships).deletedAt).not.toBeNull();
+    expect(takeOne(friendships).version).toBe(tombstone.version);
   });
 
   // A removal keeps the friendship as a tombstone, so the version it leaves is the one a later arrival is ordered against

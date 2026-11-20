@@ -1,71 +1,64 @@
 import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
-import type { PublicUser } from "@esposter/db-schema";
+import type { BlockInSocialWithRelations } from "@esposter/db-schema";
 
-import { AwaitedReason } from "#src/models/shared/AwaitedReason";
-import { useFriendStore } from "#src/store/message/user/friend";
-import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
+import { authClient } from "#src/services/auth/authClient";
+import { blockTable } from "#src/services/message/user/pair/constants";
+import { createPairConfirmations } from "#src/services/message/user/pair/createPairConfirmations";
+import { getBlockEntry } from "#src/services/message/user/pair/getBlockEntry";
+import { getUnblockEntry } from "#src/services/message/user/pair/getUnblockEntry";
+import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useOverlayStore } from "#src/store/overlay";
+import { useUserStore } from "#src/store/message/user/index";
 
 export const useBlockStore = defineStore("message/user/block", () => {
   const { $trpc } = useNuxtApp();
-  const friendStore = useFriendStore();
-  const { executeUserPairMutation, storeCreateFriend, storeDeleteFriend } = friendStore;
-  const friendRequestStore = useFriendRequestStore();
-  // A block removes the requests between the two users, so it queues on the pair's executor that the friend store
-  // Owns, beside the unfriend, accept and decline of the same user. An unblock of the same user shares it too, so the
-  // Two cannot race over the same lists
-  const { getFriendRequestsByUser, storeCreateFriendRequest, storeDeleteFriendRequestsByUser } = friendRequestStore;
-  const blockedUsers = ref<PublicUser[]>([]);
-  const blockedUsersReadKey = "blockedUsers";
-  const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<PublicUser>();
-
-  // The read's answer is merged with the blocks and unblocks that landed while it was in flight, so a response taken
-  // Before one does not write the list back without it
-  const readBlockedUsers = (read: () => Promise<PublicUser[]>) =>
-    readWithReplayedPushes(blockedUsersReadKey, read, (newBlockedUsers) => {
-      blockedUsers.value = newBlockedUsers;
-    });
-
-  const createBlock = async (userId: FriendUserIdInput) => {
-    await executeUserPairMutation(() => $trpc.block.createBlock.mutate(userId), {
-      // Only the rows this write removes — blocks of different users never queue against each other
-      applyOptimistic: () => {
-        const deletedFriend = friendStore.friends.find(({ id }) => id === userId);
-        const deletedFriendRequests = getFriendRequestsByUser(userId);
-        storeDeleteFriend(userId);
-        storeDeleteFriendRequestsByUser(userId);
-        return () => {
-          if (deletedFriend) storeCreateFriend(deletedFriend);
-          for (const deletedFriendRequest of deletedFriendRequests) storeCreateFriendRequest(deletedFriendRequest);
-        };
+  const session = authClient.useSession();
+  const userId = computed(() => session.value.data?.user.id ?? "");
+  const { executeQuery } = useMutation();
+  const overlayStore = useOverlayStore();
+  const userStore = useUserStore();
+  const { storeUser } = userStore;
+  const blocks = overlayStore.view(blockTable);
+  // A block names the user it blocks, whose row the block's answer or the read stored, so a block whose user is not held
+  // Yet shows nothing
+  const blockedUsers = computed(() =>
+    blocks.value.flatMap(({ blockedId, blockerId }) => {
+      const blockedUser = blockerId === userId.value ? userStore.userMap.get(blockedId) : undefined;
+      return blockedUser ? [blockedUser] : [];
+    }),
+  );
+  const createBlock = (targetUserId: FriendUserIdInput) => {
+    overlayStore.writeOptimistic(
+      async () => {
+        const { result, rowVersions } = await collectRowVersions(() => $trpc.block.createBlock.mutate(targetUserId));
+        storeUser(result);
+        return { arrivals: [], confirmed: createPairConfirmations(rowVersions) };
       },
-      // The blocked user's row is resolved by the server from the id, so it is listed once the server answers with it
-      awaitedBecause: AwaitedReason.ServerIssuedValue,
-      key: userId,
-      onSuccess: (user) => {
-        recordReadingPush(blockedUsersReadKey, { item: user, type: "set" });
-        if (!blockedUsers.value.some(({ id }) => id === userId)) blockedUsers.value = [user, ...blockedUsers.value];
-      },
-    });
+      { entry: getBlockEntry(userId.value, targetUserId, new Date()), onError: createErrorAlert },
+    );
   };
 
   const deleteBlock = (blockedUserId: FriendUserIdInput) => {
-    executeUserPairMutation(() => $trpc.block.deleteBlock.mutate(blockedUserId), {
-      // The one row this write removes — unblocks of different users never queue against each other. It comes
-      // Back at the end rather than where it stood, which is a cosmetic loss
-      applyOptimistic: () => {
-        const deletedBlockedUser = blockedUsers.value.find(({ id }) => id === blockedUserId);
-        recordReadingPush(blockedUsersReadKey, { checkIsRemoved: ({ id }) => id === blockedUserId, type: "remove" });
-        blockedUsers.value = blockedUsers.value.filter(({ id }) => id !== blockedUserId);
-        return () => {
-          if (!deletedBlockedUser) return;
-
-          recordReadingPush(blockedUsersReadKey, { item: deletedBlockedUser, type: "set" });
-          blockedUsers.value = [...blockedUsers.value, deletedBlockedUser];
-        };
+    overlayStore.writeOptimistic(
+      async () => {
+        const { rowVersions } = await collectRowVersions(() => $trpc.block.deleteBlock.mutate(blockedUserId));
+        return { arrivals: [], confirmed: createPairConfirmations(rowVersions) };
       },
-      key: blockedUserId,
-    });
+      { entry: getUnblockEntry(userId.value, blockedUserId, new Date()), onError: createErrorAlert },
+    );
   };
+  // The read's rows are the blocks with their tombstones, each with the user it blocks
+  const readBlockedUsers = (read: () => Promise<BlockInSocialWithRelations[]>) =>
+    executeQuery(read, {
+      key: "blockedUsers",
+      onSuccess: (blockRows) => {
+        for (const { blocked, ...block } of blockRows) {
+          storeUser(blocked);
+          overlayStore.arrive(blockTable, block);
+        }
+      },
+    });
 
   return { blockedUsers, createBlock, deleteBlock, readBlockedUsers };
 });

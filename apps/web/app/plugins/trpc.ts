@@ -8,6 +8,7 @@ import { createHttpBatchingLink } from "#src/services/trpc/createHttpBatchingLin
 import { createOfflineLink } from "#src/services/trpc/createOfflineLink";
 import { errorLink } from "#src/services/trpc/errorLink";
 import { getTrpcHeaders } from "#src/services/trpc/getTrpcHeaders";
+import { rowVersionsLink } from "#src/services/trpc/rowVersionsLink";
 import { topicsLink } from "#src/services/trpc/topicsLink";
 import { checkIsServer } from "@esposter/shared";
 import { isNonJsonSerializable, loggerLink, splitLink } from "@trpc/client";
@@ -16,6 +17,7 @@ export default defineNuxtPlugin(() => {
   const online = useOnline();
   const links: TRPCLink<TRPCRouter>[] = [
     topicsLink,
+    rowVersionsLink,
     loggerLink({
       enabled: (options) =>
         (!IS_PRODUCTION && !checkIsServer()) || (options.direction === "down" && options.result instanceof Error),

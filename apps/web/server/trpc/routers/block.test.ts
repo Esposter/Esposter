@@ -15,7 +15,7 @@ import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { postRouter } from "#server/trpc/routers/post";
 import { blocksInSocial, DatabaseEntityType, friendRequestsInSocial, friendsInSocial } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { getFriendshipId, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -50,9 +50,11 @@ describe("blockRouter", () => {
 
     const { user } = await createFriendship(mockContext);
     await blockCaller.createBlock(user.id);
-    const friendUsers = await friendCaller.readFriends();
+    const friendships = await friendCaller.readFriends();
 
-    expect(friendUsers).toStrictEqual([]);
+    expect(friendships).toHaveLength(1);
+    expect(takeOne(friendships).id).toBe(getFriendshipId(getMockSession().user.id, user.id));
+    expect(takeOne(friendships).deletedAt).not.toBeNull();
   });
 
   test("fails to block self", async () => {
@@ -93,7 +95,7 @@ describe("blockRouter", () => {
     const blockedUsers = await blockCaller.readBlockedUsers();
 
     expect(blockedUsers).toHaveLength(1);
-    expect(takeOne(blockedUsers).id).toBe(user.id);
+    expect(takeOne(blockedUsers).blocked.id).toBe(user.id);
   });
 
   test("unblocks user", async () => {
@@ -104,7 +106,9 @@ describe("blockRouter", () => {
     await blockCaller.deleteBlock(user.id);
     const blockedUsers = await blockCaller.readBlockedUsers();
 
-    expect(blockedUsers).toStrictEqual([]);
+    expect(blockedUsers).toHaveLength(1);
+    expect(takeOne(blockedUsers).blocked.id).toBe(user.id);
+    expect(takeOne(blockedUsers).deletedAt).not.toBeNull();
   });
 
   // An unblock keeps the block as a tombstone, so blocking again revives that row at a version above the tombstone's

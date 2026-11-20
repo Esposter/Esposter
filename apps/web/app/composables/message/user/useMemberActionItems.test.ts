@@ -4,6 +4,7 @@ import { useSession } from "#src/services/auth/authClient.test";
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
 import { serveMemberRoles } from "#src/services/message/member/serveMemberRoles.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
+import { createFriend } from "#src/services/message/user/createFriend.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomStore } from "#src/store/message/room/index";
@@ -41,12 +42,14 @@ describe(useMemberActionItems, () => {
   });
 
   // A direct message is only ever opened with a friend, so a friend's lead action is messaging them
-  test("leads a friend with messaging them", () => {
+  test("leads a friend with messaging them", async () => {
     expect.hasAssertions();
 
+    trpcMsw.friend.readFriends.query(() => [createFriend(createUser({ id: userId }), member)]);
+    const { $trpc } = useNuxtApp();
     const friendStore = useFriendStore();
-    const { friends } = storeToRefs(friendStore);
-    friends.value = [member];
+    const { readFriends } = friendStore;
+    await readFriends(() => $trpc.friend.readFriends.query());
     const { friendItem } = useMemberActionItems(member, "", vi.fn<() => void>());
 
     expect(friendItem.value?.title).toBe("Message");
