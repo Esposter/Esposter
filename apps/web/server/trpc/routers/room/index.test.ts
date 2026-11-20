@@ -515,10 +515,10 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await roomCaller.updateRoom({ id: newRoom.id, name: updatedName });
+    const updatedRoom = await roomCaller.updateRoom({ id: newRoom.id, name: updatedName });
 
     expect(roomObjectCalls).toContainEqual({
-      args: [{ data: { id: newRoom.id, name: updatedName }, type: "updateRoom" }],
+      args: [{ data: updatedRoom, type: "updateRoom" }],
       method: "notifyOnlineMembers",
       roomId: newRoom.id,
     });
@@ -528,9 +528,9 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const deletedRoom = await roomCaller.deleteRoom(newRoom.id);
+    const deletedMembership = await roomCaller.deleteRoom(newRoom.id);
 
-    expect(deletedRoom.id).toBe(newRoom.id);
+    expect(deletedMembership).toStrictEqual(await readMembership(newRoom.id, getMockSession().user.id));
   });
 
   test("fails delete with direct message room", async () => {
@@ -601,21 +601,17 @@ describe("roomRouter", () => {
     );
   });
 
-  // The object announces the delete to its online members once its teardown is accepted, so the caller sends no second one
-  test("empties its object and does not announce the delete itself", async () => {
+  // The object is emptied before the room is tombstoned, and the object announces nothing of the delete: each member's
+  // Tombstoned membership reaches their tabs as its own row
+  test("empties its object before the room is tombstoned", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     await roomCaller.deleteRoom(newRoom.id);
 
     expect(roomObjectCalls).toContainEqual({
-      args: [{ userId: getMockSession().user.id }, [getMockSession().user.id]],
+      args: [[getMockSession().user.id]],
       method: "deleteAll",
-      roomId: newRoom.id,
-    });
-    expect(roomObjectCalls).not.toContainEqual({
-      args: [{ data: { roomId: newRoom.id, userId: getMockSession().user.id }, type: "deleteRoom" }],
-      method: "notifyOnlineMembers",
       roomId: newRoom.id,
     });
   });
@@ -631,7 +627,7 @@ describe("roomRouter", () => {
       `[TRPCError: The sender index refused]`,
     );
     roomObjectFailures.clear();
-    await expect(roomCaller.deleteRoom(newRoom.id)).resolves.toMatchObject({ id: newRoom.id });
+    await expect(roomCaller.deleteRoom(newRoom.id)).resolves.toMatchObject({ roomId: newRoom.id });
   });
 
   test("joins", async () => {
@@ -1000,19 +996,20 @@ describe("roomRouter", () => {
     const member = await createRoomMember(mockContext, newRoom.id);
     vi.advanceTimersByTime(1);
     const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
-    const leftRoomId = await memberRoomCaller.leaveRoom(newRoom.id);
+    const leftMembership = await memberRoomCaller.leaveRoom(newRoom.id);
 
-    expect(leftRoomId).toStrictEqual(newRoom.id);
+    expect(leftMembership).toStrictEqual(await readMembership(newRoom.id, member.id));
   });
 
   test("leaves with creator to be deleted", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const leftRoomId = await roomCaller.leaveRoom(newRoom.id);
+    const leftMembership = await roomCaller.leaveRoom(newRoom.id);
 
-    await expect(roomCaller.readRoom(leftRoomId)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Room, leftRoomId).message}]`,
+    expect(leftMembership.roomId).toBe(newRoom.id);
+    await expect(roomCaller.readRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Room, newRoom.id).message}]`,
     );
   });
 
@@ -1023,9 +1020,7 @@ describe("roomRouter", () => {
     const member = await createRoomMember(mockContext, newRoom.id);
     vi.advanceTimersByTime(1);
     const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
-    await memberRoomCaller.leaveRoom(newRoom.id);
-    const removedMembership = await readMembership(newRoom.id, member.id);
-    assert.exists(removedMembership);
+    const removedMembership = await memberRoomCaller.leaveRoom(newRoom.id);
 
     const leaveEvent = {
       data: {
@@ -1040,6 +1035,8 @@ describe("roomRouter", () => {
     expect(roomObjectCalls).toContainEqual({ args: [member.id], method: "removeMember", roomId: newRoom.id });
     expect(roomObjectCalls).toContainEqual({ args: [leaveEvent], method: "notifyOnlineMembers", roomId: newRoom.id });
     expect(userObjectCalls).toContainEqual({ args: [leaveEvent], method: "broadcastEvent", userId: member.id });
+    // The leaver's own tabs drop the room by the membership the leave tombstoned, which they hold as a row
+    expect(userObjectCalls).toContainEqual({ args: [removedMembership], method: "updateUserToRoom", userId: member.id });
   });
 
   // A leave keeps the membership as a tombstone, so the version it leaves is the one a later arrival of the row loses to

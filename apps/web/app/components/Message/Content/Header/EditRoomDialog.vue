@@ -3,19 +3,14 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { UiRules } from "#src/services/ui/UiRules";
 import { useRoomDialogStore } from "#src/store/message/room/dialog";
-import { useRoomStore } from "#src/store/message/room/index";
 import { ROOM_NAME_MAX_LENGTH, selectRoomInMessageSchema } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 
 interface Props {
   room: RoomInMessage;
 }
 
 const { room } = defineProps<Props>();
-const { $trpc } = useNuxtApp();
-const roomStore = useRoomStore();
-const { storeUpdateRoom } = roomStore;
-const { rooms } = storeToRefs(roomStore);
+const saveRoom = useSaveRoom(() => room);
 const roomDialogStore = useRoomDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(roomDialogStore);
 const roomName = useRoomName(() => room.id);
@@ -29,24 +24,8 @@ const isUnchanged = computed(
     selectRoomInMessageSchema.shape.name.safeParse(editedName.value).data === room.name &&
     editedImage.value === room.image,
 );
-const { executeMutation } = useMutation();
 const updateRoom = () => {
-  const { id } = room;
-  const name = editedName.value;
-  const image = editedImage.value;
-  executeMutation(() => $trpc.room.updateRoom.mutate({ id, image, name }), {
-    applyOptimistic: () => {
-      const storedRoom = rooms.value.find(({ id: roomId }) => roomId === id);
-      if (!storedRoom) return noop;
-
-      const { image: previousImage, name: previousName } = storedRoom;
-      storeUpdateRoom({ id, image, name });
-      return () => {
-        storeUpdateRoom({ id, image: previousImage, name: previousName });
-      };
-    },
-    key: id,
-  });
+  saveRoom({ image: editedImage.value, name: editedName.value });
 };
 </script>
 

@@ -4,8 +4,8 @@ import type { RoomRoleInMessage } from "@esposter/db-schema";
 import { useToggleMemberRole } from "#src/composables/message/room/useToggleMemberRole";
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
+import { pushRooms } from "#src/services/message/room/pushRooms.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -34,8 +34,7 @@ describe(useToggleMemberRole, () => {
   // The actor's standing is read the way the app reads it, and the room's owner is someone other than the member
   const readActor = async (topRolePosition: number) => {
     trpcMsw.role.readMyPermissions.query(() => [{ isRoomOwner: false, permissions: 0n, roomId, topRolePosition }]);
-    const roomStore = useRoomStore();
-    roomStore.pushRooms({ ...createRoom(""), id: roomId, userId: v7() });
+    pushRooms({ ...createRoom(""), id: roomId, userId: v7() });
     const roleStore = useRoleStore();
     await roleStore.readMyPermissions({ roomIds: [roomId] });
   };

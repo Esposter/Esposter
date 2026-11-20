@@ -6,7 +6,6 @@ import { useDataStore } from "#src/store/message/data";
 import { usePollDialogStore } from "#src/store/message/input/pollDialog";
 import { useReplyStore } from "#src/store/message/input/reply";
 import { useScheduledMessageJobDialogStore } from "#src/store/message/input/scheduledMessageJobDialog";
-import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
 import { useRoomStore } from "#src/store/message/room/index";
 import { createRandomBoolean } from "#src/util/math/random/createRandomBoolean";
 import { createRandomInteger } from "#src/util/math/random/createRandomInteger";
@@ -19,10 +18,9 @@ import { marked } from "marked";
 export const executeSlashCommand = async (
   command: { [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P } }[SlashCommandType],
 ) => {
-  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { storeUpdateRoom } = roomStore;
-  const { currentRoomId, rooms } = storeToRefs(roomStore);
+  const { updateRoom } = roomStore;
+  const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { sendMessage } = dataStore;
   const pollDialogStore = usePollDialogStore();
@@ -31,8 +29,6 @@ export const executeSlashCommand = async (
   const { open } = scheduledMessageJobDialogStore;
   const replyStore = useReplyStore();
   const { replyToId } = storeToRefs(replyStore);
-  const slashCommandStore = useSlashCommandStore();
-  const { executeSlashCommandMutation } = slashCommandStore;
   const roomId = currentRoomId.value;
   if (!roomId) return;
   // Every command that posts differs only in the markdown it posts; the rest open a dialog or write a room
@@ -71,20 +67,7 @@ export const executeSlashCommand = async (
       break;
     case SlashCommandType.Topic: {
       // An omitted text clears the topic, so it is sent as the column's empty value: a missing topic leaves it unchanged
-      const topic = command.parameterValues.text ?? "";
-      executeSlashCommandMutation(() => $trpc.room.updateRoom.mutate({ id: roomId, topic }), {
-        // Read as the write is sent, so a rejected topic restores what the write ahead of it stored rather than
-        // What was on screen when the command was typed — and of the room the command was typed in, which by the
-        // Time a queued write is sent need not be the room on screen
-        applyOptimistic: () => {
-          const previousTopic = rooms.value.find(({ id }) => id === roomId)?.topic;
-          storeUpdateRoom({ id: roomId, topic });
-          return () => {
-            if (previousTopic !== undefined) storeUpdateRoom({ id: roomId, topic: previousTopic });
-          };
-        },
-        key: roomId,
-      });
+      updateRoom({ id: roomId, topic: command.parameterValues.text ?? "" });
       break;
     }
     case SlashCommandType.Unflip:

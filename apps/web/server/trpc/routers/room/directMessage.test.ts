@@ -382,16 +382,14 @@ describe("directMessageRouter", () => {
     await createFriends(mockContext, mainUser, addedUser);
     await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
     await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: mainUser.id });
-    const room = await mockContext.db.query.roomsInMessage.findFirst({
-      columns: { userId: true },
-      where: { id: { eq: directMessage.id } },
-    });
+    const room = await mockContext.db.query.roomsInMessage.findFirst({ where: { id: { eq: directMessage.id } } });
 
-    expect([user.id, addedUser.id]).toContain(room?.userId);
+    assert.exists(room);
+    expect([user.id, addedUser.id]).toContain(room.userId);
     // The members still in the group are told the new owner, or their list keeps the departed one and hides the owner's
     // Controls until a reload
     expect(roomObjectCalls).toContainEqual({
-      args: [{ data: { id: directMessage.id, userId: room?.userId }, type: "updateRoom" }],
+      args: [{ data: room, type: "updateRoom" }],
       method: "notifyOnlineMembers",
       roomId: directMessage.id,
     });

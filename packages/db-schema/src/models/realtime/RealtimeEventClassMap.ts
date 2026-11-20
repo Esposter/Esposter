@@ -14,7 +14,6 @@ export const RealtimeEventClassMap = {
   [RealtimeEventType.CreateTyping]: EventClass.Ephemeral,
   [RealtimeEventType.DeleteEmoji]: EventClass.MessageStream,
   [RealtimeEventType.DeleteMessage]: EventClass.MessageStream,
-  [RealtimeEventType.DeleteRoom]: EventClass.RowChange,
   [RealtimeEventType.HandRaisedChanged]: EventClass.Ephemeral,
   [RealtimeEventType.JoinCall]: EventClass.Ephemeral,
   [RealtimeEventType.JoinRoom]: EventClass.RowChange,

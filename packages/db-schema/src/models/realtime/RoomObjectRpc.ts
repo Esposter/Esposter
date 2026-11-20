@@ -61,7 +61,7 @@ export interface RoomObjectRpc {
   // Empties the room once every sender's index and every member's object has taken its removal, and tells its online members
   // It is deleted before the storage goes. The actor is the one who deletes it, and the members are the room's, which the
   // Caller reads before the room's memberships go
-  deleteAll: (actor: RoomActor, memberIds: string[]) => Promise<void>;
+  deleteAll: (memberIds: string[]) => Promise<void>;
   // Returns the file it removed, so the caller can remove its blob, and the message as the object now stores it
   // Which the caller hands back to its client as the answer
   deleteFile: (

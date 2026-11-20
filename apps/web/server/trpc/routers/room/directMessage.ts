@@ -232,7 +232,7 @@ export const directMessageRouter = router({
     await announceRoomMemberDeparture(removedUserToRoom);
     // A departed owner hands the group on, and the members still in it learn the new owner the way a room update tells them
     if (updatedRoom.userId !== room.userId)
-      await notifyOnlineRoomMembers(roomId, { data: { id: roomId, userId: updatedRoom.userId }, type: "updateRoom" });
+      await notifyOnlineRoomMembers(roomId, { data: updatedRoom, type: "updateRoom" });
     await createSystemRoomMessage(
       roomId,
       actorUser.id,

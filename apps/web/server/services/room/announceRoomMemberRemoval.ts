@@ -1,6 +1,6 @@
 import type { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemovalAction";
 import type { Context } from "#server/trpc/context";
-import type { MemberRow } from "#shared/models/db/room/MemberRow";
+import type { UserToRoomInMessage } from "@esposter/db-schema";
 
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
@@ -11,7 +11,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Call site, a moderation kick deletes a membership row nobody is told about
 export const announceRoomMemberRemoval = async (
   db: Context["db"],
-  removedMember: MemberRow,
+  removedMember: UserToRoomInMessage,
   actorUserId: string,
   action: RoomMemberRemovalAction,
 ): Promise<void> => {

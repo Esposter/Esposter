@@ -7,7 +7,7 @@ import { useRoleStore } from "#src/store/message/room/role";
 export const useReadRooms = async () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { readItems, readMoreItems } = roomStore;
+  const { arriveRooms, readItems, readMoreItems } = roomStore;
   const { currentRoomId } = storeToRefs(roomStore);
   const roleStore = useRoleStore();
   const { readMyPermissions, readRoles } = roleStore;
@@ -20,23 +20,25 @@ export const useReadRooms = async () => {
     if (roomIds.length === 0) return;
     await Promise.all([readMyUsersToRooms(roomIds), readMyPermissions({ roomIds }), readRoles({ roomIds })]);
   };
+  // The page's rows are held on the overlay as they answer, and the page keeps only their ids for paging. A row's
+  // Display name is the server's join, which the room list never shows, so it is left off the held row
+  const readRoomPage = async (
+    readPage: () => Promise<{ items: (RoomInMessage & { displayName: string })[]; nextCursor: string }>,
+  ) => {
+    const page = await readPage();
+    arriveRooms(page.items.map(({ displayName: _displayName, ...room }) => room));
+    await readRoomMetadata(page.items.map(({ id }) => id));
+    return { ...page, items: page.items.map(({ id }) => ({ id })) };
+  };
   const readRooms = () => {
     requirePartitionKey(session.value?.user.id, readRooms.name);
-    return readItems(async () => {
-      const cursorPaginationData = await $trpc.room.readRooms.query(
-        currentRoomId.value ? { roomId: currentRoomId.value } : {},
-      );
-      await readRoomMetadata(cursorPaginationData.items.map(({ id }) => id));
-      return cursorPaginationData;
-    });
+    return readItems(() =>
+      readRoomPage(() => $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {})),
+    );
   };
   const readMoreRooms = (onComplete: () => void) => {
     requirePartitionKey(session.value?.user.id, readMoreRooms.name);
-    return readMoreItems(async (cursor) => {
-      const cursorPaginationData = await $trpc.room.readRooms.query({ cursor });
-      await readRoomMetadata(cursorPaginationData.items.map(({ id }) => id));
-      return cursorPaginationData;
-    }, onComplete);
+    return readMoreItems((cursor) => readRoomPage(() => $trpc.room.readRooms.query({ cursor })), onComplete);
   };
   return { readMoreRooms, readRooms };
 };

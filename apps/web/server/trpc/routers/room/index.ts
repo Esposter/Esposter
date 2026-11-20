@@ -1,7 +1,7 @@
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { MemberRowInRoom } from "#shared/models/db/room/MemberRowInRoom";
 import type { UserInRoom } from "#shared/models/db/room/UserInRoom";
-import type { Page, RoomInMessage } from "@esposter/db-schema";
+import type { Page, RoomInMessage, UserToRoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { containsLike } from "#server/services/db/containsLike";
@@ -110,7 +110,7 @@ export const baseRoomRouter = router({
   deleteRoom: standardAuthedProcedure
     .input(deleteRoomInputSchema)
     .use(assertIsRoomMiddleware)
-    .mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx, input)),
+    .mutation<UserToRoomInMessage>(({ ctx, input }) => deleteRoom(ctx, input)),
   generateProfileImageUploadUrl: getPermissionsProcedure(
     RoomPermission.ManageRoom,
     generateRoomProfileImageUploadUrlInputSchema,
@@ -201,14 +201,14 @@ export const baseRoomRouter = router({
   leaveRoom: standardAuthedProcedure
     .input(leaveRoomInputSchema)
     .use(assertIsRoomMiddleware)
-    .mutation<RoomInMessage["id"]>(async ({ ctx, input }) => {
+    .mutation<UserToRoomInMessage>(async ({ ctx, input }) => {
       const userId = ctx.user.id;
       const ownedRoom = await ctx.db.query.roomsInMessage.findFirst({
         columns: { id: true },
         where: { id: { eq: input }, userId: { eq: userId } },
       });
 
-      if (ownedRoom) return (await deleteRoom(ctx, input)).id;
+      if (ownedRoom) return deleteRoom(ctx, input);
 
       const [[removedMembership]] = await ctx.db.batch(getRoomMembershipRemoval(ctx.db, input, userId));
       const userToRoom = requireMutation(removedMembership, Operation.Delete, DatabaseEntityType.UserToRoom, input);
@@ -228,7 +228,7 @@ export const baseRoomRouter = router({
           );
       }).match(noop, console.error);
 
-      return userToRoom.roomId;
+      return userToRoom;
     }),
   readMemberCountsByTopRole: getMemberProcedure(roomIdSchema, "roomId").query<MemberCountByTopRole[]>(
     ({ ctx, input: { roomId } }) => {
@@ -466,7 +466,7 @@ export const baseRoomRouter = router({
     const previousRoom = previousRoomRows[0];
     const updatedRoom = requireMutation(updatedRoomRows[0], Operation.Update, DatabaseEntityType.Room, id);
     const previousImage = image === undefined ? "" : (previousRoom?.image ?? "");
-    await notifyOnlineRoomMembers(id, { data: { id, ...rest }, type: "updateRoom" });
+    await notifyOnlineRoomMembers(id, { data: updatedRoom, type: "updateRoom" });
     // The rename line is the server's to write, like every other line in the room's voice, so no member can post
     // One for a rename that never happened. Compared against the stored name, so a trailing space alone is not a
     // Rename. Best-effort behind the update, which has already landed

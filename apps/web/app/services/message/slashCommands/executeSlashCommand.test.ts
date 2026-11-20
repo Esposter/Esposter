@@ -4,6 +4,7 @@ import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommand
 import { useSession } from "#src/services/auth/authClient.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
+import { pushRooms } from "#src/services/message/room/pushRooms.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { UNFLIP_FACE } from "#src/services/message/slashCommands/constants";
 import { executeSlashCommand } from "#src/services/message/slashCommands/executeSlashCommand";
@@ -38,14 +39,13 @@ describe(executeSlashCommand, () => {
 
     const { promise: rejected, resolve: signalRejected } = Promise.withResolvers<void>();
     trpcMsw.room.updateRoom.mutation(({ input }) => {
-      if (input.topic !== rejectedTopic) return { ...room, topic: input.topic ?? "" };
+      if (input.topic !== rejectedTopic) return { ...room, topic: input.topic ?? "", version: 1 };
 
       signalRejected();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const roomStore = useRoomStore();
     const { currentRoom } = storeToRefs(roomStore);
-    const { pushRooms } = roomStore;
     pushRooms({ ...room });
     await executeSlashCommand({ parameterValues: { text: acceptedTopic }, type: SlashCommandType.Topic });
     await executeSlashCommand({ parameterValues: { text: rejectedTopic }, type: SlashCommandType.Topic });
@@ -59,10 +59,9 @@ describe(executeSlashCommand, () => {
   test("a member clears the topic", async () => {
     expect.hasAssertions();
 
-    trpcMsw.room.updateRoom.mutation(({ input }) => ({ ...room, topic: input.topic ?? acceptedTopic }));
+    trpcMsw.room.updateRoom.mutation(({ input }) => ({ ...room, topic: input.topic ?? acceptedTopic, version: 1 }));
     const roomStore = useRoomStore();
     const { currentRoom } = storeToRefs(roomStore);
-    const { pushRooms } = roomStore;
     pushRooms({ ...room, topic: acceptedTopic });
     await executeSlashCommand({ parameterValues: {}, type: SlashCommandType.Topic });
     await waitForSynchronizedFunctions();
@@ -84,7 +83,6 @@ describe(executeSlashCommand, () => {
     });
     const roomStore = useRoomStore();
     const { rooms } = storeToRefs(roomStore);
-    const { pushRooms } = roomStore;
     pushRooms({ ...room, topic: acceptedTopic }, { ...otherRoom, topic: rejectedTopic });
     const pendingCommand = executeSlashCommand({
       parameterValues: { text: rejectedTopic },

@@ -9,8 +9,6 @@ import { ID_SEPARATOR, normalizeString, takeOne, toRawDeep } from "@esposter/sha
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {
   const roomStore = useRoomStore();
   const inputStore = useInputStore();
-  // One executor for every slash command, because a queue lives on the instance and not on the key
-  const { executeMutation: executeSlashCommandMutation } = useMutation();
   const { data: pendingSlashCommand } = useDataMap<SlashCommand | undefined>(() => roomStore.currentRoomId, undefined);
   const { data: parameterValues } = useDataMap<Record<string, string>>(() => roomStore.currentRoomId, {});
   const { data: activeParameterNames } = useDataMap<string[]>(() => roomStore.currentRoomId, []);
@@ -115,7 +113,6 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     createParameter,
     deleteParameter,
     errors,
-    executeSlashCommandMutation,
     focusedIndex,
     hiddenParameters,
     lastAddedParameterName,

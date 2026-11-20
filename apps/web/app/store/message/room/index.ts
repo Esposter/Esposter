@@ -2,32 +2,54 @@ import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
 import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
-import type { RoomInMessage } from "@esposter/db-schema";
+import type { RoomInMessage, UpdateRoomInput } from "@esposter/db-schema";
 
 import { checkIsUuidV7 } from "#shared/services/id/checkIsUuidV7";
-import { AwaitedReason } from "#src/models/shared/AwaitedReason";
+import { useSessionUserId } from "#src/composables/auth/useSessionUserId";
 import { authClient } from "#src/services/auth/authClient";
-import { MessageHookMap } from "#src/services/message/MessageHookMap";
-import { createOperationData } from "#src/services/shared/createOperationData";
+import { roomTable } from "#src/services/message/room/constants";
+import { getRoomPatchEntry } from "#src/services/message/room/getRoomPatchEntry";
+import { userToRoomTable } from "#src/services/message/userToRoom/constants";
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
+import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomDialogStore } from "#src/store/message/room/dialog";
+import { useOverlayStore } from "#src/store/overlay";
 import { getRouteParam } from "#src/util/router/getRouteParam";
-import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
-import { getSynchronizedFunction, Operation, RoutePath, takeOne } from "@esposter/shared";
+import { RoomType } from "@esposter/db-schema";
+import { omitUndefined, RoutePath } from "@esposter/shared";
 
 export const useRoomStore = defineStore("message/room", () => {
   const { $trpc } = useNuxtApp();
-  const { getSlice, items, ...restData } = useCursorPaginationData<RoomInMessage>();
-  const {
-    createRoom: storeCreateRoom,
-    deleteRoom: baseStoreDeleteRoom,
-    updateRoom: storeUpdateRoom,
-    ...restOperationData
-  } = createOperationData(items, ["id"], DatabaseEntityType.Room);
-  const rooms = computed(() =>
-    items.value.toSorted(
-      (firstRoom, secondRoom) => secondRoom.lastMessageAt.getTime() - firstRoom.lastMessageAt.getTime(),
-    ),
+  const overlayStore = useOverlayStore();
+  const { arrive, view, writeAwaited, writeOptimistic } = overlayStore;
+  // The cursor keeps the ids of the last page, for paging. The rows are the overlay's, read into it as each page answers
+  const { items: _pageRoomIds, ...restData } = useCursorPaginationData<Pick<RoomInMessage, "id">>();
+  const roomRows = view(roomTable);
+  const userToRooms = view(userToRoomTable);
+  const userId = useSessionUserId();
+  // The rooms the viewer holds a live membership of. A membership a removal tombstoned is not in the view, so its room
+  // Leaves the list with it, whichever read or event brought the removal
+  const myRoomIds = computed(
+    () =>
+      new Set(
+        userToRooms.value.flatMap((userToRoom) =>
+          checkIsVersioned(userToRoom) && userToRoom.userId === userId.value ? [userToRoom.roomId] : [],
+        ),
+      ),
   );
+  const rooms = computed(() =>
+    roomRows.value
+      .flatMap((room) =>
+        checkIsVersioned(room) && room.type === RoomType.Room && myRoomIds.value.has(room.id) ? [room] : [],
+      )
+      .toSorted((firstRoom, secondRoom) => secondRoom.lastMessageAt.getTime() - firstRoom.lastMessageAt.getTime()),
+  );
+  // Reads and events hand over rows as they stand, tombstones included, so each one arrives at its version
+  const arriveRooms = (newRooms: RoomInMessage[]) => {
+    for (const room of newRooms) arrive(roomTable, room);
+  };
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = getRouteParam(router.currentRoute.value.params, "id");
@@ -39,105 +61,73 @@ export const useRoomStore = defineStore("message/room", () => {
   // The message list do — so without this the cog would have to navigate first, which is a flicker and a place
   // The reader never asked to go
   const scopedRoomId = computed(() => roomDialogStore.settingsRoomId || currentRoomId.value);
-  // Every way a room leaves the list — deleted here, left here, or removed by a subscription — hands the user
-  // To the next room when it was the one on screen. Read at the moment the removal lands, so the replacement
-  // Is whatever is still there rather than what was there when the write was issued
-  const navigateFromDeletedRoom = async (roomId: string) => {
-    if (currentRoomId.value !== roomId) return;
-    await navigateTo(rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex, {
-      replace: true,
-    });
-  };
-  const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
-    const [{ id }] = args;
-    baseStoreDeleteRoom(...args);
-    await navigateFromDeletedRoom(id);
-  };
   const currentRoom = computed(() => {
     if (currentRoomId.value) return rooms.value.find(({ id }) => id === currentRoomId.value);
     else return undefined;
   });
   const session = authClient.useSession();
   const isCreator = computed(() => currentRoom.value?.userId === session.value.data?.user.id);
-
-  const { executeMutation: executeCreateRoomMutation } = useMutation();
-  const { executeMutation: executeJoinRoomMutation, isPending: isJoinRoomPending } = useMutation();
-  const { executeMutation: executeLeaveRoomMutation } = useMutation();
-  const { executeMutation: executeDeleteRoomMutation } = useMutation();
-  const createRoom = async (input: CreateRoomInput) => {
-    await executeCreateRoomMutation(() => $trpc.room.createRoom.mutate(input), {
-      // The room's id is the server's, so the room is drawn once the server answers with it. A later phase gives creates
-      // A client id to draw from
-      awaitedBecause: AwaitedReason.ServerIssuedValue,
-      key: Symbol("createRoom"),
-      onSuccess: (newRoom) => {
-        storeCreateRoom(newRoom, true);
+  // A room the viewer has just joined or created is listed by its membership, which the server answers apart from the room
+  const readMyMembershipArrivals = async (roomId: RoomInMessage["id"]) => {
+    const [userToRoom] = await $trpc.userToRoom.readMyUsersToRooms.query({ roomIds: [roomId] });
+    return userToRoom ? [createArrival(userToRoomTable, userToRoom)] : [];
+  };
+  const isJoinRoomPending = ref(false);
+  // The room's id is the server's, so the room is drawn once the server answers with it
+  const createRoom = (input: CreateRoomInput) =>
+    writeAwaited(
+      async () => {
+        const newRoom = await $trpc.room.createRoom.mutate(input);
+        return [createArrival(roomTable, newRoom), ...(await readMyMembershipArrivals(newRoom.id))];
       },
-    });
-  };
-  // Started rather than awaited, so the removal's apply can navigate as the write is sent
-  const navigateFromDeletedRoomInBackground = getSynchronizedFunction(navigateFromDeletedRoom);
-  const navigateToRoomInBackground = getSynchronizedFunction(async (roomId: string) => {
-    await navigateTo(RoutePath.Messages(roomId), { replace: true });
-  });
-  // A room leaving the list, whether it was deleted or left: the room goes at once, the reader is navigated off it in the
-  // Same step, and a failure puts back only this room, and the reader into it unless they have moved on from where the
-  // Removal sent them. The list is sorted for display, so where the room lands in it is not observable. Keyed per room,
-  // Since rooms are deleted and left independently: an unkeyed executor would treat an earlier in-flight removal as stale
-  // And swallow both its rollback and its navigation
-  const getRoomRemovalOptions = (roomId: string) => ({
-    applyOptimistic: () => {
-      const removedRoom = items.value.find(({ id }) => id === roomId);
-      const isCurrent = currentRoomId.value === roomId;
-      baseStoreDeleteRoom({ id: roomId });
-      const landingRoomId = rooms.value.length > 0 ? takeOne(rooms.value).id : "";
-      navigateFromDeletedRoomInBackground(roomId);
-      return () => {
-        if (removedRoom) storeCreateRoom(removedRoom);
-        // Still in the room means the navigation away has not landed yet, and a navigation back supersedes it
-        if (isCurrent && (currentRoomId.value === roomId || currentRoomId.value === landingRoomId))
-          navigateToRoomInBackground(roomId);
-      };
-    },
-    key: roomId,
-  });
-  const deleteRoom = (input: DeleteRoomInput) => {
-    executeDeleteRoomMutation(() => $trpc.room.deleteRoom.mutate(input), getRoomRemovalOptions(input));
-  };
+      { onError: createErrorAlert },
+    );
   const joinRoom = async (input: JoinRoomInput) => {
-    await executeJoinRoomMutation(() => $trpc.room.joinRoom.mutate(input), {
-      // The room is the server's to name from the code, so it is drawn once the server answers with it
-      awaitedBecause: AwaitedReason.ServerIssuedValue,
-      key: input,
-      onSuccess: async (joinedRoom) => {
-        storeCreateRoom(joinedRoom, true);
-        await navigateTo(RoutePath.Messages(joinedRoom.id));
+    let joinedRoomId = "";
+    isJoinRoomPending.value = true;
+    await writeAwaited(
+      async () => {
+        const joinedRoom = await $trpc.room.joinRoom.mutate(input);
+        joinedRoomId = joinedRoom.id;
+        return [createArrival(roomTable, joinedRoom), ...(await readMyMembershipArrivals(joinedRoom.id))];
       },
+      { onError: createErrorAlert },
+    );
+    isJoinRoomPending.value = false;
+    if (joinedRoomId) await navigateTo(RoutePath.Messages(joinedRoomId));
+  };
+  // A leave and a deletion are awaited, so the room leaves the list when the server answers with the membership it
+  // Tombstoned. The page the reader is on is taken off the room by the removal that the list shows
+  const leaveRoom = (input: LeaveRoomInput) =>
+    writeAwaited(async () => [createArrival(userToRoomTable, await $trpc.room.leaveRoom.mutate(input))], {
+      onError: createErrorAlert,
+    });
+  const deleteRoom = (input: DeleteRoomInput) =>
+    writeAwaited(async () => [createArrival(userToRoomTable, await $trpc.room.deleteRoom.mutate(input))], {
+      onError: createErrorAlert,
+    });
+  // A write to the room's fields shows at once and is confirmed by the row the server answers with
+  const updateRoom = (input: UpdateRoomInput) => {
+    const { id, ...patch } = input;
+    writeOptimistic(async () => createRowResponse(roomTable, await $trpc.room.updateRoom.mutate(input)), {
+      entry: getRoomPatchEntry(id, omitUndefined(patch)),
+      onError: createErrorAlert,
     });
   };
-  const leaveRoom = (input: LeaveRoomInput) => {
-    executeLeaveRoomMutation(() => $trpc.room.leaveRoom.mutate(input), getRoomRemovalOptions(input));
-  };
-  MessageHookMap[Operation.Create].register(({ message, roomId, type }) => {
-    if (type !== MessageType.EditRoom) return;
-    storeUpdateRoom({ id: roomId, name: message });
-  });
 
   return {
+    arriveRooms,
     createRoom,
-    deleteRoom,
-    getSlice,
-    joinRoom,
-    leaveRoom,
-    storeDeleteRoom,
-    storeUpdateRoom,
-    ...restOperationData,
-    rooms,
-    ...restData,
     currentRoom,
     currentRoomId,
+    deleteRoom,
     isCreator,
     isJoinRoomPending,
+    joinRoom,
+    leaveRoom,
+    rooms,
     scopedRoomId,
+    updateRoom,
+    ...restData,
   };
 });

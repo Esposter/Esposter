@@ -10,6 +10,8 @@ const { $trpc } = useNuxtApp();
 const roomId = route.params.id;
 // The dock draws the room by its icon meaning, and a bookmark of the room goes with it when the room is deleted
 usePageMark(() => ({ id: roomId, type: PageMarkType.Room }));
+// The room leaves the list when its membership is tombstoned, and the reader is taken off it from here
+useNavigateFromRemovedRoom();
 // Marking the room read is a write nothing on the page waits for, so it is sent without holding up the render
 const { executeMutation } = useMutation();
 executeMutation(

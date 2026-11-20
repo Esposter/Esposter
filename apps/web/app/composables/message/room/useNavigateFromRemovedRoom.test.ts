@@ -12,6 +12,18 @@ import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
+// A navigation lands after the page resolves, which takes more turns than a flush, so the watch resolves once the
+// Messages index has landed and the test waits on that rather than on a fixed number of flushes
+const watchPaths = () => {
+  const paths: string[] = [];
+  const { promise: isLanded, resolve: onLanded } = Promise.withResolvers<true>();
+  useRouter().afterEach((to) => {
+    paths.push(to.path);
+    if (to.path === RoutePath.MessagesIndex) onLanded(true);
+  });
+  return { isLanded, paths };
+};
+
 describe(useNavigateFromRemovedRoom, () => {
   const { trpcMsw } = setupMswTrpc();
   const room = createRoom("name");
@@ -28,27 +40,23 @@ describe(useNavigateFromRemovedRoom, () => {
     const { readRooms } = await useReadRooms();
     await readRooms();
   };
-  const watchPaths = () => {
-    const paths: string[] = [];
-    useRouter().afterEach((to) => {
-      paths.push(to.path);
-    });
-    return paths;
-  };
   const tombstoneMembership = (roomId: string) =>
     createUserToRoom({ deletedAt: new Date(), roomId, userId: session.user.id, version: 1 });
 
-  // A leave, a kick or a room delete reaches the reader's tabs as the tombstone of its membership. The room is left at
-  // once, and the reader is taken off it once, since the tombstone arrives once
+  // A leave, a kick or a room delete reaches the reader's tabs as the tombstone of its membership. The room leaves the
+  // List at once, and the reader is taken off it a single time, since the tombstone arrives once
   test("navigates off the current room once when its membership tombstone arrives", async () => {
     expect.hasAssertions();
 
     await readListedRoom();
     setCurrentRoomId(room.id);
-    const paths = watchPaths();
-    effectScope().run(() => useNavigateFromRemovedRoom());
-    useUserToRoomStore().arriveUserToRooms([tombstoneMembership(room.id)]);
-    await flushPromises();
+    const { isLanded, paths } = watchPaths();
+    effectScope().run(() => {
+      useNavigateFromRemovedRoom();
+    });
+    const userToRoomStore = useUserToRoomStore();
+    userToRoomStore.arriveUserToRooms([tombstoneMembership(room.id)]);
+    await isLanded;
     await flushPromises();
 
     expect(paths).toStrictEqual([RoutePath.MessagesIndex]);
@@ -60,10 +68,16 @@ describe(useNavigateFromRemovedRoom, () => {
 
     await readListedRoom();
     setCurrentRoomId(otherRoom.id);
-    const paths = watchPaths();
-    effectScope().run(() => useNavigateFromRemovedRoom());
-    useUserToRoomStore().arriveUserToRooms([tombstoneMembership(otherRoom.id)]);
+    const { paths } = watchPaths();
+    effectScope().run(() => {
+      useNavigateFromRemovedRoom();
+    });
+    const userToRoomStore = useUserToRoomStore();
+    userToRoomStore.arriveUserToRooms([tombstoneMembership(otherRoom.id)]);
     await flushPromises();
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
 
     expect(paths).toStrictEqual([]);
   });

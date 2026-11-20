@@ -220,9 +220,9 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   // Sent messages from theirs, since the rows that name them go with the room. A pending message's sender is a member, since a
   // Departure removes that sender's pending messages here, so the member removals reach every one of them. The room's storage
   // Goes only once every index has taken its removal, so a failed one leaves the room whole and the teardown is asked again.
-  // Once every index has taken its removal, the online members are told it is deleted, while the storage that knows them still
-  // Stands. Each sender's index publishes its own removal through its invoke, so the readers of those lists are told by it
-  async deleteAll(actor: RoomActor, memberIds: string[]): Promise<void> {
+  // The members learn of the deletion from the membership tombstones deleteRoom sends them, so nothing is sent from here.
+  // Each sender's index publishes its own removal through its invoke, so the readers of those lists are told by it
+  async deleteAll(memberIds: string[]): Promise<void> {
     const senderIds = this.db
       .selectDistinct({ userId: messagesInRoom.userId })
       .from(messagesInRoom)
@@ -240,7 +240,6 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
         `The room is kept, since ${failures.length} index or person removal(s) failed`,
       );
 
-    await this.notifyOnlineMembers({ data: { roomId: this.#roomId, userId: actor.userId }, type: "deleteRoom" });
     for (const webSocket of this.ctx.getWebSockets()) webSocket.close(1000, "Room deleted");
     await this.ctx.storage.deleteAlarm();
     await this.ctx.storage.deleteAll();
@@ -996,23 +995,27 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     if (!lastMessageAt) return;
 
     this.#setBumpDueAt(null);
-    const isWritten = await getResultAsync(async () =>
-      this.#core.update(roomsInMessage).set({ lastMessageAt }).where(eq(roomsInMessage.id, this.#roomId)),
+    // The row the write returns is what each member is sent, at the version the write raised it to
+    const writtenRows = await getResultAsync(() =>
+      this.#core.update(roomsInMessage).set({ lastMessageAt }).where(eq(roomsInMessage.id, this.#roomId)).returning(),
     ).match(
-      () => true,
+      (rows) => rows,
       (error) => {
         console.error(error);
-        return false;
+        return undefined;
       },
     );
-    if (!isWritten) {
+    if (!writtenRows) {
       this.#setBumpDueAt(this.#readRoomState()?.bumpDueAt ?? new Date(now.getTime() + WRITE_RETRY_DELAY_MS));
       return;
     }
 
+    const [updatedRoom] = writtenRows;
+    if (!updatedRoom) return;
+
     const onlineMembers = this.db.select().from(onlineMembersInRoom).all();
     const results = await Promise.allSettled(
-      onlineMembers.map(({ userId }) => this.#getUser(userId).roomActivity(this.#roomId, lastMessageAt)),
+      onlineMembers.map(({ userId }) => this.#getUser(userId).roomActivity(updatedRoom)),
     );
     for (const result of results) if (result.status === "rejected") console.error(result.reason);
   }

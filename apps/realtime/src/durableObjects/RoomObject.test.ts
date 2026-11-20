@@ -880,8 +880,12 @@ describe(RoomObject, () => {
     await object.alarm();
     await object.alarm();
 
-    expect(getUserStub(userId).roomActivity).toHaveBeenCalledExactlyOnceWith(roomId, last.createdAt);
-    expect(getUserStub(otherUserId).roomActivity).toHaveBeenCalledExactlyOnceWith(roomId, last.createdAt);
+    expect(getUserStub(userId).roomActivity).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ id: roomId, lastMessageAt: last.createdAt }),
+    );
+    expect(getUserStub(otherUserId).roomActivity).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ id: roomId, lastMessageAt: last.createdAt }),
+    );
     expect(userStubs.has(offlineUserId)).toBe(false);
 
     const [room] = await mockDatabase.db
@@ -940,8 +944,8 @@ describe(RoomObject, () => {
     await object.alarm();
 
     expect(vi.mocked(getUserStub(userId).roomActivity).mock.calls).toStrictEqual([
-      [roomId, first.createdAt],
-      [roomId, second.createdAt],
+      [expect.objectContaining({ id: roomId, lastMessageAt: first.createdAt })],
+      [expect.objectContaining({ id: roomId, lastMessageAt: second.createdAt })],
     ]);
   });
 
@@ -1150,7 +1154,7 @@ describe(RoomObject, () => {
     state.ctx.acceptWebSocket(socket, [getUserSocketTag(userId), getDeviceSocketTag(deviceId)]);
     await sendMessage(object, "hello");
 
-    await object.deleteAll(actor, [userId, otherUserId]);
+    await object.deleteAll([userId, otherUserId]);
 
     expect(socket.close).toHaveBeenCalledExactlyOnceWith(1000, "Room deleted");
     await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
@@ -1161,7 +1165,7 @@ describe(RoomObject, () => {
 
     const { object } = createRoomObject();
 
-    await object.deleteAll(actor, [userId, otherUserId]);
+    await object.deleteAll([userId, otherUserId]);
 
     expect(getUserStub(userId).removeRoomScheduledItems).toHaveBeenCalledExactlyOnceWith(roomId);
     expect(getUserStub(otherUserId).removeRoomScheduledItems).toHaveBeenCalledExactlyOnceWith(roomId);
@@ -1174,7 +1178,7 @@ describe(RoomObject, () => {
     await sendMessage(object, "hello");
     await sendMessage(object, "reply", otherActor);
 
-    await object.deleteAll(actor, [userId, otherUserId]);
+    await object.deleteAll([userId, otherUserId]);
 
     expect(getUserStub(userId).removeSentMessagesInRoom).toHaveBeenCalledExactlyOnceWith(roomId);
     expect(getUserStub(otherUserId).removeSentMessagesInRoom).toHaveBeenCalledExactlyOnceWith(roomId);
@@ -1250,7 +1254,7 @@ describe(RoomObject, () => {
       actor,
     );
 
-    await object.deleteAll(actor, [userId, otherUserId]);
+    await object.deleteAll([userId, otherUserId]);
 
     expect(getUserStub(userId).removeRoomScheduledItems).toHaveBeenCalledExactlyOnceWith(roomId);
   });
@@ -1262,15 +1266,15 @@ describe(RoomObject, () => {
     await sendMessage(object, "hello");
     getUserStub(userId).removeSentMessagesInRoom.mockRejectedValueOnce(new Error("The index is unreachable"));
 
-    await expect(object.deleteAll(actor, [userId, otherUserId])).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(object.deleteAll([userId, otherUserId])).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AggregateError: The room is kept, since 1 index or person removal(s) failed]`,
     );
     await expect(object.readMessages(newestPage)).resolves.toHaveLength(1);
 
-    await expect(object.deleteAll(actor, [userId, otherUserId])).resolves.toBeUndefined();
+    await expect(object.deleteAll([userId, otherUserId])).resolves.toBeUndefined();
   });
 
-  test("a refused teardown tells the room's online members nothing, and the accepted one tells each of them once", async () => {
+  test("a refused teardown keeps the room, and the teardown announces nothing to the members", async () => {
     expect.hasAssertions();
 
     const { object } = createRoomObject();
@@ -1278,16 +1282,13 @@ describe(RoomObject, () => {
     await sendMessage(object, "hello");
     getUserStub(userId).removeSentMessagesInRoom.mockRejectedValueOnce(new Error("The index is unreachable"));
 
-    await expect(object.deleteAll(actor, [userId, otherUserId])).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(object.deleteAll([userId, otherUserId])).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AggregateError: The room is kept, since 1 index or person removal(s) failed]`,
     );
     expect(getUserStub(otherUserId).broadcastEvent).not.toHaveBeenCalled();
 
-    await object.deleteAll(actor, [userId, otherUserId]);
-    expect(getUserStub(otherUserId).broadcastEvent).toHaveBeenCalledExactlyOnceWith({
-      data: { roomId, userId },
-      type: "deleteRoom",
-    });
+    await object.deleteAll([userId, otherUserId]);
+    expect(getUserStub(otherUserId).broadcastEvent).not.toHaveBeenCalled();
   });
 
   test("a member coming online and going offline is sent to the room as its status, once for each change", async () => {

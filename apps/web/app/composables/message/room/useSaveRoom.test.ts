@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useSaveRoom } from "#src/composables/message/room/useSaveRoom";
 import { createRoom } from "#src/services/message/room/createRoom.test";
+import { pushRooms } from "#src/services/message/room/pushRooms.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomStore } from "#src/store/message/room/index";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -11,26 +12,24 @@ import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 // Every panel saves through the store's row rather than the object it was handed, so the composable is given a
-// Getter over the store — a snapshot taken from a detached fixture would read back whatever the test wrote and
-// Pass however the rollback is scoped
+// Getter over the store — a snapshot taken from a detached fixture would read back whatever the test wrote
 const mountSaveRoom = async (room: RoomInMessage) => {
   let saveRoom: ReturnType<typeof useSaveRoom> | undefined;
   await mountSuspended(
     defineComponent({
       render: () => h("div"),
       setup: () => {
-        const roomStore = useRoomStore();
-        const { pushRooms } = roomStore;
-        const { rooms } = storeToRefs(roomStore);
         pushRooms(room);
+        const roomStore = useRoomStore();
+        const { rooms } = storeToRefs(roomStore);
         saveRoom = useSaveRoom(computed(() => rooms.value.find(({ id }) => id === room.id) ?? room));
       },
     }),
   );
   const roomStore = useRoomStore();
-  const { storeUpdateRoom } = roomStore;
+  const { arriveRooms } = roomStore;
   const { rooms } = storeToRefs(roomStore);
-  return { getRoom: () => rooms.value.find(({ id }) => id === room.id), saveRoom, storeUpdateRoom };
+  return { arriveRooms, getRoom: () => rooms.value.find(({ id }) => id === room.id), saveRoom };
 };
 
 describe(useSaveRoom, () => {
@@ -40,18 +39,16 @@ describe(useSaveRoom, () => {
   const savedName = "a";
   const topic = "topic";
 
-  // The rollback restores the keys the save wrote, not the row it read. A whole-row restore looks identical
-  // Until something else writes the same row while the save is in flight — a subscription, another panel — and
-  // Then it reverts that write too, silently undoing a change this save never touched and never persisted
-  test("restores only the fields it saved when the save is rejected", async () => {
+  // A refused save changes nothing of its own, so what another write set on the row while it was in flight stays. The
+  // Other write arrives as a newer version of the row, and the refusal drops only the save's own entry
+  test("keeps what another write set on the row when the save is refused", async () => {
     expect.hasAssertions();
 
     const room = createRoom(name);
-    const { getRoom, saveRoom, storeUpdateRoom } = await mountSaveRoom(room);
+    const { arriveRooms, getRoom, saveRoom } = await mountSaveRoom(room);
     trpcMsw.room.updateRoom.mutation(() => {
-      // The handler runs after the optimistic apply and before the rollback, which is the only window in
-      // Which a concurrent write is exposed to it
-      storeUpdateRoom({ id: room.id, topic });
+      // The handler runs while the save is in flight, which is the only window in which another write can land first
+      arriveRooms([{ ...room, topic, version: 1 }]);
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     saveRoom?.({ name: savedName });
@@ -66,7 +63,7 @@ describe(useSaveRoom, () => {
 
     const room = createRoom(name);
     const { getRoom, saveRoom } = await mountSaveRoom(room);
-    trpcMsw.room.updateRoom.mutation(() => ({ ...room, name: savedName }));
+    trpcMsw.room.updateRoom.mutation(() => ({ ...room, name: savedName, version: 1 }));
     saveRoom?.({ name: savedName });
     await flushPromises();
 

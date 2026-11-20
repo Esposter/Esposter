@@ -3,34 +3,11 @@ import type { Except } from "type-fest";
 
 import { useRoomStore } from "#src/store/message/room/index";
 
-// Every room settings panel saves a different slice of the same row through the same mutation target, so the
-// Optimistic apply lives here once. The rollback restores exactly the keys the save wrote rather than the whole
-// Row, so a field another client changed in the meantime is not reverted along with the rejected one.
+// Every room settings panel saves a different slice of the same row through the same write, so the save lives here once
 export const useSaveRoom = (room: MaybeRefOrGetter<RoomInMessage>) => {
-  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { storeUpdateRoom } = roomStore;
-  const { executeMutation } = useMutation();
+  const { updateRoom } = roomStore;
   return (fields: Except<UpdateRoomInput, "id">) => {
-    const { id } = toValue(room);
-    const input = { ...fields, id };
-    executeMutation(() => $trpc.room.updateRoom.mutate(input), {
-      applyOptimistic: () => {
-        const currentRoom = toValue(room);
-        // Object.keys widens its result to string, so the row is indexed back through the input's own key type —
-        // Every field an update input can name is a column of the row it is read from
-        const snapshot = {
-          ...(Object.fromEntries(
-            Object.keys(fields).map((key) => [key, currentRoom[key as keyof RoomInMessage]]),
-          ) as Partial<RoomInMessage>),
-          id,
-        };
-        storeUpdateRoom(input);
-        return () => {
-          storeUpdateRoom(snapshot);
-        };
-      },
-      key: id,
-    });
+    updateRoom({ ...fields, id: toValue(room).id });
   };
 };

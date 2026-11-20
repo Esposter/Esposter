@@ -3,28 +3,23 @@ import type { AdminAction } from "#src/models/message/moderation/AdminAction";
 import { pluralize } from "#shared/util/text/pluralize";
 import { AdminActionHookMap } from "#src/services/message/moderation/AdminActionHookMap";
 import { useAlertStore } from "#src/store/alert";
-import { useRoomStore } from "#src/store/message/room/index";
 import { AdminActionType, AdminActionTypes } from "@esposter/db-schema";
 
 export const useAdminActionMap = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
-  const roomStore = useRoomStore();
-  const { storeDeleteRoom } = roomStore;
   const adminActionMap: Partial<Record<AdminActionType, AdminAction>> = {
-    [AdminActionType.CreateBan]: async (roomId: string) => {
-      await storeDeleteRoom({ id: roomId });
+    // A removal is the tombstone of the target's membership, which reaches the target's tabs with the removal itself
+    [AdminActionType.CreateBan]: () => {
       createAlert("You have been banned from this room.", "error");
     },
     [AdminActionType.KickFromCall]: () => {
       createAlert("You have been kicked from the call.", "error");
     },
-    [AdminActionType.KickFromRoom]: async (roomId: string) => {
-      await storeDeleteRoom({ id: roomId });
+    [AdminActionType.KickFromRoom]: () => {
       createAlert("You have been kicked from this room.", "error");
     },
-    [AdminActionType.SoftBan]: async (roomId: string) => {
-      await storeDeleteRoom({ id: roomId });
+    [AdminActionType.SoftBan]: () => {
       createAlert("You have been soft-banned from this room.", "error");
     },
     [AdminActionType.StopScreenShare]: () => {

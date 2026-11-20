@@ -4,6 +4,7 @@ import type { RoomInMessage, UpdateRoomInput } from "@esposter/db-schema";
 import { MEGABYTE } from "#shared/services/app/constants";
 import MessageModelRoomSettingsTypeAttachmentsIndex from "#src/components/Message/Model/Room/Settings/Type/Attachments/Index.vue";
 import { createRoom } from "#src/services/message/room/createRoom.test";
+import { pushRooms } from "#src/services/message/room/pushRooms.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useRoomStore } from "#src/store/message/room/index";
@@ -69,7 +70,6 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
     // Reach the prop — a detached copy would never move under the form at all
     const roomStore = useRoomStore();
     const { rooms } = storeToRefs(roomStore);
-    const { pushRooms } = roomStore;
     pushRooms({ ...room });
     // Read back by id rather than by position: the list belongs to the nuxt app rather than to this test, so
     // Taking the first room returns whatever an earlier test left there and the assertions below would be

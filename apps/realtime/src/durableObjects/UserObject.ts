@@ -3,6 +3,7 @@ import type {
   ColumnTopic,
   PageCursor,
   ReconcileTodoRemindersInput,
+  RoomInMessage,
   ScheduledMessageInUser,
   ScheduledReminder,
   ScheduledReminderInput,
@@ -304,8 +305,8 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     return this.broadcastEvent({ data: { sessionId }, type: "replaceSession" });
   }
 
-  roomActivity(roomId: string, lastMessageAt: Date): void {
-    this.broadcast({ data: { id: roomId, lastMessageAt }, type: "roomActivity" });
+  roomActivity(room: RoomInMessage): void {
+    this.broadcast({ data: room, type: "roomActivity" });
   }
 
   updateAchievement(userAchievements: UserAchievementInAchievementWithRelations[]): Promise<void> {

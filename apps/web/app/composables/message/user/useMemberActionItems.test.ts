@@ -4,10 +4,10 @@ import { useSession } from "#src/services/auth/authClient.test";
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
 import { serveMemberRoles } from "#src/services/message/member/serveMemberRoles.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
+import { pushRooms } from "#src/services/message/room/pushRooms.test";
 import { createFriend } from "#src/services/message/user/createFriend.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { RoomPermission } from "@esposter/db-schema";
@@ -103,8 +103,7 @@ describe(useMemberActionItems, () => {
     expect.hasAssertions();
 
     const owner = { ...createUser(), displayName: "" };
-    const roomStore = useRoomStore();
-    roomStore.pushRooms({ ...createRoom(name), id: roomId, userId: owner.id });
+    pushRooms({ ...createRoom(name), id: roomId, userId: owner.id });
     await setupActor(RoomPermission.ManageDisplayNames);
     const { moderationItems } = useMemberActionItems(owner, roomId, vi.fn<() => void>());
 

@@ -3,13 +3,12 @@ import { useReadRooms } from "#src/composables/message/room/useReadRooms";
 import { useSession } from "#src/services/auth/authClient.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
+import { pushRooms } from "#src/services/message/room/pushRooms.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomDialogStore } from "#src/store/message/room/dialog";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
-import { getRouteParam } from "#src/util/router/getRouteParam";
-import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -45,116 +44,58 @@ describe(useRoomStore, () => {
     expect(scopedRoomId.value).toBe(first.id);
   });
 
-  // Every room is its own target, so removals overlap: the rejected one has to put back its own room only.
-  test("restores only the room whose deletion was rejected", async () => {
+  // A refused deletion changes nothing: the room is held, and its membership with it, so the list keeps it
+  test("keeps a room in the list when its deletion is refused", async () => {
     expect.hasAssertions();
 
-    const { promise: isSecondDeleted, resolve: onSecondDeleted } = Promise.withResolvers<true>();
-    const { promise: isFirstCalled, resolve: onFirstCalled } = Promise.withResolvers<true>();
-    trpcMsw.room.deleteRoom.mutation(async ({ input }) => {
-      if (input !== first.id) return second;
-      onFirstCalled(true);
-      await isSecondDeleted;
+    trpcMsw.room.deleteRoom.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const roomStore = useRoomStore();
-    const { deleteRoom, pushRooms } = roomStore;
+    const { deleteRoom } = roomStore;
     const { rooms } = storeToRefs(roomStore);
     pushRooms(first, second);
-    deleteRoom(first.id);
-    // A second call issued in the same tick would share the first one's batch and settle with it
-    await isFirstCalled;
-    deleteRoom(second.id);
-    await flushPromises();
-    onSecondDeleted(true);
-    await flushPromises();
+    await deleteRoom(first.id);
 
-    expect(rooms.value).toStrictEqual([first]);
+    expect(rooms.value).toStrictEqual([first, second]);
   });
 
-  // Held the same way as the deletion above
-  test("restores only the room whose leave was rejected", async () => {
-    expect.hasAssertions();
-
-    const { promise: isSecondLeft, resolve: onSecondLeft } = Promise.withResolvers<true>();
-    const { promise: isFirstCalled, resolve: onFirstCalled } = Promise.withResolvers<true>();
-    trpcMsw.room.leaveRoom.mutation(async ({ input }) => {
-      if (input !== first.id) return second.id;
-      onFirstCalled(true);
-      await isSecondLeft;
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    const roomStore = useRoomStore();
-    const { leaveRoom, pushRooms } = roomStore;
-    const { rooms } = storeToRefs(roomStore);
-    pushRooms(first, second);
-    leaveRoom(first.id);
-    // A second call issued in the same tick would share the first one's batch and settle with it
-    await isFirstCalled;
-    leaveRoom(second.id);
-    await flushPromises();
-    onSecondLeft(true);
-    await flushPromises();
-
-    expect(rooms.value).toStrictEqual([first]);
-  });
-
-  // The reader is in the room the leave takes them out of, so the refusal puts them back in it rather than leaving them
-  // In the room the leave navigated them to
-  test("a refused leave brings the reader back to the room", async () => {
-    expect.hasAssertions();
-
-    // The route's auth middleware reads the session in the nuxt shape, so the reader is answered as signed in
-    const session = { user: { id: v7() } };
-    useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
-    // The navigation the leave starts is not held by the drain, since the room's page and middleware load on first use,
-    // So the refusal waits until the reader has landed in the room the leave sent them to, as it does in the app
-    const router = useRouter();
-    const { promise: isInSecond, resolve: onInSecond } = Promise.withResolvers<true>();
-    const removeLandingListener = router.afterEach((to) => {
-      if (getRouteParam(to.params, "id") !== second.id) return;
-      removeLandingListener();
-      onInSecond(true);
-    });
-    trpcMsw.room.leaveRoom.mutation(async () => {
-      await isInSecond;
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    const roomStore = useRoomStore();
-    const { leaveRoom, pushRooms } = roomStore;
-    const { currentRoom, currentRoomId } = storeToRefs(roomStore);
-    pushRooms(first, second);
-    setCurrentRoomId(first.id);
-    leaveRoom(first.id);
-    await waitForSynchronizedFunctions();
-    // The refusal's rollback starts the navigation back as it lands, after the drain above took its snapshot
-    await waitForSynchronizedFunctions();
-
-    expect(currentRoomId.value).toBe(first.id);
-    expect(currentRoom.value).toStrictEqual(first);
-  });
-
-  // A refusal can land before the navigation away has, while the reader still reads as in the room, and the navigation
-  // Back is what cancels the one still on its way
-  test("a leave refused before its navigation lands keeps the reader in the room", async () => {
+  // The membership a leave answers with is the tombstone the list takes the room off by
+  test("takes a room off the list with the membership tombstone its leave answers with", async () => {
     expect.hasAssertions();
 
     const session = { user: { id: v7() } };
     useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
+    trpcMsw.room.leaveRoom.mutation(() =>
+      createUserToRoom({ deletedAt: new Date(), roomId: first.id, userId: session.user.id, version: 1 }),
+    );
+    const roomStore = useRoomStore();
+    const { leaveRoom } = roomStore;
+    const { rooms } = storeToRefs(roomStore);
+    pushRooms(first, second);
+    await leaveRoom(first.id);
+    await flushPromises();
+
+    expect(rooms.value.map(({ id }) => id)).toStrictEqual([second.id]);
+  });
+
+  // A refused leave changes nothing, so the reader stays in the room they were in
+  test("keeps the reader in the room when the leave is refused", async () => {
+    expect.hasAssertions();
+
     trpcMsw.room.leaveRoom.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const roomStore = useRoomStore();
-    const { leaveRoom, pushRooms } = roomStore;
-    const { currentRoomId } = storeToRefs(roomStore);
+    const { leaveRoom } = roomStore;
+    const { currentRoomId, rooms } = storeToRefs(roomStore);
     pushRooms(first, second);
     setCurrentRoomId(first.id);
-    leaveRoom(first.id);
-    await waitForSynchronizedFunctions();
-    // The navigations the removal and its rollback start are drained once the write that started them has settled
-    await waitForSynchronizedFunctions();
+    await leaveRoom(first.id);
+    await flushPromises();
 
     expect(currentRoomId.value).toBe(first.id);
+    expect(rooms.value).toStrictEqual([first, second]);
   });
 
   // The page's answer lands after the reader's socket has delivered the membership tombstone of the room, so the read
@@ -189,7 +130,8 @@ describe(useRoomStore, () => {
 
     const lateRead = readRooms();
     await isLateReadHeld;
-    useUserToRoomStore().arriveUserToRooms([
+    const userToRoomStore = useUserToRoomStore();
+    userToRoomStore.arriveUserToRooms([
       createUserToRoom({ deletedAt: new Date(), roomId: first.id, userId: session.user.id, version: 1 }),
     ]);
     onTombstoneArrived(true);

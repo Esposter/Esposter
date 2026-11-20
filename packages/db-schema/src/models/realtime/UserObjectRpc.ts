@@ -5,6 +5,7 @@ import type { UserEvent } from "#src/models/realtime/UserEvent";
 import type { ReconcileTodoRemindersInput } from "#src/models/todoReminder/ReconcileTodoRemindersInput";
 import type { remindersInUser, scheduledMessagesInUser, sentMessagesInUser } from "#src/objects/user/schema";
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
+import type { RoomInMessage } from "#src/schema/message/roomsInMessage";
 import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
 import type { UserToRoomInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import type { Except, SetNonNullable } from "type-fest";
@@ -63,7 +64,7 @@ export interface UserObjectRpc {
   removeSentMessagesInRoom: (roomId: string) => Promise<void>;
   replaceSession: (sessionId: string) => Promise<void>;
   // A room a member can see moved to the top of their list, which every tab of theirs hears of
-  roomActivity: (roomId: string, lastMessageAt: Date) => void;
+  roomActivity: (room: RoomInMessage) => void;
   updateAchievement: (userAchievements: UserAchievementInAchievementWithRelations[]) => Promise<void>;
   // The owner's user row, which carries the storage total and the version the counter wrote it at
   updateUsage: (user: UserInAuth) => Promise<void>;

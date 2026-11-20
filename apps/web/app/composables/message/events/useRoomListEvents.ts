@@ -9,7 +9,7 @@ import { getResultAsync, getSynchronizedFunction, noop, RoutePath, takeOne } fro
 // That concerns the list reaches each of the person's tabs, and the room it names is the one written to
 export const useRoomListEvents = () => {
   const roomStore = useRoomStore();
-  const { storeDeleteRoom, storeUpdateRoom } = roomStore;
+  const { arriveRooms } = roomStore;
   const memberStore = useMemberStore();
   const { arriveJoinedMember, arriveLeftMember } = memberStore;
   const directMessageStore = useDirectMessageStore();
@@ -22,24 +22,16 @@ export const useRoomListEvents = () => {
 
   onScopeDispose(
     onUserEvent("updateRoom", (updatedRoom) => {
-      storeUpdateRoom(updatedRoom);
+      arriveRooms([updatedRoom]);
       storeUpdateDirectMessage(updatedRoom);
     }),
   );
   // The room's last message moved it to the top of the list, which is what the list sorts by
   onScopeDispose(
-    onUserEvent("roomActivity", ({ id, lastMessageAt }) => {
-      storeUpdateRoom({ id, lastMessageAt });
-      storeUpdateDirectMessage({ id, lastMessageAt });
+    onUserEvent("roomActivity", (room) => {
+      arriveRooms([room]);
+      storeUpdateDirectMessage(room);
     }),
-  );
-  onScopeDispose(
-    onUserEvent(
-      "deleteRoom",
-      getSynchronizedFunction(({ roomId }) =>
-        getResultAsync(() => storeDeleteRoom({ id: roomId })).match(noop, console.error),
-      ),
-    ),
   );
   // A join's participants reach the direct message list through its membership topic, not from a read made here
   onScopeDispose(

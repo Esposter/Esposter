@@ -5,6 +5,7 @@ import MessageModelRoomSettingsTypeOverviewIndex from "#src/components/Message/M
 import MessageModelRoomSettingsTypeOverviewSlowmodeField from "#src/components/Message/Model/Room/Settings/Type/Overview/SlowmodeField.vue";
 import MessageModelRoomSettingsTypeOverviewTopicField from "#src/components/Message/Model/Room/Settings/Type/Overview/TopicField.vue";
 import { createRoom } from "#src/services/message/room/createRoom.test";
+import { pushRooms } from "#src/services/message/room/pushRooms.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomStore } from "#src/store/message/room/index";
 import { omitUndefined } from "@esposter/shared";
@@ -85,17 +86,24 @@ describe("messageModelRoomSettingsTypeOverviewIndex", () => {
     trpcMsw.room.category.readRoomCategories.query(() => []);
     trpcMsw.room.updateRoom.mutation(({ input }) => {
       inputs.push(input);
-      roomStore.storeUpdateRoom({ id: room.id, topic: "a" });
       resolveSaved();
-      return { ...room, ...omitUndefined(input), topic: "a" };
+      return { ...room, ...omitUndefined(input), topic: "a", version: 1 };
     });
-    roomStore.pushRooms({ ...room });
+    pushRooms({ ...room });
     // Read back by id, since the list belongs to the app rather than to this test
     const storedRoom = rooms.value.find(({ id }) => id === room.id);
 
     assert.exists(storedRoom);
 
-    const component = await mountSuspended(MessageModelRoomSettingsTypeOverviewIndex, { props: { room: storedRoom } });
+    // The dialog hands the panel the room the store holds at each render, so a saved topic reaches the panel's prop
+    const component = await mountSuspended(
+      defineComponent({
+        render: () =>
+          h(MessageModelRoomSettingsTypeOverviewIndex, {
+            room: rooms.value.find(({ id }) => id === room.id) ?? storedRoom,
+          }),
+      }),
+    );
     const topicInput = component.findComponent(MessageModelRoomSettingsTypeOverviewTopicField).get("input");
     await topicInput.setValue("a ");
     await topicInput.trigger("focusout");

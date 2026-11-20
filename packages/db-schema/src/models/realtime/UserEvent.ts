@@ -1,5 +1,4 @@
 import { userAchievementInAchievementWithRelationsSchema } from "#src/models/achievement/UserAchievementInAchievementWithRelations";
-import { updateRoomInputSchema } from "#src/models/message/UpdateRoomInput";
 import { RealtimeEventType } from "#src/models/realtime/RealtimeEventType";
 import { topicSchema } from "#src/models/realtime/Topic";
 import { sessionIdSchema } from "#src/models/shared/SessionId";
@@ -30,20 +29,17 @@ const updateUsageEventSchema = z.object({
   data: selectUserInAuthSchema,
   type: z.literal(RealtimeEventType.UpdateUsage),
 });
-// The fields a room edit changes, and the owner a group's departing owner hands it to
+// The room as its row stands after the edit, at the version the edit left it. The owner a group's departing owner hands
+// It to is on the row, so the edit and the handover are one frame
 const updateRoomEventSchema = z.object({
-  data: updateRoomInputSchema.extend({ userId: selectRoomInMessageSchema.shape.userId.optional() }),
+  data: selectRoomInMessageSchema,
   type: z.literal(RealtimeEventType.UpdateRoom),
 });
-// A room's last message moved it to the top of the list, which is what the room list sorts by. Its own event, since a
-// Room update names only the fields a room edit changes
+// A room's last message moved it to the top of the list, which is what the room list sorts by. The room as its row stands
+// after the write, at the version the write left it, so the list applies it as a row
 const roomActivityEventSchema = z.object({
-  data: z.object({ id: selectRoomInMessageSchema.shape.id, lastMessageAt: z.coerce.date() }),
+  data: selectRoomInMessageSchema,
   type: z.literal(RealtimeEventType.RoomActivity),
-});
-const deleteRoomEventSchema = z.object({
-  data: selectUserToRoomInMessageSchema.pick({ roomId: true, userId: true }),
-  type: z.literal(RealtimeEventType.DeleteRoom),
 });
 // The membership row a room's members may see, at the version it was written at, so a list holding it applies the row by
 // Its version like any other arrival. A removal carries the tombstone the removal left
@@ -76,7 +72,6 @@ const userEventSchemas = [
   updateUsageEventSchema,
   updateRoomEventSchema,
   roomActivityEventSchema,
-  deleteRoomEventSchema,
   joinRoomEventSchema,
   leaveRoomEventSchema,
   updateUserToRoomEventSchema,

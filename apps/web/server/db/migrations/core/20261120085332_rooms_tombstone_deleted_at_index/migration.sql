@@ -1,0 +1,1 @@
+CREATE INDEX `rooms_deletedAt_index` ON `message_rooms` (`deletedAt`) WHERE "message_rooms"."deletedAt" IS NOT NULL;

@@ -10,6 +10,7 @@ import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { createNormalizedStringSchema, createUniqueArraySchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
@@ -53,7 +54,7 @@ export const roomsInMessage = sqliteTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ maxFileSizeBytes, name, participantKey, slowmodeMs, topic, type }) => [
+    extraConfig: ({ deletedAt, maxFileSizeBytes, name, participantKey, slowmodeMs, topic, type }) => [
       check(
         "rooms_name_check",
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND LENGTH(TRIM(${name})) = 0) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)})`,
@@ -65,6 +66,7 @@ export const roomsInMessage = sqliteTable(
       check("rooms_maxFileSizeBytes_check", createMinimumCheckSql(maxFileSizeBytes, 0)),
       check("rooms_slowmodeMs_check", createMinimumCheckSql(slowmodeMs, 0)),
       check("rooms_topic_length_check", createMaxLengthCheckSql(topic, ROOM_TOPIC_MAX_LENGTH)),
+      createTombstoneIndex("rooms", deletedAt),
     ],
     schema: messageSchema,
     scope: { columns: ["id"] },

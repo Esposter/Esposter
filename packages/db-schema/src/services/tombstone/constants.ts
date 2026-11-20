@@ -6,6 +6,7 @@ import { roomCategoriesInMessage } from "#src/schema/message/roomCategoriesInMes
 import { roomEmojisInMessage } from "#src/schema/message/roomEmojisInMessage";
 import { roomMemberPermissionsInMessage } from "#src/schema/message/roomMemberPermissionsInMessage";
 import { roomRolesInMessage } from "#src/schema/message/roomRolesInMessage";
+import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { usersToRoomRolesInMessage } from "#src/schema/message/usersToRoomRolesInMessage";
 import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import { webhooksInMessage } from "#src/schema/message/webhooksInMessage";
@@ -42,6 +43,7 @@ export const OVERLAY_TOMBSTONE_TABLES = [
   roomEmojisInMessage,
   roomMemberPermissionsInMessage,
   roomRolesInMessage,
+  roomsInMessage,
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   webhooksInMessage,
