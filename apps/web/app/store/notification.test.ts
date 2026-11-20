@@ -1,9 +1,11 @@
 // @vitest-environment nuxt
+import type { ReadNotificationsResult } from "#shared/models/db/notification/ReadNotificationsResult";
 import type { AppNotification } from "#src/models/notification/AppNotification";
+import type { NotificationInNotification } from "@esposter/db-schema";
 
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useNotificationStore } from "#src/store/notification";
-import { NotificationSeverity } from "@esposter/db-schema";
+import { AppNotificationType, NotificationSeverity } from "@esposter/db-schema";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -11,16 +13,23 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useNotificationStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const title = "title";
+  const userId = v7();
   const epoch = new Date(0);
   const nextDay = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
-  const createDeliveredNotification = (id: string, createdAt: Date): AppNotification => ({
+  // A delivered row as the server answers it, at the version its write left it
+  const createDeliveredNotification = (id: string, createdAt: Date, version = 0): NotificationInNotification => ({
     body: "",
     createdAt,
+    deletedAt: null,
     id,
     isRead: false,
     path: "",
     severity: NotificationSeverity.Info,
     title,
+    type: AppNotificationType.Message,
+    updatedAt: createdAt,
+    userId,
+    version,
   });
   let notificationStore: ReturnType<typeof useNotificationStore>;
   let notifications: Ref<AppNotification[]>;
@@ -78,8 +87,7 @@ describe(useNotificationStore, () => {
     const { createNotification, dismissNotifications } = notificationStore;
     createNotification({ severity: NotificationSeverity.Success, title });
     createNotification({ severity: NotificationSeverity.Error, title });
-    dismissNotifications();
-    await flushPromises();
+    await dismissNotifications();
 
     expect(notifications.value).toStrictEqual([]);
     expect(unreadCount.value).toBe(0);
@@ -106,21 +114,22 @@ describe(useNotificationStore, () => {
   test("toasts every delivered row a push brought back, oldest first", async () => {
     expect.hasAssertions();
 
-    const { createNotification, dismissSnackbar, readItems, storeDeliveredNotifications } = notificationStore;
+    const { createNotification, dismissSnackbar, readNotifications, storeDeliveredNotifications } = notificationStore;
     const heldNotification = createDeliveredNotification(v7(), epoch);
     const tiedNotification = createDeliveredNotification(v7(), epoch);
     const newestNotification = createDeliveredNotification(v7(), nextDay);
-    await readItems(() => Promise.resolve({ items: [heldNotification], nextCursor: "" }));
+    trpcMsw.notification.readNotifications.query(() => ({ items: [heldNotification], nextCursor: "" }));
+    await readNotifications();
     createNotification({ severity: NotificationSeverity.Info, title });
     const [localNotification] = notifications.value;
     assert.exists(localNotification);
     dismissSnackbar(localNotification.id);
 
-    storeDeliveredNotifications(() =>
-      readItems(() =>
-        Promise.resolve({ items: [newestNotification, tiedNotification, heldNotification], nextCursor: "" }),
-      ),
-    );
+    trpcMsw.notification.readNotifications.query(() => ({
+      items: [newestNotification, tiedNotification, heldNotification],
+      nextCursor: "",
+    }));
+    storeDeliveredNotifications(readNotifications);
     await flushPromises();
 
     expect(snackbarNotification.value?.id).toBe(tiedNotification.id);
@@ -130,31 +139,33 @@ describe(useNotificationStore, () => {
     expect(snackbarNotification.value?.id).toBe(newestNotification.id);
   });
 
-  // Two pushes landing together each snapshot the list before their read and compare against it after, so
-  // Unqueued the second claims the row the first already brought back — and toasts it again, after the user has
-  // Dismissed it. Queued, the second reads a list that already holds the row and stays silent
+  // Two pushes landing together each snapshot the list before their read and compare against it after, so the second
+  // Would claim the row the first already brought back — and toast it again, after the user has dismissed it. The ids
+  // Already toasted keep it to one toast
   test("does not re-toast a dismissed row when two pushes overlap", async () => {
     expect.hasAssertions();
 
-    const { dismissSnackbar, readItems, storeDeliveredNotifications } = notificationStore;
+    const { dismissSnackbar, readNotifications, storeDeliveredNotifications } = notificationStore;
     const heldNotification = createDeliveredNotification(v7(), epoch);
-    await readItems(() => Promise.resolve({ items: [heldNotification], nextCursor: "" }));
+    trpcMsw.notification.readNotifications.query(() => ({ items: [heldNotification], nextCursor: "" }));
+    await readNotifications();
     const pushedNotification = createDeliveredNotification(v7(), nextDay);
-    const storePushedPage = () =>
-      readItems(() => Promise.resolve({ items: [pushedNotification, heldNotification], nextCursor: "" }));
+    trpcMsw.notification.readNotifications.query(() => ({
+      items: [pushedNotification, heldNotification],
+      nextCursor: "",
+    }));
     // Both reads are held open, and each stores its page only once its own response lands — the shape a network
     // Read has, and the one that lets the second call snapshot the list before the first has grown it. The second
-    // Response is released after the dismissal below, which is the only interleaving where a duplicate enqueue is
-    // Visible: two toasts for one row otherwise collapse when either is dismissed
+    // Response is released after the dismissal below, which is the only interleaving where a duplicate toast shows
     const { promise: firstResponse, resolve: completeFirstRead } = Promise.withResolvers<void>();
     const { promise: secondResponse, resolve: completeSecondRead } = Promise.withResolvers<void>();
     storeDeliveredNotifications(async () => {
       await firstResponse;
-      await storePushedPage();
+      await readNotifications();
     });
     storeDeliveredNotifications(async () => {
       await secondResponse;
-      await storePushedPage();
+      await readNotifications();
     });
     completeFirstRead();
     await flushPromises();
@@ -174,11 +185,15 @@ describe(useNotificationStore, () => {
     expect.hasAssertions();
 
     const notification = createDeliveredNotification(v7(), epoch);
-    trpcMsw.notification.deleteNotification.mutation(() => 5);
-    const { readItems, setUnreadDeliveredCount } = notificationStore;
-    await readItems(() => Promise.resolve({ items: [notification], nextCursor: "" }));
+    trpcMsw.notification.readNotifications.query(() => ({ items: [notification], nextCursor: "" }));
+    trpcMsw.notification.deleteNotification.mutation(() => ({
+      notification: { ...notification, deletedAt: nextDay, version: 1 },
+      unreadCount: 5,
+    }));
+    const { dismissNotification, readNotifications, setUnreadDeliveredCount } = notificationStore;
+    await readNotifications();
     setUnreadDeliveredCount(1);
-    notificationStore.dismissNotification(notification.id);
+    dismissNotification(notification.id);
     await flushPromises();
 
     expect(unreadCount.value).toBe(5);
@@ -190,14 +205,16 @@ describe(useNotificationStore, () => {
     expect.hasAssertions();
 
     const notification = createDeliveredNotification(v7(), epoch);
-    const { readItems, dismissNotification } = notificationStore;
-    await readItems(() => Promise.resolve({ items: [notification], nextCursor: "" }));
-    const { promise: readResponse, resolve: completeRead } = Promise.withResolvers<{
-      items: AppNotification[];
-      nextCursor: string;
-    }>();
-    const inFlightRead = readItems(() => readResponse);
-    trpcMsw.notification.deleteNotification.mutation(() => 0);
+    trpcMsw.notification.readNotifications.query(() => ({ items: [notification], nextCursor: "" }));
+    const { dismissNotification, readNotifications } = notificationStore;
+    await readNotifications();
+    const { promise: readResponse, resolve: completeRead } = Promise.withResolvers<ReadNotificationsResult>();
+    trpcMsw.notification.readNotifications.query(() => readResponse);
+    const inFlightRead = readNotifications();
+    trpcMsw.notification.deleteNotification.mutation(() => ({
+      notification: { ...notification, deletedAt: nextDay, version: 1 },
+      unreadCount: 0,
+    }));
     dismissNotification(notification.id);
     await flushPromises();
     completeRead({ items: [notification], nextCursor: "" });
@@ -210,20 +227,21 @@ describe(useNotificationStore, () => {
   test("does not list a notification a read answers as dismissed", async () => {
     expect.hasAssertions();
 
-    const dismissedNotification = { ...createDeliveredNotification(v7(), epoch), deletedAt: nextDay };
-    const { readItems } = notificationStore;
-    await readItems(() => Promise.resolve({ items: [dismissedNotification], nextCursor: "" }));
+    const dismissedNotification = { ...createDeliveredNotification(v7(), epoch), deletedAt: nextDay, version: 1 };
+    trpcMsw.notification.readNotifications.query(() => ({ items: [dismissedNotification], nextCursor: "" }));
+    const { readNotifications } = notificationStore;
+    await readNotifications();
 
     expect(notifications.value).toStrictEqual([]);
   });
 
-  test("marks all notifications as read", () => {
+  test("marks all notifications as read", async () => {
     expect.hasAssertions();
 
     const { createNotification, markAllAsRead } = notificationStore;
     createNotification({ severity: NotificationSeverity.Success, title });
     createNotification({ severity: NotificationSeverity.Info, title });
-    markAllAsRead();
+    await markAllAsRead();
 
     expect(unreadCount.value).toBe(0);
     expect(notifications.value.every(({ isRead }) => isRead)).toBe(true);

@@ -13,9 +13,8 @@ import { getResult } from "@esposter/shared";
 export default defineNuxtPlugin(() => {
   if (!("serviceWorker" in window.navigator)) return;
 
-  const { readNotifications } = useReadNotifications();
   const notificationStore = useNotificationStore();
-  const { storeDeliveredNotifications } = notificationStore;
+  const { readNotifications, storeDeliveredNotifications } = notificationStore;
   window.navigator.serviceWorker.addEventListener("message", (event) => {
     // The payload crosses a postMessage boundary, so it is parsed rather than trusted — an extension or another
     // Worker can post here too, and everything below reads fields off it

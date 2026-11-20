@@ -1,15 +1,32 @@
+import type { ReadNotificationsResult } from "#shared/models/db/notification/ReadNotificationsResult";
 import type { AppNotification } from "#src/models/notification/AppNotification";
+import type { Entry } from "#src/models/shared/overlay/Entry";
+import type { NotificationInNotification } from "@esposter/db-schema";
 import type { Except, SetOptional } from "type-fest";
 
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { getToastedNotificationIds } from "#src/services/notification/getToastedNotificationIds";
-import { DatabaseEntityType, NotificationSeverity } from "@esposter/db-schema";
-import { checkIsServer, noop } from "@esposter/shared";
+import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
+import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createTable } from "#src/services/shared/overlay/createTable";
+import { useOverlayStore } from "#src/store/overlay";
+import { createEmptyPage, NotificationSeverity, notificationsInNotification } from "@esposter/db-schema";
+import { checkIsServer, getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { v7 } from "uuid";
 
+// A notification row, held by its id
+const notificationTable = createTable(notificationsInNotification);
 // A read row is the row itself; an unread one is copied with it marked read, so each row a read changes is a new row
 const markRead = <T extends { isRead: boolean }>(notification: T): T =>
   notification.isRead ? notification : { ...notification, isRead: true };
+// A dismissal leaves the row at once, as the tombstone its answer confirms
+const getDismissNotificationEntry =
+  (id: string, deletedAt: Date): Entry =>
+  (view) => {
+    const rowKey: [string] = [id];
+    const notification = view.get(notificationTable, rowKey);
+    if (notification) view.set(notificationTable, rowKey, { ...notification, deletedAt });
+  };
 // The bell renders two kinds of notification and owns the difference between them. A **delivered** one is a row
 // The server wrote for this user — it reached every device that was subscribed, it survives the reload, and it is
 // Paged in like any other list. A **local** one is feedback about what this tab just did: a mutation error, a save
@@ -17,20 +34,30 @@ const markRead = <T extends { isRead: boolean }>(notification: T): T =>
 // Reload, so it is never written down — which is also why only the delivered half is paginated.
 export const useNotificationStore = defineStore("notification", () => {
   const { $trpc } = useNuxtApp();
+  const overlayStore = useOverlayStore();
+  const { arrive, view, writeAwaited, writeOptimistic } = overlayStore;
+  const notificationRows = view(notificationTable);
   const {
+    getSlice,
     hasMore,
     isLoaded,
-    items: deliveredNotifications,
+    items: deliveredItems,
     readItems,
     readMoreItems,
-  } = useCursorPaginationData<AppNotification>();
-  // Every write that answers the unread total queues on this one executor under one key, so an answer read before a
-  // Later write's can never land after it
-  const { executeMutation: executeNotificationMutation } = useMutation();
+  } = useCursorPaginationData<NotificationInNotification>();
   const localNotifications = ref<AppNotification[]>([]);
+  // The delivered half is the page's rows, read for their ids: a row is drawn from the overlay, so a dismissal that the
+  // Overlay holds as a tombstone leaves the list whichever page named it
+  const deliveredNotifications = computed(() => {
+    const idRowMap = new Map(notificationRows.value.map((row) => [row.id, row]));
+    return deliveredItems.value.flatMap(({ id }) => {
+      const row = idRowMap.get(id);
+      return row && !row.deletedAt ? [row] : [];
+    });
+  });
   // Sorted at display time rather than kept in order by every writer: the two halves arrive independently — a
   // Page appends, a local notification prepends — and only the rendered list has an opinion about their order
-  const notifications = computed(() =>
+  const notifications = computed<AppNotification[]>(() =>
     [...localNotifications.value, ...deliveredNotifications.value].toSorted((firstNotification, secondNotification) =>
       compareCreatedAt(secondNotification, firstNotification),
     ),
@@ -51,32 +78,52 @@ export const useNotificationStore = defineStore("notification", () => {
   const setUnreadDeliveredCount = (count: number) => {
     unreadDeliveredCount.value = count;
   };
+  // Lands the rows of a read in the overlay. A row a read answers at a version the tab holds applies nothing, so a read
+  // That was issued before a dismissal cannot bring the row back
+  const arriveDeliveredRows = (rows: NotificationInNotification[]) => {
+    for (const row of rows) arrive(notificationTable, row);
+  };
+  // One page of the bell, read from the server: the page's rows arrive, and its unread total is restated
+  const readDeliveredPage = async (cursor: string): Promise<ReadNotificationsResult> => {
+    const {
+      items,
+      nextCursor,
+      unreadCount: deliveredUnreadCount,
+    } = await $trpc.notification.readNotifications.query({ cursor });
+    if (deliveredUnreadCount !== undefined) setUnreadDeliveredCount(deliveredUnreadCount);
+    arriveDeliveredRows(items);
+    return { items, nextCursor };
+  };
   // What a delivered push does to the bell, kept here because only the store can tell the two halves apart. The read
   // Lands the rows the push wrote, and the tab toasts the ones it did not hold. The bell's topic-driven read calls this,
   // And so does the push's own read on a page with no live bell read, so a push is read once where the bell is on screen.
-  // Two pushes landing inside one read both toast, oldest first, and neither row can toast twice — which is also why the
-  // Calls are queued rather than run side by side: the held rows are snapshotted before the read and compared after it,
-  // So two overlapping calls would snapshot the same list and both claim the row the first read brought back, re-toasting
-  // It after it was dismissed. Queued, the second reads a list that already holds the row, and still reads, so a row
-  // Written while the first was in flight arrives rather than being joined away
-  const storeDeliveredNotifications = (readDeliveredNotifications: () => Promise<unknown>) => {
-    executeNotificationMutation(
-      async () => {
-        const heldNotifications = [...deliveredNotifications.value];
-        await readDeliveredNotifications();
-        for (const id of getToastedNotificationIds(heldNotifications, deliveredNotifications.value)) createSnackbar(id);
+  // Each id toasts once: two reads that overlap both compare against the list they began with, so each would claim the
+  // Row the other brought back, and the ids already toasted are what keep that row to one toast
+  const toastedNotificationIds = new Set<string>();
+  const storeDeliveredNotifications = getSynchronizedFunction(
+    async (readDeliveredNotifications: () => Promise<unknown>) => {
+      const heldNotifications = [...deliveredNotifications.value];
+      await getResultAsync(readDeliveredNotifications).match(() => {
+        for (const id of getToastedNotificationIds(heldNotifications, deliveredNotifications.value)) {
+          if (toastedNotificationIds.has(id)) continue;
+
+          toastedNotificationIds.add(id);
+          createSnackbar(id);
+        }
+      }, console.error);
+    },
+  );
+  const readNotifications = () =>
+    readItems(() => readDeliveredPage(""), {
+      key: AsyncDataKey.ReadNotifications,
+      // A page the server render handed over is adopted without a read, so its rows reach the overlay here
+      onComplete: ({ items }) => {
+        arriveDeliveredRows(items);
       },
-      {
-        // Nothing is drawn ahead of the read, since the read itself is what puts the rows it brings back on the bell
-        applyOptimistic: () => noop,
-        key: DatabaseEntityType.Notification,
-        // Nobody asked for this read — it rides a push — so a failure is logged rather than put in front of
-        // Someone who did nothing to cause it
-        onError: console.error,
-      },
-    );
-  };
-  // Hands back the notification's id, so an optimistic write that raised it can dismiss it when its rollback runs
+      onTopicChange: storeDeliveredNotifications,
+    });
+  const readMoreNotifications = (onComplete: () => void) => readMoreItems(readDeliveredPage, onComplete);
+  // Hands back the notification's id, so the caller can dismiss the notification it raised
   const createNotification = (
     newNotification: SetOptional<Except<AppNotification, "createdAt" | "id" | "isRead">, "body" | "path">,
   ) => {
@@ -116,19 +163,6 @@ export const useNotificationStore = defineStore("notification", () => {
       return consumedNotification;
     });
   };
-  // The delivered list and its unread total move together, so an optimistic write takes both and gives both back
-  const snapshotDeliveredNotifications = () => {
-    const previousNotifications = deliveredNotifications.value;
-    const previousUnreadDeliveredCount = unreadDeliveredCount.value;
-    return {
-      previousNotifications,
-      previousUnreadDeliveredCount,
-      restore: () => {
-        deliveredNotifications.value = previousNotifications;
-        unreadDeliveredCount.value = previousUnreadDeliveredCount;
-      },
-    };
-  };
   const dismissNotification = (id: string) => {
     dismissSnackbar(id);
     const localNotification = localNotifications.value.find((notification) => notification.id === id);
@@ -138,50 +172,40 @@ export const useNotificationStore = defineStore("notification", () => {
       return;
     }
 
-    executeNotificationMutation(() => $trpc.notification.deleteNotification.mutate(id), {
-      applyOptimistic: () => {
-        const { previousNotifications, previousUnreadDeliveredCount, restore } = snapshotDeliveredNotifications();
-        deliveredNotifications.value = previousNotifications.filter((notification) => notification.id !== id);
-        // The total is the server's, so this step moves it for display only: the count the delete answers replaces it
-        if (previousNotifications.some((notification) => notification.id === id && !notification.isRead))
-          unreadDeliveredCount.value = previousUnreadDeliveredCount - 1;
-        return restore;
+    writeOptimistic(
+      async () => {
+        const { notification, unreadCount: deliveredUnreadCount } =
+          await $trpc.notification.deleteNotification.mutate(id);
+        setUnreadDeliveredCount(deliveredUnreadCount);
+        return { arrivals: [createArrival(notificationTable, notification)], confirmed: [] };
       },
-      key: DatabaseEntityType.Notification,
-      reconcile: setUnreadDeliveredCount,
-    });
+      { entry: getDismissNotificationEntry(id, new Date()) },
+    );
   };
   const dismissNotifications = () => {
     localNotifications.value = [];
     snackbarIds.value = [];
-    executeNotificationMutation(() => $trpc.notification.deleteNotifications.mutate(), {
-      applyOptimistic: () => {
-        const { restore } = snapshotDeliveredNotifications();
-        deliveredNotifications.value = [];
-        unreadDeliveredCount.value = 0;
-        return restore;
-      },
-      key: DatabaseEntityType.Notification,
-      reconcile: setUnreadDeliveredCount,
-    });
+    return writeAwaited(async () => {
+      setUnreadDeliveredCount(await $trpc.notification.deleteNotifications.mutate());
+      // Every row is a tombstone now, so the loaded page is emptied on the answer. A read would page through the
+      // Tombstones, and a topic refetch refreshes only the first page
+      getSlice().initializeCursorPaginationData(createEmptyPage<NotificationInNotification>());
+      return [];
+    }, {});
   };
   const markAllAsRead = () => {
     // Copy-on-write is the point: the array and every changed row are replaced so the computed re-evaluates
     localNotifications.value = localNotifications.value.map((notification) => markRead(notification));
     // The statement marks every unread row read, on the loaded pages and beyond them, so the total it clears is
     // The server's one — which is also the only thing that says there is anything to clear at all
-    if (unreadDeliveredCount.value === 0) return;
+    if (unreadDeliveredCount.value === 0) return Promise.resolve();
 
-    executeNotificationMutation(() => $trpc.notification.updateNotificationsReadStatus.mutate(), {
-      applyOptimistic: () => {
-        const { previousNotifications, restore } = snapshotDeliveredNotifications();
-        deliveredNotifications.value = previousNotifications.map((notification) => markRead(notification));
-        unreadDeliveredCount.value = 0;
-        return restore;
-      },
-      key: DatabaseEntityType.Notification,
-      reconcile: setUnreadDeliveredCount,
-    });
+    return writeAwaited(async () => {
+      setUnreadDeliveredCount(await $trpc.notification.updateNotificationsReadStatus.mutate());
+      // A loaded later page would keep its rows unread, so the first page is read again and replaces the loaded pages
+      await readNotifications();
+      return [];
+    }, {});
   };
   return {
     consumeNotificationAction,
@@ -196,8 +220,8 @@ export const useNotificationStore = defineStore("notification", () => {
     isPanelOpen,
     markAllAsRead,
     notifications,
-    readItems,
-    readMoreItems,
+    readMoreNotifications,
+    readNotifications,
     setUnreadDeliveredCount,
     snackbarNotification,
     storeDeliveredNotifications,

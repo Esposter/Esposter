@@ -7,8 +7,7 @@ import { useNotificationStore } from "#src/store/notification";
 const { data: session } = await useAuthSession();
 const notificationStore = useNotificationStore();
 const { hasMore, isLoaded, isPanelOpen, notifications, unreadCount } = storeToRefs(notificationStore);
-const { dismissNotifications, markAllAsRead } = notificationStore;
-const { readMoreNotifications, readNotifications } = useReadNotifications();
+const { dismissNotifications, markAllAsRead, readMoreNotifications, readNotifications } = notificationStore;
 // The delivered half is the caller's own rows, so there is nothing to read for a visitor who is not signed in. The
 // Read is awaited here, so it has settled by the first render: a list still not loaded then is one whose read failed
 if (session.value) await readNotifications();
