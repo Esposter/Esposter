@@ -46,10 +46,10 @@ import { parseTmx } from "parse-tmx";
 const xmlString = await (await fetch("/maps/dungeon.tmx")).text();
 
 // Translates the tile flips in the layer data (default: false)
-const translateFlips = true;
+const isTranslateFlips = true;
 
 // parseTmx resolves to a neverthrow Result, so the parsed map is taken from its Ok branch and an error is rethrown
-const { map } = (await parseTmx(xmlString, translateFlips)).match(
+const { map } = (await parseTmx(xmlString, { isTranslateFlips })).match(
   (tmxParsed) => tmxParsed,
   (error) => {
     throw error;
@@ -87,7 +87,7 @@ console.log(map.layers.length);
         // Only written when the layer is hidden in Tiled
         visible: 0,
         data: [0, 1, 1, 10, 10, 10, 1, 1, 0, 0, 0, 0, …],
-        // When the translateFlips parameter is enabled
+        // When isTranslateFlips is enabled
         flips: [
             {H: false, V: false, D: false},
             {H: true, V: false, D: true},

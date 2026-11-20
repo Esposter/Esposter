@@ -34,7 +34,7 @@ describe(parseTmx, () => {
         await parseTmx(xml);
       }),
       bench("translated flips", async () => {
-        await parseTmx(xml, true);
+        await parseTmx(xml, { isTranslateFlips: true });
       }),
       { ...BENCHMARK_RUN_OPTIONS, iterations: FIXTURE_ITERATIONS },
     );
@@ -47,7 +47,7 @@ describe(parseTmx, () => {
         await parseTmx(xml);
       }),
       bench("translated flips", async () => {
-        await parseTmx(xml, true);
+        await parseTmx(xml, { isTranslateFlips: true });
       }),
       { ...BENCHMARK_RUN_OPTIONS, iterations: CSV_ITERATIONS },
     );

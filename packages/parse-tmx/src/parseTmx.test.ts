@@ -161,7 +161,7 @@ describe(parseTmx, () => {
     const horizontallyFlippedGid = 0x80000001;
     const tmxParsed = await parseTmx(
       `<map width="1" height="1"><layer id="1" name="layer" width="1" height="1"><data encoding="csv">${horizontallyFlippedGid}</data></layer></map>`,
-      true,
+      { isTranslateFlips: true },
     );
 
     expect(tmxParsed.match((parsedTmx) => parsedTmx.map.layers, throwError)).toStrictEqual([
