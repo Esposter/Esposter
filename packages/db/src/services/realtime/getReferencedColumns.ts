@@ -1,5 +1,6 @@
 import { getSchemaTables } from "#src/services/realtime/getSchemaTables";
-import { getTableColumns, getTableName } from "drizzle-orm";
+import { tableMap } from "#src/services/realtime/tableMap";
+import { getTableColumns } from "drizzle-orm";
 
 // The name of every column of every table, which a bare word in a statement's SQL may be
 const schemaColumnNames = new Set(
@@ -38,7 +39,7 @@ const hasBareQuotedName = (text: string, name: string) =>
 // SQLite, which the core schema does not hold) has no columns known here, so it is named by every column: a watch of it wakes
 // On any update, which over-wakes and never misses one. `undefined` is that every column
 export const getReferencedColumns = (sql: string, tableName: string, aliases: string[]): string[] | undefined => {
-  const table = getSchemaTables().find((schemaTable) => getTableName(schemaTable) === tableName);
+  const table = tableMap.get(tableName);
   if (!table) return undefined;
   const columnNames = Object.values(getTableColumns(table)).map(({ name }) => name);
   const bareWords = sql.replaceAll(/"[^"]*"/gu, " ").match(/[A-Za-z_]\w*/gu) ?? [];

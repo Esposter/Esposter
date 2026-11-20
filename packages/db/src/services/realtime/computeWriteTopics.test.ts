@@ -32,6 +32,11 @@ const insertRoom = async (db: Database, roomId: string, userId: string) => {
   await db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
 };
 
+// A user's membership of a room, at the notification level a direct message room starts with
+const insertMember = async (db: Database, roomId: string, userId: string) => {
+  await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+};
+
 // The names of the topics a write publishes, for a golden that records which topics a write names
 const getWriteTopicNames = async (statements: RecordedStatement[]) =>
   (await computeWriteTopics(statements)).map(({ topic }) => topic);
@@ -86,7 +91,7 @@ describe(computeWriteTopics, () => {
     const roomId = v7();
     const userId = v7();
     await insertRoom(db, roomId, userId);
-    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await insertMember(db, roomId, userId);
     await db.insert(roomMemberPermissionsInMessage).values({ roomId, userId });
     const { database, statements } = recordStatements(db);
 
@@ -114,7 +119,7 @@ describe(computeWriteTopics, () => {
     const roomId = v7();
     const userId = v7();
     await insertRoom(db, roomId, userId);
-    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await insertMember(db, roomId, userId);
     const { database, statements } = recordStatements(db);
 
     await database
@@ -139,7 +144,7 @@ describe(computeWriteTopics, () => {
     const userId = v7();
     const roleId = v7();
     await insertRoom(db, roomId, userId);
-    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await insertMember(db, roomId, userId);
     await db.insert(roomRolesInMessage).values({ id: roleId, name: "a", permissions: 0n, roomId });
     const { database, statements } = recordStatements(db);
 
@@ -160,7 +165,7 @@ describe(computeWriteTopics, () => {
     const roomId = v7();
     const userId = v7();
     await insertRoom(db, roomId, userId);
-    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await insertMember(db, roomId, userId);
     const { database, statements } = recordStatements(db);
 
     await database
@@ -184,7 +189,7 @@ describe(computeWriteTopics, () => {
     const roomId = v7();
     const userId = v7();
     await insertRoom(db, roomId, userId);
-    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await insertMember(db, roomId, userId);
     const { database, statements } = recordStatements(db);
 
     await database
@@ -265,7 +270,7 @@ describe(computeWriteTopics, () => {
     const joinerId = v7();
     await insertRoom(db, roomId, userId);
     await insertUser(db, joinerId);
-    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await insertMember(db, roomId, userId);
     const { database, statements } = recordStatements(db);
 
     await database.batch([
@@ -317,7 +322,7 @@ describe(computeWriteTopics, () => {
     const userId = v7();
     await insertRoom(db, roomId, userId);
     await insertRoom(db, otherRoomId, v7());
-    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await insertMember(db, roomId, userId);
     const { database, statements } = recordStatements(db);
 
     await database
@@ -347,7 +352,7 @@ describe(computeWriteTopics, () => {
     const userId = v7();
     await insertRoom(db, roomId, userId);
     await insertRoom(db, otherRoomId, v7());
-    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await insertMember(db, roomId, userId);
     const { database, statements } = recordStatements(db);
 
     await database
@@ -421,7 +426,7 @@ describe(computeWriteTopics, () => {
     const userId = v7();
     const roleId = v7();
     await insertRoom(db, roomId, userId);
-    await db.insert(usersToRoomsInMessage).values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+    await insertMember(db, roomId, userId);
     await db.insert(roomRolesInMessage).values({ id: roleId, name: "a", permissions: 0n, roomId });
     await db.insert(usersToRoomRolesInMessage).values({ roleId, roomId, userId });
     const { database, statements } = recordStatements(db);
