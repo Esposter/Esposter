@@ -21,6 +21,10 @@ const booleanExpressionOf = (field) =>
 // `:not([returnType])` leaves an annotated function to the `BOOLEAN_RETURN_TYPE` selectors, so each is matched once.
 const UNANNOTATED_BOOLEAN_EXPRESSION_BODY = `ArrowFunctionExpression:not([returnType])${booleanExpressionOf("body")}`;
 const UNANNOTATED_BOOLEAN_BLOCK_RETURN = `:matches(ArrowFunctionExpression, FunctionExpression):not([returnType]) > BlockStatement > ReturnStatement${booleanExpressionOf("argument")}`;
+// The three places a named function sits, each keyed by the name `CALLABLE_NAME_REGEX` reads
+const CALLABLE_VARIABLE_SELECTOR = `VariableDeclarator[id.name=${CALLABLE_NAME_REGEX}]`;
+const CALLABLE_FUNCTION_SELECTOR = `FunctionDeclaration[id.name=${CALLABLE_NAME_REGEX}]`;
+const CALLABLE_MEMBER_SELECTOR = `:matches(Property, PropertyDefinition, MethodDefinition, TSAbstractMethodDefinition)[key.name=${CALLABLE_NAME_REGEX}]`;
 // Only `no-restricted-syntax` lives on the ESLint side: oxlint enforces the rest natively but has no
 // Selector-based rule, so these AST-selector bans have nowhere else to go
 // (see openspec/specs/architecture/lint-toolchain/design.md).
@@ -127,17 +131,17 @@ export default {
       message:
         "Name a boolean-returning function `check*` — `is*`/`has*` is a stored boolean, never a call. See the naming skill.",
       selector: [
-        `VariableDeclarator[id.name=${CALLABLE_NAME_REGEX}][init.type=/^(Arrow)?FunctionExpression$/] > :matches(ArrowFunctionExpression, FunctionExpression) > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
-        `FunctionDeclaration[id.name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
-        `:matches(Property, PropertyDefinition, MethodDefinition, TSAbstractMethodDefinition)[key.name=${CALLABLE_NAME_REGEX}] > :matches(ArrowFunctionExpression, FunctionExpression, TSEmptyBodyFunctionExpression) > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `${CALLABLE_VARIABLE_SELECTOR}[init.type=/^(Arrow)?FunctionExpression$/] > :matches(ArrowFunctionExpression, FunctionExpression) > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `${CALLABLE_FUNCTION_SELECTOR} > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
+        `${CALLABLE_MEMBER_SELECTOR} > :matches(ArrowFunctionExpression, FunctionExpression, TSEmptyBodyFunctionExpression) > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
         `TSMethodSignature[key.name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
         `:matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition)[key.name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation > TSFunctionType > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
         `Identifier[name=${CALLABLE_NAME_REGEX}] > TSTypeAnnotation > TSFunctionType > TSTypeAnnotation.returnType > ${BOOLEAN_RETURN_TYPE}`,
-        `VariableDeclarator[id.name=${CALLABLE_NAME_REGEX}] > ${UNANNOTATED_BOOLEAN_EXPRESSION_BODY}`,
-        `VariableDeclarator[id.name=${CALLABLE_NAME_REGEX}] > ${UNANNOTATED_BOOLEAN_BLOCK_RETURN}`,
-        `FunctionDeclaration[id.name=${CALLABLE_NAME_REGEX}]:not([returnType]) > BlockStatement > ReturnStatement${booleanExpressionOf("argument")}`,
-        `:matches(Property, PropertyDefinition, MethodDefinition, TSAbstractMethodDefinition)[key.name=${CALLABLE_NAME_REGEX}] > ${UNANNOTATED_BOOLEAN_EXPRESSION_BODY}`,
-        `:matches(Property, PropertyDefinition, MethodDefinition, TSAbstractMethodDefinition)[key.name=${CALLABLE_NAME_REGEX}] > ${UNANNOTATED_BOOLEAN_BLOCK_RETURN}`,
+        `${CALLABLE_VARIABLE_SELECTOR} > ${UNANNOTATED_BOOLEAN_EXPRESSION_BODY}`,
+        `${CALLABLE_VARIABLE_SELECTOR} > ${UNANNOTATED_BOOLEAN_BLOCK_RETURN}`,
+        `${CALLABLE_FUNCTION_SELECTOR}:not([returnType]) > BlockStatement > ReturnStatement${booleanExpressionOf("argument")}`,
+        `${CALLABLE_MEMBER_SELECTOR} > ${UNANNOTATED_BOOLEAN_EXPRESSION_BODY}`,
+        `${CALLABLE_MEMBER_SELECTOR} > ${UNANNOTATED_BOOLEAN_BLOCK_RETURN}`,
       ].join(", "),
     },
     {
