@@ -17,7 +17,7 @@ export const FRAMEWORK_FREE_HEADLESS_NAME_REGEX: RegExp = wholeNameRegex(
 // The import site of a module named by `from "…"`, `import "…"` or `import("…")`, with the name a regex source
 const importRegex = (nameSource: string): RegExp =>
   new RegExp(String.raw`(?:\bfrom\s*|\bimport\s*\(?\s*)["']${nameSource}["']`, "u");
-const VUE_PACKAGE_NAME = "vue";
+export const VUE_PACKAGE_NAME = "vue";
 // A module named by `from "vue"`, `import "vue"` or `import("vue")`: a source file that holds one uses Vue
 export const VUE_IMPORT_REGEX: RegExp = importRegex(RegExp.escape(VUE_PACKAGE_NAME));
 const PINIA_PACKAGE_NAME = "pinia";
