@@ -7,7 +7,7 @@ import { createMockDb } from "@esposter/db-mock";
 import { roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -43,11 +43,27 @@ describe(removeAccountFromMemberRooms, () => {
     ]);
 
     await removeAccountFromMemberRooms(userId);
+    const removedMembership = await mockDb.query.usersToRoomsInMessage.findFirst({
+      where: { roomId: { eq: room.id }, userId: { eq: userId } },
+    });
 
+    assert.exists(removedMembership);
+    expect(removedMembership.deletedAt).not.toBeNull();
     expect(roomObjectCalls).toStrictEqual([
       { args: [userId], method: "removeMember", roomId: room.id },
       {
-        args: [{ data: { roomId: room.id, userId }, type: "leaveRoom" }],
+        args: [
+          {
+            data: {
+              deletedAt: removedMembership.deletedAt,
+              displayName: removedMembership.displayName,
+              roomId: room.id,
+              userId,
+              version: removedMembership.version,
+            },
+            type: "leaveRoom",
+          },
+        ],
         method: "notifyOnlineMembers",
         roomId: room.id,
       },

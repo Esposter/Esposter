@@ -45,19 +45,21 @@ const deleteRoomEventSchema = z.object({
   data: selectUserToRoomInMessageSchema.pick({ roomId: true, userId: true }),
   type: z.literal(RealtimeEventType.DeleteRoom),
 });
-// A member as the room's list shows one: the person and the display name their membership row holds
+// The membership row a room's members may see, at the version it was written at, so a list holding it applies the row by
+// Its version like any other arrival. A removal carries the tombstone the removal left
+const memberRowEventSchema = selectUserToRoomInMessageSchema.pick({
+  deletedAt: true,
+  displayName: true,
+  roomId: true,
+  userId: true,
+  version: true,
+});
+// A member as the room's list shows one: the person and the membership row they joined with
 const joinRoomEventSchema = z.object({
-  data: z.object({
-    displayName: selectUserToRoomInMessageSchema.shape.displayName,
-    roomId: selectUserToRoomInMessageSchema.shape.roomId,
-    user: publicUserSchema,
-  }),
+  data: memberRowEventSchema.extend({ user: publicUserSchema }),
   type: z.literal(RealtimeEventType.JoinRoom),
 });
-const leaveRoomEventSchema = z.object({
-  data: selectUserToRoomInMessageSchema.pick({ roomId: true, userId: true }),
-  type: z.literal(RealtimeEventType.LeaveRoom),
-});
+const leaveRoomEventSchema = z.object({ data: memberRowEventSchema, type: z.literal(RealtimeEventType.LeaveRoom) });
 const updateUserToRoomEventSchema = z.object({
   data: selectUserToRoomInMessageSchema,
   type: z.literal(RealtimeEventType.UpdateUserToRoom),

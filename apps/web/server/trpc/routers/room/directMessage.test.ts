@@ -1,6 +1,7 @@
 import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
+import type { PublicUser } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
@@ -59,6 +60,22 @@ describe("directMessageRouter", () => {
   const createUserContext = async (user?: AuthSession["user"]) =>
     createMockContext(await createMockAuthSession(mockContext.db, user));
   const readMembership = (roomId: string, userId: string) => readRoomMembership(mockContext.db, roomId, userId);
+  // The join a membership announces, carrying the row it was written with
+  const readJoinEvent = async (roomId: string, user: PublicUser) => {
+    const membership = await readMembership(roomId, user.id);
+    assert.exists(membership);
+    return {
+      data: {
+        deletedAt: membership.deletedAt,
+        displayName: membership.displayName,
+        roomId,
+        user,
+        userId: user.id,
+        version: membership.version,
+      },
+      type: "joinRoom",
+    };
+  };
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -99,13 +116,15 @@ describe("directMessageRouter", () => {
       where: { id: { eq: user.id } },
     });
 
+    assert.exists(publicMainUser);
+    assert.exists(publicUser);
     expect(userObjectCalls).toContainEqual({
-      args: [{ data: { displayName: "", roomId: directMessage.id, user: publicMainUser }, type: "joinRoom" }],
+      args: [await readJoinEvent(directMessage.id, publicMainUser)],
       method: "broadcastEvent",
       userId: mainUser.id,
     });
     expect(userObjectCalls).toContainEqual({
-      args: [{ data: { displayName: "", roomId: directMessage.id, user: publicUser }, type: "joinRoom" }],
+      args: [await readJoinEvent(directMessage.id, publicUser)],
       method: "broadcastEvent",
       userId: user.id,
     });
@@ -251,8 +270,9 @@ describe("directMessageRouter", () => {
       columns: PublicUserColumns,
       where: { id: { eq: addedUser.id } },
     });
+    assert.exists(publicAddedUser);
     expect(userObjectCalls).toContainEqual({
-      args: [{ data: { displayName: "", roomId: directMessage.id, user: publicAddedUser }, type: "joinRoom" }],
+      args: [await readJoinEvent(directMessage.id, publicAddedUser)],
       method: "broadcastEvent",
       userId: addedUser.id,
     });
@@ -287,9 +307,22 @@ describe("directMessageRouter", () => {
     await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id });
     const directMessages = await directMessageCaller.readDirectMessages();
 
+    const removedMembership = await readMembership(directMessage.id, addedUser.id);
+    assert.exists(removedMembership);
     expect(roomObjectCalls).toContainEqual({ args: [addedUser.id], method: "removeMember", roomId: directMessage.id });
     expect(userObjectCalls).toContainEqual({
-      args: [{ data: { roomId: directMessage.id, userId: addedUser.id }, type: "leaveRoom" }],
+      args: [
+        {
+          data: {
+            deletedAt: removedMembership.deletedAt,
+            displayName: removedMembership.displayName,
+            roomId: directMessage.id,
+            userId: addedUser.id,
+            version: removedMembership.version,
+          },
+          type: "leaveRoom",
+        },
+      ],
       method: "broadcastEvent",
       userId: addedUser.id,
     });

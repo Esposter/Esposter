@@ -251,7 +251,10 @@ describe(useDirectMessageStore, () => {
     await readDirectMessages();
     participants = [first, second, third];
     onUserFrame?.(
-      JSON.stringify({ data: { displayName: "", roomId: directMessage.id, user: third }, type: "joinRoom" }),
+      JSON.stringify({
+        data: { deletedAt: null, displayName: "", roomId: directMessage.id, user: third, userId: third.id, version: 0 },
+        type: "joinRoom",
+      }),
     );
     await waitForSynchronizedFunctions();
 

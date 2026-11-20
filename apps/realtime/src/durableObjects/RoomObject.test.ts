@@ -863,7 +863,10 @@ describe(RoomObject, () => {
 
     const { object } = createRoomObject();
     await object.attachMember(userId, createStatus(userId, true));
-    const leaveEvent = { data: { roomId, userId: otherUserId }, type: "leaveRoom" } as const;
+    const leaveEvent = {
+      data: { deletedAt: new Date(0), displayName: "", roomId, userId: otherUserId, version: 1 },
+      type: "leaveRoom",
+    } as const;
     await object.notifyOnlineMembers(leaveEvent);
 
     expect(getUserStub(userId).broadcastEvent).toHaveBeenCalledExactlyOnceWith(leaveEvent);

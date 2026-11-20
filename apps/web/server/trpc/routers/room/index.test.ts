@@ -926,7 +926,19 @@ describe("roomRouter", () => {
       columns: PublicUserColumns,
       where: { id: { eq: session.user.id } },
     });
-    const joinEvent = { data: { displayName: "", roomId: newRoom.id, user }, type: "joinRoom" };
+    const joinedMembership = await readMembership(newRoom.id, session.user.id);
+    assert.exists(joinedMembership);
+    const joinEvent = {
+      data: {
+        deletedAt: null,
+        displayName: "",
+        roomId: newRoom.id,
+        user,
+        userId: session.user.id,
+        version: joinedMembership.version,
+      },
+      type: "joinRoom",
+    };
     expect(userObjectCalls).toContainEqual({ args: [joinEvent], method: "broadcastEvent", userId: session.user.id });
     expect(roomObjectCalls).toContainEqual({ args: [joinEvent], method: "notifyOnlineMembers", roomId: newRoom.id });
   });
@@ -983,8 +995,19 @@ describe("roomRouter", () => {
     vi.advanceTimersByTime(1);
     const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
     await memberRoomCaller.leaveRoom(newRoom.id);
+    const removedMembership = await readMembership(newRoom.id, member.id);
+    assert.exists(removedMembership);
 
-    const leaveEvent = { data: { roomId: newRoom.id, userId: member.id }, type: "leaveRoom" };
+    const leaveEvent = {
+      data: {
+        deletedAt: removedMembership.deletedAt,
+        displayName: removedMembership.displayName,
+        roomId: newRoom.id,
+        userId: member.id,
+        version: removedMembership.version,
+      },
+      type: "leaveRoom",
+    };
     expect(roomObjectCalls).toContainEqual({ args: [member.id], method: "removeMember", roomId: newRoom.id });
     expect(roomObjectCalls).toContainEqual({ args: [leaveEvent], method: "notifyOnlineMembers", roomId: newRoom.id });
     expect(userObjectCalls).toContainEqual({ args: [leaveEvent], method: "broadcastEvent", userId: member.id });
@@ -1019,12 +1042,12 @@ describe("roomRouter", () => {
     await memberRoomCaller.leaveRoom(newRoom.id);
     const removedMembership = await readMembership(newRoom.id, member.id);
     const { items } = await roomCaller.readMembers({ roomId: newRoom.id });
+    const readMember = items.find(({ id }) => id === member.id);
 
     assert.exists(removedMembership);
-    expect(items.find(({ id }) => id === member.id)).toMatchObject({
-      deletedAt: expect.any(Date),
-      version: removedMembership.version,
-    });
+    assert.exists(readMember);
+    expect(readMember.deletedAt).toStrictEqual(removedMembership.deletedAt);
+    expect(readMember.version).toBe(removedMembership.version);
   });
 
   test("a rejoin revives the membership at a higher version, with the values a fresh membership gets", async () => {

@@ -22,7 +22,15 @@ describe("messageModelMemberList", () => {
   test("keeps the profile of the member pressed next when the first member's dismissal is reported after the move", async () => {
     expect.hasAssertions();
 
-    trpcMsw.room.readMembers.query(() => ({ hasMore: false, items: [firstMember, secondMember], nextCursor: "" }));
+    // The room's read returns each member's membership row beside the user
+    const memberRows = [firstMember, secondMember].map((member) => ({
+      ...member,
+      deletedAt: null,
+      roomId: room.id,
+      userId: member.id,
+      version: 0,
+    }));
+    trpcMsw.room.readMembers.query(() => ({ hasMore: false, items: memberRows, nextCursor: "" }));
     trpcMsw.room.readMembersCount.query(() => 2);
     trpcMsw.room.readMemberCountsByTopRole.query(() => []);
     trpcMsw.room.readMutualRooms.query(() => []);

@@ -1,5 +1,5 @@
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
-import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { MemberRowInRoom } from "#shared/models/db/room/MemberRowInRoom";
 import type { UserInRoom } from "#shared/models/db/room/UserInRoom";
 import type { Page, RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
@@ -255,7 +255,7 @@ export const baseRoomRouter = router({
         .groupBy(rankedRoles.roleId);
     },
   ),
-  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<Page<MemberInRoom>>(
+  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<Page<MemberRowInRoom>>(
     async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
       // The display name is the sort, cursor and search key, so the order, the page boundary and the match all
       // Agree with the name the row renders
@@ -266,16 +266,20 @@ export const baseRoomRouter = router({
         { displayName: sql<string>`${displayName} collate nocase`, id: usersInAuth.id },
         readMembersPageSort,
       );
-      const wheres: (SQL | undefined)[] = [
-        eq(usersToRoomsInMessage.roomId, roomId),
-        getLiveMembershipWhere(usersToRoomsInMessage),
-        getPageWhere(boundSort, cursor),
-      ];
+      // A removed member is read as their tombstone, so a list holding the row drops it by its version, not by absence
+      const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId), getPageWhere(boundSort, cursor)];
       if (filter?.name)
         wheres.push(or(containsLike(displayName, filter.name), containsLike(usersInAuth.name, filter.name)));
 
       const members = await ctx.db
-        .select({ ...getPublicUserColumns(usersInAuth), displayName })
+        .select({
+          ...getPublicUserColumns(usersInAuth),
+          deletedAt: usersToRoomsInMessage.deletedAt,
+          displayName,
+          roomId: usersToRoomsInMessage.roomId,
+          userId: usersToRoomsInMessage.userId,
+          version: usersToRoomsInMessage.version,
+        })
         .from(usersInAuth)
         .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, usersInAuth.id))
         .where(and(...wheres))

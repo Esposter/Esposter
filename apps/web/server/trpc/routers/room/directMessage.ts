@@ -222,14 +222,14 @@ export const directMessageRouter = router({
       DerivedDatabaseEntityType.DirectMessage,
       roomId,
     );
-    requireMutation(
+    const removedUserToRoom = requireMutation(
       deletedUserToRoom,
       Operation.Delete,
       DatabaseEntityType.UserToRoom,
       JSON.stringify({ roomId, userId }),
     );
 
-    await announceRoomMemberDeparture({ roomId, userId });
+    await announceRoomMemberDeparture(removedUserToRoom);
     // A departed owner hands the group on, and the members still in it learn the new owner the way a room update tells them
     if (updatedRoom.userId !== room.userId)
       await notifyOnlineRoomMembers(roomId, { data: { id: roomId, userId: updatedRoom.userId }, type: "updateRoom" });

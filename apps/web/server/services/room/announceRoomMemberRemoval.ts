@@ -1,6 +1,6 @@
 import type { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemovalAction";
 import type { Context } from "#server/trpc/context";
-import type { UserToRoomInMessage } from "@esposter/db-schema";
+import type { MemberRow } from "#shared/models/db/room/MemberRow";
 
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
@@ -11,20 +11,21 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Call site, a moderation kick deletes a membership row nobody is told about
 export const announceRoomMemberRemoval = async (
   db: Context["db"],
-  { roomId, userId }: Pick<UserToRoomInMessage, "roomId" | "userId">,
+  removedMember: MemberRow,
   actorUserId: string,
   action: RoomMemberRemovalAction,
 ): Promise<void> => {
-  await announceRoomMemberDeparture({ roomId, userId });
+  const { roomId, userId } = removedMember;
+  await announceRoomMemberDeparture(removedMember);
   // Best-effort after the membership delete — the name lookup only exists to word the system message, so a
   // Failure costs the room one line, never the removal that already landed
   await getResultAsync(async () => {
-    const removedMember = await db.query.usersInAuth.findFirst({
+    const removedUser = await db.query.usersInAuth.findFirst({
       columns: { name: true },
       where: { id: { eq: userId } },
     });
-    if (removedMember)
-      await createSystemRoomMessage(roomId, actorUserId, `${removedMember.name} was ${action} from the room.`).match(
+    if (removedUser)
+      await createSystemRoomMessage(roomId, actorUserId, `${removedUser.name} was ${action} from the room.`).match(
         noop,
         console.error,
       );

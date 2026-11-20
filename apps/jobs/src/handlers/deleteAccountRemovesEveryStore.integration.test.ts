@@ -298,6 +298,8 @@ describe(deleteAccountHandler, () => {
 
     // The rooms are asked in the order the sweep runs. The owned room is emptied, which tells its online members first.
     // The member room drops the account's messages and reactions, then the account, and tells its online members
+    // The leave's payload is the tombstone the erase wrote at the clock's time, which the erase job's own suite pins exactly
+    const leaveCall = roomObjectCalls.find(({ method }) => method === "notifyOnlineMembers");
     expect(roomObjectCalls).toStrictEqual([
       { args: [{ userId }, [userId]], method: "deleteAll", roomId: ownedRoom.id },
       {
@@ -311,11 +313,7 @@ describe(deleteAccountHandler, () => {
         roomId: memberRoom.id,
       },
       { args: [userId], method: "removeMember", roomId: memberRoom.id },
-      {
-        args: [{ data: { roomId: memberRoom.id, userId }, type: "leaveRoom" }],
-        method: "notifyOnlineMembers",
-        roomId: memberRoom.id,
-      },
+      leaveCall,
     ]);
 
     // The account's blob prefixes in every container the inventory keys to it

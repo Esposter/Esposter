@@ -1,4 +1,5 @@
 import type { Context } from "#server/trpc/context";
+import type { MemberRow } from "#shared/models/db/room/MemberRow";
 import type { PublicUser, UserEvent, UserStatusInMessage } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
@@ -17,12 +18,14 @@ import { and, eq } from "drizzle-orm";
 // One joiner's announcement: the room's online members and the joiner's own tabs hear it together, and an online joiner
 // Is attached once they have
 const announceRoomMemberJoined = async (
-  roomId: string,
+  { deletedAt, displayName, roomId, userId, version }: MemberRow,
   user: PublicUser,
-  displayName: string,
   status: undefined | UserStatusInMessage,
 ) => {
-  const event = { data: { displayName, roomId, user }, type: "joinRoom" } satisfies UserEvent;
+  const event = {
+    data: { deletedAt, displayName, roomId, user, userId, version },
+    type: "joinRoom",
+  } satisfies UserEvent;
   await Promise.all([
     notifyOnlineRoomMembers(roomId, event),
     callUserObjects([user.id], (userObject) => userObject.broadcastEvent(event)),
@@ -49,7 +52,13 @@ export const announceRoomMembersJoined = async (
   const userIds = users.map(({ id }) => id);
   const [memberships, statuses] = await Promise.all([
     db
-      .select({ displayName: usersToRoomsInMessage.displayName, userId: usersToRoomsInMessage.userId })
+      .select({
+        deletedAt: usersToRoomsInMessage.deletedAt,
+        displayName: usersToRoomsInMessage.displayName,
+        roomId: usersToRoomsInMessage.roomId,
+        userId: usersToRoomsInMessage.userId,
+        version: usersToRoomsInMessage.version,
+      })
       .from(usersToRoomsInMessage)
       .where(
         and(
@@ -61,9 +70,12 @@ export const announceRoomMembersJoined = async (
     db.select().from(userStatusesInMessage).where(inJsonArray(userStatusesInMessage.userId, userIds)),
   ]);
   for (const user of users) {
-    const displayName = memberships.find(({ userId }) => userId === user.id)?.displayName ?? "";
+    const membership = memberships.find(({ userId }) => userId === user.id);
+    // A user who holds no live membership of the room joined nothing, so there is no row to announce
+    if (!membership) continue;
+
     const status = statuses.find(({ userId }) => userId === user.id);
     // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: a joiner attached here hears the joins after theirs
-    await announceRoomMemberJoined(roomId, user, displayName, status);
+    await announceRoomMemberJoined(membership, user, status);
   }
 };

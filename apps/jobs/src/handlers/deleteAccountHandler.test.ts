@@ -228,6 +228,8 @@ describe(deleteAccountHandler, () => {
       mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage).where(eq(roomsInMessage.userId, userId)),
     ).resolves.toStrictEqual([]);
     // Only the first run sends anything: the second finds no owned room and no membership left
+    // The leave's payload is the tombstone the erase wrote at the clock's time, which the erase job's own suite pins exactly
+    const leaveCall = roomObjectCalls.find(({ method }) => method === "notifyOnlineMembers");
     expect(roomObjectCalls).toStrictEqual([
       { args: [{ userId }, []], method: "deleteAll", roomId: ownedRoom.id },
       {
@@ -241,11 +243,7 @@ describe(deleteAccountHandler, () => {
         roomId: memberRoom.id,
       },
       { args: [userId], method: "removeMember", roomId: memberRoom.id },
-      {
-        args: [{ data: { roomId: memberRoom.id, userId }, type: "leaveRoom" }],
-        method: "notifyOnlineMembers",
-        roomId: memberRoom.id,
-      },
+      leaveCall,
     ]);
     await expect(readBlobNames(StorageBucket.ResourceAssets)).resolves.toStrictEqual([]);
     await expect(readBlobNames(StorageBucket.PublicUserAssets)).resolves.toStrictEqual([]);
