@@ -6,16 +6,15 @@ import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useModerationNoteStore } from "#src/store/message/moderation/note";
 import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
 
 const isOpen = defineModel<boolean>({ default: false });
 const { roomId, user } = defineProps<MemberActionDialogProps>();
-const { $trpc } = useNuxtApp();
 const noteRules = [UiRules.maxLength(MODERATION_NOTE_MAX_LENGTH)];
 const { readModerationNotes, readMoreModerationNotes } = useReadModerationNotes(roomId, () => user.id);
+const { createModerationNote, isCreatePending } = useCreateModerationNote(roomId, () => user.id);
 const moderationNoteStore = useModerationNoteStore();
 const { currentTargetUserId, hasMore, items } = storeToRefs(moderationNoteStore);
 const note = ref("");
@@ -26,7 +25,12 @@ const isNoteValid = computed(() => createModerationNoteInputSchema.shape.note.sa
 // The ref would blank the list the new dialog has already claimed
 currentTargetUserId.value = user.id;
 const { isPending } = useQuery(readModerationNotes);
-const { executeMutation, isPending: isCreatePending } = useMutation();
+// The field keeps the note until the server has it, so a refused note stays in place to be sent again. A note the reader has
+// Typed since is left alone when the sent one is kept
+const sendNote = async () => {
+  const sentNote = note.value;
+  if ((await createModerationNote(sentNote)) && note.value === sentNote) note.value = "";
+};
 </script>
 
 <template>
@@ -56,38 +60,7 @@ const { executeMutation, isPending: isCreatePending } = useMutation();
         title="No notes yet"
       />
       <!-- Adding a note keeps the dialog open, so a moderator can keep reviewing while writing -->
-      <UiForm
-        :id="formId"
-        flex
-        flex-col
-        gap-3
-        @submit="
-          () => {
-            // The note is sent and the field clears at once, and the list is read again once the server has the note. A refused
-            // Note goes back into the field, unless the reader has typed a new one since
-            const sentNote = note;
-            executeMutation(
-              () =>
-                $trpc.message.moderation.createModerationNote.mutate({ note: sentNote, roomId, targetUserId: user.id }),
-              {
-                applyOptimistic: () => {
-                  note = '';
-                  return () => {
-                    if (note === '') note = sentNote;
-                  };
-                },
-                key: Symbol('createModerationNote'),
-                onError: (error) => {
-                  createErrorAlert(error);
-                },
-                reconcile: async () => {
-                  await readModerationNotes();
-                },
-              },
-            );
-          }
-        "
-      >
+      <UiForm :id="formId" flex flex-col gap-3 @submit="sendNote()">
         <UiTextField
           v-model="note"
           :counter="MODERATION_NOTE_MAX_LENGTH"
