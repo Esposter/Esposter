@@ -21,7 +21,13 @@ import { enhanceWeapon } from "#src/services/weapon/enhanceWeapon";
 import { getBagWeapon } from "#src/services/weapon/getBagWeapon";
 import { getRarityRequiredExps } from "#src/services/weapon/getRarityRequiredExps";
 import { getWeaponData } from "#src/services/weapon/getWeaponData";
-import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey, GameTextLoaderMap } from "genshin-text";
+import {
+  ENGLISH_GAME_TEXT,
+  fillGameTextValues,
+  GameLanguage,
+  GameLanguageGameTextLoaderMap,
+  GameTextKey,
+} from "genshin-text";
 import { assert, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
@@ -82,7 +88,7 @@ describe("weaponScreen", () => {
   test("the action labels read in the reader's game language", async () => {
     expect.hasAssertions();
 
-    const gameText = await GameTextLoaderMap[GameLanguage.German]();
+    const gameText = await GameLanguageGameTextLoaderMap[GameLanguage.German]();
     await render(WeaponScreenContainer, { props: { ...props, gameText } });
 
     await expect.element(page.getByText(gameText[GameTextKey.WeaponEnhance], { exact: true }).first()).toBeVisible();

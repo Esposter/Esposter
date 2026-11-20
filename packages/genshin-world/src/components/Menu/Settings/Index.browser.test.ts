@@ -8,7 +8,13 @@ import {
   GENSHIN_SETTINGS_DEFAULTS,
   VOLUME_LEVEL_MAXIMUM,
 } from "#src/services/menu/constants";
-import { ENGLISH_GAME_TEXT, GameLanguage, GameTextKey, GameTextLoaderMap, getLanguageDisplayName } from "genshin-text";
+import {
+  ENGLISH_GAME_TEXT,
+  GameLanguage,
+  GameLanguageGameTextLoaderMap,
+  GameTextKey,
+  getLanguageDisplayName,
+} from "genshin-text";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
@@ -52,7 +58,7 @@ describe("menuSettings", () => {
     await page.getByRole("tab", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsLanguage] }).click();
     await page.getByRole("button", { expanded: false }).click();
     await page.getByRole("option", { name: getLanguageDisplayName(GameLanguage.German, GameLanguage.German) }).click();
-    const germanText = await GameTextLoaderMap[GameLanguage.German]();
+    const germanText = await GameLanguageGameTextLoaderMap[GameLanguage.German]();
 
     await expect.element(page.getByRole("dialog", { name: germanText[GameTextKey.Settings] })).toBeInTheDocument();
   });

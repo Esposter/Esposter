@@ -1,7 +1,7 @@
 import type { Localization } from "#src/models/Localization";
 import type { ResolvedLocalization } from "#src/models/ResolvedLocalization";
 
-import { GameTextLoaderMap } from "#src/generated/genshinText/generated/GameTextLoaderMap";
+import { GameLanguageGameTextLoaderMap } from "#src/generated/genshinText/generated/GameLanguageGameTextLoaderMap";
 import { getCanonicalLanguage } from "#src/generated/genshinText/services/getCanonicalLanguage";
 import english from "#src/localizations/english";
 import { DEFAULT_LANGUAGE, LOCALIZATIONS_DIRECTORY } from "#src/services/constants";
@@ -15,7 +15,7 @@ export const readLocalization = async (language: string): Promise<ResolvedLocali
   const gameLanguage = getCanonicalLanguage(language);
   if (!gameLanguage || gameLanguage === DEFAULT_LANGUAGE) return english;
 
-  const gameText = await GameTextLoaderMap[gameLanguage]();
+  const gameText = await GameLanguageGameTextLoaderMap[gameLanguage]();
   const localization = await readPersonaModule<Localization>(LOCALIZATIONS_DIRECTORY, gameLanguage);
   return localization
     ? { ...localization, gameText, strings: { ...english.strings, ...localization.strings } }

@@ -24,14 +24,14 @@ pnpm i genshin-text
 ```
 
 1. Pick the reader's language with `matchGameLanguage`. Pass in the browser's language list.
-2. Load that language's text once with `GameTextLoaderMap`.
+2. Load that language's text once with `GameLanguageGameTextLoaderMap`.
 3. Index the text with a `GameTextKey` value.
 
 ```ts
-import { GameTextKey, GameTextLoaderMap, matchGameLanguage } from "genshin-text";
+import { GameLanguageGameTextLoaderMap, GameTextKey, matchGameLanguage } from "genshin-text";
 
 const language = matchGameLanguage(window.navigator.languages);
-const gameText = await GameTextLoaderMap[language]();
+const gameText = await GameLanguageGameTextLoaderMap[language]();
 console.log(gameText[GameTextKey.Loading]);
 ```
 
@@ -39,19 +39,19 @@ Check: the console shows the loading string in the reader's language, or in Engl
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export                   | Kind      | Purpose                                                                                                                 |
-| ------------------------ | --------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `fillGameTextValues`     | function  | Fills a string's numbered placeholders with the values given, and keeps each placeholder that has no value              |
-| `GameLanguage`           | enum      | The fifteen languages of the game                                                                                       |
-| `GameText`               | type      | Every referenced string in one language, keyed by `GameTextKey`                                                         |
-| `GameTextKey`            | enum      | Every string that a consumer shows, by the game's own text id                                                           |
-| `GameTextLoaderMap`      | const     | Loads one language's `GameText`: English is bundled, and each other language is a chunk loaded on first use             |
-| `GameTextSegment`        | interface | A run of a game string under one colour, or plain when it has none                                                      |
-| `getAcceptLanguageTags`  | function  | The tags of an `Accept-Language` header, most preferred first, weighed by their `q`                                     |
-| `getGameTextWords`       | function  | The words of a string before its `#1#` count, with the count and its unit dropped, or the string whole when it has none |
-| `getLanguageDisplayName` | function  | A game language's name, as written in another game language, or the name as given when either is not a game language    |
-| `matchGameLanguage`      | function  | The game language nearest to a list of preferred tags, or English when none matches                                     |
-| `splitGameTextColors`    | function  | Splits a game string into plain runs and colour-tagged runs                                                             |
+| Export                          | Kind      | Purpose                                                                                                                 |
+| ------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `fillGameTextValues`            | function  | Fills a string's numbered placeholders with the values given, and keeps each placeholder that has no value              |
+| `GameLanguage`                  | enum      | The fifteen languages of the game                                                                                       |
+| `GameLanguageGameTextLoaderMap` | const     | Loads one language's `GameText`: English is bundled, and each other language is a chunk loaded on first use             |
+| `GameText`                      | type      | Every referenced string in one language, keyed by `GameTextKey`                                                         |
+| `GameTextKey`                   | enum      | Every string that a consumer shows, by the game's own text id                                                           |
+| `GameTextSegment`               | interface | A run of a game string under one colour, or plain when it has none                                                      |
+| `getAcceptLanguageTags`         | function  | The tags of an `Accept-Language` header, most preferred first, weighed by their `q`                                     |
+| `getGameTextWords`              | function  | The words of a string before its `#1#` count, with the count and its unit dropped, or the string whole when it has none |
+| `getLanguageDisplayName`        | function  | A game language's name, as written in another game language, or the name as given when either is not a game language    |
+| `matchGameLanguage`             | function  | The game language nearest to a list of preferred tags, or English when none matches                                     |
+| `splitGameTextColors`           | function  | Splits a game string into plain runs and colour-tagged runs                                                             |
 
 ## <a name="license">⚖️ License</a>
 

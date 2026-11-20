@@ -126,7 +126,7 @@ export const CHARACTER_LINES_DIRECTORY: string = join(PERSONA_GENERATED_DIRECTOR
 // Modules of `genshin-text` it runs, its own alias prefix in place of the package's
 export const PERSONA_COPY_DIRECTORY: string = join(PERSONA_GENERATED_DIRECTORY, "genshinText");
 export const PersonaCopiedModules: string[] = [
-  "generated/GameTextLoaderMap.ts",
+  "generated/GameLanguageGameTextLoaderMap.ts",
   "models/GameLanguage.ts",
   "models/GameText.ts",
   "models/GameTextKey.ts",

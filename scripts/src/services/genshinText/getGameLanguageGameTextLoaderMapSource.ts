@@ -3,7 +3,7 @@ import { GameLanguage, GameLanguages } from "genshin-text";
 // The loader map's source: English imported once and bundled, as the text every other language shows until its own
 // Chunk arrives, and every other language a dynamic import of a chunk of its own, so a page downloads only the
 // Language it shows
-export const getGameTextLoaderMapSource = (): string => {
+export const getGameLanguageGameTextLoaderMapSource = (): string => {
   const entries = GameLanguages.map((language) =>
     language === GameLanguage.English
       ? `  [GameLanguage.English]: () => Promise.resolve(ENGLISH_GAME_TEXT),\n`
@@ -17,7 +17,7 @@ import { GameLanguage } from "#src/models/GameLanguage";
 
 // Written by \`pnpm -C scripts genshin:text write\`, never by hand.
 export const ENGLISH_GAME_TEXT: GameText = English;
-export const GameTextLoaderMap: Record<GameLanguage, () => Promise<GameText>> = {
+export const GameLanguageGameTextLoaderMap: Record<GameLanguage, () => Promise<GameText>> = {
 ${entries.join("")}};
 `;
 };

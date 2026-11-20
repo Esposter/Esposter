@@ -6,7 +6,7 @@ import {
   PersonaCopiedModules,
 } from "#src/services/genshinText/constants";
 import { getGameLanguageCharacterLinesLoaderMapSource } from "#src/services/genshinText/getGameLanguageCharacterLinesLoaderMapSource";
-import { getGameTextLoaderMapSource } from "#src/services/genshinText/getGameTextLoaderMapSource";
+import { getGameLanguageGameTextLoaderMapSource } from "#src/services/genshinText/getGameLanguageGameTextLoaderMapSource";
 import { getPersonaModuleSource } from "#src/services/genshinText/getPersonaModuleSource";
 import { formatGeneratedSource } from "#src/services/shared/formatGeneratedSource";
 import { readFileSync } from "node:fs";
@@ -39,11 +39,11 @@ describe(getPersonaModuleSource, () => {
   test("the loader maps are the ones the writer writes", async () => {
     expect.hasAssertions();
 
-    const gameTextMapPath = join(GENSHIN_TEXT_GENERATED_DIRECTORY, "GameTextLoaderMap.ts");
+    const gameTextMapPath = join(GENSHIN_TEXT_GENERATED_DIRECTORY, "GameLanguageGameTextLoaderMap.ts");
     const characterLinesMapPath = join(dirname(CHARACTER_LINES_DIRECTORY), "GameLanguageCharacterLinesLoaderMap.ts");
 
     expect(readFileSync(gameTextMapPath, "utf8")).toBe(
-      await formatGeneratedSource(gameTextMapPath, getGameTextLoaderMapSource()),
+      await formatGeneratedSource(gameTextMapPath, getGameLanguageGameTextLoaderMapSource()),
     );
     expect(readFileSync(characterLinesMapPath, "utf8")).toBe(
       await formatGeneratedSource(characterLinesMapPath, getGameLanguageCharacterLinesLoaderMapSource()),

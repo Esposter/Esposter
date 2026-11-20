@@ -4,7 +4,7 @@ import type { ComputedRef, Ref } from "vue";
 
 import { getResultAsync } from "@esposter/shared";
 import { watchImmediate } from "@vueuse/core";
-import { GameTextLoaderMap } from "genshin-text";
+import { GameLanguageGameTextLoaderMap } from "genshin-text";
 import { computed, shallowRef } from "vue";
 
 // The labels show the words of the language chosen here. The reader's own language's are the game text given, and any
@@ -23,7 +23,7 @@ export const useSettingsGameText = (
         return;
       }
 
-      await getResultAsync(() => GameTextLoaderMap[newLanguage]()).match(
+      await getResultAsync(() => GameLanguageGameTextLoaderMap[newLanguage]()).match(
         (loadedGameText) => {
           if (settings.value.language === newLanguage) chosenGameText.value = loadedGameText;
         },

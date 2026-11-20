@@ -7,7 +7,7 @@ import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
 
 // Written by `pnpm -C scripts genshin:text write`, never by hand.
 export const ENGLISH_GAME_TEXT: GameText = English;
-export const GameTextLoaderMap: Record<GameLanguage, () => Promise<GameText>> = {
+export const GameLanguageGameTextLoaderMap: Record<GameLanguage, () => Promise<GameText>> = {
   [GameLanguage.ChineseSimplified]: async () =>
     (await import("#src/generated/genshinText/generated/text/ChineseSimplified.json", { with: { type: "json" } }))
       .default,

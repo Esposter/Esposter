@@ -1,6 +1,6 @@
 import type { ResolvedLocalization } from "#src/models/ResolvedLocalization";
 
-import { ENGLISH_GAME_TEXT } from "#src/generated/genshinText/generated/GameTextLoaderMap";
+import { ENGLISH_GAME_TEXT } from "#src/generated/genshinText/generated/GameLanguageGameTextLoaderMap";
 
 // The language the plugin is written in, and the one every other inherits what it has not translated from. Its
 // Base verbs are the Teyvat gerunds every spinner shows ahead of a character's own

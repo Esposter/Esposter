@@ -3,7 +3,7 @@ import { checkIsServer } from "@esposter/shared";
 import {
   ENGLISH_GAME_TEXT,
   GameLanguage,
-  GameTextLoaderMap,
+  GameLanguageGameTextLoaderMap,
   getAcceptLanguageTags,
   matchGameLanguage,
 } from "genshin-text";
@@ -19,7 +19,7 @@ export const useGameText = async () => {
       const language = matchGameLanguage(
         checkIsServer() ? getAcceptLanguageTags(acceptLanguage) : window.navigator.languages,
       );
-      return { language, text: await GameTextLoaderMap[language]() };
+      return { language, text: await GameLanguageGameTextLoaderMap[language]() };
     },
     { default: () => ({ language: GameLanguage.English, text: ENGLISH_GAME_TEXT }) },
   );

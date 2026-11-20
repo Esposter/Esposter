@@ -41,7 +41,7 @@ import { SceneContextKey } from "#src/services/scene/SceneContextKey";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { capitalize, InvalidOperationError, jsonDateParse, noop, Operation } from "@esposter/shared";
 import { StoneNodeMaterial } from "genshin-engine";
-import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
+import { checkIsGameLanguage, GameLanguageGameTextLoaderMap } from "genshin-text";
 import { createPinia } from "pinia";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for the
@@ -104,7 +104,7 @@ if (screen && root) {
   // A reference in another language hands a screen taking the game's words that language's own, as its reader sees them
   const { language } = props;
   if ("gameText" in props && typeof language === "string" && checkIsGameLanguage(language))
-    props.gameText = await GameTextLoaderMap[language]();
+    props.gameText = await GameLanguageGameTextLoaderMap[language]();
   // A frame that pillarboxes the game window draws the screen from that window's left edge: its usual 1920 by 1080 canvas,
   // At a unit of one, as the game draws its interface at the window's height. The frame clips what overflows its right
   const windowLeft = searchParameters.get("windowLeft");
