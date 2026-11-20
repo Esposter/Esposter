@@ -33,7 +33,7 @@ sequenceDiagram
   CP->>CB: write ClipboardItem (TSV + HTML + sheet format)
   U->>T: Ctrl+V / Ctrl+Shift+V
   T->>PP: pasteMode = Overwrite | ShiftDown
-  PP->>CB: readText()
+  PP->>CB: clipboard.read()
   PP->>PP: sheet format, else parseClipboardValuesByPosition → coerceValue
   PP->>H: push PasteRangeCommand (overwrite) or CreateRowsCommand (shift down)
   PP->>PP: saveSheet()
