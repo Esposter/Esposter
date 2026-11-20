@@ -24,12 +24,12 @@ describe("moduleCycles", () => {
     const sourcePathSet = new Set(sourcePaths);
     // Nuxt's own record of what it injects, written by `nuxt prepare`. It also lists a composable's type parameters as
     // Exports, which is harmless here: a type parameter is never referenced as a value
-    const autoImportPathMap = new Map<string, string>();
+    const autoImportNamePathMap = new Map<string, string>();
     for (const { groups } of (await readFile(join(ROOT, ".nuxt/imports.d.ts"), "utf8")).matchAll(
       /export \{(?<names>[^}]+)\} from '\.\.\/(?<path>app\/[^']+)'/gu,
     ))
       if (groups?.names && groups.path)
-        for (const name of groups.names.split(",")) autoImportPathMap.set(name.trim(), `${groups.path}.ts`);
+        for (const name of groups.names.split(",")) autoImportNamePathMap.set(name.trim(), `${groups.path}.ts`);
 
     const resolveSpecifier = (specifier: string) => {
       const alias = [...ALIAS_DIRECTORY_MAP.keys()].find((prefix) => specifier.startsWith(prefix));
@@ -46,14 +46,14 @@ describe("moduleCycles", () => {
       return content ? babelParse(content, { plugins: ["typescript"], sourceType: "module" }).program : undefined;
     };
     // Written edges and auto-import edges apart, since which kind closes a cycle decides whose finding it is
-    const writtenEdgeMap = new Map<string, Set<string>>();
-    const autoImportEdgeMap = new Map<string, Set<string>>();
+    const sourcePathWrittenEdgeMap = new Map<string, Set<string>>();
+    const sourcePathAutoImportEdgeMap = new Map<string, Set<string>>();
     await Promise.all(
       sourcePaths.map(async (sourcePath) => {
         const writtenEdges = new Set<string>();
         const autoImportEdges = new Set<string>();
-        writtenEdgeMap.set(sourcePath, writtenEdges);
-        autoImportEdgeMap.set(sourcePath, autoImportEdges);
+        sourcePathWrittenEdgeMap.set(sourcePath, writtenEdges);
+        sourcePathAutoImportEdgeMap.set(sourcePath, autoImportEdges);
         const program = await readProgram(sourcePath);
         if (!program) return;
 
@@ -91,7 +91,7 @@ describe("moduleCycles", () => {
         }
 
         walkIdentifiers(program, ({ name }, _parent, _parentStack, isReference, isLocal) => {
-          const target = autoImportPathMap.get(name);
+          const target = autoImportNamePathMap.get(name);
           if (!isReference || isLocal || declaredNames.has(name) || !target || target === sourcePath) return;
           autoImportEdges.add(target);
         });
@@ -99,29 +99,35 @@ describe("moduleCycles", () => {
     );
 
     const getEdges = (sourcePath: string) => [
-      ...(writtenEdgeMap.get(sourcePath) ?? []),
-      ...(autoImportEdgeMap.get(sourcePath) ?? []),
+      ...(sourcePathWrittenEdgeMap.get(sourcePath) ?? []),
+      ...(sourcePathAutoImportEdgeMap.get(sourcePath) ?? []),
     ];
     // Tarjan's strongly connected components: every component of more than one module is a cycle
-    const readCycles = () => {
-      const indexMap = new Map<string, number>();
-      const lowLinkMap = new Map<string, number>();
+    const computeCycles = () => {
+      const sourcePathIndexMap = new Map<string, number>();
+      const sourcePathLowLinkMap = new Map<string, number>();
       const stack: string[] = [];
       const onStack = new Set<string>();
       const cycles: string[][] = [];
       const visit = (sourcePath: string) => {
-        indexMap.set(sourcePath, indexMap.size);
-        lowLinkMap.set(sourcePath, indexMap.size - 1);
+        sourcePathIndexMap.set(sourcePath, sourcePathIndexMap.size);
+        sourcePathLowLinkMap.set(sourcePath, sourcePathIndexMap.size - 1);
         stack.push(sourcePath);
         onStack.add(sourcePath);
         for (const target of getEdges(sourcePath))
-          if (!indexMap.has(target)) {
+          if (!sourcePathIndexMap.has(target)) {
             visit(target);
-            lowLinkMap.set(sourcePath, Math.min(lowLinkMap.get(sourcePath) ?? 0, lowLinkMap.get(target) ?? 0));
+            sourcePathLowLinkMap.set(
+              sourcePath,
+              Math.min(sourcePathLowLinkMap.get(sourcePath) ?? 0, sourcePathLowLinkMap.get(target) ?? 0),
+            );
           } else if (onStack.has(target))
-            lowLinkMap.set(sourcePath, Math.min(lowLinkMap.get(sourcePath) ?? 0, indexMap.get(target) ?? 0));
+            sourcePathLowLinkMap.set(
+              sourcePath,
+              Math.min(sourcePathLowLinkMap.get(sourcePath) ?? 0, sourcePathIndexMap.get(target) ?? 0),
+            );
 
-        if (lowLinkMap.get(sourcePath) !== indexMap.get(sourcePath)) return;
+        if (sourcePathLowLinkMap.get(sourcePath) !== sourcePathIndexMap.get(sourcePath)) return;
         const cycle: string[] = [];
         let member: string | undefined;
         do {
@@ -132,14 +138,14 @@ describe("moduleCycles", () => {
         } while (member !== sourcePath);
         if (cycle.length > 1) cycles.push(cycle.toSorted());
       };
-      for (const sourcePath of sourcePaths) if (!indexMap.has(sourcePath)) visit(sourcePath);
+      for (const sourcePath of sourcePaths) if (!sourcePathIndexMap.has(sourcePath)) visit(sourcePath);
       return cycles;
     };
 
-    const autoImportCycles = readCycles().filter((cycle) => {
+    const autoImportCycles = computeCycles().filter((cycle) => {
       const members = new Set(cycle);
       return cycle.some((sourcePath) =>
-        [...(autoImportEdgeMap.get(sourcePath) ?? [])].some((target) => members.has(target)),
+        [...(sourcePathAutoImportEdgeMap.get(sourcePath) ?? [])].some((target) => members.has(target)),
       );
     });
 

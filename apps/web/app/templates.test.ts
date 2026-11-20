@@ -107,17 +107,17 @@ describe("attributify", () => {
     expect.hasAssertions();
 
     // Each token keyed by its finding, so a template reports a token once however often it writes it
-    const tokenFindingMap = new Map<string, string>();
+    const findingTokenMap = new Map<string, string>();
     for (const { elements, sourcePath: templatePath } of sourceFiles)
       for (const { props, tag } of elements) {
         if (!/^[a-z][a-z0-9]*$/u.test(tag) || NON_NATIVE_ELEMENTS.has(tag)) continue;
         for (const prop of props)
           if (prop.type === NodeTypes.ATTRIBUTE && !prop.value && !HTML_BOOLEAN_ATTRIBUTES.has(prop.name))
-            tokenFindingMap.set(`${templatePath}: ${prop.name}`, prop.name);
+            findingTokenMap.set(`${templatePath}: ${prop.name}`, prop.name);
       }
     // One generate over every distinct token: each is matched on its own, so the set answers for all of them
-    const { matched } = await uno.generate(new Set(tokenFindingMap.values()), { preflights: false });
-    const inertAttributes = [...tokenFindingMap].flatMap(([finding, token]) => (matched.has(token) ? [] : [finding]));
+    const { matched } = await uno.generate(new Set(findingTokenMap.values()), { preflights: false });
+    const inertAttributes = [...findingTokenMap].flatMap(([finding, token]) => (matched.has(token) ? [] : [finding]));
 
     expect(inertAttributes).toStrictEqual([]);
   });
@@ -131,16 +131,16 @@ describe("attributify", () => {
   test("switches a utility through :class rather than an empty attribute value", async () => {
     expect.hasAssertions();
 
-    const boundNameFindingMap = new Map<string, string>();
+    const findingBoundNameMap = new Map<string, string>();
     for (const { elements, sourcePath: templatePath } of sourceFiles)
       for (const { props } of elements)
         for (const prop of props) {
           const bind = getStaticBind(prop);
           if (bind && EMPTY_BRANCH_REGEX.test(bind.expression))
-            boundNameFindingMap.set(`${templatePath}: :${bind.name}`, bind.name);
+            findingBoundNameMap.set(`${templatePath}: :${bind.name}`, bind.name);
         }
-    const { matched } = await uno.generate(new Set(boundNameFindingMap.values()), { preflights: false });
-    const emptyUtilities = [...boundNameFindingMap].flatMap(([finding, boundName]) =>
+    const { matched } = await uno.generate(new Set(findingBoundNameMap.values()), { preflights: false });
+    const emptyUtilities = [...findingBoundNameMap].flatMap(([finding, boundName]) =>
       matched.has(boundName) ? [finding] : [],
     );
 
