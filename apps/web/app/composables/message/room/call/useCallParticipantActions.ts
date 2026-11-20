@@ -59,7 +59,13 @@ export const useCallParticipantActions = () => {
           : getAdminActionItem(AdminActionType.ForceMute, AdminActionIconMap[AdminActionType.ForceMute], "Force Mute"),
       );
     if (isKickableFromCall.value)
-      items.push(getAdminActionItem(AdminActionType.KickFromCall, "i-mdi:account-remove", "Kick from Call"));
+      items.push(
+        getAdminActionItem(
+          AdminActionType.KickFromCall,
+          AdminActionIconMap[AdminActionType.KickFromCall],
+          "Kick from Call",
+        ),
+      );
     return items;
   };
 
