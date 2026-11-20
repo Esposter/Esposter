@@ -103,6 +103,20 @@ export const PACKAGE_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   PACKAGE_RELATIVE_IMPORT_PATTERN,
   SUBPATH_QUERY_IMPORT_PATTERN,
 ];
+// The Worker deploy gate reads each Worker's environment model from its app's source by path.
+// A subpath import of the scripts package never targets an app's files, so `WORKER_SECRETS_IMPORT_PATTERNS` allows only those models.
+export const WORKER_SECRETS_IMPORT_PATTERNS: RestrictedImportPattern[] = [
+  PACKAGE_ALIAS_IMPORT_PATTERN,
+  {
+    group: [
+      ...RELATIVE_IMPORT_GROUP,
+      "!../../../../apps/*/src/models/environment/*.ts",
+      "!../../../../apps/web/shared/models/environment/*.ts",
+    ],
+    message: RELATIVE_IMPORT_MESSAGE,
+  },
+  SUBPATH_QUERY_IMPORT_PATTERN,
+];
 export const MOD_IMPORT_PATTERN: RestrictedImportPattern = {
   group: ["#src/*", "@/**", "~/**"],
   message:

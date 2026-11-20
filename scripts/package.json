@@ -73,6 +73,7 @@
     "globe:gen": "node src/globeLandMask/index.ts",
     "bundle-sizes:gen": "node src/bundleSizes/index.ts",
     "server-bundle:check": "node src/serverBundle/index.ts",
+    "worker-secrets:check": "node src/workerSecrets/index.ts",
     "wake-check:gaps": "node src/wakeCheck/index.ts",
     "graph:gen": "node src/dependencyGraph/index.ts",
     "lint": "eslint .",

@@ -1,0 +1,34 @@
+name: Gather Worker Secrets
+description: Read one Worker's secrets from Pulumi ESC into a file under the runner's temporary directory, so the check and the put read the same values. The names come from .github/worker-secrets.json under the Worker's key, and each value is read from Pulumi ESC under the environment's prefix, so no value is written to the log or the tree
+inputs:
+  worker:
+    description: The Worker's key in .github/worker-secrets.json, e.g. `web`
+    required: true
+outputs:
+  file:
+    description: The secrets file, a JSON object of each name to its value, that the check and the put read
+    value: ${{ steps.gather.outputs.file }}
+runs:
+  using: composite
+  steps:
+    # `pulumi env get` prints a value as it is, so each line of it is masked before the value is used. The file holds every value
+    # the Worker gets, and lives under the runner's temporary directory, which the runner removes when the job ends
+    - name: 🔐 Gather the secrets
+      id: gather
+      shell: bash
+      env:
+        WORKER: ${{ inputs.worker }}
+      run: |
+        set -euo pipefail
+        umask 077
+        secrets_file="$RUNNER_TEMP/$WORKER-secrets.json"
+        echo '{}' > "$secrets_file"
+        for name in $(jq -r --arg worker "$WORKER" '.[$worker][]' "$GITHUB_WORKSPACE/.github/worker-secrets.json"); do
+          value="$(pulumi env get esposter-infra/prod "pulumiConfig.esposter-infra:${CLOUDFLARE_ENV}_${name}" --value string --show-secrets)"
+          while IFS= read -r line; do
+            if [ -n "$line" ]; then echo "::add-mask::$line"; fi
+          done <<< "$value"
+          jq --arg name "$name" --arg value "$value" '. + {($name): $value}' "$secrets_file" > "$secrets_file.next"
+          mv "$secrets_file.next" "$secrets_file"
+        done
+        echo "file=$secrets_file" >> "$GITHUB_OUTPUT"

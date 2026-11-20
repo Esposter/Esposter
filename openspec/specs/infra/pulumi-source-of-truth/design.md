@@ -8,7 +8,7 @@ Each Worker's configuration has three sources, classified by the kind of value:
 
 - **Plain values** that the environment's name fixes. The web Worker's come from `apps/web/configuration/wrangler.ts`, which writes one wrangler block per environment, and the realtime and jobs Workers' are each in their own `wrangler.jsonc`.
 - **Binding ids.** A D1 database's id is not a setting read from the environment. `CloudflareCoreDatabaseIdMap` commits each environment's id, and the wrangler blocks and the migrations read it from there.
-- **Secrets.** Each secret is a schema key marked as a secret. `.github/worker-secrets.json` lists them per Worker, and the values are read from the Pulumi ESC environment `esposter-infra/prod` under `pulumiConfig.esposter-infra:<environment>_<NAME>`, so development and production values sit side by side in one environment. The deploy job writes them with `wrangler secret bulk` after the Worker deploys.
+- **Secrets.** Each secret is a schema key marked as a secret. `.github/worker-secrets.json` lists them per Worker, and the values are read from the Pulumi ESC environment `esposter-infra/prod` under `pulumiConfig.esposter-infra:<environment>_<NAME>`, so development and production values sit side by side in one environment. The deploy job checks them against the Worker's own environment schema before the Worker deploys, and writes them with `wrangler secret bulk` after it.
 
 The web build bakes its public configuration into its runtime configuration, so the public client ids and the public push key are read from ESC before the build, and the origins come from the workflow's environment for each branch.
 
@@ -18,6 +18,7 @@ flowchart TD
   ids["Binding ids from CloudflareCoreDatabaseIdMap"] --> config
   esc["Pulumi ESC esposter-infra/prod"] --> bulk["wrangler secret bulk"]
   list[".github/worker-secrets.json"] --> bulk
+  esc --> check["worker-secrets:check against the Worker's schema"] --> worker
   config --> worker["Worker deployed by Wrangler"]
   bulk --> worker
 ```

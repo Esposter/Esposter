@@ -19,6 +19,7 @@ import {
   VUETIFY_IMPORT_PATTERN,
   WEB_ALIAS_IMPORT_PATTERNS,
   WEB_IMPORT_PATTERNS,
+  WORKER_SECRETS_IMPORT_PATTERNS,
   WORKSPACE_LIBRARY_IMPORT_PATTERN,
 } from "#oxlint/importRestrictions";
 import { JS_PLUGINS } from "#oxlint/jsPlugins";
@@ -209,6 +210,17 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       files: ["apps/*/src/**", "packages/*/**/*.{ts,vue}", "scripts/**/*.ts", "oxlint/**/*.ts", "vite/**/*.ts"],
       rules: {
         "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: PACKAGE_IMPORT_PATTERNS }],
+      },
+    },
+    {
+      // The Worker deploy gate reads each Worker's environment model by path, the one reach up a scripts tree makes, and
+      // `WORKER_SECRETS_IMPORT_PATTERNS` allows nothing else across it
+      files: ["scripts/src/services/workerSecrets/**/*.ts"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          { paths: RESTRICTED_IMPORT_PATHS, patterns: WORKER_SECRETS_IMPORT_PATTERNS },
+        ],
       },
     },
     ...AUTO_IMPORT_PACKAGE_OVERRIDES,

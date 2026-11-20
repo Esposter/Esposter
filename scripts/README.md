@@ -66,6 +66,7 @@ pnpm outdated:dependencies
 pnpm realtimekit:provision
 pnpm recreation
 pnpm server-bundle:check
+pnpm worker-secrets:check <worker> <file>
 pnpm update:node
 ```
 

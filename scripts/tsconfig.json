@@ -10,6 +10,9 @@
     "scripts/**/*.ts",
     "src/**/*.ts",
     "../oxlint.config.ts",
-    "../oxlint/**/*.ts"
+    "../oxlint/**/*.ts",
+    "../apps/jobs/src/models/environment/*.ts",
+    "../apps/realtime/src/models/environment/*.ts",
+    "../apps/web/shared/models/environment/*.ts"
   ]
 }
