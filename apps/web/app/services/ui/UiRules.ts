@@ -12,8 +12,6 @@ const optionalRule =
 // Every rule a field takes, each worded the same way so a field mixing them reads as one form: "You must enter a
 // Minimum of {n} characters" beside "You must enter a value of at least {n}"
 export const UiRules = {
-  notProfanity: (message = "This field cannot contain profanity"): UiRule =>
-    optionalRule((value) => !checkContainsProfanity(value) || message),
   maxLength: (maximum: number, message = `You must enter a maximum of ${maximum} characters`): UiRule =>
     optionalRule((value) => value.length <= maximum || message),
   maxValue: (maximum: number, message = `You must enter a value of at most ${maximum}`): UiRule =>
@@ -22,6 +20,8 @@ export const UiRules = {
   // Slowmode field refuses zero seconds
   minValue: (minimum: number, message = `You must enter a value of at least ${minimum}`): UiRule =>
     optionalRule((value) => Number(value) >= minimum || message),
+  notProfanity: (message = "This field cannot contain profanity"): UiRule =>
+    optionalRule((value) => !checkContainsProfanity(value) || message),
   pattern: (regex: RegExp, message = "Invalid format"): UiRule => optionalRule((value) => regex.test(value) || message),
   required:
     (message = "This field is required"): UiRule =>
