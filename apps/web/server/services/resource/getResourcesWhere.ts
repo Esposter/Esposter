@@ -3,8 +3,7 @@ import type { ResourceFilterInput } from "#shared/models/db/resource/ResourceFil
 
 import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
-import { getResourceSearchMatch } from "#server/services/resource/getResourceSearchMatch";
-import { getLastAccessedJoin, inJsonArray } from "@esposter/db";
+import { getLastAccessedJoin, getResourceSearchMatch, inJsonArray } from "@esposter/db";
 import { resourceAccessesInResource, resourceFavoritesInResource, resourcesInResource } from "@esposter/db-schema";
 import { getSearchExpression } from "@esposter/shared";
 import { and, eq, exists, gte, inArray, isNull, lte, notExists, sql } from "drizzle-orm";
