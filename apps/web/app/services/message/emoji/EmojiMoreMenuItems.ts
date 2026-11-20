@@ -1,4 +1,2 @@
-import { EmojiMenuItems } from "#src/services/message/emoji/EmojiMenuItems";
-
-// The row the hover bar shows, plus the one more the overflow menu has room for
-export const EmojiMoreMenuItems = [...EmojiMenuItems, "👌"];
+// The quick reactions the message's hover bar offers, in the order it shows them
+export const EmojiMoreMenuItems = ["🤣", "👍", "❤️", "👌"];

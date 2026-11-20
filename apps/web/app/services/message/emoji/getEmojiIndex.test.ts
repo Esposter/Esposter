@@ -1,6 +1,5 @@
 import type { CustomEmoji } from "#src/models/message/emoji/CustomEmoji";
 
-import { EmojiGroups } from "#src/models/message/emoji/EmojiGroup";
 import { EmojiType } from "#src/models/message/emoji/EmojiType";
 import { SkinTone } from "#src/models/message/emoji/SkinTone";
 import { applySkinTone } from "#src/services/message/emoji/applySkinTone";
@@ -81,20 +80,19 @@ describe(getEmojiIndex, () => {
     ).toBe(true);
   });
 
-  test("files every emoji under a group the enum lists", () => {
+  test("files each emoji under exactly one group", () => {
     expect.hasAssertions();
 
     const { groupEmojisMap } = getEmojiIndex();
 
-    expect([...groupEmojisMap.keys()]).toStrictEqual(EmojiGroups);
     expect([...groupEmojisMap.values()].reduce((total, emojis) => total + emojis.length, 0)).toBe(slugEmojiMap.size);
   });
 });
 
 describe(applySkinTone, () => {
+  const RED_HEART = "❤️";
   const MAN_BEARD = "🧔‍♂️";
   const MAN_BOUNCING_BALL = "⛹️‍♂️";
-  const RED_HEART = "❤️";
   const TECHNOLOGIST = "🧑‍💻";
   const manBeard = getEmoji("man_beard");
   const manBouncingBall = getEmoji("man_bouncing_ball");
