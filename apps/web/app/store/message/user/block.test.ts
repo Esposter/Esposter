@@ -1,11 +1,12 @@
 // @vitest-environment nuxt
-import type { BlockInSocialWithRelations, FriendInSocialWithRelations } from "@esposter/db-schema";
+import type { BlockInSocialWithRelations } from "@esposter/db-schema";
 
-import { useSession } from "#src/services/auth/authClient.test";
+import { setupSession } from "#src/services/auth/setupSession.test";
 import { createFriend } from "#src/services/message/user/createFriend.test";
 import { createFriendRequest } from "#src/services/message/user/createFriendRequest.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { blockTable, friendRequestTable, friendTable } from "#src/services/message/user/pair/constants";
+import { seedFriends } from "#src/services/message/user/seedFriends.test";
 import { appendRowVersions } from "#src/services/trpc/appendRowVersions.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBlockStore } from "#src/store/message/user/block";
@@ -13,11 +14,7 @@ import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
-interface MockSessionValue {
-  data?: undefined | { user: { id: string } };
-}
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useBlockStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -25,8 +22,7 @@ describe(useBlockStore, () => {
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
   const added = createUser({ name: "added" });
-  const createBlockPath = "block.createBlock";
-  const deleteBlockPath = "block.deleteBlock";
+  setupSession(appUser.id);
   const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
   // The block rows the read answers with: each one a block the app user made, the blocked user included
   const createBlockRow = (blocked: typeof first, deletedAt: Date | null = null) => ({
@@ -44,14 +40,6 @@ describe(useBlockStore, () => {
     version: 1,
   };
 
-  const seedFriends = async (friendships: FriendInSocialWithRelations[]) => {
-    const { $trpc } = useNuxtApp();
-    trpcMsw.friend.readFriends.query(() => friendships);
-    const friendStore = useFriendStore();
-    const { readFriends } = friendStore;
-    await readFriends(() => $trpc.friend.readFriends.query());
-  };
-
   const seedBlocks = async (blocks: BlockInSocialWithRelations[]) => {
     const { $trpc } = useNuxtApp();
     trpcMsw.block.readBlockedUsers.query(() => blocks);
@@ -59,10 +47,6 @@ describe(useBlockStore, () => {
     const { readBlockedUsers } = blockStore;
     await readBlockedUsers(() => $trpc.block.readBlockedUsers.query());
   };
-
-  beforeEach(() => {
-    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: appUser.id } } }));
-  });
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -72,10 +56,10 @@ describe(useBlockStore, () => {
   test("keeps only the friend whose block was rejected", async () => {
     expect.hasAssertions();
 
-    trpcMsw.block.createBlock.mutation(({ ctx, input: targetUserId }) => {
+    trpcMsw.block.createBlock.mutation(({ ctx, input: targetUserId, path }) => {
       if (targetUserId === first.id) throw trpcError;
 
-      appendRowVersions(ctx.responseHeaders, createBlockPath, [
+      appendRowVersions(ctx.responseHeaders, path, [
         { key: { receiverId: second.id, senderId: appUser.id }, table: friendTable.name, version: 1 },
         secondBlockRowVersion,
       ]);
@@ -85,7 +69,7 @@ describe(useBlockStore, () => {
     const { friends } = storeToRefs(friendStore);
     const blockStore = useBlockStore();
     const { createBlock } = blockStore;
-    await seedFriends([createFriend(appUser, first), createFriend(appUser, second)]);
+    await seedFriends(trpcMsw, [createFriend(appUser, first), createFriend(appUser, second)]);
     createBlock(first.id);
     createBlock(second.id);
     await flushPromises();
@@ -97,10 +81,10 @@ describe(useBlockStore, () => {
   test("keeps only the user whose unblock was rejected", async () => {
     expect.hasAssertions();
 
-    trpcMsw.block.deleteBlock.mutation(({ ctx, input: blockedUserId }) => {
+    trpcMsw.block.deleteBlock.mutation(({ ctx, input: blockedUserId, path }) => {
       if (blockedUserId === first.id) throw trpcError;
 
-      appendRowVersions(ctx.responseHeaders, deleteBlockPath, [secondBlockRowVersion]);
+      appendRowVersions(ctx.responseHeaders, path, [secondBlockRowVersion]);
       return blockedUserId;
     });
     const blockStore = useBlockStore();
@@ -124,8 +108,8 @@ describe(useBlockStore, () => {
       await unblockReleased;
       throw trpcError;
     });
-    trpcMsw.block.createBlock.mutation(({ ctx }) => {
-      appendRowVersions(ctx.responseHeaders, createBlockPath, [
+    trpcMsw.block.createBlock.mutation(({ ctx, path }) => {
+      appendRowVersions(ctx.responseHeaders, path, [
         { key: { blockedId: first.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
       ]);
       return first;
@@ -154,8 +138,8 @@ describe(useBlockStore, () => {
       await blockReleased;
       throw trpcError;
     });
-    trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx }) => {
-      appendRowVersions(ctx.responseHeaders, "friendRequest.declineFriendRequest", [
+    trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx, path }) => {
+      appendRowVersions(ctx.responseHeaders, path, [
         { key: { receiverId: appUser.id, senderId: first.id }, table: friendRequestTable.name, version: 1 },
       ]);
     });
@@ -181,14 +165,14 @@ describe(useBlockStore, () => {
     expect.hasAssertions();
 
     const { $trpc } = useNuxtApp();
-    trpcMsw.block.createBlock.mutation(({ ctx }) => {
-      appendRowVersions(ctx.responseHeaders, createBlockPath, [
+    trpcMsw.block.createBlock.mutation(({ ctx, path }) => {
+      appendRowVersions(ctx.responseHeaders, path, [
         { key: { blockedId: added.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
       ]);
       return added;
     });
-    trpcMsw.block.deleteBlock.mutation(({ ctx, input: blockedUserId }) => {
-      appendRowVersions(ctx.responseHeaders, deleteBlockPath, [
+    trpcMsw.block.deleteBlock.mutation(({ ctx, input: blockedUserId, path }) => {
+      appendRowVersions(ctx.responseHeaders, path, [
         { key: { blockedId: blockedUserId, blockerId: appUser.id }, table: blockTable.name, version: 1 },
       ]);
       return blockedUserId;

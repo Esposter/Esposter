@@ -25,7 +25,7 @@ const displayReceivedFriendRequests = computed(() =>
       >
         <template #append>
           <MessageFriendsDeclineFriendRequestButton :user-id="sender.id" />
-          <MessageFriendsAcceptFriendRequestButton :sender />
+          <MessageFriendsAcceptFriendRequestButton :sender-id="sender.id" />
         </template>
       </MessageFriendsUserListItem>
     </ul>

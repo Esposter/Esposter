@@ -16,9 +16,8 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const userId = computed(() => session.value.data?.user.id ?? "");
-  const { executeQuery } = useMutation();
   const overlayStore = useOverlayStore();
-  const { arrive, view, writeAwaited, writeOptimistic } = overlayStore;
+  const { view, writeAwaited, writeOptimistic } = overlayStore;
   const userStore = useUserStore();
   const { storeUser } = userStore;
   const friendRequests = view(friendRequestTable);
@@ -40,16 +39,13 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const checkHasSentFriendRequest = (targetUserId: PublicUser["id"]) =>
     friendRequests.value.some(({ receiverId, senderId }) => senderId === userId.value && receiverId === targetUserId);
   // Answered requests come back as tombstones, which the arrival keeps, so an older copy of a request cannot bring it back
-  const readFriendRequests = (read: () => Promise<FriendRequestInSocialWithRelations[]>) =>
-    executeQuery(read, {
-      key: "friendRequests",
-      onSuccess: (friendRequestRows) => {
-        for (const { sender, ...friendRequest } of friendRequestRows) {
-          storeUser(sender);
-          arrive(friendRequestTable, friendRequest);
-        }
-      },
-    });
+  const readFriendRequests = useOverlayRead(
+    friendRequestTable,
+    ({ sender, ...friendRequest }: FriendRequestInSocialWithRelations) => {
+      storeUser(sender);
+      return friendRequest;
+    },
+  );
   const sendFriendRequest = async (receiverId: PublicUser["id"]) => {
     sendingReceiverIds.value.add(receiverId);
     await withFinalizerAsync(
@@ -67,16 +63,16 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
       },
     );
   };
-  const acceptFriendRequest = (sender: PublicUser) => {
+  const acceptFriendRequest = (senderId: PublicUser["id"]) => {
     writeOptimistic(
       async () => {
         const { result: senderUser, rowVersions } = await collectRowVersions(() =>
-          $trpc.friendRequest.acceptFriendRequest.mutate(sender.id),
+          $trpc.friendRequest.acceptFriendRequest.mutate(senderId),
         );
         storeUser(senderUser);
         return { arrivals: [], confirmed: createPairConfirmations(rowVersions) };
       },
-      { entry: getAcceptFriendRequestEntry(userId.value, sender.id, new Date()), onError: createErrorAlert },
+      { entry: getAcceptFriendRequestEntry(userId.value, senderId, new Date()), onError: createErrorAlert },
     );
   };
   const declineFriendRequest = (senderId: PublicUser["id"]) => {

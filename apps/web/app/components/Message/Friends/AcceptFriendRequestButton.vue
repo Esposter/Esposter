@@ -4,7 +4,7 @@ import type { PublicUser } from "@esposter/db-schema";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 
 interface Props {
-  sender: PublicUser;
+  senderId: PublicUser["id"];
 }
 
 defineProps<Props>();
@@ -13,5 +13,5 @@ const { acceptFriendRequest } = friendRequestStore;
 </script>
 
 <template>
-  <UiButton @click="acceptFriendRequest(sender)">Accept</UiButton>
+  <UiButton @click="acceptFriendRequest(senderId)">Accept</UiButton>
 </template>

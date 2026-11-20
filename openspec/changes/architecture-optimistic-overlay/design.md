@@ -223,6 +223,7 @@ Each alternative that lost is recorded in the decisions above, beside the choice
 | `apps/web/app/store/overlay.ts`                                                 | The primitive's registry, one Pinia store per app: held rows per table, the pending entries, the write queue, the arrival gate and the view |
 | `apps/web/app/services/shared/overlay/`                                         | The gate, the trie of held rows, the recording view, the keyed view and the slot each table's rows are read and written through             |
 | `apps/web/app/composables/shared/useRunScope.ts`                                | The run scope: a new run aborts the run before it, and only the newest run commits                                                          |
+| `apps/web/app/composables/shared/useOverlayRead.ts`                             | The read whose rows arrive in one table: its query is keyed by the table, and each row arrives after `toRow` stores its related rows        |
 | `apps/web/app/composables/shared/useMutation.ts`                                | The old write path, kept beside the primitive until task 5.1 deletes it                                                                     |
 | `apps/web/app/store/overlay.test.ts`                                            | The registry's suite: the gate, the settle rule, the touched keys and the queue                                                             |
 | `apps/web/app/composables/shared/useRunScope.test.ts`                           | The run scope's suite: the newest run commits, a run aborts the one before it, and a disposed scope commits nothing                         |
@@ -295,6 +296,7 @@ The new files, in the tree form the design template asks for, are the registry's
 apps/web/app/store/overlay.ts                         the registry: the held rows, the pending entries and the write queue, one store per Pinia instance
 apps/web/app/services/shared/overlay/                 the gate, the held trie, the recording view and the keyed view
 apps/web/app/composables/shared/useRunScope.ts        the run scope, a composable that aborts the run before it
+apps/web/app/composables/shared/useOverlayRead.ts     the read whose rows arrive in one table, a composable over the overlay
 apps/web/app/services/message/user/pair/                                  the pair entries as pure functions over the keyed view, imported by the three pair stores
 ```
 

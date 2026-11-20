@@ -14,9 +14,8 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
   const session = authClient.useSession();
   const userId = computed(() => session.value.data?.user.id ?? "");
-  const { executeQuery } = useMutation();
   const overlayStore = useOverlayStore();
-  const { arrive, view, writeOptimistic } = overlayStore;
+  const { view, writeOptimistic } = overlayStore;
   const userStore = useUserStore();
   const { storeUsers } = userStore;
   const friendships = view(friendTable);
@@ -42,16 +41,13 @@ export const useFriendStore = defineStore("message/user/friend", () => {
     );
   };
   // The read's rows are the friendships with their tombstones, each with both of its users, which the user map takes
-  const readFriends = (read: () => Promise<FriendInSocialWithRelations[]>) =>
-    executeQuery(read, {
-      key: "friends",
-      onSuccess: (friendshipRows) => {
-        for (const { receiver, sender, ...friendship } of friendshipRows) {
-          storeUsers([receiver, sender]);
-          arrive(friendTable, friendship);
-        }
-      },
-    });
+  const readFriends = useOverlayRead(
+    friendTable,
+    ({ receiver, sender, ...friendship }: FriendInSocialWithRelations) => {
+      storeUsers([receiver, sender]);
+      return friendship;
+    },
+  );
 
   return { checkIsFriend, deleteFriend, friends, readFriends };
 });

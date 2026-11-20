@@ -15,9 +15,8 @@ export const useBlockStore = defineStore("message/user/block", () => {
   const { $trpc } = useNuxtApp();
   const session = authClient.useSession();
   const userId = computed(() => session.value.data?.user.id ?? "");
-  const { executeQuery } = useMutation();
   const overlayStore = useOverlayStore();
-  const { arrive, view, writeOptimistic } = overlayStore;
+  const { view, writeOptimistic } = overlayStore;
   const userStore = useUserStore();
   const { storeUser } = userStore;
   const blocks = view(blockTable);
@@ -50,16 +49,10 @@ export const useBlockStore = defineStore("message/user/block", () => {
     );
   };
   // The read's rows are the blocks with their tombstones, each with the user it blocks
-  const readBlockedUsers = (read: () => Promise<BlockInSocialWithRelations[]>) =>
-    executeQuery(read, {
-      key: "blockedUsers",
-      onSuccess: (blockRows) => {
-        for (const { blocked, ...block } of blockRows) {
-          storeUser(blocked);
-          arrive(blockTable, block);
-        }
-      },
-    });
+  const readBlockedUsers = useOverlayRead(blockTable, ({ blocked, ...block }: BlockInSocialWithRelations) => {
+    storeUser(blocked);
+    return block;
+  });
 
   return { blockedUsers, createBlock, deleteBlock, readBlockedUsers };
 });

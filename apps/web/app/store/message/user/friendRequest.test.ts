@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { FriendRequestInSocialWithRelations } from "@esposter/db-schema";
 
-import { useSession } from "#src/services/auth/authClient.test";
+import { setupSession } from "#src/services/auth/setupSession.test";
 import { createFriendRequest } from "#src/services/message/user/createFriendRequest.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { friendRequestTable } from "#src/services/message/user/pair/constants";
@@ -12,21 +12,17 @@ import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
-interface MockSessionValue {
-  data?: undefined | { user: { id: string } };
-}
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useFriendRequestStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const appUser = createUser({ name: "appUser" });
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
+  setupSession(appUser.id);
   const firstFriendRequest = createFriendRequest(first, appUser);
   const secondFriendRequest = createFriendRequest(second, appUser);
   const sentFriendRequest = createFriendRequest(appUser, second);
-  const declineFriendRequestPath = "friendRequest.declineFriendRequest";
   const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
   const firstFriendRequestRowVersion = {
     key: { receiverId: appUser.id, senderId: first.id },
@@ -41,10 +37,6 @@ describe(useFriendRequestStore, () => {
     const { readFriendRequests } = friendRequestStore;
     await readFriendRequests(() => $trpc.friendRequest.readFriendRequests.query());
   };
-
-  beforeEach(() => {
-    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: appUser.id } } }));
-  });
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -103,8 +95,8 @@ describe(useFriendRequestStore, () => {
   test("declines a request without waiting for the answer", async () => {
     expect.hasAssertions();
 
-    trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx }) => {
-      appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [firstFriendRequestRowVersion]);
+    trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx, path }) => {
+      appendRowVersions(ctx.responseHeaders, path, [firstFriendRequestRowVersion]);
     });
     const friendRequestStore = useFriendRequestStore();
     const { receivedFriendRequests } = storeToRefs(friendRequestStore);
@@ -120,10 +112,10 @@ describe(useFriendRequestStore, () => {
   test.each([first, second])("keeps only the request whose decline was rejected: $name", async (failedSender) => {
     expect.hasAssertions();
 
-    trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx, input: senderId }) => {
+    trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx, input: senderId, path }) => {
       if (senderId === failedSender.id) throw trpcError;
 
-      appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [
+      appendRowVersions(ctx.responseHeaders, path, [
         { key: { receiverId: appUser.id, senderId }, table: friendRequestTable.name, version: 1 },
       ]);
     });
@@ -147,8 +139,8 @@ describe(useFriendRequestStore, () => {
     trpcMsw.friendRequest.acceptFriendRequest.mutation(() => {
       throw trpcError;
     });
-    trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx }) => {
-      appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [
+    trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx, path }) => {
+      appendRowVersions(ctx.responseHeaders, path, [
         { key: { receiverId: appUser.id, senderId: second.id }, table: friendRequestTable.name, version: 1 },
       ]);
     });
@@ -158,7 +150,7 @@ describe(useFriendRequestStore, () => {
     const { receivedFriendRequests } = storeToRefs(friendRequestStore);
     const { acceptFriendRequest, declineFriendRequest } = friendRequestStore;
     await seedFriendRequests([firstFriendRequest, secondFriendRequest]);
-    acceptFriendRequest(first);
+    acceptFriendRequest(first.id);
     declineFriendRequest(second.id);
     await flushPromises();
 
@@ -174,14 +166,14 @@ describe(useFriendRequestStore, () => {
     trpcMsw.friendRequest.acceptFriendRequest.mutation(() => {
       throw trpcError;
     });
-    trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx }) => {
-      appendRowVersions(ctx.responseHeaders, declineFriendRequestPath, [firstFriendRequestRowVersion]);
+    trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx, path }) => {
+      appendRowVersions(ctx.responseHeaders, path, [firstFriendRequestRowVersion]);
     });
     const friendRequestStore = useFriendRequestStore();
     const { receivedFriendRequests } = storeToRefs(friendRequestStore);
     const { acceptFriendRequest, declineFriendRequest } = friendRequestStore;
     await seedFriendRequests([firstFriendRequest, secondFriendRequest]);
-    acceptFriendRequest(first);
+    acceptFriendRequest(first.id);
     declineFriendRequest(first.id);
     await flushPromises();
 

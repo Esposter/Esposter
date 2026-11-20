@@ -1,10 +1,9 @@
 // @vitest-environment nuxt
-import type { FriendInSocialWithRelations } from "@esposter/db-schema";
-
-import { useSession } from "#src/services/auth/authClient.test";
+import { setupSession } from "#src/services/auth/setupSession.test";
 import { createFriend } from "#src/services/message/user/createFriend.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { blockTable, friendTable } from "#src/services/message/user/pair/constants";
+import { seedFriends } from "#src/services/message/user/seedFriends.test";
 import { appendRowVersions } from "#src/services/trpc/appendRowVersions.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
@@ -13,11 +12,7 @@ import { useFriendStore } from "#src/store/message/user/friend";
 import { getFriendshipId } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
-interface MockSessionValue {
-  data?: undefined | { user: { id: string } };
-}
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useFriendStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -26,6 +21,7 @@ describe(useFriendStore, () => {
   const second = createUser({ name: "second" });
   const firstFriend = createFriend(appUser, first);
   const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+  setupSession(appUser.id);
   // The row an unfriend answers with: the friendship between the app user and the friend, tombstoned at the version its
   // Removal left
   const createRemovedFriendship = (friendId: string) => ({
@@ -36,20 +32,6 @@ describe(useFriendStore, () => {
     senderId: appUser.id,
     updatedAt: new Date(0),
     version: 1,
-  });
-
-  // The friends are read the way the page reads them, so the store holds the friendships and their users as the server
-  // Sent them
-  const seedFriends = async (friendships: FriendInSocialWithRelations[]) => {
-    const { $trpc } = useNuxtApp();
-    trpcMsw.friend.readFriends.query(() => friendships);
-    const friendStore = useFriendStore();
-    const { readFriends } = friendStore;
-    await readFriends(() => $trpc.friend.readFriends.query());
-  };
-
-  beforeEach(() => {
-    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: appUser.id } } }));
   });
 
   afterEach(() => {
@@ -69,7 +51,7 @@ describe(useFriendStore, () => {
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
     const { deleteFriend } = friendStore;
-    await seedFriends([firstFriend, createFriend(appUser, second)]);
+    await seedFriends(trpcMsw, [firstFriend, createFriend(appUser, second)]);
     deleteFriend(first.id);
     deleteFriend(second.id);
     await flushPromises();
@@ -89,8 +71,8 @@ describe(useFriendStore, () => {
       await unfriendReleased;
       throw trpcError;
     });
-    trpcMsw.block.createBlock.mutation(({ ctx }) => {
-      appendRowVersions(ctx.responseHeaders, "block.createBlock", [
+    trpcMsw.block.createBlock.mutation(({ ctx, path }) => {
+      appendRowVersions(ctx.responseHeaders, path, [
         { key: { receiverId: first.id, senderId: appUser.id }, table: friendTable.name, version: 1 },
         { key: { blockedId: first.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
       ]);
@@ -101,7 +83,7 @@ describe(useFriendStore, () => {
     const { deleteFriend } = friendStore;
     const blockStore = useBlockStore();
     const { createBlock } = blockStore;
-    await seedFriends([firstFriend]);
+    await seedFriends(trpcMsw, [firstFriend]);
     deleteFriend(first.id);
     createBlock(first.id);
     await flushPromises();
@@ -117,7 +99,7 @@ describe(useFriendStore, () => {
 
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
-    await seedFriends([firstFriend, firstFriend]);
+    await seedFriends(trpcMsw, [firstFriend, firstFriend]);
 
     expect(friends.value).toStrictEqual([first]);
   });
@@ -128,7 +110,7 @@ describe(useFriendStore, () => {
     expect.hasAssertions();
 
     const { $trpc } = useNuxtApp();
-    await seedFriends([firstFriend]);
+    await seedFriends(trpcMsw, [firstFriend]);
     const { promise: readAnswered, resolve: releaseRead } = Promise.withResolvers<void>();
     trpcMsw.friend.readFriends.query(async () => {
       await readAnswered;
