@@ -1,0 +1,46 @@
+// @vitest-environment nuxt
+import type { ResourceInResource } from "@esposter/db-schema";
+
+import UiForm from "#src/components/Ui/Form.vue";
+import UiSelect from "#src/components/Ui/Select/Index.vue";
+import ResourceShareDialog from "#src/components/Resource/ShareDialog.vue";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useNotificationStore } from "#src/store/notification";
+import { ResourceType } from "@esposter/db-schema";
+import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
+import { describe, expect, test, vi } from "vitest";
+
+describe("resourceShareDialog", () => {
+  const { trpcMsw } = setupMswTrpc();
+  const roomId = v7();
+  const roomName = "General";
+  const resource = { id: v7(), name: "Survey", type: ResourceType.Survey } as ResourceInResource;
+
+  // The Shared notice says the room has the message, so it shows once the server accepts the message rather than when the
+  // Share is sent
+  test("shows the shared notice only once the server accepts the message", async () => {
+    expect.hasAssertions();
+
+    const isAccepted = Promise.withResolvers<void>();
+    trpcMsw.room.readRooms.query(() => ({ items: [{ id: roomId, image: null, name: roomName }], nextCursor: "" }));
+    trpcMsw.message.createMessage.mutation(async () => {
+      await isAccepted.promise;
+    });
+    const createNotification = vi.spyOn(useNotificationStore(), "createNotification");
+    const component = await mountSuspended(ResourceShareDialog, { props: { modelValue: true, resource } });
+    await flushPromises();
+    component.findComponent(UiSelect).vm.$emit("update:modelValue", roomId);
+    component.findComponent(UiForm).vm.$emit("submit");
+    await flushPromises();
+    const noticeCountWhileSending = createNotification.mock.calls.length;
+    isAccepted.resolve();
+    await flushPromises();
+
+    expect(noticeCountWhileSending).toBe(0);
+    expect(createNotification).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ title: `Shared to ${roomName}` }),
+    );
+  });
+});

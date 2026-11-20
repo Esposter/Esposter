@@ -67,6 +67,58 @@ describe(useKnockerStore, () => {
     expect(knockers.value).toStrictEqual([first]);
   });
 
+  // The server refuses an admission it does not record. Its answer names no row, so nothing is let in and the knocker
+  // Stays in the lobby where it stood
+  test("a refused admit leaves the knocker waiting", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.callSession.knocker.admitKnocker.mutation(() => null);
+    const knockerStore = useKnockerStore();
+    const { admitKnocker, createKnocker } = knockerStore;
+    const { knockers } = storeToRefs(knockerStore);
+    createKnocker(first);
+    await admitKnocker(callSessionId, first.id);
+
+    expect(knockers.value.map(({ id }) => id)).toStrictEqual([first.id]);
+  });
+
+  // The admission answers the knocker's tombstone, at the version its removal raised it to. A knock frame that lands after
+  // It, still carrying the knocker's live row, must not bring the knocker back into the lobby
+  test("a late knock frame does not bring back an admitted knocker", async () => {
+    expect.hasAssertions();
+
+    const liveRow = { ...first, deletedAt: null, version: 0 };
+    trpcMsw.callSession.knocker.admitKnocker.mutation(() => ({ ...liveRow, deletedAt: new Date(0), version: 1 }));
+    const knockerStore = useKnockerStore();
+    const { admitKnocker, createKnocker } = knockerStore;
+    const { knockers } = storeToRefs(knockerStore);
+    createKnocker(liveRow);
+    await admitKnocker(callSessionId, first.id);
+    createKnocker(liveRow);
+
+    expect(knockers.value.map(({ id }) => id)).toStrictEqual([]);
+  });
+
+  // The knock is held by the server until it records it, so the waiting screen shows only once the call has answered
+  test("a knock shows the waiting screen only once the server has recorded it", async () => {
+    expect.hasAssertions();
+
+    const { promise: isRecorded, resolve } = Promise.withResolvers<void>();
+    trpcMsw.callSession.knocker.knockCall.mutation(async () => {
+      await isRecorded;
+    });
+    const knockerStore = useKnockerStore();
+    const { knockingCallSessionId } = storeToRefs(knockerStore);
+    const knock = knockerStore.knockCall(callId);
+    await flushPromises();
+    const isWaitingWhileRecording = knockingCallSessionId.value;
+    resolve();
+    await knock;
+
+    expect(isWaitingWhileRecording).toBe("");
+    expect(knockingCallSessionId.value).toBe(callId);
+  });
+
   test("keeps a knocker that arrived while a dismissal was in flight", async () => {
     expect.hasAssertions();
 

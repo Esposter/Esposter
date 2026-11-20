@@ -420,6 +420,33 @@ describe(useCallStore, () => {
     expect(handRaisedSent).toStrictEqual([true, false]);
   });
 
+  // The server decides a kick, and nothing is shown ahead of its answer, so a refused kick leaves the participant in the call
+  test("a refused kick leaves the participant in the call", async () => {
+    expect.hasAssertions();
+
+    const participantId = v7();
+    trpcMsw.message.moderation.executeAdminAction.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const participantStore = useParticipantStore();
+    const { callSessionParticipantsMap } = storeToRefs(participantStore);
+    participantStore.storeCallParticipants(callSessionId, [createParticipant(participantId)]);
+    const roleStore = useRoleStore();
+    vi.spyOn(roleStore, "checkHasMyPermission").mockReturnValue(true);
+    const callStore = useCallStore();
+    const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    callRoomId.value = roomId;
+    const { getActions } = useCallParticipantActions();
+    const kick = takeOne(
+      getActions(participantId, "userId", false, false).filter(({ title }) => title === "Kick from Call"),
+    );
+    await kick.onClick?.();
+    await flushPromises();
+
+    expect(callSessionParticipantsMap.value.get(callSessionId)?.has(participantId)).toBe(true);
+  });
+
   // A moderator who has not joined the call has no participant of their own, yet still lowers another's hand from it
   test("lowers another participant's hand when the caller has no participant id of their own", async () => {
     expect.hasAssertions();
