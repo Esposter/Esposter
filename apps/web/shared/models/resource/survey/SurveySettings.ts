@@ -7,10 +7,10 @@ import { z } from "zod";
 
 // Live collection settings — deliberately in the working content blob, never the publish snapshot,
 // So closing or switching mode takes effect without re-publishing every already-sent participant link
-export class SurveySettings {
-  closedMessage = "";
-  isAcceptingResponses = true;
-  responseMode: SurveyResponseMode = SurveyResponseMode.Anonymous;
+export interface SurveySettings {
+  closedMessage: string;
+  isAcceptingResponses: boolean;
+  responseMode: SurveyResponseMode;
 }
 
 export const surveySettingsSchema = z.object({
