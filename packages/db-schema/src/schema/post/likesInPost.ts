@@ -1,6 +1,7 @@
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { postSchema } from "#src/schema/post/postSchema";
 import { postsInPost } from "#src/schema/post/postsInPost";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
 import { check, index, integer, primaryKey, text } from "drizzle-orm/sqlite-core";
@@ -19,11 +20,12 @@ export const likesInPost = sqliteTable(
     value: integer().notNull(),
   },
   {
-    extraConfig: ({ postId, userId, value }) => [
+    extraConfig: ({ deletedAt, postId, userId, value }) => [
       primaryKey({ columns: [userId, postId] }),
       check("likes_value_check", sql`${value} = 1 OR ${value} = -1`),
       // The primary key leads with userId, so a post's deletion cascading into its likes has no index without this one
       index("likes_postId_index").on(postId),
+      createTombstoneIndex("likes", deletedAt),
     ],
     schema: postSchema,
     scope: { columns: ["postId", "userId"] },

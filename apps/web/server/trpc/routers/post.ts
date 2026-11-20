@@ -158,12 +158,18 @@ export const postRouter = router({
       readPostWithRelations(ctx.db, input, DatabaseEntityType.Post, ctx.user?.id),
     ),
   // The counts the server keeps on each post, read in one statement for the posts a client has marked as changed. The
-  // Server adjusts a count in the same batch as the write that changes it, so only this read says what it is now
+  // Server adjusts a count in the same batch as the write that changes it, so only this read says what it is now. Each
+  // Count names the post's version, since a count moves with the row that holds it, so a client orders the two by it
   readPostCounts: standardRateLimitedProcedure
     .input(readPostCountsInputSchema)
-    .query<Pick<PostInPost, "commentCount" | "id" | "likeCount">[]>(({ ctx, input }) =>
+    .query<Pick<PostInPost, "commentCount" | "id" | "likeCount" | "version">[]>(({ ctx, input }) =>
       ctx.db
-        .select({ commentCount: postsInPost.commentCount, id: postsInPost.id, likeCount: postsInPost.likeCount })
+        .select({
+          commentCount: postsInPost.commentCount,
+          id: postsInPost.id,
+          likeCount: postsInPost.likeCount,
+          version: postsInPost.version,
+        })
         .from(postsInPost)
         .where(inJsonArray(postsInPost.id, input)),
     ),

@@ -3,6 +3,7 @@ import { bansInMessage } from "#src/schema/message/bansInMessage";
 import { roomCategoriesInMessage } from "#src/schema/message/roomCategoriesInMessage";
 import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import { notificationsInNotification } from "#src/schema/notification/notificationsInNotification";
+import { likesInPost } from "#src/schema/post/likesInPost";
 import { resourceFavoritesInResource } from "#src/schema/resource/resourceFavoritesInResource";
 import { resourcePublicationsInResource } from "#src/schema/resource/resourcePublicationsInResource";
 import { blocksInSocial } from "#src/schema/social/blocksInSocial";
@@ -24,6 +25,7 @@ export const OVERLAY_TOMBSTONE_TABLES = [
   bookmarksInApp,
   friendRequestsInSocial,
   friendsInSocial,
+  likesInPost,
   notificationsInNotification,
   resourceFavoritesInResource,
   resourcePublicationsInResource,

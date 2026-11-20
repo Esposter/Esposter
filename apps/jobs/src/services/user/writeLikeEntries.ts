@@ -15,7 +15,7 @@ import { getMemberRoomIds } from "@esposter/db";
 export const writeLikeEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const postLikes = await getDb().query.likesInPost.findMany({
     columns: { createdAt: true, postId: true, value: true },
-    where: { userId: { eq: userId } },
+    where: { deletedAt: { isNull: true }, userId: { eq: userId } },
   });
   const roomIds = await getMemberRoomIds(getDb(), userId);
   const emojiReactions: { emojiTag: string; kind: ArchiveLikeKind; roomId: string; targetId: number }[] = [];

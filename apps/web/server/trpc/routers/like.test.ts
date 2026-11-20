@@ -123,10 +123,10 @@ describe("likeRouter", () => {
     const post = await postCaller.readPost(newPost.id);
 
     await expect(likeCaller.updateLike({ postId: newPost.id, value: updatedValue })).rejects.toThrowError(
-      new NotFoundError(DatabaseEntityType.Like, newPost.id),
+      new NotFoundError(DatabaseEntityType.Like, newPost.id).message,
     );
     await expect(likeCaller.deleteLike(newPost.id)).rejects.toThrowError(
-      new InvalidOperationError(Operation.Delete, DatabaseEntityType.Like, newPost.id),
+      new InvalidOperationError(Operation.Delete, DatabaseEntityType.Like, newPost.id).message,
     );
     expect(post.likeCount).toBe(0);
   });
