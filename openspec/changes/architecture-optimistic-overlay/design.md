@@ -30,7 +30,7 @@ A row created on the client holds no version, below every version, so the server
 
 ```mermaid
 flowchart TD
-  A["A row arrives from a read, a write response or an event"] --> G{"Is nothing held for its key (a tombstone past the retention counts as none), or is its version greater?"}
+  A["A row arrives from a read, a write response or an event"] --> G{"Nothing held for its key, or a greater version?"}
   G -->|no| X["Discarded in the primitive"]
   G -->|yes| H["Held state takes the row and its version"]
   H --> V["View: held state with the pending entries applied in issue order"]

@@ -26,7 +26,7 @@ of the usable links behind it.
 flowchart TD
     dialog["Invite friends dialog<br/>expire-after and max-uses selects"] -->|createInvite| create["createInvite<br/>replaces the old link"]
     create --> row[("invitesInMessage<br/>expiresAt · maxUses · uses")]
-    joiner["User with token"] -->|joinRoom| check{"one batch: count the use, then write the membership<br/>unexpired, under its cap, not already a member?"}
+    joiner["User with token"] -->|joinRoom| check{"one batch: count the use, then the membership"}
     row --> check
     paused[("rooms.isInvitePaused")] -.->|"set — answered like an unknown token"| check
     check -->|row returned| member["Joined room"]
