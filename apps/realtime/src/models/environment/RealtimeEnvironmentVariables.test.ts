@@ -24,4 +24,15 @@ describe("the Realtime environment", () => {
       .map(([name]) => name);
     expect(secretNames.toSorted()).toStrictEqual(workerSecrets.realtime.toSorted());
   });
+
+  test.each(["REALTIMEKIT_API_TOKEN", "REALTIMEKIT_APP_ID", "TOPIC_WATCH_SECRET"] as const)(
+    "reads an unset or empty %s as the empty string, the one absent form ESC's empty secret uploads as",
+    (name) => {
+      expect.hasAssertions();
+
+      const field = realtimeEnvironmentVariablesSchema.shape[name];
+      expect(field.parse(undefined)).toBe("");
+      expect(field.parse("")).toBe("");
+    },
+  );
 });
