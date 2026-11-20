@@ -12,6 +12,18 @@ import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
+// A transformer whose middleware and teardown each pick records, so a test reads which one was released
+const createTransformer = () => ({
+  createStaticBackgroundVideoMiddleware: vi.fn<
+    RealtimeKitVideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]
+  >(() =>
+    Promise.resolve(
+      vi.fn<Awaited<ReturnType<RealtimeKitVideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>>>(),
+    ),
+  ),
+  destruct: vi.fn<RealtimeKitVideoBackgroundTransformer["destruct"]>(),
+});
+
 describe(useRealtimeStore, () => {
   const imagePath = "imagePath";
 
@@ -67,16 +79,6 @@ describe(useRealtimeStore, () => {
     expect.hasAssertions();
 
     vi.spyOn(RealtimeKitVideoBackgroundTransformer, "isSupported").mockReturnValue(true);
-    const createTransformer = () => ({
-      createStaticBackgroundVideoMiddleware: vi.fn<
-        RealtimeKitVideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]
-      >(() =>
-        Promise.resolve(
-          vi.fn<Awaited<ReturnType<RealtimeKitVideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>>>(),
-        ),
-      ),
-      destruct: vi.fn<RealtimeKitVideoBackgroundTransformer["destruct"]>(),
-    });
     const firstTransformer = createTransformer();
     const secondTransformer = createTransformer();
     vi.spyOn(RealtimeKitVideoBackgroundTransformer, "init")

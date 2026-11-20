@@ -1,5 +1,6 @@
 // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/desmos/index.d.ts
 /* oxlint-disable typescript/method-signature-style -- third-party declaration file with overloaded method signatures */
+/* eslint-disable no-restricted-syntax -- Desmos names its own types and members, so the declaration keeps those names even where one is a second name for a type */
 declare namespace Desmos {
   interface BasicCalculator extends Pick<
     Calculator,
@@ -135,7 +136,6 @@ declare namespace Desmos {
     /**
      * Whether or not the current viewport projection is uniform with respect to both axes (i.e., the mathematical aspect ratio is square).
      */
-    // eslint-disable-next-line no-restricted-syntax -- Desmos names this member
     isProjectionUniform(): boolean;
     /**
      * Convert math coordinates to pixel coordinates.
@@ -797,7 +797,6 @@ declare namespace Desmos {
     yAxisStep?: number;
   }
 
-  // eslint-disable-next-line no-restricted-syntax -- GraphState is the Desmos API's own name for the state a graph serialises to, which its methods are typed by; the declaration keeps that name
   type GraphState = unknown;
 
   /**
