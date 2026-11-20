@@ -16,7 +16,13 @@ const DECIMAL_REFERENCE_REGEX = /^#[0-9]+$/u;
 const HEXADECIMAL_REFERENCE_REGEX = /^#x[0-9A-Fa-f]+$/u;
 // Attribute-value normalisation: each literal whitespace character reads as a space, a referenced one as itself
 const normaliseAttributeValue = (literal: string): string => literal.replaceAll(ATTRIBUTE_WHITESPACE_REGEX, " ");
-const PredefinedEntityMap: Readonly<Record<string, string>> = { amp: "&", apos: "'", gt: ">", lt: "<", quot: '"' };
+const PredefinedEntityMap = new Map([
+  ["amp", "&"],
+  ["apos", "'"],
+  ["gt", ">"],
+  ["lt", "<"],
+  ["quot", '"'],
+]);
 
 // One pass over a whole XML 1.0 document, strict as the standard's well-formedness rules are, telling the handlers what
 // It reads. Line endings are normalised before the pass, as the standard has a processor do, so every position counts
@@ -53,7 +59,7 @@ export const tokenizeXml = (input: string, { onCloseTag, onOpenTag, onText }: Xm
     for (let ampersand = text.indexOf("&"); ampersand !== -1; ampersand = text.indexOf("&", literalStart)) {
       const semicolon = text.indexOf(";", ampersand);
       const reference = semicolon === -1 ? "" : text.slice(ampersand + 1, semicolon);
-      let character = PredefinedEntityMap[reference];
+      let character = PredefinedEntityMap.get(reference);
       if (character === undefined) {
         const codePoint = DECIMAL_REFERENCE_REGEX.test(reference)
           ? Number.parseInt(reference.slice(1), 10)

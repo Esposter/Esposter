@@ -190,6 +190,16 @@ describe(tokenizeXml, () => {
     ["refuses < in an attribute", `<a b="<"/>`, "has < in the attribute b at line 1, column 7"],
     ["refuses an undefined entity", "<a>&nbsp;</a>", "has a reference XML does not define: &nbsp at line 1, column 4"],
     [
+      "refuses an inherited Object key as an entity",
+      "<a>&constructor;</a>",
+      "has a reference XML does not define: &constructor at line 1, column 4",
+    ],
+    [
+      "refuses __proto__ as an entity in an attribute",
+      `<a b="&__proto__;"/>`,
+      "has a reference XML does not define: &__proto__ at line 1, column 7",
+    ],
+    [
       "refuses an ampersand with no reference",
       "<a>&</a>",
       "has a reference XML does not define: & at line 1, column 4",
