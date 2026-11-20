@@ -24,6 +24,7 @@ import { inviteRouter } from "#server/trpc/routers/invite";
 import { roleRouter } from "#server/trpc/routers/role";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { roomRouter } from "#server/trpc/routers/room/index";
+import { webhookRouter } from "#server/trpc/routers/webhook";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
@@ -37,6 +38,7 @@ import {
   DatabaseEntityType,
   friendsInSocial,
   getLiveRowWhere,
+  getRoomEmojiBlobName,
   MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES,
   MessageType,
   PublicUserColumns,
@@ -549,6 +551,43 @@ describe("roomRouter", () => {
     await roomCaller.deleteRoom(newRoom.id);
 
     await expect(readLiveRoleLinks()).resolves.toStrictEqual([]);
+  });
+
+  // A deleted room's invites, webhooks, the bot identities its webhooks post as, its emoji and its bans are kept as
+  // Tombstones, the way its roles and links are, so no live child outlives the room
+  test("deletes the room's invites, webhooks, app users, emoji and bans as tombstones", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const invite = await createUnlimitedInvite(newRoom.id);
+    const { webhook } = await createCallerFactory(webhookRouter)(mockContext).createWebhook({
+      name,
+      roomId: newRoom.id,
+    });
+    const emojiId = v7();
+    await putBlob(getRoomEmojiBlobName(newRoom.id, emojiId));
+    await roomCaller.emoji.createRoomEmoji({ id: emojiId, name, roomId: newRoom.id });
+    const bannedAuthSession = await createMockAuthSession(mockContext.db);
+    await banRoomMember(mockContext.db, getMockSession().user.id, newRoom.id, bannedAuthSession.user.id);
+
+    await roomCaller.deleteRoom(newRoom.id);
+
+    const deletedAt = new Date(0);
+    expect(await mockContext.db.query.invitesInMessage.findFirst({ where: { id: { eq: invite.id } } })).toMatchObject({
+      deletedAt,
+    });
+    expect(await mockContext.db.query.webhooksInMessage.findFirst({ where: { id: { eq: webhook.id } } })).toMatchObject(
+      { deletedAt },
+    );
+    expect(
+      await mockContext.db.query.appUsersInMessage.findFirst({ where: { id: { eq: webhook.userId } } }),
+    ).toMatchObject({ deletedAt });
+    expect(await mockContext.db.query.roomEmojisInMessage.findFirst({ where: { id: { eq: emojiId } } })).toMatchObject({
+      deletedAt,
+    });
+    expect(await mockContext.db.query.bansInMessage.findFirst({ where: { roomId: { eq: newRoom.id } } })).toMatchObject(
+      { deletedAt },
+    );
   });
 
   test("fails delete with direct message room", async () => {
