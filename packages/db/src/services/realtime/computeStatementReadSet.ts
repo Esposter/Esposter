@@ -398,8 +398,10 @@ const readCondition = (
 
   const operator = getOperatorText(chunks[operatorIndex]);
   const operand = chunks[operatorIndex + 1];
-  // A list bound as one JSON array is the IN list over the values it holds, so each value is a scope of the column
-  if (is(operand, JsonArrayParam)) addScopeList(reference, operand.values, context);
+  // A list bound as one JSON array is the IN list over the values it holds, so each value is a scope of the column. Only an IN
+  // Reads it so: a `not in` over the same list removes the rows it holds, so it filters its table
+  const isInList = operator !== undefined && /^in\b/u.test(operator);
+  if (is(operand, JsonArrayParam) && isInList) addScopeList(reference, operand.values, context);
   else if (operator === "=" && is(operand, Param))
     addScopes(reference.columns, operand.value, context, reference.isThroughSubquery);
   else if (operator === "=") {
