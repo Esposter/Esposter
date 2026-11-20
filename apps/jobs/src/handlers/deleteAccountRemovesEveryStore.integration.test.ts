@@ -296,12 +296,12 @@ describe(deleteAccountHandler, () => {
     ]);
     await expect(readLedgerRows(userId)).resolves.toStrictEqual([]);
 
-    // The rooms are asked in the order the sweep runs. The owned room is emptied, which tells its online members first.
+    // The rooms are asked in the order the sweep runs. The owned room is emptied, and sends no notice of its own.
     // The member room drops the account's messages and reactions, then the account, and tells its online members
     // The leave's payload is the tombstone the erase wrote at the clock's time, which the erase job's own suite pins exactly
     const leaveCall = roomObjectCalls.find(({ method }) => method === "notifyOnlineMembers");
     expect(roomObjectCalls).toStrictEqual([
-      { args: [{ userId }, [userId]], method: "deleteAll", roomId: ownedRoom.id },
+      { args: [[userId]], method: "deleteAll", roomId: ownedRoom.id },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserMessages",

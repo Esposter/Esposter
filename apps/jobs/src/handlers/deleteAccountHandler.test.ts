@@ -231,7 +231,7 @@ describe(deleteAccountHandler, () => {
     // The leave's payload is the tombstone the erase wrote at the clock's time, which the erase job's own suite pins exactly
     const leaveCall = roomObjectCalls.find(({ method }) => method === "notifyOnlineMembers");
     expect(roomObjectCalls).toStrictEqual([
-      { args: [{ userId }, []], method: "deleteAll", roomId: ownedRoom.id },
+      { args: [[]], method: "deleteAll", roomId: ownedRoom.id },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserMessages",

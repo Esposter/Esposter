@@ -76,9 +76,7 @@ describe(deleteAccountOwnedRooms, () => {
 
     await runUnit(() => deleteAccountOwnedRooms(userId));
 
-    expect(roomObjectCalls).toStrictEqual([
-      { args: [{ userId }, [otherUserId]], method: "deleteAll", roomId: ownedRoom.id },
-    ]);
+    expect(roomObjectCalls).toStrictEqual([{ args: [[otherUserId]], method: "deleteAll", roomId: ownedRoom.id }]);
     await expect(
       mockDb.select({ roomId: moderationLogsInMessage.roomId }).from(moderationLogsInMessage),
     ).resolves.toStrictEqual([{ roomId: otherRoom.id }]);
