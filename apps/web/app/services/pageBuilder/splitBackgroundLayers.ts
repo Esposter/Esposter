@@ -16,7 +16,7 @@ export const splitBackgroundLayers = (value: string): string[] => {
       layers.push(layer.trim());
       layer = "";
     } else {
-      if (character === '"' || character === "'") quote = character;
+      if (['"', "'"].includes(character)) quote = character;
       else if (character === "(") depth++;
       else if (character === ")") depth--;
       layer += character;
