@@ -124,4 +124,32 @@ describe("categoryRouter", () => {
     expect(deletedRoomCategory.id).toBe(newRoomCategory.id);
     expect(roomCategories).toHaveLength(0);
   });
+
+  // A deletion keeps the category as a tombstone, so the version it leaves is the one a later arrival of the row loses to
+  test("deletes as a tombstone at a higher version, which the list leaves out", async () => {
+    expect.hasAssertions();
+
+    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ id: v7(), name });
+    const deletedRoomCategory = await roomCategoryCaller.deleteRoomCategory(newRoomCategory.id);
+    const roomCategories = await roomCategoryCaller.readRoomCategories();
+
+    expect(deletedRoomCategory.deletedAt).not.toBeNull();
+    expect(deletedRoomCategory.version).toBeGreaterThan(newRoomCategory.version);
+    expect(roomCategories).toHaveLength(0);
+  });
+
+  test("revives a deleted category created again under its id, at a higher version", async () => {
+    expect.hasAssertions();
+
+    const id = v7();
+    await roomCategoryCaller.createRoomCategory({ id, name });
+    const deletedRoomCategory = await roomCategoryCaller.deleteRoomCategory(id);
+    const revivedRoomCategory = await roomCategoryCaller.createRoomCategory({ id, name: updatedName });
+    const roomCategories = await roomCategoryCaller.readRoomCategories();
+
+    expect(revivedRoomCategory.deletedAt).toBeNull();
+    expect(revivedRoomCategory.name).toBe(updatedName);
+    expect(revivedRoomCategory.version).toBeGreaterThan(deletedRoomCategory.version);
+    expect(takeOne(roomCategories).id).toBe(id);
+  });
 });

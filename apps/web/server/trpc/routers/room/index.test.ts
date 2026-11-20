@@ -103,6 +103,9 @@ describe("roomRouter", () => {
   // A caller signed in as a user who holds no membership of the room under test
   const createStrangerRoomCaller = async () =>
     createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
+  // The membership row as stored, a removed one included, which the live readers leave out
+  const readMembership = (roomId: string, userId: string) =>
+    mockContext.db.query.usersToRoomsInMessage.findFirst({ where: { roomId: { eq: roomId }, userId: { eq: userId } } });
 
   beforeAll(async () => {
     ({ bucket: messageAssets, dispose: disposeMessageAssets } = await createMockBucket(StorageBucket.MessageAssets));
@@ -652,6 +655,43 @@ describe("roomRouter", () => {
     expect(invite?.uses).toBe(1);
   });
 
+  // A removed member's rejoin revives the tombstone, so two joins at once through a link with one use left count that use
+  // once, and the second is refused as the member the first made
+  test("a rejoin at once through a link with one use left counts the use once, and refuses the second join as the member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const memberSession = await createMockAuthSession(mockContext.db);
+    const memberRoomCaller = await createMockCaller(roomRouter, memberSession);
+    await memberRoomCaller.joinRoom((await createUnlimitedInvite(newRoom.id)).id);
+    await memberRoomCaller.leaveRoom(newRoom.id);
+    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
+
+    await expect(
+      Promise.all([memberRoomCaller.joinRoom(newInvite.id), memberRoomCaller.joinRoom(newInvite.id)]),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, JSON.stringify({ roomId: newRoom.id, userId: memberSession.user.id })).message}]`,
+    );
+
+    const invite = await mockContext.db.query.invitesInMessage.findFirst({ where: { id: { eq: newInvite.id } } });
+
+    expect(invite?.uses).toBe(1);
+  });
+
+  test("a member who joins through a link that is used up is answered as the member they are", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
+    const memberSession = await createMockAuthSession(mockContext.db);
+    const memberRoomCaller = await createMockCaller(roomRouter, memberSession);
+    await memberRoomCaller.joinRoom(newInvite.id);
+
+    await expect(memberRoomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, JSON.stringify({ roomId: newRoom.id, userId: memberSession.user.id })).message}]`,
+    );
+  });
+
   test("joining an exhausted invite fails like an unknown token", async () => {
     expect.hasAssertions();
 
@@ -900,6 +940,50 @@ describe("roomRouter", () => {
     expect(roomObjectCalls).toContainEqual({ args: [member.id], method: "removeMember", roomId: newRoom.id });
     expect(roomObjectCalls).toContainEqual({ args: [leaveEvent], method: "notifyOnlineMembers", roomId: newRoom.id });
     expect(userObjectCalls).toContainEqual({ args: [leaveEvent], method: "broadcastEvent", userId: member.id });
+  });
+
+  // A leave keeps the membership as a tombstone, so the version it leaves is the one a later arrival of the row loses to
+  test("a leave keeps the membership as a tombstone at a higher version", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    const joinedMembership = await readMembership(newRoom.id, member.id);
+    vi.advanceTimersByTime(1);
+    const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
+    await memberRoomCaller.leaveRoom(newRoom.id);
+    const removedMembership = await readMembership(newRoom.id, member.id);
+
+    assert.exists(joinedMembership);
+    assert.exists(removedMembership);
+    expect(removedMembership.deletedAt).not.toBeNull();
+    expect(removedMembership.version).toBe(joinedMembership.version + 1);
+  });
+
+  test("a rejoin revives the membership at a higher version, with the values a fresh membership gets", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
+    const memberSession = await createMockAuthSession(mockContext.db);
+    const memberRoomCaller = await createMockCaller(roomRouter, memberSession);
+    await memberRoomCaller.joinRoom(newInvite.id);
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ displayName: name })
+      .where(
+        and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, memberSession.user.id)),
+      );
+    await memberRoomCaller.leaveRoom(newRoom.id);
+    const removedMembership = await readMembership(newRoom.id, memberSession.user.id);
+    await memberRoomCaller.joinRoom(newInvite.id);
+    const rejoinedMembership = await readMembership(newRoom.id, memberSession.user.id);
+
+    assert.exists(removedMembership);
+    assert.exists(rejoinedMembership);
+    expect(rejoinedMembership.deletedAt).toBeNull();
+    expect(rejoinedMembership.displayName).toBe("");
+    expect(rejoinedMembership.version).toBe(removedMembership.version + 1);
   });
 
   test("counts members", async () => {

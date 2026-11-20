@@ -71,6 +71,9 @@ describe("moderationRouter", () => {
       .from(bansInMessage)
       .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, userId)));
   const readMembershipRows = (userId: string) => readRoomMembershipRows(mockContext.db, roomId, userId);
+  // The membership row as stored, a removed one included
+  const readMembership = (userId: string) =>
+    mockContext.db.query.usersToRoomsInMessage.findFirst({ where: { roomId: { eq: roomId }, userId: { eq: userId } } });
 
   beforeAll(() => {
     mockContext = getMockContext();
@@ -105,6 +108,23 @@ describe("moderationRouter", () => {
     },
   );
 
+  test.each([AdminActionType.CreateBan, AdminActionType.SoftBan] as const)(
+    "executeAdminAction %s leaves the membership as a tombstone at a higher version",
+    async (type) => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      const joinedMembership = await readMembership(member.id);
+      await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type });
+      const removedMembership = await readMembership(member.id);
+
+      assert.exists(joinedMembership);
+      assert.exists(removedMembership);
+      expect(removedMembership.deletedAt).not.toBeNull();
+      expect(removedMembership.version).toBe(joinedMembership.version + 1);
+    },
+  );
+
   // A ban that only deletes the membership row is undone by the link the member still holds. The rejection
   // Names the condition rather than being a bare UNAUTHORIZED, because it is one the caller can act on —
   // Retrying the link is the one thing that will never work
@@ -136,14 +156,19 @@ describe("moderationRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test(`executeAdminAction ${AdminActionType.KickFromRoom} deletes the membership row`, async () => {
+  test(`executeAdminAction ${AdminActionType.KickFromRoom} leaves the membership as a tombstone at a higher version`, async () => {
     expect.hasAssertions();
 
     const member = await createMember();
+    const joinedMembership = await readMembership(member.id);
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.KickFromRoom });
-    const membershipRows = await readMembershipRows(member.id);
+    const removedMembership = await readMembership(member.id);
 
-    expect(membershipRows).toHaveLength(0);
+    assert.exists(joinedMembership);
+    assert.exists(removedMembership);
+    expect(removedMembership.deletedAt).not.toBeNull();
+    expect(removedMembership.version).toBe(joinedMembership.version + 1);
+    expect(await readMembershipRows(member.id)).toHaveLength(0);
   });
 
   test(`executeAdminAction ${AdminActionType.TimeoutUser} sets timeoutUntil to now plus the duration`, async () => {

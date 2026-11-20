@@ -27,7 +27,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { and, eq, getTableName, inArray } from "drizzle-orm";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The participants an add reads before it writes. A test lands a concurrent change in that gap through this hook, taken
 // Once, so a concurrent add it makes reads the participants unhooked
@@ -57,6 +57,9 @@ describe("directMessageRouter", () => {
   // A context acting as the given user on a session of their own, or as a new user when none is given
   const createUserContext = async (user?: AuthSession["user"]) =>
     createMockContext(await createMockAuthSession(mockContext.db, user));
+  // The membership row as stored, a removed one included
+  const readMembership = (roomId: string, userId: string) =>
+    mockContext.db.query.usersToRoomsInMessage.findFirst({ where: { roomId: { eq: roomId }, userId: { eq: userId } } });
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -293,6 +296,26 @@ describe("directMessageRouter", () => {
     });
     expect(takeOne(directMessages.participants).participants.map(({ id }) => id)).toStrictEqual([user.id]);
     expect(takeOne(directMessages.items).participantKey).toBe(getDirectMessageParticipantKey([mainUser.id, user.id]));
+  });
+
+  // A removal keeps the participant's membership as a tombstone, so a re-add is ordered after the removal's version
+  test("removes a participant as a tombstone at a higher version, and adds them back at a higher version", async () => {
+    expect.hasAssertions();
+
+    const { directMessage, user } = await createDirectMessageWithFriend(mockContext);
+    const joinedMembership = await readMembership(directMessage.id, user.id);
+    await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: user.id });
+    const removedMembership = await readMembership(directMessage.id, user.id);
+    await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [user.id] });
+    const addedMembership = await readMembership(directMessage.id, user.id);
+
+    assert.exists(joinedMembership);
+    assert.exists(removedMembership);
+    assert.exists(addedMembership);
+    expect(removedMembership.deletedAt).not.toBeNull();
+    expect(removedMembership.version).toBe(joinedMembership.version + 1);
+    expect(addedMembership.deletedAt).toBeNull();
+    expect(addedMembership.version).toBeGreaterThan(removedMembership.version);
   });
 
   test("fails delete of another participant by a participant who does not own the direct message", async () => {
