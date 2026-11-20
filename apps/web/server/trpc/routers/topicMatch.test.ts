@@ -229,9 +229,6 @@ describe("topicMatch", () => {
     ).toStrictEqual([`message_usersToRooms:roomId=${room.id}`]);
   });
 
-  // The dock leaves out a bookmark whose resource is in the recycle bin, and the other bookmark it holds keeps the dock's
-  // Rows, so the dock's read names the rows' resource values. Restoring the binned resource brings its bookmark back, and only
-  // The resource table's own topic names that restore
   // The dock reads a binned resource's row to draw its bookmark unavailable, so its restore wakes that one row's topic
   test("restoring a binned resource wakes the bookmark dock that draws its bookmark unavailable", async () => {
     expect.hasAssertions();
