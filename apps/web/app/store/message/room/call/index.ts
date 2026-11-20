@@ -72,7 +72,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     const callSessionId = activeCallSessionId.value;
     const participantId = participantStore.participantId;
     const handParticipantId = targetParticipantId ?? participantId;
-    if (!callSessionId || !participantId || !handParticipantId) return;
+    if (!callSessionId || !handParticipantId) return;
 
     executeSetHandRaisedMutation(
       () =>

@@ -370,4 +370,32 @@ describe(useCallStore, () => {
     expect(sentWhileRaiseInFlight).toStrictEqual([true]);
     expect(handRaisedSent).toStrictEqual([true, false]);
   });
+
+  // A moderator who has not joined the call has no participant of their own, yet still lowers another's hand from it
+  test("lowers another participant's hand when the caller has no participant id of their own", async () => {
+    expect.hasAssertions();
+
+    const participantId = v7();
+    const handRaisedSent: { callSessionId: string; isHandRaised: boolean; participantId: string }[] = [];
+    trpcMsw.callSession.setHandRaised.mutation(({ input }) => {
+      handRaisedSent.push(input);
+    });
+    const participantStore = useParticipantStore();
+    const { setParticipantMap } = participantStore;
+    setParticipantMap(
+      callSessionId,
+      new Map([[participantId, { ...createParticipant(participantId), isHandRaised: true }]]),
+    );
+    const roleStore = useRoleStore();
+    vi.spyOn(roleStore, "checkHasMyPermission").mockReturnValue(true);
+    const callStore = useCallStore();
+    const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    callRoomId.value = roomId;
+    callStore.setHandRaised(false, participantId);
+    await flushPromises();
+    await waitForSynchronizedFunctions();
+
+    expect(handRaisedSent).toStrictEqual([{ callSessionId, isHandRaised: false, participantId }]);
+  });
 });
