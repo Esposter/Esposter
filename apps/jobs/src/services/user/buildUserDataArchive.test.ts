@@ -83,6 +83,8 @@ const readEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string)
 };
 const readEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) =>
   jsonDateParse(readEntryText(entries, entryName));
+const joinRoom = (roomId: string, ...userIds: string[]) =>
+  mockDb.insert(usersToRoomsInMessage).values(userIds.map((userId) => ({ roomId, userId })));
 describe(buildUserDataArchive, () => {
   let resetMockDb: () => Promise<void>;
   const attachmentBytes = new Uint8Array([255]);
@@ -155,10 +157,7 @@ describe(buildUserDataArchive, () => {
 
     // A room the person is a member of, with their message and its attachment
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
-    await mockDb.insert(usersToRoomsInMessage).values([
-      { roomId: room.id, userId },
-      { roomId: room.id, userId: otherUserId },
-    ]);
+    await joinRoom(room.id, userId, otherUserId);
     roomObjectReplies.set("exportUserMessages", () => [
       createRoomMessage({ files: [file], id: messageId, message, userId }),
     ]);
@@ -333,10 +332,7 @@ describe(buildUserDataArchive, () => {
     // The person's reaction in a room they are a member of is the room's row for that emoji on that message, which another
     // Member shares as a reactor
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
-    await mockDb.insert(usersToRoomsInMessage).values([
-      { roomId: room.id, userId },
-      { roomId: room.id, userId: otherUserId },
-    ]);
+    await joinRoom(room.id, userId, otherUserId);
     roomObjectReplies.set("exportUserReactions", () => [{ emojiTag, messageId, userIds: [userId, otherUserId] }]);
 
     // A request the person sent, one they received, and a friendship with a fourth account
@@ -388,10 +384,7 @@ describe(buildUserDataArchive, () => {
     const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ isReadOnly: true, name, userId }).returning());
-    await mockDb.insert(usersToRoomsInMessage).values([
-      { roomId: room.id, userId },
-      { roomId: room.id, userId: otherUserId },
-    ]);
+    await joinRoom(room.id, userId, otherUserId);
     const emoji = takeOne(await mockDb.insert(roomEmojisInMessage).values({ name, roomId: room.id }).returning());
     const messageAssetsBucket = getBucket(StorageBucket.MessageAssets);
     await messageAssetsBucket.put(getRoomEmojiBlobName(room.id, emoji.id), attachmentBytes);
@@ -438,10 +431,7 @@ describe(buildUserDataArchive, () => {
     const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
-    await mockDb.insert(usersToRoomsInMessage).values([
-      { roomId: room.id, userId },
-      { roomId: room.id, userId: otherUserId },
-    ]);
+    await joinRoom(room.id, userId, otherUserId);
     const search = takeOne(
       await mockDb.insert(searchHistoriesInMessage).values({ query: message, roomId: room.id, userId }).returning(),
     );
@@ -659,10 +649,7 @@ describe(buildUserDataArchive, () => {
     const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
-    await mockDb.insert(usersToRoomsInMessage).values([
-      { roomId: room.id, userId },
-      { roomId: room.id, userId: otherUserId },
-    ]);
+    await joinRoom(room.id, userId, otherUserId);
     // The person's unfollow is a decision they made, so its row stays; the other person's follow of the same thread is
     // Not theirs
     const follow = takeOne(
@@ -774,10 +761,7 @@ describe(buildUserDataArchive, () => {
     const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
-    await mockDb.insert(usersToRoomsInMessage).values([
-      { roomId: room.id, userId },
-      { roomId: room.id, userId: otherUserId },
-    ]);
+    await joinRoom(room.id, userId, otherUserId);
     const pagedMessages = Array.from({ length: OBJECT_READ_PAGE_LIMIT + 1 }, (_value, index) => `${message}${index}`);
     // The room's ids run from one, so a page's last id is its size. The room answers each page as the ids after the cursor
     // It is sent, up to the limit
