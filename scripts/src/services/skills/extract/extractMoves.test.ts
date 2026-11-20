@@ -11,7 +11,7 @@ describe(extractMoves, () => {
   test("moves a section with its subsections, leaves the rule in its place and returns the new page's index line", () => {
     expect.hasAssertions();
 
-    const { indexLines, pages, sourceText } = extractMoves(
+    const { indexLines, pageTextMap, sourceText } = extractMoves(
       {
         moves: [
           {
@@ -32,26 +32,26 @@ describe(extractMoves, () => {
 
     expect(sourceText).toBe("# a\n\n## b\n\nc\n\n## g\n");
     expect(indexLines).toStrictEqual(["- `references/b.md`"]);
-    expect(pages).toStrictEqual(new Map([["b", "# b\n\nRead a\n\nd\n\n## e\n\nf\n"]]));
+    expect(pageTextMap).toStrictEqual(new Map([["b", "# b\n\nRead a\n\nd\n\n## e\n\nf\n"]]));
   });
 
   test("ends a bullet at the blank line, and appends to a page that exists under its subheading", () => {
     expect.hasAssertions();
 
-    const { pages, sourceText } = extractMoves(
+    const { pageTextMap, sourceText } = extractMoves(
       { moves: [{ keep: "- c", match: "- b", page: "b", subheading: "d", type: ExtractMoveType.Bullet }], skill },
       "# a\n\n- b\n  e\n\nf\n",
       () => "# b\n\nRead a\n",
     );
 
     expect(sourceText).toBe("# a\n\n- c\n\nf\n");
-    expect(pages).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n## d\n\n- b\n  e\n"]]));
+    expect(pageTextMap).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n## d\n\n- b\n  e\n"]]));
   });
 
   test("keeps a heading inside a code fence with its section", () => {
     expect.hasAssertions();
 
-    const { pages, sourceText } = extractMoves(
+    const { pageTextMap, sourceText } = extractMoves(
       {
         moves: [
           { index: "- `references/b.md`", match: "## b", page: "b", read, title: "b", type: ExtractMoveType.Section },
@@ -63,20 +63,20 @@ describe(extractMoves, () => {
     );
 
     expect(sourceText).toBe("# a\n\n## d\n");
-    expect(pages).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n```md\n## c\n```\n"]]));
+    expect(pageTextMap).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n```md\n## c\n```\n"]]));
   });
 
   test("drops a block without writing it anywhere", () => {
     expect.hasAssertions();
 
-    const { pages, sourceText } = extractMoves(
+    const { pageTextMap, sourceText } = extractMoves(
       { moves: [{ isDropped: true, match: "- b", page: "b", type: ExtractMoveType.Bullet }], skill },
       "# a\n\n- b\n- c\n",
       readNoPage,
     );
 
     expect(sourceText).toBe("# a\n\n- c\n");
-    expect(pages).toStrictEqual(new Map());
+    expect(pageTextMap).toStrictEqual(new Map());
   });
 
   test("refuses a match the skill does not hold", () => {
@@ -89,7 +89,7 @@ describe(extractMoves, () => {
         readNoPage,
       ),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: getMarkdownBlockRange, no section "## b"]`,
+      `[InvalidOperationError: Invalid operation: Read, name: computeMarkdownBlockRange, no section "## b"]`,
     );
   });
 
@@ -131,20 +131,20 @@ describe(extractMoves, () => {
         readNoPage,
       ),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: getMarkdownBlockRange, 2 bullets match "- b"]`,
+      `[InvalidOperationError: Invalid operation: Read, name: computeMarkdownBlockRange, 2 bullets match "- b"]`,
     );
   });
 
   test("reads no heading inside a fence, and keeps blank lines the move did not join", () => {
     expect.hasAssertions();
 
-    const { pages, sourceText } = extractMoves(
+    const { pageTextMap, sourceText } = extractMoves(
       { moves: [{ keep: "c", match: "## b", page: "b", subheading: "d", type: ExtractMoveType.Section }], skill },
       "# a\n\n## b\n\n```sh\n## e\n\n\nf\n```\n\n## g\n\n```\nh\n\n\ni\n```\n",
       () => "# b\n\nRead a\n",
     );
 
     expect(sourceText).toBe("# a\n\n## b\n\nc\n\n## g\n\n```\nh\n\n\ni\n```\n");
-    expect(pages).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n## d\n\n```sh\n## e\n\n\nf\n```\n"]]));
+    expect(pageTextMap).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n## d\n\n```sh\n## e\n\n\nf\n```\n"]]));
   });
 });

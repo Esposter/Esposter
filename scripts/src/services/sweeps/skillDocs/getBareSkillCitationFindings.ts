@@ -2,7 +2,7 @@ import type { SkillDocsFile } from "#src/models/sweeps/skillDocs/SkillDocsFile";
 import type { SkillDocsFinding } from "#src/models/sweeps/skillDocs/SkillDocsFinding";
 
 import { SkillDocsFindingType } from "#src/models/sweeps/skillDocs/SkillDocsFindingType";
-import { getFencedLines } from "#src/services/skills/extract/getFencedLines";
+import { computeFencedLines } from "#src/services/skills/extract/computeFencedLines";
 
 // A skill named bare in front of its page or heading — (`foo`, `references/bar.md`) — reads as any backticked token,
 // So the page beside it resolves against the citing skill rather than the one meant. The form is the skill by name,
@@ -12,7 +12,7 @@ const BARE_SKILL_CITATION_REGEX = /\(`(?<name>[\w-]+)`[ \t]*,[ \t]*(?:`reference
 export const getBareSkillCitationFindings = (files: SkillDocsFile[], skillNames: Set<string>): SkillDocsFinding[] =>
   files.flatMap(({ path, text }) => {
     const lines = text.split("\n");
-    const fencedLines = getFencedLines(lines);
+    const fencedLines = computeFencedLines(lines);
     return lines
       .filter(
         (line, index) =>

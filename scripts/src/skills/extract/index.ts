@@ -30,16 +30,16 @@ await runCommand(
       const skillPath = join(skillDirectory, "SKILL.md");
       const getPagePath = (page: string) => join(referencesDirectory, `${page}.md`);
       const sourcePath = spec.source === undefined ? skillPath : getPagePath(spec.source);
-      const { indexLines, pages, sourceText } = extractMoves(spec, readFileSync(sourcePath, "utf8"), (page) => {
+      const { indexLines, pageTextMap, sourceText } = extractMoves(spec, readFileSync(sourcePath, "utf8"), (page) => {
         const pagePath = getPagePath(page);
         return existsSync(pagePath) ? readFileSync(pagePath, "utf8") : "";
       });
       mkdirSync(referencesDirectory, { recursive: true });
-      for (const [page, text] of pages) writeFileSync(getPagePath(page), text);
+      for (const [page, text] of pageTextMap) writeFileSync(getPagePath(page), text);
       writeFileSync(sourcePath, sourceText);
       const skillText = indexPages(readFileSync(skillPath, "utf8"), indexLines, spec.indexHeading);
       writeFileSync(skillPath, skillText);
-      console.info(`${spec.skill}: SKILL.md ${Buffer.byteLength(skillText)} bytes, ${pages.size} pages written`);
+      console.info(`${spec.skill}: SKILL.md ${Buffer.byteLength(skillText)} bytes, ${pageTextMap.size} pages written`);
     },
   }),
 );

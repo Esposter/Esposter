@@ -1,20 +1,20 @@
 import type { ExtractMove } from "#src/models/skills/extract/ExtractMove";
 
 import { ExtractMoveType } from "#src/models/skills/extract/ExtractMoveType";
-import { getFencedLines } from "#src/services/skills/extract/getFencedLines";
-import { getHeadingLevels } from "#src/services/skills/extract/getHeadingLevels";
+import { computeFencedLines } from "#src/services/skills/extract/computeFencedLines";
+import { computeHeadingLevels } from "#src/services/skills/extract/computeHeadingLevels";
 import { exhaustiveGuard, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 // The lines a move takes, as a half-open range. A section ends at the next heading of its own level or higher, so its
 // Subsections go with it; a bullet ends at the next top-level item, a blank line or a heading, so its indented
 // Continuation goes with it and a fence after a blank line does not. A line inside a fence is never a boundary, and a
 // Match must name exactly one block, since a bullet's is a prefix that `- b` shares with `- b-other`
-export const getMarkdownBlockRange = (
+export const computeMarkdownBlockRange = (
   lines: string[],
   { match, type }: Pick<ExtractMove, "match" | "type">,
 ): { end: number; start: number } => {
-  const fencedLines = getFencedLines(lines);
-  const headingLevels = getHeadingLevels(lines);
+  const fencedLines = computeFencedLines(lines);
+  const headingLevels = computeHeadingLevels(lines);
   const starts = lines.flatMap((line, index) =>
     !fencedLines[index] && (type === ExtractMoveType.Section ? line.trimEnd() === match : line.startsWith(match))
       ? [index]
@@ -23,7 +23,7 @@ export const getMarkdownBlockRange = (
   if (starts.length !== 1)
     throw new InvalidOperationError(
       Operation.Read,
-      getMarkdownBlockRange.name,
+      computeMarkdownBlockRange.name,
       starts.length === 0 ? `no ${type} "${match}"` : `${starts.length} ${type}s match "${match}"`,
     );
 

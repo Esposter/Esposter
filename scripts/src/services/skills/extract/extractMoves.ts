@@ -2,8 +2,8 @@ import type { ExtractSpec } from "#src/models/skills/extract/ExtractSpec";
 
 import { ExtractMoveType } from "#src/models/skills/extract/ExtractMoveType";
 import { collapseBlankLinesAt } from "#src/services/skills/extract/collapseBlankLinesAt";
-import { getHeadingLevels } from "#src/services/skills/extract/getHeadingLevels";
-import { getMarkdownBlockRange } from "#src/services/skills/extract/getMarkdownBlockRange";
+import { computeHeadingLevels } from "#src/services/skills/extract/computeHeadingLevels";
+import { computeMarkdownBlockRange } from "#src/services/skills/extract/computeMarkdownBlockRange";
 import { toText } from "#src/services/skills/extract/toText";
 import { trimBlankLines } from "#src/services/skills/extract/trimBlankLines";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -18,14 +18,14 @@ export const extractMoves = (
   { moves, skill, source }: ExtractSpec,
   sourceText: string,
   readPage: (page: string) => string,
-): { indexLines: string[]; pages: Map<string, string>; sourceText: string } => {
+): { indexLines: string[]; pageTextMap: Map<string, string>; sourceText: string } => {
   let lines = sourceText.split("\n");
   const pageSectionsMap = new Map<string, string[]>();
   const indexLines: string[] = [];
   for (const move of moves) {
-    const { end, start } = getMarkdownBlockRange(lines, move);
+    const { end, start } = computeMarkdownBlockRange(lines, move);
     const heading = takeOne(lines, start);
-    const headingLevels = getHeadingLevels(lines);
+    const headingLevels = computeHeadingLevels(lines);
     const level = takeOne(headingLevels, start);
     const blockLines =
       move.type === ExtractMoveType.Section
@@ -63,11 +63,11 @@ export const extractMoves = (
     pageSectionsMap.set(move.page, sections);
   }
 
-  const pages = new Map(
+  const pageTextMap = new Map(
     Array.from(pageSectionsMap, ([page, sections]) => {
       const existingPage = readPage(page);
       return [page, toText([[existingPage.trimEnd(), ...sections].filter(Boolean).join("\n\n")])];
     }),
   );
-  return { indexLines, pages, sourceText: toText(lines) };
+  return { indexLines, pageTextMap, sourceText: toText(lines) };
 };

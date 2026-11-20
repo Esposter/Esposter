@@ -1,5 +1,5 @@
 import { collapseBlankLinesAt } from "#src/services/skills/extract/collapseBlankLinesAt";
-import { getHeadingLevels } from "#src/services/skills/extract/getHeadingLevels";
+import { computeHeadingLevels } from "#src/services/skills/extract/computeHeadingLevels";
 import { toText } from "#src/services/skills/extract/toText";
 import { takeOne } from "@esposter/shared";
 
@@ -12,7 +12,7 @@ export const indexPages = (
   indexHeading: string = DEFAULT_INDEX_HEADING,
 ): string => {
   const lines = skillText.split("\n");
-  const headingLevels = getHeadingLevels(lines);
+  const headingLevels = computeHeadingLevels(lines);
   const indexStart = lines.findIndex(
     (line, index) => takeOne(headingLevels, index) > 0 && line.trimEnd() === indexHeading,
   );
@@ -20,11 +20,13 @@ export const indexPages = (
   else if (indexStart === -1) return toText([lines.join("\n").trimEnd(), "", indexHeading, "", ...indexLines]);
 
   const indexLevel = takeOne(headingLevels, indexStart);
-  const nextHeading = headingLevels.findIndex(
+  const nextHeadingIndex = headingLevels.findIndex(
     (headingLevel, index) => index > indexStart && headingLevel > 0 && headingLevel <= indexLevel,
   );
   const indexEnd =
-    lines.slice(0, nextHeading === -1 ? lines.length : nextHeading).findLastIndex((line) => line.trim() !== "") + 1;
+    lines
+      .slice(0, nextHeadingIndex === -1 ? lines.length : nextHeadingIndex)
+      .findLastIndex((line) => line.trim() !== "") + 1;
   return toText(
     collapseBlankLinesAt(
       [...lines.slice(0, indexEnd), ...indexLines, "", ...lines.slice(indexEnd)],
