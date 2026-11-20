@@ -9,10 +9,9 @@ import { getCreateRoomCategoryEntry } from "#src/services/message/roomCategory/g
 import { getDeleteRoomCategoryEntry } from "#src/services/message/roomCategory/getDeleteRoomCategoryEntry";
 import { getReorderRoomCategoriesEntry } from "#src/services/message/roomCategory/getReorderRoomCategoriesEntry";
 import { getRoomCategoryPositionUpdates } from "#src/services/message/roomCategory/getRoomCategoryPositionUpdates";
-import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
-import { createArrival } from "#src/services/shared/overlay/createArrival";
-import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
+import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
 import { NO_ROW_VERSION } from "@esposter/db-schema";
@@ -41,7 +40,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     for (const row of rows) arrive(roomCategoryTable, row);
   };
   // The category is drawn under the id the client gives it, at a placeholder that holds no version. The server's row
-  // Arrives in the answer, and its header confirms the placeholder at the version it names
+  // Arrives in the answer, and the answer confirms the placeholder at the version that row holds
   const createRoomCategory = (input: Except<CreateRoomCategoryInput, "id">) => {
     if (!session.value.data) return;
 
@@ -56,29 +55,17 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
       version: NO_ROW_VERSION,
     };
     writeOptimistic(
-      async () => {
-        const { result, rowVersions } = await collectRowVersions(() =>
-          $trpc.room.category.createRoomCategory.mutate({ ...input, id: roomCategory.id }),
-        );
-        return {
-          arrivals: [createArrival(roomCategoryTable, result)],
-          confirmed: createHeaderConfirmations(roomCategoryTable, rowVersions),
-        };
-      },
+      async () =>
+        createRowResponse(
+          roomCategoryTable,
+          await $trpc.room.category.createRoomCategory.mutate({ ...input, id: roomCategory.id }),
+        ),
       { entry: getCreateRoomCategoryEntry(roomCategory), onError: createErrorAlert },
     );
   };
   const deleteRoomCategory = (id: DeleteRoomCategoryInput) => {
     writeOptimistic(
-      async () => {
-        const { result, rowVersions } = await collectRowVersions(() =>
-          $trpc.room.category.deleteRoomCategory.mutate(id),
-        );
-        return {
-          arrivals: [createArrival(roomCategoryTable, result)],
-          confirmed: createHeaderConfirmations(roomCategoryTable, rowVersions),
-        };
-      },
+      async () => createRowResponse(roomCategoryTable, await $trpc.room.category.deleteRoomCategory.mutate(id)),
       { entry: getDeleteRoomCategoryEntry(id, new Date()), onError: createErrorAlert },
     );
   };
@@ -90,15 +77,8 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     if (updates.length === 0) return;
 
     writeOptimistic(
-      async () => {
-        const { result, rowVersions } = await collectRowVersions(() =>
-          $trpc.room.category.reorderRoomCategories.mutate(updates),
-        );
-        return {
-          arrivals: result.map((roomCategory) => createArrival(roomCategoryTable, roomCategory)),
-          confirmed: createHeaderConfirmations(roomCategoryTable, rowVersions),
-        };
-      },
+      async () =>
+        createRowsResponse(roomCategoryTable, await $trpc.room.category.reorderRoomCategories.mutate(updates)),
       { entry: getReorderRoomCategoriesEntry(updates), onError: createErrorAlert },
     );
   };
