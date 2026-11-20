@@ -110,8 +110,6 @@ export const D65_WHITE: Vector = [0.950428545, 1, 1.088900371];
 export const PINNED_TOOL_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // MacOS's own sysctl, named by its path so a sysctl of the same name on the PATH is never run
 export const SYSCTL_PATH = "/usr/sbin/sysctl";
-// The npm lockfile beside a manifest, which `npm install` writes and whose root entry repeats the manifest's `engines`
-export const PACKAGE_LOCK_JSON_FILENAME = "package-lock.json";
 // The web app's directory, against the repository root
 export const APP_DIRECTORY = "apps/web";
 // Claude Code's projects folder, which `CLAUDE_CONFIG_DIR` moves off `~/.claude` as Claude Code itself reads it

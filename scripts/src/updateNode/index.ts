@@ -1,4 +1,4 @@
-import { PACKAGE_LOCK_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { NPM_LOCKFILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { readManifestFiles } from "#src/services/shared/readManifestFiles";
 import { runCommand } from "#src/services/timing/runCommand";
@@ -52,7 +52,7 @@ await runCommand(
       // Unchanged pin too, since Renovate's node branch moves the pin alone and a floor it left behind is caught up here
       for (const { path } of readManifestFiles(REPOSITORY_ROOT)) {
         updateNodeFloorFile(path, version, (text) => setManifestNodeVersion(text, version));
-        const lockfilePath = resolve(dirname(path), PACKAGE_LOCK_JSON_FILENAME);
+        const lockfilePath = resolve(dirname(path), NPM_LOCKFILE);
         if (existsSync(lockfilePath))
           updateNodeFloorFile(lockfilePath, version, (text) => setLockfileNodeVersion(text, version));
       }
