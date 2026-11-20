@@ -32,7 +32,7 @@ describe(useLikeStore, () => {
   });
 
   // A vote is one row the feed, the thread and the post page all read, so a vote cast on the page reaches the feed's copy
-  // of the post as well. The post's count is read back once the vote is kept, at the version the vote moved it to
+  // Of the post as well. The post's count is read back once the vote is kept, at the version the vote moved it to
   test("lands a vote on the feed's copy and the post page's copy of one post", async () => {
     expect.hasAssertions();
 
@@ -43,9 +43,10 @@ describe(useLikeStore, () => {
     const { readItems, readPostPage } = postStore;
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
-    await readItems(async () => readPostPage({ items: [createPost({ id: postId })], nextCursor: "" }));
+    await readItems(() => Promise.resolve(readPostPage({ items: [createPost({ id: postId })], nextCursor: "" })));
     commentStore.openPost(createPost({ id: postId }));
-    const { createLike } = useLikeStore();
+    const likeStore = useLikeStore();
+    const { createLike } = likeStore;
 
     createLike({ postId, value: 1 });
 
@@ -66,8 +67,9 @@ describe(useLikeStore, () => {
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const { readItems, readPostPage } = postStore;
-    await readItems(async () => readPostPage({ items: [createPost({ id: postId })], nextCursor: "" }));
-    const { createLike } = useLikeStore();
+    await readItems(() => Promise.resolve(readPostPage({ items: [createPost({ id: postId })], nextCursor: "" })));
+    const likeStore = useLikeStore();
+    const { createLike } = likeStore;
 
     // The vote is drawn at once, and the refusal drops it
     createLike({ postId, value: 1 });
@@ -94,8 +96,9 @@ describe(useLikeStore, () => {
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const { readItems, readPostPage } = postStore;
-    await readItems(async () => readPostPage({ items: [createPost({ id: postId })], nextCursor: "" }));
-    const { createLike, deleteLike } = useLikeStore();
+    await readItems(() => Promise.resolve(readPostPage({ items: [createPost({ id: postId })], nextCursor: "" })));
+    const likeStore = useLikeStore();
+    const { createLike, deleteLike } = likeStore;
 
     createLike({ postId, value: 1 });
     await until(() => takeOne(items.value).likeCount).toBe(like.value);

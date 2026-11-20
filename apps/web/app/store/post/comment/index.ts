@@ -13,9 +13,9 @@ import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry"
 import { getSetPostEntry } from "#src/services/post/overlay/getSetPostEntry";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useUserStore } from "#src/store/message/user/index";
 import { useOverlayStore } from "#src/store/overlay";
 import { usePostCountStore } from "#src/store/post/count";
-import { useUserStore } from "#src/store/message/user/index";
 import { EMPTY_TEXT_REGEX } from "#src/util/text/constants";
 import { NO_ROW_VERSION } from "@esposter/db-schema";
 import { getPostRanking, getResultAsync } from "@esposter/shared";
@@ -26,16 +26,18 @@ export const useCommentStore = defineStore("post/comment", () => {
   const session = authClient.useSession();
   const overlayStore = useOverlayStore();
   const { arrive, writeOptimistic } = overlayStore;
-  const { refreshPostCounts } = usePostCountStore();
-  const { storeUser } = useUserStore();
+  const postCountStore = usePostCountStore();
+  const { refreshPostCountsInBackground } = postCountStore;
+  const userStore = useUserStore();
+  const { storeUser } = userStore;
   const { getPostWithRelations, postMap, storePostRelations } = usePostRows();
-  const currentPostId = ref<string>();
+  const currentPostId = ref("");
   const currentPost = computed(() => (currentPostId.value ? getPostWithRelations(currentPostId.value) : undefined));
   const commentSortType = ref<PostSortType>(PostSortType.Hot);
   // Held here rather than in each card, so a card a re-read remounts comes back open
   const expandedCommentIds = ref(new Set<string>());
   // Keyed by the post whose replies the partition holds, the route's own post included. A partition holds the ids of its
-  // replies in the order its pages named them, and the rows are the overlay's
+  // Replies in the order its pages named them, and the rows are the overlay's
   const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostKey>();
   const toBranchPosts = (branchKeys: PostKey[]) =>
     branchKeys.flatMap(({ id }) => {
@@ -97,8 +99,8 @@ export const useCommentStore = defineStore("post/comment", () => {
   };
 
   // The comment is drawn as it is sent: the reader is its author, it inherits its parent's chain, and a new reply has no
-  // votes or replies of its own. The counts it moves on the posts above it are the server's, so they are read back once
-  // it lands. `onRefused` hands the composer its text back
+  // Votes or replies of its own. The counts it moves on the posts above it are the server's, so they are read back once
+  // It lands. `onRefused` hands the composer its text back
   const createComment = (input: Except<CreateCommentInput, "id">, onRefused?: () => void) => {
     if (EMPTY_TEXT_REGEX.test(input.description)) return;
 
@@ -137,13 +139,13 @@ export const useCommentStore = defineStore("post/comment", () => {
     };
     storeUser(publicUser);
     // The branch lists the reply at once, where its entry draws it. A refused reply stays listed as an id with no row,
-    // which the branch draws as nothing
+    // Which the branch draws as nothing
     const branch = getSlice(input.parentId);
     branch.items.value = [...branch.items.value, { id: newComment.id }];
     writeOptimistic(
       async () => {
         const { ancestorIds, comment } = await $trpc.post.createComment.mutate({ ...input, id: newComment.id });
-        void refreshPostCounts(ancestorIds);
+        refreshPostCountsInBackground(ancestorIds);
         return createRowResponse(postTable, storePostRelations(comment));
       },
       {
@@ -156,7 +158,7 @@ export const useCommentStore = defineStore("post/comment", () => {
     );
   };
   // The edit waits for the server's answer, since the editor that holds the draft stays open until it lands, and the
-  // branch then shows the stored text the server kept. A refused edit alerts and answers false
+  // Branch then shows the stored text the server kept. A refused edit alerts and answers false
   const updateComment = (input: UpdateCommentInput) =>
     getResultAsync(() => $trpc.post.updateComment.mutate(input)).match(
       (comment) => {
@@ -170,13 +172,13 @@ export const useCommentStore = defineStore("post/comment", () => {
     );
   const deleteComment = (input: DeleteCommentInput) => {
     // The replies beneath the comment are not read again until their branch is opened, so none keeps a row a removal
-    // has left behind
+    // Has left behind
     deleteBranch(input);
     writeOptimistic(
       async () => {
         // The counters and the replies a removal takes are only knowable here, so they move when the server answers
         const { ancestorIds, removedIds } = await $trpc.post.deleteComment.mutate(input);
-        void refreshPostCounts(ancestorIds);
+        refreshPostCountsInBackground(ancestorIds);
         dropBranchKeys(removedIds);
         return { arrivals: [], confirmed: [] };
       },
@@ -185,17 +187,17 @@ export const useCommentStore = defineStore("post/comment", () => {
   };
 
   return {
+    arrivePost,
     commentSortType,
-    getSlice,
     createComment,
     currentPost,
     deleteComment,
     expandedCommentIds,
     getBranchComment,
     getBranchItems,
+    getSlice,
     getSliceOperationData,
     openPost,
-    arrivePost,
     readCommentPage,
     setCommentSortType,
     toggleCommentExpanded,

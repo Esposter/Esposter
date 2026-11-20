@@ -9,8 +9,8 @@ type SaveRichTextEditEmit = SetupContext<{
   "update:update-mode": [value: false];
 }>["emit"];
 // Editing away the last character is how a message or comment is deleted, so an emptied editor hands off to Delete mode
-// rather than saving nothing. The editor stays open in a saving state until the write's answer lands: a kept write closes
-// it on the text the answer stored, and a refused one leaves the draft in place, under the alert the write itself raised
+// Rather than saving nothing. The editor stays open in a saving state until the write's answer lands: a kept write closes
+// It on the text the answer stored, and a refused one leaves the draft in place, under the alert the write itself raised
 export const useSaveRichTextEdit = (
   edited: Ref<string>,
   getOriginal: () => string,

@@ -15,7 +15,7 @@ describe(useSaveRichTextEdit, () => {
     const edited = ref(editedValue);
     // The stored text is what the write's answer leaves, so a kept write changes what the editor reopens on
     let stored = original;
-    const update = vi.fn(() => {
+    const update = vi.fn<() => Promise<boolean>>(() => {
       if (isKept) stored = answered;
       return Promise.resolve(isKept);
     });
@@ -29,7 +29,7 @@ describe(useSaveRichTextEdit, () => {
     expect.hasAssertions();
 
     const answer = Promise.withResolvers<boolean>();
-    const update = vi.fn(() => answer.promise);
+    const update = vi.fn<() => Promise<boolean>>(() => answer.promise);
     const edited = ref(edit);
     const emit = vi.fn<(...parameters: ["update:delete-mode", true] | ["update:update-mode", false]) => void>();
     const { isSaving, save } = useSaveRichTextEdit(edited, () => original, update, emit);
@@ -74,7 +74,7 @@ describe(useSaveRichTextEdit, () => {
     expect.hasAssertions();
 
     const answer = Promise.withResolvers<boolean>();
-    const update = vi.fn(() => answer.promise);
+    const update = vi.fn<() => Promise<boolean>>(() => answer.promise);
     const emit = vi.fn<(...parameters: ["update:delete-mode", true] | ["update:update-mode", false]) => void>();
     const { save } = useSaveRichTextEdit(ref(edit), () => original, update, emit);
 
@@ -83,7 +83,7 @@ describe(useSaveRichTextEdit, () => {
     answer.resolve(true);
     await saving;
 
-    expect(update).toHaveBeenCalledOnce();
+    expect(update).toHaveBeenCalledTimes(1);
   });
 
   test("hands an emptied editor to delete mode instead of updating", async () => {

@@ -29,7 +29,7 @@ const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
     return {
       Enter: () => {
-        void saveMessage(this.editor);
+        saveMessage(this.editor);
         return true;
       },
     };

@@ -13,21 +13,23 @@ import { usePostCountStore } from "#src/store/post/count";
 import { NO_ROW_VERSION } from "@esposter/db-schema";
 
 // The one write path for a vote, over every copy of its post on screen: the feed, a thread and the post page read the
-// vote from the overlay, so a vote is drawn once and reaches each of them. A vote's count is the server's, and it is read
-// back once the vote is kept
+// Vote from the overlay, so a vote is drawn once and reaches each of them. A vote's count is the server's, and it is read
+// Back once the vote is kept
 export const useLikeStore = defineStore("post/like", () => {
   const { $trpc } = useNuxtApp();
   const userId = useSessionUserId();
-  const { writeOptimistic } = useOverlayStore();
-  const { refreshPostCounts } = usePostCountStore();
+  const overlayStore = useOverlayStore();
+  const { writeOptimistic } = overlayStore;
+  const postCountStore = usePostCountStore();
+  const { refreshPostCountsInBackground } = postCountStore;
   // A vote's row is drawn at once, with no version until the server names one. A second vote on one post is queued
-  // behind the first, since both write the one row, so a rapid second click cannot send a second create
+  // Behind the first, since both write the one row, so a rapid second click cannot send a second create
   const createLike = (input: CreateLikeInput) => {
     const now = new Date();
     writeOptimistic(
       async () => {
         const like = await $trpc.like.createLike.mutate(input);
-        void refreshPostCounts([input.postId]);
+        refreshPostCountsInBackground([input.postId]);
         return createRowResponse(likeTable, like);
       },
       {
@@ -48,7 +50,7 @@ export const useLikeStore = defineStore("post/like", () => {
     writeOptimistic(
       async () => {
         const like = await $trpc.like.updateLike.mutate(input);
-        void refreshPostCounts([input.postId]);
+        refreshPostCountsInBackground([input.postId]);
         return createRowResponse(likeTable, like);
       },
       { entry: getLikePatchEntry(userId.value, input.postId, { value: input.value }), onError: createErrorAlert },
@@ -59,7 +61,7 @@ export const useLikeStore = defineStore("post/like", () => {
     writeOptimistic(
       async () => {
         const removedLike = await $trpc.like.deleteLike.mutate(postId);
-        void refreshPostCounts([postId]);
+        refreshPostCountsInBackground([postId]);
         return createRowResponse(likeTable, removedLike);
       },
       { entry: getLikePatchEntry(userId.value, postId, { deletedAt: new Date() }), onError: createErrorAlert },

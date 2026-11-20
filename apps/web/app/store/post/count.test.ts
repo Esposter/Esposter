@@ -18,7 +18,8 @@ describe(usePostCountStore, () => {
     const readPostCounts = vi.fn<(postIds: string[]) => PostCountFields[]>(() => []);
     trpcMsw.post.readPostCounts.query(({ input }) => readPostCounts(input));
     const postIds = Array.from({ length: MAX_POST_COUNTS_PER_READ + 1 }, () => v7());
-    const { refreshPostCounts } = usePostCountStore();
+    const postCountStore = usePostCountStore();
+    const { refreshPostCounts } = postCountStore;
 
     await refreshPostCounts(postIds);
 
@@ -29,13 +30,14 @@ describe(usePostCountStore, () => {
   });
 
   // A count moves in the write that raises its post's version, so a read that was answered before a newer count landed
-  // holds an older version, and it does not put that count back
+  // Holds an older version, and it does not put that count back
   test("a read answered at an older version does not replace the count a newer one holds", async () => {
     expect.hasAssertions();
 
     const postId = v7();
     trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: 1, version: 1 }]);
-    const { postCounts, refreshPostCounts, setPostCounts } = usePostCountStore();
+    const postCountStore = usePostCountStore();
+    const { postCounts, refreshPostCounts, setPostCounts } = postCountStore;
     setPostCounts([{ commentCount: 0, id: postId, likeCount: 2, version: 2 }]);
 
     await refreshPostCounts([postId]);

@@ -12,6 +12,14 @@ import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
+// Holds a branch's replies on the overlay, and lists them under their parent the way a page of the branch does
+const seedBranch = (parentId: string, replies: ReturnType<typeof createPost>[]) => {
+  const commentStore = useCommentStore();
+  commentStore
+    .getSlice(parentId)
+    .initializeCursorPaginationData(commentStore.readCommentPage({ items: replies, nextCursor: "" }));
+};
+
 describe(useCommentStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const postId = v7();
@@ -20,16 +28,8 @@ describe(useCommentStore, () => {
   const newDescription = "a";
   const failingDescription = " ";
   // A count read answers at the version after the post's own row, which is how a count the server moved is told apart
-  // from the row the store already holds
+  // From the row the store already holds
   const countVersion = 1;
-
-  // Holds a branch's replies on the overlay, and lists them under their parent the way a page of the branch does
-  const seedBranch = (parentId: string, replies: ReturnType<typeof createPost>[]) => {
-    const commentStore = useCommentStore();
-    commentStore
-      .getSlice(parentId)
-      .initializeCursorPaginationData(commentStore.readCommentPage({ items: replies, nextCursor: "" }));
-  };
 
   // An edit is answered with whether the server kept it, and a refused one alerts and leaves the stored text as it was
   test("answers an edit with whether the server kept it", async () => {
@@ -53,7 +53,7 @@ describe(useCommentStore, () => {
   });
 
   // Two edits of one comment are written to its row in issue order, so a refused edit drops its own entry and leaves the
-  // row at the edit the server kept
+  // Row at the edit the server kept
   test("leaves the branch on the edit the server kept when a later edit is refused", async () => {
     expect.hasAssertions();
 
@@ -67,8 +67,10 @@ describe(useCommentStore, () => {
     const { getBranchItems, updateComment } = commentStore;
     seedBranch(postId, [comment]);
     const branchComments = getBranchItems(postId);
-    updateComment({ description: newDescription, id: comment.id });
-    updateComment({ description: failingDescription, id: comment.id });
+    await Promise.all([
+      updateComment({ description: newDescription, id: comment.id }),
+      updateComment({ description: failingDescription, id: comment.id }),
+    ]);
 
     await until(() => takeOne(branchComments.value).description).toBe(newDescription);
     expect(takeOne(branchComments.value).description).toBe(newDescription);
@@ -130,7 +132,7 @@ describe(useCommentStore, () => {
   });
 
   // The rows beneath a deleted comment go with it at once, and a branch that still claims to be loaded is one a
-  // re-expansion will not read again. So a rejected delete leaves those branches unread rather than merely empty
+  // Re-expansion will not read again. So a rejected delete leaves those branches unread rather than merely empty
   test("leaves the branches under a rejected delete unread", async () => {
     expect.hasAssertions();
 
@@ -157,12 +159,12 @@ describe(useCommentStore, () => {
   });
 
   // The counters the server moved are the ones on screen, so a reply reaches the post above its own parent as well: a
-  // root card reporting only its direct children under-reports its whole thread
+  // Root card reporting only its direct children under-reports its whole thread
   test("counts a reply against every post the server named", async () => {
     expect.hasAssertions();
 
     // Built here rather than at describe scope: the counters are what this asserts, and the store writes them into the
-    // rows it is handed
+    // Rows it is handed
     const repliedToComment = createPost({ commentCount: 0, depth: 1, parentId: postId });
     const reply = createPost({ depth: 2, parentId: repliedToComment.id });
     useSession.mockReturnValue(ref({ data: { user: getMockSession().user } }));
@@ -202,7 +204,9 @@ describe(useCommentStore, () => {
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const { readItems, readPostPage } = postStore;
-    await readItems(async () => readPostPage({ items: [createPost({ commentCount: 0, id: postId })], nextCursor: "" }));
+    await readItems(() =>
+      Promise.resolve(readPostPage({ items: [createPost({ commentCount: 0, id: postId })], nextCursor: "" })),
+    );
 
     const commentStore = useCommentStore();
     commentStore.createComment({ description: "a", parentId: postId });
@@ -213,7 +217,7 @@ describe(useCommentStore, () => {
   });
 
   // A count is held at the version it was read at, so an edit answered at an older version does not put back the count a
-  // newer read already holds
+  // Newer read already holds
   test("keeps a count a newer read holds over an edit's older answer", async () => {
     expect.hasAssertions();
 
@@ -221,21 +225,22 @@ describe(useCommentStore, () => {
     trpcMsw.post.updateComment.mutation(({ input }) =>
       createPost({ ...input, commentCount: 0, depth: 1, parentId: postId, version: 1 }),
     );
-    const { setPostCounts } = usePostCountStore();
+    const postCountStore = usePostCountStore();
+    const { setPostCounts } = postCountStore;
     setPostCounts([{ commentCount: 1, id: editedComment.id, likeCount: 0, version: 2 }]);
     const commentStore = useCommentStore();
     const { getBranchItems, updateComment } = commentStore;
     seedBranch(postId, [editedComment]);
     const branchComments = getBranchItems(postId);
 
-    updateComment({ description: newDescription, id: editedComment.id });
+    await updateComment({ description: newDescription, id: editedComment.id });
 
     await until(() => takeOne(branchComments.value).description).toBe(newDescription);
     expect(takeOne(branchComments.value).commentCount).toBe(1);
   });
 
   // A new sort orders every branch afresh, so each open branch drops the rows the old order read and reads its first
-  // page again when it is shown
+  // Page again when it is shown
   test("changing the comment sort re-reads every open branch from page one", () => {
     expect.hasAssertions();
 

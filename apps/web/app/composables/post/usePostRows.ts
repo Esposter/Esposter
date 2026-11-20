@@ -9,13 +9,16 @@ import { usePostCountStore } from "#src/store/post/count";
 import { NO_ROW_VERSION } from "@esposter/db-schema";
 
 // The post rows the feed, the threads and the post page hold, read back as posts with their relations. An author is the
-// user store's row, the counts are the count store's, and the viewer's vote is the vote row the overlay holds, so the
-// row itself keeps none of them. A removed vote is a tombstone the overlay leaves out, so it reads as no vote
+// User store's row, the counts are the count store's, and the viewer's vote is the vote row the overlay holds, so the
+// Row itself keeps none of them. A removed vote is a tombstone the overlay leaves out, so it reads as no vote
 export const usePostRows = () => {
   const userId = useSessionUserId();
-  const { arrive, view } = useOverlayStore();
-  const { storeUser, userMap } = useUserStore();
-  const { postCounts, setPostCounts } = usePostCountStore();
+  const overlayStore = useOverlayStore();
+  const { arrive, view } = overlayStore;
+  const userStore = useUserStore();
+  const { storeUser, userMap } = userStore;
+  const postCountStore = usePostCountStore();
+  const { postCounts, setPostCounts } = postCountStore;
   const postRows = view(postTable);
   const likeRows = view(likeTable);
   // A row an entry drew without a version is below every version, as a placeholder is
@@ -35,7 +38,7 @@ export const usePostRows = () => {
     if (!user) return undefined;
 
     // The store holds the newest counts it has seen, by version, so a count at the row's version or a later one is the
-    // count drawn
+    // Count drawn
     const version = post.version ?? NO_ROW_VERSION;
     const counts = postCounts.get(post.id);
     const isCountCurrent = counts !== undefined && counts.version >= version;
@@ -49,7 +52,7 @@ export const usePostRows = () => {
     };
   };
   // Stores what a read or a write returned beside its post: the author, the counts, and the viewer's vote. It returns
-  // the post row the overlay holds, which the caller arrives
+  // The post row the overlay holds, which the caller arrives
   const storePostRelations = ({ user, viewerLike, ...post }: PostInPostWithRelations): PostInPost => {
     storeUser(user);
     setPostCounts([post]);

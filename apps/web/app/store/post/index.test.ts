@@ -40,7 +40,7 @@ describe(usePostStore, () => {
   });
 
   // Two edits of one post are written to the one row in issue order, and a refused edit drops its own entry: the row
-  // is left at the edit the server kept, with nothing restored over it
+  // Is left at the edit the server kept, with nothing restored over it
   test("leaves the feed on the edit the server kept when a later edit is refused", async () => {
     expect.hasAssertions();
 
@@ -52,18 +52,18 @@ describe(usePostStore, () => {
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const { readItems, readPostPage, updatePost } = postStore;
-    await readItems(async () => readPostPage({ items: [createPost({ id: post.id })], nextCursor: "" }));
+    await readItems(() => Promise.resolve(readPostPage({ items: [createPost({ id: post.id })], nextCursor: "" })));
     updatePost({ id: post.id, title: newTitle });
     updatePost({ id: post.id, title: failingTitle });
 
     // The refused edit is drawn over the kept one until its refusal drops it, so the feed shows the kept title only once
-    // both are settled
+    // Both are settled
     await until(() => takeOne(items.value).title).toBe(newTitle);
     expect(takeOne(items.value).version).toBe(1);
   });
 
   // A refused delete leaves its post on the feed, since the row was never removed on the server and its entry drops
-  // with the refusal. Deletes of different posts carry different keys, so the accepted one is not held behind it
+  // With the refusal. Deletes of different posts carry different keys, so the accepted one is not held behind it
   test("keeps a post whose delete is refused, and drops one whose delete the server kept", async () => {
     expect.hasAssertions();
 
@@ -79,7 +79,7 @@ describe(usePostStore, () => {
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const { deletePost, readItems, readPostPage } = postStore;
-    await readItems(async () => readPostPage({ items: [post, otherPost], nextCursor: "" }));
+    await readItems(() => Promise.resolve(readPostPage({ items: [post, otherPost], nextCursor: "" })));
     deletePost(post.id);
     deletePost(otherPost.id);
 

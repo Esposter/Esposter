@@ -1,15 +1,16 @@
 import type { PostCountFields } from "#src/models/post/PostCountFields";
+import type { Except } from "type-fest";
 
 import { MAX_POST_COUNTS_PER_READ } from "#shared/models/db/post/ReadPostCountsInput";
 import { createBatchedRefresh } from "#src/services/shared/createBatchedRefresh";
-import { chunk, settleAll } from "@esposter/shared";
+import { chunk, getSynchronizedFunction, settleAll } from "@esposter/shared";
 
 // The one owner of the counts the server keeps on posts, by post id. A count has no row of its own, so it is not on the
-// overlay: each count is held at the version of its post's row, and a count takes the place of an older one only, so a
-// read that lands late cannot put back a count a newer write has already moved
+// Overlay: each count is held at the version of its post's row, and a count takes the place of an older one only, so a
+// Read that lands late cannot put back a count a newer write has already moved
 export const usePostCountStore = defineStore("post/count", () => {
   const { $trpc } = useNuxtApp();
-  const postCounts = ref(new Map<string, Omit<PostCountFields, "id">>());
+  const postCounts = ref(new Map<string, Except<PostCountFields, "id">>());
   const setPostCounts = (counts: PostCountFields[]) => {
     for (const { commentCount, id, likeCount, version } of counts) {
       const heldCount = postCounts.value.get(id);
@@ -27,5 +28,7 @@ export const usePostCountStore = defineStore("post/count", () => {
     );
     setPostCounts(postCountReads.flat());
   });
-  return { postCounts, refreshPostCounts, setPostCounts };
+  // Sent with no caller waiting: the batched read logs its own failure and reads again
+  const refreshPostCountsInBackground = getSynchronizedFunction(refreshPostCounts);
+  return { postCounts, refreshPostCounts, refreshPostCountsInBackground, setPostCounts };
 });
