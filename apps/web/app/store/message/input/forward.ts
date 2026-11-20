@@ -10,23 +10,12 @@ export const useForwardStore = defineStore("message/input/forward", () => {
   );
   const { data: roomIds, getDataRef: getRoomIdsRef } = useDataMap<string[]>(() => roomStore.currentRoomId, []);
   const { data: messageInput, getDataRef: getMessageInputRef } = useDataMap(() => roomStore.currentRoomId, "");
-  // Empties the panel of the current room and returns the rollback that puts what it held back into that room. The room is
-  // Pinned here because the route may have moved on by the time a refused forward's answer lands
-  const takeForward = () => {
-    const roomId = roomStore.currentRoomId;
-    const draft = {
-      forwardMessageId: forwardMessageId.value,
-      messageInput: messageInput.value,
-      roomIds: roomIds.value,
-    };
-    messageInput.value = "";
-    roomIds.value = [];
-    forwardMessageId.value = 0;
-    return () => {
-      getForwardMessageIdRef(roomId).value = draft.forwardMessageId;
-      getMessageInputRef(roomId).value = draft.messageInput;
-      getRoomIdsRef(roomId).value = draft.roomIds;
-    };
+  // Empties the panel of the room the forward was composed in, once the server has answered the send. The room is named by
+  // The caller, since the route may have moved on by the time the answer lands
+  const clearForward = (roomId: string) => {
+    getForwardMessageIdRef(roomId).value = 0;
+    getMessageInputRef(roomId).value = "";
+    getRoomIdsRef(roomId).value = [];
   };
-  return { forwardMessageId, messageInput, roomIds, takeForward };
+  return { clearForward, forwardMessageId, messageInput, roomIds };
 });

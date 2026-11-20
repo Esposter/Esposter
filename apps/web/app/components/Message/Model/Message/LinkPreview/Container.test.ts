@@ -20,19 +20,20 @@ describe("messageModelMessageLinkPreviewContainer", () => {
 
   // The thread pane renders messages of a room other than the one on screen, so the removal reads the message out
   // Of its own room's slice — the room on screen holds nothing for it to take the embeds off
-  test("removes the embeds of a message in a room other than the one on screen", async () => {
+  test("removes the embeds of a message in a room other than the one on screen once the room answers", async () => {
     expect.hasAssertions();
 
-    const { promise: deleteGate, resolve: releaseDelete } = Promise.withResolvers<void>();
-    trpcMsw.message.deleteLinkPreviewResponse.mutation(async () => {
-      await deleteGate;
-    });
+    const { promise: deleteGate, resolve: answerDelete } = Promise.withResolvers<void>();
     // The room numbers the message it holds, so the removal names a positive id rather than a bubble's negative one
     const message = {
       ...createOptimisticMessage({ roomId: otherRoomId, type: MessageType.Message }, v7()),
       id: 1,
       linkPreviewResponse,
     };
+    trpcMsw.message.deleteLinkPreviewResponse.mutation(async () => {
+      await deleteGate;
+      return { ...message, linkPreviewResponse: null, version: 1 };
+    });
     const component = await mountSuspended(MessageModelMessageLinkPreviewContainer, {
       props: { linkPreviewResponse, messageId: message.id, roomId: message.roomId },
     });
@@ -44,10 +45,12 @@ describe("messageModelMessageLinkPreviewContainer", () => {
     const deleted = component.findComponent({ name: "UiConfirmDialog" }).props("confirm")();
     await flushPromises();
 
-    expect(takeOne(items.value).linkPreviewResponse).toBeNull();
+    expect(takeOne(items.value).linkPreviewResponse).toStrictEqual(linkPreviewResponse);
 
-    releaseDelete();
+    answerDelete();
     await deleted;
+
+    expect(takeOne(items.value).linkPreviewResponse).toBeNull();
   });
 
   // The remove button is faded out until the pointer is over the embed or the keyboard reaches it

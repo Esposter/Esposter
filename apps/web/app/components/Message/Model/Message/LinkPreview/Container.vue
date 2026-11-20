@@ -2,11 +2,10 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { LinkPreviewResponse } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
 import { useDataStore } from "#src/store/message/data";
-import { noop } from "@esposter/shared";
 
 interface Props {
   linkPreviewResponse: LinkPreviewResponse;
@@ -15,33 +14,13 @@ interface Props {
 }
 
 const { messageId, roomId } = defineProps<Props>();
-const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
-const { getSlice } = dataStore;
+const { deleteLinkPreviewResponse } = dataStore;
 const container = useTemplateRef("container");
 const isHovered = useElementHover(container);
 const isConfirmDialogOpen = ref(false);
-const { executeMutation } = useMutation();
-const deleteLinkPreviewResponse = () => {
-  // The message's own room rather than the one on screen — the thread pane renders another room's messages too
-  const { items } = getSlice(roomId);
-  executeMutation(() => $trpc.message.deleteLinkPreviewResponse.mutate({ id: messageId, roomId }), {
-    // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. The row and
-    // Its embeds are read as the write is sent, so a rejected removal restores what the write ahead of it stored
-    // Rather than what was on screen when the user confirmed
-    applyOptimistic: () => {
-      const message = items.value.find(getEntityIdEqualComparator(["id"], { id: messageId }));
-      if (!message) return noop;
-
-      const previousLinkPreviewResponse = message.linkPreviewResponse;
-      message.linkPreviewResponse = null;
-      return () => {
-        message.linkPreviewResponse = previousLinkPreviewResponse;
-      };
-    },
-    key: messageId,
-  });
-};
+// The embed leaves the message once the room answers the removal, and a refused removal leaves it under the alert
+const removeLinkPreviewResponse = () => deleteLinkPreviewResponse({ id: messageId, roomId });
 </script>
 
 <template>
@@ -57,9 +36,10 @@ const deleteLinkPreviewResponse = () => {
     />
     <UiConfirmDialog
       v-model="isConfirmDialogOpen"
+      :awaited-because="AwaitedReason.ServerDecidedOutcome"
       confirm-label="Remove All Embeds"
       title="Are you sure?"
-      :confirm="deleteLinkPreviewResponse"
+      :confirm="removeLinkPreviewResponse"
     >
       This will remove all embeds on this message for everyone.
     </UiConfirmDialog>

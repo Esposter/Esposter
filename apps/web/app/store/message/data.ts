@@ -1,6 +1,9 @@
 import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
 import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
+import type { DeleteLinkPreviewResponseInput } from "#shared/models/db/message/DeleteLinkPreviewResponseInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
+import type { PinMessageInput } from "#shared/models/db/message/PinMessageInput";
+import type { UnpinMessageInput } from "#shared/models/db/message/UnpinMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { VotePollInput } from "#shared/models/db/message/VotePollInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
@@ -178,6 +181,26 @@ export const useDataStore = defineStore("message/data", () => {
     awaitMessageAnswer(() => $trpc.message.updateMessage.mutate(input), input.roomId);
   const deleteFile = ({ fileId, ...messageKey }: DeleteFileInput) =>
     awaitMessageAnswer(() => $trpc.message.deleteFile.mutate({ fileId, ...messageKey }), messageKey.roomId);
+  // A pin, an unpin and a link preview removal each change the message the room holds, and the room answers with it, so
+  // The answer is drawn through the same funnel
+  const pinMessage = (input: PinMessageInput) =>
+    awaitMessageAnswer(() => $trpc.message.pinMessage.mutate(input), input.roomId);
+  const unpinMessage = (input: UnpinMessageInput) =>
+    awaitMessageAnswer(() => $trpc.message.unpinMessage.mutate(input), input.roomId);
+  const deleteLinkPreviewResponse = (input: DeleteLinkPreviewResponseInput) =>
+    awaitMessageAnswer(() => $trpc.message.deleteLinkPreviewResponse.mutate(input), input.roomId);
+  // A deletion carries no version to order it, so the message leaves the list when the room answers the removal
+  const deleteMessage = (input: DeleteMessageInput) =>
+    getResultAsync(() => $trpc.message.deleteMessage.mutate(input)).match(
+      async () => {
+        await storeDeleteMessage(input);
+        return true;
+      },
+      (error) => {
+        createErrorAlert(error);
+        return false;
+      },
+    );
   // The polls with a vote out. A second vote on one poll is not sent while the first is, and the poll's radio group reads
   // Its own key only
   const votingPollKeys = ref(new Set<string>());
@@ -302,9 +325,12 @@ export const useDataStore = defineStore("message/data", () => {
     checkIsVotePending,
     createMessage,
     deleteFile,
+    deleteLinkPreviewResponse,
+    deleteMessage,
     getPreviousCursorRef,
     getSlice,
     items,
+    pinMessage,
     previousCursor,
     readMoreNewerItems,
     refreshLoadedMessages,
@@ -312,6 +338,7 @@ export const useDataStore = defineStore("message/data", () => {
     storeCreateMessage,
     storeDeleteMessage,
     storeUpdateMessage,
+    unpinMessage,
     updateMessage,
     votePoll,
     ...restData,

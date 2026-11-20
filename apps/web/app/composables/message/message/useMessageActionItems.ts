@@ -6,6 +6,7 @@ import { checkIsMessageOperationPermitted } from "#shared/services/message/check
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useClipboardStore } from "#src/store/clipboard";
+import { useDataStore } from "#src/store/message/data";
 import { useMessageDialogStore } from "#src/store/message/dialog";
 import { useMessageStore } from "#src/store/message/index";
 import { useForwardStore } from "#src/store/message/input/forward";
@@ -17,8 +18,8 @@ import { exhaustiveGuard, normalizeString } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
-  const { $trpc } = useNuxtApp();
-  const { executeMutation: executeUnpinMessageMutation } = useMutation();
+  const dataStore = useDataStore();
+  const { unpinMessage } = dataStore;
   const clipboardStore = useClipboardStore();
   const { copy } = clipboardStore;
   const messageStore = useMessageStore();
@@ -82,23 +83,8 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
     message.isPinned
       ? {
           meaning: UiIconMeaning.Unpin,
-          onClick: () => {
-            executeUnpinMessageMutation(
-              () => $trpc.message.unpinMessage.mutate({ id: message.id, roomId: message.roomId }),
-              {
-                // Read as the write is sent rather than assumed: a pin that landed — or was itself rolled back —
-                // Between the click and this write decides what unpinning owes back, and a hard-coded true would
-                // Re-pin a message the server never pinned
-                applyOptimistic: () => {
-                  const previousIsPinned = message.isPinned;
-                  message.isPinned = false;
-                  return () => {
-                    message.isPinned = previousIsPinned;
-                  };
-                },
-                key: message.id,
-              },
-            );
+          onClick: async () => {
+            await unpinMessage({ id: message.id, roomId: message.roomId });
           },
           title: "Unpin Message",
         }

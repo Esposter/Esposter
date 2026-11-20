@@ -22,7 +22,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
   const message = "message";
   const creator = createUser({ id: userId });
 
-  test("restores only its own message when the delete is rejected", async () => {
+  test("keeps the message a rejected delete leaves, with the messages that arrived meanwhile", async () => {
     expect.hasAssertions();
 
     const { promise: deleteRequested, resolve: signalDeleteRequested } = Promise.withResolvers<void>();
@@ -56,7 +56,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
     await deleteRequested;
     // A message a subscription delivered while the delete was in flight
     const arrivedMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
-    getSlice(roomId).items.value = [arrivedMessage];
+    getSlice(roomId).items.value = [deletedMessage, arrivedMessage];
     releaseDelete();
     await deleted;
     await flushPromises();

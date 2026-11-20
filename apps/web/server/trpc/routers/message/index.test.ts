@@ -441,10 +441,11 @@ describe("messageRouter", () => {
   test("pins the message and writes a pin line that points at it", async () => {
     expect.hasAssertions();
 
+    const pinnedMessage = createRoomMessage({ isPinned: true });
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage()]);
-    roomObject.pinMessage.mockReturnValue(createRoomMessage({ isPinned: true }));
+    roomObject.pinMessage.mockReturnValue(pinnedMessage);
 
-    await messageCaller.pinMessage({ id: messageId, roomId });
+    await expect(messageCaller.pinMessage({ id: messageId, roomId })).resolves.toStrictEqual(pinnedMessage);
 
     expect(roomObject.pinMessage).toHaveBeenCalledExactlyOnceWith(messageId, { userId });
     expect(roomObject.createMessage).toHaveBeenCalledExactlyOnceWith(
@@ -459,23 +460,39 @@ describe("messageRouter", () => {
     const error = new Error(" ");
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage()]);
-    roomObject.pinMessage.mockReturnValue(createRoomMessage({ isPinned: true }));
+    const pinnedMessage = createRoomMessage({ isPinned: true });
+    roomObject.pinMessage.mockReturnValue(pinnedMessage);
     roomObject.createMessage.mockRejectedValue(error);
 
-    await expect(messageCaller.pinMessage({ id: messageId, roomId })).resolves.toBeUndefined();
+    await expect(messageCaller.pinMessage({ id: messageId, roomId })).resolves.toStrictEqual(pinnedMessage);
 
     expect(consoleErrorSpy).toHaveBeenCalledExactlyOnceWith(error);
   });
 
-  test("unpins the message", async () => {
+  test("unpins the message and answers the message as it now stands", async () => {
     expect.hasAssertions();
 
+    const unpinnedMessage = createRoomMessage();
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ isPinned: true })]);
-    roomObject.unpinMessage.mockReturnValue(createRoomMessage());
+    roomObject.unpinMessage.mockReturnValue(unpinnedMessage);
 
-    await messageCaller.unpinMessage({ id: messageId, roomId });
+    await expect(messageCaller.unpinMessage({ id: messageId, roomId })).resolves.toStrictEqual(unpinnedMessage);
 
     expect(roomObject.unpinMessage).toHaveBeenCalledExactlyOnceWith(messageId, { userId });
+  });
+
+  test("removes the link preview and answers the message without it", async () => {
+    expect.hasAssertions();
+
+    const messageWithoutPreview = createRoomMessage();
+    roomObject.readMessagesByIds.mockReturnValue([createRoomMessage()]);
+    roomObject.deleteLinkPreview.mockReturnValue(messageWithoutPreview);
+
+    await expect(messageCaller.deleteLinkPreviewResponse({ id: messageId, roomId })).resolves.toStrictEqual(
+      messageWithoutPreview,
+    );
+
+    expect(roomObject.deleteLinkPreview).toHaveBeenCalledExactlyOnceWith(messageId, { userId });
   });
 
   // Each procedure has its own snapshot: the message names the room, which a test's own id makes differ per test

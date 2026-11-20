@@ -137,13 +137,13 @@ const baseMessageRouter = router({
     .meta({
       staticReason: "The room object pushes the message with its preview cleared to its sockets as a typed event",
     })
-    .mutation<void>(async ({ ctx, input }) => {
-      await requireEntity(
+    .mutation<RoomMessage>(async ({ ctx, input }) =>
+      requireEntity(
         useRoomObject(input.roomId).deleteLinkPreview(input.id, getRoomActor(ctx)),
         DatabaseEntityType.Message,
         JSON.stringify(input),
-      );
-    }),
+      ),
+    ),
   deleteMessage: getMessageProcedure(deleteMessageInputSchema, MessageOperation.Delete)
     .meta({ staticReason: "The room object pushes the deletion to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input }) => {
@@ -307,10 +307,12 @@ const baseMessageRouter = router({
         }),
       );
     }),
+  // The pinned message as the object now stores it is the answer, since the object sends the pin to every socket
+  // Except this device's own
   pinMessage: getMessageProcedure(pinMessageInputSchema, MessageOperation.Pin)
     .meta({ staticReason: "The room object pushes the pin to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input }) => {
-      await requireEntity(
+    .mutation<RoomMessage>(async ({ ctx, input }) => {
+      const pinnedMessage = await requireEntity(
         useRoomObject(input.roomId).pinMessage(input.id, getRoomActor(ctx)),
         DatabaseEntityType.Message,
         JSON.stringify(input),
@@ -321,6 +323,7 @@ const baseMessageRouter = router({
         replyToId: input.id,
         type: MessageType.PinMessage,
       }).match(noop, console.error);
+      return pinnedMessage;
     }),
   // One read for both shapes the client needs: `follows` is the follow state, every row the member holds in the room, with the
   // Unfollowed ones kept as rows so a read cannot list a thread the member has since left. `threads` is the drawer's roots, for
@@ -398,13 +401,13 @@ const baseMessageRouter = router({
   ),
   unpinMessage: getMessageProcedure(unpinMessageInputSchema, MessageOperation.Pin)
     .meta({ staticReason: "The room object pushes the unpin to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input }) => {
-      await requireEntity(
+    .mutation<RoomMessage>(async ({ ctx, input }) =>
+      requireEntity(
         useRoomObject(input.roomId).unpinMessage(input.id, getRoomActor(ctx)),
         DatabaseEntityType.Message,
         JSON.stringify(input),
-      );
-    }),
+      ),
+    ),
   updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update)
     .meta({ staticReason: "The room object pushes the edited message to its sockets as a typed event" })
     .mutation<RoomMessage>(async ({ ctx, input }) => {

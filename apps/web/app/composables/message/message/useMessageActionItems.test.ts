@@ -9,8 +9,10 @@ import { createOptimisticMessage } from "#src/services/message/createOptimisticM
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useDataStore } from "#src/store/message/data";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { MessageType } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -63,20 +65,23 @@ describe(useMessageActionItems, () => {
   test("does not re-pin a message the unpin beside it took the pin off", async () => {
     expect.hasAssertions();
 
+    // The room numbers the message it holds, so the unpin names a positive id rather than a bubble's negative one
+    const messageEntity = { ...createMessage(epoch), id: 1 };
     let isFailing = false;
     trpcMsw.message.unpinMessage.mutation(() => {
       if (isFailing) throw new TRPCError({ code: "NOT_FOUND", message: " " });
 
       isFailing = true;
+      return { ...messageEntity, isPinned: false, version: 1 };
     });
-    const messageEntity = createMessage(epoch);
+    const dataStore = useDataStore();
+    const { getSlice } = dataStore;
+    getSlice(roomId).items.value = [messageEntity];
     const item = await mountActionItem(messageEntity, "Unpin Message");
     const otherItem = await mountActionItem(messageEntity, "Unpin Message");
-    item.onClick?.(new MouseEvent("click"));
-    otherItem.onClick?.(new MouseEvent("click"));
-    await flushPromises();
+    await Promise.all([item.onClick?.(new MouseEvent("click")), otherItem.onClick?.(new MouseEvent("click"))]);
 
-    expect(messageEntity.isPinned).toBe(false);
+    expect(takeOne(getSlice(roomId).items.value).isPinned).toBe(false);
   });
 
   // Two mark-unreads move one read marker. The rejected one restores nothing, so the marker the accepted write set is
