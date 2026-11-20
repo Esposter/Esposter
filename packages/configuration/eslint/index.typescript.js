@@ -1,4 +1,4 @@
-import ignores from "@esposter/configuration/eslint/ignores.js";
+import ignores, { TEST_FILE_PATTERNS } from "@esposter/configuration/eslint/ignores.js";
 import nuxtOverrides from "@esposter/configuration/eslint/overrides/nuxt.js";
 import oxlint from "@esposter/configuration/eslint/oxlint.js";
 import plugins from "@esposter/configuration/eslint/plugins/index.js";
@@ -27,7 +27,7 @@ export default withNuxt(plugins, {
   .append(oxlint)
   .append({
     files: ["**/util/**/*.ts"],
-    ignores: ["**/*.bench.ts", "**/*.test-d.ts", "**/*.test.ts"],
+    ignores: TEST_FILE_PATTERNS,
     rules: { "no-restricted-imports": ["error", restrictedUtilImports] },
   })
   // A test setup file mocks modules and re-imports after mocking, as a test does, so it takes the test bans

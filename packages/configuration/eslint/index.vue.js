@@ -1,4 +1,4 @@
-import ignores from "@esposter/configuration/eslint/ignores.js";
+import ignores, { TEST_FILE_PATTERNS } from "@esposter/configuration/eslint/ignores.js";
 import nuxtOverrides from "@esposter/configuration/eslint/overrides/nuxt.js";
 import oxlint from "@esposter/configuration/eslint/oxlint.js";
 import plugins from "@esposter/configuration/eslint/plugins/index.js";
@@ -16,12 +16,15 @@ import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 
 import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
 
+// The script-side bans each `no-restricted-syntax` override below carries over, read off the base list once
+const scriptSyntaxBans = typescriptRules["no-restricted-syntax"].slice(1);
+
 export default withNuxt(plugins)
   .overrides({ ...nuxtOverrides, "nuxt/typescript/rules": { rules: typescriptRules } })
   .append(oxlint)
   .append({
     files: ["**/util/**/*.ts"],
-    ignores: ["**/*.bench.ts", "**/*.test-d.ts", "**/*.test.ts"],
+    ignores: TEST_FILE_PATTERNS,
     rules: { "no-restricted-imports": ["error", restrictedUtilImports] },
   })
   // A component may not format a date itself, where a service may — and eslint replaces a rule's options
@@ -31,7 +34,7 @@ export default withNuxt(plugins)
     rules: {
       "no-restricted-syntax": [
         "error",
-        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...scriptSyntaxBans,
         ...restrictedConstantSyntaxes,
         ...restrictedSourceSyntaxes,
         ...restrictedDateSyntaxes,
@@ -48,7 +51,7 @@ export default withNuxt(plugins)
     rules: {
       "no-restricted-syntax": [
         "error",
-        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...scriptSyntaxBans,
         ...restrictedModuleSyntaxes,
         ...restrictedSourceSyntaxes,
         ...restrictedWatchSyntaxes,
@@ -59,11 +62,11 @@ export default withNuxt(plugins)
   // Under `composables/` keeps its fixtures, which the test override below still reaches.
   .append({
     files: ["**/composables/**/*.ts"],
-    ignores: ["**/*.bench.ts", "**/*.test-d.ts", "**/*.test.ts"],
+    ignores: TEST_FILE_PATTERNS,
     rules: {
       "no-restricted-syntax": [
         "error",
-        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...scriptSyntaxBans,
         ...restrictedConstantSyntaxes,
         ...restrictedModuleSyntaxes,
         ...restrictedSourceSyntaxes,
@@ -78,7 +81,7 @@ export default withNuxt(plugins)
     rules: {
       "no-restricted-syntax": [
         "error",
-        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...scriptSyntaxBans,
         ...restrictedConstantSyntaxes,
         ...restrictedFocusSyntaxes,
         ...restrictedSourceSyntaxes,
@@ -91,11 +94,11 @@ export default withNuxt(plugins)
   })
   .append({
     files: ["**/app/composables/**/*.ts"],
-    ignores: ["**/*.bench.ts", "**/*.test-d.ts", "**/*.test.ts"],
+    ignores: TEST_FILE_PATTERNS,
     rules: {
       "no-restricted-syntax": [
         "error",
-        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...scriptSyntaxBans,
         ...restrictedConstantSyntaxes,
         ...restrictedFocusSyntaxes,
         ...restrictedModuleSyntaxes,
@@ -112,7 +115,7 @@ export default withNuxt(plugins)
     rules: {
       "no-restricted-syntax": [
         "error",
-        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...scriptSyntaxBans,
         ...restrictedModuleSyntaxes,
         ...restrictedTestSyntaxes,
         ...restrictedWatchSyntaxes,
