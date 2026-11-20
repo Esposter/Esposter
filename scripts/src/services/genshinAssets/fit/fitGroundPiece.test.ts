@@ -28,7 +28,7 @@ describe(fitGroundPiece, () => {
       centre: { x: 0, z: 0 },
       // The piece's outline is the half of its square west of x = 0, as a neighbouring area's ground lies east of it
       checkIsInside: (x) => x <= 0,
-      half: 300,
+      half: 150,
       key: "ground/test/outline",
     };
     const source: GroundSource = {
@@ -52,7 +52,7 @@ describe(fitGroundPiece, () => {
     const piece: GroundPiece = {
       centre: { x: 0, z: 0 },
       checkIsInside: () => true,
-      half: 300,
+      half: 250,
       key: "ground/test/centre",
     };
     const source: GroundSource = {
