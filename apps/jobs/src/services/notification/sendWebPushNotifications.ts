@@ -26,16 +26,16 @@ export const sendWebPushNotifications = async (
           payload,
         ),
       ).match(noop, async (error) => {
-        if (error instanceof WebPushError)
-          if (DEAD_PUSH_SUBSCRIPTION_STATUS_CODES.includes(error.statusCode)) {
-            console.log(`Subscription for endpoint ${endpoint} is dead (${error.statusCode}). Deleting.`);
-            await getResultAsync(() =>
-              getDb().delete(pushSubscriptionsInNotification).where(eq(pushSubscriptionsInNotification.id, id)),
-            ).match(noop, (deleteError) => {
-              console.error(`Failed to delete dead subscription ${endpoint}:`, deleteError);
-            });
-          } else console.error(`Failed to send push notification to ${endpoint}:`, error);
-        else console.error(`Unexpected error sending push notification to ${endpoint}:`, error);
+        if (!(error instanceof WebPushError))
+          console.error(`Unexpected error sending push notification to ${endpoint}:`, error);
+        else if (DEAD_PUSH_SUBSCRIPTION_STATUS_CODES.includes(error.statusCode)) {
+          console.log(`Subscription for endpoint ${endpoint} is dead (${error.statusCode}). Deleting.`);
+          await getResultAsync(() =>
+            getDb().delete(pushSubscriptionsInNotification).where(eq(pushSubscriptionsInNotification.id, id)),
+          ).match(noop, (deleteError) => {
+            console.error(`Failed to delete dead subscription ${endpoint}:`, deleteError);
+          });
+        } else console.error(`Failed to send push notification to ${endpoint}:`, error);
       });
     }),
     MAX_CONCURRENT_PUSH_SENDS,
