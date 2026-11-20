@@ -1,0 +1,59 @@
+{
+  "name": "grid-engine-headless",
+  "version": "4.13.0",
+  "description": "A headless grid movement engine: tile collision, characters on integer tiles that step in four directions, and five typed events, with no rendering and no Phaser.",
+  "keywords": [
+    "collision",
+    "game",
+    "grid",
+    "movement",
+    "tile"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/grid-engine-headless#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/gridEngineHeadless.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsrs --fast"
+  },
+  "dependencies": {
+    "neverthrow": "catalog:"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "tsdown": "catalog:"
+  }
+}
