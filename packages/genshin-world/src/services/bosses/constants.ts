@@ -91,7 +91,7 @@ export const WEEKLY_BOSS_DREAM_SOLVENT_CHANCE = 0.33;
 // The attack the phases one, two and four end with, by identifier, as no move of Dvalin's carries its English name
 export const STORMTERROR_FINALE_ATTACK = "finaleAttack";
 // The phases of the fight from the wiki's Stormterror Dvalin page, each with its shield's time limit and the number of shield
-// Breaks that end it, and the attack that transitions into the next phase. The fifth phase lasts to the fight's end. Timings
+// Breaks that end it, and the attack that transitions into the next phase. The fifth phase lasts to the fight's end.
 // Its timings are PROVISIONAL, read from the page, which cites the speedrun recording "Confront Stormterror - Speedrun Strategy & Exploits"
 // (youtu.be/j62DdUZXczM) and is not measured in a recording of this game yet
 export const STORMTERROR_PHASES: readonly StormterrorPhase[] = [
