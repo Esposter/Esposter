@@ -31,7 +31,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     }),
   );
   // A send is awaited, since its row is the server's, so no entry shows it while it is in flight. The button reads its
-  // Own receiver's entry from this set, which is added before the write and removed once it settles
+  // Own receiver's pending state from this set, which is added before the write and removed once it settles
   const sendingReceiverIds = ref(new Set<PublicUser["id"]>());
   const checkIsSendFriendRequestPending = (receiverId: PublicUser["id"]) => sendingReceiverIds.value.has(receiverId);
   // Single source of truth for "has the app user already asked this user" — the counterpart to the friend
