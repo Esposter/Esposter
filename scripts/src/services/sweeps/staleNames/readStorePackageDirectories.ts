@@ -1,6 +1,7 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getContainingModulesDirectory } from "#src/services/shared/getContainingModulesDirectory";
 import { getPackageJsonPaths } from "#src/services/shared/getPackageJsonPaths";
+import { walkRealDirectories } from "#src/services/shared/walkRealDirectories";
 import { readLinkedDirectories } from "#src/services/sweeps/staleNames/readLinkedDirectories";
 import { dirname, join } from "node:path";
 
@@ -10,15 +11,12 @@ import { dirname, join } from "node:path";
 // Layouts: the per-project store keeps a package beside its dependencies in `node_modules/.pnpm`, and the global
 // Virtual store keeps them beside it under its own `links` folder, which the workspace reaches only through its links
 export const readStorePackageDirectories = (): string[] => {
-  const packageDirectories = new Set<string>();
-  const pending = getPackageJsonPaths(REPOSITORY_ROOT).flatMap((packageJsonPath) =>
+  const roots = getPackageJsonPaths(REPOSITORY_ROOT).flatMap((packageJsonPath) =>
     readLinkedDirectories(join(dirname(packageJsonPath), "node_modules")),
   );
-  for (let packageDirectory = pending.pop(); packageDirectory !== undefined; packageDirectory = pending.pop()) {
-    if (packageDirectories.has(packageDirectory)) continue;
-
-    packageDirectories.add(packageDirectory);
-    pending.push(...readLinkedDirectories(getContainingModulesDirectory(packageDirectory)));
-  }
-  return [...packageDirectories].toSorted();
+  return walkRealDirectories(
+    roots,
+    (directory) => directory,
+    (directory) => readLinkedDirectories(getContainingModulesDirectory(directory)),
+  ).toSorted();
 };

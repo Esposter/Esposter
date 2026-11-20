@@ -85,7 +85,7 @@ export const readDependencyScores = async (sort: ScoreSort): Promise<DependencyS
     scores.push({
       bundleBytes: bundleBytes?.bytes ?? 0,
       bundleSkipReason: bundleBytes ? "" : NOT_IN_CLIENT_SKIP_REASON,
-      dependencyLines: installed === undefined ? 0 : countDependencyLines(packageName, installed),
+      dependencyLines: installed === undefined ? 0 : countDependencyLines(installed),
       entryBytes: bundleBytes?.entryBytes ?? 0,
       formatPoints,
       importerCount: importers?.size ?? 0,

@@ -13,7 +13,7 @@ export const readInstallCosts = (packageNameInstalledMap: Map<string, InstalledP
   const directoryBytesMap = new Map<string, number>();
 
   for (const [packageName, installed] of packageNameInstalledMap) {
-    const closure = getInstalledClosure(packageName, installed);
+    const closure = getInstalledClosure(installed);
     packageNameClosureMap.set(packageName, closure);
     for (const realDirectory of closure) reachCountMap.set(realDirectory, (reachCountMap.get(realDirectory) ?? 0) + 1);
   }
