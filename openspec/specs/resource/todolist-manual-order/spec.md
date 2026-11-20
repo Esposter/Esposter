@@ -41,15 +41,15 @@ Completed todos SHALL NOT be reordered, since their order is the order they were
 - **WHEN** the owner tries to drag it
 - **THEN** it does not move
 
-### Requirement: A refused reorder restores the earlier order
+### Requirement: A refused reorder keeps the new order
 
-A refused reorder SHALL restore the order the todos had, unless a save from another device was adopted before it settled.
+A refused reorder SHALL stay on screen with the save state reading Not saved, and a save from another device adopted before it settled SHALL stand.
 
 #### Scenario: Reorder refused
 
 - **GIVEN** a reorder whose save is refused
 - **WHEN** the save fails
-- **THEN** the todos return to the order they had
+- **THEN** the todos stay in the new order and the save state reads Not saved
 
 ### Requirement: Reordering keeps the places of hidden todos
 

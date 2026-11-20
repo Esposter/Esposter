@@ -50,7 +50,7 @@ Ticking a repeating todo SHALL move its due date to the next occurrence and unti
 
 - **GIVEN** a repeating todo that the owner ticked
 - **WHEN** the save is refused
-- **THEN** its due date and steps are restored
+- **THEN** its rolled due date and unticked steps stay, and the save state reads Not saved
 
 ### Requirement: Daily, weekday and weekly repeats step from the current due date
 

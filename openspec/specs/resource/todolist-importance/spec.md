@@ -19,7 +19,7 @@ A star on each todo SHALL mark it important or clear the mark, taking effect at 
 
 - **GIVEN** an unstarred todo
 - **WHEN** the owner stars it and the save is refused
-- **THEN** the star returns to its earlier state
+- **THEN** the star stays set and the save state reads Not saved
 
 ### Requirement: Importance can be set from the row menu and the dialog
 

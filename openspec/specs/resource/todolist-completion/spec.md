@@ -90,15 +90,15 @@ Completing a todo SHALL play a short chime, unticking SHALL play none, and a bro
 - **THEN** the todo is completed
 - **AND** no error is shown to the owner
 
-### Requirement: A refused save undoes the tick
+### Requirement: A refused save keeps the tick
 
-A tick whose save is refused SHALL be undone and the todo shown as it was, unless a save from another device was adopted while the tick was in flight.
+A tick whose save is refused SHALL stay on screen, with the save state reading Not saved and the refusal shown, not undone.
 
 #### Scenario: Save refused
 
 - **GIVEN** an open todo
 - **WHEN** the owner ticks it and the save is refused
-- **THEN** the todo is shown open again
+- **THEN** the todo stays ticked and the save state reads Not saved
 
 #### Scenario: Another device saved in the meantime
 
@@ -127,11 +127,11 @@ Deleting a todo or the completed todos SHALL first ask for confirmation, naming 
 - **THEN** the confirmation names three todos
 - **AND** those three todos are deleted
 
-#### Scenario: Refused delete restores the rows
+#### Scenario: Refused delete keeps the rows removed
 
 - **GIVEN** a confirmed delete whose save is refused
 - **WHEN** the save fails
-- **THEN** each deleted todo is restored to its earlier place in the list
+- **THEN** the deleted todos stay removed and the save state reads Not saved
 
 ### Requirement: Delete completed removes only the todos the list shows
 
