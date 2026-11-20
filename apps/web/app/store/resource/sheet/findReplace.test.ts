@@ -7,7 +7,7 @@ import { setupCommandTest } from "#src/composables/resource/sheet/commands/setup
 import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useResourceStore } from "#src/store/resource/index";
 import { useFindReplaceStore } from "#src/store/resource/sheet/findReplace";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(useFindReplaceStore, () => {
   setupCommandTest();
@@ -17,13 +17,13 @@ describe(useFindReplaceStore, () => {
 
     setupWithDataSource();
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
+    const { applyResource } = resourceStore;
     const findReplaceStore = useFindReplaceStore();
     const { findValue, isFindReplaceOpen, replaceValue } = storeToRefs(findReplaceStore);
     findValue.value = " ";
     isFindReplaceOpen.value = true;
     replaceValue.value = " ";
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
 
     expect({
       findValue: findValue.value,
@@ -38,16 +38,17 @@ describe(useFindReplaceStore, () => {
 
     setupWithDataSource(createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]));
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
-    const sheetResource = resource.value;
+    const { applyResource } = resourceStore;
+    const sheetResource = resourceStore.resource;
+    assert.exists(sheetResource);
     const findReplaceStore = useFindReplaceStore();
     const { currentOccurrenceIndex, findValue } = storeToRefs(findReplaceStore);
     const { goToOccurrence } = findReplaceStore;
     findValue.value = "0";
     goToOccurrence(1);
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
     await nextTick();
-    resource.value = sheetResource;
+    applyResource(sheetResource, null);
     await nextTick();
 
     expect(currentOccurrenceIndex.value).toBe(1);
@@ -64,10 +65,10 @@ describe(useFindReplaceStore, () => {
 
     setupWithDataSource(createDataSource([createColumn("")], [createRow({ "": 0 })]));
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
+    const { applyResource } = resourceStore;
     const findReplaceStore = useFindReplaceStore();
     const { currentOccurrenceIndex, findValue } = storeToRefs(findReplaceStore);
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
     findValue.value = "0";
     currentOccurrenceIndex.value = 2;
     await nextTick();

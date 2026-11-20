@@ -42,8 +42,8 @@ describe(useInsertNoteImages, () => {
 
   const setupNote = (content: JSONContent = EMPTY_NOTE_DOC) => {
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
-    resource.value = createResourceListItem({ id: resourceId, type: ResourceType.Note });
+    const { applyResource } = resourceStore;
+    applyResource(createResourceListItem({ id: resourceId, type: ResourceType.Note }), null);
     return new Editor({ content, extensions: getNoteExtensions() });
   };
 

@@ -49,8 +49,8 @@ describe(useAutosaveFunction, () => {
     save = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
     // The indicator reads the resource on screen, so an edit is only ever held for a loaded one
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
-    resource.value = createResourceListItem({ id: resourceId, type: ResourceType.Sheet });
+    const { applyResource } = resourceStore;
+    applyResource(createResourceListItem({ id: resourceId, type: ResourceType.Sheet }), null);
   });
 
   afterEach(() => {

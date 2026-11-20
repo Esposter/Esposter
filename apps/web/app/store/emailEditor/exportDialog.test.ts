@@ -13,19 +13,19 @@ describe(useEmailExportDialogStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
+    const { applyResource } = resourceStore;
     const email = createResourceListItem();
-    resource.value = email;
+    applyResource(email, null);
     const emailExportDialogStore = useEmailExportDialogStore();
     const { setPendingDataset } = emailExportDialogStore;
     const { pendingDataset } = storeToRefs(emailExportDialogStore);
     const dataset: Dataset = { columns: [], rows: [] };
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
     setPendingDataset(email.id, dataset);
 
     expect(pendingDataset.value).toBeUndefined();
 
-    resource.value = email;
+    applyResource(email, null);
 
     expect(pendingDataset.value).toStrictEqual(dataset);
   });

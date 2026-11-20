@@ -12,8 +12,7 @@ import { describe } from "vitest";
 // Resource, so the helper loads one when the test has not
 export const setupWithDataSource = (dataSource?: DataSource) => {
   const resourceStore = useResourceStore();
-  const { resource } = storeToRefs(resourceStore);
-  resource.value ??= createResourceListItem();
+  if (!resourceStore.resource) resourceStore.applyResource(createResourceListItem(), null);
   const sheetStore = useSheetStore();
   sheetStore.sheetResource.data =
     dataSource ??

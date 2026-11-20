@@ -17,20 +17,34 @@ import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { CacheTag } from "#src/models/cache/CacheTag";
 import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
-import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getFileSize } from "#src/services/file/getFileSize";
 import { copyLinkToClipboard } from "#src/services/resource/copyLinkToClipboard";
+import { publicationTable, resourceTable } from "#src/services/resource/overlay/constants";
+import { getPublicationPatchEntry } from "#src/services/resource/overlay/getPublicationPatchEntry";
+import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
+import { getSaveResourceEntry } from "#src/services/resource/overlay/getSaveResourceEntry";
 import { readStoredResourceContent } from "#src/services/resource/readStoredResourceContent";
 import { ResourceContentHookMap } from "#src/services/resource/ResourceContentHookMap";
 import { saveResourceContentDelta } from "#src/services/resource/saveResourceContentDelta";
 import { saveStagedResourceContent } from "#src/services/resource/saveStagedResourceContent";
 import { getSha256Hex } from "#src/services/shared/getSha256Hex";
+import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
 import { getRequestBodyByteLength } from "#src/services/trpc/getRequestBodyByteLength";
+import { useCacheStore } from "#src/store/cache";
 import { useNotificationStore } from "#src/store/notification";
+import { useOverlayStore } from "#src/store/overlay";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { getResultAsync, getSynchronizedFunction, noop, RoutePath, toRawDeep } from "@esposter/shared";
+import {
+  getResultAsync,
+  getSynchronizedFunction,
+  noop,
+  RoutePath,
+  toRawDeep,
+  withFinalizerAsync,
+} from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -38,21 +52,13 @@ import { getResultAsync, getSynchronizedFunction, noop, RoutePath, toRawDeep } f
 // Them. Blade-scoped: the store is app-lifetime, this state is not, so the page clears it on unmount
 export const useResourceStore = defineStore("resource", () => {
   const { $trpc } = useNuxtApp();
-  const {
-    checkIsPending: checkIsSaveContentPending,
-    executeMutation: executeSaveContentMutation,
-    whenSettled: whenContentSaved,
-  } = useMutation();
-  const { executeMutation: executeRenameMutation } = useMutation();
-  const { executeMutation: executeUpdateTagsMutation } = useMutation();
-  const { executeMutation: executeDeleteMutation } = useMutation();
+  const overlayStore = useOverlayStore();
+  const { arrive, view, writeAwaited, writeOptimistic } = overlayStore;
+  const resourceRows = view(resourceTable);
+  const publicationRows = view(publicationTable);
   const { restoreResources } = useRestoreResources();
-  const { executeMutation: executeDuplicateMutation, isPending: isDuplicatePending } = useMutation();
-  // Publishing and unpublishing are the two writes that end the same publication row, so they share one
-  // Executor rather than each holding its own: on separate instances one key promises an ordering that never
-  // Existed, and an unpublish overlapping a publish rolls back to the publication the publish had not created
-  // Yet — leaving a resource the server has published showing as a draft
-  const { executeMutation: executePublicationMutation, isPending: isPublicationPending } = useMutation();
+  const cacheStore = useCacheStore();
+  const { invalidateTags } = cacheStore;
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
   const getResourceRouter = useResourceRouter();
@@ -61,22 +67,41 @@ export const useResourceStore = defineStore("resource", () => {
   const navigateToExplorer = getSynchronizedFunction(async () => {
     await navigateTo(RoutePath.ResourceExplorerAll);
   });
-  const resource = ref<ResourceInResource>();
+  // The open resource is its id. Its row and its publication are held on the overlay, so the blade keeps no copy of either
+  const resourceId = ref("");
+  // The row of a resource the overlay holds. A client-created row has no version, and none is held as one, so only a row a
+  // Read or write has landed is taken, which is what the guard states
+  const getHeldResource = (id: string) =>
+    resourceRows.value.find((row): row is ResourceInResource => row.id === id && row.version !== undefined);
+  // The open resource's row. It is absent until its read lands
+  const resource = computed(() => getHeldResource(resourceId.value));
   // The key a view's state is filed under — a sheet's page, a panel's list — so it is the loaded resource's own
   // And a switch to another reads that one's instead of carrying this one's across
   const currentResourceId = computed(() => resource.value?.id ?? "");
-  const publication = ref<ResourcePublicationInResource>();
+  // A removed publication is held as a tombstone, and the blade reads it as no publication at all
+  const getHeldPublication = (id: string) =>
+    publicationRows.value.find(
+      (row): row is ResourcePublicationInResource => row.resourceId === id && row.version !== undefined,
+    );
+  const publication = computed(() => {
+    const heldPublication = getHeldPublication(resourceId.value);
+    return heldPublication?.deletedAt ? undefined : heldPublication;
+  });
   // A write is keyed by the resource it targets, not by whichever one the blade has open when it settles, so
-  // Everything it applies — an optimistic value, a rollback, the server's row — lands only while that resource
-  // Is still the loaded one. Applied to another, it would carry the first resource's fields into the second
-  const getActiveResource = (id: string) => (resource.value?.id === id ? resource.value : undefined);
-  // Every write reconciles only the fields it owns. By the time a rollback or a server row lands the ref may
-  // Have absorbed another concurrent edit — an autosave's contentVersion, a rename, a tag edit — so replacing
-  // It wholesale would clobber that edit
-  const mergeResource = (id: string, fields: Partial<ResourceInResource>) => {
-    const activeResource = getActiveResource(id);
-    if (activeResource) resource.value = { ...activeResource, ...fields };
-  };
+  // Everything it applies — an optimistic value, the server's row — lands only while that resource is still the loaded one.
+  // Applied to another, it would carry the first resource's fields into the second
+  const checkIsLoaded = (id: string) => currentResourceId.value === id;
+  // The save in flight for each resource, with the settlement a caller waits on. Saves of one resource are ordered on the
+  // Overlay, so the settlement of the latest is the settlement of all of them
+  const contentSaves = ref(new Map<string, Promise<void>>());
+  const checkIsSavePending = (id: string) => contentSaves.value.has(id);
+  const whenContentSaved = (id: string) => contentSaves.value.get(id) ?? Promise.resolve();
+  // The publication and duplicate writes in flight, counted, since the page's buttons are disabled while one is out
+  const pendingPublicationCount = ref(0);
+  const isPublicationPending = computed(() => pendingPublicationCount.value > 0);
+  const pendingDuplicateCount = ref(0);
+  const isDuplicatePending = computed(() => pendingDuplicateCount.value > 0);
+
   // The resource the in-memory content belongs to. A content store fills its own ref from readContent, so that
   // Read is the moment the content in hand becomes this resource's — and it stays the previous resource's for
   // The whole of a read plus the await that follows it
@@ -102,6 +127,9 @@ export const useResourceStore = defineStore("resource", () => {
   // Stored as. The open row names the hash of the content its latest write left, so a row that names this one names no
   // Content the store lacks
   let persistedContentHash: string | undefined;
+  // The version of the content the store holds for the loaded resource, which its saves send. It moves when the content is
+  // Read, saved or kept, and never with a row a read brings, since a row can land ahead of the content it describes
+  let contentBaseVersion = 0;
   // The stored bytes this client holds — read straight from R2, or sent by a save whose hash the server
   // Confirmed — which is what a large document's next save is compressed against. Not reactive and not persisted:
   // Nothing renders it, and a reload reads the bytes afresh
@@ -136,11 +164,9 @@ export const useResourceStore = defineStore("resource", () => {
   // Save are the same write. See openspec/specs/resource/resource-save-state/design.md
   const saveState = computed(() => {
     if (isContentStale.value) return ResourceSaveState.Stale;
-    // Asked of this resource rather than of the executor: a save is keyed by the resource it writes, and one
-    // Issued before the blade moved on is still in flight under its own key — read in aggregate it would show
-    // This resource saving work that belongs to another
-    else if (checkIsSaveContentPending(currentResourceId.value) || hasUnwrittenContent.value)
-      return ResourceSaveState.Saving;
+    // Asked of this resource rather than of every save: one issued before the blade moved on is still in flight, and read
+    // In aggregate it would show this resource saving work that belongs to another
+    else if (checkIsSavePending(currentResourceId.value) || hasUnwrittenContent.value) return ResourceSaveState.Saving;
     else if (isSaveContentFailed.value) return ResourceSaveState.Failed;
     else return ResourceSaveState.Saved;
   });
@@ -148,13 +174,15 @@ export const useResourceStore = defineStore("resource", () => {
   // The content state with it: a fresh row carries the current contentVersion, so saving is meaningful again, and what it
   // Carries is by definition what is written
   const assignResource = (newResource: ResourceInResource, newPublication: null | ResourcePublicationInResource) => {
-    if (!getActiveResource(newResource.id)) opening = Symbol("opening");
-    resource.value = newResource;
-    publication.value = newPublication ?? undefined;
+    if (!checkIsLoaded(newResource.id)) opening = Symbol("opening");
+    resourceId.value = newResource.id;
+    arrive(resourceTable, newResource);
+    if (newPublication) arrive(publicationTable, newPublication);
     isContentStale.value = false;
     heldSave.value = undefined;
     isSaveContentFailed.value = false;
   };
+
   // A content reload follows a re-read of the row, so the row it takes is the version the reloaded content is read at.
   // Tracked on its own executor so the page's Refresh shows the read in flight, and one key so repeated clicks queue
   // Rather than overlap
@@ -184,21 +212,22 @@ export const useResourceStore = defineStore("resource", () => {
   // Next resource's page before this one unmounts, so the teardown fires only while the state is still the one
   // The caller loaded — otherwise closing A would blank the B the swap has already loaded
   const clearResource = (id: string) => {
-    if (resource.value && resource.value.id !== id) return;
+    if (resourceId.value && resourceId.value !== id) return;
 
-    resource.value = undefined;
-    publication.value = undefined;
+    resourceId.value = "";
     opening = Symbol("opening");
     heldOtherRow = undefined;
     contentResourceId = "";
     persistedContentJson = "";
     persistedContentHash = undefined;
+    contentBaseVersion = 0;
     contentBaseline = undefined;
     isContentStale.value = false;
     heldSave.value = undefined;
     isSaveContentFailed.value = false;
     unwrittenContentResourceId.value = "";
   };
+
   // This resource's content was replaced underneath whatever blade is open — a restore is the one write that
   // Does that. The row is re-read here and the content stores re-read themselves through the hook registry,
   // Rather than the blade being keyed on a counter something bumps: which store holds the content is the
@@ -232,7 +261,7 @@ export const useResourceStore = defineStore("resource", () => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
 
-    const { contentHash, contentSize, id, type } = resourceValue;
+    const { contentHash, contentSize, contentVersion, id, type } = resourceValue;
     const readOpening = opening;
     const contentRead = Symbol("contentRead");
     latestContentRead = contentRead;
@@ -257,6 +286,7 @@ export const useResourceStore = defineStore("resource", () => {
     // The hash is the row's as it was before the blob was read, so a save that lands during the read leaves the hash behind
     // The content, and the next refetch of the row reads it again rather than missing it
     persistedContentHash = contentHash;
+    contentBaseVersion = contentVersion;
     if (storedContent) contentBaseline = storedContent;
     applyContent(content as ResourceContent<TType> | undefined);
   };
@@ -288,7 +318,7 @@ export const useResourceStore = defineStore("resource", () => {
     heldOtherRow = undefined;
     if (!checkIsContentRead() || newResource.contentHash === persistedContentHash) return;
 
-    if (checkIsSaveContentPending(newResource.id)) {
+    if (checkIsSavePending(newResource.id)) {
       heldOtherRow = newResource;
       getSynchronizedFunction(async () => {
         await whenContentSaved(newResource.id);
@@ -308,20 +338,20 @@ export const useResourceStore = defineStore("resource", () => {
 
     adoptOtherContent();
   };
-  // The page's read of the open row lands here. A refresh of the resource already open takes every field but the
-  // The version the store keeps as the one it holds for its unwritten-edit check, and the content is then checked
-  // Against the hash the store holds. A reset would drop the notice another save is held behind
+  // The page's read of the open row lands here. A read of the resource already open is a refresh: its row and publication
+  // Arrive as any other row does, and the content is then checked against the hash the store holds. A reset would drop the
+  // Notice another save is held behind
   const applyResource = (newResource: ResourceInResource, newPublication: null | ResourcePublicationInResource) => {
-    const activeResource = getActiveResource(newResource.id);
-    if (!activeResource) {
+    if (!checkIsLoaded(newResource.id)) {
       assignResource(newResource, newPublication);
       return;
     }
 
-    publication.value = newPublication ?? undefined;
-    mergeResource(newResource.id, { ...newResource, contentVersion: activeResource.contentVersion });
+    arrive(resourceTable, newResource);
+    if (newPublication) arrive(publicationTable, newPublication);
     applyOtherContent(newResource);
   };
+
   // Taking theirs: the other version is adopted and the unwritten edit is dropped with the content it was an edit of
   const takeOtherSave = async () => {
     if (!heldSave.value) return;
@@ -336,7 +366,7 @@ export const useResourceStore = defineStore("resource", () => {
     const resourceValue = resource.value;
     if (!resourceValue || !heldSave.value) return;
 
-    resourceValue.contentVersion = heldSave.value.contentVersion;
+    contentBaseVersion = heldSave.value.contentVersion;
     heldSave.value = undefined;
     isContentStale.value = false;
     await ResourceContentHookMap.Keep.run(resourceValue.type);
@@ -358,8 +388,8 @@ export const useResourceStore = defineStore("resource", () => {
     const contentJson = JSON.stringify(content);
     // The baseline is the last content the server confirmed, so while a write of this resource is still in flight it
     // Can be about to replace that content — a revert to the baseline has to be written behind it, not skipped
-    if (contentJson === persistedContentJson && !checkIsSaveContentPending(resourceValue.id)) {
-      // The server already holds this content, so a failed or refused save before it is superseded and nothing is left unsaved
+    if (contentJson === persistedContentJson && !checkIsSavePending(resourceValue.id)) {
+      // The server already holds this content, so a failed or refused save before it is replaced by this one, and nothing is left unsaved
       isSaveContentFailed.value = false;
       return;
     }
@@ -378,48 +408,68 @@ export const useResourceStore = defineStore("resource", () => {
     // Rather than the object as it stands when a save queued behind another comes up. Otherwise the server would
     // Hold an edit the persisted baseline does not name, and a revert to the issued content would be skipped
     const issuedContent = contentBytes.byteLength < MAX_REQUEST_SIZE ? structuredClone(toRawDeep(content)) : undefined;
-    // Saves of different resources are different single-flight keys, so this one can settle after the blade has
-    // Moved on, and everything it carries back — a stale latch, a failure, a contentVersion, the persisted-content
-    // Baseline — is its own resource's. Applied to whichever resource is loaded now, it strands that one behind a
-    // Refresh prompt or a version the server never issued for it. The notifications are not scoped: the write
-    // Failed for the owner either way (openspec/specs/resource/resource-save-state/design.md)
-    executeSaveContentMutation(
-      async () => {
-        // Read when the write is sent rather than when it was issued: a save that queued behind another must
-        // Carry the contentVersion that one wrote back, or the server rejects our own overlapping saves as a
-        // Cross-session edit. A load that swapped the resource in between leaves the issue-time row in place
-        const target = getActiveResource(resourceValue.id) ?? resourceValue;
-        const resourceRouter = getResourceRouter(target.type);
-        const input = { content: issuedContent, contentVersion: target.contentVersion, id: target.id };
-        const baseline = contentBaseline?.id === target.id ? contentBaseline : undefined;
-        // A body the server's request size limiter would refuse goes as a delta against the stored bytes when this
-        // Client holds them, and staged through R2 otherwise. The body is measured as the transformer
-        // Writes it, never as the content's own JSON, which is smaller — but only once the JSON alone is under the
-        // Limit, since the body is never smaller than it
-        const savedResource =
-          contentBytes.byteLength >= MAX_REQUEST_SIZE || getRequestBodyByteLength(input) >= MAX_REQUEST_SIZE
-            ? ((baseline && (await saveResourceContentDelta(resourceRouter, contentBytes, baseline, target))) ??
-              (await saveStagedResourceContent(resourceRouter, contentBytes, target)))
-            : // Calling the union of every type's content write needs an argument every arm accepts, so the
-              // Content is narrowed the same way the read above widens it
-              await resourceRouter.saveResourceContent.mutate(input as never);
-        // The server stores its own serialization of the parsed document, which a content schema's transforms can
-        // Make differ from what was sent, so the sent bytes become the baseline only when their hash is the one
-        // Stored
-        const contentHash = await getSha256Hex(contentBytes);
-        contentBaseline =
-          savedResource.contentHash === contentHash
-            ? { bytes: contentBytes, hash: contentHash, id: target.id }
-            : undefined;
-        return savedResource;
-      },
+    // Saves of different resources are different writes, so this one can settle after the blade has moved on. What it carries
+    // Back is its own resource's: the row it returns reaches the overlay for that row, and the content state is applied only
+    // While that resource is still loaded. The notifications are not scoped, since the write failed for the owner either way
+    // (openspec/specs/resource/resource-save-state/design.md)
+    const { id } = resourceValue;
+    const { promise: settled, resolve: release } = Promise.withResolvers<void>();
+    contentSaves.value.set(id, settled);
+    writeOptimistic(
+      () =>
+        withFinalizerAsync(
+          async () => {
+            // Read when the write is sent rather than when it was issued: a save that queued behind another carries the version
+            // That one answered. The loaded resource's version is the one its content was read or saved at, since a read of its
+            // Row can land before the other device's save is adopted, and a save sent with that row's version would overwrite it
+            const target = getHeldResource(id) ?? resourceValue;
+            const resourceRouter = getResourceRouter(target.type);
+            // The version the content it sends was read or saved at, which is what the server compares. A large save takes the
+            // Same pair, so a delta or a staged save never sends a version the row it reads from has not yet been told of
+            const sent = {
+              contentVersion: checkIsLoaded(id) ? contentBaseVersion : target.contentVersion,
+              id: target.id,
+            };
+            const input = { content: issuedContent, ...sent };
+            const baseline = contentBaseline?.id === target.id ? contentBaseline : undefined;
+            // A body the server's request size limiter would refuse goes as a delta against the stored bytes when this
+            // Client holds them, and staged through R2 otherwise. The body is measured as the transformer
+            // Writes it, never as the content's own JSON, which is smaller — but only once the JSON alone is under the
+            // Limit, since the body is never smaller than it
+            const savedResource =
+              contentBytes.byteLength >= MAX_REQUEST_SIZE || getRequestBodyByteLength(input) >= MAX_REQUEST_SIZE
+                ? ((baseline && (await saveResourceContentDelta(resourceRouter, contentBytes, baseline, sent))) ??
+                  (await saveStagedResourceContent(resourceRouter, contentBytes, sent)))
+                : // Calling the union of every type's content write needs an argument every arm accepts, so the
+                  // Content is narrowed the same way the read above widens it
+                  await resourceRouter.saveResourceContent.mutate(input as never);
+            // The server stores its own serialization of the parsed document, which a content schema's transforms can
+            // Make differ from what was sent, so the sent bytes become the baseline only when their hash is the one
+            // Stored
+            const contentHash = await getSha256Hex(contentBytes);
+            contentBaseline =
+              savedResource.contentHash === contentHash
+                ? { bytes: contentBytes, hash: contentHash, id: target.id }
+                : undefined;
+            if (checkIsLoaded(id)) {
+              persistedContentJson = contentJson;
+              persistedContentHash = savedResource.contentHash;
+              contentBaseVersion = savedResource.contentVersion;
+              isSaveContentFailed.value = false;
+            }
+            return createRowResponse(resourceTable, savedResource);
+          },
+          () => {
+            if (contentSaves.value.get(id) === settled) contentSaves.value.delete(id);
+            release();
+          },
+        ),
       {
-        applyOptimistic: () => noop,
-        // Content saves of one resource share its id, so they queue instead of overlapping
-        key: resourceValue.id,
+        // A content save changes no row the screen shows, so its entry only reads the row, which orders it on that row
+        entry: getSaveResourceEntry(id),
         onError: (error) => {
           if (error.message === STALE_CONTENT_VERSION_ERROR_MESSAGE) {
-            if (getActiveResource(resourceValue.id)) isContentStale.value = true;
+            if (checkIsLoaded(id)) isContentStale.value = true;
             createNotification({
               action: {
                 // A hard reload is the one path guaranteed to re-run every blade's content loader
@@ -432,25 +482,14 @@ export const useResourceStore = defineStore("resource", () => {
               title: `"${resourceValue.name}" was modified elsewhere — refresh to load the latest`,
             });
           } else {
-            if (getActiveResource(resourceValue.id)) isSaveContentFailed.value = true;
+            if (checkIsLoaded(id)) isSaveContentFailed.value = true;
             createErrorNotification(error);
           }
-        },
-        reconcile: (newResource) => {
-          if (!getActiveResource(resourceValue.id)) return;
-
-          mergeResource(resourceValue.id, {
-            contentHash: newResource.contentHash,
-            contentVersion: newResource.contentVersion,
-            updatedAt: newResource.updatedAt,
-          });
-          persistedContentJson = contentJson;
-          persistedContentHash = newResource.contentHash;
-          isSaveContentFailed.value = false;
         },
       },
     );
   };
+
   // An editor's own check refused the save before it reached saveContent, so no write was issued and the edit it held
   // Is dropped rather than landed. The state reads Not saved, and the held edit is cleared as a write would clear it, so
   // It does not keep reading as Saving
@@ -461,162 +500,155 @@ export const useResourceStore = defineStore("resource", () => {
   const renameResource = (name: string) => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
-    executeRenameMutation(
-      () => getResourceRouter(resourceValue.type).updateResource.mutate({ id: resourceValue.id, name }),
-      {
-        // Read when the write is sent rather than when it was issued: renames of one resource queue, so a
-        // Rejection has to restore the name the rename ahead of it stored, not the one on screen at issue time.
-        // Merged rather than replaced for the same reason every other write here merges — the issue-time row has
-        // No contentVersion an autosave bumped meanwhile, and no tags a tag edit wrote
-        applyOptimistic: () => {
-          const previousResource = getActiveResource(resourceValue.id);
-          if (!previousResource) return noop;
 
-          mergeResource(resourceValue.id, { name });
-          return () => {
-            mergeResource(resourceValue.id, { name: previousResource.name });
-          };
-        },
+    const { id, type } = resourceValue;
+    writeOptimistic(
+      async () => {
+        const renamedResource = await getResourceRouter(type).updateResource.mutate({ id, name });
         // The favorites and Recent rows carry the name, which nothing else re-reads once they have loaded
-        invalidates: [CacheTag.Resources],
-        key: resourceValue.id,
-        onError: createErrorNotification,
-        reconcile: (newResource) => {
-          mergeResource(resourceValue.id, { name: newResource.name, updatedAt: newResource.updatedAt });
-        },
+        await invalidateTags([CacheTag.Resources]);
+        return createRowResponse(resourceTable, renamedResource);
       },
+      { entry: getResourcePatchEntry(id, { name }), onError: createErrorNotification },
     );
   };
-  // Whole-record replace, which is Azure's own tag update semantics — the dialog always sends every tag
+  // Whole-record replace, which is Azure's own tag update semantics — the dialog always sends every tag. Only the tags are
+  // Sent, so an edit queued behind a rename never puts back the name the rename replaced
   const updateResourceTags = (tags: ResourceTags) => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
-    // A tag edit keeps its own executor rather than queueing behind a rename because the two own disjoint
-    // Fields — which is only true if the write carries nothing but the tags. Sending the name alongside them
-    // Would make a tag edit that overlaps a rename put the pre-rename name back on the server
-    executeUpdateTagsMutation(
-      () => getResourceRouter(resourceValue.type).updateResource.mutate({ id: resourceValue.id, tags }),
-      {
-        // Same as the rename above: the row is read when the write is sent and only the tags are merged, so a
-        // Rejection restores the tags the tag edit ahead of it stored and no other field is dragged back with them
-        applyOptimistic: () => {
-          const previousResource = getActiveResource(resourceValue.id);
-          if (!previousResource) return noop;
 
-          mergeResource(resourceValue.id, { tags });
-          return () => {
-            mergeResource(resourceValue.id, { tags: previousResource.tags });
-          };
-        },
+    const { id, type } = resourceValue;
+    writeOptimistic(
+      async () => {
+        const updatedResource = await getResourceRouter(type).updateResource.mutate({ id, tags });
         // The favorites and Recent rows carry the tags, which nothing else re-reads once they have loaded
-        invalidates: [CacheTag.Resources],
-        key: resourceValue.id,
-        onError: createErrorNotification,
-        reconcile: (newResource) => {
-          mergeResource(resourceValue.id, { tags: newResource.tags, updatedAt: newResource.updatedAt });
-        },
+        await invalidateTags([CacheTag.Resources]);
+        return createRowResponse(resourceTable, updatedResource);
       },
+      { entry: getResourcePatchEntry(id, { tags }), onError: createErrorNotification },
     );
   };
   const deleteResource = () => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
-    executeDeleteMutation(() => getResourceRouter(resourceValue.type).deleteResource.mutate({ id: resourceValue.id }), {
-      // The blade leaves the deleted resource at once, since every action it would send after this is refused
-      applyOptimistic: () => {
-        navigateToExplorer();
-        const notificationId = createNotification({
-          // The same undo the list's delete leaves, spent once the restore lands
-          action: {
-            handler: () => {
-              restoreResources([resourceValue]);
-            },
-            isSingleUse: true,
-            title: "Restore",
-          },
-          severity: NotificationSeverity.Success,
-          title: ResourceOperationTitleMap[ResourceOperationType.Deleted](resourceValue.name, 1),
-        });
-        // The resource was never removed, so its Restore is withdrawn
-        return () => {
-          dismissNotification(notificationId);
-        };
+
+    const { id, type } = resourceValue;
+    // The blade leaves the deleted resource at once, since every action it would send after this is refused
+    navigateToExplorer();
+    const notificationId = createNotification({
+      // The same undo the list's delete leaves, spent once the restore lands
+      action: {
+        handler: () => {
+          restoreResources([resourceValue]);
+        },
+        isSingleUse: true,
+        title: "Restore",
       },
-      // A second delete of the same resource while the first is out is dropped rather than sent
-      isExclusive: true,
-      key: resourceValue.id,
-      onError: createErrorNotification,
+      severity: NotificationSeverity.Success,
+      title: ResourceOperationTitleMap[ResourceOperationType.Deleted](resourceValue.name, 1),
     });
+    writeOptimistic(
+      async () => createRowResponse(resourceTable, await getResourceRouter(type).deleteResource.mutate({ id })),
+      {
+        entry: getResourcePatchEntry(id, { deletedAt: new Date() }),
+        // The resource was never removed, so its Restore is withdrawn
+        onError: (error) => {
+          dismissNotification(notificationId);
+          createErrorNotification(error);
+        },
+      },
+    );
   };
   const duplicateResource = async () => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
-    await executeDuplicateMutation(() => $trpc.resource.duplicateResource.mutate({ id: resourceValue.id }), {
-      // The page opens the copy by the id the server gives it
-      awaitedBecause: AwaitedReason.ServerIssuedValue,
-      key: Symbol("duplicateResource"),
-      onError: createErrorNotification,
-      onSuccess: async (newResource) => {
-        createNotification({
-          action: { title: "Go to resource", to: RoutePath.Resource(newResource.id) },
-          severity: NotificationSeverity.Success,
-          title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
-        });
-        await navigateTo(RoutePath.Resource(newResource.id));
-      },
-    });
+
+    pendingDuplicateCount.value++;
+    await writeAwaited(
+      () =>
+        withFinalizerAsync(
+          async () => {
+            const newResource = await $trpc.resource.duplicateResource.mutate({ id: resourceValue.id });
+            createNotification({
+              action: { title: "Go to resource", to: RoutePath.Resource(newResource.id) },
+              severity: NotificationSeverity.Success,
+              title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
+            });
+            // The page opens the copy by the id the server gives it
+            await navigateTo(RoutePath.Resource(newResource.id));
+            return [createArrival(resourceTable, newResource)];
+          },
+          () => {
+            pendingDuplicateCount.value--;
+          },
+        ),
+      { onError: createErrorNotification },
+    );
   };
   const publishResource = () => {
     const resourceValue = resource.value;
     if (!resourceValue || !checkHasCapability(resourceValue.type, "publishable")) return;
 
-    const resourceRouter = getResourceRouter(resourceValue.type);
-    executePublicationMutation(() => resourceRouter.publishResource.mutate({ id: resourceValue.id }), {
-      // Nothing is drawn ahead of the answer: the publication's version is the server's, and the row is built from it
-      applyOptimistic: () => noop,
-      key: resourceValue.id,
-      onError: createErrorNotification,
-      reconcile: (newPublication) => {
-        if (getActiveResource(resourceValue.id)) publication.value = newPublication;
-        createNotification({
-          action: {
-            handler: () => copyLinkToClipboard(RoutePath.View(resourceValue.type, resourceValue.id)),
-            title: "Copy public link",
-          },
-          severity: NotificationSeverity.Success,
-          title: ResourceOperationTitleMap[ResourceOperationType.Published](
-            resourceValue.name,
-            newPublication.publishVersion,
-          ),
-        });
-      },
-    });
+    const { id, name, type } = resourceValue;
+    const resourceRouter = getResourceRouter(type);
+    // Nothing is drawn ahead of the answer: the publication is the server's, so it arrives with its version
+    getSynchronizedFunction(() =>
+      writeAwaited(
+        () => {
+          pendingPublicationCount.value++;
+          return withFinalizerAsync(
+            async () => {
+              const newPublication = await resourceRouter.publishResource.mutate({ id });
+              createNotification({
+                action: { handler: () => copyLinkToClipboard(RoutePath.View(type, id)), title: "Copy public link" },
+                severity: NotificationSeverity.Success,
+                title: ResourceOperationTitleMap[ResourceOperationType.Published](name, newPublication.publishVersion),
+              });
+              return [createArrival(publicationTable, newPublication)];
+            },
+            () => {
+              pendingPublicationCount.value--;
+            },
+          );
+        },
+        { onError: createErrorNotification },
+      ),
+    )();
   };
   const unpublishResource = () => {
     const resourceValue = resource.value;
     if (!resourceValue || !checkHasCapability(resourceValue.type, "publishable")) return;
 
-    const resourceRouter = getResourceRouter(resourceValue.type);
-    executePublicationMutation(() => resourceRouter.unpublishResource.mutate({ id: resourceValue.id }), {
-      // Read when the write is sent rather than when it was issued: a second unpublish queues behind the first
-      // And finds nothing left to withdraw, so a rejection restores that — captured at click time it would put
-      // The publication the first unpublish already removed back on screen, complete with its public link
-      applyOptimistic: () => {
-        const notificationId = createNotification({
-          severity: NotificationSeverity.Success,
-          title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](resourceValue.name),
-        });
-        const previousPublication = publication.value;
-        const isActive = Boolean(getActiveResource(resourceValue.id));
-        if (isActive) publication.value = undefined;
-        return () => {
-          dismissNotification(notificationId);
-          if (isActive && getActiveResource(resourceValue.id)) publication.value = previousPublication;
-        };
-      },
-      key: resourceValue.id,
-      onError: createErrorNotification,
+    const { id, name, type } = resourceValue;
+    const resourceRouter = getResourceRouter(type);
+    const notificationId = createNotification({
+      severity: NotificationSeverity.Success,
+      title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](name),
     });
+    pendingPublicationCount.value++;
+    writeOptimistic(
+      () =>
+        withFinalizerAsync(
+          async () => {
+            const removedPublication = await resourceRouter.unpublishResource.mutate({ id });
+            // An unpublish that removed nothing answers no row, so its entry is confirmed at once with nothing to arrive
+            return removedPublication
+              ? createRowResponse(publicationTable, removedPublication)
+              : { arrivals: [], confirmed: [] };
+          },
+          () => {
+            pendingPublicationCount.value--;
+          },
+        ),
+      {
+        entry: getPublicationPatchEntry(id, { deletedAt: new Date() }),
+        onError: (error) => {
+          dismissNotification(notificationId);
+          createErrorNotification(error);
+        },
+      },
+    );
   };
   return {
     applyResource,

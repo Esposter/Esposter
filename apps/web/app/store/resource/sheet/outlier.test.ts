@@ -56,11 +56,11 @@ describe(useOutlierStore, () => {
 
     setupWithDataSource();
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
+    const { applyResource } = resourceStore;
     const outlierStore = useOutlierStore();
     const { isOutlierHighlightEnabled } = storeToRefs(outlierStore);
     isOutlierHighlightEnabled.value = true;
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
 
     expect(isOutlierHighlightEnabled.value).toBe(false);
   });

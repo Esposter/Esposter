@@ -41,8 +41,8 @@ describe(useBlueprintStore, () => {
     await readResource();
   });
 
-  // The rollback owes back the manifest text only while it is still the text this save wrote. Text the reader typed
-  // While the save was in flight is theirs, and the refusal never replaced it
+  // A refused save puts nothing back: it leaves the held content as it stands. Text the reader typed while the save was
+  // In flight is theirs, and the refusal never replaced it
   test("keeps the manifest text the reader typed while a refused save was in flight", async () => {
     expect.hasAssertions();
 

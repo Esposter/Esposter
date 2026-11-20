@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
+import type { ResourceFavoriteListItem } from "#shared/models/resource/ResourceFavoriteListItem";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useRestoreResources } from "#src/composables/resource/useRestoreResources";
@@ -18,7 +18,7 @@ describe(useRestoreResources, () => {
   test("invalidates the resources tag when a restore fails after an earlier chunk committed", async () => {
     expect.hasAssertions();
 
-    const readFavorites = vi.fn<() => ResourceListItem[]>(() => []);
+    const readFavorites = vi.fn<() => ResourceFavoriteListItem[]>(() => []);
     let chunkCount = 0;
     // The restored rows the server answers with, one per id the chunk restored
     trpcMsw.resource.restoreResources.mutation(({ input: { ids } }) => {

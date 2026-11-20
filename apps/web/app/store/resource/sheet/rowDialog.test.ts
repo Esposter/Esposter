@@ -11,14 +11,14 @@ describe(useRowDialogStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
-    resource.value = createResourceListItem();
+    const { applyResource } = resourceStore;
+    applyResource(createResourceListItem(), null);
     const rowDialogStore = useRowDialogStore();
     const { deletingIds, editingId } = storeToRefs(rowDialogStore);
     const { id } = createRow({ "": 0 });
     editingId.value = id;
     deletingIds.value = [id];
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
 
     expect({ deletingIds: deletingIds.value, editingId: editingId.value }).toStrictEqual({
       deletingIds: [],

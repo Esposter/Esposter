@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
+import type { ResourceFavoriteListItem } from "#shared/models/resource/ResourceFavoriteListItem";
 import type { Router } from "vue-router";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
@@ -65,7 +65,7 @@ describe(useDeleteResources, () => {
   test("invalidates the resources tag when a delete fails", async () => {
     expect.hasAssertions();
 
-    const readFavorites = vi.fn<() => ResourceListItem[]>(() => []);
+    const readFavorites = vi.fn<() => ResourceFavoriteListItem[]>(() => []);
     trpcMsw.resource.deleteResources.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });

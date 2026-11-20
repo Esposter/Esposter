@@ -37,9 +37,9 @@ describe(useVersionHistoryStore, () => {
   ];
   const restoredEmail = new EmailEditor({ content: [], root: { props: { lang: "", title: TEST_RESTORED_LABEL } } });
 
-  // Reads of two resources are two keys, so neither supersedes the other and the first one issued can land after
-  // The second. Filed under whichever resource is open when it lands, it lists the one left behind as this one's
-  test("files a history that lands after a switch under the resource it was read for", async () => {
+  // The timeline is one run in the panel's scope, so a read issued after it aborts it: the older read's answer is never
+  // Filed, whichever resource it was for, and the list the reader switches back to is not the older read's
+  test("a history read that a newer read aborts never lands", async () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
@@ -56,24 +56,24 @@ describe(useVersionHistoryStore, () => {
       ];
     });
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
+    const { applyResource } = resourceStore;
     const versionHistoryStore = useVersionHistoryStore();
     const { versions } = storeToRefs(versionHistoryStore);
     const { readSnapshotHistory } = versionHistoryStore;
-    resource.value = firstResource;
+    applyResource(firstResource, null);
     const firstRead = readSnapshotHistory(firstResource);
     // A read issued in the same tick would share the held one's batch and settle with it
     await isReadReached;
-    resource.value = secondResource;
+    applyResource(secondResource, null);
     await readSnapshotHistory(secondResource);
     releaseRead();
     await firstRead;
 
     expect(versions.value.map(({ summary }) => summary)).toStrictEqual([secondResource.id]);
 
-    resource.value = firstResource;
+    applyResource(firstResource, null);
 
-    expect(versions.value.map(({ summary }) => summary)).toStrictEqual([firstResource.id]);
+    expect(versions.value).toStrictEqual([]);
   });
 
   // A restore replaces the draft under the open page, so the edits its history holds describe a document that is gone.

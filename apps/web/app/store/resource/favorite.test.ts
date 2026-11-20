@@ -1,40 +1,44 @@
 // @vitest-environment nuxt
-import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
+import type { ResourceFavoriteListItem } from "#shared/models/resource/ResourceFavoriteListItem";
 
+import { createResourceFavoriteListItem } from "#shared/services/resource/list/createResourceFavoriteListItem.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { CacheTag } from "#src/models/cache/CacheTag";
+import { setupSession } from "#src/services/auth/setupSession.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useCacheStore } from "#src/store/cache";
 import { useFavoriteStore } from "#src/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useFavoriteStore, () => {
   const { trpcMsw } = setupMswTrpc();
+  const appUserId = v7();
+  setupSession(appUserId);
   const resource = createResourceListItem();
   const otherResource = createResourceListItem();
-
-  // Two tabs on the same list: the second still holds the pre-star rows, so its optimistic flip stars the row
-  // While the server's delete-then-insert finds the star the first tab set, removes it and answers false
-  test("takes the server's post-toggle state over an optimistic flip that starred", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.resource.toggleFavorite.mutation(() => false);
-    const favoriteStore = useFavoriteStore();
-    const { favorites } = storeToRefs(favoriteStore);
-    const { toggleFavorite } = favoriteStore;
-    toggleFavorite(resource);
-    await flushPromises();
-
-    expect(favorites.value).toStrictEqual([]);
+  const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+  // A star a removal left as a tombstone: the read still joins its resource, so a star set again shows it at once
+  const createRemovedStar = (starred: typeof resource) =>
+    createResourceFavoriteListItem(starred, { deletedAt: new Date(0), userId: appUserId });
+  // The row the server answers a set or removed star with, at the version it was written at
+  const createStarRow = (starred: typeof resource, deletedAt: Date | null) => ({
+    createdAt: new Date(0),
+    deletedAt,
+    resourceId: starred.id,
+    updatedAt: new Date(0),
+    userId: appUserId,
+    version: 1,
   });
 
-  test("takes the server's post-toggle state over an optimistic flip that unstarred", async () => {
+  // A star is set on screen before the server answers, and the answer that comes back as a tombstone takes over
+  test("takes the server's answer over an optimistic star that it removed", async () => {
     expect.hasAssertions();
 
-    trpcMsw.resource.readFavorites.query(() => [resource]);
-    trpcMsw.resource.toggleFavorite.mutation(() => true);
+    trpcMsw.resource.readFavorites.query(() => [createResourceFavoriteListItem(resource, { userId: appUserId })]);
+    trpcMsw.resource.toggleFavorite.mutation(() => createStarRow(resource, new Date()));
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
     const { readFavorites, toggleFavorite } = favoriteStore;
@@ -42,24 +46,45 @@ describe(useFavoriteStore, () => {
     toggleFavorite(resource);
     await flushPromises();
 
+    expect(favorites.value).toStrictEqual([]);
+  });
+
+  // A star set on screen shows its resource, which the read joined to the tombstone it left behind
+  test("shows a star set on screen with the resource the read joined to it", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.resource.readFavorites.query(() => [createRemovedStar(resource)]);
+    trpcMsw.resource.toggleFavorite.mutation(() => createStarRow(resource, null));
+    const favoriteStore = useFavoriteStore();
+    const { favoriteIds, favorites } = storeToRefs(favoriteStore);
+    const { readFavorites, toggleFavorite } = favoriteStore;
+    await readFavorites();
+    toggleFavorite(resource);
+
+    expect(favoriteIds.value.has(resource.id)).toBe(true);
+
+    await flushPromises();
+
     expect(favorites.value).toStrictEqual([resource]);
   });
 
-  // Two quick clicks on one star queue under the same key, so the second one's rollback has to undo its own
-  // Flip rather than the state at click time — nothing reconciles a dropped star until a reload
-  test("rolls a failed toggle back to the state the toggle ahead of it stored", async () => {
+  // Two quick clicks on one star queue on the same row: the second click removes what the first set, and when it is
+  // Refused the row is the one the first click's answer holds, so the star stays set
+  test("keeps the star the first of two quick toggles set when the second is refused", async () => {
     expect.hasAssertions();
 
-    let isFailing = false;
+    trpcMsw.resource.readFavorites.query(() => [createRemovedStar(resource)]);
+    let isFirstToggle = true;
     trpcMsw.resource.toggleFavorite.mutation(() => {
-      if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      if (!isFirstToggle) throw trpcError;
 
-      isFailing = true;
-      return true;
+      isFirstToggle = false;
+      return createStarRow(resource, null);
     });
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
-    const { toggleFavorite } = favoriteStore;
+    const { readFavorites, toggleFavorite } = favoriteStore;
+    await readFavorites();
     toggleFavorite(resource);
     toggleFavorite(resource);
     await flushPromises();
@@ -67,16 +92,16 @@ describe(useFavoriteStore, () => {
     expect(favorites.value).toStrictEqual([resource]);
   });
 
-  // This list is replaced wholesale by its own cached read, which refetches the moment a delete elsewhere
-  // Invalidates the resources tag — so anything that read delivered is not re-read until a reload
-  test("rolls a failed toggle back without dropping stars a re-read delivered", async () => {
+  // This list is replaced by its own cached read, which refetches the moment a delete elsewhere invalidates the
+  // Resources tag. A star that re-read delivers while a toggle is in flight is kept when that toggle is refused
+  test("keeps the stars a re-read delivered while a refused toggle was in flight", async () => {
     expect.hasAssertions();
 
     const cacheStore = useCacheStore();
     const { invalidateTags } = cacheStore;
     let isRead = false;
     trpcMsw.resource.readFavorites.query(() => {
-      if (isRead) return [otherResource];
+      if (isRead) return [createResourceFavoriteListItem(otherResource, { userId: appUserId })];
 
       isRead = true;
       return [];
@@ -84,7 +109,7 @@ describe(useFavoriteStore, () => {
     trpcMsw.resource.toggleFavorite.mutation(async () => {
       // The re-read lands while the toggle is still in flight
       await invalidateTags([CacheTag.Resources]);
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
@@ -99,7 +124,7 @@ describe(useFavoriteStore, () => {
   test("reads the favorites once for repeat and concurrent mounts", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn<() => ResourceListItem[]>(() => [resource]);
+    const handler = vi.fn<() => ResourceFavoriteListItem[]>(() => [createResourceFavoriteListItem(resource)]);
     trpcMsw.resource.readFavorites.query(handler);
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
@@ -117,7 +142,7 @@ describe(useFavoriteStore, () => {
   test("re-reads the favorites the moment the resources tag is invalidated", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn<() => ResourceListItem[]>(() => [resource]);
+    const handler = vi.fn<() => ResourceFavoriteListItem[]>(() => [createResourceFavoriteListItem(resource)]);
     trpcMsw.resource.readFavorites.query(handler);
     const cacheStore = useCacheStore();
     const { invalidateTags } = cacheStore;

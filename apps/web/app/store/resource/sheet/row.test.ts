@@ -17,7 +17,7 @@ import { useRowStore } from "#src/store/resource/sheet/row";
 import { SortOrder } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(useRowStore, () => {
   setupCommandTest();
@@ -29,14 +29,14 @@ describe(useRowStore, () => {
 
     setupWithDataSource();
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
+    const { applyResource } = resourceStore;
     const rowStore = useRowStore();
     const { page, search, selectedRowIds, sortBy } = storeToRefs(rowStore);
     page.value = 2;
     search.value = " ";
     selectedRowIds.value = [""];
     sortBy.value = [{ key: "", order: SortOrder.Asc }];
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
 
     expect({
       page: page.value,
@@ -53,17 +53,18 @@ describe(useRowStore, () => {
 
     setupWithDataSource(createDataSource([createColumn("")], []));
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
-    const firstResource = resource.value;
+    const { applyResource } = resourceStore;
+    const firstResource = resourceStore.resource;
+    assert.exists(firstResource);
     const filterStore = useFilterStore();
     const { setColumnFilter } = filterStore;
     const rowStore = useRowStore();
     const { page } = storeToRefs(rowStore);
     page.value = 2;
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
     setColumnFilter("", { type: ColumnType.String, value: "value" });
     await flushPromises();
-    resource.value = firstResource;
+    applyResource(firstResource, null);
     await flushPromises();
 
     expect(page.value).toBe(2);

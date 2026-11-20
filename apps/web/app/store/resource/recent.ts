@@ -1,18 +1,39 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { CacheTag } from "#src/models/cache/CacheTag";
 import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 import { RECENT_RESOURCES_LIMIT } from "#src/services/resource/constants";
 import { getResourceListSortName } from "#src/services/resource/list/getResourceListSortName";
 import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
+import { resourceTable } from "#src/services/resource/overlay/constants";
+import { useOverlayStore } from "#src/store/overlay";
 
 // Recent means recently *opened*, and the set is the caller's own server-side access rows, so it follows them
 // Between devices. Home's Recent tab and the palette's resources scope both want the same capped list and both
 // Mount on the explorer home page, so the set is read once and two concurrent mounts share the in-flight query
-// Rather than each issuing the same request.
+// Rather than each issuing the same request. The list is the ids a read gave, in its order, over the resource rows the
+// Overlay holds, so a resource that is deleted drops out of it without a re-read
 export const useRecentStore = defineStore("resource/recent", () => {
   const { $trpc } = useNuxtApp();
-  const recents = ref<ResourceListItem[]>([]);
+  const overlayStore = useOverlayStore();
+  const { arrive, view } = overlayStore;
+  const resourceRows = view(resourceTable);
+  const recentIds = ref<string[]>([]);
+  // The last access each read joined, by resource id, which each read replaces. It is the access row's, not the resource's, so
+  // It is held beside the resource rows rather than on them
+  const lastAccessedAts = ref(new Map<string, ResourceListItem["lastAccessedAt"]>());
+  // A deleted resource's row is held as a tombstone, so it drops out of the list here without a re-read
+  const recents = computed(() =>
+    recentIds.value.flatMap((id) => {
+      const resource = resourceRows.value.find(
+        (row): row is ResourceInResource => row.id === id && row.version !== undefined,
+      );
+      return resource && !resource.deletedAt
+        ? [{ ...resource, lastAccessedAt: lastAccessedAts.value.get(id) ?? null }]
+        : [];
+    }),
+  );
   const error = ref("");
   // Whether any read has settled, success or failure — before one has, an empty list is not yet an answer
   const isReadSettled = ref(false);
@@ -34,7 +55,13 @@ export const useRecentStore = defineStore("resource/recent", () => {
         isReadSettled.value = true;
       },
       onSuccess: ({ items }) => {
-        recents.value = items;
+        const accesses = new Map<string, ResourceListItem["lastAccessedAt"]>();
+        for (const { lastAccessedAt, ...row } of items) {
+          arrive(resourceTable, row);
+          accesses.set(row.id, lastAccessedAt);
+        }
+        recentIds.value = items.map(({ id }) => id);
+        lastAccessedAts.value = accesses;
         error.value = "";
         isReadSettled.value = true;
       },

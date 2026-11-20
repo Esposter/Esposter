@@ -1,11 +1,13 @@
 // @vitest-environment nuxt
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { createResourceFavoriteListItem } from "#shared/services/resource/list/createResourceFavoriteListItem.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useRenameResource } from "#src/composables/resource/list/useRenameResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useFavoriteStore } from "#src/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 // The refresh a write runs once it settles, announcing its call so a test awaits that rather than polling for it
@@ -63,7 +65,13 @@ describe(useRenameResource, () => {
 
     const resource = createResource();
     let serverName = name;
-    trpcMsw.resource.readFavorites.query(() => [createResourceListItem({ id: resource.value.id, name: serverName })]);
+    // One star of one user, so each read answers the same row the first one held
+    const starOwnerId = v7();
+    trpcMsw.resource.readFavorites.query(() => [
+      createResourceFavoriteListItem(createResourceListItem({ id: resource.value.id, name: serverName }), {
+        userId: starOwnerId,
+      }),
+    ]);
     trpcMsw.sheet.updateResource.mutation(() => {
       serverName = newName;
       return { ...resource.value, name: newName };

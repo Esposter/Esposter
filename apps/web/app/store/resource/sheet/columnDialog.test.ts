@@ -11,13 +11,13 @@ describe(useColumnDialogStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
-    resource.value = createResourceListItem();
+    const { applyResource } = resourceStore;
+    applyResource(createResourceListItem(), null);
     const columnDialogStore = useColumnDialogStore();
     const { chartingColumnName, editingColumnName } = storeToRefs(columnDialogStore);
     chartingColumnName.value = "name";
     editingColumnName.value = "name";
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
 
     expect({ chartingColumnName: chartingColumnName.value, editingColumnName: editingColumnName.value }).toStrictEqual({
       chartingColumnName: "",

@@ -36,12 +36,12 @@ describe(useFilterStore, () => {
 
     setupWithDataSource(createDataSource([createColumn("")], []));
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
+    const { applyResource } = resourceStore;
     const filterStore = useFilterStore();
     const { setColumnFilter } = filterStore;
     const { columnFilters } = storeToRefs(filterStore);
     setColumnFilter("", filter);
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
 
     expect(columnFilters.value).toStrictEqual({});
   });

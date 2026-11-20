@@ -16,12 +16,12 @@ describe(useCellStore, () => {
 
     setupWithDataSource();
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
+    const { applyResource } = resourceStore;
     const cellStore = useCellStore();
     const { selectedCellRange } = storeToRefs(cellStore);
     const { startCellSelection } = cellStore;
     startCellSelection(0, 0);
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
 
     expect(selectedCellRange.value).toBeUndefined();
   });

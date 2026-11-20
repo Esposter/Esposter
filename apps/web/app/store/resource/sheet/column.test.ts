@@ -15,13 +15,13 @@ describe(useColumnStore, () => {
 
     setupWithDataSource();
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
+    const { applyResource } = resourceStore;
     const columnStore = useColumnStore();
     const { search, selectedColumnIds, sortBy } = storeToRefs(columnStore);
     search.value = " ";
     selectedColumnIds.value = [""];
     sortBy.value = [{ key: "", order: SortOrder.Asc }];
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
 
     expect({ search: search.value, selectedColumnIds: selectedColumnIds.value, sortBy: sortBy.value }).toStrictEqual({
       search: "",

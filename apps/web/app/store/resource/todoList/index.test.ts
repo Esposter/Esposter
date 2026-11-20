@@ -163,8 +163,8 @@ describe(useTodoListStore, () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
-  // A reload that lands while this client's own save is still in flight. The rollback owes back the item it added and
-  // Nothing else — restoring the blob it captured throws the reloaded list away with the failed edit
+  // A reload that lands while this client's own save is still in flight. A refused save leaves the reloaded list as it
+  // Stands, since restoring the blob it captured would throw the reloaded list away with the failed edit
   test("keeps content reloaded while the save was in flight when that save fails", async () => {
     expect.hasAssertions();
 
@@ -375,16 +375,17 @@ describe(useTodoListStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
-    const firstResource = resource.value;
+    const { applyResource } = resourceStore;
+    const firstResource = resourceStore.resource;
+    assert.exists(firstResource);
     const todoListStore = await setupStore();
     const { searchQuery } = storeToRefs(todoListStore);
     searchQuery.value = itemName;
-    resource.value = createResourceListItem({ type: ResourceType.TodoList });
+    applyResource(createResourceListItem({ type: ResourceType.TodoList }), null);
 
     expect(searchQuery.value).toBe("");
 
-    resource.value = firstResource;
+    applyResource(firstResource, null);
 
     expect(searchQuery.value).toBe(itemName);
   });

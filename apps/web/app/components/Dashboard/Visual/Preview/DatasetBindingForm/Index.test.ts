@@ -81,7 +81,10 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
     picker.vm.$emit("update:modelValue", secondReference);
     await flushPromises();
 
-    const [, firstReadInit] = fetchSpy.mock.calls.find(([url]) => String(url).includes(firstReference.id)) ?? [];
+    const [, firstReadInit] =
+      fetchSpy.mock.calls.find(([url]) =>
+        (typeof url === "string" ? url : url instanceof URL ? url.href : url.url).includes(firstReference.id),
+      ) ?? [];
     expect(firstReadInit?.signal?.aborted).toBe(true);
 
     releaseRead();

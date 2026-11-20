@@ -66,8 +66,8 @@ describe(exportWhiteboard, () => {
 
   beforeEach(() => {
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
-    resource.value = createResourceListItem({ id: resourceId, name: resourceName, type: ResourceType.Whiteboard });
+    const { applyResource } = resourceStore;
+    applyResource(createResourceListItem({ id: resourceId, name: resourceName, type: ResourceType.Whiteboard }), null);
   });
 
   test("the whiteboard exports to PNG", async () => {

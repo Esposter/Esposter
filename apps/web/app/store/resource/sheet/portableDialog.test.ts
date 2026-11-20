@@ -5,7 +5,7 @@ import { setupCommandTest } from "#src/composables/resource/sheet/commands/setup
 import { setupWithDataSource } from "#src/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useResourceStore } from "#src/store/resource/index";
 import { useSheetPortableDialogStore } from "#src/store/resource/sheet/portableDialog";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(useSheetPortableDialogStore, () => {
   setupCommandTest();
@@ -17,18 +17,20 @@ describe(useSheetPortableDialogStore, () => {
 
     setupWithDataSource();
     const resourceStore = useResourceStore();
-    const { currentResourceId, resource } = storeToRefs(resourceStore);
+    const { applyResource } = resourceStore;
+    const { currentResourceId } = storeToRefs(resourceStore);
     const resourceId = currentResourceId.value;
-    const sheetResource = resource.value;
+    const sheetResource = resourceStore.resource;
+    assert.exists(sheetResource);
     const sheetPortableDialogStore = useSheetPortableDialogStore();
     const { openPreview } = sheetPortableDialogStore;
     const { isPreviewOpen } = storeToRefs(sheetPortableDialogStore);
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
     openPreview(resourceId, createDataSource(), "");
 
     expect(isPreviewOpen.value).toBe(false);
 
-    resource.value = sheetResource;
+    applyResource(sheetResource, null);
 
     expect(isPreviewOpen.value).toBe(true);
   });
@@ -40,16 +42,18 @@ describe(useSheetPortableDialogStore, () => {
 
     setupWithDataSource();
     const resourceStore = useResourceStore();
-    const { currentResourceId, resource } = storeToRefs(resourceStore);
+    const { applyResource } = resourceStore;
+    const { currentResourceId } = storeToRefs(resourceStore);
     const resourceId = currentResourceId.value;
-    const sheetResource = resource.value;
+    const sheetResource = resourceStore.resource;
+    assert.exists(sheetResource);
     const sheetPortableDialogStore = useSheetPortableDialogStore();
     const { closeSurveyImport, openSurveyImport } = sheetPortableDialogStore;
     const { isSurveyImportOpen } = storeToRefs(sheetPortableDialogStore);
     openSurveyImport(resourceId);
-    resource.value = createResourceListItem();
+    applyResource(createResourceListItem(), null);
     closeSurveyImport(resourceId);
-    resource.value = sheetResource;
+    applyResource(sheetResource, null);
 
     expect(isSurveyImportOpen.value).toBe(false);
   });

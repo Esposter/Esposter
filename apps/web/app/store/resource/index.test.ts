@@ -78,7 +78,14 @@ describe(useResourceStore, () => {
   const newName = "newName";
   const failingName = "failingName";
   const tags: ResourceTags = { a: "" };
-  const publication = { publishedAt: new Date(0), publishVersion: 1, resourceId } as ResourcePublicationInResource;
+  // A server row carries its tombstone flag and its version, which the store reads a publication by
+  const publication = {
+    deletedAt: null,
+    publishedAt: new Date(0),
+    publishVersion: 1,
+    resourceId,
+    version: 0,
+  } as ResourcePublicationInResource;
   // A Note loads its publication on the way in, so the unpublished answer is the baseline a test overrides
   const setupNoteResource = () => {
     trpcMsw.resource.readResource.query(({ input }) => ({
@@ -573,6 +580,36 @@ describe(useResourceStore, () => {
     expect(contentVersions).toStrictEqual([0, 1]);
   });
 
+  // Two saves issued back to back, against a server that refuses any save sent with a version it no longer holds. The
+  // Second is sent once the first has answered, so it carries the version the first left and lands rather than being
+  // Refused as stale and leaving the refresh prompt over the blade
+  test("does not refuse the second of two quick saves as stale", async () => {
+    expect.hasAssertions();
+
+    let serverContentVersion = 0;
+    trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
+      if (input.contentVersion !== serverContentVersion)
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
+
+      serverContentVersion++;
+      return { ...createResource(resourceId), contentVersion: serverContentVersion };
+    });
+    const notificationStore = useNotificationStore();
+    const resourceStore = useResourceStore();
+    const { readContent, saveContent } = resourceStore;
+    const { saveState } = storeToRefs(resourceStore);
+    const { readResource } = useReadOpenResource();
+    await readResource();
+    await readContent(noop);
+    saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    await settleSave();
+
+    expect(serverContentVersion).toBe(2);
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+    expect(notificationStore.notifications).toHaveLength(0);
+  });
+
   // Records the name of each content the server receives, and holds the first save until the test releases it, so a
   // Save issued meanwhile queues behind it
   const holdFirstSave = () => {
@@ -712,16 +749,16 @@ describe(useResourceStore, () => {
     expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
 
-  // Renames of one resource queue, so the second's rollback has to restore the name the rename ahead of it
-  // Stored — the name it read when it was issued predates that one, and leaves a name the server never accepted
-  // On the blade until the next load
-  test("rolls a failed rename back to the rename ahead of it", async () => {
+  // Renames of one resource queue on the row they write, and a refused rename leaves the row as the rename ahead of it
+  // Answered it. Nothing it read when it was issued is put back, so the blade never shows a name the server rejected
+  test("keeps the name the rename ahead of a refused rename stored", async () => {
     expect.hasAssertions();
 
     trpcMsw.sheet.updateResource.mutation(({ input }) => {
       if (input.name === failingName) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-      return { ...createResource(resourceId), name: input.name ?? "" };
+      // A server write bumps the row's version, so the answer lands over the row it was issued against
+      return { ...createResource(resourceId), name: input.name ?? "", version: 1 };
     });
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
@@ -812,10 +849,9 @@ describe(useResourceStore, () => {
     ]);
   });
 
-  // A second unpublish queues behind the first and finds nothing left to withdraw, so its rejection restores
-  // Nothing — the publication it read when it was issued is the one the first unpublish already removed, and
-  // Putting it back offers a public link the server no longer serves
-  test("rolls a failed unpublish back to the unpublish ahead of it", async () => {
+  // A second unpublish queues behind the first on the publication row, and its refusal leaves the tombstone the first one
+  // Answered in place. Nothing is put back, so no public link the server no longer serves comes back on screen
+  test("keeps the removal a refused second unpublish follows", async () => {
     expect.hasAssertions();
 
     let isFailing = false;
@@ -831,7 +867,7 @@ describe(useResourceStore, () => {
       if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
       isFailing = true;
-      return createResource(resourceId, ResourceType.Note);
+      return { ...publication, deletedAt: new Date(0), version: 1 };
     });
     await readResource();
     unpublishResource();
@@ -841,10 +877,9 @@ describe(useResourceStore, () => {
     expect(loadedPublication.value).toBeUndefined();
   });
 
-  // Publishing and unpublishing end the same publication row, so they run one after the other. On separate
-  // Executors they overlap: the unpublish captures the publication before the publish has created it, and its
-  // Rejection then rolls back to nothing — leaving a resource the server has published showing as a draft
-  test("queues an unpublish behind the publish it shares an executor with", async () => {
+  // Publishing and unpublishing end the same publication row. The publish is awaited, so it arrives the publication it
+  // Created, and a refused unpublish sent behind it takes nothing back: the resource the server published shows as published
+  test("keeps the publication a publish answered when an unpublish behind it is refused", async () => {
     expect.hasAssertions();
 
     const { promise: publishHandled, resolve: resolvePublishHandled } = Promise.withResolvers<void>();
@@ -956,7 +991,7 @@ describe(useResourceStore, () => {
     const { publishResource, unpublishResource } = resourceStore;
     const { readResource } = useReadOpenResource();
     trpcMsw.note.publishResource.mutation(() => publication);
-    trpcMsw.note.unpublishResource.mutation(() => createResource(resourceId, ResourceType.Note));
+    trpcMsw.note.unpublishResource.mutation(() => ({ ...publication, deletedAt: new Date(0), version: 1 }));
     await readResource();
     publishResource();
     await waitForSynchronizedFunctions();
@@ -1215,32 +1250,36 @@ describe(useResourceStore, () => {
   });
 
   // Keeping mine re-writes the local document as the newest version, so the other save is one version back in history
-  // And not overwritten
+  // And not overwritten. The kept write is sent at the other save's version, which the store takes as its base
   test("keeping mine saves over the other version and keeps it in history", async () => {
     expect.hasAssertions();
 
+    const contentVersions: number[] = [];
+    trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
+      contentVersions.push(input.contentVersion);
+      return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
+    });
     const resourceStore = useResourceStore();
     const { heldSave, resource, unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const { readContent } = resourceStore;
+    const { keepUnwrittenContent, readContent, saveContent } = resourceStore;
     const { readResource } = useReadOpenResource();
     await readResource();
     assert.exists(resource.value);
     const { contentVersion, id } = resource.value;
-    let contentVersionKept = contentVersion;
-    const keep = vi.fn<(type: ResourceType) => void>(() => {
-      contentVersionKept = resource.value?.contentVersion ?? contentVersion;
-    });
+    const keep = vi.fn<(type: ResourceType) => void>();
     const unregisterKeep = ResourceContentHookMap.Keep.register(keep);
     await readContent(noop);
     unwrittenContentResourceId.value = id;
     await withFinalizerAsync(async () => {
       serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1 });
       await readResource();
-      await resourceStore.keepUnwrittenContent();
+      await keepUnwrittenContent();
     }, unregisterKeep);
+    saveContent(createDefaultSheetResource());
+    await settleSave();
 
     expect(keep).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
-    expect(contentVersionKept).toBe(contentVersion + 1);
+    expect(contentVersions).toStrictEqual([contentVersion + 1]);
     expect(heldSave.value).toBeUndefined();
   });
 

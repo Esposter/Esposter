@@ -135,6 +135,20 @@ Whole-value reads with no version keep the run scope. Each group in the tasks li
 
 A blob-backed listing is not an overlay table. Its bucket is the index, so no write puts a row in it, and a write to it is an awaited call with no entry and no rollback. The call backgrounds are the first, in group 4.4: an upload re-reads the listing once the server confirms it, since the server checks the size a presigned url could not bound, and a delete leaves the slot listed until the worker reclaims the blob, which changes the listing's topic. The listing is a cached read, as it was, and the topic a read watches is what brings the change back.
 
+## Resource stores
+
+The open resource is two overlay rows, its resource row and its publication, each held by key. `applyResource` arrives the page's read of the row, and a read of the resource already open is a refresh that arrives the same way. The name and the tags are patch entries over the held row, so a rename and a tag edit compose, and the server's answer arrives the row at the version it names. Duplicate and publish are awaited writes: duplicate arrives the copy when the server answers, and publish arrives the publication it created. The page's buttons read a count of those writes in flight, since an awaited write has no entry to say it is pending.
+
+Unpublish is a tombstone. The server sets `deletedAt` on the publication and removes its published versions in one batch, and a republish revives the row at a higher version. The reads a client holds keep the tombstone, so a removal reaches a row the client already holds. Every server statement that decides whether a resource is published takes only live rows, through `getLivePublicationWhere`, the one helper that names the filter. The unpublish procedure answers the removed publication, or nothing when it removed none, so the MCP tool that wraps it answers the same.
+
+A content save is an optimistic write whose entry only reads the resource's row, so saves of one resource queue on that row and no save supersedes another. A save sends the version of the content the store holds, `contentBaseVersion`, not the row's `contentVersion`. That version moves when the content is read, when the store's own save lands, and when a kept document is written. Rejected: sending the row's version. A server row with a newer `contentVersion` arrives into the open resource before the other device's document is adopted, so an autosave sent with that version would overwrite the save it has not adopted. Keeping mine moves the base version and leaves the row as it is.
+
+A favorite is a row keyed by user and resource. Removing it is a tombstone, and setting it again revives that row through the upsert the pair tables use, so the list places a star by the time it was set. The toggle's entry sets the star the click would make, and the server's answer is the row. The list's joined resources are kept per read, by resource id, beside the overlay, because a read joins fields that are not the overlay's own copy of the resource. A star shows only once a read has joined its resource. Its key is two columns, so `CompositeKeyColumns` names them, as it does the other pair tables.
+
+Recent is the ordered ids the last read answered, computed over the overlay's resource rows. A deleted resource's tombstone drops out of it without a re-read, and a renamed one shows its name at once. The last access is the access row's, so it is kept per read beside the rows.
+
+Version history reads its timeline on the run scope. The timeline is one whole-value read that no version covers, so it is residue, and a newer read of the panel aborts the older one. Restore is an awaited write that arrives the restored row. A revision's answer is a version number, which no row holds, so the history is read again after it.
+
 ## Database
 
 The version facts were checked against the installed Drizzle release and with a probe, which ran the generated SQL on SQLite:
