@@ -22,6 +22,8 @@ import {
 } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
+import { createFriends } from "#server/trpc/routers/createFriends.test";
+import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { userRouter } from "#server/trpc/routers/user";
@@ -217,13 +219,58 @@ describe("userRouter", () => {
   test("reads empty statuses with default values", async () => {
     expect.hasAssertions();
 
-    const nonExistentUserId = v7();
-    const userStatus = takeOne(await caller.readStatuses([nonExistentUserId]));
+    const userStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(userStatus.expiresAt).toBeNull();
     expect(userStatus.message).toBe("");
     expect(userStatus.status).toBe(UserStatus.Online);
-    expect(userStatus.userId).toBe(nonExistentUserId);
+    expect(userStatus.userId).toBe(userId);
+  });
+
+  // A status is read by its owner, the owner's friends and the users who share a room with the owner, and no one else
+  test("does not read the status of a stranger", async () => {
+    expect.hasAssertions();
+
+    const stranger = await createMockAuthSession(mockContext.db);
+    await createCallerFactory(userRouter)(await createMockContext(stranger)).upsertStatus({
+      message,
+      status: UserStatus.DoNotDisturb,
+    });
+
+    await expect(caller.readStatuses([stranger.user.id])).resolves.toStrictEqual([]);
+  });
+
+  test("reads the status of a user who shares a room with the caller", async () => {
+    expect.hasAssertions();
+
+    const room = await createCallerFactory(roomRouter)(mockContext).createRoom({ name });
+    const roommate = await createMockAuthSession(mockContext.db);
+    await createRoomMember(mockContext, room.id, roommate.user);
+    await createCallerFactory(userRouter)(await createMockContext(roommate)).upsertStatus({
+      message,
+      status: UserStatus.DoNotDisturb,
+    });
+
+    const userStatus = takeOne(await caller.readStatuses([roommate.user.id]));
+
+    expect(userStatus.message).toBe(message);
+    expect(userStatus.status).toBe(UserStatus.DoNotDisturb);
+  });
+
+  test("reads the status of a friend", async () => {
+    expect.hasAssertions();
+
+    const friend = await createMockAuthSession(mockContext.db);
+    await createFriends(mockContext, friend.user);
+    await createCallerFactory(userRouter)(await createMockContext(friend)).upsertStatus({
+      message,
+      status: UserStatus.DoNotDisturb,
+    });
+
+    const userStatus = takeOne(await caller.readStatuses([friend.user.id]));
+
+    expect(userStatus.message).toBe(message);
+    expect(userStatus.status).toBe(UserStatus.DoNotDisturb);
   });
 
   test("upsert status inserts", async () => {

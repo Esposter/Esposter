@@ -26,6 +26,7 @@ import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { deleteAccountSessions } from "#server/services/user/deleteAccountSessions";
 import { getDataExportLink } from "#server/services/user/getDataExportLink";
+import { getStatusVisibleWhere } from "#server/services/user/getStatusVisibleWhere";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
@@ -74,7 +75,7 @@ import {
   VoiceInputMode,
 } from "@esposter/db-schema";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const userRouter = router({
   // The upload lands in R2 without the bucket binding, so the listing it changes is woken by this confirm, which the client sends
@@ -218,15 +219,15 @@ export const userRouter = router({
     .meta({ staticReason: "The user object pushes each status change to its sockets as a typed event" })
     .input(userStatusIdsInputSchema)
     .query<SetNonNullable<UserStatusInMessage, "status">[]>(async ({ ctx, input }) => {
-      const foundUserStatuses = await ctx.db
-        .select()
-        .from(userStatusesInMessage)
-        .where(inJsonArray(userStatusesInMessage.userId, input));
-      const statusMap = new Map(foundUserStatuses.map((userStatus) => [userStatus.userId, userStatus]));
+      // A user the caller may not see is left out, not answered with the default below, which is for a visible user
+      const visibleUserStatuses = await ctx.db
+        .select({ status: userStatusesInMessage, userId: usersInAuth.id })
+        .from(usersInAuth)
+        .leftJoin(userStatusesInMessage, eq(userStatusesInMessage.userId, usersInAuth.id))
+        .where(and(inJsonArray(usersInAuth.id, input), getStatusVisibleWhere(ctx.db, ctx.user.id)));
 
-      return input.map((userId): SetNonNullable<UserStatusInMessage, "status"> => {
-        const foundStatus = statusMap.get(userId);
-        if (foundStatus) return { ...foundStatus, status: getDetectedUserStatus(foundStatus) };
+      return visibleUserStatuses.map(({ status, userId }): SetNonNullable<UserStatusInMessage, "status"> => {
+        if (status) return { ...status, status: getDetectedUserStatus(status) };
         // A user with no status row is treated as online: a row is inserted the moment they go offline, so
         // Its absence is the only state left
         return {
