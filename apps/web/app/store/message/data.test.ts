@@ -607,6 +607,120 @@ describe(useDataStore, () => {
 
   // The thread pane holds replies the room's window does not, so a reconnect reads them back with the window: a reply
   // Deleted while the socket is closed leaves the pane, and an edited one takes its change
+  // A pin is the room's answer, drawn through the funnel an edit takes, so the copy the write named is the one held
+  test("a pin draws the message the room answers", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.pinMessage.mutation(() => ({ ...createRoomMessage(roomId, message), isPinned: true, version: 1 }));
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { getSlice, pinMessage } = dataStore;
+    getSlice(roomId).items.value = [
+      { ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), id: roomMessageId },
+    ];
+    const isPinned = await pinMessage({ id: roomMessageId, roomId });
+
+    expect(isPinned).toBe(true);
+    expect(takeOne(items.value).isPinned).toBe(true);
+  });
+
+  test("a refused pin leaves the message unpinned", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.pinMessage.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+    });
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { getSlice, pinMessage } = dataStore;
+    getSlice(roomId).items.value = [
+      { ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), id: roomMessageId },
+    ];
+    const isPinned = await pinMessage({ id: roomMessageId, roomId });
+
+    expect(isPinned).toBe(false);
+    expect(takeOne(items.value).isPinned).toBe(false);
+  });
+
+  // The race a rollback used to lose: a read of the message from before the unpin lands after the unpin's answer. The
+  // Answer names the newer version, so the read's older copy cannot pin the message again
+  test("a late read of a pinned message does not re-pin it once the unpin is answered", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.unpinMessage.mutation(() => ({
+      ...createRoomMessage(roomId, message),
+      isPinned: false,
+      version: 2,
+    }));
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { getSlice, storeUpdateMessage, unpinMessage } = dataStore;
+    getSlice(roomId).items.value = [
+      {
+        ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
+        id: roomMessageId,
+        isPinned: true,
+        version: 1,
+      },
+    ];
+    await unpinMessage({ id: roomMessageId, roomId });
+    await storeUpdateMessage({ ...createRoomMessage(roomId, message), id: roomMessageId, isPinned: true, version: 1 });
+
+    expect(takeOne(items.value).isPinned).toBe(false);
+  });
+
+  test("a deleted message leaves the list when the room answers, and stays when it refuses", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.deleteMessage.mutation(() => undefined);
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { deleteMessage, getSlice } = dataStore;
+    getSlice(roomId).items.value = [
+      { ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), id: roomMessageId },
+    ];
+    const isDeleted = await deleteMessage({ id: roomMessageId, roomId });
+
+    expect(isDeleted).toBe(true);
+    expect(items.value).toStrictEqual([]);
+
+    trpcMsw.message.deleteMessage.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+    });
+    getSlice(roomId).items.value = [
+      { ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), id: roomMessageId },
+    ];
+    const isRefused = await deleteMessage({ id: roomMessageId, roomId });
+
+    expect(isRefused).toBe(false);
+    expect(takeOne(items.value).message).toBe(message);
+  });
+
+  // The room answers a removal with the message as it now stands, its preview cleared, so the answer draws that copy
+  test("a link preview removal draws the message the room answers", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.deleteLinkPreviewResponse.mutation(() => ({
+      ...createRoomMessage(roomId, message),
+      linkPreviewResponse: null,
+      version: 1,
+    }));
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { deleteLinkPreviewResponse, getSlice } = dataStore;
+    getSlice(roomId).items.value = [
+      {
+        ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
+        id: roomMessageId,
+        linkPreviewResponse: { favicons: [], mediaType: "", url: "" },
+        version: 0,
+      },
+    ];
+    await deleteLinkPreviewResponse({ id: roomMessageId, roomId });
+
+    expect(takeOne(items.value).linkPreviewResponse).toBeNull();
+  });
+
   test("refreshes a thread pane's replies with the window after a reconnect", async () => {
     expect.hasAssertions();
 
