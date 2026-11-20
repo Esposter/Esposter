@@ -23,7 +23,7 @@ export const createOptimisticMessage = (input: CreateMessageInput, userId: strin
     isPinned: false,
     linkPreviewResponse: null,
     mentions: [],
-    message: input.message || "",
+    message: input.message ?? "",
     replyToId: input.replyToId || null,
     roomId: input.roomId,
     senderName: null,

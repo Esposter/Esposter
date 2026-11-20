@@ -27,11 +27,7 @@ export const getRender =
         suggestion.value = undefined;
         return true;
       },
-      onStart: (props) => {
-        show(props);
-      },
-      onUpdate: (props) => {
-        show(props);
-      },
+      onStart: show,
+      onUpdate: show,
     };
   };
