@@ -1,16 +1,35 @@
 // @vitest-environment nuxt
+import type { UserSettingsInMessage } from "@esposter/db-schema";
+
+import { useSession } from "#src/services/auth/authClient.test";
 import { createMeeting } from "#src/services/message/room/realtime/createMeeting.test";
 import { createParticipant } from "#src/services/message/room/realtime/createParticipant.test";
 import { spyOnMeetingInit } from "#src/services/message/room/realtime/spyOnMeetingInit.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useMediaStore } from "#src/store/message/room/call/media";
 import { useRealtimeStore } from "#src/store/message/room/realtime";
 import { useCallBackgroundStore } from "#src/store/message/user/settings/callBackground";
+import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 import RealtimeKitClient from "@cloudflare/realtimekit";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
+import {
+  DEFAULT_AUTO_IDLE_THRESHOLD_MS,
+  DEFAULT_INPUT_SENSITIVITY_DECIBELS,
+  DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
+  DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
+  DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
+  NoiseSuppressionMode,
+  VoiceInputMode,
+} from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { v7 } from "uuid";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+interface MockSessionValue {
+  data?: undefined | { user: { id: string } };
+}
 
 // A transformer whose middleware and teardown each pick records, so a test reads which one was released
 const createTransformer = () => ({
@@ -25,7 +44,29 @@ const createTransformer = () => ({
 });
 
 describe(useRealtimeStore, () => {
+  const { trpcMsw } = setupMswTrpc();
   const imagePath = "imagePath";
+  const userSettings: UserSettingsInMessage = {
+    autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
+    createdAt: new Date(0),
+    deletedAt: null,
+    inputSensitivityDecibels: DEFAULT_INPUT_SENSITIVITY_DECIBELS,
+    isDeafenOnJoin: false,
+    isMuteOnJoin: false,
+    microphoneVolumePercentage: DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
+    noiseSuppressionMode: NoiseSuppressionMode.Custom,
+    pushToTalkKeybind: "",
+    pushToTalkReleaseDelayMs: DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
+    speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
+    updatedAt: new Date(0),
+    userId: v7(),
+    version: 0,
+    virtualBackground: "",
+    voiceInputMode: VoiceInputMode.VoiceActivity,
+  };
+  beforeEach(() => {
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userSettings.userId } } }));
+  });
 
   afterEach(() => {
     for (const element of document.querySelectorAll("audio")) element.remove();
@@ -130,6 +171,38 @@ describe(useRealtimeStore, () => {
     await waitForSynchronizedFunctions();
 
     expect(transformer.destruct).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  // The setting is saved once the video has taken the change, so a background the video refused is not saved
+  test("does not save a virtual background the video refused", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(RealtimeKitVideoBackgroundTransformer, "isSupported").mockReturnValue(true);
+    vi.spyOn(RealtimeKitVideoBackgroundTransformer, "init").mockResolvedValue(
+      createTransformer() as unknown as RealtimeKitVideoBackgroundTransformer,
+    );
+    const callBackgroundStore = useCallBackgroundStore();
+    vi.spyOn(callBackgroundStore, "readVirtualBackgroundImagePath").mockResolvedValue(imagePath);
+    const saveUserSettings = vi.fn<() => UserSettingsInMessage>(() => userSettings);
+    trpcMsw.user.readUserSettings.query(() => userSettings);
+    trpcMsw.user.updateUserSettings.mutation(saveUserSettings);
+    const { meeting } = createMeeting();
+    meeting.self.addVideoMiddleware.mockRejectedValue(new Error(" "));
+    spyOnMeetingInit(meeting);
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    const userSettingsStore = useUserSettingsStore();
+    const { readUserSettings } = userSettingsStore;
+    const realtimeStore = useRealtimeStore();
+    const { connect, setCamera, setVirtualBackground } = realtimeStore;
+    await readUserSettings();
+    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await setCamera(true);
+    setVirtualBackground(imagePath);
+    await waitForSynchronizedFunctions();
+
+    expect(alerts.value).toHaveLength(1);
+    expect(saveUserSettings).not.toHaveBeenCalled();
   });
 
   // The browser keeps the call's sound quiet until the reader's own press, so a refused play raises the notice and
