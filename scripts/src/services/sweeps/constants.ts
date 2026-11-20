@@ -15,6 +15,9 @@ export const SKILLS_LOCK_FILE = "skills-lock.json";
 export const CLAUDE_PATHSPEC_EXCLUDE = ":(exclude).claude";
 // The NUL byte: a file holding one anywhere is binary by `git diff`'s own heuristic, so its bytes are data rather than source
 export const BINARY_BYTE = 0;
+// A camel hump: a lowercase letter or digit meeting a capital. The one boundary both the name segment rule and a
+// Component's path split on, so it is written once here and composed into each
+export const CAMEL_HUMP_REGEX: RegExp = /(?<=[a-z\d])(?=[A-Z])/u;
 // A camel hump, a snake underscore or a member dot — where one segment of a name ends and the next begins. An
 // Acronym runs into the word after it without a hump (`aHTMLFoo`), so its last capital is a boundary of its own
-export const NAME_SEGMENT_REGEX: RegExp = /(?<=[a-z\d])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|[._$]+/u;
+export const NAME_SEGMENT_REGEX: RegExp = new RegExp(`${CAMEL_HUMP_REGEX.source}|(?<=[A-Z])(?=[A-Z][a-z])|[._$]+`, "u");
