@@ -2,6 +2,7 @@ import type { CreateMessageInput } from "#shared/models/db/message/CreateMessage
 import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
+import type { VotePollInput } from "#shared/models/db/message/VotePollInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { ComposerTarget } from "#src/models/message/ComposerTarget";
@@ -31,6 +32,9 @@ import {
   Operation,
   withFinalizerAsync,
 } from "@esposter/shared";
+
+// A message id is only unique within its room, so a poll with a vote out is keyed by its room and its id together
+const getVotingPollKey = ({ id, roomId }: Pick<ClientMessage, "id" | "roomId">) => `${roomId}:${id}`;
 
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
@@ -155,10 +159,11 @@ export const useDataStore = defineStore("message/data", () => {
       },
     );
   };
-  // An edit and an attachment removal are awaited. The room object decides the row it stores: the members the new text
-  // Names, the time of the edit, the files it keeps and the version that orders it. The object sends each change to every
-  // Socket but this device's own, so the answer is the only copy this device gets, and it goes through the funnel the room's
-  // Event goes through, so every copy of the message takes it. A refused write changes nothing on screen, and the alert says why
+  // An edit, an attachment removal and a poll vote are awaited. The room object decides the row it stores: the members
+  // The new text names, the time of the edit, the files it keeps and the version that orders it. The object sends each
+  // Change to every socket but this device's own, so the answer is the only copy this device gets, and it goes through
+  // The funnel the room's event goes through, so every copy of the message takes it. A refused write changes nothing on
+  // Screen, and the alert says why
   const awaitMessageAnswer = (write: () => Promise<RoomMessage>, roomId: ClientMessage["roomId"]) =>
     getResultAsync(write).match(
       async (updatedMessage) => {
@@ -174,6 +179,22 @@ export const useDataStore = defineStore("message/data", () => {
     awaitMessageAnswer(() => $trpc.message.updateMessage.mutate(input), input.roomId);
   const deleteFile = ({ fileId, ...messageKey }: DeleteFileInput) =>
     awaitMessageAnswer(() => $trpc.message.deleteFile.mutate({ fileId, ...messageKey }), messageKey.roomId);
+  // The polls with a vote out. A second vote on one poll is not sent while the first is, and the poll's radio group reads
+  // Its own key only
+  const votingPollKeys = ref(new Set<string>());
+  const checkIsVotePending = (message: ClientMessage) => votingPollKeys.value.has(getVotingPollKey(message));
+  const votePoll = getSynchronizedFunction(async (input: VotePollInput) => {
+    const votingPollKey = getVotingPollKey(input);
+    if (votingPollKeys.value.has(votingPollKey)) return;
+
+    votingPollKeys.value.add(votingPollKey);
+    await withFinalizerAsync(
+      () => awaitMessageAnswer(() => $trpc.message.votePoll.mutate(input), input.roomId),
+      () => {
+        votingPollKeys.value.delete(votingPollKey);
+      },
+    );
+  });
   // The sender's own message is pushed first (our list is reversed — most recent at the front) so the bubble
   // Renders immediately in its loading state, THEN the Create hooks run: one of them fetches attachment download
   // Urls over the network, and running it before the push would gate the "optimistic" render behind a round trip.
@@ -218,9 +239,9 @@ export const useDataStore = defineStore("message/data", () => {
     baseStoreDeleteMessage(input);
   };
   // A reconnect replays the messages it missed but not the edits or deletes, so every message the client holds is read
-  // Again by id: the loaded window and each row a store keeps beside it. A row the room does not return is a deletion the
-  // Closed socket missed, and one whose `updatedAt` differs from any copy of it is an edit it missed. Each goes through the
-  // Same funnel its live event would have, so every copy is written at once
+  // Again by id: the loaded window and each row a store keeps beside it. A row the room does not return is a deletion
+  // The closed socket missed. Every other row goes through the same funnel its live event would have, which applies it
+  // By its version: every copy is written at once or none is, so a row already at a copy's version changes nothing
   const refreshLoadedMessages = getSynchronizedFunction((roomId: ClientMessage["roomId"]) =>
     getResultAsync(async () => {
       const copiesById = Map.groupBy(
@@ -240,11 +261,10 @@ export const useDataStore = defineStore("message/data", () => {
       ).flat();
       const liveMessageMap = new Map(liveMessages.map((message) => [message.id, message]));
       await Promise.all(
-        Array.from(copiesById, async ([messageId, copies]) => {
+        Array.from(copiesById.keys(), async (messageId) => {
           const liveMessage = liveMessageMap.get(messageId);
-          if (!liveMessage) await storeDeleteMessage({ id: messageId, roomId });
-          else if (copies.some(({ updatedAt }) => updatedAt.getTime() !== liveMessage.updatedAt.getTime()))
-            await storeUpdateMessage({ ...liveMessage, roomId });
+          if (liveMessage) await storeUpdateMessage({ ...liveMessage, roomId });
+          else await storeDeleteMessage({ id: messageId, roomId });
         }),
       );
     }).match(noop, console.error),
@@ -282,6 +302,7 @@ export const useDataStore = defineStore("message/data", () => {
   // Only expose the internal store CRUD functions for subscriptions; everything else directly calls
   // The $trpc mutations, tracked by their related subscriptions.
   return {
+    checkIsVotePending,
     createMessage,
     deleteFile,
     getPreviousCursorRef,
@@ -295,6 +316,7 @@ export const useDataStore = defineStore("message/data", () => {
     storeDeleteMessage,
     storeUpdateMessage,
     updateMessage,
+    votePoll,
     ...restData,
     typings,
   };

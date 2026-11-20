@@ -426,16 +426,19 @@ const baseMessageRouter = router({
     }),
   // Casting a vote is not editing the poll: any member may vote, while editing or deleting the poll stays with its
   // Author. The client names the option it picked and the object applies it to the stored poll, so a member can never
-  // Rewrite anyone else's vote by sending a whole poll body. An empty option id withdraws the caller's vote
+  // Rewrite anyone else's vote by sending a whole poll body. An empty option id withdraws the caller's vote. The poll
+  // As the object now stores it is the answer, since the object sends the vote to every socket but this device's own
   votePoll: getMessageProcedure(votePollInputSchema, MessageOperation.Vote)
     .meta({ staticReason: "The room object pushes the poll with the vote to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input }) => {
+    .mutation<RoomMessage>(async ({ ctx, input }) => {
       const votedMessage = await useRoomObject(input.roomId).votePoll(
         { id: input.id, optionId: input.optionId || undefined },
         getRoomActor(ctx),
       );
       if (!votedMessage)
         throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Message, JSON.stringify(input));
+
+      return votedMessage;
     }),
 });
 

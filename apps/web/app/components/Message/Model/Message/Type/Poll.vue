@@ -25,11 +25,7 @@ const pollOptionItems = computed(() => pollContent.value.options.map(({ id, labe
 const optionLabelMap = computed(
   () => new Map(pollContent.value.options.map(({ id, label }): [string, string] => [id, label])),
 );
-const { isVoting, vote } = await useVotePoll(
-  () => message,
-  () => pollContent.value,
-  isPreview,
-);
+const { isVoting, vote } = await useVotePoll(() => message, isPreview);
 </script>
 
 <template>

@@ -18,6 +18,7 @@ describe(useVotePoll, () => {
   const roomId = v7();
   const userId = v7();
   const otherUserId = v7();
+  const otherRoomId = v7();
   const optionId = v7();
   const pollContent: PollMessageContent = {
     options: [{ id: optionId, label: "label" }],
@@ -42,12 +43,9 @@ describe(useVotePoll, () => {
     const votePoll = vi.fn<(input: { id: number; optionId: string; roomId: string }) => void>();
     trpcMsw.message.votePoll.mutation(({ input }) => {
       votePoll(input);
+      return message;
     });
-    const { vote } = await useVotePoll(
-      () => message,
-      () => ({ ...pollContent, votes: { [userId]: optionId } }),
-      false,
-    );
+    const { vote } = await useVotePoll(() => message, false);
     vote("");
     await flushPromises();
 
@@ -65,14 +63,11 @@ describe(useVotePoll, () => {
     const { promise: voteReleased, resolve: releaseVote } = Promise.withResolvers<void>();
     trpcMsw.message.votePoll.mutation(async () => {
       await voteReleased;
+      return message;
     });
     // Shallow so the entity is not deep-proxied — only the swap between polls has to be tracked
     const currentMessage = shallowRef(message);
-    const { isVoting, vote } = await useVotePoll(
-      () => currentMessage.value,
-      () => pollContent,
-      false,
-    );
+    const { isVoting, vote } = await useVotePoll(() => currentMessage.value, false);
     vote(optionId);
 
     expect(isVoting.value).toBe(true);
@@ -85,6 +80,28 @@ describe(useVotePoll, () => {
     await flushPromises();
 
     expect(isVoting.value).toBe(false);
+  });
+
+  // A message id is only unique within its room, so a poll with the same id in another room is not voting while this one is
+  test("reports voting only for the room the vote was cast in", async () => {
+    expect.hasAssertions();
+
+    const message = createPollMessage(1);
+    const otherRoomMessage = { ...createPollMessage(1), roomId: otherRoomId };
+    const { promise: voteReleased, resolve: releaseVote } = Promise.withResolvers<void>();
+    trpcMsw.message.votePoll.mutation(async () => {
+      await voteReleased;
+      return message;
+    });
+    const currentMessage = shallowRef(message);
+    const { isVoting, vote } = await useVotePoll(() => currentMessage.value, false);
+    vote(optionId);
+    currentMessage.value = otherRoomMessage;
+
+    expect(isVoting.value).toBe(false);
+
+    releaseVote();
+    await flushPromises();
   });
 
   // A refused vote changes nothing. The optimistic apply used to restore the poll as it stood before the vote, and that
@@ -101,11 +118,7 @@ describe(useVotePoll, () => {
     const { getSlice, storeUpdateMessage } = dataStore;
     const message = { ...createPollMessage(1), version: 1 };
     getSlice(roomId).items.value = [message];
-    const { vote } = await useVotePoll(
-      () => message,
-      () => pollContent,
-      false,
-    );
+    const { vote } = await useVotePoll(() => message, false);
     vote(optionId);
     const newerPoll = JSON.stringify({ ...pollContent, votes: { [otherUserId]: optionId } });
     await storeUpdateMessage({ id: message.id, message: newerPoll, roomId, version: 2 });
@@ -133,11 +146,7 @@ describe(useVotePoll, () => {
     const { getSlice, storeUpdateMessage } = dataStore;
     const message = { ...createPollMessage(1), version: 1 };
     getSlice(roomId).items.value = [message];
-    const { vote } = await useVotePoll(
-      () => message,
-      () => pollContent,
-      false,
-    );
+    const { vote } = await useVotePoll(() => message, false);
     vote(optionId);
     const newerPoll = JSON.stringify({ ...pollContent, votes: { [otherUserId]: optionId } });
     await storeUpdateMessage({ id: message.id, message: newerPoll, roomId, version: 3 });

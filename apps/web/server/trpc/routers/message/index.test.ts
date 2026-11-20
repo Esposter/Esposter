@@ -480,12 +480,14 @@ describe("messageRouter", () => {
   ])("$name", async ({ optionId, sent }) => {
     expect.hasAssertions();
 
+    const votedMessage = createRoomMessage({ type: MessageType.Poll, version: 1 });
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ type: MessageType.Poll })]);
-    roomObject.votePoll.mockReturnValue(createRoomMessage({ type: MessageType.Poll }));
+    roomObject.votePoll.mockReturnValue(votedMessage);
 
-    await messageCaller.votePoll({ id: messageId, optionId, roomId });
+    const answer = await messageCaller.votePoll({ id: messageId, optionId, roomId });
 
     expect(roomObject.votePoll).toHaveBeenCalledExactlyOnceWith({ id: messageId, optionId: sent }, { userId });
+    expect(answer).toStrictEqual(votedMessage);
   });
 
   test("fails vote with BAD_REQUEST once the room no longer holds the poll", async () => {
