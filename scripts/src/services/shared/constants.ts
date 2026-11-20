@@ -1,8 +1,8 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer; the escape is the sequence's opener; `isolatedDeclarations` demands the annotation */
 import type { Vector } from "#src/models/shared/Vector";
 
-import { findRepositoryRoot } from "#src/services/shared/findRepositoryRoot";
 import { KIBIBYTE } from "@esposter/configuration/constants";
+import { findRepositoryRoot } from "@esposter/shared-node/find-repository-root";
 import { homedir } from "node:os";
 import { join } from "node:path";
 

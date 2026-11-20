@@ -42,6 +42,10 @@
       "source": "./src/childProcess.ts",
       "default": "./dist/child-process.js"
     },
+    "./find-repository-root": {
+      "source": "./src/services/findRepositoryRoot.ts",
+      "default": "./dist/find-repository-root.js"
+    },
     "./reporter": {
       "source": "./src/services/BenchmarkMarkdownReporter.ts",
       "default": "./dist/reporter.js"
@@ -57,6 +61,7 @@
       "./bench": "./dist/bench.js",
       "./cache": "./dist/cache.js",
       "./child-process": "./dist/child-process.js",
+      "./find-repository-root": "./dist/find-repository-root.js",
       "./reporter": "./dist/reporter.js",
       "./wake-check": "./dist/wake-check.js",
       "./package.json": "./package.json"

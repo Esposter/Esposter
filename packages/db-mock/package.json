@@ -54,6 +54,7 @@
     "@cloudflare/workers-types": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/shared": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "@types/node": "catalog:",
     "tsdown": "catalog:",
     "uuid": "catalog:"
