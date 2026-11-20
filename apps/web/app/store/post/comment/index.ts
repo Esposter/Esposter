@@ -12,6 +12,7 @@ import { postTable } from "#src/services/post/overlay/constants";
 import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry";
 import { getSetPostEntry } from "#src/services/post/overlay/getSetPostEntry";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
+import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useUserStore } from "#src/store/message/user/index";
 import { useOverlayStore } from "#src/store/overlay";
@@ -176,11 +177,12 @@ export const useCommentStore = defineStore("post/comment", () => {
     deleteBranch(input);
     writeOptimistic(
       async () => {
-        // The counters and the replies a removal takes are only knowable here, so they move when the server answers
-        const { ancestorIds, removedIds } = await $trpc.post.deleteComment.mutate(input);
+        // The counters and the replies a removal takes are only knowable here, so they move when the server answers, and
+        // The answer is the tombstone of every reply it took, which arrives in place of each row
+        const { ancestorIds, removed } = await $trpc.post.deleteComment.mutate(input);
         refreshPostCountsInBackground(ancestorIds);
-        dropBranchKeys(removedIds);
-        return { arrivals: [], confirmed: [] };
+        dropBranchKeys(removed.map(({ id }) => id));
+        return createRowsResponse(postTable, removed);
       },
       { entry: getPostPatchEntry(input, { deletedAt: new Date() }), onError: createErrorAlert },
     );

@@ -2,7 +2,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { getLikedPostIds } from "#src/services/account/getLikedPostIds";
 import { getDb } from "#src/services/shared/getDb";
-import { postsInPost } from "@esposter/db-schema";
+import { getLiveRowWhere, postsInPost } from "@esposter/db-schema";
 import { getPostRanking } from "@esposter/shared";
 import { and, eq, inArray } from "drizzle-orm";
 
@@ -15,7 +15,7 @@ export const computePostRankingUpdates = async (userId: UserInAuth["id"]) => {
   const likedPosts = await getDb()
     .select({ createdAt: postsInPost.createdAt, id: postsInPost.id, likeCount: postsInPost.likeCount })
     .from(postsInPost)
-    .where(inArray(postsInPost.id, getLikedPostIds(userId)));
+    .where(and(inArray(postsInPost.id, getLikedPostIds(userId)), getLiveRowWhere(postsInPost)));
   return likedPosts.map(({ createdAt, id, likeCount }) =>
     getDb()
       .update(postsInPost)

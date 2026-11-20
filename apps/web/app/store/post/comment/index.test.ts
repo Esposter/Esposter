@@ -12,6 +12,15 @@ import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
+// The row a removal answers for a post it removed: a tombstone at the version the removal left, with its text cleared
+const removedRow = (post: ReturnType<typeof createPost>) => ({
+  ...post,
+  deletedAt: new Date(),
+  description: "",
+  title: "",
+  version: post.version + 1,
+});
+
 // Holds a branch's replies on the overlay, and lists them under their parent the way a page of the branch does
 const seedBranch = (parentId: string, replies: ReturnType<typeof createPost>[]) => {
   const commentStore = useCommentStore();
@@ -87,7 +96,7 @@ describe(useCommentStore, () => {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }
 
-      return { ancestorIds: [postId], removedIds: [otherComment.id] };
+      return { ancestorIds: [postId], removed: [removedRow(otherComment)] };
     });
     // The accepted delete reads the counts it moved, and the test waits for that read so it does not end before it
     const isCountRead = Promise.withResolvers<void>();
@@ -114,7 +123,10 @@ describe(useCommentStore, () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 2, parentId: comment.id });
-    trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], removedIds: [comment.id, reply.id] }));
+    trpcMsw.post.deleteComment.mutation(() => ({
+      ancestorIds: [postId],
+      removed: [removedRow(comment), removedRow(reply)],
+    }));
     trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: 0, version: countVersion }]);
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);

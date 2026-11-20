@@ -7,6 +7,7 @@ import { createPostDescriptionSchema } from "#src/services/post/createPostDescri
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
 import { check, index, integer, real, text } from "drizzle-orm/sqlite-core";
@@ -36,7 +37,7 @@ export const postsInPost = sqliteTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ commentCount, description, parentId, title, userId }) => [
+    extraConfig: ({ commentCount, deletedAt, description, parentId, title, userId }) => [
       // No min(1): a post may be a comment, which has no title
       check("posts_title_length_check", createMaxLengthCheckSql(title, POST_TITLE_MAX_LENGTH)),
       check("posts_description_length_check", createMaxLengthCheckSql(description, POST_DESCRIPTION_MAX_LENGTH)),
@@ -56,6 +57,8 @@ export const postsInPost = sqliteTable(
       // The thread a post is in is its first ancestor, which every post beneath it shares. Deleting a post reads that
       // Thread's rows rather than every post, so the index is on the expression the subtree reads, not on a column
       index("posts_firstAncestorId_index").on(sql`json_extract("ancestorIds", '$[0]')`),
+      // A removal leaves its subtree as tombstones, which the nightly purge reads through this index
+      createTombstoneIndex("posts", deletedAt),
     ],
     schema: postSchema,
     scope: { columns: ["id", "userId", "parentId"] },

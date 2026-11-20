@@ -4,10 +4,11 @@ import type { PostInPost, PostInPostWithRelations, UserInAuth } from "@esposter/
 import { getPostWithViewerLike } from "#server/services/post/getPostWithViewerLike";
 import { getViewerPostRelations } from "#server/services/post/getViewerPostRelations";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
-import { PostInPostRelations } from "@esposter/db-schema";
+import { getLiveRowWhere, PostInPostRelations } from "@esposter/db-schema";
 
 // The row a card renders: the author beside it, and the viewer's own like when there is a viewer to have one.
-// Signed out there is no like to look up, so the read drops the filtered relation rather than filtering on nobody
+// Signed out there is no like to look up, so the read drops the filtered relation rather than filtering on nobody.
+// A removed post is no post to read, so it is not found
 export const readPostWithRelations = async (
   db: Context["db"],
   id: PostInPost["id"],
@@ -17,7 +18,7 @@ export const readPostWithRelations = async (
   getPostWithViewerLike(
     await requireEntity(
       db.query.postsInPost.findFirst({
-        where: { id: { eq: id } },
+        where: { id: { eq: id }, RAW: getLiveRowWhere },
         with: userId ? getViewerPostRelations(userId) : PostInPostRelations,
       }),
       entityType,

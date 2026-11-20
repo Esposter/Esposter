@@ -4,6 +4,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { usePostStore } from "#src/store/post/index";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe(usePostStore, () => {
@@ -74,7 +75,7 @@ describe(usePostStore, () => {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }
 
-      return [otherPost.id];
+      return [{ ...otherPost, deletedAt: new Date(), description: "", title: "", version: otherPost.version + 1 }];
     });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
@@ -87,5 +88,26 @@ describe(usePostStore, () => {
     await isRefusedDeleteReceived.promise;
     await until(() => items.value.length).toBe(1);
     expect(takeOne(items.value).id).toBe(post.id);
+  });
+
+  // A read answered before a removal can arrive after it, naming the post at the version it held then. The removal's
+  // Tombstone is held at a later version, so that older row loses and the post stays off the feed
+  test("does not relist a removed post when a read answered before the removal arrives after it", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.post.deletePost.mutation(() => [
+      { ...post, deletedAt: new Date(), description: "", title: "", version: post.version + 1 },
+    ]);
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
+    const { deletePost, readItems, readPostPage } = postStore;
+    await readItems(() => Promise.resolve(readPostPage({ items: [post], nextCursor: "" })));
+    deletePost(post.id);
+    await until(() => items.value.length).toBe(0);
+    await flushPromises();
+
+    await readItems(() => Promise.resolve(readPostPage({ items: [post], nextCursor: "" })));
+
+    expect(items.value).toHaveLength(0);
   });
 });

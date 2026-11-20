@@ -125,14 +125,62 @@ describe("postRouter", () => {
 
     const newPost = await postCaller.createPost({ title });
     const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
-    const removedIds = await postCaller.deletePost(newPost.id);
+    const removedPosts = await postCaller.deletePost(newPost.id);
 
-    expect(removedIds.toSorted((firstId, secondId) => firstId.localeCompare(secondId))).toStrictEqual(
-      [newComment.id, newPost.id].toSorted((firstId, secondId) => firstId.localeCompare(secondId)),
-    );
+    expect(
+      removedPosts.map(({ id }) => id).toSorted((firstId, secondId) => firstId.localeCompare(secondId)),
+    ).toStrictEqual([newComment.id, newPost.id].toSorted((firstId, secondId) => firstId.localeCompare(secondId)));
     await expect(postCaller.readPost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, newPost.id).message}]`,
     );
+  });
+
+  // The client holds each removed post by its id, so the removal answers the tombstone of every post it removed, at the
+  // Version the removal left, with its text cleared so no reader is handed the removed words
+  test("answers the removal with each removed post as a tombstone at the version it leaves", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ description, title });
+    const [removedPost] = await postCaller.deletePost(newPost.id);
+
+    expect({
+      deletedAt: removedPost?.deletedAt instanceof Date,
+      description: removedPost?.description,
+      title: removedPost?.title,
+      version: removedPost?.version,
+    }).toStrictEqual({ deletedAt: true, description: "", title: "", version: 1 });
+  });
+
+  // A reply to a removed post would hang under a row no reader can show, so the reply is refused as a missing post
+  test("refuses a reply to a removed post", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    await postCaller.deletePost(newPost.id);
+
+    await expect(
+      postCaller.createComment({ description, id: v7(), parentId: newPost.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, newPost.id).message}]`,
+    );
+  });
+
+  // A feed page names a removed post as a tombstone, so a reader that holds the post drops it on its next read
+  test("reads a removed post in its page as a tombstone with no text", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ description, title });
+    await postCaller.deletePost(newPost.id);
+    const page = await postCaller.readPosts({});
+
+    const { deletedAt, description: pageDescription, id, title: pageTitle } = takeOne(page.items);
+    expect({ deletedAt: deletedAt instanceof Date, description: pageDescription, id, title: pageTitle }).toStrictEqual({
+      deletedAt: true,
+      description: "",
+      id: newPost.id,
+      title: "",
+    });
+    expect(page.items).toHaveLength(1);
   });
 
   test("fails delete with wrong user", async () => {
@@ -215,7 +263,7 @@ describe("postRouter", () => {
     const deletedComment = await postCaller.deleteComment(newComment.id);
     const post = await postCaller.readPost(newPost.id);
 
-    expect(deletedComment.removedIds).toHaveLength(1);
+    expect(deletedComment.removed).toHaveLength(1);
     expect(post.commentCount).toBe(0);
   });
 
@@ -248,13 +296,13 @@ describe("postRouter", () => {
     const deletedComment = await postCaller.deleteComment(newComment.id);
     const post = await postCaller.readPost(newPost.id);
 
-    expect(deletedComment.removedIds).toHaveLength(3);
+    expect(deletedComment.removed).toHaveLength(3);
     expect(post.commentCount).toBe(0);
   });
 
   // A reply page reads the replies of its parent by `parentId`, so the delete of that parent takes the page's replies with it,
   // And the page the replies were read from is the one the delete changes
-  test("deleting a comment empties the reader of its replies' page", async () => {
+  test("deleting a comment leaves its replies' page as tombstones", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
@@ -267,7 +315,7 @@ describe("postRouter", () => {
     await postCaller.deleteComment(newComment.id);
 
     const repliesAfter = await repliesCaller.readPosts({ parentId: newComment.id });
-    expect(repliesAfter.items).toHaveLength(0);
+    expect(repliesAfter.items.every(({ deletedAt }) => deletedAt !== null)).toBe(true);
   });
 
   test("deletes comment with deleting post", async () => {

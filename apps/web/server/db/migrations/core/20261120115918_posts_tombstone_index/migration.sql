@@ -1,0 +1,1 @@
+CREATE INDEX `posts_deletedAt_index` ON `post_posts` (`deletedAt`) WHERE "post_posts"."deletedAt" IS NOT NULL;

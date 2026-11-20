@@ -27,7 +27,13 @@ import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
 import { getPageOrderBy, getPageWhere, inJsonArray, toPage } from "@esposter/db";
-import { DatabaseEntityType, DerivedDatabaseEntityType, PostInPostRelations, postsInPost } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  DerivedDatabaseEntityType,
+  getLiveRowWhere,
+  PostInPostRelations,
+  postsInPost,
+} from "@esposter/db-schema";
 import { getPostRanking, Operation } from "@esposter/shared";
 import { and, isNotNull, isNull, sql } from "drizzle-orm";
 
@@ -37,7 +43,7 @@ export const postRouter = router({
       const parentPost = await requireEntity(
         ctx.db.query.postsInPost.findFirst({
           columns: { ancestorIds: true, depth: true, id: true },
-          where: { id: { eq: input.parentId } },
+          where: { id: { eq: input.parentId }, RAW: getLiveRowWhere },
         }),
         DatabaseEntityType.Post,
         input.parentId,
@@ -101,7 +107,11 @@ export const postRouter = router({
     .input(deleteCommentInputSchema)
     .mutation<DeletedComment>(async ({ ctx, input }) => {
       const userId = ctx.user.id;
-      const ownedComment = and(ownedBy(postsInPost, input, userId), isNotNull(postsInPost.parentId));
+      const ownedComment = and(
+        ownedBy(postsInPost, input, userId),
+        isNotNull(postsInPost.parentId),
+        getLiveRowWhere(postsInPost),
+      );
       // The ancestors are what the counters move, and they never change, so they are read ahead of the batch
       const { ancestorIds } = requireMutation(
         (await ctx.db.select({ ancestorIds: postsInPost.ancestorIds }).from(postsInPost).where(ownedComment))[0],
@@ -113,13 +123,12 @@ export const postRouter = router({
       const threadRootId = ancestorIds.at(0);
       if (!threadRootId)
         throw getInvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, JSON.stringify(input));
-      // The subtree is the comment and every reply beneath it. It is read inside the batch rather than before it: a reply
-      // Landing between a read and the delete would otherwise be subtracted from the ancestors without being named. The
-      // Read and the counter's own subquery see the same rows, since nothing else writes between them
-      const subtreeWhere = getPostSubtreeWhere(input, threadRootId);
-      const [removedRows, , deletedCommentRows] = await ctx.db.batch([
-        ctx.db.select({ id: postsInPost.id }).from(postsInPost).where(subtreeWhere),
-        // Every ancestor loses the whole subtree; the guard leaves the counters alone when the delete below will not land
+      // The live subtree is the comment and every live reply beneath it. It is read inside the batch rather than before it:
+      // A reply landing between a read and the removal would otherwise be subtracted from the ancestors without being named.
+      // The counter's own subquery and the removal see the same rows, since nothing else writes between them
+      const subtreeWhere = and(getPostSubtreeWhere(input, threadRootId), getLiveRowWhere(postsInPost));
+      const [, removedRows] = await ctx.db.batch([
+        // Every ancestor loses the live subtree; the guard leaves the counters alone when the removal below will not land
         ctx.db
           .update(postsInPost)
           .set({
@@ -131,26 +140,39 @@ export const postRouter = router({
               sql`exists (select 1 from ${postsInPost} where ${ownedComment})`,
             ),
           ),
-        ctx.db.delete(postsInPost).where(ownedComment).returning(),
-      ]);
-      requireMutation(deletedCommentRows[0], Operation.Delete, DerivedDatabaseEntityType.Comment, input);
-      return { ancestorIds, removedIds: removedRows.map(({ id }: Pick<PostInPost, "id">) => id) };
-    }),
-  deletePost: standardAuthedProcedure
-    .input(deletePostInputSchema)
-    .mutation<PostInPost["id"][]>(async ({ ctx, input }) => {
-      const ownedPost = and(ownedBy(postsInPost, input, ctx.user.id), isNull(postsInPost.parentId));
-      // Read in the batch with the delete, so a reply landing in between is either named or never written
-      const [removedRows, deletedPostRows] = await ctx.db.batch([
+        // The subtree is tombstoned rather than deleted: each row keeps its place and takes the version the removal raises, so a
+        // Read that answered before it cannot bring a reply back. The text is cleared, so no reader is handed the removed words
         ctx.db
-          .select({ id: postsInPost.id })
-          .from(postsInPost)
-          .where(and(getPostSubtreeWhere(input, input), sql`exists (select 1 from ${postsInPost} where ${ownedPost})`)),
-        ctx.db.delete(postsInPost).where(ownedPost).returning(),
+          .update(postsInPost)
+          .set({ deletedAt: new Date(), description: "", title: "" })
+          .where(and(subtreeWhere, sql`exists (select 1 from ${postsInPost} where ${ownedComment})`))
+          .returning(),
       ]);
-      requireMutation(deletedPostRows[0], Operation.Delete, DatabaseEntityType.Post, input);
-      return removedRows.map(({ id }: Pick<PostInPost, "id">) => id);
+      requireMutation(removedRows[0], Operation.Delete, DerivedDatabaseEntityType.Comment, input);
+      return { ancestorIds, removed: removedRows };
     }),
+  deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<PostInPost[]>(async ({ ctx, input }) => {
+    const ownedPost = and(
+      ownedBy(postsInPost, input, ctx.user.id),
+      isNull(postsInPost.parentId),
+      getLiveRowWhere(postsInPost),
+    );
+    // The live thread under the post is tombstoned in the one statement, and it is the owner's post that gates it, so a
+    // Reply landing meanwhile is either named in the answer or never written
+    const removedRows = await ctx.db
+      .update(postsInPost)
+      .set({ deletedAt: new Date(), description: "", title: "" })
+      .where(
+        and(
+          getPostSubtreeWhere(input, input),
+          getLiveRowWhere(postsInPost),
+          sql`exists (select 1 from ${postsInPost} where ${ownedPost})`,
+        ),
+      )
+      .returning();
+    requireMutation(removedRows[0], Operation.Delete, DatabaseEntityType.Post, input);
+    return removedRows;
+  }),
   // The procedure is rate-limited, so a session may be absent — no viewer means no like lookup at all
   readPost: standardRateLimitedProcedure
     .input(readPostInputSchema)
@@ -208,7 +230,9 @@ export const postRouter = router({
         await ctx.db
           .update(postsInPost)
           .set(rest)
-          .where(and(ownedBy(postsInPost, id, ctx.user.id), isNotNull(postsInPost.parentId)))
+          .where(
+            and(ownedBy(postsInPost, id, ctx.user.id), isNotNull(postsInPost.parentId), getLiveRowWhere(postsInPost)),
+          )
           .returning()
       )[0],
       Operation.Update,
@@ -227,7 +251,7 @@ export const postRouter = router({
         await ctx.db
           .update(postsInPost)
           .set(rest)
-          .where(and(ownedBy(postsInPost, id, ctx.user.id), isNull(postsInPost.parentId)))
+          .where(and(ownedBy(postsInPost, id, ctx.user.id), isNull(postsInPost.parentId), getLiveRowWhere(postsInPost)))
           .returning()
       )[0],
       Operation.Update,

@@ -10,6 +10,7 @@ import { postTable } from "#src/services/post/overlay/constants";
 import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
+import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
 import { omitUndefined, withFinalizerAsync } from "@esposter/shared";
@@ -91,15 +92,16 @@ export const usePostStore = defineStore("post", () => {
       },
     );
   };
-  // The post leaves the feed at once: its row is drawn removed, and the keys the server's answer names leave the list
-  // When it is kept. A refused delete restores nothing, since the row was never changed on the server and the entry
-  // Dropping at once leaves the row as held
+  // The post leaves the feed at once: its row is drawn removed, and the server's answer is the tombstone of each post the
+  // Removal took, which arrives in its place and leaves the feed's keys. A refused delete restores nothing, since the row
+  // Was never changed on the server and the entry dropping at once leaves the row as held
   const deletePost = (input: DeletePostInput) => {
     writeOptimistic(
       async () => {
-        const removedIds = new Set(await $trpc.post.deletePost.mutate(input));
+        const removedPosts = await $trpc.post.deletePost.mutate(input);
+        const removedIds = new Set(removedPosts.map(({ id }) => id));
         postKeys.value = postKeys.value.filter(({ id }) => !removedIds.has(id));
-        return { arrivals: [], confirmed: [] };
+        return createRowsResponse(postTable, removedPosts);
       },
       { entry: getPostPatchEntry(input, { deletedAt: new Date() }), onError: createErrorAlert },
     );

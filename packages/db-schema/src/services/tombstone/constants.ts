@@ -12,6 +12,7 @@ import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage
 import { webhooksInMessage } from "#src/schema/message/webhooksInMessage";
 import { notificationsInNotification } from "#src/schema/notification/notificationsInNotification";
 import { likesInPost } from "#src/schema/post/likesInPost";
+import { postsInPost } from "#src/schema/post/postsInPost";
 import { resourceFavoritesInResource } from "#src/schema/resource/resourceFavoritesInResource";
 import { resourcePublicationsInResource } from "#src/schema/resource/resourcePublicationsInResource";
 import { blocksInSocial } from "#src/schema/social/blocksInSocial";
@@ -37,6 +38,7 @@ export const OVERLAY_TOMBSTONE_TABLES = [
   invitesInMessage,
   likesInPost,
   notificationsInNotification,
+  postsInPost,
   resourceFavoritesInResource,
   resourcePublicationsInResource,
   roomCategoriesInMessage,
