@@ -144,7 +144,6 @@
 | `scripts/src/models/shared`                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/skills`                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/sweeps`                             | 2026-10-25 · Haiku 5.5  |       |
-| `scripts/src/models/syntax`                             | —                       |       |
 | `scripts/src/models/timing`                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/triage`                             | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/updateNode`                         | 2026-10-29 · Haiku 5.5  |       |

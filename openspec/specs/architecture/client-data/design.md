@@ -122,7 +122,7 @@ A rollback runs late: the write ahead of it queued, the reader kept working, and
 - **What the apply took from the reader is handed back.** A field the write cleared gets its text again while it is still empty (a scheduled message's composer through `restoreDraft`, which keeps the draft's own `updatedAt` so the Drafts list keeps its order, and the todo field through `addItem`'s `onRefused`, which also covers a name a todo cannot take). A removal that navigated the reader off a room or conversation returns them to it, unless they have moved on from where it sent them. A refusal that lands before the navigation away has finds the reader still in the room, and its navigation back supersedes the one on its way, since the router cancels a pending navigation when another starts.
 - **What the screen draws is what the server will store.** The apply normalises as the server does, so the confirmed row matches the drawn one: a display name is trimmed and falls back to the account's own name (`getResolvedDisplayName`).
 - **A value the server decides is adopted in `reconcile`.** A created room category takes the position the server stored, and a role the room's list has not read yet is drawn from the server's row.
-- **A count the write moved is read back on a refusal as well as on success**, since another viewer's vote may have moved it since (`useLikeOperations`'s `onError`), as [Server-owned aggregates](#server-owned-aggregates-are-re-read-never-adjusted) states.
+- **A count the write moved is read back on a refusal as well as on success**, since another viewer's vote may have moved it since (`useLikeStore`'s writes re-read the counts whatever the answer), as [Server-owned aggregates](#server-owned-aggregates-are-re-read-never-adjusted) states.
 - **An awaited dialog closes only on success.** Its action returns whether the server kept the write (`createDirectMessage`, the program status's export and regenerate), and a picker or field the dialog holds clears only then.
 
 The optimistic apply and the server's own broadcast coexist — the write lands locally at once, and the echo re-applies the same value when it arrives:
@@ -225,13 +225,13 @@ The rule is the same shape as the server-side effects rule above (re-read what o
 
 The primitive's contract, its retry and its owners are specified in [batched refresh](../batched-refresh/design.md), which the stores use through `services/shared/createBatchedRefresh.ts`.
 
-Post counts have one owner, `usePostCountStore`: a write that changes a count asks it to re-read, and the one read is applied to every copy by the stores that hold copies, each registered with `registerPostCopies` where its store is built. Copies in different stores therefore never order their own reads against each other. Every other owner calls the primitive per instance, and writes only the copies it holds.
+Post counts have one owner, `usePostCountStore`: a write that changes a count asks it to re-read, and the one read is held once, by post id and version-gated, and every copy of a post reads its counts from it. Copies in different stores therefore never order their own reads against each other. Every other owner calls the primitive per instance, and writes only the copies it holds.
 
 ## Anti-patterns
 
 Each entry names a shape to avoid and the shape that takes its place. The check that stops it coming back is its enforcer's, not restated here.
 
-- **A count moved by a delta.** `count++` on a join, `commentCount += 1` on a reply, a live event's echo added to a `likeCount`. Use a re-read of the aggregate. The one site that may move a count at once is the viewer's own vote, in `setViewerLike`, which carries its disable with the reason.
+- **A count moved by a delta.** `count++` on a join, `commentCount += 1` on a reply, a live event's echo added to a `likeCount`. Use a re-read of the aggregate. No site moves a count at once, the viewer's own vote included: the vote's row is drawn at once and its counts wait for the read-back.
 - **A delta from an event payload.** A live event echo read as a number to add to the count. An echo says the inputs changed; the count is read again.
 - **Guessing an unknown prior state.** Treating a member with no read roles as roleless (`?? ""`), or a read-tracking set that says whether the roles were read. An unknown prior state is not a value. The owner re-reads the aggregate instead of computing a change it cannot prove. The review lane checks it, since no mechanism does yet.
 - **Ordering reads one at a time.** `createBatchedRefresh` runs one read at a time per owner: reads never overlap, the newest is always last, and a change marked during a read is read by the run after it. An older read can therefore never finish last and overwrite the newer one.
@@ -267,7 +267,7 @@ Each entry names a shape to avoid and the shape that takes its place. The check 
 | `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`                            | The server side: names a query's topics in its answer, and publishes a mutation's writes once it settles                             |
 | `apps/web/app/composables/data/pagination/cursor/useCursorPaginationOperationData.ts` | `readItems`, which watches a paged list's first page and updates its rows by id                                                      |
 | `apps/web/app/services/shared/createBatchedRefresh.ts`                                | The batched re-read every server-owned count is read back through                                                                    |
-| `apps/web/app/composables/post/useLikeOperations.ts`                                  | The like store: a vote moves its count at once, and the read-back settles it                                                         |
+| `apps/web/app/store/post/like.ts`                                                     | The like store: a vote is an overlay entry on its row, and the count read-back settles the counts                                    |
 | `apps/web/app/services/trpc/createHttpBatchingLink.ts`                                | The batch choice: production batches a tick's calls, the test build sends each as its own                                            |
 | `packages/configuration/eslint/serverCountFields.js`                                  | The one list of server-derived count fields, read by the selectors                                                                   |
 | `packages/configuration/eslint/restrictedSyntaxes.js`                                 | The `no-restricted-syntax` selectors that fail a delta on a count field                                                              |

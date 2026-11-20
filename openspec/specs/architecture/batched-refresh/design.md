@@ -28,7 +28,7 @@ The primitive never rejects. Its callers do not need to wrap a call in a result,
 
 ## Owners
 
-- **Post counts.** `usePostCountStore` is the one owner of the post counts the server keeps. A write that changes a count, a reply, a removal or an edit's response, reads the counts back through it. The read is applied to every copy the stores hold, each registered with `registerPostCopies` where its store is built and dropped with that store's scope, so one read reaches the feed and the thread.
+- **Post counts.** `usePostCountStore` is the one owner of the post counts the server keeps. A write that changes a count, a reply, a removal or an edit's response, reads the counts back through it. The read is held once, by post id and version-gated (`setPostCounts`), and every copy of a post reads its counts from there, so one read reaches the feed and the thread.
 - **Room member totals.** `useMemberStore` owns the member count and the per-role groups of each room, and re-reads them on every role-membership write and every join or leave.
 
 A new owner is a new store with its own `createBatchedRefresh`, and it is the decision of the surface that holds the copies. Two owners of the same copies would order their reads against each other, so a value with copies in more than one store has one owner, and the owner applies the read through a hook.
