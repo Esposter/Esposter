@@ -2,7 +2,7 @@ import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMyS
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
 import type { MessageFilePresignedUrlEntity } from "#shared/models/message/file/MessageFilePresignedUrlEntity";
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
-import type { AnchoredPage, Page, PageCursor, RoomMessage } from "@esposter/db-schema";
+import type { AnchoredPage, Page, PageCursor, RoomMessage, ThreadFollowInMessage } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { addMentionCounts } from "#server/services/message/addMentionCounts";
@@ -18,7 +18,7 @@ import { rejectMessageCreation } from "#server/services/message/moderation/rejec
 import { readMySentMessages } from "#server/services/message/readMySentMessages";
 import { searchMessages } from "#server/services/message/searchMessages";
 import { takeBackMentionCounts } from "#server/services/message/takeBackMentionCounts";
-import { readFollowedThreadRootIds } from "#server/services/message/thread/readFollowedThreadRootIds";
+import { readThreadFollows } from "#server/services/message/thread/readThreadFollows";
 import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThreadUnfollow";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
@@ -170,11 +170,10 @@ const baseMessageRouter = router({
         console.error,
       );
     }),
-  followThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation<void>(
-    async ({ ctx, input: { roomId, threadRootId } }) => {
-      // The bell is the member's own decision, so it clears any unfollow they recorded earlier
-      await createThreadFollow(ctx.db, { roomId, threadRootId, userId: ctx.user.id }, true);
-    },
+  // The bell is the member's own decision, so it clears any unfollow they recorded earlier. Its row comes back with its version
+  followThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation<ThreadFollowInMessage>(
+    async ({ ctx, input: { roomId, threadRootId } }) =>
+      takeOne(await createThreadFollow(ctx.db, { roomId, threadRootId, userId: ctx.user.id }, true)),
   ),
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, "roomId")
     .meta({ staticReason: "The room objects push the forwarded messages to their sockets as typed events" })
@@ -320,18 +319,17 @@ const baseMessageRouter = router({
         type: MessageType.PinMessage,
       }).match(noop, console.error);
     }),
-  // One read for both shapes the client needs, since the display list is derived from the follow state:
-  // `threadRootIds` is the follow-STATE source of truth — every followed root, including those whose root message was
-  // Deleted, so the follow button can offer Unfollow on a thread whose root is gone but whose follow row remains — while
-  // `threads` drops deleted roots so the drawer never lists a dangling follow
+  // One read for both shapes the client needs: `follows` is the follow state, every row the member holds in the room, with the
+  // Unfollowed ones kept as rows so a read cannot list a thread the member has since left. `threads` is the drawer's roots, for
+  // The live follows only, and drops deleted roots so the drawer never lists a dangling follow
   readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId").query<ReadFollowedThreadsResult>(
     async ({ ctx, input: { roomId } }) => {
-      const threadRootIds = await readFollowedThreadRootIds(ctx.db, roomId, ctx.user.id);
-      if (threadRootIds.length === 0) return { threadRootIds, threads: [] };
-      // The follows come back newest root first, so the object's roots do too. The drawer lists the newest of them, and the
-      // Follow state keeps every one. The read drops the deleted ones
+      const follows = await readThreadFollows(ctx.db, roomId, ctx.user.id);
+      const threadRootIds = follows.filter(({ isUnfollowed }) => !isUnfollowed).map(({ threadRootId }) => threadRootId);
+      if (threadRootIds.length === 0) return { follows, threads: [] };
+      // The follows come back newest root first, so the object's roots do too. The drawer lists the newest of them
       const threads = await useRoomObject(roomId).readThreads(threadRootIds.slice(0, MAX_FOLLOWED_THREADS));
-      return { threadRootIds, threads };
+      return { follows, threads };
     },
   ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId")
@@ -391,10 +389,9 @@ const baseMessageRouter = router({
       if (inFilterRoomIds.length > 0) await assertIsMember(ctx, inFilterRoomIds);
       return searchMessages(input);
     }),
-  unfollowThread: getMemberProcedure(unfollowThreadInputSchema, "roomId").mutation<void>(
-    async ({ ctx, input: { roomId, threadRootId } }) => {
-      await upsertThreadUnfollow(ctx.db, { roomId, threadRootId, userId: ctx.user.id });
-    },
+  unfollowThread: getMemberProcedure(unfollowThreadInputSchema, "roomId").mutation<ThreadFollowInMessage>(
+    async ({ ctx, input: { roomId, threadRootId } }) =>
+      takeOne(await upsertThreadUnfollow(ctx.db, { roomId, threadRootId, userId: ctx.user.id })),
   ),
   unpinMessage: getMessageProcedure(unpinMessageInputSchema, MessageOperation.Pin)
     .meta({ staticReason: "The room object pushes the unpin to its sockets as a typed event" })

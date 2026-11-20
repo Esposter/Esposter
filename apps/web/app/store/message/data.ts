@@ -37,7 +37,7 @@ export const useDataStore = defineStore("message/data", () => {
   const { executeMutation } = useMutation();
   const roomStore = useRoomStore();
   const threadFollowStore = useThreadFollowStore();
-  const { storeFollowThread } = threadFollowStore;
+  const { refetchFollowedThreads } = threadFollowStore;
   const { getSlice, items, ...restData } = useCursorPaginationDataMap<ClientMessage>(() => roomStore.currentRoomId);
   // `items` is the reading view — the room on screen. Every write names the room it is for, which a message
   // Always carries as its `roomId`: a subscription echo, a rejected edit's rollback and an attachment
@@ -129,12 +129,11 @@ export const useDataStore = defineStore("message/data", () => {
         // The server has the message, so the attachments held since the bubble are dropped for good — with them
         // Go the grants that authorize reclaiming their blobs, which only a rejection could have needed back
         await MessageHookMap[MessageHook.CommitSend].run(target, sentFileIds);
-        // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
-        // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
-        // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible
-        // Added here is best-effort, never a rollback — the message already exists on the server
+        // The server auto-follows the thread a reply lands in, so the room's follows are read again — the follow state is loaded
+        // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread. Best-effort, since
+        // The message already exists on the server and a failed read of the follows is no reason to fail the send
         const { replyToId } = input;
-        if (replyToId) storeFollowThread(input.roomId, replyToId);
+        if (replyToId) getResultAsync(() => refetchFollowedThreads(input.roomId)).match(noop, console.error);
         return true;
       },
       async (error) => {

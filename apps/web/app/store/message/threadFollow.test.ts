@@ -1,8 +1,10 @@
 // @vitest-environment nuxt
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
+import type { ThreadFollowInMessage } from "@esposter/db-schema";
 
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { useSession } from "#src/services/auth/authClient.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -22,8 +24,10 @@ describe(useThreadFollowStore, () => {
     id: threadRootId,
     replyCount: 0,
   };
+  const follow: ThreadFollowInMessage = { isUnfollowed: false, roomId, threadRootId, userId, version: 0 };
 
   beforeEach(() => {
+    useSession.mockReturnValue(ref({ data: { user: { id: userId } } }));
     setCurrentRoomId(roomId);
   });
 
@@ -32,7 +36,7 @@ describe(useThreadFollowStore, () => {
   test("drops a deleted followed root from the list and keeps the follow", async () => {
     expect.hasAssertions();
 
-    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootIds: [threadRootId], threads: [root] }));
+    trpcMsw.message.readFollowedThreads.query(() => ({ follows: [follow], threads: [root] }));
     trpcMsw.room.readUsersByIds.query(() => []);
     const threadFollowStore = useThreadFollowStore();
     const { checkIsFollowing, readFollowedThreads } = threadFollowStore;
@@ -47,7 +51,7 @@ describe(useThreadFollowStore, () => {
   test("takes an edit to a followed root", async () => {
     expect.hasAssertions();
 
-    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootIds: [threadRootId], threads: [root] }));
+    trpcMsw.message.readFollowedThreads.query(() => ({ follows: [follow], threads: [root] }));
     trpcMsw.room.readUsersByIds.query(() => []);
     const threadFollowStore = useThreadFollowStore();
     const { readFollowedThreads } = threadFollowStore;
@@ -65,7 +69,7 @@ describe(useThreadFollowStore, () => {
   test("hands every concurrent caller the follow state from one read", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn<() => ReadFollowedThreadsResult>(() => ({ threadRootIds: [threadRootId], threads: [] }));
+    const handler = vi.fn<() => ReadFollowedThreadsResult>(() => ({ follows: [follow], threads: [] }));
     trpcMsw.message.readFollowedThreads.query(handler);
     const threadFollowStore = useThreadFollowStore();
     const { checkIsFollowing, readFollowedThreads } = threadFollowStore;
@@ -85,7 +89,10 @@ describe(useThreadFollowStore, () => {
 
     const author = createUser();
     const thread = { ...createOptimisticMessage({ roomId, type: MessageType.Message }, author.id), replyCount: 0 };
-    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootIds: [thread.id], threads: [thread] }));
+    trpcMsw.message.readFollowedThreads.query(() => ({
+      follows: [{ ...follow, threadRootId: thread.id }],
+      threads: [thread],
+    }));
     trpcMsw.room.readUsersByIds.query(() => [{ ...author, displayName: "displayName", isMember: true }]);
     const threadFollowStore = useThreadFollowStore();
     const { readFollowedThreads } = threadFollowStore;
@@ -100,8 +107,8 @@ describe(useThreadFollowStore, () => {
   test("a member follows a thread whose replies have not loaded", async () => {
     expect.hasAssertions();
 
-    trpcMsw.message.followThread.mutation(() => undefined);
-    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootIds: [threadRootId], threads: [root] }));
+    trpcMsw.message.followThread.mutation(() => follow);
+    trpcMsw.message.readFollowedThreads.query(() => ({ follows: [follow], threads: [root] }));
     trpcMsw.room.readUsersByIds.query(() => []);
     const threadFollowStore = useThreadFollowStore();
     const { checkIsFollowing, followThread } = threadFollowStore;

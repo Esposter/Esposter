@@ -52,7 +52,7 @@ describe(useThreadStore, () => {
     trpcMsw.message.readMessagesByIds.query(() => []);
     trpcMsw.message.emoji.readReactions.query(() => []);
     // Opening a thread loads the follow state of its room, which no test here is about
-    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootIds: [], threads: [] }));
+    trpcMsw.message.readFollowedThreads.query(() => ({ follows: [], threads: [] }));
   });
 
   test("opens the drawer on the thread it read", async () => {

@@ -365,10 +365,16 @@ describe(useDataStore, () => {
     const { checkIsFollowing } = threadFollowStore;
     const { createMessage } = dataStore;
     const replyToId = 1;
+    // The server answers the reply with its auto-follow, so the room's follows are read again once the reply is sent
     trpcMsw.message.createMessage.mutation(() =>
       createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
     );
+    trpcMsw.message.readFollowedThreads.query(() => ({
+      follows: [{ isUnfollowed: false, roomId, threadRootId: replyToId, userId, version: 0 }],
+      threads: [],
+    }));
     const isCreated = await createMessage({ files: [], message, replyToId, roomId, type: MessageType.Message });
+    await flushPromises();
 
     expect(isCreated).toBe(true);
     expect(checkIsFollowing(roomId, replyToId)).toBe(true);

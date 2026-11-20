@@ -3,4 +3,5 @@
 // Of such a table is named here once. The runtime key reads the same columns from the table's configuration
 export interface CompositeKeyColumns {
   blocks: readonly ["blockerId", "blockedId"];
+  threadFollows: readonly ["roomId", "threadRootId", "userId"];
 }

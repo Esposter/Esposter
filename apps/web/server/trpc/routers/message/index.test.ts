@@ -504,11 +504,11 @@ describe("messageRouter", () => {
 
     roomObject.readThreads.mockReturnValue([]);
 
-    await messageCaller.followThread({ roomId, threadRootId: messageId });
+    const followedRow = await messageCaller.followThread({ roomId, threadRootId: messageId });
 
     const followedThreads = await messageCaller.readFollowedThreads({ roomId });
 
-    expect(followedThreads).toStrictEqual({ threadRootIds: [messageId], threads: [] });
+    expect(followedThreads).toStrictEqual({ follows: [followedRow], threads: [] });
     expect(roomObject.readThreads).toHaveBeenCalledExactlyOnceWith([messageId]);
   });
 
@@ -516,11 +516,11 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     await messageCaller.followThread({ roomId, threadRootId: messageId });
-    await messageCaller.unfollowThread({ roomId, threadRootId: messageId });
+    const unfollowedRow = await messageCaller.unfollowThread({ roomId, threadRootId: messageId });
 
     const followedThreads = await messageCaller.readFollowedThreads({ roomId });
 
-    expect(followedThreads).toStrictEqual({ threadRootIds: [], threads: [] });
+    expect(followedThreads).toStrictEqual({ follows: [unfollowedRow], threads: [] });
   });
 
   // The unfollow's row is read back with its version, so a read that lands after the unfollow cannot list the thread again

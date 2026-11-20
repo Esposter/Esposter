@@ -101,6 +101,8 @@ A list holds its rows by id with their versions, and its view is those rows in t
 
 A paged read returns tombstones within its page's scope, so a page can hold fewer live rows than its size, and its cursor advances over the tombstones. That is an accepted cost. A first-page read still updates rows by id as it does today, and the later pages keep their rows.
 
+A followed-thread list (group 4.4) is a computed over two things. The first is the follow rows the member holds, which the view applies the entries to. The second is each room's followed roots, which is the message cache holding the room's messages, so the drawer holds no copy of the list. A follow is one row keyed by room, root and member, so an unfollow is a row change that keeps the decision and its version, not a delete, and the room's read returns every follow row, unfollowed ones included. A follow that fails leaves no row, so the list drops it with no rollback.
+
 ## Creates
 
 A create with a client id puts a placeholder at the position its list's sort key gives. Identifiers made with `uuidv7` sort by creation time, so an id-ordered list places the placeholder exactly. The server's response names the row's version and confirms the entry, and the placeholder holds no version until then.
