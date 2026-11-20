@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import type { BookmarkInApp } from "@esposter/db-schema";
 import type { ReadBookmark } from "#shared/models/db/bookmark/ReadBookmark";
+import type { BookmarkInApp } from "@esposter/db-schema";
 
+import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { setupSession } from "#src/services/auth/setupSession.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBookmarkStore } from "#src/store/bookmark";
-import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { ResourceType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";

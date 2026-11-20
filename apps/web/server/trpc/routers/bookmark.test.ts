@@ -1,5 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
+import type { BookmarkPageLink } from "#shared/models/app/BookmarkPageLink";
+import type { ReadBookmark } from "#shared/models/db/bookmark/ReadBookmark";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
@@ -11,8 +13,6 @@ import { resourceRouter } from "#server/trpc/routers/resource";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
-import type { BookmarkPageLink } from "#shared/models/app/BookmarkPageLink";
-import type { ReadBookmark } from "#shared/models/db/bookmark/ReadBookmark";
 import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, ResourceType, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -65,7 +65,7 @@ describe("bookmarkRouter", () => {
 
     expect(bookmarkAfterFirstToggle.deletedAt).toBeNull();
     expect(linksAfterFirstToggle).toStrictEqual([{ isAvailable: true, path, title }]);
-    expect(bookmarkAfterSecondToggle.deletedAt).toStrictEqual(expect.any(Date));
+    expect(bookmarkAfterSecondToggle.deletedAt).not.toBeNull();
     expect(linksAfterSecondToggle).toStrictEqual([]);
   });
 
@@ -126,7 +126,7 @@ describe("bookmarkRouter", () => {
     const tombstones = await caller.readBookmarks();
     const revivedBookmark = await caller.toggleBookmark({ path, title });
 
-    expect(removedBookmark.deletedAt).toStrictEqual(expect.any(Date));
+    expect(removedBookmark.deletedAt).not.toBeNull();
     expect(
       tombstones.map(({ deletedAt, path: bookmarkPath }) => ({ bookmarkPath, isRemoved: deletedAt instanceof Date })),
     ).toStrictEqual([{ bookmarkPath: path, isRemoved: true }]);

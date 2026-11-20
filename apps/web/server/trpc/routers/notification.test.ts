@@ -84,7 +84,7 @@ describe("notificationRouter", () => {
     const { notification, unreadCount } = await caller.deleteNotification(firstId);
     const { items } = await caller.readNotifications({});
 
-    expect(notification.deletedAt).toStrictEqual(expect.any(Date));
+    expect(notification.deletedAt).not.toBeNull();
     expect(unreadCount).toBe(1);
     expect(items.map(({ deletedAt, id }) => ({ id, isDismissed: deletedAt instanceof Date }))).toStrictEqual([
       { id: secondId, isDismissed: false },

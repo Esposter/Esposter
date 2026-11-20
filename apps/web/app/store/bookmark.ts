@@ -3,8 +3,8 @@ import type { ToggleBookmarkInput } from "#shared/models/db/bookmark/ToggleBookm
 import type { Entry } from "#src/models/shared/overlay/Entry";
 import type { BookmarkInApp } from "@esposter/db-schema";
 
-import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { getBookmarkTarget } from "#shared/services/bookmark/getBookmarkTarget";
+import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { useNotificationStore } from "#src/store/notification";
