@@ -9,16 +9,19 @@ describe("the Jobs environment", () => {
   test("declares exactly the variables .env.example names", () => {
     expect.hasAssertions();
 
-    const names = Object.keys(parseEnv(readFileSync(join(import.meta.dirname, "../../../.env.example"), "utf8")));
+    const envExampleContent = readFileSync(join(import.meta.dirname, "../../../.env.example"), "utf8");
+    const names = Object.keys(parseEnv(envExampleContent));
     expect(names.toSorted()).toStrictEqual(Object.keys(jobsEnvironmentVariablesSchema.shape).toSorted());
   });
 
   test("uploads as Worker secrets exactly the variables it marks secret", () => {
     expect.hasAssertions();
 
-    const workerSecrets = jsonDateParse<{ jobs: string[] }>(
-      readFileSync(join(import.meta.dirname, "../../../../../.github/worker-secrets.json"), "utf8"),
+    const workerSecretsContent = readFileSync(
+      join(import.meta.dirname, "../../../../../.github/worker-secrets.json"),
+      "utf8",
     );
+    const workerSecrets = jsonDateParse<{ jobs: string[] }>(workerSecretsContent);
     const secretNames = Object.entries(jobsEnvironmentVariablesSchema.shape)
       .filter(([, schema]) => schema.meta()?.secret === true)
       .map(([name]) => name);

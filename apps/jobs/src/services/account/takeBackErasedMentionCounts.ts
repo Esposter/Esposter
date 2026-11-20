@@ -15,7 +15,7 @@ export const takeBackErasedMentionCounts = async (
 ): Promise<void> => {
   await Promise.all(
     erasedMessages.map(async ({ createdAt, editedAt, message }) => {
-      const rows = await getResultAsync(() =>
+      const userToRooms = await getResultAsync(() =>
         decrementMentionCounts(getDb(), { createdAt, editedAt, message, roomId, userId }),
       )
         .orTee((error) => {
@@ -23,8 +23,8 @@ export const takeBackErasedMentionCounts = async (
         })
         .unwrapOr([]);
       await Promise.all(
-        rows.map((row) =>
-          getResultAsync(() => getUserObject(row.userId).updateUserToRoom(row)).match(noop, (error) => {
+        userToRooms.map((userToRoom) =>
+          getResultAsync(() => getUserObject(userToRoom.userId).updateUserToRoom(userToRoom)).match(noop, (error) => {
             console.error("Failed to take back a member's mention count for an erased message", { error, roomId });
           }),
         ),

@@ -119,7 +119,7 @@ Every step treats an already-gone target as done. A missing object's delete coun
 | `apps/jobs/src/services/account/`                                  | One service per step                                                                                                           |
 | `apps/jobs/src/services/account/clearAccountModerationActor.ts`    | Blanks the moderator id on the account's moderation log rows                                                                   |
 | `apps/jobs/src/services/account/eraseAccountUserRow.ts`            | Recounts the like counts, then in one batch the comment counts, the rankings and the user row's delete                         |
-| `apps/jobs/src/services/account/getPostRankingUpdates.ts`          | Reads each liked post's recounted count and returns the guarded ranking writes that run in the user row's batch                |
+| `apps/jobs/src/services/account/computePostRankingUpdates.ts`      | Reads each liked post's recounted count and returns the guarded ranking writes that run in the user row's batch                |
 | `apps/jobs/src/handlers/deleteOrphanedProfileImageHandler.ts`      | Removes a profile image that lands after the sweep                                                                             |
 | `apps/realtime/src/durableObjects/RoomObject.ts`                   | The room object: `deleteAll`, `deleteUserReactions` and the reaction rule it shares with a member's own take-back, the erasure |
 | `packages/db/src/services/storage/listChargedBlobsByUser.ts`       | Reads the account's storage ledger rows                                                                                        |

@@ -84,7 +84,7 @@ describe(deleteAccountMemberRoomReactions, () => {
         .object({ after: z.object({ emojiTag: z.string(), messageId: z.number() }).optional() })
         .parse(args[0]);
       return reactions
-        .filter(({ emojiTag: tag }) => after === undefined || tag > after.emojiTag)
+        .filter(({ emojiTag: reactionEmojiTag }) => after === undefined || reactionEmojiTag > after.emojiTag)
         .slice(0, OBJECT_READ_PAGE_LIMIT);
     });
 

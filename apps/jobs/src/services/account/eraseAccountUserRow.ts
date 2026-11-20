@@ -1,8 +1,8 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
+import { computeOtherLikeTotal } from "#src/services/account/computeOtherLikeTotal";
+import { computePostRankingUpdates } from "#src/services/account/computePostRankingUpdates";
 import { getLikedPostIds } from "#src/services/account/getLikedPostIds";
-import { getOtherLikeTotal } from "#src/services/account/getOtherLikeTotal";
-import { getPostRankingUpdates } from "#src/services/account/getPostRankingUpdates";
 import { getDb } from "#src/services/shared/getDb";
 import { postsInPost, usersInAuth } from "@esposter/db-schema";
 import { and, eq, inArray, ne, sql } from "drizzle-orm";
@@ -15,7 +15,7 @@ import { alias } from "drizzle-orm/sqlite-core";
 // Crash before that batch commits leaves the likes that name the affected posts for the queue's retry to read
 export const eraseAccountUserRow = async (userId: UserInAuth["id"]): Promise<void> => {
   await recountPostLikes(userId);
-  const rankingUpdates = await getPostRankingUpdates(userId);
+  const rankingUpdates = await computePostRankingUpdates(userId);
   await getDb().batch([
     recountPostComments(userId),
     ...rankingUpdates,
@@ -27,7 +27,7 @@ export const eraseAccountUserRow = async (userId: UserInAuth["id"]): Promise<voi
 const recountPostLikes = (userId: UserInAuth["id"]) =>
   getDb()
     .update(postsInPost)
-    .set({ likeCount: sql`(${getOtherLikeTotal(userId)})` })
+    .set({ likeCount: sql`(${computeOtherLikeTotal(userId)})` })
     .where(inArray(postsInPost.id, getLikedPostIds(userId)));
 
 // A post's comment count is the replies beneath it, all in its thread. The replies the erasure removes are the erased

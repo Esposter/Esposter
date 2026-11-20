@@ -23,12 +23,12 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/account/getPostRankingUpdates"), async (importOriginal) => {
-  const { getPostRankingUpdates } = await importOriginal();
+vi.mock(import("#src/services/account/computePostRankingUpdates"), async (importOriginal) => {
+  const { computePostRankingUpdates } = await importOriginal();
   return {
-    getPostRankingUpdates: async (userId: string) => {
+    computePostRankingUpdates: async (userId: string) => {
       await rankingHook.beforeRead?.();
-      const updates = await getPostRankingUpdates(userId);
+      const updates = await computePostRankingUpdates(userId);
       await rankingHook.afterRead?.();
       return updates;
     },

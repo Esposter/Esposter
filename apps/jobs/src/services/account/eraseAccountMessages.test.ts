@@ -118,7 +118,8 @@ describe(eraseAccountMessages, () => {
     roomObjectReplies.set("deleteUserMessages", () => [createRoomMessage({ files: [targetFile], id: 1, userId })]);
     const scheduledMessage: ScheduledMessageInUser = { id: v7(), roomId: memberRoom.id, runAt: new Date(0) };
     userObjectReplies.set("readScheduledMessages", () => [scheduledMessage]);
-    await seedBlob(StorageBucket.MessageAssets, getFileBlobNames(memberRoom.id, targetFile.id, filename).blobName);
+    const targetBlobName = getFileBlobNames(memberRoom.id, targetFile.id, filename).blobName;
+    await seedBlob(StorageBucket.MessageAssets, targetBlobName);
     const otherUserBlobName = getFileBlobNames(memberRoom.id, otherUserFile.id, filename).blobName;
     await seedBlob(StorageBucket.MessageAssets, otherUserBlobName);
 

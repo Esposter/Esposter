@@ -11,7 +11,7 @@ import { and, eq, inArray } from "drizzle-orm";
 // The ranking is computed here from that count and the post's creation time. Each write holds only while the count it was
 // Computed from still stands, as the vote path's own write does, so a vote that lands after this read moves the count and
 // Keeps the ranking its own count wrote
-export const getPostRankingUpdates = async (userId: UserInAuth["id"]) => {
+export const computePostRankingUpdates = async (userId: UserInAuth["id"]) => {
   const likedPosts = await getDb()
     .select({ createdAt: postsInPost.createdAt, id: postsInPost.id, likeCount: postsInPost.likeCount })
     .from(postsInPost)
