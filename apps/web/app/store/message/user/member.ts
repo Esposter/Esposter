@@ -52,7 +52,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const roleStore = useRoleStore();
-  const { mutateMemberRoles } = roleStore;
+  const { notifyMemberRoleChange } = roleStore;
   const userStore = useUserStore();
   const { storeRoomMembers, storeUser, userMap } = userStore;
   const overlayStore = useOverlayStore();
@@ -131,7 +131,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Them, and the role change's own hook re-reads the room's totals
   const arriveLeftMember = (leftMember: MemberRow) => {
     arrive(memberTable, toMemberRow(leftMember));
-    mutateMemberRoles(leftMember.roomId);
+    notifyMemberRoleChange(leftMember.roomId);
   };
   // A saved display name is an optimistic write over the member's row. The entry shows the name the server will resolve,
   // And the answer is the row itself, which arrives at the version it names and settles the write

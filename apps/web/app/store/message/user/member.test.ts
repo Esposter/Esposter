@@ -160,14 +160,14 @@ describe(useMemberStore, () => {
     const { refreshMemberCounts } = memberStore;
     const { memberCountsByTopRole } = storeToRefs(memberStore);
     const roleStore = useRoleStore();
-    const { mutateMemberRoles } = roleStore;
+    const { notifyMemberRoleChange } = roleStore;
     serveCounts(1, [{ count: 1, roleId: role.id }]);
     await refreshMemberCounts([roomId]);
     serveCounts(1, [
       { count: 0, roleId: role.id },
       { count: 1, roleId: otherRole.id },
     ]);
-    mutateMemberRoles(roomId);
+    notifyMemberRoleChange(roomId);
     // The role change's own re-read lands the totals, so the test awaits it rather than making one of its own
     await waitForSynchronizedFunctions();
 
