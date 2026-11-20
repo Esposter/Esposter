@@ -1,11 +1,6 @@
 import type { Database, ThreadFollowInMessage } from "@esposter/db-schema";
 
-import {
-  getLiveMembershipWhere,
-  NotificationType,
-  threadFollowsInMessage,
-  usersToRoomsInMessage,
-} from "@esposter/db-schema";
+import { getLiveRowWhere, NotificationType, threadFollowsInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, ne } from "drizzle-orm";
 
 // Everyone following a thread root, excluding the replier themself and anyone whose room notification preference
@@ -35,7 +30,7 @@ export const getThreadFollowerUserIds = async (
       and(
         eq(usersToRoomsInMessage.userId, threadFollowsInMessage.userId),
         eq(usersToRoomsInMessage.roomId, threadFollowsInMessage.roomId),
-        getLiveMembershipWhere(usersToRoomsInMessage),
+        getLiveRowWhere(usersToRoomsInMessage),
       ),
     )
     .where(and(...wheres));

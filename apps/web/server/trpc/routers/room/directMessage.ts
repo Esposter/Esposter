@@ -35,7 +35,7 @@ import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
   friendsInSocial,
-  getLiveMembershipWhere,
+  getLiveRowWhere,
   getPublicUserColumns,
   PublicUserColumns,
   roomsInMessage,
@@ -97,7 +97,7 @@ export const directMessageRouter = router({
             and(
               eq(usersToRoomsInMessage.userId, userId),
               eq(usersToRoomsInMessage.roomId, participantRoomId),
-              getLiveMembershipWhere(usersToRoomsInMessage),
+              getLiveRowWhere(usersToRoomsInMessage),
             ),
           ),
       ]);
@@ -260,7 +260,7 @@ export const directMessageRouter = router({
           eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
           eq(usersToRoomsInMessage.userId, ctx.user.id),
           eq(usersToRoomsInMessage.isHidden, false),
-          getLiveMembershipWhere(usersToRoomsInMessage),
+          getLiveRowWhere(usersToRoomsInMessage),
         );
         // The sort is bound to the room's own columns, so the cursor's values are read off the rows it answers
         const boundSort = createPageSort(

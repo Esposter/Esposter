@@ -55,7 +55,6 @@ import {
   AppNotificationType,
   appUsersInMessage,
   DatabaseEntityType,
-  getLiveMembershipWhere,
   getLiveRowWhere,
   getUserSocketTag,
   MESSAGE_BATCH_MAX_LENGTH,
@@ -788,7 +787,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
           and(
             eq(usersToRoomsInMessage.roomId, this.#roomId),
             eq(usersToRoomsInMessage.userId, userId),
-            getLiveMembershipWhere(usersToRoomsInMessage),
+            getLiveRowWhere(usersToRoomsInMessage),
           ),
         ),
     ).match(noop, console.error);

@@ -2,7 +2,7 @@ import type { Context } from "#server/trpc/context";
 
 import {
   getDisplayNameExpression,
-  getLiveMembershipWhere,
+  getLiveRowWhere,
   roomsInMessage,
   RoomType,
   usersInAuth,
@@ -26,7 +26,7 @@ export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) 
       and(
         eq(usersToRoomsInMessage.userId, userId),
         eq(roomsInMessage.type, RoomType.DirectMessage),
-        getLiveMembershipWhere(usersToRoomsInMessage),
+        getLiveRowWhere(usersToRoomsInMessage),
       ),
     );
   const participantMembership = alias(usersToRoomsInMessage, "participantMembership");
@@ -46,7 +46,7 @@ export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) 
       and(
         eq(participantMembership.roomId, roomsInMessage.id),
         ne(participantMembership.userId, userId),
-        getLiveMembershipWhere(participantMembership),
+        getLiveRowWhere(participantMembership),
       ),
     )
     .leftJoin(participantUser, eq(participantUser.id, participantMembership.userId))

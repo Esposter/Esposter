@@ -4,7 +4,7 @@ import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role
 
 import { writeMemberPermissionOverride } from "#server/services/room/rbac/writeMemberPermissionOverride";
 import { mergeMemberPermissionOverride } from "#shared/services/room/rbac/mergeMemberPermissionOverride";
-import { getLiveMemberPermissionWhere, roomMemberPermissionsInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, roomMemberPermissionsInMessage } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 
@@ -25,7 +25,7 @@ export const setMemberPermissionOverride = async (db: Context["db"], input: Upse
   const isMemberRow = and(
     eq(roomIdColumn, roomId),
     eq(userIdColumn, userId),
-    getLiveMemberPermissionWhere(roomMemberPermissionsInMessage),
+    getLiveRowWhere(roomMemberPermissionsInMessage),
   );
   for (let attempt = 0; attempt < MAX_MEMBER_PERMISSION_OVERRIDE_ATTEMPTS; attempt++) {
     const [current] = await db

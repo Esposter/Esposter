@@ -1,6 +1,6 @@
 import type { Context } from "#server/trpc/context";
 
-import { getLiveMembershipWhere, usersToRoomsInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
 export const readDirectMessageParticipantIds = async (db: Context["db"], roomId: string) =>
@@ -8,5 +8,5 @@ export const readDirectMessageParticipantIds = async (db: Context["db"], roomId:
     await db
       .select({ userId: usersToRoomsInMessage.userId })
       .from(usersToRoomsInMessage)
-      .where(and(eq(usersToRoomsInMessage.roomId, roomId), getLiveMembershipWhere(usersToRoomsInMessage)))
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), getLiveRowWhere(usersToRoomsInMessage)))
   ).map(({ userId }) => userId);

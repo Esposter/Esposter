@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { inJsonArray } from "#src/services/shared/inJsonArray";
-import { getLiveMemberRoleWhere, usersToRoomRolesInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, usersToRoomRolesInMessage } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
 export const getRoleMemberIds = async (db: Database, roomId: string, roleIds: string[]): Promise<string[]> => {
@@ -12,7 +12,7 @@ export const getRoleMemberIds = async (db: Database, roomId: string, roleIds: st
       and(
         eq(usersToRoomRolesInMessage.roomId, roomId),
         inJsonArray(usersToRoomRolesInMessage.roleId, roleIds),
-        getLiveMemberRoleWhere(usersToRoomRolesInMessage),
+        getLiveRowWhere(usersToRoomRolesInMessage),
       ),
     );
   return [...new Set(members.map((member) => member.userId))];

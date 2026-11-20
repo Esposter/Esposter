@@ -3,10 +3,7 @@ import type { Database } from "@esposter/db-schema";
 
 import { inJsonArray } from "#src/services/shared/inJsonArray";
 import {
-  getLiveMemberPermissionWhere,
-  getLiveMemberRoleWhere,
-  getLiveMembershipWhere,
-  getLiveRoleWhere,
+  getLiveRowWhere,
   roomMemberPermissionsInMessage,
   RoomPermission,
   roomRolesInMessage,
@@ -32,7 +29,7 @@ export const getPermissions: GetPermissions = (async (
       and(
         eq(usersToRoomsInMessage.userId, userId),
         inJsonArray(usersToRoomsInMessage.roomId, roomIdArray),
-        getLiveMembershipWhere(usersToRoomsInMessage),
+        getLiveRowWhere(usersToRoomsInMessage),
       ),
     );
   const roleIdsSubquery = db
@@ -42,7 +39,7 @@ export const getPermissions: GetPermissions = (async (
       and(
         eq(usersToRoomRolesInMessage.userId, userId),
         inJsonArray(usersToRoomRolesInMessage.roomId, roomIdArray),
-        getLiveMemberRoleWhere(usersToRoomRolesInMessage),
+        getLiveRowWhere(usersToRoomRolesInMessage),
       ),
     );
   const [rows, overrideRows] = await Promise.all([
@@ -52,7 +49,7 @@ export const getPermissions: GetPermissions = (async (
       .where(
         and(
           inJsonArray(roomRolesInMessage.roomId, roomIdArray),
-          getLiveRoleWhere(roomRolesInMessage),
+          getLiveRowWhere(roomRolesInMessage),
           or(
             and(eq(roomRolesInMessage.isEveryone, true), inArray(roomRolesInMessage.roomId, memberRoomIdsSubquery)),
             inArray(roomRolesInMessage.id, roleIdsSubquery),
@@ -70,7 +67,7 @@ export const getPermissions: GetPermissions = (async (
         and(
           eq(roomMemberPermissionsInMessage.userId, userId),
           inJsonArray(roomMemberPermissionsInMessage.roomId, roomIdArray),
-          getLiveMemberPermissionWhere(roomMemberPermissionsInMessage),
+          getLiveRowWhere(roomMemberPermissionsInMessage),
         ),
       ),
   ]);

@@ -8,7 +8,7 @@ import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomM
 import { inJsonArray } from "@esposter/db";
 import {
   getDetectedUserStatus,
-  getLiveMembershipWhere,
+  getLiveRowWhere,
   userStatusesInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -64,7 +64,7 @@ export const announceRoomMembersJoined = async (
         and(
           eq(usersToRoomsInMessage.roomId, roomId),
           inJsonArray(usersToRoomsInMessage.userId, userIds),
-          getLiveMembershipWhere(usersToRoomsInMessage),
+          getLiveRowWhere(usersToRoomsInMessage),
         ),
       ),
     db.select().from(userStatusesInMessage).where(inJsonArray(userStatusesInMessage.userId, userIds)),

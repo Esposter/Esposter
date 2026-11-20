@@ -3,8 +3,7 @@ import type { SQL } from "drizzle-orm";
 
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import {
-  getLiveMemberPermissionWhere,
-  getLiveMemberRoleWhere,
+  getLiveRowWhere,
   roomMemberPermissionsInMessage,
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
@@ -19,7 +18,7 @@ export const getRoomMembershipRemoval = (db: Context["db"], roomId: string, user
   const memberRoleWhere = and(
     eq(usersToRoomRolesInMessage.roomId, roomId),
     eq(usersToRoomRolesInMessage.userId, userId),
-    getLiveMemberRoleWhere(usersToRoomRolesInMessage),
+    getLiveRowWhere(usersToRoomRolesInMessage),
   );
   return [
     db
@@ -35,7 +34,7 @@ export const getRoomMembershipRemoval = (db: Context["db"], roomId: string, user
         and(
           eq(roomMemberPermissionsInMessage.roomId, roomId),
           eq(roomMemberPermissionsInMessage.userId, userId),
-          getLiveMemberPermissionWhere(roomMemberPermissionsInMessage),
+          getLiveRowWhere(roomMemberPermissionsInMessage),
           extraWhere,
         ),
       ),

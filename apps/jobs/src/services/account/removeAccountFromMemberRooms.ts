@@ -4,7 +4,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { getDb } from "#src/services/shared/getDb";
 import { getMemberRoomIds } from "@esposter/db";
-import { getLiveMembershipWhere, usersToRoomsInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
 // The account is taken out of each room it is still a member of before its row goes.
@@ -24,7 +24,7 @@ export const removeAccountFromMemberRooms = async (userId: UserInAuth["id"]): Pr
         and(
           eq(usersToRoomsInMessage.roomId, roomId),
           eq(usersToRoomsInMessage.userId, userId),
-          getLiveMembershipWhere(usersToRoomsInMessage),
+          getLiveRowWhere(usersToRoomsInMessage),
         ),
       )
       .returning();

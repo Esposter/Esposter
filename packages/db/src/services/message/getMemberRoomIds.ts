@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { getLiveMembershipWhere, usersToRoomsInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
 // Every room the person is a member of, which is the set of room objects their presence is reported to. A membership
@@ -10,6 +10,6 @@ export const getMemberRoomIds = async (db: Database, userId: string): Promise<st
   const memberRooms = await db
     .select({ roomId: usersToRoomsInMessage.roomId })
     .from(usersToRoomsInMessage)
-    .where(and(eq(usersToRoomsInMessage.userId, userId), getLiveMembershipWhere(usersToRoomsInMessage)));
+    .where(and(eq(usersToRoomsInMessage.userId, userId), getLiveRowWhere(usersToRoomsInMessage)));
   return memberRooms.map(({ roomId }) => roomId);
 };

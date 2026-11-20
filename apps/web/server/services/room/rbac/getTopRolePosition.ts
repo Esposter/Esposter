@@ -2,12 +2,7 @@ import type { GetTopRolePosition } from "#server/models/room/rbac/GetTopRolePosi
 import type { Context } from "#server/trpc/context";
 
 import { inJsonArray } from "@esposter/db";
-import {
-  getLiveMemberRoleWhere,
-  getLiveRoleWhere,
-  roomRolesInMessage,
-  usersToRoomRolesInMessage,
-} from "@esposter/db-schema";
+import { getLiveRowWhere, roomRolesInMessage, usersToRoomRolesInMessage } from "@esposter/db-schema";
 import { and, eq, max } from "drizzle-orm";
 
 export const getTopRolePosition: GetTopRolePosition = (async (
@@ -24,8 +19,8 @@ export const getTopRolePosition: GetTopRolePosition = (async (
       and(
         eq(usersToRoomRolesInMessage.userId, userId),
         inJsonArray(roomRolesInMessage.roomId, roomIdArray),
-        getLiveMemberRoleWhere(usersToRoomRolesInMessage),
-        getLiveRoleWhere(roomRolesInMessage),
+        getLiveRowWhere(usersToRoomRolesInMessage),
+        getLiveRowWhere(roomRolesInMessage),
       ),
     )
     .groupBy(roomRolesInMessage.roomId);

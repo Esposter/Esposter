@@ -38,9 +38,7 @@ import { upsertMemberPermissionOverrideInputSchema } from "#shared/models/db/rol
 import { getPermissions, inJsonArray } from "@esposter/db";
 import {
   DatabaseEntityType,
-  getLiveMemberPermissionWhere,
-  getLiveMemberRoleWhere,
-  getLiveRoleWhere,
+  getLiveRowWhere,
   revokeRoleInputSchema,
   roomMemberPermissionsInMessage,
   RoomPermission,
@@ -63,7 +61,7 @@ export const roleRouter = router({
     const [role, actorAuthority] = await Promise.all([
       requireEntity(
         ctx.db.query.roomRolesInMessage.findFirst({
-          where: { id: { eq: roleId }, RAW: getLiveRoleWhere, roomId: { eq: roomId } },
+          where: { id: { eq: roleId }, RAW: getLiveRowWhere, roomId: { eq: roomId } },
         }),
         DatabaseEntityType.RoomRole,
         roleId,
@@ -88,9 +86,7 @@ export const roleRouter = router({
     const memberRole =
       assigned ??
       (await requireEntity(
-        ctx.db.query.usersToRoomRolesInMessage.findFirst({
-          where: { RAW: getLiveMemberRoleWhere, roleId, roomId, userId },
-        }),
+        ctx.db.query.usersToRoomRolesInMessage.findFirst({ where: { RAW: getLiveRowWhere, roleId, roomId, userId } }),
         DatabaseEntityType.UserToRoomRole,
         roleId,
       ));
@@ -149,7 +145,7 @@ export const roleRouter = router({
         and(
           eq(roomMemberPermissionsInMessage.roomId, roomId),
           eq(roomMemberPermissionsInMessage.userId, userId),
-          getLiveMemberPermissionWhere(roomMemberPermissionsInMessage),
+          getLiveRowWhere(roomMemberPermissionsInMessage),
         ),
       )
       .returning();
@@ -176,13 +172,13 @@ export const roleRouter = router({
           and(
             eq(usersToRoomRolesInMessage.roleId, id),
             eq(usersToRoomRolesInMessage.roomId, roomId),
-            getLiveMemberRoleWhere(usersToRoomRolesInMessage),
+            getLiveRowWhere(usersToRoomRolesInMessage),
           ),
         ),
       ctx.db
         .update(roomRolesInMessage)
         .set({ deletedAt: new Date() })
-        .where(and(inRoom(roomRolesInMessage, id, roomId), getLiveRoleWhere(roomRolesInMessage)))
+        .where(and(inRoom(roomRolesInMessage, id, roomId), getLiveRowWhere(roomRolesInMessage)))
         .returning(),
     ]);
     return requireMutation(deletedRoles[0], Operation.Delete, DatabaseEntityType.RoomRole, id, "NOT_FOUND");
@@ -255,7 +251,7 @@ export const roleRouter = router({
           eq(usersToRoomRolesInMessage.userId, userId),
           eq(usersToRoomRolesInMessage.roomId, roomId),
           eq(usersToRoomRolesInMessage.roleId, roleId),
-          getLiveMemberRoleWhere(usersToRoomRolesInMessage),
+          getLiveRowWhere(usersToRoomRolesInMessage),
         ),
       )
       .returning();
@@ -279,7 +275,7 @@ export const roleRouter = router({
         await ctx.db
           .update(roomRolesInMessage)
           .set(rest)
-          .where(and(inRoom(roomRolesInMessage, id, roomId), getLiveRoleWhere(roomRolesInMessage)))
+          .where(and(inRoom(roomRolesInMessage, id, roomId), getLiveRowWhere(roomRolesInMessage)))
           .returning()
       )[0],
       Operation.Update,

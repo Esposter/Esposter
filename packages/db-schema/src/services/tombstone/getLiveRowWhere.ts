@@ -2,6 +2,7 @@ import type { SQLWrapper } from "drizzle-orm";
 
 import { isNull } from "drizzle-orm";
 
-// A row of an object's table is live until its deletion leaves a tombstone, so each read and each alarm decision that is
-// About live rows takes this filter, on the table or on an alias of it. A tombstone is kept until the object's purge removes it
+// A row is live until its removal leaves a tombstone, so each read and each decision that is about live rows takes this
+// Filter, on the table or on an alias of it. That covers a membership and a row of an object's table alike. A tombstone is
+// Kept until the purge removes it, and a revival clears it, which makes the row live again
 export const getLiveRowWhere = (row: { deletedAt: SQLWrapper }) => isNull(row.deletedAt);

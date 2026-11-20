@@ -54,7 +54,7 @@ The one real limit is width: `Administrator` is the highest permission the vocab
 
 **A role, an assignment and an override are soft-deleted, and a re-grant revives the row in place.** Deleting a role tombstones the role and every assignment of it in one batch, so a revival of the role under the same id does not hand its old holders back. Revoking an assignment and clearing an override tombstone their rows. A membership removal tombstones the roles and overrides the member held, as it tombstones the membership. A re-grant or a re-create of the same key revives its tombstone at a higher version: the insert's conflict branch clears `deletedAt`, and a role's revival names its room in the set-where, so a create under another room's id never revives it. The three tables are in the overlay's tombstone registry, so the nightly purge removes their tombstones past `TOMBSTONE_RETENTION_MS`.
 
-Every decision reads live rows only, through `getLiveRoleWhere`, `getLiveMemberRoleWhere` and `getLiveMemberPermissionWhere` in `@esposter/db-schema`: the permission read, the top role position, the mention lookup, the membership export and the room's rank query. The reads return tombstones, so a client holding a row learns its removal from the read: `readRoles`, `readMemberRoles` and `readMemberPermissionOverrides` take no live filter.
+Every decision reads live rows only, through `getLiveRowWhere` in `@esposter/db-schema`: the permission read, the top role position, the mention lookup, the membership export and the room's rank query. The reads return tombstones, so a client holding a row learns its removal from the read: `readRoles`, `readMemberRoles` and `readMemberPermissionOverrides` take no live filter.
 
 ## Service layer & guards
 

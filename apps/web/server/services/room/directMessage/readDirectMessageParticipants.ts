@@ -5,7 +5,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { inJsonArray } from "@esposter/db";
 import {
   getDisplayNameExpression,
-  getLiveMembershipWhere,
+  getLiveRowWhere,
   getPublicUserColumns,
   roomsInMessage,
   RoomType,
@@ -43,7 +43,7 @@ export const readDirectMessageParticipants = async (
       and(
         eq(usersToRoomsInMessage2.roomId, usersToRoomsInMessage1.roomId),
         ne(usersToRoomsInMessage2.userId, userId),
-        getLiveMembershipWhere(usersToRoomsInMessage2),
+        getLiveRowWhere(usersToRoomsInMessage2),
       ),
     )
     .innerJoin(usersInAuth2, eq(usersInAuth2.id, usersToRoomsInMessage2.userId))
@@ -51,7 +51,7 @@ export const readDirectMessageParticipants = async (
       and(
         eq(usersToRoomsInMessage1.userId, userId),
         inJsonArray(usersToRoomsInMessage1.roomId, roomIds),
-        getLiveMembershipWhere(usersToRoomsInMessage1),
+        getLiveRowWhere(usersToRoomsInMessage1),
       ),
     )
     .orderBy(asc(sql<string>`${participantDisplayName} collate nocase`), asc(usersInAuth2.id));

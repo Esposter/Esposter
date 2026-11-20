@@ -1,6 +1,6 @@
 import type { Context } from "#server/trpc/context";
 
-import { friendsInSocial, getLiveMembershipWhere, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
+import { friendsInSocial, getLiveRowWhere, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, exists, isNull, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 
@@ -29,15 +29,12 @@ export const getStatusVisibleWhere = (db: Context["db"], viewerId: string) => {
       db
         .select({ _: sql`1` })
         .from(usersToRoomsInMessage)
-        .innerJoin(
-          viewerRoom,
-          and(eq(viewerRoom.roomId, usersToRoomsInMessage.roomId), getLiveMembershipWhere(viewerRoom)),
-        )
+        .innerJoin(viewerRoom, and(eq(viewerRoom.roomId, usersToRoomsInMessage.roomId), getLiveRowWhere(viewerRoom)))
         .where(
           and(
             eq(usersToRoomsInMessage.userId, usersInAuth.id),
             eq(viewerRoom.userId, viewerId),
-            getLiveMembershipWhere(usersToRoomsInMessage),
+            getLiveRowWhere(usersToRoomsInMessage),
           ),
         ),
     ),

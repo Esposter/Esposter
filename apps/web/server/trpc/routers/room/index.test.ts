@@ -36,7 +36,7 @@ import { createMockBucket } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   friendsInSocial,
-  getLiveMemberRoleWhere,
+  getLiveRowWhere,
   MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES,
   MessageType,
   PublicUserColumns,
@@ -541,7 +541,7 @@ describe("roomRouter", () => {
     await roleCaller.assignRole({ roleId: role.id, roomId: newRoom.id, userId: getMockSession().user.id });
     const readLiveRoleLinks = () =>
       mockContext.db.query.usersToRoomRolesInMessage.findMany({
-        where: { RAW: getLiveMemberRoleWhere, roomId: { eq: newRoom.id } },
+        where: { RAW: getLiveRowWhere, roomId: { eq: newRoom.id } },
       });
 
     expect(await readLiveRoleLinks()).toHaveLength(1);
@@ -1138,7 +1138,7 @@ describe("roomRouter", () => {
     await memberRoomCaller.leaveRoom(newRoom.id);
     await memberRoomCaller.joinRoom(newInvite.id);
     const memberRoles = await mockContext.db.query.usersToRoomRolesInMessage.findMany({
-      where: { RAW: getLiveMemberRoleWhere, userId: { eq: memberSession.user.id } },
+      where: { RAW: getLiveRowWhere, userId: { eq: memberSession.user.id } },
     });
 
     expect(memberRoles).toStrictEqual([]);

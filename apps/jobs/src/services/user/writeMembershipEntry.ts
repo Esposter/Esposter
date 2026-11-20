@@ -2,7 +2,7 @@ import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { getDb } from "#src/services/shared/getDb";
-import { getLiveMemberRoleWhere, getLiveMembershipWhere, getLiveRoleWhere } from "@esposter/db-schema";
+import { getLiveRowWhere } from "@esposter/db-schema";
 
 // The person's memberships in rooms they do not own, each with the person's own settings there.
 // Each also carries the time they joined, the time they last read the room, the category they filed it under, and the
@@ -27,19 +27,19 @@ export const writeMembershipEntry = async (archive: UserDataArchive, userId: Use
         notificationType: true,
         roomId: true,
       },
-      where: { RAW: getLiveMembershipWhere, userId: { eq: userId } },
+      where: { RAW: getLiveRowWhere, userId: { eq: userId } },
     })
   ).filter(({ roomId }) => !ownedRoomIds.has(roomId));
   const memberRoles = await getDb().query.usersToRoomRolesInMessage.findMany({
     columns: { roleId: true },
-    where: { RAW: getLiveMemberRoleWhere, userId: { eq: userId } },
+    where: { RAW: getLiveRowWhere, userId: { eq: userId } },
   });
   const roleIds = memberRoles.map(({ roleId }) => roleId);
   const roomRoles =
     roleIds.length > 0
       ? await getDb().query.roomRolesInMessage.findMany({
           columns: { id: true, name: true, roomId: true },
-          where: { id: { in: roleIds }, RAW: getLiveRoleWhere },
+          where: { id: { in: roleIds }, RAW: getLiveRowWhere },
         })
       : [];
   await archive.addJsonEntry(

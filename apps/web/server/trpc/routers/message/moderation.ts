@@ -43,7 +43,7 @@ import {
   bansInMessage,
   DatabaseEntityType,
   getDisplayNameExpression,
-  getLiveMembershipWhere,
+  getLiveRowWhere,
   getPublicUserColumns,
   MODERATION_LOG_PAGE_SORT,
   MODERATION_NOTE_PAGE_SORT,
@@ -223,7 +223,7 @@ export const moderationRouter = router({
           and(
             eq(userMemberships.userId, usersInAuth.id),
             eq(userMemberships.roomId, roomId),
-            getLiveMembershipWhere(userMemberships),
+            getLiveRowWhere(userMemberships),
           ),
         )
         .leftJoin(bannedByUsers, eq(bansInMessage.bannedByUserId, bannedByUsers.id))
@@ -232,7 +232,7 @@ export const moderationRouter = router({
           and(
             eq(bannedByMemberships.userId, bannedByUsers.id),
             eq(bannedByMemberships.roomId, roomId),
-            getLiveMembershipWhere(bannedByMemberships),
+            getLiveRowWhere(bannedByMemberships),
           ),
         )
         .where(and(...wheres))

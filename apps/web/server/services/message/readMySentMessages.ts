@@ -6,12 +6,7 @@ import type { RoomMessage } from "@esposter/db-schema";
 import { useUserObject } from "#server/composables/realtime/useUserObject";
 import { fanOutRoomReads } from "#server/services/message/fanOutRoomReads";
 import { inJsonArray, toPage } from "@esposter/db";
-import {
-  getLiveMembershipWhere,
-  roomsInMessage,
-  SENT_MESSAGE_PAGE_SORT,
-  usersToRoomsInMessage,
-} from "@esposter/db-schema";
+import { getLiveRowWhere, roomsInMessage, SENT_MESSAGE_PAGE_SORT, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
 // The sender's index names each sent message by its room and id, newest first. Each room's object is asked for the
@@ -45,7 +40,7 @@ export const readMySentMessages = async (
             and(
               eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
               eq(usersToRoomsInMessage.userId, userId),
-              getLiveMembershipWhere(usersToRoomsInMessage),
+              getLiveRowWhere(usersToRoomsInMessage),
             ),
           )
           .where(inJsonArray(roomsInMessage.id, roomIds))

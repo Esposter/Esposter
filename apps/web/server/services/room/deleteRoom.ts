@@ -12,9 +12,7 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getRoomMemberIds } from "@esposter/db";
 import {
   DatabaseEntityType,
-  getLiveMemberPermissionWhere,
-  getLiveMemberRoleWhere,
-  getLiveRoleWhere,
+  getLiveRowWhere,
   invitesInMessage,
   roomMemberPermissionsInMessage,
   roomRolesInMessage,
@@ -62,20 +60,15 @@ export const deleteRoom = async (
     db
       .update(roomRolesInMessage)
       .set({ deletedAt: new Date() })
-      .where(and(eq(roomRolesInMessage.roomId, id), getLiveRoleWhere(roomRolesInMessage))),
+      .where(and(eq(roomRolesInMessage.roomId, id), getLiveRowWhere(roomRolesInMessage))),
     db
       .update(usersToRoomRolesInMessage)
       .set({ deletedAt: new Date() })
-      .where(and(eq(usersToRoomRolesInMessage.roomId, id), getLiveMemberRoleWhere(usersToRoomRolesInMessage))),
+      .where(and(eq(usersToRoomRolesInMessage.roomId, id), getLiveRowWhere(usersToRoomRolesInMessage))),
     db
       .update(roomMemberPermissionsInMessage)
       .set({ deletedAt: new Date() })
-      .where(
-        and(
-          eq(roomMemberPermissionsInMessage.roomId, id),
-          getLiveMemberPermissionWhere(roomMemberPermissionsInMessage),
-        ),
-      ),
+      .where(and(eq(roomMemberPermissionsInMessage.roomId, id), getLiveRowWhere(roomMemberPermissionsInMessage))),
   ] as const);
   requireMutation(deletedRoomRows[0], Operation.Delete, DatabaseEntityType.Room, id);
   await Promise.all(

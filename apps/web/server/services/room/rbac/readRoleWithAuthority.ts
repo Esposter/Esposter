@@ -2,7 +2,7 @@ import type { Database } from "@esposter/db-schema";
 
 import { getRoomMemberAuthority } from "#server/services/room/rbac/getRoomMemberAuthority";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
-import { DatabaseEntityType, getLiveRoleWhere } from "@esposter/db-schema";
+import { DatabaseEntityType, getLiveRowWhere } from "@esposter/db-schema";
 
 // Every role mutation asks the same two questions — is this role the room's, and what may the actor do to it —
 // And neither read depends on the other, so they go out together. Resolved as a guard, so a role that is not the
@@ -14,7 +14,7 @@ export const readRoleWithAuthority = (db: Database, actorUserId: string, roleId:
     requireEntity(
       db.query.roomRolesInMessage.findFirst({
         columns: { isEveryone: true, position: true },
-        where: { id: { eq: roleId }, RAW: getLiveRoleWhere, roomId: { eq: roomId } },
+        where: { id: { eq: roleId }, RAW: getLiveRowWhere, roomId: { eq: roomId } },
       }),
       DatabaseEntityType.RoomRole,
       roleId,

@@ -5,7 +5,7 @@ import { writeModerationLogEntry } from "#src/services/message/moderation/writeM
 import {
   AdminActionType,
   AUTOMOD_USER_ID,
-  getLiveMembershipWhere,
+  getLiveRowWhere,
   usersToRoomsInMessage,
   WordFilterAction,
 } from "@esposter/db-schema";
@@ -43,7 +43,7 @@ export const executeAutomodAction = async (
         and(
           eq(usersToRoomsInMessage.userId, userId),
           eq(usersToRoomsInMessage.roomId, roomId),
-          getLiveMembershipWhere(usersToRoomsInMessage),
+          getLiveRowWhere(usersToRoomsInMessage),
         ),
       );
   }

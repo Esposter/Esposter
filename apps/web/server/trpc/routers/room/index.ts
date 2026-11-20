@@ -56,9 +56,7 @@ import {
   DatabaseEntityType,
   DEFAULT_EVERYONE_PERMISSIONS,
   getDisplayNameExpression,
-  getLiveMemberRoleWhere,
-  getLiveMembershipWhere,
-  getLiveRoleWhere,
+  getLiveRowWhere,
   getPublicUserColumns,
   invitesInMessage,
   MessageType,
@@ -177,7 +175,7 @@ export const baseRoomRouter = router({
     if (!joinedRows[0]) {
       const liveMembership = await ctx.db.query.usersToRoomsInMessage.findFirst({
         columns: { userId: true },
-        where: { RAW: getLiveMembershipWhere, roomId: { eq: invite.roomId }, userId: { eq: userId } },
+        where: { RAW: getLiveRowWhere, roomId: { eq: invite.roomId }, userId: { eq: userId } },
       });
       if (liveMembership)
         throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
@@ -186,7 +184,7 @@ export const baseRoomRouter = router({
 
     const { room, roomId, user } = await requireEntity(
       ctx.db.query.usersToRoomsInMessage.findFirst({
-        where: { RAW: getLiveMembershipWhere, roomId: { eq: invite.roomId }, userId: { eq: userId } },
+        where: { RAW: getLiveRowWhere, roomId: { eq: invite.roomId }, userId: { eq: userId } },
         with: UserToRoomInMessageRelations,
       }),
       DatabaseEntityType.UserToRoom,
@@ -247,10 +245,10 @@ export const baseRoomRouter = router({
           and(
             eq(roomRolesInMessage.id, usersToRoomRolesInMessage.roleId),
             not(roomRolesInMessage.isEveryone),
-            getLiveRoleWhere(roomRolesInMessage),
+            getLiveRowWhere(roomRolesInMessage),
           ),
         )
-        .where(and(eq(usersToRoomRolesInMessage.roomId, roomId), getLiveMemberRoleWhere(usersToRoomRolesInMessage)))
+        .where(and(eq(usersToRoomRolesInMessage.roomId, roomId), getLiveRowWhere(usersToRoomRolesInMessage)))
         .as("rankedRoles");
       // Only role groups are returned — the roleless trailing group is derived client-side from the
       // Total member count, which the join and leave events keep current without a refetch
@@ -300,7 +298,7 @@ export const baseRoomRouter = router({
         await ctx.db
           .select({ count: count() })
           .from(usersToRoomsInMessage)
-          .where(and(eq(usersToRoomsInMessage.roomId, roomId), getLiveMembershipWhere(usersToRoomsInMessage))),
+          .where(and(eq(usersToRoomsInMessage.roomId, roomId), getLiveRowWhere(usersToRoomsInMessage))),
       ).count,
   ),
   readMutualRooms: standardAuthedProcedure.input(userIdSchema).query<RoomInMessage[]>(({ ctx, input }) => {
@@ -314,7 +312,7 @@ export const baseRoomRouter = router({
         and(
           eq(usersToRoomsInMessage1.roomId, roomsInMessage.id),
           eq(usersToRoomsInMessage1.userId, ctx.user.id),
-          getLiveMembershipWhere(usersToRoomsInMessage1),
+          getLiveRowWhere(usersToRoomsInMessage1),
         ),
       )
       .innerJoin(
@@ -322,7 +320,7 @@ export const baseRoomRouter = router({
         and(
           eq(usersToRoomsInMessage2.roomId, roomsInMessage.id),
           eq(usersToRoomsInMessage2.userId, input.userId),
-          getLiveMembershipWhere(usersToRoomsInMessage2),
+          getLiveRowWhere(usersToRoomsInMessage2),
         ),
       )
       .where(eq(roomsInMessage.type, RoomType.Room))
@@ -346,7 +344,7 @@ export const baseRoomRouter = router({
                       andFilter(
                         eqFilter(usersToRoomsInMessage.roomId, roomTable.id),
                         eqFilter(usersToRoomsInMessage.userId, ctx.user.id),
-                        getLiveMembershipWhere(usersToRoomsInMessage),
+                        getLiveRowWhere(usersToRoomsInMessage),
                       ),
                     ),
                 ),
@@ -367,7 +365,7 @@ export const baseRoomRouter = router({
               and(
                 eq(usersToRoomsInMessage.userId, ctx.user.id),
                 eq(roomsInMessage.type, RoomType.Room),
-                getLiveMembershipWhere(usersToRoomsInMessage),
+                getLiveRowWhere(usersToRoomsInMessage),
               ),
             )
             .orderBy(desc(roomsInMessage.lastMessageAt))
@@ -380,7 +378,7 @@ export const baseRoomRouter = router({
       const innerJoinCondition = and(
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
         eq(usersToRoomsInMessage.userId, ctx.user.id),
-        getLiveMembershipWhere(usersToRoomsInMessage),
+        getLiveRowWhere(usersToRoomsInMessage),
       );
       const directMessageDisplayNames = getDirectMessageDisplayNames(ctx.db, ctx.user.id);
       const displayName = sql<string>`coalesce(nullif(${roomsInMessage.name}, ''), ${directMessageDisplayNames.displayName}, '')`;

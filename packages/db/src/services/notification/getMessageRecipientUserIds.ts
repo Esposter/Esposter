@@ -4,12 +4,7 @@ import type { SQL } from "drizzle-orm";
 import { getMentionNotificationConditions } from "#src/services/message/mention/getMentionNotificationConditions";
 import { getSenderClassifiedMentions } from "#src/services/message/mention/getSenderClassifiedMentions";
 import { getThreadFollowerUserIds } from "#src/services/notification/getThreadFollowerUserIds";
-import {
-  getLiveMembershipWhere,
-  NotificationType,
-  userStatusesInMessage,
-  usersToRoomsInMessage,
-} from "@esposter/db-schema";
+import { getLiveRowWhere, NotificationType, userStatusesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, ne, or } from "drizzle-orm";
 
 // Everyone one message notifies, thread reply included. A reply widens this set with the thread's followers
@@ -31,7 +26,7 @@ export const getMessageRecipientUserIds = async (
 ): Promise<string[]> => {
   const andWheres: (SQL | undefined)[] = [
     eq(usersToRoomsInMessage.roomId, roomId),
-    getLiveMembershipWhere(usersToRoomsInMessage),
+    getLiveRowWhere(usersToRoomsInMessage),
   ];
   if (userId) andWheres.push(ne(usersToRoomsInMessage.userId, userId));
 

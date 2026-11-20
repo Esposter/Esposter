@@ -1,7 +1,7 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 
 import { inJsonArray } from "@esposter/db";
-import { getLiveMembershipWhere, usersToRoomsInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, usersToRoomsInMessage } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 
@@ -16,7 +16,7 @@ export const assertIsMember = async ({ db, user }: Pick<AuthedContext, "db" | "u
       and(
         eq(usersToRoomsInMessage.userId, user.id),
         inJsonArray(usersToRoomsInMessage.roomId, roomIdArray),
-        getLiveMembershipWhere(usersToRoomsInMessage),
+        getLiveRowWhere(usersToRoomsInMessage),
       ),
     );
   if (foundUsersToRooms.length !== roomIdArray.length) throw new TRPCError({ code: "UNAUTHORIZED" });

@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { getLiveMembershipWhere, usersToRoomsInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
 // Every member of the room, read before the room's memberships go with it, so the room's deletion can reach each member's
@@ -9,6 +9,6 @@ export const getRoomMemberIds = async (db: Database, roomId: string): Promise<st
   const members = await db
     .select({ userId: usersToRoomsInMessage.userId })
     .from(usersToRoomsInMessage)
-    .where(and(eq(usersToRoomsInMessage.roomId, roomId), getLiveMembershipWhere(usersToRoomsInMessage)));
+    .where(and(eq(usersToRoomsInMessage.roomId, roomId), getLiveRowWhere(usersToRoomsInMessage)));
   return members.map(({ userId }) => userId);
 };

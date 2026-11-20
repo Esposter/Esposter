@@ -24,7 +24,7 @@ import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteU
 import { checkHasPermission, createPageSort, getPageOrderBy, getPageWhere, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
-  getLiveMembershipWhere,
+  getLiveRowWhere,
   getPublicUserColumns,
   invitesInMessage,
   PublicUserColumns,
@@ -139,11 +139,11 @@ export const inviteRouter = router({
           invite.userId,
         ),
         ctx.db.query.usersToRoomsInMessage.findFirst({
-          where: { RAW: getLiveMembershipWhere, roomId: { eq: invite.roomId }, userId: { eq: ctx.user.id } },
+          where: { RAW: getLiveRowWhere, roomId: { eq: invite.roomId }, userId: { eq: ctx.user.id } },
         }),
         ctx.db.$count(
           usersToRoomsInMessage,
-          and(eq(usersToRoomsInMessage.roomId, invite.roomId), getLiveMembershipWhere(usersToRoomsInMessage)),
+          and(eq(usersToRoomsInMessage.roomId, invite.roomId), getLiveRowWhere(usersToRoomsInMessage)),
         ),
       ]);
       return { ...invite, isMember: Boolean(membership), room: { memberCount, name: room.name }, user };

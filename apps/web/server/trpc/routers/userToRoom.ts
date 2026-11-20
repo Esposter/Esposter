@@ -10,7 +10,7 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { readMyUsersToRoomsInputSchema } from "#shared/models/db/userToRoom/ReadMyUsersToRoomsInput";
 import { updateUserToRoomInputSchema } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 import { inJsonArray } from "@esposter/db";
-import { getLiveMembershipWhere, roomIdSchema, usersToRoomsInMessage } from "@esposter/db-schema";
+import { getLiveRowWhere, roomIdSchema, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, ne } from "drizzle-orm";
 
 export const userToRoomRouter = router({
@@ -38,7 +38,7 @@ export const userToRoomRouter = router({
           and(
             eq(usersToRoomsInMessage.userId, ctx.user.id),
             inJsonArray(usersToRoomsInMessage.roomId, input.roomIds),
-            getLiveMembershipWhere(usersToRoomsInMessage),
+            getLiveRowWhere(usersToRoomsInMessage),
           ),
         );
     }),
