@@ -49,12 +49,6 @@ const notifyMemberRoleChange = (roomId: string) => {
   for (const memberRoleChangeHook of memberRoleChangeHooks.hooks) memberRoleChangeHook(roomId);
 };
 
-// The member store's leave path passes the roles the member held, which this store no longer keeps: a member's roles
-// Arrive as rows, so the call only re-reads the room's totals. The member store owns the call and its arguments
-const mutateMemberRoles = (roomId: string, _userId: string, _memberRoles: RoomRoleInMessage[]) => {
-  notifyMemberRoleChange(roomId);
-};
-
 // Each list is shown highest position first, as the server orders its roles
 const comparePositionDescending = (firstRole: { position: number }, secondRole: { position: number }) =>
   secondRole.position - firstRole.position;
@@ -372,7 +366,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     getRoles,
     markMemberRolesRead,
     memberPermissionOverrideMap,
-    mutateMemberRoles,
+    mutateMemberRoles: notifyMemberRoleChange,
     myPermissions,
     readMemberPermissionOverrides,
     readMyPermissions,
