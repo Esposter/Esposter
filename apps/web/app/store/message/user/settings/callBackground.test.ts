@@ -67,25 +67,23 @@ describe(useCallBackgroundStore, () => {
     expect(handler).not.toHaveBeenCalled();
   });
 
-  // Each slot is its own write target, so two deletes run concurrently rather than queueing and a rejected one
-  // Must put back only its own row
-  test("a rejected delete does not resurrect a slot deleted beside it", async () => {
+  // The blob is reclaimed by a worker after the delete answers, so the listing keeps the slot until its topic changes:
+  // the slot leaves the picker when the server says so, not when the user clicks
+  test("keeps a slot listed while its delete is in flight", async () => {
     expect.hasAssertions();
 
-    const callBackgrounds = [callBackground, { presignedUrl: "presignedUrl", slot: 1 }];
-    trpcMsw.user.readCallBackgrounds.query(() => callBackgrounds);
-    trpcMsw.user.deleteCallBackground.mutation(({ input }) => {
-      if (input.slot === 0) throw new Error(" ");
-      return undefined;
-    });
+    const { promise, resolve } = Promise.withResolvers<void>();
+    trpcMsw.user.readCallBackgrounds.query(() => [callBackground]);
+    trpcMsw.user.deleteCallBackground.mutation(() => promise);
     const callBackgroundStore = useCallBackgroundStore();
     const { deleteCallBackground, readCallBackgrounds } = callBackgroundStore;
     await readCallBackgrounds();
-    deleteCallBackground(1);
-    deleteCallBackground(0);
+    deleteCallBackground(callBackground.slot);
+    await flushPromises();
+    const listedWhileInFlight = callBackgroundStore.callBackgrounds;
+    resolve();
     await flushPromises();
 
-    // Slot 1's delete landed, so only slot 0 — whose delete was rejected — comes back
-    expect(callBackgroundStore.callBackgrounds).toStrictEqual([callBackground]);
+    expect(listedWhileInFlight).toStrictEqual([callBackground]);
   });
 });
