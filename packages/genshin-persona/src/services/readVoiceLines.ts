@@ -4,10 +4,10 @@ import { GameLanguageCharacterLinesLoaderMap } from "#src/generated/GameLanguage
 import { TravelerGender } from "#src/generated/genshinText/models/TravelerGender";
 import { fillLinePlaceholders } from "#src/generated/genshinText/services/fillLinePlaceholders";
 import { getCanonicalLanguage } from "#src/generated/genshinText/services/getCanonicalLanguage";
+import { CharacterNameTravelerTwinMap } from "#src/services/CharacterNameTravelerTwinMap";
 import { DEFAULT_LANGUAGE } from "#src/services/constants";
 import { getPlainLineText } from "#src/services/getPlainLineText";
 import { readGenshinDb } from "#src/services/readGenshinDb";
-import { TravelerTwinMap } from "#src/services/TravelerTwinMap";
 
 // Every line the character speaks in the interface language, as a person reads it; `checkIsOwnVoiceLine` is the
 // Authoring command's cut. The lines are the game data's, or — for a character the data package carries no lines
@@ -30,7 +30,7 @@ export const readVoiceLines = async (name: string, language: string): Promise<Vo
       ? friendLines.map(({ description, title }) => ({ text: description, title }))
       : ((await GameLanguageCharacterLinesLoaderMap[resultLanguage]())[name] ?? []);
   const nickname = genshindb.characters(name, queryOptions)?.name ?? name;
-  const gender = TravelerTwinMap[name]?.gender ?? TravelerGender.Male;
+  const gender = CharacterNameTravelerTwinMap[name]?.gender ?? TravelerGender.Male;
   return lines.map(({ text, title }) => ({
     text: getPlainLineText(fillLinePlaceholders(text, nickname, gender)),
     title: title.trim(),

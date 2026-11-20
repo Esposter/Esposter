@@ -1,9 +1,9 @@
 import type { WikiStoryLine } from "#src/models/WikiStoryLine";
 
+import { CharacterNameTravelerTwinMap } from "#src/services/CharacterNameTravelerTwinMap";
 import { parseWikiStoryLines } from "#src/services/parseWikiStoryLines";
 import { parseWikiTravelerLines } from "#src/services/parseWikiTravelerLines";
 import { readWikiPageText } from "#src/services/readWikiPageText";
-import { TravelerTwinMap } from "#src/services/TravelerTwinMap";
 
 const VOICE_OVERS_SUBPAGE = "/Voice-Overs";
 // The page the twins share, under the name the wiki gives the pair
@@ -11,10 +11,11 @@ const TRAVELER_PAGE = "Traveler";
 // The Traveler's index lists its story pages as one relative link per region
 const STORY_PAGE_LINK_REGEX = /^\* \[\[\/(?<page>[^\]|]+)/gmu;
 // The community wiki's English voice-over page for one character, parsed on request, for the stems its clips are
-// Filed under in every dub; a player twin's lines are read off the Traveler's story pages `TravelerTwinMap`
+// Filed under in every dub; a player twin's lines are read off the Traveler's story pages
+// `CharacterNameTravelerTwinMap`
 // Describes, as the twin's half of each dialogue
 export const readWikiStoryLines = async (name: string): Promise<WikiStoryLine[]> => {
-  const twin = TravelerTwinMap[name];
+  const twin = CharacterNameTravelerTwinMap[name];
   if (!twin) {
     const wikitext = await readWikiPageText(`${name}${VOICE_OVERS_SUBPAGE}`);
     return parseWikiStoryLines(wikitext);
