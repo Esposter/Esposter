@@ -413,7 +413,7 @@ export const useResourceStore = defineStore("resource", () => {
     const { promise: settled, resolve: release } = Promise.withResolvers<void>();
     contentSaves.value.set(id, settled);
     // Released once the outcome is recorded, not by a finalizer: writeOptimistic records a refusal after the write's
-    // promise has settled, so a waiter released on the way out would read the save as not failed
+    // Promise has settled, so a waiter released on the way out would read the save as not failed
     const settle = () => {
       if (contentSaves.value.get(id) === settled) contentSaves.value.delete(id);
       release();

@@ -33,7 +33,7 @@ describe(useSurveyStore, () => {
     settings: { ...surveySettingsSchema.parse({}), responseMode: SurveyResponseMode.Identified },
   };
   // A content save moves the row's version with its contentVersion, as the server's update does, so an answer names a
-  // version above the one held and arrives over it
+  // Version above the one held and arrives over it
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Survey, version: contentVersion });
   let content: SurveyResource;

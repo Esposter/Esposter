@@ -350,8 +350,9 @@ permissions:
     skills: true
 shellEmulator: true
 
-# Every checkout on a machine links its packages from one virtual store under the pnpm store's `links` folder, so a
-# Worktree's install only writes symlinks and the machine holds one copy of each resolved package rather than one per
-# Checkout. CI turns it back to `project` (`setup-project-dependencies`), since a runner starts with an empty store
-# And the global layout only adds work there
+# Every checkout on a machine, and every CI job, links its packages from one virtual store under the pnpm store's
+# `links` folder, so a worktree's install only writes symlinks and the machine holds one copy of each resolved package
+# rather than one per checkout. This file is the one place the layout is set: a `vp run` task starts a pnpm of its own,
+# which reads this file and not the job's environment, so an environment override split the layout between the install
+# and the installs the tasks started, and those rebuilt the tree under the other tasks mid-run
 virtualStoreType: global

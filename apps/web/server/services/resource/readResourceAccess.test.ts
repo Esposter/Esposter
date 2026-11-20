@@ -16,7 +16,7 @@ describe(readResourceAccess, () => {
   const userId = v7();
   const publishVersion = 1;
   // The rows the answer reads, in a real database, so each case asks the queries production runs: the resource's owner,
-  // the resource itself (a deleted one keeps its row), and its publication at the version it names
+  // The resource itself (a deleted one keeps its row), and its publication at the version it names
   const seedDatabase = async ({
     isDeleted = false,
     isPublished,
