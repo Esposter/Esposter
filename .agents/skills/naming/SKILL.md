@@ -65,7 +65,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 
 ## Variables
 
-- **No abbreviations** — `directMessageFoo` not `dmFoo`, `existingDirectMessage` not `existing` (bare `existing` is in `id-denylist`). Exception: `Ms` suffix for time values: `slowmodeMs`, `durationMs`. Where the rule stops — the short forms lint actually bans, the compound spellings it cannot see, and the exported, component and file names that spell the word out — `references/abbreviations.md`
+- **No abbreviations** — `directMessageFoo` not `dmFoo`, `existingAlert` not `existing` (bare `existing` is in `id-denylist`). Exception: `Ms` suffix for time values: `slowmodeMs`, `durationMs`. Where the rule stops — the short forms lint actually bans, the compound spellings it cannot see, and the exported, component and file names that spell the word out — `references/abbreviations.md`
 - **A name carries its type, never a bare generic** like `parsed` (`id-denylist`) — `parsedDate`, `parsedResult`
 - **A map or record is `<key><value>Map`**, never `<value>By<key>` or `<key>To<value>`; a function keeps its `By<Selector>` (`references/map-names.md`)
 - **Name variables after their full domain type, dropping only the schema `InMessage` suffix** — a value typed as `Ban` (table `bansInMessage`) is `const ban`, never `const bannedUser` nor `const banInMessage`. Where the suffix is kept it is the table's own name and never pluralised — `InMessages` is a `no-restricted-syntax` error
