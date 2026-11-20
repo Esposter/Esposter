@@ -3,18 +3,12 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
+import { readReferencedAssetHashes } from "#server/services/resource/snapshot/readReferencedAssetHashes";
 import { withResourceObjectLock } from "#server/services/resource/snapshot/withResourceObjectLock";
 import { getBucket } from "#server/services/storage/getBucket";
 import { ASSET_DECISION_CLOCK_MARGIN_MS, ASSET_GRACE_MS } from "#shared/services/resource/constants";
-import {
-  getResourceFileBlobName,
-  MAX_CONCURRENT_BLOB_COPIES,
-  resourceVersionAssetsInResource,
-  resourceWorkingAssetsInResource,
-  StorageBucket,
-} from "@esposter/db-schema";
+import { getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES, StorageBucket } from "@esposter/db-schema";
 import { noop, settleAll } from "@esposter/shared";
-import { eq } from "drizzle-orm";
 
 // A candidate written inside the grace window is kept, since an upload that dedupes onto it has just touched it and the
 // Save naming it may not be stored yet. A blob already gone has no window to keep
@@ -36,20 +30,7 @@ export const releaseResourceAssets = async (
   await withResourceObjectLock(db, resourceId, async () => {
     // Taken before the rows are read, so a reference written after the read is dated after this decision and its blob is kept
     const decidedAt = new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS);
-    const [retainedRows, workingRows] = await Promise.all([
-      db
-        .select({ assetHash: resourceVersionAssetsInResource.assetHash })
-        .from(resourceVersionAssetsInResource)
-        .where(eq(resourceVersionAssetsInResource.resourceId, resourceId)),
-      db
-        .select({ assetHash: resourceWorkingAssetsInResource.assetHash })
-        .from(resourceWorkingAssetsInResource)
-        .where(eq(resourceWorkingAssetsInResource.resourceId, resourceId)),
-    ]);
-    const survivors = new Set([
-      ...retainedRows.map(({ assetHash }) => assetHash),
-      ...workingRows.map(({ assetHash }) => assetHash),
-    ]);
+    const survivors = await readReferencedAssetHashes(db, resourceId);
     const unclaimedHashes = [...new Set(candidateHashes)].filter((hash) => !survivors.has(hash));
 
     const bucket = getBucket(StorageBucket.ResourceAssets);

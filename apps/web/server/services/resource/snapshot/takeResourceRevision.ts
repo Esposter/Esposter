@@ -47,15 +47,15 @@ export const takeResourceRevision = async (
     .update(resourcesInResource)
     .set({ revisionTakenAt: new Date(), revisionVersion: sql`${resourcesInResource.revisionVersion} + 1` })
     .where(
-      reason === SnapshotReason.Automatic
-        ? and(
-            getOwnedLiveResourceWhere(resource.userId, id),
-            or(
+      and(
+        getOwnedLiveResourceWhere(resource.userId, id),
+        reason === SnapshotReason.Automatic
+          ? or(
               isNull(resourcesInResource.revisionTakenAt),
               lte(resourcesInResource.revisionTakenAt, new Date(Date.now() - SNAPSHOT_INTERVAL_MS)),
-            ),
-          )
-        : getOwnedLiveResourceWhere(resource.userId, id),
+            )
+          : undefined,
+      ),
     )
     .returning({ revisionVersion: resourcesInResource.revisionVersion });
   if (!updatedResource) return undefined;
