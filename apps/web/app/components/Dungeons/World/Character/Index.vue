@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { CharacterProps } from "#src/components/Dungeons/World/Character/CharacterProps";
 import type { Position } from "grid-engine";
-import type { Observable, Subscription } from "rxjs";
 
 import { omitUndefined } from "@esposter/shared";
 import { Direction } from "grid-engine";
-import { filter } from "rxjs";
 import { Sprite } from "vue-phaserjs";
+
+// What a grid-engine stream is to this character: something it subscribes to and later releases
+interface CharacterSubscription {
+  unsubscribe: () => void;
+}
 
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });
@@ -14,7 +17,7 @@ const isMoving = defineModel<boolean>("isMoving", { required: true });
 defineProps<CharacterProps>();
 // Every grid-engine stream this character listens on, so a stream costs one call rather than a ref and a line in the
 // Teardown. Grid engine removes the character itself when a new tilemap is created
-const subscriptions = ref<Subscription[]>([]);
+const subscriptions = ref<CharacterSubscription[]>([]);
 
 const unsubscribeAll = () => {
   for (const subscription of subscriptions.value) subscription.unsubscribe();
@@ -23,10 +26,14 @@ const unsubscribeAll = () => {
 // Filters a stream to this character and holds its subscription for the teardown, the two steps every stream takes
 const subscribeToCharacter = <TEvent extends { charId: string }>(
   id: string,
-  events: Observable<TEvent>,
+  events: { subscribe: (onNext: (event: TEvent) => void) => CharacterSubscription },
   onEvent: (event: TEvent) => void,
 ) => {
-  subscriptions.value.push(events.pipe(filter(({ charId }) => charId === id)).subscribe(onEvent));
+  subscriptions.value.push(
+    events.subscribe((event) => {
+      if (event.charId === id) onEvent(event);
+    }),
+  );
 };
 
 onUnmounted(unsubscribeAll);

@@ -186,7 +186,6 @@ catalog:
   rolldown: ^1.3.3
   rollup-plugin-visualizer: ^7.1.3
   rou3: ^1.0.0
-  rxjs: ^7.8.2
   sharp: ^0.35.5
   superjson: ^2.2.6
   temporal-polyfill: ^1.0.8

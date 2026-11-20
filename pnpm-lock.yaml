@@ -612,9 +612,6 @@ catalogs:
     rou3:
       specifier: ^1.0.0
       version: 1.0.0
-    rxjs:
-      specifier: ^7.8.2
-      version: 7.8.2
     sharp:
       specifier: ^0.35.5
       version: 0.35.5
@@ -1087,9 +1084,6 @@ importers:
       read-excel-file:
         specifier: 'catalog:'
         version: 9.3.20
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
       superjson:
         specifier: 'catalog:'
         version: 2.2.6
