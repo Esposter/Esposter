@@ -27,7 +27,8 @@ const getTableNamesOf = (text: string) =>
   Array.from(text.matchAll(/\b(?:from|join) "(?<name>[^"]+)"/gu), (match) => match.groups?.name ?? "");
 
 // Whether a column's quoted name stands bare in a text, outside a qualified name after a dot
-const hasBareQuotedName = (text: string, name: string) => new RegExp(String.raw`(?<!\.)"${name}"`, "u").test(text);
+const hasBareQuotedName = (text: string, name: string) =>
+  new RegExp(String.raw`(?<!\.)"${RegExp.escape(name)}"`, "u").test(text);
 
 // The columns of a table that a statement's SQL names. A column is named by its quoted name after one of the table's own
 // Qualifiers, its name or an alias the statement gives it. Drizzle leaves a column bare when a group selects from one table
