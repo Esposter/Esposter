@@ -28,5 +28,9 @@ export const readMyInvite = async (
     .set({ deletedAt: new Date() })
     .where(and(eq(invitesInMessage.id, invite.id), getLiveInviteRowWhere(invitesInMessage)))
     .returning();
-  return lapsedInvite ?? invite;
+  if (lapsedInvite) return lapsedInvite;
+
+  // The guard matched nothing, so a create replaced the link meanwhile and tombstoned it: the row as it now stands is the answer
+  const [replacedInvite] = await db.select().from(invitesInMessage).where(eq(invitesInMessage.id, invite.id)).limit(1);
+  return replacedInvite;
 };
