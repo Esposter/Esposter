@@ -513,6 +513,85 @@ describe(CallObject, () => {
     ]);
   });
 
+  // The admission answers the knocker's row as a tombstone at the version its removal raised it to, so a lobby applies the
+  // Removal by version. A second admission of the same knocker answers the same tombstone and admits nothing more
+  test("an admission answers the knocker's tombstone, and a second admission answers it without admitting again", async () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const doorkeeper = createConnection();
+    const knocker = createConnection();
+    const doorkeeperSocket = createSocket();
+    state.ctx.acceptWebSocket(doorkeeperSocket, [
+      getUserSocketTag(doorkeeper.profile.userId),
+      getSessionSocketTag(doorkeeper.sessionId),
+    ]);
+    await callObject.knockCall({
+      callSessionId,
+      doorkeeperUserId: doorkeeper.profile.userId,
+      knocker: knocker.profile,
+      sessionId: knocker.sessionId,
+    });
+    const knockerId: string = readFrames(doorkeeperSocket)[0].data.knocker.id;
+    const admitted = await callObject.admitKnocker({ callSessionId, knockerId });
+    const admittedAgain = await callObject.admitKnocker({ callSessionId, knockerId });
+
+    expect(admitted).toStrictEqual({ ...knocker.profile, deletedAt: new Date(0), id: knockerId, version: 1 });
+    expect(admittedAgain).toStrictEqual(admitted);
+    expect(readFrames(doorkeeperSocket).map(({ type }) => type)).toStrictEqual(["knockCall"]);
+  });
+
+  // A dismissal answers the same tombstone a let-in does, so the doorkeeper's lobby removes the knock by its version
+  test("a dismissal answers the knocker's tombstone", async () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const doorkeeper = createConnection();
+    const knocker = createConnection();
+    const doorkeeperSocket = createSocket();
+    state.ctx.acceptWebSocket(doorkeeperSocket, [
+      getUserSocketTag(doorkeeper.profile.userId),
+      getSessionSocketTag(doorkeeper.sessionId),
+    ]);
+    await callObject.knockCall({
+      callSessionId,
+      doorkeeperUserId: doorkeeper.profile.userId,
+      knocker: knocker.profile,
+      sessionId: knocker.sessionId,
+    });
+    const knockerId: string = readFrames(doorkeeperSocket)[0].data.knocker.id;
+    const dismissed = await callObject.dismissKnocker({ callSessionId, knockerId });
+
+    expect(dismissed).toStrictEqual({ ...knocker.profile, deletedAt: new Date(0), id: knockerId, version: 1 });
+  });
+
+  // The knock frame carries the row the lobby holds, so a knock that comes after a dismissal is a live row above the
+  // Dismissal's tombstone, and an older frame for the same knocker cannot bring it back
+  test("a knock after a dismissal is a live row above the dismissal's tombstone", async () => {
+    expect.hasAssertions();
+
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    const doorkeeper = createConnection();
+    const knocker = createConnection();
+    const doorkeeperSocket = createSocket();
+    state.ctx.acceptWebSocket(doorkeeperSocket, [
+      getUserSocketTag(doorkeeper.profile.userId),
+      getSessionSocketTag(doorkeeper.sessionId),
+    ]);
+    const knock = { callSessionId, doorkeeperUserId: doorkeeper.profile.userId, knocker: knocker.profile };
+    await callObject.knockCall({ ...knock, sessionId: knocker.sessionId });
+    const [{ data: first }] = readFrames(doorkeeperSocket);
+    await callObject.dismissKnocker({ callSessionId, knockerId: first.knocker.id });
+    await callObject.knockCall({ ...knock, sessionId: knocker.sessionId });
+    const [, { data: second }] = readFrames(doorkeeperSocket);
+
+    expect(second.knocker).toStrictEqual({ ...knocker.profile, deletedAt: null, id: second.knocker.id, version: 2 });
+    expect(second.knocker.id).not.toBe(first.knocker.id);
+  });
+
   test("the call ending dismisses each knock on its own session", async () => {
     expect.hasAssertions();
 
