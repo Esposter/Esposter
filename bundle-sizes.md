@@ -37,7 +37,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-text               | **/*.d.ts                |   43996 |   43.0 |
 | @esposter/db-schema        | index.js                 |   42094 |   41.1 |
 | genshin-engine             | index.js                 |   40069 |   39.1 |
-| parse-tmx                  | **/*.js                  |   38345 |   37.4 |
+| parse-tmx                  | **/*.js                  |   38350 |   37.5 |
 | vue-pdfjs-headless         | **/*.js                  |   32405 |   31.6 |
 | survey-expression          | **/*.d.ts                |   32318 |   31.6 |
 | @esposter/shared           | index.d.ts               |   27494 |   26.8 |
@@ -111,7 +111,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | @esposter/db-mock          | index.js                 |    1151 |    1.1 |
 | keyframe-store             | index.js                 |    1148 |    1.1 |
 | genshin-world              | sceneExport.d.ts         |    1018 |    1.0 |
-| parse-tmx                  | parseTmx.js              |     837 |    0.8 |
+| parse-tmx                  | parseTmx.js              |     850 |    0.8 |
 | trpc-msw                   | index.js                 |     805 |    0.8 |
 | vue-canvas-frame-headless  | **/*.d.ts                |     753 |    0.7 |
 | @esposter/db-mock          | createMockBuckets.js     |     729 |    0.7 |
@@ -140,10 +140,10 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | vue-canvas-frame-headless  | index.js                 |     329 |    0.3 |
 | vue-canvas-frame-headless  | index.d.ts               |     328 |    0.3 |
 | trpc-nuxt-module           | index.d.ts               |     314 |    0.3 |
+| parse-tmx                  | parseTmx.d.ts            |     299 |    0.3 |
 | @esposter/db-schema        | createDatabaseSchema.js  |     258 |    0.3 |
 | genshin-interface          | getFixtureImageName.js   |     239 |    0.2 |
 | @esposter/shared-node      | bench.js                 |     219 |    0.2 |
-| parse-tmx                  | parseTmx.d.ts            |     214 |    0.2 |
 | tresjs-nuxt                | index.d.ts               |     212 |    0.2 |
 | @esposter/db-mock          | cloudflare-workers.js    |     198 |    0.2 |
 | @esposter/shared-node      | reporter.d.ts            |     189 |    0.2 |
@@ -157,4 +157,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts           |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts   |       9 |    0.0 |
 
-**Total:** 152 files, 13239688 bytes, 12929.4 KiB, 12.63 MiB
+**Total:** 152 files, 13239791 bytes, 12929.5 KiB, 12.63 MiB
