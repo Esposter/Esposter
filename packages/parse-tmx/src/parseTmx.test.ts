@@ -208,12 +208,9 @@ describe(parseTmx, () => {
     tmxParsed.match(noop, (error) => {
       expect(() => {
         throw error;
-      }).toThrowErrorMatchingInlineSnapshot(`
-        [InvalidOperationError: Invalid operation: Read, name: readTmxDocument, Unexpected end
-        Line: 0
-        Column: 4
-        Char: ]
-      `);
+      }).toThrowErrorMatchingInlineSnapshot(
+        `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, leaves the tag <map> with no end at line 1, column 1]`,
+      );
     });
   });
 

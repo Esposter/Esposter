@@ -3,44 +3,34 @@ import type { TMXReadContext } from "#src/models/tmx/TMXReadContext";
 
 import { closeTmxFrame } from "#src/services/closeTmxFrame";
 import { openTmxFrame } from "#src/services/openTmxFrame";
-import { toTmxAttributes } from "#src/services/toTmxAttributes";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import sax from "sax";
+import { tokenizeXml } from "#src/services/tokenizeXml";
 
-// A byte order mark is not part of the document, and sax would refuse it
-const BYTE_ORDER_MARK_REGEX = /^\uFEFF/u;
-
-// One sax pass over the document, each element opening its frame and closing into it, and the root's frame is what it
-// Returns. sax reports malformed input through `onerror`, which throws so the first error is the one the caller
-// Receives. An element with no frame is inside a subtree the reader does not model, so its own children are undefined too.
+// One pass over the document, each element opening its frame and closing into it, and the root's frame is what it
+// Returns. A malformed document throws from the tokenizer, so the first error is the one the caller receives. An
+// Element with no frame is inside a subtree the reader does not model, so its own children are undefined too.
 export const readTmxDocument = (xmlString: string, context: TMXReadContext): TMXFrame | undefined => {
-  const parser = sax.parser(true, { normalize: false, trim: false });
   const stack: (TMXFrame | undefined)[] = [];
   let root: TMXFrame | undefined;
 
-  parser.onerror = (error) => {
-    throw new InvalidOperationError(Operation.Read, readTmxDocument.name, error.message);
-  };
-  parser.onopentag = (node) => {
-    if (stack.length === 0) {
-      root = openTmxFrame(undefined, node.name, toTmxAttributes(node.attributes), context);
-      stack.push(root);
-      return;
-    }
-    const parent = stack.at(-1);
-    stack.push(parent && openTmxFrame(parent, node.name, toTmxAttributes(node.attributes), context));
-  };
-  parser.onclosetag = () => {
-    const frame = stack.pop();
-    if (frame) closeTmxFrame(frame);
-  };
-  const appendText = (text: string): void => {
-    const frame = stack.at(-1);
-    if (frame) frame.text += text;
-  };
-  parser.ontext = appendText;
-  parser.oncdata = appendText;
-  parser.write(xmlString.replace(BYTE_ORDER_MARK_REGEX, "")).close();
+  tokenizeXml(xmlString, {
+    onCloseTag: () => {
+      const frame = stack.pop();
+      if (frame) closeTmxFrame(frame);
+    },
+    onOpenTag: (name, attributes) => {
+      if (stack.length === 0) {
+        root = openTmxFrame(undefined, name, attributes, context);
+        stack.push(root);
+        return;
+      }
+      const parent = stack.at(-1);
+      stack.push(parent && openTmxFrame(parent, name, attributes, context));
+    },
+    onText: (text) => {
+      const frame = stack.at(-1);
+      if (frame) frame.text += text;
+    },
+  });
 
   return root;
 };

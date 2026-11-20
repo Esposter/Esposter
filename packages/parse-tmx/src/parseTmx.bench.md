@@ -9,22 +9,22 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 2e3d42fe0f
-- Node: v26.11.1
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- Commit: fb193d4161
+- Node: v26.13.1
+- OS: win32 10.0.26300 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
 ## parseTmx > the largest fixture
 
 | task             | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ---------------- | ------- | --------- | ------- | -------- | ------- |
-| translated flips | 1.00×   | 0.0638    | ±16.53% | 0.1841   | 200     |
-| raw gids         | 0.74×   | 0.0862    | ±10.43% | 0.2696   | 200     |
+| raw gids         | 1.00×   | 0.0985    | ±18.54% | 0.2178   | 200     |
+| translated flips | 0.79×   | 0.1250    | ±7.15%  | 0.3335   | 200     |
 
 ## parseTmx > a 300x300 CSV map
 
-| task             | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| ---------------- | ------- | --------- | ------ | -------- | ------- |
-| raw gids         | 1.00×   | 3.8796    | ±7.30% | 7.1560   | 40      |
-| translated flips | 0.32×   | 12.1804   | ±5.52% | 20.0820  | 40      |
+| task             | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ---------------- | ------- | --------- | ------- | -------- | ------- |
+| raw gids         | 1.00×   | 7.4349    | ±17.54% | 23.7459  | 40      |
+| translated flips | 0.27×   | 27.6100   | ±12.07% | 49.6910  | 40      |

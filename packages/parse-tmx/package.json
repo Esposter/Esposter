@@ -55,13 +55,11 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "neverthrow": "catalog:",
-    "sax": "catalog:"
+    "neverthrow": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
-    "@types/sax": "catalog:",
     "tsdown": "catalog:"
   }
 }
