@@ -225,9 +225,8 @@ export const useWhiteboardKeyboard = (
 
   useCommands((): UiCommand[] => {
     if (isDeleteOpen.value) return [];
-    if (selectedIds.value.length === 0) return [...historyCommands, ...editCommands, ...toolCommands];
-
-    return [...historyCommands, ...editCommands, ...toolCommands, ...selectionCommands];
+    else if (selectedIds.value.length === 0) return [...historyCommands, ...editCommands, ...toolCommands];
+    else return [...historyCommands, ...editCommands, ...toolCommands, ...selectionCommands];
   });
 
   return {

@@ -66,7 +66,6 @@ export const useWhiteboardArrangeKeyboard = (
 
   useCommands((): UiCommand[] => {
     if (isDeleteOpen.value || selectedIds.value.length === 0) return [];
-
-    return stackingCommands;
+    else return stackingCommands;
   });
 };

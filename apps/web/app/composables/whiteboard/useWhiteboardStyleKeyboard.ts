@@ -56,7 +56,6 @@ export const useWhiteboardStyleKeyboard = (
 
   useCommands((): UiCommand[] => {
     if (isDeleteOpen.value || selectedIds.value.length === 0) return [];
-
-    return selectedIds.value.length === 1 ? [copyCommand, pasteCommand] : [pasteCommand];
+    else return selectedIds.value.length === 1 ? [copyCommand, pasteCommand] : [pasteCommand];
   });
 };
