@@ -27,7 +27,9 @@ import { unpinMessageInputSchema } from "#shared/models/db/message/UnpinMessageI
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
 import { MimeType } from "#shared/models/file/MimeType";
+import { createPollMessageContent } from "#shared/models/message/poll/createPollMessageContent.test";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
+import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#shared/services/message/constants";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
@@ -208,6 +210,61 @@ describe("messageRouter", () => {
         { deviceId, userId },
       ],
     ]);
+  });
+
+  // The sanitizer would rewrite a poll's JSON, turning an ampersand into an entity, so the room would hold a question its
+  // Sender never wrote
+  test("creates a poll with its question as its sender wrote it", async () => {
+    expect.hasAssertions();
+
+    const pollMessage = JSON.stringify(createPollMessageContent(POLL_MIN_OPTIONS, { question: "Tom & Jerry <3?" }));
+    roomObject.createMessage.mockResolvedValue(createRoomMessage({ type: MessageType.Poll }));
+
+    await messageCaller.createMessage({ message: pollMessage, roomId, timeZone, type: MessageType.Poll });
+
+    expect(roomObject.createMessage).toHaveBeenCalledExactlyOnceWith(
+      {
+        files: undefined,
+        linkPreviewResponse: null,
+        message: pollMessage,
+        replyToId: undefined,
+        type: MessageType.Poll,
+      },
+      { userId },
+    );
+  });
+
+  test.each([
+    { optionCount: POLL_MIN_OPTIONS - 1, title: "fewer options than a poll can offer" },
+    { optionCount: POLL_MAX_OPTIONS + 1, title: "more options than a poll can offer" },
+  ])("refuses a poll with $title, writing nothing", async ({ optionCount }) => {
+    expect.hasAssertions();
+
+    const pollMessage = JSON.stringify(createPollMessageContent(optionCount));
+
+    await expect(
+      messageCaller.createMessage({ message: pollMessage, roomId, timeZone, type: MessageType.Poll }),
+    ).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    expect(roomObject.createMessage).not.toHaveBeenCalled();
+  });
+
+  test("sanitizes a text message's markup before the room holds it", async () => {
+    expect.hasAssertions();
+
+    roomObject.createMessage.mockResolvedValue(createRoomMessage());
+
+    await messageCaller.createMessage({ message: "<p>a</p><script>b</script>", roomId, timeZone });
+
+    expect(roomObject.createMessage).toHaveBeenCalledExactlyOnceWith(
+      {
+        files: undefined,
+        linkPreviewResponse: null,
+        message: "<p>a</p>",
+        replyToId: undefined,
+        type: MessageType.Message,
+      },
+      { userId },
+    );
   });
 
   test("updates the message as its sender, with the text it is given", async () => {

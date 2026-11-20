@@ -1,13 +1,7 @@
+import { createPollMessageContent } from "#shared/models/message/poll/createPollMessageContent.test";
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#shared/services/message/constants";
-import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
-
-const createPoll = (optionCount: number) => ({
-  options: Array.from({ length: optionCount }, (_value, index) => ({ id: v7(), label: `Option ${index}` })),
-  question: "Which one?",
-  votes: {},
-});
 
 describe("pollMessageContentSchema", () => {
   test.each([
@@ -18,6 +12,6 @@ describe("pollMessageContentSchema", () => {
   ])("$title", ({ expected, optionCount }) => {
     expect.hasAssertions();
 
-    expect(pollMessageContentSchema.safeParse(createPoll(optionCount)).success).toBe(expected);
+    expect(pollMessageContentSchema.safeParse(createPollMessageContent(optionCount)).success).toBe(expected);
   });
 });

@@ -1,0 +1,14 @@
+import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
+
+import { v7 } from "uuid";
+
+// A poll as its sender composes it: `optionCount` options labelled in order, and any part a test names replacing the default
+export const createPollMessageContent = (
+  optionCount: number,
+  overrides: Partial<PollMessageContent> = {},
+): PollMessageContent => ({
+  options: Array.from({ length: optionCount }, (_value, index) => ({ id: v7(), label: `Option ${index}` })),
+  question: "Which one?",
+  votes: {},
+  ...overrides,
+});
