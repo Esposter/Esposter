@@ -232,7 +232,8 @@ describe("topicMatch", () => {
   // The dock leaves out a bookmark whose resource is in the recycle bin, and the other bookmark it holds keeps the dock's
   // Rows, so the dock's read names the rows' resource values. Restoring the binned resource brings its bookmark back, and only
   // The resource table's own topic names that restore
-  test("restoring a binned resource wakes the bookmark dock that leaves its bookmark out", async () => {
+  // The dock reads a binned resource's row to draw its bookmark unavailable, so its restore wakes that one row's topic
+  test("restoring a binned resource wakes the bookmark dock that draws its bookmark unavailable", async () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
@@ -258,7 +259,7 @@ describe("topicMatch", () => {
 
     expect(
       getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([`${getTableName(resourcesInResource)}:*`]);
+    ).toStrictEqual([`${getTableName(resourcesInResource)}:id=${binnedResourceId}`]);
   });
 
   // The sidebar names the memberships of each room it lists by that room, so another member joining a listed room wakes the

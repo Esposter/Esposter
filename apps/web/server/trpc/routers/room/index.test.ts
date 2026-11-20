@@ -71,12 +71,12 @@ const createBookmarkedJoinableRoom = async (context: Context) => {
   });
   const path = `/rooms/${room.id}`;
   const title = "title";
-  await createCallerFactory(bookmarkRouter)(context).toggleBookmark({
+  const bookmark = await createCallerFactory(bookmarkRouter)(context).toggleBookmark({
     mark: { id: room.id, type: PageMarkType.Room },
     path,
     title,
   });
-  return { invite, path, room, title };
+  return { bookmark, invite, path, room, title };
 };
 
 describe("roomRouter", () => {
@@ -1046,19 +1046,18 @@ describe("roomRouter", () => {
   test("a join wakes the joiner's bookmark dock that lists the room", async () => {
     expect.hasAssertions();
 
-    const { invite, path, room, title } = await createBookmarkedJoinableRoom(mockContext);
+    const { bookmark, invite, path, room } = await createBookmarkedJoinableRoom(mockContext);
     const dockCaller = createCallerFactory(bookmarkRouter)(mockContext);
     const dockBefore = await dockCaller.readBookmarks();
 
     await createCallerFactory(roomRouter)(mockContext).joinRoom(invite.id);
     const dockAfter = await dockCaller.readBookmarks();
 
-    expect(dockBefore.find((bookmark) => bookmark.path === path)).toStrictEqual({ isAvailable: false, path, title });
-    expect(dockAfter.find((bookmark) => bookmark.path === path)).toStrictEqual({
+    expect(dockBefore.find((read) => read.path === path)).toStrictEqual({ ...bookmark, isAvailable: false });
+    expect(dockAfter.find((read) => read.path === path)).toStrictEqual({
+      ...bookmark,
       isAvailable: true,
       mark: { id: room.id, type: PageMarkType.Room },
-      path,
-      title,
     });
   });
 });

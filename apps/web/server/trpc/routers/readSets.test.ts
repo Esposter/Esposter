@@ -23,8 +23,13 @@ describe(computeReadSet, () => {
 
     expect(computeReadSet(statements)).toStrictEqual({
       filters: [
-        { column: "resourceId", level: 0, occurrence: "app_bookmarks", site: "where", table: "app_bookmarks" },
-        { column: "deletedAt", level: 0, occurrence: "resource_resources", site: "where", table: "resource_resources" },
+        {
+          column: "deletedAt",
+          level: 1,
+          occurrence: "resource_resourcePublications",
+          site: "where",
+          table: "resource_resourcePublications",
+        },
       ],
       joins: [
         {
