@@ -674,8 +674,10 @@ const findOwnSelection = (key: ReadSetKey, selections: ReadSelection[]) =>
 // The identity of one column of one occurrence at one level, which an equality and a selection are matched by
 const getKeyId = ({ column, level, occurrence, table }: ReadSetKey) =>
   JSON.stringify([table, column, occurrence, level]);
-// The keys an equality chain connects to a key, by identity: the key's equalities, and theirs in turn
-const getEquatedKeyIds = (key: ReadSetKey, equalities: ReadEquality[]) => {
+// The keys an equality chain connects to a key, by identity: the key's equalities, and theirs in turn. The chain stops at a
+// Null-filled occurrence, since its equalities hold only in the rows it is matched in, so a key past it is not equal to the
+// Key in every row. The key itself may be null-filled: its equalities hold wherever it has a value, which is all a name needs
+const getEquatedKeyIds = (key: ReadSetKey, equalities: ReadEquality[], nullFilledKeys: Set<string>) => {
   const equatedIds = new Set([getKeyId(key)]);
   for (let grown = true; grown;) {
     grown = false;
@@ -683,6 +685,8 @@ const getEquatedKeyIds = (key: ReadSetKey, equalities: ReadEquality[]) => {
       const leftId = getKeyId(left);
       const rightId = getKeyId(right);
       if (equatedIds.has(leftId) === equatedIds.has(rightId)) continue;
+      const reached = equatedIds.has(leftId) ? right : left;
+      if (nullFilledKeys.has(getOccurrenceKey(reached))) continue;
       equatedIds.add(leftId).add(rightId);
       grown = true;
     }
@@ -692,14 +696,15 @@ const getEquatedKeyIds = (key: ReadSetKey, equalities: ReadEquality[]) => {
 };
 // The same column of another top-level occurrence, which names the side when an equality chain pairs the two and no left join
 // Null-fills that occurrence: its value is then in every row the read returns, where the side's own value is absent for the
-// Rows its left join leaves unmatched. An occurrence no equality chain reaches holds a value of its own, so it names nothing
+// Rows its left join leaves unmatched. An occurrence no equality chain reaches holds a value of its own, so it names nothing.
+// The chain may not run through a null-filled occurrence either, so a candidate is equal to the side in every row
 const findBorrowedSelection = (
   key: ReadSetKey,
   selections: ReadSelection[],
   nullFilledKeys: Set<string>,
   equalities: ReadEquality[],
 ) => {
-  const equatedIds = getEquatedKeyIds(key, equalities);
+  const equatedIds = getEquatedKeyIds(key, equalities, nullFilledKeys);
   return selections.find(
     (candidate) =>
       candidate.table === key.table &&

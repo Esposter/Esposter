@@ -403,10 +403,10 @@ describe(computeReadTopics, () => {
     );
   });
 
-  // A filter names an occurrence of a table, not the table, so it does not stop another occurrence of that table being named by
-  // Its join key values. The viewer's own membership is filtered by `isHidden`, and the other memberships of each room are read
-  // Through a subquery, which names them by the room the outer rows return
-  test("a filter on one occurrence of a table does not stop another occurrence of it being named by its join key values", async () => {
+  // A filter names an occurrence of a table, not the table. The viewer's own membership is filtered by `isHidden` and scoped by
+  // its user. The other memberships of each room are read through a subquery whose left join null-fills them, and the chain
+  // that would name them by the room the outer rows return runs through that null-filled join, so they are read table-wide
+  test("a filter on one occurrence of a table leaves another occurrence of it table-wide when only a null-filled chain names it", async () => {
     expect.hasAssertions();
 
     const { db } = await createMockDb();
@@ -449,7 +449,7 @@ describe(computeReadTopics, () => {
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual(
       [
         `${getTableName(roomsInMessage)}:*`,
-        `${getTableName(usersToRoomsInMessage)}:roomId=${roomId}`,
+        `${getTableName(usersToRoomsInMessage)}:*`,
         `${getTableName(usersToRoomsInMessage)}:userId=${userId}`,
       ].toSorted(),
     );
@@ -734,6 +734,46 @@ describe(computeReadTopics, () => {
     await expect(getWoken(read.statements, write.statements)).resolves.toStrictEqual([
       `${getTableName(usersToRoomsInMessage)}:*`,
     ]);
+  });
+
+  // A chain of equalities reaches the candidate through an intermediate that a left join null-fills, so the partner's room is
+  // Only equated to the candidate's room in the rows the intermediate matches. In the row for another partner room the
+  // Intermediate is null and the partner's room is not the candidate's, so the membership of that room is named by the wrong room
+  test("a left join's key borrows no selected value through a chain that a left join null-fills", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const userId = v7();
+    await insertUser(db, userId);
+    const roomId = v7();
+    const otherRoomId = v7();
+    await db.insert(roomsInMessage).values([
+      { id: roomId, name: "name", type: RoomType.Room, userId },
+      { id: otherRoomId, name: "name", type: RoomType.Room, userId },
+    ]);
+    const candidateRoom = alias(roomsInMessage, "candidateRoom");
+    const partnerRoom = alias(roomsInMessage, "partnerRoom");
+    const intermediateRoom = alias(roomsInMessage, "intermediateRoom");
+    const read = recordStatements(db);
+    await read.database
+      .select({ candidateId: candidateRoom.id, isHidden: usersToRoomsInMessage.isHidden })
+      .from(candidateRoom)
+      .crossJoin(partnerRoom)
+      .leftJoin(
+        intermediateRoom,
+        and(eq(intermediateRoom.id, partnerRoom.id), eq(intermediateRoom.id, candidateRoom.id)),
+      )
+      .leftJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, partnerRoom.id))
+      .where(eq(candidateRoom.id, roomId));
+    const write = recordStatements(db);
+    await write.database.insert(usersToRoomsInMessage).values({ roomId: otherRoomId, userId });
+
+    const woken = await getWoken(read.statements, write.statements);
+    // The database is shared by the file's tests, so this test removes the rows it inserted
+    await db.delete(usersToRoomsInMessage).where(eq(usersToRoomsInMessage.roomId, otherRoomId));
+    await db.delete(roomsInMessage).where(eq(roomsInMessage.userId, userId));
+
+    expect(woken).toStrictEqual([`${getTableName(usersToRoomsInMessage)}:*`]);
   });
 
   // A self-join's partner is named by the partner key the read selects for it. Here the select returns only the partner's own
