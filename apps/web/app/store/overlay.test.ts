@@ -9,6 +9,7 @@ import { createTable } from "#src/services/shared/overlay/createTable";
 import { useOverlayStore } from "#src/store/overlay";
 import { TOMBSTONE_RETENTION_MS } from "@esposter/db-schema";
 import { flushPromises } from "@vue/test-utils";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -17,6 +18,19 @@ const neverSettles = <TResult>() => new Promise<TResult>(() => {});
 describe(useOverlayStore, () => {
   const rowTable = createRowTable();
   const table = createTable(rowTable);
+  // A membership as the viewer holds it, with a column a member's projection drops, and the projection of it
+  const membershipSource = sqliteTable("membership", {
+    deletedAt: integer({ mode: "timestamp_ms" }),
+    id: text().primaryKey(),
+    isHidden: integer({ mode: "boolean" }).notNull(),
+    name: text().notNull(),
+    version: integer().notNull(),
+  });
+  const membershipTable = createTable(membershipSource);
+  const membershipProjectionTable = createTable<
+    typeof membershipSource,
+    { deletedAt: Date | null; id: string; name: string; version: number }
+  >(membershipSource);
   const name = "";
   const otherName = " ";
   const serverName = "  ";
@@ -77,6 +91,55 @@ describe(useOverlayStore, () => {
     overlayStore.arrive(table, { deletedAt: null, id: "a", name: otherName, version: 2 });
 
     expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 2 }]);
+  });
+
+  test("a newer projected arrival keeps the columns it does not carry", () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(membershipTable, { deletedAt: null, id: "a", isHidden: true, name, version: 1 });
+    overlayStore.arrive(membershipProjectionTable, { deletedAt: null, id: "a", name: otherName, version: 2 });
+
+    expect(overlayStore.view(membershipTable).value).toStrictEqual([
+      { deletedAt: null, id: "a", isHidden: true, name: otherName, version: 2 },
+    ]);
+  });
+
+  test("a projected arrival before the full row of its version keeps the full row's columns", () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(membershipProjectionTable, { deletedAt: null, id: "a", name, version: 1 });
+    overlayStore.arrive(membershipTable, { deletedAt: null, id: "a", isHidden: true, name, version: 1 });
+
+    expect(overlayStore.view(membershipTable).value).toStrictEqual([
+      { deletedAt: null, id: "a", isHidden: true, name, version: 1 },
+    ]);
+  });
+
+  test("a newer full arrival replaces the columns a projection carried", () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(membershipProjectionTable, { deletedAt: null, id: "a", name, version: 1 });
+    overlayStore.arrive(membershipTable, { deletedAt: null, id: "a", isHidden: true, name: otherName, version: 2 });
+
+    expect(overlayStore.view(membershipTable).value).toStrictEqual([
+      { deletedAt: null, id: "a", isHidden: true, name: otherName, version: 2 },
+    ]);
+  });
+
+  test("a revival past a forgotten tombstone takes no column of that tombstone", () => {
+    expect.hasAssertions();
+
+    vi.setSystemTime(clockNow);
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(membershipTable, { deletedAt: expiredDeletedAt, id: "a", isHidden: true, name, version: 5 });
+    overlayStore.arrive(membershipProjectionTable, { deletedAt: null, id: "a", name: serverName, version: 0 });
+
+    expect(overlayStore.view(membershipTable).value).toStrictEqual([
+      { deletedAt: null, id: "a", name: serverName, version: 0 },
+    ]);
   });
 
   test("a tombstone removes its row from the view", () => {
