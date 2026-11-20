@@ -658,6 +658,51 @@ describe(useResourceStore, () => {
     expect(notificationStore.notifications.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
   });
 
+  // A save keeps the version its own opening confirmed. A reopened read confirms the resource's newer version, which is not
+  // The version the save was issued at, so the queued save is refused as stale rather than written over that version
+  test("sends a save queued before the resource closed the version its opening confirmed, not the one a reopened read confirmed", async () => {
+    expect.hasAssertions();
+
+    const { promise: isFirstSaveReleased, resolve: releaseFirstSave } = Promise.withResolvers<void>();
+    const contentVersions: number[] = [];
+    let serverContentVersion = 0;
+    trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+      contentVersions.push(input.contentVersion);
+      if (contentVersions.length === 1) await isFirstSaveReleased;
+
+      if (input.contentVersion !== serverContentVersion)
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
+
+      serverContentVersion++;
+      return { ...createResource(input.id), contentVersion: serverContentVersion };
+    });
+    const notificationStore = useNotificationStore();
+    const resourceStore = useResourceStore();
+    const { clearResource, readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    await readResource();
+    await readContent(noop);
+    saveContent(createDefaultSheetResource());
+    saveContent(createDefaultSheetResource());
+    clearResource(resourceId);
+    // Another device saves while the first save is in flight, and the resource is reopened after it
+    serverContentVersion = 1;
+    readResourceQuery.mockImplementation(({ input }) => ({
+      ...createResource(input.id),
+      contentVersion: serverContentVersion,
+      publication: null,
+      version: 1,
+    }));
+    await readResource();
+    await readContent(noop);
+    releaseFirstSave();
+    await settleSave();
+
+    expect(contentVersions).toStrictEqual([0, 0]);
+    expect(serverContentVersion).toBe(1);
+    expect(notificationStore.notifications.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
+  });
+
   // The row another device's read brings does not move the version the content was read at. A save queued behind a
   // Refused one is sent with that content version, so the server holds it to the version the content carries
   test("a row read from another device does not raise the version a save carries", async () => {

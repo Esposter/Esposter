@@ -126,13 +126,15 @@ export const useResourceStore = defineStore("resource", () => {
   // Stored as. The open row names the hash of the content its latest write left, so a row that names this one names no
   // Content the store lacks
   let persistedContentHash: string | undefined;
-  // The version of each resource's content the store last had confirmed: the one a read of its content was taken at, or
-  // The one its own save wrote. A save sends that version whether or not its resource is loaded, and never a row's version,
-  // Since a row another device moved on, or a Recent read brought, can be ahead of the content in hand
-  const confirmedContentVersions = new Map<string, number>();
+  // The version of each resource's content the opening confirmed: the one a read of its content was taken at, or the one a
+  // Save of that opening wrote. A save sends that version whether or not its resource is loaded, and never a row's version,
+  // Since a row another device moved on, or a Recent read brought, can be ahead of the content in hand. Held per opening, so
+  // A reopened read's version never reaches a save its own opening left queued
+  let confirmedContentVersions = new Map<string, number>();
   // Held while the resource is loaded or a save of it is queued, and dropped once neither holds, so the map does not grow
   // Across the resources a session opens. The content in hand belongs to a resource only while its version is held, so
-  // Dropping the version drops that claim too: reopening the resource reads its content again rather than saving it without a version
+  // Dropping the version drops that claim too: reopening the resource reads its content again rather than saving it without a version.
+  // A save queued past its opening keeps the map that opening held, which is why this drop never reaches it
   const forgetConfirmedContentVersion = (id: string) => {
     if (checkIsLoaded(id) || checkIsSavePending(id)) return;
 
@@ -183,7 +185,10 @@ export const useResourceStore = defineStore("resource", () => {
   // The content state with it: a fresh row carries the current contentVersion, so saving is meaningful again, and what it
   // Carries is by definition what is written
   const assignResource = (newResource: ResourceInResource, newPublication: null | ResourcePublicationInResource) => {
-    if (!checkIsLoaded(newResource.id)) opening = Symbol("opening");
+    if (!checkIsLoaded(newResource.id)) {
+      opening = Symbol("opening");
+      confirmedContentVersions = new Map<string, number>();
+    }
     resourceId.value = newResource.id;
     arrive(resourceTable, newResource);
     if (newPublication) arrive(publicationTable, newPublication);
@@ -225,6 +230,7 @@ export const useResourceStore = defineStore("resource", () => {
 
     resourceId.value = "";
     opening = Symbol("opening");
+    confirmedContentVersions = new Map<string, number>();
     heldOtherRow = undefined;
     contentResourceId = "";
     persistedContentJson = "";
@@ -422,6 +428,8 @@ export const useResourceStore = defineStore("resource", () => {
     // While that resource is still loaded. The notifications are not scoped, since the write failed for the owner either way
     // (openspec/specs/resource/resource-save-state/design.md)
     const { id } = resourceValue;
+    // The versions of the opening this save is issued in, so a save left queued when the resource closes keeps reading its own
+    const issuedVersions = confirmedContentVersions;
     const { promise: settled, resolve: release } = Promise.withResolvers<void>();
     contentSaves.value.set(id, settled);
     // Released once the outcome is recorded, not by a finalizer: writeOptimistic records a refusal after the write's
@@ -434,13 +442,13 @@ export const useResourceStore = defineStore("resource", () => {
     writeOptimistic(
       async () => {
         // Read when the write is sent rather than when it was issued: a save that queued behind another carries the version
-        // That one answered. It is the version the content was last confirmed at, loaded or not, since a row can land before
+        // That one answered. It is the version its own opening last confirmed, loaded or not, since a row can land before
         // The other device's save is adopted, and a save sent with that row's version would overwrite it
         const target = getHeldResource(resourceRows.value, id) ?? resourceValue;
         const resourceRouter = getResourceRouter(target.type);
         // The version the content it sends was read or saved at, which is what the server compares. A large save takes the
         // Same pair, so a delta or a staged save never sends a version the row it reads from has not yet been told of
-        const contentVersion = confirmedContentVersions.get(id);
+        const contentVersion = issuedVersions.get(id);
         if (contentVersion === undefined)
           throw new InvalidOperationError(Operation.Update, id, "has no confirmed content version");
 
@@ -468,7 +476,7 @@ export const useResourceStore = defineStore("resource", () => {
             : undefined;
         // Kept whether or not the resource is still loaded, since a save queued behind this one
         // Carries the version it confirmed
-        confirmedContentVersions.set(id, savedResource.contentVersion);
+        issuedVersions.set(id, savedResource.contentVersion);
         if (checkIsLoaded(id)) {
           persistedContentJson = contentJson;
           persistedContentHash = savedResource.contentHash;
