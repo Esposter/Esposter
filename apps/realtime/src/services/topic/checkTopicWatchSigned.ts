@@ -1,4 +1,4 @@
-import type { ColumnTopic } from "@esposter/db-schema";
+import type { TopicRead } from "@esposter/db-schema";
 
 import { getTopicWatchPayload, TOPIC_WATCH_MAX_AGE_MS } from "@esposter/db-schema";
 import { createHmac, timingSafeEqual } from "node:crypto";
@@ -8,7 +8,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 // Every watch was before signatures, so a Worker not yet given the secret refuses none
 export const checkTopicWatchSigned = (
   userId: string,
-  { readAt, signature, topics }: { readAt: number; signature: string; topics: ColumnTopic[] },
+  { readAt, signature, topics }: TopicRead,
   now: number,
 ): boolean => {
   const secret = process.env.TOPIC_WATCH_SECRET;

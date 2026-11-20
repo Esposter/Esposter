@@ -1,6 +1,5 @@
-import type { TopicRead } from "#shared/models/realtime/TopicRead";
 import type { CursorPaginationSlice } from "#src/models/pagination/cursor/CursorPaginationSlice";
-import type { Page } from "@esposter/db-schema";
+import type { Page, TopicRead } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";

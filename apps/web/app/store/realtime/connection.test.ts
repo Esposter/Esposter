@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
-import type { TopicRead } from "#shared/models/realtime/TopicRead";
-import type { ColumnTopic, RoomMessage, Topic } from "@esposter/db-schema";
+import type { ColumnTopic, RoomMessage, Topic, TopicRead } from "@esposter/db-schema";
 
 import {
   getMockPublishedTopics,

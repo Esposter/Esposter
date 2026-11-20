@@ -1,5 +1,4 @@
-import type { TopicRead } from "#shared/models/realtime/TopicRead";
-import type { ColumnTopic } from "@esposter/db-schema";
+import type { ColumnTopic, TopicRead } from "@esposter/db-schema";
 
 import { TOPICS_HEADER_COLUMNS_SEPARATOR, TOPICS_HEADER_SEPARATOR } from "#shared/services/realtime/constants";
 

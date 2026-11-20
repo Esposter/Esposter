@@ -1,4 +1,4 @@
-import type { TopicRead } from "#shared/models/realtime/TopicRead";
+import type { TopicRead } from "@esposter/db-schema";
 
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { noop } from "@esposter/shared";

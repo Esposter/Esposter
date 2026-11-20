@@ -1,7 +1,7 @@
-import type { TopicRead } from "#shared/models/realtime/TopicRead";
 import type { CacheTag } from "#src/models/cache/CacheTag";
 import type { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import type { MutationOutcome } from "#src/models/shared/MutationOutcome";
+import type { TopicRead } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
 import { MutationStatus } from "#src/models/shared/MutationStatus";

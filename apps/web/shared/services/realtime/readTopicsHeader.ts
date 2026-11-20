@@ -1,4 +1,4 @@
-import type { TopicRead } from "#shared/models/realtime/TopicRead";
+import type { TopicRead } from "@esposter/db-schema";
 
 import {
   TOPICS_HEADER,

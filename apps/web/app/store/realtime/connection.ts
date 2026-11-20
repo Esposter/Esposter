@@ -1,5 +1,4 @@
-import type { TopicRead } from "#shared/models/realtime/TopicRead";
-import type { RoomEvent, Topic, UserClientFrame } from "@esposter/db-schema";
+import type { RoomEvent, Topic, TopicRead, UserClientFrame } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { getDeviceId } from "#src/services/realtime/getDeviceId";
