@@ -48,12 +48,32 @@ describe(useRunScope, () => {
     const runScope = scope.run(useRunScope);
     assert.exists(runScope);
     const commit = vi.fn<(value: string) => void>();
+    const release = vi.fn<(value: string) => void>();
     const { promise: pending, resolve } = Promise.withResolvers<string>();
-    const run = runScope.run(() => pending, commit);
+    const run = runScope.run(() => pending, commit, release);
     scope.stop();
     resolve(result);
     await run;
 
     expect(commit).not.toHaveBeenCalled();
+    expect(release).toHaveBeenCalledExactlyOnceWith(result);
+  });
+
+  // What an aborted run built is released by the scope, since the run that built it never commits
+  test("an aborted run's result goes to release rather than commit", async () => {
+    expect.hasAssertions();
+
+    const runScope = effectScope().run(useRunScope);
+    assert.exists(runScope);
+    const commit = vi.fn<(value: string) => void>();
+    const release = vi.fn<(value: string) => void>();
+    const first = Promise.withResolvers<string>();
+    const firstRun = runScope.run(() => first.promise, commit, release);
+    const secondRun = runScope.run(() => Promise.resolve(newerResult), commit, release);
+    first.resolve(result);
+    await Promise.all([firstRun, secondRun]);
+
+    expect(release).toHaveBeenCalledExactlyOnceWith(result);
+    expect(commit).toHaveBeenCalledExactlyOnceWith(newerResult);
   });
 });

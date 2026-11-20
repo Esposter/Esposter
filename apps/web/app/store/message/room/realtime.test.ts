@@ -61,6 +61,51 @@ describe(useRealtimeStore, () => {
     expect(alerts.value).toHaveLength(0);
   });
 
+  // A pick a newer pick aborts builds nothing the next pick keeps, so the transformer it made is released with it
+  test("releases the transformer a superseded pick built", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(RealtimeKitVideoBackgroundTransformer, "isSupported").mockReturnValue(true);
+    type VideoBackgroundTransformer = RealtimeKitVideoBackgroundTransformer;
+    const createTransformer = () => ({
+      createStaticBackgroundVideoMiddleware: vi.fn<VideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>(
+        () =>
+          Promise.resolve(
+            vi.fn<Awaited<ReturnType<VideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>>>(),
+          ),
+      ),
+      destruct: vi.fn<VideoBackgroundTransformer["destruct"]>(),
+    });
+    const firstTransformer = createTransformer();
+    const secondTransformer = createTransformer();
+    vi.spyOn(RealtimeKitVideoBackgroundTransformer, "init")
+      .mockResolvedValueOnce(firstTransformer as unknown as VideoBackgroundTransformer)
+      .mockResolvedValueOnce(secondTransformer as unknown as VideoBackgroundTransformer);
+    const callBackgroundStore = useCallBackgroundStore();
+    const readStarted = Promise.withResolvers<void>();
+    const firstRead = Promise.withResolvers<string>();
+    vi.spyOn(callBackgroundStore, "readVirtualBackgroundImagePath")
+      .mockImplementationOnce(() => {
+        readStarted.resolve();
+        return firstRead.promise;
+      })
+      .mockResolvedValue(imagePath);
+    const { meeting } = createMeeting();
+    spyOnMeetingInit(meeting);
+    const realtimeStore = useRealtimeStore();
+    const { connect, setCamera, setVirtualBackground } = realtimeStore;
+    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await setCamera(true);
+    setVirtualBackground("first");
+    await readStarted.promise;
+    setVirtualBackground("second");
+    firstRead.resolve(imagePath);
+    await waitForSynchronizedFunctions();
+
+    expect(firstTransformer.destruct).toHaveBeenCalledOnce();
+    expect(secondTransformer.destruct).not.toHaveBeenCalled();
+  });
+
   // The browser keeps the call's sound quiet until the reader's own press, so a refused play raises the notice and
   // The press that answers it clears it
   test("clears the blocked-sound notice once the reader's press lets the sound play", async () => {
