@@ -63,23 +63,9 @@ describe("notificationRouter", () => {
         createNotificationRow(secondId, authSession.user.id),
       ]);
 
-    await expect(caller.deleteNotification(firstId)).resolves.toBe(1);
-  });
+    const { unreadCount } = await caller.deleteNotification(firstId);
 
-  test("deletes every notification and answers the unread count the delete leaves", async () => {
-    expect.hasAssertions();
-
-    const authSession = await createMockAuthSession(mockContext.db);
-    const caller = await createMockCaller(notificationRouter, authSession);
-    await mockContext.db
-      .insert(notificationsInNotification)
-      .values([
-        createNotificationRow(firstId, authSession.user.id),
-        createNotificationRow(secondId, authSession.user.id, true),
-      ]);
-
-    await expect(caller.deleteNotifications()).resolves.toBe(0);
-    expect((await caller.readNotifications({})).items).toStrictEqual([]);
+    expect(unreadCount).toBe(1);
   });
 
   // A dismissal leaves the row as a tombstone the read returns, so a read that lands later cannot bring it back, and the

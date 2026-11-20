@@ -14,7 +14,7 @@ import {
   notificationsInNotification,
 } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
-import { and, lt } from "drizzle-orm";
+import { and, isNull, lt, or } from "drizzle-orm";
 
 // The whole fan-out, and the only place that decides where a notification lands. Recipient resolution is the one
 // Thing that varies by type; everything past it reads the type's declared channels, so adding a notification is
@@ -48,13 +48,22 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
     // Because it runs after the rows above have landed — a throw here would ask the queue for a redelivery
     // That inserts them a second time, which is the duplication QueueJobMaxRetriesMap promises this
     // Handler does not cause
+    // A dismissal is a tombstone kept for the retention counted from the dismissal, so a row dismissed recently survives
+    // The creation's age; a live row is kept for the retention counted from its creation
+    const retentionCutoff = new Date(Date.now() - NOTIFICATION_RETENTION_MS);
     await getResultAsync(() =>
       getDb()
         .delete(notificationsInNotification)
         .where(
           and(
             inJsonArray(notificationsInNotification.userId, userIds),
-            lt(notificationsInNotification.createdAt, new Date(Date.now() - NOTIFICATION_RETENTION_MS)),
+            or(
+              and(
+                isNull(notificationsInNotification.deletedAt),
+                lt(notificationsInNotification.createdAt, retentionCutoff),
+              ),
+              lt(notificationsInNotification.deletedAt, retentionCutoff),
+            ),
           ),
         ),
     ).match(noop, (error) => {

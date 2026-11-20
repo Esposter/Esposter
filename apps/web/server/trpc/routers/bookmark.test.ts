@@ -11,6 +11,7 @@ import { resourceRouter } from "#server/trpc/routers/resource";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
+import type { ReadBookmark } from "#shared/models/db/bookmark/ReadBookmark";
 import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, ResourceType, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -35,6 +36,12 @@ describe("bookmarkRouter", () => {
     await mockContext.db.delete(roomsInMessage);
   });
 
+  // A read's rows as the dock draws them: the row's own fields are left out, and a removed row is not drawn
+  const toLink = ({ createdAt, deletedAt, resourceId, roomId, updatedAt, userId, version, ...link }: ReadBookmark) =>
+    link;
+  const readLinks = async (bookmarkCaller: DecorateRouterRecord<TRPCRouter["bookmark"]> = caller) =>
+    (await bookmarkCaller.readBookmarks()).filter(({ deletedAt }) => deletedAt === null).map(toLink);
+
   // A resource bookmarked from its own page, with the mark that names it
   const bookmarkResource = async () => {
     const resource = await resourceCaller.createResource({ name, type: ResourceType.Blueprint });
@@ -46,15 +53,15 @@ describe("bookmarkRouter", () => {
   test("toggles a bookmark on and off", async () => {
     expect.hasAssertions();
 
-    const isBookmarkedAfterFirstToggle = await caller.toggleBookmark({ path, title });
-    const bookmarksAfterFirstToggle = await caller.readBookmarks();
-    const isBookmarkedAfterSecondToggle = await caller.toggleBookmark({ path, title });
-    const bookmarksAfterSecondToggle = await caller.readBookmarks();
+    const bookmarkAfterFirstToggle = await caller.toggleBookmark({ path, title });
+    const linksAfterFirstToggle = await readLinks();
+    const bookmarkAfterSecondToggle = await caller.toggleBookmark({ path, title });
+    const linksAfterSecondToggle = await readLinks();
 
-    expect(isBookmarkedAfterFirstToggle).toBe(true);
-    expect(bookmarksAfterFirstToggle).toStrictEqual([{ isAvailable: true, path, title }]);
-    expect(isBookmarkedAfterSecondToggle).toBe(false);
-    expect(bookmarksAfterSecondToggle).toStrictEqual([]);
+    expect(bookmarkAfterFirstToggle.deletedAt).toBeNull();
+    expect(linksAfterFirstToggle).toStrictEqual([{ isAvailable: true, path, title }]);
+    expect(bookmarkAfterSecondToggle.deletedAt).toBeInstanceOf(Date);
+    expect(linksAfterSecondToggle).toStrictEqual([]);
   });
 
   test("stores a resource page's target and reads it back with its mark", async () => {
@@ -62,19 +69,19 @@ describe("bookmarkRouter", () => {
 
     const { mark } = await bookmarkResource();
 
-    await expect(caller.readBookmarks()).resolves.toStrictEqual([{ isAvailable: true, mark, path, title }]);
+    await expect(readLinks()).resolves.toStrictEqual([{ isAvailable: true, mark, path, title }]);
   });
 
-  test("hides a bookmarked resource while it is in the recycle bin, and reads it back once restored", async () => {
+  test("reads a bookmarked resource back unavailable while it is in the recycle bin, and available once restored", async () => {
     expect.hasAssertions();
 
     const { mark, resource } = await bookmarkResource();
     await resourceCaller.deleteResources({ ids: [resource.id] });
-    const bookmarksWhileBinned = await caller.readBookmarks();
+    const linksWhileBinned = await readLinks();
     await resourceCaller.restoreResources({ ids: [resource.id] });
 
-    expect(bookmarksWhileBinned).toStrictEqual([]);
-    await expect(caller.readBookmarks()).resolves.toStrictEqual([{ isAvailable: true, mark, path, title }]);
+    expect(linksWhileBinned).toStrictEqual([{ isAvailable: false, path, title }]);
+    await expect(readLinks()).resolves.toStrictEqual([{ isAvailable: true, mark, path, title }]);
   });
 
   test("takes a purged resource's bookmark with it", async () => {
@@ -84,7 +91,7 @@ describe("bookmarkRouter", () => {
     await resourceCaller.deleteResources({ ids: [resource.id] });
     await resourceCaller.purgeResource({ id: resource.id });
 
-    await expect(caller.readBookmarks()).resolves.toStrictEqual([]);
+    await expect(readLinks()).resolves.toStrictEqual([]);
   });
 
   test("reads a room bookmark back unavailable once the reader has left the room", async () => {
@@ -96,12 +103,12 @@ describe("bookmarkRouter", () => {
     const memberCaller = await createMockCaller(bookmarkRouter, memberAuthSession);
     const mark = { id: room.id, type: PageMarkType.Room } as const;
     await memberCaller.toggleBookmark({ mark, path, title });
-    const bookmarksWhileMember = await memberCaller.readBookmarks();
+    const linksWhileMember = await readLinks(memberCaller);
     const memberRoomCaller = await createMockCaller(roomRouter, memberAuthSession);
     await memberRoomCaller.leaveRoom(room.id);
 
-    expect(bookmarksWhileMember).toStrictEqual([{ isAvailable: true, mark, path, title }]);
-    await expect(memberCaller.readBookmarks()).resolves.toStrictEqual([{ isAvailable: false, path, title }]);
+    expect(linksWhileMember).toStrictEqual([{ isAvailable: true, mark, path, title }]);
+    await expect(readLinks(memberCaller)).resolves.toStrictEqual([{ isAvailable: false, path, title }]);
   });
 
   // A removal leaves the row as a tombstone the read returns, so a read that lands later cannot restore the bookmark, and a

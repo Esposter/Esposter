@@ -1,3 +1,4 @@
+import type { DeleteNotificationResult } from "#shared/models/db/notification/DeleteNotificationResult";
 import type { ReadNotificationsResult } from "#shared/models/db/notification/ReadNotificationsResult";
 
 import { ownedBy } from "#server/services/db/ownedBy";
@@ -15,26 +16,37 @@ import {
   selectNotificationInNotificationSchema,
 } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 export const notificationRouter = router({
-  // Each write answers the unread count it leaves, read in the same batch, so the bell takes the settled value
+  // Each write answers the unread count it leaves, read in the same batch, so the bell takes the settled value. A dismissal
+  // Keeps its row as a tombstone, so its version rises and a read that lands later loses to it, and the answer names the row
   deleteNotification: standardAuthedProcedure
     .input(selectNotificationInNotificationSchema.shape.id)
-    .mutation<number>(async ({ ctx, input }) => {
+    .mutation<DeleteNotificationResult>(async ({ ctx, input }) => {
       const [deletedRows, unreadRows] = await ctx.db.batch([
         ctx.db
-          .delete(notificationsInNotification)
-          .where(ownedBy(notificationsInNotification, input, ctx.user.id))
+          .update(notificationsInNotification)
+          .set({ deletedAt: new Date() })
+          .where(
+            and(
+              ownedBy(notificationsInNotification, input, ctx.user.id),
+              isNull(notificationsInNotification.deletedAt),
+            ),
+          )
           .returning(),
         selectUnreadNotificationCount(ctx.db, ctx.user.id),
       ]);
-      requireMutation(deletedRows[0], Operation.Delete, DatabaseEntityType.Notification, input);
-      return takeOne(unreadRows).count;
+      const notification = requireMutation(deletedRows[0], Operation.Delete, DatabaseEntityType.Notification, input);
+      return { notification, unreadCount: takeOne(unreadRows).count };
     }),
+  // Every live row becomes a tombstone at once, so the bell's list empties on the answer
   deleteNotifications: standardAuthedProcedure.mutation<number>(async ({ ctx }) => {
     const [, unreadRows] = await ctx.db.batch([
-      ctx.db.delete(notificationsInNotification).where(eq(notificationsInNotification.userId, ctx.user.id)),
+      ctx.db
+        .update(notificationsInNotification)
+        .set({ deletedAt: new Date() })
+        .where(and(eq(notificationsInNotification.userId, ctx.user.id), isNull(notificationsInNotification.deletedAt))),
       selectUnreadNotificationCount(ctx.db, ctx.user.id),
     ]);
     return takeOne(unreadRows).count;
