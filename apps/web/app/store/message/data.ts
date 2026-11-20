@@ -244,24 +244,25 @@ export const useDataStore = defineStore("message/data", () => {
   // By its version: every copy is written at once or none is, so a row already at a copy's version changes nothing
   const refreshLoadedMessages = getSynchronizedFunction((roomId: ClientMessage["roomId"]) =>
     getResultAsync(async () => {
-      const copiesById = Map.groupBy(
-        listHeldMessages(roomId).filter(({ isLoading }) => !isLoading),
-        ({ id }) => id,
+      const heldIds = new Set(
+        listHeldMessages(roomId)
+          .filter(({ isLoading }) => !isLoading)
+          .map(({ id }) => id),
       );
-      if (copiesById.size === 0) return;
+      if (heldIds.size === 0) return;
 
       // The held rows can name more messages than one read takes, so the ids go out in chunks of its cap, all at once,
       // And the answers are merged once every chunk is in
       const liveMessages = (
         await Promise.all(
-          chunk([...copiesById.keys()], MAX_READ_LIMIT).map((messageIds) =>
+          chunk([...heldIds], MAX_READ_LIMIT).map((messageIds) =>
             $trpc.message.readMessagesByIds.query({ messageIds, roomId }),
           ),
         )
       ).flat();
       const liveMessageMap = new Map(liveMessages.map((message) => [message.id, message]));
       await Promise.all(
-        Array.from(copiesById.keys(), async (messageId) => {
+        Array.from(heldIds, async (messageId) => {
           const liveMessage = liveMessageMap.get(messageId);
           if (liveMessage) await storeUpdateMessage({ ...liveMessage, roomId });
           else await storeDeleteMessage({ id: messageId, roomId });
