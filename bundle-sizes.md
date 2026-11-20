@@ -15,7 +15,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-world              | style.css                 |  272869 |  266.5 |
 | genshin-interface          | **/*.js                   |  267668 |  261.4 |
 | genshin-world              | index.js                  |  232578 |  227.1 |
-| @esposter/db-schema        | **/*.js                   |  231149 |  225.7 |
+| @esposter/db-schema        | **/*.js                   |  230755 |  225.3 |
 | genshin-interface          | style.css                 |  194226 |  189.7 |
 | genshin-engine             | **/*.d.ts                 |  134030 |  130.9 |
 | @esposter/shared           | **/*.js                   |  128929 |  125.9 |
@@ -35,12 +35,12 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | vue-block-editor-headless  | **/*.d.ts                 |   48859 |   47.7 |
 | math-expression-compiler   | **/*.d.ts                 |   44485 |   43.4 |
 | genshin-text               | **/*.d.ts                 |   44008 |   43.0 |
-| @esposter/db-schema        | index.js                  |   42692 |   41.7 |
+| @esposter/db-schema        | index.js                  |   42468 |   41.5 |
 | genshin-engine             | index.js                  |   40069 |   39.1 |
 | parse-tmx                  | **/*.js                   |   38350 |   37.5 |
 | vue-pdfjs-headless         | **/*.js                   |   32405 |   31.6 |
 | survey-expression          | **/*.d.ts                 |   32318 |   31.6 |
-| @esposter/db-mock          | **/*.js                   |   30494 |   29.8 |
+| @esposter/db-mock          | **/*.js                   |   30730 |   30.0 |
 | @esposter/shared           | index.d.ts                |   27592 |   26.9 |
 | vue-phaserjs               | index.d.ts                |   27075 |   26.4 |
 | vue-survey-engine-headless | index.d.ts                |   25061 |   24.5 |
@@ -160,4 +160,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 155 files, 13215255 bytes, 12905.5 KiB, 12.60 MiB
+**Total:** 155 files, 13214873 bytes, 12905.1 KiB, 12.60 MiB
