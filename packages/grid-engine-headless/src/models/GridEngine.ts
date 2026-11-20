@@ -15,6 +15,7 @@ export interface GridEngine {
     event: TEvent,
     listener: (payload: GridEngineEvents[TEvent]) => void,
   ) => () => void;
+  setPosition: (id: string, position: Position) => Result<void, GridEngineError>;
   turnTowards: (id: string, direction: Direction) => Result<void, GridEngineError>;
   update: (delta: number) => void;
 }

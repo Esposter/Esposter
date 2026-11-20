@@ -5,10 +5,12 @@ import type { GridEngineStep } from "#src/models/GridEngineStep";
 import { Direction } from "#src/models/Direction";
 import { checkIsBlocked } from "#src/services/checkIsBlocked";
 import { DirectionDeltaMap } from "#src/services/DirectionDeltaMap";
+import { emitGridEvent } from "#src/services/emitGridEvent";
+import { endRun } from "#src/services/endRun";
 import { faceCharacter } from "#src/services/faceCharacter";
 
-// Starts the waiting move as a step. A move into a blocked tile turns the character without moving it, and a move with no
-// Step starts nothing
+// Starts the waiting move as a step. A move into a blocked tile turns the character without moving it, and ends the run
+// It was part of; a move with no step starts nothing
 export const startStep = (state: GridEngineState, character: GridEngineCharacter): GridEngineStep | undefined => {
   const { pendingDirection } = character;
   character.pendingDirection = Direction.None;
@@ -18,10 +20,17 @@ export const startStep = (state: GridEngineState, character: GridEngineCharacter
   const enterTile = { x: exitTile.x + delta.x, y: exitTile.y + delta.y };
   if (checkIsBlocked(state, enterTile)) {
     faceCharacter(state, character, pendingDirection);
+    if (character.isRunning) endRun(state, character);
     return undefined;
   }
   // A step turns the character silently, since the facing it leaves for is the step's own direction
   character.facingDirection = pendingDirection;
-  character.step = { direction: pendingDirection, enterTile, exitTile, progress: 0 };
-  return character.step;
+  const step: GridEngineStep = { direction: pendingDirection, enterTile, exitTile, progress: 0 };
+  character.step = step;
+  if (!character.isRunning) {
+    character.isRunning = true;
+    emitGridEvent(state, "movementStarted", { direction: pendingDirection, id: character.id });
+  }
+  emitGridEvent(state, "positionChangeStarted", { direction: pendingDirection, enterTile, exitTile, id: character.id });
+  return step;
 };

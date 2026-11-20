@@ -1,6 +1,7 @@
 import type { GridEngine } from "#src/models/GridEngine";
 import type { GridEngineConfig } from "#src/models/GridEngineConfig";
 import type { GridEngineError } from "#src/models/GridEngineError";
+import type { Position } from "#src/models/Position";
 import type { Result } from "neverthrow";
 
 import { Direction } from "#src/models/Direction";
@@ -213,5 +214,108 @@ describe(createGridEngine, () => {
     const error = readError(engine.move(FIRST_ID, Direction.DownRight));
 
     expect(error).toStrictEqual({ id: FIRST_ID, kind: GridEngineErrorKind.DiagonalMove });
+  });
+
+  test("a listener stays subscribed until it unsubscribes (#293)", () => {
+    expect.hasAssertions();
+
+    const directionChanges: Direction[] = [];
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false]] });
+    const unsubscribe = engine.on("directionChanged", ({ direction }) => {
+      directionChanges.push(direction);
+    });
+
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Right));
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Down));
+    unsubscribe();
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Right));
+
+    expect(directionChanges).toStrictEqual([Direction.Right, Direction.Down]);
+  });
+
+  test("movementStopped names the tile the character stopped on (#159)", () => {
+    expect.hasAssertions();
+
+    const stoppedAt: Position[] = [];
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false, false]] });
+    engine.on("movementStopped", ({ position }) => {
+      stoppedAt.push(position);
+    });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+
+    engine.update(STEP_DURATION_MS);
+
+    expect(stoppedAt).toStrictEqual([{ x: 1, y: 0 }]);
+  });
+
+  test("a teleport releases the tile a moving character left (#551)", () => {
+    expect.hasAssertions();
+
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false, false]] });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+    engine.update(STEP_DURATION_MS / 2);
+
+    unwrap(engine.setPosition(FIRST_ID, { x: 2, y: 0 }));
+
+    expect(engine.checkIsBlocked({ x: 0, y: 0 })).toBe(false);
+    expect(engine.checkIsBlocked({ x: 1, y: 0 })).toBe(false);
+    expect(engine.checkIsBlocked({ x: 2, y: 0 })).toBe(true);
+  });
+
+  test("setPosition for an unknown character returns an error (#136)", () => {
+    expect.hasAssertions();
+
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false]] });
+
+    const error = readError(engine.setPosition(SECOND_ID, { x: 0, y: 0 }));
+
+    expect(error).toStrictEqual({ id: SECOND_ID, kind: GridEngineErrorKind.UnknownCharacter });
+  });
+
+  test("a new engine has no character of the previous one (#14, #287)", () => {
+    expect.hasAssertions();
+
+    const previousEngine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false]] });
+    const engine = readEngine({ tiles: [[false]] });
+
+    expect(previousEngine.checkHasCharacter(FIRST_ID)).toBe(true);
+    expect(engine.checkHasCharacter(FIRST_ID)).toBe(false);
+  });
+
+  test("a grid whose rows differ in length, or that has no row, is an invalid grid", () => {
+    expect.hasAssertions();
+
+    expect(readError(createGridEngine({ tiles: [] }))).toStrictEqual({ kind: GridEngineErrorKind.InvalidGrid });
+    expect(readError(createGridEngine({ tiles: [[false], [false, false]] }))).toStrictEqual({
+      kind: GridEngineErrorKind.InvalidGrid,
+    });
+  });
+
+  test("a speed that is not a positive number is an invalid speed", () => {
+    expect.hasAssertions();
+
+    expect(readError(createGridEngine({ characters: [{ id: FIRST_ID, speed: 0 }], tiles: [[false]] }))).toStrictEqual({
+      id: FIRST_ID,
+      kind: GridEngineErrorKind.InvalidSpeed,
+    });
+    expect(readError(createGridEngine({ characters: [{ id: FIRST_ID, speed: -1 }], tiles: [[false]] }))).toStrictEqual({
+      id: FIRST_ID,
+      kind: GridEngineErrorKind.InvalidSpeed,
+    });
+  });
+
+  test("a start or a teleport off the grid is refused as outside the grid", () => {
+    expect.hasAssertions();
+
+    expect(
+      readError(createGridEngine({ characters: [{ id: FIRST_ID, startPosition: { x: 1, y: 0 } }], tiles: [[false]] })),
+    ).toStrictEqual({ id: FIRST_ID, kind: GridEngineErrorKind.OutsideGrid, position: { x: 1, y: 0 } });
+
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false]] });
+    expect(readError(engine.setPosition(FIRST_ID, { x: 0, y: 1 }))).toStrictEqual({
+      id: FIRST_ID,
+      kind: GridEngineErrorKind.OutsideGrid,
+      position: { x: 0, y: 1 },
+    });
   });
 });

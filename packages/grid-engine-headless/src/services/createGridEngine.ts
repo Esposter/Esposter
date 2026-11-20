@@ -5,16 +5,24 @@ import type { GridEngineState } from "#src/models/GridEngineState";
 import type { Result } from "neverthrow";
 
 import { addCharacter } from "#src/services/addCharacter";
+import { checkIsGridValid } from "#src/services/checkIsGridValid";
 import { createEngine } from "#src/services/createEngine";
 import { Result as ResultFactory } from "neverthrow";
 
-export const createGridEngine = ({ characters = [], tiles }: GridEngineConfig): Result<GridEngine, GridEngineError> => {
-  const state: GridEngineState = {
-    characters: new Map(),
-    listeners: { directionChanged: new Set(), positionChangeFinished: new Set() },
-    tiles,
-  };
-  return ResultFactory.combine(characters.map((character) => addCharacter(state, character))).map(() =>
-    createEngine(state),
-  );
-};
+export const createGridEngine = ({ characters = [], tiles }: GridEngineConfig): Result<GridEngine, GridEngineError> =>
+  checkIsGridValid(tiles).andThen(() => {
+    const state: GridEngineState = {
+      characters: new Map(),
+      listeners: {
+        directionChanged: new Set(),
+        movementStarted: new Set(),
+        movementStopped: new Set(),
+        positionChangeFinished: new Set(),
+        positionChangeStarted: new Set(),
+      },
+      tiles,
+    };
+    return ResultFactory.combine(characters.map((character) => addCharacter(state, character))).map(() =>
+      createEngine(state),
+    );
+  });

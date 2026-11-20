@@ -12,15 +12,60 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
+- 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
+1. Install the package.
+
 ```bash
 pnpm i grid-engine-headless
 ```
+
+2. Make an engine and walk a character one tile. A call that can fail returns a result, read here with `match`.
+
+```ts
+import { createGridEngine, Direction } from "grid-engine-headless";
+
+const engine = createGridEngine({ characters: [{ id: "player" }], tiles: [[false, false]] }).match(
+  (created) => created,
+  (error) => {
+    throw error;
+  },
+);
+
+engine.on("positionChangeFinished", ({ enterTile, id }) => {
+  console.log(id, "stands on", enterTile);
+});
+
+engine.move("player", Direction.Right).match(
+  () => {
+    engine.update(250);
+  },
+  (error) => {
+    throw error;
+  },
+);
+```
+
+Time is passed by `update`, in milliseconds, and the default speed is four tiles a second.
+
+## <a name="key-exports">🧩 Key Exports</a>
+
+| Export                | Kind      | Purpose                                                                                                                                 |
+| --------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `CharacterConfig`     | interface | A character's starting id, position, facing and speed; each absent field takes its default                                              |
+| `createGridEngine`    | function  | Makes an engine from a grid of tiles and the characters it starts with, or returns the error that refuses them                          |
+| `Direction`           | value set | The nine directions: four steps, the four diagonals a character may face, and none                                                      |
+| `GridEngine`          | interface | The engine: adds and moves characters, turns and teleports them, answers collision queries, subscribes to events and steps time forward |
+| `GridEngineConfig`    | interface | The grid of tiles, where a tile is blocking, open or absent, and the characters an engine starts with                                   |
+| `GridEngineError`     | interface | The error a call returns, with the character or the position it was about                                                               |
+| `GridEngineErrorKind` | value set | Why a call failed: an unknown character, a position outside the grid, a diagonal move, an invalid grid or an invalid speed              |
+| `GridEngineEvents`    | interface | The payloads of the five events: a direction changed, a movement started or stopped, and a position change started or finished          |
+| `Position`            | interface | A tile by its column and row, counted from the top left corner                                                                          |
 
 ## <a name="license">⚖️ License</a>
 

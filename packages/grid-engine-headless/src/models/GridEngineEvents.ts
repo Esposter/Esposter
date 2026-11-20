@@ -5,5 +5,8 @@ import type { Position } from "#src/models/Position";
 // Listener never reads the engine back
 export interface GridEngineEvents {
   directionChanged: { direction: Direction; id: string };
+  movementStarted: { direction: Direction; id: string };
+  movementStopped: { id: string; position: Position };
   positionChangeFinished: { direction: Direction; enterTile: Position; exitTile: Position; id: string };
+  positionChangeStarted: { direction: Direction; enterTile: Position; exitTile: Position; id: string };
 }
