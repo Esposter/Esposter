@@ -7,6 +7,14 @@ import { runUnit } from "#src/services/shared/runUnit";
 import { purgeExpiredTombstones } from "#src/services/tombstone/purgeExpiredTombstones";
 import { getResultAsync, noop } from "@esposter/shared";
 
+// The nightly purges, each logged under its name when it fails, so one that fails is logged and the others still run.
+// The recycle bin's purge runs as a unit, so the topics its deletes change are published. The tombstone purge changes no
+// View and publishes nothing, so it runs bare
+const NIGHTLY_PURGES: { name: string; purge: () => Promise<void> }[] = [
+  { name: "PurgeDeletedResources", purge: () => runUnit(purgeExpiredResources) },
+  { name: "PurgeExpiredTombstones", purge: purgeExpiredTombstones },
+];
+
 // The jobs Worker is a queue consumer for every job and for each job's dead-letter queue.
 // It also runs the nightly purges, of the recycle bin and of the overlay's tombstones, on its Cron Trigger.
 // The realtime objects it reaches are bound through the realtime Worker's name, so they are not exported from here.
@@ -18,15 +26,11 @@ export default {
     validateJobsEnvironment();
     // A run that fails is logged and waits for the next night: the purge is eventually timely.
     // A Cron Trigger has no retry of its own to ask for.
-    context.waitUntil(
-      getResultAsync(() => runUnit(purgeExpiredResources)).match(noop, (error) => {
-        console.error("PurgeDeletedResources failed:", error);
-      }),
-    );
-    context.waitUntil(
-      getResultAsync(purgeExpiredTombstones).match(noop, (error) => {
-        console.error("PurgeExpiredTombstones failed:", error);
-      }),
-    );
+    for (const { name, purge } of NIGHTLY_PURGES)
+      context.waitUntil(
+        getResultAsync(purge).match(noop, (error) => {
+          console.error(`${name} failed:`, error);
+        }),
+      );
   },
 } satisfies ExportedHandler<Cloudflare.Env>;
