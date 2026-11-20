@@ -9,7 +9,10 @@ import { getDb } from "#src/services/shared/getDb";
 // A request they received is the sender's act, so it carries no time.
 // A friendship is one row for the pair, made when the receiver accepted it, so it carries no time.
 export const writeFriendEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const where = { deletedAt: { isNull: true }, OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }] };
+  const where = {
+    deletedAt: { isNull: true as const },
+    OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }],
+  };
   const [requests, friendships] = await Promise.all([
     getDb().query.friendRequestsInSocial.findMany({
       columns: { createdAt: true, receiverId: true, senderId: true },

@@ -109,6 +109,7 @@ describe(computeReadSet, () => {
       filters: [
         { column: "parentId", level: 0, occurrence: "d0", site: "where", table: "post_posts" },
         { column: "userId", level: 0, occurrence: "d0", site: "where", table: "post_posts" },
+        { column: "deletedAt", level: 3, occurrence: "social_blocks", site: "where", table: "social_blocks" },
       ],
       joins: [
         {
@@ -233,6 +234,7 @@ describe(computeReadSet, () => {
         { column: "id", level: 0, occurrence: "auth_users", site: "where", table: "auth_users" },
         { column: "name", level: 0, occurrence: "auth_users", site: "where", table: "auth_users" },
         { column: "blockedId", level: 0, occurrence: "social_blocks", site: "where", table: "social_blocks" },
+        { column: "deletedAt", level: 1, occurrence: "social_blocks", site: "where", table: "social_blocks" },
       ],
       joins: [
         {

@@ -15,7 +15,7 @@ import {
   friendsInSocial,
   PublicUserColumns,
 } from "@esposter/db-schema";
-import { getFriendshipId, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { getFriendshipId, InvalidOperationError, jsonDateParse, Operation, takeOne } from "@esposter/shared";
 import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -105,7 +105,7 @@ describe("friendRouter", () => {
     const headerParts = headerValue.split(" ");
 
     expect(takeOne(headerParts, 0)).toBe("deleteFriend");
-    expect(JSON.parse(decodeURIComponent(takeOne(headerParts, 1)))).toStrictEqual({
+    expect(jsonDateParse(decodeURIComponent(takeOne(headerParts, 1)))).toStrictEqual({
       key: { receiverId: getMockSession().user.id, senderId: user.id },
       table: getTableName(friendsInSocial),
       version: 1,
