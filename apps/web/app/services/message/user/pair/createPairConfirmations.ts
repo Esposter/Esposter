@@ -1,10 +1,10 @@
 import type { Confirmation } from "#src/models/shared/overlay/Confirmation";
 import type { RowVersion } from "@esposter/db-schema";
 
-import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
 import { blockTable, friendRequestTable, friendTable } from "#src/services/message/user/pair/constants";
 import { getBlockRowKey } from "#src/services/message/user/pair/getBlockRowKey";
 import { getFriendRowKey } from "#src/services/message/user/pair/getFriendRowKey";
+import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
 
 // The rows a write's answer named, as the confirmations its entry waits for. A row a pair table does not hold names no
 // Row the pair entries show, so it confirms none

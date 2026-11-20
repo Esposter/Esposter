@@ -22,7 +22,7 @@ const createFriend = (index: number, version: number): FriendInSocial => ({
   version,
 });
 // Read-only input to every store, so the rows are built once and each store holds them by reference
-const friends = Array.from({ length: 50 }, (_, index) => createFriend(index, 1));
+const friends = Array.from({ length: 50 }, (_value, index) => createFriend(index, 1));
 // Held at version 1, so this arrival is newer and replaces the row it names
 const newerFriend = createFriend(0, 2);
 // Each entry tombstones one row, the three over three different rows so no write waits behind another
