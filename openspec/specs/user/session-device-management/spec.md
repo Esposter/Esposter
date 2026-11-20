@@ -43,6 +43,13 @@ The Sessions card SHALL name each session's browser with its major version, and 
 - **WHEN** the user opens the Sessions card
 - **THEN** the row names the browser and the operating system
 
+#### Scenario: A browser the agent does not name shows only its device
+
+- **GIVEN** a session from an in-app webview whose agent names no browser
+- **WHEN** the user opens the Sessions card
+- **THEN** the row names the device alone
+- **AND** no browser the agent does not state is named
+
 #### Scenario: An unrecognised browser shows as an unknown device
 
 - **GIVEN** a session whose browser identity cannot be recognised

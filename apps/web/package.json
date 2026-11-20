@@ -104,7 +104,6 @@
     "@vueuse/router": "catalog:",
     "apexcharts": "catalog:",
     "better-auth": "catalog:",
-    "bowser": "catalog:",
     "codemirror": "catalog:",
     "defu": "catalog:",
     "drizzle-orm": "catalog:",

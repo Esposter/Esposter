@@ -125,7 +125,6 @@ catalog:
   "@vueuse/router": ^15.0.0
   apexcharts: ^8.9.1
   better-auth: ^1.7.26
-  bowser: ^2.15.0
   citty: ^0.2.2
   codemirror: ^6.0.2
   crossws: ^0.4.17
