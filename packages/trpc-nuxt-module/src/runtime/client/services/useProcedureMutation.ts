@@ -36,6 +36,7 @@ export const useProcedureMutation = (
       const transformed = options.transform ? await options.transform(outcome.value) : outcome.value;
       if (!options.pick) return transformed;
       const picked: Record<string, unknown> = {};
+      // The keys `pick` names are the transformed result's own, which its `unknown` type does not say
       for (const key of options.pick) picked[key] = (transformed as Record<string, unknown>)[key];
       return picked;
     },
