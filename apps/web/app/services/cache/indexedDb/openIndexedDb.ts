@@ -96,7 +96,7 @@ const deleteDatabase = () =>
     deleteRequest.onerror = () => {
       reject(
         deleteRequest.error ??
-          new InvalidOperationError(Operation.Delete, indexedDB.deleteDatabase.name, DATABASE_NAME),
+          new InvalidOperationError(Operation.Delete, DATABASE_NAME, "the browser refused the delete"),
       );
     };
   });
