@@ -3,7 +3,7 @@ import type { PersonaReference } from "genshin-persona/src/models/PersonaReferen
 const IDENTIFIER_REGEX = /^[A-Za-z_$][\w$]*$/u;
 // The generated map's source, in the formatter's own shape so a format pass leaves it alone: one line per
 // Character in name order, the name quoted only where it is not an identifier
-export const getPersonaReferenceMapSource = (
+export const getCharacterNamePersonaReferenceMapSource = (
   characterNamePersonaReferenceMap: Map<string, PersonaReference>,
 ): string => {
   const entries = [...characterNamePersonaReferenceMap]
@@ -14,7 +14,7 @@ export const getPersonaReferenceMapSource = (
     );
   return `import type { PersonaReference } from "#src/models/PersonaReference";
 
-export const PersonaReferenceMap: Record<string, PersonaReference> = {
+export const CharacterNamePersonaReferenceMap: Record<string, PersonaReference> = {
 ${entries.join("")}};
 `;
 };

@@ -2,7 +2,7 @@ import { GameLanguages } from "genshin-text";
 
 // The persona's loader map for the lines the game-data package does not carry yet: a chunk per language, imported
 // When a spinner in that language is read and never before
-export const getCharacterLinesLoaderMapSource = (): string => {
+export const getGameLanguageCharacterLinesLoaderMapSource = (): string => {
   const entries = GameLanguages.map(
     (language) =>
       `  [GameLanguage.${language}]: async () =>
@@ -15,7 +15,7 @@ import type { VoiceLine } from "#src/models/VoiceLine";
 import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
 
 // Written by \`pnpm -C scripts genshin:text write\`, never by hand.
-export const CharacterLinesLoaderMap: Record<GameLanguage, () => Promise<Record<string, VoiceLine[]>>> = {
+export const GameLanguageCharacterLinesLoaderMap: Record<GameLanguage, () => Promise<Record<string, VoiceLine[]>>> = {
 ${entries.join("")}};
 `;
 };

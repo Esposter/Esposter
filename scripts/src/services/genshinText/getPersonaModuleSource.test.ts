@@ -5,7 +5,7 @@ import {
   PERSONA_COPY_DIRECTORY,
   PersonaCopiedModules,
 } from "#src/services/genshinText/constants";
-import { getCharacterLinesLoaderMapSource } from "#src/services/genshinText/getCharacterLinesLoaderMapSource";
+import { getGameLanguageCharacterLinesLoaderMapSource } from "#src/services/genshinText/getGameLanguageCharacterLinesLoaderMapSource";
 import { getGameTextLoaderMapSource } from "#src/services/genshinText/getGameTextLoaderMapSource";
 import { getPersonaModuleSource } from "#src/services/genshinText/getPersonaModuleSource";
 import { formatGeneratedSource } from "#src/services/shared/formatGeneratedSource";
@@ -40,13 +40,13 @@ describe(getPersonaModuleSource, () => {
     expect.hasAssertions();
 
     const gameTextMapPath = join(GENSHIN_TEXT_GENERATED_DIRECTORY, "GameTextLoaderMap.ts");
-    const characterLinesMapPath = join(dirname(CHARACTER_LINES_DIRECTORY), "CharacterLinesLoaderMap.ts");
+    const characterLinesMapPath = join(dirname(CHARACTER_LINES_DIRECTORY), "GameLanguageCharacterLinesLoaderMap.ts");
 
     expect(readFileSync(gameTextMapPath, "utf8")).toBe(
       await formatGeneratedSource(gameTextMapPath, getGameTextLoaderMapSource()),
     );
     expect(readFileSync(characterLinesMapPath, "utf8")).toBe(
-      await formatGeneratedSource(characterLinesMapPath, getCharacterLinesLoaderMapSource()),
+      await formatGeneratedSource(characterLinesMapPath, getGameLanguageCharacterLinesLoaderMapSource()),
     );
   });
 });

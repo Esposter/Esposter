@@ -3,7 +3,7 @@ import type { VoiceSynthesizer } from "genshin-persona/src/models/VoiceSynthesiz
 
 import { MODELS_DIRECTORY } from "#src/services/voiceMatch/constants";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
-import { PersonaReferenceMap } from "genshin-persona/src/generated/PersonaReferenceMap.ts";
+import { CharacterNamePersonaReferenceMap } from "genshin-persona/src/generated/CharacterNamePersonaReferenceMap.ts";
 import { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
 import { createClipDecoder } from "genshin-persona/src/services/createClipDecoder.ts";
 import { createVoiceSynthesizer } from "genshin-persona/src/services/createVoiceSynthesizer.ts";
@@ -39,7 +39,7 @@ describe.skipIf(!isBenchable)("synthesizer", () => {
 
   beforeAll(async () => {
     const decoder = await createClipDecoder();
-    const stem = PersonaReferenceMap[CHARACTER_NAME]?.stem ?? "";
+    const stem = CharacterNamePersonaReferenceMap[CHARACTER_NAME]?.stem ?? "";
     const clip = await readReferenceClip(CHARACTER_NAME, stem, VoiceLanguage.English, decoder);
     decoder.free();
     assert.exists(clip);

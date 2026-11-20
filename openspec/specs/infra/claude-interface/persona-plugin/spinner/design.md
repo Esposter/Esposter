@@ -23,12 +23,12 @@ flowchart LR
 
 ## Key files
 
-| File                                                                | Role                                                                                                         |
-| :------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-persona/scripts/spinner.ts`                       | The spinner as JSON for the module, run off the start's path since the lines cost a load of the data package |
-| `packages/genshin-persona/src/services/getSpinner.ts`               | Both verb layers; one tip layer under one label — the character's lines, capped                              |
-| `packages/genshin-persona/src/services/cutSpinnerTip.ts`            | A line cut to the opening sentences that fit a tip                                                           |
-| `packages/genshin-text/src/services/fillLinePlaceholders.ts`        | A game-data line as the game shows it to a player: the nickname filled, the gender's word kept               |
-| `packages/genshin-persona/src/services/readSpinner.ts`              | The card's verbs and every line of the character's, read into one spinner                                    |
-| `packages/genshin-persona/src/generated/CharacterLinesLoaderMap.ts` | The game's own lines of every character the data package lacks, one chunk per language                       |
-| `packages/genshin-persona/src/services/readVoiceLines.ts`           | A character's lines in the interface language: the data package's, else the generated game text's            |
+| File                                                                            | Role                                                                                                         |
+| :------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-persona/scripts/spinner.ts`                                   | The spinner as JSON for the module, run off the start's path since the lines cost a load of the data package |
+| `packages/genshin-persona/src/services/getSpinner.ts`                           | Both verb layers; one tip layer under one label — the character's lines, capped                              |
+| `packages/genshin-persona/src/services/cutSpinnerTip.ts`                        | A line cut to the opening sentences that fit a tip                                                           |
+| `packages/genshin-text/src/services/fillLinePlaceholders.ts`                    | A game-data line as the game shows it to a player: the nickname filled, the gender's word kept               |
+| `packages/genshin-persona/src/services/readSpinner.ts`                          | The card's verbs and every line of the character's, read into one spinner                                    |
+| `packages/genshin-persona/src/generated/GameLanguageCharacterLinesLoaderMap.ts` | The game's own lines of every character the data package lacks, one chunk per language                       |
+| `packages/genshin-persona/src/services/readVoiceLines.ts`                       | A character's lines in the interface language: the data package's, else the generated game text's            |

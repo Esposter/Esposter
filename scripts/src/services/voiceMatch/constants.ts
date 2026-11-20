@@ -13,7 +13,7 @@ export const PERSONA_REFERENCE_MAP_PATH: string = join(
   "genshin-persona",
   "src",
   "generated",
-  "PersonaReferenceMap.ts",
+  "CharacterNamePersonaReferenceMap.ts",
 );
 // The encoder and the engine download once, outside the repository: a model is a dependency, not an output
 export const MODELS_DIRECTORY: string =

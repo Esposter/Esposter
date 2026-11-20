@@ -8,7 +8,7 @@ import {
   PERSONA_COPY_DIRECTORY,
   PersonaCopiedModules,
 } from "#src/services/genshinText/constants";
-import { getCharacterLinesLoaderMapSource } from "#src/services/genshinText/getCharacterLinesLoaderMapSource";
+import { getGameLanguageCharacterLinesLoaderMapSource } from "#src/services/genshinText/getGameLanguageCharacterLinesLoaderMapSource";
 import { getGameTextHash } from "#src/services/genshinText/getGameTextHash";
 import { getGameTextLoaderMapSource } from "#src/services/genshinText/getGameTextLoaderMapSource";
 import { getInterfaceGameText } from "#src/services/genshinText/getInterfaceGameText";
@@ -109,8 +109,8 @@ export const writeGameText = async ({ isDryRun }: DryRunOptions): Promise<string
     getGameTextLoaderMapSource(),
   );
   await writeGeneratedFile(
-    join(dirname(CHARACTER_LINES_DIRECTORY), "CharacterLinesLoaderMap.ts"),
-    getCharacterLinesLoaderMapSource(),
+    join(dirname(CHARACTER_LINES_DIRECTORY), "GameLanguageCharacterLinesLoaderMap.ts"),
+    getGameLanguageCharacterLinesLoaderMapSource(),
   );
   await Promise.all(
     PersonaCopiedModules.map((modulePath) =>

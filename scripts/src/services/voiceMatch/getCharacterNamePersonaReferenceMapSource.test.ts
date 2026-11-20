@@ -1,11 +1,11 @@
-import { getPersonaReferenceMapSource } from "#src/services/voiceMatch/getPersonaReferenceMapSource";
+import { getCharacterNamePersonaReferenceMapSource } from "#src/services/voiceMatch/getCharacterNamePersonaReferenceMapSource";
 import { describe, expect, test } from "vitest";
 
-describe(getPersonaReferenceMapSource, () => {
+describe(getCharacterNamePersonaReferenceMapSource, () => {
   test("writes one entry per line, quoting only the names that are not identifiers", () => {
     expect.hasAssertions();
 
-    const source = getPersonaReferenceMapSource(
+    const source = getCharacterNamePersonaReferenceMapSource(
       new Map([
         ["Albedo", { likeness: 0, stem: "Albedo Hello" }],
         ["Hu Tao", { likeness: 0.1, stem: "Hu Tao Hello" }],
@@ -14,7 +14,7 @@ describe(getPersonaReferenceMapSource, () => {
 
     expect(source).toBe(`import type { PersonaReference } from "#src/models/PersonaReference";
 
-export const PersonaReferenceMap: Record<string, PersonaReference> = {
+export const CharacterNamePersonaReferenceMap: Record<string, PersonaReference> = {
   Albedo: { likeness: 0, stem: "Albedo Hello" },
   "Hu Tao": { likeness: 0.1, stem: "Hu Tao Hello" },
 };

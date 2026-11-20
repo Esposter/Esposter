@@ -29,7 +29,7 @@ flowchart LR
     Pick["Reference<br/>nearest the profile, long and clean"]
     Clone["Engine<br/>carrier sentence from the reference"]
     Score["Likeness<br/>cosine to the profile"]
-    Map["PersonaReferenceMap.ts<br/>stem + likeness per character"]
+    Map["CharacterNamePersonaReferenceMap.ts<br/>stem + likeness per character"]
     Plugin["The plugin<br/>fetches the stem in the chosen dub"]
     Card["Card<br/>reference, if the ear overrules"]
 
@@ -43,7 +43,7 @@ flowchart LR
 
 ## What it writes
 
-One generated map, `packages/genshin-persona/src/generated/PersonaReferenceMap.ts`: per character, the line's **stem** — its file name on the wiki without the dub prefix and extension, the same in every dub — and the **likeness** its clone scored. The plugin reads it on every spoken reply, and so does the runner: a named run seeds itself from the map so the characters it does not measure keep their entries, and `--check` resolves each character's line through the same function the plugin does. One map rather than a module per character, which is the exception the [generated artifacts](../../../architecture/generated-artifacts/design.md) page states and gives the reason for. Precedence against a card's `reference` is resolved in code, never by copying ([per-character voices](../per-character-voices/design.md)).
+One generated map, `packages/genshin-persona/src/generated/CharacterNamePersonaReferenceMap.ts`: per character, the line's **stem** — its file name on the wiki without the dub prefix and extension, the same in every dub — and the **likeness** its clone scored. The plugin reads it on every spoken reply, and so does the runner: a named run seeds itself from the map so the characters it does not measure keep their entries, and `--check` resolves each character's line through the same function the plugin does. One map rather than a module per character, which is the exception the [generated artifacts](../../../architecture/generated-artifacts/design.md) page states and gives the reason for. Precedence against a card's `reference` is resolved in code, never by copying ([per-character voices](../per-character-voices/design.md)).
 
 The run prints one line per character — the stem, the likeness, how many clips the profile pooled and the reference's speech seconds and signal to noise — then the count measured and the characters it could not. `--write` generates the map at the end; a run without it is a dry measurement. A character the wiki has no voice-over page for yet is reported and left out of the map.
 
@@ -61,21 +61,21 @@ The runner reads the plugin's source — its wiki reading, its decoder, its engi
 
 ## Key files
 
-| File                                                              | Role                                                            |
-| :---------------------------------------------------------------- | :-------------------------------------------------------------- |
-| `scripts/src/voiceMatch/index.ts`                                 | The runner: measure the roster, write the map, or check it      |
-| `scripts/src/services/voiceMatch/measureCharacterReference.ts`    | Profile, reference, clone, likeness for one character           |
-| `scripts/src/services/voiceMatch/readReferenceCandidates.ts`      | Every story line of one character fetched, decoded and measured |
-| `scripts/src/services/voiceMatch/readMissingReferences.ts`        | Every reference asked of the wiki in every dub                  |
-| `scripts/src/services/voiceMatch/computeClipProfile.ts`           | Embedding, speech seconds and signal to noise off one clip      |
-| `scripts/src/services/voiceMatch/computeMeanEmbedding.ts`         | Clips pooled into one centre                                    |
-| `scripts/src/services/voiceMatch/getPersonaReferenceMapSource.ts` | The map's source in the formatter's own shape                   |
-| `scripts/src/services/voiceMatch/constants.ts`                    | Every floor, the carrier and the model id                       |
-| `packages/genshin-persona/src/services/parseWikiStoryLines.ts`    | The story template's titles, texts and file stems               |
-| `packages/genshin-persona/src/services/parseWikiTravelerLines.ts` | A twin's half of the Traveler's dialogues, by file and by word  |
-| `packages/genshin-persona/src/services/readWikiFile.ts`           | Each clip off the file host, as the plugin reads its reference  |
-| `packages/genshin-persona/src/services/cutReferenceClip.ts`       | The cut a twin's clip takes, in the runner as in the plugin     |
-| `packages/genshin-persona/src/generated/PersonaReferenceMap.ts`   | The output: stem and likeness per measured character            |
+| File                                                                           | Role                                                            |
+| :----------------------------------------------------------------------------- | :-------------------------------------------------------------- |
+| `scripts/src/voiceMatch/index.ts`                                              | The runner: measure the roster, write the map, or check it      |
+| `scripts/src/services/voiceMatch/measureCharacterReference.ts`                 | Profile, reference, clone, likeness for one character           |
+| `scripts/src/services/voiceMatch/readReferenceCandidates.ts`                   | Every story line of one character fetched, decoded and measured |
+| `scripts/src/services/voiceMatch/readMissingReferences.ts`                     | Every reference asked of the wiki in every dub                  |
+| `scripts/src/services/voiceMatch/computeClipProfile.ts`                        | Embedding, speech seconds and signal to noise off one clip      |
+| `scripts/src/services/voiceMatch/computeMeanEmbedding.ts`                      | Clips pooled into one centre                                    |
+| `scripts/src/services/voiceMatch/getCharacterNamePersonaReferenceMapSource.ts` | The map's source in the formatter's own shape                   |
+| `scripts/src/services/voiceMatch/constants.ts`                                 | Every floor, the carrier and the model id                       |
+| `packages/genshin-persona/src/services/parseWikiStoryLines.ts`                 | The story template's titles, texts and file stems               |
+| `packages/genshin-persona/src/services/parseWikiTravelerLines.ts`              | A twin's half of the Traveler's dialogues, by file and by word  |
+| `packages/genshin-persona/src/services/readWikiFile.ts`                        | Each clip off the file host, as the plugin reads its reference  |
+| `packages/genshin-persona/src/services/cutReferenceClip.ts`                    | The cut a twin's clip takes, in the runner as in the plugin     |
+| `packages/genshin-persona/src/generated/CharacterNamePersonaReferenceMap.ts`   | The output: stem and likeness per measured character            |
 
 ## Notes
 

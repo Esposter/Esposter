@@ -5,7 +5,7 @@ export const LOCAL_TYPE_REGEX: RegExp = /^(?:interface|type) (?<name>\w+)/gmu;
 export const CONSTANTS_FILE_REGEX: RegExp = /\/constants(?:\.test|\.bench)?\.ts$/u;
 // The naming skill's function prefixes. A name opening on one of them beside a base that does not carry it names
 // What is done to a thing rather than a second spelling of it, however many words the two share — `deleteUser`
-// Beside `User`, `getPersonaReferenceMapSource` beside `PersonaReferenceMap`
+// Beside `User`, `getCharacterNamePersonaReferenceMapSource` beside `CharacterNamePersonaReferenceMap`
 export const OPERATION_PREFIXES: ReadonlySet<string> = new Set([
   "check",
   "compute",

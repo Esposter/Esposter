@@ -1,6 +1,6 @@
 import type { PersonaReference } from "#src/models/PersonaReference";
 
-export const PersonaReferenceMap: Record<string, PersonaReference> = {
+export const CharacterNamePersonaReferenceMap: Record<string, PersonaReference> = {
   Aether: { likeness: 0.91, stem: "Aether About the Belyi Tsar" },
   Aino: { likeness: 0.95, stem: "Aino About Aino - Parental Duty" },
   Albedo: { likeness: 0.92, stem: "Albedo About Sucrose - Habits" },

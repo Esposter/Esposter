@@ -13,7 +13,11 @@ await runCommand(
         options: Object.values(VoiceLanguage),
         type: "enum",
       },
-      write: { default: false, description: "Regenerate PersonaReferenceMap from what was measured", type: "boolean" },
+      write: {
+        default: false,
+        description: "Regenerate CharacterNamePersonaReferenceMap from what was measured",
+        type: "boolean",
+      },
       // Asks the wiki for every stem the map already holds, in every dub, instead of measuring
       check: {
         default: false,

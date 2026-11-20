@@ -57,7 +57,7 @@ The welcome puts the greeting straight under the plugin's own lines — the name
 
 ## The reference
 
-**`reference` is the synthesizer's and never reaches the model** — a character is not told which line their voice is cloned from. It is also **optional, and the ear's alone**: every character's measured reference is one entry of the generated `src/generated/PersonaReferenceMap.ts`, written by the repository's reference selection and never edited by hand, and a card names a line only when someone listened and chose one over it. The plugin reads the card's over the generated one, so deleting the card's restores the measurement.
+**`reference` is the synthesizer's and never reaches the model** — a character is not told which line their voice is cloned from. It is also **optional, and the ear's alone**: every character's measured reference is one entry of the generated `src/generated/CharacterNamePersonaReferenceMap.ts`, written by the repository's reference selection and never edited by hand, and a card names a line only when someone listened and chose one over it. The plugin reads the card's over the generated one, so deleting the card's restores the measurement.
 
 ```ts
 reference: "Clorinde More About Clorinde - 03",

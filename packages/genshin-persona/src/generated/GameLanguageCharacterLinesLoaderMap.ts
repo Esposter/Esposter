@@ -4,7 +4,7 @@ import type { VoiceLine } from "#src/models/VoiceLine";
 import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
 
 // Written by `pnpm -C scripts genshin:text write`, never by hand.
-export const CharacterLinesLoaderMap: Record<GameLanguage, () => Promise<Record<string, VoiceLine[]>>> = {
+export const GameLanguageCharacterLinesLoaderMap: Record<GameLanguage, () => Promise<Record<string, VoiceLine[]>>> = {
   [GameLanguage.ChineseSimplified]: async () =>
     (await import("#src/generated/characterLines/ChineseSimplified.json", { with: { type: "json" } })).default,
   [GameLanguage.ChineseTraditional]: async () =>

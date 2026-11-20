@@ -1,6 +1,6 @@
 import type { VoiceLine } from "#src/models/VoiceLine";
 
-import { CharacterLinesLoaderMap } from "#src/generated/CharacterLinesLoaderMap";
+import { GameLanguageCharacterLinesLoaderMap } from "#src/generated/GameLanguageCharacterLinesLoaderMap";
 import { TravelerGender } from "#src/generated/genshinText/models/TravelerGender";
 import { fillLinePlaceholders } from "#src/generated/genshinText/services/fillLinePlaceholders";
 import { getCanonicalLanguage } from "#src/generated/genshinText/services/getCanonicalLanguage";
@@ -28,7 +28,7 @@ export const readVoiceLines = async (name: string, language: string): Promise<Vo
   const lines =
     friendLines.length > 0
       ? friendLines.map(({ description, title }) => ({ text: description, title }))
-      : ((await CharacterLinesLoaderMap[resultLanguage]())[name] ?? []);
+      : ((await GameLanguageCharacterLinesLoaderMap[resultLanguage]())[name] ?? []);
   const nickname = genshindb.characters(name, queryOptions)?.name ?? name;
   const gender = TravelerTwinMap[name]?.gender ?? TravelerGender.Male;
   return lines.map(({ text, title }) => ({

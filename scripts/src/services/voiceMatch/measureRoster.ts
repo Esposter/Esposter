@@ -3,10 +3,10 @@ import type { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts"
 
 import { MODELS_DIRECTORY, PERSONA_REFERENCE_MAP_PATH } from "#src/services/voiceMatch/constants";
 import { createSpeakerEmbedder } from "#src/services/voiceMatch/createSpeakerEmbedder";
-import { getPersonaReferenceMapSource } from "#src/services/voiceMatch/getPersonaReferenceMapSource";
+import { getCharacterNamePersonaReferenceMapSource } from "#src/services/voiceMatch/getCharacterNamePersonaReferenceMapSource";
 import { measureCharacterReference } from "#src/services/voiceMatch/measureCharacterReference";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { PersonaReferenceMap } from "genshin-persona/src/generated/PersonaReferenceMap.ts";
+import { CharacterNamePersonaReferenceMap } from "genshin-persona/src/generated/CharacterNamePersonaReferenceMap.ts";
 import { DEFAULT_LANGUAGE } from "genshin-persona/src/services/constants.ts";
 import { createClipDecoder } from "genshin-persona/src/services/createClipDecoder.ts";
 import { createVoiceSynthesizer } from "genshin-persona/src/services/createVoiceSynthesizer.ts";
@@ -37,7 +37,7 @@ export const measureRoster = async (language: VoiceLanguage, names: string[], is
   console.info(`engine on ${synthesizer.device}`);
   const roster = names.length > 0 ? wholeRoster.filter(({ name }) => names.includes(name)) : wholeRoster;
   const characterNamePersonaReferenceMap = new Map<string, PersonaReference>(
-    names.length > 0 ? Object.entries(PersonaReferenceMap) : [],
+    names.length > 0 ? Object.entries(CharacterNamePersonaReferenceMap) : [],
   );
   const unmeasured: string[] = [];
   for (const { name } of roster) {
@@ -59,7 +59,10 @@ export const measureRoster = async (language: VoiceLanguage, names: string[], is
   console.info(`${roster.length - unmeasured.length} of ${roster.length} characters measured in ${language}`);
   if (unmeasured.length > 0) console.info(`too few usable clips: ${unmeasured.join(", ")}`);
   if (isWriting) {
-    writeFileSync(PERSONA_REFERENCE_MAP_PATH, getPersonaReferenceMapSource(characterNamePersonaReferenceMap));
+    writeFileSync(
+      PERSONA_REFERENCE_MAP_PATH,
+      getCharacterNamePersonaReferenceMapSource(characterNamePersonaReferenceMap),
+    );
     console.info(`map generated to ${PERSONA_REFERENCE_MAP_PATH}`);
   }
 };
