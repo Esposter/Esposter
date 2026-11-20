@@ -4,14 +4,13 @@ import type { ResourceFilterValues } from "#src/models/resource/list/ResourceFil
 import type { ResourceListFilters } from "#src/models/resource/list/ResourceListFilters";
 import type { ResourceStatusFilter } from "#src/models/resource/list/ResourceStatusFilter";
 import type { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
-import type { ResourceType } from "@esposter/db-schema";
+import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 import { getResourceFilterInput } from "#src/services/resource/list/getResourceFilterInput";
 import { getResourceFilterKey } from "#src/services/resource/list/getResourceFilterKey";
 import { getResourceListSortName } from "#src/services/resource/list/getResourceListSortName";
 import { resourceTable } from "#src/services/resource/overlay/constants";
-import { getHeldResource } from "#src/services/resource/overlay/getHeldResource";
 import { useOverlayStore } from "#src/store/overlay";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
@@ -79,12 +78,18 @@ export const useReadResources = (
   });
   // The page's rows in the order the page named them, each as the overlay holds it. A row the overlay holds as removed
   // Is not held live, so it leaves the page at once
-  const items = computed(() =>
-    pageItems.value.flatMap(({ id, lastAccessedAt }) => {
-      const row = getHeldResource(resourceRows.value, id);
+  const items = computed(() => {
+    // Looked up once per recompute, rather than searched for each row the page holds
+    const heldRows = new Map(
+      resourceRows.value
+        .filter((row): row is ResourceInResource & typeof row => row.version !== undefined)
+        .map((row) => [row.id, row] as const),
+    );
+    return pageItems.value.flatMap(({ id, lastAccessedAt }) => {
+      const row = heldRows.get(id);
       return row ? [{ ...row, lastAccessedAt }] : [];
-    }),
-  );
+    });
+  });
   // Snapshots the filter + sort at call time so a chunked consumer (CSV export) pages one consistent query
   // Even if the filters change mid-export
   const createResourcesPageReader = () => {
