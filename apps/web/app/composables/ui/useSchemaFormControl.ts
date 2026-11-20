@@ -14,7 +14,7 @@ export const useSchemaFormControl = (props: UiSchemaFormRendererProps) => {
   const uiSchemaFormConfiguration = computed(() => control.value.config as UiSchemaFormConfiguration);
   const layout = computed(() => getSchemaFormLayout(control.value.schema) ?? {});
   const issue = computed(() =>
-    isChanged.value ? uiSchemaFormConfiguration.value.issueMap.get(control.value.path) : undefined,
+    isChanged.value ? uiSchemaFormConfiguration.value.pathIssueMap.get(control.value.path) : undefined,
   );
   const change = (value: unknown) => {
     isChanged.value = true;

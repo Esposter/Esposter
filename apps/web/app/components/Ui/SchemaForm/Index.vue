@@ -22,14 +22,14 @@ interface Props {
 const modelValue = defineModel<T>({ required: true });
 const { context = {}, schema } = defineProps<Props>();
 const uiSchemaFormConfiguration = computed<UiSchemaFormConfiguration>(() => {
-  const issueMap = new Map<string, string>();
+  const pathIssueMap = new Map<string, string>();
   const result = schema.safeParse(modelValue.value);
   if (!result.success)
     for (const { message, path } of result.error.issues) {
       const key = path.join(".");
-      if (!issueMap.has(key)) issueMap.set(key, message);
+      if (!pathIssueMap.has(key)) pathIssueMap.set(key, message);
     }
-  return { context, issueMap };
+  return { context, pathIssueMap };
 });
 // Zod types what it generates as draft 2020-12 JSON Schema, and JSON Forms types what it reads as draft 7; the keywords
 // A form schema holds — types, properties, required, enum, const, oneOf, items, titles — mean the same in both

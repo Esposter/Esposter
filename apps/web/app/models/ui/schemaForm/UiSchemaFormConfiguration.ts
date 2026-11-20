@@ -2,5 +2,5 @@
 // Items it chooses among, and the form schema's issues, each under the path of the field it is about
 export interface UiSchemaFormConfiguration {
   context: object;
-  issueMap: Map<string, string>;
+  pathIssueMap: Map<string, string>;
 }
