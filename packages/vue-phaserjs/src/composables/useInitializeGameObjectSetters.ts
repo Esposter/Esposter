@@ -33,6 +33,7 @@ export const useInitializeGameObjectSetters = <
     const updateEvent = getUpdateEvent(key);
     // A property with no value reports the game object's own, so a parent binding it with v-model still reads one
     const emitOwnValue = (targetGameObject: TGameObject) => {
+      // `in` proves the key exists at runtime; TS cannot relate a configuration key to the game object's keys
       if (key in targetGameObject) emit(updateEvent, targetGameObject[key as keyof typeof targetGameObject]);
     };
     // The one path a value takes into the game object on each update, so the parent hears the same either way
