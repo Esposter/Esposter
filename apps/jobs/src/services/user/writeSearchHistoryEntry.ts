@@ -6,9 +6,9 @@ import { getDb } from "#src/services/shared/getDb";
 // The person's own search queries across rooms, each with the filters it ran with and the room it searched.
 // Each also carries the time it ran.
 export const writeSearchHistoryEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const searches = await getDb().query.searchHistoriesInMessage.findMany({
+  const searchHistories = await getDb().query.searchHistoriesInMessage.findMany({
     columns: { createdAt: true, filters: true, query: true, roomId: true },
     where: { userId: { eq: userId } },
   });
-  await archive.addJsonEntry("searches.json", searches);
+  await archive.addJsonEntry("searches.json", searchHistories);
 };

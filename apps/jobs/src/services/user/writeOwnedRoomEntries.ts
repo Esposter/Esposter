@@ -27,13 +27,13 @@ export const writeOwnedRoomEntries = async (archive: UserDataArchive, userId: Us
     where: { userId: { eq: userId } },
   });
   for (const room of rooms) {
-    const emoji = await getDb().query.roomEmojisInMessage.findMany({
+    const roomEmojis = await getDb().query.roomEmojisInMessage.findMany({
       columns: { id: true, name: true },
       where: { roomId: { eq: room.id } },
     });
     await archive.addJsonEntry(`rooms/${room.id}/room.json`, {
       createdAt: room.createdAt,
-      emoji,
+      emoji: roomEmojis,
       id: room.id,
       name: room.name,
       settings: {
@@ -47,6 +47,6 @@ export const writeOwnedRoomEntries = async (archive: UserDataArchive, userId: Us
       type: room.type,
     });
     await writeRoomImageEntries(archive, room.id);
-    await writeRoomEmojiEntries(archive, room.id, emoji);
+    await writeRoomEmojiEntries(archive, room.id, roomEmojis);
   }
 };

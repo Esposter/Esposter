@@ -7,5 +7,6 @@ import { readModerationRecordsByTarget } from "#src/services/user/readModeration
 // The moderation records that name the person as their target, from both moderation tables.
 // A person has the right to see what was recorded about them, so the records they acted on as a moderator are not read
 export const writeModerationEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  await archive.addJsonEntry("moderation.json", await readModerationRecordsByTarget(getDb(), userId));
+  const moderationRecordsByTarget = await readModerationRecordsByTarget(getDb(), userId);
+  await archive.addJsonEntry("moderation.json", moderationRecordsByTarget);
 };

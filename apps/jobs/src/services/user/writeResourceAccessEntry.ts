@@ -6,9 +6,9 @@ import { getDb } from "#src/services/shared/getDb";
 // The resources the person opened, each with the time they first opened it and the time they last did.
 // Both times are written as the row stores them.
 export const writeResourceAccessEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const accesses = await getDb().query.resourceAccessesInResource.findMany({
+  const resourceAccesses = await getDb().query.resourceAccessesInResource.findMany({
     columns: { accessedAt: true, createdAt: true, resourceId: true },
     where: { userId: { eq: userId } },
   });
-  await archive.addJsonEntry("accesses.json", accesses);
+  await archive.addJsonEntry("accesses.json", resourceAccesses);
 };

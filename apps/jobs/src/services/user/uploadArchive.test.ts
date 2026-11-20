@@ -33,10 +33,10 @@ describe(uploadArchive, () => {
     const chunks = [1, 2].map((byte) => new Uint8Array(chunkBytes).fill(byte));
     await uploadArchive(bucket, "archive.zip", toChunks(chunks));
 
-    const object = await bucket.get("archive.zip");
-    assert.exists(object);
+    const archiveObject = await bucket.get("archive.zip");
+    assert.exists(archiveObject);
     // Compared as bytes in one native pass, since an element-wise equality over 12 MiB runs near the test's timeout
-    expect(Buffer.from(await object.arrayBuffer()).equals(Buffer.concat(chunks))).toBe(true);
+    expect(Buffer.from(await archiveObject.arrayBuffer()).equals(Buffer.concat(chunks))).toBe(true);
   });
 
   // A part already sent when the archive fails is never completed, so no object stands in its place

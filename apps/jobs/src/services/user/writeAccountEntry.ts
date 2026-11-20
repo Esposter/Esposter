@@ -12,64 +12,73 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Those are the account's creation, a block, a bookmark.
 // A notification, an achievement, a setting and a status are written by the system or are the account's current state
 export const writeAccountEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const [user, accounts, pushSubscriptions, blocks, notifications, achievements, bookmarks, settings, statuses] =
-    await Promise.all([
-      getDb().query.usersInAuth.findFirst({
-        columns: {
-          biography: true,
-          createdAt: true,
-          email: true,
-          emailVerified: true,
-          id: true,
-          image: true,
-          name: true,
-          storageBytesUsed: true,
-          storageTier: true,
-        },
-        where: { id: { eq: userId } },
-      }),
-      getDb().query.accountsInAuth.findMany({ columns: { providerId: true }, where: { userId: { eq: userId } } }),
-      getDb().query.pushSubscriptionsInNotification.findMany({
-        columns: { endpoint: true },
-        where: { userId: { eq: userId } },
-      }),
-      getDb().query.blocksInSocial.findMany({
-        columns: { deletedAt: false, updatedAt: false, version: false },
-        where: { blockerId: { eq: userId }, deletedAt: { isNull: true } },
-      }),
-      getDb().query.notificationsInNotification.findMany({
-        columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
-        where: { userId: { eq: userId } },
-      }),
-      getDb().query.userAchievementsInAchievement.findMany({
-        columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
-        where: { userId: { eq: userId } },
-      }),
-      getDb().query.bookmarksInApp.findMany({
-        columns: { deletedAt: false, updatedAt: false, version: false },
-        where: { userId: { eq: userId } },
-      }),
-      getDb().query.userSettingsInMessage.findMany({
-        columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
-        where: { userId: { eq: userId } },
-      }),
-      getDb().query.userStatusesInMessage.findMany({
-        columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
-        where: { userId: { eq: userId } },
-      }),
-    ]);
+  const [
+    user,
+    accounts,
+    pushSubscriptions,
+    blocks,
+    notifications,
+    userAchievements,
+    bookmarks,
+    userSettings,
+    userStatuses,
+  ] = await Promise.all([
+    getDb().query.usersInAuth.findFirst({
+      columns: {
+        biography: true,
+        createdAt: true,
+        email: true,
+        emailVerified: true,
+        id: true,
+        image: true,
+        name: true,
+        storageBytesUsed: true,
+        storageTier: true,
+      },
+      where: { id: { eq: userId } },
+    }),
+    getDb().query.accountsInAuth.findMany({ columns: { providerId: true }, where: { userId: { eq: userId } } }),
+    getDb().query.pushSubscriptionsInNotification.findMany({
+      columns: { endpoint: true },
+      where: { userId: { eq: userId } },
+    }),
+    getDb().query.blocksInSocial.findMany({
+      columns: { deletedAt: false, updatedAt: false, version: false },
+      where: { blockerId: { eq: userId }, deletedAt: { isNull: true } },
+    }),
+    getDb().query.notificationsInNotification.findMany({
+      columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
+      where: { userId: { eq: userId } },
+    }),
+    getDb().query.userAchievementsInAchievement.findMany({
+      columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
+      where: { userId: { eq: userId } },
+    }),
+    getDb().query.bookmarksInApp.findMany({
+      columns: { deletedAt: false, updatedAt: false, version: false },
+      where: { userId: { eq: userId } },
+    }),
+    getDb().query.userSettingsInMessage.findMany({
+      columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
+      where: { userId: { eq: userId } },
+    }),
+    getDb().query.userStatusesInMessage.findMany({
+      columns: { createdAt: false, deletedAt: false, updatedAt: false, version: false },
+      where: { userId: { eq: userId } },
+    }),
+  ]);
   // The account row is what every other entry is keyed to, so an export of a missing account has nothing to say
   if (!user) throw new InvalidOperationError(Operation.Read, userId, "has no user row to export");
 
   await archive.addJsonEntry("account.json", {
-    achievements,
+    achievements: userAchievements,
     blocks,
     bookmarks,
     notifications,
     pushSubscriptions: pushSubscriptions.map(({ endpoint }) => endpoint),
-    settings,
+    settings: userSettings,
     signInProviders: accounts.map(({ providerId }) => providerId),
-    statuses,
+    statuses: userStatuses,
     user,
   });
 };

@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 // The moderation log entries and notes that name the person as their target, across every room they were in.
 // A record in a room the person has left is one the archive keeps.
 export const readModerationRecordsByTarget = async (db: Database, targetUserId: UserInAuth["id"]) => {
-  const [logs, notes] = await Promise.all([
+  const [moderationLogs, moderationNotes] = await Promise.all([
     db
       .select({
         actorUserId: moderationLogsInMessage.actorUserId,
@@ -29,5 +29,5 @@ export const readModerationRecordsByTarget = async (db: Database, targetUserId: 
       .from(moderationNotesInMessage)
       .where(eq(moderationNotesInMessage.targetUserId, targetUserId)),
   ]);
-  return { logs, notes };
+  return { logs: moderationLogs, notes: moderationNotes };
 };

@@ -13,7 +13,7 @@ import { getMemberRoomIds } from "@esposter/db";
 // A post like carries the time it was made.
 // A reaction carries none: its row is shared by its reactors, so its time is the first reactor's
 export const writeLikeEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const postLikes = await getDb().query.likesInPost.findMany({
+  const likes = await getDb().query.likesInPost.findMany({
     columns: { createdAt: true, postId: true, value: true },
     where: { deletedAt: { isNull: true }, userId: { eq: userId } },
   });
@@ -37,7 +37,7 @@ export const writeLikeEntries = async (archive: UserDataArchive, userId: UserInA
       },
     );
   await archive.addJsonEntry("likes.json", [
-    ...postLikes.map(({ createdAt, postId, value }) => ({
+    ...likes.map(({ createdAt, postId, value }) => ({
       createdAt,
       kind: ArchiveLikeKind.Post,
       targetId: postId,

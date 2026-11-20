@@ -12,8 +12,8 @@ export const writeBlobEntry = async (
   bucket: R2Bucket,
   blobName: string,
 ): Promise<void> => {
-  const object = await bucket.get(blobName);
-  if (!object)
+  const blobObject = await bucket.get(blobName);
+  if (!blobObject)
     throw new InvalidOperationError(Operation.Read, blobName, "is not in the bucket to stream into the archive");
-  await archive.addEntry(entryName, object.body);
+  await archive.addEntry(entryName, blobObject.body);
 };

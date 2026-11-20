@@ -13,15 +13,15 @@ export const writeFriendEntries = async (archive: UserDataArchive, userId: UserI
     deletedAt: { isNull: true as const },
     OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }],
   };
-  const [requests, friendships] = await Promise.all([
+  const [friendRequests, friendships] = await Promise.all([
     getDb().query.friendRequestsInSocial.findMany({
       columns: { createdAt: true, receiverId: true, senderId: true },
       where,
     }),
     getDb().query.friendsInSocial.findMany({ columns: { receiverId: true, senderId: true }, where }),
   ]);
-  const sentRequests = requests.filter(({ senderId }) => senderId === userId);
-  const receivedIds = requests.filter(({ receiverId }) => receiverId === userId).map(({ senderId }) => senderId);
+  const sentRequests = friendRequests.filter(({ senderId }) => senderId === userId);
+  const receivedIds = friendRequests.filter(({ receiverId }) => receiverId === userId).map(({ senderId }) => senderId);
   const friendIds = friendships.map(({ receiverId, senderId }) => (senderId === userId ? receiverId : senderId));
   const partyIds = [...new Set([...sentRequests.map(({ receiverId }) => receiverId), ...receivedIds, ...friendIds])];
   const parties =

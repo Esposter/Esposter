@@ -7,9 +7,9 @@ import { getDb } from "#src/services/shared/getDb";
 // Each also carries the time of the first decision.
 // An unfollow is kept, since it is the person's decision
 export const writeThreadFollowEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const follows = await getDb().query.threadFollowsInMessage.findMany({
+  const threadFollows = await getDb().query.threadFollowsInMessage.findMany({
     columns: { createdAt: true, isUnfollowed: true, roomId: true, threadRootId: true },
     where: { userId: { eq: userId } },
   });
-  await archive.addJsonEntry("follows.json", follows);
+  await archive.addJsonEntry("follows.json", threadFollows);
 };

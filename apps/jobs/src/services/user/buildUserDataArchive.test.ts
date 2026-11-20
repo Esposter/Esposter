@@ -76,13 +76,15 @@ const readArchiveEntries = async (blobName: string) => {
   assert.exists(archiveObject);
   return unzipSync(new Uint8Array(await archiveObject.arrayBuffer()));
 };
-const readEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string) => {
+const computeEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string) => {
   const entry = entries[entryName];
   assert.exists(entry);
   return strFromU8(entry);
 };
-const readEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) =>
-  jsonDateParse(readEntryText(entries, entryName));
+const computeEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) => {
+  const entryText = computeEntryText(entries, entryName);
+  return jsonDateParse(entryText);
+};
 const joinRoom = (roomId: string, ...userIds: string[]) =>
   mockDb.insert(usersToRoomsInMessage).values(userIds.map((userId) => ({ roomId, userId })));
 describe(buildUserDataArchive, () => {
@@ -161,7 +163,8 @@ describe(buildUserDataArchive, () => {
     roomObjectReplies.set("exportUserMessages", () => [
       createRoomMessage({ files: [file], id: messageId, message, userId }),
     ]);
-    await seedAttachment(getFileBlobNames(room.id, file.id, file.filename).blobName);
+    const fileBlobNames = getFileBlobNames(room.id, file.id, file.filename);
+    await seedAttachment(fileBlobNames.blobName);
 
     // A room the person has left, which the archive does not ask
     await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId });
@@ -179,7 +182,8 @@ describe(buildUserDataArchive, () => {
     await writeJsonBlob(resourceBucket, getContentBlobName(resource.id), content);
     const assetHash = "0".repeat(64);
     await mockDb.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
-    await resourceBucket.put(getResourceFileBlobName(resource.id, assetHash), attachmentBytes);
+    const resourceFileBlobName = getResourceFileBlobName(resource.id, assetHash);
+    await resourceBucket.put(resourceFileBlobName, attachmentBytes);
     await mockDb
       .insert(moderationLogsInMessage)
       .values({ actorUserId: otherUserId, roomId: room.id, targetUserId: userId, type: AdminActionType.Warn });
@@ -228,7 +232,8 @@ describe(buildUserDataArchive, () => {
         "searches.json",
       ].toSorted(),
     );
-    const messages = jsonDateParse<RoomMessage[]>(readEntryText(entries, `rooms/${room.id}/messages.json`));
+    const messagesText = computeEntryText(entries, `rooms/${room.id}/messages.json`);
+    const messages = jsonDateParse<RoomMessage[]>(messagesText);
     expect(messages.map(({ message: text }) => text)).toStrictEqual([message]);
   });
 
@@ -257,7 +262,8 @@ describe(buildUserDataArchive, () => {
     await mockDb.insert(userStatusesInMessage).values({ userId });
 
     await buildUserDataArchive(userId, blobName);
-    const account = readEntryJson(await readArchiveEntries(blobName), "account.json");
+    const entries = await readArchiveEntries(blobName);
+    const account = computeEntryJson(entries, "account.json");
 
     expect(account.user).toStrictEqual({
       biography: user.biography,
@@ -300,8 +306,8 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
 
-    expect(readEntryJson(entries, "account.json").blocks).toStrictEqual([]);
-    expect(readEntryJson(entries, "friends.json").friends).toStrictEqual([]);
+    expect(computeEntryJson(entries, "account.json").blocks).toStrictEqual([]);
+    expect(computeEntryJson(entries, "friends.json").friends).toStrictEqual([]);
   });
 
   test("writes a person's own posts, likes and friends, leaving out other people's counts and records", async () => {
@@ -353,7 +359,7 @@ describe(buildUserDataArchive, () => {
         .filter((entryName) => entryName.startsWith("posts/"))
         .toSorted(),
     ).toStrictEqual([`posts/${post.id}.json`]);
-    expect(readEntryJson(entries, `posts/${post.id}.json`)).toStrictEqual({
+    expect(computeEntryJson(entries, `posts/${post.id}.json`)).toStrictEqual({
       createdAt: post.createdAt,
       depth: 0,
       description,
@@ -363,13 +369,13 @@ describe(buildUserDataArchive, () => {
     });
     // A post like carries the time it was made. A reaction carries none: its row is shared by its reactors, so its time is
     // The first reactor's, not the person's, and the exact shape leaves it out
-    expect(readEntryJson(entries, "likes.json")).toStrictEqual([
+    expect(computeEntryJson(entries, "likes.json")).toStrictEqual([
       { createdAt: like.createdAt, kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
       { emojiTag, kind: ArchiveLikeKind.Emoji, roomId: room.id, targetId: messageId },
     ]);
     // A request the person sent carries the time it was sent. One they received is the sender's act, and a friendship is one
     // Row for the pair, made when the receiver accepted it, so neither carries a time
-    expect(readEntryJson(entries, "friends.json")).toStrictEqual({
+    expect(computeEntryJson(entries, "friends.json")).toStrictEqual({
       friends: [{ id: friendUserId, name }],
       received: [{ id: receivedUserId, name }],
       sent: [{ createdAt: sentRequest.createdAt, id: otherUserId, name }],
@@ -385,9 +391,10 @@ describe(buildUserDataArchive, () => {
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ isReadOnly: true, name, userId }).returning());
     await joinRoom(room.id, userId, otherUserId);
-    const emoji = takeOne(await mockDb.insert(roomEmojisInMessage).values({ name, roomId: room.id }).returning());
+    const roomEmoji = takeOne(await mockDb.insert(roomEmojisInMessage).values({ name, roomId: room.id }).returning());
     const messageAssetsBucket = getBucket(StorageBucket.MessageAssets);
-    await messageAssetsBucket.put(getRoomEmojiBlobName(room.id, emoji.id), attachmentBytes);
+    const roomEmojiBlobName = getRoomEmojiBlobName(room.id, roomEmoji.id);
+    await messageAssetsBucket.put(roomEmojiBlobName, attachmentBytes);
     const publicBucket = getBucket(StorageBucket.PublicUserAssets);
     await publicBucket.put(`rooms/${room.id}/ProfileImage`, attachmentBytes);
 
@@ -400,15 +407,15 @@ describe(buildUserDataArchive, () => {
         .toSorted(),
     ).toStrictEqual(
       [
-        `rooms/${room.id}/emoji/${emoji.id}`,
+        `rooms/${room.id}/emoji/${roomEmoji.id}`,
         `rooms/${room.id}/images/ProfileImage`,
         `rooms/${room.id}/messages.json`,
         `rooms/${room.id}/room.json`,
       ].toSorted(),
     );
-    expect(readEntryJson(entries, `rooms/${room.id}/room.json`)).toStrictEqual({
+    expect(computeEntryJson(entries, `rooms/${room.id}/room.json`)).toStrictEqual({
       createdAt: room.createdAt,
-      emoji: [{ id: emoji.id, name }],
+      emoji: [{ id: roomEmoji.id, name }],
       id: room.id,
       name,
       settings: {
@@ -432,7 +439,7 @@ describe(buildUserDataArchive, () => {
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await joinRoom(room.id, userId, otherUserId);
-    const search = takeOne(
+    const searchHistory = takeOne(
       await mockDb.insert(searchHistoriesInMessage).values({ query: message, roomId: room.id, userId }).returning(),
     );
     await mockDb.insert(searchHistoriesInMessage).values({ query: otherMessage, roomId: room.id, userId: otherUserId });
@@ -441,8 +448,8 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // A search carries the time it ran
-    expect(readEntryJson(entries, "searches.json")).toStrictEqual([
-      { createdAt: search.createdAt, filters: [], query: message, roomId: room.id },
+    expect(computeEntryJson(entries, "searches.json")).toStrictEqual([
+      { createdAt: searchHistory.createdAt, filters: [], query: message, roomId: room.id },
     ]);
   });
 
@@ -458,7 +465,7 @@ describe(buildUserDataArchive, () => {
     const unpublishedResource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
     );
-    const publication = takeOne(
+    const resourcePublication = takeOne(
       await mockDb
         .insert(resourcePublicationsInResource)
         .values({ publishedContentVersion: 3, publishVersion: 2, resourceId: publishedResource.id })
@@ -470,9 +477,9 @@ describe(buildUserDataArchive, () => {
 
     // The publication is the draft version it was taken at, the time it began, which a republish does not move, and the time
     // It was last published, all as the row stores them
-    expect(readEntryJson(entries, `resources/${publishedResource.id}/publications.json`)).toStrictEqual({
-      createdAt: publication.createdAt,
-      publishedAt: publication.publishedAt,
+    expect(computeEntryJson(entries, `resources/${publishedResource.id}/publications.json`)).toStrictEqual({
+      createdAt: resourcePublication.createdAt,
+      publishedAt: resourcePublication.publishedAt,
       publishedContentVersion: 3,
       publishVersion: 2,
     });
@@ -494,7 +501,7 @@ describe(buildUserDataArchive, () => {
 
     // The hashes, sizes and revision counters are the store's bookkeeping, and the update and delete times are not the
     // Person's, so the record holds what the person wrote and when it was created
-    expect(readEntryJson(entries, `resources/${resource.id}/resource.json`)).toStrictEqual({
+    expect(computeEntryJson(entries, `resources/${resource.id}/resource.json`)).toStrictEqual({
       contentVersion: 0,
       createdAt: resource.createdAt,
       id: resource.id,
@@ -527,7 +534,7 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // A link holds no token, so nothing is withheld from it, and the record is written as the row stores it
-    expect(readEntryJson(entries, `resources/${linkingResource.id}/links.json`)).toStrictEqual([
+    expect(computeEntryJson(entries, `resources/${linkingResource.id}/links.json`)).toStrictEqual([
       { sourceId: linkingResource.id, targetId: linkedResource.id, type: ResourceLinkType.Email },
     ]);
     expect(Object.keys(entries)).not.toContain(`resources/${unlinkedResource.id}/links.json`);
@@ -564,7 +571,7 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // The action is written with its type, time and the id it was taken against, and no content of the target's
-    expect(readEntryJson(entries, "moderation-actions.json")).toStrictEqual([
+    expect(computeEntryJson(entries, "moderation-actions.json")).toStrictEqual([
       { roomId: ownedRoom.id, targetUserId: otherUserId, time: actionTime, type: AdminActionType.Warn },
     ]);
   });
@@ -599,7 +606,7 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // A record carries its actor, its room and the time it was made beside what it did or said, and no update or delete time
-    expect(readEntryJson(entries, "moderation.json")).toStrictEqual({
+    expect(computeEntryJson(entries, "moderation.json")).toStrictEqual({
       logs: [
         {
           actorUserId: otherUserId,
@@ -625,7 +632,7 @@ describe(buildUserDataArchive, () => {
     // A room holds one call per thread, so the other person's call is in a room of their own
     const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     // A call id is exactly CALL_ID_LENGTH alphanumerics, so these are twelve characters each
-    const call = takeOne(
+    const callSession = takeOne(
       await mockDb.insert(callSessionsInMessage).values({ id: "callSession1", roomId: room.id, userId }).returning(),
     );
     await mockDb
@@ -636,8 +643,8 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // A call carries the time it started. Its id is the key a knocker presents to join, so the exact shape leaves it out
-    expect(readEntryJson(entries, "calls.json")).toStrictEqual([
-      { createdAt: call.createdAt, roomId: room.id, threadRootId: 0 },
+    expect(computeEntryJson(entries, "calls.json")).toStrictEqual([
+      { createdAt: callSession.createdAt, roomId: room.id, threadRootId: 0 },
     ]);
   });
 
@@ -652,7 +659,7 @@ describe(buildUserDataArchive, () => {
     await joinRoom(room.id, userId, otherUserId);
     // The person's unfollow is a decision they made, so its row stays; the other person's follow of the same thread is
     // Not theirs
-    const follow = takeOne(
+    const threadFollow = takeOne(
       await mockDb
         .insert(threadFollowsInMessage)
         .values({ isUnfollowed: true, roomId: room.id, threadRootId, userId })
@@ -666,8 +673,8 @@ describe(buildUserDataArchive, () => {
     const entries = await readArchiveEntries(blobName);
 
     // A follow carries the time of the person's first decision about the thread
-    expect(readEntryJson(entries, "follows.json")).toStrictEqual([
-      { createdAt: follow.createdAt, isUnfollowed: true, roomId: room.id, threadRootId },
+    expect(computeEntryJson(entries, "follows.json")).toStrictEqual([
+      { createdAt: threadFollow.createdAt, isUnfollowed: true, roomId: room.id, threadRootId },
     ]);
   });
 
@@ -680,7 +687,7 @@ describe(buildUserDataArchive, () => {
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
-    const role = takeOne(await mockDb.insert(roomRolesInMessage).values({ name, roomId: room.id }).returning());
+    const roomRole = takeOne(await mockDb.insert(roomRolesInMessage).values({ name, roomId: room.id }).returning());
     const roomCategory = takeOne(await mockDb.insert(roomCategoriesInMessage).values({ name, userId }).returning());
     const membership = takeOne(
       await mockDb
@@ -694,8 +701,8 @@ describe(buildUserDataArchive, () => {
       { roomId: ownedRoom.id, userId },
     ]);
     await mockDb.insert(usersToRoomRolesInMessage).values([
-      { roleId: role.id, roomId: room.id, userId },
-      { roleId: role.id, roomId: room.id, userId: otherUserId },
+      { roleId: roomRole.id, roomId: room.id, userId },
+      { roleId: roomRole.id, roomId: room.id, userId: otherUserId },
     ]);
 
     await buildUserDataArchive(userId, blobName);
@@ -703,7 +710,7 @@ describe(buildUserDataArchive, () => {
 
     // The membership keeps the person's own settings, the category they filed it under, the time they joined and the
     // Time they last read the room, and the roles they hold there
-    expect(readEntryJson(entries, "memberships.json")).toStrictEqual([
+    expect(computeEntryJson(entries, "memberships.json")).toStrictEqual([
       {
         categoryId: roomCategory.id,
         createdAt: membership.createdAt,
@@ -711,7 +718,7 @@ describe(buildUserDataArchive, () => {
         isHidden: membership.isHidden,
         lastReadAt: membership.lastReadAt,
         notificationType: membership.notificationType,
-        roles: [{ id: role.id, name }],
+        roles: [{ id: roomRole.id, name }],
         roomId: room.id,
       },
     ]);
@@ -730,11 +737,11 @@ describe(buildUserDataArchive, () => {
         .values({ name, type: ResourceType.Blueprint, userId: otherUserId })
         .returning(),
     );
-    const favorite = takeOne(
+    const resourceFavorite = takeOne(
       await mockDb.insert(resourceFavoritesInResource).values({ resourceId: resource.id, userId }).returning(),
     );
     await mockDb.insert(resourceFavoritesInResource).values({ resourceId: resource.id, userId: otherUserId });
-    const access = takeOne(
+    const resourceAccess = takeOne(
       await mockDb.insert(resourceAccessesInResource).values({ resourceId: resource.id, userId }).returning(),
     );
     await mockDb.insert(resourceAccessesInResource).values({ resourceId: resource.id, userId: otherUserId });
@@ -744,11 +751,11 @@ describe(buildUserDataArchive, () => {
 
     // A favorite carries the time it was starred. An access carries the time it was first opened, as the row stores it
     // Beside the time it was last opened
-    expect(readEntryJson(entries, "favorites.json")).toStrictEqual([
-      { createdAt: favorite.createdAt, resourceId: resource.id },
+    expect(computeEntryJson(entries, "favorites.json")).toStrictEqual([
+      { createdAt: resourceFavorite.createdAt, resourceId: resource.id },
     ]);
-    expect(readEntryJson(entries, "accesses.json")).toStrictEqual([
-      { accessedAt: access.accessedAt, createdAt: access.createdAt, resourceId: resource.id },
+    expect(computeEntryJson(entries, "accesses.json")).toStrictEqual([
+      { accessedAt: resourceAccess.accessedAt, createdAt: resourceAccess.createdAt, resourceId: resource.id },
     ]);
   });
 
@@ -775,7 +782,8 @@ describe(buildUserDataArchive, () => {
 
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
-    const messages = jsonDateParse<RoomMessage[]>(readEntryText(entries, `rooms/${room.id}/messages.json`));
+    const messagesText = computeEntryText(entries, `rooms/${room.id}/messages.json`);
+    const messages = jsonDateParse<RoomMessage[]>(messagesText);
 
     // The reactions are asked first, then the messages are read in two pages, the first from no cursor and the second from the
     // Last id of the first, and the attachments are read through the same two pages again
@@ -838,7 +846,7 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
 
-    expect(readEntryJson(entries, "likes.json")).toStrictEqual(
+    expect(computeEntryJson(entries, "likes.json")).toStrictEqual(
       reactions.map(({ emojiTag: tag }) => ({
         emojiTag: tag,
         kind: ArchiveLikeKind.Emoji,

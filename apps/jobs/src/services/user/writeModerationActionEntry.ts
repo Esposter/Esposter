@@ -8,5 +8,6 @@ import { readRoomModerationActionsByUser } from "#src/services/user/readRoomMode
 // A record where the person is the target is in moderation.json.
 // A moderator's own note about a target is not an action, so it is not written
 export const writeModerationActionEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  await archive.addJsonEntry("moderation-actions.json", await readRoomModerationActionsByUser(getDb(), userId));
+  const roomModerationActionsByUser = await readRoomModerationActionsByUser(getDb(), userId);
+  await archive.addJsonEntry("moderation-actions.json", roomModerationActionsByUser);
 };

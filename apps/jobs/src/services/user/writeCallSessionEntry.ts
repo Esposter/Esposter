@@ -7,9 +7,9 @@ import { getDb } from "#src/services/shared/getDb";
 // A call's id is the key a knocker presents to join it, so it is left out.
 // The table records who started a call, not who joined it, so the other participants are not in the archive
 export const writeCallSessionEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const calls = await getDb().query.callSessionsInMessage.findMany({
+  const callSessions = await getDb().query.callSessionsInMessage.findMany({
     columns: { createdAt: true, roomId: true, threadRootId: true },
     where: { userId: { eq: userId } },
   });
-  await archive.addJsonEntry("calls.json", calls);
+  await archive.addJsonEntry("calls.json", callSessions);
 };

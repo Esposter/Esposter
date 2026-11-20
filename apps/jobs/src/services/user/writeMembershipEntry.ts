@@ -11,11 +11,11 @@ import { getLiveMemberRoleWhere, getLiveMembershipWhere, getLiveRoleWhere } from
 // The mention count is derived from other people's messages, and the slowmode and timeout clocks are operational.
 // So none of them is written
 export const writeMembershipEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const ownedRooms = await getDb().query.roomsInMessage.findMany({
+  const rooms = await getDb().query.roomsInMessage.findMany({
     columns: { id: true },
     where: { userId: { eq: userId } },
   });
-  const ownedRoomIds = new Set(ownedRooms.map(({ id }) => id));
+  const ownedRoomIds = new Set(rooms.map(({ id }) => id));
   const memberships = (
     await getDb().query.usersToRoomsInMessage.findMany({
       columns: {
@@ -30,12 +30,12 @@ export const writeMembershipEntry = async (archive: UserDataArchive, userId: Use
       where: { RAW: getLiveMembershipWhere, userId: { eq: userId } },
     })
   ).filter(({ roomId }) => !ownedRoomIds.has(roomId));
-  const roleRows = await getDb().query.usersToRoomRolesInMessage.findMany({
+  const memberRoles = await getDb().query.usersToRoomRolesInMessage.findMany({
     columns: { roleId: true },
     where: { RAW: getLiveMemberRoleWhere, userId: { eq: userId } },
   });
-  const roleIds = roleRows.map(({ roleId }) => roleId);
-  const roles =
+  const roleIds = memberRoles.map(({ roleId }) => roleId);
+  const roomRoles =
     roleIds.length > 0
       ? await getDb().query.roomRolesInMessage.findMany({
           columns: { id: true, name: true, roomId: true },
@@ -46,7 +46,7 @@ export const writeMembershipEntry = async (archive: UserDataArchive, userId: Use
     "memberships.json",
     memberships.map(({ roomId, ...membership }) => ({
       ...membership,
-      roles: roles.filter((role) => role.roomId === roomId).map(({ id, name }) => ({ id, name })),
+      roles: roomRoles.filter((role) => role.roomId === roomId).map(({ id, name }) => ({ id, name })),
       roomId,
     })),
   );

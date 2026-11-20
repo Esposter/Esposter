@@ -15,12 +15,9 @@ export const writeRoomFileEntries = async (
 ): Promise<void> => {
   const bucket = getBucket(StorageBucket.MessageAssets);
   const attachments = messages.flatMap(({ files }) => files);
-  for (const { filename, id } of attachments)
+  for (const { filename, id } of attachments) {
+    const fileBlobNames = getFileBlobNames(roomId, id, filename);
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one attachment at a time, streamed as it is read
-    await writeBlobEntry(
-      archive,
-      `rooms/${roomId}/files/${id}/${filename}`,
-      bucket,
-      getFileBlobNames(roomId, id, filename).blobName,
-    );
+    await writeBlobEntry(archive, `rooms/${roomId}/files/${id}/${filename}`, bucket, fileBlobNames.blobName);
+  }
 };

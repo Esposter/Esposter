@@ -27,7 +27,7 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
   for (const resource of resources) {
     const entryDirectory = `resources/${resource.id}`;
     await archive.addJsonEntry(`${entryDirectory}/resource.json`, resource);
-    const [[publication], links, content, workingAssets] = await Promise.all([
+    const [[resourcePublication], resourceLinks, content, resourceWorkingAssets] = await Promise.all([
       getDb()
         .select({
           createdAt: resourcePublicationsInResource.createdAt,
@@ -48,14 +48,16 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
         where: { resourceId: { eq: resource.id } },
       }),
     ]);
-    if (publication) await archive.addJsonEntry(`${entryDirectory}/publications.json`, publication);
-    if (links.length > 0) await archive.addJsonEntry(`${entryDirectory}/links.json`, links);
+    if (resourcePublication) await archive.addJsonEntry(`${entryDirectory}/publications.json`, resourcePublication);
+    if (resourceLinks.length > 0) await archive.addJsonEntry(`${entryDirectory}/links.json`, resourceLinks);
     if (content) await archive.addEntry(`${entryDirectory}/content.json`, content);
-    for (const { assetHash } of workingAssets) {
+    for (const { assetHash } of resourceWorkingAssets) {
       // A save keeps a reference to an asset that was never uploaded as the owner's data, so such a reference has no
       // Bytes to archive and no entry, where every other missing blob fails the export
-      const object = await bucket.get(getResourceFileBlobName(resource.id, assetHash));
-      if (object) await archive.addEntry(`${entryDirectory}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`, object.body);
+      const resourceFileBlobName = getResourceFileBlobName(resource.id, assetHash);
+      const blobObject = await bucket.get(resourceFileBlobName);
+      if (blobObject)
+        await archive.addEntry(`${entryDirectory}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`, blobObject.body);
     }
   }
 };

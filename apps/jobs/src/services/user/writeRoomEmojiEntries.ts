@@ -9,10 +9,12 @@ import { getRoomEmojiBlobName, StorageBucket } from "@esposter/db-schema";
 export const writeRoomEmojiEntries = async (
   archive: UserDataArchive,
   roomId: RoomInMessage["id"],
-  emoji: { id: string }[],
+  roomEmojis: { id: string }[],
 ): Promise<void> => {
   const bucket = getBucket(StorageBucket.MessageAssets);
-  for (const { id } of emoji)
+  for (const { id } of roomEmojis) {
+    const roomEmojiBlobName = getRoomEmojiBlobName(roomId, id);
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one emoji at a time, streamed as it is read
-    await writeBlobEntry(archive, `rooms/${roomId}/emoji/${id}`, bucket, getRoomEmojiBlobName(roomId, id));
+    await writeBlobEntry(archive, `rooms/${roomId}/emoji/${id}`, bucket, roomEmojiBlobName);
+  }
 };
