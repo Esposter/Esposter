@@ -2,7 +2,7 @@
 import type { SlashCommand } from "#src/models/message/slashCommands/SlashCommand";
 
 import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
-import { SHRUG_FACE, TABLE_FLIP_FACE } from "#src/services/message/slashCommands/constants";
+import { SHRUG_FACE, TABLE_FLIP_FACE, UNFLIP_FACE } from "#src/services/message/slashCommands/constants";
 
 export const SlashCommandDefinitionMap = {
   [SlashCommandType.Flip]: {
@@ -76,7 +76,7 @@ export const SlashCommandDefinitionMap = {
     type: SlashCommandType.Topic,
   },
   [SlashCommandType.Unflip]: {
-    description: "Appends ┬─┬ノ(° -°ノ) to your message",
+    description: `Appends ${UNFLIP_FACE} to your message`,
     icon: "i-mdi:emoticon-cool-outline",
     parameters: [],
     title: "Unflip",

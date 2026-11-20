@@ -1,7 +1,7 @@
 import type { SlashCommandParameters } from "#src/models/message/slashCommands/SlashCommandParameters";
 
 import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
-import { SHRUG_FACE, TABLE_FLIP_FACE } from "#src/services/message/slashCommands/constants";
+import { SHRUG_FACE, TABLE_FLIP_FACE, UNFLIP_FACE } from "#src/services/message/slashCommands/constants";
 import { useDataStore } from "#src/store/message/data";
 import { usePollDialogStore } from "#src/store/message/input/pollDialog";
 import { useReplyStore } from "#src/store/message/input/reply";
@@ -88,7 +88,7 @@ export const executeSlashCommand = async (
       break;
     }
     case SlashCommandType.Unflip:
-      message = `┬─┬ノ( º _ ºノ)`;
+      message = UNFLIP_FACE;
       break;
     default:
       exhaustiveGuard(command);

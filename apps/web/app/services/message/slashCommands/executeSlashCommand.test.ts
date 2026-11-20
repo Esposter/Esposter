@@ -2,13 +2,18 @@
 import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { UNFLIP_FACE } from "#src/services/message/slashCommands/constants";
 import { executeSlashCommand } from "#src/services/message/slashCommands/executeSlashCommand";
+import { SlashCommandDefinitionMap } from "#src/services/message/slashCommands/SlashCommandDefinitionMap";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
+import { MessageType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { beforeEach, describe, expect, test } from "vitest";
+import { marked } from "marked";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(executeSlashCommand, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -88,5 +93,24 @@ describe(executeSlashCommand, () => {
     await flushPromises();
 
     expect(rooms.value.find(({ id }) => id === room.id)?.topic).toBe(acceptedTopic);
+  });
+
+  // The menu describes the face the command sends, so the two are one constant and cannot name different faces
+  test("the unflip command posts the face its definition names", async () => {
+    expect.hasAssertions();
+
+    const dataStore = useDataStore();
+    const sendMessage = vi.spyOn(dataStore, "sendMessage").mockResolvedValue(undefined);
+    await executeSlashCommand({ parameterValues: {}, type: SlashCommandType.Unflip });
+
+    expect(SlashCommandDefinitionMap[SlashCommandType.Unflip].description).toBe(
+      `Appends ${UNFLIP_FACE} to your message`,
+    );
+    expect(sendMessage).toHaveBeenCalledExactlyOnceWith({
+      message: marked.parse(UNFLIP_FACE, { async: false }),
+      replyToId: null,
+      roomId: room.id,
+      type: MessageType.Message,
+    });
   });
 });
