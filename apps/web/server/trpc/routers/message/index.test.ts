@@ -523,6 +523,20 @@ describe("messageRouter", () => {
     expect(followedThreads).toStrictEqual({ threadRootIds: [], threads: [] });
   });
 
+  // The unfollow's row is read back with its version, so a read that lands after the unfollow cannot list the thread again
+  test("reads an unfollowed thread's follow row with the version the unfollow left it at", async () => {
+    expect.hasAssertions();
+
+    const followedRow = await messageCaller.followThread({ roomId, threadRootId: messageId });
+    const unfollowedRow = await messageCaller.unfollowThread({ roomId, threadRootId: messageId });
+
+    const { follows, threads } = await messageCaller.readFollowedThreads({ roomId });
+
+    expect(unfollowedRow.version).toBeGreaterThan(followedRow.version);
+    expect(follows).toStrictEqual([unfollowedRow]);
+    expect(threads).toStrictEqual([]);
+  });
+
   test("asks the room for the followed threads newest first, whichever order they were followed in", async () => {
     expect.hasAssertions();
 
