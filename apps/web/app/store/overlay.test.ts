@@ -299,6 +299,26 @@ describe(useOverlayStore, () => {
     expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 2 }]);
   });
 
+  // A write whose header named no row, as one past the header's budget does, confirms nothing: its entry drops with its
+  // Answer and the view is held state, which the topic refetch brings up to date, rather than waiting on a version never named
+  test("an answer that names no row drops its entry with the answer, leaving the view as held state", async () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    overlayStore.writeOptimistic(() => Promise.resolve(noChange), {
+      entry: (view) => {
+        setRowName(view, otherName);
+      },
+    });
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 1 }]);
+
+    await flushPromises();
+
+    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
+  });
+
   test("a response that carries its row settles the entry at once", async () => {
     expect.hasAssertions();
 

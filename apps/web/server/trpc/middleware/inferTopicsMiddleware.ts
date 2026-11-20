@@ -11,7 +11,7 @@ import { ROW_VERSIONS_HEADER, TOPICS_HEADER } from "#shared/services/realtime/co
 import { formatRowVersionHeaderValue } from "#shared/services/realtime/formatRowVersionHeaderValue";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
 import { computeReadTopics, computeWriteTopics, getWriteRowVersions, recordStatements } from "@esposter/db";
-import { fitTopicsBudget, MAX_READ_TOPICS } from "@esposter/db-schema";
+import { fitTopicsBudget, MAX_READ_TOPICS, MAX_WRITE_ROW_VERSIONS } from "@esposter/db-schema";
 
 // The live topics of every procedure, from the statements it awaits, the blobs its buckets read or write, and the read sets
 // Its objects report (the live queries design). A query's topics are what its answer was read from, sent back on its response.
@@ -53,10 +53,13 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
   // A mutation that succeeds names each row it changed by its key and the version the write left it at, so its answer settles
   // The entry the client made for that write at those versions. A failed mutation names none: its entry drops, and a write that
   // Landed before the failure is published below
+  // A write that changed more rows than MAX_WRITE_ROW_VERSIONS names none of them, so the header never grows with a bulk write.
+  // Its entry drops on the answer, and its rows come back through the topic refetch the publish below wakes
   if (type === "mutation" && result.ok) {
     const rowVersions = await getWriteRowVersions(recorded.statements);
-    for (const rowVersion of rowVersions)
-      ctx.responseHeaders.append(ROW_VERSIONS_HEADER, formatRowVersionHeaderValue(path, rowVersion));
+    if (rowVersions.length <= MAX_WRITE_ROW_VERSIONS)
+      for (const rowVersion of rowVersions)
+        ctx.responseHeaders.append(ROW_VERSIONS_HEADER, formatRowVersionHeaderValue(path, rowVersion));
   }
   // A write is published whichever procedure makes it and however it ends, since a query may delete the rows it reads (a
   // Lapsed invite) and a write may land before the procedure fails. A published topic only wakes a reader to refetch
