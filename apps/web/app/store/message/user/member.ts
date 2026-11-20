@@ -35,6 +35,19 @@ const getRoomMemberRows = (memberRows: readonly Readonly<Draft<MemberRow>>[], ro
     ),
   );
 
+// Joins a list's keys to the room's rows and their users, each pair shaped by `project`. A key without both is left out
+const joinListedMembers = <T>(
+  keys: readonly MemberKey[],
+  roomMemberRows: ReadonlyMap<string, MemberRow>,
+  users: ReadonlyMap<string, PublicUser>,
+  project: (user: PublicUser, row: MemberRow) => T,
+): T[] =>
+  keys.flatMap(({ userId }) => {
+    const row = roomMemberRows.get(userId);
+    const user = users.get(userId);
+    return row && user ? [project(user, row)] : [];
+  });
+
 export const useMemberStore = defineStore("message/user/member", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
@@ -57,17 +70,14 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // live. A locale collation has no SQLite counterpart, so a list sorted by one would not be the order the cursor advances
   const members = computed(() => {
     const roomMemberRows = getRoomMemberRows(memberRows.value, roomStore.scopedRoomId);
-    return listedMemberKeys.value
-      .flatMap(({ userId }) => {
-        const row = roomMemberRows.get(userId);
-        const user = userMap.get(userId);
-        return row && user ? [{ ...user, displayName: row.displayName }] : [];
-      })
-      .toSorted(
-        (firstMember, secondMember) =>
-          compareText(foldAsciiCase(firstMember.displayName), foldAsciiCase(secondMember.displayName)) ||
-          compareText(firstMember.id, secondMember.id),
-      );
+    return joinListedMembers(listedMemberKeys.value, roomMemberRows, userMap, (user, row) => ({
+      ...user,
+      displayName: row.displayName,
+    })).toSorted(
+      (firstMember, secondMember) =>
+        compareText(foldAsciiCase(firstMember.displayName), foldAsciiCase(secondMember.displayName)) ||
+        compareText(firstMember.id, secondMember.id),
+    );
   });
   // Server-computed totals for the member list headers — the paginated items only hold loaded pages. Keyed by
   // Room for the same reason the list is: they describe one room, only the network can produce them, and a
@@ -161,11 +171,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
       isLoaded: slice.isLoaded,
       items: computed(() => {
         const roomMemberRows = getRoomMemberRows(memberRows.value, roomId);
-        return slice.items.value.flatMap(({ userId }) => {
-          const row = roomMemberRows.get(userId);
-          const user = userMap.get(userId);
-          return row && user ? [{ ...user, ...row }] : [];
-        });
+        return joinListedMembers(slice.items.value, roomMemberRows, userMap, (user, row) => ({ ...user, ...row }));
       }),
       resetCursorPaginationData: slice.resetCursorPaginationData,
     };
