@@ -17,64 +17,11 @@ describe("messageModelStatusPickerForm", () => {
   const message = "message";
   const draftMessage = "draftMessage";
   const rejectedMessage = "rejectedMessage";
-  // Drives the picker the way the popover does — type a message, submit it — against a server that refuses the
-  // Write, and settles it, so each test only has to say what the row held going in
-  const submitRejectedMessage = async () => {
-    const { promise: saveRequested, resolve: signalSaveRequested } = Promise.withResolvers<void>();
-    trpcMsw.user.upsertStatus.mutation(() => {
-      signalSaveRequested();
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    const component = await mountSuspended(MessageModelStatusPickerForm);
-    const messageField = component.get("input");
-    await messageField.setValue(rejectedMessage);
-    await component.get("form").trigger("submit");
-    await saveRequested;
-    await flushPromises();
-    return messageField;
-  };
 
   beforeEach(() => {
     // Every test in the file shares the nuxt app's pinia, so each files its status under a user no earlier test wrote
     userId = v7();
     useSession.mockReturnValue(ref({ data: { user: { id: userId } } }));
-  });
-
-  // The picker closes on submit, so a draft that outlived a rejection would come back on the next open showing
-  // A value the server refused — beside a status bar reading the row it was rolled back to. The row owns both
-  // Fields here precisely because the surface holding the draft is gone by the time the write settles
-  test("re-seeds the draft from the stored row when the save is rejected", async () => {
-    expect.hasAssertions();
-
-    const statusStore = useStatusStore();
-    const { getStoredUserStatus, storeStatus } = statusStore;
-    storeStatus(userId, {
-      createdAt: new Date(0),
-      deletedAt: null,
-      expiresAt: null,
-      isConnected: true,
-      message,
-      status: UserStatus.Online,
-      updatedAt: new Date(0),
-      version: 0,
-    });
-    const messageField = await submitRejectedMessage();
-
-    expect(getStoredUserStatus(userId)?.message).toBe(message);
-    expect(messageField.element.value).toBe(message);
-  });
-
-  // A first status has no row to apply the write to and so none to roll back, which leaves the clone's source
-  // Untouched by the rejection — the one case where following the row is not enough to clear the refused value
-  test("clears the draft when a rejected save had no stored row to roll back", async () => {
-    expect.hasAssertions();
-
-    const statusStore = useStatusStore();
-    const { getStoredUserStatus } = statusStore;
-    const messageField = await submitRejectedMessage();
-
-    expect(getStoredUserStatus(userId)).toBeUndefined();
-    expect(messageField.element.value).toBe("");
   });
 
   // A presence push lands while the save is in flight, and the server refuses the save. The refusal has to leave the
@@ -92,11 +39,12 @@ describe("messageModelStatusPickerForm", () => {
       message,
       status: UserStatus.Online,
       updatedAt: new Date(0),
+      userId,
       version: 0,
     };
-    storeStatus(userId, storedStatus);
+    storeStatus(storedStatus);
     trpcMsw.user.upsertStatus.mutation(() => {
-      storeStatus(userId, { ...storedStatus, status: UserStatus.Idle, version: 1 });
+      storeStatus({ ...storedStatus, status: UserStatus.Idle, version: 1 });
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const component = await mountSuspended(MessageModelStatusPickerForm);
@@ -124,20 +72,21 @@ describe("messageModelStatusPickerForm", () => {
       message,
       status: UserStatus.Online,
       updatedAt: new Date(0),
+      userId,
       version: 0,
     };
-    storeStatus(userId, storedStatus);
+    storeStatus(storedStatus);
     const component = await mountSuspended(MessageModelStatusPickerForm);
     const messageField = component.get("input");
     await messageField.setValue(draftMessage);
-    storeStatus(userId, { ...storedStatus, isConnected: true });
+    storeStatus({ ...storedStatus, isConnected: true, version: 1 });
     await flushPromises();
 
     expect(messageField.element.value).toBe(draftMessage);
   });
 
-  // Everything the save files is keyed by the user — the queue key, the optimistic read, the row the rollback
-  // Restores — so a save without a session has nothing to file under and is not worth sending to be refused
+  // Everything the save files is keyed by the user, so a save without a session has nothing to file under and is not
+  // worth sending to be refused
   test("does not save without a session to file the write under", async () => {
     expect.hasAssertions();
 

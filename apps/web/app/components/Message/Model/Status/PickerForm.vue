@@ -5,24 +5,21 @@ import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { SelectableStatusDefinitionList } from "#src/services/message/user/status/SelectableStatusDefinitionList";
 import { StatusIconMap } from "#src/services/message/user/status/StatusIconMap";
 import { StatusTokenMap } from "#src/services/message/user/status/StatusTokenMap";
-import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useStatusStore } from "#src/store/message/user/status";
 import { STATUS_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 
 const emit = defineEmits<{ save: [] }>();
-const { $trpc } = useNuxtApp();
 // Nothing here renders until the popover above it is opened by a click, so the session is never wanted at SSR time
 const userId = useSessionUserId();
 const messageRules = [UiRules.maxLength(STATUS_MESSAGE_MAX_LENGTH)];
 const statusStore = useStatusStore();
-const { getStatusMessage, getStoredUserStatus, getUserStatus, storeStatus } = statusStore;
+const { getStatusMessage, getUserStatus, setStatus } = statusStore;
 // A manual draft, seeded once per open: the popover mounts this form only while it is open, so every open builds it
 // Again against the row as it then stands. Automatic sync would re-seed on any write to the status map, and the
 // Map carries more than these two fields — a presence push landing while the user is mid-sentence would clear
 // What they had typed, having changed only the connection state
-const { cloned: editedStatus, sync: syncEditedStatus } = useCloned(
+const { cloned: editedStatus } = useCloned(
   () => ({ message: getStatusMessage(userId.value), status: getUserStatus(userId.value) }),
   { manual: true },
 );
@@ -34,42 +31,12 @@ const statusItems = SelectableStatusDefinitionList.map(({ label, status, subtitl
 }));
 const selectedStatuses = computed(() => [editedStatus.value.status]);
 const isValid = ref(true);
-const { executeMutation } = useMutation();
 const save = () => {
-  // Every piece of bookkeeping below is keyed by the user: the queue key, the optimistic read, the row the
-  // Rollback restores. Without a session there is no key to write under, and the mutation would only be
-  // Refused anyway — so the save is not attempted rather than filed against `""`
+  // The write is filed under the person's own row, so without a session there is nothing to file it under and none is sent
   if (!userId.value) return;
 
   emit("save");
-  const input = { ...editedStatus.value };
-  executeMutation(() => $trpc.user.upsertStatus.mutate(input), {
-    // Nothing is applied when there is no record yet — the row carries fields only the server can fill in, so a
-    // First status is left to reconcile
-    applyOptimistic: () => {
-      const previousStatus = getStoredUserStatus(userId.value);
-      if (!previousStatus) return noop;
-
-      const { message: previousMessage, status: previousUserStatus } = previousStatus;
-      storeStatus(userId.value, { ...previousStatus, ...input });
-      return () => {
-        const currentStatus = getStoredUserStatus(userId.value);
-        if (currentStatus)
-          storeStatus(userId.value, { ...currentStatus, message: previousMessage, status: previousUserStatus });
-      };
-    },
-    key: userId.value,
-    // A rollback moves the row and the clone follows it, but a first status the server refuses leaves no row to roll
-    // Back — re-seed from the row either way, or that one case reopens the popover showing a refused value
-    onError: (error) => {
-      createErrorAlert(error);
-      syncEditedStatus();
-    },
-    // The row the server answers with is stored once it lands, which is the only copy of a first status
-    reconcile: ({ userId: upsertedUserId, ...rest }) => {
-      storeStatus(upsertedUserId, rest);
-    },
-  });
+  setStatus({ ...editedStatus.value });
 };
 </script>
 
