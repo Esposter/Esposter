@@ -336,8 +336,8 @@ describe(computeWriteTopics, () => {
     );
   });
 
-  // Without RETURNING the values a row holds after the update are not known, but the values it held before are, so a
-  // Reader of the old value is still woken
+  // Without RETURNING the recorder widens the update to return its scope columns (`widenUnreturnedWrite`), so the values its rows
+  // Hold after it are known as well as the values they held before it, which are read ahead of it. A reader of either is woken
   test("an update that asks for no RETURNING names the scope values its rows held before it, and the ones it sets", async () => {
     expect.hasAssertions();
 
