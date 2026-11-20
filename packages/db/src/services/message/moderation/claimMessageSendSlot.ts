@@ -3,7 +3,7 @@ import type { MessageCreationRejection } from "#src/models/message/moderation/Me
 import type { Database } from "@esposter/db-schema";
 
 import { getMessageCreationRejection } from "#src/services/message/moderation/getMessageCreationRejection";
-import { usersToRoomsInMessage } from "@esposter/db-schema";
+import { getLiveMembershipWhere, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, isNull } from "drizzle-orm";
 
 // Every send takes this before its message is written: the gate decides on the sender's slowmode clock, and the send
@@ -20,7 +20,7 @@ export const claimMessageSendSlot = async (
   for (;;) {
     const member = await db.query.usersToRoomsInMessage.findFirst({
       columns: { lastMessageAt: true },
-      where: { roomId: { eq: roomId }, userId: { eq: userId } },
+      where: { RAW: getLiveMembershipWhere, roomId: { eq: roomId }, userId: { eq: userId } },
     });
     const rejection = await getMessageCreationRejection(db, userId, roomId, message);
     if (rejection) return rejection;
@@ -32,6 +32,7 @@ export const claimMessageSendSlot = async (
         and(
           eq(usersToRoomsInMessage.roomId, roomId),
           eq(usersToRoomsInMessage.userId, userId),
+          getLiveMembershipWhere(usersToRoomsInMessage),
           member?.lastMessageAt
             ? eq(usersToRoomsInMessage.lastMessageAt, member.lastMessageAt)
             : isNull(usersToRoomsInMessage.lastMessageAt),

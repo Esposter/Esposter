@@ -5,7 +5,12 @@ import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
 import { inJsonArray } from "@esposter/db";
-import { getDetectedUserStatus, userStatusesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
+import {
+  getDetectedUserStatus,
+  getLiveMembershipWhere,
+  userStatusesInMessage,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
@@ -46,7 +51,13 @@ export const announceRoomMembersJoined = async (
     db
       .select({ displayName: usersToRoomsInMessage.displayName, userId: usersToRoomsInMessage.userId })
       .from(usersToRoomsInMessage)
-      .where(and(eq(usersToRoomsInMessage.roomId, roomId), inJsonArray(usersToRoomsInMessage.userId, userIds))),
+      .where(
+        and(
+          eq(usersToRoomsInMessage.roomId, roomId),
+          inJsonArray(usersToRoomsInMessage.userId, userIds),
+          getLiveMembershipWhere(usersToRoomsInMessage),
+        ),
+      ),
     db.select().from(userStatusesInMessage).where(inJsonArray(userStatusesInMessage.userId, userIds)),
   ]);
   for (const user of users) {

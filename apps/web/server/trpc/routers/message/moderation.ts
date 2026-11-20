@@ -19,6 +19,7 @@ import { publishDeletedMessageFiles } from "#server/services/message/moderation/
 import { readModerationNotesCount } from "#server/services/message/moderation/readModerationNotesCount";
 import { takeBackMentionCounts } from "#server/services/message/takeBackMentionCounts";
 import { announceRoomMemberRemoval } from "#server/services/room/announceRoomMemberRemoval";
+import { getRoomMembershipRemoval } from "#server/services/room/getRoomMembershipRemoval";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -42,6 +43,7 @@ import {
   bansInMessage,
   DatabaseEntityType,
   getDisplayNameExpression,
+  getLiveMembershipWhere,
   getPublicUserColumns,
   MODERATION_LOG_PAGE_SORT,
   MODERATION_NOTE_PAGE_SORT,
@@ -165,10 +167,7 @@ export const moderationRouter = router({
           await evictRoomCallParticipants(ctx.db, roomId, targetUserId);
           break;
         case AdminActionType.KickFromRoom: {
-          const [deletedMember] = await ctx.db
-            .delete(usersToRoomsInMessage)
-            .where(getRoomMembershipWhere(roomId, targetUserId))
-            .returning();
+          const [[deletedMember]] = await ctx.db.batch(getRoomMembershipRemoval(ctx.db, roomId, targetUserId));
           if (deletedMember)
             await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, RoomMemberRemovalAction.Kicked);
           await evictAfterRemoval();
@@ -219,11 +218,22 @@ export const moderationRouter = router({
         })
         .from(bansInMessage)
         .innerJoin(usersInAuth, eq(bansInMessage.userId, usersInAuth.id))
-        .leftJoin(userMemberships, and(eq(userMemberships.userId, usersInAuth.id), eq(userMemberships.roomId, roomId)))
+        .leftJoin(
+          userMemberships,
+          and(
+            eq(userMemberships.userId, usersInAuth.id),
+            eq(userMemberships.roomId, roomId),
+            getLiveMembershipWhere(userMemberships),
+          ),
+        )
         .leftJoin(bannedByUsers, eq(bansInMessage.bannedByUserId, bannedByUsers.id))
         .leftJoin(
           bannedByMemberships,
-          and(eq(bannedByMemberships.userId, bannedByUsers.id), eq(bannedByMemberships.roomId, roomId)),
+          and(
+            eq(bannedByMemberships.userId, bannedByUsers.id),
+            eq(bannedByMemberships.roomId, roomId),
+            getLiveMembershipWhere(bannedByMemberships),
+          ),
         )
         .where(and(...wheres))
         .orderBy(...getPageOrderBy(sort, cursor))

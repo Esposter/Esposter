@@ -2,7 +2,13 @@ import type { ExecutedAutomodAction } from "#src/models/message/moderation/Execu
 import type { Database, RoomFilterInMessage } from "@esposter/db-schema";
 
 import { writeModerationLogEntry } from "#src/services/message/moderation/writeModerationLogEntry";
-import { AdminActionType, AUTOMOD_USER_ID, usersToRoomsInMessage, WordFilterAction } from "@esposter/db-schema";
+import {
+  AdminActionType,
+  AUTOMOD_USER_ID,
+  getLiveMembershipWhere,
+  usersToRoomsInMessage,
+  WordFilterAction,
+} from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, sql } from "drizzle-orm";
 
@@ -33,7 +39,13 @@ export const executeAutomodAction = async (
     await db
       .update(usersToRoomsInMessage)
       .set({ timeoutUntil: sql`MAX(COALESCE(${usersToRoomsInMessage.timeoutUntil}, 0), ${timeoutUntil.getTime()})` })
-      .where(and(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.roomId, roomId)));
+      .where(
+        and(
+          eq(usersToRoomsInMessage.userId, userId),
+          eq(usersToRoomsInMessage.roomId, roomId),
+          getLiveMembershipWhere(usersToRoomsInMessage),
+        ),
+      );
   }
 
   const type = action === WordFilterAction.Timeout ? AdminActionType.TimeoutUser : AdminActionType.Warn;

@@ -12,6 +12,7 @@ import { getBookmarkTarget } from "#shared/services/bookmark/getBookmarkTarget";
 import {
   bookmarksInApp,
   DatabaseEntityType,
+  getLiveMembershipWhere,
   MAX_BOOKMARKS,
   resourcesInResource,
   usersInAuth,
@@ -39,7 +40,11 @@ export const bookmarkRouter = router({
       .leftJoin(resourcesInResource, eq(resourcesInResource.id, bookmarksInApp.resourceId))
       .leftJoin(
         usersToRoomsInMessage,
-        and(eq(usersToRoomsInMessage.roomId, bookmarksInApp.roomId), eq(usersToRoomsInMessage.userId, userId)),
+        and(
+          eq(usersToRoomsInMessage.roomId, bookmarksInApp.roomId),
+          eq(usersToRoomsInMessage.userId, userId),
+          getLiveMembershipWhere(usersToRoomsInMessage),
+        ),
       )
       .where(eq(bookmarksInApp.userId, userId))
       .orderBy(asc(bookmarksInApp.createdAt));

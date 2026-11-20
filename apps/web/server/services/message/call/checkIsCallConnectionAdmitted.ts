@@ -1,5 +1,7 @@
 import type { Context } from "#server/trpc/context";
 
+import { getLiveMembershipWhere } from "@esposter/db-schema";
+
 // Whether a connection RealtimeKit reports may stay in its call. A token outlives the membership it was minted for, so a
 // Room call asks the room's door again on every connection it reports, rather than trusting the token it was given.
 // A member timed out of the room is kept out of its calls until the timeout ends, as a removed one is for good. A
@@ -19,7 +21,7 @@ export const checkIsCallConnectionAdmitted = async (
 
   const userToRoom = await db.query.usersToRoomsInMessage.findFirst({
     columns: { timeoutUntil: true },
-    where: { roomId: { eq: callSession.roomId }, userId: { eq: userId } },
+    where: { RAW: getLiveMembershipWhere, roomId: { eq: callSession.roomId }, userId: { eq: userId } },
   });
   return Boolean(userToRoom && !(userToRoom.timeoutUntil && userToRoom.timeoutUntil > new Date()));
 };

@@ -1,4 +1,5 @@
 import { getDb } from "#src/services/shared/getDb";
+import { getLiveMembershipWhere } from "@esposter/db-schema";
 
 // Who a message notification is shown as. Resolved here rather than by each publisher, so the per-room display name
 // ([display names](openspec/specs/esbabbler/display-names/design.md)) is applied once and never on the request path a member is waiting on.
@@ -17,7 +18,7 @@ export const getMessageNotificationAuthor = async ({
   if (userId) {
     const userToRoom = await getDb().query.usersToRoomsInMessage.findFirst({
       columns: { displayName: true },
-      where: { roomId: { eq: roomId }, userId: { eq: userId } },
+      where: { RAW: getLiveMembershipWhere, roomId: { eq: roomId }, userId: { eq: userId } },
       with: { user: { columns: { image: true, name: true } } },
     });
     if (userToRoom) return { icon: userToRoom.user.image, title: userToRoom.displayName || userToRoom.user.name };

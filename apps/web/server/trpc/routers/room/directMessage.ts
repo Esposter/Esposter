@@ -14,6 +14,8 @@ import { readDirectMessageParticipantIds } from "#server/services/room/directMes
 import { readDirectMessageParticipants } from "#server/services/room/directMessage/readDirectMessageParticipants";
 import { runParticipantBatch } from "#server/services/room/directMessage/runParticipantBatch";
 import { updateDirectMessageParticipantKey } from "#server/services/room/directMessage/updateDirectMessageParticipantKey";
+import { getReviveMembershipConflict } from "#server/services/room/getReviveMembershipConflict";
+import { getRoomMembershipRemoval } from "#server/services/room/getRoomMembershipRemoval";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
 import { checkIsRoomOwner } from "#server/services/room/rbac/checkIsRoomOwner";
@@ -33,6 +35,7 @@ import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
   friendsInSocial,
+  getLiveMembershipWhere,
   getPublicUserColumns,
   PublicUserColumns,
   roomsInMessage,
@@ -85,12 +88,18 @@ export const directMessageRouter = router({
           ctx.db
             .insert(usersToRoomsInMessage)
             .values(userIdChunk.map((participantUserId) => ({ roomId: participantRoomId, userId: participantUserId })))
-            .onConflictDoNothing(),
+            .onConflictDoUpdate(getReviveMembershipConflict()),
         ),
         ctx.db
           .update(usersToRoomsInMessage)
           .set({ isHidden: false })
-          .where(and(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.roomId, participantRoomId))),
+          .where(
+            and(
+              eq(usersToRoomsInMessage.userId, userId),
+              eq(usersToRoomsInMessage.roomId, participantRoomId),
+              getLiveMembershipWhere(usersToRoomsInMessage),
+            ),
+          ),
       ]);
       const room = requireMutation(
         await ctx.db.query.roomsInMessage.findFirst({ where: { participantKey: { eq: participantKey } } }),
@@ -126,8 +135,8 @@ export const directMessageRouter = router({
     // The memberships and the key are one batch, and both are written only while the room still holds the key the list
     // Is computed from. A refused key inserts no membership, so the key and the memberships it names land together or not at all
     const isRoomKeyUnchanged = getParticipantKeyUnchangedWhere(ctx.db, roomId, participantKey);
-    // A re-added member is upserted back to visible. The added users are bound once, as a JSON array, so the statement
-    // Takes any number of them
+    // A re-added member is revived from the tombstone their removal left, as a fresh membership. The added users are bound
+    // Once, as a JSON array, so the statement takes any number of them
     const [, updatedRoomRows] = await runParticipantBatch(() =>
       ctx.db.batch([
         ctx.db
@@ -142,10 +151,7 @@ export const directMessageRouter = router({
               .from(sql`json_each(${JSON.stringify(addedUserIds)}) AS participant`)
               .where(isRoomKeyUnchanged),
           )
-          .onConflictDoUpdate({
-            set: { isHidden: false },
-            target: [usersToRoomsInMessage.userId, usersToRoomsInMessage.roomId],
-          }),
+          .onConflictDoUpdate(getReviveMembershipConflict()),
         updateDirectMessageParticipantKey(ctx.db, roomId, isRoomKeyUnchanged, [...participantIds, ...addedUserIds]),
       ]),
     );
@@ -195,12 +201,10 @@ export const directMessageRouter = router({
     // The membership and the key are one batch under the same guard as the add: both are written only while the room still
     // Holds the key the list is computed from, so a refused key leaves the membership in place
     const isRoomKeyUnchanged = getParticipantKeyUnchangedWhere(ctx.db, roomId, room.participantKey);
-    const [deletedUserToRoomRows, updatedRoomRows] = await runParticipantBatch(() =>
+    // The removal is three statements, then the key update, so the batch's fourth result is the room
+    const batchRows = await runParticipantBatch(() =>
       ctx.db.batch([
-        ctx.db
-          .delete(usersToRoomsInMessage)
-          .where(and(getRoomMembershipWhere(roomId, userId), isRoomKeyUnchanged))
-          .returning(),
+        ...getRoomMembershipRemoval(ctx.db, roomId, userId, isRoomKeyUnchanged),
         updateDirectMessageParticipantKey(
           ctx.db,
           roomId,
@@ -210,6 +214,8 @@ export const directMessageRouter = router({
         ),
       ]),
     );
+    const [[deletedUserToRoom]] = batchRows;
+    const updatedRoomRows = batchRows[3];
     const updatedRoom = requireMutation(
       updatedRoomRows[0],
       Operation.Update,
@@ -217,7 +223,7 @@ export const directMessageRouter = router({
       roomId,
     );
     requireMutation(
-      deletedUserToRoomRows[0],
+      deletedUserToRoom,
       Operation.Delete,
       DatabaseEntityType.UserToRoom,
       JSON.stringify({ roomId, userId }),
@@ -254,6 +260,7 @@ export const directMessageRouter = router({
           eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
           eq(usersToRoomsInMessage.userId, ctx.user.id),
           eq(usersToRoomsInMessage.isHidden, false),
+          getLiveMembershipWhere(usersToRoomsInMessage),
         );
         // The sort is bound to the room's own columns, so the cursor's values are read off the rows it answers
         const boundSort = createPageSort(

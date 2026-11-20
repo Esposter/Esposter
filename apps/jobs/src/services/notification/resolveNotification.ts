@@ -5,7 +5,7 @@ import { getMessageNotificationAuthor } from "#src/services/notification/getMess
 import { getMessageNotificationBody } from "#src/services/notification/getMessageNotificationBody";
 import { getDb } from "#src/services/shared/getDb";
 import { getMessageRecipientUserIds } from "@esposter/db";
-import { AppNotificationType } from "@esposter/db-schema";
+import { AppNotificationType, getLiveMembershipWhere } from "@esposter/db-schema";
 import { exhaustiveGuard, RoutePath } from "@esposter/shared";
 
 // The one place a published occurrence becomes a rendered notification and a recipient list. Every type answers
@@ -65,7 +65,7 @@ export const resolveNotification = async (
       // That holds at the one place a reminder is delivered. A membership cascades with its room, so one read answers both
       const membership = await getDb().query.usersToRoomsInMessage.findFirst({
         columns: { userId: true },
-        where: { roomId: { eq: data.roomId }, userId: { eq: data.userId } },
+        where: { RAW: getLiveMembershipWhere, roomId: { eq: data.roomId }, userId: { eq: data.userId } },
       });
       if (!membership) return undefined;
 

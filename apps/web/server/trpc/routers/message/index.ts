@@ -75,6 +75,7 @@ import {
 } from "@esposter/db";
 import {
   DatabaseEntityType,
+  getLiveMembershipWhere,
   getMimeCategory,
   MAX_FOLLOWED_THREADS,
   MessageType,
@@ -103,7 +104,7 @@ const baseMessageRouter = router({
       // Naming another would show them typing, and a member naming themselves could wear any name
       const userToRoom = await ctx.db.query.usersToRoomsInMessage.findFirst({
         columns: { displayName: true },
-        where: { roomId: { eq: roomId }, userId: { eq: user.id } },
+        where: { RAW: getLiveMembershipWhere, roomId: { eq: roomId }, userId: { eq: user.id } },
       });
       await useRoomObject(roomId).broadcastEvent(
         {

@@ -1,5 +1,6 @@
 import { bookmarksInApp } from "#src/schema/app/bookmarksInApp";
 import { bansInMessage } from "#src/schema/message/bansInMessage";
+import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import { notificationsInNotification } from "#src/schema/notification/notificationsInNotification";
 import { resourceFavoritesInResource } from "#src/schema/resource/resourceFavoritesInResource";
 import { resourcePublicationsInResource } from "#src/schema/resource/resourcePublicationsInResource";
@@ -25,4 +26,5 @@ export const OVERLAY_TOMBSTONE_TABLES = [
   notificationsInNotification,
   resourceFavoritesInResource,
   resourcePublicationsInResource,
+  usersToRoomsInMessage,
 ] as const;

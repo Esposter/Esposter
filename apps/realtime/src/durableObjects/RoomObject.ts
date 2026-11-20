@@ -56,6 +56,7 @@ import {
   AppNotificationType,
   appUsersInMessage,
   DatabaseEntityType,
+  getLiveMembershipWhere,
   getUserSocketTag,
   MESSAGE_BATCH_MAX_LENGTH,
   messageEmojisInRoom,
@@ -733,7 +734,13 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
       this.#core
         .update(usersToRoomsInMessage)
         .set({ lastReadAt: now })
-        .where(and(eq(usersToRoomsInMessage.roomId, this.#roomId), eq(usersToRoomsInMessage.userId, userId))),
+        .where(
+          and(
+            eq(usersToRoomsInMessage.roomId, this.#roomId),
+            eq(usersToRoomsInMessage.userId, userId),
+            getLiveMembershipWhere(usersToRoomsInMessage),
+          ),
+        ),
     ).match(noop, console.error);
   }
 

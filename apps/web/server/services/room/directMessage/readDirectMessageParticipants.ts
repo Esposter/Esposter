@@ -5,6 +5,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { inJsonArray } from "@esposter/db";
 import {
   getDisplayNameExpression,
+  getLiveMembershipWhere,
   getPublicUserColumns,
   roomsInMessage,
   RoomType,
@@ -39,10 +40,20 @@ export const readDirectMessageParticipants = async (
     )
     .innerJoin(
       usersToRoomsInMessage2,
-      and(eq(usersToRoomsInMessage2.roomId, usersToRoomsInMessage1.roomId), ne(usersToRoomsInMessage2.userId, userId)),
+      and(
+        eq(usersToRoomsInMessage2.roomId, usersToRoomsInMessage1.roomId),
+        ne(usersToRoomsInMessage2.userId, userId),
+        getLiveMembershipWhere(usersToRoomsInMessage2),
+      ),
     )
     .innerJoin(usersInAuth2, eq(usersInAuth2.id, usersToRoomsInMessage2.userId))
-    .where(and(eq(usersToRoomsInMessage1.userId, userId), inJsonArray(usersToRoomsInMessage1.roomId, roomIds)))
+    .where(
+      and(
+        eq(usersToRoomsInMessage1.userId, userId),
+        inJsonArray(usersToRoomsInMessage1.roomId, roomIds),
+        getLiveMembershipWhere(usersToRoomsInMessage1),
+      ),
+    )
     .orderBy(asc(sql<string>`${participantDisplayName} collate nocase`), asc(usersInAuth2.id));
   const roomIdParticipantsMap = new Map<string, DirectMessageParticipants["participants"]>();
   for (const { displayName, roomId, user } of rows)

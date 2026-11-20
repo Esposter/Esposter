@@ -2,6 +2,7 @@ import type { Context } from "#server/trpc/context";
 
 import {
   getDisplayNameExpression,
+  getLiveMembershipWhere,
   roomsInMessage,
   RoomType,
   usersInAuth,
@@ -21,7 +22,13 @@ export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) 
     .select({ roomId: usersToRoomsInMessage.roomId })
     .from(usersToRoomsInMessage)
     .innerJoin(roomsInMessage, eq(roomsInMessage.id, usersToRoomsInMessage.roomId))
-    .where(and(eq(usersToRoomsInMessage.userId, userId), eq(roomsInMessage.type, RoomType.DirectMessage)));
+    .where(
+      and(
+        eq(usersToRoomsInMessage.userId, userId),
+        eq(roomsInMessage.type, RoomType.DirectMessage),
+        getLiveMembershipWhere(usersToRoomsInMessage),
+      ),
+    );
   const participantMembership = alias(usersToRoomsInMessage, "participantMembership");
   const participantUser = alias(usersInAuth, "participantUser");
   const participantDisplayName = getDisplayNameExpression(participantMembership, participantUser);
@@ -36,7 +43,11 @@ export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) 
     .from(roomsInMessage)
     .leftJoin(
       participantMembership,
-      and(eq(participantMembership.roomId, roomsInMessage.id), ne(participantMembership.userId, userId)),
+      and(
+        eq(participantMembership.roomId, roomsInMessage.id),
+        ne(participantMembership.userId, userId),
+        getLiveMembershipWhere(participantMembership),
+      ),
     )
     .leftJoin(participantUser, eq(participantUser.id, participantMembership.userId))
     .where(inArray(roomsInMessage.id, directMessageRoomIds))

@@ -3,6 +3,7 @@ import type { Database } from "@esposter/db-schema";
 
 import { inJsonArray } from "#src/services/shared/inJsonArray";
 import {
+  getLiveMembershipWhere,
   roomMemberPermissionsInMessage,
   RoomPermission,
   roomRolesInMessage,
@@ -23,7 +24,13 @@ export const getPermissions: GetPermissions = (async (
   const memberRoomIdsSubquery = db
     .select({ roomId: usersToRoomsInMessage.roomId })
     .from(usersToRoomsInMessage)
-    .where(and(eq(usersToRoomsInMessage.userId, userId), inJsonArray(usersToRoomsInMessage.roomId, roomIdArray)));
+    .where(
+      and(
+        eq(usersToRoomsInMessage.userId, userId),
+        inJsonArray(usersToRoomsInMessage.roomId, roomIdArray),
+        getLiveMembershipWhere(usersToRoomsInMessage),
+      ),
+    );
   const roleIdsSubquery = db
     .select({ id: usersToRoomRolesInMessage.roleId })
     .from(usersToRoomRolesInMessage)

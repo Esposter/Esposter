@@ -7,6 +7,7 @@ import { useUserObject } from "#server/composables/realtime/useUserObject";
 import { fanOutRoomReads } from "#server/services/message/fanOutRoomReads";
 import { compareBySort, inJsonArray, toPage } from "@esposter/db";
 import {
+  getLiveMembershipWhere,
   roomsInMessage,
   SCHEDULED_MESSAGE_JOB_PAGE_SORT,
   ScheduledMessageJobType,
@@ -50,7 +51,13 @@ export const readMyScheduledMessageJobs = async (
           .select({ room: roomsInMessage })
           .from(usersToRoomsInMessage)
           .innerJoin(roomsInMessage, eq(roomsInMessage.id, usersToRoomsInMessage.roomId))
-          .where(and(eq(usersToRoomsInMessage.userId, userId), inJsonArray(usersToRoomsInMessage.roomId, roomIds)))
+          .where(
+            and(
+              eq(usersToRoomsInMessage.userId, userId),
+              inJsonArray(usersToRoomsInMessage.roomId, roomIds),
+              getLiveMembershipWhere(usersToRoomsInMessage),
+            ),
+          )
       : [];
   const memberRoomMap = new Map(memberRooms.map(({ room }) => [room.id, room]));
 

@@ -4,7 +4,6 @@ import type { UserInRoom } from "#shared/models/db/room/UserInRoom";
 import type { Page, RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolation";
 import { containsLike } from "#server/services/db/containsLike";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
@@ -14,8 +13,10 @@ import { announceRoomMembersJoined } from "#server/services/room/announceRoomMem
 import { deleteRoom } from "#server/services/room/deleteRoom";
 import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMessageDisplayNames";
 import { getLiveInviteWhere } from "#server/services/room/getLiveInviteWhere";
+import { getNotLiveMembershipWhere } from "#server/services/room/getNotLiveMembershipWhere";
+import { getReviveMembershipConflict } from "#server/services/room/getReviveMembershipConflict";
 import { getRoomMemberJoinCondition } from "#server/services/room/getRoomMemberJoinCondition";
-import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
+import { getRoomMembershipRemoval } from "#server/services/room/getRoomMembershipRemoval";
 import { getRoomProfileImageBlobNameFromUrl } from "#server/services/room/getRoomProfileImageBlobNameFromUrl";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
@@ -55,6 +56,7 @@ import {
   DatabaseEntityType,
   DEFAULT_EVERYONE_PERMISSIONS,
   getDisplayNameExpression,
+  getLiveMembershipWhere,
   getPublicUserColumns,
   invitesInMessage,
   MessageType,
@@ -135,8 +137,8 @@ export const baseRoomRouter = router({
     }),
   joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const userId = ctx.user.id;
-    // The room is read once, to name it in the duplicate-join error. Every refusal of the link itself, an unknown,
-    // Expired or used-up link, a paused room or a banned user, is decided by the batch below, so no read repeats its rules
+    // The room is read once, to name it in the errors and to pick the membership the batch writes. Every refusal of the link
+    // Itself, an unknown, expired or used-up link, a paused room or a banned user, is decided by the batch below
     const invite = await ctx.db.query.invitesInMessage.findFirst({
       columns: { roomId: true },
       where: { id: { eq: input } },
@@ -144,42 +146,45 @@ export const baseRoomRouter = router({
     if (!invite) throw getNotFoundError(DatabaseEntityType.Invite, input);
 
     const userToRoomContext = JSON.stringify({ roomId: invite.roomId, userId });
-    // The membership and the use it consumes are one batch, and each is selected only while the link still admits the
-    // Caller. A second join of the same user collides on the membership's key and refuses the batch the same way
-    const liveInviteWhere = getLiveInviteWhere(ctx.db, input, userId);
-    const [joinedRows] = await getResultAsync(() =>
-      ctx.db.batch([
-        ctx.db
-          .insert(usersToRoomsInMessage)
-          .select(
-            ctx.db
-              .select({
-                ...getInsertSelectMetadata(usersToRoomsInMessage),
-                roomId: invitesInMessage.roomId,
-                userId: sql`${userId}`.as("userId"),
-              })
-              .from(invitesInMessage)
-              .where(liveInviteWhere),
-          )
-          .returning(),
-        ctx.db
-          .update(invitesInMessage)
-          .set({ uses: sql`${invitesInMessage.uses} + 1` })
-          .where(liveInviteWhere),
-      ]),
-    ).match(
-      (results) => results,
-      (error) => {
-        if (checkIsUniqueViolation(error))
-          throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
-        throw error;
-      },
-    );
-    if (!joinedRows[0]) throw getNotFoundError(DatabaseEntityType.Invite, input);
+    // Two statements in one batch, in order. The first counts the link's use only while the link admits the caller and the
+    // Caller holds no live membership there, so a second join at once finds the membership the first one wrote and counts
+    // Nothing. The second writes the membership from the link, reviving a tombstone a removal left, and writes only when
+    // Changes() reports that the first counted: changes() is the row count of the statement before it
+    const [, joinedRows] = await ctx.db.batch([
+      ctx.db
+        .update(invitesInMessage)
+        .set({ uses: sql`${invitesInMessage.uses} + 1` })
+        .where(and(getLiveInviteWhere(ctx.db, input, userId), getNotLiveMembershipWhere(ctx.db, userId))),
+      ctx.db
+        .insert(usersToRoomsInMessage)
+        .select(
+          ctx.db
+            .select({
+              ...getInsertSelectMetadata(usersToRoomsInMessage),
+              roomId: invitesInMessage.roomId,
+              userId: sql`${userId}`.as("userId"),
+            })
+            .from(invitesInMessage)
+            .where(and(eq(invitesInMessage.id, input), sql`changes() > 0`)),
+        )
+        .onConflictDoUpdate(getReviveMembershipConflict())
+        .returning(),
+    ]);
+    // Nothing returned means the link refused the caller, or the caller already held the membership. A live membership is
+    // The member's own answer, and anything else is the refusal an unknown link gives
+    if (!joinedRows[0]) {
+      const liveMembership = await ctx.db.query.usersToRoomsInMessage.findFirst({
+        columns: { userId: true },
+        where: { RAW: getLiveMembershipWhere, roomId: { eq: invite.roomId }, userId: { eq: userId } },
+      });
+      if (liveMembership)
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
+      throw getNotFoundError(DatabaseEntityType.Invite, input);
+    }
 
     const { room, roomId, user } = await requireEntity(
       ctx.db.query.usersToRoomsInMessage.findFirst({
-        where: { roomId: { eq: invite.roomId }, userId: { eq: userId } },
+        where: { RAW: getLiveMembershipWhere, roomId: { eq: invite.roomId }, userId: { eq: userId } },
         with: UserToRoomInMessageRelations,
       }),
       DatabaseEntityType.UserToRoom,
@@ -203,12 +208,8 @@ export const baseRoomRouter = router({
 
       if (ownedRoom) return (await deleteRoom(ctx, input)).id;
 
-      const userToRoom = requireMutation(
-        (await ctx.db.delete(usersToRoomsInMessage).where(getRoomMembershipWhere(input, userId)).returning())[0],
-        Operation.Delete,
-        DatabaseEntityType.UserToRoom,
-        input,
-      );
+      const [[removedMembership]] = await ctx.db.batch(getRoomMembershipRemoval(ctx.db, input, userId));
+      const userToRoom = requireMutation(removedMembership, Operation.Delete, DatabaseEntityType.UserToRoom, input);
 
       await announceRoomMemberDeparture(userToRoom);
       // Best-effort after the membership delete — the name lookup only exists to word the system message, so
@@ -265,7 +266,11 @@ export const baseRoomRouter = router({
         { displayName: sql<string>`${displayName} collate nocase`, id: usersInAuth.id },
         readMembersPageSort,
       );
-      const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId), getPageWhere(boundSort, cursor)];
+      const wheres: (SQL | undefined)[] = [
+        eq(usersToRoomsInMessage.roomId, roomId),
+        getLiveMembershipWhere(usersToRoomsInMessage),
+        getPageWhere(boundSort, cursor),
+      ];
       if (filter?.name)
         wheres.push(or(containsLike(displayName, filter.name), containsLike(usersInAuth.name, filter.name)));
 
@@ -285,7 +290,7 @@ export const baseRoomRouter = router({
         await ctx.db
           .select({ count: count() })
           .from(usersToRoomsInMessage)
-          .where(eq(usersToRoomsInMessage.roomId, roomId)),
+          .where(and(eq(usersToRoomsInMessage.roomId, roomId), getLiveMembershipWhere(usersToRoomsInMessage))),
       ).count,
   ),
   readMutualRooms: standardAuthedProcedure.input(userIdSchema).query<RoomInMessage[]>(({ ctx, input }) => {
@@ -296,11 +301,19 @@ export const baseRoomRouter = router({
       .from(roomsInMessage)
       .innerJoin(
         usersToRoomsInMessage1,
-        and(eq(usersToRoomsInMessage1.roomId, roomsInMessage.id), eq(usersToRoomsInMessage1.userId, ctx.user.id)),
+        and(
+          eq(usersToRoomsInMessage1.roomId, roomsInMessage.id),
+          eq(usersToRoomsInMessage1.userId, ctx.user.id),
+          getLiveMembershipWhere(usersToRoomsInMessage1),
+        ),
       )
       .innerJoin(
         usersToRoomsInMessage2,
-        and(eq(usersToRoomsInMessage2.roomId, roomsInMessage.id), eq(usersToRoomsInMessage2.userId, input.userId)),
+        and(
+          eq(usersToRoomsInMessage2.roomId, roomsInMessage.id),
+          eq(usersToRoomsInMessage2.userId, input.userId),
+          getLiveMembershipWhere(usersToRoomsInMessage2),
+        ),
       )
       .where(eq(roomsInMessage.type, RoomType.Room))
       .orderBy(desc(roomsInMessage.lastMessageAt))
@@ -323,6 +336,7 @@ export const baseRoomRouter = router({
                       andFilter(
                         eqFilter(usersToRoomsInMessage.roomId, roomTable.id),
                         eqFilter(usersToRoomsInMessage.userId, ctx.user.id),
+                        getLiveMembershipWhere(usersToRoomsInMessage),
                       ),
                     ),
                 ),
@@ -339,7 +353,13 @@ export const baseRoomRouter = router({
             .select(getColumns(roomsInMessage))
             .from(roomsInMessage)
             .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
-            .where(and(eq(usersToRoomsInMessage.userId, ctx.user.id), eq(roomsInMessage.type, RoomType.Room)))
+            .where(
+              and(
+                eq(usersToRoomsInMessage.userId, ctx.user.id),
+                eq(roomsInMessage.type, RoomType.Room),
+                getLiveMembershipWhere(usersToRoomsInMessage),
+              ),
+            )
             .orderBy(desc(roomsInMessage.lastMessageAt))
             .limit(1)
         )[0];
@@ -350,6 +370,7 @@ export const baseRoomRouter = router({
       const innerJoinCondition = and(
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
         eq(usersToRoomsInMessage.userId, ctx.user.id),
+        getLiveMembershipWhere(usersToRoomsInMessage),
       );
       const directMessageDisplayNames = getDirectMessageDisplayNames(ctx.db, ctx.user.id);
       const displayName = sql<string>`coalesce(nullif(${roomsInMessage.name}, ''), ${directMessageDisplayNames.displayName}, '')`;

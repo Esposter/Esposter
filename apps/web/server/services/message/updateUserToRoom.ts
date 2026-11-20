@@ -4,6 +4,7 @@ import type { UserInAuth, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { ownedBy } from "#server/services/db/ownedBy";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
+import { getLiveRoomCategoryWhere } from "#server/services/room/category/getLiveRoomCategoryWhere";
 import { requireRoomCategory } from "#server/services/room/category/requireRoomCategory";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
@@ -17,6 +18,7 @@ import {
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { and } from "drizzle-orm";
 
 // `lastMessageAt` is the slowmode clock, so only a send stamps it — the client's input schema carries `lastReadAt`
 // Instead, and a member can never move the clock its next send is checked against
@@ -46,7 +48,9 @@ export const updateUserToRoom = async (
       await db
         .select()
         .from(roomCategoriesInMessage)
-        .where(ownedBy(roomCategoriesInMessage, categoryId, userId))
+        .where(
+          and(ownedBy(roomCategoriesInMessage, categoryId, userId), getLiveRoomCategoryWhere(roomCategoriesInMessage)),
+        )
     )[0];
     requireRoomCategory(ownedRoomCategory, Operation.Update, categoryId, "NOT_FOUND");
   }

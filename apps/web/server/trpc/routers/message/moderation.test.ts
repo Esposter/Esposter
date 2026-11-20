@@ -168,7 +168,7 @@ describe("moderationRouter", () => {
     assert.exists(removedMembership);
     expect(removedMembership.deletedAt).not.toBeNull();
     expect(removedMembership.version).toBe(joinedMembership.version + 1);
-    expect(await readMembershipRows(member.id)).toHaveLength(0);
+    await expect(readMembershipRows(member.id)).resolves.toHaveLength(0);
   });
 
   test(`executeAdminAction ${AdminActionType.TimeoutUser} sets timeoutUntil to now plus the duration`, async () => {
