@@ -1,6 +1,7 @@
 import type { CharacterConfig } from "#src/models/CharacterConfig";
 import type { Direction } from "#src/models/Direction";
 import type { GridEngineError } from "#src/models/GridEngineError";
+import type { GridEngineEvents } from "#src/models/GridEngineEvents";
 import type { Position } from "#src/models/Position";
 import type { Result } from "neverthrow";
 
@@ -10,5 +11,10 @@ export interface GridEngine {
   checkHasCharacter: (id: string) => boolean;
   checkIsBlocked: (position: Position) => boolean;
   move: (id: string, direction: Direction) => Result<void, GridEngineError>;
+  on: <TEvent extends keyof GridEngineEvents>(
+    event: TEvent,
+    listener: (payload: GridEngineEvents[TEvent]) => void,
+  ) => () => void;
+  turnTowards: (id: string, direction: Direction) => Result<void, GridEngineError>;
   update: (delta: number) => void;
 }

@@ -5,5 +5,6 @@ export type * from "#src/models/GridEngine";
 export type * from "#src/models/GridEngineConfig";
 export type * from "#src/models/GridEngineError";
 export * from "#src/models/GridEngineErrorKind";
+export type * from "#src/models/GridEngineEvents";
 export type * from "#src/models/Position";
 export * from "#src/services/createGridEngine";

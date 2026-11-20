@@ -11,5 +11,5 @@ export const advanceCharacter = (state: GridEngineState, character: GridEngineCh
   const step = character.step ?? startStep(state, character);
   if (step === undefined) return;
   step.progress += character.speed * delta;
-  if (step.progress >= STEP_PROGRESS) commitStep(character, step);
+  if (step.progress >= STEP_PROGRESS) commitStep(state, character, step);
 };

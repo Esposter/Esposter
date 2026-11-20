@@ -9,7 +9,11 @@ import { createEngine } from "#src/services/createEngine";
 import { Result as ResultFactory } from "neverthrow";
 
 export const createGridEngine = ({ characters = [], tiles }: GridEngineConfig): Result<GridEngine, GridEngineError> => {
-  const state: GridEngineState = { characters: new Map(), tiles };
+  const state: GridEngineState = {
+    characters: new Map(),
+    listeners: { directionChanged: new Set(), positionChangeFinished: new Set() },
+    tiles,
+  };
   return ResultFactory.combine(characters.map((character) => addCharacter(state, character))).map(() =>
     createEngine(state),
   );

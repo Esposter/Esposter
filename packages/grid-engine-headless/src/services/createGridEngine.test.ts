@@ -4,6 +4,7 @@ import type { GridEngineError } from "#src/models/GridEngineError";
 import type { Result } from "neverthrow";
 
 import { Direction } from "#src/models/Direction";
+import { GridEngineErrorKind } from "#src/models/GridEngineErrorKind";
 import { createGridEngine } from "#src/services/createGridEngine";
 import { describe, expect, test } from "vitest";
 
@@ -14,12 +15,20 @@ const unwrap = <T>(result: Result<T, GridEngineError>): T =>
     (error) => expect.fail(`the call failed with ${error.kind}`),
   );
 
+// The mirror of `unwrap`: a test that needs the call to fail reads the error it returned
+const readError = <T>(result: Result<T, GridEngineError>): GridEngineError =>
+  result.match(
+    () => expect.fail("the call succeeded"),
+    (error) => error,
+  );
+
 const readEngine = (config: GridEngineConfig): GridEngine => unwrap(createGridEngine(config));
 
 describe(createGridEngine, () => {
   const FIRST_ID = "0";
   const SECOND_ID = "1";
-  const STEP_DURATION_MS = 250;
+  const STEP_DURATION_MS = 1000 / 4;
+  const ONE_SECOND_MS = 1000;
 
   test("a blocking tile blocks", () => {
     expect.hasAssertions();
@@ -86,5 +95,123 @@ describe(createGridEngine, () => {
 
     expect(engine.checkIsBlocked({ x: 1, y: 0 })).toBe(true);
     expect(engine.checkIsBlocked({ x: 2, y: 0 })).toBe(false);
+  });
+
+  test("a step takes the same time at any split of one second of updates (#419)", () => {
+    expect.hasAssertions();
+
+    // Each split divides a step evenly, so the tile is released on the update that crosses its end
+    for (const splitMs of [1, 5, 10, 25, 50, 125, STEP_DURATION_MS]) {
+      const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false]] });
+      unwrap(engine.move(FIRST_ID, Direction.Right));
+
+      let elapsedMs = 0;
+      while (elapsedMs < ONE_SECOND_MS && engine.checkIsBlocked({ x: 0, y: 0 })) {
+        engine.update(splitMs);
+        elapsedMs += splitMs;
+      }
+      expect(elapsedMs).toBe(STEP_DURATION_MS);
+    }
+  });
+
+  test("the default speed is four tiles per second", () => {
+    expect.hasAssertions();
+
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false]] });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+
+    engine.update(STEP_DURATION_MS - 1);
+    expect(engine.checkIsBlocked({ x: 0, y: 0 })).toBe(true);
+
+    engine.update(1);
+    expect(engine.checkIsBlocked({ x: 0, y: 0 })).toBe(false);
+  });
+
+  test("a move while moving is ignored", () => {
+    expect.hasAssertions();
+
+    const engine = readEngine({
+      characters: [{ id: FIRST_ID }],
+      tiles: [
+        [false, false, false],
+        [false, false, false],
+      ],
+    });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+
+    engine.update(STEP_DURATION_MS / 2);
+    unwrap(engine.move(FIRST_ID, Direction.Down));
+
+    engine.update(STEP_DURATION_MS / 2);
+    expect(engine.checkIsBlocked({ x: 1, y: 0 })).toBe(true);
+    expect(engine.checkIsBlocked({ x: 0, y: 1 })).toBe(false);
+  });
+
+  test("a move into a blocked tile turns once and emits directionChanged once (#323, #319)", () => {
+    expect.hasAssertions();
+
+    const directionChanges: Direction[] = [];
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, true]] });
+    engine.on("directionChanged", ({ direction }) => {
+      directionChanges.push(direction);
+    });
+
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+    engine.update(STEP_DURATION_MS);
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+    engine.update(STEP_DURATION_MS);
+
+    expect(directionChanges).toStrictEqual([Direction.Right]);
+  });
+
+  test("a turn emits only on a change of facing", () => {
+    expect.hasAssertions();
+
+    const directionChanges: Direction[] = [];
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false]] });
+    engine.on("directionChanged", ({ direction }) => {
+      directionChanges.push(direction);
+    });
+
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Down));
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Right));
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Right));
+
+    expect(directionChanges).toStrictEqual([Direction.Right]);
+  });
+
+  test("a move from a position listener starts on the next update (#528)", () => {
+    expect.hasAssertions();
+
+    let finishedCount = 0;
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false, false]] });
+    engine.on("positionChangeFinished", () => {
+      finishedCount += 1;
+      if (finishedCount === 1) unwrap(engine.move(FIRST_ID, Direction.Right));
+    });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+
+    engine.update(STEP_DURATION_MS);
+    expect(engine.checkIsBlocked({ x: 2, y: 0 })).toBe(false);
+
+    engine.update(STEP_DURATION_MS);
+    expect(engine.checkIsBlocked({ x: 2, y: 0 })).toBe(true);
+    expect(finishedCount).toBe(2);
+  });
+
+  test("a diagonal move fails", () => {
+    expect.hasAssertions();
+
+    const engine = readEngine({
+      characters: [{ id: FIRST_ID }],
+      tiles: [
+        [false, false],
+        [false, false],
+      ],
+    });
+
+    const error = readError(engine.move(FIRST_ID, Direction.DownRight));
+
+    expect(error).toStrictEqual({ id: FIRST_ID, kind: GridEngineErrorKind.DiagonalMove });
   });
 });
