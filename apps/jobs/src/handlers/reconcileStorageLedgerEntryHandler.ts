@@ -2,20 +2,19 @@ import { getDb } from "#src/services/shared/getDb";
 import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
 import { verifyResourceAssetBlob } from "#src/services/storage/verifyResourceAssetBlob";
 import { reconcileStorageLedgerEntry } from "@esposter/db";
-import { r2ObjectCreatedQueueMessageSchema, StorageBucket } from "@esposter/db-schema";
+import { r2ObjectCreatedQueueMessageSchema, StorageBucket, storageBucketSchema } from "@esposter/db-schema";
 
 // The object-create notification is what turns a client's declared size into the truth.
 // It arrives after the PUT lands and carries the stored object's real size.
 // It reports what happened on a data path our servers are never part of.
-// Every bucket a reserve writes into is listed here, and the notifications come from those buckets only.
-// So an object from anywhere else is dropped rather than mis-attributed.
+// The ledger row names the bucket and the blob, so each notification is matched against its own row: one from a bucket
+// Nothing reserves into finds no row. No list of buckets is kept beside the reserve writers, so none can drift from them.
 // The row names whose allowance a blob is charged to: a resource asset's owner, or a message attachment's uploader.
 // See openspec/specs/resource/storage-quotas/design.md
-const RESERVED_STORAGE_BUCKETS = [StorageBucket.ResourceAssets, StorageBucket.MessageAssets];
-
 export const reconcileStorageLedgerEntryHandler = async (body: unknown): Promise<void> => {
   const { bucket, eventTime, object } = r2ObjectCreatedQueueMessageSchema.parse(body);
-  const storageBucket = RESERVED_STORAGE_BUCKETS.find((reservedStorageBucket) => reservedStorageBucket === bucket);
+  // The notification names its bucket as any string, and a name the storage enum does not declare has no row to find
+  const { data: storageBucket } = storageBucketSchema.safeParse(bucket);
   if (!storageBucket) return;
 
   // R2 gives no per-object ordering token, so the notification's own time orders two writes to one name.

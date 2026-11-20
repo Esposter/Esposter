@@ -144,6 +144,28 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await expect(readStorageBytesUsed()).resolves.toBe(0);
   });
 
+  // A reserve names its bucket on the row it writes, so the reconcile follows that row and keeps no list of buckets to join
+  test("charges a row in any bucket the ledger names", async () => {
+    expect.hasAssertions();
+
+    await createStorageLedgerEntry({ blobName, storageBucket: StorageBucket.UserAssets });
+    await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(blobName, StorageBucket.UserAssets));
+
+    await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
+  });
+
+  // A bucket name the storage enum does not name has no row to find, and is dropped rather than failing its delivery
+  test("drops a notification from a bucket name the storage enum does not name", async () => {
+    expect.hasAssertions();
+
+    await createStorageLedgerEntry();
+    await expect(
+      reconcileStorageLedgerEntryHandler({ ...createObjectCreatedMessage(blobName), bucket: " " }),
+    ).resolves.toBeUndefined();
+
+    await expect(readStorageBytesUsed()).resolves.toBe(0);
+  });
+
   test("a resource asset whose bytes match its name is kept", async () => {
     expect.hasAssertions();
 
