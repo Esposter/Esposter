@@ -12,7 +12,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { assert, describe, expect, test } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 
 describe("dashboardVisualPreviewDatasetBindingForm", () => {
   const { trpcMsw } = setupMswTrpc();
@@ -51,6 +51,41 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
 
     expect(emittedBindings.map(([binding]) => binding?.reference)).toStrictEqual([secondReference]);
     expect(secondReferenceReadCount).toBe(1);
+  });
+
+  // A pick is a run of its own read, so the source picked before it is aborted rather than left to land and be dropped
+  test("aborts the read of a source once a second source is picked", async () => {
+    expect.hasAssertions();
+
+    const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    const { promise: firstReadReached, resolve: onFirstReadReached } = Promise.withResolvers<void>();
+    const firstReference = { id: v7(), type: DatasetProviderType.Sheet };
+    const secondReference = { id: v7(), type: DatasetProviderType.Sheet };
+    trpcMsw.dataset.readDataset.query(async ({ input }) => {
+      if (input.id === firstReference.id) {
+        onFirstReadReached();
+        await readGate;
+      }
+      return { columns: [{ name: "", type: ColumnType.String }], rows: [] };
+    });
+    // The read's request carries the signal its call was given, which is what an abort reaches
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    useSession.mockReturnValue(ref({ data: { user: { id: v7() } } }));
+    const wrapper = await mountSuspended(DashboardVisualPreviewDatasetBindingForm, {
+      props: { modelValue: undefined },
+      shallow: true,
+    });
+    const picker = wrapper.findComponent(DatasetReferencePicker);
+    picker.vm.$emit("update:modelValue", firstReference);
+    await firstReadReached;
+    picker.vm.$emit("update:modelValue", secondReference);
+    await flushPromises();
+
+    const [, firstReadInit] = fetchSpy.mock.calls.find(([url]) => String(url).includes(firstReference.id)) ?? [];
+    expect(firstReadInit?.signal?.aborted).toBe(true);
+
+    releaseRead();
+    await flushPromises();
   });
 
   // The Order control ranks the categories by one of the query's series, and the Direction control sets how
