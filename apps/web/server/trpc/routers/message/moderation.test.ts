@@ -375,16 +375,39 @@ describe("moderationRouter", () => {
     expect(takeOne(result.items).actorUserId).toBe(owner.id);
   });
 
-  test("deleteBan removes the ban row", async () => {
+  // An unban is a tombstone at a higher version, so the ban list reads it back as a removal and a read that lands after the
+  // Unban cannot list the ban again
+  test("deleteBan leaves the ban as a tombstone at a higher version, which the ban list reads back", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
+    const [createdBan] = await readBanRows(member.id);
+    await moderationCaller.deleteBan({ roomId, userId: member.id });
+    const [removedBan] = await readBanRows(member.id);
+
+    const result = await moderationCaller.readBans({ roomId });
+
+    expect(removedBan?.deletedAt).toBeInstanceOf(Date);
+    expect(removedBan?.version).toBeGreaterThan(createdBan?.version ?? Number.POSITIVE_INFINITY);
+    expect(result.items.map(({ deletedAt, userId }) => ({ isRemoved: deletedAt !== null, userId }))).toStrictEqual([
+      { isRemoved: true, userId: member.id },
+    ]);
+  });
+
+  // A member banned again after an unban is the same ban row, revived: its removal is cleared and its version keeps climbing
+  test("a ban made again after an unban revives its row at a higher version", async () => {
     expect.hasAssertions();
 
     const member = await createMember();
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
     await moderationCaller.deleteBan({ roomId, userId: member.id });
+    const [removedBan] = await readBanRows(member.id);
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
+    const [revivedBan] = await readBanRows(member.id);
 
-    const result = await moderationCaller.readBans({ roomId });
-
-    expect(result.items).toHaveLength(0);
+    expect(revivedBan?.deletedAt).toBeNull();
+    expect(revivedBan?.version).toBeGreaterThan(removedBan?.version ?? Number.POSITIVE_INFINITY);
   });
 
   test("fails deleteBan when no ban was ever created", async () => {
