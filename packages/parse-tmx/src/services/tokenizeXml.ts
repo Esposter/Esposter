@@ -8,7 +8,7 @@ const LINE_ENDING_REGEX = /\r\n?/gu;
 const INVALID_CHARACTER_REGEX = /[^\t\n\r\u0020-\uD7FF\uE000-\uFFFD\u{10000}-\u{10FFFF}]/u;
 // XML 1.0's Name production, read where the cursor stands
 const NAME_REGEX =
-  /[:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}][-.0-9:A-Z_a-z\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}]*/uy;
+  /[:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}][-.0-9:A-Z_a-z\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C-\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}]*/uy;
 const WHITESPACE_REGEX = /[\t\n ]*/uy;
 const ONLY_WHITESPACE_REGEX = /^[\t\n ]*$/u;
 const ATTRIBUTE_WHITESPACE_REGEX = /[\t\n]/gu;
@@ -62,7 +62,7 @@ export const tokenizeXml = (input: string, { onCloseTag, onOpenTag, onText }: Xm
       let character = PredefinedEntityMap.get(reference);
       if (character === undefined) {
         const codePoint = DECIMAL_REFERENCE_REGEX.test(reference)
-          ? Number.parseInt(reference.slice(1), 10)
+          ? Math.trunc(Number(reference.slice(1)))
           : HEXADECIMAL_REFERENCE_REGEX.test(reference)
             ? Number.parseInt(reference.slice(2), 16)
             : Number.NaN;

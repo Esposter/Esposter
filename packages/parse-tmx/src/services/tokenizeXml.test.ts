@@ -1,5 +1,4 @@
 import { tokenizeXml } from "#src/services/tokenizeXml";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 type XmlEvent = ["close", string] | ["open", string, Record<string, string>] | ["text", string];
@@ -7,9 +6,15 @@ type XmlEvent = ["close", string] | ["open", string, Record<string, string>] | [
 const readEvents = (xml: string): XmlEvent[] => {
   const events: XmlEvent[] = [];
   tokenizeXml(xml, {
-    onCloseTag: (name) => events.push(["close", name]),
-    onOpenTag: (name, attributes) => events.push(["open", name, attributes]),
-    onText: (text) => events.push(["text", text]),
+    onCloseTag: (name) => {
+      events.push(["close", name]);
+    },
+    onOpenTag: (name, attributes) => {
+      events.push(["open", name, attributes]);
+    },
+    onText: (text) => {
+      events.push(["text", text]);
+    },
   });
   return events;
 };
@@ -127,9 +132,10 @@ describe(tokenizeXml, () => {
   test("sax#302 keeps attributes named __proto__ and hasOwnProperty as attributes", () => {
     expect.hasAssertions();
 
-    const [[, , attributes]] = readEvents(`<a __proto__="b" hasOwnProperty="c"/>`) as [
+    const [openEvent] = readEvents(`<a __proto__="b" hasOwnProperty="c"/>`) as [
       ["open", string, Record<string, string>],
     ];
+    const attributes = openEvent[2];
 
     expect(Object.getPrototypeOf(attributes)).toBe(Object.prototype);
     expect(Object.entries(attributes)).toStrictEqual([
@@ -138,100 +144,243 @@ describe(tokenizeXml, () => {
     ]);
   });
 
-  test.each([
-    ["sax#164 refuses an empty document", "", "has no root element at line 1, column 1"],
-    ["sax#125 refuses a document with no root element", "<!-- a -->", "has no root element at line 1, column 11"],
-    [
-      "sax#86 sax#168 sax#182 sax#246 refuses a second root element",
-      "<a></a>\n<b/>",
-      "has a second root element at line 2, column 1",
-    ],
-    [
-      "sax#76 sax#166 sax#295 refuses a repeated attribute",
-      `<a b="1" b="2"/>`,
-      "repeats the attribute b at line 1, column 10",
-    ],
-    [
-      "sax#178 refuses an XML declaration after the document's start",
-      `<a><?xml version="1.0"?></a>`,
-      "has an XML declaration that is not the document's start at line 1, column 4",
-    ],
-    ["sax#232 refuses a processing instruction with no target", "<??><a/>", "expects a name at line 1, column 3"],
-    [
-      "sax#298 refuses a CDATA section outside the root element",
-      "<a/><![CDATA[x]]>",
-      "has a CDATA section outside the root element at line 1, column 5",
-    ],
-    [
-      "sax#116 refuses a character reference with no digits",
-      "<a>&#x;</a>",
-      "has a reference XML does not define: &#x at line 1, column 4",
-    ],
-    [
-      "sax#287 refuses a reference to a character XML does not allow",
-      "<a>&#x1;</a>",
-      "has a reference XML does not define: &#x1 at line 1, column 4",
-    ],
-    [
-      "sax#153 sax#184 refuses a close tag that does not match the open element, naming both",
-      "<a></b></a>",
-      "closes <a> with </b> at line 1, column 4",
-    ],
-    ["sax#303 refuses a declaration outside a DOCTYPE", `<!ENTITY "x"><a/>`, "expects a name at line 1, column 2"],
-    ["sax#215 refuses an element left open at the end", "<a>", "leaves <a> unclosed at line 1, column 4"],
-    ["refuses a tag with no end", "<map", "leaves the tag <map> with no end at line 1, column 1"],
-    ["refuses text outside the root", "<a/>b", "has text outside the root element at line 1, column 5"],
-    ["refuses an unquoted attribute", "<a b=1/>", "expects a quoted value for the attribute b at line 1, column 6"],
-    [
-      "refuses attributes with no whitespace between",
-      `<a b="1"c="2"/>`,
-      "expects whitespace before an attribute of <a> at line 1, column 9",
-    ],
-    ["refuses < in an attribute", `<a b="<"/>`, "has < in the attribute b at line 1, column 7"],
-    ["refuses an undefined entity", "<a>&nbsp;</a>", "has a reference XML does not define: &nbsp at line 1, column 4"],
-    [
-      "refuses an inherited Object key as an entity",
-      "<a>&constructor;</a>",
-      "has a reference XML does not define: &constructor at line 1, column 4",
-    ],
-    [
-      "refuses __proto__ as an entity in an attribute",
-      `<a b="&__proto__;"/>`,
-      "has a reference XML does not define: &__proto__ at line 1, column 7",
-    ],
-    [
-      "refuses an ampersand with no reference",
-      "<a>&</a>",
-      "has a reference XML does not define: & at line 1, column 4",
-    ],
-    ["refuses ]]> in character data", "<a>]]></a>", "has ]]> in its character data at line 1, column 4"],
-    ["refuses -- inside a comment", "<a><!-- a -- b --></a>", "has -- inside a comment at line 1, column 11"],
-    [
-      "refuses a DOCTYPE whose internal subset leaves a comment open",
-      "<!DOCTYPE r [<!-- a",
-      "has a DOCTYPE with no end at line 1, column 1",
-    ],
-    ["refuses an unterminated comment", "<a><!-- a", "has a comment with no end at line 1, column 4"],
-    ["refuses an unterminated CDATA section", "<a><![CDATA[a", "has a CDATA section with no end at line 1, column 4"],
-    [
-      "refuses a character XML does not allow",
-      "<a>\u0001</a>",
-      "has a character XML does not allow at line 1, column 4",
-    ],
-    ["refuses a name that does not start as a name", "<1a/>", "expects a name at line 1, column 2"],
-    [
-      "refuses an XML declaration after whitespace",
-      ` <?xml version="1.0"?><a/>`,
-      "has an XML declaration that is not the document's start at line 1, column 2",
-    ],
-    [
-      "refuses at the line and column an error on a later line stands at",
-      "<a>\n\n  </b>",
-      "closes <a> with </b> at line 3, column 3",
-    ],
-  ])("%s", (_title, xml, reason) => {
+  test("sax#164 refuses an empty document", () => {
     expect.hasAssertions();
 
-    expect(() => readEvents(xml)).toThrow(new InvalidOperationError(Operation.Read, tokenizeXml.name, reason));
+    expect(() => readEvents("")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has no root element at line 1, column 1]`,
+    );
+  });
+
+  test("sax#125 refuses a document with no root element", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<!-- a -->")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has no root element at line 1, column 11]`,
+    );
+  });
+
+  test("sax#86 sax#168 sax#182 sax#246 refuses a second root element", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a></a>\n<b/>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a second root element at line 2, column 1]`,
+    );
+  });
+
+  test("sax#76 sax#166 sax#295 refuses a repeated attribute", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents('<a b="1" b="2"/>')).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, repeats the attribute b at line 1, column 10]`,
+    );
+  });
+
+  test("sax#178 refuses an XML declaration after the document's start", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents('<a><?xml version="1.0"?></a>')).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has an XML declaration that is not the document's start at line 1, column 4]`,
+    );
+  });
+
+  test("sax#232 refuses a processing instruction with no target", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<??><a/>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, expects a name at line 1, column 3]`,
+    );
+  });
+
+  test("sax#298 refuses a CDATA section outside the root element", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a/><![CDATA[x]]>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a CDATA section outside the root element at line 1, column 5]`,
+    );
+  });
+
+  test("sax#116 refuses a character reference with no digits", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a>&#x;</a>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a reference XML does not define: &#x at line 1, column 4]`,
+    );
+  });
+
+  test("sax#287 refuses a reference to a character XML does not allow", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a>&#x1;</a>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a reference XML does not define: &#x1 at line 1, column 4]`,
+    );
+  });
+
+  test("sax#153 sax#184 refuses a close tag that does not match the open element, naming both", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a></b></a>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, closes <a> with </b> at line 1, column 4]`,
+    );
+  });
+
+  test("sax#303 refuses a declaration outside a DOCTYPE", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents('<!ENTITY "x"><a/>')).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, expects a name at line 1, column 2]`,
+    );
+  });
+
+  test("sax#215 refuses an element left open at the end", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, leaves <a> unclosed at line 1, column 4]`,
+    );
+  });
+
+  test("refuses a tag with no end", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<map")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, leaves the tag <map> with no end at line 1, column 1]`,
+    );
+  });
+
+  test("refuses text outside the root", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a/>b")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has text outside the root element at line 1, column 5]`,
+    );
+  });
+
+  test("refuses an unquoted attribute", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a b=1/>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, expects a quoted value for the attribute b at line 1, column 6]`,
+    );
+  });
+
+  test("refuses attributes with no whitespace between", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents('<a b="1"c="2"/>')).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, expects whitespace before an attribute of <a> at line 1, column 9]`,
+    );
+  });
+
+  test("refuses < in an attribute", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents('<a b="<"/>')).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has < in the attribute b at line 1, column 7]`,
+    );
+  });
+
+  test("refuses an undefined entity", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a>&nbsp;</a>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a reference XML does not define: &nbsp at line 1, column 4]`,
+    );
+  });
+
+  test("refuses an inherited Object key as an entity", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a>&constructor;</a>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a reference XML does not define: &constructor at line 1, column 4]`,
+    );
+  });
+
+  test("refuses __proto__ as an entity in an attribute", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents('<a b="&__proto__;"/>')).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a reference XML does not define: &__proto__ at line 1, column 7]`,
+    );
+  });
+
+  test("refuses an ampersand with no reference", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a>&</a>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a reference XML does not define: & at line 1, column 4]`,
+    );
+  });
+
+  test("refuses ]]> in character data", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a>]]></a>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has ]]> in its character data at line 1, column 4]`,
+    );
+  });
+
+  test("refuses -- inside a comment", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a><!-- a -- b --></a>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has -- inside a comment at line 1, column 11]`,
+    );
+  });
+
+  test("refuses a DOCTYPE whose internal subset leaves a comment open", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<!DOCTYPE r [<!-- a")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a DOCTYPE with no end at line 1, column 1]`,
+    );
+  });
+
+  test("refuses an unterminated comment", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a><!-- a")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a comment with no end at line 1, column 4]`,
+    );
+  });
+
+  test("refuses an unterminated CDATA section", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a><![CDATA[a")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a CDATA section with no end at line 1, column 4]`,
+    );
+  });
+
+  test("refuses a character XML does not allow", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a>\u0001</a>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has a character XML does not allow at line 1, column 4]`,
+    );
+  });
+
+  test("refuses a name that does not start as a name", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<1a/>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, expects a name at line 1, column 2]`,
+    );
+  });
+
+  test("refuses an XML declaration after whitespace", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents(' <?xml version="1.0"?><a/>')).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, has an XML declaration that is not the document's start at line 1, column 2]`,
+    );
+  });
+
+  test("refuses at the line and column an error on a later line stands at", () => {
+    expect.hasAssertions();
+
+    expect(() => readEvents("<a>\n\n  </b>")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: tokenizeXml, closes <a> with </b> at line 3, column 3]`,
+    );
   });
 });
