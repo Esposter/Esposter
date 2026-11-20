@@ -58,14 +58,6 @@ const withFieldCharacter = (context: KitContext, characterId: number) => {
   context.kitEffectState.fieldCharacterId = characterId;
   return context;
 };
-// Another character on the field, whose movement the Kinetic Energy Scale logs, and the Extreme Force buffs it gets
-const OTHER_CHARACTER_ID = 10_000_002;
-const extremeForceBuffs = (context: KitContext) =>
-  context.kitEffectState.effects.filter(
-    (effect): effect is KitBuff =>
-      effect.kind === "buff" && effect.characterId === OTHER_CHARACTER_ID && effect.source === CONSTELLATION_6_SOURCE,
-  );
-
 const healthShareOf = (context: KitContext) => getPartyMember(context.party, IANSAN_CHARACTER_ID).healthShare;
 
 // Iansan on the field in Natlan with 1000 ATK, her burst landed and a Nightsoul burst set off, her HP at half so a heal shows
@@ -86,6 +78,15 @@ const createWarmingUpIansan = (ascension: number) => {
 };
 
 describe(createIansanKitBehaviour, () => {
+  // Another character on the field, whose movement the Kinetic Energy Scale logs, and the Extreme Force buffs it gets
+  const OTHER_CHARACTER_ID = 10_000_002;
+
+  const extremeForceBuffs = (context: KitContext) =>
+    context.kitEffectState.effects.filter(
+      (effect): effect is KitBuff =>
+        effect.kind === "buff" && effect.characterId === OTHER_CHARACTER_ID && effect.source === CONSTELLATION_6_SOURCE,
+    );
+
   test("reads each talent multiplier, cooldown and cost from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

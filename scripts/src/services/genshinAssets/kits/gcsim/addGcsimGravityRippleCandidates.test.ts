@@ -9,108 +9,108 @@ import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/
 import { CombatTalent, STRIKE_TARGETING_AREA, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-// Columbina's gravity ripples as skill.go and config.yml name them: each reaction's hitmark constant, the bloom's travel,
-// And the config's `E-Gravity-*` hitbox round the primary target, a circle of the radius its name is given
-const gcsim: GcsimCharacter = {
-  animationFrameNameMap: new Map(),
-  attacks: [],
-  config: {
-    abilityHitboxesMap: new Map([
-      [
-        "skill",
-        [
-          {
-            center: GcsimHitboxCenter.PrimaryTarget,
-            file: "config.yml",
-            line: 60,
-            name: "E-Gravity-LC",
-            radius: 6,
-            shape: GcsimHitboxShape.Circle,
-          },
-          {
-            center: GcsimHitboxCenter.PrimaryTarget,
-            file: "config.yml",
-            line: 63,
-            name: "E-Gravity-LB",
-            radius: 0.5,
-            shape: GcsimHitboxShape.Circle,
-          },
-          {
-            center: GcsimHitboxCenter.PrimaryTarget,
-            file: "config.yml",
-            line: 66,
-            name: "E-Gravity-LCr",
-            radius: 6,
-            shape: GcsimHitboxShape.Circle,
-          },
-        ],
-      ],
-    ]),
-    names: ["columbina"],
-    talentVariables: [],
-  },
-  configFile: "config.yml",
-  constantMap: new Map([
-    ["skillHitmarksLB", { elementLines: {}, file: "skill.go", line: 20, value: [51, 56, 62, 71, 82] }],
-    ["skillHitmarksLC", { elementLines: {}, file: "skill.go", line: 19, value: 43 }],
-    ["skillHitmarksLCr", { elementLines: {}, file: "skill.go", line: 18, value: 43 }],
-    ["skillLBTravel", { elementLines: {}, file: "skill.go", line: 30, value: 20 }],
-  ]),
-  filePaths: [],
-  folder: "columbina",
-  goSources: [],
-  gravityRipples: [
-    {
-      abil: "Gravity Interference (Lunar-Charged)",
-      element: "attributes.Electro",
-      file: "skill.go",
-      hitmarkName: "skillHitmarksLC",
-      line: 24,
-      reaction: "LunarCharge",
-      talentVariable: "skillLC",
-    },
-    {
-      abil: "Gravity Interference (Lunar-Bloom)",
-      element: "attributes.Dendro",
-      file: "skill.go",
-      hitmarkName: "skillHitmarksLB",
-      line: 28,
-      reaction: "LunarBloom",
-      talentVariable: "skillLB",
-      travelName: "skillLBTravel",
-    },
-    {
-      abil: "Gravity Interference (Lunar-Crystallize)",
-      element: "attributes.Geo",
-      file: "skill.go",
-      hitmarkName: "skillHitmarksLCr",
-      line: 34,
-      reaction: "LunarCrystallize",
-      talentVariable: "skillLCr",
-    },
-  ],
-  holdCooldowns: [],
-  queuedAttacks: [],
-  talentArrayMap: new Map(),
-  talentFile: "columbina.go",
-  talentParameterMap: new Map(),
-  travelMap: new Map(),
-};
-
-const tables: KitTables = {
-  characterId: 0,
-  labelMap: new Map(),
-  name: "Columbina",
-  talentGroupIdMap: {
-    [CombatTalent.ElementalBurst]: 0,
-    [CombatTalent.ElementalSkill]: 0,
-    [CombatTalent.NormalAttack]: 0,
-  },
-  talentMultiplierMap: {},
-  weaponType: WeaponType.Catalyst,
-};
-
 describe(addGcsimGravityRippleCandidates, () => {
+  // Columbina's gravity ripples as skill.go and config.yml name them: each reaction's hitmark constant, the bloom's travel,
+  // And the config's `E-Gravity-*` hitbox round the primary target, a circle of the radius its name is given
+  const gcsim: GcsimCharacter = {
+    animationFrameNameMap: new Map(),
+    attacks: [],
+    config: {
+      abilityHitboxesMap: new Map([
+        [
+          "skill",
+          [
+            {
+              center: GcsimHitboxCenter.PrimaryTarget,
+              file: "config.yml",
+              line: 60,
+              name: "E-Gravity-LC",
+              radius: 6,
+              shape: GcsimHitboxShape.Circle,
+            },
+            {
+              center: GcsimHitboxCenter.PrimaryTarget,
+              file: "config.yml",
+              line: 63,
+              name: "E-Gravity-LB",
+              radius: 0.5,
+              shape: GcsimHitboxShape.Circle,
+            },
+            {
+              center: GcsimHitboxCenter.PrimaryTarget,
+              file: "config.yml",
+              line: 66,
+              name: "E-Gravity-LCr",
+              radius: 6,
+              shape: GcsimHitboxShape.Circle,
+            },
+          ],
+        ],
+      ]),
+      names: ["columbina"],
+      talentVariables: [],
+    },
+    configFile: "config.yml",
+    constantMap: new Map([
+      ["skillHitmarksLB", { elementLines: {}, file: "skill.go", line: 20, value: [51, 56, 62, 71, 82] }],
+      ["skillHitmarksLC", { elementLines: {}, file: "skill.go", line: 19, value: 43 }],
+      ["skillHitmarksLCr", { elementLines: {}, file: "skill.go", line: 18, value: 43 }],
+      ["skillLBTravel", { elementLines: {}, file: "skill.go", line: 30, value: 20 }],
+    ]),
+    filePaths: [],
+    folder: "columbina",
+    goSources: [],
+    gravityRipples: [
+      {
+        abil: "Gravity Interference (Lunar-Charged)",
+        element: "attributes.Electro",
+        file: "skill.go",
+        hitmarkName: "skillHitmarksLC",
+        line: 24,
+        reaction: "LunarCharge",
+        talentVariable: "skillLC",
+      },
+      {
+        abil: "Gravity Interference (Lunar-Bloom)",
+        element: "attributes.Dendro",
+        file: "skill.go",
+        hitmarkName: "skillHitmarksLB",
+        line: 28,
+        reaction: "LunarBloom",
+        talentVariable: "skillLB",
+        travelName: "skillLBTravel",
+      },
+      {
+        abil: "Gravity Interference (Lunar-Crystallize)",
+        element: "attributes.Geo",
+        file: "skill.go",
+        hitmarkName: "skillHitmarksLCr",
+        line: 34,
+        reaction: "LunarCrystallize",
+        talentVariable: "skillLCr",
+      },
+    ],
+    holdCooldowns: [],
+    queuedAttacks: [],
+    talentArrayMap: new Map(),
+    talentFile: "columbina.go",
+    talentParameterMap: new Map(),
+    travelMap: new Map(),
+  };
+
+  const tables: KitTables = {
+    characterId: 0,
+    labelMap: new Map(),
+    name: "Columbina",
+    talentGroupIdMap: {
+      [CombatTalent.ElementalBurst]: 0,
+      [CombatTalent.ElementalSkill]: 0,
+      [CombatTalent.NormalAttack]: 0,
+    },
+    talentMultiplierMap: {},
+    weaponType: WeaponType.Catalyst,
+  };
+
   test("writes each reaction's ripple hit at its hitmarks, the bloom's travel added and its hits listed, on the circle its config names", () => {
     expect.hasAssertions();
 
