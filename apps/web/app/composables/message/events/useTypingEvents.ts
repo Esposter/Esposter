@@ -20,6 +20,11 @@ export const useTypingEvents = () => {
     }
   };
 
+  // A removal timer left pending would fire after the scope is gone, so the scope takes every one of them with it
+  onScopeDispose(() => {
+    for (const timeoutId of typingTimeoutIdMap.values()) window.clearTimeout(timeoutId);
+    typingTimeoutIdMap.clear();
+  });
   onScopeDispose(
     onRoomEvent("createTyping", (typing, roomId) => {
       // A typing frame that arrives after the reader has left its room is not the room on screen's
