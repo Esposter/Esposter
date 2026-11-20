@@ -4,13 +4,14 @@ import type { ResourceFilterValues } from "#src/models/resource/list/ResourceFil
 import type { ResourceListFilters } from "#src/models/resource/list/ResourceListFilters";
 import type { ResourceStatusFilter } from "#src/models/resource/list/ResourceStatusFilter";
 import type { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
-import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
+import type { ResourceType } from "@esposter/db-schema";
 
 import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 import { getResourceFilterInput } from "#src/services/resource/list/getResourceFilterInput";
 import { getResourceFilterKey } from "#src/services/resource/list/getResourceFilterKey";
 import { getResourceListSortName } from "#src/services/resource/list/getResourceListSortName";
 import { resourceTable } from "#src/services/resource/overlay/constants";
+import { isHeldResource } from "#src/services/resource/overlay/isHeldResource";
 import { useOverlayStore } from "#src/store/overlay";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
@@ -80,11 +81,7 @@ export const useReadResources = (
   // Is not held live, so it leaves the page at once
   const items = computed(() => {
     // Looked up once per recompute, rather than searched for each row the page holds
-    const heldRows = new Map(
-      resourceRows.value
-        .filter((row): row is ResourceInResource & typeof row => row.version !== undefined)
-        .map((row) => [row.id, row] as const),
-    );
+    const heldRows = new Map(resourceRows.value.filter(isHeldResource).map((row) => [row.id, row] as const));
     return pageItems.value.flatMap(({ id, lastAccessedAt }) => {
       const row = heldRows.get(id);
       return row ? [{ ...row, lastAccessedAt }] : [];
