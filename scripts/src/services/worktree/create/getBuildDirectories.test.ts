@@ -40,6 +40,18 @@ describe(getBuildDirectories, () => {
     expect(getBuildDirectories(workspacePackages, ["named"])).toStrictEqual(["built", "named"]);
   });
 
+  test("a named package with no build is walked through to its dependencies, and is not built itself", () => {
+    expect.hasAssertions();
+
+    const workspacePackages = [
+      createWorkspacePackage("scripts", "", { dependencies: { built: "workspace:*" }, name: "@esposter/scripts" }),
+      createWorkspacePackage("built", "packages", { name: "built", scripts: { build: "tsdown" } }),
+      createWorkspacePackage("plugin", "packages", { dependencies: { built: "workspace:*" }, name: "plugin" }),
+    ];
+
+    expect(getBuildDirectories(workspacePackages, ["plugin"])).toStrictEqual(["built"]);
+  });
+
   test("a named app builds the packages rather than itself", () => {
     expect.hasAssertions();
 

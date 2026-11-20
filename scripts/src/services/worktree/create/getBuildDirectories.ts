@@ -7,9 +7,10 @@ import { SCRIPTS_PACKAGE_NAME, WORKSPACE_PROTOCOL } from "#src/services/worktree
 // The directories a worktree builds before its first command, in dependency order: every workspace package the scripts
 // Package depends on, and every package named, each walked through the workspace packages it depends on, transitively, so
 // A package with no build of its own is walked through to the builds beneath it. The walk reads the four dependency
-// Fields a build is ordered by, and only the `workspace:` specifiers. A package with a build script is built, and so is
-// Each package named, since a named one with no build task fails its build, which names it. An app named is never built
-// Itself, since its build is the deploy's bundle: what it imports is every package's `dist`, so it stands for them all
+// Fields a build is ordered by, and only the `workspace:` specifiers. A package is built when its manifest has a build
+// Script, and only then: a named plugin with none is walked through like any other, so naming it builds nothing of its
+// Own. An app named is never built itself, since its build is the deploy's bundle: what it imports is every package's
+// `dist`, so it stands for them all
 export const getBuildDirectories = (workspacePackages: WorkspacePackage[], packageNames: string[]): string[] => {
   const workspacePackageMap = new Map(
     workspacePackages.flatMap((workspacePackage) =>
@@ -38,7 +39,7 @@ export const getBuildDirectories = (workspacePackages: WorkspacePackage[], packa
   // A member at the repository root, the scripts package, has no build of its own, so only the packages directory counts
   const directories = dependencyOrder.flatMap((workspacePackage) => {
     const { directory, manifest, workspaceDirectory } = workspacePackage;
-    const isBuilt = manifest.scripts?.build !== undefined || namedLibraries.includes(workspacePackage);
+    const isBuilt = manifest.scripts?.build !== undefined;
     return workspaceDirectory === PACKAGES_DIRECTORY && isBuilt ? [directory] : [];
   });
   const namesApp = namedPackages.some(({ workspaceDirectory }) => workspaceDirectory === APPS_DIRECTORY);
