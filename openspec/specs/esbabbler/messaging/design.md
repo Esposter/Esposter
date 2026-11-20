@@ -82,19 +82,31 @@ The `message` router merges its base procedures with the `emoji`, `moderation`, 
 | `createTyping`                    | member | Typing indicator, broadcast as a `createTyping` room event — the typist and the name shown (room display name, else account name) are resolved server-side from the session, never taken from the input |
 | `generate*FilePresignedUrl*`      | member | Presigned R2 upload and download URLs                                                                                                                                                                   |
 
+## The room list
+
+The room list is a view over the room rows the [optimistic overlay](../../../changes/architecture-optimistic-overlay/design.md) holds. A room is listed while the viewer holds a live membership of it, so a membership a removal tombstoned takes the room off the list with no extra code. The rows arrive from the room read, the membership read, a write's answer and the `updateRoom` and `roomActivity` events, each carrying its row at the version the server left it.
+
+A removal reaches the reader's tabs as the tombstone of their membership through `updateUserToRoom`, whether it is a kick, a ban, a leave on another device or a room's deletion. A leave and a deletion are awaited writes whose answer is the caller's own membership tombstone, so the room leaves the list when the server answers. The page showing a room takes the reader off it once, to the messages index, when the room leaves the list. A room the list never showed has no removal to follow, so opening one navigates nothing. A room's topic and its edits are overlay entries over the room row, confirmed by the row the server answers with.
+
+A room's deletion tombstones the room and each live membership of it in one batch, and removes the room's invites and webhooks with it, so a link or a webhook of a deleted room refuses. The nightly purge removes the room past the tombstone retention, and the cascade removes what the room still holds. The room list's reads (`readRooms` and `readMyUsersToRooms`) still answer live rows only, so a reader offline across a removal keeps the row it held until the row is cleared. That is the open part of the room group.
+
 ## Key files
 
-| File                                                                    | Role                                                                           |
-| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `apps/web/server/trpc/routers/message/index.ts`                         | Message router (procedures above)                                              |
-| `apps/web/server/services/message/createUserMessage.ts`                 | Send pipeline: slowmode claim, object write, ProcessNotification publish       |
-| `packages/db-schema/src/objects/room/schema.ts`                         | The room object's tables: messages, reactions, scheduled messages              |
-| `apps/realtime/src/durableObjects/RoomObject.ts`                        | The room object: message writes and reads, votes, and the broadcast to sockets |
-| `packages/db-schema/src/models/message/MessageType.ts`                  | Message type discriminator                                                     |
-| `apps/web/shared/services/message/MessageTypeOperationPermissionMap.ts` | Which operations each type supports, and for whom                              |
-| `apps/realtime/src/services/room/applyPollVote.ts`                      | The vote applied to a stored poll body                                         |
-| `packages/db-schema/src/models/realtime/RoomEvent.ts`                   | The frames a room's socket carries                                             |
-| `apps/web/app/composables/message/events/useMessageEvents.ts`           | The client's handlers for a room's message frames                              |
+| File                                                                    | Role                                                                            |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `apps/web/server/trpc/routers/message/index.ts`                         | Message router (procedures above)                                               |
+| `apps/web/app/store/message/room/index.ts`                              | The room store: the room list as a view over the overlay, and the room's writes |
+| `apps/web/app/composables/message/room/useNavigateFromRemovedRoom.ts`   | The page's navigation off a room whose membership tombstoned                    |
+| `apps/web/server/services/room/deleteRoom.ts`                           | The room's deletion: the room and its memberships tombstoned in one batch       |
+| `apps/web/server/services/room/announceRoomMemberDeparture.ts`          | A departure's events, with the membership row to the leaver's tabs              |
+| `apps/web/server/services/message/createUserMessage.ts`                 | Send pipeline: slowmode claim, object write, ProcessNotification publish        |
+| `packages/db-schema/src/objects/room/schema.ts`                         | The room object's tables: messages, reactions, scheduled messages               |
+| `apps/realtime/src/durableObjects/RoomObject.ts`                        | The room object: message writes and reads, votes, and the broadcast to sockets  |
+| `packages/db-schema/src/models/message/MessageType.ts`                  | Message type discriminator                                                      |
+| `apps/web/shared/services/message/MessageTypeOperationPermissionMap.ts` | Which operations each type supports, and for whom                               |
+| `apps/realtime/src/services/room/applyPollVote.ts`                      | The vote applied to a stored poll body                                          |
+| `packages/db-schema/src/models/realtime/RoomEvent.ts`                   | The frames a room's socket carries                                              |
+| `apps/web/app/composables/message/events/useMessageEvents.ts`           | The client's handlers for a room's message frames                               |
 
 ## Notes
 

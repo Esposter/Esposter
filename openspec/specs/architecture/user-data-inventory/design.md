@@ -79,7 +79,7 @@ Every bucket is private unless its name starts with `public-`, and per-user data
 
 ## Ownership rules that shape a sweep
 
-- A room has one owner, `rooms.userId`. Leaving a room as its owner deletes the room for everyone, through `deleteRoom`. No transfer path exists.
+- A room has one owner, `rooms.userId`. Leaving a room as its owner deletes the room for everyone, through `deleteRoom`, which tombstones the room and each membership of it; the nightly purge removes the room past its retention. No transfer path exists.
 - A resource has one owner, `resources.userId`, enforced by `getOwnerProcedure`. No sharing model exists.
 - A message is attributed to its author in its room's object. The author's user object indexes the messages they sent, so the person's own messages are found there rather than by scanning every room.
 
