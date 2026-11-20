@@ -890,6 +890,20 @@ describe("resourceRouter", () => {
     expect(favoritesAfterUnstar).toStrictEqual([]);
   });
 
+  // An unstar leaves its favorite as a tombstone at the version the removal left, so a read still holding the star loses to
+  // the removal, and a star made again revives the same row at the next version
+  test("an unstar leaves a tombstone that a re-star revives at a higher version", async () => {
+    expect.hasAssertions();
+
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    await caller.toggleFavorite({ id: dashboardResource.id });
+    const unstar = await caller.toggleFavorite({ id: dashboardResource.id });
+    const restar = await caller.toggleFavorite({ id: dashboardResource.id });
+
+    expect(unstar).toStrictEqual(expect.objectContaining({ deletedAt: expect.any(Date), version: 1 }));
+    expect(restar).toStrictEqual(expect.objectContaining({ deletedAt: null, version: 2 }));
+  });
+
   test("does not read a soft-deleted resource as a favorite", async () => {
     expect.hasAssertions();
 

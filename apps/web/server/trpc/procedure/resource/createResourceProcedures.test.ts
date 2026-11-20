@@ -682,6 +682,25 @@ describe(createResourceProcedures, () => {
     ).resolves.toStrictEqual([]);
   });
 
+  // An unpublish keeps the publication as a tombstone at the version its removal left, so a client still holding the live
+  // publication loses to the removal, and a republish revives the same row at the next version
+  test("a removed publication is a tombstone that a republish revives at a higher version", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+
+    await dashboardCaller.unpublishResource({ id: newResource.id });
+
+    expect(await dashboardCaller.readResourcePublication({ id: newResource.id })).toStrictEqual(
+      expect.objectContaining({ deletedAt: expect.any(Date), version: 1 }),
+    );
+    expect(await dashboardCaller.publishResource({ id: newResource.id })).toStrictEqual(
+      expect.objectContaining({ deletedAt: null, publishVersion: 2, version: 2 }),
+    );
+  });
+
   // A sweep is bounded at the instant it is decided, so one published for a resource that has nothing published
   // Takes whatever a concurrent first publish has just cloned — and a delete that removed no row leaves the
   // Version sequence untouched, so nothing downstream can tell it happened. The whole tail is gated the same
