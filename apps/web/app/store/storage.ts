@@ -1,6 +1,5 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { authClient } from "#src/services/auth/authClient";
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { useOverlayStore } from "#src/store/overlay";
 import { StorageTierQuotaMap, usersInAuth } from "@esposter/db-schema";
@@ -15,8 +14,7 @@ const storageUserTable = createTable(usersInAuth);
 // See openspec/specs/resource/storage-quotas/design.md
 export const useStorageStore = defineStore("storage", () => {
   const { $trpc } = useNuxtApp();
-  const session = authClient.useSession();
-  const userId = computed(() => session.value.data?.user.id ?? "");
+  const userId = useSessionUserId();
   const overlayStore = useOverlayStore();
   const { arrive, view } = overlayStore;
   // The table may hold other users' rows, so the meter reads the row its session owns

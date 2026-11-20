@@ -1,6 +1,5 @@
 import type { FriendInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
-import { authClient } from "#src/services/auth/authClient";
 import { friendTable } from "#src/services/message/user/pair/constants";
 import { createPairConfirmations } from "#src/services/message/user/pair/createPairConfirmations";
 import { getUnfriendEntry } from "#src/services/message/user/pair/getUnfriendEntry";
@@ -12,8 +11,7 @@ import { useOverlayStore } from "#src/store/overlay";
 
 export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
-  const session = authClient.useSession();
-  const userId = computed(() => session.value.data?.user.id ?? "");
+  const userId = useSessionUserId();
   const overlayStore = useOverlayStore();
   const { view, writeOptimistic } = overlayStore;
   const userStore = useUserStore();

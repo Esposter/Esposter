@@ -2,7 +2,6 @@
 import type { UserStatus } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
-import { authClient } from "#src/services/auth/authClient";
 import { SelectableStatusDefinitionList } from "#src/services/message/user/status/SelectableStatusDefinitionList";
 import { StatusIconMap } from "#src/services/message/user/status/StatusIconMap";
 import { StatusTokenMap } from "#src/services/message/user/status/StatusTokenMap";
@@ -15,8 +14,7 @@ import { noop } from "@esposter/shared";
 const emit = defineEmits<{ save: [] }>();
 const { $trpc } = useNuxtApp();
 // Nothing here renders until the popover above it is opened by a click, so the session is never wanted at SSR time
-const session = authClient.useSession();
-const userId = computed(() => session.value.data?.user.id ?? "");
+const userId = useSessionUserId();
 const messageRules = [UiRules.maxLength(STATUS_MESSAGE_MAX_LENGTH)];
 const statusStore = useStatusStore();
 const { getStatusMessage, getStoredUserStatus, getUserStatus, storeStatus } = statusStore;

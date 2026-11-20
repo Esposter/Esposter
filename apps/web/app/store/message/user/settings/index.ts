@@ -2,7 +2,6 @@ import type { UpdateUserSettingsInput } from "#shared/models/db/userSettings/Upd
 import type { Entry } from "#src/models/shared/overlay/Entry";
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
-import { authClient } from "#src/services/auth/authClient";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
 import { createTable } from "#src/services/shared/overlay/createTable";
@@ -24,8 +23,7 @@ const getUpdateUserSettingsEntry =
 
 export const useUserSettingsStore = defineStore("message/user/settings", () => {
   const { $trpc } = useNuxtApp();
-  const session = authClient.useSession();
-  const userId = computed(() => session.value.data?.user.id ?? "");
+  const userId = useSessionUserId();
   const overlayStore = useOverlayStore();
   const { arrive, view, writeOptimistic } = overlayStore;
   // The table may hold other users' rows, so the store reads the record its session owns

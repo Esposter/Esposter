@@ -1,7 +1,6 @@
 import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
 import type { BlockInSocialWithRelations } from "@esposter/db-schema";
 
-import { authClient } from "#src/services/auth/authClient";
 import { blockTable } from "#src/services/message/user/pair/constants";
 import { createPairConfirmations } from "#src/services/message/user/pair/createPairConfirmations";
 import { getBlockEntry } from "#src/services/message/user/pair/getBlockEntry";
@@ -13,8 +12,7 @@ import { useOverlayStore } from "#src/store/overlay";
 
 export const useBlockStore = defineStore("message/user/block", () => {
   const { $trpc } = useNuxtApp();
-  const session = authClient.useSession();
-  const userId = computed(() => session.value.data?.user.id ?? "");
+  const userId = useSessionUserId();
   const overlayStore = useOverlayStore();
   const { view, writeOptimistic } = overlayStore;
   const userStore = useUserStore();

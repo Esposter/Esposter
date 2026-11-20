@@ -1,6 +1,5 @@
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
-import { authClient } from "#src/services/auth/authClient";
 import { friendRequestTable } from "#src/services/message/user/pair/constants";
 import { createPairConfirmations } from "#src/services/message/user/pair/createPairConfirmations";
 import { getAcceptFriendRequestEntry } from "#src/services/message/user/pair/getAcceptFriendRequestEntry";
@@ -13,9 +12,8 @@ import { useOverlayStore } from "#src/store/overlay";
 import { withFinalizerAsync } from "@esposter/shared";
 
 export const useFriendRequestStore = defineStore("message/user/friendRequest", () => {
-  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const userId = computed(() => session.value.data?.user.id ?? "");
+  const userId = useSessionUserId();
   const overlayStore = useOverlayStore();
   const { view, writeAwaited, writeOptimistic } = overlayStore;
   const userStore = useUserStore();
