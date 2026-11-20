@@ -1,9 +1,10 @@
 import type { SurveyResponseInResource } from "@esposter/db-schema";
 import type { SurveyAnswers } from "vue-survey-engine-headless";
 
-import { AwaitedReason } from "#src/models/shared/AwaitedReason";
-import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
+import { createTable } from "#src/services/shared/overlay/createTable";
+import { useOverlayStore } from "#src/store/overlay";
+import { surveyResponsesInResource } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { v7 } from "uuid";
 import { surveyAnswerValueSchema } from "vue-survey-engine-headless";
@@ -11,6 +12,7 @@ import { z } from "zod";
 
 // A stored draft's answers are parsed rather than cast, since the record holds whatever the server stored
 const surveyAnswersSchema: z.ZodType<SurveyAnswers> = z.record(z.string(), surveyAnswerValueSchema);
+const surveyResponseTable = createTable(surveyResponsesInResource);
 
 export const useSurveyResponse = (resourceId: string, participantToken: string) => {
   const { $trpc } = useNuxtApp();
@@ -21,11 +23,53 @@ export const useSurveyResponse = (resourceId: string, participantToken: string) 
   // Response when there is one, else a new id that the first save creates the row under
   const seed = surveyResponseId.value || v7();
   let surveyResponse: SurveyResponseInResource | undefined;
-  const { executeMutation } = useMutation();
-  // Server-generated response row (modelVersion) — awaited, applied in onSuccess. Resolves to whether the answers are
-  // Persisted, so a caller can never show a thank-you page for a response the server never took. Only the save that
-  // Completes the runner carries isSubmitting
-  const saveSurveyResponse = async ({
+  const overlayStore = useOverlayStore();
+  const { writeOptimistic } = overlayStore;
+  // Which write to send is resolved when it is sent rather than when it was issued: a save that queued behind the create
+  // Must update the row that create produced, not write a second response
+  const sendSurveyResponse = ({
+    answers,
+    isSubmitting,
+    pageIndex,
+  }: {
+    answers: SurveyAnswers;
+    isSubmitting: boolean;
+    pageIndex: number;
+  }): Promise<SurveyResponseInResource> => {
+    const storedSurveyResponse = surveyResponse;
+    if (!storedSurveyResponse)
+      return $trpc.survey.createSurveyResponse.mutate({
+        id: seed,
+        isDraft: !isSubmitting,
+        model: answers,
+        pageNo: pageIndex,
+        participantToken,
+        resourceId,
+      });
+    // The stored row already holds these answers at this position, which is the write the server itself
+    // Rejects as a duplicate — so resolving with the stored row keeps an unchanged submit a success
+    // Rather than an error banner over answers that are already safe. The same answers still submit a draft
+    else if (
+      JSON.stringify(answers) === JSON.stringify(storedSurveyResponse.model) &&
+      pageIndex <= storedSurveyResponse.pageNo &&
+      !(storedSurveyResponse.isDraft && isSubmitting)
+    )
+      return Promise.resolve(storedSurveyResponse);
+    else
+      return $trpc.survey.updateSurveyResponse.mutate({
+        id: storedSurveyResponse.id,
+        isDraft: !isSubmitting,
+        model: answers,
+        modelVersion: storedSurveyResponse.modelVersion,
+        pageNo: pageIndex,
+        participantToken,
+        resourceId: storedSurveyResponse.resourceId,
+      });
+  };
+  // Server-generated response row (modelVersion) — awaited, since whether the answers were taken is the server's decision,
+  // And the next page or the thank-you page waits on it. Resolves to whether the answers are persisted, so a caller can never
+  // Show a thank-you page for a response the server never took. Only the save that completes the runner carries isSubmitting
+  const saveSurveyResponse = ({
     answers,
     isSubmitting,
     pageIndex,
@@ -34,53 +78,27 @@ export const useSurveyResponse = (resourceId: string, participantToken: string) 
     isSubmitting: boolean;
     pageIndex: number;
   }) => {
-    const { status } = await executeMutation(
-      () => {
-        // Which write to send is resolved when it is sent rather than when it was issued: a save that queued
-        // Behind the create must update the row that create produced, not write a second response
-        const storedSurveyResponse = surveyResponse;
-        if (!storedSurveyResponse)
-          return $trpc.survey.createSurveyResponse.mutate({
-            id: seed,
-            isDraft: !isSubmitting,
-            model: answers,
-            pageNo: pageIndex,
-            participantToken,
-            resourceId,
-          });
-        // The stored row already holds these answers at this position, which is the write the server itself
-        // Rejects as a duplicate — so resolving with the stored row keeps an unchanged submit a success
-        // Rather than an error banner over answers that are already safe. The same answers still submit a draft
-        else if (
-          JSON.stringify(answers) === JSON.stringify(storedSurveyResponse.model) &&
-          pageIndex <= storedSurveyResponse.pageNo &&
-          !(storedSurveyResponse.isDraft && isSubmitting)
-        )
-          return Promise.resolve(storedSurveyResponse);
-        else
-          return $trpc.survey.updateSurveyResponse.mutate({
-            id: storedSurveyResponse.id,
-            isDraft: !isSubmitting,
-            model: answers,
-            modelVersion: storedSurveyResponse.modelVersion,
-            pageNo: pageIndex,
-            participantToken,
-            resourceId: storedSurveyResponse.resourceId,
-          });
+    const { promise: isPersisted, resolve } = Promise.withResolvers<boolean>();
+    writeOptimistic(
+      async () => {
+        const newSurveyResponse = await sendSurveyResponse({ answers, isSubmitting, pageIndex });
+        surveyResponse = newSurveyResponse;
+        surveyResponseId.value = newSurveyResponse.id;
+        resolve(true);
+        return { arrivals: [], confirmed: [] };
       },
       {
-        // Whether the answers were taken is the server's decision, and the next page or the thank-you page waits on it
-        awaitedBecause: AwaitedReason.ServerDecidedOutcome,
-        // One live response per participant per survey, so every save queues against that one target — a
-        // Submit issued while the create is still in flight is exactly such a save
-        key: resourceId,
-        onSuccess: (newSurveyResponse) => {
-          surveyResponse = newSurveyResponse;
-          surveyResponseId.value = newSurveyResponse.id;
+        // The save draws nothing, so its entry only reads the response's row. The read touches that row's key, which orders
+        // A save behind the writes ahead of it on the same response: a submit issued while the create is in flight waits for it
+        entry: (view) => {
+          view.get(surveyResponseTable, [seed]);
+        },
+        onError: () => {
+          resolve(false);
         },
       },
     );
-    return status === MutationStatus.Succeeded;
+    return isPersisted;
   };
   // An interrupted survey resumes where it left off. A failed resume falls back to a blank survey rather than
   // Stranding the respondent on the skeleton
