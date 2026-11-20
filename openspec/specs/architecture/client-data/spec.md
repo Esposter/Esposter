@@ -286,10 +286,10 @@ A step the screen takes because of a write, such as closing a dialog, moving a r
 - **THEN** the comment shows its text from before the edit
 - **AND** an alert shows the server's message
 
-#### Scenario: A refused add hands the field its name back
+#### Scenario: A name a todo cannot take hands the field its name back
 
 - **GIVEN** a todo name the field cleared as the todo was added
-- **WHEN** the save is refused, or the name is one a todo cannot take
+- **WHEN** the name is one a todo cannot take
 - **THEN** the field shows the name again
 
 #### Scenario: A refused leave brings the reader back to the room

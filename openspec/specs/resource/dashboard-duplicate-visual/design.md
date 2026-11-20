@@ -12,7 +12,7 @@ flowchart LR
 ```
 
 - **Duplicate visual** sits on the tile's corner between Edit and Delete. The visual store's `duplicateVisual` creates a new `Visual` with a new id and the original's type, chart configuration and binding — its reference and query, never the publish snapshot baked into a published dashboard's binding, which would draw that frozen data forever — placed directly under the original at its width and height. A group copies the visuals it holds as well, each under a fresh id, so a copy never shares an id with the original.
-- **One write path.** The copy is saved with the dashboard through the same save as every edit, on the dashboard it was issued on, and taken back out if the save is refused, as a refused delete puts its visual back.
+- **One write path.** The copy is saved with the dashboard through the same save as every edit, on the dashboard it was issued on, and kept on the dashboard if the save is refused, as a refused delete leaves its visual off it, since a content write has no rollback.
 - **The copy opens nothing.** It is the original's twin on the grid; clicking it edits it like any tile.
 
 ## What is deliberately not in it
@@ -22,11 +22,11 @@ flowchart LR
 
 ## Key files
 
-| File                                                               | Role                                                         |
-| ------------------------------------------------------------------ | ------------------------------------------------------------ |
-| `apps/web/app/store/dashboard/visual.ts`                           | `duplicateVisual` — clone, place, save, take back on refusal |
-| `apps/web/app/components/Dashboard/Visual/Preview/Container.vue`   | the tile's corner, which holds the visual's actions menu     |
-| `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue` | the Duplicate item, between Edit and Delete                  |
+| File                                                               | Role                                                     |
+| ------------------------------------------------------------------ | -------------------------------------------------------- |
+| `apps/web/app/store/dashboard/visual.ts`                           | `duplicateVisual` — clone, place, save                   |
+| `apps/web/app/components/Dashboard/Visual/Preview/Container.vue`   | the tile's corner, which holds the visual's actions menu |
+| `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue` | the Duplicate item, between Edit and Delete              |
 
 ## Sources
 

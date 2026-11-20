@@ -21,15 +21,15 @@ The dashboard editor SHALL let the owner duplicate a visual from its tile corner
 - **WHEN** the owner duplicates it
 - **THEN** the copy is bound to the same query, not to the frozen snapshot
 
-### Requirement: A duplicate is saved with the dashboard or taken back
+### Requirement: A duplicate is saved with the dashboard
 
-The system SHALL save a duplicate with the dashboard as one edit, and SHALL remove the duplicate again when the save is refused.
+The system SHALL save a duplicate with the dashboard as one edit, and SHALL keep the duplicate on the dashboard when the save is refused, with the save state reading Not saved.
 
-#### Scenario: A refused save removes the duplicate
+#### Scenario: A refused save keeps the duplicate
 
 - **GIVEN** the owner duplicates a tile
 - **WHEN** saving the dashboard is refused
-- **THEN** the duplicate tile is removed
+- **THEN** the duplicate tile stays on the dashboard
 
 #### Scenario: A successful save keeps the duplicate
 

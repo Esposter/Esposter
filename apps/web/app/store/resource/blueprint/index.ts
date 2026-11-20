@@ -26,23 +26,11 @@ export const useBlueprintStore = defineStore("resource/blueprint", () => {
   const discardManifest = () => {
     setManifestJson(blueprint.value);
   };
-  // The store adopts the manifest at once, so the Deploy dialog's parameter form shows the manifest being saved.
-  // Deploy resolves parameters from the stored manifest, so a refused save puts back the blueprint it replaced, unless a
-  // Later save has adopted another manifest since, which that save's own outcome owns. The manifest text goes back too,
-  // But only while it is still the text this save wrote: anything typed since is the reader's
+  // The store adopts the manifest at once, so the Deploy dialog's parameter form shows the manifest being saved
   const saveBlueprint = (content: BlueprintResource) => {
-    const previousBlueprint = blueprint.value;
-    const previousManifestJson = manifestJson.value;
     blueprint.value = content;
     setManifestJson(content);
-    const writtenBlueprint = blueprint.value;
-    const writtenManifestJson = manifestJson.value;
-    saveContent(content, () => {
-      if (blueprint.value !== writtenBlueprint) return;
-
-      blueprint.value = previousBlueprint;
-      if (manifestJson.value === writtenManifestJson) manifestJson.value = previousManifestJson;
-    });
+    saveContent(content);
   };
   return { blueprint, discardManifest, isManifestDirty, loadContent, manifestJson, saveBlueprint, setManifestJson };
 });

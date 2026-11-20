@@ -341,19 +341,15 @@ export const useResourceStore = defineStore("resource", () => {
     isContentStale.value = false;
     await ResourceContentHookMap.Keep.run(resourceValue.type);
   };
-  // The content is already on screen, so the save gives its caller nothing to await: `rollback` undoes the caller's
-  // Change when the save is refused, whether here before it is sent or by the server. An autosave of typing passes
-  // None, since the reader's text stays and the state reads Not saved
-  const saveContent = (content: ResourceContent<ResourceType>, rollback?: () => void) => {
+  // The content is already on screen, so the save gives its caller nothing to await. A refused save leaves the change on
+  // Screen and the state reads Not saved, since a blob write has no optimistic entry and nothing to restore
+  const saveContent = (content: ResourceContent<ResourceType>) => {
     const resourceValue = resource.value;
     // Only content read for this resource is written. A debounced autosave can fire after a read swapped
     // In another resource but before the content store has re-seeded its content ref, and the content in hand is
     // Then still the previous resource's; a store that never read at all holds its empty default. Either write
     // Would replace this resource's document with one that is not its own, under this one's id and version
-    if (!resourceValue || isContentStale.value || !checkIsContentRead()) {
-      rollback?.();
-      return;
-    }
+    if (!resourceValue || isContentStale.value || !checkIsContentRead()) return;
     // Cleared here rather than by whichever trigger armed it, because this is the one door every save comes
     // Through — a dialog's Save arms nothing, and a debounce clearing its own would call a save it then refuses
     // Saved (openspec/specs/resource/resource-save-state/design.md). The unchanged-content path below is a save all the same: it
@@ -376,7 +372,6 @@ export const useResourceStore = defineStore("resource", () => {
         severity: NotificationSeverity.Error,
         title: `"${resourceValue.name}" is ${getFileSize(contentBytes.byteLength)}, over the ${getFileSize(MAX_RESOURCE_CONTENT_SIZE)} a resource can hold — it was not saved`,
       });
-      rollback?.();
       return;
     }
     // A body under the request limit sends the content object, so it sends the content this save was issued with
@@ -419,8 +414,7 @@ export const useResourceStore = defineStore("resource", () => {
         return savedResource;
       },
       {
-        // The caller changed its content before saving, so the apply is that change already made, and its undo
-        applyOptimistic: () => rollback ?? noop,
+        applyOptimistic: () => noop,
         // Content saves of one resource share its id, so they queue instead of overlapping
         key: resourceValue.id,
         onError: (error) => {

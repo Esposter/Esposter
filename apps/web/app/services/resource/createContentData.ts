@@ -42,10 +42,10 @@ export const createContentData = <
   ResourceContentHookMap.Reload.register(async (reloadedType) => {
     if (reloadedType === type) await readContentData();
   });
-  // The store has already changed its content, so the save hands back nothing to wait on: `rollback` undoes that change
-  // If the save is refused
-  const saveContent = (rollback?: () => void) => {
-    saveResourceContent(content.value, rollback);
+  // The store has already changed its content, so the save hands back nothing to wait on. A refused save leaves the change
+  // On screen, and the save state reads Failed until a save lands
+  const saveContent = () => {
+    saveResourceContent(content.value);
   };
   ResourceContentHookMap.Keep.register((keptType) => {
     if (keptType === type) saveContent();

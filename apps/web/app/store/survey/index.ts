@@ -20,19 +20,14 @@ export const useSurveyStore = defineStore("survey", () => {
   // Save through the same path and the same contentVersion
   const settings = computed(() => content.value.settings);
   // The content is written at once, so a half saved while the other half's write is still in flight builds on that
-  // Write, and `content` is always the latest content. A refused save puts back the content it replaced, through a
-  // Writer bound before the write goes out so a rollback that lands after the blade moved on is not taken as the
-  // Content open by then. A later save that wrote over this one keeps its own content
+  // Write, and `content` is always the latest content. A refused save leaves the content on screen, as every content
+  // Store does, so the writer is bound before the write goes out and only lands while the blade is still the one it was
+  // Issued from
   const saveSurvey = (newContent: SurveyResource) => {
     if (!resourceStore.resource) return;
 
-    const writeContent = getContentWriter();
-    const previousContent = content.value;
-    writeContent(newContent);
-    const writtenContent = content.value;
-    saveContent(newContent, () => {
-      if (content.value === writtenContent) writeContent(previousContent);
-    });
+    getContentWriter()(newContent);
+    saveContent(newContent);
   };
   const saveDocument = (newDocument: SurveyDocument) => {
     saveSurvey({ ...content.value, document: newDocument });

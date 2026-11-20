@@ -13,18 +13,10 @@ export const useDashboardStore = defineStore("dashboard", () => {
     // Strips methods), so the class is rebuilt here rather than assumed — see the ToData note on the schema
     (data) => new Dashboard(data),
   );
-  // The layout settings are written onto the dashboard they were chosen on, and taken back there if the save is refused.
-  // Saves queue, so a refused save takes back only when no later write has set the layout since: comparing values would
-  // Undo a later write that chose the same ones. Every write sets both settings, so one count covers them
-  let layoutWriteCount = 0;
+  // The layout settings are written onto the dashboard they were chosen on, and saved in order behind the writes ahead
   const setLayout = (layout: Pick<Dashboard, "collision" | "compactType">) => {
-    const target = dashboard.value;
-    const previousLayout = { collision: target.collision, compactType: target.compactType };
-    const writeCount = ++layoutWriteCount;
-    Object.assign(target, layout);
-    saveDashboard(() => {
-      if (writeCount === layoutWriteCount) Object.assign(target, previousLayout);
-    });
+    Object.assign(dashboard.value, layout);
+    saveDashboard();
   };
   return { dashboard, loadContent, saveDashboard, setLayout };
 });

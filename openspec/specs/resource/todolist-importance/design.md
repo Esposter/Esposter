@@ -6,7 +6,7 @@ Built on [completion](../todolist-completion/design.md). A list with no way to s
 
 `TodoListItem` has `isImportant?: true`, present only on a starred todo, so an item nobody starred carries no key and a list saved before importance existed parses as it is.
 
-- **The star trails every row**, in `UiList`'s `actions` slot beside the row's button: a `UiIconButton` toggle named _Important_ with `aria-pressed`, filled in the accent while set, as the resource explorer's favourite star is. A click sets or clears it through the store's `toggleImportant`, with nothing to confirm; a refused save puts back what it was, unless another device's save was adopted mid-flight, whose value then stands. The row's context menu holds the same toggle as **Mark as important** or **Remove importance**, and the edit dialog shows the star beside the name, saved with the rest of the form.
+- **The star trails every row**, in `UiList`'s `actions` slot beside the row's button: a `UiIconButton` toggle named _Important_ with `aria-pressed`, filled in the accent while set, as the resource explorer's favourite star is. A click sets or clears it through the store's `toggleImportant`, with nothing to confirm; a refused save keeps the value the reader set, since a content write has no rollback, and the save state reads Not saved. The row's context menu holds the same toggle as **Mark as important** or **Remove importance**, and the edit dialog shows the star beside the name, saved with the rest of the form.
 - **The Sort menu** is an overflow menu beside the search, its sorts a group of radios so the one in use shows as soon as it opens: _My order_ (the default, the `items` array), _Importance_ (starred first), _Due date_ (soonest first, undated last), _Alphabetically_ (by title, in the reader's locale) and _Creation date_ (newest first, from the `createdAt` every item already carries). These are Microsoft To Do's sorts that need no field beyond the star; its _Added to My Day_ belongs to [smart lists](../../../deferred/resource/todo-smart-lists/design.md).
 - **A sort is a view, never a rewrite.** `sortTodoListItems` returns a sorted copy and every sort is stable, so todos it ranks alike keep the list's own order, and choosing _My order_ again gives back exactly the order the list holds. Each list remembers its sort in the viewer's own `localStorage` (`LocalStorageKey.TodoListSort`), never in the content.
 - **The Completed section ignores the sort** and stays newest completion first.
@@ -19,15 +19,15 @@ Built on [completion](../todolist-completion/design.md). A list with no way to s
 
 ## Key files
 
-| File                                                           | Role                                                            |
-| -------------------------------------------------------------- | --------------------------------------------------------------- |
-| `apps/web/shared/models/resource/todoList/TodoListItem.ts`     | The item, with `isImportant`                                    |
-| `apps/web/app/store/resource/todoList/index.ts`                | `toggleImportant`, unwound on a refused save, and the kept sort |
-| `apps/web/app/services/resource/todoList/sortTodoListItems.ts` | Every sort, stable over the list's own order                    |
-| `apps/web/app/components/Resource/TodoList/Rows.vue`           | The star trailing each row and its context-menu twin            |
-| `apps/web/app/components/Resource/TodoList/TopSlot/Index.vue`  | The Sort menu                                                   |
-| `apps/web/app/components/Resource/TodoList/Items.vue`          | The open todos in the chosen sort                               |
-| `apps/web/app/components/Resource/TodoList/EditForm.vue`       | The star beside the name in the dialog                          |
+| File                                                           | Role                                                 |
+| -------------------------------------------------------------- | ---------------------------------------------------- |
+| `apps/web/shared/models/resource/todoList/TodoListItem.ts`     | The item, with `isImportant`                         |
+| `apps/web/app/store/resource/todoList/index.ts`                | `toggleImportant`, and the kept sort                 |
+| `apps/web/app/services/resource/todoList/sortTodoListItems.ts` | Every sort, stable over the list's own order         |
+| `apps/web/app/components/Resource/TodoList/Rows.vue`           | The star trailing each row and its context-menu twin |
+| `apps/web/app/components/Resource/TodoList/TopSlot/Index.vue`  | The Sort menu                                        |
+| `apps/web/app/components/Resource/TodoList/Items.vue`          | The open todos in the chosen sort                    |
+| `apps/web/app/components/Resource/TodoList/EditForm.vue`       | The star beside the name in the dialog               |
 
 ## Sources
 

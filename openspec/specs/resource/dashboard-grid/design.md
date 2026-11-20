@@ -89,7 +89,7 @@ flowchart TD
   K["Focused visual: arrows or Shift and arrows"] -->|"one placement per step"| G
   H["Edge or corner pressed"] -->|"gesture, released"| G
   B["Body released over another grid"] -->|"transfer, with that grid's group"| MV["The store moves the visual into that group"]
-  L["Inspector, with nothing selected"] -->|"save, revert on refusal"| D["Dashboard content: packing and collision"]
+  L["Inspector, with nothing selected"] -->|"save, kept on refusal"| D["Dashboard content: packing and collision"]
   G --> V["Visual store writes each change, autosave"]
   D --> GR["Grid reads the settings"]
   GR --> G
@@ -175,7 +175,7 @@ The consumers of a dashboard read its groups through `listVisuals`. A published 
 | `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue`     | The visual's menu: edit, duplicate, export, fit height, move to, delete                                                                                            |
 | `apps/web/app/components/Dashboard/Index.vue`                          | The published view: the saved packing, no editing control                                                                                                          |
 | `apps/web/app/store/dashboard/visual.ts`                               | Create, add and move between lists, the writes addressed by id, the selection, and the form draft applied to its visual                                            |
-| `apps/web/app/store/dashboard/index.ts`                                | The layout settings write, reverted on a refused save                                                                                                              |
+| `apps/web/app/store/dashboard/index.ts`                                | The layout settings write, saved in order behind the writes ahead of it                                                                                            |
 | `apps/web/shared/models/dashboard/data/Dashboard.ts`                   | The content's packing and collision settings, and the tree checks over its visuals                                                                                 |
 | `apps/web/shared/models/dashboard/data/Visual.ts`                      | The visual's fit-height flag, its alternative text, and the visuals a group holds with the group's rules                                                           |
 | `apps/web/shared/services/dashboard/constants.ts`                      | The most groups a visual may sit inside, and the most characters its alternative text takes                                                                        |

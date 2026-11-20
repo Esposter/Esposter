@@ -54,10 +54,6 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const targetVisuals = getNewVisualList(type, parentId);
     if (targetVisuals) targetVisuals.push(createNewVisual(type, cell));
   };
-  // Counts every write to the selection, so a refused delete can tell a selection that was touched and then set back to
-  // The value the delete left from one that was never touched. Counted in the setter, since a ref does not trigger on a
-  // Write of the value it already holds, and a press on the empty canvas is such a write
-  let selectionWriteCount = 0;
   // The visual the reader selected last, "" for nothing. Opening a visual selects it, and a press on the canvas clears it
   const selectedVisualId = customRef<Visual["id"]>((track, trigger) => {
     let value: Visual["id"] = "";
@@ -67,7 +63,6 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
         return value;
       },
       set(newValue) {
-        selectionWriteCount++;
         value = newValue;
         trigger();
       },
@@ -110,44 +105,24 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     });
     return true;
   };
-  // Fit height is a flag written on its own, so it is saved and taken back on a refusal like an edit, but opens no form.
-  // Each visual records the write that last set its flag, so a refused save takes back only its own write: a later toggle
-  // Of the same visual is that write's to keep, even when it lands back on the value this one replaced
-  let autoHeightWriteCount = 0;
-  const autoHeightWriteCounts = new WeakMap<Visual, number>();
+  // Fit height is a flag written on its own, so it is saved like an edit, but opens no form
   const setAutoHeight = (ids: { id: Visual["id"] }, isAutoHeight: boolean) => {
     const visual = findVisual(visuals.value, ids);
     if (!visual) return;
 
-    const previousIsAutoHeight = visual.isAutoHeight;
-    const writeCount = ++autoHeightWriteCount;
-    autoHeightWriteCounts.set(visual, writeCount);
     Object.assign(visual, { isAutoHeight });
-    saveDashboard(() => {
-      if (autoHeightWriteCounts.get(visual) === writeCount) visual.isAutoHeight = previousIsAutoHeight;
-    });
+    saveDashboard();
   };
-  // Same write path: remove locally, persist the dashboard, revert on failure so a failed delete keeps the visual. A
-  // Group removes every visual it holds with it, and the removed visual itself is put back into its list
+  // Same write path: remove locally and persist the dashboard. A group removes every visual it holds with it
   const deleteVisual = (ids: { id: Visual["id"] }) => {
     const dashboard = dashboardStore.dashboard;
     const location = findVisualLocation(dashboard.visuals, ids.id);
     if (!location) return;
 
-    const previousSelectedVisualId = selectedVisualId.value;
     removeVisualFromList(dashboard, location.group, ids.id);
     // The selection is cleared when it names the visual, or one a deleted group held with it
-    const isSelectionCleared = Boolean(findVisual([location.visual], { id: selectedVisualId.value }));
-    if (isSelectionCleared) clearSelection();
-    const selectionWriteCountAfterDelete = selectionWriteCount;
-    // A refused save also restores the selection the delete cleared, and its form with it, so the store is as it was before the
-    // Delete. A selection made while the save was in flight is the reader's, so it is kept, even when it lands back on the value
-    // The delete left
-    saveDashboard(() => {
-      getVisualList(dashboard, location.group).push(location.visual);
-      if (isSelectionCleared && selectionWriteCount === selectionWriteCountAfterDelete)
-        getSynchronizedFunction(editItem)({ id: previousSelectedVisualId });
-    });
+    if (findVisual([location.visual], { id: selectedVisualId.value })) clearSelection();
+    saveDashboard();
   };
   // A copy of one visual and of every visual it holds, each under a fresh id: its type, chart, binding and fit height,
   // Never a publish snapshot. The copy sits below the original at its size, saved through the same write path and taken
@@ -174,9 +149,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const duplicatedVisual = copyVisual(structuredClone(toRawDeep(location.visual)));
     duplicatedVisual.y = location.visual.y + location.visual.h;
     getVisualList(dashboard, location.group).push(duplicatedVisual);
-    saveDashboard(() => {
-      removeVisualFromList(dashboard, location.group, duplicatedVisual.id);
-    });
+    saveDashboard();
   };
   // Moves a visual, with every visual it holds, into another group's list, or into the dashboard's own list when there is
   // No target group. It lands at the cell given, or at the first free cell of the list it moves into when none is given.

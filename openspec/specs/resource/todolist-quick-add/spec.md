@@ -56,22 +56,16 @@ Pressing Escape in the Add a todo field SHALL empty it.
 - **WHEN** the owner presses Escape
 - **THEN** the field is empty
 
-### Requirement: A refused add returns the name to the field
+### Requirement: A refused add stays in the list
 
-A refused save of a todo added from the field SHALL remove it from the list and return the typed name to the field, unless another name has already been typed there.
+A todo added from the field SHALL stay in the list when its save is refused, with the save state reading Not saved, since a content write has no rollback.
 
 #### Scenario: Save refused
 
 - **GIVEN** a todo added from the field
 - **WHEN** its save is refused
-- **THEN** the todo is removed from the list
-- **AND** the typed name is back in the field
-
-#### Scenario: Field already holds a new name
-
-- **GIVEN** a refused add and a new name already typed in the field
-- **WHEN** the refusal arrives
-- **THEN** the new name is kept and the refused name is not put back
+- **THEN** the todo stays in the list
+- **AND** the save state reads Not saved
 
 ### Requirement: Quick add sets no date
 

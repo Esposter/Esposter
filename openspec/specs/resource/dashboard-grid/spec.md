@@ -254,11 +254,11 @@ The editor SHALL offer a Layout control that sets how visuals pack, upward, side
 - **THEN** the visual keeps the gap above it
 - **AND** the choice is saved
 
-#### Scenario: a save the server refuses takes the choice back to the one it had
+#### Scenario: a save the server refuses keeps the choice on the dashboard
 
 - **GIVEN** the owner chose Swap places in the Layout control
 - **WHEN** the save of the dashboard is refused
-- **THEN** the control shows the previous choice again
+- **THEN** the control keeps the choice, and the save state reads Not saved
 
 #### Scenario: The published dashboard packs by the saved choice
 
