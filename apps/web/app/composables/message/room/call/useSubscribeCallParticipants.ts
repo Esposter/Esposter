@@ -29,15 +29,11 @@ export const useSubscribeCallParticipants = () => {
         deleteSpeaker(participant.id);
         deleteParticipantVolumePercentage(participant.id);
       }),
-      onCallEvent("handRaisedChanged", ({ participant }) => {
-        storeCallParticipant(callSessionId, participant);
-      }),
-      onCallEvent("muteChanged", ({ participant }) => {
-        storeCallParticipant(callSessionId, participant);
-      }),
-      onCallEvent("videoChanged", ({ participant }) => {
-        storeCallParticipant(callSessionId, participant);
-      }),
+      ...(["handRaisedChanged", "muteChanged", "videoChanged"] as const).map((type) =>
+        onCallEvent(type, ({ participant }) => {
+          storeCallParticipant(callSessionId, participant);
+        }),
+      ),
     ];
     await readCallParticipants(callSessionId, () => $trpc.callSession.readCallParticipantMap.query({ callSessionId }));
     return () => {
