@@ -11,7 +11,7 @@ export const VERDICT_SEPARATOR = " — ";
 // The reasons a Keep verdict is right to keep a package for whatever its type workarounds, which the shim check does not second-guess
 const CORE_EXEMPT_REASONS: string[] = ["engine", "SDK", "framework", "tooling"];
 // The reasons a Keep verdict is right to keep a package for, which the absorb check does not second-guess
-export const KEEP_EXEMPT_REASONS: string[] = [...CORE_EXEMPT_REASONS, "types", "hold", "free"];
+export const KEEP_EXEMPT_REASONS: string[] = [...CORE_EXEMPT_REASONS, "types", "hold"];
 
 // The score's weights: four dimensions out of 100, each band's points under its exclusive upper bound
 export const SIZE_BANDS: ScoreBand[] = [

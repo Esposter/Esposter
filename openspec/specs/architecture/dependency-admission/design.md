@@ -55,6 +55,20 @@ flowchart TD
 
 The order is the point: the platform and what is already installed come before any code of ours, and the only packages the gate keeps by category are the ones whose size or churn would make owning them a standing cost — engines, SDKs, the framework and the tooling, which is delegated rather than rebuilt. Everything else is a utility, and a utility is absorbed unless its value is a feed nobody would send us. A package we want an opinion about is not deleted either: its engine stays and the connection is ours, which is the thin branch below.
 
+### Nothing is free, absorbing included
+
+Every dependency trades away control, a behaviour or a release we cannot change, and space, the client's bytes, the install and every package it reaches. Absorbing trades too: every replacement is code this repository carries, reviews and maintains for as long as it exists. The test weighs the two, and a package goes only when what we would write is small next to what leaves.
+
+**A package delivering substantial functionality we use stays**, even when it is pure JavaScript and even when we use part of it: a file-format codec, a spatial or numeric algorithm, a serialization format, a dataset such as an icon set, emoji or a font, protocol cryptography, a plugin set the app renders. So does an **official plugin or module from the maintainers of an engine or the framework we keep**, such as an editor's own extensions or a framework's own modules, since it follows that engine's releases. Each stays until it measurably costs us something: the precedents below were absorbed for a cost met in this repository, a version held behind the framework, a runtime cost on every request, a behaviour we could not change, never for being a dependency.
+
+**A package goes when its replacement is a few dozen lines of ours:**
+
+- **A thin connector.** Its own code is mostly wiring between things we already have.
+- **A sliver of use.** We call a small part that a few lines replace, such as a user-agent table read for one device label.
+- **A ride-along.** It is kept alive only by a package being absorbed, or used trivially, such as one operator over an engine's observables. A package kept because another needs it is that package's cost, so "Keep — free" is not a verdict: the ride-along is counted when its host is judged, and goes when the host goes.
+
+**A seam that fights us**, with type shims, casts or CommonJS interop where our code meets the package, is a cost the weighing counts on the package's side. An absorbed utility with no engine of its own lands in `@esposter/shared`; one with a grammar, an engine or behaviour of its own becomes a headless workspace package; code only one app needs lands in that app.
+
 ### Adapters
 
 An **adapter** is a package whose every runtime dependency and peer is already in the catalog, and whose own code does nothing but connect them — a test mock joining two libraries, a framework module joining a library to the framework's request and fetch primitives, a component wrapping an engine's view for the UI framework. It is the thin branch by construction: both engines stay, and what goes is the connection, which is small because the engines on either side already did the work.
@@ -72,7 +86,7 @@ An adapter is the cheapest item this page finds and the one that costs the most 
 
 The package's own dependencies' lines, its importing files, the manifests that list it and its type shims are shown as unscored context, beside two costs the command measures from the install. The bundle is the gzipped bytes the package adds to the app's client build, read from the raw-data report the score asks its own `nuxt analyze` run for, since a run by hand writes the treemap the command serves instead: each module is attributed to the package it sits under in `node_modules`, a workspace package by its folder, or the app itself, and a package the client build does not contain reads as `not in client`. `--analyze` builds that report first; without it the score reads the last build's report and prints its age. `--sort bundle` orders the rows by it, and the report ends on its largest, each with the share of it in the entry chunk: the bundles holding the module the report marks as the entry, which every page loads. A share there is a cost a later load removes from every page, and it is read before a lighter engine is weighed. The install is the package's own bytes plus every package it reaches, each once, and flags a dependency another catalog entry also reaches. A type shim is a `declare module` over the package, or a `@ts-expect-error` or an `as unknown as` cast beside its import or call, and a package with shims is one absorbing it fixes at the root. The weights and bands are named in `scripts/src/services/dependencies/score/constants.ts`.
 
-The command's Disagreements are rows to re-judge, never errors: a Keep whose reason is outside the exempt list (engine, SDK, framework, tooling, types, hold, free) that scores 60 or more is an absorb candidate its verdict missed, a Keep outside the shim-exempt reasons (engine, SDK, framework, tooling) that has type shims is one too, and an Absorb scoring under 30 is one the score does not back.
+The command's Disagreements are rows to re-judge, never errors: a Keep whose reason is outside the exempt list (engine, SDK, framework, tooling, types, hold) that scores 60 or more is an absorb candidate its verdict missed, a Keep outside the shim-exempt reasons (engine, SDK, framework, tooling) that has type shims is one too, and an Absorb scoring under 30 is one the score does not back.
 
 ## The precedent
 
