@@ -3,7 +3,7 @@ import { REORDER_HANDLE_CLASS } from "#src/services/ui/constants";
 // The reorder half of a table whose rows can be put in another order: a drag by the rows' handle, and Alt+Up and
 // Alt+Down on the focused row, each handing the page's new order to the call site as ids
 export const useDataTableReorder = <T extends { id: string }>(
-  isReorderActive: () => boolean | undefined,
+  checkIsReorderActive: () => boolean | undefined,
   pageIds: ComputedRef<T["id"][]>,
   onReorder: (ids: T["id"][]) => void,
 ) => {
@@ -13,7 +13,7 @@ export const useDataTableReorder = <T extends { id: string }>(
   const reorderProps = computed(() => getDragReorderProps(pageIds.value, onReorder, `.${REORDER_HANDLE_CLASS}`));
   // The page's rows in their new order, with a key's move read out and the row's focus put back
   const onReorderKeydown = async (event: KeyboardEvent) => {
-    if (!isReorderActive() || !(event.target instanceof HTMLElement)) return;
+    if (!checkIsReorderActive() || !(event.target instanceof HTMLElement)) return;
     const id = event.target.closest<HTMLElement>("[data-reorder-id]")?.dataset.reorderId;
     if (id === undefined) return;
     const focusedElement = event.target;
