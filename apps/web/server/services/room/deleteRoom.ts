@@ -6,14 +6,20 @@ import { ownedBy } from "#server/services/db/ownedBy";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
+import { getLiveInviteRowWhere } from "#server/services/room/getLiveInviteRowWhere";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { getBucket } from "#server/services/storage/getBucket";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getRoomMemberIds } from "@esposter/db";
 import {
+  appUsersInMessage,
+  bansInMessage,
   DatabaseEntityType,
+  getLiveRoomEmojiWhere,
   getLiveRowWhere,
+  getLiveWebhookWhere,
   invitesInMessage,
+  roomEmojisInMessage,
   roomMemberPermissionsInMessage,
   roomRolesInMessage,
   roomsInMessage,
@@ -23,13 +29,14 @@ import {
   webhooksInMessage,
 } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 
 // A room's deletion is a tombstone, so every member's copy of the room leaves their list at the version the batch names.
 // The membership a member held is tombstoned with it, and so are the room's roles, each member's role links and overrides,
-// As a removal tombstones them, so no live child outlives its room. The invites and webhooks of the room are removed with
-// It, so a link or a webhook of a deleted room refuses, as the hard delete's cascade left them. The member's own tabs are
-// Told their membership's tombstone, and the caller's row is the answer
+// As a removal tombstones them, so no live child outlives its room. The room's invites, webhooks, the app users its webhooks
+// Post as, its emoji and its bans are tombstoned in the same batch, so a link, a webhook or a ban of a deleted room refuses,
+// And a client holding one drops it on the answer. The member's own tabs are told their membership's tombstone, and the
+// Caller's row is the answer
 export const deleteRoom = async (
   { db, user }: Pick<AuthedContext, "db" | "user">,
   id: string,
@@ -55,8 +62,36 @@ export const deleteRoom = async (
       .set({ deletedAt: new Date() })
       .where(and(eq(usersToRoomsInMessage.roomId, id), isNull(usersToRoomsInMessage.deletedAt)))
       .returning(),
-    db.delete(invitesInMessage).where(eq(invitesInMessage.roomId, id)),
-    db.delete(webhooksInMessage).where(eq(webhooksInMessage.roomId, id)),
+    // A webhook's app user is named by the live webhook, so its statement runs first, while the webhook is still live,
+    // In the order deleteWebhook keeps
+    db
+      .update(appUsersInMessage)
+      .set({ deletedAt: new Date() })
+      .where(
+        inArray(
+          appUsersInMessage.id,
+          db
+            .select({ userId: webhooksInMessage.userId })
+            .from(webhooksInMessage)
+            .where(and(eq(webhooksInMessage.roomId, id), getLiveWebhookWhere(webhooksInMessage))),
+        ),
+      ),
+    db
+      .update(webhooksInMessage)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(webhooksInMessage.roomId, id), getLiveWebhookWhere(webhooksInMessage))),
+    db
+      .update(invitesInMessage)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(invitesInMessage.roomId, id), getLiveInviteRowWhere(invitesInMessage))),
+    db
+      .update(roomEmojisInMessage)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(roomEmojisInMessage.roomId, id), getLiveRoomEmojiWhere(roomEmojisInMessage))),
+    db
+      .update(bansInMessage)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(bansInMessage.roomId, id), getLiveRowWhere(bansInMessage))),
     db
       .update(roomRolesInMessage)
       .set({ deletedAt: new Date() })

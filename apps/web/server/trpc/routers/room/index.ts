@@ -12,6 +12,7 @@ import { announceRoomMemberDeparture } from "#server/services/room/announceRoomM
 import { announceRoomMembersJoined } from "#server/services/room/announceRoomMembersJoined";
 import { deleteRoom } from "#server/services/room/deleteRoom";
 import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMessageDisplayNames";
+import { getLiveInviteRowWhere } from "#server/services/room/getLiveInviteRowWhere";
 import { getLiveInviteWhere } from "#server/services/room/getLiveInviteWhere";
 import { getNotLiveMembershipWhere } from "#server/services/room/getNotLiveMembershipWhere";
 import { getReviveMembershipConflict } from "#server/services/room/getReviveMembershipConflict";
@@ -141,7 +142,7 @@ export const baseRoomRouter = router({
     // Itself, an unknown, expired or used-up link, a paused room or a banned user, is decided by the batch below
     const invite = await ctx.db.query.invitesInMessage.findFirst({
       columns: { roomId: true },
-      where: { id: { eq: input } },
+      where: { id: { eq: input }, RAW: getLiveInviteRowWhere },
     });
     if (!invite) throw getNotFoundError(DatabaseEntityType.Invite, input);
 
