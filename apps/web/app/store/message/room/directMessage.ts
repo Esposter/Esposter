@@ -1,189 +1,193 @@
+import type { DirectMessageParticipants } from "#shared/models/db/room/DirectMessageParticipants";
 import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMessageInput";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
-import { AwaitedReason } from "#src/models/shared/AwaitedReason";
-import { MutationStatus } from "#src/models/shared/MutationStatus";
-import { authClient } from "#src/services/auth/authClient";
-import { createOperationData } from "#src/services/shared/createOperationData";
+import { useSessionUserId } from "#src/composables/auth/useSessionUserId";
+import { useReadMyUsersToRooms } from "#src/composables/message/room/useReadMyUsersToRooms";
+import { compareMemberNames } from "#src/services/message/member/compareMemberNames";
+import { memberTable } from "#src/services/message/member/memberTable";
+import { toMemberRow } from "#src/services/message/member/toMemberRow";
+import { roomTable } from "#src/services/message/room/constants";
+import { userToRoomTable } from "#src/services/message/userToRoom/constants";
+import { getUserToRoomPatchEntry } from "#src/services/message/userToRoom/getUserToRoomPatchEntry";
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
+import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
-import { DerivedDatabaseEntityType, MessageType } from "@esposter/db-schema";
-import { getSynchronizedFunction, ID_SEPARATOR, noop, RoutePath, takeOne } from "@esposter/shared";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
+import { useUserStore } from "#src/store/message/user/index";
+import { useOverlayStore } from "#src/store/overlay";
+import { MessageType, RoomType } from "@esposter/db-schema";
+import { getOrCreate, getResultAsync, noop, RoutePath, takeOne } from "@esposter/shared";
 
 export const useDirectMessageStore = defineStore("message/room/directMessage", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = useCursorPaginationData<RoomInMessage>();
-  const {
-    createDirectMessage: storeCreateDirectMessage,
-    deleteDirectMessage: storeDeleteDirectMessage,
-    updateDirectMessage: storeUpdateDirectMessage,
-    ...restOperationData
-  } = createOperationData(items, ["id"], DerivedDatabaseEntityType.DirectMessage);
+  const overlayStore = useOverlayStore();
+  const { arrive, view, writeAwaited, writeOptimistic } = overlayStore;
+  const roomRows = view(roomTable);
+  const memberRows = view(memberTable);
+  const userId = useSessionUserId();
+  const userStore = useUserStore();
+  const { storeUser, userMap } = userStore;
+  const userToRoomStore = useUserToRoomStore();
+  const { getMyUserToRoom } = userToRoomStore;
+  const readMyUsersToRooms = useReadMyUsersToRooms();
+  // The list's cursor keeps the ids of its pages, for paging. The rows are the overlay's, read into it as each page answers
+  const { items: _pageDirectMessageIds, ...restData } = useCursorPaginationData<Pick<RoomInMessage, "id">>();
+  // A direct message the viewer holds a live, unhidden membership of, newest first.
+  // A hidden or left one has no such membership in the view, so it leaves the list with the write or the event that took it off.
   const directMessages = computed(() =>
-    items.value.toSorted(
-      (firstDirectMessage, secondDirectMessage) =>
-        secondDirectMessage.lastMessageAt.getTime() - firstDirectMessage.lastMessageAt.getTime(),
-    ),
+    roomRows.value
+      .flatMap((room) => {
+        if (!checkIsVersioned(room) || room.type !== RoomType.DirectMessage) return [];
+        const myUserToRoom = getMyUserToRoom(room.id);
+        return myUserToRoom && !myUserToRoom.isHidden ? [room] : [];
+      })
+      .toSorted(
+        (firstDirectMessage, secondDirectMessage) =>
+          secondDirectMessage.lastMessageAt.getTime() - firstDirectMessage.lastMessageAt.getTime(),
+      ),
   );
-  // Keyed by room and read by every surface that names a conversation after the people in it. Held behind its
-  // Own accessors rather than handed out: a participant list written directly from every surface that reads it
-  // Is a list nothing can state the invariants of
-  const directMessageParticipantsMap = ref(new Map<string, MemberInRoom[]>());
-  const getDirectMessageParticipants = (roomId: string) => directMessageParticipantsMap.value.get(roomId) ?? [];
+  // The other participants of each direct message come from the member rows the overlay holds.
+  // A removal is the tombstone that arrives, and the view drops it like any row.
+  // Each is named the way the room names them, and ordered the way the server pages them.
+  const participantsMap = computed(() => {
+    const map = new Map<string, MemberInRoom[]>();
+    for (const row of memberRows.value) {
+      const user = checkIsVersioned(row) && row.userId !== userId.value ? userMap.get(row.userId) : undefined;
+      if (user) getOrCreate(map, row.roomId, () => []).push({ ...user, displayName: row.displayName });
+    }
+    return new Map(
+      Array.from(map, ([roomId, participants]): [string, MemberInRoom[]] => [
+        roomId,
+        participants.toSorted(compareMemberNames),
+      ]),
+    );
+  });
+  const getDirectMessageParticipants = (roomId: string) => participantsMap.value.get(roomId) ?? [];
   // Every conversation past two people is a group, which the invite dialog lists beside the friends
   const checkIsGroupDirectMessage = (roomId: string) => getDirectMessageParticipants(roomId).length > 1;
-  const storeDirectMessageParticipants = (roomId: string, participants: (PublicUser & { displayName?: string })[]) => {
-    directMessageParticipantsMap.value.set(
-      roomId,
-      participants.map((participant) => ({ ...participant, displayName: participant.displayName ?? participant.name })),
-    );
+  // A read's rows and participants arrive as the overlay's rows, each participant's user with its membership
+  const arriveDirectMessages = (rooms: RoomInMessage[]) => {
+    for (const room of rooms) arrive(roomTable, room);
   };
-  const storeDeleteDirectMessageParticipant = (roomId: string, userId: PublicUser["id"]) => {
-    storeDirectMessageParticipants(
-      roomId,
-      getDirectMessageParticipants(roomId).filter(({ id }) => id !== userId),
-    );
+  const arriveDirectMessageParticipants = (directMessageParticipants: DirectMessageParticipants[]) => {
+    for (const { participants } of directMessageParticipants)
+      for (const { user, ...membership } of participants) {
+        storeUser(user);
+        arrive(memberTable, toMemberRow(membership));
+      }
   };
   const roomStore = useRoomStore();
-  // A direct message is a room, and the route carries one id — so the room store's reading of it is the same
-  // Reading this store needs, rather than a second copy of the route parsing that can drift from it
+  // A direct message is a room, and the route carries one id, so the room store's reading of it is the one this store needs
   const currentDirectMessageId = computed(() => roomStore.currentRoomId);
   const currentDirectMessage = computed(() =>
     directMessages.value.find(({ id }) => id === currentDirectMessageId.value),
   );
+  // A conversation the reader is on leaves the list when its membership is removed or hidden, by whichever write or event took it off.
+  // The reader is then taken to the first conversation left, or to the messages index when none is.
+  watch(directMessages, async (nextDirectMessages, previousDirectMessages) => {
+    const roomId = currentDirectMessageId.value;
+    const wasListed = previousDirectMessages.some(({ id }) => id === roomId);
+    const isListed = nextDirectMessages.some(({ id }) => id === roomId);
+    if (!wasListed || isListed) return;
+
+    await navigateTo(
+      nextDirectMessages.length > 0 ? RoutePath.Messages(takeOne(nextDirectMessages).id) : RoutePath.MessagesIndex,
+      { replace: true },
+    );
+  });
   const dataStore = useDataStore();
   const { createMessage } = dataStore;
-  const { executeMutation: executeCreateDirectMessageMutation } = useMutation();
-  const { checkIsPending: checkIsInviteFriendPending, executeMutation: executeInviteFriendMutation } = useMutation();
-  const { checkIsPending: checkIsInviteDirectMessagePending, executeMutation: executeInviteDirectMessageMutation } =
-    useMutation();
-  const { executeMutation: executeDeleteDirectMessageParticipantMutation } = useMutation();
-  const { executeMutation: executeHideDirectMessageMutation } = useMutation();
-  const { executeMutation: executeLeaveDirectMessageMutation } = useMutation();
-  const session = authClient.useSession();
+  // A create and an invite are awaited, since the server names the room, so no entry shows them.
+  // Each is held here while it is out, which is the one pending state they show.
+  const creatingFriendIds = ref(new Set<PublicUser["id"]>());
+  const invitingDirectMessageIds = ref(new Set<RoomInMessage["id"]>());
+  // The room the server answers with is drawn once it arrives, with the viewer's membership of it, which the list needs
   const createDirectMessage = async (userIds: string[]) => {
-    const outcome = await executeCreateDirectMessageMutation(
-      () => $trpc.room.directMessage.createDirectMessage.mutate(userIds),
-      {
-        // The conversation is the server's to name, so it is drawn once the server answers with its room
-        awaitedBecause: AwaitedReason.ServerIssuedValue,
-        key: Symbol("createDirectMessage"),
-        onSuccess: async (room) => {
-          const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
-          if (!existingDirectMessage) storeCreateDirectMessage(room, true);
-          await navigateTo(RoutePath.Messages(room.id));
-        },
+    let createdRoomId = "";
+    await writeAwaited(
+      async () => {
+        const room = await $trpc.room.directMessage.createDirectMessage.mutate(userIds);
+        await readMyUsersToRooms([room.id]);
+        createdRoomId = room.id;
+        return [createArrival(roomTable, room)];
       },
+      { onError: createErrorAlert },
     );
     // Whether the server kept it, so the dialog that asked stays open over a refusal
-    return outcome.status === MutationStatus.Succeeded;
+    if (!createdRoomId) return false;
+
+    await navigateTo(RoutePath.Messages(createdRoomId));
+    return true;
   };
-  // The link goes into a conversation the reader is already in, so unlike inviteFriend there is no direct message
-  // To create first, and the message is the reader's own
-  const inviteDirectMessage = (roomId: string, inviteLink: string) => {
-    executeInviteDirectMessageMutation(
-      () => createMessage({ files: [], message: inviteLink, replyToId: null, roomId, type: MessageType.Message }),
-      // The message's bubble is drawn at once by createMessage, which owns its own rollback, so this write applies nothing
-      // Of its own. Its key is what the invite's pending state reads
-      { applyOptimistic: () => noop, key: roomId },
-    );
+  // The link goes into a conversation the reader is already in, so unlike inviteFriend there is no direct message to create first.
+  // The message is the reader's own.
+  const inviteDirectMessage = async (roomId: string, inviteLink: string) => {
+    invitingDirectMessageIds.value.add(roomId);
+    await getResultAsync(() =>
+      createMessage({ files: [], message: inviteLink, replyToId: null, roomId, type: MessageType.Message }),
+    ).match(noop, createErrorAlert);
+    invitingDirectMessageIds.value.delete(roomId);
   };
-  // The invite a friend is sent: the direct message is created where none exists, and the reader stays on the
-  // Screen they are on, so unlike createDirectMessage this does not navigate. The message is the reader's own
+  // The invite a friend is sent creates the direct message where none exists, and the reader stays on the screen they are on.
+  // So unlike createDirectMessage this does not navigate, and the message is the reader's own.
   const inviteFriend = async (friendId: PublicUser["id"], inviteLink: string) => {
-    await executeInviteFriendMutation(() => $trpc.room.directMessage.createDirectMessage.mutate([friendId]), {
-      // The room the friend's conversation is in is the server's, so the invite is sent once the server names it
-      awaitedBecause: AwaitedReason.ServerIssuedValue,
-      key: friendId,
-      onSuccess: (room) => {
-        const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
-        if (!existingDirectMessage) storeCreateDirectMessage(room, true);
-        inviteDirectMessage(room.id, inviteLink);
+    creatingFriendIds.value.add(friendId);
+    let roomId = "";
+    await writeAwaited(
+      async () => {
+        const room = await $trpc.room.directMessage.createDirectMessage.mutate([friendId]);
+        await readMyUsersToRooms([room.id]);
+        roomId = room.id;
+        return [createArrival(roomTable, room)];
       },
-    });
-  };
-  const deleteDirectMessageParticipant = (roomId: string, userId: string) => {
-    executeDeleteDirectMessageParticipantMutation(
-      () => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }),
-      {
-        applyOptimistic: () => {
-          // Read here rather than before the call, so this reflects whatever a concurrent removal already stored
-          const currentParticipants = getDirectMessageParticipants(roomId);
-          const deletedIndex = currentParticipants.findIndex(({ id }) => id === userId);
-          const deletedParticipant = currentParticipants[deletedIndex];
-          // The participants that followed it, so a rollback can anchor to whichever of them is still there —
-          // An index cannot, because a removal that overlapped this one has shifted someone else into that slot
-          const followingIds = new Set(currentParticipants.slice(deletedIndex + 1).map(({ id }) => id));
-          storeDeleteDirectMessageParticipant(roomId, userId);
-          return () => {
-            if (!deletedParticipant) return;
-            // Restore only this participant, ahead of the first one that still follows it
-            const participantsNow = getDirectMessageParticipants(roomId);
-            const followingIndex = participantsNow.findIndex(({ id }) => followingIds.has(id));
-            storeDirectMessageParticipants(
-              roomId,
-              participantsNow.toSpliced(
-                followingIndex === -1 ? participantsNow.length : followingIndex,
-                0,
-                deletedParticipant,
-              ),
-            );
-          };
-        },
-        // The target is the room-and-participant pair: the same person can be in more than one direct message,
-        // So keying on userId alone would make unrelated rooms' removals queue behind each other
-        key: `${roomId}${ID_SEPARATOR}${userId}`,
-      },
+      { onError: createErrorAlert },
     );
+    creatingFriendIds.value.delete(friendId);
+    if (roomId) await inviteDirectMessage(roomId, inviteLink);
   };
-  // Started rather than awaited: the removal's apply runs the screen steps the write causes as the write is sent
-  const navigateToDirectMessage = getSynchronizedFunction(async (path: string) => {
-    await navigateTo(path, { replace: true });
-  });
-  // Hiding and leaving both take the conversation out of the list, and a reader in it is handed to the conversation at
-  // The top. A refusal restores only this conversation, since the list is sorted for display, and puts the reader back
-  // In it unless they have moved on from where the removal sent them
-  const applyOptimisticRemoveDirectMessage = (roomId: string) => {
-    const removedDirectMessage = items.value.find(({ id }) => id === roomId);
-    const isCurrent = currentDirectMessageId.value === roomId;
-    storeDeleteDirectMessage({ id: roomId });
-    const landingDirectMessageId = directMessages.value.length > 0 ? takeOne(directMessages.value).id : "";
-    if (isCurrent)
-      navigateToDirectMessage(
-        landingDirectMessageId ? RoutePath.Messages(landingDirectMessageId) : RoutePath.MessagesIndex,
-      );
-    return () => {
-      if (removedDirectMessage) storeCreateDirectMessage(removedDirectMessage);
-      // Still in the conversation means the navigation away has not landed yet, and a navigation back supersedes it
-      if (
-        isCurrent &&
-        (currentDirectMessageId.value === roomId || currentDirectMessageId.value === landingDirectMessageId)
-      )
-        navigateToDirectMessage(RoutePath.Messages(roomId));
-    };
-  };
+  // Hiding is an entry over the viewer's own membership: the conversation leaves the list while the write is out.
+  // The membership the server answers arrives at the version it names, and a refusal drops the entry, so the conversation stays.
   const hideDirectMessage = (input: HideDirectMessageInput) => {
-    executeHideDirectMessageMutation(() => $trpc.room.directMessage.hideDirectMessage.mutate(input), {
-      applyOptimistic: () => applyOptimisticRemoveDirectMessage(input),
-      // Keyed per room so hiding two conversations in quick succession never queues behind the other
-      key: input,
-    });
-  };
-  // Removing yourself is leaving: the participant list never holds the reader, so it is the conversation that goes
-  const leaveDirectMessage = (roomId: string) => {
-    const userId = session.value.data?.user.id;
-    if (!userId) return;
-    executeLeaveDirectMessageMutation(
-      () => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }),
-      { applyOptimistic: () => applyOptimisticRemoveDirectMessage(roomId), key: roomId },
+    writeOptimistic(
+      async () => createRowResponse(userToRoomTable, await $trpc.room.directMessage.hideDirectMessage.mutate(input)),
+      { entry: getUserToRoomPatchEntry(userId.value, input, { isHidden: true }), onError: createErrorAlert },
     );
   };
+  // A participant's removal is awaited, and the membership the server tombstoned arrives, which takes them off the list.
+  // A leave is the same removal of the viewer, so a reader who leaves is taken off the conversation by the same arrival.
+  const deleteDirectMessageParticipant = (roomId: string, participantId: PublicUser["id"]) =>
+    writeAwaited(
+      async () => [
+        createArrival(
+          memberTable,
+          toMemberRow(
+            await $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId: participantId }),
+          ),
+        ),
+      ],
+      { onError: createErrorAlert },
+    );
+  const leaveDirectMessage = (roomId: string) => deleteDirectMessageParticipant(roomId, userId.value);
+  // A join is announced to the room's members and to each joiner's tabs, so the added participants arrive as their join events.
+  // The answer names nothing to arrive.
+  const addDirectMessageParticipants = (roomId: string, userIds: PublicUser["id"][]) =>
+    getResultAsync(() => $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds })).match(
+      noop,
+      createErrorAlert,
+    );
 
   return {
+    addDirectMessageParticipants,
+    arriveDirectMessageParticipants,
+    arriveDirectMessages,
     checkIsGroupDirectMessage,
-    checkIsInviteDirectMessagePending,
-    checkIsInviteFriendPending,
+    checkIsInviteDirectMessagePending: (roomId: RoomInMessage["id"]) => invitingDirectMessageIds.value.has(roomId),
+    checkIsInviteFriendPending: (friendId: PublicUser["id"]) => creatingFriendIds.value.has(friendId),
     createDirectMessage,
     currentDirectMessage,
     currentDirectMessageId,
@@ -194,11 +198,6 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     inviteDirectMessage,
     inviteFriend,
     leaveDirectMessage,
-    storeDeleteDirectMessage,
-    storeDeleteDirectMessageParticipant,
-    storeDirectMessageParticipants,
-    storeUpdateDirectMessage,
-    ...restOperationData,
     ...restData,
   };
 });

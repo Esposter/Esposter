@@ -544,11 +544,11 @@ describe("roomRouter", () => {
         where: { RAW: getLiveRowWhere, roomId: { eq: newRoom.id } },
       });
 
-    expect(await readLiveRoleLinks()).toHaveLength(1);
+    await expect(readLiveRoleLinks()).resolves.toHaveLength(1);
 
     await roomCaller.deleteRoom(newRoom.id);
 
-    expect(await readLiveRoleLinks()).toStrictEqual([]);
+    await expect(readLiveRoleLinks()).resolves.toStrictEqual([]);
   });
 
   test("fails delete with direct message room", async () => {
@@ -969,12 +969,13 @@ describe("roomRouter", () => {
       columns: PublicUserColumns,
       where: { id: { eq: session.user.id } },
     });
+    assert.exists(user);
     const joinedMembership = await readMembership(newRoom.id, session.user.id);
     assert.exists(joinedMembership);
     const joinEvent = {
       data: {
         deletedAt: null,
-        displayName: "",
+        displayName: user.name,
         roomId: newRoom.id,
         user,
         userId: session.user.id,

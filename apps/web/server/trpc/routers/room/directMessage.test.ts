@@ -254,8 +254,8 @@ describe("directMessageRouter", () => {
     expect(entry.roomId).toBe(directMessage.id);
     expect(entry.participants).toHaveLength(1);
     expect(takeOne(entry.participants).displayName).toBe(displayName);
-    expect(takeOne(entry.participants).id).toBe(user.id);
-    expect(takeOne(entry.participants).name).toBe(user.name);
+    expect(takeOne(entry.participants).userId).toBe(user.id);
+    expect(takeOne(entry.participants).user.name).toBe(user.name);
   });
 
   test("creates direct message participant", async () => {
@@ -327,7 +327,7 @@ describe("directMessageRouter", () => {
       method: "broadcastEvent",
       userId: addedUser.id,
     });
-    expect(takeOne(directMessages.participants).participants.map(({ id }) => id)).toStrictEqual([user.id]);
+    expect(takeOne(directMessages.participants).participants.map(({ userId }) => userId)).toStrictEqual([user.id]);
     expect(takeOne(directMessages.items).participantKey).toBe(getDirectMessageParticipantKey([mainUser.id, user.id]));
   });
 

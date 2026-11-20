@@ -1,5 +1,6 @@
 import type { DirectMessageParticipants } from "#shared/models/db/room/DirectMessageParticipants";
-import type { Page, PublicUser, RoomInMessage } from "@esposter/db-schema";
+import type { MemberRow } from "#shared/models/db/room/MemberRow";
+import type { Page, PublicUser, RoomInMessage, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
@@ -171,7 +172,7 @@ export const directMessageRouter = router({
   deleteDirectMessageParticipant: getMemberProcedure(
     deleteDirectMessageParticipantInputSchema,
     "roomId",
-  ).mutation<PublicUser>(async ({ ctx, input: { roomId, userId } }) => {
+  ).mutation<MemberRow>(async ({ ctx, input: { roomId, userId } }) => {
     const actorUser = ctx.user;
     await assertIsRoom(ctx.db, roomId, RoomType.DirectMessage);
     // The key is read with the owner and before the participants it names, as the add reads it
@@ -240,17 +241,35 @@ export const directMessageRouter = router({
         ? `${targetUser.name} left the group.`
         : `${targetUser.name} was removed by ${actorUser.name}.`,
     ).match(noop, console.error);
-    return targetUser;
+    // The answer is the membership the removal tombstoned, as a member's row reads it: the removed member's own settings stay
+    // Private to them
+    return {
+      deletedAt: removedUserToRoom.deletedAt,
+      displayName: removedUserToRoom.displayName,
+      roomId,
+      userId,
+      version: removedUserToRoom.version,
+    };
   }),
   hideDirectMessage: standardAuthedProcedure
     .input(hideDirectMessageInputSchema)
-    .mutation<void>(async ({ ctx, input }) => {
+    .mutation<UserToRoomInMessage>(async ({ ctx, input }) => {
       await assertIsMember(ctx, input);
       await assertIsRoom(ctx.db, input, RoomType.DirectMessage);
-      await ctx.db
-        .update(usersToRoomsInMessage)
-        .set({ isHidden: true })
-        .where(getRoomMembershipWhere(input, ctx.user.id));
+      const hiddenUserToRoom = (
+        await ctx.db
+          .update(usersToRoomsInMessage)
+          .set({ isHidden: true })
+          .where(getRoomMembershipWhere(input, ctx.user.id))
+          .returning()
+      )[0];
+      // The answer is the viewer's own membership, which the list drops by its isHidden at the version it names
+      return requireMutation(
+        hiddenUserToRoom,
+        Operation.Update,
+        DatabaseEntityType.UserToRoom,
+        JSON.stringify({ roomId: input }),
+      );
     }),
   readDirectMessages: standardAuthedProcedure
     .input(readDirectMessagesInputSchema)

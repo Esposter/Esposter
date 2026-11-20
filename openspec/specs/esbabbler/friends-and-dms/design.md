@@ -29,7 +29,7 @@ On the client, the friend and request lists are kept current by the rows their r
 
 The **New Message** dialog lists accepted friends; selecting one or more and confirming calls `createDirectMessage`, which finds or creates the DM room. Idempotency comes from `rooms.participantKey` — the sorted participant ids joined into one string with a unique index — so two users always share exactly one DM room. Group DMs have no size cap of their own — `createDirectMessageInputSchema` bounds the participant list only by the shared `MAX_READ_LIMIT`, and the router's own check is that every participant is an accepted friend — the creator is deduplicated out of the target list first, so naming yourself is a no-op and naming only yourself is the one rejection. They show a generated name ("You, Alice, Bob") unless the creator sets one, and 1:1 DM names are derived at display time from the other participant so they never go stale. Hovering a DM row reveals a close action that soft-hides it (`usersToRooms.isHidden = true`) without deleting the thread.
 
-Anyone in a group DM may leave it, and only its owner — the participant who created it — removes somebody else, as in Discord. `deleteDirectMessageParticipant` refuses any other removal, and the participants popover offers Remove to the owner alone and Leave Group to everyone else — leaving calls the same procedure with the reader's own id and takes the conversation out of their list. An owner who leaves hands the group to a remaining participant in the same transaction, because the owner's permissions are checked without a membership lookup and a departed owner would otherwise keep every gate on a conversation they are not in; `deleteRoom` refuses a direct message for the same reason, so the only exits are leaving and hiding. When the owner leaves, the members still in the group who are online are sent an `updateRoom` event naming the new owner, so their owner controls follow without a reload.
+Anyone in a group DM may leave it, and only its owner — the participant who created it — removes somebody else, as in Discord. `deleteDirectMessageParticipant` refuses any other removal, and the participants popover offers Remove to the owner alone and Leave Group to everyone else — leaving calls the same procedure with the reader's own id and takes the conversation out of their list. The removal is awaited: its answer is the membership it tombstoned, shaped as a member's row, and that tombstone is what takes the participant off the popover and a reader's conversation off their list. An owner who leaves hands the group to a remaining participant in the same transaction, because the owner's permissions are checked without a membership lookup and a departed owner would otherwise keep every gate on a conversation they are not in; `deleteRoom` refuses a direct message for the same reason, so the only exits are leaving and hiding. When the owner leaves, the members still in the group who are online are sent an `updateRoom` event naming the new owner, so their owner controls follow without a reload.
 
 DMs are invisible to non-participants: invite links are rejected for `RoomType.DirectMessage` and public room discovery excludes them. DM calls work like room calls (see [calls](../calls/README.md)); starting one posts a `MessageType.Call` system message in the thread.
 
@@ -45,26 +45,27 @@ DMs are invisible to non-participants: invite links are rejected for `RoomType.D
 
 ## Procedures
 
-| Router                          | Procedures                                                                                                                                                             |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `friend`                        | `readFriends`, `deleteFriend`, `searchUsers` (excludes self + blocks)                                                                                                  |
-| `friendRequest`                 | `sendFriendRequest`, `acceptFriendRequest`, `declineFriendRequest`, `readFriendRequests`                                                                               |
-| `block`                         | `createBlock`, `deleteBlock`, `readBlockedUsers`                                                                                                                       |
-| `room` (nested `directMessage`) | `createDirectMessage`, `readDirectMessages`, `readDirectMessageParticipants`, `createDirectMessageParticipants`, `deleteDirectMessageParticipant`, `hideDirectMessage` |
+| Router                          | Procedures                                                                                                                            |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `friend`                        | `readFriends`, `deleteFriend`, `searchUsers` (excludes self + blocks)                                                                 |
+| `friendRequest`                 | `sendFriendRequest`, `acceptFriendRequest`, `declineFriendRequest`, `readFriendRequests`                                              |
+| `block`                         | `createBlock`, `deleteBlock`, `readBlockedUsers`                                                                                      |
+| `room` (nested `directMessage`) | `createDirectMessage`, `readDirectMessages`, `createDirectMessageParticipants`, `deleteDirectMessageParticipant`, `hideDirectMessage` |
 
 ## Key files
 
-| File                                                             | Role                                                    |
-| ---------------------------------------------------------------- | ------------------------------------------------------- |
-| `packages/db-schema/src/schema/social/friendRequestsInSocial.ts` | Pending-request table                                   |
-| `packages/db-schema/src/schema/social/friendsInSocial.ts`        | Accepted-friendship table                               |
-| `packages/db-schema/src/schema/social/blocksInSocial.ts`         | Block table                                             |
-| `apps/web/server/trpc/routers/friend.ts`                         | Friend procedures                                       |
-| `apps/web/server/trpc/routers/friendRequest.ts`                  | Request lifecycle                                       |
-| `apps/web/server/trpc/routers/block.ts`                          | Blocking                                                |
-| `apps/web/server/trpc/routers/room/directMessage.ts`             | DM creation, participants, hide                         |
-| `apps/web/app/pages/messages/friends.vue`                        | Friends management page                                 |
-| `apps/web/app/store/message/user/friend.ts`                      | Friends client state (+ `friendRequest.ts`, `block.ts`) |
+| File                                                             | Role                                                                                                  |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/social/friendRequestsInSocial.ts` | Pending-request table                                                                                 |
+| `packages/db-schema/src/schema/social/friendsInSocial.ts`        | Accepted-friendship table                                                                             |
+| `packages/db-schema/src/schema/social/blocksInSocial.ts`         | Block table                                                                                           |
+| `apps/web/server/trpc/routers/friend.ts`                         | Friend procedures                                                                                     |
+| `apps/web/server/trpc/routers/friendRequest.ts`                  | Request lifecycle                                                                                     |
+| `apps/web/server/trpc/routers/block.ts`                          | Blocking                                                                                              |
+| `apps/web/server/trpc/routers/room/directMessage.ts`             | DM creation, participants, hide                                                                       |
+| `apps/web/app/store/message/room/directMessage.ts`               | DM list as a view over the rooms and the reader's live memberships, participants from the member rows |
+| `apps/web/app/pages/messages/friends.vue`                        | Friends management page                                                                               |
+| `apps/web/app/store/message/user/friend.ts`                      | Friends client state (+ `friendRequest.ts`, `block.ts`)                                               |
 
 ## Notes
 

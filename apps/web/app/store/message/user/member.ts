@@ -5,7 +5,7 @@ import type { Draft } from "#src/models/shared/overlay/Draft";
 import type { Page, PublicUser } from "@esposter/db-schema";
 
 import { MemberCounts } from "#src/models/message/user/MemberCounts";
-import { foldAsciiCase } from "#src/services/message/member/foldAsciiCase";
+import { compareMemberNames } from "#src/services/message/member/compareMemberNames";
 import { getMemberRowKey } from "#src/services/message/member/getMemberRowKey";
 import { getRenameMemberEntry } from "#src/services/message/member/getRenameMemberEntry";
 import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
@@ -19,7 +19,7 @@ import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useUserStore } from "#src/store/message/user/index";
 import { useOverlayStore } from "#src/store/overlay";
-import { compareText, getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 // A list names each of its members by the room and the user, and the rows themselves are the overlay's
 type MemberKey = Pick<MemberRow, "roomId" | "userId">;
@@ -73,11 +73,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
     return joinListedMembers(listedMemberKeys.value, roomMemberRows, userMap, (user, row) => ({
       ...user,
       displayName: row.displayName,
-    })).toSorted(
-      (firstMember, secondMember) =>
-        compareText(foldAsciiCase(firstMember.displayName), foldAsciiCase(secondMember.displayName)) ||
-        compareText(firstMember.id, secondMember.id),
-    );
+    })).toSorted(compareMemberNames);
   });
   // Server-computed totals for the member list headers — the paginated items only hold loaded pages. Keyed by
   // Room for the same reason the list is: they describe one room, only the network can produce them, and a

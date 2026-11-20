@@ -5,6 +5,7 @@ import type { PublicUser, UserEvent, UserStatusInMessage } from "@esposter/db-sc
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
+import { getResolvedDisplayName } from "#shared/services/room/getResolvedDisplayName";
 import { inJsonArray } from "@esposter/db";
 import {
   getDetectedUserStatus,
@@ -23,7 +24,7 @@ const announceRoomMemberJoined = async (
   status: undefined | UserStatusInMessage,
 ) => {
   const event = {
-    data: { deletedAt, displayName, roomId, user, userId, version },
+    data: { deletedAt, displayName: getResolvedDisplayName(displayName, user.name), roomId, user, userId, version },
     type: "joinRoom",
   } satisfies UserEvent;
   await Promise.all([
