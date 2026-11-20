@@ -13,7 +13,7 @@ const emit = defineEmits<{ "update:delete-mode": [value: true]; "update:update-m
 const commentStore = useCommentStore();
 const { updateComment } = commentStore;
 const editedDescriptionHtml = ref(comment.description);
-const saveComment = useSaveRichTextEdit(
+const { isSaving, save: saveComment } = useSaveRichTextEdit(
   editedDescriptionHtml,
   () => comment.description,
   () => updateComment({ description: editedDescriptionHtml.value, id: comment.id }),
@@ -25,7 +25,9 @@ const saveComment = useSaveRichTextEdit(
   <PostDescriptionRichTextEditor v-model="editedDescriptionHtml" height="4rem" placeholder="">
     <template #append-footer="{ editor }">
       <UiButton @click="emit('update:update-mode', false)">Cancel</UiButton>
-      <UiButton v-if="editor" :variant="UiButtonVariant.Accent" @click="saveComment(editor)">Save</UiButton>
+      <UiButton v-if="editor" :variant="UiButtonVariant.Accent" :is-pending="isSaving" @click="saveComment(editor)">
+        Save
+      </UiButton>
     </template>
   </PostDescriptionRichTextEditor>
 </template>

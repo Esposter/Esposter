@@ -19,17 +19,17 @@ const { updateMessage } = dataStore;
 // The stored markup, never the rendered output: the render resolves a mention to the reader's own display name
 // And a custom emoji to a presigned read url that expires, so saving what was rendered would persist both
 const editedMessageHtml = ref(message.message);
-const saveMessage = useSaveRichTextEdit(
+const { isSaving, save: saveMessage } = useSaveRichTextEdit(
   editedMessageHtml,
   () => message.message,
-  () => updateMessage({ id: message.id, message: editedMessageHtml.value, roomId: message.roomId }),
+  async () => updateMessage({ id: message.id, message: editedMessageHtml.value, roomId: message.roomId }),
   emit,
 );
 const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
     return {
       Enter: () => {
-        saveMessage(this.editor);
+        void saveMessage(this.editor);
         return true;
       },
     };
@@ -51,7 +51,9 @@ const editorExtensions = [keyboardExtension, MentionExtension, CustomEmojiExtens
   >
     <template #append-footer="{ editor }">
       <UiButton :variant="UiButtonVariant.Quiet" @click="emit('update:update-mode', false)">Cancel</UiButton>
-      <UiButton v-if="editor" :variant="UiButtonVariant.Accent" @click="saveMessage(editor)">Save</UiButton>
+      <UiButton v-if="editor" :variant="UiButtonVariant.Accent" :is-pending="isSaving" @click="saveMessage(editor)">
+        Save
+      </UiButton>
     </template>
   </RichTextEditor>
 </template>
