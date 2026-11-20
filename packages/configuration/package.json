@@ -65,6 +65,7 @@
     "@vitest/browser-playwright": "catalog:",
     "@vizejs/unplugin": "catalog:",
     "@vizejs/vite-plugin": "catalog:",
+    "eslint": "catalog:",
     "eslint-plugin-depend": "catalog:",
     "eslint-plugin-jsonc": "catalog:",
     "eslint-plugin-oxlint": "catalog:",
