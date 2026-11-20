@@ -4,8 +4,7 @@ import type { Entry } from "#src/models/shared/overlay/Entry";
 
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
-import { createArrival } from "#src/services/shared/overlay/createArrival";
-import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
@@ -124,16 +123,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
       async () => {
         const follow = await $trpc.message.followThread.mutate({ roomId, threadRootId });
         if (!threadRoot) await getResultAsync(() => refetchFollowedThreads(roomId)).match(noop, createErrorAlert);
-        return {
-          arrivals: [createArrival(threadFollowTable, follow)],
-          confirmed: [
-            createConfirmation(
-              threadFollowTable,
-              getThreadFollowRowKey(roomId, threadRootId, userId.value),
-              follow.version,
-            ),
-          ],
-        };
+        return createRowResponse(threadFollowTable, follow);
       },
       { entry: getThreadFollowEntry(roomId, threadRootId, userId.value, false, new Date()), onError: createErrorAlert },
     );
@@ -142,16 +132,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     writeOptimistic(
       async () => {
         const follow = await $trpc.message.unfollowThread.mutate({ roomId, threadRootId });
-        return {
-          arrivals: [createArrival(threadFollowTable, follow)],
-          confirmed: [
-            createConfirmation(
-              threadFollowTable,
-              getThreadFollowRowKey(roomId, threadRootId, userId.value),
-              follow.version,
-            ),
-          ],
-        };
+        return createRowResponse(threadFollowTable, follow);
       },
       { entry: getThreadFollowEntry(roomId, threadRootId, userId.value, true, new Date()), onError: createErrorAlert },
     );
