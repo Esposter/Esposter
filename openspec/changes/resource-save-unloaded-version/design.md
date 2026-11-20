@@ -13,11 +13,11 @@ Keep, per resource id, the version the store last confirmed for that resource's 
 - The map is written where `contentBaseVersion` is written today (the read at the opening and `keepUnwrittenContent`), plus the confirmed-save branch, which currently writes it only when `checkIsLoaded(id)`.
 - Rejected: the issued version. It refuses our own queued save after our own earlier save confirmed a new version.
 - Rejected: reading the held row's version as the proxy for "latest". A row read from Recent is exactly the signal that another device has moved on, so it must not raise the version a save is built on.
-- The map is cleared when the store holds no pending save for the id, so it does not grow across openings.
+- The entry is held while its resource is loaded or a save of it is queued, and dropped once neither holds, so the map does not grow across openings. Dropping it on "no pending save" alone was the first draft and is wrong: a loaded resource between two saves has no pending save, so its next save would send no version.
 
 ## Tests
 
-- Regression, written first and seen failing: open resource R at version 3, issue a save, close R while it is in flight, deliver a row read at version 4, then send the queued save. It must carry version 3 (or the version the in-flight save confirmed), so the server's stale check refuses it.
+- Regression, written first and seen failing: two saves are queued on a resource read at version 0, the resource is closed, and another device's row at version 1 arrives before the queued save is sent. Before the fix both queued saves are sent at version 1; after it, at version 0, so the server's stale check refuses them. The two tests are the scenarios named in `tasks.md`.
 - A queued save of a loaded resource is unchanged (existing `saveContent` tests).
 
 ## Ownership

@@ -620,7 +620,7 @@ describe(useResourceStore, () => {
 
   // A save queued behind an in-flight one carries the version its content was read at, not the held row's. Another
   // Device's save moves the row, so a save sent with that version is accepted over its content, with no stale notice
-  test("A queued save of a closed resource is refused after another device saved", async () => {
+  test("a queued save of a closed resource is refused after another device saved", async () => {
     expect.hasAssertions();
 
     const { promise: isFirstSaveReleased, resolve: releaseFirstSave } = Promise.withResolvers<void>();
@@ -647,7 +647,9 @@ describe(useResourceStore, () => {
     clearResource(resourceId);
     // Another device saves the resource at version 1 while the first save is still in flight
     serverContentVersion = 1;
-    useOverlayStore().arrive(resourceTable, { ...createResource(resourceId), contentVersion: 1, version: 1 });
+    const overlayStore = useOverlayStore();
+    const { arrive } = overlayStore;
+    arrive(resourceTable, { ...createResource(resourceId), contentVersion: 1, version: 1 });
     releaseFirstSave();
     await settleSave();
 
@@ -658,7 +660,7 @@ describe(useResourceStore, () => {
 
   // The row another device's read brings does not move the version the content was read at. A save queued behind a
   // Refused one is sent with that content version, so the server holds it to the version the content carries
-  test("A row read from another device does not raise the version a save carries", async () => {
+  test("a row read from another device does not raise the version a save carries", async () => {
     expect.hasAssertions();
 
     const { promise: isFirstSaveReleased, resolve: releaseFirstSave } = Promise.withResolvers<void>();
@@ -680,7 +682,9 @@ describe(useResourceStore, () => {
     saveContent(createDefaultSheetResource());
     saveContent(createDefaultSheetResource());
     clearResource(resourceId);
-    useOverlayStore().arrive(resourceTable, { ...createResource(resourceId), contentVersion: 1, version: 1 });
+    const overlayStore = useOverlayStore();
+    const { arrive } = overlayStore;
+    arrive(resourceTable, { ...createResource(resourceId), contentVersion: 1, version: 1 });
     releaseFirstSave();
     await settleSave();
 

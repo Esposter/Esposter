@@ -41,7 +41,9 @@ import { NotificationSeverity } from "@esposter/db-schema";
 import {
   getResultAsync,
   getSynchronizedFunction,
+  InvalidOperationError,
   noop,
+  Operation,
   RoutePath,
   toRawDeep,
   withFinalizerAsync,
@@ -124,9 +126,15 @@ export const useResourceStore = defineStore("resource", () => {
   // Stored as. The open row names the hash of the content its latest write left, so a row that names this one names no
   // Content the store lacks
   let persistedContentHash: string | undefined;
-  // The version of the content the store holds for the loaded resource, which its saves send. It moves when the content is
-  // Read, saved or kept, and never with a row a read brings, since a row can land ahead of the content it describes
-  let contentBaseVersion = 0;
+  // The version of each resource's content the store last had confirmed: the one a read of its content was taken at, or
+  // The one its own save wrote. A save sends that version whether or not its resource is loaded, and never a row's version,
+  // Since a row another device moved on, or a Recent read brought, can be ahead of the content in hand
+  const confirmedContentVersions = new Map<string, number>();
+  // Held while the resource is loaded or a save of it is queued, and dropped once neither holds, so the map does not grow
+  // Across the resources a session opens
+  const forgetConfirmedContentVersion = (id: string) => {
+    if (!checkIsLoaded(id) && !checkIsSavePending(id)) confirmedContentVersions.delete(id);
+  };
   // The stored bytes this client holds — read straight from R2, or sent by a save whose hash the server
   // Confirmed — which is what a large document's next save is compressed against. Not reactive and not persisted:
   // Nothing renders it, and a reload reads the bytes afresh
@@ -217,12 +225,12 @@ export const useResourceStore = defineStore("resource", () => {
     contentResourceId = "";
     persistedContentJson = "";
     persistedContentHash = undefined;
-    contentBaseVersion = 0;
     contentBaseline = undefined;
     isContentStale.value = false;
     heldSave.value = undefined;
     isSaveContentFailed.value = false;
     unwrittenContentResourceId.value = "";
+    forgetConfirmedContentVersion(id);
   };
 
   // This resource's content was replaced underneath whatever blade is open — a restore is the one write that
@@ -283,7 +291,7 @@ export const useResourceStore = defineStore("resource", () => {
     // The hash is the row's as it was before the blob was read, so a save that lands during the read leaves the hash behind
     // The content, and the next refetch of the row reads it again rather than missing it
     persistedContentHash = contentHash;
-    contentBaseVersion = contentVersion;
+    confirmedContentVersions.set(id, contentVersion);
     if (storedContent) contentBaseline = storedContent;
     applyContent(content as ResourceContent<TType> | undefined);
   };
@@ -363,7 +371,7 @@ export const useResourceStore = defineStore("resource", () => {
     const resourceValue = resource.value;
     if (!resourceValue || !heldSave.value) return;
 
-    contentBaseVersion = heldSave.value.contentVersion;
+    confirmedContentVersions.set(resourceValue.id, heldSave.value.contentVersion);
     heldSave.value = undefined;
     isContentStale.value = false;
     await ResourceContentHookMap.Keep.run(resourceValue.type);
@@ -416,18 +424,23 @@ export const useResourceStore = defineStore("resource", () => {
     // Promise has settled, so a waiter released on the way out would read the save as not failed
     const settle = () => {
       if (contentSaves.value.get(id) === settled) contentSaves.value.delete(id);
+      forgetConfirmedContentVersion(id);
       release();
     };
     writeOptimistic(
       async () => {
         // Read when the write is sent rather than when it was issued: a save that queued behind another carries the version
-        // That one answered. The loaded resource's version is the one its content was read or saved at, since a read of its
-        // Row can land before the other device's save is adopted, and a save sent with that row's version would overwrite it
+        // That one answered. It is the version the content was last confirmed at, loaded or not, since a row can land before
+        // The other device's save is adopted, and a save sent with that row's version would overwrite it
         const target = getHeldResource(resourceRows.value, id) ?? resourceValue;
         const resourceRouter = getResourceRouter(target.type);
         // The version the content it sends was read or saved at, which is what the server compares. A large save takes the
         // Same pair, so a delta or a staged save never sends a version the row it reads from has not yet been told of
-        const sent = { contentVersion: checkIsLoaded(id) ? contentBaseVersion : target.contentVersion, id: target.id };
+        const contentVersion = confirmedContentVersions.get(id);
+        if (contentVersion === undefined)
+          throw new InvalidOperationError(Operation.Update, id, "has no confirmed content version");
+
+        const sent = { contentVersion, id: target.id };
         const input = { content: issuedContent, ...sent };
         const baseline = contentBaseline?.id === target.id ? contentBaseline : undefined;
         // A body the server's request size limiter would refuse goes as a delta against the stored bytes when this
@@ -449,10 +462,12 @@ export const useResourceStore = defineStore("resource", () => {
           savedResource.contentHash === contentHash
             ? { bytes: contentBytes, hash: contentHash, id: target.id }
             : undefined;
+        // Kept whether or not the resource is still loaded, since a save queued behind this one
+        // Carries the version it confirmed
+        confirmedContentVersions.set(id, savedResource.contentVersion);
         if (checkIsLoaded(id)) {
           persistedContentJson = contentJson;
           persistedContentHash = savedResource.contentHash;
-          contentBaseVersion = savedResource.contentVersion;
           isSaveContentFailed.value = false;
         }
         settle();
