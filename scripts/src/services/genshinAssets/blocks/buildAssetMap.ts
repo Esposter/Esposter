@@ -1,4 +1,4 @@
-import { getMemoryBoundedShardCount } from "#src/services/genshinAssets/blocks/getMemoryBoundedShardCount";
+import { computeMemoryBoundedShardCount } from "#src/services/genshinAssets/blocks/computeMemoryBoundedShardCount";
 import { getShardDirectory } from "#src/services/genshinAssets/blocks/getShardDirectory";
 import { getShardMapName } from "#src/services/genshinAssets/blocks/getShardMapName";
 import { linkInstalledBlocks } from "#src/services/genshinAssets/blocks/linkInstalledBlocks";
@@ -29,7 +29,10 @@ import { join } from "node:path";
 // AnimeStudio run at once, then merged into
 // The one CAB map and asset map a single run would have written, and the index is written from it
 export const buildAssetMap = async (shardCount?: number): Promise<void> => {
-  const shards = partitionBlockFiles(await linkInstalledBlocks(), shardCount ?? (await getMemoryBoundedShardCount()));
+  const shards = partitionBlockFiles(
+    await linkInstalledBlocks(),
+    shardCount ?? (await computeMemoryBoundedShardCount()),
+  );
   const indices = shards.map((_shard, index) => index);
   const settled = await Promise.allSettled(shards.map((files, index) => mapShard(files, index)));
   const failures = settled.flatMap((result) =>

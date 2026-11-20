@@ -20,14 +20,12 @@ export const exportResolvedAssets = async (
   exportType?: AnimeStudioExportType,
 ): Promise<{ assets: (IndexedAsset & { file: string })[]; unresolved: string[] }> => {
   const keyObjectsMap = Map.groupBy(resolvedObjects, ({ block, pathId }) => toObjectKey(block, pathId));
-  const keyIndexedMap = Map.groupBy(
-    await readIndexedAssets(
-      ({ block, pathId, type }) =>
-        types.some((assetType) => assetType === type) && keyObjectsMap.has(toObjectKey(block, pathId)),
-      GENSHIN_ANIMESTUDIO_OPTIONS,
-    ),
-    ({ block, pathId }) => toObjectKey(block, pathId),
+  const indexedAssets = await readIndexedAssets(
+    ({ block, pathId, type }) =>
+      types.some((assetType) => assetType === type) && keyObjectsMap.has(toObjectKey(block, pathId)),
+    GENSHIN_ANIMESTUDIO_OPTIONS,
   );
+  const keyIndexedMap = Map.groupBy(indexedAssets, ({ block, pathId }) => toObjectKey(block, pathId));
   const assets: (IndexedAsset & { file: string })[] = [];
   const unresolved: string[] = [];
   for (const [key, objects] of keyObjectsMap) {

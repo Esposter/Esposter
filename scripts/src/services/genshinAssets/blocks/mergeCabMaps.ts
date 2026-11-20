@@ -7,13 +7,13 @@ import { writeCabMap } from "#src/services/recreation/animeStudio/writeCabMap";
 // AnimeStudio keeps the first file it finds of a name, a CAB two runs both hold keeps the record of the earlier map,
 // And the records are written in name order, as AnimeStudio writes its own
 export const mergeCabMaps = (maps: Buffer[], baseFolder: string): Buffer => {
-  const firstRecords = new Map<string, CabMapRecord>();
+  const nameRecordMap = new Map<string, CabMapRecord>();
   for (const bytes of maps)
     for (const record of readCabMap(bytes).records) {
       const key = record.name.toLowerCase();
-      if (!firstRecords.has(key)) firstRecords.set(key, record);
+      if (!nameRecordMap.has(key)) nameRecordMap.set(key, record);
     }
-  const records = [...firstRecords.entries()]
+  const records = [...nameRecordMap.entries()]
     .toSorted(([firstKey], [secondKey]) => (firstKey < secondKey ? -1 : Number(firstKey > secondKey)))
     .map(([, record]) => record);
   return writeCabMap({ baseFolder, records });

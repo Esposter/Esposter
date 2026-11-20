@@ -12,7 +12,7 @@ import { dirname } from "node:path";
 // A map run as processes of their own at once. Each run's output is held until it exits, which a map's warnings keep
 // Small. A below-normal run runs at Below-normal priority (under the Utility QoS clamp on macOS, where a nice value leaves
 // It competing with the Foreground), so a long sweep never slows the session the user works on; how many run at once is
-// The caller's, sized to the memory by `getMemoryBoundedShardCount`
+// The caller's, sized to the memory by `computeMemoryBoundedShardCount`
 export const runAnimeStudioAsync = async (
   args: string[],
   options: AnimeStudioOptions,
