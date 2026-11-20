@@ -69,7 +69,7 @@ await loadContent();
     </UiFrame>
     <UiFrame title="Search">
       <p text-muted>Search engines list a published page unless this is off.</p>
-      <UiSwitch v-model="webpageEditor.isIndexable" is-label-shown label="Show in search results" />
+      <UiSwitch v-model="webpageEditor.isIndexable" is-label-visible label="Show in search results" />
     </UiFrame>
     <p text-sm text-muted flex gap-2 items-center md:col-span-2>
       <UiIcon :meaning="UiIconMeaning.Info" />

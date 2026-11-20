@@ -4,7 +4,7 @@ import { Checkbox } from "@vuetify/v0";
 
 interface Props {
   // The label drawn beside the box; a box in a row of a table is named by its label alone
-  isLabelShown?: true | undefined;
+  isLabelVisible?: true | undefined;
   // Some of what it stands for is checked and some is not, as a select-all over part of a list
   isMixed?: true | undefined;
   // Its accessible name, and the text beside the box where it is shown
@@ -24,7 +24,7 @@ defineProps<Props>();
       <span class="box" :data-state="attrs['data-state']" flex shrink-0 size-6 ui-field>
         <UiIcon class="mark" :meaning="isMixed ? UiIconMeaning.Mixed : UiIconMeaning.Success" />
       </span>
-      <span v-if="isLabelShown">{{ label }}</span>
+      <span v-if="isLabelVisible">{{ label }}</span>
     </button>
   </Checkbox.Root>
 </template>

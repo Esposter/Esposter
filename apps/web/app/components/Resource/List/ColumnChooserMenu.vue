@@ -23,7 +23,7 @@ const { hiddenColumnKeys, toggleableHeaders, toggleColumn } = useResourceListCol
     <UiCheckbox
       v-for="{ key, title } of toggleableHeaders"
       :key
-      is-label-shown
+      is-label-visible
       :label="title"
       :model-value="!hiddenColumnKeys.includes(key)"
       @update:model-value="toggleColumn(key)"

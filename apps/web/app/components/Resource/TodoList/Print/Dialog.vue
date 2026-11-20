@@ -28,7 +28,7 @@ useEventListener("afterprint", () => {
     title="Print list"
     :size="UiDialogSize.Small"
   >
-    <UiSwitch v-model="isStepsPrinted" is-label-shown label="Print steps" />
-    <UiSwitch v-model="isNotesPrinted" is-label-shown label="Print notes" />
+    <UiSwitch v-model="isStepsPrinted" is-label-visible label="Print steps" />
+    <UiSwitch v-model="isNotesPrinted" is-label-visible label="Print notes" />
   </StyledDialog>
 </template>

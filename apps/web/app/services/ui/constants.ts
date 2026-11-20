@@ -43,7 +43,7 @@ export const POPOVER_POSITION_TRY = "flip-block, flip-inline, flip-block flip-in
 // How many chosen titles a select holding several lists on its trigger, past which it reads how many are chosen
 export const SELECT_TRIGGER_TITLE_LIMIT = 3;
 // The autofill each kind of text field offers, which the browser fills from the reader's own details
-export const TEXT_FIELD_AUTOCOMPLETES: Partial<Record<UiTextFieldType, string>> = {
+export const TEXT_FIELD_TYPE_AUTOCOMPLETE_MAP: Partial<Record<UiTextFieldType, string>> = {
   [UiTextFieldType.Email]: "email",
   [UiTextFieldType.Tel]: "tel",
   [UiTextFieldType.Url]: "url",

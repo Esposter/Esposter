@@ -108,7 +108,7 @@ const askRemove = (index: number): void => {
         <UiSwitch
           :model-value="calculatedValue.includeIntoResult"
           label="Include into result"
-          is-label-shown
+          is-label-visible
           @update:model-value="(newIncludeIntoResult) => setIncludeIntoResult(index, newIncludeIntoResult)"
         />
         <UiIconButton label="Remove calculated value" :meaning="UiIconMeaning.Remove" @click="askRemove(index)" />

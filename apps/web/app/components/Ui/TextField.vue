@@ -4,7 +4,7 @@ import type { UiRule } from "#src/models/ui/UiRule";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
-import { TEXT_FIELD_AUTOCOMPLETES } from "#src/services/ui/constants";
+import { TEXT_FIELD_TYPE_AUTOCOMPLETE_MAP } from "#src/services/ui/constants";
 import { omitUndefined } from "@esposter/shared";
 import { Input } from "@vuetify/v0";
 
@@ -95,7 +95,7 @@ defineExpose({ element });
           :aria-describedby="error && errors.length === 0 ? errorId : attrs['aria-describedby']"
           :aria-invalid="error || isInvalid ? true : attrs['aria-invalid']"
           :aria-required="isRequired || undefined"
-          :autocomplete="type ? TEXT_FIELD_AUTOCOMPLETES[type] : undefined"
+          :autocomplete="type ? TEXT_FIELD_TYPE_AUTOCOMPLETE_MAP[type] : undefined"
           :autofocus="isAutofocus || undefined"
           :class="{ 'ui-pill pl-10 pr-10': isSearch }"
           :maxlength

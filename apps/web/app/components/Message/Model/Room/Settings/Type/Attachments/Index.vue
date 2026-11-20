@@ -66,7 +66,7 @@ const save = () => {
         <UiCheckbox
           v-for="category of MimeCategories"
           :key="category"
-          is-label-shown
+          is-label-visible
           :label="category"
           :model-value="editedAllowedMimeCategories.includes(category)"
           @update:model-value="

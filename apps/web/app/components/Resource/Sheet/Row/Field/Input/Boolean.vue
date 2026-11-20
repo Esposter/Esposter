@@ -21,7 +21,7 @@ useAutofocus(
   <!-- Inline, the cell has given up its padding to the editor, so the box keeps the text's start -->
   <div ref="container" :class="{ 'px-3': isInline }">
     <UiCheckbox
-      :is-label-shown="isInline ? undefined : true"
+      :is-label-visible="isInline ? undefined : true"
       :label="column.name"
       :model-value="modelValue ?? false"
       @update:model-value="modelValue = $event"

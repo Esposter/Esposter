@@ -35,7 +35,7 @@ const inputTypeItems = Object.values(SurveyMultipleTextItemInputType).map((input
         @update:model-value="(inputType) => updateItem(row.id, { inputType })"
       />
       <UiCheckbox
-        is-label-shown
+        is-label-visible
         :label="`Required, item ${index + 1}`"
         :model-value="row.item.isRequired"
         @update:model-value="(isRequired) => updateItem(row.id, { isRequired })"

@@ -74,7 +74,7 @@ const setOtherText = (text: string) => {
       <div :aria-describedby="describedBy" :aria-labelledby="labelledBy" role="group" flex flex-col gap-2>
         <UiCheckbox
           v-if="node.props.hasSelectAll && choiceValues.length > 0"
-          is-label-shown
+          is-label-visible
           :aria-invalid="error ? true : undefined"
           :disabled="isDisabled"
           :is-mixed="isSomeChosen && !isAllChosen ? true : undefined"
@@ -85,7 +85,7 @@ const setOtherText = (text: string) => {
         <UiCheckbox
           v-for="choice of orderedChoices"
           :key="choice.value"
-          is-label-shown
+          is-label-visible
           :aria-invalid="error ? true : undefined"
           :disabled="isDisabled"
           :label="getSurveyChoiceText(choice)"
@@ -94,7 +94,7 @@ const setOtherText = (text: string) => {
         />
         <UiCheckbox
           v-if="node.props.hasNone"
-          is-label-shown
+          is-label-visible
           :aria-invalid="error ? true : undefined"
           :disabled="isDisabled"
           :label="node.props.noneText || SURVEY_NONE_TITLE"
@@ -103,7 +103,7 @@ const setOtherText = (text: string) => {
         />
         <template v-if="node.props.hasOther">
           <UiCheckbox
-            is-label-shown
+            is-label-visible
             :aria-invalid="error ? true : undefined"
             :disabled="isDisabled"
             :label="node.props.otherText || SURVEY_OTHER_TITLE"

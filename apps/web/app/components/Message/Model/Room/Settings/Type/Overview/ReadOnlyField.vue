@@ -5,6 +5,6 @@ const emit = defineEmits<{ save: [] }>();
 
 <template>
   <MessageModelRoomSettingsField hint="Only members with Manage Messages permission can post.">
-    <UiSwitch v-model="modelValue" is-label-shown label="Read-only" @update:model-value="emit('save')" />
+    <UiSwitch v-model="modelValue" is-label-visible label="Read-only" @update:model-value="emit('save')" />
   </MessageModelRoomSettingsField>
 </template>

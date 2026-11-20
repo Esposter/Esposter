@@ -8,7 +8,7 @@ import { mergeProps } from "vue";
 
 interface Props {
   // The trigger's own text already reads the label, so no tooltip says it again: "Add filter"
-  isLabelShown?: true | undefined;
+  isLabelVisible?: true | undefined;
   items: UiMenuItem<T>[];
   // The menu's accessible name, and its trigger's, since a trigger may show no more than a mark
   label: string;
@@ -41,7 +41,7 @@ attach(content);
 </script>
 
 <template>
-  <UiTooltip #default="{ activatorProps }" :is-disabled="isOpen || isLabelShown" :label>
+  <UiTooltip #default="{ activatorProps }" :is-disabled="isOpen || isLabelVisible" :label>
     <UiButton
       ref="trigger"
       :="mergeProps(activatorProps, $attrs)"

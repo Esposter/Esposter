@@ -52,7 +52,7 @@ defineExpose({ element });
         :aria-describedby="[valueId, describedBy].filter(Boolean).join(' ')"
         :aria-labelledby="labelledBy"
         :disabled="isDisabled"
-        is-label-shown
+        is-label-visible
         :label
         :variant="UiButtonVariant.Field"
         flex-1

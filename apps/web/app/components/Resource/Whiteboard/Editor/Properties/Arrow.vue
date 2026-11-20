@@ -35,7 +35,7 @@ const setArrowhead = (arrowEndKey: ArrowEndKey, arrowhead?: ArrowheadKind) =>
     />
     <UiCheckbox
       :model-value="arrow.start.arrowhead !== undefined"
-      is-label-shown
+      is-label-visible
       label="Arrowhead at start"
       @update:model-value="
         (newModelValue) => setArrowhead(ArrowEndKey.Start, newModelValue ? WHITEBOARD_DEFAULT_ARROWHEAD : undefined)
@@ -50,7 +50,7 @@ const setArrowhead = (arrowEndKey: ArrowEndKey, arrowhead?: ArrowheadKind) =>
     />
     <UiCheckbox
       :model-value="arrow.end.arrowhead !== undefined"
-      is-label-shown
+      is-label-visible
       label="Arrowhead at end"
       @update:model-value="
         (newModelValue) => setArrowhead(ArrowEndKey.End, newModelValue ? WHITEBOARD_DEFAULT_ARROWHEAD : undefined)

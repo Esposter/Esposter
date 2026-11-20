@@ -11,7 +11,7 @@ interface Props {
   // No empty one in its place
   anchor?: HTMLElement | undefined;
   // The trigger's own text or a label beside it already reads the label, so no tooltip says it again: a date field
-  isLabelShown?: true | undefined;
+  isLabelVisible?: true | undefined;
   // The panel's accessible name, and its trigger's, since a trigger may show no more than a mark
   label: string;
   positionArea?: string | undefined;
@@ -93,7 +93,7 @@ defineExpose({ triggerElement });
 </script>
 
 <template>
-  <UiTooltip v-if="$slots.trigger" #default="{ activatorProps }" :is-disabled="isOpen || isLabelShown" :label>
+  <UiTooltip v-if="$slots.trigger" #default="{ activatorProps }" :is-disabled="isOpen || isLabelVisible" :label>
     <UiButton
       ref="trigger"
       :="mergeProps(activatorProps, $attrs)"

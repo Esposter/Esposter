@@ -12,7 +12,7 @@ defineProps<Props>();
 
 <template>
   <UiCheckbox
-    is-label-shown
+    is-label-visible
     :label="column.name"
     :model-value="selectedColumnIds.includes(column.id)"
     @update:model-value="

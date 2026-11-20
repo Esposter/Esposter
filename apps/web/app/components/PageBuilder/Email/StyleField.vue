@@ -37,7 +37,7 @@ const enumItems = computed(() =>
     />
     <UiSwitch
       v-else-if="field.type.kind === MjmlAttributeKind.Boolean"
-      is-label-shown
+      is-label-visible
       :label="field.name"
       :model-value="shownValue === 'true'"
       @update:model-value="(value) => emit('update', String(value))"

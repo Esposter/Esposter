@@ -66,7 +66,7 @@ const progressBarItems: UiMenuItem<SurveyProgressBarPlacement>[] = [
       />
       <UiSwitch
         :model-value="rootProps.isQuestionNumbersVisible"
-        is-label-shown
+        is-label-visible
         label="Show question numbers"
         @update:model-value="(isQuestionNumbersVisible) => updateRootProps({ isQuestionNumbersVisible })"
       />

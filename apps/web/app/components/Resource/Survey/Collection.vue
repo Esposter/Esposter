@@ -21,7 +21,7 @@ const save = () => {
     <h2 ui-heading>Collection</h2>
     <UiSwitch
       v-model="editedSettings.isAcceptingResponses"
-      is-label-shown
+      is-label-visible
       label="Accepting responses"
       @update:model-value="save()"
     />

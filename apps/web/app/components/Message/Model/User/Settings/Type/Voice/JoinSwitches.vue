@@ -16,13 +16,13 @@ const { updateUserSettings } = userSettingsStore;
   <div flex flex-col gap-3>
     <UiSwitch
       :model-value="userSettings.isMuteOnJoin"
-      is-label-shown
+      is-label-visible
       label="Mute on join"
       @update:model-value="(isMuteOnJoin) => updateUserSettings({ isMuteOnJoin })"
     />
     <UiSwitch
       :model-value="userSettings.isDeafenOnJoin"
-      is-label-shown
+      is-label-visible
       label="Deafen on join"
       @update:model-value="(isDeafenOnJoin) => updateUserSettings({ isDeafenOnJoin })"
     />

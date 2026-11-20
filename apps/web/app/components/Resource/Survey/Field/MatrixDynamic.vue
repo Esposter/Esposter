@@ -139,7 +139,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
                   v-for="choice of column.choices"
                   :key="String(choice.value)"
                   :aria-invalid="invalid"
-                  is-label-shown
+                  is-label-visible
                   :disabled="isDisabled"
                   :label="getSurveyChoiceText(choice)"
                   :model-value="isChosen(row[column.name], choice.value)"

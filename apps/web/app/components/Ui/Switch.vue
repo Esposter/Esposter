@@ -3,7 +3,7 @@ import { Switch } from "@vuetify/v0";
 
 interface Props {
   // The label drawn beside the switch; a switch in a row that already names it is named by its label alone
-  isLabelShown?: true | undefined;
+  isLabelVisible?: true | undefined;
   // Its accessible name, and the text beside the switch where it is shown
   label: string;
 }
@@ -22,7 +22,7 @@ defineProps<Props>();
       <span class="track" :data-state="attrs['data-state']" p-1 flex shrink-0 h-6 w-11 ui-field ui-pill>
         <span class="thumb" :data-state="attrs['data-state']" size-4 />
       </span>
-      <span v-if="isLabelShown">{{ label }}</span>
+      <span v-if="isLabelVisible">{{ label }}</span>
     </button>
   </Switch.Root>
 </template>

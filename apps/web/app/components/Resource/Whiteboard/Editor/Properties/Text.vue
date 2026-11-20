@@ -46,7 +46,7 @@ const { updateElementProperty } = whiteboardStore;
     <UiCheckbox
       v-if="element.type === PositionedElementType.Text"
       :model-value="!element.isWrapped"
-      is-label-shown
+      is-label-visible
       label="Auto width"
       @update:model-value="
         (isAutoWidth) => updateElementProperty(index, { property: 'isWrapped', value: !isAutoWidth })

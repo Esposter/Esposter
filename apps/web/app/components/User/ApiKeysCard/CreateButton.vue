@@ -81,7 +81,7 @@ const { answer } = useDialogAnswer(isOpen);
           <UiCheckbox
             v-for="mcpScope of McpScopes"
             :key="mcpScope"
-            is-label-shown
+            is-label-visible
             :label="McpScopeTitleMap[mcpScope]"
             :model-value="mcpScopes.includes(mcpScope)"
             @update:model-value="

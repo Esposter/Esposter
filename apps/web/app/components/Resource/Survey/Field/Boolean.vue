@@ -48,7 +48,7 @@ const choice = computed({
         :aria-labelledby="labelledBy"
         :disabled="isDisabled"
         :label="stateLabel"
-        is-label-shown
+        is-label-visible
       />
       <UiRadioGroup
         v-else-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Radio"
@@ -67,7 +67,7 @@ const choice = computed({
         :aria-labelledby="labelledBy"
         :disabled="isDisabled"
         :label="stateLabel"
-        is-label-shown
+        is-label-visible
       />
     </template>
   </ResourceSurveyFieldShell>
