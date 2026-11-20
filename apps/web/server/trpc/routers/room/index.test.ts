@@ -35,19 +35,24 @@ import { readAllResourcePages } from "#src/services/resource/readAllResourcePage
 import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
+  appUsersInMessage,
+  bansInMessage,
   DatabaseEntityType,
   friendsInSocial,
   getLiveRowWhere,
   getRoomEmojiBlobName,
+  invitesInMessage,
   MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES,
   MessageType,
   PublicUserColumns,
   QueueJob,
   RoomPermission,
+  roomEmojisInMessage,
   roomsInMessage,
   StorageBucket,
   userStatusesInMessage,
   usersToRoomsInMessage,
+  webhooksInMessage,
   WRITE_PRESIGNED_URL_DURATION_MS,
 } from "@esposter/db-schema";
 import { chunk, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
@@ -573,21 +578,36 @@ describe("roomRouter", () => {
     await roomCaller.deleteRoom(newRoom.id);
 
     const deletedAt = new Date(0);
-    expect(await mockContext.db.query.invitesInMessage.findFirst({ where: { id: { eq: invite.id } } })).toMatchObject({
-      deletedAt,
-    });
-    expect(await mockContext.db.query.webhooksInMessage.findFirst({ where: { id: { eq: webhook.id } } })).toMatchObject(
-      { deletedAt },
-    );
-    expect(
-      await mockContext.db.query.appUsersInMessage.findFirst({ where: { id: { eq: webhook.userId } } }),
-    ).toMatchObject({ deletedAt });
-    expect(await mockContext.db.query.roomEmojisInMessage.findFirst({ where: { id: { eq: emojiId } } })).toMatchObject({
-      deletedAt,
-    });
-    expect(await mockContext.db.query.bansInMessage.findFirst({ where: { roomId: { eq: newRoom.id } } })).toMatchObject(
-      { deletedAt },
-    );
+    await expect(
+      mockContext.db
+        .select({ deletedAt: invitesInMessage.deletedAt })
+        .from(invitesInMessage)
+        .where(eq(invitesInMessage.id, invite.id)),
+    ).resolves.toStrictEqual([{ deletedAt }]);
+    await expect(
+      mockContext.db
+        .select({ deletedAt: webhooksInMessage.deletedAt })
+        .from(webhooksInMessage)
+        .where(eq(webhooksInMessage.id, webhook.id)),
+    ).resolves.toStrictEqual([{ deletedAt }]);
+    await expect(
+      mockContext.db
+        .select({ deletedAt: appUsersInMessage.deletedAt })
+        .from(appUsersInMessage)
+        .where(eq(appUsersInMessage.id, webhook.userId)),
+    ).resolves.toStrictEqual([{ deletedAt }]);
+    await expect(
+      mockContext.db
+        .select({ deletedAt: roomEmojisInMessage.deletedAt })
+        .from(roomEmojisInMessage)
+        .where(eq(roomEmojisInMessage.id, emojiId)),
+    ).resolves.toStrictEqual([{ deletedAt }]);
+    await expect(
+      mockContext.db
+        .select({ deletedAt: bansInMessage.deletedAt })
+        .from(bansInMessage)
+        .where(eq(bansInMessage.roomId, newRoom.id)),
+    ).resolves.toStrictEqual([{ deletedAt }]);
   });
 
   test("fails delete with direct message room", async () => {
