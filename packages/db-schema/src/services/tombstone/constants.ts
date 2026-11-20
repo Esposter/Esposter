@@ -1,6 +1,9 @@
 import { bookmarksInApp } from "#src/schema/app/bookmarksInApp";
 import { bansInMessage } from "#src/schema/message/bansInMessage";
 import { roomCategoriesInMessage } from "#src/schema/message/roomCategoriesInMessage";
+import { roomMemberPermissionsInMessage } from "#src/schema/message/roomMemberPermissionsInMessage";
+import { roomRolesInMessage } from "#src/schema/message/roomRolesInMessage";
+import { usersToRoomRolesInMessage } from "#src/schema/message/usersToRoomRolesInMessage";
 import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import { notificationsInNotification } from "#src/schema/notification/notificationsInNotification";
 import { likesInPost } from "#src/schema/post/likesInPost";
@@ -30,5 +33,8 @@ export const OVERLAY_TOMBSTONE_TABLES = [
   resourceFavoritesInResource,
   resourcePublicationsInResource,
   roomCategoriesInMessage,
+  roomMemberPermissionsInMessage,
+  roomRolesInMessage,
+  usersToRoomRolesInMessage,
   usersToRoomsInMessage,
 ] as const;

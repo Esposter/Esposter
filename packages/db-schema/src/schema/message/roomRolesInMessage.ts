@@ -6,6 +6,7 @@ import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthChe
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
@@ -30,14 +31,16 @@ export const roomRolesInMessage = sqliteTable(
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ color, isEveryone, name, position, roomId }) => [
+    extraConfig: ({ color, deletedAt, isEveryone, name, position, roomId }) => [
       check("roomRoles_color_length_check", createMaxLengthCheckSql(color, ROOM_ROLE_COLOR_MAX_LENGTH)),
       check("roomRoles_name_length_check", createNameCheckSql(name, ROOM_ROLE_NAME_MAX_LENGTH)),
       check("roomRoles_position_check", createMinimumCheckSql(position, 0)),
       index("roomRoles_roomId_position_index").on(roomId, position),
+      // Only the @everyone role is unique per room, and it is never deleted, so this index needs no live predicate
       uniqueIndex("roomRoles_roomId_isEveryone_unique")
         .on(roomId)
         .where(sql`${isEveryone} = 1`),
+      createTombstoneIndex("roomRoles", deletedAt),
     ],
     schema: messageSchema,
     scope: { columns: ["roomId"] },

@@ -2,6 +2,7 @@ import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import { createBitfieldColumn } from "#src/services/shared/createBitfieldColumn";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { foreignKey, index, primaryKey, text } from "drizzle-orm/sqlite-core";
 
@@ -20,7 +21,7 @@ export const roomMemberPermissionsInMessage = sqliteTable(
     userId: text().notNull(),
   },
   {
-    extraConfig: ({ roomId, userId }) => [
+    extraConfig: ({ deletedAt, roomId, userId }) => [
       primaryKey({ columns: [userId, roomId] }),
       foreignKey({
         columns: [userId, roomId],
@@ -28,6 +29,7 @@ export const roomMemberPermissionsInMessage = sqliteTable(
       }).onDelete("cascade"),
       // The primary key leads with userId, so a room's overrides have no index of their own without this one
       index("roomMemberPermissions_roomId_index").on(roomId),
+      createTombstoneIndex("roomMemberPermissions", deletedAt),
     ],
     schema: messageSchema,
     scope: { columns: ["roomId", "userId"] },

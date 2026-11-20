@@ -2,6 +2,7 @@ import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomRolesInMessage } from "#src/schema/message/roomRolesInMessage";
 import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { foreignKey, index, primaryKey, text } from "drizzle-orm/sqlite-core";
 
@@ -14,7 +15,7 @@ export const usersToRoomRolesInMessage = sqliteTable(
     ...createRoomUserColumns(),
   },
   {
-    extraConfig: ({ roleId, roomId, userId }) => [
+    extraConfig: ({ deletedAt, roleId, roomId, userId }) => [
       primaryKey({ columns: [userId, roomId, roleId] }),
       foreignKey({
         columns: [userId, roomId],
@@ -24,6 +25,7 @@ export const usersToRoomRolesInMessage = sqliteTable(
       // Serves a room's role rows in the order the top-role query walks them (a window partitioned by userId), and a room filter on
       // Its own, so the single-column room index it replaces is a prefix of this one
       index("usersToRoomRoles_roomId_userId_index").on(roomId, userId),
+      createTombstoneIndex("usersToRoomRoles", deletedAt),
     ],
     schema: messageSchema,
     scope: { columns: ["roomId", "userId"] },

@@ -1,0 +1,3 @@
+CREATE INDEX `roomMemberPermissions_deletedAt_index` ON `message_roomMemberPermissions` (`deletedAt`) WHERE "message_roomMemberPermissions"."deletedAt" IS NOT NULL;--> statement-breakpoint
+CREATE INDEX `roomRoles_deletedAt_index` ON `message_roomRoles` (`deletedAt`) WHERE "message_roomRoles"."deletedAt" IS NOT NULL;--> statement-breakpoint
+CREATE INDEX `usersToRoomRoles_deletedAt_index` ON `message_usersToRoomRoles` (`deletedAt`) WHERE "message_usersToRoomRoles"."deletedAt" IS NOT NULL;
