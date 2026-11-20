@@ -66,12 +66,12 @@ flowchart TD
   KNOCK --> NOTIFY["knockCall frame to the creator's sockets — the lobby list"]
   NOTIFY --> DECIDE{"creator decides"}
   DECIDE -- admit --> ADMITTED["admitKnocker — one-time admitted entry"]
-  DECIDE -- dismiss --> DISMISSED["dismissKnocker — dropped from the knocker set"]
+  DECIDE -- dismiss --> DISMISSED["dismissKnocker — the knocker's row tombstoned"]
   ADMITTED --> JOIN
   DISMISSED --> WAIT["stays on prejoin"]
 ```
 
-The creator's lobby list is optimistic: admitting or dismissing removes that knocker at once, and each knocker is its own write target so a host can work down the queue without the writes queueing. A rejected one therefore puts back **only** its own knocker — reinstating the list as it stood would resurrect one already admitted beside it and drop whoever the `knockCall` frame delivered meanwhile.
+The creator's lobby is the overlay's knocker rows for the call, one row per knock, so a host works down the queue without the writes queueing. Admitting or dismissing leaves the knocker's row a tombstone at once, and the server's answer confirms it. An answer that names no row, because the call no longer holds the knocker, puts the knocker back where it stood. A `knockCall` frame that lands after a removal is an older row and loses to the tombstone, so it cannot bring the knocker back.
 
 ## Live call state
 
@@ -131,7 +131,7 @@ Each participant joins the call's meeting with the preset that names its publish
 | `call/index.ts`       | `activeCallSessionId`, `currentRoomCallSessionId`, `callRoomId` (admin-action room checks)                                                    |
 | `call/participant.ts` | `callSessionParticipantsMap` (keyed by participant id), `participantId` (the caller's own, from its join), `speakingIds`, join notice         |
 | `call/media.ts`       | deafen, force-mute, camera, screenshare + pin state, virtual background, `isPoppedOut`, streams, [per-user volume](per-user-volume/design.md) |
-| `call/knocker.ts`     | `knockingCallSessionId`, pre-join options, knocker queue                                                                                      |
+| `call/knocker.ts`     | `knockingCallSessionId`, pre-join options, the knocker lobby on the overlay                                                                   |
 | `realtime.ts`         | the RealtimeKit meeting bridge: connect, track events, device switching, mic processor, [blocked audio](blocked-audio/design.md)              |
 
 DM calls work identically — call procedures accept `RoomType.DirectMessage`; membership via `usersToRooms` gates access. The first joiner posts the `MessageType.Call` "started a call" system message, and call end writes the call-duration variant.

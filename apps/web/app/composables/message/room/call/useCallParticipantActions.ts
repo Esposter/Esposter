@@ -2,15 +2,17 @@
 import type { UnparameterizedAdminActionInput } from "#shared/models/db/moderation/UnparameterizedAdminActionInput";
 import type { Item } from "#src/models/shared/Item";
 
-import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { AdminActionIconMap } from "#src/services/message/moderation/AdminActionIconMap";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useCallStore } from "#src/store/message/room/call/index";
 import { useRoleStore } from "#src/store/message/room/role";
+import { useOverlayStore } from "#src/store/overlay";
 import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 
 export const useCallParticipantActions = () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation: executeAdminActionMutation } = useMutation();
+  const overlayStore = useOverlayStore();
+  const { writeAwaited } = overlayStore;
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
   const { setHandRaised } = callStore;
@@ -31,10 +33,14 @@ export const useCallParticipantActions = () => {
     ): Extract<Item, { icon: string }> => ({
       icon,
       onClick: async () => {
-        // The server decides what a moderation action does to the target, so the item waits on its answer
-        await executeAdminActionMutation(
-          () => $trpc.message.moderation.executeAdminAction.mutate({ roomId, targetUserId: userId, type }),
-          { awaitedBecause: AwaitedReason.ServerDecidedOutcome, key: userId },
+        // The server decides what a moderation action does to the target, so the item waits on its answer. The target's row
+        // Changes through the call's own events, so the answer carries no row and nothing is shown before it
+        await writeAwaited(
+          async () => {
+            await $trpc.message.moderation.executeAdminAction.mutate({ roomId, targetUserId: userId, type });
+            return [];
+          },
+          { onError: createErrorAlert },
         );
       },
       title,

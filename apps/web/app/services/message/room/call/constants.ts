@@ -1,13 +1,16 @@
+import type { HeldCallKnocker } from "#src/models/message/room/call/HeldCallKnocker";
 import type { HeldCallParticipant } from "#src/models/message/room/call/HeldCallParticipant";
 
 import { createTable } from "#src/services/shared/overlay/createTable";
-import { participants } from "@esposter/db-schema";
+import { knockers, participants } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 // The call participants the overlay holds, one row per connection, keyed by the id its join minted. The row is the object's
 // Projected to the wire columns, since the object's row names the auth session, which no frame carries, and it is held beside
 // The call it is in
 export const participantTable = createTable<typeof participants, HeldCallParticipant>(participants);
+// The knockers the overlay holds, one row per knock, keyed by the id the knock minted. A let-in or a dismissal leaves a tombstone
+export const knockerTable = createTable<typeof knockers, HeldCallKnocker>(knockers);
 // Client-only per-remote-participant volume multiplier — no stored default, dies with the call.
 export const DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE = 100;
 // The frame every call video is sized to: what a screen share captures at, and what a virtual background is

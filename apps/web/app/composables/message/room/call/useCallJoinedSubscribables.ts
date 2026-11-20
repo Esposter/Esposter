@@ -20,8 +20,8 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
       // Only the doorkeeper is sent the knocks, so nobody else registers for them
       if (!callSessionId || !isDoorkeeper.value) return undefined;
 
-      return onCallEvent("knockCall", ({ knocker }) => {
-        createKnocker(knocker);
+      return onCallEvent("knockCall", ({ callSessionId: knockCallSessionId, knocker }) => {
+        createKnocker(knockCallSessionId, knocker);
       });
     },
     onlineSubscribableContext,

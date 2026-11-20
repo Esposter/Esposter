@@ -1,83 +1,78 @@
 import type { JoinCallOptions } from "#src/models/message/room/call/JoinCallOptions";
-import type { CallParticipant } from "@esposter/db-schema";
+import type { CallParticipantRow } from "@esposter/db-schema";
 
-import { AwaitedReason } from "#src/models/shared/AwaitedReason";
+import { knockerTable } from "#src/services/message/room/call/constants";
 import { getDefaultJoinCallOptions } from "#src/services/message/room/call/getDefaultJoinCallOptions";
-import { getRestoredItems } from "#src/services/shared/getRestoredItems";
+import { getKnockerRemovalEntry } from "#src/services/message/room/call/getKnockerRemovalEntry";
+import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useOverlayStore } from "#src/store/overlay";
 import { useConnectionStore } from "#src/store/realtime/connection";
 
 export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const { $trpc } = useNuxtApp();
+  const overlayStore = useOverlayStore();
+  const { arrive, view, writeAwaited, writeOptimistic } = overlayStore;
   const connectionStore = useConnectionStore();
   const { openCall } = connectionStore;
   const knockingCallSessionId = ref("");
   const joinCallOptions = ref<JoinCallOptions>(getDefaultJoinCallOptions());
-  const knockers = ref<CallParticipant[]>([]);
-  // Knocking targets one call session at a time, so every knock shares one executor and one target
-  const { executeMutation: executeKnockCallMutation } = useMutation();
-  const knockCall = async (callId: string) => {
-    await executeKnockCallMutation(() => $trpc.callSession.knocker.knockCall.mutate({ id: callId }), {
-      // Read as the write is sent: knocks share one target and queue, so a rejected one must unwind to the
-      // Session the knock ahead of it stored rather than to the one held when the user clicked
-      applyOptimistic: () => {
-        const previousKnockingCallSessionId = knockingCallSessionId.value;
+  // The call whose lobby is shown. Its knockers are the overlay's live rows for it, so a lobby left behind by a call the
+  // Doorkeeper has left is not shown in the next one
+  const lobbyCallSessionId = ref("");
+  const lobbyKnockers = view(knockerTable);
+  const knockers = computed(() =>
+    lobbyKnockers.value.filter(({ callSessionId }) => callSessionId === lobbyCallSessionId.value),
+  );
+  // The server records the knock before the call's socket opens, so the waiting screen shows once it has. The knock
+  // Is awaited, and the pending button that sent it stays pending until then
+  const knockCall = (callId: string) =>
+    writeAwaited(
+      async () => {
+        await $trpc.callSession.knocker.knockCall.mutate({ id: callId });
         knockingCallSessionId.value = callId;
-        return () => {
-          knockingCallSessionId.value = previousKnockingCallSessionId;
-        };
+        await openCall(callId);
+        return [];
       },
-      // The server decides whether the knock is recorded, so the call's socket waits for that answer
-      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
-      // Only one knock is active at a time, so it is a singleton target: a stable key, and knocks run one after
-      // The other against it
-      key: "knockCall",
-      // The call's socket opens once the knock is recorded, since the server takes a knocker's connection only then. The
-      // Admission that follows reuses this socket rather than reconnecting
-      onSuccess: () => openCall(callId),
-    });
-  };
+      { onError: createErrorAlert },
+    );
   const cancelKnock = () => {
     knockingCallSessionId.value = "";
   };
-  const createKnocker = (knocker: CallParticipant) => {
-    if (knockers.value.some(({ id }) => id === knocker.id)) return;
-    knockers.value = [...knockers.value, knocker];
+  const createKnocker = (callSessionId: string, knocker: CallParticipantRow) => {
+    lobbyCallSessionId.value = callSessionId;
+    arrive(knockerTable, { ...knocker, callSessionId });
   };
-  const deleteKnocker = (knockerId: string) => {
-    knockers.value = knockers.value.filter((knocker) => knocker.id !== knockerId);
-  };
-  // Admitting and dismissing differ only in the write they send: both take one knocker out of the lobby, and
-  // Both put back that one knocker where it stood if the write is rejected
-  const getResolveKnockerOptions = (knockerId: string) => ({
-    applyOptimistic: () => {
-      const deletedIndex = knockers.value.findIndex(({ id }) => id === knockerId);
-      const deletedKnocker = knockers.value[deletedIndex];
-      deleteKnocker(knockerId);
-      return () => {
-        if (deletedKnocker) knockers.value = getRestoredItems(knockers.value, deletedKnocker, deletedIndex);
-      };
-    },
-    key: knockerId,
-  });
-  const { executeMutation: executeAdmitKnockerMutation } = useMutation();
-  // Admitting is the server's decision: it can refuse a knocker the room no longer holds, so the lobby waits on it
-  const admitKnocker = async (callSessionId: string, knockerId: string) => {
-    await executeAdmitKnockerMutation(
-      () => $trpc.callSession.knocker.admitKnocker.mutate({ callSessionId, knockerId }),
-      { ...getResolveKnockerOptions(knockerId), awaitedBecause: AwaitedReason.ServerDecidedOutcome },
+  // A let-in and a dismissal differ only in the call they send. The server answers the knocker's row, or no row when it
+  // Holds no knocker to remove, which leaves the knocker in the lobby where it stood
+  const removeKnocker = (
+    callSessionId: string,
+    knockerId: string,
+    sendRemoval: () => Promise<CallParticipantRow | null>,
+  ) => {
+    writeOptimistic(
+      async () => {
+        const knocker = await sendRemoval();
+        return createRowsResponse(knockerTable, knocker ? [{ ...knocker, callSessionId }] : []);
+      },
+      { entry: getKnockerRemovalEntry(knockerId, new Date()), onError: createErrorAlert },
     );
   };
-  const { executeMutation: executeDismissKnockerMutation } = useMutation();
+  // Admitting is the server's decision, so the knocker leaves the lobby as the server's tombstone for it confirms
+  const admitKnocker = (callSessionId: string, knockerId: string) => {
+    removeKnocker(callSessionId, knockerId, () =>
+      $trpc.callSession.knocker.admitKnocker.mutate({ callSessionId, knockerId }),
+    );
+  };
   const dismissKnocker = (callSessionId: string, knockerId: string) => {
-    executeDismissKnockerMutation(
-      () => $trpc.callSession.knocker.dismissKnocker.mutate({ callSessionId, knockerId }),
-      getResolveKnockerOptions(knockerId),
+    removeKnocker(callSessionId, knockerId, () =>
+      $trpc.callSession.knocker.dismissKnocker.mutate({ callSessionId, knockerId }),
     );
   };
   const resetKnockerState = () => {
     knockingCallSessionId.value = "";
     joinCallOptions.value = getDefaultJoinCallOptions();
-    knockers.value = [];
+    lobbyCallSessionId.value = "";
   };
 
   return {

@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { CallParticipant } from "@esposter/db-schema";
+import type { CallParticipant, CallParticipantRow } from "@esposter/db-schema";
 
 import { createId } from "#shared/util/math/random/createId";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -25,6 +25,13 @@ const createParticipant = (name: string): CallParticipant => ({
   userId: v7(),
 });
 
+// A knocker's row as the call object holds it: live, at the version it was written at
+const createRow = (knocker: CallParticipant, version: number): CallParticipantRow => ({
+  ...knocker,
+  deletedAt: null,
+  version,
+});
+
 describe(useKnockerStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const callId = createId(CALL_ID_LENGTH);
@@ -33,10 +40,8 @@ describe(useKnockerStore, () => {
   const first = createParticipant("first");
   const second = createParticipant("second");
 
-  // Only one knock is active at a time, so both knocks share a target and the second waits for the first. Its
-  // Rollback owes the lobby the first knock left — restoring what was held when the user clicked drops them out
-  // Of a call they are still knocking on
-  test("rolls a queued knock back to the call the knock ahead of it stored", async () => {
+  // Only one knock is held by the server at a time, so the second knock waits for the first to be recorded
+  test("a refused knock leaves the knock ahead of it standing", async () => {
     expect.hasAssertions();
 
     trpcMsw.callSession.knocker.knockCall.mutation(({ input }) => {
@@ -48,55 +53,6 @@ describe(useKnockerStore, () => {
     await Promise.all([knockCall(callId), knockCall(rejectedCallId)]);
 
     expect(knockingCallSessionId.value).toBe(callId);
-  });
-
-  // Each knocker is its own target, so a host working down the lobby has several writes in flight at once
-  test("puts back only the knocker whose admission was rejected, where they stood", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.callSession.knocker.admitKnocker.mutation(({ input: { knockerId } }) => {
-      if (knockerId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    const knockerStore = useKnockerStore();
-    const { admitKnocker, createKnocker } = knockerStore;
-    const { knockers } = storeToRefs(knockerStore);
-    createKnocker(first);
-    createKnocker(second);
-    await Promise.all([admitKnocker(callSessionId, first.id), admitKnocker(callSessionId, second.id)]);
-
-    expect(knockers.value).toStrictEqual([first]);
-  });
-
-  // The server refuses an admission it does not record. Its answer names no row, so nothing is let in and the knocker
-  // Stays in the lobby where it stood
-  test("a refused admit leaves the knocker waiting", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.callSession.knocker.admitKnocker.mutation(() => null);
-    const knockerStore = useKnockerStore();
-    const { admitKnocker, createKnocker } = knockerStore;
-    const { knockers } = storeToRefs(knockerStore);
-    createKnocker(first);
-    await admitKnocker(callSessionId, first.id);
-
-    expect(knockers.value.map(({ id }) => id)).toStrictEqual([first.id]);
-  });
-
-  // The admission answers the knocker's tombstone, at the version its removal raised it to. A knock frame that lands after
-  // It, still carrying the knocker's live row, must not bring the knocker back into the lobby
-  test("a late knock frame does not bring back an admitted knocker", async () => {
-    expect.hasAssertions();
-
-    const liveRow = { ...first, deletedAt: null, version: 0 };
-    trpcMsw.callSession.knocker.admitKnocker.mutation(() => ({ ...liveRow, deletedAt: new Date(0), version: 1 }));
-    const knockerStore = useKnockerStore();
-    const { admitKnocker, createKnocker } = knockerStore;
-    const { knockers } = storeToRefs(knockerStore);
-    createKnocker(liveRow);
-    await admitKnocker(callSessionId, first.id);
-    createKnocker(liveRow);
-
-    expect(knockers.value.map(({ id }) => id)).toStrictEqual([]);
   });
 
   // The knock is held by the server until it records it, so the waiting screen shows only once the call has answered
@@ -119,6 +75,61 @@ describe(useKnockerStore, () => {
     expect(knockingCallSessionId.value).toBe(callId);
   });
 
+  // A refused admission answers no row, so nothing is let in and the knocker stays in the lobby where it stood. The other
+  // Admission is the one that lands
+  test("puts back only the knocker whose admission was refused, where they stood", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.callSession.knocker.admitKnocker.mutation(({ input: { knockerId } }) => {
+      if (knockerId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      return { ...createRow(second, 1), deletedAt: new Date(0), version: 2 };
+    });
+    const knockerStore = useKnockerStore();
+    const { admitKnocker, createKnocker } = knockerStore;
+    const { knockers } = storeToRefs(knockerStore);
+    createKnocker(callSessionId, createRow(first, 0));
+    createKnocker(callSessionId, createRow(second, 1));
+    admitKnocker(callSessionId, first.id);
+    admitKnocker(callSessionId, second.id);
+    await flushPromises();
+
+    expect(knockers.value.map(({ id }) => id)).toStrictEqual([first.id]);
+  });
+
+  // The server refuses an admission it does not record. Its answer names no row, so nothing is let in and the knocker
+  // Stays in the lobby where it stood
+  test("a refused admit leaves the knocker waiting", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.callSession.knocker.admitKnocker.mutation(() => null);
+    const knockerStore = useKnockerStore();
+    const { admitKnocker, createKnocker } = knockerStore;
+    const { knockers } = storeToRefs(knockerStore);
+    createKnocker(callSessionId, createRow(first, 0));
+    admitKnocker(callSessionId, first.id);
+    await flushPromises();
+
+    expect(knockers.value.map(({ id }) => id)).toStrictEqual([first.id]);
+  });
+
+  // The admission answers the knocker's tombstone, at the version its removal raised it to. A knock frame that lands after
+  // It, still carrying the knocker's live row, must not bring the knocker back into the lobby
+  test("a late knock frame does not bring back an admitted knocker", async () => {
+    expect.hasAssertions();
+
+    const liveRow = createRow(first, 0);
+    trpcMsw.callSession.knocker.admitKnocker.mutation(() => ({ ...liveRow, deletedAt: new Date(0), version: 1 }));
+    const knockerStore = useKnockerStore();
+    const { admitKnocker, createKnocker } = knockerStore;
+    const { knockers } = storeToRefs(knockerStore);
+    createKnocker(callSessionId, liveRow);
+    admitKnocker(callSessionId, first.id);
+    await flushPromises();
+    createKnocker(callSessionId, liveRow);
+
+    expect(knockers.value.map(({ id }) => id)).toStrictEqual([]);
+  });
+
   test("keeps a knocker that arrived while a dismissal was in flight", async () => {
     expect.hasAssertions();
 
@@ -128,11 +139,11 @@ describe(useKnockerStore, () => {
     const knockerStore = useKnockerStore();
     const { createKnocker, dismissKnocker } = knockerStore;
     const { knockers } = storeToRefs(knockerStore);
-    createKnocker(first);
+    createKnocker(callSessionId, createRow(first, 0));
     dismissKnocker(callSessionId, first.id);
-    createKnocker(second);
+    createKnocker(callSessionId, createRow(second, 0));
     await flushPromises();
 
-    expect(knockers.value).toStrictEqual([first, second]);
+    expect(knockers.value.map(({ id }) => id)).toStrictEqual([first.id, second.id]);
   });
 });
