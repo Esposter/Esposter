@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
+import { useSession } from "#src/services/auth/authClient.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 import {
@@ -14,7 +15,11 @@ import {
 } from "@esposter/db-schema";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+
+interface MockSessionValue {
+  data?: undefined | { user: { id: string } };
+}
 
 describe(useUserSettingsStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -37,14 +42,21 @@ describe(useUserSettingsStore, () => {
     voiceInputMode: VoiceInputMode.VoiceActivity,
   };
 
+  beforeEach(() => {
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userSettings.userId } } }));
+  });
+
   // Two controls write different fields of the same record, so both changes must survive — the second write
-  // Reads the settings the first stored rather than the object it was holding when the user clicked
+  // Reads the settings the first stored rather than the object it was holding when the user clicked. The server
+  // Raises the version of the record on each write, so each answer arrives newer than the one before it
   test("keeps both queued field changes", async () => {
     expect.hasAssertions();
 
     const storedUserSettings = { ...userSettings };
     trpcMsw.user.readUserSettings.query(() => userSettings);
-    trpcMsw.user.updateUserSettings.mutation(({ input }) => Object.assign(storedUserSettings, input));
+    trpcMsw.user.updateUserSettings.mutation(({ input }) =>
+      Object.assign(storedUserSettings, input, { version: storedUserSettings.version + 1 }),
+    );
     const userSettingsStore = useUserSettingsStore();
     const { readUserSettings, updateUserSettings } = userSettingsStore;
     await readUserSettings();
@@ -52,7 +64,7 @@ describe(useUserSettingsStore, () => {
     updateUserSettings({ isDeafenOnJoin: true });
     await flushPromises();
 
-    expect(userSettingsStore.userSettings).toStrictEqual({ ...userSettings, isDeafenOnJoin: true, isMuteOnJoin: true });
+    expect(userSettingsStore.userSettings).toStrictEqual(storedUserSettings);
   });
 
   // One record for the whole session, so every surface that raises the dialog asks for it and only the first
