@@ -263,8 +263,8 @@ overrides:
 packageExtensions:
   # Each package below has types that import a package it does not declare. The hoisted layout hid that; in the global
   # Virtual store a package sees only what it declares, so those types fell to `any` until each names its peer
-  # @TODO: no upstream issue — cloudflare/workers-sdk: miniflare's types import @cloudflare/workers-types, which it
-  # Declares only as a devDependency
+  # @TODO: https://github.com/cloudflare/workers-sdk/issues/16982 — miniflare's types import @cloudflare/workers-types,
+  # Which it declares only as a devDependency
   miniflare:
     peerDependencies:
       "@cloudflare/workers-types": "*"
