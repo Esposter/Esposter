@@ -7,16 +7,16 @@ export const useReadSearchHistories = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const searchHistoryStore = useSearchHistoryStore();
-  const { readItems, readMoreItems } = searchHistoryStore;
+  const { readItems, readMoreItems, readSearchHistoryPage } = searchHistoryStore;
   const readSearchHistories = () =>
-    readItems(() => {
+    readItems(async () => {
       const roomId = requirePartitionKey(currentRoomId.value, readSearchHistories.name);
-      return $trpc.searchHistory.readSearchHistories.query({ roomId });
+      return readSearchHistoryPage(await $trpc.searchHistory.readSearchHistories.query({ roomId }));
     });
   const readMoreSearchHistories = (onComplete: () => void) =>
-    readMoreItems((cursor) => {
+    readMoreItems(async (cursor) => {
       const roomId = requirePartitionKey(currentRoomId.value, readMoreSearchHistories.name);
-      return $trpc.searchHistory.readSearchHistories.query({ cursor, roomId });
+      return readSearchHistoryPage(await $trpc.searchHistory.readSearchHistories.query({ cursor, roomId }));
     }, onComplete);
   return { readMoreSearchHistories, readSearchHistories };
 };
