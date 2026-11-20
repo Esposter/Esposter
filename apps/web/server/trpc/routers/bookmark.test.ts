@@ -11,10 +11,15 @@ import { resourceRouter } from "#server/trpc/routers/resource";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
+import type { BookmarkPageLink } from "#shared/models/app/BookmarkPageLink";
 import type { ReadBookmark } from "#shared/models/db/bookmark/ReadBookmark";
 import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, ResourceType, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
+
+// A read's row as the dock draws it: the link's own fields, with the mark only where the read joined one
+const toLink = ({ isAvailable, mark, path, title }: ReadBookmark): BookmarkPageLink =>
+  mark ? { isAvailable, mark, path, title } : { isAvailable, path, title };
 
 describe("bookmarkRouter", () => {
   const { getMockContext } = setupResourceSuite(resourceRouter);
@@ -36,11 +41,11 @@ describe("bookmarkRouter", () => {
     await mockContext.db.delete(roomsInMessage);
   });
 
-  // A read's rows as the dock draws them: the row's own fields are left out, and a removed row is not drawn
-  const toLink = ({ createdAt, deletedAt, resourceId, roomId, updatedAt, userId, version, ...link }: ReadBookmark) =>
-    link;
+  // A read's live rows as the dock draws them
   const readLinks = async (bookmarkCaller: DecorateRouterRecord<TRPCRouter["bookmark"]> = caller) =>
-    (await bookmarkCaller.readBookmarks()).filter(({ deletedAt }) => deletedAt === null).map(toLink);
+    (await bookmarkCaller.readBookmarks())
+      .filter(({ deletedAt }) => deletedAt === null)
+      .map((bookmark) => toLink(bookmark));
 
   // A resource bookmarked from its own page, with the mark that names it
   const bookmarkResource = async () => {
@@ -60,7 +65,7 @@ describe("bookmarkRouter", () => {
 
     expect(bookmarkAfterFirstToggle.deletedAt).toBeNull();
     expect(linksAfterFirstToggle).toStrictEqual([{ isAvailable: true, path, title }]);
-    expect(bookmarkAfterSecondToggle.deletedAt).toBeInstanceOf(Date);
+    expect(bookmarkAfterSecondToggle.deletedAt).toStrictEqual(expect.any(Date));
     expect(linksAfterSecondToggle).toStrictEqual([]);
   });
 
@@ -121,7 +126,7 @@ describe("bookmarkRouter", () => {
     const tombstones = await caller.readBookmarks();
     const revivedBookmark = await caller.toggleBookmark({ path, title });
 
-    expect(removedBookmark.deletedAt).toBeInstanceOf(Date);
+    expect(removedBookmark.deletedAt).toStrictEqual(expect.any(Date));
     expect(
       tombstones.map(({ deletedAt, path: bookmarkPath }) => ({ bookmarkPath, isRemoved: deletedAt instanceof Date })),
     ).toStrictEqual([{ bookmarkPath: path, isRemoved: true }]);
