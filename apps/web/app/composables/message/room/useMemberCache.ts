@@ -7,12 +7,12 @@ export const useMemberCache = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { getSlice } = memberStore;
+  const { getCacheSlice } = memberStore;
   const userStore = useUserStore();
   const { storeRoomMembers, storeUsers } = userStore;
   usePaginationCache({
     configuration: MemberIndexedDbStoreConfiguration,
-    getSlice,
+    getSlice: getCacheSlice,
     // Hydration only ever runs offline, where the server-computed totals cannot be fetched, and the cache keeps no record
     // Of whether its page is the whole list, so the cached rows are not a total. The totals stay what the store already
     // Holds for this room, which is nothing unless the server answered for it this session. Both are keyed by room, so

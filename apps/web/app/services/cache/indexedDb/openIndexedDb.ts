@@ -19,7 +19,7 @@ import {
 } from "@esposter/shared";
 
 export const DATABASE_NAME = SITE_NAME.toLowerCase();
-export const DATABASE_VERSION = 4;
+export const DATABASE_VERSION = 5;
 
 let databasePromise: Promise<Database<IndexedDbDatabaseSchema>> | undefined;
 

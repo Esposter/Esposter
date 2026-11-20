@@ -1,22 +1,15 @@
 <script setup lang="ts">
 import type { MemberActionDialogProps } from "#src/models/message/member/MemberActionDialogProps";
 
-import { getResolvedDisplayName } from "#shared/services/room/getResolvedDisplayName";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
-import { useUserStore } from "#src/store/message/user/index";
 import { useMemberStore } from "#src/store/message/user/member";
-import { ID_SEPARATOR, noop } from "@esposter/shared";
 
 const isOpen = defineModel<boolean>({ default: false });
 const { displayName, roomId, user } = defineProps<MemberActionDialogProps>();
-const { $trpc } = useNuxtApp();
 const memberStore = useMemberStore();
-const { storeUpdateMembers } = memberStore;
-const userStore = useUserStore();
-const { getRoomMemberMap } = userStore;
-const { executeMutation } = useMutation();
+const { renameMember } = memberStore;
 const { answer, isPending } = useDialogAnswer(isOpen);
 // The field starts on the name the row shows, so saving it as it stands writes nothing
 const editedDisplayName = ref(displayName);
@@ -27,28 +20,7 @@ const save = () => {
   if (newDisplayName === displayName) return;
 
   answer(() => {
-    executeMutation(
-      () => $trpc.userToRoom.updateUserToRoom.mutate({ displayName: newDisplayName, roomId, targetUserId: user.id }),
-      {
-        // The row shows the name the server resolves: the typed one trimmed, or the account's own name for a blank one.
-        // It is drawn at once, so the list needs no read back after the write. A refusal puts back only the display name,
-        // And only while the row still shows this write's
-        applyOptimistic: () => {
-          const member = getRoomMemberMap(roomId)?.get(user.id);
-          if (!member) return noop;
-
-          const previousDisplayName = member.displayName;
-          const resolvedDisplayName = getResolvedDisplayName(newDisplayName, member.name);
-          storeUpdateMembers(roomId, [{ ...member, displayName: resolvedDisplayName }]);
-          return () => {
-            const currentMember = getRoomMemberMap(roomId)?.get(user.id);
-            if (currentMember?.displayName === resolvedDisplayName)
-              storeUpdateMembers(roomId, [{ ...currentMember, displayName: previousDisplayName }]);
-          };
-        },
-        key: `${roomId}${ID_SEPARATOR}${user.id}`,
-      },
-    );
+    renameMember(roomId, user.id, newDisplayName);
   });
 };
 </script>

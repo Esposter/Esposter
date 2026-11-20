@@ -1,4 +1,4 @@
-import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { MemberRowInRoom } from "#shared/models/db/room/MemberRowInRoom";
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { signOut } from "#src/services/auth/authClient.test";
@@ -41,7 +41,14 @@ describe(signOutOfBrowser, () => {
   const reloadMock = vi.fn<() => void>();
   const { message1 } = setupIndexedDbSuite();
   const user = createUser();
-  const member: MemberInRoom = { ...user, displayName: user.name };
+  const member: MemberRowInRoom = {
+    ...user,
+    deletedAt: null,
+    displayName: user.name,
+    roomId: message1.roomId,
+    userId: user.id,
+    version: 0,
+  };
 
   beforeEach(() => {
     vi.stubGlobal("window", { location: { href: "", reload: reloadMock } });

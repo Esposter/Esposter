@@ -100,20 +100,20 @@ sequenceDiagram
 
 ## Key files
 
-| File                                                                        | Role                                                                              |
-| :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `apps/web/app/store/message/room/userToRoom.ts`                             | `useUserToRoomStore`, the current user's own row                                  |
-| `apps/web/app/store/message/user/index.ts`                                  | `useUserStore`, `getRoomMemberName`                                               |
-| `apps/web/app/composables/message/room/useCreator.ts`                       | message author, display name already applied                                      |
-| `apps/web/app/composables/message/useMessageHtml.ts`                        | mention label resolution                                                          |
-| `apps/web/app/services/message/member/getMemberDescription.ts`              | The account name beside a display name, only where they differ                    |
-| `apps/web/app/components/Message/Model/Message/Suggestion/MentionList.vue`  | @-mention list: display name, the account name beside it where they differ        |
-| `apps/web/app/components/Message/Model/Room/Settings/Type/Profile/`         | My Profile tab + display name field (labeled Display name)                        |
-| `apps/web/server/services/message/updateUserToRoom.ts`                      | the display-name path; the hierarchy guard for a target other than the actor      |
-| `apps/web/server/services/room/rbac/assertIsManageable.ts`                  | the hierarchy guard the path calls                                                |
-| `apps/web/app/composables/message/user/useMemberActionItems.ts`             | the one list both member menus read; offers the Display name item                 |
-| `apps/web/app/components/Message/Model/Member/ActionDialog/DisplayName.vue` | the moderator's dialog over `DisplayNameField`, mounted by the member dialog host |
-| `apps/web/app/store/message/user/member.ts`                                 | `storeUpdateMembers`, the read-back row into the room's list and names            |
+| File                                                                        | Role                                                                                                                                              |
+| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apps/web/app/store/message/room/userToRoom.ts`                             | `useUserToRoomStore`, the current user's own row                                                                                                  |
+| `apps/web/app/store/message/user/index.ts`                                  | `useUserStore`, `getRoomMemberName`                                                                                                               |
+| `apps/web/app/composables/message/room/useCreator.ts`                       | message author, display name already applied                                                                                                      |
+| `apps/web/app/composables/message/useMessageHtml.ts`                        | mention label resolution                                                                                                                          |
+| `apps/web/app/services/message/member/getMemberDescription.ts`              | The account name beside a display name, only where they differ                                                                                    |
+| `apps/web/app/components/Message/Model/Message/Suggestion/MentionList.vue`  | @-mention list: display name, the account name beside it where they differ                                                                        |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Profile/`         | My Profile tab + display name field (labeled Display name)                                                                                        |
+| `apps/web/server/services/message/updateUserToRoom.ts`                      | the display-name path; the hierarchy guard for a target other than the actor                                                                      |
+| `apps/web/server/services/room/rbac/assertIsManageable.ts`                  | the hierarchy guard the path calls                                                                                                                |
+| `apps/web/app/composables/message/user/useMemberActionItems.ts`             | the one list both member menus read; offers the Display name item                                                                                 |
+| `apps/web/app/components/Message/Model/Member/ActionDialog/DisplayName.vue` | the moderator's dialog over `DisplayNameField`, mounted by the member dialog host                                                                 |
+| `apps/web/app/store/message/user/member.ts`                                 | `renameMember`, the saved name as an entry over the member's row, its answer's row arriving at its version, and the room's names from that answer |
 
 ## Notes
 

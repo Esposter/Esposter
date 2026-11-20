@@ -1,9 +1,10 @@
 // @vitest-environment nuxt
-import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { MemberRowInRoom } from "#shared/models/db/room/MemberRowInRoom";
 import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 
 import MessageModelMemberActionDialogDisplayName from "#src/components/Message/Model/Member/ActionDialog/DisplayName.vue";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useUserStore } from "#src/store/message/user/index";
@@ -26,23 +27,19 @@ describe("messageModelMemberActionDialogDisplayName", () => {
       attachTo: document.body,
       props: { displayName, modelValue: true, roomId, user },
     });
-  const member: MemberInRoom = { ...user, displayName };
-  // The member the dialog was opened on, as the room's read left it: a row of the room's list and of its member map.
-  // Each holds its own copy, so the rows a save writes never reach the constant above
-  const seedMember = () => {
+  const memberRow: MemberRowInRoom = { ...user, deletedAt: null, displayName, roomId, userId: user.id, version: 0 };
+  // The member the dialog was opened on, as the room's first page read left it: the person, and the membership row the
+  // page held. The list is the room's, so the room is made current here, after the dialog mounts, since a mount resets the route
+  const seedMember = async () => {
+    setCurrentRoomId(roomId);
+    const { storeUser } = useUserStore();
+    storeUser(user);
     const memberStore = useMemberStore();
-    const { getSlice } = memberStore;
-    getSlice(roomId).initializeCursorPaginationData({ items: [{ ...member }], nextCursor: "" });
-    const userStore = useUserStore();
-    const { storeRoomMembers } = userStore;
-    storeRoomMembers(roomId, [{ ...member }]);
+    const { arriveMemberPage, readItems } = memberStore;
+    await readItems(() => Promise.resolve(arriveMemberPage({ items: [memberRow], nextCursor: "" })));
   };
   // The row the member list draws for the member
-  const getMemberRow = () => {
-    const memberStore = useMemberStore();
-    const { getSlice } = memberStore;
-    return takeOne(getSlice(roomId).items.value);
-  };
+  const getMemberRow = () => takeOne(storeToRefs(useMemberStore()).members.value);
 
   // The write is the save's only request, and the test awaits its arrival rather than a flush, since a test that ends
   // First leaves the request in flight
@@ -135,8 +132,8 @@ describe("messageModelMemberActionDialogDisplayName", () => {
       await isWriteAnswered;
       return createUserToRoom({ displayName: user.name, roomId, userId: user.id });
     });
-    seedMember();
     const component = await mountDialog();
+    await seedMember();
     await component.get("input").setValue(" ");
     await component.get("input").trigger("keydown", { key: "Enter" });
     await isWriteReached;
@@ -159,14 +156,14 @@ describe("messageModelMemberActionDialogDisplayName", () => {
       await isWriteRefused;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    seedMember();
     const component = await mountDialog();
+    await seedMember();
     await component.get("input").setValue(newDisplayName);
     await component.get("input").trigger("keydown", { key: "Enter" });
     await isWriteReached;
-    const memberStore = useMemberStore();
-    const { storeUpdateMembers } = memberStore;
-    storeUpdateMembers(roomId, [{ ...getMemberRow(), biography: "biography" }]);
+    const userStore = useUserStore();
+    const { storeUser } = userStore;
+    storeUser({ ...user, biography: "biography" });
     refuseWrite();
     await waitForSynchronizedFunctions();
 

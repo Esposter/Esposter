@@ -1,8 +1,9 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { MemberRow } from "#shared/models/db/room/MemberRow";
 import type { UserInRoom } from "#shared/models/db/room/UserInRoom";
-import type { RoomRoleInMessage } from "@esposter/db-schema";
+import type { PublicUser, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { useUserToRoomSubscribables } from "#src/composables/message/subscribables/useUserToRoomSubscribables";
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
@@ -14,6 +15,7 @@ import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
 import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
+import { useUserStore } from "#src/store/message/user/index";
 import { useMemberStore } from "#src/store/message/user/member";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { getScopeTopic, usersToRoomsInMessage } from "@esposter/db-schema";
@@ -36,6 +38,28 @@ describe(useMemberStore, () => {
   const member: MemberInRoom = { ...user, displayName: user.name };
   const role = createRoomRole({ roomId });
 
+  // The membership row a join announces, at the version the join left it, beside the person who joined
+  const joinRow = (
+    joinedUser: PublicUser,
+    displayName: string,
+    joinedRoomId = roomId,
+    version = 0,
+  ): MemberRow & { user: PublicUser } => ({
+    deletedAt: null,
+    displayName,
+    roomId: joinedRoomId,
+    user: joinedUser,
+    userId: joinedUser.id,
+    version,
+  });
+  // The tombstone a removal leaves: the membership row, removed, at the version the removal wrote
+  const leftRow = (leftUserId: string, leftRoomId: string, version = 1): MemberRow => ({
+    deletedAt: new Date(1),
+    displayName: member.displayName,
+    roomId: leftRoomId,
+    userId: leftUserId,
+    version,
+  });
   // The server's totals for a room, as the next read of them returns them
   const serveCounts = (count: number, countsByTopRole: MemberCountByTopRole[]) => {
     trpcMsw.room.readMembersCount.query(() => count);
@@ -53,19 +77,19 @@ describe(useMemberStore, () => {
     serveCounts(0, []);
   });
 
-  test("deletes a roled member out of their role group", async () => {
+  // The member's roles are read into the store, so a leave can clear the group they were counted in
+  test("a leave drops a roled member out of their role group", async () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { refreshMemberCounts, storeDeleteMember } = memberStore;
+    const { arriveJoinedMember, arriveLeftMember, refreshMemberCounts } = memberStore;
     const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
-    // The member list headers derive the roleless group as memberCount - sum(role groups), so a departure that
-    // Drops only the total leaves the leaver in their role group and takes the remainder negative
+    arriveJoinedMember(joinRow(user, member.displayName));
     await loadMemberRoles(roomId, [role]);
     serveCounts(1, [{ count: 1, roleId: role.id }]);
     await refreshMemberCounts([roomId]);
     serveCounts(0, [{ count: 0, roleId: role.id }]);
-    storeDeleteMember(roomId, member.id);
+    arriveLeftMember(leftRow(member.id, roomId));
     // The departure's own re-read lands the totals, so the test awaits it rather than making one of its own
     await waitForSynchronizedFunctions();
 
@@ -79,12 +103,12 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { refreshMemberCounts, storeDeleteMember } = memberStore;
+    const { arriveLeftMember, refreshMemberCounts } = memberStore;
     const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
     serveCounts(2, [{ count: 2, roleId: role.id }]);
     await refreshMemberCounts([roomId]);
     serveCounts(1, [{ count: 1, roleId: role.id }]);
-    storeDeleteMember(roomId, member.id);
+    arriveLeftMember(leftRow(member.id, roomId));
     await waitForSynchronizedFunctions();
 
     expect(memberCount.value).toBe(1);
@@ -98,7 +122,7 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { refreshMemberCounts, storeDeleteMember } = memberStore;
+    const { arriveLeftMember, refreshMemberCounts } = memberStore;
     const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
     serveCounts(2, [{ count: 2, roleId: role.id }]);
     await refreshMemberCounts([roomId]);
@@ -113,7 +137,7 @@ describe(useMemberStore, () => {
       isGroupReadFailed = true;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    storeDeleteMember(roomId, member.id);
+    arriveLeftMember(leftRow(member.id, roomId));
     await isFailureLogged;
     consoleError.mockRestore();
 
@@ -153,21 +177,20 @@ describe(useMemberStore, () => {
     ]);
   });
 
-  // The leave subscription spans every room the user is in, so the event names the room it happened in. Applied
-  // To the open one instead, a departure from anywhere removes a member who is still there
+  // A membership row is keyed by the room it is in, so a leave from another room leaves the open room's row standing
   test("leaves the open room alone when a member leaves another room", async () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { refreshMemberCounts, storeCreateMember, storeDeleteMember } = memberStore;
+    const { arriveJoinedMember, arriveLeftMember, refreshMemberCounts } = memberStore;
     const { memberCount, memberCountsByTopRole, members } = storeToRefs(memberStore);
     await loadMemberRoles(roomId, [role]);
     await loadMemberRoles(otherRoomId, []);
     serveCounts(1, [{ count: 1, roleId: role.id }]);
     await refreshMemberCounts([roomId]);
-    storeCreateMember(roomId, member);
+    arriveJoinedMember(joinRow(user, member.displayName));
     await refreshMemberCounts([roomId]);
-    storeDeleteMember(otherRoomId, member.id);
+    arriveLeftMember(leftRow(member.id, otherRoomId));
     await refreshMemberCounts([otherRoomId]);
 
     expect(members.value).toStrictEqual([member]);
@@ -179,10 +202,10 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { refreshMemberCounts, storeCreateMember } = memberStore;
+    const { arriveJoinedMember, refreshMemberCounts } = memberStore;
     const { memberCount, members } = storeToRefs(memberStore);
     serveCounts(1, []);
-    storeCreateMember(otherRoomId, member);
+    arriveJoinedMember(joinRow(user, member.displayName, otherRoomId));
     await refreshMemberCounts([otherRoomId]);
 
     expect(members.value).toStrictEqual([]);
@@ -195,9 +218,9 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { refreshMemberCounts, storeCreateMember } = memberStore;
+    const { arriveJoinedMember, refreshMemberCounts } = memberStore;
     const { members } = storeToRefs(memberStore);
-    storeCreateMember(roomId, member);
+    arriveJoinedMember(joinRow(user, member.displayName));
     await refreshMemberCounts([roomId]);
 
     expect(members.value).toStrictEqual([member]);
@@ -209,15 +232,17 @@ describe(useMemberStore, () => {
 
   // The server pages members by display name case-insensitively, so an uppercase name sorts beside its lowercase one.
   // The loaded list is ordered the same way, so the names on screen and the cursor agree on each member's place
-  test("orders the loaded members the way the server pages them", () => {
+  test("orders the loaded members the way the server pages them", async () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { getSlice } = memberStore;
+    const { arriveJoinedMember } = memberStore;
     const { members } = storeToRefs(memberStore);
-    const lowercaseMember = { ...createUser({ name: "bob" }), displayName: "bob" };
-    const uppercaseMember = { ...createUser({ name: "Carl" }), displayName: "Carl" };
-    getSlice(roomId).items.value = [lowercaseMember, uppercaseMember];
+    const lowercaseUser = createUser({ name: "bob" });
+    const uppercaseUser = createUser({ name: "Carl" });
+    arriveJoinedMember(joinRow(uppercaseUser, "Carl"));
+    arriveJoinedMember(joinRow(lowercaseUser, "bob"));
+    await waitForSynchronizedFunctions();
 
     expect(members.value.map(({ displayName }) => displayName)).toStrictEqual(["bob", "Carl"]);
   });
@@ -226,25 +251,26 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { refreshMemberCounts, storeCreateMember } = memberStore;
+    const { arriveJoinedMember } = memberStore;
     const { members } = storeToRefs(memberStore);
-    storeCreateMember(roomId, { ...member, displayName: "displayName" });
-    await refreshMemberCounts([roomId]);
+    arriveJoinedMember(joinRow(user, "displayName"));
+    await waitForSynchronizedFunctions();
 
     expect(members.value).toStrictEqual([{ ...member, displayName: "displayName" }]);
   });
 
-  test("deletes a roleless member without touching the role groups", async () => {
+  test("a leave of a roleless member leaves the role groups as they were", async () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { refreshMemberCounts, storeDeleteMember } = memberStore;
+    const { arriveJoinedMember, arriveLeftMember, refreshMemberCounts } = memberStore;
     const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
+    arriveJoinedMember(joinRow(user, member.displayName));
     await loadMemberRoles(roomId, []);
     serveCounts(2, [{ count: 1, roleId: role.id }]);
     await refreshMemberCounts([roomId]);
     serveCounts(1, [{ count: 1, roleId: role.id }]);
-    storeDeleteMember(roomId, member.id);
+    arriveLeftMember(leftRow(member.id, roomId));
     await waitForSynchronizedFunctions();
 
     expect(memberCount.value).toBe(1);
@@ -268,13 +294,23 @@ describe(useMemberStore, () => {
     const readUsersByIds = vi.fn<() => UserInRoom[]>(() => []);
     trpcMsw.room.readUsersByIds.query(readUsersByIds);
     const memberStore = useMemberStore();
+    const { arriveMemberPage, readItems } = memberStore;
     const { members } = storeToRefs(memberStore);
+    const { storeUser } = useUserStore();
+    storeUser(user);
     let displayName = member.displayName;
-    await memberStore.readItems(() => {
+    let version = 0;
+    await readItems(() => {
       readActiveTopicReads()?.push({ readAt: 0, signature: "", topics: [{ topic: membershipTopic }] });
-      return Promise.resolve({ items: [{ ...member, displayName }], nextCursor: "" });
+      return Promise.resolve(
+        arriveMemberPage({
+          items: [{ ...member, deletedAt: null, displayName, roomId, userId: member.id, version }],
+          nextCursor: "",
+        }),
+      );
     });
     displayName = "renamed";
+    version = 1;
     onUserFrame?.(JSON.stringify({ data: { topic: membershipTopic }, type: "invalidate" }));
     onUserFrame?.(
       JSON.stringify({ data: createUserToRoom({ displayName, roomId, userId: member.id }), type: "updateUserToRoom" }),

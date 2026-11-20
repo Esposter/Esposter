@@ -11,7 +11,7 @@ export const useReadMembers = () => {
   const roomStore = useRoomStore();
   const { scopedRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { readItems, readMoreItems, refreshMemberCounts } = memberStore;
+  const { arriveMemberPage, readItems, readMoreItems, refreshMemberCounts } = memberStore;
   const userStore = useUserStore();
   const { storeRoomMembers, storeUsers } = userStore;
   const readUserStatuses = useReadUserStatuses();
@@ -25,7 +25,8 @@ export const useReadMembers = () => {
   };
   // A member row is not a user row: the list renders a status and roles beside every name. Every path
   // That produces a page — the first, a search, a scroll — goes through here rather than restating the fan-out,
-  // Which is how one of them comes to render rows the others do not
+  // Which is how one of them comes to render rows the others do not. A removed member's row is read too, and is not
+  // Fetched a status or roles, since the list does not show them
   const readMemberPage = async (roomId: string, cursor: string, signal?: AbortSignal) => {
     const cursorPaginationData = await $trpc.room.readMembers.query(
       { cursor, filter: searchedName.value ? { name: searchedName.value } : undefined, roomId },
@@ -33,11 +34,11 @@ export const useReadMembers = () => {
     );
     await readMetadata(
       roomId,
-      cursorPaginationData.items.map(({ id }) => id),
+      cursorPaginationData.items.filter(({ deletedAt }) => !deletedAt).map(({ id }) => id),
     );
     storeUsers(cursorPaginationData.items);
     storeRoomMembers(roomId, cursorPaginationData.items);
-    return cursorPaginationData;
+    return arriveMemberPage(cursorPaginationData);
   };
   // The room's own totals, which a search must never re-read: the roleless group is derived from a count of
   // Everybody, and counting a filtered room would describe one nobody is in

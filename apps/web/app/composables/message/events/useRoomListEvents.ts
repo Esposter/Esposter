@@ -11,7 +11,7 @@ export const useRoomListEvents = () => {
   const roomStore = useRoomStore();
   const { storeDeleteRoom, storeUpdateRoom } = roomStore;
   const memberStore = useMemberStore();
-  const { storeCreateMember, storeDeleteMember } = memberStore;
+  const { arriveJoinedMember, arriveLeftMember } = memberStore;
   const directMessageStore = useDirectMessageStore();
   const { storeDeleteDirectMessage, storeDeleteDirectMessageParticipant, storeUpdateDirectMessage } =
     directMessageStore;
@@ -43,13 +43,13 @@ export const useRoomListEvents = () => {
   );
   // A join's participants reach the direct message list through its membership topic, not from a read made here
   onScopeDispose(
-    onUserEvent("joinRoom", ({ displayName, roomId, user }) => {
-      storeCreateMember(roomId, { ...user, displayName });
+    onUserEvent("joinRoom", (joinedMember) => {
+      arriveJoinedMember(joinedMember);
     }),
   );
   onScopeDispose(
-    onUserEvent("leaveRoom", ({ roomId, userId }) => {
-      storeDeleteMember(roomId, userId);
+    onUserEvent("leaveRoom", (leftMember) => {
+      arriveLeftMember(leftMember);
     }),
   );
   onScopeDispose(

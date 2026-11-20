@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { MemberRowInRoom } from "#shared/models/db/room/MemberRowInRoom";
 
 import { flushCache } from "#src/composables/cache/indexedDb/flushCache.test";
 import { goOffline, goOnline } from "#src/composables/shared/network.test";
@@ -27,6 +28,14 @@ describe(useMemberCache, () => {
   const secondPartitionKey = v7();
   const user = createUser();
   const member: MemberInRoom = { ...user, displayName: user.name };
+  // The cached row is the membership the page held, at the version it was written at, beside the person it names
+  const memberRow: MemberRowInRoom = {
+    ...member,
+    deletedAt: null,
+    roomId: secondPartitionKey,
+    userId: user.id,
+    version: 0,
+  };
   const mountCache = async (initialRouteId: string = partitionKey) => {
     await mountSuspended(
       defineComponent({
@@ -61,7 +70,7 @@ describe(useMemberCache, () => {
   test("populates store from cache when switching rooms offline", async () => {
     expect.hasAssertions();
 
-    await writeIndexedDb(MemberIndexedDbStoreConfiguration, [member], secondPartitionKey);
+    await writeIndexedDb(MemberIndexedDbStoreConfiguration, [memberRow], secondPartitionKey);
     await mountCache();
     // Both totals are server-computed, so the room left behind is the last thing that set them. Neither can be
     // Refetched offline, and the room being switched into must not inherit either
