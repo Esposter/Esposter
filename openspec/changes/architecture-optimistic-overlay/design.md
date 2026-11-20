@@ -119,6 +119,8 @@ The virtual background pipeline's effects move into one commit at the end of the
 
 Whole-value reads with no version keep the run scope. Each group in the tasks lists the reads it leaves as residue, and a count or a blob-backed read is residue.
 
+A blob-backed listing is not an overlay table. Its bucket is the index, so no write puts a row in it, and a write to it is an awaited call with no entry and no rollback. The call backgrounds are the first, in group 4.4: an upload re-reads the listing once the server confirms it, since the server checks the size a presigned url could not bound, and a delete leaves the slot listed until the worker reclaims the blob, which changes the listing's topic. The listing is a cached read, as it was, and the topic a read watches is what brings the change back.
+
 ## Database
 
 The version facts were checked against the installed Drizzle release and with a probe, which ran the generated SQL on SQLite:

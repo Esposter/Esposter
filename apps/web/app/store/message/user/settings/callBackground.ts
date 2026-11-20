@@ -2,18 +2,18 @@ import type { CallBackground } from "#shared/models/message/call/CallBackground"
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
-import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getSingleFilePresignedUrlEntities } from "#src/services/file/getSingleFilePresignedUrlEntities";
 import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
 import { CallVirtualBackgroundDefinitions } from "#src/services/message/room/call/CallVirtualBackgroundDefinitions";
-import { CALL_BACKGROUND_UPLOAD_KEY } from "#src/services/message/room/call/constants";
-import { getCallBackgroundKey } from "#src/services/message/room/call/getCallBackgroundKey";
 import { getCallBackgroundSelection } from "#src/services/message/room/call/getCallBackgroundSelection";
-import { getResultAsync, noop } from "@esposter/shared";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
+// The listing is the bucket's own index, so no write puts a slot in it and none is drawn ahead of the server. Each write is
+// An awaited call: the upload re-reads the listing once it is confirmed, and a delete leaves the listing as the server holds
+// It until the blob's topic changes, which the worker's reclaim of the blob makes happen
 export const useCallBackgroundStore = defineStore("message/user/settings/callBackground", () => {
   const { $trpc } = useNuxtApp();
-  const { checkIsPending, executeMutation } = useMutation();
   const callBackgrounds = ref<CallBackground[]>([]);
   // Read once per session for the picker's own render: the set is capped and only this store writes it, so
   // Every surface that opens the grid joins one listing instead of issuing its own
@@ -25,7 +25,7 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
       },
     },
   );
-  const isUploadingCallBackground = computed(() => checkIsPending(CALL_BACKGROUND_UPLOAD_KEY));
+  const isUploadingCallBackground = ref(false);
   const createCallBackground = async (file: File) => {
     const usedSlots = new Set(callBackgrounds.value.map(({ slot }) => slot));
     // The client allocates, because it is the only party holding a view that already accounts for a delete it
@@ -35,48 +35,36 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
     );
     if (slot === undefined) return;
 
-    await executeMutation(
-      async () => {
-        const presignedUrl = await $trpc.user.generateCallBackgroundUploadUrl.mutate({
-          mimetype: file.type,
-          size: file.size,
-          slot,
-        });
-        await uploadFilesToPresignedUrls({
-          files: [file],
-          generateUploadFilePresignedUrlEntities: getSingleFilePresignedUrlEntities(presignedUrl),
-        });
-        // The upload lands without the bucket binding, so the confirm is what wakes the listing's other watchers. The upload has
-        // Landed by now, so a confirm that fails is logged rather than reported as a failed upload
-        await getResultAsync(() => $trpc.user.confirmCallBackgroundUpload.mutate({ slot })).match(noop, console.error);
-      },
-      {
-        // The upload target is the server's to issue, so the slot is listed once the upload is confirmed
-        awaitedBecause: AwaitedReason.ServerIssuedValue,
-        key: CALL_BACKGROUND_UPLOAD_KEY,
-        // Re-read rather than appended optimistically: the listing is the index, and it is also where the size
-        // A presigned write url could not bound is checked - so a slot that landed over the cap never reaches the picker
-        onSuccess: () => refetchCallBackgrounds(),
+    isUploadingCallBackground.value = true;
+    // The upload target is the server's to issue, so the slot is listed once the upload is confirmed, and a refetch is
+    // The re-read rather than an append: the listing is the index, and it is also where the size a presigned write url
+    // could not bound is checked, so a slot that landed over the cap never reaches the picker
+    await withFinalizerAsync(
+      () =>
+        getResultAsync(async () => {
+          const presignedUrl = await $trpc.user.generateCallBackgroundUploadUrl.mutate({
+            mimetype: file.type,
+            size: file.size,
+            slot,
+          });
+          await uploadFilesToPresignedUrls({
+            files: [file],
+            generateUploadFilePresignedUrlEntities: getSingleFilePresignedUrlEntities(presignedUrl),
+          });
+          // The upload lands without the bucket binding, so the confirm is what wakes the listing's other watchers. The upload has
+          // Landed by now, so a confirm that fails is logged rather than reported as a failed upload
+          await getResultAsync(() => $trpc.user.confirmCallBackgroundUpload.mutate({ slot })).match(
+            noop,
+            console.error,
+          );
+        }).match(() => refetchCallBackgrounds(), createErrorAlert),
+      () => {
+        isUploadingCallBackground.value = false;
       },
     );
   };
-  const deleteCallBackground = (slot: CallBackground["slot"]) => {
-    executeMutation(() => $trpc.user.deleteCallBackground.mutate({ slot }), {
-      // The blob is reclaimed by a worker rather than inline, so the listing would hold the slot for as long as
-      // That takes. Dropping it here is what the user asked for, and the next listing agrees
-      applyOptimistic: () => {
-        const deletedCallBackground = callBackgrounds.value.find((callBackground) => callBackground.slot === slot);
-        callBackgrounds.value = callBackgrounds.value.filter((callBackground) => callBackground.slot !== slot);
-        return () => {
-          if (!deletedCallBackground) return;
-
-          callBackgrounds.value = [...callBackgrounds.value, deletedCallBackground].toSorted(
-            (firstCallBackground, secondCallBackground) => firstCallBackground.slot - secondCallBackground.slot,
-          );
-        };
-      },
-      key: getCallBackgroundKey(slot),
-    });
+  const deleteCallBackground = async (slot: CallBackground["slot"]) => {
+    await getResultAsync(() => $trpc.user.deleteCallBackground.mutate({ slot })).match(noop, createErrorAlert);
   };
   // One selection, two kinds of background: a preset resolves to the static path it ships as, a slot to a
   // Freshly signed presigned read url, and anything resolving to neither is no background at all - the state the

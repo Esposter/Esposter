@@ -2,12 +2,6 @@ import { takeOne } from "@esposter/shared";
 
 // Client-only per-remote-participant volume multiplier — no stored default, dies with the call.
 export const DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE = 100;
-// The prefix of every call background key, the per-slot keys and the upload key alike, so they share one namespace
-export const CALL_BACKGROUND_KEY = "callBackground";
-// One upload affordance, so one stable target: the picker's tile is disabled while a write is in flight, and
-// This is what it reads. Deletes are keyed per slot instead — they are independent targets, and sharing one
-// Key would serialise a user working down their own list
-export const CALL_BACKGROUND_UPLOAD_KEY = `${CALL_BACKGROUND_KEY}Upload` as const;
 // The frame every call video is sized to: what a screen share captures at, and what a virtual background is
 // Rasterized to so it covers the frame without being scaled up
 export const FULL_HD_RESOLUTION = { height: 1080, width: 1920 } as const;
