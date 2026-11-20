@@ -96,9 +96,7 @@ export const useGenshinSave = async () => {
   };
   // Every attempt sends the page's one session id, so an attempt whose write landed and whose response was lost is retried
   // As the same start, which the server answers without taking the lease again
-  const startUntilStarted = async (
-    startSessionId: string,
-  ): Promise<NonNullable<Awaited<ReturnType<typeof startLease>>> | undefined> => {
+  const startUntilStarted = async (startSessionId: string) => {
     for (let attempt = 0; ; attempt++) {
       if (isLeft) return undefined;
 
