@@ -1,4 +1,3 @@
-import { getDuplicateCodeFindingLine } from "#src/services/sweeps/duplicateCode/getDuplicateCodeFindingLine";
 import { readDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/readDuplicateCodeFindings";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
@@ -13,7 +12,7 @@ await runCommand(
     },
     run() {
       const findings = readDuplicateCodeFindings();
-      for (const finding of findings) console.info(getDuplicateCodeFindingLine(finding));
+      for (const finding of findings) console.info(`${finding.lines} ${finding.paths.join(" | ")}`);
       console.info(`${findings.length} findings`);
     },
   }),
