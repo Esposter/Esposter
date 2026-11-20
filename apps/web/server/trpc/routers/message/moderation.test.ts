@@ -19,7 +19,7 @@ import { createCallerFactory } from "#server/trpc/index";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { moderationRouter } from "#server/trpc/routers/message/moderation";
-import { readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
+import { readRoomMembership, readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
@@ -71,9 +71,7 @@ describe("moderationRouter", () => {
       .from(bansInMessage)
       .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, userId)));
   const readMembershipRows = (userId: string) => readRoomMembershipRows(mockContext.db, roomId, userId);
-  // The membership row as stored, a removed one included
-  const readMembership = (userId: string) =>
-    mockContext.db.query.usersToRoomsInMessage.findFirst({ where: { roomId: { eq: roomId }, userId: { eq: userId } } });
+  const readMembership = (userId: string) => readRoomMembership(mockContext.db, roomId, userId);
 
   beforeAll(() => {
     mockContext = getMockContext();

@@ -12,6 +12,7 @@ import { createCallerFactory } from "#server/trpc/index";
 import { blockRouter } from "#server/trpc/routers/block";
 import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { friendRouter } from "#server/trpc/routers/friend";
+import { readRoomMembership } from "#server/trpc/routers/readRoomMembershipRows.test";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { directMessageRouter } from "#server/trpc/routers/room/directMessage";
 import { roomRouter } from "#server/trpc/routers/room/index";
@@ -57,9 +58,7 @@ describe("directMessageRouter", () => {
   // A context acting as the given user on a session of their own, or as a new user when none is given
   const createUserContext = async (user?: AuthSession["user"]) =>
     createMockContext(await createMockAuthSession(mockContext.db, user));
-  // The membership row as stored, a removed one included
-  const readMembership = (roomId: string, userId: string) =>
-    mockContext.db.query.usersToRoomsInMessage.findFirst({ where: { roomId: { eq: roomId }, userId: { eq: userId } } });
+  const readMembership = (roomId: string, userId: string) => readRoomMembership(mockContext.db, roomId, userId);
 
   beforeAll(async () => {
     mockContext = await createMockContext();
