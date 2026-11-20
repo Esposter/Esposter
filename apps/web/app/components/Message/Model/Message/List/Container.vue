@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { checkIsMessageId } from "#src/services/message/checkIsMessageId";
+import { parseMessageId } from "#src/services/message/parseMessageId";
 import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
 import { getRouteParam } from "#src/util/router/getRouteParam";
@@ -12,13 +12,13 @@ const { items } = storeToRefs(dataStore);
 // Read once rather than as a computed: `messages/[id]/index` and `messages/[id]/[messageId]` are separate page
 // Components with no `key` override, so Nuxt's default per-path key remounts this on either segment changing
 // And the mounted scroll runs again for the message the new path names
-const messageId = getRouteParam(currentRoute.value.params, "messageId");
+const messageId = parseMessageId(getRouteParam(currentRoute.value.params, "messageId"));
 
-if (checkIsMessageId(messageId)) {
+if (messageId !== undefined) {
   const scrollToMessage = useScrollToMessage();
 
   onMounted(async () => {
-    await scrollToMessage(currentRoomId.value, Number(messageId));
+    await scrollToMessage(currentRoomId.value, messageId);
   });
 }
 </script>

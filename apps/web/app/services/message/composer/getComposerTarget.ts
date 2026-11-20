@@ -1,6 +1,6 @@
 import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 
-import { checkIsMessageId } from "#src/services/message/checkIsMessageId";
+import { parseMessageId } from "#src/services/message/parseMessageId";
 import { ID_SEPARATOR } from "@esposter/shared";
 
 // The inverse of getComposerKey, for the surfaces that read composer state back out of storage rather than
@@ -13,7 +13,6 @@ export const getComposerTarget = (composerKey: string): ComposerTarget | undefin
   // The key is read back out of storage, so a thread part that is no message id names no composer at all — read as
   // The room's, its draft would be sent to the room and its clear would miss the key it is stored under
   const threadRootIdValue = composerKey.slice(separatorIndex + 1);
-  return checkIsMessageId(threadRootIdValue)
-    ? { roomId: composerKey.slice(0, separatorIndex), threadRootId: Number(threadRootIdValue) }
-    : undefined;
+  const threadRootId = parseMessageId(threadRootIdValue);
+  return threadRootId === undefined ? undefined : { roomId: composerKey.slice(0, separatorIndex), threadRootId };
 };

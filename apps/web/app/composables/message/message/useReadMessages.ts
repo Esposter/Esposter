@@ -1,7 +1,7 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { checkIsMessageId } from "#src/services/message/checkIsMessageId";
 import { toRoomMessagePage } from "#src/services/message/message/toRoomMessagePage";
+import { parseMessageId } from "#src/services/message/parseMessageId";
 import { requirePartitionKey } from "#src/services/message/requirePartitionKey";
 import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
@@ -30,9 +30,8 @@ export const useReadMessages = () => {
     const previousCursor = getPreviousCursorRef(roomId);
     return readItems(async () => {
       // A route param is whatever the address bar holds, so one that is no message id reads as no message to open on
-      const messageId = getRouteParam(currentRoute.value.params, "messageId");
-      if (checkIsMessageId(messageId)) {
-        const anchorId = Number(messageId);
+      const anchorId = parseMessageId(getRouteParam(currentRoute.value.params, "messageId"));
+      if (anchorId !== undefined) {
         // The room opens at the message and reads both ways from it. A message the room does not hold leaves the
         // Window around its id, so the window only counts when it holds the message itself
         const anchoredPage = await $trpc.message.readMessagesAround.query({ messageId: anchorId, roomId });
