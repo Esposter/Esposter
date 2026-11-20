@@ -412,55 +412,52 @@ export const useResourceStore = defineStore("resource", () => {
     const { id } = resourceValue;
     const { promise: settled, resolve: release } = Promise.withResolvers<void>();
     contentSaves.value.set(id, settled);
+    // Released once the outcome is recorded, not by a finalizer: writeOptimistic records a refusal after the write's
+    // promise has settled, so a waiter released on the way out would read the save as not failed
+    const settle = () => {
+      if (contentSaves.value.get(id) === settled) contentSaves.value.delete(id);
+      release();
+    };
     writeOptimistic(
-      () =>
-        withFinalizerAsync(
-          async () => {
-            // Read when the write is sent rather than when it was issued: a save that queued behind another carries the version
-            // That one answered. The loaded resource's version is the one its content was read or saved at, since a read of its
-            // Row can land before the other device's save is adopted, and a save sent with that row's version would overwrite it
-            const target = getHeldResource(resourceRows.value, id) ?? resourceValue;
-            const resourceRouter = getResourceRouter(target.type);
-            // The version the content it sends was read or saved at, which is what the server compares. A large save takes the
-            // Same pair, so a delta or a staged save never sends a version the row it reads from has not yet been told of
-            const sent = {
-              contentVersion: checkIsLoaded(id) ? contentBaseVersion : target.contentVersion,
-              id: target.id,
-            };
-            const input = { content: issuedContent, ...sent };
-            const baseline = contentBaseline?.id === target.id ? contentBaseline : undefined;
-            // A body the server's request size limiter would refuse goes as a delta against the stored bytes when this
-            // Client holds them, and staged through R2 otherwise. The body is measured as the transformer
-            // Writes it, never as the content's own JSON, which is smaller — but only once the JSON alone is under the
-            // Limit, since the body is never smaller than it
-            const savedResource =
-              contentBytes.byteLength >= MAX_REQUEST_SIZE || getRequestBodyByteLength(input) >= MAX_REQUEST_SIZE
-                ? ((baseline && (await saveResourceContentDelta(resourceRouter, contentBytes, baseline, sent))) ??
-                  (await saveStagedResourceContent(resourceRouter, contentBytes, sent)))
-                : // Calling the union of every type's content write needs an argument every arm accepts, so the
-                  // Content is narrowed the same way the read above widens it
-                  await resourceRouter.saveResourceContent.mutate(input as never);
-            // The server stores its own serialization of the parsed document, which a content schema's transforms can
-            // Make differ from what was sent, so the sent bytes become the baseline only when their hash is the one
-            // Stored
-            const contentHash = await getSha256Hex(contentBytes);
-            contentBaseline =
-              savedResource.contentHash === contentHash
-                ? { bytes: contentBytes, hash: contentHash, id: target.id }
-                : undefined;
-            if (checkIsLoaded(id)) {
-              persistedContentJson = contentJson;
-              persistedContentHash = savedResource.contentHash;
-              contentBaseVersion = savedResource.contentVersion;
-              isSaveContentFailed.value = false;
-            }
-            return createRowResponse(resourceTable, savedResource);
-          },
-          () => {
-            if (contentSaves.value.get(id) === settled) contentSaves.value.delete(id);
-            release();
-          },
-        ),
+      async () => {
+        // Read when the write is sent rather than when it was issued: a save that queued behind another carries the version
+        // That one answered. The loaded resource's version is the one its content was read or saved at, since a read of its
+        // Row can land before the other device's save is adopted, and a save sent with that row's version would overwrite it
+        const target = getHeldResource(resourceRows.value, id) ?? resourceValue;
+        const resourceRouter = getResourceRouter(target.type);
+        // The version the content it sends was read or saved at, which is what the server compares. A large save takes the
+        // Same pair, so a delta or a staged save never sends a version the row it reads from has not yet been told of
+        const sent = { contentVersion: checkIsLoaded(id) ? contentBaseVersion : target.contentVersion, id: target.id };
+        const input = { content: issuedContent, ...sent };
+        const baseline = contentBaseline?.id === target.id ? contentBaseline : undefined;
+        // A body the server's request size limiter would refuse goes as a delta against the stored bytes when this
+        // Client holds them, and staged through R2 otherwise. The body is measured as the transformer
+        // Writes it, never as the content's own JSON, which is smaller — but only once the JSON alone is under the
+        // Limit, since the body is never smaller than it
+        const savedResource =
+          contentBytes.byteLength >= MAX_REQUEST_SIZE || getRequestBodyByteLength(input) >= MAX_REQUEST_SIZE
+            ? ((baseline && (await saveResourceContentDelta(resourceRouter, contentBytes, baseline, sent))) ??
+              (await saveStagedResourceContent(resourceRouter, contentBytes, sent)))
+            : // Calling the union of every type's content write needs an argument every arm accepts, so the
+              // Content is narrowed the same way the read above widens it
+              await resourceRouter.saveResourceContent.mutate(input as never);
+        // The server stores its own serialization of the parsed document, which a content schema's transforms can
+        // Make differ from what was sent, so the sent bytes become the baseline only when their hash is the one
+        // Stored
+        const contentHash = await getSha256Hex(contentBytes);
+        contentBaseline =
+          savedResource.contentHash === contentHash
+            ? { bytes: contentBytes, hash: contentHash, id: target.id }
+            : undefined;
+        if (checkIsLoaded(id)) {
+          persistedContentJson = contentJson;
+          persistedContentHash = savedResource.contentHash;
+          contentBaseVersion = savedResource.contentVersion;
+          isSaveContentFailed.value = false;
+        }
+        settle();
+        return createRowResponse(resourceTable, savedResource);
+      },
       {
         // A content save changes no row the screen shows, so its entry only reads the row, which orders it on that row
         entry: getSaveResourceEntry(id),
@@ -482,6 +479,7 @@ export const useResourceStore = defineStore("resource", () => {
             if (checkIsLoaded(id)) isSaveContentFailed.value = true;
             createErrorNotification(error);
           }
+          settle();
         },
       },
     );
