@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { ProgramParticipantInResource } from "@esposter/db-schema";
 
-import { PROGRAM_PARTICIPANT_BATCH_SIZE } from "#server/services/program/constants";
+import { PROGRAM_PARTICIPANT_REGENERATION_CONCURRENCY } from "#server/services/program/constants";
 import { programParticipantsInResource, surveyResponsesInResource } from "@esposter/db-schema";
 import { generateSecretToken, hashSecretToken, settleAll } from "@esposter/shared";
 import { and, eq, exists } from "drizzle-orm";
@@ -42,7 +42,7 @@ export const regenerateProgramParticipantTokens = async (
       ]);
       return participantRows.length > 0 ? { id, token } : undefined;
     }),
-    PROGRAM_PARTICIPANT_BATCH_SIZE,
+    PROGRAM_PARTICIPANT_REGENERATION_CONCURRENCY,
   );
   return regenerations.filter((regeneration) => regeneration !== undefined);
 };

@@ -2,7 +2,6 @@ import type { WebEnvironmentVariables } from "#shared/models/environment/WebEnvi
 
 import { Environment } from "#shared/models/environment/Environment";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
-import { CloudflareEnvironment } from "@esposter/db-schema";
 import { describe } from "vitest";
 
 // Every variable the schema requires, so a test runs against an environment the start-up check would accept and a
@@ -13,7 +12,9 @@ export const MOCK_ENVIRONMENT_VARIABLES = {
   BASE_URL: TEST_ORIGIN,
   BETTER_AUTH_SECRET: "BETTER_AUTH_SECRET",
   BETTER_AUTH_URL: TEST_ORIGIN,
-  CLOUDFLARE_ENVIRONMENT: CloudflareEnvironment.Development,
+  // The value rather than `CloudflareEnvironment.Development`: every test file's setup reads this, and the enum's only
+  // Home is the schema barrel, whose load is most of a pure file's setup. `satisfies` below still holds it to the enum
+  CLOUDFLARE_ENVIRONMENT: "dev",
   FACEBOOK_CLIENT_ID: "FACEBOOK_CLIENT_ID",
   FACEBOOK_CLIENT_SECRET: "FACEBOOK_CLIENT_SECRET",
   GITHUB_CLIENT_ID: "GITHUB_CLIENT_ID",

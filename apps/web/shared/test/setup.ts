@@ -2,11 +2,8 @@
 /* oxlint-disable no-underscore-dangle -- marker property name is owned by @nuxt/test-utils; Pinia's store registry has no public accessor, and `$dispose` removes each entry */
 import type { Pinia } from "pinia";
 
-import { mockTopicNamespace } from "#server/services/realtime/publishTopics.test";
-import { verifyWakes, writeWakeRecord } from "#server/trpc/liveTopicWakeCheck.test";
 import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
 import { checkIsServer } from "@esposter/shared";
-import { env } from "cloudflare:workers";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
 
 // The node environment has no storage at all: the shared Vitest configuration switches node's own Web Storage
@@ -47,8 +44,16 @@ globalThis.localStorage ??= new MemoryStorage();
 globalThis.sessionStorage ??= new MemoryStorage();
 vi.mock(import("#server/services/queue/getJobQueue"), () => import("#server/services/queue/getJobQueue.test"));
 // A topic's object lives in the realtime Worker, so a published topic is recorded where a test can read it. The binding
-// Is written into the db-mock env that the Worker's modules read through
-Object.assign(env, { TOPIC: mockTopicNamespace });
+// Is written into the db-mock env when the one module reading it loads, so a file that never publishes never loads the
+// Schema the mock namespace is built on
+vi.mock(import("#server/services/realtime/publishTopicsBestEffort"), async (importOriginal) => {
+  const [{ env }, { mockTopicNamespace }] = await Promise.all([
+    import("cloudflare:workers"),
+    import("#server/services/realtime/publishTopics.test"),
+  ]);
+  Object.assign(env, { TOPIC: mockTopicNamespace });
+  return importOriginal();
+});
 
 // The user object client redirects to its colocated in-memory double, here rather than in `context.test.ts`: a `vi.mock`
 // Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test
@@ -77,7 +82,8 @@ vi.mock(import("#server/auth"), () => import("#server/auth.test"));
 // Fills the binding, so it is registered over a double that reads the binding on first use
 vi.mock(import("#server/db/index"), () => import("#server/db/index.test"));
 // Every suite's caller runs through the live topic wake check, which asks each read again after a write and fails a read
-// Whose answer a write changed without a topic the write published waking it (`liveTopicWakeCheck.test.ts`)
+// Whose answer a write changed without a topic the write published waking it (`liveTopicWakeCheck.test.ts`). The check
+// Registers its own hooks as it loads, so only a file that builds a caller loads it and the schema it reads
 vi.mock(import("#server/trpc/index"), () => import("#server/trpc/indexWithWakeCheck.test"));
 // The dungeon page passes GridEngine to Phaser only as a plugin, so an empty constructor stands in for it
 const EmptyGridEngine = function () {};
@@ -163,11 +169,9 @@ beforeEach(() => {
 afterEach(() => {
   globalThis.localStorage.clear();
   globalThis.sessionStorage.clear();
-  verifyWakes();
   if (checkIsServer()) vi.useRealTimers();
 });
 
-afterAll(async () => {
+afterAll(() => {
   vi.restoreAllMocks();
-  await writeWakeRecord();
 });

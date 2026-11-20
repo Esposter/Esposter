@@ -2,13 +2,13 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { GeneratedProgramParticipants } from "#shared/models/resource/program/GeneratedProgramParticipants";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { PROGRAM_PARTICIPANT_BATCH_SIZE } from "#server/services/program/constants";
 import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";
 import { readProgramAudienceDataset } from "#server/services/program/readProgramAudienceDataset";
 import { readProgramBinding } from "#server/services/program/readProgramBinding";
 import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
 import { readOwnedResource } from "#server/services/resource/readOwnedResource";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
+import { getRowsPerStatement } from "@esposter/db";
 import {
   PROGRAM_PARTICIPANT_KEY_VALUE_MAX_LENGTH,
   programParticipantsInResource,
@@ -63,7 +63,7 @@ export const generateProgramParticipants = async (
   // The batches are independent, so they overlap. A participant another run claimed first conflicts and is left out of
   // This answer: that run issued its credential, and its owner was answered with it
   const insertedKeyValueSets = await Promise.all(
-    chunk(issuedParticipants, PROGRAM_PARTICIPANT_BATCH_SIZE).map(async (batch) => {
+    chunk(issuedParticipants, getRowsPerStatement(programParticipantsInResource)).map(async (batch) => {
       const insertedParticipants = await ctx.db
         .insert(programParticipantsInResource)
         .values(

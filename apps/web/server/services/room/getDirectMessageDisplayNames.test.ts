@@ -1,6 +1,6 @@
-import { D1_MAX_BOUND_PARAMETERS } from "#server/services/db/constants";
 import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMessageDisplayNames";
 import { createMockContext, createMockUser } from "#server/trpc/context.test";
+import { D1_MAX_BOUND_PARAMETERS } from "@esposter/db";
 import { roomsInMessage, RoomType, usersToRoomsInMessage } from "@esposter/db-schema";
 import { chunk } from "@esposter/shared";
 import { sql } from "drizzle-orm";

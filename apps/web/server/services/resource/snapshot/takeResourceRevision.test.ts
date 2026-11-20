@@ -187,13 +187,20 @@ describe(takeResourceRevision, () => {
     const evictedVersion = await readResourceVersion(1);
     assert.exists(evictedVersion);
     await seedContentBlob(resource.id, rewrittenSerializedContent);
-    for (let version = 2; version <= maxRetained + 1; version++)
-      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each revision takes the next version, which the eviction reads
-      await takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport);
+    // The count is read off the version counter, so the counter is moved to the ceiling's edge rather than climbed
+    // There one take at a time: the take at the ceiling keeps the first revision, and the one past it evicts it
+    await mockContext.db
+      .update(resourcesInResource)
+      .set({ revisionVersion: maxRetained - 1 })
+      .where(eq(resourcesInResource.id, resource.id));
+    await takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport);
+
+    await expect(readResourceVersion(1)).resolves.toBeDefined();
+
+    await takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport);
     const snapshotVersions = await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions);
 
-    expect(snapshotVersions).toHaveLength(maxRetained);
-    expect(takeOne(snapshotVersions).version).toBe(2);
+    expect(snapshotVersions.map(({ version }) => version)).toStrictEqual([maxRetained, maxRetained + 1]);
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
 

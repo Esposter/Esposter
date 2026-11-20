@@ -1,8 +1,5 @@
 import type { styleText } from "node:util";
 
-// D1 refuses a statement that binds more values than this, so a statement that writes a list is split to stay under it
-export const D1_MAX_BOUND_PARAMETERS = 100;
-
 // The words the query log paints as keywords: the set SQLite documents for its own SQL.
 // The keyword page is at https://www.sqlite.org/lang_keywords.html. A word not on this list is left unpainted, never guessed at
 export const SQLITE_KEYWORDS = [

@@ -13,7 +13,7 @@ import { getWakeRecordDirectory } from "@esposter/shared-node/wake-check";
 import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect } from "vitest";
+import { afterAll, afterEach, describe, expect } from "vitest";
 
 // The caller factory the wake check wraps, as tRPC's own `createCallerFactory` answers it
 export type RawCallerFactory = (router: AnyRouter) => (context: Context) => unknown;
@@ -213,13 +213,13 @@ export const takeWakeFailures = (): string[] => {
 };
 
 // Asserts after each test that no write changed a read it did not wake, then forgets the test's reads
-export const verifyWakes = () => {
+const verifyWakes = () => {
   expect(takeWakeFailures()).toStrictEqual([]);
   reads = new Map();
 };
 
 // Leaves one record per test file that made a call, which the run-level check reads across every file of the run
-export const writeWakeRecord = async () => {
+const writeWakeRecord = async () => {
   if (calledProcedures.size === 0 && counts.writes === 0) return;
   const appProcedures = await getAppProcedures();
   const called = appProcedures.filter(({ procedure }) => calledProcedures.has(procedure)).map(({ path }) => path);
@@ -236,5 +236,10 @@ export const writeWakeRecord = async () => {
   writeFileSync(join(directory, `${file}.json`), JSON.stringify(record));
 };
 
-// Describes nothing: the check is imported by the setup file and the caller factory, which its self-test runs beside
+// Registered as the check loads, which is during the collection of a file whose caller reaches it, so a file that builds
+// No caller never loads the check
+afterEach(verifyWakes);
+afterAll(writeWakeRecord);
+
+// Describes nothing: the check is imported by the caller factory, which its self-test runs beside
 describe.todo("liveTopicWakeCheck");

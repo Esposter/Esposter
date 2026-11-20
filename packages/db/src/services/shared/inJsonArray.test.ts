@@ -1,27 +1,25 @@
 import type { MockDatabase } from "@esposter/db-mock";
 
+import { getRowsPerStatement } from "#src/services/shared/getRowsPerStatement";
 import { inJsonArray } from "#src/services/shared/inJsonArray";
 import { notInJsonArray } from "#src/services/shared/notInJsonArray";
 import { createMockDb } from "@esposter/db-mock";
 import { usersInAuth } from "@esposter/db-schema";
+import { chunk } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(inJsonArray, () => {
   // Past D1's 100-parameter statement cap, so a list bound value by value would fail where this one must not
   const listLength = 150;
-  const insertChunkLength = 10;
   let mockDatabase: MockDatabase;
 
   const insertUsers = async (ids: string[]) => {
-    const chunks = Array.from({ length: Math.ceil(ids.length / insertChunkLength) }, (_value, index) =>
-      ids.slice(index * insertChunkLength, (index + 1) * insertChunkLength),
-    );
     await Promise.all(
-      chunks.map((chunk) =>
+      chunk(ids, getRowsPerStatement(usersInAuth)).map((idChunk) =>
         mockDatabase.db
           .insert(usersInAuth)
-          .values(chunk.map((id) => ({ email: `${id}@example.com`, emailVerified: false, id, name: id }))),
+          .values(idChunk.map((id) => ({ email: `${id}@example.com`, emailVerified: false, id, name: id }))),
       ),
     );
   };

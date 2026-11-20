@@ -2,10 +2,10 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { D1_MAX_BOUND_PARAMETERS } from "#server/services/db/constants";
 import { createMockOtherUserCaller, createMockUser } from "#server/trpc/context.test";
 import { roleRouter } from "#server/trpc/routers/role";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
+import { D1_MAX_BOUND_PARAMETERS } from "@esposter/db";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";

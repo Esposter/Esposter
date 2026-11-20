@@ -1,7 +1,6 @@
 import type { DirectMessageParticipants } from "#shared/models/db/room/DirectMessageParticipants";
 import type { Page, PublicUser, RoomInMessage } from "@esposter/db-schema";
 
-import { D1_MAX_BOUND_PARAMETERS } from "#server/services/db/constants";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
@@ -29,7 +28,7 @@ import { createDirectMessageParticipantsInputSchema } from "#shared/models/db/ro
 import { deleteDirectMessageParticipantInputSchema } from "#shared/models/db/room/DeleteDirectMessageParticipantInput";
 import { hideDirectMessageInputSchema } from "#shared/models/db/room/HideDirectMessageInput";
 import { DIRECT_MESSAGE_SORT, readDirectMessagesInputSchema } from "#shared/models/db/room/ReadDirectMessagesInput";
-import { createPageSort, getPageOrderBy, getPageWhere, inJsonArray, toPage } from "@esposter/db";
+import { createPageSort, getPageOrderBy, getPageWhere, getRowsPerStatement, inJsonArray, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
@@ -82,7 +81,7 @@ export const directMessageRouter = router({
           .values({ participantKey, type: RoomType.DirectMessage, userId })
           .onConflictDoNothing({ target: roomsInMessage.participantKey })
           .returning({ id: roomsInMessage.id }),
-        ...chunk(allUserIds, Math.floor(D1_MAX_BOUND_PARAMETERS / 2)).map((userIdChunk) =>
+        ...chunk(allUserIds, getRowsPerStatement(usersToRoomsInMessage)).map((userIdChunk) =>
           ctx.db
             .insert(usersToRoomsInMessage)
             .values(userIdChunk.map((participantUserId) => ({ roomId: participantRoomId, userId: participantUserId })))
