@@ -50,12 +50,11 @@ export const getTsdownConfiguration = ({
     // Consumer at runtime, naming a source path that consumer never referenced.
     deps: {
       onlyBundle: false,
-      onlyImport: getPackagePatterns([
-        ...Object.keys(dependencies ?? {}),
-        ...Object.keys(optionalDependencies ?? {}),
-        ...Object.keys(peerDependencies ?? {}),
-        ...Object.keys(peerDependenciesMeta ?? {}),
-      ]),
+      onlyImport: getPackagePatterns(
+        [dependencies, optionalDependencies, peerDependencies, peerDependenciesMeta].flatMap((fields) =>
+          Object.keys(fields ?? {}),
+        ),
+      ),
     },
     // The same path tsdown would have defaulted to, and stating it is what makes the hook below usable. Left
     // Unset, tsdown treats the default as a glob and resolves it while it is still resolving the config —
