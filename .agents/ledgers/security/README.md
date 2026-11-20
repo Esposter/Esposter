@@ -36,3 +36,7 @@ git grep -n -E "v-html|innerHTML|sql\.raw\(|Math\.random\(|execSync\(|execFileSy
 ```
 
 Procedures and routes are read in full whatever the grep finds, since a missing guard leaves no string to match.
+
+## Exclusions
+
+Excluded: `CHANGELOG.md` (lerna output).

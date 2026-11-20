@@ -33,6 +33,7 @@ The first lists the hand-kept lists a test holds, the second the prose that name
 ## Exclusions
 
 - **Generated output.** `apps/web/shared/generated` and the other generated folders are their generator's copy, and the generator is what changes them.
+- **Generated changelogs.** `CHANGELOG.md` is lerna output, written by the release, so no copy in it is ours to keep equal.
 - **Literal values in a test.** The `test-values` ledger owns the literals a test writes. This ledger reads a test only for a copy it holds.
 
 ## Carve-outs
