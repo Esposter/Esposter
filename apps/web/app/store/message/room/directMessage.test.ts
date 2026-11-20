@@ -1,9 +1,12 @@
 // @vitest-environment nuxt
+import type { PublicUser } from "@esposter/db-schema";
+
 import { useRoomListEvents } from "#src/composables/message/events/useRoomListEvents";
 import { useReadDirectMessages } from "#src/composables/message/room/useReadDirectMessages";
 import { useSession } from "#src/services/auth/authClient.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { createRoom } from "#src/services/message/room/createRoom.test";
+import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
@@ -11,6 +14,7 @@ import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealti
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 import { getScopeTopic, MessageType, RoomType, usersToRoomsInMessage } from "@esposter/db-schema";
@@ -269,5 +273,86 @@ describe(useDirectMessageStore, () => {
       second.id,
       third.id,
     ]);
+  });
+
+  // A participant's row is a membership, so a removal is its tombstone arriving. A read of the list answered before the
+  // Removal still names that participant live, at the version the removal superseded, so it must not put them back
+  test("a late participants read does not re-add a participant a removal has tombstoned", async () => {
+    expect.hasAssertions();
+
+    const directMessage = createRoom("", RoomType.DirectMessage);
+    const membershipOf = (user: PublicUser, version: number) => ({
+      ...user,
+      deletedAt: null,
+      displayName: user.name,
+      roomId: directMessage.id,
+      userId: user.id,
+      version,
+    });
+    const { promise: isLateReadAnswered, resolve: onLateReadAnswered } = Promise.withResolvers<true>();
+    let directMessageReads = 0;
+    trpcMsw.room.directMessage.readDirectMessages.query(async () => {
+      directMessageReads++;
+      // The first read holds both participants. The second is the late one, held until the removal has landed
+      if (directMessageReads > 1) await isLateReadAnswered;
+      return {
+        items: [directMessage],
+        nextCursor: "",
+        participants: [{ participants: [membershipOf(first, 0), membershipOf(second, 0)], roomId: directMessage.id }],
+      };
+    });
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const [, onUserFrame] = getLastOpenRealtimeSocketCall();
+    effectScope().run(() => {
+      useRoomListEvents();
+    });
+    const directMessageStore = useDirectMessageStore();
+    const { getDirectMessageParticipants } = directMessageStore;
+    const { readDirectMessages } = useReadDirectMessages();
+    await readDirectMessages();
+    const lateRead = readDirectMessages();
+    await flushPromises();
+    onUserFrame?.(
+      JSON.stringify({
+        data: {
+          deletedAt: new Date(0),
+          displayName: second.name,
+          roomId: directMessage.id,
+          userId: second.id,
+          version: 1,
+        },
+        type: "leaveRoom",
+      }),
+    );
+    await flushPromises();
+    onLateReadAnswered(true);
+    await lateRead;
+    await flushPromises();
+
+    expect(directMessageReads).toBe(2);
+    expect(getDirectMessageParticipants(directMessage.id).map(({ id }) => id)).toStrictEqual([first.id]);
+  });
+
+  // The hide is an entry over the viewer's membership, so the conversation leaves the list while the write is out. A
+  // Refusal drops that entry, and the conversation is visible as it was
+  test("a refused hide leaves the direct message visible", async () => {
+    expect.hasAssertions();
+
+    const session = { user: { id: v7() } };
+    useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
+    const directMessage = createRoom("", RoomType.DirectMessage);
+    trpcMsw.room.directMessage.hideDirectMessage.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    useUserToRoomStore().arriveUserToRooms([createUserToRoom({ roomId: directMessage.id, userId: session.user.id })]);
+    const directMessageStore = useDirectMessageStore();
+    const { directMessages } = storeToRefs(directMessageStore);
+    const { hideDirectMessage, pushDirectMessages } = directMessageStore;
+    pushDirectMessages(directMessage);
+    hideDirectMessage(directMessage.id);
+    await flushPromises();
+
+    expect(directMessages.value).toStrictEqual([directMessage]);
   });
 });
