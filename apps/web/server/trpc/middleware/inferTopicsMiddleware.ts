@@ -51,10 +51,10 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
       );
   }
   // A mutation that succeeds names each row it changed by its key and the version the write left it at, so its answer settles
-  // The entry the client made for that write at those versions. A failed mutation names none: its entry drops, and a write that
-  // Landed before the failure is published below
-  // A write that changed more rows than MAX_WRITE_ROW_VERSIONS names none of them, so the header never grows with a bulk write.
-  // Its entry drops on the answer, and its rows come back through the topic refetch the publish below wakes
+  // The entry the client made for that write at those versions. A write that changed more rows than MAX_WRITE_ROW_VERSIONS names
+  // None of them, so the header never grows with a bulk write: its entry drops on the answer, and its rows come back through the
+  // Topic refetch the publish below wakes. A failed mutation names none: its entry drops, and a write that landed before the failure
+  // Is published below
   if (type === "mutation" && result.ok) {
     const rowVersions = await getWriteRowVersions(recorded.statements);
     if (rowVersions.length <= MAX_WRITE_ROW_VERSIONS)
