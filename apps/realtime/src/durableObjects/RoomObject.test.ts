@@ -23,11 +23,11 @@ import {
   QueueJob,
   RoomPermission,
   roomRolesInMessage,
-  TOMBSTONE_RETENTION_MS,
   roomsInMessage,
   SOCKET_IDENTITY_HEADER,
   START_PAGE_CURSOR,
   threadFollowsInMessage,
+  TOMBSTONE_RETENTION_MS,
   topicSchema,
   usersInAuth,
   usersToRoomsInMessage,
@@ -639,12 +639,12 @@ describe(RoomObject, () => {
     await expect(object.updateScheduledMessage({ id, message: "rescheduled", runAt }, actor)).resolves.toBeNull();
 
     await expect(object.createScheduledMessage({ id, message: "put back", runAt }, actor)).resolves.toStrictEqual({
+      deletedAt: null,
       id,
       message: "put back",
       replyToId: null,
       runAt,
       userId,
-      deletedAt: null,
       version: 2,
     });
   });

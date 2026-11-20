@@ -296,7 +296,8 @@ describe(useMemberStore, () => {
     const memberStore = useMemberStore();
     const { arriveMemberPage, readItems } = memberStore;
     const { members } = storeToRefs(memberStore);
-    const { storeUser } = useUserStore();
+    const userStore = useUserStore();
+    const { storeUser } = userStore;
     storeUser(user);
     let displayName = member.displayName;
     let version = 0;

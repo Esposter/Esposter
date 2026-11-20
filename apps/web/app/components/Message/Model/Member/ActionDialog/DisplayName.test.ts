@@ -29,7 +29,7 @@ describe("messageModelMemberActionDialogDisplayName", () => {
     });
   const memberRow: MemberRowInRoom = { ...user, deletedAt: null, displayName, roomId, userId: user.id, version: 0 };
   // The member the dialog was opened on, as the room's first page read left it: the person, and the membership row the
-  // page held. The list is the room's, so the room is made current here, after the dialog mounts, since a mount resets the route
+  // Page held. The list is the room's, so the room is made current here, after the dialog mounts, since a mount resets the route
   const seedMember = async () => {
     setCurrentRoomId(roomId);
     const { storeUser } = useUserStore();
@@ -39,7 +39,11 @@ describe("messageModelMemberActionDialogDisplayName", () => {
     await readItems(() => Promise.resolve(arriveMemberPage({ items: [memberRow], nextCursor: "" })));
   };
   // The row the member list draws for the member
-  const getMemberRow = () => takeOne(storeToRefs(useMemberStore()).members.value);
+  const getMemberRow = () => {
+    const memberStore = useMemberStore();
+    const { members } = storeToRefs(memberStore);
+    return takeOne(members.value);
+  };
 
   // The write is the save's only request, and the test awaits its arrival rather than a flush, since a test that ends
   // First leaves the request in flight

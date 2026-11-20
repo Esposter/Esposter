@@ -41,8 +41,8 @@ import {
   scheduledMessagesInUser,
   SENT_MESSAGE_PAGE_SORT,
   sentMessagesInUser,
-  TOMBSTONE_RETENTION_MS,
   todoRemindersInUser,
+  TOMBSTONE_RETENTION_MS,
   TopicKind,
   userClientFrameSchema,
 } from "@esposter/db-schema";
@@ -424,6 +424,30 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     return this.env.TOPIC.get(this.env.TOPIC.idFromName(topic));
   }
 
+  // The object's tables are not D1, so the nightly D1 purge does not reach them: the alarm removes each tombstone once the
+  // Tombstone retention has passed, the age a client forgets its own copy at. A tombstone is hidden from every read, so its
+  // Removal changes no view and wakes no read
+  async #purgeExpiredTombstones(now: Date): Promise<void> {
+    const cutoff = new Date(now.getTime() - TOMBSTONE_RETENTION_MS);
+    await this.db.delete(remindersInUser).where(lte(remindersInUser.deletedAt, cutoff));
+    await this.db.delete(scheduledMessagesInUser).where(lte(scheduledMessagesInUser.deletedAt, cutoff));
+  }
+
+  // The earliest moment a table's oldest tombstone is purged, or nothing when it holds none
+  async #readOldestTombstoneExpiry(
+    table: typeof remindersInUser | typeof scheduledMessagesInUser,
+  ): Promise<Date | undefined> {
+    const [oldestTombstone] = await this.db
+      .select({ deletedAt: table.deletedAt })
+      .from(table)
+      .where(isNotNull(table.deletedAt))
+      .orderBy(asc(table.deletedAt))
+      .limit(1);
+    return oldestTombstone?.deletedAt
+      ? new Date(oldestTombstone.deletedAt.getTime() + TOMBSTONE_RETENTION_MS)
+      : undefined;
+  }
+
   // Every watch a live tab holds. A watch whose socket is gone is left out, so a close the object never heard of cannot
   // Keep a topic subscribed
   async #readTopicWatches(): Promise<TopicWatch[]> {
@@ -447,30 +471,6 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     await this.#sendDueTodoReminders(now);
     await this.#sendDueReminders(now);
     await this.#armAlarm();
-  }
-
-  // The object's tables are not D1, so the nightly D1 purge does not reach them: the alarm removes each tombstone once the
-  // Tombstone retention has passed, the age a client forgets its own copy at. A tombstone is hidden from every read, so its
-  // Removal changes no view and wakes no read
-  async #purgeExpiredTombstones(now: Date): Promise<void> {
-    const cutoff = new Date(now.getTime() - TOMBSTONE_RETENTION_MS);
-    await this.db.delete(remindersInUser).where(lte(remindersInUser.deletedAt, cutoff));
-    await this.db.delete(scheduledMessagesInUser).where(lte(scheduledMessagesInUser.deletedAt, cutoff));
-  }
-
-  // The earliest moment a table's oldest tombstone is purged, or nothing when it holds none
-  async #readOldestTombstoneExpiry(
-    table: typeof remindersInUser | typeof scheduledMessagesInUser,
-  ): Promise<Date | undefined> {
-    const [oldestTombstone] = await this.db
-      .select({ deletedAt: table.deletedAt })
-      .from(table)
-      .where(isNotNull(table.deletedAt))
-      .orderBy(asc(table.deletedAt))
-      .limit(1);
-    return oldestTombstone?.deletedAt
-      ? new Date(oldestTombstone.deletedAt.getTime() + TOMBSTONE_RETENTION_MS)
-      : undefined;
   }
 
   // The reminder is published to the notification queue as the person's own, and tombstoned only once it is queued.

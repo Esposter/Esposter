@@ -5,7 +5,7 @@ import { likesInPost } from "@esposter/db-schema";
 import { and, eq, isNull } from "drizzle-orm";
 
 // The posts the erased person liked, as a subquery: the posts whose counts and rankings the erasure rewrites. A removed
-// vote is a tombstone the count no longer holds, so only the live votes name a post
+// Vote is a tombstone the count no longer holds, so only the live votes name a post
 export const getLikedPostIds = (userId: UserInAuth["id"]) =>
   getDb()
     .select({ postId: likesInPost.postId })

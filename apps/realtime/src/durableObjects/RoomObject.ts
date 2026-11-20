@@ -812,6 +812,14 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     ).match(noop, console.error);
   }
 
+  // The object's tables are not D1, so the nightly D1 purge does not reach them: the alarm removes a scheduled message's
+  // Tombstone once the retention has passed, the age a client forgets its own copy at. A tombstone is hidden from every read,
+  // So its removal changes no view and wakes no read
+  #purgeExpiredTombstones(now: Date): void {
+    const cutoff = new Date(now.getTime() - TOMBSTONE_RETENTION_MS);
+    this.db.delete(scheduledMessagesInRoom).where(lte(scheduledMessagesInRoom.deletedAt, cutoff)).run();
+  }
+
   // A read that faults leaves the message without an image, never without the message.
   // The fault is logged, and the write goes on
   async #readAppUserImage(appUserId: string): Promise<string> {
@@ -1007,14 +1015,6 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
       onlineMembers.map(({ userId }) => this.#getUser(userId).roomActivity(this.#roomId, lastMessageAt)),
     );
     for (const result of results) if (result.status === "rejected") console.error(result.reason);
-  }
-
-  // The object's tables are not D1, so the nightly D1 purge does not reach them: the alarm removes a scheduled message's
-  // Tombstone once the retention has passed, the age a client forgets its own copy at. A tombstone is hidden from every read,
-  // So its removal changes no view and wakes no read
-  #purgeExpiredTombstones(now: Date): void {
-    const cutoff = new Date(now.getTime() - TOMBSTONE_RETENTION_MS);
-    this.db.delete(scheduledMessagesInRoom).where(lte(scheduledMessagesInRoom.deletedAt, cutoff)).run();
   }
 
   // Each due row is tombstoned in the same transaction that writes its message, so it is sent once or dropped once.

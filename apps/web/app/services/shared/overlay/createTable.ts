@@ -9,8 +9,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { getTableName } from "drizzle-orm";
 
 // The overlay's table over a Drizzle table. The row is the table's select model, or a projection of it that a caller names
-// when a read returns only some of the columns, which must be columns of the table. The key is read from its primary key,
-// so a caller names neither. The schema holds the table object once, so every Table made over it shares one slot
+// When a read returns only some of the columns, which must be columns of the table. The key is read from its primary key,
+// So a caller names neither. The schema holds the table object once, so every Table made over it shares one slot
 export const createTable = <
   TSource extends TableSource,
   TRow extends Partial<TSource["$inferSelect"]> & Versioned = TSource["$inferSelect"],

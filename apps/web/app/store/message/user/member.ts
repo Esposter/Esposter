@@ -59,15 +59,15 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const { arrive, view, writeOptimistic } = overlayStore;
   const memberRows = view(memberTable);
   // Keyed by room, like messages. A single global list would still hold the previous room's members after a switch,
-  // which is unreadable state for anything asking "are these rows this room's" — the offline cache asks exactly that
+  // Which is unreadable state for anything asking "are these rows this room's" — the offline cache asks exactly that
   const {
     getSlice,
     items: listedMemberKeys,
     ...restData
   } = useCursorPaginationDataMap<MemberKey>(() => roomStore.scopedRoomId);
   // Sorted the way the server pages them: a display name compared case-insensitively and then byte by byte, the same
-  // comparison on the same display name, and then the id. The list is one order whether it was read in pages or joined
-  // live. A locale collation has no SQLite counterpart, so a list sorted by one would not be the order the cursor advances
+  // Comparison on the same display name, and then the id. The list is one order whether it was read in pages or joined
+  // Live. A locale collation has no SQLite counterpart, so a list sorted by one would not be the order the cursor advances
   const members = computed(() => {
     const roomMemberRows = getRoomMemberRows(memberRows.value, roomStore.scopedRoomId);
     return joinListedMembers(listedMemberKeys.value, roomMemberRows, userMap, (user, row) => ({
@@ -113,7 +113,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // On Screen — a role assigned from a profile card in one room while another is open belongs to that room's totals
   memberRoleChangeHooks.register(refreshMemberCountsInBackground);
   // A page of a room's members arrives row by row, and the page's keys keep the order the server gave them, so the cursor
-  // advances from the place the page left and the list shows each row the overlay holds for its key
+  // Advances from the place the page left and the list shows each row the overlay holds for its key
   const arriveMemberPage = ({ items: pageMembers, ...page }: Page<MemberRowInRoom>): Page<MemberKey> => {
     for (const member of pageMembers) arrive(memberTable, toMemberRow(member));
     return { ...page, items: pageMembers.map(({ roomId, userId }) => ({ roomId, userId })) };
@@ -128,13 +128,13 @@ export const useMemberStore = defineStore("message/user/member", () => {
     refreshMemberCountsInBackground(roomId);
   };
   // A member who leaves arrives as the tombstone the removal left, which the list drops once it is held. Their roles go with
-  // them, and the role change's own hook re-reads the room's totals
+  // Them, and the role change's own hook re-reads the room's totals
   const arriveLeftMember = (leftMember: MemberRow) => {
     arrive(memberTable, toMemberRow(leftMember));
     mutateMemberRoles(leftMember.roomId, leftMember.userId, []);
   };
   // A saved display name is an optimistic write over the member's row. The entry shows the name the server will resolve,
-  // and the answer is the row itself, which arrives at the version it names and settles the write
+  // And the answer is the row itself, which arrives at the version it names and settles the write
   const renameMember = (roomId: string, userId: string, displayName: string) => {
     const accountName = userMap.get(userId)?.name ?? "";
     writeOptimistic(
@@ -157,7 +157,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
     );
   };
   // The offline cache keeps a room's members as the rows they are shown with, and restores them into the overlay by their
-  // versions, so the list's keys follow the restored rows. The rows are the ones the overlay shows for the room
+  // Versions, so the list's keys follow the restored rows. The rows are the ones the overlay shows for the room
   const getCacheSlice = (roomId: string): CursorPaginationSlice<MemberRowInRoom> => {
     const slice = getSlice(roomId);
     return {

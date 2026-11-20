@@ -459,6 +459,20 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     });
   }
 
+  // A tombstone past its retention is removed at the object's next write. A call object has no alarm, so its own writes
+  // Are where the purge runs, and a client that still holds the row forgets it at the same age
+  #purgeTombstones(): void {
+    this.db
+      .delete(participants)
+      .where(
+        and(
+          isNotNull(participants.deletedAt),
+          lt(participants.deletedAt, new Date(Date.now() - TOMBSTONE_RETENTION_MS)),
+        ),
+      )
+      .run();
+  }
+
   #readCallState(): { meetingId: string; startedAt: Date | null } {
     return (
       this.db.select().from(callState).where(eq(callState.id, CALL_STATE_ID)).get() ?? {
@@ -562,20 +576,6 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       sessionId: participant.sessionId,
       userId: participant.userId,
     };
-  }
-
-  // A tombstone past its retention is removed at the object's next write. A call object has no alarm, so its own writes
-  // Are where the purge runs, and a client that still holds the row forgets it at the same age
-  #purgeTombstones(): void {
-    this.db
-      .delete(participants)
-      .where(
-        and(
-          isNotNull(participants.deletedAt),
-          lt(participants.deletedAt, new Date(Date.now() - TOMBSTONE_RETENTION_MS)),
-        ),
-      )
-      .run();
   }
 
   // One piece of work per key at a time, each starting once the one before it for that key has settled. Its own result

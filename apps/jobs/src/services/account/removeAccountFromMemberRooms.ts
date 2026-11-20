@@ -9,7 +9,7 @@ import { and, eq } from "drizzle-orm";
 
 // The account is taken out of each room it is still a member of before its row goes.
 // Each membership is tombstoned first, so the `leaveRoom` the room sends carries the row at the version the removal left,
-// and a list holding it drops the row by that version.
+// And a list holding it drops the row by that version.
 // The room drops its sockets and its online set first, then every member it still has online is sent that `leaveRoom`.
 // So an open room hears of the erase rather than finding the account gone at its next reload.
 // The rooms it owned went first, so the memberships left are the rooms it is still in
