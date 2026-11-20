@@ -2,6 +2,7 @@ import type { MockDatabase } from "@esposter/db-mock";
 import type { Database } from "@esposter/db-schema";
 
 import { readFollowedThreadRootIds } from "#server/services/message/thread/readFollowedThreadRootIds";
+import { getRowsPerStatement } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { MAX_FOLLOWED_THREADS, roomsInMessage, threadFollowsInMessage, usersInAuth } from "@esposter/db-schema";
 import { chunk } from "@esposter/shared";
@@ -53,8 +54,11 @@ describe(readFollowedThreadRootIds, () => {
       threadRootId: index + 1,
       userId,
     }));
-    // Each row binds six parameters and a D1 statement binds at most a hundred, so the rows go in statements of ten
-    await Promise.all(chunk(follows, 10).map((batch) => db.insert(threadFollowsInMessage).values(batch)));
+    await Promise.all(
+      chunk(follows, getRowsPerStatement(threadFollowsInMessage)).map((batch) =>
+        db.insert(threadFollowsInMessage).values(batch),
+      ),
+    );
 
     await expect(readFollowedThreadRootIds(db, roomId, userId)).resolves.toStrictEqual(
       Array.from({ length: followCount }, (_value, index) => followCount - index),

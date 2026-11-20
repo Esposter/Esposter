@@ -1,6 +1,6 @@
 import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMessageDisplayNames";
 import { createMockContext, createMockUser } from "#server/trpc/context.test";
-import { D1_MAX_BOUND_PARAMETERS } from "@esposter/db";
+import { D1_MAX_BOUND_PARAMETERS, getRowsPerStatement } from "@esposter/db";
 import { roomsInMessage, RoomType, usersToRoomsInMessage } from "@esposter/db-schema";
 import { chunk } from "@esposter/shared";
 import { sql } from "drizzle-orm";
@@ -71,7 +71,7 @@ describe(getDirectMessageDisplayNames, () => {
     const viewer = await createMockUser(context.db);
     const roomIds = Array.from({ length: D1_MAX_BOUND_PARAMETERS + 1 }, () => v7());
     // Each write is one chunk of rows, so no statement binds more than the cap the read is held to
-    const roomIdChunks = chunk(roomIds, 5);
+    const roomIdChunks = chunk(roomIds, getRowsPerStatement(roomsInMessage));
     await Promise.all(
       roomIdChunks.map((roomIdChunk) =>
         context.db

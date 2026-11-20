@@ -14,6 +14,7 @@ import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
+import { getRowsPerStatement } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
@@ -111,9 +112,10 @@ describe("emojiRouter", () => {
       name: `emoji_${index}`,
       roomId,
     }));
-    // Each row binds five parameters and a D1 statement binds at most a hundred, so the rows go in statements of ten
     await Promise.all(
-      chunk(roomEmojiRows, 10).map((batch) => mockContext.db.insert(roomEmojisInMessage).values(batch)),
+      chunk(roomEmojiRows, getRowsPerStatement(roomEmojisInMessage)).map((batch) =>
+        mockContext.db.insert(roomEmojisInMessage).values(batch),
+      ),
     );
 
     await expect(
