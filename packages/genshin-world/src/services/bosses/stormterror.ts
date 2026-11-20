@@ -1,5 +1,4 @@
 import type { BossMove } from "#src/models/bosses/BossMove";
-import type { StormterrorPhase } from "#src/models/bosses/StormterrorPhase";
 
 import { Element } from "#src/models/Element";
 import { ENEMY_RECOVERY_SECONDS, ENEMY_WINDUP_SECONDS } from "#src/services/enemy/constants";
@@ -44,27 +43,3 @@ export const STORMTERROR_MOVES: BossMove[] = [
     windupSeconds: ENEMY_WINDUP_SECONDS,
   },
 ];
-
-// The attack the phases one, two and four end with, by identifier, as no move of Dvalin's carries its English name
-export const STORMTERROR_FINALE_ATTACK = "finaleAttack";
-
-// The phases of the fight from the wiki's Stormterror Dvalin page, each with its shield's time limit and the number of shield
-// Breaks that end it, and the attack that transitions into the next phase. The fifth phase lasts to the fight's end. Timings
-// Its timings are PROVISIONAL, read from the page, which cites the speedrun recording "Confront Stormterror - Speedrun Strategy & Exploits"
-// (youtu.be/j62DdUZXczM) and is not measured in a recording of this game yet
-export const STORMTERROR_PHASES: readonly StormterrorPhase[] = [
-  { shieldLimit: 1, timeLimitSeconds: 120, transitionAttack: STORMTERROR_FINALE_ATTACK },
-  { shieldLimit: 3, timeLimitSeconds: 480, transitionAttack: STORMTERROR_FINALE_ATTACK },
-  { shieldLimit: 5, timeLimitSeconds: 120, transitionAttack: "Energy Lightning" },
-  { shieldLimit: 6, timeLimitSeconds: 480, transitionAttack: STORMTERROR_FINALE_ATTACK },
-  { shieldLimit: Number.POSITIVE_INFINITY, timeLimitSeconds: Number.POSITIVE_INFINITY },
-];
-
-// Dvalin's shield, which each phase's breaks count against: non-elemental and a fifth of his max HP, from the same page. Once it
-// Breaks he is paralysed on the platform for a long period the wiki does not time, which ends early when the player falls out of
-// Bounds (PROVISIONAL)
-export const STORMTERROR_SHIELD_HP_FRACTION = 0.2;
-
-// The arena's wind currents from the same page: Anemograna's updrafts, which a character rides to dodge Dvalin's attacks or to
-// Crossing between platforms. Their positions are the scene export's and not read here, so each is named and not placed (PROVISIONAL)
-export const STORMTERROR_WIND_CURRENTS = [{ name: "Anemograna's updraft", source: "Anemograna" }] as const;

@@ -1,3 +1,5 @@
+import type { StormterrorPhase } from "#src/models/bosses/StormterrorPhase";
+
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 
 // A normal boss comes back this long after its Trounce Blossom is claimed, and not until then while it is unclaimed
@@ -86,3 +88,37 @@ export const WEEKLY_BOSS_GEM_ITEM_IDS: number[][] = [
 // Dream Solvent, the other drop a weekly boss's claim pays, and the chance, as a fraction, of one, from the same tab
 export const WEEKLY_BOSS_DREAM_SOLVENT_ITEM_ID = 113021;
 export const WEEKLY_BOSS_DREAM_SOLVENT_CHANCE = 0.33;
+// The attack the phases one, two and four end with, by identifier, as no move of Dvalin's carries its English name
+export const STORMTERROR_FINALE_ATTACK = "finaleAttack";
+// The phases of the fight from the wiki's Stormterror Dvalin page, each with its shield's time limit and the number of shield
+// Breaks that end it, and the attack that transitions into the next phase. The fifth phase lasts to the fight's end. Timings
+// Its timings are PROVISIONAL, read from the page, which cites the speedrun recording "Confront Stormterror - Speedrun Strategy & Exploits"
+// (youtu.be/j62DdUZXczM) and is not measured in a recording of this game yet
+export const STORMTERROR_PHASES: readonly StormterrorPhase[] = [
+  { shieldLimit: 1, timeLimitSeconds: 120, transitionAttack: STORMTERROR_FINALE_ATTACK },
+  { shieldLimit: 3, timeLimitSeconds: 480, transitionAttack: STORMTERROR_FINALE_ATTACK },
+  { shieldLimit: 5, timeLimitSeconds: 120, transitionAttack: "Energy Lightning" },
+  { shieldLimit: 6, timeLimitSeconds: 480, transitionAttack: STORMTERROR_FINALE_ATTACK },
+  { shieldLimit: Number.POSITIVE_INFINITY, timeLimitSeconds: Number.POSITIVE_INFINITY },
+];
+// Dvalin's shield, which each phase's breaks count against: non-elemental and a fifth of his max HP, from the same page. Once it
+// Breaks he is paralysed on the platform for a long period the wiki does not time, which ends early when the player falls out of
+// Bounds (PROVISIONAL)
+export const STORMTERROR_SHIELD_HP_FRACTION = 0.2;
+// The arena's wind currents from the same page: Anemograna's updrafts, which a character rides to dodge Dvalin's attacks or to
+// Crossing between platforms. Their positions are the scene export's and not read here, so each is named and not placed (PROVISIONAL)
+export const STORMTERROR_WIND_CURRENTS = [{ name: "Anemograna's updraft", source: "Anemograna" }] as const;
+// The share of its max health the Perpetual Mechanical Array cannot be damaged past until Defensive Mode has been triggered once, from the wiki
+export const PERPETUAL_MECHANICAL_ARRAY_HEALTH_GATE = 0.3;
+// The share of its max health at which Defensive Mode triggers, when it has not triggered before its first timed activation
+export const PERPETUAL_MECHANICAL_ARRAY_DEFENSIVE_MODE_HEALTH = 0.35;
+// The seconds into the fight of its first timed Defensive Mode activation, its initial cooldown on the wiki's AI table
+export const PERPETUAL_MECHANICAL_ARRAY_DEFENSIVE_MODE_SECONDS = 40;
+// The seconds Defensive Mode holds with its highlighted sentinel standing before the boss exits it, the exit's cooldown on
+// The wiki's AI table (PROVISIONAL: the wiki says only "a long period of time")
+export const PERPETUAL_MECHANICAL_ARRAY_DEFENSIVE_MODE_EXIT_SECONDS = 150;
+// The seconds the boss is paralysed once its highlighted sentinel is disabled, and the share its base resistances drop by
+export const PERPETUAL_MECHANICAL_ARRAY_PARALYSIS_SECONDS = 20;
+export const PERPETUAL_MECHANICAL_ARRAY_PARALYSIS_RESISTANCE_REDUCTION = 0.5;
+// The seconds the boss is invulnerable for as its paralysis ends, before it pulls its sentinels back in
+export const PERPETUAL_MECHANICAL_ARRAY_INVULNERABLE_SECONDS = 1;

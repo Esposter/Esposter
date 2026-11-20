@@ -1,4 +1,4 @@
-import { STORMTERROR_WIND_CURRENTS } from "#src/services/bosses/stormterror";
+import { STORMTERROR_WIND_CURRENTS } from "#src/services/bosses/constants";
 import { DOMAIN_ARENA_SPREAD } from "#src/services/domains/constants";
 
 // The wind currents' stand-in places on the arena, one per current and evenly spaced round a ring beyond the camp's, so none

@@ -12,7 +12,7 @@ import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { PoiseType } from "#src/models/enemy/PoiseType";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
-import { STORMTERROR_FINALE_ATTACK } from "#src/services/bosses/stormterror";
+import { STORMTERROR_FINALE_ATTACK } from "#src/services/bosses/constants";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";

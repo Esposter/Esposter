@@ -1,6 +1,6 @@
 import { PerpetualMechanicalArrayMode } from "#src/models/bosses/PerpetualMechanicalArrayMode";
 import { computePerpetualMechanicalArrayHealthFloor } from "#src/services/bosses/computePerpetualMechanicalArrayHealthFloor";
-import { PERPETUAL_MECHANICAL_ARRAY_HEALTH_GATE } from "#src/services/bosses/perpetualMechanicalArray";
+import { PERPETUAL_MECHANICAL_ARRAY_HEALTH_GATE } from "#src/services/bosses/constants";
 import { PERPETUAL_MECHANICAL_ARRAY_FIGHT_START } from "#src/services/bosses/stepPerpetualMechanicalArrayFight";
 import { describe, expect, test } from "vitest";
 

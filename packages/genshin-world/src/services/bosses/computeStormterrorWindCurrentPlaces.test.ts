@@ -1,5 +1,5 @@
 import { computeStormterrorWindCurrentPlaces } from "#src/services/bosses/computeStormterrorWindCurrentPlaces";
-import { STORMTERROR_WIND_CURRENTS } from "#src/services/bosses/stormterror";
+import { STORMTERROR_WIND_CURRENTS } from "#src/services/bosses/constants";
 import { DOMAIN_ARENA_SPREAD } from "#src/services/domains/constants";
 import { describe, expect, test } from "vitest";
 

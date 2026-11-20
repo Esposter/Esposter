@@ -8,7 +8,7 @@ import {
   PERPETUAL_MECHANICAL_ARRAY_DEFENSIVE_MODE_SECONDS,
   PERPETUAL_MECHANICAL_ARRAY_INVULNERABLE_SECONDS,
   PERPETUAL_MECHANICAL_ARRAY_PARALYSIS_SECONDS,
-} from "#src/services/bosses/perpetualMechanicalArray";
+} from "#src/services/bosses/constants";
 
 // The fight as it begins: attacking, with no time spent and Defensive Mode not yet triggered
 export const PERPETUAL_MECHANICAL_ARRAY_FIGHT_START: PerpetualMechanicalArrayFight = {

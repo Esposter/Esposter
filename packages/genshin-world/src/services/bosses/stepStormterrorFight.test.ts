@@ -1,5 +1,5 @@
 import { stepStormterrorFight, STORMTERROR_FIGHT_START } from "#src/services/bosses/stepStormterrorFight";
-import { STORMTERROR_PHASES } from "#src/services/bosses/stormterror";
+import { STORMTERROR_PHASES } from "#src/services/bosses/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

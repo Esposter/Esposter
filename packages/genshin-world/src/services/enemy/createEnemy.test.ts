@@ -1,7 +1,7 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyKindMovesLoaderMap } from "#src/services/bosses/EnemyKindMovesLoaderMap";
-import { STORMTERROR_SHIELD_HP_FRACTION } from "#src/services/bosses/stormterror";
+import { STORMTERROR_SHIELD_HP_FRACTION } from "#src/services/bosses/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { displaceEnemy } from "#src/services/enemy/displaceEnemy";

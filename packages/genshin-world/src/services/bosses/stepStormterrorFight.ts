@@ -1,7 +1,7 @@
 import type { StormterrorFight } from "#src/models/bosses/StormterrorFight";
 
 import { checkIsStormterrorPhaseOver } from "#src/services/bosses/checkIsStormterrorPhaseOver";
-import { STORMTERROR_PHASES } from "#src/services/bosses/stormterror";
+import { STORMTERROR_PHASES } from "#src/services/bosses/constants";
 
 // The fight as it begins: the first phase, with no time spent in it and no shield broken
 export const STORMTERROR_FIGHT_START: StormterrorFight = { phase: 1, phaseElapsedSeconds: 0, totalShieldBreaks: 0 };

@@ -5,7 +5,7 @@ import {
   PERPETUAL_MECHANICAL_ARRAY_DEFENSIVE_MODE_SECONDS,
   PERPETUAL_MECHANICAL_ARRAY_INVULNERABLE_SECONDS,
   PERPETUAL_MECHANICAL_ARRAY_PARALYSIS_SECONDS,
-} from "#src/services/bosses/perpetualMechanicalArray";
+} from "#src/services/bosses/constants";
 import {
   PERPETUAL_MECHANICAL_ARRAY_FIGHT_START,
   stepPerpetualMechanicalArrayFight,
