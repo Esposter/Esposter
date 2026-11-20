@@ -1,9 +1,9 @@
 import { roomIdSchema, roomReactionSchema } from "@esposter/db-schema";
-import { createUniqueArraySchema, MAX_READ_LIMIT } from "@esposter/shared";
+import { createIdBatchSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export const readReactionsInputSchema = z.object({
   ...roomIdSchema.shape,
-  messageIds: createUniqueArraySchema(roomReactionSchema.shape.messageId).min(1).max(MAX_READ_LIMIT),
+  messageIds: createIdBatchSchema(roomReactionSchema.shape.messageId),
 });
 export type ReadReactionsInput = z.infer<typeof readReactionsInputSchema>;
