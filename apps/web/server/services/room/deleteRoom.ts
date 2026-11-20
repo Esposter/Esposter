@@ -12,9 +12,15 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getRoomMemberIds } from "@esposter/db";
 import {
   DatabaseEntityType,
+  getLiveMemberPermissionWhere,
+  getLiveMemberRoleWhere,
+  getLiveRoleWhere,
   invitesInMessage,
+  roomMemberPermissionsInMessage,
+  roomRolesInMessage,
   roomsInMessage,
   StorageBucket,
+  usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   webhooksInMessage,
 } from "@esposter/db-schema";
@@ -22,9 +28,10 @@ import { noop, Operation } from "@esposter/shared";
 import { and, eq, isNull } from "drizzle-orm";
 
 // A room's deletion is a tombstone, so every member's copy of the room leaves their list at the version the batch names.
-// The membership a member held is tombstoned with it. The invites and webhooks of the room are removed with it, so a link
-// Or a webhook of a deleted room refuses, as the hard delete's cascade left them. The member's own tabs are told their
-// Membership's tombstone, and the caller's row is the answer
+// The membership a member held is tombstoned with it, and so are the room's roles, each member's role links and overrides,
+// As a removal tombstones them, so no live child outlives its room. The invites and webhooks of the room are removed with
+// It, so a link or a webhook of a deleted room refuses, as the hard delete's cascade left them. The member's own tabs are
+// Told their membership's tombstone, and the caller's row is the answer
 export const deleteRoom = async (
   { db, user }: Pick<AuthedContext, "db" | "user">,
   id: string,
@@ -52,6 +59,23 @@ export const deleteRoom = async (
       .returning(),
     db.delete(invitesInMessage).where(eq(invitesInMessage.roomId, id)),
     db.delete(webhooksInMessage).where(eq(webhooksInMessage.roomId, id)),
+    db
+      .update(roomRolesInMessage)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(roomRolesInMessage.roomId, id), getLiveRoleWhere(roomRolesInMessage))),
+    db
+      .update(usersToRoomRolesInMessage)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(usersToRoomRolesInMessage.roomId, id), getLiveMemberRoleWhere(usersToRoomRolesInMessage))),
+    db
+      .update(roomMemberPermissionsInMessage)
+      .set({ deletedAt: new Date() })
+      .where(
+        and(
+          eq(roomMemberPermissionsInMessage.roomId, id),
+          getLiveMemberPermissionWhere(roomMemberPermissionsInMessage),
+        ),
+      ),
   ] as const);
   requireMutation(deletedRoomRows[0], Operation.Delete, DatabaseEntityType.Room, id);
   await Promise.all(

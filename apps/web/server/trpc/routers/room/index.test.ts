@@ -533,6 +533,24 @@ describe("roomRouter", () => {
     expect(deletedMembership).toStrictEqual(await readMembership(newRoom.id, getMockSession().user.id));
   });
 
+  test("deletes the room's role links with its membership", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const role = await roleCaller.createRole({ id: v7(), name, roomId: newRoom.id });
+    await roleCaller.assignRole({ roleId: role.id, roomId: newRoom.id, userId: getMockSession().user.id });
+    const readLiveRoleLinks = () =>
+      mockContext.db.query.usersToRoomRolesInMessage.findMany({
+        where: { RAW: getLiveMemberRoleWhere, roomId: { eq: newRoom.id } },
+      });
+
+    expect(await readLiveRoleLinks()).toHaveLength(1);
+
+    await roomCaller.deleteRoom(newRoom.id);
+
+    expect(await readLiveRoleLinks()).toStrictEqual([]);
+  });
+
   test("fails delete with direct message room", async () => {
     expect.hasAssertions();
 
@@ -1036,7 +1054,11 @@ describe("roomRouter", () => {
     expect(roomObjectCalls).toContainEqual({ args: [leaveEvent], method: "notifyOnlineMembers", roomId: newRoom.id });
     expect(userObjectCalls).toContainEqual({ args: [leaveEvent], method: "broadcastEvent", userId: member.id });
     // The leaver's own tabs drop the room by the membership the leave tombstoned, which they hold as a row
-    expect(userObjectCalls).toContainEqual({ args: [removedMembership], method: "updateUserToRoom", userId: member.id });
+    expect(userObjectCalls).toContainEqual({
+      args: [removedMembership],
+      method: "updateUserToRoom",
+      userId: member.id,
+    });
   });
 
   // A leave keeps the membership as a tombstone, so the version it leaves is the one a later arrival of the row loses to
