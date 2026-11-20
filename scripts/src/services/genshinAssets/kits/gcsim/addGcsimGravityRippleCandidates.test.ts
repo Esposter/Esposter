@@ -51,13 +51,14 @@ const gcsim: GcsimCharacter = {
   },
   configFile: "config.yml",
   constantMap: new Map([
+    ["skillHitmarksLB", { elementLines: {}, file: "skill.go", line: 20, value: [51, 56, 62, 71, 82] }],
     ["skillHitmarksLC", { elementLines: {}, file: "skill.go", line: 19, value: 43 }],
     ["skillHitmarksLCr", { elementLines: {}, file: "skill.go", line: 18, value: 43 }],
-    ["skillHitmarksLB", { elementLines: {}, file: "skill.go", line: 20, value: [51, 56, 62, 71, 82] }],
     ["skillLBTravel", { elementLines: {}, file: "skill.go", line: 30, value: 20 }],
   ]),
   filePaths: [],
   folder: "columbina",
+  goSources: [],
   gravityRipples: [
     {
       abil: "Gravity Interference (Lunar-Charged)",
@@ -120,7 +121,6 @@ describe(addGcsimGravityRippleCandidates, () => {
     const valueOf = (path: string) => candidateMap.get(path)?.[0]?.value;
     expect(valueOf("hits.gravityRippleLunarCharged.hitmarkFrames")).toBe(43);
     expect(valueOf("hits.gravityRippleLunarCharged.element")).toBe("Electric");
-    expect(valueOf("hits.gravityRippleLunarCharged.poiseDamage")).toBe(0);
     expect(valueOf("hits.gravityRippleLunarCharged.area")).toStrictEqual({
       angle: 2 * Math.PI,
       height: 2,

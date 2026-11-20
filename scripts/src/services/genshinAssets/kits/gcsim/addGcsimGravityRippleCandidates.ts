@@ -19,7 +19,7 @@ const RIPPLE_TARGETS = new Map([
 // Case names, the bloom's travel added to each, and a ripple of several hits written as a list the record reads by index.
 // Its literal sets no PoiseDMG, so it deals none, as a named hit without poise does
 export const addGcsimGravityRippleCandidates = (
-  { add, addHit, addNoPoiseRule, toFile }: GcsimKitCandidateWriter,
+  { add, addHit, toFile }: GcsimKitCandidateWriter,
   { config, constantMap, gravityRipples = [] }: GcsimCharacter,
 ): void => {
   for (const ripple of gravityRipples) {
@@ -53,7 +53,6 @@ export const addGcsimGravityRippleCandidates = (
         },
         STRIKE_TARGETING_AREA,
       );
-      addNoPoiseRule(`${path}.poiseDamage`);
     }
   }
 };
