@@ -7,29 +7,37 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useUserStore } from "#src/store/message/user/index";
 import { usersToRoomRolesInMessage } from "@esposter/db-schema";
-import { getTableName } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
+
+// The server's answer to a deletion or a revocation is the row it tombstoned, at the version the removal left it
+const removed = <TRow extends { deletedAt: Date | null; version: number }>(row: TRow): TRow => ({
+  ...row,
+  deletedAt: new Date(0),
+  version: row.version + 1,
+});
 
 describe(useRoleStore, () => {
   const roomId = v7();
   const { trpcMsw } = setupMswTrpc();
   const first = createRoomRole({ name: "first", position: 1, roomId });
   const second = createRoomRole({ name: "second", position: 2, roomId });
+  const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-  // Every role is its own target, so a settings panel's writes overlap and a rejected edit unwinds only its own
-  test("restores only the role whose edit was rejected", async () => {
+  // Every role is its own target, so a settings panel's writes overlap and a rejected edit leaves only its own role as it was
+  test("keeps the role whose edit was rejected as the server holds it", async () => {
     expect.hasAssertions();
 
     trpcMsw.role.updateRole.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
-    trpcMsw.role.deleteRole.mutation(() => second);
+    trpcMsw.role.deleteRole.mutation(() => removed(second));
     const roleStore = useRoleStore();
-    const { deleteRole, getRoles, setRoles, updateRole } = roleStore;
-    setRoles(roomId, [first, second]);
+    const { arriveRoomRoles, deleteRole, getRoles, updateRole } = roleStore;
+    arriveRoomRoles([first, second]);
     updateRole({ id: first.id, name: "renamed", roomId });
     deleteRole({ id: second.id, roomId });
     await flushPromises();
@@ -37,16 +45,18 @@ describe(useRoleStore, () => {
     expect(getRoles(roomId)).toStrictEqual([first]);
   });
 
-  test("puts back only the role whose deletion was rejected, where it stood", async () => {
+  // A deletion that is rejected leaves its role listed, where the server still holds it
+  test("keeps only the role whose deletion was rejected", async () => {
     expect.hasAssertions();
 
     trpcMsw.role.deleteRole.mutation(({ input: { id } }) => {
-      if (id === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      return second;
+      if (id === first.id) throw trpcError;
+
+      return removed(second);
     });
     const roleStore = useRoleStore();
-    const { deleteRole, getRoles, setRoles } = roleStore;
-    setRoles(roomId, [first, second]);
+    const { arriveRoomRoles, deleteRole, getRoles } = roleStore;
+    arriveRoomRoles([first, second]);
     deleteRole({ id: first.id, roomId });
     deleteRole({ id: second.id, roomId });
     await flushPromises();
@@ -54,35 +64,41 @@ describe(useRoleStore, () => {
     expect(getRoles(roomId)).toStrictEqual([first]);
   });
 
-  // Writes that end the same role share one queue, so a rejected edit and a rejected deletion of it unwind in order:
-  // The deletion puts back the role the edit left behind, not the one it found before the edit went out
-  test("restores a role that a rejected edit and a rejected deletion both wrote to", async () => {
+  // An edit and a deletion of one role share its target, and both are rejected, so the role is listed as the server holds it
+  test("keeps a role listed when a rejected edit and a rejected deletion both wrote to it", async () => {
     expect.hasAssertions();
 
     trpcMsw.role.updateRole.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     trpcMsw.role.deleteRole.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     const roleStore = useRoleStore();
-    const { deleteRole, getRoles, setRoles, updateRole } = roleStore;
-    setRoles(roomId, [first, second]);
+    const { arriveRoomRoles, deleteRole, getRoles, updateRole } = roleStore;
+    arriveRoomRoles([first, second]);
     updateRole({ id: first.id, name: "renamed", roomId });
     deleteRole({ id: first.id, roomId });
     await flushPromises();
 
-    expect(getRoles(roomId)).toStrictEqual([first, second]);
+    expect(getRoles(roomId)).toStrictEqual([second, first]);
   });
 
-  // A member's roles are one list written through per-role targets, so an assignment and a revocation for the
-  // Same member run side by side — each has to unwind only the role it added or took away
-  test("restores only the role whose revocation was rejected", async () => {
+  // A member's roles are written through per-role targets, so an assignment and a revocation for the same member run side by
+  // Side, and each one's rejection leaves only the role it wrote to as the server holds it
+  test("keeps the member's role whose revocation was rejected, and drops the one revoked", async () => {
     expect.hasAssertions();
 
     const userId = v7();
-    trpcMsw.role.revokeRole.mutation(({ input: { roleId } }) => {
-      if (roleId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.role.revokeRole.mutation(({ ctx, input: { roleId }, path }) => {
+      if (roleId === first.id) throw trpcError;
+
+      appendRowVersions(ctx.responseHeaders, path, [
+        { key: { roleId, roomId, userId }, table: getTableName(usersToRoomRolesInMessage), version: 1 },
+      ]);
+      return [
+        { createdAt: new Date(0), deletedAt: new Date(0), roleId, roomId, updatedAt: new Date(0), userId, version: 1 },
+      ];
     });
     const roleStore = useRoleStore();
     const { getMemberRoles, revokeRole } = roleStore;
@@ -97,19 +113,19 @@ describe(useRoleStore, () => {
 
   // The same pair on one member's role: an assignment that is rejected and a revocation of that role that is rejected
   // Must leave the member without it, the state the server kept, whichever of the two unwinds first
-  test("restores a member without a role that a rejected assignment and a rejected revocation both wrote to", async () => {
+  test("keeps a member without a role that a rejected assignment and a rejected revocation both wrote to", async () => {
     expect.hasAssertions();
 
     const userId = v7();
     trpcMsw.role.assignRole.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     trpcMsw.role.revokeRole.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     const roleStore = useRoleStore();
-    const { assignRole, getMemberRoles, revokeRole, setRoles } = roleStore;
-    setRoles(roomId, [first, second]);
+    const { arriveRoomRoles, assignRole, getMemberRoles, revokeRole } = roleStore;
+    arriveRoomRoles([first, second]);
     assignRole({ roleId: first.id, roomId, userId });
     revokeRole({ roleId: first.id, roomId, userId });
     await flushPromises();
@@ -161,7 +177,18 @@ describe(useRoleStore, () => {
     expect.hasAssertions();
 
     const leftUser = createUser();
-    trpcMsw.role.readMemberPermissionOverrides.query(() => [{ allow: 0n, deny: 0n, userId: leftUser.id }]);
+    trpcMsw.role.readMemberPermissionOverrides.query(() => [
+      {
+        allow: 0n,
+        createdAt: new Date(0),
+        deletedAt: null,
+        deny: 0n,
+        roomId,
+        updatedAt: new Date(0),
+        userId: leftUser.id,
+        version: 0,
+      },
+    ]);
     trpcMsw.room.readUsersByIds.query(() => [{ ...leftUser, displayName: leftUser.name, isMember: false }]);
     const roleStore = useRoleStore();
     const userStore = useUserStore();

@@ -35,7 +35,7 @@ export const useMemberActionItems = (
   const { createDirectMessage } = directMessageStore;
   const checkIsRoomOwner = useCheckIsRoomOwner();
   const roleStore = useRoleStore();
-  const { getMemberRoleMap, getMyPermissions } = roleStore;
+  const { checkIsMemberRolesRead, getMemberRoles, getMyPermissions } = roleStore;
   const moderationNoteStore = useModerationNoteStore();
   const { getModerationNoteCount } = moderationNoteStore;
   const isSelf = computed(() => session.value.data?.user.id === toValue(user).id);
@@ -74,8 +74,9 @@ export const useMemberActionItems = (
   // Roles arrive, the second is a real position below every assigned role
   const targetTopPosition = computed(() => {
     const roomIdValue = toValue(roomId);
-    const roles = roomIdValue ? getMemberRoleMap(roomIdValue)?.get(toValue(user).id) : undefined;
-    if (roles) return Math.max(-1, ...roles.map(({ position }) => position));
+    const userId = toValue(user).id;
+    if (roomIdValue && checkIsMemberRolesRead(roomIdValue, userId))
+      return Math.max(-1, ...getMemberRoles(roomIdValue, userId).map(({ position }) => position));
     else return undefined;
   });
   // The owner is the one member no moderator may act on, and the server says so too — offering the actions here

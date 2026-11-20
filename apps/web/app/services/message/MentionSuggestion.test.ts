@@ -32,9 +32,9 @@ describe("mentionSuggestion", () => {
     });
     const role = createRoomRole({ roomId });
     const roleStore = useRoleStore();
-    const { setRoles } = roleStore;
-    setRoles(roomId, [role]);
-    setRoles(otherRoomId, [createRoomRole({ roomId: otherRoomId })]);
+    const { arriveRoomRoles } = roleStore;
+    arriveRoomRoles([role]);
+    arriveRoomRoles([createRoomRole({ roomId: otherRoomId })]);
     assert.exists(MentionSuggestion?.items);
     const pendingItems = MentionSuggestion.items({
       editor: {} as Editor,

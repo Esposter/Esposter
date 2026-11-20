@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { RoomRoleInMessage } from "@esposter/db-schema";
+
 import { useToggleMemberRole } from "#src/composables/message/room/useToggleMemberRole";
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
@@ -17,6 +19,17 @@ describe(useToggleMemberRole, () => {
   const toggledRole = createRoomRole({ name: "toggled", position: 3, roomId });
   const higherRole = createRoomRole({ name: "higher", position: 7, roomId });
   const lowerRole = createRoomRole({ name: "lower", position: 2, roomId });
+  // A member's role as the read answers it: the assignment, with the role it names
+  const assignmentOf = (role: RoomRoleInMessage) => ({
+    createdAt: new Date(0),
+    deletedAt: null,
+    role,
+    roleId: role.id,
+    roomId,
+    updatedAt: new Date(0),
+    userId,
+    version: 0,
+  });
 
   // The actor's standing is read the way the app reads it, and the room's owner is someone other than the member
   const readActor = async (topRolePosition: number) => {
@@ -45,7 +58,7 @@ describe(useToggleMemberRole, () => {
     trpcMsw.role.assignRole.mutation(assignRole);
     trpcMsw.role.revokeRole.mutation(revokeRole);
     const roleStore = useRoleStore();
-    roleStore.setMemberRoles(roomId, userId, memberRoles);
+    roleStore.arriveMemberRoles(memberRoles.map((memberRole) => assignmentOf(memberRole)));
     const { isManageable, toggleRole } = useToggleMemberRole(roomId, userId, toggledRole);
 
     expect(isManageable.value).toBe(false);
@@ -63,7 +76,7 @@ describe(useToggleMemberRole, () => {
 
     await readActor(5);
     const roleStore = useRoleStore();
-    roleStore.setMemberRoles(roomId, userId, [lowerRole]);
+    roleStore.arriveMemberRoles([assignmentOf(lowerRole)]);
     const { isManageable } = useToggleMemberRole(roomId, userId, toggledRole);
 
     expect(isManageable.value).toBe(true);

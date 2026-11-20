@@ -8,19 +8,37 @@ import type { ReadMyPermissionsInput } from "#shared/models/db/role/ReadMyPermis
 import type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
 import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
 import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
-import type { RevokeRoleInput, RoomPermission, RoomRoleInMessage } from "@esposter/db-schema";
+import type {
+  RevokeRoleInput,
+  RoomMemberPermissionInMessage,
+  RoomPermission,
+  RoomRoleInMessage,
+  UserToRoomRoleInMessageWithRelations,
+} from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { checkIsManageable as baseCheckIsManageable } from "#shared/services/room/rbac/checkIsManageable";
-import { mergeMemberPermissionOverride } from "#shared/services/room/rbac/mergeMemberPermissionOverride";
 import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
+import { roomMemberPermissionTable, roomRoleTable, userToRoomRoleTable } from "#src/services/message/role/constants";
+import { createRoleConfirmations } from "#src/services/message/role/createRoleConfirmations";
+import { getAssignRoomRoleEntry } from "#src/services/message/role/getAssignRoomRoleEntry";
+import { getCreateRoomRoleEntry } from "#src/services/message/role/getCreateRoomRoleEntry";
+import { getDeleteMemberPermissionOverrideEntry } from "#src/services/message/role/getDeleteMemberPermissionOverrideEntry";
+import { getDeleteRoomRoleEntry } from "#src/services/message/role/getDeleteRoomRoleEntry";
+import { getRevokeRoomRoleEntry } from "#src/services/message/role/getRevokeRoomRoleEntry";
+import { getUpdateRoomRoleEntry } from "#src/services/message/role/getUpdateRoomRoleEntry";
+import { getUpsertMemberPermissionOverrideEntry } from "#src/services/message/role/getUpsertMemberPermissionOverrideEntry";
 import { setRoomUsers } from "#src/services/message/room/setRoomUsers";
+import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { MANAGEMENT_PERMISSIONS } from "#src/services/room/rbac/constants";
-import { getRestoredItems } from "#src/services/shared/getRestoredItems";
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
+import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
+import { useOverlayStore } from "#src/store/overlay";
 import { checkHasPermission, NO_ROW_VERSION } from "@esposter/db-schema";
-import { getResultAsync, ID_SEPARATOR, noop, omitUndefined } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 import { v7 } from "uuid";
 
 // The room's derived totals are re-read through the registered hooks, since only the server's totals say what a
@@ -31,29 +49,63 @@ const notifyMemberRoleChange = (roomId: string) => {
   for (const memberRoleChangeHook of memberRoleChangeHooks.hooks) memberRoleChangeHook(roomId);
 };
 
+// The member store's leave path passes the roles the member held, which this store no longer keeps: a member's roles
+// Arrive as rows, so the call only re-reads the room's totals. The member store owns the call and its arguments
+const mutateMemberRoles = (roomId: string, _userId: string, _memberRoles: RoomRoleInMessage[]) => {
+  notifyMemberRoleChange(roomId);
+};
+
+// Each list is shown highest position first, as the server orders its roles
+const comparePositionDescending = (firstRole: { position: number }, secondRole: { position: number }) =>
+  secondRole.position - firstRole.position;
+
 export const useRoleStore = defineStore("message/room/role", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const {
-    data: roles,
-    getData: baseGetRoles,
-    setData: setRoles,
-  } = useDataMap<RoomRoleInMessage[]>(() => roomStore.scopedRoomId, []);
-  const getRoles = (roomId: string) => baseGetRoles(roomId) ?? [];
-  // Replaces one role where it stands, so a rollback or a server copy never disturbs what a concurrent write —
-  // Or the role subscription — did to the rest of the list while this one was in flight
-  const setRole = (roomId: string, updatedRole: RoomRoleInMessage) => {
-    setRoles(
-      roomId,
-      getRoles(roomId).map((role) => (role.id === updatedRole.id ? updatedRole : role)),
-    );
+  const overlayStore = useOverlayStore();
+  const { arrive, view, writeOptimistic } = overlayStore;
+  const roomRoleRows = view(roomRoleTable);
+  const userToRoomRoleRows = view(userToRoomRoleTable);
+  const roomMemberPermissionRows = view(roomMemberPermissionTable);
+  // The view lists the live rows alone: a tombstone is held so a late row loses to it, and the view leaves it out. A
+  // Placeholder a write drew carries NO_ROW_VERSION, so it is listed like a row the server holds
+  const liveRoles = computed(() => roomRoleRows.value.filter((row) => checkIsVersioned(row)));
+  const liveMemberRoles = computed(() => userToRoomRoleRows.value.filter((row) => checkIsVersioned(row)));
+  const liveMemberPermissions = computed(() => roomMemberPermissionRows.value.filter((row) => checkIsVersioned(row)));
+  const roleMap = computed(() => new Map(liveRoles.value.map((roomRole) => [roomRole.id, roomRole])));
+  const roomRolesMap = computed(() => Map.groupBy(liveRoles.value, ({ roomId }) => roomId));
+  const getRoles = (roomId: string) => (roomRolesMap.value.get(roomId) ?? []).toSorted(comparePositionDescending);
+  // A member's roles are the live assignments of live roles, by room and then by member
+  const memberRoleMap = computed(() => {
+    const map = new Map<string, Map<string, (typeof liveRoles.value)[number][]>>();
+    for (const memberRole of liveMemberRoles.value) {
+      const roomRole = roleMap.value.get(memberRole.roleId);
+      if (!roomRole) continue;
+
+      const roomMemberRoles = map.get(memberRole.roomId) ?? new Map<string, (typeof liveRoles.value)[number][]>();
+      roomMemberRoles.set(memberRole.userId, [...(roomMemberRoles.get(memberRole.userId) ?? []), roomRole]);
+      map.set(memberRole.roomId, roomMemberRoles);
+    }
+    return map;
+  });
+  const getMemberRoles = (roomId: string, userId: string) =>
+    (memberRoleMap.value.get(roomId)?.get(userId) ?? []).toSorted(comparePositionDescending);
+  // An absent member has no row, and a member with no roles has no row either. A surface that must tell them apart, a
+  // Member's actions that wait for the roles to arrive, asks whether a read has answered for the member
+  const { getData: getLoadedMemberIds, setData: setLoadedMemberIds } = useDataMap(
+    () => roomStore.scopedRoomId,
+    () => new Set<string>(),
+  );
+  const checkIsMemberRolesRead = (roomId: string, userId: string) => getLoadedMemberIds(roomId)?.has(userId) ?? false;
+  const markMemberRolesRead = (roomId: string, userIds: string[]) => {
+    setLoadedMemberIds(roomId, new Set([...(getLoadedMemberIds(roomId) ?? []), ...userIds]));
   };
   const {
     data: selectedRoleId,
     getData: getSelectedRoleId,
     setData: setSelectedRoleId,
   } = useDataMap(() => roomStore.scopedRoomId, "");
-  const selectedRole = computed(() => roles.value.find(({ id }) => id === selectedRoleId.value));
+  const selectedRole = computed(() => getRoles(roomStore.scopedRoomId).find(({ id }) => id === selectedRoleId.value));
   // A role and a member are one selection between them, so picking either clears the other
   const selectRole = (id: string) => {
     selectedRoleId.value = id;
@@ -93,54 +145,34 @@ export const useRoleStore = defineStore("message/room/role", () => {
       return baseCheckIsManageable(roomPermissions.topRolePosition, rolePosition, roomPermissions.isRoomOwner);
     else return false;
   };
-  const {
-    data: memberRoleMap,
-    getData: getMemberRoleMap,
-    setData: setMemberRoleMap,
-  } = useDataMap(() => roomStore.scopedRoomId, new Map<string, RoomRoleInMessage[]>());
-  const getMemberRoles = (roomId: string, userId: string) => getMemberRoleMap(roomId)?.get(userId) ?? [];
-  const setMemberRoles = (roomId: string, userId: string, memberRoles: RoomRoleInMessage[]) => {
-    const roomMemberRoleMap = getMemberRoleMap(roomId) ?? new Map<string, RoomRoleInMessage[]>();
-    roomMemberRoleMap.set(userId, memberRoles);
-    setMemberRoleMap(roomId, roomMemberRoleMap);
+  // A member's override, by user id within the room. A member with no live row is absent, which reads as both bitfields
+  // Zero: the roles alone
+  const memberPermissionOverrideMap = computed(
+    () =>
+      new Map(
+        liveMemberPermissions.value
+          .filter(({ roomId }) => roomId === roomStore.scopedRoomId)
+          .map(({ allow, deny, userId }) => [userId, { allow, deny }] as const),
+      ),
+  );
+  const getMemberPermissionOverride = (roomId: string, userId: string): MemberPermissionOverride => {
+    const memberPermission = liveMemberPermissions.value.find((row) => row.roomId === roomId && row.userId === userId);
+    return memberPermission ? { allow: memberPermission.allow, deny: memberPermission.deny } : { allow: 0n, deny: 0n };
   };
-  // Every role-membership MUTATION funnels through here, and every hook is told of every write, not only of a top-role
-  // Change: a write that leaves the top role alone can still be the server's commit of an optimistic one
-  const mutateMemberRoles = (roomId: string, userId: string, newRoles: RoomRoleInMessage[]) => {
-    setMemberRoles(roomId, userId, newRoles);
-    notifyMemberRoleChange(roomId);
+  // Reads arrive the rows they return as they stand, tombstones included, so each one is held at its version and a
+  // Removal the read carries replaces the live copy the store held before
+  const arriveRoomRoles = (roomRoles: RoomRoleInMessage[]) => {
+    for (const roomRole of roomRoles) arrive(roomRoleTable, roomRole);
   };
-  // Both sides of one membership, written against whatever the member's list holds right now rather than a
-  // Copy read before the write went out — so an overlapping assign/revoke on another role survives this one
-  const setMemberRole = (roomId: string, userId: string, newRole: RoomRoleInMessage) => {
-    mutateMemberRoles(roomId, userId, [
-      ...getMemberRoles(roomId, userId).filter(({ id }) => id !== newRole.id),
-      newRole,
-    ]);
+  const arriveMemberRoles = (memberRoles: UserToRoomRoleInMessageWithRelations[]) => {
+    for (const { role, ...memberRole } of memberRoles) {
+      arrive(roomRoleTable, role);
+      arrive(userToRoomRoleTable, memberRole);
+    }
   };
-  const deleteMemberRole = (roomId: string, userId: string, roleId: string) => {
-    mutateMemberRoles(
-      roomId,
-      userId,
-      getMemberRoles(roomId, userId).filter(({ id }) => id !== roleId),
-    );
+  const arriveMemberPermissionOverrides = (memberPermissions: RoomMemberPermissionInMessage[]) => {
+    for (const memberPermission of memberPermissions) arrive(roomMemberPermissionTable, memberPermission);
   };
-  // A member's override, keyed by user id within the room. A member with no row is absent, which reads as both
-  // Bitfields zero — the roles alone — so the map only ever holds the members an override actually changes
-  const {
-    data: memberPermissionOverrideMap,
-    getData: getMemberPermissionOverrideMap,
-    setData: setMemberPermissionOverrideMap,
-  } = useDataMap(() => roomStore.scopedRoomId, new Map<string, MemberPermissionOverride>());
-  const getMemberPermissionOverride = (roomId: string, userId: string) =>
-    getMemberPermissionOverrideMap(roomId)?.get(userId) ?? { allow: 0n, deny: 0n };
-  const setMemberPermissionOverride = (roomId: string, userId: string, override: MemberPermissionOverride) => {
-    const roomOverrideMap = new Map(getMemberPermissionOverrideMap(roomId));
-    if (override.allow | override.deny) roomOverrideMap.set(userId, override);
-    else roomOverrideMap.delete(userId);
-    setMemberPermissionOverrideMap(roomId, roomOverrideMap);
-  };
-
   // The store's reads of a room are live: each room is one target of the store's own instance, so a write in that room
   // Re-reads the room's answer and the rooms do not supersede one another. A read its caller awaits still throws on
   // Failure, as the raw query did; the refresh a watch runs has no caller, so it logs instead
@@ -154,13 +186,13 @@ export const useRoleStore = defineStore("message/room/role", () => {
             onError: console.error,
             onSuccess: (roomRoles) => {
               // Only a read made after the room's roles were held is a refresh, which is when the totals move
-              const isRefresh = baseGetRoles(roomId) !== undefined;
-              setRoles(roomId, roomRoles);
+              const isRefresh = roomRolesMap.value.has(roomId);
+              arriveRoomRoles(roomRoles);
 
-              const roomSelectedRoleId = getSelectedRoleId(roomId);
-              if (!roomSelectedRoleId || !roomRoles.some(({ id }) => id === roomSelectedRoleId)) {
-                const everyoneRole = roomRoles.find(({ isEveryone }) => isEveryone);
-                setSelectedRoleId(roomId, (everyoneRole ?? roomRoles[0])?.id ?? "");
+              const roomLiveRoles = getRoles(roomId);
+              if (!roomLiveRoles.some(({ id }) => id === getSelectedRoleId(roomId))) {
+                const everyoneRole = roomLiveRoles.find(({ isEveryone }) => isEveryone);
+                setSelectedRoleId(roomId, (everyoneRole ?? roomLiveRoles[0])?.id ?? "");
               }
               if (isRefresh) notifyMemberRoleChange(roomId);
             },
@@ -186,11 +218,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
       ),
     );
   };
-  const { executeMutation: executeCreateRoleMutation } = useMutation();
-  // The writes that end one row share a queue named for that row, so each unwinds against what the one before it left
-  const { executeMutation: executeRoleMutation } = useMutation();
-  const { executeMutation: executeMemberRoleMutation } = useMutation();
-  const { executeMutation: executeMemberPermissionOverrideMutation } = useMutation();
   const { executeQuery: executeReadMemberPermissionOverridesQuery } = useMutation();
   const readMemberPermissionOverrides = async (input: ReadMemberPermissionOverridesInput) => {
     await rethrowFailedRead(
@@ -198,16 +225,14 @@ export const useRoleStore = defineStore("message/room/role", () => {
         key: input.roomId,
         onError: console.error,
         onSuccess: async (overrides) => {
-          setMemberPermissionOverrideMap(
-            input.roomId,
-            new Map(overrides.map(({ allow, deny, userId }) => [userId, { allow, deny }])),
-          );
-          // An override names no one, so the rows of the overridden users are read alongside it. Its failure is
-          // Logged rather than thrown, since a refresh that throws has no caller to catch it
-          if (overrides.length === 0) return;
+          arriveMemberPermissionOverrides(overrides);
+          // An override names no one, so the rows of the users it holds are read alongside it. Its failure is logged
+          // Rather than thrown, since a refresh that throws has no caller to catch it. A tombstone names no user to read
+          const overriddenUserIds = overrides.filter(({ deletedAt }) => !deletedAt).map(({ userId }) => userId);
+          if (overriddenUserIds.length === 0) return;
 
           await getResultAsync(() =>
-            $trpc.room.readUsersByIds.query({ roomId: input.roomId, userIds: overrides.map(({ userId }) => userId) }),
+            $trpc.room.readUsersByIds.query({ roomId: input.roomId, userIds: overriddenUserIds }),
           ).match((users) => {
             setRoomUsers(input.roomId, users);
           }, console.error);
@@ -215,42 +240,11 @@ export const useRoleStore = defineStore("message/room/role", () => {
       }),
     );
   };
-  // The entry is drawn at once from the one held: the bits the write allows or denies move into their state, a bit it
-  // Names in none of the three keeps the state it had, and a bit it returns to the roles is cleared. A rejection puts
-  // Back the entry the write found. The server's own merge is what it stores, so its answer corrects the entry drawn
-  const upsertMemberPermissionOverride = (input: UpsertMemberPermissionOverrideInput) => {
-    executeMemberPermissionOverrideMutation(() => $trpc.role.upsertMemberPermissionOverride.mutate(input), {
-      applyOptimistic: () => {
-        const previousOverride = getMemberPermissionOverride(input.roomId, input.userId);
-        setMemberPermissionOverride(input.roomId, input.userId, mergeMemberPermissionOverride(previousOverride, input));
-        return () => {
-          setMemberPermissionOverride(input.roomId, input.userId, previousOverride);
-        };
-      },
-      key: `${input.roomId}${ID_SEPARATOR}${input.userId}`,
-      reconcile: (override) => {
-        setMemberPermissionOverride(input.roomId, input.userId, override);
-      },
-    });
-  };
-  const deleteMemberPermissionOverride = (input: DeleteMemberPermissionOverrideInput) => {
-    executeMemberPermissionOverrideMutation(() => $trpc.role.deleteMemberPermissionOverride.mutate(input), {
-      // Removing the entry returns the member to their roles alone, which is the state the entry is drawn in
-      applyOptimistic: () => {
-        const previousOverride = getMemberPermissionOverride(input.roomId, input.userId);
-        setMemberPermissionOverride(input.roomId, input.userId, { allow: 0n, deny: 0n });
-        return () => {
-          setMemberPermissionOverride(input.roomId, input.userId, previousOverride);
-        };
-      },
-      key: `${input.roomId}${ID_SEPARATOR}${input.userId}`,
-    });
-  };
-  // The role is created under the id the client gives it, and the server stores the row as given, so it is drawn and
-  // Selected at once. The room's own event skips the sender, so nothing draws it a second time
+  // The role is drawn under the id the client gives it, at a placeholder with no version. The server's row arrives in its
+  // Answer, and the header confirms the placeholder at the version it names. The role is selected at once
   const createRole = (input: Except<CreateRoleInput, "id">) => {
     const now = new Date();
-    const newRole: RoomRoleInMessage = {
+    const roomRole: RoomRoleInMessage = {
       color: input.color ?? "",
       createdAt: now,
       deletedAt: null,
@@ -263,119 +257,132 @@ export const useRoleStore = defineStore("message/room/role", () => {
       updatedAt: now,
       version: NO_ROW_VERSION,
     };
-    executeCreateRoleMutation(() => $trpc.role.createRole.mutate({ ...input, id: newRole.id }), {
-      applyOptimistic: () => {
-        const previousSelectedRoleId = getSelectedRoleId(input.roomId) ?? "";
-        setRoles(input.roomId, [newRole, ...getRoles(input.roomId)]);
-        setSelectedRoleId(input.roomId, newRole.id);
-        return () => {
-          setRoles(
-            input.roomId,
-            getRoles(input.roomId).filter(({ id }) => id !== newRole.id),
-          );
-          if (getSelectedRoleId(input.roomId) === newRole.id) setSelectedRoleId(input.roomId, previousSelectedRoleId);
-        };
+    setSelectedRoleId(input.roomId, roomRole.id);
+    writeOptimistic(
+      async () => {
+        const { result, rowVersions } = await collectRowVersions(() =>
+          $trpc.role.createRole.mutate({ ...input, id: roomRole.id }),
+        );
+        return { arrivals: [createArrival(roomRoleTable, result)], confirmed: createRoleConfirmations(rowVersions) };
       },
-      key: newRole.id,
-    });
+      { entry: getCreateRoomRoleEntry(roomRole), onError: createErrorAlert },
+    );
   };
   const updateRole = (input: UpdateRoleInput) => {
-    executeRoleMutation(() => $trpc.role.updateRole.mutate(input), {
-      // Read when the write is sent, and unwound one role at a time
-      applyOptimistic: () => {
-        const previousRole = getRoles(input.roomId).find(({ id }) => id === input.id);
-        if (!previousRole) return noop;
-
-        setRole(input.roomId, { ...previousRole, ...omitUndefined(input) });
-        return () => {
-          setRole(input.roomId, previousRole);
-        };
+    writeOptimistic(
+      async () => {
+        const { result, rowVersions } = await collectRowVersions(() => $trpc.role.updateRole.mutate(input));
+        return { arrivals: [createArrival(roomRoleTable, result)], confirmed: createRoleConfirmations(rowVersions) };
       },
-      key: input.id,
-      reconcile: (updatedRole) => {
-        setRole(input.roomId, updatedRole);
-      },
-    });
+      { entry: getUpdateRoomRoleEntry(input), onError: createErrorAlert },
+    );
   };
   const deleteRole = (input: DeleteRoleInput) => {
-    executeRoleMutation(() => $trpc.role.deleteRole.mutate(input), {
-      // Put back only this role, at the position it held
-      applyOptimistic: () => {
-        const previousRoles = getRoles(input.roomId);
-        const deletedIndex = previousRoles.findIndex(({ id }) => id === input.id);
-        const deletedRole = previousRoles[deletedIndex];
-        setRoles(
-          input.roomId,
-          previousRoles.filter((role) => role.id !== input.id),
-        );
-        return () => {
-          if (deletedRole) setRoles(input.roomId, getRestoredItems(getRoles(input.roomId), deletedRole, deletedIndex));
-        };
+    writeOptimistic(
+      async () => {
+        const { result, rowVersions } = await collectRowVersions(() => $trpc.role.deleteRole.mutate(input));
+        return { arrivals: [createArrival(roomRoleTable, result)], confirmed: createRoleConfirmations(rowVersions) };
       },
-      key: input.id,
-    });
+      { entry: getDeleteRoomRoleEntry(input.id, new Date()), onError: createErrorAlert },
+    );
   };
-  // A role the room's list holds is drawn on the member at once. The room's roles are only cached once a surface has
-  // Read them, so one it has not read yet is drawn from the row the server answers with, the only row to draw it from
+  // A role the room's list holds is drawn on the member at once. The answer carries the role with the assignment, so a
+  // Role the client does not hold yet is held by the same answer
   const assignRole = (input: AssignRoleInput) => {
     if (getMemberRoles(input.roomId, input.userId).some(({ id }) => id === input.roleId)) return;
-    const role = getRoles(input.roomId).find(({ id }) => id === input.roleId);
-    executeMemberRoleMutation(() => $trpc.role.assignRole.mutate(input), {
-      applyOptimistic: () => {
-        if (!role) return noop;
 
-        setMemberRole(input.roomId, input.userId, role);
-        return () => {
-          deleteMemberRole(input.roomId, input.userId, role.id);
+    writeOptimistic(
+      async () => {
+        const { result, rowVersions } = await collectRowVersions(() => $trpc.role.assignRole.mutate(input));
+        const { role, ...memberRole } = result;
+        return {
+          arrivals: [createArrival(roomRoleTable, role), createArrival(userToRoomRoleTable, memberRole)],
+          confirmed: createRoleConfirmations(rowVersions),
         };
       },
-      key: `${input.userId}${ID_SEPARATOR}${input.roleId}`,
-      reconcile: (newRole) => {
-        if (!role) setMemberRole(input.roomId, input.userId, newRole);
+      {
+        entry: getAssignRoomRoleEntry(input.roomId, input.userId, input.roleId, new Date()),
+        onError: createErrorAlert,
       },
-    });
+    );
   };
   const revokeRole = (input: RevokeRoleInput) => {
-    executeMemberRoleMutation(() => $trpc.role.revokeRole.mutate(input), {
-      applyOptimistic: () => {
-        const revokedRole = getMemberRoles(input.roomId, input.userId).find(({ id }) => id === input.roleId);
-        deleteMemberRole(input.roomId, input.userId, input.roleId);
-        return () => {
-          if (revokedRole) setMemberRole(input.roomId, input.userId, revokedRole);
+    writeOptimistic(
+      async () => {
+        const { result, rowVersions } = await collectRowVersions(() => $trpc.role.revokeRole.mutate(input));
+        return {
+          arrivals: result.map((memberRole) => createArrival(userToRoomRoleTable, memberRole)),
+          confirmed: createRoleConfirmations(rowVersions),
         };
       },
-      key: `${input.userId}${ID_SEPARATOR}${input.roleId}`,
-    });
+      {
+        entry: getRevokeRoomRoleEntry(input.roomId, input.userId, input.roleId, new Date()),
+        onError: createErrorAlert,
+      },
+    );
+  };
+  // The override is drawn at once from the one the member has now. The server's own merge is what it stores, so its
+  // Answer corrects the drawn row, and a rejection drops the drawn row
+  const upsertMemberPermissionOverride = (input: UpsertMemberPermissionOverrideInput) => {
+    writeOptimistic(
+      async () => {
+        const { result, rowVersions } = await collectRowVersions(() =>
+          $trpc.role.upsertMemberPermissionOverride.mutate(input),
+        );
+        return {
+          arrivals: result.map((memberPermission) => createArrival(roomMemberPermissionTable, memberPermission)),
+          confirmed: createRoleConfirmations(rowVersions),
+        };
+      },
+      { entry: getUpsertMemberPermissionOverrideEntry(input, new Date()), onError: createErrorAlert },
+    );
+  };
+  const deleteMemberPermissionOverride = (input: DeleteMemberPermissionOverrideInput) => {
+    writeOptimistic(
+      async () => {
+        const { result, rowVersions } = await collectRowVersions(() =>
+          $trpc.role.deleteMemberPermissionOverride.mutate(input),
+        );
+        return {
+          arrivals: result.map((memberPermission) => createArrival(roomMemberPermissionTable, memberPermission)),
+          confirmed: createRoleConfirmations(rowVersions),
+        };
+      },
+      {
+        entry: getDeleteMemberPermissionOverrideEntry(input.roomId, input.userId, new Date()),
+        onError: createErrorAlert,
+      },
+    );
   };
   return {
+    arriveMemberPermissionOverrides,
+    arriveMemberRoles,
+    arriveRoomRoles,
     assignRole,
     checkHasMyPermission,
     checkIsManageable,
+    checkIsMemberRolesRead,
     checkIsRoleManageable,
     createRole,
     deleteMemberPermissionOverride,
     deleteRole,
     getMemberPermissionOverride,
-    getMemberRoleMap,
     getMemberRoles,
     getMyPermissions,
     getRoles,
+    markMemberRolesRead,
     memberPermissionOverrideMap,
-    memberRoleMap,
     mutateMemberRoles,
     myPermissions,
     readMemberPermissionOverrides,
     readMyPermissions,
     readRoles,
     revokeRole,
-    roles,
     selectedMemberId,
     selectedRole,
     selectedRoleId,
     selectMember,
     selectRole,
-    setMemberRoles,
-    setRoles,
     updateRole,
     upsertMemberPermissionOverride,
   };

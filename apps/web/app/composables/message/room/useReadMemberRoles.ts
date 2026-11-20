@@ -9,7 +9,7 @@ import { useRoleStore } from "#src/store/message/room/role";
 export const useReadMemberRoles = () => {
   const { $trpc } = useNuxtApp();
   const roleStore = useRoleStore();
-  const { setMemberRoles } = roleStore;
+  const { arriveMemberRoles, markMemberRolesRead } = roleStore;
   const { executeQuery } = useMutation();
   return ({ roomId, userIds }: ReadMemberRolesInput) =>
     rethrowFailedRead(
@@ -18,13 +18,8 @@ export const useReadMemberRoles = () => {
         key: Symbol("readMemberRoles"),
         onError: console.error,
         onSuccess: (memberRoles) => {
-          const userIdMemberRolesMap = Object.groupBy(memberRoles, ({ userId }) => userId);
-          for (const userId of userIds)
-            setMemberRoles(
-              roomId,
-              userId,
-              (userIdMemberRolesMap[userId] ?? []).map(({ role }) => role),
-            );
+          arriveMemberRoles(memberRoles);
+          markMemberRolesRead(roomId, userIds);
         },
       }),
     );

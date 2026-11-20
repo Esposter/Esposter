@@ -7,6 +7,8 @@ export interface CompositeKeyColumns {
   bookmarks: readonly ["userId", "path"];
   likes: readonly ["userId", "postId"];
   resourceFavorites: readonly ["userId", "resourceId"];
+  roomMemberPermissions: readonly ["userId", "roomId"];
   threadFollows: readonly ["roomId", "threadRootId", "userId"];
+  usersToRoomRoles: readonly ["userId", "roomId", "roleId"];
   usersToRooms: readonly ["userId", "roomId"];
 }
