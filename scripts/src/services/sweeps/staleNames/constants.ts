@@ -1,5 +1,5 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer */
-import { CACHE_DIRECTORY, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { CACHE_DIRECTORY } from "#src/services/shared/constants";
 import { join } from "node:path";
 
 // The placeholders a rule's example uses (the `skill-authoring` skill, `references/what-belongs.md`) name nothing
@@ -12,6 +12,5 @@ export const PLURAL_SUFFIX_REGEX: RegExp = /e?s$/u;
 // The bound identifiers, since the parens and braces belong to the sentence rather than to any name
 export const CALL_REGEX: RegExp = /^(?<callee>[^(]+)\(.*\)$/su;
 export const DESTRUCTURE_REGEX: RegExp = /^\{(?<names>.*)\}$/su;
-export const STORE_DIRECTORY: string = join(REPOSITORY_ROOT, "node_modules", ".pnpm");
 export const DECLARATION_REGEX: RegExp = /\.d\.[cm]?ts$/u;
 export const SOURCE_WORD_CACHE_PATH: string = join(CACHE_DIRECTORY, "sourceWords.json");
