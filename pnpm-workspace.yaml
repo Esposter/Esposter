@@ -146,7 +146,7 @@ catalog:
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
   jscpd: ^5.4.3
-  knip: ^6.46.1
+  knip: ^6.47.0
   link-preview-js: ^6.0.0
   linkifyjs: ^4.4.0
   lowlight: ^3.3.0
