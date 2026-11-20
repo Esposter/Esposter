@@ -3,6 +3,7 @@ import { describe, vi } from "vitest";
 
 // A middleware the SDK accepts answers with no message
 const acceptMiddleware = () => Promise.resolve({ message: "", success: true });
+const createResolvedMock = () => vi.fn<() => Promise<void>>(() => Promise.resolve());
 // The SDK's meeting is replaced by an emitter holding the methods the store calls, so each test drives the events
 // The SDK would emit and reads the spies it needs
 export const createMeeting = () => {
@@ -15,15 +16,15 @@ export const createMeeting = () => {
   const self = Object.assign(new EventEmitter(), {
     addAudioMiddleware: vi.fn<typeof acceptMiddleware>(acceptMiddleware),
     addVideoMiddleware: vi.fn<typeof acceptMiddleware>(acceptMiddleware),
-    disableAudio: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    disableScreenShare: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    disableVideo: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    enableAudio: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    enableScreenShare: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    enableVideo: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    rawAudioTrack: { applyConstraints: vi.fn<() => Promise<void>>(() => Promise.resolve()) },
+    disableAudio: createResolvedMock(),
+    disableScreenShare: createResolvedMock(),
+    disableVideo: createResolvedMock(),
+    enableAudio: createResolvedMock(),
+    enableScreenShare: createResolvedMock(),
+    enableVideo: createResolvedMock(),
+    rawAudioTrack: { applyConstraints: createResolvedMock() },
     removeAllVideoMiddlewares: vi.fn<typeof acceptMiddleware>(acceptMiddleware),
-    setDevice: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    setDevice: createResolvedMock(),
     videoEnabled: false,
     videoTrack: {} as MediaStreamTrack,
   });
@@ -37,8 +38,8 @@ export const createMeeting = () => {
     return Promise.resolve();
   });
   const meeting = {
-    join: vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    leave: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    join: createResolvedMock(),
+    leave: createResolvedMock(),
     meta: new EventEmitter(),
     participants: Object.assign(new EventEmitter(), { joined }),
     self,
