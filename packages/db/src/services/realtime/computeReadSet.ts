@@ -35,7 +35,7 @@ const uniqueSorted = <T>(items: T[], toSerial: (item: T) => string): T[] => {
   const serialItemMap = new Map<string, T>();
   for (const item of items) serialItemMap.set(toSerial(item), item);
   return [...serialItemMap]
-    .toSorted(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
+    .toSorted(([firstSerial], [secondSerial]) => (firstSerial < secondSerial ? -1 : firstSerial > secondSerial ? 1 : 0))
     .map(([, item]) => item);
 };
 
