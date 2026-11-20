@@ -15,29 +15,34 @@ import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 const reminderTable = createTable(remindersInUser);
 const scheduledMessageTable = createTable(scheduledMessagesInRoom);
 
+// The fields each table's row holds for a job, without the version or deletion each write sets over it
+type JobPayload<TType extends ScheduledMessageJobWithRoom["payload"]["type"]> = Extract<
+  ScheduledMessageJobWithRoom["payload"],
+  { type: TType }
+>;
+const getReminderRow = (
+  job: ScheduledMessageJobWithRoom,
+  { text }: JobPayload<typeof ScheduledMessageJobType.Reminder>,
+) => ({ id: job.id, roomId: job.roomId, runAt: job.runAt, text });
+const getScheduledMessageRow = (
+  job: ScheduledMessageJobWithRoom,
+  { message, replyToId }: JobPayload<typeof ScheduledMessageJobType.ScheduledMessage>,
+  sessionUserId: string,
+) => ({ id: job.id, message, replyToId, runAt: job.runAt, userId: sessionUserId });
+
 // The job's row as a tombstone, drawn at once: a cancel and a send both end the job the same way. It is built from the job
 // The list holds, so it needs no row arrived first
 const getTombstoneEntry =
   (job: ScheduledMessageJobWithRoom, sessionUserId: string, deletedAt: Date): Entry =>
   (view) => {
     if (job.payload.type === ScheduledMessageJobType.Reminder) {
-      view.set(reminderTable, [job.id], {
-        deletedAt,
-        id: job.id,
-        roomId: job.roomId,
-        runAt: job.runAt,
-        text: job.payload.text,
-      });
+      view.set(reminderTable, [job.id], { ...getReminderRow(job, job.payload), deletedAt });
       return;
     }
 
     view.set(scheduledMessageTable, [job.id], {
+      ...getScheduledMessageRow(job, job.payload, sessionUserId),
       deletedAt,
-      id: job.id,
-      message: job.payload.message,
-      replyToId: job.payload.replyToId,
-      runAt: job.runAt,
-      userId: sessionUserId,
     });
   };
 
@@ -59,22 +64,11 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
   const arriveJobs = ({ items: jobs }: Page<ScheduledMessageJobWithRoom>) => {
     for (const job of jobs)
       if (job.payload.type === ScheduledMessageJobType.Reminder)
-        arrive(reminderTable, {
-          deletedAt: null,
-          id: job.id,
-          roomId: job.roomId,
-          runAt: job.runAt,
-          text: job.payload.text,
-          version: job.version,
-        });
+        arrive(reminderTable, { ...getReminderRow(job, job.payload), deletedAt: null, version: job.version });
       else
         arrive(scheduledMessageTable, {
+          ...getScheduledMessageRow(job, job.payload, userId.value),
           deletedAt: null,
-          id: job.id,
-          message: job.payload.message,
-          replyToId: job.payload.replyToId,
-          runAt: job.runAt,
-          userId: userId.value,
           version: job.version,
         });
   };
