@@ -19,8 +19,7 @@ const isOpen = defineModel<boolean>({ default: false });
 const { resource } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const notificationStore = useNotificationStore();
-const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
-const { executeMutation } = useMutation();
+const { createErrorNotification, createNotification } = notificationStore;
 const { answer, isPending } = useDialogAnswer(isOpen);
 const roomItems = ref<UiSelectItem<string>[]>([]);
 const isLoadingRooms = ref(true);
@@ -44,32 +43,24 @@ onMounted(async () => {
   }).match(noop, createErrorNotification);
   isLoadingRooms.value = false;
 });
+// The message is the room's to accept, so the notice shows once the server has accepted it, and a refused share shows its error
 const share = () => {
   const room = roomItems.value.find(({ value }) => value === roomId.value);
   if (!room) return;
   // The caller's own message in their own room — RBAC, rate limits and the message pipeline apply unchanged
-  executeMutation(
-    () =>
-      $trpc.message.createMessage.mutate({
-        message: shareMessage.value,
-        roomId: roomId.value,
-        timeZone: Temporal.Now.timeZoneId(),
-      }),
-    {
-      applyOptimistic: () => {
-        const notificationId = createNotification({
-          action: { title: "Open room", to: RoutePath.Messages(room.value) },
-          severity: NotificationSeverity.Success,
-          title: `Shared to ${room.title}`,
-        });
-        return () => {
-          dismissNotification(notificationId);
-        };
-      },
-      key: Symbol("shareResource"),
-      onError: createErrorNotification,
-    },
-  );
+  return getResultAsync(() =>
+    $trpc.message.createMessage.mutate({
+      message: shareMessage.value,
+      roomId: roomId.value,
+      timeZone: Temporal.Now.timeZoneId(),
+    }),
+  ).match(() => {
+    createNotification({
+      action: { title: "Open room", to: RoutePath.Messages(room.value) },
+      severity: NotificationSeverity.Success,
+      title: `Shared to ${room.title}`,
+    });
+  }, createErrorNotification);
 };
 </script>
 

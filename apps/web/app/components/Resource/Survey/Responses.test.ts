@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
+import type { VueWrapper } from "@vue/test-utils";
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
@@ -7,8 +8,8 @@ import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySetti
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceSurveyResponseSummaryCard from "#src/components/Resource/Survey/Response/SummaryCard.vue";
 import ResourceSurveyResponses from "#src/components/Resource/Survey/Responses.vue";
-import UiEmptyState from "#src/components/Ui/EmptyState.vue";
 import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
+import UiEmptyState from "#src/components/Ui/EmptyState.vue";
 import UiErrorState from "#src/components/Ui/ErrorState.vue";
 import UiOverflowMenu from "#src/components/Ui/OverflowMenu.vue";
 import { useSession } from "#src/services/auth/authClient.test";
@@ -18,10 +19,21 @@ import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
-import { flushPromises, type VueWrapper } from "@vue/test-utils";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
+
+// The row's own menu chooses the delete and the confirm answers it, as the owner does it on screen
+const chooseDelete = (component: VueWrapper) => {
+  const deleteItem = component
+    .findComponent(UiOverflowMenu)
+    .props("items")
+    .find((item) => "title" in item && item.title === "Delete response");
+  assert.exists(deleteItem);
+  deleteItem.onClick?.();
+  component.findComponent(UiConfirmDialog).props("confirm")();
+};
 
 describe("resourceSurveyResponses", () => {
   const { trpcMsw } = setupMswTrpc();
@@ -65,24 +77,14 @@ describe("resourceSurveyResponses", () => {
     useSession.mockReturnValue({ data: ref({ user: { id: v7() } }) });
     Object.assign(useRouter().currentRoute.value.params, { id: surveyId });
     // The dialogs' targets are keyed by the open resource, so the blade is opened on its survey as the resource page does
-    useResourceStore().applyResource(createResourceListItem({ id: surveyId, type: ResourceType.Survey }), null);
+    const resourceStore = useResourceStore();
+    resourceStore.applyResource(createResourceListItem({ id: surveyId, type: ResourceType.Survey }), null);
     trpcMsw.survey.readSurveyResponseRecords.query(() => records);
     trpcMsw.survey.readResourceContent.query(() => ({
       document,
       settings: surveySettingsSchema.parse({ responseMode: SurveyResponseMode.Identified }),
     }));
   });
-
-  // The row's own menu chooses the delete and the confirm answers it, as the owner does it on screen
-  const chooseDelete = (component: VueWrapper) => {
-    const deleteItem = component
-      .findComponent(UiOverflowMenu)
-      .props("items")
-      .find((item) => "title" in item && item.title === "Delete response");
-    assert.exists(deleteItem);
-    deleteItem.onClick?.();
-    component.findComponent(UiConfirmDialog).props("confirm")();
-  };
 
   test("says there are no responses yet when the survey has none", async () => {
     expect.hasAssertions();
@@ -177,6 +179,8 @@ describe("resourceSurveyResponses", () => {
 
     const lateRead = Promise.withResolvers<void>();
     let readCount = 0;
+    const isRefreshing = Promise.withResolvers<void>();
+    trpcMsw.survey.deleteSurveyResponse.mutation(() => undefined);
     trpcMsw.survey.readSurveyResponseRecords.query(async () => {
       readCount += 1;
       if (readCount === 1) return records;
@@ -184,6 +188,7 @@ describe("resourceSurveyResponses", () => {
         await lateRead.promise;
         return records;
       }
+      isRefreshing.resolve();
       return { columns: records.columns, isCountCapped: false, rows: [], totalRows: 0 };
     });
     const component = await mountSuspended(ResourceSurveyResponses, { route: RoutePath.Resource(surveyId) });
@@ -191,9 +196,12 @@ describe("resourceSurveyResponses", () => {
     assert.exists(individualTab);
     await individualTab.trigger("click");
     await flushPromises();
-    const lateRefresh = component.vm.refreshResponses();
+    // The table's own read, the one a delete's refresh supersedes, is started as the owner's screen would start it
+    const { refreshResponses } = component.vm as unknown as { refreshResponses: () => Promise<void> };
+    const lateRefresh = refreshResponses();
     chooseDelete(component);
-    await flushPromises();
+    // The delete's answer refreshes the table, so the refresh is in flight before the late read is released
+    await isRefreshing.promise;
     lateRead.resolve();
     await lateRefresh;
     await flushPromises();
