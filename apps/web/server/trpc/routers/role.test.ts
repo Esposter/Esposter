@@ -87,6 +87,23 @@ describe("roleRouter", () => {
     const deletedRole = await roleCaller.deleteRole({ id: createdRole.id, roomId });
 
     expect(deletedRole.id).toBe(createdRole.id);
+    expect(deletedRole.deletedAt).not.toBeNull();
+  });
+
+  // A deleted role is a tombstone, so a create under its id revives it at a higher version rather than conflicting with it
+  test("revives a deleted role under the id it was created with, at a higher version", async () => {
+    expect.hasAssertions();
+
+    const id = v7();
+    const deletedRole = await roleCaller.deleteRole({
+      id: (await roleCaller.createRole({ id, name, roomId })).id,
+      roomId,
+    });
+    const revivedRole = await roleCaller.createRole({ id, name: updatedName, roomId });
+
+    expect(revivedRole.deletedAt).toBeNull();
+    expect(revivedRole.name).toBe(updatedName);
+    expect(revivedRole.version).toBeGreaterThan(deletedRole.version);
   });
 
   test("fails delete with the @everyone role", async () => {
@@ -143,7 +160,9 @@ describe("roleRouter", () => {
 
     const assignedRole = await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
 
-    expect(assignedRole).toStrictEqual(role);
+    // The answer is the live grant the member already held, with the role it names
+    expect(assignedRole.deletedAt).toBeNull();
+    expect(assignedRole.role).toStrictEqual(role);
   });
 
   test("fails assignRole with the @everyone role", async () => {
@@ -194,7 +213,7 @@ describe("roleRouter", () => {
     await roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id });
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
-    expect(memberRoles).toStrictEqual([]);
+    expect(memberRoles.map(({ deletedAt }) => deletedAt !== null)).toStrictEqual([true]);
   });
 
   test("revokes a role the member never held", async () => {
@@ -203,7 +222,10 @@ describe("roleRouter", () => {
     const targetMember = await createMember();
     const role = await roleCaller.createRole({ id: v7(), name, roomId });
 
-    await expect(roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id })).resolves.toBeUndefined();
+    // Nothing live to tombstone, so the answer names no rows
+    await expect(roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id })).resolves.toStrictEqual(
+      [],
+    );
   });
 
   test("fails revokeRole with a role at or above the actor top position", async () => {
@@ -375,10 +397,14 @@ describe("roleRouter", () => {
       userId: member.id,
     });
 
-    expect(allowed).toStrictEqual({ allow: RoomPermission.ManageMessages, deny: 0n });
-    expect(denied).toStrictEqual({ allow: 0n, deny: RoomPermission.ManageMessages });
-    expect(inherited).toStrictEqual({ allow: 0n, deny: 0n });
-    await expect(roleCaller.readMemberPermissionOverrides({ roomId })).resolves.toStrictEqual([]);
+    expect(allowed.map(({ allow, deny }) => ({ allow, deny }))).toStrictEqual([
+      { allow: RoomPermission.ManageMessages, deny: 0n },
+    ]);
+    expect(denied.map(({ allow, deny }) => ({ allow, deny }))).toStrictEqual([
+      { allow: 0n, deny: RoomPermission.ManageMessages },
+    ]);
+    // Returning the bits to the roles tombstones the row, so the answer names it as removed
+    expect(inherited.map(({ deletedAt }) => deletedAt !== null)).toStrictEqual([true]);
   });
 
   test("fails an override that names a bit as both allowed and denied", async () => {
@@ -447,7 +473,8 @@ describe("roleRouter", () => {
       userId: member.id,
     });
     await roleCaller.deleteMemberPermissionOverride({ roomId, userId: member.id });
+    const overrides = await roleCaller.readMemberPermissionOverrides({ roomId });
 
-    await expect(roleCaller.readMemberPermissionOverrides({ roomId })).resolves.toStrictEqual([]);
+    expect(overrides.map(({ deletedAt }) => deletedAt !== null)).toStrictEqual([true]);
   });
 });

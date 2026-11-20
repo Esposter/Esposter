@@ -36,6 +36,7 @@ import { createMockBucket } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   friendsInSocial,
+  getLiveMemberRoleWhere,
   MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES,
   MessageType,
   PublicUserColumns,
@@ -1076,7 +1077,7 @@ describe("roomRouter", () => {
     expect(rejoinedMembership.version).toBe(removedMembership.version + 1);
   });
 
-  // A leave deletes the roles its membership held, since a revival of the membership would otherwise hand them back
+  // A leave tombstones the roles its membership held, since a revival of the membership would otherwise hand them back
   test("a leave takes the member's roles with it, so a rejoin does not restore them", async () => {
     expect.hasAssertions();
 
@@ -1090,7 +1091,7 @@ describe("roomRouter", () => {
     await memberRoomCaller.leaveRoom(newRoom.id);
     await memberRoomCaller.joinRoom(newInvite.id);
     const memberRoles = await mockContext.db.query.usersToRoomRolesInMessage.findMany({
-      where: { userId: { eq: memberSession.user.id } },
+      where: { RAW: getLiveMemberRoleWhere, userId: { eq: memberSession.user.id } },
     });
 
     expect(memberRoles).toStrictEqual([]);

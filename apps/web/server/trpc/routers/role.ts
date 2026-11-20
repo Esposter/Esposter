@@ -1,7 +1,10 @@
-import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPermissionOverride";
-import type { MemberPermissionOverrideEntry } from "#shared/models/db/role/MemberPermissionOverrideEntry";
 import type { MyRoomPermissions } from "#shared/models/db/role/MyRoomPermissions";
-import type { RoomRoleInMessage, UserToRoomRoleInMessageWithRelations } from "@esposter/db-schema";
+import type {
+  RoomMemberPermissionInMessage,
+  RoomRoleInMessage,
+  UserToRoomRoleInMessage,
+  UserToRoomRoleInMessageWithRelations,
+} from "@esposter/db-schema";
 
 import { inRoom } from "#server/services/db/inRoom";
 import { assertIsMember } from "#server/services/room/assertIsMember";
@@ -35,6 +38,9 @@ import { upsertMemberPermissionOverrideInputSchema } from "#shared/models/db/rol
 import { getPermissions, inJsonArray } from "@esposter/db";
 import {
   DatabaseEntityType,
+  getLiveMemberPermissionWhere,
+  getLiveMemberRoleWhere,
+  getLiveRoleWhere,
   revokeRoleInputSchema,
   roomMemberPermissionsInMessage,
   RoomPermission,
@@ -43,18 +49,22 @@ import {
   UserToRoomRoleInMessageRelations,
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNotNull, sql } from "drizzle-orm";
 
 export const roleRouter = router({
+  // A role a revocation or a deletion left as a tombstone is revived by the insert's conflict branch, and a live assignment is
+  // Already the answer, so it is read back rather than returned by the write. Either way the answer names the row it holds
   assignRole: getPermissionsProcedure(
     RoomPermission.ManageRoles,
     assignRoleInputSchema,
     "roomId",
-  ).mutation<RoomRoleInMessage>(async ({ ctx, input: { roleId, roomId, userId } }) => {
+  ).mutation<UserToRoomRoleInMessageWithRelations>(async ({ ctx, input: { roleId, roomId, userId } }) => {
     const actorUserId = ctx.user.id;
     const [role, actorAuthority] = await Promise.all([
       requireEntity(
-        ctx.db.query.roomRolesInMessage.findFirst({ where: { id: { eq: roleId }, roomId: { eq: roomId } } }),
+        ctx.db.query.roomRolesInMessage.findFirst({
+          where: { id: { eq: roleId }, RAW: getLiveRoleWhere, roomId: { eq: roomId } },
+        }),
         DatabaseEntityType.RoomRole,
         roleId,
       ),
@@ -66,9 +76,28 @@ export const roleRouter = router({
 
     await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
 
-    await ctx.db.insert(usersToRoomRolesInMessage).values({ roleId, roomId, userId }).onConflictDoNothing();
-    return role;
+    const [assigned] = await ctx.db
+      .insert(usersToRoomRolesInMessage)
+      .values({ roleId, roomId, userId })
+      .onConflictDoUpdate({
+        set: { deletedAt: null },
+        setWhere: isNotNull(usersToRoomRolesInMessage.deletedAt),
+        target: [usersToRoomRolesInMessage.userId, usersToRoomRolesInMessage.roomId, usersToRoomRolesInMessage.roleId],
+      })
+      .returning();
+    const memberRole =
+      assigned ??
+      (await requireEntity(
+        ctx.db.query.usersToRoomRolesInMessage.findFirst({
+          where: { RAW: getLiveMemberRoleWhere, roleId, roomId, userId },
+        }),
+        DatabaseEntityType.UserToRoomRole,
+        roleId,
+      ));
+    return { ...memberRole, role };
   }),
+  // A role a deletion left as a tombstone is revived by a create that names its id, and only a create in the same room
+  // May revive it, so the set-where names the room too
   createRole: getPermissionsProcedure(
     RoomPermission.ManageRoles,
     createRoleInputSchema,
@@ -82,7 +111,22 @@ export const roleRouter = router({
 
     const newRole = requireMutation(
       (
-        await ctx.db.insert(roomRolesInMessage).values({ color, id, name, permissions, position, roomId }).returning()
+        await ctx.db
+          .insert(roomRolesInMessage)
+          .values({ color, id, name, permissions, position, roomId })
+          .onConflictDoUpdate({
+            set: {
+              color: sql`excluded.color`,
+              createdAt: sql`excluded.createdAt`,
+              deletedAt: null,
+              name: sql`excluded.name`,
+              permissions: sql`excluded.permissions`,
+              position: sql`excluded.position`,
+            },
+            setWhere: sql`${isNotNull(roomRolesInMessage.deletedAt)} and ${eq(roomRolesInMessage.roomId, roomId)}`,
+            target: roomRolesInMessage.id,
+          })
+          .returning()
       )[0],
       Operation.Create,
       DatabaseEntityType.RoomRole,
@@ -91,17 +135,27 @@ export const roleRouter = router({
 
     return newRole;
   }),
+  // A member with no live override is the answer whether or not one was there to remove, so this asks for an end state
   deleteMemberPermissionOverride: getPermissionsProcedure(
     RoomPermission.ManageRoles,
     deleteMemberPermissionOverrideInputSchema,
     "roomId",
-  ).mutation<void>(async ({ ctx, input: { roomId, userId } }) => {
+  ).mutation<RoomMemberPermissionInMessage[]>(async ({ ctx, input: { roomId, userId } }) => {
     await assertIsManageable(ctx.db, ctx.user.id, userId, roomId);
-    // An end state, like revokeRole: a member with no override is the answer whether or not one was there to remove
-    await ctx.db
-      .delete(roomMemberPermissionsInMessage)
-      .where(and(eq(roomMemberPermissionsInMessage.roomId, roomId), eq(roomMemberPermissionsInMessage.userId, userId)));
+    return ctx.db
+      .update(roomMemberPermissionsInMessage)
+      .set({ deletedAt: new Date() })
+      .where(
+        and(
+          eq(roomMemberPermissionsInMessage.roomId, roomId),
+          eq(roomMemberPermissionsInMessage.userId, userId),
+          getLiveMemberPermissionWhere(roomMemberPermissionsInMessage),
+        ),
+      )
+      .returning();
   }),
+  // The role is deleted as a tombstone, and so are the assignments it held, in one batch. A revival of the role under the
+  // Same id then starts with no member holding it, rather than handing the old holders back
   deleteRole: getPermissionsProcedure(
     RoomPermission.ManageRoles,
     deleteRoleInputSchema,
@@ -114,31 +168,34 @@ export const roleRouter = router({
 
     assertCanManageRole(actorAuthority, role.position);
 
-    const deletedRole = requireMutation(
-      (
-        await ctx.db
-          .delete(roomRolesInMessage)
-          .where(inRoom(roomRolesInMessage, id, roomId))
-          .returning()
-      )[0],
-      Operation.Delete,
-      DatabaseEntityType.RoomRole,
-      id,
-      "NOT_FOUND",
-    );
-
-    return deletedRole;
+    const [, deletedRoles] = await ctx.db.batch([
+      ctx.db
+        .update(usersToRoomRolesInMessage)
+        .set({ deletedAt: new Date() })
+        .where(
+          and(
+            eq(usersToRoomRolesInMessage.roleId, id),
+            eq(usersToRoomRolesInMessage.roomId, roomId),
+            getLiveMemberRoleWhere(usersToRoomRolesInMessage),
+          ),
+        ),
+      ctx.db
+        .update(roomRolesInMessage)
+        .set({ deletedAt: new Date() })
+        .where(and(inRoom(roomRolesInMessage, id, roomId), getLiveRoleWhere(roomRolesInMessage)))
+        .returning(),
+    ]);
+    return requireMutation(deletedRoles[0], Operation.Delete, DatabaseEntityType.RoomRole, id, "NOT_FOUND");
   }),
   // Visible to the room as readMemberRoles is: a role assignment is already public to every member, and an override
-  // Is the same kind of fact about the same member
+  // Is the same kind of fact about the same member. Tombstones come back too, so a client holding an override learns it
+  // Was removed
   readMemberPermissionOverrides: getMemberProcedure(readMemberPermissionOverridesInputSchema, "roomId").query<
-    MemberPermissionOverrideEntry[]
+    RoomMemberPermissionInMessage[]
   >(({ ctx, input: { roomId } }) =>
-    ctx.db.query.roomMemberPermissionsInMessage.findMany({
-      columns: { allow: true, deny: true, userId: true },
-      where: { roomId: { eq: roomId } },
-    }),
+    ctx.db.query.roomMemberPermissionsInMessage.findMany({ where: { roomId: { eq: roomId } } }),
   ),
+  // Tombstoned assignments come back with their roles, so a client holding one learns the revocation
   readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<
     UserToRoomRoleInMessageWithRelations[]
   >(({ ctx, input: { roomId, userIds } }) =>
@@ -169,6 +226,7 @@ export const roleRouter = router({
         topRolePosition: topRolePositionMap.get(roomId) ?? -1,
       }));
     }),
+  // Tombstoned roles come back too, so a client holding a role learns its deletion from the read
   readRoles: standardAuthedProcedure
     .input(readRolesInputSchema)
     .query<RoomRoleInMessage[]>(async ({ ctx, input: { roomIds } }) => {
@@ -178,27 +236,30 @@ export const roleRouter = router({
         where: { RAW: (role) => inJsonArray(role.roomId, roomIds) },
       });
     }),
-  revokeRole: getPermissionsProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId").mutation<void>(
-    async ({ ctx, input: { roleId, roomId, userId } }) => {
-      const actorUserId = ctx.user.id;
-      const [role, actorAuthority] = await readRoleWithAuthority(ctx.db, actorUserId, roleId, roomId);
+  // No requireMutation, unlike deleteRole: this asks for an end state — the member does not hold the role — rather than for
+  // A row, and it returns nothing to be missing. Two moderators revoking at once, or one revoking against a member list
+  // That has already moved on, would otherwise be refused for arriving at exactly what they asked for. The assignments it
+  // Tombstones are returned, which may be none
+  revokeRole: getPermissionsProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId").mutation<
+    UserToRoomRoleInMessage[]
+  >(async ({ ctx, input: { roleId, roomId, userId } }) => {
+    const actorUserId = ctx.user.id;
+    const [role, actorAuthority] = await readRoleWithAuthority(ctx.db, actorUserId, roleId, roomId);
 
-      await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
-      // No requireMutation, unlike deleteRole: this asks for an end state — the member does not hold the role
-      // — rather than for a row, and it returns nothing to be missing. Two moderators revoking at once, or one
-      // Revoking against a member list that has already moved on, would otherwise be refused for arriving at
-      // Exactly what they asked for. deleteRole guards because it returns the row it deleted
-      await ctx.db
-        .delete(usersToRoomRolesInMessage)
-        .where(
-          and(
-            eq(usersToRoomRolesInMessage.userId, userId),
-            eq(usersToRoomRolesInMessage.roomId, roomId),
-            eq(usersToRoomRolesInMessage.roleId, roleId),
-          ),
-        );
-    },
-  ),
+    await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
+    return ctx.db
+      .update(usersToRoomRolesInMessage)
+      .set({ deletedAt: new Date() })
+      .where(
+        and(
+          eq(usersToRoomRolesInMessage.userId, userId),
+          eq(usersToRoomRolesInMessage.roomId, roomId),
+          eq(usersToRoomRolesInMessage.roleId, roleId),
+          getLiveMemberRoleWhere(usersToRoomRolesInMessage),
+        ),
+      )
+      .returning();
+  }),
   updateRole: getPermissionsProcedure(
     RoomPermission.ManageRoles,
     updateRoleInputSchema,
@@ -218,7 +279,7 @@ export const roleRouter = router({
         await ctx.db
           .update(roomRolesInMessage)
           .set(rest)
-          .where(inRoom(roomRolesInMessage, id, roomId))
+          .where(and(inRoom(roomRolesInMessage, id, roomId), getLiveRoleWhere(roomRolesInMessage)))
           .returning()
       )[0],
       Operation.Update,
@@ -232,7 +293,7 @@ export const roleRouter = router({
     RoomPermission.ManageRoles,
     upsertMemberPermissionOverrideInputSchema,
     "roomId",
-  ).mutation<MemberPermissionOverride>(async ({ ctx, input: { allow, deny, inherit, roomId, userId } }) => {
+  ).mutation<RoomMemberPermissionInMessage[]>(async ({ ctx, input: { allow, deny, inherit, roomId, userId } }) => {
     const actorUserId = ctx.user.id;
     // A bit set in both would be a state nothing designed, and the Administrator bit is answered from the roles
     // Alone, so neither may be written as an override
@@ -251,7 +312,6 @@ export const roleRouter = router({
     ]);
     // A member may give an override only what they hold themselves, as a role may carry only what its author holds
     await assertCanGrantPermissions(ctx.db, actorUserId, roomId, allow, isOwner);
-    const override = await setMemberPermissionOverride(ctx.db, { allow, deny, inherit, roomId, userId });
-    return override;
+    return setMemberPermissionOverride(ctx.db, { allow, deny, inherit, roomId, userId });
   }),
 });

@@ -56,7 +56,9 @@ import {
   DatabaseEntityType,
   DEFAULT_EVERYONE_PERMISSIONS,
   getDisplayNameExpression,
+  getLiveMemberRoleWhere,
   getLiveMembershipWhere,
+  getLiveRoleWhere,
   getPublicUserColumns,
   invitesInMessage,
   MessageType,
@@ -242,9 +244,13 @@ export const baseRoomRouter = router({
         .from(usersToRoomRolesInMessage)
         .innerJoin(
           roomRolesInMessage,
-          and(eq(roomRolesInMessage.id, usersToRoomRolesInMessage.roleId), not(roomRolesInMessage.isEveryone)),
+          and(
+            eq(roomRolesInMessage.id, usersToRoomRolesInMessage.roleId),
+            not(roomRolesInMessage.isEveryone),
+            getLiveRoleWhere(roomRolesInMessage),
+          ),
         )
-        .where(eq(usersToRoomRolesInMessage.roomId, roomId))
+        .where(and(eq(usersToRoomRolesInMessage.roomId, roomId), getLiveMemberRoleWhere(usersToRoomRolesInMessage)))
         .as("rankedRoles");
       // Only role groups are returned — the roleless trailing group is derived client-side from the
       // Total member count, which the join and leave events keep current without a refetch

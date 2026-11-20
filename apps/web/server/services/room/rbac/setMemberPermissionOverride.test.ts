@@ -4,7 +4,6 @@ import { setMemberPermissionOverride } from "#server/services/room/rbac/setMembe
 import { getPermissions } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
-  roomMemberPermissionsInMessage,
   RoomPermission,
   roomRolesInMessage,
   roomsInMessage,
@@ -62,7 +61,7 @@ describe(setMemberPermissionOverride, () => {
       userId,
     });
 
-    expect(override).toStrictEqual({ allow: highestBit, deny: 0n });
+    expect(override.map(({ allow, deny }) => ({ allow, deny }))).toStrictEqual([{ allow: highestBit, deny: 0n }]);
     await expect(getPermissions(mockDatabase.db, userId, roomId)).resolves.toBe(
       RoomPermission.ReadMessages | highestBit,
     );
@@ -82,11 +81,11 @@ describe(setMemberPermissionOverride, () => {
       userId,
     });
 
-    expect(override).toStrictEqual({ allow: 0n, deny: highestBit });
+    expect(override.map(({ allow, deny }) => ({ allow, deny }))).toStrictEqual([{ allow: 0n, deny: highestBit }]);
     await expect(getPermissions(mockDatabase.db, userId, roomId)).resolves.toBe(RoomPermission.ReadMessages);
   });
 
-  test("a row with every bit returned to the roles is removed", async () => {
+  test("a row with every bit returned to the roles is tombstoned, and the roles decide again", async () => {
     expect.hasAssertions();
 
     const { roomId, userId } = await setupMember();
@@ -100,7 +99,8 @@ describe(setMemberPermissionOverride, () => {
       userId,
     });
 
-    expect(override).toStrictEqual({ allow: 0n, deny: 0n });
-    await expect(mockDatabase.db.$count(roomMemberPermissionsInMessage)).resolves.toBe(0);
+    // The row is kept as a tombstone, so a client holding it learns the override was removed
+    expect(override.map(({ deletedAt }) => deletedAt !== null)).toStrictEqual([true]);
+    await expect(getPermissions(mockDatabase.db, userId, roomId)).resolves.toBe(RoomPermission.ReadMessages);
   });
 });
