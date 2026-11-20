@@ -318,4 +318,21 @@ describe(createGridEngine, () => {
       position: { x: 0, y: 1 },
     });
   });
+
+  test("a start or a teleport off a whole tile is refused as outside the grid", () => {
+    expect.hasAssertions();
+
+    expect(
+      readError(
+        createGridEngine({ characters: [{ id: FIRST_ID, startPosition: { x: Number.NaN, y: 0 } }], tiles: [[false]] }),
+      ),
+    ).toStrictEqual({ id: FIRST_ID, kind: GridEngineErrorKind.OutsideGrid, position: { x: Number.NaN, y: 0 } });
+
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false]] });
+    expect(readError(engine.setPosition(FIRST_ID, { x: 0.5, y: 0 }))).toStrictEqual({
+      id: FIRST_ID,
+      kind: GridEngineErrorKind.OutsideGrid,
+      position: { x: 0.5, y: 0 },
+    });
+  });
 });

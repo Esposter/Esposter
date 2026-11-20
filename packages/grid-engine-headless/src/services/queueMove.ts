@@ -1,9 +1,8 @@
-import type { Direction } from "#src/models/Direction";
 import type { GridEngineError } from "#src/models/GridEngineError";
 import type { GridEngineState } from "#src/models/GridEngineState";
 import type { Result } from "neverthrow";
 
-import { Direction as DirectionValues } from "#src/models/Direction";
+import { Direction } from "#src/models/Direction";
 import { GridEngineErrorKind } from "#src/models/GridEngineErrorKind";
 import { checkIsDiagonal } from "#src/services/checkIsDiagonal";
 import { readCharacter } from "#src/services/readCharacter";
@@ -14,7 +13,7 @@ import { err, ok } from "neverthrow";
 export const queueMove = (state: GridEngineState, id: string, direction: Direction): Result<void, GridEngineError> =>
   readCharacter(state, id).andThen((character) => {
     if (checkIsDiagonal(direction)) return err({ id, kind: GridEngineErrorKind.DiagonalMove });
-    const isMoving = character.step !== undefined || character.pendingDirection !== DirectionValues.None;
+    const isMoving = character.step !== undefined || character.pendingDirection !== Direction.None;
     if (!isMoving) character.pendingDirection = direction;
     return ok();
   });
