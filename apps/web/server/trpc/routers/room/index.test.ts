@@ -550,7 +550,17 @@ describe("roomRouter", () => {
         where: { RAW: getLiveRowWhere, roomId: { eq: newRoom.id } },
       });
 
-    await expect(readLiveRoleLinks()).resolves.toHaveLength(1);
+    await expect(readLiveRoleLinks()).resolves.toStrictEqual([
+      {
+        createdAt: new Date(0),
+        deletedAt: null,
+        roleId: role.id,
+        roomId: newRoom.id,
+        updatedAt: new Date(0),
+        userId: getMockSession().user.id,
+        version: 0,
+      },
+    ]);
 
     await roomCaller.deleteRoom(newRoom.id);
 

@@ -909,19 +909,11 @@ describe(RoomObject, () => {
     await object.alarm();
     await object.alarm();
 
-    expect(getUserStub(userId).roomActivity).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ id: roomId, lastMessageAt: last.createdAt }),
-    );
-    expect(getUserStub(otherUserId).roomActivity).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ id: roomId, lastMessageAt: last.createdAt }),
-    );
+    const room = takeOne(await mockDatabase.db.select().from(roomsInMessage).where(eq(roomsInMessage.id, roomId)));
+    expect(getUserStub(userId).roomActivity).toHaveBeenCalledExactlyOnceWith(room);
+    expect(getUserStub(otherUserId).roomActivity).toHaveBeenCalledExactlyOnceWith(room);
     expect(userStubs.has(offlineUserId)).toBe(false);
-
-    const [room] = await mockDatabase.db
-      .select({ lastMessageAt: roomsInMessage.lastMessageAt })
-      .from(roomsInMessage)
-      .where(eq(roomsInMessage.id, roomId));
-    expect(room?.lastMessageAt).toStrictEqual(last.createdAt);
+    expect(room.lastMessageAt).toStrictEqual(last.createdAt);
   });
 
   test("a message sent while the wave writes owes a wave of its own", async () => {
@@ -970,13 +962,18 @@ describe(RoomObject, () => {
     const second = await sendMessage(object, "second");
     writeReleased.resolve();
     await wave;
+    const firstWaveRoom = takeOne(
+      await mockDatabase.db.select().from(roomsInMessage).where(eq(roomsInMessage.id, roomId)),
+    );
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS * 2));
     await object.alarm();
 
-    expect(vi.mocked(getUserStub(userId).roomActivity).mock.calls).toStrictEqual([
-      [expect.objectContaining({ id: roomId, lastMessageAt: first.createdAt })],
-      [expect.objectContaining({ id: roomId, lastMessageAt: second.createdAt })],
-    ]);
+    const secondWaveRoom = takeOne(
+      await mockDatabase.db.select().from(roomsInMessage).where(eq(roomsInMessage.id, roomId)),
+    );
+    expect(vi.mocked(getUserStub(userId).roomActivity).mock.calls).toStrictEqual([[firstWaveRoom], [secondWaveRoom]]);
+    expect(firstWaveRoom.lastMessageAt).toStrictEqual(first.createdAt);
+    expect(secondWaveRoom.lastMessageAt).toStrictEqual(second.createdAt);
   });
 
   test("a room-list event reaches only the members online here, each through its own object", async () => {
