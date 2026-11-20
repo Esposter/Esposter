@@ -6,8 +6,8 @@ import type { PlaceLandmark } from "genshin-world";
 // Height of its terrain tiles at a point in the game's axes, the world's origin and every region file's landmarks. The
 // City areas are read by the first capital that needs them, and every capital after shares that read
 export interface GroundSource {
-  getCityAreas: () => Promise<CityArea[]>;
   getGameHeight: (x: number, z: number) => number;
   landmarks: PlaceLandmark[];
   origin: WorldOrigin;
+  readCityAreas: () => Promise<CityArea[]>;
 }

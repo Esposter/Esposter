@@ -1,6 +1,6 @@
-import type { ObjMesh } from "#src/models/genshinAssets/fit/ObjMesh";
 import type { ReadSurface } from "#src/models/genshinAssets/fit/ReadSurface";
 import type { Texture } from "#src/models/genshinAssets/fit/Texture";
+import type { ObjMesh } from "#src/models/genshinAssets/shared/ObjMesh";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { averageSurfaceDetails } from "#src/services/genshinAssets/fit/averageSurfaceDetails";

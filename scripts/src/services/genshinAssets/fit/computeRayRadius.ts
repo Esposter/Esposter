@@ -1,8 +1,8 @@
-import type { Outline } from "#src/models/genshinAssets/fit/Outline";
+import type { OutlinePoint } from "#src/models/genshinAssets/fit/OutlinePoint";
 
 // How far along a ray from the origin the hull's boundary stands, where the ray crosses an edge from a to b; the
 // Origin lies inside the hull, so the ray leaves it at the one crossing ahead of it
-export const computeRayRadius = (hull: readonly Outline[], angle: number): number => {
+export const computeRayRadius = (hull: readonly OutlinePoint[], angle: number): number => {
   const [directionX, directionZ] = [Math.cos(angle), Math.sin(angle)];
   let radius = 0;
   for (const [index, [startX, startZ]] of hull.entries()) {

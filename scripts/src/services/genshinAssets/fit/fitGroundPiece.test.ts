@@ -32,10 +32,10 @@ describe(fitGroundPiece, () => {
       key: "ground/test/outline",
     };
     const source: GroundSource = {
-      getCityAreas: () => Promise.resolve([]),
       getGameHeight: (x, z) => Math.sin(x / 90) * 3 + Math.cos(z / 70) * 2 + 50,
       landmarks: [createDomainEntrance(1, -100), createDomainEntrance(2, 100)],
       origin: [0, 0, 0],
+      readCityAreas: () => Promise.resolve([]),
     };
 
     const { build } = await fitGroundPiece(piece, source);
@@ -56,11 +56,11 @@ describe(fitGroundPiece, () => {
       key: "ground/test/centre",
     };
     const source: GroundSource = {
-      getCityAreas: () => Promise.resolve([]),
       // No terrain within 200 metres of the centre, as an export that misses the tile under it leaves it
       getGameHeight: (x, z) => (Math.hypot(x, z) < 200 ? Number.NaN : Math.sin(x / 90) * 3 + Math.cos(z / 70) * 2),
       landmarks: [],
       origin: [0, 0, 0],
+      readCityAreas: () => Promise.resolve([]),
     };
 
     const { build } = await fitGroundPiece(piece, source);

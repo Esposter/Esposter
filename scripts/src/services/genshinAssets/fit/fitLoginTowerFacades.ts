@@ -5,7 +5,7 @@ import type { TowerSlab } from "#src/models/genshinAssets/fit/TowerSlab";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 
-import { LoginStoneFamilyMaterialRegex } from "#src/models/genshinAssets/fit/LoginStoneFamilyMaterialRegex";
+import { LoginStoneFamily } from "#src/models/genshinAssets/fit/LoginStoneFamily";
 import { classifyFacadeCells } from "#src/services/genshinAssets/fit/classifyFacadeCells";
 import { computeCellMean } from "#src/services/genshinAssets/fit/computeCellMean";
 import { findCellComponents } from "#src/services/genshinAssets/fit/findCellComponents";
@@ -65,7 +65,7 @@ export const fitLoginTowerFacades = async (
   const stoneColor = new Color(
     await fitAlbedo(
       [...new Set(pathIdNameMap.values())]
-        .filter((name) => LoginStoneFamilyMaterialRegexMap[LoginStoneFamilyMaterialRegex.Towers].test(name))
+        .filter((name) => LoginStoneFamilyMaterialRegexMap[LoginStoneFamily.Towers].test(name))
         .map((name) => join(textureDirectory, `${name}_Diffuse.png`)),
     ),
   );

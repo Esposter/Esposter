@@ -3,7 +3,7 @@ import type { PlanTones } from "#src/models/genshinAssets/fit/PlanTones";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 
-import { LoginStoneFamilyMaterialRegex } from "#src/models/genshinAssets/fit/LoginStoneFamilyMaterialRegex";
+import { LoginStoneFamily } from "#src/models/genshinAssets/fit/LoginStoneFamily";
 import { blurWithinTags } from "#src/services/genshinAssets/fit/blurWithinTags";
 import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
 import { fitPlanTones } from "#src/services/genshinAssets/fit/fitPlanTones";
@@ -163,7 +163,7 @@ export const fitLoginPaving = async (
   const stone = new Color(
     await fitAlbedo(
       materialNames
-        .filter((name) => LoginStoneFamilyMaterialRegexMap[LoginStoneFamilyMaterialRegex.Walkway].test(name))
+        .filter((name) => LoginStoneFamilyMaterialRegexMap[LoginStoneFamily.Walkway].test(name))
         .map((name) => getDiffusePath(name)),
     ),
   );

@@ -18,7 +18,7 @@ import { toPointExtent } from "#src/services/genshinAssets/world/toPointExtent";
 // Place stands in and every one within the bar's radius of those, since a capital is laid out across several (Inazuma
 // City's lower town, upper town and keep). The city areas are read only when a capital needs them, once for the region
 export const readGroundFootprints = async (
-  { getCityAreas, landmarks, origin }: GroundSource,
+  { landmarks, origin, readCityAreas }: GroundSource,
   centre: GroundPoint,
   halfSide: number,
   barRadius: number,
@@ -35,7 +35,7 @@ export const readGroundFootprints = async (
       } = landmark;
       const isCapital = Object.values(RegionCapitalMap).some(({ landmarkId }) => landmarkId === id);
       if (isCapital) {
-        const areas = await getCityAreas();
+        const areas = await readCityAreas();
         const place = toCapitalWorldPlace({ x, z }, origin);
         const placeExtent = toPointExtent(place);
         const standingAreas = areas.filter(({ extent }) => computeExtentGap(extent, placeExtent) === 0);

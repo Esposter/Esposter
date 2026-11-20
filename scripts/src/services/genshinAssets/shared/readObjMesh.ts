@@ -1,3 +1,5 @@
+import type { ObjMesh } from "#src/models/genshinAssets/shared/ObjMesh";
+
 import { readFile } from "node:fs/promises";
 
 // An OBJ's vertex positions and normals, its triangles as indices into them, the group each triangle is drawn in (a
@@ -5,17 +7,7 @@ import { readFile } from "node:fs/promises";
 // Normal as an index into the normals. AnimeStudio writes x negated,
 // Turning the game's left-handed axes into a right-handed file, so x is negated back here and every vertex is in the
 // Game's own axes
-export const readObjMesh = async (
-  path: string,
-): Promise<{
-  faceGroups: string[];
-  faceNormals: [number, number, number][];
-  faces: [number, number, number][];
-  faceUvs: [number, number, number][];
-  normals: [number, number, number][];
-  uvs: [number, number][];
-  vertices: [number, number, number][];
-}> => {
+export const readObjMesh = async (path: string): Promise<ObjMesh> => {
   const text = await readFile(path, "utf8");
   const vertices: [number, number, number][] = [];
   const uvs: [number, number][] = [];

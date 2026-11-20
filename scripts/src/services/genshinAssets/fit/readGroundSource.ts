@@ -15,5 +15,5 @@ export const readGroundSource = async (region: DerivedAssetComponent): Promise<G
     readRegionLandmarks(),
   ]);
   let cityAreas: Promise<CityArea[]> | undefined;
-  return { getCityAreas: () => (cityAreas ??= readCityAreas()), getGameHeight, landmarks, origin };
+  return { getGameHeight, landmarks, origin, readCityAreas: () => (cityAreas ??= readCityAreas()) };
 };

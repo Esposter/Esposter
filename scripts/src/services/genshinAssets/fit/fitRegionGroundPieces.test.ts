@@ -25,10 +25,10 @@ describe(fitRegionGroundPieces, () => {
 
     // A side of 240 metres reads 1681 samples on the fit's six metre grid, past the gate's minimum, over flat ground
     const source: GroundSource = {
-      getCityAreas: () => Promise.resolve([]),
       getGameHeight: () => 0,
       landmarks: [],
       origin: ORIGIN,
+      readCityAreas: () => Promise.resolve([]),
     };
     const areas: GroundPieceArea[] = [
       { id: "0", layer: WorldLayer.Surface, outline: createSquareOutline(240) },
@@ -46,10 +46,10 @@ describe(fitRegionGroundPieces, () => {
     expect.hasAssertions();
 
     const source: GroundSource = {
-      getCityAreas: () => Promise.resolve([]),
       getGameHeight: () => 0,
       landmarks: [],
       origin: ORIGIN,
+      readCityAreas: () => Promise.resolve([]),
     };
     const areas: GroundPieceArea[] = [
       { id: "0", layer: WorldLayer.Surface, outline: createSquareOutline(240) },

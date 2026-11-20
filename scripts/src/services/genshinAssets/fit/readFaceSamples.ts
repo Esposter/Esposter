@@ -1,6 +1,6 @@
-import type { ObjMesh } from "#src/models/genshinAssets/fit/ObjMesh";
 import type { SurfaceSample } from "#src/models/genshinAssets/fit/SurfaceSample";
 import type { Texture } from "#src/models/genshinAssets/fit/Texture";
+import type { ObjMesh } from "#src/models/genshinAssets/shared/ObjMesh";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { computeTriangleArea } from "#src/services/genshinAssets/fit/computeTriangleArea";
