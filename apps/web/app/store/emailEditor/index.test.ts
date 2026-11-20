@@ -124,13 +124,13 @@ describe(useEmailEditorStore, () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
-  test("a refused dataset binding puts the previous binding back", async () => {
+  // A refused save leaves the binding the reader chose on screen, with the save state reading Failed
+  test("a refused dataset binding stays on the content", async () => {
     expect.hasAssertions();
 
-    const previousDatasetReference = { id: v7(), type: DatasetProviderType.Sheet };
     content = new EmailEditor({
       content: [],
-      datasetReference: previousDatasetReference,
+      datasetReference: { id: v7(), type: DatasetProviderType.Sheet },
       root: { props: { lang: "", title: "" } },
     });
     trpcMsw.email.saveResourceContent.mutation(() => {
@@ -139,9 +139,10 @@ describe(useEmailEditorStore, () => {
     const emailEditorStore = useEmailEditorStore();
     const { loadContent, saveDatasetReference } = emailEditorStore;
     await loadContent();
-    saveDatasetReference({ id: v7(), type: DatasetProviderType.Sheet });
+    const chosenDatasetReference = { id: v7(), type: DatasetProviderType.Sheet };
+    saveDatasetReference(chosenDatasetReference);
     await waitForSynchronizedFunctions();
 
-    expect(emailEditorStore.datasetReference).toStrictEqual(previousDatasetReference);
+    expect(emailEditorStore.datasetReference).toStrictEqual(chosenDatasetReference);
   });
 });

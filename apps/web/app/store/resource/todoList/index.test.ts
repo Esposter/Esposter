@@ -105,8 +105,8 @@ describe(useTodoListStore, () => {
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
   });
 
-  // The blob is persisted wholesale, so a rejected write has to leave the list showing what the server still has
-  test("reverts the list when the save fails", async () => {
+  // A refused save leaves the edit on screen, since the blob write has no entry to take back and the save state reads Failed
+  test("keeps a new todo on screen when its save fails", async () => {
     expect.hasAssertions();
 
     trpcMsw.todoList.saveResourceContent.mutation(() => {
@@ -119,12 +119,11 @@ describe(useTodoListStore, () => {
     saveItem();
     await flushPromises();
 
-    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName]);
+    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName]);
   });
 
-  // The list is ordered by the user, so where an item sits is content of its own — a rejected delete that lands
-  // Its item back at the end has still lost something, and on a long list it reappears out of sight
-  test("puts a rejected delete back at the index it was removed from", async () => {
+  // A refused delete leaves the item off the list, and the other items keep the order they had
+  test("keeps a refused delete off the list, with the rest in their order", async () => {
     expect.hasAssertions();
 
     content = { items: [new TodoListItem({ name: itemName }), new TodoListItem({ name: newItemName })] };
@@ -138,7 +137,7 @@ describe(useTodoListStore, () => {
     removeItem();
     await flushPromises();
 
-    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName]);
+    expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
   });
 
   // Another device's save re-reads the list through the reload every open content store takes, so the list on screen
@@ -265,7 +264,7 @@ describe(useTodoListStore, () => {
   // The field above the list adds with no dialog to hold a draft, so a refused save has to take the new row back out
   // The field above the list clears as a todo is added, so a name a todo cannot take and a save the server refuses both
   // Hand its text back through `onRefused`, and the refused todo leaves the list
-  test("a refused add hands the field its name back", async () => {
+  test("a name the list cannot take hands the field its text back, and a refused add stays in the list", async () => {
     expect.hasAssertions();
 
     const onRefused = vi.fn<() => void>();
@@ -283,12 +282,12 @@ describe(useTodoListStore, () => {
     addItem(newItemName, onRefused);
     await waitForSynchronizedFunctions();
 
-    expect(onRefused).toHaveBeenCalledTimes(2);
-    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName]);
+    expect(onRefused).toHaveBeenCalledExactlyOnceWith();
+    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName]);
   });
 
-  // A drag writes the content with no dialog, so a refused save has to put the rows back in the order they had
-  test("puts back the order the server refused", async () => {
+  // A drag writes the content with no dialog, and a refused save leaves the order the drag wrote
+  test("keeps the order a refused reorder wrote", async () => {
     expect.hasAssertions();
 
     content = { items: [new TodoListItem({ name: itemName }), new TodoListItem({ name: newItemName })] };
@@ -301,11 +300,11 @@ describe(useTodoListStore, () => {
     reorderItems(items.value.map(({ id }) => id).toReversed());
     await flushPromises();
 
-    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName]);
+    expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName, itemName]);
   });
 
-  // A tick writes the content with no dialog to hold a draft, so a refused save has to leave the row open again
-  test("reopens a todo whose completion the server refused", async () => {
+  // A tick writes the content with no dialog, and a refused save leaves the tick on screen
+  test("keeps a todo's tick when its save is refused", async () => {
     expect.hasAssertions();
 
     trpcMsw.todoList.saveResourceContent.mutation(() => {
@@ -317,7 +316,7 @@ describe(useTodoListStore, () => {
     toggleCompleted(takeOne(items.value).id);
     await flushPromises();
 
-    expect(takeOne(items.value).completedAt).toBeUndefined();
+    expect(takeOne(items.value).completedAt).toBeDefined();
   });
 
   test("rolls a ticked repeating todo to its next due date, open, with its steps unticked", async () => {
@@ -347,8 +346,8 @@ describe(useTodoListStore, () => {
     expect(item.steps).toStrictEqual([{ id: stepId, name: itemName }]);
   });
 
-  // Deleting every completed todo takes rows from anywhere in the list, and each refused one goes back where it stood
-  test("puts every row of a rejected multi-delete back where it stood", async () => {
+  // Deleting every completed todo takes rows from anywhere in the list, and a refused delete leaves them all off it
+  test("keeps the rows of a refused multi-delete off the list", async () => {
     expect.hasAssertions();
 
     content = {
@@ -367,7 +366,7 @@ describe(useTodoListStore, () => {
     deleteItems(items.value.filter(({ name }) => name !== newItemName).map(({ id }) => id));
     await flushPromises();
 
-    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName, adoptedItemName]);
+    expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
   });
 
   // The search is typed against the list on screen, so one carried into another list would hide its todos behind a

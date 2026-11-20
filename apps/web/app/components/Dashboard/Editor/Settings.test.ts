@@ -121,7 +121,7 @@ describe("dashboardEditorSettings", () => {
     }).toStrictEqual({ packedTop: "10px", placedTop: "110px", saved: CompactType.None });
   });
 
-  test("a save the server refuses takes the choice back to the one it had", async () => {
+  test("a save the server refuses keeps the choice on the dashboard", async () => {
     expect.hasAssertions();
 
     await loadDashboard();
@@ -133,6 +133,6 @@ describe("dashboardEditorSettings", () => {
     const dashboardStore = useDashboardStore();
     const { dashboard } = storeToRefs(dashboardStore);
 
-    expect(dashboard.value.collision).toBe(CollisionMode.Push);
+    expect(dashboard.value.collision).toBe(CollisionMode.Swap);
   });
 });

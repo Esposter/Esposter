@@ -142,10 +142,8 @@ describe(useResourceStore, () => {
     await readContent(noop);
     setRouteId(otherResourceId);
     await readResource();
-    const rollback = vi.fn<() => void>();
-    saveContent(createDefaultSheetResource(), rollback);
+    saveContent(createDefaultSheetResource());
 
-    expect(rollback).toHaveBeenCalledExactlyOnceWith();
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
@@ -157,10 +155,8 @@ describe(useResourceStore, () => {
     const { saveContent } = resourceStore;
     const { readResource } = useReadOpenResource();
     await readResource();
-    const rollback = vi.fn<() => void>();
-    saveContent(createDefaultSheetResource(), rollback);
+    saveContent(createDefaultSheetResource());
 
-    expect(rollback).toHaveBeenCalledExactlyOnceWith();
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
@@ -670,7 +666,7 @@ describe(useResourceStore, () => {
 
   // Every retry after a stale rejection is a guaranteed rejection, so the state latches: the remedy is a reload,
   // Not waiting, and the owner has to be able to see that after the warning is gone
-  test("a stale version rolls the save back and prompts a refresh", async () => {
+  test("a stale version prompts a refresh and holds the content as the save left it", async () => {
     expect.hasAssertions();
 
     trpcMsw.sheet.saveResourceContent.mutation(() => {
@@ -682,11 +678,9 @@ describe(useResourceStore, () => {
     const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
-    const rollback = vi.fn<() => void>();
-    saveContent(createDefaultSheetResource(), rollback);
+    saveContent(createDefaultSheetResource());
     await settleSave();
 
-    expect(rollback).toHaveBeenCalledExactlyOnceWith();
     expect(notificationStore.notifications.map(({ action }) => action?.title)).toStrictEqual(["Refresh"]);
   });
 

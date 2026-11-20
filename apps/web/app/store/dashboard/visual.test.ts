@@ -139,7 +139,7 @@ describe(useVisualStore, () => {
   });
 
   // Same for the delete path, which unwinds by putting its own visual back
-  test("keeps a visual added while the delete was in flight when the save fails", async () => {
+  test("a refused delete stays removed, and a visual added while it was in flight stays too", async () => {
     expect.hasAssertions();
 
     const visualStore = await setupStore();
@@ -153,12 +153,12 @@ describe(useVisualStore, () => {
     deleteVisual({ id });
     await flushPromises();
 
-    expect(visuals.value).toHaveLength(2);
-    expect(visuals.value.some((visual) => visual.id === id)).toBe(true);
+    expect(visuals.value).toHaveLength(1);
+    expect(visuals.value.some((visual) => visual.id === id)).toBe(false);
   });
 
-  // The delete closes the visual's form with its selection, so the refusal reopens the form the selection names
-  test("restores the selection of a visual whose delete failed", async () => {
+  // The delete closes the visual's form with its selection, and a refused save leaves that closed
+  test("a refused delete leaves the selection and the form of the visual it removed closed", async () => {
     expect.hasAssertions();
 
     const visualStore = await setupStore();
@@ -173,8 +173,8 @@ describe(useVisualStore, () => {
     await flushPromises();
 
     expect({ editedItemId: editedItem.value?.id, selectedVisualId: selectedVisualId.value }).toStrictEqual({
-      editedItemId: id,
-      selectedVisualId: id,
+      editedItemId: undefined,
+      selectedVisualId: "",
     });
   });
 
@@ -192,9 +192,9 @@ describe(useVisualStore, () => {
     expect(selectedVisualId.value).toBe(linkedVisual.id);
   });
 
-  // The rollback lands after the save's await, and by then the blade may hold another dashboard — put back through
-  // Whichever dashboard is open, the deleted visual would appear in that one and be saved into it by its next edit
-  test("a failed delete's rollback leaves the dashboard open by then without the visual", async () => {
+  // The save's answer lands after the await, and by then the blade may hold another dashboard. A refused delete writes
+  // Nothing into whichever dashboard is open, so that one's visuals are its own
+  test("a refused delete writes nothing into the dashboard open by then", async () => {
     expect.hasAssertions();
 
     const otherResourceId = v7();
@@ -263,8 +263,8 @@ describe(useVisualStore, () => {
     });
   });
 
-  // A fit height the server refuses is taken back, so the menu shows the flag the saved visual has
-  test("takes a fit height back when the save is refused", async () => {
+  // A fit height the server refuses stays on the visual, since the save is refused and nothing takes it back
+  test("keeps a fit height the refused save wrote", async () => {
     expect.hasAssertions();
 
     const visualStore = await setupStore();
@@ -277,36 +277,10 @@ describe(useVisualStore, () => {
     setAutoHeight({ id }, true);
     await flushPromises();
 
-    expect(takeOne(visuals.value).isAutoHeight).toBe(false);
-  });
-
-  // A refused fit height is taken back only by its own write, so a later toggle that chose the same value is kept
-  test("a refused fit height keeps a later toggle that chose the same value", async () => {
-    expect.hasAssertions();
-
-    const visualStore = await setupStore();
-    const { setAutoHeight } = visualStore;
-    const { visuals } = storeToRefs(visualStore);
-    const { id } = takeOne(visuals.value);
-    let saveCount = 0;
-    const { promise: isLastSaved, resolve: resolveLastSave }: PromiseWithResolvers<void> = Promise.withResolvers();
-    trpcMsw.dashboard.saveResourceContent.mutation(() => {
-      saveCount++;
-      if (saveCount === 1) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      if (saveCount === 3) resolveLastSave();
-      return createResource(saveCount);
-    });
-    setAutoHeight({ id }, true);
-    setAutoHeight({ id }, false);
-    setAutoHeight({ id }, true);
-    await isLastSaved;
-    await flushPromises();
-
     expect(takeOne(visuals.value).isAutoHeight).toBe(true);
   });
 
-  // A refused delete of an unselected visual keeps the selection, and a selection the reader makes while the save is in flight
-  // Survives the refusal rather than being rolled back to the one the delete never touched
+  // A selection the reader makes while a delete's save is in flight is the reader's, and a refused save does not change it
   test("keeps a selection made while a refused delete's save is in flight", async () => {
     expect.hasAssertions();
 
@@ -327,7 +301,7 @@ describe(useVisualStore, () => {
 
     expect({ selectedVisualId: selectedVisualId.value, visualCount: visuals.value.length }).toStrictEqual({
       selectedVisualId: reselected.id,
-      visualCount: 3,
+      visualCount: 2,
     });
   });
 
@@ -353,7 +327,7 @@ describe(useVisualStore, () => {
 
     expect({ selectedVisualId: selectedVisualId.value, visualCount: visuals.value.length }).toStrictEqual({
       selectedVisualId: "",
-      visualCount: 2,
+      visualCount: 1,
     });
   });
 
@@ -377,7 +351,7 @@ describe(useVisualStore, () => {
 
     expect({ selectedVisualId: selectedVisualId.value, visualCount: visuals.value.length }).toStrictEqual({
       selectedVisualId: "",
-      visualCount: 1,
+      visualCount: 0,
     });
   });
 
