@@ -4,90 +4,104 @@ import type { RoomCategoryInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { authClient } from "#src/services/auth/authClient";
+import { roomCategoryTable } from "#src/services/message/roomCategory/constants";
+import { createRoomCategoryConfirmations } from "#src/services/message/roomCategory/createRoomCategoryConfirmations";
+import { getCreateRoomCategoryEntry } from "#src/services/message/roomCategory/getCreateRoomCategoryEntry";
+import { getDeleteRoomCategoryEntry } from "#src/services/message/roomCategory/getDeleteRoomCategoryEntry";
+import { getReorderRoomCategoriesEntry } from "#src/services/message/roomCategory/getReorderRoomCategoriesEntry";
 import { getRoomCategoryPositionUpdates } from "#src/services/message/roomCategory/getRoomCategoryPositionUpdates";
-import { createOperationData } from "#src/services/shared/createOperationData";
-import { DatabaseEntityType, NO_ROW_VERSION } from "@esposter/db-schema";
+import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
+import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useOverlayStore } from "#src/store/overlay";
+import { NO_ROW_VERSION } from "@esposter/db-schema";
 import { v7 } from "uuid";
 
 export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  // One executor for every room category write: a queue lives per key within an executor, so creates and reorders
-  // Share the list's key to queue behind each other
-  const { executeMutation } = useMutation();
-  const roomCategoryListKey = "roomCategoryList";
-  const roomCategories = ref<RoomCategoryInMessage[]>([]);
-  const {
-    createRoomCategory: storeCreateRoomCategory,
-    deleteRoomCategory: storeDeleteRoomCategory,
-    updateRoomCategory: storeUpdateRoomCategory,
-  } = createOperationData(roomCategories, ["id"], DatabaseEntityType.RoomCategory);
-  // The category is created under the id the client gives it, and the server only adds userId and the appended
-  // Position, so the row drawn now is the row the server stores
+  const overlayStore = useOverlayStore();
+  const { arrive, view, writeOptimistic } = overlayStore;
+  const roomCategoryRows = view(roomCategoryTable);
+  // A category the client drew before the server answered carries NO_ROW_VERSION. The server appends a new category below
+  // The rows it holds, so such a placeholder is listed after them, in issue order, whatever position it carries
+  const roomCategories = computed(() =>
+    roomCategoryRows.value
+      .filter((roomCategory) => checkIsVersioned(roomCategory))
+      .toSorted(
+        (firstRoomCategory, secondRoomCategory) =>
+          Number(firstRoomCategory.version === NO_ROW_VERSION) -
+            Number(secondRoomCategory.version === NO_ROW_VERSION) ||
+          firstRoomCategory.position - secondRoomCategory.position,
+      ),
+  );
+  // A read's rows arrive as they are, tombstones included, so a deletion the read carries removes the category
+  const arriveRoomCategories = (rows: RoomCategoryInMessage[]) => {
+    for (const row of rows) arrive(roomCategoryTable, row);
+  };
+  // The category is drawn under the id the client gives it, at a placeholder that holds no version. The server's row
+  // Arrives in the answer, and its header confirms the placeholder at the version it names
   const createRoomCategory = (input: Except<CreateRoomCategoryInput, "id">) => {
     if (!session.value.data) return;
-    const newRoomCategory: RoomCategoryInMessage = {
+
+    const roomCategory: RoomCategoryInMessage = {
       createdAt: new Date(),
       deletedAt: null,
       id: v7(),
       name: input.name,
-      // Mirror the server's append-below-existing-order position, so the row is drawn where the server places it
-      position: roomCategories.value.reduce((maxPosition, { position }) => Math.max(maxPosition, position), -1) + 1,
+      position: 0,
       updatedAt: new Date(),
       userId: session.value.data.user.id,
       version: NO_ROW_VERSION,
     };
-    executeMutation(() => $trpc.room.category.createRoomCategory.mutate({ ...input, id: newRoomCategory.id }), {
-      applyOptimistic: () => {
-        storeCreateRoomCategory(newRoomCategory);
-        return () => {
-          storeDeleteRoomCategory({ id: newRoomCategory.id });
+    writeOptimistic(
+      async () => {
+        const { result, rowVersions } = await collectRowVersions(() =>
+          $trpc.room.category.createRoomCategory.mutate({ ...input, id: roomCategory.id }),
+        );
+        return {
+          arrivals: [createArrival(roomCategoryTable, result)],
+          confirmed: createRoomCategoryConfirmations(rowVersions),
         };
       },
-      // Creates queue on the list, since each is appended below the last the server stored and two at once would tie
-      key: roomCategoryListKey,
-      // The position the server appended at is the one the next read sorts by
-      reconcile: (createdRoomCategory) => {
-        storeUpdateRoomCategory(createdRoomCategory);
-      },
-    });
+      { entry: getCreateRoomCategoryEntry(roomCategory), onError: createErrorAlert },
+    );
   };
-
   const deleteRoomCategory = (id: DeleteRoomCategoryInput) => {
-    executeMutation(() => $trpc.room.category.deleteRoomCategory.mutate(id), {
-      // Deletes are keyed per room category and never queue against each other. Position drives the rendered
-      // Order, so where the restored row lands in the array is not observable
-      applyOptimistic: () => {
-        const deletedRoomCategory = roomCategories.value.find((roomCategory) => roomCategory.id === id);
-        storeDeleteRoomCategory({ id });
-        return () => {
-          if (deletedRoomCategory) storeCreateRoomCategory(deletedRoomCategory);
+    writeOptimistic(
+      async () => {
+        const { result, rowVersions } = await collectRowVersions(() =>
+          $trpc.room.category.deleteRoomCategory.mutate(id),
+        );
+        return {
+          arrivals: [createArrival(roomCategoryTable, result)],
+          confirmed: createRoomCategoryConfirmations(rowVersions),
         };
       },
-      key: id,
-    });
+      { entry: getDeleteRoomCategoryEntry(id, new Date()), onError: createErrorAlert },
+    );
   };
-
+  // Only the categories the server holds take a position: a placeholder has none to give, and it is listed after them
   const reorderRoomCategories = (newRoomCategories: RoomCategoryInMessage[]) => {
-    const updates = getRoomCategoryPositionUpdates(newRoomCategories);
+    const updates = getRoomCategoryPositionUpdates(
+      newRoomCategories.filter(({ version }) => version !== NO_ROW_VERSION),
+    );
     if (updates.length === 0) return;
-    executeMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
-      // Only the position of each row this write moves, so a row a concurrent create or event added is left as it is
-      applyOptimistic: () => {
-        const previousPositions = updates
-          .map(({ id }) => roomCategories.value.find((roomCategory) => roomCategory.id === id))
-          .filter((roomCategory) => roomCategory !== undefined)
-          .map(({ id, position }) => ({ id, position }));
-        for (const update of updates) storeUpdateRoomCategory(update);
-        return () => {
-          for (const previousPosition of previousPositions) storeUpdateRoomCategory(previousPosition);
+
+    writeOptimistic(
+      async () => {
+        const { result, rowVersions } = await collectRowVersions(() =>
+          $trpc.room.category.reorderRoomCategories.mutate(updates),
+        );
+        return {
+          arrivals: result.map((roomCategory) => createArrival(roomCategoryTable, roomCategory)),
+          confirmed: createRoomCategoryConfirmations(rowVersions),
         };
       },
-      // The whole list is the target, so it shares the list's key: a reorder waits for a create in flight, and a create
-      // Waits for a reorder, since both write the positions the other one reads
-      key: roomCategoryListKey,
-    });
+      { entry: getReorderRoomCategoriesEntry(updates), onError: createErrorAlert },
+    );
   };
 
-  return { createRoomCategory, deleteRoomCategory, reorderRoomCategories, roomCategories };
+  return { arriveRoomCategories, createRoomCategory, deleteRoomCategory, reorderRoomCategories, roomCategories };
 });

@@ -76,11 +76,12 @@ export const categoryRouter = router({
       ]);
       return requireRoomCategory(deletedRoomCategories[0], Operation.Delete, input, "NOT_FOUND");
     }),
+  // The read returns a deletion as a tombstone, so a category a client holds is removed by the row the read brings back
   readRoomCategories: standardAuthedProcedure.query<RoomCategoryInMessage[]>(({ ctx }) =>
     ctx.db.query.roomCategoriesInMessage.findMany({
       // Drag-reorder assigns positions, so position must take precedence over the name tiebreaker
       orderBy: (category, { asc }) => [asc(category.position), asc(category.name)],
-      where: { RAW: getLiveRoomCategoryWhere, userId: { eq: ctx.user.id } },
+      where: { userId: { eq: ctx.user.id } },
     }),
   ),
   reorderRoomCategories: standardAuthedProcedure
