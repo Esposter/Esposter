@@ -37,7 +37,7 @@ vi.mock(import("#src/services/storage/getBucket"), async () => {
 // The meter lives in the app process, so the figure reaches it through the owner's User object
 vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
 
-const hashOf = (value: string) => createHash("sha256").update(value).digest("hex");
+const hashOf = (content: string) => createHash("sha256").update(content).digest("hex");
 const readResourceAssetNames = async () => readBlobNames(StorageBucket.ResourceAssets);
 // The one method a test needs, handed out once in place of the mock bucket the handler reads
 const createBucketWith = (methods: Partial<R2Bucket>) => methods as R2Bucket;

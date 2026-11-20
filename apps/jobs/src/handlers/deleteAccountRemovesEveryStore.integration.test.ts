@@ -80,10 +80,10 @@ describe(deleteAccountHandler, () => {
   const content = JSON.stringify({});
   // The blob is written with no condition, so the store returns the object it wrote, and its size is what is charged
   const writeResourceAssetJsonBlob = async (blobName: string): Promise<number> => {
-    const object = await writeJsonBlob(getBucket(StorageBucket.ResourceAssets), blobName, content);
-    if (!object) throw new NotFoundError("ResourceAssetBlob", blobName);
+    const storedObject = await writeJsonBlob(getBucket(StorageBucket.ResourceAssets), blobName, content);
+    if (!storedObject) throw new NotFoundError("ResourceAssetBlob", blobName);
 
-    return object.size;
+    return storedObject.size;
   };
   const countedBytes = 1;
   const name = "name";
