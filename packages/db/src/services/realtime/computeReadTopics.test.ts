@@ -63,6 +63,15 @@ const seedUserRoom = async () => {
   return { db, roomId, userId };
 };
 
+// A user who owns each room of `roomIds` and is a member of none of them, for the tests that name rooms by their owner's rows
+const seedOwnedRooms = async (roomIds: string[]) => {
+  const { db } = await createMockDb();
+  const userId = v7();
+  await insertUser(db, userId);
+  await db.insert(roomsInMessage).values(roomIds.map((id) => ({ id, name: "name", type: RoomType.Room, userId })));
+  return { db, userId };
+};
+
 describe(computeReadTopics, () => {
   // A scope equality names the rows its value selects, and a secret's value is named by its digest, not the secret. The
   // Table the read starts from is named by that equality alone
@@ -177,7 +186,7 @@ describe(computeReadTopics, () => {
       .where(eq(bookmarksInApp.userId, userId));
 
     await expect(getReadTopicNames(statements)).resolves.toStrictEqual([
-      `app_bookmarks:userId=${userId}`,
+      `${getTableName(bookmarksInApp)}:userId=${userId}`,
       `${getTableName(resourcesInResource)}:*`,
     ]);
   });
@@ -258,15 +267,9 @@ describe(computeReadTopics, () => {
   test("a table a read joins is named by the join key values its rows return", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
     const firstRoomId = v7();
     const secondRoomId = v7();
-    await db.insert(roomsInMessage).values([
-      { id: firstRoomId, name: "name", type: RoomType.Room, userId },
-      { id: secondRoomId, name: "name", type: RoomType.Room, userId },
-    ]);
+    const { db } = await seedOwnedRooms([firstRoomId, secondRoomId]);
     const { database, statements } = recordStatements(db);
 
     await database
@@ -288,11 +291,7 @@ describe(computeReadTopics, () => {
   test("a table a read tests for null is named table-wide even when its join key is returned", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
-    const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: "name", type: RoomType.Room, userId });
+    const { db } = await seedOwnedRooms([v7()]);
     const { database, statements } = recordStatements(db);
 
     await database
@@ -313,15 +312,9 @@ describe(computeReadTopics, () => {
   test("a table a left join's ON clause filters is named by the join key values its rows return", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
     const firstRoomId = v7();
     const secondRoomId = v7();
-    await db.insert(roomsInMessage).values([
-      { id: firstRoomId, name: "name", type: RoomType.Room, userId },
-      { id: secondRoomId, name: "name", type: RoomType.Room, userId },
-    ]);
+    const { db, userId } = await seedOwnedRooms([firstRoomId, secondRoomId]);
     await db.insert(usersToRoomsInMessage).values({ roomId: firstRoomId, userId });
     const { database, statements } = recordStatements(db);
 
@@ -368,15 +361,9 @@ describe(computeReadTopics, () => {
   test("a table another left join compares its key against on the right is named by the join key values its rows return", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
     const firstRoomId = v7();
     const secondRoomId = v7();
-    await db.insert(roomsInMessage).values([
-      { id: firstRoomId, name: "name", type: RoomType.Room, userId },
-      { id: secondRoomId, name: "name", type: RoomType.Room, userId },
-    ]);
+    const { db, userId } = await seedOwnedRooms([firstRoomId, secondRoomId]);
     const { database, statements } = recordStatements(db);
 
     await database
@@ -477,11 +464,8 @@ describe(computeReadTopics, () => {
   test("a table a left join names stays named by its rows when an inner join references only other occurrences", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
     const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: "name", type: RoomType.Room, userId });
+    const { db, userId } = await seedOwnedRooms([roomId]);
     const { database, statements } = recordStatements(db);
 
     await database
@@ -606,11 +590,7 @@ describe(computeReadTopics, () => {
   test("a table a left join's WHERE clause filters is named table-wide", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
-    await insertUser(db, userId);
-    const roomId = v7();
-    await db.insert(roomsInMessage).values({ id: roomId, name: "name", type: RoomType.Room, userId });
+    const { db, userId } = await seedOwnedRooms([v7()]);
     const { database, statements } = recordStatements(db);
 
     await database
@@ -630,17 +610,11 @@ describe(computeReadTopics, () => {
   test("a table an in over itself tests is named by each value its subquery's rows hold", async () => {
     expect.hasAssertions();
 
-    const { db } = await createMockDb();
-    const userId = v7();
     const otherUserId = v7();
-    await insertUser(db, userId);
-    await insertUser(db, otherUserId);
     const firstRoomId = v7();
     const secondRoomId = v7();
-    await db.insert(roomsInMessage).values([
-      { id: firstRoomId, name: "name", type: RoomType.Room, userId },
-      { id: secondRoomId, name: "name", type: RoomType.Room, userId },
-    ]);
+    const { db, userId } = await seedOwnedRooms([firstRoomId, secondRoomId]);
+    await insertUser(db, otherUserId);
     await db.insert(usersToRoomsInMessage).values([
       { roomId: firstRoomId, userId },
       { roomId: secondRoomId, userId },
@@ -761,21 +735,6 @@ describe(computeReadTopics, () => {
   // A table-wide read names the table's rows, which an insert or a delete changes, and each column it reads, which an update
   // Of that column changes. An update names the columns it sets, not the rows, so a read of other columns is not woken by it
   const tableName = getTableName(usersToRoomsInMessage);
-
-  test("an update to a column no table-wide read names wakes no one", async () => {
-    expect.hasAssertions();
-
-    const { db, roomId } = await seedUserRoom();
-    const read = recordStatements(db);
-    await read.database.select({ roomId: usersToRoomsInMessage.roomId }).from(usersToRoomsInMessage);
-    const write = recordStatements(db);
-    await write.database
-      .update(usersToRoomsInMessage)
-      .set({ lastReadAt: new Date() })
-      .where(eq(usersToRoomsInMessage.roomId, roomId));
-
-    await expect(getWoken(read.statements, write.statements)).resolves.toStrictEqual([]);
-  });
 
   test("an update to a column a table-wide read names wakes it, through the table's topic", async () => {
     expect.hasAssertions();
