@@ -14,5 +14,5 @@ export const parseRgbColor = (computedColor: string): SrgbColor | undefined => {
 
   const [, red, green, blue, alpha] = match;
   if (alpha !== undefined && Number(alpha) < 1) return undefined;
-  return [Number(red) / MAX_COLOR_CHANNEL, Number(green) / MAX_COLOR_CHANNEL, Number(blue) / MAX_COLOR_CHANNEL];
+  else return [Number(red) / MAX_COLOR_CHANNEL, Number(green) / MAX_COLOR_CHANNEL, Number(blue) / MAX_COLOR_CHANNEL];
 };
