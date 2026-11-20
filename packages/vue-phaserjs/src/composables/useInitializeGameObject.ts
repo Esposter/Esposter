@@ -65,6 +65,10 @@ export const useInitializeGameObject = <
     });
   } else
     lifecycleHook((scene) => {
+      // A completion that runs after the component unmounted creates nothing, since the teardown that would destroy the
+      // Object and release its setters and events has already run
+      if (isUnmounted) return;
+
       initializeGameObject(scene);
       pushToParentContainer();
     });

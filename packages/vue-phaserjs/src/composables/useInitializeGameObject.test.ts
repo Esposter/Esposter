@@ -3,6 +3,8 @@ import type { GameObjects } from "phaser";
 
 import Sprite from "#src/components/Sprite.vue";
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
+import { pushListener } from "#src/services/hooks/pushListener";
 import { startTestScene, stepScene } from "#src/test/fixtures/headlessGame.test";
 import { setupGameObjectSuite } from "#src/test/fixtures/setupGameObjectSuite.test";
 import { assert, describe, expect, test } from "vitest";
@@ -209,5 +211,24 @@ describe(useInitializeGameObject, () => {
     expect(() => {
       stepScene(scene);
     }).not.toThrow();
+  });
+
+  // A create listener runs from the list it was dispatched with, so a listener that unmounts the component ahead of this
+  // One does not stop this one from running. The completion then makes a game object nothing would ever destroy
+  test("creates no game object when the component unmounts during the scene's create, ahead of its own completion", () => {
+    expect.hasAssertions();
+
+    pushListener(
+      Lifecycle.Create,
+      () => {
+        unmountGameObject();
+      },
+      sceneKey,
+    );
+    mountGameObject(Sprite, { props: { configuration: depthConfiguration } });
+
+    const scene = startTestScene(sceneKey);
+
+    expect(scene.children.list).toStrictEqual([]);
   });
 });
