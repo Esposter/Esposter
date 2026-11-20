@@ -3,11 +3,11 @@ import type { UserToRoomInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { userToRoomTable } from "#src/services/message/userToRoom/constants";
-import { createUserToRoomConfirmations } from "#src/services/message/userToRoom/createUserToRoomConfirmations";
 import { getUserToRoomPatchEntry } from "#src/services/message/userToRoom/getUserToRoomPatchEntry";
 import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useOverlayStore } from "#src/store/overlay";
@@ -47,7 +47,7 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
         const { result, rowVersions } = await collectRowVersions(() => $trpc.userToRoom.updateUserToRoom.mutate(input));
         return {
           arrivals: [createArrival(userToRoomTable, result)],
-          confirmed: createUserToRoomConfirmations(rowVersions),
+          confirmed: createHeaderConfirmations(userToRoomTable, rowVersions),
         };
       },
       { entry: getUserToRoomPatchEntry(userId.value, roomId, omitUndefined(patch)), onError: createErrorAlert },

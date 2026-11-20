@@ -5,7 +5,6 @@ import type { Except } from "type-fest";
 
 import { authClient } from "#src/services/auth/authClient";
 import { roomCategoryTable } from "#src/services/message/roomCategory/constants";
-import { createRoomCategoryConfirmations } from "#src/services/message/roomCategory/createRoomCategoryConfirmations";
 import { getCreateRoomCategoryEntry } from "#src/services/message/roomCategory/getCreateRoomCategoryEntry";
 import { getDeleteRoomCategoryEntry } from "#src/services/message/roomCategory/getDeleteRoomCategoryEntry";
 import { getReorderRoomCategoriesEntry } from "#src/services/message/roomCategory/getReorderRoomCategoriesEntry";
@@ -13,6 +12,7 @@ import { getRoomCategoryPositionUpdates } from "#src/services/message/roomCatego
 import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
 import { NO_ROW_VERSION } from "@esposter/db-schema";
@@ -62,7 +62,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
         );
         return {
           arrivals: [createArrival(roomCategoryTable, result)],
-          confirmed: createRoomCategoryConfirmations(rowVersions),
+          confirmed: createHeaderConfirmations(roomCategoryTable, rowVersions),
         };
       },
       { entry: getCreateRoomCategoryEntry(roomCategory), onError: createErrorAlert },
@@ -76,7 +76,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
         );
         return {
           arrivals: [createArrival(roomCategoryTable, result)],
-          confirmed: createRoomCategoryConfirmations(rowVersions),
+          confirmed: createHeaderConfirmations(roomCategoryTable, rowVersions),
         };
       },
       { entry: getDeleteRoomCategoryEntry(id, new Date()), onError: createErrorAlert },
@@ -96,7 +96,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
         );
         return {
           arrivals: result.map((roomCategory) => createArrival(roomCategoryTable, roomCategory)),
-          confirmed: createRoomCategoryConfirmations(rowVersions),
+          confirmed: createHeaderConfirmations(roomCategoryTable, rowVersions),
         };
       },
       { entry: getReorderRoomCategoriesEntry(updates), onError: createErrorAlert },
