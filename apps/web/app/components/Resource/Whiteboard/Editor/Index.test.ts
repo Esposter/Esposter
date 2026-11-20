@@ -10,6 +10,7 @@ import ResourceWhiteboardEditorPropertiesArrow from "#src/components/Resource/Wh
 import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
 import UiPalette from "#src/components/Ui/Palette/Index.vue";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
+import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "#src/services/resource/constants";
 import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { pressKey, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "#src/services/whiteboard/constants.test";
@@ -20,11 +21,11 @@ import { useWhiteboardEditorStore } from "#src/store/resource/whiteboard/editor"
 import { useWhiteboardStore } from "#src/store/resource/whiteboard/index";
 import { useContextMenuStore } from "#src/store/ui/contextMenu";
 import { ResourceType } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { ArrowPathKind, getExportBounds, PositionedElementType, TextSize } from "vue-block-editor-headless";
 
 vi.mock(import("uuid"), async (importOriginal) => {
@@ -85,13 +86,31 @@ describe("resourceWhiteboardEditor", () => {
       ...createResourceListItem({ id: resourceId, type: ResourceType.Whiteboard }),
       publication: null,
     }));
+    trpcMsw.whiteboard.saveResourceContent.mutation(() =>
+      createResourceListItem({ contentVersion: 1, id: resourceId, type: ResourceType.Whiteboard }),
+    );
     const { readResource } = useReadOpenResource();
     await readResource();
   });
+  // Registered after setupMswTrpc, so it runs before the harness checks for late requests. An edit the autosave still holds
+  // Is written here, and its write awaited: the editor writes a held edit when it unmounts, and that unmount runs in the
+  // Shared teardown outside this suite, where no handler is left to answer the write
+  afterEach(async () => {
+    if (!vi.isFakeTimers()) return;
 
-  const mountEditor = (elements: PositionedElement[]) => {
+    await nextTick();
+    await vi.advanceTimersByTimeAsync(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
+    await waitForSynchronizedFunctions();
+    vi.useRealTimers();
+  });
+
+  // The autosave debounce is counted by setTimeout, and an edit's timer is set once the editor has mounted, so the clock is faked from there
+  const mountEditor = async (elements: PositionedElement[]) => {
     trpcMsw.whiteboard.readResourceContent.query(() => ({ elements }));
-    return mountSuspended(ResourceWhiteboardEditor);
+    const component = await mountSuspended(ResourceWhiteboardEditor);
+    // oxlint-disable-next-line testing/no-faked-set-timeout -- the afterEach moves the clock to write any edit still held, then restores the real timers
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    return component;
   };
   const sendPointer = (canvas: Except<DOMWrapper<Element>, "exists">, type: string, point: Point) =>
     canvas.trigger(type, { button: 0, clientX: point.x, clientY: point.y, pointerId: POINTER_ID });
@@ -599,5 +618,25 @@ describe("resourceWhiteboardEditor", () => {
     await component.get('button[aria-label="Bring forward"]').trigger("click");
 
     expect(whiteboard.value.elements.map(({ id }) => id)).toStrictEqual([SECOND_SHAPE_ID, FIRST_SHAPE_ID]);
+  });
+
+  // An edit the autosave holds is written once its clock runs out, and the write reaches the server as the whiteboard it changed
+  test("an edit is autosaved on the shared cadence with the whiteboard it changed", async () => {
+    expect.hasAssertions();
+
+    const savedElementIds: string[][] = [];
+    trpcMsw.whiteboard.saveResourceContent.mutation(({ input }) => {
+      savedElementIds.push(input.content.elements.map(({ id }) => id));
+      return createResourceListItem({ contentVersion: 1, id: resourceId, type: ResourceType.Whiteboard });
+    });
+    await mountEditor([]);
+    await flushPromises();
+    const whiteboardStore = useWhiteboardStore();
+    whiteboardStore.insertElement(WHITEBOARD_PROCESS);
+    await nextTick();
+    await vi.advanceTimersByTimeAsync(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
+    await waitForSynchronizedFunctions();
+
+    expect(savedElementIds).toStrictEqual([[WHITEBOARD_PROCESS.id]]);
   });
 });
