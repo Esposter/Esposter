@@ -31,7 +31,7 @@ flowchart LR
 ## Not built
 
 - **The burst's Lunar damage bonus waits on the Lunar reaction hook.** The burst opens the 1.2-second window that Constellation 6 reads, but the bonus the window gives each character's Lunar reaction damage is not applied, as no kit reads a Lunar reaction's damage yet. The burst's field is not built either.
-- **The Gravity Ripple's hit is not built.** The record holds none of the ripple's multipliers or hitmarks, so a ripple runs its Lunacy and constellation effects without damage. Gravity built from direct Lunar damage is not built either, as no kit reads a Lunar damage yet.
+- **The Gravity Ripple's hit is not built.** The record holds each reaction's hitmarks, travel and circle radius, read from gcsim's gravity tick switch (`{cache-root}/gcsim-v2.47.2/internal/characters/columbina/`), but none of its multipliers, which gcsim takes from the config's talent leaves at runtime, and no kit reads the record yet, so a ripple runs its Lunacy and constellation effects without damage. Gravity built from direct Lunar damage is not built either, as no kit reads a Lunar damage yet.
 - **Constellation 4 waits on the Gravity Ripple's hits, and Ascension 4's extra hits on the Lunar reactions hook.** Constellation 4 needs the ripple's hits, its energy for each and its flat DMG. Ascension 4's extra hits on Lunar-Charged and Lunar-Crystallize need that hook, as its Moonridge Dew on Lunar-Bloom is built. Constellation 6's strike CRIT is built, but its CRIT on the Lunar reaction's own damage waits on the reaction's element, which `KitReaction` does not carry.
 
 ## Key files
