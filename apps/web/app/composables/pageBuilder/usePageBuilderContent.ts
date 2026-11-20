@@ -1,11 +1,5 @@
 import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
-import type {
-  BlockDocument,
-  BlockNode,
-  BlockRootProps,
-  BlockTypeDefinition,
-  OwnProps,
-} from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition, OwnProps } from "vue-block-editor-headless";
 import type { z } from "zod";
 
 import { ROOT_INTERACTION_ID, ROOT_POINTER } from "#src/services/pageBuilder/constants";
@@ -26,12 +20,12 @@ interface ContentTarget<TValue, TProps> {
   propsSchema: z.ZodType<TValue>;
 }
 // The props the form edits: the root's, or a node's own props as its type's props schema parses them
-type ContentValue<TNode extends BlockNode, TRoot extends BlockRootProps> = OwnProps<TNode["props"]> | TRoot;
+type ContentValue<TNode extends BlockNode, TRoot extends object> = OwnProps<TNode["props"]> | TRoot;
 // The target a selection edits: the selected node, or the root when nothing is selected or the id is not found.
 // The target is undefined when the node's type is not in the registry
 const getContentTarget = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode> & { formSchema: z.ZodType },
   TDocument extends BlockDocument<TNode, TRoot>,
 >(
@@ -68,7 +62,7 @@ const getContentTarget = <
 // Shown by the form but not applied, and a value applies as one edit of the props it changes
 export const usePageBuilderContent = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode> & { formSchema: z.ZodType },
   TDocument extends BlockDocument<TNode, TRoot>,
 >(

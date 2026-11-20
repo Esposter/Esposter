@@ -1,5 +1,5 @@
 import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
@@ -10,7 +10,7 @@ import { insertBlockNode } from "vue-block-editor-headless";
 // Applied. The block is built from the id the insert mints for it, and a slot that refuses its type applies nothing
 export const insertAt = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(

@@ -1,5 +1,5 @@
 import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
@@ -11,7 +11,7 @@ import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 // `jscpd:ignore-start`
 export const usePageBuilderSelectedNode = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(

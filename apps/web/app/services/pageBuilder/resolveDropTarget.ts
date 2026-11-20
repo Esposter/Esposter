@@ -1,7 +1,7 @@
 import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
 import type { DropTargetInput } from "#src/models/pageBuilder/DropTargetInput";
 import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { getCandidateSlotPointers } from "#src/services/pageBuilder/getCandidateSlotPointers";
 import { getDropIndex } from "#src/services/pageBuilder/getDropIndex";
@@ -15,7 +15,7 @@ import { getAcceptedTypes } from "vue-block-editor-headless";
 // And undefined when no slot accepts the type, or when the pointer is over the dragged node or a node it holds
 export const resolveDropTarget = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(

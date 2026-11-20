@@ -4,7 +4,6 @@ import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockDocumentInput } from "#src/models/BlockDocumentInput";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
-import type { BlockRootProps } from "#src/models/BlockRootProps";
 
 import { checkBlockNodeIds } from "#src/services/checkBlockNodeIds";
 import { z } from "zod";
@@ -15,7 +14,7 @@ import { z } from "zod";
 // The refinement runs only on a parse that raised no issue, so the tree it walks is the schema's typed output and not a partial one
 export const createBlockDocumentSchema = <
   TNode extends BlockNode,
-  TRootProps extends BlockRootProps,
+  TRootProps extends object,
   TRootNode extends TNode = TNode,
 >(
   contentSchema: z.ZodType<TRootNode>,

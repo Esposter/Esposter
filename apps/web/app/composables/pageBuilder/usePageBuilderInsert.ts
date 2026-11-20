@@ -1,5 +1,5 @@
 import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { getInsertableTypes } from "#src/services/pageBuilder/getInsertableTypes";
 import { getInsertTarget } from "#src/services/pageBuilder/getInsertTarget";
@@ -13,7 +13,7 @@ import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 // `jscpd:ignore-start`
 export const usePageBuilderInsert = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(

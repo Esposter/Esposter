@@ -2,7 +2,7 @@ import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type { UiCommand } from "#src/models/ui/UiCommand";
 import type { UiCommandScope } from "#src/models/ui/UiCommandScope";
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "#src/services/pageBuilder/constants";
@@ -32,7 +32,7 @@ import {
 // The page builder kind the moves below act on, stated once rather than at every signature that takes it
 type MoveKind<
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 > = PageBuilderKind<TNode, TRoot, TDefinition, TDocument>;
@@ -44,7 +44,7 @@ type MoveKind<
 // `jscpd:ignore-start`
 export const usePageBuilderMoves = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(

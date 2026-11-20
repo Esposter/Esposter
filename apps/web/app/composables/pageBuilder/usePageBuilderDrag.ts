@@ -2,7 +2,7 @@ import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
 import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
 import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
 import type { UiCommand } from "#src/models/ui/UiCommand";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { checkIsInsideBox } from "#src/services/pageBuilder/checkIsInsideBox";
@@ -27,7 +27,7 @@ import { getBlockLayerRows, getBlockNode, moveBlockNode } from "vue-block-editor
 // The slots it cannot land in
 const getDropTargetAt = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(
@@ -61,7 +61,7 @@ const getDropTargetAt = <
 // `jscpd:ignore-start`
 export const usePageBuilderDrag = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(

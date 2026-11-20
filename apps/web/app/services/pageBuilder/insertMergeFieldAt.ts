@@ -1,6 +1,6 @@
 import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
 import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
 import { appendMergeFieldToText } from "#src/services/pageBuilder/email/appendMergeFieldToText";
@@ -14,7 +14,7 @@ import { getBlockNode, getBlockPropValue } from "vue-block-editor-headless";
 // Over no text, or a text whose content does not parse, applies nothing, as a drop anywhere else does
 export const insertMergeFieldAt = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(

@@ -1,5 +1,5 @@
 import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { PageBuilderEditor } from "#src/models/pageBuilder/PageBuilderEditor";
 import { getResult, SITE_NAME } from "@esposter/shared";
@@ -12,7 +12,7 @@ const CLIPBOARD_MARKER = `${SITE_NAME.toLowerCase()}-page-builder`;
 // The kind's titles name every node type it holds, so they are the types a paste accepts
 const getClipboardNodesSchema = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(
@@ -29,7 +29,7 @@ export const serializeClipboardNodes = ({ editor, nodes }: { editor: PageBuilder
 // The editor and nodes clipboard text was copied as, or none when the text is not page builder nodes or is malformed
 export const parseClipboardNodes = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(

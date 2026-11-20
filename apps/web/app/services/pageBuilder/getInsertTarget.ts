@@ -1,5 +1,5 @@
 import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { getEmptyContainerSlotPointer } from "#src/services/pageBuilder/getEmptyContainerSlotPointer";
 import { getNodeSlotPointer } from "#src/services/pageBuilder/getNodeSlotPointer";
@@ -10,7 +10,7 @@ import { getAcceptedTypes } from "vue-block-editor-headless";
 // Else straight after the selected node in its own slot, or the end of the root's content when no node is selected
 export const getInsertTarget = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(

@@ -2,13 +2,7 @@
 import type { PageBuilderEditor } from "#src/models/pageBuilder/PageBuilderEditor";
 import type { PageBuilderPaletteCategory } from "#src/models/pageBuilder/PageBuilderPaletteCategory";
 import type { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import type {
-  BlockNode,
-  BlockRegistry,
-  BlockRootProps,
-  BlockSlots,
-  BlockTypeDefinition,
-} from "vue-block-editor-headless";
+import type { BlockNode, BlockRegistry, BlockSlots, BlockTypeDefinition } from "vue-block-editor-headless";
 import type { z } from "zod";
 
 // A kind of document the page builder shell edits, over its node, root props, node definition and document types. The
@@ -16,7 +10,7 @@ import type { z } from "zod";
 // The children port that walks its tree. The webpage's and the email's kinds are the two that hold these
 export interface PageBuilderKind<
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument,
 > {

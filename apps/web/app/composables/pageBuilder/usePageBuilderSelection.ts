@@ -1,5 +1,5 @@
 import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { getNodeIdAt } from "#src/services/pageBuilder/getNodeIdAt";
 import { getNodePointer } from "#src/services/pageBuilder/getNodePointer";
@@ -12,7 +12,7 @@ import { getAdjacentBlockNodePointer, getBlockLayerRows } from "vue-block-editor
 // `jscpd:ignore-start`
 export const usePageBuilderSelection = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(

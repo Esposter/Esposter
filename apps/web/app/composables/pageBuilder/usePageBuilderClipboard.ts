@@ -1,5 +1,5 @@
 import type { PageBuilderKind } from "#src/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { CANNOT_GO_HERE_MESSAGE } from "#src/services/pageBuilder/constants";
 import { getInsertTarget } from "#src/services/pageBuilder/getInsertTarget";
@@ -20,7 +20,7 @@ import { getBlockNode, pasteBlockNodes } from "vue-block-editor-headless";
 // `jscpd:ignore-start`
 export const usePageBuilderClipboard = <
   TNode extends BlockNode,
-  TRoot extends BlockRootProps,
+  TRoot extends object,
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(
