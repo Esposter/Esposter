@@ -121,21 +121,27 @@ describe("unbundledBarrels", () => {
   test("a build names no folder of the machine that built it", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
-    const machineFolders = PACKAGE_PATHS.flatMap((packagePath) => {
+    const distTrees = PACKAGE_PATHS.map((packagePath) => {
       const distDirectory = readDistDirectory(packagePath);
-      return readdirSync(distDirectory, { recursive: true, withFileTypes: true })
+      return {
+        distDirectory,
+        entries: readdirSync(distDirectory, { recursive: true, withFileTypes: true }),
+        packagePath,
+      };
+    });
+    const machineFolders = distTrees.flatMap(({ distDirectory, entries, packagePath }) =>
+      entries
         .map(({ name, parentPath }) => relative(distDirectory, resolve(parentPath, name)))
         .filter((path) => path.split(sep).some((segment) => MACHINE_FOLDER_NAMES.has(segment)))
-        .map((path) => `${packagePath}: ${path}`);
-    });
-    const storePaths = PACKAGE_PATHS.flatMap((packagePath) => {
-      const distDirectory = readDistDirectory(packagePath);
-      return readdirSync(distDirectory, { recursive: true, withFileTypes: true })
+        .map((path) => `${packagePath}: ${path}`),
+    );
+    const storePaths = distTrees.flatMap(({ distDirectory, entries, packagePath }) =>
+      entries
         .filter((entry) => entry.isFile() && /\.(?:c|m)?[jt]s$/u.test(entry.name))
         .map(({ name, parentPath }) => resolve(parentPath, name))
         .filter((file) => STORE_PATH_REGEX.test(readFileSync(file, "utf8")))
-        .map((file) => `${packagePath}: ${relative(distDirectory, file)}`);
-    });
+        .map((file) => `${packagePath}: ${relative(distDirectory, file)}`),
+    );
 
     expect([...machineFolders, ...storePaths]).toStrictEqual([]);
   });
