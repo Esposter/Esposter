@@ -42,3 +42,7 @@ the whole table. The rule, applied to every table a read touches:
   index rather than keep both; the composite answers its filter.
 
 Adding a query means checking its filter and its order against the index list of each table it reads, in the same change.
+
+## A table the tombstone purge deletes from gets a partial index on deletedAt
+
+A table in `OVERLAY_TOMBSTONE_TABLES` gets `createTombstoneIndex(<noun>, deletedAt)` in its `extraConfig`. The purge's `deletedAt IS NOT NULL` predicate is the index's own, so the nightly delete reads only the expired tombstones, never a live row. `apps/web/server/db/overlayTombstoneTables.test.ts` names every listed table without one, so a table registered without the index fails there.

@@ -1,5 +1,6 @@
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
 import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { integer, text } from "drizzle-orm/sqlite-core";
 
@@ -21,7 +22,11 @@ export const resourcePublicationsInResource = sqliteTable(
       .primaryKey()
       .references(() => resourcesInResource.id, { onDelete: "cascade" }),
   },
-  { schema: resourceSchema, scope: { columns: ["resourceId"] } },
+  {
+    extraConfig: ({ deletedAt }) => [createTombstoneIndex("resourcePublications", deletedAt)],
+    schema: resourceSchema,
+    scope: { columns: ["resourceId"] },
+  },
 );
 
 export type ResourcePublicationInResource = typeof resourcePublicationsInResource.$inferSelect;

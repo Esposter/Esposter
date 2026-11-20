@@ -5,7 +5,9 @@ import { and, getTableName, isNotNull, lt } from "drizzle-orm";
 
 // The nightly purge of the overlay's tombstones: every row soft-deleted past the tombstone retention, in each table the
 // Overlay soft-deletes. A tombstone is hidden from every read and from the view, so its removal changes no view and
-// Publishes no topic, and no reader is woken to fetch it. A table that fails is logged, and the others still run
+// Publishes no topic, and no reader is woken to fetch it. A table that fails is logged, and the others still run.
+// Each table's delete is one statement that reads only through its partial index on deletedAt, which holds nothing but
+// Tombstones, so it reads the expired ones and never a live row. The registry test names each listed table without one
 export const purgeExpiredTombstones = async (): Promise<void> => {
   const cutoff = new Date(Date.now() - TOMBSTONE_RETENTION_MS);
   await Promise.all(

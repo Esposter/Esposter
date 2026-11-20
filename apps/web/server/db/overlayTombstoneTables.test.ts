@@ -1,6 +1,6 @@
 import * as dbSchema from "@esposter/db-schema";
 import { getTableName, is } from "drizzle-orm";
-import { SQLiteTable } from "drizzle-orm/sqlite-core";
+import { getTableConfig, SQLiteTable } from "drizzle-orm/sqlite-core";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -40,5 +40,21 @@ describe("overlayTombstoneTables", () => {
       .toSorted();
 
     expect(readSoftDeletedTableNames()).toStrictEqual(expectedTableNames);
+  });
+
+  // The purge reads each listed table's tombstones through the partial index on deletedAt that createTombstoneIndex builds. A
+  // Listed table without it scans every row it holds each night, so the test names each one that lacks it
+  test("gives every table the purge lists the partial index on deletedAt it reads through", () => {
+    expect.hasAssertions();
+
+    const tableNamesWithoutIndex = dbSchema.OVERLAY_TOMBSTONE_TABLES.filter(
+      (table) =>
+        !getTableConfig(table).indexes.some(
+          ({ config }) =>
+            config.where !== undefined && config.columns.length === 1 && config.columns[0] === table.deletedAt,
+        ),
+    ).map((table) => getTableName(table));
+
+    expect(tableNamesWithoutIndex).toStrictEqual([]);
   });
 });

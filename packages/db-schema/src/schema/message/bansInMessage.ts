@@ -1,6 +1,7 @@
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { primaryKey, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -14,7 +15,10 @@ export const bansInMessage = sqliteTable(
     ...createRoomUserColumns(),
   },
   {
-    extraConfig: ({ roomId, userId }) => [primaryKey({ columns: [roomId, userId] })],
+    extraConfig: ({ deletedAt, roomId, userId }) => [
+      primaryKey({ columns: [roomId, userId] }),
+      createTombstoneIndex("bans", deletedAt),
+    ],
     schema: messageSchema,
     scope: { columns: ["userId", "roomId"] },
   },

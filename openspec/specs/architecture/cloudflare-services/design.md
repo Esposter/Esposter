@@ -134,7 +134,7 @@ flowchart TD
 
 Delayed work is an alarm, not a queue delay. A queue holds a message for at most a day, and a scheduled message or a TodoList reminder has no upper bound, so each is a row in its owner's storage: the room's for a scheduled message, the person's for a reminder. The owner's one alarm is set to its earliest due row, runs every row that is due, and re-arms for the next. A queue consumer that changes live state calls the owner's RPC method directly; it never sends a message to an intermediary that then calls the object.
 
-The nightly purges of deleted resources and of the overlay's tombstones are the timed jobs that are not queue jobs. They run on a Cron Trigger of the jobs Worker, each in its own step, so a failure in one is logged and the other still runs. The tombstone purge publishes nothing, since a tombstone is hidden from every read.
+The nightly purges of deleted resources and of the overlay's tombstones are the timed jobs that are not queue jobs. They run on a Cron Trigger of the jobs Worker, each in its own step, so a failure in one is logged and the other still runs. The tombstone purge publishes nothing, since a tombstone is hidden from every read. It reads each listed table only through that table's partial index on `deletedAt`, so it reads the expired tombstones and never a live row.
 
 ## Search
 

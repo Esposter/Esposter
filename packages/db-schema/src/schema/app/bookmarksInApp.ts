@@ -5,6 +5,7 @@ import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
 import { BOOKMARK_PATH_MAX_LENGTH, BOOKMARK_TITLE_MAX_LENGTH } from "#src/services/bookmark/constants";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
 import { check, index, primaryKey, text } from "drizzle-orm/sqlite-core";
@@ -25,7 +26,7 @@ export const bookmarksInApp = sqliteTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ path, resourceId, roomId, title, userId }) => [
+    extraConfig: ({ deletedAt, path, resourceId, roomId, title, userId }) => [
       primaryKey({ columns: [userId, path] }),
       check("bookmarks_path_length_check", createMaxLengthCheckSql(path, BOOKMARK_PATH_MAX_LENGTH)),
       check("bookmarks_title_length_check", createMaxLengthCheckSql(title, BOOKMARK_TITLE_MAX_LENGTH)),
@@ -38,6 +39,7 @@ export const bookmarksInApp = sqliteTable(
       index("bookmarks_roomId_index")
         .on(roomId)
         .where(sql`${roomId} IS NOT NULL`),
+      createTombstoneIndex("bookmarks", deletedAt),
     ],
     schema: appSchema,
     scope: { columns: ["userId", "resourceId", "roomId"] },

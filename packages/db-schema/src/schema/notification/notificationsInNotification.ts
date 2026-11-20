@@ -3,6 +3,7 @@ import { NotificationSeverity } from "#src/models/notification/NotificationSever
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { notificationSchema } from "#src/schema/notification/notificationSchema";
 import { createEnumColumn } from "#src/services/shared/createEnumColumn";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
 import { index, integer, text } from "drizzle-orm/sqlite-core";
@@ -45,12 +46,13 @@ export const notificationsInNotification = sqliteTable(
     // User's whole history to count the unread rows in it, and that history only grows — nothing purges a
     // Notification once it is read. The partial index is the size of the answer instead, and the answer is what a
     // Bell shows. Its predicate is spelled exactly as the query's, so the planner needs no implication proof
-    extraConfig: ({ isRead, userId }) => [
+    extraConfig: ({ deletedAt, isRead, userId }) => [
       index("notifications_userId_id_index").on(userId, sql`"id" DESC`),
       index("notifications_userId_createdAt_index").on(userId, sql`"createdAt" DESC`),
       index("notifications_userId_isRead_index")
         .on(userId)
         .where(sql`${isRead} = 0`),
+      createTombstoneIndex("notifications", deletedAt),
     ],
     schema: notificationSchema,
     scope: { columns: ["userId"] },

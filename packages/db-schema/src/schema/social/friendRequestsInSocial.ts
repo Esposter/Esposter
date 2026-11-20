@@ -1,6 +1,7 @@
 import { socialSchema } from "#src/schema/social/socialSchema";
 import { createDistinctCheckSql } from "#src/services/shared/createDistinctCheckSql";
 import { createSenderReceiverColumns } from "#src/services/social/createSenderReceiverColumns";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { check, index, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -14,10 +15,11 @@ export const friendRequestsInSocial = sqliteTable(
     ...createSenderReceiverColumns(),
   },
   {
-    extraConfig: ({ receiverId, senderId }) => [
+    extraConfig: ({ deletedAt, receiverId, senderId }) => [
       check("friendRequests_senderId_receiverId_check", createDistinctCheckSql(senderId, receiverId)),
       index("friendRequests_receiverId_index").on(receiverId),
       index("friendRequests_senderId_index").on(senderId),
+      createTombstoneIndex("friendRequests", deletedAt),
     ],
     schema: socialSchema,
     scope: { columns: ["senderId", "receiverId"] },
