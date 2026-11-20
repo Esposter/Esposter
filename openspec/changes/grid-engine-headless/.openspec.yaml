@@ -1,0 +1,4 @@
+schema: spec-driven
+affected_areas: [grid-engine-headless, dungeons, architecture]
+x-model: claude-haiku-5-5
+skip_specs: true
