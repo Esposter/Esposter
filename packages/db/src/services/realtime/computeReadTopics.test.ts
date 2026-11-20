@@ -403,9 +403,9 @@ describe(computeReadTopics, () => {
     );
   });
 
-  // A filter names an occurrence of a table, not the table. The viewer's own membership is filtered by `isHidden` and scoped by
-  // its user. The other memberships of each room are read through a subquery whose left join null-fills them, and the chain
-  // that would name them by the room the outer rows return runs through that null-filled join, so they are read table-wide
+  // A filter names an occurrence of a table, not the table. The viewer's own membership is filtered by `isHidden`, and scoped by
+  // Its user. The other memberships of each room are read through a subquery whose left join null-fills them. The chain that
+  // Would name them by the room the outer rows return runs through that null-filled join, so they are read table-wide
   test("a filter on one occurrence of a table leaves another occurrence of it table-wide when only a null-filled chain names it", async () => {
     expect.hasAssertions();
 
