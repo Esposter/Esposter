@@ -1,7 +1,7 @@
 import { PRODUCT_REVIEW_SUBJECT_PREFIX, PROPOSALS_DIRECTORY } from "#src/services/proposals/constants";
-import { getOwedReviews } from "#src/services/proposals/getOwedReviews";
+import { computeOwedReviews } from "#src/services/proposals/computeOwedReviews";
+import { computeProposalShips } from "#src/services/proposals/computeProposalShips";
 import { getProductReviewPasses } from "#src/services/proposals/getProductReviewPasses";
-import { getProposalShips } from "#src/services/proposals/getProposalShips";
 import { groupProposalsByPhase } from "#src/services/proposals/groupProposalsByPhase";
 import { readProposalSummaries } from "#src/services/proposals/readProposalSummaries";
 import { runGit } from "#src/services/shared/runGit";
@@ -47,9 +47,9 @@ await runCommand(
         `--grep=${PRODUCT_REVIEW_SUBJECT_PREFIX}`,
         "--format=%H%x1F%ct%x1F%cs%x1F%s%x1E",
       ]);
-      const ships = getProposalShips(shipLog);
+      const ships = computeProposalShips(shipLog);
       const passes = getProductReviewPasses(passLog);
-      for (const { area, lastPassDate, lastShipDate } of getOwedReviews(ships, passes))
+      for (const { area, lastPassDate, lastShipDate } of computeOwedReviews(ships, passes))
         console.info(
           `owed a product-review pass: ${area} (shipped ${lastShipDate}, last pass ${lastPassDate || "never"})`,
         );

@@ -1,8 +1,8 @@
 import { ProposalSignal } from "#src/models/proposals/ProposalSignal";
-import { getProposalSummary } from "#src/services/proposals/getProposalSummary";
+import { computeProposalSummary } from "#src/services/proposals/computeProposalSummary";
 import { describe, expect, test } from "vitest";
 
-describe(getProposalSummary, () => {
+describe(computeProposalSummary, () => {
   const id = "a-b-c";
 
   test("counts the Key files rows and reads each signal off their paths", () => {
@@ -10,7 +10,7 @@ describe(getProposalSummary, () => {
 
     const text = `# C\n\nLead.\n\n## Key files\n\n| File | Role |\n| --- | --- |\n| \`apps/web/server/a.ts\` | a |\n| \`packages/db-schema/a.ts\` | a |\n| \`apps/jobs/a.ts\` | a |\n| \`apps/web/package.json\` | a |\n\n## Sources\n\n| \`apps/infra/a.ts\` | a |\n`;
 
-    expect(getProposalSummary(id, text, new Set())).toStrictEqual({
+    expect(computeProposalSummary(id, text, new Set())).toStrictEqual({
       blockerIds: [],
       hasKeyFiles: true,
       id,
@@ -22,7 +22,7 @@ describe(getProposalSummary, () => {
   test("reports a design with no Key files table as unsized", () => {
     expect.hasAssertions();
 
-    expect(getProposalSummary(id, "# C\n\nLead.\n", new Set())).toStrictEqual({
+    expect(computeProposalSummary(id, "# C\n\nLead.\n", new Set())).toStrictEqual({
       blockerIds: [],
       hasKeyFiles: false,
       id,
@@ -38,7 +38,7 @@ describe(getProposalSummary, () => {
     const blockerId = "a-b-d";
     const text = `# C\n\nAfter [d](../${blockerId}/design.md), under [b](../a-b-program/design.md), beside [e](../a-e/), on [g](../../specs/a/g/design.md).\n\n## Scope\n\n[f](../a-f/design.md)\n`;
 
-    expect(getProposalSummary(id, text, new Set(["a-b-program", "a-f", blockerId])).blockerIds).toStrictEqual([
+    expect(computeProposalSummary(id, text, new Set(["a-b-program", "a-f", blockerId])).blockerIds).toStrictEqual([
       blockerId,
     ]);
   });

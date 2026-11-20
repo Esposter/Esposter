@@ -1,7 +1,7 @@
-import { getProposalShips } from "#src/services/proposals/getProposalShips";
+import { computeProposalShips } from "#src/services/proposals/computeProposalShips";
 import { describe, expect, test } from "vitest";
 
-describe(getProposalShips, () => {
+describe(computeProposalShips, () => {
   const date = new Date(0).toISOString().slice(0, 10);
   const hash = "a";
 
@@ -16,7 +16,7 @@ describe(getProposalShips, () => {
       "openspec/specs/h/design.md",
     ].join("\n");
 
-    expect(getProposalShips(`\u001E${hash}\u001F0\u001F${date}\u001F\n\n${names}\n`)).toStrictEqual([
+    expect(computeProposalShips(`\u001E${hash}\u001F0\u001F${date}\u001F\n\n${names}\n`)).toStrictEqual([
       { area: "a", date, hash, timestamp: 0 },
     ]);
   });

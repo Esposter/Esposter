@@ -1,5 +1,5 @@
 // A proposal's Key files table: each row opens on a backticked path. The table is read where its `## Key files` heading
-// Opens, as `getProposalSummary` reads it, so a row elsewhere on the page is never a file the proposal touches
+// Opens, as `computeProposalSummary` reads it, so a row elsewhere on the page is never a file the proposal touches
 const SECTION_SPLIT_REGEX = /^## /mu;
 const KEY_FILES_HEADING_REGEX = /^Key files\s*$/iu;
 const KEY_FILE_ROW_REGEX = /^\| `(?<path>[^`]+)`/gmu;

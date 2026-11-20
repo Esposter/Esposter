@@ -1,7 +1,7 @@
-import { getOwedReviews } from "#src/services/proposals/getOwedReviews";
+import { computeOwedReviews } from "#src/services/proposals/computeOwedReviews";
 import { describe, expect, test } from "vitest";
 
-describe(getOwedReviews, () => {
+describe(computeOwedReviews, () => {
   const area = "a";
   const passDate = new Date(0).toISOString().slice(0, 10);
   const shipDate = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString().slice(0, 10);
@@ -12,7 +12,7 @@ describe(getOwedReviews, () => {
     expect.hasAssertions();
 
     expect(
-      getOwedReviews(
+      computeOwedReviews(
         [{ area, date: shipDate, hash, timestamp: 1 }],
         [{ areas: [area], date: passDate, hash: otherHash, timestamp: 0 }],
       ),
@@ -22,7 +22,7 @@ describe(getOwedReviews, () => {
   test("owes a pass where no pass ever named the area", () => {
     expect.hasAssertions();
 
-    expect(getOwedReviews([{ area, date: shipDate, hash, timestamp: 1 }], [])).toStrictEqual([
+    expect(computeOwedReviews([{ area, date: shipDate, hash, timestamp: 1 }], [])).toStrictEqual([
       { area, lastPassDate: "", lastShipDate: shipDate },
     ]);
   });
@@ -32,7 +32,7 @@ describe(getOwedReviews, () => {
     expect.hasAssertions();
 
     expect(
-      getOwedReviews(
+      computeOwedReviews(
         [{ area, date: shipDate, hash, timestamp: 1 }],
         [{ areas: [area], date: shipDate, hash, timestamp: 1 }],
       ),
@@ -43,7 +43,7 @@ describe(getOwedReviews, () => {
     expect.hasAssertions();
 
     expect(
-      getOwedReviews(
+      computeOwedReviews(
         [{ area, date: shipDate, hash, timestamp: 1 }],
         [{ areas: [area], date: shipDate, hash: otherHash, timestamp: 1 }],
       ),

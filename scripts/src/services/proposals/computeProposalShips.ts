@@ -9,7 +9,7 @@ import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 // A log printed as `%x1E%H%x1F%ct%x1F%cs%x1F` with `--name-only` under `--no-renames --diff-filter=D`: each record's
 // Last field is the files the commit deleted, archiving a change included, and a change's area is its id's first
 // Segment — never the archive's own files or a refactor
-export const getProposalShips = (log: string): ProposalShip[] =>
+export const computeProposalShips = (log: string): ProposalShip[] =>
   getGitRecords(log).flatMap(([hash = "", timestamp = "", date = "", names = ""]) => {
     const areas = new Set(
       getNonEmptyLines(names)

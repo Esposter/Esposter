@@ -9,7 +9,7 @@ const KEY_FILE_ROW_REGEX = /^\| `[^`]+`/gmu;
 // A sibling change's design, or its folder: `](../<id>/design.md)` or `](../<id>/)`
 const PROPOSAL_LINK_REGEX = /\]\(\.\.\/(?<id>[\w-]+)\/(?:design\.md)?(?:#[^)]*)?\)/gu;
 const MANIFEST_ROW_SUFFIX = "package.json`";
-const ProposalSignalPathPrefixesMap = {
+const PROPOSAL_SIGNAL_PATH_PREFIX_MAP = {
   [ProposalSignal.Deploy]: ["apps/infra/", "apps/jobs/", "apps/realtime/"],
   [ProposalSignal.Schema]: ["packages/db-schema/"],
   [ProposalSignal.Server]: ["apps/web/server/"],
@@ -17,14 +17,16 @@ const ProposalSignalPathPrefixesMap = {
 // Everything is read off what the design already states, so nothing here is a field anyone keeps: the lead — the prose
 // Before the first section — is where a proposal links the proposals it waits on, a Key files row is a table line
 // Opening on a backticked path, and a package a proposal adds is the manifest it names there (`openspec` skill)
-export const getProposalSummary = (id: string, text: string, openIds: ReadonlySet<string>): ProposalSummary => {
+export const computeProposalSummary = (id: string, text: string, openIds: ReadonlySet<string>): ProposalSummary => {
   const [lead = "", ...sections] = text.split(SECTION_HEADING_REGEX);
   const keyFilesSection = sections.find((section) => KEY_FILES_HEADING_REGEX.test(section.split("\n")[0] ?? ""));
   const keyFileRows = keyFilesSection?.match(KEY_FILE_ROW_REGEX) ?? [];
   const signals = ProposalSignals.filter((signal) =>
     signal === ProposalSignal.Dependency
       ? keyFileRows.some((row) => row.endsWith(MANIFEST_ROW_SUFFIX))
-      : ProposalSignalPathPrefixesMap[signal].some((prefix) => keyFileRows.some((row) => row.includes(`\`${prefix}`))),
+      : PROPOSAL_SIGNAL_PATH_PREFIX_MAP[signal].some((prefix) =>
+          keyFileRows.some((row) => row.includes(`\`${prefix}`)),
+        ),
   );
   const linkedIds = new Set(Array.from(lead.matchAll(PROPOSAL_LINK_REGEX), ({ groups }) => groups?.id ?? ""));
   const blockerIds = [...linkedIds].filter(

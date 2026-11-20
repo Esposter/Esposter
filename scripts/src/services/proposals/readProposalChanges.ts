@@ -4,6 +4,7 @@ import type { ProposalChange } from "#src/models/proposals/ProposalChange";
 import { parseProposalMetadata } from "#src/services/fleet/parseProposalMetadata";
 import { parseProposalTasks } from "#src/services/fleet/parseProposalTasks";
 import { compareProposalSummaries } from "#src/services/proposals/compareProposalSummaries";
+import { computeProposalSummary } from "#src/services/proposals/computeProposalSummary";
 import {
   ARCHIVE_FOLDER,
   PROGRAM_SUFFIX,
@@ -13,7 +14,6 @@ import {
   PROPOSALS_DIRECTORY,
 } from "#src/services/proposals/constants";
 import { getProposalId } from "#src/services/proposals/getProposalId";
-import { getProposalSummary } from "#src/services/proposals/getProposalSummary";
 
 // Every open proposal's change, cheapest first, read once from the change files given. A change is open while its folder
 // Sits directly under the changes root, and a unit to build when it has a design; a program is the umbrella over the changes
@@ -22,7 +22,7 @@ import { getProposalSummary } from "#src/services/proposals/getProposalSummary";
 export const readProposalChanges = (files: readonly QueueFile[]): ProposalChange[] => {
   const openFiles = files.filter(({ path }) => getProposalId(path) !== ARCHIVE_FOLDER);
   const openIds = new Set(openFiles.map(({ path }) => getProposalId(path)));
-  const textMap = new Map(openFiles.map(({ path, text }) => [path, text]));
+  const pathTextMap = new Map(openFiles.map(({ path, text }) => [path, text]));
   return openFiles
     .filter(({ path }) => {
       const id = getProposalId(path);
@@ -30,10 +30,15 @@ export const readProposalChanges = (files: readonly QueueFile[]): ProposalChange
     })
     .map(({ path, text }) => {
       const id = getProposalId(path);
-      const changeText = (file: string) => textMap.get(`${PROPOSALS_DIRECTORY}/${id}/${file}`) ?? "";
-      const metadata = parseProposalMetadata(changeText(PROPOSAL_METADATA_FILE));
-      const { pickPhase, tasks } = parseProposalTasks(changeText(PROPOSAL_TASKS_FILE), metadata.phase);
-      return { design: text, metadata, summary: { ...getProposalSummary(id, text, openIds), phase: pickPhase }, tasks };
+      const getChangeText = (file: string) => pathTextMap.get(`${PROPOSALS_DIRECTORY}/${id}/${file}`) ?? "";
+      const metadata = parseProposalMetadata(getChangeText(PROPOSAL_METADATA_FILE));
+      const { pickPhase, tasks } = parseProposalTasks(getChangeText(PROPOSAL_TASKS_FILE), metadata.phase);
+      return {
+        design: text,
+        metadata,
+        summary: { ...computeProposalSummary(id, text, openIds), phase: pickPhase },
+        tasks,
+      };
     })
     .toSorted((firstChange, secondChange) => compareProposalSummaries(firstChange.summary, secondChange.summary));
 };
