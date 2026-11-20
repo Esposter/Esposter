@@ -21,6 +21,9 @@ const readKitOverlayRows = () =>
 const readInvariantsToolingUnits = (): string[] =>
   readLedgerUnits(readFileSync(join(REPOSITORY_ROOT, LEDGER_DIRECTORY, "invariants", "tooling.md"), "utf8"));
 
+// The units the quality and security tooling tables name: the invariants ledger's directories beside the openspec folders
+const readToolingUnits = (): string[] => [...readInvariantsToolingUnits(), ...readOpenspecFolderUnits()];
+
 // The ledgers whose units are derived rather than chosen by a pass, each with the listing that derives its rows — one
 // Unit cell per entry, in the cell's own backticked form. A derived listing is read off the filesystem, the same tree
 // The ledger's rows describe, except the tooling tables' directories, which are the invariants ledger's, and their
@@ -45,6 +48,6 @@ export const LedgerUnitsMap: Record<string, () => string[]> = {
   },
   "genshin-evidence": () => readOpenspecFolderUnits().filter((unit) => unit.startsWith("`openspec/specs/genshin/")),
   "kit-differs-from-source": readKitOverlayRows,
-  "quality/tooling": () => [...readInvariantsToolingUnits(), ...readOpenspecFolderUnits()],
-  "security/tooling": () => [...readInvariantsToolingUnits(), ...readOpenspecFolderUnits()],
+  "quality/tooling": readToolingUnits,
+  "security/tooling": readToolingUnits,
 };
