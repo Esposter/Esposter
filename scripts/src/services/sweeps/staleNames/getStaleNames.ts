@@ -2,6 +2,7 @@ import type { CitingPage } from "#src/models/shared/CitingPage";
 import type { StaleNameFinding } from "#src/models/sweeps/staleNames/StaleNameFinding";
 
 import { getBacktickedTokens } from "#src/services/citations/getBacktickedTokens";
+import { OPENSPEC_UNSHIPPED_FOLDERS } from "#src/services/openspec/constants";
 import { checkIsPlaceholder } from "#src/services/sweeps/staleNames/checkIsPlaceholder";
 import { getCitedNames } from "#src/services/sweeps/staleNames/getCitedNames";
 
@@ -14,7 +15,7 @@ const CODE_NAME_REGEX = /[a-z][A-Z]|\.|^[A-Z][A-Z\d]*(?:_[A-Z\d]+)+$/u;
 const PLACEHOLDER_SEGMENT_REGEX = /(?<=[a-z])X(?![a-z])/u;
 // A page in these folders describes what does not exist by design — a rejected direction, a deferred idea, a
 // Change not yet shipped — so every name in it resolves nowhere (the `openspec` skill, "The one status rule").
-const UNSHIPPED_PAGE_REGEX = /\/(?:rejected|deferred|changes)\//u;
+const UNSHIPPED_PAGE_REGEX = new RegExp(`/(?:${OPENSPEC_UNSHIPPED_FOLDERS.join("|")})/`, "u");
 
 // Every code name a page cites that the source tree no longer holds. A member access (`Foo.bar`) is judged by its
 // Segments, since the source writes `foo.bar` and the page writes the type's name in front of it.

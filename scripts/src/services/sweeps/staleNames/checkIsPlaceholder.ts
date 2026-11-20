@@ -1,4 +1,5 @@
-import { NAME_SEGMENT_REGEX, PLACEHOLDER_WORDS, PLURAL_SUFFIX_REGEX } from "#src/services/sweeps/staleNames/constants";
+import { NAME_SEGMENT_REGEX } from "#src/services/sweeps/constants";
+import { PLACEHOLDER_WORDS, PLURAL_SUFFIX_REGEX } from "#src/services/sweeps/staleNames/constants";
 
 // A placeholder is a whole segment of the name rather than a run of letters inside one: `readFoos` is an example
 // And `readFooter` is a name, which a substring test cannot tell apart — so it suppressed every real `Bare`,

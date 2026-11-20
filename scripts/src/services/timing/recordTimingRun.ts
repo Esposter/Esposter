@@ -2,9 +2,9 @@ import type { TimingRun } from "#src/models/timing/TimingRun";
 
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { writeFileAtomically } from "#src/services/shared/writeFileAtomically";
 import { TIMING_LOG_LENGTH } from "#src/services/timing/constants";
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
 
 // Appends one run to a command's log, keeps the last TIMING_LOG_LENGTH lines, and returns the milliseconds of the
 // Successful runs the log held before it: the history the run is compared against. The file is replaced by a rename,
@@ -18,9 +18,6 @@ export const recordTimingRun = (logPath: string, run: TimingRun): number[] => {
     .map((previous) => previous.milliseconds);
 
   const boundedLines = [...lines, JSON.stringify(run)].slice(-TIMING_LOG_LENGTH);
-  mkdirSync(dirname(logPath), { recursive: true });
-  const temporaryPath = `${logPath}.${process.pid}.tmp`;
-  writeFileSync(temporaryPath, boundedLines.map((line) => `${line}\n`).join(""));
-  renameSync(temporaryPath, logPath);
+  writeFileAtomically(logPath, boundedLines.map((line) => `${line}\n`).join(""));
   return history;
 };

@@ -1,9 +1,9 @@
+import { OPENSPEC_DIRECTORY, OPENSPEC_UNSHIPPED_FOLDERS } from "#src/services/openspec/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 
-const OPENSPEC_DIRECTORY = "openspec";
-const OPENSPEC_ROOTS = ["specs", "changes", "deferred", "rejected"];
+const OPENSPEC_ROOTS = ["specs", ...OPENSPEC_UNSHIPPED_FOLDERS];
 // The documents a folder holds when it is a spec, a change, a deferred idea or a rejected one
 const OPENSPEC_DOCUMENTS = new Set(["design.md", "proposal.md", "spec.md", "tasks.md"]);
 

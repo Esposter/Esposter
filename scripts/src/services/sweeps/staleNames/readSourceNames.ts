@@ -1,6 +1,7 @@
 import type { SourceWordEntry } from "#src/models/sweeps/staleNames/SourceWordEntry";
 
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { writeFileAtomically } from "#src/services/shared/writeFileAtomically";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
 import { SOURCE_WORD_CACHE_PATH } from "#src/services/sweeps/staleNames/constants";
@@ -8,7 +9,6 @@ import { getComponentName } from "#src/services/sweeps/staleNames/getComponentNa
 import { readFileWords } from "#src/services/sweeps/staleNames/readFileWords";
 import { readGeneratedPatterns } from "#src/services/sweeps/staleNames/readGeneratedPatterns";
 import { readSourceWordCache } from "#src/services/sweeps/staleNames/readSourceWordCache";
-import { writeCacheFile } from "#src/services/sweeps/staleNames/writeCacheFile";
 import { globSync, readFileSync, statSync } from "node:fs";
 import { join, matchesGlob, resolve } from "node:path";
 
@@ -62,6 +62,7 @@ export const readSourceNames = (): Set<string> => {
   for (const declarationPath of globSync("**/*.d.ts", { cwd: NUXT_DECLARATIONS_DIRECTORY }))
     addWords(names, readFileSync(join(NUXT_DECLARATIONS_DIRECTORY, declarationPath), "utf8"));
 
-  if (!isCacheUnchanged) writeCacheFile(SOURCE_WORD_CACHE_PATH, JSON.stringify({ entries, generatedPatterns, words }));
+  if (!isCacheUnchanged)
+    writeFileAtomically(SOURCE_WORD_CACHE_PATH, JSON.stringify({ entries, generatedPatterns, words }));
   return names;
 };
