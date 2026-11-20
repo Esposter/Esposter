@@ -1,13 +1,11 @@
 import type { ColorPalette } from "#src/models/shared/ColorPalette";
 import type { RegistryCheckError } from "#src/models/shared/RegistryCheckError";
 
-import { printTable } from "#src/services/shared/printTable";
+import { printSection } from "#src/services/outdatedDependencies/print/printSection";
 
 export const printRegistryErrors = (errors: RegistryCheckError[], color: ColorPalette): void => {
-  if (errors.length === 0) return;
-
-  console.log(color.red("Registry check errors"));
-  printTable(
+  printSection(
+    color.red("Registry check errors"),
     ["Package", "Error"],
     errors.map(({ error, packageName }) => [packageName, color.red(error)]),
     color,

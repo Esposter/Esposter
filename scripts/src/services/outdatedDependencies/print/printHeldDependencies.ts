@@ -3,8 +3,8 @@ import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared
 import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
 import { getColorizedLatestVersion } from "#src/services/outdatedDependencies/print/getColorizedLatestVersion";
+import { printSection } from "#src/services/outdatedDependencies/print/printSection";
 import { RENOVATE_CONFIGURATION_FILE } from "#src/services/shared/constants";
-import { printTable } from "#src/services/shared/printTable";
 
 export const printHeldDependencies = (heldDependencies: HeldDependency[], color: ColorPalette): void => {
   if (heldDependencies.length === 0) return;
@@ -18,9 +18,9 @@ export const printHeldDependencies = (heldDependencies: HeldDependency[], color:
   }
 
   console.log(color.cyan(`Held by ${RENOVATE_CONFIGURATION_FILE}`));
-  for (const [reason, dependencies] of reasonDependenciesMap) {
-    console.log(color.yellow(reason));
-    printTable(
+  for (const [reason, dependencies] of reasonDependenciesMap)
+    printSection(
+      color.yellow(reason),
       ["Package", "Current", "Latest"],
       dependencies.map(({ current, latest, packageName }) => [
         packageName,
@@ -29,5 +29,4 @@ export const printHeldDependencies = (heldDependencies: HeldDependency[], color:
       ]),
       color,
     );
-  }
 };

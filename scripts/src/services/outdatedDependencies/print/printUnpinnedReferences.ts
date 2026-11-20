@@ -1,13 +1,11 @@
 import type { UnpinnedReference } from "#src/models/outdatedDependencies/shared/UnpinnedReference";
 import type { ColorPalette } from "#src/models/shared/ColorPalette";
 
-import { printTable } from "#src/services/shared/printTable";
+import { printSection } from "#src/services/outdatedDependencies/print/printSection";
 
 export const printUnpinnedReferences = (references: UnpinnedReference[], color: ColorPalette): void => {
-  if (references.length === 0) return;
-
-  console.log(color.red("References not pinned to a versioned tag and a digest"));
-  printTable(
+  printSection(
+    color.red("References not pinned to a versioned tag and a digest"),
     ["Reference", "File"],
     references.map(({ path, reference }) => [color.red(reference), path]),
     color,
