@@ -56,6 +56,7 @@ import {
   appUsersInMessage,
   DatabaseEntityType,
   getLiveMembershipWhere,
+  getLiveRowWhere,
   getUserSocketTag,
   MESSAGE_BATCH_MAX_LENGTH,
   messageEmojisInRoom,
@@ -73,6 +74,7 @@ import {
   scheduledMessagesInRoom,
   SortOrder,
   START_PAGE_CURSOR,
+  TOMBSTONE_RETENTION_MS,
   TopicKind,
   unindexedMessagesInRoom,
   usersToRoomsInMessage,
@@ -96,6 +98,9 @@ const USER_MESSAGE_PAGE_SORT = { keys: ["id"], order: SortOrder.Asc } as const s
 const REACTION_PAGE_SORT = { keys: ["messageId", "emojiTag"], order: SortOrder.Asc } as const satisfies PageSort<
   "emojiTag" | "messageId"
 >;
+// A scheduled message that is cancelled, sent or dropped is a tombstone with its text cleared, so nothing it said is kept
+// Past the send. Each such write sets it the same way
+const getScheduledTombstone = (deletedAt: Date) => ({ deletedAt, message: "", replyToId: null });
 // One Room object per room. Its SQLite holds the room's messages, their reactions and their search index.
 // It also holds the scheduled messages still to send and the members online. Its sockets are the room's viewers.
 // The caller authorises each write against D1 and names the actor.
@@ -169,9 +174,14 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     { id, message, replyToId, runAt }: { id: string; message: string; replyToId?: number | undefined; runAt: Date },
     actor: RoomActor,
   ): Promise<ScheduledRoomMessage> {
+    // A put-back under the id a claim tombstoned revives the row, as the send that made the claim failed and nothing was sent
     const scheduledMessage = this.db
       .insert(scheduledMessagesInRoom)
       .values({ id, message, replyToId: replyToId ?? null, runAt, userId: actor.userId })
+      .onConflictDoUpdate({
+        set: { deletedAt: null, message, replyToId: replyToId ?? null, runAt },
+        target: scheduledMessagesInRoom.id,
+      })
       .returning()
       .get();
     await this.#armAlarm();
@@ -265,17 +275,25 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     return message;
   }
 
-  async deleteScheduledMessage(id: string, actor: RoomActor): Promise<boolean> {
-    const deletedRows = this.db
-      .delete(scheduledMessagesInRoom)
-      .where(and(eq(scheduledMessagesInRoom.id, id), eq(scheduledMessagesInRoom.userId, actor.userId)))
+  // A cancel leaves the row as a tombstone and answers with it, so the client confirms the entry it drew at that version
+  async deleteScheduledMessage(id: string, actor: RoomActor): Promise<ScheduledRoomMessage | undefined> {
+    const [tombstone] = this.db
+      .update(scheduledMessagesInRoom)
+      .set(getScheduledTombstone(new Date()))
+      .where(
+        and(
+          eq(scheduledMessagesInRoom.id, id),
+          eq(scheduledMessagesInRoom.userId, actor.userId),
+          getLiveRowWhere(scheduledMessagesInRoom),
+        ),
+      )
       .returning()
       .all();
-    if (deletedRows.length === 0) return false;
+    if (!tombstone) return undefined;
 
     await this.#armAlarm();
     await this.#notifyUser(actor.userId, (user) => user.removeScheduledMessage(id));
-    return true;
+    return tombstone;
   }
 
   async deleteUserMessages({
@@ -405,7 +423,13 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     return this.db
       .select()
       .from(scheduledMessagesInRoom)
-      .where(and(eq(scheduledMessagesInRoom.userId, userId), inArray(scheduledMessagesInRoom.id, ids)))
+      .where(
+        and(
+          eq(scheduledMessagesInRoom.userId, userId),
+          inArray(scheduledMessagesInRoom.id, ids),
+          getLiveRowWhere(scheduledMessagesInRoom),
+        ),
+      )
       .orderBy(asc(scheduledMessagesInRoom.runAt))
       .all();
   }
@@ -463,7 +487,11 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     this.db.delete(onlineMembersInRoom).where(eq(onlineMembersInRoom.userId, userId)).run();
     for (const webSocket of this.ctx.getWebSockets(getUserSocketTag(userId)))
       webSocket.close(ROOM_MEMBER_REMOVED_CODE, "Removed from the room");
-    this.db.delete(scheduledMessagesInRoom).where(eq(scheduledMessagesInRoom.userId, userId)).run();
+    this.db
+      .update(scheduledMessagesInRoom)
+      .set(getScheduledTombstone(new Date()))
+      .where(and(eq(scheduledMessagesInRoom.userId, userId), getLiveRowWhere(scheduledMessagesInRoom)))
+      .run();
     await this.#armAlarm();
     await this.#notifyUser(userId, (user) => user.removeRoomScheduledItems(this.#roomId));
   }
@@ -560,7 +588,13 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     const scheduledMessage = this.db
       .update(scheduledMessagesInRoom)
       .set({ message, replyToId: replyToId ?? null, runAt })
-      .where(and(eq(scheduledMessagesInRoom.id, id), eq(scheduledMessagesInRoom.userId, actor.userId)))
+      .where(
+        and(
+          eq(scheduledMessagesInRoom.id, id),
+          eq(scheduledMessagesInRoom.userId, actor.userId),
+          getLiveRowWhere(scheduledMessagesInRoom),
+        ),
+      )
       .returning()
       .get();
     if (!scheduledMessage) return null;
@@ -637,7 +671,16 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     const [nextScheduledMessage] = this.db
       .select({ runAt: scheduledMessagesInRoom.runAt })
       .from(scheduledMessagesInRoom)
+      .where(getLiveRowWhere(scheduledMessagesInRoom))
       .orderBy(asc(scheduledMessagesInRoom.runAt))
+      .limit(1)
+      .all();
+    // The oldest tombstone is due for the purge once its retention has passed, so the alarm wakes then even when nothing else is due
+    const [oldestTombstone] = this.db
+      .select({ deletedAt: scheduledMessagesInRoom.deletedAt })
+      .from(scheduledMessagesInRoom)
+      .where(isNotNull(scheduledMessagesInRoom.deletedAt))
+      .orderBy(asc(scheduledMessagesInRoom.deletedAt))
       .limit(1)
       .all();
     const [nextIndexRetry] = this.db
@@ -646,9 +689,15 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
       .orderBy(asc(unindexedMessagesInRoom.retryAt))
       .limit(1)
       .all();
-    const dueTimes = [this.#readRoomState()?.bumpDueAt, nextScheduledMessage?.runAt, nextIndexRetry?.retryAt].flatMap(
-      (dueAt) => (dueAt ? [dueAt.getTime()] : []),
-    );
+    const tombstoneExpiry = oldestTombstone?.deletedAt
+      ? new Date(oldestTombstone.deletedAt.getTime() + TOMBSTONE_RETENTION_MS)
+      : null;
+    const dueTimes = [
+      this.#readRoomState()?.bumpDueAt,
+      nextScheduledMessage?.runAt,
+      nextIndexRetry?.retryAt,
+      tombstoneExpiry,
+    ].flatMap((dueAt) => (dueAt ? [dueAt.getTime()] : []));
     if (dueTimes.length > 0) await this.ctx.storage.setAlarm(Math.min(...dueTimes));
     else await this.ctx.storage.deleteAlarm();
   }
@@ -919,6 +968,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
 
   async #runAlarm(): Promise<void> {
     const now = new Date();
+    this.#purgeExpiredTombstones(now);
     await this.#sendDueScheduledMessages(now);
     await this.#sendDueActivity(now);
     await this.#retryUnindexedMessages(now);
@@ -959,14 +1009,22 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     for (const result of results) if (result.status === "rejected") console.error(result.reason);
   }
 
-  // Each due row is removed in the same transaction that writes its message, so it is sent once or dropped once.
+  // The object's tables are not D1, so the nightly D1 purge does not reach them: the alarm removes a scheduled message's
+  // Tombstone once the retention has passed, the age a client forgets its own copy at. A tombstone is hidden from every read,
+  // So its removal changes no view and wakes no read
+  #purgeExpiredTombstones(now: Date): void {
+    const cutoff = new Date(now.getTime() - TOMBSTONE_RETENTION_MS);
+    this.db.delete(scheduledMessagesInRoom).where(lte(scheduledMessagesInRoom.deletedAt, cutoff)).run();
+  }
+
+  // Each due row is tombstoned in the same transaction that writes its message, so it is sent once or dropped once.
   // The send is held to the rules a live send is, as its sender stands now, and it claims the sender's slowmode clock
   // Before its message is written, as a live send does. A row whose sender may no longer send, or whose claim faults, is dropped
   async #sendDueScheduledMessages(now: Date): Promise<void> {
     const dueMessages = this.db
       .select()
       .from(scheduledMessagesInRoom)
-      .where(lte(scheduledMessagesInRoom.runAt, now))
+      .where(and(getLiveRowWhere(scheduledMessagesInRoom), lte(scheduledMessagesInRoom.runAt, now)))
       .orderBy(asc(scheduledMessagesInRoom.runAt))
       .all();
     for (const { id, message, replyToId, userId } of dueMessages) {
@@ -974,7 +1032,11 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
       // The claim is the last await before the write, so nothing a send does not own lands between the decision and it
       const isClaimed = await this.#claimSendSlot(userId, message, now);
       const sentMessage = this.db.transaction((transaction) => {
-        transaction.delete(scheduledMessagesInRoom).where(eq(scheduledMessagesInRoom.id, id)).run();
+        transaction
+          .update(scheduledMessagesInRoom)
+          .set(getScheduledTombstone(now))
+          .where(eq(scheduledMessagesInRoom.id, id))
+          .run();
         return isClaimed
           ? this.#insertMessage(
               getMessageRow(

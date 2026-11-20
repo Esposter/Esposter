@@ -34,6 +34,7 @@ import {
   SENT_MESSAGE_PAGE_SORT,
   SOCKET_IDENTITY_HEADER,
   START_PAGE_CURSOR,
+  TOMBSTONE_RETENTION_MS,
   TOPIC_WATCH_MAX_AGE_MS,
   usersInAuth,
   UserStatus,
@@ -362,7 +363,8 @@ describe(UserObject, () => {
       { roomId, text: "due", type: AppNotificationType.Reminder, userId },
       { roomId, text: "later", type: AppNotificationType.Reminder, userId },
     ]);
-    await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
+    // Both sent reminders are tombstones now, so no run is left and the alarm wakes at the oldest tombstone's purge
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(dueAt.getTime() + TOMBSTONE_RETENTION_MS);
   });
 
   test("a reminder armed again under its id replaces the one it names, so a re-run of the step that armed it converges", async () => {
@@ -395,9 +397,84 @@ describe(UserObject, () => {
     });
     await object.addReminder({ id: v7(), roomId: v7(), runAt: laterRunAt, text: "later" });
 
-    await expect(object.removeReminder(cancelledId)).resolves.toBe(true);
-    await expect(object.removeReminder(cancelledId)).resolves.toBe(false);
+    await expect(object.removeReminder(cancelledId)).resolves.toMatchObject({
+      deletedAt: new Date(0),
+      id: cancelledId,
+    });
+    await expect(object.removeReminder(cancelledId)).resolves.toBeUndefined();
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(laterRunAt.getTime());
+  });
+
+  // A cancel leaves the reminder as a tombstone no read returns and the alarm never sends, and the alarm is then armed for the
+  // Tombstone's expiry, so the purge runs when it has passed
+  test("cancelling a reminder leaves a tombstone the alarm never sends, armed for the tombstone's expiry", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createUserObject();
+    const id = v7();
+    const roomId = v7();
+    const dueAt = new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
+    await object.addReminder({ id, roomId, runAt: dueAt, text: "cancelled" });
+
+    await expect(object.removeReminder(id)).resolves.toStrictEqual({
+      deletedAt: new Date(0),
+      id,
+      roomId,
+      runAt: dueAt,
+      text: "",
+      version: 1,
+    });
+    vi.setSystemTime(dueAt);
+    await object.alarm();
+
+    expect(MockJobQueueDatabase.get(QueueJob.ProcessNotification) ?? []).toStrictEqual([]);
+    await expect(object.readReminders(firstPage)).resolves.toStrictEqual([]);
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(TOMBSTONE_RETENTION_MS);
+  });
+
+  // A reminder added again under its id revives its tombstone at a higher version, so a client that holds the tombstone takes
+  // The revival as newer than it
+  test("a reminder added again under its id after a cancel revives its tombstone at a higher version", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const reminder = {
+      id: v7(),
+      roomId: v7(),
+      runAt: new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds")),
+      text: "text",
+    };
+    await object.addReminder(reminder);
+    await object.removeReminder(reminder.id);
+    await object.addReminder(reminder);
+
+    await expect(object.readReminders(firstPage)).resolves.toStrictEqual([
+      { ...reminder, deletedAt: null, version: 2 },
+    ]);
+  });
+
+  // The alarm removes a reminder's tombstone once the tombstone retention has passed, so a reminder added under its id after
+  // That is a new row at version zero, as the forgotten-tombstone rule on the client already assumes
+  test("the alarm purges a reminder's tombstone past the tombstone retention", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const reminder = {
+      id: v7(),
+      roomId: v7(),
+      runAt: new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds")),
+      text: "text",
+    };
+    await object.addReminder(reminder);
+    await object.removeReminder(reminder.id);
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(TOMBSTONE_RETENTION_MS + 1));
+    await object.alarm();
+    await object.addReminder(reminder);
+
+    await expect(object.readReminders(firstPage)).resolves.toStrictEqual([
+      { ...reminder, deletedAt: null, version: 0 },
+    ]);
   });
 
   // A person who leaves a room takes its reminders and scheduled messages with them, so the one due first in it never fires,

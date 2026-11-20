@@ -23,6 +23,7 @@ import {
   QueueJob,
   RoomPermission,
   roomRolesInMessage,
+  TOMBSTONE_RETENTION_MS,
   roomsInMessage,
   SOCKET_IDENTITY_HEADER,
   START_PAGE_CURSOR,
@@ -615,6 +616,92 @@ describe(RoomObject, () => {
     await object.alarm();
 
     expect(getWokenTopics(readSet, topicPublishes)).toStrictEqual([`room/${roomId}:scheduledMessages:*`]);
+  });
+
+  // A cancel leaves its row as a tombstone that no read returns. A reschedule names a live row, so it cannot bring back a
+  // Cancelled one, since a sent message leaves the same tombstone and a revival would send it again. Putting the row back
+  // Under its id, as a failed send does, revives it at a higher version, so a client holding the tombstone takes it as newer
+  test("a cancelled scheduled message is a tombstone that a reschedule cannot revive, and putting it back revives it", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const id = v7();
+    const scheduledMessage = await object.createScheduledMessage(
+      { id, message: "cancelled", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      actor,
+    );
+
+    const tombstone = await object.deleteScheduledMessage(id, actor);
+
+    expect(tombstone).toStrictEqual({ ...scheduledMessage, deletedAt: new Date(0), message: "", version: 1 });
+    await expect(object.readScheduledMessages({ ids: [id], userId })).resolves.toStrictEqual([]);
+    const runAt = new Date(ROOM_ACTIVITY_DELAY_MS * 2);
+    await expect(object.updateScheduledMessage({ id, message: "rescheduled", runAt }, actor)).resolves.toBeNull();
+
+    await expect(object.createScheduledMessage({ id, message: "put back", runAt }, actor)).resolves.toStrictEqual({
+      id,
+      message: "put back",
+      replyToId: null,
+      runAt,
+      userId,
+      deletedAt: null,
+      version: 2,
+    });
+  });
+
+  // The due-send reads only live rows, so a cancelled scheduled message is never sent when it comes due, and its sender's
+  // Index is told of the cancel once, not again by the alarm
+  test("the due-send skips a cancelled scheduled message", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const cancelled = await object.createScheduledMessage(
+      { id: v7(), message: "cancelled", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      actor,
+    );
+    await object.deleteScheduledMessage(cancelled.id, actor);
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(cancelled.runAt.getTime()));
+    await object.alarm();
+
+    await expect(object.readMessages(newestPage)).resolves.toStrictEqual([]);
+    expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(cancelled.id);
+  });
+
+  // The alarm removes a tombstone once the tombstone retention has passed, the age a client forgets its copy at. A newer
+  // Tombstone is kept, so a reschedule of it still revives the row, and the alarm is armed for its expiry
+  test("the alarm purges a scheduled message's tombstone past the tombstone retention, and keeps a newer one", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createRoomObject();
+    const expired = await object.createScheduledMessage(
+      { id: v7(), message: "expired", runAt: new Date(ROOM_ACTIVITY_DELAY_MS * 2) },
+      actor,
+    );
+    const newer = await object.createScheduledMessage(
+      { id: v7(), message: "newer", runAt: new Date(ROOM_ACTIVITY_DELAY_MS * 2) },
+      actor,
+    );
+    await object.deleteScheduledMessage(expired.id, actor);
+    const newerDeletedAt = Temporal.Duration.from({ days: 1 }).total("milliseconds");
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(newerDeletedAt));
+    await object.deleteScheduledMessage(newer.id, actor);
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(TOMBSTONE_RETENTION_MS + 1));
+    await object.alarm();
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(newerDeletedAt + TOMBSTONE_RETENTION_MS);
+
+    const runAt = new Date(ROOM_ACTIVITY_DELAY_MS * 3);
+    // The expired tombstone was purged, so putting its row back is a new row at version zero
+    await expect(object.createScheduledMessage({ id: expired.id, message: "x", runAt }, actor)).resolves.toMatchObject({
+      deletedAt: null,
+      version: 0,
+    });
+    // The newer tombstone was kept, so putting its row back revives it at a higher version
+    await expect(object.createScheduledMessage({ id: newer.id, message: "x", runAt }, actor)).resolves.toMatchObject({
+      deletedAt: null,
+      version: 2,
+    });
   });
 
   // A member who leaves takes what they scheduled in the room with them, and their object drops its items for the room, so

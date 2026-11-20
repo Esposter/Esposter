@@ -32,6 +32,7 @@ import { setUserStatusInRooms } from "#src/services/user/setUserStatusInRooms";
 import { createPageSort, getPageOrderBy, getPageWhere } from "@esposter/db";
 import {
   AppNotificationType,
+  getLiveRowWhere,
   joinedCallsInUser,
   publishNotification,
   QueueJob,
@@ -40,13 +41,14 @@ import {
   scheduledMessagesInUser,
   SENT_MESSAGE_PAGE_SORT,
   sentMessagesInUser,
+  TOMBSTONE_RETENTION_MS,
   todoRemindersInUser,
   TopicKind,
   userClientFrameSchema,
 } from "@esposter/db-schema";
 import userMigrations from "@esposter/db-schema/objects/user/migrations/migrations";
 import { getResult, getResultAsync, jsonDateParse, noop } from "@esposter/shared";
-import { and, asc, count, eq, gt, inArray, lte, sql } from "drizzle-orm";
+import { and, asc, count, eq, gt, inArray, isNotNull, lte, sql } from "drizzle-orm";
 import { v7 } from "uuid";
 
 // The storage key of one watch, by the tab's id and the topic it watches
@@ -73,7 +75,10 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     await this.db
       .insert(remindersInUser)
       .values(reminder)
-      .onConflictDoUpdate({ set: { runAt: reminder.runAt, text: reminder.text }, target: remindersInUser.id });
+      .onConflictDoUpdate({
+        set: { deletedAt: null, runAt: reminder.runAt, text: reminder.text },
+        target: remindersInUser.id,
+      });
     await this.#armAlarm();
   }
 
@@ -81,7 +86,10 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     await this.db
       .insert(scheduledMessagesInUser)
       .values(scheduledMessage)
-      .onConflictDoUpdate({ set: { runAt: scheduledMessage.runAt }, target: scheduledMessagesInUser.scheduledId });
+      .onConflictDoUpdate({
+        set: { deletedAt: null, runAt: scheduledMessage.runAt },
+        target: scheduledMessagesInUser.scheduledId,
+      });
   }
 
   async addSentMessage(sentMessage: SentMessageInUserInput): Promise<void> {
@@ -110,8 +118,14 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
 
   // The reminders and scheduled messages the person holds, counted together
   async countScheduledMessageJobs(): Promise<number> {
-    const [reminderCount] = await this.db.select({ count: count() }).from(remindersInUser);
-    const [scheduledMessageCount] = await this.db.select({ count: count() }).from(scheduledMessagesInUser);
+    const [reminderCount] = await this.db
+      .select({ count: count() })
+      .from(remindersInUser)
+      .where(getLiveRowWhere(remindersInUser));
+    const [scheduledMessageCount] = await this.db
+      .select({ count: count() })
+      .from(scheduledMessagesInUser)
+      .where(getLiveRowWhere(scheduledMessagesInUser));
     return (reminderCount?.count ?? 0) + (scheduledMessageCount?.count ?? 0);
   }
 
@@ -165,7 +179,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     return this.db
       .select()
       .from(remindersInUser)
-      .where(getPageWhere(sort, cursor))
+      .where(and(getPageWhere(sort, cursor), getLiveRowWhere(remindersInUser)))
       .orderBy(...getPageOrderBy(sort, cursor))
       .limit(limit);
   }
@@ -190,7 +204,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
         runAt: scheduledMessagesInUser.runAt,
       })
       .from(scheduledMessagesInUser)
-      .where(getPageWhere(sort, cursor))
+      .where(and(getPageWhere(sort, cursor), getLiveRowWhere(scheduledMessagesInUser)))
       .orderBy(...getPageOrderBy(sort, cursor))
       .limit(limit);
   }
@@ -236,28 +250,41 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     await this.db.delete(joinedCallsInUser).where(eq(joinedCallsInUser.callSessionId, callSessionId));
   }
 
-  // A cancel removes the row and re-arms the alarm for what is left, so a reminder that was next due no longer wakes it
-  async removeReminder(id: string): Promise<boolean> {
-    const deletedRows = await this.db
-      .delete(remindersInUser)
-      .where(eq(remindersInUser.id, id))
-      .returning({ id: remindersInUser.id });
-    if (deletedRows.length === 0) return false;
+  // A cancel leaves the reminder as a tombstone and answers with it, then re-arms the alarm for what is left, so a reminder
+  // That was next due no longer wakes it
+  async removeReminder(id: string): Promise<ScheduledReminder | undefined> {
+    const [tombstone] = await this.db
+      .update(remindersInUser)
+      .set({ deletedAt: new Date(), text: "" })
+      .where(and(eq(remindersInUser.id, id), getLiveRowWhere(remindersInUser)))
+      .returning();
+    if (!tombstone) return undefined;
 
     await this.#armAlarm();
-    return true;
+    return tombstone;
   }
 
   // A person who leaves a room, or whom the room removes or deletes, takes what they held for it: the reminders set there
   // And the index entries of the messages scheduled there. The alarm is re-armed for what is left, as a cancel does
   async removeRoomScheduledItems(roomId: string): Promise<void> {
-    await this.db.delete(remindersInUser).where(eq(remindersInUser.roomId, roomId));
-    await this.db.delete(scheduledMessagesInUser).where(eq(scheduledMessagesInUser.roomId, roomId));
+    const deletedAt = new Date();
+    await this.db
+      .update(remindersInUser)
+      .set({ deletedAt, text: "" })
+      .where(and(eq(remindersInUser.roomId, roomId), getLiveRowWhere(remindersInUser)));
+    await this.db
+      .update(scheduledMessagesInUser)
+      .set({ deletedAt })
+      .where(and(eq(scheduledMessagesInUser.roomId, roomId), getLiveRowWhere(scheduledMessagesInUser)));
     await this.#armAlarm();
   }
 
+  // The index entry of a scheduled message is a tombstone once the room sends or cancels it, and the list stops naming it
   async removeScheduledMessage(scheduledId: string): Promise<void> {
-    await this.db.delete(scheduledMessagesInUser).where(eq(scheduledMessagesInUser.scheduledId, scheduledId));
+    await this.db
+      .update(scheduledMessagesInUser)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(scheduledMessagesInUser.scheduledId, scheduledId), getLiveRowWhere(scheduledMessagesInUser)));
   }
 
   // The sent messages a room's delete or erase removed, by their ids, dropped from the person's index in one statement
@@ -349,7 +376,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     const [overdueReminder] = await this.db
       .select({ runAt: remindersInUser.runAt })
       .from(remindersInUser)
-      .where(lte(remindersInUser.runAt, now))
+      .where(and(lte(remindersInUser.runAt, now), getLiveRowWhere(remindersInUser)))
       .limit(1);
     const [overdueTodoReminder] = await this.db
       .select({ runAt: todoRemindersInUser.dueAt })
@@ -359,9 +386,14 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     const [upcomingReminder] = await this.db
       .select({ runAt: remindersInUser.runAt })
       .from(remindersInUser)
-      .where(gt(remindersInUser.runAt, now))
+      .where(and(gt(remindersInUser.runAt, now), getLiveRowWhere(remindersInUser)))
       .orderBy(asc(remindersInUser.runAt))
       .limit(1);
+    // The oldest tombstone of each table is due for the purge once its retention has passed, so the alarm wakes then
+    const tombstoneExpiries = await Promise.all([
+      this.#readOldestTombstoneExpiry(remindersInUser),
+      this.#readOldestTombstoneExpiry(scheduledMessagesInUser),
+    ]);
     const [upcomingTodoReminder] = await this.db
       .select({ runAt: todoRemindersInUser.dueAt })
       .from(todoRemindersInUser)
@@ -371,6 +403,7 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     const runAts = [
       ...(overdueReminder || overdueTodoReminder ? [now.getTime() + REMINDER_RETRY_DELAY_MS] : []),
       ...[upcomingReminder, upcomingTodoReminder].flatMap((upcoming) => (upcoming ? [upcoming.runAt.getTime()] : [])),
+      ...tombstoneExpiries.flatMap((expiry) => (expiry ? [expiry.getTime()] : [])),
     ];
     if (runAts.length > 0) await this.ctx.storage.setAlarm(Math.min(...runAts));
     else await this.ctx.storage.deleteAlarm();
@@ -408,18 +441,43 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
 
   async #runAlarm(): Promise<void> {
     const now = new Date();
+    await this.#purgeExpiredTombstones(now);
     await this.#sendDueTodoReminders(now);
     await this.#sendDueReminders(now);
     await this.#armAlarm();
   }
 
-  // The reminder is published to the notification queue as the person's own, and removed only once it is queued.
+  // The object's tables are not D1, so the nightly D1 purge does not reach them: the alarm removes each tombstone once the
+  // Tombstone retention has passed, the age a client forgets its own copy at. A tombstone is hidden from every read, so its
+  // Removal changes no view and wakes no read
+  async #purgeExpiredTombstones(now: Date): Promise<void> {
+    const cutoff = new Date(now.getTime() - TOMBSTONE_RETENTION_MS);
+    await this.db.delete(remindersInUser).where(lte(remindersInUser.deletedAt, cutoff));
+    await this.db.delete(scheduledMessagesInUser).where(lte(scheduledMessagesInUser.deletedAt, cutoff));
+  }
+
+  // The earliest moment a table's oldest tombstone is purged, or nothing when it holds none
+  async #readOldestTombstoneExpiry(
+    table: typeof remindersInUser | typeof scheduledMessagesInUser,
+  ): Promise<Date | undefined> {
+    const [oldestTombstone] = await this.db
+      .select({ deletedAt: table.deletedAt })
+      .from(table)
+      .where(isNotNull(table.deletedAt))
+      .orderBy(asc(table.deletedAt))
+      .limit(1);
+    return oldestTombstone?.deletedAt
+      ? new Date(oldestTombstone.deletedAt.getTime() + TOMBSTONE_RETENTION_MS)
+      : undefined;
+  }
+
+  // The reminder is published to the notification queue as the person's own, and tombstoned only once it is queued.
   // So a failed publish is retried rather than dropped.
   async #sendDueReminders(now: Date): Promise<void> {
     const dueReminders = await this.db
       .select()
       .from(remindersInUser)
-      .where(lte(remindersInUser.runAt, now))
+      .where(and(lte(remindersInUser.runAt, now), getLiveRowWhere(remindersInUser)))
       .orderBy(asc(remindersInUser.runAt));
     await Promise.all(
       dueReminders.map(async (reminder) => {
@@ -437,7 +495,11 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
             return false;
           },
         );
-        if (isSent) await this.db.delete(remindersInUser).where(eq(remindersInUser.id, reminder.id));
+        if (isSent)
+          await this.db
+            .update(remindersInUser)
+            .set({ deletedAt: now, text: "" })
+            .where(eq(remindersInUser.id, reminder.id));
       }),
     );
   }
