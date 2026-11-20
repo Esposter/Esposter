@@ -5,13 +5,13 @@ import type { RenderContext } from "#shared/models/pageBuilder/RenderContext";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { WebpageKind } from "#src/models/pageBuilder/WebpageKind";
 
+import { checkIsHtmlElement } from "#shared/services/pageBuilder/checkIsHtmlElement";
 import { renderWebpageNode } from "#shared/services/pageBuilder/renderWebpageNode";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { createStaticVNode, createTextVNode } from "vue";
 import { renderBlockNodes } from "vue-block-editor-headless";
 
-const checkIsElement = (node: HtmlNode): node is HtmlElement => typeof node !== "string" && "tag" in node;
-const checkIsRawNode = (node: HtmlNode): node is HtmlRawNode => typeof node !== "string" && !checkIsElement(node);
+const checkIsRawNode = (node: HtmlNode): node is HtmlRawNode => typeof node !== "string" && !checkIsHtmlElement(node);
 // Renders a webpage's document as the canvas's VNodes, folding its nodes through the same registry and render the published
 // Page uses, so the canvas shows the layout the page has. Each node's root element carries its id in the canvas only, so an
 // Overlay can find the node's box, and no script runs there, since the raw type's markup is inserted as inner HTML
@@ -23,7 +23,7 @@ export const renderCanvasVNodes = (kind: WebpageKind, document: WebpageDocument,
     kind.children,
     (node, _definition, slots) => {
       const rendered = renderWebpageNode(node, slots, context);
-      if (checkIsElement(rendered)) nodeIds.set(rendered, node.props.id);
+      if (checkIsHtmlElement(rendered)) nodeIds.set(rendered, node.props.id);
       return rendered;
     },
   );

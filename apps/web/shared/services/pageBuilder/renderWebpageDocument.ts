@@ -3,6 +3,7 @@ import type { RenderContext } from "#shared/models/pageBuilder/RenderContext";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { checkIsHtmlElement } from "#shared/services/pageBuilder/checkIsHtmlElement";
 import { getNodeStyleClass } from "#shared/services/pageBuilder/getNodeStyleClass";
 import { getNodeStyleCss } from "#shared/services/pageBuilder/getNodeStyleCss";
 import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
@@ -26,7 +27,7 @@ export const renderWebpageDocument = (input: WebpageDocument, context: RenderCon
     webpageNodeChildren,
     (node, definition, slots) => {
       const rendered = renderWebpageNode(node, slots, context);
-      if (typeof rendered === "string" || !("tag" in rendered)) return rendered;
+      if (!checkIsHtmlElement(rendered)) return rendered;
 
       const attributes = { ...rendered.attributes };
       if (getNodeStyleCss(node, definition) !== "")

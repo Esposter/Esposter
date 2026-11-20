@@ -1,5 +1,6 @@
 import type { HtmlNode } from "#shared/models/pageBuilder/HtmlNode";
 
+import { checkIsHtmlElement } from "#shared/services/pageBuilder/checkIsHtmlElement";
 import { WEBPAGE_VOID_TAGS } from "#shared/services/pageBuilder/constants";
 import { escapeAttribute, escapeText } from "@esposter/shared";
 
@@ -8,13 +9,13 @@ export const serializeHtml = (nodes: HtmlNode[]): string =>
   nodes
     .map((node) => {
       if (typeof node === "string") return escapeText(node);
-      if (!("tag" in node)) return node.html;
+      if (!checkIsHtmlElement(node)) return node.html;
 
       const attributes = Object.entries(node.attributes).flatMap(([name, value]) =>
         value === undefined ? [] : [` ${name}="${escapeAttribute(value)}"`],
       );
       const openingTag = `<${node.tag}${attributes.join("")}>`;
       if (WEBPAGE_VOID_TAGS.includes(node.tag)) return openingTag;
-      return `${openingTag}${serializeHtml(node.children)}</${node.tag}>`;
+      else return `${openingTag}${serializeHtml(node.children)}</${node.tag}>`;
     })
     .join("");
