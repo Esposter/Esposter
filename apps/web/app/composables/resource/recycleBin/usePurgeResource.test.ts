@@ -1,6 +1,4 @@
 // @vitest-environment nuxt
-import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { usePurgeResource } from "#src/composables/resource/recycleBin/usePurgeResource";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";

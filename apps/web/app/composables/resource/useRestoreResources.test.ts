@@ -5,15 +5,20 @@ import { createResourceListItem } from "#shared/services/resource/list/createRes
 import { useRestoreResources } from "#src/composables/resource/useRestoreResources";
 import { resourceTable } from "#src/services/resource/overlay/constants";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { useFavoriteStore } from "#src/store/resource/favorite";
 import { useOverlayStore } from "#src/store/overlay";
+import { useFavoriteStore } from "#src/store/resource/favorite";
 import { MAX_READ_LIMIT, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+// The rows the overlay shows, which is what the list or the blade reads
+const getLiveRows = () => {
+  const overlayStore = useOverlayStore();
+  return overlayStore.view(resourceTable).value;
+};
+
 describe(useRestoreResources, () => {
   const { trpcMsw } = setupMswTrpc();
-  const getLiveRows = () => useOverlayStore().view(resourceTable).value;
 
   // The held tombstone is read against the clock, and one past the retention counts as nothing held, so the clock is
   // Pinned at the epoch the tombstone is dated from
@@ -32,7 +37,8 @@ describe(useRestoreResources, () => {
 
     const resource = createResourceListItem();
     // The row as the delete's answer left it: a tombstone, one version on
-    useOverlayStore().arrive(resourceTable, { ...resource, deletedAt: new Date(0), version: resource.version + 1 });
+    const overlayStore = useOverlayStore();
+    overlayStore.arrive(resourceTable, { ...resource, deletedAt: new Date(0), version: resource.version + 1 });
     trpcMsw.resource.restoreResources.mutation(() => [{ ...resource, deletedAt: null, version: resource.version + 2 }]);
     useRestoreResources().restoreResources([resource]);
 

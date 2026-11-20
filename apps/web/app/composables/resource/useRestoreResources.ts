@@ -56,7 +56,7 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
             // The ids are restored chunk-by-chunk, each committing independently, so a failure still leaves earlier
             // Chunks restored server-side — a write that has to invalidate even though it reports as failed, as the
             // Delete it undoes does. The rows are reachable again, so every cache of which resources are live is stale:
-            // the stars and the Recently-opened set reconcile themselves off this tag
+            // The stars and the Recently-opened set reconcile themselves off this tag
             await invalidateTags([CacheTag.Resources]);
             // The list re-reads once the restore settles, since where the restored rows sort is the server's to say
             await refresh?.();
