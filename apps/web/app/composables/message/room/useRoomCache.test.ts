@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
 import { flushCache } from "#src/composables/cache/indexedDb/flushCache.test";
 import { goOffline } from "#src/composables/shared/network.test";
+import { useSession } from "#src/services/auth/authClient.test";
 import { RoomIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
 import { UserToRoomIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/UserToRoomIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
 import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
-import { useSession } from "#src/services/auth/authClient.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { useRoomStore } from "#src/store/message/room/index";
