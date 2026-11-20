@@ -5,7 +5,7 @@ Every Cloudflare resource Esposter runs, and every GitHub repository setting, is
 ## Layout rules
 
 - **A Pulumi logical name is the Cloudflare name.** A resource applied under a different name previews as a delete and a create, so a rename of a stateful resource is a move of its data, never a relabel.
-- **Providers are split.** `src/cloudflare/` holds the `@pulumi/cloudflare` resources and `src/github/` holds the `@pulumi/github` ones: collaborators, environments, labels, secrets written from ESC, and the branch rulesets that make a branch's name the rule for who may create and push it ([branch namespaces](../branch-namespaces/design.md)).
+- **Providers are split.** `src/cloudflare/` holds the `@pulumi/cloudflare` resources and `src/github/` holds the `@pulumi/github` ones: collaborators, labels, secrets written from ESC, and the branch rulesets that make a branch's name the rule for who may create and push it ([branch namespaces](../branch-namespaces/design.md)).
 - **The naming shape** is written once in `apps/infra/docs/cloudflare/naming-conventions.md`: an environment token, an asset-type token and a workload token. Account-scoped resources drop the environment token.
 - The package entrypoint `src/index.ts` is a generated barrel, and Pulumi runs the compiled `dist/index.js`.
 
@@ -54,6 +54,6 @@ The exclusion is by resource type, so it holds for every instance of the type. E
 | :------------------------------------------------------------------------ | :------------------------------------------------------------------- |
 | `apps/infra/src/cloudflare/resources/`                                    | One file per Cloudflare resource, folders by resource type           |
 | `packages/db-schema/src/services/cloudflare/constants.ts`                 | The committed account id every Cloudflare resource is declared under |
-| `apps/infra/src/github/`                                                  | GitHub repository settings, labels, environments, rulesets, secrets  |
+| `apps/infra/src/github/`                                                  | GitHub repository settings, labels, rulesets, secrets                |
 | `apps/infra/docs/cloudflare/naming-conventions.md`                        | The Cloudflare naming shape and its tokens                           |
 | `packages/db-schema/src/services/cloudflare/getCloudflareResourceName.ts` | The name function the program and the Workers both call              |
