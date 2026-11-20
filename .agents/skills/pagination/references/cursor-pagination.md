@@ -11,7 +11,7 @@ Call `useCursorPaginationData<TItem>()` (handles the ref + cast internally). Exp
 ```ts
 export const useFooStore = defineStore("feature/foo", () => {
   const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<FooEntity>();
-  // mutations update items.value directly (optimistic or after server response)
+  // a list's writes go through the overlay, not items.value (see the rules below)
   return { hasMore, items, readItems, readMoreItems };
 });
 ```
@@ -58,7 +58,7 @@ await readFoos();
 
 - **Never** store a paginated list as a plain `ref<TItem[]>` — always the `Page<TItem>` (`{ items, nextCursor }`) that `useCursorPaginationData` holds.
 - **Never** call `readItems`/`readMoreItems` from a component directly — always via a `useRead*` composable.
-- Optimistic mutations update the list directly (spread for create, filter for delete) — no re-fetch: `items.value` on a single-list store, and on a keyed one the `items` of `getSlice(key)`, since its ambient `items` is `readonly`.
+- A write to a list is an overlay write, not a change to `items.value`: it carries an entry the list's view applies over the held rows, the server's answer arrives the rows it changed, and a delete is a tombstone the view hides. A list holds its page by key and reads each row from the overlay, so a row another read or an event brings reaches it too. The rule, and the lists that keep their own page (the recycle bin, a whole-value read), are `openspec/changes/architecture-optimistic-overlay/design.md` under "Lists and single rows"; lists move to it group by group (`tasks.md` in the same change).
 - `readMoreItems` appends; `readItems` resets the full `Page` ref (handles navigating back to first page).
 - A reset replaces the partition's data and retires the old one: a read issued against the retired data is dropped when it lands, so a page of the order a reset left behind never fills the list the new order reads into. A cache hydration replaces data without retiring it, so a read in flight still lands on the rows it restores (`emptyCursorPaginationData` in `useCursorPaginationOperationData.ts`).
 - A list on an **SSR'd route** passes `readItems` a `key` from `AsyncDataKey`; one behind `ssr: false` (the routes `apps/web/configuration/routeRules.ts` marks) passes none. Without a key the read runs twice per page load — the server issues it for the html, and hydration replays the same setup client-side — and the second answer can disagree with the rows already rendered. The key covers every input that changes which page the server rendered (the sort, the profile, the parent post), and only the hydrating render adopts the payload: a sort change, a pull to refresh and a client-side navigation all read live.
