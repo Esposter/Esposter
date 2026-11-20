@@ -1,35 +1,20 @@
 import type { Mock } from "vitest";
 
 import { MimeType } from "#shared/models/file/MimeType";
+import { ImageDouble } from "#src/services/capture/ImageDouble.test";
 import { rasterizeSvg } from "#src/services/capture/rasterizeSvg";
 import { noop } from "@esposter/shared";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(rasterizeSvg, () => {
-  // The browser's canvas and image are missing from the node environment, so the test stands in for them: the image loads on the next tick,
-  // And the canvas records the size it is drawn at. The export draws at the device pixel ratio times two, and the ratio is stood in as one
+  // The browser's canvas is missing from the node environment, so the test stands in for it, and for the image: the image
+  // Loads on the next tick, and the canvas records the size it is drawn at. The export draws at the device pixel ratio times two, and the ratio is stood in as one
   const DEVICE_PIXEL_RATIO = 1;
   const EXPORT_SCALE = DEVICE_PIXEL_RATIO * 2;
   const BLOB_URL = "blob:svg";
   const SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="50"></svg>';
   const WIDTH = 100;
   const HEIGHT = 50;
-
-  class ImageDouble {
-    onload?: () => void;
-    get src() {
-      return this.#source;
-    }
-
-    set src(source: string) {
-      this.#source = source;
-      queueMicrotask(() => {
-        this.onload?.();
-      });
-    }
-
-    #source = "";
-  }
 
   let drawImage: Mock<(image: unknown, x: number, y: number, width: number, height: number) => void>;
   let toBlob: Mock<(callback: BlobCallback, type: string) => void>;

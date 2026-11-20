@@ -1,5 +1,6 @@
 import type { Mock } from "vitest";
 
+import { ImageDouble } from "#src/services/capture/ImageDouble.test";
 import { rasterizeSvg } from "#src/services/message/room/realtime/rasterizeSvg";
 import { noop } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -9,22 +10,6 @@ describe(rasterizeSvg, () => {
   // The image loads on the next tick, and the canvas hands back a blob of the export
   const BLOB_URL = "blob:png";
   const SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="50"></svg>';
-
-  class ImageDouble {
-    onload?: () => void;
-    get src() {
-      return this.#source;
-    }
-
-    set src(source: string) {
-      this.#source = source;
-      queueMicrotask(() => {
-        this.onload?.();
-      });
-    }
-
-    #source = "";
-  }
 
   let fetchSvg: Mock<(url: string) => Promise<Response>>;
   let toBlob: Mock<(callback: BlobCallback, type: string) => void>;
