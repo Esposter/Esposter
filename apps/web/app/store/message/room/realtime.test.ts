@@ -102,7 +102,7 @@ describe(useRealtimeStore, () => {
     firstRead.resolve(imagePath);
     await waitForSynchronizedFunctions();
 
-    expect(firstTransformer.destruct).toHaveBeenCalledOnce();
+    expect(firstTransformer.destruct).toHaveBeenCalledTimes(1);
     expect(secondTransformer.destruct).not.toHaveBeenCalled();
   });
 

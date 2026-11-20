@@ -5,7 +5,6 @@ import { MicrophoneProcessor } from "#src/models/message/room/call/MicrophonePro
 import { ConnectionQuality } from "#src/models/message/room/realtime/ConnectionQuality";
 import { ConnectionState } from "#src/models/message/room/realtime/ConnectionState";
 import { RemoteAudioSource } from "#src/models/message/room/realtime/RemoteAudioSource";
-import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import {
   DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE,
   SCREEN_SHARE_CONSTRAINTS,
@@ -16,6 +15,7 @@ import { POOR_CONNECTION_SCORE } from "#src/services/message/room/realtime/const
 import { getLocalDevices } from "#src/services/message/room/realtime/getLocalDevices";
 import { rasterizeSvg } from "#src/services/message/room/realtime/rasterizeSvg";
 import { SocketConnectionStateMap } from "#src/services/message/room/realtime/SocketConnectionStateMap";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useMediaStore } from "#src/store/message/room/call/media";
 import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { useCallBackgroundStore } from "#src/store/message/user/settings/callBackground";
@@ -29,9 +29,28 @@ import {
   NoiseSuppressionMode,
   VoiceInputMode,
 } from "@esposter/db-schema";
-import { getResultAsync, getSynchronizedFunction, ID_SEPARATOR, noop } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction, ID_SEPARATOR, noop, withFinalizerAsync } from "@esposter/shared";
 
 const getRemoteAudioKey = (identity: string, source: RemoteAudioSource) => `${identity}${ID_SEPARATOR}${source}`;
+
+// How a pick leaves the camera's video: with the middleware it composites, or with none, which clears the one in place
+interface VideoChange {
+  middleware?: VideoMiddleware;
+}
+type VideoMiddleware = Awaited<
+  ReturnType<RealtimeKitVideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>
+>;
+// A pick as its pipeline resolved it. A pick with no `videoChange` leaves the video as it is
+interface VirtualBackgroundPick {
+  // Set only when the run built the transformer itself, so the commit keeps it and an uncommitted run releases it
+  createdTransformer?: RealtimeKitVideoBackgroundTransformer | undefined;
+  meeting: RealtimeKitClient;
+  videoChange?: undefined | VideoChange;
+}
+// What a run built and did not keep: its transformer, released as the run scope hands it back
+const releaseVirtualBackgroundPick = (pick: undefined | VirtualBackgroundPick) => {
+  pick?.createdTransformer?.destruct();
+};
 
 export const useRealtimeStore = defineStore("message/room/realtime", () => {
   let activeMeeting: RealtimeKitClient | undefined;
@@ -40,8 +59,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   let microphoneProcessor: MicrophoneProcessor | undefined;
   let pushToTalkReleaseTimeoutId: number | undefined;
   let videoBackgroundTransformer: RealtimeKitVideoBackgroundTransformer | undefined;
-  const { executeMutation: executeRejoinMutation } = useMutation();
-  const { executeMutation: executeSetVirtualBackgroundMutation } = useMutation();
+  const { run: runVirtualBackground } = useRunScope();
   const mediaStore = useMediaStore();
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
   const participantStore = useParticipantStore();
@@ -255,73 +273,72 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     else if (isScreenSharing) await activeMeeting.self.enableScreenShare();
     else await activeMeeting.self.disableScreenShare();
   };
-  // Local media pipeline work rather than a server write: clicking through the background picker means only
-  // The last pick matters, and the picks before it have nothing to unwind, so they supersede rather than queue
-  const applyVirtualBackgroundPipeline = async (virtualBackground: string, checkIsStale: () => boolean) => {
+  // Applies a pick's change to the meeting's video. The middleware is replaced rather than stacked, so one pick never
+  // Composites over another. A failure alerts, as a failed write does
+  const applyVirtualBackgroundChange = getSynchronizedFunction(
+    (meeting: RealtimeKitClient, { middleware }: VideoChange) =>
+      getResultAsync(async () => {
+        await meeting.self.removeAllVideoMiddlewares();
+        if (middleware) await meeting.self.addVideoMiddleware(middleware);
+        hasVirtualBackground = Boolean(middleware);
+        setLocalVideo(meeting.self);
+      }).match(noop, createErrorAlert),
+  );
+  // The pipeline's awaits, which change nothing on their own: what it resolves is the commit's to apply. A transformer it
+  // Builds goes out with the pick, so the commit keeps it and a run that does not commit releases it
+  const readVirtualBackgroundPick = async (virtualBackground: string): Promise<undefined | VirtualBackgroundPick> => {
     const meeting = activeMeeting;
-    if (!meeting?.self.videoEnabled) return;
+    if (!meeting?.self.videoEnabled) return undefined;
     else if (!RealtimeKitVideoBackgroundTransformer.isSupported()) {
       console.warn("Virtual backgrounds are not supported in this browser.");
+      return undefined;
+    }
+
+    const heldTransformer = videoBackgroundTransformer;
+    const transformer = heldTransformer ?? (await RealtimeKitVideoBackgroundTransformer.init({ meeting }));
+    const createdTransformer = heldTransformer ? undefined : transformer;
+    const imagePath = await readVirtualBackgroundImagePath(virtualBackground);
+    // A slot that has been deleted resolves to nothing, which lands here as the same no-background the None entry
+    // Selects - a missing image must never leave a call with a broken video track
+    if (!imagePath) return { createdTransformer, meeting, videoChange: {} };
+    // Only the presets are SVGs; an uploaded slot arrives as a signed url the middleware can take directly
+    const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
+    if (!resolvedPath) return { createdTransformer, meeting };
+    const middleware = await transformer.createStaticBackgroundVideoMiddleware(resolvedPath);
+    return { createdTransformer, meeting, videoChange: { middleware } };
+  };
+  // The one commit of a pick. A pick made for a meeting that has since been left releases what it built instead
+  const commitVirtualBackgroundPick = (pick: undefined | VirtualBackgroundPick) => {
+    if (!pick) return;
+    else if (pick.meeting !== activeMeeting) {
+      releaseVirtualBackgroundPick(pick);
       return;
     }
 
-    // Held for this operation, since leaving the call or switching the camera off clears the store's ref while one
-    // Of the awaits below is open. Once the store no longer points at this meeting, the operation has nothing left
-    // To write to
-    const checkIsCurrent = () => checkIsStale() || meeting !== activeMeeting;
-    const transformer = videoBackgroundTransformer ?? (await RealtimeKitVideoBackgroundTransformer.init({ meeting }));
-    // A transformer built for a meeting that has since been left belongs to nothing, so it is released here
-    if (meeting !== activeMeeting) {
-      transformer.destruct();
-      return;
-    }
-    videoBackgroundTransformer = transformer;
-    if (checkIsStale()) return;
-    const imagePath = await readVirtualBackgroundImagePath(virtualBackground);
-    if (checkIsCurrent()) return;
-    else if (!imagePath) {
-      // A slot that has been deleted resolves to nothing, which lands here as the same no-background the None entry
-      // Selects - a missing image must never leave a call with a broken video track
-      await meeting.self.removeAllVideoMiddlewares();
-      hasVirtualBackground = false;
-      setLocalVideo(meeting.self);
-      return;
-    }
-    // Only the presets are SVGs; an uploaded slot arrives as a signed url the middleware can take directly
-    const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
-    if (checkIsCurrent() || !resolvedPath) return;
-    const middleware = await transformer.createStaticBackgroundVideoMiddleware(resolvedPath);
-    if (checkIsCurrent()) return;
-    // The middleware is replaced rather than stacked, so one pick never composites over another
-    await meeting.self.removeAllVideoMiddlewares();
-    await meeting.self.addVideoMiddleware(middleware);
-    hasVirtualBackground = true;
-    setLocalVideo(meeting.self);
+    if (pick.createdTransformer) videoBackgroundTransformer = pick.createdTransformer;
+    if (pick.videoChange) applyVirtualBackgroundChange(pick.meeting, pick.videoChange);
   };
-  // The pick is drawn as it is made, and a pipeline that refuses it puts back the one it replaced. `onApplied` runs once the
-  // Pipeline has taken the pick, and only while it is still the pick in force: these supersede rather than queue, so a slow
-  // Selection can resolve after a later one has already applied, and writing it then would leave the settings row naming a
-  // Background the call is not showing
+  // Clicking through the background picker means only the last pick matters, so each pick is a run in one scope: a later
+  // Pick aborts this one, and only the newest pick commits. The pick is drawn as it is made, and a pipeline that fails
+  // Leaves no pick in its place, since the one it replaced is not put back. `onApplied` runs for the pick in force only,
+  // So a slow selection that a later one has overtaken never writes the settings row naming a background the call is not showing
   const applyVirtualBackground = (virtualBackground: string, onApplied: () => void) => {
-    executeSetVirtualBackgroundMutation(
-      async (checkIsStale) => {
-        await applyVirtualBackgroundPipeline(virtualBackground, checkIsStale);
-        if (!checkIsStale()) onApplied();
-      },
-      {
-        applyOptimistic: () => {
-          const previousVirtualBackground = mediaStore.selectedVirtualBackground;
-          mediaStore.selectedVirtualBackground = virtualBackground;
-          return () => {
-            // A later pick may already hold the screen, and it is not this refused one's to put back over
-            if (mediaStore.selectedVirtualBackground === virtualBackground)
-              mediaStore.selectedVirtualBackground = previousVirtualBackground;
-          };
-        },
-        isSupersede: true,
-        key: "virtualBackground",
-      },
-    );
+    mediaStore.selectedVirtualBackground = virtualBackground;
+    getSynchronizedFunction(() =>
+      getResultAsync(() =>
+        runVirtualBackground(
+          () => readVirtualBackgroundPick(virtualBackground),
+          (pick) => {
+            commitVirtualBackgroundPick(pick);
+            onApplied();
+          },
+          releaseVirtualBackgroundPick,
+        ),
+      ).match(noop, (error) => {
+        mediaStore.selectedVirtualBackground = "";
+        createErrorAlert(error);
+      }),
+    )();
   };
   // The pick the user actually made is the only one worth remembering, so it is persisted once the pipeline has taken it
   const setVirtualBackground = (virtualBackground: string) => {
@@ -407,27 +424,31 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   // A revoke that narrows the connection replaces it, and its user joins the meeting again with the token it was handed.
   // The devices carry across, the microphone only where the new preset still allows it, and the camera comes back on if
   // It was on. A screen share ends with the connection it was shared on, since the browser's picker has to be answered
-  // Afresh. Queued under one key, since each rejoin replaces the meeting the next one reads: a second revoke's token
-  // Joins after the first meeting is left, rather than being dropped while that meeting is still being replaced
-  const rejoin = getSynchronizedFunction((authToken: string, canPublishMicrophone: boolean) =>
-    executeRejoinMutation(
-      async () => {
-        const meeting = activeMeeting;
-        const handler = disconnectHandler;
-        if (!meeting || !handler) return;
-        const isCameraEnabled = meeting.self.videoEnabled;
-        await connect(authToken, handler, canPublishMicrophone && meeting.self.audioEnabled);
-        if (isCameraEnabled) await setCamera(true);
-        setLocalScreenShare(false, {});
+  // Afresh. Each rejoin waits for the one before it, since each replaces the meeting the next one reads: a second revoke's
+  // Token joins once the first meeting is left, rather than being dropped while that meeting is still being replaced
+  const rejoinMeeting = (authToken: string, canPublishMicrophone: boolean) =>
+    getResultAsync(async () => {
+      const meeting = activeMeeting;
+      const handler = disconnectHandler;
+      if (!meeting || !handler) return;
+      const isCameraEnabled = meeting.self.videoEnabled;
+      await connect(authToken, handler, canPublishMicrophone && meeting.self.audioEnabled);
+      if (isCameraEnabled) await setCamera(true);
+      setLocalScreenShare(false, {});
+    }).match(noop, console.error);
+  let rejoinQueue: Promise<void> = Promise.resolve();
+  const rejoin = getSynchronizedFunction(async (authToken: string, canPublishMicrophone: boolean) => {
+    const { promise: settled, resolve: settle } = Promise.withResolvers<void>();
+    const previousRejoin = rejoinQueue;
+    rejoinQueue = settled;
+    await previousRejoin;
+    await withFinalizerAsync(
+      () => rejoinMeeting(authToken, canPublishMicrophone),
+      () => {
+        settle();
       },
-      {
-        // The server's revoke decides the connection that replaces this one, so the rejoin waits on that answer
-        awaitedBecause: AwaitedReason.ServerDecidedOutcome,
-        key: "rejoin",
-        onError: console.error,
-      },
-    ),
-  );
+    );
+  });
   watch(
     () => userSettingsStore.userSettings?.speakerVolumePercentage,
     () => {
