@@ -4,16 +4,19 @@ import type { ClientThread } from "#src/models/message/ClientThread";
 import { RightDrawer } from "#src/models/message/RightDrawer";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useLayoutStore } from "#src/store/layout";
 import { useThreadFollowStore } from "#src/store/message/threadFollow";
 import { useMessageLayoutStore } from "#src/store/message/ui/layout";
-import { Operation } from "@esposter/shared";
+import { getResultAsync, noop, Operation, withFinalizerAsync } from "@esposter/shared";
 
 export const useThreadStore = defineStore("message/thread", () => {
-  // The drawer shows one thread at a time, so every open supersedes the one before it and a slower earlier
-  // Response can never land on the thread the user asked for next
-  const readThreadKey = Symbol("readThread");
-  const { executeQuery, isPending: isReadThreadPending } = useMutation();
+  // The drawer shows one thread at a time, so each open is a run of this scope: a newer open aborts the read the one
+  // Before it still waits on, and only the newest read's messages land, so a slower earlier response never lands on
+  // The thread the user asked for next
+  const { run: runReadThread } = useRunScope();
+  const isReadThreadPending = ref(false);
+  let latestReadThreadId = 0;
   const activeThreadRootId = ref<0 | ClientMessage["id"]>(0);
   const activeRoomId = ref<ClientMessage["roomId"]>("");
   const threadMessages = ref<ClientMessage[]>([]);
@@ -52,19 +55,28 @@ export const useThreadStore = defineStore("message/thread", () => {
       messageLayoutStore.previousRightDrawer = messageLayoutStore.rightDrawer;
     messageLayoutStore.rightDrawer = RightDrawer.Thread;
     layoutStore.isRightDrawerOpen = true;
+    // The flag belongs to the newest read: an aborted one settles after the read that replaced it, and must not clear
+    // It
+    const readThreadId = ++latestReadThreadId;
+    isReadThreadPending.value = true;
     await Promise.all([
-      executeQuery(readThreadMessages, {
-        key: readThreadKey,
-        onSuccess: (messages) => {
-          // The read spans the whole open, so the user can close the drawer while it is still in flight — a
-          // Response applied afterwards reopens a thread they just dismissed
-          if (!activeThreadRootId.value) return;
-          // A reply can land while the read is in flight, and the create hook has already pushed it here. The
-          // Response is a snapshot from before it, so assigning it wholesale drops the reply until a reopen
-          const readMessageIds = new Set(messages.map(({ id }) => id));
-          threadMessages.value = [...messages, ...threadMessages.value.filter(({ id }) => !readMessageIds.has(id))];
+      withFinalizerAsync(
+        () =>
+          getResultAsync(() =>
+            runReadThread(readThreadMessages, (messages) => {
+              // The read spans the whole open, so the user can close the drawer while it is still in flight — a
+              // Response applied afterwards reopens a thread they just dismissed
+              if (!activeThreadRootId.value) return;
+              // A reply can land while the read is in flight, and the create hook has already pushed it here. The
+              // Response is a snapshot from before it, so assigning it wholesale drops the reply until a reopen
+              const readMessageIds = new Set(messages.map(({ id }) => id));
+              threadMessages.value = [...messages, ...threadMessages.value.filter(({ id }) => !readMessageIds.has(id))];
+            }),
+          ).match(noop, createErrorAlert),
+        () => {
+          if (readThreadId === latestReadThreadId) isReadThreadPending.value = false;
         },
-      }),
+      ),
       // The pane's header shows the follow toggle, so the follow state it reads loads with the thread — cached per
       // Room, so this is free after the first thread
       readFollowedThreads(roomId),

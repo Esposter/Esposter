@@ -101,6 +101,29 @@ describe(useThreadStore, () => {
     expect(activeThreadRootId.value).toBe(0);
   });
 
+  // A newer open aborts the read the earlier one still waits on, so the earlier thread's replies never land on the
+  // Thread the user opened last, even when that earlier read settles after it
+  test("lands only the newest open's replies when an earlier read settles last", async () => {
+    expect.hasAssertions();
+
+    const laterThreadRootId = 2;
+    const earlierRead = Promise.withResolvers<ClientMessage[]>();
+    const laterReply = createRoomReply();
+    trpcMsw.message.readThread.query(({ input }) =>
+      input.threadRootId === threadRootId ? earlierRead.promise : [laterReply],
+    );
+    await mountThreadDrawer();
+    const threadStore = useThreadStore();
+    const { threadMessages } = storeToRefs(threadStore);
+    const openThread = useOpenThread();
+    const earlierOpen = openThread(roomId, threadRootId);
+    await openThread(roomId, laterThreadRootId);
+    earlierRead.resolve([{ ...createRoomReply(threadRootId), id: 3 }]);
+    await earlierOpen;
+
+    expect(threadMessages.value.map(({ id }) => id)).toStrictEqual([laterReply.id]);
+  });
+
   // A reply renders its attachments, the message it quotes and its reactions from the room's metadata, and a thread
   // Can hold replies the room's list never paged to — so the open reads them the way a page read does
   test("reads the metadata of the replies it opens on", async () => {
