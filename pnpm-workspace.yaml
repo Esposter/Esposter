@@ -276,3 +276,9 @@ permissions:
   tsdown:
     skills: true
 shellEmulator: true
+
+# Every checkout on a machine links its packages from one virtual store under the pnpm store's `links` folder, so a
+# Worktree's install only writes symlinks and the machine holds one copy of each resolved package rather than one per
+# Checkout. CI turns it back to `project` (`setup-project-dependencies`), since a runner starts with an empty store
+# And the global layout only adds work there
+virtualStoreType: global

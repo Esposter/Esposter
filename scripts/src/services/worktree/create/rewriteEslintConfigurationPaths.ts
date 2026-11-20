@@ -1,13 +1,10 @@
-import { PNPM_PACKAGE_PATH_REGEX } from "#src/services/worktree/create/constants";
+import { PACKAGE_SPECIFIER_PATH_REGEX } from "#src/services/worktree/create/constants";
 
-// Repoints each pnpm package path in the generated ESLint configuration to the store folder the worktree's own install
-// Gives that package, which `resolveFolder` names. The package's name and the path beneath it are kept, since only the
-// Folder differs where a worktree's lockfile resolves a package's peers differently
+// Repoints each package import in the generated ESLint configuration to the path `resolvePath` gives that package, which
+// Is where the worktree's own install put it. The path beneath the package is kept, since only the way to the package
+// Differs: the worktree sits deeper than the main checkout, and its lockfile may resolve a package's peers differently
 export const rewriteEslintConfigurationPaths = (
   configuration: string,
-  resolveFolder: (packageName: string) => string,
+  resolvePath: (packageName: string) => string,
 ): string =>
-  configuration.replaceAll(
-    PNPM_PACKAGE_PATH_REGEX,
-    (_path, packageName: string) => `node_modules/.pnpm/${resolveFolder(packageName)}/node_modules/${packageName}`,
-  );
+  configuration.replaceAll(PACKAGE_SPECIFIER_PATH_REGEX, (_path, packageName: string) => resolvePath(packageName));

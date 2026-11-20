@@ -44,7 +44,7 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 - **An idle line is a call to start what can run:** a lane's runner for a runnable item, a page per independent scene, the next wave's ready units.
 - **A machine idle because nothing can run is correct.** That line is answered by saying so. No item is queued, and no unit invented, to fill the cores: a queue that only grows is never digested.
 - **A tight line holds new starts** until memory comes back.
-- **A package that fails to load while `pnpm i` reports up to date is a partly wiped folder.** Pnpm checks the lockfile, not the files, so delete that one `node_modules/.pnpm/<pkg>@<ver>` folder and run `pnpm i --frozen-lockfile --prefer-offline`; the folder is rebuilt from the store.
+- **A package that fails to load while `pnpm i` reports up to date is a partly wiped folder.** Pnpm checks the lockfile, not the files, so run `pnpm i --force`, which imports every package from the store again. The folder is shared: every checkout links that package from the one global virtual store, so a wiped folder breaks every checkout at once.
 
 ## Keep the GPU busy
 

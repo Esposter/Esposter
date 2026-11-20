@@ -23,11 +23,11 @@ export const ESLINT_CONFIGURATION_PATH = "apps/web/.nuxt/eslint.config.mjs";
 // The package whose generator writes that configuration, and a direct dependency of the app: the configuration's imports
 // Are its dependencies, so each resolves from its folder as the generator resolved it
 export const ESLINT_CONFIGURATION_GENERATOR = "@nuxt/eslint";
-// A path into the pnpm store, the package's name after its `node_modules` folder, scoped or not, and the path beneath it
-export const PNPM_PACKAGE_PATH_REGEX: RegExp =
-  /node_modules\/\.pnpm\/[^/]+\/node_modules\/(?<packageName>(?:@[^/]+\/)?[^/]+)/gu;
-// The store folder a package's realpath sits in, captured as the folder's name
-export const PNPM_FOLDER_PATH_REGEX: RegExp = /\/node_modules\/\.pnpm\/(?<folder>[^/]+)\/node_modules\//u;
+// An import specifier's path up to the package it names: everything from the opening quote to the package's name after
+// The last `node_modules` folder, scoped or not, whichever virtual store the path runs through. The path beneath the
+// Package is left outside the match
+export const PACKAGE_SPECIFIER_PATH_REGEX: RegExp =
+  /(?<=["'])[^"']*\/node_modules\/(?<packageName>(?:@[^"'/]+\/)?[^"'/]+)/gu;
 // A folder and a branch take the name, so it is kept to the lowercase characters a branch and a folder both allow
 export const WORKTREE_NAME_REGEX: RegExp = /^[\da-z][\da-z-]*$/u;
 // The task cache a checkout's `vp run` records into: the database naming each recorded run, and the output archives beside

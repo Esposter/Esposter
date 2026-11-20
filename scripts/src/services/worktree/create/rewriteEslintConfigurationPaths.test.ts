@@ -3,25 +3,24 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(rewriteEslintConfigurationPaths, () => {
-  test("repoints each pnpm package path to the folder the resolver names, scoped packages included, and keeps the path beneath the package", () => {
+  test("repoints each package import through either virtual store to the path the resolver gives, scoped packages included, and keeps the path beneath the package", () => {
     expect.hasAssertions();
 
-    const folders: Record<string, string> = {
-      "@nuxt/eslint-config": "@nuxt+eslint-config@1.17.0_9e8f",
-      "eslint-typegen": "eslint-typegen@2.3.2_1d2c",
+    const paths: Record<string, string> = {
+      "@nuxt/eslint-config":
+        "../../../../../../../store/links/@nuxt/eslint-config/1.0.0/b/node_modules/@nuxt/eslint-config",
+      "eslint-typegen": "../../../node_modules/.pnpm/eslint-typegen@1.0.0_b/node_modules/eslint-typegen",
     };
     const configuration = [
-      "import typegen from '../../../node_modules/.pnpm/eslint-typegen@2.3.2_0f1e/node_modules/eslint-typegen/dist/index.mjs';",
-      "import { createConfigForNuxt } from '../../../node_modules/.pnpm/@nuxt+eslint-config@1.17.0_7a6b/node_modules/@nuxt/eslint-config/dist/flat.mjs';",
+      "import typegen from '../../../node_modules/.pnpm/eslint-typegen@1.0.0_a/node_modules/eslint-typegen/dist/index.mjs';",
+      "import { createConfigForNuxt } from '../../../../store/links/@nuxt/eslint-config/1.0.0/a/node_modules/@nuxt/eslint-config/dist/flat.mjs';",
       "import { fileURLToPath } from 'node:url';",
     ].join("\n");
 
-    expect(
-      rewriteEslintConfigurationPaths(configuration, (packageName) => takeOne(folders, packageName)),
-    ).toStrictEqual(
+    expect(rewriteEslintConfigurationPaths(configuration, (packageName) => takeOne(paths, packageName))).toBe(
       [
-        "import typegen from '../../../node_modules/.pnpm/eslint-typegen@2.3.2_1d2c/node_modules/eslint-typegen/dist/index.mjs';",
-        "import { createConfigForNuxt } from '../../../node_modules/.pnpm/@nuxt+eslint-config@1.17.0_9e8f/node_modules/@nuxt/eslint-config/dist/flat.mjs';",
+        "import typegen from '../../../node_modules/.pnpm/eslint-typegen@1.0.0_b/node_modules/eslint-typegen/dist/index.mjs';",
+        "import { createConfigForNuxt } from '../../../../../../../store/links/@nuxt/eslint-config/1.0.0/b/node_modules/@nuxt/eslint-config/dist/flat.mjs';",
         "import { fileURLToPath } from 'node:url';",
       ].join("\n"),
     );

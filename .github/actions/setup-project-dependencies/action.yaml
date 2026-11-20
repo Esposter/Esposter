@@ -10,6 +10,12 @@ runs:
     - name: 🪵 Keep each package's output contiguous
       shell: bash
       run: echo "PNPM_CONFIG_AGGREGATE_OUTPUT=true" >> "$GITHUB_ENV"
+    # The workspace links every checkout from the machine's one global virtual store, which pays off only where
+    # several checkouts share a warm store. A runner has one checkout and an empty store, so it keeps the
+    # per-project layout and its install costs what it always has
+    - name: 📦 Keep the per-project virtual store
+      shell: bash
+      run: echo "PNPM_CONFIG_VIRTUAL_STORE_TYPE=project" >> "$GITHUB_ENV"
     # pnpm from `packageManager`, node from `.node-version`. `install: false` because each caller owns its
     # own install — the root alone with `--ignore-scripts` for format, `install-projects` everywhere else. `cache`
     # stays off: the pnpm store is not cached at all (`openspec/specs/architecture/ci-caches/design.md` → Settled).
