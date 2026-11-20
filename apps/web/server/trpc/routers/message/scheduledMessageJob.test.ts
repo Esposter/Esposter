@@ -88,7 +88,7 @@ describe("scheduledMessageJobRouter", () => {
     expect.hasAssertions();
 
     const reminder = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
-    userObject.readReminders.mockResolvedValue([{ ...reminder, version: 0 }]);
+    userObject.readReminders.mockResolvedValue([{ ...reminder, deletedAt: null, version: 0 }]);
     const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledMessageJobs();
 
     const scheduledMessageJob = takeOne(scheduledMessageJobs.items);
@@ -99,6 +99,7 @@ describe("scheduledMessageJobRouter", () => {
       room: scheduledMessageJob.room,
       roomId,
       runAt,
+      version: 0,
     });
   });
 
@@ -120,11 +121,19 @@ describe("scheduledMessageJobRouter", () => {
     const scheduledMessageId = v7();
     const soonerRunAt = new Date(0);
     const laterRunAt = new Date(1);
-    const reminder = { id: v7(), roomId, runAt: laterRunAt, text, version: 0 };
+    const reminder = { deletedAt: null, id: v7(), roomId, runAt: laterRunAt, text, version: 0 };
     userObject.readReminders.mockResolvedValue([reminder]);
     userObject.readScheduledMessages.mockResolvedValue([{ id: scheduledMessageId, roomId, runAt: soonerRunAt }]);
     roomObject.readScheduledMessages.mockResolvedValue([
-      { id: scheduledMessageId, message: "later", replyToId: null, runAt: soonerRunAt, userId: v7(), version: 0 },
+      {
+        deletedAt: null,
+        id: scheduledMessageId,
+        message: "later",
+        replyToId: null,
+        runAt: soonerRunAt,
+        userId: v7(),
+        version: 0,
+      },
     ]);
     const { items, nextCursor } = await scheduledMessageJobCaller.readMyScheduledMessageJobs({ limit: 1 });
 
@@ -157,7 +166,7 @@ describe("scheduledMessageJobRouter", () => {
   test("does not list a reminder in a room I have left", async () => {
     expect.hasAssertions();
 
-    userObject.readReminders.mockResolvedValue([{ id: v7(), roomId, runAt, text, version: 0 }]);
+    userObject.readReminders.mockResolvedValue([{ deletedAt: null, id: v7(), roomId, runAt, text, version: 0 }]);
     await mockContext.db
       .delete(usersToRoomsInMessage)
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, getMockSession().user.id)));
@@ -180,25 +189,42 @@ describe("scheduledMessageJobRouter", () => {
     expect(userObject.removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(id);
   });
 
-  test("cancels a reminder in the person's own object without asking its room", async () => {
+  // A cancel answers with the row it left as a tombstone, tagged by its kind, so the client confirms its entry at that version
+  test("cancels a reminder in the person's own object without asking its room, and answers with its tombstone", async () => {
     expect.hasAssertions();
 
     const id = v7();
-    userObject.removeReminder.mockResolvedValue(true);
-    await scheduledMessageJobCaller.cancelScheduledMessageJob({ id, roomId });
+    const tombstone = { deletedAt: new Date(0), id, roomId, runAt, text: "", version: 1 };
+    userObject.removeReminder.mockResolvedValue(tombstone);
 
+    await expect(scheduledMessageJobCaller.cancelScheduledMessageJob({ id, roomId })).resolves.toStrictEqual({
+      kind: ScheduledMessageJobType.Reminder,
+      row: tombstone,
+    });
     expect(userObject.removeReminder).toHaveBeenCalledExactlyOnceWith(id);
     expect(roomObject.deleteScheduledMessage).not.toHaveBeenCalled();
   });
 
-  test("cancels a scheduled message in its room when no reminder has the id", async () => {
+  test("cancels a scheduled message in its room when no reminder has the id, and answers with its tombstone", async () => {
     expect.hasAssertions();
 
     const id = v7();
-    userObject.removeReminder.mockResolvedValue(false);
-    roomObject.deleteScheduledMessage.mockResolvedValue(true);
-    await scheduledMessageJobCaller.cancelScheduledMessageJob({ id, roomId });
+    const tombstone = {
+      deletedAt: new Date(0),
+      id,
+      message: "",
+      replyToId: null,
+      runAt,
+      userId: getMockSession().user.id,
+      version: 1,
+    };
+    userObject.removeReminder.mockResolvedValue(undefined);
+    roomObject.deleteScheduledMessage.mockResolvedValue(tombstone);
 
+    await expect(scheduledMessageJobCaller.cancelScheduledMessageJob({ id, roomId })).resolves.toStrictEqual({
+      kind: ScheduledMessageJobType.ScheduledMessage,
+      row: tombstone,
+    });
     expect(roomObject.deleteScheduledMessage).toHaveBeenCalledExactlyOnceWith(id, { userId: getMockSession().user.id });
   });
 
@@ -206,8 +232,8 @@ describe("scheduledMessageJobRouter", () => {
     expect.hasAssertions();
 
     const id = v7();
-    userObject.removeReminder.mockResolvedValue(false);
-    roomObject.deleteScheduledMessage.mockResolvedValue(false);
+    userObject.removeReminder.mockResolvedValue(undefined);
+    roomObject.deleteScheduledMessage.mockResolvedValue(undefined);
 
     await expect(
       scheduledMessageJobCaller.cancelScheduledMessageJob({ id, roomId }),

@@ -1,4 +1,4 @@
-import type { RoomMessage, ScheduledRoomMessage } from "@esposter/db-schema";
+import type { ScheduledRoomMessage } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { WordFilteredError } from "#server/models/message/moderation/WordFilteredError";
@@ -33,68 +33,73 @@ export const scheduledMessageRouter = router({
   }),
   deleteScheduledMessage: getMemberProcedure(deleteScheduledMessageInputSchema, "roomId").mutation<void>(
     async ({ ctx, input }) => {
-      const isDeleted = await useRoomObject(input.roomId).deleteScheduledMessage(input.id, getRoomActor(ctx));
-      if (!isDeleted) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
+      const deletedScheduledMessage = await useRoomObject(input.roomId).deleteScheduledMessage(
+        input.id,
+        getRoomActor(ctx),
+      );
+      if (!deletedScheduledMessage) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
     },
   ),
-  // The claim is the object's delete, so a message the object is already sending cannot be sent a second time from here.
+  // The claim is the object's tombstone, so a message the object is already sending cannot be sent a second time from here.
   // Every guard createUserMessage would reject runs before the claim, because a claim the guards then refuse would burn
   // The scheduled message without ever sending it
-  sendScheduledMessageNow: getMemberProcedure(sendScheduledMessageNowInputSchema, "roomId").mutation<RoomMessage>(
-    async ({ ctx, input }) => {
-      const actor = getRoomActor(ctx);
-      const roomObject = useRoomObject(input.roomId);
-      const [scheduledMessage] = await roomObject.readScheduledMessages({ ids: [input.id], userId: actor.userId });
-      if (!scheduledMessage) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
+  sendScheduledMessageNow: getMemberProcedure(
+    sendScheduledMessageNowInputSchema,
+    "roomId",
+  ).mutation<ScheduledRoomMessage>(async ({ ctx, input }) => {
+    const actor = getRoomActor(ctx);
+    const roomObject = useRoomObject(input.roomId);
+    const [scheduledMessage] = await roomObject.readScheduledMessages({ ids: [input.id], userId: actor.userId });
+    if (!scheduledMessage) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
 
-      // The word filter is the exception: it already applied the room's automod action, and its inputs are both stored, so
-      // Leaving the message scheduled hands the object the same block when it comes due — a second timeout and a second
-      // Audit row for one message. Claim it here instead, so it is burnt
-      await getResultAsync(() =>
-        assertCanCreateMessage(ctx.db, actor.userId, input.roomId, scheduledMessage.message),
-      ).match(noop, async (error) => {
-        if (error instanceof TRPCError && error.cause instanceof WordFilteredError)
-          await roomObject.deleteScheduledMessage(input.id, actor);
+    // The word filter is the exception: it already applied the room's automod action, and its inputs are both stored, so
+    // Leaving the message scheduled hands the object the same block when it comes due — a second timeout and a second
+    // Audit row for one message. Claim it here instead, so it is burnt
+    await getResultAsync(() =>
+      assertCanCreateMessage(ctx.db, actor.userId, input.roomId, scheduledMessage.message),
+    ).match(noop, async (error) => {
+      if (error instanceof TRPCError && error.cause instanceof WordFilteredError)
+        await roomObject.deleteScheduledMessage(input.id, actor);
+      throw error;
+    });
+
+    // The claim is answered with the tombstone it left, which the client confirms its entry at
+    const claimedScheduledMessage = await roomObject.deleteScheduledMessage(input.id, actor);
+    if (!claimedScheduledMessage) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
+
+    // A send that fails past the guards — a transient write, a serialization error — must not burn the message: putting
+    // It back leaves it scheduled, so the caller's error means "not sent", never "lost". The word filter can still block
+    // Here, and that one is never put back, for the same reason as above
+    return getResultAsync(() =>
+      createUserMessage(ctx.db, actor, {
+        files: [],
+        message: scheduledMessage.message,
+        replyToId: scheduledMessage.replyToId,
+        roomId: input.roomId,
+        type: MessageType.Message,
+      }),
+    ).match(
+      () => claimedScheduledMessage,
+      async (error) => {
+        if (error instanceof TRPCError && error.cause instanceof WordFilteredError) throw error;
+        // A put-back that fails too is logged, and the caller still hears why the send failed rather than why the put-back did
+        await getResultAsync(() =>
+          roomObject.createScheduledMessage(
+            {
+              id: scheduledMessage.id,
+              message: scheduledMessage.message,
+              replyToId: scheduledMessage.replyToId ?? undefined,
+              runAt: scheduledMessage.runAt,
+            },
+            actor,
+          ),
+        ).match(noop, (putBackError) => {
+          console.error("Scheduled message failed to be put back", { error: putBackError, id: scheduledMessage.id });
+        });
         throw error;
-      });
-
-      const isClaimed = await roomObject.deleteScheduledMessage(input.id, actor);
-      if (!isClaimed) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
-
-      // A send that fails past the guards — a transient write, a serialization error — must not burn the message: putting
-      // It back leaves it scheduled, so the caller's error means "not sent", never "lost". The word filter can still block
-      // Here, and that one is never put back, for the same reason as above
-      return getResultAsync(() =>
-        createUserMessage(ctx.db, actor, {
-          files: [],
-          message: scheduledMessage.message,
-          replyToId: scheduledMessage.replyToId,
-          roomId: input.roomId,
-          type: MessageType.Message,
-        }),
-      ).match(
-        (message) => message,
-        async (error) => {
-          if (error instanceof TRPCError && error.cause instanceof WordFilteredError) throw error;
-          // A put-back that fails too is logged, and the caller still hears why the send failed rather than why the put-back did
-          await getResultAsync(() =>
-            roomObject.createScheduledMessage(
-              {
-                id: scheduledMessage.id,
-                message: scheduledMessage.message,
-                replyToId: scheduledMessage.replyToId ?? undefined,
-                runAt: scheduledMessage.runAt,
-              },
-              actor,
-            ),
-          ).match(noop, (putBackError) => {
-            console.error("Scheduled message failed to be put back", { error: putBackError, id: scheduledMessage.id });
-          });
-          throw error;
-        },
-      );
-    },
-  ),
+      },
+    );
+  }),
   updateScheduledMessage: getMemberProcedure(
     updateScheduledMessageInputSchema,
     "roomId",

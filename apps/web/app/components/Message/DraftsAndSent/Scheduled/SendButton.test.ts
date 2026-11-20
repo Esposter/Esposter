@@ -1,11 +1,10 @@
 // @vitest-environment nuxt
 import MessageDraftsAndSentScheduledSendButton from "#src/components/Message/DraftsAndSent/Scheduled/SendButton.vue";
-import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { createScheduledMessageJob } from "#src/services/message/draftsAndSent/createScheduledMessageJob.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
-import { MessageType, ScheduledMessageJobType } from "@esposter/db-schema";
+import { ScheduledMessageJobType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -28,17 +27,29 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
     expect.hasAssertions();
 
     const { promise: isSent, resolve: onSent } = Promise.withResolvers<void>();
+    const sentScheduledMessageJob = createJob(v7());
+    const otherScheduledMessageJob = createJob(v7());
     trpcMsw.message.scheduledMessage.sendScheduledMessageNow.mutation(() => {
       onSent();
-      return createOptimisticMessage({ roomId: room.id, type: MessageType.Message }, userId);
+      // The row the send claimed, a tombstone at the version its write named
+      return {
+        deletedAt: new Date(0),
+        id: sentScheduledMessageJob.id,
+        message: "",
+        replyToId: null,
+        runAt: sentScheduledMessageJob.runAt,
+        userId,
+        version: 1,
+      };
     });
     // A send settles the badge by reading the count again, which the server answers with the one job left
     trpcMsw.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query(() => 1);
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
-    const sentScheduledMessageJob = createJob(v7());
-    const otherScheduledMessageJob = createJob(v7());
-    items.value = [sentScheduledMessageJob, otherScheduledMessageJob];
+    const { readItems } = scheduledMessageJobStore;
+    await readItems(() =>
+      Promise.resolve({ items: [sentScheduledMessageJob, otherScheduledMessageJob], nextCursor: "" }),
+    );
     scheduledMessageJobCount.value = 2;
 
     const component = await mountSuspended(MessageDraftsAndSentScheduledSendButton, {

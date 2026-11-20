@@ -17,6 +17,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 // Made through them rather than through a Durable Object that does not run here
 const { roomObject, useRoomObjectMock } = vi.hoisted(() => {
   const roomFake = {
+    createMessage: vi.fn<RoomObjectRpc["createMessage"]>(),
     createScheduledMessage: vi.fn<RoomObjectRpc["createScheduledMessage"]>(),
     deleteScheduledMessage: vi.fn<RoomObjectRpc["deleteScheduledMessage"]>(),
     readScheduledMessages: vi.fn<RoomObjectRpc["readScheduledMessages"]>(),
@@ -56,6 +57,7 @@ describe("scheduledMessageRouter", () => {
     expect.hasAssertions();
 
     const scheduledMessage = {
+      deletedAt: null,
       id: v7(),
       message,
       replyToId: null,
@@ -74,7 +76,15 @@ describe("scheduledMessageRouter", () => {
     expect.hasAssertions();
 
     const id = v7();
-    const updatedMessage = { id, message, replyToId: null, runAt, userId: getMockSession().user.id, version: 0 };
+    const updatedMessage = {
+      deletedAt: null,
+      id,
+      message,
+      replyToId: null,
+      runAt,
+      userId: getMockSession().user.id,
+      version: 0,
+    };
     roomObject.updateScheduledMessage.mockResolvedValue(updatedMessage);
 
     await expect(
@@ -86,7 +96,15 @@ describe("scheduledMessageRouter", () => {
     expect.hasAssertions();
 
     const id = v7();
-    roomObject.deleteScheduledMessage.mockResolvedValue(true);
+    roomObject.deleteScheduledMessage.mockResolvedValue({
+      deletedAt: new Date(0),
+      id,
+      message: "",
+      replyToId: null,
+      runAt,
+      userId: getMockSession().user.id,
+      version: 1,
+    });
 
     await scheduledMessageCaller.deleteScheduledMessage({ id, roomId });
 
@@ -97,13 +115,31 @@ describe("scheduledMessageRouter", () => {
     expect.hasAssertions();
 
     const id = v7();
-    roomObject.deleteScheduledMessage.mockResolvedValue(false);
+    roomObject.deleteScheduledMessage.mockResolvedValue(undefined);
 
     await expect(
       scheduledMessageCaller.deleteScheduledMessage({ id, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.ScheduledMessageJob, id).message}]`,
     );
+  });
+
+  // The claim is the tombstone the room leaves, and the send answers with it, so the client confirms the entry it drew at the
+  // Version the claim named, and the message it sent arrives on the room's own event
+  test("sends a scheduled message now, and answers with the tombstone its claim left", async () => {
+    expect.hasAssertions();
+
+    const id = v7();
+    const userId = getMockSession().user.id;
+    const scheduledMessage = { deletedAt: null, id, message, replyToId: null, runAt, userId, version: 0 };
+    const tombstone = { ...scheduledMessage, deletedAt: new Date(0), message: "", version: 1 };
+    roomObject.readScheduledMessages.mockResolvedValue([scheduledMessage]);
+    roomObject.deleteScheduledMessage.mockResolvedValue(tombstone);
+    roomObject.createMessage.mockResolvedValue({ ...tombstone, id: 1 } as unknown as Awaited<
+      ReturnType<RoomObjectRpc["createMessage"]>
+    >);
+
+    await expect(scheduledMessageCaller.sendScheduledMessageNow({ id, roomId })).resolves.toStrictEqual(tombstone);
   });
 
   test("fails to send a scheduled message its room's object does not hold", async () => {

@@ -15,6 +15,7 @@ export const createScheduledMessageJob = (
     room,
     roomId: room.id,
     runAt: new Date(0),
+    version: 0,
     ...overrides,
   };
 };

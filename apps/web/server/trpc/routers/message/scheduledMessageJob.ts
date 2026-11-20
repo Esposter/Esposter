@@ -1,5 +1,5 @@
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
-import type { Page, ScheduledReminder } from "@esposter/db-schema";
+import type { Page, ScheduledReminder, ScheduledRoomMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
@@ -13,21 +13,28 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { readMyScheduledMessagesInputSchema } from "#shared/models/db/message/scheduledMessage/ReadMyScheduledMessagesInput";
 import { scheduledMessageIdentityInputSchema } from "#shared/models/db/message/scheduledMessage/ScheduledMessageIdentityInput";
 import { scheduleReminderInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleReminderInput";
-import { DatabaseEntityType } from "@esposter/db-schema";
+import { DatabaseEntityType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { v7 } from "uuid";
+
+// What a cancel left as a tombstone, tagged by the kind of job it cancelled: a reminder's row, or a scheduled message's
+type CancelledScheduledMessageJob =
+  | { kind: typeof ScheduledMessageJobType.Reminder; row: ScheduledReminder }
+  | { kind: typeof ScheduledMessageJobType.ScheduledMessage; row: ScheduledRoomMessage };
 
 // The Scheduled tab's rows are held by their owners: a reminder in the person's object, a scheduled message in its room's.
 // Both are listed and cancelled here, so the tab reads and writes each kind through this router alone
 export const scheduledMessageJobRouter = router({
   // A reminder is the person's own row, so their object answers first. A miss means the id is a scheduled message, which
-  // Its room's object deletes for the sender who scheduled it and for nobody else
+  // Its room's object tombstones for the sender who scheduled it and for nobody else. Either answers with the tombstone it left
   cancelScheduledMessageJob: standardAuthedProcedure
     .input(scheduledMessageIdentityInputSchema)
-    .mutation<void>(async ({ ctx, input: { id, roomId } }) => {
-      if (await useUserObject(ctx.user.id).removeReminder(id)) return;
+    .mutation<CancelledScheduledMessageJob>(async ({ ctx, input: { id, roomId } }) => {
+      const reminder = await useUserObject(ctx.user.id).removeReminder(id);
+      if (reminder) return { kind: ScheduledMessageJobType.Reminder, row: reminder };
 
-      const isDeleted = await useRoomObject(roomId).deleteScheduledMessage(id, getRoomActor(ctx));
-      if (!isDeleted) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, id);
+      const scheduledMessage = await useRoomObject(roomId).deleteScheduledMessage(id, getRoomActor(ctx));
+      if (!scheduledMessage) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, id);
+      return { kind: ScheduledMessageJobType.ScheduledMessage, row: scheduledMessage };
     }),
   readMyScheduledMessageJobs: standardAuthedProcedure
     .input(readMyScheduledMessagesInputSchema)
@@ -40,7 +47,7 @@ export const scheduledMessageJobRouter = router({
   // A reminder is written to its owner's object, which the alarm sends at `runAt`. Its room is what the notification links
   // To, so only a member of that room can set one
   scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<
-    Except<ScheduledReminder, "version">
+    Except<ScheduledReminder, "deletedAt" | "version">
   >(async ({ ctx, input }) => {
     const reminder = { id: v7(), roomId: input.roomId, runAt: input.runAt, text: input.text };
     await useUserObject(ctx.user.id).addReminder(reminder);

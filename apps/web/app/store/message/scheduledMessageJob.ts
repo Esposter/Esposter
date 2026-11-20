@@ -1,80 +1,146 @@
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
+import type { Entry } from "#src/models/shared/overlay/Entry";
+import type { Page } from "@esposter/db-schema";
 
-import { getRestoredItems } from "#src/services/shared/getRestoredItems";
+import { createSingleFlight } from "#src/services/shared/createSingleFlight";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
+import { createTable } from "#src/services/shared/overlay/createTable";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useOverlayStore } from "#src/store/overlay";
+import { remindersInUser, ScheduledMessageJobType, scheduledMessagesInRoom } from "@esposter/db-schema";
+import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
-// A scheduled item is named by its id and its room, which is what both of its writes take
-type ScheduledMessageJobKey = Pick<ScheduledMessageJobWithRoom, "id" | "roomId">;
+// A reminder is held as the row its person holds and a scheduled message as the row its room holds, so a cancel or a send
+// Leaves that row a tombstone the list reads back
+const reminderTable = createTable(remindersInUser);
+const scheduledMessageTable = createTable(scheduledMessagesInRoom);
+
+// The job's row as a tombstone, drawn at once: a cancel and a send both end the job the same way. It is built from the job
+// The list holds, so it needs no row arrived first
+const getTombstoneEntry =
+  (job: ScheduledMessageJobWithRoom, sessionUserId: string, deletedAt: Date): Entry =>
+  (view) => {
+    if (job.payload.type === ScheduledMessageJobType.Reminder) {
+      view.set(reminderTable, [job.id], {
+        deletedAt,
+        id: job.id,
+        roomId: job.roomId,
+        runAt: job.runAt,
+        text: job.payload.text,
+      });
+      return;
+    }
+
+    view.set(scheduledMessageTable, [job.id], {
+      deletedAt,
+      id: job.id,
+      message: job.payload.message,
+      replyToId: job.payload.replyToId,
+      runAt: job.runAt,
+      userId: sessionUserId,
+    });
+  };
 
 export const useScheduledMessageJobStore = defineStore("message/scheduledMessageJob", () => {
   const { $trpc } = useNuxtApp();
-  // One executor for both writes, because a queue lives on the instance and not on the key: sending and
-  // Cancelling take the same job off the page, so on two instances the shared `key: id` would read as if they
-  // Serialised while they in fact raced, and the rejected one would put the row back over the other's removal
-  const { executeMutation: executeScheduledMessageJobMutation } = useMutation();
-  // The count is one aggregate on its own executor, so its reads share one key and the latest read to start is the
-  // One whose answer lands
-  const { executeQuery: executeScheduledMessageJobCountQuery } = useMutation();
-  const { items, ...restCursorPaginationData } = useCursorPaginationData<ScheduledMessageJobWithRoom>();
+  const userId = useSessionUserId();
+  const overlayStore = useOverlayStore();
+  const { arrive, view, writeOptimistic } = overlayStore;
+  const reminders = view(reminderTable);
+  const scheduledMessages = view(scheduledMessageTable);
+  // The page names the jobs in the order the server gives them. Each job's row arrives at the version its page read it at,
+  // So a read that lands after a cancel cannot list the job again
+  const {
+    items: pageItems,
+    readItems: readPageItems,
+    readMoreItems: readMorePageItems,
+    ...restCursorPaginationData
+  } = useCursorPaginationData<ScheduledMessageJobWithRoom>();
+  const arriveJobs = ({ items: jobs }: Page<ScheduledMessageJobWithRoom>) => {
+    for (const job of jobs)
+      if (job.payload.type === ScheduledMessageJobType.Reminder)
+        arrive(reminderTable, {
+          deletedAt: null,
+          id: job.id,
+          roomId: job.roomId,
+          runAt: job.runAt,
+          text: job.payload.text,
+          version: job.version,
+        });
+      else
+        arrive(scheduledMessageTable, {
+          deletedAt: null,
+          id: job.id,
+          message: job.payload.message,
+          replyToId: job.payload.replyToId,
+          runAt: job.runAt,
+          userId: userId.value,
+          version: job.version,
+        });
+  };
+  // A job is listed while its row is live in the overlay. The page is the membership, and the view holds only live rows, so
+  // A cancel or a send that tombstones a job's row takes it off the list the moment that write is sent
+  const items = computed(() => {
+    const liveIds = new Set([...reminders.value, ...scheduledMessages.value].map(({ id }) => id));
+    return pageItems.value.filter(({ id }) => liveIds.has(id));
+  });
+  // The badge counts every job the user has, not just the page on screen, so the server holds that count and it is read
+  // Again once a write settles, rather than adjusted. One read runs at a time, and a failed read keeps the last count
   const scheduledMessageJobCount = ref(0);
-  // The badge counts every job the user has, not just the page on screen, and the server holds that count. A write
-  // That settles reads it again rather than adjusting it, since the row it removed is one of many. A failed read keeps
-  // The last count and the tRPC link alerts it, so it never fails the write that settled before it
-  const readScheduledMessageJobCount = async () => {
-    await executeScheduledMessageJobCountQuery(
-      () => $trpc.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query(),
-      {
-        key: "scheduledMessageJobCount",
-        onError: console.error,
-        onSuccess: (count) => {
-          scheduledMessageJobCount.value = count;
-        },
+  const flushScheduledMessageJobCount = createSingleFlight(async () => {
+    scheduledMessageJobCount.value = await $trpc.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query();
+  });
+  const readScheduledMessageJobCount = () => getResultAsync(flushScheduledMessageJobCount).match(noop, console.error);
+  const readItems: typeof readPageItems = (query, options) =>
+    readPageItems(async () => {
+      const page = await query();
+      arriveJobs(page);
+      return page;
+    }, options);
+  const readMoreItems: typeof readMorePageItems = (query, onComplete) =>
+    readMorePageItems(async (cursor) => {
+      const page = await query(cursor);
+      arriveJobs(page);
+      return page;
+    }, onComplete);
+  // A cancel is drawn at once. The tombstone its answer names confirms the entry, and a refused cancel drops the entry, so
+  // The job is listed again with nothing restored. `onCancelled` runs once the server has answered, so a caller's own
+  // Follow-up never runs for a cancel that was refused
+  const cancelScheduledMessageJob = (job: ScheduledMessageJobWithRoom, onCancelled?: () => void) => {
+    const deletedAt = new Date();
+    writeOptimistic(
+      async () => {
+        const cancelled = await withFinalizerAsync(
+          () => $trpc.message.scheduledMessageJob.cancelScheduledMessageJob.mutate({ id: job.id, roomId: job.roomId }),
+          readScheduledMessageJobCount,
+        );
+        onCancelled?.();
+        return cancelled.kind === ScheduledMessageJobType.Reminder
+          ? createRowResponse(reminderTable, cancelled.row)
+          : createRowResponse(scheduledMessageTable, cancelled.row);
       },
-    );
-  };
-  const deleteScheduledMessageJob = (id: ScheduledMessageJobWithRoom["id"]) => {
-    items.value = items.value.filter((scheduledMessageJob) => scheduledMessageJob.id !== id);
-  };
-  // Cancelling and sending end the job the same way, so they share one optimistic apply. The row is read when
-  // The write is sent, so the second of two queued writes on one job finds it already gone and owes nothing back
-  const getApplyOptimisticDelete = (id: ScheduledMessageJobWithRoom["id"]) => () => {
-    const deletedIndex = items.value.findIndex((scheduledMessageJob) => scheduledMessageJob.id === id);
-    const deletedScheduledMessageJob = items.value[deletedIndex];
-    deleteScheduledMessageJob(id);
-    return () => {
-      if (!deletedScheduledMessageJob) return;
-      // Back at the index it held on the page, which is the order the server answers the tab in
-      items.value = getRestoredItems(items.value, deletedScheduledMessageJob, deletedIndex);
-    };
-  };
-  // A cancel is drawn at once: the job leaves the page as the cancel is sent. A refused cancel puts the job back where it
-  // Stood, and then runs `rollback` for whatever the caller drew beside it
-  const cancelScheduledMessageJob = ({ id, roomId }: ScheduledMessageJobKey, rollback?: () => void) => {
-    const applyOptimisticDelete = getApplyOptimisticDelete(id);
-    executeScheduledMessageJobMutation(
-      () => $trpc.message.scheduledMessageJob.cancelScheduledMessageJob.mutate({ id, roomId }),
-      {
-        applyOptimistic: () => {
-          const undoDelete = applyOptimisticDelete();
-          return () => {
-            undoDelete();
-            rollback?.();
-          };
-        },
-        key: id,
-        reconcile: readScheduledMessageJobCount,
-      },
+      { entry: getTombstoneEntry(job, userId.value, deletedAt), onError: createErrorAlert },
     );
   };
   // A reminder posts nothing, so only a scheduled message is sent now, through the room it is held by
-  const sendScheduledMessageNow = ({ id, roomId }: ScheduledMessageJobKey) => {
-    executeScheduledMessageJobMutation(
-      () => $trpc.message.scheduledMessage.sendScheduledMessageNow.mutate({ id, roomId }),
-      { applyOptimistic: getApplyOptimisticDelete(id), key: id, reconcile: readScheduledMessageJobCount },
+  const sendScheduledMessageNow = (job: ScheduledMessageJobWithRoom) => {
+    const deletedAt = new Date();
+    writeOptimistic(
+      async () => {
+        const sentScheduledMessage = await withFinalizerAsync(
+          () => $trpc.message.scheduledMessage.sendScheduledMessageNow.mutate({ id: job.id, roomId: job.roomId }),
+          readScheduledMessageJobCount,
+        );
+        return createRowResponse(scheduledMessageTable, sentScheduledMessage);
+      },
+      { entry: getTombstoneEntry(job, userId.value, deletedAt), onError: createErrorAlert },
     );
   };
   return {
     cancelScheduledMessageJob,
     items,
+    readItems,
+    readMoreItems,
     readScheduledMessageJobCount,
     scheduledMessageJobCount,
     sendScheduledMessageNow,

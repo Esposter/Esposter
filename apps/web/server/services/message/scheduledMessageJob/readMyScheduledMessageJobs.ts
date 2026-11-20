@@ -93,6 +93,7 @@ export const readMyScheduledMessageJobs = async (
             room,
             roomId: item.roomId,
             runAt: item.runAt,
+            version: item.version,
           },
         ];
 
@@ -109,6 +110,7 @@ export const readMyScheduledMessageJobs = async (
           room,
           roomId: item.roomId,
           runAt: scheduledMessage.runAt,
+          version: scheduledMessage.version,
         },
       ];
     }),

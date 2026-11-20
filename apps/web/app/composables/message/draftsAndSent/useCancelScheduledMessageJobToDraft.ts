@@ -6,21 +6,14 @@ import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessage
 
 export const useCancelScheduledMessageJobToDraft = () => {
   const inputStore = useInputStore();
-  const { drafts } = storeToRefs(inputStore);
-  const { restoreDraft, setDraft } = inputStore;
+  const { setDraft } = inputStore;
   const scheduledMessageJobStore = useScheduledMessageJobStore();
   const { cancelScheduledMessageJob } = scheduledMessageJobStore;
+  // The composer takes the job's text once the cancel is answered, so a refused cancel leaves the composer as it was and
+  // Nothing has to be given back
   return (scheduledMessageJob: ScheduledMessageJobWithRoom) => {
-    const { roomId } = scheduledMessageJob;
-    // What the composer held before the job's text took its place, which a refused cancel puts back
-    const previousDraft = drafts.value.get(roomId);
-    setDraft(roomId, getScheduledMessageJobText(scheduledMessageJob));
-    const writtenContent = drafts.value.get(roomId)?.content;
-    // A rejected cancel leaves the job scheduled, so the composer gives its draft back, and only while it still holds the
-    // Text written here. The composer's own save rewrites the draft as the same text, so the text is what is compared: a
-    // Reader who has typed into it since keeps what they typed
     cancelScheduledMessageJob(scheduledMessageJob, () => {
-      if (drafts.value.get(roomId)?.content === writtenContent) restoreDraft(roomId, previousDraft);
+      setDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));
     });
   };
 };
