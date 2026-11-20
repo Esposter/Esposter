@@ -3,8 +3,10 @@ import type { UserConfig } from "tsdown";
 
 import { ExportsGeneration } from "#src/models/ExportsGeneration";
 import { HIDDEN_FOLDER_REGEX, PNPM_PEER_SUFFIX_REGEX, SOURCE_CONDITION } from "#src/services/constants";
+import { dropModulePathCommentsPlugin } from "#src/services/dropModulePathCommentsPlugin";
 import { generateExports } from "#src/services/generateExports";
 import { getPackagePatterns } from "#src/services/getPackagePatterns";
+import { mapGlobalStorePath } from "#src/services/mapGlobalStorePath";
 import { readPackageManifest } from "#src/services/readPackageManifest";
 import { mergeConfig } from "tsdown";
 
@@ -93,11 +95,13 @@ export const getTsdownConfiguration = ({
     // Dot (pnpm's `.pnpm`), since the tools that move a `dist` between machines skip a hidden folder: CI's artifact
     // Upload dropped the vendored files and the app build then could not resolve them. That folder keeps the package
     // And its version and drops pnpm's peer suffix, which pnpm shortens to a hash on Windows, so the declarations that
-    // Import a vendored file name the same path, and measure the same size, on every machine. A function replaces the
-    // Default sanitizer, so it keeps the three characters that one swaps for an underscore.
+    // Import a vendored file name the same path, and measure the same size, on every machine. The global store keeps
+    // A package outside the repository, so `mapGlobalStorePath` writes it under that same folder before anything else
+    // Reads the name. A function replaces the default sanitizer, so it keeps the three characters that one swaps for
+    // An underscore.
     outputOptions: {
       sanitizeFileName: (name: string) =>
-        name
+        mapGlobalStorePath(name)
           .replaceAll("\0", "_")
           .replaceAll("?", "_")
           .replaceAll("*", "_")
@@ -106,6 +110,7 @@ export const getTsdownConfiguration = ({
           .replace(PNPM_PEER_SUFFIX_REGEX, "$<folder>"),
     },
     platform: "neutral",
+    plugins: [dropModulePathCommentsPlugin()],
     unbundle: true,
   } satisfies UserConfig;
   return isPrivate

@@ -3,7 +3,7 @@ import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { join, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import { build } from "vite";
 import { assert, describe, expect, onTestFinished, test } from "vitest";
@@ -21,7 +21,7 @@ const readDistDirectory = (packagePath: string) => {
  * A package builds one file per module, so a consumer's bundler drops every module an import does not reach. The
  * schema package is the one that matters: its barrel holds drizzle tables and the schemas derived from them, and
  * the client imports its enums. A package built into one file keeps all of that for a single enum, so this bundles
- * the import the way the app's client does and reads what survives. The other two tests hold the shape of the output
+ * the import the way the app's client does and reads what survives. The other tests hold the shape of the output
  * itself: it is moved between machines and loaded by Node, which neither a stylesheet import nor a hidden folder survives.
  */
 describe("unbundledBarrels", () => {
@@ -29,6 +29,11 @@ describe("unbundledBarrels", () => {
   const STYLESHEET_IMPORT_REGEX = /^import\s+(?:[^;]*?\sfrom\s+)?["'][^"']+\.css["']/mu;
   // Matches a pnpm store folder name that carries a peer suffix after its version, such as `vize@0.715.0_vue@3.5.45_…`
   const PEER_SUFFIX_FOLDER_REGEX = /^@?[^@]+@[^_]+_/u;
+  // The folders a machine names in a path: a pnpm store on macOS sits under `Library`, and a copy kept from one under
+  // `node_modules` is what `vendor` replaces
+  const MACHINE_FOLDER_NAMES = new Set(["Library", "node_modules"]);
+  // Matches the path of a pnpm store, which only the machine that built a file has
+  const STORE_PATH_REGEX = /pnpm\/store\/|links\/@\//u;
   const PACKAGE_PATHS = readTsdownPackagePaths();
 
   const DB_SCHEMA_ENTRY = pathToFileURL(resolve(REPOSITORY_ROOT, "packages/db-schema/dist/index.js")).href;
@@ -107,5 +112,31 @@ describe("unbundledBarrels", () => {
     });
 
     expect(stylesheetImporters).toStrictEqual([]);
+  });
+
+  // A dependency a build copies out of a pnpm store lands under `vendor`, named by its package. Copied under the folder it
+  // Was read from, the copy named the machine that built it: the global store sits in `~/Library`, outside the repository,
+  // So the copy went to `dist/Library` and a declaration imported it by a path no other machine has. Both the folder and a
+  // Module's specifier of a store path are that defect, so either one fails here
+  test("a build names no folder of the machine that built it", { timeout: TREE_READ_TIMEOUT_MS }, () => {
+    expect.hasAssertions();
+
+    const machineFolders = PACKAGE_PATHS.flatMap((packagePath) => {
+      const distDirectory = readDistDirectory(packagePath);
+      return readdirSync(distDirectory, { recursive: true, withFileTypes: true })
+        .map(({ name, parentPath }) => relative(distDirectory, resolve(parentPath, name)))
+        .filter((path) => path.split(sep).some((segment) => MACHINE_FOLDER_NAMES.has(segment)))
+        .map((path) => `${packagePath}: ${path}`);
+    });
+    const storePaths = PACKAGE_PATHS.flatMap((packagePath) => {
+      const distDirectory = readDistDirectory(packagePath);
+      return readdirSync(distDirectory, { recursive: true, withFileTypes: true })
+        .filter((entry) => entry.isFile() && /\.(?:c|m)?[jt]s$/u.test(entry.name))
+        .map(({ name, parentPath }) => resolve(parentPath, name))
+        .filter((file) => STORE_PATH_REGEX.test(readFileSync(file, "utf8")))
+        .map((file) => `${packagePath}: ${relative(distDirectory, file)}`);
+    });
+
+    expect([...machineFolders, ...storePaths]).toStrictEqual([]);
   });
 });

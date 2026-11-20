@@ -72,3 +72,12 @@ export const HIDDEN_FOLDER_REGEX: RegExp = /(?<![^/])\.(?=\w)/gu;
 // The peer suffix of a vendored package's folder, such as `_vue@3.5.45_typescript@6.0.3` after `vize@0.715.0`, which
 // Pnpm keeps whole on Linux and shortens to a hash on Windows
 export const PNPM_PEER_SUFFIX_REGEX: RegExp = /(?<folder>vendor\/pnpm\/@?[^/@]+@[^/_]+)_[^/]*/gu;
+// A package in pnpm's global virtual store, which every checkout links from: the store keeps it at
+// `links/<scope>/<name>/<version>/<hash>/node_modules/<name>` under the machine's own pnpm store, outside the
+// Repository, and `@` is the scope of an unscoped package. Matched through its `node_modules` folder, so the one
+// Package maps to the same output folder on every machine
+export const GLOBAL_STORE_PACKAGE_REGEX: RegExp =
+  /^.*?links\/(?<scope>@[^/]*)\/(?<name>[^/]+)\/(?<version>[^/]+)\/[^/]+\/node_modules\//u;
+// The line rolldown writes above a copied CommonJS module, naming its path relative to the output file. A module in a
+// Store is named through the store's own folders, so the line names the machine that built it
+export const MODULE_PATH_COMMENT_REGEX: RegExp = /^\/\/ (?:\.\.\/)+[^\n]*node_modules\/[^\n]*\n/gmu;
