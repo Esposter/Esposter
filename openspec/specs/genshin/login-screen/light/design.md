@@ -39,6 +39,8 @@ flowchart TD
 
 Items this page shares with the [light spec](spec.md) are kept there.
 
+- [ ] **The stone light's specular, smoothing share, occlusion grade and upward colour are parked, and the bloom reads worse than none** — no source yet for the share, the grade or the cube, and no bloom structure closes the reading; the measurements and the PC captures they need are tasks 4.1 to 4.7 of the [recreation passes change](../../../../changes/genshin-recreation-passes/tasks.md).
+
 - [ ] **Each hour's ramp, harmonics and height fall-off are solved over the exports' interior pixels, with the bins averaged** — no source yet: the solve is hosted under `login/stoneLight`, and its calibrate run is not kept locally.
 - [ ] **The day's haze is dimmer and bluer than the cloud sea's, the dusk's warmer and redder, and the night's close to the sea's** — no source yet: the haze colours are hosted, and no comparison is kept locally.
 - [ ] **These shadow settings bring the scene's edge count near the reference's** — no source yet: no edge-count comparison is kept in `{data-root}/genshin-parity/comparisons/`.
