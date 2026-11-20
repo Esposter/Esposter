@@ -3,7 +3,7 @@ import type { RowVersion } from "@esposter/db-schema";
 import type { Table } from "drizzle-orm";
 
 import { checkIsSecretColumn } from "#src/services/realtime/checkIsSecretColumn";
-import { getScopeKeys } from "#src/services/realtime/getScopeKeys";
+import { getRowScopeValues } from "#src/services/realtime/getRowScopeValues";
 import { getScopeValue } from "#src/services/realtime/getScopeValue";
 import { getWriteTable } from "#src/services/realtime/getWriteTable";
 import { checkIsRecord } from "#src/util/object/checkIsRecord";
@@ -14,12 +14,13 @@ import { getTableName } from "drizzle-orm";
 const getRowVersion = async (table: Table, row: Record<string, unknown>): Promise<RowVersion | undefined> => {
   const tableName = getTableName(table);
   const { version } = row;
-  const scopeColumns = getScopeKeys(table).filter((column) => row[column] !== undefined && row[column] !== null);
-  if (typeof version !== "number" || scopeColumns.length === 0) return undefined;
+  const scopeValues = getRowScopeValues(table, row);
+  if (typeof version !== "number" || scopeValues.length === 0) return undefined;
   const key = Object.fromEntries(
     await Promise.all(
-      scopeColumns.map(
-        async (column) => [column, await getScopeValue(row[column], checkIsSecretColumn(tableName, column))] as const,
+      scopeValues.map(
+        async ({ column, value }) =>
+          [column, await getScopeValue(value, checkIsSecretColumn(tableName, column))] as const,
       ),
     ),
   );
