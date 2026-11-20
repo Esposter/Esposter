@@ -2,6 +2,7 @@ import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAtta
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
+import { KIT_LENGTH_KEY } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
@@ -40,7 +41,7 @@ export const addGcsimGravityRippleCandidates = (
     const areaHitbox = findGcsimHitbox(config, "skill", target.hitboxName);
     const talentLeaf = findGcsimTalentLeaf(config, ripple.talentVariable, []);
     const isList = hitmarkValues.length > 1;
-    if (isList) add(`${target.path}.length`, hitmarkValues.length, toFile(hitmarks.file), hitmarks.line);
+    if (isList) add(`${target.path}.${KIT_LENGTH_KEY}`, hitmarkValues.length, toFile(hitmarks.file), hitmarks.line);
     for (const [hitIndex, hitmark] of hitmarkValues.entries()) {
       const path = isList ? `${target.path}.${hitIndex}` : target.path;
       addHit(
