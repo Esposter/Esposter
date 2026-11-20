@@ -138,7 +138,7 @@ const queue = createReplyQueue(async (request: SpeechRequest, checkIsSuperseded:
   writeVoiceLog(`${request.type} failed: ${String(outcome?.reason)}`);
   return VoiceStatus.Error;
 }, MESSAGE_DISPLAY_HOOK_TIMEOUT_MS);
-const handleLine = (line: string): Promise<VoiceStatus> => {
+const onLine = (line: string): Promise<VoiceStatus> => {
   const request = parseVoiceRequest(line);
   if (!request) return Promise.resolve(VoiceStatus.Error);
 
@@ -164,7 +164,7 @@ server.on("connection", (socket) => {
     buffer = "";
     // A line that is not JSON throws out of the parser synchronously; `Promise.try` turns that into a rejection this
     // Answers rather than one nothing on the socket hears
-    const [outcome] = await Promise.allSettled([Promise.try(() => handleLine(line))]);
+    const [outcome] = await Promise.allSettled([Promise.try(() => onLine(line))]);
     const status = outcome?.status === "fulfilled" ? outcome.value : VoiceStatus.Error;
     if (outcome?.status === "rejected") writeVoiceLog(`request failed: ${outcome.reason}`);
     const [load] = await Promise.allSettled([synthesizerLoad]);
