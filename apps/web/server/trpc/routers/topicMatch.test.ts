@@ -8,8 +8,8 @@ import { inviteRouter } from "#server/trpc/routers/invite";
 import { postRouter } from "#server/trpc/routers/post";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import {
-  computeReadSet,
   computeReadTopics,
+  computeStatementReadSet,
   computeWriteTopics,
   getSchemaTables,
   getWokenTopics,
@@ -103,7 +103,9 @@ describe("topicMatch", () => {
         reads.map(async (read) => {
           const { database, statements } = recordStatements(context.db);
           await read(database);
-          const readTableNames = new Set(computeReadSet(statements).tables);
+          const readTableNames = new Set(
+            statements.flatMap(({ statement }) => computeStatementReadSet(statement).tables),
+          );
           return statements.flatMap(({ statement }) => {
             const sql = new SQLiteDialect().sqlToQuery(statement.getSQL()).sql;
             return schemaTableNames.filter(
