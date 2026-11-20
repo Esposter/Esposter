@@ -4,6 +4,7 @@ import { useSession } from "#src/services/auth/authClient.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useStatusStore } from "#src/store/message/user/status";
 import { UserStatus } from "@esposter/db-schema";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -74,6 +75,37 @@ describe("messageModelStatusPickerForm", () => {
 
     expect(getStoredUserStatus(userId)).toBeUndefined();
     expect(messageField.element.value).toBe("");
+  });
+
+  // A presence push lands while the save is in flight, and the server refuses the save. The refusal has to leave the
+  // Status the row holds now, not the one it held when the save was sent
+  test("a refused status change leaves the status the row holds, not the one it held when sent", async () => {
+    expect.hasAssertions();
+
+    const statusStore = useStatusStore();
+    const { getUserStatus, storeStatus } = statusStore;
+    const storedStatus = {
+      createdAt: new Date(0),
+      deletedAt: null,
+      expiresAt: null,
+      isConnected: true,
+      message,
+      status: UserStatus.Online,
+      updatedAt: new Date(0),
+      version: 0,
+    };
+    storeStatus(userId, storedStatus);
+    trpcMsw.user.upsertStatus.mutation(() => {
+      storeStatus(userId, { ...storedStatus, status: UserStatus.Idle, version: 1 });
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const component = await mountSuspended(MessageModelStatusPickerForm);
+    await component.get("input").setValue(rejectedMessage);
+    await component.get("form").trigger("submit");
+    await waitForSynchronizedFunctions();
+    await flushPromises();
+
+    expect(getUserStatus(userId)).toBe(UserStatus.Idle);
   });
 
   // The row carries more than the two fields this draft holds, so a presence push flipping the connection state
