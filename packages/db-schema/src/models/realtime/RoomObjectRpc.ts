@@ -67,7 +67,7 @@ export interface RoomObjectRpc {
   deleteFile: (
     input: { fileId: string; id: number },
     actor: RoomActor,
-  ) => { deletedFile: FileEntity; message: RoomMessage } | null;
+  ) => null | { deletedFile: FileEntity; message: RoomMessage };
   deleteLinkPreview: (id: number, actor: RoomActor) => null | RoomMessage;
   // Returns the message as it was before the delete, so the caller can remove the blobs its files named
   deleteMessage: (id: number, actor: RoomActor) => Promise<null | RoomMessage>;

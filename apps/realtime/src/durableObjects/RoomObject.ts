@@ -240,7 +240,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
   deleteFile(
     { fileId, id }: { fileId: string; id: number },
     actor: RoomActor,
-  ): { deletedFile: FileEntity; message: RoomMessage } | null {
+  ): null | { deletedFile: FileEntity; message: RoomMessage } {
     const message = this.#readLiveMessage(id);
     if (!message || message.isForward) return null;
 
