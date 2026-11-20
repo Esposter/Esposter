@@ -4,6 +4,7 @@ import m0002 from "#src/objects/call/migrations/20261115020054_call_connected_at
 import m0003 from "#src/objects/call/migrations/20261119181308_call_participant_ids/migration.sql";
 import m0004 from "#src/objects/call/migrations/20261119213723_call_row_version/migration.sql";
 import m0005 from "#src/objects/call/migrations/20261120070724_call_participant_tombstones/migration.sql";
+import m0006 from "#src/objects/call/migrations/20261120233139_call_knocker_tombstones/migration.sql";
 
 export default {
   migrations: {
@@ -13,5 +14,6 @@ export default {
     "20261119181308_call_participant_ids": m0003,
     "20261119213723_call_row_version": m0004,
     "20261120070724_call_participant_tombstones": m0005,
+    "20261120233139_call_knocker_tombstones": m0006,
   },
 };

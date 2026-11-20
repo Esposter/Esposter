@@ -9,10 +9,12 @@ import type { PublishSource } from "#src/models/message/call/PublishSource";
 // Every method trusts the actor it names: the caller authorises against D1 first, and a method that checks the call's own
 // State (admission, joined, knocking) says so by its return value rather than throwing
 export interface CallObjectRpc {
-  admitKnocker: (input: { callSessionId: string; knockerId: string }) => boolean;
+  // The knocker's row as a tombstone at the version the removal left it, or the tombstone it already had.
+  // Null when the call never held the knocker
+  admitKnocker: (input: { callSessionId: string; knockerId: string }) => CallParticipantRow | null;
   // A revoked session's sockets on this call, closed, and its connections left as a leave would, with that leave
   closeSession: (sessionId: string) => Promise<CallLeave | null>;
-  dismissKnocker: (input: { callSessionId: string; knockerId: string }) => boolean;
+  dismissKnocker: (input: { callSessionId: string; knockerId: string }) => CallParticipantRow | null;
   // The departures of every connection a user holds in the call, each kicked at RealtimeKit as it leaves
   evictUser: (input: { callSessionId: string; userId: string }) => Promise<CallLeave[]>;
   // Refused, as null, when a join needs an admission and the connection has none

@@ -1,0 +1,1 @@
+ALTER TABLE `knockers` ADD `deletedAt` integer;

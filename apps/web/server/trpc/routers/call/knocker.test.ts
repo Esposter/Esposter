@@ -1,4 +1,5 @@
 import type { Context } from "#server/trpc/context";
+import type { CallParticipantRow } from "@esposter/db-schema";
 
 import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { createParticipant } from "#server/services/message/call/createParticipant";
@@ -77,16 +78,27 @@ describe("knockerRouter", () => {
       isJoined: true,
       isKnocking: false,
     }));
-    const admitKnocker = vi.fn<(input: unknown) => Promise<boolean>>(() => Promise.resolve(true));
+    const knockerId = v7();
+    const tombstone: CallParticipantRow = {
+      deletedAt: new Date(0),
+      id: knockerId,
+      image: "",
+      isCameraEnabled: false,
+      isHandRaised: false,
+      isMuted: false,
+      name: "knocker",
+      userId: v7(),
+      version: 1,
+    };
+    const admitKnocker = vi.fn<(input: unknown) => Promise<CallParticipantRow>>(() => Promise.resolve(tombstone));
     vi.mocked(useCallObject).mockReturnValue({ admitKnocker, readAccess } as unknown as ReturnType<
       typeof useCallObject
     >);
 
-    const knockerId = v7();
-
-    await creatorCaller.knocker.admitKnocker({ callSessionId, knockerId });
+    const answer = await creatorCaller.knocker.admitKnocker({ callSessionId, knockerId });
 
     expect(admitKnocker).toHaveBeenCalledExactlyOnceWith({ callSessionId, knockerId });
+    expect(answer).toStrictEqual(tombstone);
   });
 
   test("dismissKnocker refuses a joined participant who did not create the call", async () => {

@@ -1,3 +1,5 @@
+import type { CallParticipantRow } from "@esposter/db-schema";
+
 import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { createParticipant } from "#server/services/message/call/createParticipant";
 import { requireCallDoorkeeper } from "#server/services/message/call/requireCallDoorkeeper";
@@ -12,16 +14,16 @@ export const knockerRouter = router({
   admitKnocker: standardAuthedProcedure
     .input(knockerInputSchema)
     .meta({ staticReason: "The call object pushes the admission to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input: { callSessionId, knockerId } }) => {
+    .mutation<CallParticipantRow | null>(async ({ ctx, input: { callSessionId, knockerId } }) => {
       await requireCallDoorkeeper(ctx, callSessionId, "admit");
-      await useCallObject(callSessionId).admitKnocker({ callSessionId, knockerId });
+      return useCallObject(callSessionId).admitKnocker({ callSessionId, knockerId });
     }),
   dismissKnocker: standardAuthedProcedure
     .input(knockerInputSchema)
     .meta({ staticReason: "The call object pushes the dismissal to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input: { callSessionId, knockerId } }) => {
+    .mutation<CallParticipantRow | null>(async ({ ctx, input: { callSessionId, knockerId } }) => {
       await requireCallDoorkeeper(ctx, callSessionId, "dismiss");
-      await useCallObject(callSessionId).dismissKnocker({ callSessionId, knockerId });
+      return useCallObject(callSessionId).dismissKnocker({ callSessionId, knockerId });
     }),
   knockCall: standardAuthedProcedure
     .input(callSessionInputSchema)

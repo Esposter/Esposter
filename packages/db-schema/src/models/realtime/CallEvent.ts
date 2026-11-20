@@ -1,4 +1,3 @@
-import { callParticipantSchema } from "#src/models/message/call/CallParticipant";
 import { callParticipantRowSchema } from "#src/models/message/call/CallParticipantRow";
 import { RealtimeEventType } from "#src/models/realtime/RealtimeEventType";
 import { callSessionIdSchema } from "#src/models/shared/CallSessionId";
@@ -38,7 +37,7 @@ const muteChangedEventSchema = z.object({
   type: z.literal(RealtimeEventType.MuteChanged),
 });
 const knockCallEventSchema = z.object({
-  data: z.object({ callSessionId, knocker: callParticipantSchema }),
+  data: z.object({ callSessionId, knocker: callParticipantRowSchema }),
   type: z.literal(RealtimeEventType.KnockCall),
 });
 const knockerAdmittedEventSchema = z.object({

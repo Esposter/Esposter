@@ -51,18 +51,20 @@ import { z } from "zod";
 // The one row the call keeps about itself
 const CALL_STATE_ID = 1;
 
-// A participant row as a member is shown it: its columns and version, without the session it joined under
-const participantColumns = {
-  deletedAt: participants.deletedAt,
-  id: participants.id,
-  image: participants.image,
-  isCameraEnabled: participants.isCameraEnabled,
-  isHandRaised: participants.isHandRaised,
-  isMuted: participants.isMuted,
-  name: participants.name,
-  userId: participants.userId,
-  version: participants.version,
-};
+// A connection's row as a member is shown it: its columns and version, without the session it joined or knocked under
+const rowColumns = (table: typeof participants | typeof knockers) => ({
+  deletedAt: table.deletedAt,
+  id: table.id,
+  image: table.image,
+  isCameraEnabled: table.isCameraEnabled,
+  isHandRaised: table.isHandRaised,
+  isMuted: table.isMuted,
+  name: table.name,
+  userId: table.userId,
+  version: table.version,
+});
+const participantColumns = rowColumns(participants);
+const knockerColumns = rowColumns(knockers);
 
 // A joined connection as the server knows it, its session included
 type Connection = Pick<typeof participants.$inferSelect, "id" | "sessionId" | "userId">;
@@ -85,15 +87,17 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   // The work in flight for each key, a session's join or a connection's preset update, so the next for that key starts after it
   readonly #serialized = new Map<string, Promise<unknown>>();
 
-  admitKnocker({ callSessionId, knockerId }: { callSessionId: string; knockerId: string }): boolean {
-    const knocker = this.#removeKnocker(knockerId);
-    if (!knocker) return false;
-    this.db.insert(admittedSessions).values({ sessionId: knocker.sessionId }).onConflictDoNothing().run();
-    this.broadcast(
-      { data: { callSessionId }, type: "knockerAdmitted" },
-      { tag: getSessionSocketTag(knocker.sessionId) },
-    );
-    return true;
+  // Answers the knocker's row as a tombstone, at the version the removal raised it to. A knocker already let in or dismissed
+  // Answers its tombstone and is not admitted again, and a knocker the call never held answers nothing
+  admitKnocker({ callSessionId, knockerId }: { callSessionId: string; knockerId: string }): CallParticipantRow | null {
+    this.#purgeTombstones();
+    const removed = this.#removeKnocker(knockerId);
+    if (!removed) return this.#readKnocker(knockerId) ?? null;
+
+    const { sessionId, ...knocker } = removed;
+    this.db.insert(admittedSessions).values({ sessionId }).onConflictDoNothing().run();
+    this.broadcast({ data: { callSessionId }, type: "knockerAdmitted" }, { tag: getSessionSocketTag(sessionId) });
+    return knocker;
   }
 
   // A revoked session's sockets close first, so the leave that follows finds none left to close.
@@ -109,11 +113,21 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return leave;
   }
 
-  dismissKnocker({ callSessionId, knockerId }: { callSessionId: string; knockerId: string }): boolean {
-    const knocker = this.#removeKnocker(knockerId);
-    if (!knocker) return false;
-    this.#broadcastKnockerDismissed(callSessionId, knocker.sessionId);
-    return true;
+  // Answers the knocker's row as a tombstone, as an admission does. Only the removal that takes the live row tells the knocker
+  dismissKnocker({
+    callSessionId,
+    knockerId,
+  }: {
+    callSessionId: string;
+    knockerId: string;
+  }): CallParticipantRow | null {
+    this.#purgeTombstones();
+    const removed = this.#removeKnocker(knockerId);
+    if (!removed) return this.#readKnocker(knockerId) ?? null;
+
+    const { sessionId, ...knocker } = removed;
+    this.#broadcastKnockerDismissed(callSessionId, sessionId);
+    return knocker;
   }
 
   // Takes every connection of a user out of the call, for a removal, a ban or a timeout. The leave lands first.
@@ -162,16 +176,22 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     knocker: CallParticipantProfile;
     sessionId: string;
   }): void {
-    // A session knocks under one id however often it knocks, so the doorkeeper's lobby holds it once
+    this.#purgeTombstones();
+    // A session knocks under one live id however often it knocks, so the doorkeeper's lobby holds it once. A session whose
+    // Knock was let in or dismissed gets a new id, and its row is the one its session names, revived above its tombstone
     const id = this.#readKnockerBySession(sessionId)?.id ?? v7();
-    this.db
-      .insert(knockers)
-      .values({ ...knocker, id, sessionId })
-      .onConflictDoUpdate({ set: { ...knocker, sessionId }, target: knockers.id })
-      .run();
+    const row = takeOne(
+      this.db
+        .insert(knockers)
+        .values({ ...knocker, deletedAt: null, id, sessionId })
+        .onConflictDoUpdate({ set: { ...knocker, deletedAt: null, id, sessionId }, target: knockers.sessionId })
+        .returning(knockerColumns)
+        .all(),
+      0,
+    );
     // Only the doorkeeper hears of a knock: the knocker hears of its own admission or dismissal on its own socket
     this.broadcast(
-      { data: { callSessionId, knocker: { ...knocker, id } }, type: "knockCall" },
+      { data: { callSessionId, knocker: row }, type: "knockCall" },
       { tag: getUserSocketTag(doorkeeperUserId) },
     );
   }
@@ -422,7 +442,12 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   #endCall(callSessionId: string): number {
     const { startedAt } = this.#readCallState();
     const callDurationSeconds = startedAt ? Math.round((Date.now() - startedAt.getTime()) / 1000) : 0;
-    for (const { sessionId } of this.db.delete(knockers).returning({ sessionId: knockers.sessionId }).all())
+    for (const { sessionId } of this.db
+      .update(knockers)
+      .set({ deletedAt: new Date() })
+      .where(isNull(knockers.deletedAt))
+      .returning({ sessionId: knockers.sessionId })
+      .all())
       this.#broadcastKnockerDismissed(callSessionId, sessionId);
     this.db.delete(admittedSessions).run();
     this.#writeCallState({ startedAt: null });
@@ -462,14 +487,14 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   // A tombstone past its retention is removed at the object's next write. A call object has no alarm, so its own writes
   // Are where the purge runs, and a client that still holds the row forgets it at the same age
   #purgeTombstones(): void {
+    const purgedBefore = new Date(Date.now() - TOMBSTONE_RETENTION_MS);
     this.db
       .delete(participants)
-      .where(
-        and(
-          isNotNull(participants.deletedAt),
-          lt(participants.deletedAt, new Date(Date.now() - TOMBSTONE_RETENTION_MS)),
-        ),
-      )
+      .where(and(isNotNull(participants.deletedAt), lt(participants.deletedAt, purgedBefore)))
+      .run();
+    this.db
+      .delete(knockers)
+      .where(and(isNotNull(knockers.deletedAt), lt(knockers.deletedAt, purgedBefore)))
       .run();
   }
 
@@ -490,8 +515,18 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       .all();
   }
 
+  // A tombstone is no knock, so a read of the session's knock takes live rows only
   #readKnockerBySession(sessionId: string) {
-    return this.db.select().from(knockers).where(eq(knockers.sessionId, sessionId)).get();
+    return this.db
+      .select()
+      .from(knockers)
+      .where(and(eq(knockers.sessionId, sessionId), isNull(knockers.deletedAt)))
+      .get();
+  }
+
+  // A knocker's row as it stands, a tombstone included, for the answer to a let-in or a dismissal of a knock already left
+  #readKnocker(knockerId: string) {
+    return this.db.select(knockerColumns).from(knockers).where(eq(knockers.id, knockerId)).get();
   }
 
   // The meeting is made by the first join.
@@ -536,12 +571,18 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       .get();
   }
 
+  // A live knocker's row becomes a tombstone at its next version. Only this removal of the live row returns it, so a
+  // Second let-in or dismissal of the same knocker finds nothing to remove
   #removeKnocker(knockerId: string) {
-    return this.db
-      .delete(knockers)
-      .where(eq(knockers.id, knockerId))
-      .returning({ sessionId: knockers.sessionId })
-      .all()[0];
+    return takeOne(
+      this.db
+        .update(knockers)
+        .set({ deletedAt: new Date() })
+        .where(and(eq(knockers.id, knockerId), isNull(knockers.deletedAt)))
+        .returning({ ...knockerColumns, sessionId: knockers.sessionId })
+        .all(),
+      0,
+    );
   }
 
   // A leave tombstones the connection's row at its next version, so the row a read or a late frame carries loses to it
