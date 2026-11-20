@@ -8,7 +8,7 @@ import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getTableColumns } from "drizzle-orm";
 
 // How a recorded write answers its caller for the projection the caller asked for, keyed by the recorded statement the caller holds
-export const returnedAnswers = new WeakMap<object, (result: unknown) => unknown>();
+export const statementAnswerMap = new WeakMap<object, (result: unknown) => unknown>();
 
 // A write's RETURNING names the scope values of the rows it returns, and its topics are keyed by them, and its row versions carry
 // The version it left each row at. So the projection is widened with those columns the caller did not ask for, here rather than
@@ -47,6 +47,6 @@ export const widenUnreturnedWrite = (
 
 // The result a recorded statement answers its caller with: the rows it resolved to, projected to the columns the caller asked for
 export const answerReturned = (statement: object, result: unknown): unknown => {
-  const answer = returnedAnswers.get(statement);
+  const answer = statementAnswerMap.get(statement);
   return answer ? answer(result) : result;
 };

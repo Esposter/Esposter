@@ -37,11 +37,11 @@ export const getRemovalConditions = (database: Database, table: Table, where: SQ
         getOrCreate(tableNameChangedKeysMap, getTableName(key.table), () => []).push({ key, parent });
     }
 
-  const conditions = new Map<string, RemovalCondition>();
+  const tableNameRemovalConditionMap = new Map<string, RemovalCondition>();
   const visiting = new Set<string>();
   const conditionOf = (target: Table): RemovalCondition => {
     const name = getTableName(target);
-    if (conditions.has(name)) return conditions.get(name);
+    if (tableNameRemovalConditionMap.has(name)) return tableNameRemovalConditionMap.get(name);
     if (visiting.has(name)) return undefined;
     visiting.add(name);
     const incomingKeys = tableNameIncomingKeysMap.get(name) ?? [];
@@ -55,7 +55,7 @@ export const getRemovalConditions = (database: Database, table: Table, where: SQ
     const condition =
       selfKeys.length === 0 ? seed : or(...selfKeys.map((key) => getClosureCondition(database, target, key, seed)));
     visiting.delete(name);
-    conditions.set(name, condition);
+    tableNameRemovalConditionMap.set(name, condition);
     return condition;
   };
   // A changed child's rows are those its changing keys reach from a removed parent, so each key's condition is over the parent's
@@ -99,7 +99,7 @@ const getClosureCondition = (
       sql`with recursive closure(${removedKeys}) as (`,
       seedKeys.getSQL(),
       sql` union select `,
-      sql.join(getReferencedColumns(key.columns), sql`, `),
+      sql.join(getParentColumns(key.columns), sql`, `),
       sql` from ${table} inner join closure on `,
       sql.join(
         key.columns.map(({ childColumn }, index) => sql`${childColumn} = closure.${sql.raw(getRemovedKeyName(index))}`),
@@ -109,12 +109,12 @@ const getClosureCondition = (
     ],
     sql``,
   );
-  return sql`(${sql.join(getReferencedColumns(key.columns), sql`, `)}) in (${closure})`;
+  return sql`(${sql.join(getParentColumns(key.columns), sql`, `)}) in (${closure})`;
 };
 
 const getChildColumns = (columns: ReferencingColumn[]) => columns.map(({ childColumn }) => childColumn);
 
-const getReferencedColumns = (columns: ReferencingColumn[]) => columns.map(({ referencedColumn }) => referencedColumn);
+const getParentColumns = (columns: ReferencingColumn[]) => columns.map(({ referencedColumn }) => referencedColumn);
 
 // The name a removed row's referenced value takes, by its position in a self-reference's key
 const getRemovedKeyName = (index: number) => `removedKey${index}`;

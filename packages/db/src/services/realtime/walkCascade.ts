@@ -18,7 +18,7 @@ export const walkCascade = (table: Table): CascadeWalk => {
   const tableName = getTableName(table);
   const removedTables: Table[] = [table];
   const removedTableNames = new Set([tableName]);
-  const changedTables = new Map<string, Table>();
+  const changedTableMap = new Map<string, Table>();
   for (const removedTable of removedTables) {
     const referencingKeys = tableNameReferencingKeysMap.get(getTableName(removedTable)) ?? [];
     for (const { action, table: referencingTable } of referencingKeys) {
@@ -28,9 +28,9 @@ export const walkCascade = (table: Table): CascadeWalk => {
         removedTables.push(referencingTable);
       }
       if (action === "cascade" || action === "set null" || action === "set default")
-        changedTables.set(referencingTableName, referencingTable);
+        changedTableMap.set(referencingTableName, referencingTable);
     }
   }
-  changedTables.delete(tableName);
-  return { changedTables: [...changedTables.values()], removedTables };
+  changedTableMap.delete(tableName);
+  return { changedTables: [...changedTableMap.values()], removedTables };
 };

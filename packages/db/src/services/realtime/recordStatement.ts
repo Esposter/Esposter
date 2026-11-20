@@ -10,7 +10,7 @@ import { getBeforeRows } from "#src/services/realtime/getBeforeRows";
 import { getWriteTable } from "#src/services/realtime/getWriteTable";
 import {
   answerReturned,
-  returnedAnswers,
+  statementAnswerMap,
   widenReturning,
   widenUnreturnedWrite,
 } from "#src/services/realtime/widenReturning";
@@ -82,7 +82,7 @@ export const recordStatement = <T extends PromiseLike<unknown> & SQLWrapper>(sta
           const result: unknown = Reflect.apply(value, target, widened ? [widened.fields] : args);
           if (!checkIsStatement(result)) return result;
           const returned = recordStatement(result, recorder);
-          if (widened?.answer) returnedAnswers.set(returned, widened.answer);
+          if (widened?.answer) statementAnswerMap.set(returned, widened.answer);
           return returned;
         };
       // A synchronous execution, as a Durable Object's SQLite runs its statements: the statement runs when it is called, so it
