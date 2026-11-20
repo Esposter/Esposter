@@ -1,6 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { ColumnTopic } from "@esposter/db-schema";
 
+import { insertRows } from "#server/services/db/insertRows.test";
 import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { recordObjectReads } from "#server/services/realtime/requestObjectReads";
 import { confirmBlobUpload } from "#server/services/storage/confirmBlobUpload";
@@ -315,14 +316,15 @@ describe("inferTopicsMiddleware", () => {
     const context = await createMockContext();
     const user = await createMockUser(context.db);
     const roomIds = Array.from({ length: MAX_READ_TOPICS + 1 }, () => v7());
-    // One statement a room, since a multi-row insert of this many rooms binds more parameters than D1 takes in one statement
-    await Promise.all(
-      roomIds.map((id) =>
-        context.db.insert(roomsInMessage).values({ id, name: "name", type: RoomType.Room, userId: user.id }),
-      ),
+    await insertRows(
+      context.db,
+      roomsInMessage,
+      roomIds.map((id) => ({ id, name: "name", type: RoomType.Room, userId: user.id })),
     );
-    await Promise.all(
-      roomIds.map((roomId) => context.db.insert(usersToRoomsInMessage).values({ roomId, userId: user.id })),
+    await insertRows(
+      context.db,
+      usersToRoomsInMessage,
+      roomIds.map((roomId) => ({ roomId, userId: user.id })),
     );
     await createTestCaller(context).readRoomsOf(user.id);
 
