@@ -78,7 +78,7 @@ describe("topicMatch", () => {
     const context = await createMockContext();
     const reader = await createMockAuthSession(context.db);
     const room = await createCallerFactory(roomRouter)(context).createRoom({ name: "room" });
-    const invite = await createCallerFactory(inviteRouter)(context).createInvite({
+    const { invite } = await createCallerFactory(inviteRouter)(context).createInvite({
       expireAfterMinutes: 0,
       maxUses: 0,
       roomId: room.id,
@@ -204,7 +204,7 @@ describe("topicMatch", () => {
 
     const context = await createMockContext();
     const room = await createCallerFactory(roomRouter)(context).createRoom({ name: "room" });
-    const invite = await createCallerFactory(inviteRouter)(context).createInvite({
+    const { invite } = await createCallerFactory(inviteRouter)(context).createInvite({
       expireAfterMinutes: 0,
       maxUses: 0,
       roomId: room.id,

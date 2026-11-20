@@ -131,7 +131,7 @@ describe("moderationRouter", () => {
 
     const member = await createMember();
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
-    const invite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
+    const { invite } = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
     const memberAuthSession = await createMockAuthSession(mockContext.db, member);
     const memberRoomCaller = createCallerFactory(roomRouter)(await createMockContext(memberAuthSession));
 

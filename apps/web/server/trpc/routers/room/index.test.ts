@@ -65,7 +65,7 @@ const createBookmarkedJoinableRoom = async (context: Context) => {
   const owner = await createMockAuthSession(context.db);
   const ownerContext: Context = { ...context, session: owner.session, user: owner.user };
   const room = await createCallerFactory(roomRouter)(ownerContext).createRoom({ name: "name" });
-  const invite = await createCallerFactory(inviteRouter)(ownerContext).createInvite({
+  const { invite } = await createCallerFactory(inviteRouter)(ownerContext).createInvite({
     expireAfterMinutes: 0,
     maxUses: 0,
     roomId: room.id,
@@ -101,8 +101,8 @@ describe("roomRouter", () => {
   const publicUserAssetsUrlPrefix = `${TEST_ORIGIN}/${StorageBucket.PublicUserAssets}/`;
   const getBlobName = (publicUrl: string) => publicUrl.slice(publicUserAssetsUrlPrefix.length);
   // A link that never lapses, which is what every test not about expiry or exhaustion joins through
-  const createUnlimitedInvite = (inviteRoomId: string) =>
-    inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId });
+  const createUnlimitedInvite = async (inviteRoomId: string) =>
+    (await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId })).invite;
   // A caller signed in as a user who holds no membership of the room under test
   const createStrangerRoomCaller = async () =>
     createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
@@ -649,7 +649,11 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
+    const { invite: newInvite } = await inviteCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses,
+      roomId: newRoom.id,
+    });
     const strangerRoomCaller = await createStrangerRoomCaller();
     await strangerRoomCaller.joinRoom(newInvite.id);
     // `maxUses` is 1, so the invite is now exhausted — read the row directly instead of readMyInvite
@@ -668,7 +672,11 @@ describe("roomRouter", () => {
     const memberRoomCaller = await createMockCaller(roomRouter, memberSession);
     await memberRoomCaller.joinRoom((await createUnlimitedInvite(newRoom.id)).id);
     await memberRoomCaller.leaveRoom(newRoom.id);
-    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
+    const { invite: newInvite } = await inviteCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses,
+      roomId: newRoom.id,
+    });
 
     await expect(
       Promise.all([memberRoomCaller.joinRoom(newInvite.id), memberRoomCaller.joinRoom(newInvite.id)]),
@@ -685,7 +693,11 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
+    const { invite: newInvite } = await inviteCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses,
+      roomId: newRoom.id,
+    });
     const memberSession = await createMockAuthSession(mockContext.db);
     const memberRoomCaller = await createMockCaller(roomRouter, memberSession);
     await memberRoomCaller.joinRoom(newInvite.id);
@@ -701,7 +713,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await inviteCaller.createInvite({
+    const { invite: newInvite } = await inviteCaller.createInvite({
       expireAfterMinutes: 0,
       maxUses: spareMaxUses,
       roomId: newRoom.id,
@@ -729,7 +741,11 @@ describe("roomRouter", () => {
     const memberRoomCaller = await createMockCaller(roomRouter, memberSession);
     await memberRoomCaller.joinRoom((await createUnlimitedInvite(newRoom.id)).id);
     await memberRoomCaller.leaveRoom(newRoom.id);
-    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
+    const { invite: newInvite } = await inviteCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses,
+      roomId: newRoom.id,
+    });
     await (await createStrangerRoomCaller()).joinRoom(newInvite.id);
 
     await expect(memberRoomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -745,7 +761,11 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
+    const { invite: newInvite } = await inviteCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses,
+      roomId: newRoom.id,
+    });
     const firstRoomCaller = await createStrangerRoomCaller();
     await firstRoomCaller.joinRoom(newInvite.id);
     const lateRoomCaller = await createStrangerRoomCaller();
@@ -759,7 +779,11 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
+    const { invite: newInvite } = await inviteCaller.createInvite({
+      expireAfterMinutes,
+      maxUses: 0,
+      roomId: newRoom.id,
+    });
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: expireAfterMinutes + 1 }));
     const strangerRoomCaller = await createStrangerRoomCaller();
 
@@ -777,7 +801,11 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     // One use, so the join that resumes proves the paused one rolled its own increment back
-    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 1, roomId: newRoom.id });
+    const { invite: newInvite } = await inviteCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses: 1,
+      roomId: newRoom.id,
+    });
     await roomCaller.updateRoom({ id: newRoom.id, isInvitePaused: true });
 
     await expect(createUnlimitedInvite(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(

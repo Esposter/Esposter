@@ -11,7 +11,7 @@ import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { appUsersInMessage, DatabaseEntityType, RoomPermission, webhooksInMessage } from "@esposter/db-schema";
 import { hashSecretToken, InvalidOperationError, Operation, SECRET_TOKEN_LENGTH, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("webhookRouter", () => {
   const { createMember, getMockContext, getRoomId } = setupRoomSuite();
@@ -38,6 +38,7 @@ describe("webhookRouter", () => {
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     await mockContext.db.delete(webhooksInMessage);
     await mockContext.db.delete(appUsersInMessage);
   });
@@ -164,17 +165,48 @@ describe("webhookRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("deletes", async () => {
+  // The webhook and the app user it posts as are kept as tombstones, so a read that answers before the delete cannot bring
+  // The webhook back over its answer, and the room's read names the webhook as deleted
+  test("deletes, keeping the webhook and its app user as tombstones", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     const deletedWebhook = await webhookCaller.deleteWebhook({ id: newWebhook.id, roomId });
     const webhooks = await webhookCaller.readWebhooks({ roomId });
     const appUser = await mockContext.db.query.appUsersInMessage.findFirst();
 
-    expect(appUser).toBeUndefined();
     expect(deletedWebhook.id).toBe(newWebhook.id);
-    expect(webhooks).toStrictEqual([]);
+    expect(deletedWebhook.version).toBe(newWebhook.version + 1);
+    expect(deletedWebhook.deletedAt).toStrictEqual(new Date(0));
+    expect(takeOne(webhooks).deletedAt).toStrictEqual(new Date(0));
+    expect(appUser?.deletedAt).toStrictEqual(new Date(0));
+  });
+
+  test("creates a webhook in the place a deleted one held under the room's cap", async () => {
+    expect.hasAssertions();
+
+    const input: CreateWebhookInput = { name, roomId };
+    const createdWebhooks = await Promise.all(
+      Array.from({ length: WEBHOOK_MAX_LENGTH }).map(() => webhookCaller.createWebhook(input)),
+    );
+    await webhookCaller.deleteWebhook({ id: takeOne(createdWebhooks).webhook.id, roomId });
+    const { webhook } = await webhookCaller.createWebhook(input);
+
+    expect(webhook.name).toBe(name);
+  });
+
+  test("fails update for a deleted webhook", async () => {
+    expect.hasAssertions();
+
+    const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
+    await webhookCaller.deleteWebhook({ id: newWebhook.id, roomId });
+
+    await expect(
+      webhookCaller.updateWebhook({ id: newWebhook.id, isActive: updatedIsActive, name: updatedName, roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Webhook, newWebhook.id).message}]`,
+    );
   });
 
   test(`fails delete for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {

@@ -45,8 +45,8 @@ describe("inviteRouter", () => {
   const twoSecondsIn = new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds"));
   // A link that never lapses, which is what every test not about expiry or exhaustion reads through. It creates as the
   // Default caller unless a test names the one acting
-  const createUnlimitedInvite = (inviteRoomId: string, caller = inviteCaller) =>
-    caller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId });
+  const createUnlimitedInvite = async (inviteRoomId: string, caller = inviteCaller) =>
+    (await caller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId })).invite;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -159,19 +159,20 @@ describe("inviteRouter", () => {
     expect(myInvite).toBeUndefined();
   });
 
-  test("reads my expired invite to be undefined", async () => {
+  test("reads my expired invite as its tombstone", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     await inviteCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
-    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: expireAfterMinutes + 1 }));
+    const expiredAt = Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: expireAfterMinutes + 1 });
+    vi.setSystemTime(expiredAt);
     const myInvite = await inviteCaller.readMyInvite({ roomId: newRoom.id });
 
-    expect(myInvite).toBeUndefined();
+    expect(myInvite?.deletedAt).toStrictEqual(new Date(expiredAt.epochMilliseconds));
   });
 
-  // The read that finds a lapsed link deletes it, so the room's invite list, which reads every invite of the room, stops
-  // Showing the link once that read has deleted it
+  // The read that finds a lapsed link tombstones it, so the room's invite list, which reads every invite of the room, shows
+  // The link as deleted once that read has tombstoned it
   test("reading my expired invite wakes the room's invite list", async () => {
     expect.hasAssertions();
 
@@ -180,11 +181,12 @@ describe("inviteRouter", () => {
     const listedBefore = await inviteCaller.readRoomInvites({ roomId: newRoom.id });
     expect(listedBefore.items).toHaveLength(1);
 
-    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: expireAfterMinutes + 1 }));
+    const expiredAt = Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: expireAfterMinutes + 1 });
+    vi.setSystemTime(expiredAt);
     await inviteCaller.readMyInvite({ roomId: newRoom.id });
 
     const listedAfter = await inviteCaller.readRoomInvites({ roomId: newRoom.id });
-    expect(listedAfter.items).toHaveLength(0);
+    expect(takeOne(listedAfter.items).deletedAt).toStrictEqual(new Date(expiredAt.epochMilliseconds));
   });
 
   // The usability predicate runs over the page rather than in SQL, so a page can filter down to fewer rows than it
@@ -270,6 +272,25 @@ describe("inviteRouter", () => {
   // The insert that finds the collision aborts the transaction it runs in, so a retry that is not its own
   // Savepoint fails as "transaction aborted" and the create reports an id-allocation failure for a room whose
   // Next id was free
+  test("creating again answers the replaced invite as a tombstone at a higher version", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const firstInvite = await createUnlimitedInvite(newRoom.id);
+    const { replacedInvites } = await inviteCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses: 0,
+      roomId: newRoom.id,
+    });
+    const [replacedInvite] = replacedInvites;
+
+    assert(replacedInvite);
+    expect(replacedInvites).toHaveLength(1);
+    expect(replacedInvite.id).toBe(firstInvite.id);
+    expect(replacedInvite.deletedAt).toStrictEqual(new Date(0));
+    expect(replacedInvite.version).toBe(firstInvite.version + 1);
+  });
+
   test("re-rolls an invite id that collides with another member's link", async () => {
     expect.hasAssertions();
 
@@ -292,7 +313,7 @@ describe("inviteRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await inviteCaller.createInvite({ expireAfterMinutes, maxUses, roomId: newRoom.id });
+    const { invite: newInvite } = await inviteCaller.createInvite({ expireAfterMinutes, maxUses, roomId: newRoom.id });
 
     expect(newInvite.expiresAt).toStrictEqual(
       new Date(Temporal.Duration.from({ minutes: expireAfterMinutes }).total("milliseconds")),
@@ -322,6 +343,19 @@ describe("inviteRouter", () => {
     const invite = await inviteCaller.readInvite(newInvite.id);
 
     expect(invite).toBeUndefined();
+  });
+
+  test("revoking answers the invite as a tombstone at a higher version, and my invite reads that tombstone", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
+    const revokedInvite = await inviteCaller.revokeInvite({ id: newInvite.id, roomId: newRoom.id });
+    const myInvite = await inviteCaller.readMyInvite({ roomId: newRoom.id });
+
+    expect(revokedInvite.version).toBe(newInvite.version + 1);
+    expect(revokedInvite.deletedAt).toStrictEqual(new Date(0));
+    expect(myInvite).toStrictEqual(revokedInvite);
   });
 
   test("fails create invite with direct message room", async () => {

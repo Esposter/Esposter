@@ -25,7 +25,7 @@ export const createRoomMember = (mockContext: Context, roomId: string, mockUser?
   isCreating = true;
   return withFinalizerAsync(
     async () => {
-      const invite = await createCallerFactory(inviteRouter)(mockContext).createInvite({
+      const { invite } = await createCallerFactory(inviteRouter)(mockContext).createInvite({
         expireAfterMinutes: 0,
         maxUses: 0,
         roomId,

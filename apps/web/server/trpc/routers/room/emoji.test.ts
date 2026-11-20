@@ -25,7 +25,7 @@ import {
   StorageBucket,
 } from "@esposter/db-schema";
 import { chunk, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const getRoomEmojiErrorMessage = (operation: Operation, context: string) =>
   new InvalidOperationError(operation, DatabaseEntityType.RoomEmoji, context).message;
@@ -68,6 +68,7 @@ describe("emojiRouter", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     mockContext.headers.delete(DEVICE_ID_HEADER);
   });
 
@@ -261,19 +262,47 @@ describe("emojiRouter", () => {
     );
   });
 
-  test("deleteRoomEmoji removes the row and publishes the blob deletion", async () => {
+  test("deleteRoomEmoji keeps the row as a tombstone at a higher version and publishes the blob deletion", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const roomEmoji = await createRoomEmoji();
-    await roomEmojiCaller.deleteRoomEmoji({ id: roomEmoji.id, roomId });
+    const deletedRoomEmoji = await roomEmojiCaller.deleteRoomEmoji({ id: roomEmoji.id, roomId });
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
 
-    await expect(roomEmojiCaller.readRoomEmojis({ roomId })).resolves.toStrictEqual([]);
+    const roomEmojis = await roomEmojiCaller.readRoomEmojis({ roomId });
+    expect(deletedRoomEmoji.version).toBe(roomEmoji.version + 1);
+    expect(deletedRoomEmoji.deletedAt).toStrictEqual(new Date(0));
+    expect(takeOne(roomEmojis).deletedAt).toStrictEqual(new Date(0));
     expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [getRoomEmojiBlobName(roomId, roomEmoji.id)],
       storageBucket: StorageBucket.MessageAssets,
     });
+  });
+
+  test("createRoomEmoji takes the name of a deleted emoji, which no longer holds it", async () => {
+    expect.hasAssertions();
+
+    const roomEmoji = await createRoomEmoji();
+    await roomEmojiCaller.deleteRoomEmoji({ id: roomEmoji.id, roomId });
+    const recreatedRoomEmoji = await createRoomEmoji(name);
+
+    expect(recreatedRoomEmoji.name).toBe(name);
+    expect(recreatedRoomEmoji.id).not.toBe(roomEmoji.id);
+  });
+
+  test("fails updateRoomEmoji for a deleted emoji", async () => {
+    expect.hasAssertions();
+
+    const roomEmoji = await createRoomEmoji();
+    await roomEmojiCaller.deleteRoomEmoji({ id: roomEmoji.id, roomId });
+
+    await expect(
+      roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: updatedName, roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Update, roomEmoji.id)}]`,
+    );
   });
 
   test(`fails deleteRoomEmoji for a member without ${RoomPermission.ManageEmojis}`, async () => {
