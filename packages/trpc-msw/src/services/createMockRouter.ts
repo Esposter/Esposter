@@ -25,6 +25,8 @@ export const createMockRouter = <TContext extends object>(
         // The real procedure's own `.input()` calls, so tRPC parses the input as the server does: a rejection is the
         // BAD_REQUEST the server answers with, and the resolver gets what the parsers return, combined as tRPC does
         const parsers: InputParser<TContext>[] = inputRouter?._def.procedures[path]?._def.inputs ?? [];
+        // Each `.input()` returns a builder typed by its parser's output, which the root procedure type the accumulator
+        // Carries does not name, so each step is cast back to it
         const procedure = parsers.reduce<TRPCMswRoot<TContext>["procedure"]>(
           (builder, parser) => builder.input(parser) as TRPCMswRoot<TContext>["procedure"],
           baseProcedure,
@@ -32,8 +34,6 @@ export const createMockRouter = <TContext extends object>(
         const createNotFoundError = () =>
           new TRPCError({ code: "NOT_FOUND", message: `No "${type}"-procedure on path "${path}"` });
 
-        // Each procedure reads its resolver when it is called rather than when the router is built, so a resolver a test
-        // Replaces answers the next call even on a WebSocket connection whose router was built before it
         switch (type) {
           case "mutation":
           case "query":
