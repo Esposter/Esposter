@@ -1,19 +1,11 @@
+import { countVueRuleViolations } from "#src/services/countVueRuleViolations.test";
 import scopedStyles from "@esposter/configuration/eslint/plugins/scopedStyles.js";
-import { Linter } from "eslint";
 import { describe, expect, test } from "vitest";
-import parser from "vue-eslint-parser";
+
+const lint = (template: string) =>
+  countVueRuleViolations(scopedStyles, `<template>${template}</template>`, "scoped-styles/no-unknown-attribute");
 
 describe("scopedStyles", () => {
-  const linter = new Linter({ configType: "flat" });
-  const lint = (template: string) =>
-    linter
-      .verify(
-        `<template>${template}</template>`,
-        [...scopedStyles, { files: ["**/*.vue"], languageOptions: { parser } }],
-        "a.vue",
-      )
-      .filter(({ ruleId }) => ruleId === "scoped-styles/no-unknown-attribute").length;
-
   test.each([
     { name: "utilityAttribute", template: `<div size-full />`, violations: 1 },
     { name: "utilityAttributeWithValue", template: `<div p="2" />`, violations: 1 },

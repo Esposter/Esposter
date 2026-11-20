@@ -1,15 +1,10 @@
+import { countVueRuleViolations } from "#src/services/countVueRuleViolations.test";
 import directives from "@esposter/configuration/eslint/plugins/directives.js";
-import { Linter } from "eslint";
 import { describe, expect, test } from "vitest";
-import parser from "vue-eslint-parser";
+
+const lint = (source: string) => countVueRuleViolations(directives, source, "directives/require-template-reason");
 
 describe("directives", () => {
-  const linter = new Linter({ configType: "flat" });
-  const lint = (source: string) =>
-    linter
-      .verify(source, [...directives, { files: ["**/*.vue"], languageOptions: { parser } }], "a.vue")
-      .filter(({ ruleId }) => ruleId === "directives/require-template-reason").length;
-
   test.each([
     { name: "fileWithoutReason", source: `<!-- eslint-disable a/b -->\n<template><div /></template>`, violations: 1 },
     {
