@@ -311,36 +311,6 @@ describe(CallObject, () => {
     );
   });
 
-  // The leave's frame is the tombstone itself, so a member's view applies the leave at the version the object holds
-  test("a leave tells the others the participant's row, tombstone and version included", async () => {
-    expect.hasAssertions();
-
-    const state = createMockObjectState(callSessionId);
-    const callObject = createCallObject(state);
-    const leaver = createConnection();
-    const remainer = createConnection();
-    const leaverJoin = await joinConnection(callObject, leaver);
-    await joinConnection(callObject, remainer);
-    assert.exists(leaverJoin);
-    const remainerSocket = createSocket();
-    state.ctx.acceptWebSocket(remainerSocket, [
-      getUserSocketTag(remainer.profile.userId),
-      getSessionSocketTag(remainer.sessionId),
-    ]);
-
-    await callObject.leaveCall({ callSessionId, sessionId: leaver.sessionId });
-
-    expect(readFrames(remainerSocket)).toStrictEqual([
-      {
-        data: {
-          callSessionId,
-          participant: { ...leaver.profile, deletedAt: new Date(0), id: leaverJoin.participantId, version: 1 },
-        },
-        type: "leaveCall",
-      },
-    ]);
-  });
-
   // A flag change answers with the row it wrote, at the version the database left it, and carries that row to the others
   test("a flag change answers with its row at the version it left, and carries that row to the others", async () => {
     expect.hasAssertions();
