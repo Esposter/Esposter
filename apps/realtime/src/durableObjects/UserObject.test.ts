@@ -477,6 +477,23 @@ describe(UserObject, () => {
     ]);
   });
 
+  // A scheduled message the room sends or cancels leaves its index entry a tombstone, and that cancel or send arms the alarm for
+  // The tombstone's purge, as a reminder's cancel does, even when no reminder is left to wake the alarm
+  test("a scheduled message's tombstone arms the alarm for its purge", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createUserObject();
+    const scheduledId = v7();
+    await object.addScheduledMessage({
+      roomId: v7(),
+      runAt: new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds")),
+      scheduledId,
+    });
+    await object.removeScheduledMessage(scheduledId);
+
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(TOMBSTONE_RETENTION_MS);
+  });
+
   // A person who leaves a room takes its reminders and scheduled messages with them, so the one due first in it never fires,
   // While a reminder in another room is still sent when it is due
   test("removing a room's scheduled items drops its reminders and index entries, so none of them fires after the person leaves", async () => {

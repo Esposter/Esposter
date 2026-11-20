@@ -279,12 +279,14 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     await this.#armAlarm();
   }
 
-  // The index entry of a scheduled message is a tombstone once the room sends or cancels it, and the list stops naming it
+  // The index entry of a scheduled message is a tombstone once the room sends or cancels it, and the list stops naming it.
+  // The alarm is re-armed so the tombstone's purge is scheduled, as a reminder's cancel does
   async removeScheduledMessage(scheduledId: string): Promise<void> {
     await this.db
       .update(scheduledMessagesInUser)
       .set({ deletedAt: new Date() })
       .where(and(eq(scheduledMessagesInUser.scheduledId, scheduledId), getLiveRowWhere(scheduledMessagesInUser)));
+    await this.#armAlarm();
   }
 
   // The sent messages a room's delete or erase removed, by their ids, dropped from the person's index in one statement
