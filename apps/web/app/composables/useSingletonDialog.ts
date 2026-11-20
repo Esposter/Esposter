@@ -22,6 +22,7 @@ export const useSingletonDialog = <TTarget extends number | string | string[], T
   target: Ref<TTarget>,
   item?: MaybeRefOrGetter<TItem | undefined>,
 ) => {
+  // The empty value of the target's own kind. TS cannot relate the three branches to the generic TTarget, so the cast names them
   const clearTarget = () => {
     target.value = (Array.isArray(target.value) ? [] : typeof target.value === "number" ? 0 : "") as TTarget;
   };

@@ -9,8 +9,7 @@ interface UseMediaRecorderOptions {
   onStop?: (event: Event) => void;
 }
 
-export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
-  const { constraints = {} } = options;
+export const useMediaRecorder = ({ constraints = {}, onError, onStart, onStop }: UseMediaRecorderOptions = {}) => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   const data = ref<Blob[]>([]);
@@ -31,12 +30,12 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
     newMediaRecorder.ondataavailable = (event) => {
       data.value.push(event.data);
     };
-    newMediaRecorder.onstart = onLifecycle(options.onStart);
+    newMediaRecorder.onstart = onLifecycle(onStart);
     newMediaRecorder.onstop = onLifecycle((event) => {
       stopStream();
-      options.onStop?.(event);
+      onStop?.(event);
     });
-    newMediaRecorder.onerror = onLifecycle(options.onError);
+    newMediaRecorder.onerror = onLifecycle(onError);
   };
 
   const start = async () => {
