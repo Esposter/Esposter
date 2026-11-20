@@ -31,6 +31,14 @@ are four lines that read as branching logic where the helper reads as one lookup
 `let x = map.get(k); if (!x) { x = …; map.set(k, x); }` block, and the `map.get(k) ?? []` that is mutated and set
 back — whose `set` is load-bearing only on the miss, so it looks redundant to the next reader.
 
+**The exception is a reactive map.** `getOrCreate` returns the value its `create` callback made on a miss, and that
+is the raw object. A Vue reactive `Map` (a `ref(new Map())`'s `.value`) wraps an object value in a proxy when it is
+read with `get`, not when it is set, so a caller that mutates the raw object after the insert changes nothing the
+reactive graph can see. `readDataByKey` in `apps/web/app/composables/data/useDataMap.ts` hand-rolls the miss on
+purpose for that reason: it `set`s the default and returns `get(key)` read back from the map. Where the value a
+read-or-insert returns is mutated afterwards on a reactive map, keep that shape; everywhere else `getOrCreate` is
+the rule.
+
 ## `new Set` only for dedup
 
 Use `.some()` for unique arrays. `Set` only when (a) deduplication is the goal, or (b) the collection is large
