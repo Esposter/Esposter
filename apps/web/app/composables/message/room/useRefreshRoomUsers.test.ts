@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import { useRefreshRoomUsers } from "#src/composables/message/room/useRefreshRoomUsers";
+import { setRoomUsers } from "#src/services/message/room/setRoomUsers";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useUserStore } from "#src/store/message/user/index";
@@ -22,7 +23,7 @@ describe(useRefreshRoomUsers, () => {
     const renamedUser = { ...user, image: "a", name: "renamedAccount" };
     trpcMsw.room.readUsersByIds.query(() => [{ ...renamedUser, displayName: renamedUser.name, isMember: true }]);
 
-    await useRefreshRoomUsers()(roomId, () => false);
+    setRoomUsers(roomId, await useRefreshRoomUsers()(roomId));
 
     expect(userStore.getRoomMemberMap(roomId)?.get(user.id)?.displayName).toBe(renamedUser.name);
     expect(userStore.userMap.get(user.id)).toStrictEqual({
