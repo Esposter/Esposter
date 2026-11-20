@@ -1,18 +1,13 @@
 import type { HeldCallParticipant } from "#src/models/message/room/call/HeldCallParticipant";
-import type { Table } from "#src/models/shared/overlay/Table";
 
+import { createTable } from "#src/services/shared/overlay/createTable";
 import { participants } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { getTableName } from "drizzle-orm";
 
-// The call participants the overlay holds, one row per connection, keyed by the id its join minted. The table is not a createTable
-// Over the object: the object's row names the auth session, which no frame carries, so the row the overlay holds is the wire row
-// Beside the call it is in, and its key is the id the call names the connection by
-export const participantTable: Table<HeldCallParticipant, typeof participants> = {
-  keyOf: (participant) => [participant.id],
-  name: getTableName(participants),
-  source: participants,
-};
+// The call participants the overlay holds, one row per connection, keyed by the id its join minted. The row is the object's
+// Projected to the wire columns, since the object's row names the auth session, which no frame carries, and it is held beside
+// The call it is in
+export const participantTable = createTable<typeof participants, HeldCallParticipant>(participants);
 // Client-only per-remote-participant volume multiplier — no stored default, dies with the call.
 export const DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE = 100;
 // The frame every call video is sized to: what a screen share captures at, and what a virtual background is
