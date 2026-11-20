@@ -31,8 +31,8 @@ export const usePageBuilderCritique = (resourceId: MaybeRefOrGetter<string>) => 
   const lookupSurveyPublishState = (surveyId: string) => {
     const surveys = publishedSurveys.value;
     if (!surveys) return SurveyPublishState.Unreadable;
-    if (surveys.items.some(({ id }) => id === surveyId)) return SurveyPublishState.Published;
-    return surveys.nextCursor ? SurveyPublishState.Unreadable : SurveyPublishState.Unpublished;
+    else if (surveys.items.some(({ id }) => id === surveyId)) return SurveyPublishState.Published;
+    else return surveys.nextCursor ? SurveyPublishState.Unreadable : SurveyPublishState.Unpublished;
   };
   const critiqueSources = { lookupSurveyPublishState, readColor: readBrowserColor };
   // The critique as the problems surface's findings, computed once the document settles as every editor's check is. Each
@@ -52,8 +52,7 @@ export const usePageBuilderCritique = (resourceId: MaybeRefOrGetter<string>) => 
 
     const nodePointer = getNodePointer(webpageKind, document, nodeId);
     if (nodePointer === undefined) return "";
-
-    return getNodeTitle(webpageKind, document, parseJsonPointer(nodePointer));
+    else return getNodeTitle(webpageKind, document, parseJsonPointer(nodePointer));
   };
 
   return { findings, getFindingNodeTitle };

@@ -167,9 +167,8 @@ export const usePageBuilderKeyCommands = (
 
   useCommands((): UiCommand[] => {
     if (isDeleteOpen.value) return [];
-    if (!getSelectedNodeId(toValue(resourceId))) return [pasteCommand];
-
-    return [pasteCommand, ...getSelectionCommands()];
+    else if (getSelectedNodeId(toValue(resourceId))) return [pasteCommand, ...getSelectionCommands()];
+    else return [pasteCommand];
   });
 
   return { handleCanvasKeydown, handleEnterKeydown };

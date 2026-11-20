@@ -160,9 +160,8 @@ export const usePageBuilderMoves = <
     ) => string | undefined,
   ) => {
     const selection = getSelection();
-    if (!selection) return undefined;
-
-    return getRefusal(selection.kind, selection.document, selection.nodePointer);
+    if (selection) return getRefusal(selection.kind, selection.document, selection.nodePointer);
+    else return undefined;
   };
   const getMoveDownRefusal = () =>
     getSelectedRefusal((selectedKind, document, nodePointer) =>

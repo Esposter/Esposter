@@ -45,9 +45,8 @@ export const usePageBuilderInsert = <
   // Document held there is no slot to refuse a kind against, so every kind is given back
   const getInsertable = (types: readonly string[]) => {
     const document = getDocument();
-    if (!document) return [...types];
-
-    return getInsertableTypes(kind, document, getSelectedPointer(document, toValue(resourceId)), types);
+    if (document) return getInsertableTypes(kind, document, getSelectedPointer(document, toValue(resourceId)), types);
+    else return [...types];
   };
 
   return { getInsertable, insert };
