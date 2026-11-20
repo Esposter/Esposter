@@ -671,6 +671,51 @@ describe(computeReadTopics, () => {
     );
   });
 
+  // A left join's key borrows the value a read selects only from an occurrence the join equates it to. The wanderer's room is
+  // Cross-joined and no equality ties it to the neighbour's room, so the neighbour's memberships are not named by the wanderer's
+  // Rooms. A newcomer who takes a membership in the viewer's room changes what the read returns, so the neighbour's table is read
+  // Whole, and the write wakes the read
+  test("a left join's key borrows no selected value from an occurrence it is not equated to", async () => {
+    expect.hasAssertions();
+
+    const { db } = await createMockDb();
+    const viewerId = v7();
+    const wandererId = v7();
+    const neighbourId = v7();
+    const newcomerId = v7();
+    await insertUser(db, viewerId);
+    await insertUser(db, wandererId);
+    await insertUser(db, neighbourId);
+    await insertUser(db, newcomerId);
+    const viewerRoomId = v7();
+    const wandererRoomId = v7();
+    await db.insert(roomsInMessage).values([
+      { id: viewerRoomId, name: "name", type: RoomType.Room, userId: viewerId },
+      { id: wandererRoomId, name: "name", type: RoomType.Room, userId: wandererId },
+    ]);
+    await db.insert(usersToRoomsInMessage).values([
+      { roomId: viewerRoomId, userId: viewerId },
+      { roomId: wandererRoomId, userId: wandererId },
+      { roomId: viewerRoomId, userId: neighbourId },
+    ]);
+    const viewerMemberships = alias(usersToRoomsInMessage, "viewerMemberships");
+    const wandererMemberships = alias(usersToRoomsInMessage, "wandererMemberships");
+    const neighbourMemberships = alias(usersToRoomsInMessage, "neighbourMemberships");
+    const read = recordStatements(db);
+    await read.database
+      .select({ neighbourUserId: neighbourMemberships.userId, roomId: wandererMemberships.roomId })
+      .from(viewerMemberships)
+      .crossJoin(wandererMemberships)
+      .leftJoin(neighbourMemberships, eq(neighbourMemberships.roomId, viewerMemberships.roomId))
+      .where(and(eq(viewerMemberships.userId, viewerId), eq(wandererMemberships.userId, wandererId)));
+    const write = recordStatements(db);
+    await write.database.insert(usersToRoomsInMessage).values({ roomId: viewerRoomId, userId: newcomerId });
+
+    await expect(getWoken(read.statements, write.statements)).resolves.toStrictEqual([
+      `${getTableName(usersToRoomsInMessage)}:*`,
+    ]);
+  });
+
   // A self-join's partner is named by the partner key the read selects for it. Here the select returns only the partner's own
   // Room, which is the named side's value, not the viewer's: a room the viewer is alone in has no partner, so its partner row
   // Carries a null room and names nothing. The partner's table is then read whole, since no returned row names the rows a new

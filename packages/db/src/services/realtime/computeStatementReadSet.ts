@@ -47,11 +47,19 @@ interface Declaration {
   occurrence: string;
   table: string;
 }
-// A subquery the statement joins: its alias, the fields it selects, and the table its SQL reads first
+// A column a subquery selects, by the name the outer read references it by, and the key of the source column it holds, read in
+// The subquery's own level
+interface DerivedSource {
+  key: ReadSetKey;
+  name: string;
+}
+// A subquery the statement joins: its alias, the fields it selects, the table its SQL reads first, and the source each selected
+// Column holds
 interface DerivedSubquery {
   alias: string;
   base?: Table;
   selectedFields: Record<string, unknown>;
+  sources: DerivedSource[];
 }
 
 type DerivedSubqueryMap = Map<string, DerivedSubquery>;
@@ -75,6 +83,8 @@ interface ReadContext {
   // Every table occurrence the statement declares, and each one an equality scopes
   declared: Declaration[];
   derived: DerivedSubqueryMap;
+  // Every pair of keys the walk finds equal, which a join side may borrow a selected value through
+  equalities: ReadEquality[];
   // Whether the chunks walked are a WHERE or HAVING condition, which removes the rows it does not hold
   isCondition: boolean;
   // Whether the chunks walked are a branch of an `or`. A row another branch holds is not this branch's value, so a condition
@@ -90,6 +100,12 @@ interface ReadContext {
   scopedKeys: ScopedKey[];
 }
 
+// A pair of keys the walk finds equal in every row both sit in: the two sides of a join, an `in` subquery's selected column, and a
+// Reference to a derived table's column with the source column it selects
+interface ReadEquality {
+  left: ReadSetKey;
+  right: ReadSetKey;
+}
 interface ReadReference {
   columns: ReadColumn[];
   // Whether the column is read through a derived table, whose own level names its table
@@ -106,7 +122,6 @@ interface ScopedKey {
   level: ReadSetLevel;
   occurrence: string;
 }
-
 const checkIsStatementLike = (value: unknown): value is SQLWrapper =>
   isSQLWrapper(value) &&
   !is(value, SQL) &&
@@ -184,6 +199,34 @@ const toKey = ({ key, occurrence, owner }: ReadColumn, level: number) => ({
   occurrence,
   table: getTableName(owner),
 });
+// The source of each column a subquery selects, read in the subquery's own level. A source names its table occurrence only when
+// The level declares one occurrence of its table: the selected column's own alias is lost once the subquery is aliased
+const getDerivedSources = (subquery: DerivedSubquery, inner: ReadContext): DerivedSource[] => {
+  const level = getLevelIndex(inner);
+  return Object.values(subquery.selectedFields).flatMap((field) => {
+    if (!is(field, Column)) return [];
+    return toReadColumns(field, inner.derived).flatMap(({ key, owner }) => {
+      const table = getTableName(owner);
+      const occurrences = inner.declared.filter(
+        (declaration) => declaration.level === inner.level && declaration.table === table,
+      );
+      const [occurrence] = occurrences;
+      return occurrences.length === 1 && occurrence
+        ? [{ key: { column: key, level, occurrence: occurrence.occurrence, table }, name: field.name }]
+        : [];
+    });
+  });
+};
+// A reference to a subquery's column is equal to the source that column holds, in every row the reference is in, so the two
+// Are a pair the walk records. A name two selected columns share names neither of them, so it records no pair
+const addDerivedEqualities = (chunk: Column, columns: ReadColumn[], context: ReadContext) => {
+  const sources = context.derived.get(getTableName(getColumnTable(chunk)))?.sources ?? [];
+  const matches = sources.filter(({ name }) => name === chunk.name);
+  const [match] = matches;
+  if (matches.length !== 1 || !match) return;
+  for (const column of columns)
+    context.equalities.push({ left: toKey(column, getLevelIndex(context)), right: match.key });
+};
 // An equality names the rows its value selects. Through a derived table it narrows the subquery's rows, so it names them
 // Without naming the table at this level, which the subquery's own level does
 // A left join keeps the rows of the table it does not null-fill, whatever its ON clause tests, so a condition on that table
@@ -264,6 +307,9 @@ const addJoins = (
 
       const join = toJoin(leftColumn, rightColumn, context, { isSubquery });
       context.readSet.joins.push(join);
+      // A subquery's selected column is read in the level its nested statement opens next, the level the walk has not opened yet
+      const equated = isSubquery ? { ...join.right, level: context.readSet.levels.length } : join.right;
+      context.equalities.push({ left: join.left, right: equated });
       if (join.kind === JoinKind.Left)
         addNullFilled(join.nullFilled === JoinSide.Left ? leftColumn : rightColumn, context);
     }
@@ -354,8 +400,10 @@ const readReferenceAt = (chunks: unknown[], index: number, declarations: AliasDe
   let reference: ReadReference | undefined;
   if (is(chunk, Column)) {
     const relation = getTableName(getColumnTable(chunk));
+    const columns = toReadColumns(chunk, context.derived).map((readColumn) => ({ ...readColumn, relation }));
+    addDerivedEqualities(chunk, columns, context);
     reference = {
-      columns: toReadColumns(chunk, context.derived).map((readColumn) => ({ ...readColumn, relation })),
+      columns,
       isThroughSubquery: context.derived.has(getTableName(getColumnTable(getOriginalColumnFromAlias(chunk)))),
       length: 1,
     };
@@ -549,12 +597,16 @@ const walkChunk = (chunk: unknown, context: ReadContext): void => {
   else if (is(chunk, Table)) declareOccurrence(context, getTableName(chunk), getTableName(getBaseTable(chunk)));
   else if (is(chunk, Subquery)) {
     const base = findFirstTable(chunk._.sql);
-    context.derived.set(chunk._.alias, {
+    const subquery: DerivedSubquery = {
       alias: chunk._.alias,
       selectedFields: chunk._.selectedFields,
+      sources: [],
       ...(base ? { base } : {}),
-    });
-    walkChunk(chunk._.sql, enterLevel(context));
+    };
+    context.derived.set(chunk._.alias, subquery);
+    const inner = enterLevel(context);
+    walkChunk(chunk._.sql, inner);
+    subquery.sources = getDerivedSources(subquery, inner);
   } else if (checkIsStatementLike(chunk)) walkChunk(chunk.getSQL(), enterLevel(context));
 };
 // The statement's own select is its top level, which the walk opens first, so a selection's level is zero
@@ -613,26 +665,76 @@ const findOwnSelection = (key: ReadSetKey, selections: ReadSelection[]) =>
           candidate.table === key.table && candidate.column === key.column && candidate.occurrence === key.occurrence,
       )
     : undefined;
-// The same column of another top-level occurrence, which names the side when no left join null-fills that occurrence: its value
-// Is then in every row the read returns, where the side's own value is absent for the rows its left join leaves unmatched
-const findBorrowedSelection = (key: ReadSetKey, selections: ReadSelection[], nullFilledKeys: Set<string>) =>
-  selections.find(
+// The identity of one column of one occurrence at one level, which an equality and a selection are matched by
+const getKeyId = ({ column, level, occurrence, table }: ReadSetKey) =>
+  JSON.stringify([table, column, occurrence, level]);
+// The keys an equality chain connects to a key, by identity: the key's equalities, and theirs in turn
+const getEquatedKeyIds = (key: ReadSetKey, equalities: ReadEquality[]) => {
+  const equatedIds = new Set([getKeyId(key)]);
+  for (let grown = true; grown;) {
+    grown = false;
+    for (const { left, right } of equalities) {
+      const leftId = getKeyId(left);
+      const rightId = getKeyId(right);
+      if (equatedIds.has(leftId) === equatedIds.has(rightId)) continue;
+      equatedIds.add(leftId).add(rightId);
+      grown = true;
+    }
+  }
+
+  return equatedIds;
+};
+// The same column of another top-level occurrence, which names the side when an equality chain pairs the two and no left join
+// Null-fills that occurrence: its value is then in every row the read returns, where the side's own value is absent for the
+// Rows its left join leaves unmatched. An occurrence no equality chain reaches holds a value of its own, so it names nothing
+const findBorrowedSelection = (
+  key: ReadSetKey,
+  selections: ReadSelection[],
+  nullFilledKeys: Set<string>,
+  equalities: ReadEquality[],
+) => {
+  const equatedIds = getEquatedKeyIds(key, equalities);
+  return selections.find(
     (candidate) =>
       candidate.table === key.table &&
       candidate.column === key.column &&
+      equatedIds.has(getKeyId({ ...candidate, level: SELECT_LEVEL })) &&
       !nullFilledKeys.has(getOccurrenceKey({ ...candidate, level: SELECT_LEVEL })),
   );
+};
+// A nested statement's key on an occurrence only the top level declares is a correlated reference: the outer row's value of that
+// Occurrence, so the key is equal to the top level's key of it
+const getCorrelatedEqualities = (keys: ReadSetKey[], declared: Declaration[], topLevel: ReadSetLevel): ReadEquality[] =>
+  keys.flatMap((key) => {
+    const declarations = declared.filter(
+      ({ occurrence, table }) => occurrence === key.occurrence && table === key.table,
+    );
+    return key.level !== SELECT_LEVEL && declarations.length === 1 && declarations[0]?.level === topLevel
+      ? [{ left: key, right: { ...key, level: SELECT_LEVEL } }]
+      : [];
+  });
 // The name a join side's value is returned under: its own selection, else a borrowed one
-const toSelectedKey = (key: ReadSetKey, selections: ReadSelection[], nullFilledKeys: Set<string>): ReadSetKey => {
-  const selection = findOwnSelection(key, selections) ?? findBorrowedSelection(key, selections, nullFilledKeys);
+const toSelectedKey = (
+  key: ReadSetKey,
+  selections: ReadSelection[],
+  nullFilledKeys: Set<string>,
+  equalities: ReadEquality[],
+): ReadSetKey => {
+  const selection =
+    findOwnSelection(key, selections) ?? findBorrowedSelection(key, selections, nullFilledKeys, equalities);
   return selection ? { ...key, selectedAs: selection.selectedAs } : key;
 };
 // A subquery's selected column holds the outer column's value in every row the outer read returns, since the two are compared
 // For equality, so it takes the name of the outer column's own selection, and no borrowed one
-const toSelectedJoin = (join: ReadSetJoin, selections: ReadSelection[], nullFilledKeys: Set<string>): ReadSetJoin => {
-  const left = toSelectedKey(join.left, selections, nullFilledKeys);
+const toSelectedJoin = (
+  join: ReadSetJoin,
+  selections: ReadSelection[],
+  nullFilledKeys: Set<string>,
+  equalities: ReadEquality[],
+): ReadSetJoin => {
+  const left = toSelectedKey(join.left, selections, nullFilledKeys, equalities);
   if (join.kind !== JoinKind.Subquery)
-    return { ...join, left, right: toSelectedKey(join.right, selections, nullFilledKeys) };
+    return { ...join, left, right: toSelectedKey(join.right, selections, nullFilledKeys, equalities) };
   const outer = findOwnSelection(join.left, selections);
   return outer === undefined
     ? { ...join, left }
@@ -654,6 +756,7 @@ export const computeStatementReadSet = (statement: SQLWrapper): ReadSet => {
   const context: ReadContext = {
     declared,
     derived: new Map(),
+    equalities: [],
     isCondition: false,
     isInOr: false,
     isNegated: false,
@@ -666,7 +769,16 @@ export const computeStatementReadSet = (statement: SQLWrapper): ReadSet => {
   walkSiblings(sql.queryChunks, checkIsNestedSelect(sql) ? enterLevel(context) : context, scan);
   // Only a join reads a selection, so a statement with no join skips the walk of its selections
   const selections = readSet.joins.length > 0 ? getSelections(statement, scan) : [];
-  readSet.joins = readSet.joins.map((join) => toSelectedJoin(join, selections, nullFilledKeys));
+  // A side borrows only through the equalities the walk read, and the correlated references among its keys
+  const equalities = [
+    ...context.equalities,
+    ...getCorrelatedEqualities(
+      context.equalities.flatMap(({ left, right }) => [left, right]),
+      declared,
+      level,
+    ),
+  ];
+  readSet.joins = readSet.joins.map((join) => toSelectedJoin(join, selections, nullFilledKeys, equalities));
   // Every level the walk opened is kept, an empty one too, so an occurrence's level is its position in `levels`
   const levels = readSet.levels.map(({ tables }) => ({ tables: [...new Set(tables)].toSorted() }));
   // A declaration is scoped by an equality of its own in its level, so the scope is read from the level it was declared in
