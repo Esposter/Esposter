@@ -237,6 +237,7 @@ The binding's folder is the one feature that consumes it, which is the world, an
 - **A teleport emits the position events, as the documentation says.** Alternative: a teleport emits nothing. Rejected: the world's listeners rely on the position of the player changing, and the documented contract is the one the owner wrote.
 - **A position with no tile blocks.** Alternative: open, as the option would give. Rejected for the default: the documented default blocks, and the map edges depend on it.
 - **The engine is stored in the world's store, marked raw.** Alternative: a scene-level plugin property. Rejected: a plugin is registered on the scene object and typed by augmentation, and it lives as long as the scene, not the tilemap.
+- **`addCharacter` with an id already in use replaces that character silently.** The new character takes the id, with its own start, facing and speed, and the call returns ok. A run the replaced character was in is dropped with it, so no movement-stopped or position-change-finished event follows for it. Alternative: return an error for a duplicate id. Rejected: the replace is kept as decided, and the error is not added to the engine's contract.
 
 ## Migration
 
