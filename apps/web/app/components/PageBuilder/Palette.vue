@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { AnyPageBuilderDocument } from "#src/models/pageBuilder/AnyPageBuilderDocument";
 import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
 import type { FrameGeometry } from "#src/models/pageBuilder/FrameGeometry";
 import type { PaletteGroup } from "#src/models/ui/palette/PaletteGroup";
-import type { BlockNode } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode } from "vue-block-editor-headless";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { MERGE_FIELD_KIND_PREFIX } from "#src/services/pageBuilder/constants";
@@ -14,7 +13,7 @@ import { MjmlNodeType } from "mjml-blocks";
 
 interface Props {
   announce: (message: string) => void;
-  getDocument: () => AnyPageBuilderDocument | undefined;
+  getDocument: () => BlockDocument | undefined;
   // Both are the editor's, so a palette with no canvas beside it, as on an empty page, takes clicks alone
   getFrameGeometry?: (() => FrameGeometry | undefined) | undefined;
   kind: AnyPageBuilderKind;

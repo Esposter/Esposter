@@ -1,5 +1,3 @@
-import type { StyleValue } from "#shared/models/pageBuilder/StyleValue";
-
 import { styleValueSchema } from "#shared/models/pageBuilder/StyleValue";
 import {
   COLOR_TOKEN_PREFIX,
@@ -16,7 +14,7 @@ import { z } from "zod";
 // It restyles every use
 export interface WebpageRootProps {
   lang: string;
-  tokens: Record<string, StyleValue>;
+  tokens: Record<string, string>;
 }
 
 const tokenNameSchema = z

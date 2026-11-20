@@ -1,4 +1,3 @@
-import type { JsonSchemaNode } from "#server/models/resource/link/JsonSchemaNode";
 import type { ResourceLinkTarget } from "#server/models/resource/link/ResourceLinkTarget";
 import type { ResourceLinkType } from "@esposter/db-schema";
 
@@ -8,14 +7,14 @@ import { resourceLinkRegistry } from "#shared/services/resource/link/resourceLin
 import { resourceLinkTypeSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-const getResourceLinkType = (node: JsonSchemaNode): ResourceLinkType | undefined =>
+const getResourceLinkType = (node: z.core.JSONSchema.JSONSchema): ResourceLinkType | undefined =>
   resourceLinkTypeSchema.safeParse(node[RESOURCE_LINK_TYPE_KEYWORD]).data;
 // Reads a schema's links once, from the JSON Schema Zod emits for it rather than from Zod's internals, and returns
 // What collects them from one parsed value — or nothing when the schema declares no link, so a caller asks only
 // Of the shapes that can hold one. The schema is walked as the value goes rather than along paths fixed in
 // Advance, which is what reaches a link inside a recursive shape at whatever depth the value nests it
 export const createGetResourceLinkTargets = (schema: z.ZodType) => {
-  const rootNode: JsonSchemaNode = z.toJSONSchema(schema, {
+  const rootNode: z.core.JSONSchema.JSONSchema = z.toJSONSchema(schema, {
     override: ({ jsonSchema, zodSchema }) => {
       const resourceLinkType = resourceLinkRegistry.get(zodSchema)?.resourceLinkType;
       if (resourceLinkType) jsonSchema[RESOURCE_LINK_TYPE_KEYWORD] = resourceLinkType;
@@ -33,7 +32,7 @@ export const createGetResourceLinkTargets = (schema: z.ZodType) => {
     items,
     oneOf,
     properties,
-  }: JsonSchemaNode): JsonSchemaNode[] =>
+  }: z.core.JSONSchema.JSONSchema): z.core.JSONSchema.JSONSchema[] =>
     [
       ...Object.values(properties ?? {}),
       ...[items ?? []].flat(),
@@ -64,7 +63,7 @@ export const createGetResourceLinkTargets = (schema: z.ZodType) => {
   return (value: unknown): ResourceLinkTarget[] => {
     // Once each: two visuals binding the same Sheet are one link
     const keyResourceLinkTargetMap = new Map<string, ResourceLinkTarget>();
-    const walk = (node: JsonSchemaNode | undefined, nodeValue: unknown) => {
+    const walk = (node: undefined | z.core.JSONSchema.JSONSchema, nodeValue: unknown) => {
       if (!node || !linkingNodes.has(node)) return;
 
       const resourceLinkType = getResourceLinkType(node);

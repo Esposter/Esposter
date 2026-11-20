@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { AnyPageBuilderDocument } from "#src/models/pageBuilder/AnyPageBuilderDocument";
 import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
 import type { DropIndicator } from "#src/models/pageBuilder/DropIndicator";
 import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
 import type { OverlayBox } from "#src/models/pageBuilder/OverlayBox";
+import type { BlockDocument } from "vue-block-editor-headless";
 
 import { DropIndicatorKind } from "#src/models/pageBuilder/DropIndicatorKind";
 import {
@@ -47,7 +47,7 @@ const hoverTitle = computed(() => {
   if (!open || !hoveredNodeId) return "";
 
   // The shell reads a document of either kind through the kind any of them assigns to, so the pair is typed as that
-  const document: AnyPageBuilderDocument = open.document;
+  const document: BlockDocument = open.document;
   const kind: AnyPageBuilderKind = open.kind;
   return getNodeTitleById(kind, document, hoveredNodeId);
 });
@@ -90,7 +90,7 @@ const getNodeBox = (nodeId: string | undefined): OverlayBox | undefined => {
 // The box an empty slot's indicator outlines: the node holding the slot, or the whole layer when the slot is the page's content
 const getSlotOwnerBox = (
   kind: AnyPageBuilderKind,
-  document: AnyPageBuilderDocument,
+  document: BlockDocument,
   slotPointer: string,
 ): OverlayBox | undefined => {
   if (slotPointer === "/content") {
@@ -105,7 +105,7 @@ const getDropIndicator = (): DropIndicator | undefined => {
   const open = pageOpen.value;
   if (!dropTarget || !open) return undefined;
   // The shell reads a document of either kind through the kind any of them assigns to, so the pair is typed as that
-  const document: AnyPageBuilderDocument = open.document;
+  const document: BlockDocument = open.document;
   const kind: AnyPageBuilderKind = open.kind;
   const childBoxes = getDropSlotChildIds(kind, document, dropTarget.slotPointer, draggedNodeId).map((childId) =>
     getNodeBox(childId),

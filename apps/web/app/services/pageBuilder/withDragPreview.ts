@@ -1,7 +1,6 @@
-import type { AnyPageBuilderDocument } from "#src/models/pageBuilder/AnyPageBuilderDocument";
 import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
 import type { DropTarget } from "#src/models/pageBuilder/DropTarget";
-import type { BlockNode } from "vue-block-editor-headless";
+import type { BlockDocument, BlockNode } from "vue-block-editor-headless";
 
 import { applyPatches, getResult } from "@esposter/shared";
 import { insertBlockNode } from "vue-block-editor-headless";
@@ -13,7 +12,7 @@ export const DRAG_PREVIEW_NODE_ID = "drag-preview";
 // Input is never changed and the store never holds the result. applyPatches copies just the path down to the slot and shares
 // Every other subtree, so no document is cloned per pointer move. A slot that refuses the type, or an insert that cannot
 // Apply, gives the input back unchanged
-export const withDragPreview = <TDocument extends AnyPageBuilderDocument>(
+export const withDragPreview = <TDocument extends BlockDocument>(
   kind: AnyPageBuilderKind,
   document: TDocument,
   draggedType: BlockNode["type"],

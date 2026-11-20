@@ -1,8 +1,7 @@
 // @vitest-environment nuxt
-import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
 import type { DOMWrapper, VueWrapper } from "@vue/test-utils";
 import type { Except } from "type-fest";
-import type { ArrowElement, Point, ShapeElement } from "vue-block-editor-headless";
+import type { ArrowElement, Point, PositionedElement, ShapeElement } from "vue-block-editor-headless";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
@@ -90,7 +89,7 @@ describe("resourceWhiteboardEditor", () => {
     await readResource();
   });
 
-  const mountEditor = (elements: WhiteboardElement[]) => {
+  const mountEditor = (elements: PositionedElement[]) => {
     trpcMsw.whiteboard.readResourceContent.query(() => ({ elements }));
     return mountSuspended(ResourceWhiteboardEditor);
   };

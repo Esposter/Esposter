@@ -1,4 +1,4 @@
-import type { BaseEffect } from "#src/models/dungeons/npc/effect/BaseEffect";
 import type { EffectType } from "#src/models/dungeons/npc/effect/EffectType";
+import type { MessageEffect } from "#src/models/dungeons/npc/effect/MessageEffect";
 
-export type Effect = BaseEffect | { type: Exclude<EffectType, BaseEffect["type"]> };
+export type Effect = MessageEffect | { type: Exclude<EffectType, MessageEffect["type"]> };

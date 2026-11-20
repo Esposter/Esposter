@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { DirectMessageParticipant } from "#shared/models/db/room/DirectMessageParticipants";
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
   isOwner: boolean;
-  participant: DirectMessageParticipant;
+  participant: MemberInRoom;
 }
 
 defineProps<Props>();

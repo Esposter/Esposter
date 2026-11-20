@@ -1,6 +1,6 @@
-import type { AnyPageBuilderDocument } from "#src/models/pageBuilder/AnyPageBuilderDocument";
 import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
 import type { UiCommand } from "#src/models/ui/UiCommand";
+import type { BlockDocument } from "vue-block-editor-headless";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "#src/services/pageBuilder/constants";
@@ -20,7 +20,7 @@ const getMoveProps = (refusal: string | undefined) => ({ description: refusal, i
 // The canvas's frame is a document of its own, so the keys it passes on are pressed again on the window where the commands are bound
 export const usePageBuilderKeyCommands = (
   kind: AnyPageBuilderKind,
-  getPageDocument: () => AnyPageBuilderDocument | undefined,
+  getPageDocument: () => BlockDocument | undefined,
   resourceId: MaybeRefOrGetter<string>,
   announce: (message: string) => void,
   isDeleteOpen: Ref<boolean>,

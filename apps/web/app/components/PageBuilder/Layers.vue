@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { AnyPageBuilderDocument } from "#src/models/pageBuilder/AnyPageBuilderDocument";
 import type { AnyPageBuilderKind } from "#src/models/pageBuilder/AnyPageBuilderKind";
+import type { BlockDocument } from "vue-block-editor-headless";
 
 import { getLayerTreeItems } from "#src/services/pageBuilder/getLayerTreeItems";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
 
 interface Props {
-  getDocument: () => AnyPageBuilderDocument | undefined;
+  getDocument: () => BlockDocument | undefined;
   kind: AnyPageBuilderKind;
   resourceId: string;
 }

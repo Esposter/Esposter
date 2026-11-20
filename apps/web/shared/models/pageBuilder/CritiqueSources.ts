@@ -1,4 +1,3 @@
-import type { StyleValue } from "#shared/models/pageBuilder/StyleValue";
 import type { SurveyPublishState } from "#shared/models/pageBuilder/SurveyPublishState";
 import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 
@@ -6,5 +5,5 @@ import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 // As an sRGB colour or nothing where it cannot be read, and each survey's publish state
 export interface CritiqueSources {
   lookupSurveyPublishState: (surveyId: string) => SurveyPublishState;
-  readColor: (value: StyleValue) => SrgbColor | undefined;
+  readColor: (value: string) => SrgbColor | undefined;
 }

@@ -1,4 +1,4 @@
-import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
+import type { PositionedElement } from "vue-block-editor-headless";
 
 import { whiteboardElementSchema } from "#shared/models/resource/whiteboard/WhiteboardElement";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
@@ -7,7 +7,7 @@ import { z } from "zod";
 
 // A whiteboard's elements in the order of the list, the first drawn beneath the rest
 export interface WhiteboardResource {
-  elements: WhiteboardElement[];
+  elements: PositionedElement[];
 }
 
 // Each element parses by its own schema, then the core's refinement runs over the parsed list

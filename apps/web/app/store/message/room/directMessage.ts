@@ -1,5 +1,5 @@
-import type { DirectMessageParticipant } from "#shared/models/db/room/DirectMessageParticipants";
 import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMessageInput";
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
@@ -29,7 +29,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   // Keyed by room and read by every surface that names a conversation after the people in it. Held behind its
   // Own accessors rather than handed out: a participant list written directly from every surface that reads it
   // Is a list nothing can state the invariants of
-  const directMessageParticipantsMap = ref(new Map<string, DirectMessageParticipant[]>());
+  const directMessageParticipantsMap = ref(new Map<string, MemberInRoom[]>());
   const getDirectMessageParticipants = (roomId: string) => directMessageParticipantsMap.value.get(roomId) ?? [];
   // Every conversation past two people is a group, which the invite dialog lists beside the friends
   const checkIsGroupDirectMessage = (roomId: string) => getDirectMessageParticipants(roomId).length > 1;

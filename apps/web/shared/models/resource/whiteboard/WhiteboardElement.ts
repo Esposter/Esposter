@@ -13,8 +13,6 @@ import {
 } from "vue-block-editor-headless";
 import { z } from "zod";
 
-export type WhiteboardElement = PositionedElement;
-
 // The descriptions of the style fields, shared by every element that holds one, so an agent reads the same words for the same field
 const COLOR_DESCRIPTION =
   "The colour the element's outline and text draw in, as six hex digits. Empty draws in the page's text colour, which follows the theme";
@@ -135,4 +133,4 @@ export const whiteboardElementSchema = z.discriminatedUnion("type", [
   whiteboardStickyNoteSchema,
   whiteboardStrokeSchema,
   whiteboardTextSchema,
-]) satisfies z.ZodType<WhiteboardElement>;
+]) satisfies z.ZodType<PositionedElement>;

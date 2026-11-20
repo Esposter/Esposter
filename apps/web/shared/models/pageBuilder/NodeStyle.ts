@@ -1,7 +1,6 @@
 import type { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 import type { StyleState } from "#shared/models/pageBuilder/StyleState";
-import type { StyleValue } from "#shared/models/pageBuilder/StyleValue";
 
 import { styleBreakpointSchema } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { stylePropertySchema } from "#shared/models/pageBuilder/StyleProperty";
@@ -11,7 +10,7 @@ import { z } from "zod";
 
 // A node's style: for each breakpoint, for each state, the value of each property the node sets there
 export type NodeStyle = Partial<
-  Record<StyleBreakpoint, Partial<Record<StyleState, Partial<Record<StyleProperty, StyleValue>>>>>
+  Record<StyleBreakpoint, Partial<Record<StyleState, Partial<Record<StyleProperty, string>>>>>
 >;
 
 export const nodeStyleSchema = z.partialRecord(

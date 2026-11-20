@@ -26,13 +26,14 @@ describe(useRealtimeStore, () => {
     expect.hasAssertions();
 
     vi.spyOn(RealtimeKitVideoBackgroundTransformer, "isSupported").mockReturnValue(true);
-    type VideoBackgroundTransformer = RealtimeKitVideoBackgroundTransformer;
-    type VideoMiddleware = Awaited<ReturnType<VideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>>;
+    type VideoMiddleware = Awaited<
+      ReturnType<RealtimeKitVideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>
+    >;
     const transformer = {
-      createStaticBackgroundVideoMiddleware: vi.fn<VideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>(
-        () => Promise.resolve(vi.fn<VideoMiddleware>()),
-      ),
-      destruct: vi.fn<VideoBackgroundTransformer["destruct"]>(),
+      createStaticBackgroundVideoMiddleware: vi.fn<
+        RealtimeKitVideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]
+      >(() => Promise.resolve(vi.fn<VideoMiddleware>())),
+      destruct: vi.fn<RealtimeKitVideoBackgroundTransformer["destruct"]>(),
     };
     vi.spyOn(RealtimeKitVideoBackgroundTransformer, "init").mockResolvedValue(
       transformer as unknown as RealtimeKitVideoBackgroundTransformer,
@@ -66,21 +67,21 @@ describe(useRealtimeStore, () => {
     expect.hasAssertions();
 
     vi.spyOn(RealtimeKitVideoBackgroundTransformer, "isSupported").mockReturnValue(true);
-    type VideoBackgroundTransformer = RealtimeKitVideoBackgroundTransformer;
     const createTransformer = () => ({
-      createStaticBackgroundVideoMiddleware: vi.fn<VideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>(
-        () =>
-          Promise.resolve(
-            vi.fn<Awaited<ReturnType<VideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>>>(),
-          ),
+      createStaticBackgroundVideoMiddleware: vi.fn<
+        RealtimeKitVideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]
+      >(() =>
+        Promise.resolve(
+          vi.fn<Awaited<ReturnType<RealtimeKitVideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>>>(),
+        ),
       ),
-      destruct: vi.fn<VideoBackgroundTransformer["destruct"]>(),
+      destruct: vi.fn<RealtimeKitVideoBackgroundTransformer["destruct"]>(),
     });
     const firstTransformer = createTransformer();
     const secondTransformer = createTransformer();
     vi.spyOn(RealtimeKitVideoBackgroundTransformer, "init")
-      .mockResolvedValueOnce(firstTransformer as unknown as VideoBackgroundTransformer)
-      .mockResolvedValueOnce(secondTransformer as unknown as VideoBackgroundTransformer);
+      .mockResolvedValueOnce(firstTransformer as unknown as RealtimeKitVideoBackgroundTransformer)
+      .mockResolvedValueOnce(secondTransformer as unknown as RealtimeKitVideoBackgroundTransformer);
     const callBackgroundStore = useCallBackgroundStore();
     const readStarted = Promise.withResolvers<void>();
     const firstRead = Promise.withResolvers<string>();

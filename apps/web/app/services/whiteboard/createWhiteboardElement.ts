@@ -1,6 +1,5 @@
-import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
 import type { WhiteboardPlacement } from "#src/models/whiteboard/WhiteboardPlacement";
-import type { Bounds } from "vue-block-editor-headless";
+import type { Bounds, PositionedElement } from "vue-block-editor-headless";
 
 import {
   WHITEBOARD_SHAPE_FILL,
@@ -23,7 +22,7 @@ export const createWhiteboardElement = (
   placement: WhiteboardPlacement,
   id: string,
   { height, width, x, y }: Bounds,
-): WhiteboardElement => {
+): PositionedElement => {
   if (placement.type === PositionedElementType.Text)
     return {
       color: "",

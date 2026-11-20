@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
+import type { PositionedElement } from "vue-block-editor-headless";
 
 import { PositionedElementType } from "vue-block-editor-headless";
 
 interface Props {
-  element: WhiteboardElement;
+  element: PositionedElement;
 }
 
 // One element drawn by its kind, in the order the canvas gives it, so the element list's order is its z-order

@@ -1,8 +1,7 @@
-import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
 import type { WhiteboardEditState } from "#src/models/whiteboard/WhiteboardEditState";
 import type { WhiteboardHistoryEntry } from "#src/models/whiteboard/WhiteboardHistoryEntry";
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { PositionedDocument, PositionedElementProperty } from "vue-block-editor-headless";
+import type { PositionedDocument, PositionedElement, PositionedElementProperty } from "vue-block-editor-headless";
 
 import { createEmptyWhiteboard } from "#shared/services/resource/whiteboard/createEmptyWhiteboard";
 import { createContentData } from "#src/services/resource/createContentData";
@@ -53,7 +52,7 @@ export const useWhiteboardStore = defineStore("resource/whiteboard", () => {
         return false;
       },
     );
-  const insertElement = (element: WhiteboardElement) => {
+  const insertElement = (element: PositionedElement) => {
     const index = whiteboard.value.elements.length;
     if (commitOperations(insertPositionedElement(whiteboard.value, index, element))) selectElement(element.id);
   };
