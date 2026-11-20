@@ -140,4 +140,23 @@ describe(useRoomStore, () => {
 
     expect(rooms.value).toStrictEqual([]);
   });
+
+  test("a cached page restores its rooms at their versions, and the list shows them once the membership is held", () => {
+    expect.hasAssertions();
+
+    const session = { user: { id: v7() } };
+    useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
+    const roomStore = useRoomStore();
+    const { rooms } = storeToRefs(roomStore);
+    const { getSlice } = roomStore;
+    const { initializeCursorPaginationData, items } = getSlice();
+    initializeCursorPaginationData({ items: [{ ...first, version: 1 }], nextCursor: "" });
+
+    expect(items.value).toStrictEqual([]);
+
+    const userToRoomStore = useUserToRoomStore();
+    userToRoomStore.arriveUserToRooms([createUserToRoom({ roomId: first.id, userId: session.user.id })]);
+
+    expect(rooms.value.map(({ id }) => id)).toStrictEqual([first.id]);
+  });
 });

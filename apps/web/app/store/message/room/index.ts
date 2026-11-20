@@ -2,6 +2,7 @@ import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
 import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
+import type { CursorPaginationSlice } from "#src/models/pagination/cursor/CursorPaginationSlice";
 import type { RoomInMessage, UpdateRoomInput } from "@esposter/db-schema";
 
 import { checkIsUuidV7 } from "#shared/services/id/checkIsUuidV7";
@@ -25,7 +26,11 @@ export const useRoomStore = defineStore("message/room", () => {
   const overlayStore = useOverlayStore();
   const { arrive, view, writeAwaited, writeOptimistic } = overlayStore;
   // The cursor keeps the ids of the last page, for paging. The rows are the overlay's, read into it as each page answers
-  const { items: _pageRoomIds, ...restData } = useCursorPaginationData<Pick<RoomInMessage, "id">>();
+  const {
+    getSlice: getPageSlice,
+    items: _pageRoomIds,
+    ...restData
+  } = useCursorPaginationData<Pick<RoomInMessage, "id">>();
   const roomRows = view(roomTable);
   const userToRooms = view(userToRoomTable);
   const userId = useSessionUserId();
@@ -49,6 +54,20 @@ export const useRoomStore = defineStore("message/room", () => {
   // Reads and events hand over rows as they stand, tombstones included, so each one arrives at its version
   const arriveRooms = (newRooms: RoomInMessage[]) => {
     for (const room of newRooms) arrive(roomTable, room);
+  };
+  // The offline cache persists and restores the rows the list shows, so its slice holds rows: a cached page arrives each
+  // Row at its version, and the page's ids follow them, since the cursor keeps only the ids of its pages
+  const getSlice = (): CursorPaginationSlice<RoomInMessage> => {
+    const { initializeCursorPaginationData, isLoaded, resetCursorPaginationData } = getPageSlice();
+    return {
+      initializeCursorPaginationData: (page) => {
+        arriveRooms(page.items);
+        initializeCursorPaginationData({ ...page, items: page.items.map(({ id }) => ({ id })) });
+      },
+      isLoaded,
+      items: rooms,
+      resetCursorPaginationData,
+    };
   };
   const router = useRouter();
   const currentRoomId = computed(() => {
@@ -121,6 +140,7 @@ export const useRoomStore = defineStore("message/room", () => {
     currentRoom,
     currentRoomId,
     deleteRoom,
+    getSlice,
     isCreator,
     isJoinRoomPending,
     joinRoom,
