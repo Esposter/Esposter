@@ -3,7 +3,7 @@ import { createQueueMessage } from "#src/services/queue/createQueueMessage.test"
 import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { handleDeadLetterMessage } from "#src/services/queue/handleDeadLetterMessage";
 import { getBucket } from "#src/services/storage/getBucket";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock/workers";
 import {
   CloudflareAssetType,
   CloudflareEnvironment,
@@ -16,7 +16,7 @@ import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
-vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock/workers"));
 
 describe(handleDeadLetterMessage, () => {
   const sourceQueueName = getCloudflareResourceName(
