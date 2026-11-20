@@ -24,7 +24,9 @@ export const presignSigV4Url = async (
   }: SigV4Request & { expiresInMs: number },
 ): Promise<string> => {
   const expiresInSeconds = Math.floor(expiresInMs / 1000);
-  if (expiresInSeconds < 1 || expiresInMs > MAX_PRESIGNED_URL_EXPIRES_MS)
+  // Stated as the range it accepts, so a NaN, which fails every comparison, is refused rather than passed
+  const isExpiryInRange = expiresInSeconds >= 1 && expiresInMs <= MAX_PRESIGNED_URL_EXPIRES_MS;
+  if (!isExpiryInRange)
     throw new InvalidOperationError(
       Operation.Create,
       "presigned url",

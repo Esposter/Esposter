@@ -51,6 +51,16 @@ describe(presignSigV4Url, () => {
     expect(presignedUrl.searchParams.get("X-Amz-SignedHeaders")).toBe("content-length;content-type;host");
   });
 
+  test("refuses a lifetime that is not a number", async () => {
+    expect.hasAssertions();
+
+    await expect(
+      presignSigV4Url(credentials, { expiresInMs: Number.NaN, method: "GET", url }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: presigned url, expires in NaN ms, outside 1 s to 604800000 ms]`,
+    );
+  });
+
   test("refuses a lifetime past the seven days S3 allows", async () => {
     expect.hasAssertions();
 
