@@ -125,8 +125,8 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     saveDashboard();
   };
   // A copy of one visual and of every visual it holds, each under a fresh id: its type, chart, binding and fit height,
-  // Never a publish snapshot. The copy sits below the original at its size, saved through the same write path and taken
-  // Back out if the save is refused
+  // Never a publish snapshot. The copy sits below the original at its size, saved through the same write path and kept
+  // On screen if the save is refused
   const copyVisual = (visual: Visual): Visual => {
     const { chart, dataset, h, isAutoHeight, type, visuals: children, w, x, y } = visual;
     return new Visual({
