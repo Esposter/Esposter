@@ -29,7 +29,7 @@ import { useOverlayStore } from "#src/store/overlay";
 import { useResourceStore } from "#src/store/resource/index";
 import { useSheetHistoryStore } from "#src/store/resource/sheet/history/index";
 import { ResourceType } from "@esposter/db-schema";
-import { noop, takeOne, waitForSynchronizedFunctions, withFinalizerAsync } from "@esposter/shared";
+import { ASSET_HASH_REGEX, noop, takeOne, waitForSynchronizedFunctions, withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { http, HttpResponse } from "msw";
@@ -286,7 +286,7 @@ describe(useResourceStore, () => {
     expect(settledState).toBe(ResourceSaveState.Saved);
     expect(saveResourceContent).not.toHaveBeenCalled();
     expect(takeOne(generateUploadContentPresignedUrl.mock.calls, 0)[0].input.size).toBeLessThan(MAX_REQUEST_SIZE);
-    expect(input).toStrictEqual({ contentVersion: 0, hash: expect.stringMatching(/^[\da-f]{64}$/u), id: resourceId });
+    expect(input).toStrictEqual({ contentVersion: 0, hash: expect.stringMatching(ASSET_HASH_REGEX), id: resourceId });
   });
 
   test("saves a large document as a delta against the bytes the server confirmed storing", async () => {

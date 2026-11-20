@@ -1,9 +1,9 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 
 import { checkIsUuidV7 } from "#shared/services/id/checkIsUuidV7";
-import { ASSET_HASH_REGEX } from "#shared/services/resource/constants";
 import { decodePathSegments } from "#shared/util/text/decodePathSegments";
 import { FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
+import { ASSET_HASH_REGEX } from "@esposter/shared";
 
 // The single decoder + validator for `/api/resource-assets/{encodedPath}` — shared by the serving endpoint and the
 // Duplicate clone. Url segments map one-to-one onto blob-name segments, so rejecting any decoded segment that could

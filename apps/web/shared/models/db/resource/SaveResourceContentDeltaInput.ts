@@ -1,6 +1,6 @@
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
-import { ASSET_HASH_REGEX } from "#shared/services/resource/constants";
 import { selectResourceInResourceSchema } from "@esposter/db-schema";
+import { ASSET_HASH_REGEX } from "@esposter/shared";
 import { z } from "zod";
 
 export const saveResourceContentDeltaInputSchema = z.object({

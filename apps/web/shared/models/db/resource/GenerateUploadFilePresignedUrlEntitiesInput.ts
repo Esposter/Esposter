@@ -1,8 +1,7 @@
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
-import { ASSET_HASH_REGEX } from "#shared/services/resource/constants";
 import { MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES } from "#shared/services/storage/constants";
 import { fileEntitySchema, selectResourceInResourceSchema } from "@esposter/db-schema";
-import { createUniqueArraySchema } from "@esposter/shared";
+import { ASSET_HASH_REGEX, createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export const generateUploadFilePresignedUrlEntitiesInputSchema = z.object({

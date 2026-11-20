@@ -1,10 +1,9 @@
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 
-import { ASSET_HASH_REGEX } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getDecodedUriComponent } from "#shared/util/text/getDecodedUriComponent";
 import { getResourceFilesPrefix } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
+import { ASSET_HASH_REGEX, noop } from "@esposter/shared";
 
 // Only a FileAssets type has files to delete, so the capability is the parameter type — a type without it is
 // Rejected where the composable is called rather than silently doing nothing once it runs

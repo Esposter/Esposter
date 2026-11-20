@@ -1,3 +1,4 @@
+import { ASSET_HASH_REGEX } from "@esposter/shared";
 import { z } from "zod";
 
 // A file the manifest holds by its hash: the hash of its bytes, which names the object, and their size
@@ -8,5 +9,5 @@ export interface ParityStoredFile {
 
 export const parityStoredFileSchema: z.ZodObject<{ bytes: z.ZodNumber; sha256: z.ZodString }> = z.object({
   bytes: z.int().positive(),
-  sha256: z.string().regex(/^[\da-f]{64}$/u),
+  sha256: z.string().regex(ASSET_HASH_REGEX),
 }) satisfies z.ZodType<ParityStoredFile>;

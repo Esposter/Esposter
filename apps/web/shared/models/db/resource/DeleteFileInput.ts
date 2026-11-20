@@ -1,5 +1,5 @@
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
-import { ASSET_HASH_REGEX } from "#shared/services/resource/constants";
+import { ASSET_HASH_REGEX } from "@esposter/shared";
 import { z } from "zod";
 
 export const deleteFileInputSchema = z.object({

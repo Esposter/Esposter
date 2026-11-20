@@ -1,4 +1,5 @@
 import { YT_DLP_PINNED_TOOL } from "#src/services/recreation/video/constants";
+import { ASSET_HASH_REGEX } from "@esposter/shared";
 import { basename } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -16,7 +17,7 @@ describe("constants", () => {
       "executablePattern",
       "isArchive",
     ]);
-    expect(archiveSha256).toMatch(/^[\da-f]{64}$/u);
+    expect(archiveSha256).toMatch(ASSET_HASH_REGEX);
     expect(new URL(archiveUrl).hostname).toBe("github.com");
     expect(archiveUrl.split("/").at(-2)).toBe(basename(directory));
     expect(executablePattern).toBe("yt-dlp.exe");

@@ -1,7 +1,7 @@
 import type { JSONContent } from "@tiptap/core";
 
 import { DatabaseEntityType, StorageBucket } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { ASSET_HASH_SOURCE, InvalidOperationError, Operation } from "@esposter/shared";
 
 // Built once and shared between the save procedure and the client save-conflict surface so detection can never drift
 export const STALE_CONTENT_VERSION_ERROR_MESSAGE = new InvalidOperationError(
@@ -22,10 +22,6 @@ export const CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE = new InvalidOperationError
 // Also the ceiling every content schema's free-form strings and lists take, rather than each picking a number a real
 // Document might one day cross. No string or list inside a document can outgrow the document holding it
 export const MAX_RESOURCE_CONTENT_SIZE = 100_000_000;
-// The class and length of an address are written once, here, so every regex that matches an address derives from it
-const ASSET_HASH_SOURCE = String.raw`[\da-f]{64}`;
-// The address of an uploaded file: the lowercase hex SHA-256 of its bytes, the last segment of its blob name
-export const ASSET_HASH_REGEX = new RegExp(String.raw`^${ASSET_HASH_SOURCE}$`, "u");
 // An address anywhere in a serialized document, matched as a whole token: the characters either side must be neither
 // Letters nor digits, so a hash inside a longer run of them names no file. Global flag, so it is read only via matchAll
 export const ASSET_HASH_TOKEN_REGEX = new RegExp(String.raw`(?<![\dA-Za-z])${ASSET_HASH_SOURCE}(?![\dA-Za-z])`, "gu");
