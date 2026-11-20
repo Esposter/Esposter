@@ -2,7 +2,12 @@ import type { MessageCreationRejection } from "#src/models/message/moderation/Me
 import type { Database } from "@esposter/db-schema";
 
 import { checkHasPermission } from "#src/services/room/rbac/checkHasPermission";
-import { getLiveRowWhere, MessageCreationRejectionType, RoomPermission, RoomType } from "@esposter/db-schema";
+import {
+  getLiveMembershipRelationalWhere,
+  MessageCreationRejectionType,
+  RoomPermission,
+  RoomType,
+} from "@esposter/db-schema";
 import { getOrCreate } from "@esposter/shared";
 
 // The gate every message-producing path decides with, in precedence order: a timeout outranks everything,
@@ -33,7 +38,7 @@ export const getMessageCreationRejection = async (
     }),
     db.query.usersToRoomsInMessage.findFirst({
       columns: { lastMessageAt: true, timeoutUntil: true },
-      where: { RAW: getLiveRowWhere, roomId: { eq: roomId }, userId: { eq: userId } },
+      where: getLiveMembershipRelationalWhere(roomId, userId),
     }),
     // Only read when there is text to filter: an attachment-only send has nothing for the word list to match,
     // And a forward multiplies every read here by the room count

@@ -56,6 +56,7 @@ import {
   DatabaseEntityType,
   DEFAULT_EVERYONE_PERMISSIONS,
   getDisplayNameExpression,
+  getLiveMembershipRelationalWhere,
   getLiveRowWhere,
   getPublicUserColumns,
   invitesInMessage,
@@ -175,7 +176,7 @@ export const baseRoomRouter = router({
     if (!joinedRows[0]) {
       const liveMembership = await ctx.db.query.usersToRoomsInMessage.findFirst({
         columns: { userId: true },
-        where: { RAW: getLiveRowWhere, roomId: { eq: invite.roomId }, userId: { eq: userId } },
+        where: getLiveMembershipRelationalWhere(invite.roomId, userId),
       });
       if (liveMembership)
         throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
@@ -184,7 +185,7 @@ export const baseRoomRouter = router({
 
     const { room, roomId, user } = await requireEntity(
       ctx.db.query.usersToRoomsInMessage.findFirst({
-        where: { RAW: getLiveRowWhere, roomId: { eq: invite.roomId }, userId: { eq: userId } },
+        where: getLiveMembershipRelationalWhere(invite.roomId, userId),
         with: UserToRoomInMessageRelations,
       }),
       DatabaseEntityType.UserToRoom,
