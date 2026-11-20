@@ -1027,6 +1027,9 @@ importers:
       grid-engine:
         specifier: 'catalog:'
         version: 2.54.0(phaser@4.2.1)
+      grid-engine-headless:
+        specifier: workspace:*
+        version: link:../../packages/grid-engine-headless
       keyframe-store:
         specifier: workspace:*
         version: link:../../packages/keyframe-store

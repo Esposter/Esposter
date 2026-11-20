@@ -114,6 +114,7 @@
     "genshin-text": "workspace:*",
     "genshin-world": "workspace:*",
     "grid-engine": "catalog:",
+    "grid-engine-headless": "workspace:*",
     "keyframe-store": "workspace:*",
     "lowlight": "catalog:",
     "lru-cache": "catalog:",
