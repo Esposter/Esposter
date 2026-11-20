@@ -67,7 +67,7 @@ flowchart TD
   door --> release["deleteStorageBlobs<br/>on the staging blob"]
 ```
 
-The staged save runs inside the one queued call the resource's saves share (`executeSaveContentMutation`, keyed by the resource id), so the URL query, the PUT and the commit are one unit of the queue, and the `contentVersion` is read when that unit starts, as the inline path reads it when it sends.
+The staged save runs inside the one queued call the resource's saves share (`writeOptimistic`, whose entry `getSaveResourceEntry` keys it by the resource id), so the URL query, the PUT and the commit are one unit of the queue, and the `contentVersion` is read when that unit starts, as the inline path reads it when it sends.
 
 **The commit measures the real bytes**, which is what an attachment's declared size cannot do. `readStagedResourceContent` checks the object's length before it allocates the download, compares the lowercase hex SHA-256 of the bytes with the one the client sent, and inflates through `DecompressionStream`, which stops at the content limit, so an archive that inflates past it stops there rather than filling the Worker's memory. The gzip of a document under the limit is smaller than the document, so the one constant bounds both. The document then reaches the `saveResourceContent` service with the same version check the inline mutation runs (the `contentVersion` it passes), so content over the limit never becomes a resource's document, whoever sent it.
 
