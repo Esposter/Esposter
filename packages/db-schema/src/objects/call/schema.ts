@@ -16,11 +16,14 @@ const createCallParticipantColumns = () => ({
 
 // Each connection that has joined. Its id is the participant id the call names it by to every member, minted by each
 // Join, so it names the participant in this call alone. The session is the auth session that joined, kept here for the
-// Server's guards and kicks and never written into anything a member reads
+// Server's guards and kicks and never written into anything a member reads. A leave sets deletedAt rather than deleting
+// The row, so a read that answered before the leave cannot bring the connection back; the object purges it once its
+// Retention has passed
 export const participants = sqliteTable("participants", {
   id: text().primaryKey(),
   sessionId: text().notNull().unique(),
   ...createCallParticipantColumns(),
+  deletedAt: integer({ mode: "timestamp_ms" }),
   ...createVersionSchema(),
 });
 

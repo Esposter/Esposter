@@ -1,5 +1,5 @@
 import type { JoinCallResult } from "#shared/models/room/call/JoinCallResult";
-import type { CallParticipant, CallSessionInMessage } from "@esposter/db-schema";
+import type { CallParticipantRow, CallSessionInMessage } from "@esposter/db-schema";
 
 import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { useUserObject } from "#server/composables/realtime/useUserObject";
@@ -112,20 +112,22 @@ const baseCallRouter = router({
         participantMap: join.participantMap,
       };
     }),
+  // The answer is the tombstone the leave left, which the leaving client applies as its own departure
   leaveCall: standardAuthedProcedure
     .input(callSessionIdSchema)
     .meta({ staticReason: "The call object pushes the departure to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input: { callSessionId } }) => {
+    .mutation<CallParticipantRow>(async ({ ctx, input: { callSessionId } }) => {
       const { session } = ctx;
       const leave = await useCallObject(callSessionId).leaveCall({ callSessionId, sessionId: session.id });
       if (!leave) throw getNotFoundError(DatabaseEntityType.CallSession, callSessionId);
 
       await writeCallSummary(ctx.db, callSessionId, leave);
+      return leave.participant;
     }),
   readCallParticipantMap: standardAuthedProcedure
     .input(callSessionIdSchema)
     .meta({ staticReason: "The call object pushes participant changes to its sockets as typed events" })
-    .query<Map<string, CallParticipant>>(async ({ ctx, input: { callSessionId } }) => {
+    .query<Map<string, CallParticipantRow>>(async ({ ctx, input: { callSessionId } }) => {
       await requireJoinedCallSession(ctx, callSessionId);
       return useCallObject(callSessionId).readParticipantMap();
     }),
@@ -145,19 +147,21 @@ const baseCallRouter = router({
   setCameraEnabled: standardAuthedProcedure
     .input(setCameraEnabledInputSchema)
     .meta({ staticReason: "The call object pushes the camera change to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input: { callSessionId, isCameraEnabled } }) => {
+    .mutation<CallParticipantRow>(async ({ ctx, input: { callSessionId, isCameraEnabled } }) => {
       const sessionId = ctx.session.id;
-      const isUpdated = await useCallObject(callSessionId).setCameraEnabled({
+      const participant = await useCallObject(callSessionId).setCameraEnabled({
         callSessionId,
         isCameraEnabled,
         sessionId,
       });
-      if (!isUpdated) throw getForbiddenError("Must join call first");
+      if (!participant) throw getForbiddenError("Must join call first");
+
+      return participant;
     }),
   setHandRaised: standardAuthedProcedure
     .input(setHandRaisedInputSchema)
     .meta({ staticReason: "The call object pushes the hand change to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input: { callSessionId, isHandRaised, participantId } }) => {
+    .mutation<CallParticipantRow>(async ({ ctx, input: { callSessionId, isHandRaised, participantId } }) => {
       const callSession = await requireJoinedCallSession(ctx, callSessionId);
       const { participantId: ownParticipantId } = await useCallObject(callSessionId).readAccess({
         sessionId: ctx.session.id,
@@ -175,20 +179,24 @@ const baseCallRouter = router({
         if (!hasMuteMembersPermission) throw getForbiddenError("Missing permission to lower another hand");
       }
 
-      const isUpdated = await useCallObject(callSessionId).setHandRaised({
+      const participant = await useCallObject(callSessionId).setHandRaised({
         callSessionId,
         isHandRaised,
         participantId,
       });
-      if (!isUpdated) throw getForbiddenError("Must join call first");
+      if (!participant) throw getForbiddenError("Must join call first");
+
+      return participant;
     }),
   setMuted: standardAuthedProcedure
     .input(setMutedInputSchema)
     .meta({ staticReason: "The call object pushes the mute change to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input: { callSessionId, isMuted } }) => {
+    .mutation<CallParticipantRow>(async ({ ctx, input: { callSessionId, isMuted } }) => {
       const sessionId = ctx.session.id;
-      const isUpdated = await useCallObject(callSessionId).setMuted({ callSessionId, isMuted, sessionId });
-      if (!isUpdated) throw getForbiddenError("Must join call first");
+      const participant = await useCallObject(callSessionId).setMuted({ callSessionId, isMuted, sessionId });
+      if (!participant) throw getForbiddenError("Must join call first");
+
+      return participant;
     }),
 });
 

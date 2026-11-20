@@ -115,7 +115,13 @@ describe(CallObject, () => {
       {
         data: {
           callSessionId,
-          participant: { ...joiner.profile, id: join.participantId, isCameraEnabled: false },
+          participant: {
+            ...joiner.profile,
+            deletedAt: null,
+            id: join.participantId,
+            isCameraEnabled: false,
+            version: 0,
+          },
           type: "join",
         },
         type: "joinCall",
@@ -209,8 +215,9 @@ describe(CallObject, () => {
     const leaver = createConnection();
     const remainer = createConnection();
     const leaverJoin = await joinConnection(callObject, leaver);
-    await joinConnection(callObject, remainer);
+    const remainerJoin = await joinConnection(callObject, remainer);
     assert.exists(leaverJoin);
+    assert.exists(remainerJoin);
     const leaverSocket = createSocket();
     const remainerSocket = createSocket();
     state.ctx.acceptWebSocket(leaverSocket, [
@@ -226,11 +233,18 @@ describe(CallObject, () => {
 
     expect(leave).toStrictEqual({
       callDurationSeconds: null,
+      participant: { ...leaver.profile, deletedAt: new Date(0), id: leaverJoin.participantId, version: 1 },
       sessionId: leaver.sessionId,
       userId: leaver.profile.userId,
     });
     expect(readFrames(remainerSocket)).toStrictEqual([
-      { data: { callSessionId, id: leaverJoin.participantId }, type: "leaveCall" },
+      {
+        data: {
+          callSessionId,
+          participant: { ...leaver.profile, deletedAt: new Date(0), id: leaverJoin.participantId, version: 1 },
+        },
+        type: "leaveCall",
+      },
     ]);
     expect(leaverSocket.send).not.toHaveBeenCalled();
     expect(leaverSocket.close).toHaveBeenCalledExactlyOnceWith(1000, "Left the call");
@@ -241,6 +255,12 @@ describe(CallObject, () => {
 
     expect(lastLeave).toStrictEqual({
       callDurationSeconds: callDuration.total("seconds"),
+      participant: {
+        ...remainer.profile,
+        deletedAt: new Date(callDuration.total("milliseconds")),
+        id: remainerJoin.participantId,
+        version: 1,
+      },
       sessionId: remainer.sessionId,
       userId: remainer.profile.userId,
     });
@@ -248,7 +268,7 @@ describe(CallObject, () => {
   });
 
   // A leave keeps the participant's row as a tombstone at a higher version, so a read that answered before the leave
-  // cannot bring the participant back over it
+  // Cannot bring the participant back over it
   test("a leave keeps the participant as a tombstone at a higher version, so an older read cannot bring it back", async () => {
     expect.hasAssertions();
 
@@ -260,7 +280,7 @@ describe(CallObject, () => {
 
     await callObject.leaveCall({ callSessionId, sessionId: leaver.sessionId });
 
-    expect(await callObject.readParticipantMap()).toStrictEqual(
+    await expect(callObject.readParticipantMap()).resolves.toStrictEqual(
       new Map([
         [join.participantId, { ...leaver.profile, deletedAt: new Date(0), id: join.participantId, version: 1 }],
       ]),
@@ -281,7 +301,7 @@ describe(CallObject, () => {
     assert.exists(secondJoin);
 
     expect(secondJoin.participantId).not.toBe(firstJoin.participantId);
-    expect(await callObject.readParticipantMap()).toStrictEqual(
+    await expect(callObject.readParticipantMap()).resolves.toStrictEqual(
       new Map([
         [
           secondJoin.participantId,
@@ -314,12 +334,7 @@ describe(CallObject, () => {
       {
         data: {
           callSessionId,
-          participant: {
-            ...leaver.profile,
-            deletedAt: new Date(0).toISOString(),
-            id: leaverJoin.participantId,
-            version: 1,
-          },
+          participant: { ...leaver.profile, deletedAt: new Date(0), id: leaverJoin.participantId, version: 1 },
         },
         type: "leaveCall",
       },
@@ -353,7 +368,7 @@ describe(CallObject, () => {
       version: 1,
     });
     expect(readFrames(bystanderSocket)).toStrictEqual([
-      { data: { callSessionId, participant: JSON.parse(JSON.stringify(row)) }, type: "muteChanged" },
+      { data: { callSessionId, participant: structuredClone(row) }, type: "muteChanged" },
     ]);
   });
 
@@ -409,11 +424,18 @@ describe(CallObject, () => {
     const appUrl = `${REALTIMEKIT_API_ORIGIN}/accounts/${CLOUDFLARE_ACCOUNT_ID}/realtime/kit/${credentials.appId}`;
     expect(revokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
     expect(readFrames(remainerSocket)).toStrictEqual([
-      { data: { callSessionId, id: revokedJoin.participantId }, type: "leaveCall" },
+      {
+        data: {
+          callSessionId,
+          participant: { ...revoked.profile, deletedAt: new Date(0), id: revokedJoin.participantId, version: 1 },
+        },
+        type: "leaveCall",
+      },
     ]);
     expect((await callObject.readAccess({ sessionId: revoked.sessionId })).isJoined).toBe(false);
     expect(leave).toStrictEqual({
       callDurationSeconds: null,
+      participant: { ...revoked.profile, deletedAt: new Date(0), id: revokedJoin.participantId, version: 1 },
       sessionId: revoked.sessionId,
       userId: revoked.profile.userId,
     });
@@ -545,7 +567,13 @@ describe(CallObject, () => {
     assert.exists(memberJoin);
     expect((await callObject.readAccess({ sessionId: knocker.sessionId })).isKnocking).toBe(false);
     expect(readFrames(knockerSocket)).toStrictEqual([
-      { data: { callSessionId, id: memberJoin.participantId }, type: "leaveCall" },
+      {
+        data: {
+          callSessionId,
+          participant: { ...member.profile, deletedAt: new Date(0), id: memberJoin.participantId, version: 1 },
+        },
+        type: "leaveCall",
+      },
       { data: { callSessionId }, type: "knockerDismissed" },
     ]);
   });
@@ -634,8 +662,8 @@ describe(CallObject, () => {
 
     await expect(reloadedCallObject.readParticipantMap()).resolves.toStrictEqual(
       new Map([
-        [firstJoin.participantId, { ...first.profile, id: firstJoin.participantId }],
-        [secondJoin.participantId, { ...second.profile, id: secondJoin.participantId }],
+        [firstJoin.participantId, { ...first.profile, deletedAt: null, id: firstJoin.participantId, version: 0 }],
+        [secondJoin.participantId, { ...second.profile, deletedAt: null, id: secondJoin.participantId, version: 0 }],
       ]),
     );
   });
@@ -667,10 +695,11 @@ describe(CallObject, () => {
 
     expect(replacedLeave).toBeNull();
     expect(participantMap).toStrictEqual(
-      new Map([[join.participantId, { ...participant.profile, id: join.participantId }]]),
+      new Map([[join.participantId, { ...participant.profile, deletedAt: null, id: join.participantId, version: 0 }]]),
     );
     expect(leave).toStrictEqual({
       callDurationSeconds: 0,
+      participant: { ...participant.profile, deletedAt: new Date(0), id: join.participantId, version: 1 },
       sessionId: participant.sessionId,
       userId: participant.profile.userId,
     });
@@ -699,7 +728,7 @@ describe(CallObject, () => {
 
     expect(leave).toBeNull();
     await expect(callObject.readParticipantMap()).resolves.toStrictEqual(
-      new Map([[join.participantId, { ...participant.profile, id: join.participantId }]]),
+      new Map([[join.participantId, { ...participant.profile, deletedAt: null, id: join.participantId, version: 0 }]]),
     );
   });
 });

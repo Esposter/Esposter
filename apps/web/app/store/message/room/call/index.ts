@@ -2,37 +2,30 @@ import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { Promisable } from "type-fest";
 
 import { AdminActionHookMap } from "#src/services/message/moderation/AdminActionHookMap";
+import { participantTable } from "#src/services/message/room/call/constants";
+import { getLeaveCallEntry } from "#src/services/message/room/call/getLeaveCallEntry";
+import { getParticipantFlagEntry } from "#src/services/message/room/call/getParticipantFlagEntry";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useKnockerStore } from "#src/store/message/room/call/knocker";
 import { useMediaStore } from "#src/store/message/room/call/media";
 import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { useRealtimeStore } from "#src/store/message/room/realtime";
+import { useOverlayStore } from "#src/store/overlay";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { AdminActionType } from "@esposter/db-schema";
 import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
-  // Camera, mute and hand each own a different field of the participant row, so they share the participant key
-  // Without contending — separate instances let a hand going up while the mic is unmuting land in either order
-  const { executeMutation: executeSetCameraMutation } = useMutation();
-  const { executeMutation: executeSetHandRaisedMutation } = useMutation();
-  const { executeMutation: executeSetMuteMutation } = useMutation();
+  const overlayStore = useOverlayStore();
+  const { writeOptimistic } = overlayStore;
   const knockerStore = useKnockerStore();
   const { resetKnockerState } = knockerStore;
   const mediaStore = useMediaStore();
   const { resetCallMedia } = mediaStore;
   const participantStore = useParticipantStore();
-  const {
-    clearJoinNotice,
-    clearSpeakers,
-    deleteCallParticipant,
-    setParticipantCameraEnabled,
-    setParticipantHandRaised,
-    setParticipantId,
-    setParticipantMap,
-    setParticipantMuted,
-  } = participantStore;
+  const { clearJoinNotice, clearSpeakers, setParticipantId, storeCallParticipants } = participantStore;
   const realtimeStore = useRealtimeStore();
   const { connect, disconnect, setCamera, setMicrophone, setRemoteAudioMuted, setScreenShare, setVirtualBackground } =
     realtimeStore;
@@ -68,31 +61,26 @@ export const useCallStore = defineStore("message/room/call", () => {
   usePushToTalk(isInCall);
   const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
   const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
+  // A toggle is a write the screen shows at once: its entry sets the flag on the row, and the answer's row confirms the flag at
+  // The version the call object left it. Writes to one row queue behind each other, so a lower of a hand waits behind a raise
   const setHandRaised = (newIsHandRaised: boolean, targetParticipantId?: string) => {
     const callSessionId = activeCallSessionId.value;
     const participantId = participantStore.participantId;
     const handParticipantId = targetParticipantId ?? participantId;
     if (!callSessionId || !handParticipantId) return;
 
-    executeSetHandRaisedMutation(
-      () =>
-        $trpc.callSession.setHandRaised.mutate({
+    writeOptimistic(
+      async () => {
+        const participant = await $trpc.callSession.setHandRaised.mutate({
           callSessionId,
           isHandRaised: newIsHandRaised,
           participantId: handParticipantId,
-        }),
+        });
+        return createRowResponse(participantTable, { ...participant, callSessionId });
+      },
       {
-        applyOptimistic: () => {
-          const oldIsHandRaised =
-            participantStore.callSessionParticipantsMap.get(callSessionId)?.get(handParticipantId)?.isHandRaised ??
-            false;
-          setParticipantHandRaised(callSessionId, handParticipantId, newIsHandRaised);
-          return () => {
-            setParticipantHandRaised(callSessionId, handParticipantId, oldIsHandRaised);
-          };
-        },
-        // Keyed per participant so a moderator lowering several hands never queues behind the other
-        key: handParticipantId,
+        entry: getParticipantFlagEntry(handParticipantId, { isHandRaised: newIsHandRaised }),
+        onError: createErrorAlert,
       },
     );
   };
@@ -101,19 +89,17 @@ export const useCallStore = defineStore("message/room/call", () => {
     const participantId = participantStore.participantId;
     if (!callSessionId || !participantId) return;
 
-    executeSetCameraMutation(
-      () => $trpc.callSession.setCameraEnabled.mutate({ callSessionId, isCameraEnabled: newIsCameraEnabled }),
+    writeOptimistic(
+      async () => {
+        const participant = await $trpc.callSession.setCameraEnabled.mutate({
+          callSessionId,
+          isCameraEnabled: newIsCameraEnabled,
+        });
+        return createRowResponse(participantTable, { ...participant, callSessionId });
+      },
       {
-        applyOptimistic: () => {
-          const oldIsCameraEnabled = mediaStore.isCameraEnabled;
-          mediaStore.isCameraEnabled = newIsCameraEnabled;
-          setParticipantCameraEnabled(callSessionId, participantId, newIsCameraEnabled);
-          return () => {
-            mediaStore.isCameraEnabled = oldIsCameraEnabled;
-            setParticipantCameraEnabled(callSessionId, participantId, oldIsCameraEnabled);
-          };
-        },
-        key: participantId,
+        entry: getParticipantFlagEntry(participantId, { isCameraEnabled: newIsCameraEnabled }),
+        onError: createErrorAlert,
       },
     );
   };
@@ -122,16 +108,13 @@ export const useCallStore = defineStore("message/room/call", () => {
     const participantId = participantStore.participantId;
     if (!callSessionId || !participantId) return;
 
-    executeSetMuteMutation(() => $trpc.callSession.setMuted.mutate({ callSessionId, isMuted: newIsMuted }), {
-      applyOptimistic: () => {
-        const oldIsMuted = isMuted.value;
-        setParticipantMuted(callSessionId, participantId, newIsMuted);
-        return () => {
-          setParticipantMuted(callSessionId, participantId, oldIsMuted);
-        };
+    writeOptimistic(
+      async () => {
+        const participant = await $trpc.callSession.setMuted.mutate({ callSessionId, isMuted: newIsMuted });
+        return createRowResponse(participantTable, { ...participant, callSessionId });
       },
-      key: participantId,
-    });
+      { entry: getParticipantFlagEntry(participantId, { isMuted: newIsMuted }), onError: createErrorAlert },
+    );
   };
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
     currentRoomCallSessionId.value = callSessionId;
@@ -159,8 +142,8 @@ export const useCallStore = defineStore("message/room/call", () => {
 
     createErrorAlert(error);
   };
-  // Exclusive per call, so a second press while the first leave is out is dropped rather than sent
-  const { executeMutation: executeLeaveCallMutation, isPending: isLeaving } = useMutation();
+  // Set while a leave is out, so a join that starts meanwhile waits for the socket the leave is taking down
+  const isLeaving = ref(false);
   const joinCall = async (id: string) => {
     if (activeCallSessionId.value) return activeCallSessionId.value;
     // A leave still taking its socket down would close the one this join opens
@@ -179,7 +162,7 @@ export const useCallStore = defineStore("message/room/call", () => {
       // Seeded before the connect rather than after it: the participant events delivered while the connect is open
       // Land in this map in place, and a snapshot written once the connect resolves would discard them
       setParticipantId(participantId);
-      setParticipantMap(callSessionId, participantMap);
+      storeCallParticipants(callSessionId, [...participantMap.values()]);
       const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
       await connect(authToken, leaveCall, isMicrophoneEnabled);
       isDoorkeeper.value = newIsDoorkeeper;
@@ -218,7 +201,7 @@ export const useCallStore = defineStore("message/room/call", () => {
       // Seeded before the connect, as in `joinCall`: the room's participant events that arrive while it is open
       // Would otherwise be overwritten by this snapshot once it resolves
       setParticipantId(participantId);
-      setParticipantMap(callSessionId, participantMap);
+      storeCallParticipants(callSessionId, [...participantMap.values()]);
       await connect(authToken, leaveCall, true);
       await openCall(callSessionId);
       // Only the room's own call is the one the room header offers to join — a thread's call is reached from
@@ -230,43 +213,48 @@ export const useCallStore = defineStore("message/room/call", () => {
     }).match(noop, (error) => unwindJoin(isJoined, error));
     isConnecting.value = false;
   };
+  // The local teardown a leave runs. A rejected disconnect is reported rather than thrown, so it cannot strand the call's
+  // Notices and speakers
+  const teardownCall = async () => {
+    resetKnockerState();
+    closeCall();
+    resetCallMedia();
+    await getResultAsync(() => disconnect()).match(noop, console.error);
+    clearJoinNotice();
+    clearSpeakers();
+  };
   // The screen lets go of the call as the leave is sent: the call view closes and the joined call is forgotten, and the
   // Socket and the media come down before the server is told, so no teardown is left to land on a call joined after it.
-  // A refused leave changes nothing back: the local call is already down, and the session reaps the participant row on
-  // Its own, so the refusal is logged rather than alerting a call that visibly ended
+  // Only the send waits for the writes still in flight on the participant's row. A refused leave changes nothing back: the
+  // Local call is already down, and the session reaps the participant row on its own, so the refusal is logged rather than
+  // Alerting a call that visibly ended
   const leaveCall = () => {
     const callSessionId = activeCallSessionId.value;
+    // A second press finds the call already let go, so it sends nothing
     if (!callSessionId) return;
-    executeLeaveCallMutation(
+
+    const participantId = participantStore.participantId;
+    isLeaving.value = true;
+    setParticipantId("");
+    callRoomId.value = "";
+    callThreadRootId.value = 0;
+    isDoorkeeper.value = false;
+    activeCallSessionId.value = "";
+    isCallViewOpen.value = false;
+    const tearingDown = getResultAsync(teardownCall).match(noop, console.error);
+    writeOptimistic(
       () =>
-        // Sent even when a teardown step throws, so the server never keeps a participant the screen has let go of
         withFinalizerAsync(
           async () => {
-            resetKnockerState();
-            closeCall();
-            resetCallMedia();
-            // A rejected disconnect is reported rather than thrown, so it cannot strand the call's notices and speakers
-            await getResultAsync(() => disconnect()).match(noop, console.error);
-            clearJoinNotice();
-            clearSpeakers();
+            await tearingDown;
+            const participant = await $trpc.callSession.leaveCall.mutate({ callSessionId });
+            return createRowResponse(participantTable, { ...participant, callSessionId });
           },
-          () => $trpc.callSession.leaveCall.mutate({ callSessionId }),
+          () => {
+            isLeaving.value = false;
+          },
         ),
-      {
-        applyOptimistic: () => {
-          if (participantStore.participantId) deleteCallParticipant(callSessionId, participantStore.participantId);
-          setParticipantId("");
-          callRoomId.value = "";
-          callThreadRootId.value = 0;
-          isDoorkeeper.value = false;
-          activeCallSessionId.value = "";
-          isCallViewOpen.value = false;
-          return noop;
-        },
-        isExclusive: true,
-        key: callSessionId,
-        onError: console.error,
-      },
+      { entry: getLeaveCallEntry(participantId, new Date()), onError: console.error },
     );
   };
   const selectVirtualBackground = async (imagePath: string) => {
@@ -333,17 +321,16 @@ export const useCallStore = defineStore("message/room/call", () => {
     AdminActionType.TimeoutUser,
   ])
     registerCallAdminActionHook(adminActionType, leaveCall);
-  // The participant map is keyed by the call the user is actually in, which is the thread's session during a
-  // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here
+  // The mute is written to the call the user is actually in, which is the thread's session during a Thread call —
+  // `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here. The write is the same one
+  // The user's own toggle sends, so the other members see the forced mute on the row too
   registerCallAdminActionHook(AdminActionType.ForceMute, async () => {
-    if (participantStore.participantId)
-      setParticipantMuted(activeCallSessionId.value, participantStore.participantId, true);
+    setMuted(true);
     await setMicrophone(false);
     mediaStore.isForceMuted = true;
   });
   registerCallAdminActionHook(AdminActionType.ForceUnmute, async () => {
-    if (participantStore.participantId)
-      setParticipantMuted(activeCallSessionId.value, participantStore.participantId, false);
+    setMuted(false);
     await setMicrophone(true);
     mediaStore.isForceMuted = false;
   });

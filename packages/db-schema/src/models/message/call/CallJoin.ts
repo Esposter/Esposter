@@ -1,4 +1,4 @@
-import type { CallParticipant } from "#src/models/message/call/CallParticipant";
+import type { CallParticipantRow } from "#src/models/message/call/CallParticipantRow";
 
 // What a join hands back: the RealtimeKit token and meeting its client joins with, and the call as it stands
 export interface CallJoin {
@@ -10,5 +10,5 @@ export interface CallJoin {
   meetingId: string;
   // The id the joining connection is named by in the call, so its client knows which participant is itself
   participantId: string;
-  participantMap: Map<string, CallParticipant>;
+  participantMap: Map<string, CallParticipantRow>;
 }

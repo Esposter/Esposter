@@ -7,7 +7,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { CALL_ID_LENGTH } from "@esposter/db-schema";
 import { v7 } from "uuid";
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The caller's own participant, under the id its join would mint for it, the shape every write here addresses
 const createOwnParticipant = (): CallParticipant => {
@@ -50,6 +50,15 @@ const createTombstone = (row: CallParticipantRow): CallParticipantRow => ({
 describe(useParticipantStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const callSessionId = createId(CALL_ID_LENGTH);
+
+  // A tombstone past its retention is forgotten by the client's clock, so the clock is the epoch the tombstones are dated from
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   test("deleteSpeaker removes the id from speakingIds", () => {
     expect.hasAssertions();

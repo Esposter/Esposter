@@ -1,61 +1,49 @@
-import type { CallParticipant } from "@esposter/db-schema";
+import type { HeldCallParticipant } from "#src/models/message/room/call/HeldCallParticipant";
+import type { CallParticipant, CallParticipantRow } from "@esposter/db-schema";
+
+import { participantTable } from "#src/services/message/room/call/constants";
+import { useOverlayStore } from "#src/store/overlay";
+import { getOrCreate } from "@esposter/shared";
 
 export const useParticipantStore = defineStore("message/room/call/participant", () => {
-  const callSessionParticipantsMap = ref(new Map<string, Map<string, CallParticipant>>());
+  const overlayStore = useOverlayStore();
+  const { arrive, view } = overlayStore;
+  const heldParticipants = view(participantTable);
+  // Every participant the overlay holds that has not left, by the call each is in. The map is computed, so a row arriving or
+  // A write's entry shows in it at once, and a tombstone is hidden from it
+  const callSessionParticipantsMap = computed(() => {
+    const sessionParticipantsMap = new Map<string, Map<string, CallParticipant>>();
+    for (const participant of heldParticipants.value)
+      getOrCreate(sessionParticipantsMap, participant.callSessionId, () => new Map()).set(participant.id, participant);
+    return sessionParticipantsMap;
+  });
   const joinNoticeParticipant = ref<CallParticipant>();
   // The id the joined call names this client's own connection by, the one source of it: empty while not joined
   const participantId = ref("");
   const speakingIds = ref<string[]>([]);
-  const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<CallParticipant, string>();
-  const createCallParticipant = (callSessionId: string, participant: CallParticipant) => {
-    recordReadingPush(callSessionId, { item: participant, type: "set" });
-    const existingParticipantMap = callSessionParticipantsMap.value.get(callSessionId);
-    if (existingParticipantMap?.has(participant.id)) return;
-    if (existingParticipantMap) existingParticipantMap.set(participant.id, participant);
-    else callSessionParticipantsMap.value.set(callSessionId, new Map([[participant.id, participant]]));
-
-    if (participant.id !== participantId.value) joinNoticeParticipant.value = participant;
+  const readParticipants = useOverlayRead(participantTable, (participant: HeldCallParticipant) => participant);
+  // The rows a call's answer or event carries arrive at their versions, so a row that left is never brought back by an
+  // Older one that lands after it
+  const storeCallParticipants = (callSessionId: string, participants: CallParticipantRow[]) => {
+    for (const participant of participants) arrive(participantTable, { ...participant, callSessionId });
   };
-  const deleteCallParticipant = (callSessionId: string, id: string) => {
-    recordReadingPush(callSessionId, { checkIsRemoved: (participant) => participant.id === id, type: "remove" });
-    const participantMap = callSessionParticipantsMap.value.get(callSessionId);
-    if (!participantMap) return;
-    participantMap.delete(id);
-    if (joinNoticeParticipant.value?.id === id) joinNoticeParticipant.value = undefined;
+  const storeCallParticipant = (callSessionId: string, participant: CallParticipantRow) => {
+    storeCallParticipants(callSessionId, [participant]);
+    if (participant.deletedAt && joinNoticeParticipant.value?.id === participant.id)
+      joinNoticeParticipant.value = undefined;
   };
-  const setParticipantMuted = (callSessionId: string, id: string, isMuted: boolean) => {
-    recordReadingPush(callSessionId, { id, patch: { isMuted }, type: "patch" });
-    const participant = callSessionParticipantsMap.value.get(callSessionId)?.get(id);
-    if (!participant) return;
-    participant.isMuted = isMuted;
+  // A join is the one event that announces a participant, so only it raises the notice, and only for a row the call did not
+  // Already hold
+  const storeJoinedCallParticipant = (callSessionId: string, participant: CallParticipantRow) => {
+    const isNewToCall = !callSessionParticipantsMap.value.get(callSessionId)?.has(participant.id);
+    storeCallParticipant(callSessionId, participant);
+    if (isNewToCall && participant.id !== participantId.value) joinNoticeParticipant.value = participant;
   };
-  const setParticipantCameraEnabled = (callSessionId: string, id: string, isCameraEnabled: boolean) => {
-    recordReadingPush(callSessionId, { id, patch: { isCameraEnabled }, type: "patch" });
-    const participant = callSessionParticipantsMap.value.get(callSessionId)?.get(id);
-    if (!participant) return;
-    participant.isCameraEnabled = isCameraEnabled;
-  };
-  const setParticipantMap = (callSessionId: string, participants: Map<string, CallParticipant>) => {
-    callSessionParticipantsMap.value.set(callSessionId, participants);
-  };
-  // The read is handed in, as a thread's is.
-  // Its answer is merged with the participant writes that landed while it was in flight.
-  // A session whose participants a subscription is following is never written back without them.
-  const readCallParticipants = (callSessionId: string, read: () => Promise<Map<string, CallParticipant>>) =>
-    readWithReplayedPushes(
-      callSessionId,
-      async () => [...(await read()).values()],
-      (participants) => {
-        setParticipantMap(callSessionId, new Map(participants.map((participant) => [participant.id, participant])));
-      },
-      console.error,
+  // The read is handed in, as a thread's is. Its rows arrive at their versions, so the read cannot overwrite a newer row
+  const readCallParticipants = (callSessionId: string, read: () => Promise<Map<string, CallParticipantRow>>) =>
+    readParticipants(async () =>
+      Array.from((await read()).values(), (participant) => ({ ...participant, callSessionId })),
     );
-  const setParticipantHandRaised = (callSessionId: string, id: string, isHandRaised: boolean) => {
-    recordReadingPush(callSessionId, { id, patch: { isHandRaised }, type: "patch" });
-    const participant = callSessionParticipantsMap.value.get(callSessionId)?.get(id);
-    if (!participant) return;
-    participant.isHandRaised = isHandRaised;
-  };
   const deleteSpeaker = (id: string) => {
     speakingIds.value = speakingIds.value.filter((speakingId) => speakingId !== id);
   };
@@ -73,17 +61,14 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
     callSessionParticipantsMap,
     clearJoinNotice,
     clearSpeakers,
-    createCallParticipant,
-    deleteCallParticipant,
     deleteSpeaker,
     joinNoticeParticipant,
     participantId,
     readCallParticipants,
-    setParticipantCameraEnabled,
-    setParticipantHandRaised,
     setParticipantId,
-    setParticipantMap,
-    setParticipantMuted,
     speakingIds,
+    storeCallParticipant,
+    storeCallParticipants,
+    storeJoinedCallParticipant,
   };
 });

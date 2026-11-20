@@ -1,4 +1,4 @@
-import type { CallParticipant } from "@esposter/db-schema";
+import type { CallParticipantRow } from "@esposter/db-schema";
 
 export interface JoinCallResult {
   // The participant's RealtimeKit auth token, which the client hands to its meeting; empty when RealtimeKit is not configured
@@ -11,5 +11,5 @@ export interface JoinCallResult {
   meetingId: string;
   // The id this participant is named by in the call, which is how its client tells its own participant from the others
   participantId: string;
-  participantMap: Map<string, CallParticipant>;
+  participantMap: Map<string, CallParticipantRow>;
 }

@@ -118,7 +118,7 @@ describe("callRouter", () => {
 
     const creatorCaller = await createMockOtherUserCaller(callRouter, mockContext.db);
     const { callSessionId } = await creatorCaller.createCall();
-    const setMuted = vi.fn<(input: unknown) => Promise<boolean>>(() => Promise.resolve(false));
+    const setMuted = vi.fn<(input: unknown) => Promise<null>>(() => Promise.resolve(null));
     vi.mocked(useCallObject).mockReturnValueOnce({ setMuted } as unknown as ReturnType<typeof useCallObject>);
 
     await expect(creatorCaller.setMuted({ callSessionId, isMuted: true })).rejects.toThrowErrorMatchingInlineSnapshot(

@@ -8,6 +8,7 @@ import type {
   CallObjectRpc,
   CallParticipant,
   CallParticipantProfile,
+  CallParticipantRow,
   PublishSource,
 } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
@@ -37,11 +38,12 @@ import {
   PublishSource as PublishSourceEnum,
   realtimeKitParticipants,
   relations,
+  TOMBSTONE_RETENTION_MS,
   TopicKind,
 } from "@esposter/db-schema";
 import callMigrations from "@esposter/db-schema/objects/call/migrations/migrations";
-import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
-import { eq } from "drizzle-orm";
+import { getResultAsync, noop, takeOne, withFinalizerAsync } from "@esposter/shared";
+import { and, eq, isNotNull, isNull, lt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import { v7 } from "uuid";
 import { z } from "zod";
@@ -49,8 +51,9 @@ import { z } from "zod";
 // The one row the call keeps about itself
 const CALL_STATE_ID = 1;
 
-// A participant as a member is shown it: its columns, without the session it joined under
+// A participant row as a member is shown it: its columns and version, without the session it joined under
 const participantColumns = {
+  deletedAt: participants.deletedAt,
   id: participants.id,
   image: participants.image,
   isCameraEnabled: participants.isCameraEnabled,
@@ -58,6 +61,7 @@ const participantColumns = {
   isMuted: participants.isMuted,
   name: participants.name,
   userId: participants.userId,
+  version: participants.version,
 };
 
 // A joined connection as the server knows it, its session included
@@ -208,7 +212,8 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     };
   }
 
-  readParticipantMap(): Map<string, CallParticipant> {
+  // Every row the call holds, tombstones included, so a read that answered before a leave loses to the leave's row
+  readParticipantMap(): Map<string, CallParticipantRow> {
     return new Map(
       this.db
         .select(participantColumns)
@@ -238,9 +243,9 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     callSessionId: string;
     isCameraEnabled: boolean;
     sessionId: string;
-  }): boolean {
-    return this.#updateFlag(eq(participants.sessionId, sessionId), { isCameraEnabled }, (id) => ({
-      data: { callSessionId, id, isCameraEnabled },
+  }): CallParticipantRow | null {
+    return this.#updateFlag(eq(participants.sessionId, sessionId), { isCameraEnabled }, (participant) => ({
+      data: { callSessionId, participant },
       type: "videoChanged",
     }));
   }
@@ -253,9 +258,9 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     callSessionId: string;
     isHandRaised: boolean;
     participantId: string;
-  }): boolean {
-    return this.#updateFlag(eq(participants.id, participantId), { isHandRaised }, (id) => ({
-      data: { callSessionId, id, isHandRaised },
+  }): CallParticipantRow | null {
+    return this.#updateFlag(eq(participants.id, participantId), { isHandRaised }, (participant) => ({
+      data: { callSessionId, participant },
       type: "handRaisedChanged",
     }));
   }
@@ -268,9 +273,9 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     callSessionId: string;
     isMuted: boolean;
     sessionId: string;
-  }): boolean {
-    return this.#updateFlag(eq(participants.sessionId, sessionId), { isMuted }, (id) => ({
-      data: { callSessionId, id, isMuted },
+  }): CallParticipantRow | null {
+    return this.#updateFlag(eq(participants.sessionId, sessionId), { isMuted }, (participant) => ({
+      data: { callSessionId, participant },
       type: "muteChanged",
     }));
   }
@@ -351,18 +356,25 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     };
   }
 
-  // Adds a connection as a participant and announces it. Returns whether it started the call
+  // Adds a connection as a participant and announces it. Returns whether it started the call. A session that left is
+  // Revived under the id this join minted: its row is the one the session's unique column names, so the upsert keys on that
+  // Column and its conflict branch clears the tombstone at the version the row continues from
   #addParticipant(callSessionId: string, sessionId: string, participant: CallParticipant): boolean {
-    const joinedParticipant = { ...participant, isCameraEnabled: false };
+    this.#purgeTombstones();
+    const joinedParticipant = { ...participant, deletedAt: null, isCameraEnabled: false, sessionId };
     const isFirstJoiner = !this.#checkHasParticipants();
-    this.db
-      .insert(participants)
-      .values({ ...joinedParticipant, sessionId })
-      .onConflictDoUpdate({ set: { ...joinedParticipant, sessionId }, target: participants.id })
-      .run();
+    const writtenParticipant = takeOne(
+      this.db
+        .insert(participants)
+        .values(joinedParticipant)
+        .onConflictDoUpdate({ set: joinedParticipant, target: participants.sessionId })
+        .returning(participantColumns)
+        .all(),
+      0,
+    );
     if (isFirstJoiner) this.#writeCallState({ startedAt: new Date() });
     this.broadcast(
-      { data: { callSessionId, participant: joinedParticipant, type: "join" }, type: "joinCall" },
+      { data: { callSessionId, participant: writtenParticipant, type: "join" }, type: "joinCall" },
       { excludeTag: getSessionSocketTag(sessionId) },
     );
     return isFirstJoiner;
@@ -374,7 +386,13 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   }
 
   #checkHasParticipants(): boolean {
-    return this.db.select({ id: participants.id }).from(participants).limit(1).all().length > 0;
+    const livingParticipants = this.db
+      .select({ id: participants.id })
+      .from(participants)
+      .where(isNull(participants.deletedAt))
+      .limit(1)
+      .all();
+    return livingParticipants.length > 0;
   }
 
   #checkIsConnected(sessionId: string): boolean {
@@ -454,7 +472,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return this.db
       .select({ id: participants.id, sessionId: participants.sessionId, userId: participants.userId })
       .from(participants)
-      .where(eq(participants.userId, userId))
+      .where(and(eq(participants.userId, userId), isNull(participants.deletedAt)))
       .all();
   }
 
@@ -479,12 +497,21 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return this.#meetingCreation;
   }
 
+  // A tombstone is no connection, so a read of the live participant takes live rows only
   #readParticipant(participantId: string) {
-    return this.db.select().from(participants).where(eq(participants.id, participantId)).get();
+    return this.db
+      .select()
+      .from(participants)
+      .where(and(eq(participants.id, participantId), isNull(participants.deletedAt)))
+      .get();
   }
 
   #readParticipantBySession(sessionId: string) {
-    return this.db.select().from(participants).where(eq(participants.sessionId, sessionId)).get();
+    return this.db
+      .select()
+      .from(participants)
+      .where(and(eq(participants.sessionId, sessionId), isNull(participants.deletedAt)))
+      .get();
   }
 
   #readRealtimeKitParticipant(participantId: string) {
@@ -503,11 +530,21 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       .all()[0];
   }
 
+  // A leave tombstones the connection's row at its next version, so the row a read or a late frame carries loses to it
   #removeParticipant(callSessionId: string, participant: Connection): CallLeave {
-    this.db.delete(participants).where(eq(participants.id, participant.id)).run();
+    this.#purgeTombstones();
+    const leftParticipant = takeOne(
+      this.db
+        .update(participants)
+        .set({ deletedAt: new Date() })
+        .where(eq(participants.id, participant.id))
+        .returning(participantColumns)
+        .all(),
+      0,
+    );
     this.db.delete(realtimeKitParticipants).where(eq(realtimeKitParticipants.participantId, participant.id)).run();
     this.broadcast(
-      { data: { callSessionId, id: participant.id }, type: "leaveCall" },
+      { data: { callSessionId, participant: leftParticipant }, type: "leaveCall" },
       { excludeTag: getSessionSocketTag(participant.sessionId) },
     );
     this.closeSockets(getSessionSocketTag(participant.sessionId), 1000, "Left the call");
@@ -521,9 +558,24 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       );
     return {
       callDurationSeconds: this.#checkHasParticipants() ? null : this.#endCall(callSessionId),
+      participant: leftParticipant,
       sessionId: participant.sessionId,
       userId: participant.userId,
     };
+  }
+
+  // A tombstone past its retention is removed at the object's next write. A call object has no alarm, so its own writes
+  // Are where the purge runs, and a client that still holds the row forgets it at the same age
+  #purgeTombstones(): void {
+    this.db
+      .delete(participants)
+      .where(
+        and(
+          isNotNull(participants.deletedAt),
+          lt(participants.deletedAt, new Date(Date.now() - TOMBSTONE_RETENTION_MS)),
+        ),
+      )
+      .run();
   }
 
   // One piece of work per key at a time, each starting once the one before it for that key has settled. Its own result
@@ -618,18 +670,22 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     }
   }
 
-  // Writes one of a participant's flags, and broadcasts the event for it only when a participant was updated
-  #updateFlag(where: SQL, values: ParticipantFlags, toEvent: (participantId: string) => CallEvent): boolean {
+  // Writes one of a participant's flags, and broadcasts the row it left for the event only when a live participant was updated
+  #updateFlag(
+    where: SQL,
+    values: ParticipantFlags,
+    toEvent: (participant: CallParticipantRow) => CallEvent,
+  ): CallParticipantRow | null {
     const [updatedParticipant] = this.db
       .update(participants)
       .set(values)
-      .where(where)
-      .returning({ id: participants.id })
+      .where(and(where, isNull(participants.deletedAt)))
+      .returning(participantColumns)
       .all();
-    if (!updatedParticipant) return false;
+    if (!updatedParticipant) return null;
 
-    this.broadcast(toEvent(updatedParticipant.id));
-    return true;
+    this.broadcast(toEvent(updatedParticipant));
+    return updatedParticipant;
   }
 
   #updateRealtimeKitParticipant(

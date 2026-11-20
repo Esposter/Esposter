@@ -1,16 +1,17 @@
 import { callParticipantSchema } from "#src/models/message/call/CallParticipant";
+import { callParticipantRowSchema } from "#src/models/message/call/CallParticipantRow";
 import { RealtimeEventType } from "#src/models/realtime/RealtimeEventType";
 import { callSessionIdSchema } from "#src/models/shared/CallSessionId";
 import { CALL_AUTH_TOKEN_MAX_LENGTH } from "#src/services/message/constants";
 import { z } from "zod";
 
 // The events a call's socket carries, one frame each. No frame names an auth session: a connection is named by its
-// Participant or knocker id alone
+// Participant or knocker id alone. A participant's frame carries the row the call object holds, at the version it left it,
+// So a member's view applies it through the same arrival gate as a read and a leave is a tombstone, not a removal
 const callSessionId = callSessionIdSchema.shape.callSessionId;
-const participantId = callParticipantSchema.shape.id;
 
 const joinCallPayloadSchema = z.union([
-  z.object({ callSessionId, participant: callParticipantSchema, type: z.literal("join") }),
+  z.object({ callSessionId, participant: callParticipantRowSchema, type: z.literal("join") }),
   // A revoke that narrows a connection replaces it, and hands only the connection's own user the token to rejoin with
   z.object({
     authToken: z.string().min(1).max(CALL_AUTH_TOKEN_MAX_LENGTH),
@@ -21,19 +22,19 @@ const joinCallPayloadSchema = z.union([
 ]);
 const joinCallEventSchema = z.object({ data: joinCallPayloadSchema, type: z.literal(RealtimeEventType.JoinCall) });
 const leaveCallEventSchema = z.object({
-  data: z.object({ callSessionId, id: participantId }),
+  data: z.object({ callSessionId, participant: callParticipantRowSchema }),
   type: z.literal(RealtimeEventType.LeaveCall),
 });
 const videoChangedEventSchema = z.object({
-  data: z.object({ callSessionId, id: participantId, isCameraEnabled: z.boolean() }),
+  data: z.object({ callSessionId, participant: callParticipantRowSchema }),
   type: z.literal(RealtimeEventType.VideoChanged),
 });
 const handRaisedChangedEventSchema = z.object({
-  data: z.object({ callSessionId, id: participantId, isHandRaised: z.boolean() }),
+  data: z.object({ callSessionId, participant: callParticipantRowSchema }),
   type: z.literal(RealtimeEventType.HandRaisedChanged),
 });
 const muteChangedEventSchema = z.object({
-  data: z.object({ callSessionId, id: participantId, isMuted: z.boolean() }),
+  data: z.object({ callSessionId, participant: callParticipantRowSchema }),
   type: z.literal(RealtimeEventType.MuteChanged),
 });
 const knockCallEventSchema = z.object({

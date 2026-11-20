@@ -1,7 +1,8 @@
 import type { CallAccess } from "#src/models/message/call/CallAccess";
 import type { CallJoin } from "#src/models/message/call/CallJoin";
 import type { CallLeave } from "#src/models/message/call/CallLeave";
-import type { CallParticipant, CallParticipantProfile } from "#src/models/message/call/CallParticipant";
+import type { CallParticipantProfile } from "#src/models/message/call/CallParticipant";
+import type { CallParticipantRow } from "#src/models/message/call/CallParticipantRow";
 import type { PublishSource } from "#src/models/message/call/PublishSource";
 
 // The RPC surface of a CallObject, the one contract its class in the realtime Worker and the web Worker's stubs share.
@@ -31,13 +32,23 @@ export interface CallObjectRpc {
   // Null while a revoke is replacing the connection, so its kick is not taken for the participant leaving
   participantLeft: (input: { callSessionId: string; leftAt: Date; participantId: string }) => CallLeave | null;
   readAccess: (input: { sessionId: string }) => CallAccess;
-  readParticipantMap: () => Map<string, CallParticipant>;
+  // Every row the call holds, tombstones included, so a read that answered before a leave loses to the leave's row
+  readParticipantMap: () => Map<string, CallParticipantRow>;
   // The user a participant is a connection of, empty when the call holds no such participant
   readParticipantUserId: (input: { participantId: string }) => string;
   removeConnection: (input: { participantId: string }) => Promise<void>;
-  setCameraEnabled: (input: { callSessionId: string; isCameraEnabled: boolean; sessionId: string }) => boolean;
-  setHandRaised: (input: { callSessionId: string; isHandRaised: boolean; participantId: string }) => boolean;
-  setMuted: (input: { callSessionId: string; isMuted: boolean; sessionId: string }) => boolean;
+  // The row a flag change wrote, at the version it left it, or null when the call holds no live participant for it
+  setCameraEnabled: (input: {
+    callSessionId: string;
+    isCameraEnabled: boolean;
+    sessionId: string;
+  }) => CallParticipantRow | null;
+  setHandRaised: (input: {
+    callSessionId: string;
+    isHandRaised: boolean;
+    participantId: string;
+  }) => CallParticipantRow | null;
+  setMuted: (input: { callSessionId: string; isMuted: boolean; sessionId: string }) => CallParticipantRow | null;
   // Grants or revokes publishing for every connection a user holds; a revoke that narrows it replaces each connection
   updatePresets: (input: {
     callSessionId: string;

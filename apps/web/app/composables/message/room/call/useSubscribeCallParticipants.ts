@@ -3,23 +3,16 @@ import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { useRealtimeStore } from "#src/store/message/room/realtime";
 import { useConnectionStore } from "#src/store/realtime/connection";
 
-// The five participant frames the call socket carries, and the read of the session's participants. Each frame is
-// Registered before the session is read, so a change the read's answer leaves out is one a frame delivers. The join
-// Frame also carries the rejoin a revoke hands its own user, which only the tab holding the meeting acts on
+// The five participant frames the call socket carries, and the read of the session's participants. Each frame carries the
+// Row the call object holds, so it arrives at its version, and each is registered before the session is read, so a change
+// The read's answer leaves out is one a frame delivers. The join frame also carries the rejoin a revoke hands its own user,
+// Which only the tab holding the meeting acts on
 export const useSubscribeCallParticipants = () => {
   const { $trpc } = useNuxtApp();
   const mediaStore = useMediaStore();
   const { deleteParticipantVolumePercentage } = mediaStore;
   const participantStore = useParticipantStore();
-  const {
-    createCallParticipant,
-    deleteCallParticipant,
-    deleteSpeaker,
-    readCallParticipants,
-    setParticipantCameraEnabled,
-    setParticipantHandRaised,
-    setParticipantMuted,
-  } = participantStore;
+  const { deleteSpeaker, readCallParticipants, storeCallParticipant, storeJoinedCallParticipant } = participantStore;
   const realtimeStore = useRealtimeStore();
   const { rejoin } = realtimeStore;
   const connectionStore = useConnectionStore();
@@ -29,21 +22,21 @@ export const useSubscribeCallParticipants = () => {
     const unregisters = [
       onCallEvent("joinCall", (data) => {
         if (data.type === "rejoin") rejoin(data.authToken, data.canPublishMicrophone);
-        else createCallParticipant(callSessionId, data.participant);
+        else storeJoinedCallParticipant(callSessionId, data.participant);
       }),
-      onCallEvent("leaveCall", ({ id }) => {
-        deleteCallParticipant(callSessionId, id);
-        deleteSpeaker(id);
-        deleteParticipantVolumePercentage(id);
+      onCallEvent("leaveCall", ({ participant }) => {
+        storeCallParticipant(callSessionId, participant);
+        deleteSpeaker(participant.id);
+        deleteParticipantVolumePercentage(participant.id);
       }),
-      onCallEvent("handRaisedChanged", ({ id, isHandRaised }) => {
-        setParticipantHandRaised(callSessionId, id, isHandRaised);
+      onCallEvent("handRaisedChanged", ({ participant }) => {
+        storeCallParticipant(callSessionId, participant);
       }),
-      onCallEvent("muteChanged", ({ id, isMuted }) => {
-        setParticipantMuted(callSessionId, id, isMuted);
+      onCallEvent("muteChanged", ({ participant }) => {
+        storeCallParticipant(callSessionId, participant);
       }),
-      onCallEvent("videoChanged", ({ id, isCameraEnabled }) => {
-        setParticipantCameraEnabled(callSessionId, id, isCameraEnabled);
+      onCallEvent("videoChanged", ({ participant }) => {
+        storeCallParticipant(callSessionId, participant);
       }),
     ];
     await readCallParticipants(callSessionId, () => $trpc.callSession.readCallParticipantMap.query({ callSessionId }));

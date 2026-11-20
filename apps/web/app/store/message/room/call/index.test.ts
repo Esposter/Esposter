@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { ClientMessage } from "#src/models/message/ClientMessage";
-import type { CallParticipant, CallParticipantRow } from "@esposter/db-schema";
+import type { CallParticipantRow } from "@esposter/db-schema";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { createId } from "#shared/util/math/random/createId";
@@ -36,6 +36,13 @@ const createParticipant = (id: string): CallParticipantRow => ({
   name: "name",
   userId: "userId",
   version: 1,
+});
+
+// The row a leave answers with: the participant's tombstone, one version on
+const createLeftParticipant = (id: string): CallParticipantRow => ({
+  ...createParticipant(id),
+  deletedAt: new Date(0),
+  version: 2,
 });
 
 describe(useCallStore, () => {
@@ -321,6 +328,7 @@ describe(useCallStore, () => {
     const leaveCall = vi.fn<() => void>();
     trpcMsw.callSession.leaveCall.mutation(() => {
       leaveCall();
+      return createLeftParticipant(v7());
     });
     const callStore = useCallStore();
     const { activeCallSessionId, isLeaving } = storeToRefs(callStore);
@@ -343,6 +351,7 @@ describe(useCallStore, () => {
     const leaveCall = vi.fn<() => void>();
     trpcMsw.callSession.leaveCall.mutation(() => {
       leaveCall();
+      return createLeftParticipant(v7());
     });
     const mediaStore = useMediaStore();
     vi.spyOn(mediaStore, "resetCallMedia").mockImplementation(() => {
@@ -360,7 +369,7 @@ describe(useCallStore, () => {
   test("clears the leaving flag when the disconnect is rejected", async () => {
     expect.hasAssertions();
 
-    trpcMsw.callSession.leaveCall.mutation(() => undefined);
+    trpcMsw.callSession.leaveCall.mutation(() => createLeftParticipant(v7()));
     const realtimeStore = useRealtimeStore();
     vi.spyOn(realtimeStore, "disconnect").mockRejectedValue(new Error(" "));
     const callStore = useCallStore();
@@ -383,6 +392,7 @@ describe(useCallStore, () => {
     trpcMsw.callSession.setHandRaised.mutation(async ({ input }) => {
       handRaisedSent.push(input.isHandRaised);
       if (input.isHandRaised) await raiseGate.promise;
+      return createParticipant(participantId);
     });
     const participantStore = useParticipantStore();
     const { setParticipantId, storeCallParticipants } = participantStore;
@@ -418,6 +428,7 @@ describe(useCallStore, () => {
     const handRaisedSent: { callSessionId: string; isHandRaised: boolean; participantId: string }[] = [];
     trpcMsw.callSession.setHandRaised.mutation(({ input }) => {
       handRaisedSent.push(input);
+      return createParticipant(input.participantId);
     });
     const participantStore = useParticipantStore();
     participantStore.storeCallParticipants(callSessionId, [
