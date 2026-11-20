@@ -50,6 +50,13 @@ jobs:
       - name: 🔧 Install the Pulumi CLI
         uses: pulumi/actions@96c7761824268174e0d2a4e8c7d75671eebd24a7 # v7.1.0
 
+      # The gate's scripts package is installed here, since no app's install reaches it. It goes first, ahead of every app's install,
+      # so the jobs build's install is still the last one before the D1 migrations, which read it
+      - name: 📦 Install the scripts package
+        uses: ./.github/actions/install-projects
+        with:
+          filter: "@esposter/scripts"
+
       # Two values the web build bakes into its client and server runtime config, so they must exist before the build. Each
       # is also a Worker secret, put by the step after its Worker deploys. The list is `build` in worker-secrets.json
       - name: 🔐 Read the build's public configuration
@@ -79,22 +86,8 @@ jobs:
         with:
           package: "@esposter/jobs"
 
-      # Reads the install the jobs build left, which holds `@esposter/db-schema` and its drizzle-kit, so it follows that build
-      - name: 🗄️ Apply the D1 migrations
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ENVIRONMENT: ${{ env.CLOUDFLARE_ENV }}
-        run: pnpm --filter @esposter/db-schema db:migrate
-
-      # The gate's scripts package is installed for the checks below, since no app's install reaches it. Its workspace imports
-      # are the apps' schemas and `@esposter/shared`, which the app builds above have already built
-      - name: 📦 Install the scripts package
-        uses: ./.github/actions/install-projects
-        with:
-          filter: "@esposter/scripts"
-
-      # Gathered and checked before the Worker deploys, so a value its schema refuses stops the deploy before the new Worker
-      # serves any traffic
+      # Every Worker's secrets are gathered and checked before the first migration, so a value its schema refuses stops the deploy
+      # before any schema or Worker changes. Each put below still follows its own Worker's deploy, and reads the file gathered here
       - name: 🔐 Gather the realtime Worker's secrets
         id: realtime-secrets
         uses: ./.github/actions/gather-worker-secrets
@@ -107,6 +100,39 @@ jobs:
         env:
           SECRETS_FILE: ${{ steps.realtime-secrets.outputs.file }}
         run: pnpm -C scripts worker-secrets:check realtime "$SECRETS_FILE"
+
+      - name: 🔐 Gather the jobs Worker's secrets
+        id: jobs-secrets
+        uses: ./.github/actions/gather-worker-secrets
+        with:
+          worker: jobs
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+      - name: 🔐 Check the jobs Worker's secrets against its schema
+        env:
+          SECRETS_FILE: ${{ steps.jobs-secrets.outputs.file }}
+        run: pnpm -C scripts worker-secrets:check jobs "$SECRETS_FILE"
+
+      - name: 🔐 Gather the web Worker's secrets
+        id: web-secrets
+        uses: ./.github/actions/gather-worker-secrets
+        with:
+          worker: web
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+      - name: 🔐 Check the web Worker's secrets against its schema
+        env:
+          SECRETS_FILE: ${{ steps.web-secrets.outputs.file }}
+        run: pnpm -C scripts worker-secrets:check web "$SECRETS_FILE"
+
+      # Reads the install the jobs build left, which holds `@esposter/db-schema` and its drizzle-kit, so it follows that build
+      - name: 🗄️ Apply the D1 migrations
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ENVIRONMENT: ${{ env.CLOUDFLARE_ENV }}
+        run: pnpm --filter @esposter/db-schema db:migrate
 
       - name: 🚀 Deploy the realtime Worker
         env:
@@ -122,19 +148,6 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      - name: 🔐 Gather the jobs Worker's secrets
-        id: jobs-secrets
-        uses: ./.github/actions/gather-worker-secrets
-        with:
-          worker: jobs
-        env:
-          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-
-      - name: 🔐 Check the jobs Worker's secrets against its schema
-        env:
-          SECRETS_FILE: ${{ steps.jobs-secrets.outputs.file }}
-        run: pnpm -C scripts worker-secrets:check jobs "$SECRETS_FILE"
-
       - name: 🚀 Deploy the jobs Worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -148,19 +161,6 @@ jobs:
           file: ${{ steps.jobs-secrets.outputs.file }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
-      - name: 🔐 Gather the web Worker's secrets
-        id: web-secrets
-        uses: ./.github/actions/gather-worker-secrets
-        with:
-          worker: web
-        env:
-          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-
-      - name: 🔐 Check the web Worker's secrets against its schema
-        env:
-          SECRETS_FILE: ${{ steps.web-secrets.outputs.file }}
-        run: pnpm -C scripts worker-secrets:check web "$SECRETS_FILE"
 
       - name: 🚀 Deploy the web Worker
         env:
