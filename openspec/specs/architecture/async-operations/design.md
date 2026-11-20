@@ -50,7 +50,7 @@ The `key` is not the only thing an operation resolves when it is issued. **Every
 
 `useCursorPaginationDataMap` hands its operation-data composable that binder, so `readItems` / `readMoreItems` file their rows under the key the read was issued for with nothing at the call site. Anything else the same read writes back — a total, a page number, a per-role breakdown — is bound the same way, **before the read's first await**, and so is any plain value the response is interpreted against (which tab was open, which filters were applied). A read composable that calls `getBoundCount()` at the top of its query and writes `boundCount.value` after it is the shape; reading a current-key ref after an await is the defect, and it does not announce itself — the result simply appears under whatever the user switched to.
 
-The same rule decides what a **subscription** may apply. A subscription spans every entity the client is interested in, so its payload carries the key the event happened under and the handler takes it as a parameter (`storeDeleteMember(roomId, id)`). A handler that resolves the key itself can only resolve the one on screen, which is the wrong one for every event that did not happen there.
+The same rule decides what a **subscription** may apply. A subscription spans every entity the client is interested in, so its payload carries the key the event happened under and the handler takes it as a parameter (`arriveLeftMember(leftMember)`, whose row names its room). A handler that resolves the key itself can only resolve the one on screen, which is the wrong one for every event that did not happen there.
 
 ## Reads — `executeQuery`
 

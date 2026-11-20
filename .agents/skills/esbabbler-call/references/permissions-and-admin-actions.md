@@ -12,13 +12,11 @@ The value set is `packages/db-schema/src/models/message/AdminActionType.ts`, and
 
 ## Admin action hooks in the call stores
 
-Admin action hooks in `useCallStore` receive `roomId`. Compare it against `callRoomId` (not `activeCallSessionId`), since admin actions are room-scoped:
+Admin action hooks in `useCallStore` receive `roomId`. They register through `registerCallAdminActionHook`, which compares it against `callRoomId` (not `activeCallSessionId`), since admin actions are room-scoped. A force mute writes the viewer's own mute row through `setMuted`, so the server and the screen agree, then turns the microphone off:
 
 ```ts
-AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
-  if (callRoomId.value !== roomId) return;
-  if (participantStore.participantId)
-    setParticipantMuted(activeCallSessionId.value, participantStore.participantId, true);
+registerCallAdminActionHook(AdminActionType.ForceMute, async () => {
+  setMuted(true);
   await setMicrophone(false);
   mediaStore.isForceMuted = true;
 });

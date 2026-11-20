@@ -54,8 +54,8 @@ which answers a question about a value it leaves alone.
 ## A setter is named after the field it writes
 
 A function whose whole body assigns a boolean `is*` field is `set` plus that field's name minus the `is`:
-`setParticipantMuted` writes `isMuted`, `setParticipantCameraEnabled` writes `isCameraEnabled`,
-`setParticipantHandRaised` writes `isHandRaised`.
+`setMuted` writes `isMuted`, `setCameraEnabled` writes `isCameraEnabled`,
+`setHandRaised` writes `isHandRaised`.
 
 `setFooOn` names an action rather than the `isFoo` it writes, `setBar` drops half of the `isBarEnabled` it
 writes, and `setFooEnabled` over an `isFoo` invents a second word for a field that already has one — each leaves
