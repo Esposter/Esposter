@@ -9,22 +9,22 @@ import { defineConfig } from "eslint/config";
 // Per element), WAI-ARIA's `role` and `aria-*`, custom data, and the two Vue keeps for itself. Vue's `<template>` and
 // `<slot>` share HTML's names but are the framework's outlets, whose bound attributes are slot props
 const HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
-const htmlTagNameSet = new Set(htmlTagNames);
-const vueOutletNames = new Set(["slot", "template"]);
-const vueReservedAttributeNames = new Set(["key", "ref"]);
-const globalAttributeNames = new Set(htmlElementAttributes["*"]);
+const HTML_TAG_NAME_SET = new Set(htmlTagNames);
+const VUE_OUTLET_NAMES = new Set(["slot", "template"]);
+const VUE_RESERVED_ATTRIBUTE_NAMES = new Set(["key", "ref"]);
+const GLOBAL_ATTRIBUTE_NAMES = new Set(htmlElementAttributes["*"]);
 
 /** @param {string} elementName @param {string} attributeName */
 const checkIsKnownAttribute = (elementName, attributeName) =>
-  globalAttributeNames.has(attributeName) ||
+  GLOBAL_ATTRIBUTE_NAMES.has(attributeName) ||
   htmlElementAttributes[elementName]?.includes(attributeName) ||
-  vueReservedAttributeNames.has(attributeName) ||
+  VUE_RESERVED_ATTRIBUTE_NAMES.has(attributeName) ||
   attributeName === "role" ||
   attributeName.startsWith("aria-") ||
   attributeName.startsWith("data-");
 
 /** @param {import("vue-eslint-parser").AST.VAttribute | import("vue-eslint-parser").AST.VDirective} attribute */
-const getAttributeName = (attribute) => {
+const computeAttributeName = (attribute) => {
   if (!attribute.directive) return attribute.key.rawName.toLowerCase();
   // Only a bound attribute with a static name sets an attribute; every other directive is Vue's
   const { argument, name } = attribute.key;
@@ -39,12 +39,12 @@ const noUnknownAttribute = {
       VElement: (element) => {
         if (
           element.namespace !== HTML_NAMESPACE ||
-          !htmlTagNameSet.has(element.name) ||
-          vueOutletNames.has(element.name)
+          !HTML_TAG_NAME_SET.has(element.name) ||
+          VUE_OUTLET_NAMES.has(element.name)
         )
           return;
         for (const attribute of element.startTag.attributes) {
-          const attributeName = getAttributeName(attribute);
+          const attributeName = computeAttributeName(attribute);
           if (!attributeName || checkIsKnownAttribute(element.name, attributeName)) continue;
           context.report({
             loc: attribute.loc,
