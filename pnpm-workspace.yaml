@@ -268,8 +268,8 @@ packageExtensions:
   miniflare:
     peerDependencies:
       "@cloudflare/workers-types": "*"
-  # @TODO: no upstream issue — nuxt/nuxt: @nuxt/schema's types import the packages its options configure and declare
-  # None of them. Each is optional, so it is linked only where the checkout installs it
+  # @nuxt/schema's types import the packages its options configure and declare none of them, by design: an app installs
+  # The builder it uses. Each is optional, so it is linked only where the checkout installs it
   "@nuxt/schema-nightly":
     peerDependencies:
       "@unhead/vue": "*"
@@ -299,58 +299,37 @@ packageExtensions:
   nitro-nightly:
     peerDependencies:
       nitro: "*"
-  # @TODO: no upstream issue — pmndrs/xr: its types import `three`, which ships no types, and it does not declare
-  # `@types/three`
+  # Three ships no types, and its add-ons leave `@types/three` to the app, as three's own docs ask the app to install it
   "@pmndrs/pointer-events":
     peerDependencies:
       "@types/three": "*"
-  # @TODO: no upstream issue — Tresjs/cientos: its types import `three`, which ships no types, and it does not declare
-  # `@types/three`
   "@tresjs/cientos":
     peerDependencies:
       "@types/three": "*"
-  # @TODO: no upstream issue — Tresjs/tres: its types import `three`, which ships no types, and it does not declare
-  # `@types/three`
   "@tresjs/core":
     peerDependencies:
       "@types/three": "*"
-  # @TODO: no upstream issue — yomotsu/camera-controls: its types import `three`, which ships no types, and it does not declare
-  # `@types/three`
   "camera-controls":
     peerDependencies:
       "@types/three": "*"
-  # @TODO: no upstream issue — vasturiano/three-conic-polygon-geometry: its types import `three`, which ships no types, and it does not declare
-  # `@types/three`
   "three-conic-polygon-geometry":
     peerDependencies:
       "@types/three": "*"
-  # @TODO: no upstream issue — FarazzShaikh/THREE-CustomShaderMaterial: its types import `three`, which ships no types, and it does not declare
-  # `@types/three`
   "three-custom-shader-material":
     peerDependencies:
       "@types/three": "*"
-  # @TODO: no upstream issue — vasturiano/three-geojson-geometry: its types import `three`, which ships no types, and it does not declare
-  # `@types/three`
   "three-geojson-geometry":
     peerDependencies:
       "@types/three": "*"
-  # @TODO: no upstream issue — vasturiano/three-globe: its types import `three`, which ships no types, and it does not declare
-  # `@types/three`
   "three-globe":
     peerDependencies:
       "@types/three": "*"
-  # @TODO: no upstream issue — gkjohnson/three-mesh-bvh: its types import `three`, which ships no types, and it does not declare
-  # `@types/three`
   "three-mesh-bvh":
     peerDependencies:
       "@types/three": "*"
-  # @TODO: no upstream issue — vasturiano/three-slippy-map-globe: its types import `three`, which ships no types, and it does not declare
-  # `@types/three`
   "three-slippy-map-globe":
     peerDependencies:
       "@types/three": "*"
-  # @TODO: no upstream issue — pmndrs/three-stdlib: its types import `three`, which ships no types, and it does not declare
-  # `@types/three`
   "three-stdlib":
     peerDependencies:
       "@types/three": "*"
