@@ -57,13 +57,15 @@ describe(useLikeStore, () => {
     expect(currentPost.value?.likeCount).toBe(like.value);
   });
 
-  // A vote the server refuses is taken back by its entry dropping, so the post shows no vote once the refusal lands
-  test("draws no vote on a post whose vote the server refuses", async () => {
+  // A vote the server refuses is taken back by its entry dropping, so the post shows no vote once the refusal lands.
+  // The count is read back all the same, since another viewer's vote may have moved it
+  test("draws no vote on a post whose vote the server refuses, and reads its count back", async () => {
     expect.hasAssertions();
 
     trpcMsw.like.createLike.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
+    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: 3, version: 1 }]);
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const { readItems, readPostPage } = postStore;
@@ -76,6 +78,7 @@ describe(useLikeStore, () => {
     expect(takeOne(items.value).viewerLike?.value).toBe(1);
     await until(() => takeOne(items.value).viewerLike).toBeUndefined();
     expect(takeOne(items.value).viewerLike).toBeUndefined();
+    await until(() => takeOne(items.value).likeCount).toBe(3);
   });
 
   // A removed vote is the server's tombstone, which the view leaves out, so the post reads as having no vote of the viewer
