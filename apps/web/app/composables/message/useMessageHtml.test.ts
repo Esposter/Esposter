@@ -69,7 +69,7 @@ describe(useMessageHtml, () => {
     const messageHtml = useMessageHtml(createCustomEmojiNode(roomEmojiId), roomId);
 
     expect(messageHtml.value).toBe(
-      `<span ${CUSTOM_EMOJI_ID_ATTRIBUTE}="${roomEmojiId}" ${CUSTOM_EMOJI_NAME_ATTRIBUTE}="${name}"><img class="custom-emoji" src="${presignedUrl.replaceAll("&", "&amp;")}" alt=":${name}:" ></span>`,
+      `<span ${CUSTOM_EMOJI_ID_ATTRIBUTE}="${roomEmojiId}" ${CUSTOM_EMOJI_NAME_ATTRIBUTE}="${name}"><img class="custom-emoji" src="${presignedUrl}" alt=":${name}:" ></span>`,
     );
   });
 

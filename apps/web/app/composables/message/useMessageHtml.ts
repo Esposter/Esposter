@@ -15,21 +15,20 @@ import { parse } from "node-html-parser";
 // Name this room calls that member, and a custom emoji shows the image its id names. One parse and one pass per
 // Rewrite (openspec/specs/architecture/content-token-rewriting/design.md) — the tree that is queried has to be the tree that is
 // Serialized, or the mutations are made to a copy nobody reads
-export const useMessageHtml = (message: MaybeRefOrGetter<string>, roomId?: MaybeRefOrGetter<string>) => {
+export const useMessageHtml = (message: MaybeRefOrGetter<string>, roomId: MaybeRefOrGetter<string>) => {
   const userStore = useUserStore();
-  const { userMap } = storeToRefs(userStore);
   const { getRoomMemberName } = userStore;
   const roomEmojiStore = useRoomEmojiStore();
   const { customEmojiMap } = storeToRefs(roomEmojiStore);
   return computed(() => {
     const messageHtml = parse(toValue(message));
-    const roomIdValue = roomId ? toValue(roomId) : undefined;
+    const roomIdValue = toValue(roomId);
 
     for (const mention of messageHtml.querySelectorAll(MENTION_SELECTOR)) {
       const memberId = mention.getAttribute(MENTION_ID_ATTRIBUTE);
       if (!memberId) continue;
-      // A room's mention reads the name its member row carries there; with no room, the account name
-      const displayName = roomIdValue ? getRoomMemberName(roomIdValue, memberId) : userMap.value.get(memberId)?.name;
+      // A mention reads the name its member row carries in this room
+      const displayName = getRoomMemberName(roomIdValue, memberId);
       if (!displayName) continue;
       if (displayName === mention.textContent.slice(1)) continue;
 
@@ -46,7 +45,7 @@ export const useMessageHtml = (message: MaybeRefOrGetter<string>, roomId?: Maybe
 
       const shortcode = getEmojiShortcode(roomEmoji.name);
       customEmoji.set_content(
-        `<img class="custom-emoji" src="${escapeHtml(roomEmoji.presignedUrl)}" alt="${shortcode}" />`,
+        `<img class="custom-emoji" src="${escapeHtml(roomEmoji.presignedUrl)}" alt="${escapeHtml(shortcode)}" />`,
       );
     }
     // A spoiler is a control a reader activates, so it is announced and focusable as one. Its reveal is the one
