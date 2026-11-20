@@ -64,7 +64,11 @@ export const likeRouter = router({
   }),
   deleteLike: standardAuthedProcedure.input(deleteLikeInputSchema).mutation<LikeInPost>(async ({ ctx, input }) => {
     const userId = ctx.user.id;
-    const post = await requireEntity(readLikedPost(ctx.db, input), DatabaseEntityType.Post, input);
+    const post = await requireEntity(
+      readLikedPost(ctx.db, input, { includeRemoved: true }),
+      DatabaseEntityType.Post,
+      input,
+    );
     const existingLike = requireMutation(
       await readLike(ctx.db, input, userId),
       Operation.Delete,
@@ -108,7 +112,10 @@ export const likeRouter = router({
     .input(updateLikeInputSchema)
     .mutation<LikeInPost>(async ({ ctx, input: { postId, value } }) => {
       const userId = ctx.user.id;
-      const [post, existingLike] = await Promise.all([readLikedPost(ctx.db, postId), readLike(ctx.db, postId, userId)]);
+      const [post, existingLike] = await Promise.all([
+        readLikedPost(ctx.db, postId, { includeRemoved: true }),
+        readLike(ctx.db, postId, userId),
+      ]);
       if (!post) throw getNotFoundError(DatabaseEntityType.Post, postId);
       else if (!existingLike) throw getNotFoundError(DatabaseEntityType.Like, postId);
       else if (existingLike.value === value)

@@ -133,6 +133,18 @@ describe("likeRouter", () => {
     expect(post.likeCount).toBe(0);
   });
 
+  // A removed post takes no new vote, but the vote already on it is still removed, so the member is not left holding it
+  test("removes a vote on a removed post", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    await likeCaller.createLike({ postId: newPost.id, value });
+    await postCaller.deletePost(newPost.id);
+    const removedLike = await likeCaller.deleteLike(newPost.id);
+
+    expect(removedLike.deletedAt).not.toBeNull();
+  });
+
   test("fails delete with wrong user", async () => {
     expect.hasAssertions();
 
