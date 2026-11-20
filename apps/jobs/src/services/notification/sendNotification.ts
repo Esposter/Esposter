@@ -14,7 +14,7 @@ import {
   notificationsInNotification,
 } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
-import { and, isNull, lt, or } from "drizzle-orm";
+import { and, isNull, lt } from "drizzle-orm";
 
 // The whole fan-out, and the only place that decides where a notification lands. Recipient resolution is the one
 // Thing that varies by type; everything past it reads the type's declared channels, so adding a notification is
@@ -48,8 +48,8 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
     // Because it runs after the rows above have landed — a throw here would ask the queue for a redelivery
     // That inserts them a second time, which is the duplication QueueJobMaxRetriesMap promises this
     // Handler does not cause
-    // A dismissal is a tombstone kept for the retention counted from the dismissal, so a row dismissed recently survives
-    // The creation's age; a live row is kept for the retention counted from its creation
+    // A live row is kept for the retention counted from its creation. A dismissal is a tombstone the nightly purge removes on
+    // Its own retention, so the trim takes live rows only and leaves a tombstone to the purge rather than duplicating it
     const retentionCutoff = new Date(Date.now() - NOTIFICATION_RETENTION_MS);
     await getResultAsync(() =>
       getDb()
@@ -57,13 +57,8 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
         .where(
           and(
             inJsonArray(notificationsInNotification.userId, userIds),
-            or(
-              and(
-                isNull(notificationsInNotification.deletedAt),
-                lt(notificationsInNotification.createdAt, retentionCutoff),
-              ),
-              lt(notificationsInNotification.deletedAt, retentionCutoff),
-            ),
+            isNull(notificationsInNotification.deletedAt),
+            lt(notificationsInNotification.createdAt, retentionCutoff),
           ),
         ),
     ).match(noop, (error) => {

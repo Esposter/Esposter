@@ -4,10 +4,11 @@ import { validateJobsEnvironment } from "#src/services/environment/validateJobsE
 import { handleQueueBatch } from "#src/services/queue/handleQueueBatch";
 import { purgeExpiredResources } from "#src/services/resource/purgeExpiredResources";
 import { runUnit } from "#src/services/shared/runUnit";
+import { purgeExpiredTombstones } from "#src/services/tombstone/purgeExpiredTombstones";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // The jobs Worker is a queue consumer for every job and for each job's dead-letter queue.
-// It also runs the nightly purge on its Cron Trigger.
+// It also runs the nightly purges, of the recycle bin and of the overlay's tombstones, on its Cron Trigger.
 // The realtime objects it reaches are bound through the realtime Worker's name, so they are not exported from here.
 // This Worker serves no HTTP, so every request it is sent is answered with a 404
 export default {
@@ -20,6 +21,11 @@ export default {
     context.waitUntil(
       getResultAsync(() => runUnit(purgeExpiredResources)).match(noop, (error) => {
         console.error("PurgeDeletedResources failed:", error);
+      }),
+    );
+    context.waitUntil(
+      getResultAsync(purgeExpiredTombstones).match(noop, (error) => {
+        console.error("PurgeExpiredTombstones failed:", error);
       }),
     );
   },
