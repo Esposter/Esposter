@@ -9,7 +9,7 @@ import { getStorageBucketBindingName } from "@esposter/db-schema";
 export const recordStorageBlobWrite = (
   storageBucket: StorageBucket,
   key: string,
-  getBlobs: () => RecordedBlobs | undefined,
+  blobs: RecordedBlobs | undefined,
 ): void => {
-  recordBlobWrite(getBlobs(), getStorageBucketBindingName(storageBucket), key);
+  recordBlobWrite(blobs, getStorageBucketBindingName(storageBucket), key);
 };
