@@ -14,11 +14,11 @@ const createHealthChanged = (characterId: number, healthShare: number): KitEvent
   bondOfLifeShare: 0,
   characterId,
   healthShare,
+  healthShareAfter: 0.5,
+  healthShareBefore: 0.5,
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
-  healthShareAfter: 0.5,
-  healthShareBefore: 0.5,
 });
 
 describe(createTidalShadowPassiveModule, () => {

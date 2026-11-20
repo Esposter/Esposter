@@ -24,11 +24,11 @@ describe(createAeonWavePassiveModule, () => {
     bondOfLifeShare: 0,
     characterId: TRAVELER_CHARACTER_ID,
     healthShare: 0.1,
+    healthShareAfter: 0.6,
+    healthShareBefore: 0.5,
     isFallRefused: false,
     kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,
-    healthShareAfter: 0.6,
-    healthShareBefore: 0.5,
   };
 
   test("a change in the wielder's HP adds a stack of Charged Attack DMG for two seconds", () => {

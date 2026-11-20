@@ -23,11 +23,11 @@ describe(createDeathlyPactPassiveModule, () => {
     bondOfLifeShare: 0.1,
     characterId: TRAVELER_CHARACTER_ID,
     healthShare: 0,
+    healthShareAfter: 0.5,
+    healthShareBefore: 0.5,
     isFallRefused: false,
     kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,
-    healthShareAfter: 0.5,
-    healthShareBefore: 0.5,
   };
 
   test("an increase of the wielder's Bond of Life raises its DMG by 25% for three seconds", () => {

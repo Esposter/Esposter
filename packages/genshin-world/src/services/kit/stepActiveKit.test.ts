@@ -293,11 +293,11 @@ describe(stepActiveKit, () => {
         bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: -0.25,
+        healthShareAfter: 0.75,
+        healthShareBefore: 1,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
-        healthShareAfter: 0.75,
-        healthShareBefore: 1,
       },
     ]);
   });
@@ -334,11 +334,11 @@ describe(stepActiveKit, () => {
         bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: -0.9,
+        healthShareAfter: 0.1,
+        healthShareBefore: 1,
         isFallRefused: true,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
-        healthShareAfter: 0.1,
-        healthShareBefore: 1,
       },
       { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.FallRefused },
     ]);

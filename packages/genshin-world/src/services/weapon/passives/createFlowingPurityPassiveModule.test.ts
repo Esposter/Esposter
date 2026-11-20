@@ -18,11 +18,11 @@ const clearHealth = (bondOfLifeShare: number) => ({
   bondOfLifeShare,
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: 0,
+  healthShareAfter: 0.5,
+  healthShareBefore: 0.5,
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
-  healthShareAfter: 0.5,
-  healthShareBefore: 0.5,
 });
 
 describe(createFlowingPurityPassiveModule, () => {

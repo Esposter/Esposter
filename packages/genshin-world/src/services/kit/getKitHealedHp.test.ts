@@ -31,6 +31,8 @@ describe(getKitHealedHp, () => {
     bondOfLifeShare: 0,
     characterId: TRAVELER_CHARACTER_ID,
     healthShare: 0,
+    healthShareAfter: 1,
+    healthShareBefore: 1,
     isFallRefused: false,
     kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,
@@ -56,6 +58,8 @@ describe(getKitHealedHp, () => {
           bondOfLifeShare: 0,
           characterId: TRAVELER_CHARACTER_ID,
           healthShare: 0.25,
+          healthShareAfter: 1,
+          healthShareBefore: 0.75,
           isFallRefused: false,
           kind: KitEventKind.HealthChanged,
           overflowHealthShare: 0,
@@ -76,6 +80,8 @@ describe(getKitHealedHp, () => {
           bondOfLifeShare: 0,
           characterId: TRAVELER_CHARACTER_ID,
           healthShare: 0,
+          healthShareAfter: 1,
+          healthShareBefore: 1,
           isFallRefused: false,
           kind: KitEventKind.HealthChanged,
           overflowHealthShare: 0.1,
@@ -96,6 +102,8 @@ describe(getKitHealedHp, () => {
           bondOfLifeShare: 0.25,
           characterId: TRAVELER_CHARACTER_ID,
           healthShare: 0.125,
+          healthShareAfter: 1,
+          healthShareBefore: 0.875,
           isFallRefused: false,
           kind: KitEventKind.HealthChanged,
           overflowHealthShare: 0,
@@ -116,6 +124,8 @@ describe(getKitHealedHp, () => {
           bondOfLifeShare: 0,
           characterId: TRAVELER_CHARACTER_ID,
           healthShare: 0.1,
+          healthShareAfter: 1,
+          healthShareBefore: 0.9,
           isFallRefused: false,
           kind: KitEventKind.HealthChanged,
           overflowHealthShare: 0,
@@ -140,9 +150,15 @@ describe(getKitHealedHp, () => {
       TRAVELER_CHARACTER_ID,
       1200,
     );
-    const { bondOfLifeShare, characterId, healthShare, isFallRefused, overflowHealthShare } = takeOne(
-      healedParty.healthChanges,
-    );
+    const {
+      bondOfLifeShare,
+      characterId,
+      healthShare,
+      healthShareAfter,
+      healthShareBefore,
+      isFallRefused,
+      overflowHealthShare,
+    } = takeOne(healedParty.healthChanges);
 
     expect(
       getKitHealedHp(
@@ -150,6 +166,8 @@ describe(getKitHealedHp, () => {
           bondOfLifeShare,
           characterId,
           healthShare,
+          healthShareAfter,
+          healthShareBefore,
           isFallRefused,
           kind: KitEventKind.HealthChanged,
           overflowHealthShare,

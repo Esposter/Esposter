@@ -90,6 +90,7 @@ const readConstellation6Bonus = ({
       healthShare: 0.1,
       healthShareAfter: Math.min(1, healthShareBefore + 0.1),
       healthShareBefore,
+      isFallRefused: false,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,
       sourceCharacterId,

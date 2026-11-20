@@ -150,6 +150,8 @@ const createHealEvent = (): KitHealthChangedEvent => ({
   bondOfLifeShare: 0,
   characterId: NEUVILLETTE_CHARACTER_ID,
   healthShare: 0.2,
+  healthShareAfter: 1,
+  healthShareBefore: 0.8,
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,

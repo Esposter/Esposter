@@ -6,10 +6,10 @@ import type { Element } from "#src/models/Element";
 // Made the change, none for an enemy's strike, a drown or a heal that names no healer, and the member's share of its
 // Max HP before the change and after it
 export interface PartyHealthChange {
-  // The share of the heal a Bond of Life took before it restored the HP, none when no Bond of Life was standing
-  bondOfLifeShare: number;
   // The attack tag of the attack whose party heal made the change, none for a heal a kit makes outside an attack
   attackTag?: AttackTag;
+  // The share of the heal a Bond of Life took before it restored the HP, none when no Bond of Life was standing
+  bondOfLifeShare: number;
   characterId: number;
   // The element of the attack that caused the change, none for a drain, a drown, a heal or an attack with no element
   element?: Element | undefined;

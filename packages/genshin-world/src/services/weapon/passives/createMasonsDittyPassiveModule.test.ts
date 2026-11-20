@@ -15,6 +15,8 @@ const createHeal = (characterId: number, sourceCharacterId: number): KitHealthCh
   bondOfLifeShare: 0,
   characterId,
   healthShare: 0.1,
+  healthShareAfter: 1,
+  healthShareBefore: 0.9,
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,

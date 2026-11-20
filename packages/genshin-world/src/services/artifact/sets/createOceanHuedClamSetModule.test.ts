@@ -50,6 +50,8 @@ const createHeal = (healthShare: number, sourceCharacterId: number): KitEvent =>
   bondOfLifeShare: 0,
   characterId: TRAVELER_CHARACTER_ID,
   healthShare,
+  healthShareAfter: 1 + Math.min(healthShare, 0),
+  healthShareBefore: 1 - Math.max(healthShare, 0),
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,

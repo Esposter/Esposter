@@ -29,6 +29,8 @@ const healthChangedOf = (characterId: number) =>
     bondOfLifeShare: 0,
     characterId,
     healthShare: -0.1,
+    healthShareAfter: 0.9,
+    healthShareBefore: 1,
     isFallRefused: false,
     kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,
