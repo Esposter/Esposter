@@ -64,6 +64,19 @@ describe("categoryRouter", () => {
     expect(third.position).toBe(2);
   });
 
+  test("creates concurrently at distinct positions", async () => {
+    expect.hasAssertions();
+
+    const [first, second] = await Promise.all([
+      roomCategoryCaller.createRoomCategory({ id: v7(), name }),
+      roomCategoryCaller.createRoomCategory({ id: v7(), name: updatedName }),
+    ]);
+
+    expect(
+      [first.position, second.position].toSorted((firstPosition, secondPosition) => firstPosition - secondPosition),
+    ).toStrictEqual([0, 1]);
+  });
+
   test("reorders to the positions given, and reads the category moved to the front first", async () => {
     expect.hasAssertions();
 

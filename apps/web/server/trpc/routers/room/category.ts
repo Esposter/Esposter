@@ -1,5 +1,6 @@
 import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
+import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { ownedBy } from "#server/services/db/ownedBy";
 import { requireRoomCategory } from "#server/services/room/category/requireRoomCategory";
 import { router } from "#server/trpc/index";
@@ -7,27 +8,37 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { createRoomCategoryInputSchema } from "#shared/models/db/roomCategory/CreateRoomCategoryInput";
 import { deleteRoomCategoryInputSchema } from "#shared/models/db/roomCategory/DeleteRoomCategoryInput";
 import { reorderRoomCategoriesInputSchema } from "#shared/models/db/roomCategory/ReorderRoomCategoriesInput";
-import { roomCategoriesInMessage } from "@esposter/db-schema";
-import { Operation, takeOne } from "@esposter/shared";
-import { and, eq, max, sql } from "drizzle-orm";
+import { roomCategoriesInMessage, usersInAuth } from "@esposter/db-schema";
+import { Operation } from "@esposter/shared";
+import { and, eq, sql } from "drizzle-orm";
 
 export const categoryRouter = router({
   createRoomCategory: standardAuthedProcedure
     .input(createRoomCategoryInputSchema)
     .mutation<RoomCategoryInMessage>(async ({ ctx, input }) => {
+      const userId = ctx.user.id;
       // Append below the user's existing drag-assigned order — the column default 0 would tie with
-      // Whatever category the user dragged to the top and jump the new category above it
-      const { maxPosition } = takeOne(
-        await ctx.db
-          .select({ maxPosition: max(roomCategoriesInMessage.position) })
-          .from(roomCategoriesInMessage)
-          .where(eq(roomCategoriesInMessage.userId, ctx.user.id)),
-      );
+      // Whatever category the user dragged to the top and jump the new category above it. The position is read inside
+      // The insert statement, so two creates that run at once each read the maximum the other has not yet written
       return requireRoomCategory(
         (
           await ctx.db
             .insert(roomCategoriesInMessage)
-            .values({ ...input, position: (maxPosition ?? -1) + 1, userId: ctx.user.id })
+            .select(
+              ctx.db
+                .select({
+                  ...getInsertSelectMetadata(roomCategoriesInMessage),
+                  id: sql`${input.id}`.as("id"),
+                  name: sql`${input.name}`.as("name"),
+                  position:
+                    sql`(select coalesce(max(${roomCategoriesInMessage.position}), -1) + 1 from ${roomCategoriesInMessage} where ${eq(roomCategoriesInMessage.userId, userId)})`.as(
+                      "position",
+                    ),
+                  userId: sql`${userId}`.as("userId"),
+                })
+                .from(usersInAuth)
+                .where(eq(usersInAuth.id, userId)),
+            )
             .returning()
         )[0],
         Operation.Create,
