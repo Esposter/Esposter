@@ -21,12 +21,12 @@ const checkIsPollMessage = (message: string | undefined) =>
 
 // A message as its sender composes it: text, attachments the uploads reserved, the message it replies to, and the type
 // A member may post. At least one of text or attachments is required. Text is sanitized on the way in, and either kind of
-// Body is bounded by MESSAGE_MAX_LENGTH as it is stored
+// Body is bounded by MESSAGE_MAX_LENGTH as it arrives and again as it is stored, since sanitizing can lengthen text
 export const createMessageInputSchema = refineMessageSchema(
   z
     .object({
       files: createUniqueArraySchema(fileEntitySchema, "id").max(FILE_MAX_LENGTH).optional(),
-      message: z.string().optional(),
+      message: z.string().max(MESSAGE_MAX_LENGTH).optional(),
       replyToId: roomMessageSchema.shape.replyToId.optional(),
       ...roomIdSchema.shape,
       type: userMessageTypeSchema.default(MessageType.Message),
