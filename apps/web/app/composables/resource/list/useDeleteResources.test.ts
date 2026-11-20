@@ -9,7 +9,7 @@ import { resourceTable } from "#src/services/resource/overlay/constants";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useOverlayStore } from "#src/store/overlay";
 import { useFavoriteStore } from "#src/store/resource/favorite";
-import { RoutePath } from "@esposter/shared";
+import { MAX_READ_LIMIT, RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -151,6 +151,29 @@ describe(useDeleteResources, () => {
     await isBothSettled;
     await flushPromises();
     expect(getLiveIds()).toStrictEqual([resource.id]);
+  });
+
+  // A chunk the server answers lands as it is answered, so a later chunk the server refuses leaves the earlier chunk's rows
+  // Deleted on screen as they are on the server, rather than holding them live behind the refused write
+  test("keeps the rows an earlier chunk deleted removed when a later chunk is refused", async () => {
+    expect.hasAssertions();
+
+    const overlayStore = useOverlayStore();
+    const acceptedResources = Array.from({ length: MAX_READ_LIMIT }, () => createResourceListItem());
+    const refusedResource = createResourceListItem();
+    for (const selectedResource of [...acceptedResources, refusedResource])
+      overlayStore.arrive(resourceTable, selectedResource);
+    trpcMsw.resource.deleteResources.mutation(({ input }) => {
+      if (input.ids.includes(refusedResource.id)) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+
+      return acceptedResources.map((acceptedResource) => createRemovedRow(acceptedResource));
+    });
+    const { isCalled, refresh } = createRefresh();
+    useDeleteResources(refresh)([...acceptedResources, refusedResource]);
+
+    await isCalled;
+    await flushPromises();
+    expect(getLiveIds()).toStrictEqual([refusedResource.id]);
   });
 
   test("stays put when the deleted resources are not the open one", async () => {

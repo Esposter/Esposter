@@ -25,7 +25,7 @@ export const useDeleteResources = (refresh: () => Promise<void>) => {
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification, dismissNotification } = notificationStore;
   const overlayStore = useOverlayStore();
-  const { writeOptimistic } = overlayStore;
+  const { arrive, writeOptimistic } = overlayStore;
   const { restoreResources } = useRestoreResources(refresh);
   // Owned by the list rather than by whatever triggers it — a row's menu, the selection, a context menu — because the
   // Rows it removes and puts back are the list's, and the write outlives the menu that fired it
@@ -64,7 +64,12 @@ export const useDeleteResources = (refresh: () => Promise<void>) => {
           async () =>
             createRowsResponse(
               resourceTable,
-              await sendIdsInChunks(ids, (chunkIds) => $trpc.resource.deleteResources.mutate({ ids: chunkIds })),
+              await sendIdsInChunks(ids, async (chunkIds) => {
+                const chunkRows = await $trpc.resource.deleteResources.mutate({ ids: chunkIds });
+                // Each chunk's rows arrive as it lands, so a later chunk the server refuses leaves these deleted here too
+                for (const row of chunkRows) arrive(resourceTable, row);
+                return chunkRows;
+              }),
             ),
           async () => {
             // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure still leaves
