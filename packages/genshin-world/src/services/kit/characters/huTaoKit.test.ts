@@ -66,7 +66,6 @@ const drainHuTao = (constellationCount: number, healthShare: number, drains = 1)
         bondOfLifeShare: 0,
         characterId: HU_TAO_CHARACTER_ID,
         healthShare: -0.1,
-        healthShareAfter: 0.4,
         healthShareBefore: 0.5,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
@@ -342,7 +341,6 @@ describe("spirit Soother", () => {
         characterId: HU_TAO_CHARACTER_ID,
         // The shares are summed and subtracted as floats, so they are compared to the digits the game gives
         healthShare: expect.closeTo(SPIRIT_SOOTHER_REGEN_SHARE, 10),
-        healthShareAfter: expect.closeTo(0.6 + SPIRIT_SOOTHER_REGEN_SHARE, 10),
         healthShareBefore: 0.6,
         isFallRefused: false,
         overflowHealthShare: expect.closeTo(0, 10),

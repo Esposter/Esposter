@@ -65,7 +65,6 @@ const drainKaeya = (combatant: Combatant, context: KitContext, remainingHealthSh
       bondOfLifeShare: 0,
       characterId: KAEYA_CHARACTER_ID,
       healthShare: -0.25,
-      healthShareAfter: 0.25,
       healthShareBefore: 0.5,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,

@@ -39,7 +39,6 @@ const drainDehya = (ascension: number): { context: KitContext; partyMember: Part
       bondOfLifeShare: 0,
       characterId: DEHYA_CHARACTER_ID,
       healthShare: -0.1,
-      healthShareAfter: 0.4,
       healthShareBefore: 0.5,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,

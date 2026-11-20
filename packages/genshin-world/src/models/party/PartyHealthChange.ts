@@ -4,7 +4,7 @@ import type { Element } from "#src/models/Element";
 // A change to a party member's HP as it took effect: the member, the share of its Max HP it gained, or lost as a negative
 // Share, never past all of it or below none, the share of a heal that went past all of it, the character whose kit
 // Made the change, none for an enemy's strike, a drown or a heal that names no healer, and the member's share of its
-// Max HP before the change and after it
+// Max HP before the change, which with the change's share gives the share after it
 export interface PartyHealthChange {
   // The attack tag of the attack whose party heal made the change, none for a heal a kit makes outside an attack
   attackTag?: AttackTag;
@@ -14,7 +14,6 @@ export interface PartyHealthChange {
   // The element of the attack that caused the change, none for a drain, a drown, a heal or an attack with no element
   element?: Element | undefined;
   healthShare: number;
-  healthShareAfter: number;
   healthShareBefore: number;
   // Whether the change ran the member out of HP while it stood, so its fall is the kits' to end, none for any other change
   isFall?: true;

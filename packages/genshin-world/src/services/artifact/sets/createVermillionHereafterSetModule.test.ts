@@ -41,7 +41,6 @@ const createHpDecrease = (): KitEvent => ({
   bondOfLifeShare: 0,
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: -0.1,
-  healthShareAfter: 0.9,
   healthShareBefore: 1,
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,

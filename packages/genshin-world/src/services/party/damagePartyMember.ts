@@ -34,7 +34,6 @@ export const damagePartyMember = (
     characterId,
     ...(element === undefined ? {} : { element }),
     healthShare: partyMember.healthShare - previousHealthShare,
-    healthShareAfter: partyMember.healthShare,
     healthShareBefore: previousHealthShare,
     isFallRefused,
     ...(isFall ? { isFall: true } : {}),

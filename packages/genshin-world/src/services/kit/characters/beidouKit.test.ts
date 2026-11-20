@@ -43,7 +43,6 @@ const createDamageTakenEvent = (characterId: number): KitHealthChangedEvent => (
   bondOfLifeShare: 0,
   characterId,
   healthShare: -0.1,
-  healthShareAfter: 0.4,
   healthShareBefore: 0.5,
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,

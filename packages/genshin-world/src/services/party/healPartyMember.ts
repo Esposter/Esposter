@@ -28,7 +28,6 @@ export const healPartyMember = (
     ...(attackTag === undefined ? {} : { attackTag }),
     characterId,
     healthShare,
-    healthShareAfter: partyMember.healthShare,
     healthShareBefore: previousHealthShare,
     isFallRefused: false,
     overflowHealthShare: restoredHealthShare - healthShare,

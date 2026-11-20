@@ -32,7 +32,6 @@ const reportHealing = (combatant: Combatant, overflowHealthShare: number): KitEf
       bondOfLifeShare: 0,
       characterId: GAMING_CHARACTER_ID,
       healthShare: 0.1,
-      healthShareAfter: 0.6,
       healthShareBefore: 0.5,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,

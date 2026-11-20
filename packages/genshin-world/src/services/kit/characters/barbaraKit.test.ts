@@ -68,7 +68,6 @@ const reportJeanFall = (combatant: Combatant, party: Party, kitEffectState: KitE
       bondOfLifeShare: 0,
       characterId: JEAN_CHARACTER_ID,
       healthShare: -1,
-      healthShareAfter: 0,
       healthShareBefore: 1,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,

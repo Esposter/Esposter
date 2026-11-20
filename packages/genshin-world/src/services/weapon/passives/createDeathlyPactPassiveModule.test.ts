@@ -23,7 +23,6 @@ describe(createDeathlyPactPassiveModule, () => {
     bondOfLifeShare: 0.1,
     characterId: TRAVELER_CHARACTER_ID,
     healthShare: 0,
-    healthShareAfter: 0.5,
     healthShareBefore: 0.5,
     isFallRefused: false,
     kind: KitEventKind.HealthChanged,

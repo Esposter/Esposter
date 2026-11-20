@@ -19,7 +19,6 @@ describe(createPrincipleOfEquilibriumPassiveModule, () => {
     bondOfLifeShare: 0,
     characterId: TRAVELER_CHARACTER_ID + 1,
     healthShare: 0.5,
-    healthShareAfter: 1,
     healthShareBefore: 0.5,
     isFallRefused: false,
     kind: KitEventKind.HealthChanged,

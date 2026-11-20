@@ -24,7 +24,6 @@ describe(createAeonWavePassiveModule, () => {
     bondOfLifeShare: 0,
     characterId: TRAVELER_CHARACTER_ID,
     healthShare: 0.1,
-    healthShareAfter: 0.6,
     healthShareBefore: 0.5,
     isFallRefused: false,
     kind: KitEventKind.HealthChanged,

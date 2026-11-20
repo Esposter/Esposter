@@ -202,7 +202,6 @@ describe("ascension 1's counter window", () => {
         bondOfLifeShare: 0,
         characterId: YUNJIN_CHARACTER_ID,
         healthShare: -0.1,
-        healthShareAfter: 0.4,
         healthShareBefore: 0.5,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,

@@ -101,7 +101,6 @@ describe(createBoundlessBlessingPassiveModule, () => {
         bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: 0,
-        healthShareAfter: 0.5,
         healthShareBefore: 0.5,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
