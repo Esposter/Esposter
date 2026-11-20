@@ -2,12 +2,10 @@ import type { Database } from "@esposter/db-schema";
 
 import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
-import { createUser } from "#src/services/shared/createUser.test";
 import { runUnit } from "#src/services/shared/runUnit";
 import { getBucket } from "#src/services/storage/getBucket";
-import { disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readDeletedResourcePage } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import { createMockDb, createUser, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock";
 import {
   getScopeTopic,
   resourcesInResource,
@@ -22,7 +20,7 @@ import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
 
 describe(purgeResourceAndBroadcast, () => {
   let mockDb: Database;

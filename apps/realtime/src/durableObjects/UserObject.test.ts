@@ -17,12 +17,10 @@ import type { Mock } from "vitest";
 import { UserObject } from "#src/durableObjects/UserObject";
 import { createSocket, readFrames } from "#src/services/durableObject/createMockSocket.test";
 import { observeWakes, verifyWakes } from "#src/services/durableObject/wakeCheck.test";
-import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { createOnlineStatus } from "#src/services/room/createOnlineStatus.test";
-import { createUser } from "#src/services/shared/createUser.test";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
 import { toPage } from "@esposter/db";
-import { createMockDb, createMockObjectState } from "@esposter/db-mock";
+import { createMockDb, createMockObjectState, createUser, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
   AppNotificationType,
   createPageInputSchema,
@@ -68,7 +66,7 @@ vi.mock(import("#src/services/room/getRoomObject"), () => ({
   getRoomObject: (roomId: string) => getRoomStub(roomId) as unknown as DurableObjectStub<RoomObject>,
 }));
 
-vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("@esposter/db-mock"));
 
 vi.mock(import("#src/services/todoReminder/sendTodoReminder"), () => ({
   sendTodoReminder: vi.fn<(reminder: TodoReminder) => Promise<void>>(() => Promise.resolve()),

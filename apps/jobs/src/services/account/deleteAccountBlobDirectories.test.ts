@@ -1,12 +1,12 @@
 import { deleteAccountBlobDirectories } from "#src/services/account/deleteAccountBlobDirectories";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "@esposter/db-mock";
 import { getSaveBlobName, getUserProfileImageBlobName, StorageBucket } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
 
 describe(deleteAccountBlobDirectories, () => {
   beforeAll(async () => {

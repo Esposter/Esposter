@@ -1,11 +1,11 @@
 import type { WebhookPayload, WebhookQueueMessage } from "@esposter/db-schema";
 
 import { processWebhookHandler } from "#src/handlers/processWebhookHandler";
-import { clearRoomObjectCalls, roomObjectCalls } from "#src/services/room/getRoomObject.test";
+import { clearRoomObjectCalls, roomObjectCalls } from "@esposter/db-mock";
 import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
 
 describe(processWebhookHandler, () => {
   const avatarUrl = "https://example.com/avatar";
@@ -18,7 +18,7 @@ describe(processWebhookHandler, () => {
   const webhookMessageCall = {
     args: [{ appUserId: userId, appUserImage: avatarUrl, deliveryId, message: content, senderName: username }],
     method: "createWebhookMessage",
-    roomId,
+    objectId: roomId,
   };
   const payload = { avatar_url: avatarUrl, content, username } satisfies WebhookPayload;
 

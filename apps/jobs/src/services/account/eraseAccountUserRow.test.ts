@@ -1,8 +1,7 @@
 import type { Database, PostInPost } from "@esposter/db-schema";
 
 import { eraseAccountUserRow } from "#src/services/account/eraseAccountUserRow";
-import { createUser } from "#src/services/shared/createUser.test";
-import { createMockDb } from "@esposter/db-mock";
+import { createMockDb, createUser } from "@esposter/db-mock";
 import { likesInPost, postsInPost, usersInAuth } from "@esposter/db-schema";
 import { getPostRanking, takeOne } from "@esposter/shared";
 import { and, eq, sql } from "drizzle-orm";

@@ -1,8 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
-import { createUser } from "#src/services/shared/createUser.test";
 import { purgeExpiredTombstones } from "#src/services/tombstone/purgeExpiredTombstones";
-import { createMockDb } from "@esposter/db-mock";
+import { createMockDb, createUser } from "@esposter/db-mock";
 import {
   AppNotificationType,
   NotificationSeverity,

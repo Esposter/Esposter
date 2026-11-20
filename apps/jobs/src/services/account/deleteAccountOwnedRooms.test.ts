@@ -2,14 +2,19 @@ import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
 import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
-import { clearRoomObjectCalls, roomObjectCalls } from "#src/services/room/getRoomObject.test";
-import { createUser } from "#src/services/shared/createUser.test";
 import { runUnit } from "#src/services/shared/runUnit";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { getMemberRoomIds } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import {
+  clearMockBuckets,
+  clearRoomObjectCalls,
+  createMockDb,
+  createUser,
+  disposeMockBuckets,
+  openMockBuckets,
+  roomObjectCalls,
+} from "@esposter/db-mock";
 import {
   AdminActionType,
   getScopeTopic,
@@ -25,8 +30,8 @@ import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
 
 describe(deleteAccountOwnedRooms, () => {
   let mockDb: Database;
@@ -76,7 +81,7 @@ describe(deleteAccountOwnedRooms, () => {
 
     await runUnit(() => deleteAccountOwnedRooms(userId));
 
-    expect(roomObjectCalls).toStrictEqual([{ args: [[otherUserId]], method: "deleteAll", roomId: ownedRoom.id }]);
+    expect(roomObjectCalls).toStrictEqual([{ args: [[otherUserId]], method: "deleteAll", objectId: ownedRoom.id }]);
     await expect(
       mockDb.select({ roomId: moderationLogsInMessage.roomId }).from(moderationLogsInMessage),
     ).resolves.toStrictEqual([{ roomId: otherRoom.id }]);

@@ -1,1 +1,4 @@
-{ "extends": "../configuration/tsconfig.node.json" }
+{
+  "extends": "../configuration/tsconfig.node.json",
+  "compilerOptions": { "types": ["node", "@cloudflare/workers-types"] }
+}

@@ -2,13 +2,17 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { BlobDeletionQueueMessage, Database } from "@esposter/db-schema";
 
 import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHandler";
-import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
-import { userObjectCalls } from "#src/services/user/getUserObject.test";
-import { createMockDb } from "@esposter/db-mock";
+import {
+  clearMockBuckets,
+  createMockDb,
+  createUser,
+  disposeMockBuckets,
+  openMockBuckets,
+  userObjectCalls,
+} from "@esposter/db-mock";
 import { MAX_CONCURRENT_BLOB_DELETIONS, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -25,12 +29,12 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
 
 // Handed out as a spy so one call can be given a bucket whose delete fails: Miniflare's bucket takes no spy on its methods
 vi.mock(import("#src/services/storage/getBucket"), async () => {
-  const actual = await import("#src/services/storage/getBucket.test");
+  const actual = await import("@esposter/db-mock");
   return { ...actual, getBucket: vi.fn<typeof actual.getBucket>(actual.getBucket) };
 });
 
 // The owner's meter lives in the app process, so the figure reaches it through the owner's User object
-vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
+vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock"));
 
 const readContainer = () => readBlobNames(StorageBucket.MessageAssets);
 
@@ -135,7 +139,7 @@ describe(processBlobDeletionHandler, () => {
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
     const storageUser = await readStorageUser();
-    expect(userObjectCalls).toStrictEqual([{ args: [storageUser], method: "updateUsage", userId }]);
+    expect(userObjectCalls).toStrictEqual([{ args: [storageUser], method: "updateUsage", objectId: userId }]);
   });
 
   // A deletion whose blobs were never charged to anyone releases nothing, so there is no meter to tell

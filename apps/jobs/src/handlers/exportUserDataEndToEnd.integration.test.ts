@@ -1,15 +1,20 @@
 import type { Database } from "@esposter/db-schema";
 
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
-import { clearRoomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { createRoomMessage } from "#src/services/shared/createRoomMessage.test";
-import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import {
+  clearMockBuckets,
+  clearRoomObjectCalls,
+  createMockDb,
+  createUser,
+  disposeMockBuckets,
+  openMockBuckets,
+  roomObjectReplies,
+} from "@esposter/db-mock";
 import {
   AdminActionType,
   dataExportsInUser,
@@ -44,8 +49,8 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
 
 describe(exportUserDataHandler, () => {
   const content = JSON.stringify({});

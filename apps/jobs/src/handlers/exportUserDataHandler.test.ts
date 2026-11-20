@@ -2,15 +2,20 @@ import type { Database } from "@esposter/db-schema";
 
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
 import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
-import { clearRoomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { createRoomMessage } from "#src/services/shared/createRoomMessage.test";
-import { createUser } from "#src/services/shared/createUser.test";
 import { runUnit } from "#src/services/shared/runUnit";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { getFileBlobNames, readDataExport } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import {
+  clearMockBuckets,
+  clearRoomObjectCalls,
+  createMockDb,
+  createUser,
+  disposeMockBuckets,
+  openMockBuckets,
+  roomObjectReplies,
+} from "@esposter/db-mock";
 import {
   dataExportsInUser,
   DataExportStatus,
@@ -28,8 +33,8 @@ import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
 
 describe(exportUserDataHandler, () => {
   let mockDb: Database;

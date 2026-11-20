@@ -1,10 +1,8 @@
 import type { Database, RoomReaction } from "@esposter/db-schema";
 
 import { deleteAccountMemberRoomReactions } from "#src/services/account/deleteAccountMemberRoomReactions";
-import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
-import { createUser } from "#src/services/shared/createUser.test";
-import { createMockDb } from "@esposter/db-mock";
+import { clearRoomObjectCalls, createMockDb, createUser, roomObjectCalls, roomObjectReplies } from "@esposter/db-mock";
 import { roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -18,7 +16,7 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
 
 describe(deleteAccountMemberRoomReactions, () => {
   const emojiTag = "emojiTag";
@@ -58,7 +56,7 @@ describe(deleteAccountMemberRoomReactions, () => {
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserReactions",
-        roomId: memberRoom.id,
+        objectId: memberRoom.id,
       },
     ]);
   });
@@ -95,7 +93,7 @@ describe(deleteAccountMemberRoomReactions, () => {
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserReactions",
-        roomId: room.id,
+        objectId: room.id,
       },
       {
         args: [
@@ -106,7 +104,7 @@ describe(deleteAccountMemberRoomReactions, () => {
           },
         ],
         method: "deleteUserReactions",
-        roomId: room.id,
+        objectId: room.id,
       },
     ]);
   });

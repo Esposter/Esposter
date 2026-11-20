@@ -5,11 +5,10 @@ import { sendNotification } from "#src/services/notification/sendNotification";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
 import { getMockPublishedTopics, getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
-import { createUser } from "#src/services/shared/createUser.test";
 import { getDb } from "#src/services/shared/getDb";
 import { runUnit } from "#src/services/shared/runUnit";
 import { readNotificationRows } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import { createMockDb, createUser } from "@esposter/db-mock";
 import {
   AppNotificationType,
   getScopeTopic,

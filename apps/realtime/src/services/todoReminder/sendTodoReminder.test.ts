@@ -1,12 +1,16 @@
 import type { Database } from "@esposter/db-schema";
 
-import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
-import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import {
+  clearMockBuckets,
+  createMockDb,
+  createUser,
+  disposeMockBuckets,
+  MockJobQueueDatabase,
+  openMockBuckets,
+} from "@esposter/db-mock";
 import {
   AppNotificationType,
   QueueJob,
@@ -26,9 +30,9 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("@esposter/db-mock"));
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
 
 const seedContent = async (
   resourceId: string,

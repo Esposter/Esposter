@@ -1,9 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { removeAccountFromMemberRooms } from "#src/services/account/removeAccountFromMemberRooms";
-import { clearRoomObjectCalls, roomObjectCalls } from "#src/services/room/getRoomObject.test";
-import { createUser } from "#src/services/shared/createUser.test";
-import { createMockDb } from "@esposter/db-mock";
+import { clearRoomObjectCalls, createMockDb, createUser, roomObjectCalls } from "@esposter/db-mock";
 import { roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -16,7 +14,7 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
 
 describe(removeAccountFromMemberRooms, () => {
   const name = "name";
@@ -50,7 +48,7 @@ describe(removeAccountFromMemberRooms, () => {
     assert.exists(removedMembership);
     expect(removedMembership.deletedAt).not.toBeNull();
     expect(roomObjectCalls).toStrictEqual([
-      { args: [userId], method: "removeMember", roomId: room.id },
+      { args: [userId], method: "removeMember", objectId: room.id },
       {
         args: [
           {
@@ -65,7 +63,7 @@ describe(removeAccountFromMemberRooms, () => {
           },
         ],
         method: "notifyOnlineMembers",
-        roomId: room.id,
+        objectId: room.id,
       },
     ]);
   });

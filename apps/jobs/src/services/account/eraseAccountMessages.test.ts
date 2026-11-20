@@ -1,16 +1,24 @@
 import type { Database, ScheduledMessageInUser } from "@esposter/db-schema";
 
 import { eraseAccountMessages } from "#src/services/account/eraseAccountMessages";
-import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
 import { createRoomMessage } from "#src/services/shared/createRoomMessage.test";
-import { createUser } from "#src/services/shared/createUser.test";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
-import { clearUserObjectCalls, userObjectCalls, userObjectReplies } from "#src/services/user/getUserObject.test";
 import { getFileBlobNames } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import {
+  clearMockBuckets,
+  clearRoomObjectCalls,
+  clearUserObjectCalls,
+  createMockDb,
+  createUser,
+  disposeMockBuckets,
+  openMockBuckets,
+  roomObjectCalls,
+  roomObjectReplies,
+  userObjectCalls,
+  userObjectReplies,
+} from "@esposter/db-mock";
 import {
   roomsInMessage,
   START_PAGE_CURSOR,
@@ -35,9 +43,9 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
-vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock"));
 
 describe(eraseAccountMessages, () => {
   const filename = "filename";
@@ -129,12 +137,16 @@ describe(eraseAccountMessages, () => {
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserMessages",
-        roomId: memberRoom.id,
+        objectId: memberRoom.id,
       },
-      { args: [scheduledMessage.id, { userId }], method: "deleteScheduledMessage", roomId: memberRoom.id },
+      { args: [scheduledMessage.id, { userId }], method: "deleteScheduledMessage", objectId: memberRoom.id },
     ]);
     expect(userObjectCalls).toStrictEqual([
-      { args: [{ cursor: START_PAGE_CURSOR, limit: OBJECT_READ_PAGE_LIMIT }], method: "readScheduledMessages", userId },
+      {
+        args: [{ cursor: START_PAGE_CURSOR, limit: OBJECT_READ_PAGE_LIMIT }],
+        method: "readScheduledMessages",
+        objectId: userId,
+      },
     ]);
     await expect(readBlobNames(StorageBucket.MessageAssets)).resolves.toStrictEqual([otherUserBlobName]);
   });
@@ -162,12 +174,12 @@ describe(eraseAccountMessages, () => {
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserMessages",
-        roomId: room.id,
+        objectId: room.id,
       },
       {
         args: [{ after: OBJECT_READ_PAGE_LIMIT, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserMessages",
-        roomId: room.id,
+        objectId: room.id,
       },
     ]);
   });
@@ -198,7 +210,7 @@ describe(eraseAccountMessages, () => {
     expect(
       roomObjectCalls
         .filter(({ method }) => method === "deleteScheduledMessage")
-        .map(({ args, roomId: callRoomId }) => ({ callRoomId, id: args[0] })),
+        .map(({ args, objectId: callRoomId }) => ({ callRoomId, id: args[0] })),
     ).toStrictEqual(scheduledMessages.map(({ id }) => ({ callRoomId: roomId, id })));
   });
 });

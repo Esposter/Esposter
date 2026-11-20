@@ -1,3 +1,4 @@
+import { readWranglerConfiguration } from "@esposter/db-mock";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
@@ -10,8 +11,6 @@ import {
   QueueJobBindingNameMap,
   StorageBucket,
 } from "@esposter/db-schema";
-import { jsonDateParse } from "@esposter/shared";
-import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -31,16 +30,10 @@ describe.each([{ environment: CloudflareEnvironment.Development }, { environment
     // A wrangler config that names a queue, bucket or database Pulumi does not create binds to nothing.
     // Each expected name is built by the same function Pulumi calls, so the two cannot disagree.
     // Read from this package's own file so the suite runs from the repo root too.
-    // The config is JSONC: the formatter keeps its trailing commas, which JSON.parse refuses, so they are removed first.
-    const configuration = jsonDateParse<{
+    const configuration = readWranglerConfiguration<{
       account_id: string;
       env: Record<CloudflareEnvironment, WranglerEnvironment>;
-    }>(
-      readFileSync(resolve(import.meta.dirname, "..", "wrangler.jsonc"), "utf8").replaceAll(
-        /,(?<closing>\s*[}\]])/gu,
-        "$<closing>",
-      ),
-    );
+    }>(resolve(import.meta.dirname, "..", "wrangler.jsonc"));
     const wrangler = configuration.env[environment];
 
     test("deploys into the committed account, which each environment inherits", () => {

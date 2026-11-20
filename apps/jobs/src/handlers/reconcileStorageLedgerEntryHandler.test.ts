@@ -2,13 +2,17 @@ import type { R2Bucket, R2ObjectBody } from "@cloudflare/workers-types";
 import type { Database, R2ObjectCreatedQueueMessage } from "@esposter/db-schema";
 
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
-import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
-import { userObjectCalls } from "#src/services/user/getUserObject.test";
 import { getBlobName } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import {
+  clearMockBuckets,
+  createMockDb,
+  createUser,
+  disposeMockBuckets,
+  openMockBuckets,
+  userObjectCalls,
+} from "@esposter/db-mock";
 import {
   getResourceFileBlobName,
   QueueJob,
@@ -30,12 +34,12 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
 
 // Handed out as a spy so one call can be given a bucket with only the method under test: Miniflare's bucket takes no spy on its methods
 vi.mock(import("#src/services/storage/getBucket"), async () => {
-  const actual = await import("#src/services/storage/getBucket.test");
+  const actual = await import("@esposter/db-mock");
   return { ...actual, getBucket: vi.fn<typeof actual.getBucket>(actual.getBucket) };
 });
 
 // The meter lives in the app process, so the figure reaches it through the owner's User object
-vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
+vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock"));
 
 const hashOf = (content: string) => createHash("sha256").update(content).digest("hex");
 const readResourceAssetNames = async () => readBlobNames(StorageBucket.ResourceAssets);
@@ -100,7 +104,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
     const storageUser = await readStorageUser();
-    expect(userObjectCalls).toStrictEqual([{ args: [storageUser], method: "updateUsage", userId }]);
+    expect(userObjectCalls).toStrictEqual([{ args: [storageUser], method: "updateUsage", objectId: userId }]);
   });
 
   // A message attachment is named by its room and its id, with the filename after the separator.
@@ -115,7 +119,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
     const storageUser = await readStorageUser();
-    expect(userObjectCalls).toStrictEqual([{ args: [storageUser], method: "updateUsage", userId }]);
+    expect(userObjectCalls).toStrictEqual([{ args: [storageUser], method: "updateUsage", objectId: userId }]);
     expect(getBucket).not.toHaveBeenCalled();
   });
 

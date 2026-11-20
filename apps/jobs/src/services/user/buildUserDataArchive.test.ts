@@ -1,15 +1,21 @@
 import type { Database, RoomMessage } from "@esposter/db-schema";
 
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
-import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
 import { createRoomMessage } from "#src/services/shared/createRoomMessage.test";
-import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import { getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import {
+  clearMockBuckets,
+  clearRoomObjectCalls,
+  createMockDb,
+  createUser,
+  disposeMockBuckets,
+  openMockBuckets,
+  roomObjectCalls,
+  roomObjectReplies,
+} from "@esposter/db-mock";
 import {
   accountsInAuth,
   achievementsInAchievement,
@@ -67,8 +73,8 @@ vi.mock(import("#src/services/shared/getDb"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
 
 const readArchiveEntries = async (blobName: string) => {
   const archiveBucket = getBucket(StorageBucket.UserAssets);
@@ -197,17 +203,17 @@ describe(buildUserDataArchive, () => {
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserReactions",
-        roomId: room.id,
+        objectId: room.id,
       },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
-        roomId: room.id,
+        objectId: room.id,
       },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
-        roomId: room.id,
+        objectId: room.id,
       },
     ]);
     expect(Object.keys(entries).toSorted()).toStrictEqual(
@@ -791,27 +797,27 @@ describe(buildUserDataArchive, () => {
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserReactions",
-        roomId: room.id,
+        objectId: room.id,
       },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
-        roomId: room.id,
+        objectId: room.id,
       },
       {
         args: [{ after: OBJECT_READ_PAGE_LIMIT, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
-        roomId: room.id,
+        objectId: room.id,
       },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
-        roomId: room.id,
+        objectId: room.id,
       },
       {
         args: [{ after: OBJECT_READ_PAGE_LIMIT, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
-        roomId: room.id,
+        objectId: room.id,
       },
     ]);
     expect(messages.map(({ message: text }) => text)).toStrictEqual(pagedMessages);
@@ -859,12 +865,12 @@ describe(buildUserDataArchive, () => {
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserReactions",
-        roomId: room.id,
+        objectId: room.id,
       },
       {
         args: [{ after: lastKey, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserReactions",
-        roomId: room.id,
+        objectId: room.id,
       },
     ]);
   });

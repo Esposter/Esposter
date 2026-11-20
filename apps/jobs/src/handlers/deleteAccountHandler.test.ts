@@ -2,16 +2,23 @@ import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
 import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
-import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
 import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
-import { createUser } from "#src/services/shared/createUser.test";
 import { runUnit } from "#src/services/shared/runUnit";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
-import { clearUserObjectCalls, userObjectReplies } from "#src/services/user/getUserObject.test";
 import { getContentBlobName, getMemberRoomIds } from "@esposter/db";
-import { createMockDb } from "@esposter/db-mock";
+import {
+  clearMockBuckets,
+  clearRoomObjectCalls,
+  clearUserObjectCalls,
+  createMockDb,
+  createUser,
+  disposeMockBuckets,
+  openMockBuckets,
+  roomObjectCalls,
+  roomObjectReplies,
+  userObjectReplies,
+} from "@esposter/db-mock";
 import {
   accountsInAuth,
   getScopeTopic,
@@ -34,9 +41,9 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 // A bucket binding is a proxy a spy cannot reach, so the blob sweep is failed at its own step instead
 const blobSweepFailure = vi.hoisted(() => ({ error: undefined as Error | undefined }));
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
-vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("@esposter/db-mock"));
+vi.mock(import("#src/services/user/getUserObject"), () => import("@esposter/db-mock"));
 vi.mock(import("#src/services/account/deleteAccountBlobDirectories"), async (importOriginal) => {
   const { deleteAccountBlobDirectories } = await importOriginal();
   return {
@@ -231,18 +238,18 @@ describe(deleteAccountHandler, () => {
     // The leave's payload is the tombstone the erase wrote at the clock's time, which the erase job's own suite pins exactly
     const leaveCall = roomObjectCalls.find(({ method }) => method === "notifyOnlineMembers");
     expect(roomObjectCalls).toStrictEqual([
-      { args: [[]], method: "deleteAll", roomId: ownedRoom.id },
+      { args: [[]], method: "deleteAll", objectId: ownedRoom.id },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserMessages",
-        roomId: memberRoom.id,
+        objectId: memberRoom.id,
       },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserReactions",
-        roomId: memberRoom.id,
+        objectId: memberRoom.id,
       },
-      { args: [userId], method: "removeMember", roomId: memberRoom.id },
+      { args: [userId], method: "removeMember", objectId: memberRoom.id },
       leaveCall,
     ]);
     await expect(readBlobNames(StorageBucket.ResourceAssets)).resolves.toStrictEqual([]);
