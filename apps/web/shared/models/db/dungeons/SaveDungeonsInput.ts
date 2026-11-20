@@ -1,8 +1,4 @@
 import { dungeonsSchema } from "#shared/models/dungeons/data/Dungeons";
-import { MAX_ETAG_LENGTH } from "#shared/services/blobState/constants";
-import { z } from "zod";
+import { createSaveInputSchema } from "#shared/services/blobState/createSaveInputSchema";
 
-export const saveDungeonsInputSchema = z.object({
-  data: dungeonsSchema,
-  etag: z.string().max(MAX_ETAG_LENGTH).optional(),
-});
+export const saveDungeonsInputSchema = createSaveInputSchema(dungeonsSchema);
