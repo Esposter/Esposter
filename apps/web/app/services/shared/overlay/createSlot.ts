@@ -7,6 +7,7 @@ import type { Versioned } from "#src/models/shared/overlay/Versioned";
 
 import { checkIsForgotten } from "#src/services/shared/overlay/checkIsForgotten";
 import { checkIsNewerArrival } from "#src/services/shared/overlay/checkIsNewerArrival";
+import { checkIsRowField } from "#src/services/shared/overlay/checkIsRowField";
 import { createKeyTrieNode } from "#src/services/shared/overlay/createKeyTrieNode";
 import { listKeyTrie } from "#src/services/shared/overlay/listKeyTrie";
 import { readKeyTrie } from "#src/services/shared/overlay/readKeyTrie";
@@ -17,7 +18,8 @@ import { writeKeyTrie } from "#src/services/shared/overlay/writeKeyTrie";
 export const createSlot = <TRow extends Versioned>(table: Table<TRow>): Slot<TRow> => {
   const held = shallowRef(createKeyTrieNode<TRow>());
   // A held tombstone past the retention is forgotten, so nothing is held for its key and a row arriving for it applies at
-  // Any version. Every read of held state goes through here, so the arrival gate and the settle rule agree on it
+  // Any version. Every read of held state goes through here, so the arrival gate, the merge and the settle rule
+  // Agree on it
   const readHeldRow = (key: RowKey) => {
     const heldRow = readKeyTrie(held.value, key);
     return checkIsForgotten(heldRow) ? undefined : heldRow;
@@ -32,9 +34,22 @@ export const createSlot = <TRow extends Versioned>(table: Table<TRow>): Slot<TRo
   return {
     arrive: (row) => {
       const key = table.keyOf(row);
-      if (!checkIsNewerArrival(readHeldRow(key), row)) return;
+      const heldRow = readHeldRow(key);
+      // A newer arrival replaces the columns it carries and keeps the held value of each column it lacks, since a
+      // Projection carries fewer columns than the row it projects
+      if (checkIsNewerArrival(heldRow, row)) {
+        writeKeyTrie(held.value, key, heldRow ? { ...heldRow, ...row } : row);
+        triggerRef(held);
+        return;
+      }
+      // The held row is at this version or newer. An arrival at the held version fills only the columns the held
+      // Row lacks, so a projection and the full row of one write compose in either order, and an older one is discarded
+      if (heldRow === undefined || checkIsNewerArrival(row, heldRow)) return;
 
-      writeKeyTrie(held.value, key, row);
+      const fillsHeldRow = Object.keys(row).some((fieldName) => !checkIsRowField(heldRow, fieldName));
+      if (!fillsHeldRow) return;
+
+      writeKeyTrie(held.value, key, { ...row, ...heldRow });
       triggerRef(held);
     },
     list: () => {

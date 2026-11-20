@@ -73,7 +73,7 @@ describe(useOverlayStore, () => {
     expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 2 }]);
   });
 
-  test("an equal arrival changes nothing", () => {
+  test("an equal arrival changes no column the held row has", () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();

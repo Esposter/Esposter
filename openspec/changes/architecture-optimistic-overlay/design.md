@@ -1,6 +1,6 @@
 # Optimistic overlay
 
-Server truth is held per table row, every row carries a version the database raises on each change, and an arrival applies only when its version is newer than the one held. A pending write is an entry the screen reads on top of that truth, dropped once the server's version of each row it changed has arrived. No write restores an older value, no caller orders its own async work, no caller names a queue key, and no caller checks whether its result is stale.
+Server truth is held per table row, every row carries a version the database raises on each change, and an arrival applies only when its version is not older than the one held, a newer one replacing the columns it carries and an equal one filling the columns the held row lacks. A pending write is an entry the screen reads on top of that truth, dropped once the server's version of each row it changed has arrived. No write restores an older value, no caller orders its own async work, no caller names a queue key, and no caller checks whether its result is stale.
 
 ## Scope
 
@@ -17,7 +17,7 @@ Server truth is held per table row, every row carries a version the database rai
 Nine rules hold the design together. Every store, every read and every write follows them.
 
 1. Every row the server holds has a version, a non-negative integer the database raises on every change and never lowers. A row that is soft-deleted and revived keeps climbing, so its version never restarts while its key exists.
-2. An arrival is a row with its version, from a read, a write response or an event. Held state keeps, per row key, the newest version it has applied, tombstones included. An arrival applies when nothing is held for its key or its version is greater than the held one, and a held tombstone past the tombstone retention counts as nothing held. An equal or lower version is discarded in the primitive, so no caller branches on it.
+2. An arrival is a row with its version, from a read, a write response or an event. Held state keeps, per row key, the newest version it has applied, tombstones included, and merges each arrival by column. An arrival applies when nothing is held for its key or its version is greater than the held one. It replaces the columns it carries and keeps the held value of the rest, since a member's projection carries fewer columns than the membership it projects. A projection keeps `deletedAt` and `version`, since a live projection that dropped `deletedAt` would inherit a held tombstone's. An arrival at the held version fills only the columns the held row lacks and changes no column it has, so a projection and the full row of one write compose in either order. A held tombstone past the tombstone retention counts as nothing held. A lower version is discarded in the primitive, so no caller branches on it.
 3. A tombstone is a row whose deletion has set `deletedAt` and raised its version. It hides the row from the view and is kept as held state, so an older arrival for that key loses, until the retention forgets it (the forgotten-tombstone decision under Decisions).
 4. Absence never removes. A read that omits a held row says nothing about that row.
 5. A write with an optimistic entry becomes a pending entry in the write registry. The entry is a pure function over the held state, and the registry infers its touched keys by running it once. The entry stays pending until the write's response or failure. The response names the version of every tracked row the write changed, and the entry is then confirmed at those versions. It drops once held state for each confirmed key is at or above its confirmed version. A failed entry drops at once and changes no held state.
@@ -31,8 +31,10 @@ A row created on the client holds no version, below every version, so the server
 ```mermaid
 flowchart TD
   A["A row arrives from a read, a write response or an event"] --> G{"Nothing held for its key, or a greater version?"}
-  G -->|no| X["Discarded in the primitive"]
-  G -->|yes| H["Held state takes the row and its version"]
+  G -->|yes| H["Held state merges the row by column and takes its version"]
+  G -->|no| E{"Same version, and a column the held row lacks?"}
+  E -->|yes| H
+  E -->|no| X["Discarded in the primitive"]
   H --> V["View: held state with the pending entries applied in issue order"]
   W["A write with an entry is issued"] --> P["Pending entry applies over the view"]
   P -->|"write fails"| D["Entry dropped, held state unchanged"]
@@ -103,7 +105,7 @@ sequenceDiagram
 
 A store builds its collections from the primitive, which holds the held state and the entries. The registry is a Pinia store, because it holds shared reactive state, which the `pinia` skill keeps in a store and never at module scope. The store returns only its view under its own name, and held state never leaves the primitive, so no component can write it and no store rebuilds the view by hand. A store's public names are the view, the functions that issue writes, and the functions that ingest reads. Components read the view.
 
-Truth is held per table row: the rows of each pair table, friendships, friend requests and blocks, are one collection each, and a list item joins them with the user rows. User rows are not overlay rows. `createTable` types a table's whole row unless a caller names a projection of it, and a user's public row is a projection of the account row, so users stay in `useUserStore`'s `userMap`, where the pair stores read them by key and the view joins them. A collection reaches the primitive as a `Table` made by `createTable` over its Drizzle table object, and the slot that holds its rows is kept by that object, so two `Table` objects over one table share the rows held for it. The pilot holds its pair rows this way. `readFriends`, `readBlockedUsers` and `readFriendRequests` return their rows, tombstones included, so an arrival keeps a removal over an older copy, and each view hides the tombstones. Membership rows are separate collections in the same way. The member list (group 4.4) holds them as a projection, the columns a member may read, since a membership's private columns reach no other member, and the room's store moves with group 4.3.
+Truth is held per table row: the rows of each pair table, friendships, friend requests and blocks, are one collection each, and a list item joins them with the user rows. User rows are not overlay rows. `createTable` types a table's whole row unless a caller names a projection of it, and a user's public row is a projection of the account row, so users stay in `useUserStore`'s `userMap`, where the pair stores read them by key and the view joins them. A collection reaches the primitive as a `Table` made by `createTable` over its Drizzle table object, and the slot that holds its rows is kept by that object, so two `Table` objects over one table share the rows held for it, and the slot merges each arrival by column (rule 2), so a projection leaves the columns it does not carry as they were. The pilot holds its pair rows this way. `readFriends`, `readBlockedUsers` and `readFriendRequests` return their rows, tombstones included, so an arrival keeps a removal over an older copy, and each view hides the tombstones. Membership rows are separate collections in the same way. The member list (group 4.4) holds them as a projection, the columns a member may read, since a membership's private columns reach no other member, and the room's store moves with group 4.3.
 
 ## Settling
 
@@ -113,7 +115,7 @@ The realtime events that carry rows (call participants, the user's storage usage
 
 ## Lists and single rows
 
-A list holds its rows by id with their versions, and its view is those rows in the list's sort order. A single row is a list of one with the same rule. Arrivals carry whole rows, so two writes that change different fields of one row compose: each entry applies to the held row in issue order.
+A list holds its rows by id with their versions, and its view is those rows in the list's sort order. A single row is a list of one with the same rule. Arrivals carry rows or projections of them and merge by column (rule 2), so two writes that change different fields of one row compose: each entry applies to the held row in issue order.
 
 A paged read returns tombstones within its page's scope, so a page can hold fewer live rows than its size, and its cursor advances over the tombstones. That is an accepted cost. A first-page read still updates rows by id as it does today, and the later pages keep their rows.
 
@@ -230,7 +232,7 @@ The enforcement ladder is applied rung by rung, and each rule names the rung tha
 
 ## Tests
 
-- The primitive's suite covers the gate (an older arrival is ignored, a newer one applies, an equal one is ignored, a placeholder accepts version zero), tombstones, a tombstone past the retention counting as nothing held for the gate and the settle rule, absence, the view, confirmation, failure, the queue by touched key across two instances, an awaited pair of responses arriving in reverse order, and an aborted run committing nothing.
+- The primitive's suite covers the gate (an older arrival is ignored, a newer one replaces the columns it carries, an equal one fills the columns the held row lacks, a projection keeps the columns it does not carry, a placeholder accepts version zero, and a revival past a forgotten tombstone takes none of its columns), tombstones, a tombstone past the retention counting as nothing held for the gate and the settle rule, absence, the view, confirmation, failure, the queue by touched key across two instances, an awaited pair of responses arriving in reverse order, and an aborted run committing nothing.
 - The stability test runs each optimistic entry on two states that differ in other rows, and fails when its touched keys differ.
 - The three pilot races each get a regression test written first and seen failing against the current rollback, which is the proof run. The unfriend-after-block race is one of them.
 - The wake check's cross-check asserts that each optimistic write's touched keys cover the rows its recorded write set names, run against the state its server test seeds.
@@ -291,7 +293,7 @@ Each alternative that lost is recorded in the decisions above, beside the choice
 | `apps/web/app/composables/post/usePostRows.ts`                                             | The post rows read back with their author, counts and the viewer's vote, which the feed, the thread and the vote store share                                                                                                                                           |
 | `apps/web/app/services/post/overlay/`                                                      | The post and vote tables, their key, and the entries that draw a post's edit or removal and a vote's change                                                                                                                                                            |
 | `apps/web/server/db/migrations/core/20261120051340_likes_tombstone_index/`                 | The partial `deletedAt` index on the vote table, the only statement in it                                                                                                                                                                                              |
-| `apps/web/app/store/overlay.test.ts`                                                       | The registry's suite: the gate, the settle rule, the touched keys and the queue                                                                                                                                                                                        |
+| `apps/web/app/store/overlay.test.ts`                                                       | The registry's suite: the gate and the column merge, the settle rule, the touched keys and the queue                                                                                                                                                                   |
 | `apps/web/app/composables/shared/useRunScope.test.ts`                                      | The run scope's suite: the newest run commits, a run aborts the one before it, and a disposed scope commits nothing                                                                                                                                                    |
 | `apps/web/app/composables/shared/useMutation.test.ts`                                      | The old write path's suite, deleted with it in task 5.1                                                                                                                                                                                                                |
 | `apps/web/app/composables/shared/useReadingPushes.ts`                                      | Deleted: replaced by arrivals                                                                                                                                                                                                                                          |
