@@ -1,6 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { SQL } from "drizzle-orm";
 
+import { getLiveInviteRowWhere } from "#server/services/room/getLiveInviteRowWhere";
 import { bansInMessage, invitesInMessage, roomsInMessage } from "@esposter/db-schema";
 import { and, eq, exists, isNull, notExists, sql } from "drizzle-orm";
 
@@ -9,6 +10,7 @@ import { and, eq, exists, isNull, notExists, sql } from "drizzle-orm";
 export const getAdmittedInviteWhere = (db: Context["db"], code: string, userId: string): SQL | undefined =>
   and(
     eq(invitesInMessage.id, code),
+    getLiveInviteRowWhere(invitesInMessage),
     exists(
       db
         .select({ _: sql`1` })

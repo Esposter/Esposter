@@ -8,7 +8,7 @@ This page is about **inbound** webhooks only. Posting room events out to a user-
 
 Two tables, one-to-one. `webhooksInMessage` holds the room membership and the secret: `roomId`, `creatorId` (the member who made it), `tokenHash` (the SHA-256 of the token, unique — the token itself is never stored), an `isActive` switch, a display `name`, and a `userId` that is `unique` and references the second table. `appUsersInMessage` is the bot identity — its `id` and `image`. Its name is the webhook's, the one row a rename writes, so every message the bot posted reads the name it has now. Separating them is what lets a webhook message carry an author at all: the identity is a row a message can point at, so rendering does not have to special-case "no user".
 
-The pairing is enforced by construction. `createWebhook` inserts both rows in one batch, and `deleteWebhook` deletes the app user, which cascades the webhook away with it. A room may hold up to `WEBHOOK_MAX_LENGTH` webhooks (declared in `apps/web/shared/services/message/constants.ts`), checked inside that same batch.
+The pairing is enforced by construction. `createWebhook` inserts both rows in one batch, and `deleteWebhook` tombstones both in one batch, the app user first while the webhook is still live. A hard delete of the app user would cascade the webhook away with no tombstone to answer for it, so the webhook's own tombstone follows, and its answer is the row the reader drops. The delivery route and the notification author read only live webhooks, so a tombstoned one answers as unknown. A room may hold up to `WEBHOOK_MAX_LENGTH` webhooks (declared in `apps/web/shared/services/message/constants.ts`), checked inside that same batch.
 
 ## Delivery
 
@@ -55,7 +55,7 @@ All webhook procedures live in the `webhook` router.
 | `readWebhooks`    | `ManageWebhooks` | lists a room's webhooks, never their tokens                       |
 | `updateWebhook`   | `ManageWebhooks` | renames a webhook or toggles `isActive`                           |
 | `regenerateToken` | `ManageWebhooks` | mints a new token, shown once, invalidating the old url           |
-| `deleteWebhook`   | `ManageWebhooks` | deletes the app user, cascading the webhook                       |
+| `deleteWebhook`   | `ManageWebhooks` | tombstones the webhook and its app user                           |
 | `readAppUsers`    | room member      | resolves bot identities for rendering the message list            |
 
 `createWebhook` is the one procedure on the slow rate-limit budget, because it is the only one that mints a credential. `readAppUsers` is deliberately open to any member: rendering a room's history requires the identities of everything that has spoken in it, while the tokens stay behind the permission gate.

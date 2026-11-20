@@ -6,6 +6,7 @@ import { WEBHOOK_NAME_MAX_LENGTH } from "#src/services/message/webhook/constants
 import { SECRET_TOKEN_HASH_LENGTH } from "#src/services/shared/constants";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { check, index, integer, text, unique } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -35,12 +36,13 @@ export const webhooksInMessage = sqliteTable(
       .references(() => appUsersInMessage.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name, roomId, tokenHash }) => [
+    extraConfig: ({ deletedAt, name, roomId, tokenHash }) => [
       check("webhooks_name_length_check", createNameCheckSql(name, WEBHOOK_NAME_MAX_LENGTH)),
       // A room's webhook list and its create-time count read by room, and its deletion cascades through it
       index("webhooks_roomId_index").on(roomId),
       // A delivery is matched to its webhook by the hash of the credential it presents, so one lookup answers it
       unique("webhooks_tokenHash_unique").on(tokenHash),
+      createTombstoneIndex("webhooks", deletedAt),
     ],
     schema: messageSchema,
     scope: { columns: ["roomId"] },

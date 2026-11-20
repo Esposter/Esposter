@@ -5,6 +5,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { getDb } from "#src/services/shared/getDb";
 import { writeRoomEmojiEntries } from "#src/services/user/writeRoomEmojiEntries";
 import { writeRoomImageEntries } from "#src/services/user/writeRoomImageEntries";
+import { getLiveRoomEmojiWhere } from "@esposter/db-schema";
 
 // Each room the person owns is written as its record: its name, topic, type, settings and creation time.
 // Its emoji are listed by id and name.
@@ -29,7 +30,7 @@ export const writeOwnedRoomEntries = async (archive: UserDataArchive, userId: Us
   for (const room of rooms) {
     const roomEmojis = await getDb().query.roomEmojisInMessage.findMany({
       columns: { id: true, name: true },
-      where: { roomId: { eq: room.id } },
+      where: { RAW: getLiveRoomEmojiWhere, roomId: { eq: room.id } },
     });
     await archive.addJsonEntry(`rooms/${room.id}/room.json`, {
       createdAt: room.createdAt,

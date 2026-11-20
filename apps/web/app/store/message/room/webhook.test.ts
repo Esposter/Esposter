@@ -6,9 +6,7 @@ import { createWebhook } from "#src/services/message/room/createWebhook.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
-import { useAlertStore } from "#src/store/alert";
 import { useWebhookStore } from "#src/store/message/room/webhook";
-import { useWebhookDialogStore } from "#src/store/message/room/webhookDialog";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -20,7 +18,9 @@ describe(useWebhookStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const first = createWebhook({ roomId });
   const second = createWebhook({ roomId });
-  // The read hands back each row with the room and the webhook's creator attached, the way the panel renders it
+  const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+  const deletedFirst: PublicWebhookInMessage = { ...first, deletedAt: new Date(0), version: first.version + 1 };
+  // The read hands back each row with the room and the webhook's creator attached, the way the server answers it
   const room = createRoom("name");
   const creator = createUser();
   const toWebhookInMessageWithRelations = (webhook: PublicWebhookInMessage) => ({ ...webhook, creator, room });
@@ -29,9 +29,6 @@ describe(useWebhookStore, () => {
     setCurrentRoomId(roomId);
   });
 
-  // `items` is the reading view, so it follows whichever room is scoped — a read names its room when it is issued
-  // And stores its rows there whatever the reader has opened since, which is what makes the newly scoped room's
-  // List its own and the previous room's list still correct when it is opened again
   test("files a read's rows under the room it was issued for, not the room scoped when it lands", async () => {
     expect.hasAssertions();
 
@@ -53,96 +50,89 @@ describe(useWebhookStore, () => {
     setCurrentRoomId(roomId);
 
     expect(items.value).toStrictEqual([
-      toWebhookInMessageWithRelations(first),
       toWebhookInMessageWithRelations(second),
+      toWebhookInMessageWithRelations(first),
     ]);
   });
 
-  // A row's name field and its active switch write different fields of one webhook through one target, so an
-  // Earlier change superseded by the other control's would skip its rollback and its alert, leaving a rejected
-  // Value on the row as though it had saved
-  test("surfaces a rejected row change even when the other control saves straight after", async () => {
+  // The list is the room's live webhooks, newest first, and a deleted one is held as a tombstone that the list leaves out
+  test("lists the room's live webhooks newest first, and leaves out a tombstone", async () => {
     expect.hasAssertions();
 
-    let updateCount = 0;
-    trpcMsw.webhook.updateWebhook.mutation(() => {
-      updateCount += 1;
-      // A distinct message per call, so the alert store keeps both instead of refreshing one
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: String(updateCount) });
-    });
-    const webhookStore = useWebhookStore();
-    const { updateWebhook } = webhookStore;
-    const alertStore = useAlertStore();
-    const { alerts } = storeToRefs(alertStore);
-    updateWebhook(roomId, { id: first.id, name: "name" });
-    updateWebhook(roomId, { id: first.id, isActive: false });
-    await flushPromises();
-
-    expect(alerts.value.map(({ text }) => text)).toStrictEqual(["1", "2"]);
-  });
-
-  // Each row is its own target, so its writes never queue behind another row's and a rejected edit unwinds
-  // Only the row it touched
-  test("restores only the row whose edit was rejected", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.webhook.updateWebhook.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    trpcMsw.webhook.deleteWebhook.mutation(() => second);
-    const webhookStore = useWebhookStore();
-    const { deleteWebhook, getSlice, updateWebhook } = webhookStore;
-    const { items } = storeToRefs(webhookStore);
-    // Copies, since an optimistic update assigns onto the stored row in place
-    getSlice(roomId).items.value = [{ ...first }, { ...second }];
-    updateWebhook(roomId, { id: first.id, name: " " });
-    deleteWebhook(roomId, { id: second.id });
-    await flushPromises();
-
-    expect(items.value).toStrictEqual([first]);
-  });
-
-  test("puts back only the row whose deletion was rejected, where it stood", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.webhook.deleteWebhook.mutation(({ input: { id } }) => {
-      if (id === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      return second;
-    });
-    const webhookStore = useWebhookStore();
-    const { deleteWebhook, getSlice } = webhookStore;
-    const { items } = storeToRefs(webhookStore);
-    getSlice(roomId).items.value = [{ ...first }, { ...second }];
-    deleteWebhook(roomId, { id: first.id });
-    deleteWebhook(roomId, { id: second.id });
-    await flushPromises();
-
-    expect(items.value).toStrictEqual([first]);
-  });
-
-  // A rename and a regeneration are separate writes to one webhook, so a regeneration that lands while the rename is in
-  // Flight is not the rename's to undo: the rejected rename puts back only the name it changed, and the URL it issued stays
-  test("keeps the URL a regeneration issued while the rejected rename was in flight", async () => {
-    expect.hasAssertions();
-
-    const rejectedName = "rejectedName";
-    const regeneratedToken = "token1";
-    const webhookStore = useWebhookStore();
-    const webhookDialogStore = useWebhookDialogStore();
-    const { getSlice, regenerateToken, updateWebhook } = webhookStore;
-    const { items } = storeToRefs(webhookStore);
-    trpcMsw.webhook.regenerateToken.mutation(() => ({ token: regeneratedToken, webhook: first }));
-    trpcMsw.webhook.updateWebhook.mutation(async () => {
-      await regenerateToken(roomId, { id: first.id });
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    getSlice(roomId).items.value = [{ ...first }];
-    updateWebhook(roomId, { id: first.id, name: rejectedName });
-    await flushPromises();
-
-    expect(items.value).toStrictEqual([first]);
-    expect(webhookDialogStore.issuedUrl).toBe(
-      `${useRuntimeConfig().public.baseUrl}/api/webhooks/${first.id}/${regeneratedToken}`,
+    trpcMsw.webhook.readWebhooks.query(() =>
+      [first, second, deletedFirst].map((webhook) => toWebhookInMessageWithRelations(webhook)),
     );
+    const webhookStore = useWebhookStore();
+    const { items } = storeToRefs(webhookStore);
+    await webhookStore.readWebhooks(roomId);
+
+    expect(items.value).toStrictEqual([toWebhookInMessageWithRelations(second)]);
+  });
+
+  // The deletion leaves the list at once, as the tombstone its answer confirms
+  test("a deletion leaves the webhook out of the list at once, and its answer is the tombstone", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.webhook.readWebhooks.query(() =>
+      [first, second].map((webhook) => toWebhookInMessageWithRelations(webhook)),
+    );
+    trpcMsw.webhook.deleteWebhook.mutation(() => deletedFirst);
+    const webhookStore = useWebhookStore();
+    const { items } = storeToRefs(webhookStore);
+    const { deleteWebhook, readWebhooks } = webhookStore;
+    await readWebhooks(roomId);
+    deleteWebhook(roomId, { id: first.id });
+
+    expect(items.value).toStrictEqual([toWebhookInMessageWithRelations(second)]);
+
+    await flushPromises();
+
+    expect(items.value).toStrictEqual([toWebhookInMessageWithRelations(second)]);
+  });
+
+  // A refused deletion changes nothing held, so the webhook is listed again where it stood
+  test("a refused deletion lists the webhook where it stood", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.webhook.readWebhooks.query(() =>
+      [first, second].map((webhook) => toWebhookInMessageWithRelations(webhook)),
+    );
+    trpcMsw.webhook.deleteWebhook.mutation(() => {
+      throw trpcError;
+    });
+    const webhookStore = useWebhookStore();
+    const { items } = storeToRefs(webhookStore);
+    const { deleteWebhook, readWebhooks } = webhookStore;
+    await readWebhooks(roomId);
+    deleteWebhook(roomId, { id: first.id });
+    await flushPromises();
+
+    expect(items.value).toStrictEqual([
+      toWebhookInMessageWithRelations(second),
+      toWebhookInMessageWithRelations(first),
+    ]);
+  });
+
+  // An update names only the fields it changes, so the active switch leaves the name the row shows where it is while
+  // Its own write is in flight
+  test("an update changes only the fields it names while its write is in flight", async () => {
+    expect.hasAssertions();
+
+    const { promise: isUpdateAnswered, resolve: answerUpdate } = Promise.withResolvers<void>();
+    trpcMsw.webhook.readWebhooks.query(() => [toWebhookInMessageWithRelations(first)]);
+    trpcMsw.webhook.updateWebhook.mutation(async () => {
+      await isUpdateAnswered;
+      return { ...first, isActive: false, version: first.version + 1 };
+    });
+    const webhookStore = useWebhookStore();
+    const { items } = storeToRefs(webhookStore);
+    const { readWebhooks, updateWebhook } = webhookStore;
+    await readWebhooks(roomId);
+    updateWebhook(roomId, { id: first.id, isActive: false });
+
+    expect(items.value).toStrictEqual([{ ...toWebhookInMessageWithRelations(first), isActive: false }]);
+
+    answerUpdate();
+    await flushPromises();
   });
 });

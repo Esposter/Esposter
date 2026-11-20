@@ -2,6 +2,7 @@ import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { ROOM_EMOJI_NAME_MAX_LENGTH, ROOM_EMOJI_NAME_REGEX } from "#src/services/room/constants";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { normalizeString } from "@esposter/shared";
 import { sql } from "drizzle-orm";
@@ -22,13 +23,17 @@ export const roomEmojisInMessage = sqliteTable(
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name, roomId }) => [
+    extraConfig: ({ deletedAt, name, roomId }) => [
       check("roomEmojis_name_length_check", createNameCheckSql(name, ROOM_EMOJI_NAME_MAX_LENGTH)),
       // SQLite has no regex operator, so the charset is GLOB's spelling of ROOM_EMOJI_NAME_REGEX: non-empty, and no
       // Character outside the set. The zod schema still tests the regex itself, so a change to it must be mirrored here
       check("roomEmojis_name_charset_check", sql`${name} <> '' AND ${name} NOT GLOB '*[^a-z0-9_]*'`),
-      // One shortcode names at most one emoji in a room, which is what makes `:name:` resolvable at all
-      uniqueIndex("roomEmojis_roomId_name_unique").on(roomId, name),
+      // One shortcode names at most one live emoji in a room, which is what makes `:name:` resolvable at all. A deleted emoji
+      // Is a tombstone outside the index, so its name is free again for a new emoji
+      uniqueIndex("roomEmojis_roomId_name_unique")
+        .on(roomId, name)
+        .where(sql`${deletedAt} IS NULL`),
+      createTombstoneIndex("roomEmojis", deletedAt),
     ],
     schema: messageSchema,
     scope: { columns: ["roomId"] },

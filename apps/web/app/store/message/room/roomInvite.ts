@@ -1,46 +1,61 @@
 import type { RevokeInviteInput } from "#shared/models/db/room/RevokeInviteInput";
-import type { InviteInMessageWithCreator } from "@esposter/db-schema";
+import type { InviteInMessage, InviteInMessageWithCreator, Page, RoomInMessage } from "@esposter/db-schema";
 
+import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { inviteCreateHooks } from "#src/services/message/room/invite/inviteCreateHooks";
-import { useInviteStore } from "#src/store/message/room/invite";
+import { inviteTable } from "#src/services/message/room/overlay/constants";
+import { getInvitePatchEntry } from "#src/services/message/room/overlay/getInvitePatchEntry";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { useUserStore } from "#src/store/message/user/index";
+import { useOverlayStore } from "#src/store/overlay";
+
+// A list names each invite by its id, and the rows themselves are the overlay's
+type InviteKey = InviteInMessage["id"];
 
 // The room's whole set, behind ManageRoom — apart from `useInviteStore`, which holds the reader's own link
 export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
   const { $trpc } = useNuxtApp();
-  const inviteStore = useInviteStore();
-  const { setInvite } = inviteStore;
-  const { executeMutation } = useMutation();
+  const overlayStore = useOverlayStore();
+  const { arrive, view, writeOptimistic } = overlayStore;
+  const inviteRows = view(inviteTable);
+  const userStore = useUserStore();
+  const { storeUsers } = userStore;
   // Keyed by room: a read for the room the reader just left is filed under it rather than over the list on screen
-  const { getSlice, getSliceOperationData } = useCursorPaginationDataMap<InviteInMessageWithCreator>();
-
+  const { getSlice, getSliceOperationData } = useCursorPaginationDataMap<InviteKey>();
+  // The rows the keys name, with each creator's user. A tombstone is held and left out here, and so is a link that has
+  // Lapsed, as the read that carried it did before the overlay
+  const toListedInvites = (keys: readonly InviteKey[]) =>
+    keys.flatMap((id) => {
+      const invite = inviteRows.value.find((row): row is InviteInMessage => row.id === id && row.version !== undefined);
+      const user = invite ? userStore.userMap.get(invite.userId) : undefined;
+      return invite && user && !invite.deletedAt && checkIsInviteUsable(invite) ? [{ ...invite, user }] : [];
+    });
+  const getInviteItems = (roomId: RoomInMessage["id"]) =>
+    computed(() => toListedInvites(getSliceOperationData(roomId).items.value));
+  // A page of a room's invites arrives row by row, and the list keeps the ids the page named, in the server's order
+  const readInvitePage = ({ items: pageInvites, ...page }: Page<InviteInMessageWithCreator>): Page<InviteKey> => {
+    storeUsers(pageInvites.map(({ user }) => user));
+    for (const invite of pageInvites) arrive(inviteTable, invite);
+    return { ...page, items: pageInvites.map(({ id }) => id) };
+  };
+  // The revoked link leaves at once, as the tombstone its answer confirms, so the reader's own link and the list both
+  // Stop offering a token this panel just killed
   const revokeInvite = (input: RevokeInviteInput) => {
-    const { items } = getSlice(input.roomId);
-    executeMutation(() => $trpc.invite.revokeInvite.mutate(input), {
-      applyOptimistic: () => {
-        const revokedInvite = items.value.find(({ id }) => id === input.id);
-        items.value = items.value.filter(({ id }) => id !== input.id);
-        // The reader's own link lives in the other store, and revoking it here has to reach that too — the
-        // Invite dialog would otherwise go on offering a token this panel just killed
-        const myInvite = inviteStore.invites.get(input.roomId);
-        if (myInvite?.id === input.id) setInvite(input.roomId, undefined);
-        return () => {
-          // One invite per member, so a link minted for the member since keeps the place the revoked one would take
-          if (revokedInvite && !items.value.some(({ userId }) => userId === revokedInvite.userId))
-            items.value = [revokedInvite, ...items.value];
-          if (myInvite?.id === input.id) setInvite(input.roomId, myInvite);
-        };
-      },
-      key: input.id,
+    writeOptimistic(async () => createRowResponse(inviteTable, await $trpc.invite.revokeInvite.mutate(input)), {
+      entry: getInvitePatchEntry(input.id, { deletedAt: new Date() }),
+      onError: createErrorAlert,
     });
   };
-  // One invite per member per room, so a link minted from the dialog replaces whatever that member held here
+  // One invite per member per room, so a link minted from the dialog is listed in place of whatever that member held
+  // Here, whose row the create's answer tombstones
   inviteCreateHooks.register((roomId, invite) => {
     const { isLoaded, items } = getSlice(roomId);
     // A list nobody has read yet is left alone: its first read carries the new row anyway
     if (!isLoaded.value) return;
 
-    items.value = [invite, ...items.value.filter(({ userId }) => userId !== invite.userId)];
+    items.value = [invite.id, ...items.value.filter((id) => id !== invite.id)];
   });
 
-  return { getSlice, getSliceOperationData, revokeInvite };
+  return { getInviteItems, getSliceOperationData, readInvitePage, revokeInvite };
 });

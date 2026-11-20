@@ -1,4 +1,5 @@
 import { messageSchema } from "#src/schema/message/messageSchema";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -15,7 +16,7 @@ export const appUsersInMessage = sqliteTable(
       .$defaultFn(() => v7()),
     image: text().notNull().default(""),
   },
-  { schema: messageSchema },
+  { extraConfig: ({ deletedAt }) => [createTombstoneIndex("appUsers", deletedAt)], schema: messageSchema },
 );
 
 export type AppUserInMessage = typeof appUsersInMessage.$inferSelect;

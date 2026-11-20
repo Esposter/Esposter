@@ -1,4 +1,4 @@
-import type { RoomEmojiInMessage, RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
+import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
@@ -24,6 +24,7 @@ import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/mes
 import { createPresignedPutUrl } from "@esposter/db";
 import {
   DatabaseEntityType,
+  getLiveRoomEmojiWhere,
   getRoomEmojiBlobName,
   roomEmojisInMessage,
   roomIdSchema,
@@ -76,7 +77,7 @@ export const emojiRouter = router({
               .where(
                 and(
                   eq(roomsInMessage.id, roomId),
-                  sql`(select count(*) from ${roomEmojisInMessage} where ${eq(roomEmojisInMessage.roomId, roomId)}) < ${MAX_ROOM_EMOJIS}`,
+                  sql`(select count(*) from ${roomEmojisInMessage} where ${and(eq(roomEmojisInMessage.roomId, roomId), getLiveRoomEmojiWhere(roomEmojisInMessage))}) < ${MAX_ROOM_EMOJIS}`,
                   notExists(getRoomEmojiNameQuery(ctx.db, roomId, name)),
                 ),
               ),
@@ -89,16 +90,19 @@ export const emojiRouter = router({
     );
     return getRoomEmojiWithPresignedUrl(StorageBucket.MessageAssets, newRoomEmoji);
   }),
+  // A removal keeps the emoji as a tombstone, so its version rises and a read that answers before the removal cannot put it
+  // Back. Its name is freed by the partial unique index, which only a live emoji holds
   deleteRoomEmoji: getPermissionsProcedure(
     RoomPermission.ManageEmojis,
     deleteRoomEmojiInputSchema,
     "roomId",
-  ).mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, roomId } }) => {
+  ).mutation<RoomEmojiWithPresignedUrl>(async ({ ctx, input: { id, roomId } }) => {
     const deletedRoomEmoji = requireMutation(
       (
         await ctx.db
-          .delete(roomEmojisInMessage)
-          .where(inRoom(roomEmojisInMessage, id, roomId))
+          .update(roomEmojisInMessage)
+          .set({ deletedAt: new Date() })
+          .where(and(inRoom(roomEmojisInMessage, id, roomId), getLiveRoomEmojiWhere(roomEmojisInMessage)))
           .returning()
       )[0],
       Operation.Delete,
@@ -111,7 +115,7 @@ export const emojiRouter = router({
       noop,
       console.error,
     );
-    return deletedRoomEmoji;
+    return getRoomEmojiWithPresignedUrl(StorageBucket.MessageAssets, deletedRoomEmoji);
   }),
   generateUploadRoomEmojiPresignedUrlEntity: getPermissionsProcedure(
     RoomPermission.ManageEmojis,
@@ -159,7 +163,7 @@ export const emojiRouter = router({
     RoomPermission.ManageEmojis,
     updateRoomEmojiInputSchema,
     "roomId",
-  ).mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, name, roomId } }) => {
+  ).mutation<RoomEmojiWithPresignedUrl>(async ({ ctx, input: { id, name, roomId } }) => {
     assertIsNotUnicodeEmojiSlug(Operation.Update, name);
 
     const updatedRoomEmoji = requireMutation(
@@ -167,10 +171,15 @@ export const emojiRouter = router({
         await ctx.db
           .update(roomEmojisInMessage)
           .set({ name })
-          // The room's other emoji are the ones this name may not already belong to, and the unique index is
-          // What makes that true — matching here is what turns a taken name into a stated refusal
+          // The room's other live emoji are the ones this name may not already belong to, and the unique index is
+          // What makes that true — matching here is what turns a taken name into a stated refusal. A tombstone is not
+          // Renamed, since the write names a live emoji only
           .where(
-            and(inRoom(roomEmojisInMessage, id, roomId), notExists(getRoomEmojiNameQuery(ctx.db, roomId, name, id))),
+            and(
+              inRoom(roomEmojisInMessage, id, roomId),
+              getLiveRoomEmojiWhere(roomEmojisInMessage),
+              notExists(getRoomEmojiNameQuery(ctx.db, roomId, name, id)),
+            ),
           )
           .returning()
       )[0],
@@ -178,6 +187,6 @@ export const emojiRouter = router({
       DatabaseEntityType.RoomEmoji,
       id,
     );
-    return updatedRoomEmoji;
+    return getRoomEmojiWithPresignedUrl(StorageBucket.MessageAssets, updatedRoomEmoji);
   }),
 });

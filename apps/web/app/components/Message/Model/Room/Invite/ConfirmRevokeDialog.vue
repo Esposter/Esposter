@@ -10,11 +10,12 @@ interface Props {
 
 const { roomId } = defineProps<Props>();
 const roomInviteStore = useRoomInviteStore();
-const { getSlice, revokeInvite } = roomInviteStore;
+const { getInviteItems, revokeInvite } = roomInviteStore;
 const roomInviteDialogStore = useRoomInviteDialogStore();
 const { revokingId } = storeToRefs(roomInviteDialogStore);
+const invites = getInviteItems(roomId);
 const { isOpen, item: invite } = useSingletonDialog(revokingId, () =>
-  getSlice(roomId).items.value.find(({ id }) => id === revokingId.value),
+  invites.value.find(({ id }) => id === revokingId.value),
 );
 </script>
 

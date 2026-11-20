@@ -1,3 +1,4 @@
+import type { CreateInviteResult } from "#shared/models/db/room/CreateInviteResult";
 import type { ReadInviteResult } from "#shared/models/db/room/ReadInviteResult";
 import type { InviteInMessage, InviteInMessageWithCreator, Page } from "@esposter/db-schema";
 
@@ -5,6 +6,7 @@ import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolati
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { readMyInvite } from "#server/services/message/readMyInvite";
 import { MAX_INVITE_ID_RETRIES } from "#server/services/room/constants";
+import { getLiveInviteRowWhere } from "#server/services/room/getLiveInviteRowWhere";
 import { resolveLiveInvite } from "#server/services/room/resolveLiveInvite";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -38,7 +40,7 @@ import { and, eq, exists, getColumns, sql } from "drizzle-orm";
 export const inviteRouter = router({
   createInvite: getPermissionsProcedure(RoomPermission.ManageInvites, createInviteInputSchema, "roomId")
     .use(assertIsRoomMiddleware)
-    .mutation<InviteInMessageWithCreator>(async ({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) => {
+    .mutation<CreateInviteResult>(async ({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) => {
       const userId = ctx.user.id;
       // Timestamps have no empty value, so the 0 sentinel (never expires) maps to null here
       const expiresAt = expireAfterMinutes
@@ -68,10 +70,20 @@ export const inviteRouter = router({
         // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt rolls a new id only because this one collided
         const invite = await getResultAsync(() =>
           ctx.db.batch([
-            // One invite per member per room — creating with new options replaces the old link
+            // One live invite per member per room — creating with new options replaces the old link, which is tombstoned
+            // So the answer names it at its version and no reader keeps offering it
             ctx.db
-              .delete(invitesInMessage)
-              .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, userId), roomIsOpen)),
+              .update(invitesInMessage)
+              .set({ deletedAt: new Date() })
+              .where(
+                and(
+                  eq(invitesInMessage.roomId, roomId),
+                  eq(invitesInMessage.userId, userId),
+                  getLiveInviteRowWhere(invitesInMessage),
+                  roomIsOpen,
+                ),
+              )
+              .returning(),
             ctx.db
               .insert(invitesInMessage)
               .select(
@@ -90,13 +102,16 @@ export const inviteRouter = router({
               .returning(),
           ]),
         ).match(
-          ([, invites]) => requireMutation(invites[0], Operation.Create, DatabaseEntityType.Invite, roomId),
+          ([replacedInvites, invites]) => ({
+            invite: requireMutation(invites[0], Operation.Create, DatabaseEntityType.Invite, roomId),
+            replacedInvites,
+          }),
           (error) => {
             if (checkIsUniqueViolation(error)) return undefined;
             throw error;
           },
         );
-        if (invite) return { ...invite, user };
+        if (invite) return { invite: { ...invite.invite, user }, replacedInvites: invite.replacedInvites };
       }
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId, "UNPROCESSABLE_CONTENT");
     }),
@@ -154,9 +169,13 @@ export const inviteRouter = router({
     // The page is cut over every row and only then filtered: a batch of lapsed links narrows what this page shows
     // Without ending the walk, and the cursor still names the oldest row read rather than the oldest usable one
     const page = toPage(invites, ROOM_INVITE_PAGE_SORT, cursor, limit);
-    return { items: page.items.filter((invite) => checkIsInviteUsable(invite)), nextCursor: page.nextCursor };
+    return {
+      items: page.items.filter((invite) => invite.deletedAt !== null || checkIsInviteUsable(invite)),
+      nextCursor: page.nextCursor,
+    };
   }),
-  revokeInvite: getMemberProcedure(revokeInviteInputSchema, "roomId").mutation<void>(
+  // A revoke tombstones the link and answers it at its version, so a reader holding the live link drops it on the answer
+  revokeInvite: getMemberProcedure(revokeInviteInputSchema, "roomId").mutation<InviteInMessage>(
     async ({ ctx, input: { id, roomId } }) => {
       // A member revokes their own link; revoking anybody's is `ManageRoom`, not `ManageInvites`. The default
       // Role carries `ManageInvites` so that every member can mint a link at all, which makes it the wrong gate
@@ -166,11 +185,12 @@ export const inviteRouter = router({
       const wheres = [eq(invitesInMessage.id, id), eq(invitesInMessage.roomId, roomId)];
       if (!isInviteManager) wheres.push(eq(invitesInMessage.userId, user.id));
 
-      requireMutation(
+      return requireMutation(
         (
           await ctx.db
-            .delete(invitesInMessage)
-            .where(and(...wheres))
+            .update(invitesInMessage)
+            .set({ deletedAt: new Date() })
+            .where(and(...wheres, getLiveInviteRowWhere(invitesInMessage)))
             .returning()
         )[0],
         Operation.Delete,

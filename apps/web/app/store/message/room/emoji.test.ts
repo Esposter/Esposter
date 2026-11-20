@@ -2,16 +2,27 @@
 import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
 import { EmojiType } from "#src/models/message/emoji/EmojiType";
+import { roomEmojiTable } from "#src/services/message/room/overlay/constants";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomEmojiStore } from "#src/store/message/room/emoji";
+import { useOverlayStore } from "#src/store/overlay";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useRoomEmojiStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   const presignedUrl = "https://example.com/emoji.png";
+
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
   const createRoomEmoji = (): RoomEmojiWithPresignedUrl => ({
     createdAt: new Date(0),
     deletedAt: null,
@@ -23,35 +34,66 @@ describe(useRoomEmojiStore, () => {
     version: 0,
   });
 
-  // The room's subscription is open while its set is read, so a removal and a creation that land in that window are
-  // Not in the answer's favour: the answer may still list the removed emoji and not the created one
-  test("replays a removal and a creation that land during the read over its answer", async () => {
+  // A removal and a creation that land while the room's set is read are held over its answer: the removal at a higher
+  // Version than the answer's live copy of the same emoji, and the creation because the answer predates it
+  test("keeps a removal and a creation that land during the read over its answer", async () => {
     expect.hasAssertions();
 
-    const roomEmojiStore = useRoomEmojiStore();
+    setCurrentRoomId(roomId);
+    const overlayStore = useOverlayStore();
+    const { arrive } = overlayStore;
     const kept = createRoomEmoji();
     const removed = createRoomEmoji();
-    const createdRoomEmoji = createRoomEmoji();
+    const addedRoomEmoji = { ...createRoomEmoji(), name: "addedRoomEmoji" };
     trpcMsw.room.emoji.readRoomEmojis.query(() => {
-      roomEmojiStore.storeDeleteRoomEmoji(roomId, { id: removed.id });
-      roomEmojiStore.storeCreateRoomEmoji(roomId, createdRoomEmoji);
+      arrive(roomEmojiTable, { ...removed, deletedAt: new Date(0), version: 1 });
+      arrive(roomEmojiTable, addedRoomEmoji);
       return [kept, removed];
     });
+    const roomEmojiStore = useRoomEmojiStore();
+    const { items } = storeToRefs(roomEmojiStore);
     await roomEmojiStore.readRoomEmojis(roomId);
 
-    expect(roomEmojiStore.getSlice(roomId).items.value).toStrictEqual([kept, createdRoomEmoji]);
+    // The set has no order of its own, so the two live emoji are named as members of it
+    expect(items.value).toHaveLength(2);
+    expect(items.value).toStrictEqual(expect.arrayContaining([kept, addedRoomEmoji]));
   });
 
   test("stamps the emoji type on the room's own set", () => {
     expect.hasAssertions();
 
     setCurrentRoomId(roomId);
-    const roomEmojiStore = useRoomEmojiStore();
+    const overlayStore = useOverlayStore();
+    const { arrive } = overlayStore;
     const roomEmoji = createRoomEmoji();
-    roomEmojiStore.storeCreateRoomEmoji(roomId, roomEmoji);
+    arrive(roomEmojiTable, roomEmoji);
+    const roomEmojiStore = useRoomEmojiStore();
+    const { customEmojis } = storeToRefs(roomEmojiStore);
 
-    expect(roomEmojiStore.customEmojis).toStrictEqual([
+    expect(customEmojis.value).toStrictEqual([
       { id: roomEmoji.id, name: roomEmoji.name, presignedUrl, slug: roomEmoji.name, type: EmojiType.Custom },
     ]);
+  });
+
+  // The removal leaves the set at once, and its answer keeps it out
+  test("a removal leaves the emoji out at once, and its answer keeps it out", async () => {
+    expect.hasAssertions();
+
+    setCurrentRoomId(roomId);
+    const overlayStore = useOverlayStore();
+    const { arrive } = overlayStore;
+    const roomEmoji = createRoomEmoji();
+    arrive(roomEmojiTable, roomEmoji);
+    trpcMsw.room.emoji.deleteRoomEmoji.mutation(() => ({ ...roomEmoji, deletedAt: new Date(0), version: 1 }));
+    const roomEmojiStore = useRoomEmojiStore();
+    const { items } = storeToRefs(roomEmojiStore);
+    const { deleteRoomEmoji } = roomEmojiStore;
+    deleteRoomEmoji(roomId, { id: roomEmoji.id });
+
+    expect(items.value).toStrictEqual([]);
+
+    await flushPromises();
+
+    expect(items.value).toStrictEqual([]);
   });
 });

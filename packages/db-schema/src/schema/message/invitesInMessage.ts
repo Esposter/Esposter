@@ -2,6 +2,7 @@ import { messageSchema } from "#src/schema/message/messageSchema";
 import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
 import { createExactLengthCheckSql } from "#src/services/shared/createExactLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
+import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
 import { SECRET_TOKEN_LENGTH, secretTokenSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
@@ -23,7 +24,7 @@ export const invitesInMessage = sqliteTable(
     uses: integer().notNull().default(0),
   },
   {
-    extraConfig: ({ id, maxUses, roomId, uses }) => [
+    extraConfig: ({ deletedAt, id, maxUses, roomId, uses }) => [
       check("invites_id_length_check", createExactLengthCheckSql(id, SECRET_TOKEN_LENGTH)),
       check("invites_maxUses_check", createMinimumCheckSql(maxUses, 0)),
       check("invites_uses_check", createMinimumCheckSql(uses, 0)),
@@ -31,6 +32,7 @@ export const invitesInMessage = sqliteTable(
       // A room's invite list pages newest first, so the index leads with the room and orders the rest as the read does.
       // The room's deletion cascades through the same leading column
       index("invites_roomId_createdAt_id_index").on(roomId, sql`"createdAt" DESC`, sql`"id" DESC`),
+      createTombstoneIndex("invites", deletedAt),
     ],
     schema: messageSchema,
     scope: { columns: ["id", "roomId"], secretColumns: ["id"] },

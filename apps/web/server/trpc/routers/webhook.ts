@@ -9,7 +9,6 @@ import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
 import { pickColumns } from "#server/services/db/pickColumns";
-import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
@@ -24,6 +23,7 @@ import { inJsonArray } from "@esposter/db";
 import {
   appUsersInMessage,
   DatabaseEntityType,
+  getLiveWebhookWhere,
   PublicWebhookColumns,
   roomIdSchema,
   RoomPermission,
@@ -32,7 +32,7 @@ import {
   webhooksInMessage,
 } from "@esposter/db-schema";
 import { generateSecretToken, hashSecretToken, Operation } from "@esposter/shared";
-import { and, eq, getColumns, sql } from "drizzle-orm";
+import { and, eq, getColumns, inArray, sql } from "drizzle-orm";
 import { v7 } from "uuid";
 
 // Every column of a webhook a response carries: the allowlist a relational read takes, so a write answers with the
@@ -57,7 +57,7 @@ export const webhookRouter = router({
     const tokenHash = await hashSecretToken(token);
     const isUnderWebhookCap = and(
       eq(roomsInMessage.id, roomId),
-      sql`(select count(*) from ${webhooksInMessage} where ${eq(webhooksInMessage.roomId, roomId)}) < ${WEBHOOK_MAX_LENGTH}`,
+      sql`(select count(*) from ${webhooksInMessage} where ${and(eq(webhooksInMessage.roomId, roomId), getLiveWebhookWhere(webhooksInMessage))}) < ${WEBHOOK_MAX_LENGTH}`,
     );
     const [, webhookRows] = await ctx.db.batch([
       ctx.db.insert(appUsersInMessage).select(
@@ -90,27 +90,34 @@ export const webhookRouter = router({
       webhook: requireMutation(webhookRows[0], Operation.Create, DatabaseEntityType.Webhook, webhookContext),
     };
   }),
+  // The webhook and the app user it posts as are tombstoned together. A hard delete of the app user would cascade the webhook
+  // Away with no tombstone to answer for it. The app user is named by the live webhook, so its statement runs first, while
+  // The webhook is still live, and the webhook's own statement then tombstones the row the answer names
   deleteWebhook: getPermissionsProcedure(
     RoomPermission.ManageWebhooks,
     deleteWebhookInputSchema,
     "roomId",
   ).mutation<PublicWebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
-    const webhook = await requireEntity(
-      ctx.db.query.webhooksInMessage.findFirst({
-        columns: PublicWebhookColumns,
-        where: { id: { eq: id }, roomId: { eq: roomId } },
-      }),
-      DatabaseEntityType.Webhook,
-      id,
-    );
-    // The webhook row is cascade-deleted with the app user it posts as, so the app user is the one delete
-    requireMutation(
-      (await ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning())[0],
-      Operation.Delete,
-      DatabaseEntityType.AppUser,
-      webhook.userId,
-    );
-    return webhook;
+    const [, deletedWebhooks] = await ctx.db.batch([
+      ctx.db
+        .update(appUsersInMessage)
+        .set({ deletedAt: new Date() })
+        .where(
+          inArray(
+            appUsersInMessage.id,
+            ctx.db
+              .select({ userId: webhooksInMessage.userId })
+              .from(webhooksInMessage)
+              .where(and(inRoom(webhooksInMessage, id, roomId), getLiveWebhookWhere(webhooksInMessage))),
+          ),
+        ),
+      ctx.db
+        .update(webhooksInMessage)
+        .set({ deletedAt: new Date() })
+        .where(and(inRoom(webhooksInMessage, id, roomId), getLiveWebhookWhere(webhooksInMessage)))
+        .returning(publicWebhookColumns),
+    ]);
+    return requireMutation(deletedWebhooks[0], Operation.Delete, DatabaseEntityType.Webhook, id);
   }),
   readAppUsers: getMemberProcedure(readAppUsersInputSchema, "roomId").query<NamedAppUserInMessage[]>(
     ({ ctx, input: { ids, roomId } }) =>
@@ -119,7 +126,13 @@ export const webhookRouter = router({
         .select({ ...getColumns(appUsersInMessage), name: webhooksInMessage.name })
         .from(appUsersInMessage)
         .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
-        .where(and(eq(webhooksInMessage.roomId, roomId), inJsonArray(appUsersInMessage.id, ids))),
+        .where(
+          and(
+            eq(webhooksInMessage.roomId, roomId),
+            getLiveWebhookWhere(webhooksInMessage),
+            inJsonArray(appUsersInMessage.id, ids),
+          ),
+        ),
   ),
   readWebhooks: getPermissionsProcedure(RoomPermission.ManageWebhooks, roomIdSchema, "roomId").query<
     WebhookInMessageWithRelations[]
@@ -142,7 +155,7 @@ export const webhookRouter = router({
           await ctx.db
             .update(webhooksInMessage)
             .set({ tokenHash })
-            .where(inRoom(webhooksInMessage, id, roomId))
+            .where(and(inRoom(webhooksInMessage, id, roomId), getLiveWebhookWhere(webhooksInMessage)))
             .returning(publicWebhookColumns)
         )[0],
         Operation.Update,
@@ -161,7 +174,7 @@ export const webhookRouter = router({
         await ctx.db
           .update(webhooksInMessage)
           .set(rest)
-          .where(inRoom(webhooksInMessage, id, roomId))
+          .where(and(inRoom(webhooksInMessage, id, roomId), getLiveWebhookWhere(webhooksInMessage)))
           .returning(publicWebhookColumns)
       )[0],
       Operation.Update,

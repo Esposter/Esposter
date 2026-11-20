@@ -1,7 +1,7 @@
 import { db } from "#server/db/index";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { consumeRequestAddressRateLimit } from "#server/services/rateLimiter/consumeRequestAddressRateLimit";
-import { QueueJob, selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
+import { getLiveWebhookWhere, QueueJob, selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
 import { getResult, getResultAsync, hashSecretToken, secretTokenSchema } from "@esposter/shared";
 import { env } from "cloudflare:workers";
 import { defineEventHandler, getRouterParams } from "nuxt/server";
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
     const tokenHash = await hashSecretToken(token);
     const webhook = await db.query.webhooksInMessage.findFirst({
       columns: { roomId: true, userId: true },
-      where: { id: { eq: id }, isActive: { eq: true }, tokenHash: { eq: tokenHash } },
+      where: { id: { eq: id }, isActive: { eq: true }, RAW: getLiveWebhookWhere, tokenHash: { eq: tokenHash } },
     });
     if (!webhook) {
       event.res.status = 404;

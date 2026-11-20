@@ -296,7 +296,7 @@ describe(computeReadSet, () => {
     const inviterId = getMockSession().user.id;
     const context = await createMockContext();
     const newRoom = await createCallerFactory(roomRouter)(context).createRoom({ name: "room" });
-    const newInvite = await createCallerFactory(inviteRouter)(context).createInvite({
+    const { invite: newInvite } = await createCallerFactory(inviteRouter)(context).createInvite({
       expireAfterMinutes: 0,
       maxUses: 0,
       roomId: newRoom.id,
@@ -312,6 +312,7 @@ describe(computeReadSet, () => {
 
     expect(computeReadSet(statements)).toStrictEqual({
       filters: [
+        { column: "deletedAt", level: 0, occurrence: "message_invites", site: "where", table: "message_invites" },
         { column: "isInvitePaused", level: 1, occurrence: "message_rooms", site: "where", table: "message_rooms" },
         { column: "deletedAt", level: 2, occurrence: "message_bans", site: "where", table: "message_bans" },
         { column: "deletedAt", level: 5, occurrence: "d0", site: "where", table: "message_usersToRooms" },

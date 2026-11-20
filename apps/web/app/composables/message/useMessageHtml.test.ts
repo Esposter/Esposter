@@ -2,10 +2,11 @@
 import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
 import { useMessageHtml } from "#src/composables/message/useMessageHtml";
+import { roomEmojiTable } from "#src/services/message/room/overlay/constants";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
-import { useRoomEmojiStore } from "#src/store/message/room/emoji";
 import { useUserStore } from "#src/store/message/user/index";
+import { useOverlayStore } from "#src/store/overlay";
 import {
   CUSTOM_EMOJI_ID_ATTRIBUTE,
   CUSTOM_EMOJI_NAME_ATTRIBUTE,
@@ -63,9 +64,9 @@ describe(useMessageHtml, () => {
   test("resolves a custom emoji node to its image", () => {
     expect.hasAssertions();
 
-    const roomEmojiStore = useRoomEmojiStore();
-    const { storeCreateRoomEmoji } = roomEmojiStore;
-    storeCreateRoomEmoji(roomId, roomEmoji);
+    const overlayStore = useOverlayStore();
+    const { arrive } = overlayStore;
+    arrive(roomEmojiTable, roomEmoji);
     const messageHtml = useMessageHtml(createCustomEmojiNode(roomEmojiId), roomId);
 
     expect(messageHtml.value).toBe(

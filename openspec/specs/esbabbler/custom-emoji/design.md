@@ -21,7 +21,7 @@ flowchart TD
   store --> picker["Picker category, ':' autocomplete, reaction chips"]
   store --> render["Message render — the content node resolves to its image"]
   picker -->|"pick"| tag["Reaction — emojiTag = custom:{id}"]
-  del["deleteRoomEmoji"] --> gone[("row deleted")]
+  del["deleteRoomEmoji"] --> gone[("row tombstoned at a higher version")]
   gone -->|"publishBlobDeletion"| jobq["ProcessBlobDeletion queue job"]
   gone -.->|"nothing resolves the id any more"| fallback["Reactions show a placeholder, content shows its shortcode"]
 ```
@@ -42,7 +42,7 @@ One table, `roomEmojis`, holding an `id`, a `name`, and its `roomId`. The object
 
 Two constraints carry the whole shortcode contract:
 
-- **A unique index on `(roomId, name)`**, so one shortcode names at most one emoji in a room.
+- **A unique index on `(roomId, name)`** over live rows, so one shortcode names at most one live emoji in a room. A removed emoji is a tombstone the index leaves out, so its shortcode is free again.
 - **A name check constraint** restricting the name to lowercase letters, digits and underscores — the same closed charset the Unicode dataset's slugs use, which is what lets `:name:` resolve against one vocabulary rather than two.
 
 Both places a name is entered — the create dialog and the settings rename — are **one field**, and it takes the
@@ -75,32 +75,32 @@ Both are keyed by **id**, which is the one deliberate divergence from Discord's 
 
 ## Resolution, and what a deleted emoji does
 
-A room's set is read when the room is entered and kept current by the rows it reads: `readRoomEmojis` watches them, and every emoji write publishes the rows it changes, so every surface resolves an id through one store map. The read is watched once it answers, and every write this client makes while the read is in flight is replayed over its answer by `apps/web/app/composables/shared/useReadingPushes.ts` (merged by `apps/web/app/services/shared/mergeSnapshot.ts`) rather than overwritten by it, so an emoji this client removed or added in the gap is neither lost nor written back. Another device's write in that gap reaches the set through the read's start time, which [client data](../../architecture/client-data/design.md) "Live reads" records. Rendering follows [content token rewriting](../../architecture/content-token-rewriting/design.md): the message is parsed once, and each custom-emoji node is replaced in that same tree with an `<img>` sized in `em` so it follows the line's own text size.
+A room's set is read when the room is entered and kept current by the rows it reads: `readRoomEmojis` watches them, and every emoji write publishes the rows it changes, so every surface resolves an id through one store map. The read is watched once it answers. Every write to the set is an entry over the overlay's rows, so a removal or a creation that lands while the read is in flight is held at its own version, and the read's answer, which predates it, does not overwrite it. `readRoomEmojis` returns the room's tombstones with its live rows, so a removal the answer names reaches the set as a row, not as an absence. Another device's write reaches the set when the topic the read watches changes, and the re-read's answer lands by version like any other read ([client data](../../architecture/client-data/design.md)). Rendering follows [content token rewriting](../../architecture/content-token-rewriting/design.md): the message is parsed once, and each custom-emoji node is replaced in that same tree with an `<img>` sized in `em` so it follows the line's own text size.
 
 An id that resolves to nothing is **data, not an error**. A reaction to a deleted emoji still counts and renders a placeholder rather than disappearing; a content node keeps the shortcode it was authored with; and one unresolvable emoji never fails the render of the message around it.
 
 ## Teardown
 
-Deleting an emoji removes the row first and then sends the object deletion, best-effort and post-persist like every other attachment delete ([file & media](../file-media/design.md)). An abandoned upload — a presigned PUT that was used but whose create never ran — leaves an object no row reaches, under the `{roomId}/…` prefix the room's own deletion sweeps, and it is invisible until then because every read goes through the row.
+Deleting an emoji tombstones the row first and then sends the object deletion. The row stays, at a higher version, so a read that answers before the removal cannot put the emoji back. The object deletion is best-effort and post-persist like every other attachment delete ([file & media](../file-media/design.md)). An abandoned upload — a presigned PUT that was used but whose create never ran — leaves an object no row reaches, under the `{roomId}/…` prefix the room's own deletion sweeps, and it is invisible until then because every read goes through the row.
 
 ## Key files
 
-| File                                                                | Role                                                       |
-| :------------------------------------------------------------------ | :--------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/roomEmojisInMessage.ts`      | the table, the name charset, and the per-room unique index |
-| `apps/web/server/trpc/routers/room/emoji.ts`                        | upload target, create, rename, delete, read                |
-| `packages/db-schema/src/services/storage/getRoomEmojiBlobName.ts`   | the one place the blob name is spelled                     |
-| `apps/web/server/services/message/emoji/checkIsUnicodeEmojiSlug.ts` | the shadowing guard                                        |
-| `apps/web/app/store/message/room/emoji.ts`                          | the room's set, its upload action, and the id-keyed map    |
-| `apps/web/app/models/message/emoji/CustomEmoji.ts`                  | what a picking surface sees                                |
-| `apps/web/app/components/Styled/Emoji.vue`                          | one glyph component — a character or an image              |
-| `apps/web/app/components/Message/Model/Message/Emoji/Tag.vue`       | a stored reaction tag, resolved or placeheld               |
-| `apps/web/app/services/message/CustomEmojiExtension.ts`             | the content node, carrying id and name and no url          |
-| `apps/web/app/composables/message/useMessageHtml.ts`                | the render pass — mentions and emoji, one parse            |
-| `apps/web/app/components/Message/Model/Room/Emoji/CreateDialog.vue` | the Add Emoji dialog the picker footer opens               |
-| `apps/web/app/components/Message/Model/Room/Emoji/NameField.vue`    | the one name field — colons as chrome, one rule set        |
-| `apps/web/app/components/Message/Model/Message/Emoji/Picker.vue`    | the room's picker — its set, and Add Emoji for who may     |
-| `apps/web/app/components/Message/Model/Room/Settings/Type/Emoji/`   | the settings panel: the whole set, rename, delete          |
+| File                                                                | Role                                                                                           |
+| :------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/roomEmojisInMessage.ts`      | the table, the name charset, the per-room unique index over live rows, and the tombstone index |
+| `apps/web/server/trpc/routers/room/emoji.ts`                        | upload target, create, rename, delete, read                                                    |
+| `packages/db-schema/src/services/storage/getRoomEmojiBlobName.ts`   | the one place the blob name is spelled                                                         |
+| `apps/web/server/services/message/emoji/checkIsUnicodeEmojiSlug.ts` | the shadowing guard                                                                            |
+| `apps/web/app/store/message/room/emoji.ts`                          | the room's set, its upload action, and the id-keyed map                                        |
+| `apps/web/app/models/message/emoji/CustomEmoji.ts`                  | what a picking surface sees                                                                    |
+| `apps/web/app/components/Styled/Emoji.vue`                          | one glyph component — a character or an image                                                  |
+| `apps/web/app/components/Message/Model/Message/Emoji/Tag.vue`       | a stored reaction tag, resolved or placeheld                                                   |
+| `apps/web/app/services/message/CustomEmojiExtension.ts`             | the content node, carrying id and name and no url                                              |
+| `apps/web/app/composables/message/useMessageHtml.ts`                | the render pass — mentions and emoji, one parse                                                |
+| `apps/web/app/components/Message/Model/Room/Emoji/CreateDialog.vue` | the Add Emoji dialog the picker footer opens                                                   |
+| `apps/web/app/components/Message/Model/Room/Emoji/NameField.vue`    | the one name field — colons as chrome, one rule set                                            |
+| `apps/web/app/components/Message/Model/Message/Emoji/Picker.vue`    | the room's picker — its set, and Add Emoji for who may                                         |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Emoji/`   | the settings panel: the whole set, rename, delete                                              |
 
 ## Notes
 
