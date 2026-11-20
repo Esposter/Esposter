@@ -4,7 +4,7 @@ import type { RenameMap } from "#src/models/identifiers/rename/RenameMap";
 // Which of the map's names a source binds: imported by name from a module the map names, or declared by the source
 // Itself when it is one of the map's sources. A name imported under an alias is bound to the alias, so only its
 // Import renames it
-export const getBoundNames = ({ modules, renames }: RenameMap, text: string, isSource: boolean): BoundNames => {
+export const computeBoundNames = ({ modules, renames }: RenameMap, text: string, isSource: boolean): BoundNames => {
   const importRegex = new RegExp(
     `import\\s+(?:type\\s+)?\\{([^}]*)\\}\\s*from\\s*["'](?:${modules.map((module) => `${RegExp.escape(module)}[^"']*`).join("|")})["']`,
     "gu",

@@ -2,8 +2,8 @@ import type { RenameMap } from "#src/models/identifiers/rename/RenameMap";
 import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
 import { checkIsName } from "#src/services/identifiers/rename/checkIsName";
+import { computeBoundNames } from "#src/services/identifiers/rename/computeBoundNames";
 import { getAlternation } from "#src/services/identifiers/rename/getAlternation";
-import { getBoundNames } from "#src/services/identifiers/rename/getBoundNames";
 import { getChildren } from "#src/services/shared/getChildren";
 import { parents } from "#src/services/shared/parents";
 import { parseSource } from "#src/services/shared/parseSource";
@@ -16,7 +16,7 @@ import { parseSource } from "#src/services/shared/parseSource";
 // The typecheck to find
 export const renameIdentifiers = (text: string, renameMap: RenameMap, isSource: boolean): string => {
   const { accessors, renames, specifiers } = renameMap;
-  const { aliasedNames, boundNames, importRegex } = getBoundNames(renameMap, text, isSource);
+  const { aliasedNames, boundNames, importRegex } = computeBoundNames(renameMap, text, isSource);
   const getRename = (name: string) => renames[name] ?? name;
   const aliasedRegex =
     aliasedNames.size > 0 ? new RegExp(`(?<![\\w$])(${getAlternation(aliasedNames)})(?=\\s+as\\s)`, "gu") : undefined;
