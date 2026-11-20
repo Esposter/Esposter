@@ -10,10 +10,13 @@ export const createObjectStub = <ObjectRpc>(
   objectReplies: Map<string, ObjectReply>,
 ): DurableObjectStub<ObjectRpc & Rpc.DurableObjectBranded> =>
   new Proxy({} as DurableObjectStub<ObjectRpc & Rpc.DurableObjectBranded>, {
-    get:
-      (_target, method: string) =>
-      (...args: unknown[]) => {
+    get: (_target, method: string | symbol) => {
+      // A stub is not a thenable, so `then` is unanswered and awaiting it resolves to the stub, and a symbol is not an RPC
+      if (typeof method === "symbol" || method === "then") return undefined;
+
+      return (...args: unknown[]) => {
         objectCalls.push({ args, method, objectId });
         return Promise.resolve(objectReplies.get(method)?.(args, objectId));
-      },
+      };
+    },
   });
