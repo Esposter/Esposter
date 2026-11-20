@@ -315,6 +315,7 @@ describe("postRouter", () => {
     await postCaller.deleteComment(newComment.id);
 
     const repliesAfter = await repliesCaller.readPosts({ parentId: newComment.id });
+    expect(repliesAfter.items).toHaveLength(1);
     expect(repliesAfter.items.every(({ deletedAt }) => deletedAt !== null)).toBe(true);
   });
 
