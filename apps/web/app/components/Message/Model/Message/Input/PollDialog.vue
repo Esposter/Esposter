@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { pollOptionSchema } from "#shared/models/message/poll/PollOption";
+import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#shared/services/message/constants";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "#shared/services/message/constants";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useDataStore } from "#src/store/message/data";
 import { usePollDialogStore } from "#src/store/message/input/pollDialog";

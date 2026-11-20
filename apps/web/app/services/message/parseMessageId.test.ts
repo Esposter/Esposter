@@ -14,6 +14,8 @@ describe(parseMessageId, () => {
     { expected: undefined, title: "refuses an id past the safe integer range", value: "9007199254740992" },
     { expected: undefined, title: "refuses an empty string", value: "" },
   ])("$title", ({ expected, value }) => {
+    expect.hasAssertions();
+
     expect(parseMessageId(value)).toBe(expected);
   });
 });

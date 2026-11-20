@@ -5,8 +5,8 @@ import { noop } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(rasterizeSvg, () => {
-  // The browser's image, canvas and fetch are missing from the node environment, so the test stands in for them: the
-  // image loads on the next tick, and the canvas hands back a blob of the export
+  // The browser's image, canvas and fetch are missing from the node environment, so the test stands in for them
+  // The image loads on the next tick, and the canvas hands back a blob of the export
   const BLOB_URL = "blob:png";
   const SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="50"></svg>';
 
@@ -30,7 +30,7 @@ describe(rasterizeSvg, () => {
   let toBlob: Mock<(callback: BlobCallback, type: string) => void>;
 
   beforeEach(() => {
-    fetchSvg = vi.fn<(url: string) => Promise<Response>>(async () => new Response(SVG));
+    fetchSvg = vi.fn<(url: string) => Promise<Response>>(() => Promise.resolve(new Response(SVG)));
     toBlob = vi.fn<(callback: BlobCallback, type: string) => void>((callback) => {
       callback(new Blob([], { type: "image/png" }));
     });
