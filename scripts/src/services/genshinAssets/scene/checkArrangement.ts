@@ -3,7 +3,7 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { computeCrossRatio } from "#src/services/genshinAssets/scene/computeCrossRatio";
-import { DerivedAssetArrangementMap } from "#src/services/genshinAssets/scene/DerivedAssetArrangementMap";
+import { DerivedAssetComponentArrangementMap } from "#src/services/genshinAssets/scene/DerivedAssetComponentArrangementMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentClips } from "#src/services/genshinAssets/shared/readComponentClips";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
@@ -27,7 +27,7 @@ export const checkArrangement = async (
   }[];
   ratios: { fitted: number; measured: number; name: string; reference: string }[];
 }> => {
-  const { explainedOffsets, families, ratios } = DerivedAssetArrangementMap[component];
+  const { explainedOffsets, families, ratios } = DerivedAssetComponentArrangementMap[component];
   // A component no offset explains, as Windrise, decodes no clips
   const [placements, clips] = await Promise.all([
     readComponentPlacements(component),

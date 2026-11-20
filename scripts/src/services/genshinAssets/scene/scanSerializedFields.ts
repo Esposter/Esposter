@@ -195,12 +195,12 @@ export const scanSerializedFields = (
   let offset = firstOffset;
   while (checkHasBytes(offset, WORD)) {
     const start = offset;
-    const read = readers
+    const fieldRead = readers
       .values()
       .map((reader) => reader(start))
       .find((result) => result !== undefined && !checkIsCrossing(start, result));
-    if (read) fields.push(read.field);
-    offset = read?.end ?? offset + WORD;
+    if (fieldRead) fields.push(fieldRead.field);
+    offset = fieldRead?.end ?? offset + WORD;
   }
   return fields;
 };

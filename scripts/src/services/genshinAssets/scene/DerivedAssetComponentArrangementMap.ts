@@ -21,7 +21,7 @@ import { Quaternion, Vector3 } from "three";
 // Beside the exports' objects it stands for, composed as the family stands its parts, and how far across and up the
 // Game's own data stands each family of the witness off its laid-out place at run time, a family not named standing
 // At its place
-export const DerivedAssetArrangementMap: Record<
+export const DerivedAssetComponentArrangementMap: Record<
   DerivedAssetComponent,
   {
     explainedOffsets: Record<

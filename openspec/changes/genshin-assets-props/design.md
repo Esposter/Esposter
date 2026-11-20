@@ -225,45 +225,45 @@ These are the game's art. Each is a missing asset the recreation draws a stand-i
 
 ## Key files
 
-| File                                                                            | Role after the change                                                                                                |
-| :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------- |
-| `scripts/src/models/genshinAssets/shared/DerivedAssetComponent.ts`              | gains the props member                                                                                               |
-| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`         | gains the props entry, with no roots, no name pattern and the world screen                                           |
-| `scripts/src/services/genshinAssets/scene/DerivedAssetArrangementMap.ts`        | gains the props entry, empty                                                                                         |
-| `scripts/src/services/genshinAssets/sound/DerivedAssetSoundEffectMap.ts`        | gains the props entry, empty                                                                                         |
-| `scripts/src/services/genshinAssets/shared/readMeshAssets.ts`                   | the mesh lookup `asset-find` prints, refusing a name no mesh holds                                                   |
-| `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`                  | gains the props fit entry                                                                                            |
-| `scripts/src/services/genshinAssets/fit/fitProps.ts`                            | the props' fit entry: every kind `PROP_KINDS` lists, or those named                                                  |
-| `scripts/src/services/genshinAssets/fit/fitPropKind.ts`                         | a kind's outline fitted from its export, or named and skipped when the export is not on disk                         |
-| `scripts/src/services/genshinAssets/props/constants.ts`                         | `PROP_KINDS`, the kinds `fit props` fits, empty until each kind's task adds its row                                  |
-| `scripts/src/services/genshinAssets/props/buildPropRecord.ts`                   | a kind's record under `props/<name>`, parsed before it is returned, so a mesh is refused                             |
-| `scripts/src/models/genshinAssets/props/PropKind.ts`                            | a prop kind: its record's name, its export's mesh and its outline's shape                                            |
-| `scripts/src/models/genshinAssets/props/PropRecord.ts`                          | the published outline, numbers alone, and the schema that refuses any other key                                      |
-| `scripts/src/models/genshinAssets/props/PropShape.ts`                           | a solid kind's visual hull or a round kind's lathe                                                                   |
-| `scripts/src/services/genshinAssets/fit/fitWindriseScene.ts`                    | hands the statue fit a region's Goddess prefab by key                                                                |
-| `scripts/src/services/genshinAssets/fit/fitRegionStatue.ts`                     | the statue fit, taking any region's Goddess prefab                                                                   |
-| `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`           | registers the `asset-find` subcommand beside `ui-find`                                                               |
-| `scripts/src/services/genshinAssets/shared/findHierarchyRoot.ts`                | the walk from an object up to its hierarchy's root, shared by the weapons' roots and the root lookup                 |
-| `scripts/src/services/genshinAssets/shared/findRootsByName.ts`                  | the roots of the prefabs holding a GameObject of the name, named by block, refusing a name none holds                |
-| `scripts/src/services/genshinAssets/shared/readPrefabRoots.ts`                  | reads the props' layout dumps and finds the name's roots in them                                                     |
-| `scripts/src/services/genshinAssets/commands/rootFindCommand.ts`                | registers the `root-find` subcommand beside `asset-find`                                                             |
-| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`                  | publishes the Mora kinds' rows per region                                                                            |
-| `scripts/src/services/genshinAssets/chests/ChestKindLabelIdMap.ts`              | gains the two Mora labels as kinds                                                                                   |
-| `scripts/src/services/genshinAssets/shared/constants.ts`                        | the list of regions the waypoints command writes, Mondstadt and Liyue                                                |
-| `scripts/src/services/genshinAssets/fit/selectFittedRegions.ts`                 | the regions of the waypoints list whose map fit passes its bar, the gate a waypoint is written past                  |
-| `packages/genshin-world/src/components/World/Landmark/Pillar/Index.vue`         | draws a pillar stand-in at an arrival, which the domain entrance and each teleport waypoint draw through             |
-| `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts`         | names each region's landmark meshes for the export, gains a region's statue prefab, and gains the props entry, empty |
-| `packages/genshin-world/src/models/data/GameDataset.ts`                         | gains the props dataset                                                                                              |
-| `packages/genshin-world/src/generated/gameDataLock.json`                        | gains the props keys on publish                                                                                      |
-| `packages/genshin-world/src/store/chests.ts`                                    | reads the chests of the regions in reach from the scene's map, each read by `useRegionData` as it comes within reach |
-| `packages/genshin-world/src/components/World/Interactables/Index.vue`           | draws a chest and a gather node from its record, keeping the stand-in for a kind with none                           |
-| `packages/genshin-world/src/components/World/StandIns/Index.vue`                | draws an Oculus and an outcrop from their records, keeping the stand-ins                                             |
-| `packages/genshin-world/src/components/World/Landmark/Statue/Index.vue`         | draws each region's statue from its own record                                                                       |
-| `packages/genshin-world/src/components/World/Landmark/DomainEntrance/Index.vue` | draws the entrance from its record in place of the box                                                               |
-| `packages/genshin-world/src/components/World/Landmarks/Index.vue`               | draws the waypoints as stand-ins, then from their records                                                            |
-| `packages/genshin-world/src/components/World/FrostbearingTree/Index.vue`        | draws the tree from its record in place of the capsule                                                               |
-| `packages/genshin-engine/src/kits/props/createPropGeometry.ts`                  | draws a prop's outline: the boxes of a hull, or a lathe's sections on their foot at their axis                       |
-| `packages/genshin-engine/src/models/kits/props/PropOutline.ts`                  | a prop's outline as the kit reads it, a hull or a lathe told apart by its keys                                       |
+| File                                                                              | Role after the change                                                                                                |
+| :-------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/models/genshinAssets/shared/DerivedAssetComponent.ts`                | gains the props member                                                                                               |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`           | gains the props entry, with no roots, no name pattern and the world screen                                           |
+| `scripts/src/services/genshinAssets/scene/DerivedAssetComponentArrangementMap.ts` | gains the props entry, empty                                                                                         |
+| `scripts/src/services/genshinAssets/sound/DerivedAssetSoundEffectMap.ts`          | gains the props entry, empty                                                                                         |
+| `scripts/src/services/genshinAssets/shared/readMeshAssets.ts`                     | the mesh lookup `asset-find` prints, refusing a name no mesh holds                                                   |
+| `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`                    | gains the props fit entry                                                                                            |
+| `scripts/src/services/genshinAssets/fit/fitProps.ts`                              | the props' fit entry: every kind `PROP_KINDS` lists, or those named                                                  |
+| `scripts/src/services/genshinAssets/fit/fitPropKind.ts`                           | a kind's outline fitted from its export, or named and skipped when the export is not on disk                         |
+| `scripts/src/services/genshinAssets/props/constants.ts`                           | `PROP_KINDS`, the kinds `fit props` fits, empty until each kind's task adds its row                                  |
+| `scripts/src/services/genshinAssets/props/buildPropRecord.ts`                     | a kind's record under `props/<name>`, parsed before it is returned, so a mesh is refused                             |
+| `scripts/src/models/genshinAssets/props/PropKind.ts`                              | a prop kind: its record's name, its export's mesh and its outline's shape                                            |
+| `scripts/src/models/genshinAssets/props/PropRecord.ts`                            | the published outline, numbers alone, and the schema that refuses any other key                                      |
+| `scripts/src/models/genshinAssets/props/PropShape.ts`                             | a solid kind's visual hull or a round kind's lathe                                                                   |
+| `scripts/src/services/genshinAssets/fit/fitWindriseScene.ts`                      | hands the statue fit a region's Goddess prefab by key                                                                |
+| `scripts/src/services/genshinAssets/fit/fitRegionStatue.ts`                       | the statue fit, taking any region's Goddess prefab                                                                   |
+| `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`             | registers the `asset-find` subcommand beside `ui-find`                                                               |
+| `scripts/src/services/genshinAssets/shared/findHierarchyRoot.ts`                  | the walk from an object up to its hierarchy's root, shared by the weapons' roots and the root lookup                 |
+| `scripts/src/services/genshinAssets/shared/findRootsByName.ts`                    | the roots of the prefabs holding a GameObject of the name, named by block, refusing a name none holds                |
+| `scripts/src/services/genshinAssets/shared/readPrefabRoots.ts`                    | reads the props' layout dumps and finds the name's roots in them                                                     |
+| `scripts/src/services/genshinAssets/commands/rootFindCommand.ts`                  | registers the `root-find` subcommand beside `asset-find`                                                             |
+| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`                    | publishes the Mora kinds' rows per region                                                                            |
+| `scripts/src/services/genshinAssets/chests/ChestKindLabelIdMap.ts`                | gains the two Mora labels as kinds                                                                                   |
+| `scripts/src/services/genshinAssets/shared/constants.ts`                          | the list of regions the waypoints command writes, Mondstadt and Liyue                                                |
+| `scripts/src/services/genshinAssets/fit/selectFittedRegions.ts`                   | the regions of the waypoints list whose map fit passes its bar, the gate a waypoint is written past                  |
+| `packages/genshin-world/src/components/World/Landmark/Pillar/Index.vue`           | draws a pillar stand-in at an arrival, which the domain entrance and each teleport waypoint draw through             |
+| `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts`           | names each region's landmark meshes for the export, gains a region's statue prefab, and gains the props entry, empty |
+| `packages/genshin-world/src/models/data/GameDataset.ts`                           | gains the props dataset                                                                                              |
+| `packages/genshin-world/src/generated/gameDataLock.json`                          | gains the props keys on publish                                                                                      |
+| `packages/genshin-world/src/store/chests.ts`                                      | reads the chests of the regions in reach from the scene's map, each read by `useRegionData` as it comes within reach |
+| `packages/genshin-world/src/components/World/Interactables/Index.vue`             | draws a chest and a gather node from its record, keeping the stand-in for a kind with none                           |
+| `packages/genshin-world/src/components/World/StandIns/Index.vue`                  | draws an Oculus and an outcrop from their records, keeping the stand-ins                                             |
+| `packages/genshin-world/src/components/World/Landmark/Statue/Index.vue`           | draws each region's statue from its own record                                                                       |
+| `packages/genshin-world/src/components/World/Landmark/DomainEntrance/Index.vue`   | draws the entrance from its record in place of the box                                                               |
+| `packages/genshin-world/src/components/World/Landmarks/Index.vue`                 | draws the waypoints as stand-ins, then from their records                                                            |
+| `packages/genshin-world/src/components/World/FrostbearingTree/Index.vue`          | draws the tree from its record in place of the capsule                                                               |
+| `packages/genshin-engine/src/kits/props/createPropGeometry.ts`                    | draws a prop's outline: the boxes of a hull, or a lathe's sections on their foot at their axis                       |
+| `packages/genshin-engine/src/models/kits/props/PropOutline.ts`                    | a prop's outline as the kit reads it, a hull or a lathe told apart by its keys                                       |
 
 The new kit draws each outline through the box and stacked-lathe generators that the architecture kit already holds, and the new lookups sit beside the UI-block one. Both are created, and the tree is:
 

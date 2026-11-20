@@ -1,10 +1,10 @@
 import { computeCrossRatio } from "#src/services/genshinAssets/scene/computeCrossRatio";
-import { DerivedAssetArrangementMap } from "#src/services/genshinAssets/scene/DerivedAssetArrangementMap";
+import { DerivedAssetComponentArrangementMap } from "#src/services/genshinAssets/scene/DerivedAssetComponentArrangementMap";
 import { ARRANGEMENT_CROSS_RATIO_TOLERANCE } from "#src/services/genshinAssets/shared/constants";
 import { describe, expect, test } from "vitest";
 
-describe("derivedAssetArrangementMap", () => {
-  const ratios = Object.values(DerivedAssetArrangementMap).flatMap(({ ratios: componentRatios }) =>
+describe("derivedAssetComponentArrangementMap", () => {
+  const ratios = Object.values(DerivedAssetComponentArrangementMap).flatMap(({ ratios: componentRatios }) =>
     Object.entries(componentRatios),
   );
 
