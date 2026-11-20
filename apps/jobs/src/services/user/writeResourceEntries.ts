@@ -27,7 +27,7 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
   for (const resource of resources) {
     const entryDirectory = `resources/${resource.id}`;
     await archive.addJsonEntry(`${entryDirectory}/resource.json`, resource);
-    const [publication, links, content, workingAssets] = await Promise.all([
+    const [[publication], links, content, workingAssets] = await Promise.all([
       getDb()
         .select({
           createdAt: resourcePublicationsInResource.createdAt,
@@ -37,8 +37,7 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
         })
         .from(resourcePublicationsInResource)
         .where(getLivePublicationWhere(eq(resourcePublicationsInResource.resourceId, resource.id)))
-        .limit(1)
-        .then(([livePublication]) => livePublication),
+        .limit(1),
       getDb().query.resourceLinksInResource.findMany({
         columns: { sourceId: true, targetId: true, type: true },
         where: { sourceId: { eq: resource.id } },
