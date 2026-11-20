@@ -1,6 +1,7 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { WriteResourceActivityInput } from "#server/models/resource/WriteResourceActivityInput";
 
+import { epochMsSql } from "#server/services/db/epochMsSql";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "#server/services/resource/constants";
 import { writeResourceActivities } from "#server/services/resource/writeResourceActivities";
 import { resourceActivitiesInResource, ResourceActivityType, resourcesInResource } from "@esposter/db-schema";
@@ -35,7 +36,7 @@ export const writeResourceActivity = (ctx: AuthedContext, { resourceId, ...rest 
           gt(resourceActivitiesInResource.createdAt, new Date(Date.now() - CONTENT_SAVED_COALESCE_WINDOW_MS)),
         ),
       );
-    // Epoch milliseconds and a generated id, since an insert from a select takes no JS default for any of them
+    // A generated id, since an insert from a select takes no JS default for it
     const now = Date.now();
     await ctx.db.insert(resourceActivitiesInResource).select(
       ctx.db
@@ -43,10 +44,10 @@ export const writeResourceActivity = (ctx: AuthedContext, { resourceId, ...rest 
           activityType: sql<ResourceActivityType>`${rest.activityType}`.as("activityType"),
           apiKeyId: sql<null | string>`${apiKeyId}`.as("apiKeyId"),
           apiKeyName: sql<string>`${apiKeyName}`.as("apiKeyName"),
-          createdAt: sql<Date>`${now}`.as("createdAt"),
+          createdAt: epochMsSql(now).as("createdAt"),
           id: sql<string>`${v7()}`.as("id"),
           resourceId: resourcesInResource.id,
-          updatedAt: sql<Date>`${now}`.as("updatedAt"),
+          updatedAt: epochMsSql(now).as("updatedAt"),
           userId: sql<string>`${userId}`.as("userId"),
         })
         .from(resourcesInResource)

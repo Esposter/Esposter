@@ -11,6 +11,7 @@ import type { ResourceListPage } from "#shared/models/resource/ResourceListPage"
 import type { ResourceInResource, ResourcePublicationInResource, ResourceType } from "@esposter/db-schema";
 import type { z } from "zod";
 
+import { epochMsSql } from "#server/services/db/epochMsSql";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
 import { RESOURCE_ASSET_PRESIGNED_URL_DURATION_MS } from "#server/services/resource/constants";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
@@ -312,7 +313,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Row left carrying the column's default reports a draft that has moved since it was published,
         // Whatever the owner has or has not edited since
         const { contentVersion: publishedContentVersion } = ctx.resource;
-        // Epoch milliseconds, since the publication is inserted from a select, which takes no JS default for its timestamps
         const now = Date.now();
         // The object and the claim naming it are written under the lease, so a collection cannot free the object between them
         const published = await withResourceObjectLock(ctx.db, id, async () => {
@@ -337,11 +337,11 @@ export const createResourceProcedures = <TType extends ResourceType>(
                 .select(
                   ctx.db
                     .select({
-                      createdAt: sql<Date>`${now}`.as("createdAt"),
-                      publishedAt: sql<Date>`${now}`.as("publishedAt"),
+                      createdAt: epochMsSql(now).as("createdAt"),
+                      publishedAt: epochMsSql(now).as("publishedAt"),
                       publishedContentVersion: sql<number>`${publishedContentVersion}`.as("publishedContentVersion"),
                       resourceId: resourcesInResource.id,
-                      updatedAt: sql<Date>`${now}`.as("updatedAt"),
+                      updatedAt: epochMsSql(now).as("updatedAt"),
                     })
                     .from(resourcesInResource)
                     .where(getOwnedLiveResourceWhere(ctx.user.id, id)),

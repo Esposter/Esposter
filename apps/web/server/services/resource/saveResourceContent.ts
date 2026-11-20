@@ -2,6 +2,7 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { SaveResourceContentInput } from "#server/models/resource/SaveResourceContentInput";
 import type { ResourceInResource, ResourceLinkInResource } from "@esposter/db-schema";
 
+import { epochMsSql } from "#server/services/db/epochMsSql";
 import { ownedBy } from "#server/services/db/ownedBy";
 import { getOwnedLiveResourceWhere } from "#server/services/resource/getOwnedLiveResourceWhere";
 import { getResourceLinkKey } from "#server/services/resource/link/getResourceLinkKey";
@@ -137,18 +138,17 @@ export const saveResourceContent = async (
   // The clear and the write are one batch, the write guarded on the version as the clear is, so the set is either the one this
   // Save wrote or the one the save that superseded it wrote
   const writeResourceLinks = (expectedContentVersion: number) => {
-    // Epoch milliseconds, since an insert from a select takes no JS default for the timestamp columns
     const now = Date.now();
     return ctx.db.batch([
       clearResourceLinks(isCurrentContentVersion(expectedContentVersion)),
       ctx.db.insert(resourceLinksInResource).select(
         ctx.db
           .select({
-            createdAt: sql<Date>`${now}`.as("createdAt"),
+            createdAt: epochMsSql(now).as("createdAt"),
             sourceId: sql<ResourceInResource["id"]>`${id}`.as("sourceId"),
             targetId: sql<string>`json_extract(link.value, '$.targetId')`.as("targetId"),
             type: sql<ResourceLinkInResource["type"]>`json_extract(link.value, '$.type')`.as("type"),
-            updatedAt: sql<Date>`${now}`.as("updatedAt"),
+            updatedAt: epochMsSql(now).as("updatedAt"),
           })
           .from(sql`json_each(${JSON.stringify(resourceLinkTargets)}) AS link`)
           .where(isCurrentContentVersion(expectedContentVersion)),

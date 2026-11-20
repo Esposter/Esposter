@@ -3,6 +3,7 @@ import type { WriteResourceActivityInput } from "#server/models/resource/WriteRe
 import type { ResourceActivityType } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
+import { epochMsSql } from "#server/services/db/epochMsSql";
 import { resourceActivitiesInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { sql } from "drizzle-orm";
@@ -25,7 +26,6 @@ export const writeResourceActivities = (
     if (resourceIds.length === 0) return;
 
     const entries = JSON.stringify(resourceIds.map((resourceId) => ({ id: v7(), resourceId })));
-    // Epoch milliseconds, since an insert from a select takes no JS default for the timestamps
     const now = Date.now();
     await ctx.db
       .insert(resourceActivitiesInResource)
@@ -35,13 +35,13 @@ export const writeResourceActivities = (
             activityType: sql<ResourceActivityType>`${activityType}`.as("activityType"),
             apiKeyId: sql<null | string>`${ctx.apiKey?.id ?? null}`.as("apiKeyId"),
             apiKeyName: sql<string>`${ctx.apiKey?.name ?? ""}`.as("apiKeyName"),
-            createdAt: sql<Date>`${now}`.as("createdAt"),
+            createdAt: epochMsSql(now).as("createdAt"),
             id: sql<string>`json_extract(entry.value, '$.id')`.as("id"),
             newName: sql<null | string>`${newName ?? null}`.as("newName"),
             oldName: sql<null | string>`${oldName ?? null}`.as("oldName"),
             publishVersion: sql<null | number>`${publishVersion ?? null}`.as("publishVersion"),
             resourceId: sql<string>`json_extract(entry.value, '$.resourceId')`.as("resourceId"),
-            updatedAt: sql<Date>`${now}`.as("updatedAt"),
+            updatedAt: epochMsSql(now).as("updatedAt"),
             userId: sql<string>`${ctx.user.id}`.as("userId"),
           })
           .from(sql`json_each(${entries}) AS entry`),

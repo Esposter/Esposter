@@ -4,6 +4,7 @@ import type { ResourceInResource, ResourceVersionInResource, SnapshotChannel } f
 import type { SQL } from "drizzle-orm";
 import type { UndefinedOnPartial } from "type-fest";
 
+import { epochMsSql } from "#server/services/db/epochMsSql";
 import { resourceVersionAssetsInResource, resourceVersionsInResource } from "@esposter/db-schema";
 import { and, eq, sql } from "drizzle-orm";
 
@@ -25,7 +26,6 @@ export const getSnapshotVersionWrites = (
   { assetHashes, summary, writtenVersion }: PreparedSnapshotVersion,
 ) => {
   const { baseHash, hash, plaintextBytes, storedBytes } = writtenVersion;
-  // Epoch milliseconds, the encoding the timestamp columns store, since an insert from a select takes no JS default
   const now = Date.now();
   return [
     db
@@ -58,9 +58,9 @@ export const getSnapshotVersionWrites = (
                 .select({
                   assetHash: sql<string>`asset.value`.as("assetHash"),
                   channel: sql<SnapshotChannel>`${channel}`.as("channel"),
-                  createdAt: sql<Date>`${now}`.as("createdAt"),
+                  createdAt: epochMsSql(now).as("createdAt"),
                   resourceId: sql<ResourceInResource["id"]>`${resourceId}`.as("resourceId"),
-                  updatedAt: sql<Date>`${now}`.as("updatedAt"),
+                  updatedAt: epochMsSql(now).as("updatedAt"),
                   version: sql<number>`${version}`.as("version"),
                 })
                 .from(sql`json_each(${JSON.stringify([...assetHashes])}) AS asset`),

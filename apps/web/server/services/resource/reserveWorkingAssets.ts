@@ -1,6 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { epochMsSql } from "#server/services/db/epochMsSql";
 import { touchSnapshotAssets } from "#server/services/resource/snapshot/touchSnapshotAssets";
 import { withResourceObjectLock } from "#server/services/resource/snapshot/withResourceObjectLock";
 import { resourceWorkingAssetsInResource } from "@esposter/db-schema";
@@ -34,7 +35,7 @@ export const reserveWorkingAssets = async (
 
     // A concurrent reserve of the same asset may have written the row since the read, which is the same reference. One
     // Statement over a JSON array, since a bind limit of 100 parameters per statement would cap a document at a few dozen
-    // Assets. Epoch milliseconds, since an insert from a select takes no JS default for the timestamp columns
+    // Assets.
     const now = Date.now();
     await db
       .insert(resourceWorkingAssetsInResource)
@@ -42,9 +43,9 @@ export const reserveWorkingAssets = async (
         db
           .select({
             assetHash: sql<string>`asset.value`.as("assetHash"),
-            createdAt: sql<Date>`${now}`.as("createdAt"),
+            createdAt: epochMsSql(now).as("createdAt"),
             resourceId: sql<string>`${resourceId}`.as("resourceId"),
-            updatedAt: sql<Date>`${now}`.as("updatedAt"),
+            updatedAt: epochMsSql(now).as("updatedAt"),
           })
           .from(sql`json_each(${JSON.stringify([...addedHashes])}) AS asset`)
           .where(sql`true`),

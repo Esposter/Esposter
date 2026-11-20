@@ -2,6 +2,7 @@ import type { StorageBlobReservation } from "#server/models/storage/StorageBlobR
 import type { Context } from "#server/trpc/context";
 import type { StorageBucket, UserInAuth } from "@esposter/db-schema";
 
+import { epochMsSql } from "#server/services/db/epochMsSql";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import {
@@ -84,14 +85,13 @@ export const reserveStorageBytes = async (
             // Nothing is counted against the user until storage reports what actually landed. Until then the
             // Row's own `declaredBytes` is what holds the space, through the pending sum above
             countedBytes: sql<number>`0`.as("countedBytes"),
-            // Epoch milliseconds, the encoding the timestamp columns store, since an insert from a select is not encoded
-            createdAt: sql<Date>`${now.getTime()}`.as("createdAt"),
+            createdAt: epochMsSql(now.getTime()).as("createdAt"),
             declaredBytes: sql<number>`json_extract(reservation.value, '$.declaredBytes')`.as("declaredBytes"),
-            expiresAt: sql<Date>`${expiresAt.getTime()}`.as("expiresAt"),
+            expiresAt: epochMsSql(expiresAt.getTime()).as("expiresAt"),
             reconciledAt: sql<Date | null>`NULL`.as("reconciledAt"),
             sequencer: sql<null | string>`NULL`.as("sequencer"),
             storageBucket: sql<StorageBucket>`${storageBucket}`.as("storageBucket"),
-            updatedAt: sql<Date>`${now.getTime()}`.as("updatedAt"),
+            updatedAt: epochMsSql(now.getTime()).as("updatedAt"),
             userId: sql<string>`${userId}`.as("userId"),
           })
           .from(sql`json_each(${reservationsJson}) AS reservation, ${usersInAuth}`)
