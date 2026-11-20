@@ -49,10 +49,8 @@ describe(sendNotification, () => {
   const actingSessionId = v7();
   const dismissedNotificationId = v7();
   const epoch = new Date(0);
-  // The clock the trim reads, 60 days after the epoch: a dismissal at the epoch is past the retention, and one 59 days after
-  // The epoch is inside it
+  // The clock the trim reads, 60 days after the epoch: a dismissal at the epoch is past the notification retention
   const clockNow = new Date(Temporal.Duration.from({ days: 60 }).total("milliseconds"));
-  const recentDeletion = new Date(Temporal.Duration.from({ days: 59 }).total("milliseconds"));
   const createNotificationRow = (id: string) => ({
     id,
     severity: NotificationSeverity.Info,
@@ -151,27 +149,15 @@ describe(sendNotification, () => {
     expect(trim).toHaveBeenCalledTimes(1);
   });
 
-  // A dismissal is a tombstone the trim keeps for the retention counted from the dismissal, not from the creation
-  test("trims a dismissed notification once its dismissal is past the retention, though it was created just now", async () => {
+  // A dismissal is a tombstone the purge removes on its own retention. The trim takes only live rows, so a dismissal past the
+  // notification retention is left to the purge rather than removed here as well
+  test("leaves a dismissed notification to the purge, though its dismissal is past the notification retention", async () => {
     expect.hasAssertions();
 
     vi.useFakeTimers({ now: clockNow, toFake: ["Date"] });
     await mockDb
       .insert(notificationsInNotification)
       .values({ ...createNotificationRow(dismissedNotificationId), deletedAt: epoch });
-    await sendNotification({ path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId });
-
-    const rows = await mockDb.select().from(notificationsInNotification);
-    expect(rows.filter(({ id }) => id === dismissedNotificationId)).toStrictEqual([]);
-  });
-
-  test("keeps a dismissed notification inside the retention, though it was created before it", async () => {
-    expect.hasAssertions();
-
-    vi.useFakeTimers({ now: clockNow, toFake: ["Date"] });
-    await mockDb
-      .insert(notificationsInNotification)
-      .values({ ...createNotificationRow(dismissedNotificationId), createdAt: epoch, deletedAt: recentDeletion });
     await sendNotification({ path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId });
 
     const rows = await mockDb.select().from(notificationsInNotification);
