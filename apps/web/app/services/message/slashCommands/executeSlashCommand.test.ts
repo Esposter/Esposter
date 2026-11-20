@@ -1,6 +1,9 @@
 // @vitest-environment nuxt
+import { useReadRooms } from "#src/composables/message/room/useReadRooms";
 import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
+import { useSession } from "#src/services/auth/authClient.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
+import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { UNFLIP_FACE } from "#src/services/message/slashCommands/constants";
 import { executeSlashCommand } from "#src/services/message/slashCommands/executeSlashCommand";
@@ -13,6 +16,7 @@ import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { marked } from "marked";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(executeSlashCommand, () => {
@@ -93,6 +97,53 @@ describe(executeSlashCommand, () => {
     await flushPromises();
 
     expect(rooms.value.find(({ id }) => id === room.id)?.topic).toBe(acceptedTopic);
+  });
+
+  // The answer to a topic is the room's row at the version it stored. A newer row a read brought back while the write
+  // Was in flight stays, since the older answer lands behind it and loses on its version
+  test("an older topic answer does not overwrite the newer topic a read brought back", async () => {
+    expect.hasAssertions();
+
+    const session = { user: { id: v7() } };
+    useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
+    const newerTopic = "newerTopic";
+    const { promise: isAnswerHeld, resolve: onAnswerHeld } = Promise.withResolvers<true>();
+    const { promise: releaseAnswer, resolve: onReleaseAnswer } = Promise.withResolvers<true>();
+    trpcMsw.room.updateRoom.mutation(async ({ input }) => {
+      onAnswerHeld(true);
+      await releaseAnswer;
+      return { ...room, topic: input.topic ?? "", version: 5 };
+    });
+    let readCount = 0;
+    trpcMsw.room.readRooms.query(() => {
+      readCount++;
+      const isFirstRead = readCount === 1;
+      return {
+        items: [
+          { ...room, displayName: room.name, topic: isFirstRead ? "" : newerTopic, version: isFirstRead ? 4 : 6 },
+        ],
+        nextCursor: "",
+      };
+    });
+    trpcMsw.userToRoom.readMyUsersToRooms.query(() => [createUserToRoom({ roomId: room.id, userId: session.user.id })]);
+    trpcMsw.role.readMyPermissions.query(() => []);
+    trpcMsw.role.readRoles.query(() => []);
+    const roomStore = useRoomStore();
+    const { currentRoom } = storeToRefs(roomStore);
+    const { readRooms } = await useReadRooms();
+    await readRooms();
+    const pendingCommand = executeSlashCommand({
+      parameterValues: { text: "olderTopic" },
+      type: SlashCommandType.Topic,
+    });
+    await isAnswerHeld;
+    await readRooms();
+    onReleaseAnswer(true);
+    await pendingCommand;
+    await waitForSynchronizedFunctions();
+    await flushPromises();
+
+    expect(currentRoom.value?.topic).toBe(newerTopic);
   });
 
   // The menu describes the face the command sends, so the two are one constant and cannot name different faces

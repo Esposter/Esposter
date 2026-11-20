@@ -1,10 +1,13 @@
 // @vitest-environment nuxt
+import { useReadRooms } from "#src/composables/message/room/useReadRooms";
 import { useSession } from "#src/services/auth/authClient.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
+import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomDialogStore } from "#src/store/message/room/dialog";
 import { useRoomStore } from "#src/store/message/room/index";
+import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -152,5 +155,47 @@ describe(useRoomStore, () => {
     await waitForSynchronizedFunctions();
 
     expect(currentRoomId.value).toBe(first.id);
+  });
+
+  // The page's answer lands after the reader's socket has delivered the membership tombstone of the room, so the read
+  // Brings back the row the tombstone removed. A room the list shows is the one whose membership is live, so the answer
+  // Re-adds nothing, and the stale live membership the answer also carries loses to the tombstone's version
+  test("a late page read does not re-add a room whose membership tombstone arrived", async () => {
+    expect.hasAssertions();
+
+    const session = { user: { id: v7() } };
+    useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
+    const liveMembership = createUserToRoom({ roomId: first.id, userId: session.user.id });
+    const { promise: isLateReadHeld, resolve: onLateReadHeld } = Promise.withResolvers<true>();
+    const { promise: isTombstoneArrived, resolve: onTombstoneArrived } = Promise.withResolvers<true>();
+    let readCount = 0;
+    trpcMsw.room.readRooms.query(async () => {
+      readCount++;
+      if (readCount > 1) {
+        onLateReadHeld(true);
+        await isTombstoneArrived;
+      }
+      return { items: [{ ...first, displayName: first.name }], nextCursor: "" };
+    });
+    trpcMsw.userToRoom.readMyUsersToRooms.query(() => [liveMembership]);
+    trpcMsw.role.readMyPermissions.query(() => []);
+    trpcMsw.role.readRoles.query(() => []);
+    const roomStore = useRoomStore();
+    const { rooms } = storeToRefs(roomStore);
+    const { readRooms } = await useReadRooms();
+    await readRooms();
+
+    expect(rooms.value.map(({ id }) => id)).toStrictEqual([first.id]);
+
+    const lateRead = readRooms();
+    await isLateReadHeld;
+    useUserToRoomStore().arriveUserToRooms([
+      createUserToRoom({ deletedAt: new Date(), roomId: first.id, userId: session.user.id, version: 1 }),
+    ]);
+    onTombstoneArrived(true);
+    await lateRead;
+    await flushPromises();
+
+    expect(rooms.value).toStrictEqual([]);
   });
 });
