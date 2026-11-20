@@ -6,6 +6,7 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
+import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { userObjectCalls } from "#src/services/user/getUserObject.test";
 import { createMockDb } from "@esposter/db-mock";
 import { MAX_CONCURRENT_BLOB_DELETIONS, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
@@ -33,13 +34,11 @@ vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/
 
 const readContainer = () => readBlobNames(StorageBucket.MessageAssets);
 
-const createBlobDeletionEvent = (data: BlobDeletionQueueMessage) => data;
-
 const createEvent = (blobNames: string[]) =>
-  createBlobDeletionEvent({ blobNames, storageBucket: StorageBucket.MessageAssets });
+  ({ blobNames, storageBucket: StorageBucket.MessageAssets }) satisfies BlobDeletionQueueMessage;
 
 const createPrefixEvent = (prefix: string, createdBefore: Date) =>
-  createBlobDeletionEvent({ createdBefore, prefix, storageBucket: StorageBucket.MessageAssets });
+  ({ createdBefore, prefix, storageBucket: StorageBucket.MessageAssets }) satisfies BlobDeletionQueueMessage;
 
 // The bucket the handler reads once, with only the delete under test: the handler's other reads are the mock's own
 const createDeletingBucket = (deleteNames: (names: string | string[]) => Promise<void>) =>
@@ -50,13 +49,8 @@ describe(processBlobDeletionHandler, () => {
   const secondBlobName = " ";
   const prefix = "a";
   const prefixedBlobName = `${prefix}/${blobName}`;
-  const content = "";
   const userId = v7();
   const countedBytes = 1;
-  const seedBlob = async (name: string) => {
-    const bucket = getBucket(StorageBucket.MessageAssets);
-    await bucket.put(name, content);
-  };
   // A blob storage has already reported, so the counter is carrying its bytes and a release gives them back
   const seedStorageLedgerEntry = (name: string) =>
     mockDb
@@ -96,8 +90,8 @@ describe(processBlobDeletionHandler, () => {
   test("deletes every blob in the batch", async () => {
     expect.hasAssertions();
 
-    await seedBlob(blobName);
-    await seedBlob(secondBlobName);
+    await seedBlob(StorageBucket.MessageAssets, blobName);
+    await seedBlob(StorageBucket.MessageAssets, secondBlobName);
     await processBlobDeletionHandler(createEvent([blobName, secondBlobName]));
 
     await expect(readContainer()).resolves.toStrictEqual([]);
@@ -107,14 +101,12 @@ describe(processBlobDeletionHandler, () => {
   test("a named deletion keeps a blob re-uploaded after its decision", async () => {
     expect.hasAssertions();
 
-    await seedBlob(blobName);
-    await processBlobDeletionHandler(
-      createBlobDeletionEvent({
-        blobNames: [blobName],
-        decidedAt: new Date(0),
-        storageBucket: StorageBucket.MessageAssets,
-      }),
-    );
+    await seedBlob(StorageBucket.MessageAssets, blobName);
+    await processBlobDeletionHandler({
+      blobNames: [blobName],
+      decidedAt: new Date(0),
+      storageBucket: StorageBucket.MessageAssets,
+    } satisfies BlobDeletionQueueMessage);
 
     await expect(readContainer()).resolves.toStrictEqual([blobName]);
   });
@@ -123,14 +115,12 @@ describe(processBlobDeletionHandler, () => {
   test("a replayed named deletion for a blob last written before its decision still deletes it", async () => {
     expect.hasAssertions();
 
-    await seedBlob(blobName);
-    await processBlobDeletionHandler(
-      createBlobDeletionEvent({
-        blobNames: [blobName],
-        decidedAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
-        storageBucket: StorageBucket.MessageAssets,
-      }),
-    );
+    await seedBlob(StorageBucket.MessageAssets, blobName);
+    await processBlobDeletionHandler({
+      blobNames: [blobName],
+      decidedAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
+      storageBucket: StorageBucket.MessageAssets,
+    } satisfies BlobDeletionQueueMessage);
 
     await expect(readContainer()).resolves.toStrictEqual([]);
   });
@@ -138,7 +128,7 @@ describe(processBlobDeletionHandler, () => {
   test("tells the owner's meter what the deletion gave back", async () => {
     expect.hasAssertions();
 
-    await seedBlob(blobName);
+    await seedBlob(StorageBucket.MessageAssets, blobName);
     await seedStorageLedgerEntry(blobName);
     await mockDb.update(usersInAuth).set({ storageBytesUsed: countedBytes });
     await processBlobDeletionHandler(createEvent([blobName]));
@@ -152,7 +142,7 @@ describe(processBlobDeletionHandler, () => {
   test("updates no meter when the deletion frees no accounted bytes", async () => {
     expect.hasAssertions();
 
-    await seedBlob(blobName);
+    await seedBlob(StorageBucket.MessageAssets, blobName);
     await processBlobDeletionHandler(createEvent([blobName]));
 
     expect(userObjectCalls).toStrictEqual([]);
@@ -162,7 +152,7 @@ describe(processBlobDeletionHandler, () => {
     expect.hasAssertions();
 
     const event = createEvent([blobName, secondBlobName]);
-    await seedBlob(blobName);
+    await seedBlob(StorageBucket.MessageAssets, blobName);
     await processBlobDeletionHandler(event);
 
     await expect(processBlobDeletionHandler(event)).resolves.toBeUndefined();
@@ -173,7 +163,7 @@ describe(processBlobDeletionHandler, () => {
   test("deletes every blob under the prefix", async () => {
     expect.hasAssertions();
 
-    await seedBlob(prefixedBlobName);
+    await seedBlob(StorageBucket.MessageAssets, prefixedBlobName);
     await processBlobDeletionHandler(
       createPrefixEvent(prefix, new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds"))),
     );
@@ -186,7 +176,7 @@ describe(processBlobDeletionHandler, () => {
   test("keeps a blob written after the prefix deletion was published", async () => {
     expect.hasAssertions();
 
-    await seedBlob(prefixedBlobName);
+    await seedBlob(StorageBucket.MessageAssets, prefixedBlobName);
     await processBlobDeletionHandler(createPrefixEvent(prefix, new Date(0)));
 
     await expect(readContainer()).resolves.toStrictEqual([prefixedBlobName]);
@@ -195,7 +185,7 @@ describe(processBlobDeletionHandler, () => {
   test("rethrows a failing delete so the queue redelivers the batch", async () => {
     expect.hasAssertions();
 
-    await seedBlob(blobName);
+    await seedBlob(StorageBucket.MessageAssets, blobName);
     vi.mocked(getBucket).mockReturnValueOnce(createDeletingBucket(() => Promise.reject(new Error(" "))));
 
     await expect(processBlobDeletionHandler(createEvent([blobName]))).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -213,24 +203,10 @@ describe(processBlobDeletionHandler, () => {
     // Deletes go out a wave of MAX_CONCURRENT_BLOB_DELETIONS names at a time, so the last name is alone in its wave
     const blobNames = Array.from({ length: MAX_CONCURRENT_BLOB_DELETIONS + 1 }, (_value, index) => `blob/${index}`);
     const lastBlobName = `blob/${MAX_CONCURRENT_BLOB_DELETIONS}`;
-    const bucket = getBucket(StorageBucket.MessageAssets);
-    await Promise.all(blobNames.map(async (name) => seedBlob(name)));
-    await Promise.all(
-      blobNames.map(async (name) =>
-        mockDb
-          .insert(storageLedgerInStorage)
-          .values({
-            blobName: name,
-            countedBytes,
-            declaredBytes: countedBytes,
-            expiresAt: new Date(0),
-            reconciledAt: new Date(0),
-            storageBucket: StorageBucket.MessageAssets,
-            userId,
-          }),
-      ),
-    );
+    await Promise.all(blobNames.map(async (name) => seedBlob(StorageBucket.MessageAssets, name)));
+    await Promise.all(blobNames.map(async (name) => seedStorageLedgerEntry(name)));
     await mockDb.update(usersInAuth).set({ storageBytesUsed: countedBytes * blobNames.length });
+    const bucket = getBucket(StorageBucket.MessageAssets);
     vi.mocked(getBucket).mockReturnValueOnce(
       createDeletingBucket(async (names) =>
         Array.isArray(names) && names.includes(lastBlobName) ? Promise.reject(new Error(" ")) : bucket.delete(names),

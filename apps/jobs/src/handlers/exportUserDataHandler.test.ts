@@ -1,8 +1,9 @@
-import type { Database, RoomMessage } from "@esposter/db-schema";
+import type { Database } from "@esposter/db-schema";
 
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
 import { getReaderWakes, MockPublishedTopics } from "#src/services/realtime/publishTopics.test";
 import { clearRoomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
+import { createRoomMessage } from "#src/services/shared/createRoomMessage.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { runUnit } from "#src/services/shared/runUnit";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
@@ -14,7 +15,6 @@ import {
   dataExportsInUser,
   DataExportStatus,
   getTableTopic,
-  MessageType,
   resourcesInResource,
   ResourceType,
   resourceWorkingAssetsInResource,
@@ -89,26 +89,7 @@ describe(exportUserDataHandler, () => {
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
     // The room answers with one message that attaches a file whose blob was never written, so reading it fails
     const file = { filename, hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "mimetype", size: 0 };
-    const message: RoomMessage = {
-      appUserId: null,
-      appUserImage: "",
-      createdAt: new Date(0),
-      deletedAt: null,
-      editedAt: null,
-      files: [file],
-      id: 1,
-      isForward: false,
-      isPinned: false,
-      linkPreviewResponse: null,
-      mentions: [],
-      message: "message",
-      replyToId: null,
-      senderName: null,
-      type: MessageType.Message,
-      updatedAt: new Date(0),
-      userId,
-      version: 0,
-    };
+    const message = createRoomMessage({ files: [file], id: 1, message: "message", userId });
     roomObjectReplies.set("exportUserReactions", () => []);
     roomObjectReplies.set("exportUserMessages", () => [message]);
     const dataExportId = await seedQueuedExport(userId);

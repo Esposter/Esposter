@@ -4,6 +4,7 @@ import { deleteOrphanedProfileImageHandler } from "#src/handlers/deleteOrphanedP
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { seedBlob } from "#src/services/storage/seedBlob.test";
 import { createMockDb } from "@esposter/db-mock";
 import { getUserProfileImageBlobName, StorageBucket, usersInAuth } from "@esposter/db-schema";
 import { v7 } from "uuid";
@@ -30,10 +31,6 @@ const checkHasBlob = async (blobName: string) =>
 
 describe(deleteOrphanedProfileImageHandler, () => {
   const userId = v7();
-  const blobContent = " ";
-  const seedBlob = async (blobName: string) => {
-    await getBucket(StorageBucket.PublicUserAssets).put(blobName, blobContent);
-  };
 
   beforeAll(async () => {
     mockDb = (await createMockDb()).db;
@@ -54,7 +51,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
     expect.hasAssertions();
 
     const blobName = getUserProfileImageBlobName(v7());
-    await seedBlob(blobName);
+    await seedBlob(StorageBucket.PublicUserAssets, blobName);
     await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
     await expect(checkHasBlob(blobName)).resolves.toBe(false);
@@ -65,7 +62,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
 
     await mockDb.update(usersInAuth).set({ deletionRequestedAt: new Date(0) });
     const blobName = getUserProfileImageBlobName(userId);
-    await seedBlob(blobName);
+    await seedBlob(StorageBucket.PublicUserAssets, blobName);
     await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
     await expect(checkHasBlob(blobName)).resolves.toBe(false);
@@ -75,7 +72,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
     expect.hasAssertions();
 
     const blobName = getUserProfileImageBlobName(userId);
-    await seedBlob(blobName);
+    await seedBlob(StorageBucket.PublicUserAssets, blobName);
     await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
     await expect(checkHasBlob(blobName)).resolves.toBe(true);
@@ -86,7 +83,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
     expect.hasAssertions();
 
     const blobName = `rooms/${v7()}/ProfileImage/${v7()}`;
-    await seedBlob(blobName);
+    await seedBlob(StorageBucket.PublicUserAssets, blobName);
     await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
     await expect(checkHasBlob(blobName)).resolves.toBe(true);
