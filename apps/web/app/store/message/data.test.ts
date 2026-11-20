@@ -605,8 +605,6 @@ describe(useDataStore, () => {
     expect(takeOne(items.value).files.map(({ id }) => id)).toStrictEqual([rejectedFileId, keptFileId]);
   });
 
-  // The thread pane holds replies the room's window does not, so a reconnect reads them back with the window: a reply
-  // Deleted while the socket is closed leaves the pane, and an edited one takes its change
   // A pin is the room's answer, drawn through the funnel an edit takes, so the copy the write named is the one held
   test("a pin draws the message the room answers", async () => {
     expect.hasAssertions();
@@ -721,6 +719,8 @@ describe(useDataStore, () => {
     expect(takeOne(items.value).linkPreviewResponse).toBeNull();
   });
 
+  // The thread pane holds replies the room's window does not, so a reconnect reads them back with the window: a reply
+  // Deleted while the socket is closed leaves the pane, and an edited one takes its change
   test("refreshes a thread pane's replies with the window after a reconnect", async () => {
     expect.hasAssertions();
 
