@@ -9,6 +9,7 @@ import { userObjectCalls } from "#server/composables/realtime/useUserObject.test
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
 import { MockJobQueue } from "#server/services/queue/getJobQueue.test";
+import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
@@ -37,6 +38,8 @@ import {
   DatabaseEntityType,
   dataExportsInUser,
   DataExportStatus,
+  getBlobTopic,
+  getStorageBucketBindingName,
   getUserProfileImageBlobName,
   McpScope,
   QueueJob,
@@ -560,6 +563,19 @@ describe("userRouter", () => {
 
     await expect(caller.generateCallBackgroundUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify({ mimetype: input.mimetype, size: input.size }))}]`,
+    );
+  });
+
+  // The upload went to R2 straight from the client, so the confirm is the one write the listing's readers hear of: it
+  // Wakes the prefix readCallBackgrounds lists under
+  test("confirmCallBackgroundUpload wakes the caller's call background listing", async () => {
+    expect.hasAssertions();
+
+    MockPublishedTopics.length = 0;
+    await caller.confirmCallBackgroundUpload({ slot: 0 });
+
+    expect(getMockPublishedTopics()).toContain(
+      getBlobTopic(getStorageBucketBindingName(StorageBucket.UserAssets), getCallBackgroundPrefix(userId)),
     );
   });
 
