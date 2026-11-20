@@ -64,6 +64,9 @@ export const WORKSPACE_FILE = "pnpm-workspace.yaml";
 // The barrel every package with a source tree writes at the top of `src`, and the folder of Vue components it reads from
 export const BARREL_FILE = "index.ts";
 export const COMPONENTS_DIRECTORY = "components";
+// The app's migrations, one folder per database under it, from the repository root. The Drizzle config writes them there,
+// And the mock database and the dev seed read them from there, so the three cannot disagree on where a migration is
+export const DATABASE_MIGRATIONS_DIRECTORY = "apps/web/server/db/migrations";
 // A leading dot on a folder name in an output path, such as the `.pnpm` folder pnpm keeps its packages in
 export const HIDDEN_FOLDER_REGEX: RegExp = /(?<![^/])\.(?=\w)/gu;
 // The peer suffix of a vendored package's folder, such as `_vue@3.5.45_typescript@6.0.3` after `vize@0.715.0`, which

@@ -1,5 +1,6 @@
 import { CloudflareCoreDatabaseIdMap } from "#src/services/cloudflare/CloudflareCoreDatabaseIdMap";
 import { CLOUDFLARE_ACCOUNT_ID } from "#src/services/cloudflare/constants";
+import { DATABASE_MIGRATIONS_DIRECTORY } from "@esposter/configuration/constants";
 import { defineConfig } from "drizzle-kit";
 
 // The `core` D1 database. `db:migrate` applies through D1's HTTP API, so the token comes from the environment the deploy
@@ -17,6 +18,6 @@ export default defineConfig({
   },
   dialect: "sqlite",
   driver: "d1-http",
-  out: "../../apps/web/server/db/migrations/core",
+  out: `../../${DATABASE_MIGRATIONS_DIRECTORY}/core`,
   schema: "src/schema/**/*.ts",
 });
