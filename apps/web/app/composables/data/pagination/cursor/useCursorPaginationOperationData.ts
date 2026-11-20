@@ -168,7 +168,8 @@ export const useCursorPaginationOperationData = <TItem>(
     };
     // Only the hydrating render may adopt the payload — a sort change, a pull to refresh and a client-side
     // Navigation all read live. A server read that failed wrote nothing, so hydration issues it again and the
-    // TRPC error link surfaces what the server render swallowed
+    // TRPC error link surfaces what the server render swallowed. The payload is Nuxt's untyped record, so the cast
+    // Restates the page the render stored under `key`, typed at its `satisfies HydratedPage<TItem>` above
     const hydratedPage =
       key && nuxtApp.isHydrating ? (nuxtApp.payload.data[key] as HydratedPage<TItem> | undefined) : undefined;
     if (hydratedPage) {
