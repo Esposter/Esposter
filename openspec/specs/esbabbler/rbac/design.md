@@ -52,6 +52,10 @@ The one real limit is width: `Administrator` is the highest permission the vocab
 | `usersToRoomRoles`      | `(userId, roomId, roleId)` composite PK — explicit role assignments                                                                                                   |
 | `roomMemberPermissions` | `(userId, roomId)` PK — one member's `allow` and `deny` bits, disjoint by the writer rather than a `CHECK`; see [overrides](../member-permission-overrides/design.md) |
 
+**A role, an assignment and an override are soft-deleted, and a re-grant revives the row in place.** Deleting a role tombstones the role and every assignment of it in one batch, so a revival of the role under the same id does not hand its old holders back. Revoking an assignment and clearing an override tombstone their rows. A membership removal tombstones the roles and overrides the member held, as it tombstones the membership. A re-grant or a re-create of the same key revives its tombstone at a higher version: the insert's conflict branch clears `deletedAt`, and a role's revival names its room in the set-where, so a create under another room's id never revives it. The three tables are in the overlay's tombstone registry, so the nightly purge removes their tombstones past `TOMBSTONE_RETENTION_MS`.
+
+Every decision reads live rows only, through `getLiveRoleWhere`, `getLiveMemberRoleWhere` and `getLiveMemberPermissionWhere` in `@esposter/db-schema`: the permission read, the top role position, the mention lookup, the membership export and the room's rank query. The reads return tombstones, so a client holding a row learns its removal from the read: `readRoles`, `readMemberRoles` and `readMemberPermissionOverrides` take no live filter.
+
 ## Service layer & guards
 
 The functions are split across three homes by who needs them. The two permission reads live in `@esposter/db`, because the realtime Worker's `RoomObject` and the jobs Worker's recipient lookup evaluate them too; `server/services/room/rbac/` re-exports each as a one-line shim so server code keeps importing them from one place. The pure hierarchy predicate lives in `shared/` so the client can evaluate it without a round trip, and the server-only helpers stay under `server/`.
@@ -77,21 +81,22 @@ tRPC procedure builders in `server/trpc/procedure/room/`:
 
 ## Key files
 
-| File                                                                         | Role                                              |
-| ---------------------------------------------------------------------------- | ------------------------------------------------- |
-| `packages/db-schema/src/schema/message/roomRolesInMessage.ts`                | `RoomPermission` const + roles table              |
-| `packages/db-schema/src/schema/message/usersToRoomRolesInMessage.ts`         | Assignment table                                  |
-| `packages/db/src/services/room/rbac/`                                        | `getPermissions` + `checkHasPermission`           |
-| `apps/web/server/services/room/rbac/`                                        | Server helpers + re-export shims                  |
-| `apps/web/shared/services/room/rbac/checkIsManageable.ts`                    | Hierarchy predicate shared w/ client              |
-| `apps/web/server/trpc/procedure/room/getPermissionsProcedure.ts`             | Permission middleware builder                     |
-| `apps/web/server/trpc/routers/role.ts`                                       | Role CRUD + `readMemberRoles`                     |
-| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts` | The message gate, where `SendMessages` is checked |
-| `packages/db/src/services/message/mention/getSenderClassifiedMentions.ts`    | Broadcast mentions held to `MentionEveryone`      |
+| File                                                                         | Role                                                                                                                   |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/roomRolesInMessage.ts`                | `RoomPermission` const + roles table                                                                                   |
+| `packages/db-schema/src/schema/message/usersToRoomRolesInMessage.ts`         | Assignment table                                                                                                       |
+| `packages/db/src/services/room/rbac/`                                        | `getPermissions` + `checkHasPermission`                                                                                |
+| `apps/web/server/services/room/rbac/`                                        | Server helpers + re-export shims                                                                                       |
+| `apps/web/shared/services/room/rbac/checkIsManageable.ts`                    | Hierarchy predicate shared w/ client                                                                                   |
+| `apps/web/server/trpc/procedure/room/getPermissionsProcedure.ts`             | Permission middleware builder                                                                                          |
+| `apps/web/server/trpc/routers/role.ts`                                       | Role CRUD + `readMemberRoles`                                                                                          |
+| `apps/web/app/store/message/room/role.ts`                                    | The role store on the overlay: role, assignment and override rows held and read at their versions, each write an entry |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts` | The message gate, where `SendMessages` is checked                                                                      |
+| `packages/db/src/services/message/mention/getSenderClassifiedMentions.ts`    | Broadcast mentions held to `MentionEveryone`                                                                           |
 
 ## Notes
 
 - `readMemberRoles` is deliberately a separate procedure from `readMembers` (called in parallel from `useReadMembers`) rather than a join.
 - The permissions a new server room's `@everyone` role holds are `DEFAULT_EVERYONE_PERMISSIONS` in `packages/db-schema/src/services/room/constants.ts`, and `createRoom` seeds them.
 - **Every server room has an `@everyone` role.** `createRoom` seeds it, and a migration backfills the rooms that predate it, so no server room lacks the row the send gate reads. Backfilling direct messages was rejected: a direct message has no roles by design and its gate skips `SendMessages`, so a row would hand its two members permissions a direct message has never held.
-- **A role change reaches the client through the rows it changes, with no socket event.** Every role read watches the rows it reads, and every role write publishes the rows it changes. The role store's watch re-reads the room's roles and each member's own permissions when a write lands, and a member's roles are re-read by the surface that shows them (`useReadMemberRoles`), so the watch ends with that surface. A refresh of the room's roles fires the member-role hooks, which re-read the room's member totals, since a membership write wakes that read too. The role router sends no room event for any role write.
+- **A role change reaches the client through the rows it changes, with no socket event.** Every role read watches the rows it reads, and every role write publishes the rows it changes. The role store's watch re-reads the room's roles and each member's own permissions when a write lands, and a member's roles are re-read by the surface that shows them (`useReadMemberRoles`), so the watch ends with that surface. A refresh of the room's roles fires the member-role hooks, which re-read the room's member totals, since a membership write wakes that read too. The role router sends no room event for any role write. A write's answer names the rows it changed, and the store holds those rows at their versions before the watch's re-read lands, so a change shows at once and a late read cannot undo it (the [overlay](../../../changes/architecture-optimistic-overlay/design.md)).

@@ -32,7 +32,7 @@ The fold happens in `getPermissions`, so `checkHasPermission`, `readMyPermission
 
 Each write publishes the rows it changes, which the override map's read and each member's own permissions read watch, so every viewer re-reads the state the write left. The member whose override changed re-reads their own permissions through the same watch, since every permission gate reads that bitfield. No socket event carries the state.
 
-Leaving a room tombstones the membership and deletes the override rows it holds in the same batch, since the composite foreign key's cascade does not run for a tombstone.
+Leaving a room tombstones the membership and the override rows it holds in the same batch, so a client holding an override learns it was removed, and a rejoin does not restore it.
 
 ## The Roles panel
 
@@ -40,7 +40,7 @@ The Roles settings panel lists roles and members in two groups. A member appears
 
 - **`Add role or member`** creates a role from the typed name. A member is added from the `Add member` picker, which offers the members the room's list has loaded and opens their entry to set.
 - Selecting a role opens the role editor unchanged. Selecting a member opens the member editor: the same categories of permissions, each row a three-state segmented control — `Deny`, `Inherit`, `Allow`. The inherit segment names what the roles give, so `inherit` reads as the concrete answer it resolves to.
-- `Remove override` asks first, then deletes the row, and the member falls back to their roles.
+- `Remove override` asks first, then tombstones the row, and the member falls back to their roles.
 
 The member editor leaves out the Administrator bit, which no override can hold.
 
@@ -49,7 +49,7 @@ The member editor leaves out the Administrator bit, which no override can hold.
 - **Overrides do not change a member's top role position.** Position decides hierarchy for role assignments; an override is a statement about permissions, so `getRoomMemberAuthority` is unchanged and the grant check covers what an actor may give.
 - **An override never reaches Administrator.** Both the `allow` and `deny` bits exclude it at the write and at the fold, the same rule that keeps an owner from being locked out of their own room.
 - **Only the actor's held permissions may be granted.** Discord's rule for a channel entry, and the one `createRole` already applies to a role.
-- **Writes are compare-and-set, and an empty row is deleted.** Clearing a bit can empty both fields, and an empty row would appear in the entry list as a member with nothing to show.
+- **Writes are compare-and-set, and an empty row is a tombstone.** Clearing a bit can empty both fields, and an empty row would appear in the entry list as a member with nothing to show. A later override revives the tombstone at a higher version, so a client holding the removed row takes the revival at the version it names.
 - **Overrides are visible to the room, as role assignments are.** Reads and events take the member procedure, not the permission procedure, because the roles panel's data is already the room's own; a stricter read would hide from members a fact the roles already show them.
 
 ## Key files
