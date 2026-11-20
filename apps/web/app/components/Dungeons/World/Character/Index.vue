@@ -6,7 +6,7 @@ import { omitUndefined } from "@esposter/shared";
 import { Direction } from "grid-engine";
 import { Sprite } from "vue-phaserjs";
 
-// What a grid-engine stream is to this character: something it subscribes to and later releases
+// A grid-engine stream's subscription, released on teardown
 interface CharacterSubscription {
   unsubscribe: () => void;
 }
