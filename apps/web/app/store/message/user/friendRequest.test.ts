@@ -92,6 +92,29 @@ describe(useFriendRequestStore, () => {
     expect(checkHasSentFriendRequest(second.id)).toBe(true);
   });
 
+  // The button holds disabled while its send is out, but the store takes a second call too. A second send to the same
+  // Receiver is answered by the one in flight, so the server gets one request and the pending state ends with it
+  test("sends a receiver one request while its send is in flight", async () => {
+    expect.hasAssertions();
+
+    const { promise: sendAnswered, resolve: answerSend } = Promise.withResolvers<FriendRequestInSocialWithRelations>();
+    const sendRequest = vi.fn<(receiverId: string) => Promise<FriendRequestInSocialWithRelations>>(() => sendAnswered);
+    trpcMsw.friendRequest.sendFriendRequest.mutation(({ input }) => sendRequest(input));
+    const friendRequestStore = useFriendRequestStore();
+    const { checkIsSendFriendRequestPending, sendFriendRequest } = friendRequestStore;
+    const sent = sendFriendRequest(second.id);
+    const resent = sendFriendRequest(second.id);
+    await flushPromises();
+
+    expect(checkIsSendFriendRequestPending(second.id)).toBe(true);
+
+    answerSend(sentFriendRequest);
+    await Promise.all([sent, resent]);
+
+    expect(sendRequest).toHaveBeenCalledExactlyOnceWith(second.id);
+    expect(checkIsSendFriendRequestPending(second.id)).toBe(false);
+  });
+
   test("declines a request without waiting for the answer", async () => {
     expect.hasAssertions();
 
