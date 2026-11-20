@@ -16,7 +16,4 @@ export interface RenderTextureConfiguration
     RenderNodesConfiguration,
     SceneObjectConfiguration,
     SizeConfiguration,
-    TintConfiguration {
-  height: number;
-  width: number;
-}
+    TintConfiguration {}

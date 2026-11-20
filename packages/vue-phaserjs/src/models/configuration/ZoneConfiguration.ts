@@ -13,9 +13,7 @@ export interface ZoneConfiguration
     Except<Types.GameObjects.Zone.ZoneConfig, keyof Types.GameObjects.GameObjectConfig>,
     GlobalConfiguration,
     OriginConfiguration,
+    Pick<GameObjects.Zone, "displayHeight" | "displayWidth">,
     ScrollFactorConfiguration,
     TransformConfiguration,
-    VisibleConfiguration {
-  displayHeight: GameObjects.Zone["displayHeight"];
-  displayWidth: GameObjects.Zone["displayWidth"];
-}
+    VisibleConfiguration {}
