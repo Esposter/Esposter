@@ -14,14 +14,14 @@ describe("componentFolders", () => {
   const WORD_REGEX = /[A-Z][a-z0-9]*|[A-Z]+(?![a-z])/gu;
   // Every folder that holds a component, keyed by the folder it sits in. Derived from the component paths rather
   // Than read separately, because a folder with no component in it has nothing to fold into
-  const parentFolderNamesMap = componentPaths.reduce<Map<string, Set<string>>>((folderNames, componentPath) => {
+  const parentFolderNamesMap = new Map<string, Set<string>>();
+  for (const componentPath of componentPaths) {
     const segments = componentPath.split("/").slice(0, -1);
     for (const [index, segment] of segments.entries()) {
       const parent = segments.slice(0, index).join("/");
-      folderNames.set(parent, (folderNames.get(parent) ?? new Set()).add(segment));
+      parentFolderNamesMap.set(parent, (parentFolderNamesMap.get(parent) ?? new Set()).add(segment));
     }
-    return folderNames;
-  }, new Map());
+  }
 
   test("holds no component beside the folder its own name opens with", () => {
     expect.hasAssertions();
