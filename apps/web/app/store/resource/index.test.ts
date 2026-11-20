@@ -1123,6 +1123,34 @@ describe(useResourceStore, () => {
     expect(resource.value?.id).toBe(otherResourceId);
   });
 
+  // A save that settles while its resource is closed drops the version the content was confirmed at, so the content in hand
+  // Stops belonging to that resource. Reopening it must read the content again, not claim it still, or the next save has no version
+  test("reopening a resource whose save settled while it was away reads its content again", async () => {
+    expect.hasAssertions();
+
+    const { promise: isFirstSaveReleased, resolve: releaseFirstSave } = Promise.withResolvers<void>();
+    trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+      await isFirstSaveReleased;
+      return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
+    });
+    const resourceStore = useResourceStore();
+    const { checkIsContentRead, clearResource, readContent, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    await readResource();
+    await readContent(noop);
+    saveContent(createDefaultSheetResource());
+    // The next blade opens before this one closes, as a keyed page swap does, so the close leaves the state alone
+    setRouteId(otherResourceId);
+    await readResource();
+    clearResource(resourceId);
+    releaseFirstSave();
+    await settleSave();
+    setRouteId(resourceId);
+    await readResource();
+
+    expect(checkIsContentRead()).toBe(false);
+  });
+
   // A list view names no resource, and a read racing the navigation onto one resolves the route after it has
   // Left the blade — the empty sentinel would reach the server as a uuid input that fails validation
   test("issues no read when the route names no resource", async () => {

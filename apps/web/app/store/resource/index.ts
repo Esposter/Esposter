@@ -131,9 +131,13 @@ export const useResourceStore = defineStore("resource", () => {
   // Since a row another device moved on, or a Recent read brought, can be ahead of the content in hand
   const confirmedContentVersions = new Map<string, number>();
   // Held while the resource is loaded or a save of it is queued, and dropped once neither holds, so the map does not grow
-  // Across the resources a session opens
+  // Across the resources a session opens. The content in hand belongs to a resource only while its version is held, so
+  // Dropping the version drops that claim too: reopening the resource reads its content again rather than saving it without a version
   const forgetConfirmedContentVersion = (id: string) => {
-    if (!checkIsLoaded(id) && !checkIsSavePending(id)) confirmedContentVersions.delete(id);
+    if (checkIsLoaded(id) || checkIsSavePending(id)) return;
+
+    confirmedContentVersions.delete(id);
+    if (contentResourceId === id) contentResourceId = "";
   };
   // The stored bytes this client holds — read straight from R2, or sent by a save whose hash the server
   // Confirmed — which is what a large document's next save is compressed against. Not reactive and not persisted:
