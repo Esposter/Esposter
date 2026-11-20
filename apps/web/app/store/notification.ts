@@ -9,6 +9,7 @@ import { getToastedNotificationIds } from "#src/services/notification/getToasted
 import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createTable } from "#src/services/shared/overlay/createTable";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
 import { createEmptyPage, NotificationSeverity, notificationsInNotification } from "@esposter/db-schema";
 import { checkIsServer, getResultAsync, getSynchronizedFunction } from "@esposter/shared";
@@ -179,19 +180,25 @@ export const useNotificationStore = defineStore("notification", () => {
         setUnreadDeliveredCount(deliveredUnreadCount);
         return { arrivals: [createArrival(notificationTable, notification)], confirmed: [] };
       },
-      { entry: getDismissNotificationEntry(id, new Date()) },
+      { entry: getDismissNotificationEntry(id, new Date()), onError: createErrorAlert },
     );
   };
   const dismissNotifications = () => {
     localNotifications.value = [];
     snackbarIds.value = [];
-    return writeAwaited(async () => {
-      setUnreadDeliveredCount(await $trpc.notification.deleteNotifications.mutate());
-      // Every row is a tombstone now, so the loaded page is emptied on the answer. A read would page through the
-      // Tombstones, and a topic refetch refreshes only the first page
-      getSlice().initializeCursorPaginationData(createEmptyPage<NotificationInNotification>());
-      return [];
-    }, {});
+    return writeAwaited(
+      async () => {
+        setUnreadDeliveredCount(await $trpc.notification.deleteNotifications.mutate());
+        // Every row is a tombstone now, so the loaded page is emptied on the answer. A read would page through the
+        // Tombstones, and a topic refetch refreshes only the first page. The reset retires the page a read still in flight
+        // Was issued against, so that read lands nothing; the initialize then restores the loaded list with its empty page
+        const slice = getSlice();
+        slice.resetCursorPaginationData();
+        slice.initializeCursorPaginationData(createEmptyPage<NotificationInNotification>());
+        return [];
+      },
+      { onError: createErrorAlert },
+    );
   };
   const markAllAsRead = () => {
     // Copy-on-write is the point: the array and every changed row are replaced so the computed re-evaluates
@@ -200,12 +207,15 @@ export const useNotificationStore = defineStore("notification", () => {
     // The server's one — which is also the only thing that says there is anything to clear at all
     if (unreadDeliveredCount.value === 0) return Promise.resolve();
 
-    return writeAwaited(async () => {
-      setUnreadDeliveredCount(await $trpc.notification.updateNotificationsReadStatus.mutate());
-      // A loaded later page would keep its rows unread, so the first page is read again and replaces the loaded pages
-      await readNotifications();
-      return [];
-    }, {});
+    return writeAwaited(
+      async () => {
+        setUnreadDeliveredCount(await $trpc.notification.updateNotificationsReadStatus.mutate());
+        // A loaded later page would keep its rows unread, so the first page is read again and replaces the loaded pages
+        await readNotifications();
+        return [];
+      },
+      { onError: createErrorAlert },
+    );
   };
   return {
     consumeNotificationAction,
