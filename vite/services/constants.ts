@@ -21,12 +21,12 @@ export const PNPM_STATE_PATTERNS: CachePattern[] = [
 // Build's listing of the workspace root names it, so the check keeps it under `node_modules/.cache` instead
 export const ROOT_TSBUILDINFO_PATH = "node_modules/.cache/tsrs/root.tsbuildinfo";
 
-// The files a package's build rewrites, or another task writes into the package, relative to the package
+// The files a package's build rewrites, or another task writes into the package, relative to the package. The generated
+// Entry joins them unless the package writes that entry by hand, which `getPackageRewrittenPatterns` decides
 export const PACKAGE_REWRITTEN_PATTERNS: string[] = [
   "auto-imports.d.ts",
   "dist/**",
   "src/components/index.ts",
-  "src/index.ts",
   // A tool's own cache, which a build writes into the package's `node_modules` and nothing reads back as an input
   "node_modules/.cache/**",
   // The parity page's production build, written into the world package by `build:parity`

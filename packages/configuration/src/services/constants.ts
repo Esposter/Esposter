@@ -65,6 +65,8 @@ export const WORKSPACE_FILE = "pnpm-workspace.yaml";
 export const BARREL_FILE = "index.ts";
 // The folder under a package holding its source, which every `source` arm of its exports map starts in
 export const SOURCE_DIRECTORY_NAME = "src";
+// The line a package's `.gitignore` holds to commit the `src/index.ts` it writes by hand, against the root ignore of barrels
+export const HAND_WRITTEN_ENTRY_LINE: string = `!/${SOURCE_DIRECTORY_NAME}/${BARREL_FILE}`;
 export const COMPONENTS_DIRECTORY = "components";
 // The app's migrations, one folder per database under it, from the repository root. The Drizzle config writes them there,
 // And the mock database and the dev seed read them from there, so the three cannot disagree on where a migration is

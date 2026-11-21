@@ -1,12 +1,10 @@
 import type { RunTask } from "#vite/models/RunTask";
 
-import {
-  BUILD_HOOK_GENERATED_PATTERNS,
-  PACKAGE_REWRITTEN_PATTERNS,
-  PACKAGES_DIRECTORY,
-} from "#vite/services/constants";
+import { BUILD_HOOK_GENERATED_PATTERNS, PACKAGES_DIRECTORY } from "#vite/services/constants";
 import { createBuildCache } from "#vite/services/createBuildCache";
 import { getBuildTaskName } from "#vite/services/getBuildTaskName";
+import { getPackageRewrittenPatterns } from "#vite/services/getPackageRewrittenPatterns";
+import { getPackageRoot } from "#vite/services/getPackageRoot";
 import { readPackageBuildManifests } from "#vite/services/readPackageBuildManifests";
 
 // Each package with a build script is a task of its own, run in its directory and ordered after the builds of the
@@ -26,7 +24,10 @@ export const readPackageBuildTasks = (): [string, RunTask][] => {
     return [
       getBuildTaskName(directory),
       {
-        cache: createBuildCache(directory, [...PACKAGE_REWRITTEN_PATTERNS, ...BUILD_HOOK_GENERATED_PATTERNS]),
+        cache: createBuildCache(directory, [
+          ...getPackageRewrittenPatterns(getPackageRoot(directory)),
+          ...BUILD_HOOK_GENERATED_PATTERNS,
+        ]),
         command: "pnpm run build",
         cwd: `${PACKAGES_DIRECTORY}/${directory}`,
         dependsOn: dependencyNames.flatMap((dependencyName) => buildTaskNameMap.get(dependencyName) ?? []),

@@ -2,7 +2,6 @@ import type { BarrelLines } from "#src/models/precheck/BarrelLines";
 import type { GeneratedFileCheck } from "#src/models/precheck/GeneratedFileCheck";
 import type { ExportsGeneration } from "@esposter/configuration";
 
-import { checkIsHandWrittenEntry } from "#src/services/precheck/checkIsHandWrittenEntry";
 import { generateBarrelLines } from "#src/services/precheck/generateBarrelLines";
 import { getBarrelFindings } from "#src/services/precheck/getBarrelFindings";
 import { getExpectedLines } from "#src/services/precheck/getExpectedLines";
@@ -11,6 +10,7 @@ import { readBarrelLines } from "#src/services/precheck/readBarrelLines";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { generateExports, getSubpathExclusions, readPackageManifest } from "@esposter/configuration";
 import { BARREL_FILE, COMPONENTS_DIRECTORY, SOURCE_DIRECTORY_NAME } from "@esposter/configuration/constants";
+import { checkIsHandWrittenEntry } from "@esposter/configuration/hand-written-entry";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 

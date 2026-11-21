@@ -29,6 +29,10 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
       // Barrel imports — most of a tooling script's startup
       "./constants": { default: "./dist/constants.js", source: "./src/services/constants.ts" },
       "./eslint/*": "./eslint/*",
+      // A raw `.ts` source, as `./oxfmt` is, because the root config reads it before any build has run, and a `dist`
+      // Import there would wait on a build the root config itself orders. The build's cache asks it whether a package
+      // Writes its own entry.
+      "./hand-written-entry": "./src/services/checkIsHandWrittenEntry.ts",
       "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
       "./types/global.d.ts": "./types/global.d.ts",
       "./vitest/*": "./vitest/*",
