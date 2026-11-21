@@ -15,7 +15,6 @@ on:
 permissions:
   contents: read
 
-# Per branch and never cancelled: a deploy that has started runs to its end, and a newer commit's deploy waits behind it
 concurrency:
   group: deploy-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: false
@@ -23,9 +22,6 @@ concurrency:
 jobs:
   deploy:
     name: Deploy
-    # Held rather than deployed unless CI's run concluded success: a failed run, or one a newer push cancelled, deploys nothing.
-    # It also deploys only a push to this repository: this job checks out the run's commit and holds the secrets, so a CI
-    # run that ever gained a pull request trigger, from a fork's branch named `main`, must not reach it
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_repository.full_name == github.repository }}
     runs-on: ubuntu-latest
     env:
@@ -50,8 +46,8 @@ jobs:
       - name: 🔧 Install the Pulumi CLI
         uses: pulumi/actions@96c7761824268174e0d2a4e8c7d75671eebd24a7 # v7.1.0
 
-      # The gate's scripts package is installed here, since no app's install reaches it. It goes first, ahead of every app's install,
-      # so the jobs build's install is still the last one before the D1 migrations, which read it
+      # It goes first, ahead of every app's install, so the jobs build's install is still the last one before the D1
+      # migrations, which read it
       - name: 📦 Install the scripts package
         uses: ./.github/actions/install-projects
         with:
@@ -75,7 +71,6 @@ jobs:
         with:
           package: "@esposter/web"
 
-      # The realtime objects deploy first, since the jobs and the web Worker call them by their bindings
       - name: 🏗️ Build the realtime Worker
         uses: ./.github/actions/build-app
         with:
@@ -122,7 +117,6 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: pnpm -C apps/realtime deploy:worker
 
-      # After its deploy, since `wrangler secret bulk` writes to a Worker that must already exist
       - name: 🔐 Put the realtime Worker's secrets
         uses: ./.github/actions/put-worker-secrets
         with:
@@ -136,7 +130,6 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: pnpm -C apps/jobs deploy:worker
 
-      # After its deploy, since `wrangler secret bulk` writes to a Worker that must already exist
       - name: 🔐 Put the jobs Worker's secrets
         uses: ./.github/actions/put-worker-secrets
         with:
@@ -150,7 +143,6 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: pnpm -C apps/web deploy:worker
 
-      # After its deploy, since `wrangler secret bulk` writes to a Worker that must already exist
       - name: 🔐 Put the web Worker's secrets
         uses: ./.github/actions/put-worker-secrets
         with:
