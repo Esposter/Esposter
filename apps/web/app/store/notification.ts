@@ -9,6 +9,7 @@ import { getToastedNotificationIds } from "#src/services/notification/getToasted
 import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createTable } from "#src/services/shared/overlay/createTable";
+import { getHeldRowEntry } from "#src/services/shared/overlay/getHeldRowEntry";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
 import { createEmptyPage, NotificationSeverity, notificationsInNotification } from "@esposter/db-schema";
@@ -21,13 +22,8 @@ const notificationTable = createTable(notificationsInNotification);
 const markRead = <T extends { isRead: boolean }>(notification: T): T =>
   notification.isRead ? notification : { ...notification, isRead: true };
 // A dismissal leaves the row at once, as the tombstone its answer confirms
-const getDismissNotificationEntry =
-  (id: string, deletedAt: Date): Entry =>
-  (view) => {
-    const rowKey: [string] = [id];
-    const notification = view.get(notificationTable, rowKey);
-    if (notification) view.set(notificationTable, rowKey, { ...notification, deletedAt });
-  };
+const getDismissNotificationEntry = (id: string, deletedAt: Date): Entry =>
+  getHeldRowEntry(notificationTable, [id], (notification) => ({ ...notification, deletedAt }));
 // The bell renders two kinds of notification and owns the difference between them. A **delivered** one is a row
 // The server wrote for this user — it reached every device that was subscribed, it survives the reload, and it is
 // Paged in like any other list. A **local** one is feedback about what this tab just did: a mutation error, a save

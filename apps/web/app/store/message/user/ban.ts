@@ -7,6 +7,7 @@ import type { Page } from "@esposter/db-schema";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
 import { createTable } from "#src/services/shared/overlay/createTable";
+import { getHeldRowEntry } from "#src/services/shared/overlay/getHeldRowEntry";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useOverlayStore } from "#src/store/overlay";
@@ -19,13 +20,8 @@ const banTable: Table<BanInRoom, typeof bansInMessage> = createTable(bansInMessa
 type BanKey = Pick<BanInRoom, "roomId" | "userId">;
 
 // The ban as its unban leaves it: removed at once, as the tombstone the server's answer confirms
-const getDeleteBanEntry =
-  (roomId: BanKey["roomId"], userId: BanKey["userId"], deletedAt: Date): Entry =>
-  (view) => {
-    const key: [string, string] = [roomId, userId];
-    const ban = view.get(banTable, key);
-    if (ban) view.set(banTable, key, { ...ban, deletedAt });
-  };
+const getDeleteBanEntry = (roomId: BanKey["roomId"], userId: BanKey["userId"], deletedAt: Date): Entry =>
+  getHeldRowEntry(banTable, [roomId, userId], (ban) => ({ ...ban, deletedAt }));
 
 export const useBanStore = defineStore("message/user/ban", () => {
   const { $trpc } = useNuxtApp();
