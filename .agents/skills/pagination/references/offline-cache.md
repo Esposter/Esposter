@@ -17,6 +17,8 @@ Consequences that keep this boundary intact:
 
 **A store whose rows live on the overlay restores them through `arrive`.** Its `items` is then the overlay's live view, and `initializeCursorPaginationData` arrives each cached row at its version, then keeps only the page's ids for paging, the same split the reads make. A restore that writes the ids alone leaves the list empty offline, since a row is not in the view until it is arrived. A list with no cursor, such as the viewer's memberships in the room cache, has no ids to keep: its restore arrives the rows and sets its readiness, and its `items` is the viewer's live view.
 
+**A restore takes only versioned records.** `readIndexedDb` drops a record with no version at its read, so the arrival gate is never handed a row it cannot order. A change to what a record holds raises `DATABASE_VERSION`, and the upgrade clears every store, so the records written before it are gone before the first read.
+
 **Each list in a cache keeps its own readiness flag.** A feature cache with two lists over one partition (`useRoomCache` wires the rooms and the viewer's memberships) gives each its own `isLoaded`, owned by the store that loads it. A hydration of one must not read the other's flag: both restore in the same tick, and whichever lands first would make the other bail.
 
 **The cache names its partition, it does not read the ambient one.** Both watchers act on a partition key the cache already has in hand, so the store hands over `getSlice` rather than `items`/`isLoaded`: a hydrate that finishes after the reader moved on lands in the partition it was read for instead of being dropped. That is why there is no "is this still the current partition" check anywhere in here.

@@ -20,7 +20,9 @@ import {
 } from "@esposter/shared";
 
 export const DATABASE_NAME = SITE_NAME.toLowerCase();
-export const DATABASE_VERSION = 6;
+// Raised with each change to a store's keys or to what a record holds. The upgrade clears every store, so no record
+// Written before the change is restored
+export const DATABASE_VERSION = 7;
 
 let databasePromise: Promise<Database<IndexedDbDatabaseSchema>> | undefined;
 

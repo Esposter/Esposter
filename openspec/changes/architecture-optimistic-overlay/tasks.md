@@ -52,6 +52,7 @@ Ordered by dependency: the primitive first, then the schema the pilot needs, the
 ## 5. Retire the primitive's bookkeeping
 
 - [x] 5.1 Delete the call-id map and its getter, the supersede function, the supersede write option, the stale argument threaded through reads and writes, the stale and silent branches in settlement, the stale fields in the operation context, and the stale outcome. Verified: a grep of the apps and packages sources for each name prints nothing, and the primitive's test file has no stale case.
+- [x] 5.3 Offline cache holds versions: a cached record carries its row's version, a restore drops a record without one at its read, and the database version rises so the upgrade clears the records written before it. Verified: `does not populate store from a cached record that has no version` in `apps/web/app/composables/cache/indexedDb/usePaginationCache.test.ts`, written first and seen failing with the version guard reverted, and `persists items to cache when items change` in the same file, which now asserts the whole persisted record, version included.
 
 ## 6. Enforcers
 

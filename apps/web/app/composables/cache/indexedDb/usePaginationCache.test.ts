@@ -71,6 +71,12 @@ describe(usePaginationCache, () => {
     id: messageId,
     userId: getMockSession().user.id,
   });
+  // The row as a cache written before the version column holds it: the same row, with no version to order it by
+  const createUnversionedMessageRow = (roomId: string = partitionKey): MessageValue => {
+    const row = createMessageRow(roomId);
+    Reflect.deleteProperty(row, "version");
+    return row;
+  };
   // The load a store performs writes the rows and records readiness together, so the harness does both at once.
   // The partition is named where a load happens before the key is on the ref — a store that already held rows
   // When this composable mounted
@@ -121,7 +127,7 @@ describe(usePaginationCache, () => {
     const cachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
 
     expect(cachedItems).toHaveLength(1);
-    expect(takeOne(cachedItems).message).toStrictEqual(message);
+    expect(takeOne(cachedItems)).toStrictEqual(createMessageRow());
   });
 
   test("clears cache when items are emptied after being loaded", async () => {
@@ -257,6 +263,18 @@ describe(usePaginationCache, () => {
 
     expect(items.value).toHaveLength(1);
     expect(takeOne(items.value).message).toStrictEqual(message);
+  });
+
+  // A record with no version holds nothing to order a later answer by, so a restore that took it would keep its stored
+  // Columns against every row the server answers with. Only versioned records are restored
+  test("does not populate store from a cached record that has no version", async () => {
+    expect.hasAssertions();
+
+    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createUnversionedMessageRow()], partitionKey);
+    await mountCache();
+    await flushCache();
+
+    expect(items.value).toHaveLength(0);
   });
 
   // Readiness is per-partition rather than a reading of the list, so a caller whose rows have not yet been

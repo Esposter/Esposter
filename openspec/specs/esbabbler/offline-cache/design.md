@@ -26,7 +26,7 @@ The cache persists what a store's slice shows: the live rows of the loaded list,
 
 Hydration does not write the rows into a list. It hands each cached row to the store's arrival gate, through the slice's `initializeCursorPaginationData`, so a row takes its place in the overlay by version. A row the server has already answered at a newer version keeps that version, and a row restored offline holds the version it was saved at. The store's view then shows the rows it holds, and a later read or write answer arrives by the same gate.
 
-Not built: the cache's own version check, which the overlay design's Offline cache section states. That section has the cache's records gain a version the cache's database version is raised for, and a record without a version is never hydrated. Until it lands, a record is restored as the row it was, whatever version it carries.
+A record restores only if it carries a version. `readIndexedDb` parses every record it reads and drops one without a non-negative integer `version`, so the arrival gate is never handed a row it cannot order. A restored row keeps the version it was written at, and the server's answer for that row is ordered against it.
 
 ### partitionKey is always required
 
@@ -37,7 +37,7 @@ Every object store is partitioned; `readIndexedDb` / `writeIndexedDb` always tak
 - **Rooms** → the viewing user, injected as `viewerId` (key path `[viewerId, id]`). A room's own `userId` is its creator, so it is not the partition
 - **Memberships** → the viewing user, which a membership row carries as its own `userId` (key path `[userId, roomId]`, the table's key)
 
-Each store's index is named for the field it partitions on, and `writeIndexedDb` stamps that field onto every record it writes. A change to a store's keys bumps `DATABASE_VERSION`, and an upgrade clears every store the database holds rather than migrating them, since a store the new version adds does not exist yet: the cache is refilled from the server.
+Each store's index is named for the field it partitions on, and `writeIndexedDb` stamps that field onto every record it writes. A change to a store's keys, or to what a record holds, bumps `DATABASE_VERSION`, and an upgrade clears every store the database holds rather than migrating them, since a store the new version adds does not exist yet: the cache is refilled from the server. A record written before a bump is therefore gone before the first read, and the parse in `readIndexedDb` is what covers any record that lacks a version otherwise.
 
 ### Sign-out clears the whole database
 
@@ -113,7 +113,7 @@ Nothing in a fetch composable touches the cache: hydration is a watcher's job, f
 | `apps/web/app/services/cache/indexedDb/openIndexedDb.ts`      | singleton open, releasing to another tab's delete, + `resetIndexedDb` (sign-out and tests) |
 | `apps/web/app/services/cache/constants.ts`                    | `RESET_DATABASE_TIMEOUT_MS`, the bound on the delete's wait                                |
 | `apps/web/app/services/auth/signOutOfBrowser.ts`              | deletes the whole database just before the load                                            |
-| `apps/web/app/services/cache/indexedDb/readIndexedDb.ts`      | read all items by `partitionKey`                                                           |
+| `apps/web/app/services/cache/indexedDb/readIndexedDb.ts`      | read a partition's records by `partitionKey`, dropping any without a version               |
 | `apps/web/app/services/cache/indexedDb/writeIndexedDb.ts`     | replace all items for a `partitionKey` (respects `limit`)                                  |
 | `apps/web/app/composables/cache/indexedDb/`                   | `usePaginationCache`, the one generic pagination cache composable                          |
 | `apps/web/app/composables/message/message/useMessageCache.ts` | message wiring                                                                             |
@@ -124,4 +124,4 @@ Nothing in a fetch composable touches the cache: hydration is a watcher's job, f
 
 - The cache is wired at the composable layer, so a read helper never learns whether one exists — threading cache parameters back through them would give the same question two answers.
 - Neither half of the cache alerts. `readIndexedDb` / `writeIndexedDb` report a refused operation to their caller rather than swallowing it, and `usePaginationCache` declares the one `onError` both halves use — the user never asked for the cache, so a browser that refuses it (quota reached, private mode) is logged and nothing more. A second error channel inside the services is a channel that can disagree with that one.
-- Tests: the generic composable owns the whole cache lifecycle (persist on change, clear on empty, hydrate on mount/switch/offline, readiness and partition-key guards), tested once for both pagination variants. A feature cache tests only what is its own — its `getWriteItems` filter, its `onHydrate` side effects, and one end-to-end wiring pass over its partition-key source and store hook. Awaiting landed cache state follows the [no-polling](../../architecture/no-polling/design.md) rule; the composables return nothing. `fake-indexeddb/auto` is loaded in `vitest.config.ts` `setupFiles` — no mocking needed.
+- Tests: the generic composable owns the whole cache lifecycle (persist on change, clear on empty, hydrate on mount/switch/offline, readiness, partition-key and version guards), tested once for both pagination variants. A feature cache tests only what is its own — its `getWriteItems` filter, its `onHydrate` side effects, and one end-to-end wiring pass over its partition-key source and store hook. Awaiting landed cache state follows the [no-polling](../../architecture/no-polling/design.md) rule; the composables return nothing. `fake-indexeddb/auto` is loaded in `vitest.config.ts` `setupFiles` — no mocking needed.
