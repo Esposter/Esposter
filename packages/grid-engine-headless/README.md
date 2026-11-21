@@ -62,6 +62,7 @@ Time is passed by `update`, in milliseconds, and the default speed is four tiles
 | `createGridEngine`    | function  | Makes an engine from a grid of tiles and the characters it starts with, or returns the error that refuses them                          |
 | `Direction`           | value set | The nine directions: four steps, the four diagonals a character may face, and none                                                      |
 | `DirectionDeltaMap`   | map       | The tile one step in each cardinal direction reaches; a diagonal or none has no entry                                                   |
+| `Directions`          | array     | Every direction, in the order `Direction` declares them                                                                                 |
 | `GridEngine`          | interface | The engine: adds and moves characters, turns and teleports them, answers collision queries, subscribes to events and steps time forward |
 | `GridEngineConfig`    | interface | The grid of tiles, where a tile is blocking, open or absent, and the characters an engine starts with                                   |
 | `GridEngineError`     | interface | The error a call returns, with the character or the position it was about                                                               |

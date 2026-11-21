@@ -12,3 +12,4 @@ export const Direction = {
   UpRight: "up-right",
 } as const;
 export type Direction = (typeof Direction)[keyof typeof Direction];
+export const Directions: Direction[] = Object.values(Direction);
