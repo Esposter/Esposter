@@ -64,8 +64,8 @@ describe(usePaginationCache, () => {
   const partitionKey = v7();
   const secondPartitionKey = v7();
   const messageId = 1;
-  const message = "message";
-  const secondMessage = "secondMessage";
+  const message = "";
+  const secondMessage = " ";
   const createMessageRow = (roomId: string = partitionKey, messageText: string = message): MessageValue => ({
     ...createMessage(roomId, messageText),
     id: messageId,
@@ -216,7 +216,7 @@ describe(usePaginationCache, () => {
     expect.hasAssertions();
 
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
-    const error = new Error(message);
+    const error = new Error(" ");
     vi.spyOn(indexedDB, "open").mockImplementation(() => {
       throw error;
     });
