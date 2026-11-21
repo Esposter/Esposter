@@ -78,6 +78,7 @@ describe(useRoomCategoryStore, () => {
       throw trpcError;
     });
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const roomCategoryStore = useRoomCategoryStore();
     const { roomCategories } = storeToRefs(roomCategoryStore);
     const { createRoomCategory: storeCreateRoomCategory } = roomCategoryStore;
@@ -85,7 +86,7 @@ describe(useRoomCategoryStore, () => {
     await flushPromises();
 
     expect(roomCategories.value).toStrictEqual([]);
-    expect(alertStore.alerts).toHaveLength(1);
+    expect(alerts.value).toHaveLength(1);
   });
 
   // The category leaves the list at once, and the tombstone the server answers with keeps it out: an older copy of the
@@ -117,6 +118,7 @@ describe(useRoomCategoryStore, () => {
       throw trpcError;
     });
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const roomCategoryStore = useRoomCategoryStore();
     const { roomCategories } = storeToRefs(roomCategoryStore);
     const { arriveRoomCategories, deleteRoomCategory } = roomCategoryStore;
@@ -125,7 +127,7 @@ describe(useRoomCategoryStore, () => {
     await flushPromises();
 
     expect(roomCategories.value.map((roomCategory) => roomCategory.id)).toStrictEqual([id]);
-    expect(alertStore.alerts).toHaveLength(1);
+    expect(alerts.value).toHaveLength(1);
   });
 
   // Each category is its own row, so a rejected deletion leaves the other one's removal where it stands

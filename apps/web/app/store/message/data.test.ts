@@ -541,7 +541,7 @@ describe(useDataStore, () => {
     expect.hasAssertions();
 
     const threadStore = useThreadStore();
-    const { threadMessages } = storeToRefs(threadStore);
+    const { activeRoomId, threadMessages } = storeToRefs(threadStore);
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice, storeUpdateMessage } = dataStore;
@@ -551,10 +551,10 @@ describe(useDataStore, () => {
       version: 0,
     };
     getSlice(roomId).items.value = [staleCopy];
-    threadStore.activeRoomId = roomId;
+    activeRoomId.value = roomId;
     threadMessages.value = [{ ...staleCopy, message: updatedMessage, version: 1 }];
     await storeUpdateMessage({ id: roomMessageId, message: updatedMessage, roomId, version: 1 });
-    threadStore.activeRoomId = "";
+    activeRoomId.value = "";
     threadMessages.value = [];
 
     expect(takeOne(items.value).message).toBe(updatedMessage);
@@ -725,7 +725,7 @@ describe(useDataStore, () => {
     expect.hasAssertions();
 
     const threadStore = useThreadStore();
-    const { threadMessages } = storeToRefs(threadStore);
+    const { activeRoomId, threadMessages } = storeToRefs(threadStore);
     const dataStore = useDataStore();
     const deletedReply = {
       ...createOptimisticMessage({ replyToId: roomMessageId, roomId, type: MessageType.Message }, userId),
@@ -736,7 +736,7 @@ describe(useDataStore, () => {
       id: 3,
       version: 0,
     };
-    threadStore.activeRoomId = roomId;
+    activeRoomId.value = roomId;
     threadMessages.value = [deletedReply, editedReply];
     trpcMsw.message.readMessagesByIds.query(() => [
       { ...editedReply, message: updatedMessage, updatedAt: new Date(1), version: 1 },
