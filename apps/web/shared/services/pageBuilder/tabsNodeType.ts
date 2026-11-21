@@ -7,6 +7,7 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { containerPropsSchema } from "#shared/services/pageBuilder/containerPropsSchema";
 import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
+import { getTabButtonId } from "#shared/services/pageBuilder/getTabButtonId";
 import { getTabPanelId } from "#shared/services/pageBuilder/getTabPanelId";
 import { hidePanel } from "#shared/services/pageBuilder/hidePanel";
 import { z } from "zod";
@@ -62,7 +63,7 @@ export const tabsNodeType = {
       attributes: {
         [HtmlAttributeName.AriaControls]: getTabPanelId(tab),
         [HtmlAttributeName.AriaSelected]: String(index === 0),
-        [HtmlAttributeName.Id]: `${tab.props.id}-tab`,
+        [HtmlAttributeName.Id]: getTabButtonId(tab),
         [HtmlAttributeName.Role]: "tab",
         [HtmlAttributeName.Tabindex]: index === 0 ? "0" : "-1",
         [HtmlAttributeName.Type]: "button",

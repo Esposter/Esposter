@@ -9,6 +9,7 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
+import { getButtonCss } from "#shared/services/pageBuilder/getButtonCss";
 import { nodeTextSchema } from "#shared/services/pageBuilder/nodeTextSchema";
 import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema";
 import { z } from "zod";
@@ -26,7 +27,7 @@ const buttonPropsSchema = z.object({
 
 // A link drawn as a button, so the published control is a real link a reader can follow and focus
 export const buttonNodeType = {
-  css: ".button { display: inline-block; padding: 0.5rem 1rem; border-radius: 0.25rem; background-color: #333; color: #fff; text-decoration: none; }",
+  css: getButtonCss(".button", "#333"),
   formSchema: buttonFormSchema,
   isFocusable: true,
   propsSchema: buttonPropsSchema,

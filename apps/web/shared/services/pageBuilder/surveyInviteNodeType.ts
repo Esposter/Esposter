@@ -9,6 +9,7 @@ import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { SURVEY_INVITE_BUTTON_COLOR } from "#shared/services/pageBuilder/constants";
 import { elementIdSchema } from "#shared/services/pageBuilder/elementIdSchema";
+import { getButtonCss } from "#shared/services/pageBuilder/getButtonCss";
 import { getSurveyInviteUrl } from "#shared/services/pageBuilder/getSurveyInviteUrl";
 import { nodeTextSchema } from "#shared/services/pageBuilder/nodeTextSchema";
 import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
@@ -27,7 +28,7 @@ const surveyInvitePropsSchema = z.object({
 }) satisfies z.ZodType<OwnProps<SurveyInviteNodeProps>>;
 
 export const surveyInviteNodeType = {
-  css: `.survey-invite { display: inline-block; padding: 0.5rem 1rem; border-radius: 0.25rem; background-color: ${SURVEY_INVITE_BUTTON_COLOR}; color: #fff; text-decoration: none; }`,
+  css: getButtonCss(".survey-invite", SURVEY_INVITE_BUTTON_COLOR),
   formSchema: surveyInviteFormSchema,
   isFocusable: false,
   propsSchema: surveyInvitePropsSchema,
