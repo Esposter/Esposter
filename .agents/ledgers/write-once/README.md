@@ -52,7 +52,7 @@ A copy an outside reader must hold is not removed. Each keeps the test that hold
 
 ## Open findings
 
-Each is a copy the code could be read instead of. Each needs a call, or belongs to another area's pass. Named by the test that holds it:
+Each is a copy the code could be read instead of. Each needs a call, or belongs to another area's pass. Named by the test that holds it, or by the file where no test does:
 
 - `deployedPictures.test.ts` — `UI_AvatarIcon_` is a literal in two `genshinAssets` files and in this test. Export it from `genshinAssets` and import it in all three (`tooling`).
 - `packageKeywords.test.ts` — `WORKSPACE_DIRECTORIES` restates the `apps/*` and `packages/*` globs. `readWorkspacePackages` yields the same members, but it types its manifest as `PackageManifest`, which has no `keywords`, `bugs` or `homepage`, so the switch needs that type widened in the shared reader first (`tooling`).
@@ -64,3 +64,5 @@ Each is a copy the code could be read instead of. Each needs a call, or belongs 
 - `ciCaches.test.ts` — the same save condition repeats on every save step. A composite action would state it once (the `github-actions` skill).
 - `childProcessImport.test.ts` — the child-process ban is spelled twice in `oxlint/importRestrictions.ts`. One pattern if the rule accepts it (the `oxlint` skill).
 - `nuxtModuleNames.test.ts` — `MODULE_NAME` is kept equal to the manifest name, because a runtime file cannot import the manifest. A build-time define could carry the value instead (the `build` skill).
+- `apps/web/server/services/room/getReviveMembershipConflict.ts` — `UNREVIVED_COLUMN_KEYS` restates `usersToRooms`' scope columns, `userId` and `roomId`, which the table already declares and the conflict target lists again. The scope is read by `getScopeKeys`, which the `@esposter/db` barrel does not export, so the call is whether that reader joins the barrel or `getTableScope` gets a non-optional read for a scoped table (`server`).
+- `apps/web/server/services/room/deleteRoom.ts`, `getRoomMembershipRemoval.ts` — each tombstones the room's child tables by hand, one statement per table, so a new room child is one more statement a developer must remember to add. Deriving the list from the relations changes the batch order, since a webhook's app user is tombstoned while its webhook is still live, so it is an owner call (`server`).
