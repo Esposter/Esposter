@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 
 import { friendsInSocial, getLiveRowWhere, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
-import { and, eq, exists, isNull, or, sql } from "drizzle-orm";
+import { and, eq, exists, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 
 // Who may read a status: its owner, the owner's friends and the users who share a room with the owner. Each friend or
@@ -17,7 +17,7 @@ export const getStatusVisibleWhere = (db: Context["db"], viewerId: string) => {
         .from(friendsInSocial)
         .where(
           and(
-            isNull(friendsInSocial.deletedAt),
+            getLiveRowWhere(friendsInSocial),
             or(
               and(eq(friendsInSocial.senderId, viewerId), eq(friendsInSocial.receiverId, usersInAuth.id)),
               and(eq(friendsInSocial.receiverId, viewerId), eq(friendsInSocial.senderId, usersInAuth.id)),
