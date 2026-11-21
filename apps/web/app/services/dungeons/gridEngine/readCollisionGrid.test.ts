@@ -1,13 +1,14 @@
 import type { CollisionLayer } from "#src/models/dungeons/tilemap/CollisionLayer";
 
+import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { readCollisionGrid } from "#src/services/dungeons/gridEngine/readCollisionGrid";
 import { GridEngineErrorKind } from "grid-engine-headless";
 import { err, ok } from "neverthrow";
 import { describe, expect, test } from "vitest";
 
 describe(readCollisionGrid, () => {
-  const COLLISION_LAYER_NAME = "Collision";
-  const GROUND_LAYER_NAME = "Ground";
+  const COLLISION_LAYER_NAME = LayerName.Collision;
+  const GROUND_LAYER_NAME = LayerName.Ground;
 
   test("a blocking tile blocks, an open tile is open, and no tile is absent", () => {
     expect.hasAssertions();
