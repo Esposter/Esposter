@@ -23,8 +23,8 @@ describe(useMessageCache, () => {
   let getSlice: ReturnType<typeof useDataStore>["getSlice"];
   const roomId = v7();
   const secondRoomId = v7();
-  const message = "message";
-  const secondMessage = "second message";
+  const message = "";
+  const secondMessage = " ";
   // A room's messages are numbered from one within the room, so two rooms hold a message under the same integer id
   const sharedMessageId = 1;
   // The store refs are captured from inside the mounted component's scope because mountSuspended creates its own
