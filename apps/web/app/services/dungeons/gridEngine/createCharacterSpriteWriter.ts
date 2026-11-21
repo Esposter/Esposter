@@ -17,6 +17,8 @@ export const createCharacterSpriteWriter = (
   sprite: GameObjects.Sprite,
   walkingAnimationMapping: WalkingAnimationMapping,
 ) => {
+  // The placement is the sprite's top-left corner, so its origin is set to that corner before anything is drawn
+  sprite.setOrigin(0, 0);
   // No frame has been shown yet, so the first step starts from the foot the last step did not plant
   let walkingFrameState: WalkingFrameState = { frame: -1, isLastFootLeft: false };
   const writeCharacterSprite = ({ facingDirection, position, progress }: CharacterState) => {
