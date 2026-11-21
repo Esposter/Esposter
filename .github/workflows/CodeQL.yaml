@@ -7,6 +7,7 @@ on:
       - ai/queue
       - main
   schedule:
+    # Weekly, on Sunday, so the scan picks up CodeQL query updates after a release
     - cron: "16 18 * * 0"
 
 permissions:
