@@ -1,10 +1,14 @@
 // @vitest-environment nuxt
+import { createMessage } from "#src/services/message/message/createMessage.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useForwardStore } from "#src/store/message/input/forward";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useForwardStore, () => {
+  const { trpcMsw } = setupMswTrpc();
+
   // The panel keeps its draft while the forward is out, and empties once the server answers. A refused forward has
   // Nothing to put back, since the draft never left the panel
   test("a forward the server has not answered keeps the draft it was composed in", () => {
@@ -67,5 +71,31 @@ describe(useForwardStore, () => {
 
     expect(messageInput.value).toBe("ab");
     expect(roomIds.value).toStrictEqual([pickedRoomId]);
+  });
+
+  // The panel's forward is one write, so the store drops a send made while the one before it is out, from whichever dialog
+  // Asks, and the server receives the forward once
+  test("drops a send made while the forward for its panel is out", async () => {
+    expect.hasAssertions();
+
+    const sourceRoomId = v7();
+    const destinationRoomId = v7();
+    setCurrentRoomId(sourceRoomId);
+    let sendCount = 0;
+    const { promise: isAnswered, resolve: answerForward } = Promise.withResolvers<void>();
+    trpcMsw.message.forwardMessage.mutation(() => {
+      sendCount += 1;
+      return isAnswered;
+    });
+    const forwardStore = useForwardStore();
+    const { sendForward } = forwardStore;
+    const forward = createMessage(sourceRoomId, "<p>a</p>");
+    const draft = { message: "a", roomIds: [destinationRoomId] };
+    const firstSend = sendForward(sourceRoomId, forward, draft);
+    const secondSend = sendForward(sourceRoomId, forward, draft);
+    answerForward();
+    await Promise.all([firstSend, secondSend]);
+
+    expect(sendCount).toBe(1);
   });
 });

@@ -1,11 +1,14 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { ForwardDraft } from "#src/models/message/ForwardDraft";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { applyIfUnchanged } from "#src/services/shared/applyIfUnchanged";
 import { useRoomStore } from "#src/store/message/room/index";
 
 export const useForwardStore = defineStore("message/input/forward", () => {
   const roomStore = useRoomStore();
+  const { $trpc } = useNuxtApp();
+  const { executeMutation, isPending: isForwardPending } = useMutation();
   const { data: forwardMessageId, getDataRef: getForwardMessageIdRef } = useDataMap<0 | ClientMessage["id"]>(
     () => roomStore.currentRoomId,
     0,
@@ -20,5 +23,25 @@ export const useForwardStore = defineStore("message/input/forward", () => {
     applyIfUnchanged(getMessageInputRef(roomId), sent.message, "");
     applyIfUnchanged(getRoomIdsRef(roomId), sent.roomIds, []);
   };
-  return { clearForward, forwardMessageId, messageInput, roomIds };
+  // The forward is one write per panel, and a Send pressed while the one before it is out is dropped, whichever dialog
+  // Shows the panel, so a reopened dialog cannot send the forward a second time
+  const sendForward = (roomId: string, forward: ClientMessage, sent: ForwardDraft) =>
+    executeMutation(
+      () =>
+        $trpc.message.forwardMessage.mutate({
+          id: forward.id,
+          message: sent.message,
+          roomId: forward.roomId,
+          roomIds: sent.roomIds,
+        }),
+      {
+        awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+        isExclusive: true,
+        key: roomId,
+        onSuccess: () => {
+          clearForward(roomId, sent);
+        },
+      },
+    );
+  return { clearForward, forwardMessageId, isForwardPending, messageInput, roomIds, sendForward };
 });
