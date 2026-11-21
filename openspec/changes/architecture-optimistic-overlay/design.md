@@ -149,7 +149,7 @@ The offline cache persists held state for its partition, live rows and tombstone
 
 A run scope is the primitive's name for local work: the virtual background pick, the dataset binding pick and any whole-value read that no version covers. The primitive keeps one abort controller per live scope. A new run in a scope aborts the controller of the run before it, and the primitive commits a run's result only while that run is the scope's newest. A result it does not commit goes to the run's `release`, which lets go of what the run built. The callee receives the signal for its awaits and never checks it.
 
-The virtual background pipeline's effects move into one commit at the end of the run. The pick it resolved is applied by the primitive, and a transformer that an aborted run created is released by the scope. The pick shows in a local value the run owns: set when the run starts and dropped when the run ends without committing, with no restore closure.
+The virtual background pipeline's effects move into one commit at the end of the run. The commit applies the pick it resolved to the video, and the scope holds each commit until the one before it settles, so two picks' applies never overlap; no executor or key queues them. A transformer that an aborted run created is released by the scope. The pick shows in a local value the run owns: set when the run starts and dropped when the run ends without committing, with no restore closure.
 
 Whole-value reads with no version keep the run scope. Each group in the tasks lists the reads it leaves as residue, and a count or a blob-backed read is residue.
 

@@ -60,7 +60,6 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   let pushToTalkReleaseTimeoutId: number | undefined;
   let videoBackgroundTransformer: RealtimeKitVideoBackgroundTransformer | undefined;
   const { run: runVirtualBackground } = useRunScope();
-  const { executeMutation: executeVirtualBackgroundMutation } = useMutation();
   const mediaStore = useMediaStore();
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
   const participantStore = useParticipantStore();
@@ -274,30 +273,21 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     else if (isScreenSharing) await activeMeeting.self.enableScreenShare();
     else await activeMeeting.self.disableScreenShare();
   };
-  // Applies a pick's change to the meeting's video. The applies queue on one key, so each remove-and-add completes before
-  // The next starts and one pick never composites over another. `onApplied` runs once the video has taken the change, so a
-  // Background the video refused is never saved. A failure alerts, as a failed write does
+  // Applies a pick's change to the meeting's video. It is the pick's commit, and the run scope holds the next commit until
+  // this one settles, so each remove-and-add completes before the next starts and one pick never composites over another.
+  // `onApplied` runs once the video has taken the change, so a background the video refused is never saved. A failure alerts
   const applyVirtualBackgroundChange = (
     meeting: RealtimeKitClient,
     { middleware }: VideoChange,
     onApplied: () => void,
-  ) => {
-    executeVirtualBackgroundMutation(
-      async () => {
-        await meeting.self.removeAllVideoMiddlewares();
-        if (middleware) await meeting.self.addVideoMiddleware(middleware);
-        hasVirtualBackground = Boolean(middleware);
-        setLocalVideo(meeting.self);
-        onApplied();
-      },
-      {
-        // The pick is drawn as it is made, so the apply has nothing of its own to show ahead of its answer
-        applyOptimistic: () => noop,
-        key: "virtualBackground",
-        onError: createErrorAlert,
-      },
-    );
-  };
+  ) =>
+    getResultAsync(async () => {
+      await meeting.self.removeAllVideoMiddlewares();
+      if (middleware) await meeting.self.addVideoMiddleware(middleware);
+      hasVirtualBackground = Boolean(middleware);
+      setLocalVideo(meeting.self);
+      onApplied();
+    }).match(noop, createErrorAlert);
   // The pipeline's awaits, which change nothing on their own: what it resolves is the commit's to apply. A transformer it
   // Builds goes out with the pick, so the commit keeps it and a run that does not commit releases it
   const readVirtualBackgroundPick = async (virtualBackground: string): Promise<undefined | VirtualBackgroundPick> => {
@@ -335,7 +325,10 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   };
   // The one commit of a pick. A pick made for a meeting that has since been left releases what it built and saves nothing.
   // A pick with no change to apply has nothing the video could refuse, so its setting is saved at once
-  const commitVirtualBackgroundPick = (pick: undefined | VirtualBackgroundPick, onApplied: () => void) => {
+  const commitVirtualBackgroundPick = (
+    pick: undefined | VirtualBackgroundPick,
+    onApplied: () => void,
+  ): Promise<void> | undefined => {
     if (!pick) {
       onApplied();
       return;
@@ -345,8 +338,8 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     }
 
     if (pick.createdTransformer) videoBackgroundTransformer = pick.createdTransformer;
-    if (pick.videoChange) applyVirtualBackgroundChange(pick.meeting, pick.videoChange, onApplied);
-    else onApplied();
+    if (pick.videoChange) return applyVirtualBackgroundChange(pick.meeting, pick.videoChange, onApplied);
+    onApplied();
   };
   // Clicking through the background picker means only the last pick matters, so each pick is a run in one scope: a later
   // Pick aborts this one, and only the newest pick commits. The pick is drawn as it is made, and a pipeline that fails
@@ -358,9 +351,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
       getResultAsync(() =>
         runVirtualBackground(
           () => readVirtualBackgroundPick(virtualBackground),
-          (pick) => {
-            commitVirtualBackgroundPick(pick, onApplied);
-          },
+          (pick) => commitVirtualBackgroundPick(pick, onApplied),
           releaseVirtualBackgroundPick,
         ),
       ).match(noop, (error) => {
