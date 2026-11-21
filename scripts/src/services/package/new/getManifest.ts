@@ -7,6 +7,7 @@ import { GITHUB_ISSUES_URL, GITHUB_REPOSITORY_URL } from "#src/services/package/
 import { getEntryPath } from "#src/services/package/new/getEntryPath";
 import { getPackageHomepage } from "#src/services/package/new/getPackageHomepage";
 import { getPackageName } from "#src/services/package/new/getPackageName";
+import { NUXT_KIT_PACKAGE_NAME } from "#src/services/shared/constants";
 
 // The manifest a package is created with. Its version is lerna's one version, so `lernaPackages` holds it from the first commit.
 // Its `sideEffects` is the boolean a bundler acts on, which `sideEffects` holds every package to
@@ -51,7 +52,7 @@ export const getManifest = (options: CreatePackageOptions, version: string): Rec
     },
     sideEffects: false,
     types: "dist/index.d.ts",
-    ...(isNuxtModule ? { dependencies: { "@nuxt/kit": "catalog:", "@nuxt/schema": "catalog:" } } : {}),
+    ...(isNuxtModule ? { dependencies: { [NUXT_KIT_PACKAGE_NAME]: "catalog:", "@nuxt/schema": "catalog:" } } : {}),
     devDependencies: { "@esposter/configuration": "workspace:*", tsdown: "catalog:" },
     ...(isNuxtModule ? { peerDependencies: { nitro: "catalog:", nuxt: "catalog:" } } : {}),
   };

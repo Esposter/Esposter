@@ -30,16 +30,12 @@ const readPackageSources = (): PackageSource[] =>
   readWorkspacePackages(REPOSITORY_ROOT)
     .filter(({ workspaceDirectory }) => workspaceDirectory === "packages")
     .map(({ directory, manifest, workspaceDirectory }) => {
-      // The manifest type has no `exports` or `imports`, which this graph reads from every package
+      // The manifest type declares no `imports`, which this graph reads from every package
       const {
         exports = {},
         imports = {},
         name,
-      } = manifest as PackageManifest & {
-        exports?: Record<string, unknown>;
-        imports?: Record<string, string>;
-        name: string;
-      };
+      } = manifest as PackageManifest & { imports?: Record<string, string>; name: string };
       return { directory: resolve(REPOSITORY_ROOT, workspaceDirectory, directory), exports, imports, name };
     });
 
