@@ -68,9 +68,9 @@ A failed run SHALL schedule one more run without a mark, paced by the backoff fr
 - **WHEN** a key is marked and the read succeeds
 - **THEN** the key is read after the backoff's last wait, the maximum, and the retry count resets
 
-### Requirement: A post count moves only by a read, and every copy the client holds receives it
+### Requirement: A post count reaches every copy the client holds through one store
 
-A count the server keeps on a post SHALL reach every copy the post or comment stores hold only through the one read of `usePostCountStore`, and a write that brings a copy from its response SHALL read the count back rather than take it from the response.
+A count the server keeps on a post SHALL reach every copy the post or comment stores hold through `usePostCountStore`, which SHALL take a count only when its version is not older than the one it holds, whether the count came from a read or from a write's answer.
 
 #### Scenario: A reply reaches the feed's copy of its parent
 
@@ -82,15 +82,16 @@ A count the server keeps on a post SHALL reach every copy the post or comment st
 
 - **GIVEN** an edit whose response carries an older count than a read that already landed
 - **WHEN** the edit settles
-- **THEN** the copy shows the count the owner reads back
+- **THEN** the copy shows the newer count the read set
 
-#### Scenario: A rejected delete restores the count the server holds
+#### Scenario: A refused delete lists the comment again with the count the store holds
 
-- **GIVEN** a delete the server rejects, after the count moved while the comment was out of the thread
-- **WHEN** the rollback restores the comment
-- **THEN** the restored comment shows the count the server holds
+- **GIVEN** a delete the server refuses, after the count moved while the comment was out of the thread
+- **WHEN** the refusal arrives
+- **THEN** the comment is listed again
+- **AND** it shows the count the store holds
 
 ## Non-goals
 
 - Ordering across owners. Two owners of the same copies are not supported, so the question does not arise; a value with copies in two stores has one owner.
-- Retrying a write. Writes are rolled back and reported, as [client data](../client-data/design.md) states.
+- Retrying a write. A refused write drops its entry and reports its error, as [client data](../client-data/design.md) states.

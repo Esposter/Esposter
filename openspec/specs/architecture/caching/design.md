@@ -18,7 +18,7 @@ const { isPending: isLoading, read: readFavorites } = useCachedRead(() => $trpc.
 ```
 
 - **`read(key?)`** — what a surface calls on mount. It issues nothing once the entry has landed, and the concurrent first callers join one request through `executeQuery`'s `isExclusive` single-flight.
-- **`refetch(key?)`** — an unconditional re-read, deliberately **not** single-flight, for the reason [async operations](../async-operations/design.md) gives under the invalidating re-read; it supersedes the in-flight answer on latest-wins instead.
+- **`refetch(key?)`** — an unconditional re-read, deliberately **not** single-flight, for the reason [async operations](../async-operations/design.md) gives under the invalidating re-read. It aborts the read of its key that is still in flight through the run scope, rather than joining it.
 - **A value a live event pushed is an arrival, not a supersede.** A store that holds a row a cached read and an event both answer hands each one to the overlay's `arrive`, which applies a row only at a version above the one held, or fills the columns a held row lacks at its version. The read that is still in flight cannot write an older row back, because it arrives at a lower version and loses in the primitive, so no call site marks a read stale. The window is real — the live event socket is established before the first read is issued. Ordering two async sources against each other is the primitive's job — a store that grows a pair of counters beside its `ref` has hand-rolled the call id the ban in [async operations](../async-operations/design.md) names.
 - **`onSuccess(result, key)`** — the caller owns what the response writes. One read can populate two maps (`threadFollow`) or a data ref plus an error ref (`recent`), so the primitive never owns the data.
 - **`isPending`** — the instance reads one cache, so the primitive's pending state _is_ that cache's loading flag. No store keeps an `isLoading` ref.
@@ -34,14 +34,22 @@ Two invariants the primitive exists to hold:
 
 ## The tag model
 
-A write declares what it changed; a cache declares what it depends on. Neither knows the other exists.
+A write declares what it changed; a cache declares what it depends on. Neither knows the other exists. A write names the tags from its finalizer, which is the shape of the delete of resources, reduced to one chunk:
 
 ```ts
-executeMutation(() => $trpc.resource.deleteResources.mutate({ ids }), {
-  applyOptimistic: () => () => {},
-  invalidates: [CacheTag.Resources],
-  key: Symbol("deleteResources"),
-});
+writeOptimistic(
+  () =>
+    withFinalizerAsync(
+      async () => createRowsResponse(resourceTable, await $trpc.resource.deleteResources.mutate({ ids })),
+      () => invalidateTags([CacheTag.Resources]),
+    ),
+  {
+    entry: (view) => {
+      for (const id of ids) getResourcePatchEntry(id, { deletedAt: new Date() })(view);
+    },
+    onError: createErrorNotification,
+  },
+);
 ```
 
 `CacheTag` (`apps/web/app/models/cache/CacheTag.ts`) is small on purpose — a tag is the smallest fact a cache can subscribe to, not an entity id:
@@ -51,7 +59,7 @@ executeMutation(() => $trpc.resource.deleteResources.mutate({ ids }), {
 | `Resources` | which resources exist, are live, and their name and tags as the cached rows carry them | delete, restore, purge, rename, tag edit |
 | `Recents`   | the recency ordering, without membership changing                                      | `recordAccess` — a recorded visit        |
 
-`invalidates` lives on `useMutation`'s write options and **never** on its read options: a read has no reason to invalidate anything. It fires **after the write has landed**, so a rejected or rolled-back write invalidates nothing — it changed nothing to be stale about.
+`invalidates` lives on `useMutation`'s write options and **never** on its read options: a read has no reason to invalidate anything. The writes still on `executeMutation` carry it (`recordAccess` is one), and it fires only after the write's success, so a refused write there invalidates nothing, since it changed nothing to be stale about. The overlay writes that can persist part of themselves before a refusal name their tags from a finalizer instead, which runs whether the write was kept or refused (see below).
 
 The registry itself is a Pinia store (`apps/web/app/store/cache.ts`) rather than a module-level `Map`, because a module map is shared across Pinia instances: it would leak registrations between tests and, on the server, from one request's app into the next's.
 
@@ -59,7 +67,7 @@ Three consequences worth knowing:
 
 - **A cache that was never constructed is never invalidated**, and that is correct — it holds nothing stale. Registration happens when the store is first used.
 - **Adding a cached set is one `tags` entry.** Nothing central enumerates caches, so nothing central has to be found and edited.
-- **Untagged is a decision, and it gets written down.** `storage` carries no tags because its counter only moves when the bucket's object-create notification lands seconds after the PUT — there is no moment a write could invalidate it and read a different number. `threadFollow` carries none because no resource write changes who follows which thread. `userSettings` carries none because the only write that touches the record is `updateUserSettings`, which is answered with the row it just persisted.
+- **Untagged is a decision, and it gets written down.** `storage` carries no tags because its counter only moves when the bucket's object-create notification lands seconds after the PUT — there is no moment a write could invalidate it and read a different number. `threadFollow` carries none because no resource write changes who follows which thread. `userSettings` carries none because the only write that touches the record is `updateUserSettings`, which arrives the row it is answered with.
 
 ## Why an invalidated cache is re-read, not edited
 
@@ -85,8 +93,7 @@ A refetching cache re-reads **from cold** as well, even if nothing has read it y
 
 ```mermaid
 flowchart TD
-  Write[executeMutation with invalidates] -->|rejected or rolled back| Nothing[Nothing is invalidated — the write changed nothing]
-  Write -->|persisted| Tags[invalidateTags with the write's tags]
+  Write[A write that changes what a cache holds] -->|"its finalizer, kept or refused"| Tags[invalidateTags with the write's tags]
   Tags --> Registry[(Cache registry — tag to caches)]
   Registry --> Drop[Each registered cache drops its entries]
   Drop --> Mode{isRefetchOnInvalidate?}
@@ -97,9 +104,9 @@ flowchart TD
   Reissue --> Store
 ```
 
-## The writes that invalidate on failure
+## The writes that invalidate whatever the answer
 
-`deleteResources` and `restoreResources` send their ids chunk-by-chunk, and each chunk commits independently — so a later chunk's failure still leaves earlier chunks deleted or restored server-side. They therefore call `invalidateTags` by hand from `onError`, on top of their `invalidates`. These are the only writes that reach for the registry directly, and they are not a hole in the "a failed write invalidates nothing" rule: the write genuinely did persist part of itself.
+`deleteResources` and `restoreResources` send their ids chunk-by-chunk, and each chunk commits independently — so a later chunk's failure still leaves earlier chunks deleted or restored server-side. They therefore call `invalidateTags` from their finalizer rather than from their answer, so the tag is invalidated whether the write was kept or refused. The purge of a resource and the list's rename do the same. The store's own rename and tag edit call it once the write has answered, which is a success, so a refused one there invalidates nothing. The finalizer is not a hole in the "a failed write invalidates nothing" rule: a write that persisted part of itself has changed something a cache can be stale about.
 
 ## Key files
 

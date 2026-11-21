@@ -1,6 +1,6 @@
 ## Purpose
 
-The message-scoped settings dialog and its database-backed communication settings. Covers which preferences follow a member across devices, which stay on one device, how changes apply and revert, the allowed ranges, and how the dialog is navigated.
+The message-scoped settings dialog and its database-backed communication settings. Covers which preferences follow a member across devices, which stay on one device, how changes apply and what a failed save leaves, the allowed ranges, and how the dialog is navigated.
 
 ## Requirements
 
@@ -24,9 +24,9 @@ A member's microphone, speaker and camera choices SHALL stay on the device where
 - **WHEN** the member signs in on another device
 - **THEN** the other device keeps its own microphone choice
 
-### Requirement: A settings change applies at once and reverts if saving fails
+### Requirement: A settings change applies at once and returns to its stored value if saving fails
 
-A settings change SHALL show at once, and SHALL revert with an error shown to the member when saving it fails.
+A settings change SHALL show at once, and SHALL be dropped with an error shown to the member when saving it fails.
 
 #### Scenario: a change saves
 
@@ -38,7 +38,7 @@ A settings change SHALL show at once, and SHALL revert with an error shown to th
 
 - **GIVEN** a member changing a setting while saving is failing
 - **WHEN** the save fails
-- **THEN** the setting returns to its previous value
+- **THEN** the setting returns to its stored value
 - **AND** the member is shown an error
 
 ### Requirement: The auto-idle threshold is between one minute and one day

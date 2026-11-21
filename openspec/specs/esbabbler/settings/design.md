@@ -12,7 +12,7 @@ A Discord-style settings dialog for **message/communication** preferences, drawn
 
 The dialog is opened by the gear in `MessageLeftSideBarStatusBar` and mirrors the [room settings](../room-settings/design.md) pattern (`SettingsType` value set → list-item map → content map → `Type/*` panels) with its own parallel wrappers under `Message/Model/User/Settings/`. Unlike room settings there is no permission gating — every panel is self-scoped to the current user.
 
-Both settings dialogs share three conventions: panels are lazy async components rendered inside `<Suspense>` with a shared `MessageModelSettingsSkeleton` fallback (shown on every tab switch); every settings write over a row the overlay holds is **optimistic** (apply to the store immediately, mutate in the background, roll back + surface the error on failure — [client data](../../architecture/client-data/design.md)), and a write where no store holds the row is awaited with its reason named; and the sidebar section highlight covers **all** visible sections, drawn as a `StyledSlideIndicator` rail on the user settings page and as the `isCurrent` of the dialog's list rows.
+Both settings dialogs share three conventions: panels are lazy async components rendered inside `<Suspense>` with a shared `MessageModelSettingsSkeleton` fallback (shown on every tab switch); every settings write over a row the overlay holds is **optimistic** (the change shows in the store at once as an overlay entry, and a refused write drops it and surfaces the error — [client data](../../architecture/client-data/design.md)), and a write where no store holds the row is awaited with its reason named; and the sidebar section highlight covers **all** visible sections, drawn as a `StyledSlideIndicator` rail on the user settings page and as the `isCurrent` of the dialog's list rows.
 
 They also share the responsive shell — the sidebar that sits beside the panel on a wide screen and covers it while open on a narrow one, closed on selection — which [room settings](../room-settings/design.md) describes with its diagram. The user dialog holds that open flag as `isDrawerOpen` on its dialog store; the room dialog threads it through its `Dialog`.
 
@@ -44,7 +44,7 @@ On the `user` router:
 | `readUserSettings`   | authed | —                                                                      | the user's row, or defaults if none yet |
 | `updateUserSettings` | authed | partial settings (`updateUserSettingsInputSchema`, `refineAtLeastOne`) | upsert; returns the full row            |
 
-The client store (`store/message/user/settings/index.ts`) applies updates optimistically and reverts + alerts on failure. The read is one record for the whole session, so it goes through [`useCachedRead`](../../architecture/caching/design.md) — every surface that raises the dialog asks for it, the concurrent asks join one request, and no write invalidates it because `updateUserSettings` stores the row it is answered with.
+The client store (`store/message/user/settings/index.ts`) applies updates optimistically as overlay entries, and a refused update drops its entry and alerts. The read is one record for the whole session, so it goes through [`useCachedRead`](../../architecture/caching/design.md) — every surface that raises the dialog asks for it, the concurrent asks join one request, and no write invalidates it because `updateUserSettings` stores the row it is answered with.
 
 ```mermaid
 flowchart TD
@@ -54,7 +54,7 @@ flowchart TD
   W["control changed"] --> O["optimistic update in the store"]
   O --> U["updateUserSettings"]
   U -->|returned row stored| S
-  U -->|failure| V["revert and alert"]
+  U -->|failure| V["entry dropped, stored value shows, and alert"]
 ```
 
 ## Navigation / scrollspy
@@ -72,7 +72,7 @@ The dialog uses a Discord-style two-level nav: a `UiList` of the `UserSettingsLi
 | `apps/web/server/trpc/routers/user.ts`                           | `readUserSettings` + `updateUserSettings`                  |
 | `apps/web/app/models/message/user/UserSettingsType.ts`           | the panel value set; a value is its own title              |
 | `apps/web/app/services/message/user/settings/`                   | list-item / content / section maps                         |
-| `apps/web/app/store/message/user/settings/index.ts`              | DB-backed store (optimistic + revert)                      |
+| `apps/web/app/store/message/user/settings/index.ts`              | DB-backed store (optimistic overlay entry)                 |
 | `apps/web/app/store/message/user/settings/voiceDevice.ts`        | device-local store (`localStorage` device IDs)             |
 | `apps/web/app/store/message/user/settings/dialog.ts`             | dialog UI store (visibility, panel, mobile `isDrawerOpen`) |
 | `apps/web/app/components/Message/Model/User/Settings/`           | dialog + wrappers + `Type/*` panels                        |

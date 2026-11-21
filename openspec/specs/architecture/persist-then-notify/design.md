@@ -63,7 +63,7 @@ Where the side effect is a write with its own event — a system message announc
 
 Rethrowing after a successful write is wrong in two distinct ways, and the second one is why this is a standard rather than a preference.
 
-A tRPC mutation that rethrows reports failure for work that landed. The client rolls back an optimistic update that storage disagrees with, the user retries, and the retry writes a second entity.
+A tRPC mutation that rethrows reports failure for work that landed. The client drops an optimistic entry that storage refuses, the user retries, and the retry writes a second entity.
 
 A queue consumer that rethrows asks for a retry — a Cloudflare Queue delivers at-least-once, and a redelivered message reruns the handler from the top. A message is written under an id the room's object hands out fresh, so the replay creates a second message rather than overwriting the first. A best-effort failure path is what keeps at-least-once delivery from meaning at-least-once _entities_; a message the retries run out on waits in its job's dead-letter queue, which keeps it.
 

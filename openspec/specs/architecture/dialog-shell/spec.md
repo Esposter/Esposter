@@ -85,7 +85,7 @@ The confirm control SHALL be the dialog's one confirm action, in the accent colo
 
 ### Requirement: Confirming closes the dialog itself after its answer
 
-Confirming SHALL close the dialog as its write is sent, and the write's rollback SHALL answer a refusal. A dialog that names a reason to wait SHALL close after its answer instead, and SHALL stay open with its draft intact when the answer is refused.
+Confirming SHALL close the dialog as its write is sent, and a refused write SHALL drop its change and alert the reader. A dialog that names a reason to wait SHALL close after its answer instead, and SHALL stay open with its draft intact when the answer is refused.
 
 #### Scenario: A confirmed dialog closes while its write is in flight
 

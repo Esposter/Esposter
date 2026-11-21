@@ -26,7 +26,7 @@ A preset's id can never collide with a slot number, since ids are names and slot
 
 Applying a background and remembering it are separate calls. Selecting a background turns the camera on. The middleware stays attached to the meeting while the camera is off, so the background returns with the camera; a camera that starts mid-call with no middleware attached applies the persisted pick without writing it back — restoring a selection is not the user making it again.
 
-Picks supersede rather than queue, so only the one still in force is remembered. A slow selection can resolve after a later one has already applied; persisting it then would leave the settings row naming a background the call is not showing, and restore it on the next camera start.
+Each pick is a run in one run scope, so a later pick aborts the one before it, and only the newest run commits. A slow selection that a later one has overtaken is released rather than applied, so the settings row is written only for the background in force. Otherwise it would name a background the call is not showing and restore it on the next camera start.
 
 ## The flow
 
@@ -69,7 +69,7 @@ A call left while a background is still being read ends that apply quietly. The 
 | `apps/web/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | presets as one source among two                         |
 | `apps/web/app/store/message/user/settings/callBackground.ts`                  | the listing, the upload/delete writes, and the resolver |
 | `apps/web/app/components/Message/Content/Call/VirtualBackground/Grid.vue`     | upload tile, per-slot delete, resolved image urls       |
-| `apps/web/app/store/message/room/realtime.ts`                                 | middleware applied from a resolved url                  |
+| `apps/web/app/store/message/room/realtime.ts`                                 | the pick as a run scope: its pipeline, its one commit   |
 
 ## Notes
 

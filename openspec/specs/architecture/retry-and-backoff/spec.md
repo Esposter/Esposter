@@ -60,7 +60,7 @@ A read that fails for a transient reason SHALL be retried through the wrapper, a
 
 - **GIVEN** a mutation that the server rejects
 - **WHEN** the write fails
-- **THEN** it is rolled back and reported once, and no retry is scheduled
+- **THEN** its change is dropped and it is reported once, and no retry is scheduled
 
 #### Scenario: A retrying read states its cap
 

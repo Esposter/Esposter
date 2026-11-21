@@ -38,9 +38,9 @@ The dialog follows the [user settings dialog](../settings/design.md) conventions
 
 ## Saving a panel
 
-Every panel that edits the room row saves through `useSaveRoom`, not through its own `executeMutation` call. Each control is a draft over the row's value (`useStoredDraft`): it shows the stored value until the reader edits it, so a change another client made reaches a panel the reader has not touched, and an edit stays the reader's while a rejected save rolls the row back, so the next blur retries what they entered with `isDirty` still true ([client data access](../../architecture/client-data/design.md)). A draft that differs from the stored value only in the form the server saves it in, such as a topic's surrounding spaces, is no edit. A save hands `useSaveRoom` only the fields the reader edited, so a field another client changed since the panel opened is never written back with the value the panel was opened on. The composable adds the room id, keys the write on it so panels editing different fields of one room queue instead of clobbering each other, and builds the rollback by reading back **exactly the keys the save wrote**. Snapshotting the whole row instead would revert a field another client changed between the apply and the rejection.
+Every panel that edits the room row saves through `useSaveRoom`, not through its own write call. Each control is a draft over the row's value (`useStoredDraft`): it shows the stored value until the reader edits it, so a change another client made reaches a panel the reader has not touched. An edit stays the reader's while a rejected save drops its entry, which returns the stored value to the screen, so the next blur retries what they entered with `isDirty` still true ([client data access](../../architecture/client-data/design.md)). A draft that differs from the stored value only in the form the server saves it in, such as a topic's surrounding spaces, is no edit. A save hands `useSaveRoom` only the fields the reader edited, so a field another client changed since the panel opened is never written back with the value the panel was opened on. The composable adds the room id, and `updateRoom` writes those fields as an overlay entry over the room's row. Panels saving different fields of one room therefore queue behind one another on that row, and their entries compose by column. A refused save touches only the fields it named, so it never puts back a field another client changed in between.
 
-Two panels writing disjoint fields is therefore the normal case rather than a special one, and adding a third is a call with a different field set — never another copy of the optimistic block.
+Two panels writing disjoint fields is therefore the normal case rather than a special one, and adding a third is a call with a different field set — never another copy of the save.
 
 ## Mobile
 
@@ -48,14 +48,14 @@ The shared `MessageModelSettingsLeftSideBar` sits beside the panel from the `md`
 
 ## Key files
 
-| File                                                              | Role                                                  |
-| :---------------------------------------------------------------- | :---------------------------------------------------- |
-| `apps/web/app/models/message/room/SettingsType.ts`                | panel value set (values double as titles)             |
-| `apps/web/app/models/message/room/SettingsCategory.ts`            | sidebar category value set                            |
-| `apps/web/app/services/message/settings/SettingsCategoryMap.ts`   | category → panels grouping                            |
-| `apps/web/app/services/message/settings/SettingsListItemMap.ts`   | panel icons/colors                                    |
-| `apps/web/app/services/message/settings/SettingsContentMap.ts`    | panel → lazy component                                |
-| `apps/web/app/services/message/settings/SettingsPermissionMap.ts` | panel → required `RoomPermission`                     |
-| `apps/web/app/composables/message/room/useSaveRoom.ts`            | shared optimistic room-row save + key-scoped rollback |
-| `apps/web/app/components/Message/Model/Room/Settings/`            | dialog + sidebar + `Type/*` panels                    |
-| `apps/web/app/services/room/rbac/constants.ts`                    | the dialog's own gate, derived from the panel map     |
+| File                                                              | Role                                                 |
+| :---------------------------------------------------------------- | :--------------------------------------------------- |
+| `apps/web/app/models/message/room/SettingsType.ts`                | panel value set (values double as titles)            |
+| `apps/web/app/models/message/room/SettingsCategory.ts`            | sidebar category value set                           |
+| `apps/web/app/services/message/settings/SettingsCategoryMap.ts`   | category → panels grouping                           |
+| `apps/web/app/services/message/settings/SettingsListItemMap.ts`   | panel icons/colors                                   |
+| `apps/web/app/services/message/settings/SettingsContentMap.ts`    | panel → lazy component                               |
+| `apps/web/app/services/message/settings/SettingsPermissionMap.ts` | panel → required `RoomPermission`                    |
+| `apps/web/app/composables/message/room/useSaveRoom.ts`            | shared room-row save, over the store's overlay write |
+| `apps/web/app/components/Message/Model/Room/Settings/`            | dialog + sidebar + `Type/*` panels                   |
+| `apps/web/app/services/room/rbac/constants.ts`                    | the dialog's own gate, derived from the panel map    |

@@ -136,7 +136,7 @@ What is not a reason:
 
 - **A version token.** A stale `contentVersion`, `modelVersion` or `publishVersion` is a refusal like any other: the refused entry drops and `onError` shows the refresh prompt, while the bumped token arrives with the answer.
 - **A row nobody can see.** A create landing in a list that is not on screen does not wait by itself: an entry changes nothing visible, and the dialog that sent it closes at once. A create whose id the server mints waits under `ServerIssuedValue`, as the schedule dialogs do, so a refusal leaves their draft in place.
-- **A single-flight hazard.** `createLike` draws the viewer's vote at once and keeps `{ isExclusive: true, key: postId }`, so a rapid second click drops instead of creating a second vote.
+- **A single-flight hazard.** `createLike` draws the viewer's vote at once, and its entry touches the vote's row, so a rapid second press queues behind the create. A press on the same arrow is the withdrawal of the vote just drawn, so it never sends a second create.
 
 A resource's content save follows the same rule one level up. It is an entry over the resource row, so the store changes its content at once and a refused save drops its entry. The answer to a save is an arrival the store applies, and no component closes a dialog or moves a row on it.
 

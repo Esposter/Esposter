@@ -67,9 +67,9 @@ A confirmation SHALL wait for its delete only when the delete names a reason the
 - **THEN** the dialog stays open with its answer ready to try again
 - **AND** a failure raises an error alert
 
-### Requirement: An optimistic delete closes at once and rolls back on rejection
+### Requirement: An optimistic delete closes at once and drops its change on rejection
 
-A confirmation SHALL be optimistic unless it names a reason to wait: it SHALL close at once, and a rejected write SHALL be answered by rolling back the list and showing an error.
+A confirmation SHALL be optimistic unless it names a reason to wait: it SHALL close at once, and a rejected write SHALL be answered by dropping its change from the list and showing an error.
 
 #### Scenario: An optimistic delete closes as soon as it is confirmed
 
@@ -78,11 +78,11 @@ A confirmation SHALL be optimistic unless it names a reason to wait: it SHALL cl
 - **THEN** the dialog closes at once
 - **AND** the list already shows the removal
 
-#### Scenario: A rejected optimistic delete restores the list and shows an error
+#### Scenario: A rejected optimistic delete brings the item back and shows an error
 
 - **GIVEN** an optimistic delete was confirmed and the server rejects it
 - **WHEN** the rejection arrives
-- **THEN** the removed item returns to the list
+- **THEN** the removed item is listed again
 - **AND** the reader sees an error notice
 
 ### Requirement: A high-stakes delete requires the exact entity name

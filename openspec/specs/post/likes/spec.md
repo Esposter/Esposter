@@ -83,19 +83,21 @@ A post a reader receives SHALL carry only that reader's own vote and SHALL NOT l
 
 ### Requirement: A vote shows at once on every copy of the post on screen
 
-A vote SHALL appear immediately on every copy of the post the reader is looking at, whichever list or page the copy came from.
+A vote SHALL appear immediately on every copy of the post the reader is looking at, whichever list or page the copy came from. The net count SHALL NOT move until the server reads it back once the vote settles.
 
 #### Scenario: A vote on a post page shows on its feed card
 
 - **GIVEN** a post shown both in the feed and on its own page
 - **WHEN** the reader votes on the post from its own page
-- **THEN** the feed card for the same post shows the same vote and net count without a reload
+- **THEN** the feed card for the same post shows the same vote without a reload
+- **AND** it shows the net count the server reads back once the vote settles
 
-#### Scenario: A refused vote reverts every copy on screen
+#### Scenario: A refused vote is dropped from every copy on screen
 
 - **GIVEN** a post shown in more than one place with a vote applied to all of them
 - **WHEN** the server refuses that vote
-- **THEN** every copy of the post returns to the vote and net count it showed before
+- **THEN** every copy of the post shows the vote it held before
+- **AND** every copy shows the net count the server reads back
 
 ### Requirement: Votes count toward like achievements
 

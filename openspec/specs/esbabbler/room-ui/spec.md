@@ -166,7 +166,7 @@ Room categories SHALL reorder by dragging their headers or with the alt and arro
 
 - **GIVEN** a member dragging a category
 - **WHEN** saving the new order fails
-- **THEN** the whole change is rolled back and the previous order is shown
+- **THEN** the whole change is dropped and the previous order is shown
 
 #### Scenario: a new category
 

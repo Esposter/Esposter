@@ -122,7 +122,7 @@ A write SHALL wait for the server's answer before the screen changes only when w
 
 - **GIVEN** a save that carries the content version it was made against, already shown on screen
 - **WHEN** the server reports that version is stale
-- **THEN** the screen reverts to the content before the save
+- **THEN** the save is dropped, and the screen keeps the content the reader made
 - **AND** the reader is asked to refresh
 
 #### Scenario: A rapid second click on a like creates only one like

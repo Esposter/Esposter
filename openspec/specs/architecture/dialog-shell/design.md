@@ -23,7 +23,7 @@ flowchart TD
   FORM -->|"yes"| SUBMIT["form submit"]
   SUBMIT --> ANSWER
   ANSWER --> MODE{"does it name a reason to wait"}
-  MODE -->|"no"| GONE["closes at once — a rejection rolls back and toasts"]
+  MODE -->|"no"| GONE["closes at once — a rejection drops its change and toasts"]
   MODE -->|"yes"| PENDING["pending until it settles<br/>closes, or stays open on false"]
 ```
 
