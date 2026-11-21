@@ -15,11 +15,17 @@ const spectralNoiseProfileSchema = z.object({
   height: z.int().positive(),
   width: z.int().positive(),
 }) satisfies z.ZodType<SpectralNoiseProfile>;
+// The density fills a cloud layer's RGBA texture, one channel for each of a texel's four, so it has exactly four
+const CLOUD_TEXEL_CHANNEL_COUNT = 4;
+const densitySpectralNoiseProfileSchema = z.object({
+  ...spectralNoiseProfileSchema.shape,
+  channels: z.array(spectralNoiseChannelSchema).length(CLOUD_TEXEL_CHANNEL_COUNT),
+}) satisfies z.ZodType<SpectralNoiseProfile>;
 
 // The statistics of the login sky's four cloud textures, the profiles `synthesizeCloudLayerTextures` is handed
 export const loginCloudLayerTexturesSchema = z.object({
   curl: spectralNoiseProfileSchema,
-  density: spectralNoiseProfileSchema,
+  density: densitySpectralNoiseProfileSchema,
   normal: z.object({ bias: z.array(z.number()).length(3), height: spectralNoiseProfileSchema }),
   wisps: spectralNoiseProfileSchema,
 }) satisfies z.ZodType<CloudLayerTextureProfiles>;
