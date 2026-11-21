@@ -1,3 +1,4 @@
+import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { assert, describe, expect, test, vi } from "vitest";
 
@@ -98,5 +99,39 @@ describe(useRunScope, () => {
     await Promise.all([firstRun, secondRun]);
 
     expect(secondCommit).toHaveBeenCalledExactlyOnceWith(newerResult);
+  });
+
+  // A key is a run of its own: a run of another key neither aborts the one in flight nor is aborted by it
+  test("a run of one key does not abort the run of another key", async () => {
+    expect.hasAssertions();
+
+    const runScope = effectScope().run(useRunScope);
+    assert.exists(runScope);
+    const commit = vi.fn<(value: string) => void>();
+    const firstRunKey = Symbol("first");
+    const otherRunKey = Symbol("other");
+    const first = Promise.withResolvers<string>();
+    const firstRun = runScope.run(() => first.promise, commit, noop, firstRunKey);
+    const otherRun = runScope.run(() => Promise.resolve(newerResult), commit, noop, otherRunKey);
+    first.resolve(result);
+    await Promise.all([firstRun, otherRun]);
+
+    expect(commit).toHaveBeenCalledTimes(2);
+  });
+
+  test("a new run of a key aborts the run of that key before it", async () => {
+    expect.hasAssertions();
+
+    const runScope = effectScope().run(useRunScope);
+    assert.exists(runScope);
+    const commit = vi.fn<(value: string) => void>();
+    const runKey = Symbol("run");
+    const first = Promise.withResolvers<string>();
+    const firstRun = runScope.run(() => first.promise, commit, noop, runKey);
+    const secondRun = runScope.run(() => Promise.resolve(newerResult), commit, noop, runKey);
+    first.resolve(result);
+    await Promise.all([firstRun, secondRun]);
+
+    expect(commit).toHaveBeenCalledExactlyOnceWith(newerResult);
   });
 });
