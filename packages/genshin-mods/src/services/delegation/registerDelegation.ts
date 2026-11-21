@@ -7,6 +7,7 @@ import type { DelegationCall } from "../../models/DelegationCall";
 import { DelegationStep } from "../../models/DelegationStep";
 import { LOOKUP_TOOLS, RESET_TOOLS, SHELL_TOOLS } from "../constants";
 import { InitialState } from "../InitialState";
+import { letThrough } from "../letThrough";
 import { getCallStep } from "./getCallStep";
 import { getLaunchRefusal } from "./getLaunchRefusal";
 import { getNextStreak } from "./getNextStreak";
@@ -23,10 +24,6 @@ const countCall = async ($: EngineInterface, call: DelegationCall): Promise<stri
   return step === DelegationStep.Lookup ? getNudge(streak) : undefined;
 };
 
-// Any failure lets the call through, as the ward's does: a count that blocked on its own failure would block every
-// Call after it. `next` is replay-safe here, so a call the hook had already counted is not run twice
-const letCallThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
-
 export const registerDelegation = (on: On): void => {
   // An agent launch on any model but haiku is refused before it counts. A nudge rides on the call's own result as
   // Context the model reads after it, and never blocks the call
@@ -39,5 +36,5 @@ export const registerDelegation = (on: On): void => {
     return nudge !== undefined && result.deny === undefined
       ? { ...result, context: [...(result.context ?? []), nudge] }
       : result;
-  }).catch(letCallThrough);
+  }).catch(letThrough);
 };

@@ -5,6 +5,7 @@ import { atom, read } from "claude-code";
 
 import { WardAnswer, WardAnswers } from "../../models/WardAnswer";
 import { InitialState } from "../InitialState";
+import { letThrough } from "../letThrough";
 import { getCollidingRecord } from "./getCollidingRecord";
 import { getRecordsWithEdit } from "./getRecordsWithEdit";
 import { readRecords } from "./readRecords";
@@ -53,15 +54,9 @@ const ward = async (
   return result;
 };
 
-// Any failure lets the edit through, the question dismissed or the record unreadable alike: a guard that blocked on
-// Its own failure would block every edit after it, and Cancel is the person's way to stop one. `next` is replay-safe
-// Here, so an edit the hook had already made is not made twice
-const letEditThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
-
+// The question dismissed or the record unreadable alike lets the edit through, since Cancel is the person's way to stop one
 export const registerWard = (on: On): void => {
-  on("tool.call", { tool: "Edit" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(letEditThrough);
-  on("tool.call", { tool: "Write" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(letEditThrough);
-  on("tool.call", { tool: "NotebookEdit" }, ($, e, next) => ward($, e.notebook_path, () => next(e))).catch(
-    letEditThrough,
-  );
+  on("tool.call", { tool: "Edit" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(letThrough);
+  on("tool.call", { tool: "Write" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(letThrough);
+  on("tool.call", { tool: "NotebookEdit" }, ($, e, next) => ward($, e.notebook_path, () => next(e))).catch(letThrough);
 };
