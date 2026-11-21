@@ -4,8 +4,9 @@ import type { BookmarkPageLink } from "#shared/models/app/BookmarkPageLink";
 import type { ReadBookmark } from "#shared/models/db/bookmark/ReadBookmark";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { bookmarkRouter } from "#server/trpc/routers/bookmark";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { trpcRouter } from "#server/trpc/routers/index";
@@ -13,6 +14,8 @@ import { resourceRouter } from "#server/trpc/routers/resource";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
+import { bookmarkTable } from "#src/services/bookmark/overlay/constants";
+import { getToggleBookmarkEntry } from "#src/services/bookmark/overlay/getToggleBookmarkEntry";
 import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, ResourceType, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -54,6 +57,22 @@ describe("bookmarkRouter", () => {
     await caller.toggleBookmark({ mark, path, title });
     return { mark, resource };
   };
+
+  // The toggle's entry is the one the store issues, and the bookmark row the toggle names is the one it shows
+  test("the toggle entry covers the bookmark row the toggle names", async () => {
+    expect.hasAssertions();
+
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(bookmarkRouter)(context).toggleBookmark({ path, title }),
+      context: mockContext,
+      entry: getToggleBookmarkEntry(getMockSession().user.id, { path, title }, new Date(0)),
+      path: "toggleBookmark",
+      tables: [bookmarkTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
 
   test("toggles a bookmark on and off", async () => {
     expect.hasAssertions();

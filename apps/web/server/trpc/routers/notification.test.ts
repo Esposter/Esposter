@@ -1,7 +1,11 @@
 import type { Context } from "#server/trpc/context";
 
-import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { notificationRouter } from "#server/trpc/routers/notification";
+import { notificationTable } from "#src/services/notification/overlay/constants";
+import { getDismissNotificationEntry } from "#src/services/notification/overlay/getDismissNotificationEntry";
 import { AppNotificationType, NotificationSeverity, notificationsInNotification } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -27,6 +31,25 @@ describe("notificationRouter", () => {
 
   afterEach(async () => {
     await mockContext.db.delete(notificationsInNotification);
+  });
+
+  // The dismissal's entry is the one the store issues, and the notification row it names is the one the entry shows
+  test("the dismiss entry covers the notification row the dismissal names", async () => {
+    expect.hasAssertions();
+
+    await mockContext.db
+      .insert(notificationsInNotification)
+      .values([createNotificationRow(firstId, getMockSession().user.id)]);
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(notificationRouter)(context).deleteNotification(firstId),
+      context: mockContext,
+      entry: getDismissNotificationEntry(firstId, new Date(0)),
+      path: "deleteNotification",
+      tables: [notificationTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 
   test("reads the list to its end newest first, with the unread total on the first page only", async () => {

@@ -8,6 +8,7 @@ import type { SurveyDocument } from "vue-survey-engine-headless";
 import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "#server/services/survey/constants";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
 import { createPageDocument } from "#server/trpc/routers/createPageDocument.test";
 import { createPublishedSurvey } from "#server/trpc/routers/createPublishedSurvey.test";
@@ -20,6 +21,8 @@ import { sheetRouter } from "#server/trpc/routers/sheet";
 import { surveyRouter } from "#server/trpc/routers/survey";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
+import { surveyResponseTable } from "#src/services/survey/overlay/constants";
+import { getSurveyResponseEntry } from "#src/services/survey/overlay/getSurveyResponseEntry";
 import {
   DatabaseEntityType,
   ResourceType,
@@ -134,6 +137,32 @@ describe("surveyRouter", () => {
     const content = await caller.readResourceContent({ id: newResource.id });
 
     expect(content).toStrictEqual({ document, settings });
+  });
+
+  // The response's entry is the one the store issues, and the response row the create names is the row it shows
+  test("the response entry covers the survey response row the create names", async () => {
+    expect.hasAssertions();
+
+    const newResource = await createResponseSurvey();
+    const seed = v7();
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) =>
+        createCallerFactory(surveyRouter)(context).createSurveyResponse({
+          id: seed,
+          isDraft: false,
+          model: { a: 0 },
+          pageNo: 0,
+          participantToken: "",
+          resourceId: newResource.id,
+        }),
+      context: mockContext,
+      entry: getSurveyResponseEntry(seed),
+      path: "createSurveyResponse",
+      tables: [surveyResponseTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 
   test("clears its responses when the resource is purged", async () => {
