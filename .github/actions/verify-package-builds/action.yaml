@@ -3,9 +3,8 @@ description: Fail when a library that builds has no output on disk after the bui
 runs:
   using: composite
   steps:
-    # The set is discovered, not listed: a library builds if it has a tsdown config, so one added later is
-    # covered with nothing edited. `dist` alone: it is the half that is deployed and published, so its absence is
-    # the silent one — a missing barrel fails `typecheck` and `lint` by name.
+    # `dist` alone: it is the half that is deployed and published, so its absence is the silent one — a missing
+    # barrel fails `typecheck` and `lint` by name.
     - name: 🔍 Verify package builds
       shell: bash
       run: |

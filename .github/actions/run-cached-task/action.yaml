@@ -11,9 +11,7 @@ inputs:
 runs:
   using: composite
   steps:
-    # By prefix, and safely so: vp replays an entry only when every input it traced still matches, so another
-    # commit's entry is a miss rather than a stale hit. After the install, because the directory is under
-    # `node_modules`, and because the traced inputs include the dependencies a task read there.
+    # After the install, since the directory sits under `node_modules`.
     - name: ♻️ Restore the task cache
       uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:

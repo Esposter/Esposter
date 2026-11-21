@@ -14,8 +14,7 @@ runs:
       with:
         filter: ${{ inputs.package }}...
 
-    # Uncached: 🏗️ CI's task cache holds the full library set, which this closure-only install cannot replay, and
-    # a deploy is rare enough that building the few libraries an app links against is the cheaper trade
+    # Uncached: this closure-only install cannot replay CI's full library set (`openspec/specs/architecture/monorepo-tooling/design.md` → `## CI job shape`)
     - name: 🏗️ Build dependencies
       shell: bash
       env:
