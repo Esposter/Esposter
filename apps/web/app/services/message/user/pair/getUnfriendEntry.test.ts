@@ -1,3 +1,5 @@
+import type { HeldTables } from "#src/models/shared/overlay/HeldTables";
+
 import { friendTable } from "#src/services/message/user/pair/constants";
 import { getFriendRowKey } from "#src/services/message/user/pair/getFriendRowKey";
 import { getTouchedKeys } from "#src/services/message/user/pair/getTouchedKeys.test";
@@ -15,8 +17,8 @@ describe(getUnfriendEntry, () => {
     const otherId = v7();
     const deletedAt = new Date(0);
     const entry = getUnfriendEntry(userId, friendId, deletedAt);
-    const emptySlotFor = createSlotFor();
-    const heldSlotFor = createSlotFor();
+    const emptySlotFor = createSlotFor(shallowRef<HeldTables>({}));
+    const heldSlotFor = createSlotFor(shallowRef<HeldTables>({}));
     heldSlotFor(friendTable).arrive({
       createdAt: new Date(0),
       deletedAt: null,

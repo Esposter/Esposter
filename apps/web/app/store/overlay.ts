@@ -1,5 +1,6 @@
 import type { Arrival } from "#src/models/shared/overlay/Arrival";
 import type { AwaitedWriteOptions } from "#src/models/shared/overlay/AwaitedWriteOptions";
+import type { HeldTables } from "#src/models/shared/overlay/HeldTables";
 import type { OptimisticWriteOptions } from "#src/models/shared/overlay/OptimisticWriteOptions";
 import type { PendingEntry } from "#src/models/shared/overlay/PendingEntry";
 import type { Table } from "#src/models/shared/overlay/Table";
@@ -16,7 +17,10 @@ import { getResult, getResultAsync, getSynchronizedFunction } from "@esposter/sh
 // The write registry of one Pinia instance: the held server rows of every table, the pending entries and the write
 // Queue. It is the only writer of held state, and a store reads its rows through the view it returns
 export const useOverlayStore = defineStore("overlay", () => {
-  const slotFor = createSlotFor();
+  // The held rows are the store's state, so Pinia carries them in a server render's payload and a client's first render
+  // Draws the rows the server drew, with no read run again. Nothing else here is state: the pending entries hold functions
+  const heldTables = shallowRef<HeldTables>({});
+  const slotFor = createSlotFor(heldTables);
   const enqueue = createWriteQueue();
   // Pending entries in issue order. A shallow ref, since an entry is a function the view calls and not state it reads
   const pendingEntries = shallowRef<PendingEntry[]>([]);
@@ -69,5 +73,5 @@ export const useOverlayStore = defineStore("overlay", () => {
     getResultAsync(mutate).match(applyArrivals, (error) => {
       onError?.(error);
     });
-  return { arrive, view, writeAwaited, writeOptimistic };
+  return { arrive, heldTables, view, writeAwaited, writeOptimistic };
 });

@@ -1,3 +1,5 @@
+import type { HeldTables } from "#src/models/shared/overlay/HeldTables";
+
 import { blockTable } from "#src/services/message/user/pair/constants";
 import { getBlockRowKey } from "#src/services/message/user/pair/getBlockRowKey";
 import { getTouchedKeys } from "#src/services/message/user/pair/getTouchedKeys.test";
@@ -14,8 +16,8 @@ describe(getUnblockEntry, () => {
     const blockedId = v7();
     const otherId = v7();
     const entry = getUnblockEntry(userId, blockedId, new Date(0));
-    const emptySlotFor = createSlotFor();
-    const heldSlotFor = createSlotFor();
+    const emptySlotFor = createSlotFor(shallowRef<HeldTables>({}));
+    const heldSlotFor = createSlotFor(shallowRef<HeldTables>({}));
     heldSlotFor(blockTable).arrive({
       blockedId,
       blockerId: userId,

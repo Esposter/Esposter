@@ -1,5 +1,7 @@
 import type { Draft } from "#src/models/shared/overlay/Draft";
 import type { DraftHandle } from "#src/models/shared/overlay/DraftHandle";
+import type { HeldTables } from "#src/models/shared/overlay/HeldTables";
+import type { KeyTrieNode } from "#src/models/shared/overlay/KeyTrieNode";
 import type { RowKey } from "#src/models/shared/overlay/RowKey";
 import type { Slot } from "#src/models/shared/overlay/Slot";
 import type { Table } from "#src/models/shared/overlay/Table";
@@ -13,15 +15,22 @@ import { listKeyTrie } from "#src/services/shared/overlay/listKeyTrie";
 import { readKeyTrie } from "#src/services/shared/overlay/readKeyTrie";
 import { writeKeyTrie } from "#src/services/shared/overlay/writeKeyTrie";
 
-// The trie sits in a shallow ref and is triggered on each write, so a view that lists it recomputes without making
-// Every held row reactive
-export const createSlot = <TRow extends Versioned>(table: Table<TRow>): Slot<TRow> => {
-  const held = shallowRef(createKeyTrieNode<TRow>());
+// The table's trie sits in the store's held tables, which Pinia carries in a server render's payload. Each write triggers
+// That state, so a view that lists it recomputes without making every held row reactive
+export const createSlot = <TRow extends Versioned>(table: Table<TRow>, heldTables: Ref<HeldTables>): Slot<TRow> => {
+  // The trie of this table's rows, typed by the row: the table's name is the one table whose rows the trie holds
+  const readHeldTrie = () => (heldTables.value[table.name] ?? createKeyTrieNode<Versioned>()) as KeyTrieNode<TRow>;
+  const writeHeldRow = (key: RowKey, row: TRow) => {
+    const heldTrie = heldTables.value[table.name] ?? createKeyTrieNode<Versioned>();
+    heldTables.value[table.name] = heldTrie;
+    writeKeyTrie(heldTrie, key, row);
+    triggerRef(heldTables);
+  };
   // A held tombstone past the retention is forgotten, so nothing is held for its key and a row arriving for it applies at
   // Any version. Every read of held state goes through here, so the arrival gate, the merge and the settle rule
   // Agree on it
   const readHeldRow = (key: RowKey) => {
-    const heldRow = readKeyTrie(held.value, key);
+    const heldRow = readKeyTrie(readHeldTrie(), key);
     return checkIsForgotten(heldRow) ? undefined : heldRow;
   };
   // Rows an entry wrote in the current draft, over held state until the draft ends
@@ -38,8 +47,7 @@ export const createSlot = <TRow extends Versioned>(table: Table<TRow>): Slot<TRo
       // A newer arrival replaces the columns it carries and keeps the held value of each column it lacks, since a
       // Projection carries fewer columns than the row it projects
       if (checkIsNewerArrival(heldRow, row)) {
-        writeKeyTrie(held.value, key, heldRow ? { ...heldRow, ...row } : row);
-        triggerRef(held);
+        writeHeldRow(key, heldRow ? { ...heldRow, ...row } : row);
         return true;
       }
       // The held row is at this version or newer. An older one is discarded. An arrival at the held version fills only the
@@ -47,17 +55,15 @@ export const createSlot = <TRow extends Versioned>(table: Table<TRow>): Slot<TRo
       if (heldRow === undefined || checkIsNewerArrival(row, heldRow)) return false;
 
       const fillsHeldRow = Object.keys(row).some((fieldName) => !checkIsRowField(heldRow, fieldName));
-      if (fillsHeldRow) {
-        writeKeyTrie(held.value, key, { ...row, ...heldRow });
-        triggerRef(held);
-      }
+      if (fillsHeldRow) writeHeldRow(key, { ...row, ...heldRow });
       return true;
     },
     list: () => {
+      const heldTrie = readHeldTrie();
       // The held rows as the draft has written them, then the rows only the draft created
-      const heldRows = listKeyTrie(held.value).map(([key, row]) => readKeyTrie(overrides, key) ?? row);
+      const heldRows = listKeyTrie(heldTrie).map(([key, row]) => readKeyTrie(overrides, key) ?? row);
       const createdRows = listKeyTrie(overrides)
-        .filter(([key]) => readKeyTrie(held.value, key) === undefined)
+        .filter(([key]) => readKeyTrie(heldTrie, key) === undefined)
         .map(([, row]) => row);
       return [...heldRows, ...createdRows].filter((row) => !row.deletedAt);
     },

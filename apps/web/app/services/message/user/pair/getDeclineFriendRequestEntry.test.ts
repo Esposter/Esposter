@@ -1,3 +1,5 @@
+import type { HeldTables } from "#src/models/shared/overlay/HeldTables";
+
 import { friendRequestTable } from "#src/services/message/user/pair/constants";
 import { getDeclineFriendRequestEntry } from "#src/services/message/user/pair/getDeclineFriendRequestEntry";
 import { getFriendRowKey } from "#src/services/message/user/pair/getFriendRowKey";
@@ -14,8 +16,8 @@ describe(getDeclineFriendRequestEntry, () => {
     const senderId = v7();
     const otherId = v7();
     const entry = getDeclineFriendRequestEntry(userId, senderId, new Date(0));
-    const emptySlotFor = createSlotFor();
-    const heldSlotFor = createSlotFor();
+    const emptySlotFor = createSlotFor(shallowRef<HeldTables>({}));
+    const heldSlotFor = createSlotFor(shallowRef<HeldTables>({}));
     heldSlotFor(friendRequestTable).arrive({
       createdAt: new Date(0),
       deletedAt: null,

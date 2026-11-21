@@ -244,6 +244,23 @@ describe(useOverlayStore, () => {
     ]);
   });
 
+  test("a store hydrated from the state a server render serialised answers its view with the rows, with no read run", () => {
+    expect.hasAssertions();
+
+    const serverPinia = createPinia();
+    setActivePinia(serverPinia);
+    const serverOverlayStore = useOverlayStore();
+    serverOverlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    // The payload carries the store's state as plain data, so the server's held tables are cloned out of Pinia's reactive state
+    const payload = structuredClone(serverPinia.state.value.overlay.heldTables);
+    const clientPinia = createPinia();
+    clientPinia.state.value = { overlay: { heldTables: payload } };
+    setActivePinia(clientPinia);
+    const clientOverlayStore = useOverlayStore();
+
+    expect(clientOverlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
+  });
+
   test("an entry that throws in the view leaves the view equal to held state and reports its error once to its write", async () => {
     expect.hasAssertions();
 

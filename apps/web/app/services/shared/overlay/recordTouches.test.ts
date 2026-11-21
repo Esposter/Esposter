@@ -1,3 +1,4 @@
+import type { HeldTables } from "#src/models/shared/overlay/HeldTables";
 import type { KeyedView } from "#src/models/shared/overlay/KeyedView";
 
 import { createRowTable } from "#src/services/shared/overlay/createRowTable.test";
@@ -14,7 +15,7 @@ describe(recordTouches, () => {
   test("records the keys of the rows an entry reads and writes", () => {
     expect.hasAssertions();
 
-    const slotFor = createSlotFor();
+    const slotFor = createSlotFor(shallowRef<HeldTables>({}));
 
     expect(
       recordTouches(slotFor, (view) => {
@@ -30,7 +31,7 @@ describe(recordTouches, () => {
   test("discards the writes an entry makes, leaving held state as it was", () => {
     expect.hasAssertions();
 
-    const slotFor = createSlotFor();
+    const slotFor = createSlotFor(shallowRef<HeldTables>({}));
 
     expect(
       recordTouches(slotFor, (view) => {
@@ -47,8 +48,8 @@ describe(recordTouches, () => {
       view.get(table, ["a"]);
       view.set(table, ["b"], { deletedAt: null, id: "b", name, version: 0 });
     };
-    const emptySlotFor = createSlotFor();
-    const populatedSlotFor = createSlotFor();
+    const emptySlotFor = createSlotFor(shallowRef<HeldTables>({}));
+    const populatedSlotFor = createSlotFor(shallowRef<HeldTables>({}));
     populatedSlotFor(table).arrive({ deletedAt: null, id: "a", name, version: 1 });
     populatedSlotFor(table).arrive({ deletedAt: null, id: "c", name, version: 3 });
 
