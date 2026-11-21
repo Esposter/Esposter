@@ -3,31 +3,24 @@
 Read when writing a function's parameters: a second call shape, an options object, a default, or a boolean
 flag.
 
-## Arrow function overloads
+## Overloads
 
-Use call signature syntax on the variable type — never `function` declarations for overloads, unless the return needs the cast-free form in "Overloads with no cast" below:
+An overload is a `function` declaration, and that is the one overload form: no arrow overload, no interface of call signatures, no `as`. Write one overload signature per call shape, each with its own precise return, then one implementation with no return annotation, whose parameters accept every shape:
 
 ```ts
-interface GetFoo {
-  (db: Db, id: string): Promise<bigint>;
-  (db: Db, ids: string[]): Promise<Map<string, bigint>>;
-}
-
-export const getFoo: GetFoo = (async (db: Db, ids: string | string[]): Promise<bigint | Map<string, bigint>> => {
+export function getFoo(db: Db, id: string): Promise<bigint>;
+export function getFoo(db: Db, ids: string[]): Promise<Map<string, bigint>>;
+export async function getFoo(db: Db, ids: string | string[]) {
   const idArray = Array.isArray(ids) ? ids : [ids];
   // ...shared implementation, producing `result: Map<string, bigint>`...
   return Array.isArray(ids) ? result : (result.get(ids) ?? 0n);
-}) as GetFoo;
+}
 ```
 
-- Overload signatures go on the `const`'s **type annotation**, not repeated in the body.
-- Implementation parameter **and return** types are the **union** of all overload variants, both written out — the implementation is not contextually typed once it is cast.
-- **Parenthesise the arrow and cast it back to the interface.** TypeScript checks an implementation against each call signature separately, and a `Promise<bigint | Map<string, bigint>>` satisfies neither of them, so the assignment does not compile without the `as`. The interface above stays the contract every caller sees, so the cast widens nothing at a call site.
+- The implementation signature is not visible to callers: they see only the overload signatures, so each keeps its precise return.
+- The implementation's return is **inferred**, not written out. TypeScript checks each overload against the implementation loosely, so the implementation's union return and each overload's narrower return need no cast between them.
 - Use `Array.isArray` to branch; each branch returns its specific type.
-
-## Overloads with no cast
-
-When the return type is a mapped type over a generic computed key (`[P in DialogMessageKey<T>]` built from `` `${T}dialogMessage` ``), the arrow's own return cannot satisfy it: an object literal with computed keys widens to an index signature, which is not assignable to that mapped type, so the arrow form needs the `as` above. Write the overload as a `function` declaration instead: one call signature with the precise return, and an implementation whose return is inferred. TypeScript checks the two against each other with no cast. `apps/web/app/composables/dungeons/useDialogMessage.ts` is the example, and `apps/web/app/composables/message/room/useCreator.ts` the same shape for a union return.
+- `apps/web/app/composables/dungeons/useDialogMessage.ts` is the example for a mapped-type return, and `apps/web/app/composables/message/room/useCreator.ts` the same shape for a union return.
 
 ## Options argument defaults
 
