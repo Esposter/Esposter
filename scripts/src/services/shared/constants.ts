@@ -64,6 +64,8 @@ export const EMPTY_TREE_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
 // The manifest every member and the root carry, which is how a workspace glob's children are told from a plain
 // Directory and how an npm-installed project is found beside its lockfile
 export const PACKAGE_JSON_FILENAME = "package.json";
+// The package a Nuxt module depends on at runtime, and which only a Nuxt module declares, so a dependency on it is what makes a package one
+export const NUXT_KIT_PACKAGE_NAME = "@nuxt/kit";
 // `pnpm`'s `packageManager` pin is `<name>@<version>`, with an optional `+sha512.<hex>` suffix.
 // Corepack verifies the download against that suffix, which is no part of the version the registry is asked about.
 export const PACKAGE_MANAGER_REGEX: RegExp = /^(?<packageName>[^@]+)@(?<version>[^+]+)/u;
