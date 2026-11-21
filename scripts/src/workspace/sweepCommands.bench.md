@@ -9,21 +9,22 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 186f17175
-- Node: v26.9.0
-- OS: win32 10.0.26200 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- Commit: e9d706b2a7
+- Node: v26.13.1
+- OS: darwin 27.0.0 (arm64)
+- CPU: Apple M1 × 8
+- RAM: 16.0 GiB
 
 ## ai:sweep commands end to end
 
-| task                             | vs base | mean (ms) | ±rme    | p99 (ms)  | samples |
-| -------------------------------- | ------- | --------- | ------- | --------- | ------- |
-| ai:sweep:repeated-list-items     | 1.00×   | 1923.2125 | ±15.50% | 2055.3207 | 3       |
-| ai:sweep:ledger-coverage         | 0.73×   | 2639.8671 | ±2.25%  | 2657.7424 | 3       |
-| ai:sweep:skill-docs              | 0.52×   | 3727.9154 | ±26.68% | 4166.3999 | 3       |
-| ai:sweep:file-organization       | 0.5×    | 3864.3245 | ±7.39%  | 3943.7423 | 3       |
-| ai:sweep:shared-export-consumers | 0.46×   | 4167.0856 | ±15.83% | 4447.8774 | 3       |
-| ai:sweep:unterminated-results    | 0.4×    | 4767.7332 | ±11.02% | 5000.0899 | 3       |
-| ai:sweep:constant-scope          | 0.38×   | 5073.6575 | ±33.38% | 5713.1964 | 3       |
-| ai:sweep:duplicate-prose         | 0.34×   | 5737.3747 | ±59.23% | 7228.1468 | 3       |
+| task                             | vs base | mean (ms)  | ±rme     | p99 (ms)   | samples |
+| -------------------------------- | ------- | ---------- | -------- | ---------- | ------- |
+| ai:sweep:repeated-list-items     | 1.00×   | 1907.5602  | ±29.26%  | 2154.7313  | 3       |
+| ai:sweep:skill-docs              | 0.98×   | 1938.0217  | ±41.99%  | 2303.9844  | 3       |
+| ai:sweep:duplicate-code          | 0.26×   | 7464.7538  | ±102.57% | 10491.8317 | 3       |
+| ai:sweep:constant-scope          | 0.14×   | 13848.9397 | ±83.85%  | 16894.2627 | 3       |
+| ai:sweep:shared-export-consumers | 0.12×   | 15938.4865 | ±55.22%  | 19903.6474 | 3       |
+| ai:sweep:ledger-coverage         | 0.12×   | 16361.4885 | ±66.59%  | 21140.3455 | 3       |
+| ai:sweep:duplicate-prose         | 0.094×  | 20364.6602 | ±68.56%  | 23925.2990 | 3       |
+| ai:sweep:file-organization       | 0.067×  | 28637.6916 | ±46.67%  | 34594.4787 | 3       |
+| ai:sweep:unterminated-results    | 0.059×  | 32068.8389 | ±123.39% | 49912.7532 | 3       |
