@@ -4,7 +4,7 @@ A headless grid movement package of ours replaces grid-engine: tile collision, c
 
 ## Scope
 
-The package is built, and the dungeon world is its one consumer through a binding in the app, which the [dungeons world](../../../dungeons/world/design.md) page describes with the world's use of the engine. The package's requirements are in the [grid movement spec](spec.md), and the verdicts on the upstream tracker are in the [area index](../README.md).
+The package is built, and the dungeon world is its one consumer through a binding in the app, which the [dungeons world](../../dungeons/world/design.md) page describes with the world's use of the engine. The package's requirements are in the [grid movement spec](spec.md), and the verdicts on the upstream tracker are in the [area index](../README.md).
 
 ## How it works
 
@@ -222,4 +222,4 @@ Not earned: the direction values, which typecheck already holds; the README; and
 - [grid-engine issues](https://github.com/Annoraaq/grid-engine/issues), the tracker every verdict above is read from, with its comments.
 - [grid-engine pull requests](https://github.com/Annoraaq/grid-engine/pulls), read as the issues they close; the fixes cited above are #319's [#320](https://github.com/Annoraaq/grid-engine/pull/320) and [#322](https://github.com/Annoraaq/grid-engine/pull/322), #323's [#324](https://github.com/Annoraaq/grid-engine/pull/324), #419's [#420](https://github.com/Annoraaq/grid-engine/pull/420), #293's [#294](https://github.com/Annoraaq/grid-engine/pull/294), #159's [#169](https://github.com/Annoraaq/grid-engine/pull/169) and #93's [#94](https://github.com/Annoraaq/grid-engine/pull/94).
 - The package's README, which links the documentation site; the site was not fetched, and the README's description of the headless and plugin entries is what this design reads.
-- [The dependency admission page](../../../architecture/dependency-admission/design.md), for the verdict, the stop list, the adapter branch and the standard an absorption meets.
+- [The dependency admission page](../../architecture/dependency-admission/design.md), for the verdict, the stop list, the adapter branch and the standard an absorption meets.
