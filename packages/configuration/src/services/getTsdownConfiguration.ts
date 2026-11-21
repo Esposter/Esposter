@@ -123,11 +123,12 @@ export const getTsdownConfiguration = ({
       // Whose types cannot satisfy `isolatedDeclarations` falls back to a full TypeScript program, which for
       // The Drizzle schema would be minutes of build time and a multi-megabyte file nothing opens. Deriving
       // From `private` rather than opting in per package also means it cannot be forgotten. What it leaves
-      // Behind is full programs only where one is unavoidable: every published package extends
-      // `tsconfig.library.json` and emits per file under `isolatedDeclarations`, except the Vue packages, whose
+      // Behind is full programs only where one is unavoidable: every published package extends a preset that sets
+      // `isolatedDeclarations` (`tsconfig.library.json`, `tsconfig.node.json`, `tsconfig.browser.json` or
+      // `tsconfig.nuxt-module.json`) and emits per file, except the Vue packages, whose
       // `.vue` declarations come from the content mapper and have no per-file path to take at all — see
       // `getTsdownConfigurationVue`, which loads the whole program on purpose. The slow path is exactly the packages
-      // That cannot avoid it, and a new published package taking it would have to have left the library preset.
+      // That cannot avoid it, and a new published package taking it would have to have left those presets.
       mergeConfig(commonConfiguration, { dts: false })
     : mergeConfig(commonConfiguration, {
         // Declarations are consumed through whatever resolution mode the consumer picked, so they are checked
