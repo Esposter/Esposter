@@ -11,8 +11,7 @@ export const useCallIdSubscribables = async (callId: string) => {
   const { activeCallSessionId } = storeToRefs(callStore);
   const { leaveCall } = callStore;
   const knockerStore = useKnockerStore();
-  const { knockingCallSessionId } = storeToRefs(knockerStore);
-  const { cancelKnock } = knockerStore;
+  const { cancelKnock, checkIsKnockingCall } = knockerStore;
   const mediaStore = useMediaStore();
   const { isPoppedOut } = storeToRefs(mediaStore);
   const connectionStore = useConnectionStore();
@@ -31,7 +30,7 @@ export const useCallIdSubscribables = async (callId: string) => {
   onUnmounted(() => {
     // Popping out keeps a standalone call alive while the user navigates away; the PiP window owns the call surface.
     if (isPoppedOut.value) return;
-    if (!activeCallSessionId.value && knockingCallSessionId.value === callId) cancelKnock();
+    if (!activeCallSessionId.value && checkIsKnockingCall(callId)) cancelKnock();
     // A socket a knock opened has no joined call whose leave would close it
     if (!activeCallSessionId.value) closeCall();
     leaveCall();

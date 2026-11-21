@@ -146,4 +146,40 @@ describe(useKnockerStore, () => {
 
     expect(knockers.value.map(({ id }) => id)).toStrictEqual([first.id, second.id]);
   });
+
+  // The call's last participant leaving dismisses its knockers on the server, and tells only the knockers, so the lobby the
+  // Doorkeeper left still holds the knocker. A knock on the rejoined call shows itself and not that knocker
+  test("a rejoined lobby does not bring back a knocker it held before the doorkeeper left", () => {
+    expect.hasAssertions();
+
+    const knockerStore = useKnockerStore();
+    const { createKnocker, resetKnockerState } = knockerStore;
+    const { knockers } = storeToRefs(knockerStore);
+    createKnocker(callSessionId, createRow(first, 0));
+    resetKnockerState();
+    createKnocker(callSessionId, createRow(second, 0));
+
+    expect(knockers.value.map(({ id }) => id)).toStrictEqual([second.id]);
+  });
+
+  // The page that sent a knock cancels it when it leaves, and the server may answer after that. The answer finds the knock
+  // Cancelled, so the waiting screen does not show for it
+  test("a knock cancelled while the server has it does not show the waiting screen once it answers", async () => {
+    expect.hasAssertions();
+
+    const { promise: isRecorded, resolve } = Promise.withResolvers<void>();
+    trpcMsw.callSession.knocker.knockCall.mutation(async () => {
+      await isRecorded;
+    });
+    const knockerStore = useKnockerStore();
+    const { knockingCallSessionId } = storeToRefs(knockerStore);
+    const { cancelKnock, knockCall } = knockerStore;
+    const knock = knockCall(callId);
+    await flushPromises();
+    cancelKnock();
+    resolve();
+    await knock;
+
+    expect(knockingCallSessionId.value).toBe("");
+  });
 });

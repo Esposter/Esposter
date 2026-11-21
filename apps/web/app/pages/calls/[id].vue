@@ -37,7 +37,7 @@ watch(activeCallSessionId, async (newActiveCallSessionId) => {
     </Head>
     <div size-full ui-body>
       <MessageContentCallView v-if="activeCallSessionId" />
-      <MessageContentCallWaiting v-else-if="knockingCallSessionId" />
+      <MessageContentCallWaiting v-else-if="knockingCallSessionId === id" />
       <MessageContentCallPreJoin v-else :call-id="id" :is-creator="callSession.userId === session?.user.id" />
     </div>
   </NuxtLayout>
