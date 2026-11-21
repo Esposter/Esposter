@@ -2,10 +2,15 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createMockContext } from "#server/trpc/context.test";
+import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { categoryRouter } from "#server/trpc/routers/room/category";
-import { DatabaseEntityType, roomCategoriesInMessage } from "@esposter/db-schema";
+import { roomCategoryTable } from "#src/services/message/roomCategory/constants";
+import { getCreateRoomCategoryEntry } from "#src/services/message/roomCategory/getCreateRoomCategoryEntry";
+import { getDeleteRoomCategoryEntry } from "#src/services/message/roomCategory/getDeleteRoomCategoryEntry";
+import { getReorderRoomCategoriesEntry } from "#src/services/message/roomCategory/getReorderRoomCategoriesEntry";
+import { DatabaseEntityType, NO_ROW_VERSION, roomCategoriesInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -152,5 +157,68 @@ describe("categoryRouter", () => {
     expect(revivedRoomCategory.name).toBe(updatedName);
     expect(revivedRoomCategory.version).toBeGreaterThan(deletedRoomCategory.version);
     expect(takeOne(roomCategories).id).toBe(id);
+  });
+
+  // Each category write's optimistic entry shows every row its answer names, checked against the seeded state
+  test("the category create's entry covers the category row the server names", async () => {
+    expect.hasAssertions();
+
+    const id = v7();
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(categoryRouter)(context).createRoomCategory({ id, name }),
+      context: mockContext,
+      entry: getCreateRoomCategoryEntry({
+        createdAt: new Date(),
+        deletedAt: null,
+        id,
+        name,
+        position: 0,
+        updatedAt: new Date(),
+        userId: getMockSession().user.id,
+        version: NO_ROW_VERSION,
+      }),
+      path: "createRoomCategory",
+      tables: [roomCategoryTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the category delete's entry covers the category row the server names", async () => {
+    expect.hasAssertions();
+
+    const roomCategory = await roomCategoryCaller.createRoomCategory({ id: v7(), name });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(categoryRouter)(context).deleteRoomCategory(roomCategory.id),
+      context: mockContext,
+      entry: getDeleteRoomCategoryEntry(roomCategory.id, new Date()),
+      path: "deleteRoomCategory",
+      tables: [roomCategoryTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the category reorder's entry covers every category row the server names", async () => {
+    expect.hasAssertions();
+
+    const first = await roomCategoryCaller.createRoomCategory({ id: v7(), name });
+    const second = await roomCategoryCaller.createRoomCategory({ id: v7(), name: updatedName });
+    const updates = [
+      { id: first.id, position: 1 },
+      { id: second.id, position: 0 },
+    ];
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(categoryRouter)(context).reorderRoomCategories(updates),
+      context: mockContext,
+      entry: getReorderRoomCategoriesEntry(updates),
+      path: "reorderRoomCategories",
+      tables: [roomCategoryTable],
+    });
+
+    expect(named).toHaveLength(2);
+    expect(uncovered).toStrictEqual([]);
   });
 });

@@ -4,12 +4,20 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createMockOtherUserCaller, createMockUser } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { roleRouter } from "#server/trpc/routers/role";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { readRowVersionsHeader } from "#shared/services/realtime/readRowVersionsHeader";
-import { roomRoleTable } from "#src/services/message/role/constants";
+import { roleTables, roomRoleTable } from "#src/services/message/role/constants";
+import { getAssignRoomRoleEntry } from "#src/services/message/role/getAssignRoomRoleEntry";
+import { getCreateRoomRoleEntry } from "#src/services/message/role/getCreateRoomRoleEntry";
+import { getDeleteMemberPermissionOverrideEntry } from "#src/services/message/role/getDeleteMemberPermissionOverrideEntry";
+import { getDeleteRoomRoleEntry } from "#src/services/message/role/getDeleteRoomRoleEntry";
+import { getRevokeRoomRoleEntry } from "#src/services/message/role/getRevokeRoomRoleEntry";
+import { getUpdateRoomRoleEntry } from "#src/services/message/role/getUpdateRoomRoleEntry";
+import { getUpsertMemberPermissionOverrideEntry } from "#src/services/message/role/getUpsertMemberPermissionOverrideEntry";
 import { D1_MAX_BOUND_PARAMETERS } from "@esposter/db";
-import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
+import { DatabaseEntityType, NO_ROW_VERSION, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -492,5 +500,146 @@ describe("roleRouter", () => {
     const overrides = await roleCaller.readMemberPermissionOverrides({ roomId });
 
     expect(overrides.map(({ deletedAt }) => deletedAt !== null)).toStrictEqual([true]);
+  });
+
+  // Each role write's optimistic entry shows every row its answer names, checked against the seeded state: the entry the store
+  // Issues covers the header's rows, so a row it leaves out is a gap the cross-check reports
+  test("the role create's entry covers the role row the server names", async () => {
+    expect.hasAssertions();
+
+    const id = v7();
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(roleRouter)(context).createRole({ id, name, roomId }),
+      context: mockContext,
+      entry: getCreateRoomRoleEntry({
+        color: "",
+        createdAt: new Date(),
+        deletedAt: null,
+        id,
+        isEveryone: false,
+        name,
+        permissions: 0n,
+        position: 0,
+        roomId,
+        updatedAt: new Date(),
+        version: NO_ROW_VERSION,
+      }),
+      path: "createRole",
+      tables: roleTables,
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the role update's entry covers the role row the server names", async () => {
+    expect.hasAssertions();
+
+    const role = await roleCaller.createRole({ id: v7(), name, roomId });
+    const input = { id: role.id, name: updatedName, roomId };
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(roleRouter)(context).updateRole(input),
+      context: mockContext,
+      entry: getUpdateRoomRoleEntry(input),
+      path: "updateRole",
+      tables: roleTables,
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the role delete's entry covers the role row the server names", async () => {
+    expect.hasAssertions();
+
+    const role = await roleCaller.createRole({ id: v7(), name, roomId });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(roleRouter)(context).deleteRole({ id: role.id, roomId }),
+      context: mockContext,
+      entry: getDeleteRoomRoleEntry(role.id, new Date()),
+      path: "deleteRole",
+      tables: roleTables,
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the role assignment's entry covers the assignment row the server names", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    const role = await roleCaller.createRole({ id: v7(), name, roomId });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) =>
+        createCallerFactory(roleRouter)(context).assignRole({ roleId: role.id, roomId, userId: member.id }),
+      context: mockContext,
+      entry: getAssignRoomRoleEntry(roomId, member.id, role.id, new Date()),
+      path: "assignRole",
+      tables: roleTables,
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the role revocation's entry covers the assignment row the server names", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    const role = await roleCaller.createRole({ id: v7(), name, roomId });
+    await roleCaller.assignRole({ roleId: role.id, roomId, userId: member.id });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) =>
+        createCallerFactory(roleRouter)(context).revokeRole({ roleId: role.id, roomId, userId: member.id }),
+      context: mockContext,
+      entry: getRevokeRoomRoleEntry(roomId, member.id, role.id, new Date()),
+      path: "revokeRole",
+      tables: roleTables,
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the permission override's entry covers the override row the server names", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    const input = { allow: RoomPermission.ManageMessages, deny: 0n, inherit: 0n, roomId, userId: member.id };
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(roleRouter)(context).upsertMemberPermissionOverride(input),
+      context: mockContext,
+      entry: getUpsertMemberPermissionOverrideEntry(input, new Date()),
+      path: "upsertMemberPermissionOverride",
+      tables: roleTables,
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the permission override's removal entry covers the override row the server names", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await roleCaller.upsertMemberPermissionOverride({
+      allow: RoomPermission.ManageMessages,
+      deny: 0n,
+      inherit: 0n,
+      roomId,
+      userId: member.id,
+    });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) =>
+        createCallerFactory(roleRouter)(context).deleteMemberPermissionOverride({ roomId, userId: member.id }),
+      context: mockContext,
+      entry: getDeleteMemberPermissionOverrideEntry(roomId, member.id, new Date()),
+      path: "deleteMemberPermissionOverride",
+      tables: roleTables,
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 });

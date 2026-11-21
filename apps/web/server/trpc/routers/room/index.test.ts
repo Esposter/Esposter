@@ -17,6 +17,7 @@ import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { bookmarkRouter } from "#server/trpc/routers/bookmark";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
@@ -30,6 +31,8 @@ import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
+import { roomTable } from "#src/services/message/room/constants";
+import { getRoomPatchEntry } from "#src/services/message/room/getRoomPatchEntry";
 import { readAllResourcePages } from "#src/services/resource/readAllResourcePages";
 import { deleteDirectory } from "@esposter/db";
 import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
@@ -1383,5 +1386,23 @@ describe("roomRouter", () => {
       isAvailable: true,
       mark: { id: room.id, type: PageMarkType.Room },
     });
+  });
+
+  // The room update's optimistic entry shows every row its answer names, checked against the seeded state
+  test("the room update's entry covers the room row the server names", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newName = "newName";
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(roomRouter)(context).updateRoom({ id: newRoom.id, name: newName }),
+      context: mockContext,
+      entry: getRoomPatchEntry(newRoom.id, { name: newName }),
+      path: "updateRoom",
+      tables: [roomTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 });

@@ -22,6 +22,7 @@ import {
   getMockSession,
 } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { blockRouter } from "#server/trpc/routers/block";
 import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
@@ -32,6 +33,10 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
+import { userSettingsTable } from "#src/services/message/user/settings/constants";
+import { getUpdateUserSettingsEntry } from "#src/services/message/user/settings/getUpdateUserSettingsEntry";
+import { statusTable } from "#src/services/message/user/status/constants";
+import { getStatusEntry } from "#src/services/message/user/status/getStatusEntry";
 import { deleteDirectory } from "@esposter/db";
 import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
@@ -712,5 +717,39 @@ describe("userRouter", () => {
     await expect(caller.generateDataExportLink(dataExport.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, dataExport.id).message}]`,
     );
+  });
+
+  // Each settings and status write's optimistic entry shows every row its answer names. Neither table is tracked by the header,
+  // So the answer names no row and the entry is confirmed by the row the answer holds
+  test("the settings update's entry covers every row its answer names", async () => {
+    expect.hasAssertions();
+
+    const input = { isMuteOnJoin: true };
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(userRouter)(context).updateUserSettings(input),
+      context: mockContext,
+      entry: getUpdateUserSettingsEntry(userId, input),
+      path: "updateUserSettings",
+      tables: [userSettingsTable],
+    });
+
+    expect(named).toHaveLength(0);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the status write's entry covers every row its answer names", async () => {
+    expect.hasAssertions();
+
+    const input = { status: UserStatus.DoNotDisturb };
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(userRouter)(context).upsertStatus(input),
+      context: mockContext,
+      entry: getStatusEntry(userId, input),
+      path: "upsertStatus",
+      tables: [statusTable],
+    });
+
+    expect(named).toHaveLength(0);
+    expect(uncovered).toStrictEqual([]);
   });
 });

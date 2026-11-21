@@ -10,6 +10,7 @@ import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/re
 import { getDirectMessageParticipantKey } from "#server/services/room/directMessage/getDirectMessageParticipantKey";
 import { createMockAuthSession, createMockContext, createMockUser, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { blockRouter } from "#server/trpc/routers/block";
 import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { friendRouter } from "#server/trpc/routers/friend";
@@ -18,6 +19,8 @@ import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createD
 import { directMessageRouter } from "#server/trpc/routers/room/directMessage";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
+import { userToRoomTable } from "#src/services/message/userToRoom/constants";
+import { getUserToRoomPatchEntry } from "#src/services/message/userToRoom/getUserToRoomPatchEntry";
 import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
@@ -657,5 +660,22 @@ describe("directMessageRouter", () => {
     );
 
     expect(publishedMembershipTopics.some((topic) => listedTopics.has(topic))).toBe(true);
+  });
+
+  // The hide's optimistic entry shows the membership row its answer names, checked against the seeded state
+  test("the hide's entry covers the membership row the server names", async () => {
+    expect.hasAssertions();
+
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(directMessageRouter)(context).hideDirectMessage(directMessage.id),
+      context: mockContext,
+      entry: getUserToRoomPatchEntry(getMockSession().user.id, directMessage.id, { isHidden: true }),
+      path: "hideDirectMessage",
+      tables: [userToRoomTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 });

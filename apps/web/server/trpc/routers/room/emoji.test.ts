@@ -8,11 +8,14 @@ import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { emojiRouter } from "#server/trpc/routers/room/emoji";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
+import { roomEmojiTable } from "#src/services/message/room/overlay/constants";
+import { getRoomEmojiPatchEntry } from "#src/services/message/room/overlay/getRoomEmojiPatchEntry";
 import { getRowsPerStatement } from "@esposter/db";
 import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
@@ -332,5 +335,39 @@ describe("emojiRouter", () => {
 
     expect(roomEmojis).toHaveLength(1);
     expect(takeOne(roomEmojis).presignedUrl).toContain(getRoomEmojiBlobName(roomId, roomEmoji.id));
+  });
+
+  // Each emoji write's optimistic entry shows every row its answer names, checked against the seeded state
+  test("the emoji rename's entry covers the emoji row the server names", async () => {
+    expect.hasAssertions();
+
+    const roomEmoji = await createRoomEmoji();
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) =>
+        createCallerFactory(emojiRouter)(context).updateRoomEmoji({ id: roomEmoji.id, name: updatedName, roomId }),
+      context: mockContext,
+      entry: getRoomEmojiPatchEntry(roomEmoji.id, { name: updatedName }),
+      path: "updateRoomEmoji",
+      tables: [roomEmojiTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the emoji delete's entry covers the emoji row the server names", async () => {
+    expect.hasAssertions();
+
+    const roomEmoji = await createRoomEmoji();
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(emojiRouter)(context).deleteRoomEmoji({ id: roomEmoji.id, roomId }),
+      context: mockContext,
+      entry: getRoomEmojiPatchEntry(roomEmoji.id, { deletedAt: new Date() }),
+      path: "deleteRoomEmoji",
+      tables: [roomEmojiTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 });

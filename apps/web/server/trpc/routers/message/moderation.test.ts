@@ -16,6 +16,7 @@ import {
   getMockSession,
 } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { moderationRouter } from "#server/trpc/routers/message/moderation";
@@ -23,6 +24,8 @@ import { readRoomMembership, readRoomMembershipRows } from "#server/trpc/routers
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
+import { banTable } from "#src/services/message/user/ban/constants";
+import { getDeleteBanEntry } from "#src/services/message/user/ban/getDeleteBanEntry";
 import {
   AdminActionType,
   bansInMessage,
@@ -595,4 +598,22 @@ describe("moderationRouter", () => {
       );
     },
   );
+
+  // The unban's optimistic removal shows the ban row its answer names, checked against the seeded state
+  test("the unban's entry covers the ban row the server names", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(moderationRouter)(context).deleteBan({ roomId, userId: member.id }),
+      context: mockContext,
+      entry: getDeleteBanEntry(roomId, member.id, new Date()),
+      path: "deleteBan",
+      tables: [banTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
 });

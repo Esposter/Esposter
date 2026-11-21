@@ -5,9 +5,12 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { webhookRouter } from "#server/trpc/routers/webhook";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
+import { webhookTable } from "#src/services/message/room/overlay/constants";
+import { getWebhookPatchEntry } from "#src/services/message/room/overlay/getWebhookPatchEntry";
 import { appUsersInMessage, DatabaseEntityType, RoomPermission, webhooksInMessage } from "@esposter/db-schema";
 import { hashSecretToken, InvalidOperationError, Operation, SECRET_TOKEN_LENGTH, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -250,5 +253,39 @@ describe("webhookRouter", () => {
     await expect(
       nonMemberWebhookCaller.readAppUsers({ ids: [newWebhook.userId], roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  // Each webhook write's optimistic entry shows every row its answer names, checked against the seeded state
+  test("the webhook update's entry covers the webhook row the server names", async () => {
+    expect.hasAssertions();
+
+    const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
+    const input = { id: newWebhook.id, isActive: updatedIsActive, name: updatedName, roomId };
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(webhookRouter)(context).updateWebhook(input),
+      context: mockContext,
+      entry: getWebhookPatchEntry(newWebhook.id, { isActive: updatedIsActive, name: updatedName }),
+      path: "updateWebhook",
+      tables: [webhookTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the webhook delete's entry covers the webhook row the server names", async () => {
+    expect.hasAssertions();
+
+    const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(webhookRouter)(context).deleteWebhook({ id: newWebhook.id, roomId }),
+      context: mockContext,
+      entry: getWebhookPatchEntry(newWebhook.id, { deletedAt: new Date() }),
+      path: "deleteWebhook",
+      tables: [webhookTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 });

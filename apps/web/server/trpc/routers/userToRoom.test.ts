@@ -5,12 +5,16 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { messageRouter } from "#server/trpc/routers/message/index";
 import { roleRouter } from "#server/trpc/routers/role";
 import { categoryRouter } from "#server/trpc/routers/room/category";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { userToRoomRouter } from "#server/trpc/routers/userToRoom";
+import { getRenameMemberEntry } from "#src/services/message/member/getRenameMemberEntry";
+import { userToRoomTable } from "#src/services/message/userToRoom/constants";
+import { getUserToRoomPatchEntry } from "#src/services/message/userToRoom/getUserToRoomPatchEntry";
 import {
   DatabaseEntityType,
   NotificationType,
@@ -263,5 +267,43 @@ describe("userToRoomRouter", () => {
 
     await expect(readMemberCategoryId(firstMember, newRoom.id)).resolves.toStrictEqual(firstCategory.id);
     await expect(readMemberCategoryId(secondMember, newRoom.id)).resolves.toStrictEqual(secondCategory.id);
+  });
+
+  // Each membership write's optimistic entry shows every row its answer names, checked against the seeded state
+  test("the notification update's entry covers the membership row the server names", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const input = { notificationType: NotificationType.Never, roomId: newRoom.id };
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(userToRoomRouter)(context).updateUserToRoom(input),
+      context: mockContext,
+      entry: getUserToRoomPatchEntry(getMockSession().user.id, newRoom.id, {
+        notificationType: NotificationType.Never,
+      }),
+      path: "updateUserToRoom",
+      tables: [userToRoomTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the member rename's entry covers the membership row the server names", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    const input = { displayName, roomId: newRoom.id, targetUserId: member.id };
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(userToRoomRouter)(context).updateUserToRoom(input),
+      context: mockContext,
+      entry: getRenameMemberEntry(newRoom.id, member.id, displayName, member.name),
+      path: "updateUserToRoom",
+      tables: [userToRoomTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 });
