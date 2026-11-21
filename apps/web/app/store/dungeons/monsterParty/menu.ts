@@ -18,6 +18,7 @@ export const useMonsterPartyMenuStore = defineStore("dungeons/monsterParty/menu"
   const playerStore = usePlayerStore();
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const { monsterPartyOptionGrid } = monsterPartySceneStore;
+  const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
   const { previousSceneKey } = transitionFrom(SceneKey.MonsterParty);
   // Held by the store rather than at module scope, so each Pinia instance starts with its own cursor
   const monsterPartyMenuOptionGrid = markRaw(
@@ -70,7 +71,6 @@ export const useMonsterPartyMenuStore = defineStore("dungeons/monsterParty/menu"
           monsterPartyInfoPanelStore.infoDialogMessage.text = `Release ${monsterPartyOptionGrid.value.key}?`;
           break;
         case MenuOption.Summary: {
-          const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
           const { launchScene } = transitionFrom(scene.scene.key);
           monsterDetailsSceneStore.selectedMonster = monsterPartyOptionGrid.value;
           launchScene(scene, SceneKey.MonsterDetails);
