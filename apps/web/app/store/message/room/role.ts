@@ -13,7 +13,6 @@ import type {
   RoomMemberPermissionInMessage,
   RoomPermission,
   RoomRoleInMessage,
-  UserToRoomRoleInMessageWithRelations,
 } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
@@ -157,12 +156,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
   // Removal the read carries replaces the live copy the store held before
   const arriveRoomRoles = (roomRoles: RoomRoleInMessage[]) => {
     for (const roomRole of roomRoles) arrive(roomRoleTable, roomRole);
-  };
-  const arriveMemberRoles = (memberRoles: UserToRoomRoleInMessageWithRelations[]) => {
-    for (const { role, ...memberRole } of memberRoles) {
-      arrive(roomRoleTable, role);
-      arrive(userToRoomRoleTable, memberRole);
-    }
   };
   // The store's reads of a room are live: each room is one target of the store's own instance, so a write in that room
   // Re-reads the room's answer and the rooms do not supersede one another. A read its caller awaits still throws on
@@ -346,7 +339,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
     );
   };
   return {
-    arriveMemberRoles,
     arriveRoomRoles,
     assignRole,
     checkHasMyPermission,

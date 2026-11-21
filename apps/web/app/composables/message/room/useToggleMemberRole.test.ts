@@ -1,16 +1,28 @@
 // @vitest-environment nuxt
-import type { RoomRoleInMessage } from "@esposter/db-schema";
+import type { RoomRoleInMessage, UserToRoomRoleInMessageWithRelations } from "@esposter/db-schema";
 
 import { useToggleMemberRole } from "#src/composables/message/room/useToggleMemberRole";
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
+import { roomRoleTable, userToRoomRoleTable } from "#src/services/message/role/constants";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { pushRooms } from "#src/services/message/room/pushRooms.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
+import { useOverlayStore } from "#src/store/overlay";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
+
+// A member's assignments arrive as a read holds them: each one with the role it names, both at their versions
+const seedMemberRoles = (memberRoles: UserToRoomRoleInMessageWithRelations[]) => {
+  const overlayStore = useOverlayStore();
+  const { arrive } = overlayStore;
+  for (const { role, ...memberRole } of memberRoles) {
+    arrive(roomRoleTable, role);
+    arrive(userToRoomRoleTable, memberRole);
+  }
+};
 
 describe(useToggleMemberRole, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -56,8 +68,7 @@ describe(useToggleMemberRole, () => {
     });
     trpcMsw.role.assignRole.mutation(assignRole);
     trpcMsw.role.revokeRole.mutation(revokeRole);
-    const roleStore = useRoleStore();
-    roleStore.arriveMemberRoles(memberRoles.map((memberRole) => assignmentOf(memberRole)));
+    seedMemberRoles(memberRoles.map((memberRole) => assignmentOf(memberRole)));
     const { isManageable, toggleRole } = useToggleMemberRole(roomId, userId, toggledRole);
 
     expect(isManageable.value).toBe(false);
@@ -74,8 +85,7 @@ describe(useToggleMemberRole, () => {
     expect.hasAssertions();
 
     await readActor(5);
-    const roleStore = useRoleStore();
-    roleStore.arriveMemberRoles([assignmentOf(lowerRole)]);
+    seedMemberRoles([assignmentOf(lowerRole)]);
     const { isManageable } = useToggleMemberRole(roomId, userId, toggledRole);
 
     expect(isManageable.value).toBe(true);
