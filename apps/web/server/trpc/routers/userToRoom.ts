@@ -29,7 +29,7 @@ export const userToRoomRouter = router({
   // Offline across the removal drops the room by it. The rows are the caller's own alone, so there is no membership to assert
   readMyUsersToRooms: standardAuthedProcedure
     .input(readMyUsersToRoomsInputSchema)
-    .query<UserToRoomInMessage[]>(async ({ ctx, input }) =>
+    .query<UserToRoomInMessage[]>(({ ctx, input }) =>
       ctx.db
         .select()
         .from(usersToRoomsInMessage)
