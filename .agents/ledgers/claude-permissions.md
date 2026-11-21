@@ -5,4 +5,4 @@ The allow-only permission files — the trailing space-star form, colon sub-scri
 | Unit                          | Swept                 | Notes |
 | ----------------------------- | --------------------- | ----- |
 | `.agents/settings.local.json` | 2026-11-22 · Opus 5.5 |       |
-| `.agents/settings.json`       | —                     |       |
+| `.agents/settings.json`       | 2026-11-22 · Opus 5.5 |       |
