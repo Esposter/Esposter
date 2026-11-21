@@ -6,19 +6,35 @@ import { createSaveResourceContentInputSchema } from "#shared/models/db/resource
 import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { createSurveyResponseInputSchema } from "#shared/models/db/survey/CreateSurveyResponseInput";
 import { updateSurveyResponseInputSchema } from "#shared/models/db/survey/UpdateSurveyResponseInput";
-import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
+import {
+  defineAchievementDefinition,
+  defineTriggerAchievementDefinition,
+} from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceType, SurveyAchievementName } from "@esposter/db-schema";
 
+const defineCreateSurveyResponseAchievementDefinition = defineTriggerAchievementDefinition(
+  "survey.createSurveyResponse",
+  createSurveyResponseInputSchema,
+);
+
+const definePublishResourceAchievementDefinition = defineTriggerAchievementDefinition(
+  "survey.publishResource",
+  resourceIdInputSchema,
+);
+
+const defineCreateResourceAchievementDefinition = defineTriggerAchievementDefinition(
+  "survey.createResource",
+  createResourceInputSchema,
+);
+
 export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Survey, {
-  [SurveyAchievementName.DataCollector]: defineAchievementDefinition({
+  [SurveyAchievementName.DataCollector]: defineCreateSurveyResponseAchievementDefinition({
     amount: 100,
     description: "Receive 100 survey responses",
     icon: "i-mdi:database",
-    inputSchema: createSurveyResponseInputSchema,
     points: 150,
-    triggerPath: "survey.createSurveyResponse",
   }),
   [SurveyAchievementName.Modeler]: defineAchievementDefinition({
     amount: 1,
@@ -28,21 +44,17 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     points: 15,
     triggerPath: "survey.saveResourceContent",
   }),
-  [SurveyAchievementName.Publisher]: defineAchievementDefinition({
+  [SurveyAchievementName.Publisher]: definePublishResourceAchievementDefinition({
     amount: 1,
     description: "Publish a survey",
     icon: "i-mdi:publish",
-    inputSchema: resourceIdInputSchema,
     points: 25,
-    triggerPath: "survey.publishResource",
   }),
-  [SurveyAchievementName.Respondent]: defineAchievementDefinition({
+  [SurveyAchievementName.Respondent]: defineCreateSurveyResponseAchievementDefinition({
     amount: 1,
     description: "Respond to a survey",
     icon: "i-mdi:clipboard-check",
-    inputSchema: createSurveyResponseInputSchema,
     points: 10,
-    triggerPath: "survey.createSurveyResponse",
   }),
   [SurveyAchievementName.ResponseEditor]: defineAchievementDefinition({
     amount: 1,
@@ -68,28 +80,22 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     points: 5,
     triggerPath: "survey.updateResource",
   }),
-  [SurveyAchievementName.SurveyGuru]: defineAchievementDefinition({
+  [SurveyAchievementName.SurveyGuru]: definePublishResourceAchievementDefinition({
     amount: 50,
     description: "Publish 50 surveys",
     icon: "i-mdi:trophy-variant",
-    inputSchema: resourceIdInputSchema,
     points: 200,
-    triggerPath: "survey.publishResource",
   }),
-  [SurveyAchievementName.Surveyor]: defineAchievementDefinition({
+  [SurveyAchievementName.Surveyor]: defineCreateResourceAchievementDefinition({
     amount: 1,
     description: "Create a survey",
     icon: "i-mdi:poll",
-    inputSchema: createResourceInputSchema,
     points: 15,
-    triggerPath: "survey.createResource",
   }),
-  [SurveyAchievementName.SurveySays]: defineAchievementDefinition({
+  [SurveyAchievementName.SurveySays]: defineCreateResourceAchievementDefinition({
     amount: 10,
     description: "Create 10 surveys",
     icon: "i-mdi:clipboard-list",
-    inputSchema: createResourceInputSchema,
     points: 50,
-    triggerPath: "survey.createResource",
   }),
 });

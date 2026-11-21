@@ -10,27 +10,36 @@ import { isAtLeast } from "#shared/services/achievement/conditions/isAtLeast";
 import { isLessThan } from "#shared/services/achievement/conditions/isLessThan";
 import { length } from "#shared/services/achievement/conditions/length";
 import { property } from "#shared/services/achievement/conditions/property";
-import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
+import {
+  defineAchievementDefinition,
+  defineTriggerAchievementDefinition,
+} from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { PostAchievementName } from "@esposter/db-schema";
 
+const defineCreateCommentAchievementDefinition = defineTriggerAchievementDefinition(
+  "post.createComment",
+  createCommentInputSchema,
+);
+
+const defineCreatePostAchievementDefinition = defineTriggerAchievementDefinition(
+  "post.createPost",
+  createPostInputSchema,
+);
+
 export const PostAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Post, {
-  [PostAchievementName.BriefComment]: defineAchievementDefinition({
+  [PostAchievementName.BriefComment]: defineCreateCommentAchievementDefinition({
     amount: 50,
     condition: property("description", length(isLessThan(50))),
     description: "Create 50 comments under 50 characters",
     icon: "i-mdi:comment-flash",
-    inputSchema: createCommentInputSchema,
     points: 40,
-    triggerPath: "post.createComment",
   }),
-  [PostAchievementName.Commentator]: defineAchievementDefinition({
+  [PostAchievementName.Commentator]: defineCreateCommentAchievementDefinition({
     amount: 1,
     description: "Comment on a post",
     icon: "i-mdi:comment-plus",
-    inputSchema: createCommentInputSchema,
     points: 10,
-    triggerPath: "post.createComment",
   }),
   [PostAchievementName.CommentDeleter]: defineAchievementDefinition({
     amount: 1,
@@ -48,23 +57,19 @@ export const PostAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
     points: 5,
     triggerPath: "post.updateComment",
   }),
-  [PostAchievementName.DetailedPost]: defineAchievementDefinition({
+  [PostAchievementName.DetailedPost]: defineCreatePostAchievementDefinition({
     amount: 1,
     condition: property("description", length(isAtLeast(1000))),
     description: "Create a post with 1000-4999 characters",
     icon: "i-mdi:text-box",
-    inputSchema: createPostInputSchema,
     points: 30,
-    triggerPath: "post.createPost",
   }),
-  [PostAchievementName.Novelist]: defineAchievementDefinition({
+  [PostAchievementName.Novelist]: defineCreatePostAchievementDefinition({
     amount: 1,
     condition: property("description", length(isAtLeast(5000))),
     description: "Create a post with 5000+ characters",
     icon: "i-mdi:book-open-page-variant",
-    inputSchema: createPostInputSchema,
     points: 50,
-    triggerPath: "post.createPost",
   }),
   [PostAchievementName.PostDeleter]: defineAchievementDefinition({
     amount: 1,
@@ -82,20 +87,16 @@ export const PostAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
     points: 5,
     triggerPath: "post.updatePost",
   }),
-  [PostAchievementName.PosterChild]: defineAchievementDefinition({
+  [PostAchievementName.PosterChild]: defineCreatePostAchievementDefinition({
     amount: 1,
     description: "Create a post",
     icon: "i-mdi:post",
-    inputSchema: createPostInputSchema,
     points: 10,
-    triggerPath: "post.createPost",
   }),
-  [PostAchievementName.ProlificPoster]: defineAchievementDefinition({
+  [PostAchievementName.ProlificPoster]: defineCreatePostAchievementDefinition({
     amount: 25,
     description: "Create 25 posts",
     icon: "i-mdi:magnify",
-    inputSchema: createPostInputSchema,
     points: 35,
-    triggerPath: "post.createPost",
   }),
 });
