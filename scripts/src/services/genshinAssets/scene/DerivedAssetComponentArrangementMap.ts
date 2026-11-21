@@ -1,7 +1,4 @@
-import type { ArrangementFamily } from "#src/models/genshinAssets/scene/ArrangementFamily";
-import type { ArrangementRatio } from "#src/models/genshinAssets/scene/ArrangementRatio";
-import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
-import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
+import type { ComponentArrangement } from "#src/models/genshinAssets/scene/ComponentArrangement";
 import type { TowerPlacement } from "#src/models/genshinAssets/shared/TowerPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 
@@ -17,18 +14,8 @@ import { LOGIN_DOOR_MESH } from "#src/services/genshinAssets/shared/constants";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { Quaternion, Vector3 } from "three";
 
-interface ComponentArrangement {
-  explainedOffsets: Record<
-    string,
-    (placements: readonly AssetPlacement[], clips: readonly DecodedClip[]) => [number, number]
-  >;
-  families: ArrangementFamily[];
-  ratios: Record<string, ArrangementRatio>;
-}
-
 // The arrangement of a component with no parts laid out in a witness, one object every such component refers to
 const EMPTY_ARRANGEMENT: ComponentArrangement = { explainedOffsets: {}, families: [], ratios: {} };
-
 // Each component's arrangement: the ratios its references show between parts that meet, its fitted families, each
 // Beside the exports' objects it stands for, composed as the family stands its parts, and how far across and up the
 // Game's own data stands each family of the witness off its laid-out place at run time, a family not named standing
