@@ -1,50 +1,16 @@
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
-import type { Entry } from "#src/models/shared/overlay/Entry";
 import type { Page } from "@esposter/db-schema";
 
+import { reminderTable, scheduledMessageTable } from "#src/services/message/scheduledMessageJob/constants";
+import { getReminderRow } from "#src/services/message/scheduledMessageJob/getReminderRow";
+import { getScheduledMessageRow } from "#src/services/message/scheduledMessageJob/getScheduledMessageRow";
+import { getTombstoneEntry } from "#src/services/message/scheduledMessageJob/getTombstoneEntry";
 import { createSingleFlight } from "#src/services/shared/createSingleFlight";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
-import { createTable } from "#src/services/shared/overlay/createTable";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
-import { remindersInUser, ScheduledMessageJobType, scheduledMessagesInRoom } from "@esposter/db-schema";
+import { ScheduledMessageJobType } from "@esposter/db-schema";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
-
-// A reminder is held as the row its person holds and a scheduled message as the row its room holds, so a cancel or a send
-// Leaves that row a tombstone the list reads back
-const reminderTable = createTable(remindersInUser);
-const scheduledMessageTable = createTable(scheduledMessagesInRoom);
-
-// The fields each table's row holds for a job, without the version or deletion each write sets over it
-type JobPayload<TType extends ScheduledMessageJobWithRoom["payload"]["type"]> = Extract<
-  ScheduledMessageJobWithRoom["payload"],
-  { type: TType }
->;
-const getReminderRow = (
-  job: ScheduledMessageJobWithRoom,
-  { text }: JobPayload<typeof ScheduledMessageJobType.Reminder>,
-) => ({ id: job.id, roomId: job.roomId, runAt: job.runAt, text });
-const getScheduledMessageRow = (
-  job: ScheduledMessageJobWithRoom,
-  { message, replyToId }: JobPayload<typeof ScheduledMessageJobType.ScheduledMessage>,
-  sessionUserId: string,
-) => ({ id: job.id, message, replyToId, runAt: job.runAt, userId: sessionUserId });
-
-// The job's row as a tombstone, drawn at once: a cancel and a send both end the job the same way. It is built from the job
-// The list holds, so it needs no row arrived first
-const getTombstoneEntry =
-  (job: ScheduledMessageJobWithRoom, sessionUserId: string, deletedAt: Date): Entry =>
-  (view) => {
-    if (job.payload.type === ScheduledMessageJobType.Reminder) {
-      view.set(reminderTable, [job.id], { ...getReminderRow(job, job.payload), deletedAt });
-      return;
-    }
-
-    view.set(scheduledMessageTable, [job.id], {
-      ...getScheduledMessageRow(job, job.payload, sessionUserId),
-      deletedAt,
-    });
-  };
 
 export const useScheduledMessageJobStore = defineStore("message/scheduledMessageJob", () => {
   const { $trpc } = useNuxtApp();

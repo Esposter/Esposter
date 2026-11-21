@@ -1,28 +1,18 @@
 import type { DeleteBanInput } from "#shared/models/db/moderation/DeleteBanInput";
 import type { BanInRoom } from "#shared/models/db/room/BanInRoom";
-import type { Entry } from "#src/models/shared/overlay/Entry";
-import type { Table } from "#src/models/shared/overlay/Table";
 import type { Page } from "@esposter/db-schema";
 
+import { banTable } from "#src/services/message/user/ban/constants";
+import { getDeleteBanEntry } from "#src/services/message/user/ban/getDeleteBanEntry";
 import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
-import { createTable } from "#src/services/shared/overlay/createTable";
-import { getHeldRowEntry } from "#src/services/shared/overlay/getHeldRowEntry";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useOverlayStore } from "#src/store/overlay";
-import { bansInMessage } from "@esposter/db-schema";
-
-// A row carries its banned user's name in the room, which is the name the panel shows, so the table holds the whole read row
-const banTable: Table<BanInRoom, typeof bansInMessage> = createTable(bansInMessage);
 
 // A list names each of its rows by the room and the user it bans, and the rows themselves are the overlay's
 type BanKey = Pick<BanInRoom, "roomId" | "userId">;
-
-// The ban as its unban leaves it: removed at once, as the tombstone the server's answer confirms
-const getDeleteBanEntry = (roomId: BanKey["roomId"], userId: BanKey["userId"], deletedAt: Date): Entry =>
-  getHeldRowEntry(banTable, [roomId, userId], (ban) => ({ ...ban, deletedAt }));
 
 export const useBanStore = defineStore("message/user/ban", () => {
   const { $trpc } = useNuxtApp();

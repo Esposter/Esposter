@@ -1,22 +1,12 @@
 import type { UpdateUserSettingsInput } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
-import type { Entry } from "#src/models/shared/overlay/Entry";
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
+import { userSettingsTable } from "#src/services/message/user/settings/constants";
+import { getUpdateUserSettingsEntry } from "#src/services/message/user/settings/getUpdateUserSettingsEntry";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
-import { createTable } from "#src/services/shared/overlay/createTable";
-import { getHeldRowEntry } from "#src/services/shared/overlay/getHeldRowEntry";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
-import { userSettingsInMessage } from "@esposter/db-schema";
-import { omitUndefined } from "@esposter/shared";
-
-const userSettingsTable = createTable(userSettingsInMessage);
-
-// The record the write leaves at once: the fields it names, over the settings held for the user. A record the user does
-// Not hold yet has nothing to change, so the entry shows nothing for it
-const getUpdateUserSettingsEntry = (userId: string, input: UpdateUserSettingsInput): Entry =>
-  getHeldRowEntry(userSettingsTable, [userId], (userSettingsRow) => ({ ...userSettingsRow, ...omitUndefined(input) }));
 
 export const useUserSettingsStore = defineStore("message/user/settings", () => {
   const { $trpc } = useNuxtApp();
