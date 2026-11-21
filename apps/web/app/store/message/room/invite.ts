@@ -6,6 +6,7 @@ import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#s
 import { getInviteLink } from "#src/services/message/room/invite/getInviteLink";
 import { inviteCreateHooks } from "#src/services/message/room/invite/inviteCreateHooks";
 import { inviteTable } from "#src/services/message/room/overlay/constants";
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useUserStore } from "#src/store/message/user/index";
@@ -28,8 +29,7 @@ export const useInviteStore = defineStore("message/room/invite", () => {
       new Map<RoomInMessage["id"], InviteInMessage>(
         inviteRows.value
           .filter(
-            (invite): invite is InviteInMessage =>
-              invite.userId === sessionUserId.value && invite.deletedAt === null && invite.version !== undefined,
+            (invite): invite is InviteInMessage => invite.userId === sessionUserId.value && checkIsVersioned(invite),
           )
           .map((invite) => [invite.roomId, invite]),
       ),

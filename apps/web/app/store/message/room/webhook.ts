@@ -12,6 +12,7 @@ import type { Except } from "type-fest";
 
 import { webhookTable } from "#src/services/message/room/overlay/constants";
 import { getWebhookPatchEntry } from "#src/services/message/room/overlay/getWebhookPatchEntry";
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -28,13 +29,13 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const overlayStore = useOverlayStore();
   const { view, writeAwaited, writeOptimistic } = overlayStore;
   const webhookRows = view(webhookTable);
-  // The room the screen is scoped to, with its live webhooks, newest first as the server lists them. A deleted webhook
-  // Stays held as a tombstone, so it is left out here
+  // The room the screen is scoped to, with its live webhooks, newest first as the server lists them. The view leaves a
+  // Deleted webhook's tombstone out
   const items = computed(() =>
     webhookRows.value
       .filter(
         (webhook): webhook is PublicWebhookInMessage =>
-          webhook.roomId === roomStore.scopedRoomId && webhook.deletedAt === null && webhook.version !== undefined,
+          webhook.roomId === roomStore.scopedRoomId && checkIsVersioned(webhook),
       )
       .toSorted((firstWebhook, secondWebhook) => secondWebhook.id.localeCompare(firstWebhook.id)),
   );

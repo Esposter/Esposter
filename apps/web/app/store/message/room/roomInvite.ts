@@ -5,6 +5,7 @@ import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteU
 import { inviteCreateHooks } from "#src/services/message/room/invite/inviteCreateHooks";
 import { inviteTable } from "#src/services/message/room/overlay/constants";
 import { getInvitePatchEntry } from "#src/services/message/room/overlay/getInvitePatchEntry";
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useUserStore } from "#src/store/message/user/index";
@@ -23,13 +24,13 @@ export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
   const { storeUsers } = userStore;
   // Keyed by room: a read for the room the reader just left is filed under it rather than over the list on screen
   const { getSlice, getSliceOperationData } = useCursorPaginationDataMap<InviteKey>();
-  // The rows the keys name, with each creator's user. A tombstone is held and left out here, and so is a link that has
-  // Lapsed, as the read that carried it did before the overlay
+  // The rows the keys name, with each creator's user. The view leaves a tombstone out, and so is a link that has lapsed,
+  // As the read that carried it did before the overlay
   const toListedInvites = (keys: readonly InviteKey[]) =>
     keys.flatMap((id) => {
-      const invite = inviteRows.value.find((row): row is InviteInMessage => row.id === id && row.version !== undefined);
+      const invite = inviteRows.value.find((row): row is InviteInMessage => row.id === id && checkIsVersioned(row));
       const user = invite ? userStore.userMap.get(invite.userId) : undefined;
-      return invite && user && !invite.deletedAt && checkIsInviteUsable(invite) ? [{ ...invite, user }] : [];
+      return invite && user && checkIsInviteUsable(invite) ? [{ ...invite, user }] : [];
     });
   const getInviteItems = (roomId: RoomInMessage["id"]) =>
     computed(() => toListedInvites(getSliceOperationData(roomId).items.value));

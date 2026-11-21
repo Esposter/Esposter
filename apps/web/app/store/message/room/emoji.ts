@@ -10,6 +10,7 @@ import { getSingleFilePresignedUrlEntities } from "#src/services/file/getSingleF
 import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
 import { roomEmojiTable } from "#src/services/message/room/overlay/constants";
 import { getRoomEmojiPatchEntry } from "#src/services/message/room/overlay/getRoomEmojiPatchEntry";
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -22,11 +23,11 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   const overlayStore = useOverlayStore();
   const { view, writeAwaited, writeOptimistic } = overlayStore;
   const roomEmojiRows = view(roomEmojiTable);
-  // The room the screen is scoped to, with its live emoji. A deleted emoji stays held as a tombstone, so it is left out here
+  // The room the screen is scoped to, with its live emoji. The view leaves a deleted emoji's tombstone out
   const items = computed(() =>
     roomEmojiRows.value.filter(
       (roomEmoji): roomEmoji is RoomEmojiWithPresignedUrl =>
-        roomEmoji.roomId === roomStore.scopedRoomId && roomEmoji.deletedAt === null && roomEmoji.version !== undefined,
+        roomEmoji.roomId === roomStore.scopedRoomId && checkIsVersioned(roomEmoji),
     ),
   );
   // What every picking surface consumes. The name is the slug: it is already drawn from the dataset's slug
