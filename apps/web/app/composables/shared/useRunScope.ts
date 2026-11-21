@@ -12,7 +12,7 @@ export const useRunScope = () => {
   onScopeDispose(() => {
     current?.abort();
   });
-  const run = <TResult>(
+  const run = async <TResult>(
     task: (signal: AbortSignal) => Promise<TResult>,
     commit: (result: TResult) => Promisable<void>,
     release: (result: TResult) => void = noop,
@@ -20,7 +20,7 @@ export const useRunScope = () => {
     current?.abort();
     const controller = new AbortController();
     current = controller;
-    return getResultAsync(() => task(controller.signal)).match(
+    await getResultAsync(() => task(controller.signal)).match(
       async (result) => {
         const previous = applying;
         const { promise: settled, resolve: settle } = Promise.withResolvers<void>();

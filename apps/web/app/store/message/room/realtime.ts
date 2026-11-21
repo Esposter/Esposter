@@ -274,7 +274,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     else await activeMeeting.self.disableScreenShare();
   };
   // Applies a pick's change to the meeting's video. It is the pick's commit, and the run scope holds the next commit until
-  // this one settles, so each remove-and-add completes before the next starts and one pick never composites over another.
+  // This one settles, so each remove-and-add completes before the next starts and one pick never composites over another.
   // `onApplied` runs once the video has taken the change, so a background the video refused is never saved. A failure alerts
   const applyVirtualBackgroundChange = (
     meeting: RealtimeKitClient,
@@ -328,18 +328,14 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   const commitVirtualBackgroundPick = (
     pick: undefined | VirtualBackgroundPick,
     onApplied: () => void,
-  ): Promise<void> | undefined => {
-    if (!pick) {
+  ): Promise<void> => {
+    if (!pick) onApplied();
+    else if (pick.meeting === activeMeeting) {
+      if (pick.createdTransformer) videoBackgroundTransformer = pick.createdTransformer;
+      if (pick.videoChange) return applyVirtualBackgroundChange(pick.meeting, pick.videoChange, onApplied);
       onApplied();
-      return;
-    } else if (pick.meeting !== activeMeeting) {
-      releaseVirtualBackgroundPick(pick);
-      return;
-    }
-
-    if (pick.createdTransformer) videoBackgroundTransformer = pick.createdTransformer;
-    if (pick.videoChange) return applyVirtualBackgroundChange(pick.meeting, pick.videoChange, onApplied);
-    onApplied();
+    } else releaseVirtualBackgroundPick(pick);
+    return Promise.resolve();
   };
   // Clicking through the background picker means only the last pick matters, so each pick is a run in one scope: a later
   // Pick aborts this one, and only the newest pick commits. The pick is drawn as it is made, and a pipeline that fails
