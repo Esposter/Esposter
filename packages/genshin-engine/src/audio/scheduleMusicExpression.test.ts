@@ -11,7 +11,7 @@ describe(scheduleMusicExpression, () => {
     expect.hasAssertions();
 
     const gain = createGain();
-    scheduleMusicExpression(gain as unknown as AudioParam, [20], 1);
+    scheduleMusicExpression(gain, [20], 1);
 
     expect(gain.setValueAtTime).toHaveBeenCalledExactlyOnceWith(10, 1);
     expect(gain.exponentialRampToValueAtTime).not.toHaveBeenCalled();
@@ -21,7 +21,7 @@ describe(scheduleMusicExpression, () => {
     expect.hasAssertions();
 
     const gain = createGain();
-    scheduleMusicExpression(gain as unknown as AudioParam, [0, 20], 0);
+    scheduleMusicExpression(gain, [0, 20], 0);
 
     expect(gain.setValueAtTime.mock.calls).toStrictEqual([
       [1, 0],

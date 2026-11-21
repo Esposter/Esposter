@@ -5,7 +5,11 @@ const toAmplitude = (gain: number): number => 10 ** (gain / 20);
 // To that window's centre, then an exponential ramp from each centre to the next, which moves evenly in decibels, and
 // The last window's gain held past its centre. A segment with no expression plays at unity, and one of a single window
 // Holds it without an event past its start, so a segment shorter than half a window leaves the next one's alone
-export const scheduleMusicExpression = (gain: AudioParam, expression: number[], start: number): void => {
+export const scheduleMusicExpression = (
+  gain: Pick<AudioParam, "exponentialRampToValueAtTime" | "setValueAtTime">,
+  expression: number[],
+  start: number,
+): void => {
   const [first = 0, ...rest] = expression;
   gain.setValueAtTime(toAmplitude(first), start);
   if (rest.length === 0) return;

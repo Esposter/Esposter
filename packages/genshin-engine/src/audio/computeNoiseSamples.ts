@@ -13,13 +13,14 @@ export const computeNoiseSamples = (noiseBands: readonly number[], sampleRate: n
   const imaginary = new Float64Array(MUSIC_NOISE_LENGTH);
   for (let band = 0; band < noiseBands.length; band++) {
     const level = noiseBands[band] ?? 0;
-    const centre = MUSIC_NOISE_BAND_CENTRES[band] ?? sampleRate;
+    const centre = MUSIC_NOISE_BAND_CENTRES[band];
+    if (level <= 0 || centre === undefined) continue;
     const lowBin = Math.max(Math.ceil(((centre / Math.SQRT2) * MUSIC_NOISE_LENGTH) / sampleRate), 1);
     const highBin = Math.min(
       Math.floor((centre * Math.SQRT2 * MUSIC_NOISE_LENGTH) / sampleRate),
       MUSIC_NOISE_LENGTH / 2 - 1,
     );
-    if (level <= 0 || lowBin > highBin) continue;
+    if (lowBin > highBin) continue;
     const amplitude = level / Math.sqrt(2 * (highBin - lowBin + 1));
     for (let bin = lowBin; bin <= highBin; bin++) {
       const hash = Math.sin(bin * 12.9898 + band * 78.233) * 43_758.5453;

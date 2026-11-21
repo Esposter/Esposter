@@ -7,7 +7,7 @@ import { transformFourier } from "#src/audio/transformFourier";
 // The noise plays in frames a quarter of a frame apart, where a Hann window's squares sum to one and a half
 const HOP_SHARE = 4;
 const WINDOW_SQUARES_PER_HOP = 1.5;
-const window = Float64Array.from(
+const hannWindow = Float64Array.from(
   { length: SOUND_EFFECT_FRAME_LENGTH },
   (_value, index) => 0.5 - 0.5 * Math.cos((2 * Math.PI * index) / SOUND_EFFECT_FRAME_LENGTH),
 );
@@ -55,7 +55,7 @@ const computeSoundEffectNoise = (
     transformFourier(real, imaginary);
     for (let index = 0; index < SOUND_EFFECT_FRAME_LENGTH; index++) {
       const sample = start + index;
-      if (sample >= 0) output[sample] = (output[sample] ?? 0) + (real[index] ?? 0) * (window[index] ?? 0);
+      if (sample >= 0) output[sample] = (output[sample] ?? 0) + (real[index] ?? 0) * (hannWindow[index] ?? 0);
     }
   }
   return output.subarray(0, length);

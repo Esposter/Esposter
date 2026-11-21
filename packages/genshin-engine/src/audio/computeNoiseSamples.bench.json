@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/audio/computeNoiseSamples.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 23.10291659999998,
+              "name": "silent",
+              "p99": 45.69720822000007,
+              "rme": 35.17717036730956,
+              "sampleCount": 10
+            },
+            {
+              "mean": 34.75043329999996,
+              "name": "lit",
+              "p99": 64.37388375000013,
+              "rme": 38.89786869015852,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeNoiseSamples > 1 bands"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 44.26194590000005,
+              "name": "silent",
+              "p99": 83.79993697000027,
+              "rme": 37.76594496343428,
+              "sampleCount": 10
+            },
+            {
+              "mean": 63.563245900000084,
+              "name": "lit",
+              "p99": 222.58792803000006,
+              "rme": 71.73365198076273,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeNoiseSamples > 8 bands"
+        }
+      ]
+    }
+  ]
+}

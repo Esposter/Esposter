@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/audio/computeSoundEffectSamples.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 84.31603729999998,
+              "name": "silent",
+              "p99": 230.90325184000005,
+              "rme": 62.11796985068446,
+              "sampleCount": 10
+            },
+            {
+              "mean": 214.11773319999998,
+              "name": "lit",
+              "p99": 348.0609449999999,
+              "rme": 33.43082774764247,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeSoundEffectSamples > 4 frames"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 249.59327499999927,
+              "name": "silent",
+              "p99": 408.09186643999936,
+              "rme": 32.42025666006556,
+              "sampleCount": 10
+            },
+            {
+              "mean": 293.1440666000006,
+              "name": "lit",
+              "p99": 411.8957112200004,
+              "rme": 15.698611933302741,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeSoundEffectSamples > 32 frames"
+        }
+      ]
+    }
+  ]
+}
