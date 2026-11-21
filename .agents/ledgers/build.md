@@ -2,17 +2,17 @@
 
 Each package's tsdown configuration, tsconfig and manifest placement — externals, `sideEffects`, `onlyImport`, and what a manifest lists.
 
-| Unit                                                                                                       | Swept | Notes |
-| ---------------------------------------------------------------------------------------------------------- | ----- | ----- |
-| `packages/configuration` — the factories                                                                   | —     |       |
-| `packages/shared`, `packages/shared-node`                                                                  | —     |       |
-| `packages/db-schema`, `packages/db`, `packages/db-mock`                                                    | —     |       |
-| `packages/keyframe-store`, `packages/parse-tmx`                                                            | —     |       |
-| `packages/vue-phaserjs`                                                                                    | —     |       |
-| `packages/genshin-persona`                                                                                 | —     |       |
-| `apps/jobs`, `apps/realtime`, `apps/infra`                                                                 | —     |       |
-| `apps/web` — manifest and tsconfig                                                                         | —     |       |
-| `scripts` and the root manifest and tsconfig                                                               | —     |       |
-| `packages/genshin-engine`, `packages/genshin-world`, `packages/genshin-interface`, `packages/genshin-text` | —     |       |
-| `packages/pitch-transcription`, `packages/trpc-msw`, `packages/trpc-nuxt-module`                           | —     |       |
-| `packages/genshin-mods`, `packages/follow-ups`                                                             | —     |       |
+| Unit                                                                                                       | Swept                 | Notes |
+| ---------------------------------------------------------------------------------------------------------- | --------------------- | ----- |
+| `packages/configuration` — the factories                                                                   | 2026-11-22 · Opus 5.5 |       |
+| `packages/shared`, `packages/shared-node`                                                                  | 2026-11-22 · Opus 5.5 |       |
+| `packages/db-schema`, `packages/db`, `packages/db-mock`                                                    | 2026-11-22 · Opus 5.5 |       |
+| `packages/keyframe-store`, `packages/parse-tmx`                                                            | 2026-11-22 · Opus 5.5 |       |
+| `packages/vue-phaserjs`                                                                                    | 2026-11-22 · Opus 5.5 |       |
+| `packages/genshin-persona`                                                                                 | 2026-11-22 · Opus 5.5 |       |
+| `apps/jobs`, `apps/realtime`, `apps/infra`                                                                 | 2026-11-22 · Opus 5.5 |       |
+| `apps/web` — manifest and tsconfig                                                                         | 2026-11-22 · Opus 5.5 |       |
+| `scripts` and the root manifest and tsconfig                                                               | 2026-11-22 · Opus 5.5 |       |
+| `packages/genshin-engine`, `packages/genshin-world`, `packages/genshin-interface`, `packages/genshin-text` | 2026-11-22 · Opus 5.5 |       |
+| `packages/pitch-transcription`, `packages/trpc-msw`, `packages/trpc-nuxt-module`                           | 2026-11-22 · Opus 5.5 |       |
+| `packages/genshin-mods`, `packages/follow-ups`                                                             | 2026-11-22 · Opus 5.5 |       |
