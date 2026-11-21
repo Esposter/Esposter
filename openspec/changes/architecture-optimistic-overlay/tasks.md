@@ -55,7 +55,7 @@ Ordered by dependency: the primitive first, then the schema the pilot needs, the
 
 ## 6. Enforcers
 
-- [ ] 6.1 Lint selector: an entry that iterates the keyed view or assigns a ref fails lint. Verified: a fixture in the eslint fixture suite, written first and seen failing, then the selector passes it.
+- [x] 6.1 Lint selector: an entry that iterates the keyed view or assigns a ref fails lint. Verified: a fixture in the eslint fixture suite, written first and seen failing, then the selector passes it. Done: "An optimistic entry never iterates its view or assigns a ref", the selector in `restrictedOverlaySyntaxes.js`, proved by the fixtures in `restrictedOverlaySyntaxes.test.ts`, seven of which failed against the empty list before the selector.
 - [ ] 6.2 Wake check cross-check: each optimistic write's touched keys cover the rows its recorded write set names, run against the state its server test seeds. A gap is a finding that the entry does not show a changed row. Verified: a fixture entry that omits a written row fails the wake check, written first and seen failing.
 
 ## 7. Specs and skills

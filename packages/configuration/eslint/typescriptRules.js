@@ -1,5 +1,6 @@
 import restrictedDeleteSyntaxes from "@esposter/configuration/eslint/restrictedDeleteSyntaxes.js";
 import restrictedImportSyntaxes from "@esposter/configuration/eslint/restrictedImportSyntaxes.js";
+import restrictedOverlaySyntaxes from "@esposter/configuration/eslint/restrictedOverlaySyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 
 // The map-naming selector reads these three shapes in every branch, so each is written once: the two name
@@ -34,6 +35,7 @@ export default {
     ...restrictedSyntaxes,
     ...restrictedDeleteSyntaxes,
     ...restrictedImportSyntaxes,
+    ...restrictedOverlaySyntaxes,
     {
       // A Durable Object is named by its namespace only inside `getObjectStub`, so every stub a Worker holds runs its RPC methods
       // Through the object's invoke, which records the reads of each call and publishes its writes. A stub named any other way
