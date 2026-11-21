@@ -5,8 +5,8 @@ import type { PostKey } from "#src/models/post/PostKey";
 import type { Page, PostInPostWithRelations } from "@esposter/db-schema";
 
 import { PostSortType } from "#shared/models/post/PostSortType";
+import { PostSortTypePageSortMap } from "#shared/services/post/PostSortTypePageSortMap";
 import { usePostRows } from "#src/composables/post/usePostRows";
-import { comparePostsBySort } from "#src/services/post/comparePostsBySort";
 import { postTable } from "#src/services/post/overlay/constants";
 import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
@@ -14,6 +14,7 @@ import { createRowResponse } from "#src/services/shared/overlay/createRowRespons
 import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
+import { compareBySort } from "@esposter/db-schema";
 import { omitUndefined, withFinalizerAsync } from "@esposter/shared";
 
 // The feed is a list of post ids in the order its pages named them. Its rows are the overlay's, so a post a write or a
@@ -50,9 +51,10 @@ export const usePostStore = defineStore("post", () => {
   // The post goes before the first held row the feed's sort places after it, and at the end when none is. A key whose
   // Row is not held cannot be ordered, so it is passed over
   const insertPostKey = (post: PostInPostWithRelations) => {
+    const compare = compareBySort(PostSortTypePageSortMap[sortType.value]);
     const index = postKeys.value.findIndex(({ id }) => {
       const heldPost = getPostWithRelations(id);
-      return heldPost !== undefined && comparePostsBySort(sortType.value, post, heldPost) < 0;
+      return heldPost !== undefined && compare(post, heldPost) < 0;
     });
     postKeys.value =
       index === -1 ? [...postKeys.value, { id: post.id }] : postKeys.value.toSpliced(index, 0, { id: post.id });
