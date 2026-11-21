@@ -5,6 +5,7 @@ import type { NotificationInNotification } from "@esposter/db-schema";
 import type { Except, SetOptional } from "type-fest";
 
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getToastedNotificationIds } from "#src/services/notification/getToastedNotificationIds";
 import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
@@ -193,7 +194,7 @@ export const useNotificationStore = defineStore("notification", () => {
         slice.initializeCursorPaginationData(createEmptyPage<NotificationInNotification>());
         return [];
       },
-      { onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
     );
   };
   const markAllAsRead = () => {
@@ -210,7 +211,7 @@ export const useNotificationStore = defineStore("notification", () => {
         await readNotifications();
         return [];
       },
-      { onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
     );
   };
   return {

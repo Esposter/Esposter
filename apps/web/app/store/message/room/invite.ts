@@ -3,6 +3,7 @@ import type { InviteInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getInviteLink } from "#src/services/message/room/invite/getInviteLink";
 import { inviteCreateHooks } from "#src/services/message/room/invite/inviteCreateHooks";
 import { inviteTable } from "#src/services/message/room/overlay/constants";
@@ -51,7 +52,7 @@ export const useInviteStore = defineStore("message/room/invite", () => {
             await inviteCreateHooks.run(input.roomId, invite);
             return [...replacedInvites, invite].map((row) => createArrival(inviteTable, row));
           },
-          { onError: createErrorAlert },
+          { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
         ),
       () => {
         createInvitePendingRoomIds.value.delete(input.roomId);

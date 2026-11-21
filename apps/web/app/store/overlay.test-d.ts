@@ -8,6 +8,7 @@ import type { Versioned } from "#src/models/shared/overlay/Versioned";
 import type { listOverlayRows } from "#src/services/shared/overlay/listOverlayRows";
 import type { useOverlayStore } from "#src/store/overlay";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { describe, expect, expectTypeOf, test } from "vitest";
 
 type OverlayStore = ReturnType<typeof useOverlayStore>;
@@ -59,5 +60,15 @@ describe("overlayStore type", () => {
     expect.hasAssertions();
 
     expectTypeOf<OverlayStore["writeAwaited"]>().parameter(0).returns.toEqualTypeOf<Promise<Arrival[]>>();
+  });
+
+  test("an awaited write names the reason the server answers it", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<OverlayStore["writeAwaited"]>().toBeCallableWith(() => Promise.resolve([]), {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+    });
+    // @ts-expect-error An awaited write names why it waits, since nothing else in the call says the screen holds
+    expectTypeOf<OverlayStore["writeAwaited"]>().toBeCallableWith(() => Promise.resolve([]), { onError: noop });
   });
 });

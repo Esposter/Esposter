@@ -1,5 +1,6 @@
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
 import { withFinalizerAsync } from "@esposter/shared";
@@ -36,7 +37,7 @@ export const useCreateModerationNote = (
             await readModerationNotes();
             return [];
           },
-          { onError: createErrorAlert },
+          { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
         ),
       () => {
         pendingCount.value -= 1;

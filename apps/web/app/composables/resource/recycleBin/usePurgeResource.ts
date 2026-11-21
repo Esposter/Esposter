@@ -3,6 +3,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CacheTag } from "#src/models/cache/CacheTag";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useCacheStore } from "#src/store/cache";
 import { useNotificationStore } from "#src/store/notification";
 import { useOverlayStore } from "#src/store/overlay";
@@ -38,7 +39,7 @@ export const usePurgeResource = (refresh: () => Promise<void>) => {
               await refresh();
             },
           ),
-        { onError: createErrorNotification },
+        { awaitedBecause: AwaitedReason.IrreversibleStep, onError: createErrorNotification },
       ),
     )();
   };

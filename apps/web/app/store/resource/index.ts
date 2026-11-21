@@ -17,6 +17,7 @@ import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { CacheTag } from "#src/models/cache/CacheTag";
 import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getFileSize } from "#src/services/file/getFileSize";
 import { copyLinkToClipboard } from "#src/services/resource/copyLinkToClipboard";
 import { publicationTable, resourceTable } from "#src/services/resource/overlay/constants";
@@ -611,7 +612,7 @@ export const useResourceStore = defineStore("resource", () => {
             pendingDuplicateCount.value--;
           },
         ),
-      { onError: createErrorNotification },
+      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorNotification },
     );
   };
   const publishResource = () => {
@@ -640,7 +641,7 @@ export const useResourceStore = defineStore("resource", () => {
             },
           );
         },
-        { onError: createErrorNotification },
+        { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorNotification },
       ),
     )();
   };

@@ -7,7 +7,7 @@ Read when a store action writes to the server, or when its write's entry or its 
 The overlay store (`apps/web/app/store/overlay.ts`) is the one writer of the server rows a store holds. A store issues its writes through it and reads its rows back through its view:
 
 - **`writeOptimistic(mutate, { entry, onError })`** for a write the screen shows at once. `entry` is a pure function over the keyed view: it reads and writes rows by key through the view it is handed, and nothing else. The registry runs it once to find the rows it touches, and queues the write behind each earlier write whose rows overlap. The store names no key.
-- **`writeAwaited(mutate, { onError })`** for a write the screen waits on. It has no entry and takes no key: the version gate orders two answers for one row.
+- **`writeAwaited(mutate, { awaitedBecause, onError })`** for a write the screen waits on. It has no entry and takes no key: the version gate orders two answers for one row, and `awaitedBecause` names the reason the server answers it, as `executeMutation`'s awaited form does.
 - **The answer's rows arrive, and a failed write drops its entry.** The response names the version of each row the write changed. The entry is confirmed at those versions and drops once held state is at or above them. A refused write changes no held state, so there is nothing to restore.
 - **A row's removal is a tombstone a read returns**, so the view hides it and an older arrival cannot bring it back. Absence never removes a held row.
 

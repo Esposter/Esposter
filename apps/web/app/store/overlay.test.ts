@@ -2,6 +2,7 @@ import type { Arrival } from "#src/models/shared/overlay/Arrival";
 import type { KeyedView } from "#src/models/shared/overlay/KeyedView";
 import type { WriteResponse } from "#src/models/shared/overlay/WriteResponse";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
 import { createRowTable } from "#src/services/shared/overlay/createRowTable.test";
@@ -484,8 +485,12 @@ describe(useOverlayStore, () => {
     const overlayStore = useOverlayStore();
     const first = Promise.withResolvers<Arrival[]>();
     const second = Promise.withResolvers<Arrival[]>();
-    const firstWrite = overlayStore.writeAwaited(() => first.promise, {});
-    const secondWrite = overlayStore.writeAwaited(() => second.promise, {});
+    const firstWrite = overlayStore.writeAwaited(() => first.promise, {
+      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+    });
+    const secondWrite = overlayStore.writeAwaited(() => second.promise, {
+      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+    });
     second.resolve([createArrival(table, { deletedAt: null, id: "a", name: serverName, version: 2 })]);
     await secondWrite;
     first.resolve([createArrival(table, { deletedAt: null, id: "a", name, version: 1 })]);
@@ -501,7 +506,7 @@ describe(useOverlayStore, () => {
     const optimisticMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
     const awaitedMutate = vi.fn<() => Promise<Arrival[]>>(() => Promise.resolve([]));
     overlayStore.writeOptimistic(optimisticMutate, { entry: writeFirstRow });
-    await overlayStore.writeAwaited(awaitedMutate, {});
+    await overlayStore.writeAwaited(awaitedMutate, { awaitedBecause: AwaitedReason.ServerDecidedOutcome });
 
     expect(awaitedMutate).toHaveBeenCalledExactlyOnceWith();
   });

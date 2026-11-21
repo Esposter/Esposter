@@ -1,5 +1,6 @@
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { friendRequestTable } from "#src/services/message/user/pair/constants";
 import { createPairConfirmations } from "#src/services/message/user/pair/createPairConfirmations";
 import { getAcceptFriendRequestEntry } from "#src/services/message/user/pair/getAcceptFriendRequestEntry";
@@ -57,7 +58,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
             storeUser(sender);
             return [createArrival(friendRequestTable, friendRequest)];
           },
-          { onError: createErrorAlert },
+          { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
         ),
       () => {
         sendingReceiverIds.value.delete(receiverId);

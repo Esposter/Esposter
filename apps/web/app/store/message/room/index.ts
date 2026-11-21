@@ -7,6 +7,7 @@ import type { RoomInMessage, UpdateRoomInput } from "@esposter/db-schema";
 
 import { checkIsUuidV7 } from "#shared/services/id/checkIsUuidV7";
 import { useSessionUserId } from "#src/composables/auth/useSessionUserId";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { authClient } from "#src/services/auth/authClient";
 import { roomTable } from "#src/services/message/room/constants";
 import { getRoomPatchEntry } from "#src/services/message/room/getRoomPatchEntry";
@@ -99,7 +100,7 @@ export const useRoomStore = defineStore("message/room", () => {
         const newRoom = await $trpc.room.createRoom.mutate(input);
         return [createArrival(roomTable, newRoom), ...(await readMyMembershipArrivals(newRoom.id))];
       },
-      { onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
     );
   const joinRoom = async (input: JoinRoomInput) => {
     let joinedRoomId = "";
@@ -110,7 +111,7 @@ export const useRoomStore = defineStore("message/room", () => {
         joinedRoomId = joinedRoom.id;
         return [createArrival(roomTable, joinedRoom), ...(await readMyMembershipArrivals(joinedRoom.id))];
       },
-      { onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
     );
     isJoinRoomPending.value = false;
     if (joinedRoomId) await navigateTo(RoutePath.Messages(joinedRoomId));
@@ -119,10 +120,12 @@ export const useRoomStore = defineStore("message/room", () => {
   // Tombstoned. The page the reader is on is taken off the room by the removal that the list shows
   const leaveRoom = (input: LeaveRoomInput) =>
     writeAwaited(async () => [createArrival(userToRoomTable, await $trpc.room.leaveRoom.mutate(input))], {
+      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
       onError: createErrorAlert,
     });
   const deleteRoom = (input: DeleteRoomInput) =>
     writeAwaited(async () => [createArrival(userToRoomTable, await $trpc.room.deleteRoom.mutate(input))], {
+      awaitedBecause: AwaitedReason.IrreversibleStep,
       onError: createErrorAlert,
     });
   // A write to the room's fields shows at once and is confirmed by the row the server answers with

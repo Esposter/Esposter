@@ -7,6 +7,7 @@ import type { Page, PostInPostWithRelations } from "@esposter/db-schema";
 import { PostSortType } from "#shared/models/post/PostSortType";
 import { PostSortTypePageSortMap } from "#shared/services/post/PostSortTypePageSortMap";
 import { usePostRows } from "#src/composables/post/usePostRows";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { postTable } from "#src/services/post/overlay/constants";
 import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
@@ -74,7 +75,7 @@ export const usePostStore = defineStore("post", () => {
             insertPostKey(post);
             return [createArrival(postTable, storePostRelations(post))];
           },
-          { onError: createErrorAlert },
+          { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
         ),
       () => {
         createPendingCount.value -= 1;

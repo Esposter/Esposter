@@ -1,6 +1,7 @@
 import type { JoinCallOptions } from "#src/models/message/room/call/JoinCallOptions";
 import type { CallParticipantRow } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { knockerTable } from "#src/services/message/room/call/constants";
 import { getDefaultJoinCallOptions } from "#src/services/message/room/call/getDefaultJoinCallOptions";
 import { getKnockerRemovalEntry } from "#src/services/message/room/call/getKnockerRemovalEntry";
@@ -48,7 +49,7 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
             await openCall(callId);
             return [];
           },
-          { onError: createErrorAlert },
+          { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
         ),
       () => {
         pendingKnockCallSessionIds.value.delete(callId);

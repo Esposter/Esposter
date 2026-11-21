@@ -6,6 +6,7 @@ import type { RoomEmojiWithPresignedUrl, RoomInMessage } from "@esposter/db-sche
 import type { Except } from "type-fest";
 
 import { EmojiType } from "#src/models/message/emoji/EmojiType";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getSingleFilePresignedUrlEntities } from "#src/services/file/getSingleFilePresignedUrlEntities";
 import { uploadFilesToPresignedUrls } from "#src/services/file/uploadFilesToPresignedUrls";
 import { roomEmojiTable } from "#src/services/message/room/overlay/constants";
@@ -65,7 +66,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
         isCreated = true;
         return [createArrival(roomEmojiTable, roomEmoji)];
       },
-      { onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
     );
     return isCreated;
   };

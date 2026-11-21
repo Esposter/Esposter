@@ -1,6 +1,7 @@
 import type { CreateSearchHistoryInput } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
 import type { Page, SearchHistoryInMessage } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -41,7 +42,7 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   const createSearchHistory = (input: CreateSearchHistoryInput) =>
     writeAwaited(
       async () => [createArrival(searchHistoryTable, await $trpc.searchHistory.createSearchHistory.mutate(input))],
-      { onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
     );
 
   return {

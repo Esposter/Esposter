@@ -2,6 +2,7 @@ import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { useRunScope } from "#src/composables/shared/useRunScope";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getSnapshotVersionTitle } from "#src/services/resource/getSnapshotVersionTitle";
 import { resourceTable } from "#src/services/resource/overlay/constants";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
@@ -109,7 +110,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
         }
         return [createArrival(resourceTable, restoredResource)];
       },
-      { onError: createErrorNotification },
+      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorNotification },
     );
   };
   // The safety net a write that replaces a draft wholesale takes first. Reports whether it landed, because such
@@ -128,7 +129,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
         await readSnapshotHistory(resource);
         return [];
       },
-      { onError: createErrorNotification },
+      { awaitedBecause: AwaitedReason.IrreversibleStep, onError: createErrorNotification },
     );
     return isSaved;
   };

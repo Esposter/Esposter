@@ -5,6 +5,7 @@ import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
 import { useSessionUserId } from "#src/composables/auth/useSessionUserId";
 import { useReadMyUsersToRooms } from "#src/composables/message/room/useReadMyUsersToRooms";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { compareMemberNames } from "#src/services/message/member/compareMemberNames";
 import { memberTable } from "#src/services/message/member/memberTable";
 import { toMemberRow } from "#src/services/message/member/toMemberRow";
@@ -116,7 +117,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
         createdRoomId = room.id;
         return [createArrival(roomTable, room)];
       },
-      { onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
     );
     // Whether the server kept it, so the dialog that asked stays open over a refusal
     if (!createdRoomId) return false;
@@ -145,7 +146,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
         roomId = room.id;
         return [createArrival(roomTable, room)];
       },
-      { onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
     );
     creatingFriendIds.value.delete(friendId);
     if (roomId) await inviteDirectMessage(roomId, inviteLink);
@@ -170,7 +171,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
           ),
         ),
       ],
-      { onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
     );
   const leaveDirectMessage = (roomId: string) => deleteDirectMessageParticipant(roomId, userId.value);
   // A join is announced to the room's members and to each joiner's tabs, so the added participants arrive as their join events.

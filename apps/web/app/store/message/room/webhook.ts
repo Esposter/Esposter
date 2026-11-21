@@ -9,6 +9,7 @@ import type {
   WebhookInMessageWithRelations,
 } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { webhookTable } from "#src/services/message/room/overlay/constants";
 import { getWebhookPatchEntry } from "#src/services/message/room/overlay/getWebhookPatchEntry";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
@@ -58,7 +59,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
             showIssuedUrl(issuedWebhook);
             return [createArrival(webhookTable, issuedWebhook.webhook)];
           },
-          { onError: createErrorAlert },
+          { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
         ),
       () => {
         isCreateWebhookPending.value = false;
@@ -83,7 +84,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
         showIssuedUrl(regeneratedWebhook);
         return [createArrival(webhookTable, regeneratedWebhook.webhook)];
       },
-      { onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
     );
   };
   const deleteWebhook = (input: DeleteWebhookInput) => {
