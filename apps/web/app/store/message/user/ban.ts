@@ -4,6 +4,7 @@ import type { Entry } from "#src/models/shared/overlay/Entry";
 import type { Table } from "#src/models/shared/overlay/Table";
 import type { Page } from "@esposter/db-schema";
 
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -37,13 +38,13 @@ export const useBanStore = defineStore("message/user/ban", () => {
   const { getSliceOperationData, items: listedBanKeys } = useCursorPaginationDataMap<BanKey>(
     () => roomStore.scopedRoomId,
   );
-  // The live rows the keys name, in the keys' order. A removed ban stays held as a tombstone, so it is left out here
+  // The live rows the keys name, in the keys' order. The view leaves a removed ban's tombstone out
   const toLiveBans = (keys: readonly BanKey[]) =>
     keys.flatMap(({ roomId, userId }) => {
       const ban = bans.value.find(
-        (row): row is BanInRoom => row.roomId === roomId && row.userId === userId && row.version !== undefined,
+        (row): row is BanInRoom => row.roomId === roomId && row.userId === userId && checkIsVersioned(row),
       );
-      return ban?.deletedAt === null ? [ban] : [];
+      return ban ? [ban] : [];
     });
   // A page of a room's bans arrives row by row, and the list keeps the keys the page named, in the order the server gave them
   const readBanPage = ({ items: pageBans, ...page }: Page<BanInRoom>): Page<BanKey> => {

@@ -2,6 +2,7 @@ import type { UpdateUserSettingsInput } from "#shared/models/db/userSettings/Upd
 import type { Entry } from "#src/models/shared/overlay/Entry";
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
 import { createTable } from "#src/services/shared/overlay/createTable";
@@ -31,7 +32,7 @@ export const useUserSettingsStore = defineStore("message/user/settings", () => {
   // A record the user holds is one a read or a save answered with, so a row no server version names is not the record
   const userSettings = computed(() =>
     userSettingsRows.value.find(
-      (row): row is UserSettingsInMessage => row.userId === userId.value && row.version !== undefined,
+      (row): row is UserSettingsInMessage => row.userId === userId.value && checkIsVersioned(row),
     ),
   );
   // One record for the whole session, opened from a dialog every surface can raise — so the reads its mounts

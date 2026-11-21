@@ -12,6 +12,7 @@ import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleCh
 import { memberTable } from "#src/services/message/member/memberTable";
 import { toMemberRow } from "#src/services/message/member/toMemberRow";
 import { createBatchedRefresh } from "#src/services/shared/createBatchedRefresh";
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -24,14 +25,11 @@ import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared"
 // A list names each of its members by the room and the user, and the rows themselves are the overlay's
 type MemberKey = Pick<MemberRow, "roomId" | "userId">;
 
-// A row the view shows is held at a version, unless a draft created it, and a placeholder holds none until its answer names one
-const checkIsHeldRow = (row: Readonly<Draft<MemberRow>>): row is MemberRow => row.version !== undefined;
-
 // A room's rows by user, from the rows the view shows. A removed membership is not shown, so it is not in the map
 const getRoomMemberRows = (memberRows: readonly Readonly<Draft<MemberRow>>[], roomId: string | undefined) =>
   new Map(
     memberRows.flatMap((row): [string, MemberRow][] =>
-      checkIsHeldRow(row) && row.roomId === roomId ? [[row.userId, row]] : [],
+      checkIsVersioned(row) && row.roomId === roomId ? [[row.userId, row]] : [],
     ),
   );
 
