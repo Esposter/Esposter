@@ -3,15 +3,15 @@ import type { WordFilterFormData } from "#src/models/message/moderation/WordFilt
 import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { mergeWordFilterFormData } from "#src/services/message/moderation/mergeWordFilterFormData";
 import { TimeoutDurationMap } from "#src/services/message/moderation/TimeoutDurationMap";
 import { TimeoutDurationSelectItems } from "#src/services/message/moderation/TimeoutDurationSelectItems";
 import { getNumberSelectItems } from "#src/services/message/shared/getNumberSelectItems";
-import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
-import { useOverlayStore } from "#src/store/overlay";
+import { applyIfUnchanged } from "#src/services/shared/applyIfUnchanged";
 import { WordFilterAction, WordFilterActions } from "@esposter/db-schema";
-import { checkIsDeepEqual, toRawDeep, withFinalizerAsync } from "@esposter/shared";
+import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 
 interface Props {
   filter?: RoomFilterInMessage | undefined;
@@ -44,47 +44,41 @@ const isDirty = computed(
     editedFormData.value.action !== initialFormData.value.action ||
     (isTimeout.value && editedFormData.value.timeoutDurationMs !== initialFormData.value.timeoutDurationMs),
 );
-const overlayStore = useOverlayStore();
-const { writeAwaited } = overlayStore;
-// One save at a time: each one merges against the baseline the save before it answers, so a second one sent meanwhile
-// Would merge against a list the first has yet to write
-const isSavePending = ref(false);
-// The bar stays until the room keeps the filter, so a refused save leaves the edit in place to send again
-const saveFilter = async () => {
-  if (isSavePending.value) return;
-
-  // The edit as it stood when the save was issued, and the filter it was made against
+const { executeMutation } = useMutation();
+// A save for the room waits behind the save in flight rather than being dropped, and each one merges against the baseline
+// The save before it kept, read when it is sent, so it never merges against a list the save before it has yet to write
+const saveFilter = () => {
+  // The edit as it stood when the save was issued
   const issuedFormData = structuredClone(toRawDeep(editedFormData.value));
-  const baseFormData = initialFormData.value;
-  isSavePending.value = true;
-  await withFinalizerAsync(
-    () =>
-      writeAwaited(
-        async () => {
-          // Read when the write is sent, since another moderator may have changed the words since this form read them.
-          // The write keeps those changes and applies only the words and fields the reader changed
-          const currentFilter = await $trpc.room.filter.readRoomFilter.query({ roomId });
-          const {
-            action,
-            timeoutDurationMs: mergedTimeoutDurationMs,
-            words,
-          } = mergeWordFilterFormData(baseFormData, issuedFormData, getWordFilterFormData(currentFilter));
-          const savedFilter = await $trpc.room.filter.upsertRoomFilter.mutate({
-            action,
-            roomId,
-            ...(action === WordFilterAction.Timeout && { timeoutDurationMs: mergedTimeoutDurationMs }),
-            words,
-          });
-          // The saved filter is the server's, and it may hold other moderators' words the write merged in, so it becomes
-          // The baseline once it answers
-          initialFormData.value = getWordFilterFormData(savedFilter);
-          sync();
-          return [];
-        },
-        { onError: createErrorAlert },
-      ),
-    () => {
-      isSavePending.value = false;
+  return executeMutation(
+    async () => {
+      const baseFormData = initialFormData.value;
+      // Read when the write is sent, since another moderator may have changed the words since this form read them.
+      // The write keeps those changes and applies only the words and fields the reader changed
+      const currentFilter = await $trpc.room.filter.readRoomFilter.query({ roomId });
+      const {
+        action,
+        timeoutDurationMs: mergedTimeoutDurationMs,
+        words,
+      } = mergeWordFilterFormData(baseFormData, issuedFormData, getWordFilterFormData(currentFilter));
+      return $trpc.room.filter.upsertRoomFilter.mutate({
+        action,
+        roomId,
+        ...(action === WordFilterAction.Timeout && { timeoutDurationMs: mergedTimeoutDurationMs }),
+        words,
+      });
+    },
+    {
+      // The bar stays until the room keeps the filter, so a refused save leaves the edit in place to send again
+      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+      key: roomId,
+      onSuccess: (savedFilter) => {
+        // The saved filter is the server's, and it may hold other moderators' words the write merged in, so it becomes the
+        // Baseline once it answers
+        initialFormData.value = getWordFilterFormData(savedFilter);
+        // The form takes the saved list, unless the reader has edited it since the save was issued, and that edit is kept
+        applyIfUnchanged(editedFormData, issuedFormData, structuredClone(toRawDeep(initialFormData.value)));
+      },
     },
   );
 };
