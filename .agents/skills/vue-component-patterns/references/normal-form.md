@@ -31,7 +31,8 @@ A repeated expression, handler or region is named once. Extraction must pay: it 
 A package that builds with the shared Vue plugin has `ref`, `computed`, `unref` and the rest ambient in its scripts and none in its templates. A function a template needs is named in the script and the template binds the name, so the plugin supplies the import and the template needs none:
 
 ```ts
-const createRenderer = (context: TresRendererSetupContext) => createGenshinRenderer(unref(context.canvas));
+const createRenderer = (context: TresRendererSetupContext) =>
+  createGenshinRenderer(unref(context.canvas), { honoursPowerPreference: true });
 ```
 
 ## An integration root

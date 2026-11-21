@@ -49,7 +49,7 @@ import {
 } from "genshin-engine";
 import { Mesh, PerspectiveCamera, Scene, TorusKnotGeometry } from "three";
 
-const renderer = createGenshinRenderer(canvas);
+const renderer = createGenshinRenderer(canvas, { honoursPowerPreference: true });
 await renderer.init();
 const scene = new Scene();
 const camera = new PerspectiveCamera();
