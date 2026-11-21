@@ -12,7 +12,7 @@ describe(useCreateModerationNote, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   const targetUserId = v7();
-  const note = "a note";
+  const note = "a";
   const createNote = (): ModerationNoteInRoom => ({
     actorDisplayName: "",
     actorUserId: null,
