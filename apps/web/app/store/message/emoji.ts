@@ -4,9 +4,10 @@ import type { RoomReaction } from "@esposter/db-schema";
 
 import { authClient } from "#src/services/auth/authClient";
 import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { checkIsNewerArrival } from "#src/services/shared/overlay/checkIsNewerArrival";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
-import { getOrCreate, getResultAsync, ID_SEPARATOR, withFinalizerAsync } from "@esposter/shared";
+import { getOrCreate, getResultAsync, ID_SEPARATOR, Operation, withFinalizerAsync } from "@esposter/shared";
 
 // A reaction is one emoji on one message, so its identity is the pair, and a press on it is held while its write is out
 const getEmojiKey = ({ emojiTag, messageId }: Pick<RoomReaction, "emojiTag" | "messageId">) =>
@@ -77,6 +78,17 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     if (emoji.userIds.includes(session.value.data.user.id)) await deleteEmoji({ emojiTag, messageId, roomId });
     else await createEmoji({ emojiTag, messageId, roomId });
   };
+  // A deleted message's reactions go with it, and the room sends no removal for them, so each one is emptied at the version
+  // It holds: a read answered before the delete is at that version or older, and the gate refuses it
+  MessageHookMap[Operation.Delete].register(({ id, roomId }) => {
+    const emojis = getHeldEmojis(roomId, id);
+    if (emojis.length > 0)
+      setHeldEmojis(
+        roomId,
+        id,
+        emojis.map((emoji) => ({ ...emoji, userIds: [] })),
+      );
+  });
 
   return { createEmoji, deleteEmoji, getEmojis, storeEmoji, toggleEmoji };
 });

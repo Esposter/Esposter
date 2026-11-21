@@ -4,8 +4,10 @@ import type { RoomReaction } from "@esposter/db-schema";
 import { getMockSession } from "#server/trpc/context.test";
 import { useReadEmojis } from "#src/composables/message/emoji/useReadEmojis";
 import { useSession } from "#src/services/auth/authClient.test";
+import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "#src/store/message/emoji";
+import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -69,6 +71,24 @@ describe(useEmojiStore, () => {
 
     resolveRead([createReaction([userId], 1)]);
     await read;
+
+    expect(getEmojis(roomId, messageId)).toStrictEqual([]);
+  });
+
+  // A deleted message's reactions go with it and the room sends no removal for them, so a read answered after the delete
+  // Finds no row for them and leaves none of them held
+  test("a deleted message's reactions leave the store, and a read after the delete does not bring them back", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    trpcMsw.message.emoji.readReactions.query(() => []);
+    const emojiStore = useEmojiStore();
+    const { getEmojis, storeEmoji } = emojiStore;
+    const readEmojis = useReadEmojis();
+    storeEmoji(roomId, createReaction([userId], 1));
+    await MessageHookMap[Operation.Delete].run({ id: messageId, roomId });
+    await readEmojis(roomId, [messageId]);
 
     expect(getEmojis(roomId, messageId)).toStrictEqual([]);
   });
