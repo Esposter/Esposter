@@ -5,7 +5,7 @@ const ISO_LEADING_DATE_REGEX = /^\d{4}-\d{2}-\d{2}/u;
 const LETTER_REGEX = /\p{L}/u;
 const MONTH_NAMES = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 // The engine reads a word by its first three letters, so the check does too
-const MONTH_NAME_REGEX = /\b(?<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/iu;
+const MONTH_NAME_REGEX = new RegExp(String.raw`\b(?<month>${MONTH_NAMES.join("|")})[a-z]*\b`, "iu");
 const YEAR_REGEX = /\b\d{4}\b/u;
 // A zone's offset, which a four-digit run would read as a year: `GMT-0400`, `UTC+0530` or a space before a `+0400`
 const TIME_ZONE_OFFSET_REGEX = /(?:\b(?:gmt|utc)|\s)[+-]\d{2}:?\d{2}\b/giu;
