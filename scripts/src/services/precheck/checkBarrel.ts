@@ -8,8 +8,9 @@ import { getExpectedLines } from "#src/services/precheck/getExpectedLines";
 import { getLazyDirectories } from "#src/services/precheck/getLazyDirectories";
 import { readBarrelLines } from "#src/services/precheck/readBarrelLines";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { generateExports, getSubpathExclusions, readPackageManifest } from "@esposter/configuration";
+import { getSubpathExclusions, readPackageManifest } from "@esposter/configuration";
 import { BARREL_FILE, COMPONENTS_DIRECTORY, SOURCE_DIRECTORY_NAME } from "@esposter/configuration/constants";
+import { generateExports } from "@esposter/configuration/generate-exports";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 

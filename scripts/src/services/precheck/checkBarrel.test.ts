@@ -1,5 +1,5 @@
 import { checkBarrel } from "#src/services/precheck/checkBarrel";
-import { generateExports } from "@esposter/configuration";
+import { generateExports } from "@esposter/configuration/generate-exports";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, describe, expect, test, vi } from "vitest";
