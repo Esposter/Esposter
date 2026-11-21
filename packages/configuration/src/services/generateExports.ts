@@ -10,7 +10,8 @@ const COMPONENT_BARREL_PATH = join(COMPONENTS_DIRECTORY, BARREL_FILE);
 // Writes the component barrel first, because the source barrel then lists it like any other module. Every barrel is
 // Build output the repository tracks, so one on disk that the answer does not write is an earlier build's, left when
 // The package changed its answer. It is removed: the package's own typecheck would still read it, naming modules the
-// Package may have since deleted, and nothing else would ever clear it
+// Package may have since deleted, and nothing else would ever clear it. The one exception is `src/index.ts` under None,
+// Which the package writes itself as its curated entry, so that name is kept
 const BarrelsMap: Record<
   ExportsGeneration,
   { barrelPaths: string[]; generators: ((sourceDirectory: string, excludedPaths: string[]) => void)[] }
