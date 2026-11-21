@@ -7,6 +7,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { MAX_FORWARD_ROOMS, MAX_SEARCH_ROOMS } from "#server/services/message/constants";
 import { createRoomMessage as baseCreateRoomMessage } from "#server/services/message/createRoomMessage.test";
+import { takeBackMentionCounts } from "#server/services/message/takeBackMentionCounts";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import {
   createMockAuthSession,
@@ -129,6 +130,13 @@ vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
 vi.mock(import("#server/composables/realtime/useUserObject"), () => ({
   useUserObject: (userId: string) => useUserObjectMock(userId) as unknown as ReturnType<typeof useUserObject>,
 }));
+// The take-back catches its own writes, so the only rejection that can reach the router is one a test queues here. The
+// Real take-back runs unless a test says otherwise
+vi.mock(import("#server/services/message/takeBackMentionCounts"), async (importOriginal) => {
+  const actual = await importOriginal();
+
+  return { ...actual, takeBackMentionCounts: vi.fn<typeof actual.takeBackMentionCounts>(actual.takeBackMentionCounts) };
+});
 
 describe("messageRouter", () => {
   const { createMember, getMockContext, getRoomCaller, getRoomId } = setupRoomSuite();
@@ -310,6 +318,39 @@ describe("messageRouter", () => {
     await messageCaller.deleteMessage({ id: messageId, roomId });
 
     await expect(getMentionCount(member.id)).resolves.toBe(0);
+  });
+
+  test("deletes the message even when its mention counts cannot be taken back", async () => {
+    expect.hasAssertions();
+
+    const error = new Error(" ");
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
+    const message = createRoomMessage();
+    roomObject.readMessagesByIds.mockReturnValue([message]);
+    roomObject.deleteMessage.mockResolvedValue(message);
+    vi.mocked(takeBackMentionCounts).mockRejectedValueOnce(error);
+
+    await expect(messageCaller.deleteMessage({ id: messageId, roomId })).resolves.toBeUndefined();
+
+    expect(roomObject.deleteMessage).toHaveBeenCalledExactlyOnceWith(messageId, { userId });
+    expect(consoleErrorSpy).toHaveBeenCalledExactlyOnceWith(error);
+  });
+
+  test("edits the message even when its mention counts cannot be taken back", async () => {
+    expect.hasAssertions();
+
+    const error = new Error(" ");
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
+    const updatedMessage = createRoomMessage({ editedAt: new Date(), message: updatedText, version: 1 });
+    roomObject.readMessagesByIds.mockReturnValue([createRoomMessage()]);
+    roomObject.updateMessage.mockReturnValue({ message: updatedMessage, previousMessage: createRoomMessage() });
+    vi.mocked(takeBackMentionCounts).mockRejectedValueOnce(error);
+
+    await expect(messageCaller.updateMessage({ id: messageId, message: updatedText, roomId })).resolves.toStrictEqual(
+      updatedMessage,
+    );
+
+    expect(consoleErrorSpy).toHaveBeenCalledExactlyOnceWith(error);
   });
 
   test("moves the mention counts with an edit: a member the new text names is counted, and one the old text named is taken back", async () => {

@@ -154,7 +154,12 @@ const baseMessageRouter = router({
         JSON.stringify(input),
       );
       await publishDeletedMessageFiles(input.roomId, [deletedMessage]);
-      await takeBackMentionCounts(ctx.db, input.roomId, deletedMessage);
+      // Best-effort behind the delete, which the room object has already committed: a failed take-back costs a count,
+      // Where rethrowing would reject a delete that landed
+      await getResultAsync(() => takeBackMentionCounts(ctx.db, input.roomId, deletedMessage)).match(
+        noop,
+        console.error,
+      );
     }),
   // Reclaims blobs that were uploaded against a presigned write url but never reached a message — the composer's revert
   // Path. Nothing else can: every other deletion walks a persisted message's `files`, and an upload the composer threw
@@ -419,8 +424,15 @@ const baseMessageRouter = router({
         DatabaseEntityType.Message,
         JSON.stringify(input),
       );
-      await takeBackMentionCounts(ctx.db, input.roomId, previousMessage);
-      await addMentionCounts(ctx.db, input.roomId, { message: input.message, userId: previousMessage.userId });
+      // Best-effort behind the edit, which the room object has already committed: a failed count costs a badge, where
+      // Rethrowing would reject an edit that landed
+      await getResultAsync(() => takeBackMentionCounts(ctx.db, input.roomId, previousMessage)).match(
+        noop,
+        console.error,
+      );
+      await getResultAsync(() =>
+        addMentionCounts(ctx.db, input.roomId, { message: input.message, userId: previousMessage.userId }),
+      ).match(noop, console.error);
       return updatedMessage;
     }),
   // Casting a vote is not editing the poll: any member may vote, while editing or deleting the poll stays with its
