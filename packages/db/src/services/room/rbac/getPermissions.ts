@@ -1,4 +1,3 @@
-import type { GetPermissions } from "#src/models/room/rbac/GetPermissions";
 import type { Database } from "@esposter/db-schema";
 
 import { inJsonArray } from "#src/services/shared/inJsonArray";
@@ -16,11 +15,9 @@ import { and, eq, inArray, or } from "drizzle-orm";
 const OVERRIDABLE_PERMISSIONS = ~RoomPermission.Administrator;
 
 // A tombstoned role, assignment or override counts for nothing, so each read below takes live rows only
-export const getPermissions: GetPermissions = (async (
-  db: Database,
-  userId: string,
-  roomIds: string | string[],
-): Promise<bigint | Map<string, bigint>> => {
+export function getPermissions(db: Database, userId: string, roomId: string): Promise<bigint>;
+export function getPermissions(db: Database, userId: string, roomIds: string[]): Promise<Map<string, bigint>>;
+export async function getPermissions(db: Database, userId: string, roomIds: string | string[]) {
   const roomIdArray = Array.isArray(roomIds) ? roomIds : [roomIds];
   const memberRoomIdsSubquery = db
     .select({ roomId: usersToRoomsInMessage.roomId })
@@ -84,4 +81,4 @@ export const getPermissions: GetPermissions = (async (
         ~(deny & OVERRIDABLE_PERMISSIONS),
     );
   return Array.isArray(roomIds) ? roomIdPermissionsMap : (roomIdPermissionsMap.get(roomIds) ?? 0n);
-}) as GetPermissions;
+}
