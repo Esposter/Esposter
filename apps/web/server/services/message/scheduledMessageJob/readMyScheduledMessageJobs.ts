@@ -5,7 +5,8 @@ import type { Page } from "@esposter/db-schema";
 
 import { useUserObject } from "#server/composables/realtime/useUserObject";
 import { fanOutRoomReads } from "#server/services/message/fanOutRoomReads";
-import { compareBySort, inJsonArray, toPage } from "@esposter/db";
+import { inJsonArray, toPage } from "@esposter/db";
+import { compareBySort } from "@esposter/db-schema";
 import {
   getLiveRowWhere,
   roomsInMessage,

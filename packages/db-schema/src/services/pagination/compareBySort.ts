@@ -1,7 +1,7 @@
-import type { PageSort } from "@esposter/db-schema";
+import type { PageSort } from "#src/models/pagination/PageSort";
 
+import { SortOrder } from "#src/models/pagination/SortOrder";
 import { toPageCursorValue } from "#src/services/pagination/toPageCursorValue";
-import { SortOrder } from "@esposter/db-schema";
 
 // The list's order in JavaScript, for a page merged from several sources: each answers its rows after the cursor, and the
 // Union is ordered by this before toPage keeps the first of them. Values compare as SQLite compares them
