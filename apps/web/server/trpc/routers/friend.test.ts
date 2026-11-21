@@ -4,10 +4,12 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { ROW_VERSIONS_HEADER } from "#shared/services/realtime/constants";
+import { getUnfriendEntry } from "#src/services/message/user/pair/getUnfriendEntry";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -113,6 +115,22 @@ describe("friendRouter", () => {
       table: getTableName(friendsInSocial),
       version: 1,
     });
+  });
+
+  // The unfriend's entry shows the friendship row the removal writes, so the optimistic change covers every row the server names
+  test("the unfriend entry touches every row the removal writes", async () => {
+    expect.hasAssertions();
+
+    const { user, userId } = await createFriendship(mockContext);
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(friendRouter)(context).deleteFriend(user.id),
+      context: mockContext,
+      entry: getUnfriendEntry(userId, user.id, new Date(0)),
+      path: "deleteFriend",
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 
   test("fails to delete self as friend", async () => {

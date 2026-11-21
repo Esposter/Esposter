@@ -57,6 +57,7 @@ Ordered by dependency: the primitive first, then the schema the pilot needs, the
 
 - [x] 6.1 Lint selector: an entry that iterates the keyed view or assigns a ref fails lint. Verified: a fixture in the eslint fixture suite, written first and seen failing, then the selector passes it. Done: "An optimistic entry never iterates its view or assigns a ref", the selector in `restrictedOverlaySyntaxes.js`, proved by the fixtures in `restrictedOverlaySyntaxes.test.ts`, seven of which failed against the empty list before the selector.
 - [ ] 6.2 Wake check cross-check: each optimistic write's touched keys cover the rows its recorded write set names, run against the state its server test seeds. A gap is a finding that the entry does not show a changed row. Verified: a fixture entry that omits a written row fails the wake check, written first and seen failing.
+      Progress: the cross-check is `getUncoveredWrites` in `apps/web/server/trpc/optimisticWriteCrossCheck.test.ts`, which names the rows a write's response names that its entry does not touch, at the state the seeded database holds. Its fixture is in `optimisticWriteCrossCheck.harness.test.ts`, where an entry that omits the block row fails naming it. The five pilot writes are covered in their router tests, each beside its seed: unfriend, block over a friendship, block over a pending request, unblock, accept and decline. The other 50 optimistic write sites in `apps/web/app` are not covered, so this task stays open.
 
 ## 7. Specs and skills
 

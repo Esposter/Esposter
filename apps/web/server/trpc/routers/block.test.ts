@@ -10,10 +10,14 @@ import {
   getMockSession,
 } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { blockRouter } from "#server/trpc/routers/block";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
+import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
 import { postRouter } from "#server/trpc/routers/post";
+import { getBlockEntry } from "#src/services/message/user/pair/getBlockEntry";
+import { getUnblockEntry } from "#src/services/message/user/pair/getUnblockEntry";
 import { blocksInSocial, DatabaseEntityType, friendRequestsInSocial, friendsInSocial } from "@esposter/db-schema";
 import { getFriendshipId, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -55,6 +59,40 @@ describe("blockRouter", () => {
     expect(friendships).toHaveLength(1);
     expect(takeOne(friendships).id).toBe(getFriendshipId(getMockSession().user.id, user.id));
     expect(takeOne(friendships).deletedAt).not.toBeNull();
+  });
+
+  // The block's entry shows the friendship, the request and the block row it writes, so the optimistic change covers every
+  // Row the server names
+  test("the block entry touches every row a block writes over a friendship", async () => {
+    expect.hasAssertions();
+
+    const { user, userId } = await createFriendship(mockContext);
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(blockRouter)(context).createBlock(user.id),
+      context: mockContext,
+      entry: getBlockEntry(userId, user.id, new Date(0)),
+      path: "createBlock",
+    });
+
+    expect(named).toHaveLength(2);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the block entry touches the pending request a block removes", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const user = await createMockUser(mockContext.db);
+    await createCallerFactory(friendRequestRouter)(mockContext).sendFriendRequest(user.id);
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(blockRouter)(context).createBlock(user.id),
+      context: mockContext,
+      entry: getBlockEntry(userId, user.id, new Date(0)),
+      path: "createBlock",
+    });
+
+    expect(named).toHaveLength(2);
+    expect(uncovered).toStrictEqual([]);
   });
 
   test("fails to block self", async () => {
@@ -129,6 +167,23 @@ describe("blockRouter", () => {
     expect(tombstone.version).toBe(1);
     expect(block.deletedAt).toBeNull();
     expect(block.version).toBe(tombstone.version + 1);
+  });
+
+  test("the unblock entry touches the block row the removal writes", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const user = await createMockUser(mockContext.db);
+    await blockCaller.createBlock(user.id);
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(blockRouter)(context).deleteBlock(user.id),
+      context: mockContext,
+      entry: getUnblockEntry(userId, user.id, new Date(0)),
+      path: "deleteBlock",
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 
   test("fails to unblock self", async () => {

@@ -11,10 +11,13 @@ import {
   getMockSession,
 } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { blockRouter } from "#server/trpc/routers/block";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
+import { getAcceptFriendRequestEntry } from "#src/services/message/user/pair/getAcceptFriendRequestEntry";
+import { getDeclineFriendRequestEntry } from "#src/services/message/user/pair/getDeclineFriendRequestEntry";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -165,6 +168,43 @@ describe("friendRequestRouter", () => {
     await expect(friendRequestCaller.sendFriendRequest(senderUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId).message}]`,
     );
+  });
+
+  // The accept's entry shows the request it tombstones and the friendship it holds, so the optimistic change covers both rows
+  test("the accept entry touches the request and the friendship the accept writes", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user } = senderAuthSession;
+    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(userId);
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(friendRequestRouter)(context).acceptFriendRequest(user.id),
+      context: mockContext,
+      entry: getAcceptFriendRequestEntry(userId, user.id, new Date(0)),
+      path: "acceptFriendRequest",
+    });
+
+    expect(named).toHaveLength(2);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the decline entry touches the request the decline tombstones", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user } = senderAuthSession;
+    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(userId);
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(friendRequestRouter)(context).declineFriendRequest(user.id),
+      context: mockContext,
+      entry: getDeclineFriendRequestEntry(userId, user.id, new Date(0)),
+      path: "declineFriendRequest",
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 
   test("fails to decline self friend request", async () => {
