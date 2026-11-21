@@ -10,6 +10,7 @@ import { resetIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "#src/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
+import { createMessage } from "#src/services/message/message/createMessage.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { useDataStore } from "#src/store/message/data";
 import { MessageType } from "@esposter/db-schema";
@@ -82,12 +83,9 @@ describe(useMessageCache, () => {
   test("populates store from cache when switching rooms offline", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    await writeIndexedDb(
-      MessageIndexedDbStoreConfiguration,
-      [createOptimisticMessage({ message, roomId: secondRoomId, type: MessageType.Message }, userId)],
-      secondRoomId,
-    );
+    // The cache holds server rows, which carry a version. An optimistic bubble has none to order it by, and the cache
+    // Never persists one, so a seeded bubble would not be a row the cache could hold
+    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessage(secondRoomId, message)], secondRoomId);
     await mountCache();
     setCurrentRoomId(secondRoomId);
     await flushCache();
@@ -100,23 +98,14 @@ describe(useMessageCache, () => {
   test("caches the same integer id in two rooms apart", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
     await writeIndexedDb(
       MessageIndexedDbStoreConfiguration,
-      [{ ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), id: sharedMessageId }],
+      [{ ...createMessage(roomId, message), id: sharedMessageId }],
       roomId,
     );
     await writeIndexedDb(
       MessageIndexedDbStoreConfiguration,
-      [
-        {
-          ...createOptimisticMessage(
-            { message: secondMessage, roomId: secondRoomId, type: MessageType.Message },
-            userId,
-          ),
-          id: sharedMessageId,
-        },
-      ],
+      [{ ...createMessage(secondRoomId, secondMessage), id: sharedMessageId }],
       secondRoomId,
     );
     const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, roomId);
