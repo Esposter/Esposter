@@ -45,6 +45,16 @@ describe(serializeXml, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ a: "xyz" }]);
   });
 
+  // XML has no HTML entity for a no-break space, so a reader that meets one as markup refuses the whole file
+  test("a no-break space is written as itself and survives the round trip", async () => {
+    expect.hasAssertions();
+
+    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "x y" })]);
+    const { rows } = await roundTrip(dataSource);
+
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: "x y" }]);
+  });
+
   test("a tab or a newline in a column name that is not a valid XML name survives the round trip", async () => {
     expect.hasAssertions();
 
