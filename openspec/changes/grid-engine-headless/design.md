@@ -356,12 +356,12 @@ The absorb score reads the client bundle report and the install. For grid-engine
 | Runtime dependencies     | rxjs, mnemonist, tiled-property-flattener                 | neverthrow, which the client already ships                    |
 | Peer dependencies        | phaser                                                    | none; the binding is app code and uses Phaser                 |
 | Import without Phaser    | loads Phaser at module scope                              | loads nothing outside the package                             |
-| Client gzipped bytes     | about 69 KB                                               | recorded by the bundle-size record at the verify step         |
+| Client gzipped bytes     | 77,086 bytes in the `nuxt analyze` report at `b2fbed9b6d` | 6,253 bytes in the report at `7eb0afeeab`                     |
 | Surface the app reaches  | the calls, the getter and the streams in the survey table | the methods and the events in the public API                  |
 | Surface on offer         | about seventy methods and about eight streams             | the methods and the five events in the public API             |
 | Lockfile records removed | none                                                      | the three dependencies, when the swap removes the last import |
 
-The replacement's bytes are not claimed before it is built. The verify step records them in the bundle-size record and compares them with the figure above, and the size claim stands only on that comparison.
+The verify step measured both builds with `nuxt analyze --no-serve` (the score's own run, `CLIENT_BUNDLE_REPORT_PATH` set): the client's gzipped total is 8,386,344 bytes at `b2fbed9b6d` and 8,316,740 at `7eb0afeeab`, a net change of -69,604 bytes. The grid-engine share is 77,086 bytes of the report, which is above the "about 69 KB" figure this section started from, so the size claim rests on the measured net change rather than on that figure. The headless core is 6,253 bytes, and neverthrow's 2,695 bytes were already in the client. The rxjs, mnemonist and tiled-property-flattener modules are inlined into grid-engine's bundle, so they carry no separate bytes in the report. `pnpm ai:dependencies:score` no longer lists grid-engine.
 
 ## Test plan
 
@@ -392,6 +392,9 @@ Not earned: the direction values, which typecheck already holds; the README; the
 - **The build may become a program.** When the binding and the swap prove to be separate responsibilities, the checklist splits into a program, as the openspec page-shape rule asks. This change holds the whole checklist as its owner asked.
 - **A dungeons roadmap item is not added here.** The admission page places an absorption's backlog on the roadmap of the area whose component carries the dependency; that item is a follow-up this change does not write.
 - **A long update walks the distance it covers.** The excess is spent as the steps it covers, so an update of a long delta walks the character through several tiles where one tile was walked before. Whether the world's frame delta can be that long is the driven run's check (2.3), since the core does not cap the delta it is given.
+- **The driven run (2.3) is not done.** The dev server's first request hung in this environment, so the swapped world was not driven. A smoke load of `/dungeons` reached the page, but its module graph failed on a stale core build (below), so no walk, wall, encounter, teleport, respawn or tilemap switch was observed, and the frame-delta check and the placement comparison with 1.6 are open. The dev hang is an environment behaviour, not a commit's: `git bisect` over `2e6ef3e79a..7eb0afeeab` found no boundary, since both ends answered `/about` with 200 once Nitro's dev reload was allowed to finish. The reload timeout defaults to 120 s, and a cold dependency re-bundle exceeded it on this machine, which is what the 500s and the "hung" message were. The hang also returned on the first request after the `/dungeons` rule was removed (below), so the first request's re-bundle, not a route, is what fails.
+- **The `/dungeons` `ssr: false` rule stays.** The verdict was to server-render `/dungeons` with the rule removed. The dev server hung on the first request then, and every route answered 500 after 60 s, so the page's server render could not be read and no Phaser error was observed. The rule stays, with its comment naming the rex plugins' `Phaser` globals.
+- **The core's build cache can restore a stale `dist`.** `pnpm dev` runs `build:packages`, which restored the core's `dist/index.js` from an earlier build after the package's entry had changed, so the app could not import `DirectionDeltaMap`. A direct `tsdown` build wrote the right file, and the next `pnpm dev` restored the old one. The per-package build cache (`vite/services/createBuildCache.ts`, its auto-tracked inputs) is the suspect; the cause is not diagnosed here.
 
 ## Sources
 
