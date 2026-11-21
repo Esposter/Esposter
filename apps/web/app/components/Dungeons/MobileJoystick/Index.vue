@@ -21,13 +21,15 @@ watch([base, thumb], ([newBase, newThumb]) => {
 
   const scene = getScene(sceneKey);
   virtualJoystick.value?.destroy();
-  virtualJoystick.value = scene.virtualJoystickPlugin.add(scene, {
-    base: newBase,
-    radius: JOYSTICK_RADIUS,
-    thumb: newThumb,
-    x: getJoystickX(),
-    y: getJoystickY(scene),
-  });
+  virtualJoystick.value = markRaw(
+    scene.virtualJoystickPlugin.add(scene, {
+      base: newBase,
+      radius: JOYSTICK_RADIUS,
+      thumb: newThumb,
+      x: getJoystickX(),
+      y: getJoystickY(scene),
+    }),
+  );
 });
 
 watch([virtualJoystick, controls], ([newVirtualJoystick, newControls]) => {
@@ -50,7 +52,7 @@ onUnmounted(() => {
     }"
     :on-complete="
       (_scene, image) => {
-        base = image;
+        base = markRaw(image);
       }
     "
   />
@@ -63,7 +65,7 @@ onUnmounted(() => {
     }"
     :on-complete="
       (_scene, image) => {
-        thumb = image;
+        thumb = markRaw(image);
       }
     "
   />
