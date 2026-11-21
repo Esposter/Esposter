@@ -17,7 +17,8 @@ const createTilemap = (layers: { isDrawn: boolean; name: string; tile: boolean |
       return { properties: { [TileProperty.Collision]: tile } };
     },
     height: 1,
-    layers: layers.map(({ isDrawn, name }) => ({ name, tilemapLayer: isDrawn ? {} : undefined })),
+    // Phaser's layer data holds no tilemap layer as null, not undefined, for a layer that was never drawn
+    layers: layers.map(({ isDrawn, name }) => ({ name, tilemapLayer: isDrawn ? {} : null })),
     width: 1,
   }) as unknown as Tilemaps.Tilemap;
 
