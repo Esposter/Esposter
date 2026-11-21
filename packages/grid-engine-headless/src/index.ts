@@ -9,3 +9,4 @@ export * from "#src/models/GridEngineErrorKind";
 export type * from "#src/models/GridEngineEvents";
 export type * from "#src/models/Position";
 export * from "#src/services/createGridEngine";
+export * from "#src/services/DirectionDeltaMap";

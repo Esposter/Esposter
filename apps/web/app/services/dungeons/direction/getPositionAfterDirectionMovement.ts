@@ -1,35 +1,25 @@
 import type { Position } from "grid-engine-headless";
 
-import { InteractableDirection } from "#src/models/dungeons/direction/InteractableDirection";
 import { addPositions } from "#src/services/dungeons/direction/addPositions";
-import { Direction } from "grid-engine-headless";
+import { Direction, DirectionDeltaMap } from "grid-engine-headless";
 
-const BaseDirectionPositionOffsetMap = {
-  [Direction.Down]: { x: 0, y: 1 },
-  [Direction.Left]: { x: -1, y: 0 },
-  [Direction.Right]: { x: 1, y: 0 },
-  [Direction.Up]: { x: 0, y: -1 },
-} as const satisfies Record<InteractableDirection, Position>;
+const NoOffset = { x: 0, y: 0 } as const satisfies Position;
+// The core's step for a cardinal direction. Only the four cardinals have one, and only they are passed here
+const getCardinalOffset = (direction: Direction): Position => DirectionDeltaMap[direction] ?? NoOffset;
 // A diagonal is its two component directions travelled at once
+const getDiagonalOffset = (vertical: Direction, horizontal: Direction): Position =>
+  addPositions(getCardinalOffset(vertical), getCardinalOffset(horizontal));
+
 const DirectionPositionOffsetMap = {
-  ...BaseDirectionPositionOffsetMap,
-  [Direction.DownLeft]: addPositions(
-    BaseDirectionPositionOffsetMap[InteractableDirection.DOWN],
-    BaseDirectionPositionOffsetMap[InteractableDirection.LEFT],
-  ),
-  [Direction.DownRight]: addPositions(
-    BaseDirectionPositionOffsetMap[InteractableDirection.DOWN],
-    BaseDirectionPositionOffsetMap[InteractableDirection.RIGHT],
-  ),
-  [Direction.None]: { x: 0, y: 0 },
-  [Direction.UpLeft]: addPositions(
-    BaseDirectionPositionOffsetMap[InteractableDirection.UP],
-    BaseDirectionPositionOffsetMap[InteractableDirection.LEFT],
-  ),
-  [Direction.UpRight]: addPositions(
-    BaseDirectionPositionOffsetMap[InteractableDirection.UP],
-    BaseDirectionPositionOffsetMap[InteractableDirection.RIGHT],
-  ),
+  [Direction.Down]: getCardinalOffset(Direction.Down),
+  [Direction.DownLeft]: getDiagonalOffset(Direction.Down, Direction.Left),
+  [Direction.DownRight]: getDiagonalOffset(Direction.Down, Direction.Right),
+  [Direction.Left]: getCardinalOffset(Direction.Left),
+  [Direction.None]: NoOffset,
+  [Direction.Right]: getCardinalOffset(Direction.Right),
+  [Direction.Up]: getCardinalOffset(Direction.Up),
+  [Direction.UpLeft]: getDiagonalOffset(Direction.Up, Direction.Left),
+  [Direction.UpRight]: getDiagonalOffset(Direction.Up, Direction.Right),
 } as const satisfies Record<Direction, Position>;
 
 export const getPositionAfterDirectionMovement = (position: Position, direction: Direction): Position =>
