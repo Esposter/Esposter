@@ -5,7 +5,6 @@ import type { InputState } from "#src/models/input/InputState";
 import type { InputTarget } from "#src/models/input/InputTarget";
 
 import {
-  FIELD_SELECTOR,
   FOCUS_KEY_CODES,
   GAMEPAD_BUTTONS,
   GAMEPAD_LOOK_RADIANS_PER_SECOND,
@@ -27,13 +26,8 @@ import { toDeadzoned } from "#src/input/toDeadzoned";
 import { GamepadButton } from "#src/models/input/GamepadButton";
 import { InputActions } from "#src/models/input/InputAction";
 
-// Whether a key was sent from a field, the element it was typed into. A key a command dispatches on the window comes
-// From the window, which is no element and matches no selector, so it is the game's whatever field has the focus
-const checkIsFieldTarget = (eventTarget: EventTarget | null): boolean =>
-  (eventTarget as null | Partial<Pick<Element, "matches">>)?.matches?.(FIELD_SELECTOR) === true;
-
 // The keys and mouse buttons held, the pointer's movement while it is locked, and the first gamepad's sticks and
-// Buttons, all read through the window handed in, once a frame. The look is what the pointer moved since the last read,
+// Buttons, all read through the target handed in, once a frame. The look is what the pointer moved since the last read,
 // The zoom the wheel's notches since then, and the move is the keys and the stick combined, a pair of opposite keys
 // Cancelling. An action is held while every code of one of its chords is, and pressed when a chord's last code was
 // Pressed since the last read with the rest held, the longest chord pressed by a code winning, so a gamepad's bumper and
@@ -70,7 +64,7 @@ export const createInput = (target: InputTarget): Input => {
   target.addEventListener(
     "keydown",
     (event) => {
-      if (checkIsFieldTarget(event.target)) return;
+      if (target.checkIsFieldTarget(event.target)) return;
       if (boundCodes.has(event.code) && !FOCUS_KEY_CODES.includes(event.code)) event.preventDefault();
       press(event.code);
     },
@@ -109,14 +103,14 @@ export const createInput = (target: InputTarget): Input => {
   target.addEventListener(
     "pointerlockchange",
     () => {
-      isFirstMoveSinceLock = target.document.pointerLockElement !== null;
+      isFirstMoveSinceLock = target.checkIsPointerLocked();
     },
     { signal },
   );
   target.addEventListener(
     "mousemove",
     (event) => {
-      if (target.document.pointerLockElement === null) return;
+      if (!target.checkIsPointerLocked()) return;
       const isFirstMove = isFirstMoveSinceLock;
       isFirstMoveSinceLock = false;
       if (isFirstMove) return;
@@ -143,7 +137,7 @@ export const createInput = (target: InputTarget): Input => {
     },
     press,
     readInput: (frameSeconds) => {
-      const gamepad = target.navigator.getGamepads().find((candidate): candidate is InputGamepad => candidate !== null);
+      const gamepad = target.getGamepads().find((candidate): candidate is InputGamepad => candidate !== null);
       const [stickX = 0, stickY = 0, lookStickX = 0, lookStickY = 0] = gamepad?.axes ?? [];
       for (const [index, button] of GAMEPAD_BUTTONS.entries())
         if (gamepad?.buttons[index]?.pressed) press(button);

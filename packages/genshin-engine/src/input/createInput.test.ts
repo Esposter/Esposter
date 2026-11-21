@@ -14,9 +14,16 @@ import { GamepadButton } from "#src/models/input/GamepadButton";
 import { InputAction } from "#src/models/input/InputAction";
 import { describe, expect, test } from "vitest";
 
+// An element standing in for a field, whose keys are typed into it rather than sent on the window
+const FIELD_ELEMENT: object = {};
+
 // An event target standing in for the window, with the gamepads it reports and the element holding its pointer lock
 const createTarget = (gamepads: (InputGamepad | null)[] = [], pointerLockElement: null | object = null) =>
-  Object.assign(new EventTarget(), { document: { pointerLockElement }, navigator: { getGamepads: () => gamepads } });
+  Object.assign(new EventTarget(), {
+    checkIsFieldTarget: (eventTarget: EventTarget | null) => eventTarget === FIELD_ELEMENT,
+    checkIsPointerLocked: () => pointerLockElement !== null,
+    getGamepads: () => gamepads,
+  });
 
 // A key event sent from an element, as a key typed into a field is: the target is that element, which a plain event
 // Target has none of, so the test sets it on the event
@@ -181,7 +188,7 @@ describe(createInput, () => {
 
     const target = createTarget();
     const { readInput } = createInput(target);
-    const event = createKeyEventFrom({ matches: () => true }, "KeyM");
+    const event = createKeyEventFrom(FIELD_ELEMENT, "KeyM");
     target.dispatchEvent(event);
 
     expect({ isDefaultPrevented: event.defaultPrevented, pressedActions: readInput(0).pressedActions }).toStrictEqual({

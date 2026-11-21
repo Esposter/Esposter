@@ -35,7 +35,7 @@ flowchart TD
 
 A bound key's default is prevented (`packages/genshin-engine/src/input/createInput.ts`), so `F5` opens the events screen rather than reloading the page, `F1` the handbook rather than the browser's help and `F3` the wish rather than its find bar (`packages/genshin-engine/src/input/InputActionBindingMap.ts`). `Enter`, `Space` and `Tab` keep their defaults (`packages/genshin-engine/src/input/constants.ts`): they are how a screen's buttons are pressed and walked through from the keyboard, so preventing them would leave a menu unreachable without a pointer.
 
-A key typed into a field (an input, a text area, a select or anything editable) reaches no binding at all and keeps its default, so a letter typed into a chat or a console never opens a screen (`packages/genshin-engine/src/input/createInput.ts`, `FIELD_SELECTOR` in `packages/genshin-engine/src/input/constants.ts`).
+A key typed into a field (an input, a text area, a select or anything editable) reaches no binding at all and keeps its default, so a letter typed into a chat or a console never opens a screen (`packages/genshin-engine/src/input/createInput.ts`, with the field check the world hands in in `packages/genshin-world/src/services/input/createWindowInputTarget.ts`, which reads `FIELD_SELECTOR` in `packages/genshin-engine/src/input/constants.ts`).
 
 ## A pad walks a menu
 
@@ -65,16 +65,17 @@ The bindings of places and modes the world does not have are left out (`packages
 
 ## Key files
 
-| File                                                              | Its role                                                                                                           |
-| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/models/input/InputAction.ts`         | every action a player's buttons ask for                                                                            |
-| `packages/genshin-engine/src/input/InputActionBindingMap.ts`      | the game's default chords for each action, on a PC and a pad                                                       |
-| `packages/genshin-engine/src/models/input/GamepadButton.ts`       | a pad's buttons in the standard layout, named by where they sit                                                    |
-| `packages/genshin-engine/src/models/input/MouseButton.ts`         | a mouse's buttons, spelt apart from every key                                                                      |
-| `packages/genshin-engine/src/input/createInput.ts`                | the listeners, the gamepad's poll and the once-a-frame read into held and pressed actions, and a menu's directions |
-| `packages/genshin-engine/src/input/constants.ts`                  | the focus keys, the field selector and the standard layout's button order                                          |
-| `packages/genshin-world/src/composables/useMenuNavigation.ts`     | the pad's walk of a menu: its focus, its press, its tab steps and the focus a menu opens on                        |
-| `packages/genshin-world/src/services/menu/findMenuFocusTarget.ts` | the nearest control lying in a direction from another                                                              |
+| File                                                                   | Its role                                                                                                                  |
+| :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-engine/src/models/input/InputAction.ts`              | every action a player's buttons ask for                                                                                   |
+| `packages/genshin-engine/src/input/InputActionBindingMap.ts`           | the game's default chords for each action, on a PC and a pad                                                              |
+| `packages/genshin-engine/src/models/input/GamepadButton.ts`            | a pad's buttons in the standard layout, named by where they sit                                                           |
+| `packages/genshin-engine/src/models/input/MouseButton.ts`              | a mouse's buttons, spelt apart from every key                                                                             |
+| `packages/genshin-engine/src/input/createInput.ts`                     | the listeners, the target's gamepad poll and the once-a-frame read into held and pressed actions, and a menu's directions |
+| `packages/genshin-world/src/services/input/createWindowInputTarget.ts` | the window as the input reads it: its listeners, its pointer lock, its gamepads and the fields a key is typed into        |
+| `packages/genshin-engine/src/input/constants.ts`                       | the focus keys, the field selector and the standard layout's button order                                                 |
+| `packages/genshin-world/src/composables/useMenuNavigation.ts`          | the pad's walk of a menu: its focus, its press, its tab steps and the focus a menu opens on                               |
+| `packages/genshin-world/src/services/menu/findMenuFocusTarget.ts`      | the nearest control lying in a direction from another                                                                     |
 
 ## Sources
 

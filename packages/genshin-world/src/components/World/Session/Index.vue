@@ -100,6 +100,7 @@ import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossom
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
+import { createWindowInputTarget } from "#src/services/input/createWindowInputTarget";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
@@ -208,7 +209,7 @@ const grassTrail = createGrassTrail();
 // oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
 // The keys, pointer and gamepad, read once a frame ahead of everything the frame moves, which reads the same state
-const input = createInput(window);
+const input = createInput(createWindowInputTarget(window));
 const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
 const worldScreenStore = useWorldScreenStore();

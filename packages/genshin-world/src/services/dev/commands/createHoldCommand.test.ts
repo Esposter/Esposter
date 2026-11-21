@@ -3,12 +3,13 @@ import { createHoldCommand } from "#src/services/dev/commands/createHoldCommand"
 import { createInput, InputAction } from "genshin-engine";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-// An event target standing in for the window the input reads, which reports no gamepad and holds the focus on the
-// Element given, if any
-const createTarget = (activeElement: null | { matches: (selectors: string) => boolean } = null) =>
+// An event target standing in for the window the input reads, which reports no gamepad and no pointer lock, and in which
+// The element given, if any, is the one field a key is typed into
+const createTarget = (fieldElement: null | object = null) =>
   Object.assign(new EventTarget(), {
-    document: { activeElement, pointerLockElement: null },
-    navigator: { getGamepads: () => [] },
+    checkIsFieldTarget: (eventTarget: EventTarget | null) => eventTarget !== null && eventTarget === fieldElement,
+    checkIsPointerLocked: () => false,
+    getGamepads: () => [],
   });
 
 // A browser event class keeping the fields its init gives, all the input reads from a keyboard or mouse event
@@ -141,7 +142,8 @@ describe(createHoldCommand, () => {
     expect.hasAssertions();
 
     // The console's field holds the focus while its line runs, and a hold's keys are sent on the window, not from it
-    const target = createTarget({ matches: () => true });
+    const consoleField: object = {};
+    const target = createTarget(consoleField);
     const { readInput } = createInput(target);
     const frameClock = createFrameClock();
     createHoldCommand({ onFrame: frameClock.onFrame, target }).run({ control: DevMoveDirection.Forward, seconds: 1 });

@@ -51,7 +51,7 @@ flowchart LR
 | `apps/web/app/components/Genshin/World.vue`                                | Renders the developer surface in a `DevOnly` block that a production build strips, and waits for its registry in development                                              |
 | `packages/genshin-world/src/composables/useGenshinTuning.ts`               | Registers the look's variables instead of an Inspector group                                                                                                              |
 | `packages/genshin-engine/src/input/createInput.ts`                         | Ignores a key whose event target is a field, so a `hold` sent on the window reaches the game                                                                              |
-| `packages/genshin-engine/src/models/input/InputTarget.ts`                  | The window the input reads: its listeners, its pointer lock and its gamepads, not its focus                                                                               |
+| `packages/genshin-engine/src/models/input/InputTarget.ts`                  | The window the input reads, each read handed in: its listeners, its pointer lock, its gamepads and the field a key came from, not its focus                               |
 
 Scenario files are added beside the runner as the changes that show them land, one scenario per file:
 

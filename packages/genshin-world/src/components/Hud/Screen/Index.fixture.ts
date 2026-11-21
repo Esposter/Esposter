@@ -8,6 +8,7 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
+import { createWindowInputTarget } from "#src/services/input/createWindowInputTarget";
 import { CHONGYUN_CHARACTER_ID } from "#src/services/kit/characters/chongyunKit";
 import { MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
 import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
@@ -54,7 +55,7 @@ export const props = {
   characterIdSkillGlyphsMap,
   frame: { gadgetCooldown: 0, pivotX: 0.5, pivotY: 0.5, seconds: 0, sheerCold: 0, stamina: STAMINA_MAX },
   gameText: ENGLISH_GAME_TEXT,
-  input: createInput(window),
+  input: createInput(createWindowInputTarget(window)),
   interfaceRects: await readHudInterfaceRects(GAME_DATA_LOCAL_BASE_URL),
   isQuickSwapOpen: false,
   isTouch: true,
