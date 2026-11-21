@@ -20,15 +20,17 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
   // `exports` field is what encapsulates a package: without these, every `@esposter/configuration/eslint/*.js`
   // Import — the shared flat config each package symlinks — the formatter's settings the root config and every
   // Generator read, the app's `types/global.d.ts` import and the Vue hook every Vitest worker imports all resolve to
-  // Nothing. The formatter's is raw TypeScript Node strips, so it resolves before this package is built. Every project under `packages/` picks the augmentation up
-  // Through `tsconfig.base.json`'s own `include`; the app is the one consumer outside that tree, and a specifier is
-  // The only way it can name the file without counting directories, so that file is the only one exported.
+  // Nothing. The formatter's and the generator's are raw TypeScript Node strips, so they resolve before this package
+  // Built. Every project under `packages/` picks the augmentation up Through `tsconfig.base.json`'s own `include`;
+  // The app is the one consumer outside that tree, and a specifier is the only way it can name the file without
+  // Counting directories, so that file is the only one exported.
   exports: {
     customExports: {
       // The constants alone, for a script that needs one and would otherwise load every build and test helper the root
       // Barrel imports — most of a tooling script's startup
       "./constants": { default: "./dist/constants.js", source: "./src/services/constants.ts" },
       "./eslint/*": "./eslint/*",
+      "./generate-exports": "./src/services/generateExports.ts",
       "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
       "./types/global.d.ts": "./types/global.d.ts",
       "./vitest/*": "./vitest/*",
