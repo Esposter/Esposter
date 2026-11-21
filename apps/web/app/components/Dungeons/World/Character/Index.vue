@@ -2,7 +2,8 @@
 import type { CharacterProps } from "#src/components/Dungeons/World/Character/CharacterProps";
 import type { Position } from "grid-engine";
 
-import { omitUndefined } from "@esposter/shared";
+import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
+import { noop, omitUndefined } from "@esposter/shared";
 import { Direction } from "grid-engine";
 import { Sprite } from "vue-phaserjs";
 
@@ -15,6 +16,8 @@ const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });
 const isMoving = defineModel<boolean>("isMoving", { required: true });
 defineProps<CharacterProps>();
+const worldSceneStore = useWorldSceneStore();
+const { gridEngine } = storeToRefs(worldSceneStore);
 // Every grid-engine stream this character listens on, so a stream costs one call rather than a ref and a line in the
 // Teardown. Grid engine removes the character itself when a new tilemap is created
 const subscriptions = ref<CharacterSubscription[]>([]);
@@ -61,6 +64,10 @@ onUnmounted(unsubscribeAll);
           startPosition: position,
           ...omitUndefined({ facingDirection: direction, speed }),
         });
+        // The core's engine takes the character beside the plugin's until the swap, and holds no sprite
+        gridEngine
+          ?.addCharacter({ id, startPosition: position, ...omitUndefined({ facingDirection: direction, speed }) })
+          .match(noop, console.error);
         subscribeToCharacter(id, scene.gridEngine.movementStarted(), () => {
           isMoving = true;
         });

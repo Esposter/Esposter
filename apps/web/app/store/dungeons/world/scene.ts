@@ -1,6 +1,7 @@
 import type { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
 import type { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import type { WorldData } from "#shared/models/dungeons/data/world/WorldData";
+import type { GridEngine } from "grid-engine-headless";
 import type { Tilemaps } from "phaser";
 
 import { useDungeonsStore } from "#src/store/dungeons/index";
@@ -18,6 +19,8 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   };
   // We will create the tilemap and its metadata in the world scene vue component
   const tilemap = ref<Tilemaps.Tilemap>() as Ref<Tilemaps.Tilemap>;
+  // The tilemap's grid engine is made with the tilemap and marked raw where it is set, and it is released with the scene
+  const gridEngine = ref<GridEngine>();
   const tilemapKeyLayerMap = ref(new Map<TilemapKey, Map<string, Tilemaps.TilemapLayer | undefined>>());
   const layerMap = computed({
     get: () => tilemapKeyLayerMap.value.get(tilemapKey.value),
@@ -34,5 +37,5 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
       else tilemapKeyObjectLayerMap.value.delete(tilemapKey.value);
     },
   });
-  return { layerMap, objectLayerMap, switchToTilemap, tilemap, tilemapKey, worldData };
+  return { gridEngine, layerMap, objectLayerMap, switchToTilemap, tilemap, tilemapKey, worldData };
 });
