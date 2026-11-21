@@ -44,7 +44,7 @@ import {
 } from "@esposter/db-schema";
 import callMigrations from "@esposter/db-schema/objects/call/migrations/migrations";
 import { getResultAsync, noop, takeOne, withFinalizerAsync } from "@esposter/shared";
-import { and, eq, isNotNull, isNull, lt } from "drizzle-orm";
+import { and, eq, isNotNull, lt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import { v7 } from "uuid";
 import { z } from "zod";
@@ -414,7 +414,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     const livingParticipants = this.db
       .select({ id: participants.id })
       .from(participants)
-      .where(isNull(participants.deletedAt))
+      .where(getLiveRowWhere(participants))
       .limit(1)
       .all();
     return livingParticipants.length > 0;
@@ -516,7 +516,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return this.db
       .select({ id: participants.id, sessionId: participants.sessionId, userId: participants.userId })
       .from(participants)
-      .where(and(eq(participants.userId, userId), isNull(participants.deletedAt)))
+      .where(and(eq(participants.userId, userId), getLiveRowWhere(participants)))
       .all();
   }
 
@@ -556,7 +556,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return this.db
       .select()
       .from(participants)
-      .where(and(eq(participants.id, participantId), isNull(participants.deletedAt)))
+      .where(and(eq(participants.id, participantId), getLiveRowWhere(participants)))
       .get();
   }
 
@@ -564,7 +564,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return this.db
       .select()
       .from(participants)
-      .where(and(eq(participants.sessionId, sessionId), isNull(participants.deletedAt)))
+      .where(and(eq(participants.sessionId, sessionId), getLiveRowWhere(participants)))
       .get();
   }
 
@@ -725,7 +725,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     const [updatedParticipant] = this.db
       .update(participants)
       .set(values)
-      .where(and(where, isNull(participants.deletedAt)))
+      .where(and(where, getLiveRowWhere(participants)))
       .returning(participantColumns)
       .all();
     if (!updatedParticipant) return null;
