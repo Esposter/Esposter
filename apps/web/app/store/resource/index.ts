@@ -21,6 +21,7 @@ import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getFileSize } from "#src/services/file/getFileSize";
 import { copyLinkToClipboard } from "#src/services/resource/copyLinkToClipboard";
 import { publicationTable, resourceTable } from "#src/services/resource/overlay/constants";
+import { getDeleteResourcesEntry } from "#src/services/resource/overlay/getDeleteResourcesEntry";
 import { getHeldResource } from "#src/services/resource/overlay/getHeldResource";
 import { getPublicationPatchEntry } from "#src/services/resource/overlay/getPublicationPatchEntry";
 import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
@@ -580,7 +581,7 @@ export const useResourceStore = defineStore("resource", () => {
     writeOptimistic(
       async () => createRowResponse(resourceTable, await getResourceRouter(type).deleteResource.mutate({ id })),
       {
-        entry: getResourcePatchEntry(id, { deletedAt: new Date() }),
+        entry: getDeleteResourcesEntry([id], new Date()),
         // The resource was never removed, so its Restore is withdrawn
         onError: (error) => {
           dismissNotification(notificationId);

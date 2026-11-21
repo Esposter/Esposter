@@ -10,10 +10,13 @@ import {
   createMockOtherUserCaller,
 } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { blockRouter } from "#server/trpc/routers/block";
 import { likeRouter } from "#server/trpc/routers/like";
 import { postRouter } from "#server/trpc/routers/post";
 import { PostSortType } from "#shared/models/post/PostSortType";
+import { postTable } from "#src/services/post/overlay/constants";
+import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -88,6 +91,23 @@ describe("postRouter", () => {
     const updatedPost = await postCaller.updatePost({ id: newPost.id, title: updatedTitle });
 
     expect(updatedPost.title).toBe(updatedTitle);
+  });
+
+  // The edit's entry is the one the store issues, and the one post the edit changes is the row the entry shows
+  test("the update entry covers every row the edit names", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(postRouter)(context).updatePost({ id: newPost.id, title: updatedTitle }),
+      context: mockContext,
+      entry: getPostPatchEntry(newPost.id, { title: updatedTitle }),
+      path: "updatePost",
+      tables: [postTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 
   test("fails update with wrong user", async () => {

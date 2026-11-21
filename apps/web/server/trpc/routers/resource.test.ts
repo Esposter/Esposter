@@ -17,6 +17,7 @@ import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { emailRouter } from "#server/trpc/routers/email";
 import { trpcRouter } from "#server/trpc/routers/index";
@@ -25,6 +26,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { todoListRouter } from "#server/trpc/routers/todoList";
 import { webpageRouter } from "#server/trpc/routers/webpage";
+import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { CritiqueFindingKind } from "#shared/models/pageBuilder/CritiqueFindingKind";
@@ -47,6 +49,11 @@ import {
 } from "#shared/services/pageBuilder/critique/constants.test";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
+import { publicationTable, resourceTable } from "#src/services/resource/overlay/constants";
+import { getDeleteResourcesEntry } from "#src/services/resource/overlay/getDeleteResourcesEntry";
+import { getPublicationPatchEntry } from "#src/services/resource/overlay/getPublicationPatchEntry";
+import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
+import { getRestoreResourcesEntry } from "#src/services/resource/overlay/getRestoreResourcesEntry";
 import { getContentBlobName, listBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
@@ -1696,5 +1703,100 @@ describe("resourceRouter", () => {
         operations: [{ op: JsonPatchOperationType.Add, path: "", value: { items: [] } }],
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  // The write's entry is the one the store issues, and the cross-check reads the rows the write names against the keys it touches
+  test("the rename entry covers every row the rename names", async () => {
+    expect.hasAssertions();
+
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) =>
+        createCallerFactory(dashboardRouter)(context).updateResource({ id: dashboardResource.id, name: updatedName }),
+      context: mockContext,
+      entry: getResourcePatchEntry(dashboardResource.id, { name: updatedName }),
+      path: "updateResource",
+      tables: [resourceTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the batch delete entry covers every row the delete names", async () => {
+    expect.hasAssertions();
+
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({
+      content: new Dashboard(),
+      contentVersion: dashboardResource.contentVersion,
+      id: dashboardResource.id,
+    });
+    await dashboardCaller.publishResource({ id: dashboardResource.id });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(resourceRouter)(context).deleteResources({ ids: [dashboardResource.id] }),
+      context: mockContext,
+      entry: getDeleteResourcesEntry([dashboardResource.id], new Date(0)),
+      path: "deleteResources",
+      tables: [resourceTable, publicationTable],
+    });
+
+    expect(named).toHaveLength(2);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the delete entry covers every row a resource's own delete names", async () => {
+    expect.hasAssertions();
+
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(dashboardRouter)(context).deleteResource({ id: dashboardResource.id }),
+      context: mockContext,
+      entry: getDeleteResourcesEntry([dashboardResource.id], new Date(0)),
+      path: "deleteResource",
+      tables: [resourceTable, publicationTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the restore entry covers every row the restore names", async () => {
+    expect.hasAssertions();
+
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    await caller.deleteResources({ ids: [dashboardResource.id] });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(resourceRouter)(context).restoreResources({ ids: [dashboardResource.id] }),
+      context: mockContext,
+      entry: getRestoreResourcesEntry([dashboardResource.id]),
+      path: "restoreResources",
+      tables: [resourceTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the unpublish entry covers every row the unpublish names", async () => {
+    expect.hasAssertions();
+
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({
+      content: new Dashboard(),
+      contentVersion: dashboardResource.contentVersion,
+      id: dashboardResource.id,
+    });
+    await dashboardCaller.publishResource({ id: dashboardResource.id });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(dashboardRouter)(context).unpublishResource({ id: dashboardResource.id }),
+      context: mockContext,
+      entry: getPublicationPatchEntry(dashboardResource.id, { deletedAt: new Date(0) }),
+      path: "unpublishResource",
+      tables: [publicationTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 });

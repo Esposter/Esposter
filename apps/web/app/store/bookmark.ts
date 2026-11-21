@@ -1,18 +1,13 @@
 import type { BookmarkPageLink } from "#shared/models/app/BookmarkPageLink";
 import type { ToggleBookmarkInput } from "#shared/models/db/bookmark/ToggleBookmarkInput";
-import type { Entry } from "#src/models/shared/overlay/Entry";
 import type { BookmarkInApp } from "@esposter/db-schema";
 
-import { getBookmarkTarget } from "#shared/services/bookmark/getBookmarkTarget";
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
+import { bookmarkTable } from "#src/services/bookmark/overlay/constants";
+import { getToggleBookmarkEntry } from "#src/services/bookmark/overlay/getToggleBookmarkEntry";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
-import { createTable } from "#src/services/shared/overlay/createTable";
 import { useNotificationStore } from "#src/store/notification";
 import { useOverlayStore } from "#src/store/overlay";
-import { bookmarksInApp } from "@esposter/db-schema";
-
-// A bookmark row, held by its user and its path
-const bookmarkTable = createTable(bookmarksInApp);
 
 // The fields a read joins in from other tables, kept beside the row by its path: whether the page is reachable, and the
 // Mark that names it. A row the read did not join is drawn as reachable with no mark
@@ -20,30 +15,6 @@ interface BookmarkLink {
   isAvailable?: boolean;
   mark?: BookmarkPageLink["mark"];
 }
-
-// The bookmark a toggle makes is the row the entry writes: a live one for a page not bookmarked, the tombstone lifted for
-// A page whose removal the reader holds. The server's row confirms it
-const getToggleBookmarkEntry =
-  (userId: string, input: ToggleBookmarkInput, now: Date): Entry =>
-  (view) => {
-    const rowKey: [string, string] = [userId, input.path];
-    const bookmark = view.get(bookmarkTable, rowKey);
-    if (bookmark && !bookmark.deletedAt) {
-      view.set(bookmarkTable, rowKey, { ...bookmark, deletedAt: now });
-      return;
-    }
-
-    view.set(bookmarkTable, rowKey, {
-      ...bookmark,
-      ...getBookmarkTarget(input.mark),
-      createdAt: bookmark?.createdAt ?? now,
-      deletedAt: null,
-      path: input.path,
-      title: input.title,
-      updatedAt: now,
-      userId,
-    });
-  };
 
 // Server-side, so a reader's bookmarks follow them between devices; a reader who is not signed in has none
 export const useBookmarkStore = defineStore("bookmark", () => {

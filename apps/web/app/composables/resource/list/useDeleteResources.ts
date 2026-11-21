@@ -4,7 +4,7 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CacheTag } from "#src/models/cache/CacheTag";
 import { resourceTable } from "#src/services/resource/overlay/constants";
-import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
+import { getDeleteResourcesEntry } from "#src/services/resource/overlay/getDeleteResourcesEntry";
 import { sendIdsInChunks } from "#src/services/resource/sendIdsInChunks";
 import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
 import { useCacheStore } from "#src/store/cache";
@@ -54,8 +54,6 @@ export const useDeleteResources = (refresh: () => Promise<void>) => {
     // So the user sits in an editor that error-toasts on every autosave. The blade's own delete already
     // Routes here, and a delete must not navigate from one entry point and not the other
     if (ids.includes(getRouteParam(router.currentRoute.value.params, "id"))) navigateToExplorer();
-    // Each resource is held as a tombstone until its answer arrives, so the list drops it as the write is sent
-    const removals = ids.map((id) => getResourcePatchEntry(id, { deletedAt: new Date() }));
     // The batch procedure with one id shares the exact cleanup path (row + publication + blob directory).
     // Selection accumulates across pages, so the ids are chunked to the server's per-call cap and sent in order
     writeOptimistic(
@@ -83,9 +81,7 @@ export const useDeleteResources = (refresh: () => Promise<void>) => {
           },
         ),
       {
-        entry: (view) => {
-          for (const removal of removals) removal(view);
-        },
+        entry: getDeleteResourcesEntry(ids, new Date()),
         onError: (error) => {
           dismissNotification(notificationId);
           createErrorNotification(error);

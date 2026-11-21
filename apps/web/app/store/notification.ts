@@ -1,30 +1,24 @@
 import type { ReadNotificationsResult } from "#shared/models/db/notification/ReadNotificationsResult";
 import type { AppNotification } from "#src/models/notification/AppNotification";
-import type { Entry } from "#src/models/shared/overlay/Entry";
 import type { NotificationInNotification } from "@esposter/db-schema";
 import type { Except, SetOptional } from "type-fest";
 
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getToastedNotificationIds } from "#src/services/notification/getToastedNotificationIds";
+import { notificationTable } from "#src/services/notification/overlay/constants";
+import { getDismissNotificationEntry } from "#src/services/notification/overlay/getDismissNotificationEntry";
 import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
-import { createTable } from "#src/services/shared/overlay/createTable";
-import { getHeldRowEntry } from "#src/services/shared/overlay/getHeldRowEntry";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
-import { createEmptyPage, NotificationSeverity, notificationsInNotification } from "@esposter/db-schema";
+import { createEmptyPage, NotificationSeverity } from "@esposter/db-schema";
 import { checkIsServer, getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { v7 } from "uuid";
 
-// A notification row, held by its id
-const notificationTable = createTable(notificationsInNotification);
 // A read row is the row itself; an unread one is copied with it marked read, so each row a read changes is a new row
 const markRead = <T extends { isRead: boolean }>(notification: T): T =>
   notification.isRead ? notification : { ...notification, isRead: true };
-// A dismissal leaves the row at once, as the tombstone its answer confirms
-const getDismissNotificationEntry = (id: string, deletedAt: Date): Entry =>
-  getHeldRowEntry(notificationTable, [id], (notification) => ({ ...notification, deletedAt }));
 // The bell renders two kinds of notification and owns the difference between them. A **delivered** one is a row
 // The server wrote for this user — it reached every device that was subscribed, it survives the reload, and it is
 // Paged in like any other list. A **local** one is feedback about what this tab just did: a mutation error, a save

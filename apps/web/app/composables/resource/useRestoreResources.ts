@@ -4,7 +4,7 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CacheTag } from "#src/models/cache/CacheTag";
 import { resourceTable } from "#src/services/resource/overlay/constants";
-import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
+import { getRestoreResourcesEntry } from "#src/services/resource/overlay/getRestoreResourcesEntry";
 import { sendIdsInChunks } from "#src/services/resource/sendIdsInChunks";
 import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
 import { useCacheStore } from "#src/store/cache";
@@ -29,8 +29,6 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
   const restoreResources = (resources: ResourceInResource[]) => {
     const ids = resources.map(({ id }) => id);
     const firstResource = takeOne(resources);
-    // Each row is held as a tombstone until its answer arrives, so the row shows again as the restore is sent
-    const restores = ids.map((id) => getResourcePatchEntry(id, { deletedAt: null }));
     for (const id of ids) pendingRestoreIds.value.add(id);
     // The toast shows at once, while the rows it brings back are the server's to return, in its order
     const notificationId = createNotification({
@@ -63,9 +61,7 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
           },
         ),
       {
-        entry: (view) => {
-          for (const restore of restores) restore(view);
-        },
+        entry: getRestoreResourcesEntry(ids),
         onError: (error) => {
           dismissNotification(notificationId);
           createErrorNotification(error);

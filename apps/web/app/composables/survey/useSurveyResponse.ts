@@ -2,10 +2,9 @@ import type { SurveyResponseInResource } from "@esposter/db-schema";
 import type { SurveyAnswers } from "vue-survey-engine-headless";
 
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
-import { createTable } from "#src/services/shared/overlay/createTable";
+import { getSurveyResponseEntry } from "#src/services/survey/overlay/getSurveyResponseEntry";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
-import { surveyResponsesInResource } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { v7 } from "uuid";
 import { surveyAnswerValueSchema } from "vue-survey-engine-headless";
@@ -13,7 +12,6 @@ import { z } from "zod";
 
 // A stored draft's answers are parsed rather than cast, since the record holds whatever the server stored
 const surveyAnswersSchema: z.ZodType<SurveyAnswers> = z.record(z.string(), surveyAnswerValueSchema);
-const surveyResponseTable = createTable(surveyResponsesInResource);
 
 interface SaveSurveyResponseInput {
   answers: SurveyAnswers;
@@ -83,11 +81,7 @@ export const useSurveyResponse = (resourceId: string, participantToken: string) 
         return { arrivals: [], confirmed: [] };
       },
       {
-        // The save draws nothing, so its entry only reads the response's row. The read touches that row's key, which orders
-        // A save behind the writes ahead of it on the same response: a submit issued while the create is in flight waits for it
-        entry: (view) => {
-          view.get(surveyResponseTable, [seed]);
-        },
+        entry: getSurveyResponseEntry(seed),
         onError: (error) => {
           resolve(false);
           createErrorAlert(error);
