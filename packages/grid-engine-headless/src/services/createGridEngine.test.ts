@@ -25,11 +25,44 @@ const readError = <T>(result: Result<T, GridEngineError>): GridEngineError =>
 
 const readEngine = (config: GridEngineConfig): GridEngine => unwrap(createGridEngine(config));
 
+// The tiles an engine's steps commit to, in the order they commit
+const recordFinishedTiles = (engine: GridEngine): Position[] => {
+  const finishedTiles: Position[] = [];
+  engine.on("positionChangeFinished", ({ enterTile }) => {
+    finishedTiles.push(enterTile);
+  });
+  return finishedTiles;
+};
+
 describe(createGridEngine, () => {
   const FIRST_ID = "0";
   const SECOND_ID = "1";
   const STEP_DURATION_MS = 1000 / 4;
   const ONE_SECOND_MS = 1000;
+  const CORRIDOR_TILES = [[false, false, false, false, false, false]];
+  const FOUR_TILES: Position[] = [
+    { x: 1, y: 0 },
+    { x: 2, y: 0 },
+    { x: 3, y: 0 },
+    { x: 4, y: 0 },
+  ];
+
+  // The world's walk: the move is asked again before each update, as its input asks it while a key is held
+  const walkAskingEachUpdate = (engine: GridEngine, splitMs: number, updateCount: number): void => {
+    for (let index = 0; index < updateCount; index += 1) {
+      unwrap(engine.move(FIRST_ID, Direction.Right));
+      engine.update(splitMs);
+    }
+  };
+
+  // A run a listener keeps going: each commit asks for the next move, so one update can run on across the steps it ends
+  const walkFromListener = (engine: GridEngine, splitMs: number, updateCount: number): void => {
+    engine.on("positionChangeFinished", () => {
+      unwrap(engine.move(FIRST_ID, Direction.Right));
+    });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+    for (let index = 0; index < updateCount; index += 1) engine.update(splitMs);
+  };
 
   test("a blocking tile blocks", () => {
     expect.hasAssertions();
@@ -98,21 +131,127 @@ describe(createGridEngine, () => {
     expect(engine.checkIsBlocked({ x: 2, y: 0 })).toBe(false);
   });
 
-  test("a step takes the same time at any split of one second of updates (#419)", () => {
+  test("a run covers the same tiles in one second at any split of updates, dividing a step or not (#419)", () => {
     expect.hasAssertions();
 
-    // Each split divides a step evenly, so the tile is released on the update that crosses its end
-    for (const splitMs of [1, 5, 10, 25, 50, 125, STEP_DURATION_MS]) {
-      const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false]] });
-      unwrap(engine.move(FIRST_ID, Direction.Right));
+    for (const splitMs of [1, 5, 10, 20, 25, 50, 125, STEP_DURATION_MS, ONE_SECOND_MS]) {
+      const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: CORRIDOR_TILES });
+      const finishedTiles = recordFinishedTiles(engine);
+      walkFromListener(engine, splitMs, ONE_SECOND_MS / splitMs);
 
-      let elapsedMs = 0;
-      while (elapsedMs < ONE_SECOND_MS && engine.checkIsBlocked({ x: 0, y: 0 })) {
-        engine.update(splitMs);
-        elapsedMs += splitMs;
-      }
-      expect(elapsedMs).toBe(STEP_DURATION_MS);
+      expect(finishedTiles).toStrictEqual(FOUR_TILES);
     }
+  });
+
+  test("a run asked before each update covers the same tiles at 20 ms updates as at 4 ms updates (#419)", () => {
+    expect.hasAssertions();
+
+    const coarseEngine = readEngine({ characters: [{ id: FIRST_ID }], tiles: CORRIDOR_TILES });
+    const coarseTiles = recordFinishedTiles(coarseEngine);
+    walkAskingEachUpdate(coarseEngine, 20, 50);
+
+    const fineEngine = readEngine({ characters: [{ id: FIRST_ID }], tiles: CORRIDOR_TILES });
+    const fineTiles = recordFinishedTiles(fineEngine);
+    walkAskingEachUpdate(fineEngine, 4, 250);
+
+    expect(coarseTiles).toStrictEqual(FOUR_TILES);
+    expect(fineTiles).toStrictEqual(FOUR_TILES);
+  });
+
+  test("a stop at a tile with a large delta lands exactly on it, and the next move starts from there", () => {
+    expect.hasAssertions();
+
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: CORRIDOR_TILES });
+    const finishedTiles = recordFinishedTiles(engine);
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+
+    engine.update(ONE_SECOND_MS);
+
+    expect(finishedTiles).toStrictEqual([{ x: 1, y: 0 }]);
+    expect(engine.checkIsBlocked({ x: 2, y: 0 })).toBe(false);
+
+    // No move waits through this update, so the distance the last one passed its tile is dropped
+    engine.update(ONE_SECOND_MS);
+    // The listener asks for a Right move at each commit, so a leftover that reached the next run would run on
+    engine.on("positionChangeFinished", () => {
+      unwrap(engine.move(FIRST_ID, Direction.Right));
+    });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+    engine.update(STEP_DURATION_MS);
+
+    expect(finishedTiles).toStrictEqual([
+      { x: 1, y: 0 },
+      { x: 2, y: 0 },
+    ]);
+  });
+
+  test("a stop from a position listener at a tile with a large delta lands on that tile (#528)", () => {
+    expect.hasAssertions();
+
+    const stoppedAt: Position[] = [];
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: CORRIDOR_TILES });
+    const finishedTiles = recordFinishedTiles(engine);
+    engine.on("positionChangeFinished", ({ enterTile }) => {
+      if (enterTile.x < 2) unwrap(engine.move(FIRST_ID, Direction.Right));
+    });
+    engine.on("movementStopped", ({ position }) => {
+      stoppedAt.push(position);
+    });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+
+    engine.update(ONE_SECOND_MS);
+
+    expect(finishedTiles).toStrictEqual([
+      { x: 1, y: 0 },
+      { x: 2, y: 0 },
+    ]);
+    expect(stoppedAt).toStrictEqual([{ x: 2, y: 0 }]);
+    expect(engine.checkIsBlocked({ x: 3, y: 0 })).toBe(false);
+  });
+
+  test("a move in another direction does not take the distance a step past its end left", () => {
+    expect.hasAssertions();
+
+    const engine = readEngine({
+      characters: [{ id: FIRST_ID }],
+      tiles: [
+        [false, false],
+        [false, false],
+        [false, false],
+      ],
+    });
+    const finishedTiles = recordFinishedTiles(engine);
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+    engine.update(ONE_SECOND_MS);
+
+    // The listener asks for another Down move, so a leftover that reached the Down step would run on past its tile
+    engine.on("positionChangeFinished", () => {
+      unwrap(engine.move(FIRST_ID, Direction.Down));
+    });
+    unwrap(engine.move(FIRST_ID, Direction.Down));
+    engine.update(STEP_DURATION_MS);
+
+    expect(finishedTiles).toStrictEqual([
+      { x: 1, y: 0 },
+      { x: 1, y: 1 },
+    ]);
+  });
+
+  test("a teleport drops the distance an update left past a step", () => {
+    expect.hasAssertions();
+
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: CORRIDOR_TILES });
+    unwrap(engine.move(FIRST_ID, Direction.Right));
+    engine.update(ONE_SECOND_MS);
+
+    // The listener asks for a Right move at each commit, so a leftover that reached the teleported run would run on
+    engine.on("positionChangeFinished", () => {
+      unwrap(engine.move(FIRST_ID, Direction.Right));
+    });
+    unwrap(engine.setPosition(FIRST_ID, { x: 0, y: 0 }));
+    engine.update(STEP_DURATION_MS);
+
+    expect(unwrap(engine.readCharacter(FIRST_ID)).position).toStrictEqual({ x: 1, y: 0 });
   });
 
   test("the default speed is four tiles per second", () => {

@@ -8,8 +8,8 @@ import { checkIsDiagonal } from "#src/services/checkIsDiagonal";
 import { readCharacter } from "#src/services/readCharacter";
 import { err, ok } from "neverthrow";
 
-// A move waits for the next update, so a move made from a listener starts on the one after the step that raised it. A
-// Move asked while the character is already moving or has one waiting is ignored
+// A move waits for an update to start it, and a move a listener makes during a commit takes the distance its update has
+// Left when the directions match. A move asked while the character is already moving or has one waiting is ignored
 export const queueMove = (state: GridEngineState, id: string, direction: Direction): Result<void, GridEngineError> =>
   readCharacter(state, id).andThen((character) => {
     if (checkIsDiagonal(direction)) return err({ id, kind: GridEngineErrorKind.DiagonalMove });

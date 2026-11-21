@@ -11,8 +11,8 @@ import { endRun } from "#src/services/endRun";
 import { readCharacter } from "#src/services/readCharacter";
 import { err, ok } from "neverthrow";
 
-// A teleport stops any step and any waiting move, releases the tile the step left, and emits the position change as a
-// Step does. A run it was part of ends where the character lands
+// A teleport stops any step and any waiting move, drops the distance a step passed its end, releases the tile the step
+// Left, and emits the position change as a step does. A run it was part of ends where the character lands
 export const teleportCharacter = (
   state: GridEngineState,
   id: string,
@@ -22,6 +22,7 @@ export const teleportCharacter = (
     if (checkIsOutsideGrid(state.tiles, position)) return err({ id, kind: GridEngineErrorKind.OutsideGrid, position });
     const exitTile = character.position;
     delete character.step;
+    delete character.carry;
     character.pendingDirection = Direction.None;
     character.position = position;
     const payload = { direction: character.facingDirection, enterTile: position, exitTile, id };

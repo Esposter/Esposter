@@ -1,4 +1,5 @@
 import type { Direction } from "#src/models/Direction";
+import type { GridEngineCarry } from "#src/models/GridEngineCarry";
 import type { GridEngineStep } from "#src/models/GridEngineStep";
 import type { Position } from "#src/models/Position";
 
@@ -6,6 +7,7 @@ import type { Position } from "#src/models/Position";
 // Update, and Direction.None when no move waits. A run is under way from a character's first step until it stops, and
 // A run that a listener's move carries on from one step to the next is still the same run
 export interface GridEngineCharacter {
+  carry?: GridEngineCarry;
   facingDirection: Direction;
   id: string;
   isRunning: boolean;
