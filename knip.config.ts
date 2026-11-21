@@ -59,6 +59,9 @@ const knipConfiguration: KnipConfig = {
         // `lru-cache` without declaring it, so the app declares it, nothing in the app imports it, and without it
         // `nuxt prepare` fails under CI's install
         "lru-cache",
+        // The Nitro dev runner loads it by name through `deps.paths` in `configuration/nitro.ts`, which finds its folder with
+        // `createRequire` rather than an import, so nothing in the app's graph imports it
+        "miniflare-dev",
         // @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — knip reads an `#app` import as the package it
         // Resolves to, which is the `nuxt-nightly` alias until the catalog's `nuxt` is a range again
         "nuxt-nightly",

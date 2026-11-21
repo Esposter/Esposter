@@ -154,6 +154,9 @@ catalog:
   marked: ^18.2.1
   mime-db: ^1.54.0
   miniflare: 5.20261119.0-beta
+  # The Nitro dev runner's miniflare, on the stable line its `latest` tag names: wrangler's 5 beta fails to load the
+  # runner's entry under `nuxt dev`, so `apps/web/configuration/nitro.ts` points the runner at this install
+  miniflare-dev: npm:miniflare@^4.20260730.0
   minisearch: ^7.2.0
   mjml: ^5.4.1
   mjml-preset-core: ^5.4.1
