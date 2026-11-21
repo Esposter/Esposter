@@ -24,9 +24,9 @@ const BarrelsMap: Record<
 };
 const ALL_BARREL_PATHS = new Set(Object.values(BarrelsMap).flatMap(({ barrelPaths }) => barrelPaths));
 // Writes the barrels into `src` under the package directory tsdown resolved, from the build's `build:prepare` hook.
-// `excludedPaths` are the `src`-relative folders and modules both barrels leave out: a directory the package loads on demand,
-// and a subpath entry's module or folder, which `getSubpathExclusions` derives from the package's entries. The `internal`
-// folder is left out too: it holds what a package keeps private, so no barrel lists a module under it.
+// `excludedPaths` are the `src`-relative folders and modules both barrels leave out: a directory the package loads on
+// Demand, and a subpath entry's module or folder, which `getSubpathExclusions` derives from the package's entries. The
+// `internal` folder is left out too: it holds what a package keeps private, so no barrel lists a module under it.
 export const generateExports = (
   packageDirectory: string,
   exportsGeneration: ExportsGeneration,
