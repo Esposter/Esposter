@@ -1,10 +1,8 @@
-import type { SlotFor } from "#src/models/shared/overlay/SlotFor";
-
 import { friendRequestTable, friendTable } from "#src/services/message/user/pair/constants";
 import { getAcceptFriendRequestEntry } from "#src/services/message/user/pair/getAcceptFriendRequestEntry";
 import { getFriendRowKey } from "#src/services/message/user/pair/getFriendRowKey";
+import { getTouchedKeys } from "#src/services/message/user/pair/getTouchedKeys.test";
 import { createSlotFor } from "#src/services/shared/overlay/createSlotFor";
-import { recordTouches } from "#src/services/shared/overlay/recordTouches";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -16,9 +14,6 @@ describe(getAcceptFriendRequestEntry, () => {
     const senderId = v7();
     const otherId = v7();
     const entry = getAcceptFriendRequestEntry(userId, senderId, new Date(0));
-    const touchedKeys = (slotFor: SlotFor) => [
-      ...new Set(recordTouches(slotFor, entry).map(({ key, table }) => JSON.stringify({ key, table }))),
-    ];
     const emptySlotFor = createSlotFor();
     const heldSlotFor = createSlotFor();
     const pairKey = getFriendRowKey(userId, senderId)[0];
@@ -41,8 +36,8 @@ describe(getAcceptFriendRequestEntry, () => {
       version: 0,
     });
 
-    expect(touchedKeys(heldSlotFor)).toStrictEqual(touchedKeys(emptySlotFor));
-    expect(touchedKeys(emptySlotFor)).toStrictEqual([
+    expect(getTouchedKeys(heldSlotFor, entry)).toStrictEqual(getTouchedKeys(emptySlotFor, entry));
+    expect(getTouchedKeys(emptySlotFor, entry)).toStrictEqual([
       JSON.stringify({ key: getFriendRowKey(userId, senderId), table: friendRequestTable.name }),
       JSON.stringify({ key: getFriendRowKey(userId, senderId), table: friendTable.name }),
     ]);
