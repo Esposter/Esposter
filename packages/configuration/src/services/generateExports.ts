@@ -11,15 +11,20 @@ const COMPONENT_BARREL_PATH = join(COMPONENTS_DIRECTORY, BARREL_FILE);
 // Build output the repository tracks, so one on disk that the answer does not write is an earlier build's, left when
 // The package changed its answer. It is removed: the package's own typecheck would still read it, naming modules the
 // Package may have since deleted, and nothing else would ever clear it. The one exception is `src/index.ts` under None,
-// Which the package writes itself as its curated entry, so that name is kept
+// Which the package writes itself as its curated entry, so that name is kept: it is the None answer's `curatedPaths`
 const BarrelsMap: Record<
   ExportsGeneration,
-  { barrelPaths: string[]; generators: ((sourceDirectory: string, excludedPaths: string[]) => void)[] }
+  {
+    barrelPaths: string[];
+    curatedPaths: string[];
+    generators: ((sourceDirectory: string, excludedPaths: string[]) => void)[];
+  }
 > = {
-  [ExportsGeneration.None]: { barrelPaths: [], generators: [] },
-  [ExportsGeneration.TypeScript]: { barrelPaths: [BARREL_FILE], generators: [generateSourceBarrel] },
+  [ExportsGeneration.None]: { barrelPaths: [], curatedPaths: [BARREL_FILE], generators: [] },
+  [ExportsGeneration.TypeScript]: { barrelPaths: [BARREL_FILE], curatedPaths: [], generators: [generateSourceBarrel] },
   [ExportsGeneration.Vue]: {
     barrelPaths: [COMPONENT_BARREL_PATH, BARREL_FILE],
+    curatedPaths: [],
     generators: [generateComponentBarrel, generateSourceBarrel],
   },
 };
@@ -33,10 +38,9 @@ export const generateExports = (
   excludedPaths: string[] = [],
 ): void => {
   const sourceDirectory = join(packageDirectory, SOURCE_DIRECTORY_NAME);
-  const { barrelPaths, generators } = BarrelsMap[exportsGeneration];
-  // Under None the package writes `src/index.ts` itself as its curated entry, so that name is kept rather than removed
-  const keptPaths = exportsGeneration === ExportsGeneration.None ? [...barrelPaths, BARREL_FILE] : barrelPaths;
+  const { barrelPaths, curatedPaths, generators } = BarrelsMap[exportsGeneration];
+  const keptPaths = new Set([...barrelPaths, ...curatedPaths]);
   for (const barrelPath of ALL_BARREL_PATHS)
-    if (!keptPaths.includes(barrelPath)) rmSync(join(sourceDirectory, barrelPath), { force: true });
+    if (!keptPaths.has(barrelPath)) rmSync(join(sourceDirectory, barrelPath), { force: true });
   for (const generateBarrel of generators) generateBarrel(sourceDirectory, excludedPaths);
 };
