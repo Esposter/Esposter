@@ -51,6 +51,7 @@ import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
 import { fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
 import { flowfireEdge } from "#src/services/gcg/cards/flowfireEdge";
 import { flowingFlame } from "#src/services/gcg/cards/flowingFlame";
+import { friedEgg } from "#src/services/gcg/cards/friedEgg";
 import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { gamblersEarrings } from "#src/services/gcg/cards/gamblersEarrings";
@@ -145,7 +146,6 @@ import { tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
 import { tenguJuuraiStormcluster } from "#src/services/gcg/cards/tenguJuuraiStormcluster";
 import { tenkoThunderbolts } from "#src/services/gcg/cards/tenkoThunderbolts";
 import { tenshukaku } from "#src/services/gcg/cards/tenshukaku";
-import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { theBestestTravelCompanion } from "#src/services/gcg/cards/theBestestTravelCompanion";
 import { theShrinesSacredShade } from "#src/services/gcg/cards/theShrinesSacredShade";
 import { theWolfWithin } from "#src/services/gcg/cards/theWolfWithin";
@@ -342,7 +342,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [333_006, mondstadtHashBrown],
   [333_007, mushroomPizza],
   [333_008, mintyMeatRolls],
-  [333_009, teyvatFriedEgg],
+  [333_009, friedEgg],
   [3120111, vermillionHereafterBonus],
   [GCG_BURNING_FLAME_ID, burningFlame],
   [GCG_CATALYZING_FIELD_ID, catalyzingField],

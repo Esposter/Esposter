@@ -4,10 +4,10 @@ import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
 import { Element } from "#src/models/Element";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { friedEgg } from "#src/services/gcg/cards/friedEgg";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { lotusFlowerCrisp } from "#src/services/gcg/cards/lotusFlowerCrisp";
-import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -67,7 +67,7 @@ describe("lotusFlowerCrisp", () => {
   });
 });
 
-describe("teyvatFriedEgg", () => {
+describe("friedEgg", () => {
   test("a defeated character is revived to 1 HP and healed 1 HP, and holds the food for the round", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -76,8 +76,8 @@ describe("teyvatFriedEgg", () => {
     ]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
 
-    expect(teyvatFriedEgg.canPlay?.(context, 1)).toBe(true);
-    teyvatFriedEgg.play?.(context, 1);
+    expect(friedEgg.canPlay?.(context, 1)).toBe(true);
+    friedEgg.play?.(context, 1);
     const side = takeOne(duel.sides, 0);
 
     expect({
@@ -95,8 +95,8 @@ describe("teyvatFriedEgg", () => {
       createGcgCharacterState({ character: { id: 3 }, hp: 0 }),
     ]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
-    teyvatFriedEgg.play?.(context, 1);
+    friedEgg.play?.(context, 1);
 
-    expect([teyvatFriedEgg.canPlay?.(context, 2), teyvatFriedEgg.canPlay?.(context, 0)]).toStrictEqual([false, false]);
+    expect([friedEgg.canPlay?.(context, 2), friedEgg.canPlay?.(context, 0)]).toStrictEqual([false, false]);
   });
 });
