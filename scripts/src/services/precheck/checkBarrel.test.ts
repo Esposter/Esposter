@@ -1,6 +1,6 @@
 import { checkBarrel } from "#src/services/precheck/checkBarrel";
 import { generateExports } from "@esposter/configuration";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, describe, expect, test, vi } from "vitest";
 
@@ -62,5 +62,23 @@ describe(checkBarrel, () => {
     generateExports(packageRoot, "vue", ["components/Lazy"]);
 
     expect(checkBarrel(PACKAGE_WITH_LAZY_COMPONENTS, false).findings).toStrictEqual([]);
+  });
+
+  // A package that writes its own entry un-ignores it in its `.gitignore`, so the entry is never compared with a barrel
+  // The generator would write, and the fix never writes over it
+  test("leaves a hand-written entry the package un-ignores as it is", () => {
+    expect.hasAssertions();
+
+    const PACKAGE_WITH_HAND_WRITTEN_ENTRY = "packages/hand-written-entry-package";
+    const packageRoot = join(repositoryRoot, PACKAGE_WITH_HAND_WRITTEN_ENTRY);
+    const sourceDirectory = join(packageRoot, "src");
+    mkdirSync(sourceDirectory, { recursive: true });
+    writeFileSync(join(packageRoot, ".gitignore"), "!/src/index.ts\n");
+    writeFileSync(join(packageRoot, "package.json"), "{}");
+    writeFileSync(join(sourceDirectory, "util.ts"), "export const util = 0;");
+    writeFileSync(join(sourceDirectory, "index.ts"), 'export * from "./curated.ts";\n');
+
+    expect(checkBarrel(PACKAGE_WITH_HAND_WRITTEN_ENTRY, true)).toStrictEqual({ findings: [], regenerated: [] });
+    expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe('export * from "./curated.ts";\n');
   });
 });

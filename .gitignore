@@ -4,7 +4,7 @@ node_modules
 
 # Build output
 dist
-# The package barrels a build writes
+# The package barrels a build writes; a package that writes its own src/index.ts un-ignores that one path in its own .gitignore
 **/src/index.ts
 **/src/components/index.ts
 *.tsbuildinfo

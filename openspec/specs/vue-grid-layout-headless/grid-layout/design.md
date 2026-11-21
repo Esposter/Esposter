@@ -75,7 +75,7 @@ flowchart TD
 
 | File                                                                  | Role                                                                                                                        |
 | :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| `packages/vue-grid-layout-headless/src/vueGridLayoutHeadless.ts`      | The main entry: `useGridLayout`, `startExternalDrag`, and the grid's models                                                 |
+| `packages/vue-grid-layout-headless/src/index.ts`                      | The main entry: `useGridLayout`, `startExternalDrag`, and the grid's models                                                 |
 | `packages/vue-grid-layout-headless/src/composables/useGridLayout.ts`  | The gesture state, the preview, the commits, the keyboard step and the resize observer                                      |
 | `packages/vue-grid-layout-headless/src/services/startExternalDrag.ts` | A drag from outside every grid, such as a palette entry, dropped onto the grid under the pointer                            |
 | `packages/vue-grid-layout-headless/src/services/mountedGrids.ts`      | The grids mounted on the page, keyed by root                                                                                |

@@ -7,9 +7,9 @@ import {
   PACKAGES_DIRECTORY,
   VITEST_CONFIG_SOURCE,
 } from "#src/services/package/new/constants";
-import { getEntryPath } from "#src/services/package/new/getEntryPath";
 import { getEntrySource } from "#src/services/package/new/getEntrySource";
 import { getManifest } from "#src/services/package/new/getManifest";
+import { getModulePath } from "#src/services/package/new/getModulePath";
 import { getPluginManifest } from "#src/services/package/new/getPluginManifest";
 import { getReadme } from "#src/services/package/new/getReadme";
 import { getTsconfig } from "#src/services/package/new/getTsconfig";
@@ -21,7 +21,7 @@ export const getPackageFiles = (options: CreatePackageOptions, version: string):
   const { kind, name } = options;
   const packageDirectory = `${PACKAGES_DIRECTORY}/${name}`;
   const files = new Map<string, string>([
-    [`${packageDirectory}/${getEntryPath(options)}`, getEntrySource(options)],
+    [`${packageDirectory}/${getModulePath(options)}`, getEntrySource(options)],
     [`${packageDirectory}/eslint.config.js`, ESLINT_CONFIG_SOURCE],
     [`${packageDirectory}/package.json`, toJson(getManifest(options, version))],
     [`${packageDirectory}/README.md`, getReadme(options)],

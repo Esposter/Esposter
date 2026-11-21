@@ -33,7 +33,9 @@ export const generateExports = (
 ): void => {
   const sourceDirectory = join(packageDirectory, SOURCE_DIRECTORY_NAME);
   const { barrelPaths, generators } = BarrelsMap[exportsGeneration];
+  // Under None the package writes `src/index.ts` itself as its curated entry, so that name is kept rather than removed
+  const keptPaths = exportsGeneration === ExportsGeneration.None ? [...barrelPaths, BARREL_FILE] : barrelPaths;
   for (const barrelPath of ALL_BARREL_PATHS)
-    if (!barrelPaths.includes(barrelPath)) rmSync(join(sourceDirectory, barrelPath), { force: true });
+    if (!keptPaths.includes(barrelPath)) rmSync(join(sourceDirectory, barrelPath), { force: true });
   for (const generateBarrel of generators) generateBarrel(sourceDirectory, excludedPaths);
 };

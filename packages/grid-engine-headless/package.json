@@ -30,7 +30,7 @@
   },
   "exports": {
     ".": {
-      "source": "./src/gridEngineHeadless.ts",
+      "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json"

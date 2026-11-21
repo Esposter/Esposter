@@ -1,13 +1,9 @@
 import type { UserConfig } from "tsdown";
 
 import { ExportsGeneration, getTsdownConfiguration } from "@esposter/configuration";
-import { mergeConfig } from "tsdown";
 
-// Named by hand with exportsGeneration "none", because a generated barrel would publish the internal registry of
+// Written by hand with exportsGeneration "none", because a generated barrel would publish the internal registry of
 // Mounted grids and the constants.
-const tsdownConfiguration: UserConfig = mergeConfig(
-  getTsdownConfiguration({ exportsGeneration: ExportsGeneration.None }),
-  { entry: { index: "src/vueGridLayoutHeadless.ts" } },
-);
+const tsdownConfiguration: UserConfig = getTsdownConfiguration({ exportsGeneration: ExportsGeneration.None });
 
 export default tsdownConfiguration;

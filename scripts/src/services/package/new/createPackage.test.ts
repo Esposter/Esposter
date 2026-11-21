@@ -72,6 +72,11 @@ describe(createPackage, () => {
       ].toSorted(),
     );
     expect(manifest.version).toBe(version);
+    // A library's root entry is the barrel its build writes, so no module the generator writes takes its name
+    expect(manifest.exports).toStrictEqual({
+      ".": { default: "./dist/index.js", source: "./src/index.ts" },
+      "./package.json": "./package.json",
+    });
     expect(manifest.sideEffects).toBe(false);
     expect(Object.keys(manifest.scripts as object)).toStrictEqual(["build", "lint", "lint:fix", "test", "typecheck"]);
   });

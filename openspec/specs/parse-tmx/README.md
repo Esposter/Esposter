@@ -113,7 +113,7 @@ Every issue and pull request of [sax](https://github.com/isaacs/sax-js), the XML
 | `packages/parse-tmx/src/services/openTmxLayerChild.ts`  | The layers a map holds, a tile layer's data and its chunks            |
 | `packages/parse-tmx/src/services/openTmxObjectChild.ts` | An object group's objects, their shapes, gids and text                |
 | `packages/parse-tmx/src/services/readTmxAttributes.ts`  | Each element's attribute table, read as the model its kinds say       |
-| `packages/parse-tmx/src/api.ts`                         | The package's public surface: the entry points and the parsed types   |
+| `packages/parse-tmx/src/index.ts`                       | The package's public surface: the entry points and the parsed types   |
 | `packages/parse-tmx/src/services/closeTmxFrame.ts`      | The character data each element owns, read on close                   |
 | `packages/parse-tmx/src/services/decodeTileData.ts`     | The tile layer's encodings and compression                            |
 | `packages/parse-tmx/src/services/assignTileData.ts`     | The cell count check and the flip translation of decoded tile data    |

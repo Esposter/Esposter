@@ -51,15 +51,27 @@ describe(generateExports, () => {
     );
   });
 
-  // A package that stops generating a barrel keeps no stale one: an earlier build's would still be typechecked
-  test("removes the barrels an earlier answer wrote and this one does not", () => {
+  // A package that stops generating a component barrel keeps no stale one: an earlier build's would still be typechecked
+  test("removes the component barrel an earlier Vue answer wrote and a later answer does not", () => {
     expect.hasAssertions();
 
-    writeFileSync(join(sourceDirectory, TEST_FILENAME, `${TEST_FILENAME}.ts`), `export const a = 0;`);
+    mkdirSync(join(sourceDirectory, "components"), { recursive: true });
+    writeFileSync(join(sourceDirectory, "components", `${TEST_FILENAME}.vue`), "<template><i /></template>");
+    generateExports(packageDirectory, ExportsGeneration.Vue);
     generateExports(packageDirectory, ExportsGeneration.TypeScript);
+
+    expect(existsSync(join(sourceDirectory, "components", "index.ts"))).toBe(false);
+  });
+
+  // A None package names its own `src/index.ts`, so no answer removes the entry it curates by hand
+  test("keeps the entry a package writes by hand under None", () => {
+    expect.hasAssertions();
+
+    const entry = `export * from "./${TEST_FILENAME}/${TEST_FILENAME}.ts";\n`;
+    writeFileSync(join(sourceDirectory, "index.ts"), entry);
     generateExports(packageDirectory, ExportsGeneration.None);
 
-    expect(existsSync(join(sourceDirectory, "index.ts"))).toBe(false);
+    expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(entry);
   });
 
   // A module under a lazy directory is loaded by its own `import()`, so a barrel line for it would load it with the entry

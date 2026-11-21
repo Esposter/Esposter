@@ -33,7 +33,7 @@
   },
   "exports": {
     ".": {
-      "source": "./src/api.ts",
+      "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json"

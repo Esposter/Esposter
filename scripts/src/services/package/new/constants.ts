@@ -14,6 +14,8 @@ export const GITHUB_REPOSITORY_URL = "https://github.com/Esposter/Esposter";
 export const GITHUB_ISSUES_URL: string = `${GITHUB_REPOSITORY_URL}/issues`;
 // The specs, which the generated README links for documentation until the package has a capability of its own
 export const SPECS_URL: string = `${GITHUB_REPOSITORY_URL}/tree/main/openspec/specs`;
+// A library's root entry is the barrel its build generates from its modules, and a Nuxt module's is the module Nuxt loads
+export const LIBRARY_ENTRY_PATH = "src/index.ts";
 export const NUXT_MODULE_ENTRY_PATH = "src/module.ts";
 // Where a Nuxt module declares `MODULE_NAME`, the constant its `meta.name` reads and the workspace test holds to the package name
 export const NUXT_MODULE_CONSTANTS_PATH = "src/runtime/constants.ts";

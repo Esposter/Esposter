@@ -26,6 +26,8 @@ const PINIA_SCOPE = "@pinia/";
 const PINIA_NAME_SOURCE = String.raw`(?:${RegExp.escape(PINIA_PACKAGE_NAME)}|${RegExp.escape(PINIA_SCOPE)}[^"'\n]*)`;
 // A module named by `from "…"`, `import "…"` or `import("…")`, where the name is one of Pinia's
 export const PINIA_IMPORT_REGEX: RegExp = importRegex(PINIA_NAME_SOURCE);
+// The package a Nuxt module depends on at runtime, and which only a Nuxt module declares, so a dependency on it is what makes a package one
+export const NUXT_KIT_PACKAGE_NAME = "@nuxt/kit";
 // The frameworks a framework-free headless package declares none of and imports none of, by package name
 export const FRAMEWORK_PACKAGE_NAMES: readonly string[] = [
   VUE_PACKAGE_NAME,

@@ -1,0 +1,2 @@
+# The root ignore names the barrels a build writes; this package writes its own src/index.ts by hand, so it is committed
+!/src/index.ts
