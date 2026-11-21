@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import MessageModelMessageInputScheduledMessageJobDialog from "#src/components/Message/Model/Message/Input/ScheduledMessageJobDialog.vue";
 import { createRoom } from "#src/services/message/room/createRoom.test";
+import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobDialogStore } from "#src/store/message/input/scheduledMessageJobDialog";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
@@ -20,8 +21,9 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
   test("a refused schedule leaves the dialog open with its text", async () => {
     expect.hasAssertions();
 
-    Object.assign(useRouter().currentRoute.value.params, { id: room.id });
+    let sendCount = 0;
     trpcMsw.message.scheduledMessage.createScheduledMessage.mutation(() => {
+      sendCount += 1;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const scheduledMessageJobDialogStore = useScheduledMessageJobDialogStore();
@@ -30,6 +32,7 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
     const component = await mountSuspended(MessageModelMessageInputScheduledMessageJobDialog, {
       attachTo: document.body,
     });
+    setCurrentRoomId(room.id);
     await flushPromises();
     const textField = component.get("textarea");
     await textField.setValue(text);
@@ -39,6 +42,7 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
     await flushPromises();
     await waitForSynchronizedFunctions();
 
+    expect(sendCount).toBe(1);
     expect(isOpen.value).toBe(true);
     expect(textField.element.value).toBe(text);
   });
