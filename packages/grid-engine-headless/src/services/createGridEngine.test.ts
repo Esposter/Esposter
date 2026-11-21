@@ -622,4 +622,27 @@ describe(createGridEngine, () => {
       expect(engine.checkIsBlocked({ x: 1, y: 0 })).toBe(false);
     },
   );
+
+  test("a raise reaches the listeners subscribed when it began, and a listener that subscribes itself again is heard once per raise", () => {
+    expect.hasAssertions();
+
+    // The bound ends the self-subscription, so the test ends whatever the engine does with a listener it re-subscribes
+    const SUBSCRIPTION_LIMIT = 3;
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false]] });
+    let heardCount = 0;
+    let unsubscribe = () => undefined as void;
+    const listener = (): void => {
+      heardCount += 1;
+      if (heardCount >= SUBSCRIPTION_LIMIT) return;
+      unsubscribe();
+      unsubscribe = engine.on("directionChanged", listener);
+    };
+    unsubscribe = engine.on("directionChanged", listener);
+
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Right));
+    expect(heardCount).toBe(1);
+
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Down));
+    expect(heardCount).toBe(2);
+  });
 });
