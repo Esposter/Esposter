@@ -46,4 +46,33 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
     expect(isOpen.value).toBe(true);
     expect(textField.element.value).toBe(text);
   });
+
+  // The schedule the server keeps empties the text it was sent with. Text the reader typed while the server had it is the
+  // Next schedule's, so it stays in the dialog when it is opened again
+  test("a kept schedule keeps the text typed while the server had it", async () => {
+    expect.hasAssertions();
+
+    const { promise: isKept, resolve: keepSchedule } = Promise.withResolvers<void>();
+    trpcMsw.message.scheduledMessage.createScheduledMessage.mutation(() => isKept);
+    const scheduledMessageJobDialogStore = useScheduledMessageJobDialogStore();
+    scheduledMessageJobDialogStore.open(ScheduledMessageJobType.ScheduledMessage);
+    const component = await mountSuspended(MessageModelMessageInputScheduledMessageJobDialog, {
+      attachTo: document.body,
+    });
+    setCurrentRoomId(room.id);
+    await flushPromises();
+    await component.get("textarea").setValue(text);
+    const confirmButton = component.findAll("button").find((button) => button.text() === "Schedule Message");
+    assert.exists(confirmButton);
+    confirmButton.element.click();
+    await flushPromises();
+    await component.get("textarea").setValue("ab");
+    keepSchedule();
+    await flushPromises();
+    await waitForSynchronizedFunctions();
+    scheduledMessageJobDialogStore.open(ScheduledMessageJobType.ScheduledMessage);
+    await flushPromises();
+
+    expect(component.get("textarea").element.value).toBe("ab");
+  });
 });

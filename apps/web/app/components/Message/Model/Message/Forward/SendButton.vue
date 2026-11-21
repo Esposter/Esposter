@@ -33,7 +33,7 @@ const sendForward = async () => {
   const sentRoomId = currentRoomId.value;
   const destinationRoomId = roomIds.value.length === 1 ? takeOne(roomIds.value) : "";
   const message = messageInput.value;
-  const forwardedRoomIds = roomIds.value;
+  const forwardedRoomIds = [...roomIds.value];
   isPending.value = true;
   await withFinalizerAsync(
     () =>
@@ -45,7 +45,7 @@ const sendForward = async () => {
           roomIds: forwardedRoomIds,
         }),
       ).match(() => {
-        clearForward(sentRoomId);
+        clearForward(sentRoomId, { message, roomIds: forwardedRoomIds });
         if (!destinationRoomId) return;
 
         createAlert("Message forwarded!", "success", { icon: "i-mdi:share" });

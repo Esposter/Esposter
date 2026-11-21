@@ -6,6 +6,7 @@ import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { applyIfUnchanged } from "#src/services/shared/applyIfUnchanged";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useModerationNoteStore } from "#src/store/message/moderation/note";
 import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
@@ -29,7 +30,7 @@ const { isPending } = useQuery(readModerationNotes);
 // Typed since is left alone when the sent one is kept
 const sendNote = async () => {
   const sentNote = note.value;
-  if ((await createModerationNote(sentNote)) && note.value === sentNote) note.value = "";
+  if (await createModerationNote(sentNote)) applyIfUnchanged(note, sentNote, "");
 };
 </script>
 

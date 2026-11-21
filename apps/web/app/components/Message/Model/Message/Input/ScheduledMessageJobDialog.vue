@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getEarliestScheduledAt } from "#src/services/message/getEarliestScheduledAt";
+import { applyIfUnchanged } from "#src/services/shared/applyIfUnchanged";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useScheduledMessageJobDialogStore } from "#src/store/message/input/scheduledMessageJobDialog";
@@ -30,22 +31,23 @@ const scheduleJob = async () => {
   const roomId = currentRoomId.value;
   if (!roomId) return false;
 
+  const sentText = text.value;
   return getResultAsync(async () =>
     isReminder.value
       ? await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
           roomId,
           runAt: scheduledAt.value,
-          text: text.value,
+          text: sentText,
         })
       : await $trpc.message.scheduledMessage.createScheduledMessage.mutate({
-          message: marked.parse(text.value, { async: false }),
+          message: marked.parse(sentText, { async: false }),
           replyToId: null,
           roomId,
           runAt: scheduledAt.value,
         }),
   ).match(
     () => {
-      text.value = "";
+      applyIfUnchanged(text, sentText, "");
       return true;
     },
     (error) => {

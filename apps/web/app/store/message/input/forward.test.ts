@@ -40,10 +40,32 @@ describe(useForwardStore, () => {
     roomIds.value = [destinationRoomId];
     setCurrentRoomId(destinationRoomId);
 
-    forwardStore.clearForward(sourceRoomId);
+    forwardStore.clearForward(sourceRoomId, { message: "composed", roomIds: [destinationRoomId] });
     setCurrentRoomId(sourceRoomId);
 
     expect(messageInput.value).toBe("");
     expect(roomIds.value).toStrictEqual([]);
+  });
+
+  // The answer empties only what the forward sent. Text and room picks the reader made while the server had it are the
+  // Draft the next forward starts from, so they stay
+  test("a sent forward keeps the text and room picks the reader changed while the server had it", () => {
+    expect.hasAssertions();
+
+    const sourceRoomId = v7();
+    const sentRoomId = v7();
+    const pickedRoomId = v7();
+    setCurrentRoomId(sourceRoomId);
+    const forwardStore = useForwardStore();
+    const { messageInput, roomIds } = storeToRefs(forwardStore);
+    messageInput.value = "a";
+    roomIds.value = [sentRoomId];
+    messageInput.value = "ab";
+    roomIds.value = [pickedRoomId];
+
+    forwardStore.clearForward(sourceRoomId, { message: "a", roomIds: [sentRoomId] });
+
+    expect(messageInput.value).toBe("ab");
+    expect(roomIds.value).toStrictEqual([pickedRoomId]);
   });
 });
