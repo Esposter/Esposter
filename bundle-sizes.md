@@ -28,7 +28,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | vue-survey-engine-headless | **/*.d.ts                 |   74241 |   72.5 |
 | mjml-blocks                | **/*.d.ts                 |   72461 |   70.8 |
 | survey-expression          | **/*.js                   |   72155 |   70.5 |
-| @esposter/infra            | index.js                  |   69472 |   67.8 |
+| @esposter/infra            | index.js                  |   69637 |   68.0 |
 | genshin-engine             | index.d.ts                |   55167 |   53.9 |
 | trpc-msw                   | **/*.d.ts                 |   52211 |   51.0 |
 | nuxt-security-module       | **/*.js                   |   50351 |   49.2 |
@@ -165,4 +165,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 160 files, 13241509 bytes, 12931.2 KiB, 12.63 MiB
+**Total:** 160 files, 13241674 bytes, 12931.3 KiB, 12.63 MiB
