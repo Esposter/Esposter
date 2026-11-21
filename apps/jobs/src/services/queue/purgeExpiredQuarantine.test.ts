@@ -18,9 +18,9 @@ vi.mock(import("#src/services/storage/getBucket"), () => import("@esposter/db-mo
 // R2 stamps a body's upload time from the real clock, so the clock the purge reads is set from the moment the body was
 // Written: a day past the retention, or a day inside it
 const clockPastRetention = () =>
-  Temporal.Now.instant().add({ milliseconds: QUARANTINE_RETENTION_MS }).add({ hours: 24 }).epochMilliseconds;
+  Temporal.Now.instant().add({ milliseconds: QUARANTINE_RETENTION_MS }).add({ hours: 24 });
 const clockWithinRetention = () =>
-  Temporal.Now.instant().add({ milliseconds: QUARANTINE_RETENTION_MS }).subtract({ hours: 24 }).epochMilliseconds;
+  Temporal.Now.instant().add({ milliseconds: QUARANTINE_RETENTION_MS }).subtract({ hours: 24 });
 
 describe(purgeExpiredQuarantine, () => {
   const queueName = getCloudflareResourceName(
