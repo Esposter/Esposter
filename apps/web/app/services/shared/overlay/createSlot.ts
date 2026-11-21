@@ -15,16 +15,18 @@ import { listKeyTrie } from "#src/services/shared/overlay/listKeyTrie";
 import { readKeyTrie } from "#src/services/shared/overlay/readKeyTrie";
 import { writeKeyTrie } from "#src/services/shared/overlay/writeKeyTrie";
 
-// The table's trie sits in the store's held tables, which Pinia carries in a server render's payload. Each write triggers
-// That state, so a view that lists it recomputes without making every held row reactive
-export const createSlot = <TRow extends Versioned>(table: Table<TRow>, heldTables: Ref<HeldTables>): Slot<TRow> => {
+// The table's trie sits in the store's held tables, which Pinia carries in a server render's payload. Each write assigns
+// The held tables a new object, so a view that lists it recomputes without making every held row reactive
+export const createSlot = <TRow extends Versioned>(
+  table: Table<TRow>,
+  heldTables: { value: HeldTables },
+): Slot<TRow> => {
   // The trie of this table's rows, typed by the row: the table's name is the one table whose rows the trie holds
   const readHeldTrie = () => (heldTables.value[table.name] ?? createKeyTrieNode<Versioned>()) as KeyTrieNode<TRow>;
   const writeHeldRow = (key: RowKey, row: TRow) => {
     const heldTrie = readHeldTrie();
-    heldTables.value[table.name] = heldTrie;
     writeKeyTrie(heldTrie, key, row);
-    triggerRef(heldTables);
+    heldTables.value = { ...heldTables.value, [table.name]: heldTrie };
   };
   // A held tombstone past the retention is forgotten, so nothing is held for its key and a row arriving for it applies at
   // Any version. Every read of held state goes through here, so the arrival gate, the merge and the settle rule

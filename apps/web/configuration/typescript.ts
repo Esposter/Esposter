@@ -12,12 +12,9 @@ import type { NuxtConfig } from "nuxt/schema";
 export const typescript: NonNullable<NuxtConfig["typescript"]> = {
   // Nuxt includes each local module's whole `runtime/server` folder, tests too; a package's tests are its own program's,
   // Typechecked by the package against its own globals, which the Workers ones would change here
-  // The server program reaches app modules through `#src` (the wake check's test imports the overlay's slot), and those
-  // Modules name Vue's auto-imports (`Ref`, `triggerRef`), which only the app program's declaration of them provides
   serverTsConfig: {
     compilerOptions: { types: ["@cloudflare/workers-types"] },
     exclude: ["../../../packages/*/src/runtime/**/*.test.ts", "../../../packages/*/src/runtime/**/*.test-d.ts"],
-    include: ["./types/imports.d.ts"],
   },
   // Nuxt's app program includes `app/**` but its shared program does not, and both reach server modules through the
   // Router's types, so the shared one names the `cloudflare:workers` declaration the app holds (`tsconfig.root.json` does too)
