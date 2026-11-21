@@ -42,6 +42,6 @@ describe(getSubpathExclusions, () => {
   test("leaves out nothing for a manifest with no exports", () => {
     expect.hasAssertions();
 
-    expect(getSubpathExclusions({ name: "barrel-package" })).toStrictEqual([]);
+    expect(getSubpathExclusions({ name: "" })).toStrictEqual([]);
   });
 });
