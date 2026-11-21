@@ -3,6 +3,7 @@ import type { DeletedComment } from "#shared/models/db/post/DeletedComment";
 import type { Page, PostInPost, PostInPostWithRelations, relations } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
 
+import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { ownedBy } from "#server/services/db/ownedBy";
 import { bindPostSort } from "#server/services/post/bindPostSort";
 import { getNotBlockedWhere } from "#server/services/post/getNotBlockedWhere";
@@ -11,6 +12,7 @@ import { getPostWithViewerLike } from "#server/services/post/getPostWithViewerLi
 import { getViewerPostRelations } from "#server/services/post/getViewerPostRelations";
 import { readPostWithRelations } from "#server/services/post/readPostWithRelations";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
@@ -35,7 +37,7 @@ import {
   postsInPost,
 } from "@esposter/db-schema";
 import { getPostRanking, Operation } from "@esposter/shared";
-import { and, isNotNull, isNull, sql } from "drizzle-orm";
+import { and, eq, isNotNull, isNull, sql } from "drizzle-orm";
 
 export const postRouter = router({
   createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<CreatedComment>(
@@ -51,32 +53,44 @@ export const postRouter = router({
       // The parent's chain plus the parent itself: what this reply inherits, and the posts whose counters move
       const ancestorIds = [...parentPost.ancestorIds, parentPost.id];
       const createdAt = new Date();
+      // The parent is live in the write as well as in the read above, since a removal can land between the two. The reply
+      // And the counters take that as their guard, so a reply to a removed post is never written and counts nowhere
+      const isParentLive = and(eq(postsInPost.id, input.parentId), getLiveRowWhere(postsInPost));
       // The reply and the counter of every ancestor commit in one batch, so no counter counts a reply that did not land
       const [newCommentRows] = await ctx.db.batch([
         ctx.db
           .insert(postsInPost)
-          .values({
-            ...input,
-            ancestorIds,
-            createdAt,
-            depth: parentPost.depth + 1,
-            ranking: getPostRanking(0, createdAt),
-            userId: ctx.user.id,
-          })
+          .select(
+            ctx.db
+              .select({
+                ...getInsertSelectMetadata(postsInPost),
+                ancestorIds: sql`${sql.param(ancestorIds, postsInPost.ancestorIds)}`.as("ancestorIds"),
+                depth: sql<number>`${parentPost.depth + 1}`.as("depth"),
+                description: sql<string>`${input.description}`.as("description"),
+                id: sql<string>`${input.id}`.as("id"),
+                parentId: sql<string>`${input.parentId}`.as("parentId"),
+                ranking: sql<number>`${getPostRanking(0, createdAt)}`.as("ranking"),
+                userId: sql<string>`${ctx.user.id}`.as("userId"),
+              })
+              .from(postsInPost)
+              .where(isParentLive),
+          )
           .returning(),
         // Every ancestor, not just the parent: a counter that stops at direct children makes a feed card
         // Under-report its own thread
         ctx.db
           .update(postsInPost)
           .set({ commentCount: sql`${postsInPost.commentCount} + 1` })
-          .where(inJsonArray(postsInPost.id, ancestorIds)),
+          .where(
+            and(
+              inJsonArray(postsInPost.id, ancestorIds),
+              sql`exists (select 1 from ${postsInPost} where ${isParentLive})`,
+            ),
+          ),
       ]);
-      const newComment = requireMutation(
-        newCommentRows[0],
-        Operation.Create,
-        DerivedDatabaseEntityType.Comment,
-        JSON.stringify(input),
-      );
+      // No row back means the guard lost: the parent was removed after the read, so the reply is refused as the post it now is
+      const newComment = newCommentRows[0];
+      if (!newComment) throw getNotFoundError(DatabaseEntityType.Post, input.parentId);
 
       return {
         ancestorIds,

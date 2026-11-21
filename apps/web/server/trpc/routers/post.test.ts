@@ -24,7 +24,7 @@ import {
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The id is the last key every sort ends on, so the order of two rows that tie on the sort's own key is the ids' order
 const compareById = (first: Pick<PostInPost, "id">, second: Pick<PostInPost, "id">) => (second.id < first.id ? -1 : 1);
@@ -48,6 +48,7 @@ describe("postRouter", () => {
   });
 
   afterEach(async () => {
+    vi.restoreAllMocks();
     await mockContext.db.delete(postsInPost);
     await mockContext.db.delete(blocksInSocial);
   });
@@ -166,6 +167,28 @@ describe("postRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, newPost.id).message}]`,
     );
+  });
+
+  // The parent is read ahead of the reply's batch, so a removal that lands between the read and the batch must still refuse
+  // The reply, rather than hang it under a post no reader can show
+  test("refuses a reply to a post a removal takes between the read and the write", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const batch = mockContext.db.batch.bind(mockContext.db);
+    vi.spyOn(mockContext.db, "batch").mockImplementationOnce(async (queries) => {
+      await postCaller.deletePost(newPost.id);
+      return batch(queries);
+    });
+
+    await expect(
+      postCaller.createComment({ description, id: v7(), parentId: newPost.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, newPost.id).message}]`,
+    );
+    const replies = await mockContext.db.select().from(postsInPost).where(eq(postsInPost.parentId, newPost.id));
+
+    expect(replies).toStrictEqual([]);
   });
 
   // A feed page names a removed post as a tombstone, so a reader that holds the post drops it on its next read
