@@ -31,23 +31,40 @@ export const synthesizeCloudLayerTextures = async (
   const random = createSeededRandom(CLOUD_LAYER_TEXTURE_SEED);
   await waitForIdle();
   const densityFields = synthesizeSpectralNoise(density, random);
-  writeCloudLayerTexture(textures.density, (index) => densityFields.map((field) => field[index] ?? 0));
+  writeCloudLayerTexture(textures.density, (index, texel) => {
+    for (let channel = 0; channel < densityFields.length; channel++)
+      texel[channel] = densityFields[channel]?.[index] ?? 0;
+  });
   await waitForIdle();
   const [curlAcross, curlDown] = synthesizeSpectralNoise(curl, random);
-  writeCloudLayerTexture(textures.curl, (index) => [curlAcross?.[index] ?? 0, curlDown?.[index] ?? 0, 0, 1]);
+  writeCloudLayerTexture(textures.curl, (index, texel) => {
+    texel[0] = curlAcross?.[index] ?? 0;
+    texel[1] = curlDown?.[index] ?? 0;
+    texel[2] = 0;
+    texel[3] = 1;
+  });
   await waitForIdle();
   const [wispsField] = synthesizeSpectralNoise(wisps, random);
-  writeCloudLayerTexture(textures.wisps, (index) => [1, 1, 1, wispsField?.[index] ?? 0]);
+  writeCloudLayerTexture(textures.wisps, (index, texel) => {
+    texel[0] = 1;
+    texel[1] = 1;
+    texel[2] = 1;
+    texel[3] = wispsField?.[index] ?? 0;
+  });
   await waitForIdle();
   const [height] = synthesizeSpectralNoise(normal.height, random);
   const [biasAcross = 0, biasDown = 0, biasOut = 1] = normal.bias;
   const { height: rows, width: columns } = normal.height;
   const readHeight = (column: number, row: number): number =>
     height?.[((row + rows) % rows) * columns + ((column + columns) % columns)] ?? 0;
-  writeCloudLayerTexture(textures.normal, (index) => {
-    const [column, row] = [index % columns, Math.floor(index / columns)];
+  writeCloudLayerTexture(textures.normal, (index, texel) => {
+    const column = index % columns;
+    const row = Math.floor(index / columns);
     const across = biasAcross - (readHeight(column + 1, row) - readHeight(column - 1, row)) / 2;
     const down = biasDown - (readHeight(column, row + 1) - readHeight(column, row - 1)) / 2;
-    return [...[across, down, biasOut].map((value) => value * 0.5 + 0.5), 1];
+    texel[0] = across * 0.5 + 0.5;
+    texel[1] = down * 0.5 + 0.5;
+    texel[2] = biasOut * 0.5 + 0.5;
+    texel[3] = 1;
   });
 };
