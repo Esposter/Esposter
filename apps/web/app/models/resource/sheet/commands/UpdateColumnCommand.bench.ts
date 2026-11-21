@@ -17,7 +17,13 @@ const updatedColumn = Object.assign(structuredClone(originalColumn), { name: `${
 const createRenameCommand = () => new UpdateColumnCommand(originalName, updatedColumn);
 
 describe(UpdateColumnCommand, () => {
-  setupCommandBench("rename column, 100 rows", createRenameCommand, () => createBenchDataSource(benchRows100));
-  setupCommandBench("rename column, 1000 rows", createRenameCommand, () => createBenchDataSource(benchRows1k));
-  setupCommandBench("rename column, 10000 rows", createRenameCommand, () => createBenchDataSource(benchRows10k));
+  setupCommandBench("rename column, 100 rows", [
+    { createCommand: createRenameCommand, createDataSource: () => createBenchDataSource(benchRows100), name: "rename" },
+  ]);
+  setupCommandBench("rename column, 1000 rows", [
+    { createCommand: createRenameCommand, createDataSource: () => createBenchDataSource(benchRows1k), name: "rename" },
+  ]);
+  setupCommandBench("rename column, 10000 rows", [
+    { createCommand: createRenameCommand, createDataSource: () => createBenchDataSource(benchRows10k), name: "rename" },
+  ]);
 });

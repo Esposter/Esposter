@@ -18,7 +18,25 @@ const createMoveCommand = () =>
   );
 
 describe(MoveColumnCommand, () => {
-  setupCommandBench("move column 0→4, 100 rows", createMoveCommand, () => createBenchDataSource(benchRows100));
-  setupCommandBench("move column 0→4, 1000 rows", createMoveCommand, () => createBenchDataSource(benchRows1k));
-  setupCommandBench("move column 0→4, 10000 rows", createMoveCommand, () => createBenchDataSource(benchRows10k));
+  setupCommandBench("move column 0→4, 100 rows", [
+    {
+      createCommand: createMoveCommand,
+      createDataSource: () => createBenchDataSource(benchRows100),
+      name: "move first column last",
+    },
+  ]);
+  setupCommandBench("move column 0→4, 1000 rows", [
+    {
+      createCommand: createMoveCommand,
+      createDataSource: () => createBenchDataSource(benchRows1k),
+      name: "move first column last",
+    },
+  ]);
+  setupCommandBench("move column 0→4, 10000 rows", [
+    {
+      createCommand: createMoveCommand,
+      createDataSource: () => createBenchDataSource(benchRows10k),
+      name: "move first column last",
+    },
+  ]);
 });

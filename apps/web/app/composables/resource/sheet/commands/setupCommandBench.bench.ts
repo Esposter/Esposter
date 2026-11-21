@@ -4,31 +4,35 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 
+interface CommandBenchCase {
+  createCommand: () => ADataSourceCommand;
+  createDataSource: () => DataSource;
+  name: string;
+}
+
 // Every command bench is the same pair measured at some case: `execute` against a data source nothing else has
-// Touched, then the round trip that ends back where it started. Registering both from one place is what keeps
-// `vs base` meaningful — a group holds a single case at a single scale, so the multiplier reads as what the undo
-// Costs on top of the execute. A flat group mixing 100-row and 10000-row tasks reports the ratio between two
-// Scales instead, which is a fact about the fixture rather than about the command.
+// touched, then the round trip that ends back where it started. Registering both from one place is what keeps
+// `vs base` meaningful. A group holds one scale and may hold several shapes at that scale, each shape its own
+// pair; a group mixing scales reports the ratio between two fixture sizes instead, which is a fact about the
+// fixture rather than about the command.
 //
-// The undo task times its own `execute` too, because there is no undo to measure without one — hence the task
-// Name. Both callbacks build their own data source (every command mutates the one it is handed) and their own
-// Command (a command carries the state its undo consumes).
-export const setupCommandBench = (
-  title: string,
-  createCommand: () => ADataSourceCommand,
-  createDataSource: () => DataSource,
-): void => {
+// The undo task times its own `execute` too, because there is no undo to measure without one, hence the task
+// name. Both callbacks build their own data source (every command mutates the one it is handed) and their own
+// command (a command carries the state its undo consumes).
+export const setupCommandBench = (title: string, cases: CommandBenchCase[]): void => {
   test(title, async ({ bench }) => {
     await bench.compare(
-      bench("execute", () => {
-        createCommand().execute(createDataSource());
-      }),
-      bench("execute + undo", () => {
-        const dataSource = createDataSource();
-        const command = createCommand();
-        command.execute(dataSource);
-        command.undo(dataSource);
-      }),
+      ...cases.flatMap(({ createCommand, createDataSource, name }) => [
+        bench(`${name} execute`, () => {
+          createCommand().execute(createDataSource());
+        }),
+        bench(`${name} execute + undo`, () => {
+          const dataSource = createDataSource();
+          const command = createCommand();
+          command.execute(dataSource);
+          command.undo(dataSource);
+        }),
+      ]),
       BENCHMARK_RUN_OPTIONS,
     );
   });

@@ -6,17 +6,17 @@
         {
           "benchmarks": [
             {
-              "mean": 0.1732600000002094,
-              "name": "execute",
-              "p99": 0.20596199999975398,
-              "rme": 5.733119487510942,
+              "mean": 0.5878998999998658,
+              "name": "move first column last execute",
+              "p99": 0.9709105299996645,
+              "rme": 21.050742425048867,
               "sampleCount": 10
             },
             {
-              "mean": 0.2551199999998971,
-              "name": "execute + undo",
-              "p99": 0.522721000000147,
-              "rme": 29.497907431862654,
+              "mean": 3.582708199999797,
+              "name": "move first column last execute + undo",
+              "p99": 27.18136380999985,
+              "rme": 183.7831093273502,
               "sampleCount": 10
             }
           ],
@@ -25,17 +25,17 @@
         {
           "benchmarks": [
             {
-              "mean": 2.9951199999998606,
-              "name": "execute",
-              "p99": 4.3147759999999105,
-              "rme": 19.963587857468365,
+              "mean": 14.041720699999768,
+              "name": "move first column last execute",
+              "p99": 39.845770719999585,
+              "rme": 52.98882595246831,
               "sampleCount": 10
             },
             {
-              "mean": 3.3471300000001976,
-              "name": "execute + undo",
-              "p99": 6.701022999999596,
-              "rme": 31.95771103184175,
+              "mean": 19.174508500000048,
+              "name": "move first column last execute + undo",
+              "p99": 78.56982450000038,
+              "rme": 89.42716827130151,
               "sampleCount": 10
             }
           ],
@@ -44,17 +44,17 @@
         {
           "benchmarks": [
             {
-              "mean": 20.287189999999917,
-              "name": "execute",
-              "p99": 26.507856000000057,
-              "rme": 12.591298701315603,
+              "mean": 187.8973915999999,
+              "name": "move first column last execute + undo",
+              "p99": 418.7950138099992,
+              "rme": 45.124495657426536,
               "sampleCount": 10
             },
             {
-              "mean": 26.1748800000003,
-              "name": "execute + undo",
-              "p99": 34.07333800000014,
-              "rme": 11.373549463819925,
+              "mean": 244.8236167,
+              "name": "move first column last execute",
+              "p99": 542.8784542499995,
+              "rme": 42.97305466722161,
               "sampleCount": 10
             }
           ],

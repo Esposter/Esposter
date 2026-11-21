@@ -9,29 +9,29 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 879ae0aaa
-- Node: v26.8.1
-- OS: win32 10.0.26200 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- Commit: 0301845672
+- Node: v26.13.1
+- OS: darwin 27.0.0 (arm64)
+- CPU: Apple M1 × 8
+- RAM: 16.0 GiB
 
 ## UpdateColumnCommand > rename column, 100 rows
 
-| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute        | 1.00×   | 0.4032    | ±15.89% | 0.5860   | 10      |
-| execute + undo | 0.89×   | 0.4526    | ±20.18% | 0.6781   | 10      |
+| task                  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| --------------------- | ------- | --------- | ------- | -------- | ------- |
+| rename execute        | 1.00×   | 2.7098    | ±39.24% | 5.8940   | 10      |
+| rename execute + undo | 0.9×    | 3.0271    | ±29.18% | 4.8126   | 10      |
 
 ## UpdateColumnCommand > rename column, 1000 rows
 
-| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute        | 1.00×   | 3.5377    | ±18.46% | 5.7206   | 10      |
-| execute + undo | 0.86×   | 4.1122    | ±3.93%  | 4.4704   | 10      |
+| task                  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| --------------------- | ------- | --------- | ------- | -------- | ------- |
+| rename execute + undo | 1.00×   | 41.1093   | ±69.81% | 115.1661 | 10      |
+| rename execute        | 0.73×   | 56.2533   | ±70.85% | 158.9403 | 10      |
 
 ## UpdateColumnCommand > rename column, 10000 rows
 
-| task           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------ | -------- | ------- |
-| execute        | 1.00×   | 30.5627   | ±7.77% | 37.1318  | 10      |
-| execute + undo | 0.78×   | 38.9485   | ±7.34% | 46.4169  | 10      |
+| task                  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| --------------------- | ------- | --------- | ------- | -------- | ------- |
+| rename execute        | 1.00×   | 381.0979  | ±37.49% | 747.7131 | 10      |
+| rename execute + undo | 0.84×   | 451.5330  | ±40.56% | 871.9974 | 10      |

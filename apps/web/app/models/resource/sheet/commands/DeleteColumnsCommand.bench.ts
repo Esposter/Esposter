@@ -14,29 +14,35 @@ const oneColumnIds = createColumnIds(1);
 const threeColumnIds = createColumnIds(3);
 
 describe(DeleteColumnsCommand, () => {
-  setupCommandBench(
-    "delete 1 of 5 columns, 100 rows",
-    () => new DeleteColumnsCommand(oneColumnIds),
-    () => createBenchDataSource(benchRows100),
-  );
-  setupCommandBench(
-    "delete 1 of 5 columns, 1000 rows",
-    () => new DeleteColumnsCommand(oneColumnIds),
-    () => createBenchDataSource(benchRows1k),
-  );
-  setupCommandBench(
-    "delete 1 of 5 columns, 10000 rows",
-    () => new DeleteColumnsCommand(oneColumnIds),
-    () => createBenchDataSource(benchRows10k),
-  );
-  setupCommandBench(
-    "delete 3 of 5 columns, 1000 rows",
-    () => new DeleteColumnsCommand(threeColumnIds),
-    () => createBenchDataSource(benchRows1k),
-  );
-  setupCommandBench(
-    "delete 3 of 5 columns, 10000 rows",
-    () => new DeleteColumnsCommand(threeColumnIds),
-    () => createBenchDataSource(benchRows10k),
-  );
+  setupCommandBench("delete columns, 100 rows", [
+    {
+      createCommand: () => new DeleteColumnsCommand(oneColumnIds),
+      createDataSource: () => createBenchDataSource(benchRows100),
+      name: "1 of 5 columns",
+    },
+  ]);
+  setupCommandBench("delete columns, 1000 rows", [
+    {
+      createCommand: () => new DeleteColumnsCommand(oneColumnIds),
+      createDataSource: () => createBenchDataSource(benchRows1k),
+      name: "1 of 5 columns",
+    },
+    {
+      createCommand: () => new DeleteColumnsCommand(threeColumnIds),
+      createDataSource: () => createBenchDataSource(benchRows1k),
+      name: "3 of 5 columns",
+    },
+  ]);
+  setupCommandBench("delete columns, 10000 rows", [
+    {
+      createCommand: () => new DeleteColumnsCommand(oneColumnIds),
+      createDataSource: () => createBenchDataSource(benchRows10k),
+      name: "1 of 5 columns",
+    },
+    {
+      createCommand: () => new DeleteColumnsCommand(threeColumnIds),
+      createDataSource: () => createBenchDataSource(benchRows10k),
+      name: "3 of 5 columns",
+    },
+  ]);
 });

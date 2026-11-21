@@ -9,43 +9,33 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 879ae0aaa
-- Node: v26.8.1
-- OS: win32 10.0.26200 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- Commit: 0301845672
+- Node: v26.13.1
+- OS: darwin 27.0.0 (arm64)
+- CPU: Apple M1 × 8
+- RAM: 16.0 GiB
 
-## DeleteColumnsCommand > delete 1 of 5 columns, 100 rows
+## DeleteColumnsCommand > delete columns, 100 rows
 
-| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute + undo | 1.00×   | 0.8334    | ±13.47% | 1.1096   | 10      |
-| execute        | 1×      | 0.8372    | ±71.47% | 2.9310   | 10      |
+| task                          | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ----------------------------- | ------- | --------- | ------- | -------- | ------- |
+| 1 of 5 columns execute + undo | 1.00×   | 0.8080    | ±23.34% | 1.3089   | 10      |
+| 1 of 5 columns execute        | 0.91×   | 0.8851    | ±29.47% | 1.6510   | 10      |
 
-## DeleteColumnsCommand > delete 1 of 5 columns, 1000 rows
+## DeleteColumnsCommand > delete columns, 1000 rows
 
-| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute        | 1.00×   | 4.2811    | ±17.47% | 6.5234   | 10      |
-| execute + undo | 0.82×   | 5.2463    | ±8.18%  | 6.2896   | 10      |
+| task                          | vs base | mean (ms) | ±rme     | p99 (ms) | samples |
+| ----------------------------- | ------- | --------- | -------- | -------- | ------- |
+| 1 of 5 columns execute        | 1.00×   | 10.2426   | ±29.10%  | 17.1165  | 10      |
+| 1 of 5 columns execute + undo | 0.5×    | 20.4932   | ±80.93%  | 78.9880  | 10      |
+| 3 of 5 columns execute        | 0.45×   | 23.0042   | ±158.18% | 153.5227 | 10      |
+| 3 of 5 columns execute + undo | 0.43×   | 23.8186   | ±121.07% | 127.3344 | 10      |
 
-## DeleteColumnsCommand > delete 1 of 5 columns, 10000 rows
+## DeleteColumnsCommand > delete columns, 10000 rows
 
-| task           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------ | -------- | ------- |
-| execute        | 1.00×   | 31.5744   | ±7.16% | 37.1085  | 10      |
-| execute + undo | 0.79×   | 40.1060   | ±7.70% | 48.4767  | 10      |
-
-## DeleteColumnsCommand > delete 3 of 5 columns, 1000 rows
-
-| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute        | 1.00×   | 3.5802    | ±13.38% | 4.4884   | 10      |
-| execute + undo | 0.7×    | 5.1006    | ±17.23% | 7.1947   | 10      |
-
-## DeleteColumnsCommand > delete 3 of 5 columns, 10000 rows
-
-| task           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------ | -------- | ------- |
-| execute        | 1.00×   | 30.5854   | ±7.34% | 36.7735  | 10      |
-| execute + undo | 0.73×   | 42.0492   | ±6.35% | 47.1829  | 10      |
+| task                          | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ----------------------------- | ------- | --------- | ------- | -------- | ------- |
+| 3 of 5 columns execute + undo | 1.00×   | 147.0402  | ±48.76% | 395.8006 | 10      |
+| 3 of 5 columns execute        | 0.82×   | 178.3293  | ±24.54% | 298.2081 | 10      |
+| 1 of 5 columns execute        | 0.61×   | 240.2887  | ±50.48% | 612.5133 | 10      |
+| 1 of 5 columns execute + undo | 0.48×   | 303.4347  | ±39.29% | 602.7265 | 10      |

@@ -17,19 +17,25 @@ const indexedRows500 = createEveryOtherIndexedRows(benchRows1k);
 const indexedRows5k = createEveryOtherIndexedRows(benchRows10k);
 
 describe(DeleteRowsCommand, () => {
-  setupCommandBench(
-    "delete 50 rows from 100",
-    () => new DeleteRowsCommand(indexedRows50),
-    () => createBenchDataSource(benchRows100),
-  );
-  setupCommandBench(
-    "delete 500 rows from 1000",
-    () => new DeleteRowsCommand(indexedRows500),
-    () => createBenchDataSource(benchRows1k),
-  );
-  setupCommandBench(
-    "delete 5000 rows from 10000",
-    () => new DeleteRowsCommand(indexedRows5k),
-    () => createBenchDataSource(benchRows10k),
-  );
+  setupCommandBench("delete 50 rows from 100", [
+    {
+      createCommand: () => new DeleteRowsCommand(indexedRows50),
+      createDataSource: () => createBenchDataSource(benchRows100),
+      name: "every other row",
+    },
+  ]);
+  setupCommandBench("delete 500 rows from 1000", [
+    {
+      createCommand: () => new DeleteRowsCommand(indexedRows500),
+      createDataSource: () => createBenchDataSource(benchRows1k),
+      name: "every other row",
+    },
+  ]);
+  setupCommandBench("delete 5000 rows from 10000", [
+    {
+      createCommand: () => new DeleteRowsCommand(indexedRows5k),
+      createDataSource: () => createBenchDataSource(benchRows10k),
+      name: "every other row",
+    },
+  ]);
 });

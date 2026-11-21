@@ -6,97 +6,87 @@
         {
           "benchmarks": [
             {
-              "mean": 0.833390000000054,
-              "name": "execute + undo",
-              "p99": 1.1095959999999014,
-              "rme": 13.472663563462495,
+              "mean": 0.8079792000001362,
+              "name": "1 of 5 columns execute + undo",
+              "p99": 1.3088951300003555,
+              "rme": 23.34377808062562,
               "sampleCount": 10
             },
             {
-              "mean": 0.8371500000000197,
-              "name": "execute",
-              "p99": 2.9310070000003092,
-              "rme": 71.46642759772374,
+              "mean": 0.8850959999999759,
+              "name": "1 of 5 columns execute",
+              "p99": 1.6509882200006905,
+              "rme": 29.471653360133015,
               "sampleCount": 10
             }
           ],
-          "fullName": "DeleteColumnsCommand > delete 1 of 5 columns, 100 rows"
+          "fullName": "DeleteColumnsCommand > delete columns, 100 rows"
         },
         {
           "benchmarks": [
             {
-              "mean": 4.28105999999998,
-              "name": "execute",
-              "p99": 6.523404000000146,
-              "rme": 17.468205163923102,
+              "mean": 10.242570899999919,
+              "name": "1 of 5 columns execute",
+              "p99": 17.116487560000042,
+              "rme": 29.102603991201097,
               "sampleCount": 10
             },
             {
-              "mean": 5.246299999999974,
-              "name": "execute + undo",
-              "p99": 6.289593999999779,
-              "rme": 8.179772854157633,
+              "mean": 20.493228999999975,
+              "name": "1 of 5 columns execute + undo",
+              "p99": 78.9880061899999,
+              "rme": 80.92680963963103,
+              "sampleCount": 10
+            },
+            {
+              "mean": 23.004171100000075,
+              "name": "3 of 5 columns execute",
+              "p99": 153.5227402200002,
+              "rme": 158.1766397183611,
+              "sampleCount": 10
+            },
+            {
+              "mean": 23.81856659999994,
+              "name": "3 of 5 columns execute + undo",
+              "p99": 127.33436441000022,
+              "rme": 121.07351885381192,
               "sampleCount": 10
             }
           ],
-          "fullName": "DeleteColumnsCommand > delete 1 of 5 columns, 1000 rows"
+          "fullName": "DeleteColumnsCommand > delete columns, 1000 rows"
         },
         {
           "benchmarks": [
             {
-              "mean": 31.57444999999989,
-              "name": "execute",
-              "p99": 37.10854799999948,
-              "rme": 7.159750342548878,
+              "mean": 147.04016259999952,
+              "name": "3 of 5 columns execute + undo",
+              "p99": 395.80064981000044,
+              "rme": 48.761277418857915,
               "sampleCount": 10
             },
             {
-              "mean": 40.10599000000002,
-              "name": "execute + undo",
-              "p99": 48.476680999999665,
-              "rme": 7.69670874728607,
-              "sampleCount": 10
-            }
-          ],
-          "fullName": "DeleteColumnsCommand > delete 1 of 5 columns, 10000 rows"
-        },
-        {
-          "benchmarks": [
-            {
-              "mean": 3.580209999999988,
-              "name": "execute",
-              "p99": 4.488378000000294,
-              "rme": 13.379076121847291,
+              "mean": 178.32927480000035,
+              "name": "3 of 5 columns execute",
+              "p99": 298.20805618999833,
+              "rme": 24.5413883264563,
               "sampleCount": 10
             },
             {
-              "mean": 5.100550000000112,
-              "name": "execute + undo",
-              "p99": 7.19474500000014,
-              "rme": 17.23018862376921,
-              "sampleCount": 10
-            }
-          ],
-          "fullName": "DeleteColumnsCommand > delete 3 of 5 columns, 1000 rows"
-        },
-        {
-          "benchmarks": [
-            {
-              "mean": 30.58535999999994,
-              "name": "execute",
-              "p99": 36.77349899999964,
-              "rme": 7.3399081242998845,
+              "mean": 240.28869170000016,
+              "name": "1 of 5 columns execute",
+              "p99": 612.5132985600003,
+              "rme": 50.48261781386496,
               "sampleCount": 10
             },
             {
-              "mean": 42.0491600000003,
-              "name": "execute + undo",
-              "p99": 47.18288200000016,
-              "rme": 6.349411144914874,
+              "mean": 303.4346791999996,
+              "name": "1 of 5 columns execute + undo",
+              "p99": 602.7264665000002,
+              "rme": 39.28759896550979,
               "sampleCount": 10
             }
           ],
-          "fullName": "DeleteColumnsCommand > delete 3 of 5 columns, 10000 rows"
+          "fullName": "DeleteColumnsCommand > delete columns, 10000 rows"
         }
       ]
     }
