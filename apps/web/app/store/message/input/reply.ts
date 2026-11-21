@@ -22,6 +22,7 @@ export const useReplyStore = defineStore("message/input/reply", () => {
   });
 
   const dataStore = useDataStore();
+  const { getSlice } = dataStore;
   const { $trpc } = useNuxtApp();
   // These are all the messages that have been replied to. Every read and write names the room the message is in —
   // A hook or a read response can land after a switch, and the thread pane renders a room beside the one on screen
@@ -31,7 +32,7 @@ export const useReplyStore = defineStore("message/input/reply", () => {
   );
   MessageHookMap[Operation.Create].register(async ({ replyToId: repliedMessageId, roomId }) => {
     if (!repliedMessageId) return;
-    const reply = dataStore.getSlice(roomId).items.value.find(({ id }) => id === repliedMessageId);
+    const reply = getSlice(roomId).items.value.find(({ id }) => id === repliedMessageId);
     if (reply) {
       getReplyMapRef(roomId).value.set(repliedMessageId, reply);
       return;
