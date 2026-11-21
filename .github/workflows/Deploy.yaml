@@ -86,9 +86,7 @@ jobs:
         with:
           package: "@esposter/jobs"
 
-      # Every Worker's secrets are gathered and checked before the first migration, so a value its schema refuses stops the deploy
-      # before any schema or Worker changes. Each put below still follows its own Worker's deploy, and reads the file gathered here
-      - name: 🔐 Gather the realtime Worker's secrets
+      - name: 🔐 Gather and check the realtime Worker's secrets
         id: realtime-secrets
         uses: ./.github/actions/gather-worker-secrets
         with:
@@ -96,12 +94,7 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-      - name: 🔐 Check the realtime Worker's secrets against its schema
-        env:
-          SECRETS_FILE: ${{ steps.realtime-secrets.outputs.file }}
-        run: pnpm -C scripts worker-secrets:check realtime "$SECRETS_FILE"
-
-      - name: 🔐 Gather the jobs Worker's secrets
+      - name: 🔐 Gather and check the jobs Worker's secrets
         id: jobs-secrets
         uses: ./.github/actions/gather-worker-secrets
         with:
@@ -109,23 +102,13 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-      - name: 🔐 Check the jobs Worker's secrets against its schema
-        env:
-          SECRETS_FILE: ${{ steps.jobs-secrets.outputs.file }}
-        run: pnpm -C scripts worker-secrets:check jobs "$SECRETS_FILE"
-
-      - name: 🔐 Gather the web Worker's secrets
+      - name: 🔐 Gather and check the web Worker's secrets
         id: web-secrets
         uses: ./.github/actions/gather-worker-secrets
         with:
           worker: web
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-
-      - name: 🔐 Check the web Worker's secrets against its schema
-        env:
-          SECRETS_FILE: ${{ steps.web-secrets.outputs.file }}
-        run: pnpm -C scripts worker-secrets:check web "$SECRETS_FILE"
 
       # Reads the install the jobs build left, which holds `@esposter/db-schema` and its drizzle-kit, so it follows that build
       - name: 🗄️ Apply the D1 migrations

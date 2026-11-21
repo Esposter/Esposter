@@ -1,5 +1,5 @@
 name: Gather Worker Secrets
-description: Read one Worker's secrets from Pulumi ESC into a file under the runner's temporary directory, so the check and the put read the same values. The names come from .github/worker-secrets.json under the Worker's key, and each value is read from Pulumi ESC under the environment's prefix, so no value is written to the log or the tree
+description: Read one Worker's secrets from Pulumi ESC into a file under the runner's temporary directory, check them against the Worker's schema, and leave the file for the put, so the check and the put read the same values. The names come from .github/worker-secrets.json under the Worker's key, and each value is read from Pulumi ESC under the environment's prefix, so no value is written to the log or the tree
 inputs:
   worker:
     description: The Worker's key in .github/worker-secrets.json, e.g. `web`
@@ -32,3 +32,9 @@ runs:
           mv "$secrets_file.next" "$secrets_file"
         done
         echo "file=$secrets_file" >> "$GITHUB_OUTPUT"
+    - name: 🔐 Check the secrets against the Worker's schema
+      shell: bash
+      env:
+        SECRETS_FILE: ${{ steps.gather.outputs.file }}
+        WORKER: ${{ inputs.worker }}
+      run: pnpm -C scripts worker-secrets:check "$WORKER" "$SECRETS_FILE"
