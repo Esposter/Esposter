@@ -2,7 +2,7 @@ import type { Context } from "#server/trpc/context";
 import type { SQL } from "drizzle-orm";
 
 import { bansInMessage, getLiveRowWhere, invitesInMessage, roomsInMessage } from "@esposter/db-schema";
-import { and, eq, exists, isNull, notExists, sql } from "drizzle-orm";
+import { and, eq, exists, notExists, sql } from "drizzle-orm";
 
 // The row of a link while its room is open to invites and holds no active ban for the user. A link's own expiry and uses
 // Are decided where it is read: a reader by checkIsInviteUsable, and the join in the statement that consumes a use
@@ -24,7 +24,7 @@ export const getAdmittedInviteWhere = (db: Context["db"], code: string, userId: 
           and(
             eq(bansInMessage.roomId, invitesInMessage.roomId),
             eq(bansInMessage.userId, userId),
-            isNull(bansInMessage.deletedAt),
+            getLiveRowWhere(bansInMessage),
           ),
         ),
     ),

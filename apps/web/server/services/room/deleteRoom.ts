@@ -26,7 +26,7 @@ import {
   webhooksInMessage,
 } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 // A room's deletion is a tombstone, so every member's copy of the room leaves their list at the version the batch names.
 // The membership a member held is tombstoned with it, and so are the room's roles, each member's role links and overrides,
@@ -41,7 +41,7 @@ export const deleteRoom = async (
   const ownedRooms = await db
     .select({ id: roomsInMessage.id })
     .from(roomsInMessage)
-    .where(and(ownedBy(roomsInMessage, id, user.id), isNull(roomsInMessage.deletedAt)));
+    .where(and(ownedBy(roomsInMessage, id, user.id), getLiveRowWhere(roomsInMessage)));
   requireMutation(ownedRooms[0], Operation.Delete, DatabaseEntityType.Room, id);
 
   // The object is emptied before the row is tombstoned, and so is each member's object of what it holds for the room. A
@@ -52,12 +52,12 @@ export const deleteRoom = async (
     db
       .update(roomsInMessage)
       .set({ deletedAt: new Date() })
-      .where(and(ownedBy(roomsInMessage, id, user.id), isNull(roomsInMessage.deletedAt)))
+      .where(and(ownedBy(roomsInMessage, id, user.id), getLiveRowWhere(roomsInMessage)))
       .returning(),
     db
       .update(usersToRoomsInMessage)
       .set({ deletedAt: new Date() })
-      .where(and(eq(usersToRoomsInMessage.roomId, id), isNull(usersToRoomsInMessage.deletedAt)))
+      .where(and(eq(usersToRoomsInMessage.roomId, id), getLiveRowWhere(usersToRoomsInMessage)))
       .returning(),
     // A webhook's app user is named by the live webhook, so its statement runs first, while the webhook is still live,
     // In the order deleteWebhook keeps
