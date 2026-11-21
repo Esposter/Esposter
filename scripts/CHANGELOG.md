@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **build:** a hand-written src/index.ts stays a build cache input, and its rule has one owner ([90caabb](https://github.com/Esposter/Esposter/commit/90caabbfe8c86c5193a5e32e6b45af5888c350d6))
+* **configuration:** a subpath's source arm leaves its module out of the root barrel ([90d488f](https://github.com/Esposter/Esposter/commit/90d488fe333e4f7f7728e93f4f10148414716411))
+* **configuration:** an unannotated is*/has* function whose body is a boolean is check* ([4085872](https://github.com/Esposter/Esposter/commit/408587267529ecb6e819acf92ad268d92cba1bc0))
+* **configuration:** vendored files stop naming the machine's pnpm store ([0fefd45](https://github.com/Esposter/Esposter/commit/0fefd45ea947fdb7e8f8fbac22951cf48be27110))
+* **genshin-text:** the loader map is named by its key, GameLanguage, first ([737321f](https://github.com/Esposter/Esposter/commit/737321fefb6c6a999fc2910afa5a9175f23e8a14))
+* **realtime:** TOPIC_WATCH_SECRET is required, and a watch with no signature is refused rather than taken unverified ([8015a18](https://github.com/Esposter/Esposter/commit/8015a18263848b841464c34c5af0c6e71e9c1d48))
+* **scripts:** a derived ledger out of step with its tree fails the precheck, naming the sweep that writes its rows ([9bf803c](https://github.com/Esposter/Esposter/commit/9bf803c2e2b9df6cc289619aae1fa87fc93f5313))
+* **scripts:** a gravity ripple's talent variable is an indexed talent array, so a case whose multiplier is a call is skipped ([f6b7dc0](https://github.com/Esposter/Esposter/commit/f6b7dc0d9d274175580d7afbc3ec9f24c0542de9))
+* **scripts:** a node_modules link that loops back on itself is dropped, not read as a stat error ([76064c8](https://github.com/Esposter/Esposter/commit/76064c8d1c69befb1e88bad8477d3603776c4f49))
+* **scripts:** a worktree builds the packages with a build script, so a named plugin with none is not built ([e41855e](https://github.com/Esposter/Esposter/commit/e41855ea76c3ad0145ee9b0ee85659a3668b75a6))
+* **scripts:** GitHub's link states are a value set the state map is keyed by, and the report's continuation comments are capitalized ([d73ae06](https://github.com/Esposter/Esposter/commit/d73ae06f25d8c95be6bfad9bd53ac836ef83ffe7))
+* **scripts:** ledger coverage derives openspec units with forward slashes on Windows ([fe51065](https://github.com/Esposter/Esposter/commit/fe51065d357e15f39fcb830f4d5ff9ec709e894f))
+* **scripts:** restore the deleted getNodeModulesDirectory helper and point the stale-names import at the shared containing-directory helper ([5cd22f3](https://github.com/Esposter/Esposter/commit/5cd22f37398428fa00096c933bac0667b1059e60))
+* **scripts:** spawnPnpm takes a readonly argument list, as the worktree install's constant is ([fae4233](https://github.com/Esposter/Esposter/commit/fae4233fb230c14944eb786083636858cc6c2e56))
+* **scripts:** the Columbina gravity ripple writer leaves the no-poise rule to the shared candidates, which write it for each hit without poise ([bc1b212](https://github.com/Esposter/Esposter/commit/bc1b2127c374d9c6391f95ca5cdd62cdf6223c48))
+* **scripts:** the coverage sweep writes only ledgers, and a derived table is the same whatever order its listing arrives in ([db1b1bb](https://github.com/Esposter/Esposter/commit/db1b1bb82a9b07666da98968765531fa6d2c1f4e))
+* **scripts:** the ledger coverage command and its test sort their imports ([cfa561d](https://github.com/Esposter/Esposter/commit/cfa561d72ed08616ef8cc6bb078c3ec475f8d5e9))
+* **scripts:** the stale-names check reads the installed packages under either store layout ([3357238](https://github.com/Esposter/Esposter/commit/3357238808b07dd1c7552d0a6307dbc027b02f2e))
+* **scripts:** the stale-names walk reads only directories and links to them, so a regular file in a node_modules is not read as a package ([853e6c7](https://github.com/Esposter/Esposter/commit/853e6c7efce7699b95fef6a42baf5107404764a8))
+* **scripts:** the todo reader narrows each grep line's three groups, so a line the pattern names without them is skipped ([455a1f1](https://github.com/Esposter/Esposter/commit/455a1f1f4adccb6c98c0b970ee91a384000b5574))
+* **shared:** the webhook event list is the scripts' own Object.values over the shared value set, since only the scripts read it ([173dd95](https://github.com/Esposter/Esposter/commit/173dd9587b874ae1055646abbd4e4d705a676729))
+* **web,scripts:** the version keys sort among their siblings, the reordered imports sort, and the GitHub boundary's null carries its reason ([6cf1c12](https://github.com/Esposter/Esposter/commit/6cf1c122397321bbd1ff2827acf61132f15c785b))
+* **web,shared-node,scripts:** the wake check's records, full-run rule and gaps are one owner, and a run with --changed or --project is not whole ([f51b934](https://github.com/Esposter/Esposter/commit/f51b9348ed738bdfcb36c99049b6dfb95d42fe0b))
+
+### Features
+
+* **ci:** the deploy checks each Worker's secrets against its own schema before the Worker deploys ([62c6f63](https://github.com/Esposter/Esposter/commit/62c6f63a58a635f2f58d9bcc8287d55f73996404))
+* **scripts:** a framework-free headless package is named <thing>-headless ([836f009](https://github.com/Esposter/Esposter/commit/836f009f57bab44eebec9242e59be75a26a3eb87))
+* **scripts:** ai:setup reads whether the pnpm store sits on a Dev Drive on Windows ([ae7fbeb](https://github.com/Esposter/Esposter/commit/ae7fbeb6868ca4cd8829b5095667d978093d76c3))
+* **scripts:** ai:todos:report lists every marker by state, read off git grep ([e6487d4](https://github.com/Esposter/Esposter/commit/e6487d4ab39cf6961ffb36d6a11a184d826f5b87))
+* **scripts:** ai:todos:report lists only the @TODO markers that are work now ([9921f56](https://github.com/Esposter/Esposter/commit/9921f56766fbf2d78261423550c6a40b1ccb13a5)), closes [drizzle-orm#6543](https://github.com/drizzle-orm/issues/6543) [h3#1629](https://github.com/h3/issues/1629) [nuxt#37147](https://github.com/nuxt/issues/37147) [nuxt/scripts#946](https://github.com/nuxt/scripts/issues/946) [unocss#5478](https://github.com/unocss/issues/5478)
+* **scripts:** Columbina's Gravity Ripple hits are built from gcsim's gravity tick switch, one per reaction ([9dae251](https://github.com/Esposter/Esposter/commit/9dae25153c6fe0cb360cdef13905e2e7aa70e564))
+* **scripts:** Radiant Psalter's first shield delay is read from gcsim's burst.go, and Dahlia's overlay drops its unsourced 31 ([03b39c3](https://github.com/Esposter/Esposter/commit/03b39c3d45449abf7425850dbd4f7af5de012dc7))
+
+### Performance Improvements
+
+* **deps:** every checkout on a machine links its packages from pnpm's global virtual store ([5a1291f](https://github.com/Esposter/Esposter/commit/5a1291f63ac9b4d53e562b21c79dfc0728b59c4f))
+* **scripts:** a worktree installs the whole workspace once, before any task runs ([2c21f77](https://github.com/Esposter/Esposter/commit/2c21f7700659c727c47dc2e65acf6515fb7bf5fa))
+* **test:** the jobs setup stops loading the schema, and the ground fit tests fit smaller pieces ([e2a9e75](https://github.com/Esposter/Esposter/commit/e2a9e75a10c69233f0fb8981217dfd2aba43dfda))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 ### Bug Fixes

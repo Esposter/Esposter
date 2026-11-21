@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **configuration:** a subpath's source arm leaves its module out of the root barrel ([90d488f](https://github.com/Esposter/Esposter/commit/90d488fe333e4f7f7728e93f4f10148414716411))
+* **deps:** the manifests that inline type-fest or vize record the versions the lockfile resolves, as the build writes them ([75c0941](https://github.com/Esposter/Esposter/commit/75c09411d50183d0936361726abad10eb721014e))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 ### Bug Fixes

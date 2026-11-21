@@ -3,6 +3,58 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **db:** a blob's key is bounded at R2's key limit, so a long file name's topic publishes ([4152561](https://github.com/Esposter/Esposter/commit/4152561ccd7ab9ea6de5c38339d4653d24dec9df))
+* **db:** a condition under a not, and a scope in a left join's ON on the kept table, filter their table instead of scoping it ([68a1bfb](https://github.com/Esposter/Esposter/commit/68a1bfbd6c1907d8a20b0a7126a98869892a30c8))
+* **db:** a delete that sets a member's category to null wakes the reads scoped by that member, since the change is named from the rows its key reaches ([bd26ded](https://github.com/Esposter/Esposter/commit/bd26ded110cf6cf9608f57d7c313206b2cfb6a02))
+* **db:** a join side borrows a selected value only through a chain no left join null-fills ([fadc2ca](https://github.com/Esposter/Esposter/commit/fadc2cad7d213bffa5270f865effb4c5f141a745))
+* **db:** a join side borrows a selected value only through an equality chain ([9d5ed14](https://github.com/Esposter/Esposter/commit/9d5ed146e4912989fb47e4f862563c5bc3fb14fa))
+* **db:** a list bound as one JSON array is read as the IN list it stands for, a scope per value, so a write to a value the list does not name wakes no read of it ([1e32419](https://github.com/Esposter/Esposter/commit/1e324191412fa8b1178c3f75563e317e5dddc6b5))
+* **db:** a list over a scope column past 64 values reads its table table-wide, so the topics header stays inside its budget ([88a5607](https://github.com/Esposter/Esposter/commit/88a5607fa6f9509de88eea8726ac5fc59d0e2dfa))
+* **db:** a procedure's read topics fit one header budget, and a read past it collapses its row topics table-wide ([092813a](https://github.com/Esposter/Esposter/commit/092813a9a60ee8256a6cce5b9663670815e0f245))
+* **db:** a raw SQL fragment's columns are unseen, so a table-wide read names every column of a table the fragment is in ([6c96167](https://github.com/Esposter/Esposter/commit/6c961673b3811ac729ceaec8033f189a6de20a49))
+* **db:** a read set occurrence's fields sit in the order the sort lint expects, which the isScoped rename had broken ([23ee4e5](https://github.com/Esposter/Esposter/commit/23ee4e52ba61ab88ddc58599836cbe6f95ff95a8))
+* **db:** a recorded write that asks for no RETURNING runs through run, the method its caller awaited ([20ed501](https://github.com/Esposter/Esposter/commit/20ed50193b31c429d0375a4daa494057b4e597f2))
+* **db:** a row-derived topic needs a join that keeps the partner's rows, and a table with no filter of its own ([16dd964](https://github.com/Esposter/Esposter/commit/16dd9642fedf2abc456b64576fd41c12e459ff6d))
+* **db:** a self-join's partner is named by its own occurrence's selection, or by a borrowed one no left join null-fills ([a04175a](https://github.com/Esposter/Esposter/commit/a04175a630fa68216a3ee5e069f283ddcb735a44))
+* **db:** a statement run on the handle a transaction callback is given is recorded, so the scheduled messages a send removes wake their reads ([5307d0d](https://github.com/Esposter/Esposter/commit/5307d0d02a104c630a7105e6bee611a502e90eb4))
+* **db:** an equality under an or names no scope, so the table is read table-wide when a branch of the or holds other rows ([5c91d00](https://github.com/Esposter/Esposter/commit/5c91d008aca7aba48149fb5d1e67abef8aad63cf))
+* **db:** an occurrence's level is its position in the levels, empty levels included ([0255892](https://github.com/Esposter/Esposter/commit/0255892447bf8901d48a1efe57fc6ec665813b60))
+* **db:** publishTopicsBestEffort's topic source lists the Promise before the array, as the sort rule asks ([416ecf2](https://github.com/Esposter/Esposter/commit/416ecf20b82eabe358db21322e9dfd20f8c8478f))
+* **db:** the bucket's root is a topic the schema accepts, and the design names the blob topics ([e004f47](https://github.com/Esposter/Esposter/commit/e004f47154eb4303128d6ed63a6c731211bc85f2))
+* **db:** the message gate's comments name the room object's alarm, which delivers scheduled sends, not a Function worker ([a91a011](https://github.com/Esposter/Esposter/commit/a91a011c33acb5a376a36f73d23c6363a2d08229))
+* **db:** the read walker reads a subquery's selection past its proxy, so a capped count over a raw sql`1` no longer throws ([03f1c28](https://github.com/Esposter/Esposter/commit/03f1c2845b3c1b4bf874439c54de787e4607f410))
+* **realtime:** a write names the scope values of the rows it writes, whatever its RETURNING asks for ([5799d61](https://github.com/Esposter/Esposter/commit/5799d61fd497caf7ef714a28cda4b04cafc97fe0))
+* **realtime:** a write that asks for no RETURNING runs as one that returns its scope columns, so no caller has to remember RETURNING ([f65eec7](https://github.com/Esposter/Esposter/commit/f65eec7e811a1ac96c0b99f8b3a24be32c04b367))
+* **realtime:** the recorder's widening helper takes a statement the type of its caller, so the RETURNING it adds typechecks without a cast ([ced732b](https://github.com/Esposter/Esposter/commit/ced732b2214f22e0cae55c1d601c0fe73028ba36))
+* **room:** a removed membership is a tombstone that a rejoin revives at a higher version, and a join counts its use in the statement that writes the membership ([e166375](https://github.com/Esposter/Esposter/commit/e1663757c0a7d91a2a9906e02d191be4f2d836a2))
+* **web:** a presigned call background upload is confirmed through confirmBlobUpload, so the listing watchers wake for it ([962e55b](https://github.com/Esposter/Esposter/commit/962e55bb0184b454e51d85a1591ac53207c0eaaf))
+* **web:** an unpublish and an unstar leave tombstones that a republish or a re-star revives at a higher version ([3c610ef](https://github.com/Esposter/Esposter/commit/3c610efa474a624f8f7d0e708216bea000094df8))
+* **web:** leaving a room takes the person's reminders and scheduled messages for it ([78d1ac3](https://github.com/Esposter/Esposter/commit/78d1ac318e4ac1c182cac345d0f45a439b932ae4))
+
+### Features
+
+* **db:** a bucket binding's reads and writes are blob topics, and the blob-state procedures are inferred ([8c24682](https://github.com/Esposter/Esposter/commit/8c2468262e6e013e4ff5c7223dc273fa7500f00b))
+* **db:** a column is metadata of a watch and a publish, not part of a topic's name, so an update wakes only the readers of its columns ([24f9df0](https://github.com/Esposter/Esposter/commit/24f9df0fa34ebfb8e7a0770f64615505f0ca674a))
+* **db:** a delete names the child rows its keys reach by the value each held ([db6822f](https://github.com/Esposter/Esposter/commit/db6822f9a41e084a0a85547d30f9ee8a55cb4add))
+* **db:** a filter names the table occurrence it tests, and the walker reads only conditions as filters ([db55046](https://github.com/Esposter/Esposter/commit/db550466de0e89b0c20b255cd082e236d9833c95))
+* **db:** a left join names a table by its rows only when no filter and no inner join references that table ([5df84c3](https://github.com/Esposter/Esposter/commit/5df84c36b219e9a984f68e97a22f897d472f3f62))
+* **db:** a multipart upload's completion publishes its key, as a put does ([38f3be6](https://github.com/Esposter/Esposter/commit/38f3be6192622c1abbb53e036971d30cb4985a09))
+* **db:** a read names each table at the statement level it sits in ([bf5315a](https://github.com/Esposter/Esposter/commit/bf5315ab5929b89419be87085e7ab079ab6f84fb))
+* **db:** a table a join reaches is named by the values its returned rows carry ([6bc593c](https://github.com/Esposter/Esposter/commit/6bc593c66b5b5517ed603bb7e87058cf887c6487))
+* **db:** a table is table-wide when any of its unscoped occurrences is named by no returned row ([c1138f6](https://github.com/Esposter/Esposter/commit/c1138f666e933dc4b45319ddd74ad82870384b92))
+* **db:** a table-wide read names the columns it reads, and an update publishes the columns it sets rather than its table ([65bf9b3](https://github.com/Esposter/Esposter/commit/65bf9b383506aa6b360c84fa5370fca77e8eb043))
+* **db:** a write names the rows it reads before it runs, and a delete reads its cascade through every key ([bcb97a9](https://github.com/Esposter/Esposter/commit/bcb97a93c6f27dbd9fa2794cc19b79156bf26049))
+* **realtime:** a mutation's header names each row it changed by its key and version ([50670f7](https://github.com/Esposter/Esposter/commit/50670f7c158cf2941a3352f9dfbbc751d9189789))
+* **web:** a procedure infers its live topics from the statements it awaits, unless it declares them by hand ([9349e52](https://github.com/Esposter/Esposter/commit/9349e52e18404eb3039997e6bfd7ca3ad625d721))
+
+### Performance Improvements
+
+* **test:** a pure test file stops loading the schema, and inserts are sized off their table ([be7f263](https://github.com/Esposter/Esposter/commit/be7f26325aa97f5f54b875d431290a9e20e2bf13))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 ### Bug Fixes

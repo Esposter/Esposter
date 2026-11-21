@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **web,shared-node,scripts:** the wake check's records, full-run rule and gaps are one owner, and a run with --changed or --project is not whole ([f51b934](https://github.com/Esposter/Esposter/commit/f51b9348ed738bdfcb36c99049b6dfb95d42fe0b))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 ### Features

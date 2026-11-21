@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **configuration:** an unannotated is*/has* function whose body is a boolean is check* ([4085872](https://github.com/Esposter/Esposter/commit/408587267529ecb6e819acf92ad268d92cba1bc0))
+* **deps:** the manifests that inline type-fest or vize record the versions the lockfile resolves, as the build writes them ([75c0941](https://github.com/Esposter/Esposter/commit/75c09411d50183d0936361726abad10eb721014e))
+* **vue-phaserjs:** a create listener that unmounts the component stops its game object from being made ([2ed9780](https://github.com/Esposter/Esposter/commit/2ed97807facdac0e9fec06ce9127d4b20f11e6d0))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 **Note:** Version bump only for package vue-phaserjs

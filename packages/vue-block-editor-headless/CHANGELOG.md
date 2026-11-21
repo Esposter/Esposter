@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **vue-block-editor-headless:** the root props constraint is object, and its exported alias is gone ([a92cf46](https://github.com/Esposter/Esposter/commit/a92cf4689a8af4ba88c4c187df73a2bfa8fb7385))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 ### Features
