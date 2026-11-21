@@ -12,8 +12,8 @@ export const routeRules: NonNullable<NuxtConfig["routeRules"]> = {
     headers: { "Access-Control-Allow-Origin": "*", "Cross-Origin-Resource-Policy": "cross-origin" },
   },
   "/calls/**": { robots: false, ssr: false },
-  // The rex plugins the dungeons page imports (`phaser4-rex-plugins/plugins/*`, in `pages/dungeons.vue`) read `Phaser` globals at module
-  // Evaluation and throw under Node SSR, so the page stays client-only (the `vue-phaserjs` skill, "SSR")
+  // The page imports `phaser` (`pages/dungeons.vue`), and phaser's module evaluation reads `window`: its device detection
+  // Runs in `init()` and reads `window.cordova`, so under Node SSR the import throws `window is not defined` and the page stays client-only
   "/dungeons": { robots: false, ssr: false },
   // A WebGPU canvas with nothing to render before it runs, and three.js is client-only, so the page is built for the browser alone
   "/fluid-simulator": { robots: false, ssr: false },
