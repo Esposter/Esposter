@@ -169,8 +169,8 @@ describe("postRouter", () => {
     );
   });
 
-  // The parent is read ahead of the reply's batch, so a removal that lands between the read and the batch must still refuse
-  // The reply, rather than hang it under a post no reader can show
+  // The parent is read ahead of the reply's batch, so a removal between the two must still refuse the reply,
+  // Rather than hang it under a post no reader can show
   test("refuses a reply to a post a removal takes between the read and the write", async () => {
     expect.hasAssertions();
 

@@ -11,6 +11,7 @@ import { getPostSubtreeWhere } from "#server/services/post/getPostSubtreeWhere";
 import { getPostWithViewerLike } from "#server/services/post/getPostWithViewerLike";
 import { getViewerPostRelations } from "#server/services/post/getViewerPostRelations";
 import { readPostWithRelations } from "#server/services/post/readPostWithRelations";
+import { tombstonePostSubtree } from "#server/services/post/tombstonePostSubtree";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -53,8 +54,8 @@ export const postRouter = router({
       // The parent's chain plus the parent itself: what this reply inherits, and the posts whose counters move
       const ancestorIds = [...parentPost.ancestorIds, parentPost.id];
       const createdAt = new Date();
-      // The parent is live in the write as well as in the read above, since a removal can land between the two. The reply
-      // And the counters take that as their guard, so a reply to a removed post is never written and counts nowhere
+      // The parent is live in the write as well as the read above, since a removal can land between them. The reply
+      // And its counters take the parent's liveness as their guard: a reply to a removed post is never written
       const isParentLive = and(eq(postsInPost.id, input.parentId), getLiveRowWhere(postsInPost));
       // The reply and the counter of every ancestor commit in one batch, so no counter counts a reply that did not land
       const [newCommentRows] = await ctx.db.batch([
@@ -88,7 +89,8 @@ export const postRouter = router({
             ),
           ),
       ]);
-      // No row back means the guard lost: the parent was removed after the read, so the reply is refused as the post it now is
+      // No row back means the guard lost, so the parent was removed after the read, and the reply is refused as a
+      // Missing post, the same refusal the read makes
       const newComment = newCommentRows[0];
       if (!newComment) throw getNotFoundError(DatabaseEntityType.Post, input.parentId);
 
@@ -137,12 +139,12 @@ export const postRouter = router({
       const threadRootId = ancestorIds.at(0);
       if (!threadRootId)
         throw getInvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, JSON.stringify(input));
-      // The live subtree is the comment and every live reply beneath it. It is read inside the batch rather than before it:
-      // A reply landing between a read and the removal would otherwise be subtracted from the ancestors without being named.
-      // The counter's own subquery and the removal see the same rows, since nothing else writes between them
+      // The live subtree is the comment and every live reply beneath it, read inside the batch rather than before it.
+      // A reply landing between a read and the removal would otherwise be subtracted from the ancestors without being
+      // Named. The counter's own subquery and the removal see the same rows, since nothing else writes between them
       const subtreeWhere = and(getPostSubtreeWhere(input, threadRootId), getLiveRowWhere(postsInPost));
       const [, removedRows] = await ctx.db.batch([
-        // Every ancestor loses the live subtree; the guard leaves the counters alone when the removal below will not land
+        // Every ancestor loses the live subtree, unless the owner's removal below does not land
         ctx.db
           .update(postsInPost)
           .set({
@@ -154,13 +156,7 @@ export const postRouter = router({
               sql`exists (select 1 from ${postsInPost} where ${ownedComment})`,
             ),
           ),
-        // The subtree is tombstoned rather than deleted: each row keeps its place and takes the version the removal raises, so a
-        // Read that answered before it cannot bring a reply back. The text is cleared, so no reader is handed the removed words
-        ctx.db
-          .update(postsInPost)
-          .set({ deletedAt: new Date(), description: "", title: "" })
-          .where(and(subtreeWhere, sql`exists (select 1 from ${postsInPost} where ${ownedComment})`))
-          .returning(),
+        tombstonePostSubtree(ctx.db, subtreeWhere, ownedComment),
       ]);
       requireMutation(removedRows[0], Operation.Delete, DerivedDatabaseEntityType.Comment, input);
       return { ancestorIds, removed: removedRows };
@@ -173,17 +169,11 @@ export const postRouter = router({
     );
     // The live thread under the post is tombstoned in the one statement, and it is the owner's post that gates it, so a
     // Reply landing meanwhile is either named in the answer or never written
-    const removedRows = await ctx.db
-      .update(postsInPost)
-      .set({ deletedAt: new Date(), description: "", title: "" })
-      .where(
-        and(
-          getPostSubtreeWhere(input, input),
-          getLiveRowWhere(postsInPost),
-          sql`exists (select 1 from ${postsInPost} where ${ownedPost})`,
-        ),
-      )
-      .returning();
+    const removedRows = await tombstonePostSubtree(
+      ctx.db,
+      and(getPostSubtreeWhere(input, input), getLiveRowWhere(postsInPost)),
+      ownedPost,
+    );
     requireMutation(removedRows[0], Operation.Delete, DatabaseEntityType.Post, input);
     return removedRows;
   }),
