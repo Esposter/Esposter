@@ -2,18 +2,28 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { MimeType } from "#shared/models/file/MimeType";
+import { TOPICS_HEADER } from "#shared/services/realtime/constants";
+import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
 import MessageRightSideBarThreadIndex from "#src/components/Message/RightSideBar/Thread/Index.vue";
+import { goOnline } from "#src/composables/shared/network.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
+import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useLayoutStore } from "#src/store/layout";
 import { useFileStore } from "#src/store/message/file/index";
 import { useThreadStore } from "#src/store/message/thread";
-import { MessageType } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { useConnectionStore } from "#src/store/realtime/connection";
+import { getTopic, MessageType, TopicKind } from "@esposter/db-schema";
+import { Operation, waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(
+  import("#src/services/realtime/openRealtimeSocket"),
+  () => import("#src/services/realtime/openRealtimeSocket.test"),
+);
 
 // The store reaches the layout store, which reads the library's breakpoints — an injection that needs a component
 // Instance. Shallow because only the store wiring is under test here, not the drawer's own markup
@@ -227,5 +237,36 @@ describe(useThreadStore, () => {
     expect(activeThreadRootId.value).toBe(0);
     expect(threadMessages.value).toStrictEqual([]);
     expect(isRightDrawerOpen.value).toBe(false);
+  });
+
+  // A reply the room takes while the thread is open is a publish of the room's topic, which the read names, so the
+  // Thread is read again and the reply lands without a reopen
+  test("reads the thread again when a topic its answer names is published", async () => {
+    expect.hasAssertions();
+
+    const topic = getTopic(TopicKind.Room, roomId);
+    let replies = [createRoomReply()];
+    trpcMsw.message.readThread.query(({ ctx }) => {
+      ctx.responseHeaders.set(
+        TOPICS_HEADER,
+        formatTopicsHeaderValue("message.readThread", { readAt: 0, signature: "", topics: [{ topic }] }),
+      );
+      return replies;
+    });
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const [, onFrame] = getLastOpenRealtimeSocketCall();
+    goOnline();
+    await mountThreadDrawer();
+    const threadStore = useThreadStore();
+    const { threadMessages } = storeToRefs(threadStore);
+    const openThread = useOpenThread();
+    await openThread(roomId, threadRootId);
+    const laterReply = { ...createRoomReply(), id: roomReplyId + 1 };
+    replies = [createRoomReply(), laterReply];
+    onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
+    await waitForSynchronizedFunctions();
+
+    expect(threadMessages.value.map(({ id }) => id)).toContain(laterReply.id);
   });
 });
