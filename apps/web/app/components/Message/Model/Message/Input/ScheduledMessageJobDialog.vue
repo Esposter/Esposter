@@ -30,14 +30,14 @@ const scheduleJob = async () => {
   const roomId = currentRoomId.value;
   if (!roomId) return false;
 
-  return getResultAsync(() =>
+  return getResultAsync(async () =>
     isReminder.value
-      ? $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
+      ? await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
           roomId,
           runAt: scheduledAt.value,
           text: text.value,
         })
-      : $trpc.message.scheduledMessage.createScheduledMessage.mutate({
+      : await $trpc.message.scheduledMessage.createScheduledMessage.mutate({
           message: marked.parse(text.value, { async: false }),
           replyToId: null,
           roomId,

@@ -1,4 +1,5 @@
 import type { UpsertStatusInput } from "#shared/models/db/user/UpsertStatusInput";
+import type { Draft } from "#src/models/shared/overlay/Draft";
 import type { UserStatusInMessage } from "@esposter/db-schema";
 
 import { statusTable } from "#src/services/message/user/status/constants";
@@ -17,7 +18,13 @@ export const useStatusStore = defineStore("message/user/status", () => {
   // Each person's row by the person's id, a computed over the rows the overlay holds, so a row that arrives or a status
   // set on screen is read at once
   const statusMap = computed(
-    () => new Map(statuses.value.map((userStatus): [string, UserStatusInMessage] => [userStatus.userId, userStatus])),
+    () =>
+      new Map(
+        statuses.value.map((userStatus): [string, Readonly<Draft<UserStatusInMessage>>] => [
+          userStatus.userId,
+          userStatus,
+        ]),
+      ),
   );
   const getUserStatus = (id: string) => statusMap.value.get(id)?.status ?? UserStatus.Online;
   const getStatusMessage = (id: string) => statusMap.value.get(id)?.message ?? "";
