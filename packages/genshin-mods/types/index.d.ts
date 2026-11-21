@@ -24,16 +24,6 @@ export interface EnabledMods {
   waypoints: boolean;
 }
 
-// The rate-limit window past a usage line, named as its section spells it, the line it has passed, whether the reserve
-// Was entered by spending ahead of an even pace rather than by the window's maintenance line, and when it resets; `""`
-// In the name is the absent reserve
-export interface ReserveWindow {
-  isAheadOfPace: boolean;
-  name: string;
-  percentage: number;
-  resetsAt: string;
-}
-
 // What the sins mod last found: its scores when the call answered, or why it could not score the last prompt
 export type SinStatus = "answered" | "failed" | "no-key" | "node-too-old" | "unchecked";
 
@@ -53,7 +43,6 @@ declare module "claude-code" {
       lastPrompt: string;
       lookupStreak: number;
       now: number;
-      reserveWindow: ReserveWindow;
       // Keyed by sin name, the last evidence values of each sin in order
       sinHistory: Record<string, number[]>;
       sinSession: number;

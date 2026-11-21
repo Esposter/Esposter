@@ -13,7 +13,6 @@ export const InitialState: PluginState["genshin-mods"] = {
   lastPrompt: "",
   lookupStreak: 0,
   now: 0,
-  reserveWindow: { isAheadOfPace: false, name: "", percentage: 0, resetsAt: "" },
   sinHistory: {},
   sinSession: 0,
   sinStatus: SinStatusKind.Unchecked,

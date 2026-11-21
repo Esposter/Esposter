@@ -6,20 +6,12 @@ export const CACHE_LIFETIME_MS: number = Temporal.Duration.from({ hours: 1 }).to
 export const CACHE_LOW_MS: number = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");
 export const CACHE_WARNING_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 export const USAGE_WARNING_PERCENTAGE = 80;
-// The usage line each window's maintenance line starts at
-export const FIVE_HOUR_MAINTENANCE_PERCENTAGE = 80;
-export const WEEKLY_MAINTENANCE_PERCENTAGE = 80;
-// A window under this share is never read for its pace, since an early reading projects wildly
-export const PACE_FLOOR_PERCENTAGE = 50;
-// Each window's length, which its reset time is counted back from
-export const FIVE_HOUR_WINDOW_MS: number = Temporal.Duration.from({ hours: 5 }).total("milliseconds");
-export const WEEKLY_WINDOW_MS: number = Temporal.Duration.from({ hours: 168 }).total("milliseconds");
 // The only model a subagent launches on: the main session thinks, and everything it delegates runs on haiku
 export const AGENT_MODEL = "haiku";
 // What a launch on any other model, or a fork, is told instead
 export const AGENT_MODEL_REFUSAL: string = `A subagent runs on "${AGENT_MODEL}" alone: pass model "${AGENT_MODEL}", and never a fork, which runs on the session's own model. Work too judged for ${AGENT_MODEL} stays in the main session, and a spec ${AGENT_MODEL} cannot carry still has a call open.`;
-// What a workflow refused under a reserve is told to do instead, after the reserve's summary
-export const RESERVE_REFUSAL_INSTRUCTION: string = `Launch an agent with model "${AGENT_MODEL}" instead, for cleanup or a compute runner whose judgement is settled; otherwise write the unit down as a follow-up and leave it for after the reset.`;
+// What a workflow launch is refused with when its agents cannot all be seen to run on haiku
+export const WORKFLOW_MODEL_REFUSAL: string = `A workflow runs its agents on "${AGENT_MODEL}" alone: pass model "${AGENT_MODEL}" in each agent() call's own options. A saved workflow named with no script, or a script the guard cannot read as code, is refused. Work too judged for ${AGENT_MODEL} stays in the main session, and a spec ${AGENT_MODEL} cannot carry still has a call open.`;
 export const MAX_WAYPOINTS = 3;
 export const MAX_SHOWN_TASKS = 8;
 // Whole minutes as the band writes them, `12m`
@@ -37,10 +29,6 @@ export const HANDOFF_QUESTION =
 export const VEIL_SECTION_ID = "genshin-mods-veil";
 export const VEIL_SYSTEM_SECTION =
   "Recording mode is on: the screen is being recorded or shared. Never write an email address, a phone number, a money amount, an API key, a token or a password in a reply; write a placeholder such as [email], [phone], [amount] or [secret] instead, even when asked for the value. Tool calls still use the real values.";
-export const RESERVE_SECTION_ID = "genshin-mods-reserve";
-// The reserve's section ends on this instruction: the window's rest goes on cleanup a haiku agent can do cold
-export const MAINTENANCE_INSTRUCTION =
-  "Until it resets, spend the rest of the window on haiku agents for cleanup: fix the findings of a code review of this window's own recent commits, drain an open sweep ledger, bring the docs and skills in line with the code changed this window, fix CI's typecheck and lint reds, and land the refactors, simplifications and optimisations the compute queue's runs surfaced; write a finding that needs judgement down as a follow-up (the follow-ups plugin's capture skill) rather than deciding it on haiku; keep the compute queue's runners going.";
 // The tools that look something up, the tools that change files, and the shell whose command decides which it is
 export const LOOKUP_TOOLS = ["Read", "WebFetch"] as const;
 export const RESET_TOOLS = ["Agent", "Edit", "NotebookEdit", "Write"] as const;

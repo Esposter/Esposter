@@ -11,7 +11,6 @@ import {
   CACHE_WARNING_MS,
   MACHINE_WATCHER_RETRY_MILLISECONDS,
   MACHINE_WATCHER_SCRIPT,
-  RESERVE_SECTION_ID,
   VEIL_SECTION_ID,
   VEIL_SYSTEM_SECTION,
   WAYPOINTS_QUESTION,
@@ -21,9 +20,6 @@ import { ModDescriptionMap } from "./ModDescriptionMap";
 import { readHome } from "./readHome";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
 import { getCacheWarningDelayMs } from "./resin/getCacheWarningDelayMs";
-import { getReserveSummary } from "./resin/getReserveSummary";
-import { getReserveWindow } from "./resin/getReserveWindow";
-import { reserveText } from "./resin/reserveText";
 import { appendSinEvidence } from "./sins/appendSinEvidence";
 import { SINS_API_URL, SINS_TIMEOUT_MS } from "./sins/constants";
 import { getSinQuestions } from "./sins/getSinQuestions";
@@ -46,7 +42,6 @@ const lastCacheRequestAtAtom = atom(
 );
 const lookupStreakAtom = atom({ key: "lookupStreak", plugin: "genshin-mods" } as const, InitialState.lookupStreak);
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
-const reserveWindowAtom = atom({ key: "reserveWindow", plugin: "genshin-mods" } as const, InitialState.reserveWindow);
 const sinHistoryAtom = atom({ key: "sinHistory", plugin: "genshin-mods" } as const, InitialState.sinHistory);
 const sinSessionAtom = atom({ key: "sinSession", plugin: "genshin-mods" } as const, InitialState.sinSession);
 const sinStatusAtom = atom({ key: "sinStatus", plugin: "genshin-mods" } as const, InitialState.sinStatus);
@@ -230,17 +225,12 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
     return next(e);
   });
 
-  // While the veil is on, the model is told to write placeholders too, so a reply never holds a value to hide. While a
-  // Usage reserve holds and the resin mod is on, the model is told what the reserve asks until the window resets, which
-  // It may have done since the last measurement
+  // While the veil is on, the model is told to write placeholders too, so a reply never holds a value to hide
   on("prompt.compose", async ($, e, next) => {
     const result = await next(e);
-    const { resin, veil } = await read($, enabledModsAtom);
-    const reserveWindow = await read($, reserveWindowAtom);
+    const { veil } = await read($, enabledModsAtom);
     const sections = [...result.sections];
     if (veil) sections.push({ id: VEIL_SECTION_ID, scope: "session", text: VEIL_SYSTEM_SECTION });
-    if (resin && reserveWindow.name && Date.parse(reserveWindow.resetsAt) > (await $.clock.now()))
-      sections.push({ id: RESERVE_SECTION_ID, scope: "session", text: reserveText(reserveWindow) });
     return { sections };
   });
 
@@ -277,18 +267,5 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
         runDetached(() => suggestWaypoints($));
       });
     return result;
-  });
-
-  // The reserve is read off each measurement: it starts at the first window past its line and lifts at the measurement a
-  // Window's reset raises, which finds none. The toast names the window once, as the reserve starts
-  on("session.measure", async ($, e, next) => {
-    const now = await $.clock.now();
-    const reserveWindow = getReserveWindow(e.rateLimits, now);
-    const previousReserveWindow = await read($, reserveWindowAtom);
-    await update($, reserveWindowAtom, () => reserveWindow ?? InitialState.reserveWindow);
-    if (reserveWindow && !previousReserveWindow.name && (await read($, enabledModsAtom)).resin)
-      $.ui.toast(`${getReserveSummary(reserveWindow)}.`);
-
-    return next(e);
   });
 };
