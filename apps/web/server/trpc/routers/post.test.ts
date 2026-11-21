@@ -26,6 +26,9 @@ import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
+// The id is the last key every sort ends on, so the order of two rows that tie on the sort's own key is the ids' order
+const compareById = (first: Pick<PostInPost, "id">, second: Pick<PostInPost, "id">) => (second.id < first.id ? -1 : 1);
+
 describe("postRouter", () => {
   let mockContext: Context;
   let postCaller: DecorateRouterRecord<TRPCRouter["post"]>;
@@ -553,4 +556,42 @@ describe("postRouter", () => {
 
     expect([...firstPage.items, ...secondPage.items].map(({ id }) => id)).toStrictEqual([firstId, secondId, thirdId]);
   });
+
+  // Six root posts with ties on the ranking and on the likes, so every page boundary below falls inside a tie. Each sort
+  // Ends on the id, as PostSortTypePageSortMap names it, so the order is total
+  const feedColumns = [
+    { likeCount: 2, ranking: 1 },
+    { likeCount: 1, ranking: 3 },
+    { likeCount: 2, ranking: 3 },
+    { likeCount: 2, ranking: 2 },
+    { likeCount: 0, ranking: 3 },
+    { likeCount: 1, ranking: 1 },
+  ];
+  const feedOrders = {
+    [PostSortType.Hot]: (first: Pick<PostInPost, "id" | "ranking">, second: Pick<PostInPost, "id" | "ranking">) =>
+      second.ranking - first.ranking || compareById(first, second),
+    [PostSortType.New]: compareById,
+    [PostSortType.Top]: (first: Pick<PostInPost, "id" | "likeCount">, second: Pick<PostInPost, "id" | "likeCount">) =>
+      second.likeCount - first.likeCount || compareById(first, second),
+  };
+
+  test.each([PostSortType.Hot, PostSortType.New, PostSortType.Top])(
+    "reads the feed in %s order, with every page boundary inside a tie",
+    async (sortName) => {
+      expect.hasAssertions();
+
+      const feedPosts = await Promise.all(
+        Array.from({ length: feedColumns.length }, () => postCaller.createPost({ title })),
+      );
+      await Promise.all(feedPosts.map(({ id }, index) => setReplyColumns(id, takeOne(feedColumns, index))));
+      const seededPosts = feedPosts.map(({ id }, index) => ({ id, ...takeOne(feedColumns, index) }));
+      const firstPage = await postCaller.readPosts({ limit: 2, sortName });
+      const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 2, sortName });
+      const thirdPage = await postCaller.readPosts({ cursor: secondPage.nextCursor, limit: 2, sortName });
+
+      expect([...firstPage.items, ...secondPage.items, ...thirdPage.items].map(({ id }) => id)).toStrictEqual(
+        seededPosts.toSorted(feedOrders[sortName]).map(({ id }) => id),
+      );
+    },
+  );
 });

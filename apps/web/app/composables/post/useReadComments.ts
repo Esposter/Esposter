@@ -10,7 +10,7 @@ export const useReadComments = (parentId: string) => {
   const items = getBranchItems(parentId);
   const { readFirstPage, readMorePages } = usePagedPostRead({ readItems, readMoreItems, readPage: readCommentPage });
   const getQuery = () => ({ parentId, sortName: commentSortType.value });
-  const readComments = () => readFirstPage(getQuery(), AsyncDataKey.ReadComments(parentId));
+  const readComments = () => readFirstPage(getQuery, AsyncDataKey.ReadComments(parentId));
   const readMoreComments = (onComplete: () => void) => readMorePages(getQuery(), onComplete);
   return { hasMore, isLoaded, items, readComments, readMoreComments };
 };

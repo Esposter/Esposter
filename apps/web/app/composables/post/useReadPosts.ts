@@ -8,7 +8,7 @@ export const useReadPosts = (userId?: string) => {
   const { readFirstPage, readMorePages } = usePagedPostRead({ readItems, readMoreItems, readPage: readPostPage });
   const getQuery = () => ({ sortName: sortType.value, userId });
   // The feed and the profile both render server-side, so the first page rides the payload into hydration
-  const readPosts = () => readFirstPage(getQuery(), AsyncDataKey.ReadPosts(sortType.value, userId));
+  const readPosts = () => readFirstPage(getQuery, AsyncDataKey.ReadPosts(sortType.value, userId));
   const readMorePosts = (onComplete: () => void) => readMorePages(getQuery(), onComplete);
   return { readMorePosts, readPosts };
 };

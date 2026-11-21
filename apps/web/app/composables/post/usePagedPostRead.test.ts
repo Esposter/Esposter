@@ -34,7 +34,7 @@ describe(usePagedPostRead, () => {
       return { items: [createPost({ userId })], nextCursor: "" };
     });
     const { readFirstPage } = createPagedRead();
-    await readFirstPage({ userId }, AsyncDataKey.ReadPosts(PostSortType.Hot, userId));
+    await readFirstPage(() => ({ userId }), AsyncDataKey.ReadPosts(PostSortType.Hot, userId));
 
     expect(sentQueries.map((query) => query.userId)).toStrictEqual([userId]);
   });
@@ -52,7 +52,7 @@ describe(usePagedPostRead, () => {
         : { items: [createPost()], nextCursor: "" };
     });
     const { readFirstPage, readMorePages } = createPagedRead();
-    await readFirstPage({ userId }, AsyncDataKey.ReadPosts(PostSortType.Hot, userId));
+    await readFirstPage(() => ({ userId }), AsyncDataKey.ReadPosts(PostSortType.Hot, userId));
     await readMorePages({ userId }, noop);
 
     expect(sentCursors).toStrictEqual([START_PAGE_CURSOR, pageCursor]);
