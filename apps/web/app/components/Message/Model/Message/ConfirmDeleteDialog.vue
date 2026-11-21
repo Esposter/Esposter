@@ -14,14 +14,6 @@ const { isOpen, item: message } = useSingletonDialog(deletingMessageId, () =>
   items.value.find(({ id }) => id === deletingMessageId.value),
 );
 const creator = useCreator(message);
-// The message leaves the list once the room answers the removal. A refused removal leaves it where it was, under the alert
-const confirmDelete = () => {
-  const target = getMessageWriteTarget(message.value, getSlice);
-  if (!target) return;
-
-  const { messageId, roomId } = target;
-  return deleteMessage({ id: messageId, roomId });
-};
 </script>
 
 <template>
@@ -31,8 +23,17 @@ const confirmDelete = () => {
     :awaited-because="AwaitedReason.ServerDecidedOutcome"
     confirm-label="Delete"
     title="Delete Message"
-    :confirm="confirmDelete"
+    :confirm="
+      () => {
+        const target = getMessageWriteTarget(message, getSlice);
+        if (!target) return;
+
+        return deleteMessage({ id: target.messageId, roomId: target.roomId });
+      }
+    "
   >
+    <!-- The message leaves the list once the room answers the removal. A refused removal leaves it where it was,
+    Under the alert -->
     <p>Are you sure you want to delete this message?</p>
     <div py-2 ui-frame>
       <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
