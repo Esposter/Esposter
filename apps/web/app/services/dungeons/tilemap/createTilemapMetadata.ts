@@ -23,6 +23,8 @@ export const createTilemapMetadata = (layerNameEnum: Record<string, string>) => 
       tilesets.push(tileset);
     }
     const layer = createLayer(tilemap.value, layerName, tilesets);
+    // A layer draws over the ones before it in the tilemap's own order, which the depth of a character is counted from
+    layer.setDepth(tilemap.value.layers.findIndex(({ name }) => name === layerName));
     if (debugLayerNames.has(layerName)) layer.setAlpha(IS_PRODUCTION ? 0 : 0.7);
     // A layer holds its scene, so it enters the store raw like the tilemap it belongs to
     rawLayerMap.set(layerName, markRaw(layer));
