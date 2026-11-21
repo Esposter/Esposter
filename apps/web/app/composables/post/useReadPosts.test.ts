@@ -5,6 +5,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { usePostStore } from "#src/store/post/index";
 import { createEmptyPage } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
+import { z } from "zod";
 
 describe(useReadPosts, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -16,7 +17,7 @@ describe(useReadPosts, () => {
 
     const sentSortNames: PostSortType[] = [];
     trpcMsw.post.readPosts.query(({ input }) => {
-      sentSortNames.push(input.sortName);
+      sentSortNames.push(z.enum(PostSortType).parse(input?.sortName));
       return createEmptyPage();
     });
     const postStore = usePostStore();

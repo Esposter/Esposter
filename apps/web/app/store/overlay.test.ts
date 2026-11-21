@@ -252,7 +252,7 @@ describe(useOverlayStore, () => {
     const serverOverlayStore = useOverlayStore();
     serverOverlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
     // The payload carries the store's state as plain data, so the server's held tables are cloned out of Pinia's reactive state
-    const payload = structuredClone(serverPinia.state.value.overlay.heldTables);
+    const payload = structuredClone(serverOverlayStore.$state.heldTables);
     const clientPinia = createPinia();
     clientPinia.state.value = { overlay: { heldTables: payload } };
     setActivePinia(clientPinia);
