@@ -1,7 +1,7 @@
 import { useRefreshRoomUsers } from "#src/composables/message/room/useRefreshRoomUsers";
 import { setRoomUsers } from "#src/services/message/room/setRoomUsers";
 import { useRoomStore } from "#src/store/message/room/index";
-import { getSynchronizedFunction, noop } from "@esposter/shared";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 // The open room's topic is watched, since a person's name or image is published on the topic of each room they are in.
 // Each publish re-reads the users that room shows, so a rename reaches the names on screen.
@@ -25,7 +25,9 @@ export const useRoomUserSubscribables = () => {
       runScope,
     }),
   );
-  const releaseRoomUsers = getSynchronizedFunction((roomId: string) => executeQuery(noop, { key: roomId, runScope }));
+  const releaseRoomUsers = getSynchronizedFunction((roomId: string) =>
+    executeQuery(() => Promise.resolve(), { key: roomId, runScope }),
+  );
   useOnlineSubscribable(
     currentRoomId,
     (roomId) => {

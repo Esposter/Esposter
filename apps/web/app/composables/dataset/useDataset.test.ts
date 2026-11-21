@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { Dataset } from "#shared/models/dataset/Dataset";
+
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
@@ -63,7 +65,7 @@ describe(useDataset, () => {
     const connectionStore = useConnectionStore();
     connectionStore.openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
-    let dataset = { columns: [], rows: [] };
+    let dataset: Dataset = { columns: [], rows: [] };
     trpcMsw.dataset.readDataset.query(({ ctx }) => {
       ctx.responseHeaders.set(
         TOPICS_HEADER,

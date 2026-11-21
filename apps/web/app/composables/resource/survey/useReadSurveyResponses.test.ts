@@ -1,16 +1,18 @@
 // @vitest-environment nuxt
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
 
+import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
 import { useReadSurveyResponses } from "#src/composables/resource/survey/useReadSurveyResponses";
 import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useConnectionStore } from "#src/store/realtime/connection";
-import { getTopic, TopicKind } from "@esposter/db-schema";
+import { getTopic, SurveyResponseMode, TopicKind } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
+import { createSurveyDocument } from "vue-survey-engine-headless";
 
 vi.mock(
   import("#src/services/realtime/openRealtimeSocket"),
@@ -46,7 +48,10 @@ describe(useReadSurveyResponses, () => {
       );
       return records;
     });
-    trpcMsw.survey.readResourceContent.query(() => null);
+    trpcMsw.survey.readResourceContent.query(() => ({
+      document: createSurveyDocument(),
+      settings: surveySettingsSchema.parse({ responseMode: SurveyResponseMode.Identified }),
+    }));
     const scope = effectScope();
     const reader = scope.run(() => useReadSurveyResponses(surveyId));
     await reader?.refreshResponses();
