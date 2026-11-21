@@ -1,6 +1,6 @@
 import type { Promisable } from "type-fest";
 
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
 // The run scope of local work that has no version. A new run aborts the run before it, and only the newest run commits
 // Its result. The task receives the signal for its own awaits and never checks it: a superseded run applies nothing, and
@@ -26,12 +26,10 @@ export const useRunScope = () => {
         const { promise: settled, resolve: settle } = Promise.withResolvers<void>();
         applying = settled;
         await previous;
-        try {
+        await withFinalizerAsync(async () => {
           if (controller.signal.aborted) release(result);
           else await commit(result);
-        } finally {
-          settle();
-        }
+        }, settle);
       },
       (error) => {
         if (!controller.signal.aborted) throw error;
