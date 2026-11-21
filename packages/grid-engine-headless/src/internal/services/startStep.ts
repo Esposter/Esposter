@@ -10,7 +10,8 @@ import { Direction } from "#src/models/Direction";
 import { DirectionDeltaMap } from "#src/services/DirectionDeltaMap";
 
 // Starts the waiting move as a step. A move into a blocked tile turns the character without moving it, and ends the run
-// It was part of; a move with no step starts nothing
+// It was part of; a move with no step starts nothing. A listener that teleports the character while the step starts ends
+// The step there, so none is returned and nothing more is raised for it
 export const startStep = (state: GridEngineState, character: GridEngineCharacter): GridEngineStep | undefined => {
   const { pendingDirection } = character;
   character.pendingDirection = Direction.None;
@@ -31,6 +32,7 @@ export const startStep = (state: GridEngineState, character: GridEngineCharacter
     character.isRunning = true;
     emitGridEvent(state, "movementStarted", { direction: pendingDirection, id: character.id });
   }
+  if (character.step !== step) return undefined;
   emitGridEvent(state, "positionChangeStarted", { direction: pendingDirection, enterTile, exitTile, id: character.id });
-  return step;
+  return character.step === step ? step : undefined;
 };

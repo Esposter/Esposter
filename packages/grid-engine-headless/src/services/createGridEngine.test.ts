@@ -600,4 +600,26 @@ describe(createGridEngine, () => {
       position: { x: 0.5, y: 0 },
     });
   });
+
+  test.each([["movementStarted"], ["positionChangeStarted"]] as const)(
+    "a teleport from a %s listener is where the character stays, and the step it interrupts moves it nowhere",
+    (event) => {
+      expect.hasAssertions();
+
+      const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false, false, false]] });
+      const finishedTiles = recordFinishedTiles(engine);
+      let isTeleported = false;
+      engine.on(event, () => {
+        if (isTeleported) return;
+        isTeleported = true;
+        unwrap(engine.setPosition(FIRST_ID, { x: 3, y: 0 }));
+      });
+      unwrap(engine.move(FIRST_ID, Direction.Right));
+      engine.update(STEP_DURATION_MS);
+
+      expect(finishedTiles).toStrictEqual([{ x: 3, y: 0 }]);
+      expect(engine.checkIsBlocked({ x: 3, y: 0 })).toBe(true);
+      expect(engine.checkIsBlocked({ x: 1, y: 0 })).toBe(false);
+    },
+  );
 });
