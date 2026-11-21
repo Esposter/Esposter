@@ -40,6 +40,24 @@ describe(usePostStore, () => {
     await expect(storeCreatePost({ description: "", title: newTitle })).resolves.toBeUndefined();
   });
 
+  // The feed keeps a created post where its sort places it: a Hot feed ranks by ranking before id, so a new post ranked
+  // Between two held posts is drawn between them rather than at the bottom
+  test("places a created post where the feed's sort places it", async () => {
+    expect.hasAssertions();
+
+    const rankedPost = createPost({ ranking: 2 });
+    const createdPost = createPost({ ranking: 1 });
+    trpcMsw.post.createPost.mutation(() => createdPost);
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
+    const { createPost: storeCreatePost, readItems, readPostPage } = postStore;
+    await readItems(() => Promise.resolve(readPostPage({ items: [rankedPost, otherPost], nextCursor: "" })));
+
+    await storeCreatePost({ description: "", title: newTitle });
+
+    expect(items.value.map(({ id }) => id)).toStrictEqual([rankedPost.id, createdPost.id, otherPost.id]);
+  });
+
   // Two edits of one post are written to the one row in issue order, and a refused edit drops its own entry: the row
   // Is left at the edit the server kept, with nothing restored over it
   test("leaves the feed on the edit the server kept when a later edit is refused", async () => {

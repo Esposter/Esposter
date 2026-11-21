@@ -6,6 +6,7 @@ import type { Page, PostInPostWithRelations } from "@esposter/db-schema";
 
 import { PostSortType } from "#shared/models/post/PostSortType";
 import { usePostRows } from "#src/composables/post/usePostRows";
+import { comparePostsBySort } from "#src/services/post/comparePostsBySort";
 import { postTable } from "#src/services/post/overlay/constants";
 import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
@@ -46,9 +47,19 @@ export const usePostStore = defineStore("post", () => {
     for (const post of pagePosts) arrive(postTable, storePostRelations(post));
     return { ...page, items: pagePosts.map(({ id }) => ({ id })) };
   };
+  // The post goes before the first held row the feed's sort places after it, and at the end when none is. A key whose
+  // Row is not held cannot be ordered, so it is passed over
+  const insertPostKey = (post: PostInPostWithRelations) => {
+    const index = postKeys.value.findIndex(({ id }) => {
+      const heldPost = getPostWithRelations(id);
+      return heldPost !== undefined && comparePostsBySort(sortType.value, post, heldPost) < 0;
+    });
+    postKeys.value =
+      index === -1 ? [...postKeys.value, { id: post.id }] : postKeys.value.toSpliced(index, 0, { id: post.id });
+  };
   // The id only exists once the server has written the row, and the page that submitted the form needs it to open what
-  // Was just posted. The new post joins the end of the feed as the server answered it, and a rejected create hands back
-  // Nothing: its alert has already been raised, so the caller's only job is to stay put
+  // Was just posted. The new post joins the feed where its sort places it, and a rejected create hands back nothing.
+  // Its alert has already been raised, so the caller's only job is to stay put
   const createPost = async (input: CreatePostInput): Promise<PostInPostWithRelations | undefined> => {
     const outcome: { post?: PostInPostWithRelations } = {};
     createPendingCount.value += 1;
@@ -58,7 +69,7 @@ export const usePostStore = defineStore("post", () => {
           async () => {
             const post = await $trpc.post.createPost.mutate(input);
             outcome.post = post;
-            postKeys.value = [...postKeys.value, { id: post.id }];
+            insertPostKey(post);
             return [createArrival(postTable, storePostRelations(post))];
           },
           { onError: createErrorAlert },
