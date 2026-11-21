@@ -1,15 +1,19 @@
 import type { GridEngineState } from "#src/internal/models/GridEngineState";
 import type { GridEngineEvents } from "#src/models/GridEngineEvents";
 
-// A listener stays subscribed until the function returned here is called
+// A listener stays subscribed until the function returned here is called. Each subscription is its own entry, so a function
+// Subscribed twice is heard twice, and the first unsubscribe leaves the second in place
 export const addListener = <TEvent extends keyof GridEngineEvents>(
   state: GridEngineState,
   event: TEvent,
   listener: (payload: GridEngineEvents[TEvent]) => void,
 ): (() => void) => {
   const listeners = state.listeners[event];
-  listeners.add(listener);
+  const subscription = (payload: GridEngineEvents[TEvent]) => {
+    listener(payload);
+  };
+  listeners.add(subscription);
   return () => {
-    listeners.delete(listener);
+    listeners.delete(subscription);
   };
 };

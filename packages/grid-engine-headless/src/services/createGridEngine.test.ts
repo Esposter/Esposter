@@ -645,4 +645,23 @@ describe(createGridEngine, () => {
     unwrap(engine.turnTowards(FIRST_ID, Direction.Down));
     expect(heardCount).toBe(2);
   });
+
+  test("a function subscribed twice is heard once per subscription, and one unsubscribe leaves the other", () => {
+    expect.hasAssertions();
+
+    let heardCount = 0;
+    const listener = (): void => {
+      heardCount += 1;
+    };
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false]] });
+    const unsubscribeFirst = engine.on("directionChanged", listener);
+    engine.on("directionChanged", listener);
+
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Right));
+    expect(heardCount).toBe(2);
+
+    unsubscribeFirst();
+    unwrap(engine.turnTowards(FIRST_ID, Direction.Down));
+    expect(heardCount).toBe(3);
+  });
 });
