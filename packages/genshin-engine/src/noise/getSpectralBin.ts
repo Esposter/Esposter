@@ -9,7 +9,8 @@ export const getSpectralBin = (column: number, row: number, width: number, heigh
   const down = (row > height / 2 ? row - height : row) / height;
   const radius = Math.hypot(across, down);
   if (radius === 0) return undefined;
-  const [least, most] = [Math.log2(1 / Math.max(width, height)), Math.log2(Math.SQRT1_2)];
+  const least = Math.log2(1 / Math.max(width, height));
+  const most = Math.log2(Math.SQRT1_2);
   const radial = Math.min(
     Math.max(Math.floor(((Math.log2(radius) - least) / (most - least)) * SPECTRAL_RADIAL_BIN_COUNT), 0),
     SPECTRAL_RADIAL_BIN_COUNT - 1,

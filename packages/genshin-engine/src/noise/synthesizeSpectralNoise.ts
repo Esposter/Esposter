@@ -17,7 +17,8 @@ const countUnder = (sorted: Float32Array, value: number): number => {
 const readQuantile = (quantiles: readonly number[], share: number): number => {
   const position = share * (quantiles.length - 1);
   const lower = Math.floor(position);
-  const [low = 0, high = low] = [quantiles[lower], quantiles[lower + 1]];
+  const low = quantiles[lower] ?? 0;
+  const high = quantiles[lower + 1] ?? low;
   return low + (high - low) * (position - lower);
 };
 // A texture synthesized from its statistics (`SpectralNoiseProfile`), a field a channel, row after row: at every
@@ -55,7 +56,8 @@ export const synthesizeSpectralNoise = (
     draws.push(draw);
     // The inverse transform as the forward one over the conjugate, whose real part is the field's
     const [real, imaginary] = [new Float64Array(count), new Float64Array(count)];
-    for (const [index, bin] of bins.entries()) {
+    for (let index = 0; index < count; index++) {
+      const bin = bins[index];
       const amplitude = (bin === undefined ? 0 : (amplitudes[bin] ?? 0)) * Math.sqrt(count);
       real[index] = (draw.real[index] ?? 0) * amplitude;
       imaginary[index] = -(draw.imaginary[index] ?? 0) * amplitude;
@@ -71,7 +73,8 @@ export const synthesizeSpectralNoise = (
       const last = Math.max(sorted.length - 1, 1);
       // Values that tie take the ranks they span in turn, so the band still reaches both its ends
       const tieOffsetMap = new Map<number, number>();
-      for (const [index, value] of bandField.entries()) {
+      for (let index = 0; index < bandField.length; index++) {
+        const value = bandField[index] ?? 0;
         const under = countUnder(sorted, value);
         const isTied = sorted[under + 1] === value;
         const offset = isTied ? (tieOffsetMap.get(value) ?? 0) : 0;

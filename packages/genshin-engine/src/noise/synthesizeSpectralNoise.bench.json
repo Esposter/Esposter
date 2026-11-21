@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "src/noise/synthesizeSpectralNoise.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 5.025024800000028,
+              "name": "32 texels a side",
+              "p99": 13.293056220000057,
+              "rme": 47.960868053494245,
+              "sampleCount": 10
+            },
+            {
+              "mean": 91.92430429999999,
+              "name": "128 texels a side",
+              "p99": 129.67395316,
+              "rme": 22.718781731021608,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "synthesizeSpectralNoise > a texture of each side"
+        }
+      ]
+    }
+  ]
+}
