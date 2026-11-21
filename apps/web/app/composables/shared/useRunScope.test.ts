@@ -1,3 +1,4 @@
+import { flushPromises } from "@vue/test-utils";
 import { assert, describe, expect, test, vi } from "vitest";
 
 describe(useRunScope, () => {
@@ -75,5 +76,27 @@ describe(useRunScope, () => {
 
     expect(release).toHaveBeenCalledExactlyOnceWith(result);
     expect(commit).toHaveBeenCalledExactlyOnceWith(newerResult);
+  });
+
+  // A commit still applying holds the scope's next commit until it settles, so two picks' applies never overlap
+  test("a commit still applying holds the next commit of its scope until it settles", async () => {
+    expect.hasAssertions();
+
+    const runScope = effectScope().run(useRunScope);
+    assert.exists(runScope);
+    const firstApply = Promise.withResolvers<void>();
+    const firstCommit = vi.fn<(value: string) => Promise<void>>().mockReturnValueOnce(firstApply.promise);
+    const secondCommit = vi.fn<(value: string) => void>();
+    const firstRun = runScope.run(() => Promise.resolve(result), firstCommit);
+    await flushPromises();
+    const secondRun = runScope.run(() => Promise.resolve(newerResult), secondCommit);
+    await flushPromises();
+
+    expect(secondCommit).not.toHaveBeenCalled();
+
+    firstApply.resolve();
+    await Promise.all([firstRun, secondRun]);
+
+    expect(secondCommit).toHaveBeenCalledExactlyOnceWith(newerResult);
   });
 });
