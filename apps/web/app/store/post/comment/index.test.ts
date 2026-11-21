@@ -3,6 +3,7 @@ import { getMockSession } from "#server/trpc/context.test";
 import { PostSortType } from "#shared/models/post/PostSortType";
 import { useSession } from "#src/services/auth/authClient.test";
 import { createPost } from "#src/services/post/createPost.test";
+import { createRemovedPost } from "#src/services/post/createRemovedPost.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useCommentStore } from "#src/store/post/comment/index";
 import { usePostCountStore } from "#src/store/post/count";
@@ -11,15 +12,6 @@ import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
-
-// The row a removal answers for a post it removed: a tombstone at the version the removal left, with its text cleared
-const removedRow = (post: ReturnType<typeof createPost>) => ({
-  ...post,
-  deletedAt: new Date(),
-  description: "",
-  title: "",
-  version: post.version + 1,
-});
 
 // Holds a branch's replies on the overlay, and lists them under their parent the way a page of the branch does
 const seedBranch = (parentId: string, replies: ReturnType<typeof createPost>[]) => {
@@ -96,7 +88,7 @@ describe(useCommentStore, () => {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }
 
-      return { ancestorIds: [postId], removed: [removedRow(otherComment)] };
+      return { ancestorIds: [postId], removed: [createRemovedPost(otherComment)] };
     });
     // The accepted delete reads the counts it moved, and the test waits for that read so it does not end before it
     const isCountRead = Promise.withResolvers<void>();
@@ -125,7 +117,7 @@ describe(useCommentStore, () => {
     const reply = createPost({ depth: 2, parentId: comment.id });
     trpcMsw.post.deleteComment.mutation(() => ({
       ancestorIds: [postId],
-      removed: [removedRow(comment), removedRow(reply)],
+      removed: [createRemovedPost(comment), createRemovedPost(reply)],
     }));
     trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: 0, version: countVersion }]);
     const commentStore = useCommentStore();

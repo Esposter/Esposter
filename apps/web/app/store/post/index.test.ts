@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import { createPost } from "#src/services/post/createPost.test";
+import { createRemovedPost } from "#src/services/post/createRemovedPost.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { usePostStore } from "#src/store/post/index";
 import { takeOne } from "@esposter/shared";
@@ -93,7 +94,7 @@ describe(usePostStore, () => {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }
 
-      return [{ ...otherPost, deletedAt: new Date(), description: "", title: "", version: otherPost.version + 1 }];
+      return [createRemovedPost(otherPost)];
     });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
@@ -113,9 +114,7 @@ describe(usePostStore, () => {
   test("does not relist a removed post when a read answered before the removal arrives after it", async () => {
     expect.hasAssertions();
 
-    trpcMsw.post.deletePost.mutation(() => [
-      { ...post, deletedAt: new Date(), description: "", title: "", version: post.version + 1 },
-    ]);
+    trpcMsw.post.deletePost.mutation(() => [createRemovedPost(post)]);
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const { deletePost, readItems, readPostPage } = postStore;
