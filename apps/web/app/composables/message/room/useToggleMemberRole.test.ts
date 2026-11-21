@@ -3,7 +3,7 @@ import type { RoomRoleInMessage, UserToRoomRoleInMessageWithRelations } from "@e
 
 import { useToggleMemberRole } from "#src/composables/message/room/useToggleMemberRole";
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
-import { roomRoleTable, userToRoomRoleTable } from "#src/services/message/role/constants";
+import { userToRoomRoleTable } from "#src/services/message/role/constants";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { pushRooms } from "#src/services/message/room/pushRooms.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -16,10 +16,12 @@ import { describe, expect, test, vi } from "vitest";
 
 // A member's assignments arrive as a read holds them: each one with the role it names, both at their versions
 const seedMemberRoles = (memberRoles: UserToRoomRoleInMessageWithRelations[]) => {
+  const roleStore = useRoleStore();
+  const { arriveRoomRoles } = roleStore;
   const overlayStore = useOverlayStore();
   const { arrive } = overlayStore;
   for (const { role, ...memberRole } of memberRoles) {
-    arrive(roomRoleTable, role);
+    arriveRoomRoles([role]);
     arrive(userToRoomRoleTable, memberRole);
   }
 };
