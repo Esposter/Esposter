@@ -11,14 +11,14 @@ interface CommandBenchCase {
 }
 
 // Every command bench is the same pair measured at some case: `execute` against a data source nothing else has
-// touched, then the round trip that ends back where it started. Registering both from one place is what keeps
+// Touched, then the round trip that ends back where it started. Registering both from one place is what keeps
 // `vs base` meaningful. A group holds one scale and may hold several shapes at that scale, each shape its own
-// pair; a group mixing scales reports the ratio between two fixture sizes instead, which is a fact about the
-// fixture rather than about the command.
+// Pair; a group mixing scales reports the ratio between two fixture sizes instead, which is a fact about the
+// Fixture rather than about the command.
 //
-// The undo task times its own `execute` too, because there is no undo to measure without one, hence the task
-// name. Both callbacks build their own data source (every command mutates the one it is handed) and their own
-// command (a command carries the state its undo consumes).
+// The undo task times its own `execute` too, because there is no undo to measure without one, hence the task name.
+// Both callbacks build their own data source (every command mutates the one it is handed) and their own command,
+// Since a command carries the state its undo consumes.
 export const setupCommandBench = (title: string, cases: CommandBenchCase[]): void => {
   test(title, async ({ bench }) => {
     await bench.compare(
