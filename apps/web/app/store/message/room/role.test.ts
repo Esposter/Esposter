@@ -188,7 +188,7 @@ describe(useRoleStore, () => {
   });
 
   // Two members' roles read on one surface, issued together, both mark their members read: a read keyed by the table would
-  // let the second read supersede the first
+  // Let the second read supersede the first
   test("a read of one member's roles does not supersede a read of another member's", async () => {
     expect.hasAssertions();
 

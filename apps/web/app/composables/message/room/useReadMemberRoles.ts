@@ -1,5 +1,7 @@
 import type { ReadMemberRolesInput } from "#shared/models/db/role/ReadMemberRolesInput";
+import type { UserToRoomRoleInMessageWithRelations } from "@esposter/db-schema";
 
+import { userToRoomRoleTable } from "#src/services/message/role/constants";
 import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
 import { useRoleStore } from "#src/store/message/room/role";
 
@@ -9,16 +11,21 @@ import { useRoleStore } from "#src/store/message/room/role";
 export const useReadMemberRoles = () => {
   const { $trpc } = useNuxtApp();
   const roleStore = useRoleStore();
-  const { arriveMemberRoles, markMemberRolesRead } = roleStore;
-  const { executeQuery } = useMutation();
+  const { arriveRoomRoles, markMemberRolesRead } = roleStore;
+  const readMemberRoleRows = useOverlayRead(
+    userToRoomRoleTable,
+    ({ role, ...memberRole }: UserToRoomRoleInMessageWithRelations) => {
+      arriveRoomRoles([role]);
+      return memberRole;
+    },
+  );
   return ({ roomId, userIds }: ReadMemberRolesInput) =>
     rethrowFailedRead(
-      executeQuery(() => $trpc.role.readMemberRoles.query({ roomId, userIds }), {
+      readMemberRoleRows(() => $trpc.role.readMemberRoles.query({ roomId, userIds }), {
         // A fresh target per read, so a later page of members does not supersede the watch of an earlier one
         key: Symbol("readMemberRoles"),
         onError: console.error,
-        onSuccess: (memberRoles) => {
-          arriveMemberRoles(memberRoles);
+        onSuccess: () => {
           markMemberRolesRead(roomId, userIds);
         },
       }),

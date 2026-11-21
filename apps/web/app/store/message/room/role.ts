@@ -164,25 +164,20 @@ export const useRoleStore = defineStore("message/room/role", () => {
       arrive(userToRoomRoleTable, memberRole);
     }
   };
-  const arriveMemberPermissionOverrides = (memberPermissions: RoomMemberPermissionInMessage[]) => {
-    for (const memberPermission of memberPermissions) arrive(roomMemberPermissionTable, memberPermission);
-  };
   // The store's reads of a room are live: each room is one target of the store's own instance, so a write in that room
   // Re-reads the room's answer and the rooms do not supersede one another. A read its caller awaits still throws on
   // Failure, as the raw query did; the refresh a watch runs has no caller, so it logs instead
-  const { executeQuery: executeReadRolesQuery } = useMutation();
+  const readRoomRoleRows = useOverlayRead(roomRoleTable, (roomRole: RoomRoleInMessage) => roomRole);
   const readRoles = async ({ roomIds }: ReadRolesInput) => {
     await Promise.all(
-      roomIds.map((roomId) =>
-        rethrowFailedRead(
-          executeReadRolesQuery(() => $trpc.role.readRoles.query({ roomIds: [roomId] }), {
+      roomIds.map((roomId) => {
+        // Only a read made after the room's roles were held is a refresh, which is when the totals move
+        const isRefresh = roomRolesMap.value.has(roomId);
+        return rethrowFailedRead(
+          readRoomRoleRows(() => $trpc.role.readRoles.query({ roomIds: [roomId] }), {
             key: roomId,
             onError: console.error,
-            onSuccess: (roomRoles) => {
-              // Only a read made after the room's roles were held is a refresh, which is when the totals move
-              const isRefresh = roomRolesMap.value.has(roomId);
-              arriveRoomRoles(roomRoles);
-
+            onSuccess: () => {
               const roomLiveRoles = getRoles(roomId);
               if (!roomLiveRoles.some(({ id }) => id === getSelectedRoleId(roomId))) {
                 const everyoneRole = roomLiveRoles.find(({ isEveryone }) => isEveryone);
@@ -191,8 +186,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
               if (isRefresh) notifyMemberRoleChange(roomId);
             },
           }),
-        ),
-      ),
+        );
+      }),
     );
   };
   const { executeQuery: executeReadMyPermissionsQuery } = useMutation();
@@ -212,14 +207,16 @@ export const useRoleStore = defineStore("message/room/role", () => {
       ),
     );
   };
-  const { executeQuery: executeReadMemberPermissionOverridesQuery } = useMutation();
+  const readMemberPermissionOverrideRows = useOverlayRead(
+    roomMemberPermissionTable,
+    (memberPermission: RoomMemberPermissionInMessage) => memberPermission,
+  );
   const readMemberPermissionOverrides = async (input: ReadMemberPermissionOverridesInput) => {
     await rethrowFailedRead(
-      executeReadMemberPermissionOverridesQuery(() => $trpc.role.readMemberPermissionOverrides.query(input), {
+      readMemberPermissionOverrideRows(() => $trpc.role.readMemberPermissionOverrides.query(input), {
         key: input.roomId,
         onError: console.error,
         onSuccess: async (overrides) => {
-          arriveMemberPermissionOverrides(overrides);
           // An override names no one, so the rows of the users it holds are read alongside it. Its failure is logged
           // Rather than thrown, since a refresh that throws has no caller to catch it. A tombstone names no user to read
           const overriddenUserIds = overrides.filter(({ deletedAt }) => !deletedAt).map(({ userId }) => userId);
@@ -349,7 +346,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
     );
   };
   return {
-    arriveMemberPermissionOverrides,
     arriveMemberRoles,
     arriveRoomRoles,
     assignRole,
