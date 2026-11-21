@@ -278,6 +278,25 @@ describe(useMutation, () => {
     expect(freshOnSuccess).toHaveBeenCalledTimes(1);
   });
 
+  test("drops an in-flight read's answer once a supersede write on its key has landed", async () => {
+    expect.hasAssertions();
+
+    const readOnSuccess = vi.fn<() => void>();
+    const { executeMutation, executeQuery } = useMutation();
+    const runScope = createRunScope();
+    const { promise: readPromise, resolve: resolveRead } = Promise.withResolvers<string>();
+    const read = executeQuery(() => readPromise, { key, onSuccess: readOnSuccess, runScope });
+    await executeMutation(() => Promise.resolve(result), {
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+      isSupersede: true,
+      key,
+    });
+    resolveRead("older");
+
+    await expect(read).resolves.toStrictEqual({ status: MutationStatus.Stale });
+    expect(readOnSuccess).not.toHaveBeenCalled();
+  });
+
   test("drops a superseded read's failure without alerting", async () => {
     expect.hasAssertions();
 

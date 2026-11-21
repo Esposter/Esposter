@@ -152,6 +152,10 @@ export const useMutation = () => {
     // The outcome of this read once its run commits, which stays Stale for a run the scope superseded or aborted
     let committed: MutationOutcome<TResult> = { status: MutationStatus.Stale };
     const commit = async ({ reads, result }: { reads: TopicRead[]; result: TResult }) => {
+      // A supersede write on this key made the read stale while it was in flight, so the target already holds a newer value
+      // Than this answer and nothing here applies it. The run scope only sees its own key's newer runs, not this one
+      if (checkIsStale()) return;
+
       committed = { result, status: MutationStatus.Succeeded };
       await onSuccess?.(result);
       watchTopics(
