@@ -86,7 +86,7 @@ describe("knockerRouter", () => {
       isCameraEnabled: false,
       isHandRaised: false,
       isMuted: false,
-      name: "knocker",
+      name: "name",
       userId: v7(),
       version: 1,
     };
