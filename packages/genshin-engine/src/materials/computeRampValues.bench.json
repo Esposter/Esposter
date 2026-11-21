@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/materials/computeRampValues.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.01513750000002574,
+              "name": "dark in shade",
+              "p99": 0.023173880000006194,
+              "rme": 24.105582784745962,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.062004400000000716,
+              "name": "keeps a tone in shade",
+              "p99": 0.4665275000000452,
+              "rme": 182.00102598161382,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeRampValues > 64 texels"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.07722490000001017,
+              "name": "dark in shade",
+              "p99": 0.13717394000000582,
+              "rme": 21.63569709010911,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.13845429999998943,
+              "name": "keeps a tone in shade",
+              "p99": 0.33222196999997095,
+              "rme": 60.516957274432635,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeRampValues > 512 texels"
+        }
+      ]
+    }
+  ]
+}
