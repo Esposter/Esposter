@@ -42,7 +42,10 @@ export const createCharacterSpriteWriter = (
     sprite.setFrame(walkingFrameState.frame);
   };
 
-  return () => {
+  const drawCharacterSprite = () => {
     gridEngine.readCharacter(id).match(writeCharacterSprite, console.error);
   };
+  // The sprite is drawn as it is attached, since the foreground reads its depth before the next update draws it
+  drawCharacterSprite();
+  return drawCharacterSprite;
 };

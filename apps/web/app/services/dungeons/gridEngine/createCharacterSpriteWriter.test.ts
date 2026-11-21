@@ -3,6 +3,7 @@ import type { GameObjects, Tilemaps } from "phaser";
 import type { Mock } from "vitest";
 
 import { createCharacterSpriteWriter } from "#src/services/dungeons/gridEngine/createCharacterSpriteWriter";
+import { getCharacterDepth } from "#src/services/dungeons/gridEngine/getCharacterDepth";
 import { createGridEngine, Direction } from "grid-engine-headless";
 import { ok } from "neverthrow";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
@@ -12,6 +13,9 @@ describe(createCharacterSpriteWriter, () => {
   const TILE_SIZE = 16;
   const SPRITE_SIZE = 8;
   const LAYER_COUNT = 2;
+  // A sprite's top-left corner, where the tile's corner centres and bottom aligns it
+  const PLACED_LEFT = 20;
+  const PLACED_TOP = 8;
   const DOWN_FRAMES = { leftFoot: 6, rightFoot: 8, standing: 7 };
   const WALKING_ANIMATION_MAPPING: WalkingAnimationMapping = { [Direction.Down]: DOWN_FRAMES };
 
@@ -58,5 +62,15 @@ describe(createCharacterSpriteWriter, () => {
     createCharacterSpriteWriter(createAttachedGridEngine(), tilemap, CHARACTER_ID, sprite, WALKING_ANIMATION_MAPPING);
 
     expect(setOrigin).toHaveBeenCalledExactlyOnceWith(0, 0);
+  });
+
+  test("a character is placed, depth-sorted and framed when it is attached, before any update", () => {
+    expect.hasAssertions();
+
+    createCharacterSpriteWriter(createAttachedGridEngine(), tilemap, CHARACTER_ID, sprite, WALKING_ANIMATION_MAPPING);
+
+    expect(setPosition).toHaveBeenCalledExactlyOnceWith(PLACED_LEFT, PLACED_TOP);
+    expect(setDepth).toHaveBeenCalledExactlyOnceWith(getCharacterDepth(LAYER_COUNT, PLACED_TOP + SPRITE_SIZE));
+    expect(setFrame).toHaveBeenCalledExactlyOnceWith(DOWN_FRAMES.standing);
   });
 });
