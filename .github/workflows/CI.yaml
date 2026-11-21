@@ -11,9 +11,7 @@ on:
 permissions:
   contents: read
 
-# A newer push cancels the run in progress on a working branch. On `main` and `ai/queue` it waits instead: their pushes
-# land minutes apart, so cancelling left no run to finish and nothing for the deploy to start from. Each job's
-# `timeout-minutes` is several times its longest run, so a hang there frees the branch instead of holding it for hours.
+# Each job's `timeout-minutes` is several times its longest run, so a hang there frees the branch instead of holding it for hours.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/ai/queue' }}
@@ -73,7 +71,7 @@ jobs:
       - name: 🏗️ Build the app bundles the suite asserts against
         run: pnpm --filter "@esposter/infra" build
       # Restored only: `build-packages` fills and saves the mirror under this key before a shard starts on the default
-      # branch and `ai/queue`; another branch restores the newest mirror it can see (monorepo-tooling.md → ## CI job shape)
+      # branch and `ai/queue`; another branch restores the newest mirror it can see (openspec/specs/architecture/monorepo-tooling/design.md → ## CI job shape)
       - name: ♻️ Restore the game data mirror
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -89,7 +87,7 @@ jobs:
           path: node_modules/.vitest-cache
           key: vitest-module-cache-${{ matrix.shard }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
           restore-keys: vitest-module-cache-${{ matrix.shard }}-${{ hashFiles('pnpm-lock.yaml') }}-
-      # `default` beside `blob`, on purpose (monorepo-tooling.md → ## CI job shape)
+      # `default` beside `blob`, on purpose (openspec/specs/architecture/monorepo-tooling/design.md → ## CI job shape)
       - name: 🧪 Test
         env:
           SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
@@ -189,7 +187,6 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm --filter "{.}" i --ignore-scripts
 
-      # Like the checks below, a hit restores nothing: the replay is the verdict that this exact tree already formatted
       - name: 📝 Format
         uses: ./.github/actions/run-cached-task
         with:
@@ -222,7 +219,6 @@ jobs:
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
 
-      # Like the app build, a hit restores nothing: the replay is the verdict that this exact tree already passed
       - name: ✅ ${{ matrix.name }}
         uses: ./.github/actions/run-cached-task
         with:
