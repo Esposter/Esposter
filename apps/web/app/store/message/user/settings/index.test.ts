@@ -58,13 +58,14 @@ describe(useUserSettingsStore, () => {
       Object.assign(storedUserSettings, input, { version: storedUserSettings.version + 1 }),
     );
     const userSettingsStore = useUserSettingsStore();
+    const { userSettings: heldUserSettings } = storeToRefs(userSettingsStore);
     const { readUserSettings, updateUserSettings } = userSettingsStore;
     await readUserSettings();
     updateUserSettings({ isMuteOnJoin: true });
     updateUserSettings({ isDeafenOnJoin: true });
     await flushPromises();
 
-    expect(userSettingsStore.userSettings).toStrictEqual(storedUserSettings);
+    expect(heldUserSettings.value).toStrictEqual(storedUserSettings);
   });
 
   // One record for the whole session, so every surface that raises the dialog asks for it and only the first

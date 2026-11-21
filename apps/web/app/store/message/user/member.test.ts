@@ -285,7 +285,8 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onUserFrame] = getLastOpenRealtimeSocketCall();
     effectScope().run(() => {
       useUserToRoomSubscribables();

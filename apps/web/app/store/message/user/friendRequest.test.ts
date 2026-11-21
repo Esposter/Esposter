@@ -149,6 +149,7 @@ describe(useFriendRequestStore, () => {
       ]);
     });
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const friendRequestStore = useFriendRequestStore();
     const { receivedFriendRequests } = storeToRefs(friendRequestStore);
     const { declineFriendRequest } = friendRequestStore;
@@ -158,7 +159,7 @@ describe(useFriendRequestStore, () => {
     await flushPromises();
 
     expect(receivedFriendRequests.value).toStrictEqual([createFriendRequest(failedSender, appUser)]);
-    expect(alertStore.alerts).toHaveLength(1);
+    expect(alerts.value).toHaveLength(1);
   });
 
   // An accept and a decline answer different senders, so neither queues behind the other while both write the one list

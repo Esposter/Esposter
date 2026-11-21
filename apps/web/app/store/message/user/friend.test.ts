@@ -54,6 +54,7 @@ describe(useFriendStore, () => {
       return createRemovedFriendship(friendId);
     });
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
     const { deleteFriend } = friendStore;
@@ -63,7 +64,7 @@ describe(useFriendStore, () => {
     await flushPromises();
 
     expect(friends.value).toStrictEqual([failedFriend]);
-    expect(alertStore.alerts).toHaveLength(1);
+    expect(alerts.value).toHaveLength(1);
   });
 
   // An unfriend and a block of one user write the same friendship row, so the block queues behind the unfriend. Its

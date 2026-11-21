@@ -52,7 +52,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const roleStore = useRoleStore();
   const { notifyMemberRoleChange } = roleStore;
   const userStore = useUserStore();
-  const { storeRoomMembers, storeUser, userMap } = userStore;
+  const { storeRoomMembers, storeUser } = userStore;
   const overlayStore = useOverlayStore();
   const { arrive, view, writeOptimistic } = overlayStore;
   const memberRows = view(memberTable);
@@ -68,7 +68,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Live. A locale collation has no SQLite counterpart, so a list sorted by one would not be the order the cursor advances
   const members = computed(() => {
     const roomMemberRows = getRoomMemberRows(memberRows.value, roomStore.scopedRoomId);
-    return joinListedMembers(listedMemberKeys.value, roomMemberRows, userMap, (user, row) => ({
+    return joinListedMembers(listedMemberKeys.value, roomMemberRows, userStore.userMap, (user, row) => ({
       ...user,
       displayName: row.displayName,
     })).toSorted(compareMemberNames);
@@ -130,7 +130,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // A saved display name is an optimistic write over the member's row. The entry shows the name the server will resolve,
   // And the answer is the row itself, which arrives at the version it names and settles the write
   const renameMember = (roomId: string, userId: string, displayName: string) => {
-    const accountName = userMap.get(userId)?.name ?? "";
+    const accountName = userStore.userMap.get(userId)?.name ?? "";
     writeOptimistic(
       async () => {
         const updatedMembership = await $trpc.userToRoom.updateUserToRoom.mutate({
@@ -140,7 +140,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
         });
         const row = toMemberRow(updatedMembership);
         // The room's names follow the row the answer holds, so the messages a member wrote show the name the room now gives them
-        const user = userMap.get(userId);
+        const user = userStore.userMap.get(userId);
         if (user) storeRoomMembers(roomId, [{ ...user, displayName: row.displayName }]);
         return {
           arrivals: [createArrival(memberTable, row)],
@@ -165,7 +165,10 @@ export const useMemberStore = defineStore("message/user/member", () => {
       isLoaded: slice.isLoaded,
       items: computed(() => {
         const roomMemberRows = getRoomMemberRows(memberRows.value, roomId);
-        return joinListedMembers(slice.items.value, roomMemberRows, userMap, (user, row) => ({ ...user, ...row }));
+        return joinListedMembers(slice.items.value, roomMemberRows, userStore.userMap, (user, row) => ({
+          ...user,
+          ...row,
+        }));
       }),
       resetCursorPaginationData: slice.resetCursorPaginationData,
     };

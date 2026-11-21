@@ -76,11 +76,12 @@ describe(useCallBackgroundStore, () => {
     trpcMsw.user.readCallBackgrounds.query(() => [callBackground]);
     trpcMsw.user.deleteCallBackground.mutation(() => promise);
     const callBackgroundStore = useCallBackgroundStore();
+    const { callBackgrounds } = storeToRefs(callBackgroundStore);
     const { deleteCallBackground, readCallBackgrounds } = callBackgroundStore;
     await readCallBackgrounds();
     const deleting = deleteCallBackground(callBackground.slot);
     await flushPromises();
-    const listedWhileInFlight = callBackgroundStore.callBackgrounds;
+    const listedWhileInFlight = callBackgrounds.value;
     resolve();
     await deleting;
 
