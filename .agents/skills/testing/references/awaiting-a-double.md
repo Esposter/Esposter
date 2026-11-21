@@ -10,11 +10,10 @@ An ordering contract ("the caller does not return until its side effect is durab
 
 ## Two overlapping writes: hold the rejection until the success has settled
 
-A test proving a rollback restores only its own row needs the failing write to unwind against a list the
-successful one has **already** shortened. Issued together, the rejection can land first and roll back against a
-list nothing has shortened yet — which passes against the whole-list rollback the test exists to rule out. Gate
-the failing handler on a promise the successful one resolves, so the order is the test's rather than the
-scheduler's.
+A test proving a refused write leaves the row another write changed as it stands needs the refusal to settle after
+that success has. Issued together, the rejection can land first and drop its entry against held state nothing has
+changed yet, which passes against the very bug the test exists to catch. Gate the failing handler on a promise the
+successful one resolves, so the order is the test's rather than the scheduler's.
 
 **The held call signals its arrival, and the next call waits for it.** A second call issued beside a held one is
 answered without waiting for the release it was meant to follow (`references/client-trpc-calls.md`), so the held

@@ -62,5 +62,5 @@ Ordered by dependency: the primitive first, then the schema the pilot needs, the
 ## 7. Specs and skills
 
 - [ ] 7.1 Owning sections: client data (optimistic apply, rollback, concurrency and live reads), async operations (writes, reads and outcomes), cloud services (the version column, tombstones and the header), friends and direct messages (the replay paragraph), and the offline cache (held state with versions) are rewritten to the overlay, and the spec deltas for the four capabilities are added so skip_specs is removed. Verified: the openspec validate command passes with strict checking, and the scripts' scenario test passes for this change.
-- [ ] 7.2 Skill sweep: the pinia, vue composable patterns, testing and drizzle skills drop the rollback guidance and state the version, tombstone and touched-key rules. Verified: a grep of the skills and the ledgers for the deleted names returns only archive entries.
+- [x] 7.2 Skill sweep: the pinia, vue composable patterns, testing and drizzle skills drop the rollback guidance and state the version, tombstone and touched-key rules. Verified: a grep of the skills and the ledgers for the deleted names returns only archive entries.
 - [ ] 7.3 Archive: once the groups in 3 to 6 have shipped, the change is archived with its deltas merged. Verified: the archive command's output names each merged capability.

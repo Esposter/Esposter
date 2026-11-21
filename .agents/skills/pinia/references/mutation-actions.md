@@ -1,91 +1,35 @@
 # Writing a store mutation action
 
-Read when a store action calls a tRPC mutation, or when picking its `useMutation` `key`. `SKILL.md` keeps the one line; this page is whether the action is earned, and how one is wired.
+Read when a store action writes to the server, or when its write's entry or its `useMutation` key is being chosen. `SKILL.md` keeps the one-line rules; this page is how each form is wired.
 
-## Wiring the instance
+## A write to a server row is an overlay write
 
-- **Declare every instance at the store root** — `const { executeMutation } = useMutation()`. Never inside an action (detached effect scope leak) — `setup-scope/no-detached-mutation` fails the lint on one.
-- **One `useMutation()` instance per mutation**, via destructure renames (`executeCreateFooMutation`, plus `isPending: isCreateFooPending` / `checkIsPending: checkIsFooPending` when consumed), so one action's queue and pending state can't hold up another's. **Two mutations that end the same row share one instance instead**, named for the target — the rule and the test for which case you are in are in `openspec/specs/architecture/async-operations/design.md` § A key queues only within one `useMutation()` instance.
-- **Never hand-roll the alert/rollback/pending wiring** — it surfaces errors via `createErrorAlert` unless you pass `onError`, and runs writes to one `key` one at a time so two actions writing different fields of the same entity both land. Destructure `isPending` only where a control consumes it; the in-flight guard decision tree lives in `openspec/specs/architecture/client-data/design.md` § In-flight guarding.
-- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure. Every screen step the write causes (close, clear, move, navigate) runs here or beside the call, never after the answer: the optimistic form returns `void`, so there is nothing to wait on.
-- **`reconcile`** takes a value only the server issues that a later write reads (a version token, an etag) — never a place to close, clear or navigate.
-- **`awaitedBecause`** is the other form, for one of the three reasons in `openspec/specs/architecture/client-data/design.md` § Optimistic by default; its `onSuccess` acts on the server's value. Options naming neither do not compile.
-- **Whether an awaited write landed is the outcome's `status`, never a flag `onSuccess` flips.** An awaited action behind a dialog returns `outcome.status === MutationStatus.Succeeded` (`createRoomEmoji` is the shape), so the dialog stays open on `false`; a `let isSuccessful = false` closed over by `onSuccess` restates that discriminant by hand. An optimistic action returns nothing.
+The overlay store (`apps/web/app/store/overlay.ts`) is the one writer of the server rows a store holds. A store issues its writes through it and reads its rows back through its view:
 
-## A store never orders its own async work
+- **`writeOptimistic(mutate, { entry, onError })`** for a write the screen shows at once. `entry` is a pure function over the keyed view: it reads and writes rows by key through the view it is handed, and nothing else. The registry runs it once to find the rows it touches, and queues the write behind each earlier write whose rows overlap. The store names no key.
+- **`writeAwaited(mutate, { onError })`** for a write the screen waits on. It has no entry and takes no key: the version gate orders two answers for one row.
+- **The answer's rows arrive, and a failed write drops its entry.** The response names the version of each row the write changed. The entry is confirmed at those versions and drops once held state is at or above them. A refused write changes no held state, so there is nothing to restore.
+- **A row's removal is a tombstone a read returns**, so the view hides it and an older arrival cannot bring it back. Absence never removes a held row.
 
-No promise chained onto the previous one, no `Map<id, Promise>` of in-flight reads, no generation counter or `isSaving` flag. That ordering lives in the primitive, keyed by target; a store that seems to need its own needs the right `key`. Protection applied by hand is protection that gets forgotten.
+The rules and their reasons are `openspec/changes/architecture-optimistic-overlay/design.md` (The model, Entity keys, Settling) until that change is archived. `deleteFriend` in `apps/web/app/store/message/user/friend.ts` is the shape of an entry and its answer together.
 
-**A read that must not be issued twice at once passes `isExclusive: true` to `executeQuery`.** Concurrent callers **join** one request and all get the data — a read is never dropped, which would leave the joiner rendering an empty list. A joiner joins in-flight work only; read-once semantics are a separate cache flag the action checks first, and an invalidating re-read omits the opt-in so it cannot join the answer it just invalidated.
+## A write off the overlay
 
-## Where the snapshot is taken, and what it covers
+A mutation whose rows the overlay does not hold runs through `useMutation()` (`apps/web/app/composables/shared/useMutation.ts`):
 
-**`applyOptimistic` runs when the write is _sent_, so take the snapshot inside the callback.** A queued write must roll back to what the write ahead of it stored, not to the state the user saw when they clicked. For the same reason, anything else the payload reads from live state — a version token, a create-or-update branch — is read inside the `mutate` callback rather than before the call.
+- **Declare every instance at the store root** — `const { executeMutation } = useMutation()`. Never inside an action, since a detached effect scope leaks; `setup-scope/no-detached-mutation` fails the lint on one.
+- **Say why the write waits.** An awaited write names one reason from the closed set in `apps/web/app/models/shared/AwaitedReason.ts`, and its `onSuccess` acts on the server's value.
+- **Whether an awaited write landed is the outcome's `status`**, never a flag `onSuccess` flips. An awaited action behind a dialog returns `outcome.status === MutationStatus.Succeeded`, so the dialog stays open on a refusal.
+- **Every call takes a `key`.** Writes that share a key queue one at a time within one instance; two instances never serialize against each other however their keys are spelled. `sendForward` in `apps/web/app/store/message/input/forward.ts` is the shape.
 
-**A rollback undoes its own write, never the list.** Snapshot the one entity the write touched and unwind that; `items.value = snapshot` is wrong even when taken at send time. Writes keyed per entity do not queue against each other, and the same lists also receive typed-event pushes, so reinstating a whole-list copy resurrects rows a concurrent delete removed and drops rows that arrived mid-flight. Restore through the store's own `store*` CRUD helper rather than by index: a rejected delete that lands its row back at the end of an ordered list is a cosmetic loss, a dropped event row is a correctness one. Where the row's place is itself content — an order a user set, a lobby queue — the rollback needs no index: a list on the overlay views the rows it holds in its own sort order, so a rejected removal's row returns to the place that order gives it, and a row a mid-flight re-read already brought back is held once (`openspec/changes/architecture-optimistic-overlay/design.md`); a hand-written `toSpliced` is the version that forgets the second half and renders the row twice.
+## Picking the key of a `useMutation` write
 
-## Shape
+Same key means same target, so those writes queue behind each other.
 
-```ts
-// A write whose event reaches the caller's own socket needs no store action: the caller runs the write through its own
-// instance, which surfaces the rejection and owns the pending state
-const { executeMutation } = useMutation();
-executeMutation(() => $trpc.foo.deleteFoo.mutate(id), { applyOptimistic: () => noop, key: id });
+- **Per-entity operations** take the entity id or its natural composite, joined with the `naming` skill's `ID_SEPARATOR` (`references/composite-keys.md`). Never a hand-written hyphen, since a uuid contains hyphens and such a key cannot be split back apart.
+- **Creates** take the id the client gave the row, so every create is independent of its siblings. An awaited create with no id of its own takes a per-call `Symbol(...)`. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
+- **Singleton targets** take the scope's id or a stable target name.
 
-// store action justified — optimistic local state with automatic rollback
-const deleteFoo = (input: DeleteFooInput) => {
-  executeMutation(() => $trpc.foo.deleteFoo.mutate(input), {
-    applyOptimistic: () => {
-      // The one row this write removes, not a copy of the list: a rejected delete must not undo the
-      // delete running beside it under another key, nor drop a row an event delivered meanwhile.
-      // Built once and then searched with. Constructing it inside the callback rebuilds the same predicate
-      // for every row, and `unicorn/no-array-callback-reference` reports the inline call as a bare reference
-      const checkIsDeletedFoo = getEntityIdEqualComparator<Foo>(["parentId", "childId"], input);
-      const deletedFoo = items.value.find(checkIsDeletedFoo);
-      storeDeleteFoo(input);
-      return () => {
-        if (deletedFoo) storeCreateFoo(deletedFoo);
-      };
-    },
-    // A foo is identified by the parent-and-child pair, so that composite is the target — there is no `id`
-    key: `${input.parentId}${ID_SEPARATOR}${input.childId}`,
-  });
-};
-```
+## A store action earns its place
 
-A create gives its row the id, so it is drawn and selected at once, and its procedure's input picks `id` from the row's select schema (`createRole` is the shape):
-
-```ts
-const createFoo = (input: Except<CreateFooInput, "id">) => {
-  const newFoo: Foo = { ...input, createdAt: new Date(), deletedAt: null, id: v7(), updatedAt: new Date() };
-  executeCreateFooMutation(() => $trpc.foo.createFoo.mutate({ ...input, id: newFoo.id }), {
-    applyOptimistic: () => {
-      setFoos(input.parentId, [newFoo, ...getFoos(input.parentId)]);
-      setSelectedFooId(input.parentId, newFoo.id);
-      return () => {
-        setFoos(
-          input.parentId,
-          getFoos(input.parentId).filter(({ id }) => id !== newFoo.id),
-        );
-      };
-    },
-    key: newFoo.id,
-  });
-};
-```
-
-## Picking the `key`
-
-Same key = same target, so those writes queue behind each other.
-
-- **Per-entity operations** → the entity id or its natural composite (`key: input.id`, `` key: `${parentId}${ID_SEPARATOR}${childId}` ``). The separator is the `naming` skill's `ID_SEPARATOR` (`references/composite-keys.md`) and never a hand-written hyphen, since a uuid contains hyphens and such a key cannot be split back apart.
-- **Creates** → the id the client gave the row, so every create is independent and never waits behind its siblings. An awaited create with no id of its own takes a per-call `Symbol("createFoo")`. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
-- **Singleton targets** → the scope's id or a stable target name.
-
-Full rationale: `openspec/specs/architecture/async-operations/design.md` (concurrency) and `openspec/specs/architecture/client-data/design.md` (optimistic apply, in-flight guarding).
-
-## When a store action earns its place
-
-Do **not** create Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` — components/composables run the write through their own `useMutation` when the result is handled by a typed event or no shared state update is needed (`openspec/specs/architecture/client-data/design.md`). Add a store action only when it adds meaningful client logic: genuine optimistic state, navigation or local side effects tied to the result, shared state updates no typed event covers, or coordination of multiple stores/requests/validation steps.
-
-Every mutation goes through `useMutation` (`apps/web/app/composables/shared/useMutation.ts`), a store action's and a component's alike, and **`key` is required on every call** — like a Pinia store id, identity is always explicit, and the same key queues those writes **within one `useMutation()` instance**: two instances do not serialize against each other however their keys are spelled.
+Do **not** create a Pinia action that only wraps a single `$trpc.xxx.mutate(...)`. The caller runs the write itself, through the overlay or its own `useMutation`, when its result is handled by a typed event or no shared state changes. Add a store action only when it adds meaningful client logic: an overlay entry over the store's rows, navigation or local side effects tied to the result, shared state updates no typed event covers, or coordination of several stores, requests or validation steps (`openspec/specs/architecture/client-data/design.md`).

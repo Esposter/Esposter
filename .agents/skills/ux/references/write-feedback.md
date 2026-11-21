@@ -19,8 +19,8 @@ rule. How the confirm closes follows from the mutation, so a call site states it
 - **One rule for every delete, the undo as the second guard**, since a reader cannot tell from a Delete button whether
   the app can reverse it (`openspec/rejected/architecture/no-confirm-for-undoable-deletes/design.md`).
 - **An optimistic write's dialog never waits for the server.** The list already changed, so a dialog held over it
-  while the request is out is a lag with nothing behind it. The rollback and the error toast are the answer to a
-  rejection, as they are for every optimistic write.
+  while the request is out is a lag with nothing behind it. A refused optimistic write drops its entry and shows the
+  error toast, as every optimistic write does.
 - **A write that waits for one of the three reasons keeps its dialog.** A value only the server mints (an invite
   link, an API key's secret, a presigned upload), an outcome the server decides (moderation, a deploy), or a step
   that cannot be undone (the sign-out after an account delete): the pending answer is the only sign anything is

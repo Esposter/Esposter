@@ -31,7 +31,7 @@ Two exclusions belong in the window, because they consume real attention otherwi
 Small windows read front to back. Past the point where that stops being possible, order the reading so the expensive findings surface first rather than last:
 
 1. **The seams.** Where the change hands data across a boundary — a store to a component, a router to a client, one package to another. Nearly every `critical` this repo has shipped lived at one, because each side's tests pass alone.
-2. **The writes.** Mutations, migrations, optimistic updates and their rollbacks, anything with an ordering or a lock.
+2. **The writes.** Mutations, migrations, optimistic entries and the arrivals that confirm them, anything with an ordering or a lock.
 3. **Everything else**, front to back.
 
 Say which order you used when the window was wide enough to need one. A round is not comparable to another without it.

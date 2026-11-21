@@ -12,6 +12,7 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 - **A table writing its own copy of a column group the others share** — rejected: parallel tables share their columns through a factory, because a builder reused across tables shares one config (`references/table-definition.md`).
 - **Following `drizzle-kit`'s own skills (`pnpm-drizzle-kit-*`) where they differ from this one** — they describe the tool in general, `push` and CLI-applied migrations included; this skill wins, since `db:gen` is the only generator (`references/migrations.md`, and the package's apply path in `packages/db-schema/README.md`).
 - **A bare table export (`rooms`, `users`)** — it collides with a local of the same name, a row type or a name another module already exports (the `UserStatus` value set); the `In<Area>` suffix is derived, never chosen, and `packages/db-schema/src/schema.test.ts` holds it.
+- **A version the writer sets, or a trigger that raises it** — rejected: a write that names the number can lower it, and a trigger would hold the rule in a second place. The database raises `version` inside the builder's update (`references/row-versions-and-tombstones.md`).
 
 ## Deep dives
 
@@ -29,6 +30,7 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 - `references/json-arrays.md` — when a query filters on a list of ids that may be long, or reads a JSON text array.
 - `references/fts5.md` — when a table is searched by its text, or a search index changes.
 - `references/durable-object-schemas.md` — when adding or editing a table in a Durable Object's own SQLite: the room, call or user object.
+- `references/row-versions-and-tombstones.md` — when adding a table the client holds through the overlay, adding a column to one, or writing a delete or a revival.
 
 ## D1 and Object SQLite
 
@@ -49,6 +51,13 @@ A column builder is called bare, never with a name string (`no-restricted-syntax
 - **A column holding another table's id gets `.references()`**, with the `onDelete` the domain means — except a column projected from user-authored content on every save, which stays a bare id.
 - **Parallel tables share their column group, as a factory function** — `createRoomUserColumns()` spread into each table of the group, `createMetadataSchema()` into every table; a call builds fresh builders, so no table inherits another's. A rename where the names differ is a migration. Factor the predicate with the `create*CheckSql` helpers too (`references/table-definition.md`).
 - The full statement of each, and why a suite fighting a new reference is reporting its own fixtures: `references/table-definition.md`.
+
+## Row Versions and Tombstones
+
+- **Every table carries `version`, raised by the database on each change** — `createVersionSchema()` through the metadata definition, never a number a writer names (`references/row-versions-and-tombstones.md`).
+- **A removal is a tombstone and a revival is an upsert that clears `deletedAt`** — a row the overlay holds is soft-deleted, and every decision about live rows takes `getLiveRowWhere` (`references/row-versions-and-tombstones.md`).
+- **An optimistic entry addresses a row by its primary key** — the key is a stable identity, one level per composite column, never a string built from the columns (`references/row-versions-and-tombstones.md`).
+- **No raw statement writes a tracked table** — it skips the builder's version increment, so every write goes through the builder (`references/row-versions-and-tombstones.md`).
 
 ## Schemas, Names and Registries
 

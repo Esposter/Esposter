@@ -17,7 +17,7 @@ that spans an `await`, a tick or a mount, find the row.**
 
 | Wanting to…                                            | Use                                                                                                                                          | Never                                                                                            |
 | :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
-| order overlapping reads or writes                      | `useMutation` (`executeQuery`/`executeMutation`), keyed by target                                                                            | a promise chain, an in-flight promise map, a generation counter, a call id, an `isSaving` flag   |
+| order overlapping reads or writes                      | `useQuery`, or `executeQuery` with the caller's run scope; a server row's write is `writeOptimistic` on the overlay store, with no key       | a promise chain, an in-flight promise map, a generation counter, a call id, an `isSaving` flag   |
 | let a pushed value beat a read already in flight       | the overlay's `arrive` (`app/store/overlay.ts`): a row lands only at a higher version, or fills a held row's missing columns at the same one | a pair of counters beside a `ref`                                                                |
 | skip a save when nothing changed                       | `useSave` (`{ save, setState }`)                                                                                                             | a hand-rolled snapshot, or a `set*` wrapper in a store                                           |
 | know a save is still coming                            | the mutation's own `isPending`                                                                                                               | a counter of armed debounces, or an `isPending` you assign yourself                              |
@@ -92,8 +92,11 @@ Every API call must be necessary. **Never fire a persistence call — tRPC mutat
 
 ## Async Sequencing — One Primitive
 
-A composable never decides **how** concurrency is handled. It declares **what the operation targets** (`key`) and **whether it reads or writes** (which entry point it calls) — `useMutation` (`apps/web/app/composables/shared/useMutation.ts`) derives the rest. A composable that seems to need its own ordering needs the right `key`.
+A composable never decides **how** concurrency is handled. A read holds the run scope it is ordered by, and a write to a server row names its **entry**, never a key: the primitive derives the rest, a queue for the writes whose rows overlap and an abort for the run a newer run of its key replaces. A composable that seems to need its own ordering is reaching for a primitive that already owns it, and a `useMutation` `key` is the residual form for writes the overlay does not hold yet.
 
 **A store is a call site too.** A store that both reads a value and receives it pushed — a typed event, a broadcast, any handler writing the same ref the read writes — is ordering two async sources against each other, which is the primitive's job however few lines it takes to fake.
 
-The entry points, the `isExclusive` opt-in, the pending flag, `getSynchronizedFunction` pairing and the abort signal a mid-flight check reads: `references/async-sequencing.md`. Full model: `openspec/specs/architecture/async-operations/design.md`.
+- **A server row's write names its entry and no key, and an awaited write takes no entry** (`references/async-sequencing.md`).
+- **A row a read or an event returns arrives through the version gate, and a removal arrives as a tombstone** — absence never removes a held row, and a whole-value read with no version orders through a run scope (`references/async-sequencing.md`).
+
+The entry points, the `isExclusive` opt-in, the pending flag, `getSynchronizedFunction` pairing and the abort signal a mid-flight check reads: `references/async-sequencing.md`. Full model: `openspec/changes/architecture-optimistic-overlay/design.md`, until that change is archived.

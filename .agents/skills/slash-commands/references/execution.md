@@ -11,7 +11,7 @@ Derived from `slashCommand.parameters.length > 0`, not a separate `mode` field. 
 
 ## The execution switch
 
-The only switch over `SlashCommandType` is in `apps/web/app/services/message/slashCommands/executeSlashCommand.ts`, closed by `exhaustiveGuard(command)` — so a new member fails typecheck until handled. It is a plain function, since the suggestion menu, the parameter chips and the actions menu all reach it, and it takes the one `useMutation` executor from the slash command store so a topic typed through one queues behind a topic typed through another.
+The only switch over `SlashCommandType` is in `apps/web/app/services/message/slashCommands/executeSlashCommand.ts`, closed by `exhaustiveGuard(command)` — so a new member fails typecheck until handled. It is a plain function, since the suggestion menu, the parameter chips and the actions menu all reach it. A topic is the room store's `updateRoom`, an entry over the room row, so a topic typed through one surface queues behind one typed through another.
 
 Its argument is a discriminated union pairing each type with its own parameter shape, so `command.parameterValues` is narrowed per case:
 

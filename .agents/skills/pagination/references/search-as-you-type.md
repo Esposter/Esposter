@@ -2,7 +2,7 @@
 
 Read when wiring a search input that queries the server as the user types, or when something already does and you are changing it.
 
-Hand-rolling search-as-you-type around a `$trpc` search query is **banned** — no per-component `useThrottle`/`refDebounced` + `watch` + `AbortController` + `isSearching` wiring, and no `@input` handlers firing queries. That stack exists exactly once, in `useAutoSearch` (`apps/web/app/composables/useAutoSearch.ts`): the throttle window it owns, in-flight request abort, normalized-query change detection, reset-on-empty, the `isPending` and `isError` refs with a `retry`, and the shared `getResultAsync` → `createErrorAlert` error surfacing from the client-data conventions (`openspec/specs/architecture/client-data/design.md`), and a superseded or aborted search read stays silent, as the search design states (`openspec/specs/architecture/search/design.md`) — no consumer writes error handling.
+Hand-rolling search-as-you-type around a `$trpc` search query is **banned** — no per-component `useThrottle`/`refDebounced` + `watch` + `AbortController` + `isSearching` wiring, and no `@input` handlers firing queries. That stack exists exactly once, in `useAutoSearch` (`apps/web/app/composables/useAutoSearch.ts`): the throttle window it owns, in-flight request abort, normalized-query change detection, reset-on-empty, the `isPending` and `isError` refs with a `retry`, and the shared `getResultAsync` → `createErrorAlert` error surfacing from the client-data conventions (`openspec/specs/architecture/client-data/design.md`), and an aborted search read stays silent, as the search design states (`openspec/specs/architecture/search/design.md`) — no consumer writes error handling.
 
 Pick the layer by result shape:
 

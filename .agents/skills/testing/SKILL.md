@@ -33,6 +33,7 @@ Assertions and waiting:
 - `references/polling.md` — when a test waits for something to happen.
 - `references/timers-and-hand-resolved-promises.md` — when a test fakes timers, pins the clock, or holds a call in flight.
 - `references/awaiting-a-double.md` — when a test proves a caller awaits its side effect, orders two overlapping calls, or reads what a tRPC call caused.
+- `references/overlay-writes.md` — when a test covers an optimistic write's view, a removal's tombstone, or two responses for one row.
 
 Doubles:
 
@@ -84,6 +85,11 @@ Every literal, id, date, path and fixture a test writes is that skill's: the can
 - **Mock the smallest seam that makes the behaviour reachable**, never re-declare a mock another file owns, and drive real state before faking it (`references/module-mocks.md`).
 - **The cleanup hook follows how the mock was created**, never habit — the wrong one leaks an implementation or a queued once-value into the next test (`references/mock-cleanup.md`).
 - **`vi.fn()` always takes its signature** — `vi.fn<(input: CreateEmojiInput) => Promise<void>>()`, the production input and return types imported rather than restated. A bare `vi.fn()` infers `unknown` parameters, so destructuring a recorded call is an implicit-`any` lint error and `mockResolvedValue` accepts anything.
+
+## Optimistic Writes
+
+- **A refused write is asserted on the view, and a removal on its tombstone** — a refusal restores nothing, and absence never removes a held row (`references/overlay-writes.md`).
+- **Two responses for one row are ordered by their versions, not by arrival** — the older one is gated on the newer one's settle (`references/awaiting-a-double.md`).
 
 ## Reactive Effects and Timers
 

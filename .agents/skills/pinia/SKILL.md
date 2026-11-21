@@ -8,7 +8,7 @@ description: Apply when writing or reviewing any Pinia store, or deciding whethe
 ## Settled — do not re-propose
 
 - **A rule for a ref destructured off a store without `storeToRefs`** — `const { rooms } = roomStore` and `const { createRoom } = roomStore` are the same syntax, and which loses reactivity is a fact about the field's type (`packages/configuration/eslint/restrictedStoreSyntaxes.js`); the dot read a component makes is the decidable half and is banned.
-- **A rule for optimistic rollback correctness** — needs the whole write path in mind.
+- **A rollback closure that restores the value a write replaced** — a refused write drops its entry and changes no held state, since a restore drops every arrival that landed meanwhile (the overlay design's Decisions).
 
 ## Consuming a Store
 
@@ -39,11 +39,18 @@ The selected **id** is store state with `""` as nothing selected, owned by the s
 
 ## Keyed State — `useDataMap` vs a Plain Map
 
-`useDataMap` when there is a meaningful current id, a plain `ref(new Map())` otherwise; a factory for a class default, every field of per-key state keyed, and a write naming its key where it is issued (`references/keyed-state-and-pagination.md`).
+`useDataMap` when there is a meaningful current id, a plain `ref(new Map())` otherwise; a factory for a class default, every field of per-key state keyed, and a non-overlay write naming its key where it is issued (`references/keyed-state-and-pagination.md`).
+
+## Server Rows Live in the Overlay
+
+- **A write to a server row names an entry, never a key** — `writeOptimistic` takes an entry, a pure function over the keyed view, the registry infers the rows it touches and queues the writes that overlap, and the answer's versions drop it (`references/mutation-actions.md`).
+- **A refused write drops its entry and restores nothing** — there is no rollback closure to write (`references/mutation-actions.md`).
+- **A removal is a tombstone a read returns, never an absent row** — absence never removes a held row, so a removal reaches the store as a row at its version (`references/mutation-actions.md`).
+- **An awaited write takes no entry, and a whole-value read orders through a run scope** — `writeAwaited` has no key, and a newer run of a read's key aborts the one before it (`references/mutation-actions.md`).
 
 ## tRPC Mutation Placement
 
-A store action that only wraps one `$trpc` mutate is not written — the caller runs it through its own `useMutation`; every mutation, in a store or not, takes a required `key` (`references/mutation-actions.md`).
+A store action that only wraps one `$trpc` mutate is not written — the caller runs the write itself. A write to a server row is an overlay write with no key; every other mutation takes a required `key` (`references/mutation-actions.md`).
 
 ## Live Updates Reach a Store as Typed Events
 
@@ -80,7 +87,7 @@ Never expose `sessionId` or any raw session identifier as a store state field. A
 ## Deep Dives
 
 - `references/keyed-state-and-pagination.md` — when a store keys state by an id, holds a list of entities, or paginates one.
-- `references/mutation-actions.md` — when writing a store action that calls a tRPC mutation, or picking its `key`.
+- `references/mutation-actions.md` — when a store action writes to the server: its overlay entry, or the `key` of a `useMutation` write.
 - `references/cross-surface-state.md` — when more than one mounted surface displays or mutates the same server-side singular state.
 - `references/class-instances-in-state.md` — when a class or third-party instance is pushed into store state.
 - `references/blade-scoped-state.md` — when a component populates a store ref for code outside its subtree, or tears one down on a keyed route.

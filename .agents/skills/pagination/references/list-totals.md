@@ -25,7 +25,7 @@ const page = toPage(rows, sort, cursor, limit);
 return totals ? { ...page, count: takeOne(totals).count } : page;
 ```
 
-The store then holds the total the first page answered, and **a write never moves it by a delta**: a delete re-reads the list and its total together, and a failed delete drops its pending entry so the rows it hid show again, never a number. A nudge is wrong in both directions — a refresh landing mid-flight has already re-counted, and the rollback, or the dropped entry, of a rejected write adds back rows the fresh count never held. A write that gates on the loaded rows (`items.every(...)`) is the same bug one layer down: gate on the total, which is the only value that speaks for the pages nobody has read.
+The store then holds the total the first page answered, and **a write never moves it by a delta**: a delete re-reads the list and its total together, and a failed delete drops its pending entry so the rows it hid show again, never a number. A nudge is wrong in both directions — a refresh landing mid-flight has already re-counted, and the dropped entry of a rejected write adds back rows the fresh count never held. A write that gates on the loaded rows (`items.every(...)`) is the same bug one layer down: gate on the total, which is the only value that speaks for the pages nobody has read.
 
 ## A keyed read's query closure does not run on the hydrating client
 
