@@ -664,4 +664,27 @@ describe(createGridEngine, () => {
     unwrap(engine.turnTowards(FIRST_ID, Direction.Down));
     expect(heardCount).toBe(3);
   });
+
+  test("a character added at a tile keeps its own copy of it, so a later change to the object it was given moves nothing", () => {
+    expect.hasAssertions();
+
+    const startPosition = { x: 0, y: 0 };
+    const engine = readEngine({ characters: [{ id: FIRST_ID, startPosition }], tiles: [[false, false]] });
+    startPosition.x = 1;
+
+    expect(engine.checkIsBlocked({ x: 0, y: 0 })).toBe(true);
+    expect(engine.checkIsBlocked({ x: 1, y: 0 })).toBe(false);
+  });
+
+  test("a teleport keeps its own copy of the tile it was sent to, so a later change to the object it was sent moves nothing", () => {
+    expect.hasAssertions();
+
+    const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false, false]] });
+    const target = { x: 1, y: 0 };
+    unwrap(engine.setPosition(FIRST_ID, target));
+    target.x = 0;
+
+    expect(engine.checkIsBlocked({ x: 1, y: 0 })).toBe(true);
+    expect(engine.checkIsBlocked({ x: 0, y: 0 })).toBe(false);
+  });
 });

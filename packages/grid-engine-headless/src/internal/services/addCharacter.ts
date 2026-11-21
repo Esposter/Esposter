@@ -26,7 +26,8 @@ export const addCharacter = (
     id,
     isRunning: false,
     pendingDirection: Direction.None,
-    position: startPosition,
+    // The character keeps its own tile, so a later change to the object the caller passed moves nothing
+    position: { x: startPosition.x, y: startPosition.y },
     speed,
   });
   return ok();

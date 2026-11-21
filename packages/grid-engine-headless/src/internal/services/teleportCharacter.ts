@@ -24,8 +24,10 @@ export const teleportCharacter = (
     delete character.step;
     delete character.carry;
     character.pendingDirection = Direction.None;
-    character.position = position;
-    const payload = { direction: character.facingDirection, enterTile: position, exitTile, id };
+    // The character and the events it raises keep their own copy of the tile, which the caller's object cannot change
+    const enterTile = { x: position.x, y: position.y };
+    character.position = enterTile;
+    const payload = { direction: character.facingDirection, enterTile, exitTile, id };
     emitGridEvent(state, "positionChangeStarted", payload);
     emitGridEvent(state, "positionChangeFinished", payload);
     if (character.isRunning) endRun(state, character);
