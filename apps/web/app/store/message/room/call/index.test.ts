@@ -447,6 +447,33 @@ describe(useCallStore, () => {
     expect(callSessionParticipantsMap.value.get(callSessionId)?.has(participantId)).toBe(true);
   });
 
+  // A moderation action names the room the call is held in, which the call reads, not the route the viewer is on
+  test("a kick names the room the call is held in", async () => {
+    expect.hasAssertions();
+
+    const participantId = v7();
+    const kickedRoomIds: string[] = [];
+    trpcMsw.message.moderation.executeAdminAction.mutation(({ input }) => {
+      kickedRoomIds.push(input.roomId);
+    });
+    const participantStore = useParticipantStore();
+    participantStore.storeCallParticipants(callSessionId, [createParticipant(participantId)]);
+    const roleStore = useRoleStore();
+    vi.spyOn(roleStore, "checkHasMyPermission").mockReturnValue(true);
+    const callStore = useCallStore();
+    const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    callRoomId.value = roomId;
+    const { getActions } = useCallParticipantActions();
+    const kick = takeOne(
+      getActions(participantId, "userId", false, false).filter(({ title }) => title === "Kick from Call"),
+    );
+    await kick.onClick?.();
+    await flushPromises();
+
+    expect(kickedRoomIds).toStrictEqual([roomId]);
+  });
+
   // A moderator who has not joined the call has no participant of their own, yet still lowers another's hand from it
   test("lowers another participant's hand when the caller has no participant id of their own", async () => {
     expect.hasAssertions();
