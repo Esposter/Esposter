@@ -11,7 +11,9 @@ import { ResourceType } from "@esposter/db-schema";
 export const useEmailEditorStore = defineStore("emailEditor", () => {
   const resourceStore = useResourceStore();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  const { getEmailDocument, setEmailDocument } = pageBuilderDocumentStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+  const { clearHistory } = pageBuilderHistoryStore;
   const {
     content: emailEditor,
     loadContent,
@@ -25,15 +27,15 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
       const resourceId = resourceStore.currentResourceId;
       if (!resourceId) return;
 
-      pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, { content: email.content, root: email.root });
-      pageBuilderHistoryStore.clearHistory(resourceId);
+      setEmailDocument(resourceId, emailKind, { content: email.content, root: email.root });
+      clearHistory(resourceId);
     },
   );
   const datasetReference = computed(() => emailEditor.value.datasetReference);
   // The document the page builder holds is written back as the content's body and head, with the dataset binding the
   // Content keeps beside them. Nothing is written for a resource whose document is not held
   const saveEmail = (resourceId: string) => {
-    const document = pageBuilderDocumentStore.getEmailDocument(resourceId);
+    const document = getEmailDocument(resourceId);
     if (!document) return;
 
     emailEditor.value.content = document.content;
