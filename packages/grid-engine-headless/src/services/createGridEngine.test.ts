@@ -630,7 +630,7 @@ describe(createGridEngine, () => {
     const SUBSCRIPTION_LIMIT = 3;
     const engine = readEngine({ characters: [{ id: FIRST_ID }], tiles: [[false]] });
     let heardCount = 0;
-    let unsubscribe = () => undefined as void;
+    let unsubscribe: () => void;
     const listener = (): void => {
       heardCount += 1;
       if (heardCount >= SUBSCRIPTION_LIMIT) return;

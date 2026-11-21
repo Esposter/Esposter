@@ -7,10 +7,10 @@ import { join } from "node:path";
 
 const COMPONENT_BARREL_PATH = join(COMPONENTS_DIRECTORY, BARREL_FILE);
 // Each answer's `src`-relative barrels and the generators that write them. The generators run in order: the Vue answer
-// writes the component barrel first, because the source barrel then lists it like any other module. Every barrel is
-// build output, so one on disk that the answer does not write is an earlier build's, left when
-// the package changed its answer. It is removed: the package's own typecheck would still read it, naming modules the
-// package may have since deleted, and nothing else would ever clear it.
+// Writes the component barrel first, because the source barrel then lists it like any other module. Every barrel is
+// Build output, so one on disk that the answer does not write is an earlier build's, left when
+// The package changed its answer. It is removed: the package's own typecheck would still read it, naming modules the
+// Package may have since deleted, and nothing else would ever clear it.
 const BarrelsMap: Record<
   ExportsGeneration,
   { barrelPaths: string[]; generators: ((sourceDirectory: string, excludedPaths: string[]) => void)[] }

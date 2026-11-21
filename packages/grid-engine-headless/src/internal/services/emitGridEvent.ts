@@ -8,5 +8,6 @@ export const emitGridEvent = <TEvent extends keyof GridEngineEvents>(
   event: TEvent,
   payload: GridEngineEvents[TEvent],
 ): void => {
-  for (const listener of [...state.listeners[event]]) listener(payload);
+  const listeners = [...state.listeners[event]];
+  for (const listener of listeners) listener(payload);
 };

@@ -1,4 +1,4 @@
-import { createPost } from "#src/services/post/createPost.test";
+import type { createPost } from "#src/services/post/createPost.test";
 
 // The row a removal answers for a post it removed: a tombstone at the version the removal left, with its text cleared
 export const createRemovedPost = (post: ReturnType<typeof createPost>) => ({

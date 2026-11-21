@@ -22,8 +22,8 @@ describe(useOverlayRead, () => {
     const { view } = overlayStore;
     const heldRows = view(table);
     const { promise: slowAnswer, resolve: answerSlowRead } = Promise.withResolvers<(typeof rowTable.$inferSelect)[]>();
-    const slowRead = readRows(() => slowAnswer, { key: Symbol() });
-    await readRows(() => Promise.resolve([newerRow]), { key: Symbol() });
+    const slowRead = readRows(() => slowAnswer, { key: Symbol("slowRead") });
+    await readRows(() => Promise.resolve([newerRow]), { key: Symbol("newerRead") });
     answerSlowRead([olderRow]);
     await slowRead;
 
