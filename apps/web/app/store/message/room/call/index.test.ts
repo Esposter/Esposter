@@ -112,25 +112,23 @@ describe(useCallStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const participantStore = useParticipantStore();
-    participantStore.setParticipantId(participantId);
-    participantStore.storeCallParticipants(callSessionId, [createParticipant(participantId)]);
+    const { setParticipantId, storeCallParticipant, storeCallParticipants } = participantStore;
+    setParticipantId(participantId);
+    storeCallParticipants(callSessionId, [createParticipant(participantId)]);
     const callStore = useCallStore();
     const { activeCallSessionId, isMuted } = storeToRefs(callStore);
+    const { toggleMute } = callStore;
     activeCallSessionId.value = callSessionId;
-    await callStore.toggleMute();
+    await toggleMute();
     await flushPromises();
 
     expect(isMuted.value).toBe(false);
 
-    participantStore.storeCallParticipant(callSessionId, {
-      ...createParticipant(participantId),
-      isMuted: true,
-      version: 2,
-    });
+    storeCallParticipant(callSessionId, { ...createParticipant(participantId), isMuted: true, version: 2 });
 
     expect(isMuted.value).toBe(true);
 
-    participantStore.storeCallParticipant(callSessionId, createParticipant(participantId));
+    storeCallParticipant(callSessionId, createParticipant(participantId));
 
     expect(isMuted.value).toBe(true);
   });
@@ -178,8 +176,8 @@ describe(useCallStore, () => {
   // Set, so the composer keeps spinning on a call that never started
   test.each([
     {
-      join: async (callStore: ReturnType<typeof useCallStore>) => {
-        await callStore.joinCall(callSessionId);
+      join: async ({ joinCall }: ReturnType<typeof useCallStore>) => {
+        await joinCall(callSessionId);
       },
       registerJoin: () => {
         trpcMsw.callSession.joinCall.mutation(() => {
@@ -189,8 +187,8 @@ describe(useCallStore, () => {
       title: "an id",
     },
     {
-      join: async (callStore: ReturnType<typeof useCallStore>) => {
-        await callStore.joinCallByRoomId(roomId);
+      join: async ({ joinCallByRoomId }: ReturnType<typeof useCallStore>) => {
+        await joinCallByRoomId(roomId);
       },
       registerJoin: () => {
         trpcMsw.callSession.joinCallByRoomId.mutation(() => {
@@ -224,7 +222,7 @@ describe(useCallStore, () => {
     title: string;
   }>([
     {
-      join: (callStore) => callStore.joinCall(callSessionId),
+      join: ({ joinCall }) => joinCall(callSessionId),
       registerJoin: (participantId, participantMap) => {
         trpcMsw.callSession.joinCall.mutation(() => ({
           authToken: "",
@@ -238,7 +236,7 @@ describe(useCallStore, () => {
       title: "an id",
     },
     {
-      join: (callStore) => callStore.joinCallByRoomId(roomId),
+      join: ({ joinCallByRoomId }) => joinCallByRoomId(roomId),
       registerJoin: (participantId, participantMap) => {
         trpcMsw.callSession.joinCallByRoomId.mutation(() => ({
           authToken: "",
@@ -266,7 +264,8 @@ describe(useCallStore, () => {
     );
     const participantStore = useParticipantStore();
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
-    participantStore.storeCallParticipants(callSessionId, [createParticipant(leavingId)]);
+    const { storeCallParticipant, storeCallParticipants, storeJoinedCallParticipant } = participantStore;
+    storeCallParticipants(callSessionId, [createParticipant(leavingId)]);
     const realtimeStore = useRealtimeStore();
     const connectStarted = Promise.withResolvers<void>();
     const connectEnded = Promise.withResolvers<void>();
@@ -277,12 +276,8 @@ describe(useCallStore, () => {
     const callStore = useCallStore();
     const joining = join(callStore);
     await connectStarted.promise;
-    participantStore.storeCallParticipant(callSessionId, {
-      ...createParticipant(leavingId),
-      deletedAt: new Date(0),
-      version: 2,
-    });
-    participantStore.storeJoinedCallParticipant(callSessionId, createParticipant(joiningId));
+    storeCallParticipant(callSessionId, { ...createParticipant(leavingId), deletedAt: new Date(0), version: 2 });
+    storeJoinedCallParticipant(callSessionId, createParticipant(joiningId));
     connectEnded.resolve();
     await joining;
 
@@ -303,12 +298,14 @@ describe(useCallStore, () => {
       participantMap: new Map([[selfId, createParticipant(selfId)]]),
     }));
     const participantStore = useParticipantStore();
+    const { participantId } = storeToRefs(participantStore);
     const realtimeStore = useRealtimeStore();
     vi.spyOn(realtimeStore, "connect").mockResolvedValue();
     const callStore = useCallStore();
-    await callStore.joinCall(callSessionId);
+    const { joinCall } = callStore;
+    await joinCall(callSessionId);
 
-    expect(participantStore.participantId).toBe(selfId);
+    expect(participantId.value).toBe(selfId);
   });
 
   test("routes to the call's own page when the call belongs to no room", () => {
@@ -332,12 +329,13 @@ describe(useCallStore, () => {
     });
     const callStore = useCallStore();
     const { activeCallSessionId, isLeaving } = storeToRefs(callStore);
+    const { leaveCall: storeLeaveCall } = callStore;
     activeCallSessionId.value = callSessionId;
-    callStore.leaveCall();
+    storeLeaveCall();
 
     expect(isLeaving.value).toBe(true);
 
-    callStore.leaveCall();
+    storeLeaveCall();
     await flushPromises();
 
     expect(leaveCall).toHaveBeenCalledExactlyOnceWith();
@@ -359,8 +357,9 @@ describe(useCallStore, () => {
     });
     const callStore = useCallStore();
     const { activeCallSessionId } = storeToRefs(callStore);
+    const { leaveCall: storeLeaveCall } = callStore;
     activeCallSessionId.value = callSessionId;
-    callStore.leaveCall();
+    storeLeaveCall();
     await flushPromises();
 
     expect(leaveCall).toHaveBeenCalledExactlyOnceWith();
@@ -374,8 +373,9 @@ describe(useCallStore, () => {
     vi.spyOn(realtimeStore, "disconnect").mockRejectedValue(new Error(" "));
     const callStore = useCallStore();
     const { activeCallSessionId, isLeaving } = storeToRefs(callStore);
+    const { leaveCall } = callStore;
     activeCallSessionId.value = callSessionId;
-    callStore.leaveCall();
+    leaveCall();
     await flushPromises();
 
     expect(isLeaving.value).toBe(false);
@@ -402,9 +402,10 @@ describe(useCallStore, () => {
     vi.spyOn(roleStore, "checkHasMyPermission").mockReturnValue(true);
     const callStore = useCallStore();
     const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
+    const { toggleHandRaised } = callStore;
     activeCallSessionId.value = callSessionId;
     callRoomId.value = roomId;
-    callStore.toggleHandRaised();
+    toggleHandRaised();
     await flushPromises();
     const { getActions } = useCallParticipantActions();
     const lowerHand = takeOne(
@@ -430,7 +431,8 @@ describe(useCallStore, () => {
     });
     const participantStore = useParticipantStore();
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
-    participantStore.storeCallParticipants(callSessionId, [createParticipant(participantId)]);
+    const { storeCallParticipants } = participantStore;
+    storeCallParticipants(callSessionId, [createParticipant(participantId)]);
     const roleStore = useRoleStore();
     vi.spyOn(roleStore, "checkHasMyPermission").mockReturnValue(true);
     const callStore = useCallStore();
@@ -457,7 +459,8 @@ describe(useCallStore, () => {
       kickedRoomIds.push(input.roomId);
     });
     const participantStore = useParticipantStore();
-    participantStore.storeCallParticipants(callSessionId, [createParticipant(participantId)]);
+    const { storeCallParticipants } = participantStore;
+    storeCallParticipants(callSessionId, [createParticipant(participantId)]);
     const roleStore = useRoleStore();
     vi.spyOn(roleStore, "checkHasMyPermission").mockReturnValue(true);
     const callStore = useCallStore();
@@ -485,16 +488,16 @@ describe(useCallStore, () => {
       return createParticipant(input.participantId);
     });
     const participantStore = useParticipantStore();
-    participantStore.storeCallParticipants(callSessionId, [
-      { ...createParticipant(participantId), isHandRaised: true },
-    ]);
+    const { storeCallParticipants } = participantStore;
+    storeCallParticipants(callSessionId, [{ ...createParticipant(participantId), isHandRaised: true }]);
     const roleStore = useRoleStore();
     vi.spyOn(roleStore, "checkHasMyPermission").mockReturnValue(true);
     const callStore = useCallStore();
     const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
+    const { setHandRaised } = callStore;
     activeCallSessionId.value = callSessionId;
     callRoomId.value = roomId;
-    callStore.setHandRaised(false, participantId);
+    setHandRaised(false, participantId);
     await flushPromises();
     await waitForSynchronizedFunctions();
 

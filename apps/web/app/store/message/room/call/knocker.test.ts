@@ -65,7 +65,8 @@ describe(useKnockerStore, () => {
     });
     const knockerStore = useKnockerStore();
     const { knockingCallSessionId } = storeToRefs(knockerStore);
-    const knock = knockerStore.knockCall(callId);
+    const { knockCall } = knockerStore;
+    const knock = knockCall(callId);
     await flushPromises();
     const isWaitingWhileRecording = knockingCallSessionId.value;
     resolve();

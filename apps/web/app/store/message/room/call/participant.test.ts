@@ -79,8 +79,9 @@ describe(useParticipantStore, () => {
     const participant = createOwnParticipant();
     const participantStore = useParticipantStore();
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
-    participantStore.storeCallParticipants(callSessionId, [createRow(participant, 1)]);
-    participantStore.storeCallParticipant(callSessionId, { ...createRow(participant, 2), isHandRaised: true });
+    const { storeCallParticipant, storeCallParticipants } = participantStore;
+    storeCallParticipants(callSessionId, [createRow(participant, 1)]);
+    storeCallParticipant(callSessionId, { ...createRow(participant, 2), isHandRaised: true });
 
     expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participant.id)?.isHandRaised).toBe(true);
   });
@@ -91,8 +92,9 @@ describe(useParticipantStore, () => {
     const participant = createOwnParticipant();
     const participantStore = useParticipantStore();
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
-    participantStore.storeCallParticipants(callSessionId, [createRow(participant, 1)]);
-    participantStore.storeCallParticipants(callSessionId, [createRow(participant, 1)]);
+    const { storeCallParticipants } = participantStore;
+    storeCallParticipants(callSessionId, [createRow(participant, 1)]);
+    storeCallParticipants(callSessionId, [createRow(participant, 1)]);
 
     expect(callSessionParticipantsMap.value.get(callSessionId)?.size).toBe(1);
   });
@@ -105,18 +107,17 @@ describe(useParticipantStore, () => {
     const { $trpc } = useNuxtApp();
     const participantStore = useParticipantStore();
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
+    const { readCallParticipants, storeCallParticipant } = participantStore;
     const kept = createRow(createParticipant(), 1);
     const left = createRow(createParticipant(), 1);
     trpcMsw.callSession.readCallParticipantMap.query(() => {
-      participantStore.storeCallParticipant(callSessionId, createTombstone(left));
+      storeCallParticipant(callSessionId, createTombstone(left));
       return new Map([
         [kept.id, kept],
         [left.id, left],
       ]);
     });
-    await participantStore.readCallParticipants(callSessionId, () =>
-      $trpc.callSession.readCallParticipantMap.query({ callSessionId }),
-    );
+    await readCallParticipants(callSessionId, () => $trpc.callSession.readCallParticipantMap.query({ callSessionId }));
 
     expect([...(callSessionParticipantsMap.value.get(callSessionId)?.keys() ?? [])]).toStrictEqual([kept.id]);
   });
