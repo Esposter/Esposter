@@ -31,6 +31,7 @@ import {
   admittedSessions,
   callSessionsInMessage,
   callState,
+  getLiveRowWhere,
   getSessionSocketTag,
   getUserSocketTag,
   knockers,
@@ -449,7 +450,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     for (const { sessionId } of this.db
       .update(knockers)
       .set({ deletedAt: new Date() })
-      .where(isNull(knockers.deletedAt))
+      .where(getLiveRowWhere(knockers))
       .returning({ sessionId: knockers.sessionId })
       .all())
       this.#broadcastKnockerDismissed(callSessionId, sessionId);
@@ -529,7 +530,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return this.db
       .select()
       .from(knockers)
-      .where(and(eq(knockers.sessionId, sessionId), isNull(knockers.deletedAt)))
+      .where(and(eq(knockers.sessionId, sessionId), getLiveRowWhere(knockers)))
       .get();
   }
 
@@ -582,7 +583,7 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       this.db
         .update(knockers)
         .set({ deletedAt: new Date() })
-        .where(and(eq(knockers.id, knockerId), isNull(knockers.deletedAt)))
+        .where(and(eq(knockers.id, knockerId), getLiveRowWhere(knockers)))
         .returning({ ...knockerColumns, sessionId: knockers.sessionId })
         .all(),
       0,
