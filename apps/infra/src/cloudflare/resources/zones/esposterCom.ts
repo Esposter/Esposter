@@ -1,12 +1,11 @@
+import EsposterComDomain from "#src/cloudflare/constants/EsposterComDomain";
 import { CLOUDFLARE_ACCOUNT_ID } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
 // The zone every hostname under esposter.com is routed in. A zone is account-scoped and named by its domain.
 // Its logical name is therefore the domain itself
-const domainName = "esposter.com";
-
 export const esposterCom: cloudflare.Zone = new cloudflare.Zone(
-  domainName,
-  { account: { id: CLOUDFLARE_ACCOUNT_ID }, name: domainName, type: "full" },
+  EsposterComDomain,
+  { account: { id: CLOUDFLARE_ACCOUNT_ID }, name: EsposterComDomain, type: "full" },
   { protect: true },
 );

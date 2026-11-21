@@ -1,3 +1,4 @@
+import WwwEsposterComHostname from "#src/cloudflare/constants/WwwEsposterComHostname";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -19,7 +20,7 @@ export const esposterComRedirects: cloudflare.Ruleset = new cloudflare.Ruleset(
         },
         description: "www to the apex, path and query kept",
         enabled: true,
-        expression: 'http.host eq "www.esposter.com"',
+        expression: `http.host eq "${WwwEsposterComHostname}"`,
       },
     ],
     zoneId: esposterCom.id,
