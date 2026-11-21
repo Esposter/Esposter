@@ -51,9 +51,10 @@ describe(useConnectionStore, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
+    const { openCall } = connectionStore;
     const callSessionId = createId(CALL_ID_LENGTH);
-    await connectionStore.openCall(callSessionId);
-    await connectionStore.openCall(callSessionId);
+    await openCall(callSessionId);
+    await openCall(callSessionId);
 
     expect(openRealtimeSocket).toHaveBeenCalledTimes(1);
   });
@@ -64,10 +65,11 @@ describe(useConnectionStore, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
+    const { onRoomEvent, openRoom } = connectionStore;
     const roomId = v7();
     const handler = vi.fn<(data: unknown, roomId: string) => void>();
-    connectionStore.onRoomEvent("deleteMessage", handler);
-    await connectionStore.openRoom(
+    onRoomEvent("deleteMessage", handler);
+    await openRoom(
       roomId,
       () => undefined,
       () => undefined,
@@ -106,14 +108,15 @@ describe(useConnectionStore, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser, watchTopics } = connectionStore;
+    openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     const topic: Topic = `post:${v7()}`;
     const firstRefetch = vi.fn<() => void>();
     const secondRefetch = vi.fn<() => void>();
     const read = createRead([{ topic }], readAt);
-    const unwatchFirst = connectionStore.watchTopics(read, firstRefetch);
-    const unwatchSecond = connectionStore.watchTopics(read, secondRefetch);
+    const unwatchFirst = watchTopics(read, firstRefetch);
+    const unwatchSecond = watchTopics(read, secondRefetch);
     onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
     unwatchFirst();
     unwatchSecond();
@@ -132,12 +135,13 @@ describe(useConnectionStore, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser, watchTopics } = connectionStore;
+    openUser();
     const topic: Topic = `message_usersToRooms:userId=${v7()}`;
     const nameRead = createRead([{ columns: ["name"], topic }], readAt);
     const hiddenRead = createRead([{ columns: ["isHidden"], topic }], readAt);
-    connectionStore.watchTopics(nameRead, vi.fn<() => void>());
-    connectionStore.watchTopics(hiddenRead, vi.fn<() => void>());
+    watchTopics(nameRead, vi.fn<() => void>());
+    watchTopics(hiddenRead, vi.fn<() => void>());
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
       watchFrame(nameRead),
@@ -151,12 +155,13 @@ describe(useConnectionStore, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser, watchTopics } = connectionStore;
+    openUser();
     const topic: Topic = `post:${v7()}`;
     const newerRead = createRead([{ topic }], newerReadAt);
     const olderRead = createRead([{ topic }], readAt);
-    connectionStore.watchTopics(newerRead, vi.fn<() => void>());
-    connectionStore.watchTopics(olderRead, vi.fn<() => void>());
+    watchTopics(newerRead, vi.fn<() => void>());
+    watchTopics(olderRead, vi.fn<() => void>());
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
       watchFrame(newerRead),
@@ -169,14 +174,15 @@ describe(useConnectionStore, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser, watchTopics } = connectionStore;
+    openUser();
     const options = vi.mocked(openRealtimeSocket).mock.lastCall?.[2];
     const newerTopic: Topic = `post:${v7()}`;
     const olderTopic: Topic = `post:${v7()}`;
     const newerRead = createRead([{ topic: newerTopic }], newerReadAt);
     const olderRead = createRead([{ topic: olderTopic }], readAt);
-    connectionStore.watchTopics(newerRead, vi.fn<() => void>());
-    connectionStore.watchTopics(olderRead, vi.fn<() => void>());
+    watchTopics(newerRead, vi.fn<() => void>());
+    watchTopics(olderRead, vi.fn<() => void>());
     sendRealtimeFrame.mockClear();
     options?.onOpen?.();
 
@@ -192,14 +198,15 @@ describe(useConnectionStore, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser, watchTopics } = connectionStore;
+    openUser();
     const options = vi.mocked(openRealtimeSocket).mock.lastCall?.[2];
     const topic: Topic = `post:${v7()}`;
-    connectionStore.watchTopics(createRead([{ topic }], readAt), vi.fn<() => void>());
+    watchTopics(createRead([{ topic }], readAt), vi.fn<() => void>());
     options?.onOpen?.();
     sendRealtimeFrame.mockClear();
     const refetchedRead = createRead([{ topic }], newerReadAt);
-    connectionStore.watchTopics(refetchedRead, vi.fn<() => void>());
+    watchTopics(refetchedRead, vi.fn<() => void>());
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
       watchFrame(refetchedRead),
@@ -228,11 +235,12 @@ describe(useConnectionStore, () => {
     const reads = readTopicsHeader(readerContext.responseHeaders, "readFriends");
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser, watchTopics } = connectionStore;
+    openUser();
     const [, onUserFrame] = getLastOpenRealtimeSocketCall();
     const refetch = vi.fn<() => void>();
     sendRealtimeFrame.mockClear();
-    for (const read of reads) connectionStore.watchTopics(read, refetch);
+    for (const read of reads) watchTopics(read, refetch);
 
     expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual(
       reads.map((read) => watchFrame(read)),
