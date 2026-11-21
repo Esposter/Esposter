@@ -156,6 +156,9 @@ catalog:
   miniflare: 5.20261119.0-beta
   # The Nitro dev runner's miniflare, on the stable line its `latest` tag names: wrangler's 5 beta fails to load the
   # runner's entry under `nuxt dev`, so `apps/web/configuration/nitro.ts` points the runner at this install
+  # @TODO: no upstream issue — unjs/env-runner's module fallback answers miniflare 5's POST import request with a 404,
+  # so the dev entry does not load; file against unjs/env-runner. Nearest open issue, another fallback's:
+  # https://github.com/cloudflare/workers-sdk/issues/16381
   miniflare-dev: npm:miniflare@^4.20260730.0
   minisearch: ^7.2.0
   mjml: ^5.4.1
