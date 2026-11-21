@@ -58,7 +58,7 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
     const { promise: isKept, resolve: keepSchedule } = Promise.withResolvers<ScheduledRoomMessage>();
     const keptSchedule: ScheduledRoomMessage = {
       deletedAt: null,
-      id: 1,
+      id: v7(),
       message: text,
       replyToId: null,
       runAt: new Date(0),
