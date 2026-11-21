@@ -42,7 +42,7 @@ watch(
             editedName = roomEmoji.name;
             return;
           }
-          updateRoomEmoji(roomId, { id: roomEmoji.id, name: editedName });
+          updateRoomEmoji({ id: roomEmoji.id, name: editedName, roomId });
         }
       "
     />

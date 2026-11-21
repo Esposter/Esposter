@@ -39,7 +39,7 @@ const nameRules = [
         () => {
           if (!isDirty || !checkIsNameValid(editedName)) return;
 
-          updateWebhook(roomId, { id: webhook.id, name: editedName });
+          updateWebhook({ id: webhook.id, name: editedName, roomId });
           settle();
         }
       "

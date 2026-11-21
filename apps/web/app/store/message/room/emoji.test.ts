@@ -88,7 +88,7 @@ describe(useRoomEmojiStore, () => {
     const roomEmojiStore = useRoomEmojiStore();
     const { items } = storeToRefs(roomEmojiStore);
     const { deleteRoomEmoji } = roomEmojiStore;
-    deleteRoomEmoji(roomId, { id: roomEmoji.id });
+    deleteRoomEmoji({ id: roomEmoji.id, roomId });
 
     expect(items.value).toStrictEqual([]);
 

@@ -81,7 +81,7 @@ describe(useWebhookStore, () => {
     const { items } = storeToRefs(webhookStore);
     const { deleteWebhook, readWebhooks } = webhookStore;
     await readWebhooks(roomId);
-    deleteWebhook(roomId, { id: first.id });
+    deleteWebhook({ id: first.id, roomId });
 
     expect(items.value).toStrictEqual([toWebhookInMessageWithRelations(second)]);
 
@@ -104,7 +104,7 @@ describe(useWebhookStore, () => {
     const { items } = storeToRefs(webhookStore);
     const { deleteWebhook, readWebhooks } = webhookStore;
     await readWebhooks(roomId);
-    deleteWebhook(roomId, { id: first.id });
+    deleteWebhook({ id: first.id, roomId });
     await flushPromises();
 
     expect(items.value).toStrictEqual([
@@ -128,7 +128,7 @@ describe(useWebhookStore, () => {
     const { items } = storeToRefs(webhookStore);
     const { readWebhooks, updateWebhook } = webhookStore;
     await readWebhooks(roomId);
-    updateWebhook(roomId, { id: first.id, isActive: false });
+    updateWebhook({ id: first.id, isActive: false, roomId });
 
     expect(items.value).toStrictEqual([{ ...toWebhookInMessageWithRelations(first), isActive: false }]);
 

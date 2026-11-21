@@ -18,6 +18,6 @@ const { updateWebhook } = webhookStore;
     is-label-visible
     label="Active"
     :model-value="webhook.isActive"
-    @update:model-value="(isActive) => updateWebhook(roomId, { id: webhook.id, isActive })"
+    @update:model-value="(isActive) => updateWebhook({ id: webhook.id, isActive, roomId })"
   />
 </template>

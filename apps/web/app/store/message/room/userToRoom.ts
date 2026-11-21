@@ -1,7 +1,6 @@
 import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 import type { CursorPaginationSlice } from "#src/models/pagination/cursor/CursorPaginationSlice";
 import type { UserToRoomInMessage } from "@esposter/db-schema";
-import type { Except } from "type-fest";
 
 import { userToRoomTable } from "#src/services/message/userToRoom/constants";
 import { getUserToRoomPatchEntry } from "#src/services/message/userToRoom/getUserToRoomPatchEntry";
@@ -60,10 +59,10 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   const markMyUserToRoomsLoaded = () => {
     isLoaded.value = true;
   };
-  // The viewer's row takes the fields the write sets at once. The server's row and its header confirm it, and a
-  // Rejected write leaves the row as it was
-  const updateMyUserToRoom = (input: Except<UpdateUserToRoomInput, "targetUserId">) => {
-    const { roomId, ...patch } = input;
+  // The viewer's row, or the member's row the input names, takes the fields the write sets at once. The server's row
+  // And its header confirm it, and a rejected write leaves the row as it was
+  const updateMyUserToRoom = (input: UpdateUserToRoomInput) => {
+    const { roomId, targetUserId, ...patch } = input;
     writeOptimistic(
       async () => {
         const { result, rowVersions } = await collectRowVersions(() => $trpc.userToRoom.updateUserToRoom.mutate(input));
@@ -72,7 +71,10 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
           confirmed: createHeaderConfirmations(userToRoomTable, rowVersions),
         };
       },
-      { entry: getUserToRoomPatchEntry(userId.value, roomId, omitUndefined(patch)), onError: createErrorAlert },
+      {
+        entry: getUserToRoomPatchEntry(targetUserId ?? userId.value, roomId, omitUndefined(patch)),
+        onError: createErrorAlert,
+      },
     );
   };
 

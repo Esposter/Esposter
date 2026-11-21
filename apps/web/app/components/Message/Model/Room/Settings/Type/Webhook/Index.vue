@@ -28,7 +28,7 @@ await readWebhooks(room.id);
         :disabled="items.length >= WEBHOOK_MAX_LENGTH"
         :is-pending="isCreateWebhookPending"
         :variant="UiButtonVariant.Accent"
-        @click="createWebhook(room.id, { name: DEFAULT_WEBHOOK_NAME })"
+        @click="createWebhook({ name: DEFAULT_WEBHOOK_NAME, roomId: room.id })"
       >
         New webhook
       </UiButton>

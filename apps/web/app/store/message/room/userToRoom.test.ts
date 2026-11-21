@@ -39,6 +39,26 @@ describe(useUserToRoomStore, () => {
     expect(getMyUserToRoom(roomId)).toStrictEqual({ ...userToRoom, displayName, version: 1 });
   });
 
+  // A write that names another member patches that member's row, so the viewer's own row keeps its value until it answers
+  test("leaves the viewer's own row as it was when the write names another member", async () => {
+    expect.hasAssertions();
+
+    const { promise: isAnswered, resolve: answer } = Promise.withResolvers<void>();
+    trpcMsw.userToRoom.updateUserToRoom.mutation(async () => {
+      await isAnswered;
+      return { ...userToRoom, version: 1 };
+    });
+    const userToRoomStore = useUserToRoomStore();
+    const { arriveUserToRooms, getMyUserToRoom, updateMyUserToRoom } = userToRoomStore;
+    arriveUserToRooms([userToRoom]);
+    updateMyUserToRoom({ displayName, roomId, targetUserId: v7() });
+
+    expect(getMyUserToRoom(roomId)?.displayName).toBe(userToRoom.displayName);
+
+    answer();
+    await flushPromises();
+  });
+
   // Two writes to one row queue on it, so the second is sent once the first has answered
   test("sends a write to a row behind an overlapping write that has not answered", async () => {
     expect.hasAssertions();

@@ -47,25 +47,21 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   // Three steps in one action, because the row may only ever name a blob that landed: mint the write target,
   // Put the image there, then create the row that names it. A failure before the last step leaves a blob no row
   // Reaches, under the `{roomId}/…` prefix the room's own teardown sweeps
-  const createRoomEmoji = async (
-    roomId: RoomInMessage["id"],
-    file: File,
-    { name }: Except<CreateRoomEmojiInput, "id" | "roomId">,
-  ) => {
+  const createRoomEmoji = async (input: Except<CreateRoomEmojiInput, "id">, file: File) => {
     // Whether the server kept it, so the dialog that asked stays open over a refusal
     let isCreated = false;
     await writeAwaited(
       async () => {
         const { id, presignedUrl } = await $trpc.room.emoji.generateUploadRoomEmojiPresignedUrlEntity.query({
           mimetype: file.type,
-          roomId,
+          roomId: input.roomId,
           size: file.size,
         });
         await uploadFilesToPresignedUrls({
           files: [file],
           generateUploadFilePresignedUrlEntities: getSingleFilePresignedUrlEntities(presignedUrl),
         });
-        const roomEmoji = await $trpc.room.emoji.createRoomEmoji.mutate({ id, name, roomId });
+        const roomEmoji = await $trpc.room.emoji.createRoomEmoji.mutate({ ...input, id });
         isCreated = true;
         return [createArrival(roomEmojiTable, roomEmoji)];
       },
@@ -73,17 +69,15 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
     );
     return isCreated;
   };
-  const updateRoomEmoji = (roomId: RoomInMessage["id"], input: Except<UpdateRoomEmojiInput, "roomId">) => {
+  const updateRoomEmoji = (input: UpdateRoomEmojiInput) => {
     writeOptimistic(
-      async () =>
-        createRowResponse(roomEmojiTable, await $trpc.room.emoji.updateRoomEmoji.mutate({ ...input, roomId })),
+      async () => createRowResponse(roomEmojiTable, await $trpc.room.emoji.updateRoomEmoji.mutate(input)),
       { entry: getRoomEmojiPatchEntry(input.id, { name: input.name }), onError: createErrorAlert },
     );
   };
-  const deleteRoomEmoji = (roomId: RoomInMessage["id"], input: Except<DeleteRoomEmojiInput, "roomId">) => {
+  const deleteRoomEmoji = (input: DeleteRoomEmojiInput) => {
     writeOptimistic(
-      async () =>
-        createRowResponse(roomEmojiTable, await $trpc.room.emoji.deleteRoomEmoji.mutate({ ...input, roomId })),
+      async () => createRowResponse(roomEmojiTable, await $trpc.room.emoji.deleteRoomEmoji.mutate(input)),
       { entry: getRoomEmojiPatchEntry(input.id, { deletedAt: new Date() }), onError: createErrorAlert },
     );
   };

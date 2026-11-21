@@ -31,7 +31,7 @@ const { confirmLabel, title } = WebhookDialogActionMetaMap[action];
     v-model="isOpen"
     :confirm-label
     :title
-    :confirm="() => webhook && write(roomId, { id: webhook.id })"
+    :confirm="() => webhook && write({ id: webhook.id, roomId })"
   >
     <p v-if="action === WebhookDialogAction.Delete">Are you sure you want to delete {{ webhook.name }}?</p>
     <p v-else>

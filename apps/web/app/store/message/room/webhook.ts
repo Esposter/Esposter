@@ -8,7 +8,6 @@ import type {
   RoomInMessage,
   WebhookInMessageWithRelations,
 } from "@esposter/db-schema";
-import type { Except } from "type-fest";
 
 import { webhookTable } from "#src/services/message/room/overlay/constants";
 import { getWebhookPatchEntry } from "#src/services/message/room/overlay/getWebhookPatchEntry";
@@ -49,13 +48,13 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   // The create's answer is the server's to mint, so it is shown once the server issues it. Its pending state is the
   // Dialog's button, which no entry can show for a write that has none
   const isCreateWebhookPending = ref(false);
-  const createWebhook = async (roomId: RoomInMessage["id"], input: Except<CreateWebhookInput, "roomId">) => {
+  const createWebhook = async (input: CreateWebhookInput) => {
     isCreateWebhookPending.value = true;
     await withFinalizerAsync(
       () =>
         writeAwaited(
           async () => {
-            const issuedWebhook = await $trpc.webhook.createWebhook.mutate({ ...input, roomId });
+            const issuedWebhook = await $trpc.webhook.createWebhook.mutate(input);
             showIssuedUrl(issuedWebhook);
             return [createArrival(webhookTable, issuedWebhook.webhook)];
           },
@@ -67,34 +66,31 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
     );
   };
   // Only the fields this write names change, so a rename and an active switch compose on the row they both show
-  const updateWebhook = (roomId: RoomInMessage["id"], input: Except<UpdateWebhookInput, "roomId">) => {
-    writeOptimistic(
-      async () => createRowResponse(webhookTable, await $trpc.webhook.updateWebhook.mutate({ ...input, roomId })),
-      {
-        entry: getWebhookPatchEntry(input.id, {
-          ...(input.isActive !== undefined && { isActive: input.isActive }),
-          ...(input.name !== undefined && { name: input.name }),
-        }),
-        onError: createErrorAlert,
-      },
-    );
+  const updateWebhook = (input: UpdateWebhookInput) => {
+    writeOptimistic(async () => createRowResponse(webhookTable, await $trpc.webhook.updateWebhook.mutate(input)), {
+      entry: getWebhookPatchEntry(input.id, {
+        ...(input.isActive !== undefined && { isActive: input.isActive }),
+        ...(input.name !== undefined && { name: input.name }),
+      }),
+      onError: createErrorAlert,
+    });
   };
   // The token is the server's to mint, and the URL that carries it is shown once the server issues it
-  const regenerateToken = async (roomId: RoomInMessage["id"], input: Except<RegenerateTokenInput, "roomId">) => {
+  const regenerateToken = async (input: RegenerateTokenInput) => {
     await writeAwaited(
       async () => {
-        const regeneratedWebhook = await $trpc.webhook.regenerateToken.mutate({ ...input, roomId });
+        const regeneratedWebhook = await $trpc.webhook.regenerateToken.mutate(input);
         showIssuedUrl(regeneratedWebhook);
         return [createArrival(webhookTable, regeneratedWebhook.webhook)];
       },
       { onError: createErrorAlert },
     );
   };
-  const deleteWebhook = (roomId: RoomInMessage["id"], input: Except<DeleteWebhookInput, "roomId">) => {
-    writeOptimistic(
-      async () => createRowResponse(webhookTable, await $trpc.webhook.deleteWebhook.mutate({ ...input, roomId })),
-      { entry: getWebhookPatchEntry(input.id, { deletedAt: new Date() }), onError: createErrorAlert },
-    );
+  const deleteWebhook = (input: DeleteWebhookInput) => {
+    writeOptimistic(async () => createRowResponse(webhookTable, await $trpc.webhook.deleteWebhook.mutate(input)), {
+      entry: getWebhookPatchEntry(input.id, { deletedAt: new Date() }),
+      onError: createErrorAlert,
+    });
   };
   return { createWebhook, deleteWebhook, isCreateWebhookPending, items, readWebhooks, regenerateToken, updateWebhook };
 });
