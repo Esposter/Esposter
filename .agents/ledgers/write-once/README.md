@@ -25,7 +25,7 @@ Run from the repository root, since a claim that a copy has no other holder read
 ```bash
 git grep -n -E '^[[:space:]]*const [A-Z][A-Z0-9_]+ = \[' -- '*.test.ts' '*.test-d.ts'
 git grep -n -i -E 'held (equal|in step)|keeps? .* (equal|in step)|only thing holding|copies? of' -- '*.ts' '*.vue' '*.md' ':!*CHANGELOG.md'
-git grep -n -E '\b(ALLOW|EXEMPT|EXCEPT|SKIP)[A-Z_]*\b' -- apps packages scripts
+git grep -n -E '(^|[^A-Za-z0-9_])(ALLOW|EXEMPT|EXCEPT|SKIP)[A-Z_]*([^A-Za-z0-9_]|$)' -- apps packages scripts
 ```
 
 The first lists the hand-kept lists a test holds, the second the prose that names a copy a check keeps equal, and the third an allowlist. Each is a pattern, not a scan: a list whose exceptions are the drift is a roster the enforcement ladder keeps off the lint rung.
