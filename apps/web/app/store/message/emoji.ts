@@ -9,9 +9,10 @@ import { checkIsNewerArrival } from "#src/services/shared/overlay/checkIsNewerAr
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { getOrCreate, getResultAsync, ID_SEPARATOR, Operation, withFinalizerAsync } from "@esposter/shared";
 
-// A reaction is one emoji on one message, so its identity is the pair, and a press on it is held while its write is out
-const getEmojiKey = ({ emojiTag, messageId }: Pick<RoomReaction, "emojiTag" | "messageId">) =>
-  `${messageId}${ID_SEPARATOR}${emojiTag}`;
+// A reaction is one emoji on one message, so its identity is the room, the message and the emoji, and a press on it is
+// Held while its write is out. A message's id is numbered within its room, so the room is part of the key
+const getEmojiKey = ({ emojiTag, messageId, roomId }: AddReactionInput) =>
+  `${roomId}${ID_SEPARATOR}${messageId}${ID_SEPARATOR}${emojiTag}`;
 
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();

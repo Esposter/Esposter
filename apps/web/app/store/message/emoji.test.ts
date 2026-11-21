@@ -188,4 +188,30 @@ describe(useEmojiStore, () => {
     expect(calledProcedures).toStrictEqual(["addReaction"]);
     expect(getEmojis(roomId, messageId)).toStrictEqual([createReaction([userId], 1)]);
   });
+
+  // A message's id is numbered within its room, so the same id in another room is another reaction, and a press there is
+  // Sent while the press in this room is still out
+  test("sends a press on the same message id in another room while the one in this room is in flight", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const otherRoomId = v7();
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const sentRoomIds: string[] = [];
+    const { promise: addResponse, resolve: resolveAdd } = Promise.withResolvers<RoomReaction>();
+    trpcMsw.message.emoji.addReaction.mutation(({ input }) => {
+      sentRoomIds.push(input.roomId);
+      return input.roomId === roomId ? addResponse : createReaction([userId], 1);
+    });
+    const emojiStore = useEmojiStore();
+    const { createEmoji, getEmojis } = emojiStore;
+    const pendingAdd = createEmoji({ emojiTag, messageId, roomId });
+    await flushPromises();
+    await createEmoji({ emojiTag, messageId, roomId: otherRoomId });
+    resolveAdd(createReaction([userId], 1));
+    await pendingAdd;
+
+    expect(sentRoomIds).toStrictEqual([roomId, otherRoomId]);
+    expect(getEmojis(otherRoomId, messageId)).toStrictEqual([createReaction([userId], 1)]);
+  });
 });
