@@ -5,6 +5,6 @@ import { RoomPermission } from "@esposter/db-schema";
 // Panels require rather than a second list beside it — a member who may only manage emoji or bans still reaches the
 // Rail that manages them
 export const MANAGEMENT_PERMISSIONS = Object.values(SettingsPermissionMap).reduce<RoomPermission>(
-  (permissions, permission) => (permission === null ? permissions : permissions | permission),
+  (permissions, permission) => (permission === undefined ? permissions : permissions | permission),
   RoomPermission.Administrator,
 );
