@@ -630,7 +630,8 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     const previous = this.#serialized.get(key) ?? Promise.resolve();
     const current = withFinalizerAsync(
       async () => {
-        await getResultAsync(() => previous);
+        // The failure of the piece before this one went to that piece's own caller, so this wait only needs it settled
+        await getResultAsync(() => previous).unwrapOr(undefined);
         return work();
       },
       () => {
