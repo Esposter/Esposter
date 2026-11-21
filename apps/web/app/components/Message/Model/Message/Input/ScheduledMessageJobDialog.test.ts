@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { ScheduledRoomMessage } from "@esposter/db-schema";
+
 import MessageModelMessageInputScheduledMessageJobDialog from "#src/components/Message/Model/Message/Input/ScheduledMessageJobDialog.vue";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
@@ -9,6 +11,7 @@ import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 
 describe("messageModelMessageInputScheduledMessageJobDialog", () => {
@@ -52,7 +55,16 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
   test("a kept schedule keeps the text typed while the server had it", async () => {
     expect.hasAssertions();
 
-    const { promise: isKept, resolve: keepSchedule } = Promise.withResolvers<void>();
+    const { promise: isKept, resolve: keepSchedule } = Promise.withResolvers<ScheduledRoomMessage>();
+    const keptSchedule: ScheduledRoomMessage = {
+      deletedAt: null,
+      id: 1,
+      message: text,
+      replyToId: null,
+      runAt: new Date(0),
+      userId: v7(),
+      version: 0,
+    };
     trpcMsw.message.scheduledMessage.createScheduledMessage.mutation(() => isKept);
     const scheduledMessageJobDialogStore = useScheduledMessageJobDialogStore();
     scheduledMessageJobDialogStore.open(ScheduledMessageJobType.ScheduledMessage);
@@ -67,7 +79,7 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
     confirmButton.element.click();
     await flushPromises();
     await component.get("textarea").setValue("ab");
-    keepSchedule();
+    keepSchedule(keptSchedule);
     await flushPromises();
     await waitForSynchronizedFunctions();
     scheduledMessageJobDialogStore.open(ScheduledMessageJobType.ScheduledMessage);
