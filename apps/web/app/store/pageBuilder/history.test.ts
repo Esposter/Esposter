@@ -111,7 +111,7 @@ describe(usePageBuilderHistoryStore, () => {
     setDocument(resourceId, webpageKind, textDocument);
     const interactionId = v7();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-    const { applyEdit, undo } = pageBuilderHistoryStore;
+    const { applyEdit, getUndoLabel, undo } = pageBuilderHistoryStore;
     for (const text of ["a", "ab"])
       applyEdit(
         resourceId,
@@ -121,11 +121,11 @@ describe(usePageBuilderHistoryStore, () => {
         TEST_TEXT_LABEL,
         interactionId,
       ).match(noop, console.error);
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe(TEST_TEXT_LABEL);
+    expect(getUndoLabel(resourceId)).toBe(TEST_TEXT_LABEL);
     undo(resourceId);
 
     expect(getDocument(resourceId)).toStrictEqual(textDocument);
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
+    expect(getUndoLabel(resourceId)).toBe("");
   });
 
   test("two inserts at one index in one interaction are two undo entries", () => {
@@ -454,19 +454,17 @@ describe(usePageBuilderHistoryStore, () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument, getEmailDocument, setEmailDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, result.data);
-    pageBuilderHistoryStore.applyEdit(
-      resourceId,
-      [{ op: JsonPatchOperationType.Replace, path: "/root/props/title", value: "e" }],
-      "f",
-    );
+    const { applyEdit, undo } = pageBuilderHistoryStore;
+    setEmailDocument(resourceId, emailKind, result.data);
+    applyEdit(resourceId, [{ op: JsonPatchOperationType.Replace, path: "/root/props/title", value: "e" }], "f");
 
-    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.title).toBe("e");
-    expect(pageBuilderDocumentStore.getDocument(resourceId)).toBeUndefined();
+    expect(getEmailDocument(resourceId)?.root.props.title).toBe("e");
+    expect(getDocument(resourceId)).toBeUndefined();
 
-    pageBuilderHistoryStore.undo(resourceId);
+    undo(resourceId);
 
-    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.title).toBe("");
+    expect(getEmailDocument(resourceId)?.root.props.title).toBe("");
   });
 });
