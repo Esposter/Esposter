@@ -47,7 +47,7 @@ const isDirty = computed(
 const overlayStore = useOverlayStore();
 const { writeAwaited } = overlayStore;
 // One save at a time: each one merges against the baseline the save before it answers, so a second one sent meanwhile
-// would merge against a list the first has yet to write
+// Would merge against a list the first has yet to write
 const isSavePending = ref(false);
 // The bar stays until the room keeps the filter, so a refused save leaves the edit in place to send again
 const saveFilter = async () => {

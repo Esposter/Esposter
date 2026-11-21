@@ -483,13 +483,13 @@ describe(RoomObject, () => {
       { emojiTag, messageId: message.id, userIds: [userId, otherUserId], version: 1 },
     ]);
 
-    expect(await object.removeReaction(reaction, actor)).toStrictEqual({
+    await expect(object.removeReaction(reaction, actor)).resolves.toStrictEqual({
       emojiTag,
       messageId: message.id,
       userIds: [otherUserId],
       version: 2,
     });
-    expect(await object.removeReaction(reaction, otherActor)).toStrictEqual({
+    await expect(object.removeReaction(reaction, otherActor)).resolves.toStrictEqual({
       emojiTag,
       messageId: message.id,
       userIds: [],
@@ -499,7 +499,7 @@ describe(RoomObject, () => {
     await expect(object.readReactions([message.id])).resolves.toStrictEqual([
       { emojiTag, messageId: message.id, userIds: [], version: 3 },
     ]);
-    expect(await object.addReaction(reaction, otherActor)).toStrictEqual({
+    await expect(object.addReaction(reaction, otherActor)).resolves.toStrictEqual({
       emojiTag,
       messageId: message.id,
       userIds: [otherUserId],

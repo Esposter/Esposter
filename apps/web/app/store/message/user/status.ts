@@ -16,7 +16,7 @@ export const useStatusStore = defineStore("message/user/status", () => {
   const { arrive, view, writeOptimistic } = overlayStore;
   const statuses = view(statusTable);
   // Each person's row by the person's id, a computed over the rows the overlay holds, so a row that arrives or a status
-  // set on screen is read at once
+  // Set on screen is read at once
   const statusMap = computed(
     () =>
       new Map(

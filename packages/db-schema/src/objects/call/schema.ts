@@ -6,15 +6,15 @@ import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 // The columns a connection in the call is held by, shared by the participant and knocker tables.
 // Both hold the same shape for different states of the same connection
 const createCallParticipantColumns = () => ({
+  deletedAt: integer({ mode: "timestamp_ms" }),
   id: text().primaryKey(),
-  sessionId: text().notNull().unique(),
   image: text().notNull().default(""),
   isCameraEnabled: integer({ mode: "boolean" }).notNull(),
   isHandRaised: integer({ mode: "boolean" }).notNull(),
   isMuted: integer({ mode: "boolean" }).notNull(),
   name: text().notNull(),
+  sessionId: text().notNull().unique(),
   userId: text().notNull(),
-  deletedAt: integer({ mode: "timestamp_ms" }),
   ...createVersionSchema(),
 });
 

@@ -86,7 +86,7 @@ describe("messageModelStatusPickerForm", () => {
   });
 
   // Everything the save files is keyed by the user, so a save without a session has nothing to file under and is not
-  // worth sending to be refused
+  // Worth sending to be refused
   test("does not save without a session to file the write under", async () => {
     expect.hasAssertions();
 

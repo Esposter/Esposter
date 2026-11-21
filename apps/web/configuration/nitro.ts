@@ -32,7 +32,7 @@ export const nitro: NonNullable<NuxtConfig["nitro"]> = {
     wrangler: { compatibility_date: compatibilityDate, ...getEnvironmentWrangler(getCloudflareEnvironment()) },
   },
   // The dev runner loads `miniflare` by name from the app root, where nothing resolves it: the app declares the stable
-  // line as `miniflare-dev`, and the wrangler pin's 5 beta does not load the runner's entry, so the runner is pointed here
+  // Line as `miniflare-dev`, and the wrangler pin's 5 beta does not load the runner's entry, so the runner is pointed here
   deps: { paths: { miniflare: miniflareDevDirectory } },
   // A package resolves the build the Workers runtime runs, as wrangler's own bundler resolves it: a Worker is a web
   // Runtime, so a package's browser build is taken over its Node one. The preset names `workerd` and `worker` alone, so

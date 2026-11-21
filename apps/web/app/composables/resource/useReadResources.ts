@@ -10,8 +10,8 @@ import { ResourceListSource } from "#src/models/resource/list/ResourceListSource
 import { getResourceFilterInput } from "#src/services/resource/list/getResourceFilterInput";
 import { getResourceFilterKey } from "#src/services/resource/list/getResourceFilterKey";
 import { getResourceListSortName } from "#src/services/resource/list/getResourceListSortName";
+import { checkIsHeldResource } from "#src/services/resource/overlay/checkIsHeldResource";
 import { resourceTable } from "#src/services/resource/overlay/constants";
-import { isHeldResource } from "#src/services/resource/overlay/isHeldResource";
 import { useOverlayStore } from "#src/store/overlay";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
@@ -81,7 +81,9 @@ export const useReadResources = (
   // Is not held live, so it leaves the page at once
   const items = computed(() => {
     // Looked up once per recompute, rather than searched for each row the page holds
-    const heldRows = new Map(resourceRows.value.filter(isHeldResource).map((row) => [row.id, row] as const));
+    const heldRows = new Map(
+      resourceRows.value.filter((row) => checkIsHeldResource(row)).map((row) => [row.id, row] as const),
+    );
     return pageItems.value.flatMap(({ id, lastAccessedAt }) => {
       const row = heldRows.get(id);
       return row ? [{ ...row, lastAccessedAt }] : [];
