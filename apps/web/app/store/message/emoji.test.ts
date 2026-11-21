@@ -1,9 +1,11 @@
 // @vitest-environment nuxt
+import type { RoomReaction } from "@esposter/db-schema";
+
 import { getMockSession } from "#server/trpc/context.test";
+import { useReadEmojis } from "#src/composables/message/emoji/useReadEmojis";
 import { useSession } from "#src/services/auth/authClient.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "#src/store/message/emoji";
-import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -18,7 +20,12 @@ describe(useEmojiStore, () => {
   const roomId = v7();
   const messageId = 1;
   const emojiTag = "👍";
-  const createReaction = (userIds: string[] = []) => ({ emojiTag, messageId, userIds, version: 0 });
+  const createReaction = (userIds: string[] = [], version = 0): RoomReaction => ({
+    emojiTag,
+    messageId,
+    userIds,
+    version,
+  });
 
   beforeEach(() => {
     useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
@@ -28,31 +35,87 @@ describe(useEmojiStore, () => {
     vi.restoreAllMocks();
   });
 
-  test("stores an event's row, replacing the one it names", () => {
+  // An arrival is the row as the room holds it at its version, so a row at an older version than the one held is a late
+  // Copy and changes nothing
+  test("stores an arrival only when its version is newer than the one held", () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     const emojiStore = useEmojiStore();
     const { getEmojis, storeEmoji } = emojiStore;
-    storeEmoji(roomId, createReaction());
-    const userId = getMockSession().user.id;
-    storeEmoji(roomId, createReaction([userId]));
+    storeEmoji(roomId, createReaction([userId], 2));
+    storeEmoji(roomId, createReaction([], 1));
 
-    expect(getEmojis(roomId, messageId)).toStrictEqual([createReaction([userId])]);
+    expect(getEmojis(roomId, messageId)).toStrictEqual([createReaction([userId], 2)]);
   });
 
-  test("storeDeleteEmoji removes the reaction row it names", () => {
+  // The room's answer to a removal keeps the reaction with no reactor at its version, so a read that answered before the
+  // Removal and arrives after it is older, and cannot put the reaction back
+  test("a late read does not re-add a reaction the room has since removed", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const { promise: readResponse, resolve: resolveRead } = Promise.withResolvers<RoomReaction[]>();
+    trpcMsw.message.emoji.readReactions.query(() => readResponse);
+    trpcMsw.message.emoji.removeReaction.mutation(() => createReaction([], 2));
     const emojiStore = useEmojiStore();
-    const { getEmojis, storeDeleteEmoji, storeEmoji } = emojiStore;
-    storeEmoji(roomId, createReaction());
-    storeDeleteEmoji(roomId, createReaction());
+    const { getEmojis, storeEmoji, toggleEmoji } = emojiStore;
+    const readEmojis = useReadEmojis();
+    storeEmoji(roomId, createReaction([userId], 1));
+    const read = readEmojis(roomId, [messageId]);
+    await toggleEmoji(roomId, createReaction([userId], 1));
+    expect(getEmojis(roomId, messageId)).toStrictEqual([]);
+
+    resolveRead([createReaction([userId], 1)]);
+    await read;
 
     expect(getEmojis(roomId, messageId)).toStrictEqual([]);
   });
 
-  // Reacting again removes the caller's own reaction, and adds it otherwise. The reaction row is shared, so leaving it is
-  // Only ever a removal: the row goes with its last reactor and stays for everyone else
+  // An event sent before the toggle's answer, and delivered after it, is at the version the toggle already passed
+  test("an older event does not undo a newer toggle", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const otherUserId = v7();
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    trpcMsw.message.emoji.addReaction.mutation(() => createReaction([userId], 2));
+    const emojiStore = useEmojiStore();
+    const { getEmojis, storeEmoji, toggleEmoji } = emojiStore;
+    storeEmoji(roomId, createReaction([], 0));
+    await toggleEmoji(roomId, createReaction([], 0));
+    storeEmoji(roomId, createReaction([otherUserId], 1));
+
+    expect(getEmojis(roomId, messageId)).toStrictEqual([createReaction([userId], 2)]);
+  });
+
+  // A toggle is awaited, so the reaction shows nothing new until the room answers, and a refused one leaves it as the
+  // Room holds it
+  test("a refused toggle leaves the reaction as the room holds it, and shows nothing before the room answers", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const otherUserId = v7();
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const { promise: addResponse, reject: refuseAdd } = Promise.withResolvers<RoomReaction>();
+    trpcMsw.message.emoji.addReaction.mutation(() => addResponse);
+    const emojiStore = useEmojiStore();
+    const { getEmojis, storeEmoji, toggleEmoji } = emojiStore;
+    storeEmoji(roomId, createReaction([otherUserId], 1));
+    const pendingToggle = toggleEmoji(roomId, createReaction([otherUserId], 1));
+    await flushPromises();
+
+    expect(getEmojis(roomId, messageId)).toStrictEqual([createReaction([otherUserId], 1)]);
+
+    refuseAdd(new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " }));
+    await pendingToggle;
+
+    expect(getEmojis(roomId, messageId)).toStrictEqual([createReaction([otherUserId], 1)]);
+  });
+
+  // Reacting again removes the caller's own reaction, and adds it otherwise. A press made while the one before it is in
+  // Flight is not sent, since the room has not yet answered what the first press did
   test.each([
     { expectedProcedure: "removeReaction", isReactor: true },
     { expectedProcedure: "addReaction", isReactor: false },
@@ -64,65 +127,45 @@ describe(useEmojiStore, () => {
     const calledProcedures: string[] = [];
     trpcMsw.message.emoji.addReaction.mutation(() => {
       calledProcedures.push("addReaction");
-      return createReaction([userId]);
+      return createReaction([userId], 1);
     });
     trpcMsw.message.emoji.removeReaction.mutation(() => {
       calledProcedures.push("removeReaction");
+      return createReaction([], 2);
     });
     const emojiStore = useEmojiStore();
-    const { setEmojis, toggleEmoji } = emojiStore;
+    const { storeEmoji, toggleEmoji } = emojiStore;
     const emoji = createReaction(isReactor ? [userId] : []);
-    setEmojis(roomId, messageId, [emoji]);
-    toggleEmoji(roomId, emoji);
-    await flushPromises();
+    storeEmoji(roomId, emoji);
+    await toggleEmoji(roomId, emoji);
 
     expect(calledProcedures).toStrictEqual([expectedProcedure]);
   });
 
-  // The toggle's rollback takes the caller off the reaction as it stands, so another member's reaction delivered while
-  // The rejected write was in flight is kept
-  test("keeps a reaction delivered while the rejected toggle was in flight", async () => {
+  test("does not send a press while the one before it on the same reaction is in flight", async () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const otherUserId = v7();
     useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
-    const emojiStore = useEmojiStore();
-    const { createEmoji, getEmojis, setEmojis, storeEmoji } = emojiStore;
+    const calledProcedures: string[] = [];
+    const { promise: addResponse, resolve: resolveAdd } = Promise.withResolvers<RoomReaction>();
     trpcMsw.message.emoji.addReaction.mutation(() => {
-      storeEmoji(roomId, createReaction([otherUserId, userId]));
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      calledProcedures.push("addReaction");
+      return addResponse;
     });
-    setEmojis(roomId, messageId, [createReaction([otherUserId])]);
-    createEmoji({ emojiTag, messageId, roomId });
-    await flushPromises();
-
-    expect(takeOne(getEmojis(roomId, messageId)).userIds).toStrictEqual([otherUserId]);
-  });
-
-  // A remove made while its add is still in flight must wait for it, or the add's settled row lands after the remove and
-  // Puts back a reaction the server no longer holds
-  test("removes a reaction whose add was still in flight", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    trpcMsw.message.emoji.removeReaction.mutation(() => {
+      calledProcedures.push("removeReaction");
+      return createReaction([], 2);
+    });
     const emojiStore = useEmojiStore();
     const { createEmoji, deleteEmoji, getEmojis } = emojiStore;
-    const { promise: addResponse, resolve: resolveAdd } = Promise.withResolvers<ReturnType<typeof createReaction>>();
-    const addStarted = new Promise<void>((resolveAddStarted) => {
-      trpcMsw.message.emoji.addReaction.mutation(() => {
-        resolveAddStarted();
-        return addResponse;
-      });
-    });
-    trpcMsw.message.emoji.removeReaction.mutation(() => undefined);
-    createEmoji({ emojiTag, messageId, roomId });
-    await addStarted;
-    deleteEmoji({ emojiTag, messageId, roomId });
-    resolveAdd(createReaction([userId]));
+    const pendingAdd = createEmoji({ emojiTag, messageId, roomId });
     await flushPromises();
+    await deleteEmoji({ emojiTag, messageId, roomId });
+    resolveAdd(createReaction([userId], 1));
+    await pendingAdd;
 
-    expect(getEmojis(roomId, messageId)).toStrictEqual([]);
+    expect(calledProcedures).toStrictEqual(["addReaction"]);
+    expect(getEmojis(roomId, messageId)).toStrictEqual([createReaction([userId], 1)]);
   });
 });

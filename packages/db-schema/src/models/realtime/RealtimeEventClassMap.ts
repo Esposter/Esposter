@@ -12,7 +12,6 @@ export const RealtimeEventClassMap = {
   [RealtimeEventType.CreateEmoji]: EventClass.MessageStream,
   [RealtimeEventType.CreateMessage]: EventClass.MessageStream,
   [RealtimeEventType.CreateTyping]: EventClass.Ephemeral,
-  [RealtimeEventType.DeleteEmoji]: EventClass.MessageStream,
   [RealtimeEventType.DeleteMessage]: EventClass.MessageStream,
   [RealtimeEventType.HandRaisedChanged]: EventClass.Ephemeral,
   [RealtimeEventType.JoinCall]: EventClass.Ephemeral,

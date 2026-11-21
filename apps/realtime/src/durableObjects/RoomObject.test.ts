@@ -466,7 +466,9 @@ describe(RoomObject, () => {
     ).toBe(0);
   });
 
-  test("a reaction gathers its reactors, and the last one to leave takes it away", async () => {
+  // The last one to leave leaves the reaction with no reactor at a newer version, so a read that answered before the
+  // Removal cannot put the reaction back, and the next reactor continues its count
+  test("a reaction gathers its reactors, and the last one to leave leaves it with none at a newer version", async () => {
     expect.hasAssertions();
 
     const { object } = createRoomObject();
@@ -481,10 +483,28 @@ describe(RoomObject, () => {
       { emojiTag, messageId: message.id, userIds: [userId, otherUserId], version: 1 },
     ]);
 
-    await object.removeReaction(reaction, actor);
-    await object.removeReaction(reaction, otherActor);
+    expect(await object.removeReaction(reaction, actor)).toStrictEqual({
+      emojiTag,
+      messageId: message.id,
+      userIds: [otherUserId],
+      version: 2,
+    });
+    expect(await object.removeReaction(reaction, otherActor)).toStrictEqual({
+      emojiTag,
+      messageId: message.id,
+      userIds: [],
+      version: 3,
+    });
 
-    await expect(object.readReactions([message.id])).resolves.toStrictEqual([]);
+    await expect(object.readReactions([message.id])).resolves.toStrictEqual([
+      { emojiTag, messageId: message.id, userIds: [], version: 3 },
+    ]);
+    expect(await object.addReaction(reaction, otherActor)).toStrictEqual({
+      emojiTag,
+      messageId: message.id,
+      userIds: [otherUserId],
+      version: 4,
+    });
   });
 
   test("a vote is recorded on the poll's stored body, and withdrawn when no option is named", async () => {
@@ -1124,8 +1144,11 @@ describe(RoomObject, () => {
         (reaction) => toReactionKey(reaction),
       ),
     ).toStrictEqual([{ emojiTag: "a", messageId: otherMessage.id }]);
+    // The reactions the person was the last reactor of are left with none, at the version the erase raised
     await expect(object.readReactions([message.id, otherMessage.id])).resolves.toStrictEqual([
       { emojiTag: "a", messageId: message.id, userIds: [otherUserId], version: 2 },
+      { emojiTag: "b", messageId: message.id, userIds: [], version: 1 },
+      { emojiTag: "a", messageId: otherMessage.id, userIds: [], version: 1 },
     ]);
   });
 

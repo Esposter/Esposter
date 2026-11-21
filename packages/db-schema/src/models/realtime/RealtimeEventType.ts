@@ -5,7 +5,6 @@ export const RealtimeEventType = {
   CreateEmoji: "createEmoji",
   CreateMessage: "createMessage",
   CreateTyping: "createTyping",
-  DeleteEmoji: "deleteEmoji",
   DeleteMessage: "deleteMessage",
   HandRaisedChanged: "handRaisedChanged",
   Invalidate: "invalidate",

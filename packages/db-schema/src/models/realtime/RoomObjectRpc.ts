@@ -109,9 +109,9 @@ export interface RoomObjectRpc {
   // A member who is no longer in the room is dropped from its online set and sockets, and their scheduled messages in it are
   // Removed, with their object told to drop what it holds for the room
   removeMember: (userId: string) => Promise<void>;
-  // Takes the actor off the emoji's reactors, deleting the reaction when the actor was its only one. False when the actor
-  // Was not a reactor
-  removeReaction: (input: { emojiTag: string; messageId: number }, actor: RoomActor) => boolean;
+  // Takes the actor off the emoji's reactors and answers the reaction as it now stands, with no reactor when the actor was
+  // Its only one. Null when the actor was not a reactor
+  removeReaction: (input: { emojiTag: string; messageId: number }, actor: RoomActor) => null | RoomReaction;
   // The matches after a page cursor, in the order getRoomSearchPageSort gives the query
   searchMessages: (input: RoomSearchInput) => RoomSearchResult;
   // A status the person set, which every room they are in shows

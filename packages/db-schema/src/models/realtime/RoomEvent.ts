@@ -27,13 +27,10 @@ const updateMessageEventSchema = z.object({
   data: roomMessageSchema,
   type: z.literal(RealtimeEventType.UpdateMessage),
 });
-// A reaction is one row, and its update carries the whole row, so a client replaces the reaction it holds by its key
+// A reaction is one row, and its update carries the whole row with its version, so a client replaces the reaction it holds
+// By its key, and a removal is an update too: the row is sent with no reactor
 const createEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.literal(RealtimeEventType.CreateEmoji) });
 const updateEmojiEventSchema = z.object({ data: roomReactionSchema, type: z.literal(RealtimeEventType.UpdateEmoji) });
-const deleteEmojiEventSchema = z.object({
-  data: roomReactionSchema.pick({ emojiTag: true, messageId: true }),
-  type: z.literal(RealtimeEventType.DeleteEmoji),
-});
 const adminActionEventSchema = z.object({
   data: z.object({
     durationMs: timeoutUserAdminActionInputSchema.shape.durationMs.optional(),
@@ -57,7 +54,6 @@ const roomEventSchemas = [
   updateMessageEventSchema,
   createEmojiEventSchema,
   updateEmojiEventSchema,
-  deleteEmojiEventSchema,
   adminActionEventSchema,
   upsertStatusEventSchema,
 ] as const;

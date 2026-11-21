@@ -24,7 +24,7 @@ describe(useReadMessages, () => {
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     const message = createMessage(roomId);
-    const emoji = { emojiTag, messageId: message.id, userIds: [] as string[], version: 0 };
+    const emoji = { emojiTag, messageId: message.id, userIds: [v7()], version: 0 };
     trpcMsw.message.readMessages.query(async () => {
       await readGate;
       return { items: [message], nextCursor: "" };

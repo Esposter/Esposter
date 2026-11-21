@@ -2,7 +2,6 @@ import type { RoomReaction } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
-import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { router } from "#server/trpc/index";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
@@ -29,13 +28,18 @@ export const emojiRouter = router({
   readReactions: getMemberProcedure(readReactionsInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes reaction changes to its sockets as typed events" })
     .query<RoomReaction[]>(({ input: { messageIds, roomId } }) => useRoomObject(roomId).readReactions(messageIds)),
+  // The reaction as the room now holds it is the answer, with the caller off it, so a removal the last reactor made answers
+  // The reaction with no reactor at the version the removal raised
   removeReaction: getMemberProcedure(removeReactionInputSchema, "roomId")
-    .meta({ staticReason: "The room object pushes the removed reaction to its sockets as a typed event" })
-    .mutation<void>(async ({ ctx, input }) => {
-      const isRemoved = await useRoomObject(input.roomId).removeReaction(
-        { emojiTag: input.emojiTag, messageId: input.messageId },
-        getRoomActor(ctx),
-      );
-      if (!isRemoved) throw getNotFoundError(DatabaseEntityType.Reaction, JSON.stringify(input));
-    }),
+    .meta({ staticReason: "The room object pushes the reaction it now holds to its sockets as a typed event" })
+    .mutation<RoomReaction>(async ({ ctx, input }) =>
+      requireEntity(
+        useRoomObject(input.roomId).removeReaction(
+          { emojiTag: input.emojiTag, messageId: input.messageId },
+          getRoomActor(ctx),
+        ),
+        DatabaseEntityType.Reaction,
+        JSON.stringify(input),
+      ),
+    ),
 });

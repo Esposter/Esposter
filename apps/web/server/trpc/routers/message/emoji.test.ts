@@ -68,14 +68,18 @@ describe("emojiRouter", () => {
     );
   });
 
-  test("removes the caller from the reactors of a reaction", async () => {
+  // The answer is the reaction as the room now holds it, with the caller taken off: when the caller was its last reactor,
+  // The row is answered with no reactor, at the version the removal raised
+  test("removes the caller from the reactors and returns the reaction the room holds", async () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    roomObject.removeReaction.mockResolvedValue(true);
+    const reaction = { emojiTag, messageId, userIds: [], version: 2 };
+    roomObject.removeReaction.mockResolvedValue(reaction);
 
-    await emojiCaller.removeReaction({ emojiTag, messageId, roomId });
+    const removedReaction = await emojiCaller.removeReaction({ emojiTag, messageId, roomId });
 
+    expect(removedReaction).toStrictEqual(reaction);
     expect(roomObject.removeReaction).toHaveBeenCalledExactlyOnceWith({ emojiTag, messageId }, { userId });
   });
 
@@ -83,7 +87,7 @@ describe("emojiRouter", () => {
     expect.hasAssertions();
 
     const input = { emojiTag, messageId, roomId };
-    roomObject.removeReaction.mockResolvedValue(false);
+    roomObject.removeReaction.mockResolvedValue(null);
 
     await expect(emojiCaller.removeReaction(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Reaction, JSON.stringify(removeReactionInputSchema.parse(input))).message}]`,

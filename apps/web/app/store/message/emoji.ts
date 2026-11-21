@@ -4,107 +4,79 @@ import type { RoomReaction } from "@esposter/db-schema";
 
 import { authClient } from "#src/services/auth/authClient";
 import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
-import { NO_ROW_VERSION } from "@esposter/db-schema";
-import { getOrCreate, ID_SEPARATOR } from "@esposter/shared";
+import { checkIsNewerArrival } from "#src/services/shared/overlay/checkIsNewerArrival";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { getOrCreate, getResultAsync, ID_SEPARATOR, withFinalizerAsync } from "@esposter/shared";
 
-// A reaction is one emoji on one message, so its identity is the pair, and every write queues on that pair
+// A reaction is one emoji on one message, so its identity is the pair, and a press on it is held while its write is out
 const getEmojiKey = ({ emojiTag, messageId }: Pick<RoomReaction, "emojiTag" | "messageId">) =>
   `${messageId}${ID_SEPARATOR}${emojiTag}`;
 
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  // One queue for adds and removes alike, so a remove made while its add is in flight waits for it, and the add's settled
-  // Row never lands after the remove
-  const { executeMutation } = useMutation();
-  // A message's reactions, filed under the room they belong to and then under the message. Every write names both,
-  // Since a read response, a subscription echo and a rollback all land after an await, when the room on screen may have moved on
+  // A message's reactions, filed under the room they belong to and then under the message. A reaction with no reactor is
+  // Held too, since its removal's version is what an older copy of it loses to
   const emojiMap: Ref<Map<string, Map<number, RoomReaction[]>>> = ref(new Map());
-  // A read never writes, since a read can run during a render: a message nothing has set reads as none, and only a set
-  // Makes an entry
-  const getEmojis = (roomId: string, messageId: number) => emojiMap.value.get(roomId)?.get(messageId) ?? [];
-  const setEmojis = (roomId: string, messageId: number, emojis: RoomReaction[]) => {
+  const getHeldEmojis = (roomId: string, messageId: number) => emojiMap.value.get(roomId)?.get(messageId) ?? [];
+  const setHeldEmojis = (roomId: string, messageId: number, emojis: RoomReaction[]) => {
     getOrCreate(emojiMap.value, roomId, () => new Map<number, RoomReaction[]>()).set(messageId, emojis);
   };
+  // A read never writes, since a read can run during a render: a message nothing has set reads as none
+  const getEmojis = (roomId: string, messageId: number) =>
+    getHeldEmojis(roomId, messageId).filter(({ userIds }) => userIds.length > 0);
   const findEmoji = (roomId: string, emoji: Pick<RoomReaction, "emojiTag" | "messageId">) =>
-    getEmojis(roomId, emoji.messageId).find(getEntityIdEqualComparator(["emojiTag"], emoji));
-  // Puts the reaction in place of the one it identifies, or adds it, and returns what was there before for a rollback
-  // A room event carries the whole row as the room holds it after a create or an update, so both are one write here
+    getHeldEmojis(roomId, emoji.messageId).find(getEntityIdEqualComparator(["emojiTag"], emoji));
+  // The one write a reaction takes: the room's answer to an add or a removal, an event, or a read. It applies only when
+  // Nothing is held for the reaction or its version is newer, so a late read cannot re-add a removed reaction and an
+  // Older event cannot undo a newer toggle
   const storeEmoji = (roomId: string, emoji: RoomReaction) => {
-    const previousEmoji = findEmoji(roomId, emoji);
-    const emojis = getEmojis(roomId, emoji.messageId);
-    setEmojis(
+    const heldEmoji = findEmoji(roomId, emoji);
+    if (!checkIsNewerArrival(heldEmoji, emoji)) return;
+
+    const emojis = getHeldEmojis(roomId, emoji.messageId);
+    setHeldEmojis(
       roomId,
       emoji.messageId,
-      previousEmoji ? emojis.map((item) => (item === previousEmoji ? emoji : item)) : [...emojis, emoji],
+      heldEmoji ? emojis.map((item) => (item === heldEmoji ? emoji : item)) : [...emojis, emoji],
     );
   };
-  // Puts the caller in or takes them out of the reaction as it stands now, so what other members did while the write was
-  // In flight is kept. The reaction goes with its last reactor
-  const storeReactor = (
-    roomId: string,
-    { emojiTag, messageId }: Pick<RoomReaction, "emojiTag" | "messageId">,
-    userId: string,
-    isReactor: boolean,
-  ) => {
-    // The reaction keeps the version it held, since this changes the row as held until the server's answer lands
-    const previousEmoji = findEmoji(roomId, { emojiTag, messageId });
-    const userIds = (previousEmoji?.userIds ?? []).filter((reactorId) => reactorId !== userId);
-    if (isReactor) userIds.push(userId);
-    if (userIds.length > 0)
-      storeEmoji(roomId, { emojiTag, messageId, userIds, version: previousEmoji?.version ?? NO_ROW_VERSION });
-    else storeDeleteEmoji(roomId, { emojiTag, messageId });
-  };
-  const createEmoji = (input: AddReactionInput) => {
-    if (!session.value.data) return;
+  // A press on a reaction is not sent while the one before it is out, since the room has not yet answered what that one
+  // Did. The reaction shows what the room holds until the answer lands, as an awaited write has no entry to show it
+  const pendingEmojiKeys = ref(new Set<string>());
+  const awaitEmojiAnswer = async (input: AddReactionInput, write: () => Promise<RoomReaction>) => {
+    const emojiKey = getEmojiKey(input);
+    if (!session.value.data || pendingEmojiKeys.value.has(emojiKey)) return;
 
-    const { id: userId } = session.value.data.user;
-    executeMutation(() => $trpc.message.emoji.addReaction.mutate(input), {
-      applyOptimistic: () => {
-        storeReactor(input.roomId, input, userId, true);
-        return () => {
-          storeReactor(input.roomId, input, userId, false);
-        };
+    pendingEmojiKeys.value.add(emojiKey);
+    await withFinalizerAsync(
+      () =>
+        getResultAsync(write).match(
+          (emoji) => {
+            storeEmoji(input.roomId, emoji);
+          },
+          (error) => {
+            createErrorAlert(error);
+          },
+        ),
+      () => {
+        pendingEmojiKeys.value.delete(emojiKey);
       },
-      // Keyed per emoji identity so reacting with two emojis in quick succession never queues behind the other
-      key: getEmojiKey(input),
-      // The room does not echo a write back to the device that made it, so the row the server settled is applied here
-      reconcile: (result) => {
-        storeEmoji(input.roomId, result);
-      },
-    });
+    );
   };
-  const deleteEmoji = (input: RemoveReactionInput) => {
-    if (!session.value.data) return;
-
-    const { id: userId } = session.value.data.user;
-    executeMutation(() => $trpc.message.emoji.removeReaction.mutate(input), {
-      applyOptimistic: () => {
-        storeReactor(input.roomId, input, userId, false);
-        return () => {
-          storeReactor(input.roomId, input, userId, true);
-        };
-      },
-      key: getEmojiKey(input),
-    });
-  };
-  // Reacting again removes this user's own reaction; the last one to leave takes the reaction itself with it
-  const toggleEmoji = (roomId: string, emoji: RoomReaction) => {
+  // Each resolves once the room has answered, so a caller that needs the write to have landed can await it
+  const createEmoji = (input: AddReactionInput) =>
+    awaitEmojiAnswer(input, () => $trpc.message.emoji.addReaction.mutate(input));
+  const deleteEmoji = (input: RemoveReactionInput) =>
+    awaitEmojiAnswer(input, () => $trpc.message.emoji.removeReaction.mutate(input));
+  // Reacting again removes this user's own reaction; the last one to leave leaves the reaction with no reactor
+  const toggleEmoji = async (roomId: string, emoji: RoomReaction) => {
     if (!session.value.data) return;
 
     const { emojiTag, messageId } = emoji;
-    if (emoji.userIds.includes(session.value.data.user.id)) deleteEmoji({ emojiTag, messageId, roomId });
-    else createEmoji({ emojiTag, messageId, roomId });
+    if (emoji.userIds.includes(session.value.data.user.id)) await deleteEmoji({ emojiTag, messageId, roomId });
+    else await createEmoji({ emojiTag, messageId, roomId });
   };
 
-  const storeDeleteEmoji = (roomId: string, input: Pick<RoomReaction, "emojiTag" | "messageId">) => {
-    const emojis = getEmojis(roomId, input.messageId);
-    setEmojis(
-      roomId,
-      input.messageId,
-      emojis.filter((emoji) => !getEntityIdEqualComparator(["emojiTag"], input)(emoji)),
-    );
-  };
-
-  return { createEmoji, deleteEmoji, getEmojis, setEmojis, storeDeleteEmoji, storeEmoji, toggleEmoji };
+  return { createEmoji, deleteEmoji, getEmojis, storeEmoji, toggleEmoji };
 });

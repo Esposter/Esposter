@@ -3,10 +3,11 @@ import { useConnectionStore } from "#src/store/realtime/connection";
 
 export const useEmojiEvents = () => {
   const emojiStore = useEmojiStore();
-  const { storeDeleteEmoji, storeEmoji } = emojiStore;
+  const { storeEmoji } = emojiStore;
   const connectionStore = useConnectionStore();
   const { onRoomEvent } = connectionStore;
 
+  // A removal is an update too, since the room sends the row with no reactor at its version
   onScopeDispose(
     onRoomEvent("createEmoji", (newEmoji, roomId) => {
       storeEmoji(roomId, newEmoji);
@@ -15,11 +16,6 @@ export const useEmojiEvents = () => {
   onScopeDispose(
     onRoomEvent("updateEmoji", (updatedEmoji, roomId) => {
       storeEmoji(roomId, updatedEmoji);
-    }),
-  );
-  onScopeDispose(
-    onRoomEvent("deleteEmoji", (deletedEmoji, roomId) => {
-      storeDeleteEmoji(roomId, deletedEmoji);
     }),
   );
 };

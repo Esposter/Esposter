@@ -59,7 +59,9 @@ export const messagesInRoom = sqliteTable(
   ],
 );
 
-// One row is one reaction on one message: the members who chose one emoji. A deleted message takes its reactions with it
+// One row is one reaction on one message: the members who chose one emoji. A reaction nobody chooses keeps its row with no
+// Reactor, at the version its removal raised, so a copy from before the removal cannot put it back. A deleted message
+// Takes its reactions with it
 export const messageEmojisInRoom = sqliteTable(
   "messageEmojis",
   {

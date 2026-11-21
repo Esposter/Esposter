@@ -494,12 +494,15 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     await this.#notifyUser(userId, (user) => user.removeRoomScheduledItems(this.#roomId));
   }
 
-  removeReaction({ emojiTag, messageId }: { emojiTag: string; messageId: number }, actor: RoomActor): boolean {
+  // The reaction as the room now holds it, with the actor taken off, so the actor's device is answered with the same row
+  removeReaction(
+    { emojiTag, messageId }: { emojiTag: string; messageId: number },
+    actor: RoomActor,
+  ): null | RoomReaction {
     const reaction = this.#readReaction(messageId, emojiTag);
-    if (!reaction?.userIds.includes(actor.userId)) return false;
+    if (!reaction?.userIds.includes(actor.userId)) return null;
 
-    this.#removeReactor(reaction, actor.userId, getSendOptions(actor));
-    return true;
+    return this.#removeReactor(reaction, actor.userId, getSendOptions(actor)) ?? null;
   }
 
   // With text, the matches are ranked within this room by bm25, with the message weighted 3, the file names 1 and the
@@ -938,18 +941,11 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     return message;
   }
 
-  #removeReactor(reaction: RoomReaction, userId: string, sendOptions: SendOptions): void {
+  // The last reactor leaves the reaction with none rather than deleting its row. The row keeps the version the removal
+  // Raised, so a copy of the reaction from before the removal cannot put it back, and the next reactor continues its count
+  #removeReactor(reaction: RoomReaction, userId: string, sendOptions: SendOptions): RoomReaction | undefined {
     const { emojiTag, messageId } = reaction;
-    if (reaction.userIds.length === 1) {
-      this.db
-        .delete(messageEmojisInRoom)
-        .where(and(eq(messageEmojisInRoom.messageId, messageId), eq(messageEmojisInRoom.emojiTag, emojiTag)))
-        .run();
-      this.broadcast({ data: { emojiTag, messageId }, type: "deleteEmoji" }, sendOptions);
-      return;
-    }
-
-    this.#setReactors(
+    return this.#setReactors(
       { emojiTag, messageId },
       reaction.userIds.filter((reactorId) => reactorId !== userId),
       sendOptions,

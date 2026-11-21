@@ -10,7 +10,7 @@ export const useSelectEmoji = (message: ClientMessage) => {
     // String equality and needs no index, no shortcode vocabulary and no parsing. 👍 and 👍🏽 are different
     // Strings and therefore different reactions, which is what Discord and Slack both do
     const foundEmoji = getEmojis(message.roomId, message.id).find(({ emojiTag }) => emojiTag === emoji);
-    if (foundEmoji) toggleEmoji(message.roomId, foundEmoji);
-    else createEmoji({ emojiTag: emoji, messageId: message.id, roomId: message.roomId });
+    if (foundEmoji) return toggleEmoji(message.roomId, foundEmoji);
+    return createEmoji({ emojiTag: emoji, messageId: message.id, roomId: message.roomId });
   };
 };
