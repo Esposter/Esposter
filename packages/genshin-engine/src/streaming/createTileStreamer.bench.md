@@ -9,7 +9,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 84b33e57ce
+- Commit: ab599b4b05
 - Node: v26.13.1
 - OS: darwin 27.0.0 (arm64)
 - CPU: Apple M1 × 8
@@ -19,12 +19,12 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task                        | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | --------------------------- | ------- | --------- | ------- | -------- | ------- |
-| every tile still generating | 1.00×   | 0.0593    | ±23.31% | 0.1058   | 10      |
-| every tile held             | 0.79×   | 0.0748    | ±66.03% | 0.2524   | 10      |
+| every tile still generating | 1.00×   | 0.0324    | ±23.84% | 0.0543   | 10      |
+| every tile held             | 0.7×    | 0.0461    | ±16.71% | 0.0706   | 10      |
 
 ## createTileStreamer > 1024 tiles a frame
 
 | task                        | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | --------------------------- | ------- | --------- | ------- | -------- | ------- |
-| every tile still generating | 1.00×   | 0.4823    | ±8.91%  | 0.6161   | 10      |
-| every tile held             | 0.5×    | 0.9552    | ±80.26% | 3.7088   | 10      |
+| every tile still generating | 1.00×   | 0.4804    | ±9.12%  | 0.5830   | 10      |
+| every tile held             | 0.65×   | 0.7342    | ±40.91% | 1.7126   | 10      |

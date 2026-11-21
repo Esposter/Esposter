@@ -11,6 +11,11 @@ interface CachedTile<TTile> {
   lastWantedFrame: number;
   tile: TTile;
 }
+const checkIsSelected = (selection: TerrainSelection, key: number): boolean => {
+  for (let index = 0; index < selection.count; index++) if (selection.keys[index] === key) return true;
+  return false;
+};
+
 // Which tiles are held, which are generating, and which to ask for next. The coarsest missing tiles are asked for
 // First, since one of them covers the ground a finer tile will later refine, and at most a few generate at once.
 // Past the cache's size, the tile wanted longest ago is freed, never one wanted or drawn this frame, and a tile
@@ -34,6 +39,8 @@ export const createTileStreamer = <TTile>({
   const retryKeySet = new Set<number>();
   // The keys generating when the last refresh came, whose tiles arrive built over what it replaced
   const stalePendingKeySet = new Set<number>();
+  // The retry keys an update takes up, kept as one array across frames so a frame copies them without allocating
+  const takenRetryKeys: number[] = [];
   let frame = 0;
   let isDisposed = false;
 
@@ -56,6 +63,32 @@ export const createTileStreamer = <TTile>({
   const checkIsSettled = (key: number): boolean => {
     const cachedTile = cachedTileMap.get(key);
     return (cachedTile !== undefined && !cachedTile.isStale) || givenUpKeySet.has(key);
+  };
+
+  // Marks a selection's tiles used this frame: a held one is wanted now, and a generating one was wanted this frame
+  const markSelectionUsed = (selection: TerrainSelection) => {
+    for (let index = 0; index < selection.count; index++) {
+      const key = selection.keys[index] ?? 0;
+      const cachedTile = cachedTileMap.get(key);
+      if (cachedTile) cachedTile.lastWantedFrame = frame;
+      else if (pendingWantedFrameMap.has(key)) pendingWantedFrameMap.set(key, frame);
+    }
+  };
+
+  // Asks for a selection's missing tiles, coarsest level first, while the pending limit has room
+  const requestSelectionMissing = (selection: TerrainSelection) => {
+    let coarsestLevel = 0;
+    for (let index = 0; index < selection.count; index++) {
+      const key = selection.keys[index] ?? 0;
+      if (!checkIsSettled(key)) coarsestLevel = Math.max(coarsestLevel, getTerrainTileLevel(key));
+    }
+    for (let level = coarsestLevel; level >= 0 && pendingWantedFrameMap.size < maxPendingCount; level--)
+      for (let index = 0; index < selection.count && pendingWantedFrameMap.size < maxPendingCount; index++) {
+        const key = selection.keys[index] ?? 0;
+        if (getTerrainTileLevel(key) !== level || checkIsSettled(key) || pendingWantedFrameMap.has(key)) continue;
+        pendingWantedFrameMap.set(key, frame);
+        requestTile(key);
+      }
   };
 
   return {
@@ -104,37 +137,22 @@ export const createTileStreamer = <TTile>({
     },
     update: (wanted: TerrainSelection, drawn: TerrainSelection, surrounding: TerrainSelection) => {
       frame++;
-      const failedKeys = [...retryKeySet];
+      takenRetryKeys.length = 0;
+      for (const key of retryKeySet) takenRetryKeys.push(key);
       retryKeySet.clear();
       // An ancestor drawn in place of a tile still coming is used as much as a wanted one
-      for (const { count, keys } of [wanted, drawn, surrounding])
-        for (let index = 0; index < count; index++) {
-          const key = keys[index] ?? 0;
-          const cachedTile = cachedTileMap.get(key);
-          if (cachedTile) cachedTile.lastWantedFrame = frame;
-          else if (pendingWantedFrameMap.has(key)) pendingWantedFrameMap.set(key, frame);
-        }
+      markSelectionUsed(wanted);
+      markSelectionUsed(drawn);
+      markSelectionUsed(surrounding);
       // Every tile the view wants is asked for before any of those round it, so turning finds the ground held without
       // Slowing the view's own
-      for (const { count, keys } of [wanted, surrounding]) {
-        let coarsestLevel = 0;
-        for (let index = 0; index < count; index++) {
-          const key = keys[index] ?? 0;
-          if (!checkIsSettled(key)) coarsestLevel = Math.max(coarsestLevel, getTerrainTileLevel(key));
-        }
-        for (let level = coarsestLevel; level >= 0 && pendingWantedFrameMap.size < maxPendingCount; level--)
-          for (let index = 0; index < count && pendingWantedFrameMap.size < maxPendingCount; index++) {
-            const key = keys[index] ?? 0;
-            if (getTerrainTileLevel(key) !== level || checkIsSettled(key) || pendingWantedFrameMap.has(key)) continue;
-            pendingWantedFrameMap.set(key, frame);
-            requestTile(key);
-          }
-      }
+      requestSelectionMissing(wanted);
+      requestSelectionMissing(surrounding);
       // A failed key the loop above re-requested is counted as generating instead, and one that no slot took stays counted
       // While an update still asks for it and it is neither held nor generating. One no update asks for any longer, such
       // As a drawn ancestor no longer wanted, is dropped
-      for (const key of failedKeys) {
-        const isAskedFor = [wanted, surrounding].some(({ count, keys }) => keys.subarray(0, count).includes(key));
+      for (const key of takenRetryKeys) {
+        const isAskedFor = checkIsSelected(wanted, key) || checkIsSelected(surrounding, key);
         if (isAskedFor && !checkIsSettled(key) && !pendingWantedFrameMap.has(key)) retryKeySet.add(key);
       }
     },
