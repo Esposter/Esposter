@@ -2,8 +2,8 @@ import type { BarrelLines } from "#src/models/precheck/BarrelLines";
 import type { ExportsGeneration } from "@esposter/configuration";
 
 import { readBarrelLines } from "#src/services/precheck/readBarrelLines";
-import { generateExports } from "@esposter/configuration";
 import { BARREL_FILE, COMPONENTS_DIRECTORY, SOURCE_DIRECTORY_NAME } from "@esposter/configuration/constants";
+import { generateExports } from "@esposter/configuration/generate-exports";
 import { withFinalizer } from "@esposter/shared";
 import { cpSync, mkdtempSync, rmSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -13,7 +13,8 @@ const SOURCE_FILE_REGEX = /\.(?:ts|vue)$/u;
 
 // The barrels the generator writes for a package, computed over a copy of its source so the committed barrels are never
 // Written. The copy keeps the modules and their exports, which is all the generator reads, and is removed either way.
-// The generator is this checkout's own, the one its build runs, so the barrels are checked against the commit's generator
+// The generator is read from this checkout's source rather than the built package, so a configuration change is checked
+// Before its build runs, against the generator that change wrote
 export const generateBarrelLines = (
   sourceDirectory: string,
   exportsGeneration: ExportsGeneration,
