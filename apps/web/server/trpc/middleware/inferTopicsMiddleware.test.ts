@@ -253,7 +253,7 @@ describe("inferTopicsMiddleware", () => {
   test("a signed-out query's topics carry an empty signature", async () => {
     expect.hasAssertions();
 
-    const context = await createMockContext();
+    const context = await createMockContext(null);
     await createTestCaller(context).readUser(v7());
 
     expect(readTopicsHeader(context.responseHeaders, "readUser").map(({ signature }) => signature)).toStrictEqual([""]);

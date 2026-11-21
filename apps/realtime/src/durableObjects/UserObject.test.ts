@@ -651,25 +651,9 @@ describe(UserObject, () => {
     expect(getTopicStub(topic).subscribe).not.toHaveBeenCalled();
   });
 
-  // A tab still running the client from before signatures sends its watch with no signature, which the frame reads as empty:
-  // Taken unverified while the Worker holds no secret, so the deploy that lands the code before the secret refuses none of it
-  test("a watch from a tab that predates signatures is taken while the Worker holds no secret", async () => {
-    expect.hasAssertions();
-
-    vi.stubEnv("TOPIC_WATCH_SECRET", undefined);
-    const { object } = createUserObject();
-    const topic: Topic = `post:${v7()}`;
-    const socket = await connect(object, { deviceId, sessionId });
-    await object.webSocketMessage(
-      socket as unknown as WebSocket,
-      JSON.stringify({ data: { readAt, topics: [{ topic }] }, type: "watch" }),
-    );
-
-    expect(getTopicStub(topic).subscribe).toHaveBeenCalledExactlyOnceWith(userId, readAt, undefined);
-  });
-
-  // Once the Worker holds the secret, the same stale watch is refused: the enforcement a tab reload is needed to pass
-  test("a watch from a tab that predates signatures is refused once the Worker holds a secret", async () => {
+  // A tab still running the client from before signatures sends its watch with no signature, which the frame refuses whatever
+  // The secret is: the stale tab is dropped unanswered, and a reload picks up a signed watch
+  test("a watch with no signature is refused even with the secret set", async () => {
     expect.hasAssertions();
 
     const { object } = createUserObject();

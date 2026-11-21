@@ -4,18 +4,15 @@ import { getTopicWatchPayload, TOPIC_WATCH_MAX_AGE_MS } from "@esposter/db-schem
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 // Whether a watch is one the server signed for the person it is made by: the signature covers exactly the topics it names, for
-// That person and that read's time, and the read began within the bound. With no secret set the watch is taken unverified, as
-// Every watch was before signatures, so a Worker not yet given the secret refuses none
+// That person and that read's time, and the read began within the bound. An empty or mismatched signature is refused
 export const checkTopicWatchSigned = (
   userId: string,
   { readAt, signature, topics }: TopicRead,
   now: number,
 ): boolean => {
-  const secret = process.env.TOPIC_WATCH_SECRET;
-  if (!secret) return true;
   if (now - readAt > TOPIC_WATCH_MAX_AGE_MS) return false;
 
-  const expected = createHmac("sha256", secret)
+  const expected = createHmac("sha256", process.env.TOPIC_WATCH_SECRET)
     .update(getTopicWatchPayload(userId, readAt, topics))
     .digest();
   const actual = Buffer.from(signature, "base64url");

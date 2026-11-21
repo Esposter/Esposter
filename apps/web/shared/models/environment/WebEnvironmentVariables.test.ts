@@ -25,11 +25,31 @@ describe("webEnvironmentVariablesSchema", () => {
     expect(secretNames.toSorted()).toStrictEqual(workerSecrets.web.toSorted());
   });
 
-  test("reads an unset or empty TOPIC_WATCH_SECRET as the one absent form, the empty string", () => {
+  test("refuses an unset or empty TOPIC_WATCH_SECRET, which has no absent form", () => {
     expect.hasAssertions();
 
     const { TOPIC_WATCH_SECRET } = webEnvironmentVariablesSchema.shape;
-    expect(TOPIC_WATCH_SECRET.parse(undefined)).toBe("");
-    expect(TOPIC_WATCH_SECRET.parse("")).toBe("");
+    expect(() => TOPIC_WATCH_SECRET.parse(undefined)).toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "expected": "string",
+          "code": "invalid_type",
+          "path": [],
+          "message": "Invalid input: expected string, received undefined"
+        }
+      ]]
+    `);
+    expect(() => TOPIC_WATCH_SECRET.parse("")).toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "origin": "string",
+          "code": "too_small",
+          "minimum": 1,
+          "inclusive": true,
+          "path": [],
+          "message": "Too small: expected string to have >=1 characters"
+        }
+      ]]
+    `);
   });
 });

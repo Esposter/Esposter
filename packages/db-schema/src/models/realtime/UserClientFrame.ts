@@ -9,9 +9,9 @@ import { z } from "zod";
 const watchFrameSchema = z.object({
   data: z.object({
     readAt: z.int().nonnegative(),
-    // Empty when the server holds no secret, and absent from a tab that predates signatures: the object reads both as no
-    // Signature to check, which it takes unverified while no secret is set and refuses once one is
-    signature: z.string().max(64).default(""),
+    // The server's signature over the read. A tab that predates signatures sends none, so its frame fails this schema and is
+    // Dropped unanswered, and an empty or mismatched signature is refused by the object
+    signature: z.string().max(64),
     topics: z.array(columnTopicSchema).min(1).max(MAX_READ_TOPICS),
   }),
   type: z.literal("watch"),
