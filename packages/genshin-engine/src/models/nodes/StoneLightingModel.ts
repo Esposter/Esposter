@@ -11,6 +11,14 @@ import { createSunVisibilityNode } from "#src/nodes/createSunVisibilityNode";
 import { diffuseColor, exp, normalView, normalWorld, positionWorld, texture, vec2 } from "three/tsl";
 import { LightingModel } from "three/webgpu";
 
+// A node of no type, checked to be a vec3 before it is read as one, so a node of any other type fails the build here
+// Rather than in the shader
+const checkIsVec3Node = (node: Node): node is Node<"vec3"> => node.nodeType === "vec3";
+const readVec3Node = (node: Node): Node<"vec3"> => {
+  if (!checkIsVec3Node(node)) throw new TypeError(`Expected a vec3 node, got ${String(node.nodeType)}`);
+  return node;
+};
+
 // The game's deferred pass as it lights the stone's G-buffer, with no highlight yet: the sun through the toon ramp,
 // Read at a half plus half the face's facing to it scaled by the sun's visibility there raised to a fifth
 // (`computeStoneRampCoordinate`), the sky's light as second order spherical harmonics over the world normal
@@ -31,12 +39,13 @@ export class StoneLightingModel extends LightingModel {
     return exp(this.stoneLight.heightDarkening.negate().mul(positionWorld.y.clamp(0, STONE_DARKENING_TOP)));
   }
 
-  // Three types the light's data and its builder's context loosely, so each is read as the node it is
+  // The light's direction and the reflected light's terms are nodes of no type in three's typings, so each is read through
+  // `readVec3Node`, which checks it is the vec3 it is read as
   override direct({ lightColor, lightDirection, reflectedLight }: LightingModelDirectInput): void {
     const { ramp, sunRadiance } = this.stoneLight;
     const visibility = createSunVisibilityNode(lightColor, sunRadiance);
     const coordinate = normalView
-      .dot(lightDirection as Node<"vec3">)
+      .dot(readVec3Node(lightDirection))
       .mul(visibility.pow(STONE_SHADOW_EXPONENT))
       .mul(0.5)
       .add(0.5);
@@ -45,7 +54,7 @@ export class StoneLightingModel extends LightingModel {
       .mul(STONE_RAMP_KNOT_COUNT - 1)
       .add(0.5)
       .div(STONE_RAMP_KNOT_COUNT);
-    (reflectedLight.directDiffuse as Node<"vec3">).addAssign(
+    readVec3Node(reflectedLight.directDiffuse).addAssign(
       texture(ramp, vec2(rampU, 0.5)).rgb.mul(diffuseColor.rgb).mul(this.createDarkeningNode()),
     );
   }
@@ -64,8 +73,10 @@ export class StoneLightingModel extends LightingModel {
       .add(harmonics.element(7).mul(x.mul(x).sub(z.mul(z))))
       .add(harmonics.element(8).mul(y.mul(y).mul(3).sub(1)))
       .add(heightFade.mul(positionWorld.y.mul(-STONE_HEIGHT_FALLOFF).exp()));
+    // Three types the builder's context as `unknown`, so it is the one cast left here: the lighting context it holds has
+    // The reflected light, and three's typings offer no narrower type to check it against
     const { reflectedLight } = builder.context as { reflectedLight: LightingModelReflectedLight };
-    (reflectedLight.indirectDiffuse as Node<"vec3">).addAssign(
+    readVec3Node(reflectedLight.indirectDiffuse).addAssign(
       ambient.mul(diffuseColor.rgb).mul(this.createDarkeningNode()),
     );
   }
