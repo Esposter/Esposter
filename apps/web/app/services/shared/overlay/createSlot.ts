@@ -21,7 +21,7 @@ export const createSlot = <TRow extends Versioned>(table: Table<TRow>, heldTable
   // The trie of this table's rows, typed by the row: the table's name is the one table whose rows the trie holds
   const readHeldTrie = () => (heldTables.value[table.name] ?? createKeyTrieNode<Versioned>()) as KeyTrieNode<TRow>;
   const writeHeldRow = (key: RowKey, row: TRow) => {
-    const heldTrie = heldTables.value[table.name] ?? createKeyTrieNode<Versioned>();
+    const heldTrie = readHeldTrie();
     heldTables.value[table.name] = heldTrie;
     writeKeyTrie(heldTrie, key, row);
     triggerRef(heldTables);
