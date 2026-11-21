@@ -25,20 +25,16 @@ interface BaseMutationOptions {
   // Nothing. Writes only — a read has no reason to invalidate anything, which is why this is not on QueryOptions
   invalidates?: CacheTag[] | undefined;
   isExclusive?: true | undefined;
-  isSupersede?: true | undefined;
   key: PropertyKey;
   onError?: ((error: Error) => Promisable<void>) | undefined;
 }
 
 interface ExecuteMutation {
   <TResult>(
-    mutate: (checkIsStale: () => boolean) => Promise<TResult>,
+    mutate: () => Promise<TResult>,
     options: AwaitedMutationOptions<TResult>,
   ): Promise<MutationOutcome<TResult>>;
-  <TResult>(
-    mutate: (checkIsStale: () => boolean) => Promise<TResult>,
-    options: OptimisticMutationOptions<TResult>,
-  ): void;
+  <TResult>(mutate: () => Promise<TResult>, options: OptimisticMutationOptions<TResult>): void;
 }
 
 // A write the screen shows when it is sent. `reconcile` takes what only the server issues, such as a version token the
@@ -65,9 +61,6 @@ interface QueryOptions<TResult> {
 export const useMutation = () => {
   const cacheStore = useCacheStore();
   const { invalidateTags } = cacheStore;
-  // Which call is the latest for a target. Only supersede-mode operations take a number here — every read,
-  // And the writes that opt in; a queued write is the latest for its target by the time it runs
-  const keyCallIdMap = new Map<PropertyKey, number>();
   const keyQueueMap = new Map<PropertyKey, Promise<void>>();
   // The in-flight outcome of each target's exclusive read, so a second caller for data already on its way
   // Awaits that response instead of issuing a duplicate request
@@ -76,25 +69,6 @@ export const useMutation = () => {
   const isPending = computed(() => keyPendingCountMap.value.size > 0);
   // Per-key pending for per-item surfaces (a table row's own button)
   const checkIsPending = (key: PropertyKey) => keyPendingCountMap.value.has(key);
-  const getCheckIsStale = (key: PropertyKey) => {
-    const id = (keyCallIdMap.get(key) ?? 0) + 1;
-    keyCallIdMap.set(key, id);
-    return () => id !== keyCallIdMap.get(key);
-  };
-  // Marks whatever is in flight for a target stale without issuing anything of its own: a value that reached
-  // The caller from outside this primitive — a subscription push — is newer than a read still on its way, and
-  // The read that lands after it must not write the older value back over it. Nothing in flight is nothing to
-  // Supersede, which is also what keeps the call-id bookkeeping bounded to the calls that exist
-  const supersedeKey = (key: PropertyKey) => {
-    if (!keyPendingCountMap.value.has(key)) return;
-
-    getCheckIsStale(key);
-    // Whatever was joinable answers for a call this just made stale, so it resolves `Stale` — applying no state
-    // And running no callback. A later exclusive caller joining it would resolve holding nothing, so the entry
-    // Goes the same way a superseding read's does. The finalizer's identity check is what keeps an older read
-    // From dropping the entry a newer one registered after it
-    keySharedQueryMap.delete(key);
-  };
   const claimKey = (key: PropertyKey) => {
     keyPendingCountMap.value.set(key, (keyPendingCountMap.value.get(key) ?? 0) + 1);
   };
@@ -103,7 +77,6 @@ export const useMutation = () => {
     if (pendingCount <= 1) {
       // No call remains in flight for this key, so its bookkeeping can be dropped wholesale
       keyPendingCountMap.value.delete(key);
-      keyCallIdMap.delete(key);
       keyQueueMap.delete(key);
     } else keyPendingCountMap.value.set(key, pendingCount - 1);
   };
@@ -134,7 +107,7 @@ export const useMutation = () => {
   // Reads are ordered by the run scope the caller holds: a newer read of the key aborts the one before it, and only the
   // Read the scope holds current commits its answer and its topic watch, so an older answer that lands last replaces neither
   const executeQuery = <TResult>(
-    query: (checkIsStale: () => boolean) => Promise<TResult>,
+    query: () => Promise<TResult>,
     options: QueryOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
     const { isExclusive, isUnwatched, key, onError, onSuccess, runScope } = options;
@@ -143,19 +116,13 @@ export const useMutation = () => {
     // The whole read — the joiner sees the same data and the same outcome one request later
     if (sharedQuery) return sharedQuery;
 
-    const checkIsStale = getCheckIsStale(key);
     claimKey(key);
-    // This read is the latest for the target now, so whatever was joinable is the answer it just superseded —
-    // A stale response applies no state and runs no callback, and a later caller joining it would resolve
-    // Holding nothing. It issues its own read instead
+    // This read is the newest for the target now, so whatever was joinable is an answer it supersedes: that run commits
+    // Nothing, and a later caller joining it would resolve holding nothing. It issues its own read instead
     keySharedQueryMap.delete(key);
-    // The outcome of this read once its run commits, which stays Stale for a run the scope superseded or aborted
-    let committed: MutationOutcome<TResult> = { status: MutationStatus.Stale };
+    // The outcome of this read once its run commits. A run the scope superseded or aborted commits nothing and is dropped
+    let committed: MutationOutcome<TResult> = { status: MutationStatus.Dropped };
     const commit = async ({ reads, result }: { reads: TopicRead[]; result: TResult }) => {
-      // A supersede write on this key made the read stale while it was in flight, so the target already holds a newer value
-      // Than this answer and nothing here applies it. The run scope only sees its own key's newer runs, not this one
-      if (checkIsStale()) return;
-
       committed = { result, status: MutationStatus.Succeeded };
       await onSuccess?.(result);
       watchTopics(
@@ -168,9 +135,9 @@ export const useMutation = () => {
       async () => {
         const settled = await settleOperation(
           async () => {
-            await runScope.run(() => collectTopics(() => query(checkIsStale)), commit, noop, key);
+            await runScope.run(() => collectTopics(query), commit, noop, key);
           },
-          { checkIsStale, isSilentWhenStale: true, onError },
+          { onError },
         );
         return settled.status === MutationStatus.Failed ? settled : committed;
       },
@@ -186,15 +153,13 @@ export const useMutation = () => {
     if (isExclusive) keySharedQueryMap.set(key, outcome as Promise<MutationOutcome<never>>);
     return outcome;
   };
-  // Writes queue per target: discarding one loses its error and its rollback, so it is never dropped by
-  // Default — a caller opts into latest-wins with isSupersede where dropping the earlier call is the intent
+  // Writes queue per target: discarding one loses its error and its rollback, so it is never dropped by default
   const runMutation = <TResult>(
-    mutate: (checkIsStale: () => boolean) => Promise<TResult>,
+    mutate: () => Promise<TResult>,
     {
       applyOptimistic,
       invalidates,
       isExclusive,
-      isSupersede,
       key,
       onError,
       onSuccess,
@@ -205,7 +170,6 @@ export const useMutation = () => {
   ): Promise<MutationOutcome<TResult>> => {
     if (isExclusive && keyPendingCountMap.value.has(key)) return Promise.resolve({ status: MutationStatus.Dropped });
 
-    const checkIsStale = isSupersede ? getCheckIsStale(key) : () => false;
     claimKey(key);
     // Composed onto this write's own success callback rather than handled inside settleOperation, which the read path
     // Shares: a read carries no invalidates and so cannot reach this at all. It runs after the write landed
@@ -216,33 +180,22 @@ export const useMutation = () => {
           await invalidateTags(invalidates);
         }
       : onSuccess;
-    const run = () =>
-      settleOperation(mutate, {
-        applyOptimistic,
-        checkIsStale,
-        isSilentWhenStale: false,
-        onError,
-        onSuccess: onSettled,
-      });
+    const run = () => settleOperation(mutate, { applyOptimistic, onError, onSuccess: onSettled });
     // The finalizer guarantees pending and queue bookkeeping unwind even when applyOptimistic or a callback
     // Throws, so a thrown callback can never strand the key as permanently pending or wedge its queue
-    return isSupersede
-      ? withFinalizerAsync(run, () => {
-          releaseKey(key);
-        })
-      : enqueue(key, run);
+    return enqueue(key, run);
   };
   // The two forms of a write, the optimistic one last. It hands its caller nothing, so no step the screen takes can
   // Wait on its answer: the write still runs on its key's queue, and whatever the answer brings is the rollback's,
   // The alert's or `reconcile`'s. It floats as a synchronized function, so a test or a shutdown that needs every write
   // Landed drains it with the rest
   const executeMutation = (<TResult>(
-    mutate: (checkIsStale: () => boolean) => Promise<TResult>,
+    mutate: () => Promise<TResult>,
     options: AwaitedMutationOptions<TResult> | OptimisticMutationOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> | void => {
     if (options.awaitedBecause) return runMutation(mutate, options);
     getSynchronizedFunction(() => runMutation(mutate, { ...options, onSuccess: options.reconcile }))();
     return undefined;
   }) as ExecuteMutation;
-  return { checkIsPending, executeMutation, executeQuery, isPending, supersedeKey, whenSettled };
+  return { checkIsPending, executeMutation, executeQuery, isPending, whenSettled };
 };

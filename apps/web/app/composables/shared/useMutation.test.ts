@@ -217,102 +217,6 @@ describe(useMutation, () => {
     expect(startOrderWhileFirstInFlight).toStrictEqual(["first", "second"]);
   });
 
-  test("rolls back and alerts a superseded write that fails", async () => {
-    expect.hasAssertions();
-
-    const rollback = vi.fn<() => void>();
-    const { executeMutation } = useMutation();
-    const alertStore = useAlertStore();
-    const { alerts } = storeToRefs(alertStore);
-    const { promise: supersededPromise, reject: rejectSuperseded } = Promise.withResolvers<void>();
-    executeMutation(() => supersededPromise, { applyOptimistic: () => rollback, isSupersede: true, key });
-    executeMutation(() => Promise.resolve(), { applyOptimistic: () => noop, isSupersede: true, key });
-    await flushPromises();
-    rejectSuperseded(error);
-    await flushPromises();
-
-    expect(rollback).toHaveBeenCalledExactlyOnceWith();
-    expect(alerts.value).toHaveLength(1);
-  });
-
-  test("reports a superseded write as stale and drops its onSuccess when an overlapping supersede write lands", async () => {
-    expect.hasAssertions();
-
-    const supersededOnSuccess = vi.fn<() => void>();
-    const freshOnSuccess = vi.fn<() => void>();
-    const { executeMutation } = useMutation();
-    const { promise: supersededPromise, resolve: resolveSuperseded } = Promise.withResolvers<void>();
-    const supersededWrite = executeMutation(() => supersededPromise, {
-      awaitedBecause: AwaitedReason.ServerIssuedValue,
-      isSupersede: true,
-      key,
-      onSuccess: supersededOnSuccess,
-    });
-    await executeMutation(() => Promise.resolve(), {
-      awaitedBecause: AwaitedReason.ServerIssuedValue,
-      isSupersede: true,
-      key,
-      onSuccess: freshOnSuccess,
-    });
-    resolveSuperseded();
-
-    await expect(supersededWrite).resolves.toStrictEqual({ status: MutationStatus.Stale });
-    expect(supersededOnSuccess).not.toHaveBeenCalled();
-    expect(freshOnSuccess).toHaveBeenCalledTimes(1);
-  });
-
-  test("runs reads for one target concurrently and keeps only the latest", async () => {
-    expect.hasAssertions();
-
-    const supersededOnSuccess = vi.fn<() => void>();
-    const freshOnSuccess = vi.fn<() => void>();
-    const { executeQuery } = useMutation();
-    const runScope = createRunScope();
-    const { promise: supersededPromise, resolve: resolveSuperseded } = Promise.withResolvers<void>();
-    const supersededRead = executeQuery(() => supersededPromise, { key, onSuccess: supersededOnSuccess, runScope });
-    await executeQuery(() => Promise.resolve(), { key, onSuccess: freshOnSuccess, runScope });
-    resolveSuperseded();
-
-    await expect(supersededRead).resolves.toStrictEqual({ status: MutationStatus.Stale });
-    expect(supersededOnSuccess).not.toHaveBeenCalled();
-    expect(freshOnSuccess).toHaveBeenCalledTimes(1);
-  });
-
-  test("drops an in-flight read's answer once a supersede write on its key has landed", async () => {
-    expect.hasAssertions();
-
-    const readOnSuccess = vi.fn<() => void>();
-    const { executeMutation, executeQuery } = useMutation();
-    const runScope = createRunScope();
-    const { promise: readPromise, resolve: resolveRead } = Promise.withResolvers<string>();
-    const read = executeQuery(() => readPromise, { key, onSuccess: readOnSuccess, runScope });
-    await executeMutation(() => Promise.resolve(result), {
-      awaitedBecause: AwaitedReason.ServerIssuedValue,
-      isSupersede: true,
-      key,
-    });
-    resolveRead("older");
-
-    await expect(read).resolves.toStrictEqual({ status: MutationStatus.Stale });
-    expect(readOnSuccess).not.toHaveBeenCalled();
-  });
-
-  test("drops a superseded read's failure without alerting", async () => {
-    expect.hasAssertions();
-
-    const { executeQuery } = useMutation();
-    const runScope = createRunScope();
-    const alertStore = useAlertStore();
-    const { alerts } = storeToRefs(alertStore);
-    const { promise: supersededPromise, reject: rejectSuperseded } = Promise.withResolvers<void>();
-    const supersededRead = executeQuery(() => supersededPromise, { key, runScope });
-    await executeQuery(() => Promise.resolve(), { key, runScope });
-    rejectSuperseded(error);
-
-    await expect(supersededRead).resolves.toStrictEqual({ status: MutationStatus.Stale });
-    expect(alerts.value).toHaveLength(0);
-  });
-
   test("shares one in-flight exclusive read with the caller that joined it", async () => {
     expect.hasAssertions();
 
@@ -363,7 +267,7 @@ describe(useMutation, () => {
     resolveExclusive("exclusive");
 
     await expect(joinedRead).resolves.toStrictEqual({ result: "joined", status: MutationStatus.Succeeded });
-    await expect(exclusiveRead).resolves.toStrictEqual({ status: MutationStatus.Stale });
+    await expect(exclusiveRead).resolves.toStrictEqual({ status: MutationStatus.Dropped });
     expect(onSuccess.mock.calls).toStrictEqual([["replacement"], ["joined"]]);
   });
 
@@ -401,7 +305,7 @@ describe(useMutation, () => {
     expect(query).toHaveBeenCalledTimes(2);
   });
 
-  test("alerts a read that fails while it is still the latest", async () => {
+  test("alerts a read that fails", async () => {
     expect.hasAssertions();
 
     const { executeQuery } = useMutation();
