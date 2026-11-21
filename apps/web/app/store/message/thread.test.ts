@@ -254,7 +254,8 @@ describe(useThreadStore, () => {
       return replies;
     });
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     goOnline();
     await mountThreadDrawer();
