@@ -35,7 +35,7 @@ const createEngine = (files: Record<string, string>): GuardEngine => ({
   },
 });
 
-describe("registerWorkflowGuard", () => {
+describe(registerWorkflowGuard, () => {
   const HAIKU_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'haiku' });";
   const MIXED_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'opus' });";
 
@@ -46,7 +46,7 @@ describe("registerWorkflowGuard", () => {
     const next = vi.fn<Next>(() => ({}));
 
     await expect(handler(createEngine({}), { script: HAIKU_SCRIPT }, next)).resolves.toStrictEqual({});
-    expect(next).toHaveBeenCalledWith({ script: HAIKU_SCRIPT });
+    expect(next).toHaveBeenCalledExactlyOnceWith({ script: HAIKU_SCRIPT });
   });
 
   test("a haiku-only script at a path launches", async () => {
@@ -58,7 +58,7 @@ describe("registerWorkflowGuard", () => {
     await expect(
       handler(createEngine({ "/scripts/cleanup.js": HAIKU_SCRIPT }), { scriptPath: "/scripts/cleanup.js" }, next),
     ).resolves.toStrictEqual({});
-    expect(next).toHaveBeenCalledWith({ scriptPath: "/scripts/cleanup.js" });
+    expect(next).toHaveBeenCalledExactlyOnceWith({ scriptPath: "/scripts/cleanup.js" });
   });
 
   test("a workflow with an agent on another model is refused", async () => {
@@ -79,7 +79,7 @@ describe("registerWorkflowGuard", () => {
     const { handler } = register();
     const next = vi.fn<Next>(() => ({}));
 
-    await expect(handler(createEngine({}), { name: "other" }, next)).resolves.toStrictEqual({
+    await expect(handler(createEngine({}), { name: "" }, next)).resolves.toStrictEqual({
       deny: WORKFLOW_MODEL_REFUSAL,
     });
     expect(next).not.toHaveBeenCalled();
@@ -104,6 +104,6 @@ describe("registerWorkflowGuard", () => {
     const next = vi.fn<Next>(() => ({}));
 
     expect(letLaunchThrough(createEngine({}), { script: MIXED_SCRIPT }, next)).toStrictEqual({});
-    expect(next).toHaveBeenCalledWith({ script: MIXED_SCRIPT });
+    expect(next).toHaveBeenCalledExactlyOnceWith({ script: MIXED_SCRIPT });
   });
 });

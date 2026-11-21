@@ -5,7 +5,6 @@ import { atom, read } from "claude-code";
 
 import { WardAnswer, WardAnswers } from "../../models/WardAnswer";
 import { InitialState } from "../InitialState";
-import { letThrough } from "../letThrough";
 import { getCollidingRecord } from "./getCollidingRecord";
 import { getRecordsWithEdit } from "./getRecordsWithEdit";
 import { readRecords } from "./readRecords";
@@ -53,6 +52,9 @@ const ward = async (
 
   return result;
 };
+
+// A hook that rejects lets its call through: a guard that blocked on its own failure would block every call after it
+const letThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
 
 // The question dismissed or the record unreadable alike lets the edit through, since Cancel is the person's way to stop one
 export const registerWard = (on: On): void => {

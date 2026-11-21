@@ -3,7 +3,6 @@ import type { EngineInterface, On, ToolCallResult } from "claude-code";
 import { atom, read } from "claude-code";
 
 import { InitialState } from "../InitialState";
-import { letThrough } from "../letThrough";
 import { joinDirectory } from "../shell/joinDirectory";
 import { getCheckoutPeer } from "./getCheckoutPeer";
 import { getParentFolder } from "./getParentFolder";
@@ -44,6 +43,9 @@ const wholeIndex = async (
   const peerPath = getCheckoutPeer(records, checkoutRoot, await $.session.id(), await $.clock.now());
   return peerPath === undefined ? proceed() : { deny: getWholeIndexDenyReason(refusal.form, peerPath) };
 };
+
+// A hook that rejects lets its call through: a guard that blocked on its own failure would block every call after it
+const letThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
 
 export const registerWholeIndex = (on: On): void => {
   // eslint-disable-next-line no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise

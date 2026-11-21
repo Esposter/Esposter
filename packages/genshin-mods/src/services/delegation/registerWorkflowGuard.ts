@@ -1,9 +1,11 @@
-import type { On } from "claude-code";
+import type { EngineInterface, On } from "claude-code";
 
 import { WORKFLOW_MODEL_REFUSAL } from "../constants";
-import { letThrough } from "../letThrough";
 import { checkIsHaikuOnlyScript } from "./checkIsHaikuOnlyScript";
 import { readWorkflowScript } from "./readWorkflowScript";
+
+// A hook that rejects lets its call through: a guard that blocked on its own failure would block every call after it
+const letThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
 
 export const registerWorkflowGuard = (on: On): void => {
   // A workflow's agents are subagents, so each one must name haiku, as an agent launch does. A saved workflow named with

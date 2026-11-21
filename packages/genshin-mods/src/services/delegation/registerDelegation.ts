@@ -7,7 +7,6 @@ import type { DelegationCall } from "../../models/DelegationCall";
 import { DelegationStep } from "../../models/DelegationStep";
 import { LOOKUP_TOOLS, RESET_TOOLS, SHELL_TOOLS } from "../constants";
 import { InitialState } from "../InitialState";
-import { letThrough } from "../letThrough";
 import { getCallStep } from "./getCallStep";
 import { getLaunchRefusal } from "./getLaunchRefusal";
 import { getNextStreak } from "./getNextStreak";
@@ -23,6 +22,9 @@ const countCall = async ($: EngineInterface, call: DelegationCall): Promise<stri
   const streak = await update($, lookupStreakAtom, (value) => getNextStreak(value, step));
   return step === DelegationStep.Lookup ? getNudge(streak) : undefined;
 };
+
+// A hook that rejects lets its call through: a guard that blocked on its own failure would block every call after it
+const letThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
 
 export const registerDelegation = (on: On): void => {
   // An agent launch on any model but haiku is refused before it counts. A nudge rides on the call's own result as
