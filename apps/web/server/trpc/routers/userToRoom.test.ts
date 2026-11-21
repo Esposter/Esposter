@@ -89,15 +89,28 @@ describe("userToRoomRouter", () => {
     expect(userToRoom.notificationType).toBe(NotificationType.DirectMessage);
   });
 
-  test("fails readMyUsersToRooms for non-member", async () => {
+  test("reads no membership for a non-member", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const nonMemberUserToRoomCaller = createCallerFactory(userToRoomRouter)(await createUserContext());
 
-    await expect(
-      nonMemberUserToRoomCaller.readMyUsersToRooms({ roomIds: [newRoom.id] }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(nonMemberUserToRoomCaller.readMyUsersToRooms({ roomIds: [newRoom.id] })).resolves.toStrictEqual([]);
+  });
+
+  // A reader offline while the membership was removed still holds its live row, and absence never removes a row, so the
+  // Read answers the tombstone the leave left. The room list drops the room by that row, not by a read that omits it
+  test("answers the tombstone of a membership its member left", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    const memberRoomCaller = createCallerFactory(roomRouter)(await createUserContext(member));
+    const memberUserToRoomCaller = createCallerFactory(userToRoomRouter)(await createUserContext(member));
+    const leftMembership = await memberRoomCaller.leaveRoom(newRoom.id);
+    const myUsersToRooms = await memberUserToRoomCaller.readMyUsersToRooms({ roomIds: [newRoom.id] });
+
+    expect(myUsersToRooms).toStrictEqual([leftMembership]);
   });
 
   test("clearMentionCount is idempotent", async () => {

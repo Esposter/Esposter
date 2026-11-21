@@ -4,12 +4,13 @@ import { requirePartitionKey } from "#src/services/message/requirePartitionKey";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
+import { chunk, MAX_READ_LIMIT } from "@esposter/shared";
 
 export const useReadRooms = async () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { arriveRooms, readItems, readMoreItems } = roomStore;
-  const { currentRoomId } = storeToRefs(roomStore);
+  const { currentRoomId, rooms } = storeToRefs(roomStore);
   const roleStore = useRoleStore();
   const { readMyPermissions, readRoles } = roleStore;
   const userToRoomStore = useUserToRoomStore();
@@ -34,11 +35,25 @@ export const useReadRooms = async () => {
     markMyUserToRoomsLoaded();
     return { ...page, items: page.items.map(({ id }) => ({ id })) };
   };
+  // The page names only the rooms that are live, so a room the list shows that the page leaves out may have been removed
+  // While the reader was offline. Absence never removes a row, so each one's membership is read, and its answer is the
+  // Removal's tombstone, which takes the room off the list
+  const readUnlistedMemberships = (listedRoomIds: RoomInMessage["id"][]) => {
+    const listedRoomIdSet = new Set(listedRoomIds);
+    const unlistedRoomIds = rooms.value.map(({ id }) => id).filter((roomId) => !listedRoomIdSet.has(roomId));
+    return Promise.all(chunk(unlistedRoomIds, MAX_READ_LIMIT).map((roomIds) => readMyUsersToRooms(roomIds)));
+  };
+  // The first page is the resume read: it runs on mount and on a topic change, so a reader who was offline is answered
+  // Its removals by it
   const readRooms = () => {
     requirePartitionKey(session.value?.user.id, readRooms.name);
-    return readItems(() =>
-      readRoomPage(() => $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {})),
-    );
+    return readItems(async () => {
+      const page = await readRoomPage(() =>
+        $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {}),
+      );
+      await readUnlistedMemberships(page.items.map(({ id }) => id));
+      return page;
+    });
   };
   const readMoreRooms = (onComplete: () => void) => {
     requirePartitionKey(session.value?.user.id, readMoreRooms.name);

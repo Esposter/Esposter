@@ -141,6 +141,32 @@ describe(useRoomStore, () => {
     expect(rooms.value).toStrictEqual([]);
   });
 
+  // A reader offline while the room was removed holds the room and its live membership from before. The page the resume
+  // Read answers names only live rooms, so it leaves the room out, and absence never removes a row: the read names the
+  // Held membership the page left out, and its tombstone is the answer that takes the room off the list
+  test("a resume read drops a room removed while the reader was offline", async () => {
+    expect.hasAssertions();
+
+    const session = { user: { id: v7() } };
+    useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
+    pushRooms(first);
+    trpcMsw.room.readRooms.query(() => ({ items: [], nextCursor: "" }));
+    trpcMsw.userToRoom.readMyUsersToRooms.query(({ input }) =>
+      input.roomIds.includes(first.id)
+        ? [createUserToRoom({ deletedAt: new Date(0), roomId: first.id, userId: session.user.id, version: 1 })]
+        : [],
+    );
+    trpcMsw.role.readMyPermissions.query(() => []);
+    trpcMsw.role.readRoles.query(() => []);
+    const roomStore = useRoomStore();
+    const { rooms } = storeToRefs(roomStore);
+    const { readRooms } = await useReadRooms();
+    await readRooms();
+    await flushPromises();
+
+    expect(rooms.value).toStrictEqual([]);
+  });
+
   test("a cached page restores its rooms at their versions, and the list shows them once the membership is held", () => {
     expect.hasAssertions();
 
