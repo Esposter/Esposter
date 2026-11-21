@@ -1,22 +1,15 @@
 // @vitest-environment nuxt
 import type { PostInPostWithRelations } from "@esposter/db-schema";
-import type { VueWrapper } from "@vue/test-utils";
 
 import PostCommentUpdateRichTextEditor from "#src/components/Post/Comment/UpdateRichTextEditor.vue";
 import PostDescriptionRichTextEditor from "#src/components/Post/Description/RichTextEditor.vue";
 import { createPost } from "#src/services/post/createPost.test";
+import { findButton } from "#src/services/shared/findButton.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
-
-const findButton = (component: VueWrapper, text: string) => {
-  const button = component.findAll("button").find((candidate) => candidate.text() === text);
-  if (!button) throw new Error(`no ${text} button`);
-
-  return button.element as HTMLButtonElement;
-};
 
 describe("postCommentUpdateRichTextEditor", () => {
   const { trpcMsw } = setupMswTrpc();

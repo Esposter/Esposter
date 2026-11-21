@@ -1,21 +1,14 @@
 // @vitest-environment nuxt
 import type { ClientMessage } from "#src/models/message/ClientMessage";
-import type { VueWrapper } from "@vue/test-utils";
 
 import MessageModelMessageEditor from "#src/components/Message/Model/Message/Editor.vue";
 import { createMessage } from "#src/services/message/message/createMessage.test";
+import { findButton } from "#src/services/shared/findButton.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
-
-const findButton = (component: VueWrapper, text: string) => {
-  const button = component.findAll("button").find((candidate) => candidate.text() === text);
-  if (!button) throw new Error(`no ${text} button`);
-
-  return button.element as HTMLButtonElement;
-};
 
 describe("messageModelMessageEditor", () => {
   const { trpcMsw } = setupMswTrpc();
