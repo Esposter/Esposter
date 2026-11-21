@@ -17,67 +17,65 @@ import { LOGIN_DOOR_MESH } from "#src/services/genshinAssets/shared/constants";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { Quaternion, Vector3 } from "three";
 
+interface ComponentArrangement {
+  explainedOffsets: Record<
+    string,
+    (placements: readonly AssetPlacement[], clips: readonly DecodedClip[]) => [number, number]
+  >;
+  families: ArrangementFamily[];
+  ratios: Record<string, ArrangementRatio>;
+}
+
+// The arrangement of a component with no parts laid out in a witness, one object every such component refers to
+const EMPTY_ARRANGEMENT: ComponentArrangement = { explainedOffsets: {}, families: [], ratios: {} };
+
 // Each component's arrangement: the ratios its references show between parts that meet, its fitted families, each
 // Beside the exports' objects it stands for, composed as the family stands its parts, and how far across and up the
 // Game's own data stands each family of the witness off its laid-out place at run time, a family not named standing
 // At its place
-export const DerivedAssetComponentArrangementMap: Record<
-  DerivedAssetComponent,
-  {
-    explainedOffsets: Record<
-      string,
-      (placements: readonly AssetPlacement[], clips: readonly DecodedClip[]) => [number, number]
-    >;
-    families: ArrangementFamily[];
-    ratios: Record<string, ArrangementRatio>;
-  }
-> = {
+export const DerivedAssetComponentArrangementMap: Record<DerivedAssetComponent, ComponentArrangement> = {
   // The animals and the fishing scene have no parts laid out in a witness, so neither has an arrangement of its own
-  [DerivedAssetComponent.Animals]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.Animals]: EMPTY_ARRANGEMENT,
   // Each sub-area with a catalogued extent has no arrangement of its own: its parts are its region's
-  [DerivedAssetComponent.ArdraviValley]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.AshavanRealm]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.AshveilPeak]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Atocpan]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.AvidyaForest]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.BasinOfUnnumberedFlames]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.BelleauRegion]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.BerylRegion]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.BishuiPlain]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.BrightcrownMountains]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Character]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.ChenyuValeSouthernMountain]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.ChenyuValeUpperVale]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.CoatepecMountain]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.CourtOfFontaineRegion]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.DesertOfHadramaveth]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Dragonspine]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.EasybreezeHolidayResort]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.ErinnyesForest]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.EverfrozenEarth]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Fishing]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.ArdraviValley]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.AshavanRealm]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.AshveilPeak]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Atocpan]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.AvidyaForest]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.BasinOfUnnumberedFlames]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.BelleauRegion]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.BerylRegion]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.BishuiPlain]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.BrightcrownMountains]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Character]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.ChenyuValeSouthernMountain]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.ChenyuValeUpperVale]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.CoatepecMountain]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.CourtOfFontaineRegion]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.DesertOfHadramaveth]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Dragonspine]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.EasybreezeHolidayResort]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.ErinnyesForest]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.EverfrozenEarth]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Fishing]: EMPTY_ARRANGEMENT,
   // The Court's parts stand where the world's own data places them, as Windrise's do, so its families wait on the export
-  [DerivedAssetComponent.Fontaine]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.FontaineResearchInstituteOfKineticEnergyEngineeringRegion]: {
-    explainedOffsets: {},
-    families: [],
-    ratios: {},
-  },
-  [DerivedAssetComponent.GalesongHill]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.GavirehLajavard]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.HiisiIsland]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Hud]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.HypostyleDesert]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.Fontaine]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.FontaineResearchInstituteOfKineticEnergyEngineeringRegion]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.GalesongHill]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.GavirehLajavard]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.HiisiIsland]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Hud]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.HypostyleDesert]: EMPTY_ARRANGEMENT,
   // Inazuma City's parts stand where the city's own data places them, as Windrise's do, so its families wait on the export
-  [DerivedAssetComponent.Inazuma]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Kannazuka]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.LandOfLowerSetekh]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.LandOfUpperSetekh]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.LempoIsle]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.LiffeyRegion]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Lisha]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.Inazuma]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Kannazuka]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.LandOfLowerSetekh]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.LandOfUpperSetekh]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.LempoIsle]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.LiffeyRegion]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Lisha]: EMPTY_ARRANGEMENT,
   // Liyue Harbor's parts stand where the city's own data places them, as Windrise's do, so its families wait on the export
-  [DerivedAssetComponent.Liyue]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.Liyue]: EMPTY_ARRANGEMENT,
   [DerivedAssetComponent.Login]: {
     // The towers' row and its bridges keep their laid places while every block of the walkway rises under the camera,
     // So the scene, which stands the walkway risen, stands them the lift lower
@@ -158,50 +156,50 @@ export const DerivedAssetComponentArrangementMap: Record<
       },
     },
   },
-  [DerivedAssetComponent.LokapalaJungle]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.LostNursery]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Minlin]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.LokapalaJungle]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.LostNursery]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Minlin]: EMPTY_ARRANGEMENT,
   // Mondstadt's parts stand where the city's own data places them, as Windrise's do, so its families wait on the export
-  [DerivedAssetComponent.Mondstadt]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.MorteRegion]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.MtLaixin]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.NarukamiIsland]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.Mondstadt]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.MorteRegion]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.MtLaixin]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.NarukamiIsland]: EMPTY_ARRANGEMENT,
   // The People of the Springs' parts stand where the world's own data places them, as Windrise's do
-  [DerivedAssetComponent.Natlan]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.Natlan]: EMPTY_ARRANGEMENT,
   // Nasha Town's parts stand where the world's own data places them, as Windrise's do
-  [DerivedAssetComponent.NodKrai]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.NostoiRegion]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Ochkanatlan]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.PahaIsle]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.NodKrai]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.NostoiRegion]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Ochkanatlan]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.PahaIsle]: EMPTY_ARRANGEMENT,
   // Lumine is no world part, so she has no ratios or families to fit yet
-  [DerivedAssetComponent.PlayerGirl]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Props]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.QiongjiEstuary]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.QuahuacanCliff]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.RealmOfFarakhkert]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.SeaOfClouds]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.SeiraiIsland]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.PlayerGirl]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Props]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.QiongjiEstuary]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.QuahuacanCliff]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.RealmOfFarakhkert]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.SeaOfClouds]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.SeiraiIsland]: EMPTY_ARRANGEMENT,
   // Snezhnograd's parts stand where the world's own data places them, as Windrise's do
-  [DerivedAssetComponent.Snezhnaya]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.StarfellValley]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.Snezhnaya]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.StarfellValley]: EMPTY_ARRANGEMENT,
   // Sumeru City's parts stand where the world's own data places them, as Windrise's do
-  [DerivedAssetComponent.Sumeru]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.TequemecanValley]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.TezcatepetoncoRange]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.TheChasm]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.ToyacSprings]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Traveler]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.TsurumiIsland]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Vanarana]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.VissudhaField]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.VoidseaOutlook]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.WatatsumiIsland]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.WavechaserPlain]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.Weapons]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.WindrestPeak]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.Sumeru]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.TequemecanValley]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.TezcatepetoncoRange]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.TheChasm]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.ToyacSprings]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Traveler]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.TsurumiIsland]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Vanarana]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.VissudhaField]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.VoidseaOutlook]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.WatatsumiIsland]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.WavechaserPlain]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.Weapons]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.WindrestPeak]: EMPTY_ARRANGEMENT,
   // Windrise's parts stand where the world's own data places them, so its ratios wait on a fitted family to hold. Its plants
   // Are the families it fits, the grass and the trees, each beside the game's placements of it
   [DerivedAssetComponent.Windrise]: { explainedOffsets: {}, families: WindrisePlantArrangementFamilies, ratios: {} },
-  [DerivedAssetComponent.WindwailHighland]: { explainedOffsets: {}, families: [], ratios: {} },
-  [DerivedAssetComponent.YashioriIsland]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.WindwailHighland]: EMPTY_ARRANGEMENT,
+  [DerivedAssetComponent.YashioriIsland]: EMPTY_ARRANGEMENT,
 };
