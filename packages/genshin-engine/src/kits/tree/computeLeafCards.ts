@@ -2,19 +2,16 @@ import type { LeafCards } from "#src/models/kits/tree/LeafCards";
 import type { TreeCluster } from "#src/models/kits/tree/TreeCluster";
 import type { TreeOptions } from "#src/models/kits/tree/TreeOptions";
 
-import { sampleTreeNormalField } from "#src/kits/tree/sampleTreeNormalField";
+import { writeTreeNormalField } from "#src/kits/tree/writeTreeNormalField";
 import { writeQuadIndices } from "#src/kits/writeQuadIndices";
 import { LEAF_SHAPE_KEPT_SHARE } from "#src/nodes/constants";
 import { createSeededRandom } from "#src/random/createSeededRandom";
 
 const VERTICES_PER_CARD = 4;
 const INDICES_PER_CARD = 6;
-const CORNER_SIGNS = [
-  [-1, -1],
-  [1, -1],
-  [1, 1],
-  [-1, 1],
-] as const;
+// Each corner's sign along the card's tangent and along its bitangent, in the order the corners are written
+const CORNER_TANGENT_SIGNS = [-1, 1, 1, -1];
+const CORNER_BITANGENT_SIGNS = [-1, -1, 1, 1];
 // Leaf cards scattered through a sphere around each cluster's centre, each facing a random way, as many as keep the
 // Cluster's leaf area times the tree's scale between them. Every vertex takes its normal from the tree's normal field,
 // Or points out from its cluster's centre where none is given, never off its card, so the toon ramp shades the crown as
@@ -36,6 +33,8 @@ export const computeLeafCards = (
   const normals = new Float32Array(cardCount * VERTICES_PER_CARD * 3);
   const uvs = new Float32Array(cardCount * VERTICES_PER_CARD * 2);
   const indices = new Uint32Array(cardCount * INDICES_PER_CARD);
+  // The one normal each vertex is written from, reused for every vertex so no vertex allocates
+  const vertexNormal = new Float64Array(3);
   let card = 0;
   for (const [cluster, { radius, x: centerX, y: centerY, z: centerZ }] of clusters.entries())
     for (let cardIndex = 0; cardIndex < (clusterCardCounts[cluster] ?? 0); cardIndex++, card++) {
@@ -60,14 +59,23 @@ export const computeLeafCards = (
       const bitangentY = Math.cos(tiltAngle);
       const bitangentZ = Math.sin(tiltAngle) * tangentX;
       const vertexStart = card * VERTICES_PER_CARD;
-      for (const [cornerIndex, [tangentSign, bitangentSign]] of CORNER_SIGNS.entries()) {
-        const vertex = vertexStart + cornerIndex;
+      for (let corner = 0; corner < VERTICES_PER_CARD; corner++) {
+        const tangentSign = CORNER_TANGENT_SIGNS[corner] ?? 0;
+        const bitangentSign = CORNER_BITANGENT_SIGNS[corner] ?? 0;
+        const vertex = vertexStart + corner;
         const x = cardX + (tangentX * tangentSign + bitangentX * bitangentSign) * cardSize;
         const y = cardY + bitangentY * bitangentSign * cardSize;
         const z = cardZ + (tangentZ * tangentSign + bitangentZ * bitangentSign) * cardSize;
         // Where the field gives none, the cluster's radial normal stands in
-        const fieldNormal = normalField ? sampleTreeNormalField(normalField, [x, y, z]) : undefined;
-        const [normalX, normalY, normalZ] = fieldNormal ?? [x - centerX, y - centerY, z - centerZ];
+        const hasFieldNormal = normalField !== undefined && writeTreeNormalField(vertexNormal, 0, normalField, x, y, z);
+        if (!hasFieldNormal) {
+          vertexNormal[0] = x - centerX;
+          vertexNormal[1] = y - centerY;
+          vertexNormal[2] = z - centerZ;
+        }
+        const normalX = vertexNormal[0] ?? 0;
+        const normalY = vertexNormal[1] ?? 0;
+        const normalZ = vertexNormal[2] ?? 0;
         const length = Math.hypot(normalX, normalY, normalZ) || 1;
         positions[vertex * 3] = x;
         positions[vertex * 3 + 1] = y;

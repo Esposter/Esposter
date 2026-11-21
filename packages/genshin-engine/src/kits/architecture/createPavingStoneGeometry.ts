@@ -1,5 +1,4 @@
 import type { PavingStoneShape } from "#src/models/kits/architecture/PavingStoneShape";
-import type { Vector3Tuple } from "three";
 
 import { BufferAttribute, BufferGeometry } from "three";
 
@@ -7,26 +6,37 @@ import { BufferAttribute, BufferGeometry } from "three";
 // Triangles are unshared, so the normals computed from them are flat, as a cut stone's faces are, and they wind outward
 export const createPavingStoneGeometry = ({ bottom, radii, top }: PavingStoneShape): BufferGeometry => {
   const sideCount = radii.length;
-  const getCorner = (side: number, height: number): Vector3Tuple => {
+  // Each side is four triangles of three corners, three numbers a corner
+  const positions = new Float32Array(sideCount * 4 * 3 * 3);
+  let offset = 0;
+  const writeCorner = (x: number, height: number, z: number): void => {
+    positions[offset] = x;
+    positions[offset + 1] = height;
+    positions[offset + 2] = z;
+    offset += 3;
+  };
+  const writeSideCorner = (side: number, height: number): void => {
     const angle = (2 * Math.PI * side) / sideCount;
     const radius = radii[side % sideCount] ?? 0;
-    return [radius * Math.cos(angle), height, radius * Math.sin(angle)];
+    writeCorner(radius * Math.cos(angle), height, radius * Math.sin(angle));
   };
-  const positions: number[] = [];
-  const pushTriangle = (first: Vector3Tuple, second: Vector3Tuple, third: Vector3Tuple): void => {
-    positions.push(...first, ...second, ...third);
-  };
-  const centreTop: Vector3Tuple = [0, top, 0];
-  const centreBottom: Vector3Tuple = [0, bottom, 0];
   for (let side = 0; side < sideCount; side++) {
     const nextSide = side + 1;
-    pushTriangle(centreTop, getCorner(nextSide, top), getCorner(side, top));
-    pushTriangle(centreBottom, getCorner(side, bottom), getCorner(nextSide, bottom));
-    pushTriangle(getCorner(side, bottom), getCorner(side, top), getCorner(nextSide, top));
-    pushTriangle(getCorner(side, bottom), getCorner(nextSide, top), getCorner(nextSide, bottom));
+    writeCorner(0, top, 0);
+    writeSideCorner(nextSide, top);
+    writeSideCorner(side, top);
+    writeCorner(0, bottom, 0);
+    writeSideCorner(side, bottom);
+    writeSideCorner(nextSide, bottom);
+    writeSideCorner(side, bottom);
+    writeSideCorner(side, top);
+    writeSideCorner(nextSide, top);
+    writeSideCorner(side, bottom);
+    writeSideCorner(nextSide, top);
+    writeSideCorner(nextSide, bottom);
   }
   const geometry = new BufferGeometry();
-  geometry.setAttribute("position", new BufferAttribute(new Float32Array(positions), 3));
+  geometry.setAttribute("position", new BufferAttribute(positions, 3));
   geometry.computeVertexNormals();
   return geometry;
 };
