@@ -8,6 +8,7 @@ Workflow and composite-action authoring — the runner's own affordances, templa
 | `.github/workflows` — `Release`, `build-packages`                       | —     |       |
 | `.github/workflows` — `claude-warmup`                                   | —     |       |
 | `.github/workflows` — `Bench`, `CodeQL`, `DeleteMergedBranch`, `Pulumi` | —     |       |
+| `.github/workflows` — `Deploy`, `FinishRelease`, `Scorecard`            | —     |       |
 | `.github/workflows/Review.yaml`                                         | —     |       |
 | `.github/workflows/MergeMain.yaml`                                      | —     |       |
 | `.github/actions`                                                       | —     |       |
