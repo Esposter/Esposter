@@ -41,7 +41,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { generateSecretToken, hashSecretToken, NotFoundError, takeOne } from "@esposter/shared";
+import { generateSecretToken, hashSecretToken, NotFoundError } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -126,118 +126,124 @@ describe(deleteAccountHandler, () => {
     await disposeMockBuckets();
   });
 
-  const seedChargedBlob = async (userId: string, storageBucket: StorageBucket, blobName: string) => {
-    await seedBlob(storageBucket, blobName);
-    await chargeStorageLedgerEntry(mockDb, userId, storageBucket, blobName, countedBytes);
-  };
-
   test("removes every store the inventory keys to the account, keeps the activity it left on another's resource, and leaves the other account's data as it was", async () => {
     expect.hasAssertions();
 
     const userId = v7();
     const otherUserId = v7();
     const hash = v7();
-    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
-    await mockDb.insert(accountsInAuth).values({ accountId: "accountId", id: v7(), providerId: "providerId", userId });
-    await mockDb.insert(sessionsInAuth).values({ expiresAt: new Date(0), id: v7(), token: v7(), userId });
-
-    // The account's owned room, with the account's membership and a profile image. The room's attachment is charged to
-    // The account
-    const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
-    const ownedRoomAttachmentBlobName = `${ownedRoom.id}/${v7()}`;
-    await mockDb.insert(usersToRoomsInMessage).values({ roomId: ownedRoom.id, userId });
-    await seedBlob(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/ProfileImage`);
-    await seedChargedBlob(userId, StorageBucket.MessageAssets, ownedRoomAttachmentBlobName);
-
-    // A room the account is a member of but does not own, with the account's charged attachment, and the other
+    const ownedRoomId = v7();
+    const memberRoomId = v7();
+    const ownedResourceId = v7();
+    const ownedSurveyId = v7();
+    const ownedProgramId = v7();
+    const otherResourceId = v7();
+    // The owned room's attachment is charged to the account. The member room holds the account's attachment, and the other
     // Account's attachment beside it
-    const memberRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
-    await mockDb.insert(usersToRoomsInMessage).values([
-      { roomId: memberRoom.id, userId },
-      { roomId: memberRoom.id, userId: otherUserId },
-    ]);
-    const memberRoomAttachmentBlobName = `${memberRoom.id}/${v7()}`;
-    const otherMemberRoomAttachmentBlobName = `${memberRoom.id}/${v7()}`;
-    await seedChargedBlob(userId, StorageBucket.MessageAssets, memberRoomAttachmentBlobName);
-    await seedChargedBlob(otherUserId, StorageBucket.MessageAssets, otherMemberRoomAttachmentBlobName);
-
-    // The moderation record names the account in a room the account does not own.
-    // Its target is a foreign key with a cascade, so it goes with the account's row
-    await mockDb
-      .insert(moderationLogsInMessage)
-      .values({ actorUserId: otherUserId, roomId: memberRoom.id, targetUserId: userId, type: AdminActionType.Warn });
-    // The account's own action against the other account, in the same room, is kept with its author blanked
-    await mockDb
-      .insert(moderationLogsInMessage)
-      .values({ actorUserId: userId, roomId: memberRoom.id, targetUserId: otherUserId, type: AdminActionType.Warn });
-
-    // The account's owned resource, with a working copy, a version and its activity trail
-    const ownedResource = takeOne(
-      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Note, userId }).returning(),
-    );
-    const contentBlobName = getContentBlobName(ownedResource.id);
-    const contentSize = await writeResourceAssetJsonBlob(contentBlobName);
-    await chargeStorageLedgerEntry(mockDb, userId, StorageBucket.ResourceAssets, contentBlobName, contentSize);
+    const ownedRoomAttachmentBlobName = `${ownedRoomId}/${v7()}`;
+    const memberRoomAttachmentBlobName = `${memberRoomId}/${v7()}`;
+    const otherMemberRoomAttachmentBlobName = `${memberRoomId}/${v7()}`;
+    const contentBlobName = getContentBlobName(ownedResourceId);
     // A version's object is stored under its resource's directory at its hash, as the snapshot store writes it
-    const versionBlobName = `${ownedResource.id}/objects/${hash}`;
-    const versionSize = await writeResourceAssetJsonBlob(versionBlobName);
-    await chargeStorageLedgerEntry(mockDb, userId, StorageBucket.ResourceAssets, versionBlobName, versionSize);
+    const versionBlobName = `${ownedResourceId}/objects/${hash}`;
+    const tokenHash = await hashSecretToken(generateSecretToken());
+    const genshinAssetsBucket = getBucket(StorageBucket.GenshinAssets);
+
+    // The rows go in one batch, which runs them in order, so each foreign key is written before the row that names it. The
+    // Objects are written beside it: the version's row is written after its object, since the row records the size that
+    // Object was stored at
+    const [, contentSize, versionSize] = await Promise.all([
+      mockDb.batch([
+        mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]),
+        mockDb.insert(accountsInAuth).values({ accountId: "accountId", id: v7(), providerId: "providerId", userId }),
+        mockDb.insert(sessionsInAuth).values({ expiresAt: new Date(0), id: v7(), token: v7(), userId }),
+        mockDb.insert(apiKeysInAuth).values({ id: v7(), key: v7(), referenceId: userId }),
+        // The owned room, and a room the account is a member of but does not own
+        mockDb.insert(roomsInMessage).values([
+          { id: ownedRoomId, name, userId },
+          { id: memberRoomId, name, userId: otherUserId },
+        ]),
+        mockDb.insert(usersToRoomsInMessage).values([
+          { roomId: ownedRoomId, userId },
+          { roomId: memberRoomId, userId },
+          { roomId: memberRoomId, userId: otherUserId },
+        ]),
+        // The moderation record names the account in a room the account does not own. Its target is a foreign key with a
+        // Cascade, so it goes with the account's row. The account's own action against the other account, in the same room,
+        // Is kept with its author blanked
+        mockDb.insert(moderationLogsInMessage).values([
+          { actorUserId: otherUserId, roomId: memberRoomId, targetUserId: userId, type: AdminActionType.Warn },
+          { actorUserId: userId, roomId: memberRoomId, targetUserId: otherUserId, type: AdminActionType.Warn },
+        ]),
+        // The owned resource with its working copy and activity trail, the owned survey and program with a row each that
+        // Belongs to it, and a resource the account does not own with the account's own activity on it, which is kept
+        mockDb.insert(resourcesInResource).values([
+          { id: ownedResourceId, name, type: ResourceType.Note, userId },
+          { id: ownedSurveyId, name, type: ResourceType.Survey, userId },
+          { id: ownedProgramId, name, type: ResourceType.Program, userId },
+          { id: otherResourceId, name, type: ResourceType.Note, userId: otherUserId },
+        ]),
+        mockDb.insert(resourceActivitiesInResource).values([
+          { activityType: ResourceActivityType.Created, resourceId: ownedResourceId, userId },
+          { activityType: ResourceActivityType.ContentSaved, resourceId: otherResourceId, userId },
+        ]),
+        mockDb.insert(surveyResponsesInResource).values({ resourceId: ownedSurveyId }),
+        mockDb
+          .insert(programParticipantsInResource)
+          .values({ keyValue: v7(), publicId: v7(), resourceId: ownedProgramId, tokenHash }),
+      ]),
+      writeResourceAssetJsonBlob(contentBlobName),
+      writeResourceAssetJsonBlob(versionBlobName),
+      seedBlob(StorageBucket.PublicUserAssets, `rooms/${ownedRoomId}/ProfileImage`),
+      seedBlob(StorageBucket.MessageAssets, ownedRoomAttachmentBlobName),
+      seedBlob(StorageBucket.MessageAssets, memberRoomAttachmentBlobName),
+      seedBlob(StorageBucket.MessageAssets, otherMemberRoomAttachmentBlobName),
+      // The account's own blob directories
+      seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId)),
+      seedBlob(StorageBucket.UserAssets, `${userId}/CallBackground/0`),
+      writeJsonBlob(genshinAssetsBucket, getSaveBlobName(userId), content),
+      seedBlob(StorageBucket.ClickerAssets, getSaveBlobName(userId)),
+      seedBlob(StorageBucket.UserAssets, getSaveBlobName(userId)),
+    ]);
+    // The version's row, and then each charged blob's ledger row, which needs its user's row the batch wrote
     await mockDb
       .insert(resourceVersionsInResource)
       .values({
         channel: SnapshotChannel.Published,
         hash,
         plaintextBytes: versionSize,
-        resourceId: ownedResource.id,
+        resourceId: ownedResourceId,
         storedBytes: versionSize,
         version: 0,
       });
-    await mockDb
-      .insert(resourceActivitiesInResource)
-      .values({ activityType: ResourceActivityType.Created, resourceId: ownedResource.id, userId });
-
-    // The account's owned survey and program, each with a row that belongs to it, and an API key.
-    // The user row's cascade takes the API key
-    const ownedSurvey = takeOne(
-      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Survey, userId }).returning(),
+    await chargeStorageLedgerEntry(
+      mockDb,
+      userId,
+      StorageBucket.MessageAssets,
+      ownedRoomAttachmentBlobName,
+      countedBytes,
     );
-    await mockDb.insert(surveyResponsesInResource).values({ resourceId: ownedSurvey.id });
-    const ownedProgram = takeOne(
-      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Program, userId }).returning(),
+    await chargeStorageLedgerEntry(
+      mockDb,
+      userId,
+      StorageBucket.MessageAssets,
+      memberRoomAttachmentBlobName,
+      countedBytes,
     );
-    await mockDb
-      .insert(programParticipantsInResource)
-      .values({
-        keyValue: v7(),
-        publicId: v7(),
-        resourceId: ownedProgram.id,
-        tokenHash: await hashSecretToken(generateSecretToken()),
-      });
-    await mockDb.insert(apiKeysInAuth).values({ id: v7(), key: v7(), referenceId: userId });
-
-    // A resource the account does not own, with the account's own activity on it, which is kept
-    const otherResource = takeOne(
-      await mockDb
-        .insert(resourcesInResource)
-        .values({ name, type: ResourceType.Note, userId: otherUserId })
-        .returning(),
+    await chargeStorageLedgerEntry(
+      mockDb,
+      otherUserId,
+      StorageBucket.MessageAssets,
+      otherMemberRoomAttachmentBlobName,
+      countedBytes,
     );
-    await mockDb
-      .insert(resourceActivitiesInResource)
-      .values({ activityType: ResourceActivityType.ContentSaved, resourceId: otherResource.id, userId });
-
-    // The account's own blob directories
-    await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId));
-    await seedBlob(StorageBucket.UserAssets, `${userId}/CallBackground/0`);
-    const genshinAssetsBucket = getBucket(StorageBucket.GenshinAssets);
-    await writeJsonBlob(genshinAssetsBucket, getSaveBlobName(userId), content);
-    await seedBlob(StorageBucket.ClickerAssets, getSaveBlobName(userId));
-    await seedBlob(StorageBucket.UserAssets, getSaveBlobName(userId));
+    await chargeStorageLedgerEntry(mockDb, userId, StorageBucket.ResourceAssets, contentBlobName, contentSize);
+    await chargeStorageLedgerEntry(mockDb, userId, StorageBucket.ResourceAssets, versionBlobName, versionSize);
 
     const otherUserRowBefore = await mockDb.select().from(usersInAuth).where(eq(usersInAuth.id, otherUserId));
     // Each seeded row is present before the deletion, so the empty checks below cannot pass vacuously
-    await expect(readSurveyResponseRows(ownedSurvey.id)).resolves.toHaveLength(1);
-    await expect(readProgramParticipantRows(ownedProgram.id)).resolves.toHaveLength(1);
+    await expect(readSurveyResponseRows(ownedSurveyId)).resolves.toHaveLength(1);
+    await expect(readProgramParticipantRows(ownedProgramId)).resolves.toHaveLength(1);
     await expect(readApiKeyRows(userId)).resolves.toHaveLength(1);
 
     // The member room's erase answers one of the account's messages, and the message carries one file
@@ -268,12 +274,12 @@ describe(deleteAccountHandler, () => {
       mockDb
         .select({ roomId: usersToRoomsInMessage.roomId })
         .from(usersToRoomsInMessage)
-        .where(eq(usersToRoomsInMessage.roomId, ownedRoom.id)),
+        .where(eq(usersToRoomsInMessage.roomId, ownedRoomId)),
     ).resolves.toStrictEqual([]);
-    await expect(readBlobNamesUnder(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/`)).resolves.toStrictEqual(
+    await expect(readBlobNamesUnder(StorageBucket.PublicUserAssets, `rooms/${ownedRoomId}/`)).resolves.toStrictEqual(
       [],
     );
-    await expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${ownedRoom.id}/`)).resolves.toStrictEqual([]);
+    await expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${ownedRoomId}/`)).resolves.toStrictEqual([]);
 
     // The owned resource, its version, its working copy, its objects and its activity trail
     await expect(
@@ -286,19 +292,19 @@ describe(deleteAccountHandler, () => {
       mockDb
         .select({ version: resourceVersionsInResource.version })
         .from(resourceVersionsInResource)
-        .where(eq(resourceVersionsInResource.resourceId, ownedResource.id)),
+        .where(eq(resourceVersionsInResource.resourceId, ownedResourceId)),
     ).resolves.toStrictEqual([]);
-    await expect(readBlobNamesUnder(StorageBucket.ResourceAssets, `${ownedResource.id}/`)).resolves.toStrictEqual([]);
-    await expect(readResourceActivityRows(ownedResource.id)).resolves.toStrictEqual([]);
+    await expect(readBlobNamesUnder(StorageBucket.ResourceAssets, `${ownedResourceId}/`)).resolves.toStrictEqual([]);
+    await expect(readResourceActivityRows(ownedResourceId)).resolves.toStrictEqual([]);
 
     // The owned survey's responses and the owned program's participants go with their resources
     // The API key goes with the user row
-    await expect(readSurveyResponseRows(ownedSurvey.id)).resolves.toStrictEqual([]);
-    await expect(readProgramParticipantRows(ownedProgram.id)).resolves.toStrictEqual([]);
+    await expect(readSurveyResponseRows(ownedSurveyId)).resolves.toStrictEqual([]);
+    await expect(readProgramParticipantRows(ownedProgramId)).resolves.toStrictEqual([]);
     await expect(readApiKeyRows(userId)).resolves.toStrictEqual([]);
 
     // The account's charged attachment in the room it is a member of is gone, and the other account's stays as it was
-    await expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${memberRoom.id}/`)).resolves.toStrictEqual([
+    await expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${memberRoomId}/`)).resolves.toStrictEqual([
       otherMemberRoomAttachmentBlobName,
     ]);
     await expect(readLedgerRows(userId)).resolves.toStrictEqual([]);
@@ -308,18 +314,18 @@ describe(deleteAccountHandler, () => {
     // The leave's payload is the tombstone the erase wrote at the clock's time, which the erase job's own suite pins exactly
     const leaveCall = roomObjectCalls.find(({ method }) => method === "notifyOnlineMembers");
     expect(roomObjectCalls).toStrictEqual([
-      { args: [[userId]], method: "deleteAll", objectId: ownedRoom.id },
+      { args: [[userId]], method: "deleteAll", objectId: ownedRoomId },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserMessages",
-        objectId: memberRoom.id,
+        objectId: memberRoomId,
       },
       {
         args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "deleteUserReactions",
-        objectId: memberRoom.id,
+        objectId: memberRoomId,
       },
-      { args: [userId], method: "removeMember", objectId: memberRoom.id },
+      { args: [userId], method: "removeMember", objectId: memberRoomId },
       leaveCall,
     ]);
 
@@ -345,13 +351,13 @@ describe(deleteAccountHandler, () => {
           targetUserId: moderationLogsInMessage.targetUserId,
         })
         .from(moderationLogsInMessage)
-        .where(eq(moderationLogsInMessage.roomId, memberRoom.id)),
+        .where(eq(moderationLogsInMessage.roomId, memberRoomId)),
     ).resolves.toStrictEqual([{ actorUserId: null, targetUserId: otherUserId }]);
     await expect(
       mockDb
         .select({ userId: resourceActivitiesInResource.userId })
         .from(resourceActivitiesInResource)
-        .where(eq(resourceActivitiesInResource.resourceId, otherResource.id)),
+        .where(eq(resourceActivitiesInResource.resourceId, otherResourceId)),
     ).resolves.toStrictEqual([{ userId: null }]);
 
     // The other account: its row and its charged attachment are exactly as they were
