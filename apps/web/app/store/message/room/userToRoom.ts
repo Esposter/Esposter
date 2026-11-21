@@ -61,7 +61,7 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   };
   // The viewer's row, or the member's row the input names, takes the fields the write sets at once. The server's row
   // And its header confirm it, and a rejected write leaves the row as it was
-  const updateMyUserToRoom = (input: UpdateUserToRoomInput) => {
+  const updateUserToRoom = (input: UpdateUserToRoomInput) => {
     const { roomId, targetUserId, ...patch } = input;
     writeOptimistic(
       async () => {
@@ -78,5 +78,5 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
     );
   };
 
-  return { arriveUserToRooms, getMyUserToRoom, getSlice, markMyUserToRoomsLoaded, myUserToRoom, updateMyUserToRoom };
+  return { arriveUserToRooms, getMyUserToRoom, getSlice, markMyUserToRoomsLoaded, myUserToRoom, updateUserToRoom };
 });

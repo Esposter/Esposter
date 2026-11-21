@@ -116,26 +116,26 @@ describe(useMessageActionItems, () => {
     expect.hasAssertions();
 
     const userToRoomStore = useUserToRoomStore();
-    const { arriveUserToRooms, updateMyUserToRoom } = userToRoomStore;
+    const { arriveUserToRooms, updateUserToRoom } = userToRoomStore;
     arriveUserToRooms([userToRoom]);
-    const updateUserToRoom = vi.fn<(input: UpdateUserToRoomInput) => void>();
+    const receivedUpdate = vi.fn<(input: UpdateUserToRoomInput) => void>();
     const { promise: queued, resolve: releaseQueued } = Promise.withResolvers<void>();
     trpcMsw.userToRoom.updateUserToRoom.mutation(async ({ input }) => {
-      updateUserToRoom(input);
+      receivedUpdate(input);
       if (input.displayName !== undefined) await queued;
 
       return userToRoom;
     });
-    updateMyUserToRoom({ displayName: "queued", roomId });
+    updateUserToRoom({ displayName: "queued", roomId });
     const item = await mountActionItem(createMessage(nextDay), "Mark Unread From Here");
     item.onClick?.(new MouseEvent("click"));
     await flushPromises();
 
-    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({ displayName: "queued", roomId });
+    expect(receivedUpdate).toHaveBeenCalledExactlyOnceWith({ displayName: "queued", roomId });
 
     releaseQueued();
     await flushPromises();
 
-    expect(updateUserToRoom).toHaveBeenLastCalledWith({ lastReadAt: new Date(nextDay.getTime() - 1), roomId });
+    expect(receivedUpdate).toHaveBeenLastCalledWith({ lastReadAt: new Date(nextDay.getTime() - 1), roomId });
   });
 });

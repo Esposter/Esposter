@@ -60,17 +60,17 @@ describe("messageContentHeaderOverflowMenu", () => {
     const userId = getMockSession().user.id;
     const userToRoom = createUserToRoom({ roomId, userId });
     const userToRoomStore = useUserToRoomStore();
-    const { arriveUserToRooms, updateMyUserToRoom } = userToRoomStore;
+    const { arriveUserToRooms, updateUserToRoom } = userToRoomStore;
     arriveUserToRooms([userToRoom]);
-    const updateUserToRoom = vi.fn<(input: UpdateUserToRoomInput) => void>();
+    const receivedUpdate = vi.fn<(input: UpdateUserToRoomInput) => void>();
     const { promise: queued, resolve: releaseQueued } = Promise.withResolvers<void>();
     trpcMsw.userToRoom.updateUserToRoom.mutation(async ({ input }) => {
-      updateUserToRoom(input);
+      receivedUpdate(input);
       if (input.displayName !== undefined) await queued;
 
       return { ...userToRoom, notificationType: input.notificationType ?? userToRoom.notificationType, version: 1 };
     });
-    updateMyUserToRoom({ displayName: "queued", roomId });
+    updateUserToRoom({ displayName: "queued", roomId });
     const component = await mountSuspended(MessageContentHeaderOverflowMenu, { props: { isToolsInHeader: true } });
     // Set after mounting, which resets the route the room is read from
     setCurrentRoomId(roomId);
@@ -81,11 +81,11 @@ describe("messageContentHeaderOverflowMenu", () => {
     item?.onClick?.(new MouseEvent("click"));
     await flushPromises();
 
-    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({ displayName: "queued", roomId });
+    expect(receivedUpdate).toHaveBeenCalledExactlyOnceWith({ displayName: "queued", roomId });
 
     releaseQueued();
     await flushPromises();
 
-    expect(updateUserToRoom).toHaveBeenLastCalledWith({ notificationType: NotificationType.Never, roomId });
+    expect(receivedUpdate).toHaveBeenLastCalledWith({ notificationType: NotificationType.Never, roomId });
   });
 });

@@ -32,13 +32,13 @@ const { openRightDrawer } = messageLayoutStore;
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
-const { updateMyUserToRoom } = userToRoomStore;
+const { updateUserToRoom } = userToRoomStore;
 const { myUserToRoom } = storeToRefs(userToRoomStore);
 const updateNotificationType = (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
   if (!roomId || !myUserToRoom.value) return;
 
-  updateMyUserToRoom({ notificationType: newNotificationType, roomId });
+  updateUserToRoom({ notificationType: newNotificationType, roomId });
 };
 // On a phone the header leaves the call and its toggles to this menu, so they lead it
 const headerItems = computed<Item[]>(() =>

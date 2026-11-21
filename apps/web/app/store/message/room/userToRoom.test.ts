@@ -27,9 +27,9 @@ describe(useUserToRoomStore, () => {
       return { ...userToRoom, displayName: input.displayName ?? userToRoom.displayName, version: 1 };
     });
     const userToRoomStore = useUserToRoomStore();
-    const { arriveUserToRooms, getMyUserToRoom, updateMyUserToRoom } = userToRoomStore;
+    const { arriveUserToRooms, getMyUserToRoom, updateUserToRoom } = userToRoomStore;
     arriveUserToRooms([userToRoom]);
-    updateMyUserToRoom({ displayName, roomId });
+    updateUserToRoom({ displayName, roomId });
 
     expect(getMyUserToRoom(roomId)?.displayName).toBe(displayName);
 
@@ -49,9 +49,9 @@ describe(useUserToRoomStore, () => {
       return { ...userToRoom, version: 1 };
     });
     const userToRoomStore = useUserToRoomStore();
-    const { arriveUserToRooms, getMyUserToRoom, updateMyUserToRoom } = userToRoomStore;
+    const { arriveUserToRooms, getMyUserToRoom, updateUserToRoom } = userToRoomStore;
     arriveUserToRooms([userToRoom]);
-    updateMyUserToRoom({ displayName, roomId, targetUserId: v7() });
+    updateUserToRoom({ displayName, roomId, targetUserId: v7() });
 
     expect(getMyUserToRoom(roomId)?.displayName).toBe(userToRoom.displayName);
 
@@ -74,10 +74,10 @@ describe(useUserToRoomStore, () => {
       return { ...userToRoom, displayName: input.displayName ?? "", version: sent.length };
     });
     const userToRoomStore = useUserToRoomStore();
-    const { arriveUserToRooms, updateMyUserToRoom } = userToRoomStore;
+    const { arriveUserToRooms, updateUserToRoom } = userToRoomStore;
     arriveUserToRooms([userToRoom]);
-    updateMyUserToRoom({ displayName: first, roomId });
-    updateMyUserToRoom({ displayName: second, roomId });
+    updateUserToRoom({ displayName: first, roomId });
+    updateUserToRoom({ displayName: second, roomId });
     await flushPromises();
 
     expect(sent).toStrictEqual([first]);
@@ -96,13 +96,14 @@ describe(useUserToRoomStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const userToRoomStore = useUserToRoomStore();
-    const { arriveUserToRooms, getMyUserToRoom, updateMyUserToRoom } = userToRoomStore;
+    const { arriveUserToRooms, getMyUserToRoom, updateUserToRoom } = userToRoomStore;
     arriveUserToRooms([userToRoom]);
-    updateMyUserToRoom({ displayName, roomId });
+    updateUserToRoom({ displayName, roomId });
     await flushPromises();
 
     expect(getMyUserToRoom(roomId)?.displayName).toBe(userToRoom.displayName);
-    expect(alertStore.alerts).toHaveLength(1);
+    expect(alerts.value).toHaveLength(1);
   });
 });

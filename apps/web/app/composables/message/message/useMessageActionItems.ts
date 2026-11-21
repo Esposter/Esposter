@@ -32,7 +32,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
   const { forwardMessageId } = storeToRefs(forwardStore);
   const copyMessageLink = useCopyMessageLink();
   const userToRoomStore = useUserToRoomStore();
-  const { updateMyUserToRoom } = userToRoomStore;
+  const { updateUserToRoom } = userToRoomStore;
   const openThread = useOpenThread();
   const roleStore = useRoleStore();
   const { checkHasMyPermission } = roleStore;
@@ -114,7 +114,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
     meaning: UiIconMeaning.Unread,
     onClick: () => {
       const lastReadAt = new Date(message.createdAt.getTime() - 1);
-      updateMyUserToRoom({ lastReadAt, roomId: message.roomId });
+      updateUserToRoom({ lastReadAt, roomId: message.roomId });
     },
     title: "Mark Unread From Here",
   };
