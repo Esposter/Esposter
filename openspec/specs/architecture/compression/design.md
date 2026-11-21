@@ -20,11 +20,11 @@ flowchart TD
 
 The call sites that use something other than zstd are none of them a choice we are free to revisit — each reads or writes a format whose codec another party already fixed. They are listed because the reason differs per row, which is exactly what a hand-maintained table has to carry:
 
-| Call site                                                     | Codec                  | Why it cannot be zstd                                                            |
-| ------------------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------- |
-| `packages/parse-tmx/src/services/getDecompressedBytes.ts`     | gzip / deflate         | The bytes were written by the Tiled map editor, and its TMX spec names the codec |
-| `apps/web/app/services/emailEditor/exportPersonalizedHtml.ts` | deflate, via `zipSync` | A ZIP archive a person downloads and opens in their file manager                 |
-| `apps/web/app/services/resource/saveStagedResourceContent.ts` | gzip                   | The browser writes it, and `CompressionStream` offers no zstd                    |
+| Call site                                                          | Codec                  | Why it cannot be zstd                                                            |
+| ------------------------------------------------------------------ | ---------------------- | -------------------------------------------------------------------------------- |
+| `packages/parse-tmx/src/internal/services/getDecompressedBytes.ts` | gzip / deflate         | The bytes were written by the Tiled map editor, and its TMX spec names the codec |
+| `apps/web/app/services/emailEditor/exportPersonalizedHtml.ts`      | deflate, via `zipSync` | A ZIP archive a person downloads and opens in their file manager                 |
+| `apps/web/app/services/resource/saveStagedResourceContent.ts`      | gzip                   | The browser writes it, and `CompressionStream` offers no zstd                    |
 
 The test for a new site is therefore not "which codec is best" but **"does anything outside this repository have to understand these bytes?"** If nothing does, it is zstd. If something does, the counterparty's format is the answer and the row above gains a sibling.
 
@@ -34,13 +34,13 @@ Compressing on the server through a node builtin, and decompressing in the brows
 
 ## Key Files
 
-| File                                                            | Role                                                                       |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `packages/keyframe-store/src/services/encodeObject.ts`          | a retained version, compressed as a keyframe or a delta                    |
-| `packages/keyframe-store/src/services/decodeObject.ts`          | the matching decode, with the base plaintext as the dictionary             |
-| `packages/db/src/services/storage/writeJsonBlob.ts`             | every JSON blob, a standalone frame served as `Content-Encoding: zstd`     |
-| `packages/parse-tmx/src/services/getDecompressedBytes.ts`       | the browser-side decode of a foreign format, through `DecompressionStream` |
-| `packages/configuration/src/services/getTsdownConfiguration.ts` | the neutral platform default that keeps node builtins out of a bundle      |
+| File                                                               | Role                                                                       |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| `packages/keyframe-store/src/services/encodeObject.ts`             | a retained version, compressed as a keyframe or a delta                    |
+| `packages/keyframe-store/src/services/decodeObject.ts`             | the matching decode, with the base plaintext as the dictionary             |
+| `packages/db/src/services/storage/writeJsonBlob.ts`                | every JSON blob, a standalone frame served as `Content-Encoding: zstd`     |
+| `packages/parse-tmx/src/internal/services/getDecompressedBytes.ts` | the browser-side decode of a foreign format, through `DecompressionStream` |
+| `packages/configuration/src/services/getTsdownConfiguration.ts`    | the neutral platform default that keeps node builtins out of a bundle      |
 
 ## Notes
 

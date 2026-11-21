@@ -73,23 +73,23 @@ flowchart TD
 
 ## Key files
 
-| File                                                                  | Role                                                                                                                        |
-| :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| `packages/vue-grid-layout-headless/src/index.ts`                      | The main entry: `useGridLayout`, `startExternalDrag`, and the grid's models                                                 |
-| `packages/vue-grid-layout-headless/src/composables/useGridLayout.ts`  | The gesture state, the preview, the commits, the keyboard step and the resize observer                                      |
-| `packages/vue-grid-layout-headless/src/services/startExternalDrag.ts` | A drag from outside every grid, such as a palette entry, dropped onto the grid under the pointer                            |
-| `packages/vue-grid-layout-headless/src/services/mountedGrids.ts`      | The grids mounted on the page, keyed by root                                                                                |
-| `packages/vue-grid-layout-headless/src/services/findGridRoot.ts`      | The nearest mounted grid root at or above an element, so an inner grid's root wins for a press and for a drop               |
-| `packages/vue-grid-layout-headless/src/services/findGridAt.ts`        | The grid under a point: the first hit outside the dragged element, then its nearest root                                    |
-| `packages/vue-grid-layout-headless/src/placement/getGestureCell.ts`   | Turns a pointer's offset into the whole cells a move or a resize lands on                                                   |
-| `packages/vue-grid-layout-headless/src/placement/resolveMove.ts`      | Applies the collision mode to a dropped cell: push, swap or refuse, and refuses any landing that displaces a solid item     |
-| `packages/vue-grid-layout-headless/src/placement/placeMove.ts`        | Places a move: applies the collision mode, then compacts under the grid's columns and type                                  |
-| `packages/vue-grid-layout-headless/src/placement/compactLayout.ts`    | Compacts a layout upward, sideways or not at all, resolves overlaps, and bounds a horizontal push; a solid item never rises |
-| `packages/vue-grid-layout-headless/src/placement/fitLayout.ts`        | Fits a saved layout to a column count, then compacts it                                                                     |
-| `packages/vue-grid-layout-headless/src/placement/getFirstFreeCell.ts` | The first cell a new item's span fits in, scanning rows from the top                                                        |
-| `packages/vue-grid-layout-headless/src/models/GridRefusal.ts`         | The consumer's refusal of an item for a grid, asked before the grid lays out or commits a landing                           |
-| `packages/vue-grid-layout-headless/src/models/GridTransfer.ts`        | The hand-over a body drag released over another grid makes: the item, its cell and that grid's root                         |
-| `packages/vue-grid-layout-headless/src/models/GridCommit.ts`          | The commit a release writes: the changed cells                                                                              |
+| File                                                                         | Role                                                                                                                        |
+| :--------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| `packages/vue-grid-layout-headless/src/index.ts`                             | The main entry: `useGridLayout`, `startExternalDrag`, and the grid's models                                                 |
+| `packages/vue-grid-layout-headless/src/composables/useGridLayout.ts`         | The gesture state, the preview, the commits, the keyboard step and the resize observer                                      |
+| `packages/vue-grid-layout-headless/src/services/startExternalDrag.ts`        | A drag from outside every grid, such as a palette entry, dropped onto the grid under the pointer                            |
+| `packages/vue-grid-layout-headless/src/internal/services/mountedGrids.ts`    | The grids mounted on the page, keyed by root                                                                                |
+| `packages/vue-grid-layout-headless/src/internal/services/findGridRoot.ts`    | The nearest mounted grid root at or above an element, so an inner grid's root wins for a press and for a drop               |
+| `packages/vue-grid-layout-headless/src/internal/services/findGridAt.ts`      | The grid under a point: the first hit outside the dragged element, then its nearest root                                    |
+| `packages/vue-grid-layout-headless/src/internal/placement/getGestureCell.ts` | Turns a pointer's offset into the whole cells a move or a resize lands on                                                   |
+| `packages/vue-grid-layout-headless/src/internal/placement/resolveMove.ts`    | Applies the collision mode to a dropped cell: push, swap or refuse, and refuses any landing that displaces a solid item     |
+| `packages/vue-grid-layout-headless/src/internal/placement/placeMove.ts`      | Places a move: applies the collision mode, then compacts under the grid's columns and type                                  |
+| `packages/vue-grid-layout-headless/src/internal/placement/compactLayout.ts`  | Compacts a layout upward, sideways or not at all, resolves overlaps, and bounds a horizontal push; a solid item never rises |
+| `packages/vue-grid-layout-headless/src/internal/placement/fitLayout.ts`      | Fits a saved layout to a column count, then compacts it                                                                     |
+| `packages/vue-grid-layout-headless/src/placement/getFirstFreeCell.ts`        | The first cell a new item's span fits in, scanning rows from the top                                                        |
+| `packages/vue-grid-layout-headless/src/models/GridRefusal.ts`                | The consumer's refusal of an item for a grid, asked before the grid lays out or commits a landing                           |
+| `packages/vue-grid-layout-headless/src/models/GridTransfer.ts`               | The hand-over a body drag released over another grid makes: the item, its cell and that grid's root                         |
+| `packages/vue-grid-layout-headless/src/models/GridCommit.ts`                 | The commit a release writes: the changed cells                                                                              |
 
 ## Sources
 

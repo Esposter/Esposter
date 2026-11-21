@@ -29,7 +29,6 @@
     },
     "./package.json": "./package.json",
     "./eslint/*": "./eslint/*",
-    "./hand-written-entry": "./src/services/checkIsHandWrittenEntry.ts",
     "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
     "./types/global.d.ts": "./types/global.d.ts",
     "./vitest/*": "./vitest/*"
@@ -43,7 +42,6 @@
       },
       "./package.json": "./package.json",
       "./eslint/*": "./eslint/*",
-      "./hand-written-entry": "./src/services/checkIsHandWrittenEntry.ts",
       "./oxfmt": "./oxfmt/oxfmtConfiguration.ts",
       "./types/global.d.ts": "./types/global.d.ts",
       "./vitest/*": "./vitest/*"

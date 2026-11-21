@@ -1,8 +1,8 @@
 import type { GridBlock } from "#src/models/GridBlock";
 import type { GridCell } from "#src/models/GridCell";
 
-import { checkIsColliding } from "#src/placement/checkIsColliding";
-import { clampCell } from "#src/placement/clampCell";
+import { checkIsColliding } from "#src/internal/placement/checkIsColliding";
+import { clampCell } from "#src/internal/placement/clampCell";
 
 // The first cell a new item of the given span fits in, scanning rows from the top and columns from the left, so a new item
 // Lands beside the items already in a row before it lands below them

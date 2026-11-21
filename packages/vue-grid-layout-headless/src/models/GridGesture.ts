@@ -1,6 +1,6 @@
+import type { MountedGrid } from "#src/internal/models/MountedGrid";
 import type { GridBlock } from "#src/models/GridBlock";
 import type { GridPoint } from "#src/models/GridPoint";
-import type { MountedGrid } from "#src/models/MountedGrid";
 import type { ResizeEdge } from "#src/models/ResizeEdge";
 
 // A pointer gesture held over an item, from the press until the release or the cancel

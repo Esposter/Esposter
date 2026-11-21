@@ -63,17 +63,6 @@ describe(generateExports, () => {
     expect(existsSync(join(sourceDirectory, "components", "index.ts"))).toBe(false);
   });
 
-  // A None package names its own `src/index.ts`, so no answer removes the entry it curates by hand
-  test("keeps the entry a package writes by hand under None", () => {
-    expect.hasAssertions();
-
-    const entry = `export * from "./${TEST_FILENAME}/${TEST_FILENAME}.ts";\n`;
-    writeFileSync(join(sourceDirectory, "index.ts"), entry);
-    generateExports(packageDirectory, ExportsGeneration.None);
-
-    expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(entry);
-  });
-
   // A module under a lazy directory is loaded by its own `import()`, so a barrel line for it would load it with the entry
   test("leaves the modules of a lazy directory out of the barrel and keeps the others", () => {
     expect.hasAssertions();
@@ -101,6 +90,19 @@ describe(generateExports, () => {
       `export { default as ${getComponentName(`${TEST_FILENAME}.vue`)} } from "./${TEST_FILENAME}.vue";
 `,
     );
+  });
+
+  // A module under `internal` is private to its package, so no barrel lists it, while a module beside that folder is still listed
+  test("leaves a module under internal out of the barrel and keeps a sibling outside it", () => {
+    expect.hasAssertions();
+
+    const internalDirectory = join(sourceDirectory, "internal", "services");
+    mkdirSync(internalDirectory, { recursive: true });
+    writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.ts`), `export type A = 0;`);
+    writeFileSync(join(internalDirectory, `${TEST_FILENAME}.ts`), `export type B = 0;`);
+    generateExports(packageDirectory, ExportsGeneration.TypeScript);
+
+    expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(`export * from "./${TEST_FILENAME}.ts";\n`);
   });
 
   // A sibling's watcher vendoring this source reads the barrel while it is being written, so an unchanged one is left

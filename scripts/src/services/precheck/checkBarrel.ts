@@ -10,7 +10,6 @@ import { readBarrelLines } from "#src/services/precheck/readBarrelLines";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { generateExports, getSubpathExclusions, readPackageManifest } from "@esposter/configuration";
 import { BARREL_FILE, COMPONENTS_DIRECTORY, SOURCE_DIRECTORY_NAME } from "@esposter/configuration/constants";
-import { checkIsHandWrittenEntry } from "@esposter/configuration/hand-written-entry";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
@@ -23,8 +22,6 @@ export const checkBarrel = (packageDirectory: string, fix: boolean): GeneratedFi
   const componentsLabel = `${packageDirectory}/${SOURCE_DIRECTORY_NAME}/${COMPONENTS_DIRECTORY}/${BARREL_FILE}`;
   // A package that generates no barrel has none on disk, so there is nothing to compare
   if (!existsSync(join(sourceDirectory, BARREL_FILE))) return { findings: [], regenerated: [] };
-  // A package that writes its own entry has a barrel no generator wrote, so there is nothing for the generator to check
-  if (checkIsHandWrittenEntry(packageRoot)) return { findings: [], regenerated: [] };
   // A Vue package's component barrel exists only where the Vue answer writes it
   const exportsGeneration: ExportsGeneration = existsSync(join(sourceDirectory, COMPONENTS_DIRECTORY, BARREL_FILE))
     ? "vue"

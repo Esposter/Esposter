@@ -1,4 +1,4 @@
-import { Flipped } from "#src/models/Flipped";
+import { Flipped } from "#src/internal/models/Flipped";
 import { parseTmx } from "#src/parseTmx";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { readFile } from "node:fs/promises";

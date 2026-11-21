@@ -1,10 +1,10 @@
-import type { TMXReadContext } from "#src/models/tmx/TMXReadContext";
+import type { TMXReadContext } from "#src/internal/models/tmx/TMXReadContext";
 import type { ResultAsync } from "neverthrow";
 
+import { TMXTagName } from "#src/internal/models/tmx/TMXTagName";
+import { assignTileData } from "#src/internal/services/assignTileData";
+import { readTmxDocument } from "#src/internal/services/readTmxDocument";
 import { TMXParsed } from "#src/models/tmx/parsed/TMXParsed";
-import { TMXTagName } from "#src/models/tmx/TMXTagName";
-import { assignTileData } from "#src/services/assignTileData";
-import { readTmxDocument } from "#src/services/readTmxDocument";
 import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
 interface ParseTmxOptions {

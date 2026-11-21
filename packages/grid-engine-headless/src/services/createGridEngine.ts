@@ -1,12 +1,12 @@
+import type { GridEngineState } from "#src/internal/models/GridEngineState";
 import type { GridEngine } from "#src/models/GridEngine";
 import type { GridEngineConfig } from "#src/models/GridEngineConfig";
 import type { GridEngineError } from "#src/models/GridEngineError";
-import type { GridEngineState } from "#src/models/GridEngineState";
 import type { Result } from "neverthrow";
 
-import { addCharacter } from "#src/services/addCharacter";
-import { checkIsGridValid } from "#src/services/checkIsGridValid";
-import { createEngine } from "#src/services/createEngine";
+import { addCharacter } from "#src/internal/services/addCharacter";
+import { checkIsGridValid } from "#src/internal/services/checkIsGridValid";
+import { createEngine } from "#src/internal/services/createEngine";
 import { Result as ResultFactory } from "neverthrow";
 
 export const createGridEngine = ({ characters = [], tiles }: GridEngineConfig): Result<GridEngine, GridEngineError> =>

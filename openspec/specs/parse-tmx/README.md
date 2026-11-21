@@ -103,19 +103,19 @@ Every issue and pull request of [sax](https://github.com/isaacs/sax-js), the XML
 
 ## Key Files
 
-| File                                                    | Role                                                                  |
-| :------------------------------------------------------ | :-------------------------------------------------------------------- |
-| `packages/parse-tmx/src/parseTmx.ts`                    | The map entry point: the XML pass, then the decoded tile data         |
-| `packages/parse-tmx/src/services/parseTileset.ts`       | The tileset-file entry point, for an external tileset                 |
-| `packages/parse-tmx/src/services/tokenizeXml.ts`        | The XML 1.0 tokenizer: one strict pass, its errors at line and column |
-| `packages/parse-tmx/src/services/readTmxDocument.ts`    | The tokenizer's driver: opens, closes and reads text into the frames  |
-| `packages/parse-tmx/src/services/openTmxFrame.ts`       | Which child an element may hold, and the frame each one opens         |
-| `packages/parse-tmx/src/services/openTmxLayerChild.ts`  | The layers a map holds, a tile layer's data and its chunks            |
-| `packages/parse-tmx/src/services/openTmxObjectChild.ts` | An object group's objects, their shapes, gids and text                |
-| `packages/parse-tmx/src/services/readTmxAttributes.ts`  | Each element's attribute table, read as the model its kinds say       |
-| `packages/parse-tmx/src/index.ts`                       | The package's public surface: the entry points and the parsed types   |
-| `packages/parse-tmx/src/services/closeTmxFrame.ts`      | The character data each element owns, read on close                   |
-| `packages/parse-tmx/src/services/decodeTileData.ts`     | The tile layer's encodings and compression                            |
-| `packages/parse-tmx/src/services/assignTileData.ts`     | The cell count check and the flip translation of decoded tile data    |
-| `packages/parse-tmx/src/models/tmx/parsed`              | The parsed Phaser tilemap shapes the reader builds                    |
-| `packages/parse-tmx/src/models/tmx/TMXFrame.ts`         | The frame each open element holds, typed by its tag                   |
+| File                                                             | Role                                                                  |
+| :--------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `packages/parse-tmx/src/parseTmx.ts`                             | The map entry point: the XML pass, then the decoded tile data         |
+| `packages/parse-tmx/src/services/parseTileset.ts`                | The tileset-file entry point, for an external tileset                 |
+| `packages/parse-tmx/src/internal/services/tokenizeXml.ts`        | The XML 1.0 tokenizer: one strict pass, its errors at line and column |
+| `packages/parse-tmx/src/internal/services/readTmxDocument.ts`    | The tokenizer's driver: opens, closes and reads text into the frames  |
+| `packages/parse-tmx/src/internal/services/openTmxFrame.ts`       | Which child an element may hold, and the frame each one opens         |
+| `packages/parse-tmx/src/internal/services/openTmxLayerChild.ts`  | The layers a map holds, a tile layer's data and its chunks            |
+| `packages/parse-tmx/src/internal/services/openTmxObjectChild.ts` | An object group's objects, their shapes, gids and text                |
+| `packages/parse-tmx/src/internal/services/readTmxAttributes.ts`  | Each element's attribute table, read as the model its kinds say       |
+| `packages/parse-tmx/src/index.ts`                                | The package's public surface: the entry points and the parsed types   |
+| `packages/parse-tmx/src/internal/services/closeTmxFrame.ts`      | The character data each element owns, read on close                   |
+| `packages/parse-tmx/src/internal/services/decodeTileData.ts`     | The tile layer's encodings and compression                            |
+| `packages/parse-tmx/src/internal/services/assignTileData.ts`     | The cell count check and the flip translation of decoded tile data    |
+| `packages/parse-tmx/src/models/tmx/parsed`                       | The parsed Phaser tilemap shapes the reader builds                    |
+| `packages/parse-tmx/src/internal/models/tmx/TMXFrame.ts`         | The frame each open element holds, typed by its tag                   |

@@ -1,0 +1,40 @@
+import type { TMXAttributes } from "#src/internal/models/tmx/TMXAttributes";
+
+import { AttributeKind } from "#src/internal/models/AttributeKind";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+
+type TMXAttributeValue<Kind extends AttributeKind> = Kind extends TMXNumberKind ? number : string;
+// The model an element table reads as: a required kind is always a key, an optional one a key only when written
+type TMXAttributeValues<Table extends Record<string, AttributeKind>> = {
+  [Name in keyof Table as Table[Name] extends TMXRequiredKind ? Name : never]: TMXAttributeValue<Table[Name]>;
+} & {
+  [Name in keyof Table as Table[Name] extends TMXRequiredKind ? never : Name]?: TMXAttributeValue<Table[Name]>;
+};
+type TMXNumberKind = typeof AttributeKind.Number | typeof AttributeKind.RequiredNumber;
+
+type TMXRequiredKind = typeof AttributeKind.RequiredNumber | typeof AttributeKind.RequiredString;
+
+// An optional attribute left out, or a number written empty, is absent, since `Number("")` would read it as zero.
+// A required one is written as zero, or empty for a String, so the model's key is always there.
+// A String attribute written empty is kept, as the document wrote it.
+export const readTmxAttributes = <Table extends Record<string, AttributeKind>>(
+  attributes: TMXAttributes,
+  table: Table,
+): TMXAttributeValues<Table> => {
+  const values: Record<string, number | string> = {};
+  for (const [name, kind] of Object.entries(table)) {
+    const isNumber = kind === AttributeKind.Number || kind === AttributeKind.RequiredNumber;
+    const isRequired = kind === AttributeKind.RequiredNumber || kind === AttributeKind.RequiredString;
+    const text = attributes[name];
+    if (text === undefined || (isNumber && text === "")) {
+      if (isRequired) values[name] = isNumber ? 0 : "";
+    } else if (isNumber) {
+      const number = Number(text);
+      if (Number.isNaN(number))
+        throw new InvalidOperationError(Operation.Read, readTmxAttributes.name, `${text} is not a number`);
+      values[name] = number;
+    } else values[name] = text;
+  }
+  // The table names every required key, which the loop above always writes, so the record is the model's shape
+  return values as TMXAttributeValues<Table>;
+};

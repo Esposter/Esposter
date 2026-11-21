@@ -10,10 +10,10 @@ import type { GridSpacing } from "#src/models/GridSpacing";
 import type { GridTransfer } from "#src/models/GridTransfer";
 
 import { useGridLayout } from "#src/composables/useGridLayout";
+import { getColumnPitch } from "#src/internal/placement/getColumnPitch";
 import { CollisionMode } from "#src/models/CollisionMode";
 import { CompactType } from "#src/models/CompactType";
 import { ResizeEdge } from "#src/models/ResizeEdge";
-import { getColumnPitch } from "#src/placement/getColumnPitch";
 import { startExternalDrag } from "#src/services/startExternalDrag";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";

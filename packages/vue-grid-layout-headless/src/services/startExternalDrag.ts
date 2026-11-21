@@ -1,9 +1,9 @@
+import type { MountedGrid } from "#src/internal/models/MountedGrid";
 import type { GridCell } from "#src/models/GridCell";
 import type { GridItem } from "#src/models/GridItem";
 import type { GridRefusal } from "#src/models/GridRefusal";
-import type { MountedGrid } from "#src/models/MountedGrid";
 
-import { findGridAt } from "#src/services/findGridAt";
+import { findGridAt } from "#src/internal/services/findGridAt";
 
 // An item from outside every grid, such as a palette entry, is dragged by its element: the grid under the pointer previews the
 // Cell the item would land on, and the release drops it there, or nowhere when no grid takes it. The drop receives the grid's

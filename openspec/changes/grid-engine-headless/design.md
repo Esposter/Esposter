@@ -287,8 +287,9 @@ The binding is the part that knows Phaser. It reads the tilemap into the `tiles`
 ```text
 packages/grid-engine-headless/        ← the package: a manifest, a README, its source, and no Phaser import
   src/models/                         ← the types: Direction, Position, the config, the events, the error
-  src/services/                       ← one function per step: the collision rule, the step, the commit, the events
-  src/grid-engine-headless.ts         ← the entry the build generates a barrel for
+  src/services/                       ← the functions the core exports: the engine's factory and the direction table
+  src/internal/                       ← the collision rule, the steps and the commit, private to the package
+  src/index.ts                        ← the entry: the barrel the build generates from the modules outside src/internal
 apps/web/app/services/dungeons/gridEngine/   ← the binding: the collision read, the placement, the depth, the frames
 ```
 
@@ -394,7 +395,7 @@ Not earned: the direction values, which typecheck already holds; the README; the
 - **A long update walks the distance it covers.** The excess is spent as the steps it covers, so an update of a long delta walks the character through several tiles where one tile was walked before. Whether the world's frame delta can be that long is the driven run's check (2.3), since the core does not cap the delta it is given.
 - **The driven run (2.3) is not done.** The dev server's first request hung in this environment, so the swapped world was not driven. A smoke load of `/dungeons` reached the page, but its module graph failed on a stale core build (below), so no walk, wall, encounter, teleport, respawn or tilemap switch was observed, and the frame-delta check and the placement comparison with 1.6 are open. The dev hang is an environment behaviour, not a commit's: `git bisect` over `2e6ef3e79a..7eb0afeeab` found no boundary, since both ends answered `/about` with 200 once Nitro's dev reload was allowed to finish. The reload timeout defaults to 120 s, and a cold dependency re-bundle exceeded it on this machine, which is what the 500s and the "hung" message were. The hang also returned on the first request after the `/dungeons` rule was removed (below), so the first request's re-bundle, not a route, is what fails.
 - **The `/dungeons` `ssr: false` rule stays.** The verdict was to server-render `/dungeons` with the rule removed. The dev server hung on the first request then, and every route answered 500 after 60 s, so the page's server render could not be read and no Phaser error was observed. The rule stays, with its comment naming the rex plugins' `Phaser` globals.
-- **The core's build cache can restore a stale `dist`.** `pnpm dev` runs `build:packages`, which restored the core's `dist/index.js` from an earlier build after the package's entry had changed, so the app could not import `DirectionDeltaMap`. A direct `tsdown` build wrote the right file, and the next `pnpm dev` restored the old one. The cause was the per-package build cache excluding `src/index.ts` from every package's inputs (`vite/services/createBuildCache.ts`, fed by `vite/services/getPackageRewrittenPatterns.ts`). That exclusion is right for a generated barrel; the core writes its entry by hand, so an edit to it never invalidated the build. The entry is a cache input now.
+- **The core's build cache can restore a stale `dist`.** `pnpm dev` runs `build:packages`, which restored the core's `dist/index.js` from an earlier build after the package's entry had changed, so the app could not import `DirectionDeltaMap`. A direct `tsdown` build wrote the right file, and the next `pnpm dev` restored the old one. The cause was the per-package build cache excluding `src/index.ts` from every package's inputs (`vite/services/createBuildCache.ts`, fed by `PACKAGE_REWRITTEN_PATTERNS` in `vite/services/constants.ts`). That exclusion is right for a generated barrel, and the core's entry was hand-written, so an edit to it never invalidated the build. The core's entry is generated now, like every package's, so the same exclusion holds for all of them.
 
 ## Sources
 
