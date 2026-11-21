@@ -17,3 +17,5 @@ Any Phaser class that chains to `Scene → TextureManager → Texture → Frame 
 - `Input.Keyboard.Key`, `Input.Keyboard.CursorKeys` (via KeyboardPlugin → Scene)
 - Rex plugin instances (Slider, VirtualJoystick, etc.)
 - Any class that holds a `scene` reference
+
+Not on the list: `Tilemaps.ObjectLayer`, the parsed Tiled object group (`name`, `id`, `opacity`, `properties`, `propertyTypes`, `type`, `visible`, `objects`). It is plain data with no scene, texture or live graph, so a store holds it as it is.
