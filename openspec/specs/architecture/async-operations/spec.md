@@ -58,19 +58,13 @@ A write SHALL apply its change when it is sent, and when the server rejects it S
 
 ### Requirement: A write is never discarded silently
 
-A write SHALL NOT be discarded unless its caller asked for that, and every write that is discarded or superseded SHALL report its outcome to its caller.
+A write SHALL NOT be discarded unless its caller asked for that, and every write that is discarded SHALL report its outcome to its caller.
 
 #### Scenario: A duplicate exclusive write is reported as dropped
 
 - **GIVEN** an exclusive write for a target already in flight
 - **WHEN** another exclusive write for that target is issued
 - **THEN** the second call is reported as dropped and nothing is sent
-
-#### Scenario: A superseded write that failed still reports its failure
-
-- **GIVEN** a superseding write whose earlier call failed after a newer call was issued
-- **WHEN** the earlier call's failure arrives
-- **THEN** the failure is reported to its caller
 
 ### Requirement: A write-back lands under the target it was issued for
 

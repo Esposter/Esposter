@@ -4,16 +4,15 @@ Read when a composable issues a read or a write that can overlap another, or per
 
 ## The entry points
 
-- **`executeQuery(query, { key, onError, onSuccess })`** — reads, latest-wins per key. A superseded read is silent (no callbacks, no alert): discarding it loses nothing, which is why it is the read default.
+- **`executeQuery(query, { key, onError, onSuccess, runScope })`** — reads, latest-wins per key through the run scope the caller holds (`useRunScope`). A superseded read is silent (no callbacks, no alert): discarding it loses nothing, which is why it is the read default.
 - **`executeMutation(mutate, { applyOptimistic, key, onError, reconcile })`** — writes, **queued** per key, returning nothing: the screen changes in the apply, so no caller can wait on the answer. The awaited form, `{ awaitedBecause, key, onSuccess }`, resolves to a `MutationOutcome` and is only for the three reasons the client data design lists. Discarding a write loses its error and its rollback, so a write is never dropped by default.
-- **A row a typed event pushes goes to the overlay, not to a ref.** A store with both a cached read and a `store*` event handler hands each row to `arrive(table, row)` from `useOverlayStore`, which applies it only at a version above the one held, or fills its missing columns at the held version. A read still on its way answers at a lower version and loses there, so the store calls no supersede: `useCachedRead` has none.
+- **A row a typed event pushes goes to the overlay, not to a ref.** A store with both a cached read and a `store*` event handler hands each row to `arrive(table, row)` from `useOverlayStore`, which applies it only at a version above the one held, or fills its missing columns at the held version. A read still on its way answers at a lower version and loses there, so neither the store nor `useCachedRead` orders anything of its own.
 - **`useQuery(query, { onSuccess })`** — `executeQuery` + `shallowRef` data + auto-fetch on setup + error alert. Reach for it before writing a bespoke read composable; write a custom one only when the state shape genuinely differs (its own cursor, an inline error panel), and build it on `executeQuery` even then.
 - **Neither entry point is tRPC-only** — both take a plain `() => Promise<T>`, so IndexedDB writes and other local async work order through the same keys.
 
 ## The opt-ins
 
-- **`isExclusive: true` on a read** — single-flight, for the fan-out read every instance of a surface issues on mount (the worked cases are `openspec/specs/architecture/async-operations/design.md`'s). The second caller **joins** the in-flight call and resolves with its outcome, so the data is in the store by the time it returns — a read is never `Dropped`, which would leave that caller rendering empty. It joins only what is still in flight, so read-once-per-session stays a separate cache flag (`isLoaded`, a `loadedFooIds` set) checked at the call site first, and a re-read issued _because_ something changed omits the opt-in rather than joining the answer it just invalidated.
-- **`isSupersede: true` on a write** — latest-wins, for a control that fires per keystroke or drag frame. A superseded write still rolls back and still reports its failure.
+- **`isExclusive: true` on a read** — single-flight, for the fan-out read every instance of a surface issues on mount (the worked cases are `openspec/specs/architecture/async-operations/design.md`'s). The second caller **joins** the in-flight call and resolves with its outcome, so the data is in the store by the time it returns — a joiner is never dropped by its own choice, which would leave that caller rendering empty. It joins only what is still in flight, so read-once-per-session stays a separate cache flag (`isLoaded`, a `loadedFooIds` set) checked at the call site first, and a re-read issued _because_ something changed omits the opt-in rather than joining the answer it just invalidated.
 - **`isExclusive: true` on a write** — drops a duplicate outright, because its caller wanted an effect that is already happening.
 
 ## Pending state and sync call sites
@@ -25,7 +24,7 @@ Read when a composable issues a read or a write that can overlap another, or per
 
 ## Staleness is per target
 
-An operation that must check mid-flight receives `checkIsStale` as its callback's first argument — the guard is handed to it, never built by it.
+A task that must check mid-flight is run by a run scope, which hands it the run's abort signal — the guard is handed to it, never built by it.
 
 Latest-wins is **per target**, so an operation whose target itself moved on was never superseded by anything — re-check the source after the await and bail.
 

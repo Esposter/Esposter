@@ -1,6 +1,6 @@
 # Async Operations
 
-Every user-facing async operation on the client declares exactly two things: **what it targets** and **whether it reads or writes**. `useMutation` (`apps/web/app/composables/shared/useMutation.ts`) derives the **default** concurrency behaviour from those two facts, and the two opt-ins below — `isExclusive` and `isSupersede` — are the only things that change it.
+Every user-facing async operation on the client declares exactly two things: **what it targets** and **whether it reads or writes**. `useMutation` (`apps/web/app/composables/shared/useMutation.ts`) derives the **default** concurrency behaviour from those two facts, and the one opt-in below — `isExclusive` — is the only thing that changes it.
 
 ## No call site orders its own async work
 
@@ -23,7 +23,7 @@ The `key` is the identity of the thing being operated on, and it is always expli
 
 - **Operation on an existing entity** → its id or natural composite (`input.id`, `` `${userId}-${roleId}` ``).
 - **Singleton target** — the current user's settings, the one dataset a composable shows — → the scope's id when one exists, else a stable name (`key: "userSettings"`). Keys are scoped per `useMutation()` instance, so names cannot collide across instances.
-- **Create with no id yet** → a per-call `Symbol("createRoom")`, so independent creates never queue behind or supersede each other.
+- **Create with no id yet** → a per-call `Symbol("createRoom")`, so independent creates never queue behind each other.
 - **Anything the primitive cannot take verbatim** — a key is a `PropertyKey`, and nothing else is accepted — → narrow the source type until it is one, never `String()` it. Stringifying collapses distinct keys onto a single target (`"1,2"` and `[1, 2]` both become `1,2`), which is why `IndexedDbDatabaseSchema` types every index key as a string: an IndexedDB partition is then its own target, unconverted.
 
 Two writes that share a key are two writes to the same thing, and they run one at a time. Two writes with different keys are independent and run concurrently. Note that "same entity" is not the same question as "same value": the Attachments settings panel writes a maximum file size and a list of allowed types through one `key: room.id`, because both are writes to that room — but neither replaces the other, so both must land.
@@ -54,15 +54,15 @@ The same rule decides what a **subscription** may apply. A subscription spans ev
 
 ## Reads — `executeQuery`
 
-`executeQuery(query, { isExclusive, key, onError, onSuccess })` is latest-wins for its key. A superseded read never runs `onSuccess`, never runs `onError`, and never alerts — it reports `Stale` and stays silent, because a race it lost is not something the user needs to hear about. Reads for one key otherwise run concurrently, so a slow response can never overwrite a fast one issued after it.
+`executeQuery(query, { isExclusive, key, onError, onSuccess, runScope })` is latest-wins for its key, through the run scope its caller holds: a newer read of the key aborts the one before it, and only the newest run commits its answer and its topic watch. A superseded read never runs `onSuccess`, never runs `onError`, and never alerts — it reports `Dropped` and stays silent, because a race it lost is not something the user needs to hear about. Reads for one key otherwise run concurrently, so a slow response can never overwrite a fast one issued after it.
 
 One opt-in narrows this:
 
 - **`isExclusive`** — single-flight. While an `isExclusive` read with the same key is in flight, a second `isExclusive` caller issues no request of its own: it **joins** that call and resolves with its outcome. Its own `onSuccess`/`onError` do not run — the call it joined already applied the state and reported — so a joiner of a call that succeeded finds the data it asked for in the store. For the fan-out reads that every instance of a surface issues on mount: one favourites set behind a list, a blade and Home, or one room's follow state behind every follow button in it.
 
-  **Only a call that passed the flag is joinable, so a key's reads flag all or none.** A plain read publishes nothing to join, and every read — flagged or not — supersedes whatever was joinable and takes its place. So one unflagged read on a key the rest of the surface flags costs two round trips instead of one, and the joiners of the call it superseded resolve `Stale` over a store that read never wrote — an empty list beside a populated one, which is the outcome the flag exists to prevent. The exception below is the one place a key deliberately mixes.
+  **Only a call that passed the flag is joinable, so a key's reads flag all or none.** A plain read publishes nothing to join, and every read — flagged or not — supersedes whatever was joinable and takes its place. So one unflagged read on a key the rest of the surface flags costs two round trips instead of one, and the joiners of the call it superseded resolve `Dropped` over a store that read never wrote — an empty list beside a populated one, which is the outcome the flag exists to prevent. The exception below is the one place a key deliberately mixes.
 
-A joined read is never `Dropped`. Dropping is right for a write, whose caller wanted an effect that is already happening, and wrong for a read, whose caller wanted the data — a caller handed nothing renders an empty list beside a populated one.
+A joined read is never dropped by its own caller's choice. Dropping is right for a write, whose caller wanted an effect that is already happening, and wrong for a read, whose caller wanted the data — a caller handed nothing renders an empty list beside a populated one. The one way a joiner ends `Dropped` is the case above, when a later read superseded the call it joined.
 
 Two things `isExclusive` deliberately does **not** do:
 
@@ -73,11 +73,10 @@ Two things `isExclusive` deliberately does **not** do:
 
 ## Writes — `executeMutation`
 
-`executeMutation(mutate, { applyOptimistic, isExclusive, isSupersede, key, onError, reconcile })` queues per key, and returns nothing: its promise floats through `getSynchronizedFunction`, so `waitForSynchronizedFunctions()` drains it with every other fire-and-forget. The awaited form takes `awaitedBecause` and `onSuccess` in place of `reconcile`, and resolves to its outcome ([client data](../client-data/design.md#optimistic-by-default)). `applyOptimistic` runs when the write is **sent**, not when it was issued, so its snapshot reflects whatever the write ahead of it stored — a queued write builds on its predecessor's outcome instead of on a stale copy of the screen. For the same reason, a write that reads a version token or resolves a create-or-update branch does that **inside** `mutate`, not before the call.
+`executeMutation(mutate, { applyOptimistic, isExclusive, key, onError, reconcile })` queues per key, and returns nothing: its promise floats through `getSynchronizedFunction`, so `waitForSynchronizedFunctions()` drains it with every other fire-and-forget. The awaited form takes `awaitedBecause` and `onSuccess` in place of `reconcile`, and resolves to its outcome ([client data](../client-data/design.md#optimistic-by-default)). `applyOptimistic` runs when the write is **sent**, not when it was issued, so its snapshot reflects whatever the write ahead of it stored — a queued write builds on its predecessor's outcome instead of on a stale copy of the screen. For the same reason, a write that reads a version token or resolves a create-or-update branch does that **inside** `mutate`, not before the call.
 
-Two opt-ins narrow this, and nothing else does:
+One opt-in narrows this, and nothing else does:
 
-- **`isSupersede`** — latest-wins instead of queueing, for a control that fires per keystroke or per drag frame, where the earlier value is already replaced on screen by the later one and losing it costs nothing. A superseded write still runs its rollback and still surfaces its error: superseding drops the older **result**, never the older **failure**.
 - **`isExclusive`** — single-flight. While any call with the same key is pending — a read in flight, or a write queued or in flight — the call is **dropped** outright: nothing fires, nothing is queued, and the caller gets `Dropped`. For non-idempotent creates that must never double-fire, like `createLike`.
 
 Everything else queues. If a write is worth issuing, it is worth landing.
@@ -97,7 +96,6 @@ The test is not "does this fetch" but **"does discarding this lose information?"
 | Opt-in        | On a read                                                         | On a write                          |
 | ------------- | ----------------------------------------------------------------- | ----------------------------------- |
 | `isExclusive` | Joins another `isExclusive` call in flight and shares its outcome | Drops the duplicate — nothing fires |
-| `isSupersede` | Not an option — a read is latest-wins already                     | Latest-wins instead of queueing     |
 
 ## Outcomes
 
@@ -105,14 +103,13 @@ The operation's own rejection never escapes: a read and an awaited write resolve
 
 A **callback** is the exception. A throw from `applyOptimistic`, from the rollback it returns, or from `onSuccess`/`reconcile`/`onError` rejects the promise the entry point returned, and nothing catches it — the pending bookkeeping still unwinds, but the caller gets a rejection instead of an outcome, and a caller that stored the promise without a rejection handler gets an unhandled rejection. A callback body that can fail therefore produces its own result rather than throwing.
 
-| Status      | For a read                                                                                                                 | For a write                                                                                                                     |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `Succeeded` | Fetched while still the latest for its target — carries the data, which `onSuccess` has already applied                    | Persisted — carries the server-authoritative result                                                                             |
-| `Failed`    | Rejected while still the latest. Nothing was applied, so nothing is unwound, and the error is reported or alerted          | Rejected. The optimistic change has been rolled back and the error reported or alerted by this point                            |
-| `Stale`     | Superseded by a newer read for the same target. Silent by design — no callbacks, no alert, whether it resolved or rejected | Only with `isSupersede`, and only after resolving **successfully**. A superseded write that _failed_ reports `Failed`, not this |
-| `Dropped`   | Never — a read is joined, not dropped                                                                                      | With `isExclusive`, behind an in-flight sibling. Never sent                                                                     |
+| Status      | For a read                                                                                                                       | For a write                                                                                          |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `Succeeded` | Fetched while still the latest for its target — carries the data, which `onSuccess` has already applied                          | Persisted — carries the server-authoritative result                                                  |
+| `Failed`    | Rejected while still the latest. Nothing was applied, so nothing is unwound, and the error is reported or alerted                | Rejected. The optimistic change has been rolled back and the error reported or alerted by this point |
+| `Dropped`   | Superseded by a newer read of the same key before it committed. Silent — no callbacks, no alert, whether it resolved or rejected | With `isExclusive`, behind an in-flight sibling. Never sent                                          |
 
-A joined read reports the outcome of the call it joined — failures and `Stale` included, so a joiner resolves `Stale` when a later read superseded the call it was waiting on.
+A joined read reports the outcome of the call it joined — failures and `Dropped` included, so a joiner resolves `Dropped` when a later read superseded the call it was waiting on.
 
 ## Read lifecycle
 
@@ -121,14 +118,14 @@ flowchart TD
   Need[Surface needs data] --> Exclusive{isExclusive and an isExclusive read for this key still in flight?}
   Exclusive -->|yes| Join[Join it — no request is issued]
   Exclusive -->|no| Bind[Bind to the target key, claim latest-for-target, drop whatever was joinable]
-  Join --> Shared[Resolve with that call's outcome — Stale if a later read superseded it]
+  Join --> Shared[Resolve with that call's outcome — Dropped if a later read superseded it]
   Bind --> Send[Send the read]
   Send -->|resolves| Superseded{Superseded by a newer read?}
   Send -->|rejects| Lost{Superseded by a newer read?}
   Superseded -->|no| Success[onSuccess with the fetched data]
-  Superseded -->|yes| Stale[Stale — discard the older response]
+  Superseded -->|yes| Discard[Dropped — discard the older response]
   Lost -->|no| Report[onError, or an alert with the real Error.message]
-  Lost -->|yes| Silent[Stale — silent, nothing was applied]
+  Lost -->|yes| Silent[Dropped — silent, nothing was applied]
   Success --> Store[(Store)]
 ```
 
@@ -139,17 +136,12 @@ flowchart TD
   Action[User action] --> Exclusive{isExclusive and a call on the same key pending?}
   Exclusive -->|yes| Dropped[Dropped — nothing fires]
   Exclusive -->|no| Bind[Bind to the target key]
-  Bind --> Mode{isSupersede?}
-  Mode -->|no| Queue[Wait for the target's earlier writes to settle]
-  Mode -->|yes| Latest[Claim latest-for-target]
+  Bind --> Queue[Wait for the target's earlier writes to settle]
   Queue --> Apply[applyOptimistic]
-  Latest --> Apply
   Apply -->|writes the change now| Store[(Store)]
   Apply -->|returns rollback closure| Send[Send the write]
-  Send -->|resolves| Superseded{Superseded by a newer call?}
+  Send -->|resolves| Success[onSuccess with the server-authoritative result]
   Send -->|rejects| Rollback[Run rollback closure]
-  Superseded -->|no| Success[onSuccess with the server-authoritative result]
-  Superseded -->|yes| Stale[Stale — discard the older result]
   Success --> Store
   Rollback --> Store
   Rollback --> Report[onError, or an alert with the real Error.message]
@@ -157,17 +149,18 @@ flowchart TD
 
 ## Key files
 
-| File                                                           | Role                                                                           |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `apps/web/app/composables/shared/useMutation.ts`               | The primitive — per-target queue, latest-wins guard, pending counts, reporting |
-| `apps/web/app/composables/shared/useQuery.ts`                  | Read composable built on `executeQuery` — auto-fetch on setup, `data` ref      |
-| `apps/web/app/models/shared/MutationStatus.ts`                 | The four outcomes                                                              |
-| `packages/shared/src/util/function/getSynchronizedFunction.ts` | Fires an async operation from a sync callback slot                             |
+| File                                                           | Role                                                                              |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `apps/web/app/composables/shared/useMutation.ts`               | The primitive — per-target queue, latest-wins guard, pending counts, reporting    |
+| `apps/web/app/composables/shared/useQuery.ts`                  | Read composable built on `executeQuery` — auto-fetch on setup, `data` ref         |
+| `apps/web/app/composables/shared/useRunScope.ts`               | The run scope a read is ordered by: a newer run of a key aborts the one before it |
+| `apps/web/app/models/shared/MutationStatus.ts`                 | The three outcomes                                                                |
+| `packages/shared/src/util/function/getSynchronizedFunction.ts` | Fires an async operation from a sync callback slot                                |
 
 ## Notes
 
 - **Not only tRPC.** Both entry points take a plain `() => Promise<T>`, so an IndexedDB write or any other local async work is ordered the same way — `usePaginationCache` keys its cache writes on the partition, so one partition's rewrites run in order while another partition's never wait behind them.
-- **A guard is handed to you, never built.** An operation whose body has to check mid-flight — a multi-step local media switch — receives `checkIsStale` as its first argument. It asks the primitive whether it is still the latest for its target and never tracks that itself.
+- **A guard is handed to you, never built.** A task that has to check mid-flight — a multi-step local media switch — is run by a run scope, which hands it the run's abort signal. It checks that signal and never tracks whether it is still the latest for its key itself.
 - **Latest-wins is per target, so a switch away still needs its own check.** A read whose target moved on entirely — the room changed while IndexedDB answered — was never superseded, because the new read has a different key. Re-check the source after the await and bail.
-- **Latest-wins protects state, not the server.** A superseding write still issues its network call. Preventing a second trigger while the first is in flight belongs to the surface — see [in-flight guarding](../client-data/design.md#in-flight-guarding).
+- **Latest-wins protects state, not the server.** A superseded read still sent its request, and only its answer is discarded. Preventing a second trigger while the first is in flight belongs to the surface — see [in-flight guarding](../client-data/design.md#in-flight-guarding).
 - **Search-as-you-type is the one read that goes further.** `useAutoSearch` (see [Search](../search/design.md)) actually cancels the superseded request with an `AbortController` instead of ignoring its response.
