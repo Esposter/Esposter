@@ -93,9 +93,8 @@ export const useThreadStore = defineStore("message/thread", () => {
     threadMessages.value = [];
     // A split exists to hold the thread beside another pane, so it goes with the thread — and the drawer keeps
     // Showing the pane the split was pinning rather than an empty thread
-    const { splitRightDrawer } = messageLayoutStore;
-    if (splitRightDrawer) {
-      messageLayoutStore.rightDrawer = splitRightDrawer;
+    if (messageLayoutStore.splitRightDrawer) {
+      messageLayoutStore.rightDrawer = messageLayoutStore.splitRightDrawer;
       messageLayoutStore.splitRightDrawer = undefined;
       return;
     }
