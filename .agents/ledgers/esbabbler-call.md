@@ -10,4 +10,6 @@ The call row and its in-memory participant maps, the id through `createId`, stan
 | `Message/Content/Call` — the roots, `Control`, `Panel`, `PreJoin`, `JoinNotice`                                                      | —     |       |
 | `Message/Content/Call` — `Participant`, `PictureInPicture`, `ScreenShare`, `Video`, `Audio`, `Camera`, `Device`, `VirtualBackground` | —     |       |
 | `server/services/message/call`                                                                                                       | —     |       |
+| `server/trpc/routers/call`                                                                                                           | —     |       |
+| `server/api/webhooks`                                                                                                                | —     |       |
 | `pages/calls` and the call models in `app`, `server` and `shared`                                                                    | —     |       |
