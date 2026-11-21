@@ -70,7 +70,7 @@ A pass sweeps the union of both. The spec side has no recipe here: `scripts/src/
 | `openspec/specs/genshin/controls`                            | —                       |       |
 | `openspec/specs/genshin/cooking`                             | 2026-10-27 · Haiku 5.5  |       |
 | `openspec/specs/genshin/crafting`                            | —                       |       |
-| `openspec/specs/genshin/derived-assets`                      | —                       |       |
+| `openspec/specs/genshin/derived-assets/*`                    | —                       |       |
 | `openspec/specs/genshin/derived-assets/animestudio-macos`    | 2026-10-27 · Haiku 5.5  |       |
 | `openspec/specs/genshin/derived-assets/animestudio-upstream` | 2026-10-27 · Haiku 5.5  |       |
 | `openspec/specs/genshin/derived-assets/development-exports`  | —                       |       |
@@ -106,7 +106,7 @@ A pass sweeps the union of both. The spec side has no recipe here: `scripts/src/
 | `openspec/specs/genshin/interface-library`                   | —                       |       |
 | `openspec/specs/genshin/inventory`                           | —                       |       |
 | `openspec/specs/genshin/investigation`                       | —                       |       |
-| `openspec/specs/genshin/kits`                                | —                       |       |
+| `openspec/specs/genshin/kits/*`                              | —                       |       |
 | `openspec/specs/genshin/kits/aino`                           | 2026-10-27 · Haiku 5.5  |       |
 | `openspec/specs/genshin/kits/albedo`                         | 2026-10-27 · Haiku 5.5  |       |
 | `openspec/specs/genshin/kits/alhaitham`                      | 2026-10-27 · Haiku 5.5  |       |
@@ -267,7 +267,7 @@ A pass sweeps the union of both. The spec side has no recipe here: `scripts/src/
 | `openspec/specs/genshin/parity/visual-suite`                 | 2026-10-27 · Haiku 5.5  |       |
 | `openspec/specs/genshin/parity/witness`                      | 2026-10-27 · Haiku 5.5  |       |
 | `openspec/specs/genshin/party`                               | 2026-10-27 · Haiku 5.5  |       |
-| `openspec/specs/genshin/puzzles`                             | —                       |       |
+| `openspec/specs/genshin/puzzles/*`                           | —                       |       |
 | `openspec/specs/genshin/puzzles/monument`                    | —                       |       |
 | `openspec/specs/genshin/puzzles/seelie`                      | —                       |       |
 | `openspec/specs/genshin/puzzles/time-trial-challenge`        | 2026-10-27 · Haiku 5.5  |       |

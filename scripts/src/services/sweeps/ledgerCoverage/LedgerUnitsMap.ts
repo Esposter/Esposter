@@ -24,6 +24,17 @@ const readInvariantsToolingUnits = (): string[] =>
 // The units the quality and security tooling tables name: the invariants ledger's directories beside the openspec folders
 const readToolingUnits = (): string[] => [...readInvariantsToolingUnits(), ...readOpenspecFolderUnits()];
 
+// A Genshin spec folder holding spec folders of its own is one row for its own documents, spelled `folder/*` as the
+// Engine ledger spells a directory's direct files. Each sub-folder is a row of its own, and a row naming the folder
+// Would cover its subtree too: kits' 244 files are a unit no pass can read beside its 121 character rows.
+const readGenshinEvidenceUnits = (): string[] => {
+  const units = readOpenspecFolderUnits().filter((unit) => unit.startsWith("`openspec/specs/genshin/"));
+  return units.map((unit) => {
+    const folder = unit.slice(1, -1);
+    return units.some((other) => other.startsWith(`\`${folder}/`)) ? `\`${folder}/*\`` : unit;
+  });
+};
+
 // The ledgers whose units are derived rather than chosen by a pass, each with the listing that derives its rows — one
 // Unit cell per entry, in the cell's own backticked form. A derived listing is read off the filesystem, the same tree
 // The ledger's rows describe, except the tooling tables' directories, which are the invariants ledger's, and their
@@ -46,7 +57,7 @@ export const LedgerUnitsMap: Record<string, () => string[]> = {
       )
       .map(({ name }) => `\`${name}\``);
   },
-  "genshin-evidence": () => readOpenspecFolderUnits().filter((unit) => unit.startsWith("`openspec/specs/genshin/")),
+  "genshin-evidence": readGenshinEvidenceUnits,
   "kit-differs-from-source": readKitOverlayRows,
   "quality/tooling": readToolingUnits,
   "security/tooling": readToolingUnits,
