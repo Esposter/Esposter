@@ -1,10 +1,27 @@
 # Delegation guard
 
-Part of [Genshin mods](../README.md). The main session is the expensive reader in this repository: a lookup it makes costs the family that thinks, and its result stays in the context of every later turn. The delegation rule says a chain of lookups whose next step is a lookup too belongs to a haiku subagent, which reads the chain and returns its conclusion. The rule is easy to state and easy to break one read at a time, so the guard counts the main session's lookups and says so when a run of them gets long. The rule's other half, that every subagent runs on haiku, it enforces outright: a launch on any other model is refused.
+Part of [Genshin mods](../README.md). The main session is the expensive reader in this repository: a lookup it makes costs the family that thinks, and its result stays in the context of every later turn. The delegation rule says a chain of lookups whose next step is a lookup too belongs to a haiku subagent, which reads the chain and returns its conclusion. The rule is easy to state and easy to break one read at a time, so the guard counts the main session's lookups and says so when a run of them gets long. The rule's other half, that every subagent runs on haiku, it enforces outright: a launch on any other model is refused, and so is a workflow whose agents are not all on haiku.
 
 ## The launch gate
 
-Every `Agent` call is decided before it runs. It passes only when its `model` is `haiku`. A launch naming another model is denied, and so is one naming none, which inherits the session's model, and any `fork`, which runs on the session's model whatever it names. The denial says what to do instead: pass model `haiku`, keep work too judged for haiku in the main session, and treat a spec haiku cannot carry as one with a call still open. The gate runs in every session, with or without a usage reserve, and a refused launch is not counted. The launch gate reads each `Agent` call, and a workflow's agents are not among them. Their `model` is the `llm-delegation` skill's rule alone, except under a [usage reserve](../resin/design.md), where the reserve's gate reads a workflow's script and launches it only when every agent in it is pinned to haiku. **Rejected: refusing every workflow under a reserve.** A workflow of haiku agents costs what the same agent launches cost, which the reserve allows, and the refusal only pushed the session onto one agent launch per unit.
+Every `Agent` call is decided before it runs. It passes only when its `model` is `haiku`. A launch naming another model is denied, and so is one naming none, which inherits the session's model, and any `fork`, which runs on the session's model whatever it names. The denial says what to do instead: pass model `haiku`, keep work too judged for haiku in the main session, and treat a spec haiku cannot carry as one with a call still open. The gate runs in every session, and a refused launch is not counted.
+
+A workflow's agents are the same subagents, so the workflow gate below reads each workflow's script for them. **Rejected: refusing every workflow.** A workflow of haiku agents costs what the same agent launches cost, and the refusal only pushed the session onto one agent launch per unit, where a single workflow runs them all in one script.
+
+## The workflow gate
+
+A `Workflow` launch is decided before it runs, in every session. Its script is the inline one, or the file at the launch's path, and the launch passes only when each `agent(` call in the script passes `model` as a plain `'haiku'` or `"haiku"` literal in its own options object, with at least one such call. The check reads the code with its strings, template text and comments blanked, and it refuses whatever it cannot classify: a slash, a backslash outside a string, an HTML-style comment, a literal or comment left open, a name that reaches code the script does not show (`eval`, `Function`, `this`, `import`, `require`, `process`, `globalThis`, `Reflect`, `self`, `window`, `constructor`, `workflow`), and an `agent` that is not called. A saved workflow named with no script, and a path with no file, are refused too, since their agents cannot be seen.
+
+```mermaid
+flowchart TD
+  L["Workflow launch"] --> R{"Script readable as code?<br/>inline, or the file at its path"}
+  R -->|no| D["Refused: its agents cannot be seen"]
+  R -->|yes| C{"Every agent( call names haiku<br/>in its own options, and there is one?"}
+  C -->|no| D2["Refused: pass haiku in each call's options"]
+  C -->|yes| A["Runs"]
+```
+
+The refusal says to pass model `haiku` in each agent's own options, keep work too judged for haiku in the main session, and treat a spec haiku cannot carry as one with a call still open. A failure of the gate lets the launch through, as the [ward](../ward/design.md) does, so a failure never blocks a launch. **Rejected: a text match for the haiku literal anywhere in the script**, since a prompt quoting `model: 'haiku'` beside an opus call would pass; each call's own options are read instead.
 
 ## How it works
 
@@ -34,15 +51,23 @@ flowchart TD
 
 ## Key files
 
-| File                                                                    | Role                                                                                                       |
-| :---------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-mods/src/services/delegation/registerDelegation.ts`   | The call hook: refuses an agent launch not on haiku, counts each call and adds the note to its result      |
-| `packages/genshin-mods/src/services/delegation/getLaunchRefusal.ts`     | Whether an agent launch is refused, and the text it is told                                                |
-| `packages/genshin-mods/src/services/delegation/getCallStep.ts`          | Whether a call is a lookup, a reset or neither                                                             |
-| `packages/genshin-mods/src/services/delegation/checkIsLookupCommand.ts` | Whether a shell command only reads, after its leading segments                                             |
-| `packages/genshin-mods/src/services/delegation/getNextStreak.ts`        | The count after one call                                                                                   |
-| `packages/genshin-mods/src/services/delegation/getNudge.ts`             | Whether a count owes the note                                                                              |
-| `packages/genshin-mods/src/services/constants.ts`                       | The tool lists, the command patterns, the nudge interval and its text, the one agent model and its refusal |
+| File                                                                      | Role                                                                                                                                           |
+| :------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-mods/src/services/delegation/registerDelegation.ts`     | The call hook: refuses an agent launch not on haiku, counts each call and adds the note to its result                                          |
+| `packages/genshin-mods/src/services/delegation/getLaunchRefusal.ts`       | Whether an agent launch is refused, and the text it is told                                                                                    |
+| `packages/genshin-mods/src/services/delegation/registerWorkflowGuard.ts`  | The `tool.call` hook on `Workflow`: refuses a launch unless every agent in its script is haiku                                                 |
+| `packages/genshin-mods/src/services/delegation/checkIsHaikuOnlyScript.ts` | The pure check that every `agent(` call in a script passes the haiku model                                                                     |
+| `packages/genshin-mods/src/services/delegation/checkIsHaikuOptions.ts`    | Whether one call's options object names haiku as its one `model` key                                                                           |
+| `packages/genshin-mods/src/services/delegation/maskScriptCode.ts`         | The script's code, strings and comments blanked, or nothing when unreadable                                                                    |
+| `packages/genshin-mods/src/services/delegation/findClosingBracket.ts`     | The index of the bracket closing the one at a given index, or -1 when none does                                                                |
+| `packages/genshin-mods/src/services/delegation/findNonSpace.ts`           | The index of the first non-space character in a range                                                                                          |
+| `packages/genshin-mods/src/services/delegation/findTopLevelComma.ts`      | The index of the first comma outside every bracket in a range, or -1 when there is none                                                        |
+| `packages/genshin-mods/src/services/delegation/readWorkflowScript.ts`     | The launch's script, inline or from the file at its path when it is there                                                                      |
+| `packages/genshin-mods/src/services/delegation/getCallStep.ts`            | Whether a call is a lookup, a reset or neither                                                                                                 |
+| `packages/genshin-mods/src/services/delegation/checkIsLookupCommand.ts`   | Whether a shell command only reads, after its leading segments                                                                                 |
+| `packages/genshin-mods/src/services/delegation/getNextStreak.ts`          | The count after one call                                                                                                                       |
+| `packages/genshin-mods/src/services/delegation/getNudge.ts`               | Whether a count owes the note                                                                                                                  |
+| `packages/genshin-mods/src/services/constants.ts`                         | The tool lists, the command patterns, the nudge interval and its text, the one agent model, and the refusals of an agent launch and a workflow |
 
 ## Notes
 

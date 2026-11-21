@@ -1,6 +1,6 @@
 ## Purpose
 
-A refusal of every subagent launch not on haiku, and a nudge after every third lookup in a row the main session makes with no decision between them, telling the model that the chain goes to a haiku agent as one bounded question, rather than reading it one hop at a time in the main context.
+A refusal of every subagent launch not on haiku, a refusal of every workflow whose agents are not all on haiku, and a nudge after every third lookup in a row the main session makes with no decision between them, telling the model that the chain goes to a haiku agent as one bounded question, rather than reading it one hop at a time in the main context.
 
 ## Requirements
 
@@ -89,3 +89,38 @@ A failure in the guard SHALL let the call through unchanged.
 - **GIVEN** a call whose check fails
 - **WHEN** the call is made
 - **THEN** it runs unchanged
+
+### Requirement: A workflow runs only when every agent in it is haiku
+
+A workflow launch SHALL run only when every agent in its script is launched on haiku, in every session.
+
+#### Scenario: A workflow pinned to haiku
+
+- **GIVEN** a workflow whose script runs at least one agent, and every agent in it names haiku in its own options
+- **WHEN** the launch is made
+- **THEN** it runs
+- **AND** the script is read inline or from the file at the launch's path
+
+#### Scenario: A workflow with an agent on another model
+
+- **GIVEN** a workflow whose script runs an agent on a model other than haiku, or an agent naming no model
+- **WHEN** the launch is made
+- **THEN** it is refused and the refusal says to pass haiku in each agent's own options
+
+#### Scenario: A saved workflow named with no script
+
+- **GIVEN** a workflow launch that names a saved workflow and gives no script
+- **WHEN** the launch is made
+- **THEN** it is refused, since its agents cannot be seen
+
+#### Scenario: A script file that is missing
+
+- **GIVEN** a workflow launch whose script path has no file at that path
+- **WHEN** the launch is made
+- **THEN** it is refused, since its agents cannot be seen
+
+#### Scenario: The workflow gate failing
+
+- **GIVEN** the workflow gate itself failing
+- **WHEN** a workflow launch is made
+- **THEN** the launch goes through

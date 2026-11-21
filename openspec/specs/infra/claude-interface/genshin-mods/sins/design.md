@@ -207,7 +207,7 @@ packages/genshin-mods/src/models/   ← SinPosterior, SinFigures, SinScore and S
   - Robbins–Monro steps of $1/n$ converge to one fixed value, which is the thing the forgetting is there to avoid. It is the $\gamma = 1$ limit of this design.
   - A confidence weight from the API's confidence is not used. The confidence is stored, so a weight can be replayed later.
   - Seven calls, one per sin, cost seven times as much for the same prompt, and the batching rule answers the question in one call.
-  - A fork of the session's own model per prompt spends the same window the resin mod's usage reserve protects.
+  - A fork of the session's own model per prompt spends the session's usage window at the dearer family the delegation guard refuses a fork for.
 - **Sorting the bars by score is rejected.** Colour follows the sin, and sorting would make the adjacent pairs change with every prompt, which the palette's gates do not cover. The order is fixed.
 - **Retention.** The evidence log is kept. A retention rule waits until the log is large enough to matter, and is deferred rather than built.
 - **The node:sqlite module is a release candidate** (stability 1.2 in its docs). Its API can move, so it is checked on each Node bump.

@@ -12,6 +12,7 @@ Time and effort are the limit, so every resource the session holds works at once
 - **Waiting on a run with nothing else started** — a foreground solve, a sleep loop, a turn spent watching an agent. Its completion notifies the session; the time before it belongs to the next unit.
 - **Ending a turn to report while independent work is still ready.** The report goes out with the work still running, and names what runs and what is queued.
 - **A question to the user that blocks the rest of the turn.** Asks of the user are batched at the end of a reply, and everything not waiting on the answer carries on.
+- **A usage reserve: a maintenance line on a usage window, a cleanup-only phase past it, or a wind-down before the window resets.** Rejected in the owner's words: "remove this weird maintenance mode… it makes sense to fully utilise all of it anyways". Each usage window is spent in full on normal work, and nothing switches a session into a cleanup-only or reserve mode. The `genshin-mods` resin mod reads no window (`openspec/specs/infra/claude-interface/genshin-mods/resin/design.md`, "Overturned: a usage reserve").
 
 ## Rules
 
@@ -36,15 +37,8 @@ Asking first is for the short user-only list, and nothing else:
 
 An ask is one line, sent at the end of a reply with the default already taken. It never holds a unit that does not depend on its answer.
 
-## The usage reserve
-
-Each usage window keeps part of its end for the compute queue's runners, and what the session does while a window's reserve holds is `references/usage-reserve.md`.
-
-The reserve guards a local plan's window. A cloud session spends the account's API cloud credit instead, so it keeps working to the end of its task and never stops at a window's line; the mod's gap that shows it the reserve, and what to do under that notice, is in `references/usage-reserve.md`'s Scope paragraph.
-
 ## Deep Dives
 
 - `references/machine-efficiency.md` — when a wave starts, when an agent is about to check, build, search or scan, when the CPU is pinned while the GPU idles, and when the disk fills.
 - `references/fleet.md` — when more than one machine works the backlog: profiles, the pulled queue, claims as refs, fleet load and sync.
-- `references/usage-reserve.md` — when a usage window reaches its maintenance line.
 - `references/game-data.md` — when game data has to reach a machine, by download or by a copy between LAN machines.

@@ -2,18 +2,18 @@
 
 Claude Code loads **mods**: plugins whose hooks are a TypeScript module the engine runs in-process, so a plugin can draw a band above the prompt, show toasts, register commands, ask a question, rewrite a tool call before it runs and read the session's usage. `genshin-mods` carries these, each one answering something this repository's sessions do every day: several sessions share one checkout, long turns work through task lists, the context of a long session is what costs, and a run of lookups belongs to a subagent. How any mod is written here, and the engine rules that shape every file of this one, is the [Claude Code mods](../../../architecture/claude-mods/design.md) standard.
 
-| Mod                                        | What it does                                                                                                                 |
-| :----------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| [Waypoints](waypoints/design.md)           | After each answer, up to three next steps the session suggests, one press each                                               |
-| [Resin](resin/design.md)                   | The cache's countdown, the context, the limits and the cost, with warm, compact and a one-click handoff                      |
-| [Veil](veil/design.md)                     | Recording mode: emails, amounts, phone numbers and secrets shown as placeholders while the model reads them                  |
-| [Commission](commission/design.md)         | A goal's task list, how far it is and how long it has run                                                                    |
-| [Ward](ward/design.md)                     | A question before editing a file another session changed in the last half hour                                               |
-| [Pulse](pulse/design.md)                   | Keeps the machine watcher running from any session with the plugin                                                           |
-| [Sins](sins/design.md)                     | Scores each prompt against seven sins with TypeSafe, drawn as bars in a pane, off until switched on                          |
-| [Delegation guard](delegation/design.md)   | Refuses a subagent not on haiku, and after every third lookup in a row, a note to hand the chain to a haiku agent            |
-| [Disk-scan guard](disk-scan/design.md)     | Refuses a Bash `find`, `du`, `grep -r` or `ls -R` that starts at a root or a home folder, naming where to look               |
-| [Whole-index guard](whole-index/design.md) | Refuses a git command over the whole index (`git add .`, `git stash`, `git clean`) while another session shares the checkout |
+| Mod                                        | What it does                                                                                                                            |
+| :----------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| [Waypoints](waypoints/design.md)           | After each answer, up to three next steps the session suggests, one press each                                                          |
+| [Resin](resin/design.md)                   | The cache's countdown, the context, the limits and the cost, with warm, compact and a one-click handoff                                 |
+| [Veil](veil/design.md)                     | Recording mode: emails, amounts, phone numbers and secrets shown as placeholders while the model reads them                             |
+| [Commission](commission/design.md)         | A goal's task list, how far it is and how long it has run                                                                               |
+| [Ward](ward/design.md)                     | A question before editing a file another session changed in the last half hour                                                          |
+| [Pulse](pulse/design.md)                   | Keeps the machine watcher running from any session with the plugin                                                                      |
+| [Sins](sins/design.md)                     | Scores each prompt against seven sins with TypeSafe, drawn as bars in a pane, off until switched on                                     |
+| [Delegation guard](delegation/design.md)   | Refuses a subagent or a workflow's agent not on haiku, and after every third lookup in a row, a note to hand the chain to a haiku agent |
+| [Disk-scan guard](disk-scan/design.md)     | Refuses a Bash `find`, `du`, `grep -r` or `ls -R` that starts at a root or a home folder, naming where to look                          |
+| [Whole-index guard](whole-index/design.md) | Refuses a git command over the whole index (`git add .`, `git stash`, `git clean`) while another session shares the checkout            |
 
 ## How to use it
 

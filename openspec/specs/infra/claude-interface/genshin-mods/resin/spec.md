@@ -1,6 +1,6 @@
 ## Purpose
 
-A band row of what the session is spending — time left on the prompt cache and what a cold cache would re-send, the context window, the five-hour and weekly limits, the cost so far — with one-press warm, compact and handoff, a warning before the cache goes cold, and a usage reserve that has the session clean up on cheap agents as a limit window fills, and refuses at launch any agent that would spend the window on a dearer model.
+A band row of what the session is spending — time left on the prompt cache and what a cold cache would re-send, the context window, the five-hour and weekly limits, the cost so far — with one-press warm, compact and handoff, and a warning before the cache goes cold.
 
 ## Requirements
 
@@ -88,89 +88,12 @@ A toast SHALL warn five minutes before the cache expires, once per expiry, and n
 - **WHEN** that moment arrives
 - **THEN** no toast is shown
 
-### Requirement: A usage reserve starts when a limit window runs low
+### Requirement: Resin off hides the row and the toasts
 
-When a limit window passes its maintenance line, or is half spent ahead of an even pace, the session SHALL start a usage reserve naming the window and its reset time.
-
-#### Scenario: The five-hour window passing its maintenance line
-
-- **GIVEN** the five-hour window past its maintenance line
-- **WHEN** the measurement arrives
-- **THEN** a usage reserve starts naming that window and its reset time
-
-#### Scenario: A window spent ahead of an even pace
-
-- **GIVEN** a window half spent while the share of its length elapsed is smaller
-- **WHEN** the measurement arrives
-- **THEN** the reserve starts early, before the window reaches its maintenance line
-
-### Requirement: The session is told the window and what the reserve asks
-
-While a reserve holds, the session SHALL be told the window, the line it has passed, its reset time and what the reserve asks.
-
-#### Scenario: A reserve holding
-
-- **GIVEN** a reserve holding
-- **WHEN** the session's instructions are read
-- **THEN** they ask for the rest of the window to be spent on cleanup agents
-
-### Requirement: Workflow launches are refused while a reserve holds
-
-While a reserve holds and the resin mod is on, a workflow launch SHALL be refused, with the reserve's summary and what to do instead, unless its script provably runs every agent on haiku.
-
-#### Scenario: Launching a workflow under a reserve
-
-- **GIVEN** a reserve holding
-- **WHEN** a workflow launch is requested whose script runs an agent on a model other than haiku, or runs an agent with no model
-- **THEN** it is denied with the reserve's summary and a suggestion to launch a haiku agent for cleanup or to leave the unit for after the reset
-
-#### Scenario: A workflow pinned to haiku under a reserve
-
-- **GIVEN** a reserve holding
-- **WHEN** a workflow launch is requested whose script runs at least one agent, and every agent in it is launched on the haiku model
-- **THEN** it is allowed
-- **AND** the script is read inline or from the file at the launch's path
-
-#### Scenario: A saved workflow named under a reserve
-
-- **GIVEN** a reserve holding
-- **WHEN** a workflow launch names a saved workflow and gives no script
-- **THEN** it is denied with the reserve's summary and a suggestion to launch a haiku agent for cleanup or to leave the unit for after the reset
-
-#### Scenario: A script file that is missing under a reserve
-
-- **GIVEN** a reserve holding
-- **WHEN** a workflow launch gives a script path with no file at that path
-- **THEN** it is denied with the reserve's summary and a suggestion to launch a haiku agent for cleanup or to leave the unit for after the reset
-
-#### Scenario: A haiku agent launched under a reserve
-
-- **GIVEN** a reserve holding
-- **WHEN** a haiku agent launch is requested
-- **THEN** it is allowed
-
-#### Scenario: The refusal gate failing
-
-- **GIVEN** the launch gate itself failing
-- **WHEN** a workflow launch is requested
-- **THEN** the launch goes through
-
-### Requirement: The reserve lifts when its window resets
-
-The reserve SHALL lift when its window resets, and no button or command SHALL lift it.
-
-#### Scenario: The window resetting
-
-- **GIVEN** a reserve on a window
-- **WHEN** the window resets below its line and the next measurement arrives
-- **THEN** the reserve lifts and its section stops being sent
-
-### Requirement: Resin off hides the row, the toasts and the reserve
-
-The resin off command SHALL hide the row, the toasts and the usage reserve's section.
+The resin off command SHALL hide the row and the toasts.
 
 #### Scenario: Turning resin off
 
 - **GIVEN** resin on
 - **WHEN** the person sends the off command
-- **THEN** the row, the toasts and the reserve section are hidden
+- **THEN** the row and the toasts are hidden
