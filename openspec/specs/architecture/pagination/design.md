@@ -63,7 +63,7 @@ The message list opens at a linked message and scrolls both ways. The cursor car
 | `packages/db/src/services/pagination/getPageWhere.ts`            | the row-value comparison after a cursor                                                                                                 |
 | `packages/db/src/services/pagination/getPageOrderBy.ts`          | the sort's order                                                                                                                        |
 | `packages/db/src/services/pagination/toPage.ts`                  | the page and its cursor from `limit + 1` rows                                                                                           |
-| `packages/db/src/services/pagination/compareBySort.ts`           | the sort's order in JavaScript, for merged sources                                                                                      |
+| `packages/db-schema/src/services/pagination/compareBySort.ts`    | the sort's order in JavaScript, for merged sources                                                                                      |
 | `packages/db/src/services/pagination/toMergedPage.ts`            | one page from several sources' rows after the cursor                                                                                    |
 | `packages/db-schema/src/models/pagination/PageLimit.ts`          | `pageLimitSchema`, the page size a read takes                                                                                           |
 | `packages/db-schema/src/models/pagination/EncodedPageCursor.ts`  | `encodedPageCursorSchema`, the cursor as it travels                                                                                     |
