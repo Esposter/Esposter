@@ -12,18 +12,19 @@ export const useOutlierStore = defineStore("resource/sheet/outlier", () => {
   const { data: isOutlierHighlightEnabled } = useCurrentResourceDataMap(false);
   const outlierCells = computed<Set<string>>(() => {
     if (!isOutlierHighlightEnabled.value) return new Set();
-    const { dataSource } = sheetStore;
     const outlierCellIds = new Set<string>();
-    const readCell = compileSheetColumns(dataSource.columns)(dataSource.rows);
+    const readCell = compileSheetColumns(sheetStore.dataSource.columns)(sheetStore.dataSource.rows);
     // Effective type and the resolver, so a computed column producing numbers is highlighted on the same terms
     // As one storing them — it is the values on screen a reader compares against the mean
-    const numberColumns = dataSource.columns.filter((column) => getEffectiveColumnType(column) === ColumnType.Number);
+    const numberColumns = sheetStore.dataSource.columns.filter(
+      (column) => getEffectiveColumnType(column) === ColumnType.Number,
+    );
     for (const column of numberColumns) {
-      const values = dataSource.rows.map((row, rowIndex) => readCell(row, column, rowIndex));
+      const values = sheetStore.dataSource.rows.map((row, rowIndex) => readCell(row, column, rowIndex));
       const { average, standardDeviation } = computeColumnStatisticsForColumn(column, values);
       if (average === undefined || standardDeviation === undefined || standardDeviation <= 0) continue;
       const threshold = OUTLIER_STANDARD_DEVIATION_MULTIPLIER * standardDeviation;
-      for (const [rowIndex, row] of dataSource.rows.entries()) {
+      for (const [rowIndex, row] of sheetStore.dataSource.rows.entries()) {
         const value = takeOne(values, rowIndex);
         if (typeof value === "number" && Math.abs(value - average) > threshold)
           outlierCellIds.add(getItemId(row.id, column.name));
