@@ -16,6 +16,7 @@ import { blockRouter } from "#server/trpc/routers/block";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
+import { pairTables } from "#src/services/message/user/pair/constants";
 import { getAcceptFriendRequestEntry } from "#src/services/message/user/pair/getAcceptFriendRequestEntry";
 import { getDeclineFriendRequestEntry } from "#src/services/message/user/pair/getDeclineFriendRequestEntry";
 import {
@@ -183,6 +184,7 @@ describe("friendRequestRouter", () => {
       context: mockContext,
       entry: getAcceptFriendRequestEntry(userId, user.id, new Date(0)),
       path: "acceptFriendRequest",
+      tables: pairTables,
     });
 
     expect(named).toHaveLength(2);
@@ -201,6 +203,7 @@ describe("friendRequestRouter", () => {
       context: mockContext,
       entry: getDeclineFriendRequestEntry(userId, user.id, new Date(0)),
       path: "declineFriendRequest",
+      tables: pairTables,
     });
 
     expect(named).toHaveLength(1);

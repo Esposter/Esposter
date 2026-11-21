@@ -16,6 +16,7 @@ import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
 import { postRouter } from "#server/trpc/routers/post";
+import { pairTables } from "#src/services/message/user/pair/constants";
 import { getBlockEntry } from "#src/services/message/user/pair/getBlockEntry";
 import { getUnblockEntry } from "#src/services/message/user/pair/getUnblockEntry";
 import { blocksInSocial, DatabaseEntityType, friendRequestsInSocial, friendsInSocial } from "@esposter/db-schema";
@@ -72,6 +73,7 @@ describe("blockRouter", () => {
       context: mockContext,
       entry: getBlockEntry(userId, user.id, new Date(0)),
       path: "createBlock",
+      tables: pairTables,
     });
 
     expect(named).toHaveLength(2);
@@ -89,6 +91,7 @@ describe("blockRouter", () => {
       context: mockContext,
       entry: getBlockEntry(userId, user.id, new Date(0)),
       path: "createBlock",
+      tables: pairTables,
     });
 
     expect(named).toHaveLength(2);
@@ -180,6 +183,7 @@ describe("blockRouter", () => {
       context: mockContext,
       entry: getUnblockEntry(userId, user.id, new Date(0)),
       path: "deleteBlock",
+      tables: pairTables,
     });
 
     expect(named).toHaveLength(1);

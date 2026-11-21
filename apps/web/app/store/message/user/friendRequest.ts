@@ -1,12 +1,12 @@
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
-import { friendRequestTable } from "#src/services/message/user/pair/constants";
-import { createPairConfirmations } from "#src/services/message/user/pair/createPairConfirmations";
+import { friendRequestTable, pairTables } from "#src/services/message/user/pair/constants";
 import { getAcceptFriendRequestEntry } from "#src/services/message/user/pair/getAcceptFriendRequestEntry";
 import { getDeclineFriendRequestEntry } from "#src/services/message/user/pair/getDeclineFriendRequestEntry";
 import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useUserStore } from "#src/store/message/user/index";
 import { useOverlayStore } from "#src/store/overlay";
@@ -72,7 +72,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
           $trpc.friendRequest.acceptFriendRequest.mutate(senderId),
         );
         storeUser(senderUser);
-        return { arrivals: [], confirmed: createPairConfirmations(rowVersions) };
+        return { arrivals: [], confirmed: createHeaderConfirmations(pairTables, rowVersions) };
       },
       { entry: getAcceptFriendRequestEntry(userId.value, senderId, new Date()), onError: createErrorAlert },
     );
@@ -83,7 +83,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
         const { rowVersions } = await collectRowVersions(() =>
           $trpc.friendRequest.declineFriendRequest.mutate(senderId),
         );
-        return { arrivals: [], confirmed: createPairConfirmations(rowVersions) };
+        return { arrivals: [], confirmed: createHeaderConfirmations(pairTables, rowVersions) };
       },
       { entry: getDeclineFriendRequestEntry(userId.value, senderId, new Date()), onError: createErrorAlert },
     );

@@ -1,11 +1,11 @@
 import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
 import type { BlockInSocialWithRelations } from "@esposter/db-schema";
 
-import { blockTable } from "#src/services/message/user/pair/constants";
-import { createPairConfirmations } from "#src/services/message/user/pair/createPairConfirmations";
+import { blockTable, pairTables } from "#src/services/message/user/pair/constants";
 import { getBlockEntry } from "#src/services/message/user/pair/getBlockEntry";
 import { getUnblockEntry } from "#src/services/message/user/pair/getUnblockEntry";
 import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
+import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useUserStore } from "#src/store/message/user/index";
 import { useOverlayStore } from "#src/store/overlay";
@@ -31,7 +31,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
       async () => {
         const { result, rowVersions } = await collectRowVersions(() => $trpc.block.createBlock.mutate(targetUserId));
         storeUser(result);
-        return { arrivals: [], confirmed: createPairConfirmations(rowVersions) };
+        return { arrivals: [], confirmed: createHeaderConfirmations(pairTables, rowVersions) };
       },
       { entry: getBlockEntry(userId.value, targetUserId, new Date()), onError: createErrorAlert },
     );
@@ -41,7 +41,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
     writeOptimistic(
       async () => {
         const { rowVersions } = await collectRowVersions(() => $trpc.block.deleteBlock.mutate(blockedUserId));
-        return { arrivals: [], confirmed: createPairConfirmations(rowVersions) };
+        return { arrivals: [], confirmed: createHeaderConfirmations(pairTables, rowVersions) };
       },
       { entry: getUnblockEntry(userId.value, blockedUserId, new Date()), onError: createErrorAlert },
     );

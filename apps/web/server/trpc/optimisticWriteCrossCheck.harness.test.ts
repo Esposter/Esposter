@@ -5,7 +5,7 @@ import { createCallerFactory } from "#server/trpc/index";
 import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { blockRouter } from "#server/trpc/routers/block";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
-import { blockTable, friendRequestTable, friendTable } from "#src/services/message/user/pair/constants";
+import { blockTable, friendRequestTable, friendTable, pairTables } from "#src/services/message/user/pair/constants";
 import { getBlockEntry } from "#src/services/message/user/pair/getBlockEntry";
 import { getFriendRowKey } from "#src/services/message/user/pair/getFriendRowKey";
 import { describe, expect, test } from "vitest";
@@ -28,6 +28,7 @@ describe(getUncoveredWrites, () => {
       context,
       entry: omitsBlockEntry,
       path: "createBlock",
+      tables: pairTables,
     });
 
     expect(uncovered.map(({ key, table }) => ({ key, table }))).toStrictEqual([
@@ -46,6 +47,7 @@ describe(getUncoveredWrites, () => {
       context,
       entry: getBlockEntry(getMockSession().user.id, user.id, new Date(0)),
       path: "createBlock",
+      tables: pairTables,
     });
 
     expect(named).toHaveLength(2);

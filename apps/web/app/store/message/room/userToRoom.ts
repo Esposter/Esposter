@@ -68,7 +68,7 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
         const { result, rowVersions } = await collectRowVersions(() => $trpc.userToRoom.updateUserToRoom.mutate(input));
         return {
           arrivals: [createArrival(userToRoomTable, result)],
-          confirmed: createHeaderConfirmations(userToRoomTable, rowVersions),
+          confirmed: createHeaderConfirmations([userToRoomTable], rowVersions),
         };
       },
       {

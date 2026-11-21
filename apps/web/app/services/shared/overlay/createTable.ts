@@ -4,18 +4,22 @@ import type { Versioned } from "#src/models/shared/overlay/Versioned";
 
 import { checkIsKeyValue } from "#src/services/shared/overlay/checkIsKeyValue";
 import { checkIsRowField } from "#src/services/shared/overlay/checkIsRowField";
+import { createKeyOfScope } from "#src/services/shared/overlay/createKeyOfScope";
 import { listKeyFieldNames } from "#src/services/shared/overlay/listKeyFieldNames";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { getTableName } from "drizzle-orm";
 
 // The overlay's table over a Drizzle table. The row is the table's select model, or a projection of it that a caller names
 // When a read returns only some of the columns, which must be columns of the table. The key is read from its primary key,
-// So a caller names neither. The schema holds the table object once, so every Table made over it shares one slot
+// So a caller names neither. A table whose header scope does not spell its primary key out names how the scope builds it,
+// Since the key of such a row is derived from the scope and not read off it. The schema holds the table object once, so
+// Every Table made over it shares one slot
 export const createTable = <
   TSource extends TableSource,
   TRow extends Partial<TSource["$inferSelect"]> & Versioned = TSource["$inferSelect"],
 >(
   source: TSource,
+  keyOfScope?: Table<TRow, TSource>["keyOfScope"],
 ): Table<TRow, TSource> => {
   const keyFieldNames = listKeyFieldNames(source);
   return {
@@ -32,6 +36,7 @@ export const createTable = <
           "a key field of the row holds neither a string nor a number",
         );
       }),
+    keyOfScope: keyOfScope ?? createKeyOfScope(keyFieldNames),
     name: getTableName(source),
     source,
   };

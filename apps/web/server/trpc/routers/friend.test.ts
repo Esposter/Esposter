@@ -9,6 +9,7 @@ import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { ROW_VERSIONS_HEADER } from "#shared/services/realtime/constants";
+import { pairTables } from "#src/services/message/user/pair/constants";
 import { getUnfriendEntry } from "#src/services/message/user/pair/getUnfriendEntry";
 import {
   blocksInSocial,
@@ -127,6 +128,7 @@ describe("friendRouter", () => {
       context: mockContext,
       entry: getUnfriendEntry(userId, user.id, new Date(0)),
       path: "deleteFriend",
+      tables: pairTables,
     });
 
     expect(named).toHaveLength(1);

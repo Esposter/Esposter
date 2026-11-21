@@ -1,10 +1,10 @@
 import type { FriendInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
-import { friendTable } from "#src/services/message/user/pair/constants";
-import { createPairConfirmations } from "#src/services/message/user/pair/createPairConfirmations";
+import { friendTable, pairTables } from "#src/services/message/user/pair/constants";
 import { getUnfriendEntry } from "#src/services/message/user/pair/getUnfriendEntry";
 import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useUserStore } from "#src/store/message/user/index";
 import { useOverlayStore } from "#src/store/overlay";
@@ -33,7 +33,10 @@ export const useFriendStore = defineStore("message/user/friend", () => {
     writeOptimistic(
       async () => {
         const { result, rowVersions } = await collectRowVersions(() => $trpc.friend.deleteFriend.mutate(friendId));
-        return { arrivals: [createArrival(friendTable, result)], confirmed: createPairConfirmations(rowVersions) };
+        return {
+          arrivals: [createArrival(friendTable, result)],
+          confirmed: createHeaderConfirmations(pairTables, rowVersions),
+        };
       },
       { entry: getUnfriendEntry(userId.value, friendId, new Date()), onError: createErrorAlert },
     );
