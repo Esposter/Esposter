@@ -1,6 +1,6 @@
 ## Purpose
 
-One scrollspy for every sidebar that tracks scrolled content — useVisibleSectionIds resolves the anchors, StyledSlideIndicator draws the rail.
+One scrollspy for every sidebar that tracks scrolled content — useVisibleSectionIds resolves the anchors, and each sidebar draws the highlight: a StyledSlideIndicator rail, or the isCurrent of its UiList rows.
 
 ## Requirements
 

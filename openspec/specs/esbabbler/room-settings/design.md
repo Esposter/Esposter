@@ -34,7 +34,7 @@ flowchart LR
   LeftSideBar -- "SettingsPermissionMap gate" --> RBAC["useRoleStore.getMyPermissions"]
 ```
 
-The dialog follows the [user settings dialog](../settings/design.md) conventions, its panels rendered in `<Suspense :timeout="0">`, and the active panel item in the open category group is highlighted by the `StyledSlideIndicator` rail (items carry `data-slide-indicator-key`). Unlike the user dialog there is no in-panel section scrollspy — room panels are single-view tools (tables and two-pane editors), so the second nav level selects panels, not scroll sections.
+The dialog follows the [user settings dialog](../settings/design.md) conventions, its panels rendered in `<Suspense :timeout="0">`, and the active panel item in the open category group is highlighted by its `UiList` row's `isCurrent`, with no rail. Unlike the user dialog there is no in-panel section scrollspy — room panels are single-view tools (tables and two-pane editors), so the second nav level selects panels, not scroll sections.
 
 ## Saving a panel
 
