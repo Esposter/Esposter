@@ -95,6 +95,22 @@ sequenceDiagram
   C->>C: the watching query runs again
 ```
 
+## Row versions and tombstones
+
+Every row the server holds carries a `version`, a non-negative integer the database raises on every change and never lowers. One definition, `createVersionSchema` (`packages/db-schema/src/createMetadataSchema.ts`), gives the column to the D1 metadata and to each realtime object's tables, so every table has it the same way. An insert takes the default of zero. The increment is the column's update function, embedded in the statement as SQL, so the database raises the version inside the statement that makes the change. A write that names a version sets it, so no writer names one. The placeholder a client draws before the server answers carries `NO_ROW_VERSION`, which is below every stored version.
+
+A **tombstone** is a row whose deletion has set `deletedAt` and raised its version. It stays in its table, so a read or a write answer that arrives later at an older version loses to it. Revival is an upsert whose conflict branch clears `deletedAt`, so the revived row continues the count and never restarts it while its key exists. The tables that hold tombstones are listed in one registry, `OVERLAY_TOMBSTONE_TABLES` (`packages/db-schema/src/services/tombstone/constants.ts`), and every statement that decides from one of them takes live rows only, through the live-row helpers. A read returns its tombstones within its scope, so a reader holding a live row learns of the removal, and absence in a read never removes a row.
+
+Tombstones are kept for seven days, `TOMBSTONE_RETENTION_MS`, and then removed:
+
+- The nightly purge on the jobs Worker's Cron Trigger removes each registry table's tombstones past the retention, one table at a time (`apps/jobs/src/services/tombstone/purgeExpiredTombstones.ts`). It publishes no topic, since a tombstone is hidden from every read.
+- Each room and user object removes its own scheduled-message tombstones in its alarm, which is armed at the oldest tombstone's expiry. A call object has no alarm, so it removes its participant tombstones at its next write.
+- A client forgets a tombstone it holds at the same age, so a key the purge removed starts again at version zero on the server and on the client alike.
+
+**The mutation header names the rows a write changed.** `inferTopicsMiddleware` (`apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`) answers a successful mutation with one row-versions header entry per row the write changed, carrying the procedure, the row's table and key, and the version the write left it at. The recorder's `RETURNING` supplies each row (`getWriteRowVersions`). A write that changed more rows than `MAX_WRITE_ROW_VERSIONS` names none, which keeps the header at about the topics header's budget however many rows a bulk write changes, and a failed mutation names none. The client reads the header through `rowVersionsLink`, which hands each mutation the rows its own calls answered with, collected by `collectRowVersions`. Every write's topics are still published once it settles, whichever way it ends, so a write too large for the header reaches its readers through a topic refetch.
+
+Realtime events that carry a row carry the row at its version in place of a partial patch, so a receiver applies them by the same rule as a read's rows (the [client data design](../client-data/design.md)).
+
 ## A message's path
 
 ```mermaid
@@ -166,6 +182,10 @@ The decisions behind this split, and the alternatives they beat, are recorded in
 | `apps/web/server/services/realtime/publishTopicsBestEffort.ts`              | the web Worker's best-effort publish of a write's topics to their topic objects                                                     |
 | `apps/web/server/trpc/middleware/inferTopicsMiddleware.ts`                  | the tRPC middleware that merges a request's reads into its topics header, within `MAX_READ_TOPICS`, and publishes its writes        |
 | `packages/db-schema/src/services/realtime/fitTopicsBudget.ts`               | collapses a merged read's row, object and blob topics to their coarser topics, largest group first, until the header's budget holds |
+| `packages/db-schema/src/createMetadataSchema.ts`                            | the metadata every D1 table and object table spreads: the `version` column, its raise on each update, and `NO_ROW_VERSION`          |
+| `packages/db-schema/src/services/tombstone/constants.ts`                    | `TOMBSTONE_RETENTION_MS` and the registry of tables whose tombstones the purge removes                                              |
+| `apps/jobs/src/services/tombstone/purgeExpiredTombstones.ts`                | the nightly purge that removes each registry table's tombstones past the retention                                                  |
+| `apps/web/app/services/trpc/rowVersionsLink.ts`                             | the client link that hands a mutation the rows its calls answered with                                                              |
 | `packages/db/src/services/realtime/recordStatements.ts`                     | the recorder a request, a job unit or an object handle awaits its statements through, and the write set it captures                 |
 | `packages/db/src/services/realtime/getObjectStub.ts`                        | the one way a caller reaches a Durable Object, through its `invoke`                                                                 |
 | `apps/realtime/src/worker.ts`                                               | the realtime Worker: exports the four objects, nothing else                                                                         |

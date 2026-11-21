@@ -1,4 +1,3 @@
 schema: spec-driven
 affected_areas: [architecture, esbabbler, resource, post]
 x-model: claude-haiku-5-5
-skip_specs: true

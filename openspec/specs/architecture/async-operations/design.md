@@ -13,16 +13,16 @@ The reason is not tidiness. Protection applied by hand is protection that gets f
 Ask one question of an operation: **does discarding its result lose information?**
 
 - A **read** loses nothing. You asked for the freshest data, a newer read is already on its way, and there is no side effect to unwind. Discarding a superseded response is exactly what you wanted.
-- A **write** loses two things. It loses its **error** — the only signal that the value the user is looking at was never persisted — and it loses its **rollback**, the only thing that takes that value back off the screen.
+- A **write** loses two things. It loses its **error** — the only signal that the value the user is looking at was never persisted — and it loses the **entry** that shows that value, the only thing that takes it back off the screen when the server refuses it.
 
-So the defaults are asymmetric on purpose: **reads are latest-wins per target, writes queue per target.** A write is dropped only when a caller says, explicitly, that dropping it is the intent.
+So the defaults are asymmetric on purpose: **reads are latest-wins per target, writes queue on the rows they touch.** A write is dropped only when a caller says, explicitly, that dropping it is the intent.
 
 ## Targets
 
 The `key` is the identity of the thing being operated on, and it is always explicit — the same reason a Pinia store id is. Reads and writes choose it the same way. It is resolved when the operation is **issued**, so the result is applied against the state it was issued for even if the screen has moved on by the time it lands. Choosing one is mechanical:
 
 - **Operation on an existing entity** → its id or natural composite (`input.id`, `` `${userId}-${roleId}` ``).
-- **Singleton target** — the current user's settings, the one dataset a composable shows — → the scope's id when one exists, else a stable name (`key: "userSettings"`). Keys are scoped per `useMutation()` instance, so names cannot collide across instances.
+- **Singleton target** — the current user's settings, the one dataset a composable shows — → the scope's id when one exists, else a stable name (`key: "userSettings"`). Keys are scoped per `useMutation()` instance, so names cannot collide across instances. An overlay write names no key at all: its queue key is the rows its entry touches.
 - **Create with no id yet** → a per-call `Symbol("createRoom")`, so independent creates never queue behind each other.
 - **Anything the primitive cannot take verbatim** — a key is a `PropertyKey`, and nothing else is accepted — → narrow the source type until it is one, never `String()` it. Stringifying collapses distinct keys onto a single target (`"1,2"` and `[1, 2]` both become `1,2`), which is why `IndexedDbDatabaseSchema` types every index key as a string: an IndexedDB partition is then its own target, unconverted.
 
@@ -30,19 +30,15 @@ Two writes that share a key are two writes to the same thing, and they run one a
 
 Reads and writes never share a queue, even on one key: a read waits for nobody.
 
-## A key queues only within one `useMutation()` instance
+## Writes queue by the rows they touch
 
-The queue is state on the instance, not on the key. Two instances keyed on the same target therefore run concurrently while their call sites read as if they serialised — the failure mode is silent, because the key is right and the ordering it promises simply never existed.
+**An overlay write queues on the rows its entry touches, across the app.** The registry (`apps/web/app/store/overlay.ts`) runs the entry once against a recording view when the write is issued. The rows the entry reads or writes are the write's touched keys, and the write waits for every earlier write whose touched keys overlap its own. Writes on unrelated rows run at once, in any store, so no two stores serialise each other. The queue is one per registry, which is one per app (`createWriteQueue`).
 
-So the instance count follows what the writes touch, not how many mutations there are:
+Touches are found by running the entry, not by naming a key, so the writer cannot forget one. The entry has to read a row another write changes to wait behind that write, since a read counts as a touch as well as a write. Two entries that read the same row therefore run one at a time; a write that reads no row another write touches runs at once.
 
-- **Writes that end the same row share one instance**, declared once at the store root and named for the target rather than for either write (one executor for cancelling and sending a scheduled message job, one for publishing and unpublishing a resource — both end that resource's publication row). Sharing is what makes `key: id` mean what it says: the second write applies its optimistic change against what the first actually left, so its rollback cannot resurrect a row the first already removed.
-- **One write reached from several call sites shares one instance too**, held where every site reaches it, which is a store and never a composable called at each site. A slash command is run from the suggestion menu, the parameter chips and the composer's actions menu, and the first of them is a Tiptap callback outside any scope: an executor made per call site gives each its own queue, so two topics typed through two sites run together and the later rollback undoes the earlier write. The slash command store holds the one executor and the command's function looks it up as it runs.
-- **Writes that own different fields of one entity keep their own instances.** A call participant's camera, mute and hand-raise all key on the participant, and that is correct precisely because none of them replaces another — they merge, and queueing would only make each wait on writes it cannot conflict with. Same for the Attachments panel writing a room's maximum file size and its allowed types, and for a resource's content save, rename and tag edit.
+**An awaited overlay write takes no key.** A write whose result the screen waits for has no entry, so nothing on screen is ordered against it and no key can be inferred. Its answer's rows arrive through the version gate, which orders two answers for one row by their versions, so the higher version holds whatever order the answers arrive in.
 
-  Owning a field is a claim about the **payload**, not only about what the client merges back. A tag edit that restated the resource's name alongside its tags would put the pre-rename name back whenever it overlapped a rename, however carefully the response was merged — so the input schema makes each field optional and the write carries nothing else.
-
-The test is whether one write's rollback could undo another's landed change. If it could, they are the same target and share an executor; if it could not, they are independent and keep theirs.
+**A key queues only within one `useMutation()` instance.** The writers that have not moved onto the overlay still queue on a key, and that queue is state on the instance, not on the key. Two instances keyed on the same target therefore run concurrently while their call sites read as if they serialised. The failure mode is silent, because the key is right and the ordering it promises never existed. Writes that end the same row should therefore share one instance, held where every call site reaches it, and writes that own different fields of one entity keep their own. The test for sharing is whether one write's rollback could undo another write's landed change. The overlay has no such rollback, so its writes need no shared instance.
 
 ## The state an operation writes back is bound where the key is
 
@@ -71,9 +67,11 @@ Two things `isExclusive` deliberately does **not** do:
 
 `isPending` doubles as the loading flag for a read composable — `useQuery` hands it back alongside `data` — so no composable keeps its own `isLoading` ref.
 
-## Writes — `executeMutation`
+## Writes — the overlay and `executeMutation`
 
-`executeMutation(mutate, { applyOptimistic, isExclusive, key, onError, reconcile })` queues per key, and returns nothing: its promise floats through `getSynchronizedFunction`, so `waitForSynchronizedFunctions()` drains it with every other fire-and-forget. The awaited form takes `awaitedBecause` and `onSuccess` in place of `reconcile`, and resolves to its outcome ([client data](../client-data/design.md#optimistic-by-default)). `applyOptimistic` runs when the write is **sent**, not when it was issued, so its snapshot reflects whatever the write ahead of it stored — a queued write builds on its predecessor's outcome instead of on a stale copy of the screen. For the same reason, a write that reads a version token or resolves a create-or-update branch does that **inside** `mutate`, not before the call.
+The overlay writes described above are the path for every store that has moved. `executeMutation(mutate, { applyOptimistic, isExclusive, key, onError, reconcile })` is the path of the writers that have not moved yet, and its rules are these.
+
+`executeMutation` queues per key, and returns nothing: its promise floats through `getSynchronizedFunction`, so `waitForSynchronizedFunctions()` drains it with every other fire-and-forget. The awaited form takes `awaitedBecause` and `onSuccess` in place of `reconcile`, and resolves to its outcome ([client data](../client-data/design.md#optimistic-by-default)). `applyOptimistic` runs when the write is **sent**, not when it was issued, so its snapshot reflects whatever the write ahead of it stored. For the same reason, a write that reads a version token or resolves a create-or-update branch does that **inside** `mutate`, not before the call.
 
 One opt-in narrows this, and nothing else does:
 
@@ -81,15 +79,13 @@ One opt-in narrows this, and nothing else does:
 
 Everything else queues. If a write is worth issuing, it is worth landing.
 
-### A read whose own side effect depends on what it snapshotted is not a read
+### A snapshot-then-compare sequence keeps the ids it has handled
 
-The split above is about **outcomes**, not about HTTP verbs. A read loses nothing when it is discarded — but a read that snapshots state before it fires and acts on the difference afterwards is holding a value across its own await, and two of them interleaved both snapshot the same "before".
+The split above is about **outcomes**, not about HTTP verbs. A read loses nothing when it is discarded, but a read that snapshots state before it fires and acts on the difference afterwards holds a value across its own await, and two of them interleaved both snapshot the same "before".
 
-The bell's read after a delivered push is the case: it records the notification ids the tab already holds, reads the first page again, and toasts whatever came back that was not in that set (`getToastedNotificationIds`). That read is the bell's own, woken by the rows its push publishes, or the push's read in a tab whose bell has never landed one. Run side by side, two pushes both snapshot the pre-read list and both toast the row the first read brought back, re-toasting it after the reader has dismissed it. So the whole snapshot-read-compare goes through `executeMutation` under one key, and its queue is what makes the second call compare against a list that already holds the row.
+The bell is the case. A delivered push reads the first page again and toasts each row the read brought that the tab did not hold before it. Two pushes that overlap would both compare against the list they began with, and each would toast the row the other brought back. So the store keeps the ids it has toasted, and it toasts each id once (`apps/web/app/store/notification.ts`). No queue orders the comparison. The set is what makes the second push skip the row.
 
-`isExclusive` is the wrong shape here, and it is the tempting one: joining the read in flight would collapse the duplicate, and it would also drop any row written after that read was issued — which is exactly the row the second push was announcing. Queueing keeps both properties: one comparison at a time, and every push still causes a read of its own.
-
-The test is not "does this fetch" but **"does discarding this lose information?"** — the same question the whole page turns on. A comparison against a snapshot is information, so the operation queues.
+`isExclusive` would collapse the duplicate by joining the read in flight, but it would also drop any row written after that read was issued, which is exactly the row the second push was announcing. A set of toasted ids keeps both properties: one toast per row, and every push still causes a read of its own.
 
 ## The two opt-ins at a glance
 
@@ -99,15 +95,15 @@ The test is not "does this fetch" but **"does discarding this lose information?"
 
 ## Outcomes
 
-The operation's own rejection never escapes: a read and an awaited write resolve to an outcome discriminated on `MutationStatus`, which is the only signal a call did not land. An optimistic write hands its caller nothing, so its outcome is the rollback's and the alert's alone.
+The operation's own rejection never escapes: a read and an awaited write resolve to an outcome discriminated on `MutationStatus`, which is the only signal a call did not land. An optimistic write hands its caller nothing, so its outcome is the alert's alone.
 
-A **callback** is the exception. A throw from `applyOptimistic`, from the rollback it returns, or from `onSuccess`/`reconcile`/`onError` rejects the promise the entry point returned, and nothing catches it — the pending bookkeeping still unwinds, but the caller gets a rejection instead of an outcome, and a caller that stored the promise without a rejection handler gets an unhandled rejection. A callback body that can fail therefore produces its own result rather than throwing.
+A **callback** is the exception. A throw from `applyOptimistic`, from the rollback it returns, or from `onSuccess`/`reconcile`/`onError` on `executeMutation` rejects the promise the entry point returned, and nothing catches it — the pending bookkeeping still unwinds, but the caller gets a rejection instead of an outcome, and a caller that stored the promise without a rejection handler gets an unhandled rejection. A callback body that can fail therefore produces its own result rather than throwing.
 
-| Status      | For a read                                                                                                                       | For a write                                                                                          |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `Succeeded` | Fetched while still the latest for its target — carries the data, which `onSuccess` has already applied                          | Persisted — carries the server-authoritative result                                                  |
-| `Failed`    | Rejected while still the latest. Nothing was applied, so nothing is unwound, and the error is reported or alerted                | Rejected. The optimistic change has been rolled back and the error reported or alerted by this point |
-| `Dropped`   | Superseded by a newer read of the same key before it committed. Silent — no callbacks, no alert, whether it resolved or rejected | With `isExclusive`, behind an in-flight sibling. Never sent                                          |
+| Status      | For a read                                                                                                                       | For a write                                                                                  |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `Succeeded` | Fetched while still the latest for its target — carries the data, which `onSuccess` has already applied                          | Persisted — carries the server-authoritative result                                          |
+| `Failed`    | Rejected while still the latest. Nothing was applied, so nothing is unwound, and the error is reported or alerted                | Rejected. The write's entry has been dropped and the error reported or alerted by this point |
+| `Dropped`   | Superseded by a newer read of the same key before it committed. Silent — no callbacks, no alert, whether it resolved or rejected | With `isExclusive`, behind an in-flight sibling. Never sent                                  |
 
 A joined read reports the outcome of the call it joined — failures and `Dropped` included, so a joiner resolves `Dropped` when a later read superseded the call it was waiting on.
 
@@ -133,29 +129,30 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  Action[User action] --> Exclusive{isExclusive and a call on the same key pending?}
-  Exclusive -->|yes| Dropped[Dropped — nothing fires]
-  Exclusive -->|no| Bind[Bind to the target key]
-  Bind --> Queue[Wait for the target's earlier writes to settle]
-  Queue --> Apply[applyOptimistic]
-  Apply -->|writes the change now| Store[(Store)]
-  Apply -->|returns rollback closure| Send[Send the write]
-  Send -->|resolves| Success[onSuccess with the server-authoritative result]
-  Send -->|rejects| Rollback[Run rollback closure]
-  Success --> Store
-  Rollback --> Store
-  Rollback --> Report[onError, or an alert with the real Error.message]
+  Action[User action] --> Issue[Issue the write with its entry]
+  Issue --> Touch[Run the entry once to find the rows it touches]
+  Touch --> Show[The entry applies over the held rows at once]
+  Touch --> Queue[Wait for the earlier writes that touch a shared row]
+  Queue --> Send[Send the write]
+  Send -->|answers with the rows it changed, at their versions| Confirm[Each row arrives and the entry is confirmed at those versions]
+  Send -->|is refused| Drop[The entry drops and the held rows stay as they were]
+  Confirm --> Held{Is each confirmed row held at its version or newer?}
+  Held -->|yes| Gone[The entry drops]
+  Held -->|no| Wait[The entry applies until the row arrives]
+  Drop --> Report[onError, or an alert with the real Error.message]
 ```
 
 ## Key files
 
-| File                                                           | Role                                                                              |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `apps/web/app/composables/shared/useMutation.ts`               | The primitive — per-target queue, latest-wins guard, pending counts, reporting    |
-| `apps/web/app/composables/shared/useQuery.ts`                  | Read composable built on `executeQuery` — auto-fetch on setup, `data` ref         |
-| `apps/web/app/composables/shared/useRunScope.ts`               | The run scope a read is ordered by: a newer run of a key aborts the one before it |
-| `apps/web/app/models/shared/MutationStatus.ts`                 | The three outcomes                                                                |
-| `packages/shared/src/util/function/getSynchronizedFunction.ts` | Fires an async operation from a sync callback slot                                |
+| File                                                           | Role                                                                                                                   |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/store/overlay.ts`                                | The overlay registry: the write queue by touched rows, the entries, the arrival gate and the view                      |
+| `apps/web/app/services/shared/overlay/createWriteQueue.ts`     | The queue a write waits in behind the earlier writes whose touched rows overlap its own                                |
+| `apps/web/app/services/shared/overlay/recordTouches.ts`        | The one run of an entry that finds the rows it touches, so the queue needs no key from the writer                      |
+| `apps/web/app/composables/shared/useMutation.ts`               | The write primitive for the writers not yet on the overlay, and `executeQuery`, the read primitive for every live read |
+| `apps/web/app/composables/shared/useRunScope.ts`               | The run scope a read or a local run is ordered by: a newer run of a key aborts the one before it                       |
+| `apps/web/app/models/shared/MutationStatus.ts`                 | The outcomes a call can settle to                                                                                      |
+| `packages/shared/src/util/function/getSynchronizedFunction.ts` | Fires an async operation from a sync callback slot                                                                     |
 
 ## Notes
 

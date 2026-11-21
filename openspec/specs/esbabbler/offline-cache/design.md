@@ -20,6 +20,14 @@ One generic composable, `usePaginationCache`, owns the whole lifecycle: it persi
 
 Feature wiring is a thin wrapper supplying partition key, store refs, and hooks: `useMessageCache` (room partition, filters loading messages), `useMemberCache` (room partition, hydrates the user store and the room's member map, never the totals), `useRoomCache` (user partition, the rooms and the viewer's memberships beside them).
 
+### What a cached row holds, and how it comes back
+
+The cache persists what a store's slice shows: the live rows of the loaded list, capped at the store's limit. It persists none of the held state beneath the view, so a tombstone is never cached, and it never persists a pending entry. Each record is the row as the store held it, with its partition stamped on it, so a record carries the version its row had when the cache wrote it.
+
+Hydration does not write the rows into a list. It hands each cached row to the store's arrival gate, through the slice's `initializeCursorPaginationData`, so a row takes its place in the overlay by version. A row the server has already answered at a newer version keeps that version, and a row restored offline holds the version it was saved at. The store's view then shows the rows it holds, and a later read or write answer arrives by the same gate.
+
+Not built: the cache's own version check, which the overlay design's Offline cache section states. That section has the cache's records gain a version the cache's database version is raised for, and a record without a version is never hydrated. Until it lands, a record is restored as the row it was, whatever version it carries.
+
 ### partitionKey is always required
 
 Every object store is partitioned; `readIndexedDb` / `writeIndexedDb` always take an explicit `partitionKey`:
