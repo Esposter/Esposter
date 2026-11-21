@@ -15,11 +15,13 @@ export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefi
   const key = Symbol("useDataset");
   const refresh = () =>
     executeQuery(
-      () => {
+      (signal) => {
         const referenceValue = toValue(reference);
         // Clearing the reference is itself the latest read, so an in-flight response for the old reference
         // Cannot land on an empty selection
-        return referenceValue ? $trpc.dataset.readDataset.query(referenceValue) : Promise.resolve(undefined);
+        return referenceValue
+          ? $trpc.dataset.readDataset.query(referenceValue, { signal })
+          : Promise.resolve(undefined);
       },
       {
         key,

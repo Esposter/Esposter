@@ -46,7 +46,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
     readingResourceId.value = resource.id;
     return withFinalizerAsync(
       () =>
-        executeQuery(() => $trpc.resource.readSnapshotHistory.query({ id: resource.id }), {
+        executeQuery((signal) => $trpc.resource.readSnapshotHistory.query({ id: resource.id }, { signal }), {
           key,
           onSuccess: (newVersions) => {
             resourceVersions.value = newVersions;

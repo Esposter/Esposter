@@ -106,8 +106,9 @@ export const useMutation = () => {
   const watchTopics = useWatchTopics();
   // Reads are ordered by the run scope the caller holds: a newer read of the key aborts the one before it, and only the
   // Read the scope holds current commits its answer and its topic watch, so an older answer that lands last replaces neither
+  // The read is handed its run's signal, so a request it makes is aborted by the newer read that supersedes it
   const executeQuery = <TResult>(
-    query: () => Promise<TResult>,
+    query: (signal: AbortSignal) => Promise<TResult>,
     options: QueryOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
     const { isExclusive, isUnwatched, key, onError, onSuccess, runScope } = options;
@@ -135,7 +136,7 @@ export const useMutation = () => {
       async () => {
         const settled = await settleOperation(
           async () => {
-            await runScope.run(() => collectTopics(query), commit, noop, key);
+            await runScope.run((signal) => collectTopics(() => query(signal)), commit, noop, key);
           },
           { onError },
         );
