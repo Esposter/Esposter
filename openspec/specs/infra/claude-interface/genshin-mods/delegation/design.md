@@ -21,7 +21,7 @@ flowchart TD
   C -->|yes| A["Runs"]
 ```
 
-The refusal says to pass model `haiku` in each agent's own options, keep work too judged for haiku in the main session, and treat a spec haiku cannot carry as one with a call still open. A failure of the gate lets the launch through, as the [ward](../ward/design.md) does, so a failure never blocks a launch. **Rejected: a text match for the haiku literal anywhere in the script**, since a prompt quoting `model: 'haiku'` beside an opus call would pass; each call's own options are read instead.
+The refusal is `WORKFLOW_MODEL_REFUSAL` in `packages/genshin-mods/src/services/constants.ts`, the launch gate's denial applied to each call's own options. A failure of the gate lets the launch through, as the [ward](../ward/design.md) does, so a failure never blocks a launch. **Rejected: a text match for the haiku literal anywhere in the script**, since a prompt quoting `model: 'haiku'` beside an opus call would pass; each call's own options are read instead.
 
 ## How it works
 

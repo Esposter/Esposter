@@ -6,7 +6,6 @@ import { z } from "zod";
 
 // Every variable the web Worker reads. A secret is marked by `.meta({ secret: true })`: a deploy uploads each marked one
 // From Pulumi ESC as a Worker secret, and every other one is a wrangler var nitro.ts writes into its environment's block.
-// RealtimeKit is optional — a deployment without it runs calls with no media server — so its two variables may be absent.
 // `TOPIC_WATCH_SECRET` is required, with no absent form: the web Worker signs each watch with it and the realtime Worker checks
 // Each one against it, so the deploy gate refuses a Worker whose secret is empty
 export interface WebEnvironmentVariables {
