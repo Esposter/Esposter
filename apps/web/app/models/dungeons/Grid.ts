@@ -13,6 +13,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   isWrapping: boolean;
   position: Ref<Position>;
   validate: (this: Grid<TGrid>, position: Position) => MaybeRef<boolean>;
+  // This is the array index if the grid were to be flattened
   // Going from top-left to bottom-right
   get index() {
     let index = this.position.value.x;
@@ -47,7 +48,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
     this.position = position;
     this.isWrapping = isWrapping;
   }
-  // This is the array index if the grid were to be flattened
+
   getColumnSize(rowIndex: number) {
     if (rowIndex > this.rowSize - 1)
       throw new InvalidOperationError(Operation.Read, this.constructor.name, `row index: ${rowIndex}`);

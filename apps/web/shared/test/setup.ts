@@ -51,7 +51,6 @@ vi.mock(import("#server/services/realtime/publishTopicsBestEffort"), async (impo
   Object.assign(env, { TOPIC: mockTopicNamespace });
   return importOriginal();
 });
-
 // The user object client redirects to its colocated in-memory double, here rather than in `context.test.ts`: a `vi.mock`
 // Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test
 // File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
@@ -68,7 +67,6 @@ vi.mock(
   import("#server/composables/realtime/useCallObject"),
   () => import("#server/composables/realtime/useCallObject.test"),
 );
-
 // A bucket binding is read through the Worker's env, which Node does not have. Its buckets are made by the suite that
 // Uses them, into the mock's own record, so the read stays synchronous as the binding is
 vi.mock(import("#server/services/storage/getBucket"), () => import("#server/services/storage/getBucket.test"));
@@ -145,14 +143,12 @@ if (!checkIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUX
     $pinia.state.value = {};
     setActivePinia($pinia);
   });
-
 // A component a test mounts is unmounted after it, so nothing it teleported, listened to or scheduled reaches the next
 // Test. A test's own `unmount()` is left only where unmounting is what it checks. Node-env files never mount
 if (!checkIsServer()) {
   const { enableAutoUnmount } = await import("@vue/test-utils");
   enableAutoUnmount(afterEach);
 }
-
 // Stubbed before every test rather than once, since the config restores every stubbed variable after each one. A test
 // That needs a variable different, or absent, stubs it itself after this runs
 // oxlint-disable-next-line vitest/no-duplicate-hooks -- the nuxt environment's hook above is registered only inside its own guard, so this one cannot join it

@@ -6,7 +6,6 @@ import { useInputStore } from "vue-phaserjs";
 
 export abstract class BaseControls implements Controls {
   input?: PlayerInput | undefined;
-
   // An input set by the game wins over the device, and neither is read while input is paused. Decided here once,
   // So a device only answers what it is holding and can never report a press the game was not listening for
   getInput(isJustDown?: true) {
