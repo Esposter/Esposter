@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **nuxt-security-module:** the route rule reader takes only each rule's security key, which every shape of Nuxt's route rule carries ([dc37952](https://github.com/Esposter/Esposter/commit/dc379522c1dca44c4b34644b8604ec6fa0153030))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 **Note:** Version bump only for package nuxt-security-module

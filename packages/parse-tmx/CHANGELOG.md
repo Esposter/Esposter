@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **parse-tmx:** parseTmx takes isTranslateFlips in an options object, not a positional boolean ([f74e4a1](https://github.com/Esposter/Esposter/commit/f74e4a1151c27506034eb49785895e77dae514f2))
+* **parse-tmx:** the predefined entities are a Map, so an inherited Object key is refused as an undefined reference ([5db36a1](https://github.com/Esposter/Esposter/commit/5db36a12b34779dc25247c0f907983e3f4f97b70))
+* **parse-tmx:** the tokenizer passes oxlint, and each refusal asserts its own message ([fca3c62](https://github.com/Esposter/Esposter/commit/fca3c6289f56a0651affc0596b76ac8a871ff197))
+
+### Features
+
+* **parse-tmx:** sax is absorbed as tokenizeXml, a strict XML 1.0 tokenizer of the package's own ([c8bc453](https://github.com/Esposter/Esposter/commit/c8bc453b0c00c0cbda7246ea9a5fde1a078ed257)), closes [#184](https://github.com/Esposter/Esposter/issues/184) [#215](https://github.com/Esposter/Esposter/issues/215) [#89](https://github.com/Esposter/Esposter/issues/89) [220/#221](https://github.com/Esposter/Esposter/issues/221)
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 **Note:** Version bump only for package parse-tmx

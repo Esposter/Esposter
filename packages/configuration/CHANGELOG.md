@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **build:** a hand-written src/index.ts stays a build cache input, and its rule has one owner ([90caabb](https://github.com/Esposter/Esposter/commit/90caabbfe8c86c5193a5e32e6b45af5888c350d6))
+* **configuration:** a subpath's source arm leaves its module out of the root barrel ([90d488f](https://github.com/Esposter/Esposter/commit/90d488fe333e4f7f7728e93f4f10148414716411))
+* **configuration:** a test setup file takes the test bans, so the jobs setup's re-imports after mocking lint as the web setup's do ([9690c2b](https://github.com/Esposter/Esposter/commit/9690c2bfb6bdff6eee1775cc468760877f4fa51b))
+* **configuration:** an unannotated is*/has* function whose body is a boolean is check* ([4085872](https://github.com/Esposter/Esposter/commit/408587267529ecb6e819acf92ad268d92cba1bc0))
+* **configuration:** the Durable Object naming rule also bans getByName, and its comment names the Topic objects' two exceptions ([387b20f](https://github.com/Esposter/Esposter/commit/387b20f8bb4ce749035e8f94aeb3b32d301865dd))
+* **configuration:** the package declares the eslint its ESLint configuration imports ([4b79911](https://github.com/Esposter/Esposter/commit/4b7991140d99b63e0b076e8700ccafa18f6b707c))
+* **configuration:** vendored files stop naming the machine's pnpm store ([0fefd45](https://github.com/Esposter/Esposter/commit/0fefd45ea947fdb7e8f8fbac22951cf48be27110))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 ### Bug Fixes

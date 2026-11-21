@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **configuration:** a subpath's source arm leaves its module out of the root barrel ([90d488f](https://github.com/Esposter/Esposter/commit/90d488fe333e4f7f7728e93f4f10148414716411))
+* **db-mock:** a mock object's transactionSync rolls its writes back when the closure throws, as the runtime does ([e874536](https://github.com/Esposter/Esposter/commit/e8745369382939042595038d40634c65ba969dc1))
+* **db-mock:** a Workers stub answers no then and records only string RPCs ([6d49b02](https://github.com/Esposter/Esposter/commit/6d49b020cccca913797cbdd6cfff0f5bb19f4678))
+* **db-mock:** the wrangler test loads beside its module, and the read strips JSONC comments ([5872a41](https://github.com/Esposter/Esposter/commit/5872a41fcf6af81dea35e04499777fabc37bf387))
+* **db-mock:** the wrangler trailing-comma strip leaves string literals whole ([b827185](https://github.com/Esposter/Esposter/commit/b82718565e91dcac69a0c6a6d5afa575d9fa412d))
+
+### Features
+
+* **db-schema:** every row carries a version the database raises on each change ([f550858](https://github.com/Esposter/Esposter/commit/f550858a48ff7af1f6fb6007d0f6bfd74bbc0e47))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 ### Performance Improvements

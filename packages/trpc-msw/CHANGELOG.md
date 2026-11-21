@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **deps:** the manifests that inline type-fest or vize record the versions the lockfile resolves, as the build writes them ([75c0941](https://github.com/Esposter/Esposter/commit/75c09411d50183d0936361726abad10eb721014e))
+* **trpc-msw:** the options model sorts its interface first, takes Except over Omit, and capitalises its comment ([09f1366](https://github.com/Esposter/Esposter/commit/09f13669a2c9a9d4db3002578b9c24a09de682ab))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 **Note:** Version bump only for package trpc-msw

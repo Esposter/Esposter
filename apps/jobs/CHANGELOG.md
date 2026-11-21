@@ -3,6 +3,43 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **configuration:** an unannotated is*/has* function whose body is a boolean is check* ([4085872](https://github.com/Esposter/Esposter/commit/408587267529ecb6e819acf92ad268d92cba1bc0))
+* **db-mock:** the queue tests take the bucket doubles from the workers entry, and the wrangler test sits beside its module ([5aa1458](https://github.com/Esposter/Esposter/commit/5aa145855bb0b55be6830c51c677dfca545f3589))
+* **jobs,realtime:** a reminder is sent only while its owner is still a member of its room ([328a5c4](https://github.com/Esposter/Esposter/commit/328a5c47b31d0a02a2dd99a8cfb8c71ded763700))
+* **jobs,web:** the friend entries' live filter is a literal, the friend header is parsed by jsonDateParse, and the read sets name the block tombstone ([969a647](https://github.com/Esposter/Esposter/commit/969a647ad57a68a9a78ec4d990cc6047aff7c70a))
+* **jobs:** a bell row's topic is published once the row lands, before the device push waits on each device ([acdf035](https://github.com/Esposter/Esposter/commit/acdf035805852957b61c559dd0a0a1e4303ed0c8))
+* **jobs:** a quarantined dead letter expires past a 30-day retention, purged nightly ([7711348](https://github.com/Esposter/Esposter/commit/7711348854871118d66d69dbb92bf5bef4950b7f))
+* **jobs:** the account sweep calls deleteAll with the member list alone, as the object takes it ([0eba2f5](https://github.com/Esposter/Esposter/commit/0eba2f5d86925629442ad8d600e74e483b8d4ac8))
+* **jobs:** the data export reads a resource's live publication with await, not a .then ([7fdd96a](https://github.com/Esposter/Esposter/commit/7fdd96a298daaebb028191c788455706012feacd))
+* **jobs:** the erasure's test mocks shared/db's getDb, which the erasure reads, so its four ranking cases run again ([ac126ff](https://github.com/Esposter/Esposter/commit/ac126ffc1b7ddb905e1b342f86e458b703ee76af))
+* **jobs:** the nightly purge removes the overlay's tombstones seven days after their deletion, and the bell's trim leaves a dismissal to it ([3e87b0d](https://github.com/Esposter/Esposter/commit/3e87b0d5bb719a74dcde3ffdaeec73b352d91bd1))
+* **jobs:** the reconcile matches each notification to its ledger row, not a list of buckets ([03d4cfd](https://github.com/Esposter/Esposter/commit/03d4cfdf96c047dadac3a2759a467c7d859c8e30))
+* **jobs:** the test setup awaits its two imports in turn, as the web setup does ([bb8d2d9](https://github.com/Esposter/Esposter/commit/bb8d2d90edf1b182137302ac4ea6de54357d7687))
+* **notifications:** a push endpoint must be https on a browser's push service ([82dff0a](https://github.com/Esposter/Esposter/commit/82dff0aecba346e58edf4ab52276a1369f9b19c0))
+* **room:** a removed membership is a tombstone that a rejoin revives at a higher version, and a join counts its use in the statement that writes the membership ([e166375](https://github.com/Esposter/Esposter/commit/e1663757c0a7d91a2a9906e02d191be4f2d836a2))
+* **web,jobs:** the run-scope test awaits both runs once it settles them, and the export tests sort their keys ([9791a07](https://github.com/Esposter/Esposter/commit/9791a07f978dd12f20c14e15b0e61f314252949b))
+* **web:** a removed vote is a tombstone at the version it leaves, and a vote made again revives it at a higher one ([edfafae](https://github.com/Esposter/Esposter/commit/edfafaebcc9608aecb6dfd2dc36bc15d415e11a6))
+* **web:** an unpublish and an unstar leave tombstones that a republish or a re-star revives at a higher version ([3c610ef](https://github.com/Esposter/Esposter/commit/3c610efa474a624f8f7d0e708216bea000094df8))
+* **web:** leaving a room takes the person's reminders and scheduled messages for it ([78d1ac3](https://github.com/Esposter/Esposter/commit/78d1ac318e4ac1c182cac345d0f45a439b932ae4))
+
+### Features
+
+* **db-schema:** every row carries a version the database raises on each change ([f550858](https://github.com/Esposter/Esposter/commit/f550858a48ff7af1f6fb6007d0f6bfd74bbc0e47))
+* **db:** a bucket binding's reads and writes are blob topics, and the blob-state procedures are inferred ([8c24682](https://github.com/Esposter/Esposter/commit/8c2468262e6e013e4ff5c7223dc273fa7500f00b))
+* **db:** a column is metadata of a watch and a publish, not part of a topic's name, so an update wakes only the readers of its columns ([24f9df0](https://github.com/Esposter/Esposter/commit/24f9df0fa34ebfb8e7a0770f64615505f0ca674a))
+* **overlay:** room emoji, invite and webhook stores move to entries and arrivals ([affa52b](https://github.com/Esposter/Esposter/commit/affa52b65906efd35e2b1c09cade10db2cb57ed2))
+* **web,jobs,realtime:** a membership event and the room's member read carry the membership row at its version ([169873b](https://github.com/Esposter/Esposter/commit/169873bb06bae7eebcdadd408cf82ad985539805))
+* **web,jobs:** a removed friendship, request or block is a tombstone at a higher version, and the reads and checks that decide from the pair tables leave it out ([5ad7e2b](https://github.com/Esposter/Esposter/commit/5ad7e2b004c671e5e92a89b7ef800ce2eb6681cc))
+
+### Performance Improvements
+
+* **db-schema,jobs,web:** the tombstone purge reads only expired tombstones, through a partial index on each table's deletedAt ([6f26280](https://github.com/Esposter/Esposter/commit/6f26280a4e859b95ff869d121961046dbc06abfb))
+* **test:** the jobs setup stops loading the schema, and the ground fit tests fit smaller pieces ([e2a9e75](https://github.com/Esposter/Esposter/commit/e2a9e75a10c69233f0fb8981217dfd2aba43dfda))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 ### Bug Fixes

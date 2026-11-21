@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **configuration:** a subpath's source arm leaves its module out of the root barrel ([90d488f](https://github.com/Esposter/Esposter/commit/90d488fe333e4f7f7728e93f4f10148414716411))
+* **configuration:** an unannotated is*/has* function whose body is a boolean is check* ([4085872](https://github.com/Esposter/Esposter/commit/408587267529ecb6e819acf92ad268d92cba1bc0))
+* **deps:** the manifests that inline type-fest or vize record the versions the lockfile resolves, as the build writes them ([75c0941](https://github.com/Esposter/Esposter/commit/75c09411d50183d0936361726abad10eb721014e))
+* **genshin-text:** the loader map is named by its key, GameLanguage, first ([737321f](https://github.com/Esposter/Esposter/commit/737321fefb6c6a999fc2910afa5a9175f23e8a14))
+* **genshin-world:** Iansan's port passes typecheck and lint: the Constellation 6 buff filter narrows to a buff, the step movement takes an optional field character, and imports and keys sort ([644e431](https://github.com/Esposter/Esposter/commit/644e4319b623b4a601ebb5aaabc3215236e0e7b3))
+* **genshin-world:** the paralysis resistance drop leaves the constants until the arena reads it ([650beae](https://github.com/Esposter/Esposter/commit/650beaedc15ae9c4589865f48a9074a3e5c521aa))
+* **genshin-world:** two test files' imports are in sort order ([51570f2](https://github.com/Esposter/Esposter/commit/51570f2011c54141a6cdb91355a0272eaf8c4133))
+
+### Features
+
+* **genshin-world:** a HealthChanged event carries the member's share before and after its change, and the attack of a heal ([5171e9f](https://github.com/Esposter/Esposter/commit/5171e9f4cd74efb201b91eaa854f3f50fc4149f2))
+* **genshin-world:** Iansan's Kinetic Energy Scale logs the field character's movement, and its restore takes those points, on the queue's overflow contract ([836368d](https://github.com/Esposter/Esposter/commit/836368d7fba251ca7398adae91fff0275e1ea16f))
+* **genshin-world:** Kokomi's Constellation 6 gives her a 40% Hydro DMG Bonus for four seconds after her Normal or Charged Attack heals a member at 80% HP ([09ba7c2](https://github.com/Esposter/Esposter/commit/09ba7c2c49fffbf637743b4e4c9d2678da667f48))
+* **scripts:** Radiant Psalter's first shield delay is read from gcsim's burst.go, and Dahlia's overlay drops its unsourced 31 ([03b39c3](https://github.com/Esposter/Esposter/commit/03b39c3d45449abf7425850dbd4f7af5de012dc7))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 ### Bug Fixes

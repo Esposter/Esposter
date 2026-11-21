@@ -3,6 +3,53 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
+
+### Bug Fixes
+
+* **calls:** a call names each connection by a fresh participant id, never the caller's auth session ([c567700](https://github.com/Esposter/Esposter/commit/c56770004c0b93d1ac05648ec78a3a821c437868))
+* **db-schema:** a blob topic's bucket must be a binding a storage bucket names ([ba42e5e](https://github.com/Esposter/Esposter/commit/ba42e5eb7f97fd60ec1f915cbfc61a6d5fd2621e))
+* **db-schema:** a bookmark's path is one of this app's, so a protocol-relative path no longer opens another host in a new tab ([b47550b](https://github.com/Esposter/Esposter/commit/b47550b717473f51ead8136471a11278b6004b38))
+* **db-schema:** webhook and app-user soft deletes are listed as overlay tombstone tables, so the purge reaches them ([5d326fe](https://github.com/Esposter/Esposter/commit/5d326fefc2baa550349916f2cfa2045b339d81bc))
+* **db:** a blob's key is bounded at R2's key limit, so a long file name's topic publishes ([4152561](https://github.com/Esposter/Esposter/commit/4152561ccd7ab9ea6de5c38339d4653d24dec9df))
+* **db:** a procedure's read topics fit one header budget, and a read past it collapses its row topics table-wide ([092813a](https://github.com/Esposter/Esposter/commit/092813a9a60ee8256a6cce5b9663670815e0f245))
+* **db:** a read across many objects of one kind collapses to the kind's table topic, which every object's write publishes ([f2acdfc](https://github.com/Esposter/Esposter/commit/f2acdfc622c02fc7bbe67a6e878d64f116d36203))
+* **db:** a read past the header's budget collapses its blob and object topics too, a blob to its bucket's root and an object's rows to their table ([5d881db](https://github.com/Esposter/Esposter/commit/5d881db9a3a8ae86f4b753371faff28aec49b04d))
+* **db:** the bucket's root is a topic the schema accepts, and the design names the blob topics ([e004f47](https://github.com/Esposter/Esposter/commit/e004f47154eb4303128d6ed63a6c731211bc85f2))
+* **esbabbler:** a reaction's add and removal are awaited answers under the version gate ([6a370f8](https://github.com/Esposter/Esposter/commit/6a370f8b349dac09a248e1ab3fff3370b5c38f35))
+* **jobs:** a quarantined dead letter expires past a 30-day retention, purged nightly ([7711348](https://github.com/Esposter/Esposter/commit/7711348854871118d66d69dbb92bf5bef4950b7f))
+* **lint:** the call's member and union sorts, the schema's keys, the test's expect forms, the comment capitals, the orphaned dungeon type file and the held-resource predicate's check name pass as CI runs them ([a62c157](https://github.com/Esposter/Esposter/commit/a62c157076295a1a8c99f536d424e827a73cb90b))
+* **lint:** the room's delete result names null first, as sort-union-types asks ([ec79a69](https://github.com/Esposter/Esposter/commit/ec79a6900211ec0001104b77e3552318040e0973))
+* **messages:** an edit takes back the mention counts of the message it replaced, as the room held it at the write ([ed5c43e](https://github.com/Esposter/Esposter/commit/ed5c43ed62a48b6fc656a3a7a77e8d86f104a509))
+* **notifications:** a push endpoint must be https on a browser's push service ([82dff0a](https://github.com/Esposter/Esposter/commit/82dff0aecba346e58edf4ab52276a1369f9b19c0))
+* **realtime:** a watch is taken only when the server signed the read it names, so a signed-in person watches only the topics their reads were given ([2db1cd1](https://github.com/Esposter/Esposter/commit/2db1cd1586fb1aec27d3e2ed35b9b4f25f9a6ad5))
+* **realtime:** TOPIC_WATCH_SECRET is required, and a watch with no signature is refused rather than taken unverified ([8015a18](https://github.com/Esposter/Esposter/commit/8015a18263848b841464c34c5af0c6e71e9c1d48))
+* **room:** a deleted room category is a tombstone that a create under its id revives at a higher version, and a removal takes the caller's memberships off it in the same batch ([3e47af2](https://github.com/Esposter/Esposter/commit/3e47af21043362b685e81d8967b96409cf63ce48))
+* **room:** a removed membership is a tombstone that a rejoin revives at a higher version, and a join counts its use in the statement that writes the membership ([e166375](https://github.com/Esposter/Esposter/commit/e1663757c0a7d91a2a9906e02d191be4f2d836a2))
+* **search:** a repeated search is refused by a unique index, not by a read ahead of the write ([39c03b7](https://github.com/Esposter/Esposter/commit/39c03b7e04a1d410fad78a945408974da66a0aee))
+* **web:** a held tombstone past the retention counts as nothing held, so a revived row at version zero arrives as new and its write settles on that arrival ([f90067c](https://github.com/Esposter/Esposter/commit/f90067cb48667194584a27b357d273aa366fd41c))
+* **web:** a public read awaits its view count, so the write is published before the read returns and the owner's count is woken ([90a8368](https://github.com/Esposter/Esposter/commit/90a83681781aa7661f8daf718939212ac6ac564b))
+* **web:** a removed vote is a tombstone at the version it leaves, and a vote made again revives it at a higher one ([edfafae](https://github.com/Esposter/Esposter/commit/edfafaebcc9608aecb6dfd2dc36bc15d415e11a6))
+* **web:** leaving a room takes the person's reminders and scheduled messages for it ([78d1ac3](https://github.com/Esposter/Esposter/commit/78d1ac318e4ac1c182cac345d0f45a439b932ae4))
+* **web:** the typed rows the version column reaches carry it, and a row not yet held holds no version ([9fa3fb0](https://github.com/Esposter/Esposter/commit/9fa3fb0e19b6158d5955fc045278dcc9fdb5be5e))
+
+### Features
+
+* **db-schema:** every row carries a version the database raises on each change ([f550858](https://github.com/Esposter/Esposter/commit/f550858a48ff7af1f6fb6007d0f6bfd74bbc0e47))
+* **db-schema:** roles, assignments and overrides are soft-deleted, and a re-grant revives its row ([794d3ae](https://github.com/Esposter/Esposter/commit/794d3ae356082b61798bcd159aed5056e7dcc658))
+* **db-schema:** scheduled messages and reminders are tombstones, so a cancel or a send leaves a row a reschedule cannot revive ([47c887b](https://github.com/Esposter/Esposter/commit/47c887b2addfad965209c83e21b1ef34dbbd284b))
+* **db:** a bucket binding's reads and writes are blob topics, and the blob-state procedures are inferred ([8c24682](https://github.com/Esposter/Esposter/commit/8c2468262e6e013e4ff5c7223dc273fa7500f00b))
+* **db:** a column is metadata of a watch and a publish, not part of a topic's name, so an update wakes only the readers of its columns ([24f9df0](https://github.com/Esposter/Esposter/commit/24f9df0fa34ebfb8e7a0770f64615505f0ca674a))
+* **db:** a table-wide read names the columns it reads, and an update publishes the columns it sets rather than its table ([65bf9b3](https://github.com/Esposter/Esposter/commit/65bf9b383506aa6b360c84fa5370fca77e8eb043))
+* **overlay:** room emoji, invite and webhook stores move to entries and arrivals ([affa52b](https://github.com/Esposter/Esposter/commit/affa52b65906efd35e2b1c09cade10db2cb57ed2))
+* **realtime:** a mutation's header names each row it changed by its key and version ([50670f7](https://github.com/Esposter/Esposter/commit/50670f7c158cf2941a3352f9dfbbc751d9189789))
+* **web,jobs,realtime:** a membership event and the room's member read carry the membership row at its version ([169873b](https://github.com/Esposter/Esposter/commit/169873bb06bae7eebcdadd408cf82ad985539805))
+* **web:** a procedure infers its live topics from the statements it awaits, unless it declares them by hand ([9349e52](https://github.com/Esposter/Esposter/commit/9349e52e18404eb3039997e6bfd7ca3ad625d721))
+
+### Performance Improvements
+
+* **db-schema,jobs,web:** the tombstone purge reads only expired tombstones, through a partial index on each table's deletedAt ([6f26280](https://github.com/Esposter/Esposter/commit/6f26280a4e859b95ff869d121961046dbc06abfb))
+
 # [4.13.0](https://github.com/Esposter/Esposter/compare/v4.12.0...v4.13.0) (2026-11-19)
 
 ### Bug Fixes
