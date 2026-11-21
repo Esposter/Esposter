@@ -1,3 +1,4 @@
+import type { useRunScope } from "#src/composables/shared/useRunScope";
 import type { CacheTag } from "#src/models/cache/CacheTag";
 import type { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import type { MutationOutcome } from "#src/models/shared/MutationOutcome";
@@ -8,7 +9,7 @@ import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { collectTopics } from "#src/services/realtime/collectTopics";
 import { settleOperation } from "#src/services/shared/settleOperation";
 import { useCacheStore } from "#src/store/cache";
-import { getSynchronizedFunction, withFinalizerAsync } from "@esposter/shared";
+import { getSynchronizedFunction, noop, withFinalizerAsync } from "@esposter/shared";
 
 // A write that waits for the server's answer before the screen changes names why, from the closed set, and gets the
 // Outcome to act on. It may still apply part of its change at once
@@ -56,6 +57,9 @@ interface QueryOptions<TResult> {
   key: PropertyKey;
   onError?: ((error: Error) => Promisable<void>) | undefined;
   onSuccess?: (result: TResult) => Promisable<void>;
+  // The run scope that orders the read of its key, which every read names, a read with a version included. Its current
+  // Run is the only one that commits the answer and the topic watch
+  runScope: ReturnType<typeof useRunScope>;
 }
 
 export const useMutation = () => {
@@ -127,13 +131,13 @@ export const useMutation = () => {
   // A read stays live: the topics its answer came from are watched for as long as this instance's scope lives, and a
   // Write that changed one runs the same read again — which is why every read of a query procedure goes through here
   const watchTopics = useWatchTopics();
-  // Reads are latest-wins per target: the caller wants the freshest data, and a superseded response has
-  // Nothing to unwind — discarding it loses no information
+  // Reads are ordered by the run scope the caller holds: a newer read of the key aborts the one before it, and only the
+  // Read the scope holds current commits its answer and its topic watch, so an older answer that lands last replaces neither
   const executeQuery = <TResult>(
     query: (checkIsStale: () => boolean) => Promise<TResult>,
     options: QueryOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
-    const { isExclusive, isUnwatched, key, onError, onSuccess } = options;
+    const { isExclusive, isUnwatched, key, onError, onSuccess, runScope } = options;
     const sharedQuery = isExclusive ? keySharedQueryMap.get(key) : undefined;
     // The call already in flight applies the state and runs the callbacks for this target, so awaiting it is
     // The whole read — the joiner sees the same data and the same outcome one request later
@@ -145,30 +149,27 @@ export const useMutation = () => {
     // A stale response applies no state and runs no callback, and a later caller joining it would resolve
     // Holding nothing. It issues its own read instead
     keySharedQueryMap.delete(key);
-    let topicReads: TopicRead[] | undefined;
+    // The outcome of this read once its run commits, which stays Stale for a run the scope superseded or aborted
+    let committed: MutationOutcome<TResult> = { status: MutationStatus.Stale };
+    const commit = async ({ reads, result }: { reads: TopicRead[]; result: TResult }) => {
+      committed = { result, status: MutationStatus.Succeeded };
+      await onSuccess?.(result);
+      watchTopics(
+        key,
+        isUnwatched ? undefined : reads,
+        getSynchronizedFunction(() => executeQuery(query, options)),
+      );
+    };
     const outcome = withFinalizerAsync(
-      () =>
-        settleOperation(
+      async () => {
+        const settled = await settleOperation(
           async () => {
-            const collected = await collectTopics(() => query(checkIsStale));
-            topicReads = collected.reads;
-            return collected.result;
+            await runScope.run(() => collectTopics(() => query(checkIsStale)), commit, noop, key);
           },
-          {
-            checkIsStale,
-            isSilentWhenStale: true,
-            onError,
-            // Only the latest read of a target reaches here, so only it decides what the target watches
-            onSuccess: async (result) => {
-              await onSuccess?.(result);
-              watchTopics(
-                key,
-                isUnwatched ? undefined : topicReads,
-                getSynchronizedFunction(() => executeQuery(query, options)),
-              );
-            },
-          },
-        ),
+          { checkIsStale, isSilentWhenStale: true, onError },
+        );
+        return settled.status === MutationStatus.Failed ? settled : committed;
+      },
       () => {
         releaseKey(key);
         // Only this call's own entry is dropped: the read that superseded it registers its own, and clearing

@@ -23,6 +23,7 @@ export const usePaginationCache = <
   // The partition is the target: its writes run one at a time so each rewrite lands on the set the one before
   // It stored, while another partition's cache is a different target and never waits behind it
   const { executeMutation, executeQuery } = useMutation();
+  const runScope = useRunScope();
   // Neither half of the cache is something the user acted on — one mirrors a list they are already looking at,
   // The other restores what they already had — so a failure is logged, never alerted
   const onError = console.error;
@@ -54,6 +55,7 @@ export const usePaginationCache = <
         initializeCursorPaginationData({ items: cachedItems, nextCursor: "" });
         await onHydrate?.(cachedItems, newPartitionKey);
       },
+      runScope,
     });
   });
   // The capped write set is both what gets persisted and what the deep watch tracks. Watching the whole

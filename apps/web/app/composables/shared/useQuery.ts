@@ -18,6 +18,7 @@ export const useQuery = <TResult>(
   { isInlineError, isLazy, onSuccess }: QueryOptions<TResult> = {},
 ) => {
   const { executeQuery, isPending } = useMutation();
+  const runScope = useRunScope();
   const data = shallowRef<TResult>();
   // The message of the last failed read, empty while the read is in flight or has landed. `data` cannot carry
   // This: a read that answers no row leaves it undefined too, so a surface gating on data alone renders its
@@ -40,6 +41,7 @@ export const useQuery = <TResult>(
         data.value = result;
         onSuccess?.(result);
       },
+      runScope,
     });
   };
   // Fetch on setup without blocking it — no Suspense boundary, unlike a top-level awaited query

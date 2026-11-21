@@ -184,6 +184,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     );
   };
   const { executeQuery: executeReadMyPermissionsQuery } = useMutation();
+  const runScope = useRunScope();
   const readMyPermissions = async ({ roomIds }: ReadMyPermissionsInput) => {
     await Promise.all(
       roomIds.map((roomId) =>
@@ -195,6 +196,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
               for (const { roomId: permissionRoomId, ...rest } of roomPermissionsList)
                 setMyPermissions(permissionRoomId, rest);
             },
+            runScope,
           }),
         ),
       ),

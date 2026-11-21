@@ -847,6 +847,46 @@ describe(useResourceStore, () => {
     expect(notificationStore.notifications.map(({ action }) => action?.title)).toStrictEqual(["Refresh"]);
   });
 
+  // An explicit reload is a read like any other: its answer can land after a newer read has held a newer version. When the
+  // Row it answers with is older, it applies nothing, so it must not clear the stale latch a save raised after that read
+  test("an older reload answer leaves a stale latch raised after a newer read", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.sheet.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
+    });
+    const { promise: isReloadReached, resolve: onReloadReached } = Promise.withResolvers<void>();
+    const { promise: olderAnswer, resolve: answerOlderReload } = Promise.withResolvers<ReadResourceResult>();
+    let readCount = 0;
+    trpcMsw.resource.readResource.query(async ({ input }) => {
+      readCount++;
+      // The first read the store makes is the reload, which is held until its older answer is given
+      if (readCount === 1) {
+        onReloadReached();
+        return olderAnswer;
+      }
+
+      return { ...createResource(input.id), publication: null, version: 2 };
+    });
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    const { readContent, reloadResource, saveContent } = resourceStore;
+    const { readResource } = useReadOpenResource();
+    const reload = reloadResource();
+    await isReloadReached;
+    await readResource();
+    await readContent(noop);
+    saveContent(createDefaultSheetResource());
+    await settleSave();
+
+    expect(saveState.value).toBe(ResourceSaveState.Stale);
+
+    answerOlderReload({ ...createResource(resourceId), publication: null, version: 1 });
+    await reload;
+
+    expect(saveState.value).toBe(ResourceSaveState.Stale);
+  });
+
   test("reports a stale save as out of date until the resource is opened afresh", async () => {
     expect.hasAssertions();
 

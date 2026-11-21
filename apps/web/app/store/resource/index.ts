@@ -190,8 +190,11 @@ export const useResourceStore = defineStore("resource", () => {
       confirmedContentVersions = new Map<string, number>();
     }
     resourceId.value = newResource.id;
-    arrive(resourceTable, newResource);
+    const isResourceApplied = arrive(resourceTable, newResource);
     if (newPublication) arrive(publicationTable, newPublication);
+    // A reload answer the gate discards is older than the row held, so the newer state a read or a save left stands
+    if (!isResourceApplied) return;
+
     isContentStale.value = false;
     heldSave.value = undefined;
     isSaveContentFailed.value = false;
@@ -201,6 +204,7 @@ export const useResourceStore = defineStore("resource", () => {
   // Tracked on its own executor so the page's Refresh shows the read in flight, and one key so repeated clicks queue
   // Rather than overlap
   const { executeQuery: executeReloadQuery, isPending: isReloadPending } = useMutation();
+  const reloadRunScope = useRunScope();
   const reloadKey = Symbol("reloadResource");
   const reloadResource = async () => {
     // A route with no resource segment names nothing to read, and the empty sentinel would reach the server as a uuid
@@ -219,6 +223,7 @@ export const useResourceStore = defineStore("resource", () => {
 
           assignResource(newResource, newPublication);
         },
+        runScope: reloadRunScope,
       }),
     );
   };

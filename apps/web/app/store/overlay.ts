@@ -28,9 +28,11 @@ export const useOverlayStore = defineStore("overlay", () => {
     for (const arrival of arrivals) arrival(slotFor);
     settlePendingEntries();
   };
+  // Whether the row was not discarded as older, so a read whose effects follow its answer takes them unless it is late
   const arrive = <TRow extends Versioned>(table: Table<TRow>, row: TRow) => {
-    slotFor(table).arrive(row);
+    const isApplied = slotFor(table).arrive(row);
     settlePendingEntries();
+    return isApplied;
   };
   const view = <TRow extends Versioned>(table: Table<TRow>) =>
     computed(() => listOverlayRows(slotFor, table, pendingEntries.value));

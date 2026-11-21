@@ -28,6 +28,7 @@ export const useMicrophoneLevel = () => {
     { immediate: false },
   );
   const { executeQuery } = useMutation();
+  const runScope = useRunScope();
   // A start that lands while one is pending joins it, so a double click cannot open a second stream beside the first
   const start = async () => {
     await executeQuery(() => holdMicrophone(holder), {
@@ -55,6 +56,7 @@ export const useMicrophoneLevel = () => {
         // That lands during the close cannot be overtaken by a state write
         if (previousAudioContext) await getResultAsync(() => previousAudioContext.close()).match(noop, console.error);
       },
+      runScope,
     });
   };
   const stop = async () => {

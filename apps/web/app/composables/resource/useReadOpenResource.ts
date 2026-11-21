@@ -12,6 +12,7 @@ export const useReadOpenResource = () => {
   const resourceStore = useResourceStore();
   const { applyResource } = resourceStore;
   const { executeQuery, isPending } = useMutation();
+  const runScope = useRunScope();
   // The open resource is one target, so every read of it supersedes the one before it
   const key = Symbol("readOpenResource");
   const readResource = async () => {
@@ -33,6 +34,7 @@ export const useReadOpenResource = () => {
 
           applyResource(fetchedResource, publication);
         },
+        runScope,
       }),
     );
   };

@@ -22,6 +22,7 @@ export const useReadResourcesPage = <TFilterInput>({
   readPage,
 }: ReadResourcesPageOptions<TFilterInput>) => {
   const { executeQuery, isPending } = useMutation();
+  const runScope = useRunScope();
   const items = ref<ResourceListItem[]>([]);
   const count = ref(0);
   const error = ref("");
@@ -86,6 +87,7 @@ export const useReadResourcesPage = <TFilterInput>({
           }
           items.value = newItems;
         },
+        runScope,
       },
     );
   };

@@ -24,6 +24,7 @@ export const useCallPreJoinMedia = () => {
     constraints: microphoneConstraints,
   });
   const { executeQuery } = useMutation();
+  const runScope = useRunScope();
   let isDisposed = false;
   onScopeDispose(() => {
     isDisposed = true;
@@ -33,7 +34,7 @@ export const useCallPreJoinMedia = () => {
   // A refused or unavailable device is logged rather than dropped: the reason is only in the error, and the pre-join
   // Screen is where a wrong device id or a blocked permission is diagnosed.
   const startDevice = (key: string, start: () => Promise<MediaStream | undefined>) =>
-    executeQuery(start, { isExclusive: true, key, onError: console.error });
+    executeQuery(start, { isExclusive: true, key, onError: console.error, runScope });
   const isCameraEnabled = computed({
     get: () => joinCallOptions.value.isCameraEnabled,
     set: (value) => {

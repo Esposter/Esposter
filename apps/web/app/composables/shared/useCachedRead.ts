@@ -22,6 +22,7 @@ export const useCachedRead = <TResult>(
   const cacheStore = useCacheStore();
   const { registerCache } = cacheStore;
   const { executeQuery, isPending } = useMutation();
+  const runScope = useRunScope();
   const loadedKeys = new Set<string>();
   const executeRead = async (key: string, isExclusive?: true) => {
     await executeQuery(() => query(key), {
@@ -34,6 +35,7 @@ export const useCachedRead = <TResult>(
         loadedKeys.add(key);
         onSuccess(result, key);
       },
+      runScope,
     });
   };
   // What every surface calls on mount. The concurrent first callers join one request through the primitive's

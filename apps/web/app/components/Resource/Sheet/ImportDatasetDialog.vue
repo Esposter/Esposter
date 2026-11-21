@@ -27,6 +27,7 @@ const { closeSurveyImport } = sheetPortableDialogStore;
 const { $trpc } = useNuxtApp();
 const getDataSourceSetter = useSetDataSource();
 const { checkIsPending, executeMutation, executeQuery } = useMutation();
+const runScope = useRunScope();
 const { answer, importingResourceId, isImporting, saveResourceRevision } = useImportPreview(isOpen, closeSurveyImport);
 const surveys = ref<ResourceInResource[]>();
 const surveyItems = computed(() =>
@@ -49,6 +50,7 @@ const readSurveys = () =>
       // A survey deleted since the dialog last read the list is no longer one to import, so the choice of it is dropped
       if (!items.some(({ id }) => id === selectedSurveyId.value)) selectedSurveyId.value = "";
     },
+    runScope,
   });
 
 watch(isOpen, async (newIsOpen) => {

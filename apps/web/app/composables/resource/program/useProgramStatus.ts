@@ -39,6 +39,7 @@ export const useProgramStatus = () => {
   const isRespondedPartial = ref(false);
   // Live while the blade is open, so a response landing elsewhere moves its counts without a refresh
   const { executeQuery: executeReadStatusQuery } = useMutation();
+  const runScope = useRunScope();
   const readStatus = async () => {
     const programId = id.value;
     await executeReadStatusQuery(() => $trpc.program.readProgramStatus.query({ id: programId }), {
@@ -48,6 +49,7 @@ export const useProgramStatus = () => {
         isRespondedPartial.value = programStatus.isRespondedPartial;
         statusRows.value = programStatus.rows;
       },
+      runScope,
     });
   };
   const generateParticipants = async () => {

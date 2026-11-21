@@ -40,17 +40,18 @@ export const createSlot = <TRow extends Versioned>(table: Table<TRow>): Slot<TRo
       if (checkIsNewerArrival(heldRow, row)) {
         writeKeyTrie(held.value, key, heldRow ? { ...heldRow, ...row } : row);
         triggerRef(held);
-        return;
+        return true;
       }
-      // The held row is at this version or newer. An arrival at the held version fills only the columns the held
-      // Row lacks, so a projection and the full row of one write compose in either order, and an older one is discarded
-      if (heldRow === undefined || checkIsNewerArrival(row, heldRow)) return;
+      // The held row is at this version or newer. An older one is discarded. An arrival at the held version fills only the
+      // Columns the held row lacks, so a projection and the full row of one write compose in either order
+      if (heldRow === undefined || checkIsNewerArrival(row, heldRow)) return false;
 
       const fillsHeldRow = Object.keys(row).some((fieldName) => !checkIsRowField(heldRow, fieldName));
-      if (!fillsHeldRow) return;
-
-      writeKeyTrie(held.value, key, { ...row, ...heldRow });
-      triggerRef(held);
+      if (fillsHeldRow) {
+        writeKeyTrie(held.value, key, { ...row, ...heldRow });
+        triggerRef(held);
+      }
+      return true;
     },
     list: () => {
       // The held rows as the draft has written them, then the rows only the draft created

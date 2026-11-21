@@ -20,6 +20,7 @@ export const useOverlayRead = <TRow extends Versioned, TReadRow>(
   toRow: (readRow: TReadRow) => TRow,
 ) => {
   const { executeQuery } = useMutation();
+  const runScope = useRunScope();
   const overlayStore = useOverlayStore();
   const { arrive } = overlayStore;
   return (
@@ -33,5 +34,6 @@ export const useOverlayRead = <TRow extends Versioned, TReadRow>(
         for (const readRow of readRows) arrive(table, toRow(readRow));
         await onSuccess?.(readRows);
       },
+      runScope,
     });
 };

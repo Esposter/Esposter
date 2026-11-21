@@ -9,12 +9,19 @@ import { getTopic, TopicKind } from "@esposter/db-schema";
 import { noop, waitForSynchronizedFunctions } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { describe, expect, test, vi } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 
 vi.mock(
   import("#src/services/realtime/openRealtimeSocket"),
   () => import("#src/services/realtime/openRealtimeSocket.test"),
 );
+
+// A run scope held by one test, so each read orders only within that test
+const createRunScope = () => {
+  const runScope = effectScope().run(useRunScope);
+  assert.exists(runScope);
+  return runScope;
+};
 
 describe(useMutation, () => {
   const key = "";
@@ -260,9 +267,10 @@ describe(useMutation, () => {
     const supersededOnSuccess = vi.fn<() => void>();
     const freshOnSuccess = vi.fn<() => void>();
     const { executeQuery } = useMutation();
+    const runScope = createRunScope();
     const { promise: supersededPromise, resolve: resolveSuperseded } = Promise.withResolvers<void>();
-    const supersededRead = executeQuery(() => supersededPromise, { key, onSuccess: supersededOnSuccess });
-    await executeQuery(() => Promise.resolve(), { key, onSuccess: freshOnSuccess });
+    const supersededRead = executeQuery(() => supersededPromise, { key, onSuccess: supersededOnSuccess, runScope });
+    await executeQuery(() => Promise.resolve(), { key, onSuccess: freshOnSuccess, runScope });
     resolveSuperseded();
 
     await expect(supersededRead).resolves.toStrictEqual({ status: MutationStatus.Stale });
@@ -274,11 +282,12 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeQuery } = useMutation();
+    const runScope = createRunScope();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
     const { promise: supersededPromise, reject: rejectSuperseded } = Promise.withResolvers<void>();
-    const supersededRead = executeQuery(() => supersededPromise, { key });
-    await executeQuery(() => Promise.resolve(), { key });
+    const supersededRead = executeQuery(() => supersededPromise, { key, runScope });
+    await executeQuery(() => Promise.resolve(), { key, runScope });
     rejectSuperseded(error);
 
     await expect(supersededRead).resolves.toStrictEqual({ status: MutationStatus.Stale });
@@ -292,10 +301,11 @@ describe(useMutation, () => {
     const joinedOnSuccess = vi.fn<(result: string) => void>();
     const query = vi.fn<() => Promise<string>>();
     const { executeQuery } = useMutation();
+    const runScope = createRunScope();
     const { promise: queryPromise, resolve: resolveQuery } = Promise.withResolvers<string>();
     query.mockReturnValueOnce(queryPromise);
-    const inFlightRead = executeQuery(query, { isExclusive: true, key, onSuccess });
-    const joinedRead = executeQuery(query, { isExclusive: true, key, onSuccess: joinedOnSuccess });
+    const inFlightRead = executeQuery(query, { isExclusive: true, key, onSuccess, runScope });
+    const joinedRead = executeQuery(query, { isExclusive: true, key, onSuccess: joinedOnSuccess, runScope });
     await flushPromises();
     resolveQuery(result);
 
@@ -310,9 +320,10 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeQuery } = useMutation();
+    const runScope = createRunScope();
     const { promise: queryPromise, reject: rejectQuery } = Promise.withResolvers<void>();
-    const inFlightRead = executeQuery(() => queryPromise, { isExclusive: true, key, onError: noop });
-    const joinedRead = executeQuery(() => Promise.resolve(), { isExclusive: true, key, onError: noop });
+    const inFlightRead = executeQuery(() => queryPromise, { isExclusive: true, key, onError: noop, runScope });
+    const joinedRead = executeQuery(() => Promise.resolve(), { isExclusive: true, key, onError: noop, runScope });
     await flushPromises();
     rejectQuery(error);
 
@@ -325,10 +336,11 @@ describe(useMutation, () => {
 
     const onSuccess = vi.fn<(result: string) => void>();
     const { executeQuery } = useMutation();
+    const runScope = createRunScope();
     const { promise: exclusivePromise, resolve: resolveExclusive } = Promise.withResolvers<string>();
-    const exclusiveRead = executeQuery(() => exclusivePromise, { isExclusive: true, key, onSuccess });
-    await executeQuery(() => Promise.resolve("replacement"), { key, onSuccess });
-    const joinedRead = executeQuery(() => Promise.resolve("joined"), { isExclusive: true, key, onSuccess });
+    const exclusiveRead = executeQuery(() => exclusivePromise, { isExclusive: true, key, onSuccess, runScope });
+    await executeQuery(() => Promise.resolve("replacement"), { key, onSuccess, runScope });
+    const joinedRead = executeQuery(() => Promise.resolve("joined"), { isExclusive: true, key, onSuccess, runScope });
     resolveExclusive("exclusive");
 
     await expect(joinedRead).resolves.toStrictEqual({ result: "joined", status: MutationStatus.Succeeded });
@@ -341,15 +353,16 @@ describe(useMutation, () => {
 
     const duplicateQuery = vi.fn<() => Promise<string>>(() => Promise.resolve("duplicate"));
     const { executeQuery } = useMutation();
+    const runScope = createRunScope();
     const { promise: supersededQueryPromise, resolve: resolveSupersededQuery } = Promise.withResolvers<string>();
     const { promise: newerQueryPromise, resolve: resolveNewerQuery } = Promise.withResolvers<string>();
-    const supersededRead = executeQuery(() => supersededQueryPromise, { isExclusive: true, key });
-    await executeQuery(() => Promise.resolve("replacement"), { key });
-    const newerRead = executeQuery(() => newerQueryPromise, { isExclusive: true, key });
+    const supersededRead = executeQuery(() => supersededQueryPromise, { isExclusive: true, key, runScope });
+    await executeQuery(() => Promise.resolve("replacement"), { key, runScope });
+    const newerRead = executeQuery(() => newerQueryPromise, { isExclusive: true, key, runScope });
     await flushPromises();
     resolveSupersededQuery("superseded");
     await supersededRead;
-    const joinedRead = executeQuery(duplicateQuery, { isExclusive: true, key });
+    const joinedRead = executeQuery(duplicateQuery, { isExclusive: true, key, runScope });
     resolveNewerQuery("newer");
 
     await expect(joinedRead).resolves.toStrictEqual({ result: "newer", status: MutationStatus.Succeeded });
@@ -362,8 +375,9 @@ describe(useMutation, () => {
 
     const query = vi.fn<() => Promise<void>>(() => Promise.resolve());
     const { executeQuery } = useMutation();
-    await executeQuery(query, { isExclusive: true, key });
-    await executeQuery(query, { isExclusive: true, key });
+    const runScope = createRunScope();
+    await executeQuery(query, { isExclusive: true, key, runScope });
+    await executeQuery(query, { isExclusive: true, key, runScope });
 
     expect(query).toHaveBeenCalledTimes(2);
   });
@@ -372,9 +386,10 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeQuery } = useMutation();
+    const runScope = createRunScope();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    const outcome = await executeQuery(() => Promise.reject(error), { key });
+    const outcome = await executeQuery(() => Promise.reject(error), { key, runScope });
 
     expect(outcome.status).toBe(MutationStatus.Failed);
     expect(alerts.value).toHaveLength(1);
@@ -574,7 +589,8 @@ describe(useMutation, () => {
     });
     const scope = effectScope();
     const { executeQuery } = scope.run(() => useMutation()) ?? {};
-    await executeQuery?.(query, { isUnwatched: true, key });
+    const runScope = createRunScope();
+    await executeQuery?.(query, { isUnwatched: true, key, runScope });
     onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
     await waitForSynchronizedFunctions();
     scope.stop();

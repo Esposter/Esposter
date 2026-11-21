@@ -13,6 +13,7 @@ const commentStore = useCommentStore();
 const { commentSortType, currentPost } = storeToRefs(commentStore);
 const { arrivePost, openPost } = commentStore;
 const { executeQuery } = useMutation();
+const runScope = useRunScope();
 let isLoaded = false;
 // A comment is a post, so this returns one either way: opening a reply's own id renders it as the root of its
 // Thread with its replies beneath, which is what "continue this thread" is — the same page, one level of
@@ -32,6 +33,7 @@ const outcome = await executeQuery(() => $trpc.post.readPost.query(route.params.
     isLoaded = true;
     arrivePost(newPost);
   },
+  runScope,
 });
 if (outcome.status === MutationStatus.Succeeded) openPost(outcome.result);
 </script>
