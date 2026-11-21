@@ -31,7 +31,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const memberRows = view(memberTable);
   const userId = useSessionUserId();
   const userStore = useUserStore();
-  const { storeUser, userMap } = userStore;
+  const { storeUser } = userStore;
   const userToRoomStore = useUserToRoomStore();
   const { getMyUserToRoom } = userToRoomStore;
   const readMyUsersToRooms = useReadMyUsersToRooms();
@@ -57,7 +57,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const participantsMap = computed(() => {
     const map = new Map<string, MemberInRoom[]>();
     for (const row of memberRows.value) {
-      const user = checkIsVersioned(row) && row.userId !== userId.value ? userMap.get(row.userId) : undefined;
+      const user = checkIsVersioned(row) && row.userId !== userId.value ? userStore.userMap.get(row.userId) : undefined;
       if (user) getOrCreate(map, row.roomId, () => []).push({ ...user, displayName: row.displayName });
     }
     return new Map(
