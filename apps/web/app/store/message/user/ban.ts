@@ -4,8 +4,9 @@ import type { Entry } from "#src/models/shared/overlay/Entry";
 import type { Table } from "#src/models/shared/overlay/Table";
 import type { Page } from "@esposter/db-schema";
 
+import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
-import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
+import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { getHeldRowEntry } from "#src/services/shared/overlay/getHeldRowEntry";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -53,13 +54,10 @@ export const useBanStore = defineStore("message/user/ban", () => {
   const deleteBan = (input: DeleteBanInput) => {
     writeOptimistic(
       async () => {
-        const removedBan = await $trpc.message.moderation.deleteBan.mutate(input);
-        // The answer is the ban row without its user, which the list keeps, so it confirms the entry at its version and
-        // The list's own read brings the tombstone to the rows it holds
-        return {
-          arrivals: [],
-          confirmed: [createConfirmation(banTable, [input.roomId, input.userId], removedBan.version)],
-        };
+        const { rowVersions } = await collectRowVersions(() => $trpc.message.moderation.deleteBan.mutate(input));
+        // The header names the ban row it removed at the version it left it, so the entry is confirmed by its own write. The
+        // List's own read brings the tombstone to the rows it holds
+        return { arrivals: [], confirmed: createHeaderConfirmations([banTable], rowVersions) };
       },
       { entry: getDeleteBanEntry(input.roomId, input.userId, new Date()), onError: createErrorAlert },
     );

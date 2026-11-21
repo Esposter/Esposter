@@ -11,7 +11,7 @@ import { createMockAuthSession, createMockContext, createMockUser } from "#serve
 import { createCallerFactory, publicProcedure, router } from "#server/trpc/index";
 import { ROW_VERSIONS_HEADER } from "#shared/services/realtime/constants";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
-import { getScopeValue, getWokenTopics, inJsonArray } from "@esposter/db";
+import { getWokenTopics, inJsonArray } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
   getBlobTopic,
@@ -212,8 +212,8 @@ describe("inferTopicsMiddleware", () => {
     expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)?.split(", ")).toHaveLength(MAX_WRITE_ROW_VERSIONS);
   });
 
-  // An invite's code is a credential, so its row is named by the digest its topic names, never by the code itself
-  test("names a secret row by its digest, never by its credential, in the row versions header", async () => {
+  // An invite is keyed by its code, a credential, so the header names no invite row: neither the code nor its digest reaches it
+  test("names no invite row in the row versions header, so the credential never reaches it", async () => {
     expect.hasAssertions();
 
     const context = await createMockContext();
@@ -223,10 +223,9 @@ describe("inferTopicsMiddleware", () => {
     await context.db.insert(invitesInMessage).values({ id: token, roomId: room.id, userId: user.id });
     await createTestCaller(context).useInvite(token);
 
-    const digest = await getScopeValue(token, true);
-    expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)).toBe(
-      `useInvite ${encodeURIComponent(JSON.stringify({ key: { id: digest, roomId: room.id }, table: inviteTable, version: 1 }))}`,
-    );
+    const rowVersionsHeader = context.responseHeaders.get(ROW_VERSIONS_HEADER) ?? "";
+    expect(rowVersionsHeader).not.toContain(inviteTable);
+    expect(rowVersionsHeader).not.toContain(token);
   });
 
   // A read's topics are watched only by the person who read them, so the header signs them for that person: the realtime

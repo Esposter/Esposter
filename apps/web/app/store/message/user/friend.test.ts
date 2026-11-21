@@ -80,7 +80,7 @@ describe(useFriendStore, () => {
     });
     trpcMsw.block.createBlock.mutation(({ ctx, path }) => {
       appendRowVersions(ctx.responseHeaders, path, [
-        { key: { receiverId: first.id, senderId: appUser.id }, table: friendTable.name, version: 1 },
+        { key: { id: getFriendshipId(appUser.id, first.id) }, table: friendTable.name, version: 1 },
         { key: { blockedId: first.id, blockerId: appUser.id }, table: blockTable.name, version: 1 },
       ]);
       return first;

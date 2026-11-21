@@ -18,8 +18,12 @@ import type { Except } from "type-fest";
 
 import { checkIsManageable as baseCheckIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
-import { roomMemberPermissionTable, roomRoleTable, userToRoomRoleTable } from "#src/services/message/role/constants";
-import { createRoleConfirmations } from "#src/services/message/role/createRoleConfirmations";
+import {
+  roomMemberPermissionTable,
+  roleTables,
+  roomRoleTable,
+  userToRoomRoleTable,
+} from "#src/services/message/role/constants";
 import { getAssignRoomRoleEntry } from "#src/services/message/role/getAssignRoomRoleEntry";
 import { getCreateRoomRoleEntry } from "#src/services/message/role/getCreateRoomRoleEntry";
 import { getDeleteMemberPermissionOverrideEntry } from "#src/services/message/role/getDeleteMemberPermissionOverrideEntry";
@@ -31,6 +35,7 @@ import { setRoomUsers } from "#src/services/message/room/setRoomUsers";
 import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { MANAGEMENT_PERMISSIONS } from "#src/services/room/rbac/constants";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
+import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -249,7 +254,10 @@ export const useRoleStore = defineStore("message/room/role", () => {
         const { result, rowVersions } = await collectRowVersions(() =>
           $trpc.role.createRole.mutate({ ...input, id: roomRole.id }),
         );
-        return { arrivals: [createArrival(roomRoleTable, result)], confirmed: createRoleConfirmations(rowVersions) };
+        return {
+          arrivals: [createArrival(roomRoleTable, result)],
+          confirmed: createHeaderConfirmations(roleTables, rowVersions),
+        };
       },
       { entry: getCreateRoomRoleEntry(roomRole), onError: createErrorAlert },
     );
@@ -258,7 +266,10 @@ export const useRoleStore = defineStore("message/room/role", () => {
     writeOptimistic(
       async () => {
         const { result, rowVersions } = await collectRowVersions(() => $trpc.role.updateRole.mutate(input));
-        return { arrivals: [createArrival(roomRoleTable, result)], confirmed: createRoleConfirmations(rowVersions) };
+        return {
+          arrivals: [createArrival(roomRoleTable, result)],
+          confirmed: createHeaderConfirmations(roleTables, rowVersions),
+        };
       },
       { entry: getUpdateRoomRoleEntry(input), onError: createErrorAlert },
     );
@@ -267,7 +278,10 @@ export const useRoleStore = defineStore("message/room/role", () => {
     writeOptimistic(
       async () => {
         const { result, rowVersions } = await collectRowVersions(() => $trpc.role.deleteRole.mutate(input));
-        return { arrivals: [createArrival(roomRoleTable, result)], confirmed: createRoleConfirmations(rowVersions) };
+        return {
+          arrivals: [createArrival(roomRoleTable, result)],
+          confirmed: createHeaderConfirmations(roleTables, rowVersions),
+        };
       },
       { entry: getDeleteRoomRoleEntry(input.id, new Date()), onError: createErrorAlert },
     );
@@ -283,7 +297,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
         const { role, ...memberRole } = result;
         return {
           arrivals: [createArrival(roomRoleTable, role), createArrival(userToRoomRoleTable, memberRole)],
-          confirmed: createRoleConfirmations(rowVersions),
+          confirmed: createHeaderConfirmations(roleTables, rowVersions),
         };
       },
       {
@@ -298,7 +312,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
         const { result, rowVersions } = await collectRowVersions(() => $trpc.role.revokeRole.mutate(input));
         return {
           arrivals: result.map((memberRole) => createArrival(userToRoomRoleTable, memberRole)),
-          confirmed: createRoleConfirmations(rowVersions),
+          confirmed: createHeaderConfirmations(roleTables, rowVersions),
         };
       },
       {
@@ -317,7 +331,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
         );
         return {
           arrivals: result.map((memberPermission) => createArrival(roomMemberPermissionTable, memberPermission)),
-          confirmed: createRoleConfirmations(rowVersions),
+          confirmed: createHeaderConfirmations(roleTables, rowVersions),
         };
       },
       { entry: getUpsertMemberPermissionOverrideEntry(input, new Date()), onError: createErrorAlert },
@@ -331,7 +345,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
         );
         return {
           arrivals: result.map((memberPermission) => createArrival(roomMemberPermissionTable, memberPermission)),
-          confirmed: createRoleConfirmations(rowVersions),
+          confirmed: createHeaderConfirmations(roleTables, rowVersions),
         };
       },
       {

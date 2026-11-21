@@ -3,8 +3,7 @@ import type { Entry } from "#src/models/shared/overlay/Entry";
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
-import { createArrival } from "#src/services/shared/overlay/createArrival";
-import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
+import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { getHeldRowEntry } from "#src/services/shared/overlay/getHeldRowEntry";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -44,14 +43,9 @@ export const useUserSettingsStore = defineStore("message/user/settings", () => {
     if (!userSettings.value) return;
 
     writeOptimistic(
-      async () => {
-        const updatedUserSettings = await $trpc.user.updateUserSettings.mutate(input);
-        // The row the write answers with is the one row it changed, so it arrives and confirms the entry at its version
-        return {
-          arrivals: [createArrival(userSettingsTable, updatedUserSettings)],
-          confirmed: [createConfirmation(userSettingsTable, [updatedUserSettings.userId], updatedUserSettings.version)],
-        };
-      },
+      // The row the write answers with is the one row it changed, and settings are untracked by the header, so the answer
+      // Confirms the entry by the table's own key
+      async () => createRowResponse(userSettingsTable, await $trpc.user.updateUserSettings.mutate(input)),
       { entry: getUpdateUserSettingsEntry(userId.value, input), onError: createErrorAlert },
     );
   };

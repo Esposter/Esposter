@@ -12,6 +12,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBlockStore } from "#src/store/message/user/block";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
+import { getFriendshipId } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -60,7 +61,7 @@ describe(useBlockStore, () => {
       if (targetUserId === first.id) throw trpcError;
 
       appendRowVersions(ctx.responseHeaders, path, [
-        { key: { receiverId: second.id, senderId: appUser.id }, table: friendTable.name, version: 1 },
+        { key: { id: getFriendshipId(appUser.id, second.id) }, table: friendTable.name, version: 1 },
         secondBlockRowVersion,
       ]);
       return second;
@@ -140,7 +141,7 @@ describe(useBlockStore, () => {
     });
     trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx, path }) => {
       appendRowVersions(ctx.responseHeaders, path, [
-        { key: { receiverId: appUser.id, senderId: first.id }, table: friendRequestTable.name, version: 1 },
+        { key: { id: getFriendshipId(first.id, appUser.id) }, table: friendRequestTable.name, version: 1 },
       ]);
     });
     const friendRequestStore = useFriendRequestStore();

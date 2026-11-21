@@ -6,3 +6,9 @@ import { roomMemberPermissionsInMessage, roomRolesInMessage, usersToRoomRolesInM
 export const roomRoleTable = createTable(roomRolesInMessage);
 export const userToRoomRoleTable = createTable(usersToRoomRolesInMessage);
 export const roomMemberPermissionTable = createTable(roomMemberPermissionsInMessage);
+// The role tables a write's header can name a row of, in the order the role writes name them
+export const roleTables: [typeof roomRoleTable, typeof userToRoomRoleTable, typeof roomMemberPermissionTable] = [
+  roomRoleTable,
+  userToRoomRoleTable,
+  roomMemberPermissionTable,
+];

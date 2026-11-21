@@ -1,4 +1,5 @@
-import type { SQLWrapper, Table } from "drizzle-orm";
+import type { SQLWrapper } from "drizzle-orm";
+import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 
 import { checkIsStatement } from "#src/services/realtime/checkIsStatement";
 import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
@@ -15,7 +16,7 @@ export const statementAnswerMap = new WeakMap<object, (result: unknown) => unkno
 // In each caller, which would have to remember to ask for them. The caller is answered only the columns it asked for, and a
 // Projection that already holds every widened column is left as it is
 export const widenReturning = (
-  table: Table,
+  table: SQLiteTable,
   fields: Record<string, unknown>,
 ): { answer?: (result: unknown) => unknown; fields: Record<string, unknown> } => {
   const columns = getTableColumns(table);

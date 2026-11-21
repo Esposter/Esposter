@@ -1,27 +1,35 @@
 import type { RecordedStatement } from "#src/models/realtime/RecordedStatement";
 import type { RowVersion } from "@esposter/db-schema";
-import type { Table } from "drizzle-orm";
+import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 
 import { checkIsSecretColumn } from "#src/services/realtime/checkIsSecretColumn";
-import { getRowScopeValues } from "#src/services/realtime/getRowScopeValues";
+import { getScopeKeys } from "#src/services/realtime/getScopeKeys";
 import { getScopeValue } from "#src/services/realtime/getScopeValue";
 import { getWriteTable } from "#src/services/realtime/getWriteTable";
 import { checkIsRecord } from "#src/util/object/checkIsRecord";
+import { listKeyFieldNames } from "@esposter/db-schema";
 import { getTableName } from "drizzle-orm";
 
-// One row a write returned, named by each scope column it holds a value for, the way its topic names it, and at the version
-// The write left it. A row with no scope value names no row, and one with no version was not widened, so neither is named
-const getRowVersion = async (table: Table, row: Record<string, unknown>): Promise<RowVersion | undefined> => {
+// One row a write returned, named by its primary key's fields, the fields the overlay holds the row by, and at the version the
+// Write left it. A table no topic names is untracked, a row with a key value missing names no row, and one with no version was
+// Not widened, so none of them is named. A key a credential is part of names no row either, since the header never carries one
+const getRowVersion = async (table: SQLiteTable, row: Record<string, unknown>): Promise<RowVersion | undefined> => {
   const tableName = getTableName(table);
   const { version } = row;
-  const scopeValues = getRowScopeValues(table, row);
-  if (typeof version !== "number" || scopeValues.length === 0) return undefined;
+  const keyFieldNames = listKeyFieldNames(table);
+  if (
+    typeof version !== "number" ||
+    getScopeKeys(table).length === 0 ||
+    keyFieldNames.length === 0 ||
+    keyFieldNames.some((fieldName) => checkIsSecretColumn(tableName, fieldName))
+  )
+    return undefined;
+
+  const keyValues = keyFieldNames.map((fieldName) => row[fieldName]);
+  if (keyValues.some((value) => value === undefined || value === null)) return undefined;
   const key = Object.fromEntries(
     await Promise.all(
-      scopeValues.map(
-        async ({ column, value }) =>
-          [column, await getScopeValue(value, checkIsSecretColumn(tableName, column))] as const,
-      ),
+      keyFieldNames.map(async (fieldName, index) => [fieldName, await getScopeValue(keyValues[index], false)] as const),
     ),
   );
   return { key, table: tableName, version };

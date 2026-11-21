@@ -112,7 +112,7 @@ describe("friendRouter", () => {
 
     expect(takeOne(headerParts, 0)).toBe("deleteFriend");
     expect(jsonDateParse(decodeURIComponent(takeOne(headerParts, 1)))).toStrictEqual({
-      key: { receiverId: getMockSession().user.id, senderId: user.id },
+      key: { id: getFriendshipId(getMockSession().user.id, user.id) },
       table: getTableName(friendsInSocial),
       version: 1,
     });

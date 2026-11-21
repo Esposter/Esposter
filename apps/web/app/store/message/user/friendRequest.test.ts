@@ -10,6 +10,7 @@ import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useFriendStore } from "#src/store/message/user/friend";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
+import { getFriendshipId } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -25,7 +26,7 @@ describe(useFriendRequestStore, () => {
   const sentFriendRequest = createFriendRequest(appUser, second);
   const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
   const firstFriendRequestRowVersion = {
-    key: { receiverId: appUser.id, senderId: first.id },
+    key: { id: getFriendshipId(first.id, appUser.id) },
     table: friendRequestTable.name,
     version: 1,
   };
@@ -145,7 +146,7 @@ describe(useFriendRequestStore, () => {
       if (senderId === failedSender.id) throw trpcError;
 
       appendRowVersions(ctx.responseHeaders, path, [
-        { key: { receiverId: appUser.id, senderId }, table: friendRequestTable.name, version: 1 },
+        { key: { id: getFriendshipId(senderId, appUser.id) }, table: friendRequestTable.name, version: 1 },
       ]);
     });
     const alertStore = useAlertStore();
@@ -171,7 +172,7 @@ describe(useFriendRequestStore, () => {
     });
     trpcMsw.friendRequest.declineFriendRequest.mutation(({ ctx, path }) => {
       appendRowVersions(ctx.responseHeaders, path, [
-        { key: { receiverId: appUser.id, senderId: second.id }, table: friendRequestTable.name, version: 1 },
+        { key: { id: getFriendshipId(second.id, appUser.id) }, table: friendRequestTable.name, version: 1 },
       ]);
     });
     const friendStore = useFriendStore();

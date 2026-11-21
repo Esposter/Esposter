@@ -3,8 +3,11 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createMockOtherUserCaller, createMockUser } from "#server/trpc/context.test";
+import { createCallerFactory } from "#server/trpc/index";
 import { roleRouter } from "#server/trpc/routers/role";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
+import { readRowVersionsHeader } from "#shared/services/realtime/readRowVersionsHeader";
+import { roomRoleTable } from "#src/services/message/role/constants";
 import { D1_MAX_BOUND_PARAMETERS } from "@esposter/db";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
@@ -78,6 +81,19 @@ describe("roleRouter", () => {
     expect(updatedRole.id).toBe(createdRole.id);
     expect(updatedRole.permissions).toBe(createdRole.permissions);
     expect(updatedRole.position).toBe(createdRole.position);
+  });
+
+  // The role's overlay entry holds it by its id, so the header names the updated role by that id for the entry to be confirmed by it
+  test("names an updated role by its id in the row versions header", async () => {
+    expect.hasAssertions();
+
+    const createdRole = await roleCaller.createRole({ id: v7(), name, roomId });
+    const context = { ...mockContext, responseHeaders: new Headers() };
+    await createCallerFactory(roleRouter)(context).updateRole({ id: createdRole.id, name: updatedName, roomId });
+
+    expect(readRowVersionsHeader(context.responseHeaders, "updateRole")).toStrictEqual([
+      { key: { id: createdRole.id }, table: roomRoleTable.name, version: 1 },
+    ]);
   });
 
   test("deletes", async () => {

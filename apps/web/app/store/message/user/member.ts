@@ -6,15 +6,15 @@ import type { Page, PublicUser } from "@esposter/db-schema";
 
 import { MemberCounts } from "#src/models/message/user/MemberCounts";
 import { compareMemberNames } from "#src/services/message/member/compareMemberNames";
-import { getMemberRowKey } from "#src/services/message/member/getMemberRowKey";
 import { getRenameMemberEntry } from "#src/services/message/member/getRenameMemberEntry";
 import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
 import { memberTable } from "#src/services/message/member/memberTable";
 import { toMemberRow } from "#src/services/message/member/toMemberRow";
 import { createBatchedRefresh } from "#src/services/shared/createBatchedRefresh";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
+import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
-import { createConfirmation } from "#src/services/shared/overlay/createConfirmation";
+import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
@@ -133,18 +133,16 @@ export const useMemberStore = defineStore("message/user/member", () => {
     const accountName = userStore.userMap.get(userId)?.name ?? "";
     writeOptimistic(
       async () => {
-        const updatedMembership = await $trpc.userToRoom.updateUserToRoom.mutate({
-          displayName,
-          roomId,
-          targetUserId: userId,
-        });
+        const { result: updatedMembership, rowVersions } = await collectRowVersions(() =>
+          $trpc.userToRoom.updateUserToRoom.mutate({ displayName, roomId, targetUserId: userId }),
+        );
         const row = toMemberRow(updatedMembership);
         // The room's names follow the row the answer holds, so the messages a member wrote show the name the room now gives them
         const user = userStore.userMap.get(userId);
         if (user) storeRoomMembers(roomId, [{ ...user, displayName: row.displayName }]);
         return {
           arrivals: [createArrival(memberTable, row)],
-          confirmed: [createConfirmation(memberTable, getMemberRowKey(userId, roomId), row.version)],
+          confirmed: createHeaderConfirmations([memberTable], rowVersions),
         };
       },
       { entry: getRenameMemberEntry(roomId, userId, displayName, accountName), onError: createErrorAlert },
