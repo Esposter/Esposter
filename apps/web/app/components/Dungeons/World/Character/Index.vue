@@ -6,7 +6,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { createCharacterSpriteWriter } from "#src/services/dungeons/gridEngine/createCharacterSpriteWriter";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
-import { noop, omitUndefined } from "@esposter/shared";
+import { omitUndefined } from "@esposter/shared";
 import { Direction } from "grid-engine-headless";
 import { Sprite } from "vue-phaserjs";
 
@@ -45,37 +45,39 @@ const attachSprite = (scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
   // Between tiles would land between screen pixels and smear across both
   sprite.setVertexRoundMode("fullAuto");
   const engine = gridEngine.value;
-  if (engine && tilemap.value) {
+  // A character the engine refuses never joins, so it draws no sprite and listens to no events, and its failure is
+  // Logged once here rather than on every frame the sprite writer would read it
+  if (engine && tilemap.value)
     engine
       .addCharacter({
         id: props.id,
         startPosition: position.value,
         ...omitUndefined({ facingDirection: direction.value, speed: props.speed }),
       })
-      .match(noop, console.error);
-    characterIdSpriteWriterMap.set(
-      props.id,
-      createCharacterSpriteWriter(engine, tilemap.value, props.id, sprite, props.walkingAnimationMapping),
-    );
-    subscribeToCharacter(engine, "movementStarted", () => {
-      isMoving.value = true;
-    });
-    subscribeToCharacter(engine, "movementStopped", () => {
-      isMoving.value = false;
-    });
-    subscribeToCharacter(engine, "positionChangeStarted", (positionChange) => {
-      direction.value = positionChange.direction;
-      props.onPositionChangeStarted?.(scene, positionChange);
-    });
-    subscribeToCharacter(engine, "positionChangeFinished", (positionChange) => {
-      position.value = positionChange.enterTile;
-      direction.value = positionChange.direction;
-      props.onPositionChangeFinished?.(scene, positionChange);
-    });
-    subscribeToCharacter(engine, "directionChanged", ({ direction: newDirection }) => {
-      direction.value = newDirection;
-    });
-  }
+      .match(() => {
+        characterIdSpriteWriterMap.set(
+          props.id,
+          createCharacterSpriteWriter(engine, tilemap.value, props.id, sprite, props.walkingAnimationMapping),
+        );
+        subscribeToCharacter(engine, "movementStarted", () => {
+          isMoving.value = true;
+        });
+        subscribeToCharacter(engine, "movementStopped", () => {
+          isMoving.value = false;
+        });
+        subscribeToCharacter(engine, "positionChangeStarted", (positionChange) => {
+          direction.value = positionChange.direction;
+          props.onPositionChangeStarted?.(scene, positionChange);
+        });
+        subscribeToCharacter(engine, "positionChangeFinished", (positionChange) => {
+          position.value = positionChange.enterTile;
+          direction.value = positionChange.direction;
+          props.onPositionChangeFinished?.(scene, positionChange);
+        });
+        subscribeToCharacter(engine, "directionChanged", ({ direction: newDirection }) => {
+          direction.value = newDirection;
+        });
+      }, console.error);
   props.onComplete?.(scene, sprite);
 };
 

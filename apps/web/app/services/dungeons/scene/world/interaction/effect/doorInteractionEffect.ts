@@ -1,18 +1,17 @@
 import type { TeleportTarget } from "#shared/generated/tiled/propertyTypes/class/TeleportTarget";
 import type { Effect } from "#src/models/dungeons/scene/world/interaction/Effect";
 
-import { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
 import { TeleportObjectProperty } from "#shared/generated/tiled/propertyTypes/class/TeleportObjectProperty";
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import { getPositionAfterDirectionMovement } from "#src/services/dungeons/direction/getPositionAfterDirectionMovement";
-import { getObjects } from "#src/services/dungeons/scene/world/getObjects";
+import { getDoorPosition } from "#src/services/dungeons/scene/world/interaction/getDoorPosition";
 import { getInteractiveObject } from "#src/services/dungeons/scene/world/interaction/getInteractiveObject";
 import { getDungeonsSoundEffect } from "#src/services/dungeons/sound/getDungeonsSoundEffect";
 import { getTiledObjectProperty } from "#src/services/dungeons/tilemap/getTiledObjectProperty";
 import { phaserEventEmitter } from "#src/services/phaser/phaserEventEmitter";
 import { usePlayerStore } from "#src/store/dungeons/player";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
-import { getResultAsync, noop, NotFoundError } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { Cameras } from "phaser";
 import { useCameraStore } from "vue-phaserjs";
 
@@ -28,30 +27,19 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   const { fadeIn, fadeOut } = cameraStore;
   const worldSceneStore = useWorldSceneStore();
   const { switchToTilemap } = worldSceneStore;
-  const { objectLayerMap, tilemap } = storeToRefs(worldSceneStore);
+  const playerStore = usePlayerStore();
+  const { player } = storeToRefs(playerStore);
   fadeOut(scene);
   getDungeonsSoundEffect(scene, SoundEffectKey.OpenDoor).play();
   // Phaser's emitter drops the promise an async listener returns, so getResultAsync logs a failed teleport instead
   scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
     getResultAsync(async () => {
-      await switchToTilemap(teleportTargetTiledObjectProperty.value.tilemapKey);
-
-      const doorObjectLayer = objectLayerMap.value?.get(ObjectgroupName.Door);
-      if (!doorObjectLayer)
-        throw new NotFoundError(doorInteractionEffect.name, teleportTargetTiledObjectProperty.value.tilemapKey);
-
-      const doorObjects = getObjects(tilemap.value, doorObjectLayer);
-      for (const { properties, x, y } of doorObjects) {
-        const idTiledObjectProperty = getTiledObjectProperty<TeleportTarget["id"]>(
-          properties,
-          TeleportObjectProperty.Id,
-        );
-        if (idTiledObjectProperty.value !== teleportTargetTiledObjectProperty.value.id) continue;
-
-        const playerStore = usePlayerStore();
-        const { player } = storeToRefs(playerStore);
-        phaserEventEmitter.emit("playerTeleport", getPositionAfterDirectionMovement({ x, y }, player.value.direction));
-      }
+      const { id, tilemapKey } = teleportTargetTiledObjectProperty.value;
+      const doorPosition = getDoorPosition(tilemapKey, id);
+      const playerPosition = getPositionAfterDirectionMovement(doorPosition, player.value.direction);
+      await switchToTilemap(tilemapKey, playerPosition);
+      // The position events a teleport emits are what the player's encounter check listens to
+      phaserEventEmitter.emit("playerTeleport", playerPosition);
 
       fadeIn(scene);
     }).match(noop, console.error),

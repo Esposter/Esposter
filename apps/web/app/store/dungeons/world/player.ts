@@ -14,7 +14,7 @@ export const useWorldPlayerStore = defineStore("dungeons/world/player", () => {
   const { switchToTilemap } = worldSceneStore;
   const respawn = async () => {
     const { direction, position, tilemapKey } = structuredClone(toRawDeep(playerStore.player.respawnLocation));
-    await switchToTilemap(tilemapKey);
+    await switchToTilemap(tilemapKey, position);
     phaserEventEmitter.emit("playerTeleport", position, directionSchema.parse(direction));
   };
   const healParty = () => {

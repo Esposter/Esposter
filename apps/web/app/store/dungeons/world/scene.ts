@@ -1,7 +1,7 @@
 import type { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
 import type { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import type { WorldData } from "#shared/models/dungeons/data/world/WorldData";
-import type { GridEngine } from "grid-engine-headless";
+import type { GridEngine, Position } from "grid-engine-headless";
 import type { Tilemaps } from "phaser";
 
 import { useDungeonsStore } from "#src/store/dungeons/index";
@@ -10,10 +10,13 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const dungeonsStore = useDungeonsStore();
   const tilemapKey = computed(() => dungeonsStore.save.tilemapKey);
   const worldData = computed<WorldData>(() => dungeonsStore.save.world[tilemapKey.value]);
-  const switchToTilemap = async (newTilemapKey: TilemapKey) => {
+  // The tilemap and the player's tile on it are written together, so the player that re-renders in the new tilemap is
+  // Never placed on a tile of the tilemap it left
+  const switchToTilemap = async (newTilemapKey: TilemapKey, playerPosition: Position) => {
     dungeonsStore.save.tilemapKey = newTilemapKey;
+    dungeonsStore.save.player.position = playerPosition;
     // We need to wait for:
-    // 1. The player to re-render first in the tilemap before we can teleport it
+    // 1. The player to re-render first in the tilemap, where it joins the grid at the position just stored
     // 2. The tilemap key watcher to load the new tilemap from the vue-phaser library
     await nextTick();
   };
