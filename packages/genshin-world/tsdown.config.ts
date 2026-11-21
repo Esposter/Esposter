@@ -5,11 +5,11 @@ import { generateCharacterKitMap } from "#scripts/kit/generateCharacterKitMap";
 import { tresCustomElements } from "#scripts/tres/tresCustomElements";
 import {
   ExportsGeneration,
-  generateExports,
   getSubpathExclusions,
   getTsdownConfigurationVue,
   readPackageManifest,
 } from "@esposter/configuration";
+import { generateExports } from "@esposter/configuration/generate-exports";
 import { mergeConfig } from "tsdown";
 
 // `terrainTileWorker` is the terrain worker's own entry, which the app bundles as a worker, and `save`
