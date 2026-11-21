@@ -5,12 +5,11 @@ import { useRunScope } from "#src/composables/shared/useRunScope";
 import { getSnapshotVersionTitle } from "#src/services/resource/getSnapshotVersionTitle";
 import { resourceTable } from "#src/services/resource/overlay/constants";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
-import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useNotificationStore } from "#src/store/notification";
 import { useOverlayStore } from "#src/store/overlay";
 import { useResourceStore } from "#src/store/resource/index";
 import { NotificationSeverity, SnapshotChannel } from "@esposter/db-schema";
-import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
+import { withFinalizerAsync } from "@esposter/shared";
 
 // The version history panel's own state: one merged timeline over both channels, and the two writes its rows
 // Issue. Blade-scoped — the store is app-lifetime and this state is the open resource's, so the panel clears
@@ -24,7 +23,9 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
   const overlayStore = useOverlayStore();
   const { writeAwaited } = overlayStore;
   // The timeline is one read of the open resource, so a read for another resource, or a newer read of this one, aborts it
-  const { run } = useRunScope();
+  const { executeQuery } = useMutation();
+  const runScope = useRunScope();
+  const key = Symbol("readSnapshotHistory");
   // Keyed by the resource the history was read for, so a list held for one resource is never shown for another
   const { data: versions, getDataRef: getVersionsRef } = useCurrentResourceDataMap<SnapshotVersion[]>([]);
   // The read in flight, by its token, so a read the scope aborted does not clear the one that replaced it
@@ -45,14 +46,13 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
     readingResourceId.value = resource.id;
     return withFinalizerAsync(
       () =>
-        getResultAsync(() =>
-          run(
-            (signal) => $trpc.resource.readSnapshotHistory.query({ id: resource.id }, { signal }),
-            (newVersions) => {
-              resourceVersions.value = newVersions;
-            },
-          ),
-        ).match(noop, createErrorAlert),
+        executeQuery(() => $trpc.resource.readSnapshotHistory.query({ id: resource.id }), {
+          key,
+          onSuccess: (newVersions) => {
+            resourceVersions.value = newVersions;
+          },
+          runScope,
+        }),
       () => {
         if (latestRead !== read) return;
 

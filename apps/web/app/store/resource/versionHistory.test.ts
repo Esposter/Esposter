@@ -9,19 +9,28 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { TEST_ID, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
+import { TOPICS_HEADER } from "#shared/services/realtime/constants";
+import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useReadOpenResource } from "#src/composables/resource/useReadOpenResource";
+import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useEmailEditorStore } from "#src/store/emailEditor/index";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "#src/store/pageBuilder/history";
+import { useConnectionStore } from "#src/store/realtime/connection";
 import { useResourceStore } from "#src/store/resource/index";
 import { useVersionHistoryStore } from "#src/store/resource/versionHistory";
 import { useWebpageEditorStore } from "#src/store/webpageEditor/index";
-import { ResourceType, SnapshotChannel } from "@esposter/db-schema";
-import { JsonPatchOperationType, noop } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { getTopic, ResourceType, SnapshotChannel, TopicKind } from "@esposter/db-schema";
+import { JsonPatchOperationType, noop, waitForSynchronizedFunctions } from "@esposter/shared";
+import { describe, expect, test, vi } from "vitest";
 import { updateBlockNodeProps } from "vue-block-editor-headless";
+
+vi.mock(
+  import("#src/services/realtime/openRealtimeSocket"),
+  () => import("#src/services/realtime/openRealtimeSocket.test"),
+);
 
 describe(useVersionHistoryStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -36,6 +45,42 @@ describe(useVersionHistoryStore, () => {
     },
   ];
   const restoredEmail = new EmailEditor({ content: [], root: { props: { lang: "", title: TEST_RESTORED_LABEL } } });
+
+  // A revision saved elsewhere publishes the resource's topic, which the history read names in its answer, so the panel
+  // Reads the history again rather than keeping the list it was opened with
+  test("reads the history again when a topic its answer names is published", async () => {
+    expect.hasAssertions();
+
+    const connectionStore = useConnectionStore();
+    connectionStore.openUser();
+    const [, onFrame] = getLastOpenRealtimeSocketCall();
+    const resource = createResourceListItem();
+    const topic = getTopic(TopicKind.Resource, resource.id);
+    let isRevisionSaved = false;
+    trpcMsw.resource.readSnapshotHistory.query(({ ctx, input }) => {
+      ctx.responseHeaders.set(
+        TOPICS_HEADER,
+        formatTopicsHeaderValue("resource.readSnapshotHistory", { readAt: 0, signature: "", topics: [{ topic }] }),
+      );
+      if (!isRevisionSaved) return [];
+
+      return [
+        { channel: SnapshotChannel.Revisions, isCurrent: false, summary: input.id, takenAt: new Date(0), version: 0 },
+      ];
+    });
+    const resourceStore = useResourceStore();
+    const { applyResource } = resourceStore;
+    const versionHistoryStore = useVersionHistoryStore();
+    const { versions } = storeToRefs(versionHistoryStore);
+    const { readSnapshotHistory } = versionHistoryStore;
+    applyResource(resource, null);
+    await readSnapshotHistory(resource);
+    isRevisionSaved = true;
+    onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
+    await waitForSynchronizedFunctions();
+
+    expect(versions.value.map(({ summary }) => summary)).toStrictEqual([resource.id]);
+  });
 
   // The timeline is one run in the panel's scope, so a read issued after it aborts it: the older read's answer is never
   // Filed, whichever resource it was for, and the list the reader switches back to is not the older read's
