@@ -131,6 +131,11 @@ export const useResourceStore = defineStore("resource", () => {
   // Since a row another device moved on, or a Recent read brought, can be ahead of the content in hand. Held per opening, so
   // A reopened read's version never reaches a save its own opening left queued
   let confirmedContentVersions = new Map<string, number>();
+  // A new opening takes its own identity and no confirmed versions, so nothing the one before it issued reaches it
+  const startOpening = () => {
+    opening = Symbol("opening");
+    confirmedContentVersions = new Map<string, number>();
+  };
   // Held while the resource is loaded or a save of it is queued, and dropped once neither holds, so the map does not grow
   // Across the resources a session opens. The content in hand belongs to a resource only while its version is held, so
   // Dropping the version drops that claim too: reopening the resource reads its content again rather than saving it without a version.
@@ -185,10 +190,7 @@ export const useResourceStore = defineStore("resource", () => {
   // The content state with it: a fresh row carries the current contentVersion, so saving is meaningful again, and what it
   // Carries is by definition what is written
   const assignResource = (newResource: ResourceInResource, newPublication: null | ResourcePublicationInResource) => {
-    if (!checkIsLoaded(newResource.id)) {
-      opening = Symbol("opening");
-      confirmedContentVersions = new Map<string, number>();
-    }
+    if (!checkIsLoaded(newResource.id)) startOpening();
     resourceId.value = newResource.id;
     const isResourceApplied = arrive(resourceTable, newResource);
     if (newPublication) arrive(publicationTable, newPublication);
@@ -234,8 +236,7 @@ export const useResourceStore = defineStore("resource", () => {
     if (resourceId.value && resourceId.value !== id) return;
 
     resourceId.value = "";
-    opening = Symbol("opening");
-    confirmedContentVersions = new Map<string, number>();
+    startOpening();
     heldOtherRow = undefined;
     contentResourceId = "";
     persistedContentJson = "";
