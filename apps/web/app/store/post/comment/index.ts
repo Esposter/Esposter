@@ -179,10 +179,10 @@ export const useCommentStore = defineStore("post/comment", () => {
       async () => {
         // The counters and the replies a removal takes are only knowable here, so they move when the server answers, and
         // The answer is the tombstone of every reply it took, which arrives in place of each row
-        const { ancestorIds, removed } = await $trpc.post.deleteComment.mutate(input);
+        const { ancestorIds, removedPosts } = await $trpc.post.deleteComment.mutate(input);
         refreshPostCountsInBackground(ancestorIds);
-        dropBranchKeys(removed.map(({ id }) => id));
-        return createRowsResponse(postTable, removed);
+        dropBranchKeys(removedPosts.map(({ id }) => id));
+        return createRowsResponse(postTable, removedPosts);
       },
       { entry: getPostPatchEntry(input, { deletedAt: new Date() }), onError: createErrorAlert },
     );

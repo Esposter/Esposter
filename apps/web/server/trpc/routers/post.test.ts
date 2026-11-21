@@ -289,7 +289,7 @@ describe("postRouter", () => {
     const deletedComment = await postCaller.deleteComment(newComment.id);
     const post = await postCaller.readPost(newPost.id);
 
-    expect(deletedComment.removed).toHaveLength(1);
+    expect(deletedComment.removedPosts).toHaveLength(1);
     expect(post.commentCount).toBe(0);
   });
 
@@ -322,7 +322,7 @@ describe("postRouter", () => {
     const deletedComment = await postCaller.deleteComment(newComment.id);
     const post = await postCaller.readPost(newPost.id);
 
-    expect(deletedComment.removed).toHaveLength(3);
+    expect(deletedComment.removedPosts).toHaveLength(3);
     expect(post.commentCount).toBe(0);
   });
 

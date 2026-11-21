@@ -159,7 +159,7 @@ export const postRouter = router({
         tombstonePostSubtree(ctx.db, subtreeWhere, ownedComment),
       ]);
       requireMutation(removedRows[0], Operation.Delete, DerivedDatabaseEntityType.Comment, input);
-      return { ancestorIds, removed: removedRows };
+      return { ancestorIds, removedPosts: removedRows };
     }),
   deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<PostInPost[]>(async ({ ctx, input }) => {
     const ownedPost = and(

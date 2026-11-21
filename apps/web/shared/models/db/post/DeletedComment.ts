@@ -4,5 +4,5 @@ import type { PostInPost } from "@esposter/db-schema";
 // Takes the whole subtree beneath the comment, and the client may never have read those rows, so each one is answered
 export interface DeletedComment {
   ancestorIds: PostInPost["id"][];
-  removed: PostInPost[];
+  removedPosts: PostInPost[];
 }

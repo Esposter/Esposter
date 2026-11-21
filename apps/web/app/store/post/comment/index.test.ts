@@ -88,7 +88,7 @@ describe(useCommentStore, () => {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }
 
-      return { ancestorIds: [postId], removed: [createRemovedPost(otherComment)] };
+      return { ancestorIds: [postId], removedPosts: [createRemovedPost(otherComment)] };
     });
     // The accepted delete reads the counts it moved, and the test waits for that read so it does not end before it
     const isCountRead = Promise.withResolvers<void>();
@@ -117,7 +117,7 @@ describe(useCommentStore, () => {
     const reply = createPost({ depth: 2, parentId: comment.id });
     trpcMsw.post.deleteComment.mutation(() => ({
       ancestorIds: [postId],
-      removed: [createRemovedPost(comment), createRemovedPost(reply)],
+      removedPosts: [createRemovedPost(comment), createRemovedPost(reply)],
     }));
     trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: 0, version: countVersion }]);
     const commentStore = useCommentStore();
