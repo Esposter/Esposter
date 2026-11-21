@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/streaming/createTileStreamer.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.05932079999999473,
+              "name": "every tile still generating",
+              "p99": 0.10576549999997156,
+              "rme": 23.31004891093974,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.07483740000000125,
+              "name": "every tile held",
+              "p99": 0.2523559999999936,
+              "rme": 66.02944463465421,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createTileStreamer > 64 tiles a frame"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.48232490000000894,
+              "name": "every tile still generating",
+              "p99": 0.6161005900000248,
+              "rme": 8.909952526158069,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.9551998999999911,
+              "name": "every tile held",
+              "p99": 3.7088110600000173,
+              "rme": 80.26117519238144,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createTileStreamer > 1024 tiles a frame"
+        }
+      ]
+    }
+  ]
+}
