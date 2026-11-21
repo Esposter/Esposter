@@ -16,9 +16,9 @@ A headless package with the vue- prefix SHALL be named vue-, then what it is, th
 - **WHEN** the package check runs
 - **THEN** the check passes
 
-#### Scenario: A headless package without a Vue peer fails the check
+#### Scenario: A Vue headless package without a Vue peer fails the check
 
-- **GIVEN** a headless package that does not declare Vue as a peer
+- **GIVEN** a headless package with the vue- prefix that does not declare Vue as a peer
 - **WHEN** the package check runs
 - **THEN** the check fails and names the package
 

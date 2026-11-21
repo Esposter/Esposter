@@ -18,6 +18,7 @@ export const FRAMEWORK_FREE_HEADLESS_NAME_REGEX: RegExp = wholeNameRegex(
 const importRegex = (nameSource: string): RegExp =>
   new RegExp(String.raw`(?:\bfrom\s*|\bimport\s*\(?\s*)["']${nameSource}["']`, "u");
 export const VUE_PACKAGE_NAME = "vue";
+const VUE_SCOPE = "@vue/";
 // A module named by `from "vue"`, `import "vue"` or `import("vue")`: a source file that holds one uses Vue
 export const VUE_IMPORT_REGEX: RegExp = importRegex(RegExp.escape(VUE_PACKAGE_NAME));
 const PINIA_PACKAGE_NAME = "pinia";
@@ -34,7 +35,13 @@ export const FRAMEWORK_PACKAGE_NAMES: readonly string[] = [
   "three",
   "react",
 ];
-// A module named by one of those frameworks, or by a subpath of one, which a framework-free headless package never holds
+// The scopes whose packages are a framework's own: `@pinia/testing` and `@vue/test-utils` are read as the framework
+const FRAMEWORK_SCOPES: readonly string[] = [PINIA_SCOPE, VUE_SCOPE];
+// A module named by one of those frameworks, by a subpath of one, or by a package under one of those scopes, which a
+// Framework-free headless package never holds
 export const FRAMEWORK_IMPORT_REGEX: RegExp = importRegex(
-  String.raw`(?:${FRAMEWORK_PACKAGE_NAMES.map((name) => RegExp.escape(name)).join("|")})(?:/[^"'\n]*)?`,
+  String.raw`(?:${[
+    ...FRAMEWORK_PACKAGE_NAMES.map((name) => RegExp.escape(name)),
+    ...FRAMEWORK_SCOPES.map((scope) => String.raw`${RegExp.escape(scope)}[^"'\n]*`),
+  ].join("|")})(?:/[^"'\n]*)?`,
 );

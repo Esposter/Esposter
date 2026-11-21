@@ -28,7 +28,7 @@ describe(getHeadlessPackageFailures, () => {
     expect(getHeadlessPackageFailures(CONVENTION_MANIFEST, VUE_SOURCE_FILES)).toStrictEqual([]);
   });
 
-  test("a headless package without a Vue peer fails the check", () => {
+  test("a vue- headless package without a Vue peer fails the check", () => {
     expect.hasAssertions();
 
     expect(
@@ -98,6 +98,20 @@ describe(getHeadlessPackageFailures, () => {
       ),
     ).toStrictEqual([
       `${FRAMEWORK_FREE_PACKAGE_NAME} is a framework-free headless package, so it declares no framework peer, but declares vue as a peer dependency`,
+    ]);
+  });
+
+  test("a framework-free headless package that imports a package under a framework scope fails the check", () => {
+    expect.hasAssertions();
+
+    expect(
+      getHeadlessPackageFailures(FRAMEWORK_FREE_MANIFEST, [
+        { path: TEST_FILENAME, text: 'import { createTestingPinia } from "@pinia/testing";' },
+        { path: `vue-${TEST_FILENAME}`, text: 'import { mount } from "@vue/test-utils";' },
+      ]),
+    ).toStrictEqual([
+      `${FRAMEWORK_FREE_PACKAGE_NAME} is a framework-free headless package, so it imports no framework, but ${TEST_FILENAME} imports one`,
+      `${FRAMEWORK_FREE_PACKAGE_NAME} is a framework-free headless package, so it imports no framework, but vue-${TEST_FILENAME} imports one`,
     ]);
   });
 
