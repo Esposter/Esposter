@@ -108,8 +108,8 @@ describe(useRunScope, () => {
     const runScope = effectScope().run(useRunScope);
     assert.exists(runScope);
     const commit = vi.fn<(value: string) => void>();
-    const firstRunKey = Symbol("first");
-    const otherRunKey = Symbol("other");
+    const firstRunKey = Symbol();
+    const otherRunKey = Symbol();
     const first = Promise.withResolvers<string>();
     const firstRun = runScope.run(() => first.promise, commit, noop, firstRunKey);
     const otherRun = runScope.run(() => Promise.resolve(newerResult), commit, noop, otherRunKey);
@@ -125,7 +125,7 @@ describe(useRunScope, () => {
     const runScope = effectScope().run(useRunScope);
     assert.exists(runScope);
     const commit = vi.fn<(value: string) => void>();
-    const runKey = Symbol("run");
+    const runKey = Symbol();
     const first = Promise.withResolvers<string>();
     const firstRun = runScope.run(() => first.promise, commit, noop, runKey);
     const secondRun = runScope.run(() => Promise.resolve(newerResult), commit, noop, runKey);

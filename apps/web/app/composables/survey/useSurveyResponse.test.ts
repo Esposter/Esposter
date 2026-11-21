@@ -4,6 +4,7 @@ import type { SurveyResponseInResource } from "@esposter/db-schema";
 import { useSurveyResponse } from "#src/composables/survey/useSurveyResponse";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useAlertStore } from "#src/store/alert";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -68,6 +69,22 @@ describe(useSurveyResponse, () => {
     const isSaved = await saveSurveyResponse({ answers: model, isSubmitting: false, pageIndex: 0 });
 
     expect(isSaved).toBe(false);
+  });
+
+  // A rejected autosave leaves the answers on screen unstored, so the respondent is told the save failed rather than
+  // Left to assume it went through
+  test("alerts a rejected save", async () => {
+    expect.hasAssertions();
+
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    trpcMsw.survey.createSurveyResponse.mutation(() => {
+      throw new TRPCError({ code: "CONFLICT" });
+    });
+    const { saveSurveyResponse } = useSurveyResponse(resourceId, participantToken);
+    await saveSurveyResponse({ answers: model, isSubmitting: false, pageIndex: 0 });
+
+    expect(alerts.value).toHaveLength(1);
   });
 
   // The server rejects a write that changes nothing as a duplicate, and an unchanged submit is exactly that —

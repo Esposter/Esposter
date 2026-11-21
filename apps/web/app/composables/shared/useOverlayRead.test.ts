@@ -12,8 +12,8 @@ describe(useOverlayRead, () => {
   const olderRow = { deletedAt: null, id: rowId, name: "", version: 0 };
   const newerRow = { deletedAt: null, id: rowId, name: " ", version: 1 };
 
-  // The two reads take different keys, so the call-id check of a shared key cannot be what orders them: only the arrival
-  // Gate can keep the older answer out of the view
+  // The two reads take different keys, so the key does not order them: the arrival gate alone keeps the older answer out
+  // Of the view
   test("a slow read that answers after a newer read leaves the newer row held", async () => {
     expect.hasAssertions();
 
@@ -22,8 +22,8 @@ describe(useOverlayRead, () => {
     const { view } = overlayStore;
     const heldRows = view(table);
     const { promise: slowAnswer, resolve: answerSlowRead } = Promise.withResolvers<(typeof rowTable.$inferSelect)[]>();
-    const slowRead = readRows(() => slowAnswer, { key: Symbol("slow") });
-    await readRows(() => Promise.resolve([newerRow]), { key: Symbol("fast") });
+    const slowRead = readRows(() => slowAnswer, { key: Symbol() });
+    await readRows(() => Promise.resolve([newerRow]), { key: Symbol() });
     answerSlowRead([olderRow]);
     await slowRead;
 

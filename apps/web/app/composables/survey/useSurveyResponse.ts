@@ -3,6 +3,7 @@ import type { SurveyAnswers } from "vue-survey-engine-headless";
 
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { createTable } from "#src/services/shared/overlay/createTable";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
 import { surveyResponsesInResource } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
@@ -13,6 +14,12 @@ import { z } from "zod";
 // A stored draft's answers are parsed rather than cast, since the record holds whatever the server stored
 const surveyAnswersSchema: z.ZodType<SurveyAnswers> = z.record(z.string(), surveyAnswerValueSchema);
 const surveyResponseTable = createTable(surveyResponsesInResource);
+
+interface SaveSurveyResponseInput {
+  answers: SurveyAnswers;
+  isSubmitting: boolean;
+  pageIndex: number;
+}
 
 export const useSurveyResponse = (resourceId: string, participantToken: string) => {
   const { $trpc } = useNuxtApp();
@@ -31,11 +38,7 @@ export const useSurveyResponse = (resourceId: string, participantToken: string) 
     answers,
     isSubmitting,
     pageIndex,
-  }: {
-    answers: SurveyAnswers;
-    isSubmitting: boolean;
-    pageIndex: number;
-  }): Promise<SurveyResponseInResource> => {
+  }: SaveSurveyResponseInput): Promise<SurveyResponseInResource> => {
     const storedSurveyResponse = surveyResponse;
     if (!storedSurveyResponse)
       return $trpc.survey.createSurveyResponse.mutate({
@@ -69,15 +72,7 @@ export const useSurveyResponse = (resourceId: string, participantToken: string) 
   // Server-generated response row (modelVersion) — awaited, since whether the answers were taken is the server's decision,
   // And the next page or the thank-you page waits on it. Resolves to whether the answers are persisted, so a caller can never
   // Show a thank-you page for a response the server never took. Only the save that completes the runner carries isSubmitting
-  const saveSurveyResponse = ({
-    answers,
-    isSubmitting,
-    pageIndex,
-  }: {
-    answers: SurveyAnswers;
-    isSubmitting: boolean;
-    pageIndex: number;
-  }) => {
+  const saveSurveyResponse = ({ answers, isSubmitting, pageIndex }: SaveSurveyResponseInput) => {
     const { promise: isPersisted, resolve } = Promise.withResolvers<boolean>();
     writeOptimistic(
       async () => {
@@ -93,8 +88,9 @@ export const useSurveyResponse = (resourceId: string, participantToken: string) 
         entry: (view) => {
           view.get(surveyResponseTable, [seed]);
         },
-        onError: () => {
+        onError: (error) => {
           resolve(false);
+          createErrorAlert(error);
         },
       },
     );
