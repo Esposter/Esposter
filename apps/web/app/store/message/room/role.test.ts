@@ -4,6 +4,7 @@ import { serveMemberRoles } from "#src/services/message/member/serveMemberRoles.
 import { createUser } from "#src/services/message/user/createUser.test";
 import { appendRowVersions } from "#src/services/trpc/appendRowVersions.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { useReadMemberRoles } from "#src/composables/message/room/useReadMemberRoles";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useUserStore } from "#src/store/message/user/index";
 import { usersToRoomRolesInMessage } from "@esposter/db-schema";
@@ -169,6 +170,54 @@ describe(useRoleStore, () => {
     await read;
 
     expect(getMemberRoles(roomId, userId)).toStrictEqual([]);
+  });
+
+  // Two rooms' roles read together both land: a read keyed by the table would let the second room's read supersede the first
+  test("a read of two rooms' roles lands the roles of both", async () => {
+    expect.hasAssertions();
+
+    const otherRoomId = v7();
+    const otherRole = createRoomRole({ name: "other", position: 1, roomId: otherRoomId });
+    trpcMsw.role.readRoles.query(({ input }) => (input.roomIds[0] === roomId ? [first] : [otherRole]));
+    const roleStore = useRoleStore();
+    const { getRoles, readRoles } = roleStore;
+    await readRoles({ roomIds: [roomId, otherRoomId] });
+
+    expect(getRoles(roomId)).toStrictEqual([first]);
+    expect(getRoles(otherRoomId)).toStrictEqual([otherRole]);
+  });
+
+  // Two members' roles read on one surface, issued together, both mark their members read: a read keyed by the table would
+  // let the second read supersede the first
+  test("a read of one member's roles does not supersede a read of another member's", async () => {
+    expect.hasAssertions();
+
+    const firstUserId = v7();
+    const secondUserId = v7();
+    const { promise: answered, resolve: releaseAnswers } = Promise.withResolvers<void>();
+    trpcMsw.role.readMemberRoles.query(async ({ input }) => {
+      await answered;
+      return input.userIds.map((userId) => ({
+        createdAt: new Date(0),
+        deletedAt: null,
+        role: first,
+        roleId: first.id,
+        roomId,
+        updatedAt: new Date(0),
+        userId,
+        version: 0,
+      }));
+    });
+    const roleStore = useRoleStore();
+    const { checkIsMemberRolesRead } = roleStore;
+    const readMemberRoles = useReadMemberRoles();
+    const firstRead = readMemberRoles({ roomId, userIds: [firstUserId] });
+    const secondRead = readMemberRoles({ roomId, userIds: [secondUserId] });
+    releaseAnswers();
+    await Promise.all([firstRead, secondRead]);
+
+    expect(checkIsMemberRolesRead(roomId, firstUserId)).toBe(true);
+    expect(checkIsMemberRolesRead(roomId, secondUserId)).toBe(true);
   });
 
   // An override names the members it changes, and the read takes their rows alongside it. A user who has left the room
