@@ -202,10 +202,18 @@ export const directMessageRouter = router({
     // The membership and the key are one batch under the same guard as the add: both are written only while the room still
     // Holds the key the list is computed from, so a refused key leaves the membership in place
     const isRoomKeyUnchanged = getParticipantKeyUnchangedWhere(ctx.db, roomId, room.participantKey);
-    // The removal is three statements, then the key update, so the batch's fourth result is the room
+    // The membership, then the key, then the membership's cascade, so the batch's second result is the room. The cascade
+    // Reads the membership's own tombstone, which the guard lets through only while the key is unchanged, so a refused key
+    // Leaves the children live too
+    const [membershipStatement, ...cascadeStatements] = getRoomMembershipRemoval(
+      ctx.db,
+      roomId,
+      userId,
+      isRoomKeyUnchanged,
+    );
     const batchRows = await runParticipantBatch(() =>
       ctx.db.batch([
-        ...getRoomMembershipRemoval(ctx.db, roomId, userId, isRoomKeyUnchanged),
+        membershipStatement,
         updateDirectMessageParticipantKey(
           ctx.db,
           roomId,
@@ -213,10 +221,10 @@ export const directMessageRouter = router({
           remainingParticipantIds,
           checkIsRoomOwner(room, userId) ? nextOwnerId : undefined,
         ),
+        ...cascadeStatements,
       ]),
     );
-    const [[deletedUserToRoom]] = batchRows;
-    const updatedRoomRows = batchRows[3];
+    const [[deletedUserToRoom], updatedRoomRows] = batchRows;
     const updatedRoom = requireMutation(
       updatedRoomRows[0],
       Operation.Update,

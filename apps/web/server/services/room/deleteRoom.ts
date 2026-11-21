@@ -8,20 +8,15 @@ import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPre
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { getBucket } from "#server/services/storage/getBucket";
+import { getCascadeTombstones } from "#server/services/tombstone/getCascadeTombstones";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getRoomMemberIds } from "@esposter/db";
 import {
   appUsersInMessage,
-  bansInMessage,
   DatabaseEntityType,
   getLiveRowWhere,
-  invitesInMessage,
-  roomEmojisInMessage,
-  roomMemberPermissionsInMessage,
-  roomRolesInMessage,
   roomsInMessage,
   StorageBucket,
-  usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   webhooksInMessage,
 } from "@esposter/db-schema";
@@ -29,11 +24,10 @@ import { noop, Operation } from "@esposter/shared";
 import { and, eq, inArray } from "drizzle-orm";
 
 // A room's deletion is a tombstone, so every member's copy of the room leaves their list at the version the batch names.
-// The membership a member held is tombstoned with it, and so are the room's roles, each member's role links and overrides,
-// As a removal tombstones them, so no live child outlives its room. The room's invites, webhooks, the app users its webhooks
-// Post as, its emoji and its bans are tombstoned in the same batch, so a link, a webhook or a ban of a deleted room refuses,
-// And a client holding one drops it on the answer. The member's own tabs are told their membership's tombstone, and the
-// Caller's row is the answer
+// The membership a member held is tombstoned with it, and so is every child the room's cascade would remove: its roles,
+// Each member's role links and overrides, its invites, webhooks, the app users its webhooks post as, its emoji and its
+// Bans, so no live child outlives its room and a link, a webhook or a ban of a deleted room refuses. A client holding one
+// Drops it on the answer. The member's own tabs are told their membership's tombstone, and the caller's row is the answer
 export const deleteRoom = async (
   { db, user }: Pick<AuthedContext, "db" | "user">,
   id: string,
@@ -54,13 +48,15 @@ export const deleteRoom = async (
       .set({ deletedAt: new Date() })
       .where(and(ownedBy(roomsInMessage, id, user.id), getLiveRowWhere(roomsInMessage)))
       .returning(),
+    // The membership is batched here, since its rows are the answer, and the room's other children follow it by the cascade
     db
       .update(usersToRoomsInMessage)
       .set({ deletedAt: new Date() })
       .where(and(eq(usersToRoomsInMessage.roomId, id), getLiveRowWhere(usersToRoomsInMessage)))
       .returning(),
-    // A webhook's app user is named by the live webhook, so its statement runs first, while the webhook is still live,
-    // In the order deleteWebhook keeps
+    // A webhook's app user is not the room's cascade's to reach: the foreign key runs from the webhook to its app user, so the
+    // Cascade walks down to the webhook and never up to the app user. The live webhooks name them, so this runs first, while the
+    // Webhook is still live, in the order deleteWebhook keeps
     db
       .update(appUsersInMessage)
       .set({ deletedAt: new Date() })
@@ -73,34 +69,7 @@ export const deleteRoom = async (
             .where(and(eq(webhooksInMessage.roomId, id), getLiveRowWhere(webhooksInMessage))),
         ),
       ),
-    db
-      .update(webhooksInMessage)
-      .set({ deletedAt: new Date() })
-      .where(and(eq(webhooksInMessage.roomId, id), getLiveRowWhere(webhooksInMessage))),
-    db
-      .update(invitesInMessage)
-      .set({ deletedAt: new Date() })
-      .where(and(eq(invitesInMessage.roomId, id), getLiveRowWhere(invitesInMessage))),
-    db
-      .update(roomEmojisInMessage)
-      .set({ deletedAt: new Date() })
-      .where(and(eq(roomEmojisInMessage.roomId, id), getLiveRowWhere(roomEmojisInMessage))),
-    db
-      .update(bansInMessage)
-      .set({ deletedAt: new Date() })
-      .where(and(eq(bansInMessage.roomId, id), getLiveRowWhere(bansInMessage))),
-    db
-      .update(roomRolesInMessage)
-      .set({ deletedAt: new Date() })
-      .where(and(eq(roomRolesInMessage.roomId, id), getLiveRowWhere(roomRolesInMessage))),
-    db
-      .update(usersToRoomRolesInMessage)
-      .set({ deletedAt: new Date() })
-      .where(and(eq(usersToRoomRolesInMessage.roomId, id), getLiveRowWhere(usersToRoomRolesInMessage))),
-    db
-      .update(roomMemberPermissionsInMessage)
-      .set({ deletedAt: new Date() })
-      .where(and(eq(roomMemberPermissionsInMessage.roomId, id), getLiveRowWhere(roomMemberPermissionsInMessage))),
+    ...getCascadeTombstones(db, roomsInMessage, eq(roomsInMessage.id, id), [usersToRoomsInMessage]),
   ] as const);
   requireMutation(deletedRoomRows[0], Operation.Delete, DatabaseEntityType.Room, id);
   await Promise.all(
