@@ -33,7 +33,7 @@ export const useReadResourcesPage = <TFilterInput>({
   let cursorsKey = "";
   // Undefined until a total lands, since "" is itself a valid key (a list nothing filters)
   let countedFilterKey: string | undefined;
-  // The table is one target, so every read supersedes the one before it
+  // The table is one target, so its run scope orders the reads: a newer read aborts the one before it
   const key = Symbol("useReadResourcesPage");
   const read = async (options: ReadResourcesOptions) => {
     lastOptions = options;

@@ -46,7 +46,7 @@ export const useCachedRead = <TResult>(
     await executeRead(key, true);
   };
   // An unconditional re-read, deliberately not single-flight: a read issued *because* something changed must
-  // Not join the answer that the change just invalidated — it supersedes it on latest-wins instead
+  // Not join the answer that the change just invalidated — it aborts the run of its key before it instead
   const refetch = async (key = DEFAULT_CACHE_KEY) => {
     loadedKeys.delete(key);
     await executeRead(key);

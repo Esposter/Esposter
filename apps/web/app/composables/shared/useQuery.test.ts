@@ -149,4 +149,25 @@ describe(useQuery, () => {
 
     expect(sendRealtimeFrame).not.toHaveBeenCalled();
   });
+
+  // A refresh supersedes the one before it, so a slower earlier answer that lands last is dropped rather than shown
+  test("drops an earlier refresh's answer that lands after a newer refresh's", async () => {
+    expect.hasAssertions();
+
+    const { promise: earlierAnswer, resolve: answerEarlierRefresh } = Promise.withResolvers<string>();
+    let readCount = 0;
+    const { data, refresh } = useQuery(
+      () => {
+        readCount++;
+        return readCount === 1 ? earlierAnswer : Promise.resolve("newer");
+      },
+      { isLazy: true },
+    );
+    const earlierRefresh = refresh();
+    await refresh();
+    answerEarlierRefresh(result);
+    await earlierRefresh;
+
+    expect(data.value).toBe("newer");
+  });
 });

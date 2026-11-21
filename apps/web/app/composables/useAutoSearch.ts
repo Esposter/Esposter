@@ -36,7 +36,7 @@ export const useAutoSearch = (
       isError.value = false;
       await getResultAsync(() => search(sanitizedSearchQuery, newAbortController.signal)).match(
         () => {
-          // An aborted call was superseded — the newer call owns isPending now
+          // An aborted call's controller was replaced by a newer search's, which owns isPending now
           if (!newAbortController.signal.aborted) isPending.value = false;
         },
         (error) => {

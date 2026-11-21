@@ -38,7 +38,8 @@ export const useCursorSearcher = <TItem extends ToData<AItemEntity>>(
     },
     search: async (sanitizedSearchQuery, signal) => {
       const page = await query(sanitizedSearchQuery, "", { signal });
-      // A search superseded while its answer was on the way is aborted, so its answer never takes the list on screen
+      // The search's own controller is aborted when a newer search starts, so an answer that lands after it throws here
+      // And never takes the list on screen
       signal.throwIfAborted();
       landSearch(sanitizedSearchQuery, page);
     },

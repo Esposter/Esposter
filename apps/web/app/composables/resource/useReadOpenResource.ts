@@ -13,7 +13,7 @@ export const useReadOpenResource = () => {
   const { applyResource } = resourceStore;
   const { executeQuery, isPending } = useMutation();
   const runScope = useRunScope();
-  // The open resource is one target, so every read of it supersedes the one before it
+  // The open resource is one target, so its run scope orders the reads: a newer read of it aborts the one before it
   const key = Symbol("readOpenResource");
   const readResource = async () => {
     // Resolved per call rather than captured: the read takes whichever resource the route names when it runs

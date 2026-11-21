@@ -132,4 +132,43 @@ describe(useCachedRead, () => {
 
     expect(query).toHaveBeenCalledTimes(2);
   });
+
+  // A refetch supersedes the one before it for its key, so a slower earlier answer that lands last is dropped
+  test("drops an earlier refetch's answer that lands after a newer refetch's", async () => {
+    expect.hasAssertions();
+
+    const onSuccess = vi.fn<(readResult: string, cacheKey: string) => void>();
+    const { promise: earlierAnswer, resolve: answerEarlierRefetch } = Promise.withResolvers<string>();
+    let readCount = 0;
+    const { refetch } = useCachedRead(
+      () => {
+        readCount++;
+        return readCount === 1 ? earlierAnswer : Promise.resolve("newer");
+      },
+      { onSuccess },
+    );
+    const earlierRefetch = refetch();
+    await refetch();
+    answerEarlierRefetch(result);
+    await earlierRefetch;
+
+    expect(onSuccess).toHaveBeenCalledExactlyOnceWith("newer", "");
+  });
+
+  // Each cache key is a target of its own, so a refetch of one key does not drop the answer of another
+  test("keeps the answer of a refetch that another key's refetch does not supersede", async () => {
+    expect.hasAssertions();
+
+    const onSuccess = vi.fn<(readResult: string, cacheKey: string) => void>();
+    const { promise: slowAnswer, resolve: answerSlowRefetch } = Promise.withResolvers<string>();
+    const { refetch } = useCachedRead((cacheKey) => (cacheKey === key ? slowAnswer : Promise.resolve(result)), {
+      onSuccess,
+    });
+    const slowRefetch = refetch(key);
+    await refetch(otherKey);
+    answerSlowRefetch(result);
+    await slowRefetch;
+
+    expect(onSuccess).toHaveBeenCalledTimes(2);
+  });
 });

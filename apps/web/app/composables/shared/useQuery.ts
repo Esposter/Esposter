@@ -24,8 +24,8 @@ export const useQuery = <TResult>(
   // This: a read that answers no row leaves it undefined too, so a surface gating on data alone renders its
   // Empty case over a read that never happened — and a form doing that initialises on defaults it would persist
   const error = ref("");
-  // One instance reads one target, so every refresh supersedes the fetch before it and a slower earlier
-  // Response can never overwrite a newer one
+  // One instance reads one target, so its run scope orders the refreshes: a refresh aborts the fetch before it, and a
+  // Slower earlier response is never committed over a newer one
   const key = Symbol("useQuery");
   const refresh = async () => {
     error.value = "";
