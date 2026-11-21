@@ -5,6 +5,7 @@ import type { GridEngine, Position } from "grid-engine-headless";
 import type { Tilemaps } from "phaser";
 
 import { useDungeonsStore } from "#src/store/dungeons/index";
+import { NotInitializedError } from "@esposter/shared";
 
 export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const dungeonsStore = useDungeonsStore();
@@ -21,7 +22,17 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
     await nextTick();
   };
   // We will create the tilemap and its metadata in the world scene vue component
-  const tilemap = ref<Tilemaps.Tilemap>() as Ref<Tilemaps.Tilemap>;
+  // A read before the tilemap is made is an error, since every reader of it runs after the tilemap is set
+  const tilemapValue = ref<Tilemaps.Tilemap>();
+  const tilemap = computed({
+    get: () => {
+      if (!tilemapValue.value) throw new NotInitializedError("Tilemap");
+      return tilemapValue.value;
+    },
+    set: (newTilemap) => {
+      tilemapValue.value = newTilemap;
+    },
+  });
   // The tilemap's grid engine is made with the tilemap and marked raw where it is set, and it is released with the scene
   const gridEngine = ref<GridEngine>();
   // Each character's sprite writer, keyed by its id. Each frame the engine steps first, then every writer draws its sprite
