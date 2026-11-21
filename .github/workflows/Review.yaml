@@ -103,7 +103,7 @@ jobs:
           retention-days: 7
 
   # One fix job per review issue of this run, in a matrix. No concurrency group: each fixer lands its commits on `ai/queue`
-  # by pull and push, and a fixer that crashes leaves its issue open and whole for the settle job.
+  # by pull and push.
   fix:
     # The settle job reads this name (`getFixJobName`) to tell whether an issue's fixer is still on it
     name: Fix issue #${{ matrix.issue }}
@@ -166,8 +166,6 @@ jobs:
           gh auth setup-git
           pnpm -C scripts ai:review:fix --findings "$RUNNER_TEMP/review-findings/issue-$ISSUE.json"
 
-  # Settles every review issue still open once the fixers are done: the ones this run's fixers left, the ones past the
-  # fix matrix's cap, and the ones a crashed fixer left whole. One settler session per issue, oldest first, on the queue's tip.
   settle:
     name: Settle review issues
     needs: [review, fix]
@@ -177,7 +175,6 @@ jobs:
     # the loop's deadline (`REVIEW_SETTLE_DEADLINE`), each settler session has its own wall clock limit of 120 minutes, and
     # the issues the deadline leaves stay open for the run it dispatches.
     timeout-minutes: 360
-    # The settlers land their commits one at a time, so a second settle job waits behind the first rather than racing it
     concurrency:
       group: review-settle
       cancel-in-progress: false
