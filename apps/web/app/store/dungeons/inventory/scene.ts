@@ -5,7 +5,7 @@ import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialI
 import { checkIsUsableItem } from "#src/services/dungeons/scene/inventory/checkIsUsableItem";
 import { usePlayerStore } from "#src/store/dungeons/player";
 import { useSceneStore } from "#src/store/dungeons/scene";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 
 export const useInventorySceneStore = defineStore("dungeons/inventory/scene", () => {
   const playerStore = usePlayerStore();
@@ -35,7 +35,7 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
   // Cursor leaves it on a hole, so it moves down to the next valid item
   watchDeep(inventory, () => {
     if (unref(itemOptionGrid.validate(itemOptionGrid.position.value))) return;
-    itemOptionGrid.move(Direction.DOWN);
+    itemOptionGrid.move(Direction.Down);
   });
   return { inventory, itemOptionGrid };
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { BarType } from "#src/models/dungeons/UI/bar/BarType";
 import { BAR_WIDTH } from "#src/services/dungeons/UI/bar/constants";

@@ -1,5 +1,5 @@
 import type { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { NpcObjectProperty } from "#shared/generated/tiled/propertyTypes/class/NpcObjectProperty";
 import { NpcPathObjectProperty } from "#shared/generated/tiled/propertyTypes/class/NpcPathObjectProperty";
@@ -13,7 +13,7 @@ import { getTiledObjectProperty } from "#src/services/dungeons/tilemap/getTiledO
 import { useNpcStore } from "#src/store/dungeons/world/npc";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { ID_SEPARATOR, NotFoundError } from "@esposter/shared";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 
 export const readNpcs = () => {
   const npcStore = useNpcStore();
@@ -49,7 +49,7 @@ export const readNpcs = () => {
         id: `${CharacterId.Npc}${ID_SEPARATOR}${id}`,
         name: id,
         path: npcPath,
-        singleSidedSpritesheetDirection: Direction.RIGHT,
+        singleSidedSpritesheetDirection: Direction.Right,
         walkingAnimationMapping: {
           down: { leftFoot: frame + 4, rightFoot: frame + 5, standing: frame },
           left: sideWalkingAnimation,

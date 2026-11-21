@@ -1,13 +1,14 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
-import { Direction, directionSchema } from "#shared/models/dungeons/data/player/Direction";
+import { directionSchema } from "#shared/models/dungeons/data/player/directionSchema";
 import { positionSchema } from "#shared/models/dungeons/data/player/Position";
 import { tilemapKeySchema } from "#shared/models/dungeons/keys/TilemapKey";
+import { Direction } from "grid-engine-headless";
 import { z } from "zod";
 
 export class RespawnLocation {
-  direction: Direction = Direction.UP;
+  direction: Direction = Direction.Up;
   position: Position = { x: 9, y: 4 };
   tilemapKey: TilemapKey = TilemapKey.HomeBuilding1;
 }

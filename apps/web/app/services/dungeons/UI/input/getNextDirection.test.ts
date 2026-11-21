@@ -1,5 +1,5 @@
 import { getNextDirection } from "#src/services/dungeons/UI/input/getNextDirection";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe(getNextDirection, () => {
@@ -8,22 +8,22 @@ describe(getNextDirection, () => {
   test("faces the direction of a single step on either axis", () => {
     expect.hasAssertions();
 
-    expect(getNextDirection(origin, { x: 5, y: 4 })).toBe(Direction.UP);
-    expect(getNextDirection(origin, { x: 5, y: 6 })).toBe(Direction.DOWN);
-    expect(getNextDirection(origin, { x: 4, y: 5 })).toBe(Direction.LEFT);
-    expect(getNextDirection(origin, { x: 6, y: 5 })).toBe(Direction.RIGHT);
+    expect(getNextDirection(origin, { x: 5, y: 4 })).toBe(Direction.Up);
+    expect(getNextDirection(origin, { x: 5, y: 6 })).toBe(Direction.Down);
+    expect(getNextDirection(origin, { x: 4, y: 5 })).toBe(Direction.Left);
+    expect(getNextDirection(origin, { x: 6, y: 5 })).toBe(Direction.Right);
   });
 
   test("faces nowhere when the next position is the current one", () => {
     expect.hasAssertions();
 
-    expect(getNextDirection(origin, { x: 5, y: 5 })).toBe(Direction.NONE);
+    expect(getNextDirection(origin, { x: 5, y: 5 })).toBe(Direction.None);
   });
 
   test("a diagonal step faces its vertical component", () => {
     expect.hasAssertions();
 
-    expect(getNextDirection(origin, { x: 6, y: 4 })).toBe(Direction.UP);
-    expect(getNextDirection(origin, { x: 4, y: 6 })).toBe(Direction.DOWN);
+    expect(getNextDirection(origin, { x: 6, y: 4 })).toBe(Direction.Up);
+    expect(getNextDirection(origin, { x: 4, y: 6 })).toBe(Direction.Down);
   });
 });

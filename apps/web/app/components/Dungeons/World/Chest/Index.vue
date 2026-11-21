@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Chest } from "#shared/models/dungeons/data/world/Chest";
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { TilesetKey } from "#src/models/dungeons/keys/TilesetKey";
 import { getAnimationConfiguration } from "#src/services/dungeons/animation/getAnimationConfiguration";

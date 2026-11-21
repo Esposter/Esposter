@@ -80,27 +80,6 @@ vi.mock(import("#server/db/index"), () => import("#server/db/index.test"));
 // Whose answer a write changed without a topic the write published waking it (`liveTopicWakeCheck.test.ts`). The check
 // Registers its own hooks as it loads, so only a file that builds a caller loads it and the schema it reads
 vi.mock(import("#server/trpc/index"), () => import("#server/trpc/indexWithWakeCheck.test"));
-// The dungeon page passes GridEngine to Phaser only as a plugin, so an empty constructor stands in for it
-const EmptyGridEngine = function () {};
-// `grid-engine` re-exports Phaser, which touches `window` and a canvas context at import. Every dungeon suite that
-// Reaches its grid-engine exports through a module needs only those, so they are registered once here rather than per file
-vi.mock(import("grid-engine"), () => ({
-  // oxlint-disable typescript/no-unsafe-enum-assignment -- the stubs restate grid-engine's enums as plain values, because importing the real enums loads Phaser, which touches window
-  Direction: {
-    DOWN: "down",
-    DOWN_LEFT: "down-left",
-    DOWN_RIGHT: "down-right",
-    LEFT: "left",
-    NONE: "none",
-    RIGHT: "right",
-    UP: "up",
-    UP_LEFT: "up-left",
-    UP_RIGHT: "up-right",
-  } as typeof import("grid-engine").Direction,
-  GridEngine: EmptyGridEngine as unknown as typeof import("grid-engine").GridEngine,
-  NumberOfDirections: { EIGHT: 8, FOUR: 4 } as typeof import("grid-engine").NumberOfDirections,
-  // oxlint-enable typescript/no-unsafe-enum-assignment
-}));
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- the stubbed `useRuntimeConfig` returns a fraction of the config, which the typed `import()` form holds to the real return type
 vi.mock("nuxt/server", async (importOriginal) => ({
   ...(await importOriginal<object>()),

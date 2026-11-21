@@ -1,96 +1,95 @@
 <script setup lang="ts">
 import type { CharacterProps } from "#src/components/Dungeons/World/Character/CharacterProps";
-import type { Position } from "grid-engine";
+import type { GridEngine, GridEngineEvents, Position } from "grid-engine-headless";
+import type { GameObjects } from "phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { createCharacterSpriteWriter } from "#src/services/dungeons/gridEngine/createCharacterSpriteWriter";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { noop, omitUndefined } from "@esposter/shared";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 import { Sprite } from "vue-phaserjs";
-
-// A grid-engine stream's subscription, released on teardown
-interface CharacterSubscription {
-  unsubscribe: () => void;
-}
 
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });
 const isMoving = defineModel<boolean>("isMoving", { required: true });
-defineProps<CharacterProps>();
+const props = defineProps<CharacterProps>();
 const worldSceneStore = useWorldSceneStore();
-const { gridEngine } = storeToRefs(worldSceneStore);
-// Every grid-engine stream this character listens on, so a stream costs one call rather than a ref and a line in the
-// Teardown. Grid engine removes the character itself when a new tilemap is created
-const subscriptions = ref<CharacterSubscription[]>([]);
+const { characterIdSpriteWriterMap } = worldSceneStore;
+const { gridEngine, tilemap } = storeToRefs(worldSceneStore);
+// Every subscription this character holds on the engine, released when the sprite is created again and on teardown
+const unsubscribes: (() => void)[] = [];
 
-const unsubscribeAll = () => {
-  for (const subscription of subscriptions.value) subscription.unsubscribe();
-  subscriptions.value.length = 0;
+const releaseCharacter = () => {
+  for (const unsubscribe of unsubscribes) unsubscribe();
+  unsubscribes.length = 0;
+  characterIdSpriteWriterMap.delete(props.id);
 };
-// Filters a stream to this character and holds its subscription for the teardown, the two steps every stream takes
-const subscribeToCharacter = <TEvent extends { charId: string }>(
-  id: string,
-  events: { subscribe: (onNext: (event: TEvent) => void) => CharacterSubscription },
-  onEvent: (event: TEvent) => void,
+// The engine emits for every character, so each listener checks the payload's id before it reads the event
+const subscribeToCharacter = <TEvent extends keyof GridEngineEvents>(
+  engine: GridEngine,
+  event: TEvent,
+  onEvent: (payload: GridEngineEvents[TEvent]) => void,
 ) => {
-  subscriptions.value.push(
-    events.subscribe((event) => {
-      if (event.charId === id) onEvent(event);
+  unsubscribes.push(
+    engine.on(event, (payload) => {
+      if (payload.id === props.id) onEvent(payload);
     }),
   );
 };
 
-onUnmounted(unsubscribeAll);
+const attachSprite = (scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
+  // The sprite can be created again, and each creation adds its subscriptions, so the last set is released first
+  releaseCharacter();
+  // The world camera's zoom scales every sprite, which the default rounding skips, so a pixel sprite walking
+  // Between tiles would land between screen pixels and smear across both
+  sprite.setVertexRoundMode("fullAuto");
+  const engine = gridEngine.value;
+  if (engine && tilemap.value) {
+    engine
+      .addCharacter({
+        id: props.id,
+        startPosition: position.value,
+        ...omitUndefined({ facingDirection: direction.value, speed: props.speed }),
+      })
+      .match(noop, console.error);
+    characterIdSpriteWriterMap.set(
+      props.id,
+      createCharacterSpriteWriter(engine, tilemap.value, props.id, sprite, props.walkingAnimationMapping),
+    );
+    subscribeToCharacter(engine, "movementStarted", () => {
+      isMoving.value = true;
+    });
+    subscribeToCharacter(engine, "movementStopped", () => {
+      isMoving.value = false;
+    });
+    subscribeToCharacter(engine, "positionChangeStarted", (positionChange) => {
+      direction.value = positionChange.direction;
+      props.onPositionChangeStarted?.(scene, positionChange);
+    });
+    subscribeToCharacter(engine, "positionChangeFinished", (positionChange) => {
+      position.value = positionChange.enterTile;
+      direction.value = positionChange.direction;
+      props.onPositionChangeFinished?.(scene, positionChange);
+    });
+    subscribeToCharacter(engine, "directionChanged", ({ direction: newDirection }) => {
+      direction.value = newDirection;
+    });
+  }
+  props.onComplete?.(scene, sprite);
+};
+
+onUnmounted(releaseCharacter);
 </script>
 
 <template>
   <Sprite
     :configuration="{
       flipX:
-        (singleSidedSpritesheetDirection === Direction.LEFT && direction === Direction.RIGHT) ||
-        (singleSidedSpritesheetDirection === Direction.RIGHT && direction === Direction.LEFT),
+        (singleSidedSpritesheetDirection === Direction.Left && direction === Direction.Right) ||
+        (singleSidedSpritesheetDirection === Direction.Right && direction === Direction.Left),
       ...spriteConfiguration,
     }"
-    :on-complete="
-      (scene, sprite) => {
-        // The sprite can be created again, and each creation adds its subscriptions, so the last set is released first
-        unsubscribeAll();
-        // The world camera's zoom scales every sprite, which the default rounding skips, so a pixel sprite walking
-        // Between tiles would land between screen pixels and smear across both
-        sprite.setVertexRoundMode('fullAuto');
-        scene.gridEngine.addCharacter({
-          id,
-          sprite,
-          walkingAnimationMapping,
-          startPosition: position,
-          ...omitUndefined({ facingDirection: direction, speed }),
-        });
-        // The core's engine takes the character beside the plugin's until the swap, and holds no sprite
-        gridEngine
-          ?.addCharacter({ id, startPosition: position, ...omitUndefined({ facingDirection: direction, speed }) })
-          .match(noop, console.error);
-        subscribeToCharacter(id, scene.gridEngine.movementStarted(), () => {
-          isMoving = true;
-        });
-        subscribeToCharacter(id, scene.gridEngine.movementStopped(), () => {
-          isMoving = false;
-        });
-
-        subscribeToCharacter(id, scene.gridEngine.positionChangeStarted(), (positionChange) => {
-          const { charId } = positionChange;
-          direction = scene.gridEngine.getFacingDirection(charId);
-          onPositionChangeStarted?.(scene, positionChange);
-        });
-        subscribeToCharacter(id, scene.gridEngine.positionChangeFinished(), (positionChange) => {
-          const { charId, enterTile } = positionChange;
-          position = enterTile;
-          direction = scene.gridEngine.getFacingDirection(charId);
-          onPositionChangeFinished?.(scene, positionChange);
-        });
-        subscribeToCharacter(id, scene.gridEngine.directionChanged(), ({ direction: newDirection }) => {
-          direction = newDirection;
-        });
-        onComplete?.(scene, sprite);
-      }
-    "
+    :on-complete="attachSprite"
   />
 </template>

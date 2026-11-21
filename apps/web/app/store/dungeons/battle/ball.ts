@@ -1,4 +1,4 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 import type { GameObjects } from "phaser";
 
 import { BallKey } from "#shared/models/dungeons/keys/image/UI/BallKey";

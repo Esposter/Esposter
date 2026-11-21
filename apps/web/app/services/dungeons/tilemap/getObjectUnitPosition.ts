@@ -1,4 +1,4 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 import type { Tilemaps } from "phaser";
 
 export const getObjectUnitPosition = (tilemap: Tilemaps.Tilemap, pixelPosition: Position): Position => ({

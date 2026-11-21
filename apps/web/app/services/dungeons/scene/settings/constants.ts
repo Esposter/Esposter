@@ -1,4 +1,4 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 import type { Except } from "type-fest";
 
 export const MENU_HORIZONTAL_PADDING = 100;

@@ -4,7 +4,7 @@ import { getDirectionStep } from "#src/services/dungeons/UI/input/getDirectionSt
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { mod } from "#src/util/math/mod";
 import { takeOne } from "@esposter/shared";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 
 export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", () => {
   const settingsStore = useSettingsStore();
@@ -12,9 +12,9 @@ export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", 
   const themeModeSetting = computed(() => settingsStore.settings[SettingsOption["Theme Mode"]]);
   const updateThemeModeSetting = (direction: Direction) => {
     const index = ThemeModeSettings.indexOf(themeModeSetting.value);
-    if (index === -1 || ![Direction.LEFT, Direction.RIGHT].includes(direction)) return;
+    if (index === -1 || (direction !== Direction.Left && direction !== Direction.Right)) return;
     // The setting list is a ring, so stepping past either end lands on the other
-    const offset = getDirectionStep(direction, Direction.LEFT);
+    const offset = getDirectionStep(direction, Direction.Left);
     setSettings(
       SettingsOption["Theme Mode"],
       takeOne(ThemeModeSettings, mod(index + offset, ThemeModeSettings.length)),

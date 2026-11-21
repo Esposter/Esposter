@@ -1,12 +1,12 @@
 # World
 
-The overworld: tile-based maps authored in Tiled Map Editor, walked with grid-engine, populated by NPCs and interactive objects, with random monster encounters in marked areas.
+The overworld: tile-based maps authored in Tiled Map Editor, walked on the headless grid engine, populated by NPCs and interactive objects, with random monster encounters in marked areas.
 
 ## How it works
 
 **Tiled pipeline** — maps live as `.tmx` files; `pnpm tiled:gen` (`scripts/tiled/index.ts`, built on the `parse-tmx` package) generates typed artifacts into `shared/generated/tiled/`: the `TilemapKey` value set (Home, HomeBuilding1, HomeBuilding2), per-map `LayerName` value sets, object-group names, and typed object-property classes (`TeleportObjectProperty`, `EncounterObjectProperty`, `NpcId`, `ItemId`, …). Map content changes are therefore compile-time-checked against the code that consumes them.
 
-**Movement** — the grid-engine Phaser plugin moves the player cell-by-cell; position/direction live in the player store and persist in the save. NPCs move by `MovementPattern` (idle or clockwise patrol) via `moveNpcs`.
+**Movement** — the headless grid engine (`grid-engine-headless`) moves the player cell-by-cell, and the world's binding draws each character's sprite from its state; position/direction live in the player store and persist in the save. NPCs move by `MovementPattern` (idle or clockwise patrol) via `moveNpcs`.
 
 **Interactions** — pressing Confirm facing an object walks `ObjectInteractionEffectMap`, keyed by Tiled object group:
 

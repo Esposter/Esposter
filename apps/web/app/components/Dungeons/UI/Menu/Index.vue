@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="TGrid extends readonly (readonly string[])[]">
 import type { Grid } from "#src/models/dungeons/Grid";
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { MENU_DEPTH, MENU_WIDTH } from "#src/services/dungeons/UI/menu/constants";
 import { getMenuHeight } from "#src/services/dungeons/UI/menu/getMenuHeight";

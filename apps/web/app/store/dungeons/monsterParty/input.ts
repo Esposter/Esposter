@@ -1,5 +1,5 @@
 import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
-import type { Direction } from "grid-engine";
+import type { Direction } from "grid-engine-headless";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { SceneKey } from "#src/models/dungeons/keys/SceneKey";

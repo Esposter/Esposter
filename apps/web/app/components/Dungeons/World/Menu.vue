@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { MENU_PADDING, MENU_WIDTH } from "#src/services/dungeons/UI/menu/constants";
 import { useWorldMenuStore } from "#src/store/dungeons/world/menu";

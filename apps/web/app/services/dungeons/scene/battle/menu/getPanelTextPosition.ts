@@ -1,4 +1,4 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { getCursorPosition } from "#src/services/dungeons/scene/battle/menu/getCursorPosition";
 

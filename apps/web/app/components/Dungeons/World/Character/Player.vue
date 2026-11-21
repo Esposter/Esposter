@@ -3,8 +3,6 @@ import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "#src/models/dungeons/scene/world/CharacterId";
-import { DirectionToGridDirectionMap } from "#src/services/dungeons/direction/DirectionToGridDirectionMap";
-import { GridDirectionToDirectionMap } from "#src/services/dungeons/direction/GridDirectionToDirectionMap";
 import { PlayerWalkingAnimationMapping } from "#src/services/dungeons/scene/world/constants";
 import { rollRandomEncounter } from "#src/services/dungeons/scene/world/rollRandomEncounter";
 import { getDungeonsSoundEffect } from "#src/services/dungeons/sound/getDungeonsSoundEffect";
@@ -14,7 +12,7 @@ import { useWorldDialogStore } from "#src/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "#src/store/dungeons/world/player";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 import { Cameras } from "phaser";
 import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaserjs";
 
@@ -22,20 +20,14 @@ const playerStore = usePlayerStore();
 const { player } = storeToRefs(playerStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { isPlayerFainted } = storeToRefs(monsterPartySceneStore);
-const playerGridDirection = computed({
-  get: () => DirectionToGridDirectionMap[player.value.direction],
-  set: (direction) => {
-    if (direction) player.value.direction = GridDirectionToDirectionMap[direction];
-  },
-});
 const playerWalkingDirection = computed(() =>
-  playerGridDirection.value === Direction.NONE ? Direction.DOWN : playerGridDirection.value,
+  player.value.direction === Direction.None ? Direction.Down : player.value.direction,
 );
 const worldPlayerStore = useWorldPlayerStore();
 const { healParty, respawn } = worldPlayerStore;
 const { isMoving, sprite } = storeToRefs(worldPlayerStore);
 const worldSceneStore = useWorldSceneStore();
-const { layerMap, tilemapKey } = storeToRefs(worldSceneStore);
+const { gridEngine, layerMap, tilemapKey } = storeToRefs(worldSceneStore);
 const worldDialogStore = useWorldDialogStore();
 const { showMessages } = worldDialogStore;
 const sceneKey = useInjectSceneKey();
@@ -66,10 +58,10 @@ onCreate(
 );
 
 usePhaserListener("playerTeleport", (position, direction) => {
-  onNextTick((scene) => {
-    // Let grid engine set the position; teleporting before the tilemap is initialized then surfaces as an error.
-    scene.gridEngine.setPosition(CharacterId.Player, position);
-    if (direction) playerGridDirection.value = direction;
+  onNextTick(() => {
+    // The engine places the player; an unknown character is its error result, and no engine means no tilemap yet
+    gridEngine.value?.setPosition(CharacterId.Player, position).match(noop, console.error);
+    if (direction) player.value.direction = direction;
     frame.value = PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing;
   }, sceneKey);
 });
@@ -86,7 +78,7 @@ onShutdown((scene) => {
     :id="CharacterId.Player"
     :key="tilemapKey"
     v-model:position="player.position"
-    v-model:direction="playerGridDirection"
+    v-model:direction="player.direction"
     v-model:is-moving="isMoving"
     :sprite-configuration="{ texture: SpritesheetKey.Character, frame }"
     :walking-animation-mapping="PlayerWalkingAnimationMapping"

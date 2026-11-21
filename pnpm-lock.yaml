@@ -486,9 +486,6 @@ catalogs:
     fflate:
       specifier: ^0.8.3
       version: 0.8.3
-    grid-engine:
-      specifier: ^2.54.0
-      version: 2.54.0
     h3:
       specifier: ^2.0.8
       version: 2.0.8
@@ -1027,9 +1024,6 @@ importers:
       genshin-world:
         specifier: workspace:*
         version: link:../../packages/genshin-world
-      grid-engine:
-        specifier: 'catalog:'
-        version: 2.54.0(phaser@4.2.1)
       grid-engine-headless:
         specifier: workspace:*
         version: link:../../packages/grid-engine-headless
@@ -6013,9 +6007,6 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
-  '@types/minimist@1.2.5':
-    resolution: {integrity: sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==}
-
   '@types/mjml-core@5.1.1':
     resolution: {integrity: sha512-H3ycAWAk7LCLUqX/uLVbrndU9zZ93tcjbfmrAoe2lsPw+lEpiLl0Gi6vYNXEcY7Ww/tv/oXm/9HkAGYWyY1TTw==}
 
@@ -8591,11 +8582,6 @@ packages:
     peerDependencies:
       graphology-types: '>=0.24.0'
 
-  grid-engine@2.54.0:
-    resolution: {integrity: sha512-VP+xXgRets2+daCxH6IbQcqX0r5XpWKF6xKGEjIpxjhcKtjO+laF56OR7m1YZ1vb1aeufzi1M8F5q9iIVl39iQ==}
-    peerDependencies:
-      phaser: ~4.0.0
-
   guid-typescript@1.0.9:
     resolution: {integrity: sha512-Y8T4vYhEfwJOTbouREvG+3XDsjr8E3kIr7uf+JZ0BYloFsttiHU0WfvANVsR7TxNUJa/WpCnw/Ino/p+DeBhBQ==}
 
@@ -9597,9 +9583,6 @@ packages:
 
   mlly@1.8.2:
     resolution: {integrity: sha512-d+ObxMQFmbt10sretNDytwt85VrbkhhUA/JBGm1MPaWJ65Cl4wOgLaB1NYvJSZ0Ef03MMEU/0xpPMXUIQ29UfA==}
-
-  mnemonist@0.40.8:
-    resolution: {integrity: sha512-tebbu8e/W45Nz7USfGcmnHUiOcNsXa9Mow8eb0UPwOk3gu6grw0/2+SefXBJCgDQpE9mdn7dNUMJBra9mcRUVw==}
 
   mocked-exports@0.1.1:
     resolution: {integrity: sha512-aF7yRQr/Q0O2/4pIXm6PZ5G+jAd7QS4Yu8m+WEeEHGnbo+7mE36CbLSDQiXYV8bVL3NfmdeqPJct0tUlnjVSnA==}
@@ -10844,9 +10827,6 @@ packages:
     resolution: {integrity: sha512-DPe5pVFaAsinSaV6QjQ6gdiedWDcRCbUuiQfQa2wmWV7+xC9bGulGI8+TdRmoFkAPaBXk8CrAbnlY2ISniJ47Q==}
     engines: {node: '>=18'}
 
-  rxjs@7.8.2:
-    resolution: {integrity: sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==}
-
   sade@1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
@@ -11221,9 +11201,6 @@ packages:
 
   three@0.187.0:
     resolution: {integrity: sha512-Qiu7R+Cmh8CstZsY1uJOSWnVlfo7ZtNLV7mF8Jltk3LB3AtDu9cRZlcnRKkAk8Y4z6KKw35z7Y7Urd7jWY8etA==}
-
-  tiled-property-flattener@1.1.1:
-    resolution: {integrity: sha512-Acj6WKbBkJlmqyDtlUIwvGHtNgopUmxYNZiLYWvgxWOTmtVubwskvOoZV3qqCGepBtL/18Fq/t4396n1NpqHng==}
 
   time-span@5.1.0:
     resolution: {integrity: sha512-75voc/9G4rDIJleOo4jPvN4/YC4GRZrY8yy1uU4lwrB3XEQbWve8zXoO5No4eFrGcTAMYyoY67p8jRQdtA1HbA==}
@@ -16062,8 +16039,6 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
-  '@types/minimist@1.2.5': {}
-
   '@types/mjml-core@5.1.1': {}
 
   '@types/mjml@5.4.2':
@@ -18793,13 +18768,6 @@ snapshots:
       graphology-types: 0.24.8
       obliterator: 2.0.5
 
-  grid-engine@2.54.0(phaser@4.2.1):
-    dependencies:
-      mnemonist: 0.40.8
-      phaser: 4.2.1
-      rxjs: 7.8.2
-      tiled-property-flattener: 1.1.1
-
   guid-typescript@1.0.9: {}
 
   h3@1.15.11:
@@ -20121,10 +20089,6 @@ snapshots:
       pathe: 2.0.3
       pkg-types: 1.3.1
       ufo: 1.6.4
-
-  mnemonist@0.40.8:
-    dependencies:
-      obliterator: 2.0.5
 
   mocked-exports@0.1.1: {}
 
@@ -21708,10 +21672,6 @@ snapshots:
 
   run-applescript@7.1.0: {}
 
-  rxjs@7.8.2:
-    dependencies:
-      tslib: 2.9.1
-
   sade@1.8.1:
     dependencies:
       mri: 1.2.0
@@ -22139,12 +22099,6 @@ snapshots:
       three: 0.187.0
 
   three@0.187.0: {}
-
-  tiled-property-flattener@1.1.1:
-    dependencies:
-      '@types/minimist': 1.2.5
-      lodash: 4.18.1
-      minimist: 1.2.8
 
   time-span@5.1.0:
     dependencies:

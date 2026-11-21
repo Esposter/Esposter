@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Npc } from "#src/models/dungeons/scene/world/Npc";
-import type { Direction } from "grid-engine";
+import type { Direction } from "grid-engine-headless";
 
 import { takeOne } from "@esposter/shared";
 

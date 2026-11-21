@@ -5,7 +5,7 @@ import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOp
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { step } from "#src/util/math/ease/step";
 import { clamp } from "@vueuse/core";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 
 export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const settingsStore = useSettingsStore();
@@ -39,9 +39,9 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     if (volumeIncrementCooldown.value > 0) return;
 
     const newVolumePercentage =
-      direction === Direction.LEFT && volumePercentage.value > 0
+      direction === Direction.Left && volumePercentage.value > 0
         ? volumePercentage.value - increment
-        : direction === Direction.RIGHT && volumePercentage.value < 100
+        : direction === Direction.Right && volumePercentage.value < 100
           ? volumePercentage.value + increment
           : undefined;
     if (newVolumePercentage === undefined) return;
@@ -50,7 +50,7 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   };
   const checkIsUpdateVolume = (input: PlayerInput, settingsOption: SettingsOption): input is Direction => {
     const isUpdateVolume =
-      settingsOption === SettingsOption.VolumePercentage && (input === Direction.LEFT || input === Direction.RIGHT);
+      settingsOption === SettingsOption.VolumePercentage && (input === Direction.Left || input === Direction.Right);
     // Any other input means the direction key was lifted, so the held delta starts over
     if (!isUpdateVolume) {
       volumeDelta.value = 0;

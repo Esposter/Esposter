@@ -1,24 +1,24 @@
 import type { InteractableDirectionMap } from "#src/models/dungeons/direction/InteractableDirectionMap";
 
 import { checkIsInteractiveObjectPosition } from "#src/services/dungeons/scene/world/interaction/checkIsInteractiveObjectPosition";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsInteractiveObjectPosition, () => {
   const playerPosition = { x: 3, y: 3 };
   const objectPosition = { x: 3, y: 4 };
   const interactableDirectionMap: InteractableDirectionMap = {
-    [Direction.DOWN]: true,
-    [Direction.LEFT]: false,
-    [Direction.RIGHT]: false,
-    [Direction.UP]: false,
+    [Direction.Down]: true,
+    [Direction.Left]: false,
+    [Direction.Right]: false,
+    [Direction.Up]: false,
   };
 
   test("the object is interactive when the player faces it from an interactable direction", () => {
     expect.hasAssertions();
 
     expect(
-      checkIsInteractiveObjectPosition(playerPosition, Direction.DOWN, objectPosition, interactableDirectionMap),
+      checkIsInteractiveObjectPosition(playerPosition, Direction.Down, objectPosition, interactableDirectionMap),
     ).toBe(true);
   });
 
@@ -26,7 +26,7 @@ describe(checkIsInteractiveObjectPosition, () => {
     expect.hasAssertions();
 
     expect(
-      checkIsInteractiveObjectPosition(playerPosition, Direction.DOWN, { x: 2, y: 4 }, interactableDirectionMap),
+      checkIsInteractiveObjectPosition(playerPosition, Direction.Down, { x: 2, y: 4 }, interactableDirectionMap),
     ).toBe(false);
   });
 
@@ -34,7 +34,7 @@ describe(checkIsInteractiveObjectPosition, () => {
     expect.hasAssertions();
 
     expect(
-      checkIsInteractiveObjectPosition(playerPosition, Direction.LEFT, { x: 2, y: 3 }, interactableDirectionMap),
+      checkIsInteractiveObjectPosition(playerPosition, Direction.Left, { x: 2, y: 3 }, interactableDirectionMap),
     ).toBe(false);
   });
 
@@ -42,10 +42,10 @@ describe(checkIsInteractiveObjectPosition, () => {
     expect.hasAssertions();
 
     expect(
-      checkIsInteractiveObjectPosition(playerPosition, Direction.DOWN_LEFT, { x: 2, y: 4 }, interactableDirectionMap),
+      checkIsInteractiveObjectPosition(playerPosition, Direction.DownLeft, { x: 2, y: 4 }, interactableDirectionMap),
     ).toBe(false);
     expect(
-      checkIsInteractiveObjectPosition(playerPosition, Direction.NONE, playerPosition, interactableDirectionMap),
+      checkIsInteractiveObjectPosition(playerPosition, Direction.None, playerPosition, interactableDirectionMap),
     ).toBe(false);
   });
 });

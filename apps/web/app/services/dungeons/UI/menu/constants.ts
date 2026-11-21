@@ -1,4 +1,4 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 export const MENU_PADDING = 4;
 export const MENU_WIDTH = 300;

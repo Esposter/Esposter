@@ -1,4 +1,4 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";

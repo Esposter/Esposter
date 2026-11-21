@@ -1,5 +1,4 @@
-import type { Direction } from "#shared/models/dungeons/data/player/Direction";
-import type { Position } from "grid-engine";
+import type { Direction, Position } from "grid-engine-headless";
 
 export interface InitialMetadata {
   direction: Direction;

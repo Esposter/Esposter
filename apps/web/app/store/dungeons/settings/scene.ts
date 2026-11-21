@@ -1,5 +1,5 @@
 import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
@@ -20,7 +20,7 @@ import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { useVolumeStore } from "#src/store/dungeons/settings/volume";
 import { exhaustiveGuard, getResult, noop } from "@esposter/shared";
 import { clamp } from "@vueuse/core";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
   const dungeonsStore = useDungeonsStore();
@@ -62,7 +62,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   };
 
   const moveSettingsRow = (direction: Direction) => {
-    const rowIndex = settingsOptionGrid.position.value.y + getDirectionStep(direction, Direction.UP);
+    const rowIndex = settingsOptionGrid.position.value.y + getDirectionStep(direction, Direction.Up);
     if (settingsOptionGrid.getValue({ x: 0, y: rowIndex }) === undefined) return;
 
     settingsOptionGrid.position.value = getRestingPosition(rowIndex);
@@ -72,7 +72,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     const { x, y } = settingsOptionGrid.position.value;
     if (!checkHasValueCells(y)) return;
 
-    const nextX = clamp(x + getDirectionStep(direction, Direction.LEFT), 1, settingsOptionGrid.getColumnSize(y) - 1);
+    const nextX = clamp(x + getDirectionStep(direction, Direction.Left), 1, settingsOptionGrid.getColumnSize(y) - 1);
     if (nextX === x) return;
 
     settingsOptionGrid.position.value = { x: nextX, y };
@@ -103,8 +103,8 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
       else if (checkIsUpdateVolume(input, selectedSettingsOption.value)) updateVolume(input, delta);
       else if (checkIsUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
         updateThemeModeSetting(justDownInput);
-      else if (justDownInput === Direction.UP || justDownInput === Direction.DOWN) moveSettingsRow(justDownInput);
-      else if (justDownInput === Direction.LEFT || justDownInput === Direction.RIGHT) moveSettingsColumn(justDownInput);
+      else if (justDownInput === Direction.Up || justDownInput === Direction.Down) moveSettingsRow(justDownInput);
+      else if (justDownInput === Direction.Left || justDownInput === Direction.Right) moveSettingsColumn(justDownInput);
     }).match(noop, console.error);
   };
 

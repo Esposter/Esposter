@@ -1,4 +1,4 @@
-import type { Direction } from "grid-engine";
+import type { Direction } from "grid-engine-headless";
 
 // The player may be facing a diagonal or standing still, neither of which the map holds an entry for
 export const checkIsInteractableDirection = (

@@ -8,7 +8,7 @@ import { useDungeonsStore } from "#src/store/dungeons/index";
 import { getRowPosition } from "#src/store/dungeons/settings/getRowPosition.test";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { useSettingsSceneStore } from "#src/store/dungeons/settings/scene";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -54,15 +54,15 @@ describe(useSettingsSceneStore, () => {
     const { onPlayerInput, restSettingsCursor } = settingsSceneStore;
     settingsStore.settings[SettingsOption["Text Speed"]] = TextSpeedSetting.Mid;
     restSettingsCursor();
-    onPlayerInput(scene, Direction.RIGHT, Direction.RIGHT, 0);
+    onPlayerInput(scene, Direction.Right, Direction.Right, 0);
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
     // Past the last value, right changes nothing and saves nothing
-    onPlayerInput(scene, Direction.RIGHT, Direction.RIGHT, 0);
+    onPlayerInput(scene, Direction.Right, Direction.Right, 0);
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
-    onPlayerInput(scene, Direction.LEFT, Direction.LEFT, 0);
-    onPlayerInput(scene, Direction.LEFT, Direction.LEFT, 0);
+    onPlayerInput(scene, Direction.Left, Direction.Left, 0);
+    onPlayerInput(scene, Direction.Left, Direction.Left, 0);
 
     expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Slow);
     // Mid to Fast, Fast to Mid, Mid to Slow: the edge press is not one of the three
@@ -77,7 +77,7 @@ describe(useSettingsSceneStore, () => {
     const { onPlayerInput, restSettingsCursor, settingsOptionGrid } = settingsSceneStore;
     settingsStore.settings[SettingsOption.Animations] = AnimationsSetting.Off;
     restSettingsCursor();
-    onPlayerInput(scene, Direction.DOWN, Direction.DOWN, 0);
+    onPlayerInput(scene, Direction.Down, Direction.Down, 0);
 
     const animationsRow = getRowPosition(settingsOptionGrid, SettingsOption.Animations);
     expect(settingsOptionGrid.position.value).toStrictEqual({

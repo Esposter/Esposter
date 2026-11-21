@@ -19,6 +19,3 @@ exported PascalCase `as const` object whose values are literals.
 
 - **A standard notation whose casing is its meaning** — `DateToken`'s format tokens, where `MM` is a month and `mm`
   a minute, so PascalCasing them would erase the distinction the notation exists to make.
-- **A mirror of a library's own set** — the dungeons' `Direction` copies grid-engine's `Direction`, which shared code
-  cannot import at runtime, under grid-engine's own keys, so a member reads the same whichever of the two a file
-  imports.

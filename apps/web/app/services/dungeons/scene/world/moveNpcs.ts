@@ -1,16 +1,16 @@
-import type { SceneWithPlugins } from "vue-phaserjs";
+import type { GridEngine } from "grid-engine-headless";
 
 import { MovementPattern } from "#src/models/dungeons/npc/MovementPattern";
 import { getNextDirection } from "#src/services/dungeons/UI/input/getNextDirection";
 import { useNpcStore } from "#src/store/dungeons/world/npc";
-import { exhaustiveGuard, takeOne } from "@esposter/shared";
+import { exhaustiveGuard, noop, takeOne } from "@esposter/shared";
 
-export const moveNpcs = (scene: SceneWithPlugins) => {
+export const moveNpcs = (gridEngine: GridEngine) => {
   const npcStore = useNpcStore();
   const { items } = storeToRefs(npcStore);
 
   for (const npc of items.value) {
-    if (!scene.gridEngine.hasCharacter(npc.id) || npc.isMoving) continue;
+    if (!gridEngine.checkHasCharacter(npc.id) || npc.isMoving) continue;
 
     switch (npc.movementPattern) {
       case MovementPattern.Idle:
@@ -20,9 +20,9 @@ export const moveNpcs = (scene: SceneWithPlugins) => {
         const newPathIndex = (npc.pathIndex + 1) % pathSize;
         const currentPosition = takeOne(npc.path, npc.pathIndex);
         const nextPosition = takeOne(npc.path, newPathIndex);
-        if (scene.gridEngine.isBlocked(nextPosition)) continue;
+        if (gridEngine.checkIsBlocked(nextPosition)) continue;
 
-        scene.gridEngine.move(npc.id, getNextDirection(currentPosition, nextPosition));
+        gridEngine.move(npc.id, getNextDirection(currentPosition, nextPosition)).match(noop, console.error);
         npc.pathIndex = newPathIndex;
         continue;
       }

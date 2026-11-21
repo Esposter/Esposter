@@ -8,7 +8,8 @@ import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
 import { onCreate, onShutdown, Tilemap } from "vue-phaserjs";
 
 const worldSceneStore = useWorldSceneStore();
-const { gridEngine, tilemapKey } = storeToRefs(worldSceneStore);
+const { releaseGridEngine } = worldSceneStore;
+const { tilemapKey } = storeToRefs(worldSceneStore);
 // Runs on every tilemap the component builds, so the bounds follow the tilemap's own size rather than a number kept here
 const initializeBounds = (scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => {
   if (tilemapKey.value === TilemapKey.Home)
@@ -24,7 +25,7 @@ onShutdown((scene) => {
   scene.cameras.main.removeBounds();
   scene.cameras.main.setZoom(1);
   // The tilemap's grid engine is released with the scene, and the next tilemap makes its own
-  gridEngine.value = undefined;
+  releaseGridEngine();
 });
 </script>
 
@@ -33,7 +34,7 @@ onShutdown((scene) => {
     :configuration="{ key: tilemapKey }"
     @complete="
       (scene, tilemap) => {
-        createTilemapAssets(scene, tilemap);
+        createTilemapAssets(tilemap);
         initializeBounds(scene, tilemap);
       }
     "

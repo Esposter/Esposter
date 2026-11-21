@@ -1,4 +1,4 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
 // The player and the enemy hold the same four values against different starting points: each side slides its

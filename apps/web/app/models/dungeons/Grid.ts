@@ -1,11 +1,11 @@
 /* eslint-disable perfectionist/sort-switch-case -- the cardinal moves read in their pairs, and the diagonals fall through together */
 import type { GridValue } from "#src/models/dungeons/GridValue";
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 import type { SetRequired } from "type-fest";
 import type { UnwrapRef } from "vue";
 
 import { exhaustiveGuard, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 
 export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   // A ref because a grid can be derived from an external 1D array rather than held as its own rows
@@ -82,23 +82,23 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
 
   move(direction: Direction, isSkipValidation?: boolean) {
     switch (direction) {
-      case Direction.UP:
+      case Direction.Up:
         this.#step("y", -1, isSkipValidation);
         return;
-      case Direction.DOWN:
+      case Direction.Down:
         this.#step("y", 1, isSkipValidation);
         return;
-      case Direction.LEFT:
+      case Direction.Left:
         this.#step("x", -1, isSkipValidation);
         return;
-      case Direction.RIGHT:
+      case Direction.Right:
         this.#step("x", 1, isSkipValidation);
         return;
-      case Direction.UP_LEFT:
-      case Direction.UP_RIGHT:
-      case Direction.DOWN_LEFT:
-      case Direction.DOWN_RIGHT:
-      case Direction.NONE:
+      case Direction.UpLeft:
+      case Direction.UpRight:
+      case Direction.DownLeft:
+      case Direction.DownRight:
+      case Direction.None:
         return;
       default:
         exhaustiveGuard(direction);

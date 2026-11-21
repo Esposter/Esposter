@@ -1,4 +1,4 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { CURSOR_POSITION_INCREMENT, INITIAL_CURSOR_POSITION } from "#src/services/dungeons/scene/battle/menu/constants";
 

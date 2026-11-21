@@ -3,7 +3,7 @@ import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOp
 import { useDungeonsStore } from "#src/store/dungeons/index";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
 import { useVolumeStore } from "#src/store/dungeons/settings/volume";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -41,11 +41,11 @@ describe(useVolumeStore, () => {
 
     const settingsStore = useSettingsStore();
     const volumeStore = useVolumeStore();
-    volumeStore.updateVolume(Direction.LEFT, 0);
+    volumeStore.updateVolume(Direction.Left, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(39);
 
-    volumeStore.updateVolume(Direction.LEFT, 0);
+    volumeStore.updateVolume(Direction.Left, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(39);
   });
@@ -56,12 +56,12 @@ describe(useVolumeStore, () => {
     const settingsStore = useSettingsStore();
     const volumeStore = useVolumeStore();
     settingsStore.settings[SettingsOption.VolumePercentage] = 0;
-    volumeStore.updateVolume(Direction.LEFT, 0);
+    volumeStore.updateVolume(Direction.Left, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(0);
     expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
 
-    volumeStore.updateVolume(Direction.RIGHT, 0);
+    volumeStore.updateVolume(Direction.Right, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(1);
   });
@@ -72,7 +72,7 @@ describe(useVolumeStore, () => {
     const settingsStore = useSettingsStore();
     const volumeStore = useVolumeStore();
     settingsStore.settings[SettingsOption.VolumePercentage] = 100;
-    volumeStore.updateVolume(Direction.RIGHT, 0);
+    volumeStore.updateVolume(Direction.Right, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(100);
     expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
@@ -83,8 +83,8 @@ describe(useVolumeStore, () => {
 
     const settingsStore = useSettingsStore();
     const volumeStore = useVolumeStore();
-    volumeStore.updateVolume(Direction.UP, 0);
-    volumeStore.updateVolume(Direction.DOWN, 0);
+    volumeStore.updateVolume(Direction.Up, 0);
+    volumeStore.updateVolume(Direction.Down, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(40);
     expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
@@ -95,11 +95,11 @@ describe(useVolumeStore, () => {
 
     const settingsStore = useSettingsStore();
     const volumeStore = useVolumeStore();
-    volumeStore.updateVolume(Direction.LEFT, 0);
+    volumeStore.updateVolume(Direction.Left, 0);
 
-    expect(volumeStore.checkIsUpdateVolume(Direction.UP, SettingsOption.VolumePercentage)).toBe(false);
+    expect(volumeStore.checkIsUpdateVolume(Direction.Up, SettingsOption.VolumePercentage)).toBe(false);
 
-    volumeStore.updateVolume(Direction.LEFT, 0);
+    volumeStore.updateVolume(Direction.Left, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(38);
   });
@@ -109,9 +109,9 @@ describe(useVolumeStore, () => {
 
     const volumeStore = useVolumeStore();
 
-    expect(volumeStore.checkIsUpdateVolume(Direction.LEFT, SettingsOption.VolumePercentage)).toBe(true);
-    expect(volumeStore.checkIsUpdateVolume(Direction.RIGHT, SettingsOption.VolumePercentage)).toBe(true);
-    expect(volumeStore.checkIsUpdateVolume(Direction.LEFT, SettingsOption["Text Speed"])).toBe(false);
+    expect(volumeStore.checkIsUpdateVolume(Direction.Left, SettingsOption.VolumePercentage)).toBe(true);
+    expect(volumeStore.checkIsUpdateVolume(Direction.Right, SettingsOption.VolumePercentage)).toBe(true);
+    expect(volumeStore.checkIsUpdateVolume(Direction.Left, SettingsOption["Text Speed"])).toBe(false);
   });
 
   test("shutting the slider down destroys it and lets go of it, so a later volume change does not reach it", () => {

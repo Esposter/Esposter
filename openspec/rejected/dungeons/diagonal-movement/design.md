@@ -9,4 +9,4 @@ Letting the player (and the joystick) move diagonally — up-left, down-right an
 - **Corners would be cut.** A diagonal step checks only the tile it lands on, so the player could slip between two wall tiles that touch at a corner.
 - **The joystick feels worse.** Eight sectors make a thumb that is slightly off-axis walk diagonally, where four snap it to the direction meant.
 
-So the input maps one key to one direction (`getDirectionFromCursorKeys`) and grid-engine runs with `NumberOfDirections.FOUR`.
+So the input maps one key to one direction (`getDirectionFromCursorKeys`) and the headless grid engine (`grid-engine-headless`) steps four ways only, so a diagonal move is refused.

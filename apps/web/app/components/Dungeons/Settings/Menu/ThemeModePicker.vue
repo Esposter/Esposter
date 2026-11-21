@@ -10,7 +10,7 @@ import {
 } from "#src/services/dungeons/scene/settings/constants";
 import { getSettingsOptionY } from "#src/services/dungeons/scene/settings/getSettingsOptionY";
 import { useColorPickerStore } from "#src/store/dungeons/settings/colorPicker";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 import { Input } from "phaser";
 import { Image, Text } from "vue-phaserjs";
 
@@ -32,7 +32,7 @@ const cursorY = textY + THEME_MODE_PICKER_CURSOR_OFFSET_Y;
       scaleX: 2.5,
       flipX: true,
     }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.LEFT)"
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.Left)"
   />
   <Text
     :configuration="{
@@ -52,6 +52,6 @@ const cursorY = textY + THEME_MODE_PICKER_CURSOR_OFFSET_Y;
       texture: ImageKey.CursorWhite,
       scaleX: 2.5,
     }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.RIGHT)"
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.Right)"
   />
 </template>

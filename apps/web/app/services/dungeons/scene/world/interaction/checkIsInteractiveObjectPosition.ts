@@ -1,5 +1,5 @@
 import type { InteractableDirectionMap } from "#src/models/dungeons/direction/InteractableDirectionMap";
-import type { Direction, Position } from "grid-engine";
+import type { Direction, Position } from "grid-engine-headless";
 
 import { getPositionAfterDirectionMovement } from "#src/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { checkIsInteractableDirection } from "#src/services/dungeons/scene/world/interaction/checkIsInteractableDirection";

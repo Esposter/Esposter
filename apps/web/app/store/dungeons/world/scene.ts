@@ -21,6 +21,16 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const tilemap = ref<Tilemaps.Tilemap>() as Ref<Tilemaps.Tilemap>;
   // The tilemap's grid engine is made with the tilemap and marked raw where it is set, and it is released with the scene
   const gridEngine = ref<GridEngine>();
+  // Each character's sprite writer, keyed by its id. Each frame the engine steps first, then every writer draws its sprite
+  const characterIdSpriteWriterMap = new Map<string, () => void>();
+  const updateGridEngine = (delta: number) => {
+    gridEngine.value?.update(delta);
+    for (const writeCharacterSprite of characterIdSpriteWriterMap.values()) writeCharacterSprite();
+  };
+  const releaseGridEngine = () => {
+    gridEngine.value = undefined;
+    characterIdSpriteWriterMap.clear();
+  };
   const tilemapKeyLayerMap = ref(new Map<TilemapKey, Map<string, Tilemaps.TilemapLayer | undefined>>());
   const layerMap = computed({
     get: () => tilemapKeyLayerMap.value.get(tilemapKey.value),
@@ -37,5 +47,16 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
       else tilemapKeyObjectLayerMap.value.delete(tilemapKey.value);
     },
   });
-  return { gridEngine, layerMap, objectLayerMap, switchToTilemap, tilemap, tilemapKey, worldData };
+  return {
+    characterIdSpriteWriterMap,
+    gridEngine,
+    layerMap,
+    objectLayerMap,
+    releaseGridEngine,
+    switchToTilemap,
+    tilemap,
+    tilemapKey,
+    updateGridEngine,
+    worldData,
+  };
 });

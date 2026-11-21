@@ -1,7 +1,7 @@
 import type { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
 import type { Effect } from "#src/models/dungeons/npc/effect/Effect";
 import type { Npc as NpcData } from "#src/models/dungeons/npc/Npc";
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 import type { Except } from "type-fest";
 
 import { MovementPattern } from "#src/models/dungeons/npc/MovementPattern";

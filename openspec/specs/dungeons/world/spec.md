@@ -1,6 +1,6 @@
 ## Purpose
 
-The Tiled codegen pipeline, grid-engine movement, NPC interactions, chests, doors, and random encounters. The overworld is a set of tile maps the player walks across, with people to talk to, chests to open, doors to pass through, and wild monsters to meet in marked areas.
+The Tiled codegen pipeline, headless grid movement, NPC interactions, chests, doors, and random encounters. The overworld is a set of tile maps the player walks across, with people to talk to, chests to open, doors to pass through, and wild monsters to meet in marked areas.
 
 ## Requirements
 

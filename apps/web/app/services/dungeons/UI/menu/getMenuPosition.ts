@@ -1,4 +1,4 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { MENU_PADDING, MENU_WIDTH } from "#src/services/dungeons/UI/menu/constants";

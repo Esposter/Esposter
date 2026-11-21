@@ -1,7 +1,8 @@
-import type { FrameRow, WalkingAnimationMapping } from "grid-engine";
+import type { FrameRow } from "#src/models/dungeons/scene/world/FrameRow";
+import type { WalkingAnimationMapping } from "#src/models/dungeons/scene/world/WalkingAnimationMapping";
 
 import { InteractableDirection } from "#src/models/dungeons/direction/InteractableDirection";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 
 export const MAX_STEPS_BEFORE_NEXT_ENCOUNTER = 20;
 
@@ -19,8 +20,8 @@ const BasePlayerWalkingAnimationMapping = {
 
 export const PlayerWalkingAnimationMapping = {
   ...BasePlayerWalkingAnimationMapping,
-  [Direction.DOWN_LEFT]: BasePlayerWalkingAnimationMapping[Direction.LEFT],
-  [Direction.DOWN_RIGHT]: BasePlayerWalkingAnimationMapping[Direction.RIGHT],
-  [Direction.UP_LEFT]: BasePlayerWalkingAnimationMapping[Direction.LEFT],
-  [Direction.UP_RIGHT]: BasePlayerWalkingAnimationMapping[Direction.RIGHT],
+  [Direction.DownLeft]: BasePlayerWalkingAnimationMapping[Direction.Left],
+  [Direction.DownRight]: BasePlayerWalkingAnimationMapping[Direction.Right],
+  [Direction.UpLeft]: BasePlayerWalkingAnimationMapping[Direction.Left],
+  [Direction.UpRight]: BasePlayerWalkingAnimationMapping[Direction.Right],
 } as const satisfies WalkingAnimationMapping;

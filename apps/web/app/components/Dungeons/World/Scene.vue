@@ -13,7 +13,7 @@ const { fadeIn } = cameraStore;
 const activeInputResolvers = getActiveInputResolvers();
 const update = useResolveInput(activeInputResolvers);
 const worldSceneStore = useWorldSceneStore();
-const { gridEngine } = storeToRefs(worldSceneStore);
+const { updateGridEngine } = worldSceneStore;
 
 const create = (scene: SceneWithPlugins) => {
   playDungeonsBackgroundMusic(scene, BackgroundMusicKey.AndTheJourneyBegins);
@@ -29,7 +29,7 @@ const create = (scene: SceneWithPlugins) => {
       (scene, _time, delta) => {
         update(scene);
         // The grid engine steps its characters with the frame's delta, once the frame's input has resolved
-        gridEngine?.update(delta);
+        updateGridEngine(delta);
       }
     "
   >

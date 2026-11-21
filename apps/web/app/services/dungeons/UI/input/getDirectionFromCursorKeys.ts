@@ -2,7 +2,7 @@ import type { InteractableDirection } from "#src/models/dungeons/direction/Inter
 import type { BaseCursorKeys } from "#src/models/dungeons/input/BaseCursorKeys";
 
 import { getDirectionCursorKeyMap } from "#src/services/dungeons/UI/input/getDirectionCursorKeyMap";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 import { Input } from "phaser";
 
 export const getDirectionFromCursorKeys = (cursorKeys: BaseCursorKeys, isJustDown?: true) => {
@@ -15,5 +15,5 @@ export const getDirectionFromCursorKeys = (cursorKeys: BaseCursorKeys, isJustDow
   for (const [direction, cursorKey] of directionCursorKeyEntries)
     if (isJustDown ? Input.Keyboard.JustDown(cursorKey) : cursorKey.isDown) return direction;
 
-  return Direction.NONE;
+  return Direction.None;
 };

@@ -1,32 +1,32 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { InteractableDirection } from "#src/models/dungeons/direction/InteractableDirection";
 import { addPositions } from "#src/services/dungeons/direction/addPositions";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 
 const BaseDirectionPositionOffsetMap = {
-  [Direction.DOWN]: { x: 0, y: 1 },
-  [Direction.LEFT]: { x: -1, y: 0 },
-  [Direction.RIGHT]: { x: 1, y: 0 },
-  [Direction.UP]: { x: 0, y: -1 },
+  [Direction.Down]: { x: 0, y: 1 },
+  [Direction.Left]: { x: -1, y: 0 },
+  [Direction.Right]: { x: 1, y: 0 },
+  [Direction.Up]: { x: 0, y: -1 },
 } as const satisfies Record<InteractableDirection, Position>;
 // A diagonal is its two component directions travelled at once
 const DirectionPositionOffsetMap = {
   ...BaseDirectionPositionOffsetMap,
-  [Direction.DOWN_LEFT]: addPositions(
+  [Direction.DownLeft]: addPositions(
     BaseDirectionPositionOffsetMap[InteractableDirection.DOWN],
     BaseDirectionPositionOffsetMap[InteractableDirection.LEFT],
   ),
-  [Direction.DOWN_RIGHT]: addPositions(
+  [Direction.DownRight]: addPositions(
     BaseDirectionPositionOffsetMap[InteractableDirection.DOWN],
     BaseDirectionPositionOffsetMap[InteractableDirection.RIGHT],
   ),
-  [Direction.NONE]: { x: 0, y: 0 },
-  [Direction.UP_LEFT]: addPositions(
+  [Direction.None]: { x: 0, y: 0 },
+  [Direction.UpLeft]: addPositions(
     BaseDirectionPositionOffsetMap[InteractableDirection.UP],
     BaseDirectionPositionOffsetMap[InteractableDirection.LEFT],
   ),
-  [Direction.UP_RIGHT]: addPositions(
+  [Direction.UpRight]: addPositions(
     BaseDirectionPositionOffsetMap[InteractableDirection.UP],
     BaseDirectionPositionOffsetMap[InteractableDirection.RIGHT],
   ),

@@ -1,6 +1,6 @@
 import type { Attack } from "#src/models/dungeons/attack/Attack";
 import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
-import type { Direction } from "grid-engine";
+import type { Direction } from "grid-engine-headless";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Grid } from "#src/models/dungeons/Grid";

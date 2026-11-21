@@ -1,5 +1,5 @@
 import { Grid } from "#src/models/dungeons/Grid";
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 import { describe, expect, test } from "vitest";
 
 // The invariants every dungeons menu navigates by, rather than a description of how the walk is written.
@@ -14,10 +14,10 @@ describe(Grid, () => {
   const RAGGED_GRID = [["a", "b", "c"], ["d"], ["e", "f", "g"]] as const;
 
   test.each([
-    [Direction.UP, { x: 1, y: 1 }, { x: 1, y: 0 }],
-    [Direction.DOWN, { x: 1, y: 0 }, { x: 1, y: 1 }],
-    [Direction.LEFT, { x: 1, y: 0 }, { x: 0, y: 0 }],
-    [Direction.RIGHT, { x: 1, y: 0 }, { x: 2, y: 0 }],
+    [Direction.Up, { x: 1, y: 1 }, { x: 1, y: 0 }],
+    [Direction.Down, { x: 1, y: 0 }, { x: 1, y: 1 }],
+    [Direction.Left, { x: 1, y: 0 }, { x: 0, y: 0 }],
+    [Direction.Right, { x: 1, y: 0 }, { x: 2, y: 0 }],
   ])("moves %s off %j", (direction, from, to) => {
     expect.hasAssertions();
 
@@ -28,10 +28,10 @@ describe(Grid, () => {
   });
 
   test.each([
-    [Direction.UP, { x: 0, y: 0 }],
-    [Direction.DOWN, { x: 0, y: 1 }],
-    [Direction.LEFT, { x: 0, y: 0 }],
-    [Direction.RIGHT, { x: 2, y: 0 }],
+    [Direction.Up, { x: 0, y: 0 }],
+    [Direction.Down, { x: 0, y: 1 }],
+    [Direction.Left, { x: 0, y: 0 }],
+    [Direction.Right, { x: 2, y: 0 }],
   ])("holds still moving %s off its edge, rather than stepping outside", (direction, from) => {
     expect.hasAssertions();
 
@@ -51,15 +51,15 @@ describe(Grid, () => {
     const grid = new Grid({ grid: GRID, position: ref({ x: 0, y: 0 }), validate: () => false });
 
     expect(() => {
-      grid.move(Direction.RIGHT);
+      grid.move(Direction.Right);
     }).toThrowErrorMatchingInlineSnapshot(`[InvalidOperationError: Invalid operation: Update, name: move, 2]`);
   });
 
   test.each([
-    [Direction.UP, { x: 0, y: 0 }, { x: 0, y: 1 }],
-    [Direction.DOWN, { x: 0, y: 1 }, { x: 0, y: 0 }],
-    [Direction.LEFT, { x: 0, y: 0 }, { x: 2, y: 0 }],
-    [Direction.RIGHT, { x: 2, y: 0 }, { x: 0, y: 0 }],
+    [Direction.Up, { x: 0, y: 0 }, { x: 0, y: 1 }],
+    [Direction.Down, { x: 0, y: 1 }, { x: 0, y: 0 }],
+    [Direction.Left, { x: 0, y: 0 }, { x: 2, y: 0 }],
+    [Direction.Right, { x: 2, y: 0 }, { x: 0, y: 0 }],
   ])("wraps %s to the far edge when wrapping", (direction, from, to) => {
     expect.hasAssertions();
 
@@ -73,7 +73,7 @@ describe(Grid, () => {
     expect.hasAssertions();
 
     const grid = new Grid({ grid: HOLED_GRID, position: ref({ x: 0, y: 0 }) });
-    grid.move(Direction.RIGHT);
+    grid.move(Direction.Right);
 
     expect(grid.position.value).toStrictEqual({ x: 2, y: 0 });
   });
@@ -83,7 +83,7 @@ describe(Grid, () => {
 
     // The skip is what lets a caller place the cursor somewhere its own predicate would refuse
     const grid = new Grid({ grid: GRID, position: ref({ x: 0, y: 0 }), validate: () => false });
-    grid.move(Direction.RIGHT, true);
+    grid.move(Direction.Right, true);
 
     expect(grid.position.value).toStrictEqual({ x: 1, y: 0 });
   });
@@ -92,12 +92,12 @@ describe(Grid, () => {
     expect.hasAssertions();
 
     const grid = new Grid({ grid: GRID, position: ref({ x: 0, y: 0 }), validate: ({ x }) => x !== 1 });
-    grid.move(Direction.RIGHT);
+    grid.move(Direction.Right);
 
     expect(grid.position.value).toStrictEqual({ x: 2, y: 0 });
   });
 
-  test.each([Direction.UP_LEFT, Direction.UP_RIGHT, Direction.DOWN_LEFT, Direction.DOWN_RIGHT, Direction.NONE])(
+  test.each([Direction.UpLeft, Direction.UpRight, Direction.DownLeft, Direction.DownRight, Direction.None])(
     "ignores %s, which the grid has no axis for",
     (direction) => {
       expect.hasAssertions();
@@ -126,7 +126,7 @@ describe(Grid, () => {
     // A column the row does not reach is a hole like any other, so the walk carries on past it. Reading it as a
     // Fault stops the cursor at the short row and every row beyond it is unreachable
     const grid = new Grid({ grid: RAGGED_GRID, position: ref({ x: 2, y: 0 }) });
-    grid.move(Direction.DOWN);
+    grid.move(Direction.Down);
 
     expect(grid.position.value).toStrictEqual({ x: 2, y: 2 });
   });

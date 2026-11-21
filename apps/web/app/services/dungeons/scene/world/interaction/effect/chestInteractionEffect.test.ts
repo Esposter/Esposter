@@ -5,13 +5,13 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { ChestObjectProperty } from "#shared/generated/tiled/propertyTypes/class/ChestObjectProperty";
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
-import { Direction } from "#shared/models/dungeons/data/player/Direction";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { Chest } from "#shared/models/dungeons/data/world/Chest";
 import { getItem } from "#shared/services/dungeons/item/getItem";
 import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
 import { chestInteractionEffect } from "#src/services/dungeons/scene/world/interaction/effect/chestInteractionEffect";
 import { useDungeonsStore } from "#src/store/dungeons/index";
+import { Direction } from "grid-engine-headless";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -47,7 +47,7 @@ describe(chestInteractionEffect, () => {
     const dungeonsStore = useDungeonsStore();
     dungeonsStore.save = new Save();
     dungeonsStore.save.player.position = { x: 3, y: 3 };
-    dungeonsStore.save.player.direction = Direction.DOWN;
+    dungeonsStore.save.player.direction = Direction.Down;
     dungeonsStore.save.player.inventory = [];
     dungeonsStore.save.world[TilemapKey.Home].chestMap = { [getPositionId(chestPosition)]: new Chest() };
     showMessages.mockClear();

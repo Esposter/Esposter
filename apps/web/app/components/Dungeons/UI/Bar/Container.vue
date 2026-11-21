@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ImagePosition } from "#src/models/dungeons/ImagePosition";
 import type { BarType } from "#src/models/dungeons/UI/bar/BarType";
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 import type { Tweens } from "phaser";
 
 import { BAR_WIDTH } from "#src/services/dungeons/UI/bar/constants";

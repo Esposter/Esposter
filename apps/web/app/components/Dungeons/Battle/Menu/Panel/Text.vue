@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="TGrid extends readonly (readonly unknown[])[]">
 import type { Grid } from "#src/models/dungeons/Grid";
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { DialogTextStyle } from "#src/assets/dungeons/styles/DialogTextStyle";
 import { Input } from "phaser";

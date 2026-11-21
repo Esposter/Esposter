@@ -1,10 +1,9 @@
-import type { Direction } from "#shared/models/dungeons/data/player/Direction";
 import type { Inventory } from "#shared/models/dungeons/data/player/Inventory";
-import type { Position } from "grid-engine";
+import type { Direction, Position } from "grid-engine-headless";
 
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
-import { directionSchema } from "#shared/models/dungeons/data/player/Direction";
+import { directionSchema } from "#shared/models/dungeons/data/player/directionSchema";
 import { inventorySchema } from "#shared/models/dungeons/data/player/Inventory";
 import { positionSchema } from "#shared/models/dungeons/data/player/Position";
 import { RespawnLocation, respawnLocationSchema } from "#shared/models/dungeons/data/player/RespawnLocation";

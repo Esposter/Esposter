@@ -1,5 +1,5 @@
 import type { Grid } from "#src/models/dungeons/Grid";
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { PlayerSpecialInput } from "#src/models/dungeons/UI/input/PlayerSpecialInput";
 import { useControlsStore } from "#src/store/dungeons/controls";

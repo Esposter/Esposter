@@ -1,17 +1,14 @@
 import type { Tilemaps } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
 import { Chest } from "#shared/models/dungeons/data/world/Chest";
-import { TileProperty } from "#src/models/dungeons/tilemap/TileProperty";
 import { getPositionId } from "#src/services/dungeons/direction/getPositionId";
 import { createWorldGridEngine } from "#src/services/dungeons/gridEngine/createWorldGridEngine";
 import { getObjects } from "#src/services/dungeons/scene/world/getObjects";
 import { TilemapMetadataMap } from "#src/services/dungeons/tilemap/TilemapMetadataMap";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
-import { NumberOfDirections } from "grid-engine";
 
-export const createTilemapAssets = (scene: SceneWithPlugins, newTilemap: Tilemaps.Tilemap) => {
+export const createTilemapAssets = (newTilemap: Tilemaps.Tilemap) => {
   const worldSceneStore = useWorldSceneStore();
   const { gridEngine, objectLayerMap, tilemap, tilemapKey, worldData } = storeToRefs(worldSceneStore);
 
@@ -27,11 +24,6 @@ export const createTilemapAssets = (scene: SceneWithPlugins, newTilemap: Tilemap
     }
   }
 
-  scene.gridEngine.create(tilemap.value, {
-    characters: [],
-    collisionTilePropertyName: TileProperty.Collision,
-    numberOfDirections: NumberOfDirections.FOUR,
-  });
   createWorldGridEngine(tilemap.value).match((newGridEngine) => {
     gridEngine.value = markRaw(newGridEngine);
   }, console.error);

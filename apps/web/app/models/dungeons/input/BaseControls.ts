@@ -1,7 +1,7 @@
 import type { Controls } from "#src/models/dungeons/input/Controls";
 import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
 
-import { Direction } from "grid-engine";
+import { Direction } from "grid-engine-headless";
 import { useInputStore } from "vue-phaserjs";
 
 export abstract class BaseControls implements Controls {
@@ -11,7 +11,7 @@ export abstract class BaseControls implements Controls {
   getInput(isJustDown?: true) {
     const inputStore = useInputStore();
     const { isInputActive } = storeToRefs(inputStore);
-    if (!isInputActive.value) return Direction.NONE;
+    if (!isInputActive.value) return Direction.None;
 
     const input = this.input;
     this.resetInput();

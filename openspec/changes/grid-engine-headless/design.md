@@ -53,11 +53,6 @@ The commit and its event come before the sprite is written, so a listener sees t
 | `apps/web/app/store/dungeons/world/player.ts`                                      | Checks the respawn direction against the core's direction values instead of the engine's enum                         |
 | `apps/web/app/services/dungeons/UI/input/checkIsMovingDirection.ts`                | Reads the core's direction values, with the no-direction value excluded as now                                        |
 | `apps/web/app/models/dungeons/tilemap/TileProperty.ts`                             | Keeps the collision property name the binding reads from the tiles                                                    |
-| `apps/web/app/models/dungeons/gridEngine/PositionChangeStarted.ts`                 | Deleted: the core's event payload types replace the types extracted from the plugin's streams                         |
-| `apps/web/app/models/dungeons/gridEngine/PositionChangeFinished.ts`                | Deleted, for the same reason                                                                                          |
-| `apps/web/app/services/dungeons/direction/DirectionToGridDirectionMap.ts`          | Deleted: the app and the core share one direction vocabulary                                                          |
-| `apps/web/app/services/dungeons/direction/GridDirectionToDirectionMap.ts`          | Deleted, for the same reason                                                                                          |
-| `apps/web/shared/models/dungeons/data/player/Direction.ts`                         | Deleted: shared code imports the core's direction values directly, since the core imports nothing that loads Phaser   |
 | `apps/web/shared/test/setup.ts`                                                    | Loses the module mock of grid-engine, which existed only because importing it loads Phaser                            |
 | `pnpm-workspace.yaml`                                                              | Loses the grid-engine catalog entry in the swap commit                                                                |
 | `apps/web/package.json`                                                            | Depends on the new package instead of the catalog entry                                                               |
@@ -69,7 +64,7 @@ The commit and its event come before the sprite is written, so a listener sees t
 | `openspec/rejected/dungeons/diagonal-movement/design.md`                           | Its note that the engine runs four-directional is reworded to the core, and the decision it records stands            |
 | `openspec/specs/architecture/dependency-admission/design.md`                       | Gains the package in its precedent section once the swap lands                                                        |
 
-The package and the binding are new paths, so they are not listed here. Their layout is in "Layout" below.
+The package and the binding are new paths, so they are not listed here. Their layout is in "Layout" below. The swap deletes the two position-change models, the two direction maps and the shared direction mirror, so they are not listed either: the core's event payloads, its `Direction` and the app's shared imports replace them.
 
 ## Survey: the calls the app makes
 
@@ -317,6 +312,9 @@ The binding's folder is the one feature that consumes it, which is the world, an
 - **A position with no tile blocks.** Alternative: open, as the option would give. Rejected for the default: the documented default blocks, and the map edges depend on it.
 - **The engine is stored in the world's store, marked raw.** Alternative: a scene-level plugin property. Rejected: a plugin is registered on the scene object and typed by augmentation, and it lives as long as the scene, not the tilemap.
 - **`addCharacter` with an id already in use replaces that character silently.** The new character takes the id, with its own start, facing and speed, and the call returns ok. A run the replaced character was in is dropped with it, so no movement-stopped or position-change-finished event follows for it. Alternative: return an error for a duplicate id. Rejected: the replace is kept as decided, and the error is not added to the engine's contract.
+- **The sprite writers are held by the world store, keyed by character id.** The binding's writer is a closure over the sprite and the walking frame, as the Binding paragraph says, but the store keeps the writers in a map, not the sprites. Each frame `updateGridEngine` steps the engine and then draws every writer, so a sprite shows the state its frame's step left. Alternative: each character subscribes to the scene's update, which orders its write against the engine's step only by registration order. Rejected: the write must follow the engine's step.
+- **Direction's members are PascalCase, `Down` and `UpLeft`.** The naming rule's casing, which the core's value set already follows, so the swap renames every member the app took from the mirror to match. The values are unchanged, so no stored data moves.
+- **`/dungeons` stays `ssr: false`.** The swap-removal test could not be run: the dev server on port 3001 answered every route with a Workers hang, the root page included, so the server-rendered page could not be read. The rule keeps its comment, naming the rex plugin imports the page makes, which read Phaser's globals at module evaluation.
 
 ## Migration
 

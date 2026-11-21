@@ -1,4 +1,4 @@
-import type { Position } from "grid-engine";
+import type { Position } from "grid-engine-headless";
 
 import { getMenuPosition } from "#src/services/dungeons/UI/menu/getMenuPosition";
 import { onCreate } from "vue-phaserjs";
