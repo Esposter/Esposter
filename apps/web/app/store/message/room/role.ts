@@ -41,9 +41,9 @@ import { getResultAsync } from "@esposter/shared";
 import { v7 } from "uuid";
 
 // The room's derived totals are re-read through the registered hooks, since only the server's totals say what a
-// Role-membership change did. Two things fire them: a write to a member's roles, and a refresh of the room's roles,
-// Because a membership write publishes the room's topic that refresh watches. A read of one member's roles does not,
-// Its counts the server already includes
+// Role-membership change did. Two things fire them: a refresh of the room's roles, which a write to a member's roles
+// Brings about by the topic the server infers for it and the refresh watches, and a member leaving the room. A read
+// Of one member's roles does not, its counts the server already includes
 const notifyMemberRoleChange = (roomId: string) => {
   for (const memberRoleChangeHook of memberRoleChangeHooks.hooks) memberRoleChangeHook(roomId);
 };
