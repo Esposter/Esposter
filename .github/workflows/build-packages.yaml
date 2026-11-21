@@ -11,7 +11,7 @@ permissions:
 jobs:
   build-packages:
     name: Build Packages
-    # The two callers' copies queue on the commit (monorepo-tooling.md → ## CI job shape)
+    # The two callers' copies queue on the commit (openspec/specs/architecture/monorepo-tooling/design.md → ## CI job shape)
     concurrency:
       group: build-packages-${{ github.sha }}
       cancel-in-progress: false
@@ -72,8 +72,7 @@ jobs:
           path: ~/.cache/workspace-data/content
           key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
       # `*/dist` is the build output, and the generated barrels and the `src/generated` files a build hook writes
-      # (gitignored) sit beside the sources; libraries only, so their common ancestor `packages` is where the artifact
-      # unpacks
+      # (gitignored) sit beside the sources; libraries only
       - name: 📤 Upload package builds
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

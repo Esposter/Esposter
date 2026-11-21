@@ -7,7 +7,7 @@ name: 🚀 Release
 # (`MergeMain.yaml`), so nothing here dispatches it.
 on:
   schedule:
-    # Nightly, at 15:16 UTC
+    # Nightly, at 15:16 UTC, shipping what the review has passed since the last release
     - cron: "16 15 * * *"
   workflow_dispatch:
 
