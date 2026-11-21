@@ -90,14 +90,10 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   // Answers the knocker's row as a tombstone, at the version the removal raised it to. A knocker already let in or dismissed
   // Answers its tombstone and is not admitted again, and a knocker the call never held answers nothing
   admitKnocker({ callSessionId, knockerId }: { callSessionId: string; knockerId: string }): CallParticipantRow | null {
-    this.#purgeTombstones();
-    const removed = this.#removeKnocker(knockerId);
-    if (!removed) return this.#readKnocker(knockerId) ?? null;
-
-    const { sessionId, ...knocker } = removed;
-    this.db.insert(admittedSessions).values({ sessionId }).onConflictDoNothing().run();
-    this.broadcast({ data: { callSessionId }, type: "knockerAdmitted" }, { tag: getSessionSocketTag(sessionId) });
-    return knocker;
+    return this.#answerKnockerRemoval(knockerId, (sessionId) => {
+      this.db.insert(admittedSessions).values({ sessionId }).onConflictDoNothing().run();
+      this.broadcast({ data: { callSessionId }, type: "knockerAdmitted" }, { tag: getSessionSocketTag(sessionId) });
+    });
   }
 
   // A revoked session's sockets close first, so the leave that follows finds none left to close.
@@ -121,13 +117,9 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     callSessionId: string;
     knockerId: string;
   }): CallParticipantRow | null {
-    this.#purgeTombstones();
-    const removed = this.#removeKnocker(knockerId);
-    if (!removed) return this.#readKnocker(knockerId) ?? null;
-
-    const { sessionId, ...knocker } = removed;
-    this.#broadcastKnockerDismissed(callSessionId, sessionId);
-    return knocker;
+    return this.#answerKnockerRemoval(knockerId, (sessionId) =>
+      this.#broadcastKnockerDismissed(callSessionId, sessionId),
+    );
   }
 
   // Takes every connection of a user out of the call, for a removal, a ban or a timeout. The leave lands first.
@@ -569,6 +561,18 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       .from(realtimeKitParticipants)
       .where(eq(realtimeKitParticipants.participantId, participantId))
       .get();
+  }
+
+  // Takes a live knocker out and hands its session to `announce`, which says what the removal sends. A knocker the call no
+  // Longer holds answers its row as it stands, and announces nothing
+  #answerKnockerRemoval(knockerId: string, announce: (sessionId: string) => void): CallParticipantRow | null {
+    this.#purgeTombstones();
+    const removed = this.#removeKnocker(knockerId);
+    if (!removed) return this.#readKnocker(knockerId) ?? null;
+
+    const { sessionId, ...knocker } = removed;
+    announce(sessionId);
+    return knocker;
   }
 
   // A live knocker's row becomes a tombstone at its next version. Only this removal of the live row returns it, so a

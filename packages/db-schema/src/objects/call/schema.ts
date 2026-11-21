@@ -6,12 +6,16 @@ import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 // The columns a connection in the call is held by, shared by the participant and knocker tables.
 // Both hold the same shape for different states of the same connection
 const createCallParticipantColumns = () => ({
+  id: text().primaryKey(),
+  sessionId: text().notNull().unique(),
   image: text().notNull().default(""),
   isCameraEnabled: integer({ mode: "boolean" }).notNull(),
   isHandRaised: integer({ mode: "boolean" }).notNull(),
   isMuted: integer({ mode: "boolean" }).notNull(),
   name: text().notNull(),
   userId: text().notNull(),
+  deletedAt: integer({ mode: "timestamp_ms" }),
+  ...createVersionSchema(),
 });
 
 // Each connection that has joined. Its id is the participant id the call names it by to every member, minted by each
@@ -19,23 +23,11 @@ const createCallParticipantColumns = () => ({
 // Server's guards and kicks and never written into anything a member reads. A leave sets deletedAt rather than deleting
 // The row, so a read that answered before the leave cannot bring the connection back; the object purges it once its
 // Retention has passed
-export const participants = sqliteTable("participants", {
-  id: text().primaryKey(),
-  sessionId: text().notNull().unique(),
-  ...createCallParticipantColumns(),
-  deletedAt: integer({ mode: "timestamp_ms" }),
-  ...createVersionSchema(),
-});
+export const participants = sqliteTable("participants", createCallParticipantColumns());
 
 // Each connection waiting for a doorkeeper to let it in, named and held the way a participant is. A let-in or a dismissal
 // Sets deletedAt rather than deleting the row, so the doorkeeper's lobby applies the removal by version, as it does a leave
-export const knockers = sqliteTable("knockers", {
-  id: text().primaryKey(),
-  sessionId: text().notNull().unique(),
-  ...createCallParticipantColumns(),
-  deletedAt: integer({ mode: "timestamp_ms" }),
-  ...createVersionSchema(),
-});
+export const knockers = sqliteTable("knockers", createCallParticipantColumns());
 
 // The knockers a doorkeeper has let past, each consumed by the join it allows
 export const admittedSessions = sqliteTable("admittedSessions", {
