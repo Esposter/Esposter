@@ -30,14 +30,16 @@ const readStateDirectory = async ($: EngineInterface) => {
 };
 
 // The session's character, from the record its start hook wrote, else the pin, else the birthday pick; the spinner
-// Is read again only when the character or the language that spells them changed
+// Is read again only when the character or the language that spells them changed. A script that prints text that is
+// Not JSON, or nothing, has failed: the state it would have set stays as it was, and the next read replaces it
 const refresh = async ($: EngineInterface) => {
   const sessionId = await $.session.id();
   const status = await $.process.run(["node", `${$.plugin.root}/scripts/status.mjs`], {
     stdin: JSON.stringify({ session_id: sessionId }),
   });
-  if (!status.stdout.trim()) return;
-  const { character, isRecorded } = JSON.parse(status.stdout) as PersonaStatus;
+  const [statusOutcome] = await Promise.allSettled([Promise.try(() => JSON.parse(status.stdout) as PersonaStatus)]);
+  if (statusOutcome.status === "rejected") return;
+  const { character, isRecorded } = statusOutcome.value;
   await update($, isCharacterRecordedAtom, () => isRecorded);
   const previous = await read($, characterAtom);
   await update($, characterAtom, () => character);
@@ -46,7 +48,8 @@ const refresh = async ($: EngineInterface) => {
   const spinner = await $.process.run(["node", `${$.plugin.root}/scripts/spinner.mjs`, character.name], {
     timeoutMs: SPINNER_TIMEOUT_MS,
   });
-  if (spinner.stdout.trim()) await update($, spinnerAtom, () => JSON.parse(spinner.stdout) as PersonaSpinner);
+  const [spinnerOutcome] = await Promise.allSettled([Promise.try(() => JSON.parse(spinner.stdout) as PersonaSpinner)]);
+  if (spinnerOutcome.status === "fulfilled") await update($, spinnerAtom, () => spinnerOutcome.value);
 };
 
 // Off the dispatch that asked, so neither the session's start nor a verb's answer waits on a node start
