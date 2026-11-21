@@ -1,15 +1,14 @@
 import { MimeType } from "#shared/models/file/MimeType";
-import { escapeXml } from "#shared/util/text/escapeXml";
 import { copyComputedStyles } from "#src/services/capture/copyComputedStyles";
 import { readFontFaceCss } from "#src/services/capture/readFontFaceCss";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { escapeText, InvalidOperationError, Operation } from "@esposter/shared";
 
 export const createElementSvg = async (element: HTMLElement) => {
   const { height, width } = element.getBoundingClientRect();
   if (!width || !height) throw new InvalidOperationError(Operation.Read, createElementSvg.name, "Canvas has no size");
   const clone = element.cloneNode(true) as HTMLElement;
   copyComputedStyles(element, clone);
-  const fontCss = escapeXml(await readFontFaceCss());
+  const fontCss = escapeText(await readFontFaceCss());
   const svgContent = new XMLSerializer().serializeToString(clone);
   const svg = new Blob(
     [

@@ -1,8 +1,8 @@
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 
 import { escapeHtml } from "#shared/util/text/escapeHtml";
-import { escapeXml } from "#shared/util/text/escapeXml";
 import { toMergeField } from "#src/services/emailEditor/toMergeField";
+import { escapeText } from "@esposter/shared";
 
 // The token is matched in the form the compiled html writes it: a text node escapes `&`, `<` and `>` and leaves quotes
 // Alone, so a column named "P&L" is `{{P&amp;L}}` and one named "O'Brien" is `{{O'Brien}}`
@@ -11,7 +11,7 @@ import { toMergeField } from "#src/services/emailEditor/toMergeField";
 export const substituteMergeFields = (html: string, row: Record<string, ColumnValue>) => {
   const valueMap = new Map(
     Object.entries(row).map(([columnName, value]) => [
-      escapeXml(toMergeField(columnName)),
+      escapeText(toMergeField(columnName)),
       escapeHtml(String(value ?? "")),
     ]),
   );
