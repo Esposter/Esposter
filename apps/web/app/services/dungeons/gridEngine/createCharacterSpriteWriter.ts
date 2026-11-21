@@ -26,7 +26,9 @@ export const createCharacterSpriteWriter = (
     if (!frames) return;
 
     walkingFrameState =
-      progress === 0 ? getTurnFrame(frames, walkingFrameState) : getStepFrame(frames, walkingFrameState, progress);
+      progress === 0
+        ? getTurnFrame(frames, walkingFrameState)
+        : getStepFrame(frames, walkingFrameState, progress, position);
     const pixel = getSpritePixelPosition({
       customOffset: { x: 0, y: 0 },
       displayHeight: sprite.displayHeight,
