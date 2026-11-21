@@ -35,16 +35,16 @@ by a flag no longer returns the site.
 
 ## The composables-and-services recipe
 
-Two greps, and the first decides.
+Two checks, and the first decides.
 
 ```bash
 # a composable called from a service: it is not at setup, so it is a service or a store lookup
 rg -n "\buse[A-Z]\w*\(" apps/web/app/services --glob '!*.test.*' | rg -v "use\w*Store\(|useNuxtApp\(|useRuntimeConfig\(|useRouter\(|useRoute\("
-# a composable with no reactive call, lifecycle hook or composable call in it
-for f in $(git ls-files apps/web/app/composables | rg -v "\.test\.|\.bench\." | rg "\.ts$"); do rg -q "\b(ref|shallowRef|computed|reactive|watch\w*|onMounted|onUnmounted|onScopeDispose|tryOnScopeDispose|use[A-Z]\w*)[<(]" "$f" || echo "$f"; done
 ```
 
-A hit is a finding when the function is not at setup and reads no setup-only context. The dungeons' store-reading helpers are services under `services/dungeons`, so a `use*` called from a state, an action or a Phaser callback is a hit, and the Tiptap `use*Extension` factories are named by their skill, so they are not one; A function that issues a write takes it from a store, so a callback outside setup shares the registry's queue the other call sites use. The second grep needs the generic bracket in its pattern: `useScript<typeof Desmos>(` is a composable call and a pattern ending at `(` misses it.
+The second check is the scan `pnpm ai:sweep:composable-without-reactivity`: a composable with no reactive call, lifecycle hook or composable call in it, one path per line.
+
+A hit is a finding when the function is not at setup and reads no setup-only context. The dungeons' store-reading helpers are services under `services/dungeons`, so a `use*` called from a state, an action or a Phaser callback is a hit, and the Tiptap `use*Extension` factories are named by their skill, so they are not one; A function that issues a write takes it from a store, so a callback outside setup shares the registry's queue the other call sites use.
 
 ## Exclusions
 

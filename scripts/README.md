@@ -38,10 +38,12 @@ pnpm ai:review
 pnpm ai:review:fix
 pnpm ai:review:settle
 pnpm ai:skills:extract
+pnpm ai:sweep:composable-without-reactivity
 pnpm ai:sweep:constant-scope
 pnpm ai:sweep:duplicate-code
 pnpm ai:sweep:duplicate-prose
 pnpm ai:sweep:file-organization
+pnpm ai:sweep:kit-design
 pnpm ai:sweep:ledger-coverage
 pnpm ai:sweep:repeated-list-items
 pnpm ai:sweep:shared-export-consumers
