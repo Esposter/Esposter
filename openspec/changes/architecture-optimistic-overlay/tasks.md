@@ -51,7 +51,7 @@ Ordered by dependency: the primitive first, then the schema the pilot needs, the
 
 ## 5. Retire the primitive's bookkeeping
 
-- [ ] 5.1 Delete the call-id map and its getter, the supersede function, the supersede write option, the stale argument threaded through reads and writes, the stale and silent branches in settlement, the stale fields in the operation context, and the stale outcome. Verified: a grep of the apps and packages sources for each name prints nothing, and the primitive's test file has no stale case.
+- [x] 5.1 Delete the call-id map and its getter, the supersede function, the supersede write option, the stale argument threaded through reads and writes, the stale and silent branches in settlement, the stale fields in the operation context, and the stale outcome. Verified: a grep of the apps and packages sources for each name prints nothing, and the primitive's test file has no stale case.
 
 ## 6. Enforcers
 
