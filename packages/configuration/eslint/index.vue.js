@@ -7,6 +7,7 @@ import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDat
 import restrictedFocusSyntaxes from "@esposter/configuration/eslint/restrictedFocusSyntaxes.js";
 import restrictedModuleSyntaxes from "@esposter/configuration/eslint/restrictedModuleSyntaxes.js";
 import restrictedSourceSyntaxes from "@esposter/configuration/eslint/restrictedSourceSyntaxes.js";
+import restrictedStoreCallSyntaxes from "@esposter/configuration/eslint/restrictedStoreCallSyntaxes.js";
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
 import restrictedTestSyntaxes from "@esposter/configuration/eslint/restrictedTestSyntaxes.js";
 import restrictedTrimSyntaxes from "@esposter/configuration/eslint/restrictedTrimSyntaxes.js";
@@ -58,6 +59,36 @@ export default withNuxt(plugins)
       ],
     },
   })
+  // A store is consumed the same way in `.ts` as in `.vue`, so every app `.ts` takes the dot-read ban. A store's own
+  // Source is the exception: it reads a nested store's refs by dot on purpose, so its override below keeps only the
+  // Method-call ban. Tests under `app/` are a consumer too, and the app test override carries the ban past the test one.
+  .append({
+    files: ["**/app/**/*.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...scriptSyntaxBans,
+        ...restrictedModuleSyntaxes,
+        ...restrictedSourceSyntaxes,
+        ...restrictedStoreSyntaxes,
+        ...restrictedWatchSyntaxes,
+      ],
+    },
+  })
+  .append({
+    files: ["**/app/store/**/*.ts"],
+    ignores: TEST_FILE_PATTERNS,
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...scriptSyntaxBans,
+        ...restrictedModuleSyntaxes,
+        ...restrictedSourceSyntaxes,
+        ...restrictedStoreCallSyntaxes,
+        ...restrictedWatchSyntaxes,
+      ],
+    },
+  })
   // A composable holds no fixed value of its own, so its override is the `.ts` one plus that ban — a suite or a bench
   // Under `composables/` keeps its fixtures, which the test override below still reaches.
   .append({
@@ -103,6 +134,7 @@ export default withNuxt(plugins)
         ...restrictedFocusSyntaxes,
         ...restrictedModuleSyntaxes,
         ...restrictedSourceSyntaxes,
+        ...restrictedStoreSyntaxes,
         ...restrictedWatchSyntaxes,
       ],
     },
@@ -117,6 +149,21 @@ export default withNuxt(plugins)
         "error",
         ...scriptSyntaxBans,
         ...restrictedModuleSyntaxes,
+        ...restrictedTestSyntaxes,
+        ...restrictedWatchSyntaxes,
+      ],
+    },
+  })
+  // An app test is a consumer, so it carries the store ban the test override above does not. Scoped to `app/` because a
+  // Server test names its own `keyframeStore` and `objectStore`, which are not Pinia stores.
+  .append({
+    files: ["**/app/**/*.test.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...scriptSyntaxBans,
+        ...restrictedModuleSyntaxes,
+        ...restrictedStoreSyntaxes,
         ...restrictedTestSyntaxes,
         ...restrictedWatchSyntaxes,
       ],

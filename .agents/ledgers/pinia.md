@@ -20,6 +20,13 @@ Store shape and the rules around a mutation: `storeToRefs`, store-to-store dot-a
 | `app/store/realtime`                                                                                                                                                                                                                                | 2026-11-22 · Haiku 5.5 | the socket connection's state                                                                                  |
 | `app/store/editor`, `app/store/richTextEditor`                                                                                                                                                                                                      | 2026-11-22 · Haiku 5.5 | two one-file folders that fit one row                                                                          |
 
+## Rules
+
+Enforced rather than swept, so not in the units above:
+
+- A store read by dot outside its own source — `packages/configuration/eslint/restrictedStoreSyntaxes.js`.
+- A store's own source calling a nested store's method by dot — `packages/configuration/eslint/restrictedStoreCallSyntaxes.js`.
+
 ## Exclusions
 
 - Cursor-pagination mechanics — the `pagination` ledger's question, over the same files.
