@@ -12,13 +12,13 @@ import { Image, useTween } from "vue-phaserjs";
 interface Props {
   barPercentage: number;
   imagePosition: ImagePosition;
-  isSkipAnimations?: boolean | undefined;
+  isSkipAnimations?: true | undefined;
   scaleY: number;
   type: BarType;
   width: number;
 }
 
-const { barPercentage, isSkipAnimations = false, width } = defineProps<Props>();
+const { barPercentage, isSkipAnimations, width } = defineProps<Props>();
 const emit = defineEmits<{
   "complete:display-width": [];
   "start:display-width": [tween: Tweens.Tween];

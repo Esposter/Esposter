@@ -9,11 +9,9 @@ import { useExperienceBarStore } from "#src/store/dungeons/UI/experienceBar";
 interface Props {
   barPercentage: number;
   position: Position;
-  scaleY?: number | undefined;
-  width?: number | undefined;
 }
 
-const { barPercentage: baseBarPercentage, scaleY = 0.4, width = BAR_WIDTH } = defineProps<Props>();
+const { barPercentage: baseBarPercentage } = defineProps<Props>();
 const emit = defineEmits<{ "level-up": [onComplete: () => void] }>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);
@@ -31,14 +29,14 @@ const isAnimatingLevelUp = ref(false);
   <DungeonsUIBarContainer
     :type="BarType.Experience"
     :position
-    :width
-    :scale-y
+    :width="BAR_WIDTH"
+    :scale-y="0.4"
     :bar-percentage="isAnimatingLevelUp && !(isSkipAnimations || isSettingsSkipAnimations) ? 0 : baseBarPercentage"
-    :is-skip-animations="isSkipAnimations && !isAnimatingLevelUp"
+    :is-skip-animations="(isSkipAnimations && !isAnimatingLevelUp) || undefined"
     @start:display-width="isAnimating = true"
     @update:display-width="
       (value) => {
-        if (isAnimatingLevelUp || value < width) return;
+        if (isAnimatingLevelUp || value < BAR_WIDTH) return;
 
         isAnimatingLevelUp = true;
         emit('level-up', () => {

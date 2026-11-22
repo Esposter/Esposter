@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { ImagePosition } from "#src/models/dungeons/ImagePosition";
 import type { BarType } from "#src/models/dungeons/UI/bar/BarType";
 import type { Position } from "grid-engine-headless";
 import type { Tweens } from "phaser";
@@ -10,28 +9,21 @@ import { Container } from "vue-phaserjs";
 
 interface Props {
   barPercentage: number;
-  isSkipAnimations?: boolean | undefined;
+  isSkipAnimations?: true | undefined;
   position: Position;
   scaleY?: number | undefined;
   type: BarType;
   width?: number | undefined;
 }
 
-const {
-  barPercentage: baseBarPercentage,
-  isSkipAnimations = false,
-  position,
-  scaleY = 0.7,
-  width = BAR_WIDTH,
-} = defineProps<Props>();
+const { barPercentage: baseBarPercentage, position, scaleY = 0.7, width = BAR_WIDTH } = defineProps<Props>();
 const emit = defineEmits<{
   "complete:display-width": [];
   "start:display-width": [tween: Tweens.Tween];
   "update:display-width": [value: number];
 }>();
 // Origin at the middle-left of the health caps so it spans the game object's full width.
-const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePosition, "originX" | "originY">;
-const imagePosition = computed(() => ({ ...position, ...imageOrigin }));
+const imagePosition = computed(() => ({ ...position, originX: 0, originY: 0.5 }));
 </script>
 
 <template>
