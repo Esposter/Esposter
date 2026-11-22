@@ -11,5 +11,5 @@ export const parseMachineJson = <TValue = unknown>(
   json: string,
   reviver?: (key: string, value: unknown, context: { source?: string }) => unknown,
 ): TValue =>
-  // oxlint-disable-next-line no-restricted-properties -- the one sanctioned plain parse for this tree
+  // oxlint-disable-next-line no-restricted-properties, typescript/no-unsafe-type-assertion -- the one sanctioned plain parse for this tree; the lib's JSON.parse reviver omits the source-text argument the runtime passes third
   JSON.parse(json, reviver as Parameters<typeof JSON.parse>[1]);
