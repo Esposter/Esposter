@@ -66,8 +66,8 @@ export const executeSlashCommand = async (
       message = TABLE_FLIP_FACE;
       break;
     case SlashCommandType.Topic: {
-      // An omitted text clears the topic, so it is sent as the column's empty value: a missing topic leaves it unchanged
-      updateRoom({ id: roomId, topic: command.parameterValues.text ?? "" });
+      // An empty text clears the topic, sent as the column's empty value: a missing topic would leave it unchanged
+      updateRoom({ id: roomId, topic: command.parameterValues.text });
       break;
     }
     case SlashCommandType.Unflip:

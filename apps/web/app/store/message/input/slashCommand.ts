@@ -4,7 +4,7 @@ import type { SlashCommandParameterError } from "#src/models/message/slashComman
 import { parseTextAndParameters } from "#src/services/message/slashCommands/parseTextAndParameters";
 import { useInputStore } from "#src/store/message/input/index";
 import { useRoomStore } from "#src/store/message/room/index";
-import { ID_SEPARATOR, normalizeString, takeOne, toRawDeep } from "@esposter/shared";
+import { ID_SEPARATOR, normalizeString, toRawDeep } from "@esposter/shared";
 
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {
   const roomStore = useRoomStore();
@@ -60,9 +60,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     if (remainingText && parameters.length > 0) {
       const parsedTextAndParameters = parseTextAndParameters(remainingText, parameters);
       parameterValues.value = Object.fromEntries(
-        parameters
-          .filter(({ name }) => Object.hasOwn(parsedTextAndParameters.parameterValues, name))
-          .map(({ name }) => [name, takeOne(parsedTextAndParameters.parameterValues, name)]),
+        parameters.map(({ name }) => [name, parsedTextAndParameters.parameterValues[name] ?? ""]),
       );
       trailingMessage.value = parsedTextAndParameters.trailingMessage;
     } else {

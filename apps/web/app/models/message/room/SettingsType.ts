@@ -13,3 +13,5 @@ export const SettingsType = {
   WordFilter: "Word Filter",
 } as const;
 export type SettingsType = (typeof SettingsType)[keyof typeof SettingsType];
+
+export const SettingsTypes = Object.values(SettingsType);

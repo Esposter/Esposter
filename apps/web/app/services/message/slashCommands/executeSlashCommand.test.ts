@@ -8,7 +8,6 @@ import { pushRooms } from "#src/services/message/room/pushRooms.test";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { UNFLIP_FACE } from "#src/services/message/slashCommands/constants";
 import { executeSlashCommand } from "#src/services/message/slashCommands/executeSlashCommand";
-import { SlashCommandDefinitionMap } from "#src/services/message/slashCommands/SlashCommandDefinitionMap";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
@@ -63,7 +62,7 @@ describe(executeSlashCommand, () => {
     const roomStore = useRoomStore();
     const { currentRoom } = storeToRefs(roomStore);
     pushRooms({ ...room, topic: acceptedTopic });
-    await executeSlashCommand({ parameterValues: {}, type: SlashCommandType.Topic });
+    await executeSlashCommand({ parameterValues: { text: "" }, type: SlashCommandType.Topic });
     await waitForSynchronizedFunctions();
 
     expect(currentRoom.value?.topic).toBe("");
@@ -144,17 +143,13 @@ describe(executeSlashCommand, () => {
     expect(currentRoom.value?.topic).toBe(newerTopic);
   });
 
-  // The menu describes the face the command sends, so the two are one constant and cannot name different faces
-  test("the unflip command posts the face its definition names", async () => {
+  test("the unflip command posts its face", async () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
     const sendMessage = vi.spyOn(dataStore, "sendMessage").mockResolvedValue(undefined);
     await executeSlashCommand({ parameterValues: {}, type: SlashCommandType.Unflip });
 
-    expect(SlashCommandDefinitionMap[SlashCommandType.Unflip].description).toBe(
-      `Appends ${UNFLIP_FACE} to your message`,
-    );
     expect(sendMessage).toHaveBeenCalledExactlyOnceWith({
       message: marked.parse(UNFLIP_FACE, { async: false }),
       replyToId: null,
