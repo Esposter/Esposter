@@ -423,6 +423,17 @@ call) sits inside a settlement, `Promise.allSettled` or `getResultAsync(...).mat
 not on that path, since a throw there is a bug rather than a settlement gap. A shared wrapper's claim is checked at
 its call sites, so each `runDetached(` is a candidate too: `git grep -n 'runDetached(' -- packages`.
 
+The **awaited-hook** half is a hook registered on a hook map, which the store awaiting the map runs as part of its
+own flow: an awaited call in its body with no terminator rejects that flow, as the Create hook did when a failed
+attachment read kept an incoming message out of the list.
+
+```bash
+git grep -n -P '\.register\(\s*async' -- apps packages scripts
+```
+
+Read each body's awaits. A hook whose rejection is propagated on purpose to an awaited runner
+(`ResourceContentHookMap.Reload` and `Adopt`, run by `reloadResourceContent`) is terminated by that runner's caller.
+
 ## Exclusions
 
 - `.isOk()` / `.isErr()` call sites are a lint finding, not a sweep finding — they fail on the line that writes them.
@@ -435,3 +446,5 @@ its call sites, so each `runDetached(` is a candidate too: `git grep -n 'runDeta
   finding, raised rather than swept here.
 - `requireAuthData`, where the whole point is that the auth api's own sentence reaches the user — the wrapper
   would prefix it with an operation and an entity name and bury it. The reason is written at the call site.
+- The plugins' `on(` hooks in `packages/genshin-mods` and `packages/genshin-persona/mod`: the engine's dispatch
+  receives their rejection, and they are read under the `claude-mods` ledger.
