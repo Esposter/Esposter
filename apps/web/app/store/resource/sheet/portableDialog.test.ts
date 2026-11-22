@@ -17,9 +17,8 @@ describe(useSheetPortableDialogStore, () => {
 
     setupWithDataSource();
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
+    const { currentResourceId, resource } = storeToRefs(resourceStore);
     const { applyResource } = resourceStore;
-    const { currentResourceId } = storeToRefs(resourceStore);
     const resourceId = currentResourceId.value;
     const sheetResource = resource.value;
     assert.exists(sheetResource);
@@ -43,9 +42,8 @@ describe(useSheetPortableDialogStore, () => {
 
     setupWithDataSource();
     const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
+    const { currentResourceId, resource } = storeToRefs(resourceStore);
     const { applyResource } = resourceStore;
-    const { currentResourceId } = storeToRefs(resourceStore);
     const resourceId = currentResourceId.value;
     const sheetResource = resource.value;
     assert.exists(sheetResource);
