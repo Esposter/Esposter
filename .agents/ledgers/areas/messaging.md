@@ -19,7 +19,7 @@
 - `apps/web/app/components/Message/Model/User`
 - `apps/web/app/components/Message/Content/Call/Audio`, `apps/web/app/components/Message/Content/Call/Camera`, `apps/web/app/components/Message/Content/Call/Control`, `apps/web/app/components/Message/Content/Call/Device`, `apps/web/app/components/Message/Content/Call/JoinNotice`, `apps/web/app/components/Message/Content/Call/Panel`, `apps/web/app/components/Message/Content/Call/Participant`, `apps/web/app/components/Message/Content/Call/PictureInPicture`, `apps/web/app/components/Message/Content/Call/PreJoin`, `apps/web/app/components/Message/Content/Call/ScreenShare`, `apps/web/app/components/Message/Content/Call/Video`, `apps/web/app/components/Message/Content/Call/VirtualBackground`
 - `apps/web/app/components/Message/Content/Call` — `Button.vue`, `FeatureCard.vue`, `InviteCard.vue`, `JoinForm.vue`, `Stage.vue`, `StartButton.vue`, `View.vue`, `Waiting.vue`
-- `apps/web/app/components/Message/Content/Header`, `apps/web/app/components/Message/Content/Show`
+- `apps/web/app/components/Message/Content/Header`
 - `apps/web/app/components/Message/Content` — `Index.vue`, `PushPermissionAlert.vue`, `RoomWelcome.vue`
 - `apps/web/app/components/Message/DraftsAndSent`
 - `apps/web/app/components/Message/RightSideBar`, `apps/web/app/components/Message/Layout.client.vue`
