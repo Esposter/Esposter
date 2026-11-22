@@ -17,6 +17,7 @@ import { postRouter } from "#server/trpc/routers/post";
 import { PostSortType } from "#shared/models/post/PostSortType";
 import { postTable } from "#src/services/post/overlay/constants";
 import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry";
+import { getSetPostEntry } from "#src/services/post/overlay/getSetPostEntry";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -327,6 +328,33 @@ describe("postRouter", () => {
     expect(newReply.depth).toBe(2);
     expect(post.commentCount).toBe(2);
     expect(comment.commentCount).toBe(1);
+  });
+
+  // The reply's entry is the one the store issues. The counters it moves sit on the posts above it, which the entry reaches
+  // Through its parent's chain, so a write to any of them queues behind the reply
+  test("the reply entry covers every post above it that its create counts", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const { comment: newComment } = await postCaller.createComment({ description, id: v7(), parentId: newPost.id });
+    const replyId = v7();
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) =>
+        createCallerFactory(postRouter)(context).createComment({ description, id: replyId, parentId: newComment.id }),
+      context: mockContext,
+      entry: getSetPostEntry({
+        ...newComment,
+        ancestorIds: [...newComment.ancestorIds, newComment.id],
+        depth: newComment.depth + 1,
+        id: replyId,
+        parentId: newComment.id,
+      }),
+      path: "createComment",
+      tables: [postTable],
+    });
+
+    expect(named).toHaveLength(3);
+    expect(uncovered).toStrictEqual([]);
   });
 
   // The delete cascades down the parentId chain, so the rows it removes are gone before anything could count
