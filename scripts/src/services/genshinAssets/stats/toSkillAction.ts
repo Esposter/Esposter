@@ -1,6 +1,7 @@
 import type { SkillAction } from "#src/models/genshinAssets/stats/SkillAction";
 
 // A talent config's action read in either of its two shapes, or none where it is not a skill action
+// The dump's scrambled keys: MONCLPCEMJG is talentType, CCDDFPKKMDK is talentIndex and PLLGLGGOCHL is extraLevel
 export const toSkillAction = (action: Record<string, unknown>): SkillAction | undefined => {
   if (
     action.MONCLPCEMJG === "AvatarSkill" &&
