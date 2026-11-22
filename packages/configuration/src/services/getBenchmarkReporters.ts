@@ -1,3 +1,5 @@
+import { checkIsBenchmarkSmokeRun } from "#src/services/checkIsBenchmarkSmokeRun";
+
 // Vitest's subcommand is the first positional argument, so it sits behind node and the CLI entry point.
 const VITEST_SUBCOMMAND_INDEX = 2;
 // Vitest 5 reports a benchmark as an ordinary test result, so there is no bench-only reporter slot: the
@@ -6,7 +8,12 @@ const VITEST_SUBCOMMAND_INDEX = 2;
 // Verb read at the subcommand position rather than anywhere in argv: `vitest run bench` and `vitest --project
 // Bench` carry the same word as a filter, and matching those hands an ordinary run the reporter that rewrites
 // Every `*.bench.md` it passes plus an hour-long timeout. `undefined` leaves Vitest's own default list in place.
-// Referenced as a path string rather than an import: configuration builds before shared-node.
+// Referenced as a path string rather than an import: configuration builds before shared-node. A smoke run keeps only
+// The default list, since its one-sample results are not ones to commit.
 export const getBenchmarkReporters = (): string[] | undefined =>
   // oxlint-disable-next-line no-restricted-properties -- Vitest parses its own command line; this reads its subcommand
-  process.argv[VITEST_SUBCOMMAND_INDEX] === "bench" ? ["default", "@esposter/shared-node/reporter"] : undefined;
+  process.argv[VITEST_SUBCOMMAND_INDEX] === "bench"
+    ? checkIsBenchmarkSmokeRun()
+      ? ["default"]
+      : ["default", "@esposter/shared-node/reporter"]
+    : undefined;

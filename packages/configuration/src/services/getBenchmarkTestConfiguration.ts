@@ -1,5 +1,6 @@
 import type { ViteUserConfig } from "vitest/config";
 
+import { checkIsBenchmarkSmokeRun } from "#src/services/checkIsBenchmarkSmokeRun";
 import { getBenchmarkReporters } from "#src/services/getBenchmarkReporters";
 
 // A benchmark is an ordinary test to Vitest, so it is held to the test timeout — and a bench is the one test meant
@@ -7,6 +8,9 @@ import { getBenchmarkReporters } from "#src/services/getBenchmarkReporters";
 // Default would fail those on the clock and report it as a failing test rather than as a bench that ran. An hour
 // Is not a budget anything is expected to reach, it is a ceiling that only a hang can hit.
 const BENCHMARK_TIMEOUT_MS = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+// The provider a smoke run executes every bench through, once each. Referenced as a path string for the same reason the
+// Reporter is: configuration builds before shared-node
+const BENCHMARK_SMOKE_PROVIDER = "@esposter/shared-node/bench-smoke-provider";
 // The bench wiring on its own, spread last by `getVitestConfiguration` over the member's own test options, whose
 // Timeouts would otherwise win over the one a bench needs. Outside a bench run it spreads nothing: a present
 // `reporters: undefined` is an empty reporter list rather than an absent setting, and a test run that reports
@@ -28,7 +32,10 @@ export const getBenchmarkTestConfiguration = (): NonNullable<ViteUserConfig["tes
         // Absolute count that every large-N bench here will trip. The plain getters that remain are uniform
         // Across runs, and the gate is the diff between two committed artifacts, not an absolute claim about
         // The shipped bundle (which has collapsed those imports into direct references and pays neither).
-        benchmark: { suppressExportGetterWarnings: true },
+        benchmark: {
+          ...(checkIsBenchmarkSmokeRun() ? { provider: BENCHMARK_SMOKE_PROVIDER } : {}),
+          suppressExportGetterWarnings: true,
+        },
         hookTimeout: BENCHMARK_TIMEOUT_MS,
         reporters,
         testTimeout: BENCHMARK_TIMEOUT_MS,

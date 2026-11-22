@@ -65,3 +65,13 @@ The Markdown report SHALL escape the pipe delimiters in a benchmark name so the 
 - **GIVEN** a benchmark whose name contains a pipe character
 - **WHEN** the Markdown report is rendered
 - **THEN** the pipe is escaped and the name stays in its cell
+
+### Requirement: A smoke run executes every bench once and writes no report
+
+A bench run started as a smoke run SHALL execute each registered bench once with no warmup, and SHALL leave every committed report as it was.
+
+#### Scenario: reports through Vitest's own reporter alone on a smoke run
+
+- **GIVEN** a bench run with the smoke switch set
+- **WHEN** the run's reporters are chosen
+- **THEN** only Vitest's own reporter is added, so no report file is written

@@ -34,6 +34,10 @@
       "source": "./src/services/constants.ts",
       "default": "./dist/bench.js"
     },
+    "./bench-smoke-provider": {
+      "source": "./src/services/benchmarkSmokeProvider.ts",
+      "default": "./dist/bench-smoke-provider.js"
+    },
     "./cache": {
       "source": "./src/cache.ts",
       "default": "./dist/cache.js"
@@ -59,6 +63,7 @@
   "publishConfig": {
     "exports": {
       "./bench": "./dist/bench.js",
+      "./bench-smoke-provider": "./dist/bench-smoke-provider.js",
       "./cache": "./dist/cache.js",
       "./child-process": "./dist/child-process.js",
       "./find-repository-root": "./dist/find-repository-root.js",
@@ -77,6 +82,7 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
+    "tinybench": "catalog:",
     "uuid": "catalog:"
   },
   "devDependencies": {

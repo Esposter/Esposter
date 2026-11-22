@@ -621,6 +621,9 @@ catalogs:
     three-mesh-bvh:
       specifier: ^0.9.18
       version: 0.9.18
+    tinybench:
+      specifier: ^6.2.4
+      version: 6.2.4
     tsdown:
       specifier: ^0.23.7
       version: 0.23.7
@@ -1842,6 +1845,9 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
+      tinybench:
+        specifier: 'catalog:'
+        version: 6.2.4
       uuid:
         specifier: 'catalog:'
         version: 14.0.3

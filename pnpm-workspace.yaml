@@ -194,6 +194,7 @@ catalog:
   temporal-polyfill: ^1.0.8
   three: ^0.187.0
   three-mesh-bvh: ^0.9.18
+  tinybench: ^6.2.4
   tsdown: ^0.23.7
   tsrs: ^7.1.0-beta.tsrs4
   type-fest: ^6.0.3

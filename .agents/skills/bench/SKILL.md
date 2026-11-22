@@ -5,7 +5,7 @@ description: Apply when adding or editing benchmarks, timing how long anything t
 
 # Benchmarking Conventions
 
-A benchmark is a test. `bench` comes from the test context, each registration is a value, and one `bench.compare(...)` runs the group and is what the report reads — so a bench file carries no bench-only API beyond that fixture, and there is no separate bench runner, bin, or direct `tinybench` dependency (tinybench is underneath, reached through Vitest).
+A benchmark is a test. `bench` comes from the test context, each registration is a value, and one `bench.compare(...)` runs the group and is what the report reads — so a bench file carries no bench-only API beyond that fixture, and there is no separate bench runner, bin, or direct `tinybench` dependency in a bench (tinybench is underneath, reached through Vitest; the smoke provider in `@esposter/shared-node` is the one module that constructs it).
 
 A reporter writes each bench file's results to colocated `*.bench.{json,md}` you commit and diff — the offline gate; how a run is started from a package, from the root and on CI is `references/running-benchmarks.md`.
 

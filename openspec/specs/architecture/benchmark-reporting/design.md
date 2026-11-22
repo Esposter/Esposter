@@ -36,24 +36,33 @@ The environment block comes from `readBenchmarkEnvironment`. It holds the commit
 
 `getBenchmarkReporters` in `packages/configuration` adds the reporter's path string to Vitest's reporters, and only when the Vitest subcommand is `bench`. The path is a string rather than an import because `configuration` builds before this package. `default` comes first, because naming reporters replaces Vitest's default list, and the default is what prints the terminal table.
 
+## Smoke runs
+
+A run whose numbers nobody reads, which is every CI run, only needs to prove that each bench file still loads, builds its fixtures and runs its tasks. `pnpm bench:ci` sets `BENCHMARK_SMOKE_RUN`, and `getBenchmarkTestConfiguration` then hands Vitest the smoke provider from `@esposter/shared-node/bench-smoke-provider`. The provider runs each test's benches through tinybench as Vitest's own provider does, with one measured iteration, no warmup and no time budget spread over whatever the file passed, so a heavier group's own counts cannot bring the minutes back. A task that throws fails its test. The same switch keeps only Vitest's default reporter, so a smoke run started on a developer's machine cannot write its one-sample results over the committed ones.
+
+Vitest has no run-once mode of its own, and its provider option is the one place that sees every bench, so the cap lives there rather than in each file's options. Go's `-benchtime=1x` and Criterion's test mode under `cargo test` are the same idea in other ecosystems.
+
 ## Notes
 
-- The reports are committed and read in review, not gated in CI. The Bench workflow in `.github/workflows/Bench.yaml` runs every bench on each push to prove each still executes, and it commits nothing. It skips `main`, which only fast-forwards to a tip `ai/queue` has already benched. Thresholds are the `bench` skill's to set.
+- The reports are committed and read in review, not gated in CI. The Bench workflow in `.github/workflows/Bench.yaml` runs every bench on each push as a smoke run, to prove each still executes, and it commits nothing. It skips `main`, which only fast-forwards to a tip `ai/queue` has already benched. Thresholds are the `bench` skill's to set.
 - Every bench file must commit its report pair. `scripts/src/workspace/benchArtifacts.test.ts` fails a bench that does not, and a file that only declares `describe.todo` beside shared code is exempt.
 - The package's sizes are in the [bundle sizes](../bundle-sizes/design.md) record, which lists the bench and reporter entrypoints, since the reporter is the one that a Vitest run loads, and each declaration file the package emits.
 - A committed number is only comparable within one host, which is why the environment block travels with it.
 
 ## Key files
 
-| File                                                                 | Role                                                                   |
-| -------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `packages/shared-node/src/services/BenchmarkMarkdownReporter.ts`     | the reporter Vitest loads, exported by default at the reporter subpath |
-| `packages/shared-node/src/services/buildBenchmarkFileReport.ts`      | turns one file's tests into groups of tasks                            |
-| `packages/shared-node/src/services/buildBenchmarkFileReport.test.ts` | the tests whose titles are the projection scenarios                    |
-| `packages/shared-node/src/services/formatBenchmarkMarkdown.ts`       | renders the report as Markdown tables                                  |
-| `packages/shared-node/src/services/formatBenchmarkMarkdown.test.ts`  | the tests whose titles are the rendering scenarios                     |
-| `packages/shared-node/src/services/writeBenchmarkReport.ts`          | writes the JSON and Markdown reports beside the source                 |
-| `packages/shared-node/src/services/readBenchmarkEnvironment.ts`      | records the machine and checkout a run used                            |
-| `packages/shared-node/src/services/constants.ts`                     | the run options and the baseline task's name                           |
-| `packages/configuration/src/services/getBenchmarkReporters.ts`       | adds the reporter only when Vitest runs bench                          |
-| `scripts/src/workspace/benchArtifacts.test.ts`                       | every bench must commit its report pair                                |
+| File                                                                   | Role                                                                   |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `packages/shared-node/src/services/BenchmarkMarkdownReporter.ts`       | the reporter Vitest loads, exported by default at the reporter subpath |
+| `packages/shared-node/src/services/buildBenchmarkFileReport.ts`        | turns one file's tests into groups of tasks                            |
+| `packages/shared-node/src/services/buildBenchmarkFileReport.test.ts`   | the tests whose titles are the projection scenarios                    |
+| `packages/shared-node/src/services/formatBenchmarkMarkdown.ts`         | renders the report as Markdown tables                                  |
+| `packages/shared-node/src/services/formatBenchmarkMarkdown.test.ts`    | the tests whose titles are the rendering scenarios                     |
+| `packages/shared-node/src/services/writeBenchmarkReport.ts`            | writes the JSON and Markdown reports beside the source                 |
+| `packages/shared-node/src/services/readBenchmarkEnvironment.ts`        | records the machine and checkout a run used                            |
+| `packages/shared-node/src/services/constants.ts`                       | the run options and the baseline task's name                           |
+| `packages/configuration/src/services/getBenchmarkReporters.ts`         | adds the reporter only when Vitest runs bench                          |
+| `packages/configuration/src/services/checkIsBenchmarkSmokeRun.ts`      | whether the run is a smoke run, read from `BENCHMARK_SMOKE_RUN`        |
+| `packages/configuration/src/services/getBenchmarkTestConfiguration.ts` | selects the smoke provider on a smoke run                              |
+| `packages/shared-node/src/services/benchmarkSmokeProvider.ts`          | runs every bench of a smoke run once                                   |
+| `scripts/src/workspace/benchArtifacts.test.ts`                         | every bench must commit its report pair                                |

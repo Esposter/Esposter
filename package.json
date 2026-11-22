@@ -84,7 +84,7 @@
     "ai:worktree:create": "pnpm -C scripts ai:worktree:create",
     "ai:worktree:remove": "pnpm -C scripts ai:worktree:remove",
     "bench": "pnpm -r --workspace-concurrency=1 --if-present bench",
-    "bench:ci": "vitest bench --run",
+    "bench:ci": "BENCHMARK_SMOKE_RUN=true vitest bench --run",
     "bench:types": "pnpm -C scripts bench:types",
     "build": "pnpm --filter \"@esposter/web...\" build",
     "bundle-sizes:gen": "pnpm -C scripts bundle-sizes:gen",
