@@ -50,8 +50,8 @@ describe(recordTouches, () => {
     };
     const emptySlotFor = createSlotFor(shallowRef<HeldTables>({}));
     const populatedSlotFor = createSlotFor(shallowRef<HeldTables>({}));
-    populatedSlotFor(table).arrive({ deletedAt: null, id: "a", name, version: 1 });
-    populatedSlotFor(table).arrive({ deletedAt: null, id: "c", name, version: 3 });
+    populatedSlotFor(table).arrive({ deletedAt: null, id: "a", name, version: 0 });
+    populatedSlotFor(table).arrive({ deletedAt: null, id: "c", name, version: 0 });
 
     expect(recordTouches(populatedSlotFor, entry)).toStrictEqual(recordTouches(emptySlotFor, entry));
   });
