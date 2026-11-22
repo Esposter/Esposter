@@ -7,7 +7,7 @@ export const towersTopic: ReferenceTopic = {
   investigations: [
     {
       method:
-        "genshin:assets fit login with fitSectionShades on the towers, then compare at every hour; compare with the door and then the towers casting no shadow",
+        "genshin:assets fit login with fitSectionShades (a fit tool no commit of this repo holds) on the towers, then compare at every hour; compare with the door and then the towers casting no shadow",
       outcome: InvestigationOutcome.Rejected,
       result:
         "Each tower section shaded by the colour its mesh paints its sides there, as a share of every tower's mean, scores the phone's door frame 0.008 worse and the day and dusk worse too: the gilding reads as bright orange bands where the game's gold is a metal, dark under the diffuse light and bright only in its highlight. The door casts no shadow: at dusk the sun stands low behind it and laid its shadow down the walkway to the camera, where the recording's walkway is lit, and without it the phone's door frame and the dusk score better. A tower's shadow still lies over the wings in front of the door where the recording's are lit, yet the towers drawn without shadows score the door frames and the dusk worse, so it is the dusk sun's direction or that tower's place that is off, not its shadow",

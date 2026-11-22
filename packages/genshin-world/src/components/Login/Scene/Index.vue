@@ -24,6 +24,7 @@ import {
   LOGIN_BRIDGE_NORMAL_DETAIL_WAVELENGTH,
   LOGIN_BRIDGE_SURFACE_DETAIL,
   LOGIN_DOOR_LIGHT_MS,
+  LOGIN_NO_EXPORTED_GROUPS,
   LOGIN_SCENE_EXPORT_COMPONENT,
 } from "#src/services/login/constants";
 import { applyLoginDoorLift } from "#src/services/login/door/applyLoginDoorLift";
@@ -37,6 +38,7 @@ import {
   LOGIN_DOOR_SLIT_STRENGTH,
   LOGIN_DOOR_SLIT_WIDTH,
   LOGIN_DOOR_SURFACE_DETAIL,
+  LOGIN_NO_LIFT,
 } from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
 import { createLoginDoorRelief } from "#src/services/login/door/createLoginDoorRelief";
@@ -496,7 +498,7 @@ onRender(({ delta: frameDelta }) => {
   // The exported parts ride the glide with ours, off by whatever offset a witness tool sets them: their towers and
   // Bridges the row and their walkway the walkway's copies, assembling as ours does. Their door rides ours, its copies
   // At the offset too
-  for (const group of exportedParts.value?.children ?? []) {
+  for (const group of exportedParts.value?.children ?? LOGIN_NO_EXPORTED_GROUPS) {
     const offset: [number, number, number] | undefined = group.userData.offset;
     const [x = 0, y = 0, z = 0] = offset ?? [];
     group.position.set(x, y, z);
@@ -521,9 +523,13 @@ onRender(({ delta: frameDelta }) => {
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
   isDoorRising.value = isDoorDue && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
   riseMs = isDoorRising.value ? riseMs + delta * 1000 : 0;
-  if (!isDoorFormed)
-    for (const [index, piece] of doorPieces.entries())
-      applyLoginDoorLift(door, piece, door.pieces[index]?.lift ?? [], riseMs);
+  if (!isDoorFormed) {
+    let pieceIndex = 0;
+    for (const piece of doorPieces) {
+      applyLoginDoorLift(door, piece, door.pieces[pieceIndex]?.lift ?? LOGIN_NO_LIFT, riseMs);
+      pieceIndex++;
+    }
+  }
   // The door's own interface waits on the door, once its last piece has risen into place
   if (!isDoorFormed && isDoorRising.value && riseMs >= doorLiftMs) {
     isDoorFormed = true;
