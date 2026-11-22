@@ -1,21 +1,9 @@
-import CloudflareLocationHint from "#src/cloudflare/constants/CloudflareLocationHint";
-import {
-  CLOUDFLARE_ACCOUNT_ID,
-  CloudflareAssetType,
-  CloudflareDatabaseRole,
-  CloudflareEnvironment,
-  getCloudflareResourceName,
-} from "@esposter/db-schema";
-import * as cloudflare from "@pulumi/cloudflare";
+import type * as cloudflare from "@pulumi/cloudflare";
 
-const databaseName = getCloudflareResourceName(
+import { createD1Database } from "#src/cloudflare/services/createD1Database";
+import { CloudflareDatabaseRole, CloudflareEnvironment } from "@esposter/db-schema";
+
+export const devD1EsposterCore: cloudflare.D1Database = createD1Database(
   CloudflareEnvironment.Development,
-  CloudflareAssetType.D1Database,
   CloudflareDatabaseRole.Core,
-);
-
-export const devD1EsposterCore: cloudflare.D1Database = new cloudflare.D1Database(
-  databaseName,
-  { accountId: CLOUDFLARE_ACCOUNT_ID, name: databaseName, primaryLocationHint: CloudflareLocationHint },
-  { protect: true },
 );
