@@ -610,8 +610,8 @@ catalogs:
       specifier: ^0.35.5
       version: 0.35.5
     superjson:
-      specifier: ^2.2.6
-      version: 2.2.6
+      specifier: ^2.2.7
+      version: 2.2.7
     temporal-polyfill:
       specifier: ^1.0.8
       version: 1.0.8
@@ -1077,7 +1077,7 @@ importers:
         version: 9.3.20
       superjson:
         specifier: 'catalog:'
-        version: 2.2.6
+        version: 2.2.7
       survey-expression:
         specifier: workspace:*
         version: link:../../packages/survey-expression
@@ -1941,7 +1941,7 @@ importers:
         version: 26.6.6
       superjson:
         specifier: 'catalog:'
-        version: 2.2.6
+        version: 2.2.7
       trpc-nuxt-module:
         specifier: workspace:*
         version: link:../trpc-nuxt-module
@@ -2011,7 +2011,7 @@ importers:
         version: 21.0.4
       superjson:
         specifier: 'catalog:'
-        version: 2.2.6
+        version: 2.2.7
       tsdown:
         specifier: 'catalog:'
         version: 0.23.7(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.7)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@7.1.0-beta.tsrs4)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
@@ -11126,8 +11126,8 @@ packages:
     resolution: {integrity: sha512-WHkws2ZflZe41zj6AolvvmaTrWds/VuyeYr9iPVv/oQeaIoVxMKaushfFWpOGDT+GuBrM/sVqF8KUCYQlSSTdQ==}
     engines: {node: '>=18'}
 
-  superjson@2.2.6:
-    resolution: {integrity: sha512-H+ue8Zo4vJmV2nRjpx86P35lzwDT3nItnIsocgumgr0hHMQ+ZGq5vrERg9kJBo5AWGmxZDhzDo+WVIJqkB0cGA==}
+  superjson@2.2.7:
+    resolution: {integrity: sha512-QK/H+tosbovdRvIuGqcWn8g3IxPZY7B8ZPowCAmWsV8bPvCk+bGMlZt90C4AxZjnzMO2WBRDacr1+0i1AOy/5g==}
     engines: {node: '>=16'}
 
   supports-color@10.2.2:
@@ -22020,7 +22020,7 @@ snapshots:
       make-asynchronous: 1.1.0
       time-span: 5.1.0
 
-  superjson@2.2.6:
+  superjson@2.2.7:
     dependencies:
       copy-anything: 4.1.5
 
