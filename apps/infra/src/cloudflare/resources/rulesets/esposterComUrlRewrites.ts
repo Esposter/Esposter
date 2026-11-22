@@ -3,7 +3,7 @@ import AssetsEsposterComHostname from "#src/cloudflare/constants/AssetsEsposterC
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import * as cloudflare from "@pulumi/cloudflare";
 
-// A public object's stable url is `https://assets.<env>.esposter.com/<bucket>/<key>`, and the web Worker serves the public
+// A public object's stable url is `https://assets.<env>.esposter.com/<bucket>/<key>`, and the Worker serves the public
 // Buckets under its `/assets/` route, so each assets host's path is rewritten onto that route before the Worker sees it
 const assetsHosts = [AssetsEsposterComHostname, AssetsDevEsposterComHostname];
 

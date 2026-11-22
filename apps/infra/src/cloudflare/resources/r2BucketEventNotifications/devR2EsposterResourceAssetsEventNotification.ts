@@ -15,7 +15,6 @@ const bucketName = getCloudflareResourceName(
   CloudflareAssetType.R2Bucket,
   StorageBucket.ResourceAssets,
 );
-// Object creation is the only event this notification carries.
 export const devR2EsposterResourceAssetsEventNotification: cloudflare.R2BucketEventNotification =
   new cloudflare.R2BucketEventNotification(
     `${bucketName}-event-notification`,

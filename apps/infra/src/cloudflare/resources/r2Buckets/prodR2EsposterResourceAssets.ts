@@ -1,21 +1,9 @@
-import CloudflareLocationHint from "#src/cloudflare/constants/CloudflareLocationHint";
-import {
-  CLOUDFLARE_ACCOUNT_ID,
-  CloudflareAssetType,
-  CloudflareEnvironment,
-  getCloudflareResourceName,
-  StorageBucket,
-} from "@esposter/db-schema";
-import * as cloudflare from "@pulumi/cloudflare";
+import type * as cloudflare from "@pulumi/cloudflare";
 
-const bucketName = getCloudflareResourceName(
+import { createR2Bucket } from "#src/cloudflare/services/createR2Bucket";
+import { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
+
+export const prodR2EsposterResourceAssets: cloudflare.R2Bucket = createR2Bucket(
   CloudflareEnvironment.Production,
-  CloudflareAssetType.R2Bucket,
   StorageBucket.ResourceAssets,
-);
-
-export const prodR2EsposterResourceAssets: cloudflare.R2Bucket = new cloudflare.R2Bucket(
-  bucketName,
-  { accountId: CLOUDFLARE_ACCOUNT_ID, location: CloudflareLocationHint, name: bucketName },
-  { protect: true },
 );

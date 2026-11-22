@@ -1,3 +1,4 @@
+import EsposterComDomain from "#src/cloudflare/constants/EsposterComDomain";
 import WwwEsposterComHostname from "#src/cloudflare/constants/WwwEsposterComHostname";
 import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import * as cloudflare from "@pulumi/cloudflare";
@@ -15,7 +16,7 @@ export const esposterComRedirects: cloudflare.Ruleset = new cloudflare.Ruleset(
           fromValue: {
             preserveQueryString: true,
             statusCode: 301,
-            targetUrl: { expression: 'concat("https://esposter.com", http.request.uri.path)' },
+            targetUrl: { expression: `concat("https://${EsposterComDomain}", http.request.uri.path)` },
           },
         },
         description: "www to the apex, path and query kept",
