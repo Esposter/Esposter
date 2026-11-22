@@ -2,6 +2,7 @@ import type { Plugin } from "@oxlint/plugins";
 
 import { fakeClockOnly } from "#src/services/oxlint/testing/fakeClockOnly";
 import { noFakedSetTimeout } from "#src/services/oxlint/testing/noFakedSetTimeout";
+import { requireSuite } from "#src/services/oxlint/testing/requireSuite";
 import { definePlugin } from "@oxlint/plugins";
 
 // An oxlint JS plugin enforcing the testing skill's timer rules for suites that do real I/O, each read off a file's
@@ -13,10 +14,14 @@ import { definePlugin } from "@oxlint/plugins";
 //
 // A call with no `toFake` list fakes Vitest's default set, so both report it.
 //
-// Scoped by `overrides` in the root oxlint.config.ts to `**/*.test.ts`: only a suite imports either module.
+// The test-helper rule, `require-suite`, reads a whole file: a `.test.ts` that declares no suite is a helper, and its
+// Placeholder is `describe.todo`, the testing skill's test-helper-files page.
+//
+// Scoped by `overrides` in the root oxlint.config.ts to `**/*.test.ts`: only a suite imports either module, and every
+// Test file is held to `require-suite`.
 const plugin: Plugin = definePlugin({
   meta: { name: "testing" },
-  rules: { "fake-clock-only": fakeClockOnly, "no-faked-set-timeout": noFakedSetTimeout },
+  rules: { "fake-clock-only": fakeClockOnly, "no-faked-set-timeout": noFakedSetTimeout, "require-suite": requireSuite },
 });
 
 export default plugin;

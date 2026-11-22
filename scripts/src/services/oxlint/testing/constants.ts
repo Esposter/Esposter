@@ -9,3 +9,7 @@ export const FAKEABLE_CLOCKS: string[] = ["Date", "Temporal"];
 export const MINIFLARE_MODULE = "@esposter/db-mock";
 // The app's mock context, which every server suite on the database takes its Miniflare through
 export const MINIFLARE_MODULE_SUFFIX = "/trpc/context.test";
+export const REQUIRE_SUITE_MESSAGE =
+  "A test file declares a suite: a helper-only `.test.ts` ends with `describe.todo` naming its file, so Vitest reads it as a suite with no tests. See the testing skill's test-helper-files page";
+// The calls that declare a suite or a test, bare or with a modifier such as `test.each` or `describe.todo`
+export const SUITE_CALLEES: string[] = ["describe", "it", "test"];

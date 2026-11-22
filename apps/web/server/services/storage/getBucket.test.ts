@@ -4,6 +4,7 @@ import type { StorageBucket } from "@esposter/db-schema";
 import { requestBlobsStorage } from "#server/services/storage/requestBlobs";
 import { recordStorageBucket } from "@esposter/db";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { describe } from "vitest";
 
 // The buckets a test has made, by storage bucket. A suite that touches one makes it in its own beforeAll
 // With createMockBucket and records it here, because the binding it stands in for is read synchronously
@@ -18,3 +19,5 @@ export const getBucket = (storageBucket: StorageBucket): R2Bucket => {
 
   return recordStorageBucket(storageBucket, bucket, () => requestBlobsStorage.getStore());
 };
+
+describe.todo("getBucket");

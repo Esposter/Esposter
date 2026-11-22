@@ -43,3 +43,12 @@ describe("testing", () => {
     rules: ["testing/fake-clock-only", "testing/no-faked-set-timeout"],
   });
 });
+
+describe("testing/require-suite", () => {
+  const FIXTURES = [
+    { name: "helperOnlyReports", source: `export const helper = 0;`, violations: 1 },
+    { name: "describeTodoPasses", source: `describe.todo("helper");`, violations: 0 },
+    { name: "eachCallPasses", source: `test.each([1])("reads %d", () => {});`, violations: 0 },
+  ];
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "testing", rules: ["testing/require-suite"] });
+});

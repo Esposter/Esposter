@@ -116,7 +116,14 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       files: ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"],
       rules: { "typescript/no-unsafe-type-assertion": "off" },
     },
-    { files: ["**/*.test.ts"], rules: { "testing/fake-clock-only": "error", "testing/no-faked-set-timeout": "error" } },
+    {
+      files: ["**/*.test.ts"],
+      rules: {
+        "testing/fake-clock-only": "error",
+        "testing/no-faked-set-timeout": "error",
+        "testing/require-suite": "error",
+      },
+    },
     {
       // Nuxt auto-imports Vue into the app tree alone: a package, the Nuxt configuration and `shared/` reach it by import
       files: ["apps/web/app/**"],
