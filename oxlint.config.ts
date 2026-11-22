@@ -135,7 +135,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         "apps/web/app/components/Ui/**",
         "apps/web/app/composables/ui/**",
         "apps/web/app/models/ui/**",
-        "apps/web/app/plugins/ui.ts",
+        "apps/web/app/plugins/03.ui.ts",
         "apps/web/app/services/ui/**",
       ],
       rules: {
