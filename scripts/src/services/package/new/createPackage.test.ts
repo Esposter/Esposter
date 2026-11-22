@@ -12,7 +12,7 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { describe, expect, onTestFinished, test } from "vitest";
+import { assert, describe, expect, onTestFinished, test } from "vitest";
 
 const readRepositoryLines = (root: string, path: string): string[] =>
   readFileSync(join(root, path), "utf8").split("\n");
@@ -78,7 +78,8 @@ describe(createPackage, () => {
       "./package.json": "./package.json",
     });
     expect(manifest.sideEffects).toBe(false);
-    expect(Object.keys(manifest.scripts as object)).toStrictEqual(["build", "lint", "lint:fix", "test", "typecheck"]);
+    assert.exists(manifest.scripts);
+    expect(Object.keys(manifest.scripts)).toStrictEqual(["build", "lint", "lint:fix", "test", "typecheck"]);
   });
 
   test("lists the library in the agent guide and the root README, cell by cell", () => {
