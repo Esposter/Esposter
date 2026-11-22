@@ -16,6 +16,9 @@ const { scripts } = parseMachineJson<{ scripts: Record<string, string> }>(
   readFileSync(resolve(REPOSITORY_ROOT, PACKAGE_JSON_FILENAME), "utf8"),
 );
 const sweepScriptNames = Object.keys(scripts).filter((name) => name.startsWith(SWEEP_SCRIPT_PREFIX));
+// The argument a command cannot run without, as an agent would type it: the kit the kit-differs-from-source ledger's
+// Own recipe names
+const SWEEP_SCRIPT_ARGUMENTS: Partial<Record<string, string>> = { "ai:sweep:kit-design": "arataki-itto" };
 
 test("ai:sweep commands end to end", async ({ bench }) => {
   await bench.compare(
@@ -25,7 +28,8 @@ test("ai:sweep commands end to end", async ({ bench }) => {
       // Concatenate. The sweep's own output is what an agent reads and not what this measures, so only a failure's
       // Stderr is kept, for the error a non-zero exit throws
       bench(name, () => {
-        execSync(`pnpm ${name}`, { cwd: REPOSITORY_ROOT, stdio: ["ignore", "ignore", "pipe"] });
+        const command = [`pnpm ${name}`, SWEEP_SCRIPT_ARGUMENTS[name]].filter(Boolean).join(" ");
+        execSync(command, { cwd: REPOSITORY_ROOT, stdio: ["ignore", "ignore", "pipe"] });
       }),
     ),
     // A command is a second or two, so the shared iteration count would put this bench in the minutes. One warmup
