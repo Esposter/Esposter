@@ -22,3 +22,13 @@ Where work is placed and how it is shaped — a fact resolved once at the consum
 | `packages/genshin-world`                                                       |       |
 | `packages/pitch-transcription`                                                 |       |
 | `scripts/src/services/genshinParity`, `scripts/src/services/genshinAssets`     |       |
+| `apps/web/shared/services`, `apps/web/shared/util`                             |       |
+| `apps/web/shared/models`                                                       |       |
+| `apps/web/app/services/resource`                                               |       |
+| `apps/web/app/services` — the rest                                             |       |
+| `apps/web/app/store`                                                           |       |
+| `apps/web/app/composables`                                                     |       |
+| `apps/web/app/models`, `apps/web/app/util`                                     |       |
+| `apps/web/app/components/Message`                                              |       |
+| `apps/web/app/components/Resource`                                             |       |
+| `apps/web/app/components` — the rest                                           |       |

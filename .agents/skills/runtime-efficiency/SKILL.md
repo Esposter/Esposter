@@ -46,6 +46,14 @@ The dangerous case is a sequence that looks independent: rows written for one pu
 
 The check that can drop the work using nothing already in hand runs before the queries. A payload that renders to nothing, an empty id set, a flag that says this type never reaches this surface — each of those ends the call before it costs anything, and every one of them placed after a query is that query wasted on work that was never going to happen.
 
+## Build a library's fixed setup once, not on every call
+
+A convenience call that takes its configuration as an argument often rebuilds everything that configuration implies before it does the work: a schema from a list of extensions, a renderer's mapping from each extension's output spec, a pattern compiled from a fixed string. When the configuration never changes, that setup is the same on every call, and in a loop it is most of the cost — the page builder's text render spent nearly all of its time rebuilding TipTap's schema and mappings once per node (`openspec/specs/resource/note-resource/design.md`, "Published view"). Build the fixed part once at module scope from the library's exported pieces, and pass the call only what varies. A profile finds it: time the call against its setup alone before rewriting anything.
+
+## Count without allocating
+
+A size is counted, never measured by building the thing and reading its length. A text's UTF-8 byte length is `getUtf8ByteLength` (`@esposter/shared`), which encodes into one scratch buffer kept for every call; `encode(text).byteLength` allocates every byte to count them, which a per-cell size paid fifty thousand times in one row insert. Lint reports the encode-to-count shape, and an encode whose bytes are used — a hash, a signature, a body — stays.
+
 ## A script's clock is boot, spawns and reads
 
 Measure a script end to end first (`scripts/src/workspace/sweepCommands.bench.md`); what its time is made of, and the timeout a whole-tree suite needs, is in `references/script-clock.md`.
