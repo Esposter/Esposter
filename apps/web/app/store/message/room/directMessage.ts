@@ -174,16 +174,8 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
       { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
     );
   const leaveDirectMessage = (roomId: string) => deleteDirectMessageParticipant(roomId, userId.value);
-  // A join is announced to the room's members and to each joiner's tabs, so the added participants arrive as their join events.
-  // The answer names nothing to arrive.
-  const addDirectMessageParticipants = (roomId: string, userIds: PublicUser["id"][]) =>
-    getResultAsync(() => $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds })).match(
-      noop,
-      createErrorAlert,
-    );
 
   return {
-    addDirectMessageParticipants,
     arriveDirectMessageParticipants,
     arriveDirectMessages,
     checkIsGroupDirectMessage,

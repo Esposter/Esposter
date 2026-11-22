@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
+import { useOverlayStore } from "#src/store/overlay";
 
 interface Props {
   roomId: RoomInMessage["id"];
@@ -10,8 +13,11 @@ interface Props {
 const isOpen = defineModel<boolean>({ default: false });
 const { roomId } = defineProps<Props>();
 const { data: session } = await useAuthSession();
+const { $trpc } = useNuxtApp();
+const overlayStore = useOverlayStore();
+const { writeAwaited } = overlayStore;
 const directMessageStore = useDirectMessageStore();
-const { addDirectMessageParticipants, getDirectMessageParticipants } = directMessageStore;
+const { getDirectMessageParticipants } = directMessageStore;
 const friendPicker = useTemplateRef("friendPicker");
 const selectedUserIds = ref<string[]>([]);
 const excludedUserIds = computed(() => {
@@ -26,7 +32,15 @@ const createDirectMessageParticipants = () => {
   const userIds = selectedUserIds.value;
   selectedUserIds.value = [];
   friendPicker.value?.reset();
-  addDirectMessageParticipants(roomId, userIds);
+  // A join is announced to the room's members and to each joiner's tabs, so the added participants arrive as their join
+  // Events, and the answer names nothing to arrive
+  writeAwaited(
+    async () => {
+      await $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds });
+      return [];
+    },
+    { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
+  );
 };
 </script>
 
