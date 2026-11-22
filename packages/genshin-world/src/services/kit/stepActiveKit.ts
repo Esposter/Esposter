@@ -99,12 +99,12 @@ export const stepActiveKit = (
   const combatant = findKitStance(kitEffectState.effects, characterId)?.combatant ?? fieldCombatant;
   const { kit } = combatant;
   const { position } = characterController;
-  const movement = measureKitStepMovement({
+  const movement = measureKitStepMovement(
     characterId,
-    fieldCharacterId: kitEffectState.fieldCharacterId,
-    from: kitEffectState.fieldPosition ?? position,
-    to: position,
-  });
+    kitEffectState.fieldCharacterId,
+    kitEffectState.fieldPosition ?? position,
+    position,
+  );
   kitEffectState.fieldPosition = { x: position.x, z: position.z };
   body.facing = characterController.facing;
   body.height = input.height;
@@ -191,11 +191,11 @@ export const stepActiveKit = (
     for (const normalAttack of kit.normalAttacks)
       if (checkKitActionLanded(normalAttack, landedHits, strikes))
         emitKitEvent({ action: normalAttack, kind: KitEventKind.NormalAttackLanded }, context);
-  for (const chargedAttack of kit.chargedAttackVariant
-    ? [kit.chargedAttack, kit.chargedAttackVariant.action]
-    : [kit.chargedAttack])
-    if (checkKitActionLanded(chargedAttack, landedHits, strikes))
-      emitKitEvent({ action: chargedAttack, kind: KitEventKind.ChargedAttackLanded }, context);
+  if (checkKitActionLanded(kit.chargedAttack, landedHits, strikes))
+    emitKitEvent({ action: kit.chargedAttack, kind: KitEventKind.ChargedAttackLanded }, context);
+  const chargedAttackVariantAction = kit.chargedAttackVariant?.action;
+  if (chargedAttackVariantAction && checkKitActionLanded(chargedAttackVariantAction, landedHits, strikes))
+    emitKitEvent({ action: chargedAttackVariantAction, kind: KitEventKind.ChargedAttackLanded }, context);
   // The summons' hits land from their own bodies, priced by the combatants that cast them and infused by their
   // Infusions, and the step's own hits from the turned body and the character on the field, infused by the infusion it
   // Started with

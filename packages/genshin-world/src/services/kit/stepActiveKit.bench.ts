@@ -23,13 +23,17 @@ const [characterIdKitMap, statTables, enemyTables] = await Promise.all([
 // And the party's effects up. A change to the step re-runs it on the machine that wrote the report, and the diff of the
 // Report is the change's before against its after
 describe(stepActiveKit, () => {
-  test.for([
-    { isInCombat: false, scale: "idle" },
-    { isInCombat: true, scale: "in combat" },
-  ])("a minute of the proof party, $scale", async ({ isInCombat }, { bench }) => {
-    // A run is a minute of steps, tens of milliseconds, so forty rounds hold the margin to about a percent
-    await bench("the fixed step", () => {
-      replayScriptedMinute({ characterIdKitMap, enemyTables, isInCombat, statTables });
-    }).run({ ...BENCHMARK_RUN_OPTIONS, iterations: 40, warmupIterations: 1 });
+  test("a minute of the proof party", async ({ bench }) => {
+    await bench.compare(
+      ...[
+        { isInCombat: false, shape: "idle" },
+        { isInCombat: true, shape: "in combat" },
+      ].map(({ isInCombat, shape }) =>
+        bench(shape, () => {
+          replayScriptedMinute({ characterIdKitMap, enemyTables, isInCombat, statTables });
+        }),
+      ),
+      { ...BENCHMARK_RUN_OPTIONS, iterations: 40, warmupIterations: 1 },
+    );
   });
 });

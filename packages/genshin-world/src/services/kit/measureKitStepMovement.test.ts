@@ -15,15 +15,15 @@ describe(measureKitStepMovement, () => {
   test("measures the ground distance the field character's body moved across the step", () => {
     expect.hasAssertions();
 
-    expect(measureKitStepMovement({ characterId: OTHER, fieldCharacterId: OTHER, from: START, to: END })).toBe(5);
+    expect(measureKitStepMovement(OTHER, OTHER, START, END)).toBe(5);
   });
 
   test("measures none on the step a character swaps on to the field, or for a body that stays", () => {
     expect.hasAssertions();
 
     expect([
-      measureKitStepMovement({ characterId: IANSAN, fieldCharacterId: OTHER, from: START, to: END }),
-      measureKitStepMovement({ characterId: OTHER, fieldCharacterId: OTHER, from: END, to: END }),
+      measureKitStepMovement(IANSAN, OTHER, START, END),
+      measureKitStepMovement(OTHER, OTHER, END, END),
     ]).toStrictEqual([0, 0]);
   });
 });
