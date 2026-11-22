@@ -51,10 +51,10 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | vue-survey-engine-headless | index.js                  |   19851 |   19.4 |
 | math-expression-compiler   | index.js                  |   19163 |   18.7 |
 | genshin-interface          | index.d.ts                |   18481 |   18.0 |
-| trpc-nuxt-module           | **/*.js                   |   17808 |   17.4 |
+| trpc-nuxt-module           | **/*.js                   |   18130 |   17.7 |
 | pitch-transcription        | **/*.js                   |   17267 |   16.9 |
 | vue-block-editor-headless  | index.d.ts                |   17146 |   16.7 |
-| trpc-nuxt-module           | **/*.d.ts                 |   15629 |   15.3 |
+| trpc-nuxt-module           | **/*.d.ts                 |   15696 |   15.3 |
 | @esposter/db               | index.js                  |   15588 |   15.2 |
 | survey-expression          | index.d.ts                |   15558 |   15.2 |
 | vue-block-editor-headless  | index.js                  |   15047 |   14.7 |
@@ -85,7 +85,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | pitch-transcription        | index.js                  |    3722 |    3.6 |
 | vue-pdfjs-headless         | index.d.ts                |    3577 |    3.5 |
 | vue-editor-layout-headless | index.d.ts                |    3477 |    3.4 |
-| trpc-msw                   | createTRPCMsw.js          |    3433 |    3.4 |
+| trpc-msw                   | createTRPCMsw.js          |    3375 |    3.3 |
 | @esposter/configuration    | index.js                  |    3204 |    3.1 |
 | tresjs-nuxt                | **/*.js                   |    3107 |    3.0 |
 | genshin-world              | terrainTileWorker.js      |    3027 |    3.0 |
@@ -165,4 +165,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 160 files, 13310228 bytes, 12998.3 KiB, 12.69 MiB
+**Total:** 160 files, 13310559 bytes, 12998.6 KiB, 12.69 MiB
