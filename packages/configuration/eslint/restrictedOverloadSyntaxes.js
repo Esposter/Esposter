@@ -7,7 +7,7 @@ export default [
   {
     message:
       "Overloads are banned — write one function per call shape, each with its own exact type (a batch and a single read over it). See the typescript skill's references/function-signatures.md.",
-    selector: "TSDeclareFunction:not([declare=true]):not(TSModuleDeclaration TSDeclareFunction)",
+    selector: "TSDeclareFunction:not([declare=true]):not(TSModuleDeclaration[declare=true] TSDeclareFunction)",
   },
   {
     // The same trust in an interface or a type literal: a second call signature is an overload of the first, so the
@@ -15,7 +15,7 @@ export default [
     message:
       "Overloads are banned — a second call signature is an overload. Write one function per call shape, each with its own exact type. See the typescript skill's references/function-signatures.md.",
     selector:
-      "TSCallSignatureDeclaration ~ TSCallSignatureDeclaration:not(TSModuleDeclaration TSCallSignatureDeclaration)",
+      "TSCallSignatureDeclaration ~ TSCallSignatureDeclaration:not(TSModuleDeclaration[declare=true] TSCallSignatureDeclaration)",
   },
   {
     // A method with no body in a class is an overload signature, since the implementation is the one with a body. An
@@ -23,6 +23,7 @@ export default [
     // Either, so no selector names an abstract overload
     message:
       "Overloads are banned — a class method's overload signatures are one method per call shape, each with its own exact type. See the typescript skill's references/function-signatures.md.",
-    selector: "MethodDefinition[value.type=TSEmptyBodyFunctionExpression]:not(TSModuleDeclaration MethodDefinition)",
+    selector:
+      "MethodDefinition[value.type=TSEmptyBodyFunctionExpression]:not(TSModuleDeclaration[declare=true] MethodDefinition)",
   },
 ];

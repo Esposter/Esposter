@@ -27,6 +27,13 @@ describe("restrictedOverloadSyntaxes", () => {
         violations: 0,
       },
       {
+        filePath: "overloadNamespace.ts",
+        name: "overloadNamespace",
+        source:
+          "export namespace Util {\n  export function parse(value: string): string;\n  export function parse(value: number): number;\n  export function parse(value: unknown) {\n    return value;\n  }\n}",
+        violations: 2,
+      },
+      {
         filePath: "overloadDeclarationFile.d.ts",
         name: "overloadDeclarationFile",
         source: "export function parse(value: string): string;\nexport function parse(value: number): number;",
