@@ -1,4 +1,4 @@
-import { cloudflareConfiguration } from "#src/configuration";
+import { cloudflareConfiguration } from "#src/cloudflareConfiguration";
 import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 

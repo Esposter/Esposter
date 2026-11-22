@@ -3,7 +3,7 @@ import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import * as cloudflare from "@pulumi/cloudflare";
 
 // A proxied placeholder, so the redirect ruleset can answer www before any origin does
-export const esposterComWww: cloudflare.DnsRecord = new cloudflare.DnsRecord(
+export const wwwEsposterCom: cloudflare.DnsRecord = new cloudflare.DnsRecord(
   WwwEsposterComHostname,
   {
     comment: "Proxied placeholder; the redirect rule answers it",

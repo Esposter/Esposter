@@ -50,5 +50,6 @@ Each is a copy the code could be read instead of. Each needs a call, or belongs 
 - `openspecIndexes.test.ts`, `skillDocs.test.ts` — hand-written indexes held equal to their folders by a test. A generated index, or the prose kept as it is. Owner call.
 - `aiScripts.test.ts` — the `package-scripts` catalogue rows are held equal to the root `ai:` scripts. Owner call, as above.
 - `ciCaches.test.ts` — the same save condition repeats on every save step. A composite action would state it once (the `github-actions` skill).
+- `apps/infra/docs/cloudflare/naming-conventions.md` — the Environment and Asset type tables restate the `CloudflareEnvironment` and `CloudflareAssetType` tokens by hand, beside the meanings the code does not hold. Keeping the convention readable in the doc or pointing at the models is the owner's call.
 - `childProcessImport.test.ts` — the child-process ban is spelled twice in `oxlint/importRestrictions.ts`. One pattern if the rule accepts it (the `oxlint` skill).
 - `nuxtModuleNames.test.ts` — `MODULE_NAME` is kept equal to the manifest name, because a runtime file cannot import the manifest. A build-time define could carry the value instead (the `build` skill).
