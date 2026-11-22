@@ -174,21 +174,17 @@ export const useCommentStore = defineStore("post/comment", () => {
   // The answer names each reply a removal takes as well as the comment and the posts above it, and no entry can name the
   // Replies, so the removal waits for the answer. The branch beneath the comment is emptied only once the server keeps the
   // Removal, and the counters above it are read back then
-  const deleteComment = async (input: DeleteCommentInput) => {
-    const outcome: { isRemoved?: boolean } = {};
-    await writeAwaited(
+  const deleteComment = async (input: DeleteCommentInput) =>
+    writeAwaited(
       async () => {
         const { ancestorIds, removedPosts } = await $trpc.post.deleteComment.mutate(input);
         refreshPostCountsInBackground(ancestorIds);
         deleteBranch(input);
         dropBranchKeys(removedPosts.map(({ id }) => id));
-        outcome.isRemoved = true;
         return removedPosts.map((post) => createArrival(postTable, post));
       },
       { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
     );
-    return outcome.isRemoved === true;
-  };
 
   return {
     arrivePost,

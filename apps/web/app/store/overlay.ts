@@ -69,9 +69,17 @@ export const useOverlayStore = defineStore("overlay", () => {
   };
   // A write with no entry shows nothing until its answer, so it takes no queue key: the version gate orders its
   // Responses, and it is issued at once
-  const writeAwaited = (mutate: () => Promise<Arrival[]>, { onError }: AwaitedWriteOptions): Promise<void> =>
-    getResultAsync(mutate).match(applyArrivals, (error) => {
-      onError?.(error);
-    });
+  // Resolves whether the server kept the write, so a caller that closes a dialog or leaves a page on success reads it here
+  const writeAwaited = (mutate: () => Promise<Arrival[]>, { onError }: AwaitedWriteOptions): Promise<boolean> =>
+    getResultAsync(mutate).match(
+      (arrivals) => {
+        applyArrivals(arrivals);
+        return true;
+      },
+      (error) => {
+        onError?.(error);
+        return false;
+      },
+    );
   return { arrive, heldTables, view, writeAwaited, writeOptimistic };
 });

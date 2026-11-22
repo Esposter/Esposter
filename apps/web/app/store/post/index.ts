@@ -108,20 +108,16 @@ export const usePostStore = defineStore("post", () => {
   // The answer names each post the removal took, the post and every reply beneath it, and no entry can name the replies a
   // Removal takes, so the post stays on the feed until the server answers and leaves it then. A refused delete alerts and
   // Resolves false, which keeps the dialog asking open
-  const deletePost = async (input: DeletePostInput) => {
-    const outcome: { isRemoved?: boolean } = {};
-    await writeAwaited(
+  const deletePost = async (input: DeletePostInput) =>
+    writeAwaited(
       async () => {
         const removedPosts = await $trpc.post.deletePost.mutate(input);
         const removedIds = new Set(removedPosts.map(({ id }) => id));
         postKeys.value = postKeys.value.filter(({ id }) => !removedIds.has(id));
-        outcome.isRemoved = true;
         return removedPosts.map((post) => createArrival(postTable, post));
       },
       { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
     );
-    return outcome.isRemoved === true;
-  };
   return {
     createPost,
     deletePost,
