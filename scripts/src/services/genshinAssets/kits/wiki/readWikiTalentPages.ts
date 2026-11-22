@@ -19,7 +19,7 @@ const InfoboxTypeCombatTalentMap: Partial<Record<string, CombatTalent>> = {
 
 // A failed call answers HTTP 200 too, with an error in place of the query, so the answer is refused by that key
 const categoryResponseSchema = z.object({
-  error: z.undefined(),
+  error: z.undefined().optional(),
   query: z
     .object({
       pages: z.array(
