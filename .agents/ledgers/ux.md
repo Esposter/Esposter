@@ -50,6 +50,14 @@ server answers?** If not, and the button is not a dialog's answer, it binds `is-
 
    Each hit is a question: read the row for a text field with one of those props beside a sibling. A labelled text field beside an unlabelled control has no single fix, since a `UiSelect` trigger draws no label above it and `items-start` would put it beside the label rather than the input. A row of labelled fields, each with its label above, is the case `items-start` fixes.
 
+3. An action that mounts only on hover. A hover state that mounts a menu or a button needs a route for the keyboard: a focusable element that mounts it on focus as well (`Message/Model/Message/File/Index.vue`), or a key that already opens it from a focused element.
+
+   ```bash
+   rg -n '@mouse(enter|over)|@mouseleave' apps/web/app/components apps/web/app/pages -g '*.vue'
+   ```
+
+   Each hit is a question: a highlight or a preview that changes nothing a key could reach takes none.
+
 ## Coverage
 
 Notes on a tree several units share:
