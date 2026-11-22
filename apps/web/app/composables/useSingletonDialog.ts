@@ -22,8 +22,9 @@ export const useSingletonDialog = <TTarget extends number | string | string[], T
   target: Ref<TTarget>,
   item?: MaybeRefOrGetter<TItem | undefined>,
 ) => {
-  // The empty value of the target's own kind. TS cannot relate the three branches to the generic TTarget, so the cast names them
+  // The empty value of the target's own kind
   const clearTarget = () => {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- each branch is the empty value of one kind TTarget can be, and the compiler cannot relate the union of the three to the generic TTarget
     target.value = (Array.isArray(target.value) ? [] : typeof target.value === "number" ? 0 : "") as TTarget;
   };
   const targetItem = computed(() => (item === undefined ? undefined : toValue(item)));

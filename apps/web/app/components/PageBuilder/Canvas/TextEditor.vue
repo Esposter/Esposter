@@ -32,6 +32,7 @@ const getNodeContent = () => {
   const document = getHeldDocument(resourceId)?.document;
   const nodePointer = document && getNodePointer(kind, document, nodeId);
   const node = document && nodePointer !== undefined ? getBlockNode(document, nodePointer, kind.children) : undefined;
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a text node holds TextNodeProps, but the block document types a node's props generically, and the type check on the node type does not narrow them
   return node?.type === kind.textType ? (node.props as TextNodeProps).content : undefined;
 };
 // Each session is its own interaction, so its changes are one history entry and the next session is another one

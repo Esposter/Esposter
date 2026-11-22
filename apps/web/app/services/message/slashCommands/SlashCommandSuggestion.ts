@@ -31,6 +31,7 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
 
       // The branch above returned for every command that declares parameters, which is what leaves this one
       // Parameterless — a fact about the array's length that its type has no way to carry
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the parameter array's length narrows nothing in SlashCommand's type, so the parameterless command type is named here
       await executeSlashCommand({ parameterValues: {}, type: slashCommand.type as SlashCommandTypeWithoutParameters });
     }).match(noop, console.error),
   ),
