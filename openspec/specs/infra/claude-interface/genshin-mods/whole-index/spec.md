@@ -84,6 +84,6 @@ Any failure of the guard SHALL let the git command through.
 
 #### Scenario: The record of recent edits cannot be read
 
-- **GIVEN** an unreadable record of recent edits
+- **GIVEN** an unreadable record of recent edits, or one holding another shape
 - **WHEN** a whole-index git command is requested
 - **THEN** it runs

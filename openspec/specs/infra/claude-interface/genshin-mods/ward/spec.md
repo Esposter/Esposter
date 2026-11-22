@@ -70,7 +70,7 @@ Any failure of the guard SHALL let the edit through.
 
 #### Scenario: The record file cannot be read
 
-- **GIVEN** an unreadable record of recent edits
+- **GIVEN** an unreadable record of recent edits, or one holding another shape
 - **WHEN** a session edits a file
 - **THEN** the edit runs
 

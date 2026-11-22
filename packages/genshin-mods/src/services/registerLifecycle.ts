@@ -2,11 +2,10 @@ import type { EngineInterface, On } from "claude-code";
 
 import { atom, read, update } from "claude-code";
 
-import type { EnabledMods } from "../../types";
-
 import { ModName, ModNames } from "../models/ModName";
 import { SinStatusKind } from "../models/SinStatusKind";
 import { TaskStatus } from "../models/TaskStatus";
+import { checkIsEnabledMods } from "./checkIsEnabledMods";
 import {
   CACHE_WARNING_MS,
   MACHINE_WATCHER_RETRY_MILLISECONDS,
@@ -184,9 +183,8 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
     });
 
   on("session.start", async ($, e, next) => {
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the value is read back from the host's store, which this plugin reads without a schema library to check the record it wrote
-    const stored = (await $.store.get(enabledModsAtom.ref.key)) as Partial<EnabledMods> | undefined;
-    await update($, enabledModsAtom, (value) => ({ ...value, ...stored }));
+    const stored: unknown = await $.store.get(enabledModsAtom.ref.key);
+    await update($, enabledModsAtom, (value) => ({ ...value, ...(checkIsEnabledMods(stored) ? stored : undefined) }));
     await Promise.all(
       ModNames.map((name) =>
         $.command.register({ argumentHint: "[on|off]", description: ModDescriptionMap[name], name }),

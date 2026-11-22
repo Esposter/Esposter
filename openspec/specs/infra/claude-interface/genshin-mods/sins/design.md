@@ -151,7 +151,7 @@ The log is what a later change would replay under a different half-life. The sco
 
 The script makes one `POST` to `https://api.typesafe.ai/v1/systemone` with the `Authorization: Bearer` header from the key the plugin reads: its `typesafe_key` option, else `TYPESAFE_API_KEY`, handed to the script in its stdin request beside the payload. The body names the model `jev-latest`, the redacted prompt as `state`, and seven `score` questions keyed by sin name, each with its instructions and five criteria. One call answers all seven, which is the batching rule of the typed-decisions tier: every independent question about one state goes in one call.
 
-The script returns one of four results: the seven answers; `no-key`, when no key is set; `node-too-old`, when the Node cannot open the log; or `failed`, with a reason. The module treats only the answers as evidence, and records the other three as the status the band and the pane explain.
+The script returns one of four results: the seven answers; `no-key`, when no key is set; `node-too-old`, when the Node cannot open the log; or `failed`, with a reason. A result that is not one of those four in its shape reads as `failed`. The module treats only the answers as evidence, and records the other three as the status the band and the pane explain.
 
 ## Key files
 
@@ -183,6 +183,7 @@ packages/genshin-mods/src/services/sins/   ← each module with its co-located .
   getBarCells.ts          ← a bar's solid and tinted cells from the score, the spread and the width
   getSinQuestions.ts      ← the seven `score` questions one call answers, and the question each sin asks
   parseSinsResult.ts      ← the script's one JSON result
+  checkIsSinsResult.ts    ← the shape each result is read as: a score for every sin in an answer, and no answers in the other three
   readIsLightTheme.ts     ← the palette mode from the engine's theme row
   readTypeSafeKey.ts      ← the key sins scores with, read off the plugin's option, else the variable
   pickTypeSafeKey.ts      ← that choice on its own: the option first, a blank option falling back to the variable
