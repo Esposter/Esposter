@@ -14,24 +14,27 @@ describe(useWorldPlayerStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const dungeonsStore = useDungeonsStore();
-    dungeonsStore.save = new Save();
+    const { save } = storeToRefs(dungeonsStore);
+    save.value = new Save();
   });
 
   test("a respawn into a smaller tilemap places the player at the respawn location on that tilemap", async () => {
     expect.hasAssertions();
 
     const dungeonsStore = useDungeonsStore();
+    const { save } = storeToRefs(dungeonsStore);
     // The player was left outside the respawn tilemap's grid, on Home
-    dungeonsStore.save.player.position = { x: 6, y: 21 };
-    dungeonsStore.save.player.respawnLocation = {
+    save.value.player.position = { x: 6, y: 21 };
+    save.value.player.respawnLocation = {
       direction: Direction.Up,
       position: { x: 5, y: 7 },
       tilemapKey: TilemapKey.HomeBuilding1,
     };
     const worldPlayerStore = useWorldPlayerStore();
-    await worldPlayerStore.respawn();
+    const { respawn } = worldPlayerStore;
+    await respawn();
 
-    expect(dungeonsStore.save.tilemapKey).toBe(TilemapKey.HomeBuilding1);
-    expect(dungeonsStore.save.player.position).toStrictEqual({ x: 5, y: 7 });
+    expect(save.value.tilemapKey).toBe(TilemapKey.HomeBuilding1);
+    expect(save.value.player.position).toStrictEqual({ x: 5, y: 7 });
   });
 });

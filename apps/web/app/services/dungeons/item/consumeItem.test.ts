@@ -28,7 +28,8 @@ describe(consumeItem, () => {
       quantity: 1,
     };
     const playerStore = usePlayerStore();
-    playerStore.player.inventory = [item];
+    const { player } = storeToRefs(playerStore);
+    player.value.inventory = [item];
   });
 
   test("removes the item once its last one is spent", () => {
@@ -37,7 +38,8 @@ describe(consumeItem, () => {
     consumeItem(ref(item));
 
     const playerStore = usePlayerStore();
-    expect(playerStore.player.inventory).toStrictEqual([]);
+    const { player } = storeToRefs(playerStore);
+    expect(player.value.inventory).toStrictEqual([]);
   });
 
   test("keeps the item while one is left", () => {
@@ -47,6 +49,7 @@ describe(consumeItem, () => {
     consumeItem(ref(item));
 
     const playerStore = usePlayerStore();
-    expect(playerStore.player.inventory).toStrictEqual([{ ...item, quantity: 1 }]);
+    const { player } = storeToRefs(playerStore);
+    expect(player.value.inventory).toStrictEqual([{ ...item, quantity: 1 }]);
   });
 });

@@ -39,7 +39,8 @@ vi.mock(import("#src/services/dungeons/text/animateText"), () => ({ animateText:
 
 const setParty = (...monsters: Monster[]) => {
   const dungeonsStore = useDungeonsStore();
-  dungeonsStore.save.player.monsters = monsters;
+  const { save } = storeToRefs(dungeonsStore);
+  save.value.player.monsters = monsters;
 };
 
 // The party is read through reactive proxies, so a monster is found by its place in the party rather than by identity
@@ -63,7 +64,8 @@ describe(useMonsterPartyInputStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const dungeonsStore = useDungeonsStore();
-    dungeonsStore.save = new Save();
+    const { save } = storeToRefs(dungeonsStore);
+    save.value = new Save();
     emitSpy = vi.spyOn(phaserEventEmitter, "emit");
   });
 
@@ -80,8 +82,9 @@ describe(useMonsterPartyInputStore, () => {
     const { onPlayerInput } = monsterPartyInputStore;
     await onPlayerInput(scene, PlayerSpecialInput.Confirm);
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
+    const { infoDialogMessage } = storeToRefs(monsterPartyInfoPanelStore);
 
-    expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe("Selected monster is fainted.");
+    expect(infoDialogMessage.value.text).toBe("Selected monster is fainted.");
     expect(transitionFrom(SceneKey.MonsterParty).switchToPreviousScene).not.toHaveBeenCalled();
     expect(emitSpy).not.toHaveBeenCalled();
   });
@@ -95,8 +98,9 @@ describe(useMonsterPartyInputStore, () => {
     const { onPlayerInput } = monsterPartyInputStore;
     await onPlayerInput(scene, PlayerSpecialInput.Confirm);
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
+    const { infoDialogMessage } = storeToRefs(monsterPartyInfoPanelStore);
 
-    expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe("Selected monster is already battling.");
+    expect(infoDialogMessage.value.text).toBe("Selected monster is already battling.");
     expect(emitSpy).not.toHaveBeenCalled();
   });
 
@@ -121,12 +125,14 @@ describe(useMonsterPartyInputStore, () => {
     const fighting = new Monster(MonsterKey.Iguanignite);
     setParty(fighting, new Monster(MonsterKey.Iguanignite));
     const monsterPartyInputStore = useMonsterPartyInputStore();
+    const { onPlayerInput } = monsterPartyInputStore;
     fighting.status.health = 0;
-    await monsterPartyInputStore.onPlayerInput(scene, PlayerSpecialInput.Cancel);
+    await onPlayerInput(scene, PlayerSpecialInput.Cancel);
 
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
+    const { infoDialogMessage } = storeToRefs(monsterPartyInfoPanelStore);
 
-    expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe("You need to select a monster to switch to.");
+    expect(infoDialogMessage.value.text).toBe("You need to select a monster to switch to.");
     expect(transitionFrom(SceneKey.MonsterParty).switchToPreviousScene).not.toHaveBeenCalled();
     expect(emitSpy).not.toHaveBeenCalledWith("unswitchMonster");
   });

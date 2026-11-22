@@ -37,26 +37,30 @@ describe(CaptureItemResolver, () => {
       quantity: 1,
     };
     const playerStore = usePlayerStore();
-    playerStore.player.monsters = [];
+    const { player } = storeToRefs(playerStore);
+    player.value.monsters = [];
   });
 
   test("refuses a capture and says why while the party is full", () => {
     expect.hasAssertions();
 
     const playerStore = usePlayerStore();
-    playerStore.player.monsters = Array.from({ length: MONSTER_PARTY_MAX_LENGTH }, () => ({}) as Monster);
+    const { player } = storeToRefs(playerStore);
+    player.value.monsters = Array.from({ length: MONSTER_PARTY_MAX_LENGTH }, () => ({}) as Monster);
     const inventoryInfoPanelStore = useInventoryInfoPanelStore();
+    const { infoDialogMessage } = storeToRefs(inventoryInfoPanelStore);
     const isActive = new CaptureItemResolver().checkIsActive(ref(item), ref({} as Monster));
 
     expect(isActive).toBe(false);
-    expect(inventoryInfoPanelStore.infoDialogMessage.text).toBe("You have no room in your party! Cannot use Potion.");
+    expect(infoDialogMessage.value.text).toBe("You have no room in your party! Cannot use Potion.");
   });
 
   test("allows a capture while the party has one place left", () => {
     expect.hasAssertions();
 
     const playerStore = usePlayerStore();
-    playerStore.player.monsters = Array.from({ length: MONSTER_PARTY_MAX_LENGTH - 1 }, () => ({}) as Monster);
+    const { player } = storeToRefs(playerStore);
+    player.value.monsters = Array.from({ length: MONSTER_PARTY_MAX_LENGTH - 1 }, () => ({}) as Monster);
     const isActive = new CaptureItemResolver().checkIsActive(ref(item), ref({} as Monster));
 
     expect(isActive).toBe(true);

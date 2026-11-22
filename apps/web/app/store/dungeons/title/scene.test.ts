@@ -37,65 +37,79 @@ describe(useTitleSceneStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const dungeonsStore = useDungeonsStore();
-    dungeonsStore.dungeons.save = undefined;
-    dungeonsStore.save = new Save();
-    vi.mocked(dungeonsStore.fadeSwitchToScene).mockClear();
+    const { dungeons, save } = storeToRefs(dungeonsStore);
+    const { fadeSwitchToScene } = dungeonsStore;
+    dungeons.value.save = undefined;
+    save.value = new Save();
+    vi.mocked(fadeSwitchToScene).mockClear();
   });
 
   test("continuing loads the stored save and fades into the world with it", () => {
     expect.hasAssertions();
 
     const dungeonsStore = useDungeonsStore();
+    const { dungeons, save } = storeToRefs(dungeonsStore);
+    const { fadeSwitchToScene } = dungeonsStore;
     const storedSave = new Save();
     storedSave.tilemapKey = TilemapKey.HomeBuilding1;
-    dungeonsStore.dungeons.save = storedSave;
+    dungeons.value.save = storedSave;
     selectOption(PlayerTitleMenuOption.Continue);
     const titleSceneStore = useTitleSceneStore();
-    titleSceneStore.onPlayerInput(scene, PlayerSpecialInput.Confirm);
+    const { onPlayerInput } = titleSceneStore;
+    onPlayerInput(scene, PlayerSpecialInput.Confirm);
 
-    expect(dungeonsStore.save).toStrictEqual(storedSave);
-    expect(dungeonsStore.fadeSwitchToScene).toHaveBeenCalledWith(scene, SceneKey.World);
+    expect(save.value).toStrictEqual(storedSave);
+    expect(fadeSwitchToScene).toHaveBeenCalledWith(scene, SceneKey.World);
   });
 
   test("continuing without a stored save leaves the current save and the scene alone", () => {
     expect.hasAssertions();
 
     const dungeonsStore = useDungeonsStore();
-    const currentSave = dungeonsStore.save;
+    const { save } = storeToRefs(dungeonsStore);
+    const { fadeSwitchToScene } = dungeonsStore;
+    const saveBeforeOption = save.value;
     selectOption(PlayerTitleMenuOption.Continue);
     const titleSceneStore = useTitleSceneStore();
-    titleSceneStore.onPlayerInput(scene, PlayerSpecialInput.Confirm);
+    const { onPlayerInput } = titleSceneStore;
+    onPlayerInput(scene, PlayerSpecialInput.Confirm);
 
-    expect(dungeonsStore.save).toBe(currentSave);
-    expect(dungeonsStore.fadeSwitchToScene).not.toHaveBeenCalled();
+    expect(save.value).toBe(saveBeforeOption);
+    expect(fadeSwitchToScene).not.toHaveBeenCalled();
   });
 
   test("a new game starts a fresh save and keeps the stored one for later", () => {
     expect.hasAssertions();
 
     const dungeonsStore = useDungeonsStore();
+    const { dungeons, save } = storeToRefs(dungeonsStore);
+    const { fadeSwitchToScene } = dungeonsStore;
     const storedSave = new Save();
     storedSave.tilemapKey = TilemapKey.HomeBuilding2;
-    dungeonsStore.dungeons.save = storedSave;
+    dungeons.value.save = storedSave;
     selectOption(PlayerTitleMenuOption["New Game"]);
     const titleSceneStore = useTitleSceneStore();
-    titleSceneStore.onPlayerInput(scene, PlayerSpecialInput.Confirm);
+    const { onPlayerInput } = titleSceneStore;
+    onPlayerInput(scene, PlayerSpecialInput.Confirm);
 
-    expect(dungeonsStore.save.tilemapKey).toBe(TilemapKey.Home);
-    expect(dungeonsStore.dungeons.save).toStrictEqual(storedSave);
-    expect(dungeonsStore.fadeSwitchToScene).toHaveBeenCalledWith(scene, SceneKey.World);
+    expect(save.value.tilemapKey).toBe(TilemapKey.Home);
+    expect(dungeons.value.save).toStrictEqual(storedSave);
+    expect(fadeSwitchToScene).toHaveBeenCalledWith(scene, SceneKey.World);
   });
 
   test("settings opens the settings scene and leaves the save alone", () => {
     expect.hasAssertions();
 
     const dungeonsStore = useDungeonsStore();
-    const currentSave = dungeonsStore.save;
+    const { save } = storeToRefs(dungeonsStore);
+    const { fadeSwitchToScene } = dungeonsStore;
+    const saveBeforeOption = save.value;
     selectOption(PlayerTitleMenuOption.Settings);
     const titleSceneStore = useTitleSceneStore();
-    titleSceneStore.onPlayerInput(scene, PlayerSpecialInput.Confirm);
+    const { onPlayerInput } = titleSceneStore;
+    onPlayerInput(scene, PlayerSpecialInput.Confirm);
 
-    expect(dungeonsStore.save).toBe(currentSave);
-    expect(dungeonsStore.fadeSwitchToScene).toHaveBeenCalledWith(scene, SceneKey.Settings);
+    expect(save.value).toBe(saveBeforeOption);
+    expect(fadeSwitchToScene).toHaveBeenCalledWith(scene, SceneKey.Settings);
   });
 });

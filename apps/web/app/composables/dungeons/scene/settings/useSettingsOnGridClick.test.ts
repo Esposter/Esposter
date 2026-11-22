@@ -18,15 +18,18 @@ vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.tes
 
 describe(useSettingsOnGridClick, () => {
   const dungeonsStore = useDungeonsStore();
+  const { saveDungeons } = dungeonsStore;
   let controls: Controls;
 
   beforeEach(() => {
     setActivePinia(createPinia());
     controls = { setInput: vi.fn<(input: PlayerSpecialInput) => void>() } as unknown as Controls;
     const controlsStore = useControlsStore();
-    controlsStore.controls = controls;
+    const { controls: storedControls } = storeToRefs(controlsStore);
+    storedControls.value = controls;
     const settingsStore = useSettingsStore();
-    settingsStore.settings = getInitialSettings();
+    const { settings } = storeToRefs(settingsStore);
+    settings.value = getInitialSettings();
   });
 
   // A value cell saves on the press that lands on it, so the cell being held means the save already happened
@@ -43,7 +46,7 @@ describe(useSettingsOnGridClick, () => {
     settingsOptionGrid.position.value = fastCell;
     useSettingsOnGridClick(fastCell)();
 
-    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
+    expect(saveDungeons).not.toHaveBeenCalled();
     expect(controls.setInput).not.toHaveBeenCalled();
   });
 
@@ -57,7 +60,7 @@ describe(useSettingsOnGridClick, () => {
     useSettingsOnGridClick(soundRow)();
 
     expect(settingsOptionGrid.position.value.y).toBe(soundRow.y);
-    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
+    expect(saveDungeons).not.toHaveBeenCalled();
   });
 
   test("a second press on Close confirms and saves nothing", () => {
@@ -70,6 +73,6 @@ describe(useSettingsOnGridClick, () => {
     useSettingsOnGridClick(closeRow)();
 
     expect(controls.setInput).toHaveBeenCalledExactlyOnceWith(PlayerSpecialInput.Confirm);
-    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
+    expect(saveDungeons).not.toHaveBeenCalled();
   });
 });

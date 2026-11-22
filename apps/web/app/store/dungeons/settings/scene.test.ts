@@ -18,13 +18,15 @@ vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.tes
 
 describe(useSettingsSceneStore, () => {
   const dungeonsStore = useDungeonsStore();
+  const { saveDungeons } = dungeonsStore;
   // The scene is only read for special inputs, which these tests never send
   const scene = {} as SceneWithPlugins;
 
   beforeEach(() => {
     setActivePinia(createPinia());
     const settingsStore = useSettingsStore();
-    settingsStore.settings = getInitialSettings();
+    const { settings } = storeToRefs(settingsStore);
+    settings.value = getInitialSettings();
     const settingsSceneStore = useSettingsSceneStore();
     const { settingsOptionGrid } = settingsSceneStore;
     settingsOptionGrid.position.value = { x: 0, y: 0 };
@@ -35,47 +37,50 @@ describe(useSettingsSceneStore, () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
-    settingsStore.settings[SettingsOption.VolumePercentage] = 40;
+    const { settings } = storeToRefs(settingsStore);
+    settings.value[SettingsOption.VolumePercentage] = 40;
     const settingsSceneStore = useSettingsSceneStore();
     const { selectSettingsPosition, settingsOptionGrid } = settingsSceneStore;
     const volumeRow = getRowPosition(settingsOptionGrid, SettingsOption.VolumePercentage);
     selectSettingsPosition(volumeRow);
 
-    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(40);
+    expect(settings.value[SettingsOption.VolumePercentage]).toBe(40);
     expect(settingsOptionGrid.position.value).toStrictEqual(volumeRow);
-    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
+    expect(saveDungeons).not.toHaveBeenCalled();
   });
 
   test("left and right step through a row's values, saving each one they land on", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
+    const { settings } = storeToRefs(settingsStore);
     const settingsSceneStore = useSettingsSceneStore();
     const { onPlayerInput, restSettingsCursor } = settingsSceneStore;
-    settingsStore.settings[SettingsOption["Text Speed"]] = TextSpeedSetting.Mid;
+    settings.value[SettingsOption["Text Speed"]] = TextSpeedSetting.Mid;
     restSettingsCursor();
     onPlayerInput(scene, Direction.Right, Direction.Right, 0);
 
-    expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
+    expect(settings.value[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
     // Past the last value, right changes nothing and saves nothing
     onPlayerInput(scene, Direction.Right, Direction.Right, 0);
 
-    expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
+    expect(settings.value[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
     onPlayerInput(scene, Direction.Left, Direction.Left, 0);
     onPlayerInput(scene, Direction.Left, Direction.Left, 0);
 
-    expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Slow);
+    expect(settings.value[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Slow);
     // Mid to Fast, Fast to Mid, Mid to Slow: the edge press is not one of the three
-    expect(dungeonsStore.saveDungeons).toHaveBeenCalledTimes(3);
+    expect(saveDungeons).toHaveBeenCalledTimes(3);
   });
 
   test("up and down rest on each row's saved value and save nothing", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
+    const { settings } = storeToRefs(settingsStore);
     const settingsSceneStore = useSettingsSceneStore();
     const { onPlayerInput, restSettingsCursor, settingsOptionGrid } = settingsSceneStore;
-    settingsStore.settings[SettingsOption.Animations] = AnimationsSetting.Off;
+    settings.value[SettingsOption.Animations] = AnimationsSetting.Off;
     restSettingsCursor();
     onPlayerInput(scene, Direction.Down, Direction.Down, 0);
 
@@ -84,15 +89,16 @@ describe(useSettingsSceneStore, () => {
       x: settingsOptionGrid.getPositionX(AnimationsSetting.Off, animationsRow.y),
       y: animationsRow.y,
     });
-    expect(settingsStore.settings[SettingsOption.Animations]).toBe(AnimationsSetting.Off);
-    expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Mid);
-    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
+    expect(settings.value[SettingsOption.Animations]).toBe(AnimationsSetting.Off);
+    expect(settings.value[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Mid);
+    expect(saveDungeons).not.toHaveBeenCalled();
   });
 
   test("clicking a value saves it, and clicking a name only moves to its row", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
+    const { settings } = storeToRefs(settingsStore);
     const settingsSceneStore = useSettingsSceneStore();
     const { selectSettingsPosition, settingsOptionGrid } = settingsSceneStore;
     const textSpeedRow = getRowPosition(settingsOptionGrid, SettingsOption["Text Speed"]);
@@ -101,13 +107,13 @@ describe(useSettingsSceneStore, () => {
       y: textSpeedRow.y,
     });
 
-    expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
+    expect(settings.value[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
     selectSettingsPosition({ x: 0, y: textSpeedRow.y });
 
-    expect(settingsStore.settings[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
+    expect(settings.value[SettingsOption["Text Speed"]]).toBe(TextSpeedSetting.Fast);
     expect(settingsOptionGrid.position.value.x).toBe(
       settingsOptionGrid.getPositionX(TextSpeedSetting.Fast, textSpeedRow.y),
     );
-    expect(dungeonsStore.saveDungeons).toHaveBeenCalledTimes(1);
+    expect(saveDungeons).toHaveBeenCalledTimes(1);
   });
 });

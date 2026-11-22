@@ -45,11 +45,12 @@ describe(chestInteractionEffect, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const dungeonsStore = useDungeonsStore();
-    dungeonsStore.save = new Save();
-    dungeonsStore.save.player.position = { x: 3, y: 3 };
-    dungeonsStore.save.player.direction = Direction.Down;
-    dungeonsStore.save.player.inventory = [];
-    dungeonsStore.save.world[TilemapKey.Home].chestMap = { [getPositionId(chestPosition)]: new Chest() };
+    const { save } = storeToRefs(dungeonsStore);
+    save.value = new Save();
+    save.value.player.position = { x: 3, y: 3 };
+    save.value.player.direction = Direction.Down;
+    save.value.player.inventory = [];
+    save.value.world[TilemapKey.Home].chestMap = { [getPositionId(chestPosition)]: new Chest() };
     showMessages.mockClear();
   });
 
@@ -59,9 +60,10 @@ describe(chestInteractionEffect, () => {
     const isHandled = await chestInteractionEffect(scene, [getChestObject(chestPosition.x, chestPosition.y)]);
 
     const dungeonsStore = useDungeonsStore();
+    const { save } = storeToRefs(dungeonsStore);
     expect(isHandled).toBe(true);
-    expect(dungeonsStore.save.player.inventory).toStrictEqual([{ ...getItem(ItemId.Potion), quantity: 1 }]);
-    expect(dungeonsStore.save.world[TilemapKey.Home].chestMap[getPositionId(chestPosition)]?.isOpened).toBe(true);
+    expect(save.value.player.inventory).toStrictEqual([{ ...getItem(ItemId.Potion), quantity: 1 }]);
+    expect(save.value.world[TilemapKey.Home].chestMap[getPositionId(chestPosition)]?.isOpened).toBe(true);
     expect(showMessages).toHaveBeenCalledWith(scene, [{ text: `You've obtained ${ItemId.Potion}.` }]);
   });
 
@@ -69,24 +71,26 @@ describe(chestInteractionEffect, () => {
     expect.hasAssertions();
 
     const dungeonsStore = useDungeonsStore();
-    dungeonsStore.save.player.inventory = [{ ...getItem(ItemId.Potion), quantity: 1 }];
+    const { save } = storeToRefs(dungeonsStore);
+    save.value.player.inventory = [{ ...getItem(ItemId.Potion), quantity: 1 }];
     await chestInteractionEffect(scene, [getChestObject(chestPosition.x, chestPosition.y)]);
 
-    expect(dungeonsStore.save.player.inventory).toStrictEqual([{ ...getItem(ItemId.Potion), quantity: 2 }]);
+    expect(save.value.player.inventory).toStrictEqual([{ ...getItem(ItemId.Potion), quantity: 2 }]);
   });
 
   test("an opened chest gives nothing again and says so", async () => {
     expect.hasAssertions();
 
     const dungeonsStore = useDungeonsStore();
-    dungeonsStore.save.world[TilemapKey.Home].chestMap[getPositionId(chestPosition)] = {
+    const { save } = storeToRefs(dungeonsStore);
+    save.value.world[TilemapKey.Home].chestMap[getPositionId(chestPosition)] = {
       isOpened: true,
       itemId: ItemId.Potion,
     };
     const isHandled = await chestInteractionEffect(scene, [getChestObject(chestPosition.x, chestPosition.y)]);
 
     expect(isHandled).toBe(true);
-    expect(dungeonsStore.save.player.inventory).toStrictEqual([]);
+    expect(save.value.player.inventory).toStrictEqual([]);
     expect(showMessages).toHaveBeenCalledWith(scene, [{ text: "There is nothing left in the chest." }]);
   });
 
@@ -97,8 +101,9 @@ describe(chestInteractionEffect, () => {
 
     expect(isHandled).toBe(false);
     const dungeonsStore = useDungeonsStore();
+    const { save } = storeToRefs(dungeonsStore);
 
-    expect(dungeonsStore.save.player.inventory).toStrictEqual([]);
+    expect(save.value.player.inventory).toStrictEqual([]);
     expect(showMessages).not.toHaveBeenCalled();
   });
 });

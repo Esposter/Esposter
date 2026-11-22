@@ -38,13 +38,16 @@ describe("gainExperience", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const dungeonsStore = useDungeonsStore();
-    dungeonsStore.save = new Save();
+    const { save } = storeToRefs(dungeonsStore);
+    save.value = new Save();
     // A level 5 player monster needs 125 experience for its next level, so each test sets how close it starts
     playerMonster = new Monster(MonsterKey.Iguanignite);
     const monsterPartySceneStore = useMonsterPartySceneStore();
-    monsterPartySceneStore.monsters = [playerMonster];
+    const { monsters } = storeToRefs(monsterPartySceneStore);
+    monsters.value = [playerMonster];
     const enemyStore = useEnemyStore();
-    enemyStore.activeMonster = enemyMonster;
+    const { activeMonster } = storeToRefs(enemyStore);
+    activeMonster.value = enemyMonster;
     setState.mockClear();
     showMessages.mockClear();
   });

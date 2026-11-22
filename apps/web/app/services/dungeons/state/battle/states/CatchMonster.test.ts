@@ -44,9 +44,11 @@ describe("catchMonster", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const dungeonsStore = useDungeonsStore();
-    dungeonsStore.save = new Save();
+    const { save } = storeToRefs(dungeonsStore);
+    save.value = new Save();
     const enemyStore = useEnemyStore();
-    enemyStore.activeMonster = new Monster(MonsterKey.Iguanignite);
+    const { activeMonster } = storeToRefs(enemyStore);
+    activeMonster.value = new Monster(MonsterKey.Iguanignite);
     setState.mockClear();
     showMessages.mockClear();
   });

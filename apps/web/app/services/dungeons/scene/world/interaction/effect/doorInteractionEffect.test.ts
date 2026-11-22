@@ -49,7 +49,8 @@ describe(doorInteractionEffect, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const dungeonsStore = useDungeonsStore();
-    dungeonsStore.save = new Save();
+    const { save } = storeToRefs(dungeonsStore);
+    save.value = new Save();
     once.mockClear();
   });
 
@@ -57,9 +58,10 @@ describe(doorInteractionEffect, () => {
     expect.hasAssertions();
 
     const dungeonsStore = useDungeonsStore();
+    const { save } = storeToRefs(dungeonsStore);
     // The player stands below a door of Home, outside the smaller tilemap's grid, and walks up into the door
-    dungeonsStore.save.player.position = { x: 6, y: 21 };
-    dungeonsStore.save.player.direction = Direction.Up;
+    save.value.player.position = { x: 6, y: 21 };
+    save.value.player.direction = Direction.Up;
     const isHandled = doorInteractionEffect(scene, [
       getDoorObject(6, 20, { id: "1", tilemapKey: TilemapKey.HomeBuilding1 }),
     ]);
@@ -67,15 +69,15 @@ describe(doorInteractionEffect, () => {
     await onFadeOutComplete();
 
     expect(isHandled).toBe(true);
-    expect(dungeonsStore.save.tilemapKey).toBe(TilemapKey.HomeBuilding1);
-    expect(dungeonsStore.save.player.position).toStrictEqual({ x: 5, y: 7 });
+    expect(save.value.tilemapKey).toBe(TilemapKey.HomeBuilding1);
+    expect(save.value.player.position).toStrictEqual({ x: 5, y: 7 });
 
     // The remounted character joins the target tilemap's engine at that position, and can step from it
     const { height, width } = TilemapAssetMap[TilemapKey.HomeBuilding1];
     const tiles = Array.from({ length: height }, () => Array.from({ length: width }, () => false));
     const playerPositionAfterStep = createGridEngine({ tiles }).andThen((gridEngine) =>
       gridEngine
-        .addCharacter({ id: CharacterId.Player, startPosition: dungeonsStore.save.player.position })
+        .addCharacter({ id: CharacterId.Player, startPosition: save.value.player.position })
         .andThen(() => gridEngine.move(CharacterId.Player, Direction.Left))
         .andThen(() => {
           gridEngine.update(Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));

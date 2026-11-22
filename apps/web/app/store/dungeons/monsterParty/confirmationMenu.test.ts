@@ -26,36 +26,41 @@ describe(useConfirmationMenuStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const dungeonsStore = useDungeonsStore();
-    dungeonsStore.save = new Save();
+    const { save } = storeToRefs(dungeonsStore);
+    save.value = new Save();
   });
 
   test("backing out of the confirmation returns to the menu and restores the info text", () => {
     expect.hasAssertions();
 
     const monsterPartySceneStore = useMonsterPartySceneStore();
-    monsterPartySceneStore.sceneMode = SceneMode.Confirmation;
+    const { sceneMode } = storeToRefs(monsterPartySceneStore);
+    sceneMode.value = SceneMode.Confirmation;
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
-    monsterPartyInfoPanelStore.infoDialogMessage.text = "Release a monster?";
+    const { infoDialogMessage } = storeToRefs(monsterPartyInfoPanelStore);
+    infoDialogMessage.value.text = "Release a monster?";
     const confirmationMenuStore = useConfirmationMenuStore();
     const { onPlayerInput } = confirmationMenuStore;
     onPlayerInput(scene, PlayerSpecialInput.Cancel);
 
-    expect(monsterPartySceneStore.sceneMode).toBe(SceneMode.Menu);
-    expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe(DEFAULT_INFO_DIALOG_MESSAGE);
+    expect(sceneMode.value).toBe(SceneMode.Menu);
+    expect(infoDialogMessage.value.text).toBe(DEFAULT_INFO_DIALOG_MESSAGE);
   });
 
   test("dismissing the confirmation from outside it closes the menu and restores the info text", () => {
     expect.hasAssertions();
 
     const monsterPartySceneStore = useMonsterPartySceneStore();
-    monsterPartySceneStore.sceneMode = SceneMode.Confirmation;
+    const { sceneMode } = storeToRefs(monsterPartySceneStore);
+    sceneMode.value = SceneMode.Confirmation;
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
-    monsterPartyInfoPanelStore.infoDialogMessage.text = "Release a monster?";
+    const { infoDialogMessage } = storeToRefs(monsterPartyInfoPanelStore);
+    infoDialogMessage.value.text = "Release a monster?";
     const confirmationMenuStore = useConfirmationMenuStore();
     const { onDismiss } = confirmationMenuStore;
     onDismiss();
 
-    expect(monsterPartySceneStore.sceneMode).toBe(SceneMode.Default);
-    expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe(DEFAULT_INFO_DIALOG_MESSAGE);
+    expect(sceneMode.value).toBe(SceneMode.Default);
+    expect(infoDialogMessage.value.text).toBe(DEFAULT_INFO_DIALOG_MESSAGE);
   });
 });

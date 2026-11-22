@@ -22,7 +22,8 @@ describe(createTilemapMetadata, () => {
     // The names are read in alphabetical order, so Building is created before Ground, though Ground comes first in the tilemap
     const depthMap = new Map<string, number>();
     const worldSceneStore = useWorldSceneStore();
-    worldSceneStore.tilemap = {
+    const { tilemap } = storeToRefs(worldSceneStore);
+    tilemap.value = {
       addTilesetImage: () => undefined,
       createLayer: (layerName: string) => ({
         setDepth: (depth: number) => {

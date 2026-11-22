@@ -35,7 +35,8 @@ describe(applyNpcEffects, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const dungeonsStore = useDungeonsStore();
-    dungeonsStore.save.player.monsters = [new Monster(MonsterKey.Iguanignite)];
+    const { save } = storeToRefs(dungeonsStore);
+    save.value.player.monsters = [new Monster(MonsterKey.Iguanignite)];
     showMessages.mockReset();
     showMessages.mockResolvedValue(undefined);
   });
@@ -62,12 +63,13 @@ describe(applyNpcEffects, () => {
     expect.hasAssertions();
 
     const dungeonsStore = useDungeonsStore();
+    const { save } = storeToRefs(dungeonsStore);
     const party = [new Monster(MonsterKey.Iguanignite), new Monster(MonsterKey.Iguanignite)];
     for (const monster of party) monster.status.health = 1;
-    dungeonsStore.save.player.monsters = party;
+    save.value.player.monsters = party;
     await applyNpcEffects(scene, getNpc([{ type: EffectType.Heal }]));
 
-    expect(dungeonsStore.save.player.monsters.map(({ status }) => status.health)).toStrictEqual(
+    expect(save.value.player.monsters.map(({ status }) => status.health)).toStrictEqual(
       party.map(({ statistics }) => statistics.maxHealth),
     );
   });

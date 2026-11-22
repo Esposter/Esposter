@@ -24,7 +24,8 @@ describe(animateThrowBall, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const settingsStore = useSettingsStore();
-    settingsStore.settings = getInitialSettings();
+    const { settings } = storeToRefs(settingsStore);
+    settings.value = getInitialSettings();
   });
 
   // With animations off the throw skips its presentation, and the ball must end where the presentation ends: hidden,
@@ -33,14 +34,17 @@ describe(animateThrowBall, () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
-    settingsStore.settings[SettingsOption.Animations] = AnimationsSetting.Off;
+    const { settings } = storeToRefs(settingsStore);
+    settings.value[SettingsOption.Animations] = AnimationsSetting.Off;
     const ballStore = useBallStore();
+    const { isVisible, pathFollower } = storeToRefs(ballStore);
+    const { endPosition } = ballStore;
     const setPosition = vi.fn<(x: number, y: number) => void>();
-    ballStore.pathFollower = { setPosition } as unknown as GameObjects.PathFollower;
+    pathFollower.value = { setPosition } as unknown as GameObjects.PathFollower;
 
     await animateThrowBall(scene, CaptureResult.Success);
 
-    expect(ballStore.isVisible).toBe(false);
-    expect(setPosition).toHaveBeenCalledExactlyOnceWith(ballStore.endPosition.x, ballStore.endPosition.y);
+    expect(isVisible.value).toBe(false);
+    expect(setPosition).toHaveBeenCalledExactlyOnceWith(endPosition.x, endPosition.y);
   });
 });

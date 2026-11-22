@@ -5,7 +5,8 @@ import { noop } from "@esposter/shared";
 // So no call site checks the setting itself
 export const animateOrSkip = (animate: () => Promise<void>, skip: () => void = noop) => {
   const settingsStore = useSettingsStore();
-  if (!settingsStore.isSkipAnimations) return animate();
+  const { isSkipAnimations } = storeToRefs(settingsStore);
+  if (!isSkipAnimations.value) return animate();
 
   skip();
   return Promise.resolve();

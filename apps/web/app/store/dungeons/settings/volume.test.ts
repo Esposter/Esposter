@@ -13,121 +13,139 @@ vi.mock("#src/store/dungeons/index", () => import("#src/store/dungeons/index.tes
 
 describe(useVolumeStore, () => {
   const dungeonsStore = useDungeonsStore();
+  const { saveDungeons } = dungeonsStore;
   beforeEach(() => {
     setActivePinia(createPinia());
     const settingsStore = useSettingsStore();
-    settingsStore.settings = getInitialSettings();
-    settingsStore.settings[SettingsOption.VolumePercentage] = 40;
-    vi.mocked(dungeonsStore.saveDungeons).mockClear();
+    const { settings } = storeToRefs(settingsStore);
+    settings.value = getInitialSettings();
+    settings.value[SettingsOption.VolumePercentage] = 40;
+    vi.mocked(saveDungeons).mockClear();
   });
 
   test("setVolume clamps the volume to the range it can take and saves it", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
+    const { settings } = storeToRefs(settingsStore);
     const volumeStore = useVolumeStore();
-    volumeStore.setVolume(120);
+    const { setVolume } = volumeStore;
+    setVolume(120);
 
-    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(100);
+    expect(settings.value[SettingsOption.VolumePercentage]).toBe(100);
 
-    volumeStore.setVolume(-5);
+    setVolume(-5);
 
-    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(0);
-    expect(dungeonsStore.saveDungeons).toHaveBeenCalledTimes(2);
+    expect(settings.value[SettingsOption.VolumePercentage]).toBe(0);
+    expect(saveDungeons).toHaveBeenCalledTimes(2);
   });
 
   test("a held direction changes the volume once per cooldown, not once per call", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
+    const { settings } = storeToRefs(settingsStore);
     const volumeStore = useVolumeStore();
-    volumeStore.updateVolume(Direction.Left, 0);
+    const { updateVolume } = volumeStore;
+    updateVolume(Direction.Left, 0);
 
-    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(39);
+    expect(settings.value[SettingsOption.VolumePercentage]).toBe(39);
 
-    volumeStore.updateVolume(Direction.Left, 0);
+    updateVolume(Direction.Left, 0);
 
-    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(39);
+    expect(settings.value[SettingsOption.VolumePercentage]).toBe(39);
   });
 
   test("right raises the volume and left lowers it, stopping at the bottom", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
+    const { settings } = storeToRefs(settingsStore);
     const volumeStore = useVolumeStore();
-    settingsStore.settings[SettingsOption.VolumePercentage] = 0;
-    volumeStore.updateVolume(Direction.Left, 0);
+    const { updateVolume } = volumeStore;
+    settings.value[SettingsOption.VolumePercentage] = 0;
+    updateVolume(Direction.Left, 0);
 
-    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(0);
-    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
+    expect(settings.value[SettingsOption.VolumePercentage]).toBe(0);
+    expect(saveDungeons).not.toHaveBeenCalled();
 
-    volumeStore.updateVolume(Direction.Right, 0);
+    updateVolume(Direction.Right, 0);
 
-    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(1);
+    expect(settings.value[SettingsOption.VolumePercentage]).toBe(1);
   });
 
   test("right stops at the top of the volume range without saving", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
+    const { settings } = storeToRefs(settingsStore);
     const volumeStore = useVolumeStore();
-    settingsStore.settings[SettingsOption.VolumePercentage] = 100;
-    volumeStore.updateVolume(Direction.Right, 0);
+    const { updateVolume } = volumeStore;
+    settings.value[SettingsOption.VolumePercentage] = 100;
+    updateVolume(Direction.Right, 0);
 
-    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(100);
-    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
+    expect(settings.value[SettingsOption.VolumePercentage]).toBe(100);
+    expect(saveDungeons).not.toHaveBeenCalled();
   });
 
   test("up and down leave the volume alone", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
+    const { settings } = storeToRefs(settingsStore);
     const volumeStore = useVolumeStore();
-    volumeStore.updateVolume(Direction.Up, 0);
-    volumeStore.updateVolume(Direction.Down, 0);
+    const { updateVolume } = volumeStore;
+    updateVolume(Direction.Up, 0);
+    updateVolume(Direction.Down, 0);
 
-    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(40);
-    expect(dungeonsStore.saveDungeons).not.toHaveBeenCalled();
+    expect(settings.value[SettingsOption.VolumePercentage]).toBe(40);
+    expect(saveDungeons).not.toHaveBeenCalled();
   });
 
   test("lifting the key starts the next hold at once rather than waiting out the old cooldown", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
+    const { settings } = storeToRefs(settingsStore);
     const volumeStore = useVolumeStore();
-    volumeStore.updateVolume(Direction.Left, 0);
+    const { checkIsUpdateVolume, updateVolume } = volumeStore;
+    updateVolume(Direction.Left, 0);
 
-    expect(volumeStore.checkIsUpdateVolume(Direction.Up, SettingsOption.VolumePercentage)).toBe(false);
+    expect(checkIsUpdateVolume(Direction.Up, SettingsOption.VolumePercentage)).toBe(false);
 
-    volumeStore.updateVolume(Direction.Left, 0);
+    updateVolume(Direction.Left, 0);
 
-    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(38);
+    expect(settings.value[SettingsOption.VolumePercentage]).toBe(38);
   });
 
   test("only left and right on the volume row count as a volume update", () => {
     expect.hasAssertions();
 
     const volumeStore = useVolumeStore();
+    const { checkIsUpdateVolume } = volumeStore;
 
-    expect(volumeStore.checkIsUpdateVolume(Direction.Left, SettingsOption.VolumePercentage)).toBe(true);
-    expect(volumeStore.checkIsUpdateVolume(Direction.Right, SettingsOption.VolumePercentage)).toBe(true);
-    expect(volumeStore.checkIsUpdateVolume(Direction.Left, SettingsOption["Text Speed"])).toBe(false);
+    expect(checkIsUpdateVolume(Direction.Left, SettingsOption.VolumePercentage)).toBe(true);
+    expect(checkIsUpdateVolume(Direction.Right, SettingsOption.VolumePercentage)).toBe(true);
+    expect(checkIsUpdateVolume(Direction.Left, SettingsOption["Text Speed"])).toBe(false);
   });
 
   test("shutting the slider down destroys it and lets go of it, so a later volume change does not reach it", () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
+    const { settings } = storeToRefs(settingsStore);
     const volumeStore = useVolumeStore();
+    const { volumeSlider } = storeToRefs(volumeStore);
+    const { destroyVolumeSlider, setVolume } = volumeStore;
     const destroy = vi.fn<() => void>();
     const slider = { destroy, value: 0.4 };
-    volumeStore.volumeSlider = slider;
-    volumeStore.destroyVolumeSlider();
-    volumeStore.setVolume(70);
+    volumeSlider.value = slider;
+    destroyVolumeSlider();
+    setVolume(70);
 
     expect(destroy).toHaveBeenCalledExactlyOnceWith();
     expect(slider.value).toBe(0.4);
-    expect(volumeStore.volumeSlider).toBeUndefined();
-    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(70);
+    expect(volumeSlider.value).toBeUndefined();
+    expect(settings.value[SettingsOption.VolumePercentage]).toBe(70);
   });
 });
