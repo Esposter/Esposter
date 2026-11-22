@@ -52,3 +52,11 @@ refs, dynamic bindings or third-party selectors:
 ```bash
 grep -rn 'class="' --include=*.vue apps/web/app/components
 ```
+
+A bar that wraps is a question the templates test cannot answer, so the wrap is read by hand:
+
+```bash
+rg -n 'flex-wrap' apps/web/app/components apps/web/app/pages apps/web/app/layouts -g '*.vue'
+```
+
+Each hit is a question: a bar that pushes a group apart (`grow`, `flex-1`, `justify-between`) or holds a full command set takes no wrap, since its leading content yields and the occasional commands wait in an overflow menu (the `responsive` skill). A list of chips, tags, swatches or pills wraps by design, and so does a form row of fields.
