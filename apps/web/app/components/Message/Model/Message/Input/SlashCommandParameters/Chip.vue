@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { slashCommandParameterValueSchema } from "#src/models/message/slashCommands/SlashCommandParameter";
+import { slashCommandParameterValueSchema } from "#src/models/message/slashCommands/slashCommandParameterValueSchema";
 import { REQUIRED_ERROR_MESSAGE } from "#src/services/message/slashCommands/constants";
 import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
 import { checkIsCaretAtEnd } from "#src/util/dom/checkIsCaretAtEnd";

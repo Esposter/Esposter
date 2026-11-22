@@ -11,8 +11,7 @@ describe(MicrophoneProcessor, () => {
 
     constructor() {
       // A browser refuses a node for a processor its context has not loaded, so the stub refuses it too
-      if (addModule.mock.calls.length === 0)
-        throw new Error("The node was built before its processor module was added");
+      if (addModule.mock.calls.length === 0) throw new Error(" ");
     }
   }
   // Only the members the middleware reaches are present, so the context is a plain object rather than a stub class

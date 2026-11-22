@@ -27,7 +27,7 @@ An object literal that fits the width is on one line — `oxfmt`'s `objectWrap: 
 - **Comment only _exceptional_ behaviour** — never restate a convention a skill or doc already holds (`references/comment-content.md`).
 - **Comments describe the present, never the history**; git is the changelog (`references/comment-content.md`).
 - **A comment explains the code, never the change that produced it** (`references/comment-content.md`).
-- **`/** */` is for an exported API surface and a module-scope paragraph, `//` for everything else** (`references/doc-blocks.md`).
+- **`/** */` is for a module-scope paragraph and for an exported API surface that already carries one; `//` for everything else, an export included** (`references/doc-blocks.md`).
 - **Tight and generic** — no baked-in example values; an actual error text a workaround addresses is kept (`references/comment-content.md`).
 - **Don't fight oxlint's `capitalized-comments`** — after a rewrap, move an identifier off the line front and re-read the joined sentence (`comments/no-capitalized-identifier`, `references/capitalized-comments.md`).
 

@@ -1,7 +1,7 @@
 import type { SlashCommandParameters } from "#src/models/message/slashCommands/SlashCommandParameters";
 import type { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
 
-import { slashCommandParameterValueSchema } from "#src/models/message/slashCommands/SlashCommandParameter";
+import { slashCommandParameterValueSchema } from "#src/models/message/slashCommands/slashCommandParameterValueSchema";
 import { REQUIRED_ERROR_MESSAGE } from "#src/services/message/slashCommands/constants";
 import { executeSlashCommand } from "#src/services/message/slashCommands/executeSlashCommand";
 import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
