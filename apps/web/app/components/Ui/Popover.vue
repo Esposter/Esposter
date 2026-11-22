@@ -21,7 +21,11 @@ interface Props {
 // Under headings. What a call site passes goes to the trigger, which opens the panel natively through its popover
 // Target, so a second click on it closes the panel rather than light-dismissing it and opening it again
 defineOptions({ inheritAttrs: false });
-defineSlots<{ default: (props: { close: () => void }) => VNode; footer?: () => VNode; trigger?: () => VNode }>();
+defineSlots<{
+  default: (props: { close: () => void }) => VNode;
+  footer?: (props: { close: () => void }) => VNode;
+  trigger?: () => VNode;
+}>();
 // Written from outside too, so a shortcut elsewhere on the page can open the panel
 const isOpenModel = defineModel<boolean>("isOpen", { default: false });
 const { anchor, positionArea = POPOVER_POSITION_AREA } = defineProps<Props>();
@@ -122,7 +126,7 @@ defineExpose({ triggerElement });
       <slot :close="closeToTrigger" />
     </div>
     <footer v-if="$slots.footer" ui-region-footer>
-      <slot name="footer" />
+      <slot name="footer" :close="closeToTrigger" />
     </footer>
   </div>
 </template>

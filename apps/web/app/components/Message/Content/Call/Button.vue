@@ -30,6 +30,8 @@ const roomParticipantMap = useCallRoomParticipantMap();
           </UiItemContent>
         </div>
       </div>
+    </template>
+    <template #footer="{ close }">
       <UiButton
         :variant="UiButtonVariant.Danger"
         @click="

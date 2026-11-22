@@ -44,6 +44,15 @@ describe("uiPopover", () => {
       expect(document.activeElement).toBe(trigger.element);
     });
 
+    test("draws its footer beneath the body, outside the region that scrolls", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiPopover, { props: { label }, slots: { ...slots, footer: "footer" } });
+
+      expect(component.get("[ui-region-body]").find("footer").exists()).toBe(false);
+      expect(component.get('[role="dialog"] footer').text()).toBe("footer");
+    });
+
     test("hangs off an element already on the page in place of a trigger of its own, and hands focus back to it", async () => {
       expect.hasAssertions();
 

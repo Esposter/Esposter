@@ -46,7 +46,7 @@ An immersive page (`apps/web/app/layouts/immersive.vue`) is one with no app fram
 
 ## What stays in `class="..."`
 
-Only a scoped CSS ref, a `:class` binding (the home of a valueless utility switched on a condition), a third-party or SVG class and `group` — everything else is an attribute (`references/class-attribute.md`).
+Only a scoped CSS ref, a `:class` binding (the home of a valueless utility switched on a condition), a third-party or SVG class, `group` and an aria-state variant (`aria-pressed:`, `aria-disabled:`) — everything else is an attribute (`references/class-attribute.md`).
 
 ## Theme utilities are attributify too — `references/theme-utilities.md`
 

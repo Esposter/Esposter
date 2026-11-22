@@ -49,10 +49,10 @@ const updateAspectRatio = () => {
           rd="[var(--ui-container-radius)]"
           op-0
           pointer-events-none
+          ui-selected
           inset-0
           absolute
           group-hover:op-100
-          shadow="[inset_0_0_0_var(--ui-indicator-width)_var(--ui-accent)]"
         />
         <span
           class="reveal"

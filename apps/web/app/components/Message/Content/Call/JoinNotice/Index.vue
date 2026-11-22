@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { useCallStore } from "#src/store/message/room/call/index";
 import { useKnockerStore } from "#src/store/message/room/call/knocker";
 import { useParticipantStore } from "#src/store/message/room/call/participant";
+import { useUserStore } from "#src/store/message/user/index";
 
+const callStore = useCallStore();
+const { callRoomId } = storeToRefs(callStore);
 const knockerStore = useKnockerStore();
 const { knockers } = storeToRefs(knockerStore);
 const participantStore = useParticipantStore();
 const { clearJoinNotice } = participantStore;
 const { joinNoticeParticipant } = storeToRefs(participantStore);
+const userStore = useUserStore();
+const { getRoomMemberName } = userStore;
 </script>
 
 <!-- Floats over the stage's corner, arriving from above as a toast does; who is waiting outranks who just joined -->
@@ -45,7 +51,7 @@ const { joinNoticeParticipant } = storeToRefs(participantStore);
     <div ui-row>
       <UiItemContent
         :image="joinNoticeParticipant.image ?? undefined"
-        :title="`${joinNoticeParticipant.name} joined the call`"
+        :title="`${getRoomMemberName(callRoomId, joinNoticeParticipant.userId, joinNoticeParticipant.name)} joined the call`"
       >
         <template #append>
           <UiIconButton

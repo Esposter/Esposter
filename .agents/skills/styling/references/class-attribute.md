@@ -9,5 +9,6 @@ Only when technically required:
 - **Third-party component classes** — e.g. `apexcharts-tooltip`
 - **SVG classes** — e.g. `fclass1`, `a`, `b`
 - **`group`** — UnoCSS group variant token; must stay in `class` so descendant `group-hover:` variants work
+- **Aria-state variants** — `aria-pressed:` and `aria-disabled:` utilities stay in `class`: as attributes, `aria-pressed:shadow="…"` is an invalid ARIA attribute to `vuejs-accessibility/aria-props`, so the library's `ColorField` and `UiIconButton` write them this way too
 
 A scoped class (with `v-bind()` for reactive values) also stays correct where attributify cannot reach: structural pseudo-selectors (`:nth-child`, `:not()`, `:first-of-type`), `:deep()` rules, bare element/tag selectors, and non-colour reactive values (`transform`, `top`, `height`, `fill`, `animation`). Everything else — a class that only sets a theme colour, a hover colour, or arbitrary-value properties — is an attribute.

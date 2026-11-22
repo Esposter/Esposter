@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { validateFileWithAlert } from "#src/services/file/validateFileWithAlert";
 import { CallVirtualBackgroundDefinitions } from "#src/services/message/room/call/CallVirtualBackgroundDefinitions";
@@ -69,29 +70,15 @@ onMounted(async () => {
         @delete="deletingSelection = $event"
         @select="(virtualBackground) => emit('select', virtualBackground)"
       />
-      <UiTooltip
+      <UiIconButton
         v-if="callBackgrounds.length < MAX_CALL_BACKGROUNDS"
-        #default="{ activatorProps }"
         label="Upload Background"
-      >
-        <button
-          :="activatorProps"
-          aria-label="Upload Background"
-          type="button"
-          :disabled="isUploadingCallBackground"
-          flex
-          aspect-square
-          cursor-pointer
-          items-center
-          justify-center
-          ui-field
-          disabled:cursor-default
-          @click="fileInput?.open()"
-        >
-          <UiSpinner v-if="isUploadingCallBackground" />
-          <UiIcon v-else :meaning="UiIconMeaning.Upload" />
-        </button>
-      </UiTooltip>
+        :is-pending="isUploadingCallBackground"
+        :meaning="UiIconMeaning.Upload"
+        :variant="UiButtonVariant.Field"
+        aspect-square
+        @click="fileInput?.open()"
+      />
       <UiHiddenFileInput
         ref="fileInput"
         :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"

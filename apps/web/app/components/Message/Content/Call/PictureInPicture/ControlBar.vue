@@ -7,7 +7,7 @@ const { isPoppedOut } = storeToRefs(mediaStore);
 </script>
 
 <template>
-  <div px-2 pb-2 flex shrink-0 flex-wrap gap-1 items-center justify-center>
+  <div px-2 pb-2 flex shrink-0 gap-1 items-center justify-center>
     <MessageContentCallAudioMuteButton />
     <MessageContentCallCameraButton />
     <MessageContentCallScreenShareButton />
