@@ -24,7 +24,7 @@ Client writes race. Each `useMutation()` instance owns its own queue, so two com
 - `architecture/cloudflare-services`: the version column, tombstones and the mutation header.
 - `esbabbler/friends-and-dms`: the pair rows and their replay paragraph.
 
-This commit is documentation only, so the change carries no spec delta yet. The pilot adds the deltas for these capabilities when its behaviour ships, and the design records each one.
+This commit is documentation only, so the change adds no behaviour of its own. Its four spec deltas under `specs/` are one per capability above, and the design records the rules each one states.
 
 ## Size
 
