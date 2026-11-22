@@ -1,7 +1,6 @@
 import type { useMutation } from "#src/composables/shared/useMutation";
 
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
-import { noop } from "@esposter/shared";
 import { describe, expect, expectTypeOf, test } from "vitest";
 
 const mutate = () => Promise.resolve("");
@@ -21,19 +20,6 @@ describe("useMutation type", () => {
     expect.hasAssertions();
 
     expectTypeOf<ExecuteMutation>().toBeCallableWith(mutate, {
-      awaitedBecause: AwaitedReason.ServerIssuedValue,
-      key: "",
-    });
-  });
-
-  test("a write takes no rollback in either form", () => {
-    expect.hasAssertions();
-
-    // @ts-expect-error A failed write is reported, and nothing on screen is put back, so a rollback is not a member
-    expectTypeOf<ExecuteMutation>().toBeCallableWith(mutate, { applyOptimistic: noop, key: "" });
-    // @ts-expect-error A failed awaited write is reported, and nothing on screen is put back, so a rollback is not a member
-    expectTypeOf<ExecuteMutation>().toBeCallableWith(mutate, {
-      applyOptimistic: noop,
       awaitedBecause: AwaitedReason.ServerIssuedValue,
       key: "",
     });

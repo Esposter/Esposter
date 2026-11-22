@@ -5,7 +5,7 @@ import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { getResultAsync } from "@esposter/shared";
 
-export const settleOperation = <TResult>(
+export const settleOperation = async <TResult>(
   operate: () => Promise<TResult>,
   { onError, onSuccess }: OperationContext<TResult>,
 ) =>
