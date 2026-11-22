@@ -11,6 +11,6 @@ const DERIVED_CONTENT_TYPES = new Set<ResourceType>([ResourceType.Webpage]);
 export const omitDerivedContent = (resource: ResourceInResource, content: unknown): unknown => {
   if (!DERIVED_CONTENT_TYPES.has(resource.type) || typeof content !== "object" || content === null) return content;
 
-  const { html: _html, ...workingContent } = content as { html?: unknown };
+  const { html: _html, ...workingContent }: { html?: unknown } = content;
   return workingContent;
 };

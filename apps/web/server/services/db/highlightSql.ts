@@ -3,8 +3,10 @@ import { styleText } from "node:util";
 
 type HighlightKind = keyof typeof HighlightStyleMap;
 
-// Object.keys types its result as string[]; the object's keys are its kinds, which the call alone does not show
-const HIGHLIGHT_KINDS = Object.keys(HighlightStyleMap) as HighlightKind[];
+// Object.keys types its result as string[]; the object's keys are its kinds, so a key is one only if the map names it
+const HIGHLIGHT_KINDS = Object.keys(HighlightStyleMap).filter((key): key is HighlightKind =>
+  Object.hasOwn(HighlightStyleMap, key),
+);
 // Longest first, so ORDER is never taken for a prefix of a longer keyword the alternation has yet to try
 const KEYWORD_PATTERN = SQLITE_KEYWORDS.toSorted(
   (firstKeyword, secondKeyword) => secondKeyword.length - firstKeyword.length,

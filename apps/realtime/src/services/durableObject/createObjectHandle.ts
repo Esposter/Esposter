@@ -15,7 +15,8 @@ export const createObjectHandle = <T extends object>(handle: T, { owned = false 
       if (invocationHandles) {
         let record = invocationHandles.get(target);
         if (!record) {
-          // The forced conversion: the recorder's handle type is D1's, and the recorder treats both alike
+          // The recorder's handle type is D1's, and the recorder treats both alike
+          // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the recorder is typed over D1 and an object's SQLite handle is not D1, so no type relates the two; recordStatements wraps only the methods a statement is built from, which both share
           record = { owned, recorder: recordStatements(target as Database) };
           invocationHandles.set(target, record);
         }

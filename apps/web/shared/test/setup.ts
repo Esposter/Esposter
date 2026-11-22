@@ -101,7 +101,8 @@ vi.mock("nuxt/server", async (importOriginal) => ({
 // (`checkIsServer()` — no `window`) skip it — they never mount, and importing the nuxt runtime there would break them.
 // Plain happy-dom files (a `window` but no Nuxt app) skip it via the env's own marker — mounting there would crash.
 let isNuxtRuntimeWarm = false;
-if (!checkIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUXT_VITEST_ENVIRONMENT__)
+// eslint-disable-next-line no-restricted-syntax -- a genuine top-level fork: checkIsServer() guards the read, and the marker is set only on the happy-dom environment, so the read is the environment question itself
+if (!checkIsServer() && "__NUXT_VITEST_ENVIRONMENT__" in window && window.__NUXT_VITEST_ENVIRONMENT__)
   beforeEach(async () => {
     const [{ mountSuspended }, { useNuxtApp, useRouter }, { setActivePinia }, { defineComponent, h }] =
       await Promise.all([import("@nuxt/test-utils/runtime"), import("nuxt/app"), import("pinia"), import("vue")]);
@@ -117,6 +118,7 @@ if (!checkIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUX
     // Its store belongs to, and the app calls actions on its own stores whenever it likes (a plugin's head-render or
     // `afterEach` hook), so a suite holding a second Pinia of its own reads the app's from that moment on.
     // `@pinia/nuxt` types `$pinia` only for the app's own tsconfig, so `shared/` reads it as `unknown`
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the $pinia augmentation of @pinia/nuxt is in the app's tsconfig only, so this tsconfig reads the app's Pinia as unknown
     const $pinia = useNuxtApp().$pinia as Pinia;
     for (const store of $pinia._s.values()) store.$dispose();
     $pinia.state.value = {};

@@ -9,5 +9,6 @@ export const pickColumns = <TColumns extends Record<string, AnyColumn>, TKey ext
   allowlist: Record<TKey, true>,
 ): Pick<TColumns, TKey> => {
   const keys = Object.keys(columns).filter((key): key is TKey => Object.hasOwn(allowlist, key));
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the keys are known only at runtime, so the built object is a bare Record that no per-key Pick overlaps
   return Object.fromEntries(keys.map((key) => [key, columns[key]])) as Pick<TColumns, TKey>;
 };

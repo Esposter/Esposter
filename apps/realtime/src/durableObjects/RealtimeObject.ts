@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-type-assertion -- a dispatch by a string name, which the type system cannot express: TRpc types each name's arguments */
 import type { MethodArgs } from "#src/models/durableObject/MethodArgs";
 import type { MethodResult } from "#src/models/durableObject/MethodResult";
 import type { ObjectInvocationHandles } from "#src/models/durableObject/ObjectInvocationHandles";
@@ -67,10 +68,11 @@ export abstract class RealtimeObject<
   ): Promise<ObjectInvocation<MethodResult<TRpc, TMethod>>> {
     // The method is named by a string at run time, so the object is read by name here, and TRpc types the arguments each name takes
     // eslint-disable-next-line no-restricted-syntax -- a dispatch by a string name, which the type system cannot express: TRpc types each name's arguments
-    const target = this as unknown as Record<TMethod, (...args: MethodArgs<TRpc, TMethod>) => unknown>;
-    return (await this.runInvocation(`"${method}"`, () => target[method](...args))) as ObjectInvocation<
-      MethodResult<TRpc, TMethod>
+    const target = this as unknown as Record<
+      TMethod,
+      (...args: MethodArgs<TRpc, TMethod>) => MethodResult<TRpc, TMethod>
     >;
+    return this.runInvocation(`"${method}"`, () => target[method](...args));
   }
 
   // A close the peer began is answered in kind, so the socket is released rather than left half open. A reserved code
