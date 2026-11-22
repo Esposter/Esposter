@@ -1,4 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-type-assertion -- three types a material's colour and emission nodes as a union of every node type, and its normal map's output untyped; the stand-ins draw vec3 nodes there, which the annotation and assertions name */
 import type { WitnessMaterial } from "#src/models/scene/WitnessMaterial";
 import type { WitnessMaterialFactory } from "#src/models/scene/WitnessMaterialFactory";
 import type { SceneMaterial } from "genshin-engine";
@@ -6,6 +5,7 @@ import type { Texture } from "three";
 import type { Node } from "three/webgpu";
 
 import { WitnessProperty } from "#src/models/scene/WitnessProperty";
+import { asVec3Node } from "#src/services/scene/asVec3Node";
 import { LEAF_SHADER } from "#src/services/scene/constants";
 import { DoubleSide } from "three";
 import { color, faceDirection, normalMap, step, texture, vec3 } from "three/tsl";
@@ -35,8 +35,8 @@ export const createWitnessMaterial = (
   const tint = vec3(red, green, blue);
   const albedoNode = diffuse ? texture(diffuse).rgb.mul(tint) : tint;
   // The host's colour and emission are the vectors its own stand-ins draw with, which three types as any node
-  const colorNode = material.colorNode as Node<"vec3"> | null;
-  const emissiveNode = material.emissiveNode as Node<"vec3"> | null;
+  const colorNode = material.colorNode && asVec3Node(material.colorNode);
+  const emissiveNode = material.emissiveNode && asVec3Node(material.emissiveNode);
   material.colorNode = colorNode ? colorNode.mul(albedoNode) : albedoNode;
   // The leaf cards are cut where their texture's alpha falls under the material's cutoff, as the game's foliage shader
   // Clips them, and drawn from both sides: the leaf mesh holds no back face for any card and its normals are a field
@@ -54,7 +54,7 @@ export const createWitnessMaterial = (
     const mappedNormal: Node = normalMap(texture(normal));
     // Three turns a double-sided face's whole tangent frame round on its back, so a card's mapped normal is turned
     // Back to the crown's, as the stand-in's card reads it
-    material.normalNode = isLeafCard ? (mappedNormal as Node<"vec3">).mul(faceDirection) : mappedNormal;
+    material.normalNode = isLeafCard ? asVec3Node(mappedNormal).mul(faceDirection) : mappedNormal;
   }
   const mask = getTexture(WitnessProperty.DetailMask);
   if (mask && floats[WitnessProperty.EmissionType]) {

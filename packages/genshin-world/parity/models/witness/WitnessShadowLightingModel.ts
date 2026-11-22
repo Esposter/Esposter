@@ -1,6 +1,7 @@
 import type { Color } from "three";
-import type { LightingModelDirectInput, Node, UniformNode } from "three/webgpu";
+import type { LightingModelDirectInput, UniformNode } from "three/webgpu";
 
+import { asVec3Node } from "#src/services/scene/asVec3Node";
 import { createSunVisibilityNode } from "genshin-engine";
 import { vec3 } from "three/tsl";
 import { LightingModel } from "three/webgpu";
@@ -16,8 +17,6 @@ export class WitnessShadowLightingModel extends LightingModel {
   }
 
   override direct({ lightColor, reflectedLight }: LightingModelDirectInput): void {
-    (reflectedLight.directDiffuse as Node<"vec3">).addAssign(
-      vec3(createSunVisibilityNode(lightColor, this.sunRadiance)),
-    );
+    asVec3Node(reflectedLight.directDiffuse).addAssign(vec3(createSunVisibilityNode(lightColor, this.sunRadiance)));
   }
 }

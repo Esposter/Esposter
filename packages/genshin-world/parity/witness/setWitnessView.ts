@@ -2,6 +2,7 @@ import type { WitnessView } from "#parity/models/witness/WitnessView";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import { applyLeafHalf } from "#parity/witness/applyLeafHalf";
+import { readUserData } from "#src/services/scene/readUserData";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { PerspectiveCamera, Vector3 } from "three";
 
@@ -33,7 +34,7 @@ export const setWitnessView = async (
     group.visible = families.value.includes(group.name);
     // Kept for the scene, which stands a row it scrolls where its own stands, off by this
     group.userData.offset = familyOffsets[group.name] ?? [0, 0, 0];
-    group.position.set(...(group.userData.offset as [number, number, number]));
+    group.position.set(...readUserData<[number, number, number]>(group.userData, "offset"));
     for (const part of group.children) {
       part.userData.laidScale ??= part.scale.clone();
       part.scale.copy(part.userData.laidScale).multiplyScalar(familyScales[group.name] ?? 1);

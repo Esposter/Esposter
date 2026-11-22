@@ -1,6 +1,7 @@
 import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { UniformNode } from "three/webgpu";
 
+import { readUserData } from "#src/services/scene/readUserData";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The share of each band's clouds the sky draws, by the band's name, or handed back to the scene's own when none are
@@ -10,10 +11,10 @@ export const setSceneCloudCover = (context: SceneContext | undefined, covers?: R
   if (!context) throw new InvalidOperationError(Operation.Read, "scene", "the scene has not rendered yet");
   const bands: string[] = [];
   context.scene.traverse((object) => {
-    const cover = object.userData.cover as undefined | UniformNode<"float", number>;
+    const cover = readUserData<undefined | UniformNode<"float", number>>(object.userData, "cover");
     if (!cover) return;
     object.userData.ownCover ??= cover.value;
-    cover.value = covers?.[object.name] ?? (object.userData.ownCover as number);
+    cover.value = covers?.[object.name] ?? readUserData<number>(object.userData, "ownCover");
     bands.push(object.name);
   });
   return bands;

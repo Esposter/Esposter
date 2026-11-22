@@ -1,5 +1,6 @@
 import type { SceneContext } from "#src/models/scene/SceneContext";
 
+import { readUserData } from "#src/services/scene/readUserData";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { MathUtils } from "three";
 
@@ -17,12 +18,12 @@ export const setSceneCloudHeights = (
   if (!context) throw new InvalidOperationError(Operation.Read, "scene", "the scene has not rendered yet");
   const ownRanges: Record<string, [number, number]> = {};
   context.scene.traverse((object) => {
-    const places = object.userData.places as [number, number, number][] | undefined;
-    const ceilings = object.userData.ceilings as number[] | undefined;
-    const ownRange = object.userData.heightRange as [number, number] | undefined;
+    const places = readUserData<[number, number, number][] | undefined>(object.userData, "places");
+    const ceilings = readUserData<number[] | undefined>(object.userData, "ceilings");
+    const ownRange = readUserData<[number, number] | undefined>(object.userData, "heightRange");
     if (!places || !ownRange) return;
     object.userData.ownHeights ??= places.map(([, height]) => height);
-    const ownHeights = object.userData.ownHeights as number[];
+    const ownHeights = readUserData<number[]>(object.userData, "ownHeights");
     const [low, high] = heights?.[object.name] ?? ownRange;
     for (const [index, place] of places.entries())
       place[1] = Math.min(

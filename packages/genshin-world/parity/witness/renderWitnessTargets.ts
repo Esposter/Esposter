@@ -8,7 +8,9 @@ import { WitnessRole } from "#parity/models/witness/WitnessRole";
 import { WitnessShadowMaterial } from "#parity/models/witness/WitnessShadowMaterial";
 import { WitnessTarget, WitnessTargets } from "#parity/models/witness/WitnessTarget";
 import { checkIsWitnessDrawn } from "#parity/witness/checkIsWitnessDrawn";
+import { asVec3Node } from "#src/services/scene/asVec3Node";
 import { IN_FAMILY_KEY, SCENE_FAMILY_KEY } from "#src/services/scene/constants";
+import { readUserData } from "#src/services/scene/readUserData";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { createOcclusionNode, StoneNodeMaterial } from "genshin-engine";
 import {
@@ -133,7 +135,7 @@ export const renderWitnessTargets = async (
   const heldGroups: Object3D[] = [];
   if (isScene)
     scene.traverseVisible((object) => {
-      const family = object.userData[SCENE_FAMILY_KEY] as string | undefined;
+      const family = readUserData<string | undefined>(object.userData, SCENE_FAMILY_KEY);
       if (family && families.includes(family)) addPart(family, object);
     });
   else
@@ -172,19 +174,22 @@ export const renderWitnessTargets = async (
       targetMaterials.set(key, material);
       return material;
     }
-    const albedo = mesh.material instanceof NodeMaterial ? (mesh.material.colorNode as Node<"vec3"> | null) : null;
+    const albedo =
+      mesh.material instanceof NodeMaterial && mesh.material.colorNode ? asVec3Node(mesh.material.colorNode) : null;
     // The part's own normal map bends the normal the target writes, as the G-buffer the game lights holds it, taken
     // From the view into the world as `normalWorld` takes the geometry's. A face drawn from behind writes its geometry's
     // Own normal, never the flip `normalWorld` gives a back face, unless a map bends it: a leaf card's normal is its
     // Crown's from either side
     const sourceNormal =
-      mesh.material instanceof NodeMaterial ? (mesh.material.normalNode as Node<"vec3"> | null) : null;
+      mesh.material instanceof NodeMaterial && mesh.material.normalNode ? asVec3Node(mesh.material.normalNode) : null;
     const geometryNormal = material.side === DoubleSide ? normalWorldGeometry : normalWorld;
     const worldNormal = sourceNormal
       ? sourceNormal.transformNormalByInverseViewMatrix(cameraViewMatrix).normalize()
       : geometryNormal;
     const emission =
-      mesh.material instanceof StoneNodeMaterial ? (mesh.material.emissiveNode as Node<"vec3"> | null) : null;
+      mesh.material instanceof StoneNodeMaterial && mesh.material.emissiveNode
+        ? asVec3Node(mesh.material.emissiveNode)
+        : null;
     const targetNodeMap: Record<Exclude<WitnessTarget, typeof WitnessTarget.Shadow>, Node<"vec4">> = {
       [WitnessTarget.Albedo]: vec4(albedo ?? vec3(1), 1),
       [WitnessTarget.Depth]: vec4(positionView.z.negate(), 0, 0, 1),

@@ -2,6 +2,7 @@ import type { SceneLights } from "#parity/models/SceneLights";
 import type { SceneLightShares } from "#parity/models/SceneLightShares";
 import type { SceneContext } from "#src/models/scene/SceneContext";
 
+import { readUserData } from "#src/services/scene/readUserData";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { DirectionalLight, HemisphereLight, Vector3 } from "three";
 
@@ -17,12 +18,12 @@ export const setSceneLights = (
   context.scene.traverse((object) => {
     if (object instanceof HemisphereLight) {
       object.userData.ownIntensity ??= object.intensity;
-      object.intensity = (object.userData.ownIntensity as number) * ambientShare;
+      object.intensity = readUserData<number>(object.userData, "ownIntensity") * ambientShare;
     } else if (object instanceof DirectionalLight) {
       object.userData.ownIntensity ??= object.intensity;
       // The god rays' own light casts the sun's shadow for them and lights nothing, so it is neither scaled nor read
       if (object.userData.ownIntensity === 0) return;
-      object.intensity = (object.userData.ownIntensity as number) * sunShare;
+      object.intensity = readUserData<number>(object.userData, "ownIntensity") * sunShare;
       direction = new Vector3().subVectors(object.position, object.target.position).normalize().toArray();
     }
   });
