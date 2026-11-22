@@ -23,6 +23,17 @@ git grep -n -E "v-html|innerHTML|sql\.raw\(|Math\.random\(|execSync\(|execFileSy
 
 Procedures and routes are read in full whatever the grep finds, since a missing guard leaves no string to match.
 
+A package fetched and run at run time, rather than one the lock records, is a sink only where the step that runs it
+holds a secret, since that secret goes to whatever the registry serves. It is a separate recipe, over the whole tree:
+
+```sh
+git grep -I -n -E "(dlx|npx |bunx |npm exec )" -- ':!*.md' ':!pnpm-lock.yaml'
+```
+
+A hit in a comment, or in a script whose environment holds no secret, is not the shape. A hit whose step holds one
+(`secrets.` in its `env:`, or a credential the script reads) is read against the decision that keeps the call as it
+is: a risk its owning page records is an accepted one, and is not a finding.
+
 ## Exclusions
 
 Excluded: `CHANGELOG.md` (lerna output).
