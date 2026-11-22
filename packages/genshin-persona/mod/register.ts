@@ -34,11 +34,17 @@ const readStateDirectory = async ($: EngineInterface) => {
 // Not JSON, or nothing, has failed: the state it would have set stays as it was, and the next read replaces it
 const refresh = async ($: EngineInterface) => {
   const sessionId = await $.session.id();
-  const status = await $.process.run(["node", `${$.plugin.root}/scripts/status.mjs`], {
-    stdin: JSON.stringify({ session_id: sessionId }),
-  });
+  // A script the node process cannot start leaves the state as it was, as one that prints nothing does
+  const [statusRun] = await Promise.allSettled([
+    $.process.run(["node", `${$.plugin.root}/scripts/status.mjs`], {
+      stdin: JSON.stringify({ session_id: sessionId }),
+    }),
+  ]);
+  if (statusRun.status === "rejected") return;
   // oxlint-disable typescript/no-unsafe-type-assertion -- the status script prints JSON the mod reads as the PersonaStatus it writes, which JSON.parse types as any
-  const [statusOutcome] = await Promise.allSettled([Promise.try(() => JSON.parse(status.stdout) as PersonaStatus)]);
+  const [statusOutcome] = await Promise.allSettled([
+    Promise.try(() => JSON.parse(statusRun.value.stdout) as PersonaStatus),
+  ]);
   // oxlint-enable typescript/no-unsafe-type-assertion
   if (statusOutcome.status === "rejected") return;
   const { character, isRecorded } = statusOutcome.value;
@@ -47,11 +53,14 @@ const refresh = async ($: EngineInterface) => {
   await update($, characterAtom, () => character);
   if (previous.name === character.name && previous.displayName === character.displayName) return;
 
-  const spinner = await $.process.run(["node", `${$.plugin.root}/scripts/spinner.mjs`, character.name], {
-    timeoutMs: SPINNER_TIMEOUT_MS,
-  });
+  const [spinnerRun] = await Promise.allSettled([
+    $.process.run(["node", `${$.plugin.root}/scripts/spinner.mjs`, character.name], { timeoutMs: SPINNER_TIMEOUT_MS }),
+  ]);
+  if (spinnerRun.status === "rejected") return;
   // oxlint-disable typescript/no-unsafe-type-assertion -- the spinner script prints JSON the mod reads as the PersonaSpinner it writes, which JSON.parse types as any
-  const [spinnerOutcome] = await Promise.allSettled([Promise.try(() => JSON.parse(spinner.stdout) as PersonaSpinner)]);
+  const [spinnerOutcome] = await Promise.allSettled([
+    Promise.try(() => JSON.parse(spinnerRun.value.stdout) as PersonaSpinner),
+  ]);
   // oxlint-enable typescript/no-unsafe-type-assertion
   if (spinnerOutcome.status === "fulfilled") await update($, spinnerAtom, () => spinnerOutcome.value);
 };

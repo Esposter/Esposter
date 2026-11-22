@@ -13,10 +13,15 @@ vi.mock(import("claude-code"), () => ({ atom: (_key: unknown, initial: unknown) 
 
 // The engine's interface for a session start: each script prints the output it is given, and a timer runs the callback
 // It is handed at once
-const createEngine = (outputs: { spinner?: string; status: string }) => {
-  const run = vi.fn<(argv: string[], options?: unknown) => Promise<{ stderr: string; stdout: string }>>((argv) =>
-    Promise.resolve({ stderr: "", stdout: argv[1]?.endsWith("status.mjs") ? outputs.status : (outputs.spinner ?? "") }),
-  );
+const createEngine = (outputs: { spinner?: string; status: string }, failedScript?: string) => {
+  const run = vi.fn<(argv: string[], options?: unknown) => Promise<{ stderr: string; stdout: string }>>((argv) => {
+    const script = argv[1] ?? "";
+    if (failedScript && script.endsWith(failedScript)) return Promise.reject(new Error("spawn node ENOENT"));
+    return Promise.resolve({
+      stderr: "",
+      stdout: script.endsWith("status.mjs") ? outputs.status : (outputs.spinner ?? ""),
+    });
+  });
   const $ = {
     clock: {
       after: vi.fn<(ms: number, callback: () => void) => void>((_ms, callback) => {
@@ -73,6 +78,21 @@ describe(register, () => {
     expect(run).toHaveBeenCalledTimes(1);
     expect(update).not.toHaveBeenCalled();
   });
+
+  // A script the node process cannot start rejects its run, which the refresh runs off a timer slot with nothing to catch it
+  test.each(["status.mjs", "spinner.mjs"])(
+    "a %s that cannot start resolves rather than rejecting unhandled",
+    async (failedScript) => {
+      expect.hasAssertions();
+
+      const status = JSON.stringify({ character: { color: "", displayName: "", name: "Keqing" }, isRecorded: true });
+      const { $ } = createEngine({ spinner: "", status }, failedScript);
+      await startSession($);
+      await settle();
+
+      expect(onUnhandledRejection).not.toHaveBeenCalled();
+    },
+  );
 
   test("a spinner the script printed that is not JSON resolves and keeps the spinner it had", async () => {
     expect.hasAssertions();

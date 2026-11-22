@@ -166,7 +166,13 @@ server.on("connection", (socket) => {
     // Answers rather than one nothing on the socket hears
     const [outcome] = await Promise.allSettled([Promise.try(() => onLine(line))]);
     const status = outcome?.status === "fulfilled" ? outcome.value : VoiceStatus.Error;
-    if (outcome?.status === "rejected") writeVoiceLog(`request failed: ${outcome.reason}`);
+    // The diagnosis is written settled, so a log file that cannot be written still lets the socket end below
+    if (outcome?.status === "rejected")
+      await Promise.allSettled([
+        Promise.try(() => {
+          writeVoiceLog(`request failed: ${outcome.reason}`);
+        }),
+      ]);
     const [load] = await Promise.allSettled([synthesizerLoad]);
     const device = load?.status === "fulfilled" ? load.value.device : "";
     socket.end(`${[status, device].filter(Boolean).join(VOICE_STATUS_SEPARATOR)}\n`);

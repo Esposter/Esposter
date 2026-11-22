@@ -410,6 +410,19 @@ Every hit's callback body has to terminate its own chain. That is a per-site rea
 whole work is already inside an `executeMutation` with an `onError` is terminated, and one whose awaits are all
 local writes has nothing to terminate.
 
+The **floated** half is the one place a rejection reaches nothing: a `no-floating-promises` directive hides the
+float from the rule, and its reason claims that the callee settles its own outcomes. Each directive is a candidate,
+and its claim is read against the floated call:
+
+```bash
+git grep -n 'no-floating-promises' -- apps packages scripts
+```
+
+A claim holds when every external call on the floated path (a process, a file, a socket, a network or a device
+call) sits inside a settlement, `Promise.allSettled` or `getResultAsync(...).match`. A `match` handler's own code is
+not on that path, since a throw there is a bug rather than a settlement gap. A shared wrapper's claim is checked at
+its call sites, so each `runDetached(` is a candidate too: `git grep -n 'runDetached(' -- packages`.
+
 ## Exclusions
 
 - `.isOk()` / `.isErr()` call sites are a lint finding, not a sweep finding — they fail on the line that writes them.
