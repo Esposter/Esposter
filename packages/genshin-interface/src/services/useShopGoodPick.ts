@@ -21,7 +21,7 @@ export const useShopGoodPick = ({ count, getCountMaximum, getGoods, goodId }: Sh
   // The count kept within the picked good's most, never less than one so the picker still reads as a count
   const pickedCount = computed(() => Math.min(Math.max(count.value, 1), Math.max(getCountMaximum(), 1)));
   const setCount = (event: Event) => {
-    count.value = Number((event.target as HTMLInputElement).value);
+    if (event.target instanceof HTMLInputElement) count.value = Number(event.target.value);
   };
   return { pickedCount, pickedGood, setCount };
 };

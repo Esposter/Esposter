@@ -9,6 +9,7 @@ import { afterAll, vi } from "vitest";
 // oxlint-disable-next-line typescript/no-deprecated -- `bind` resolves to the string-tag overload marked deprecated; the copy only forwards the call
 const createElement = window.document.createElement.bind(window.document);
 // The cast is needed: tsrs requires `lang` on the context, and TypeScript's DOM lib lacks it, so no literal fits both.
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a fake context: the DOM lib's type has no `lang`, which tsrs requires, so the literal fits neither the lib's type nor tsrs's
 const mockCanvasContext = {
   arc: noop,
   arcTo: noop,
@@ -100,10 +101,8 @@ const mockCanvasContext = {
 
 vi.spyOn(window.document, "createElement").mockImplementation((tagName, options) => {
   const element = createElement(tagName, options);
-  if (tagName.toLowerCase() === "canvas")
-    vi.spyOn(element as HTMLCanvasElement, "getContext").mockImplementation((contextId) =>
-      contextId === "2d" ? mockCanvasContext : null,
-    );
+  if (element instanceof HTMLCanvasElement)
+    vi.spyOn(element, "getContext").mockImplementation((contextId) => (contextId === "2d" ? mockCanvasContext : null));
   return element;
 });
 // `happy-dom` dispatches a data-URL image's `load` synchronously when its

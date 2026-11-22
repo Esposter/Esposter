@@ -8,5 +8,5 @@ export const props = {
   selectedId: 1001,
   stopLabel: "Stop",
   title: "Cook",
-  zones: { delicious: [0.38, 0.62] as [number, number], regular: [0.3, 0.7] as [number, number] },
+  zones: { delicious: [0.38, 0.62] satisfies [number, number], regular: [0.3, 0.7] satisfies [number, number] },
 };
