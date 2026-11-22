@@ -1,8 +1,7 @@
 import type { JSONContent } from "@tiptap/core";
 
 import { NOTE_IMAGE_SOURCE_REGEX } from "#shared/services/resource/note/constants";
-import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
-import { noteProseMirrorSchema } from "#shared/services/resource/note/noteProseMirrorSchema";
+import { noteExtensions, noteProseMirrorSchema } from "#shared/services/resource/note/noteProseMirrorSchema";
 import { sanitizeTextHtml } from "@esposter/shared";
 import { renderToHTMLString } from "@tiptap/static-renderer/pm/html-string";
 
@@ -13,7 +12,6 @@ const NOTE_IMAGE_ALLOWANCE = {
   allowedSources: { img: { src: [NOTE_IMAGE_SOURCE_REGEX] } },
   allowedTags: ["img"],
 };
-const noteExtensions = getNoteExtensions();
 
 // A note's document as the HTML a reader sees, sanitised at the render boundary. Both the note view and the page
 // Builder's text and email rich text render through it, so one writing kit and one sanitiser shape every read. It renders
