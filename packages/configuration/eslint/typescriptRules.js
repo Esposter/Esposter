@@ -1,6 +1,7 @@
 import restrictedDeleteSyntaxes from "@esposter/configuration/eslint/restrictedDeleteSyntaxes.js";
 import restrictedImportSyntaxes from "@esposter/configuration/eslint/restrictedImportSyntaxes.js";
 import restrictedOverlaySyntaxes from "@esposter/configuration/eslint/restrictedOverlaySyntaxes.js";
+import restrictedOverloadSyntaxes from "@esposter/configuration/eslint/restrictedOverloadSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 
 // The map-naming selector reads these three shapes in every branch, so each is written once: the two name
@@ -33,6 +34,7 @@ export default {
   "no-restricted-syntax": [
     "error",
     ...restrictedSyntaxes,
+    ...restrictedOverloadSyntaxes,
     ...restrictedDeleteSyntaxes,
     ...restrictedImportSyntaxes,
     ...restrictedOverlaySyntaxes,

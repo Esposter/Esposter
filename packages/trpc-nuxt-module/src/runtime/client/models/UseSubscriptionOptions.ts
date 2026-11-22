@@ -7,6 +7,7 @@ import type { MaybeRefOrGetter } from "vue";
 export type UseSubscriptionOptions<TDefinition extends TRPCResolverDef> =
   SubscriptionResolver<TDefinition> extends {
     (input: TDefinition["input"], opts: infer TOptions): unknown;
+    // eslint-disable-next-line no-restricted-syntax -- tRPC's subscribe is overloaded and exports no type for its callbacks overload, and a single signature reads the last overload, so the pattern names both
     (...args: never[]): unknown;
   }
     ? Partial<TOptions> & { enabled?: MaybeRefOrGetter<boolean> }

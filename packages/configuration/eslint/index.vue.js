@@ -6,6 +6,7 @@ import restrictedConstantSyntaxes from "@esposter/configuration/eslint/restricte
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
 import restrictedFocusSyntaxes from "@esposter/configuration/eslint/restrictedFocusSyntaxes.js";
 import restrictedModuleSyntaxes from "@esposter/configuration/eslint/restrictedModuleSyntaxes.js";
+import restrictedOverloadSyntaxes from "@esposter/configuration/eslint/restrictedOverloadSyntaxes.js";
 import restrictedSourceSyntaxes from "@esposter/configuration/eslint/restrictedSourceSyntaxes.js";
 import restrictedStoreCallSyntaxes from "@esposter/configuration/eslint/restrictedStoreCallSyntaxes.js";
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
@@ -165,6 +166,20 @@ export default withNuxt(plugins)
         ...restrictedModuleSyntaxes,
         ...restrictedStoreSyntaxes,
         ...restrictedTestSyntaxes,
+        ...restrictedWatchSyntaxes,
+      ],
+    },
+  })
+  // A declaration file augments third-party APIs that are overloaded already, so the overload bans stop at its door.
+  // Every other script-side ban still reaches it, so only the overload entries leave its list
+  .append({
+    files: ["**/*.d.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...scriptSyntaxBans.filter((entry) => !restrictedOverloadSyntaxes.includes(entry)),
+        ...restrictedModuleSyntaxes,
+        ...restrictedSourceSyntaxes,
         ...restrictedWatchSyntaxes,
       ],
     },

@@ -43,7 +43,7 @@ Interface method signatures must be property signatures (`bar: (x: string) => vo
 2. **Third-party declaration files with real overloads** (DefinitelyTyped-style `.d.ts`) — overloaded method signatures can't be cleanly converted.
 3. **Interfaces whose parameters must stay bivariant** — a property function type is checked contravariantly under `strictFunctionTypes`, so an interface over a narrower type (`DataSourceConfiguration<Subtype>` in a map of `DataSourceConfiguration<SheetSettings>`, a `PageBuilderKind` over a narrower node) would stop assigning to the shared form. Method signatures keep it assignable.
 
-**Overloads in your own code** are banned, and a call signature inside an object type is an overload too (`bar: { (x: string): void; (x: number): string }`): write one function per call shape with its own exact type (`.agents/skills/typescript/references/function-signatures.md`), so the exemption is only a `.d.ts` file or a `declare module` block.
+**Overloads in your own code** are banned, and so are a call signature inside an object type (`bar: { (x: string): void; (x: number): string }`) and a class method's overload signatures: write one function per call shape with its own exact type (`.agents/skills/typescript/references/function-signatures.md`). The `no-restricted-syntax` ban (`packages/configuration/eslint/restrictedOverloadSyntaxes.js`) exempts a `.d.ts` file, a `declare module` block and a `declare function`. Two shapes carry one directive each with its reason: `takeOne`'s `TakeOne` and `UseSubscriptionOptions` in `packages/trpc-nuxt-module`, which reads an overloaded third-party type.
 
 ## `no-restricted-properties` bans (oxlint, `oxlint.config.ts`)
 
