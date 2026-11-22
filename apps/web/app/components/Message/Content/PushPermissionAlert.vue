@@ -11,13 +11,20 @@ const isDismissed = useLocalStorage(LocalStorageKey.PushPermissionAlertDismissed
 const requestPermission = () => window.Notification.requestPermission();
 </script>
 
-<!-- A browser asks for the permission only from a press, so the ask is a line of its own until it is answered or
-     closed, as Discord's bar over the app is. Granting it is what subscribes this device (`usePushSubscription`) -->
+<!-- Granting the permission subscribes this device through `usePushSubscription` -->
 <template>
   <UiAlert v-if="isPushSupported && notificationPermission === 'prompt' && !isDismissed" :status="UiToken.Info" m-2>
-    <div flex flex-wrap gap-2 items-center>
+    <div flex gap-2 items-center>
       <span flex-1>Turn on desktop notifications to hear about new messages while you are away.</span>
-      <UiButton @click="requestPermission()">Enable</UiButton>
+      <UiButton
+        @click="
+          async () => {
+            await requestPermission();
+          }
+        "
+      >
+        Enable
+      </UiButton>
       <UiIconButton
         label="Dismiss"
         :meaning="UiIconMeaning.Close"
