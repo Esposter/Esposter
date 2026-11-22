@@ -37,11 +37,12 @@ describe(usePostCountStore, () => {
     const postId = v7();
     trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: 1, version: 1 }]);
     const postCountStore = usePostCountStore();
-    const { postCounts, refreshPostCounts, setPostCounts } = postCountStore;
+    const { postCounts } = storeToRefs(postCountStore);
+    const { refreshPostCounts, setPostCounts } = postCountStore;
     setPostCounts([{ commentCount: 0, id: postId, likeCount: 2, version: 2 }]);
 
     await refreshPostCounts([postId]);
 
-    expect(postCounts.get(postId)?.likeCount).toBe(2);
+    expect(postCounts.value.get(postId)?.likeCount).toBe(2);
   });
 });
