@@ -6,6 +6,7 @@ import { COMMAND_INPUT_INDEX } from "#src/services/message/slashCommands/constan
 import { SlashCommandDefinitionMap } from "#src/services/message/slashCommands/SlashCommandDefinitionMap";
 import { useInputStore } from "#src/store/message/input/index";
 import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -14,7 +15,7 @@ import { describe, expect, test } from "vitest";
 describe("messageModelMessageInputSlashCommandParameters", () => {
   const roomId = v7();
   // The Me command's one parameter is required; its chip is the input a test types the value into
-  const parameterName = "message";
+  const parameterName = takeOne(SlashCommandDefinitionMap[SlashCommandType.Me].parameters).name;
 
   // A room's store is keyed by the room in the route, which mounting resets, so the room is set after the mount. The
   // Row is attached to the document, since a keystroke in a detached tree never reaches the window's listeners

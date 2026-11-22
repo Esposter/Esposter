@@ -33,7 +33,7 @@ describe("messageModelMessageForwardSendButton", () => {
       sendCount += 1;
       return isAnswered;
     });
-    const forward = createMessage(roomId, "<p>a</p>");
+    const forward = createMessage(roomId);
     const sentDialog = await mountSuspended(MessageModelMessageForwardSendButton, { props: { forward } });
     setCurrentRoomId(roomId);
     const forwardStore = useForwardStore();

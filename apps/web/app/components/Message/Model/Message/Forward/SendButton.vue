@@ -2,6 +2,7 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiToken } from "#src/models/ui/UiToken";
 import { useAlertStore } from "#src/store/alert";
 import { useForwardStore } from "#src/store/message/input/forward";
 import { useRoomStore } from "#src/store/message/room/index";
@@ -32,7 +33,7 @@ const send = async () => {
   });
   if (!isSent || !destinationRoomId) return;
 
-  createAlert("Message forwarded!", "success", { icon: "i-mdi:share" });
+  createAlert("Message forwarded!", UiToken.Success, { icon: "i-mdi:share" });
   navigateToDestination(destinationRoomId);
 };
 </script>

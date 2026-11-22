@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useDataStore } from "#src/store/message/data";
+import { useRoomEmojiDialogStore } from "#src/store/message/room/emojiDialog";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useScrollStore } from "#src/store/message/ui/scroll";
 import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
@@ -9,7 +10,9 @@ const { isError, isPending, refresh } = await readMessages();
 const dataStore = useDataStore();
 const { hasMore, items, previousCursor } = storeToRefs(dataStore);
 const roomStore = useRoomStore();
-const { currentRoom } = storeToRefs(roomStore);
+const { currentRoom, currentRoomId } = storeToRefs(roomStore);
+const roomEmojiDialogStore = useRoomEmojiDialogStore();
+const { isCreateOpen } = storeToRefs(roomEmojiDialogStore);
 const scrollStore = useScrollStore();
 // The sentinel and the container are the store's: whether the reader is looking at the present is one fact, read
 // By the jump-to-present affordance as much as by the anchoring below
@@ -52,6 +55,8 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
   <MessageModelMessageConfirmDeleteDialog />
   <MessageModelMessageFileViewerDialog />
   <MessageModelMessageFileConfirmDeleteDialog />
+  <MessageModelMessageLinkPreviewConfirmRemoveDialog />
+  <MessageModelRoomEmojiCreateDialog v-model="isCreateOpen" :room-id="currentRoomId" />
   <MessageModelMessageConfirmPinDialog />
   <MessageModelMessageReactionsDialog />
   <div

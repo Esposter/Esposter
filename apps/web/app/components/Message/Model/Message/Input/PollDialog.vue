@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiRules } from "#src/services/ui/UiRules";
 import { useDataStore } from "#src/store/message/data";
@@ -52,22 +51,15 @@ const createPoll = async () => {
     title="Create Poll"
   >
     <UiTextField v-model="question" is-autofocus label="Question" :rules="requiredRules" />
-    <div v-for="(option, index) of options" :key="index" flex gap-2 items-end>
-      <UiTextField
-        :model-value="option"
-        :label="`Option ${index + 1}`"
-        :rules="requiredRules"
-        flex-1
-        @update:model-value="options = options.with(index, $event)"
-      />
-      <UiIconButton
-        :disabled="options.length <= POLL_MIN_OPTIONS"
-        label="Remove option"
-        :meaning="UiIconMeaning.Remove"
-        :variant="UiButtonVariant.Quiet"
-        @click="options = options.toSpliced(index, 1)"
-      />
-    </div>
+    <MessageModelMessageInputPollDialogOption
+      v-for="(option, index) of options"
+      :key="index"
+      :index
+      :is-remove-disabled="options.length <= POLL_MIN_OPTIONS || undefined"
+      :model-value="option"
+      @update:model-value="options = options.with(index, $event)"
+      @remove="options = options.toSpliced(index, 1)"
+    />
     <UiButton :disabled="options.length >= POLL_MAX_OPTIONS" self-start @click="options = [...options, '']">
       <UiIcon :meaning="UiIconMeaning.Create" />
       Add Option

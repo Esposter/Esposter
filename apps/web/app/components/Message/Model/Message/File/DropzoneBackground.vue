@@ -41,7 +41,7 @@ const { isOverDropZone } = useDropZone(defaultDocument, {
     The composer under it and names that one -->
   <Transition name="drop">
     <div v-if="isOverDropZone" role="status" flex pointer-events-none items-center inset-0 justify-center fixed z-2000>
-      <div class="scrim" inset-0 absolute />
+      <div inset-0 absolute ui-scrim />
       <div p-8 text-center flex flex-col gap-2 relative ui-lifted>
         <p ui-title>Upload to {{ dropTarget.threadRootId ? "thread" : roomName }}</p>
         <p text-muted>You can add comments before uploading.</p>
@@ -51,11 +51,6 @@ const { isOverDropZone } = useDropZone(defaultDocument, {
 </template>
 
 <style scoped>
-.scrim {
-  background: var(--ui-scrim);
-  opacity: 0.85;
-}
-
 .drop-enter-active {
   transition: opacity var(--ui-motion-medium);
 }

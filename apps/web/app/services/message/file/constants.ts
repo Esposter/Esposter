@@ -5,3 +5,4 @@ export const MAX_ZOOM_SCALE = 8;
 export const MIN_ZOOM_SCALE = 1;
 export const ZOOM_SCALE_PER_WHEEL_STEP = 0.25;
 export const SPOILER_FILENAME_PREFIX = "SPOILER_";
+export const ATTACHMENTS_COMMAND_GROUP = "Attachments";

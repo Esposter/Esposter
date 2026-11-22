@@ -130,6 +130,8 @@ const uiSurfaceUtilities = {
     },
     FORCED_COLORS_EDGE,
   ],
+  // The page's background drawn translucent over what it covers, such as a drop zone over the page
+  "ui-scrim": { background: "var(--ui-scrim)", opacity: "0.85" },
 } as const satisfies Record<string, StaticRule[1]>;
 // A shape laid over a surface rather than a surface of its own: a pill is the corner a search field takes. Its rule is
 // Generated after every surface's, whose own corner it has to win at the same specificity, so it cannot sit among them

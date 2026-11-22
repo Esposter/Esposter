@@ -9,7 +9,7 @@ defineProps<URLLinkPreviewResponse>();
 <template>
   <div p-3 flex flex-col gap-2 min-w-0 ui-frame>
     <span v-if="siteName" text-sm text-muted>{{ siteName }}</span>
-    <NuxtLink :to="url" external target="_blank" text-info>{{ title }}</NuxtLink>
+    <NuxtLink :to="url" external target="_blank" text-info hover:underline>{{ title }}</NuxtLink>
     <p v-if="description" text-sm>{{ description }}</p>
     <NuxtImg v-if="images[0]" w-full :src="images[0]" :alt="siteName ?? title" />
   </div>

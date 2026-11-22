@@ -2,10 +2,9 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { LinkPreviewResponse } from "@esposter/db-schema";
 
-import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { useDataStore } from "#src/store/message/data";
+import { useLinkPreviewDialogStore } from "#src/store/message/linkPreviewDialog";
 
 interface Props {
   linkPreviewResponse: LinkPreviewResponse;
@@ -13,14 +12,11 @@ interface Props {
   roomId: ClientMessage["roomId"];
 }
 
-const { messageId, roomId } = defineProps<Props>();
-const dataStore = useDataStore();
-const { deleteLinkPreviewResponse } = dataStore;
+defineProps<Props>();
+const linkPreviewDialogStore = useLinkPreviewDialogStore();
+const { removingMessageId, removingRoomId } = storeToRefs(linkPreviewDialogStore);
 const container = useTemplateRef("container");
 const isHovered = useElementHover(container);
-const isConfirmDialogOpen = ref(false);
-// The embed leaves the message once the room answers the removal, and a refused removal leaves it under the alert
-const removeLinkPreviewResponse = () => deleteLinkPreviewResponse({ id: messageId, roomId });
 </script>
 
 <template>
@@ -32,16 +28,12 @@ const removeLinkPreviewResponse = () => deleteLinkPreviewResponse({ id: messageI
       label="Remove embeds"
       :meaning="UiIconMeaning.Remove"
       :variant="UiButtonVariant.Quiet"
-      @click="isConfirmDialogOpen = true"
+      @click="
+        () => {
+          removingMessageId = messageId;
+          removingRoomId = roomId;
+        }
+      "
     />
-    <UiConfirmDialog
-      v-model="isConfirmDialogOpen"
-      :awaited-because="AwaitedReason.ServerDecidedOutcome"
-      confirm-label="Remove All Embeds"
-      title="Are you sure?"
-      :confirm="removeLinkPreviewResponse"
-    >
-      This will remove all embeds on this message for everyone.
-    </UiConfirmDialog>
   </div>
 </template>

@@ -10,12 +10,17 @@ const { isPreview = false } = defineProps<Props>();
 </script>
 
 <template>
-  <MessageModelMessageFileContainer v-if="message.files.length > 0" max-w-140 :is-preview :message />
+  <MessageModelMessageFileContainer
+    v-if="message.files.length > 0"
+    max-w-140
+    :is-preview="isPreview || undefined"
+    :message
+  />
   <MessageModelMessageLinkPreviewContainer
     v-if="message.linkPreviewResponse"
     :link-preview-response="message.linkPreviewResponse"
     :message-id="message.id"
     :room-id="message.roomId"
   />
-  <MessageModelMessageEmojiList :is-preview :message />
+  <MessageModelMessageEmojiList :is-preview="isPreview || undefined" :message />
 </template>

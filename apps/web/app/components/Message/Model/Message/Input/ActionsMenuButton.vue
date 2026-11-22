@@ -10,7 +10,7 @@ import { SlashCommandDefinitionMap } from "#src/services/message/slashCommands/S
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 const items = computed<Item[]>(() => [
   {
-    icon: "i-mdi:file-upload-outline",
+    meaning: UiIconMeaning.Upload,
     onClick: async () => {
       const files = await pickFiles();
       if (files.length > 0) emit("upload-file", files);

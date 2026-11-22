@@ -1,9 +1,11 @@
 // @vitest-environment nuxt
+import MessageModelMessageLinkPreviewConfirmRemoveDialog from "#src/components/Message/Model/Message/LinkPreview/ConfirmRemoveDialog.vue";
 import MessageModelMessageLinkPreviewContainer from "#src/components/Message/Model/Message/LinkPreview/Container.vue";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDataStore } from "#src/store/message/data";
+import { useLinkPreviewDialogStore } from "#src/store/message/linkPreviewDialog";
 import { MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -34,14 +36,17 @@ describe("messageModelMessageLinkPreviewContainer", () => {
       await deleteGate;
       return { ...message, linkPreviewResponse: null, version: 1 };
     });
-    const component = await mountSuspended(MessageModelMessageLinkPreviewContainer, {
-      props: { linkPreviewResponse, messageId: message.id, roomId: message.roomId },
-    });
+    const component = await mountSuspended(MessageModelMessageLinkPreviewConfirmRemoveDialog);
     setCurrentRoomId(roomId);
     const dataStore = useDataStore();
     const { getSlice } = dataStore;
     const { items } = getSlice(otherRoomId);
     items.value = [message];
+    const linkPreviewDialogStore = useLinkPreviewDialogStore();
+    const { removingMessageId, removingRoomId } = storeToRefs(linkPreviewDialogStore);
+    removingRoomId.value = otherRoomId;
+    removingMessageId.value = message.id;
+    await flushPromises();
     const deleted = component.findComponent({ name: "UiConfirmDialog" }).props("confirm")();
     await flushPromises();
 

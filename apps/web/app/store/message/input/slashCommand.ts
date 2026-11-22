@@ -16,7 +16,6 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   const { data: trailingMessage } = useDataMap(() => roomStore.currentRoomId, "");
   const { data: focusedIndex } = useDataMap(() => roomStore.currentRoomId, 0);
   const { data: selectedHiddenIndex } = useDataMap(() => roomStore.currentRoomId, 0);
-  const { data: lastAddedParameterName } = useDataMap(() => roomStore.currentRoomId, "");
   const activeParameters = computed(
     () => pendingSlashCommand.value?.parameters.filter(({ name }) => activeParameterNames.value.includes(name)) ?? [],
   );
@@ -34,8 +33,9 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     else errors.value = errors.value.map((error) => (error.id === id ? { ...error, messages } : error));
   };
 
+  // The new chip lands at the end of the row, so focus moves to the index it takes
   const createParameter = (name: string) => {
-    lastAddedParameterName.value = name;
+    focusedIndex.value = activeParameterNames.value.length;
     activeParameterNames.value = [...activeParameterNames.value, name];
   };
 
@@ -73,7 +73,6 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     activeParameterNames.value = parameters.map(({ name }) => name);
     errors.value = [];
     focusedIndex.value = 0;
-    lastAddedParameterName.value = "";
   };
 
   const getText = () => {
@@ -97,7 +96,6 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     errors.value = [];
     trailingMessage.value = "";
     focusedIndex.value = 0;
-    lastAddedParameterName.value = "";
   };
 
   const collapseToText = () => {
@@ -115,7 +113,6 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     errors,
     focusedIndex,
     hiddenParameters,
-    lastAddedParameterName,
     parameterValues,
     pendingSlashCommand,
     selectedHiddenIndex,

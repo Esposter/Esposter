@@ -6,14 +6,13 @@ import { checkIsCaretAtEnd } from "#src/util/dom/checkIsCaretAtEnd";
 import { checkIsCaretAtStart } from "#src/util/dom/checkIsCaretAtStart";
 
 interface Props {
-  isAutofocus?: boolean | undefined;
   isFocused?: boolean | undefined;
   isRequired: boolean;
   name: string;
 }
 
 const modelValue = defineModel<string>({ default: "" });
-const { isAutofocus, isFocused, name } = defineProps<Props>();
+const { isFocused, name } = defineProps<Props>();
 const emit = defineEmits<{
   blur: [];
   delete: [];
@@ -31,7 +30,7 @@ const isError = computed(() => {
   return Boolean(parameterError && parameterError.messages.length > 0);
 });
 
-useFocusWhenActive(input, () => Boolean(isFocused || isAutofocus));
+useFocusWhenActive(input, () => Boolean(isFocused));
 </script>
 
 <template>
@@ -79,11 +78,7 @@ useFocusWhenActive(input, () => Boolean(isFocused || isAutofocus));
 </template>
 
 <style scoped>
-.chip:focus-within {
-  background-color: color-mix(in srgb, var(--ui-tint) 10%, var(--ui-panel));
-}
-
 .chip[data-invalid] {
-  background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-panel));
+  background-color: var(--ui-field-invalid-background);
 }
 </style>

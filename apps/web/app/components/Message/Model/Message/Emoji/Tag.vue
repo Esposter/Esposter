@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+
 interface Props {
   emojiTag: string;
 }
@@ -18,14 +20,6 @@ const { customEmoji, customEmojiId, description } = useEmojiTag(() => emojiTag);
   />
   <!-- The emoji this reaction names has been deleted. The reaction is still real and still counts, so it renders
        as a placeholder rather than disappearing or printing its own tag -->
-  <span
-    v-else-if="customEmojiId"
-    class="i-mdi:image-broken-variant"
-    :aria-label="description"
-    role="img"
-    align-middle
-    size-6
-    inline-block
-  />
+  <UiIcon v-else-if="customEmojiId" :label="description" :meaning="UiIconMeaning.MissingImage" />
   <template v-else>{{ emojiTag }}</template>
 </template>

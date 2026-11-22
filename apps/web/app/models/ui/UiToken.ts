@@ -7,6 +7,7 @@ export const UiToken = {
   Error: "error",
   Info: "info",
   Lifted: "lifted",
+  MediaOverlay: "media-overlay",
   Muted: "muted",
   Panel: "panel",
   Success: "success",

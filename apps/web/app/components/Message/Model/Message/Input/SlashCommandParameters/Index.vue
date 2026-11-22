@@ -6,8 +6,7 @@ import { SlashCommandDefinitions } from "#src/services/message/slashCommands/Sla
 import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
 
 const slashCommandStore = useSlashCommandStore();
-const { activeParameters, focusedIndex, lastAddedParameterName, parameterValues, pendingSlashCommand } =
-  storeToRefs(slashCommandStore);
+const { activeParameters, focusedIndex, parameterValues, pendingSlashCommand } = storeToRefs(slashCommandStore);
 const {
   collapseToText,
   createParameter,
@@ -74,7 +73,6 @@ const deleteLastParameter = () => {
         <MessageModelMessageInputSlashCommandParametersChip
           :is-required
           :name
-          :is-autofocus="lastAddedParameterName === name || (!lastAddedParameterName && index === 0)"
           :is-focused="focusedIndex === index"
           :model-value="parameterValues[name] ?? ''"
           @update:model-value="updateParameterValue(name, $event)"

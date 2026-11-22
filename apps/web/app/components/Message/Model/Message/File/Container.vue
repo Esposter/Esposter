@@ -4,11 +4,11 @@ import type { ClientMessage } from "#src/models/message/ClientMessage";
 import { getColumnLayout } from "#src/services/message/file/getColumnLayout";
 
 interface Props {
-  isPreview?: boolean | undefined;
+  isPreview?: true | undefined;
   message: ClientMessage;
 }
 
-const { isPreview = false, message } = defineProps<Props>();
+const { message } = defineProps<Props>();
 const columnLayout = computed(() => getColumnLayout(message.files.length));
 </script>
 

@@ -5,7 +5,7 @@ import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { useEmojiStore } from "#src/store/message/emoji";
 
 interface Props {
-  isPreview?: boolean | undefined;
+  isPreview?: true | undefined;
   message: ClientMessage;
 }
 

@@ -115,19 +115,15 @@ export const useFileStore = defineStore("message/file", () => {
   // Opens its own dialog from its own renderer and audio plays from the row, so pulling either in would mean two
   // Dialogs racing for one click. Named by the room the viewed file's message is in, which the thread pane can hold
   // Beside another room
-  const getViewableFiles = (roomId: RoomInMessage["id"]) => {
-    const roomFileUrlMap = getData(roomId);
-    const files: Pick<FileEntity, "filename" | "id" | "mimetype">[] = [];
-    if (!roomFileUrlMap) return files;
-
-    for (const { filename, id, mimetype } of getRoomFiles(roomId)) {
-      if (!roomFileUrlMap.has(id)) continue;
-      const inferredMimetype = getInferredMimetype(mimetype);
-      if (inferredMimetype !== "image" && inferredMimetype !== "video") continue;
-      files.push({ filename, id, mimetype });
-    }
-    return files;
+  // Whether one file is in the gallery, read from its own url and mimetype, so a tile asks of its own file and never walks the room
+  const checkIsViewableFile = (roomId: RoomInMessage["id"], { id, mimetype }: Pick<FileEntity, "id" | "mimetype">) => {
+    const inferredMimetype = getInferredMimetype(mimetype);
+    return Boolean(getData(roomId)?.has(id)) && (inferredMimetype === "image" || inferredMimetype === "video");
   };
+  const getViewableFiles = (roomId: RoomInMessage["id"]) =>
+    getRoomFiles(roomId)
+      .filter((file) => checkIsViewableFile(roomId, file))
+      .map(({ filename, id, mimetype }) => ({ filename, id, mimetype }));
 
-  return { fileUrlMap, getFileUrlMap: getData, getViewableFiles, readFileUrls };
+  return { checkIsViewableFile, fileUrlMap, getFileUrlMap: getData, getViewableFiles, readFileUrls };
 });

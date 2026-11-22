@@ -77,6 +77,6 @@ const { isVoting, vote } = await useVotePoll(() => message, isPreview);
         </UiButton>
       </div>
     </section>
-    <MessageModelMessageEmojiList :is-preview :message />
+    <MessageModelMessageEmojiList :is-preview="isPreview || undefined" :message />
   </MessageModelMessageTypeListItem>
 </template>

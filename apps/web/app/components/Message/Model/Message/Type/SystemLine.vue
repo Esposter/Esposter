@@ -29,6 +29,6 @@ const { isPreview = false } = defineProps<Props>();
       <span><slot /></span>
       <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
     </div>
-    <MessageModelMessageEmojiList :is-preview :message />
+    <MessageModelMessageEmojiList :is-preview="isPreview || undefined" :message />
   </MessageModelMessageTypeListItem>
 </template>

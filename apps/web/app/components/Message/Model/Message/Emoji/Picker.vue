@@ -3,6 +3,7 @@ import type { PickableEmoji } from "#src/models/message/emoji/PickableEmoji";
 import type { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 
 import { useRoomEmojiStore } from "#src/store/message/room/emoji";
+import { useRoomEmojiDialogStore } from "#src/store/message/room/emojiDialog";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
@@ -21,7 +22,8 @@ const roomEmojiStore = useRoomEmojiStore();
 const { customEmojis } = storeToRefs(roomEmojiStore);
 const roleStore = useRoleStore();
 const { checkHasMyPermission } = roleStore;
-const isCreateDialogOpen = ref(false);
+const roomEmojiDialogStore = useRoomEmojiDialogStore();
+const { isCreateOpen } = storeToRefs(roomEmojiDialogStore);
 const hasManageEmojis = computed(
   () => Boolean(currentRoomId.value) && checkHasMyPermission(currentRoomId.value, RoomPermission.ManageEmojis),
 );
@@ -39,12 +41,12 @@ const hasManageEmojis = computed(
     @select="(emojiTag: string, emoji: PickableEmoji) => emit('select', emojiTag, emoji)"
   >
     <template v-if="hasManageEmojis" #footer>
-      <!-- The picker steps aside for the dialog -->
+      <!-- The picker steps aside for the dialog, which the list mounts once for every message -->
       <UiButton
         @click.stop="
           () => {
             isOpen = false;
-            isCreateDialogOpen = true;
+            isCreateOpen = true;
           }
         "
       >
@@ -52,6 +54,4 @@ const hasManageEmojis = computed(
       </UiButton>
     </template>
   </StyledEmojiPicker>
-  <!-- Beside the picker rather than in its footer: a dialog inside the panel would close with the panel -->
-  <MessageModelRoomEmojiCreateDialog v-if="hasManageEmojis" v-model="isCreateDialogOpen" :room-id="currentRoomId" />
 </template>
