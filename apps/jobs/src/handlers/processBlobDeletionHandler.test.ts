@@ -205,8 +205,8 @@ describe(processBlobDeletionHandler, () => {
     expect.hasAssertions();
 
     // Deletes go out a wave of MAX_CONCURRENT_BLOB_DELETIONS names at a time, so the last name is alone in its wave
-    const blobNames = Array.from({ length: MAX_CONCURRENT_BLOB_DELETIONS + 1 }, (_value, index) => `blob/${index}`);
-    const lastBlobName = `blob/${MAX_CONCURRENT_BLOB_DELETIONS}`;
+    const blobNames = Array.from({ length: MAX_CONCURRENT_BLOB_DELETIONS + 1 }, (_value, index) => String(index));
+    const lastBlobName = String(MAX_CONCURRENT_BLOB_DELETIONS);
     await Promise.all(blobNames.map(async (name) => seedBlob(StorageBucket.MessageAssets, name)));
     await Promise.all(blobNames.map(async (name) => seedStorageLedgerEntry(name)));
     await mockDb.update(usersInAuth).set({ storageBytesUsed: countedBytes * blobNames.length });
