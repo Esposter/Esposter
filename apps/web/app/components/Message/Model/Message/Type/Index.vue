@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
 
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getShortTimeLabel } from "#src/util/date/getShortTimeLabel";
 
 defineSlots<{ default?: () => VNode }>();
@@ -13,7 +14,7 @@ const messageHtml = useMessageHtml(
 </script>
 
 <template>
-  <MessageModelMessageTypeListItem :active :is-preview>
+  <MessageModelMessageTypeListItem :is-active="active" :is-preview>
     <template #prepend>
       <div v-if="message.replyToId" flex flex-col items-center relative>
         <MessageModelMessageReplySpine
@@ -28,19 +29,19 @@ const messageHtml = useMessageHtml(
       </div>
       <UiAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
       <!-- A message that continues its author's batch shows its time in the author's column, and only while it is the
-        Row being acted on -->
+           Row being acted on -->
       <span v-else :class="{ 'op-0': !active }" text-sm text-muted text-center>
         {{ getShortTimeLabel(message.createdAt) }}
       </span>
     </template>
     <MessageModelMessageReplyTitle v-if="message.replyToId || !isSameBatch" :creator :message />
     <!-- A forward only adds the quote rail and its label — the body underneath is the same one every other
-      message renders, so the edited marker and the inline editor survive being forwarded -->
+         message renders, so the edited marker and the inline editor survive being forwarded -->
     <div v-if="message.isForward" pl-3 ui-guide>
       <MessageModelMessageTypeBody :is-preview :message :message-html>
         <template #prepend>
           <span text-sm text-muted flex gap-1 italic items-center>
-            <span class="i-mdi:share" size-6 />
+            <UiIcon :meaning="UiIconMeaning.Forward" />
             Forwarded
           </span>
         </template>

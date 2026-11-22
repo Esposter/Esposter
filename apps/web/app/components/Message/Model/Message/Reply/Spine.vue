@@ -14,7 +14,6 @@ const scrollToMessage = useScrollToMessage();
 
 <template>
   <div
-    class="spine"
     :class="isIndicatorActive ? 'b-text' : 'b-divider'"
     b-l-2
     b-t-2
@@ -24,14 +23,9 @@ const scrollToMessage = useScrollToMessage();
     h-3
     w-8
     cursor-pointer
+    transition="[border-color_var(--ui-motion-short)]"
     @mouseenter="isIndicatorActive = true"
     @mouseleave="isIndicatorActive = false"
     @click="scrollToMessage(roomId, replyToId)"
   />
 </template>
-
-<style scoped>
-.spine {
-  transition: border-color var(--ui-motion-short);
-}
-</style>

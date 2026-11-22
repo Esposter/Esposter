@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
 
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiToken } from "#src/models/ui/UiToken";
 
 interface Props extends MessageComponentProps {}
@@ -28,8 +29,8 @@ const formattedDuration = computed(() => {
 <template>
   <MessageModelMessageTypeSystemLine
     :active
-    :icon="isCallEnded ? 'i-mdi:phone-hangup' : 'i-mdi:phone'"
     :is-preview
+    :meaning="isCallEnded ? UiIconMeaning.HangUp : UiIconMeaning.Call"
     :message
     :token="isCallEnded ? UiToken.Error : UiToken.Success"
   >

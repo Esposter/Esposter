@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 describe("messageModelMessageTypeIndex", () => {
   const roomId = v7();
   const creator = createUser();
-  const editor = "editor";
+  const editor = "a";
   // The local midnight of the epoch's day, so its time and day read the same in every zone
   const createdAt = getZonedDateTime(new Date(0)).startOfDay().toInstant();
   const createMessage = (isForward: boolean) => {
@@ -65,7 +65,7 @@ describe("messageModelMessageTypeIndex", () => {
       slots: { default: editor },
     });
 
-    expect(component.text()).toMatchInlineSnapshot(`"Nname0:00editor"`);
+    expect(component.text()).toMatchInlineSnapshot(`"Nname0:00a"`);
   });
 
   test("renders the inline editor slot of a forward", async () => {
@@ -77,6 +77,6 @@ describe("messageModelMessageTypeIndex", () => {
       slots: { default: editor },
     });
 
-    expect(component.text()).toMatchInlineSnapshot(`"Nname0:00 Forwarded editor"`);
+    expect(component.text()).toMatchInlineSnapshot(`"Nname0:00 Forwarded a"`);
   });
 });

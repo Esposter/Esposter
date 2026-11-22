@@ -18,16 +18,16 @@ describe("messageModelMessageSuggestionMentionList", () => {
   test("names a member by the room's display name with the account name beside it", async () => {
     expect.hasAssertions();
 
-    const member: MemberInRoom = { ...createUser({ name: "Alice" }), displayName: "Ally" };
+    const member: MemberInRoom = { ...createUser(), displayName: "displayName" };
 
-    await expect(getOptionTexts(member)).resolves.toStrictEqual(["Ally Alice"]);
+    await expect(getOptionTexts(member)).resolves.toStrictEqual(["displayName name"]);
   });
 
   test("names a member the room shows under their account name with no account name beside it", async () => {
     expect.hasAssertions();
 
-    const member: MemberInRoom = { ...createUser({ name: "Alice" }), displayName: "Alice" };
+    const member: MemberInRoom = { ...createUser(), displayName: "name" };
 
-    await expect(getOptionTexts(member)).resolves.toStrictEqual(["Alice"]);
+    await expect(getOptionTexts(member)).resolves.toStrictEqual(["name"]);
   });
 });

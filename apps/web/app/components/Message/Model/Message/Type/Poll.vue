@@ -2,6 +2,7 @@
 import type { MessageComponentProps } from "#src/models/message/MessageComponentProps";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getOptionIdVoteCountMap } from "#src/services/message/poll/getOptionIdVoteCountMap";
 import { getVoteDescription } from "#src/services/message/poll/getVoteDescription";
 import { pollMessageContentSchema } from "@esposter/db-schema";
@@ -29,10 +30,10 @@ const { isVoting, vote } = await useVotePoll(() => message, isPreview);
 </script>
 
 <template>
-  <MessageModelMessageTypeListItem :active :is-preview>
+  <MessageModelMessageTypeListItem :is-active="active" :is-preview>
     <template #prepend>
       <span text-muted flex h-8 items-center>
-        <span class="i-mdi:poll" aria-hidden="true" size-6 />
+        <UiIcon :meaning="UiIconMeaning.Poll" />
       </span>
     </template>
     <div flex flex-wrap gap-x-1 min-h-8 items-center>
@@ -41,7 +42,7 @@ const { isVoting, vote } = await useVotePoll(() => message, isPreview);
       <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
     </div>
     <!-- The poll is a thing of its own inside the message, so it is framed: the question over its answers, each with
-      Its share of the votes under it -->
+         Its share of the votes under it -->
     <section p-3 flex flex-col gap-2 max-w-140 ui-frame>
       <h3 ui-heading>{{ pollContent.question }}</h3>
       <UiRadioGroup

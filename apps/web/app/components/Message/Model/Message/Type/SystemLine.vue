@@ -6,9 +6,7 @@ import type { UiToken } from "#src/models/ui/UiToken";
 // The shell every non-authored message line shares: a leading icon, one sentence of content, then the timestamp
 // And the reaction row. Only the icon and the sentence differ between them.
 interface Props extends Pick<MessageComponentProps, "active" | "isPreview" | "message"> {
-  // An icon class written whole, for a glyph no meaning names
-  icon?: string | undefined;
-  meaning?: UiIconMeaning | undefined;
+  meaning: UiIconMeaning;
   // A colour that says how it went, such as a call that ended
   token?: UiToken | undefined;
 }
@@ -18,11 +16,10 @@ const { isPreview = false } = defineProps<Props>();
 </script>
 
 <template>
-  <MessageModelMessageTypeListItem :active :is-preview>
+  <MessageModelMessageTypeListItem :is-active="active" :is-preview>
     <template #prepend>
       <span :style="{ color: token ? `var(--ui-${token})` : 'var(--ui-muted)' }" flex h-8 items-center>
-        <UiIcon v-if="meaning" :meaning />
-        <span v-else :class="icon" aria-hidden="true" size-6 />
+        <UiIcon :meaning />
       </span>
     </template>
     <div flex flex-wrap gap-x-1 min-h-8 items-center>

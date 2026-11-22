@@ -63,11 +63,12 @@ const isActive = computed(
 const isOptionsMenuVisible = computed(
   () => !message.isLoading && isActive.value && !isUpdateMode.value && !isDeleting.value,
 );
+const optionsMenuTop = computed(() => (isSameBatch.value ? -9 : -2));
 </script>
 
 <template>
   <!-- display: contents keeps both children as direct flex items of the column-reversed list
-    while hover tracking spans the message and its overlapping options menu as one region -->
+       while hover tracking spans the message and its overlapping options menu as one region -->
   <div contents @mouseenter="isHovered = true" @mouseleave="isHovered = false">
     <component
       :is="MessageComponentMap[message.type]"
@@ -89,13 +90,18 @@ const isOptionsMenuVisible = computed(
       />
     </component>
     <div v-if="isOptionsMenuVisible" relative z-1>
-      <MessageModelMessageOptionsMenu
-        :message
-        right-4
-        absolute
-        :top="isSameBatch ? -9 : -2"
-        @update:menu="isOptionsMenuOpen = $event"
-      />
+      <Suspense :timeout="0">
+        <MessageModelMessageOptionsMenu
+          :message
+          right-4
+          absolute
+          :top="optionsMenuTop"
+          @update:menu="isOptionsMenuOpen = $event"
+        />
+        <template #fallback>
+          <UiSkeleton :top="optionsMenuTop" h-8 w-48 right-4 absolute />
+        </template>
+      </Suspense>
     </div>
   </div>
 </template>

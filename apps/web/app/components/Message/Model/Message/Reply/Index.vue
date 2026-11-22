@@ -26,7 +26,7 @@ const scrollToMessage = useScrollToMessage();
       <UiAvatar :image="creator.image" :name="creator.name" is-small />
       <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
       <span text-heading-color shrink-0>{{ creator.name }}</span>
-      <span v-if="reply.isForward" class="i-mdi:share" aria-label="Forwarded" role="img" shrink-0 size-6 />
+      <UiIcon v-if="reply.isForward" :meaning="UiIconMeaning.Forward" label="Forwarded" />
       <MessageModelMessageSnippet :message="reply">
         <button
           :class="isIndicatorActive ? 'text-text' : 'text-muted'"
@@ -40,7 +40,7 @@ const scrollToMessage = useScrollToMessage();
           Click to see attachment
         </button>
       </MessageModelMessageSnippet>
-      <span v-if="reply.files.length > 0" class="i-mdi:file-image" aria-label="Attachment" role="img" shrink-0 size-6 />
+      <UiIcon v-if="reply.files.length > 0" :meaning="UiIconMeaning.Image" label="Attachment" />
     </template>
     <template v-else>
       <UiIcon :meaning="UiIconMeaning.Reply" />
