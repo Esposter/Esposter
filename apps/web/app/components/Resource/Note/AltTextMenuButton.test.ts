@@ -6,6 +6,7 @@ import ResourceNoteAltTextMenuButton from "#src/components/Resource/Note/AltText
 import { getResourceFileBlobName } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { Editor } from "@tiptap/core";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -28,6 +29,7 @@ describe("resourceNoteAltTextMenuButton", () => {
     await wrapper.get("button").trigger("click");
     await wrapper.get("input").setValue(alt);
     await wrapper.get("form").trigger("submit");
+    await flushPromises();
 
     // The editor keeps an empty paragraph after the image, and the published copy keeps it too
     expect(renderNoteHtml(editor.getJSON())).toBe(`<img src="${assetUrl}" alt="${alt}"><p></p>`);
