@@ -17,6 +17,7 @@ flowchart LR
   READ -->|"isAccessed: true, opened-first"| RECENT["/recents · Home Recent tab · the palette's resources scope"]
   READ -->|"isFavorite: true"| FLIST["/favorites"]
   READ -->|"lastAccessedAt column"| ALL["/all workbench"]
+  READ -->|"each row's star, a left join"| FAV
   STARL["star column on /all"] --> TGL["resource.toggleFavorite"]
   STARB["star on the resource's title row"] --> TGL
   STARH["a Home row's context menu"] --> TGL
@@ -38,13 +39,13 @@ A star is a toggle, and `toggleFavorite` implements it as a delete-then-insert r
 
 ## Procedures
 
-| Procedure                 | Auth   | Input               | Purpose                                                              |
-| ------------------------- | ------ | ------------------- | -------------------------------------------------------------------- |
-| `resource.toggleFavorite` | owner  | `{ id }`            | Insert/delete the favorite row, returns new state                    |
-| `resource.readFavorites`  | authed | `{ cursor, limit }` | Favorites joined to live resources, newest starred, a page at a time |
-| `resource.recordAccess`   | owner  | `{ id }`            | Upsert this user's access row for the resource                       |
+| Procedure                 | Auth   | Input               | Purpose                                                               |
+| ------------------------- | ------ | ------------------- | --------------------------------------------------------------------- |
+| `resource.toggleFavorite` | owner  | `{ id }`            | Insert/delete the favorite row, returns new state                     |
+| `resource.readFavorites`  | authed | `{ cursor, limit }` | Live stars joined to live resources, newest starred, a page at a time |
+| `resource.recordAccess`   | owner  | `{ id }`            | Upsert this user's access row for the resource                        |
 
-The list routes use neither of the reads above: they are `resource.readResources` with `isFavorite: true` or `isAccessed: true`, so they inherit the whole workbench. `readFavorites` serves the star lookup set and Home's tab.
+The list routes use neither of the reads above: they are `resource.readResources` with `isFavorite: true` or `isAccessed: true`, so they inherit the whole workbench. `readFavorites` serves Home's Favorites tab. Every resource read answers each of its rows with the viewer's own star beside it (a left join on the star, tombstones included), so no list reads the whole set to know which of its rows are starred.
 
 ## Key files
 
@@ -53,7 +54,8 @@ The list routes use neither of the reads above: they are `resource.readResources
 | `packages/db-schema/src/schema/resource/resourceFavoritesInResource.ts` | Favorites table                          |
 | `packages/db-schema/src/schema/resource/resourceAccessesInResource.ts`  | Access table (one row per user/resource) |
 | `server/trpc/routers/resource.ts`                                       | Toggle/read/record procedures, filters   |
-| `app/store/resource/favorite.ts`                                        | Favorites store + optimistic toggle      |
+| `app/store/resource/favorite.ts`                                        | Favorites store, its paged list + toggle |
+| `app/composables/resource/useReadFavorites.ts`                          | Favorites list's page reads              |
 | `app/components/Resource/FavoriteToggle.vue`                            | The star, shared by the list and blade   |
 | `app/composables/resource/useRecordResourceAccess.ts`                   | Identity-watching access write           |
 | `app/store/resource/recent.ts`                                          | Recents store + capped opened-first read |
@@ -62,7 +64,8 @@ The list routes use neither of the reads above: they are `resource.readResources
 ## Notes
 
 - The `/all` star renders always rather than on hover: hover does not exist on touch, and a star you cannot find is a star you do not use.
-- Favorites are read once per list rather than once per row — every row asks "am I starred?", so the store exposes a `Set` of ids and the rows read it. A row's star state needs the whole set, not the page in view, so the store reads `readFavorites` to its end a page at a time, keyset-paged by the star's time and the resource's id, and no page of it can hide a star. The set itself is read once per session, not once per mount: the workbench list mounts inside the blade, so concurrent mounts share the in-flight query instead of each running the same joined read, and a delete invalidates it because only the server knows which stars resolve.
+- A row's star travels with the row. Each resource read answers its rows with the star beside them, and the client holds that star on the favorites overlay table, so every surface that shows the row reads the same star and a star set or removed on one row reaches every other. No list reads the whole set to know its stars, and no store keeps one.
+- The favorites list is a page of the starred rows, read by `readFavorites` a page at a time, keyset-paged by the star's time and the resource's id, the most recently set first. Each row is drawn from the overlay, so a star removed here or elsewhere, or a resource deleted, leaves the list at once, whichever page named it.
 - Soft-deleted resources are filtered out of every read here, so a starred resource sitting in the [recycle bin](../recycle-bin/design.md) disappears from Favorites and returns when restored — the star itself is never lost. The same is true of an access row.
 - The palette's resources scope reads the same server-side set for its **Recently opened** group, so it and the Recent route can never disagree. Recent _searches_ stay in `localStorage`: a query you typed is not something to follow you between machines.
 - Recents are a store for the same reason favorites are: Home mounts the Recent tab and registers the palette's resources scope together, and both want the same capped list.

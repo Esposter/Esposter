@@ -1,21 +1,27 @@
 # Caching
 
-A handful of reads are the same for the whole session: the favourite set every row's star checks against, the recently-opened list Home previews, the storage number the meter renders, the message settings record the fullscreen dialog edits, one room's thread-follow state. Every surface that shows one asks for it on mount, and asking the server again on each mount is a round trip for an answer that cannot have changed.
+A handful of reads are the same for the whole session: the recently-opened list Home previews, the storage number the meter renders, the message settings record the fullscreen dialog edits, one room's thread-follow state. Every surface that shows one asks for it on mount, and asking the server again on each mount is a round trip for an answer that cannot have changed.
 
 `useCachedRead` (`apps/web/app/composables/shared/useCachedRead.ts`) is the only thing that caches such a read, and `CacheTag` plus the cache registry are the only way one is invalidated. **No store keeps a read-once flag of its own**, and no composable holds a list of which caches a mutation affects.
 
 ## The primitive
 
 ```ts
-const { isPending: isLoading, read: readFavorites } = useCachedRead(() => $trpc.resource.readFavorites.query(), {
-  isRefetchOnInvalidate: true,
-  onError: createErrorNotification,
-  onSuccess: (newFavorites) => {
-    favorites.value = newFavorites;
+const { isPending: isLoading, read: readRecents } = useCachedRead(
+  () => $trpc.resource.readResources.query({ ...filter, limit: RECENT_RESOURCES_LIMIT, sortName }),
+  {
+    onError: (readError) => {
+      error.value = readError.message;
+    },
+    onSuccess: ({ items }) => {
+      recentIds.value = items.map(({ id }) => id);
+    },
+    tags: [CacheTag.Recents, CacheTag.Resources],
   },
-  tags: [CacheTag.Resources],
-});
+);
 ```
+
+A list that pages is not a cache. The favorites list is read a page at a time through `useReadFavorites` over `useCursorPaginationData`, and every row's star arrives with the row, so nothing holds the whole favorites set (the [favorites & recents](../../resource/favorites-and-recents/design.md) design).
 
 - **`read(key?)`** — what a surface calls on mount. It issues nothing once the entry has landed, and the concurrent first callers join one request through `executeQuery`'s `isExclusive` single-flight.
 - **`refetch(key?)`** — an unconditional re-read, deliberately **not** single-flight, for the reason [async operations](../async-operations/design.md) gives under the invalidating re-read. It aborts the read of its key that is still in flight through the run scope, rather than joining it.
@@ -83,7 +89,6 @@ An invalidated cache either re-reads at once or drops and waits for whatever rea
 
 | Cache          | Refetches now | Why                                                                          |
 | -------------- | ------------- | ---------------------------------------------------------------------------- |
-| `favorite`     | yes           | its stars render in the very table a delete is issued from                   |
 | `recent`       | no            | you are on the resource or the workbench — nothing showing Recent is mounted |
 | `storage`      | n/a           | untagged                                                                     |
 | `threadFollow` | no            | untagged                                                                     |

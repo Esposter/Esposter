@@ -172,5 +172,5 @@ stateDiagram-v2
 ## Notes
 
 - The shell reuses the [shell cohesion](../shell-cohesion/design.md) primitives; styling follows the `styling` and `ui-library` skills.
-- **One list mechanism**: there is no per-editor picker anywhere. Home recents, `/all`, `/favorites` and `/recents` are all `resource.readResources` (different filter/sort/limit), not four data paths. Home's Favorites tab is the one endpoint of its own, `resource.readFavorites`, and it builds its scope with the same `getResourcesWhere`.
+- **One list mechanism**: there is no per-editor picker anywhere. Home recents, `/all`, `/favorites` and `/recents` are all `resource.readResources` (different filter/sort/limit), not four data paths. Home's Favorites tab is the one endpoint of its own, `resource.readFavorites`, a page of the viewer's live stars joined to their resources.
 - **Editors are pure editors.** The resource lifecycle (create / select / rename / delete / publish) lives only in the Explorer + Overview blade — never in an editor's header. Editor headers keep only editing tools; editors save independently (autosave / edit-dialog).
