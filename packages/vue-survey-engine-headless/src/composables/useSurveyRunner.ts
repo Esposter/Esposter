@@ -40,6 +40,13 @@ export const useSurveyRunner = (
   const refreshNow = () => {
     now.value = new Date();
   };
+  // Every action refreshes the clock before it runs, so the helper is the one place the refresh is written
+  const action =
+    <TArgs extends unknown[], TResult>(run: (...args: TArgs) => TResult) =>
+    (...args: TArgs): TResult => {
+      refreshNow();
+      return run(...args);
+    };
   const state = ref(createSurveyRunnerState(getDocument(), answers, pageIndex));
   const errors = ref<SurveyPageError[]>([]);
   const seed = ref(initialSeed);
@@ -73,37 +80,32 @@ export const useSurveyRunner = (
     return numbers;
   });
   const errorByPointer = (pointer: string) => errors.value.find((error) => error.pointer === pointer)?.message ?? "";
-  const setAnswer = (name: string, value: SurveyAnswerValue | undefined) => {
-    refreshNow();
+  const setAnswer = action((name: string, value: SurveyAnswerValue | undefined) => {
     state.value = setSurveyAnswer(state.value, name, value);
     errors.value = errors.value.filter((error) => error.name !== name);
-  };
+  });
   // A blocked move keeps the state where it is and names the questions that blocked it
-  const next = () => {
-    refreshNow();
+  const next = action(() => {
     const move = goToNextSurveyPage(getDocument(), state.value, now.value);
     state.value = move.state;
     errors.value = move.errors;
-  };
+  });
   // Moving back never validates, so it clears the errors the page showed
-  const previous = () => {
-    refreshNow();
+  const previous = action(() => {
     state.value = goToPreviousSurveyPage(getDocument(), state.value, now.value);
     errors.value = [];
-  };
+  });
   // The answers to store on a passing completion, and none while an error still blocks it
-  const complete = () => {
-    refreshNow();
+  const complete = action(() => {
     const completion = completeSurvey(getDocument(), state.value, now.value);
     state.value = completion.state;
     errors.value = completion.errors;
     return completion.errors.length === 0 ? completion.answers : undefined;
-  };
-  const restore = (restoredAnswers: SurveyAnswers, restoredPageIndex: number) => {
-    refreshNow();
+  });
+  const restore = action((restoredAnswers: SurveyAnswers, restoredPageIndex: number) => {
     state.value = createSurveyRunnerState(getDocument(), restoredAnswers, restoredPageIndex);
     errors.value = [];
-  };
+  });
 
   return {
     complete,
