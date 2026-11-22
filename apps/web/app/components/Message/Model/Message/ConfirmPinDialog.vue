@@ -21,7 +21,6 @@ const creator = useCreator(message);
     v-if="message && creator"
     v-model="isOpen"
     :awaited-because="AwaitedReason.ServerDecidedOutcome"
-    confirm-label="Oh yeah. Pin it"
     :confirm="
       () => {
         const target = getMessageWriteTarget(message, getSlice);
@@ -30,6 +29,7 @@ const creator = useCreator(message);
         return pinMessage({ id: target.messageId, roomId: target.roomId });
       }
     "
+    confirm-label="Oh yeah. Pin it"
     title="Pin It. Pin It Good."
   >
     <!-- The dialog closes once the room answers the pin. A refused pin leaves the message as it was,

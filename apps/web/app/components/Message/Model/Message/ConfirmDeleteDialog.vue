@@ -21,8 +21,6 @@ const creator = useCreator(message);
     v-if="message && creator"
     v-model="isOpen"
     :awaited-because="AwaitedReason.ServerDecidedOutcome"
-    confirm-label="Delete"
-    title="Delete Message"
     :confirm="
       () => {
         const target = getMessageWriteTarget(message, getSlice);
@@ -31,6 +29,8 @@ const creator = useCreator(message);
         return deleteMessage({ id: target.messageId, roomId: target.roomId });
       }
     "
+    confirm-label="Delete"
+    title="Delete Message"
   >
     <!-- The message leaves the list once the room answers the removal. A refused removal leaves it where it was,
     Under the alert -->

@@ -19,7 +19,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   const userId = v7();
-  const message = "message";
+  const message = "";
   const creator = createUser({ id: userId });
 
   test("keeps the message a rejected delete leaves, with the messages that arrived meanwhile", async () => {

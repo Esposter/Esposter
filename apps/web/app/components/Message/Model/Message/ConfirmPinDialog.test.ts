@@ -18,7 +18,7 @@ describe("messageModelMessageConfirmPinDialog", () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   const userId = v7();
-  const message = "message";
+  const message = "";
   const creator = createUser({ id: userId });
 
   // What a rejected pin owes back is read as the write is sent, never assumed: another moderator's pin can land
@@ -26,7 +26,7 @@ describe("messageModelMessageConfirmPinDialog", () => {
   test("leaves an already pinned message pinned when the pin is rejected", async () => {
     expect.hasAssertions();
 
-    const { promise: isPinRejected, resolve: onPinRejected } = Promise.withResolvers<void>();
+    const { promise: pinRejection, resolve: onPinRejected } = Promise.withResolvers<void>();
     trpcMsw.message.pinMessage.mutation(() => {
       onPinRejected();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
@@ -52,7 +52,7 @@ describe("messageModelMessageConfirmPinDialog", () => {
     const pinButton = component.findAll("button").find((button) => button.text() === "Oh yeah. Pin it");
     assert.exists(pinButton);
     await pinButton.trigger("click");
-    await isPinRejected;
+    await pinRejection;
     await flushPromises();
 
     expect(pinnedMessage.isPinned).toBe(true);

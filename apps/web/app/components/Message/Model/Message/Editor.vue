@@ -43,17 +43,17 @@ const editorExtensions = [keyboardExtension, MentionExtension, CustomEmojiExtens
 <template>
   <RichTextEditor
     v-model="editedMessageHtml"
-    focus-position="end"
-    placeholder="Edit message"
     :extensions="editorExtensions"
+    focus-position="end"
     :limit="MESSAGE_MAX_LENGTH"
+    placeholder="Edit message"
     @keydown.esc="!isSaving && emit('update:update-mode', false)"
   >
     <template #append-footer="{ editor }">
       <UiButton :disabled="isSaving" :variant="UiButtonVariant.Quiet" @click="emit('update:update-mode', false)">
         Cancel
       </UiButton>
-      <UiButton v-if="editor" :variant="UiButtonVariant.Accent" :is-pending="isSaving" @click="saveMessage(editor)">
+      <UiButton v-if="editor" :is-pending="isSaving" :variant="UiButtonVariant.Accent" @click="saveMessage(editor)">
         Save
       </UiButton>
     </template>

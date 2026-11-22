@@ -7,7 +7,6 @@ import { MessageType } from "@esposter/db-schema";
 interface Props {
   message: ClientMessage;
 }
-
 // What stands in for a message with no text, such as one that only carried a file
 defineSlots<{ default?: () => VNode }>();
 const { message } = defineProps<Props>();
