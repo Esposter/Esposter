@@ -1,6 +1,7 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { checkIsNewerThanCopy } from "#src/services/message/checkIsNewerThanCopy";
 import { useReplyStore } from "#src/store/message/input/reply";
 
 export const useReadReplies = () => {
@@ -12,6 +13,8 @@ export const useReadReplies = () => {
 
     const messages = await $trpc.message.readMessagesByIds.query({ messageIds: replyToIds, roomId });
     const replyMap = getReplyMapRef(roomId);
-    for (const message of messages) replyMap.value.set(message.id, { ...message, roomId });
+    for (const message of messages)
+      if (checkIsNewerThanCopy(replyMap.value.get(message.id), message))
+        replyMap.value.set(message.id, { ...message, roomId });
   };
 };
