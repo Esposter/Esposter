@@ -37,7 +37,7 @@ const intervalRules = [UiRules.minValue(1), UiRules.maxValue(TODO_LIST_RECURRENC
 <!-- The Repeat menu beside the due date, and once a todo repeats, how many of its unit lie between one due date and the
      Next: the custom schedule. The schema refuses an interval out of range, so the dialog cannot save one -->
 <template>
-  <div flex flex-wrap gap-2 items-end>
+  <div flex flex-wrap gap-2 items-start>
     <div flex-1 min-w-0><UiSelect v-model="unit" :items="unitItems" label="Repeat" /></div>
     <div v-if="modelValue" flex-1 min-w-0>
       <UiTextField

@@ -13,11 +13,11 @@ const nameRules = [UiRules.maxLength(ITEM_NAME_MAX_LENGTH)];
 <!-- The field a visit starts with: Enter adds the todo it names and leaves the field empty and focused for the next,
      While a due date and notes are set by opening the new row -->
 <template>
-  <form
+  <UiForm
     flex-1
     min-w-0
     @keydown.esc="name = ''"
-    @submit.prevent="
+    @submit="
       () => {
         const submittedName = name;
         name = '';
@@ -28,5 +28,5 @@ const nameRules = [UiRules.maxLength(ITEM_NAME_MAX_LENGTH)];
     "
   >
     <UiTextField v-model="name" is-label-hidden label="Add a todo" placeholder="Add a todo" :rules="nameRules" />
-  </form>
+  </UiForm>
 </template>

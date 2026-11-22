@@ -2,7 +2,6 @@
 import type { TodoListStep } from "#shared/models/resource/todoList/TodoListStep";
 
 import { ITEM_NAME_MAX_LENGTH, TODO_LIST_ITEM_STEPS_MAX_LENGTH } from "#shared/services/resource/item/constants";
-import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiRules } from "#src/services/ui/UiRules";
 import { v7 } from "uuid";
@@ -11,7 +10,6 @@ import { v7 } from "uuid";
 const modelValue = defineModel<TodoListStep[] | undefined>({ required: true });
 const name = ref("");
 const nameRules = [UiRules.maxLength(ITEM_NAME_MAX_LENGTH)];
-const stepNameRules = [UiRules.required(), UiRules.maxLength(ITEM_NAME_MAX_LENGTH)];
 // The item's schema rejects a longer checklist, so the field stops adding at the limit rather than the save failing
 const isAtMaxSteps = computed(() => (modelValue.value?.length ?? 0) >= TODO_LIST_ITEM_STEPS_MAX_LENGTH);
 const addStep = () => {
@@ -26,27 +24,27 @@ const addStep = () => {
 <template>
   <div flex flex-col gap-2>
     <ul v-if="modelValue" list-none flex flex-col gap-1>
-      <li v-for="step of modelValue" :key="step.id" flex gap-2 items-center>
-        <UiCheckbox
-          :label="step.name"
-          :model-value="Boolean(step.completedAt)"
-          @update:model-value="step.completedAt = step.completedAt ? undefined : new Date()"
-        />
-        <div :class="{ 'text-muted': step.completedAt }" flex-1 min-w-0>
-          <UiTextField v-model="step.name" is-label-hidden label="Step" :rules="stepNameRules" />
-        </div>
-        <UiIconButton
-          label="Remove step"
-          :meaning="UiIconMeaning.Remove"
-          :variant="UiButtonVariant.Quiet"
-          @click="
-            () => {
-              const remainingSteps = modelValue?.filter(({ id }) => id !== step.id) ?? [];
-              modelValue = remainingSteps.length > 0 ? remainingSteps : undefined;
-            }
-          "
-        />
-      </li>
+      <ResourceTodoListStepsRow
+        v-for="step of modelValue"
+        :key="step.id"
+        :step
+        @remove="
+          () => {
+            const remainingSteps = modelValue?.filter(({ id }) => id !== step.id) ?? [];
+            modelValue = remainingSteps.length > 0 ? remainingSteps : undefined;
+          }
+        "
+        @rename="
+          (newName) => {
+            step.name = newName;
+          }
+        "
+        @toggle="
+          () => {
+            step.completedAt = step.completedAt ? undefined : new Date();
+          }
+        "
+      />
     </ul>
     <!-- Inside the dialog's own form, so Enter here adds the step and is kept from saving the dialog -->
     <div

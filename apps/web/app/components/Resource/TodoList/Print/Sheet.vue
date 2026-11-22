@@ -35,7 +35,7 @@ useHead({ bodyAttrs: { "data-todo-list-printing": "" } });
      shell surrounds it -->
 <template>
   <Teleport to="body">
-    <article class="todo-list-print-sheet hidden print:block">
+    <article class="todo-list-print-sheet hidden" print:block>
       <h1>{{ resource?.name }}</h1>
       <template v-for="{ title, todos } of sections" :key="title">
         <h2 v-if="title && todos.length > 0">{{ title }}</h2>

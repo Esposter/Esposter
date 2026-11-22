@@ -29,13 +29,7 @@ const sortItems = computed<Item[]>(() =>
 <template>
   <div flex gap-2 items-center>
     <ResourceTodoListTopSlotAddForm />
-    <div
-      v-if="isSearchOpen || searchQuery"
-      flex-1
-      min-w-0
-      @focusout="isSearchOpen = false"
-      @keydown.esc="searchQuery = ''"
-    >
+    <div v-if="isSearchOpen || searchQuery" flex-1 min-w-0 @focusout="isSearchOpen = false">
       <UiTextField v-model="searchQuery" is-autofocus label="Search todos" :type="UiTextFieldType.Search" />
     </div>
     <UiIconButton

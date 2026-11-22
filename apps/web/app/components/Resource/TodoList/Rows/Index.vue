@@ -3,7 +3,6 @@ import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem
 import type { Item } from "#src/models/shared/Item";
 import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useTodoListStore } from "#src/store/resource/todoList/index";
 import { useTodoDialogStore } from "#src/store/resource/todoList/todoDialog";
@@ -66,14 +65,6 @@ const getTodoItems = (id: TodoListItem["id"]): Item[] => [
       <UiCheckbox :label="title" :model-value="checkIsCompleted(value)" @update:model-value="emit('toggle', value)" />
     </template>
     <template #title="{ item: { value } }"><ResourceTodoListItemTitle :id="value" /></template>
-    <template #actions="{ item: { value } }">
-      <UiIconButton
-        :aria-pressed="checkIsImportant(value)"
-        label="Important"
-        :meaning="UiIconMeaning.Favorite"
-        :variant="UiButtonVariant.Quiet"
-        @click="toggleImportant(value)"
-      />
-    </template>
+    <template #actions="{ item: { value } }"><ResourceTodoListRowsImportantButton :id="value" /></template>
   </UiList>
 </template>
