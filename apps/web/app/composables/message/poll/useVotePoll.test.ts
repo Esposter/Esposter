@@ -42,7 +42,7 @@ describe(useVotePoll, () => {
       return message;
     });
     const { vote } = await useVotePoll(() => message, false);
-    vote("");
+    await vote("");
     await flushPromises();
 
     expect(votePoll).toHaveBeenCalledExactlyOnceWith({ id: message.id, optionId: "", roomId });
@@ -64,7 +64,7 @@ describe(useVotePoll, () => {
     // Shallow so the entity is not deep-proxied — only the swap between polls has to be tracked
     const currentMessage = shallowRef(message);
     const { isVoting, vote } = await useVotePoll(() => currentMessage.value, false);
-    vote(optionId);
+    const voting = vote(optionId);
 
     expect(isVoting.value).toBe(true);
 
@@ -73,6 +73,7 @@ describe(useVotePoll, () => {
     expect(isVoting.value).toBe(false);
 
     releaseVote();
+    await voting;
     await flushPromises();
 
     expect(isVoting.value).toBe(false);
@@ -91,12 +92,13 @@ describe(useVotePoll, () => {
     });
     const currentMessage = shallowRef(message);
     const { isVoting, vote } = await useVotePoll(() => currentMessage.value, false);
-    vote(optionId);
+    const voting = vote(optionId);
     currentMessage.value = otherRoomMessage;
 
     expect(isVoting.value).toBe(false);
 
     releaseVote();
+    await voting;
     await flushPromises();
   });
 
@@ -115,10 +117,11 @@ describe(useVotePoll, () => {
     const message = { ...createPollMessage(1), version: 1 };
     getSlice(roomId).items.value = [message];
     const { vote } = await useVotePoll(() => message, false);
-    vote(optionId);
+    const voting = vote(optionId);
     const newerPoll = JSON.stringify({ ...pollContent, votes: { [otherUserId]: optionId } });
     await storeUpdateMessage({ id: message.id, message: newerPoll, roomId, version: 2 });
     releaseRefusal();
+    await voting;
     await flushPromises();
 
     expect(takeOne(getSlice(roomId).items.value).message).toBe(newerPoll);
@@ -143,10 +146,11 @@ describe(useVotePoll, () => {
     const message = { ...createPollMessage(1), version: 1 };
     getSlice(roomId).items.value = [message];
     const { vote } = await useVotePoll(() => message, false);
-    vote(optionId);
+    const voting = vote(optionId);
     const newerPoll = JSON.stringify({ ...pollContent, votes: { [otherUserId]: optionId } });
     await storeUpdateMessage({ id: message.id, message: newerPoll, roomId, version: 3 });
     releaseAnswer();
+    await voting;
     await flushPromises();
 
     expect(takeOne(getSlice(roomId).items.value).message).toBe(newerPoll);
