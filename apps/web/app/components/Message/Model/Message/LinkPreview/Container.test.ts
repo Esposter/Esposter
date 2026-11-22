@@ -2,7 +2,7 @@
 import MessageModelMessageLinkPreviewConfirmRemoveDialog from "#src/components/Message/Model/Message/LinkPreview/ConfirmRemoveDialog.vue";
 import MessageModelMessageLinkPreviewContainer from "#src/components/Message/Model/Message/LinkPreview/Container.vue";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDataStore } from "#src/store/message/data";
 import { useLinkPreviewDialogStore } from "#src/store/message/linkPreviewDialog";
@@ -37,7 +37,7 @@ describe("messageModelMessageLinkPreviewContainer", () => {
       return { ...message, linkPreviewResponse: null, version: 1 };
     });
     const component = await mountSuspended(MessageModelMessageLinkPreviewConfirmRemoveDialog);
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     const dataStore = useDataStore();
     const { getSlice } = dataStore;
     const { items } = getSlice(otherRoomId);

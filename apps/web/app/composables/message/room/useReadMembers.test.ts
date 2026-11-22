@@ -3,10 +3,10 @@ import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByT
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 
 import { useReadMembers } from "#src/composables/message/room/useReadMembers";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useMemberStore } from "#src/store/message/user/member";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -30,7 +30,7 @@ describe(useReadMembers, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          setCurrentRoomId(roomId);
+          setRouteId(roomId);
           const memberStore = useMemberStore();
           ({ memberCount, memberCountsByTopRole, members } = storeToRefs(memberStore));
           ({ readMembers } = useReadMembers());
@@ -82,14 +82,14 @@ describe(useReadMembers, () => {
     // The reads are issued a microtask after the call, so let them go out before the room moves
     await flushPromises();
     // The user switches rooms while the three reads are still in flight
-    setCurrentRoomId(otherRoomId);
+    setRouteId(otherRoomId);
     releaseReads();
     await pendingRead;
 
     expect(memberCount.value).toBeUndefined();
     expect(memberCountsByTopRole.value).toStrictEqual([]);
 
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
 
     expect(memberCount.value).toBe(newCount);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: newCount, roleId }]);

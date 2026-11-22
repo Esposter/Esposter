@@ -3,10 +3,10 @@ import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import MessageModelMessageReply from "#src/components/Message/Model/Message/Reply/Index.vue";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { useReplyStore } from "#src/store/message/input/reply";
 import { useUserStore } from "#src/store/message/user/index";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -23,7 +23,7 @@ describe("messageModelMessageReply", () => {
     const component = await mountSuspended(MessageModelMessageReply, {
       props: { messageId: repliedMessage.id, roomId },
     });
-    setCurrentRoomId(currentRoomId);
+    setRouteId(currentRoomId);
     const userStore = useUserStore();
     const { storeUser } = userStore;
     storeUser(createUser({ id: userId }));

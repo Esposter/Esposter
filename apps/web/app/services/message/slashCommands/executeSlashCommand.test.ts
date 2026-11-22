@@ -5,12 +5,12 @@ import { useSession } from "#src/services/auth/authClient.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { pushRooms } from "#src/services/message/room/pushRooms.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { UNFLIP_FACE } from "#src/services/message/slashCommands/constants";
 import { executeSlashCommand } from "#src/services/message/slashCommands/executeSlashCommand";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { MessageType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -27,7 +27,7 @@ describe(executeSlashCommand, () => {
   const rejectedTopic = "rejectedTopic";
 
   beforeEach(() => {
-    setCurrentRoomId(room.id);
+    setRouteId(room.id);
   });
 
   // Both commands write the topic of one room, so the second runs behind the first and applies on top of what it
@@ -87,7 +87,7 @@ describe(executeSlashCommand, () => {
       parameterValues: { text: rejectedTopic },
       type: SlashCommandType.Topic,
     });
-    setCurrentRoomId(otherRoom.id);
+    setRouteId(otherRoom.id);
     releaseUpdate();
     await pendingCommand;
     await rejected;

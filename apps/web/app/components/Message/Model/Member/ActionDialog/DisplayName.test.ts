@@ -4,11 +4,11 @@ import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateU
 
 import MessageModelMemberActionDialogDisplayName from "#src/components/Message/Model/Member/ActionDialog/DisplayName.vue";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useUserStore } from "#src/store/message/user/index";
 import { useMemberStore } from "#src/store/message/user/member";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
@@ -39,7 +39,7 @@ describe("messageModelMemberActionDialogDisplayName", () => {
   // The member the dialog was opened on, as the room's first page read left it: the person, and the membership row the
   // Page held. The list is the room's, so the room is made current here, after the dialog mounts, since a mount resets the route
   const seedMember = async () => {
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     const userStore = useUserStore();
     const { storeUser } = userStore;
     storeUser(user);

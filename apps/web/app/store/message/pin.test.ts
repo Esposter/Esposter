@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { useDataStore } from "#src/store/message/data";
 import { usePinStore } from "#src/store/message/pin";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -16,7 +16,7 @@ describe(usePinStore, () => {
   const createMessage = () => createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
 
   beforeEach(() => {
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
   });
 
   // The pinned list is maintained off the same update the message list gets, so the entity it lists is the one

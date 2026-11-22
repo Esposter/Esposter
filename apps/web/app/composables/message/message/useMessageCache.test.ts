@@ -11,8 +11,8 @@ import { readIndexedDb } from "#src/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { createMessage } from "#src/services/message/message/createMessage.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { useDataStore } from "#src/store/message/data";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -35,7 +35,7 @@ describe(useMessageCache, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          setCurrentRoomId(initialRouteId);
+          setRouteId(initialRouteId);
           const dataStore = useDataStore();
           ({ items } = storeToRefs(dataStore));
           ({ getSlice } = dataStore);
@@ -87,7 +87,7 @@ describe(useMessageCache, () => {
     // Never persists one, so a seeded bubble would not be a row the cache could hold
     await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessage(secondRoomId, message)], secondRoomId);
     await mountCache();
-    setCurrentRoomId(secondRoomId);
+    setRouteId(secondRoomId);
     await flushCache();
 
     expect(items.value).toHaveLength(1);

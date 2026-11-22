@@ -3,9 +3,9 @@ import type { Editor } from "@tiptap/core";
 
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
 import { MentionSuggestion } from "#src/services/message/MentionSuggestion";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { RoomPermission } from "@esposter/db-schema";
 import { MENTION_EVERYONE_ID, MENTION_HERE_ID, MentionType } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -17,7 +17,7 @@ describe("mentionSuggestion", () => {
   const otherRoomId = v7();
 
   beforeEach(() => {
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
   });
 
   // The member read spans an await, so a room switched to in between must not supply the role suggestions — the
@@ -41,7 +41,7 @@ describe("mentionSuggestion", () => {
       query: "",
       signal: new AbortController().signal,
     });
-    setCurrentRoomId(otherRoomId);
+    setRouteId(otherRoomId);
     releaseRead();
     const items = await pendingItems;
 
@@ -79,7 +79,7 @@ describe("mentionSuggestion", () => {
   test("offers the room-wide mentions while the room's permissions are not read", async () => {
     expect.hasAssertions();
 
-    setCurrentRoomId(v7());
+    setRouteId(v7());
     trpcMsw.room.readMembers.query(() => ({ hasMore: false, items: [], nextCursor: "" }));
     assert.exists(MentionSuggestion?.items);
     const items = await MentionSuggestion.items({

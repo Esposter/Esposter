@@ -2,12 +2,12 @@
 import { TOPICS_HEADER } from "#shared/services/realtime/constants";
 import { formatTopicsHeaderValue } from "#shared/services/realtime/formatTopicsHeaderValue";
 import { goOnline } from "#src/composables/shared/network.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useUserStore } from "#src/store/message/user/index";
 import { useConnectionStore } from "#src/store/realtime/connection";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { getTopic, TopicKind } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -69,7 +69,7 @@ describe(useRoomUserSubscribables, () => {
       useRoomUserSubscribables();
     });
     // A subscription is established when its room changes, so the room is opened once the subscribable is listening
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     await whenDisplayName(user.name);
     displayName = "renamedAccount";
     onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));

@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { useReadReplies } from "#src/composables/message/message/useReadReplies";
 import { createMessage } from "#src/services/message/message/createMessage.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useReplyStore } from "#src/store/message/input/reply";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -24,7 +24,7 @@ describe(useReadReplies, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          setCurrentRoomId(roomId);
+          setRouteId(roomId);
           replyStore = useReplyStore();
           readReplies = useReadReplies();
         },

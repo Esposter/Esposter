@@ -2,10 +2,10 @@
 import type { FriendRequestInSocialWithRelations } from "@esposter/db-schema";
 
 import MessageModelUserProfileCard from "#src/components/Message/Model/User/ProfileCard/Index.vue";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createFriendRequest } from "#src/services/message/user/createFriendRequest.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -24,7 +24,7 @@ describe("messageModelUserProfileCard", () => {
 
     trpcMsw.room.readMutualRooms.query(() => []);
     const component = await mountSuspended(MessageModelUserProfileCard, { props: { user: { ...user, displayName } } });
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     await flushPromises();
 
     expect(component.text()).toMatchInlineSnapshot(`"DAdd frienddisplayName actionsCopy user ID displayNameOnline"`);
@@ -38,7 +38,7 @@ describe("messageModelUserProfileCard", () => {
     trpcMsw.room.readMutualRooms.query(() => []);
     trpcMsw.friendRequest.sendFriendRequest.mutation(() => sendAnswered);
     const component = await mountSuspended(MessageModelUserProfileCard, { props: { user: { ...user, displayName } } });
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     await flushPromises();
     const addFriendButton = component.findAll("button").find((button) => button.text() === "Add friend");
     await addFriendButton?.trigger("click");

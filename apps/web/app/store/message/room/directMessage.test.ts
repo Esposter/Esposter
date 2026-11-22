@@ -8,7 +8,6 @@ import { useSession } from "#src/services/auth/authClient.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
 import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
@@ -18,6 +17,7 @@ import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { getRouteParam } from "#src/util/router/getRouteParam";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { getScopeTopic, MessageType, RoomType, usersToRoomsInMessage } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -243,7 +243,7 @@ describe(useDirectMessageStore, () => {
       createUserToRoom({ roomId: landingDirectMessage.id, userId: session.user.id }),
     ]);
     await flushPromises();
-    setCurrentRoomId(hiddenDirectMessage.id);
+    setRouteId(hiddenDirectMessage.id);
     hideDirectMessage(hiddenDirectMessage.id);
     await isInLanding;
 
@@ -283,7 +283,7 @@ describe(useDirectMessageStore, () => {
       createUserToRoom({ roomId: landingDirectMessage.id, userId: session.user.id }),
     ]);
     await flushPromises();
-    setCurrentRoomId(leftDirectMessage.id);
+    setRouteId(leftDirectMessage.id);
     await leaveDirectMessage(leftDirectMessage.id);
     await isInLanding;
 

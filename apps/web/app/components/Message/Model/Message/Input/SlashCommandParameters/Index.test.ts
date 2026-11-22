@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import MessageModelMessageInputSlashCommandParameters from "#src/components/Message/Model/Message/Input/SlashCommandParameters/Index.vue";
 import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { COMMAND_INPUT_INDEX } from "#src/services/message/slashCommands/constants";
 import { SlashCommandDefinitionMap } from "#src/services/message/slashCommands/SlashCommandDefinitionMap";
 import { useInputStore } from "#src/store/message/input/index";
@@ -21,7 +21,7 @@ describe("messageModelMessageInputSlashCommandParameters", () => {
   // Row is attached to the document, since a keystroke in a detached tree never reaches the window's listeners
   const mountWithPendingCommand = async () => {
     const component = await mountSuspended(MessageModelMessageInputSlashCommandParameters, { attachTo: document.body });
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     const slashCommandStore = useSlashCommandStore();
     const { setPendingSlashCommand } = slashCommandStore;
     setPendingSlashCommand(SlashCommandDefinitionMap[SlashCommandType.Me]);

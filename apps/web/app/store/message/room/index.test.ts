@@ -4,11 +4,11 @@ import { useSession } from "#src/services/auth/authClient.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { pushRooms } from "#src/services/message/room/pushRooms.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomDialogStore } from "#src/store/message/room/dialog";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -27,7 +27,7 @@ describe(useRoomStore, () => {
 
     // A room is on the route throughout, so the two states the scope can be in are distinguishable — read against
     // An empty route both assertions would hold for a scope that ignores the route entirely
-    setCurrentRoomId(first.id);
+    setRouteId(first.id);
     const roomStore = useRoomStore();
     const { scopedRoomId } = storeToRefs(roomStore);
     const roomDialogStore = useRoomDialogStore();
@@ -90,7 +90,7 @@ describe(useRoomStore, () => {
     const { leaveRoom } = roomStore;
     const { currentRoomId, rooms } = storeToRefs(roomStore);
     pushRooms(first, second);
-    setCurrentRoomId(first.id);
+    setRouteId(first.id);
     await leaveRoom(first.id);
     await flushPromises();
 

@@ -6,10 +6,10 @@ import type { inferProcedureInput } from "@trpc/server";
 import { MimeType } from "#shared/models/file/MimeType";
 import { STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE } from "#shared/services/storage/constants";
 import { useUploadFiles } from "#src/composables/message/file/useUploadFiles";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useUploadFileStore } from "#src/store/message/input/uploadFile";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { noop, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
@@ -45,7 +45,7 @@ describe(useUploadFiles, () => {
   beforeEach(() => {
     // The room store reads the current room off the route; an unlisted room falls back to the platform cap,
     // Which is all this composable needs from it.
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     trpcMsw.message.generateUploadFilePresignedUrlEntities.mutation(() => [
       { id: fileId, presignedUrl, thumbnailPresignedUrl, token },
     ]);
@@ -132,7 +132,7 @@ describe(useUploadFiles, () => {
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles);
     uploadFileToUrlMock.mockImplementation(() => {
-      setCurrentRoomId(otherRoomId);
+      setRouteId(otherRoomId);
       return Promise.reject(new Error(filename));
     });
     await useUploadFiles(target)([createFile()]);

@@ -3,9 +3,9 @@ import type { searchMessagesInputSchema } from "#shared/models/db/message/Search
 import type { z } from "zod";
 
 import MessageRightSideBarSearchInput from "#src/components/Message/RightSideBar/Search/Input.vue";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "#src/store/message/search/index";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { DEFAULT_PAGE_LIMIT, FilterType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -59,7 +59,7 @@ describe("messageRightSideBarSearchInput", () => {
       };
     });
     const component = await mountSuspended(MessageRightSideBarSearchInput);
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     const searchMessageStore = useSearchMessageStore();
     const { searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
     searchQuery.value = "";

@@ -5,10 +5,10 @@ import type { ThreadFollowInMessage } from "@esposter/db-schema";
 import { useSession } from "#src/services/auth/authClient.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useThreadFollowStore } from "#src/store/message/threadFollow";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { MessageType } from "@esposter/db-schema";
 import { Operation, waitForSynchronizedFunctions } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -37,7 +37,7 @@ describe(useThreadFollowStore, () => {
 
   beforeEach(() => {
     useSession.mockReturnValue(ref({ data: { user: { id: userId } } }));
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
   });
 
   // A followed root is a copy of the room's message, so the followed list takes the room's edits and deletions

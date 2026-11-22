@@ -2,11 +2,11 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDataStore } from "#src/store/message/data";
 import { useFileStore } from "#src/store/message/file/index";
 import { useThreadStore } from "#src/store/message/thread";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { MessageType, READ_PRESIGNED_URL_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -37,7 +37,7 @@ describe(useFileStore, () => {
   };
 
   beforeEach(() => {
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
   });
 
   afterEach(() => {
@@ -238,9 +238,9 @@ describe(useFileStore, () => {
     );
     getSlice(roomId).items.value.push(message);
     fileUrlMap.value.set(fileId, { expiresAt: Date.now(), url: freshUrl });
-    setCurrentRoomId(otherRoomId);
+    setRouteId(otherRoomId);
     await MessageHookMap[Operation.Delete].run(message);
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
 
     expect(fileUrlMap.value.has(fileId)).toBe(false);
   });

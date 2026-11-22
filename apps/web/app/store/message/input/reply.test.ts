@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDataStore } from "#src/store/message/data";
 import { useReplyStore } from "#src/store/message/input/reply";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -17,7 +17,7 @@ describe(useReplyStore, () => {
   const userId = v7();
 
   beforeEach(() => {
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
   });
 
   // A message's Create hooks run behind an await on the incoming path, so the reader can have opened another room
@@ -31,7 +31,7 @@ describe(useReplyStore, () => {
     const { getReplyMapRef } = replyStore;
     const repliedMessage = createOptimisticMessage({ roomId, type: MessageType.Message }, userId);
     getSlice(roomId).items.value.push(repliedMessage);
-    setCurrentRoomId(otherRoomId);
+    setRouteId(otherRoomId);
     await MessageHookMap[Operation.Create].run(
       createOptimisticMessage({ replyToId: repliedMessage.id, roomId, type: MessageType.Message }, userId),
     );

@@ -9,7 +9,6 @@ import { useUserToRoomSubscribables } from "#src/composables/message/subscribabl
 import { createRoomRole } from "#src/services/message/member/createRoomRole.test";
 import { serveMemberRoles } from "#src/services/message/member/serveMemberRoles.test";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { readActiveTopicReads } from "#src/services/realtime/collectTopics";
 import { getLastOpenRealtimeSocketCall } from "#src/services/realtime/openRealtimeSocket.test";
@@ -18,6 +17,7 @@ import { useRoleStore } from "#src/store/message/room/role";
 import { useUserStore } from "#src/store/message/user/index";
 import { useMemberStore } from "#src/store/message/user/member";
 import { useConnectionStore } from "#src/store/realtime/connection";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { getScopeTopic, usersToRoomsInMessage } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -73,7 +73,7 @@ describe(useMemberStore, () => {
   };
 
   beforeEach(() => {
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     serveCounts(0, []);
   });
 
@@ -225,7 +225,7 @@ describe(useMemberStore, () => {
 
     expect(members.value).toStrictEqual([member]);
 
-    setCurrentRoomId(v7());
+    setRouteId(v7());
 
     expect(members.value).toStrictEqual([]);
   });

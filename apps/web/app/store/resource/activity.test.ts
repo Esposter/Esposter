@@ -2,6 +2,7 @@
 import type { Page, ResourceActivityInResource } from "@esposter/db-schema";
 
 import { useActivityStore } from "#src/store/resource/activity";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -10,13 +11,6 @@ const createReader =
   (...activityIds: string[]): (() => Promise<Page<ResourceActivityInResource>>) =>
   () =>
     Promise.resolve({ items: activityIds.map((id) => createActivity(id)), nextCursor: "nextCursor" });
-// Set on the route rather than navigated to: the blade's page is auth-guarded, so a real push never resolves.
-// Through triggerRef because currentRoute is a shallowRef
-const openActivityBlade = (id: string) => {
-  const router = useRouter();
-  Object.assign(router.currentRoute.value.params, { id });
-  triggerRef(router.currentRoute);
-};
 
 describe(useActivityStore, () => {
   const firstResourceId = v7();
@@ -33,12 +27,13 @@ describe(useActivityStore, () => {
     const activityStore = useActivityStore();
     const { hasMore, items } = storeToRefs(activityStore);
     const { readItems } = activityStore;
-    openActivityBlade(firstResourceId);
+    // Set on the route rather than navigated to: the blade's page is auth-guarded, so a real push never resolves
+    setRouteId(firstResourceId);
     await readItems(createReader(firstActivityId));
 
     expect(items.value.map(({ id }) => id)).toStrictEqual([firstActivityId]);
 
-    openActivityBlade(secondResourceId);
+    setRouteId(secondResourceId);
 
     expect(items.value).toStrictEqual([]);
     expect(hasMore.value).toBe(false);
@@ -47,7 +42,7 @@ describe(useActivityStore, () => {
 
     expect(items.value.map(({ id }) => id)).toStrictEqual([secondActivityId]);
 
-    openActivityBlade(firstResourceId);
+    setRouteId(firstResourceId);
 
     expect(items.value.map(({ id }) => id)).toStrictEqual([firstActivityId]);
   });

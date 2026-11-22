@@ -3,10 +3,10 @@ import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
 import { useMessageHtml } from "#src/composables/message/useMessageHtml";
 import { roomEmojiTable } from "#src/services/message/room/overlay/constants";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { useUserStore } from "#src/store/message/user/index";
 import { useOverlayStore } from "#src/store/overlay";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import {
   CUSTOM_EMOJI_ID_ATTRIBUTE,
   CUSTOM_EMOJI_NAME_ATTRIBUTE,
@@ -43,7 +43,7 @@ describe(useMessageHtml, () => {
 
   beforeEach(() => {
     // The rewrite reads the room on screen's emoji set, which is the room these messages are rendered in
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
   });
 
   // The tree that is queried has to be the tree that is serialized: query one and serialize a second and every

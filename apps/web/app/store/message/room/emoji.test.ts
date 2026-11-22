@@ -3,10 +3,10 @@ import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
 import { EmojiType } from "#src/models/message/emoji/EmojiType";
 import { roomEmojiTable } from "#src/services/message/room/overlay/constants";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoomEmojiStore } from "#src/store/message/room/emoji";
 import { useOverlayStore } from "#src/store/overlay";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -39,7 +39,7 @@ describe(useRoomEmojiStore, () => {
   test("keeps a removal and a creation that land during the read over its answer", async () => {
     expect.hasAssertions();
 
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     const overlayStore = useOverlayStore();
     const { arrive } = overlayStore;
     const kept = createRoomEmoji();
@@ -63,7 +63,7 @@ describe(useRoomEmojiStore, () => {
   test("stamps the emoji type on the room's own set", () => {
     expect.hasAssertions();
 
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     const overlayStore = useOverlayStore();
     const { arrive } = overlayStore;
     const roomEmoji = createRoomEmoji();
@@ -80,7 +80,7 @@ describe(useRoomEmojiStore, () => {
   test("a removal leaves the emoji out at once, and its answer keeps it out", async () => {
     expect.hasAssertions();
 
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     const overlayStore = useOverlayStore();
     const { arrive } = overlayStore;
     const roomEmoji = createRoomEmoji();

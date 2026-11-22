@@ -2,10 +2,10 @@
 import type { BanInRoom } from "#shared/models/db/room/BanInRoom";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useBanStore } from "#src/store/message/user/ban";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -31,7 +31,7 @@ describe(useBanStore, () => {
   // The clock starts at the epoch, so a removal dated the epoch is still inside the tombstone retention
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
   });
 
   afterEach(() => {

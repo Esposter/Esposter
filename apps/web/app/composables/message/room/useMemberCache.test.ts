@@ -8,10 +8,10 @@ import { goOffline, goOnline } from "#src/composables/shared/network.test";
 import { MemberIndexedDbStoreConfiguration } from "#src/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "#src/services/cache/indexedDb/openIndexedDb";
 import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useMemberStore } from "#src/store/message/user/member";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
@@ -41,7 +41,7 @@ describe(useMemberCache, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          setCurrentRoomId(initialRouteId);
+          setRouteId(initialRouteId);
           const memberStore = useMemberStore();
           ({ memberCount, memberCountsByTopRole, members } = storeToRefs(memberStore));
           ({ refreshMemberCounts, resetCursorPaginationData } = memberStore);
@@ -80,7 +80,7 @@ describe(useMemberCache, () => {
     await refreshMemberCounts([partitionKey]);
     expect(memberCount.value).toBe(1);
     goOffline();
-    setCurrentRoomId(secondPartitionKey);
+    setRouteId(secondPartitionKey);
     await flushCache();
 
     expect(members.value).toHaveLength(1);

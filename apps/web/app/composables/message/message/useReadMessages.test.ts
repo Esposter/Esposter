@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { useReadMessages } from "#src/composables/message/message/useReadMessages";
 import { createMessage } from "#src/services/message/message/createMessage.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "#src/store/message/emoji";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -35,7 +35,7 @@ describe(useReadMessages, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          setCurrentRoomId(roomId);
+          setRouteId(roomId);
           const emojiStore = useEmojiStore();
           ({ getEmojis } = emojiStore);
           ({ readMessages } = useReadMessages());
@@ -44,7 +44,7 @@ describe(useReadMessages, () => {
     );
     const pendingRead = readMessages();
     await flushPromises();
-    setCurrentRoomId(otherRoomId);
+    setRouteId(otherRoomId);
     releaseRead();
     await pendingRead;
 

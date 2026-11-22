@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { createMessage } from "#src/services/message/message/createMessage.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useForwardStore } from "#src/store/message/input/forward";
 import { v7 } from "uuid";
@@ -17,16 +17,16 @@ describe(useForwardStore, () => {
 
     const sourceRoomId = v7();
     const destinationRoomId = v7();
-    setCurrentRoomId(sourceRoomId);
+    setRouteId(sourceRoomId);
     const forwardStore = useForwardStore();
     const { messageInput, roomIds } = storeToRefs(forwardStore);
     messageInput.value = composedMessage;
     roomIds.value = [destinationRoomId];
 
-    setCurrentRoomId(destinationRoomId);
+    setRouteId(destinationRoomId);
 
     expect(messageInput.value).toBe("");
-    setCurrentRoomId(sourceRoomId);
+    setRouteId(sourceRoomId);
 
     expect(messageInput.value).toBe(composedMessage);
     expect(roomIds.value).toStrictEqual([destinationRoomId]);
@@ -38,16 +38,16 @@ describe(useForwardStore, () => {
 
     const sourceRoomId = v7();
     const destinationRoomId = v7();
-    setCurrentRoomId(sourceRoomId);
+    setRouteId(sourceRoomId);
     const forwardStore = useForwardStore();
     const { clearForward } = forwardStore;
     const { messageInput, roomIds } = storeToRefs(forwardStore);
     messageInput.value = composedMessage;
     roomIds.value = [destinationRoomId];
-    setCurrentRoomId(destinationRoomId);
+    setRouteId(destinationRoomId);
 
     clearForward(sourceRoomId, { message: composedMessage, roomIds: [destinationRoomId] });
-    setCurrentRoomId(sourceRoomId);
+    setRouteId(sourceRoomId);
 
     expect(messageInput.value).toBe("");
     expect(roomIds.value).toStrictEqual([]);
@@ -61,7 +61,7 @@ describe(useForwardStore, () => {
     const sourceRoomId = v7();
     const sentRoomId = v7();
     const pickedRoomId = v7();
-    setCurrentRoomId(sourceRoomId);
+    setRouteId(sourceRoomId);
     const forwardStore = useForwardStore();
     const { clearForward } = forwardStore;
     const { messageInput, roomIds } = storeToRefs(forwardStore);
@@ -83,7 +83,7 @@ describe(useForwardStore, () => {
 
     const sourceRoomId = v7();
     const destinationRoomId = v7();
-    setCurrentRoomId(sourceRoomId);
+    setRouteId(sourceRoomId);
     let sendCount = 0;
     const { promise: isAnswered, resolve: answerForward } = Promise.withResolvers<void>();
     trpcMsw.message.forwardMessage.mutation(() => {

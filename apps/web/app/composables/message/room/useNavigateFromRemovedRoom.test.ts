@@ -4,9 +4,9 @@ import { useReadRooms } from "#src/composables/message/room/useReadRooms";
 import { useSession } from "#src/services/auth/authClient.test";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { RoutePath } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -49,7 +49,7 @@ describe(useNavigateFromRemovedRoom, () => {
     expect.hasAssertions();
 
     await readListedRoom();
-    setCurrentRoomId(room.id);
+    setRouteId(room.id);
     const { isLanded, paths } = watchPaths();
     effectScope().run(() => {
       useNavigateFromRemovedRoom();
@@ -68,7 +68,7 @@ describe(useNavigateFromRemovedRoom, () => {
     expect.hasAssertions();
 
     await readListedRoom();
-    setCurrentRoomId(otherRoom.id);
+    setRouteId(otherRoom.id);
     const { paths } = watchPaths();
     effectScope().run(() => {
       useNavigateFromRemovedRoom();

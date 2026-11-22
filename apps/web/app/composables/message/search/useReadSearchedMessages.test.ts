@@ -5,11 +5,11 @@ import type { MockInstance } from "vitest";
 
 import { useReadSearchedMessages } from "#src/composables/message/search/useReadSearchedMessages";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useSearchHistoryStore } from "#src/store/message/search/history";
 import { useSearchMessageStore } from "#src/store/message/search/index";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { DEFAULT_PAGE_LIMIT, encodePageCursor, FilterType, MessageType } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -40,7 +40,7 @@ describe(useReadSearchedMessages, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          setCurrentRoomId(roomId);
+          setRouteId(roomId);
           const searchMessageStore = useSearchMessageStore();
           ({ count, isSearching, items, searchQuery, selectedFilters } = storeToRefs(searchMessageStore));
           const searchHistoryStore = useSearchHistoryStore();
@@ -72,13 +72,13 @@ describe(useReadSearchedMessages, () => {
     // The search is issued a microtask after the call, so let it go out before the room moves
     await flushPromises();
     // The user opens another room before the search comes back
-    setCurrentRoomId(otherRoomId);
+    setRouteId(otherRoomId);
     releaseSearch();
     await pendingSearch;
 
     expect(count.value).toBe(0);
 
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
 
     expect(count.value).toBe(newCount);
     expect(createSearchHistory).toHaveBeenCalledExactlyOnceWith({ filters: undefined, query, roomId });
@@ -109,7 +109,7 @@ describe(useReadSearchedMessages, () => {
     const pendingRoomSearch = readSearchedMessages();
     // Let the search reach its resolver before the room moves, so the next one is a request of its own
     await isRoomSearchReached;
-    setCurrentRoomId(otherRoomId);
+    setRouteId(otherRoomId);
     searchQuery.value = query;
     const pendingOtherRoomSearch = readSearchedMessages();
     await isOtherRoomSearchReached;
@@ -118,11 +118,11 @@ describe(useReadSearchedMessages, () => {
 
     expect(isSearching.value).toBe(true);
 
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
 
     expect(isSearching.value).toBe(false);
 
-    setCurrentRoomId(otherRoomId);
+    setRouteId(otherRoomId);
     releaseOtherRoomSearch();
     await pendingOtherRoomSearch;
 

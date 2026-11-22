@@ -3,9 +3,9 @@ import type { VueWrapper } from "@vue/test-utils";
 
 import MessageModelMessageForwardSendButton from "#src/components/Message/Model/Message/Forward/SendButton.vue";
 import { createMessage } from "#src/services/message/message/createMessage.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useForwardStore } from "#src/store/message/input/forward";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -35,7 +35,7 @@ describe("messageModelMessageForwardSendButton", () => {
     });
     const forward = createMessage(roomId);
     const sentDialog = await mountSuspended(MessageModelMessageForwardSendButton, { props: { forward } });
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     const forwardStore = useForwardStore();
     const { roomIds } = storeToRefs(forwardStore);
     roomIds.value = [destinationRoomId];
@@ -43,7 +43,7 @@ describe("messageModelMessageForwardSendButton", () => {
     clickSend(sentDialog);
     sentDialog.unmount();
     const reopenedDialog = await mountSuspended(MessageModelMessageForwardSendButton, { props: { forward } });
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     await flushPromises();
     clickSend(reopenedDialog);
     await flushPromises();

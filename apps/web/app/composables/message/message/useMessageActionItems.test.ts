@@ -7,10 +7,10 @@ import { getMockSession } from "#server/trpc/context.test";
 import { setupSession } from "#src/services/auth/setupSession.test";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDataStore } from "#src/store/message/data";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -56,7 +56,7 @@ describe(useMessageActionItems, () => {
     return messageEntity;
   };
   beforeAll(() => {
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
   });
 
   // A rejected unpin owes back the pin state the write beside it left, which is not necessarily pinned: the

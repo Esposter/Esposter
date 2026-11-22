@@ -13,13 +13,13 @@ import { createOptimisticMessage } from "#src/services/message/createOptimisticM
 import { SPOILER_FILENAME_PREFIX } from "#src/services/message/file/constants";
 import { createMessage as createRoomMessage } from "#src/services/message/message/createMessage.test";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDataStore } from "#src/store/message/data";
 import { useInputStore } from "#src/store/message/input/index";
 import { useUploadFileStore } from "#src/store/message/input/uploadFile";
 import { useThreadStore } from "#src/store/message/thread";
 import { useThreadFollowStore } from "#src/store/message/threadFollow";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { MessageType } from "@esposter/db-schema";
 import { Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -62,7 +62,7 @@ describe(useDataStore, () => {
   };
 
   beforeEach(() => {
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
   });
 
@@ -401,11 +401,11 @@ describe(useDataStore, () => {
     const { previousCursor } = storeToRefs(dataStore);
     const { getPreviousCursorRef } = dataStore;
     getPreviousCursorRef(roomId).value = newerCursor;
-    setCurrentRoomId(otherRoomId);
+    setRouteId(otherRoomId);
 
     expect(previousCursor.value).toBe("");
 
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
 
     expect(previousCursor.value).toBe(newerCursor);
   });

@@ -3,9 +3,9 @@ import type { ScheduledRoomMessage } from "@esposter/db-schema";
 
 import MessageModelMessageInputScheduledMessageJobDialog from "#src/components/Message/Model/Message/Input/ScheduledMessageJobDialog.vue";
 import { createRoom } from "#src/services/message/room/createRoom.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobDialogStore } from "#src/store/message/input/scheduledMessageJobDialog";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -36,7 +36,7 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
     const component = await mountSuspended(MessageModelMessageInputScheduledMessageJobDialog, {
       attachTo: document.body,
     });
-    setCurrentRoomId(room.id);
+    setRouteId(room.id);
     await flushPromises();
     const textField = component.get("textarea");
     await textField.setValue(text);
@@ -73,7 +73,7 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
     const component = await mountSuspended(MessageModelMessageInputScheduledMessageJobDialog, {
       attachTo: document.body,
     });
-    setCurrentRoomId(room.id);
+    setRouteId(room.id);
     await flushPromises();
     await component.get("textarea").setValue(text);
     const confirmButton = component.findAll("button").find((button) => button.text() === "Schedule Message");

@@ -4,9 +4,9 @@ import UiList from "#src/components/Ui/List/Index.vue";
 import UiPopover from "#src/components/Ui/Popover.vue";
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { pushRooms } from "#src/services/message/room/pushRooms.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -40,7 +40,7 @@ describe("messageModelMemberList", () => {
     const component = await mountSuspended(
       defineComponent({
         setup() {
-          setCurrentRoomId(room.id);
+          setRouteId(room.id);
           return () => h(MessageModelMemberList);
         },
       }),

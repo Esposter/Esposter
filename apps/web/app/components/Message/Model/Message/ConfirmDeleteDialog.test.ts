@@ -2,12 +2,12 @@
 import MessageModelMessageConfirmDeleteDialog from "#src/components/Message/Model/Message/ConfirmDeleteDialog.vue";
 import UiConfirmDialog from "#src/components/Ui/ConfirmDialog.vue";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useDataStore } from "#src/store/message/data";
 import { useMessageDialogStore } from "#src/store/message/dialog";
 import { useUserStore } from "#src/store/message/user/index";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
@@ -33,7 +33,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const component = await mountSuspended(MessageModelMessageConfirmDeleteDialog, { shallow: true });
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice } = dataStore;

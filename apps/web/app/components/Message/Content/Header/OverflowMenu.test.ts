@@ -7,9 +7,9 @@ import UiOverflowMenu from "#src/components/Ui/OverflowMenu.vue";
 import { setupSession } from "#src/services/auth/setupSession.test";
 import { NotificationTypeLabelMap } from "#src/services/message/NotificationTypeLabelMap";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { NotificationType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -73,7 +73,7 @@ describe("messageContentHeaderOverflowMenu", () => {
     updateUserToRoom({ displayName: "queued", roomId });
     const component = await mountSuspended(MessageContentHeaderOverflowMenu, { props: { isToolsInHeader: true } });
     // Set after mounting, which resets the route the room is read from
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     const item = component
       .findComponent(UiOverflowMenu)
       .props("items")

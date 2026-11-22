@@ -5,6 +5,7 @@ import ResourceActivityLog from "#src/components/Resource/ActivityLog.vue";
 import UiSkeleton from "#src/components/Ui/Skeleton.vue";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useActivityStore } from "#src/store/resource/activity";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -31,11 +32,8 @@ describe("resourceActivityLog", () => {
       return data;
     });
     const wrapper = await mountSuspended(ResourceActivityLog, { props: { resourceId }, shallow: true });
-    // Set on the route after the mount, which lands on its own route, and through triggerRef since currentRoute is a
-    // ShallowRef
-    const router = useRouter();
-    Object.assign(router.currentRoute.value.params, { id: resourceId });
-    triggerRef(router.currentRoute);
+    // Set on the route after the mount, which lands on its own route
+    setRouteId(resourceId);
     const activityStore = useActivityStore();
     const { readItems } = activityStore;
     await readItems(() => Promise.resolve(data));

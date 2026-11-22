@@ -3,10 +3,10 @@ import type { PublicWebhookInMessage } from "@esposter/db-schema";
 
 import { createRoom } from "#src/services/message/room/createRoom.test";
 import { createWebhook } from "#src/services/message/room/createWebhook.test";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useWebhookStore } from "#src/store/message/room/webhook";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -26,7 +26,7 @@ describe(useWebhookStore, () => {
   const toWebhookInMessageWithRelations = (webhook: PublicWebhookInMessage) => ({ ...webhook, creator, room });
 
   beforeEach(() => {
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
   });
 
   test("files a read's rows under the room it was issued for, not the room scoped when it lands", async () => {
@@ -41,13 +41,13 @@ describe(useWebhookStore, () => {
     const { readWebhooks } = webhookStore;
     const { items } = storeToRefs(webhookStore);
     const pendingRead = readWebhooks(roomId);
-    setCurrentRoomId(otherRoomId);
+    setRouteId(otherRoomId);
     onRoomSwitched();
     await pendingRead;
 
     expect(items.value).toStrictEqual([]);
 
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
 
     expect(items.value).toStrictEqual([
       toWebhookInMessageWithRelations(second),

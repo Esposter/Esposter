@@ -2,16 +2,16 @@
 import type { SlashCommand } from "#src/models/message/slashCommands/SlashCommand";
 
 import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { useInputStore } from "#src/store/message/input/index";
 import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useSlashCommandStore, () => {
   beforeEach(() => {
-    setCurrentRoomId(v7());
+    setRouteId(v7());
   });
 
   const description = "";

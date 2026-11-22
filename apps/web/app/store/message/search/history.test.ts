@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { SearchHistoryInMessage } from "@esposter/db-schema";
 
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useSearchHistoryStore } from "#src/store/message/search/history";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
@@ -14,7 +14,7 @@ describe(useSearchHistoryStore, () => {
   const query = "query";
 
   beforeEach(() => {
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
   });
 
   // The server mints the search's id, so the search is drawn once its answer arrives, and only in the room it was made for
@@ -37,10 +37,10 @@ describe(useSearchHistoryStore, () => {
     const { items } = storeToRefs(searchHistoryStore);
     const { createSearchHistory } = searchHistoryStore;
     await createSearchHistory({ query, roomId });
-    setCurrentRoomId(otherRoomId);
+    setRouteId(otherRoomId);
 
     expect(items.value).toStrictEqual([]);
-    setCurrentRoomId(roomId);
+    setRouteId(roomId);
     expect(items.value).toStrictEqual([searchHistory]);
   });
 });

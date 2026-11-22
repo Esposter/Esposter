@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { DRAFT_DEBOUNCE_MS } from "#src/services/message/draft/constants";
 import { draftsSerializer } from "#src/services/message/draft/draftsSerializer";
-import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { useInputStore } from "#src/store/message/input/index";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { marked } from "marked";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -27,7 +27,7 @@ describe(useInputStore, () => {
   beforeEach(() => {
     // Frozen rather than merely faked, so a draft's `updatedAt` is an exact value instead of "some Date"
     vi.useFakeTimers({ now: 0 });
-    setCurrentRoomId(roomId1);
+    setRouteId(roomId1);
   });
 
   afterEach(() => {
@@ -201,7 +201,7 @@ describe(useInputStore, () => {
     input.value = draftContent;
     await nextTick();
     vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS - 1);
-    setCurrentRoomId(roomId2);
+    setRouteId(roomId2);
     await nextTick();
     vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
     await nextTick();
