@@ -1,8 +1,8 @@
 import type { Context } from "#server/trpc/context";
 import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPermissionOverride";
 import type { RoomMemberPermissionInMessage } from "@esposter/db-schema";
-import type { SQL } from "drizzle-orm";
 
+import { getMemberPermissionOverrideRowWhere } from "#server/services/room/rbac/getMemberPermissionOverrideRowWhere";
 import { roomMemberPermissionsInMessage } from "@esposter/db-schema";
 import { and, eq, isNotNull } from "drizzle-orm";
 
@@ -14,13 +14,11 @@ export const writeMemberPermissionOverride = async (
   db: Context["db"],
   {
     current,
-    isMemberRow,
     override,
     roomId,
     userId,
   }: {
     current?: MemberPermissionOverride | undefined;
-    isMemberRow?: SQL | undefined;
     override: MemberPermissionOverride;
     roomId: string;
     userId: string;
@@ -33,6 +31,7 @@ export const writeMemberPermissionOverride = async (
     roomId: roomIdColumn,
     userId: userIdColumn,
   } = roomMemberPermissionsInMessage;
+  const isMemberRow = getMemberPermissionOverrideRowWhere(roomId, userId);
   const isUnchanged = current
     ? and(isMemberRow, eq(allowColumn, current.allow), eq(denyColumn, current.deny))
     : isMemberRow;

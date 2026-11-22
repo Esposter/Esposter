@@ -2,11 +2,11 @@
 import type { Context } from "#server/trpc/context";
 import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
 
+import { getMemberPermissionOverrideRowWhere } from "#server/services/room/rbac/getMemberPermissionOverrideRowWhere";
 import { writeMemberPermissionOverride } from "#server/services/room/rbac/writeMemberPermissionOverride";
 import { mergeMemberPermissionOverride } from "#shared/services/room/rbac/mergeMemberPermissionOverride";
-import { getLiveRowWhere, roomMemberPermissionsInMessage } from "@esposter/db-schema";
+import { roomMemberPermissionsInMessage } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
 
 const MAX_MEMBER_PERMISSION_OVERRIDE_ATTEMPTS = 3;
 // The bitfields are read and merged in JS, since D1 stores them as text and SQL cannot OR or AND them. The write is then
@@ -16,24 +16,15 @@ const MAX_MEMBER_PERMISSION_OVERRIDE_ATTEMPTS = 3;
 // Member already had no override and none was asked for
 export const setMemberPermissionOverride = async (db: Context["db"], input: UpsertMemberPermissionOverrideInput) => {
   const { roomId, userId } = input;
-  const {
-    allow: allowColumn,
-    deny: denyColumn,
-    roomId: roomIdColumn,
-    userId: userIdColumn,
-  } = roomMemberPermissionsInMessage;
-  const isMemberRow = and(
-    eq(roomIdColumn, roomId),
-    eq(userIdColumn, userId),
-    getLiveRowWhere(roomMemberPermissionsInMessage),
-  );
+  const { allow: allowColumn, deny: denyColumn } = roomMemberPermissionsInMessage;
+  const isMemberRow = getMemberPermissionOverrideRowWhere(roomId, userId);
   for (let attempt = 0; attempt < MAX_MEMBER_PERMISSION_OVERRIDE_ATTEMPTS; attempt++) {
     const [current] = await db
       .select({ allow: allowColumn, deny: denyColumn })
       .from(roomMemberPermissionsInMessage)
       .where(isMemberRow);
     const override = mergeMemberPermissionOverride(current ?? { allow: 0n, deny: 0n }, input);
-    const written = await writeMemberPermissionOverride(db, { current, isMemberRow, override, roomId, userId });
+    const written = await writeMemberPermissionOverride(db, { current, override, roomId, userId });
     if (written) return written;
   }
 
