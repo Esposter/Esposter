@@ -31,7 +31,7 @@ Always use the UnoCSS abbreviated shorthand forms — they are first-class utili
 Prefer UnoCSS **named** utilities over numeric equivalents whenever a name exists:
 
 - Font weight: `fw-medium` / `fw-semibold` / `fw-bold` — never `fw-500` / `fw-600` / `fw-700`, and never the longer `font-*` spelling the blocklist refuses.
-- Transition timing: a motion token inside the `transition` value (`references/arbitrary-values.md`) — never a `duration-*` utility.
+- Transition timing: see `references/arbitrary-values.md`, "Transitions".
 
 ## Gap Directionality
 
