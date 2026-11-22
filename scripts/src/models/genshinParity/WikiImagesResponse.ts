@@ -3,15 +3,15 @@
 // When one response does not hold them all. An error is answered under HTTP 200, in place of the batch
 export interface WikiImagesResponse {
   continue?: Record<string, string> | undefined;
-  error?: { code: string; info: string } | undefined;
+  error?: undefined | { code: string; info: string };
   query?:
+    | undefined
     | {
         pages?:
           | Record<
               string,
-              { imageinfo?: { height: number; url: string; width: number }[] | undefined; title?: string | undefined }
+              { imageinfo?: undefined | { height: number; url: string; width: number }[]; title?: string | undefined }
             >
           | undefined;
-      }
-    | undefined;
+      };
 }

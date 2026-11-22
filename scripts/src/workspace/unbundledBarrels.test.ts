@@ -36,35 +36,40 @@ describe("unbundledBarrels", () => {
   const STORE_PATH_REGEX = /pnpm\/store\/|links\/@\//u;
   const PACKAGE_PATHS = readTsdownPackagePaths();
 
+  const BUNDLE_TIMEOUT_MS = Temporal.Duration.from({ seconds: 60 }).total("milliseconds");
   const DB_SCHEMA_ENTRY = pathToFileURL(resolve(REPOSITORY_ROOT, "packages/db-schema/dist/index.js")).href;
 
-  test("an import of one enum loads no drizzle", async () => {
-    expect.hasAssertions();
+  test(
+    "an import of one enum loads no drizzle",
+    async () => {
+      expect.hasAssertions();
 
-    const directory = mkdtempSync(join(tmpdir(), "unbundled-barrels-"));
-    onTestFinished(() => {
-      rmSync(directory, { force: true, recursive: true });
-    });
-    const entry = join(directory, "entry.js");
-    writeFileSync(
-      entry,
-      `import { MessageType } from ${JSON.stringify(DB_SCHEMA_ENTRY)};\nconsole.log(MessageType);\n`,
-    );
-    const output = await build({
-      build: { minify: false, rolldownOptions: { input: entry }, write: false },
-      configFile: false,
-      logLevel: "silent",
-      root: directory,
-    });
-    const results = Array.isArray(output) ? output : [output];
-    const code = results
-      .flatMap((result) => ("output" in result ? result.output : []))
-      .map((chunk) => ("code" in chunk ? chunk.code : ""))
-      .join("\n");
+      const directory = mkdtempSync(join(tmpdir(), "unbundled-barrels-"));
+      onTestFinished(() => {
+        rmSync(directory, { force: true, recursive: true });
+      });
+      const entry = join(directory, "entry.js");
+      writeFileSync(
+        entry,
+        `import { MessageType } from ${JSON.stringify(DB_SCHEMA_ENTRY)};\nconsole.log(MessageType);\n`,
+      );
+      const output = await build({
+        build: { minify: false, rolldownOptions: { input: entry }, write: false },
+        configFile: false,
+        logLevel: "silent",
+        root: directory,
+      });
+      const results = Array.isArray(output) ? output : [output];
+      const code = results
+        .flatMap((result) => ("output" in result ? result.output : []))
+        .map((chunk) => ("code" in chunk ? chunk.code : ""))
+        .join("\n");
 
-    expect(code).toContain("MessageType");
-    expect(code).not.toContain("pgTable");
-  }, 60_000);
+      expect(code).toContain("MessageType");
+      expect(code).not.toContain("pgTable");
+    },
+    BUNDLE_TIMEOUT_MS,
+  );
 
   // CI uploads each package's `dist` as an artifact that skips a hidden folder by default, so a vendored file under
   // Pnpm's `.pnpm` was missing from the app build and its import of the file failed to resolve
