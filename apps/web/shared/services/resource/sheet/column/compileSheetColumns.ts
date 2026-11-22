@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-type-assertion -- a call through the transformation's runtime type: each entry takes its own variant, so the call's parameter is the intersection of those, which is never for disjoint variants */
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnCellReader } from "#shared/models/resource/sheet/column/ColumnCellReader";
 import type { SheetCellReader } from "#shared/models/resource/sheet/column/SheetCellReader";

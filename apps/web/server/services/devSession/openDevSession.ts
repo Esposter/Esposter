@@ -17,6 +17,7 @@ export const openDevSession = async (context: Awaited<typeof auth.$context>): Pr
   // Better-auth's type admits a capitalised same-site value that the cookie writer's type does not, and the writer reads
   // Either case
   return {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- better-auth's sameSite admits a capitalised value the cookie writer's type does not, and the writer reads either case, so the attributes are the writer's own type
     attributes: attributes as DevSessionCookie["attributes"],
     name,
     value: await signSessionToken(session.token, context.secret),

@@ -12,6 +12,8 @@ export function reapplyLiveResourceContent<TType extends ResourceType>(
 export function reapplyLiveResourceContent(resource: ResourceInResource, content: unknown): Promise<unknown>;
 export function reapplyLiveResourceContent(resource: ResourceInResource, content: unknown) {
   const reapplyLiveContent = ResourceLiveContentMap[resource.type];
-  if (reapplyLiveContent) return reapplyLiveContent(resource, content as never);
+  if (reapplyLiveContent)
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a call through the type's runtime key: each entry takes its own content type, so the call's parameter is the intersection of them, which is never for disjoint types; the content came from a snapshot the type's schema parsed
+    return reapplyLiveContent(resource, content as never);
   else return Promise.resolve(content);
 }

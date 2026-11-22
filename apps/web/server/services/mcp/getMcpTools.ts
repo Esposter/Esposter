@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-type-assertion -- a built procedure types its meta as unknown, and the root's Meta is the one shape every procedure's meta is written to; tRPC types an input as a parser union, and the MCP endpoint serves only zod inputs, each held to an object schema by getMcpTools.test.ts */
 import type { McpTool } from "#server/models/mcp/McpTool";
 import type { Meta } from "#server/models/trpc/Meta";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";

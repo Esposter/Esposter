@@ -5,10 +5,13 @@ import type { Get, Paths } from "type-fest";
 export const getPropertyValue = <TInput, TPath extends Paths<TInput> & string>(
   input: TInput,
   path: TPath,
-): Get<TInput, TPath> =>
-  path
+): Get<TInput, TPath> => {
+  const value = path
     .split(".")
     .reduce<unknown>(
       (object, key) => (object === undefined || object === null ? undefined : Reflect.get(new Object(object), key)),
       input,
-    ) as Get<TInput, TPath>;
+    );
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the walk is by a dotted string, which the compiler cannot compute Get from, so the value is the path's own type restated
+  return value as Get<TInput, TPath>;
+};

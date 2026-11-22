@@ -12,6 +12,7 @@ export const defineAchievementDefinitionMap = <
   category: TCategory,
   definitionMap: TDefinitionMap,
 ) =>
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Object.fromEntries types its keys as a bare string index, and the entries are built at run time, so no per-key mapped type overlaps the record
   Object.fromEntries(
     // Category is assigned last so an entry carrying one cannot outrank the map's. Object.assign rather than a
     // Spread because the entry value is generic, and TypeScript rejects spreading it (TS2698)

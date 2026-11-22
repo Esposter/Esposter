@@ -31,7 +31,8 @@ export const createTmxProperties = async () => {
     map: { layers, tilesets },
   } of tilemaps) {
     layersData.push({ key, layers });
-    externalTilesets.push(...(tilesets as TMXExternalTilesetParsed[]));
+    // An external tileset names its file by its source; an embedded one has no file for a base tileset key to name
+    externalTilesets.push(...tilesets.filter((tileset): tileset is TMXExternalTilesetParsed => "source" in tileset));
   }
 
   await Promise.all([createLayers(layersData), createBaseTilesetKey(externalTilesets)]);

@@ -41,6 +41,7 @@ export const readSnapshotVersionContent = async <TType extends ResourceType>(
   if (plaintext) {
     // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, exactly as readResourceContent relies on
     const json = JSON.parse(Buffer.from(plaintext).toString());
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- ResourceDefinitionMap indexed by a generic type is typed as the union of every entry's schema, so parse returns that union, and the compiler cannot relate it to TType
     return ResourceDefinitionMap[resource.type].contentSchema.parse(json) as ResourceContent<TType>;
   } else return undefined;
 };
