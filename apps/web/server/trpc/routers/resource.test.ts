@@ -872,13 +872,34 @@ describe("resourceRouter", () => {
 
     const dashboardResource = await dashboardCaller.createResource({ name });
     await caller.toggleFavorite({ id: dashboardResource.id });
-    const favoritesAfterStar = await caller.readFavorites();
+    const { items: favoritesAfterStar } = await caller.readFavorites();
     await caller.toggleFavorite({ id: dashboardResource.id });
-    const favoritesAfterUnstar = await caller.readFavorites();
+    const { items: favoritesAfterUnstar } = await caller.readFavorites();
 
     expect(favoritesAfterStar.map(({ resource }) => resource.id)).toStrictEqual([dashboardResource.id]);
     expect(favoritesAfterUnstar).toHaveLength(1);
     expect(favoritesAfterUnstar[0]?.favorite.deletedAt).not.toBeNull();
+  });
+
+  // A page answers the most recently set stars first, and its cursor continues the walk past the stars it answered
+  test("pages the favorites, the most recently set first", async () => {
+    expect.hasAssertions();
+
+    const oldestResource = await dashboardCaller.createResource({ name: "oldest" });
+    await caller.toggleFavorite({ id: oldestResource.id });
+    vi.advanceTimersByTime(1);
+    const middleResource = await dashboardCaller.createResource({ name: "middle" });
+    await caller.toggleFavorite({ id: middleResource.id });
+    vi.advanceTimersByTime(1);
+    const newestResource = await dashboardCaller.createResource({ name: "newest" });
+    await caller.toggleFavorite({ id: newestResource.id });
+
+    const firstPage = await caller.readFavorites({ limit: 2 });
+    const secondPage = await caller.readFavorites({ cursor: firstPage.nextCursor, limit: 2 });
+
+    expect(firstPage.items.map(({ resource }) => resource.id)).toStrictEqual([newestResource.id, middleResource.id]);
+    expect(secondPage.items.map(({ resource }) => resource.id)).toStrictEqual([oldestResource.id]);
+    expect(secondPage.nextCursor).toBe("");
   });
 
   // An unstar leaves its favorite as a tombstone at the version the removal left, so a read still holding the star loses to
@@ -902,7 +923,7 @@ describe("resourceRouter", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     await caller.toggleFavorite({ id: dashboardResource.id });
     await caller.deleteResources({ ids: [dashboardResource.id] });
-    const favorites = await caller.readFavorites();
+    const { items: favorites } = await caller.readFavorites();
 
     expect(favorites).toStrictEqual([]);
   });

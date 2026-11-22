@@ -64,7 +64,7 @@ describe(useRestoreResources, () => {
 
       return ids.map((id) => createResourceListItem({ id }));
     });
-    trpcMsw.resource.readFavorites.query(readFavorites);
+    trpcMsw.resource.readFavorites.query(() => ({ items: readFavorites(), nextCursor: "" }));
     // The favorites cache is loaded by the time a restore runs, so the invalidation has something to re-read
     const favoriteStore = useFavoriteStore();
     const { readFavorites: readCachedFavorites } = favoriteStore;

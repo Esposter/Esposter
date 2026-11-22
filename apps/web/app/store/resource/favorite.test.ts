@@ -8,10 +8,14 @@ import { setupSession } from "#src/services/auth/setupSession.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useCacheStore } from "#src/store/cache";
 import { useFavoriteStore } from "#src/store/resource/favorite";
+import { encodePageCursor } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+// The one page a read answers when the set fits on it, which the store reads to its end
+const favoritePage = (items: ResourceFavoriteListItem[]) => ({ items, nextCursor: "" });
 
 describe(useFavoriteStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -45,7 +49,9 @@ describe(useFavoriteStore, () => {
   test("takes the server's answer over an optimistic star that it removed", async () => {
     expect.hasAssertions();
 
-    trpcMsw.resource.readFavorites.query(() => [createResourceFavoriteListItem(resource, { userId: appUserId })]);
+    trpcMsw.resource.readFavorites.query(() =>
+      favoritePage([createResourceFavoriteListItem(resource, { userId: appUserId })]),
+    );
     trpcMsw.resource.toggleFavorite.mutation(() => createStarRow(resource, new Date()));
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
@@ -61,7 +67,7 @@ describe(useFavoriteStore, () => {
   test("shows a star set on screen with the resource the read joined to it", async () => {
     expect.hasAssertions();
 
-    trpcMsw.resource.readFavorites.query(() => [createRemovedStar(resource)]);
+    trpcMsw.resource.readFavorites.query(() => favoritePage([createRemovedStar(resource)]));
     trpcMsw.resource.toggleFavorite.mutation(() => createStarRow(resource, null));
     const favoriteStore = useFavoriteStore();
     const { favoriteIds, favorites } = storeToRefs(favoriteStore);
@@ -81,7 +87,7 @@ describe(useFavoriteStore, () => {
   test("keeps the star the first of two quick toggles set when the second is refused", async () => {
     expect.hasAssertions();
 
-    trpcMsw.resource.readFavorites.query(() => [createRemovedStar(resource)]);
+    trpcMsw.resource.readFavorites.query(() => favoritePage([createRemovedStar(resource)]));
     let isFirstToggle = true;
     trpcMsw.resource.toggleFavorite.mutation(() => {
       if (!isFirstToggle) throw trpcError;
@@ -109,10 +115,10 @@ describe(useFavoriteStore, () => {
     const { invalidateTags } = cacheStore;
     let isRead = false;
     trpcMsw.resource.readFavorites.query(() => {
-      if (isRead) return [createResourceFavoriteListItem(otherResource, { userId: appUserId })];
+      if (isRead) return favoritePage([createResourceFavoriteListItem(otherResource, { userId: appUserId })]);
 
       isRead = true;
-      return [];
+      return favoritePage([]);
     });
     trpcMsw.resource.toggleFavorite.mutation(async () => {
       // The re-read lands while the toggle is still in flight
@@ -133,7 +139,7 @@ describe(useFavoriteStore, () => {
     expect.hasAssertions();
 
     const handler = vi.fn<() => ResourceFavoriteListItem[]>(() => [createResourceFavoriteListItem(resource)]);
-    trpcMsw.resource.readFavorites.query(handler);
+    trpcMsw.resource.readFavorites.query(() => favoritePage(handler()));
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
     const { readFavorites } = favoriteStore;
@@ -144,6 +150,30 @@ describe(useFavoriteStore, () => {
     expect(favorites.value).toStrictEqual([resource]);
   });
 
+  // Every row's star state needs the whole set, so a star on a later page of it is starred too
+  test("holds the stars of every page of the set", async () => {
+    expect.hasAssertions();
+
+    const laterResource = createResourceListItem();
+    let isFirstPage = true;
+    trpcMsw.resource.readFavorites.query(() => {
+      const page = isFirstPage
+        ? {
+            items: [createResourceFavoriteListItem(resource, { userId: appUserId })],
+            nextCursor: encodePageCursor({ isBackward: false, values: [0, resource.id] }),
+          }
+        : { items: [createResourceFavoriteListItem(laterResource, { userId: appUserId })], nextCursor: "" };
+      isFirstPage = false;
+      return page;
+    });
+    const favoriteStore = useFavoriteStore();
+    const { favoriteIds } = storeToRefs(favoriteStore);
+    const { readFavorites } = favoriteStore;
+    await readFavorites();
+
+    expect(favoriteIds.value.has(laterResource.id)).toBe(true);
+  });
+
   // A delete or a restore changes which stars still resolve to a live resource, and the stars are rendered in
   // The very table the delete is issued from — so this is the one cache that re-reads at once rather than
   // Dropping and waiting for its next mount
@@ -151,7 +181,7 @@ describe(useFavoriteStore, () => {
     expect.hasAssertions();
 
     const handler = vi.fn<() => ResourceFavoriteListItem[]>(() => [createResourceFavoriteListItem(resource)]);
-    trpcMsw.resource.readFavorites.query(handler);
+    trpcMsw.resource.readFavorites.query(() => favoritePage(handler()));
     const cacheStore = useCacheStore();
     const { invalidateTags } = cacheStore;
     const favoriteStore = useFavoriteStore();

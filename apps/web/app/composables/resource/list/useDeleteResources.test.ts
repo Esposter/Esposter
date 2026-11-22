@@ -107,7 +107,7 @@ describe(useDeleteResources, () => {
     trpcMsw.resource.deleteResources.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    trpcMsw.resource.readFavorites.query(readFavorites);
+    trpcMsw.resource.readFavorites.query(() => ({ items: readFavorites(), nextCursor: "" }));
     // The table the delete is issued from renders the stars, so the favorites cache is loaded by this point —
     // A cache that was never constructed holds nothing stale and is nothing to invalidate
     const favoriteStore = useFavoriteStore();

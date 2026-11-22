@@ -1,3 +1,4 @@
+import type { ResourceFavoriteListItem } from "#shared/models/resource/ResourceFavoriteListItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceInResource } from "@esposter/db-schema";
 
@@ -7,6 +8,7 @@ import { getToggleFavoriteEntry } from "#src/services/resource/overlay/getToggle
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
 import { useNotificationStore } from "#src/store/notification";
 import { useOverlayStore } from "#src/store/overlay";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 
 // Favorites are server-side from day one — a star that vanishes on another device reads as data loss. A star is a row on the
 // Overlay, and the resource it stars is the one the read joined, kept by id beside it
@@ -36,10 +38,22 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
   const favoriteIds = computed(() => new Set(favoriteRows.value.map(({ resourceId }) => resourceId)));
   // Whether any read has settled, success or failure — before one has, an empty list is not yet an answer
   const isReadSettled = ref(false);
-  // The workbench list, the blade page and Home all want the same MAX_READ_LIMIT joined rows, and the list
-  // Mounts inside the blade — so the set is read once and two concurrent mounts share the in-flight query
-  // Rather than every navigation re-running it
-  const { isPending, read: readFavorites } = useCachedRead(() => $trpc.resource.readFavorites.query(), {
+  // Every row's star state needs the whole set, so it is read to its end, a page at a time. A page is as large as the server
+  // Answers, so a set that fits one page is one request
+  const readFavoriteSet = async () => {
+    const favoriteSet: ResourceFavoriteListItem[] = [];
+    let cursor = "";
+    do {
+      // oxlint-disable-next-line no-await-in-loop -- Pagination: each page's cursor comes from the page before it, so the walk is serial
+      const page = await $trpc.resource.readFavorites.query({ cursor, limit: MAX_READ_LIMIT });
+      favoriteSet.push(...page.items);
+      cursor = page.nextCursor;
+    } while (cursor);
+    return favoriteSet;
+  };
+  // The workbench list, the blade page and Home all want the same joined set, and the list mounts inside the blade — so
+  // The set is read once and two concurrent mounts share the in-flight query rather than every navigation re-running it
+  const { isPending, read: readFavorites } = useCachedRead(readFavoriteSet, {
     // The one cache that cannot wait for its next mount: the stars are rendered in the very table a delete is
     // Issued from, so the set has to be correct on screen the moment the write lands
     isRefetchOnInvalidate: true,
@@ -53,8 +67,8 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
       resources.value = new Map(newFavorites.map(({ resource }) => [resource.id, resource]));
       isReadSettled.value = true;
     },
-    // A delete, restore or purge changes which stars still point at a live resource, and the list is capped at
-    // MAX_READ_LIMIT — only the server knows which row backfills the one that left, so it is re-read, not edited
+    // A delete, restore or purge changes which stars still point at a live resource, and only the server knows which row
+    // Backfills the one that left, so the set is re-read, not edited
     tags: [CacheTag.Resources],
   });
   // A star is set or removed where it is drawn, and the write it sends answers the star's row at its version

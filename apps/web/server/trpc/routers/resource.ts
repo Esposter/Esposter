@@ -57,6 +57,7 @@ import { createResourceOfTypeInputSchema } from "#shared/models/db/resource/Crea
 import { deleteResourcesInputSchema } from "#shared/models/db/resource/DeleteResourcesInput";
 import { readActivitiesInputSchema, RESOURCE_ACTIVITY_SORT } from "#shared/models/db/resource/ReadActivitiesInput";
 import { readDeletedResourcesInputSchema } from "#shared/models/db/resource/ReadDeletedResourcesInput";
+import { FAVORITE_PAGE_SORT, readFavoritesInputSchema } from "#shared/models/db/resource/ReadFavoritesInput";
 import { readResourceConsumersInputSchema } from "#shared/models/db/resource/ReadResourceConsumersInput";
 import { readResourceContentInputSchema } from "#shared/models/db/resource/ReadResourceContentInput";
 import { readResourceContentSchemaInputSchema } from "#shared/models/db/resource/ReadResourceContentSchemaInput";
@@ -96,8 +97,8 @@ import {
   SnapshotReason,
   StorageBucket,
 } from "@esposter/db-schema";
-import { getSynchronizedFunction, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
-import { and, count, desc, eq, isNotNull, isNull, sql } from "drizzle-orm";
+import { getSynchronizedFunction, Operation, RoutePath, takeOne } from "@esposter/shared";
+import { and, count, desc, eq, isNotNull, isNull } from "drizzle-orm";
 
 export const resourceRouter = router({
   // Typeless: the type is named in the input, so one tool creates a resource of any type
@@ -236,27 +237,40 @@ export const resourceRouter = router({
     .query<ResourceListPage>(({ ctx, input: { cursor, limit, sort } }) =>
       readDeletedResourcePage(ctx.db, { cursor, limit, sort, userId: ctx.user.id }),
     ),
-  // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
-  // Star's own timestamp is not a column any list shows
-  // A removed star comes back as a tombstone, so the client applies its removal. Live stars are listed first, so tombstones
-  // Only fill what the live ones leave of the page
-  readFavorites: standardAuthedProcedure.query<ResourceFavoriteListItem[]>(({ ctx }) => {
-    const userId = ctx.user.id;
-    return ctx.db
-      .select({ favorite: resourceFavoritesInResource, resource: resourceListSelection })
-      .from(resourceFavoritesInResource)
-      .innerJoin(resourcesInResource, eq(resourcesInResource.id, resourceFavoritesInResource.resourceId))
-      .leftJoin(resourceAccessesInResource, getLastAccessedJoin(userId))
-      .where(
-        and(
-          eq(resourceFavoritesInResource.userId, userId),
-          eq(resourcesInResource.userId, userId),
-          isNull(resourcesInResource.deletedAt),
-        ),
-      )
-      .orderBy(sql`${resourceFavoritesInResource.deletedAt} is null desc`, desc(resourceFavoritesInResource.createdAt))
-      .limit(MAX_READ_LIMIT);
-  }),
+  // The stars a page at a time, the most recently set first. A removed star comes back as a tombstone, so the client applies
+  // Its removal. Every row's star state needs the whole set, so the client reads the set to its end, page by page
+  readFavorites: standardAuthedProcedure
+    .input(readFavoritesInputSchema)
+    .query<Page<ResourceFavoriteListItem>>(async ({ ctx, input: { cursor, limit } }) => {
+      const userId = ctx.user.id;
+      const boundSort = createPageSort(
+        { createdAt: resourceFavoritesInResource.createdAt, resourceId: resourceFavoritesInResource.resourceId },
+        FAVORITE_PAGE_SORT,
+      );
+      const rows = await ctx.db
+        .select({
+          createdAt: resourceFavoritesInResource.createdAt,
+          favorite: resourceFavoritesInResource,
+          resource: resourceListSelection,
+          resourceId: resourceFavoritesInResource.resourceId,
+        })
+        .from(resourceFavoritesInResource)
+        .innerJoin(resourcesInResource, eq(resourcesInResource.id, resourceFavoritesInResource.resourceId))
+        .leftJoin(resourceAccessesInResource, getLastAccessedJoin(userId))
+        .where(
+          and(
+            eq(resourceFavoritesInResource.userId, userId),
+            eq(resourcesInResource.userId, userId),
+            isNull(resourcesInResource.deletedAt),
+            getPageWhere(boundSort, cursor),
+          ),
+        )
+        .orderBy(...getPageOrderBy(boundSort, cursor))
+        .limit(limit + 1);
+      // The sort's keys are read off each row for the cursor, so the page answers the stars without them
+      const page = toPage(rows, FAVORITE_PAGE_SORT, cursor, limit);
+      return { ...page, items: page.items.map(({ favorite, resource }) => ({ favorite, resource })) };
+    }),
   // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
   // For every type, so this cross-type read resolves it whatever the resource turns out to be
   readResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")

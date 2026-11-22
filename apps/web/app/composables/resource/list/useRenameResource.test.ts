@@ -88,11 +88,14 @@ describe(useRenameResource, () => {
     let serverName = name;
     // One star of one user, so each read answers the same row the first one held
     const starOwnerId = v7();
-    trpcMsw.resource.readFavorites.query(() => [
-      createResourceFavoriteListItem(createResourceListItem({ id: resource.value.id, name: serverName }), {
-        userId: starOwnerId,
-      }),
-    ]);
+    trpcMsw.resource.readFavorites.query(() => ({
+      items: [
+        createResourceFavoriteListItem(createResourceListItem({ id: resource.value.id, name: serverName }), {
+          userId: starOwnerId,
+        }),
+      ],
+      nextCursor: "",
+    }));
     trpcMsw.sheet.updateResource.mutation(() => {
       serverName = newName;
       return { ...resource.value, name: newName };
