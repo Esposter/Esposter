@@ -37,7 +37,7 @@ onMounted(() => {
         @click="isOpen = false"
       />
     </div>
-    <p text-muted>Share this call link with others you want in the call.</p>
+    <p text-muted ui-lede>Share this call link with others you want in the call.</p>
     <div pl-2 flex gap-2 items-center ui-field>
       <span text-sm flex-1 min-w-0 truncate>{{ callLink }}</span>
       <UiCopyButton :source="callLink" />

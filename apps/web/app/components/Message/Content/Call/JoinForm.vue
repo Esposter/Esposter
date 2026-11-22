@@ -29,7 +29,7 @@ const isJoinable = computed(() => selectCallSessionInMessageSchema.shape.id.safe
       }
     "
   >
-    <UiTextField v-model="callCodeOrLink" label="Enter a code or link" flex-1 min-w-0 />
+    <UiTextField v-model="callCodeOrLink" flex-1 min-w-0 label="Enter a code or link" />
     <UiButton :disabled="!isJoinable" :is-pending type="submit"> Join </UiButton>
   </UiForm>
 </template>

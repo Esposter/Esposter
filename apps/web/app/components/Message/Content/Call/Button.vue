@@ -16,7 +16,7 @@ const roomParticipantMap = useCallRoomParticipantMap();
 <template>
   <UiPopover v-if="isInCall" :label="`Call participants: ${roomParticipantMap.size}`" :variant="UiButtonVariant.Quiet">
     <template #trigger>
-      <UiIcon :meaning="UiIconMeaning.Call" text-success />
+      <UiIcon text-success :meaning="UiIconMeaning.Call" />
       <span text-success>{{ roomParticipantMap.size }}</span>
     </template>
     <template #default="{ close }">
@@ -25,7 +25,7 @@ const roomParticipantMap = useCallRoomParticipantMap();
         <div v-for="{ id, image, isMuted, name } of roomParticipantMap.values()" :key="id" ui-row>
           <UiItemContent :image="image ?? undefined" :title="name">
             <template v-if="isMuted" #append>
-              <UiIcon :meaning="UiIconMeaning.MicrophoneOff" label="Muted" text-muted />
+              <UiIcon text-muted :meaning="UiIconMeaning.MicrophoneOff" label="Muted" />
             </template>
           </UiItemContent>
         </div>
@@ -46,9 +46,9 @@ const roomParticipantMap = useCallRoomParticipantMap();
   </UiPopover>
   <UiIconButton
     v-else
-    :meaning="UiIconMeaning.Call"
     :is-pending="isConnecting"
     label="Start Call"
+    :meaning="UiIconMeaning.Call"
     :variant="UiButtonVariant.Quiet"
     @click="joinCallByRoomId(currentRoomId)"
   />

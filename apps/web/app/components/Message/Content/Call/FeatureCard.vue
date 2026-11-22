@@ -10,9 +10,9 @@ defineProps<Props>();
 <template>
   <div flex flex-col gap-1>
     <div flex gap-2 items-center>
-      <span :class="icon" text-accent shrink-0 size-6 />
-      <h2 text-heading-color>{{ title }}</h2>
+      <span text-accent shrink-0 size-6 :class="icon" />
+      <h2 ui-heading>{{ title }}</h2>
     </div>
-    <p text-muted>{{ description }}</p>
+    <p text-muted ui-lede>{{ description }}</p>
   </div>
 </template>
