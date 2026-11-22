@@ -1,4 +1,4 @@
-import type { MjmlDocument } from "mjml-blocks";
+import type { MjmlColumnNode, MjmlDocument } from "mjml-blocks";
 
 import { compileEmailDocument } from "#server/services/emailEditor/compileEmailDocument";
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
@@ -8,35 +8,24 @@ import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
+const createMjmlDocument = (child: MjmlColumnNode["props"]["children"][number]): MjmlDocument => ({
+  content: [
+    {
+      props: { children: [{ props: { children: [child], id: v7() }, type: MjmlNodeType.Column }], id: v7() },
+      type: MjmlNodeType.Section,
+    },
+  ],
+  root: { props: { lang: "", title: "" } },
+});
+
 describe(compileEmailDocument, () => {
   test("an email document with invalid markup is refused by the compile", async () => {
     expect.hasAssertions();
 
-    const document: MjmlDocument = {
-      content: [
-        {
-          props: {
-            children: [
-              {
-                props: {
-                  children: [
-                    {
-                      props: { content: TEST_LABEL, id: v7(), padding: "1px 2px 3px 4px 5px" },
-                      type: MjmlNodeType.Button,
-                    },
-                  ],
-                  id: v7(),
-                },
-                type: MjmlNodeType.Column,
-              },
-            ],
-            id: v7(),
-          },
-          type: MjmlNodeType.Section,
-        },
-      ],
-      root: { props: { lang: "", title: "" } },
-    };
+    const document = createMjmlDocument({
+      props: { content: TEST_LABEL, id: v7(), padding: "1px 2px 3px 4px 5px" },
+      type: MjmlNodeType.Button,
+    });
 
     await compileEmailDocument(document, TEST_CONTEXT).match(noop, (error) => {
       expect(error.message).toMatchInlineSnapshot(`
@@ -49,37 +38,13 @@ describe(compileEmailDocument, () => {
   test("a merge field's token compiles to the one form substitution matches", async () => {
     expect.hasAssertions();
 
-    const document: MjmlDocument = {
-      content: [
-        {
-          props: {
-            children: [
-              {
-                props: {
-                  children: [
-                    {
-                      props: {
-                        content: {
-                          content: [{ content: [{ text: "{{P&L}}", type: "text" }], type: "paragraph" }],
-                          type: "doc",
-                        },
-                        id: v7(),
-                      },
-                      type: MjmlNodeType.Text,
-                    },
-                  ],
-                  id: v7(),
-                },
-                type: MjmlNodeType.Column,
-              },
-            ],
-            id: v7(),
-          },
-          type: MjmlNodeType.Section,
-        },
-      ],
-      root: { props: { lang: "", title: "" } },
-    };
+    const document = createMjmlDocument({
+      props: {
+        content: { content: [{ content: [{ text: "{{P&L}}", type: "text" }], type: "paragraph" }], type: "doc" },
+        id: v7(),
+      },
+      type: MjmlNodeType.Text,
+    });
 
     await compileEmailDocument(document, TEST_CONTEXT).match(
       (html) => {
@@ -94,37 +59,13 @@ describe(compileEmailDocument, () => {
   test("a valid email document compiles to email HTML", async () => {
     expect.hasAssertions();
 
-    const document: MjmlDocument = {
-      content: [
-        {
-          props: {
-            children: [
-              {
-                props: {
-                  children: [
-                    {
-                      props: {
-                        content: {
-                          content: [{ content: [{ text: TEST_LABEL, type: "text" }], type: "paragraph" }],
-                          type: "doc",
-                        },
-                        id: v7(),
-                      },
-                      type: MjmlNodeType.Text,
-                    },
-                  ],
-                  id: v7(),
-                },
-                type: MjmlNodeType.Column,
-              },
-            ],
-            id: v7(),
-          },
-          type: MjmlNodeType.Section,
-        },
-      ],
-      root: { props: { lang: "", title: "" } },
-    };
+    const document = createMjmlDocument({
+      props: {
+        content: { content: [{ content: [{ text: TEST_LABEL, type: "text" }], type: "paragraph" }], type: "doc" },
+        id: v7(),
+      },
+      type: MjmlNodeType.Text,
+    });
     const html = await compileEmailDocument(document, TEST_CONTEXT).match(
       (compiledHtml) => compiledHtml,
       (error) => {
@@ -261,28 +202,10 @@ describe(compileEmailDocument, () => {
   test("an email whose survey invite has an empty label is refused as an Err, not thrown", async () => {
     expect.hasAssertions();
 
-    const document: MjmlDocument = {
-      content: [
-        {
-          props: {
-            children: [
-              {
-                props: {
-                  children: [
-                    { props: { id: v7(), label: "", surveyId: TEST_SURVEY_ID }, type: EmailNodeType.SurveyInvite },
-                  ],
-                  id: v7(),
-                },
-                type: MjmlNodeType.Column,
-              },
-            ],
-            id: v7(),
-          },
-          type: MjmlNodeType.Section,
-        },
-      ],
-      root: { props: { lang: "", title: "" } },
-    };
+    const document = createMjmlDocument({
+      props: { id: v7(), label: "", surveyId: TEST_SURVEY_ID },
+      type: EmailNodeType.SurveyInvite,
+    });
 
     await compileEmailDocument(document, TEST_CONTEXT).match(noop, (error) => {
       expect(error.message).toMatchInlineSnapshot(`

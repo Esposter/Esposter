@@ -1,30 +1,19 @@
 import { compileEmailDocument } from "#server/services/emailEditor/compileEmailDocument";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
-import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
-import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
-import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
-import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
-import { STARTER_EMAIL_SOURCE } from "#shared/services/pageBuilder/email/starterEmailSource";
-import { noop } from "@esposter/shared";
-import { parseMjmlDocument } from "mjml-blocks";
+import { readStarterEmail } from "#shared/services/pageBuilder/email/readStarterEmail";
 import { describe, expect, test } from "vitest";
 
 describe("starterEmail", () => {
   test("the starter email compiles under strict validation", async () => {
     expect.hasAssertions();
 
-    const result = parseMjmlDocument(
-      STARTER_EMAIL_SOURCE,
-      emailRegistry,
-      emailBodyChildrenSchema,
-      noteRichText,
-      MAX_EMAIL_NODES,
+    const html = await compileEmailDocument(readStarterEmail(), { origin: TEST_ORIGIN }).match(
+      (compiledHtml) => compiledHtml,
+      (error) => {
+        throw error;
+      },
     );
-    expect(result.success).toBe(true);
-    if (!result.success) return;
 
-    await compileEmailDocument(result.data, { origin: TEST_ORIGIN }).match(noop, (error) => {
-      throw error;
-    });
+    expect(html).toContain("<!doctype html>");
   });
 });
