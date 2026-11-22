@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
-import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { useAlertStore } from "#src/store/alert";
 import { useForwardStore } from "#src/store/message/input/forward";
@@ -27,11 +26,11 @@ const navigateToDestination = getSynchronizedFunction(async (roomId: string) => 
 // In, then opens the single destination; a refused one leaves the draft where it was, under the alert
 const send = async () => {
   const destinationRoomId = roomIds.value.length === 1 ? takeOne(roomIds.value) : "";
-  const outcome = await sendForward(currentRoomId.value, forward, {
+  const isSent = await sendForward(currentRoomId.value, forward, {
     message: messageInput.value,
     roomIds: [...roomIds.value],
   });
-  if (outcome.status !== MutationStatus.Succeeded || !destinationRoomId) return;
+  if (!isSent || !destinationRoomId) return;
 
   createAlert("Message forwarded!", "success", { icon: "i-mdi:share" });
   navigateToDestination(destinationRoomId);

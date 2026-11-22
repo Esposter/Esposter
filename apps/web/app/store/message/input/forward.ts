@@ -3,12 +3,18 @@ import type { ForwardDraft } from "#src/models/message/ForwardDraft";
 
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { applyIfUnchanged } from "#src/services/shared/applyIfUnchanged";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
+import { useOverlayStore } from "#src/store/overlay";
 
 export const useForwardStore = defineStore("message/input/forward", () => {
   const roomStore = useRoomStore();
   const { $trpc } = useNuxtApp();
-  const { executeMutation, isPending: isForwardPending } = useMutation();
+  const overlayStore = useOverlayStore();
+  const { writeAwaited } = overlayStore;
+  // The rooms whose forward is out, which the panel reads as its pending state. An awaited write has no entry to show it
+  const forwardingRoomIds = ref(new Set<string>());
+  const isForwardPending = computed(() => forwardingRoomIds.value.size > 0);
   const { data: forwardMessageId, getDataRef: getForwardMessageIdRef } = useDataMap<0 | ClientMessage["id"]>(
     () => roomStore.currentRoomId,
     0,
@@ -24,24 +30,26 @@ export const useForwardStore = defineStore("message/input/forward", () => {
     applyIfUnchanged(getRoomIdsRef(roomId), sent.roomIds, []);
   };
   // The forward is one write per panel, and a Send pressed while the one before it is out is dropped, whichever dialog
-  // Shows the panel, so a reopened dialog cannot send the forward a second time
-  const sendForward = (roomId: string, forward: ClientMessage, sent: ForwardDraft) =>
-    executeMutation(
-      () =>
-        $trpc.message.forwardMessage.mutate({
+  // Shows the panel, so a reopened dialog cannot send the forward a second time. Resolves to whether the server kept it
+  const sendForward = async (roomId: string, forward: ClientMessage, sent: ForwardDraft) => {
+    if (forwardingRoomIds.value.has(roomId)) return false;
+
+    forwardingRoomIds.value.add(roomId);
+    const isSent = await writeAwaited(
+      async () => {
+        await $trpc.message.forwardMessage.mutate({
           id: forward.id,
           message: sent.message,
           roomId: forward.roomId,
           roomIds: sent.roomIds,
-        }),
-      {
-        awaitedBecause: AwaitedReason.ServerDecidedOutcome,
-        isExclusive: true,
-        key: roomId,
-        onSuccess: () => {
-          clearForward(roomId, sent);
-        },
+        });
+        clearForward(roomId, sent);
+        return [];
       },
+      { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
     );
+    forwardingRoomIds.value.delete(roomId);
+    return isSent;
+  };
   return { clearForward, forwardMessageId, isForwardPending, messageInput, roomIds, sendForward };
 });

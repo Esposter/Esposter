@@ -2,9 +2,9 @@ import type { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import type { Promisable } from "type-fest";
 
 // How a dialog that answers a write closes. Its write shows on screen before the server answers, so the dialog goes the
-// Moment it is called and a refusal is left to the write's rollback and alert. A dialog that names a reason to wait is
-// Awaited with its answer pending instead, closing once the write settles unless it settled `false`, which keeps the
-// Dialog and its draft to try again
+// Moment it is called and a refusal is left to the write's alert, since its entry drops on its own. A dialog that
+// Names a reason to wait is awaited with its answer pending instead, closing once the write settles unless it settled
+// `false`, which keeps the dialog and its draft to try again
 export const useDialogAnswer = (isOpen: Ref<boolean>) => {
   const { executeMutation, isPending } = useMutation();
   const key = Symbol("answer");
