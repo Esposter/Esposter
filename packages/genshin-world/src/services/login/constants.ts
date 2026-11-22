@@ -74,7 +74,7 @@ export const LOGIN_DOOR_PROMPT_FADE_MS = 300;
 export const LOGIN_LAST_STRETCH_PACE: number = (1 - LOGIN_FLIGHT_LOADING_SHARE) / LOGIN_DOOR_AFTER_LOAD_MS;
 // The procedural normal detail the bridges' stone leans its normals by: a cell as wide as the exports' own surface
 // Wavelength read from their frame (21.8913 metres), and the amplitude that brings our mean lean to the exports' bend of
-// 1.7607 degrees, solved at that wavelength (design.md)
+// 1.7607 degrees, solved at that wavelength (openspec/changes/genshin-recreation-passes/design.md)
 export const LOGIN_BRIDGE_NORMAL_DETAIL_WAVELENGTH = 21.8913;
 export const LOGIN_BRIDGE_NORMAL_DETAIL_AMPLITUDE = 0.8388;
 // The bridges' grain: their exports' structure over their pixels (the surface pass's terms, variance then bands finest
