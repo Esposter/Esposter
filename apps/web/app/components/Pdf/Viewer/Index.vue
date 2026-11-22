@@ -73,14 +73,17 @@ const closeSidebarOnPhone = () => {
       @watermark="isWatermarkOpen = true"
     />
     <PdfViewerSearchBar :viewer="state" />
-    <UiForm v-if="isPasswordRequested" flex flex-wrap gap-2 items-end @submit="() => submitPassword()">
+    <UiForm v-if="isPasswordRequested" @submit="() => submitPassword()">
       <UiTextField
         v-model="passwordInput"
         label="Password"
         :error="isPasswordWrong ? 'The password is wrong.' : ''"
         :type="UiTextFieldType.Password"
-      />
-      <UiButton type="submit" :variant="UiButtonVariant.Accent">Open</UiButton>
+      >
+        <template #trailing>
+          <UiButton type="submit" :variant="UiButtonVariant.Accent">Open</UiButton>
+        </template>
+      </UiTextField>
     </UiForm>
     <!-- The document's failure or the viewer's own, since a viewer whose module never came draws no page either -->
     <p v-if="isUnavailable" text-muted p-3>The PDF could not be loaded.</p>

@@ -40,6 +40,10 @@ interface Props {
   type?: UiTextFieldType | undefined;
 }
 
+// A control beside the input rides in its row, so it lines up with the input box, and the message under the field grows
+// Below the input without moving it. A control beside a field in the caller's own row would be bottom-aligned to a
+// Field whose message line comes and goes, and drift with it
+defineSlots<{ trailing?: () => VNode }>();
 const modelValue = defineModel<string>({ required: true });
 const { counter, isAutofocus, maxlength, rules = [], type } = defineProps<Props>();
 // The limit counted under the field, whether it only counts or also stops the typing
@@ -74,54 +78,57 @@ defineExpose({ element });
     <label :for="String(id)" :class="{ 'sr-only': isLabelHidden || isSearch }" text-sm text-muted
       >{{ label }} <UiRequiredMark v-if="isRequired" is-silent
     /></label>
-    <div relative>
-      <UiIcon
-        v-if="isSearch"
-        :meaning="UiIconMeaning.Search"
-        text-muted
-        pointer-events-none
-        left-2
-        top="1/2"
-        absolute
-        translate-y="-1/2"
-      />
-      <Input.Control #default="{ attrs }" renderless>
-        <!-- eslint-disable vue/no-restricted-syntax -- the library's own control renders the browser's autofocus for its dialog, which call sites ask for with is-autofocus -->
-        <!-- An email, a telephone number or a URL offers the browser's autofill for it -->
-        <component
-          :is="rows ? 'textarea' : 'input'"
-          ref="element"
-          :="attrs"
-          :aria-describedby="error && errors.length === 0 ? errorId : attrs['aria-describedby']"
-          :aria-invalid="error || isInvalid ? true : attrs['aria-invalid']"
-          :aria-required="isRequired || undefined"
-          :autocomplete="type ? TEXT_FIELD_TYPE_AUTOCOMPLETE_MAP[type] : undefined"
-          :autofocus="isAutofocus || undefined"
-          :class="{ 'ui-pill pl-10 pr-10': isSearch }"
-          :maxlength
-          :placeholder="placeholder ?? (isSearch ? label : undefined)"
-          :rows
-          class="control disabled:cursor-default disabled:op-disabled"
-          px-2
-          py-1
-          min-h-8
-          w-full
-          resize-y
-          ui-field
+    <div flex gap-2 items-start>
+      <div flex-1 min-w-0 relative>
+        <UiIcon
+          v-if="isSearch"
+          :meaning="UiIconMeaning.Search"
+          text-muted
+          pointer-events-none
+          left-2
+          top="1/2"
+          absolute
+          translate-y="-1/2"
         />
-        <!-- eslint-enable vue/no-restricted-syntax -->
-      </Input.Control>
-      <UiIconButton
-        v-if="isSearch && modelValue && !isDisabled"
-        label="Clear search"
-        :meaning="UiIconMeaning.Remove"
-        :variant="UiButtonVariant.Quiet"
-        right-0
-        top-0
-        absolute
-        ui-pill
-        @click="modelValue = ''"
-      />
+        <Input.Control #default="{ attrs }" renderless>
+          <!-- eslint-disable vue/no-restricted-syntax -- the library's own control renders the browser's autofocus for its dialog, which call sites ask for with is-autofocus -->
+          <!-- An email, a telephone number or a URL offers the browser's autofill for it -->
+          <component
+            :is="rows ? 'textarea' : 'input'"
+            ref="element"
+            :="attrs"
+            :aria-describedby="error && errors.length === 0 ? errorId : attrs['aria-describedby']"
+            :aria-invalid="error || isInvalid ? true : attrs['aria-invalid']"
+            :aria-required="isRequired || undefined"
+            :autocomplete="type ? TEXT_FIELD_TYPE_AUTOCOMPLETE_MAP[type] : undefined"
+            :autofocus="isAutofocus || undefined"
+            :class="{ 'ui-pill pl-10 pr-10': isSearch }"
+            :maxlength
+            :placeholder="placeholder ?? (isSearch ? label : undefined)"
+            :rows
+            class="control disabled:cursor-default disabled:op-disabled"
+            px-2
+            py-1
+            min-h-8
+            w-full
+            resize-y
+            ui-field
+          />
+          <!-- eslint-enable vue/no-restricted-syntax -->
+        </Input.Control>
+        <UiIconButton
+          v-if="isSearch && modelValue && !isDisabled"
+          label="Clear search"
+          :meaning="UiIconMeaning.Remove"
+          :variant="UiButtonVariant.Quiet"
+          right-0
+          top-0
+          absolute
+          ui-pill
+          @click="modelValue = ''"
+        />
+      </div>
+      <slot name="trailing" />
     </div>
     <!-- Only while it has something to say, so a field in a row lines up with the buttons beside it -->
     <div v-if="errors.length > 0 || error || countLimit || hint" text-sm flex gap-2>

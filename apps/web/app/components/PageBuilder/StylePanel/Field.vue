@@ -18,6 +18,8 @@ interface Props {
   // The property the value sets, which the browser checks the value against as it is typed
   property: StyleProperty;
 }
+// What a text field's row holds beside it, such as a layer's remove button
+defineSlots<{ trailing?: () => VNode }>();
 // The saved value. A draft the check refuses stays in the field, unsaved, and the saved value is left as it was
 const modelValue = defineModel<string>({ required: true });
 const { property } = defineProps<Props>();
@@ -65,24 +67,26 @@ watch(draft, (value) => {
 </script>
 
 <template>
-  <div v-if="lengthParts && !isEditingText" flex gap-2 items-end>
-    <UiTextField
-      :model-value="lengthParts.amount"
-      :label
-      :placeholder
-      :rules
-      :type="UiTextFieldType.Number"
-      @keydown="(event: KeyboardEvent) => stepAmount(event)"
-      @update:model-value="(amount) => setAmount(amount)"
-    />
-    <UiSelect
-      :is-disabled="lengthParts.amount === ''"
-      :items="unitItems"
-      :label="`${label} unit`"
-      :model-value="unit"
-      @update:model-value="(lengthUnit) => setUnit(lengthUnit)"
-    />
-  </div>
+  <UiTextField
+    v-if="lengthParts && !isEditingText"
+    :model-value="lengthParts.amount"
+    :label
+    :placeholder
+    :rules
+    :type="UiTextFieldType.Number"
+    @keydown="(event: KeyboardEvent) => stepAmount(event)"
+    @update:model-value="(amount) => setAmount(amount)"
+  >
+    <template #trailing>
+      <UiSelect
+        :is-disabled="lengthParts.amount === ''"
+        :items="unitItems"
+        :label="`${label} unit`"
+        :model-value="unit"
+        @update:model-value="(lengthUnit) => setUnit(lengthUnit)"
+      />
+    </template>
+  </UiTextField>
   <UiTextField
     v-else
     v-model="draft"
@@ -91,5 +95,9 @@ watch(draft, (value) => {
     :rules
     @focusin="isEditingText = true"
     @focusout="isEditingText = false"
-  />
+  >
+    <template #trailing>
+      <slot name="trailing" />
+    </template>
+  </UiTextField>
 </template>

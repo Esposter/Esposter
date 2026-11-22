@@ -45,17 +45,20 @@ const addLayer = () => {
 <template>
   <div flex flex-col gap-2>
     <p v-if="layers.length === 0 && placeholder" text-muted>{{ placeholder }}</p>
-    <div v-for="(layer, index) in layers" :key="layer.id" flex gap-2 items-end>
-      <PageBuilderStylePanelField
-        :label="`Layer ${index + 1}`"
-        :model-value="layer.value"
-        property="background-image"
-        @update:model-value="(value) => setLayer(layer.id, value)"
-      />
-      <!-- eslint-disable vue/no-restricted-syntax -- removes a layer from the unsaved page draft, which the page builder's undo history restores -->
-      <UiButton @click="removeLayer(layer.id)">Remove</UiButton>
-      <!-- eslint-enable vue/no-restricted-syntax -->
-    </div>
+    <PageBuilderStylePanelField
+      v-for="(layer, index) in layers"
+      :key="layer.id"
+      :label="`Layer ${index + 1}`"
+      :model-value="layer.value"
+      property="background-image"
+      @update:model-value="(value) => setLayer(layer.id, value)"
+    >
+      <template #trailing>
+        <!-- eslint-disable vue/no-restricted-syntax -- removes a layer from the unsaved page draft, which the page builder's undo history restores -->
+        <UiButton @click="removeLayer(layer.id)">Remove</UiButton>
+        <!-- eslint-enable vue/no-restricted-syntax -->
+      </template>
+    </PageBuilderStylePanelField>
     <UiButton @click="addLayer()">Add a layer</UiButton>
   </div>
 </template>

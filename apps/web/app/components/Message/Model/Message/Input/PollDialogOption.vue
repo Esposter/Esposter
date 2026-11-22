@@ -16,14 +16,15 @@ const requiredRules = [UiRules.required()];
 </script>
 
 <template>
-  <div flex gap-2 items-end>
-    <UiTextField v-model="label" :label="`Option ${index + 1}`" :rules="requiredRules" flex-1 />
-    <UiIconButton
-      :disabled="isRemoveDisabled"
-      label="Remove option"
-      :meaning="UiIconMeaning.Remove"
-      :variant="UiButtonVariant.Quiet"
-      @click="emit('remove')"
-    />
-  </div>
+  <UiTextField v-model="label" :label="`Option ${index + 1}`" :rules="requiredRules">
+    <template #trailing>
+      <UiIconButton
+        :disabled="isRemoveDisabled"
+        label="Remove option"
+        :meaning="UiIconMeaning.Remove"
+        :variant="UiButtonVariant.Quiet"
+        @click="emit('remove')"
+      />
+    </template>
+  </UiTextField>
 </template>

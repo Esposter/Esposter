@@ -36,15 +36,18 @@ const rows = ref(Object.keys(tags).length > 0 ? getTagRows(tags).map((row) => cr
     title="Edit tags"
     :size="UiDialogSize.Large"
   >
-    <div v-for="(row, index) of rows" :key="row.id" flex gap-2 items-end>
+    <div v-for="(row, index) of rows" :key="row.id" flex gap-2 items-start>
       <UiTextField v-model="row.name" label="Name" :rules="nameRules" flex-1 />
-      <UiTextField v-model="row.value" label="Value" :rules="valueRules" flex-1 />
-      <UiIconButton
-        label="Remove tag"
-        :meaning="UiIconMeaning.Delete"
-        :variant="UiButtonVariant.Quiet"
-        @click="rows = rows.toSpliced(index, 1)"
-      />
+      <UiTextField v-model="row.value" label="Value" :rules="valueRules" flex-1>
+        <template #trailing>
+          <UiIconButton
+            label="Remove tag"
+            :meaning="UiIconMeaning.Delete"
+            :variant="UiButtonVariant.Quiet"
+            @click="rows = rows.toSpliced(index, 1)"
+          />
+        </template>
+      </UiTextField>
     </div>
     <UiButton v-if="rows.length < MAX_TAGS_COUNT" self-start @click="rows = [...rows, createRow()]">
       <UiIcon :meaning="UiIconMeaning.Create" />
