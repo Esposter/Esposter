@@ -50,6 +50,15 @@ timed call mutates or consumes is a finding; a construction that is the thing me
 baseline building the same markup as the unit) is not, and neither is a fresh output accumulator the call's contract
 takes.
 
+```bash
+# a bench importing from a test module, whose helper may build the state the timed call steps on every call
+git grep -n -E 'from "[^"]*\.test"' -- '*.bench.ts'
+```
+
+Its hits are judged by what the helper does inside the timed callback. A helper that builds the state the timed call
+mutates is a finding, and no grep sees inside it; a constant, or a helper only the module scope or a `beforeEach`
+calls, is not.
+
 ## Judging a match
 
 - **A fixture helper that spreads a container is not isolation.** Copy every level the benched code writes
