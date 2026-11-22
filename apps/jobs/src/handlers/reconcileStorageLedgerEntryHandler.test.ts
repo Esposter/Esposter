@@ -49,7 +49,6 @@ const createBucketWith = (methods: Partial<R2Bucket>) => methods as R2Bucket;
 describe(reconcileStorageLedgerEntryHandler, () => {
   const userId = v7();
   const storageBucket = StorageBucket.ResourceAssets;
-  const blobName = " ";
   const contentLength = 1;
   const eventTime = new Date(0).toISOString();
   const createObjectCreatedMessage = (key: string, bucket: StorageBucket = storageBucket) =>
@@ -80,6 +79,8 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   const resourceId = v7();
   const resourceAssetContent = " ";
   const matchingResourceAssetName = getResourceFileBlobName(resourceId, hashOf(resourceAssetContent));
+  // The default blob is a resource asset whose bytes match its name, so a case that never seeds it reads nothing back
+  const blobName = matchingResourceAssetName;
   // The hash of the other canonical value, so the name describes bytes the blob does not hold
   const mismatchedResourceAssetName = getResourceFileBlobName(resourceId, hashOf(""));
   // The log names the hash of the bytes the blob holds, which is the name's hash of the other value
