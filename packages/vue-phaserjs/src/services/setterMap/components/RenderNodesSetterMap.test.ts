@@ -1,7 +1,7 @@
 import { RenderNodesSetter } from "#src/models/setterMap/components/RenderNodesSetter";
 import { RenderNodesSetterMap } from "#src/services/setterMap/components/RenderNodesSetterMap";
 import { removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
-import { afterEach, assert, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, describe, expect, test } from "vitest";
 
 describe("renderNodesSetterMap", () => {
   const sceneKey = "sceneKey";
@@ -19,11 +19,10 @@ describe("renderNodesSetterMap", () => {
 
     const scene = startTestScene(sceneKey);
     const graphics = scene.add.graphics();
-    const emit = vi.fn<(...args: unknown[]) => void>();
     const setValue = RenderNodesSetterMap[setter];
     assert.exists(setValue);
     const value = { isConfigured: true };
-    setValue(graphics, emit)(value);
+    setValue(graphics)(value);
 
     expect(graphics[setter]).toBe(value);
   });
