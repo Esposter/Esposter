@@ -183,7 +183,7 @@ const createProcedureGroups = <TType extends ResourceType>(
           size,
         ),
       ),
-    // Every content write funnels through saveResourceContent, so this one stream keeps every other device's
+    // Every content write funnels through saveResourceContent, the one door that applies the version check
     readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceContent<TType> | undefined>(
       ({ input: { id } }) => readContent(id),
     ),
@@ -280,11 +280,7 @@ const createProcedureGroups = <TType extends ResourceType>(
       async ({ ctx, input: { id } }) => {
         const content = await readContent(id);
         if (content === undefined)
-          throw getInvalidOperationError(
-            Operation.Update,
-            DatabaseEntityType.Resource,
-            "cannot publish resource without content",
-          );
+          throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Resource, JSON.stringify({ id }));
         // Transformed before the transaction opens: a hook may read through `ctx.db` (Dashboard resolves every
         // Bound dataset), and issuing that read while this connection holds a transaction deadlocks
         const publishedContent = transformPublishedContent
@@ -386,19 +382,22 @@ const createProcedureGroups = <TType extends ResourceType>(
     readPublishedResourceContent: standardRateLimitedProcedure
       .input(selectResourceInResourceSchema.shape.id)
       .query<PublishedResourceContent<TType>>(async ({ ctx, input }) => {
-        // A binned resource is no longer served, whatever publication row it still holds
-        const resource = await requireEntity(
-          ctx.db.query.resourcesInResource.findFirst({
-            where: { deletedAt: { isNull: true }, id: { eq: input }, type: { eq: type } },
-          }),
-          DatabaseEntityType.Resource,
-          input,
-        );
-        const [publication] = await ctx.db
-          .select()
-          .from(resourcePublicationsInResource)
-          .where(getLivePublicationWhere(eq(resourcePublicationsInResource.resourceId, input)))
-          .limit(1);
+        // A binned resource is no longer served, whatever publication row it still holds. The two reads do not depend on
+        // Each other, so they overlap, and a missing resource still answers its 404 once both settle
+        const [resource, [publication]] = await Promise.all([
+          requireEntity(
+            ctx.db.query.resourcesInResource.findFirst({
+              where: { deletedAt: { isNull: true }, id: { eq: input }, type: { eq: type } },
+            }),
+            DatabaseEntityType.Resource,
+            input,
+          ),
+          ctx.db
+            .select()
+            .from(resourcePublicationsInResource)
+            .where(getLivePublicationWhere(eq(resourcePublicationsInResource.resourceId, input)))
+            .limit(1),
+        ]);
         if (!publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, input);
 
         const content = await readPublishedContent(ctx.db, resource, publication.publishVersion);

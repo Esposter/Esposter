@@ -7,7 +7,7 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { getSaveBlobName } from "@esposter/db-schema";
 
 // A save is sent under the ETag its last read or save returned, so a write over a save another session changed is a
-// CONFLICT, which the client answers by reading again. An absent ETag saves only over no save at all
+// CONFLICT, which the client answers by reading again. An absent ETag saves only over no save at all.
 // The data is typed by its input and output as two parameters rather than by a generic schema, because a generic
 // Schema's optional-key check stays deferred, and tRPC then types the input as possibly undefined
 export const createSaveBlobStateProcedure = <TData, TDataInput>(

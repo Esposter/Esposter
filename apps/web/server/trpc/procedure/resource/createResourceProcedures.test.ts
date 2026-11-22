@@ -505,7 +505,7 @@ describe(createResourceProcedures, () => {
     await expect(
       dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Resource, staged content is larger than 100000000 bytes]`,
+      `[TRPCError: Invalid operation: Update, name: Resource, staged content is larger than ${MAX_RESOURCE_CONTENT_SIZE} bytes]`,
     );
     await expect(resourceCaller.readResource({ id: newResource.id })).resolves.toHaveProperty("contentVersion", 0);
   });
@@ -523,7 +523,7 @@ describe(createResourceProcedures, () => {
     await expect(
       dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Resource, staged content is not a gzip of at most 100000000 bytes]`,
+      `[TRPCError: Invalid operation: Update, name: Resource, staged content is not a gzip of at most ${MAX_RESOURCE_CONTENT_SIZE} bytes]`,
     );
     await expect(resourceCaller.readResource({ id: newResource.id })).resolves.toHaveProperty("contentVersion", 0);
   });
@@ -625,7 +625,7 @@ describe(createResourceProcedures, () => {
     const newResource = await dashboardCaller.createResource({ name });
 
     await expect(dashboardCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Resource, cannot publish resource without content]`,
+      `[TRPCError: Invalid operation: Update, name: Resource, ${JSON.stringify({ id: newResource.id })}]`,
     );
   });
 

@@ -6,7 +6,7 @@ import { createReadBlobStateProcedure } from "#server/trpc/procedure/blobState/c
 import { createSaveBlobStateProcedure } from "#server/trpc/procedure/blobState/createSaveBlobStateProcedure";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { createMockBucket } from "@esposter/db-mock";
-import { getSaveBlobName, StorageBucket } from "@esposter/db-schema";
+import { getBlobTopic, getSaveBlobName, getStorageBucketBindingName, StorageBucket } from "@esposter/db-schema";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -19,7 +19,8 @@ class Save {
 }
 
 // The save blob's topic, which a read of the save names and a save of it publishes
-const getSaveTopic = () => `USER_ASSETS:${getSaveBlobName(getMockSession().user.id)}`;
+const getSaveTopic = () =>
+  getBlobTopic(getStorageBucketBindingName(StorageBucket.UserAssets), getSaveBlobName(getMockSession().user.id));
 
 describe("blob state procedures", () => {
   const saveSchema = z.object({ value: z.number() });
