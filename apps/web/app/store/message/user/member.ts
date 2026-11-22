@@ -10,9 +10,9 @@ import { getRenameMemberEntry } from "#src/services/message/member/getRenameMemb
 import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
 import { memberTable } from "#src/services/message/member/memberTable";
 import { toMemberRow } from "#src/services/message/member/toMemberRow";
+import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { createBatchedRefresh } from "#src/services/shared/createBatchedRefresh";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
-import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";

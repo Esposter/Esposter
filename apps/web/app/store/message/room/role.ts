@@ -19,8 +19,8 @@ import type { Except } from "type-fest";
 import { checkIsManageable as baseCheckIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
 import {
-  roomMemberPermissionTable,
   roleTables,
+  roomMemberPermissionTable,
   roomRoleTable,
   userToRoomRoleTable,
 } from "#src/services/message/role/constants";
@@ -35,8 +35,8 @@ import { setRoomUsers } from "#src/services/message/room/setRoomUsers";
 import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { MANAGEMENT_PERMISSIONS } from "#src/services/room/rbac/constants";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
-import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
+import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
