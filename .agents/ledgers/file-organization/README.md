@@ -19,13 +19,7 @@ never a finding: the skill's exceptions are a roster no scan can hold, so no wor
 empty, and a unit is dated by reading it, not by the scan coming back clean. Its cases are
 `getFileOrganizationFindings.test.ts`, which is what keeps "prove the scan can fail" proved.
 
-A duplicate constant is the one thing the scan does not read, because it is found by value rather than by name:
-
-```bash
-# String literals appearing in more than one file — the candidate list, not the finding
-grep -rhoE '"[a-zA-Z][a-zA-Z0-9 ./_-]{4,}"' --include=*.ts --include=*.vue apps/web/app apps/web/server apps/web/shared packages/*/src |
-  sort | uniq -c | sort -rn | awk '$1 > 1'
-```
+A duplicate constant is the one thing the scan does not read, because it is found by value rather than by name. `pnpm ai:sweep:duplicate-literal` prints each string literal two or more source files hold, with its file count: the candidate list, not the finding.
 
 ## The consumer scan
 
