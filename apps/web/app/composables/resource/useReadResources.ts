@@ -6,7 +6,6 @@ import type { ResourceStatusFilter } from "#src/models/resource/list/ResourceSta
 import type { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
 import type { ResourceType } from "@esposter/db-schema";
 
-import { useArriveResourceListItems } from "#src/composables/resource/useArriveResourceListItems";
 import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 import { getResourceFilterInput } from "#src/services/resource/list/getResourceFilterInput";
 import { getResourceFilterKey } from "#src/services/resource/list/getResourceFilterKey";

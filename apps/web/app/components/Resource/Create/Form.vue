@@ -18,7 +18,9 @@ interface Props {
 
 const { type } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const createResource = useCreateResource();
+// Creation goes through the same type-to-router dispatch every other resource action does, so a new creatable type is a
+// Router and a gallery entry rather than a third place listing every type
+const getResourceRouter = useResourceRouter();
 // Pending until the create has landed, its first save with it and the navigation after, which is the whole of
 // A submit
 const { executeMutation, isPending: isSubmitting } = useMutation();
@@ -40,7 +42,7 @@ const submit = async () => {
   // Enter submits a form the button refuses — the button's disabled state only guards clicks
   if (isDisabled.value) return;
 
-  await executeMutation(() => createResource(type, name.value), {
+  await executeMutation(() => getResourceRouter(type).createResource.mutate({ name: name.value }), {
     // The page navigates to the id the server mints, so the create is awaited for it
     awaitedBecause: AwaitedReason.ServerIssuedValue,
     // Exclusive, so Enter re-firing the form while the first create is in flight is dropped rather than creating

@@ -3,7 +3,6 @@ import type { uploadFileToUrl } from "#src/services/file/uploadFileToUrl";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { useUploadResourceFile } from "#src/composables/resource/useUploadResourceFile";
 import { StorageStatusError } from "#src/models/file/StorageStatusError";
 import { getSha256Hex } from "#src/services/shared/getSha256Hex";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";

@@ -3,7 +3,6 @@ import type { ReadResourcesOptions } from "#src/models/resource/list/ReadResourc
 import type { PageCursor } from "@esposter/db-schema";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { useReadResources } from "#src/composables/resource/useReadResources";
 import { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
 import { resourceTable } from "#src/services/resource/overlay/constants";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
@@ -79,7 +78,7 @@ describe(useReadResources, () => {
     const { count, readResources } = useReadResources({ searchQuery });
     await readResources(firstOptions);
     sentCursors.length = 0;
-    searchQuery.value = "budget";
+    searchQuery.value = " ";
     await readResources(firstOptions);
 
     expect(sentCursors).toStrictEqual([START_PAGE_CURSOR]);

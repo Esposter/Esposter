@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { useRestoreResources } from "#src/composables/resource/useRestoreResources";
 import { resourceTable } from "#src/services/resource/overlay/constants";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useOverlayStore } from "#src/store/overlay";

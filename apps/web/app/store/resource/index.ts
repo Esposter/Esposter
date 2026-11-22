@@ -20,6 +20,7 @@ import { CacheTag } from "#src/models/cache/CacheTag";
 import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getFileSize } from "#src/services/file/getFileSize";
+import { GO_TO_RESOURCE_TITLE } from "#src/services/resource/constants";
 import { copyLinkToClipboard } from "#src/services/resource/copyLinkToClipboard";
 import { favoriteTable, publicationTable, resourceTable } from "#src/services/resource/overlay/constants";
 import { getDeleteResourcesEntry } from "#src/services/resource/overlay/getDeleteResourcesEntry";
@@ -628,7 +629,7 @@ export const useResourceStore = defineStore("resource", () => {
           async () => {
             const newResource = await $trpc.resource.duplicateResource.mutate({ id: resourceValue.id });
             createNotification({
-              action: { title: "Go to resource", to: RoutePath.Resource(newResource.id) },
+              action: { title: GO_TO_RESOURCE_TITLE, to: RoutePath.Resource(newResource.id) },
               severity: NotificationSeverity.Success,
               title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
             });

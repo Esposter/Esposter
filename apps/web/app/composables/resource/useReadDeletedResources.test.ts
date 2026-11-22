@@ -3,7 +3,6 @@ import type { ReadResourcesOptions } from "#src/models/resource/list/ReadResourc
 import type { PageCursor } from "@esposter/db-schema";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { useReadDeletedResources } from "#src/composables/resource/useReadDeletedResources";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { encodePageCursor, START_PAGE_CURSOR } from "@esposter/db-schema";
 import { v7 } from "uuid";
@@ -32,10 +31,11 @@ describe(useReadDeletedResources, () => {
           }
         : { items: [{ ...createResourceListItem(), favorite: null }], nextCursor: "" };
     });
-    const { readDeletedResources } = useReadDeletedResources();
+    const { count, readDeletedResources } = useReadDeletedResources();
     await readDeletedResources(firstOptions);
     await readDeletedResources(secondOptions);
 
     expect(sentCursors).toStrictEqual([START_PAGE_CURSOR, nextPageCursor]);
+    expect(count.value).toBe(2);
   });
 });

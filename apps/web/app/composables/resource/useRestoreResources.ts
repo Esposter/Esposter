@@ -3,6 +3,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CacheTag } from "#src/models/cache/CacheTag";
+import { GO_TO_RESOURCE_TITLE } from "#src/services/resource/constants";
 import { resourceTable } from "#src/services/resource/overlay/constants";
 import { getRestoreResourcesEntry } from "#src/services/resource/overlay/getRestoreResourcesEntry";
 import { sendIdsInChunks } from "#src/services/resource/sendIdsInChunks";
@@ -34,7 +35,7 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
     const notificationId = createNotification({
       // A batch is back in the list it was deleted from, so only a single resource names where it went
       ...(resources.length === 1
-        ? { action: { title: "Go to resource", to: RoutePath.Resource(firstResource.id) } }
+        ? { action: { title: GO_TO_RESOURCE_TITLE, to: RoutePath.Resource(firstResource.id) } }
         : {}),
       severity: NotificationSeverity.Success,
       title: ResourceOperationTitleMap[ResourceOperationType.Restored](firstResource.name, resources.length),

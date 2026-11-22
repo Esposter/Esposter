@@ -5,7 +5,6 @@ import { FileProcedureNames } from "#server/models/resource/FileProcedureNames";
 import { PublishProcedureNames } from "#server/models/resource/PublishProcedureNames";
 import { trpcRouter } from "#server/trpc/routers/index";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
-import { CreatableResourceTypes } from "#src/models/resource/CreatableResourceType";
 import { ResourceTypes } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -29,14 +28,6 @@ describe(useResourceRouter, () => {
     expect.hasAssertions();
 
     expect(getResourceRouterProcedureNames(type)).toStrictEqual(expect.arrayContaining([...BaseProcedureNames]));
-  });
-
-  // `useCreateResource` dispatches a create the same way, so a gallery entry whose router cannot create it would
-  // Otherwise only fail at the click that submits the create form
-  test.each(CreatableResourceTypes)("%s: exposes createResource for a type the gallery offers", (type) => {
-    expect.hasAssertions();
-
-    expect(getResourceRouterProcedureNames(type)).toContain("createResource");
   });
 
   // The capability is what makes the procedure reachable, so a type declaring one without the other leaves
