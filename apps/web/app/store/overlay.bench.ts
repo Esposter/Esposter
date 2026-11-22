@@ -6,6 +6,7 @@ import { createTable } from "#src/services/shared/overlay/createTable";
 import { getHeldRowEntry } from "#src/services/shared/overlay/getHeldRowEntry";
 import { useOverlayStore } from "#src/store/overlay";
 import { friendsInSocial } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, test } from "vitest";
@@ -36,7 +37,7 @@ const createOverlay = (entries: Entry[]) => {
   const overlayStore = useOverlayStore();
   const { arrive, view: readView, writeOptimistic } = overlayStore;
   for (const friend of friends) arrive(table, friend);
-  for (const entry of entries) writeOptimistic(neverSettles, { entry });
+  for (const entry of entries) writeOptimistic(neverSettles, { entry, onError: noop });
   const view = readView(table);
   // Read once, so the arrival in a unit dirties a view that holds a value and the unit's read recomputes it
   readRowCount(view);

@@ -6,7 +6,7 @@ import { useNotificationStore } from "#src/store/notification";
 
 const { data: session } = await useAuthSession();
 const notificationStore = useNotificationStore();
-const { hasMore, isLoaded, isPanelOpen, notifications, unreadCount } = storeToRefs(notificationStore);
+const { hasMore, isLoaded, isPanelOpen, displayNotifications, unreadCount } = storeToRefs(notificationStore);
 const { dismissNotifications, markAllAsRead, readMoreNotifications, readNotifications } = notificationStore;
 // The delivered half is the caller's own rows, so there is nothing to read for a visitor who is not signed in. The
 // Read is awaited here, so it has settled by the first render: a list still not loaded then is one whose read failed
@@ -35,12 +35,12 @@ if (session.value) await readNotifications();
     </template>
     <div w="[min(30rem,80dvw)]" flex gap-2 items-center>
       <h2 flex-1 ui-heading>Notifications</h2>
-      <UiButton v-if="notifications.length > 0" :variant="UiButtonVariant.Quiet" @click="dismissNotifications()">
+      <UiButton v-if="displayNotifications.length > 0" :variant="UiButtonVariant.Quiet" @click="dismissNotifications()">
         Dismiss all
       </UiButton>
     </div>
-    <ul v-if="notifications.length > 0" flex flex-col gap-3>
-      <AppNotificationBellItem v-for="notification of notifications" :key="notification.id" :notification />
+    <ul v-if="displayNotifications.length > 0" flex flex-col gap-3>
+      <AppNotificationBellItem v-for="notification of displayNotifications" :key="notification.id" :notification />
     </ul>
     <UiErrorState v-else-if="!isLoaded" error="Your notifications could not be loaded." @retry="readNotifications()" />
     <UiEmptyState

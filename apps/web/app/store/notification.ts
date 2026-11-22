@@ -6,6 +6,7 @@ import type { Except, SetOptional } from "type-fest";
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getToastedNotificationIds } from "#src/services/notification/getToastedNotificationIds";
+import { markRead } from "#src/services/notification/markRead";
 import { notificationTable } from "#src/services/notification/overlay/constants";
 import { getDismissNotificationEntry } from "#src/services/notification/overlay/getDismissNotificationEntry";
 import { AsyncDataKey } from "#src/services/shared/AsyncDataKey";
@@ -16,9 +17,6 @@ import { createEmptyPage, NotificationSeverity } from "@esposter/db-schema";
 import { checkIsServer, getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { v7 } from "uuid";
 
-// A read row is the row itself; an unread one is copied with it marked read, so each row a read changes is a new row
-const markRead = <T extends { isRead: boolean }>(notification: T): T =>
-  notification.isRead ? notification : { ...notification, isRead: true };
 // The bell renders two kinds of notification and owns the difference between them. A **delivered** one is a row
 // The server wrote for this user — it reached every device that was subscribed, it survives the reload, and it is
 // Paged in like any other list. A **local** one is feedback about what this tab just did: a mutation error, a save
@@ -49,7 +47,7 @@ export const useNotificationStore = defineStore("notification", () => {
   });
   // Sorted at display time rather than kept in order by every writer: the two halves arrive independently — a
   // Page appends, a local notification prepends — and only the rendered list has an opinion about their order
-  const notifications = computed<AppNotification[]>(() =>
+  const displayNotifications = computed<AppNotification[]>(() =>
     [...localNotifications.value, ...deliveredNotifications.value].toSorted((firstNotification, secondNotification) =>
       compareCreatedAt(secondNotification, firstNotification),
     ),
@@ -63,7 +61,7 @@ export const useNotificationStore = defineStore("notification", () => {
   );
   // One snackbar queue: every pushed notification also toasts, newer ones wait behind the current head
   const snackbarIds = ref<string[]>([]);
-  const snackbarNotification = computed(() => notifications.value.find(({ id }) => id === snackbarIds.value[0]));
+  const snackbarNotification = computed(() => displayNotifications.value.find(({ id }) => id === snackbarIds.value[0]));
   const createSnackbar = (id: string) => {
     snackbarIds.value = [...snackbarIds.value, id];
   };
@@ -87,10 +85,10 @@ export const useNotificationStore = defineStore("notification", () => {
     return { items, nextCursor };
   };
   // What a delivered push does to the bell, kept here because only the store can tell the two halves apart. The read
-  // Lands the rows the push wrote, and the tab toasts the ones it did not hold. The bell's topic-driven read calls this,
-  // And so does the push's own read on a page with no live bell read, so a push is read once where the bell is on screen.
-  // Each id toasts once: two reads that overlap both compare against the list they began with, so each would claim the
-  // Row the other brought back, and the ids already toasted are what keep that row to one toast
+  // Lands the rows the push wrote, and the tab toasts the ones it did not hold. The bell's topic-driven read calls
+  // This, and so does the push's own read on a page with no live bell read, so a push is read once where the bell is on
+  // Screen. Each id toasts once: two reads that overlap both compare against the list they began with, so each would
+  // Claim the row the other brought back, and the ids already toasted are what keep that row to one toast
   const toastedNotificationIds = new Set<string>();
   const storeDeliveredNotifications = getSynchronizedFunction(
     async (readDeliveredNotifications: () => Promise<unknown>) => {
@@ -181,8 +179,9 @@ export const useNotificationStore = defineStore("notification", () => {
       async () => {
         setUnreadDeliveredCount(await $trpc.notification.deleteNotifications.mutate());
         // Every row is a tombstone now, so the loaded page is emptied on the answer. A read would page through the
-        // Tombstones, and a topic refetch refreshes only the first page. The reset retires the page a read still in flight
-        // Was issued against, so that read lands nothing; the initialize then restores the loaded list with its empty page
+        // Tombstones, and a topic refetch refreshes only the first page. The reset retires the page a read still in
+        // Flight was issued against, so that read lands nothing; the initialize then restores the loaded list with its
+        // Empty page
         const slice = getSlice();
         slice.resetCursorPaginationData();
         slice.initializeCursorPaginationData(createEmptyPage<NotificationInNotification>());
@@ -216,11 +215,11 @@ export const useNotificationStore = defineStore("notification", () => {
     dismissNotification,
     dismissNotifications,
     dismissSnackbar,
+    displayNotifications,
     hasMore,
     isLoaded,
     isPanelOpen,
     markAllAsRead,
-    notifications,
     readMoreNotifications,
     readNotifications,
     setUnreadDeliveredCount,

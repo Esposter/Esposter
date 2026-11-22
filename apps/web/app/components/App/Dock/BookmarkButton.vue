@@ -14,7 +14,7 @@ const { toggleBookmark } = bookmarkStore;
 const pageMarkStore = usePageMarkStore();
 const { getPageMark } = pageMarkStore;
 const recentPageStore = useRecentPageStore();
-const { rankedRecentPages } = storeToRefs(recentPageStore);
+const { displayRecentPages } = storeToRefs(recentPageStore);
 const isBookmarkable = computed(
   () => Boolean(session.value) && !RECENT_PAGE_EXCLUDED_PATHS.includes(currentRoute.value.path),
 );
@@ -32,7 +32,7 @@ const isBookmarkable = computed(
         const pageMark = getPageMark(currentRoute.path);
         const pageLabel = getPageLabel(
           currentRoute.path,
-          rankedRecentPages.find(({ path }) => path === currentRoute.path)?.title ?? '',
+          displayRecentPages.find(({ path }) => path === currentRoute.path)?.title ?? '',
         );
         toggleBookmark({ mark: pageMark, path: currentRoute.path, title: pageLabel });
       }

@@ -23,15 +23,15 @@ declare const table: Table<TestRow>;
 const noop = () => {};
 const acceptOptimisticOptions = (options: OptimisticWriteOptions) => options;
 const acceptAwaitedOptions = (options: AwaitedWriteOptions) => options;
-const response: Entry = noop;
+const entry: Entry = noop;
 
 describe("overlayStore type", () => {
   test("an optimistic write names its entry, and no queue key or rollback", () => {
     expect.hasAssertions();
     // @ts-expect-error A write's queue key comes from its entry, so a caller names none
-    acceptOptimisticOptions({ entry: response, key: "" });
+    acceptOptimisticOptions({ entry, key: "" });
     // @ts-expect-error A dropped entry restores nothing, so a rollback is not a member
-    acceptOptimisticOptions({ entry: response, rollback: noop });
+    acceptOptimisticOptions({ entry, rollback: noop });
   });
 
   test("an awaited write takes no key and no entry", () => {
@@ -40,7 +40,7 @@ describe("overlayStore type", () => {
     // @ts-expect-error An awaited write has no entry to queue by, and takes no key
     acceptAwaitedOptions({ key: "" });
     // @ts-expect-error An awaited write has no entry
-    acceptAwaitedOptions({ entry: response });
+    acceptAwaitedOptions({ entry });
   });
 
   test("arrivals are rows with their version, so a row without one is refused", () => {

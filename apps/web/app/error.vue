@@ -15,10 +15,10 @@ const { error } = defineProps<Props>();
 const { currentRoute } = useRouter();
 const { data: session } = await useAuthSession();
 const bookmarkStore = useBookmarkStore();
-const { bookmarks } = storeToRefs(bookmarkStore);
+const { displayBookmarks } = storeToRefs(bookmarkStore);
 const { readBookmarks, toggleBookmark } = bookmarkStore;
 // A bookmark of this address outlives a page that no longer exists, so the bookmark is offered for removal from here
-const bookmark = computed(() => bookmarks.value.find(({ path }) => path === currentRoute.value.path));
+const bookmark = computed(() => displayBookmarks.value.find(({ path }) => path === currentRoute.value.path));
 if (session.value) await readBookmarks();
 const togglePageBookmark = () => {
   if (bookmark.value) return toggleBookmark({ path: bookmark.value.path, title: bookmark.value.title });

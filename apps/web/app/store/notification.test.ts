@@ -32,15 +32,16 @@ describe(useNotificationStore, () => {
     version,
   });
   let notificationStore: ReturnType<typeof useNotificationStore>;
-  let notifications: Ref<AppNotification[]>;
+  let displayNotifications: Ref<AppNotification[]>;
   let snackbarNotification: ComputedRef<AppNotification | undefined>;
   let unreadCount: ComputedRef<number>;
 
   beforeEach(() => {
-    // The clock starts at the epoch, so a dismissal dated the epoch or a day after it is still inside the tombstone retention
+    // The clock starts at the epoch, so a dismissal dated the epoch or a day after it is still inside the tombstone
+    // Retention
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     notificationStore = useNotificationStore();
-    ({ notifications, snackbarNotification, unreadCount } = storeToRefs(notificationStore));
+    ({ displayNotifications, snackbarNotification, unreadCount } = storeToRefs(notificationStore));
   });
 
   afterEach(() => {
@@ -54,7 +55,10 @@ describe(useNotificationStore, () => {
     createNotification({ severity: NotificationSeverity.Success, title });
     createNotification({ severity: NotificationSeverity.Error, title: " " });
 
-    expect(notifications.value.map(({ title: notificationTitle }) => notificationTitle)).toStrictEqual([" ", title]);
+    expect(displayNotifications.value.map(({ title: notificationTitle }) => notificationTitle)).toStrictEqual([
+      " ",
+      title,
+    ]);
     expect(unreadCount.value).toBe(2);
     // The snackbar queue is FIFO, so the first created notification toasts first
     expect(snackbarNotification.value?.title).toBe(title);
@@ -65,11 +69,11 @@ describe(useNotificationStore, () => {
 
     const { createNotification, dismissNotification } = notificationStore;
     createNotification({ severity: NotificationSeverity.Info, title });
-    const notification = notifications.value.find(({ title: notificationTitle }) => notificationTitle === title);
+    const notification = displayNotifications.value.find(({ title: notificationTitle }) => notificationTitle === title);
     assert.exists(notification);
     dismissNotification(notification.id);
 
-    expect(notifications.value).toStrictEqual([]);
+    expect(displayNotifications.value).toStrictEqual([]);
     expect(snackbarNotification.value).toBeUndefined();
   });
 
@@ -78,12 +82,12 @@ describe(useNotificationStore, () => {
 
     const { createNotification, dismissSnackbar } = notificationStore;
     createNotification({ severity: NotificationSeverity.Warning, title });
-    const notification = notifications.value.find(({ title: notificationTitle }) => notificationTitle === title);
+    const notification = displayNotifications.value.find(({ title: notificationTitle }) => notificationTitle === title);
     assert.exists(notification);
     dismissSnackbar(notification.id);
 
     expect(snackbarNotification.value).toBeUndefined();
-    expect(notifications.value).toHaveLength(1);
+    expect(displayNotifications.value).toHaveLength(1);
   });
 
   test("deletes all notifications", async () => {
@@ -95,7 +99,7 @@ describe(useNotificationStore, () => {
     createNotification({ severity: NotificationSeverity.Error, title });
     await dismissNotifications();
 
-    expect(notifications.value).toStrictEqual([]);
+    expect(displayNotifications.value).toStrictEqual([]);
     expect(unreadCount.value).toBe(0);
     expect(snackbarNotification.value).toBeUndefined();
   });
@@ -127,7 +131,7 @@ describe(useNotificationStore, () => {
     trpcMsw.notification.readNotifications.query(() => ({ items: [heldNotification], nextCursor: "" }));
     await readNotifications();
     createNotification({ severity: NotificationSeverity.Info, title });
-    const [localNotification] = notifications.value;
+    const [localNotification] = displayNotifications.value;
     assert.exists(localNotification);
     dismissSnackbar(localNotification.id);
 
@@ -194,7 +198,7 @@ describe(useNotificationStore, () => {
     trpcMsw.notification.readNotifications.query(() => ({ items: [notification], nextCursor: "" }));
     trpcMsw.notification.deleteNotification.mutation(() => ({
       notification: { ...notification, deletedAt: nextDay, version: 1 },
-      unreadCount: 5,
+      unreadCount: 2,
     }));
     const { dismissNotification, readNotifications, setUnreadDeliveredCount } = notificationStore;
     await readNotifications();
@@ -202,7 +206,7 @@ describe(useNotificationStore, () => {
     dismissNotification(notification.id);
     await flushPromises();
 
-    expect(unreadCount.value).toBe(5);
+    expect(unreadCount.value).toBe(2);
   });
 
   // A read issued before a dismissal answers the page as it stood then, so the answer must not bring back the row the
@@ -226,7 +230,7 @@ describe(useNotificationStore, () => {
     completeRead({ items: [notification], nextCursor: "" });
     await inFlightRead;
 
-    expect(notifications.value).toStrictEqual([]);
+    expect(displayNotifications.value).toStrictEqual([]);
   });
 
   // A read answers a dismissed notification as a tombstone, and the list leaves it out
@@ -238,7 +242,7 @@ describe(useNotificationStore, () => {
     const { readNotifications } = notificationStore;
     await readNotifications();
 
-    expect(notifications.value).toStrictEqual([]);
+    expect(displayNotifications.value).toStrictEqual([]);
   });
 
   test("marks all notifications as read", async () => {
@@ -250,6 +254,6 @@ describe(useNotificationStore, () => {
     await markAllAsRead();
 
     expect(unreadCount.value).toBe(0);
-    expect(notifications.value.every(({ isRead }) => isRead)).toBe(true);
+    expect(displayNotifications.value.every(({ isRead }) => isRead)).toBe(true);
   });
 });

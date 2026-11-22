@@ -9,6 +9,7 @@ import { createRowTable } from "#src/services/shared/overlay/createRowTable.test
 import { createTable } from "#src/services/shared/overlay/createTable";
 import { useOverlayStore } from "#src/store/overlay";
 import { TOMBSTONE_RETENTION_MS } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createPinia, setActivePinia } from "pinia";
@@ -48,9 +49,9 @@ describe(useOverlayStore, () => {
   const readFirstRow = (view: KeyedView) => {
     view.get(table, ["a"]);
   };
-  // The clock starts at the epoch, so a tombstone deleted at the epoch is inside the retention. The retention tests move
-  // The clock two retentions on, where a tombstone deleted at the epoch is past it, and one deleted a retention and a
-  // Half past the epoch is still inside it
+  // The clock starts at the epoch, so a tombstone deleted at the epoch is inside the retention. The retention tests
+  // Move the clock two retentions on, where a tombstone deleted at the epoch is past it, and one deleted a retention
+  // And a half past the epoch is still inside it
   const clockNow = Temporal.Instant.fromEpochMilliseconds(TOMBSTONE_RETENTION_MS * 2);
   const expiredDeletedAt = new Date(0);
   const freshDeletedAt = new Date(TOMBSTONE_RETENTION_MS * 1.5);
@@ -205,6 +206,7 @@ describe(useOverlayStore, () => {
       entry: (view) => {
         setRowName(view, otherName);
       },
+      onError: noop,
     });
     await flushPromises();
 
@@ -263,7 +265,8 @@ describe(useOverlayStore, () => {
     const serverOverlayStore = useOverlayStore();
     const { $state, arrive } = serverOverlayStore;
     arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    // The payload carries the store's state as plain data, so the server's held tables are cloned out of Pinia's reactive state
+    // The payload carries the store's state as plain data, so the server's held tables are cloned out of Pinia's
+    // Reactive state
     const payload = structuredClone($state.heldTables);
     const clientPinia = createPinia();
     clientPinia.state.value = { overlay: { heldTables: payload } };
@@ -337,8 +340,8 @@ describe(useOverlayStore, () => {
     const { promise: firstWritten, resolve: resolveFirst } = Promise.withResolvers<WriteResponse>();
     const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => firstWritten);
     const secondMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.resolve(noChange));
-    writeOptimistic(firstMutate, { entry: writeFirstRow });
-    writeOptimistic(secondMutate, { entry: writeFirstRow });
+    writeOptimistic(firstMutate, { entry: writeFirstRow, onError: noop });
+    writeOptimistic(secondMutate, { entry: writeFirstRow, onError: noop });
     await flushPromises();
 
     expect(secondMutate).not.toHaveBeenCalled();
@@ -356,8 +359,8 @@ describe(useOverlayStore, () => {
     const { writeOptimistic } = overlayStore;
     const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
     const secondMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
-    writeOptimistic(firstMutate, { entry: writeFirstRow });
-    writeOptimistic(secondMutate, { entry: writeOtherRow });
+    writeOptimistic(firstMutate, { entry: writeFirstRow, onError: noop });
+    writeOptimistic(secondMutate, { entry: writeOtherRow, onError: noop });
     await flushPromises();
 
     expect(firstMutate).toHaveBeenCalledExactlyOnceWith();
@@ -371,8 +374,8 @@ describe(useOverlayStore, () => {
     const { writeOptimistic } = overlayStore;
     const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
     const readMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.resolve(noChange));
-    writeOptimistic(firstMutate, { entry: writeFirstRow });
-    writeOptimistic(readMutate, { entry: readFirstRow });
+    writeOptimistic(firstMutate, { entry: writeFirstRow, onError: noop });
+    writeOptimistic(readMutate, { entry: readFirstRow, onError: noop });
     await flushPromises();
 
     expect(readMutate).not.toHaveBeenCalled();
@@ -384,10 +387,10 @@ describe(useOverlayStore, () => {
     const overlayStore = useOverlayStore();
     const { writeOptimistic } = overlayStore;
     const onError = vi.fn<(error: Error) => void>();
-    const failingMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.reject(new Error(name)));
+    const failingMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.reject(new Error(" ")));
     const nextMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.resolve(noChange));
     writeOptimistic(failingMutate, { entry: writeFirstRow, onError });
-    writeOptimistic(nextMutate, { entry: writeFirstRow });
+    writeOptimistic(nextMutate, { entry: writeFirstRow, onError: noop });
     await flushPromises();
 
     expect(nextMutate).toHaveBeenCalledExactlyOnceWith();
@@ -403,11 +406,13 @@ describe(useOverlayStore, () => {
       entry: (view) => {
         setRowName(view, otherName);
       },
+      onError: noop,
     });
     writeOptimistic(() => neverSettles(), {
       entry: (view) => {
         setRowName(view, serverName);
       },
+      onError: noop,
     });
 
     expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 1 }]);
@@ -420,7 +425,7 @@ describe(useOverlayStore, () => {
     const { arrive, view: readView, writeOptimistic } = overlayStore;
     const onError = vi.fn<(error: Error) => void>();
     arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    writeOptimistic(() => Promise.reject(new Error(name)), {
+    writeOptimistic(() => Promise.reject(new Error(" ")), {
       entry: (view) => {
         setRowName(view, otherName);
       },
@@ -432,7 +437,7 @@ describe(useOverlayStore, () => {
     await flushPromises();
 
     expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
-    expect(onError).toHaveBeenCalledExactlyOnceWith(new Error(name));
+    expect(onError).toHaveBeenCalledExactlyOnceWith(new Error(" "));
   });
 
   test("a confirmed entry stays until the row arrives at the version the response named", async () => {
@@ -445,6 +450,7 @@ describe(useOverlayStore, () => {
       entry: (view) => {
         setRowName(view, otherName);
       },
+      onError: noop,
     });
     await flushPromises();
 
@@ -456,7 +462,8 @@ describe(useOverlayStore, () => {
   });
 
   // A write whose header named no row, as one past the header's budget does, confirms nothing: its entry drops with its
-  // Answer and the view is held state, which the topic refetch brings up to date, rather than waiting on a version never named
+  // Answer and the view is held state, which the topic refetch brings up to date, rather than waiting on a version
+  // Never named
   test("an answer that names no row drops its entry with the answer, leaving the view as held state", async () => {
     expect.hasAssertions();
 
@@ -467,6 +474,7 @@ describe(useOverlayStore, () => {
       entry: (view) => {
         setRowName(view, otherName);
       },
+      onError: noop,
     });
 
     expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 1 }]);
@@ -492,6 +500,7 @@ describe(useOverlayStore, () => {
         entry: (view) => {
           setRowName(view, otherName);
         },
+        onError: noop,
       },
     );
     await flushPromises();
@@ -506,8 +515,14 @@ describe(useOverlayStore, () => {
     const { view: readView, writeAwaited } = overlayStore;
     const first = Promise.withResolvers<Arrival[]>();
     const second = Promise.withResolvers<Arrival[]>();
-    const firstWrite = writeAwaited(() => first.promise, { awaitedBecause: AwaitedReason.ServerDecidedOutcome });
-    const secondWrite = writeAwaited(() => second.promise, { awaitedBecause: AwaitedReason.ServerDecidedOutcome });
+    const firstWrite = writeAwaited(() => first.promise, {
+      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+      onError: noop,
+    });
+    const secondWrite = writeAwaited(() => second.promise, {
+      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+      onError: noop,
+    });
     second.resolve([createArrival(table, { deletedAt: null, id: "a", name: serverName, version: 2 })]);
     await secondWrite;
     first.resolve([createArrival(table, { deletedAt: null, id: "a", name, version: 1 })]);
@@ -523,8 +538,8 @@ describe(useOverlayStore, () => {
     const { writeAwaited, writeOptimistic } = overlayStore;
     const optimisticMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
     const awaitedMutate = vi.fn<() => Promise<Arrival[]>>(() => Promise.resolve([]));
-    writeOptimistic(optimisticMutate, { entry: writeFirstRow });
-    await writeAwaited(awaitedMutate, { awaitedBecause: AwaitedReason.ServerDecidedOutcome });
+    writeOptimistic(optimisticMutate, { entry: writeFirstRow, onError: noop });
+    await writeAwaited(awaitedMutate, { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: noop });
 
     expect(awaitedMutate).toHaveBeenCalledExactlyOnceWith();
   });

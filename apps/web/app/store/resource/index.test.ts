@@ -412,7 +412,7 @@ describe(useResourceStore, () => {
     const { readContent, saveContent } = resourceStore;
     const { readResource } = useReadOpenResource();
     const notificationStore = useNotificationStore();
-    const { notifications } = storeToRefs(notificationStore);
+    const { displayNotifications } = storeToRefs(notificationStore);
     await readResource();
     await readContent(noop);
     const content = createDefaultSheetResource();
@@ -420,7 +420,7 @@ describe(useResourceStore, () => {
     saveContent(content);
 
     expect(saveResourceContent).not.toHaveBeenCalled();
-    expect(notifications.value).toHaveLength(1);
+    expect(displayNotifications.value).toHaveLength(1);
     expect(saveState.value).toBe(ResourceSaveState.Failed);
   });
 
@@ -604,7 +604,7 @@ describe(useResourceStore, () => {
       return { ...createResource(resourceId), contentVersion: serverContentVersion };
     });
     const notificationStore = useNotificationStore();
-    const { notifications } = storeToRefs(notificationStore);
+    const { displayNotifications } = storeToRefs(notificationStore);
     const resourceStore = useResourceStore();
     const { readContent, saveContent } = resourceStore;
     const { saveState } = storeToRefs(resourceStore);
@@ -617,7 +617,7 @@ describe(useResourceStore, () => {
 
     expect(serverContentVersion).toBe(2);
     expect(saveState.value).toBe(ResourceSaveState.Saved);
-    expect(notifications.value).toHaveLength(0);
+    expect(displayNotifications.value).toHaveLength(0);
   });
 
   // A save queued behind an in-flight one carries the version its content was read at, not the held row's. Another
@@ -639,7 +639,7 @@ describe(useResourceStore, () => {
       return { ...createResource(input.id), contentVersion: serverContentVersion };
     });
     const notificationStore = useNotificationStore();
-    const { notifications } = storeToRefs(notificationStore);
+    const { displayNotifications } = storeToRefs(notificationStore);
     const resourceStore = useResourceStore();
     const { clearResource, readContent, saveContent } = resourceStore;
     const { readResource } = useReadOpenResource();
@@ -658,7 +658,7 @@ describe(useResourceStore, () => {
 
     expect(contentVersions).toStrictEqual([0, 0]);
     expect(serverContentVersion).toBe(1);
-    expect(notifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
+    expect(displayNotifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
   });
 
   // A save keeps the version its own opening confirmed. A reopened read confirms the resource's newer version, which is not
@@ -680,7 +680,7 @@ describe(useResourceStore, () => {
       return { ...createResource(input.id), contentVersion: serverContentVersion };
     });
     const notificationStore = useNotificationStore();
-    const { notifications } = storeToRefs(notificationStore);
+    const { displayNotifications } = storeToRefs(notificationStore);
     const resourceStore = useResourceStore();
     const { clearResource, readContent, saveContent } = resourceStore;
     const { readResource } = useReadOpenResource();
@@ -704,7 +704,7 @@ describe(useResourceStore, () => {
 
     expect(contentVersions).toStrictEqual([0, 0]);
     expect(serverContentVersion).toBe(1);
-    expect(notifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
+    expect(displayNotifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
   });
 
   // The row another device's read brings does not move the version the content was read at. A save queued behind a
@@ -840,7 +840,7 @@ describe(useResourceStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
     });
     const notificationStore = useNotificationStore();
-    const { notifications } = storeToRefs(notificationStore);
+    const { displayNotifications } = storeToRefs(notificationStore);
     const resourceStore = useResourceStore();
     const { readContent, saveContent } = resourceStore;
     const { readResource } = useReadOpenResource();
@@ -849,7 +849,7 @@ describe(useResourceStore, () => {
     saveContent(createDefaultSheetResource());
     await settleSave();
 
-    expect(notifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh"]);
+    expect(displayNotifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh"]);
   });
 
   // An explicit reload is a read like any other: its answer can land after a newer read has held a newer version. When the
@@ -952,13 +952,13 @@ describe(useResourceStore, () => {
     const { deleteResource } = resourceStore;
     const { readResource } = useReadOpenResource();
     const notificationStore = useNotificationStore();
-    const { notifications } = storeToRefs(notificationStore);
+    const { displayNotifications } = storeToRefs(notificationStore);
     await readResource();
     const deleteSettled = settleRequest();
     deleteResource();
     await deleteSettled;
 
-    const { action } = takeOne(notifications.value);
+    const { action } = takeOne(displayNotifications.value);
     assert.exists(action);
     const { handler, ...restAction } = action;
 

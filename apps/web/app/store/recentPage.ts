@@ -2,20 +2,15 @@ import type { PageLink } from "#shared/models/app/PageLink";
 import type { RecentPage } from "#src/models/app/RecentPage";
 
 import { RECENT_PAGES_STORED_LIMIT } from "#src/services/app/constants";
-import { getFrecency } from "#src/services/app/getFrecency";
+import { getRankedPages } from "#src/services/app/getRankedPages";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { checkIsDeepEqual } from "@esposter/shared";
 
-// The one ranking both the dock's order and the trim of a full list read, so the pages kept are the ones shown first
-const getRankedPages = (recentPages: RecentPage[], now: number) =>
-  recentPages.toSorted(
-    (firstRecentPage, secondRecentPage) => getFrecency(secondRecentPage, now) - getFrecency(firstRecentPage, now),
-  );
 // The pages this device visited, ranked by frecency — how often and how lately. Kept on the device, since a recent
 // List is a convenience rather than data worth a server round trip, and it exists signed out as well
 export const useRecentPageStore = defineStore("recentPage", () => {
   const recentPages = useLocalStorage<RecentPage[]>(LocalStorageKey.RecentPages, []);
-  const rankedRecentPages = computed(() => getRankedPages(recentPages.value, Date.now()));
+  const displayRecentPages = computed(() => getRankedPages(recentPages.value, Date.now()));
   const visitPage = (path: string) => {
     const visitedPage = recentPages.value.find((recentPage) => recentPage.path === path);
     const now = Date.now();
@@ -49,5 +44,5 @@ export const useRecentPageStore = defineStore("recentPage", () => {
     if (matchedPages.length === recentPages.value.length) return;
     recentPages.value = matchedPages;
   };
-  return { forgetUnmatchedPages, rankedRecentPages, updateRecentPage, visitPage };
+  return { displayRecentPages, forgetUnmatchedPages, updateRecentPage, visitPage };
 });

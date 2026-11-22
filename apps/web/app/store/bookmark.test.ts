@@ -53,12 +53,12 @@ describe(useBookmarkStore, () => {
 
     trpcMsw.bookmark.toggleBookmark.mutation(() => createBookmarkRow(1, epoch));
     const bookmarkStore = useBookmarkStore();
-    const { bookmarks } = storeToRefs(bookmarkStore);
+    const { displayBookmarks } = storeToRefs(bookmarkStore);
     const { toggleBookmark } = bookmarkStore;
     toggleBookmark({ path, title });
     await flushPromises();
 
-    expect(bookmarks.value).toStrictEqual([]);
+    expect(displayBookmarks.value).toStrictEqual([]);
   });
 
   test("keeps the state the toggle ahead of a refused one stored", async () => {
@@ -72,13 +72,13 @@ describe(useBookmarkStore, () => {
       return createBookmarkRow(0);
     });
     const bookmarkStore = useBookmarkStore();
-    const { bookmarks } = storeToRefs(bookmarkStore);
+    const { displayBookmarks } = storeToRefs(bookmarkStore);
     const { toggleBookmark } = bookmarkStore;
     toggleBookmark({ path, title });
     toggleBookmark({ path, title });
     await flushPromises();
 
-    expect(bookmarks.value).toStrictEqual([{ isAvailable: true, path, title }]);
+    expect(displayBookmarks.value).toStrictEqual([{ isAvailable: true, path, title }]);
   });
 
   test("draws a bookmark made here with the mark it names", async () => {
@@ -87,12 +87,12 @@ describe(useBookmarkStore, () => {
     const mark = { id: v7(), resourceType: ResourceType.Note, type: PageMarkType.Resource } as const;
     trpcMsw.bookmark.toggleBookmark.mutation(() => ({ ...createBookmarkRow(0), resourceId: mark.id }));
     const bookmarkStore = useBookmarkStore();
-    const { bookmarks } = storeToRefs(bookmarkStore);
+    const { displayBookmarks } = storeToRefs(bookmarkStore);
     const { toggleBookmark } = bookmarkStore;
     toggleBookmark({ mark, path, title });
     await flushPromises();
 
-    expect(bookmarks.value).toStrictEqual([{ isAvailable: true, mark, path, title }]);
+    expect(displayBookmarks.value).toStrictEqual([{ isAvailable: true, mark, path, title }]);
   });
 
   // A read issued before the bookmark was added and removed answers the page as it stood then, so the answer lands on
@@ -108,7 +108,7 @@ describe(useBookmarkStore, () => {
       return toggleCount === 1 ? createBookmarkRow(0) : createBookmarkRow(1, epoch);
     });
     const bookmarkStore = useBookmarkStore();
-    const { bookmarks } = storeToRefs(bookmarkStore);
+    const { displayBookmarks } = storeToRefs(bookmarkStore);
     const { readBookmarks, toggleBookmark } = bookmarkStore;
     const inFlightRead = readBookmarks();
     toggleBookmark({ path, title });
@@ -118,7 +118,7 @@ describe(useBookmarkStore, () => {
     completeRead([createReadBookmark(0)]);
     await inFlightRead;
 
-    expect(bookmarks.value).toStrictEqual([]);
+    expect(displayBookmarks.value).toStrictEqual([]);
   });
 
   // A read answers a removed bookmark as a tombstone, and the list leaves it out
@@ -127,23 +127,24 @@ describe(useBookmarkStore, () => {
 
     trpcMsw.bookmark.readBookmarks.query(() => [createReadBookmark(1, epoch)]);
     const bookmarkStore = useBookmarkStore();
-    const { bookmarks } = storeToRefs(bookmarkStore);
+    const { displayBookmarks } = storeToRefs(bookmarkStore);
     const { readBookmarks } = bookmarkStore;
     await readBookmarks();
 
-    expect(bookmarks.value).toStrictEqual([]);
+    expect(displayBookmarks.value).toStrictEqual([]);
   });
 
-  // The link fields a read joins in are drawn beside the row, so a page the reader cannot reach stays listed, unavailable
+  // The link fields a read joins in are drawn beside the row, so a page the reader cannot reach stays listed,
+  // Unavailable
   test("draws a bookmark a read answers unavailable with the link fields the read joined in", async () => {
     expect.hasAssertions();
 
     trpcMsw.bookmark.readBookmarks.query(() => [{ ...createReadBookmark(0), isAvailable: false }]);
     const bookmarkStore = useBookmarkStore();
-    const { bookmarks } = storeToRefs(bookmarkStore);
+    const { displayBookmarks } = storeToRefs(bookmarkStore);
     const { readBookmarks } = bookmarkStore;
     await readBookmarks();
 
-    expect(bookmarks.value).toStrictEqual([{ isAvailable: false, path, title }]);
+    expect(displayBookmarks.value).toStrictEqual([{ isAvailable: false, path, title }]);
   });
 });

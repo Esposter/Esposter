@@ -23,15 +23,14 @@ export const useStorageStore = defineStore("storage", () => {
       ? { bytesUsed: user.storageBytesUsed, quotaBytes: StorageTierQuotaMap[user.storageTier], tier: user.storageTier }
       : undefined;
   });
-  const { read: readStorageUsage } = useCachedRead(() => $trpc.storage.readUsage.query(), {
-    onSuccess: (user) => {
-      arrive(userTable, user);
-    },
-  });
   // The subscription is established before the first read is issued, so a charge can land between the two. The pushed
-  // Row is the newer of the pair when its version is, and the overlay's arrival gate keeps it whichever order they land in
+  // Row is the newer of the pair when its version is, and the overlay's arrival gate keeps it whichever order they land
+  // In
   const storeUpdateStorageUsage = (user: UserInAuth) => {
     arrive(userTable, user);
   };
+  const { read: readStorageUsage } = useCachedRead(() => $trpc.storage.readUsage.query(), {
+    onSuccess: storeUpdateStorageUsage,
+  });
   return { readStorageUsage, storageUsage, storeUpdateStorageUsage };
 });

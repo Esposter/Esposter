@@ -4,7 +4,7 @@ import { useBookmarkStore } from "#src/store/bookmark";
 
 const { data: session } = await useAuthSession();
 const bookmarkStore = useBookmarkStore();
-const { bookmarks } = storeToRefs(bookmarkStore);
+const { displayBookmarks } = storeToRefs(bookmarkStore);
 const { readBookmarks } = bookmarkStore;
 const unbookmarkedRecentPages = useUnbookmarkedRecentPages();
 const displayRecentPages = computed(() => unbookmarkedRecentPages.value.slice(0, RECENT_PAGES_SHOWN_LIMIT));
@@ -18,7 +18,7 @@ if (session.value) await readBookmarks();
 <template>
   <div gap-1 items-center>
     <AppDockPageLink
-      v-for="bookmark of bookmarks"
+      v-for="bookmark of displayBookmarks"
       :key="bookmark.path"
       :is-unavailable="!bookmark.isAvailable || undefined"
       :page="bookmark"
@@ -26,7 +26,7 @@ if (session.value) await readBookmarks();
     <!-- The recent pages live in this browser's storage, which the server render cannot read -->
     <ClientOnly>
       <div
-        v-if="bookmarks.length > 0 && displayRecentPages.length > 0"
+        v-if="displayBookmarks.length > 0 && displayRecentPages.length > 0"
         aria-hidden="true"
         bg-divider
         shrink-0

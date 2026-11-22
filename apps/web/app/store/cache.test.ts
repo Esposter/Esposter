@@ -1,11 +1,14 @@
-// @vitest-environment nuxt
 import { CacheTag } from "#src/models/cache/CacheTag";
 import { useCacheStore } from "#src/store/cache";
 import { flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import { describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useCacheStore, () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   test("invalidates only the caches registered under the tag", async () => {
     expect.hasAssertions();
 

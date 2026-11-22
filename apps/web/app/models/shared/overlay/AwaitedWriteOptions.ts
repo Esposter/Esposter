@@ -5,5 +5,5 @@ import type { AwaitedReason } from "#src/models/shared/AwaitedReason";
 // Of executeMutation takes, so a write that waits for no reason the server alone can answer is refused
 export interface AwaitedWriteOptions {
   awaitedBecause: AwaitedReason;
-  onError?: (error: Error) => void;
+  onError: (error: Error) => void;
 }

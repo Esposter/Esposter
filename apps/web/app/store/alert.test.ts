@@ -1,11 +1,16 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import { useAlertStore } from "#src/store/alert";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useAlertStore, () => {
   const text = "";
   const otherText = " ";
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
 
   test("refreshes an identical alert instead of stacking a second copy", () => {
     expect.hasAssertions();

@@ -7,6 +7,6 @@ export const useUnbookmarkedRecentPages = () => {
   const bookmarkStore = useBookmarkStore();
   const { bookmarkPaths } = storeToRefs(bookmarkStore);
   const recentPageStore = useRecentPageStore();
-  const { rankedRecentPages } = storeToRefs(recentPageStore);
-  return computed(() => rankedRecentPages.value.filter(({ path }) => !bookmarkPaths.value.has(path)));
+  const { displayRecentPages } = storeToRefs(recentPageStore);
+  return computed(() => displayRecentPages.value.filter(({ path }) => !bookmarkPaths.value.has(path)));
 };

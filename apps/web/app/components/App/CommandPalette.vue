@@ -22,7 +22,7 @@ const commandStore = useCommandStore();
 const { commands, isCommandPaletteOpen, isScoped, isShortcutsDialogOpen, scope } = storeToRefs(commandStore);
 const { openCommandPalette } = commandStore;
 const bookmarkStore = useBookmarkStore();
-const { bookmarks } = storeToRefs(bookmarkStore);
+const { displayBookmarks } = storeToRefs(bookmarkStore);
 const unbookmarkedRecentPages = useUnbookmarkedRecentPages();
 const themeModeCommands = useThemeModeCommands();
 const uiStyleCommands = useUiStyleCommands();
@@ -80,7 +80,7 @@ useCommands(() => [
     items.map(({ href, icon, title: itemTitle }) => ({ group: title, icon, id: href, title: itemTitle, to: href })),
   ),
   // The reader's places, as the dock keeps them: bookmarks, then the pages they come back to most
-  ...bookmarks.value.map((bookmark) => getPlaceCommand(bookmark, bookmark.isAvailable)),
+  ...displayBookmarks.value.map((bookmark) => getPlaceCommand(bookmark, bookmark.isAvailable)),
   ...unbookmarkedRecentPages.value.map((recentPage) => getPlaceCommand(recentPage, true)),
   ...themeModeCommands.value,
   ...uiStyleCommands.value,

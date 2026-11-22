@@ -18,7 +18,7 @@ import { getResult, getResultAsync, getSynchronizedFunction } from "@esposter/sh
 // Queue. It is the only writer of held state, and a store reads its rows through the view it returns
 export const useOverlayStore = defineStore("overlay", () => {
   // The held rows are the store's state, so Pinia carries them in a server render's payload and a client's first render
-  // Draws the rows the server drew, with no read run again. Nothing else here is state: the pending entries hold functions
+  // Draws the rows the server drew, with no read run again. Nothing else here is state: pending entries hold functions
   const heldTables = shallowRef<HeldTables>({});
   const slotFor = createSlotFor(heldTables);
   const enqueue = createWriteQueue();
@@ -56,20 +56,21 @@ export const useOverlayStore = defineStore("overlay", () => {
               },
               (error) => {
                 pendingEntries.value = pendingEntries.value.filter((other) => other !== pendingEntry);
-                onError?.(error);
+                onError(error);
               },
             ),
           ),
         )();
       },
       (error) => {
-        onError?.(error);
+        onError(error);
       },
     );
   };
   // A write with no entry shows nothing until its answer, so it takes no queue key: the version gate orders its
   // Responses, and it is issued at once
-  // Resolves whether the server kept the write, so a caller that closes a dialog or leaves a page on success reads it here
+  // Resolves whether the server kept the write, so a caller that closes a dialog or leaves a page on success
+  // Reads it here
   const writeAwaited = (mutate: () => Promise<Arrival[]>, { onError }: AwaitedWriteOptions): Promise<boolean> =>
     getResultAsync(mutate).match(
       (arrivals) => {
@@ -77,7 +78,7 @@ export const useOverlayStore = defineStore("overlay", () => {
         return true;
       },
       (error) => {
-        onError?.(error);
+        onError(error);
         return false;
       },
     );

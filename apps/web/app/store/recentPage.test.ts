@@ -26,13 +26,13 @@ describe(useRecentPageStore, () => {
     expect.hasAssertions();
 
     const recentPageStore = useRecentPageStore();
-    const { rankedRecentPages } = storeToRefs(recentPageStore);
+    const { displayRecentPages } = storeToRefs(recentPageStore);
     const { visitPage } = recentPageStore;
     visitPage(path);
     visitPage(path);
     visitPage(`${path}1`);
 
-    expect(rankedRecentPages.value.map((recentPage) => [recentPage.path, recentPage.visitCount])).toStrictEqual([
+    expect(displayRecentPages.value.map((recentPage) => [recentPage.path, recentPage.visitCount])).toStrictEqual([
       [path, 2],
       [`${path}1`, 1],
     ]);
@@ -42,14 +42,14 @@ describe(useRecentPageStore, () => {
     expect.hasAssertions();
 
     const recentPageStore = useRecentPageStore();
-    const { rankedRecentPages } = storeToRefs(recentPageStore);
+    const { displayRecentPages } = storeToRefs(recentPageStore);
     const { visitPage } = recentPageStore;
     visitPage(path);
     visitPage(path);
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").add({ days: 91 }));
     visitPage(`${path}1`);
 
-    expect(rankedRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual([`${path}1`, path]);
+    expect(displayRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual([`${path}1`, path]);
   });
 
   test("keeps the title and mark across visits and writes new ones", () => {
@@ -57,13 +57,13 @@ describe(useRecentPageStore, () => {
 
     const mark = { id: ZERO_UUID, resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
     const recentPageStore = useRecentPageStore();
-    const { rankedRecentPages } = storeToRefs(recentPageStore);
+    const { displayRecentPages } = storeToRefs(recentPageStore);
     const { updateRecentPage, visitPage } = recentPageStore;
     visitPage(path);
     updateRecentPage({ mark, path, title });
     visitPage(path);
 
-    expect(rankedRecentPages.value.map((recentPage) => [recentPage.mark, recentPage.title])).toStrictEqual([
+    expect(displayRecentPages.value.map((recentPage) => [recentPage.mark, recentPage.title])).toStrictEqual([
       [mark, title],
     ]);
   });
@@ -72,20 +72,20 @@ describe(useRecentPageStore, () => {
     expect.hasAssertions();
 
     const recentPageStore = useRecentPageStore();
-    const { rankedRecentPages } = storeToRefs(recentPageStore);
+    const { displayRecentPages } = storeToRefs(recentPageStore);
     const { forgetUnmatchedPages, visitPage } = recentPageStore;
     visitPage(path);
     visitPage(`${path}1`);
     forgetUnmatchedPages((visitedPath) => visitedPath === path);
 
-    expect(rankedRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual([path]);
+    expect(displayRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual([path]);
   });
 
   test("drops the lowest-ranked page once the list is full", () => {
     expect.hasAssertions();
 
     const recentPageStore = useRecentPageStore();
-    const { rankedRecentPages } = storeToRefs(recentPageStore);
+    const { displayRecentPages } = storeToRefs(recentPageStore);
     const { visitPage } = recentPageStore;
     visitPage(path);
     for (const index of Array.from({ length: RECENT_PAGES_STORED_LIMIT }).keys()) {
@@ -93,7 +93,7 @@ describe(useRecentPageStore, () => {
       visitPage(`${path}${index}`);
     }
 
-    expect(rankedRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual(
+    expect(displayRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual(
       Array.from(
         { length: RECENT_PAGES_STORED_LIMIT },
         (_value, index) => `${path}${RECENT_PAGES_STORED_LIMIT - 1 - index}`,

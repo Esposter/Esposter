@@ -4,5 +4,5 @@ import type { Entry } from "#src/models/shared/overlay/Entry";
 // From the entry, and a rollback is not a member, since a dropped entry restores nothing
 export interface OptimisticWriteOptions {
   entry: Entry;
-  onError?: (error: Error) => void;
+  onError: (error: Error) => void;
 }
