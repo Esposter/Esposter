@@ -115,7 +115,7 @@ const items = computed(() =>
     <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename="renameResource" :resource />
     <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />
     <ResourceAskClaudeDialog v-if="isAskClaudeOpen" v-model="isAskClaudeOpen" :resource />
-    <UiConfirmDialog v-model="isDeleteOpen" confirm-label="Delete" title="Delete resource" :confirm="deleteResource">
+    <UiConfirmDialog v-model="isDeleteOpen" :confirm="deleteResource" confirm-label="Delete" title="Delete resource">
       <p>Move {{ resource.name }} to the recycle bin? You can restore it from there.</p>
       <!-- The confirmation stays mounted while closed, so the read waits for it to open -->
       <ResourceConsumersWarning v-if="isDeleteOpen" :ids />

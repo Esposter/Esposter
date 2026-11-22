@@ -74,7 +74,7 @@ watch(publication, async (newPublication) => {
       <div gap-x-6 gap-y-2 grid items-center cols="[auto_1fr] md:[auto_1fr_auto_1fr]">
         <span text-muted>Type</span>
         <div flex gap-2 items-center>
-          <span :class="ResourceDefinitionMap[resource.type].icon" aria-hidden="true" size-6 />
+          <span size-6 aria-hidden="true" :class="ResourceDefinitionMap[resource.type].icon" />
           {{ ResourceDefinitionMap[resource.type].title }}
         </div>
         <span text-muted>Created</span>
