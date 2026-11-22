@@ -9,15 +9,15 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 87118e9173
-- Node: v26.11.1
-- OS: win32 10.0.26300 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- Commit: 566d3aa627
+- Node: v26.13.1
+- OS: darwin 27.0.0 (arm64)
+- CPU: Apple M1 × 8
+- RAM: 16.0 GiB
 
-## <anonymous> > a page's response
+## security headers plugin > a page's response
 
 | task                                    | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | --------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| native — serializing the page's headers | 1.00×   | 0.0168    | ±29.40% | 0.0579   | 500     |
-| headers applied to a response           | 0.15×   | 0.1137    | ±7.00%  | 0.3579   | 500     |
+| native — serializing the page's headers | 1.00×   | 0.0178    | ±45.57% | 0.0846   | 500     |
+| headers applied to a response           | 0.095×  | 0.1866    | ±65.99% | 1.2980   | 500     |

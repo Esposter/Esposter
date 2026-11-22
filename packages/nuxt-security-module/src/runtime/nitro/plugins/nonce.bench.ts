@@ -13,7 +13,7 @@ import { describe, test } from "vitest";
 
 // A rendered page's markup carrying its nonce and its integrity attributes: the nonce is generated for the request, then
 // The nonce and SRI plugins rewrite each section of the page, a fresh page and event per iteration.
-describe(nonce, () => {
+describe("nonce plugin", () => {
   test("a rendered page's nonce and SRI attributes", async ({ bench }) => {
     const app = createNitroApp();
     await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);

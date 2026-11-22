@@ -6,21 +6,21 @@
         {
           "benchmarks": [
             {
-              "mean": 0.016818600000000065,
+              "mean": 0.01778773399999408,
               "name": "native — serializing the page's headers",
-              "p99": 0.05789999999990528,
-              "rme": 29.40244920475483,
+              "p99": 0.08462225999994409,
+              "rme": 45.57216516668635,
               "sampleCount": 500
             },
             {
-              "mean": 0.1136849999999995,
+              "mean": 0.18660916599999838,
               "name": "headers applied to a response",
-              "p99": 0.35790599999999806,
-              "rme": 7.004246247437913,
+              "p99": 1.2979611700001423,
+              "rme": 65.99351053764634,
               "sampleCount": 500
             }
           ],
-          "fullName": "<anonymous> > a page's response"
+          "fullName": "security headers plugin > a page's response"
         }
       ]
     }

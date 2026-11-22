@@ -9,15 +9,15 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 87118e9173
-- Node: v26.11.1
-- OS: win32 10.0.26300 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- Commit: 566d3aa627
+- Node: v26.13.1
+- OS: darwin 27.0.0 (arm64)
+- CPU: Apple M1 × 8
+- RAM: 16.0 GiB
 
-## <anonymous> > a rendered page's nonce and SRI attributes
+## nonce plugin > a rendered page's nonce and SRI attributes
 
-| task                            | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| native — a page's markup copied | 1.00×   | 0.0085    | ±87.00% | 0.0417   | 200     |
-| a page's markup rewritten       | 0.012×  | 0.7256    | ±5.33%  | 1.6557   | 200     |
+| task                            | vs base  | mean (ms) | ±rme    | p99 (ms) | samples |
+| ------------------------------- | -------- | --------- | ------- | -------- | ------- |
+| native — a page's markup copied | 1.00×    | 0.0027    | ±9.35%  | 0.0072   | 200     |
+| a page's markup rewritten       | 0.00081× | 3.3441    | ±53.86% | 41.6160  | 200     |

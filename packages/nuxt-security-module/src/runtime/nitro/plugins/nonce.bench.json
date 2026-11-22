@@ -6,21 +6,21 @@
         {
           "benchmarks": [
             {
-              "mean": 0.008505000000001246,
+              "mean": 0.002717905000022257,
               "name": "native — a page's markup copied",
-              "p99": 0.04165100000001639,
-              "rme": 87.00226114376129,
+              "p99": 0.007219249999989178,
+              "rme": 9.353245436161146,
               "sampleCount": 200
             },
             {
-              "mean": 0.7255814999999951,
+              "mean": 3.3440789600000125,
               "name": "a page's markup rewritten",
-              "p99": 1.6557270000000244,
-              "rme": 5.328612279359742,
+              "p99": 41.616019499999766,
+              "rme": 53.855003063264085,
               "sampleCount": 200
             }
           ],
-          "fullName": "<anonymous> > a rendered page's nonce and SRI attributes"
+          "fullName": "nonce plugin > a rendered page's nonce and SRI attributes"
         }
       ]
     }
