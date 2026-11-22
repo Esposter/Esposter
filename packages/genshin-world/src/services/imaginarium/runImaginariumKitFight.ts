@@ -22,6 +22,9 @@ import { createParty } from "#src/services/party/createParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
+import { stepPartyElementalStates } from "#src/services/party/stepPartyElementalStates";
+import { stepPartyFall } from "#src/services/party/stepPartyFall";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { MILLISECONDS_PER_SECOND, takeOne } from "@esposter/shared";
 import {
@@ -105,6 +108,10 @@ export const runImaginariumKitFight = (
   let elapsedSeconds = 0;
   let stepCount = 0;
   while (elapsedSeconds < timeLimitSeconds && countDefeats() < enemies.length && !checkIsPartyDown(party)) {
+    // The party's clocks run as they do in the world's frame, before the field performer acts
+    stepPartyCooldowns(party, FIXED_STEP_SECONDS);
+    stepPartyElementalStates(party, FIXED_STEP_SECONDS);
+    stepPartyFall(party, FIXED_STEP_SECONDS);
     const characterId = getActiveCharacterId(party);
     const combatant = characterIdCombatantMap.get(characterId);
     const kitState = kitStates.get(characterId);
