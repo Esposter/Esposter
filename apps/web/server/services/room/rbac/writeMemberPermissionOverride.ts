@@ -6,10 +6,10 @@ import { getMemberPermissionOverrideRowWhere } from "#server/services/room/rbac/
 import { roomMemberPermissionsInMessage } from "@esposter/db-schema";
 import { and, eq, isNotNull } from "drizzle-orm";
 
-// Writes one merged override, compare-and-set on the bits it was merged from. It returns the rows the write changed, the
-// Tombstone included, or undefined when another write got there first, which is the caller's cue to read again. A write
-// That changes nothing and finds no live row returns no rows. A removal tombstones the row, and a write that finds only a
-// Tombstone revives it at a higher version, so the row keeps its version count
+// Writes one merged override, compare-and-set on the bits it was merged from. It returns the rows the write changed,
+// The tombstone included, or undefined when another write got there first, which is the caller's cue to read again. A
+// Write that changes nothing and finds no live row returns no rows. A removal tombstones the row, and a write that
+// Finds only a tombstone revives it at a higher version, so the row keeps its version count
 export const writeMemberPermissionOverride = async (
   db: Context["db"],
   {

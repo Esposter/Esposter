@@ -9,11 +9,11 @@ import { roomMemberPermissionsInMessage } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 
 const MAX_MEMBER_PERMISSION_OVERRIDE_ATTEMPTS = 3;
-// The bitfields are read and merged in JS, since D1 stores them as text and SQL cannot OR or AND them. The write is then
-// Compare-and-set on the bits it was merged from: a concurrent override that got there first makes this one lose, and it
-// Reads the row again and merges onto that, a bounded number of times. A row with neither field set is the member's roles
-// Again, so it is tombstoned rather than kept as an empty entry. Returns the rows the write changed, or none when the
-// Member already had no override and none was asked for
+// The bitfields are read and merged in JS, since D1 stores them as text and SQL cannot OR or AND them. The write is
+// Then compare-and-set on the bits it was merged from: a concurrent override that got there first makes this one lose,
+// And it reads the row again and merges onto that, a bounded number of times. A row with neither field set is the
+// Member's roles again, so it is tombstoned rather than kept as an empty entry. Returns the rows the write changed, or
+// None when the member already had no override and none was asked for
 export const setMemberPermissionOverride = async (db: Context["db"], input: UpsertMemberPermissionOverrideInput) => {
   const { roomId, userId } = input;
   const { allow: allowColumn, deny: denyColumn } = roomMemberPermissionsInMessage;

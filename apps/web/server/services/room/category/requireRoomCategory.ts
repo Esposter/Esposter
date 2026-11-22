@@ -5,7 +5,8 @@ import type { Operation } from "@esposter/shared";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
-// Every category mutation addresses one of the caller's own categories, so a miss is always the same rejection
+// Every category mutation addresses one of the caller's own categories, so a miss is refused by the same guard, and
+// The code it carries is the caller's choice
 export const requireRoomCategory = (
   roomCategory: RoomCategoryInMessage | undefined,
   operation: Operation,

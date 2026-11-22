@@ -84,8 +84,8 @@ describe(checkHasPermission, () => {
     expect(hasManagePermission).toBe(true);
   });
 
-  // A revoked override is a tombstone the server keeps, so the permission it allowed stops counting once the tombstone is
-  // Written, and the member's roles decide again
+  // A revoked override is a tombstone the server keeps, so the permission it allowed stops counting once the tombstone
+  // Is written, and the member's roles decide again
   test("a revoked override stops counting for permissions on the server", async () => {
     expect.hasAssertions();
 

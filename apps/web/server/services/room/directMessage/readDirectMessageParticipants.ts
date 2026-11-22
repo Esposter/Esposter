@@ -18,7 +18,8 @@ import { alias } from "drizzle-orm/sqlite-core";
 
 // The other participants of the given direct messages, read for the viewer alone.
 // A room the viewer is not in has no membership row to match, so it is never returned.
-// Each participant is its live membership row, which the overlay holds at its version, and its name is the one the room shows.
+// Each participant is its live membership row, which the overlay holds at its version,
+// And its name is the one the room shows.
 // Grouped by room, and each room's names in the order the list sorts them.
 export const readDirectMessageParticipants = async (
   db: Context["db"],
