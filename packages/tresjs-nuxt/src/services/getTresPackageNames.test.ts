@@ -9,7 +9,7 @@ const writeManifest = async (directory: string, manifest: object) => {
   await writeFile(join(directory, "package.json"), JSON.stringify(manifest));
 };
 
-describe("getTresPackageNames", () => {
+describe(getTresPackageNames, () => {
   let workspaceDirectory: string;
 
   beforeEach(async () => {

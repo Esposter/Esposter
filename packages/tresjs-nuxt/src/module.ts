@@ -3,7 +3,13 @@ import type { NuxtModule } from "@nuxt/schema";
 
 import { MODULE_NAME } from "#src/runtime/constants";
 import { checkIsTresCustomElement } from "#src/services/checkIsTresCustomElement";
-import { CORE_PACKAGE_NAME, GLSL_PACKAGE_NAME, THREE_PACKAGE_NAME, TRES_CANVAS_NAME } from "#src/services/constants";
+import {
+  CORE_PACKAGE_NAME,
+  GLSL_PACKAGE_NAME,
+  THREE_PACKAGE_NAME,
+  TRES_CANVAS_NAME,
+  TRES_PACKAGE_SCOPE,
+} from "#src/services/constants";
 import { getExportNames } from "#src/services/getExportNames";
 import { getTresPackageNames } from "#src/services/getTresPackageNames";
 import { addComponent, addImports, addVitePlugin, createResolver, defineNuxtModule, resolvePath } from "@nuxt/kit";
@@ -12,13 +18,14 @@ import { defu } from "defu";
 export type { ModuleOptions } from "#src/models/ModuleOptions";
 
 const LOWERCASE_NAME_REGEX = /^[a-z]/u;
+const TRES_PACKAGE_SCOPE_REGEX = new RegExp(RegExp.escape(TRES_PACKAGE_SCOPE), "u");
 
 const tresjsModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
   defaults: { glsl: false, modules: [] },
   meta: { compatibility: { nuxt: ">=5.0.0-0" }, configKey: "tres", name: MODULE_NAME },
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url);
-    nuxt.options.build.transpile.push(/@tresjs\//u);
+    nuxt.options.build.transpile.push(TRES_PACKAGE_SCOPE_REGEX);
     nuxt.options.vue.compilerOptions.isCustomElement = checkIsTresCustomElement;
     const coreExportNames = await getExportNames(await resolvePath(CORE_PACKAGE_NAME));
     addImports([

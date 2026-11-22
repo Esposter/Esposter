@@ -59,8 +59,7 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
-    "tsdown": "catalog:",
-    "vite-plugin-glsl": "catalog:"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "@tresjs/core": "catalog:",
