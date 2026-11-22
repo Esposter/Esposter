@@ -3,15 +3,11 @@ import type { CharacterPackIndex } from "genshin-world";
 
 import { characterPackManifestSchema } from "#src/models/genshinAssets/characterPacks/CharacterPackManifest";
 import { CHARACTER_PACK_MANIFEST_NAME } from "#src/services/genshinAssets/characterPacks/constants";
+import { getFileSha256 } from "#src/services/provenance/getFileSha256";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
-
-const hashFile = async (localPath: string): Promise<string> =>
-  createHash("sha256")
-    .update(await readFile(localPath))
-    .digest("hex");
 
 // An avatar's entry in the index, read from the listing of its folder: its manifest's files, each checked against the
 // Bytes and sha256 the folder holds, then the manifest itself, hashed since no manifest lists its own file. A manifest
@@ -29,8 +25,8 @@ export const toCharacterPackAvatar = async (
   if (manifest.avatarId !== avatarId)
     throw new InvalidOperationError(Operation.Read, avatarId, "has a manifest that names another avatar");
 
-  const sizeMap = new Map(files.map(({ path, size }) => [path, size]));
-  const mismatch = manifest.files.find(({ bytes, path }) => sizeMap.get(path) !== bytes);
+  const pathSizeMap = new Map(files.map(({ path, size }) => [path, size]));
+  const mismatch = manifest.files.find(({ bytes, path }) => pathSizeMap.get(path) !== bytes);
   if (mismatch !== undefined)
     throw new InvalidOperationError(
       Operation.Read,
@@ -38,10 +34,16 @@ export const toCharacterPackAvatar = async (
       "is listed by its manifest at other bytes than the folder holds",
     );
 
-  const hashMap = new Map(
-    await Promise.all(files.map(async ({ localPath, path }) => [path, await hashFile(localPath)] as const)),
+  const manifestSha256 = createHash("sha256").update(manifestBytes).digest("hex");
+  const pathHashMap = new Map(
+    await Promise.all(
+      files.map(
+        async ({ localPath, path }) =>
+          [path, path === CHARACTER_PACK_MANIFEST_NAME ? manifestSha256 : await getFileSha256(localPath)] as const,
+      ),
+    ),
   );
-  const unhashed = manifest.files.find(({ path, sha256 }) => hashMap.get(path) !== sha256);
+  const unhashed = manifest.files.find(({ path, sha256 }) => pathHashMap.get(path) !== sha256);
   if (unhashed !== undefined)
     throw new InvalidOperationError(
       Operation.Read,
@@ -49,11 +51,7 @@ export const toCharacterPackAvatar = async (
       "is listed by its manifest at a sha256 its bytes do not hash to",
     );
 
-  const manifestIndexFile = {
-    bytes: manifestFile.size,
-    path: CHARACTER_PACK_MANIFEST_NAME,
-    sha256: createHash("sha256").update(manifestBytes).digest("hex"),
-  };
+  const manifestIndexFile = { bytes: manifestFile.size, path: CHARACTER_PACK_MANIFEST_NAME, sha256: manifestSha256 };
   const indexFiles = [...manifest.files, manifestIndexFile];
   if (files.length !== indexFiles.length)
     throw new InvalidOperationError(

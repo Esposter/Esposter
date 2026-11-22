@@ -18,11 +18,11 @@ import { COMMISSION_RANK_BAND_COUNT, commissionSliceSchema, GameDataset } from "
 // One record a region, each task filed under the region its city is named for, with the main quest its city opens with
 // When the dump names one, and a city no region is named for left out
 export const buildCommissions = (cityRegionMap: ReadonlyMap<number, string>): Record<string, unknown> => {
-  const previews = new Map(
+  const previewIdRowMap = new Map(
     readExcelTable<ExcelRewardPreviewRow>("RewardPreviewExcelConfigData").map((preview) => [preview.id, preview]),
   );
   const toBandItems = (previewId: number, owner: string): RewardItem[] => {
-    const preview = previews.get(previewId);
+    const preview = previewIdRowMap.get(previewId);
     if (!preview)
       throw new InvalidOperationError(
         Operation.Read,

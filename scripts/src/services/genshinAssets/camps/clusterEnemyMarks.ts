@@ -1,8 +1,8 @@
 import type { MapPointPlace } from "#src/models/genshinAssets/points/MapPointPlace";
 
 // Groups a region's enemy marks into camps. Marks of one kind join one camp when a chain of them, each within the
-// Clustering distance of the next, links them, and marks of different kinds never join. Returns the camps in the order
-// Their first marks were given
+// Clustering distance of the next, links them, and marks of different kinds never join. Returns the camps grouped by
+// Kind, each kind in the order its first mark was given, and its camps in the order their first marks were given
 export const clusterEnemyMarks = <Kind>(
   places: readonly MapPointPlace<Kind>[],
   clusterDistance: number,

@@ -7,11 +7,11 @@ describe(replaceEnemyCamps, () => {
   test("the stand-in camp in Mondstadt is replaced", () => {
     expect.hasAssertions();
     const standIn: EnemyCamp = {
-      areaId: "mondstadt",
-      id: "mondstadt-stand-in-camp",
-      members: [{ enemyKindId: 21010101, id: "stand-in-1", level: 2, patrol: [], position: { x: 0, z: 0 } }],
+      areaId: "",
+      id: "",
+      members: [{ enemyKindId: 21010101, id: "", level: 0, patrol: [], position: { x: 0, z: 0 } }],
     };
-    const built: EnemyCamp = { areaId: "mondstadt", id: "mondstadt-camp-1", members: [] };
+    const built: EnemyCamp = { areaId: "", id: "", members: [] };
     expect(replaceEnemyCamps({ enemyCamps: [standIn], landmarks: [] }, [built])).toStrictEqual({
       enemyCamps: [built],
       landmarks: [],

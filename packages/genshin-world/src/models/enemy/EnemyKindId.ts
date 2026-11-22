@@ -86,3 +86,4 @@ export const EnemyKindId = {
   StormterrorDvalin: 29010104,
 } as const;
 export type EnemyKindId = (typeof EnemyKindId)[keyof typeof EnemyKindId];
+export const EnemyKindIds: readonly EnemyKindId[] = Object.values(EnemyKindId);

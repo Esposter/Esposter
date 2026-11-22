@@ -1,15 +1,7 @@
-import type { FamilyLabelMatch } from "#src/services/genshinAssets/camps/buildFamilyLabelEnemyKindIdMap";
+import type { FamilyLabelMatch } from "#src/models/genshinAssets/camps/FamilyLabelMatch";
 
-import { EnemyKindId } from "genshin-world";
-
-// The member of EnemyKindId a kind is written as, the name the object gives its id
-export const toEnemyKindIdMember = (kindId: EnemyKindId): string => {
-  const [member] = Object.entries(EnemyKindId).find(([, id]) => id === kindId) ?? [];
-  return member ?? String(kindId);
-};
-
-// A label as a property key, bare when it is an identifier and quoted otherwise
-const toPropertyKey = (label: string): string => (/^[A-Za-z_$][\w$]*$/u.test(label) ? label : JSON.stringify(label));
+import { toEnemyKindIdMember } from "#src/services/genshinAssets/camps/toEnemyKindIdMember";
+import { toPropertyKey } from "#src/services/genshinAssets/camps/toPropertyKey";
 
 // The source of the family-label map the camps read, one line a label in alphabetical order
 export const toFamilyLabelMapSource = (matches: readonly FamilyLabelMatch[]): string =>

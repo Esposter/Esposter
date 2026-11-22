@@ -1,6 +1,8 @@
 import type { ExcelDailyTaskRow } from "#src/models/genshinAssets/commissions/ExcelDailyTaskRow";
 import type { Commission } from "genshin-world";
 
+import { checkIsDailyTaskFinishKind } from "#src/services/genshinAssets/commissions/checkIsDailyTaskFinishKind";
+import { checkIsDailyTaskTypeKind } from "#src/services/genshinAssets/commissions/checkIsDailyTaskTypeKind";
 import {
   DAILY_FINISH_DEFAULT,
   DAILY_TASK_CENTER_POSITION_DEFAULT,
@@ -21,19 +23,18 @@ export const toCommissionTask = (row: ExcelDailyTaskRow, preferredRegion: string
     finishType = DAILY_FINISH_DEFAULT,
     type = DAILY_TASK_TYPE_DEFAULT,
   } = row;
-  const kind = DailyTaskTypeKindMap[type];
-  const finishKind = DailyTaskFinishKindMap[finishType];
-  if (!kind || !finishKind)
+  if (!checkIsDailyTaskTypeKind(type) || !checkIsDailyTaskFinishKind(finishType))
     throw new InvalidOperationError(
       Operation.Read,
       String(row.id),
       `has the type ${type} and the finish ${finishType}, which the maps do not name`,
     );
+  const kind = DailyTaskTypeKindMap[type];
   return {
     centerPosition,
     enterDistance: row.enterDistance,
     exitDistance: row.exitDistance,
-    finishKind,
+    finishKind: DailyTaskFinishKindMap[finishType],
     finishProgress: kind === CommissionKind.Quest ? QUEST_TASK_FINISH_PROGRESS : row.finishProgress,
     id: row.id,
     kind,

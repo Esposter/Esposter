@@ -14,3 +14,4 @@ export const ChestKind = {
   WoodenMora: "WoodenMora",
 } as const;
 export type ChestKind = (typeof ChestKind)[keyof typeof ChestKind];
+export const ChestKinds: readonly ChestKind[] = Object.values(ChestKind);

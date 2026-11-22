@@ -15,8 +15,8 @@ describe(fitPictureColour, () => {
     colors: { [MAIN_COLOUR_PROPERTY]: [0.5, 0.5, 0.5, 1] },
     floats: {},
     keywords: [],
-    name: "CardArt",
-    shaderPathId: "1",
+    name: "",
+    shaderPathId: "",
     textures: {},
   };
 

@@ -6,7 +6,6 @@ import { tintMaterialTexture } from "#src/services/genshinAssets/fit/tintMateria
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const OPAQUE_ALPHA = 255;
-
 // A picture's mean colour as its material draws it, as sRGB bytes: each visible texel's colour averaged, weighted by its
 // Alpha, so a transparent border counts for nothing. A stand-in for the picture takes this colour, so its place reads in
 // The picture's own tone. A picture with no visible texel has no colour to take

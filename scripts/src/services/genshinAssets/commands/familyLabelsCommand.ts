@@ -8,7 +8,8 @@ import {
   FAMILY_LABEL_MAP_RELATIVE_PATH,
 } from "#src/services/genshinAssets/camps/constants";
 import { readFamilyLabelRedirects } from "#src/services/genshinAssets/camps/readFamilyLabelRedirects";
-import { toEnemyKindIdMember, toFamilyLabelMapSource } from "#src/services/genshinAssets/camps/toFamilyLabelMapSource";
+import { toEnemyKindIdMember } from "#src/services/genshinAssets/camps/toEnemyKindIdMember";
+import { toFamilyLabelMapSource } from "#src/services/genshinAssets/camps/toFamilyLabelMapSource";
 import { checkWikiPageCached } from "#src/services/genshinAssets/enemies/checkWikiPageCached";
 import { fetchEnemyWikiPages } from "#src/services/genshinAssets/enemies/fetchEnemyWikiPages";
 import { readWikiPageContent } from "#src/services/genshinAssets/enemies/readWikiPageContent";
