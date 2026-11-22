@@ -28,8 +28,9 @@ import {
 } from "vue-block-editor-headless";
 import { z } from "zod";
 
-// An arrow end's point is the connection point its binding names, so the core derives it and an agent is refused a write to it by path. The end is strict,
-// As the core's end is, since a spread of its fields does not carry the strict mode, so a stored end still holding the old arrowhead flag fails its parse
+// An arrow end's point is the connection point its binding names, so the core derives it and refuses a bound end whose
+// Point is off that connection point. The end is strict, as the core's end is, since a spread of its fields does not
+// Carry the strict mode, so a stored end carrying a key this schema does not name fails its parse too
 const whiteboardArrowEndSchema = z.strictObject({
   ...arrowEndSchema.shape,
   arrowhead: arrowEndSchema.shape.arrowhead.meta({ description: ARROWHEAD_DESCRIPTION }),
