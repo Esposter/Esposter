@@ -9,13 +9,16 @@ import { getPanzoomPinchFrame } from "#src/services/panzoom/getPanzoomPinchFrame
 import { getPanzoomTarget } from "#src/services/panzoom/getPanzoomTarget";
 import { writePanzoomStyle } from "#src/services/panzoom/writePanzoomStyle";
 
+// An element of any window carries `closest`, where `instanceof` would fail on one made in another window
+const checkIsElement = (target: EventTarget | null): target is Element => target !== null && "closest" in target;
+
 // A pointer that the exclusions and the filter let through joins the gesture. One pointer starts a drag, and a second turns
 // The gesture into a pinch. A pointer past the second is not tracked. Every press clears the click suppression a drag left armed
 export const startPanzoomGesture = (context: PanzoomContext, event: PointerEvent): void => {
   const { element, options, pointers, state } = context;
   context.isClickSuppressed = false;
   if (pointers.size >= 2) return;
-  if (checkIsPanzoomExcluded(event.target as Element, options)) return;
+  if (!checkIsElement(event.target) || checkIsPanzoomExcluded(event.target, options)) return;
   const { filter } = options;
   if (filter && !filter(event)) return;
 

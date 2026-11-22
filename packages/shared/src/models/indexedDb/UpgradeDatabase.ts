@@ -8,8 +8,9 @@ export interface UpgradeDatabase<TSchema extends DatabaseSchema = DatabaseSchema
     name: TStoreName,
     options?: IDBObjectStoreParameters,
   ) => DatabaseObjectStore<TSchema, TStoreName, "versionchange">;
-  deleteObjectStore: (name: DatabaseStoreName<TSchema>) => void;
+  // An earlier version's store is among the stores the database holds, and the schema no longer names it, so a name is any string
+  deleteObjectStore: (name: string) => void;
   // The stores the database holds when the upgrade opens, a snapshot, so a loop over it can delete the stores it names. An
   // Earlier version's store is among them, and a store the new version adds is not
-  objectStoreNames: DatabaseStoreName<TSchema>[];
+  objectStoreNames: string[];
 }

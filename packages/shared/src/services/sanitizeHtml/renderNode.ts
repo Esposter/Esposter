@@ -7,11 +7,12 @@ import { escapeAttribute } from "#src/services/sanitizeHtml/escapeAttribute";
 import { escapeText } from "#src/services/sanitizeHtml/escapeText";
 import { filterAttributes } from "#src/services/sanitizeHtml/filterAttributes";
 import { getChildNodes } from "#src/services/sanitizeHtml/getChildNodes";
+import { defaultTreeAdapter } from "parse5";
 
 // Renders a parsed node as the markup it is allowed to be. Anything the policy does not name is unwrapped to its text,
 // Or dropped with its content when it is a non-text element, so the output is built from allowed parts only
 export const renderNode = (node: DefaultTreeAdapterTypes.ChildNode, policy: SanitizePolicy, depth: number): string => {
-  if (node.nodeName === "#text") return escapeText((node as DefaultTreeAdapterTypes.TextNode).value);
+  if (defaultTreeAdapter.isTextNode(node)) return escapeText(node.value);
   if (!("tagName" in node) || depth > MAX_NESTING_DEPTH) return "";
 
   const element = node;

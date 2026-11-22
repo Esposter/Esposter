@@ -3,10 +3,12 @@ import type { z } from "zod";
 
 import { ID_SEPARATOR } from "#src/util/id/constants";
 
+const checkIsRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
+
 // A composite key is its parts joined by the one separator, so items unique by the whole of it are told apart by it
 const getItemKey = (item: unknown, key: readonly string[] | string): unknown => {
-  const record = item as Record<string, unknown>;
-  return typeof key === "string" ? record[key] : key.map((part) => record[part]).join(ID_SEPARATOR);
+  if (!checkIsRecord(item)) return undefined;
+  return typeof key === "string" ? item[key] : key.map((part) => item[part]).join(ID_SEPARATOR);
 };
 
 export const createUniqueArraySchema: CreateUniqueArraySchema = <TSchema extends z.ZodType>(

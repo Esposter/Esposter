@@ -14,5 +14,9 @@ export const applyPatches = <T>(document: T, operations: JsonPatchOperation[]): 
     inverseGroups.push(result.inverses);
   }
   // The caller vouches that its operations keep the document's shape, and one that cannot parses the result
-  return { document: patchedDocument as T, inverses: inverseGroups.toReversed().flat() };
+  return {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a JSON Patch names its paths as strings, so the document's type after the operations is the caller's claim, which no type can follow
+    document: patchedDocument as T,
+    inverses: inverseGroups.toReversed().flat(),
+  };
 };

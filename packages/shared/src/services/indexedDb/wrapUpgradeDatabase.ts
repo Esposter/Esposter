@@ -1,5 +1,4 @@
 import type { DatabaseSchema } from "#src/models/indexedDb/DatabaseSchema";
-import type { DatabaseStoreName } from "#src/models/indexedDb/DatabaseStoreName";
 import type { UpgradeDatabase } from "#src/models/indexedDb/UpgradeDatabase";
 
 import { wrapDatabase } from "#src/services/indexedDb/wrapDatabase";
@@ -14,5 +13,5 @@ export const wrapUpgradeDatabase = <TSchema extends DatabaseSchema = DatabaseSch
   deleteObjectStore: (name) => {
     database.deleteObjectStore(name);
   },
-  objectStoreNames: [...database.objectStoreNames] as DatabaseStoreName<TSchema>[],
+  objectStoreNames: [...database.objectStoreNames],
 });
