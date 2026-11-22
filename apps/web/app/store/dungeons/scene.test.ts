@@ -13,8 +13,8 @@ describe(useSceneStore, () => {
     expect.hasAssertions();
 
     const sceneStore = useSceneStore();
-    const { popSceneKeysAbove } = sceneStore;
     const { previousSceneKeyStack } = storeToRefs(sceneStore);
+    const { popSceneKeysAbove } = sceneStore;
     previousSceneKeyStack.value = [SceneKey.Battle, SceneKey.Inventory, SceneKey.MonsterParty, SceneKey.MonsterDetails];
     const poppedSceneKeys = popSceneKeysAbove(SceneKey.Battle);
 

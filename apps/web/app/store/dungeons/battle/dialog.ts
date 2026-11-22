@@ -1,11 +1,11 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { showMessageNoInputRequired as baseShowMessageNoInputRequired } from "#src/services/dungeons/dialog/showMessageNoInputRequired";
 import { useDialogStore } from "#src/store/dungeons/dialog";
 
 export const useBattleDialogStore = defineStore("dungeons/battle/dialog", () => {
   const dialogStore = useDialogStore();
-  const { showMessageNoInputRequired: baseShowMessageNoInputRequired, updateQueuedMessagesAndShowMessage } =
-    dialogStore;
+  const { updateQueuedMessagesAndShowMessage } = dialogStore;
   const battleDialogTarget = useBattleDialogTarget();
   const showMessages = (scene: SceneWithPlugins, messages: string[]) =>
     updateQueuedMessagesAndShowMessage(
