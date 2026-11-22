@@ -14,7 +14,7 @@ import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
 import { ResourceType } from "@esposter/db-schema";
 
 // The one record of every router the dispatch reaches, keyed by resource type; each router is named once, here
-export const resourceCallers = {
+const resourceCallers = {
   [ResourceType.Dashboard]: (ctx: Context) => createCallerFactory(dashboardRouter)(ctx),
   [ResourceType.Email]: (ctx: Context) => createCallerFactory(emailRouter)(ctx),
   [ResourceType.Note]: (ctx: Context) => createCallerFactory(noteRouter)(ctx),
