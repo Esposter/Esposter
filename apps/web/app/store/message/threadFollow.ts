@@ -1,6 +1,7 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { ClientThread } from "#src/models/message/ClientThread";
 
+import { createInFlightChanges } from "#src/services/message/createInFlightChanges";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { threadFollowTable } from "#src/services/message/threadFollow/constants";
@@ -31,17 +32,22 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     () => roomStore.currentRoomId,
     () => [],
   );
+  // The followed roots read takes the room's deletes and edits made while it is in flight, so its answer cannot list a
+  // Root the room removed, nor hold a copy the room has since edited
+  const inFlightChanges = createInFlightChanges();
   // A followed root's row is its own copy, since the room may not hold its message, so it takes the room's changes here
   messageHolderRegistry.register((roomId, hold) => {
     hold(getFollowedRoots(roomId) ?? []);
   });
   MessageHookMap[Operation.Update].register((input) => {
+    inFlightChanges.recordUpdate(input);
     updateMessageCopy(
       getFollowedRoots(input.roomId)?.find(({ id }) => id === input.id),
       input,
     );
   });
   MessageHookMap[Operation.Delete].register(({ id, roomId }) => {
+    inFlightChanges.recordDelete({ id, roomId });
     const roots = getFollowedRoots(roomId);
     // A deleted root leaves the drawer's list. Its follow row stays, so an unfollow can still find the thread
     if (roots?.some((root) => root.id === id))
@@ -68,12 +74,16 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   // Renders an unfollowed star for a thread the user follows. Untagged: nothing a resource write does changes who follows
   const { read: readFollowedThreads, refetch: refetchFollowedThreads } = useCachedRead(
     async (roomId) => {
-      const { follows, threads } = await $trpc.message.readFollowedThreads.query({ roomId });
-      const roomThreads = threads.map((thread) => ({ ...thread, roomId }));
+      const { answer, messages } = await inFlightChanges.read(
+        roomId,
+        () => $trpc.message.readFollowedThreads.query({ roomId }),
+        (readAnswer) => readAnswer.threads,
+      );
+      const roomThreads = messages.map((thread) => ({ ...thread, roomId }));
       // A row is drawn only once its root's author is known, so the authors the roots name are read with the list, as a
       // Room's messages read theirs, and the list lands with them already known
       await readMessageCreators(roomId, roomThreads);
-      return { follows, threads: roomThreads };
+      return { follows: answer.follows, threads: roomThreads };
     },
     {
       onSuccess: ({ follows, threads }, roomId) => {
