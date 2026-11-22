@@ -38,6 +38,8 @@ Notes on a tree several units share:
 grep -rnE '<(button|input|select|textarea)[ >]| title="' --include=*.vue apps/web/app/components apps/web/app/pages apps/web/app/layouts | grep -v 'components/Ui/'
 # a colour written by hand rather than a token
 grep -rnE '#[0-9a-fA-F]{3,8}\b' --include=*.vue apps/web/app/components apps/web/app/pages apps/web/app/layouts | grep -v 'components/Ui/'
+# 3. a focus tint in a scoped style: a field draws its active fill from ui-field, so a :focus or :focus-within rule that sets a colour is a candidate
+grep -rnE ':focus(-within)?\b' --include='*.vue' apps/web/app/components apps/web/app/pages apps/web/app/layouts
 # 4. a set's own icon class in a feature: each is a candidate, a hit only where UiIconMeaning already names its glyph
 grep -rnE 'i-[a-z0-9]+:[a-z0-9-]+' --include=*.vue apps/web/app/components apps/web/app/pages apps/web/app/layouts | grep -v 'components/Ui/'
 ```
@@ -45,8 +47,20 @@ grep -rnE 'i-[a-z0-9]+:[a-z0-9-]+' --include=*.vue apps/web/app/components apps/
 Each hit of 4 is read against `UiIconMeaning`: a class with no meaning yet is written whole until one is added, which is a feature change and not a sweep fix.
 
 ```bash
+# 5. a write-named button with no is-pending: the tag names a write verb in its click and binds no pending state
+rg -Pzo '<UiButton\b(?![^>]*is-pending)[^>]*@click="[^"]*\b(save|delete|remove|create|update|submit|send|revoke|publish|upload|import|generate|restore|leave|join|accept|decline|upsert|add|follow|block|invite|kick|ban|vote|like|pin|unpin|confirm|apply|reset|set|move|sync)\w*' --glob '*.vue' apps/web/app/components apps/web/app/pages apps/web/app/layouts
+```
+
+Each hit of 5 is read for the server write its handler reaches, which the reader sees only once the server answers. A local edit, a dialog's opener and an event the parent writes are not hits here. A write behind a menu item's `onClick` names no verb, so it is read by hand from the menu's items.
+
+```bash
 # 6. a read's empty state with no failure branch: a file that draws an empty state and reads isPending, and never names its error
 for f in $(grep -rlE 'UiEmptyState' --include='*.vue' apps/web/app/components apps/web/app/pages apps/web/app/layouts); do grep -qE 'isPending|is-pending' "$f" && ! grep -qE '\berror\b|isError|is-error' "$f" && echo "$f"; done
 ```
 
 Each hit of 6 is read for the read it draws: a failed read that falls through to the empty state is a hit, and the fix binds the read's error and draws `UiErrorState` ahead of the empty state.
+
+```bash
+# 7. a comment naming a focus ring: a text entry takes a fill and no ring, so a comment that gives one a ring names the wrong mark
+grep -rniE 'focus[- ]ring' --include='*.vue' --include='*.ts' apps/web/app/components apps/web/app/pages apps/web/app/layouts
+```
