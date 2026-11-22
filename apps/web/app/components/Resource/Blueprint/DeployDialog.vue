@@ -31,68 +31,69 @@ const { createErrorNotification } = notificationStore;
 const isOpen = ref(false);
 const parameterValues = ref<Record<string, string>>({});
 const deployments = ref<BlueprintDeployment[]>([]);
-// Each open starts fresh: fields prefilled from their defaults, previous results cleared
-watch(isOpen, (newIsOpen) => {
-  if (!newIsOpen) return;
-
-  parameterValues.value = Object.fromEntries(
-    blueprint.value.parameters.map(({ defaultValue, key }) => [key, defaultValue]),
-  );
-  deployments.value = [];
-});
 // What each entry will be created as, resolved from the fields as they are typed
 const deployReviews = computed(() => buildBlueprintDeployReviews(blueprint.value.entries, parameterValues.value));
 const isDeployBlocked = computed(() => deployReviews.value.some(({ isNameEmpty }) => isNameEmpty));
-const deploy = async () => {
-  const resourceValue = resource.value;
-  if (!resourceValue) return;
-
-  // The results list what the server created, so the deploy is awaited for them
-  await executeMutation(
-    () => $trpc.blueprint.deployBlueprint.mutate({ id: resourceValue.id, parameterValues: parameterValues.value }),
-    {
-      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
-      key: resourceValue.id,
-      onError: createErrorNotification,
-      onSuccess: (newDeployments) => {
-        deployments.value = newDeployments;
-      },
-    },
-  );
-};
 </script>
 
 <template>
-  <UiButton
-    :disabled="isDisabled"
-    :title="isDisabled ? 'Save the manifest before deploying' : undefined"
-    @click="isOpen = true"
-  >
-    <UiIcon :meaning="UiIconMeaning.Deploy" />
-    Deploy
-  </UiButton>
+  <UiTooltip #default="{ activatorProps }" :is-disabled="!isDisabled" label="Save the manifest before deploying">
+    <UiButton
+      :="activatorProps"
+      :disabled="isDisabled"
+      @click="
+        () => {
+          // Each open starts fresh: fields prefilled from their defaults, previous results cleared
+          parameterValues = Object.fromEntries(
+            blueprint.parameters.map(({ defaultValue, key }) => [key, defaultValue]),
+          );
+          deployments = [];
+          isOpen = true;
+        }
+      "
+    >
+      <UiIcon :meaning="UiIconMeaning.Deploy" />
+      Deploy
+    </UiButton>
+  </UiTooltip>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Deploy blueprint" :size="UiDialogSize.Medium">
     <template #default="{ formId }">
-      <UiForm v-if="deployments.length === 0" :id="formId" flex flex-col gap-3 @submit="deploy()">
+      <UiForm
+        v-if="deployments.length === 0"
+        :id="formId"
+        flex
+        flex-col
+        gap-3
+        @submit="
+          async () => {
+            const resourceValue = resource;
+            if (!resourceValue) return;
+
+            // The results list what the server created, so the deploy is awaited for them
+            await executeMutation(
+              () => $trpc.blueprint.deployBlueprint.mutate({ id: resourceValue.id, parameterValues }),
+              {
+                awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+                key: resourceValue.id,
+                onError: createErrorNotification,
+                onSuccess: (newDeployments) => {
+                  deployments = newDeployments;
+                },
+              },
+            );
+          }
+        "
+      >
         <p v-if="blueprint.parameters.length === 0" text-muted>
           This blueprint has no parameters. Deploy creates every entry as a new, fully wired resource.
         </p>
-        <div v-for="{ allowedValues, description, key, title } of blueprint.parameters" :key flex flex-col gap-1>
-          <UiSelect
-            v-if="allowedValues"
-            :items="allowedValues.map((value) => ({ title: value, value }))"
-            :label="title || key"
-            :model-value="parameterValues[key] ?? ''"
-            @update:model-value="parameterValues[key] = $event"
-          />
-          <UiTextField
-            v-else
-            :label="title || key"
-            :model-value="parameterValues[key] ?? ''"
-            @update:model-value="parameterValues[key] = $event"
-          />
-          <p v-if="description" text-muted>{{ description }}</p>
-        </div>
+        <ResourceBlueprintDeployParameterField
+          v-for="parameter of blueprint.parameters"
+          :key="parameter.key"
+          :parameter
+          :model-value="parameterValues[parameter.key] ?? ''"
+          @update:model-value="parameterValues[parameter.key] = $event"
+        />
         <!-- Each entry is a row leading with its type's mark, the name it will be created with after it -->
         <div v-if="deployReviews.length > 0" flex flex-col gap-1>
           <p>Creates {{ deployReviews.length }} {{ pluralize("resource", deployReviews.length) }}:</p>

@@ -21,17 +21,6 @@ onUnmounted(() => {
   discardManifest();
 });
 const errorMessage = ref("");
-const save = () => {
-  errorMessage.value = "";
-  const parsedManifest = getResult(() => parseBlueprintManifest(manifestJson.value))
-    .orTee((error) => {
-      errorMessage.value = error.message;
-    })
-    .unwrapOr(undefined);
-  if (!parsedManifest) return;
-
-  saveBlueprint(parsedManifest);
-};
 </script>
 
 <template>
@@ -39,7 +28,23 @@ const save = () => {
     <!-- The heading yields its width and the two actions keep theirs, so the row never wraps -->
     <div flex gap-2 items-center>
       <h2 flex-1 min-w-0 truncate ui-heading>Manifest</h2>
-      <UiButton :is-pending="isSaving" :variant="UiButtonVariant.Accent" @click="save()">
+      <UiButton
+        :is-pending="isSaving"
+        :variant="UiButtonVariant.Accent"
+        @click="
+          () => {
+            errorMessage = '';
+            const parsedManifest = getResult(() => parseBlueprintManifest(manifestJson))
+              .orTee((error) => {
+                errorMessage = error.message;
+              })
+              .unwrapOr(undefined);
+            if (!parsedManifest) return;
+
+            saveBlueprint(parsedManifest);
+          }
+        "
+      >
         <UiIcon v-if="!isSaving" :meaning="UiIconMeaning.Save" />
         Save
       </UiButton>
