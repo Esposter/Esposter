@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { PageMarkType } from "#shared/models/app/PageMarkType";
-import { RECENT_PAGES_STORED_LIMIT } from "#src/services/app/constants";
+import { RECENT_PAGES_CLOCK_INTERVAL_MS, RECENT_PAGES_STORED_LIMIT } from "#src/services/app/constants";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { useRecentPageStore } from "#src/store/recentPage";
 import { ResourceType } from "@esposter/db-schema";
@@ -14,7 +14,7 @@ describe(useRecentPageStore, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date", "setInterval"] });
   });
 
   afterEach(() => {
@@ -48,6 +48,26 @@ describe(useRecentPageStore, () => {
     visitPage(path);
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").add({ days: 91 }));
     visitPage(`${path}1`);
+    vi.advanceTimersByTime(RECENT_PAGES_CLOCK_INTERVAL_MS);
+
+    expect(displayRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual([`${path}1`, path]);
+  });
+
+  test("re-ranks as the clock moves on, without a visit", () => {
+    expect.hasAssertions();
+
+    const recentPageStore = useRecentPageStore();
+    const { displayRecentPages } = storeToRefs(recentPageStore);
+    const { visitPage } = recentPageStore;
+    visitPage(path);
+    visitPage(path);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").add({ days: 5 }));
+    visitPage(`${path}1`);
+
+    expect(displayRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual([path, `${path}1`]);
+
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").add({ days: 92 }));
+    vi.advanceTimersByTime(RECENT_PAGES_CLOCK_INTERVAL_MS);
 
     expect(displayRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual([`${path}1`, path]);
   });

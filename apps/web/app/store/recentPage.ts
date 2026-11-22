@@ -1,7 +1,7 @@
 import type { PageLink } from "#shared/models/app/PageLink";
 import type { RecentPage } from "#src/models/app/RecentPage";
 
-import { RECENT_PAGES_STORED_LIMIT } from "#src/services/app/constants";
+import { RECENT_PAGES_CLOCK_INTERVAL_MS, RECENT_PAGES_STORED_LIMIT } from "#src/services/app/constants";
 import { getRankedPages } from "#src/services/app/getRankedPages";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { checkIsDeepEqual } from "@esposter/shared";
@@ -10,7 +10,10 @@ import { checkIsDeepEqual } from "@esposter/shared";
 // List is a convenience rather than data worth a server round trip, and it exists signed out as well
 export const useRecentPageStore = defineStore("recentPage", () => {
   const recentPages = useLocalStorage<RecentPage[]>(LocalStorageKey.RecentPages, []);
-  const displayRecentPages = computed(() => getRankedPages(recentPages.value, Date.now()));
+  // A visit is the list's only write, so without a clock the order would hold as it was at the last visit while
+  // Frecency ages; this clock re-ranks the pages as time passes
+  const clock = useNow({ scheduler: (callback) => useIntervalFn(callback, RECENT_PAGES_CLOCK_INTERVAL_MS) });
+  const displayRecentPages = computed(() => getRankedPages(recentPages.value, clock.value.getTime()));
   const visitPage = (path: string) => {
     const visitedPage = recentPages.value.find((recentPage) => recentPage.path === path);
     const now = Date.now();

@@ -13,6 +13,8 @@ export const FRECENCY_BUCKETS: readonly FrecencyBucket[] = [
   { maxAgeMs: Temporal.Duration.from({ days: 90 }).total("milliseconds"), weight: 30 },
 ];
 export const FRECENCY_OLDEST_WEIGHT = 10;
+// How often the dock reads the clock, so a page's place in the order follows its age without a visit
+export const RECENT_PAGES_CLOCK_INTERVAL_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 export const RECENT_PAGES_SHOWN_LIMIT = 5;
 export const RECENT_PAGES_STORED_LIMIT = 50;
 // Home is the logo and signing in is a step on the way somewhere, so neither is a place a reader comes back to
