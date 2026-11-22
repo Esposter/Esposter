@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { checkIsUuidRouteId } from "#src/services/router/checkIsUuidRouteId";
-import { noop } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth", validate: checkIsUuidRouteId });
 

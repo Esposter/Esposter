@@ -2,7 +2,7 @@
 import type { AppNotificationAction } from "#src/models/notification/AppNotificationAction";
 
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
-import { getSynchronizedFunction, noop } from "@esposter/shared";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 interface Props {
   action: AppNotificationAction;
