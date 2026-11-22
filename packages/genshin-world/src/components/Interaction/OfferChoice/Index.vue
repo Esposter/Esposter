@@ -54,12 +54,12 @@ const emit = defineEmits<{
 .offer-choice {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: calc(var(--unit) * 8);
   align-items: flex-start;
   pointer-events: auto;
 }
 
 .offer {
-  padding: 4px 12px;
+  padding: calc(var(--unit) * 4) calc(var(--unit) * 12);
 }
 </style>
