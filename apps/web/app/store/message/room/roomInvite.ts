@@ -11,9 +11,6 @@ import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useUserStore } from "#src/store/message/user/index";
 import { useOverlayStore } from "#src/store/overlay";
 
-// A list names each invite by its id, and the rows themselves are the overlay's
-type InviteKey = InviteInMessage["id"];
-
 // The room's whole set, behind ManageRoom — apart from `useInviteStore`, which holds the reader's own link
 export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
   const { $trpc } = useNuxtApp();
@@ -23,10 +20,11 @@ export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
   const userStore = useUserStore();
   const { storeUsers } = userStore;
   // Keyed by room: a read for the room the reader just left is filed under it rather than over the list on screen
-  const { getSlice, getSliceOperationData } = useCursorPaginationDataMap<InviteKey>();
+  // A list names each invite by its id, and the rows themselves are the overlay's
+  const { getSlice, getSliceOperationData } = useCursorPaginationDataMap<InviteInMessage["id"]>();
   // The rows the keys name, with each creator's user. The view leaves a tombstone out, and so is a link that has lapsed,
   // As the read that carried it did before the overlay
-  const toListedInvites = (keys: readonly InviteKey[]) =>
+  const toListedInvites = (keys: readonly InviteInMessage["id"][]) =>
     keys.flatMap((id) => {
       const invite = inviteRows.value.find((row): row is InviteInMessage => row.id === id && checkIsVersioned(row));
       const user = invite ? userStore.userMap.get(invite.userId) : undefined;
@@ -35,7 +33,10 @@ export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
   const getInviteItems = (roomId: RoomInMessage["id"]) =>
     computed(() => toListedInvites(getSliceOperationData(roomId).items.value));
   // A page of a room's invites arrives row by row, and the list keeps the ids the page named, in the server's order
-  const readInvitePage = ({ items: pageInvites, ...page }: Page<InviteInMessageWithCreator>): Page<InviteKey> => {
+  const readInvitePage = ({
+    items: pageInvites,
+    ...page
+  }: Page<InviteInMessageWithCreator>): Page<InviteInMessage["id"]> => {
     storeUsers(pageInvites.map(({ user }) => user));
     for (const invite of pageInvites) arrive(inviteTable, invite);
     return { ...page, items: pageInvites.map(({ id }) => id) };

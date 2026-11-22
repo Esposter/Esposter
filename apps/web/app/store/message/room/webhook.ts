@@ -46,21 +46,23 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const readWebhookRows = useOverlayRead(webhookTable, (webhook: WebhookInMessageWithRelations) => webhook);
   const readWebhooks = (roomId: RoomInMessage["id"]) =>
     readWebhookRows(() => $trpc.webhook.readWebhooks.query({ roomId }));
+  // The credential is the server's to mint, so the URL that carries it is shown once the write answers with it
+  const writeIssuedWebhook = (mutate: () => Promise<IssuedWebhookInMessage>) =>
+    writeAwaited(
+      async () => {
+        const issuedWebhook = await mutate();
+        showIssuedUrl(issuedWebhook);
+        return [createArrival(webhookTable, issuedWebhook.webhook)];
+      },
+      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
+    );
   // The create's answer is the server's to mint, so it is shown once the server issues it. Its pending state is the
   // Dialog's button, which no entry can show for a write that has none
   const isCreateWebhookPending = ref(false);
   const createWebhook = async (input: CreateWebhookInput) => {
     isCreateWebhookPending.value = true;
     await withFinalizerAsync(
-      () =>
-        writeAwaited(
-          async () => {
-            const issuedWebhook = await $trpc.webhook.createWebhook.mutate(input);
-            showIssuedUrl(issuedWebhook);
-            return [createArrival(webhookTable, issuedWebhook.webhook)];
-          },
-          { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
-        ),
+      () => writeIssuedWebhook(() => $trpc.webhook.createWebhook.mutate(input)),
       () => {
         isCreateWebhookPending.value = false;
       },
@@ -76,17 +78,8 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
       onError: createErrorAlert,
     });
   };
-  // The token is the server's to mint, and the URL that carries it is shown once the server issues it
-  const regenerateToken = async (input: RegenerateTokenInput) => {
-    await writeAwaited(
-      async () => {
-        const regeneratedWebhook = await $trpc.webhook.regenerateToken.mutate(input);
-        showIssuedUrl(regeneratedWebhook);
-        return [createArrival(webhookTable, regeneratedWebhook.webhook)];
-      },
-      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
-    );
-  };
+  const regenerateToken = (input: RegenerateTokenInput) =>
+    writeIssuedWebhook(() => $trpc.webhook.regenerateToken.mutate(input));
   const deleteWebhook = (input: DeleteWebhookInput) => {
     writeOptimistic(async () => createRowResponse(webhookTable, await $trpc.webhook.deleteWebhook.mutate(input)), {
       entry: getWebhookPatchEntry(input.id, { deletedAt: new Date() }),
