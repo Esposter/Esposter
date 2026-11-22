@@ -3,8 +3,6 @@ import { readSkillDocsFindings } from "#src/services/sweeps/skillDocs/readSkillD
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-const typeWidth = Math.max(...SkillDocsFindingTypes.map(({ length }) => length));
-
 await runCommand(
   defineCommand({
     meta: {
@@ -12,6 +10,7 @@ await runCommand(
       name: "ai:sweep:skill-docs",
     },
     run: () => {
+      const typeWidth = Math.max(...SkillDocsFindingTypes.map(({ length }) => length));
       for (const { detail, path, type } of readSkillDocsFindings())
         console.info(`${type.padEnd(typeWidth)} ${path}: ${detail}`);
     },

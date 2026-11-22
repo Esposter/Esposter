@@ -1,3 +1,4 @@
+import { TodoLinkState } from "#src/models/sweeps/todos/TodoLinkState";
 import { CLAUDE_PATHSPEC_EXCLUDE } from "#src/services/sweeps/constants";
 
 // What both marker scans leave out: prose names the marker to say how one is written, and this directory plants the
@@ -11,3 +12,4 @@ export const TODO_EXCLUDED_PATHSPECS: string[] = [
 export const TODO_MARKER = "@TODO";
 // The links GitHub's own record answers for, read in one request by the report
 export const GITHUB_URL_PREFIX = "https://github.com/";
+export const TODO_LINK_STATE_ORDER: TodoLinkState[] = Object.values(TodoLinkState);
