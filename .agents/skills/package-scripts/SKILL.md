@@ -41,6 +41,7 @@ Once, after all the edits going out together: the tests of what the change touch
 - **A caller runs the script, not the binary under it** — `pnpm exec <binary>` in a workflow is a second definition that drifts; where no script has the shape, add one (`bench:ci`).
 - **A command stays a script unless caching earns it a `vp run` task** in the root `vite.config.ts` — the three conditions, and what each rules out, are `openspec/specs/architecture/vite-plus/design.md`, "The task cache".
 - **A script is invoked bare — `pnpm <script>`, never `pnpm run <script>`** — including under `-C` and `--filter`. `run` is load-bearing only for a name that shadows a pnpm command; `scripts/src/workspace/packageScripts.test.ts` fails on any other inside a manifest, so a workflow or a doc is where the collision is still unchecked.
+- **A script a session writes a second time becomes a command.** An inline Python, shell or node snippet run once in a scratchpad stays there (a backfill is the `backfills` skill's); the second time the same job is scripted it is a citty command under `scripts` (the `cli` skill) with its `ai:*` alias and its row in `references/ai-scripts.md`, so every session and team member runs the same tool through pnpm.
 - **A tool's default configuration stays unless a measured reason still holds.** An override, or a hook built to work around a default, is removed when its reason goes.
 - How each fails, and the name that shadows a pnpm command: `references/pnpm-traps.md`.
 
