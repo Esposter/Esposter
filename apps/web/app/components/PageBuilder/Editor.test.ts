@@ -91,9 +91,10 @@ describe("pageBuilderEditor", () => {
   test("the editor draws the palette, the canvas and the content panel", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         {
           props: {
@@ -126,7 +127,8 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
 
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
@@ -136,16 +138,18 @@ describe("pageBuilderEditor", () => {
   test("a node selection offers Content and Style only", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
 
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
@@ -157,7 +161,8 @@ describe("pageBuilderEditor", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
 
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
@@ -172,17 +177,19 @@ describe("pageBuilderEditor", () => {
   test("the device toggle sets the frame's device", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setDevice, setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    pageBuilderCanvasStore.setDevice(resourceId, PageBuilderDevice.Desktop);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setDevice(resourceId, PageBuilderDevice.Desktop);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     const mobile = component.findAll('[role="radio"]').find((option) => option.text() === "Mobile");
@@ -196,16 +203,18 @@ describe("pageBuilderEditor", () => {
     display.isCompact = true;
     display.isMobile = true;
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
     const inspector = findSheet(component, PAGE_BUILDER_REGION_NAME_MAP[PAGE_BUILDER_REGION_ID_MAP.Inspector]);
 
@@ -225,16 +234,18 @@ describe("pageBuilderEditor", () => {
     expect.hasAssertions();
     display.isMobile = true;
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
     const inspector = component.get<HTMLDialogElement>(`dialog[data-placement="${UiDialogPlacement.DrawerEnd}"]`);
 
@@ -253,9 +264,10 @@ describe("pageBuilderEditor", () => {
   test("a critique finding is a warning in the problems surface", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         createTestTextNode(TEST_OTHER_ID, {
           [StyleBreakpoint.Base]: { [StyleState.Default]: { color: TEST_GREY_RGB_VALUE } },
@@ -274,10 +286,12 @@ describe("pageBuilderEditor", () => {
   test("choosing a finding in the problems surface selects the node it names", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         createTestTextNode(TEST_OTHER_ID, {
           [StyleBreakpoint.Base]: { [StyleState.Default]: { color: TEST_GREY_RGB_VALUE } },
@@ -289,7 +303,7 @@ describe("pageBuilderEditor", () => {
 
     await takeOne(component.findAll(problemRows)).trigger("click");
 
-    expect(pageBuilderCanvasStore.getSelectedNodeId(resourceId)).toBe(TEST_OTHER_ID);
+    expect(getSelectedNodeId(resourceId)).toBe(TEST_OTHER_ID);
   });
 
   test("an unsaved edit changes the findings", async () => {
@@ -298,15 +312,13 @@ describe("pageBuilderEditor", () => {
     // oxlint-disable-next-line testing/no-faked-set-timeout -- the findings debounce is counted by the clock; the afterEach above restores the real timers before the harness waits a turn on setTimeout
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [createTestTextNode(TEST_OTHER_ID, {})],
-      root: TEST_ROOT,
-    });
+    setDocument(resourceId, webpageKind, { content: [createTestTextNode(TEST_OTHER_ID, {})], root: TEST_ROOT });
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
     const findingsBeforeEdit = component.findAll(problemRows).map((row) => row.text());
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         createTestTextNode(TEST_OTHER_ID, {
           [StyleBreakpoint.Base]: { [StyleState.Default]: { color: TEST_GREY_RGB_VALUE } },
@@ -326,6 +338,7 @@ describe("pageBuilderEditor", () => {
   test("an invite to an unpublished survey is reported", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
     const { promise: surveyListRead, resolve: completeSurveyListRead } = Promise.withResolvers<void>();
     trpcMsw.survey.readResources.query(() => {
       completeSurveyListRead();
@@ -333,7 +346,7 @@ describe("pageBuilderEditor", () => {
     });
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [createTestSurveyInviteNode(TEST_OTHER_ID, TEST_SURVEY_ID)],
       root: TEST_ROOT,
     });
@@ -354,12 +367,10 @@ describe("pageBuilderEditor", () => {
     const readResources = vi.fn<() => ResourceListPage>(() => createEmptyPage());
     trpcMsw.survey.readResources.query(readResources);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [createTestTextNode(TEST_OTHER_ID, {})],
-      root: TEST_ROOT,
-    });
+    setDocument(resourceId, webpageKind, { content: [createTestTextNode(TEST_OTHER_ID, {})], root: TEST_ROOT });
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
     await flushPromises();
 
@@ -370,22 +381,24 @@ describe("pageBuilderEditor", () => {
   test("a block can be moved with the keyboard alone", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await pressKey({ altKey: true, key: "ArrowDown" });
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
+    expect(getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
       TEST_OTHER_ID,
       TEST_ROOT_TEXT_ID,
     ]);
@@ -394,40 +407,42 @@ describe("pageBuilderEditor", () => {
   test("delete removes the selected node", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await pressKey({ key: "Delete" });
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
-      TEST_OTHER_ID,
-    ]);
+    expect(getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([TEST_OTHER_ID]);
   });
 
   test("a key typed into a text field is no edit key", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
     const input = document.createElement("input");
     document.body.append(input);
@@ -438,7 +453,7 @@ describe("pageBuilderEditor", () => {
 
     await pressKey({ key: "Delete" }, input);
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
+    expect(getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
       TEST_ROOT_TEXT_ID,
       TEST_OTHER_ID,
     ]);
@@ -447,17 +462,19 @@ describe("pageBuilderEditor", () => {
   test("a move announces its result in the live region", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await pressKey({ altKey: true, key: "ArrowDown" });
@@ -471,30 +488,34 @@ describe("pageBuilderEditor", () => {
   test("enter edits a selected text node in place", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getEditingNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await component.trigger("keydown", { key: "Enter" });
 
-    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
+    expect(getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
   });
 
   test("enter does nothing on a button", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getEditingNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         {
           props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
@@ -503,47 +524,51 @@ describe("pageBuilderEditor", () => {
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await component.trigger("keydown", { key: "Enter" });
 
-    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe("");
+    expect(getEditingNodeId(resourceId)).toBe("");
   });
 
   test("enter on a focused button activates it rather than editing the selected text", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getEditingNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await component.get("button").trigger("keydown", { key: "Enter" });
 
-    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe("");
+    expect(getEditingNodeId(resourceId)).toBe("");
   });
 
   test("enter on a button in the canvas frame activates it rather than editing the selected text", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getEditingNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
     // An element of the frame's document comes from another realm, so it fails instanceof Element against this window's
     const frameButton: { closest: () => unknown; tagName: string } = { closest: () => frameButton, tagName: "BUTTON" };
@@ -552,30 +577,32 @@ describe("pageBuilderEditor", () => {
 
     component.findComponent(PageBuilderCanvas).vm.$emit("canvasKeydown", event);
 
-    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe("");
+    expect(getEditingNodeId(resourceId)).toBe("");
   });
 
   test("leaving a text edit focuses the node's row in the layers tree", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setEditingNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, {
       attachTo: document.body,
       props: { kind: webpageKind, resourceId },
     });
-    pageBuilderCanvasStore.setEditingNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setEditingNodeId(resourceId, TEST_ROOT_TEXT_ID);
     await nextTick();
 
-    pageBuilderCanvasStore.setEditingNodeId(resourceId, "");
+    setEditingNodeId(resourceId, "");
     // The tree is shown on one tick and its row focused on the next. Waiting on the page instead would let the canvas
     // Frame finish loading, and happy-dom then strands the nodes teleported into it when the editor unmounts
     await nextTick();
@@ -588,64 +615,68 @@ describe("pageBuilderEditor", () => {
   test("a keydown forwarded from the canvas deletes the selected node", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     component
       .findComponent(PageBuilderCanvas)
       .vm.$emit("canvasKeydown", new KeyboardEvent("keydown", { key: "Delete" }));
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
-      TEST_OTHER_ID,
-    ]);
+    expect(getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([TEST_OTHER_ID]);
   });
 
   test("a keydown forwarded from the canvas starts a text edit on enter", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getEditingNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     component
       .findComponent(PageBuilderCanvas)
       .vm.$emit("canvasKeydown", new KeyboardEvent("keydown", { key: "Enter" }));
 
-    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
+    expect(getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
   });
 
   test("ctrl C copies the selected node to the clipboard", async () => {
     expect.hasAssertions();
     const writeText = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue(undefined);
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await pressKey({ ctrlKey: true, key: "c" });
@@ -658,9 +689,10 @@ describe("pageBuilderEditor", () => {
   test("an empty page shows its empty state instead of the canvas", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
 
     const resourceId = v7();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
+    setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
 
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 

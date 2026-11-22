@@ -45,7 +45,8 @@ describe("pageBuilderStylePanel", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, {
       content: [
         {
           props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
@@ -55,8 +56,10 @@ describe("pageBuilderStylePanel", () => {
       root: TEST_ROOT,
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { getUndoLabel } = pageBuilderHistoryStore;
 
     const component = await mountSuspended(PageBuilderStylePanel, { props: { resourceId } });
 
@@ -113,19 +116,21 @@ describe("pageBuilderStylePanel", () => {
         "Effects",
       ]
     `);
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
+    expect(getUndoLabel(resourceId)).toBe("");
   });
 
   test("a refused draft is not shown on the node selected after it", async () => {
     expect.hasAssertions();
 
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, {
       content: [createTestImageNode(TEST_URL, TEST_OTHER_ID), createTestImageNode(TEST_URL, TEST_THIRD_ID)],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderStylePanel, { props: { resourceId: TEST_ID } });
     const getWidthInput = () => {
@@ -137,7 +142,7 @@ describe("pageBuilderStylePanel", () => {
     };
     await getWidthInput().setValue("10px}");
 
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_THIRD_ID);
+    setSelectedNodeId(TEST_ID, TEST_THIRD_ID);
     await component.vm.$nextTick();
 
     expect((getWidthInput().element as HTMLInputElement).value).toBe("");
@@ -148,20 +153,22 @@ describe("pageBuilderStylePanel", () => {
 
     vi.stubGlobal("CSS", { supports: () => true });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, {
       content: [
         createSection(TEST_OTHER_ID, { [StyleBreakpoint.Base]: { [StyleState.Default]: { display: "flex" } } }),
       ],
       root: TEST_ROOT,
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderStylePanel, { props: { resourceId: TEST_ID } });
     await getFieldInput(component, "flex-wrap").setValue("wrap");
 
     expect(getSectorTitle(component, "flex-wrap")).toBe("Layout");
-    expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content[0]?.props.style).toStrictEqual({
+    expect(getDocument(TEST_ID)?.content[0]?.props.style).toStrictEqual({
       [StyleBreakpoint.Base]: { [StyleState.Default]: { display: "flex", "flex-wrap": "wrap" } },
     });
   });
@@ -171,18 +178,17 @@ describe("pageBuilderStylePanel", () => {
 
     vi.stubGlobal("CSS", { supports: () => true });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [createButton(TEST_OTHER_ID)],
-      root: TEST_ROOT,
-    });
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, { content: [createButton(TEST_OTHER_ID)], root: TEST_ROOT });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderStylePanel, { props: { resourceId: TEST_ID } });
     await getFieldInput(component, "transform").setValue("rotate(10deg)");
 
     expect(getSectorTitle(component, "transform")).toBe("Effects");
-    expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content[0]?.props.style).toStrictEqual({
+    expect(getDocument(TEST_ID)?.content[0]?.props.style).toStrictEqual({
       [StyleBreakpoint.Base]: { [StyleState.Default]: { transform: "rotate(10deg)" } },
     });
   });
@@ -192,19 +198,21 @@ describe("pageBuilderStylePanel", () => {
 
     vi.stubGlobal("CSS", { supports: () => false });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, {
       content: [createSection(TEST_OTHER_ID, { [StyleBreakpoint.Base]: { [StyleState.Default]: { "z-index": "2" } } })],
       root: TEST_ROOT,
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderStylePanel, { props: { resourceId: TEST_ID } });
     await getFieldInput(component, "z-index").setValue("2px");
     await flushPromises();
 
     expect(component.text()).toContain("z-index does not take this value");
-    expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content[0]?.props.style).toStrictEqual({
+    expect(getDocument(TEST_ID)?.content[0]?.props.style).toStrictEqual({
       [StyleBreakpoint.Base]: { [StyleState.Default]: { "z-index": "2" } },
     });
   });

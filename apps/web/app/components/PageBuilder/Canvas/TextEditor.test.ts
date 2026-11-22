@@ -19,7 +19,8 @@ import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vites
 const mountEditingText = async () => {
   const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+  const { setDocument } = pageBuilderDocumentStore;
+  setDocument(resourceId, webpageKind, {
     content: [
       { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
     ],
@@ -73,7 +74,8 @@ describe("pageBuilderCanvasTextEditor", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
@@ -94,15 +96,18 @@ describe("pageBuilderCanvasTextEditor", () => {
 
     const resourceId = v7();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getEditingNodeId, setEditingNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    const { getUndoLabel, undo } = pageBuilderHistoryStore;
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setEditingNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setEditingNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderCanvasTextEditor, {
       props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
     });
@@ -115,14 +120,14 @@ describe("pageBuilderCanvasTextEditor", () => {
     editor.commands.insertContent("b");
     await component.trigger("keydown", { key: "Escape" });
 
-    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe("");
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([
+    expect(getEditingNodeId(resourceId)).toBe("");
+    expect(getDocument(resourceId)?.content).toStrictEqual([
       { props: { content: editor.getJSON(), elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
     ]);
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("Edit text");
-    pageBuilderHistoryStore.undo(resourceId);
+    expect(getUndoLabel(resourceId)).toBe("Edit text");
+    undo(resourceId);
 
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
+    expect(getUndoLabel(resourceId)).toBe("");
     component.unmount();
   });
 
@@ -131,8 +136,10 @@ describe("pageBuilderCanvasTextEditor", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    const { getUndoLabel, undo } = pageBuilderHistoryStore;
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
@@ -154,12 +161,12 @@ describe("pageBuilderCanvasTextEditor", () => {
     await editSession("a");
     await editSession("b");
     // Each session is its own entry, so two undos take both back and no third is left
-    pageBuilderHistoryStore.undo(resourceId);
+    undo(resourceId);
 
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("Edit text");
-    pageBuilderHistoryStore.undo(resourceId);
+    expect(getUndoLabel(resourceId)).toBe("Edit text");
+    undo(resourceId);
 
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
+    expect(getUndoLabel(resourceId)).toBe("");
   });
 
   test("typing two braces offers the dataset's columns", async () => {
@@ -168,7 +175,8 @@ describe("pageBuilderCanvasTextEditor", () => {
     const columnId = v7();
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, {
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(resourceId, emailKind, {
       content: [
         {
           props: {
@@ -202,9 +210,10 @@ describe("pageBuilderCanvasTextEditor", () => {
     // The suggestion's items resolve after the keystroke, so the list is read once the promises it waits on have settled
     await flushPromises();
     const richTextSuggestionStore = useRichTextSuggestionStore();
+    const { suggestion } = storeToRefs(richTextSuggestionStore);
 
-    expect(richTextSuggestionStore.suggestion?.props.items).toStrictEqual(["first_name", "last_name"]);
-    richTextSuggestionStore.suggestion?.props.command("last_name");
+    expect(suggestion.value?.props.items).toStrictEqual(["first_name", "last_name"]);
+    suggestion.value?.props.command("last_name");
 
     expect(editor.getText()).toBe(`${TEST_ID} {{last_name}}`);
     component.unmount();

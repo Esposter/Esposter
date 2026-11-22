@@ -16,11 +16,12 @@ describe("pageBuilderCanvasDeviceToggle", () => {
     expect.hasAssertions();
 
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getDevice } = pageBuilderCanvasStore;
     const component = mount(PageBuilderCanvasDeviceToggle, { attachTo: document.body, props: { resourceId: TEST_ID } });
     await flushPromises();
     const tablet = component.findAll('[role="radio"]').find((option) => option.text() === "Tablet");
     await tablet?.trigger("click");
 
-    expect(pageBuilderCanvasStore.getDevice(TEST_ID)).toBe(PageBuilderDevice.Tablet);
+    expect(getDevice(TEST_ID)).toBe(PageBuilderDevice.Tablet);
   });
 });

@@ -13,7 +13,8 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 // A page holding one text node under the test id, the node the hover outline names
 const setTextDocument = () => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+  const { setDocument } = pageBuilderDocumentStore;
+  setDocument(TEST_ID, webpageKind, {
     content: [{ props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ID }, type: WebpageNodeType.Text }],
     root: { props: { lang: "en", tokens: {} } },
   });
@@ -38,10 +39,8 @@ describe("pageBuilderCanvasOverlays", () => {
     const element = document.createElement("div");
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(120, 40, 80, 20));
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [],
-      root: { props: { lang: "en", tokens: {} } },
-    });
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, { content: [], root: { props: { lang: "en", tokens: {} } } });
 
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {
@@ -72,10 +71,8 @@ describe("pageBuilderCanvasOverlays", () => {
     const element = document.createElement("div");
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(120, 40, 80, 20));
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [],
-      root: { props: { lang: "en", tokens: {} } },
-    });
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, { content: [], root: { props: { lang: "en", tokens: {} } } });
 
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {
@@ -104,10 +101,8 @@ describe("pageBuilderCanvasOverlays", () => {
     const element = document.createElement("div");
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(120, 40, 80, 20));
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [],
-      root: { props: { lang: "en", tokens: {} } },
-    });
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, { content: [], root: { props: { lang: "en", tokens: {} } } });
 
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {

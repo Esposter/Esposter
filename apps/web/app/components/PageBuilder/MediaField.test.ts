@@ -20,7 +20,8 @@ describe("pageBuilderMediaField", () => {
   test("a picked image uploads, and its asset url is emitted as the source of the node selected when it was picked", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderMediaField, {
       props: { category: MimeCategory.Image, resourceId: TEST_ID, type: ResourceType.Email },
@@ -36,7 +37,8 @@ describe("pageBuilderMediaField", () => {
   test("an upload that lands after the selection moved still names the node its image was picked for", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
     const { promise, resolve } = Promise.withResolvers<string>();
     upload.result = promise;
 
@@ -46,7 +48,7 @@ describe("pageBuilderMediaField", () => {
     component
       .getComponent(UiFileField)
       .vm.$emit("update:modelValue", [new File([], TEST_IMAGE_FILE_NAME, { type: MimeType.Png })]);
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_THIRD_ID);
+    setSelectedNodeId(TEST_ID, TEST_THIRD_ID);
     resolve(assetUrl);
     await flushPromises();
 

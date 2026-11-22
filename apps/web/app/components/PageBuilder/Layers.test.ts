@@ -15,17 +15,19 @@ describe("pageBuilderLayers", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, TEST_WEBPAGE);
     const component = await mountSuspended(PageBuilderLayers, {
       attachTo: document.body,
-      props: { getDocument: () => pageBuilderDocumentStore.getDocument(resourceId), kind: webpageKind, resourceId },
+      props: { getDocument: () => getDocument(resourceId), kind: webpageKind, resourceId },
     });
     component.get<HTMLElement>(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
 
     await expect(press("ArrowDown")).resolves.toBe(TEST_NESTED_TEXT_ID);
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getSelectedNodeId } = pageBuilderCanvasStore;
 
-    expect(pageBuilderCanvasStore.getSelectedNodeId(resourceId)).toBe(TEST_NESTED_TEXT_ID);
+    expect(getSelectedNodeId(resourceId)).toBe(TEST_NESTED_TEXT_ID);
 
     component.unmount();
   });
@@ -35,10 +37,11 @@ describe("pageBuilderLayers", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, TEST_WEBPAGE);
     const component = await mountSuspended(PageBuilderLayers, {
       attachTo: document.body,
-      props: { getDocument: () => pageBuilderDocumentStore.getDocument(resourceId), kind: webpageKind, resourceId },
+      props: { getDocument: () => getDocument(resourceId), kind: webpageKind, resourceId },
     });
     component.get<HTMLElement>(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
 

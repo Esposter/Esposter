@@ -109,9 +109,11 @@ const createVideoNode = (src: string): VideoNode => ({
 // The panel of a selected media node, mounted over a document that holds it alone
 const mountMediaPanel = async (resourceId: string, node: ImageNode | VideoNode) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [node], root: TEST_ROOT });
+  const { setDocument } = pageBuilderDocumentStore;
+  setDocument(resourceId, webpageKind, { content: [node], root: TEST_ROOT });
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-  pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
+  const { setSelectedNodeId } = pageBuilderCanvasStore;
+  setSelectedNodeId(resourceId, TEST_OTHER_ID);
 
   const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
   await flushPromises();
@@ -137,14 +139,16 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { href: TEST_URL, label: "a" });
 
-    const document = webpageDocumentSchema.parse(pageBuilderDocumentStore.getDocument(resourceId));
+    const document = webpageDocumentSchema.parse(getDocument(resourceId));
 
     expect(document.content).toStrictEqual([
       {
@@ -167,14 +171,16 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { href: TEST_URL, label: "" });
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(createButtonDocument().content);
+    expect(getDocument(resourceId)?.content).toStrictEqual(createButtonDocument().content);
 
     component.unmount();
   });
@@ -184,18 +190,18 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createEmailButtonDocument("a"));
+    const { getHeldDocument, setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(resourceId, emailKind, createEmailButtonDocument("a"));
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
 
     expect(component.findComponent({ name: "UiSchemaForm" }).props("modelValue")).toStrictEqual({ content: "a" });
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { content: "b" });
 
-    expect(pageBuilderDocumentStore.getHeldDocument(resourceId)?.document).toStrictEqual(
-      createEmailButtonDocument("b"),
-    );
+    expect(getHeldDocument(resourceId)?.document).toStrictEqual(createEmailButtonDocument("b"));
 
     component.unmount();
   });
@@ -205,9 +211,11 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, TEST_EMAIL);
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(resourceId, emailKind, TEST_EMAIL);
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_NESTED_TEXT_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_NESTED_TEXT_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
 
     expect(component.findComponent(UiSchemaForm).exists()).toBe(false);
@@ -224,12 +232,13 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, createButtonDocument());
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { lang: "a" });
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.root).toStrictEqual({ props: { lang: "a", tokens: {} } });
+    expect(getDocument(resourceId)?.root).toStrictEqual({ props: { lang: "a", tokens: {} } });
 
     component.unmount();
   });
@@ -247,11 +256,12 @@ describe("pageBuilderContentPanel", () => {
     }));
     trpcMsw.resource.readResource.query(() => publishedInList);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    if (kind === emailKind)
-      pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createEmailSurveyInviteDocument(NO_SURVEY_ID));
-    else pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createSurveyInviteDocument(NO_SURVEY_ID));
+    const { setDocument, setEmailDocument } = pageBuilderDocumentStore;
+    if (kind === emailKind) setEmailDocument(resourceId, emailKind, createEmailSurveyInviteDocument(NO_SURVEY_ID));
+    else setDocument(resourceId, webpageKind, createSurveyInviteDocument(NO_SURVEY_ID));
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind, resourceId } });
     await flushPromises();
 
@@ -262,6 +272,7 @@ describe("pageBuilderContentPanel", () => {
     expect.hasAssertions();
 
     const { component, pageBuilderDocumentStore, published, resourceId } = await mountInvitePicker(webpageKind);
+    const { getDocument } = pageBuilderDocumentStore;
 
     expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
       items: [{ meaning: UiIconMeaning.Survey, title: published.name, value: published.id }],
@@ -269,9 +280,7 @@ describe("pageBuilderContentPanel", () => {
     });
     component.getComponent(ResourceLinkSelect).vm.$emit("update:modelValue", published.id);
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(
-      createSurveyInviteDocument(published.id).content,
-    );
+    expect(getDocument(resourceId)?.content).toStrictEqual(createSurveyInviteDocument(published.id).content);
 
     component.unmount();
   });
@@ -280,6 +289,7 @@ describe("pageBuilderContentPanel", () => {
     expect.hasAssertions();
 
     const { component, pageBuilderDocumentStore, published, resourceId } = await mountInvitePicker(emailKind);
+    const { getEmailDocument } = pageBuilderDocumentStore;
 
     expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
       items: [{ meaning: UiIconMeaning.Survey, title: published.name, value: published.id }],
@@ -287,9 +297,7 @@ describe("pageBuilderContentPanel", () => {
     });
     component.getComponent(ResourceLinkSelect).vm.$emit("update:modelValue", published.id);
 
-    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.content).toStrictEqual(
-      createEmailSurveyInviteDocument(published.id).content,
-    );
+    expect(getEmailDocument(resourceId)?.content).toStrictEqual(createEmailSurveyInviteDocument(published.id).content);
 
     component.unmount();
   });
@@ -302,10 +310,12 @@ describe("pageBuilderContentPanel", () => {
     trpcMsw.survey.readResources.query(() => createEmptyPage());
     trpcMsw.resource.readResource.query(() => ({ ...survey, publication: null }));
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
     const document = createSurveyInviteDocument(survey.id);
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, document);
+    setDocument(resourceId, webpageKind, document);
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
     await flushPromises();
 
@@ -313,7 +323,7 @@ describe("pageBuilderContentPanel", () => {
       getUnpublishedResourceMessage(survey.name),
     ]);
     expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual(createEmptyPage());
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(document.content);
+    expect(getDocument(resourceId)?.content).toStrictEqual(document.content);
 
     component.unmount();
   });
@@ -324,16 +334,18 @@ describe("pageBuilderContentPanel", () => {
     const resourceId = v7();
     trpcMsw.survey.readResources.query(() => createEmptyPage());
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
     const document = createSurveyInviteDocument(NO_SURVEY_ID);
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, document);
+    setDocument(resourceId, webpageKind, document);
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
     await flushPromises();
 
     expect(component.get('[role="status"]').text()).toBe("A survey must be published before it can be chosen");
     expect(component.findComponent({ name: "UiSelect" }).props("items")).toStrictEqual([]);
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(document.content);
+    expect(getDocument(resourceId)?.content).toStrictEqual(document.content);
 
     component.unmount();
   });
@@ -343,16 +355,18 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
 
     component
       .getComponent(UiSchemaForm)
       .vm.$emit("update:modelValue", { elementId: "", href: TEST_URL, label: TEST_LABEL, target: ButtonTarget.NewTab });
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([
+    expect(getDocument(resourceId)?.content).toStrictEqual([
       {
         props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.NewTab },
         type: WebpageNodeType.Button,
@@ -367,9 +381,11 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
 
     component
@@ -381,7 +397,7 @@ describe("pageBuilderContentPanel", () => {
         target: ButtonTarget.SameTab,
       });
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([
+    expect(getDocument(resourceId)?.content).toStrictEqual([
       {
         props: { elementId: "a", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, target: ButtonTarget.SameTab },
         type: WebpageNodeType.Button,

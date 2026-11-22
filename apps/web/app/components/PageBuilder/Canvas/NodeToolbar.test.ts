@@ -20,12 +20,11 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     expect.hasAssertions();
 
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [createTestImageNode(TEST_URL, TEST_OTHER_ID)],
-      root: TEST_ROOT,
-    });
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, { content: [createTestImageNode(TEST_URL, TEST_OTHER_ID)], root: TEST_ROOT });
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderCanvasNodeToolbar, {
       props: {
@@ -52,9 +51,9 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     ]);
 
     await component.get("button[aria-label='Duplicate']").trigger("click");
-    const copyId = pageBuilderCanvasStore.getSelectedNodeId(TEST_ID);
+    const copyId = getSelectedNodeId(TEST_ID);
 
-    expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content).toStrictEqual([
+    expect(getDocument(TEST_ID)?.content).toStrictEqual([
       createTestImageNode(TEST_URL, TEST_OTHER_ID),
       createTestImageNode(TEST_URL, copyId),
     ]);
@@ -64,12 +63,11 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     expect.hasAssertions();
 
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [createTestImageNode(TEST_URL, TEST_OTHER_ID)],
-      root: TEST_ROOT,
-    });
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, { content: [createTestImageNode(TEST_URL, TEST_OTHER_ID)], root: TEST_ROOT });
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderCanvasNodeToolbar, {
       props: {
@@ -82,20 +80,22 @@ describe("pageBuilderCanvasNodeToolbar", () => {
 
     await component.get("button[aria-label='Delete']").trigger("click");
 
-    expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content).toHaveLength(1);
+    expect(getDocument(TEST_ID)?.content).toHaveLength(1);
 
     await component.get(`button[data-variant="${UiButtonVariant.Danger}"]`).trigger("click");
 
-    expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content).toStrictEqual([]);
+    expect(getDocument(TEST_ID)?.content).toStrictEqual([]);
   });
 
   test("the toolbar's select parent selects the node holding the selected one", async () => {
     expect.hasAssertions();
 
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, TEST_WEBPAGE);
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_NESTED_TEXT_ID);
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, TEST_WEBPAGE);
+    setSelectedNodeId(TEST_ID, TEST_NESTED_TEXT_ID);
 
     const component = await mountSuspended(PageBuilderCanvasNodeToolbar, {
       props: {
@@ -108,7 +108,7 @@ describe("pageBuilderCanvasNodeToolbar", () => {
 
     await component.get("button[aria-label='Select parent']").trigger("click");
 
-    expect(pageBuilderCanvasStore.getSelectedNodeId(TEST_ID)).toBe(TEST_SECTION_ID);
+    expect(getSelectedNodeId(TEST_ID)).toBe(TEST_SECTION_ID);
   });
 
   test("a delete confirm open when the toolbar unmounts releases the editor's keys", async () => {
@@ -116,12 +116,11 @@ describe("pageBuilderCanvasNodeToolbar", () => {
 
     const onUpdateIsDeleteOpen = vi.fn<(isDeleteOpen: boolean) => void>();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [createTestImageNode(TEST_URL, TEST_OTHER_ID)],
-      root: TEST_ROOT,
-    });
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, { content: [createTestImageNode(TEST_URL, TEST_OTHER_ID)], root: TEST_ROOT });
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderCanvasNodeToolbar, {
       props: {

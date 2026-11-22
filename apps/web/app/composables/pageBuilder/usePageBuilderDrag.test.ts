@@ -57,18 +57,13 @@ describe(usePageBuilderDrag, () => {
   const setup = async (document: WebpageDocument) => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(RESOURCE_ID, webpageKind, document);
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(RESOURCE_ID, webpageKind, document);
     const announce = vi.fn<(message: string) => void>();
     const drag = await mountSuspended(
       defineComponent({
         render: () => h("div"),
-        setup: () =>
-          usePageBuilderDrag(
-            webpageKind,
-            () => pageBuilderDocumentStore.getDocument(RESOURCE_ID),
-            RESOURCE_ID,
-            announce,
-          ),
+        setup: () => usePageBuilderDrag(webpageKind, () => getDocument(RESOURCE_ID), RESOURCE_ID, announce),
       }),
     );
     return { announce, drag, pageBuilderCanvasStore, pageBuilderDocumentStore };
@@ -101,6 +96,7 @@ describe(usePageBuilderDrag, () => {
     const COLUMN_NAME = "first_name";
     const columnId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getEmailDocument, setEmailDocument } = pageBuilderDocumentStore;
     const EMAIL_TEXT_DOCUMENT: MjmlDocument = {
       content: [
         {
@@ -121,18 +117,12 @@ describe(usePageBuilderDrag, () => {
       ],
       root: { props: { lang: "", title: "" } },
     };
-    pageBuilderDocumentStore.setEmailDocument(RESOURCE_ID, emailKind, EMAIL_TEXT_DOCUMENT);
+    setEmailDocument(RESOURCE_ID, emailKind, EMAIL_TEXT_DOCUMENT);
     const announce = vi.fn<(message: string) => void>();
     const drag = await mountSuspended(
       defineComponent({
         render: () => h("div"),
-        setup: () =>
-          usePageBuilderDrag(
-            emailKind,
-            () => pageBuilderDocumentStore.getEmailDocument(RESOURCE_ID),
-            RESOURCE_ID,
-            announce,
-          ),
+        setup: () => usePageBuilderDrag(emailKind, () => getEmailDocument(RESOURCE_ID), RESOURCE_ID, announce),
       }),
     );
 
@@ -140,7 +130,7 @@ describe(usePageBuilderDrag, () => {
     window.dispatchEvent(pointerAt("pointermove", 100, 30));
     window.dispatchEvent(pointerAt("pointerup", 100, 30));
 
-    expect(pageBuilderDocumentStore.getEmailDocument(RESOURCE_ID)).toStrictEqual({
+    expect(getEmailDocument(RESOURCE_ID)).toStrictEqual({
       content: [
         {
           props: {
@@ -205,6 +195,7 @@ describe(usePageBuilderDrag, () => {
   test("escape cancels a drag", async () => {
     expect.hasAssertions();
     const { announce, drag, pageBuilderDocumentStore } = await setup(COLUMN_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
 
     drag.vm.startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_ONE));
     window.dispatchEvent(pointerAt("pointermove", 100, 30));
@@ -212,20 +203,22 @@ describe(usePageBuilderDrag, () => {
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
     window.dispatchEvent(pointerAt("pointerup", 100, 30));
 
-    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(COLUMN_DOCUMENT);
+    expect(getDocument(RESOURCE_ID)).toStrictEqual(COLUMN_DOCUMENT);
     expect(announce).not.toHaveBeenCalled();
   });
 
   test("dragging a block into a column inserts it there", async () => {
     expect.hasAssertions();
     const { announce, drag, pageBuilderCanvasStore, pageBuilderDocumentStore } = await setup(COLUMN_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
+    const { getSelectedNodeId } = pageBuilderCanvasStore;
 
     drag.vm.startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_ONE));
     window.dispatchEvent(pointerAt("pointermove", 100, 30));
     window.dispatchEvent(pointerAt("pointerup", 100, 30));
 
-    const insertedId = pageBuilderCanvasStore.getSelectedNodeId(RESOURCE_ID);
-    const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
+    const insertedId = getSelectedNodeId(RESOURCE_ID);
+    const document = getDocument(RESOURCE_ID);
 
     expect(document && getSlotChildIds(webpageKind, document, COLUMN_SLOT)).toStrictEqual([
       TEXT_ONE,
@@ -238,19 +231,21 @@ describe(usePageBuilderDrag, () => {
   test("a second pointer neither moves nor lands a drag its press started", async () => {
     expect.hasAssertions();
     const { drag, pageBuilderCanvasStore, pageBuilderDocumentStore } = await setup(COLUMN_DOCUMENT);
+    const { getSelectedNodeId } = pageBuilderCanvasStore;
+    const { getDocument } = pageBuilderDocumentStore;
 
     drag.vm.startPaletteDrag(WebpageNodeType.Text, pressedWith("pointerdown", 0, 0, 1), () => createGeometry(TEXT_ONE));
     window.dispatchEvent(pressedWith("pointermove", 100, 30, 2));
     window.dispatchEvent(pressedWith("pointerup", 100, 30, 2));
 
     expect(drag.vm.dropTarget).toBeUndefined();
-    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(COLUMN_DOCUMENT);
+    expect(getDocument(RESOURCE_ID)).toStrictEqual(COLUMN_DOCUMENT);
 
     window.dispatchEvent(pressedWith("pointermove", 100, 30, 1));
     window.dispatchEvent(pressedWith("pointerup", 100, 30, 1));
 
-    const insertedId = pageBuilderCanvasStore.getSelectedNodeId(RESOURCE_ID);
-    const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
+    const insertedId = getSelectedNodeId(RESOURCE_ID);
+    const document = getDocument(RESOURCE_ID);
 
     expect(document && getSlotChildIds(webpageKind, document, COLUMN_SLOT)).toStrictEqual([
       TEXT_ONE,
@@ -262,6 +257,8 @@ describe(usePageBuilderDrag, () => {
   test("a survey invite dropped into a column is inserted with no survey chosen", async () => {
     expect.hasAssertions();
     const { drag, pageBuilderCanvasStore, pageBuilderDocumentStore } = await setup(COLUMN_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
+    const { getSelectedNodeId } = pageBuilderCanvasStore;
 
     drag.vm.startPaletteDrag(WebpageNodeType.SurveyInvite, pointerAt("pointerdown", 0, 0), () =>
       createGeometry(TEXT_ONE),
@@ -269,8 +266,8 @@ describe(usePageBuilderDrag, () => {
     window.dispatchEvent(pointerAt("pointermove", 100, 30));
     window.dispatchEvent(pointerAt("pointerup", 100, 30));
 
-    const insertedId = pageBuilderCanvasStore.getSelectedNodeId(RESOURCE_ID);
-    const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
+    const insertedId = getSelectedNodeId(RESOURCE_ID);
+    const document = getDocument(RESOURCE_ID);
 
     expect(document && getBlockNode(document, `${COLUMN_SLOT}/1`, webpageKind.children)).toStrictEqual({
       props: { elementId: "", id: insertedId, label: "Survey", surveyId: NO_SURVEY_ID },
@@ -281,24 +278,26 @@ describe(usePageBuilderDrag, () => {
   test("dropping a block where no slot accepts it cancels the drop", async () => {
     expect.hasAssertions();
     const { announce, drag, pageBuilderDocumentStore } = await setup(ROOT_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
 
     drag.vm.startPaletteDrag(WebpageNodeType.Column, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_ONE));
     window.dispatchEvent(pointerAt("pointermove", 100, 30));
     window.dispatchEvent(pointerAt("pointerup", 100, 30));
 
-    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
+    expect(getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
     expect(announce).not.toHaveBeenCalled();
   });
 
   test("a drag released outside the frame cancels the drop", async () => {
     expect.hasAssertions();
     const { announce, drag, pageBuilderDocumentStore } = await setup(ROOT_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
 
     drag.vm.startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 0, 0), () => createGeometry());
     window.dispatchEvent(pointerAt("pointermove", 600, 30));
     window.dispatchEvent(pointerAt("pointerup", 600, 30));
 
-    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
+    expect(getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
     expect(announce).not.toHaveBeenCalled();
   });
 
@@ -321,17 +320,19 @@ describe(usePageBuilderDrag, () => {
   test("a click without movement does not start an insert", async () => {
     expect.hasAssertions();
     const { announce, drag, pageBuilderDocumentStore } = await setup(ROOT_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
 
     drag.vm.startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 0, 0), () => createGeometry());
     window.dispatchEvent(pointerAt("pointerup", 0, 0));
 
-    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
+    expect(getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
     expect(announce).not.toHaveBeenCalled();
   });
 
   test("a release on a refusing slot inserts nothing", async () => {
     expect.hasAssertions();
     const { announce, drag, pageBuilderDocumentStore } = await setup(ROOT_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
 
     drag.vm.startPaletteDrag(WebpageNodeType.Column, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_ONE));
     window.dispatchEvent(pointerAt("pointermove", 100, 30));
@@ -342,7 +343,7 @@ describe(usePageBuilderDrag, () => {
     // The release's click, which the drag swallows, so the swallow is consumed here rather than left for a later test
     document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
-    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
+    expect(getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
     expect(announce).not.toHaveBeenCalled();
     expect(drag.vm.refusal).toBe("");
   });
@@ -443,12 +444,13 @@ describe(usePageBuilderDrag, () => {
   test("dragging a node handle into another column moves it there", async () => {
     expect.hasAssertions();
     const { announce, drag, pageBuilderDocumentStore } = await setup(TWO_COLUMN_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
 
     drag.vm.startNodeDrag(TEXT_ONE, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_TWO));
     window.dispatchEvent(pointerAt("pointermove", 100, 70));
     window.dispatchEvent(pointerAt("pointerup", 100, 70));
 
-    const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
+    const document = getDocument(RESOURCE_ID);
 
     expect(document && getSlotChildIds(webpageKind, document, COLUMN_SLOT)).toStrictEqual([]);
     expect(document && getSlotChildIds(webpageKind, document, COLUMN_TWO_SLOT)).toStrictEqual([TEXT_TWO, TEXT_ONE]);
@@ -459,6 +461,7 @@ describe(usePageBuilderDrag, () => {
   test("escape cancels a node drag", async () => {
     expect.hasAssertions();
     const { announce, drag, pageBuilderDocumentStore } = await setup(TWO_COLUMN_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
 
     drag.vm.startNodeDrag(TEXT_ONE, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_TWO));
     window.dispatchEvent(pointerAt("pointermove", 100, 70));
@@ -466,13 +469,14 @@ describe(usePageBuilderDrag, () => {
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
     window.dispatchEvent(pointerAt("pointerup", 100, 70));
 
-    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(TWO_COLUMN_DOCUMENT);
+    expect(getDocument(RESOURCE_ID)).toStrictEqual(TWO_COLUMN_DOCUMENT);
     expect(announce).not.toHaveBeenCalled();
   });
 
   test("a section cannot be dropped into a section it holds", async () => {
     expect.hasAssertions();
     const { announce, drag, pageBuilderDocumentStore } = await setup(NESTED_SECTION_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
 
     drag.vm.startNodeDrag(OUTER_SECTION_ID, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_ONE));
     window.dispatchEvent(pointerAt("pointermove", 100, 30));
@@ -481,33 +485,36 @@ describe(usePageBuilderDrag, () => {
 
     window.dispatchEvent(pointerAt("pointerup", 100, 30));
 
-    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(NESTED_SECTION_DOCUMENT);
+    expect(getDocument(RESOURCE_ID)).toStrictEqual(NESTED_SECTION_DOCUMENT);
     expect(announce).not.toHaveBeenCalled();
   });
 
   test("releasing a node where no slot accepts it leaves it in place", async () => {
     expect.hasAssertions();
     const { announce, drag, pageBuilderDocumentStore } = await setup(TWO_COLUMN_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
 
     // Outside the frame no slot lies under the pointer, and a text is accepted by every slot the frame offers
     drag.vm.startNodeDrag(TEXT_ONE, pointerAt("pointerdown", 0, 0), () => createGeometry());
     window.dispatchEvent(pointerAt("pointermove", 600, 30));
     window.dispatchEvent(pointerAt("pointerup", 600, 30));
 
-    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(TWO_COLUMN_DOCUMENT);
+    expect(getDocument(RESOURCE_ID)).toStrictEqual(TWO_COLUMN_DOCUMENT);
     expect(announce).not.toHaveBeenCalled();
   });
 
   test("undo returns a dragged node to its place", async () => {
     expect.hasAssertions();
     const { drag, pageBuilderDocumentStore } = await setup(TWO_COLUMN_DOCUMENT);
+    const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { undo } = pageBuilderHistoryStore;
 
     drag.vm.startNodeDrag(TEXT_ONE, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_TWO));
     window.dispatchEvent(pointerAt("pointermove", 100, 70));
     window.dispatchEvent(pointerAt("pointerup", 100, 70));
-    pageBuilderHistoryStore.undo(RESOURCE_ID);
+    undo(RESOURCE_ID);
 
-    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(TWO_COLUMN_DOCUMENT);
+    expect(getDocument(RESOURCE_ID)).toStrictEqual(TWO_COLUMN_DOCUMENT);
   });
 });

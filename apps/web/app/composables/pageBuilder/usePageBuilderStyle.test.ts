@@ -27,7 +27,8 @@ describe(usePageBuilderStyle, () => {
     const resourceId = v7();
     const style: NodeStyle = { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "red" } } };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, {
       content: [
         {
           props: { elementId: "", href: TEST_URL, id: TEST_ID, label: TEST_LABEL, style, target: ButtonTarget.SameTab },
@@ -38,12 +39,13 @@ describe(usePageBuilderStyle, () => {
       root: TEST_ROOT,
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     usePageBuilderStyle(resourceId).copyStyle();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
+    setSelectedNodeId(resourceId, TEST_OTHER_ID);
     usePageBuilderStyle(resourceId).pasteStyle();
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content[1]?.props.style).toStrictEqual(style);
+    expect(getDocument(resourceId)?.content[1]?.props.style).toStrictEqual(style);
   });
 
   test("resetting a node's last override removes its style", () => {
@@ -51,18 +53,17 @@ describe(usePageBuilderStyle, () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [createButton(TEST_ID)],
-      root: TEST_ROOT,
-    });
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, { content: [createButton(TEST_ID)], root: TEST_ROOT });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const { resetField, setField } = usePageBuilderStyle(resourceId);
 
     setField("color", "red");
     resetField("color");
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content[0]?.props).toStrictEqual({
+    expect(getDocument(resourceId)?.content[0]?.props).toStrictEqual({
       elementId: "",
       href: TEST_URL,
       id: TEST_ID,
@@ -76,17 +77,17 @@ describe(usePageBuilderStyle, () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [createButton(TEST_ID)],
-      root: TEST_ROOT,
-    });
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, { content: [createButton(TEST_ID)], root: TEST_ROOT });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { getUndoLabel } = pageBuilderHistoryStore;
 
     usePageBuilderStyle(resourceId).resetField("color");
 
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
+    expect(getUndoLabel(resourceId)).toBe("");
   });
 
   test("dragging an opacity slider records one undoable change", () => {
@@ -94,30 +95,30 @@ describe(usePageBuilderStyle, () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [createButton(TEST_ID)],
-      root: TEST_ROOT,
-    });
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, { content: [createButton(TEST_ID)], root: TEST_ROOT });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { getPreview, getUndoLabel, undo } = pageBuilderHistoryStore;
     const { previewField, setField } = usePageBuilderStyle(resourceId);
 
     previewField("opacity", "0.5");
     previewField("opacity", "0.4");
 
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
-    expect(pageBuilderHistoryStore.getPreview(resourceId)?.content[0]?.props.style).toStrictEqual({
+    expect(getUndoLabel(resourceId)).toBe("");
+    expect(getPreview(resourceId)?.content[0]?.props.style).toStrictEqual({
       [StyleBreakpoint.Base]: { [StyleState.Default]: { opacity: "0.4" } },
     });
 
     setField("opacity", "0.4");
 
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("Edit style");
-    expect(pageBuilderHistoryStore.getPreview(resourceId)).toBeUndefined();
-    pageBuilderHistoryStore.undo(resourceId);
+    expect(getUndoLabel(resourceId)).toBe("Edit style");
+    expect(getPreview(resourceId)).toBeUndefined();
+    undo(resourceId);
 
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
+    expect(getUndoLabel(resourceId)).toBe("");
   });
 
   test("a style edit writes the breakpoint of the device the canvas shows", () => {
@@ -125,17 +126,16 @@ describe(usePageBuilderStyle, () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [createButton(TEST_ID)],
-      root: TEST_ROOT,
-    });
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, { content: [createButton(TEST_ID)], root: TEST_ROOT });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
-    pageBuilderCanvasStore.setDevice(resourceId, PageBuilderDevice.Tablet);
+    const { setDevice, setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
+    setDevice(resourceId, PageBuilderDevice.Tablet);
 
     usePageBuilderStyle(resourceId).setField("color", "red");
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content[0]?.props.style).toStrictEqual({
+    expect(getDocument(resourceId)?.content[0]?.props.style).toStrictEqual({
       [StyleBreakpoint.Tablet]: { [StyleState.Default]: { color: "red" } },
     });
   });

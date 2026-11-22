@@ -102,9 +102,11 @@ describe("pageBuilderEmailStylePanel", () => {
     expect.hasAssertions();
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, createTextDocument("20px", "16px"));
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(TEST_ID, emailKind, createTextDocument("20px", "16px"));
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
     const labels = component.findAll("label").map((label) => label.text());
@@ -138,9 +140,11 @@ describe("pageBuilderEmailStylePanel", () => {
     expect.hasAssertions();
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, createTextDocument("20px", "16px"));
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(TEST_ID, emailKind, createTextDocument("20px", "16px"));
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
     const getFontSizeInput = () => {
@@ -165,9 +169,11 @@ describe("pageBuilderEmailStylePanel", () => {
     trpcMsw.email.readResourceFiles.query(() => []);
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createImageDocument());
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(resourceId, emailKind, createImageDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId } });
     component.getComponent(PageBuilderMediaField).vm.$emit("update", TEST_URL, TEST_OTHER_ID);
@@ -185,9 +191,11 @@ describe("pageBuilderEmailStylePanel", () => {
     expect.hasAssertions();
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, createTextDocument("20px", "16px"));
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(TEST_ID, emailKind, createTextDocument("20px", "16px"));
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
 
@@ -199,9 +207,11 @@ describe("pageBuilderEmailStylePanel", () => {
     expect.hasAssertions();
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, createButtonDocument());
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(TEST_ID, emailKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
     const sectorTitles = component.findAll("button").map((button) => button.text());
@@ -227,9 +237,11 @@ describe("pageBuilderEmailStylePanel", () => {
     expect.hasAssertions();
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, createButtonDocument());
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(TEST_ID, emailKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
 
@@ -245,9 +257,11 @@ describe("pageBuilderEmailStylePanel", () => {
       { mimetype: "image/gif", size: 1024, url: TEST_URL },
     ]);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createImageDocument());
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(resourceId, emailKind, createImageDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId } });
     await flushPromises();
@@ -266,9 +280,11 @@ describe("pageBuilderEmailStylePanel", () => {
     const resourceId = v7();
     trpcMsw.email.readResourceFiles.query(() => [{ mimetype: "image/png", size: 2048, url: TEST_URL }]);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createImageDocument());
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(resourceId, emailKind, createImageDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId } });
     await flushPromises();

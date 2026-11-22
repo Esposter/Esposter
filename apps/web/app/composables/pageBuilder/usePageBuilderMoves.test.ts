@@ -60,7 +60,8 @@ const setupMoves = <
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   seed(pageBuilderDocumentStore, resourceId);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-  pageBuilderCanvasStore.setSelectedNodeId(resourceId, selectedNodeId);
+  const { setSelectedNodeId } = pageBuilderCanvasStore;
+  setSelectedNodeId(resourceId, selectedNodeId);
   const announce = vi.fn<(message: string) => void>();
   return {
     announce,
@@ -74,9 +75,13 @@ const setup = (selectedNodeId: string, document = createFixtureDocument()) =>
   setupMoves(
     webpageKind,
     (pageBuilderDocumentStore, resourceId) => {
-      pageBuilderDocumentStore.setDocument(resourceId, webpageKind, document);
+      const { setDocument } = pageBuilderDocumentStore;
+      setDocument(resourceId, webpageKind, document);
     },
-    (pageBuilderDocumentStore, resourceId) => pageBuilderDocumentStore.getDocument(resourceId),
+    (pageBuilderDocumentStore, resourceId) => {
+      const { getDocument } = pageBuilderDocumentStore;
+      return getDocument(resourceId);
+    },
     selectedNodeId,
   );
 
@@ -85,9 +90,10 @@ describe(usePageBuilderMoves, () => {
     expect.hasAssertions();
 
     const { moveDown, pageBuilderDocumentStore, resourceId } = setup("a");
+    const { getDocument } = pageBuilderDocumentStore;
     moveDown();
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
+    expect(getDocument(resourceId)).toStrictEqual({
       content: [
         createSection("b", [createImage("f")]),
         createSection("a", [createColumns("c", [createColumn("d", [])])]),
@@ -100,9 +106,10 @@ describe(usePageBuilderMoves, () => {
     expect.hasAssertions();
 
     const { moveRight, pageBuilderDocumentStore, resourceId } = setup("b");
+    const { getDocument } = pageBuilderDocumentStore;
     moveRight();
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
+    expect(getDocument(resourceId)).toStrictEqual({
       content: [
         createSection("a", [createColumns("c", [createColumn("d", [])]), createSection("b", [createImage("f")])]),
       ],
@@ -114,9 +121,10 @@ describe(usePageBuilderMoves, () => {
     expect.hasAssertions();
 
     const { moveLeft, pageBuilderDocumentStore, resourceId } = setup("f");
+    const { getDocument } = pageBuilderDocumentStore;
     moveLeft();
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
+    expect(getDocument(resourceId)).toStrictEqual({
       content: [
         createSection("a", [createColumns("c", [createColumn("d", [])])]),
         createSection("b", []),
@@ -169,9 +177,13 @@ describe(usePageBuilderMoves, () => {
     const { getMoveLeftRefusal } = setupMoves(
       emailKind,
       (pageBuilderDocumentStore, resourceId) => {
-        pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, TEST_EMAIL);
+        const { setEmailDocument } = pageBuilderDocumentStore;
+        setEmailDocument(resourceId, emailKind, TEST_EMAIL);
       },
-      (pageBuilderDocumentStore, resourceId) => pageBuilderDocumentStore.getEmailDocument(resourceId),
+      (pageBuilderDocumentStore, resourceId) => {
+        const { getEmailDocument } = pageBuilderDocumentStore;
+        return getEmailDocument(resourceId);
+      },
       TEST_SECTION_ID,
     );
 
@@ -202,23 +214,26 @@ describe(usePageBuilderMoves, () => {
     expect.hasAssertions();
 
     const { deleteSelected, pageBuilderCanvasStore, pageBuilderDocumentStore, resourceId } = setup("a");
+    const { getSelectedNodeId } = pageBuilderCanvasStore;
+    const { getDocument } = pageBuilderDocumentStore;
     deleteSelected();
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
+    expect(getDocument(resourceId)).toStrictEqual({
       content: [createSection("b", [createImage("f")])],
       root: TEST_ROOT,
     });
-    expect(pageBuilderCanvasStore.getSelectedNodeId(resourceId)).toBe("b");
+    expect(getSelectedNodeId(resourceId)).toBe("b");
   });
 
   test("deleting a node ends a text edit on a node inside it", () => {
     expect.hasAssertions();
 
     const { deleteSelected, pageBuilderCanvasStore, resourceId } = setup("b");
-    pageBuilderCanvasStore.setEditingNodeId(resourceId, "f");
+    const { getEditingNodeId, setEditingNodeId } = pageBuilderCanvasStore;
+    setEditingNodeId(resourceId, "f");
     deleteSelected();
 
-    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe("");
+    expect(getEditingNodeId(resourceId)).toBe("");
   });
 
   test("a move announces the node's new position among its siblings", () => {
@@ -264,10 +279,11 @@ describe(usePageBuilderMoves, () => {
     expect.hasAssertions();
 
     const { announce, moveUp, pageBuilderDocumentStore, resourceId } = setup("a");
-    const before = pageBuilderDocumentStore.getDocument(resourceId);
+    const { getDocument } = pageBuilderDocumentStore;
+    const before = getDocument(resourceId);
     moveUp();
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)).toBe(before);
+    expect(getDocument(resourceId)).toBe(before);
     expect(announce.mock.calls).toStrictEqual([]);
   });
 
@@ -275,11 +291,13 @@ describe(usePageBuilderMoves, () => {
     expect.hasAssertions();
 
     const { announce, duplicateSelected, pageBuilderCanvasStore, pageBuilderDocumentStore, resourceId } = setup("f");
+    const { getDocument } = pageBuilderDocumentStore;
+    const { getSelectedNodeId } = pageBuilderCanvasStore;
     duplicateSelected();
-    const copyId = pageBuilderCanvasStore.getSelectedNodeId(resourceId);
+    const copyId = getSelectedNodeId(resourceId);
 
     expect(copyId).not.toBe("f");
-    expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
+    expect(getDocument(resourceId)).toStrictEqual({
       content: [
         createSection("a", [createColumns("c", [createColumn("d", [])])]),
         createSection("b", [createImage("f"), createImage(copyId)]),

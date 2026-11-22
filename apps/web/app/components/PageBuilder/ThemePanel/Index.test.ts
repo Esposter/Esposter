@@ -12,11 +12,13 @@ describe("pageBuilderThemePanel", () => {
     expect.hasAssertions();
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, {
       content: [],
       root: { props: { lang: TEST_LANG, tokens: { "font-body": "serif" } } },
     });
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { getUndoLabel } = pageBuilderHistoryStore;
 
     const component = await mountSuspended(PageBuilderThemePanel, { props: { resourceId: TEST_ID } });
     const forId = component
@@ -25,7 +27,7 @@ describe("pageBuilderThemePanel", () => {
       ?.attributes("for");
     await component.get(`input[id="${forId}"]`).setValue("");
 
-    expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.root.props.tokens).toStrictEqual({ "font-body": "serif" });
-    expect(pageBuilderHistoryStore.getUndoLabel(TEST_ID)).toBe("");
+    expect(getDocument(TEST_ID)?.root.props.tokens).toStrictEqual({ "font-body": "serif" });
+    expect(getUndoLabel(TEST_ID)).toBe("");
   });
 });

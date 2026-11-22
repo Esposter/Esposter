@@ -16,7 +16,8 @@ vi.mock(import("uuid"), async (importOriginal) => {
 // Inserts into the document the store holds for the resource, the way the shell does
 const insertIntoResource = (resourceId: string, slotPointer: string, index: number, type: WebpageNodeType) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const document = pageBuilderDocumentStore.getDocument(resourceId);
+  const { getDocument } = pageBuilderDocumentStore;
+  const document = getDocument(resourceId);
   return (
     document !== undefined &&
     insertAt(webpageKind, document, resourceId, slotPointer, index, (id) => webpageKind.createNode(type, id))
@@ -27,7 +28,8 @@ const setup = () => {
   setActivePinia(createPinia());
   const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
+  const { setDocument } = pageBuilderDocumentStore;
+  setDocument(resourceId, webpageKind, TEST_WEBPAGE);
   return resourceId;
 };
 
@@ -41,15 +43,17 @@ describe(insertAt, () => {
     const insertedId = v7();
     vi.mocked<() => string>(v7).mockReturnValueOnce(insertedId);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getSelectedNodeId } = pageBuilderCanvasStore;
 
     expect(insertIntoResource(resourceId, "/content", 1, WebpageNodeType.Text)).toBe(true);
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
+    expect(getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
       TEST_SECTION_ID,
       insertedId,
       TEST_ROOT_TEXT_ID,
     ]);
-    expect(pageBuilderCanvasStore.getSelectedNodeId(resourceId)).toBe(insertedId);
+    expect(getSelectedNodeId(resourceId)).toBe(insertedId);
   });
 
   test("a slot that refuses the type applies nothing", () => {
@@ -57,9 +61,10 @@ describe(insertAt, () => {
 
     const resourceId = setup();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const before = pageBuilderDocumentStore.getDocument(resourceId);
+    const { getDocument } = pageBuilderDocumentStore;
+    const before = getDocument(resourceId);
 
     expect(insertIntoResource(resourceId, "/content/0/props/children", 0, WebpageNodeType.Column)).toBe(false);
-    expect(pageBuilderDocumentStore.getDocument(resourceId)).toBe(before);
+    expect(getDocument(resourceId)).toBe(before);
   });
 });

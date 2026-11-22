@@ -18,14 +18,15 @@ describe(usePageBuilderKeyCommands, () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
     await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () =>
           usePageBuilderKeyCommands(
             webpageKind,
-            () => pageBuilderDocumentStore.getDocument(resourceId),
+            () => getDocument(resourceId),
             () => resourceId,
             vi.fn<(message: string) => void>(),
             ref(false),
@@ -43,15 +44,17 @@ describe(usePageBuilderKeyCommands, () => {
 
     const resourceId = v7();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const isDeleteOpen = ref(true);
     await mountSuspended(
       defineComponent({
@@ -59,7 +62,7 @@ describe(usePageBuilderKeyCommands, () => {
         setup: () =>
           usePageBuilderKeyCommands(
             webpageKind,
-            () => pageBuilderDocumentStore.getDocument(resourceId),
+            () => getDocument(resourceId),
             () => resourceId,
             vi.fn<(message: string) => void>(),
             isDeleteOpen,
@@ -69,7 +72,7 @@ describe(usePageBuilderKeyCommands, () => {
 
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "Delete" }));
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
+    expect(getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
       TEST_ROOT_TEXT_ID,
       TEST_OTHER_ID,
     ]);
@@ -78,9 +81,7 @@ describe(usePageBuilderKeyCommands, () => {
     await nextTick();
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "Delete" }));
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
-      TEST_OTHER_ID,
-    ]);
+    expect(getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([TEST_OTHER_ID]);
   });
 
   test("a move the selection cannot take is listed unavailable with its reason, and one it can take is not", async () => {
@@ -88,22 +89,24 @@ describe(usePageBuilderKeyCommands, () => {
 
     const resourceId = v7();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_OTHER_ID);
+    setSelectedNodeId(resourceId, TEST_OTHER_ID);
     await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () =>
           usePageBuilderKeyCommands(
             webpageKind,
-            () => pageBuilderDocumentStore.getDocument(resourceId),
+            () => getDocument(resourceId),
             () => resourceId,
             vi.fn<(message: string) => void>(),
             ref(false),

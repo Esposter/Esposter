@@ -72,34 +72,31 @@ describe("pageBuilderEmailBar", () => {
 
     const nodeId = v7();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getSelectedNodeId } = pageBuilderCanvasStore;
     const component = await mountBar([{ message, nodeId, severity: EditorFindingSeverity.Error }]);
     await takeOne(component.get('[role="dialog"]').findAll("button"), 0).trigger("click");
 
-    expect(pageBuilderCanvasStore.getSelectedNodeId(TEST_ID)).toBe(nodeId);
+    expect(getSelectedNodeId(TEST_ID)).toBe(nodeId);
   });
 
   test("editing the preview text writes the root's preview", async () => {
     expect.hasAssertions();
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, {
-      content: [],
-      root: { props: { lang: "", title: "" } },
-    });
+    const { getEmailDocument, setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(TEST_ID, emailKind, { content: [], root: { props: { lang: "", title: "" } } });
     const component = await mountBar();
     await component.get("input").setValue(message);
 
-    expect(pageBuilderDocumentStore.getEmailDocument(TEST_ID)?.root.props.preview).toBe(message);
+    expect(getEmailDocument(TEST_ID)?.root.props.preview).toBe(message);
   });
 
   test("the preview text shows the length its schema allows beside the field", async () => {
     expect.hasAssertions();
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, {
-      content: [],
-      root: { props: { lang: "", title: "" } },
-    });
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(TEST_ID, emailKind, { content: [], root: { props: { lang: "", title: "" } } });
     const component = await mountBar();
 
     expect(component.findComponent(UiTextField).text()).toMatchInlineSnapshot(

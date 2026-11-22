@@ -26,6 +26,7 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
   const { applyEdit, setPreview } = pageBuilderHistoryStore;
   // The store is read through its object, since destructuring would keep the copied style as it was when this ran
   const pageBuilderStyleClipboardStore = usePageBuilderStyleClipboardStore();
+  const { setCopiedStyle } = pageBuilderStyleClipboardStore;
   const target = computed(() => {
     const resourceIdValue = toValue(resourceId);
     const open = getOpenDocument(resourceIdValue);
@@ -91,7 +92,7 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
   // Two nodes match after it. The copied style is shared, never mutated, since every edit above writes a new style
   const copyStyle = () => {
     const targetValue = target.value;
-    if (targetValue) pageBuilderStyleClipboardStore.setCopiedStyle(targetValue.style ?? {});
+    if (targetValue) setCopiedStyle(targetValue.style ?? {});
   };
   const pasteStyle = () => {
     const targetValue = target.value;

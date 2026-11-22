@@ -22,7 +22,8 @@ import { afterEach, assert, describe, expect, test, vi } from "vitest";
 // Enter begins a text edit through the key commands, which set the edit the way this helper does
 const beginTextEdit = async () => {
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-  pageBuilderCanvasStore.setEditingNodeId(TEST_ID, TEST_ROOT_TEXT_ID);
+  const { setEditingNodeId } = pageBuilderCanvasStore;
+  setEditingNodeId(TEST_ID, TEST_ROOT_TEXT_ID);
   await nextTick();
 };
 
@@ -47,14 +48,16 @@ describe("pageBuilderCanvas", () => {
   );
   const mountSelectedText = async () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, elementId: "", id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
       ],
       root: TEST_ROOT,
     });
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(TEST_ID, TEST_ROOT_TEXT_ID);
     Object.defineProperty(window, "frameElement", { configurable: true, value: document.createElement("iframe") });
     vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
       return this.dataset.nodeId ? TEXT_RECT : FRAME_RECT;
@@ -89,7 +92,8 @@ describe("pageBuilderCanvas", () => {
       name: "the page",
       seed: () => {
         const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-        pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+        const { setDocument } = pageBuilderDocumentStore;
+        setDocument(TEST_ID, webpageKind, {
           content: [
             {
               props: {
@@ -118,7 +122,8 @@ describe("pageBuilderCanvas", () => {
         if (!result.success) throw new Error("the test email should parse");
 
         const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-        pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, result.data);
+        const { setEmailDocument } = pageBuilderDocumentStore;
+        setEmailDocument(TEST_ID, emailKind, result.data);
       },
     },
   ])("switching to tablet draws $name at tablet width", async ({ kind, seed }) => {
@@ -126,7 +131,8 @@ describe("pageBuilderCanvas", () => {
 
     seed();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setDevice(TEST_ID, PageBuilderDevice.Tablet);
+    const { setDevice } = pageBuilderCanvasStore;
+    setDevice(TEST_ID, PageBuilderDevice.Tablet);
 
     const component = await mountSuspended(PageBuilderCanvas, {
       props: {

@@ -33,10 +33,12 @@ export const insertAt = <
   if (operations.length === 0) return false;
 
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+  const { applyEdit } = pageBuilderHistoryStore;
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-  return pageBuilderHistoryStore.applyEdit(resourceId, operations, "Insert block").match(
+  const { setSelectedNodeId } = pageBuilderCanvasStore;
+  return applyEdit(resourceId, operations, "Insert block").match(
     () => {
-      pageBuilderCanvasStore.setSelectedNodeId(resourceId, insertedId);
+      setSelectedNodeId(resourceId, insertedId);
       return true;
     },
     (error) => {

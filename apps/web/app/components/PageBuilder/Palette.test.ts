@@ -51,15 +51,11 @@ describe("pageBuilderPalette", () => {
   test("a palette click still inserts the block", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, { content: [], root: TEST_ROOT });
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, { content: [], root: TEST_ROOT });
     const announce = vi.fn<(message: string) => void>();
     const component = await mountSuspended(PageBuilderPalette, {
-      props: {
-        announce,
-        getDocument: () => pageBuilderDocumentStore.getDocument(TEST_ID),
-        kind: webpageKind,
-        resourceId: TEST_ID,
-      },
+      props: { announce, getDocument: () => getDocument(TEST_ID), kind: webpageKind, resourceId: TEST_ID },
     });
 
     await component
@@ -67,9 +63,7 @@ describe("pageBuilderPalette", () => {
       .find((button) => button.text() === WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Text])
       ?.trigger("click");
 
-    expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content.map(({ type }) => type)).toStrictEqual([
-      WebpageNodeType.Text,
-    ]);
+    expect(getDocument(TEST_ID)?.content.map(({ type }) => type)).toStrictEqual([WebpageNodeType.Text]);
   });
 
   test.each([
@@ -109,7 +103,8 @@ describe("pageBuilderPalette", () => {
     const columnId = v7();
     const insertedId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, {
+    const { getEmailDocument, setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(TEST_ID, emailKind, {
       content: [
         {
           props: {
@@ -122,13 +117,14 @@ describe("pageBuilderPalette", () => {
       root: { props: { lang: "", title: "" } },
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, columnId);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, columnId);
     const { setMergeFieldColumns } = pageBuilderDocumentStore;
     setMergeFieldColumns(TEST_ID, ["first_name"]);
     const component = await mountSuspended(PageBuilderPalette, {
       props: {
         announce: vi.fn<(message: string) => void>(),
-        getDocument: () => pageBuilderDocumentStore.getEmailDocument(TEST_ID),
+        getDocument: () => getEmailDocument(TEST_ID),
         kind: emailKind,
         resourceId: TEST_ID,
       },
@@ -140,7 +136,7 @@ describe("pageBuilderPalette", () => {
       .find((button) => button.text() === "first_name")
       ?.trigger("click");
 
-    expect(pageBuilderDocumentStore.getEmailDocument(TEST_ID)?.content).toStrictEqual([
+    expect(getEmailDocument(TEST_ID)?.content).toStrictEqual([
       {
         props: {
           children: [
@@ -257,7 +253,8 @@ describe("pageBuilderPalette", () => {
     expect.hasAssertions();
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(TEST_ID, webpageKind, {
       content: [
         {
           props: {
@@ -285,11 +282,12 @@ describe("pageBuilderPalette", () => {
       root: TEST_ROOT,
     });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
     const component = await mountSuspended(PageBuilderPalette, {
       props: {
         announce: vi.fn<(message: string) => void>(),
-        getDocument: () => pageBuilderDocumentStore.getDocument(TEST_ID),
+        getDocument: () => getDocument(TEST_ID),
         kind: webpageKind,
         resourceId: TEST_ID,
       },

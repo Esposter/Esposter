@@ -19,24 +19,18 @@ import { beforeEach, describe, expect, test } from "vitest";
 const createEmailSettings = () => {
   const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, {
-    content: [],
-    root: { props: { lang: "", title: "" } },
-  });
-  const { setFormValue } = usePageBuilderContent(
-    emailKind,
-    () => pageBuilderDocumentStore.getEmailDocument(resourceId),
-    resourceId,
-  );
+  const { getEmailDocument, setEmailDocument } = pageBuilderDocumentStore;
+  setEmailDocument(resourceId, emailKind, { content: [], root: { props: { lang: "", title: "" } } });
+  const { setFormValue } = usePageBuilderContent(emailKind, () => getEmailDocument(resourceId), resourceId);
   // The root form writes the root's whole props, so a setting is written over the props the document holds now
   const setSettings = (settings: Partial<MjmlRootProps>) => {
-    const document = pageBuilderDocumentStore.getEmailDocument(resourceId);
+    const document = getEmailDocument(resourceId);
     if (!document) throw new Error("the email should be open");
 
     setFormValue({ ...document.root.props, ...settings });
   };
   const compile = () => {
-    const document = pageBuilderDocumentStore.getEmailDocument(resourceId);
+    const document = getEmailDocument(resourceId);
     if (!document) throw new Error("the email should be open");
 
     return serializeMjml(renderMjmlDocument(document, emailRegistry, { context: TEST_CONTEXT, isStampingIds: false }));
@@ -54,26 +48,22 @@ describe(usePageBuilderContent, () => {
 
     const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
-      content: [createButton(TEST_ID)],
-      root: TEST_ROOT,
-    });
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, { content: [createButton(TEST_ID)], root: TEST_ROOT });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
-    const { setFormValue } = usePageBuilderContent(
-      webpageKind,
-      () => pageBuilderDocumentStore.getDocument(resourceId),
-      resourceId,
-    );
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
+    setSelectedNodeId(resourceId, TEST_ID);
+    const { setFormValue } = usePageBuilderContent(webpageKind, () => getDocument(resourceId), resourceId);
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { getUndoLabel, undo } = pageBuilderHistoryStore;
 
     setFormValue({ elementId: "", href: TEST_URL, label: "O", target: ButtonTarget.SameTab });
     setFormValue({ elementId: "", href: TEST_URL, label: "Op", target: ButtonTarget.SameTab });
 
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("Edit block");
-    pageBuilderHistoryStore.undo(resourceId);
+    expect(getUndoLabel(resourceId)).toBe("Edit block");
+    undo(resourceId);
 
-    expect(pageBuilderHistoryStore.getUndoLabel(resourceId)).toBe("");
+    expect(getUndoLabel(resourceId)).toBe("");
   });
 
   test("editing the title sets the title of the compiled email", () => {
@@ -136,11 +126,13 @@ describe(usePageBuilderContent, () => {
 
     const { resourceId, setSettings } = createEmailSettings();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getEmailDocument } = pageBuilderDocumentStore;
     setSettings({ title: "Hi" });
 
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-    pageBuilderHistoryStore.undo(resourceId);
+    const { undo } = pageBuilderHistoryStore;
+    undo(resourceId);
 
-    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.title).toBe("");
+    expect(getEmailDocument(resourceId)?.root.props.title).toBe("");
   });
 });

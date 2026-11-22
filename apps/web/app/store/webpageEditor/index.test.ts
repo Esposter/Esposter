@@ -90,13 +90,14 @@ describe(useWebpageEditorStore, () => {
     const description = "a";
     content = new WebpageEditor({ description, imageUrl: TEST_URL });
     const webpageEditorStore = useWebpageEditorStore();
+    const { webpageEditor } = storeToRefs(webpageEditorStore);
     const { loadContent, saveWebpage } = webpageEditorStore;
     await loadContent();
     saveWebpage(resourceId);
     await flushPromises();
 
-    expect(webpageEditorStore.webpageEditor.description).toBe(description);
-    expect(webpageEditorStore.webpageEditor.imageUrl).toBe(TEST_URL);
+    expect(webpageEditor.value.description).toBe(description);
+    expect(webpageEditor.value.imageUrl).toBe(TEST_URL);
   });
 
   test("a warning does not refuse a save", async () => {

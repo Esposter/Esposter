@@ -17,15 +17,13 @@ const setup = (selectedNodeId: string) => {
   setActivePinia(createPinia());
   const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
+  const { getDocument, setDocument } = pageBuilderDocumentStore;
+  setDocument(resourceId, webpageKind, TEST_WEBPAGE);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-  pageBuilderCanvasStore.setSelectedNodeId(resourceId, selectedNodeId);
-  const selection = usePageBuilderSelection(
-    webpageKind,
-    () => pageBuilderDocumentStore.getDocument(resourceId),
-    resourceId,
-  );
-  const getSelectedNodeId = () => pageBuilderCanvasStore.getSelectedNodeId(resourceId);
+  const { getSelectedNodeId: readNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
+  setSelectedNodeId(resourceId, selectedNodeId);
+  const selection = usePageBuilderSelection(webpageKind, () => getDocument(resourceId), resourceId);
+  const getSelectedNodeId = () => readNodeId(resourceId);
   return { ...selection, getSelectedNodeId };
 };
 

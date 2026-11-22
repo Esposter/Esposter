@@ -22,16 +22,13 @@ const setup = (selectedNodeId: string, content: WebpageDocument["content"]) => {
   setActivePinia(createPinia());
   const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  const { getDocument, setDocument } = pageBuilderDocumentStore;
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content, root: TEST_ROOT });
-  pageBuilderCanvasStore.setSelectedNodeId(resourceId, selectedNodeId);
+  const { setSelectedNodeId } = pageBuilderCanvasStore;
+  setDocument(resourceId, webpageKind, { content, root: TEST_ROOT });
+  setSelectedNodeId(resourceId, selectedNodeId);
   const announce = vi.fn<(message: string) => void>();
-  const { insert } = usePageBuilderInsert(
-    webpageKind,
-    () => pageBuilderDocumentStore.getDocument(resourceId),
-    resourceId,
-    announce,
-  );
+  const { insert } = usePageBuilderInsert(webpageKind, () => getDocument(resourceId), resourceId, announce);
   // The id the insert gives its new node, fixed so a test reads it exactly
   const insertedId = v7();
   vi.mocked<() => string>(v7).mockReturnValueOnce(insertedId);
@@ -50,17 +47,19 @@ describe(usePageBuilderInsert, () => {
       createButton(TEST_ID),
       createButton(TEST_OTHER_ID),
     ]);
+    const { getSelectedNodeId } = pageBuilderCanvasStore;
+    const { getDocument } = pageBuilderDocumentStore;
 
     insert(WebpageNodeType.Text);
 
-    const content = pageBuilderDocumentStore.getDocument(resourceId)?.content ?? [];
+    const content = getDocument(resourceId)?.content ?? [];
 
     expect(content.map(({ props, type }) => [props.id, type])).toStrictEqual([
       [TEST_ID, WebpageNodeType.Button],
       [insertedId, WebpageNodeType.Text],
       [TEST_OTHER_ID, WebpageNodeType.Button],
     ]);
-    expect(pageBuilderCanvasStore.getSelectedNodeId(resourceId)).toBe(insertedId);
+    expect(getSelectedNodeId(resourceId)).toBe(insertedId);
   });
 
   test("an insert into an empty container fills its first slot", () => {
@@ -69,10 +68,11 @@ describe(usePageBuilderInsert, () => {
     const { insert, insertedId, pageBuilderDocumentStore, resourceId } = setup(TEST_ID, [
       { props: { children: [], elementId: "", id: TEST_ID, tag: HtmlTag.Section }, type: WebpageNodeType.Section },
     ]);
+    const { getDocument } = pageBuilderDocumentStore;
 
     insert(WebpageNodeType.Button);
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([
+    expect(getDocument(resourceId)?.content).toStrictEqual([
       {
         props: {
           children: [createWebpageNode(WebpageNodeType.Button, insertedId)],
@@ -103,11 +103,12 @@ describe(usePageBuilderInsert, () => {
         type: WebpageNodeType.Columns,
       },
     ]);
-    const documentBefore = pageBuilderDocumentStore.getDocument(resourceId);
+    const { getDocument } = pageBuilderDocumentStore;
+    const documentBefore = getDocument(resourceId);
 
     insert(WebpageNodeType.Text);
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)).toBe(documentBefore);
+    expect(getDocument(resourceId)).toBe(documentBefore);
     expect(announce).not.toHaveBeenCalled();
   });
 

@@ -102,6 +102,7 @@ describe(useEmailEditorStore, () => {
     content = new EmailEditor({ content: [], datasetReference, root: { props: { lang: "", title: "" } } });
     const emailEditorStore = useEmailEditorStore();
     const { loadContent, saveEmail } = emailEditorStore;
+    const { datasetReference: storedDatasetReference } = storeToRefs(emailEditorStore);
     await loadContent();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setEmailDocument } = pageBuilderDocumentStore;
@@ -109,7 +110,7 @@ describe(useEmailEditorStore, () => {
     saveEmail(resourceId);
     await flushPromises();
 
-    expect(emailEditorStore.datasetReference).toStrictEqual(datasetReference);
+    expect(storedDatasetReference.value).toStrictEqual(datasetReference);
   });
 
   test("skips the store echo that follows the load", async () => {
@@ -137,12 +138,13 @@ describe(useEmailEditorStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const emailEditorStore = useEmailEditorStore();
+    const { datasetReference } = storeToRefs(emailEditorStore);
     const { loadContent, saveDatasetReference } = emailEditorStore;
     await loadContent();
     const chosenDatasetReference = { id: v7(), type: DatasetProviderType.Sheet };
     saveDatasetReference(chosenDatasetReference);
     await waitForSynchronizedFunctions();
 
-    expect(emailEditorStore.datasetReference).toStrictEqual(chosenDatasetReference);
+    expect(datasetReference.value).toStrictEqual(chosenDatasetReference);
   });
 });

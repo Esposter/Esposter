@@ -45,19 +45,15 @@ const createClipboard = (
   deleteNode: (nodeId: string) => boolean,
 ) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  return usePageBuilderClipboard(
-    webpageKind,
-    () => pageBuilderDocumentStore.getDocument(resourceId),
-    resourceId,
-    announce,
-    deleteNode,
-  );
+  const { getDocument } = pageBuilderDocumentStore;
+  return usePageBuilderClipboard(webpageKind, () => getDocument(resourceId), resourceId, announce, deleteNode);
 };
 
 const openResource = (content: WebpageDocument["content"]) => {
   const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content, root: TEST_ROOT });
+  const { setDocument } = pageBuilderDocumentStore;
+  setDocument(resourceId, webpageKind, { content, root: TEST_ROOT });
   return resourceId;
 };
 
@@ -78,9 +74,11 @@ describe(usePageBuilderClipboard, () => {
     expect.hasAssertions();
     stubClipboard();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument } = pageBuilderDocumentStore;
     const sourceId = openResource([createTextNode(TEST_ROOT_TEXT_ID)]);
-    pageBuilderCanvasStore.setSelectedNodeId(sourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(sourceId, TEST_ROOT_TEXT_ID);
     await createClipboard(
       sourceId,
       vi.fn<(message: string) => void>(),
@@ -94,7 +92,7 @@ describe(usePageBuilderClipboard, () => {
       vi.fn<(nodeId: string) => boolean>(),
     ).pasteSelected();
 
-    const pastedNode = pageBuilderDocumentStore.getDocument(targetId)?.content[0];
+    const pastedNode = getDocument(targetId)?.content[0];
 
     expect(pastedNode).toStrictEqual({
       props: { content: TEST_TEXT_CONTENT, elementId: "", id: pastedNode?.props.id },
@@ -109,34 +107,33 @@ describe(usePageBuilderClipboard, () => {
     const clipboard = stubClipboard();
     clipboard.text = serializeClipboardNodes({ editor: PageBuilderEditor.Webpage, nodes: [] });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getEmailDocument, setEmailDocument } = pageBuilderDocumentStore;
     const targetId = v7();
-    pageBuilderDocumentStore.setEmailDocument(targetId, emailKind, {
-      content: [],
-      root: { props: { lang: "", title: "" } },
-    });
+    setEmailDocument(targetId, emailKind, { content: [], root: { props: { lang: "", title: "" } } });
     const announce = vi.fn<(message: string) => void>();
     await usePageBuilderClipboard(
       emailKind,
-      () => pageBuilderDocumentStore.getEmailDocument(targetId),
+      () => getEmailDocument(targetId),
       targetId,
       announce,
       vi.fn<(nodeId: string) => boolean>(),
     ).pasteSelected();
 
     expect(announce.mock.calls).toStrictEqual([[REFUSAL_MESSAGE]]);
-    expect(pageBuilderDocumentStore.getEmailDocument(targetId)?.content).toStrictEqual([]);
+    expect(getEmailDocument(targetId)?.content).toStrictEqual([]);
   });
 
   test("empty clipboard text is announced as a block that cannot go here on paste", async () => {
     expect.hasAssertions();
     stubClipboard();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument } = pageBuilderDocumentStore;
     const targetId = openResource([]);
     const announce = vi.fn<(message: string) => void>();
     await createClipboard(targetId, announce, vi.fn<(nodeId: string) => boolean>()).pasteSelected();
 
     expect(announce.mock.calls).toStrictEqual([[CANNOT_GO_HERE_MESSAGE]]);
-    expect(pageBuilderDocumentStore.getDocument(targetId)?.content).toStrictEqual([]);
+    expect(getDocument(targetId)?.content).toStrictEqual([]);
   });
 
   test("a clipboard node of a type no webpage holds is announced as a block that cannot go here on paste", async () => {
@@ -147,12 +144,13 @@ describe(usePageBuilderClipboard, () => {
       nodes: [createTextNode(TEST_ROOT_TEXT_ID)],
     }).replace(`"type":"${WebpageNodeType.Text}"`, `"type":"${UNKNOWN_NODE_TYPE}"`);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument } = pageBuilderDocumentStore;
     const targetId = openResource([]);
     const announce = vi.fn<(message: string) => void>();
     await createClipboard(targetId, announce, vi.fn<(nodeId: string) => boolean>()).pasteSelected();
 
     expect(announce.mock.calls).toStrictEqual([[CANNOT_GO_HERE_MESSAGE]]);
-    expect(pageBuilderDocumentStore.getDocument(targetId)?.content).toStrictEqual([]);
+    expect(getDocument(targetId)?.content).toStrictEqual([]);
   });
 
   test("cut deletes the node it copied when the selection moves while the clipboard write waits", async () => {
@@ -161,21 +159,23 @@ describe(usePageBuilderClipboard, () => {
     vi.stubGlobal("navigator", { clipboard: { writeText: () => writeGate.promise } });
     const otherNodeId = v7();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument } = pageBuilderDocumentStore;
     const resourceId = openResource([createTextNode(TEST_ROOT_TEXT_ID), createTextNode(otherNodeId)]);
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const { deleteNode } = usePageBuilderMoves(
       webpageKind,
-      () => pageBuilderDocumentStore.getDocument(resourceId),
+      () => getDocument(resourceId),
       resourceId,
       vi.fn<(message: string) => void>(),
     );
     const cut = createClipboard(resourceId, vi.fn<(message: string) => void>(), deleteNode).cutSelected();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, otherNodeId);
+    setSelectedNodeId(resourceId, otherNodeId);
     writeGate.resolve();
     await cut;
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([createTextNode(otherNodeId)]);
+    expect(getDocument(resourceId)?.content).toStrictEqual([createTextNode(otherNodeId)]);
   });
 
   test("cut announces nothing when the node is deleted while the clipboard write waits", async () => {
@@ -183,12 +183,14 @@ describe(usePageBuilderClipboard, () => {
     const writeGate = Promise.withResolvers<void>();
     vi.stubGlobal("navigator", { clipboard: { writeText: () => writeGate.promise } });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument } = pageBuilderDocumentStore;
     const resourceId = openResource([createTextNode(TEST_ROOT_TEXT_ID)]);
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const { deleteNode } = usePageBuilderMoves(
       webpageKind,
-      () => pageBuilderDocumentStore.getDocument(resourceId),
+      () => getDocument(resourceId),
       resourceId,
       vi.fn<(message: string) => void>(),
     );
@@ -205,15 +207,15 @@ describe(usePageBuilderClipboard, () => {
     expect.hasAssertions();
     vi.stubGlobal("navigator", { clipboard: { writeText: () => Promise.reject(new Error(" ")) } });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setSelectedNodeId } = pageBuilderCanvasStore;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument } = pageBuilderDocumentStore;
     const resourceId = openResource([createTextNode(TEST_ROOT_TEXT_ID)]);
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const announce = vi.fn<(message: string) => void>();
     await createClipboard(resourceId, announce, vi.fn<(nodeId: string) => boolean>()).copySelected();
 
     expect(announce.mock.calls).toStrictEqual([["Could not copy block"]]);
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([
-      createTextNode(TEST_ROOT_TEXT_ID),
-    ]);
+    expect(getDocument(resourceId)?.content).toStrictEqual([createTextNode(TEST_ROOT_TEXT_ID)]);
   });
 });
