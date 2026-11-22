@@ -6,5 +6,7 @@
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 113 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 84 },
-  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 10231 } }
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 10231 } },
+  "parameters.nightsoulDrainPerSecond": { "cause": "Unsourced", "value": 10 },
+  "parameters.nightsoulPoints": { "file": "mualani.go", "line": 40, "source": "Gcsim", "value": 60 }
 }
