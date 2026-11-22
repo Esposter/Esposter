@@ -8,7 +8,7 @@ interface Props<T> {
   itemType: string;
   name: string;
   originalItem?: T | undefined;
-  // Awaited, so a failed delete keeps the dialog open to try again
+  // Not awaited: the confirm closes as the delete is sent, and a refused delete is left to its own toast
   remove?: (() => Promisable<unknown>) | undefined;
 }
 

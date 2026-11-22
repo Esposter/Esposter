@@ -29,15 +29,10 @@ interface Props {
 }
 // What a call site passes goes to the dialog element, which it sizes
 defineOptions({ inheritAttrs: false });
-const slots = defineSlots<{
-  default?: () => VNode;
-  "prepend-actions"?: () => VNode;
-  "prepend-confirm"?: () => VNode;
-}>();
+defineSlots<{ default?: () => VNode; "prepend-actions"?: () => VNode; "prepend-confirm"?: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { confirmLabel, confirmVariant = UiButtonVariant.Accent, size = UiDialogSize.Medium } = defineProps<Props>();
+const { confirmVariant = UiButtonVariant.Accent, size = UiDialogSize.Medium } = defineProps<Props>();
 const { answer, isPending } = useDialogAnswer(isOpen);
-const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions"] || slots["prepend-confirm"]));
 </script>
 
 <template>
@@ -52,7 +47,8 @@ const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions
         </div>
       </Transition>
     </template>
-    <template v-if="hasActions" #footer>
+    <!-- Read here rather than in a computed, since a slot's presence is not reactive and a computed would keep the first answer -->
+    <template v-if="confirmLabel || $slots['prepend-actions'] || $slots['prepend-confirm']" #footer>
       <!-- The actions row is the dialog's footer, held through its leave as the body is -->
       <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">
         <div v-if="isOpen" contents>

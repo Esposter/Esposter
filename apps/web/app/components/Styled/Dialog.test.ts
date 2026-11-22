@@ -96,6 +96,29 @@ describe("styledDialog", () => {
     expect(document.body.querySelector("dialog p")?.textContent).toBe("a");
   });
 
+  // A slot's presence is not reactive, so the row is read at each render.
+  // The action slot that appears after mount under an empty confirm label still draws it
+  test("draws the actions row once an action slot appears under an empty confirm label", async () => {
+    expect.hasAssertions();
+
+    const isActionShown = ref(false);
+    mount(
+      defineComponent(
+        () => () =>
+          h(
+            StyledDialog,
+            { confirmLabel: "", modelValue: true, title },
+            isActionShown.value ? { "prepend-confirm": () => h("button", "a") } : {},
+          ),
+      ),
+      { attachTo: document.body },
+    );
+    isActionShown.value = true;
+    await flushPromises();
+
+    expect(getFooterButtonTexts()).toStrictEqual(["Cancel", "a"]);
+  });
+
   test.each([
     { description: "Medium when no size is given", expected: UiDialogSize.Medium, props: {} },
     { description: "the size it is given", expected: UiDialogSize.Large, props: { size: UiDialogSize.Large } },
