@@ -44,7 +44,7 @@ grep -rnE ':focus(-within)?\b' --include='*.vue' apps/web/app/components apps/we
 grep -rnE 'i-[a-z0-9]+:[a-z0-9-]+' --include=*.vue apps/web/app/components apps/web/app/pages apps/web/app/layouts | grep -v 'components/Ui/'
 ```
 
-Each hit of 4 is read against `UiIconMeaning`: a class with no meaning yet is written whole until one is added, which is a feature change and not a sweep fix.
+Each hit of 4 is read against `UiIconMeaning`: a class with no meaning yet is written whole until one is added, which is a feature change and not a sweep fix. A menu typed as `MenuItem` takes a class alone, so a meaning in the rich text menu is a type change first.
 
 ```bash
 # 5. a write-named button with no is-pending: the tag names a write verb in its click and binds no pending state
