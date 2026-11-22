@@ -28,7 +28,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | vue-survey-engine-headless | **/*.d.ts                 |   74241 |   72.5 |
 | mjml-blocks                | **/*.d.ts                 |   72461 |   70.8 |
 | survey-expression          | **/*.js                   |   72155 |   70.5 |
-| @esposter/infra            | index.js                  |   69637 |   68.0 |
+| @esposter/infra            | index.js                  |   70955 |   69.3 |
 | genshin-engine             | index.d.ts                |   55274 |   54.0 |
 | trpc-msw                   | **/*.d.ts                 |   52211 |   51.0 |
 | nuxt-security-module       | **/*.js                   |   50351 |   49.2 |

@@ -1,6 +1,6 @@
 # Infra
 
-`apps/infra` manages Esposter's cloud footprint as Pulumi TypeScript. A single `prod` stack owns the Cloudflare account's resources (the zone and its records, the R2 buckets, the D1 databases, the queues and their dead-letter queues, the Workers' custom domains) and the GitHub repository settings (labels, secrets, branch rulesets). The Workers' code is not a Pulumi resource: Wrangler deploys it from CI.
+`apps/infra` manages Esposter's cloud footprint as Pulumi TypeScript. The domain is registered at Cloudflare Registrar. A single `prod` stack owns the Cloudflare account's resources (the zone, its records and its DNSSEC, the R2 buckets, the D1 databases, the queues and their dead-letter queues, the Workers' custom domains) and the GitHub repository settings (labels, secrets, branch rulesets). The Workers' code is not a Pulumi resource: Wrangler deploys it from CI.
 
 - [Pulumi layout](pulumi-layout/design.md) — how resources are laid out in Pulumi: one resource per file, folders by resource type, names built by one function, the provider split.
 - [Pulumi source of truth](pulumi-source-of-truth/design.md) — the Workers' configuration, declared in code, with its secrets read from the secrets environment.

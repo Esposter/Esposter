@@ -4,7 +4,7 @@ Closes the gaps a registrar move leaves, after the [Cloudflare program](../archi
 
 ## What works today against what the change adds
 
-Today the zone is declared in Pulumi with `protect: true`, its nameservers already point at Cloudflare, DNSSEC is off, and the domain publishes no MX, SPF or DMARC record. The transfer is in progress and nothing in the program mentions the registration.
+Today the domain is registered at Cloudflare, the zone is declared in Pulumi with `protect: true`, its nameservers point at Cloudflare, its DNSSEC is declared and signing, and it publishes the no-mail baseline. The DS record at the registry is Cloudflare's to publish, and the registration stays outside the program.
 
 The change adds a handful of resources to the program and records everything else on the posture page. It adds no Worker code.
 
@@ -58,8 +58,4 @@ apps/infra/src/cloudflare/resources/dnsRecords/esposterComDmarc.ts
 ## Sources
 
 - [Transfer a domain to Cloudflare](https://developers.cloudflare.com/registrar/get-started/transfer-domain-to-cloudflare/): the prerequisites, the order (DNSSEC off at the old registrar, nameservers moved, lock removed, auth code entered), the one-year extension and the up-to-ten-day timeline.
-- [Cloudflare DNSSEC](https://developers.cloudflare.com/dns/dnssec/) and [Enable DNSSEC](https://developers.cloudflare.com/registrar/get-started/enable-dnssec/): the DS record added automatically for Cloudflare Registrar domains, and its one-to-two-day publication.
-- [Registrar API](https://developers.cloudflare.com/registrar/registrar-api/) and [Renew domains](https://developers.cloudflare.com/registrar/account-options/renew-domains/): what the API does not yet cover, and the expiry and failed-renewal emails.
-- [Cloudflare account two-factor authentication](https://developers.cloudflare.com/fundamentals/user-profiles/2fa/) and [Transfer out from Cloudflare](https://developers.cloudflare.com/registrar/account-options/transfer-out-from-cloudflare/): the recommendation and Super Admin enforcement, and the warning that admin roles can unlock a domain and take its auth code.
-- [Cloudflare login options](https://developers.cloudflare.com/fundamentals/user-profiles/login/): social login through GitHub, Google or Apple, and Cloudflare's second factor presented in addition to the provider's.
-- [RFC 7505](https://www.rfc-editor.org/rfc/rfc7505): the null MX record, which says a domain accepts no mail.
+- The DNSSEC, Registrar API, renewal, two-factor, transfer-out and login pages, and RFC 7505, are the [posture page's sources](../../specs/infra/cost-and-security-posture/design.md#sources), where the decisions they support now live.

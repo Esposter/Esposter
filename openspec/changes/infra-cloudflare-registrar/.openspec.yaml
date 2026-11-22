@@ -2,4 +2,4 @@ schema: spec-driven
 affected_areas: [infra]
 skip_specs: true
 x-model: claude-sonnet-5-5
-x-waiting: "tasks 2.1 to 2.4 wait on the registrar transfer completing"
+x-waiting: "task 2.2 waits on the owner's dashboard read-back, and 2.5 on Cloudflare publishing the DS record"

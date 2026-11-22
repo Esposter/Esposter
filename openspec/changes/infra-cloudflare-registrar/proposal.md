@@ -7,7 +7,7 @@
 ## What changes
 
 - The README, the README logo sources and the logo asset stop naming the old registrar. This is done.
-- Once the transfer completes, the program declares the zone's DNSSEC, and a no-mail baseline for a domain that sends no mail: a null MX, an SPF record that authorises no sender, and a DMARC record that rejects.
+- With the transfer complete, the program declares the zone's DNSSEC, and a no-mail baseline for a domain that sends no mail: a null MX, an SPF record that authorises no sender, and a DMARC record that rejects.
 - The cost and security posture page gains the rows for what stays outside the program: the registration and its renewal and expiry warnings, and the account's sign-in, where no two-factor enforcement is declared.
 
 ## Capabilities
@@ -16,7 +16,7 @@ None. The change is infrastructure and documentation, so it carries no spec delt
 
 ## Waiting on
 
-The transfer completing. Cloudflare's transfer guide gives its total time as up to ten days, depending on the old registrar, and every program change here is gated on the registrar of record being Cloudflare.
+The owner reading the account's admin roles and the deploy token's permissions back in the dashboard, and Cloudflare publishing the DS record at the registry, which its DNSSEC page puts at one to two days and which cannot be hurried.
 
 ## Impact
 
