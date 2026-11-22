@@ -242,10 +242,10 @@ export const GameTextKey = {
   // The enemies' drops by their item names
   DamagedMask: "461826100",
   DandelionSeed: "2071890124",
-  Dendrobium: "354894236",
-  DendroSigil: "2628812996",
   // The blessing's threshold steps are the game's own decrease and increase buttons
   Decrease: "UI_BUTTON_REDUCE",
+  Dendrobium: "354894236",
+  DendroSigil: "2628812996",
   // Party Setup's button that deploys the team shown
   Deploy: "UI_BUTTON_ENABLE_TEAM",
   // The dialogue's auto-play button, as it reads while off and while playing
