@@ -55,6 +55,23 @@ describe(useReplyStore, () => {
     expect(getReplyMapRef(roomId).value.get(repliedMessage.id)?.id).toBe(repliedMessage.id);
   });
 
+  // Two replies to one unloaded target each read it, so the later read's answer can be older than the copy the earlier
+  // One filed
+  test("keeps a reply's target copy newer than the read's answer", async () => {
+    expect.hasAssertions();
+
+    const repliedMessage = { ...createOptimisticMessage({ roomId, type: MessageType.Message }, userId), id: 1 };
+    trpcMsw.message.readMessagesByIds.query(() => [{ ...repliedMessage, version: 1 }]);
+    const replyStore = useReplyStore();
+    const { getReplyMapRef } = replyStore;
+    getReplyMapRef(roomId).value.set(repliedMessage.id, { ...repliedMessage, message: "edited", version: 2 });
+    await MessageHookMap[Operation.Create].run(
+      createOptimisticMessage({ replyToId: repliedMessage.id, roomId, type: MessageType.Message }, userId),
+    );
+
+    expect(getReplyMapRef(roomId).value.get(repliedMessage.id)?.message).toBe("edited");
+  });
+
   // A quoted message read from the server is a copy of the room's row, so an edit of the quoted message reaches the
   // Quote through the hook rather than the quote holding the text from before the edit
   test("takes an edit to a quoted message", async () => {

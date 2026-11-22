@@ -15,6 +15,17 @@ describe(readWikiTalentPages, () => {
     vi.resetAllMocks();
   });
 
+  // The cache is written by JSON.stringify, which drops an absent error, so the cached answer must parse without the key
+  test("reads a cached answer back without asking the wiki again", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(fetchOk).mockResolvedValueOnce(Response.json({ query: { pages: [] } }));
+    await readWikiTalentPages("a", cacheDirectory);
+
+    await expect(readWikiTalentPages("a", cacheDirectory)).resolves.toStrictEqual([]);
+    expect(fetchOk).toHaveBeenCalledOnce();
+  });
+
   test("refuses a wiki error answer rather than caching it", async () => {
     expect.hasAssertions();
 

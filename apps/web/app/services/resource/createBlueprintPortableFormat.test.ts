@@ -9,6 +9,7 @@ import { PortableFormatMap } from "#src/services/resource/PortableFormatMap";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useBlueprintStore } from "#src/store/resource/blueprint/index";
+import { useResourceStore } from "#src/store/resource/index";
 import { ResourceType } from "@esposter/db-schema";
 import { downloadFile } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
@@ -110,6 +111,32 @@ describe(createBlueprintPortableFormat, () => {
     const { manifestJson } = storeToRefs(blueprintStore);
 
     expect(readFile).not.toHaveBeenCalled();
+    expect(manifestJson.value).toBe(savedJson);
+  });
+
+  // Closing and reopening the resource loads the same id, so only the opening tells the import's file from the reopened one's
+  test("a manifest file read after its resource is closed and reopened changes nothing", async () => {
+    expect.hasAssertions();
+
+    const { readResource } = useReadOpenResource();
+    await readResource();
+    const { promise: file, resolve: resolveFile } = Promise.withResolvers<File>();
+    vi.mocked(showOpenFilePicker).mockResolvedValue([{ getFile: () => file }] as never);
+    const [manifestFormat] = PortableFormatMap[ResourceType.Blueprint];
+    assert.exists(manifestFormat?.import);
+    const importing = manifestFormat.import();
+    await flushPromises();
+    const resourceStore = useResourceStore();
+    const { clearResource } = resourceStore;
+    clearResource(resourceId);
+    await readResource();
+    const blueprintStore = useBlueprintStore();
+    const { loadContent } = blueprintStore;
+    await loadContent();
+    resolveFile(new File([JSON.stringify({ entries: [], parameters: [] })], "Launch.json"));
+    await importing;
+    const { manifestJson } = storeToRefs(blueprintStore);
+
     expect(manifestJson.value).toBe(savedJson);
   });
 
