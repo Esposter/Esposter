@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 describe(formatForgeTime, () => {
   test.each([
     ["whole minutes in the game's minute words", 5 * SECONDS_PER_MINUTE, 5],
-    ["a time under a minute as one minute, the game having no seconds unit", 5, 1],
+    ["a time under a minute as one minute, since the wish time family holds no seconds", 5, 1],
   ])("reads %s", (_description, seconds, minutes) => {
     expect.hasAssertions();
 
