@@ -1,4 +1,5 @@
 import { SinName } from "../../models/SinName";
+
 // One fixed slot of the dataviz reference palette per sin, so a sin keeps its colour as its score moves
 export const SinColorMap: Record<SinName, { dark: string; light: string }> = {
   [SinName.Envy]: { dark: "#c98500", light: "#eda100" },

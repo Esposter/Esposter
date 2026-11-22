@@ -4,6 +4,7 @@ import { SIN_NAMES } from "../../models/SinName";
 import { getPosterior, getPosteriorTrail } from "./getPosteriorTrail";
 import { getScoreAndSpread } from "./getScoreAndSpread";
 import { getTrend } from "./getTrend";
+
 // The sins the person can read, in the pane's order: one with no evidence is left out rather than shown as a zero
 export const getSinScores = (history: Record<string, number[]>): SinScore[] =>
   SIN_NAMES.flatMap((name) => {

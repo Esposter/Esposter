@@ -1,4 +1,5 @@
 import { veilText } from "./veilText";
+
 // A tool's output is whatever the tool recorded, so every string inside it is veiled and its shape is kept, which is
 // What the engine draws the result from
 export const veilValue = (value: unknown): unknown => {
