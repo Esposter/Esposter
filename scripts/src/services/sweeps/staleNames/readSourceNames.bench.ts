@@ -19,10 +19,17 @@ describe.skipIf(!isBenchable)(readSourceNames, () => {
       bench("warm", () => {
         readSourceNames();
       }),
-      bench("cold", () => {
-        rmSync(SOURCE_WORD_CACHE_PATH, { force: true });
-        readSourceNames();
-      }),
+      bench(
+        "cold",
+        {
+          beforeEach: () => {
+            rmSync(SOURCE_WORD_CACHE_PATH, { force: true });
+          },
+        },
+        () => {
+          readSourceNames();
+        },
+      ),
       BENCHMARK_RUN_OPTIONS,
     );
   });
