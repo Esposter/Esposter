@@ -117,12 +117,11 @@ describe(getAgentJsonSchema, () => {
   test("describes a group's visuals as the visual schema again, by reference", () => {
     expect.hasAssertions();
 
-    const { $defs = {}, properties = {} } = getAgentJsonSchema(
-      ResourceDefinitionMap[ResourceType.Dashboard].contentSchema,
-    );
+    const rootSchema = getAgentJsonSchema(ResourceDefinitionMap[ResourceType.Dashboard].contentSchema);
+    const { properties = {} } = rootSchema;
     const visualRef = readItemsRef(properties.visuals);
     assert.exists(visualRef);
-    const visualSchema = $defs[visualRef.replace("#/$defs/", "")];
+    const visualSchema = getReferencedJsonSchema(rootSchema, visualRef);
 
     expect(readItemsRef(typeof visualSchema === "object" ? visualSchema.properties?.visuals : undefined)).toBe(
       visualRef,
@@ -153,9 +152,12 @@ describe(getAgentJsonSchema, () => {
   test("lists the types a webpage root's content takes, a branch by reference where a slot recurses", () => {
     expect.hasAssertions();
 
-    const { $defs = {}, properties = {} } = getAgentJsonSchema(webpageDocumentSchema);
+    const rootSchema = getAgentJsonSchema(webpageDocumentSchema);
+    const { properties = {} } = rootSchema;
     const resolveSchema = (schema: JSONSchema._JSONSchema | undefined): JSONSchema._JSONSchema | undefined =>
-      typeof schema === "object" && schema.$ref !== undefined ? $defs[schema.$ref.replace("#/$defs/", "")] : schema;
+      typeof schema === "object" && schema.$ref !== undefined
+        ? getReferencedJsonSchema(rootSchema, schema.$ref)
+        : schema;
     const readBranchType = (branch: JSONSchema._JSONSchema | undefined): string | undefined => {
       const resolved = resolveSchema(branch);
       if (resolved === undefined || typeof resolved === "boolean") return undefined;

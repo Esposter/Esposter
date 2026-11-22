@@ -8,6 +8,7 @@ import { closeSessionSockets } from "#server/services/realtime/closeSessionSocke
 import { createMockDb } from "@esposter/db-mock";
 import { roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Each object a revoked session reaches is faked, so a test reads which of them were asked to close the session
@@ -31,9 +32,9 @@ vi.mock(import("#server/composables/realtime/useUserObject"), () => ({
 
 describe(closeSessionSockets, () => {
   const name = "name";
-  const sessionId = "session-abcdefghijklmnop";
-  const ownerId = "5b8f2c1e-7a3d-7d4e-9f60-1a2b3c4d5e66";
-  const userId = "8f1c6a2e-4b7d-7e9a-8c31-2d5f7a9b0c11";
+  const sessionId = v7();
+  const ownerId = v7();
+  const userId = v7();
 
   let db: Database;
   let mockDatabase: MockDatabase;
@@ -62,12 +63,12 @@ describe(closeSessionSockets, () => {
     expect.hasAssertions();
 
     await db.insert(usersInAuth).values([
-      { email: "owner@example.com", emailVerified: false, id: ownerId, name },
-      { email: "user@example.com", emailVerified: false, id: userId, name },
+      { email: "a", emailVerified: false, id: ownerId, name },
+      { email: "b", emailVerified: false, id: userId, name },
     ]);
     const room = takeOne(await db.insert(roomsInMessage).values({ name, userId: ownerId }).returning());
     await db.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
-    const readError = new Error("read failed");
+    const readError = new Error(" ");
     userObject.readJoinedCallIds.mockRejectedValueOnce(readError);
     const consoleError = vi.spyOn(console, "error").mockImplementation(noop);
 

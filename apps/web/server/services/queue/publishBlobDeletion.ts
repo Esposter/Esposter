@@ -27,12 +27,12 @@ export const publishBlobDeletion = (
     // Harmless duplicate into a chunk of blobs that no delivery, retry or replay can ever reclaim.
     for (const blobNamesChunk of chunkBlobNamesByMessageSize([...new Set(blobNamesValue)])) {
       // Spread rather than assigned, so a deletion without a decision sends no key at all instead of an undefined one
-      const data: BlobDeletionQueueMessage = {
+      const blobDeletionQueueMessage: BlobDeletionQueueMessage = {
         blobNames: blobNamesChunk,
         storageBucket,
         ...(decidedAt && { decidedAt }),
       };
       // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a failed chunk stops the ones behind it, and every chunk before it stays durable for a redelivery
-      await getJobQueue(QueueJob.ProcessBlobDeletion).send(data);
+      await getJobQueue(QueueJob.ProcessBlobDeletion).send(blobDeletionQueueMessage);
     }
   });

@@ -4,6 +4,7 @@ import type { RequestEvent } from "nuxt/server";
 
 import { forwardSocket } from "#server/services/realtime/forwardSocket";
 import { SOCKET_IDENTITY_HEADER } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 interface ForwardedInit {
@@ -11,12 +12,7 @@ interface ForwardedInit {
 }
 
 describe(forwardSocket, () => {
-  const identity: SocketIdentity = {
-    deviceId: "33333333-3333-7333-8333-333333333333",
-    sessionExpiresAt: 0,
-    sessionId: "session-abcdefghijklmnop",
-    userId: "22222222-2222-7222-8222-222222222222",
-  };
+  const identity: SocketIdentity = { deviceId: v7(), sessionExpiresAt: 0, sessionId: v7(), userId: v7() };
   const url = "https://esposter.com/ws/user";
   const createEvent = (headers: Record<string, string>) =>
     ({
@@ -28,11 +24,7 @@ describe(forwardSocket, () => {
     expect.hasAssertions();
 
     const { fetch, stub } = createStub();
-    await forwardSocket(
-      createEvent({ [SOCKET_IDENTITY_HEADER.userId]: "44444444-4444-7444-8444-444444444444" }),
-      stub,
-      identity,
-    );
+    await forwardSocket(createEvent({ [SOCKET_IDENTITY_HEADER.userId]: v7() }), stub, identity);
 
     const headers = fetch.mock.calls[0]?.[1].headers;
     expect(headers?.[SOCKET_IDENTITY_HEADER.userId]).toBe(identity.userId);

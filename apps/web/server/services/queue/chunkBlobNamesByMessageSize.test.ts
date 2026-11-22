@@ -2,6 +2,12 @@ import { chunkBlobNamesByMessageSize } from "#server/services/queue/chunkBlobNam
 import { MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES, MAX_BLOB_DELETION_MESSAGE_BYTES } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
+// Each chunk's JSON, the message the queue carries, is within the byte budget
+const expectChunksWithinByteBudget = (chunks: string[][]) => {
+  for (const chunk of chunks)
+    expect(Buffer.byteLength(JSON.stringify(chunk), "utf8")).toBeLessThanOrEqual(MAX_BLOB_DELETION_MESSAGE_BYTES);
+};
+
 describe(chunkBlobNamesByMessageSize, () => {
   const blobName = "a";
   // The character under test and nothing wrapped around it: three UTF-8 bytes for one unit of length, which is
@@ -38,8 +44,7 @@ describe(chunkBlobNamesByMessageSize, () => {
     const chunks = chunkBlobNamesByMessageSize(blobNames);
 
     expect(chunks).toStrictEqual([[multiByteBlobName], [multiByteBlobName]]);
-    for (const chunk of chunks)
-      expect(Buffer.byteLength(JSON.stringify(chunk), "utf8")).toBeLessThanOrEqual(MAX_BLOB_DELETION_MESSAGE_BYTES);
+    expectChunksWithinByteBudget(chunks);
   });
 
   test("splits on the escaped byte budget", () => {
@@ -49,8 +54,7 @@ describe(chunkBlobNamesByMessageSize, () => {
     const chunks = chunkBlobNamesByMessageSize(blobNames);
 
     expect(chunks).toStrictEqual([[escapedBlobName], [escapedBlobName]]);
-    for (const chunk of chunks)
-      expect(Buffer.byteLength(JSON.stringify(chunk), "utf8")).toBeLessThanOrEqual(MAX_BLOB_DELETION_MESSAGE_BYTES);
+    expectChunksWithinByteBudget(chunks);
   });
 
   test("gives a name larger than the whole budget its own chunk", () => {

@@ -59,7 +59,7 @@ describe(getMcpTools, () => {
   test("gives each scope its own tools", () => {
     expect.hasAssertions();
 
-    const mcpTools = getMcpTools(trpcRouter);
+    const mcpTools = getMcpTools(trpcRouter, McpScopes);
 
     expect(
       Object.fromEntries(
@@ -122,7 +122,7 @@ describe(getMcpTools, () => {
         .mutation<void>(() => undefined),
     });
 
-    expect(getMcpTools(humanOnlyRouter)).toStrictEqual([]);
+    expect(getMcpTools(humanOnlyRouter, McpScopes)).toStrictEqual([]);
   });
 
   // A type's own procedure decides what a key may do: a description serves it to the Agent, and a human-only reason keeps
@@ -147,7 +147,7 @@ describe(getMcpTools, () => {
   test("names every tool apart", () => {
     expect.hasAssertions();
 
-    const names = getMcpTools(trpcRouter).map(({ name }) => name);
+    const names = getMcpTools(trpcRouter, McpScopes).map(({ name }) => name);
 
     expect(names).toStrictEqual([...new Set(names)]);
   });

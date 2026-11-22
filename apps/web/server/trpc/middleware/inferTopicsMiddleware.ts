@@ -4,7 +4,7 @@ import type { ColumnTopic } from "@esposter/db-schema";
 import { requestDbStorage } from "#server/db/requestDb";
 import { createTopicWatchSignature } from "#server/services/realtime/createTopicWatchSignature";
 import { publishTopicsBestEffort } from "#server/services/realtime/publishTopicsBestEffort";
-import { requestObjectReadsStorage } from "#server/services/realtime/requestObjectReads";
+import { requestObjectReadsStorage } from "#server/services/realtime/requestObjectReadsStorage";
 import { requestBlobsStorage } from "#server/services/storage/requestBlobs";
 import { t } from "#server/trpc/initTrpc";
 import { ROW_VERSIONS_HEADER, TOPICS_HEADER } from "#shared/services/realtime/constants";

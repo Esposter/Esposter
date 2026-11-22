@@ -1,4 +1,4 @@
-import { recordObjectReads } from "#server/services/realtime/requestObjectReads";
+import { recordObjectReads } from "#server/services/realtime/recordObjectReads";
 import { getObjectStub } from "@esposter/db";
 import { env } from "cloudflare:workers";
 

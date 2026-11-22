@@ -22,6 +22,10 @@ export const publishBlobPrefixDeletion = (
   getResultAsync(async () => {
     // Stamped at publish time, not at delivery: the handler must only ever delete what the caller was looking at.
     // Spread rather than assigned, so an unbounded sweep sends no key at all instead of an undefined one
-    const data: BlobDeletionQueueMessage = { prefix, storageBucket, ...(createdBefore && { createdBefore }) };
-    await getJobQueue(QueueJob.ProcessBlobDeletion).send(data);
+    const blobDeletionQueueMessage: BlobDeletionQueueMessage = {
+      prefix,
+      storageBucket,
+      ...(createdBefore && { createdBefore }),
+    };
+    await getJobQueue(QueueJob.ProcessBlobDeletion).send(blobDeletionQueueMessage);
   });

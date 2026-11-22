@@ -29,7 +29,7 @@ describe(verifyRealtimeKitWebhook, () => {
     const signature = await signer.sign(body);
 
     await expect(verifyRealtimeKitWebhook(body, signature)).resolves.toBe(true);
-    expect(fetch).toHaveBeenCalledWith(REALTIMEKIT_WEBHOOK_KEY_URL);
+    expect(fetch).toHaveBeenCalledExactlyOnceWith(REALTIMEKIT_WEBHOOK_KEY_URL);
   });
 
   test("refuses a body changed after it was signed", async () => {

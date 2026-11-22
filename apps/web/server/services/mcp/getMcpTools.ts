@@ -1,5 +1,6 @@
 import type { McpTool } from "#server/models/mcp/McpTool";
 import type { Meta } from "#server/models/trpc/Meta";
+import type { McpScope } from "@esposter/db-schema";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { AnyProcedure, AnyRouter } from "@trpc/server";
 import type { z } from "zod";
@@ -9,13 +10,14 @@ import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 // Every query and mutation whose meta opts into MCP, as a tool named by its path. The record is flat at runtime, one
 // Procedure per dotted path, where its type nests the sub-routers; a tool name takes no dot in every client, so the
 // Dots become underscores, which no router key carries
-export const getMcpTools = (router: AnyRouter): McpTool[] =>
+export const getMcpTools = (router: AnyRouter, mcpScopes: McpScope[]): McpTool[] =>
   Object.entries<AnyProcedure>(router._def.procedures).flatMap(([path, { _def }]) => {
     // A built procedure types its meta as unknown; the root declares it as `Meta`
-    // oxlint-disable typescript/no-unsafe-type-assertion -- a built procedure types its meta as unknown, and the root's Meta is the one shape every procedure's meta is written to; tRPC types an input as a parser union, and the MCP endpoint serves only zod inputs, each held to an object schema by getMcpTools.test.ts
+    // oxlint-disable typescript/no-unsafe-type-assertion -- a built procedure types its meta as unknown, and the root's Meta is the one shape every procedure's meta is written to
     const { humanOnly, mcp } = (_def.meta ?? {}) as Meta;
     // oxlint-enable typescript/no-unsafe-type-assertion
-    if (!mcp || humanOnly || _def.type === "subscription") return [];
+    // A tool outside the scopes the caller's key holds is dropped before its input schema is derived, since that derivation is the cost
+    if (!mcp || humanOnly || _def.type === "subscription" || !mcpScopes.includes(mcp.scope)) return [];
     // One input whose written side is an object, defaulted, transformed or not, which `getMcpTools.test.ts` holds for every
     // Procedure that opts in, since a tool's input schema must be an object
     const [input] = _def.inputs;

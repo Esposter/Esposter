@@ -3,7 +3,7 @@ import type { ColumnTopic } from "@esposter/db-schema";
 
 import { insertRows } from "#server/services/db/insertRows.test";
 import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
-import { recordObjectReads } from "#server/services/realtime/requestObjectReads";
+import { recordObjectReads } from "#server/services/realtime/recordObjectReads";
 import { confirmBlobUpload } from "#server/services/storage/confirmBlobUpload";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";

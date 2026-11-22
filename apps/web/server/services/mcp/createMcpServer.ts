@@ -15,7 +15,7 @@ import { callTRPCProcedure } from "@trpc/server";
 // Do for the browser. A tool outside those scopes is neither listed nor callable: this is the one place a key's scopes
 // Are checked, and every call an agent makes passes through it
 export const createMcpServer = (router: AnyRouter, ctx: Context, mcpScopes: McpScope[]) => {
-  const mcpTools = getMcpTools(router).filter(({ scope }) => mcpScopes.includes(scope));
+  const mcpTools = getMcpTools(router, mcpScopes);
   // The low-level server rather than `McpServer`, which parses a tool's arguments with its schema and hands the
   // Handler the parsed output: tRPC would then parse that output a second time, which only holds while every input's
   // Transforms are idempotent. A generic bridge is the advanced use the SDK keeps this server for
