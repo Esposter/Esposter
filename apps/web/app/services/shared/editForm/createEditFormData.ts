@@ -4,7 +4,7 @@ import type { EntityIds } from "#src/models/entity/EntityIds";
 import type { ToData } from "@esposter/shared";
 
 import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
-import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
+import { checkIsDeepEqual, toRawDeep, typedFromEntries } from "@esposter/shared";
 
 // `onEdit` hears every open of an item, a press, a menu's Edit and a restore from the query params alike, so a caller that
 // Keeps a selection of its own writes it in one place
@@ -64,10 +64,8 @@ export const createEditFormData = <
       return typeof value === "string" ? [[key, value] as const] : [];
     });
     if (queryIdEntries.length !== idKeys.length) return;
-    // Object.fromEntries types its keys as string, but the entries are the id keys read off the query, which are the
-    // EntityIds' keys
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the values are the id strings the URL carried, and the compiler cannot relate a record built from the id keys to EntityIds of a generic TItem
-    await editItem(Object.fromEntries(queryIdEntries) as EntityIds<TItem, TIdKeys>);
+    // The entries are the id keys read off the query, which are the EntityIds' keys
+    await editItem(typedFromEntries<EntityIds<TItem, TIdKeys>>(queryIdEntries));
   });
 
   return { editedItem, editItem, isDirty, isEditFormDialogOpen, isEditFormValid, isSavable, originalItem, resetItem };

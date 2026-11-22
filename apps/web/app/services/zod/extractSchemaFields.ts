@@ -1,5 +1,7 @@
 import type { z } from "zod";
 
+import { typedFromEntries } from "@esposter/shared";
+
 // The subset of a source object that a form schema declares, so the schema form is handed the fields it renders and
 // Nothing else. Deliberately a projection rather than a parse: the source is a column the app already built,
 // And running it through the schema would apply the form's own defaults and transforms to values the user is
@@ -7,6 +9,5 @@ import type { z } from "zod";
 // What goes *into* the form; the validation boundary is the submit, not the open.
 // The keys are read at runtime, which an `object` cannot be indexed by, so each is read through Reflect; the result is
 // Viewed as the schema's input, since the compiler cannot see that the fields it collects are the schema's shape
-export const extractSchemaFields = <T extends z.ZodObject>(schema: T, source: object) =>
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the collected fields are the schema's own keys, which the compiler cannot relate to the generic z.input<T>
-  Object.fromEntries(Object.keys(schema.shape).map((key) => [key, Reflect.get(source, key)])) as z.input<T>;
+export const extractSchemaFields = <T extends z.ZodObject>(schema: T, source: object): z.input<T> =>
+  typedFromEntries<z.input<T>>(Object.keys(schema.shape).map((key) => [key, Reflect.get(source, key)]));

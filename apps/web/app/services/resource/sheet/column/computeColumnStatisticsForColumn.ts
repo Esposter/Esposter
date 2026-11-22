@@ -10,19 +10,19 @@ import { buildColumnStatisticsComputeContext } from "#src/services/resource/shee
 import { ColumnStatisticsDefinitions } from "#src/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
 import { computeMonthFrequencies } from "#src/services/resource/sheet/column/computeMonthFrequencies";
 import { computeTopFrequencies } from "#src/services/resource/sheet/column/computeTopFrequencies";
+import { typedFromEntries } from "@esposter/shared";
 
 // The values are the column's cells as the compiled sheet reads them, one per row, so a caller that already holds
 // Them does not read every cell a second time
 export const computeColumnStatisticsForColumn = (column: ToData<Column>, values: ColumnValue[]): ColumnStatistics => {
   const effectiveColumnType = getEffectiveColumnType(column);
   const context = buildColumnStatisticsComputeContext(effectiveColumnType, values);
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- each definition's key is a runtime value, so the record is built keyed by the statistics the definitions name, which the compiler cannot relate to the Pick
-  const statisticsValues = Object.fromEntries(
+  const statisticsValues = typedFromEntries<Pick<ColumnStatistics, ColumnStatisticsKey>>(
     ColumnStatisticsDefinitions.map(({ applicableColumnTypes, compute, key }) => [
       key,
       applicableColumnTypes.includes(effectiveColumnType) ? compute(context) : undefined,
     ]),
-  ) as Pick<ColumnStatistics, ColumnStatisticsKey>;
+  );
   const topFrequencies =
     effectiveColumnType === ColumnType.String
       ? computeTopFrequencies(context.stringCountMap)
