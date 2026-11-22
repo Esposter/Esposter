@@ -113,6 +113,11 @@ defineExpose({ element });
             w-full
             resize-y
             ui-field
+            @keydown.esc="
+              () => {
+                if (isSearch && modelValue) modelValue = '';
+              }
+            "
           />
           <!-- eslint-enable vue/no-restricted-syntax -->
         </Input.Control>

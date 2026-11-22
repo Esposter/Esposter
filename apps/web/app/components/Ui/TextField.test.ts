@@ -229,5 +229,21 @@ describe("uiTextField", () => {
       expect(component.props("modelValue")).toBe("");
       expect(component.find('[aria-label="Clear search"]').exists()).toBe(false);
     });
+
+    test("clears a search on Escape", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiTextField, {
+        props: {
+          label,
+          modelValue: "query",
+          "onUpdate:modelValue": (value: string) => component.setProps({ modelValue: value }),
+          type: UiTextFieldType.Search,
+        },
+      });
+      await component.get("input").trigger("keydown", { key: "Escape" });
+
+      expect(component.props("modelValue")).toBe("");
+    });
   });
 });
