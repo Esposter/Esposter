@@ -480,7 +480,7 @@ export const resourceRouter = router({
       // The version preview reconstitute through
       const reappliedContent = omitDerivedContent(
         ctx.resource,
-        await reapplyLiveResourceContent(ctx.resource, snapshotContent),
+        await reapplyLiveResourceContent(ctx.resource.type, ctx.resource, snapshotContent),
       );
       // Nothing is copied: the save below reserves the objects the restored content names, so they stay alive, and they
       // Are this Resource's own objects, so a restore holds no second copy of any asset. A version's asset an eviction

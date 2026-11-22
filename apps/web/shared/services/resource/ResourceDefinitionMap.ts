@@ -1,5 +1,7 @@
 // @unocss-include
+import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ResourceDefinition } from "#shared/models/resource/ResourceDefinition";
+import type { z } from "zod";
 
 import { dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
 import { emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
@@ -75,3 +77,11 @@ export const ResourceDefinitionMap = {
     title: ResourceType.Whiteboard,
   },
 } as const satisfies Record<ResourceType, ResourceDefinition>;
+// The same map read per key: each entry's content schema is typed by the key it sits under, so a generic type reads its own
+// Schema and `ResourceContent<TType>` is that entry's output. A read of the map by a generic key alone types as the union of
+// Every type's schema, which no single type's content would type against
+export const ResourceContentSchemaMap: {
+  [TType in ResourceType]: {
+    contentSchema: z.ZodType<ResourceContent<TType>, z.input<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>>;
+  };
+} = ResourceDefinitionMap;

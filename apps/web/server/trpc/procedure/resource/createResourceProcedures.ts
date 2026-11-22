@@ -8,7 +8,6 @@ import type { ResourceFile } from "#shared/models/resource/ResourceFile";
 import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 import type { ResourceInResource, ResourcePublicationInResource, ResourceType } from "@esposter/db-schema";
-import type { z } from "zod";
 
 import { epochMsSql } from "#server/services/db/epochMsSql";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
@@ -64,7 +63,7 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { ResourceSortName } from "#shared/models/resource/ResourceSortName";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
-import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { ResourceContentSchemaMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceFileMimeTypeMap } from "#shared/services/resource/ResourceFileMimeTypeMap";
 import { ResourceSortNamePageSortMap } from "#shared/services/resource/ResourceSortNamePageSortMap";
 import { createPresignedGetUrl, getContentBlobName, getLivePublicationWhere, readResourceListPage } from "@esposter/db";
@@ -110,22 +109,13 @@ export const PUBLISH_PROCEDURE_NAMES = [
   "unpublishResource",
 ] as const;
 
-// A generic key reads the union of every type's content schema, so the schema a type's procedures read and save through
-// Would not type against that type's content. The overload names the schema of the one type asked for, and the
-// Implementation reads the map those schemas sit in: `ResourceContent` is inferred from the same entry, so they agree
-function getContentSchema<TType extends ResourceType>(
-  type: TType,
-): z.ZodType<ResourceContent<TType>, z.input<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>>;
-function getContentSchema(type: ResourceType) {
-  return ResourceDefinitionMap[type].contentSchema;
-}
 // The procedures of one resource type, each group built from that type's own content schema, so their content, input
 // And read types are the type's rather than the union of every type's
 const createProcedureGroups = <TType extends ResourceType>(
   type: TType,
   options?: PublishableResourceProcedureOptions<ResourceContent<TType>>,
 ) => {
-  const contentSchema = getContentSchema(type);
+  const { contentSchema } = ResourceContentSchemaMap[type];
   const transformPublishedContent = options?.transformPublishedContent;
   // The input side is the accessor's declared input rather than zod's default, since defaulting it to unknown would erase
   // The procedure's input type for consumers like achievement condition paths
@@ -148,7 +138,7 @@ const createProcedureGroups = <TType extends ResourceType>(
     // Reconstitution, not a plain read: a snapshot's frozen copy of what the type declares live is replaced
     // Here, so the public read and the owner's version preview answer the same content — and so does the
     // Restore, which reconstitutes through the same declaration
-    return reapplyLiveResourceContent<TType>(resource, content);
+    return reapplyLiveResourceContent(type, resource, content);
   };
   const baseProcedures = {
     createResource: standardAuthedProcedure
@@ -502,19 +492,23 @@ type ResourceProcedures<TType extends ResourceType> = ProcedureGroups<TType>["ba
   (TType extends FileAssetsResourceType ? ProcedureGroups<TType>["fileAssetsProcedures"] : unknown) &
   (TType extends PublishableResourceType ? ProcedureGroups<TType>["publishProcedures"] : unknown);
 
-export function createResourceProcedures<TType extends PublishableResourceType>(
+// The publish hooks are keyed by the type: a publishable type takes its options, and every other type takes none. The
+// Check is not distributive, so the options stay this type's own rather than the union of every publishable type's
+export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,
-  options?: PublishableResourceProcedureOptions<ResourceContent<TType>>,
-): ResourceProcedures<TType>;
-export function createResourceProcedures<TType extends ResourceType>(type: TType): ResourceProcedures<TType>;
-export function createResourceProcedures<TType extends ResourceType>(
-  type: TType,
-  options?: PublishableResourceProcedureOptions<ResourceContent<TType>>,
-) {
+  options?: [TType] extends [PublishableResourceType]
+    ? PublishableResourceProcedureOptions<ResourceContent<TType>>
+    : never,
+): ResourceProcedures<TType> => {
   const { baseProcedures, fileAssetsProcedures, publishProcedures } = createProcedureGroups(type, options);
-  return {
+  // The groups are gated on the same runtime checks the conditional states at the type level, which is why the object is
+  // Right for every type, and why the cast is the one the compiler leaves: TS2322 refuses a concrete object as a value of
+  // `ResourceProcedures<TType>`, a conditional over the generic `TType`
+  const procedures = {
     ...baseProcedures,
     ...(checkHasCapability(type, "fileAssets") ? fileAssetsProcedures : {}),
     ...(checkHasCapability(type, "publishable") ? publishProcedures : {}),
   };
-}
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a conditional over the generic TType, which no concrete object is assignable to (TS2322); each group is gated on checkHasCapability above
+  return procedures as ResourceProcedures<TType>;
+};

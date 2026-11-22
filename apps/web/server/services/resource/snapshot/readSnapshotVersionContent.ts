@@ -4,7 +4,7 @@ import type { ResourceInResource, ResourceType, ResourceVersionInResource } from
 
 import { createSnapshotKeyframeStore } from "#server/services/resource/snapshot/createSnapshotKeyframeStore";
 import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
-import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { ResourceContentSchemaMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ObjectNotStoredError } from "keyframe-store";
 
 // Reconstructs one retained version and parses it with the type's content schema. The row is what says a version
@@ -41,7 +41,6 @@ export const readSnapshotVersionContent = async <TType extends ResourceType>(
   if (plaintext) {
     // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, exactly as readResourceContent relies on
     const json = JSON.parse(Buffer.from(plaintext).toString());
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- ResourceDefinitionMap indexed by a generic type is typed as the union of every entry's schema, so parse returns that union, and the compiler cannot relate it to TType
-    return ResourceDefinitionMap[resource.type].contentSchema.parse(json) as ResourceContent<TType>;
+    return ResourceContentSchemaMap[resource.type].contentSchema.parse(json);
   } else return undefined;
 };

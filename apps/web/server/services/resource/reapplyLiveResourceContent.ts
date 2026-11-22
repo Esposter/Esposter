@@ -4,16 +4,14 @@ import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 import { ResourceLiveContentMap } from "#server/services/resource/ResourceLiveContentMap";
 
 // Re-applies a type's live state over content that came out of a snapshot. Every reconstitution goes through
-// Here, so a new path cannot be the one that forgets, and a type with nothing live pays a map lookup
-export function reapplyLiveResourceContent<TType extends ResourceType>(
+// Here, so a new path cannot be the one that forgets, and a type with nothing live pays a map lookup. The type keys
+// Both the map and the content, so the entry read for it takes that type's own content and nothing is asserted
+export const reapplyLiveResourceContent = <TType extends ResourceType>(
+  type: TType,
   resource: ResourceInResource,
   content: ResourceContent<TType>,
-): Promise<ResourceContent<TType>>;
-export function reapplyLiveResourceContent(resource: ResourceInResource, content: unknown): Promise<unknown>;
-export function reapplyLiveResourceContent(resource: ResourceInResource, content: unknown) {
-  const reapplyLiveContent = ResourceLiveContentMap[resource.type];
-  if (reapplyLiveContent)
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a call through the type's runtime key: each entry takes its own content type, so the call's parameter is the intersection of them, which is never for disjoint types; the content came from a snapshot the type's schema parsed
-    return reapplyLiveContent(resource, content as never);
+): Promise<ResourceContent<TType>> => {
+  const reapplyLiveContent = ResourceLiveContentMap[type];
+  if (reapplyLiveContent) return reapplyLiveContent(resource, content);
   else return Promise.resolve(content);
-}
+};
