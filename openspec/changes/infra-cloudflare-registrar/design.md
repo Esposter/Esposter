@@ -12,7 +12,7 @@ The change adds a handful of resources to the program and records everything els
 
 ```mermaid
 flowchart TD
-  T["transfer completes: registrar of record is Cloudflare"] --> G{"registrar of record read from the public record"}
+  T["transfer done (task 2.1): registrar of record is Cloudflare"] --> G{"registrar of record read from the public record"}
   G -->|"still the old registrar"| W["wait, declare nothing"]
   G -->|"Cloudflare"| D["declare the zone's DNSSEC"]
   D --> DS["Cloudflare publishes the DS at the registry, one to two days"]
