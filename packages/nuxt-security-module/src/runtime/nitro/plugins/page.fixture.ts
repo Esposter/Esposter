@@ -1,4 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-type-assertion -- the fakes stand in for Nitro's app and h3's event with only the members the plugin reads, which are subsets of the full types */
 import type { ContentSecurityPolicy } from "#src/models/ContentSecurityPolicy";
 import type { SecurityHeaders } from "#src/models/SecurityHeaders";
 import type { SecurityRules } from "#src/models/SecurityRules";
@@ -108,12 +107,15 @@ export const createNitroApp = (): {
   };
 
   // A plugin is typed by Nitro's own app, which this fake stands in for: the cast is the one place that gap is closed
+  // oxlint-disable typescript/no-unsafe-type-assertion -- the fakes stand in for Nitro's app and h3's event with only the members the plugin reads, which are subsets of the full types
   const nitroApp = { hooks } as Parameters<NitroAppPlugin>[0];
+  // oxlint-enable typescript/no-unsafe-type-assertion
   return { nitroApp, run };
 };
 
 // A fresh request event for the page's path, the way each request arrives: its own response headers, no rules cached yet
 export const createPageEvent = (): H3Event =>
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the fakes stand in for Nitro's app and h3's event with only the members the plugin reads, which are subsets of the full types
   ({ res: { headers: new Headers() }, url: new URL(`http://localhost${PAGE_PATHNAME}`) }) as H3Event;
 
 // A fresh copy of the page's sections, since a render hook replaces each section's array as it rewrites it

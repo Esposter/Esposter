@@ -1,4 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-type-assertion -- a built procedure types its meta as unknown, and the root's Meta is the one shape every procedure's meta is written to; tRPC types an input as a parser union, and the MCP endpoint serves only zod inputs, each held to an object schema by getMcpTools.test.ts */
 import type { McpTool } from "#server/models/mcp/McpTool";
 import type { Meta } from "#server/models/trpc/Meta";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
@@ -13,7 +12,9 @@ import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 export const getMcpTools = (router: AnyRouter): McpTool[] =>
   Object.entries<AnyProcedure>(router._def.procedures).flatMap(([path, { _def }]) => {
     // A built procedure types its meta as unknown; the root declares it as `Meta`
+    // oxlint-disable typescript/no-unsafe-type-assertion -- a built procedure types its meta as unknown, and the root's Meta is the one shape every procedure's meta is written to; tRPC types an input as a parser union, and the MCP endpoint serves only zod inputs, each held to an object schema by getMcpTools.test.ts
     const { humanOnly, mcp } = (_def.meta ?? {}) as Meta;
+    // oxlint-enable typescript/no-unsafe-type-assertion
     if (!mcp || humanOnly || _def.type === "subscription") return [];
     // One input whose written side is an object, defaulted, transformed or not, which `getMcpTools.test.ts` holds for every
     // Procedure that opts in, since a tool's input schema must be an object
@@ -24,7 +25,9 @@ export const getMcpTools = (router: AnyRouter): McpTool[] =>
         // Client can let every read through while it keeps asking about writes
         annotations: { readOnlyHint: _def.type === "query" },
         description: mcp.description,
+        // oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types an input as a parser union, and the MCP endpoint serves only zod inputs, each held to an object schema by getMcpTools.test.ts
         inputSchema: getAgentJsonSchema(input as z.ZodType) as Tool["inputSchema"],
+        // oxlint-enable typescript/no-unsafe-type-assertion
         name: path.replaceAll(".", "_"),
         path,
         scope: mcp.scope,

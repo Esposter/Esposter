@@ -1,5 +1,4 @@
 <script setup lang="ts" generic="TModel extends Date | undefined">
-/* oxlint-disable typescript/no-unsafe-type-assertion -- a picked moment is a Date and clearing writes undefined, and the caller's generic model holds a Date, or undefined too when it is clearable, which the compiler cannot relate to TModel */
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { getZonedDateTime } from "@esposter/shared";
@@ -51,10 +50,14 @@ const choose = (newZonedDateTime: Temporal.ZonedDateTime) => {
     clampedZonedDateTime = minZonedDateTime.value;
   else if (maxZonedDateTime.value && Temporal.ZonedDateTime.compare(clampedZonedDateTime, maxZonedDateTime.value) > 0)
     clampedZonedDateTime = maxZonedDateTime.value;
+  // oxlint-disable typescript/no-unsafe-type-assertion -- a picked moment is a Date and clearing writes undefined, and the caller's generic model holds a Date, or undefined too when it is clearable, which the compiler cannot relate to TModel
   modelValue.value = new Date(clampedZonedDateTime.epochMilliseconds) as TModel;
+  // oxlint-enable typescript/no-unsafe-type-assertion
 };
 const clear = () => {
+  // oxlint-disable typescript/no-unsafe-type-assertion -- a picked moment is a Date and clearing writes undefined, and the caller's generic model holds a Date, or undefined too when it is clearable, which the compiler cannot relate to TModel
   modelValue.value = undefined as TModel;
+  // oxlint-enable typescript/no-unsafe-type-assertion
 };
 // A new day keeps the time already chosen, or the current one's to the minute when there is none yet
 const chooseDate = (date: Temporal.PlainDate) => {

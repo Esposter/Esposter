@@ -1,5 +1,4 @@
 <script setup lang="ts" generic="TMultiple extends boolean = false">
-/* oxlint-disable typescript/no-unsafe-type-assertion -- the model is a list or an id by TMultiple, a conditional type that the compiler cannot narrow by the mode's runtime flag; the value written is the shape the mode holds, which FriendPickerModelValue<TMultiple> selects at runtime */
 import type { FriendPickerModelValue } from "#src/models/message/room/directMessage/FriendPickerModelValue";
 import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { PublicUser } from "@esposter/db-schema";
@@ -32,9 +31,13 @@ const friendItems = computed(() =>
 );
 // The single/multiple split is the component's generic, which the template cannot narrow — so the two shapes of
 // The model are read and written here, in one place, rather than cast at every binding
+// oxlint-disable typescript/no-unsafe-type-assertion -- the model is a list or an id by TMultiple, a conditional type that the compiler cannot narrow by the mode's runtime flag; the value written is the shape the mode holds, which FriendPickerModelValue<TMultiple> selects at runtime
 const readModelValue = () => modelValue.value as string | string[] | undefined;
+// oxlint-enable typescript/no-unsafe-type-assertion
 const writeModelValue = (value: string | string[] | undefined) => {
+  // oxlint-disable typescript/no-unsafe-type-assertion -- the model is a list or an id by TMultiple, a conditional type that the compiler cannot narrow by the mode's runtime flag; the value written is the shape the mode holds, which FriendPickerModelValue<TMultiple> selects at runtime
   modelValue.value = value as FriendPickerModelValue<TMultiple>;
+  // oxlint-enable typescript/no-unsafe-type-assertion
 };
 const selectedUserIds = computed(() => {
   const value = readModelValue();

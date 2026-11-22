@@ -1,4 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-type-assertion -- the content read is the resource type TType the caller names, which the store's runtime type cannot carry to the compiler; the union of every type's content write takes the one argument each arm accepts, so the input is named as never where it is saved */
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ContentBaseline } from "#src/models/resource/ContentBaseline";
 import type { ResourceSave } from "#src/models/resource/ResourceSave";
@@ -313,7 +312,9 @@ export const useResourceStore = defineStore("resource", () => {
     persistedContentHash = contentHash;
     confirmedContentVersions.set(id, contentVersion);
     if (storedContent) contentBaseline = storedContent;
+    // oxlint-disable typescript/no-unsafe-type-assertion -- the content read is the resource type TType the caller names, which the store's runtime type cannot carry to the compiler; the union of every type's content write takes the one argument each arm accepts, so the input is named as never where it is saved
     applyContent(content as ResourceContent<TType> | undefined);
+    // oxlint-enable typescript/no-unsafe-type-assertion
   };
   // Every blade of a resource renders the one content, so it is read once per opened resource rather than once
   // Per blade mount — switching blades renders from the store at once. What changes it after that is the store's own
@@ -475,7 +476,9 @@ export const useResourceStore = defineStore("resource", () => {
               (await saveStagedResourceContent(resourceRouter, contentBytes, sent)))
             : // Calling the union of every type's content write needs an argument every arm accepts, so the
               // Content is narrowed the same way the read above widens it
+              // oxlint-disable typescript/no-unsafe-type-assertion -- the content read is the resource type TType the caller names, which the store's runtime type cannot carry to the compiler; the union of every type's content write takes the one argument each arm accepts, so the input is named as never where it is saved
               await resourceRouter.saveResourceContent.mutate(input as never);
+        // oxlint-enable typescript/no-unsafe-type-assertion
         // The server stores its own serialization of the parsed document, which a content schema's transforms can
         // Make differ from what was sent, so the sent bytes become the baseline only when their hash is the one
         // Stored
