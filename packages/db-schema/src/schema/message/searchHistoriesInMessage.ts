@@ -6,7 +6,7 @@ import { MESSAGE_MAX_LENGTH } from "#src/services/message/constants";
 import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { sqliteTable } from "#src/sqliteTable";
-import { MAX_READ_LIMIT } from "@esposter/shared";
+import { createNormalizedStringSchema, MAX_READ_LIMIT } from "@esposter/shared";
 import { check, index, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
@@ -45,6 +45,6 @@ export const selectSearchHistoryInMessageSchema = createSelectSchema(searchHisto
   // A row records the filters its search ran with, which are not unique by type — two `has:` narrow together
   filters: filterSchema.array().max(MAX_READ_LIMIT),
   id: () => z.uuidv7(),
-  query: (schema) => schema.max(MESSAGE_MAX_LENGTH),
+  query: (schema) => createNormalizedStringSchema(MESSAGE_MAX_LENGTH, schema),
   roomId: () => z.uuidv7(),
 });

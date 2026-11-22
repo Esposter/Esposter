@@ -51,6 +51,14 @@ describe("searchHistoryRouter", () => {
     expect(searchHistory.query).toBe(query);
   });
 
+  test("records a padded search as its trimmed query", async () => {
+    expect.hasAssertions();
+
+    const searchHistory = await searchHistoryCaller.createSearchHistory({ query: ` ${query} `, roomId });
+
+    expect(searchHistory.query).toBe(query);
+  });
+
   test("reads the list to its end newest first across a page boundary", async () => {
     expect.hasAssertions();
 
