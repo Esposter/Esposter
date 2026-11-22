@@ -40,7 +40,7 @@ const isLeaveOpen = ref(false);
           {{ participants.length }}
         </template>
         <div w="[min(18rem,80dvw)]" flex flex-col>
-          <p text-sm text-muted>Participants</p>
+          <p text-muted>Participants</p>
           <MessageContentHeaderDirectMessageParticipant
             v-for="participant of participants"
             :key="participant.id"
@@ -55,13 +55,13 @@ const isLeaveOpen = ref(false);
         </div>
       </UiPopover>
       <MessageContentHeaderCreateDirectMessageParticipantButton :room-id="currentDirectMessage.id" />
-      <MessageContentShowDrawerButton :drawer="RightDrawer.Search" />
+      <MessageContentHeaderDrawerButton :drawer="RightDrawer.Search" />
     </div>
     <UiConfirmDialog
       v-if="removingParticipant"
       v-model="isRemoveOpen"
       confirm-label="Remove"
-      :title="`Remove ${removingParticipant.name}`"
+      :title="`Remove ${removingParticipant.displayName}`"
       :confirm="
         () =>
           currentDirectMessage &&
@@ -69,7 +69,7 @@ const isLeaveOpen = ref(false);
           deleteDirectMessageParticipant(currentDirectMessage.id, removingParticipant.id)
       "
     >
-      <p>Remove {{ removingParticipant.name }} from this conversation?</p>
+      <p>Remove {{ removingParticipant.displayName }} from this conversation?</p>
     </UiConfirmDialog>
     <UiConfirmDialog
       v-model="isLeaveOpen"

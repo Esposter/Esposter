@@ -4,8 +4,10 @@ import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateU
 import { getMockSession } from "#server/trpc/context.test";
 import MessageContentHeaderOverflowMenu from "#src/components/Message/Content/Header/OverflowMenu.vue";
 import UiOverflowMenu from "#src/components/Ui/OverflowMenu.vue";
+import { RightDrawer } from "#src/models/message/RightDrawer";
 import { setupSession } from "#src/services/auth/setupSession.test";
 import { NotificationTypeLabelMap } from "#src/services/message/NotificationTypeLabelMap";
+import { RightDrawerToggleMap } from "#src/services/message/RightDrawerToggleMap";
 import { createUserToRoom } from "#src/services/message/room/createUserToRoom.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
@@ -40,9 +42,9 @@ describe("messageContentHeaderOverflowMenu", () => {
 
     expect(items.map(({ isChecked, isGroupStart, title }) => ({ isChecked, isGroupStart, title }))).toStrictEqual([
       { isChecked: undefined, isGroupStart: undefined, title: "Start Call" },
-      { isChecked: false, isGroupStart: undefined, title: "Followed Threads" },
-      { isChecked: false, isGroupStart: undefined, title: "Search" },
-      { isChecked: false, isGroupStart: undefined, title: "Member List" },
+      { isChecked: false, isGroupStart: undefined, title: RightDrawerToggleMap[RightDrawer.Threads].title },
+      { isChecked: false, isGroupStart: undefined, title: RightDrawerToggleMap[RightDrawer.Search].title },
+      { isChecked: false, isGroupStart: undefined, title: RightDrawerToggleMap[RightDrawer.Member].title },
       { isChecked: undefined, isGroupStart: true, title: "Pinned Messages" },
       ...Object.values(NotificationType).map((type, index) => ({
         isChecked: undefined,
@@ -70,7 +72,7 @@ describe("messageContentHeaderOverflowMenu", () => {
 
       return { ...userToRoom, notificationType: input.notificationType ?? userToRoom.notificationType, version: 1 };
     });
-    updateUserToRoom({ displayName: "queued", roomId });
+    updateUserToRoom({ displayName: "a", roomId });
     const component = await mountSuspended(MessageContentHeaderOverflowMenu, { props: { isToolsInHeader: true } });
     // Set after mounting, which resets the route the room is read from
     setRouteId(roomId);
@@ -81,7 +83,7 @@ describe("messageContentHeaderOverflowMenu", () => {
     item?.onClick?.(new MouseEvent("click"));
     await flushPromises();
 
-    expect(receivedUpdate).toHaveBeenCalledExactlyOnceWith({ displayName: "queued", roomId });
+    expect(receivedUpdate).toHaveBeenCalledExactlyOnceWith({ displayName: "a", roomId });
 
     releaseQueued();
     await flushPromises();

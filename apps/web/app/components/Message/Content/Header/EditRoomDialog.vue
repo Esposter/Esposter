@@ -24,9 +24,6 @@ const isUnchanged = computed(
     selectRoomInMessageSchema.shape.name.safeParse(editedName.value).data === room.name &&
     editedImage.value === room.image,
 );
-const updateRoom = () => {
-  saveRoom({ image: editedImage.value, name: editedName.value });
-};
 </script>
 
 <template>
@@ -34,7 +31,11 @@ const updateRoom = () => {
     v-model="isEditRoomDialogOpen"
     confirm-label="Save"
     :is-confirm-disabled="isUnchanged || undefined"
-    :submit="updateRoom"
+    :submit="
+      () => {
+        saveRoom({ image: editedImage, name: editedName });
+      }
+    "
     title="Edit Room"
   >
     <MessageContentHeaderEditRoomImageField v-model="editedImage" :name="roomName" :room-id="room.id" />

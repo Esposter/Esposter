@@ -41,7 +41,7 @@ const { smAndUp } = useUiDisplay();
     <div flex shrink-0 gap-1 items-center>
       <template v-if="smAndUp">
         <MessageContentCallButton />
-        <MessageContentShowDrawerButton v-for="drawer of RIGHT_DRAWER_TOGGLES" :key="drawer" :drawer />
+        <MessageContentHeaderDrawerButton v-for="drawer of RIGHT_DRAWER_TOGGLES" :key="drawer" :drawer />
       </template>
       <MessageContentHeaderOverflowMenu :is-tools-in-header="smAndUp" />
     </div>

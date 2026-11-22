@@ -26,15 +26,14 @@ const { isLoading, uploadImage } = useUploadImage((file) =>
 <template>
   <div flex flex-col gap-2 items-center>
     <UiTooltip #default="{ activatorProps }" label="Upload Image">
-      <button
+      <UiButton
         :="activatorProps"
-        aria-label="Upload Image"
-        type="button"
-        :disabled="isLoading"
         class="group"
-        cursor-pointer
         relative
-        disabled:cursor-default
+        aria-label="Upload Image"
+        :disabled="isLoading"
+        type="button"
+        :variant="UiButtonVariant.Quiet"
         @click="fileInput?.open()"
       >
         <UiAvatar :image="modelValue" :name is-large group-hover:op-80 />
@@ -44,7 +43,7 @@ const { isLoading, uploadImage } = useUploadImage((file) =>
         <span p-1 flex right--1 top--1 absolute ui-raised ui-pill>
           <UiIcon :meaning="UiIconMeaning.Edit" />
         </span>
-      </button>
+      </UiButton>
     </UiTooltip>
     <UiHiddenFileInput
       ref="fileInput"

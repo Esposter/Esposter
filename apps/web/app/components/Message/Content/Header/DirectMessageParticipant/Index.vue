@@ -15,10 +15,10 @@ const emit = defineEmits<{ remove: [] }>();
 
 <template>
   <div ui-row>
-    <UiItemContent :image="participant.image" :title="participant.name">
+    <UiItemContent :image="participant.image" :title="participant.displayName">
       <template v-if="isOwner" #append>
         <UiIconButton
-          :label="`Remove ${participant.name}`"
+          :label="`Remove ${participant.displayName}`"
           :meaning="UiIconMeaning.Remove"
           :variant="UiButtonVariant.Quiet"
           @click="emit('remove')"
