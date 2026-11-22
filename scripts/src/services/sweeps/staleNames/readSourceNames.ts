@@ -1,6 +1,6 @@
 import type { SourceWordEntry } from "#src/models/sweeps/staleNames/SourceWordEntry";
 
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { APP_DIRECTORY, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { writeFileAtomically } from "#src/services/shared/writeFileAtomically";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
@@ -19,7 +19,7 @@ const COMPONENT_PATH_REGEX = /\/components\/(?<componentPath>.+\.vue)$/u;
 // The declarations Nuxt generates for the app — its own components and auto-imports beside the app's — which are
 // Gitignored, so they are read by path rather than through git, and are simply absent on a checkout nothing has
 // Prepared yet
-const NUXT_DECLARATIONS_DIRECTORY = join(REPOSITORY_ROOT, "apps", "web", ".nuxt");
+const NUXT_DECLARATIONS_DIRECTORY = join(REPOSITORY_ROOT, APP_DIRECTORY, ".nuxt");
 
 // Every name the tracked tree holds: each word of every source file, every path segment (a directory a ledger
 // Row names, a file name whole and by its dot-split parts, so `Foo.test.ts` vouches for `Foo`), the registered
