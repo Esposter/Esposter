@@ -9,7 +9,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: cfdf8b4618
+- Commit: 7c64d0e9e4
 - Node: v26.13.1
 - OS: darwin 27.0.0 (arm64)
 - CPU: Apple M1 × 8
@@ -19,10 +19,10 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ---- | ------- | --------- | ------- | -------- | ------- |
-| draw | 1.00×   | 0.3053    | ±51.60% | 0.8556   | 10      |
+| draw | 1.00×   | 0.0927    | ±52.41% | 0.2482   | 10      |
 
 ## selectDrawnEnemies > 3450 enemies
 
-| task | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ---- | ------- | --------- | ------- | -------- | ------- |
-| draw | 1.00×   | 9.9380    | ±64.22% | 27.2189  | 10      |
+| task | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ---- | ------- | --------- | ------ | -------- | ------- |
+| draw | 1.00×   | 0.2307    | ±2.74% | 0.2509   | 10      |
