@@ -6,9 +6,9 @@ import { readQuestionUnits } from "#src/services/sweeps/ledgerCoverage/readQuest
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 
-// The next sample of the questions, read from the status: every question's open cells, drawn rarest question first,
-// Each unit printed with the questions it is judged for. A seed fixes the draw, so a rerun on the same day reads the
-// Same units.
+// The next sample of the questions, read from the status: every question's open cells, drawn rarest question first.
+// Each unit is printed with the questions it is judged for.
+// A seed fixes the draw, so a rerun on the same day reads the same units.
 await runCommand(
   defineCommand({
     args: {
@@ -24,8 +24,8 @@ await runCommand(
       name: "ai:sweep:sample",
     },
     run: ({ args }) => {
-      const statuses = readLedgerStatus(readLedgerEvents(), readQuestionUnits());
-      for (const { ledgers, unit } of getLedgerSample(statuses, args.seed, SAMPLE_SIZE))
+      const ledgerCoverages = readLedgerStatus(readLedgerEvents(), readQuestionUnits());
+      for (const { ledgers, unit } of getLedgerSample(ledgerCoverages, args.seed, SAMPLE_SIZE))
         console.info(`${unit} :: ${ledgers.join(", ")}`);
     },
   }),

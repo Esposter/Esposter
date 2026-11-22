@@ -22,24 +22,30 @@ await runCommand(
       name: "ai:skills:extract",
     },
     run: ({ args }) => {
-      const spec = parseMachineJson<ExtractSpec>(
+      const extractSpec = parseMachineJson<ExtractSpec>(
         readFileSync(resolve(process.env.INIT_CWD ?? process.cwd(), args.spec), "utf8"),
       );
-      const skillDirectory = join(REPOSITORY_ROOT, SKILLS_DIRECTORY, spec.skill);
+      const skillDirectory = join(REPOSITORY_ROOT, SKILLS_DIRECTORY, extractSpec.skill);
       const referencesDirectory = join(skillDirectory, "references");
       const skillPath = join(skillDirectory, "SKILL.md");
       const getPagePath = (page: string) => join(referencesDirectory, `${page}.md`);
-      const sourcePath = spec.source === undefined ? skillPath : getPagePath(spec.source);
-      const { indexLines, pageTextMap, sourceText } = extractMoves(spec, readFileSync(sourcePath, "utf8"), (page) => {
-        const pagePath = getPagePath(page);
-        return existsSync(pagePath) ? readFileSync(pagePath, "utf8") : "";
-      });
+      const sourcePath = extractSpec.source === undefined ? skillPath : getPagePath(extractSpec.source);
+      const { indexLines, pageTextMap, sourceText } = extractMoves(
+        extractSpec,
+        readFileSync(sourcePath, "utf8"),
+        (page) => {
+          const pagePath = getPagePath(page);
+          return existsSync(pagePath) ? readFileSync(pagePath, "utf8") : "";
+        },
+      );
       mkdirSync(referencesDirectory, { recursive: true });
       for (const [page, text] of pageTextMap) writeFileSync(getPagePath(page), text);
       writeFileSync(sourcePath, sourceText);
-      const skillText = indexPages(readFileSync(skillPath, "utf8"), indexLines, spec.indexHeading);
+      const skillText = indexPages(readFileSync(skillPath, "utf8"), indexLines, extractSpec.indexHeading);
       writeFileSync(skillPath, skillText);
-      console.info(`${spec.skill}: SKILL.md ${Buffer.byteLength(skillText)} bytes, ${pageTextMap.size} pages written`);
+      console.info(
+        `${extractSpec.skill}: SKILL.md ${Buffer.byteLength(skillText)} bytes, ${pageTextMap.size} pages written`,
+      );
     },
   }),
 );
