@@ -243,7 +243,8 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
       ...getConstellation1ReactionBonus(member, reaction, context),
       ...getConstellation4ReactionBonus(member, reaction, context),
     }),
-    // Constellation 4: a party member's strike on an enemy under the Omen or her bubble, Mona's own strikes read here
+    // Constellation 4: a deployed member's strike on an enemy under the Omen or her bubble, other than Mona's own strike,
+    // Which her own hooks price
     getPartyStrikeBonus: (member, strike, enemy, party, effects) =>
       getConstellation4Bonus(member, strike.combatant, enemy, party, effects),
     getPassiveBonuses,
