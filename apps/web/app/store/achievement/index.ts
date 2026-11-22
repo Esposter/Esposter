@@ -6,7 +6,9 @@ import type { AchievementName, UserAchievementInAchievementWithRelations } from 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 import { checkIsUnlockedUserAchievement } from "#src/services/achievement/checkIsUnlockedUserAchievement";
 import { getUnlockedUserAchievements } from "#src/services/achievement/getUnlockedUserAchievements";
+import { userAchievementTable } from "#src/services/achievement/overlay/constants";
 import { toUserAchievementWithDefinition } from "#src/services/achievement/toUserAchievementWithDefinition";
+import { useOverlayStore } from "#src/store/overlay";
 
 export const useAchievementStore = defineStore("achievement", () => {
   const achievementDefinitionMap = ref<AchievementDefinitionViewMap>();
@@ -16,9 +18,12 @@ export const useAchievementStore = defineStore("achievement", () => {
   const initializeAchievementDefinitionMap = (newAchievementDefinitionMap: AchievementDefinitionViewMap) => {
     achievementDefinitionMap.value = newAchievementDefinitionMap;
   };
-  const userAchievements = ref<UserAchievementWithDefinition[]>([]);
+  const overlayStore = useOverlayStore();
+  const { arrive, view } = overlayStore;
+  const userAchievements = view(userAchievementTable);
+  // Each row is an arrival, so a read that answers older than a row a push already brought keeps the newer one
   const initializeUserAchievements = (newUserAchievements: UserAchievementWithDefinition[]) => {
-    userAchievements.value = newUserAchievements;
+    for (const userAchievement of newUserAchievements) arrive(userAchievementTable, userAchievement);
   };
   const statistics = computed(() => {
     const unlockedUserAchievements = getUnlockedUserAchievements(userAchievements.value);
@@ -42,13 +47,9 @@ export const useAchievementStore = defineStore("achievement", () => {
       updatedUserAchievement,
       achievementDefinitionMap.value[updatedUserAchievement.achievement.name],
     );
-    const index = userAchievements.value.findIndex(
-      ({ achievementId, userId }) =>
-        userId === updatedUserAchievement.userId && achievementId === updatedUserAchievement.achievementId,
-    );
-    if (index === -1) userAchievements.value.push(userAchievementWithDefinition);
-    else userAchievements.value[index] = userAchievementWithDefinition;
-    if (checkIsUnlockedUserAchievement(userAchievementWithDefinition))
+    // A push the held row already supersedes is not a new unlock, so it raises no toast
+    const isApplied = arrive(userAchievementTable, userAchievementWithDefinition);
+    if (isApplied && checkIsUnlockedUserAchievement(userAchievementWithDefinition))
       recentlyUnlockedUserAchievements.value.push(userAchievementWithDefinition);
   };
   return {

@@ -70,6 +70,12 @@ The app SHALL show a signed-in user each progress or unlock change to their own 
 - **WHEN** one of their achievements unlocks
 - **THEN** a notification toast for the unlock appears without a reload
 
+#### Scenario: A stale unlock is not toasted
+
+- **GIVEN** a signed-in user's held achievement is at a newer version than an unlock pushed to them
+- **WHEN** that push arrives, or a read that answers older than the held row lands
+- **THEN** the held row stays, and no toast is raised for the stale push
+
 #### Scenario: Other users' changes are not shown
 
 - **GIVEN** a signed-in user is on any page of the app
