@@ -91,6 +91,20 @@ describe("restrictedSyntaxes", () => {
         source: "useEditor({ autofocus: 'end' });",
         violations: 1,
       },
+      {
+        filePath: "updateProcedureUpserts.ts",
+        name: "updateProcedureUpserts",
+        source:
+          "const router = { updateSettings: procedure.mutation(({ ctx, input }) => ctx.db.insert(settings).values(input).onConflictDoUpdate({ set: input, target: settings.userId })) };",
+        violations: 1,
+      },
+      {
+        filePath: "upsertProcedureUpserts.ts",
+        name: "upsertProcedureUpserts",
+        source:
+          "const router = { upsertSettings: procedure.mutation(({ ctx, input }) => ctx.db.insert(settings).values(input).onConflictDoUpdate({ set: input, target: settings.userId })) };",
+        violations: 0,
+      },
     ],
   });
 });

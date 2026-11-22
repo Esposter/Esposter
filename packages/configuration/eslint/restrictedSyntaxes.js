@@ -172,4 +172,12 @@ export default [
       "Don't pass `autofocus` in an object. Give the rich text editor `focus-position`, or call `autofocusEditor` from an editor's `onCreate`, which leaves a reader typing elsewhere alone. See the ui-library skill's fields page.",
     selector: "Property[key.name='autofocus']",
   },
+  {
+    // A procedure whose handler inserts on conflict writes a row it creates when absent, so its name is the upsert's,
+    // Not the update's. The name is what a caller and a tool reads the write as
+    message:
+      "A procedure that inserts on conflict is an upsert — name it `upsert*`, not `update*` (see the trpc skill's procedure naming).",
+    selector:
+      "Property[key.name=/^update[A-Z]/] > CallExpression[callee.property.name='mutation'] CallExpression[callee.property.name='onConflictDoUpdate']",
+  },
 ];
