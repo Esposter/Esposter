@@ -170,6 +170,12 @@ export const measureMotion = async (
   // Scene's own clock read the time a millisecond or two apart, and a piece rising at metres a second moves centimetres
   // In that, so its path is held at the moment its pose stands at, and the pace those moments keep against the clock
   const fitted = frames.map(({ pieces, riseMs }) => {
+    if (pieces.length !== piecePoses.length)
+      throw new InvalidOperationError(
+        Operation.Read,
+        DOOR_FAMILY,
+        "drew a different number of pieces than its clip moves",
+      );
     const oursPoses = pieces.map((elements) => new Matrix4().fromArray(elements));
     let best = { distance: Infinity, riseMs };
     for (let candidate = riseMs - PARITY_FRAME_MS; candidate <= riseMs + PARITY_FRAME_MS; candidate += MOTION_STEP_MS) {

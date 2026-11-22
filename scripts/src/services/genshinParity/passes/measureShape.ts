@@ -130,7 +130,7 @@ export const measureShape = (component: DerivedAssetComponent, pageRoot?: string
       const detailNotes = detailWavelengths.map(({ detail, index }) =>
         detail
           ? `${familyName(index)} surface detail wavelength to fit at: ${detail.metres.toFixed(4)} m, ${detail.isFromTexture ? "read from its normal map" : "the frame's lobe"}`
-          : `${familyName(index)} surface detail wavelength: none, the frame resolves no lobe and its normal map none`,
+          : `${familyName(index)} surface detail wavelength: none, the frame resolves no lobe and none was read from its normal map`,
       );
       const envelopeReadings = await measureEnvelope(referenceId, exportsRead, oursRead, page, camera);
       return {
