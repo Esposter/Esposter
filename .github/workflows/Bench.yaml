@@ -2,10 +2,12 @@ name: 🏎️ Bench
 # Its own workflow rather than a 🏗️ CI job so it never blocks a merge: the committed `*.bench.md` stay the offline
 # walltime gate, and this only proves every `*.bench.ts` still executes.
 
+# Every branch but `main`: `main` only ever fast-forwards to a tip already pushed to `ai/queue`, so a run there
+# benches a commit that has already been benched
 on:
   push:
-    branches:
-      - "**"
+    branches-ignore:
+      - main
 
 permissions:
   contents: read

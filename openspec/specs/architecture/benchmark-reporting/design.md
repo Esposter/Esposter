@@ -38,7 +38,7 @@ The environment block comes from `readBenchmarkEnvironment`. It holds the commit
 
 ## Notes
 
-- The reports are committed and read in review, not gated in CI. The Bench workflow in `.github/workflows/Bench.yaml` runs every bench on each push to prove each still executes, and it commits nothing. Thresholds are the `bench` skill's to set.
+- The reports are committed and read in review, not gated in CI. The Bench workflow in `.github/workflows/Bench.yaml` runs every bench on each push to prove each still executes, and it commits nothing. It skips `main`, which only fast-forwards to a tip `ai/queue` has already benched. Thresholds are the `bench` skill's to set.
 - Every bench file must commit its report pair. `scripts/src/workspace/benchArtifacts.test.ts` fails a bench that does not, and a file that only declares `describe.todo` beside shared code is exempt.
 - The package's sizes are in the [bundle sizes](../bundle-sizes/design.md) record, which lists the bench and reporter entrypoints, since the reporter is the one that a Vitest run loads, and each declaration file the package emits.
 - A committed number is only comparable within one host, which is why the environment block travels with it.
