@@ -78,7 +78,7 @@ The **Bans** tab searches by the banned user's name, over the join that already 
 | `apps/web/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line                                                         |
 | `apps/web/server/services/room/announceRoomMemberDeparture.ts`                     | the member's sockets closed on the room's object, then the room-left event                |
 | `apps/web/server/services/room/announceRoomMembersJoined.ts`                       | the join to the room's online members, then the joiner, and the joiner attached if online |
-| `apps/web/server/services/message/call/evictRoomCallParticipants.ts`               | a removal reaching the room's calls                                                       |
+| `apps/web/server/services/message/moderation/evictRoomCallParticipants.ts`         | a removal reaching the room's calls                                                       |
 | `apps/realtime/src/durableObjects/CallObject.ts`                                   | publish revokes: the preset update, kick and rejoin                                       |
 | `apps/web/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input                                                                 |
 | `apps/web/shared/models/db/moderation/UnparameterizedAdminActionType.ts`           | the actions that take nothing past their target                                           |

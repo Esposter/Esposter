@@ -29,7 +29,7 @@ Paths relative to `apps/web`; `packages/` and `apps/realtime/` ones to the repo 
 
 | File                                                                     | Role                                            |
 | ------------------------------------------------------------------------ | ----------------------------------------------- |
-| `server/services/message/call/evictRoomCallParticipants.ts`              | a removal reaching every call in the room       |
+| `server/services/message/moderation/evictRoomCallParticipants.ts`        | a removal reaching every call in the room       |
 | `server/services/message/call/checkIsCallConnectionAdmitted.ts`          | the door every call connection is asked again   |
 | `apps/realtime/src/services/realtimeKit/removeRealtimeKitParticipant.ts` | a participant the server removes at RealtimeKit |
 | `packages/db-schema/src/models/message/UserMessageType.ts`               | the message types a member may post             |
