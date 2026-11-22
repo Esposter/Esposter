@@ -184,6 +184,7 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
     });
 
   on("session.start", async ($, e, next) => {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the value is read back from the host's store, which this plugin reads without a schema library to check the record it wrote
     const stored = (await $.store.get(enabledModsAtom.ref.key)) as Partial<EnabledMods> | undefined;
     await update($, enabledModsAtom, (value) => ({ ...value, ...stored }));
     await Promise.all(

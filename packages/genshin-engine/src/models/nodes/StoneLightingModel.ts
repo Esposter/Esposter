@@ -75,6 +75,7 @@ export class StoneLightingModel extends LightingModel {
       .add(heightFade.mul(positionWorld.y.mul(-STONE_HEIGHT_FALLOFF).exp()));
     // Three types the builder's context as `unknown`, so it is the one cast left here: the lighting context it holds has
     // The reflected light, and three's typings offer no narrower type to check it against
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- @types/three declares the builder's `context` as `unknown`, so the lighting context it holds is asserted to the reflected light it carries
     const { reflectedLight } = builder.context as { reflectedLight: LightingModelReflectedLight };
     readVec3Node(reflectedLight.indirectDiffuse).addAssign(
       ambient.mul(diffuseColor.rgb).mul(this.createDarkeningNode()),

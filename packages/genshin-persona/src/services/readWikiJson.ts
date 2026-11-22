@@ -8,5 +8,6 @@ export const readWikiJson = async <T>(url: string): Promise<T> => {
     headers: { "user-agent": WIKI_USER_AGENT },
     signal: AbortSignal.timeout(WIKI_FETCH_TIMEOUT_MS),
   });
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the wiki's answer is untyped JSON, and the plugin carries no schema library; each reader reads only optional fields of the shape its `T` names
   return (await response.json()) as T;
 };
