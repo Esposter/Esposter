@@ -13,7 +13,7 @@ const { activeSelectedFilter, isMenuOpen, isSearchQueryEmpty, searchQuery, selec
 </script>
 
 <!-- Discord's search: filters typed into the one field become chips before the text, and the panel under it offers
-     What to type next, a past search to run again, or the picker a filter still waiting for its value opens -->
+     what to type next, a past search to run again, or the picker a filter still waiting for its value opens -->
 <template>
   <UiTokenField
     v-model:is-open="isMenuOpen"
@@ -24,7 +24,7 @@ const { activeSelectedFilter, isMenuOpen, isSearchQueryEmpty, searchQuery, selec
     @submit="
       async () => {
         // Enter only ever searches: the colon is what converts a keyword, so by the time Enter is pressed the query
-        // Is search text. It never fills a pending chip either — only a picker gives a filter its value
+        // is search text. It never fills a pending chip either — only a picker gives a filter its value
         if (isSearchQueryEmpty) return;
         await readSearchedMessages();
       }

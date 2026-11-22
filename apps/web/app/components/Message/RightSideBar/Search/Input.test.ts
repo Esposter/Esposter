@@ -12,8 +12,9 @@ import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
-// A pending chip opens its picker, whose chunk and reads land after the environment is torn down, and no test here
-// Asserts on the picker. The cast is the one a stub cannot avoid: the real type is the picker's own instance type
+// A pending chip opens its picker, whose chunk and reads land after the environment is torn down.
+// No test here asserts on the picker. The cast is the one a stub cannot avoid.
+// The real type is the picker's own instance type.
 vi.mock(import("#src/services/message/filter/SearchFilterComponentMap"), async (importOriginal) => {
   const { SearchFilterComponentMap } = await importOriginal();
   const { FilterType: MockFilterType } = await import("@esposter/db-schema");
@@ -35,8 +36,8 @@ describe("messageRightSideBarSearchInput", () => {
   // A fresh search writes its history entry after its results land, so a test reading the search awaits the entry
   let isSearchHistoryCreated: Promise<void>;
 
-  // The field as the user drives it: the mount first, because it resets the route and the store keys every field by the
-  // Room in it, then the text typed into it
+  // The field as the user drives it: the mount first, because it resets the route.
+  // The store keys every field by the room in it, so the text is typed in after that
   const type = async (text: string) => {
     searchMessages = vi.fn<(input: z.input<typeof searchMessagesInputSchema>) => void>();
     trpcMsw.message.searchMessages.query(({ input }) => {

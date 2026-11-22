@@ -9,8 +9,8 @@ const threadStore = useThreadStore();
 const { closeThread } = threadStore;
 const { activeThreadRootId, isReadThreadPending, threadMessages } = storeToRefs(threadStore);
 const actionItems = useThreadActionItems();
-// Oldest first, so the thread reads top-down into the composer below it — the root is the earliest message in
-// Its own thread, so it needs no special case to stay at the top
+// Oldest first, so the thread reads top-down into the composer below it.
+// The root is the earliest message in its own thread, so it needs no special case to stay at the top
 const displayThreadMessages = computed(() => threadMessages.value.toSorted(compareCreatedAt));
 </script>
 
