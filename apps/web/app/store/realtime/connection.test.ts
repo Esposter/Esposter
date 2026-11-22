@@ -213,7 +213,9 @@ describe(useConnectionStore, () => {
 
     // The write's publish reads its topic binding from the workers env, which this environment does not get from the shared setup
     const previousTopic = env.TOPIC;
-    onTestFinished(() => Object.assign(env, { TOPIC: previousTopic }));
+    onTestFinished(() => {
+      Object.assign(env, { TOPIC: previousTopic });
+    });
     Object.assign(env, { TOPIC: mockTopicNamespace });
     const context = await createMockContext();
     const reader = await createMockAuthSession(context.db);
