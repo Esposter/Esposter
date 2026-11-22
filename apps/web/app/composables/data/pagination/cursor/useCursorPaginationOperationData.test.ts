@@ -285,6 +285,23 @@ describe(useCursorPaginationOperationData, () => {
     expect(items.value).toStrictEqual([newItem]);
   });
 
+  test("keeps the newest of two overlapping reads of the first page when the older one lands last", async () => {
+    expect.hasAssertions();
+
+    await mountWithMorePages();
+    const newerItem = "newerItem";
+    const { query: olderQuery, resolveQuery: resolveOlder } = createPendingQuery<Page<string>>({
+      items: [item],
+      nextCursor: "",
+    });
+    const readOlder = readItems(olderQuery);
+    await readItems(() => Promise.resolve({ items: [newerItem], nextCursor: "" }));
+    resolveOlder();
+    await readOlder;
+
+    expect(items.value).toStrictEqual([newerItem]);
+  });
+
   test("does not query more items while offline and still completes the waypoint cycle", async () => {
     expect.hasAssertions();
 
