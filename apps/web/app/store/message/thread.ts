@@ -1,3 +1,4 @@
+import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { ClientThread } from "#src/models/message/ClientThread";
 
@@ -21,6 +22,10 @@ export const useThreadStore = defineStore("message/thread", () => {
   const isReadThreadPending = ref(false);
   let latestReadThreadId = 0;
   const activeThreadRootId = ref<0 | ClientMessage["id"]>(0);
+  // The room's changes to the open thread made while its read was in flight are applied to the answer when it lands.
+  // A deleted reply stays out, and an edited one is applied through the copy it names.
+  const deletedDuringRead = new Set<ClientMessage["id"]>();
+  const updatedDuringRead = new Map<ClientMessage["id"], MessageEvents["updateMessage"][0][0]>();
   const activeRoomId = ref<ClientMessage["roomId"]>("");
   const threadMessages = ref<ClientMessage[]>([]);
   // The open thread as a list of threads shows it, once its root has read: what following it lists at once
@@ -49,6 +54,8 @@ export const useThreadStore = defineStore("message/thread", () => {
   ) => {
     activeRoomId.value = roomId;
     activeThreadRootId.value = threadRootId;
+    deletedDuringRead.clear();
+    updatedDuringRead.clear();
     // Cleared with the drawer rather than when the replies land, so the pane never shows the previous thread's
     // Replies under the new thread's header while the read is in flight
     threadMessages.value = [];
@@ -71,10 +78,20 @@ export const useThreadStore = defineStore("message/thread", () => {
               // The read spans the whole open, so the user can close the drawer while it is still in flight — a
               // Response applied afterwards reopens a thread they just dismissed
               if (!activeThreadRootId.value) return;
+              // The response is a snapshot from before the room's changes made while it was in flight. Those changes are applied
+              // Before they land, and a deleted reply stays out
+              const readMessages = messages.filter(({ id }) => !deletedDuringRead.has(id));
+              for (const message of readMessages) {
+                const change = updatedDuringRead.get(message.id);
+                if (change) updateMessageCopy(message, change);
+              }
               // A reply can land while the read is in flight, and the create hook has already pushed it here. The
               // Response is a snapshot from before it, so assigning it wholesale drops the reply until a reopen
-              const readMessageIds = new Set(messages.map(({ id }) => id));
-              threadMessages.value = [...messages, ...threadMessages.value.filter(({ id }) => !readMessageIds.has(id))];
+              const readMessageIds = new Set(readMessages.map(({ id }) => id));
+              threadMessages.value = [
+                ...readMessages,
+                ...threadMessages.value.filter(({ id }) => !readMessageIds.has(id)),
+              ];
             },
             runScope: readThreadScope,
           }),
@@ -115,6 +132,7 @@ export const useThreadStore = defineStore("message/thread", () => {
     threadMessages.value.push(message);
   });
   MessageHookMap[Operation.Update].register((input) => {
+    if (isReadThreadPending.value && input.roomId === activeRoomId.value) updatedDuringRead.set(input.id, input);
     if (!checkIsActiveThreadMessage(input)) return;
 
     updateMessageCopy(
@@ -130,6 +148,7 @@ export const useThreadStore = defineStore("message/thread", () => {
       return;
     }
 
+    if (isReadThreadPending.value) deletedDuringRead.add(messageId);
     threadMessages.value = threadMessages.value.filter((message) => message.id !== messageId);
   });
   // The replies are rows the room's window does not hold, so the reconnect refresh reads them back through the funnel

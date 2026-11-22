@@ -2,7 +2,6 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { ComposerTarget } from "#src/models/message/ComposerTarget";
 import type { Page } from "@esposter/db-schema";
-import type { Router } from "vue-router";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { MimeType } from "#shared/models/file/MimeType";
@@ -26,7 +25,7 @@ import { Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shar
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 interface MockSessionValue {
   data?: undefined | { user: { id: string } };
@@ -40,7 +39,6 @@ const stubObjectUrls = () => {
 
 describe(useDataStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  let router: Router;
   const roomId = v7();
   // Every send here is the room's own composer, which is the target `sendMessage` defaults to
   const target: ComposerTarget = { roomId, threadRootId: 0 };
@@ -58,17 +56,13 @@ describe(useDataStore, () => {
   const roomMessageId = 1;
   const newerCursor = v7();
 
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   // The store reads only `session.value.data.user.id`, so signing in is that slice of the session ref
   const signIn = () => {
     useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
   };
 
   beforeEach(() => {
-    Object.assign(router.currentRoute.value.params, { id: roomId });
+    setCurrentRoomId(roomId);
     useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
   });
 

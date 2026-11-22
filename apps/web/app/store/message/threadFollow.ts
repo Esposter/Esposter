@@ -78,7 +78,12 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     {
       onSuccess: ({ follows, threads }, roomId) => {
         for (const follow of follows) arrive(threadFollowTable, follow);
-        setFollowedRoots(roomId, threads);
+        // A root followThread pushed while this read was in flight is not in its answer, so the answer merges into the held roots
+        const readRootIds = new Set(threads.map(({ id }) => id));
+        setFollowedRoots(roomId, [
+          ...threads,
+          ...(getFollowedRoots(roomId) ?? []).filter(({ id }) => !readRootIds.has(id)),
+        ]);
       },
     },
   );

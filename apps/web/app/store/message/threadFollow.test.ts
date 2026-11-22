@@ -111,6 +111,29 @@ describe(useThreadFollowStore, () => {
     expect(creator.value?.id).toBe(author.id);
   });
 
+  test("keeps a root followed while a follows read was in flight", async () => {
+    expect.hasAssertions();
+
+    const read = Promise.withResolvers<ReadFollowedThreadsResult>();
+    const readStarted = Promise.withResolvers<void>();
+    trpcMsw.message.readFollowedThreads.query(() => {
+      readStarted.resolve();
+      return read.promise;
+    });
+    trpcMsw.room.readUsersByIds.query(() => []);
+    trpcMsw.message.followThread.mutation(() => follow);
+    const threadFollowStore = useThreadFollowStore();
+    const { followThread, readFollowedThreads } = threadFollowStore;
+    const { followedThreads } = storeToRefs(threadFollowStore);
+    const readPromise = readFollowedThreads(roomId);
+    await readStarted.promise;
+    followThread(roomId, threadRootId, root);
+    read.resolve({ follows: [], threads: [] });
+    await readPromise;
+
+    expect(followedThreads.value).toStrictEqual([root]);
+  });
+
   // The thread pane holds only the id until its replies load, so the follow goes out with the id alone and the drawer
   // Reads its list again once the follow lands
   test("a member follows a thread whose replies have not loaded", async () => {

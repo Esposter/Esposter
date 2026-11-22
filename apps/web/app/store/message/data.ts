@@ -14,6 +14,7 @@ import type { Editor } from "@tiptap/core";
 
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
 import { MessageHook } from "#src/models/message/MessageHook";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { authClient } from "#src/services/auth/authClient";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
@@ -203,20 +204,14 @@ export const useDataStore = defineStore("message/data", () => {
     );
   // The polls with a vote out. A second vote on one poll is not sent while the first is, and the poll's radio group reads
   // Its own key only
-  const votingPollKeys = ref(new Set<string>());
-  const checkIsVotePending = (message: ClientMessage) => votingPollKeys.value.has(getVotingPollKey(message));
-  const votePoll = getSynchronizedFunction(async (input: VotePollInput) => {
-    const votingPollKey = getVotingPollKey(input);
-    if (votingPollKeys.value.has(votingPollKey)) return;
-
-    votingPollKeys.value.add(votingPollKey);
-    await withFinalizerAsync(
-      () => awaitMessageAnswer(() => $trpc.message.votePoll.mutate(input), input.roomId),
-      () => {
-        votingPollKeys.value.delete(votingPollKey);
-      },
-    );
-  });
+  const { checkIsPending, executeMutation } = useMutation();
+  const checkIsVotePending = (message: ClientMessage) => checkIsPending(getVotingPollKey(message));
+  const votePoll = (input: VotePollInput) =>
+    executeMutation(() => awaitMessageAnswer(() => $trpc.message.votePoll.mutate(input), input.roomId), {
+      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+      isExclusive: true,
+      key: getVotingPollKey(input),
+    });
   // The sender's own message is pushed first (our list is reversed — most recent at the front) so the bubble
   // Renders immediately in its loading state, THEN the Create hooks run: one of them fetches attachment download
   // Urls over the network, and running it before the push would gate the "optimistic" render behind a round trip.

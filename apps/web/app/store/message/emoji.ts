@@ -2,12 +2,13 @@ import type { AddReactionInput } from "#shared/models/db/message/reaction/AddRea
 import type { RemoveReactionInput } from "#shared/models/db/message/reaction/RemoveReactionInput";
 import type { RoomReaction } from "@esposter/db-schema";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { authClient } from "#src/services/auth/authClient";
 import { getEntityIdEqualComparator } from "#src/services/entity/getEntityIdEqualComparator";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { checkIsNewerArrival } from "#src/services/shared/overlay/checkIsNewerArrival";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
-import { getOrCreate, getResultAsync, ID_SEPARATOR, Operation, withFinalizerAsync } from "@esposter/shared";
+import { getOrCreate, ID_SEPARATOR, Operation } from "@esposter/shared";
 
 // A reaction is one emoji on one message, so its identity is the room, the message and the emoji, and a press on it is
 // Held while its write is out. A message's id is numbered within its room, so the room is part of the key
@@ -45,26 +46,19 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   };
   // A press on a reaction is not sent while the one before it is out, since the room has not yet answered what that one
   // Did. The reaction shows what the room holds until the answer lands, as an awaited write has no entry to show it
-  const pendingEmojiKeys = ref(new Set<string>());
+  const { executeMutation } = useMutation();
   const awaitEmojiAnswer = async (input: AddReactionInput, write: () => Promise<RoomReaction>) => {
-    const emojiKey = getEmojiKey(input);
-    if (!session.value.data || pendingEmojiKeys.value.has(emojiKey)) return;
+    if (!session.value.data) return;
 
-    pendingEmojiKeys.value.add(emojiKey);
-    await withFinalizerAsync(
-      () =>
-        getResultAsync(write).match(
-          (emoji) => {
-            storeEmoji(input.roomId, emoji);
-          },
-          (error) => {
-            createErrorAlert(error);
-          },
-        ),
-      () => {
-        pendingEmojiKeys.value.delete(emojiKey);
+    await executeMutation(write, {
+      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+      isExclusive: true,
+      key: getEmojiKey(input),
+      onError: createErrorAlert,
+      onSuccess: (emoji) => {
+        storeEmoji(input.roomId, emoji);
       },
-    );
+    });
   };
   // Each resolves once the room has answered, so a caller that needs the write to have landed can await it
   const createEmoji = (input: AddReactionInput) =>

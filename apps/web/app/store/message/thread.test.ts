@@ -205,6 +205,40 @@ describe(useThreadStore, () => {
     expect(threadMessages.value.map(({ id }) => id)).toStrictEqual([readReply.id, liveReply.id]);
   });
 
+  test("drops a reply the room deleted while the thread read was in flight", async () => {
+    expect.hasAssertions();
+
+    const { readStarted, resolveRead } = holdThreadRead();
+    await mountThreadDrawer();
+    const threadStore = useThreadStore();
+    const { threadMessages } = storeToRefs(threadStore);
+    const openThread = useOpenThread();
+    const openPromise = openThread(roomId, threadRootId);
+    await readStarted;
+    await MessageHookMap[Operation.Delete].run({ id: roomReplyId, roomId });
+    resolveRead([createRoomReply(threadRootId)]);
+    await openPromise;
+
+    expect(threadMessages.value).toStrictEqual([]);
+  });
+
+  test("takes an edit the room made while the thread read was in flight into what the read lands", async () => {
+    expect.hasAssertions();
+
+    const { readStarted, resolveRead } = holdThreadRead();
+    await mountThreadDrawer();
+    const threadStore = useThreadStore();
+    const { threadMessages } = storeToRefs(threadStore);
+    const openThread = useOpenThread();
+    const openPromise = openThread(roomId, threadRootId);
+    await readStarted;
+    await MessageHookMap[Operation.Update].run({ id: roomReplyId, message: "edited", roomId, version: 1 });
+    resolveRead([createRoomReply(threadRootId)]);
+    await openPromise;
+
+    expect(threadMessages.value.map(({ message: text }) => text)).toStrictEqual(["edited"]);
+  });
+
   test("ignores a message that belongs to another thread", async () => {
     expect.hasAssertions();
 
