@@ -1,4 +1,5 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { CallParticipant } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
 import { AdminActionHookMap } from "#src/services/message/moderation/AdminActionHookMap";
@@ -63,57 +64,40 @@ export const useCallStore = defineStore("message/room/call", () => {
   const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
   // A toggle is a write the screen shows at once: its entry sets the flag on the row, and the answer's row confirms the flag at
   // The version the call object left it. Writes to one row queue behind each other, so a lower of a hand waits behind a raise
-  const setHandRaised = (newIsHandRaised: boolean, targetParticipantId?: string) => {
+  const writeParticipantFlag = (
+    participantId: string,
+    flags: Parameters<typeof getParticipantFlagEntry>[1],
+    mutate: (callSessionId: string) => Promise<CallParticipant>,
+  ) => {
     const callSessionId = activeCallSessionId.value;
-    const participantId = participantStore.participantId;
-    const handParticipantId = targetParticipantId ?? participantId;
-    if (!callSessionId || !handParticipantId) return;
+    if (!callSessionId || !participantId) return;
 
     writeOptimistic(
       async () => {
-        const participant = await $trpc.callSession.setHandRaised.mutate({
-          callSessionId,
-          isHandRaised: newIsHandRaised,
-          participantId: handParticipantId,
-        });
+        const participant = await mutate(callSessionId);
         return createRowResponse(participantTable, { ...participant, callSessionId });
       },
-      {
-        entry: getParticipantFlagEntry(handParticipantId, { isHandRaised: newIsHandRaised }),
-        onError: createErrorAlert,
-      },
+      { entry: getParticipantFlagEntry(participantId, flags), onError: createErrorAlert },
+    );
+  };
+  const setHandRaised = (newIsHandRaised: boolean, targetParticipantId?: string) => {
+    const handParticipantId = targetParticipantId ?? participantStore.participantId;
+    writeParticipantFlag(handParticipantId, { isHandRaised: newIsHandRaised }, (callSessionId) =>
+      $trpc.callSession.setHandRaised.mutate({
+        callSessionId,
+        isHandRaised: newIsHandRaised,
+        participantId: handParticipantId,
+      }),
     );
   };
   const setCameraEnabled = (newIsCameraEnabled: boolean) => {
-    const callSessionId = activeCallSessionId.value;
-    const participantId = participantStore.participantId;
-    if (!callSessionId || !participantId) return;
-
-    writeOptimistic(
-      async () => {
-        const participant = await $trpc.callSession.setCameraEnabled.mutate({
-          callSessionId,
-          isCameraEnabled: newIsCameraEnabled,
-        });
-        return createRowResponse(participantTable, { ...participant, callSessionId });
-      },
-      {
-        entry: getParticipantFlagEntry(participantId, { isCameraEnabled: newIsCameraEnabled }),
-        onError: createErrorAlert,
-      },
+    writeParticipantFlag(participantStore.participantId, { isCameraEnabled: newIsCameraEnabled }, (callSessionId) =>
+      $trpc.callSession.setCameraEnabled.mutate({ callSessionId, isCameraEnabled: newIsCameraEnabled }),
     );
   };
   const setMuted = (newIsMuted: boolean) => {
-    const callSessionId = activeCallSessionId.value;
-    const participantId = participantStore.participantId;
-    if (!callSessionId || !participantId) return;
-
-    writeOptimistic(
-      async () => {
-        const participant = await $trpc.callSession.setMuted.mutate({ callSessionId, isMuted: newIsMuted });
-        return createRowResponse(participantTable, { ...participant, callSessionId });
-      },
-      { entry: getParticipantFlagEntry(participantId, { isMuted: newIsMuted }), onError: createErrorAlert },
+    writeParticipantFlag(participantStore.participantId, { isMuted: newIsMuted }, (callSessionId) =>
+      $trpc.callSession.setMuted.mutate({ callSessionId, isMuted: newIsMuted }),
     );
   };
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
@@ -190,7 +174,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   // Rather than from the thread store: a call is not a thread's own state, and reaching for it here would put
   // The drawer's layout behind every join
   const joinCallByRoomId = async (roomId: string, threadRootId: 0 | ClientMessage["id"] = 0) => {
-    if (!roomId || activeCallSessionId.value) return;
+    if (!roomId || activeCallSessionId.value || isLeaving.value) return;
     isConnecting.value = true;
     callRoomId.value = roomId;
     callThreadRootId.value = threadRootId;

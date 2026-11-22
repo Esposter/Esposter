@@ -15,13 +15,13 @@ vi.mock(
   () => import("#src/services/realtime/openRealtimeSocket.test"),
 );
 
-const createParticipant = (name: string): CallParticipant => ({
+const createParticipant = (): CallParticipant => ({
   id: v7(),
   image: "",
   isCameraEnabled: false,
   isHandRaised: false,
   isMuted: false,
-  name,
+  name: "name",
   userId: v7(),
 });
 
@@ -37,8 +37,8 @@ describe(useKnockerStore, () => {
   const callId = createId(CALL_ID_LENGTH);
   const callSessionId = createId(CALL_ID_LENGTH);
   const rejectedCallId = createId(CALL_ID_LENGTH);
-  const first = createParticipant("first");
-  const second = createParticipant("second");
+  const first = createParticipant();
+  const second = createParticipant();
 
   // Only one knock is held by the server at a time, so the second knock waits for the first to be recorded
   test("a refused knock leaves the knock ahead of it standing", async () => {

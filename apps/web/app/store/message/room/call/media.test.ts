@@ -45,9 +45,9 @@ describe(useMediaStore, () => {
     const mediaStore = useMediaStore();
     const { setParticipantVolumePercentage } = mediaStore;
     const { participantVolumePercentageMap } = storeToRefs(mediaStore);
-    setParticipantVolumePercentage(participantId, 1);
+    setParticipantVolumePercentage(participantId, 0);
 
-    expect(participantVolumePercentageMap.value.get(participantId)).toBe(1);
+    expect(participantVolumePercentageMap.value.get(participantId)).toBe(0);
   });
 
   test("deleteParticipantVolumePercentage removes the participant volume percentage", () => {
@@ -57,7 +57,7 @@ describe(useMediaStore, () => {
     const mediaStore = useMediaStore();
     const { deleteParticipantVolumePercentage, setParticipantVolumePercentage } = mediaStore;
     const { participantVolumePercentageMap } = storeToRefs(mediaStore);
-    setParticipantVolumePercentage(participantId, 1);
+    setParticipantVolumePercentage(participantId, 0);
     deleteParticipantVolumePercentage(participantId);
 
     expect(participantVolumePercentageMap.value.has(participantId)).toBe(false);
@@ -70,7 +70,7 @@ describe(useMediaStore, () => {
     const mediaStore = useMediaStore();
     const { resetCallMedia, setParticipantVolumePercentage } = mediaStore;
     const { participantVolumePercentageMap } = storeToRefs(mediaStore);
-    setParticipantVolumePercentage(participantId, 1);
+    setParticipantVolumePercentage(participantId, 0);
     resetCallMedia();
 
     expect(participantVolumePercentageMap.value.size).toBe(0);

@@ -381,6 +381,24 @@ describe(useCallStore, () => {
     expect(isLeaving.value).toBe(false);
   });
 
+  // A leave still taking its socket down is the one a join would close, so a room join waits for it
+  test("does not join a room call while a leave is still taking its socket down", async () => {
+    expect.hasAssertions();
+
+    const joinSent = vi.fn<() => void>();
+    trpcMsw.callSession.joinCallByRoomId.mutation(() => {
+      joinSent();
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const callStore = useCallStore();
+    const { isLeaving } = storeToRefs(callStore);
+    const { joinCallByRoomId } = callStore;
+    isLeaving.value = true;
+    await joinCallByRoomId(roomId);
+
+    expect(joinSent).not.toHaveBeenCalled();
+  });
+
   // A lower is the same row's hand as a raise, so it waits behind the raise still in flight: sent at once, the server
   // Could apply the two in either order and keep whichever arrived last
   test("sends a lower of a participant's hand behind that participant's raise still in flight", async () => {
