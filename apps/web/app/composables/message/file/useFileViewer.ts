@@ -19,7 +19,7 @@ export const useFileViewer = () => {
   const { isOpen, item: file } = useSingletonDialog(viewingFileId, () =>
     viewableFiles.value.find(({ id }) => id === viewingFileId.value),
   );
-  const image = useTemplateRef("image");
+  const image = useTemplateRef<HTMLDivElement>("image");
   // Cursor is inherited from the frame rather than set here, so the zoom-in/grab affordance stays a binding on an
   // Element panzoom does not also write styles to
   const { isZoomed, panzoom } = usePanZoom(image, {
