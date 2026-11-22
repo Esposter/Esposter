@@ -10,21 +10,21 @@ import { z } from "zod";
 
 // The answer's shape, checked so a batch the API answers otherwise fails the read rather than reading as empty
 const wikiImagesResponseSchema = z.object({
-  continue: z.record(z.string(), z.string()).exactOptional(),
-  error: z.object({ code: z.string(), info: z.string() }).exactOptional(),
+  continue: z.record(z.string(), z.string()).optional(),
+  error: z.object({ code: z.string(), info: z.string() }).optional(),
   query: z
     .object({
       pages: z
         .record(
           z.string(),
           z.object({
-            imageinfo: z.array(z.object({ height: z.number(), url: z.string(), width: z.number() })).exactOptional(),
-            title: z.string().exactOptional(),
+            imageinfo: z.array(z.object({ height: z.number(), url: z.string(), width: z.number() })).optional(),
+            title: z.string().optional(),
           }),
         )
-        .exactOptional(),
+        .optional(),
     })
-    .exactOptional(),
+    .optional(),
 });
 const checkIsWikiImagesResponse = (value: unknown): value is WikiImagesResponse =>
   wikiImagesResponseSchema.safeParse(value).success;
