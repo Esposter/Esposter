@@ -26,31 +26,35 @@ const excludedUserIds = computed(() => {
   userIds.push(...getDirectMessageParticipants(roomId).map(({ id }) => id));
   return userIds;
 });
-// The dialog closes as the add is sent, so the selection clears with it: the picker is reset beside the write, and
-// The write carries the selection as it was taken. A refused add is the write's alert, and the reader picks again
-const createDirectMessageParticipants = () => {
-  const userIds = selectedUserIds.value;
-  selectedUserIds.value = [];
-  friendPicker.value?.reset();
-  // A join is announced to the room's members and to each joiner's tabs, so the added participants arrive as their join
-  // Events, and the answer names nothing to arrive
-  writeAwaited(
-    async () => {
-      await $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds });
-      return [];
-    },
-    { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
-  );
-};
 </script>
 
 <template>
   <StyledFormDialog
     v-model="isOpen"
+    :awaited-because="AwaitedReason.ServerDecidedOutcome"
     confirm-label="Add"
     :is-confirm-disabled="selectedUserIds.length === 0 || undefined"
     title="Add People"
-    :submit="createDirectMessageParticipants"
+    :submit="
+      async () => {
+        // The server may refuse the add, so the picked friends stay in the dialog until it is kept, and the picker
+        // Clears only then
+        const isAdded = await writeAwaited(
+          async () => {
+            // A join is announced to the room's members and to each joiner's tabs, so the added participants arrive
+            // As their join events, and the answer names nothing to arrive
+            await $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds: selectedUserIds });
+            return [];
+          },
+          { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
+        );
+        if (isAdded) {
+          selectedUserIds = [];
+          friendPicker?.reset();
+        }
+        return isAdded;
+      }
+    "
   >
     <MessageModelRoomDirectMessageFriendPicker
       ref="friendPicker"

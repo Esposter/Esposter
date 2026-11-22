@@ -56,19 +56,14 @@ describe("messageContentHeaderCreateDirectMessageParticipantDialog", () => {
     expect(sentInput).toStrictEqual({ roomId, userIds: [friend.id] });
   });
 
-  // The write is the dialog's own, so a refusal is raised by the dialog's write and nowhere else: without its error
-  // Handler the add fails in silence, and the reader is never told it did not happen
-  test("a refused add raises the error alert", async () => {
-    expect.hasAssertions();
-
+  // The add the server refuses, submitted with one friend picked, answered by the time this returns
+  const submitRefusedAdd = async () => {
     answerFriendPicker();
     const { promise: requested, resolve: onRequested } = Promise.withResolvers<void>();
     trpcMsw.room.directMessage.createDirectMessageParticipants.mutation(() => {
       onRequested();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const alertStore = useAlertStore();
-    const { alerts } = storeToRefs(alertStore);
     const component = await mountSuspended(MessageContentHeaderCreateDirectMessageParticipantDialog, {
       attachTo: document.body,
       props: { modelValue: true, roomId: v7() },
@@ -78,6 +73,26 @@ describe("messageContentHeaderCreateDirectMessageParticipantDialog", () => {
     await requested;
     await flushPromises();
 
+    return component;
+  };
+
+  // The write is the dialog's own, so a refusal is raised by the dialog's write and nowhere else: without its error
+  // Handler the add fails in silence, and the reader is never told it did not happen
+  test("a refused add raises the error alert", async () => {
+    expect.hasAssertions();
+
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    await submitRefusedAdd();
+
     expect(alerts.value.map(({ text }) => text)).toStrictEqual([" "]);
+  });
+
+  test("a refused add keeps the dialog open on the friend picked", async () => {
+    expect.hasAssertions();
+
+    const component = await submitRefusedAdd();
+
+    expect(component.emitted("update:modelValue")).toBeUndefined();
   });
 });
