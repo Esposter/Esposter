@@ -1,39 +1,24 @@
-import type { EngineInterface, On } from "claude-code";
+import type { On } from "claude-code";
 
 import { atom, read, update } from "claude-code";
 
 import { ModName, ModNames } from "../models/ModName";
-import { SinStatusKind } from "../models/SinStatusKind";
 import { TaskStatus } from "../models/TaskStatus";
 import { checkIsEnabledMods } from "./checkIsEnabledMods";
-import {
-  CACHE_WARNING_MS,
-  MACHINE_WATCHER_RETRY_MILLISECONDS,
-  MACHINE_WATCHER_SCRIPT,
-  VEIL_SECTION_ID,
-  VEIL_SYSTEM_SECTION,
-  WAYPOINTS_QUESTION,
-} from "./constants";
+import { closeCommission } from "./commission/closeCommission";
+import { VEIL_SECTION_ID, VEIL_SYSTEM_SECTION } from "./constants";
 import { InitialState } from "./InitialState";
 import { ModDescriptionMap } from "./ModDescriptionMap";
-import { readHome } from "./readHome";
-import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
-import { getCacheWarningDelayMs } from "./resin/getCacheWarningDelayMs";
-import { appendSinEvidence } from "./sins/appendSinEvidence";
-import { SINS_API_URL, SINS_TIMEOUT_MS } from "./sins/constants";
-import { getSinQuestions } from "./sins/getSinQuestions";
-import { parseSinsResult } from "./sins/parseSinsResult";
+import { watchPulse } from "./pulse/watchPulse";
+import { armCacheWarning } from "./resin/armCacheWarning";
+import { runDetached } from "./runDetached";
 import { readTypeSafeKey } from "./sins/readTypeSafeKey";
-import { SINS_SCRIPT } from "./sins/sinsScript";
-import { veilText } from "./veil/veilText";
-import { parseWaypoints } from "./waypoints/parseWaypoints";
+import { scoreSins } from "./sins/scoreSins";
+import { turnState } from "./turnState";
+import { suggestWaypoints } from "./waypoints/suggestWaypoints";
 
 const commissionAtom = atom({ key: "commission", plugin: "genshin-mods" } as const, InitialState.commission);
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
-const isCommissionExpandedAtom = atom(
-  { key: "isCommissionExpanded", plugin: "genshin-mods" } as const,
-  InitialState.isCommissionExpanded,
-);
 const lastPromptAtom = atom({ key: "lastPrompt", plugin: "genshin-mods" } as const, InitialState.lastPrompt);
 const lastCacheRequestAtAtom = atom(
   { key: "lastCacheRequestAt", plugin: "genshin-mods" } as const,
@@ -45,124 +30,7 @@ const sinHistoryAtom = atom({ key: "sinHistory", plugin: "genshin-mods" } as con
 const sinSessionAtom = atom({ key: "sinSession", plugin: "genshin-mods" } as const, InitialState.sinSession);
 const sinStatusAtom = atom({ key: "sinStatus", plugin: "genshin-mods" } as const, InitialState.sinStatus);
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
-
-// The events a plugin may hook once with no matcher, each hooked here for every mod, with the commands that switch
-// The mods. Neither variable is drawn: the expiry already warned about, so each warns once, and whether a turn is
-// Renewing the cache itself, when no warning is owed
-let warnedLastCacheRequestAt = 0;
-let isTurnRunning = false;
-
-// The engine's timer and hook slots take no promise, so an action run from one floats. Every action run through here
-// Resolves each of its outcomes rather than rejecting, which is what lets the floating stand
-const runDetached = (action: () => Promise<void>): void => {
-  // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer and hook slots take no promise, and every action run through here resolves each of its outcomes
-  action();
-};
-
-// The cache goes cold at a known instant, so its warning is one timer armed for that instant at each turn's end, from the
-// Request that last read or wrote the cache, rather than a check on a clock. The timer warns once for that request, and
-// Stands down while a turn runs, since that turn's end arms it again. A timer left from an earlier turn finds the cache
-// Renewed and does nothing more than the warning it would have given
-const warnCache = async ($: EngineInterface) => {
-  const now = await $.clock.now();
-  await update($, nowAtom, () => now);
-  const lastCacheRequestAt = await read($, lastCacheRequestAtAtom);
-  const remainingMs = getCacheRemainingMs(lastCacheRequestAt, now);
-  const isWarningDue = lastCacheRequestAt > 0 && remainingMs > 0 && remainingMs <= CACHE_WARNING_MS;
-  if (
-    !isWarningDue ||
-    isTurnRunning ||
-    warnedLastCacheRequestAt === lastCacheRequestAt ||
-    !(await read($, enabledModsAtom)).resin
-  )
-    return;
-
-  warnedLastCacheRequestAt = lastCacheRequestAt;
-  $.ui.toast("The prompt cache goes cold in five minutes: warm it, compact or hand off from the band.");
-};
-
-const armCacheWarning = async ($: EngineInterface) => {
-  const delayMs = getCacheWarningDelayMs(await read($, lastCacheRequestAtAtom), await $.clock.now());
-  if (delayMs === undefined) return;
-
-  $.clock.after(delayMs, () => {
-    runDetached(() => warnCache($));
-  });
-};
-
-const suggestWaypoints = async ($: EngineInterface) => {
-  const answer = await $.model.fork({ prompt: WAYPOINTS_QUESTION });
-  if (answer.isAnswered) await update($, waypointsAtom, () => parseWaypoints(answer.text));
-};
-
-// The sins are scored beside the prompt's turn, never in front of it: the call and the evidence log run in the plugin's
-// Node script, and a run that fails, or a machine that cannot open the log, records nothing and says why in the band
-const scoreSins = async ($: EngineInterface, text: string, typeSafeKey: string) => {
-  if (!(await read($, enabledModsAtom)).sins) return;
-
-  const key = await readTypeSafeKey($, typeSafeKey);
-  if (!key) {
-    await update($, sinStatusAtom, () => SinStatusKind.NoKey);
-    return;
-  }
-
-  const session = (await read($, sinSessionAtom)) || (await $.clock.now());
-  await update($, sinSessionAtom, () => session);
-  const home = await readHome($);
-  const [outcome] = await Promise.allSettled([
-    $.process.run(["node", "--input-type=module", "-e", SINS_SCRIPT], {
-      stdin: JSON.stringify({
-        apiUrl: SINS_API_URL,
-        key,
-        questions: getSinQuestions(),
-        session,
-        state: veilText(text),
-        storePath: `${home}/.claude/genshin-mods/sins.sqlite`,
-      }),
-      timeoutMs: SINS_TIMEOUT_MS,
-    }),
-  ]);
-  const result =
-    outcome.status === "fulfilled" && outcome.value.exitCode === 0
-      ? parseSinsResult(outcome.value.stdout)
-      : { result: SinStatusKind.Failed };
-
-  // A `/clear` or a resume during the run has reset the session, and a switch turned off has turned the mod off, so this
-  // Run's answers belong to nothing shown
-  const sessionNow = await read($, sinSessionAtom);
-  const { sins } = await read($, enabledModsAtom);
-  if (sessionNow !== session || !sins) return;
-
-  if (result.result === SinStatusKind.Answered)
-    await update($, sinHistoryAtom, (history) => appendSinEvidence(history, result.answers));
-
-  await update($, sinStatusAtom, () => result.result);
-};
-
-// Keeps the machine watcher running as this session's child. The watcher writes the machine's state, holds its lock and
-// Pushes its heartbeat, so its output is read only to keep the child's pipe drained. A watcher exits at once while another
-// Session's holds the machine's lock, so each exit starts the watcher again after a wait, and the session that outlives the
-// One watching takes the watching over
-const watchPulse = async ($: EngineInterface) => {
-  if (!(await read($, enabledModsAtom)).pulse) return;
-
-  const cwd = await $.session.cwd();
-  if (!(await $.fs.exists(`${cwd}/${MACHINE_WATCHER_SCRIPT}`))) return;
-
-  for await (const _ of $.process.spawn({ argv: ["pnpm", "ai:machine:watch"], cwd })) {
-    // The watcher's output is discarded, since nothing in the session reads it
-  }
-
-  $.clock.after(MACHINE_WATCHER_RETRY_MILLISECONDS, () => {
-    runDetached(() => watchPulse($));
-  });
-};
-
-const closeCommission = async ($: EngineInterface) => {
-  await update($, commissionAtom, () => InitialState.commission);
-  await update($, isCommissionExpandedAtom, () => InitialState.isCommissionExpanded);
-};
-
+// The events a plugin may hook once with no matcher, each hooked here for every mod, with the commands that switch the mods
 export const registerLifecycle = (on: On, typeSafeKey: string): void => {
   // The bare command flips a mod and an argument sets it, kept in the store so it holds for every later session
   for (const name of ModNames)
@@ -193,11 +61,10 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
     runDetached(() => watchPulse($));
     return next(e);
   });
-
   // A `/clear` or a resume carries on in this process under another conversation, with no `session.start` for it, so
   // Nothing the old one showed is kept
   on("session.end", async ($, e, next) => {
-    if (e.reason === "clear" || e.reason === "resume") {
+    if (["clear", "resume"].includes(e.reason)) {
       await update($, lastCacheRequestAtAtom, () => InitialState.lastCacheRequestAt);
       await update($, sinHistoryAtom, () => InitialState.sinHistory);
       await update($, sinSessionAtom, () => InitialState.sinSession);
@@ -208,7 +75,6 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
 
     return next(e);
   });
-
   // The prompt is kept as the goal of a commission this turn may open, and a commission whose every task is done has
   // Shown its finished row since the last turn ended, so it closes as the person moves on. A new prompt also starts
   // The lookup count again, since the lookups of the last turn are not the chain of this one
@@ -223,21 +89,18 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
     });
     return next(e);
   });
-
   // While the veil is on, the model is told to write placeholders too, so a reply never holds a value to hide
   on("prompt.compose", async ($, e, next) => {
     const result = await next(e);
-    const { veil } = await read($, enabledModsAtom);
+    const { veil: isVeilEnabled } = await read($, enabledModsAtom);
     const sections = [...result.sections];
-    if (veil) sections.push({ id: VEIL_SECTION_ID, scope: "session", text: VEIL_SYSTEM_SECTION });
+    if (isVeilEnabled) sections.push({ id: VEIL_SECTION_ID, scope: "session", text: VEIL_SYSTEM_SECTION });
     return { sections };
   });
-
   on("turn.start", (_$, e, next) => {
-    isTurnRunning = true;
+    turnState.isTurnRunning = true;
     return next(e);
   });
-
   // The cache's lifetime runs from the request that read or wrote it, so each of the main conversation's requests
   // Restarts the countdown as it is sent, not as its reply ends
   on("turn.step", async function* ($, e, next) {
@@ -249,14 +112,13 @@ export const registerLifecycle = (on: On, typeSafeKey: string): void => {
 
     return yield* next(e);
   });
-
   // An answer of the main conversation asks for waypoints off the turn's own dispatch, so the fork never holds the
   // Turn's end or the next prompt behind it
   on("turn.complete", async ($, e, next) => {
     const result = await next(e);
     if (e.agentId !== undefined) return result;
 
-    isTurnRunning = false;
+    turnState.isTurnRunning = false;
 
     const now = await $.clock.now();
     await update($, nowAtom, () => now);

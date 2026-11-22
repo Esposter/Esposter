@@ -8,10 +8,11 @@ export const CACHE_WARNING_MS: number = Temporal.Duration.from({ minutes: 5 }).t
 export const USAGE_WARNING_PERCENTAGE = 80;
 // The only model a subagent launches on: the main session thinks, and everything it delegates runs on haiku
 export const AGENT_MODEL = "haiku";
+const MODEL_SCOPE_SENTENCE = `Work too judged for ${AGENT_MODEL} stays in the main session, and a spec ${AGENT_MODEL} cannot carry still has a call open.`;
 // What a launch on any other model, or a fork, is told instead
-export const AGENT_MODEL_REFUSAL: string = `A subagent runs on "${AGENT_MODEL}" alone: pass model "${AGENT_MODEL}", and never a fork, which runs on the session's own model. Work too judged for ${AGENT_MODEL} stays in the main session, and a spec ${AGENT_MODEL} cannot carry still has a call open.`;
+export const AGENT_MODEL_REFUSAL: string = `A subagent runs on "${AGENT_MODEL}" alone: pass model "${AGENT_MODEL}", and never a fork, which runs on the session's own model. ${MODEL_SCOPE_SENTENCE}`;
 // What a workflow launch is refused with when its agents cannot all be seen to run on haiku
-export const WORKFLOW_MODEL_REFUSAL: string = `A workflow runs its agents on "${AGENT_MODEL}" alone: pass model "${AGENT_MODEL}" in each agent() call's own options. A saved workflow named with no script, or a script the guard cannot read as code, is refused. Work too judged for ${AGENT_MODEL} stays in the main session, and a spec ${AGENT_MODEL} cannot carry still has a call open.`;
+export const WORKFLOW_MODEL_REFUSAL: string = `A workflow runs its agents on "${AGENT_MODEL}" alone: pass model "${AGENT_MODEL}" in each agent() call's own options. A saved workflow named with no script, or a script the guard cannot read as code, is refused. ${MODEL_SCOPE_SENTENCE}`;
 export const MAX_WAYPOINTS = 3;
 export const MAX_SHOWN_TASKS = 8;
 // Whole minutes as the band writes them, `12m`
