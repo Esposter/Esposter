@@ -1,6 +1,6 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
-import type { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import type { Vector } from "#src/models/shared/Vector";
+import type { WitnessTarget } from "genshin-world/sceneExport";
 import type { Page } from "playwright";
 
 import { decodeTarget } from "#src/services/genshinParity/shared/decodeTarget";
@@ -16,7 +16,7 @@ declare global {
       height: number;
       parts: WitnessGbuffer["parts"];
       positionLift: number;
-      targets: Partial<Record<WitnessTargetName, string>>;
+      targets: Partial<Record<WitnessTarget, string>>;
       width: number;
     }>;
   }
@@ -26,12 +26,12 @@ declare global {
 // Handed over as base64 and decoded here, along with the parts and the view's size the page draws them at
 export const readWitnessTargetsInCall = async (
   page: Page,
-  names: readonly WitnessTargetName[],
+  names: readonly WitnessTarget[],
   isScene: boolean,
   lightDirection?: Readonly<Vector>,
 ): Promise<
   Pick<WitnessGbuffer, "families" | "height" | "parts" | "width"> & {
-    targets: Partial<Record<WitnessTargetName, Float32Array>>;
+    targets: Partial<Record<WitnessTarget, Float32Array>>;
   }
 > => {
   const { families, height, parts, positionLift, targets, width } = await page.evaluate(

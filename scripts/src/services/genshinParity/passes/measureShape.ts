@@ -1,7 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { chooseDetailWavelength } from "#src/services/genshinParity/passes/chooseDetailWavelength";
 import { compareFamilyTargets } from "#src/services/genshinParity/passes/compareFamilyTargets";
 import { computeSurfaceBend } from "#src/services/genshinParity/passes/computeSurfaceBend";
@@ -19,12 +18,13 @@ import { readSurfaceWavelengths } from "#src/services/genshinParity/passes/readS
 import { toShapeReading } from "#src/services/genshinParity/passes/toShapeReading";
 import { toSurfaceWavelengthDiagnostics } from "#src/services/genshinParity/passes/toSurfaceWavelengthDiagnostics";
 import { writeShapeDiff } from "#src/services/genshinParity/passes/writeShapeDiff";
+import { WitnessTarget } from "genshin-world/sceneExport";
 
-const TARGET_NAMES: WitnessTargetName[] = [
-  WitnessTargetName.Part,
-  WitnessTargetName.Depth,
-  WitnessTargetName.Normal,
-  WitnessTargetName.GeometryNormal,
+const TARGET_NAMES: WitnessTarget[] = [
+  WitnessTarget.Part,
+  WitnessTarget.Depth,
+  WitnessTarget.Normal,
+  WitnessTarget.GeometryNormal,
 ];
 // How many of a failing family's parts its note names
 const NAMED_PART_COUNT = 5;

@@ -4,7 +4,10 @@ import type { GpuPass } from "#src/models/genshinParity/shared/GpuPass";
 import { getFrameCount } from "#src/services/genshinParity/shared/getFrameCount";
 
 // Each kind of pass over the frames of some ranges, by its encoder and attachment: its GPU time and its count a frame
-export const readPassUseMap = (passes: GpuPass[], ranges: FrameRange[]): Map<string, { count: number; ms: number }> => {
+export const computePassUseMap = (
+  passes: GpuPass[],
+  ranges: FrameRange[],
+): Map<string, { count: number; ms: number }> => {
   const frameCount = getFrameCount(ranges);
   const passUseMap = new Map<string, { count: number; ms: number }>();
   for (const { detail, frame, gpuMs, label } of passes) {

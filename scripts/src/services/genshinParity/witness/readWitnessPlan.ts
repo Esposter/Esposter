@@ -1,6 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { INTERFACE_HEIGHT } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
@@ -9,6 +8,7 @@ import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitne
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { gcd } from "#src/services/genshinParity/witness/gcd";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
+import { WitnessTarget } from "genshin-world/sceneExport";
 import { MathUtils } from "three";
 
 // How high over the ground the plan's eye stands, so far that a part's height barely moves where it lands: a curb
@@ -66,7 +66,7 @@ export const readWitnessPlan = async (
         height: drawnHeight,
         targets: { albedo = new Float32Array() },
         width: drawnWidth,
-      } = await readWitnessTargets(page, [WitnessTargetName.Albedo]);
+      } = await readWitnessTargets(page, [WitnessTarget.Albedo]);
       if (drawnWidth !== width || drawnHeight !== height)
         throw new InvalidOperationError(
           Operation.Read,

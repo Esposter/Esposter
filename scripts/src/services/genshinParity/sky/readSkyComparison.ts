@@ -5,7 +5,6 @@ import type { Vector } from "#src/models/shared/Vector";
 import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 import type { Page } from "playwright";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { ATMOSPHERE_SPLIT_BLOCK_SIZES } from "#src/services/genshinParity/passes/constants";
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
 import { LUMINANCE } from "#src/services/genshinParity/shared/constants";
@@ -22,6 +21,7 @@ import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
 import { toMeanLab } from "#src/services/genshinParity/sky/toMeanLab";
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
+import { WitnessTarget } from "genshin-world/sceneExport";
 
 // A witness page's reference and the scene's sky beside it as statistics blind to where their clouds stand
 // (`SkyStatistics`), since the game scatters its clouds and drifts its cloud layer, so no score by pixels judges ours:
@@ -60,7 +60,7 @@ export const readSkyComparison = async (
   await setPageWitnessView(page, { camera, families: [] });
   const {
     targets: { part: scenePart = new Float32Array() },
-  } = await readWitnessTargets(page, [WitnessTargetName.Part], true);
+  } = await readWitnessTargets(page, [WitnessTarget.Part], true);
   const sky = skyMask.map((isSky, pixel) => Number(isSky === 1 && !scenePart[pixel * 4]));
   // An image's sky over a region of it: its colour in linear light and its luminance at the size the sky is read at,
   // Its clouds split from its clear sky over the whole sky, and its statistics over the region given

@@ -1,21 +1,6 @@
-import {
-  PARITY_DEFAULT_PORT,
-  PARITY_PAGE_TITLE,
-  PARITY_PORT_COUNT,
-  PARITY_PROBE_TIMEOUT_MS,
-} from "#src/services/genshinParity/shared/constants";
-import { fetchOk } from "#src/services/shared/fetchOk";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
-
-// Whether the parity page answers at a root, told apart by its title from whatever else serves on the same port
-const checkIsParityPage = (root: string): Promise<boolean> =>
-  getResultAsync(async () => {
-    const response = await fetchOk(root, { timeoutMs: PARITY_PROBE_TIMEOUT_MS });
-    return (await response.text()).includes(PARITY_PAGE_TITLE);
-  }).match(
-    (isParity) => isParity,
-    () => false,
-  );
+import { checkIsParityPage } from "#src/services/genshinParity/shared/checkIsParityPage";
+import { PARITY_DEFAULT_PORT, PARITY_PORT_COUNT } from "#src/services/genshinParity/shared/constants";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The root of the parity page, found by probing up from the first port: the server takes the next port when one is busy,
 // So the page is asked for port by port rather than assumed to be on one. The first port is `GENSHIN_PARITY_PORT` when it

@@ -3,7 +3,6 @@ import type { StoneLightPixel } from "#src/models/genshinParity/witness/StoneLig
 import type { StoneLightReading } from "#src/models/genshinParity/witness/StoneLightReading";
 import type { SceneFog } from "genshin-world/parity/models/SceneFog";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { readPageFunction } from "#src/services/genshinParity/shared/readPageFunction";
@@ -19,6 +18,7 @@ import { STONE_HEIGHT_BANDS } from "#src/services/genshinParity/witness/constant
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { computeStoneHarmonics, computeStoneRampCoordinate, STONE_HARMONIC_COUNT } from "genshin-engine";
+import { WitnessTarget } from "genshin-world/sceneExport";
 import { Matrix3, Matrix4, Vector3 } from "three";
 
 // A pixel's bin: its depth band (`DEPTH_BANDS`), its height band (`STONE_HEIGHT_BANDS`), its ramp coordinate in this many
@@ -57,13 +57,13 @@ export const readStoneLightReading = async (
         },
         width,
       } = await readWitnessTargets(page, [
-        WitnessTargetName.Albedo,
-        WitnessTargetName.Depth,
-        WitnessTargetName.Emission,
-        WitnessTargetName.Normal,
-        WitnessTargetName.Occlusion,
-        WitnessTargetName.Part,
-        WitnessTargetName.Shadow,
+        WitnessTarget.Albedo,
+        WitnessTarget.Depth,
+        WitnessTarget.Emission,
+        WitnessTarget.Normal,
+        WitnessTarget.Occlusion,
+        WitnessTarget.Part,
+        WitnessTarget.Shadow,
       ]);
       const sky = await readPageFunction<{ matrixWorld: number[]; projectionMatrixInverse: number[] }>(
         page,

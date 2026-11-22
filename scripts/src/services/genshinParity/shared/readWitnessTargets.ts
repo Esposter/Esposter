@@ -1,5 +1,5 @@
-import type { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import type { Vector } from "#src/models/shared/Vector";
+import type { WitnessTarget } from "genshin-world/sceneExport";
 import type { Page } from "playwright";
 
 import { readWitnessTargetsInCall } from "#src/services/genshinParity/shared/readWitnessTargetsInCall";
@@ -12,12 +12,12 @@ import { readWitnessTargetsInCall } from "#src/services/genshinParity/shared/rea
 // The scene's own parts in place of the exports', and given a direction, under the sun cast from it for this read alone
 export const readWitnessTargets = async (
   page: Page,
-  names: readonly WitnessTargetName[],
+  names: readonly WitnessTarget[],
   isScene = false,
   lightDirection?: Readonly<Vector>,
 ): Promise<Awaited<ReturnType<typeof readWitnessTargetsInCall>>> => {
   const { families, height, parts, width } = await readWitnessTargetsInCall(page, [], isScene, lightDirection);
-  const targets: Partial<Record<WitnessTargetName, Float32Array>> = {};
+  const targets: Partial<Record<WitnessTarget, Float32Array>> = {};
   for (const name of names) {
     // oxlint-disable-next-line no-await-in-loop -- One device: the page's one renderer draws one target at a time, so each is drawn and read back before the next is drawn into it
     const { targets: callTargets } = await readWitnessTargetsInCall(page, [name], isScene, lightDirection);

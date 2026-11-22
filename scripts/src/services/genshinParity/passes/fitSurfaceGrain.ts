@@ -1,7 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { SurfaceDetail } from "genshin-engine";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { computeFamilyMask } from "#src/services/genshinParity/passes/computeFamilyMask";
 import { computeFamilyStructure } from "#src/services/genshinParity/passes/computeFamilyStructure";
 import { GRAIN_MAX_ITERATIONS, GRAIN_TOLERANCE, SHAPE_WIDTH } from "#src/services/genshinParity/passes/constants";
@@ -16,6 +15,7 @@ import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { solveResidualsByNewton } from "#src/services/recreation/solve/solveResidualsByNewton";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { computeSurfaceOctaves, SURFACE_DETAIL_BAND_SIGMAS } from "genshin-engine";
+import { WitnessTarget } from "genshin-world/sceneExport";
 
 declare global {
   interface Window {
@@ -25,7 +25,7 @@ declare global {
 }
 
 // The targets a family's grain is read from: its exports' parts and albedo, and ours drawn beside them
-const GRAIN_TARGETS = [WitnessTargetName.Part, WitnessTargetName.Albedo];
+const GRAIN_TARGETS = [WitnessTarget.Part, WitnessTarget.Albedo];
 
 // Where a grain fit stopped: whether every structure term held its tolerance, the steps taken, the terms there in the
 // Order `computeStructureTerms` gives them (the luminance's variance, then each octave band finest first), and the detail

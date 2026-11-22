@@ -3,7 +3,6 @@ import type { FogSample } from "#src/models/genshinParity/sky/FogSample";
 import type { Vector } from "#src/models/shared/Vector";
 import type { SceneFog } from "genshin-world/parity/models/SceneFog";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { getToneSlope } from "#src/services/genshinParity/display/getToneSlope";
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
@@ -21,6 +20,7 @@ import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import { mapVector } from "#src/services/shared/mapVector";
 import { getOrCreate } from "@esposter/shared";
+import { WitnessTarget } from "genshin-world/sceneExport";
 import { Matrix4, Vector3 } from "three";
 
 // The densities the refinement brackets, and how many golden-section steps narrow it, each a fixed share of the last
@@ -53,7 +53,7 @@ export const solveReferenceFog = async (
     const {
       targets: { depth = new Float32Array(), part = new Float32Array() },
       width,
-    } = await readWitnessTargets(page, [WitnessTargetName.Depth, WitnessTargetName.Part]);
+    } = await readWitnessTargets(page, [WitnessTarget.Depth, WitnessTarget.Part]);
     const sky = await readPageFunction<{
       matrixWorld: number[];
       projectionMatrixInverse: number[];

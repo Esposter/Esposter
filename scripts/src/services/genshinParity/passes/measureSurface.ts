@@ -2,7 +2,6 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityPassReading";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
 import { computeFamilyMask } from "#src/services/genshinParity/passes/computeFamilyMask";
 import { computeFamilyStructure } from "#src/services/genshinParity/passes/computeFamilyStructure";
@@ -19,8 +18,9 @@ import { openSurfaceStatisticsPage } from "#src/services/genshinParity/shared/op
 import { computeLabelSimilarity } from "#src/services/genshinParity/witness/computeLabelSimilarity";
 import { withFinalizerAsync } from "@esposter/shared";
 import { SURFACE_DETAIL_BAND_SIGMAS } from "genshin-engine";
+import { WitnessTarget } from "genshin-world/sceneExport";
 
-const TARGET_NAMES: WitnessTargetName[] = [WitnessTargetName.Part, WitnessTargetName.Albedo, WitnessTargetName.Depth];
+const TARGET_NAMES: WitnessTarget[] = [WitnessTarget.Part, WitnessTarget.Albedo, WitnessTarget.Depth];
 // The reason a family's structure is read as when the exports draw it within one half of the blocks, so no gate is read
 const NO_GATE_REASON = "no gate: the family lies within one half";
 

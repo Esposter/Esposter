@@ -5,7 +5,6 @@ import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityP
 import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 import type { Page } from "playwright";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyEnvelope } from "#src/services/genshinParity/passes/compareFamilyEnvelope";
 import { computeEnvelopeRadius } from "#src/services/genshinParity/passes/computeEnvelopeRadius";
 import { computeFamilyEnvelope } from "#src/services/genshinParity/passes/computeFamilyEnvelope";
@@ -16,12 +15,9 @@ import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitne
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { WindrisePartFamily } from "genshin-world";
+import { WitnessTarget } from "genshin-world/sceneExport";
 
-const TARGET_NAMES: WitnessTargetName[] = [
-  WitnessTargetName.Part,
-  WitnessTargetName.Depth,
-  WitnessTargetName.GeometryNormal,
-];
+const TARGET_NAMES: WitnessTarget[] = [WitnessTarget.Part, WitnessTarget.Depth, WitnessTarget.GeometryNormal];
 
 // The Oak's shape read on its envelope, a family of scattered cards: the exports' and ours at the reference's camera
 // Each closed at the cards' spacing (`computeEnvelopeRadius`), against a gate read off the exports themselves. The

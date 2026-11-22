@@ -1,8 +1,8 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
 import type { Page } from "playwright";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
+import { WitnessTarget } from "genshin-world/sceneExport";
 
 // The witness page's G-buffer at the view last set: the four targets it holds, each read alone
 export const readWitnessGbuffer = async (page: Page): Promise<WitnessGbuffer> => {
@@ -15,10 +15,10 @@ export const readWitnessGbuffer = async (page: Page): Promise<WitnessGbuffer> =>
     },
     ...rest
   } = await readWitnessTargets(page, [
-    WitnessTargetName.Albedo,
-    WitnessTargetName.Depth,
-    WitnessTargetName.Normal,
-    WitnessTargetName.Part,
+    WitnessTarget.Albedo,
+    WitnessTarget.Depth,
+    WitnessTarget.Normal,
+    WitnessTarget.Part,
   ]);
   return { ...rest, albedo, depth, normal, part };
 };

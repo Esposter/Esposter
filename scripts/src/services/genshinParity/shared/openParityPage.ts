@@ -1,4 +1,3 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: the page draws one frame after another until it is ready, and its readiness is read after the frame it drew */
 import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityPageOptions";
 import type { Page } from "playwright";
 
@@ -16,7 +15,7 @@ import {
 import { reportConsoleError } from "#src/services/genshinParity/shared/reportConsoleError";
 import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolveParityPageRoot";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -107,24 +106,30 @@ export const openParityPage = async ({
       : "";
     if (witness) {
       const { assets, root } = getComponentDirectory(witness);
-      await page.route(`**${WITNESS_PATH_PREFIX}**`, async (route) => {
-        const path = decodeURIComponent(new URL(route.request().url()).pathname.slice(WITNESS_PATH_PREFIX.length));
-        const filePath = path === WITNESS_LAYOUT_PATH ? join(root, WITNESS_LAYOUT_FILE_NAME) : join(assets, path);
-        // An export not on disk is answered as missing: the page fails loading it, and whatever failure follows is thrown
-        // With the path. Fulfilling from a file that is not there would reject inside this handler, where nothing awaits it
-        if (!existsSync(filePath)) {
-          missingFiles.push(filePath);
-          return route.fulfill({ status: 404 });
-        }
-        // A page that draws only some meshes is served the placements of those alone: the city's others only slow it
-        if (path === WITNESS_LAYOUT_PATH && witnessMeshes) {
-          const meshes = new Set(witnessMeshes);
-          const layout = parseMachineJson<{ placements: { mesh: string }[] }>(await readFile(filePath, "utf8"));
-          layout.placements = layout.placements.filter(({ mesh }) => meshes.has(mesh));
-          return route.fulfill({ body: JSON.stringify(layout), contentType: "application/json" });
-        }
-        return route.fulfill({ path: filePath });
-      });
+      await page.route(`**${WITNESS_PATH_PREFIX}**`, (route) =>
+        getResultAsync(async () => {
+          const path = decodeURIComponent(new URL(route.request().url()).pathname.slice(WITNESS_PATH_PREFIX.length));
+          const filePath = path === WITNESS_LAYOUT_PATH ? join(root, WITNESS_LAYOUT_FILE_NAME) : join(assets, path);
+          // An export not on disk is answered as missing: the page fails loading it, and whatever failure follows is thrown
+          // With the path. Fulfilling from a file that is not there would reject inside this handler, where nothing awaits it
+          if (!existsSync(filePath)) {
+            missingFiles.push(filePath);
+            return route.fulfill({ status: 404 });
+          }
+          // A page that draws only some meshes is served the placements of those alone: the city's others only slow it
+          if (path === WITNESS_LAYOUT_PATH && witnessMeshes) {
+            const meshes = new Set(witnessMeshes);
+            const layout = parseMachineJson<{ placements: { mesh: string }[] }>(await readFile(filePath, "utf8"));
+            layout.placements = layout.placements.filter(({ mesh }) => meshes.has(mesh));
+            return route.fulfill({ body: JSON.stringify(layout), contentType: "application/json" });
+          }
+          return route.fulfill({ path: filePath });
+        }).match(noop, (error) => {
+          // Nothing awaits this handler, so its failure is named here, and the page is answered rather than left waiting on it
+          console.error(`parity page: ${route.request().url()}: ${error.message}`);
+          return route.fulfill({ status: 500 });
+        }),
+      );
     }
     // A faked clock runs only as far as the caller moves it, frame by frame, so a motion is shot at exact moments. Installed
     // Alone, it flows with real time, so the frames a page draws would depend on how fast the machine runs: it is paused
@@ -151,8 +156,10 @@ export const openParityPage = async ({
         .waitFor({ timeout: PARITY_READY_TIMEOUT_MS });
     let { parityError, parityReady: readyScreen } = await readPageState();
     while (parityError === undefined && readyScreen === undefined) {
+      // oxlint-disable no-await-in-loop -- Each step reads the last: the page draws one frame after another until it is ready, and its readiness is read after the frame it drew
       await page.clock.runFor(PARITY_FRAME_MS);
       ({ parityError, parityReady: readyScreen } = await readPageState());
+      // oxlint-enable no-await-in-loop
     }
     if (parityError !== undefined) throw new InvalidOperationError(Operation.Read, screen, parityError);
     // An unknown name draws the list of screens, which would otherwise be shot and scored as the screen

@@ -1,8 +1,8 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { WitnessTargetsRead } from "#src/models/genshinParity/passes/WitnessTargetsRead";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
-import type { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
+import type { WitnessTarget } from "genshin-world/sceneExport";
 import type { Page } from "playwright";
 import type { Promisable } from "type-fest";
 
@@ -20,7 +20,7 @@ import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 // The pass's own comparison, whose readings and notes are gathered over every reference
 export const measureFamilyTargets = async (
   component: DerivedAssetComponent,
-  targetNames: readonly WitnessTargetName[],
+  targetNames: readonly WitnessTarget[],
   compare: (
     referenceId: string,
     exportsRead: WitnessTargetsRead,

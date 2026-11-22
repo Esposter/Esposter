@@ -1,6 +1,8 @@
 // The scene exports' entry for the app's server, which serves the developer's own exports of the game's scenes in the
 // Layout the world reads them by. Only the layout's own names are reached from here, so the server never loads the
-// World's components
+// World's components. The witness target names are the one parity model it takes, since the parity tooling reads them at run time
+// And they are a plain map with no component behind them
+export { WitnessTarget } from "#parity/models/witness/WitnessTarget";
 export type { AvatarBone } from "#src/models/avatar/AvatarBone";
 export type { AvatarManifest } from "#src/models/avatar/AvatarManifest";
 export type { AvatarMaterial } from "#src/models/avatar/AvatarMaterial";

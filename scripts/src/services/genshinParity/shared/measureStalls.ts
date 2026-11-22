@@ -58,7 +58,7 @@ const RECORD_FRAMES_SCRIPT = `
   });
 `;
 
-// Opens the screen on the parity page at a viewport and device ratio, runs the orbit and walk states, prints a row a state,
+// Opens the screen on the parity page at a viewport and device ratio, runs the orbit and walk states, prints a row for a state,
 // And writes the run beside the rest of the parity tool's output. Its page is the one `genshin:parity` serves. With a trace,
 // Each GPU call the page makes is recorded too, with each node material three builds and each program it adds once the
 // Renderer is handed over, and each pass timed on the GPU where the adapter has timestamp queries, read at full

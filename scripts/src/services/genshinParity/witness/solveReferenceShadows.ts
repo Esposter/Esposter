@@ -3,7 +3,6 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { PricedDirection } from "#src/models/genshinParity/witness/PricedDirection";
 import type { Vector } from "#src/models/shared/Vector";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { SHADOW_WIDTH } from "#src/services/genshinParity/passes/constants";
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
@@ -29,6 +28,7 @@ import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelde
 import { computeOtsuThreshold } from "#src/services/recreation/statistics/computeOtsuThreshold";
 import { BYTE } from "#src/services/shared/constants";
 import { withFinalizerAsync } from "@esposter/shared";
+import { WitnessTarget } from "genshin-world/sceneExport";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -101,7 +101,7 @@ export const solveReferenceShadows = async (
         height,
         targets: { albedo = new Float32Array(), normal = new Float32Array(), part = new Float32Array() },
         width,
-      } = await readWitnessTargets(page, [WitnessTargetName.Albedo, WitnessTargetName.Normal, WitnessTargetName.Part]);
+      } = await readWitnessTargets(page, [WitnessTarget.Albedo, WitnessTarget.Normal, WitnessTarget.Part]);
       const { direction } = await page.evaluate(() => window.setSceneLights({}));
       const shot = await sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
       const isReceiver = Uint8Array.from({ length: width * height }, (_value, pixel) =>
@@ -135,7 +135,7 @@ export const solveReferenceShadows = async (
       const priceDirection = async (candidate: Readonly<Vector>): Promise<{ distance: number; edges: Uint8Array }> => {
         const {
           targets: { shadow = new Float32Array() },
-        } = await readWitnessTargets(page, [WitnessTargetName.Shadow], false, candidate);
+        } = await readWitnessTargets(page, [WitnessTarget.Shadow], false, candidate);
         const isOursShadowed = Uint8Array.from(isReceiver, (isSet, pixel) =>
           Number(Boolean(isSet) && (shadow[pixel * 4] ?? 0) < SHADOWED_VISIBILITY),
         );

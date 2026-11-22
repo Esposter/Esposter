@@ -1,7 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { DisplaySample } from "#src/models/genshinParity/display/DisplaySample";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { DISPLAY_WIDTH } from "#src/services/genshinParity/passes/constants";
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
@@ -13,8 +12,9 @@ import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
 import { withFinalizerAsync } from "@esposter/shared";
+import { WitnessTarget } from "genshin-world/sceneExport";
 
-const TARGET_NAMES: WitnessTargetName[] = [WitnessTargetName.Albedo, WitnessTargetName.Depth, WitnessTargetName.Part];
+const TARGET_NAMES: WitnessTarget[] = [WitnessTarget.Albedo, WitnessTarget.Depth, WitnessTarget.Part];
 // A pixel is read where little haze lies over it, its albedo dark in no channel and its colour shown short of white in
 // Every one, where the curve and the encoding still tell one light from the next
 const MAX_DEPTH = 80;

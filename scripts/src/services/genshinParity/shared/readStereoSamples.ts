@@ -1,16 +1,19 @@
 import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
-import { execFileSync } from "@esposter/shared-node/child-process";
+import { execFileAsync } from "@esposter/shared-node/child-process";
 
 // Any audio FFmpeg reads as two channels of 32-bit samples at a rate, left then right, a single channel heard in both
 export const readStereoSamples = async (path: string, sampleRate: number): Promise<[Float32Array, Float32Array]> => {
   const ffmpegPath = await resolveFfmpeg();
-  const output = execFileSync(
+  const { stdout: output } = await execFileAsync(
     ffmpegPath,
     ["-hide_banner", "-loglevel", "error", "-i", path, "-ac", "2", "-ar", String(sampleRate), "-f", "f32le", "pipe:1"],
-    { maxBuffer: 1024 ** 3 },
+    { encoding: "buffer", maxBuffer: 1024 ** 3 },
   );
-  // Copied out, since a buffer Node pools may start where a float cannot
-  const interleaved = new Float32Array(output.buffer.slice(output.byteOffset, output.byteOffset + output.byteLength));
+  const interleaved = new Float32Array(
+    output.buffer,
+    output.byteOffset,
+    output.byteLength / Float32Array.BYTES_PER_ELEMENT,
+  );
   const left = new Float32Array(interleaved.length / 2);
   const right = new Float32Array(interleaved.length / 2);
   for (let frame = 0; frame < left.length; frame++) {

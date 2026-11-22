@@ -1,7 +1,6 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { carryLossToPlan } from "#src/services/genshinParity/passes/carryLossToPlan";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
 import { LOST_FULL } from "#src/services/genshinParity/passes/constants";
@@ -12,6 +11,7 @@ import { parseNumbers } from "#src/services/shared/parseNumbers";
 import { toByte } from "#src/services/shared/toByte";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
+import { WitnessTarget } from "genshin-world/sceneExport";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -66,7 +66,7 @@ export const lostCommand: SubCommandsDef[string] = defineCommand({
       throw new InvalidOperationError(Operation.Read, "plan", "its size, resolution and band are not all positive");
     const { notes } = await measureFamilyTargets(
       args.component,
-      [WitnessTargetName.Part, WitnessTargetName.Albedo, WitnessTargetName.Position],
+      [WitnessTarget.Part, WitnessTarget.Albedo, WitnessTarget.Position],
       async (referenceId, exportsRead, oursRead, page) => {
         const { families, width } = exportsRead;
         const family = families.indexOf(args.family);

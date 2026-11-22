@@ -7,11 +7,11 @@ describe(readRawRgb, () => {
     expect.hasAssertions();
 
     const input = await sharp({
-      create: { background: { alpha: 1, b: 30, g: 20, r: 10 }, channels: 4, height: 1, width: 1 },
+      create: { background: { alpha: 1, b: 3, g: 2, r: 1 }, channels: 4, height: 1, width: 1 },
     })
       .png()
       .toBuffer();
 
-    await expect(readRawRgb(input, 2, 1)).resolves.toStrictEqual(Buffer.from([10, 20, 30, 10, 20, 30]));
+    await expect(readRawRgb(input, 2, 1)).resolves.toStrictEqual(Buffer.from([1, 2, 3, 1, 2, 3]));
   });
 });

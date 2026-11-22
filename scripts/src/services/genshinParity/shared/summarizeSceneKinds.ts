@@ -1,9 +1,9 @@
 import type { GpuPass } from "#src/models/genshinParity/shared/GpuPass";
 import type { SceneKindTrace } from "#src/models/genshinParity/shared/SceneKindTrace";
 
+import { computePassUseMap } from "#src/services/genshinParity/shared/computePassUseMap";
 import { getFrameCount } from "#src/services/genshinParity/shared/getFrameCount";
 import { getLetter } from "#src/services/genshinParity/shared/getLetter";
-import { readPassUseMap } from "#src/services/genshinParity/shared/readPassUseMap";
 import { roundHundredths } from "#src/services/genshinParity/shared/roundHundredths";
 import { sumMs } from "#src/services/genshinParity/shared/sumMs";
 
@@ -18,7 +18,7 @@ export const summarizeSceneKinds = (
   times: number[],
   { baselines, kinds }: SceneKindTrace,
 ): string[] => {
-  const baselineUseMap = readPassUseMap(passes, baselines);
+  const baselineUseMap = computePassUseMap(passes, baselines);
   const passKeys = [...baselineUseMap]
     .toSorted(([, firstUse], [, secondUse]) => secondUse.ms - firstUse.ms)
     .map(([key]) => key);
@@ -28,7 +28,7 @@ export const summarizeSceneKinds = (
     0,
   );
   const framesPerSecond = durationMs > 0 ? (getFrameCount(baselines) * MS_PER_SECOND) / durationMs : 0;
-  const baselineMs = baselines.map((baseline) => sumMs(readPassUseMap(passes, [baseline])));
+  const baselineMs = baselines.map((baseline) => sumMs(computePassUseMap(passes, [baseline])));
 
   return [
     `kinds, camera still: ${roundHundredths(sumMs(baselineUseMap))} ms a frame on the GPU with every kind drawn (${roundHundredths(Math.min(...baselineMs))} to ${roundHundredths(Math.max(...baselineMs))} across its ${baselines.length} ranges), at ${Math.round(framesPerSecond)} frames a second`,
@@ -39,8 +39,8 @@ export const summarizeSceneKinds = (
     `kind | drawables | ms a frame saved | ${passKeys.map((_key, index) => getLetter(index)).join(" | ")}`,
     ...kinds
       .map(({ drawables, kind, ...range }, index) => {
-        const besideUseMap = readPassUseMap(passes, baselines.slice(index, index + 2));
-        const hiddenUseMap = readPassUseMap(passes, [range]);
+        const besideUseMap = computePassUseMap(passes, baselines.slice(index, index + 2));
+        const hiddenUseMap = computePassUseMap(passes, [range]);
         const savedMs = passKeys.map((key) => (besideUseMap.get(key)?.ms ?? 0) - (hiddenUseMap.get(key)?.ms ?? 0));
         return { drawables, kind, savedMs, totalMs: savedMs.reduce((total, ms) => total + ms, 0) };
       })

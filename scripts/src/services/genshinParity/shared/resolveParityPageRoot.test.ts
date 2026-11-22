@@ -36,14 +36,15 @@ describe(resolveParityPageRoot, () => {
 
   test("rejects a server on the port whose page is not the parity page", async () => {
     expect.hasAssertions();
-    const port = await serve("<html><head><title>Something else</title></head></html>");
+    const port = await serve("a");
+    const { message } = new InvalidOperationError(
+      Operation.Read,
+      "parity page",
+      `no server answers on ports ${port} to ${port + PARITY_PORT_COUNT - 1}; start one with pnpm -C packages/genshin-world parity`,
+    );
 
-    await expect(resolveParityPageRoot(port)).rejects.toStrictEqual(
-      new InvalidOperationError(
-        Operation.Read,
-        "parity page",
-        `no server answers on ports ${port} to ${port + PARITY_PORT_COUNT - 1}; start one with pnpm -C packages/genshin-world parity`,
-      ),
+    await expect(resolveParityPageRoot(port)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${message}]`,
     );
   });
 });

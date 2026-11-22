@@ -1,7 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { RadianceFrames } from "#src/models/genshinParity/radiance/RadianceFrames";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { DISPLAY_WIDTH, SHAPE_WIDTH } from "#src/services/genshinParity/passes/constants";
 import { getReferenceCameraPose } from "#src/services/genshinParity/passes/getReferenceCameraPose";
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
@@ -13,6 +12,7 @@ import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitne
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { withFinalizerAsync } from "@esposter/shared";
+import { WitnessTarget } from "genshin-world/sceneExport";
 
 // One reference's two frames at the display width, both resized from the shape's width by the same lanczos3 kernel, and
 // The masks read over them: the family each pixel's export part draws, and our render's share of the sun. Both are read
@@ -38,9 +38,9 @@ export const readRadianceFrames = async (
         ? toPageCamera((await solveReferenceCamera(page, referenceId, component)).pose)
         : undefined;
       await setPageWitnessView(page, { camera, isAlone: true });
-      const exportsRead = await readWitnessTargets(page, [WitnessTargetName.Part]);
+      const exportsRead = await readWitnessTargets(page, [WitnessTarget.Part]);
       await setPageWitnessView(page, { camera, families: [] });
-      const oursRead = await readWitnessTargets(page, [WitnessTargetName.Shadow], true);
+      const oursRead = await readWitnessTargets(page, [WitnessTarget.Shadow], true);
       const oursShot = await page.screenshot();
       const part = exportsRead.targets.part ?? new Float32Array();
       const shadow = oursRead.targets.shadow ?? new Float32Array();

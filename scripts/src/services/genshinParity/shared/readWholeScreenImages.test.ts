@@ -12,14 +12,14 @@ describe(readWholeScreenImages, () => {
   test("reads every batch the continuation names, merging a page answered in two", async () => {
     expect.hasAssertions();
 
-    const continuation = { continue: "gimcontinue||", gimcontinue: "2|Menu.png" };
+    const continuation = { continue: "gimcontinue||", gimcontinue: "2|b" };
     const responses: WikiImagesResponse[] = [
-      { continue: continuation, query: { pages: { 1: { title: "File:Handbook.png" } } } },
+      { continue: continuation, query: { pages: { 1: { title: "a" } } } },
       {
         query: {
           pages: {
             1: { imageinfo: [{ height: 1730, url: "https://wiki/handbook", width: 3130 }] },
-            2: { imageinfo: [{ height: 1440, url: "https://wiki/menu", width: 2560 }], title: "File:Menu.png" },
+            2: { imageinfo: [{ height: 1440, url: "https://wiki/menu", width: 2560 }], title: "b" },
           },
         },
       },
@@ -28,11 +28,11 @@ describe(readWholeScreenImages, () => {
     for (const response of responses) fetchSpy.mockResolvedValueOnce(Response.json(response));
 
     await expect(readWholeScreenImages("a")).resolves.toStrictEqual([
-      { height: 1730, title: "File:Handbook.png", url: "https://wiki/handbook", width: 3130 },
-      { height: 1440, title: "File:Menu.png", url: "https://wiki/menu", width: 2560 },
+      { height: 1730, title: "a", url: "https://wiki/handbook", width: 3130 },
+      { height: 1440, title: "b", url: "https://wiki/menu", width: 2560 },
     ]);
     expect(fetchSpy.mock.calls[1]?.[0]).toBe(
-      `${WIKI_ORIGIN}/api.php?action=query&generator=images&gimlimit=max&titles=a&prop=imageinfo&iiprop=size|url&format=json&continue=gimcontinue%7C%7C&gimcontinue=2%7CMenu.png`,
+      `${WIKI_ORIGIN}/api.php?action=query&generator=images&gimlimit=max&titles=a&prop=imageinfo&iiprop=size|url&format=json&continue=gimcontinue%7C%7C&gimcontinue=2%7Cb`,
     );
   });
 
@@ -40,7 +40,7 @@ describe(readWholeScreenImages, () => {
     expect.hasAssertions();
 
     const responses: WikiImagesResponse[] = [
-      { continue: { gimcontinue: "2|Menu.png" }, query: { pages: { 1: { title: "File:Handbook.png" } } } },
+      { continue: { gimcontinue: "2|b" }, query: { pages: { 1: { title: "a" } } } },
       { error: { code: "badcontinue", info: "Invalid continue param." } },
     ];
     const fetchSpy = vi.spyOn(globalThis, "fetch");

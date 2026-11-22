@@ -1,7 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
 import { COLOUR_GATE, FRAME_GATE_PIXELS, SHAPE_WIDTH } from "#src/services/genshinParity/passes/constants";
 import { formatScales } from "#src/services/genshinParity/passes/formatScales";
@@ -18,6 +17,7 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { computeLabelSimilarity } from "#src/services/genshinParity/witness/computeLabelSimilarity";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
+import { WitnessTarget } from "genshin-world/sceneExport";
 
 // The glow, read where the light pass reads the frame: at each current build's reference under the scene's pose for it,
 // The pixels of each family the exports' materials add a glow over their lit colour to (their emission, cut where the
@@ -36,7 +36,7 @@ export const measureGlow = async (component: DerivedAssetComponent, pageRoot?: s
         families,
         targets: { emission = new Float32Array(), part = new Float32Array() },
         width,
-      } = await readWitnessTargets(page, [WitnessTargetName.Emission, WitnessTargetName.Part]);
+      } = await readWitnessTargets(page, [WitnessTarget.Emission, WitnessTarget.Part]);
       // The stand-in as the scene lights it, its exports hidden, under the same camera
       const oursShot = await shootWitnessFamilies(page, [], { height, width });
       const referenceShot = await readRawRgb(image, width, height);

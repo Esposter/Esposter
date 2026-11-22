@@ -26,6 +26,5 @@ export const readAudioSamples = async (path: string, sampleRate: number, startFr
     ],
     { encoding: "buffer", maxBuffer: 1024 ** 3 },
   );
-  // Copied out, since a buffer Node pools may start where a float cannot
-  return new Float32Array(output.buffer.slice(output.byteOffset, output.byteOffset + output.byteLength));
+  return new Float32Array(output.buffer, output.byteOffset, output.byteLength / Float32Array.BYTES_PER_ELEMENT);
 };
