@@ -38,7 +38,9 @@ export const createInstanceCulling = ({ count, indexCount, isVisible }: Instance
   // Every instance in order until a pass culls, so a draw that never runs one, as on WebGL, takes them all
   const survivorAttribute = new StorageBufferAttribute(createSurvivorIndices(count), 1);
   const counter = storage(indirect, "uint", CULLING_INDIRECT_ARGUMENT_COUNT).toAtomic();
-  const survivors = storage(survivorAttribute, "uint", count);
+  // A node's access is set in place by toReadOnly, so each use takes a node of its own rather than sharing one
+  const survivorStorage = () => storage(survivorAttribute, "uint", count);
+  const survivors = survivorStorage();
   const resetCount = Fn(() => {
     atomicStore(counter.element(CULLING_INSTANCE_COUNT_INDEX), uint(0));
   })().compute(1);
@@ -59,6 +61,6 @@ export const createInstanceCulling = ({ count, indexCount, isVisible }: Instance
     },
     indirect,
     // The instance a survivor's slot draws, read by the draw's own vertex stage at its instance index
-    survivor: float(storage(survivorAttribute, "uint", count).toReadOnly().element(instanceIndex)),
+    survivor: float(survivorStorage().toReadOnly().element(instanceIndex)),
   };
 };

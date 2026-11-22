@@ -59,8 +59,19 @@ export const createInput = (target: InputTarget): Input => {
     heldCodes.add(code);
   };
   // Whether the chord's last code was pressed since the last read with every other one held
-  const checkIsChordTriggered = (chord: readonly string[]): boolean =>
-    chord.every((code, index) => (index === chord.length - 1 ? pressedCodes.has(code) : heldCodes.has(code)));
+  const checkIsChordTriggered = (chord: readonly string[]): boolean => {
+    let codeCount = 0;
+    for (const code of chord) {
+      codeCount++;
+      if (codeCount === chord.length ? !pressedCodes.has(code) : !heldCodes.has(code)) return false;
+    }
+    return true;
+  };
+  // Whether every code of the chord is held, a loop rather than a callback so a frame builds none
+  const checkIsChordHeld = (chord: readonly string[]): boolean => {
+    for (const code of chord) if (!heldCodes.has(code)) return false;
+    return true;
+  };
   target.addEventListener(
     "keydown",
     (event) => {
@@ -137,11 +148,19 @@ export const createInput = (target: InputTarget): Input => {
     },
     press,
     readInput: (frameSeconds) => {
-      const gamepad = target.getGamepads().find((candidate): candidate is InputGamepad => candidate !== null);
+      let gamepad: InputGamepad | undefined;
+      for (const candidate of target.getGamepads())
+        if (candidate !== null) {
+          gamepad = candidate;
+          break;
+        }
       const [stickX = 0, stickY = 0, lookStickX = 0, lookStickY = 0] = gamepad?.axes ?? [];
-      for (const [index, button] of GAMEPAD_BUTTONS.entries())
-        if (gamepad?.buttons[index]?.pressed) press(button);
+      let buttonIndex = 0;
+      for (const button of GAMEPAD_BUTTONS) {
+        if (gamepad?.buttons[buttonIndex]?.pressed) press(button);
         else heldCodes.delete(button);
+        buttonIndex++;
+      }
 
       inputState.lookYaw = pendingLookYaw - toDeadzoned(lookStickX) * GAMEPAD_LOOK_RADIANS_PER_SECOND * frameSeconds;
       inputState.lookPitch =
@@ -181,7 +200,7 @@ export const createInput = (target: InputTarget): Input => {
       for (const action of InputActions)
         for (const chord of InputActionBindingMap[action]) {
           const lastCode = chord.at(-1);
-          if (chord.every((code) => heldCodes.has(code))) heldActions.add(action);
+          if (checkIsChordHeld(chord)) heldActions.add(action);
           if (
             lastCode !== undefined &&
             checkIsChordTriggered(chord) &&

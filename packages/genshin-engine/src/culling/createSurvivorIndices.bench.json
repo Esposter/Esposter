@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/culling/createSurvivorIndices.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.0023707999999999178,
+              "name": "allocate",
+              "p99": 0.0083607200000273,
+              "rme": 74.77897490690708,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.07198729999999501,
+              "name": "createSurvivorIndices",
+              "p99": 0.10616356000000167,
+              "rme": 13.454397958564554,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createSurvivorIndices > 1000 instances"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.0028999999999882674,
+              "name": "allocate",
+              "p99": 0.013098559999976942,
+              "rme": 110.22207104956038,
+              "sampleCount": 10
+            },
+            {
+              "mean": 11.054579000000007,
+              "name": "createSurvivorIndices",
+              "p99": 17.155368750000026,
+              "rme": 20.451892654913532,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createSurvivorIndices > 100000 instances"
+        }
+      ]
+    }
+  ]
+}
