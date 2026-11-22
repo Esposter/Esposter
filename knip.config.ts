@@ -41,9 +41,9 @@ const knipConfiguration: KnipConfig = {
         // Through the manifest's subpath imports, which reach each worker and worklet
         "app/workers/**/*.ts",
       ],
-      // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop `app/assets/**` once the tileset glob is followed,
-      // Since knip reads its Tiled `.tsx` definitions as unused source
-      ignore: ["app/assets/**", "public/**", "shared/generated/**"],
+      // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop the tilesets once their glob is followed, since knip
+      // Reads their Tiled `.tsx` definitions as unused source
+      ignore: ["app/assets/dungeons/tilesets/**/*.tsx", "public/**", "shared/generated/**"],
       ignoreDependencies: [
         "@iconify-json/.+",
         "@takumi-rs/core",
