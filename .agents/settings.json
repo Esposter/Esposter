@@ -5,5 +5,15 @@
   "statusLine": {
     "command": "node \"$(git rev-parse --show-toplevel)/packages/genshin-persona/scripts/statusLine.mjs\"",
     "type": "command"
+  },
+  "permissions": {
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f *)",
+      "Bash(git reset --hard*)",
+      "Bash(git stash*)"
+    ]
   }
 }
