@@ -1,5 +1,4 @@
 import { getVisibleSectionIds } from "#src/services/shared/getVisibleSectionIds";
-import { checkIsServer } from "@esposter/shared";
 
 // Same members in the same order. Both halves are load-bearing and only one of them is visible at a glance: a
 // Prefix passes `every` on its own, so dropping the length clause reads right and answers wrong
@@ -73,17 +72,19 @@ export const useVisibleSectionIds = (
     sections.value = newSections;
     updateVisibleIds();
   };
-  // After render, so the sections the page rendered are in the document — and again whenever the ids change, deep
-  // Because a caller may mutate its array in place. Unlike a post effect, an immediate watch also calls back during
-  // SSR, where there is no document to resolve against
-  watchDeep(
+  // After render, so the sections the page rendered are in the document, and again whenever the ids change, deep
+  // Because a caller may mutate its array in place. The first resolve waits for mount, since there is no document to
+  // Resolve against during SSR
+  const { trigger } = watchTriggerable(
     () => toValue(sectionIds),
     () => {
-      if (checkIsServer()) return;
       resolveSections();
     },
-    { flush: "post", immediate: true },
+    { deep: true, flush: "post" },
   );
+  onMounted(() => {
+    trigger();
+  });
   // Sections that arrive later than this composable does: a settings panel resolving its Suspense, a card
   // Rendering behind a skeleton. Nothing else would ever look for them again, and an id that resolves to no
   // Element is simply absent from the set rather than an error, so the sidebar would sit on a stale highlight
