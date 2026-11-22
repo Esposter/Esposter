@@ -2,8 +2,7 @@ import type { CreateUniqueArraySchema } from "#src/models/zod/CreateUniqueArrayS
 import type { z } from "zod";
 
 import { ID_SEPARATOR } from "#src/util/id/constants";
-
-const checkIsRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
+import { checkIsRecord } from "#src/util/object/checkIsRecord";
 
 // A composite key is its parts joined by the one separator, so items unique by the whole of it are told apart by it
 const getItemKey = (item: unknown, key: readonly string[] | string): unknown => {
