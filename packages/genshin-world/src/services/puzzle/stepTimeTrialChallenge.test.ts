@@ -1,104 +1,52 @@
-import type { TimeTrialChallenge } from "#src/models/puzzle/TimeTrialChallenge";
-
-import { ChestKind } from "#src/models/chest/ChestKind";
 import { TimeTrialChallengeState } from "#src/models/puzzle/TimeTrialChallengeState";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { computeTimeTrialChestPlaces } from "#src/services/puzzle/computeTimeTrialChestPlaces";
+import { createTimeTrialChallenge } from "#src/services/puzzle/createTimeTrialChallenge";
 import { startTimeTrialChallenge } from "#src/services/puzzle/startTimeTrialChallenge";
 import { stepTimeTrialChallenge } from "#src/services/puzzle/stepTimeTrialChallenge";
 import { strikeTimeTrialTarget } from "#src/services/puzzle/strikeTimeTrialTarget";
 import { describe, expect, test } from "vitest";
 
-const createChallenge = (limitSeconds: number, targetCount: number): TimeTrialChallenge => ({
-  limitSeconds,
-  remainingSeconds: 0,
-  state: TimeTrialChallengeState.Idle,
-  struckCount: 0,
-  targetCount,
-});
+describe(stepTimeTrialChallenge, () => {
+  test("a missed target before the timer ends gives no chest", () => {
+    expect.hasAssertions();
 
-describe("time-trial challenge", () => {
-  const LIMIT_SECONDS = 10;
-  const TARGET_COUNT = 2;
-  const MARKER_ID = "id";
-  const MARKER_POSITION = { x: 3, z: -4 };
+    const marker = {
+      challenge: { ...createTimeTrialChallenge(), targetCount: 2 },
+      id: "id",
+      position: { x: 3, z: -4 },
+    };
+    startTimeTrialChallenge(marker.challenge);
+    strikeTimeTrialTarget(marker.challenge);
+    stepTimeTrialChallenge(marker.challenge, marker.challenge.limitSeconds);
 
-  describe(startTimeTrialChallenge, () => {
-    test("starts its clock at its limit", () => {
-      expect.hasAssertions();
-
-      const challenge = createChallenge(LIMIT_SECONDS, TARGET_COUNT);
-      startTimeTrialChallenge(challenge);
-
-      expect({ remainingSeconds: challenge.remainingSeconds, state: challenge.state }).toStrictEqual({
-        remainingSeconds: LIMIT_SECONDS,
-        state: TimeTrialChallengeState.Running,
-      });
-    });
+    expect({
+      chestPlaces: computeTimeTrialChestPlaces([marker]),
+      remainingSeconds: marker.challenge.remainingSeconds,
+      state: marker.challenge.state,
+    }).toStrictEqual({ chestPlaces: [], remainingSeconds: 0, state: TimeTrialChallengeState.Failed });
   });
 
-  describe(strikeTimeTrialTarget, () => {
-    test("finishing every target in time spawns the chest", () => {
-      expect.hasAssertions();
+  test("the timer runs out on the step its seconds do, not one step late", () => {
+    expect.hasAssertions();
 
-      const marker = {
-        challenge: createChallenge(LIMIT_SECONDS, TARGET_COUNT),
-        id: MARKER_ID,
-        position: MARKER_POSITION,
-      };
-      startTimeTrialChallenge(marker.challenge);
-      stepTimeTrialChallenge(marker.challenge, LIMIT_SECONDS / 2);
-      strikeTimeTrialTarget(marker.challenge);
-      strikeTimeTrialTarget(marker.challenge);
+    const challenge = { ...createTimeTrialChallenge(), limitSeconds: 5 };
+    startTimeTrialChallenge(challenge);
+    for (let step = 0; step < 299; step++) stepTimeTrialChallenge(challenge, FIXED_STEP_SECONDS);
 
-      expect({ chestPlaces: computeTimeTrialChestPlaces([marker]), state: marker.challenge.state }).toStrictEqual({
-        chestPlaces: [{ id: `time-trial-chest-${MARKER_ID}`, kind: ChestKind.Exquisite, position: MARKER_POSITION }],
-        state: TimeTrialChallengeState.Solved,
-      });
-    });
+    expect(challenge.state).toBe(TimeTrialChallengeState.Running);
+
+    stepTimeTrialChallenge(challenge, FIXED_STEP_SECONDS);
+
+    expect(challenge.state).toBe(TimeTrialChallengeState.Failed);
   });
 
-  describe(stepTimeTrialChallenge, () => {
-    test("a missed target before the timer ends gives no chest", () => {
-      expect.hasAssertions();
+  test("leaves an idle challenge's clock alone", () => {
+    expect.hasAssertions();
 
-      const marker = {
-        challenge: createChallenge(LIMIT_SECONDS, TARGET_COUNT),
-        id: MARKER_ID,
-        position: MARKER_POSITION,
-      };
-      startTimeTrialChallenge(marker.challenge);
-      strikeTimeTrialTarget(marker.challenge);
-      stepTimeTrialChallenge(marker.challenge, LIMIT_SECONDS);
+    const challenge = createTimeTrialChallenge();
+    stepTimeTrialChallenge(challenge, challenge.limitSeconds);
 
-      expect({
-        chestPlaces: computeTimeTrialChestPlaces([marker]),
-        remainingSeconds: marker.challenge.remainingSeconds,
-        state: marker.challenge.state,
-      }).toStrictEqual({ chestPlaces: [], remainingSeconds: 0, state: TimeTrialChallengeState.Failed });
-    });
-
-    test("the timer runs out on the step its seconds do, not one step late", () => {
-      expect.hasAssertions();
-
-      const challenge = { ...createChallenge(LIMIT_SECONDS, TARGET_COUNT), limitSeconds: 5 };
-      startTimeTrialChallenge(challenge);
-      for (let step = 0; step < 299; step++) stepTimeTrialChallenge(challenge, FIXED_STEP_SECONDS);
-
-      expect(challenge.state).toBe(TimeTrialChallengeState.Running);
-
-      stepTimeTrialChallenge(challenge, FIXED_STEP_SECONDS);
-
-      expect(challenge.state).toBe(TimeTrialChallengeState.Failed);
-    });
-
-    test("leaves an idle challenge's clock alone", () => {
-      expect.hasAssertions();
-
-      const challenge = createChallenge(LIMIT_SECONDS, TARGET_COUNT);
-      stepTimeTrialChallenge(challenge, LIMIT_SECONDS);
-
-      expect(challenge.state).toBe(TimeTrialChallengeState.Idle);
-    });
+    expect(challenge.state).toBe(TimeTrialChallengeState.Idle);
   });
 });

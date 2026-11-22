@@ -22,7 +22,7 @@ export const getLedgerCoverage = (
 ): UnitCoverage[] => {
   const ledgerEvents = events
     .filter((event) => checkIsLedgerEventFor(event, ledger))
-    .toSorted((first, second) => first.date.localeCompare(second.date));
+    .toSorted((firstEvent, secondEvent) => firstEvent.date.localeCompare(secondEvent.date));
   const sample = ledgerEvents.findLast(({ type }) => type === LedgerEventType.Sampled);
   const isSampledClean = sample?.defects === 0;
   let changedPaths: readonly string[] | undefined;
