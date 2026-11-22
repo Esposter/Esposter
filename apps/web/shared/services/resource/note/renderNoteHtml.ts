@@ -23,8 +23,8 @@ const NOTE_IMAGE_ALLOWANCE = {
 const resolvedNoteExtensions = resolveExtensions(noteExtensions);
 const noteExtensionAttributes = getAttributesFromExtensions(resolvedNoteExtensions);
 const { markExtensions, nodeExtensions } = splitExtensions(resolvedNoteExtensions);
-// The writing kit's renderer, assembled once from the pieces `renderToHTMLString` assembles on every call: resolving
-// The extensions and mapping each one's output spec to a string was most of what rendering one note cost
+// The writing kit's renderer, assembled once from the pieces `renderToHTMLString` assembles on every call: the resolved
+// Extensions and their output specs are built here, so each render only walks the document
 const renderNoteNode = renderJSONContentToString<Mark, Node>({
   markMapping: Object.fromEntries(
     markExtensions.map((extension) =>
