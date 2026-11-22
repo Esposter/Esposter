@@ -14,7 +14,7 @@ export const readBoundProgramIds = async (
   const boundPrograms = await db.query.resourcesInResource.findMany({
     columns: { id: true },
     where: {
-      links: { targetId: { eq: id }, type: { eq: ResourceLinkType.Survey } },
+      resourceLinksInResource: { targetId: { eq: id }, type: { eq: ResourceLinkType.Survey } },
       type: { eq: ResourceType.Program },
       userId: { eq: userId },
     },

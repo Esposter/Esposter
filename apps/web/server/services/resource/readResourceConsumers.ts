@@ -8,4 +8,4 @@ import { readLiveOwnedResourceSummaries } from "#server/services/resource/readLi
 // Ids themselves is left out, since deleting it alongside leaves it no reference to miss, and another owner's resource
 // Never resolves a reference to these, nor is its name the caller's to read
 export const readResourceConsumers = (ctx: AuthedContext, ids: ResourceInResource["id"][]): Promise<LinkedResource[]> =>
-  readLiveOwnedResourceSummaries(ctx, { id: { notIn: ids }, links: { targetId: { in: ids } } });
+  readLiveOwnedResourceSummaries(ctx, { id: { notIn: ids }, resourceLinksInResource: { targetId: { in: ids } } });
