@@ -1,5 +1,4 @@
-import type { WikiImageInfoResponse } from "#src/models/WikiImageInfoResponse";
-
+import { checkIsWikiImageInfoResponse } from "#src/services/checkIsWikiImageInfoResponse";
 import { WIKI_IMAGE_INFO_URL } from "#src/services/constants";
 import { readWikiJson } from "#src/services/readWikiJson";
 
@@ -7,9 +6,11 @@ import { readWikiJson } from "#src/services/readWikiJson";
 // Removed since the reference selection ran — has no entry, and is reported rather than guessed around. The API
 // Answers under normalised titles, spaces for underscores, so the answer is mapped back through its own record
 export const readWikiFileUrls = async (titles: string[]): Promise<Map<string, string>> => {
-  const { query } = await readWikiJson<WikiImageInfoResponse>(
+  const response = await readWikiJson(
     `${WIKI_IMAGE_INFO_URL}${encodeURIComponent(titles.join("|"))}`,
+    checkIsWikiImageInfoResponse,
   );
+  const query = response?.query;
   const normalizedAskedTitleMap = new Map((query?.normalized ?? []).map(({ from = "", to = "" }) => [to, from]));
   return new Map(
     Object.values(query?.pages ?? {}).flatMap(({ imageinfo, title = "" }) => {
