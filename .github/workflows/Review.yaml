@@ -69,12 +69,7 @@ jobs:
         run: pnpm --filter "@esposter/infra" build
 
       - name: 🆔 Identify the reviewer
-        run: |
-          git config user.name "Q16solver"
-          git config user.email "Q16solver@users.noreply.github.com"
-          git config core.fileMode false
-          echo "* -text" >> "$(git rev-parse --git-common-dir)/info/attributes"
-          git rm -r -q --cached . && git reset -q --hard
+        uses: ./.github/actions/identify-bot
 
       - name: 🤝 Trust the workspace
         uses: ./.github/actions/trust-workspace
@@ -141,12 +136,7 @@ jobs:
           save: false
 
       - name: 🆔 Identify the fixer
-        run: |
-          git config user.name "Q16solver"
-          git config user.email "Q16solver@users.noreply.github.com"
-          git config core.fileMode false
-          echo "* -text" >> "$(git rev-parse --git-common-dir)/info/attributes"
-          git rm -r -q --cached . && git reset -q --hard
+        uses: ./.github/actions/identify-bot
 
       - name: 🤝 Trust the workspace
         uses: ./.github/actions/trust-workspace
@@ -203,12 +193,7 @@ jobs:
           save: false
 
       - name: 🆔 Identify the settler
-        run: |
-          git config user.name "Q16solver"
-          git config user.email "Q16solver@users.noreply.github.com"
-          git config core.fileMode false
-          echo "* -text" >> "$(git rev-parse --git-common-dir)/info/attributes"
-          git rm -r -q --cached . && git reset -q --hard
+        uses: ./.github/actions/identify-bot
 
       - name: 🤝 Trust the workspace
         uses: ./.github/actions/trust-workspace

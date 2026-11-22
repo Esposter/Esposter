@@ -29,8 +29,8 @@ jobs:
       # The two languages CodeQL has for this tree, and between them the whole of it: `javascript-typescript`
       # Extracts `.vue`, `.html`, `.json` and `.yaml` alongside `.ts` and `.js`, and `actions` reads the workflows.
       # The rest of what the repository is written in — SQL, SCSS, shell, markdown — has no CodeQL extractor at
-      # All, so there is no third entry to add. One language failing still reports the other, since neither
-      # Analysis tells the other anything.
+      # all, so there is no third entry to add. One language failing still reports the other, since neither
+      # analysis tells the other anything.
       fail-fast: false
       matrix:
         language:
@@ -43,7 +43,7 @@ jobs:
           persist-credentials: false
 
       # `build-mode: none` keeps CodeQL off autobuild: neither language needs a build to be analysed, and the
-      # Build this repository has is minutes of Nuxt for a scan that reads sources
+      # build this repository has is minutes of Nuxt for a scan that reads sources
       - name: 🔎 Initialise CodeQL
         uses: github/codeql-action/init@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
         with:
@@ -58,10 +58,10 @@ jobs:
         uses: github/codeql-action/analyze@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
 
   # `analyze` uploads its findings and exits 0 whatever they are, so an alert is a fact on the Security tab and
-  # Nothing else. This gate reads them back for the ref just scanned and fails on any still open — a dismissed one
-  # Is a person's decision and stays green — so that an alert is a red run fixed on `ai/queue`, and the
-  # Failing step's log is the list it is handed. `analyze` waits for the upload's processing by default, so the
-  # Alerts are current by the time this job starts.
+  # nothing else. This gate reads them back for the ref just scanned and fails on any still open — a dismissed one
+  # is a person's decision and stays green — so that an alert is a red run fixed on `ai/queue`, and the
+  # failing step's log is the list it is handed. `analyze` waits for the upload's processing by default, so the
+  # alerts are current by the time this job starts.
   alerts:
     name: 🚦 Alerts
     needs: analyze

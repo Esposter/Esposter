@@ -29,6 +29,7 @@ autoDedupe: true
 bail: false
 
 catalog:
+  "@anthropic-ai/claude-code": ^2.1.330
   "@arethetypeswrong/core": ^0.18.5
   "@better-auth/api-key": ^1.7.27
   "@better-auth/drizzle-adapter": ^1.7.27

@@ -39,8 +39,7 @@ jobs:
         uses: ./.github/actions/setup-packages
         with:
           filter: "@esposter/web..."
-      # Uncached: a replay needs the app's `.output` carried in the cache, which costs more than it saves
-      # (`openspec/specs/architecture/vite-plus/design.md` → Rejected)
+      # Uncached (`openspec/specs/architecture/vite-plus/design.md` → Rejected)
       - name: 🏗️ Build app
         run: pnpm -C apps/web build
       # The Worker's code is capped at 64 MiB uncompressed, so the server bundle is summed against that cap after each build

@@ -1,0 +1,13 @@
+name: Identify Bot
+description: Commit as the review bot, with the checkout's index rebuilt under the bot's attributes and file modes ignored
+runs:
+  using: composite
+  steps:
+    - name: 🆔 Identify the bot
+      shell: bash
+      run: |
+        git config user.name "Q16solver"
+        git config user.email "Q16solver@users.noreply.github.com"
+        git config core.fileMode false
+        echo "* -text" >> "$(git rev-parse --git-common-dir)/info/attributes"
+        git rm -r -q --cached . && git reset -q --hard

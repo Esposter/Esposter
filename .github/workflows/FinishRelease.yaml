@@ -63,11 +63,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ inputs.tag }}
-        # A re-run must pick up where the last run stopped, not fail: an existing draft goes on to the Publish, and an
-        # Already-published release skips it. Only a genuine "not found" is evidence the release is absent — a 401, a
-        # Secondary rate limit or a network blip exits non-zero too, and reading that as absence sends the retry into
+        # A re-run must pick up where the last run stopped, not fail: an existing draft goes on to publish, and an
+        # already-published release skips it. Only a genuine "not found" is evidence the release is absent — a 401, a
+        # secondary rate limit or a network blip exits non-zero too, and reading that as absence sends the retry into
         # `create` against a tag that is already released. So the error text decides, and anything else fails here where
-        # The cause is still readable
+        # the cause is still readable
         run: |
           if isDraft="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft 2> "$RUNNER_TEMP/releaseError")"; then
             if [ "$isDraft" = false ]; then
