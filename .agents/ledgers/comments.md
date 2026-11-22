@@ -58,6 +58,8 @@ Greps, per unit:
 
 11. `^\s*(//|/\*|\*|<!--).*(reject|settles every|resolves (each|its|every))` over `*.ts`, `*.vue`, plus `git grep -n no-floating-promises` for the directives — a comment saying what a call, a press or a hook does when it rejects, or that a promise cannot reject. Read each claim against the code it names: it holds only where the rejection is caught, logged or settled at the place the comment says, and a directive's reason is the same claim. A schema, validator or path that rejects is a different sentence and most hits are that; skip those by their subject.
 
+12. `^\s*(//|/\*|\*|<!--).*(^|[^A-Za-z])[Mm]ount(s|ed)?[^A-Za-z]` over the same scope — every comment line naming a mount. A line that names who mounts a component (`the list mounts this`, `the caller mounts it only while open`, `mounted by the resource shell`) is checked against that mounter's own template: it must render the component, under the guard the comment states. Lifecycle prose (`mounts on each open`, `unmounts`) names no mounter and is skipped.
+
 Never swept anywhere: 3-line `//` blocks with every line short.
 
 Excluded: `apps/web/app/types/desmos.d.ts`, `packages/configuration/types/global.d.ts`, `packages/vue-phaserjs/auto-imports.d.ts` (vendored/generated) · `apps/web/app/util/math/random/getRandomValues.ts` (source-URL references) · `*/tsdown.config.ts`, `@ts-expect-error` / `oxlint-disable` lines (directives) · doc blocks copied verbatim from an upstream type (the Desmos enums) — they are kept diff-identical to their source, same ground as an unimplemented interface stub.

@@ -10,10 +10,10 @@ import { getHeldResource } from "#src/services/resource/overlay/getHeldResource"
 import { useOverlayStore } from "#src/store/overlay";
 
 // Recent means recently *opened*, and the set is the caller's own server-side access rows, so it follows them
-// Between devices. Home's Recent tab and the palette's resources scope both want the same capped list and both
-// Mount on the explorer home page, so the set is read once and two concurrent mounts share the in-flight query
-// Rather than each issuing the same request. The list is the ids a read gave, in its order, over the resource rows the
-// Overlay holds, so a resource that is deleted drops out of it without a re-read
+// Between devices. Home's Recent tab and the palette's resources scope both want the same capped list: the tab mounts
+// On the explorer home page and the palette on every page, so the set is read once and two concurrent mounts share the
+// In-flight query rather than each issuing the same request. The list is the ids a read gave, in its order, over the
+// Resource rows the overlay holds, so a resource that is deleted drops out of it without a re-read
 export const useRecentStore = defineStore("resource/recent", () => {
   const { $trpc } = useNuxtApp();
   const overlayStore = useOverlayStore();
