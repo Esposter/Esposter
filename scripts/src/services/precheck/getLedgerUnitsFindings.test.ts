@@ -1,38 +1,30 @@
 import { getLedgerUnitsFindings } from "#src/services/precheck/getLedgerUnitsFindings";
 import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
-import { OPEN_CELL } from "#src/services/sweeps/ledgerCoverage/constants";
 import { describe, expect, test } from "vitest";
 
-const getRow = (unit: string) => `| ${unit} | ${OPEN_CELL} |  |\n`;
-
 describe(getLedgerUnitsFindings, () => {
-  const header = `| Unit | Swept | Notes |
-| ---- | ----- | ----- |
+  const header = `| Unit | Notes |
+| ---- | ----- |
 `;
+  const getText = (unit: string) => `${header}| ${unit} | b |\n`;
 
-  test("finds nothing when each derived ledger holds a row for every unit the tree derives", () => {
+  test("finds nothing when every row names a unit the tree derives", () => {
     expect.hasAssertions();
 
-    expect(getLedgerUnitsFindings(() => `${header}${getRow("`a`")}`, { derived: () => ["`a`"] })).toStrictEqual([]);
+    expect(getLedgerUnitsFindings(() => getText("`a`"), { derived: () => ["`a`", "`c`"] })).toStrictEqual([]);
   });
 
-  test("names a derived ledger that lacks a row the tree derives, with the command that writes it", () => {
+  test("finds nothing for a derived ledger with no file", () => {
     expect.hasAssertions();
 
-    expect(getLedgerUnitsFindings(() => header, { derived: () => ["`a`"] })).toStrictEqual([
-      `out of sync ${LEDGER_DIRECTORY}/derived.md`,
-      "fix: pnpm ai:sweep:ledger-coverage",
+    expect(getLedgerUnitsFindings(() => "", { derived: () => ["`a`"] })).toStrictEqual([]);
+  });
+
+  test("names a row whose unit the tree no longer derives", () => {
+    expect.hasAssertions();
+
+    expect(getLedgerUnitsFindings(() => getText("`a`"), { derived: () => ["`c`"] })).toStrictEqual([
+      `stale row \`a\` in ${LEDGER_DIRECTORY}/derived.md: no unit the tree derives, so remove it`,
     ]);
-  });
-
-  test("names only the derived ledger that is out of sync", () => {
-    expect.hasAssertions();
-
-    expect(
-      getLedgerUnitsFindings((ledger) => (ledger === "complete" ? `${header}${getRow("`a`")}` : header), {
-        complete: () => ["`a`"],
-        missing: () => ["`a`"],
-      }),
-    ).toStrictEqual([`out of sync ${LEDGER_DIRECTORY}/missing.md`, "fix: pnpm ai:sweep:ledger-coverage"]);
   });
 });

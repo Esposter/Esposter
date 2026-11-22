@@ -1,172 +1,184 @@
 import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent";
 
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
+import { UnitState } from "#src/models/sweeps/ledgerCoverage/UnitState";
 import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/shared/constants";
-import { applyLedgerEvents } from "#src/services/sweeps/ledgerCoverage/applyLedgerEvents";
-import {
-  OPEN_CELL,
-  SWEPT_CELL_SEPARATOR,
-  TRAILER_VALUE_SEPARATOR,
-} from "#src/services/sweeps/ledgerCoverage/constants";
-import { EPOCH_DATE } from "#src/services/sweeps/ledgerCoverage/constants.test";
+import { TRAILER_VALUE_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
+import { DAY_AFTER_EPOCH_DATE, EPOCH_DATE } from "#src/services/sweeps/ledgerCoverage/constants.test";
+import { getLedgerCoverage } from "#src/services/sweeps/ledgerCoverage/getLedgerCoverage";
 import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEvents";
 import { describe, expect, test } from "vitest";
 
-describe(applyLedgerEvents, () => {
+describe(getLedgerCoverage, () => {
   const ledger = "a/b";
   const unit = "`c`";
   // A trailer's unit as getLedgerEvents hands it over, with the backticks already removed
   const bareUnit = "c";
   const earlier = EPOCH_DATE;
-  const later = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString().slice(0, 10);
-  const getText = (swept: string, rowUnit = unit) =>
-    `| Unit   | Swept      | Notes |
-| ------ | ---------- | ----- |
-| ${rowUnit}   | ${swept.padEnd(10)} |       |
-`;
-  const getEvent = (type: LedgerEventType, date: string, eventUnit?: string, model = ""): LedgerEvent => ({
+  const later = DAY_AFTER_EPOCH_DATE;
+  const model = "d";
+  const getEvent = (type: LedgerEventType, date: string, eventUnit?: string, eventModel = ""): LedgerEvent => ({
     date,
     ledger,
-    model,
+    model: eventModel,
     type,
     unit: eventUnit,
   });
-  const getTrailerEvents = (trailerUnit: string) =>
-    getLedgerEvents(
+  const getSample = (date: string, defects: number): LedgerEvent => ({
+    ...getEvent(LedgerEventType.Sampled, date),
+    defects,
+  });
+
+  test("leaves a unit no trailer names open", () => {
+    expect.hasAssertions();
+
+    expect(getLedgerCoverage(ledger, [unit], [])).toStrictEqual([{ state: UnitState.Open, unit }]);
+  });
+
+  test("dates a unit from its sweep trailer with the model that read it", () => {
+    expect.hasAssertions();
+
+    const events = [getEvent(LedgerEventType.Ledger, earlier, bareUnit, model)];
+
+    expect(getLedgerCoverage(ledger, [unit], events)).toStrictEqual([
+      { date: earlier, model, state: UnitState.Swept, unit },
+    ]);
+  });
+
+  test.each([
+    ["a backticked unit from a bare trailer unit", unit, "c"],
+    ["a bare unit from a backticked trailer unit", bareUnit, unit],
+  ])("dates %s", (_description, ledgerUnit, trailerUnit) => {
+    expect.hasAssertions();
+
+    const events = getLedgerEvents(
       `${earlier}${FIELD_SEPARATOR}${LedgerEventType.Ledger}: ${ledger}${TRAILER_VALUE_SEPARATOR}${trailerUnit}${RECORD_SEPARATOR}`,
     );
 
-  // A blank cell records no sweep, so it is an open row, and the trailer naming that row still finds it
-  test.each([
-    ["an open row", OPEN_CELL],
-    ["a row whose Swept cell is blank", ""],
-  ])("dates %s from its sweep trailer", (_description, swept) => {
-    expect.hasAssertions();
-
-    const event = getEvent(LedgerEventType.Ledger, earlier, bareUnit);
-
-    expect(applyLedgerEvents(getText(swept), ledger, [event])).toStrictEqual({
-      matched: [event],
-      text: getText(earlier),
-    });
+    expect(getLedgerCoverage(ledger, [ledgerUnit], events)).toStrictEqual([
+      { date: earlier, model: "", state: UnitState.Swept, unit: ledgerUnit },
+    ]);
   });
 
-  test("names the model the sweep commit was co-authored by", () => {
+  // A carried trailer is written after later passes, so its place is its date, never its position in the log
+  test("never lowers a date to a carried trailer listed after it", () => {
     expect.hasAssertions();
 
-    const model = "d";
-    const event = getEvent(LedgerEventType.Ledger, earlier, bareUnit, model);
+    const events = [
+      getEvent(LedgerEventType.Ledger, later, bareUnit),
+      getEvent(LedgerEventType.Ledger, earlier, bareUnit),
+    ];
 
-    expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
-      matched: [event],
-      text: getText(`${earlier}${SWEPT_CELL_SEPARATOR}${model}`),
-    });
+    expect(getLedgerCoverage(ledger, [unit], events)).toStrictEqual([
+      { date: later, model: "", state: UnitState.Swept, unit },
+    ]);
   });
 
-  test("dates a backticked row from a bare trailer unit", () => {
+  test("keeps a carried date a later reopen listed before it clears", () => {
     expect.hasAssertions();
 
-    const events = getTrailerEvents("c");
+    const events = [getEvent(LedgerEventType.Reopens, later), getEvent(LedgerEventType.Ledger, earlier, bareUnit)];
 
-    expect(applyLedgerEvents(getText(OPEN_CELL), ledger, events)).toStrictEqual({
-      matched: events,
-      text: getText(earlier),
-    });
-  });
-
-  test("dates a bare row from a backticked trailer unit", () => {
-    expect.hasAssertions();
-
-    const events = getTrailerEvents(unit);
-
-    expect(applyLedgerEvents(getText(OPEN_CELL, bareUnit), ledger, events)).toStrictEqual({
-      matched: events,
-      text: getText(earlier, bareUnit),
-    });
-  });
-
-  // A later pass on the same day is the one whose model read the unit last
-  test("names the model of a same-day sweep over a dated row", () => {
-    expect.hasAssertions();
-
-    const model = "d";
-    const event = getEvent(LedgerEventType.Ledger, earlier, bareUnit, model);
-
-    expect(applyLedgerEvents(getText(earlier), ledger, [event])).toStrictEqual({
-      matched: [event],
-      text: getText(`${earlier}${SWEPT_CELL_SEPARATOR}${model}`),
-    });
-  });
-
-  test("never lowers a date the file already holds", () => {
-    expect.hasAssertions();
-
-    const event = getEvent(LedgerEventType.Ledger, earlier, bareUnit);
-
-    expect(applyLedgerEvents(getText(later), ledger, [event])).toStrictEqual({
-      matched: [event],
-      text: getText(later),
-    });
+    expect(getLedgerCoverage(ledger, [unit], events)).toStrictEqual([{ state: UnitState.Open, unit }]);
   });
 
   // A promoted ledger is a folder of area files, and a rule change names the folder
   test.each([
     ["the whole ledger", ledger],
     ["the folder above the ledger", "a"],
-  ])("reopens a row from a reopen naming %s", (_description, reopenedLedger) => {
+  ])("reopens a unit from a reopen naming %s", (_description, reopenedLedger) => {
     expect.hasAssertions();
 
-    const event = { ...getEvent(LedgerEventType.Reopens, later), ledger: reopenedLedger };
+    const events = [
+      getEvent(LedgerEventType.Ledger, earlier, bareUnit),
+      { ...getEvent(LedgerEventType.Reopens, later), ledger: reopenedLedger },
+    ];
 
-    expect(applyLedgerEvents(getText(earlier), ledger, [event])).toStrictEqual({
-      matched: [event],
-      text: getText(OPEN_CELL),
-    });
+    expect(getLedgerCoverage(ledger, [unit], events)).toStrictEqual([{ state: UnitState.Open, unit }]);
   });
 
-  // The reset predates the pass it would undo, so the pass stands
-  test("ignores a reopen older than the row's date", () => {
+  test("reopens only the unit a reopen names", () => {
     expect.hasAssertions();
 
-    const event = getEvent(LedgerEventType.Reopens, earlier);
+    const otherUnit = "`e`";
+    const events = [
+      getEvent(LedgerEventType.Ledger, earlier, bareUnit),
+      getEvent(LedgerEventType.Ledger, earlier, "e"),
+      getEvent(LedgerEventType.Reopens, later, "e"),
+    ];
 
-    expect(applyLedgerEvents(getText(later), ledger, [event])).toStrictEqual({
-      matched: [event],
-      text: getText(later),
-    });
+    expect(getLedgerCoverage(ledger, [unit, otherUnit], events)).toStrictEqual([
+      { date: earlier, model: "", state: UnitState.Swept, unit },
+      { state: UnitState.Open, unit: otherUnit },
+    ]);
   });
 
-  test("dates a row swept again after a reopen on the same day", () => {
+  test("dates a unit swept again after a reopen on the same day", () => {
     expect.hasAssertions();
 
     const events = [getEvent(LedgerEventType.Reopens, later), getEvent(LedgerEventType.Ledger, later, bareUnit)];
 
-    expect(applyLedgerEvents(getText(earlier), ledger, events)).toStrictEqual({
-      matched: events,
-      text: getText(later),
-    });
-  });
-
-  // Matched is the caller's to aggregate across a folder, so a trailer naming no row here is simply absent from it
-  test("leaves a sweep trailer naming no row out of the matched events", () => {
-    expect.hasAssertions();
-
-    const event = getEvent(LedgerEventType.Ledger, earlier, "d");
-
-    expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
-      matched: [],
-      text: getText(OPEN_CELL),
-    });
+    expect(getLedgerCoverage(ledger, [unit], events)).toStrictEqual([
+      { date: later, model: "", state: UnitState.Swept, unit },
+    ]);
   });
 
   test("leaves another ledger's events alone", () => {
     expect.hasAssertions();
 
-    const event = { ...getEvent(LedgerEventType.Ledger, earlier, bareUnit), ledger: "x" };
+    const events = [{ ...getEvent(LedgerEventType.Ledger, earlier, bareUnit), ledger: "x" }];
 
-    expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
-      matched: [],
-      text: getText(OPEN_CELL),
-    });
+    expect(getLedgerCoverage(ledger, [unit], events)).toStrictEqual([{ state: UnitState.Open, unit }]);
+  });
+
+  test("holds a unit open whatever its trailers say when its ledger's check forces it", () => {
+    expect.hasAssertions();
+
+    const events = [getEvent(LedgerEventType.Ledger, earlier, bareUnit)];
+
+    expect(getLedgerCoverage(ledger, [unit], events, { checkIsForcedOpen: () => true })).toStrictEqual([
+      { state: UnitState.Open, unit },
+    ]);
+  });
+
+  test("marks an unread unit sampled after a sample that found no defect", () => {
+    expect.hasAssertions();
+
+    expect(getLedgerCoverage(ledger, [unit], [getSample(earlier, 0)])).toStrictEqual([
+      { state: UnitState.Sampled, unit },
+    ]);
+  });
+
+  test("leaves an unread unit open after a sample that found a defect", () => {
+    expect.hasAssertions();
+
+    expect(getLedgerCoverage(ledger, [unit], [getSample(earlier, 1)])).toStrictEqual([{ state: UnitState.Open, unit }]);
+  });
+
+  test("owes a sampled unit again after a reopen", () => {
+    expect.hasAssertions();
+
+    const events = [getSample(earlier, 0), getEvent(LedgerEventType.Reopens, later)];
+
+    expect(getLedgerCoverage(ledger, [unit], events)).toStrictEqual([{ state: UnitState.Open, unit }]);
+  });
+
+  test.each([
+    ["the path itself", "c"],
+    ["a file under it", "c/f.ts"],
+  ])("owes a sampled unit again after a commit touches %s", (_description, changedPath) => {
+    expect.hasAssertions();
+
+    expect(
+      getLedgerCoverage(ledger, [unit], [getSample(earlier, 0)], { readChangedPaths: () => [changedPath] }),
+    ).toStrictEqual([{ state: UnitState.Open, unit }]);
+  });
+
+  test("keeps a sampled unit sampled when a commit touches a path that only shares its prefix", () => {
+    expect.hasAssertions();
+
+    expect(
+      getLedgerCoverage(ledger, [unit], [getSample(earlier, 0)], { readChangedPaths: () => ["c-d/f.ts"] }),
+    ).toStrictEqual([{ state: UnitState.Sampled, unit }]);
   });
 });

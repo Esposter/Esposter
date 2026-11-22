@@ -1,6 +1,6 @@
 # Ledgers
 
-Progress state for sweeps in flight. What a sweep is and how one is run: the `sweeps` skill.
+The sweeps in flight: each one's rules owner, unit and scope. Where each unit stands is `pnpm ai:sweep:status`, read from the commit trailers rather than stored here. What a sweep is and how one is run: the `sweeps` skill.
 
 `Scope` is the sweep's domain as git pathspecs — where its convention applies, which is not the same as where it
 has rows yet. It is what the standing-resume command takes; why it is written this way, and what holds it honest,
@@ -57,7 +57,7 @@ are the `sweeps` skill's `references/standing-resume.md`.
 | [vue-phaserjs](vue-phaserjs.md)                       | `vue-phaserjs` skill                                                                               | one game tree                   | `packages/vue-phaserjs` `apps/web/app/components/Dungeons` `apps/web/app/store/dungeons` `apps/web/app/composables/dungeons` `apps/web/app/services/dungeons` `apps/web/app/models/dungeons`                                                                                                                                                        |
 | [write-once](write-once/)                             | `openspec/specs/architecture/write-once/design.md` and its red flags                               | one package or tree             | `apps` `packages` `scripts`                                                                                                                                                                                                                                                                                                                         |
 
-`naming`, `typescript`, `file-organization`, `testing` and `test-values` keep their own area tables rather than `invariants`' list, since each sizes its units to its own question, a package, a directory or a file.
+`invariants`, `quality`, `security` and `write-once` read the one [area list](areas/), and each keeps a file of its own only for the units it holds a note on. `naming`, `typescript`, `file-organization`, `testing` and `test-values` keep their own area tables rather than that list, since each sizes its units to its own question, a package, a directory or a file.
 
 Some scopes are deliberately not a directory list. The quality and security lanes read any code, so narrowing them
 would only hide the areas nobody has looked at; `testing` is scoped by filename because a suite sits beside

@@ -4,19 +4,7 @@ The question is the write-once design's: does a declaration, or a list kept by h
 
 ## Areas
 
-Coverage lives in the area file, never here. A pass loads this file and the one area it is sweeping. The area names are [quality](../quality/)'s, so "was this area swept, for which question, and when" reads off one set of names across every promoted ledger. Its units are the quality ledger's code units, since those are already sized to one pass.
-
-| Area                      | What it holds                                                                                     |
-| ------------------------- | ------------------------------------------------------------------------------------------------- |
-| [app-shell](app-shell.md) | Everything a product mounts inside rather than owns: the chrome, routes and cross-cutting layers. |
-| [dungeons](dungeons.md)   | The game.                                                                                         |
-| [messaging](messaging.md) | Esbabbler — its components, store, composables, services and models.                              |
-| [products](products.md)   | The app's smaller products.                                                                       |
-| [resource](resource.md)   | The resource explorer, the sheet editor and the other editors.                                    |
-| [server](server.md)       | `apps/web/server` — routers, procedure builders, guards and services.                             |
-| [shared](shared.md)       | `apps/web/shared`, `app/components/Styled`, `packages/shared` and `packages/shared-node`.         |
-| [packages](packages.md)   | Every workspace package outside `apps/web`, `packages/shared` and `packages/shared-node`.         |
-| [tooling](tooling.md)     | `scripts/` and `apps/web/configuration` — code no product area claims.                            |
+The areas and their units are the shared [area list](../areas/), and `pnpm ai:sweep:status write-once` says where each unit stands. It holds a note on no unit, so it keeps no area file of its own. A pass loads this file and the area's file in the list.
 
 ## The find recipe
 

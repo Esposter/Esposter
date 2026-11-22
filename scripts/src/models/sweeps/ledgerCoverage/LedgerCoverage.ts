@@ -1,8 +1,7 @@
-import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent";
-import type { LedgerFile } from "#src/models/sweeps/ledgerCoverage/LedgerFile";
+import type { UnitCoverage } from "#src/models/sweeps/ledgerCoverage/UnitCoverage";
 
-// The ledger files with their rows dated by the events, and the events no row of any file took
+// One ledger's units, each with where it stands
 export interface LedgerCoverage {
-  files: (LedgerFile & { rewrittenText: string })[];
-  unmatched: LedgerEvent[];
+  ledger: string;
+  units: UnitCoverage[];
 }

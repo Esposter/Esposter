@@ -4,20 +4,9 @@ The question is the code-review skill's quality lane: reuse, simplification, eff
 
 ## Areas
 
-Coverage lives in the area file, never here. A pass loads this file and the one area it is sweeping.
+The areas and their units are the shared [area list](../areas/), and `pnpm ai:sweep:status quality` says where each unit stands. It keeps an area file only for the units it holds a note on: [app-shell](app-shell.md), [dungeons](dungeons.md), [packages](packages.md), [products](products.md), [resource](resource.md), [shared](shared.md) and [tooling](tooling.md). A pass loads this file, the area's file in the list and this ledger's file for the area where it has one.
 
-| Area                                | What it holds                                                                                                                                                                                                                         |
-| :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [app-shell](app-shell.md)           | Everything a product mounts inside rather than owns: the chrome, the routes, and the cross-cutting service and composable layers no single feature claims.                                                                            |
-| [dungeons](dungeons.md)             | The game is a fifth of the app's source. `components/Dungeons` splits at its sub-directories, and each row pairs a component group with the store, composable and service files that only it uses.                                    |
-| [duplicate-code](duplicate-code.md) | Every run of code two files share, found by `pnpm ai:sweep:duplicate-code` over the code scopes. Its rules are in the section below.                                                                                                  |
-| [messaging](messaging.md)           | Esbabbler — its components, store, composables, services and models.                                                                                                                                                                  |
-| [packages](packages.md)             | Every workspace package outside `apps/web`, `packages/shared` and `packages/shared-node`. Grouped so each row is one review-sized commit.                                                                                             |
-| [products](products.md)             | The app's smaller products — everything under `app/components` that is neither messaging nor the resource explorer. Each row carries a product's components together with the store, composable, service and page files only it uses. |
-| [resource](resource.md)             | The resource explorer, the sheet editor and the other editors.                                                                                                                                                                        |
-| [server](server.md)                 | `apps/web/server` — routers, procedure builders, guards and services.                                                                                                                                                                 |
-| [shared](shared.md)                 | `apps/web/shared`, `app/components/Styled`, `packages/shared` and `packages/shared-node` — what both halves of the app read.                                                                                                          |
-| [tooling](tooling.md)               | The repo's own scripts and the agent tree — code no product area claims. `scripts/`, `.agents/`, the app's root configuration and `openspec/`.                                                                                        |
+[duplicate-code](duplicate-code.md) is this ledger's own area: every run of code two files share, found by `pnpm ai:sweep:duplicate-code` over the code scopes. Its rules are in the section below.
 
 ## Duplicate code
 

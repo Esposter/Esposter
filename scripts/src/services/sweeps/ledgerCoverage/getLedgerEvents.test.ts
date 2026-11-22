@@ -1,7 +1,7 @@
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/shared/constants";
-import { TRAILER_VALUE_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
-import { EPOCH_DATE } from "#src/services/sweeps/ledgerCoverage/constants.test";
+import { SWEPT_CELL_SEPARATOR, TRAILER_VALUE_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
+import { DAY_AFTER_EPOCH_DATE, EPOCH_DATE } from "#src/services/sweeps/ledgerCoverage/constants.test";
 import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEvents";
 import { describe, expect, test } from "vitest";
 
@@ -57,5 +57,50 @@ Co-Authored-By: Claude ${model} (d) <e>
     expect(getLedgerEvents(getRecord(`${LedgerEventType.Ledger}: \`a\`\n${LedgerEventType.Ledger}:\n`))).toStrictEqual(
       [],
     );
+  });
+
+  // A pass no trailer recorded is carried by a later commit, which names the date and the model of the pass itself
+  test("reads a carried trailer as the date and model it names", () => {
+    expect.hasAssertions();
+
+    const carriedDate = DAY_AFTER_EPOCH_DATE;
+    const model = "d";
+    const body = `${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}b${TRAILER_VALUE_SEPARATOR}${carriedDate}${SWEPT_CELL_SEPARATOR}${model}
+`;
+
+    expect(getLedgerEvents(getRecord(body))).toStrictEqual([
+      { date: carriedDate, ledger: "a", model, type: LedgerEventType.Ledger, unit: "b" },
+    ]);
+  });
+
+  test("skips a carried trailer whose date is not a date", () => {
+    expect.hasAssertions();
+
+    const body = `${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}b${TRAILER_VALUE_SEPARATOR}c
+`;
+
+    expect(getLedgerEvents(getRecord(body))).toStrictEqual([]);
+  });
+
+  test("reads a sample as its ledger and the defects it found", () => {
+    expect.hasAssertions();
+
+    const body = `${LedgerEventType.Sampled}: a${TRAILER_VALUE_SEPARATOR}30${SWEPT_CELL_SEPARATOR}0
+`;
+
+    expect(getLedgerEvents(getRecord(body))).toStrictEqual([
+      { date, defects: 0, ledger: "a", model: "", type: LedgerEventType.Sampled },
+    ]);
+  });
+
+  test("skips a sample that names no defect count", () => {
+    expect.hasAssertions();
+
+    expect(
+      getLedgerEvents(
+        getRecord(`${LedgerEventType.Sampled}: a
+`),
+      ),
+    ).toStrictEqual([]);
   });
 });

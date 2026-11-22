@@ -1,6 +1,6 @@
 # Dungeons
 
-| Unit                                                           | Swept                 | Notes                                |
-| -------------------------------------------------------------- | --------------------- | ------------------------------------ |
-| `services/dungeons`, `composables/dungeons`, `store/dungeons`  | 2026-11-19 · Opus 5.5 |                                      |
-| `components/Dungeons`, `services/phaser`, `composables/phaser` | 2026-11-19 · Opus 5.5 | most of it is Phaser rather than DOM |
+| Unit                                                           | Notes                                |
+| -------------------------------------------------------------- | ------------------------------------ |
+| `services/dungeons`, `composables/dungeons`, `store/dungeons`  |                                      |
+| `components/Dungeons`, `services/phaser`, `composables/phaser` | most of it is Phaser rather than DOM |

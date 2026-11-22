@@ -20,24 +20,24 @@ the two ways a bench quietly stops measuring what it names.
 
 ## Units
 
-| Unit                                                                                                    | Swept                  | Notes                                                                             |
-| ------------------------------------------------------------------------------------------------------- | ---------------------- | --------------------------------------------------------------------------------- |
-| `apps/web` — the sheet command benches and their fixtures                                               | 2026-11-22 · Haiku 5.5 | 6 groups plus the 4 `.bench.ts` fixture files that carry `describe.todo`          |
-| `apps/web` — `app/templates`                                                                            | 2026-11-22 · Haiku 5.5 | the template checks' parse, walk and generate costs                               |
-| `packages/keyframe-store`                                                                               | 2026-11-22 · Haiku 5.5 | one `test.for` per document size; every write task copies the seeded backend      |
-| `scripts`                                                                                               | 2026-11-22 · Haiku 5.5 | `buildPackages` is switched off and deletes each `dist`, so it also skips on `CI` |
-| `packages/genshin-engine`                                                                               | 2026-11-22 · Haiku 5.5 |                                                                                   |
-| `packages/pitch-transcription`, `packages/trpc-nuxt-module`                                             | 2026-11-22 · Haiku 5.5 |                                                                                   |
-| `apps/web/app/services/resource` — `compressContentDelta`, and `sheet/column`'s `compileSheetColumns`   | —                      |                                                                                   |
-| `apps/web/app/store` — `overlay.bench.ts`                                                               | —                      |                                                                                   |
-| `apps/web/server/services` — `emailEditor`, `genshin` and `resource`                                    | —                      |                                                                                   |
-| `apps/web/shared/services/pageBuilder` — the apply, render and critique benches                         | —                      |                                                                                   |
-| `packages/db/src/services/storage` — `writeJsonBlob.bench.ts`                                           | —                      |                                                                                   |
-| `packages/genshin-world/src` — the composable, enemy, kit and store benches                             | —                      |                                                                                   |
-| `packages/math-expression-compiler/src/services` — the compiler and parser benches                      | —                      |                                                                                   |
-| `packages/mjml-blocks/src/services` — `readMjmlContent.bench.ts`                                        | —                      |                                                                                   |
-| `packages/nuxt-security-module/src/runtime` — the nitro plugins, server middleware and services benches | —                      |                                                                                   |
-| `packages/parse-tmx/src` — `parseTmx.bench.ts`                                                          | —                      |                                                                                   |
+| Unit                                                                                                    | Notes                                                                             |
+| ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `apps/web` — the sheet command benches and their fixtures                                               | 6 groups plus the 4 `.bench.ts` fixture files that carry `describe.todo`          |
+| `apps/web` — `app/templates`                                                                            | the template checks' parse, walk and generate costs                               |
+| `packages/keyframe-store`                                                                               | one `test.for` per document size; every write task copies the seeded backend      |
+| `scripts`                                                                                               | `buildPackages` is switched off and deletes each `dist`, so it also skips on `CI` |
+| `packages/genshin-engine`                                                                               |                                                                                   |
+| `packages/pitch-transcription`, `packages/trpc-nuxt-module`                                             |                                                                                   |
+| `apps/web/app/services/resource` — `compressContentDelta`, and `sheet/column`'s `compileSheetColumns`   |                                                                                   |
+| `apps/web/app/store` — `overlay.bench.ts`                                                               |                                                                                   |
+| `apps/web/server/services` — `emailEditor`, `genshin` and `resource`                                    |                                                                                   |
+| `apps/web/shared/services/pageBuilder` — the apply, render and critique benches                         |                                                                                   |
+| `packages/db/src/services/storage` — `writeJsonBlob.bench.ts`                                           |                                                                                   |
+| `packages/genshin-world/src` — the composable, enemy, kit and store benches                             |                                                                                   |
+| `packages/math-expression-compiler/src/services` — the compiler and parser benches                      |                                                                                   |
+| `packages/mjml-blocks/src/services` — `readMjmlContent.bench.ts`                                        |                                                                                   |
+| `packages/nuxt-security-module/src/runtime` — the nitro plugins, server middleware and services benches |                                                                                   |
+| `packages/parse-tmx/src` — `parseTmx.bench.ts`                                                          |                                                                                   |
 
 ## Find recipe
 

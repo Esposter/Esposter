@@ -21,3 +21,5 @@ export const CAMEL_HUMP_REGEX: RegExp = /(?<=[a-z\d])(?=[A-Z])/u;
 // A camel hump, a snake underscore or a member dot — where one segment of a name ends and the next begins. An
 // Acronym runs into the word after it without a hump (`aHTMLFoo`), so its last capital is a boundary of its own
 export const NAME_SEGMENT_REGEX: RegExp = new RegExp(`${CAMEL_HUMP_REGEX.source}|(?<=[A-Z])(?=[A-Z][a-z])|[._$]+`, "u");
+// The one list of areas and units the area-split ledgers share, one file per area, read through `LedgerUnitsMap`
+export const LEDGER_AREA_DIRECTORY: string = `${LEDGER_DIRECTORY}/areas`;

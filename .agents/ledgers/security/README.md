@@ -2,24 +2,10 @@
 
 ## Areas
 
-Coverage lives in the area file, never here. A pass loads this file, the `security` skill's checklist
+The areas and their units are the shared [area list](../areas/), and `pnpm ai:sweep:status security` says where each unit stands. It keeps an area file only for the units it holds a note on: [shared](shared.md) and [tooling](tooling.md). A pass loads this file, the `security` skill's checklist
 (`.agents/skills/security/references/owasp-top-10.md`), the register of verified boundaries
-(`openspec/specs/architecture/security/README.md`) and the one area it is sweeping. A flow the register
-already answers is cited from its row rather than read again. The area names, units and what each area holds are
-[quality](../quality/)'s, so "was this area swept, for which question, and when" reads off one set of names across
-every promoted ledger, and each description is written once, there.
-
-| Area                      |
-| ------------------------- |
-| [app-shell](app-shell.md) |
-| [messaging](messaging.md) |
-| [resource](resource.md)   |
-| [products](products.md)   |
-| [dungeons](dungeons.md)   |
-| [server](server.md)       |
-| [shared](shared.md)       |
-| [packages](packages.md)   |
-| [tooling](tooling.md)     |
+(`openspec/specs/architecture/security/README.md`) and the area's file in the list. A flow the register
+already answers is cited from its row rather than read again.
 
 Unlike most sweeps, a finding here usually changes behaviour: it closes a hole. Each one is fixed in its own commit
 with its regression test, apart from the unit's `Ledger:` trailer commit, so reverting a fix never reopens the

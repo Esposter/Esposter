@@ -1,5 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
+import { LEDGER_AREA_DIRECTORY, LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
+import { LedgerUnitsMap } from "#src/services/sweeps/ledgerCoverage/LedgerUnitsMap";
 import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -28,11 +29,18 @@ describe("ledgerScopes", () => {
   const PATHSPEC_REGEX = /`(?<pathspec>[^`]+)`/gu;
   const ledgerDirectory = join(REPOSITORY_ROOT, LEDGER_DIRECTORY);
   const index = readFileSync(join(ledgerDirectory, "README.md"), "utf8");
-  // A ledger is either one file or a promoted folder of area files, so both shapes are a name the index owes a
-  // Row to — the folder's own README is its metadata, not a ledger of its own.
-  const ledgers = readdirSync(ledgerDirectory, { withFileTypes: true })
-    .filter((entry) => entry.name !== "README.md")
-    .map((entry) => (entry.isDirectory() ? entry.name : entry.name.replace(MARKDOWN_EXTENSION_REGEX, "")));
+  // A ledger is one file, a promoted folder of area files, or a derived ledger that keeps no file while it has nothing
+  // To note, so all three are a name the index owes a row to — a folder's own README is its metadata, and the area list
+  // Is the units the area-split ledgers share, not a ledger of its own.
+  const areaDirectoryName = LEDGER_AREA_DIRECTORY.slice(LEDGER_DIRECTORY.length + 1);
+  const ledgers = [
+    ...new Set([
+      ...readdirSync(ledgerDirectory, { withFileTypes: true })
+        .filter((entry) => entry.name !== "README.md" && entry.name !== areaDirectoryName)
+        .map((entry) => (entry.isDirectory() ? entry.name : entry.name.replace(MARKDOWN_EXTENSION_REGEX, ""))),
+      ...Object.keys(LedgerUnitsMap).map((ledger) => ledger.split("/")[0] ?? ledger),
+    ]),
+  ];
   const rows = index
     .split("\n")
     .map((line) => LEDGER_ROW_REGEX.exec(line)?.groups)

@@ -2,15 +2,15 @@
 
 Composable shape and, first, the primitives that already own a job: ordering overlapping async work, dirty-check saves, intervals, pan/zoom, read-or-insert, and whether a function is a composable at all or a service (`references/composables-and-services.md`). Rules: the `vue-composable-patterns` skill.
 
-| Unit                                                       | Swept                   | Notes                                                                             |
-| ---------------------------------------------------------- | ----------------------- | --------------------------------------------------------------------------------- |
-| `app/composables/shared`                                   | 2026-11-06 · Sonnet 5.5 | the primitives themselves — a counter here is the implementation, not a violation |
-| `app/composables/resource`                                 | 2026-11-06 · Sonnet 5.5 |                                                                                   |
-| `app/composables/message`                                  | 2026-11-06 · Sonnet 5.5 |                                                                                   |
-| `app/composables/data`, `app/composables/file`, root files | 2026-11-06 · Sonnet 5.5 |                                                                                   |
-| `app/composables/dungeons`, `app/composables/clicker`      | 2026-11-06 · Sonnet 5.5 | Phaser-driven; frame loops are not async ordering                                 |
-| `app/store` as call sites                                  | 2026-11-06 · Sonnet 5.5 | shape is the `pinia` ledger's; this reads only the bookkeeping around an `await`  |
-| `app/composables/ui`                                       | 2026-11-06 · Sonnet 5.5 |                                                                                   |
+| Unit                                                       | Notes                                                                             |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `app/composables/shared`                                   | the primitives themselves — a counter here is the implementation, not a violation |
+| `app/composables/resource`                                 |                                                                                   |
+| `app/composables/message`                                  |                                                                                   |
+| `app/composables/data`, `app/composables/file`, root files |                                                                                   |
+| `app/composables/dungeons`, `app/composables/clicker`      | Phaser-driven; frame loops are not async ordering                                 |
+| `app/store` as call sites                                  | shape is the `pinia` ledger's; this reads only the bookkeeping around an `await`  |
+| `app/composables/ui`                                       |                                                                                   |
 
 ## The find recipe
 

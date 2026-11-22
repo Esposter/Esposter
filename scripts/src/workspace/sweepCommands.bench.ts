@@ -11,8 +11,7 @@ const SWEEP_SCRIPT_PREFIX = "ai:sweep:";
 // Benched the day it is added. The whole command an agent types is what is spawned — the root's delegation to
 // `scripts`, that package's loader booting, the `git ls-files` spawns and every file read — because that walltime is
 // What a session waits on, and its clock is those layers before it is any unit's (`runtime-efficiency` skill, "A
-// Script's clock"). `ai:sweep:ledger-coverage` rewrites the ledgers exactly as any run of it does, and a second run
-// Finds nothing left to write.
+// Script's clock").
 const { scripts } = parseMachineJson<{ scripts: Record<string, string> }>(
   readFileSync(resolve(REPOSITORY_ROOT, PACKAGE_JSON_FILENAME), "utf8"),
 );

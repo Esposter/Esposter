@@ -20,7 +20,7 @@ import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/ge
 import { readGcsimMainCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimMainCharacters";
 import { toGcsimFolderName } from "#src/services/genshinAssets/kits/gcsim/toGcsimFolderName";
 import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths";
-import { readKitOverlayFile } from "#src/services/genshinAssets/kits/readKitOverlay";
+import { readKitOverlayFile } from "#src/services/genshinAssets/kits/readKitOverlayFile";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
 import { getKitGapPaths } from "#src/services/genshinAssets/kits/record/getKitGapPaths";
 import { seedKitOverlay } from "#src/services/genshinAssets/kits/record/seedKitOverlay";

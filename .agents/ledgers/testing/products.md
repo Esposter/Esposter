@@ -1,6 +1,6 @@
 # Products
 
-| Unit                                                                               | Swept                 | Notes |
-| ---------------------------------------------------------------------------------- | --------------------- | ----- |
-| `Post`, `Clicker`, `Achievement` + their `store`, `composables`, `services`        | 2026-11-19 · Opus 5.5 |       |
-| `Visual`, `About`, `Anime`, `Login`, `desmos` + their `services` and `composables` | 2026-11-19 · Opus 5.5 |       |
+| Unit                                                                               | Notes |
+| ---------------------------------------------------------------------------------- | ----- |
+| `Post`, `Clicker`, `Achievement` + their `store`, `composables`, `services`        |       |
+| `Visual`, `About`, `Anime`, `Login`, `desmos` + their `services` and `composables` |       |

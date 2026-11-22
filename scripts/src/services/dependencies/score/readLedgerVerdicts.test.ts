@@ -8,11 +8,11 @@ describe(readLedgerVerdicts, () => {
     const ledger = [
       "# Dependencies",
       "",
-      "| Package | Swept | Verdict | Reason |",
-      "| ------- | ----- | ------- | ------ |",
-      "| `alpha` | — | Keep — data | a word list |",
-      "| `beta` | — | Absorb | a small helper |",
-      "| `gamma` | — | — | not judged |",
+      "| Unit | Verdict | Reason |",
+      "| ---- | ------- | ------ |",
+      "| `alpha` | Keep — data | a word list |",
+      "| `beta` | Absorb | a small helper |",
+      "| `gamma` | — | not judged |",
     ].join("\n");
 
     expect(readLedgerVerdicts(ledger)).toStrictEqual(
@@ -27,7 +27,7 @@ describe(readLedgerVerdicts, () => {
   test("skips a row whose verdict cell is empty rather than storing its padding", () => {
     expect.hasAssertions();
 
-    const ledger = "| `alpha` | — |  | a reason |";
+    const ledger = "| `alpha` |  | a reason |";
 
     expect(readLedgerVerdicts(ledger)).toStrictEqual(new Map());
   });
