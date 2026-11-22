@@ -26,3 +26,7 @@ Notes on a tree several units share:
 
 - Router **tests** — the `testing` ledger owns those; a finding about a caller pattern goes there.
 - Input schemas under `shared/models/db` — `schemas` owns their shape, this ledger only checks the router imports rather than declares them.
+
+## Find recipe
+
+None: a procedure built as a mutation under a read or `generate*` verb has no mechanical shape, since whether it reads depends on what its handler reaches, which no one file's syntax shows. Each such mutation is read by its unit (`generate*` is also the verb of presigned upload addresses, which are mutations on purpose in several routers).
