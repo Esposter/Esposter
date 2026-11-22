@@ -23,10 +23,6 @@ interface Props {
 
 const { view } = defineProps<Props>();
 const emit = defineEmits<{ answer: [name: string, value: SurveyAnswerValue | undefined] }>();
-// A field's answer is written under the question's name, which only a question's props carry
-const updateAnswer = (value: SurveyAnswerValue | undefined) => {
-  if ("name" in view.node.props) emit("answer", view.node.props.name, value);
-};
 // The question as its field draws it, with the required flag the runner decides, so its mark follows its requiring condition. A panel draws no field
 const fieldNode = computed(() =>
   view.node.type === SurveyNodeType.Panel ? undefined : withSurveyRequired(view.node, view.isRequired),
@@ -70,7 +66,11 @@ const titleId = useId();
         :model-value="'name' in view.node.props ? answers[view.node.props.name] : undefined"
         :node="fieldNode"
         :seed
-        @update:model-value="(value) => updateAnswer(value)"
+        @update:model-value="
+          (value) => {
+            if ('name' in view.node.props) emit('answer', view.node.props.name, value);
+          }
+        "
       />
     </div>
   </div>
