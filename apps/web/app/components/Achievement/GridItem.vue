@@ -27,6 +27,7 @@ const targetAmount = computed(() => achievementDefinition.amount ?? 1);
       <div
         class="badge"
         :data-unlocked="checkIsUnlockedUserAchievement(userAchievement) || undefined"
+        text-muted
         flex
         shrink-0
         size-10
@@ -64,10 +65,6 @@ const targetAmount = computed(() => achievementDefinition.amount ?? 1);
 </template>
 
 <style scoped>
-.badge {
-  color: var(--ui-muted);
-}
-
 .badge[data-unlocked] {
   background-color: var(--ui-success);
   color: var(--ui-background);
