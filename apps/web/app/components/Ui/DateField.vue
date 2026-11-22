@@ -42,6 +42,11 @@ const time = computed({
     choose(zonedDateTime.value.withPlainTime(Temporal.PlainTime.from(value)));
   },
 });
+// oxlint-disable typescript/no-unsafe-type-assertion -- a picked moment is a Date and clearing writes undefined, and the caller's generic model holds a Date, or undefined too when it is clearable, which the compiler cannot relate to TModel
+const writeModelValue = (value: Date | undefined) => {
+  modelValue.value = value as TModel;
+};
+// oxlint-enable typescript/no-unsafe-type-assertion
 // A moment before the earliest or after the latest is moved onto it, so a day picked on the earliest one's own day
 // Still lands after its time
 const choose = (newZonedDateTime: Temporal.ZonedDateTime) => {
@@ -50,14 +55,10 @@ const choose = (newZonedDateTime: Temporal.ZonedDateTime) => {
     clampedZonedDateTime = minZonedDateTime.value;
   else if (maxZonedDateTime.value && Temporal.ZonedDateTime.compare(clampedZonedDateTime, maxZonedDateTime.value) > 0)
     clampedZonedDateTime = maxZonedDateTime.value;
-  // oxlint-disable typescript/no-unsafe-type-assertion -- a picked moment is a Date and clearing writes undefined, and the caller's generic model holds a Date, or undefined too when it is clearable, which the compiler cannot relate to TModel
-  modelValue.value = new Date(clampedZonedDateTime.epochMilliseconds) as TModel;
-  // oxlint-enable typescript/no-unsafe-type-assertion
+  writeModelValue(new Date(clampedZonedDateTime.epochMilliseconds));
 };
 const clear = () => {
-  // oxlint-disable typescript/no-unsafe-type-assertion -- a picked moment is a Date and clearing writes undefined, and the caller's generic model holds a Date, or undefined too when it is clearable, which the compiler cannot relate to TModel
-  modelValue.value = undefined as TModel;
-  // oxlint-enable typescript/no-unsafe-type-assertion
+  writeModelValue(undefined);
 };
 // A new day keeps the time already chosen, or the current one's to the minute when there is none yet
 const chooseDate = (date: Temporal.PlainDate) => {
