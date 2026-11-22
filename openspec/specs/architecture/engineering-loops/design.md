@@ -123,6 +123,6 @@ No step on this list waits for approval, since each one ends in a queue push, wh
 | `.agents/skills/resuming/SKILL.md`           | a session's leftovers brought back in sync before new work           |
 | `.agents/skills/skill-authoring/SKILL.md`    | where a lesson goes, and how a skill is kept                         |
 | `scripts/src/proposals/report/index.ts`      | sizes and groups open proposals, lists the areas owed a pass         |
-| `scripts/src/sweeps/ledgerCoverage/index.ts` | dates every ledger row from commit trailers                          |
+| `scripts/src/sweeps/ledgerStatus/index.ts`   | dates every ledger row from commit trailers                          |
 | `scripts/src/triage/index.ts`                | labels an issue with its triage role                                 |
 | `scripts/src/todos/report/index.ts`          | lists every `@TODO` by its link's state                              |
