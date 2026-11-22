@@ -7,7 +7,7 @@ import { definePlugin } from "@oxlint/plugins";
 //
 // The error link already alerts the codes it owns, so a caller that reads `error.message` off a rejection and
 // Hands it to `createAlert` puts a second identical toast on screen for one failure. `createErrorAlert` is the
-// One caller-side alert precisely because it asks `checkIsAlertedByErrorLink` first — spelled out per site, that
+// One caller-side alert precisely because it asks `checkIsAnsweredByErrorLink` first — spelled out per site, that
 // Guard is a line every caller can forget, and each one that does ships the double toast.
 //
 // The check is the narrowest shape that means "this is a rejection rather than a message the caller composed":

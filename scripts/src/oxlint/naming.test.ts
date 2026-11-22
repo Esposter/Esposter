@@ -38,7 +38,8 @@ describe("naming", () => {
     { name: "readsMember", source: `export const ${VERB_READ}A = b.${VERB_READ}A;`, violations: 0 },
     // A destructuring pattern names its fields, not the call.
     { name: "destructuresCall", source: `export const { ${VERB_READ}A } = b.${VERB_READ}A();`, violations: 0 },
-    // The product's name spelled out, where a value derives it from `SITE_NAME` and our own text leaves it out
+    // A spelled-out product name is reported both where a value should derive it from `SITE_NAME` and where
+    // Our own text should leave it out.
     { name: "spellsSiteName", source: `export const a = "${NAME}-a";`, violations: 1 },
     { name: "spellsSiteNameInTemplate", source: `export const a = \`${TITLE}\`;`, violations: 1 },
     { name: "spellsSiteNameInEscapedTemplate", source: `export const a = \`${ESCAPED_NAME}\`;`, violations: 1 },

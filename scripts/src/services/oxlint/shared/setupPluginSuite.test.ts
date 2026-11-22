@@ -11,6 +11,8 @@ interface OxlintFixture {
   // Rule with no autofix, or a suite of one, never runs the fix pass at all
   fixed?: string;
   name: string;
+  // Each source exports what it declares, since an unexported declaration is unused and the correctness category
+  // Reports it, which the test that reports nothing else would count
   source: string;
   violations: number;
 }

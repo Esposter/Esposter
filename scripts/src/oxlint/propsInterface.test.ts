@@ -1,6 +1,8 @@
 import { setupPluginSuite } from "#src/services/oxlint/shared/setupPluginSuite.test";
 import { describe } from "vitest";
 
+const wrapSource = (source: string): string => `<script setup lang="ts">\n${source}\n</script>`;
+
 describe("propsInterface", () => {
   const NAME = "Props";
   const EXPORTED_TYPE_RULE = "props-interface/no-exported-type";
@@ -67,7 +69,7 @@ describe("propsInterface", () => {
     fixtures: FIXTURES,
     plugin: "propsInterface",
     rules: [EXPORTED_TYPE_RULE, PROPS_NAME_RULE],
-    wrapSource: (source) => `<script setup lang="ts">\n${source}\n</script>`,
+    wrapSource,
   });
 });
 
@@ -135,7 +137,7 @@ describe("props-interface/no-unread-destructure", () => {
       source: `const { a, b } = defineProps<Props>();`,
       violations: 2,
     },
-    // A run of unread props goes with its separators, whether it leads, sits between two kept props, or ends the pattern.
+    // A run of unread props goes with its separators, whether leading, between two kept props, or ending the pattern.
     {
       fixed: `const { c } = defineProps<Props>();\nconst d = computed(() => c);`,
       name: "unreadRunKeepsRead",
@@ -201,6 +203,6 @@ describe("props-interface/no-unread-destructure", () => {
     fixtures: UNREAD_FIXTURES,
     plugin: "propsInterface",
     rules: [UNREAD_DESTRUCTURE_RULE],
-    wrapSource: (source) => `<script setup lang="ts">\n${source}\n</script>`,
+    wrapSource,
   });
 });

@@ -3,7 +3,6 @@ import { describe } from "vitest";
 
 describe("immutability", () => {
   const RULE = "immutability/no-map-mutation";
-  // Every fixture exports what it declares, so the correctness category oxlint keeps on reports nothing else.
   const FIXTURES = [
     {
       name: "propertyAssignment",

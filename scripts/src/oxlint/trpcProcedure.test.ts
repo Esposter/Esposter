@@ -67,7 +67,7 @@ describe("trpcProcedure", () => {
       source: `export const a = () => { throw new ${ERROR_CLASS}({ ${CODE_KEY}: "a", ${MESSAGE_KEY}: new ${FORBIDDEN_ERROR}(r).${MESSAGE_KEY} }); };`,
       violations: 1,
     },
-    // A BAD_REQUEST with no message reaches the client as an empty rejection.
+    // A BAD_REQUEST with no message reaches the client as the bare code, which names nothing the user can act on.
     {
       name: "bareBadRequest",
       source: `export const a = () => { throw new ${ERROR_CLASS}({ ${CODE_KEY}: "${BAD_REQUEST}" }); };`,

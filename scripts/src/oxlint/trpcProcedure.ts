@@ -13,10 +13,10 @@ import { definePlugin } from "@oxlint/plugins";
 // And `no-empty-input` runs repo-wide, since the client calls procedures from every tree.
 //
 // `require-return-type` and `no-hand-rolled-error` exist to shrink the trpc ledger rather than to be swept forever:
-// Each was found by hand in two consecutive sweep units, in the same shape, which is the signal that an enforcer
-// Should own it (`sweeps` skill, "Shrinking beats re-running"). `require-query-verb` holds the skill's three query
-// Verbs, `no-prototype-key` the keys a client proxy resolves off `Function.prototype` instead of the router, and
-// `no-empty-input` the `.query({})` an all-optional input never needs.
+// Each is a rule a hand sweep keeps finding, which is the signal that an enforcer should own it (`sweeps` skill,
+// "Shrinking beats re-running"). `require-query-verb` holds the skill's three query verbs, `no-prototype-key` the keys
+// A client proxy resolves off `Function.prototype` instead of the router, and `no-empty-input` the `.query({})` an
+// All-optional input never needs.
 //
 // None needs type information, and none carries a list the repo can outgrow: the verbs are the convention's own,
 // The prototype keys the language's, and a missing generic is an absent `typeArguments` on a call written with an

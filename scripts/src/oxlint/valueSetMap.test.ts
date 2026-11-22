@@ -3,7 +3,6 @@ import { describe } from "vitest";
 
 describe("valueSetMap", () => {
   const RULE = "value-set-map/no-literal-map-key";
-  // Every fixture exports what it declares, so the correctness category oxlint keeps on reports nothing else.
   const FIXTURES = [
     { name: "literalKey", source: `export const FooMap = { a: 1 };`, violations: 1 },
     { name: "quotedKey", source: `export const FooMap = { "a-b": 1 };`, violations: 1 },

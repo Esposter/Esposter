@@ -9,8 +9,7 @@ import { definePlugin } from "@oxlint/plugins";
 /**
  * An oxlint JS plugin enforcing the formatting skill's rule that a `//` line never opens on a bare identifier.
  * `capitalized-comments` uppercases the first letter of every `//` line and cannot tell a prose word from a name, so a
- * rewrap that puts `useEditor` at a line front comes back as `UseEditor` — and `--fix` writes it. The comments sweep
- * found that corruption in two passes before it reached here.
+ * rewrap that puts `useEditor` at a line front comes back as `UseEditor` — and `--fix` writes it.
  *
  * It reads one file and two vocabularies the repo cannot outgrow. A capitalised opening word is reported when its
  * lowercase-first spelling starts with one of the naming skill's function or boolean prefixes (or a composable's
@@ -27,9 +26,10 @@ import { definePlugin } from "@oxlint/plugins";
  * (`packages/configuration/eslint/plugins/directives.js`). A bare directive naming no rule switches this one off
  * with the rest, so it is the one shape neither half sees; the only ones are generated files the lint ignores.
  *
- * `no-repeated-disable-next-line` enforces the oxlint skill's rule that a file repeating one rule's `-next-line` disable
- * collapses into one file-level directive at its top. It reads the comments alone: the grouping is by linter prefix and
- * rule name, and the fix writes the file-level directive from the reasons the repeats already carry, so no list either.
+ * `no-repeated-disable-next-line` enforces the oxlint skill's rule that a file repeating one
+ * rule's `-next-line` disable collapses into one file-level directive at its top. It reads the
+ * comments alone: the grouping is by linter prefix and rule name, and the fix writes the
+ * file-level directive from the reasons the repeats already carry, so no list either.
  *
  * `no-trailing-comment` enforces the formatting skill's rule that a `//` comment sits on its own line above its
  * code. Stock `no-inline-comments` reads block comments too, and so fires on the `@vue-ignore` block a props

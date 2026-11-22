@@ -3,7 +3,6 @@ import { describe } from "vitest";
 
 describe("literalUnion", () => {
   const RULE = "literal-union/no-string-literal-union";
-  // Every fixture exports what it declares, so the correctness category oxlint keeps on reports nothing else.
   const FIXTURES = [
     { name: "twoStrings", source: `export type X = "a" | "b";`, violations: 1 },
     { name: "threeStrings", source: `export type X = "a" | "b" | "c";`, violations: 1 },

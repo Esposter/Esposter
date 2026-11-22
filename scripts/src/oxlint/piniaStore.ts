@@ -9,8 +9,7 @@ import { definePlugin } from "@oxlint/plugins";
 //
 // A destructure straight off the call hides which store the names came from and, for a ref, silently drops its
 // Reactivity; `storeToRefs(useFooStore())` and `useFooStore().method()` are the same shape one step removed. A
-// Binding named `store`, or after half the store's name, is what the next reader has to resolve by opening the
-// Import. Both findings recurred across the store and component sweeps before reaching here.
+// Binding named `store`, or after half the store's name, is what the next reader has to resolve by opening the import.
 //
 // The scope is the construct's domain: a call whose callee is Pinia's own `use<Name>Store` naming. The binding
 // Passes when its name ends in `<Name>Store`, so a qualifier in front of the whole (`newCacheStore` beside a
