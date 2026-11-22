@@ -111,6 +111,11 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     },
     { files: ["apps/web/server/trpc/**/*.test.ts"], rules: { "trpc-procedure/require-query-verb": "off" } },
     { files: ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"], rules: { "test-values/no-typed-date": "error" } },
+    // A test's mocks and fakes are shaped for each consumer, which the rule reads as an unchecked assertion
+    {
+      files: ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"],
+      rules: { "typescript/no-unsafe-type-assertion": "off" },
+    },
     { files: ["**/*.test.ts"], rules: { "testing/fake-clock-only": "error", "testing/no-faked-set-timeout": "error" } },
     {
       // Nuxt auto-imports Vue into the app tree alone: a package, the Nuxt configuration and `shared/` reach it by import
@@ -422,7 +427,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/no-unsafe-enum-comparison": "off",
     "typescript/no-unsafe-member-access": "off",
     "typescript/no-unsafe-return": "off",
-    "typescript/no-unsafe-type-assertion": "off",
+    "typescript/no-unsafe-type-assertion": "error",
     "typescript/prefer-nullish-coalescing": "off",
     "typescript/prefer-optional-chain": "error",
     "typescript/prefer-readonly-parameter-types": "off",

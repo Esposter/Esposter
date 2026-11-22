@@ -22,7 +22,6 @@ vi.mock(import("#src/services/recreation/video/resolveYtDlp"), () => ({
 const { spawnSync } = vi.hoisted(() => ({ spawnSync: vi.fn<SpawnSyncStub>() }));
 
 vi.mock(import("@esposter/shared-node/child-process"), () => ({
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a vi.fn stub is one signature, and node's spawnSync is an overload set that no vi.fn type reproduces
   spawnSync: spawnSync as unknown as typeof baseSpawnSync,
 }));
 
