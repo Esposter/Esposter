@@ -79,7 +79,8 @@ describe("portableFormatMap", () => {
     await exportFormat("HTML")();
 
     const alertStore = useAlertStore();
-    expect(alertStore.alerts.map(({ text }) => text)).toStrictEqual([]);
+    const { alerts } = storeToRefs(alertStore);
+    expect(alerts.value.map(({ text }) => text)).toStrictEqual([]);
     expect(readDownloads()).toStrictEqual([[`${TEST_LABEL}.html`, "<p>a</p>", "text/html"]]);
   });
 
@@ -93,8 +94,9 @@ describe("portableFormatMap", () => {
     await exportFormat("HTML")();
 
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     expect(readDownloads()).toHaveLength(0);
-    expect(alertStore.alerts.map(({ text }) => text)).toStrictEqual(["mj-text is not allowed here"]);
+    expect(alerts.value.map(({ text }) => text)).toStrictEqual(["mj-text is not allowed here"]);
   });
 
   test("a merge field stays as its token in the file", async () => {
@@ -130,8 +132,9 @@ describe("portableFormatMap", () => {
     await exportFormat("HTML")();
 
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     expect(readDownloads()).toHaveLength(0);
-    expect(alertStore.alerts.map(({ text }) => text)).toStrictEqual([
+    expect(alerts.value.map(({ text }) => text)).toStrictEqual([
       "the email was refused",
       "The email is not saved, so nothing was exported",
     ]);

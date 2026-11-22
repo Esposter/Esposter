@@ -11,7 +11,8 @@ import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless
 
 const loadSurvey = () => {
   const surveyCreatorStore = useSurveyCreatorStore();
-  surveyCreatorStore.load(
+  const { load } = surveyCreatorStore;
+  load(
     surveyDocumentSchema.parse({
       content: [
         {
@@ -60,11 +61,12 @@ describe("resourceSurveyCreatorLayers", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey();
+    const { selectedPointer } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorLayers);
 
     await component.get('[data-pointer="/content/0/props/children/0/props/children/0"]').trigger("click");
 
-    expect(surveyCreatorStore.selectedPointer).toBe("/content/0/props/children/0/props/children/0");
+    expect(selectedPointer.value).toBe("/content/0/props/children/0/props/children/0");
 
     component.unmount();
   });
@@ -73,7 +75,8 @@ describe("resourceSurveyCreatorLayers", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(
+    const { load } = surveyCreatorStore;
+    load(
       createSurveyTestDocument([
         createSurveyTestPage([createSurveyTestQuestion("question1"), createSurveyTestQuestion("question2")]),
       ]),
@@ -97,7 +100,8 @@ describe("resourceSurveyCreatorLayers", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(
+    const { load } = surveyCreatorStore;
+    load(
       createSurveyTestDocument([
         createSurveyTestPage([createSurveyTestQuestion("question1"), createSurveyTestQuestion("question2")]),
       ]),

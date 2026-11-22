@@ -41,7 +41,8 @@ describe(useRenameResource, () => {
 
     const resource = createResource();
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(resourceTable, resource.value);
+    const { arrive } = overlayStore;
+    arrive(resourceTable, resource.value);
     const { isCalled, refresh } = createRefresh();
     trpcMsw.sheet.updateResource.mutation(() => ({ ...resource.value, name: newName, version: 1 }));
     useRenameResource(resource, refresh)(newName);
@@ -64,7 +65,8 @@ describe(useRenameResource, () => {
 
     const resource = createResource();
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(resourceTable, resource.value);
+    const { arrive } = overlayStore;
+    arrive(resourceTable, resource.value);
     const { isCalled, refresh } = createRefresh();
     trpcMsw.sheet.updateResource.mutation(() => {
       throw new TRPCError({ code: "BAD_REQUEST", message: " " });

@@ -16,7 +16,8 @@ const createSurvey = (titles: string[]) =>
   ]);
 const loadSurvey = () => {
   const surveyCreatorStore = useSurveyCreatorStore();
-  surveyCreatorStore.load(createSurvey(["", ""]));
+  const { load } = surveyCreatorStore;
+  load(createSurvey(["", ""]));
   return surveyCreatorStore;
 };
 
@@ -32,6 +33,7 @@ describe("resourceSurveyCreatorCanvasNode", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey();
+    const { document } = storeToRefs(surveyCreatorStore);
     useSurveyCreatorCommands().select(FIRST_POINTER);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await component.get('span[aria-label="Title"]').trigger("click");
@@ -39,13 +41,14 @@ describe("resourceSurveyCreatorCanvasNode", () => {
     await component.get('input[aria-label="Title"]').trigger("keydown", { key: "Enter" });
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(createSurvey(["Why", ""]));
+    expect(document.value).toStrictEqual(createSurvey(["Why", ""]));
   });
 
   test("a run of typing is one undo step", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey();
+    const { document } = storeToRefs(surveyCreatorStore);
     useSurveyCreatorCommands().select(FIRST_POINTER);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await component.get('span[aria-label="Title"]').trigger("click");
@@ -54,19 +57,20 @@ describe("resourceSurveyCreatorCanvasNode", () => {
     useSurveyCreatorCommands().undo();
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(createSurvey(["", ""]));
+    expect(document.value).toStrictEqual(createSurvey(["", ""]));
   });
 
   test("an unselected question is not edited by a click", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey();
+    const { selectedPointer } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     // The canvas draws the page first, then its two questions
     await component.findAll('[tabindex="0"]').at(2)?.trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.selectedPointer).toBe("/content/0/props/children/1");
+    expect(selectedPointer.value).toBe("/content/0/props/children/1");
     expect(component.find('input[aria-label="Title"]').exists()).toBe(false);
   });
 

@@ -78,7 +78,8 @@ describe("resourceSurveyResponses", () => {
     Object.assign(useRouter().currentRoute.value.params, { id: surveyId });
     // The dialogs' targets are keyed by the open resource, so the blade is opened on its survey as the resource page does
     const resourceStore = useResourceStore();
-    resourceStore.applyResource(createResourceListItem({ id: surveyId, type: ResourceType.Survey }), null);
+    const { applyResource } = resourceStore;
+    applyResource(createResourceListItem({ id: surveyId, type: ResourceType.Survey }), null);
     trpcMsw.survey.readSurveyResponseRecords.query(() => records);
     trpcMsw.survey.readResourceContent.query(() => ({
       document,

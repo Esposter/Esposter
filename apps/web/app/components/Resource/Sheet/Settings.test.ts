@@ -27,14 +27,15 @@ describe("resourceSheetSettings", () => {
 
     const columnIdWidthMap = { [v7()]: 1 };
     const { component, sheetStore } = await mountSettings();
-    sheetStore.sheetResource.settings.columnIdWidthMap = columnIdWidthMap;
+    const { settings, sheetResource } = storeToRefs(sheetStore);
+    sheetResource.value.settings.columnIdWidthMap = columnIdWidthMap;
     const radio = component
       .findAll('[role="radio"]')
       .find((option) => option.attributes("aria-label") === DataSourceType.Xlsx);
     await radio?.trigger("click");
     await flushPromises();
 
-    expect(sheetStore.settings).toStrictEqual({ ...createDefaultSheetSettings(DataSourceType.Xlsx), columnIdWidthMap });
+    expect(settings.value).toStrictEqual({ ...createDefaultSheetSettings(DataSourceType.Xlsx), columnIdWidthMap });
     expect(component.find("input").exists()).toBe(true);
   });
 
@@ -42,7 +43,8 @@ describe("resourceSheetSettings", () => {
     expect.hasAssertions();
 
     const { component, sheetStore } = await mountSettings();
-    sheetStore.sheetResource.settings = createDefaultSheetSettings(DataSourceType.Json);
+    const { sheetResource } = storeToRefs(sheetStore);
+    sheetResource.value.settings = createDefaultSheetSettings(DataSourceType.Json);
     await flushPromises();
 
     expect(component.find("input").exists()).toBe(false);

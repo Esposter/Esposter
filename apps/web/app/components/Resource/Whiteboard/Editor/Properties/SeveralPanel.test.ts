@@ -14,41 +14,45 @@ describe("resourceWhiteboardEditorPropertiesSeveralPanel", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
     const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { selectedIds } = storeToRefs(whiteboardEditorStore);
     const first: ShapeElement = { ...WHITEBOARD_PROCESS, fill: "#0000ff", id: v7() };
     const second: ShapeElement = { ...WHITEBOARD_PROCESS, fill: "#ff0000", id: v7(), x: 200 };
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [first, second] });
-    whiteboardEditorStore.selectedIds = [first.id, second.id];
+    editState.value = createWhiteboardEditState({ elements: [first, second] });
+    selectedIds.value = [first.id, second.id];
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesSeveralPanel);
 
     const noFillButton = wrapper.findAll("button").find((button) => button.text() === "No fill");
     assert.exists(noFillButton);
     await noFillButton.trigger("click");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({
+    expect(editState.value.document).toStrictEqual({
       elements: [
         { ...first, fill: "" },
         { ...second, fill: "" },
       ],
     });
-    expect(whiteboardStore.editState.history.past).toHaveLength(1);
+    expect(editState.value.history.past).toHaveLength(1);
   });
 
   test("bring forward moves the selection of several past the element above it in one edit", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
     const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { selectedIds } = storeToRefs(whiteboardEditorStore);
     const first: ShapeElement = { ...WHITEBOARD_PROCESS, id: v7() };
     const second: ShapeElement = { ...WHITEBOARD_PROCESS, id: v7(), x: 200 };
     const third: ShapeElement = { ...WHITEBOARD_PROCESS, id: v7(), x: 400 };
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [first, second, third] });
-    whiteboardEditorStore.selectedIds = [first.id, second.id];
+    editState.value = createWhiteboardEditState({ elements: [first, second, third] });
+    selectedIds.value = [first.id, second.id];
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesSeveralPanel);
 
     await wrapper.get('button[aria-label="Bring forward"]').trigger("click");
 
-    expect(whiteboardStore.editState.document.elements).toStrictEqual([third, first, second]);
-    expect(whiteboardStore.editState.history.past).toHaveLength(1);
+    expect(editState.value.document.elements).toStrictEqual([third, first, second]);
+    expect(editState.value.history.past).toHaveLength(1);
   });
 });

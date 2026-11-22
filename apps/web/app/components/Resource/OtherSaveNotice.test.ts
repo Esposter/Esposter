@@ -10,7 +10,8 @@ describe("otherSaveNotice", () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    resourceStore.heldSave = { contentVersion: 1 };
+    const { heldSave } = storeToRefs(resourceStore);
+    heldSave.value = { contentVersion: 1 };
     const component = await mountSuspended(OtherSaveNotice);
 
     expect(component.text()).toContain("Saved on another device or by an agent while you have an unsaved edit");

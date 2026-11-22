@@ -13,7 +13,8 @@ describe("resourceWhiteboardEditorPropertiesSketch", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesSketch, {
       props: { element: WHITEBOARD_PROCESS, index: 0 },
     });
@@ -22,7 +23,7 @@ describe("resourceWhiteboardEditorPropertiesSketch", () => {
     assert.exists(architectButton);
     await architectButton.trigger("click");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({
+    expect(editState.value.document).toStrictEqual({
       elements: [{ ...WHITEBOARD_PROCESS, sketchLevel: SketchLevel.Architect }],
     });
   });

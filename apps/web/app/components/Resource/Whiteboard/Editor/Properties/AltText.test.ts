@@ -16,7 +16,8 @@ describe("resourceWhiteboardEditorPropertiesAltText", () => {
 
     const image = createWhiteboardImageElement(FILE_ID, { x: 0, y: 0 });
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [image] });
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [image] });
     const panel = await mountSuspended(ResourceWhiteboardEditorPropertiesAltText, {
       props: { element: image, index: 0 },
     });
@@ -24,8 +25,8 @@ describe("resourceWhiteboardEditorPropertiesAltText", () => {
     await panel.get("input").setValue("Quarterly chart");
     await panel.get("input").trigger("keydown.enter");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({ elements: [{ ...image, altText: "Quarterly chart" }] });
-    expect(whiteboardStore.editState.history.past).toHaveLength(1);
+    expect(editState.value.document).toStrictEqual({ elements: [{ ...image, altText: "Quarterly chart" }] });
+    expect(editState.value.history.past).toHaveLength(1);
   });
 
   test("leaving the field with its alt text unchanged makes no edit", async () => {
@@ -33,15 +34,16 @@ describe("resourceWhiteboardEditorPropertiesAltText", () => {
 
     const image = createWhiteboardImageElement(FILE_ID, { x: 0, y: 0 });
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [image] });
-    const editStateBefore = whiteboardStore.editState;
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [image] });
+    const editStateBefore = editState.value;
     const panel = await mountSuspended(ResourceWhiteboardEditorPropertiesAltText, {
       props: { element: image, index: 0 },
     });
 
     await panel.get("input").trigger("focusout");
 
-    expect(whiteboardStore.editState).toBe(editStateBefore);
+    expect(editState.value).toBe(editStateBefore);
   });
 
   test("the field shows the alt text the element holds, and empties when the element holds none", async () => {

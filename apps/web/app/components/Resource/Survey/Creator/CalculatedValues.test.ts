@@ -58,14 +58,16 @@ describe("resourceSurveyCreatorCalculatedValues", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(createSurveyTestDocument(["b"]));
+    const { document } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(createSurveyTestDocument(["b"]));
     const [issue] = checkSurveyDocument(createSurveyTestDocument(["a"]));
     const component = await mountSuspended(CalculatedValues);
 
     await getFieldByLabel(component, "Name").setValue("a");
 
     expect(component.get('[role="alert"]').text()).toBe(issue?.message);
-    expect(surveyCreatorStore.document.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["b"]);
+    expect(document.value.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["b"]);
 
     component.unmount();
   });
@@ -74,15 +76,14 @@ describe("resourceSurveyCreatorCalculatedValues", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(createSurveyTestDocument(["b"]));
+    const { document } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(createSurveyTestDocument(["b"]));
     const component = await mountSuspended(CalculatedValues);
 
     await getButtonByText(component, "Add a calculated value")?.trigger("click");
 
-    expect(surveyCreatorStore.document.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual([
-      "b",
-      "value",
-    ]);
+    expect(document.value.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["b", "value"]);
 
     component.unmount();
   });
@@ -91,18 +92,20 @@ describe("resourceSurveyCreatorCalculatedValues", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(createSurveyTestDocument(["b", "c"]));
+    const { document } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(createSurveyTestDocument(["b", "c"]));
     const component = await mountSuspended(CalculatedValues);
 
     await component.findAll('[aria-label="Remove calculated value"]')[0]?.trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.document.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["b", "c"]);
+    expect(document.value.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["b", "c"]);
 
     await getButtonByText(component, "Remove")?.trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.document.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["c"]);
+    expect(document.value.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["c"]);
 
     component.unmount();
   });
@@ -111,7 +114,9 @@ describe("resourceSurveyCreatorCalculatedValues", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(createSurveyTestDocument(["b", "c"]));
+    const { document } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(createSurveyTestDocument(["b", "c"]));
     const component = await mountSuspended(CalculatedValues);
 
     await component.get('[aria-label="Remove calculated value"]').trigger("click");
@@ -123,7 +128,7 @@ describe("resourceSurveyCreatorCalculatedValues", () => {
     await cancelButton.trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.document.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["b", "c"]);
+    expect(document.value.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["b", "c"]);
 
     component.unmount();
   });

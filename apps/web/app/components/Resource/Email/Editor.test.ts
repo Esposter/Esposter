@@ -97,6 +97,7 @@ describe("resourceEmailEditor", () => {
   test("enter edits a selected text block in place", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { getEditingNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
 
     trpcMsw.email.readResourceContent.query(
       () =>
@@ -123,13 +124,13 @@ describe("resourceEmailEditor", () => {
           root: { props: { lang: "", title: "" } },
         }),
     );
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(ResourceEmailEditor);
     await waitForSynchronizedFunctions();
     await flushPromises();
 
     await component.trigger("keydown", { key: "Enter" });
 
-    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
+    expect(getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
   });
 });

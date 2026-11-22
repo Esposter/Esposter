@@ -63,16 +63,18 @@ describe("resourceSurveyCreatorLogicBuilder", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load({
+    const { document, selectedPointer } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load({
       content: [createPageNode([createQuestion("a", "")]), createPageNode([])],
       root: { props: surveyRootPropsSchema.parse({ backgroundImage: "" }) },
     });
-    surveyCreatorStore.selectedPointer = "/content/1";
+    selectedPointer.value = "/content/1";
     const component = await mountSuspended(LogicBuilder);
 
     await getSectionField(component, "Enabled if", "Expression").setValue("{a} = 1");
 
-    expect(surveyCreatorStore.document.content[1]?.props.enableIf).toBe("{a} = 1");
+    expect(document.value.content[1]?.props.enableIf).toBe("{a} = 1");
 
     component.unmount();
   });
@@ -81,17 +83,19 @@ describe("resourceSurveyCreatorLogicBuilder", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load({
+    const { document, selectedPointer } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load({
       content: [createPageNode([createQuestion("a", "")]), createPageNode([], "{a} = 1")],
       root: { props: surveyRootPropsSchema.parse({ backgroundImage: "" }) },
     });
-    surveyCreatorStore.selectedPointer = "/content/1";
+    selectedPointer.value = "/content/1";
     const component = await mountSuspended(LogicBuilder);
 
     await getSectionField(component, "Enabled if", "Expression").setValue("{a} =");
 
     expect(component.get('[role="alert"]').text()).toBe("Expected an expression at character 6");
-    expect(surveyCreatorStore.document.content[1]?.props.enableIf).toBe("{a} = 1");
+    expect(document.value.content[1]?.props.enableIf).toBe("{a} = 1");
 
     component.unmount();
   });
@@ -100,14 +104,16 @@ describe("resourceSurveyCreatorLogicBuilder", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(createSurveyTestDocument([createQuestion("a", ""), createQuestion("b", "")]));
-    surveyCreatorStore.selectedPointer = "/content/0/props/children/1";
+    const { selectedNode, selectedPointer } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(createSurveyTestDocument([createQuestion("a", ""), createQuestion("b", "")]));
+    selectedPointer.value = "/content/0/props/children/1";
     const component = await mountSuspended(LogicBuilder);
     await getButtonByText(component, "Add a condition")?.trigger("click");
 
     await getFieldByLabel(component, "Value").setValue("yes");
 
-    expect(surveyCreatorStore.selectedNode?.props.visibleIf).toBe("{a} = 'yes'");
+    expect(selectedNode.value?.props.visibleIf).toBe("{a} = 'yes'");
 
     component.unmount();
   });
@@ -116,14 +122,16 @@ describe("resourceSurveyCreatorLogicBuilder", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(createSurveyTestDocument([createQuestion("a", ""), createQuestion("b", "{a} > 5")]));
-    surveyCreatorStore.selectedPointer = "/content/0/props/children/1";
+    const { selectedNode, selectedPointer } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(createSurveyTestDocument([createQuestion("a", ""), createQuestion("b", "{a} > 5")]));
+    selectedPointer.value = "/content/0/props/children/1";
     const component = await mountSuspended(LogicBuilder);
 
     await getFieldByLabel(component, "Expression").setValue("{a} >");
 
     expect(component.get('[role="alert"]').text()).toBe("Expected an expression at character 6");
-    expect(surveyCreatorStore.selectedNode?.props.visibleIf).toBe("{a} > 5");
+    expect(selectedNode.value?.props.visibleIf).toBe("{a} > 5");
 
     component.unmount();
   });
@@ -132,19 +140,21 @@ describe("resourceSurveyCreatorLogicBuilder", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(createSurveyTestDocument([createQuestion("a", ""), createQuestion("b", "{a} = 'yes'")]));
-    surveyCreatorStore.selectedPointer = "/content/0/props/children/1";
+    const { selectedNode, selectedPointer } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(createSurveyTestDocument([createQuestion("a", ""), createQuestion("b", "{a} = 'yes'")]));
+    selectedPointer.value = "/content/0/props/children/1";
     const component = await mountSuspended(LogicBuilder);
 
     await component.get('[aria-label="Remove condition"]').trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.selectedNode?.props.visibleIf).toBe("{a} = 'yes'");
+    expect(selectedNode.value?.props.visibleIf).toBe("{a} = 'yes'");
 
     await getButtonByText(component, "Remove")?.trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.selectedNode?.props.visibleIf).toBe("");
+    expect(selectedNode.value?.props.visibleIf).toBe("");
 
     component.unmount();
   });
@@ -153,8 +163,10 @@ describe("resourceSurveyCreatorLogicBuilder", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(createSurveyTestDocument([createQuestion("a", ""), createQuestion("b", "{a} = 'yes'")]));
-    surveyCreatorStore.selectedPointer = "/content/0/props/children/1";
+    const { selectedNode, selectedPointer } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(createSurveyTestDocument([createQuestion("a", ""), createQuestion("b", "{a} = 'yes'")]));
+    selectedPointer.value = "/content/0/props/children/1";
     const component = await mountSuspended(LogicBuilder);
 
     await component.get('[aria-label="Remove condition"]').trigger("click");
@@ -166,7 +178,7 @@ describe("resourceSurveyCreatorLogicBuilder", () => {
     await cancelButton.trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.selectedNode?.props.visibleIf).toBe("{a} = 'yes'");
+    expect(selectedNode.value?.props.visibleIf).toBe("{a} = 'yes'");
 
     component.unmount();
   });

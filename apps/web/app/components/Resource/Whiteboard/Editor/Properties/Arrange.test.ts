@@ -28,9 +28,11 @@ describe("resourceWhiteboardEditorPropertiesArrange", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
     const whiteboardEditorStore = useWhiteboardEditorStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [createShape(FIRST_ID, 0), FREE_ARROW] });
-    whiteboardEditorStore.selectedIds = [FIRST_ID, ARROW_ID];
+    const { selectedIds } = storeToRefs(whiteboardEditorStore);
+    editState.value = createWhiteboardEditState({ elements: [createShape(FIRST_ID, 0), FREE_ARROW] });
+    selectedIds.value = [FIRST_ID, ARROW_ID];
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesArrange);
 
     for (const label of [...ALIGN_LABELS, ...DISTRIBUTE_LABELS])
@@ -41,11 +43,11 @@ describe("resourceWhiteboardEditorPropertiesArrange", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
     const whiteboardEditorStore = useWhiteboardEditorStore();
-    whiteboardStore.editState = createWhiteboardEditState({
-      elements: [createShape(FIRST_ID, 0), createShape(SECOND_ID, 200)],
-    });
-    whiteboardEditorStore.selectedIds = [FIRST_ID, SECOND_ID];
+    const { selectedIds } = storeToRefs(whiteboardEditorStore);
+    editState.value = createWhiteboardEditState({ elements: [createShape(FIRST_ID, 0), createShape(SECOND_ID, 200)] });
+    selectedIds.value = [FIRST_ID, SECOND_ID];
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesArrange);
 
     // The two shapes differ in x alone, so the left, centre and right edges would move one and the top, middle and bottom edges already line up
@@ -61,18 +63,17 @@ describe("resourceWhiteboardEditorPropertiesArrange", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
     const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { selectedIds } = storeToRefs(whiteboardEditorStore);
     const second = createShape(SECOND_ID, 200);
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [createShape(FIRST_ID, 0), second] });
-    whiteboardEditorStore.selectedIds = [FIRST_ID, SECOND_ID];
+    editState.value = createWhiteboardEditState({ elements: [createShape(FIRST_ID, 0), second] });
+    selectedIds.value = [FIRST_ID, SECOND_ID];
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesArrange);
 
     await wrapper.get('button[aria-label="Align left"]').trigger("click");
 
-    expect(whiteboardStore.editState.document.elements).toStrictEqual([
-      createShape(FIRST_ID, 0),
-      createShape(SECOND_ID, 0),
-    ]);
-    expect(whiteboardStore.editState.history.past).toHaveLength(1);
+    expect(editState.value.document.elements).toStrictEqual([createShape(FIRST_ID, 0), createShape(SECOND_ID, 0)]);
+    expect(editState.value.history.past).toHaveLength(1);
   });
 });

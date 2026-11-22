@@ -38,7 +38,8 @@ describe(useReadSurveyResponses, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     let records = emptyRecords;
     trpcMsw.survey.readSurveyResponseRecords.query(({ ctx }) => {

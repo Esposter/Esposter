@@ -536,8 +536,9 @@ describe("resourceWhiteboardEditor", () => {
 
     const component = await mountEditor([]);
     const whiteboardStore = useWhiteboardStore();
+    const { insertElement } = whiteboardStore;
     await flushPromises();
-    whiteboardStore.insertElement(WHITEBOARD_PROCESS);
+    insertElement(WHITEBOARD_PROCESS);
     await flushPromises();
     const view = component.get('[aria-label="View"]');
 
@@ -551,9 +552,10 @@ describe("resourceWhiteboardEditor", () => {
 
     const component = await mountEditor([]);
     const whiteboardStore = useWhiteboardStore();
+    const { insertElement } = whiteboardStore;
     const { whiteboard } = storeToRefs(whiteboardStore);
     await flushPromises();
-    whiteboardStore.insertElement(WHITEBOARD_PROCESS);
+    insertElement(WHITEBOARD_PROCESS);
     await flushPromises();
     await component.get('[aria-label="Undo"]').trigger("click");
     await component.get('[aria-label="Redo"]').trigger("click");
@@ -632,7 +634,8 @@ describe("resourceWhiteboardEditor", () => {
     await mountEditor([]);
     await flushPromises();
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.insertElement(WHITEBOARD_PROCESS);
+    const { insertElement } = whiteboardStore;
+    insertElement(WHITEBOARD_PROCESS);
     await nextTick();
     await vi.advanceTimersByTimeAsync(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
     await waitForSynchronizedFunctions();

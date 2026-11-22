@@ -17,7 +17,8 @@ describe("resourceWhiteboardEditorPropertiesArrow", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS, WHITEBOARD_ARROW] });
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS, WHITEBOARD_ARROW] });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesArrow, {
       props: { arrow: WHITEBOARD_ARROW, index: 1 },
     });
@@ -34,7 +35,7 @@ describe("resourceWhiteboardEditorPropertiesArrow", () => {
     await detachStartButton.trigger("click");
 
     // The start is free and stays at its point, and the rest of the arrow is untouched
-    expect(whiteboardStore.editState.document).toStrictEqual({
+    expect(editState.value.document).toStrictEqual({
       elements: [WHITEBOARD_PROCESS, { ...WHITEBOARD_ARROW, start: { point: { x: 50, y: 100 } } }],
     });
   });
@@ -43,12 +44,13 @@ describe("resourceWhiteboardEditorPropertiesArrow", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
     const arrow: ArrowElement = {
       ...WHITEBOARD_ARROW,
       end: { point: { x: 150, y: 250 } },
       start: { point: { x: 50, y: 100 } },
     };
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS, arrow] });
+    editState.value = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS, arrow] });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesArrow, { props: { arrow, index: 1 } });
 
     // Checking an end's box sets its triangle, and the head choice for that end appears beside it
@@ -78,7 +80,7 @@ describe("resourceWhiteboardEditorPropertiesArrow", () => {
     assert.exists(endDiamondButton);
     await endDiamondButton.trigger("click");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({
+    expect(editState.value.document).toStrictEqual({
       elements: [
         WHITEBOARD_PROCESS,
         {

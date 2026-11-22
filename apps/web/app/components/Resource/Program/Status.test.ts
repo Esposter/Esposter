@@ -48,7 +48,8 @@ const findButton = (component: VueWrapper, label: string) => {
 };
 const getNotificationTitles = () => {
   const notificationStore = useNotificationStore();
-  return notificationStore.notifications.map(({ title }) => title);
+  const { notifications } = storeToRefs(notificationStore);
+  return notifications.value.map(({ title }) => title);
 };
 // The blade renders inside the shell's Suspense boundary, which is what shows a skeleton while it resolves —
 // So the blade awaits everything it renders from in setup rather than mounting empty behind its own flag

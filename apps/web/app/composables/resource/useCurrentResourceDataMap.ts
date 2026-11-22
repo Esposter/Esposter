@@ -4,5 +4,6 @@ import { useResourceStore } from "#src/store/resource/index";
 // That key is the open resource's id, owned here rather than restated beside every field
 export const useCurrentResourceDataMap = <TItem>(defaultValue: (() => TItem) | TItem) => {
   const resourceStore = useResourceStore();
-  return useDataMap(() => resourceStore.currentResourceId, defaultValue);
+  const { currentResourceId } = storeToRefs(resourceStore);
+  return useDataMap(() => currentResourceId.value, defaultValue);
 };

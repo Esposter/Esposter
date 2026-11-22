@@ -60,11 +60,12 @@ describe(useReadResources, () => {
     const { items: listItems, readResources } = useReadResources();
     await readResources(firstOptions);
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(resourceTable, { ...item, name: "renamed", version: 1 });
+    const { arrive } = overlayStore;
+    arrive(resourceTable, { ...item, name: "renamed", version: 1 });
 
     expect(listItems.value.map(({ name }) => name)).toStrictEqual(["renamed"]);
 
-    overlayStore.arrive(resourceTable, { ...item, deletedAt: new Date(0), version: 2 });
+    arrive(resourceTable, { ...item, deletedAt: new Date(0), version: 2 });
 
     expect(listItems.value).toStrictEqual([]);
   });

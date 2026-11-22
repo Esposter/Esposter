@@ -53,8 +53,9 @@ describe(useRowStore, () => {
 
     setupWithDataSource(createDataSource([createColumn("")], []));
     const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
     const { applyResource } = resourceStore;
-    const firstResource = resourceStore.resource;
+    const firstResource = resource.value;
     assert.exists(firstResource);
     const filterStore = useFilterStore();
     const { setColumnFilter } = filterStore;
@@ -77,10 +78,11 @@ describe(useRowStore, () => {
 
     setupWithDataSource(createDataSource([createColumn("")], []));
     const sheetStore = useSheetStore();
+    const { sheetResource } = storeToRefs(sheetStore);
     const rowStore = useRowStore();
     const { page } = storeToRefs(rowStore);
     page.value = 2;
-    sheetStore.sheetResource.data = createDataSource([createColumn("")], []);
+    sheetResource.value.data = createDataSource([createColumn("")], []);
     await flushPromises();
 
     expect(page.value).toBe(2);
@@ -101,13 +103,15 @@ describe(useRowStore, () => {
       createDataSource([sourceColumn, runningSummationColumn], [createRow({ "": 1 }), createRow({ "": 2 })]),
     );
     const sheetStore = useSheetStore();
+    const { dataSource } = storeToRefs(sheetStore);
     const rowStore = useRowStore();
-    const lastRow = takeOne(sheetStore.dataSource.rows, 1);
+    const { getCellText } = rowStore;
+    const lastRow = takeOne(dataSource.value.rows, 1);
 
-    expect(rowStore.getCellText(lastRow, runningSummationColumn)).toBe("3");
+    expect(getCellText(lastRow, runningSummationColumn)).toBe("3");
 
-    takeOne(sheetStore.dataSource.rows).data[""] = 5;
+    takeOne(dataSource.value.rows).data[""] = 5;
 
-    expect(rowStore.getCellText(lastRow, runningSummationColumn)).toBe("7");
+    expect(getCellText(lastRow, runningSummationColumn)).toBe("7");
   });
 });

@@ -20,20 +20,22 @@ import { downloadFile, InvalidOperationError, Operation } from "@esposter/shared
 export const createNoteMarkdownPortableFormat = (): PortableFormat => ({
   export: async () => {
     const resourceStore = useResourceStore();
-    const resourceId = resourceStore.currentResourceId;
+    const { currentResourceId, resource } = storeToRefs(resourceStore);
+    const resourceId = currentResourceId.value;
     const noteStore = useNoteStore();
     const { loadContent } = noteStore;
     await loadContent();
-    if (resourceStore.currentResourceId !== resourceId || !resourceStore.resource) return;
+    if (currentResourceId.value !== resourceId || !resource.value) return;
 
     const { note } = storeToRefs(noteStore);
     const markdown = serializeNoteMarkdown(note.value.doc);
-    downloadFile(`${trimFileExtension(resourceStore.resource.name)}.md`, markdown, MimeType.Markdown);
+    downloadFile(`${trimFileExtension(resource.value.name)}.md`, markdown, MimeType.Markdown);
   },
   icon: "i-mdi:language-markdown",
   import: async () => {
     const resourceStore = useResourceStore();
-    const resourceId = resourceStore.currentResourceId;
+    const { currentResourceId } = storeToRefs(resourceStore);
+    const resourceId = currentResourceId.value;
     const noteStore = useNoteStore();
     const { loadContent } = noteStore;
     await loadContent();

@@ -21,9 +21,10 @@ describe("resourceBladeHeader", () => {
     expect(component.find('[aria-label="Ask Claude"]').exists()).toBe(true);
     // The palette keeps the commands of every header mounted before this one, so this type's group is what is read
     const commandStore = useCommandStore();
+    const { commands } = storeToRefs(commandStore);
 
     expect(
-      commandStore.commands
+      commands.value
         .filter((command) => command.id === "ask-claude" && command.group === group)
         .map(({ title }) => title),
     ).toStrictEqual(["Ask Claude"]);

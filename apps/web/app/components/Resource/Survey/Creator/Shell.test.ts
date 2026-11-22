@@ -32,9 +32,11 @@ vi.mock(import("#src/composables/ui/useUiDisplay"), async (importOriginal) => {
 
 const loadSurvey = () => {
   const surveyCreatorStore = useSurveyCreatorStore();
+  const { isPreview } = storeToRefs(surveyCreatorStore);
+  const { load } = surveyCreatorStore;
   // The store keeps its preview across tests, so each survey starts in Design
-  surveyCreatorStore.isPreview = false;
-  surveyCreatorStore.load(
+  isPreview.value = false;
+  load(
     surveyDocumentSchema.parse({
       content: [
         {
@@ -88,6 +90,7 @@ describe("resourceSurveyCreatorShell", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey();
+    const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
     const { select } = useSurveyCreatorCommands();
     select(secondQuestionPointer);
     const component = await mountSuspended(ResourceSurveyCreatorShell);
@@ -96,7 +99,7 @@ describe("resourceSurveyCreatorShell", () => {
     document.body.dispatchEvent(new KeyboardEvent("keydown", { altKey: true, bubbles: true, key: "ArrowUp" }));
 
     expect(
-      surveyCreatorStore.document.content.map(({ props }) => props.children.map(({ props: { id } }) => id)),
+      surveyDocument.value.content.map(({ props }) => props.children.map(({ props: { id } }) => id)),
     ).toStrictEqual([["second", "first"]]);
 
     component.unmount();
@@ -114,12 +117,13 @@ describe("resourceSurveyCreatorShell", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey();
+    const { isPreview } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorShell);
 
     expect(component.findAll(structureSelector)).toHaveLength(1);
     expect(component.findAll(inspectorSelector)).toHaveLength(1);
 
-    surveyCreatorStore.isPreview = true;
+    isPreview.value = true;
     await nextTick();
 
     expect(component.findComponent(ResourceSurveyRunner).exists()).toBe(true);
@@ -133,8 +137,9 @@ describe("resourceSurveyCreatorShell", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey();
+    const { isPreview } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorShell);
-    surveyCreatorStore.isPreview = true;
+    isPreview.value = true;
     await nextTick();
     await component
       .findAll("button")
@@ -144,9 +149,9 @@ describe("resourceSurveyCreatorShell", () => {
 
     expect(component.find("table").exists()).toBe(true);
 
-    surveyCreatorStore.isPreview = false;
+    isPreview.value = false;
     await nextTick();
-    surveyCreatorStore.isPreview = true;
+    isPreview.value = true;
     await nextTick();
     await flushPromises();
 

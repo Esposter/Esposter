@@ -28,9 +28,11 @@ describe("resourceHomeRecentsList", () => {
       return { items: [recent], nextCursor: "" };
     });
     const recentStore = useRecentStore();
-    await recentStore.readRecents();
+    const { readRecents } = recentStore;
+    await readRecents();
     const cacheStore = useCacheStore();
-    await cacheStore.invalidateTags([CacheTag.Recents]);
+    const { invalidateTags } = cacheStore;
+    await invalidateTags([CacheTag.Recents]);
     const wrapper = await mountSuspended(ResourceHomeRecentsList, { shallow: true });
     await flushPromises();
 

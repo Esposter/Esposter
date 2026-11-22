@@ -67,7 +67,8 @@ const createLargeSheetResource = (name: string) => {
 const settleSave = async () => {
   await waitForSynchronizedFunctions();
   const resourceStore = useResourceStore();
-  return resourceStore.saveState;
+  const { saveState } = storeToRefs(resourceStore);
+  return saveState.value;
 };
 
 describe(useResourceStore, () => {
@@ -447,13 +448,14 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
+    const { currentResourceId } = storeToRefs(resourceStore);
     const { saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
     const { readContent, saveContent, setPersistedContent } = resourceStore;
     const { readResource } = useReadOpenResource();
     await readResource();
     await readContent(noop);
     setPersistedContent(createDefaultSheetResource());
-    unwrittenContentResourceId.value = resourceStore.currentResourceId;
+    unwrittenContentResourceId.value = currentResourceId.value;
     saveContent(createDefaultSheetResource());
     await settleSave();
 
@@ -491,10 +493,11 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
+    const { currentResourceId } = storeToRefs(resourceStore);
     const { saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
     const { readResource } = useReadOpenResource();
     await readResource();
-    const heldResourceId = resourceStore.currentResourceId;
+    const heldResourceId = currentResourceId.value;
     unwrittenContentResourceId.value = heldResourceId;
     setRouteId(otherResourceId);
     await readResource();
@@ -603,6 +606,7 @@ describe(useResourceStore, () => {
       return { ...createResource(resourceId), contentVersion: serverContentVersion };
     });
     const notificationStore = useNotificationStore();
+    const { notifications } = storeToRefs(notificationStore);
     const resourceStore = useResourceStore();
     const { readContent, saveContent } = resourceStore;
     const { saveState } = storeToRefs(resourceStore);
@@ -615,7 +619,7 @@ describe(useResourceStore, () => {
 
     expect(serverContentVersion).toBe(2);
     expect(saveState.value).toBe(ResourceSaveState.Saved);
-    expect(notificationStore.notifications).toHaveLength(0);
+    expect(notifications.value).toHaveLength(0);
   });
 
   // A save queued behind an in-flight one carries the version its content was read at, not the held row's. Another
@@ -637,6 +641,7 @@ describe(useResourceStore, () => {
       return { ...createResource(input.id), contentVersion: serverContentVersion };
     });
     const notificationStore = useNotificationStore();
+    const { notifications } = storeToRefs(notificationStore);
     const resourceStore = useResourceStore();
     const { clearResource, readContent, saveContent } = resourceStore;
     const { readResource } = useReadOpenResource();
@@ -655,7 +660,7 @@ describe(useResourceStore, () => {
 
     expect(contentVersions).toStrictEqual([0, 0]);
     expect(serverContentVersion).toBe(1);
-    expect(notificationStore.notifications.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
+    expect(notifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
   });
 
   // A save keeps the version its own opening confirmed. A reopened read confirms the resource's newer version, which is not
@@ -677,6 +682,7 @@ describe(useResourceStore, () => {
       return { ...createResource(input.id), contentVersion: serverContentVersion };
     });
     const notificationStore = useNotificationStore();
+    const { notifications } = storeToRefs(notificationStore);
     const resourceStore = useResourceStore();
     const { clearResource, readContent, saveContent } = resourceStore;
     const { readResource } = useReadOpenResource();
@@ -700,7 +706,7 @@ describe(useResourceStore, () => {
 
     expect(contentVersions).toStrictEqual([0, 0]);
     expect(serverContentVersion).toBe(1);
-    expect(notificationStore.notifications.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
+    expect(notifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh", "Refresh"]);
   });
 
   // The row another device's read brings does not move the version the content was read at. A save queued behind a
@@ -836,6 +842,7 @@ describe(useResourceStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
     });
     const notificationStore = useNotificationStore();
+    const { notifications } = storeToRefs(notificationStore);
     const resourceStore = useResourceStore();
     const { readContent, saveContent } = resourceStore;
     const { readResource } = useReadOpenResource();
@@ -844,7 +851,7 @@ describe(useResourceStore, () => {
     saveContent(createDefaultSheetResource());
     await settleSave();
 
-    expect(notificationStore.notifications.map(({ action }) => action?.title)).toStrictEqual(["Refresh"]);
+    expect(notifications.value.map(({ action }) => action?.title)).toStrictEqual(["Refresh"]);
   });
 
   // An explicit reload is a read like any other: its answer can land after a newer read has held a newer version. When the
@@ -1257,12 +1264,14 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
+    const { isReloadPending } = storeToRefs(resourceStore);
+    const { reloadResource } = resourceStore;
     await useReadOpenResource().readResource();
-    const refresh = resourceStore.reloadResource();
+    const refresh = reloadResource();
 
-    expect(resourceStore.isReloadPending).toBe(true);
+    expect(isReloadPending.value).toBe(true);
     await refresh;
-    expect(resourceStore.isReloadPending).toBe(false);
+    expect(isReloadPending.value).toBe(false);
   });
 
   // A third-party editor adopts the content the store's re-read landed, so the two stages run in order rather
@@ -1421,6 +1430,7 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
+    const { takeOtherSave } = resourceStore;
     const { heldSave, resource, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
     const { readContent } = resourceStore;
     const { readResource } = useReadOpenResource();
@@ -1434,7 +1444,7 @@ describe(useResourceStore, () => {
     await withFinalizerAsync(async () => {
       serveOpenRow({ contentHash: otherDeviceHash, contentVersion: contentVersion + 1 });
       await readResource();
-      await resourceStore.takeOtherSave();
+      await takeOtherSave();
     }, unregisterReload);
 
     expect(reload).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);

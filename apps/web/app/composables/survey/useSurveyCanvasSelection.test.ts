@@ -11,8 +11,10 @@ describe(useSurveyCanvasSelection, () => {
 
     setActivePinia(createPinia());
     const surveyCreatorStore = useSurveyCreatorStore();
+    const { selectedPointer } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
     // The selection is read off the document, so the element's pointer names a page the document holds
-    surveyCreatorStore.load(createSurveyOnePageTestDocument([]));
+    load(createSurveyOnePageTestDocument([]));
     const { getSelectionBindings } = useSurveyCanvasSelection();
     const pointer = "/content/0";
     const bindings = getSelectionBindings(pointer);
@@ -24,16 +26,16 @@ describe(useSurveyCanvasSelection, () => {
 
     child.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "Enter" }));
 
-    expect(surveyCreatorStore.selectedPointer).toBe("");
+    expect(selectedPointer.value).toBe("");
 
     element.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "Enter" }));
 
-    expect(surveyCreatorStore.selectedPointer).toBe(pointer);
+    expect(selectedPointer.value).toBe(pointer);
     expect(getSelectionBindings(pointer).class).toStrictEqual({ "ui-selected": true });
 
-    surveyCreatorStore.selectedPointer = "";
+    selectedPointer.value = "";
     element.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
-    expect(surveyCreatorStore.selectedPointer).toBe(pointer);
+    expect(selectedPointer.value).toBe(pointer);
   });
 });

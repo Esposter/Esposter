@@ -12,8 +12,9 @@ describe("resourceWhiteboardEditorPropertiesFill", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
     const shape: ShapeElement = { ...WHITEBOARD_PROCESS, fill: "#0000ff" };
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [shape] });
+    editState.value = createWhiteboardEditState({ elements: [shape] });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesFill, {
       props: { element: shape, index: 0 },
     });
@@ -22,6 +23,6 @@ describe("resourceWhiteboardEditorPropertiesFill", () => {
     assert.exists(noFillButton);
     await noFillButton.trigger("click");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({ elements: [{ ...shape, fill: "" }] });
+    expect(editState.value.document).toStrictEqual({ elements: [{ ...shape, fill: "" }] });
   });
 });

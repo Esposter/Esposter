@@ -13,7 +13,8 @@ import { getResultAsync } from "@esposter/shared";
 // Ever deleted: one the survey held when the editor opened, or one the session uploaded
 export const useSurveyFiles = () => {
   const resourceStore = useResourceStore();
-  const getResourceId = () => resourceStore.currentResourceId;
+  const { currentResourceId } = storeToRefs(resourceStore);
+  const getResourceId = () => currentResourceId.value;
   const uploadFile = useUploadResourceFile(ResourceType.Survey, getResourceId);
   const deleteFile = useDeleteResourceFile(ResourceType.Survey, getResourceId);
   const surveyFilesStore = useSurveyFilesStore();

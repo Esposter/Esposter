@@ -52,7 +52,8 @@ describe(useVersionHistoryStore, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     const resource = createResourceListItem();
     const topic = getTopic(TopicKind.Resource, resource.id);
@@ -134,7 +135,8 @@ describe(useVersionHistoryStore, () => {
         trpcMsw.webpage.readResourceContent.query(() => content);
         trpcMsw.webpage.readResourcePublication.query(() => undefined);
         const webpageEditorStore = useWebpageEditorStore();
-        await webpageEditorStore.loadContent();
+        const { loadContent } = webpageEditorStore;
+        await loadContent();
 
         return () => {
           content = new WebpageEditor({ content: restoredContent });
@@ -142,8 +144,9 @@ describe(useVersionHistoryStore, () => {
       },
       read: (resourceId: string) => {
         const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+        const { getDocument } = pageBuilderDocumentStore;
 
-        return pageBuilderDocumentStore.getDocument(resourceId)?.content;
+        return getDocument(resourceId)?.content;
       },
       type: ResourceType.Webpage,
     },
@@ -158,7 +161,8 @@ describe(useVersionHistoryStore, () => {
         trpcMsw.email.readResourceContent.query(() => content);
         trpcMsw.email.readResourcePublication.query(() => undefined);
         const emailEditorStore = useEmailEditorStore();
-        await emailEditorStore.loadContent();
+        const { loadContent } = emailEditorStore;
+        await loadContent();
 
         return () => {
           content = restoredEmail;
@@ -166,8 +170,9 @@ describe(useVersionHistoryStore, () => {
       },
       read: (resourceId: string) => {
         const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+        const { getEmailDocument } = pageBuilderDocumentStore;
 
-        return pageBuilderDocumentStore.getEmailDocument(resourceId)?.root;
+        return getEmailDocument(resourceId)?.root;
       },
       type: ResourceType.Email,
     },

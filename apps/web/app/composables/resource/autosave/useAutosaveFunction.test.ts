@@ -56,7 +56,8 @@ describe(useAutosaveFunction, () => {
   afterEach(() => {
     vi.useRealTimers();
     const resourceStore = useResourceStore();
-    resourceStore.clearResource(resourceId);
+    const { clearResource } = resourceStore;
+    clearResource(resourceId);
   });
 
   test("saves once the debounce elapses", async () => {

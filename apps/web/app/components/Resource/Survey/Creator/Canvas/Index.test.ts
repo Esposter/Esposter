@@ -27,30 +27,34 @@ describe("resourceSurveyCreatorCanvasIndex", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(createSurveyOnePageTestDocument([textQuestion("first"), textQuestion("second")]));
+    const { document, selectedPointer } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(createSurveyOnePageTestDocument([textQuestion("first"), textQuestion("second")]));
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await findButton(component, "Add question")?.trigger("click");
     await flushPromises();
 
-    const children = surveyCreatorStore.document.content[0]?.props.children ?? [];
+    const children = document.value.content[0]?.props.children ?? [];
     expect(getChildren(children)).toStrictEqual([
       [SurveyNodeType.Text, "first"],
       [SurveyNodeType.Text, "second"],
       [SurveyNodeType.Text, "question1"],
     ]);
-    expect(surveyCreatorStore.selectedPointer).toBe("/content/0/props/children/2");
+    expect(selectedPointer.value).toBe("/content/0/props/children/2");
   });
 
   test("the skeleton adds a page", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(createSurveyOnePageTestDocument([textQuestion("first")]));
+    const { document, selectedPointer } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(createSurveyOnePageTestDocument([textQuestion("first")]));
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await findButton(component, "Add page")?.trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.document.content).toHaveLength(2);
-    expect(surveyCreatorStore.selectedPointer).toBe("/content/1");
+    expect(document.value.content).toHaveLength(2);
+    expect(selectedPointer.value).toBe("/content/1");
   });
 });

@@ -44,14 +44,15 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesText, {
       props: { element: WHITEBOARD_PROCESS, index: 0 },
     });
 
     await clickButton(wrapper, "XL");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({
+    expect(editState.value.document).toStrictEqual({
       elements: [{ ...WHITEBOARD_PROCESS, textSize: TextSize.ExtraLarge }],
     });
   });
@@ -60,14 +61,15 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [TEXT_BOX] });
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [TEXT_BOX] });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesText, {
       props: { element: TEXT_BOX, index: 0 },
     });
 
     await wrapper.get('[role="checkbox"][aria-label="Auto width"]').trigger("click");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({
+    expect(editState.value.document).toStrictEqual({
       elements: [{ ...TEXT_BOX, isWrapped: false, width: getTextWidth("Review the order", TextSize.Small) }],
     });
   });
@@ -77,21 +79,23 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
 
     const autoWidthBox: TextElement = { ...TEXT_BOX, isWrapped: false, width: 120 };
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [autoWidthBox] });
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [autoWidthBox] });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesText, {
       props: { element: autoWidthBox, index: 0 },
     });
 
     await wrapper.get('[role="checkbox"][aria-label="Auto width"]').trigger("click");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({ elements: [{ ...autoWidthBox, isWrapped: true }] });
+    expect(editState.value.document).toStrictEqual({ elements: [{ ...autoWidthBox, isWrapped: true }] });
   });
 
   test("shape text aligns to the left and the top", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesText, {
       props: { element: WHITEBOARD_PROCESS, index: 0 },
     });
@@ -99,7 +103,7 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     await clickButton(wrapper, "Left");
     await clickButton(wrapper, "Top");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({
+    expect(editState.value.document).toStrictEqual({
       elements: [
         {
           ...WHITEBOARD_PROCESS,
@@ -114,14 +118,15 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [TEXT_BOX] });
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [TEXT_BOX] });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesText, {
       props: { element: TEXT_BOX, index: 0 },
     });
 
     await clickButton(wrapper, "Right");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({
+    expect(editState.value.document).toStrictEqual({
       elements: [{ ...TEXT_BOX, horizontalAlignment: HorizontalAlignment.Right }],
     });
   });

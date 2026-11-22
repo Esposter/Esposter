@@ -17,7 +17,8 @@ describe("resourceWhiteboardElementImage", () => {
 
     const image = createWhiteboardImageElement(FILE_ID, { x: 0, y: 0 });
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [image] });
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [image] });
     const panel = await mountSuspended(ResourceWhiteboardEditorPropertiesAltText, {
       props: { element: image, index: 0 },
     });
@@ -26,7 +27,7 @@ describe("resourceWhiteboardElementImage", () => {
     await panel.get("input").trigger("focusout");
 
     const namedImage: ImageElement = { ...image, altText: "Quarterly chart" };
-    expect(whiteboardStore.editState.document).toStrictEqual({ elements: [namedImage] });
+    expect(editState.value.document).toStrictEqual({ elements: [namedImage] });
     const canvasImage = await mountSuspended(ResourceWhiteboardElementImage, { props: { image: namedImage } });
     expect(canvasImage.get("image").attributes("role")).toBe("img");
     expect(canvasImage.get("image").attributes("aria-label")).toBe("Quarterly chart");
@@ -37,7 +38,8 @@ describe("resourceWhiteboardElementImage", () => {
 
     const image = createWhiteboardImageElement(FILE_ID, { x: 0, y: 0 });
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [image] });
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [image] });
     const panel = await mountSuspended(ResourceWhiteboardEditorPropertiesAltText, {
       props: { element: image, index: 0 },
     });

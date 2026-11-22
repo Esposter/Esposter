@@ -17,10 +17,11 @@ describe(useSheetPortableDialogStore, () => {
 
     setupWithDataSource();
     const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
     const { applyResource } = resourceStore;
     const { currentResourceId } = storeToRefs(resourceStore);
     const resourceId = currentResourceId.value;
-    const sheetResource = resourceStore.resource;
+    const sheetResource = resource.value;
     assert.exists(sheetResource);
     const sheetPortableDialogStore = useSheetPortableDialogStore();
     const { openPreview } = sheetPortableDialogStore;
@@ -42,10 +43,11 @@ describe(useSheetPortableDialogStore, () => {
 
     setupWithDataSource();
     const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
     const { applyResource } = resourceStore;
     const { currentResourceId } = storeToRefs(resourceStore);
     const resourceId = currentResourceId.value;
-    const sheetResource = resourceStore.resource;
+    const sheetResource = resource.value;
     assert.exists(sheetResource);
     const sheetPortableDialogStore = useSheetPortableDialogStore();
     const { closeSurveyImport, openSurveyImport } = sheetPortableDialogStore;

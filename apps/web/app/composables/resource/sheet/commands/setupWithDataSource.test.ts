@@ -12,15 +12,18 @@ import { describe } from "vitest";
 // Resource, so the helper loads one when the test has not
 export const setupWithDataSource = (dataSource?: DataSource) => {
   const resourceStore = useResourceStore();
-  if (!resourceStore.resource) resourceStore.applyResource(createResourceListItem(), null);
+  const { resource } = storeToRefs(resourceStore);
+  const { applyResource } = resourceStore;
+  if (!resource.value) applyResource(createResourceListItem(), null);
   const sheetStore = useSheetStore();
-  sheetStore.sheetResource.data =
+  const { dataSource: storedDataSource, sheetResource } = storeToRefs(sheetStore);
+  sheetResource.value.data =
     dataSource ??
     createDataSource(
       [createColumn(""), createColumn(" ")],
       [createRow({ "": 0, " ": 1 }), createRow({ "": 2, " ": 3 })],
     );
-  return { dataSource: sheetStore.dataSource };
+  return { dataSource: storedDataSource.value };
 };
 
 describe.todo("setupWithDataSource");

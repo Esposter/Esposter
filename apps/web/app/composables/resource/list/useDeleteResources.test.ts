@@ -81,8 +81,9 @@ describe(useDeleteResources, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(resourceTable, resource);
-    overlayStore.arrive(resourceTable, otherResource);
+    const { arrive } = overlayStore;
+    arrive(resourceTable, resource);
+    arrive(resourceTable, otherResource);
     trpcMsw.resource.deleteResources.mutation(() => [createRemovedRow(resource)]);
     const { isCalled, refresh } = createRefresh();
     useDeleteResources(refresh)([resource]);
@@ -128,8 +129,9 @@ describe(useDeleteResources, () => {
 
     Object.assign(router.currentRoute.value.params, { id: "" });
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(resourceTable, resource);
-    overlayStore.arrive(resourceTable, otherResource);
+    const { arrive } = overlayStore;
+    arrive(resourceTable, resource);
+    arrive(resourceTable, otherResource);
     trpcMsw.resource.deleteResources.mutation(({ input }) => {
       if (input.ids.includes(resource.id)) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
@@ -159,10 +161,10 @@ describe(useDeleteResources, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
+    const { arrive } = overlayStore;
     const acceptedResources = Array.from({ length: MAX_READ_LIMIT }, () => createResourceListItem());
     const refusedResource = createResourceListItem();
-    for (const selectedResource of [...acceptedResources, refusedResource])
-      overlayStore.arrive(resourceTable, selectedResource);
+    for (const selectedResource of [...acceptedResources, refusedResource]) arrive(resourceTable, selectedResource);
     trpcMsw.resource.deleteResources.mutation(({ input }) => {
       if (input.ids.includes(refusedResource.id)) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 

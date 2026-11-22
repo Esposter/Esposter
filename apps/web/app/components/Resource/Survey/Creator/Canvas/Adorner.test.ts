@@ -13,7 +13,8 @@ import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-h
 
 const loadSurvey = (children: object[]) => {
   const surveyCreatorStore = useSurveyCreatorStore();
-  surveyCreatorStore.load(createSurveyOnePageTestDocument(children));
+  const { load } = surveyCreatorStore;
+  load(createSurveyOnePageTestDocument(children));
   useSurveyCreatorCommands().select("/content/0/props/children/0");
   return surveyCreatorStore;
 };
@@ -40,11 +41,12 @@ describe("resourceSurveyCreatorCanvasAdorner", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey([textQuestion]);
+    const { document } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await findButton(component, "Required")?.trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(
+    expect(document.value).toStrictEqual(
       createSurveyOnePageTestDocument([
         { props: { id: "first", isRequired: true, name: "first" }, type: SurveyNodeType.Text },
       ]),
@@ -58,27 +60,27 @@ describe("resourceSurveyCreatorCanvasAdorner", () => {
       textQuestion,
       { props: { id: "second", name: "second" }, type: SurveyNodeType.Text },
     ]);
+    const { document, selectedPointer } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await component.get('[aria-label="Duplicate"]').trigger("click");
     await flushPromises();
 
-    const names = surveyCreatorStore.document.content[0]?.props.children.map(({ props }) =>
-      "name" in props ? props.name : "",
-    );
+    const names = document.value.content[0]?.props.children.map(({ props }) => ("name" in props ? props.name : ""));
     expect(names).toStrictEqual(["first", "first1", "second"]);
-    expect(surveyCreatorStore.selectedPointer).toBe("/content/0/props/children/1");
+    expect(selectedPointer.value).toBe("/content/0/props/children/1");
   });
 
   test("a choice question becomes another choice kind with its choices", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey([radioGroup]);
+    const { document } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await component.get('[aria-label="Change kind"]').trigger("click");
     await findMenuItem(component, surveyNodeTypeDefinitionMap[SurveyNodeType.Checkbox].label)?.trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(
+    expect(document.value).toStrictEqual(
       createSurveyOnePageTestDocument([
         { props: { choices, id: "question", name: "question" }, type: SurveyNodeType.Checkbox },
       ]),
@@ -89,6 +91,7 @@ describe("resourceSurveyCreatorCanvasAdorner", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey([radioGroup]);
+    const { document } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await component.get('[aria-label="Change kind"]').trigger("click");
     await findMenuItem(component, surveyNodeTypeDefinitionMap[SurveyNodeType.Text].label)?.trigger("click");
@@ -96,13 +99,14 @@ describe("resourceSurveyCreatorCanvasAdorner", () => {
     await findButton(component, "Cancel")?.trigger("click");
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(createSurveyOnePageTestDocument([radioGroup]));
+    expect(document.value).toStrictEqual(createSurveyOnePageTestDocument([radioGroup]));
   });
 
   test("a kind change undoes as one step", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey([radioGroup]);
+    const { document } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await component.get('[aria-label="Change kind"]').trigger("click");
     await findMenuItem(component, surveyNodeTypeDefinitionMap[SurveyNodeType.Text].label)?.trigger("click");
@@ -112,6 +116,6 @@ describe("resourceSurveyCreatorCanvasAdorner", () => {
     useSurveyCreatorCommands().undo();
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(createSurveyOnePageTestDocument([radioGroup]));
+    expect(document.value).toStrictEqual(createSurveyOnePageTestDocument([radioGroup]));
   });
 });

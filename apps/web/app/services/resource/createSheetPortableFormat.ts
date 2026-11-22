@@ -18,7 +18,8 @@ export const createSheetPortableFormat = (type: DataSourceType): PortableFormat 
   export: async () => {
     // Named before the first await, so the dialog opens for the sheet the command was run on
     const resourceStore = useResourceStore();
-    const resourceId = resourceStore.currentResourceId;
+    const { currentResourceId } = storeToRefs(resourceStore);
+    const resourceId = currentResourceId.value;
     const sheetStore = useSheetStore();
     const { loadContent } = sheetStore;
     // The command bar is reachable from any blade, so the content may not be loaded yet
@@ -30,14 +31,16 @@ export const createSheetPortableFormat = (type: DataSourceType): PortableFormat 
   icon: DataSourceTypeItemCategoryDefinitionMap[type].icon,
   import: async () => {
     const resourceStore = useResourceStore();
-    const resourceId = resourceStore.currentResourceId;
+    const { currentResourceId } = storeToRefs(resourceStore);
+    const resourceId = currentResourceId.value;
     const sheetStore = useSheetStore();
     const { loadContent } = sheetStore;
     await loadContent();
     const configuration = DataSourceConfigurationMap[type];
     // A format other than the sheet's own is read with that format's defaults rather than rewriting the settings
     // The sheet already has — the same fallback the export dialog makes
-    const settings = sheetStore.settings.type === type ? sheetStore.settings : createDefaultSheetSettings(type);
+    const { settings: storedSettings } = storeToRefs(sheetStore);
+    const settings = storedSettings.value.type === type ? storedSettings.value : createDefaultSheetSettings(type);
     const sheetPortableDialogStore = useSheetPortableDialogStore();
     const { openPreview } = sheetPortableDialogStore;
     await importFile(configuration.mimeType, configuration.accept, async (file) => {

@@ -38,8 +38,9 @@ describe(useFindReplaceStore, () => {
 
     setupWithDataSource(createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]));
     const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
     const { applyResource } = resourceStore;
-    const sheetResource = resourceStore.resource;
+    const sheetResource = resource.value;
     assert.exists(sheetResource);
     const findReplaceStore = useFindReplaceStore();
     const { currentOccurrenceIndex, findValue } = storeToRefs(findReplaceStore);

@@ -37,7 +37,9 @@ describe("resourceSurveyCreatorPalette", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(
+    const { document, selectedPointer } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(
       surveyDocumentSchema.parse({
         content: [
           {
@@ -64,19 +66,21 @@ describe("resourceSurveyCreatorPalette", () => {
       .find((button) => button.text() === surveyNodeTypeDefinitionMap[SurveyNodeType.Rating].label)
       ?.trigger("click");
 
-    expect(surveyCreatorStore.document.content[0]?.props.children.map(({ type }) => type)).toStrictEqual([
+    expect(document.value.content[0]?.props.children.map(({ type }) => type)).toStrictEqual([
       SurveyNodeType.Text,
       SurveyNodeType.Rating,
       SurveyNodeType.Text,
     ]);
-    expect(surveyCreatorStore.selectedPointer).toBe("/content/0/props/children/1");
+    expect(selectedPointer.value).toBe("/content/0/props/children/1");
   });
 
   test("owner adds a question to a selected page", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(
+    const { document, selectedPointer } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(
       createSurveyTestDocument([
         createSurveyTestPage([createSurveyTestQuestion("first"), createSurveyTestQuestion("second")]),
       ]),
@@ -90,15 +94,16 @@ describe("resourceSurveyCreatorPalette", () => {
       .find((button) => button.text() === surveyNodeTypeDefinitionMap[SurveyNodeType.Text].label)
       ?.trigger("click");
 
-    expect(surveyCreatorStore.document.content[0]?.props.children).toHaveLength(3);
-    expect(surveyCreatorStore.selectedPointer).toBe("/content/0/props/children/2");
+    expect(document.value.content[0]?.props.children).toHaveLength(3);
+    expect(selectedPointer.value).toBe("/content/0/props/children/2");
   });
 
   test("an insertion menu offers only the kinds the slot accepts", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(
+    const { load } = surveyCreatorStore;
+    load(
       createSurveyTestDocument([
         createSurveyTestPage([createSurveyTestPanelDynamic("panel", [createSurveyTestQuestion("question1")])]),
       ]),
@@ -130,8 +135,9 @@ describe("resourceSurveyCreatorPalette", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
+    const { load } = surveyCreatorStore;
     // A survey with no page has nothing selected to insert after, so the insertion point is the survey's top level, which takes pages alone
-    surveyCreatorStore.load({ ...createSurveyDocument(), content: [] });
+    load({ ...createSurveyDocument(), content: [] });
     const component = await mountSuspended(ResourceSurveyCreatorPalette);
 
     expect(component.findAll("button:not([aria-expanded])").map((button) => button.text())).toStrictEqual([]);

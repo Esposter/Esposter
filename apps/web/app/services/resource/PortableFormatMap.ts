@@ -38,7 +38,8 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     {
       export: async () => {
         const resourceStore = useResourceStore();
-        const resourceValue = resourceStore.resource;
+        const { resource } = storeToRefs(resourceStore);
+        const resourceValue = resource.value;
         if (resourceValue) await exportDashboardPng(resourceValue.name);
       },
       icon: "i-mdi:image-outline",
@@ -72,7 +73,8 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const alertStore = useAlertStore();
         const { createAlert } = alertStore;
         const resourceStore = useResourceStore();
-        const resourceId = resourceStore.currentResourceId;
+        const { currentResourceId } = storeToRefs(resourceStore);
+        const resourceId = currentResourceId.value;
         // The open editor's latest edit reaches the stored copy first, so the export compiles what the reader sees: the
         // Export is the server's output, so it waits for the save to land. With no editor open nothing is held
         const emailExportDialogStore = useEmailExportDialogStore();
@@ -115,7 +117,8 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
       icon: "i-mdi:poll",
       import: async () => {
         const resourceStore = useResourceStore();
-        const resourceId = resourceStore.currentResourceId;
+        const { currentResourceId } = storeToRefs(resourceStore);
+        const resourceId = currentResourceId.value;
         const sheetStore = useSheetStore();
         const { loadContent } = sheetStore;
         await loadContent();
@@ -131,7 +134,8 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     {
       export: async () => {
         const resourceStore = useResourceStore();
-        const resourceId = resourceStore.currentResourceId;
+        const { currentResourceId } = storeToRefs(resourceStore);
+        const resourceId = currentResourceId.value;
         const todoListStore = useTodoListStore();
         const { loadContent } = todoListStore;
         await loadContent();

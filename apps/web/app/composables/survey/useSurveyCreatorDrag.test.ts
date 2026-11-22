@@ -35,9 +35,10 @@ const createPointerEvent = (type: string, clientX: number, clientY: number) =>
 const setup = (content: SurveyPageNode[]) => {
   setActivePinia(createPinia());
   const surveyCreatorStore = useSurveyCreatorStore();
+  const { load } = surveyCreatorStore;
   const { document, isUndoable } = storeToRefs(surveyCreatorStore);
   const original = { ...createSurveyDocument(), content };
-  surveyCreatorStore.load(original);
+  load(original);
   return { document, isUndoable, original, ...useSurveyCreatorCommands(), ...useSurveyCreatorDrag() };
 };
 

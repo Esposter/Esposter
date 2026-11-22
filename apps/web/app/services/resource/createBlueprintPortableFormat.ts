@@ -19,15 +19,16 @@ import { downloadFile } from "@esposter/shared";
 export const createBlueprintPortableFormat = (): PortableFormat => ({
   export: async () => {
     const resourceStore = useResourceStore();
-    const resourceId = resourceStore.currentResourceId;
+    const { currentResourceId, resource } = storeToRefs(resourceStore);
+    const resourceId = currentResourceId.value;
     const blueprintStore = useBlueprintStore();
     const { loadContent } = blueprintStore;
     await loadContent();
-    if (resourceStore.currentResourceId !== resourceId || !resourceStore.resource) return;
+    if (currentResourceId.value !== resourceId || !resource.value) return;
 
     const { blueprint } = storeToRefs(blueprintStore);
     downloadFile(
-      `${trimFileExtension(resourceStore.resource.name)}.json`,
+      `${trimFileExtension(resource.value.name)}.json`,
       stringifyBlueprintManifest(blueprint.value),
       MimeType.Json,
     );
@@ -35,7 +36,8 @@ export const createBlueprintPortableFormat = (): PortableFormat => ({
   icon: "i-mdi:code-json",
   import: async () => {
     const resourceStore = useResourceStore();
-    const resourceId = resourceStore.currentResourceId;
+    const { currentResourceId } = storeToRefs(resourceStore);
+    const resourceId = currentResourceId.value;
     const blueprintStore = useBlueprintStore();
     const { loadContent, setManifestJson } = blueprintStore;
     await loadContent();
@@ -47,7 +49,7 @@ export const createBlueprintPortableFormat = (): PortableFormat => ({
 
       const manifest = parseBlueprintManifest(await file.text());
       // A file read after the owner moved to another resource is that resource's import, and must not fill this one
-      if (resourceStore.currentResourceId !== resourceId) return;
+      if (currentResourceId.value !== resourceId) return;
       // The safety net an import takes before it replaces the draft, so the saved manifest it replaces stays in version
       // History whenever the owner saves the import. A failed revision leaves the Editor's text as it was
       if (!(await saveResourceRevision())) return;

@@ -16,12 +16,13 @@ describe(useSetDataSource, () => {
 
     setupWithDataSource();
     const sheetStore = useSheetStore();
+    const { dataSource } = storeToRefs(sheetStore);
     const getDataSourceSetter = useSetDataSource();
     const setDataSource = getDataSourceSetter();
     const newDataSource = createDataSource();
     setDataSource(newDataSource);
 
-    expect(sheetStore.dataSource).toStrictEqual(newDataSource);
+    expect(dataSource.value).toStrictEqual(newDataSource);
   });
 
   test("clears undo and redo history after setting data source", () => {
@@ -63,7 +64,8 @@ describe(useSetDataSource, () => {
     clearResource(resource.value.id);
     setDataSource(createDataSource([], []));
     const sheetStore = useSheetStore();
+    const { dataSource: storedDataSource } = storeToRefs(sheetStore);
 
-    expect(sheetStore.dataSource).toStrictEqual(dataSource);
+    expect(storedDataSource.value).toStrictEqual(dataSource);
   });
 });

@@ -38,7 +38,9 @@ describe("resourceNoteDialogs", () => {
 
     await useReadOpenResource().readResource();
     const noteStore = useNoteStore();
-    await noteStore.loadContent();
+    const { note } = storeToRefs(noteStore);
+    const { loadContent } = noteStore;
+    await loadContent();
     const notePortableDialogStore = useNotePortableDialogStore();
     const { openPreview } = notePortableDialogStore;
     const wrapper = await mountSuspended(ResourceNoteDialogs);
@@ -46,7 +48,7 @@ describe("resourceNoteDialogs", () => {
     await flushPromises();
 
     expect(wrapper.get(".rich-text-content").text()).toBe("imported");
-    expect(noteStore.note.doc).toStrictEqual(EMPTY_NOTE_DOC);
+    expect(note.value.doc).toStrictEqual(EMPTY_NOTE_DOC);
   });
 
   // The preview is the body, and the import's actions are the footer beneath it, so the confirm stays in view on a long note
@@ -55,7 +57,8 @@ describe("resourceNoteDialogs", () => {
 
     await useReadOpenResource().readResource();
     const noteStore = useNoteStore();
-    await noteStore.loadContent();
+    const { loadContent } = noteStore;
+    await loadContent();
     const notePortableDialogStore = useNotePortableDialogStore();
     const { openPreview } = notePortableDialogStore;
     const wrapper = await mountSuspended(ResourceNoteDialogs);
@@ -73,7 +76,9 @@ describe("resourceNoteDialogs", () => {
 
     await useReadOpenResource().readResource();
     const noteStore = useNoteStore();
-    await noteStore.loadContent();
+    const { note } = storeToRefs(noteStore);
+    const { loadContent } = noteStore;
+    await loadContent();
     const notePortableDialogStore = useNotePortableDialogStore();
     const { openPreview } = notePortableDialogStore;
     const { isPreviewOpen } = storeToRefs(notePortableDialogStore);
@@ -86,7 +91,7 @@ describe("resourceNoteDialogs", () => {
     await flushPromises();
 
     expect(isPreviewOpen.value).toBe(false);
-    expect(noteStore.note.doc).toStrictEqual(EMPTY_NOTE_DOC);
+    expect(note.value.doc).toStrictEqual(EMPTY_NOTE_DOC);
   });
 
   // The replaced content is saved as a revision before the import writes, so the reader can restore it
@@ -108,7 +113,9 @@ describe("resourceNoteDialogs", () => {
     trpcMsw.resource.readSnapshotHistory.query(() => []);
     await useReadOpenResource().readResource();
     const noteStore = useNoteStore();
-    await noteStore.loadContent();
+    const { note } = storeToRefs(noteStore);
+    const { loadContent } = noteStore;
+    await loadContent();
     const notePortableDialogStore = useNotePortableDialogStore();
     const { openPreview } = notePortableDialogStore;
     const wrapper = await mountSuspended(ResourceNoteDialogs);
@@ -122,6 +129,6 @@ describe("resourceNoteDialogs", () => {
     await flushPromises();
 
     expect(revisionSaves).toStrictEqual([resourceId]);
-    expect(noteStore.note.doc).toStrictEqual(importedDoc);
+    expect(note.value.doc).toStrictEqual(importedDoc);
   });
 });

@@ -11,7 +11,8 @@ describe("resourceSurveyCreatorToolbar", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(surveyDocumentSchema.parse({ content: [], root: { props: { backgroundImage: "" } } }));
+    const { load } = surveyCreatorStore;
+    load(surveyDocumentSchema.parse({ content: [], root: { props: { backgroundImage: "" } } }));
     const component = await mountSuspended(ResourceSurveyCreatorToolbar);
 
     expect(component.get('[aria-label="Undo"]').attributes("aria-disabled")).toBe("true");
@@ -22,7 +23,9 @@ describe("resourceSurveyCreatorToolbar", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(
+    const { isPreview } = storeToRefs(surveyCreatorStore);
+    const { load } = surveyCreatorStore;
+    load(
       surveyDocumentSchema.parse({
         content: [{ props: { children: [], enableIf: "", id: "page" }, type: SurveyNodeType.Page }],
         root: { props: { backgroundImage: "" } },
@@ -32,18 +35,19 @@ describe("resourceSurveyCreatorToolbar", () => {
 
     await component.get('[aria-label="Preview"]').trigger("click");
 
-    expect(surveyCreatorStore.isPreview).toBe(true);
+    expect(isPreview.value).toBe(true);
 
     await component.get('[aria-label="Design"]').trigger("click");
 
-    expect(surveyCreatorStore.isPreview).toBe(false);
+    expect(isPreview.value).toBe(false);
   });
 
   test("import, Export and Clear are in the overflow menu", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(surveyDocumentSchema.parse({ content: [], root: { props: { backgroundImage: "" } } }));
+    const { load } = surveyCreatorStore;
+    load(surveyDocumentSchema.parse({ content: [], root: { props: { backgroundImage: "" } } }));
     const component = await mountSuspended(ResourceSurveyCreatorToolbar);
 
     expect(component.find('[aria-label="Import"]').exists()).toBe(false);

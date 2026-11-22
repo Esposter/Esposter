@@ -14,7 +14,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // The rows the overlay shows, which is what the list or the blade reads
 const getLiveRows = () => {
   const overlayStore = useOverlayStore();
-  return overlayStore.view(resourceTable).value;
+  const { view } = overlayStore;
+  return view(resourceTable).value;
 };
 
 describe(useRestoreResources, () => {
@@ -38,7 +39,8 @@ describe(useRestoreResources, () => {
     const resource = createResourceListItem();
     // The row as the delete's answer left it: a tombstone, one version on
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(resourceTable, { ...resource, deletedAt: new Date(0), version: resource.version + 1 });
+    const { arrive } = overlayStore;
+    arrive(resourceTable, { ...resource, deletedAt: new Date(0), version: resource.version + 1 });
     trpcMsw.resource.restoreResources.mutation(() => [{ ...resource, deletedAt: null, version: resource.version + 2 }]);
     useRestoreResources().restoreResources([resource]);
 

@@ -182,10 +182,11 @@ describe(usePasteRangeFromClipboard, () => {
     const resourceStore = useResourceStore();
     const { applyResource } = resourceStore;
     const sheetStore = useSheetStore();
+    const { sheetResource } = storeToRefs(sheetStore);
     const otherDataSource = createSingleCellDataSource();
     readTextMock.mockImplementationOnce(() => {
       applyResource(createResourceListItem(), null);
-      sheetStore.sheetResource.data = otherDataSource;
+      sheetResource.value.data = otherDataSource;
       return Promise.resolve("2");
     });
     selectAnchor(0, 0);

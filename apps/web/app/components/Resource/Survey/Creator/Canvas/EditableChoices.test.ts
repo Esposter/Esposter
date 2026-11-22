@@ -18,7 +18,8 @@ const createSurvey = (choices: SurveyChoice[]) =>
   ]);
 const loadChoiceQuestion = (choices: SurveyChoice[]) => {
   const surveyCreatorStore = useSurveyCreatorStore();
-  surveyCreatorStore.load(createSurvey(choices));
+  const { load } = surveyCreatorStore;
+  load(createSurvey(choices));
   useSurveyCreatorCommands().select("/content/0/props/children/0");
   return surveyCreatorStore;
 };
@@ -29,12 +30,13 @@ describe("resourceSurveyCreatorCanvasEditableChoices", () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadChoiceQuestion([{ text: "first", value: 1 }]);
+    const { document } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await findChoice(component, 1).trigger("click");
     await component.get('input[aria-label="Choice 1"]').trigger("keydown", { key: "Enter" });
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(
+    expect(document.value).toStrictEqual(
       createSurvey([
         { text: "first", value: 1 },
         { text: "", value: 2 },
@@ -50,19 +52,21 @@ describe("resourceSurveyCreatorCanvasEditableChoices", () => {
       { text: "first", value: 1 },
       { text: "second", value: 2 },
     ]);
+    const { document } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await findChoice(component, 2).trigger("click");
     await component.get('input[aria-label="Choice 2"]').setValue("");
     await component.get('input[aria-label="Choice 2"]').trigger("keydown", { key: "Enter" });
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(createSurvey([{ text: "first", value: 1 }]));
+    expect(document.value).toStrictEqual(createSurvey([{ text: "first", value: 1 }]));
   });
 
   test("a choice added and left empty is removed on focus leaving it", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadChoiceQuestion([{ text: "first", value: 1 }]);
+    const { document } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await findChoice(component, 1).trigger("click");
     await component.get('input[aria-label="Choice 1"]').trigger("keydown", { key: "Enter" });
@@ -70,20 +74,21 @@ describe("resourceSurveyCreatorCanvasEditableChoices", () => {
     await component.get('input[aria-label="Choice 2"]').trigger("focusout");
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(createSurvey([{ text: "first", value: 1 }]));
+    expect(document.value).toStrictEqual(createSurvey([{ text: "first", value: 1 }]));
   });
 
   test("the last choice cannot be removed", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadChoiceQuestion([{ text: "first", value: 1 }]);
+    const { document } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await findChoice(component, 1).trigger("click");
     await component.get('input[aria-label="Choice 1"]').setValue("");
     await component.get('input[aria-label="Choice 1"]').trigger("keydown", { key: "Enter" });
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(createSurvey([{ text: "first", value: 1 }]));
+    expect(document.value).toStrictEqual(createSurvey([{ text: "first", value: 1 }]));
     expect(findChoice(component, 1).text()).toBe("first");
   });
 
@@ -94,11 +99,12 @@ describe("resourceSurveyCreatorCanvasEditableChoices", () => {
       { text: "first", value: 1 },
       { text: "second", value: 2 },
     ]);
+    const { document } = storeToRefs(surveyCreatorStore);
     const component = await mountSuspended(ResourceSurveyCreatorCanvas);
     await findChoice(component, 1).trigger("keydown", { altKey: true, key: "ArrowDown" });
     await flushPromises();
 
-    expect(surveyCreatorStore.document).toStrictEqual(
+    expect(document.value).toStrictEqual(
       createSurvey([
         { text: "second", value: 2 },
         { text: "first", value: 1 },

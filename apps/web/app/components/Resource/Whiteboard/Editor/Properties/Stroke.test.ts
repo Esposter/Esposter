@@ -13,8 +13,9 @@ describe("resourceWhiteboardEditorPropertiesStroke", () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
     const shape: ShapeElement = { ...WHITEBOARD_PROCESS, color: "#ff0000" };
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [shape] });
+    editState.value = createWhiteboardEditState({ elements: [shape] });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesStroke, {
       props: { element: shape, index: 0 },
     });
@@ -23,14 +24,15 @@ describe("resourceWhiteboardEditorPropertiesStroke", () => {
     assert.exists(clearColourButton);
     await clearColourButton.trigger("click");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({ elements: [{ ...shape, color: "" }] });
+    expect(editState.value.document).toStrictEqual({ elements: [{ ...shape, color: "" }] });
   });
 
   test("a bold width is committed to the element", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
-    whiteboardStore.editState = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesStroke, {
       props: { element: WHITEBOARD_PROCESS, index: 0 },
     });
@@ -39,7 +41,7 @@ describe("resourceWhiteboardEditorPropertiesStroke", () => {
     assert.exists(boldButton);
     await boldButton.trigger("click");
 
-    expect(whiteboardStore.editState.document).toStrictEqual({
+    expect(editState.value.document).toStrictEqual({
       elements: [{ ...WHITEBOARD_PROCESS, strokeWidth: StrokeWidth.Bold }],
     });
   });

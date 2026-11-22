@@ -35,7 +35,8 @@ describe("resourceWebpageSettings", () => {
     await component.get('[role="switch"]').trigger("click");
     await flushPromises();
     const webpageEditorStore = useWebpageEditorStore();
+    const { webpageEditor } = storeToRefs(webpageEditorStore);
 
-    expect(webpageEditorStore.webpageEditor.isIndexable).toBe(false);
+    expect(webpageEditor.value.isIndexable).toBe(false);
   });
 });

@@ -237,6 +237,7 @@ describe(useTodoListStore, () => {
     const todoListStore = await setupStore();
     const { items } = storeToRefs(todoListStore);
     const resourceStore = useResourceStore();
+    const { keepUnwrittenContent } = resourceStore;
     const { unwrittenContentResourceId } = storeToRefs(resourceStore);
     const { promise: isKeptSaveReached, resolve: onKeptSaveReached } = Promise.withResolvers<void>();
     const saveKept = vi.fn<(options: { input: { contentVersion: number; id: string } }) => ResourceInResource>(() => {
@@ -252,7 +253,7 @@ describe(useTodoListStore, () => {
       publication: null,
     }));
     await useReadOpenResource().readResource();
-    await resourceStore.keepUnwrittenContent();
+    await keepUnwrittenContent();
     await isKeptSaveReached;
     await flushPromises();
 
@@ -375,8 +376,9 @@ describe(useTodoListStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
     const { applyResource } = resourceStore;
-    const firstResource = resourceStore.resource;
+    const firstResource = resource.value;
     assert.exists(firstResource);
     const todoListStore = await setupStore();
     const { searchQuery } = storeToRefs(todoListStore);
