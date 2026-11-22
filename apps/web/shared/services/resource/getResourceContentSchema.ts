@@ -15,4 +15,5 @@ const ResourceContentSchemaMap: {
 
 export const getResourceContentSchema = <TType extends ResourceType>(
   type: TType,
-): (typeof ResourceContentSchemaMap)[TType]["contentSchema"] => ResourceContentSchemaMap[type].contentSchema;
+): z.ZodType<ResourceContent<TType>, z.input<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>> =>
+  ResourceContentSchemaMap[type].contentSchema;
