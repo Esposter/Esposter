@@ -117,20 +117,23 @@ export const MAX_VOLUME = 100;
 // And its file `language_model`, so both spellings carry its dtype
 export const VOICE_MODEL_ID = "owensong/chatterbox-nano-ONNX";
 export const VOICE_MODEL_ARCHITECTURE = "ChatterboxModel";
-export const VOICE_MODEL_DTYPE: Record<string, string> = {
+export const VOICE_MODEL_DTYPE = {
   conditional_decoder: "q4",
   embed_tokens: "fp16",
   language_model: "q4f16",
   model: "q4f16",
   speech_encoder: "q4f16",
-};
+} as const;
 export const VOICE_CPU_DEVICE = "cpu";
 export const VOICE_GPU_DEVICE = "webgpu";
 // Windows' vocoder runs on DirectML, where WebGPU's vocoder returns near-silence; DirectML rejects a slice in the
 // Language model, which stays on WebGPU
 export const VOICE_VOCODER_GPU_DEVICE = "dml";
 // The speech encoder runs on the CPU on every rung, since the WebGPU provider rejects its graph
-const getVoiceDeviceMap = (languageModelDevice: string, vocoderDevice: string): Record<string, string> => ({
+const getVoiceDeviceMap = (
+  languageModelDevice: string,
+  vocoderDevice: string,
+): Record<keyof typeof VOICE_MODEL_DTYPE, string> => ({
   conditional_decoder: vocoderDevice,
   embed_tokens: languageModelDevice,
   language_model: languageModelDevice,
