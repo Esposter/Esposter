@@ -51,16 +51,16 @@ export const useCallParticipantActions = () => {
           ? getAdminActionItem(
               AdminActionType.ForceUnmute,
               AdminActionIconMap[AdminActionType.ForceUnmute],
-              "Force Unmute",
+              "Server Unmute",
             )
-          : getAdminActionItem(AdminActionType.ForceMute, AdminActionIconMap[AdminActionType.ForceMute], "Force Mute"),
+          : getAdminActionItem(AdminActionType.ForceMute, AdminActionIconMap[AdminActionType.ForceMute], "Server Mute"),
       );
     if (isKickableFromCall.value)
       items.push(
         getAdminActionItem(
           AdminActionType.KickFromCall,
           AdminActionIconMap[AdminActionType.KickFromCall],
-          "Kick from Call",
+          "Disconnect",
         ),
       );
     return items;

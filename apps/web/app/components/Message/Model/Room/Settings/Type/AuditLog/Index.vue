@@ -17,7 +17,7 @@ const filters = computed(() => ({
   targetUserId: targetUserId.value,
   type: type.value,
 }));
-const { readModerationLog, readMoreModerationLog } = useReadModerationLog(room.id, filters);
+const { readModerationLog, readMoreModerationLog } = useReadModerationLog(room.id, () => filters.value);
 const moderationLogStore = useModerationLogStore();
 const { hasMore, items } = storeToRefs(moderationLogStore);
 const { readMembers } = useReadMembers();

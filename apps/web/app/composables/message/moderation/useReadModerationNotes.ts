@@ -2,10 +2,7 @@ import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
 import { useModerationNoteStore } from "#src/store/message/moderation/note";
 
-export const useReadModerationNotes = (
-  roomId: RoomInMessage["id"],
-  targetUserId: MaybeRefOrGetter<PublicUser["id"]>,
-) => {
+export const useReadModerationNotes = (roomId: RoomInMessage["id"], targetUserId: () => PublicUser["id"]) => {
   const { $trpc } = useNuxtApp();
   const moderationNoteStore = useModerationNoteStore();
   const { readItems, readMoreItems, setModerationNoteCount } = moderationNoteStore;
@@ -14,7 +11,7 @@ export const useReadModerationNotes = (
   // Catch it, one of them an `onSuccess` whose rejection escapes its mutation
   const readModerationNotes = () =>
     readItems(async () => {
-      const targetUserIdValue = toValue(targetUserId);
+      const targetUserIdValue = targetUserId();
       const [moderationNotes, count] = await Promise.all([
         $trpc.message.moderation.readModerationNotes.query({ roomId, targetUserId: targetUserIdValue }),
         $trpc.message.moderation.readModerationNotesCount.query({ roomId, targetUserId: targetUserIdValue }),
@@ -24,7 +21,7 @@ export const useReadModerationNotes = (
     });
   const readMoreModerationNotes = (onComplete: () => void) => {
     // Taken as the read is issued, so a retry after the dialog moved to another target still asks for this target's notes
-    const issuedTargetUserId = toValue(targetUserId);
+    const issuedTargetUserId = targetUserId();
     return readMoreItems(
       (cursor) =>
         $trpc.message.moderation.readModerationNotes.query({ cursor, roomId, targetUserId: issuedTargetUserId }),

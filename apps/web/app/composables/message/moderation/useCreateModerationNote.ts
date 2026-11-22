@@ -7,32 +7,24 @@ import { withFinalizerAsync } from "@esposter/shared";
 
 // A note is a server-minted row the notes list holds outside the overlay, so its write is awaited: nothing is drawn before
 // The answer, and the list is read again once the server has kept the note. Resolves to whether the server kept it
-export const useCreateModerationNote = (
-  roomId: RoomInMessage["id"],
-  targetUserId: MaybeRefOrGetter<PublicUser["id"]>,
-) => {
+export const useCreateModerationNote = (roomId: RoomInMessage["id"], targetUserId: () => PublicUser["id"]) => {
   const { $trpc } = useNuxtApp();
   const overlayStore = useOverlayStore();
   const { writeAwaited } = overlayStore;
   const { readModerationNotes } = useReadModerationNotes(roomId, targetUserId);
-  // An awaited write has no entry to say it is pending, so the form reads the count of notes out
-  const pendingCount = ref(0);
-  const isCreatePending = computed(() => pendingCount.value > 0);
+  // An awaited write has no entry to say it is pending, so the form reads the flag out
+  const isCreatePending = ref(false);
   const createModerationNote = async (note: string): Promise<boolean> => {
     // One note at a time, since the field holds the note until its answer, and a second send would post it twice
-    if (pendingCount.value > 0) return false;
+    if (isCreatePending.value) return false;
 
     const outcome = { isKept: false };
-    pendingCount.value += 1;
+    isCreatePending.value = true;
     await withFinalizerAsync(
       () =>
         writeAwaited(
           async () => {
-            await $trpc.message.moderation.createModerationNote.mutate({
-              note,
-              roomId,
-              targetUserId: toValue(targetUserId),
-            });
+            await $trpc.message.moderation.createModerationNote.mutate({ note, roomId, targetUserId: targetUserId() });
             outcome.isKept = true;
             await readModerationNotes();
             return [];
@@ -40,7 +32,7 @@ export const useCreateModerationNote = (
           { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
         ),
       () => {
-        pendingCount.value -= 1;
+        isCreatePending.value = false;
       },
     );
     return outcome.isKept;

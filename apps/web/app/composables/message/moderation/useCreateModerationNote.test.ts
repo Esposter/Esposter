@@ -39,8 +39,8 @@ describe(useCreateModerationNote, () => {
       return answer;
     });
     trpcMsw.message.moderation.readModerationNotes.query(() => ({ items: [], nextCursor: "" }));
-    trpcMsw.message.moderation.readModerationNotesCount.query(() => 1);
-    const { createModerationNote } = useCreateModerationNote(roomId, targetUserId);
+    trpcMsw.message.moderation.readModerationNotesCount.query(() => 0);
+    const { createModerationNote } = useCreateModerationNote(roomId, () => targetUserId);
     const firstSend = createModerationNote(note);
     await isSent;
     const isSecondKept = await createModerationNote(note);
@@ -56,9 +56,9 @@ describe(useCreateModerationNote, () => {
     expect.hasAssertions();
 
     trpcMsw.message.moderation.createModerationNote.mutation(() => {
-      throw new TRPCError({ code: "FORBIDDEN", message: "refused" });
+      throw new TRPCError({ code: "FORBIDDEN", message: " " });
     });
-    const { createModerationNote, isCreatePending } = useCreateModerationNote(roomId, targetUserId);
+    const { createModerationNote, isCreatePending } = useCreateModerationNote(roomId, () => targetUserId);
     const isKept = await createModerationNote(note);
 
     expect(isKept).toBe(false);
@@ -73,8 +73,8 @@ describe(useCreateModerationNote, () => {
 
     trpcMsw.message.moderation.createModerationNote.mutation(() => createNote());
     trpcMsw.message.moderation.readModerationNotes.query(() => ({ items: [], nextCursor: "" }));
-    trpcMsw.message.moderation.readModerationNotesCount.query(() => 1);
-    const { createModerationNote } = useCreateModerationNote(roomId, targetUserId);
+    trpcMsw.message.moderation.readModerationNotesCount.query(() => 0);
+    const { createModerationNote } = useCreateModerationNote(roomId, () => targetUserId);
     const isKept = await createModerationNote(note);
 
     expect(isKept).toBe(true);

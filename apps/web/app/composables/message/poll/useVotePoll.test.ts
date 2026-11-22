@@ -20,11 +20,7 @@ describe(useVotePoll, () => {
   const otherUserId = v7();
   const otherRoomId = v7();
   const optionId = v7();
-  const pollContent: PollMessageContent = {
-    options: [{ id: optionId, label: "label" }],
-    question: "question",
-    votes: {},
-  };
+  const pollContent: PollMessageContent = { options: [{ id: optionId, label: " " }], question: " ", votes: {} };
   // A vote names the message by its room-assigned id, which an optimistic bubble does not have yet
   const createPollMessage = (id: number) => ({
     ...createOptimisticMessage({ message: JSON.stringify(pollContent), roomId, type: MessageType.Poll }, userId),

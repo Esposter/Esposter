@@ -459,7 +459,7 @@ describe(useCallStore, () => {
     callRoomId.value = roomId;
     const { getActions } = useCallParticipantActions();
     const kick = takeOne(
-      getActions(participantId, "userId", false, false).filter(({ title }) => title === "Kick from Call"),
+      getActions(participantId, "userId", false, false).filter(({ title }) => title === "Disconnect"),
     );
     await kick.onClick?.();
     await flushPromises();
@@ -487,7 +487,7 @@ describe(useCallStore, () => {
     callRoomId.value = roomId;
     const { getActions } = useCallParticipantActions();
     const kick = takeOne(
-      getActions(participantId, "userId", false, false).filter(({ title }) => title === "Kick from Call"),
+      getActions(participantId, "userId", false, false).filter(({ title }) => title === "Disconnect"),
     );
     await kick.onClick?.();
     await flushPromises();
