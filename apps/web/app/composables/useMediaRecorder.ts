@@ -1,6 +1,6 @@
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useAlertStore } from "#src/store/alert";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
 interface UseMediaRecorderOptions {
   constraints?: MaybeRefOrGetter<MediaStreamConstraints>;
@@ -38,25 +38,36 @@ export const useMediaRecorder = ({ constraints = {}, onError, onStart, onStop }:
     newMediaRecorder.onerror = onLifecycle(onError);
   };
 
+  // Held across the device's await, since no recorder exists to read the state of until the stream is in hand.
+  // Once the recorder is made, a start reads its own state, not the mirror that lands on the lifecycle event
+  let isStarting = false;
   const start = async () => {
-    if (state.value && state.value !== "inactive") return;
+    if (isStarting || (mediaRecorder.value && mediaRecorder.value.state !== "inactive")) return;
     else if (isSupported.value) {
-      data.value = [];
-      // Release any lingering stream so useUserMedia re-requests a fresh one.
-      stopStream();
+      isStarting = true;
+      await withFinalizerAsync(
+        async () => {
+          data.value = [];
+          // Release any lingering stream so useUserMedia re-requests a fresh one.
+          stopStream();
 
-      await getResultAsync(() => startStream()).match(noop, (error) => {
-        // A DOMException is the device refusing — the user picked this device, so they are told. Anything
-        // Else reaching here is a programming error nobody watching a recorder can act on
-        if (error instanceof DOMException) createErrorAlert(error);
-        else console.error(error);
-      });
-      if (!stream.value) return;
+          await getResultAsync(() => startStream()).match(noop, (error) => {
+            // A DOMException is the device refusing — the user picked this device, so they are told. Anything
+            // Else reaching here is a programming error nobody watching a recorder can act on
+            if (error instanceof DOMException) createErrorAlert(error);
+            else console.error(error);
+          });
+          if (!stream.value) return;
 
-      const newMediaRecorder = new MediaRecorder(stream.value);
-      setupMediaRecorder(newMediaRecorder);
-      mediaRecorder.value = newMediaRecorder;
-      newMediaRecorder.start();
+          const newMediaRecorder = new MediaRecorder(stream.value);
+          setupMediaRecorder(newMediaRecorder);
+          mediaRecorder.value = newMediaRecorder;
+          newMediaRecorder.start();
+        },
+        () => {
+          isStarting = false;
+        },
+      );
     } else createAlert("Media devices API is not supported in this environment.", "error");
   };
 
