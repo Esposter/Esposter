@@ -188,7 +188,8 @@ describe(useCallStore, () => {
     const realtimeStore = useRealtimeStore();
     vi.spyOn(realtimeStore, "connect").mockResolvedValue();
     vi.spyOn(realtimeStore, "setCamera").mockRejectedValue(new Error(" "));
-    const { joinCallOptions } = storeToRefs(useKnockerStore());
+    const knockerStore = useKnockerStore();
+    const { joinCallOptions } = storeToRefs(knockerStore);
     joinCallOptions.value.isCameraEnabled = true;
     const callStore = useCallStore();
     const { activeCallSessionId } = storeToRefs(callStore);
