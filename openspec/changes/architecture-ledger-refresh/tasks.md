@@ -16,7 +16,6 @@
 
 ## 2. Resweep
 
-- [x] 2.1 Not run: the swept cells were read under the current rules and carry over (1.9), so the sample draws from the open cells only.
-- [ ] 2.2 Sample every question: the units `pnpm ai:sweep:sample` prints, read in full, each judged for every question listed beside it, and a `Sampled:` trailer per question naming its defects. Verified by `pnpm ai:sweep:status` listing each ledger's unread units as sampled or open.
-- [ ] 2.3 For each question whose sample found a defect, write the find recipe or lint rule for it and sample again; read the question unit by unit only where the defect has no mechanical shape. Verified by `pnpm ai:sweep:status` listing no open unit.
-- [ ] 2.4 Archive this change once `pnpm ai:sweep:status` lists no open unit. Verified by `pnpm exec openspec archive architecture-ledger-refresh --yes` succeeding.
+- [ ] 2.1 Sample every question: the units `pnpm ai:sweep:sample` prints, read in full, each judged for every question listed beside it, and a `Sampled:` trailer per question naming its defects. Verified by `pnpm ai:sweep:status` listing each ledger's unread units as sampled or open.
+- [ ] 2.2 For each question whose sample found a defect, write the find recipe or lint rule for it and sample again; read the question unit by unit only where the defect has no mechanical shape. Verified by `pnpm ai:sweep:status` listing no open unit.
+- [ ] 2.3 Archive this change once `pnpm ai:sweep:status` lists no open unit. Verified by `pnpm exec openspec archive architecture-ledger-refresh --yes` succeeding.
