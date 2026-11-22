@@ -12,5 +12,6 @@ export const UNIT_CELL_SEPARATOR = " — ";
 export const UNIT_CELL_REST = "the rest";
 // How many open cells a question's sample draws, or every one of them where a question holds fewer
 export const SAMPLE_SIZE = 30;
-// The index rows whose units are a table of their own rather than cells of the area list
-export const OWN_TABLE_LEDGERS: readonly string[] = ["component-reference"];
+// The index rows that are not questions of the area list: a ledger with a table of its own, and `docs`, whose rows are
+// Its `docs/content` and `docs/skills` ledgers
+export const OWN_TABLE_LEDGERS: readonly string[] = ["component-reference", "docs"];
