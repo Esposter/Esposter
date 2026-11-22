@@ -95,7 +95,7 @@ written by the generator that reads that data (`createValueSetString`), never me
   `packages/shared` and `packages/parse-tmx`) annotate the array explicitly:
   `export const FooTypes: readonly FooType[] = Object.values(FooType);`. In the app, let it infer.
 
-- **Never write `Object.values(SomeSet)` inline** — use the exported array.
+- **Never write `Object.values(SomeSet)` inline** — use the exported array. The one exception is a citty command's enum argument `options`, written inline: a spread readonly list loses the parsed value's default under `defineCommand`'s `const` parameter (the `cli` skill, "Arguments are declared by kind").
 - **The values array lives in the set's own file, never at a consumption site** — a
   `const FooTypes = Object.values(FooType)` declared locally in a service/component (or duplicated across two consumers)
   is the violation shape even when typed and named correctly; move it to the set's file and import it. Same rule for
