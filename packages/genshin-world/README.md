@@ -68,17 +68,16 @@ Allow CORS for your page's origin. Esposter's own accounts admit only Esposter's
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export              | Kind       | Purpose                                                                                                     |
-| ------------------- | ---------- | ----------------------------------------------------------------------------------------------------------- |
-| `GameOpening`       | component  | The game's opening: its splash sequence, login screen and startup loading                                   |
-| `GenshinSave`       | type       | One player's whole Genshin save, with one key per system                                                    |
-| `genshinSaveSchema` | schema     | The Zod schema a save is parsed against, refusing one that is too large                                     |
-| `readCatalogue`     | function   | The catalogue of regions, areas and subareas, fetched by key and checked against its schema                 |
-| `readGameData`      | function   | Reads one game-data record by key and parses it with the schema given                                       |
-| `readGenshinSave`   | function   | Reads a save into the world's systems, leaving derived ones to the rules that read them on load             |
-| `readStatTables`    | function   | The game's stat tables, fetched by key and checked against their schema                                     |
-| `useSky`            | composable | Writes the sky at the game's clock into everything the sky lights, and drifts the clouds with the wind      |
-| `WorldScreen`       | component  | The whole world as one screen with its own canvas, opened once its names, tables and first view have loaded |
+| Export              | Kind      | Purpose                                                                                                     |
+| ------------------- | --------- | ----------------------------------------------------------------------------------------------------------- |
+| `GameOpening`       | component | The game's opening: its splash sequence, login screen and startup loading                                   |
+| `GenshinSave`       | type      | One player's whole Genshin save, with one key per system                                                    |
+| `genshinSaveSchema` | schema    | The Zod schema a save is parsed against, refusing one that is too large                                     |
+| `readCatalogue`     | function  | The catalogue of regions, areas and subareas, fetched by key and checked against its schema                 |
+| `readGameData`      | function  | Reads one game-data record by key and parses it with the schema given                                       |
+| `readGenshinSave`   | function  | Reads a save into the world's systems, leaving derived ones to the rules that read them on load             |
+| `readStatTables`    | function  | The game's stat tables, fetched by key and checked against their schema                                     |
+| `WorldScreen`       | component | The whole world as one screen with its own canvas, opened once its names, tables and first view have loaded |
 
 ## <a name="license">⚖️ License</a>
 
