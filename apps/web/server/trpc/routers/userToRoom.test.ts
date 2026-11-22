@@ -53,15 +53,11 @@ describe("userToRoomRouter", () => {
   // A context acting as the given user on a session of their own, or as a new user when none is given
   const createUserContext = async (user?: AuthSession["user"]) =>
     createMockContext(await createMockAuthSession(mockContext.db, user));
-  const readMemberMentionCount = async (member: AuthSession["user"], roomId: string) => {
+  // The member's own row for the room, read the way the member reads it
+  const readMemberRow = async (member: AuthSession["user"], roomId: string) => {
     const memberUserToRoomCaller = createCallerFactory(userToRoomRouter)(await createUserContext(member));
     const myUsersToRooms = await memberUserToRoomCaller.readMyUsersToRooms({ roomIds: [roomId] });
-    return takeOne(myUsersToRooms).mentionCount;
-  };
-  const readMemberCategoryId = async (member: AuthSession["user"], roomId: string) => {
-    const memberUserToRoomCaller = createCallerFactory(userToRoomRouter)(await createUserContext(member));
-    const myUsersToRooms = await memberUserToRoomCaller.readMyUsersToRooms({ roomIds: [roomId] });
-    return takeOne(myUsersToRooms).categoryId;
+    return takeOne(myUsersToRooms);
   };
 
   beforeAll(async () => {
@@ -124,9 +120,9 @@ describe("userToRoomRouter", () => {
     const memberUserToRoomCaller = createCallerFactory(userToRoomRouter)(await createUserContext(member));
     await memberUserToRoomCaller.clearMentionCount({ roomId });
     await memberUserToRoomCaller.clearMentionCount({ roomId });
-    const mentionCount = await readMemberMentionCount(member, roomId);
+    const memberRow = await readMemberRow(member, roomId);
 
-    expect(mentionCount).toBe(0);
+    expect(memberRow.mentionCount).toBe(0);
   });
 
   test("updates notificationType", async () => {
@@ -235,8 +231,10 @@ describe("userToRoomRouter", () => {
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomCategory, ownerCategory.id).message}]`,
     );
 
+    const memberRow = await readMemberRow(member, newRoom.id);
+
     expect(updatedUserToRoom.categoryId).toStrictEqual(memberCategory.id);
-    await expect(readMemberCategoryId(member, newRoom.id)).resolves.toStrictEqual(memberCategory.id);
+    expect(memberRow.categoryId).toStrictEqual(memberCategory.id);
   });
 
   // Each member files the room under a category of their own, so one member's assignment never moves another's
@@ -265,8 +263,11 @@ describe("userToRoomRouter", () => {
       roomId: newRoom.id,
     });
 
-    await expect(readMemberCategoryId(firstMember, newRoom.id)).resolves.toStrictEqual(firstCategory.id);
-    await expect(readMemberCategoryId(secondMember, newRoom.id)).resolves.toStrictEqual(secondCategory.id);
+    const firstMemberRow = await readMemberRow(firstMember, newRoom.id);
+    const secondMemberRow = await readMemberRow(secondMember, newRoom.id);
+
+    expect(firstMemberRow.categoryId).toStrictEqual(firstCategory.id);
+    expect(secondMemberRow.categoryId).toStrictEqual(secondCategory.id);
   });
 
   // Each membership write's optimistic entry shows every row its answer names, checked against the seeded state

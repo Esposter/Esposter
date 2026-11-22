@@ -111,7 +111,7 @@ describe("postRouter", () => {
     expect(uncovered).toStrictEqual([]);
   });
 
-  test("fails update with wrong user", async () => {
+  test("fails update with a user who is not the author", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
@@ -230,7 +230,7 @@ describe("postRouter", () => {
     expect(page.items).toHaveLength(1);
   });
 
-  test("fails delete with wrong user", async () => {
+  test("fails delete with a user who is not the author", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
@@ -278,7 +278,7 @@ describe("postRouter", () => {
     expect(updatedComment.description).toBe(updatedDescription);
   });
 
-  test("fails update comment with wrong user", async () => {
+  test("fails update comment with a user who is not the author", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
@@ -405,7 +405,7 @@ describe("postRouter", () => {
     );
   });
 
-  test("fails delete comment with wrong user", async () => {
+  test("fails delete comment with a user who is not the author", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });

@@ -108,7 +108,7 @@ describe("likeRouter", () => {
     expect(uncovered).toStrictEqual([]);
   });
 
-  test("fails update with wrong user", async () => {
+  test("fails update with a user who has no like on the post", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
@@ -210,7 +210,7 @@ describe("likeRouter", () => {
     expect(removedLike.deletedAt).not.toBeNull();
   });
 
-  test("fails delete with wrong user", async () => {
+  test("fails delete with a user who has no like on the post", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
