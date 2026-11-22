@@ -6,7 +6,7 @@ import { InitialState } from "../InitialState";
 import { SIN_BAR_WIDTH, SINS_PANE_ID } from "./constants";
 import { getBarCells } from "./getBarCells";
 import { getSinScores } from "./getSinScores";
-import { getTrendGlyphs } from "./getTrend";
+import { getTrendGlyphs } from "./getTrendGlyphs";
 import { readIsLightTheme } from "./readIsLightTheme";
 import { readSinStatus } from "./readSinStatus";
 import { SinColorMap } from "./SinColorMap";

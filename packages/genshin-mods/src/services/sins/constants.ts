@@ -18,6 +18,8 @@ export const SIN_PRIOR = 1;
 export const SIN_HISTORY_LENGTH = 300;
 // The bar's width in cells, the solid run to the score and the tinted run to the score plus its spread
 export const SIN_BAR_WIDTH = 24;
+// The eight glyphs a trend point draws with, the lowest to the tallest
+export const TREND_GLYPHS = "▁▂▃▄▅▆▇█";
 
 export const SINS_PANE_ID = "sins";
 // The node script's whole run, its one request included; a run past this is killed and reads as failed

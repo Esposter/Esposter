@@ -48,7 +48,7 @@ describe("sinsScript", () => {
     await new Promise<void>((resolve) => {
       server.listen(0, "127.0.0.1", resolve);
     });
-    apiUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}/v1/systemone`;
+    apiUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   });
 
   afterEach(async () => {
@@ -60,7 +60,7 @@ describe("sinsScript", () => {
     });
   });
 
-  const getPayload = () => ({ apiUrl, questions: getSinQuestions(), session: 1, state: "a prompt", storePath });
+  const getPayload = () => ({ apiUrl, questions: getSinQuestions(), session: 1, state: "", storePath });
 
   test("answers no-key without a key, and makes no request", async () => {
     expect.hasAssertions();
