@@ -1,135 +1,30 @@
 # Packages
 
-| Unit                                                 | Notes                                                              |
-| ---------------------------------------------------- | ------------------------------------------------------------------ |
-| `apps/jobs`                                          | every `mockDb` stays — hoisted factory, see the README             |
-| `apps/realtime`                                      | every `mockDb` stays — hoisted factory, see the README             |
-| `db`, `db-schema`, `db-mock`                         |                                                                    |
-| `shared`, `shared-node`                              |                                                                    |
-| `parse-tmx`                                          |                                                                    |
-| `vue-phaserjs`                                       |                                                                    |
-| `configuration`, `infra`                             |                                                                    |
-| `keyframe-store`                                     |                                                                    |
-| `genshin-persona`                                    | its mocks are hoisted factories, typed off the source              |
-| `genshin-engine`                                     |                                                                    |
-| `genshin-world/parity`                               |                                                                    |
-| `genshin-world/scripts`                              |                                                                    |
-| `genshin-world/src`                                  | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/components`                       |                                                                    |
-| `genshin-world/src/composables`                      |                                                                    |
-| `genshin-world/src/data`                             |                                                                    |
-| `genshin-world/src/models`                           |                                                                    |
-| `genshin-world/src/services`                         | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/services/achievement`             |                                                                    |
-| `genshin-world/src/services/adventureRank`           |                                                                    |
-| `genshin-world/src/services/archive`                 |                                                                    |
-| `genshin-world/src/services/artifact`                | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/services/artifact/sets`           | flat and past one sitting, with no subfolder to cut at; split owed |
-| `genshin-world/src/services/bosses`                  |                                                                    |
-| `genshin-world/src/services/character`               | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/services/character/avatar`        |                                                                    |
-| `genshin-world/src/services/chest`                   |                                                                    |
-| `genshin-world/src/services/combat`                  | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/services/combat/aura`             |                                                                    |
-| `genshin-world/src/services/combat/damage`           |                                                                    |
-| `genshin-world/src/services/combat/dendroCore`       |                                                                    |
-| `genshin-world/src/services/combat/energy`           |                                                                    |
-| `genshin-world/src/services/combat/internalCooldown` |                                                                    |
-| `genshin-world/src/services/combat/reach`            |                                                                    |
-| `genshin-world/src/services/combat/shield`           |                                                                    |
-| `genshin-world/src/services/commission`              |                                                                    |
-| `genshin-world/src/services/cooking`                 |                                                                    |
-| `genshin-world/src/services/crafting`                |                                                                    |
-| `genshin-world/src/services/data`                    |                                                                    |
-| `genshin-world/src/services/dialogue`                |                                                                    |
-| `genshin-world/src/services/domains`                 |                                                                    |
-| `genshin-world/src/services/elementalNode`           |                                                                    |
-| `genshin-world/src/services/elementalSight`          |                                                                    |
-| `genshin-world/src/services/enemy`                   |                                                                    |
-| `genshin-world/src/services/expedition`              |                                                                    |
-| `genshin-world/src/services/exploration`             |                                                                    |
-| `genshin-world/src/services/fishing`                 |                                                                    |
-| `genshin-world/src/services/fontaine`                |                                                                    |
-| `genshin-world/src/services/forging`                 |                                                                    |
-| `genshin-world/src/services/friendship`              |                                                                    |
-| `genshin-world/src/services/gadget`                  |                                                                    |
-| `genshin-world/src/services/gathering`               |                                                                    |
-| `genshin-world/src/services/gcg`                     | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/services/gcg/cards`               | flat and past one sitting, with no subfolder to cut at; split owed |
-| `genshin-world/src/services/gcg/effects`             |                                                                    |
-| `genshin-world/src/services/handbook`                |                                                                    |
-| `genshin-world/src/services/home`                    |                                                                    |
-| `genshin-world/src/services/hud`                     |                                                                    |
-| `genshin-world/src/services/imaginarium`             |                                                                    |
-| `genshin-world/src/services/inazuma`                 |                                                                    |
-| `genshin-world/src/services/interaction`             |                                                                    |
-| `genshin-world/src/services/inventory`               |                                                                    |
-| `genshin-world/src/services/investigation`           |                                                                    |
-| `genshin-world/src/services/kit`                     | flat and past one sitting, with no subfolder to cut at; split owed |
-| `genshin-world/src/services/kit/build`               |                                                                    |
-| `genshin-world/src/services/kit/characters`          | flat and past one sitting, with no subfolder to cut at; split owed |
-| `genshin-world/src/services/kit/effects`             |                                                                    |
-| `genshin-world/src/services/leyLine`                 |                                                                    |
-| `genshin-world/src/services/liyue`                   |                                                                    |
-| `genshin-world/src/services/loading`                 |                                                                    |
-| `genshin-world/src/services/login`                   | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/services/login/cloud`             |                                                                    |
-| `genshin-world/src/services/login/door`              |                                                                    |
-| `genshin-world/src/services/login/hull`              |                                                                    |
-| `genshin-world/src/services/login/interface`         |                                                                    |
-| `genshin-world/src/services/login/music`             |                                                                    |
-| `genshin-world/src/services/login/scene`             |                                                                    |
-| `genshin-world/src/services/login/shared`            |                                                                    |
-| `genshin-world/src/services/login/tower`             |                                                                    |
-| `genshin-world/src/services/login/walkway`           |                                                                    |
-| `genshin-world/src/services/mail`                    |                                                                    |
-| `genshin-world/src/services/map`                     |                                                                    |
-| `genshin-world/src/services/menu`                    |                                                                    |
-| `genshin-world/src/services/mondstadt`               |                                                                    |
-| `genshin-world/src/services/natlan`                  |                                                                    |
-| `genshin-world/src/services/nod-krai`                |                                                                    |
-| `genshin-world/src/services/offering`                |                                                                    |
-| `genshin-world/src/services/originalResin`           |                                                                    |
-| `genshin-world/src/services/party`                   |                                                                    |
-| `genshin-world/src/services/profile`                 |                                                                    |
-| `genshin-world/src/services/puzzle`                  |                                                                    |
-| `genshin-world/src/services/quest`                   |                                                                    |
-| `genshin-world/src/services/reliquary`               |                                                                    |
-| `genshin-world/src/services/reputation`              |                                                                    |
-| `genshin-world/src/services/resident`                |                                                                    |
-| `genshin-world/src/services/reward`                  |                                                                    |
-| `genshin-world/src/services/save`                    |                                                                    |
-| `genshin-world/src/services/scene`                   |                                                                    |
-| `genshin-world/src/services/sceneGroup`              |                                                                    |
-| `genshin-world/src/services/screen`                  |                                                                    |
-| `genshin-world/src/services/shadow`                  |                                                                    |
-| `genshin-world/src/services/shared`                  |                                                                    |
-| `genshin-world/src/services/sheerCold`               |                                                                    |
-| `genshin-world/src/services/shop`                    |                                                                    |
-| `genshin-world/src/services/shortcutWheel`           |                                                                    |
-| `genshin-world/src/services/snezhnaya`               |                                                                    |
-| `genshin-world/src/services/spiralAbyss`             | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/services/spiralAbyss/blessings`   |                                                                    |
-| `genshin-world/src/services/splash`                  |                                                                    |
-| `genshin-world/src/services/statue`                  |                                                                    |
-| `genshin-world/src/services/sumeru`                  |                                                                    |
-| `genshin-world/src/services/time`                    |                                                                    |
-| `genshin-world/src/services/tip`                     |                                                                    |
-| `genshin-world/src/services/transPoint`              |                                                                    |
-| `genshin-world/src/services/trial`                   |                                                                    |
-| `genshin-world/src/services/weapon`                  | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/services/weapon/passives`         | flat and past one sitting, with no subfolder to cut at; split owed |
-| `genshin-world/src/services/weekly`                  |                                                                    |
-| `genshin-world/src/services/wildlife`                |                                                                    |
-| `genshin-world/src/services/windrise`                |                                                                    |
-| `genshin-world/src/services/wish`                    |                                                                    |
-| `genshin-world/src/services/world`                   | its own files only; each subfolder is a row of its own             |
-| `genshin-world/src/services/world/locomotion`        |                                                                    |
-| `genshin-world/src/workers`                          |                                                                    |
-| `genshin-interface`                                  |                                                                    |
-| `genshin-text`                                       |                                                                    |
-| `genshin-mods`                                       |                                                                    |
-| `pitch-transcription`                                |                                                                    |
-| `trpc-msw`                                           |                                                                    |
-| `trpc-nuxt-module`                                   |                                                                    |
-| `follow-ups`                                         |                                                                    |
+| Unit                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Notes                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `packages/genshin-world/src/services/login/cloud`, `packages/genshin-world/src/services/login/door`, `packages/genshin-world/src/services/login/hull`, `packages/genshin-world/src/services/login/interface`, `packages/genshin-world/src/services/login/music`, `packages/genshin-world/src/services/login/scene`, `packages/genshin-world/src/services/login/shared`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | its own files only; each subfolder is a row of its own |
+| `packages/genshin-world/src/services/login/tower`, `packages/genshin-world/src/services/login/walkway`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | its own files only; each subfolder is a row of its own |
+| `packages/genshin-world/src/services/login` — `GameClientVersionTextMap.ts`, `InterfaceIconGameTextKeyMap.ts`, `LoginPartFamilyMeshRegexMap.ts`, `LoginStatusStepGameTextKeyMap.ts`, `constants.ts`, `getLoginTimeOfDay.test.ts`, `getLoginTimeOfDay.ts`, `readLoginData.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | its own files only; each subfolder is a row of its own |
+| `packages/genshin-world/src/services/combat` — `aura`, `checkIsLunarReactionType.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | its own files only; each subfolder is a row of its own |
+| `packages/genshin-world/src/services/combat` — `damage`, `dendroCore`, `energy`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | its own files only; each subfolder is a row of its own |
+| `packages/genshin-world/src/services/combat` — `internalCooldown`, `reach`, `shield`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | its own files only; each subfolder is a row of its own |
+| `packages/genshin-world/src/services/spiralAbyss` — `advanceAbyssHalf.test.ts`, `advanceAbyssHalf.ts`, `applyAbyssBlessingReaction.test.ts`, `applyAbyssBlessingReaction.ts`, `applyAbyssCarry.test.ts`, `applyAbyssCarry.ts`, `blessings`, `checkIsAbyssChallengeCleared.ts`, `checkIsAbyssChallengeFailed.test.ts`, `checkIsAbyssChallengeFailed.ts`, `checkIsAbyssFloorCleared.ts`, `checkIsAbyssFloorUnlocked.test.ts`, `checkIsAbyssFloorUnlocked.ts`, `checkIsAbyssOpenAtRank.test.ts`, `checkIsAbyssOpenAtRank.ts`, `checkIsAbyssStarConditionMet.ts`, `computeAbyssChamberStars.test.ts`, `computeAbyssChamberStars.ts`, `computeAbyssFloorStars.ts`, `constants.test.ts`, `constants.ts`, `createAbyssArena.test.ts`, `createAbyssArena.ts`, `createAbyssChallenge.test.ts`, `createAbyssChallenge.ts`, `createAbyssHalfCamp.test.ts`, `createAbyssHalfCamp.ts`, `createInitialAbyssBlessingState.ts`, `defeatAbyssArenaEnemy.test.ts`, `defeatAbyssArenaEnemy.ts`, `defeatAbyssHalf.ts`, `enterArenaChamber.test.ts`, `findAbyssPeriodAt.test.ts`, `findAbyssPeriodAt.ts`, `getAbyssBenedictionAttributeLines.test.ts`, `getAbyssBenedictionAttributeLines.ts`, `getAbyssCampId.ts`, `getAbyssChamberBlessing.test.ts`, `getAbyssChamberBlessing.ts` | its own files only; each subfolder is a row of its own |
+| `packages/genshin-world/src/services/spiralAbyss` — `getAbyssChamberSeconds.test.ts`, `getAbyssChamberSeconds.ts`, `getAbyssCycleKey.test.ts`, `getAbyssCycleKey.ts`, `getAbyssFloorsOffered.test.ts`, `getAbyssFloorsOffered.ts`, `pickAbyssBenedictionList.test.ts`, `pickAbyssBenedictionList.ts`, `readAbyssBenedictionChoices.ts`, `readAbyssEnemyKinds.ts`, `readAbyssFloorRewards.ts`, `readAbyssFloors.ts`, `readAbyssPeriods.ts`, `readAbyssTables.ts`, `recordAbyssChamberClear.test.ts`, `recordAbyssChamberClear.ts`, `settleAbyssClear.test.ts`, `settleAbyssClear.ts`, `stepAbyssArena.test.ts`, `stepAbyssArena.ts`, `stepAbyssChallenge.test.ts`, `stepAbyssChallenge.ts`, `takeAbyssCarry.ts`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | its own files only; each subfolder is a row of its own |
+
+Notes on a tree several units share:
+
+- `apps/jobs`: every `mockDb` stays — hoisted factory, see the README
+- `apps/realtime`: every `mockDb` stays — hoisted factory, see the README
+- `packages/genshin-persona`: its mocks are hoisted factories, typed off the source
+- `packages/genshin-world/src`: its own files only; each subfolder is a row of its own
+- `packages/genshin-world/src/services`: its own files only; each subfolder is a row of its own
+- `packages/genshin-world/src/services/artifact`: its own files only; each subfolder is a row of its own
+- `packages/genshin-world/src/services/artifact/sets`: flat and past one sitting, with no subfolder to cut at; split owed
+- `packages/genshin-world/src/services/character`: its own files only; each subfolder is a row of its own
+- `packages/genshin-world/src/services/gcg`: its own files only; each subfolder is a row of its own
+- `packages/genshin-world/src/services/gcg/cards`: flat and past one sitting, with no subfolder to cut at; split owed
+- `packages/genshin-world/src/services/kit`: flat and past one sitting, with no subfolder to cut at; split owed
+- `packages/genshin-world/src/services/kit/characters`: flat and past one sitting, with no subfolder to cut at; split owed
+- `packages/genshin-world/src/services/weapon`: its own files only; each subfolder is a row of its own
+- `packages/genshin-world/src/services/weapon/passives`: flat and past one sitting, with no subfolder to cut at; split owed
+- `packages/genshin-world/src/services/world`: its own files only; each subfolder is a row of its own

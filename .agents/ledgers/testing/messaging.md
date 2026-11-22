@@ -1,9 +1,6 @@
 # Messaging
 
-| Unit                                                                                         | Notes                             |
-| -------------------------------------------------------------------------------------------- | --------------------------------- |
-| `store/message`                                                                              | the widest keyed state in the app |
-| `services/message`                                                                           |                                   |
-| `composables/message`                                                                        |                                   |
-| `components/Message`                                                                         | splits at `Model/` on contact     |
-| `services/{room,user}`, `composables/user`, `store/user`, `components/{User,RichTextEditor}` |                                   |
+Notes on a tree several units share:
+
+- `apps/web/app/store/message`: the widest keyed state in the app
+- `apps/web/app/components/Message`: splits at `Model/` on contact

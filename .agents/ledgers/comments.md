@@ -1,51 +1,42 @@
 # Comments
 
-| Unit                                                                                                           | Notes                                                                                               |
-| -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `apps/web` — `app/components`                                                                                  | the densest prose in the app                                                                        |
-| `apps/web` — `app/services`, `app/util`                                                                        | the separator and alerting rules, restated per call site                                            |
-| `apps/web` — `app/composables/message`                                                                         | the file, room and subscribable trees                                                               |
-| `apps/web` — the rest of `app/composables`                                                                     | the pagination binder and readiness rules, per call site                                            |
-| `apps/web` — `app/models`, `app/types`                                                                         | the dungeons tree's legacy prose                                                                    |
-| `apps/web` — `app/store`                                                                                       | the optimistic-write rationale, restated per call site                                              |
-| `apps/web` — `app/pages`, `layouts`, the rest                                                                  | plus `middleware`, `plugins`, `assets`                                                              |
-| `apps/web` — `server/trpc/routers`                                                                             | the per-type router suites                                                                          |
-| `apps/web` — `server/trpc/routers` subtrees                                                                    | `message`, `room`, `call`                                                                           |
-| `apps/web` — the rest of `server/trpc`                                                                         | `guards`, `middleware`, `procedure`, `plugins`, root                                                |
-| `apps/web` — `server/services/resource`                                                                        |                                                                                                     |
-| `apps/web` — `server/services/message`                                                                         |                                                                                                     |
-| `apps/web` — `server/services` — the dense rest                                                                | `blueprint`, `storage`, `survey`, `program`                                                         |
-| `apps/web` — the rest of `server/services`                                                                     |                                                                                                     |
-| `apps/web` — the rest of `server`                                                                              | `models`, `composables`, `api`, `plugins`, `db`, root                                               |
-| `apps/web` — `shared/models/resource`                                                                          |                                                                                                     |
-| `apps/web` — `shared/models/db`                                                                                |                                                                                                     |
-| `apps/web` — the rest of `shared/models`                                                                       |                                                                                                     |
-| `apps/web` — `shared/services`                                                                                 |                                                                                                     |
-| `apps/web` — the rest of `shared`                                                                              | `util`, `types`, `assets`, `test`                                                                   |
-| `apps/web` — `configuration`                                                                                   | CSP labels, Nuxt config prose                                                                       |
-| `apps/jobs` — `handlers`                                                                                       | the densest prose in the package                                                                    |
-| `apps/jobs` — `services`, the rest                                                                             | plus `models`                                                                                       |
-| `apps/realtime` — `services`, the rest                                                                         | plus `models`                                                                                       |
-| `packages/configuration`                                                                                       | external lists, `global.d.ts`                                                                       |
-| `packages/db-mock`                                                                                             |                                                                                                     |
-| `packages/db` — `services/message`                                                                             | moderation, threads, mentions                                                                       |
-| `packages/db` — the rest of `services`, `models`                                                               | notification, resource, room, storage                                                               |
-| `packages/db-schema` — `models`                                                                                | entity classes, queue payloads                                                                      |
-| `packages/db-schema` — `schema`, `relations`                                                                   | tables and their v2 relations                                                                       |
-| `packages/db-schema` — `services`, package root                                                                | `schema.test.ts`, `sqliteTable.ts`                                                                  |
-| `packages/keyframe-store`                                                                                      | the stored-object and delta prose                                                                   |
-| `apps/infra`                                                                                                   | event subscriptions, GitHub rulesets                                                                |
-| `packages/parse-tmx`                                                                                           | the node model                                                                                      |
-| `packages/shared`, `packages/shared-node`                                                                      | `takeOne`                                                                                           |
-| `packages/vue-phaserjs`                                                                                        | composables, store, models, test setup                                                              |
-| repo root — `scripts/`, `.agents/`, root `*.config.ts`                                                         | workflow scripts and their tests                                                                    |
-| `.github` — workflows, composite actions                                                                       | the densest rationale prose outside `apps/web`; `github-actions` for what a step's comment may keep |
-| `packages/genshin-persona`                                                                                     | the data package's load cost, stated once at `readGenshinDb`                                        |
-| `packages/genshin-engine`                                                                                      |                                                                                                     |
-| `packages/genshin-world`, `packages/genshin-interface`, `packages/genshin-text`                                |                                                                                                     |
-| `packages/genshin-mods`, `packages/follow-ups`                                                                 |                                                                                                     |
-| `packages/pitch-transcription`, `packages/trpc-msw`, `packages/trpc-nuxt-module`                               |                                                                                                     |
-| `scripts/src/services/genshinParity`, `scripts/src/services/genshinAssets`, `scripts/src/services/genshinText` |                                                                                                     |
+| Unit                                                                                                                                        | Notes                                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `packages/db/src/services/message`, `packages/db/src/services/notification`                                                                 | moderation, threads, mentions                                                                       |
+| `apps/jobs/src/handlers`, `apps/jobs/src/models`                                                                                            | the densest prose in the package                                                                    |
+| `apps/realtime/src/services` — `durableObject`, `queue`, `realtime`, `realtimeKit`, `reminder`, `room`, `shared`, `storage`, `todoReminder` | plus `models`                                                                                       |
+| `apps/realtime/src/services` — `topic`, `user`                                                                                              | plus `models`                                                                                       |
+| `packages/keyframe-store`                                                                                                                   | the stored-object and delta prose                                                                   |
+| `apps/web/configuration`                                                                                                                    | CSP labels, Nuxt config prose                                                                       |
+| `.github` — `ISSUE_TEMPLATE`, `PULL_REQUEST_TEMPLATE.md`, `actions`, `assets`, `worker-secrets.json`, `workflows`                           | the densest rationale prose outside `apps/web`; `github-actions` for what a step's comment may keep |
+
+Notes on a tree several units share:
+
+- `apps/web` — `app/components`: the densest prose in the app
+- `apps/web` — `app/services`, `app/util`: the separator and alerting rules, restated per call site
+- `apps/web` — `app/composables/message`: the file, room and subscribable trees
+- `apps/web` — the rest of `app/composables`: the pagination binder and readiness rules, per call site
+- `apps/web` — `app/models`, `app/types`: the dungeons tree's legacy prose
+- `apps/web` — `app/store`: the optimistic-write rationale, restated per call site
+- `apps/web` — `app/pages`, `layouts`, the rest: plus `middleware`, `plugins`, `assets`
+- `apps/web` — `server/trpc/routers`: the per-type router suites
+- `apps/web` — `server/trpc/routers` subtrees: `message`, `room`, `call`
+- `apps/web` — the rest of `server/trpc`: `guards`, `middleware`, `procedure`, `plugins`, root
+- `apps/web` — `server/services` — the dense rest: `blueprint`, `storage`, `survey`, `program`
+- `apps/web` — the rest of `server`: `models`, `composables`, `api`, `plugins`, `db`, root
+- `apps/web` — the rest of `shared`: `util`, `types`, `assets`, `test`
+- `apps/jobs` — `services`, the rest: plus `models`
+- `packages/configuration`: external lists, `global.d.ts`
+- `packages/db` — the rest of `services`, `models`: notification, resource, room, storage
+- `packages/db-schema` — `models`: entity classes, queue payloads
+- `packages/db-schema` — `schema`, `relations`: tables and their v2 relations
+- `packages/db-schema` — `services`, package root: `schema.test.ts`, `sqliteTable.ts`
+- `apps/infra`: event subscriptions, GitHub rulesets
+- `packages/parse-tmx`: the node model
+- `packages/shared`, `packages/shared-node`: `takeOne`
+- `packages/vue-phaserjs`: composables, store, models, test setup
+- repo root — `scripts`, `.agents/`, root `*.config.ts`: workflow scripts and their tests
+- `packages/genshin-persona`: the data package's load cost, stated once at `readGenshinDb`
 
 Greps, per unit:
 

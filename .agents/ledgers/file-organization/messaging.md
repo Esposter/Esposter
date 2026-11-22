@@ -1,9 +1,10 @@
 # Messaging
 
-| Unit                                                                            | Notes                                                                |
-| ------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `app/models/message`                                                            | a type derived from a services map is a type-only import, not a move |
-| `app/components/Message` — `Content`, `DraftsAndSent`, `Friends`, the side bars | the stray-component half is `components/index.test.ts`, not a pass   |
-| `app/components/Message/Model/Message`                                          |                                                                      |
-| `app/components/Message/Model/Room`                                             |                                                                      |
-| `app/components/Message/Model` — `User` and the small folders                   | `FileRenderer`, `Settings`, `RoomCategory`, `Status`, `Member`       |
+| Unit                                         | Notes                                                          |
+| -------------------------------------------- | -------------------------------------------------------------- |
+| `apps/web/app/components/Message/Model/User` | `FileRenderer`, `Settings`, `RoomCategory`, `Status`, `Member` |
+
+Notes on a tree several units share:
+
+- `apps/web/app/models/message`: a type derived from a services map is a type-only import, not a move
+- `apps/web/app/components/Message` — `Content`, `DraftsAndSent`, `Friends`, the side bars: the stray-component half is `components/index.test.ts`, not a pass

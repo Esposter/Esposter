@@ -1,8 +1,5 @@
 # Server
 
-| Unit                                                     | Notes                                                             |
-| -------------------------------------------------------- | ----------------------------------------------------------------- |
-| `server/services`, `server/composables`, `server/models` |                                                                   |
-| `server/trpc` — the resource family                      | `resource`, `survey`, `program`                                   |
-| `server/trpc` — the room family                          | `room`, `call`, `userToRoom`                                      |
-| `server/trpc` — the rest                                 | the loose routers, `guards`, `procedure`, `plugins`, `middleware` |
+| Unit                                                                                                                                                                                                                                                                                                                    | Notes                                                                                                                            |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/server/trpc` — `context.test.ts`, `context.ts`, `index.ts`, `indexWithWakeCheck.test.ts`, `initTrpc.ts`, `liveTopicWakeCheck.harness.test.ts`, `liveTopicWakeCheck.test.ts`, `liveTopicWakeCheckGlobal.ts`, `optimisticWriteCrossCheck.harness.test.ts`, `optimisticWriteCrossCheck.test.ts`, `rootConfig.ts` | `resource`, `survey`, `program`; `room`, `call`, `userToRoom`; the loose routers, `guards`, `procedure`, `plugins`, `middleware` |

@@ -1,6 +1,5 @@
 # Dungeons
 
-| Unit                                                           | Notes                                |
-| -------------------------------------------------------------- | ------------------------------------ |
-| `services/dungeons`, `composables/dungeons`, `store/dungeons`  |                                      |
-| `components/Dungeons`, `services/phaser`, `composables/phaser` | most of it is Phaser rather than DOM |
+Notes on a tree several units share:
+
+- `apps/web/app/components/Dungeons`, `services/phaser`, `composables/phaser`: most of it is Phaser rather than DOM

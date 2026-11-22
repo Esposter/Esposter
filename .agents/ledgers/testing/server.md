@@ -1,14 +1,9 @@
 # Server
 
-| Unit                                                                                                                    | Notes                         |
-| ----------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| `trpc/routers/message` — `emoji`, `index`, `moderation`, `scheduledMessageJob`                                          | the widest suite in the tree  |
-| `trpc/routers/room` — `category`, `createDirectMessageWithFriend`, `directMessage`, `emoji`, `filter`, `index`          |                               |
-| `trpc/routers` — `call`, `role`, `searchHistory`, `userToRoom`, `webhook`                                               | the caller fixtures live here |
-| `trpc/routers` — `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                              |                               |
-| `trpc/routers` — `dashboard`, `dataset`, `email`, `webpage`, `post`, `like`, `block`, `friend`, `friendRequest`, `user` |                               |
-| `trpc/routers` — `achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage`  |                               |
-| `trpc/routers` — `bookmark`, the root suites and the shared fixtures                                                    |                               |
-| `trpc/{guards,procedure,plugins,middleware}` and `context.test.ts`                                                      |                               |
-| `services/pagination`, `services/{resource,blueprint}`                                                                  |                               |
-| `services` — the rest, `composables`, `api`, `routes`                                                                   |                               |
+| Unit                                   | Notes                        |
+| -------------------------------------- | ---------------------------- |
+| `apps/web/server/trpc/routers/message` | the widest suite in the tree |
+
+Notes on a tree several units share:
+
+- `apps/web/server/trpc/routers` — `call`, `role`, `searchHistory`, `userToRoom`, `webhook`: the caller fixtures live here
