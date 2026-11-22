@@ -8,6 +8,7 @@ description: Apply when writing or reviewing a composable, a form dialog, browse
 ## Settled — do not re-propose
 
 - **A rule for a hand-kept in-flight count** — decidable only where the pair brackets one asynchronous operation, incremented where it starts and decremented where it settles; monotonicity is not the test, since a domain total moves both ways too, and whether two writes name the same operation is a question about what they mean.
+- **A knock's pending set is the one hand-kept cancel** — `apps/web/app/store/message/room/call/knocker.ts` keeps the calls a knock is out for, so a page that leaves stops the knock's continuation (the waiting screen and the socket) while the server's write still lands. `writeAwaited` applies a write's arrivals and has no cancel, and `useRunScope` aborts only a newer run of its own key or its scope's disposal, which a Pinia store never reaches by a page leaving. One caller does not earn a `cancel` on either primitive, so none is added; a second caller needing the same continuation guard is the trigger to add one to `useRunScope`.
 
 ## Reach for the primitive — never hand-rolled
 
