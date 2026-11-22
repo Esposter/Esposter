@@ -17,13 +17,13 @@ import { exportWebpageHtml } from "#src/services/pageBuilder/exportWebpageHtml";
 import { createBlueprintPortableFormat } from "#src/services/resource/createBlueprintPortableFormat";
 import { createNoteMarkdownPortableFormat } from "#src/services/resource/createNoteMarkdownPortableFormat";
 import { createSheetPortableFormat } from "#src/services/resource/createSheetPortableFormat";
+import { loadCommandSheet } from "#src/services/resource/sheet/loadCommandSheet";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { exportWhiteboard } from "#src/services/whiteboard/export/exportWhiteboard";
 import { useAlertStore } from "#src/store/alert";
 import { useEmailExportDialogStore } from "#src/store/emailEditor/exportDialog";
 import { usePageBuilderDocumentStore } from "#src/store/pageBuilder/document";
 import { useResourceStore } from "#src/store/resource/index";
-import { useSheetStore } from "#src/store/resource/sheet/index";
 import { useSheetPortableDialogStore } from "#src/store/resource/sheet/portableDialog";
 import { useTodoListStore } from "#src/store/resource/todoList/index";
 import { useTodoListPrintDialogStore } from "#src/store/resource/todoList/printDialog";
@@ -116,12 +116,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     {
       icon: "i-mdi:poll",
       import: async () => {
-        const resourceStore = useResourceStore();
-        const { currentResourceId } = storeToRefs(resourceStore);
-        const resourceId = currentResourceId.value;
-        const sheetStore = useSheetStore();
-        const { loadContent } = sheetStore;
-        await loadContent();
+        const resourceId = await loadCommandSheet();
         const sheetPortableDialogStore = useSheetPortableDialogStore();
         const { openSurveyImport } = sheetPortableDialogStore;
         openSurveyImport(resourceId);

@@ -5,7 +5,7 @@ import { createDefaultSheetSettings } from "#shared/services/resource/sheet/crea
 import { importFile } from "#src/services/file/importFile";
 import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { DataSourceTypeItemCategoryDefinitionMap } from "#src/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";
-import { useResourceStore } from "#src/store/resource/index";
+import { loadCommandSheet } from "#src/services/resource/sheet/loadCommandSheet";
 import { useSheetStore } from "#src/store/resource/sheet/index";
 import { useSheetPortableDialogStore } from "#src/store/resource/sheet/portableDialog";
 import { trimFileExtension } from "#src/util/file/trimFileExtension";
@@ -16,26 +16,15 @@ import { trimFileExtension } from "#src/util/file/trimFileExtension";
 // Exported from
 export const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
   export: async () => {
-    // Named before the first await, so the dialog opens for the sheet the command was run on
-    const resourceStore = useResourceStore();
-    const { currentResourceId } = storeToRefs(resourceStore);
-    const resourceId = currentResourceId.value;
-    const sheetStore = useSheetStore();
-    const { loadContent } = sheetStore;
-    // The command bar is reachable from any blade, so the content may not be loaded yet
-    await loadContent();
+    const resourceId = await loadCommandSheet();
     const sheetPortableDialogStore = useSheetPortableDialogStore();
     const { openExport } = sheetPortableDialogStore;
     openExport(resourceId, type);
   },
   icon: DataSourceTypeItemCategoryDefinitionMap[type].icon,
   import: async () => {
-    const resourceStore = useResourceStore();
-    const { currentResourceId } = storeToRefs(resourceStore);
-    const resourceId = currentResourceId.value;
+    const resourceId = await loadCommandSheet();
     const sheetStore = useSheetStore();
-    const { loadContent } = sheetStore;
-    await loadContent();
     const configuration = DataSourceConfigurationMap[type];
     // A format other than the sheet's own is read with that format's defaults rather than rewriting the settings
     // The sheet already has — the same fallback the export dialog makes
