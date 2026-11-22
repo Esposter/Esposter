@@ -4,8 +4,14 @@ import type { Level } from "#src/models/recreation/image/Level";
 import { CHANNELS, COLOUR_CHANNELS } from "#src/services/recreation/image/constants";
 
 // The level's pixels just outside the region are its boundary, known from the frame, and the region's own are unknown.
-// Built over the region and its one-pixel ring, clipped to the frame, so a region on a frame edge has no ring there
-export const getFinestLevel = (pixels: Uint8Array, width: number, height: number, region: ImageRegion): Level => {
+// Built over the region and its one-pixel ring, clipped to the frame, so a region on a frame edge has no ring there.
+// Its origin in the frame is returned with it, as left and top
+export const getFinestLevel = (
+  pixels: Uint8Array,
+  width: number,
+  height: number,
+  region: ImageRegion,
+): Level & { left: number; top: number } => {
   const left = Math.max(0, region.x - 1);
   const top = Math.max(0, region.y - 1);
   const levelWidth = Math.min(width, region.x + region.width + 1) - left;
@@ -27,5 +33,5 @@ export const getFinestLevel = (pixels: Uint8Array, width: number, height: number
       for (let channel = 0; channel < COLOUR_CHANNELS; channel++)
         values[index * COLOUR_CHANNELS + channel] = pixels[pixelIndex + channel] ?? 0;
     }
-  return { height: levelHeight, known, values, width: levelWidth };
+  return { height: levelHeight, known, left, top, values, width: levelWidth };
 };

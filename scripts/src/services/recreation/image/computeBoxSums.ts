@@ -1,11 +1,6 @@
 // The sum of each pixel's window of `values`, a square of `radius` pixels each way clipped at the frame's edges, read
 // From one integral image so every window costs the same whatever its radius
-export const computeBoxSums = (
-  values: ArrayLike<number>,
-  width: number,
-  height: number,
-  radius: number,
-): Float64Array => {
+export const computeBoxSums = (values: ArrayLike<number>, width: number, height: number, radius: number) => {
   const stride = width + 1;
   const integral = new Float64Array(stride * (height + 1));
   for (let y = 0; y < height; y++)

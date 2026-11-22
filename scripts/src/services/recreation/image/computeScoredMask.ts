@@ -3,12 +3,7 @@ import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 // The pixels a comparison scores, read on a raster of the given size over the region: 1 where the middle of the raster
 // Pixel lies in one of the rectangles, which are in the reference's own pixels. A raster smaller than the region, such
 // As FLIP's, takes each pixel at the place its middle has in the region
-export const computeScoredMask = (
-  rectangles: ImageRegion[],
-  region: ImageRegion,
-  width: number,
-  height: number,
-): Uint8Array => {
+export const computeScoredMask = (rectangles: ImageRegion[], region: ImageRegion, width: number, height: number) => {
   const mask = new Uint8Array(width * height);
   for (let row = 0; row < height; row++)
     for (let column = 0; column < width; column++) {

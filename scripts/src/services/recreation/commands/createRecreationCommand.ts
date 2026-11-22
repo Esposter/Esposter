@@ -2,7 +2,7 @@ import type { LuaDialect } from "#src/models/recreation/lua/LuaDialect";
 import type { CommandDef } from "citty";
 
 import { clipCommand } from "#src/services/recreation/commands/clipCommand";
-import { createLuaDialectCommand } from "#src/services/recreation/commands/luaDialectCommand";
+import { createLuaDialectCommand } from "#src/services/recreation/commands/createLuaDialectCommand";
 import { searchCommand } from "#src/services/recreation/commands/searchCommand";
 import { defineCommand } from "citty";
 

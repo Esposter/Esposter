@@ -1,5 +1,5 @@
 // The pixels beside a pixel within the image, left, right, up and down, each one that the image holds
-export const getNeighbourPixels = (pixel: number, width: number, height: number): number[] => {
+export const getNeighbourPixels = (pixel: number, width: number, height: number) => {
   const x = pixel % width;
   const y = Math.floor(pixel / width);
   const neighbours: number[] = [];

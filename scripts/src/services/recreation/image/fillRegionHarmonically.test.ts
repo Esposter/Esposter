@@ -7,9 +7,12 @@ import { describe, expect, test } from "vitest";
 describe(fillRegionHarmonically, () => {
   const OPAQUE = 255;
   const INTERFACE_COLOUR = [0, 0, 0, OPAQUE];
+  const FRAME_WIDTH = 10;
+  const FRAME_HEIGHT = 8;
+  const NO_REGION = { height: 0, width: 0, x: 0, y: 0 };
   const getGradientColour = (column: number, row: number) => [2 * column + 3, row + 40, 100 - column, OPAQUE];
   // A frame's pixels, each its colour at its own column and row, the region's own pixels set to the interface's colour
-  const getFrame = (
+  const createFrame = (
     width: number,
     height: number,
     region: ImageRegion,
@@ -30,18 +33,16 @@ describe(fillRegionHarmonically, () => {
   test("fills a region surrounded by a flat border flat", () => {
     expect.hasAssertions();
 
-    const width = 10;
-    const height = 8;
     const region = { height: 3, width: 4, x: 3, y: 2 };
 
     expect(
       fillRegionHarmonically(
-        getFrame(width, height, region, () => flatColour),
-        width,
-        height,
+        createFrame(FRAME_WIDTH, FRAME_HEIGHT, region, () => flatColour),
+        FRAME_WIDTH,
+        FRAME_HEIGHT,
         region,
       ),
-    ).toStrictEqual(getFrame(width, height, { height: 0, width: 0, x: 0, y: 0 }, () => flatColour));
+    ).toStrictEqual(createFrame(FRAME_WIDTH, FRAME_HEIGHT, NO_REGION, () => flatColour));
   });
 
   test("fills a region along a linear gradient with the gradient, leaving the rest of the frame as it was", () => {
@@ -52,24 +53,22 @@ describe(fillRegionHarmonically, () => {
     const region = { height: 12, width: 16, x: 12, y: 9 };
 
     expect(
-      fillRegionHarmonically(getFrame(width, height, region, getGradientColour), width, height, region),
-    ).toStrictEqual(getFrame(width, height, { height: 0, width: 0, x: 0, y: 0 }, getGradientColour));
+      fillRegionHarmonically(createFrame(width, height, region, getGradientColour), width, height, region),
+    ).toStrictEqual(createFrame(width, height, NO_REGION, getGradientColour));
   });
 
   test("fills a region on the frame's left edge from the border it has", () => {
     expect.hasAssertions();
 
-    const width = 10;
-    const height = 8;
     const region = { height: 3, width: 4, x: 0, y: 2 };
 
     expect(
       fillRegionHarmonically(
-        getFrame(width, height, region, () => flatColour),
-        width,
-        height,
+        createFrame(FRAME_WIDTH, FRAME_HEIGHT, region, () => flatColour),
+        FRAME_WIDTH,
+        FRAME_HEIGHT,
         region,
       ),
-    ).toStrictEqual(getFrame(width, height, { height: 0, width: 0, x: 0, y: 0 }, () => flatColour));
+    ).toStrictEqual(createFrame(FRAME_WIDTH, FRAME_HEIGHT, NO_REGION, () => flatColour));
   });
 });
