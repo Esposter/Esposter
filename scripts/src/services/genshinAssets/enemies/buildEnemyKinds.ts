@@ -10,8 +10,6 @@ import {
   BASE_ATTACK_PROPERTY,
   BASE_DEFENSE_PROPERTY,
   BASE_HEALTH_PROPERTY,
-  DEFAULT_CODEX_SUBTYPE,
-  DEFAULT_SECURITY_LEVEL,
   MONSTER_DESCRIBE_TABLE_NAME,
   MONSTER_TABLE_NAME,
   WEEKLY_BOSS_KIND_IDS,
@@ -29,7 +27,7 @@ import { readAbyssFloors } from "#src/services/genshinAssets/spiralAbyss/readAby
 import { toAbyssEnemyKinds } from "#src/services/genshinAssets/spiralAbyss/toAbyssEnemyKinds";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { Element, EnemyFamily, EnemyType, GameDataset } from "genshin-world";
 
 // The kinds every region's camps place and every Mondstadt bounty, weekly boss, Spiral Abyss chamber and Imaginarium
 // Stage fights, each read from the game's monster table with its family from the archive and its name's text id, and
@@ -70,16 +68,16 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
       baseHealth: monsterRow.hpBase,
       defenseCurve: getGrowCurve(monsterRow, BASE_DEFENSE_PROPERTY),
       elementResistances: {
-        Electric: monsterRow.elecSubHurt,
-        Fire: monsterRow.fireSubHurt,
-        Grass: monsterRow.grassSubHurt,
-        Ice: monsterRow.iceSubHurt,
-        Rock: monsterRow.rockSubHurt,
-        Water: monsterRow.waterSubHurt,
-        Wind: monsterRow.windSubHurt,
+        [Element.Anemo]: monsterRow.windSubHurt,
+        [Element.Cryo]: monsterRow.iceSubHurt,
+        [Element.Dendro]: monsterRow.grassSubHurt,
+        [Element.Electro]: monsterRow.elecSubHurt,
+        [Element.Geo]: monsterRow.rockSubHurt,
+        [Element.Hydro]: monsterRow.waterSubHurt,
+        [Element.Pyro]: monsterRow.fireSubHurt,
       },
-      enemyFamily: codexRow.subType ?? DEFAULT_CODEX_SUBTYPE,
-      enemyType: monsterRow.securityLevel ?? DEFAULT_SECURITY_LEVEL,
+      enemyFamily: codexRow.subType ?? EnemyFamily.ElementalLifeforms,
+      enemyType: monsterRow.securityLevel ?? EnemyType.Common,
       healthCurve: getGrowCurve(monsterRow, BASE_HEALTH_PROPERTY),
       id: enemyKindId,
       nameTextId: String(monsterDescribeRow.nameTextMapHash),

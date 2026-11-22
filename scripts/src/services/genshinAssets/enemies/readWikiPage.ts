@@ -1,4 +1,5 @@
 import { wikiPageResponseSchema } from "#src/models/genshinAssets/enemies/WikiPageResponse";
+import { toWikiPageCachePath } from "#src/services/genshinAssets/enemies/toWikiPageCachePath";
 import { WIKI_API_URL } from "#src/services/genshinAssets/shared/constants";
 import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -6,7 +7,7 @@ import { writeFileSync } from "node:fs";
 
 // Fetches one wiki page through the wiki's API into its cache file, checking that the answer is a page before it is kept:
 // A cached refusal or missing page would never be fetched again
-export const readWikiPage = async (title: string, cachePath: string): Promise<void> => {
+export const readWikiPage = async (cacheDirectory: string, title: string): Promise<void> => {
   const searchParams = new URLSearchParams({
     action: "query",
     format: "json",
@@ -21,5 +22,5 @@ export const readWikiPage = async (title: string, cachePath: string): Promise<vo
   const [page] = response.query.pages;
   if (page?.missing || !page?.revisions?.length)
     throw new InvalidOperationError(Operation.Read, title, "is not a page on the wiki");
-  writeFileSync(cachePath, JSON.stringify(response));
+  writeFileSync(toWikiPageCachePath(cacheDirectory, title), JSON.stringify(response));
 };

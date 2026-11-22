@@ -26,5 +26,5 @@ export const toArticleDropSource = (articleTitle: string, content: string): Arti
   if (firstTemplate?.groups?.template !== undefined)
     return { template: firstTemplate.groups.template.trim(), type: "template" };
   if (isBossReward) return { type: "bossReward" };
-  return { type: "none" };
+  else return { type: "none" };
 };

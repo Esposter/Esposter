@@ -1,4 +1,5 @@
 import { readWikiPage } from "#src/services/genshinAssets/enemies/readWikiPage";
+import { toWikiPageCachePath } from "#src/services/genshinAssets/enemies/toWikiPageCachePath";
 import { existsSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -9,7 +10,7 @@ describe(readWikiPage, () => {
   let cacheDirectory: string;
 
   beforeEach(async () => {
-    cacheDirectory = await mkdtemp(join(tmpdir(), "fetch-wiki-page-"));
+    cacheDirectory = await mkdtemp(join(tmpdir(), "read-wiki-page-"));
   });
 
   afterEach(async () => {
@@ -22,11 +23,10 @@ describe(readWikiPage, () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       Response.json({ query: { pages: [{ ns: 0, pageid: 1, revisions: [], title: "Slimes" }] } }),
     );
-    const cachePath = join(cacheDirectory, "Page_Slimes.json");
 
-    await expect(readWikiPage("Slimes", cachePath)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(readWikiPage(cacheDirectory, "Slimes")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: Slimes, is not a page on the wiki]`,
     );
-    expect(existsSync(cachePath)).toBe(false);
+    expect(existsSync(toWikiPageCachePath(cacheDirectory, "Slimes"))).toBe(false);
   });
 });

@@ -11,8 +11,6 @@ describe(buildEnemyDropTemplate, () => {
   // The drops module's data as the wiki gives it, cut down to the entries these tests read: an entry whose members name
   // A template, and one whose material set is conditional on a named state
   const DROPS_DATA = `return {
-	['Base_Info'] = { ['type-1'] = { Mora = '≤200', members = {'Vishap Hatchlings'} } },
-	['Custom_Enemies'] = {},
 	['Enemies'] = {
 		${AVATAR_OF_LAVA_DROPS_ENTRY},
 		{

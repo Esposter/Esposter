@@ -10,7 +10,7 @@ describe(nameMonsterAssets, () => {
 
     const prefabPathHash = "2956196180941222287";
     const prefabPath = "ART/Char/Monster/Monster_Hili_None_01/Monster_Hili_None_01";
-    const row: MonsterAssetRow = { id: 21010101, monsterName: "Hili_None_01", prefabPathHash };
+    const row: MonsterAssetRow = { id: 0, monsterName: "monsterName", prefabPathHash };
     const pathNames = new Map([[getPathHashKey(prefabPathHash), prefabPath]]);
 
     expect(nameMonsterAssets(row, pathNames)).toStrictEqual({
@@ -27,7 +27,7 @@ describe(nameMonsterAssets, () => {
     const prefabPathHash = "2956196180941222287";
     const prefabPath = "ART/Char/Monster/Monster_Hili_None_01/Monster_Hili_None_01";
     const controllerPathHash = "13507751526928566456";
-    const row: MonsterAssetRow = { controllerPathHash, id: 21010101, monsterName: "Hili_None_01", prefabPathHash };
+    const row: MonsterAssetRow = { controllerPathHash, id: 0, monsterName: "monsterName", prefabPathHash };
     const pathNames = new Map([[getPathHashKey(prefabPathHash), prefabPath]]);
 
     expect(nameMonsterAssets(row, pathNames)).toStrictEqual({

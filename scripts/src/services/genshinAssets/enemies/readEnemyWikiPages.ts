@@ -1,6 +1,5 @@
 import { checkWikiPageCached } from "#src/services/genshinAssets/enemies/checkWikiPageCached";
 import { readWikiPage } from "#src/services/genshinAssets/enemies/readWikiPage";
-import { toWikiPageCachePath } from "#src/services/genshinAssets/enemies/toWikiPageCachePath";
 import { WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
 import { mkdirSync } from "node:fs";
 
@@ -18,7 +17,7 @@ export const readEnemyWikiPages = async (
     else {
       mkdirSync(cacheDirectory, { recursive: true });
       // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one page is fetched at a time, so the wiki is asked for no more than one at once
-      await readWikiPage(title, toWikiPageCachePath(cacheDirectory, title));
+      await readWikiPage(cacheDirectory, title);
       lines.push(`${title}: fetched`);
     }
   return lines.join("\n");
