@@ -9,7 +9,7 @@ const emit = defineEmits<{ reset: []; save: [] }>();
      already took. Lifted, so the form scrolls under the bar rather than through it, and rising into place as the first
      change is made -->
 <template>
-  <div class="bar ui-bar-enter" role="status" px-3 py-2 flex gap-2 items-center bottom-4 sticky ui-lifted>
+  <div class="bar ui-bar-enter" px-3 py-2 flex gap-2 items-center bottom-4 sticky ui-lifted role="status">
     <span flex-1 min-w-0 truncate>You have unsaved changes.</span>
     <UiButton :variant="UiButtonVariant.Quiet" @click="emit('reset')">Reset</UiButton>
     <UiButton :variant="UiButtonVariant.Accent" @click="emit('save')">Save changes</UiButton>

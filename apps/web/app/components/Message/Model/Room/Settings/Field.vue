@@ -11,7 +11,7 @@ const { hint = "", title = "" } = defineProps<Props>();
 
 <template>
   <div flex flex-col gap-1>
-    <span v-if="title" text-sm text-muted>{{ title }}</span>
+    <UiFieldLabel v-if="title" :label="title" />
     <slot />
     <p v-if="hint" text-sm text-muted>{{ hint }}</p>
   </div>
