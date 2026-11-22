@@ -1,3 +1,5 @@
+import { getUtf8ByteLength } from "#src/util/text/getUtf8ByteLength";
+
 // What a serialized array costs beyond its items: the two enclosing brackets, less the separating comma the
 // Per-item cost below charges the first item, which has nothing to separate it from. Charged to every chunk up
 // Front, so a chunk filled exactly to the budget serializes to the budget rather than one byte past it — and one
@@ -9,10 +11,7 @@ const ARRAY_SERIALIZATION_BYTES = 1;
 // Rejected whole at the service's own event limit.
 // An item that exceeds the budget on its own still gets its own chunk: dropping it would silently strand
 // Whatever it named, and one oversized item failing loudly is the better of the two.
-// Byte length is measured with TextEncoder rather than Buffer, since this package is imported by the browser
-// Bundle, where the Node global does not exist.
 export const chunkBySerializedSize = <T>(items: T[], maxBytes: number, maxCount: number): T[][] => {
-  const textEncoder = new TextEncoder();
   const chunks: T[][] = [];
   let currentChunk: T[] = [];
   let currentBytes = ARRAY_SERIALIZATION_BYTES;
@@ -20,7 +19,7 @@ export const chunkBySerializedSize = <T>(items: T[], maxBytes: number, maxCount:
     // The serialized cost of one array element: the item as JSON — every quote and escape included — plus the
     // Separating comma. Measuring the raw value undercounts, since a quote, a backslash or a control character
     // Costs two to six bytes once serialized, and a value made of them outgrows the budget the check just cleared
-    const itemBytes = textEncoder.encode(JSON.stringify(item)).length + 1;
+    const itemBytes = getUtf8ByteLength(JSON.stringify(item)) + 1;
     if (currentChunk.length > 0 && (currentChunk.length === maxCount || currentBytes + itemBytes > maxBytes)) {
       chunks.push(currentChunk);
       currentChunk = [];

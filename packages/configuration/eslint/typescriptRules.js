@@ -330,6 +330,15 @@ export default {
         "VariableDeclarator[id.name=/^show[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]):not([init.callee.object.name='vi']), TSInterfaceBody > TSPropertySignature[key.name=/^show[A-Z]/][typeAnnotation.typeAnnotation.type='TSBooleanKeyword']:not(TSModuleDeclaration *)",
     },
     {
+      // Encoding a text only to read its length allocates every byte to count them. `getUtf8ByteLength` writes into one
+      // Scratch buffer kept for every call, which is faster at every length and allocates nothing. An encode whose bytes
+      // Are used — a hash, a signature, a body — is not matched
+      message:
+        "Count a text's UTF-8 bytes with `getUtf8ByteLength(text)` from `@esposter/shared`, never `encode(text).byteLength` or `.length`.",
+      selector:
+        "MemberExpression[property.name=/^(byteLength|length)$/][object.type='CallExpression'][object.callee.property.name='encode']:matches([object.callee.object.name=/(encoder|Encoder|ENCODER)$/], [object.callee.object.callee.name='TextEncoder'])",
+    },
+    {
       // An underscore marks a binding nothing reads, so an import renamed with one reads as unused at every site
       // That uses it; a name clash is settled with `base*`, which says the local one builds on it
       message:

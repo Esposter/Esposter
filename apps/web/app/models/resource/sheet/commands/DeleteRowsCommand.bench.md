@@ -17,21 +17,21 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## DeleteRowsCommand > delete 50 rows from 100
 
-| task                           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------------------------ | ------- | --------- | ------- | -------- | ------- |
-| every other row execute        | 1.00×   | 0.0348    | ±7.36%  | 0.0438   | 10      |
-| every other row execute + undo | 0.46×   | 0.0765    | ±10.92% | 0.0997   | 10      |
+| task                           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------------------------------ | ------- | --------- | ------ | -------- | ------- |
+| every other row execute        | 1.00×   | 0.0612    | ±3.89% | 0.0695   | 10      |
+| every other row execute + undo | 0.46×   | 0.1336    | ±6.15% | 0.1565   | 10      |
 
 ## DeleteRowsCommand > delete 500 rows from 1000
 
 | task                           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ------------------------------ | ------- | --------- | ------ | -------- | ------- |
-| every other row execute        | 1.00×   | 0.3364    | ±5.13% | 0.3740   | 10      |
-| every other row execute + undo | 0.58×   | 0.5830    | ±1.25% | 0.6008   | 10      |
+| every other row execute        | 1.00×   | 0.4785    | ±4.00% | 0.5390   | 10      |
+| every other row execute + undo | 0.52×   | 0.9169    | ±0.97% | 0.9408   | 10      |
 
 ## DeleteRowsCommand > delete 5000 rows from 10000
 
 | task                           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ------------------------------ | ------- | --------- | ------ | -------- | ------- |
-| every other row execute        | 1.00×   | 3.3692    | ±2.53% | 3.6328   | 10      |
-| every other row execute + undo | 0.49×   | 6.8753    | ±8.13% | 8.4417   | 10      |
+| every other row execute        | 1.00×   | 4.7706    | ±1.29% | 4.9359   | 10      |
+| every other row execute + undo | 0.52×   | 9.2605    | ±4.64% | 10.5176  | 10      |

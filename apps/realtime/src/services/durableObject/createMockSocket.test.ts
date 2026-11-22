@@ -1,5 +1,5 @@
 import { RESERVED_CLOSE_CODES } from "#src/services/durableObject/constants";
-import { jsonDateParse } from "@esposter/shared";
+import { getUtf8ByteLength, jsonDateParse } from "@esposter/shared";
 import { describe, vi } from "vitest";
 
 // A socket the runtime accepted: the close and send calls the object makes are the ones a test reads, and its attachment is
@@ -20,7 +20,7 @@ export const createSocket = () => {
     },
     send: vi.fn<(frame: string) => void>(),
     serializeAttachment: (value: unknown) => {
-      const size = new TextEncoder().encode(JSON.stringify(value)).byteLength;
+      const size = getUtf8ByteLength(JSON.stringify(value));
       if (size > attachmentMaxBytes)
         throw new TypeError(`A WebSocket 'attachment' cannot be larger than ${attachmentMaxBytes} bytes.`);
       attachment = value;

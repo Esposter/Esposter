@@ -1,4 +1,5 @@
 import { chunkBySerializedSize } from "#src/util/array/chunkBySerializedSize";
+import { getUtf8ByteLength } from "#src/util/text/getUtf8ByteLength";
 import { describe, expect, test } from "vitest";
 
 describe(chunkBySerializedSize, () => {
@@ -31,7 +32,7 @@ describe(chunkBySerializedSize, () => {
 
     expect(chunks).toStrictEqual([["a"], ["b"]]);
 
-    for (const chunk of chunks) expect(new TextEncoder().encode(JSON.stringify(chunk)).length).toBeLessThanOrEqual(8);
+    for (const chunk of chunks) expect(getUtf8ByteLength(JSON.stringify(chunk))).toBeLessThanOrEqual(8);
   });
 
   test("splits on the count bound before the byte budget is reached", () => {

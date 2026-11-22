@@ -557,6 +557,25 @@ describe("typescriptRules", () => {
       // A generic or a union names a type with something added, so it is not a second name for one
       { filePath: "genericTypeAlias.ts", name: "genericTypeAlias", source: "export type A = B<C>;", violations: 0 },
       { filePath: "unionTypeAlias.ts", name: "unionTypeAlias", source: "export type A = B | C;", violations: 0 },
+      {
+        filePath: "encodedByteLength.ts",
+        name: "encodedByteLength",
+        source: `export const a = new TextEncoder().encode("a").byteLength;`,
+        violations: 1,
+      },
+      {
+        filePath: "encoderLength.ts",
+        name: "encoderLength",
+        source: `const textEncoder = new TextEncoder();\nexport const a = textEncoder.encode("a").length;`,
+        violations: 1,
+      },
+      // The bytes themselves are what a hash or a body needs
+      {
+        filePath: "encodedBytes.ts",
+        name: "encodedBytes",
+        source: `export const a = new TextEncoder().encode("a");`,
+        violations: 0,
+      },
     ],
   });
 });
