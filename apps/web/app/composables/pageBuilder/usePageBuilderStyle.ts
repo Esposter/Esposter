@@ -24,8 +24,9 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
   const { getDevice, getSelectedNodeId, getStyleState } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit, setPreview } = pageBuilderHistoryStore;
-  // The store is read through its object, since destructuring would keep the copied style as it was when this ran
+  // The copied style is read through its ref, since destructuring the value would keep the style as it was when this ran
   const pageBuilderStyleClipboardStore = usePageBuilderStyleClipboardStore();
+  const { copiedStyle } = storeToRefs(pageBuilderStyleClipboardStore);
   const { setCopiedStyle } = pageBuilderStyleClipboardStore;
   const target = computed(() => {
     const resourceIdValue = toValue(resourceId);
@@ -96,10 +97,9 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
   };
   const pasteStyle = () => {
     const targetValue = target.value;
-    const { copiedStyle } = pageBuilderStyleClipboardStore;
-    if (!targetValue || !copiedStyle) return;
+    if (!targetValue || !copiedStyle.value) return;
 
-    const operations = getStyleOperations(targetValue.pointer, targetValue.style, copiedStyle);
+    const operations = getStyleOperations(targetValue.pointer, targetValue.style, copiedStyle.value);
     if (operations.length === 0) return;
 
     applyEdit(toValue(resourceId), operations, "Paste style").match(noop, console.error);

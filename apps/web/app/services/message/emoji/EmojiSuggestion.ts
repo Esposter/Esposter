@@ -17,8 +17,8 @@ export const EmojiSuggestion: Except<SuggestionOptions<PickableEmoji, PickableEm
   char: SuggestionTrigger.Emoji,
   command: ({ editor, props: emoji, range }) => {
     const emojiPickerStore = useEmojiPickerStore();
-    const { skinTone } = emojiPickerStore;
-    const content = getPickableEmojiContent(emoji, getPickableEmojiTag(emoji, skinTone));
+    const { skinTone } = storeToRefs(emojiPickerStore);
+    const content = getPickableEmojiContent(emoji, getPickableEmojiTag(emoji, skinTone.value));
     editor.chain().focus().deleteRange(range).insertContent(content).run();
   },
   // The same index and the same ranking the picker searches, so the two surfaces cannot disagree on what a
@@ -27,8 +27,8 @@ export const EmojiSuggestion: Except<SuggestionOptions<PickableEmoji, PickableEm
     if (query.length < EMOJI_SUGGESTION_MIN_QUERY_LENGTH) return [];
 
     const roomEmojiStore = useRoomEmojiStore();
-    const { customEmojis } = roomEmojiStore;
-    return searchEmojis(query, customEmojis).slice(0, MAX_EMOJI_SUGGESTIONS);
+    const { customEmojis } = storeToRefs(roomEmojiStore);
+    return searchEmojis(query, customEmojis.value).slice(0, MAX_EMOJI_SUGGESTIONS);
   },
   pluginKey: new PluginKey("emojiSuggestion"),
   render: getRender(EmojiSuggestionList),

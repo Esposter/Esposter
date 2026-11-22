@@ -16,9 +16,11 @@ export const usePostRows = () => {
   const overlayStore = useOverlayStore();
   const { arrive, view } = overlayStore;
   const userStore = useUserStore();
-  const { storeUser, userMap } = userStore;
+  const { userMap } = storeToRefs(userStore);
+  const { storeUser } = userStore;
   const postCountStore = usePostCountStore();
-  const { postCounts, setPostCounts } = postCountStore;
+  const { postCounts } = storeToRefs(postCountStore);
+  const { setPostCounts } = postCountStore;
   const postRows = view(postTable);
   const likeRows = view(likeTable);
   // A row an entry drew without a version is below every version, as a placeholder is
@@ -34,13 +36,13 @@ export const usePostRows = () => {
       ),
   );
   const toPostWithRelations = (post: Readonly<Draft<PostInPost>>): PostInPostWithRelations | undefined => {
-    const user = userMap.get(post.userId);
+    const user = userMap.value.get(post.userId);
     if (!user) return undefined;
 
     // The store holds the newest counts it has seen, by version, so a count at the row's version or a later one is the
     // Count drawn
     const version = post.version ?? NO_ROW_VERSION;
-    const counts = postCounts.get(post.id);
+    const counts = postCounts.value.get(post.id);
     const isCountCurrent = counts !== undefined && counts.version >= version;
     return {
       ...post,

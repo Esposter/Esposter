@@ -15,19 +15,21 @@ import { getExportBounds, PositionedElementType, toPositionedSvg } from "vue-blo
 // File matches what the canvas shows, and nothing is captured from the page
 export const exportWhiteboard = async (format: WhiteboardExportFormat) => {
   const resourceStore = useResourceStore();
-  const { resource } = resourceStore;
-  if (!resource) return;
+  const { resource } = storeToRefs(resourceStore);
+  // The file is named and fetched for the resource as it stood when the export was asked for, so it is taken once here
+  const exportedResource = resource.value;
+  if (!exportedResource) return;
 
   const whiteboardStore = useWhiteboardStore();
   const { editState } = storeToRefs(whiteboardStore);
   const { loadContent } = whiteboardStore;
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
-  const fileName = sanitizeFilename(resource.name);
+  const fileName = sanitizeFilename(exportedResource.name);
   await getResultAsync(async () => {
     await loadContent();
     const savedDocument = editState.value.document;
-    const { failedFileIds, imageUrls } = await getWhiteboardImageUrls(savedDocument, resource.id);
+    const { failedFileIds, imageUrls } = await getWhiteboardImageUrls(savedDocument, exportedResource.id);
     // An image that could not be loaded is left out with its element, so neither file draws it, and the owner is told how many
     const positionedDocument = {
       ...savedDocument,
