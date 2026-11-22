@@ -1,6 +1,6 @@
 # Draining
 
-Read when an ordinary change touches a file in a unit whose ledger row is still open.
+Read when an ordinary change touches a file in a unit a question still holds open.
 
 A ledger that only moves when someone sits down to work it moves at the rate someone sits down to work it, which is rarely. It does not have to: ordinary changes already land inside unswept units every day, and that contact is free coverage nobody is collecting.
 
@@ -8,6 +8,6 @@ A ledger that only moves when someone sits down to work it moves at the rate som
 
 Scope it to the files the change touches, not the unit around them; widening it there is how a one-line fix turns into an afternoon.
 
-**The row stays `—` until the whole unit is swept.** There is no partially-swept state, and inventing one — a fraction, a file list, a third symbol — puts progress state at file granularity in a table that exists to track units, where it drifts the moment anyone touches those files again. The opportunistic pass shortens the eventual unit pass; it never reports it.
+**The cell stays `—` until the whole unit is swept.** There is no partially-swept state, and inventing one — a fraction, a file list, a third symbol — puts progress state at file granularity in a table that exists to track units, where it drifts the moment anyone touches those files again. The opportunistic pass shortens the eventual unit pass; it never reports it.
 
 This is what keeps a standing ledger moving. The scheduled pass stops being the only thing that drains it and becomes the sweep-up for whatever ordinary work never happened to reach.

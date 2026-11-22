@@ -11,7 +11,7 @@ commit, every unit read whole.
 
 ## `/finishing` runs at every area boundary
 
-When a sitting finishes one area's rows (app shell, messaging, packages, …) and before it starts the next, it runs the audit over that area's commits (`finishing` skill). A rename leaves a docs sentence behind and a repeated finding wants its enforcer, and both are cheapest to catch while the area is still in mind. The audit is not the checks, which still wait for the push.
+When a sitting finishes one area's units (app shell, messaging, packages, …) and before it starts the next, it runs the audit over that area's commits (`finishing` skill). A rename leaves a docs sentence behind and a repeated finding wants its enforcer, and both are cheapest to catch while the area is still in mind. The audit is not the checks, which still wait for the push.
 
 ## A finding in another session's file waits for that session's commit
 
@@ -35,24 +35,21 @@ and it ends.
 
 ## A sitting crosses ledgers
 
-A ledger is not finished in a sitting. Every sweep is standing and most ledgers are larger than any one sitting,
-so "work this ledger until it is done" is not a plan — and stopping when one ledger's open rows run out spends the
-rest of the sitting on nothing.
+A ledger is not finished in a sitting. Every sweep is standing and most questions hold more cells than any one
+sitting reads, so "work this ledger until it is done" is not a plan. **A question left half-drained is the normal
+resting state**, and a sitting reads units rather than ledgers: every question holding a unit is judged on the one
+read of it.
 
-**A ledger left half-drained is the normal resting state.** When the ledger being worked runs out of open rows,
-take an open row from another. Crossing ledgers costs nothing: a row is scoped by its own pathspecs and carries its
-own convention.
-
-What may not be split is a **unit**. A row is swept and dated in this sitting or untouched — the same rule that
+What may not be split is a **unit**. A cell is swept and dated in this sitting or untouched — the same rule that
 denies a partially-swept state denies a half-read one, and a unit abandoned mid-read leaves the next sitting unable
 to tell what was already looked at.
 
-The handover names where each ledger was left, so the next sitting opens on a row rather than re-deriving scope.
+The handover names the units left, so the next sitting opens on a unit rather than re-deriving scope.
 
 ## One read, several questions
 
-A sitting may load a unit once and judge it against each question whose `Scope` holds it, one question at a time, writing one `Ledger:` trailer per question. A merged checklist of every question at once is a skim: twenty questions read past what one would find.
+A sitting loads a unit once and judges it against each question whose `Scope` holds it, one question at a time and only for that question's files in it, writing one `Ledger:` trailer per question. A merged checklist of every question at once is a skim: twenty questions read past what one would find.
 
 ## Sampled clean
 
-A sitting may read a random sample of a ledger's never-swept units, each a full pass with its own trailer, and count its **defects** — fixes that change behaviour toward correct, or findings raised; a rename or a tidier literal is not one. The record commit ending the sample carries `Sampled: <ledger> | <size> · <defects>`. While the latest sample found none, `pnpm ai:sweep:status` lists the unread units as `sampled`: undated, and owed again on a `Reopens:` naming them or their ledger, or a commit touching a path they name. Zero defects in `n` bounds the rate below about `3/n`, so sample at least thirty; the tidies left behind drain with the next edit (`references/draining.md`).
+`pnpm ai:sweep:sample` draws the next sample: thirty open cells per question, or every one where a question holds fewer, taken by units with the rarest question first, each unit printed with the questions it is judged for. Each is a full pass with its own trailers, and the sitting counts each question's **defects** — fixes that change behaviour toward correct, or findings raised; a rename or a tidier literal is not one. The record commit ending the sample carries one `Sampled: <question> | <size> · <defects>` per question. While a question's latest sample found none, `pnpm ai:sweep:status` lists its unread cells as `sampled`: undated, and owed again on a `Reopens:` naming them or their question, or a commit touching a path they name. Zero defects in `n` bounds the rate below about `3/n`, so sample at least thirty; the tidies left behind drain with the next edit (`references/draining.md`).

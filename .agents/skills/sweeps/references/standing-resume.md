@@ -51,23 +51,23 @@ Left unchecked this is the silent scan of `references/find-recipes.md` inverted 
 clean, it reports everything and reads as a tree nobody can afford to sweep, which is how a row that is a handful
 of files of real work gets deferred as several sittings.
 
-## Scope is the convention's domain, not the union of the rows
+## Scope is the convention's domain, not the union of its cells
 
-Declaring only what already has a row makes the command agree with the ledger by construction, which is the one
+Declaring only what already has a unit makes the command agree with the area list by construction, which is the one
 thing it must not do — a tree the convention reaches that no unit names is the gap worth surfacing.
 
 **The scope alone does not surface it, though: the resume asks which files changed, and a tree nobody has touched
 since the date changes nothing.** So an unnamed tree that is also quiet stays invisible for exactly as long as it
 stays quiet, which is the case where nobody was going to look anyway. Reconciling is its own step, and it is
-cheap — list the scope's own directories and read the rows beside them:
+cheap — list the scope's own directories and read the area list's bullets beside them:
 
 ```bash
 find <scope directory> -maxdepth 1
 ```
 
-Anything the ledger does not name opens at `—` — a directory no resume would ever have reported, because nothing
+Anything no area unit names gets a bullet, open for every question — a directory no resume would ever have reported, because nothing
 in it changed. The coarsest form of that gap is held by a test: `scripts/src/workspace/ledgerMembers.test.ts` fails on a
-workspace member no row of the `quality` ledger names, since a package added after a ledger was written is the
+workspace member no area unit names, since a package added after the list was written is the
 unnamed tree that arrives most often.
 
 That is also why `Scope` lives on the index row and never inside the ledger file: a resume reads the index to
@@ -81,11 +81,11 @@ to declaring one.
 
 ## A rule change reopens what its recipe finds
 
-A change to a rule runs that rule's find recipe and writes one `Reopens: <ledger> | <unit>` trailer for each unit the recipe hits, in the commit that changes the rule. A rule with no recipe reopens its whole ledger with `Reopens: <ledger>`. A skill edit therefore costs a pass over what it touched rather than over every unit, and a rule earns a recipe, or a lint rule, by being cheaper to reopen. The recipe stays where the rule's owning skill or the ledger's `README.md` keeps it; the status runs none itself (`SKILL.md`, Settled).
+A change to a rule runs that rule's find recipe and writes one `Reopens: <ledger> | <unit>` trailer for each unit the recipe hits, in the commit that changes the rule. A rule with no recipe reopens its whole question with `Reopens: <question>`, and the question goes back to sampling (`references/windows-and-convergence.md`, "Sampled clean") rather than to a read of every cell. A skill edit therefore costs a pass over what it touched, or about thirty cells, and a rule earns a recipe, or a lint rule, by being cheaper to reopen. The recipe stays where the rule's owning skill or the ledger's `README.md` keeps it; the status runs none itself (`SKILL.md`, Settled).
 
 ## A fully dated ledger is kept
 
-A `—` in the status is unswept, and **a fully dated ledger is kept, not deleted**: its units and its trailers answer "was this area swept, and when" in one `pnpm ai:sweep:status` read, which `git log` alone answers only by archaeology from someone who already knows what to look for. Those dates are also what the next convention change is scoped against. Add a coverage line rather than widening an existing one when a unit turns out too big, and split it into its own file when the lines stop fitting.
+A `—` in the status is unswept, and **a fully dated ledger is kept, not deleted**: its units and its trailers answer "was this area swept, and when" in one `pnpm ai:sweep:status` read, which `git log` alone answers only by archaeology from someone who already knows what to look for. Those dates are also what the next convention change is scoped against. A unit that turns out too big is split in the area list (`references/ledger-files.md`).
 
 ## Every sweep is standing
 
