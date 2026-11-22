@@ -1,11 +1,19 @@
 import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { MONDSTADT_EXPEDITION_PIN_LAYOUT } from "#src/services/expedition/constants";
 import { readExpeditionLimitAdds } from "#src/services/expedition/readExpeditionLimitAdds";
 import { readMondstadtExpeditionPlaces } from "#src/services/expedition/readMondstadtExpeditionPlaces";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
+import { AMBER_CHARACTER_ID } from "#src/services/kit/characters/amberKit";
+import { BARBARA_CHARACTER_ID } from "#src/services/kit/characters/barbaraKit";
+import { KAEYA_CHARACTER_ID } from "#src/services/kit/characters/kaeyaKit";
+import { LISA_CHARACTER_ID } from "#src/services/kit/characters/lisaKit";
+import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
+import { SUCROSE_CHARACTER_ID } from "#src/services/kit/characters/sucroseKit";
+import { XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
 import { createSeededRandom } from "genshin-engine";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
@@ -14,25 +22,27 @@ import { ENGLISH_GAME_TEXT } from "genshin-text";
 // At 1080 high, so each place's rank, quest and statue are read as the open ones the map shows
 const places = await readMondstadtExpeditionPlaces(GAME_DATA_LOCAL_BASE_URL);
 const pinnedPlaces = places.slice(0, 6);
+const { characterDataMap } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const now = Temporal.Instant.fromEpochMilliseconds(0);
 
 export const props = {
   adventureRank: Math.max(...pinnedPlaces.map(({ rankLevel }) => rankLevel)),
   characterExpeditionPassives: new Map(),
+  // The seven characters the clip's picker lists, each named by the game's name records
   characters: [
-    { id: 1, name: "Amber" },
-    { id: 2, name: "Lisa" },
-    { id: 3, name: "Kaeya" },
-    { id: 4, name: "Xingqiu" },
-    { id: 5, name: "Noelle" },
-    { id: 6, name: "Sucrose" },
-    { id: 7, name: "Barbara" },
-  ],
+    AMBER_CHARACTER_ID,
+    LISA_CHARACTER_ID,
+    KAEYA_CHARACTER_ID,
+    XINGQIU_CHARACTER_ID,
+    NOELLE_CHARACTER_ID,
+    SUCROSE_CHARACTER_ID,
+    BARBARA_CHARACTER_ID,
+  ].map((id) => ({ id, name: englishNameText[characterDataMap.get(id)?.nameTextId ?? ""] ?? "" })),
   completedQuestIds: new Set(pinnedPlaces.map(({ questId }) => questId)),
   downCharacterIds: new Set<number>(),
   expeditionLimitAdds: await readExpeditionLimitAdds(GAME_DATA_LOCAL_BASE_URL),
   // Kaeya is out to a place the Mondstadt map does not pin, an hour into a twelve-hour expedition
-  expeditions: [{ characterId: 3, hours: 12, leftAt: now.subtract({ hours: 1 }), placeId: 0 }],
+  expeditions: [{ characterId: KAEYA_CHARACTER_ID, hours: 12, leftAt: now.subtract({ hours: 1 }), placeId: 0 }],
   gameText: ENGLISH_GAME_TEXT,
   hours: 4,
   inventory: { items: [], nextId: 1 },

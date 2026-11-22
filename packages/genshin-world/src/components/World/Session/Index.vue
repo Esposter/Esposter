@@ -143,7 +143,6 @@ import {
 } from "genshin-engine";
 import { CharacterMenuTab, InventorySort, ItemCategory } from "genshin-interface";
 import { GAME_CREAM } from "genshin-interface/constants";
-import { GameTextKey } from "genshin-text";
 import { Group, PCFShadowMap, Vector3 } from "three";
 
 interface Props extends WorldScreenProps, WorldTables {}
@@ -1501,8 +1500,7 @@ useWorldSaveSync({
     </MenuScreen>
     <GameOverScreen
       v-if="screenKind === ScreenKind.GameOver"
-      :revive-label="gameText[GameTextKey.Revive]"
-      :title="gameText[GameTextKey.PlayerDieNone]"
+      :game-text
       @revive="
         reviveFallenParty();
         closeScreen();

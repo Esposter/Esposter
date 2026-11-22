@@ -17,10 +17,10 @@ import { checkIsForgeRecipeOpen } from "#src/services/forging/checkIsForgeRecipe
 import { computeForgeQueueSlots } from "#src/services/forging/computeForgeQueueSlots";
 import { computeForgeRefusalLabel } from "#src/services/forging/computeForgeRefusalLabel";
 import { computeForgeTalents } from "#src/services/forging/computeForgeTalents";
+import { formatForgeTime } from "#src/services/forging/formatForgeTime";
 import { obtainForgeOrder } from "#src/services/forging/obtainForgeOrder";
 import { startForge } from "#src/services/forging/startForge";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
-import { SECONDS_PER_MINUTE } from "#src/services/time/constants";
 import { takeOne } from "@esposter/shared";
 import { ForgeQueueState, ForgeScreen, GameScreen, ItemCategory } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
@@ -68,9 +68,6 @@ const {
   weapons,
 } = defineProps<Props>();
 const emit = defineEmits<{ achievementEvents: [achievementEvents: AchievementEvent[]]; close: [] }>();
-// A duration in the game's own shape: seconds under a minute, then whole minutes
-const formatForgeTime = (seconds: number) =>
-  seconds < SECONDS_PER_MINUTE ? `${seconds}s` : `${Math.floor(seconds / SECONDS_PER_MINUTE)}m`;
 // A recipe is named by the item it yields first: a weapon by its weapon, and the rest by their item
 const getRecipeName = ({ results }: ForgeRecipe) => {
   const { itemId } = takeOne(results, 0);
@@ -81,7 +78,7 @@ const recipeNameMap = computed(
 );
 const recipeCells = computed<ForgeRecipeCell[]>(() =>
   recipes.map((recipe) => ({
-    forgeTimeLabel: fillGameTextValues(gameText[GameTextKey.ForgeItemTime], formatForgeTime(recipe.seconds)),
+    forgeTimeLabel: fillGameTextValues(gameText[GameTextKey.ForgeItemTime], formatForgeTime(gameText, recipe.seconds)),
     id: recipe.id,
     isOpen: checkIsForgeRecipeOpen(recipe, progress.value, adventureRank),
     name: recipeNameMap.value.get(recipe.id) ?? "",
@@ -152,7 +149,7 @@ const queueDetail = computed(() => {
     forgedLabel: fillGameTextValues(gameText[GameTextKey.ForgeQueueProgress], `${slot.forged}/${order.count}`),
     headingLabel: isComplete
       ? gameText[GameTextKey.ForgeComplete]
-      : fillGameTextValues(gameText[GameTextKey.ForgeTimeRemaining], formatForgeTime(slot.remainingSeconds)),
+      : fillGameTextValues(gameText[GameTextKey.ForgeTimeRemaining], formatForgeTime(gameText, slot.remainingSeconds)),
     id: slot.id,
     isObtainable: slot.forged > 0,
     progress: isComplete ? 1 : (elapsedSeconds - slot.forged * order.unitSeconds) / order.unitSeconds,
@@ -253,7 +250,10 @@ const obtain = (queueId: number) => {
       :yield-count="pickedRecipe ? takeOne(pickedRecipe.results, 0).count : 0"
       :title="gameText[GameTextKey.ForgeTitle]"
       :total-time-label="
-        fillGameTextValues(gameText[GameTextKey.ForgeTotalTime], formatForgeTime((pickedRecipe?.seconds ?? 0) * amount))
+        fillGameTextValues(
+          gameText[GameTextKey.ForgeTotalTime],
+          formatForgeTime(gameText, (pickedRecipe?.seconds ?? 0) * amount),
+        )
       "
       @close="emit('close')"
       @obtain="(queueId) => obtain(queueId)"

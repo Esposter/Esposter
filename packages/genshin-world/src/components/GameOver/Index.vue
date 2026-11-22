@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import type { GameText } from "genshin-text";
+
 import { GameButton, GameButtonKind } from "genshin-interface";
 import { GAME_CREAM } from "genshin-interface/constants";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
-  // The button's words in the reader's language
-  reviveLabel: string;
-  // The game's own words for the screen's title, once every member of the deployed team has fallen
-  title: string;
+  // The game's words in the reader's language
+  gameText: GameText;
 }
 
 defineProps<Props>();
@@ -17,8 +18,10 @@ const emit = defineEmits<{ revive: [] }>();
   <!-- The game over screen, shown once every member of the deployed team has fallen: its title over a veil, and Revive
        under it, which brings the team back at the nearest teleport waypoint -->
   <div class="game-over">
-    <h1 class="title">{{ title }}</h1>
-    <GameButton class="revive" :kind="GameButtonKind.Row" tip="" @click="emit('revive')">{{ reviveLabel }}</GameButton>
+    <h1 class="title">{{ gameText[GameTextKey.PlayerDieNone] }}</h1>
+    <GameButton class="revive" :kind="GameButtonKind.Row" tip="" @click="emit('revive')">{{
+      gameText[GameTextKey.Revive]
+    }}</GameButton>
   </div>
 </template>
 
