@@ -19,6 +19,7 @@ const {
   exportInvites,
   generateParticipants,
   isGeneratePending,
+  isReadStatusError,
   isRespondedPartial,
   issuedLink,
   readStatus,
@@ -68,7 +69,7 @@ await Promise.all([readStatus(), programResource.value.surveyId ? refreshSurveyC
       buttons cannot all fit beside the heading -->
     <div flex flex-wrap gap-4 items-center>
       <h2 ui-heading>Status</h2>
-      <p text-sm text-muted flex-1 min-w-0 truncate>
+      <p v-if="!isReadStatusError" text-sm text-muted flex-1 min-w-0 truncate>
         {{ isRespondedPartial ? "at least " : "" }}{{ respondedCount }} of {{ statusRows.length }} responded
       </p>
       <UiButton @click="askExportInvites(ProgramInviteScope.All)">Export invites</UiButton>
@@ -94,7 +95,9 @@ await Promise.all([readStatus(), programResource.value.surveyId ? refreshSurveyC
       This survey holds more responses than one read returns, so some participants shown as awaiting may have already
       responded.
     </UiAlert>
+    <UiErrorState v-if="isReadStatusError" error="The participants could not be loaded." @retry="readStatus()" />
     <UiDataTable
+      v-else
       v-model:items-per-page="itemsPerPage"
       v-model:page="page"
       v-model:sort-by="sortBy"

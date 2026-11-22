@@ -18,6 +18,7 @@ import { useNotificationStore } from "#src/store/notification";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { downloadFile, generateSecretToken, RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { strToU8, unzipSync } from "fflate";
 import { v7 } from "uuid";
@@ -105,6 +106,25 @@ describe("resourceProgramStatus", () => {
     const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
 
     expect(component.text()).toContain("Anonymous mode drops participant tokens");
+  });
+
+  // A failed read is not an empty blade: the table is replaced by its error, and the retry reads the rows again
+  test("shows the error and its retry when the status read fails", async () => {
+    expect.hasAssertions();
+
+    let isFailing = true;
+    trpcMsw.program.readProgramStatus.query(() => {
+      if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      return { isRespondedPartial: false, rows: [statusRow] };
+    });
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
+    expect(component.text()).toContain("The participants could not be loaded.");
+    expect(component.text()).not.toContain("No participants yet");
+
+    isFailing = false;
+    await findButton(component, "Try again").trigger("click");
+    await flushPromises();
+    expect(component.text()).toContain(keyValue);
   });
 
   test("does not warn for identified surveys", async () => {

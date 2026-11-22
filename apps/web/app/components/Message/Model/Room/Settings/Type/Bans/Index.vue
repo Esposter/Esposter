@@ -10,7 +10,7 @@ interface Props {
 }
 
 const { room } = defineProps<Props>();
-const { hasMore, isPending, items, readMoreBans, searchQuery } = useReadBans(room.id);
+const { hasMore, isError, isPending, items, readMoreBans, retry, searchQuery } = useReadBans(room.id);
 </script>
 
 <template>
@@ -24,6 +24,7 @@ const { hasMore, isPending, items, readMoreBans, searchQuery } = useReadBans(roo
         <UiSkeleton h-4 w="1/3" />
       </div>
     </div>
+    <UiErrorState v-else-if="isError" error="The bans could not be loaded." @retry="retry()" />
     <UiEmptyState
       v-else-if="items.length === 0"
       :meaning="UiIconMeaning.Person"

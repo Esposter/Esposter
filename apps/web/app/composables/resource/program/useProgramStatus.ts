@@ -37,12 +37,14 @@ export const useProgramStatus = () => {
   const statusRows = ref<ProgramStatusRow[]>([]);
   // Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
   const isRespondedPartial = ref(false);
+  // A failed read leaves the rows of the last one that landed, so the blade shows its error rather than reading as empty
+  const isReadStatusError = ref(false);
   // Live while the blade is open, so a response landing elsewhere moves its counts without a refresh
   const { executeQuery: executeReadStatusQuery } = useMutation();
   const runScope = useRunScope();
   const readStatus = async () => {
     const programId = id.value;
-    await executeReadStatusQuery(() => $trpc.program.readProgramStatus.query({ id: programId }), {
+    const outcome = await executeReadStatusQuery(() => $trpc.program.readProgramStatus.query({ id: programId }), {
       key: programId,
       onError: createErrorNotification,
       onSuccess: (programStatus) => {
@@ -51,6 +53,8 @@ export const useProgramStatus = () => {
       },
       runScope,
     });
+    // A read a newer one superseded says nothing about what the blade shows, which that newer read settles
+    if (outcome.status !== MutationStatus.Dropped) isReadStatusError.value = outcome.status === MutationStatus.Failed;
   };
   const generateParticipants = async () => {
     // A participant's link opens the bound survey, so without one there is nothing to hand the owner
@@ -173,6 +177,7 @@ export const useProgramStatus = () => {
     exportInvites,
     generateParticipants,
     isGeneratePending,
+    isReadStatusError,
     isRespondedPartial,
     issuedLink,
     readStatus,

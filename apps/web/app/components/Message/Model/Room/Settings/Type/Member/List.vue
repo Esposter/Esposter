@@ -7,7 +7,6 @@ import { getMemberDescription } from "#src/services/message/member/getMemberDesc
 import { useRoleStore } from "#src/store/message/room/role";
 import { useMemberStore } from "#src/store/message/user/member";
 import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 
 const roleStore = useRoleStore();
 const { selectMember } = roleStore;
@@ -34,13 +33,7 @@ const searchQuery = ref("");
 // An empty query is a query rather than a reset, so emptying the field lists the room again instead of leaving
 // The last term's rows on screen — and the first of those reads is the page this panel opens on, which is why
 // Nothing here reads a page of its own
-const { isPending } = useAutoSearch(searchQuery, {
-  isIncludeEmptySearchQuery: true,
-  reset: noop,
-  search: async (newSearchQuery, signal) => {
-    await searchMembers(newSearchQuery, signal);
-  },
-});
+const { isError, isPending, retry } = useReadItemsSearch(searchQuery, searchMembers);
 
 await readMemberCounts();
 </script>
@@ -52,6 +45,7 @@ await readMemberCounts();
     <div v-if="isPending" flex flex-col>
       <UiListRowSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
     </div>
+    <UiErrorState v-else-if="isError" error="The members could not be loaded." @retry="retry()" />
     <template v-else>
       <UiList v-if="memberItems.length > 0" v-model="selectedMemberIds" :items="memberItems" label="Members" />
       <UiEmptyState v-else :meaning="UiIconMeaning.Person" title="No member goes by that name." />

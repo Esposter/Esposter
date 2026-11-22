@@ -14,7 +14,7 @@ import { useStatusStore } from "#src/store/message/user/status";
 import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 const { readMembers, readMoreMembers } = useReadMembers();
-const { isPending } = await readMembers();
+const { isError, isPending, refresh } = await readMembers();
 const memberStore = useMemberStore();
 const { hasMore, memberCount, memberCountsByTopRole, members } = storeToRefs(memberStore);
 const roomStore = useRoomStore();
@@ -97,6 +97,7 @@ const getContextMenuItems = (userId: string): Item[] => {
     <ul v-if="isPending" aria-busy="true" aria-label="Members" flex flex-col>
       <MessageModelMemberListItemSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
     </ul>
+    <UiErrorState v-else-if="isError" error="The members could not be loaded." @retry="refresh()" />
     <template v-else-if="currentRoom">
       <UiList
         :get-row-props="
