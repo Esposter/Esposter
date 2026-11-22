@@ -5,9 +5,8 @@ import type { z } from "zod";
 // And running it through the schema would apply the form's own defaults and transforms to values the user is
 // About to edit — handing them back something they never typed. `z.input` says exactly that, since this is
 // What goes *into* the form; the validation boundary is the submit, not the open.
-// The keys are read at runtime, which an `object` cannot be indexed by, so the source is viewed as a record; the result is
+// The keys are read at runtime, which an `object` cannot be indexed by, so each is read through Reflect; the result is
 // Viewed as the schema's input, since the compiler cannot see that the fields it collects are the schema's shape
 export const extractSchemaFields = <T extends z.ZodObject>(schema: T, source: object) =>
-  Object.fromEntries(
-    Object.keys(schema.shape).map((key) => [key, (source as Record<string, unknown>)[key]]),
-  ) as z.input<T>;
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the collected fields are the schema's own keys, which the compiler cannot relate to the generic z.input<T>
+  Object.fromEntries(Object.keys(schema.shape).map((key) => [key, Reflect.get(source, key)])) as z.input<T>;

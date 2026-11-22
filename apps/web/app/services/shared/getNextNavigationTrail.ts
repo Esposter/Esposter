@@ -1,17 +1,11 @@
-import type { NavigationTrailCrumb } from "#src/models/shared/NavigationTrailCrumb";
-import type { NavigationTrailPage } from "#src/models/shared/NavigationTrailPage";
-
+import { NavigationTrailPage } from "#src/models/shared/NavigationTrailPage";
 import { NavigationTrailPageMap } from "#src/services/shared/NavigationTrailPageMap";
 import { RoutePath } from "@esposter/shared";
 
-// Object.entries widens the keys to string, but the map is `satisfies Record<NavigationTrailPage, ...>`, so its keys are
-// The pages themselves, which the compiler cannot carry through Object.entries
-const NAVIGATION_TRAIL_PAGE_ENTRIES = Object.entries(NavigationTrailPageMap) as [
-  NavigationTrailPage,
-  NavigationTrailCrumb,
-][];
-// A page absent from the map can be navigated from without ever becoming a crumb — that is how a page opts out
-const getPage = (path: string) => NAVIGATION_TRAIL_PAGE_ENTRIES.find(([, crumb]) => crumb.path === path)?.[0];
+// A page absent from the map can be navigated from without ever becoming a crumb — that is how a page opts out. The
+// Pages are walked through their own value set, so each is indexed as the page it is rather than as an Object.entries string
+const getPage = (path: string) =>
+  Object.values(NavigationTrailPage).find((page) => NavigationTrailPageMap[page].path === path);
 // A page and its own sub-views (a resource and its blades) share these leading segments, which is what tells
 // Moving around inside one page apart from leaving it for another
 const getPageKey = (path: string) => path.split("/").slice(0, 3).join("/");

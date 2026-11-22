@@ -8,17 +8,15 @@ import { omitUndefined, Operation, takeOne, uncapitalize } from "@esposter/share
 
 export const createOperationData = <
   TItem extends object,
+  // The id keys are also keys of TItem, which EntityIdKeys alone does not say for a generic TItem, since it stays a deferred conditional
   // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- inferred from `idKeys`, so a caller's tuple keeps its literal keys
-  TIdKeys extends EntityIdKeys<TItem>,
+  TIdKeys extends EntityIdKeys<TItem> & (keyof TItem & string)[],
   TEntityTypeKey extends EntityTypeKey,
 >(
   items: Ref<TItem[]>,
   idKeys: [...TIdKeys],
   entityTypeKey: TEntityTypeKey,
 ) => {
-  // The compiler cannot see that a caller's id keys name keys of TItem, since EntityIdKeys stays a deferred conditional
-  // For a generic TItem, so the one cast that states it sits here rather than at each comparator
-  const idKeyNames = idKeys as (keyof TItem & string)[];
   const pushItems = (...newItems: TItem[]) => {
     items.value.push(...newItems);
   };
@@ -26,7 +24,7 @@ export const createOperationData = <
     items.value.unshift(...newItems);
   };
   const createItem = (newItem: TItem, isReversed?: true) => {
-    const checkIsNewItem = getEntityIdEqualComparator(idKeyNames, newItem);
+    const checkIsNewItem = getEntityIdEqualComparator<TItem, TIdKeys[number]>(idKeys, newItem);
     // Guard against duplicate delivery from transport reconnections (e.g. SSE Last-Event-ID catch-up
     // Re-yielding stored events).
     if (items.value.some((item) => checkIsNewItem(item))) return;
@@ -37,19 +35,19 @@ export const createOperationData = <
   const updateItem = (updatedItem: { [P in keyof TItem]?: TItem[P] | undefined }) => {
     // Built once and then searched with, rather than inside the callback: the comparator closes over the
     // Target, so constructing it per element rebuilds the same predicate for every row in the list
-    const checkIsUpdatedItem = getEntityIdEqualComparator(idKeyNames, updatedItem);
+    const checkIsUpdatedItem = getEntityIdEqualComparator<TItem, TIdKeys[number]>(idKeys, updatedItem);
     const index = items.value.findIndex((item) => checkIsUpdatedItem(item));
     if (index === -1) return;
 
     Object.assign(takeOne(items.value, index), omitUndefined(updatedItem));
   };
   const deleteItem = (ids: EntityIds<TItem, TIdKeys>) => {
-    // The ids are the entity's id fields, a subset of TItem's that the compiler cannot relate to TItem for a generic TItem
-    const checkIsDeletedItem = getEntityIdEqualComparator(idKeyNames, ids as Partial<TItem>);
+    const checkIsDeletedItem = getEntityIdEqualComparator<TItem, TIdKeys[number]>(idKeys, ids);
     items.value = items.value.filter((item) => !checkIsDeletedItem(item));
   };
   // The keys are template strings the compiler reads as string, so the mapped type restates which key holds which
   // Operation's function
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the object's keys are template strings over the generic entity type key, which the compiler types as string, so no key-to-function correspondence reaches the mapped type
   return {
     [`${uncapitalize(entityTypeKey)}s`]: items,
     [`${uncapitalize(Operation.Create)}${entityTypeKey}`]: createItem,

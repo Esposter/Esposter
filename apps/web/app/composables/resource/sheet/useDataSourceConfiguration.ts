@@ -6,6 +6,6 @@ import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSou
 export const useDataSourceConfiguration = <TSheetSettings extends SheetSettings>(
   settings: MaybeRefOrGetter<TSheetSettings>,
 ) =>
-  // The map is keyed by the concrete settings type, and indexing it with the generic's own discriminant yields
-  // The union of every entry rather than the one the caller's type parameter fixes
-  computed(() => DataSourceConfigurationMap[toValue(settings).type] as DataSourceConfiguration<TSheetSettings>);
+  // The map holds each source's configuration over the widest settings, which a configuration over the caller's narrower
+  // Settings accepts, since its methods take the settings they are given and the caller's are a subtype of that
+  computed<DataSourceConfiguration<TSheetSettings>>(() => DataSourceConfigurationMap[toValue(settings).type]);

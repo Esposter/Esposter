@@ -17,7 +17,7 @@ describe(getRandomValue, () => {
   test("fails for empty values", () => {
     expect.hasAssertions();
 
-    expect(() => getRandomValue("")).toThrowErrorMatchingInlineSnapshot(
+    expect(() => getRandomValue([])).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: getRandomValue, cannot pick random value from empty values]`,
     );
   });

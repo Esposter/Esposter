@@ -8,7 +8,11 @@ import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 
 // `onEdit` hears every open of an item, a press, a menu's Edit and a restore from the query params alike, so a caller that
 // Keeps a selection of its own writes it in one place
-export const createEditFormData = <TItem extends ToData<AItemEntity>, TIdKeys extends EntityIdKeys<TItem>>(
+export const createEditFormData = <
+  TItem extends ToData<AItemEntity>,
+  // The id keys are also keys of TItem, which EntityIdKeys alone does not say for a generic TItem, since it stays a deferred conditional
+  TIdKeys extends EntityIdKeys<TItem> & (keyof TItem & string)[],
+>(
   items: ComputedRef<TItem[]>,
   idKeys: [...TIdKeys],
   onEdit?: (ids: EntityIds<TItem, TIdKeys>) => void,
@@ -20,9 +24,7 @@ export const createEditFormData = <TItem extends ToData<AItemEntity>, TIdKeys ex
     const editedItemValue = editedItem.value;
     if (!editedItemValue) return undefined;
 
-    // The compiler cannot see that a caller's id keys name keys of TItem, since EntityIdKeys stays a deferred conditional
-    // For a generic TItem, so the one cast here states it
-    const checkIsOriginalItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue);
+    const checkIsOriginalItem = getEntityIdEqualComparator<TItem, TIdKeys[number]>(idKeys, editedItemValue);
     return items.value.find((item) => checkIsOriginalItem(item));
   });
   // Written by the edit dialog's form, which counts every field's rules as the reader types
@@ -38,12 +40,7 @@ export const createEditFormData = <TItem extends ToData<AItemEntity>, TIdKeys ex
   const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 
   const editItem = async (ids: EntityIds<TItem, TIdKeys>) => {
-    // Object.keys widens the ids' keys to string, and ids holds only EntityIds' keys, which the compiler cannot relate
-    // To TItem for a generic TItem
-    const checkIsEntityIdEqual = getEntityIdEqualComparator(
-      Object.keys(ids) as (keyof TItem & string)[],
-      ids as Partial<TItem>,
-    );
+    const checkIsEntityIdEqual = getEntityIdEqualComparator<TItem, TIdKeys[number]>(idKeys, ids);
     const item = items.value.find((candidateItem) => checkIsEntityIdEqual(candidateItem));
     if (!item) return;
 
@@ -63,12 +60,13 @@ export const createEditFormData = <TItem extends ToData<AItemEntity>, TIdKeys ex
   watchImmediate(items, async () => {
     if (isEditFormDialogOpen.value || editedItem.value) return;
     const queryIdEntries = idKeys.flatMap((key) => {
-      const value = router.currentRoute.value.query[key as string];
+      const value = router.currentRoute.value.query[key];
       return typeof value === "string" ? [[key, value] as const] : [];
     });
     if (queryIdEntries.length !== idKeys.length) return;
     // Object.fromEntries types its keys as string, but the entries are the id keys read off the query, which are the
     // EntityIds' keys
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the values are the id strings the URL carried, and the compiler cannot relate a record built from the id keys to EntityIds of a generic TItem
     await editItem(Object.fromEntries(queryIdEntries) as EntityIds<TItem, TIdKeys>);
   });
 
