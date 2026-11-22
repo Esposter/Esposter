@@ -4,7 +4,10 @@ import CloudflareLocationHint from "#src/cloudflare/constants/CloudflareLocation
 import { CLOUDFLARE_ACCOUNT_ID, CloudflareAssetType, getCloudflareResourceName } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
-export const createR2Bucket = (environment: CloudflareEnvironment, storageBucket: StorageBucket) => {
+export const createR2Bucket = (
+  environment: CloudflareEnvironment,
+  storageBucket: StorageBucket,
+): cloudflare.R2Bucket => {
   const bucketName = getCloudflareResourceName(environment, CloudflareAssetType.R2Bucket, storageBucket);
   return new cloudflare.R2Bucket(
     bucketName,
