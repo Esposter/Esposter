@@ -3,7 +3,8 @@ import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent"
 import { LedgerEventType, LedgerEventTypes } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { getGitRecords } from "#src/services/shared/getGitRecords";
 import { SWEPT_CELL_SEPARATOR, TRAILER_VALUE_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
-import { getLedgerArea, getLedgerQuestion } from "#src/services/sweeps/ledgerCoverage/getLedgerQuestion";
+import { getLedgerArea } from "#src/services/sweeps/ledgerCoverage/getLedgerArea";
+import { getLedgerQuestion } from "#src/services/sweeps/ledgerCoverage/getLedgerQuestion";
 import { normalizeLedgerUnit } from "#src/services/sweeps/ledgerCoverage/normalizeLedgerUnit";
 
 const TRAILER_REGEX = new RegExp(String.raw`^(?<type>${LedgerEventTypes.join("|")}):(?<value>.*)$`, "gmu");
