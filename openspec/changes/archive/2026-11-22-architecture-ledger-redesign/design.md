@@ -40,7 +40,7 @@ Four rules make a sweep cost what it finds, and the `sweeps` skill states each o
 
 ## Rejected alternatives
 
-- **Each area-split question keeping its own copy of the `invariants` area list, held equal by `ledgerAreaUnits.test.ts`.** Every question rewrote every unit, so rows grew as questions times units, and a test whose only job is keeping copies equal is the [write-once](../../specs/architecture/write-once/design.md) page's list held equal to its source.
+- **Each area-split question keeping its own copy of the `invariants` area list, held equal by `ledgerAreaUnits.test.ts`.** Every question rewrote every unit, so rows grew as questions times units, and a test whose only job is keeping copies equal is the [write-once](../../../specs/architecture/write-once/design.md) page's list held equal to its source.
 - **Writing coverage into the files from the trailers.** The cells held nothing the trailers did not. Keeping them cost a rewrite in every sitting and a rebase conflict whenever two sessions swept rows of one file, and they went stale whenever a sitting skipped the run.
 - **Never committing a trailer on its own.** The `sweeps` skill rejected the empty commit, because a rebase could not be relied on to keep one. Git keeps a commit that starts empty through `pull --rebase`, so that reason no longer holds. Without the empty commit, a clean sitting's trailers would be lost once no table was left to commit.
 - **Recipes run by the status itself, keyed by a rule id.** That needs a registry of every rule with a runnable query beside the skills that state the rules, which is a second copy of them. The sitting that changes a rule already holds its recipe, and its per-unit `Reopens:` trailers give the same reopen with nothing new to keep.

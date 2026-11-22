@@ -18,9 +18,9 @@ The rules around a sitting also make a sweep cost more than it finds. A rule cha
 - A sitting may read a unit once and judge it against each question in turn.
 - A question whose random sample comes back clean is marked sampled clean, and its unread units are owed again only on a reopen or a change to their code.
 
-No behaviour of the app changes. This is a tooling and documentation change, so it carries no spec delta.
+No behaviour of the app changes. This is a tooling and documentation change, and its one spec delta is a MODIFIED requirement on the agent-configuration spec: explanatory documentation lives in the OpenSpec tree, and the agent tree holds only what a machine consumes.
 
 ## Out of scope
 
-- Reading any row. The row tasks of the [ledger refresh](../architecture-ledger-refresh/proposal.md) wait for this change, so no sweep is spent on a shape that is about to change.
+- Reading any row. The row tasks of the [ledger refresh](../../architecture-ledger-refresh/proposal.md) wait for this change, so no sweep is spent on a shape that is about to change.
 - Moving a ledger's scope into its owning skill's `paths:` frontmatter, which the design rejects.
