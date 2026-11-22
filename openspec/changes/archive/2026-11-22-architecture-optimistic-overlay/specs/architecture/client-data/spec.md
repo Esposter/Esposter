@@ -118,7 +118,7 @@ A write SHALL wait for the server's answer before the screen changes only when w
 - **WHEN** the create is sent
 - **THEN** the link appears only once the server has answered
 
-#### Scenario: A stale version rolls the save back and prompts a refresh
+#### Scenario: A stale version drops the save and prompts a refresh
 
 - **GIVEN** a save that carries the content version it was made against, already shown on screen
 - **WHEN** the server reports that version is stale

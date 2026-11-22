@@ -84,7 +84,7 @@ The `message` router merges its base procedures with the `emoji`, `moderation`, 
 
 ## The room list
 
-The room list is a view over the room rows the [optimistic overlay](../../../changes/architecture-optimistic-overlay/design.md) holds. A room is listed while the viewer holds a live membership of it, so a membership a removal tombstoned takes the room off the list with no extra code. The rows arrive from the room read, the membership read, a write's answer and the `updateRoom` and `roomActivity` events, each carrying its row at the version the server left it.
+The room list is a view over the room rows the [optimistic overlay](../../../changes/archive/2026-11-22-architecture-optimistic-overlay/design.md) holds. A room is listed while the viewer holds a live membership of it, so a membership a removal tombstoned takes the room off the list with no extra code. The rows arrive from the room read, the membership read, a write's answer and the `updateRoom` and `roomActivity` events, each carrying its row at the version the server left it.
 
 A removal reaches the reader's tabs as the tombstone of their membership through `updateUserToRoom`, whether it is a kick, a ban, a leave on another device or a room's deletion. A leave and a deletion are awaited writes whose answer is the caller's own membership tombstone, so the room leaves the list when the server answers. The page showing a room takes the reader off it once, to the messages index, when the room leaves the list. A room the list never showed has no removal to follow, so opening one navigates nothing. A room's topic and its edits are overlay entries over the room row, confirmed by the row the server answers with.
 

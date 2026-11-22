@@ -27,7 +27,7 @@ interface BackgroundMutationOptions<TResult> extends BaseMutationOptions {
 
 interface BaseMutationOptions {
   // The cached reads this write makes stale, named by tag so the write never learns which caches exist.
-  // Dropped once the write has landed: a rejected or rolled-back write changed nothing, so it invalidates
+  // Dropped once the write has landed: a refused write changed nothing, so it invalidates
   // Nothing. Writes only — a read has no reason to invalidate anything, which is why this is not on QueryOptions
   invalidates?: CacheTag[] | undefined;
   isExclusive?: true | undefined;

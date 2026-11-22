@@ -99,4 +99,4 @@ A composable never decides **how** concurrency is handled. A read holds the run 
 - **A server row's write names its entry and no key, and an awaited write takes no entry** (`references/async-sequencing.md`).
 - **A row a read or an event returns arrives through the version gate, and a removal arrives as a tombstone** — absence never removes a held row, and a whole-value read with no version orders through a run scope (`references/async-sequencing.md`).
 
-The entry points, the `isExclusive` opt-in, the pending flag, `getSynchronizedFunction` pairing and the abort signal a mid-flight check reads: `references/async-sequencing.md`. Full model: `openspec/changes/architecture-optimistic-overlay/design.md`, until that change is archived.
+The entry points, the `isExclusive` opt-in, the pending flag, `getSynchronizedFunction` pairing and the abort signal a mid-flight check reads: `references/async-sequencing.md`. Full model: `openspec/changes/archive/2026-11-22-architecture-optimistic-overlay/design.md`, until that change is archived.

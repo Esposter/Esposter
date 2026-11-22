@@ -11,7 +11,7 @@ The overlay store (`apps/web/app/store/overlay.ts`) is the one writer of the ser
 - **The answer's rows arrive, and a failed write drops its entry.** The response names the version of each row the write changed. The entry is confirmed at those versions and drops once held state is at or above them. A refused write changes no held state, so there is nothing to restore.
 - **A row's removal is a tombstone a read returns**, so the view hides it and an older arrival cannot bring it back. Absence never removes a held row.
 
-The rules and their reasons are `openspec/changes/architecture-optimistic-overlay/design.md` (The model, Entity keys, Settling) until that change is archived. `deleteFriend` in `apps/web/app/store/message/user/friend.ts` is the shape of an entry and its answer together.
+The rules and their reasons are `openspec/changes/archive/2026-11-22-architecture-optimistic-overlay/design.md` (The model, Entity keys, Settling) until that change is archived. `deleteFriend` in `apps/web/app/store/message/user/friend.ts` is the shape of an entry and its answer together.
 
 ## A write off the overlay
 

@@ -1,6 +1,6 @@
 # Row Versions and Tombstones
 
-Read when adding a table the client holds through the overlay, adding a column to such a table, or writing a delete or a revival. `SKILL.md` states each rule in one line, and this page carries the full statement of each. The reasoning is in the change design's Database section, `openspec/changes/architecture-optimistic-overlay/design.md`, until that change is archived.
+Read when adding a table the client holds through the overlay, adding a column to such a table, or writing a delete or a revival. `SKILL.md` states each rule in one line, and this page carries the full statement of each. The reasoning is in the change design's Database section, `openspec/changes/archive/2026-11-22-architecture-optimistic-overlay/design.md`, until that change is archived.
 
 - **Every table carries `version`.** `createVersionSchema()` (`packages/db-schema/src/createMetadataSchema.ts`) is spread by `createMetadataSchema()`, which every D1 table takes, and directly by each object's tables in `packages/db-schema/src/objects/*/schema.ts`. The migration that adds the column makes it `NOT NULL DEFAULT 0`, and that default is the value an insert takes. It is not a fill for missing data, so it is not a backfill (`references/migrations.md`).
 - **The database raises `version`, and no writer names it.** The column's `$onUpdateFn` is embedded in the statement as SQL, so each update adds one in the same statement it runs. A write that names a version could lower it, so no caller sets one.

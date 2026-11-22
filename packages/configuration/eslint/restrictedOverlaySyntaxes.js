@@ -21,9 +21,9 @@ const REF_SELECTORS = [
   "UpdateExpression[argument.type='MemberExpression'][argument.computed=false][argument.property.name='value']",
 ];
 const ITERATION_MESSAGE =
-  "An optimistic entry reads and writes rows by key, so it never iterates its view: name each row through `view.get` or `view.set`. See openspec/changes/architecture-optimistic-overlay/design.md (Entity keys).";
+  "An optimistic entry reads and writes rows by key, so it never iterates its view: name each row through `view.get` or `view.set`. See openspec/specs/architecture/client-data/design.md (useMutation).";
 const REF_MESSAGE =
-  "An optimistic entry is a pure change over the keyed view, so it never assigns a ref: write the row with `view.set`, and the screen reads the view. See openspec/changes/architecture-optimistic-overlay/design.md (The model).";
+  "An optimistic entry is a pure change over the keyed view, so it never assigns a ref: write the row with `view.set`, and the screen reads the view. See openspec/specs/architecture/client-data/design.md (useMutation).";
 
 export default [
   ...ITERATION_SELECTORS.map((selector) => ({ message: ITERATION_MESSAGE, selector: `${ENTRY_FUNCTION} ${selector}` })),

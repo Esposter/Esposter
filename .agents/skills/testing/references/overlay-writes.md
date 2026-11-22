@@ -1,6 +1,6 @@
 # Tests of an optimistic write
 
-Read when a test covers a store's optimistic write, a removal's effect on a held row, or two responses for one row. Each rule `SKILL.md` gives in one line is stated in full here. The reasoning is in the change design's Settling section, `openspec/changes/architecture-optimistic-overlay/design.md`, until that change is archived.
+Read when a test covers a store's optimistic write, a removal's effect on a held row, or two responses for one row. Each rule `SKILL.md` gives in one line is stated in full here. The reasoning is in the change design's Settling section, `openspec/changes/archive/2026-11-22-architecture-optimistic-overlay/design.md`, until that change is archived.
 
 - **A refused write is asserted on the view.** Its entry drops, so the test reads the store's view after the rejection and expects the row as it was held. The registry's suite has the shape: a failed write drops its entry and leaves the view as held state was (`apps/web/app/store/overlay.test.ts`). A test that expects a restored value is pinning a rollback the design deleted.
 - **A removal is asserted as a tombstone.** The row comes back at its version with `deletedAt` set, and the view hides it. The test never expects the row to be absent, since an absent row removes nothing from held state (`apps/web/app/store/overlay.test.ts`, "a tombstone removes its row from the view").

@@ -61,7 +61,7 @@ Never `watch` an open boolean to reset a draft — `useCloned` re-clones wheneve
   if (status === MutationStatus.Failed) syncEditedFoo();
   ```
 
-  Without it the surface reopens on the rejected draft (`openspec/changes/architecture-optimistic-overlay/design.md`, Settling).
+  Without it the surface reopens on the rejected draft (`openspec/changes/archive/2026-11-22-architecture-optimistic-overlay/design.md`, Settling).
 
 A draft cloned as one object over every field the write sends doubles as the write's input, so the submitted payload and the resynced draft cannot drift apart.
 
