@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
+
+### Bug Fixes
+
+* **bench:** a sheet command bench builds its fixture in the task's beforeEach, outside the timing ([e970492](https://github.com/Esposter/Esposter/commit/e9704923c4f229df60f445ec2b5774ce3715204d))
+* **web:** the app's plugins carry their order in their names, and the tRPC plugin runs before any that creates a store ([2b727b4](https://github.com/Esposter/Esposter/commit/2b727b406556b5f4d1eae12ac6bce48d18b56f5e))
+
+### Performance Improvements
+
+* **note:** a note renders from a schema built once, not one TipTap rebuilds on every call ([67c0918](https://github.com/Esposter/Esposter/commit/67c0918248b24e9a65198d28004b9f1f60bd1d4e))
+* **note:** the note renderer is assembled once from the static renderer's exported pieces ([127ad46](https://github.com/Esposter/Esposter/commit/127ad46e11b4151c029e252420517a61d2e3a2b0))
+* **note:** the renderer reads the writing kit's extensions from the schema module, so the list is built once ([f630538](https://github.com/Esposter/Esposter/commit/f630538d2e225be72fe88799465378bafb05b3f9))
+* **shared:** a text's UTF-8 byte length is counted by getUtf8ByteLength, and lint bans encoding only to count ([3f0f7a3](https://github.com/Esposter/Esposter/commit/3f0f7a3f958d4db681bd7571614ecae497dfc2ca))
+* **sheet:** a cell's size counts its UTF-8 bytes from the code units rather than encoding them ([9ec3b71](https://github.com/Esposter/Esposter/commit/9ec3b71949aa20c8adb9f9c7a402fd6d03063734))
+
 # [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
 
 ### Bug Fixes

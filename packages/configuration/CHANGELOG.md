@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
+
+### Features
+
+* **bench:** a CI bench run executes every bench once through a smoke provider and writes no report ([6154630](https://github.com/Esposter/Esposter/commit/615463083f0f270c612e7074cbb777bb6461ab66))
+
+### Performance Improvements
+
+* **shared:** a text's UTF-8 byte length is counted by getUtf8ByteLength, and lint bans encoding only to count ([3f0f7a3](https://github.com/Esposter/Esposter/commit/3f0f7a3f958d4db681bd7571614ecae497dfc2ca))
+
 # [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
 
 ### Bug Fixes
