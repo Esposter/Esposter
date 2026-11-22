@@ -42,15 +42,6 @@ watch(dataset, (newDataset) => {
     reference,
   };
 });
-const pickReference = (newReference: DatasetReference | undefined) => {
-  if (!newReference) {
-    pickedReference.value = undefined;
-    modelValue.value = undefined;
-    return;
-  }
-
-  pickedReference.value = newReference;
-};
 </script>
 
 <template>
@@ -58,11 +49,21 @@ const pickReference = (newReference: DatasetReference | undefined) => {
     <DatasetReferencePicker
       :error
       :model-value="modelValue?.reference"
-      @update:model-value="(newReference) => pickReference(newReference)"
+      @update:model-value="
+        (newReference) => {
+          if (!newReference) {
+            pickedReference = undefined;
+            modelValue = undefined;
+            return;
+          }
+
+          pickedReference = newReference;
+        }
+      "
     />
     <template v-if="modelValue">
       <div flex flex-col gap-1 w-64>
-        <span text-sm text-muted>X column</span>
+        <span text-muted>X column</span>
         <UiSelect v-model="modelValue.query.xColumn" :items="columnItems" label="X column" />
       </div>
       <!-- A row edits its series in place, so the bound query holds each change without a write back -->

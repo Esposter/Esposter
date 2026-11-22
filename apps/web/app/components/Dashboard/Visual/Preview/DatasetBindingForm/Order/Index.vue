@@ -28,31 +28,33 @@ const orderByValue = computed(() => {
   return order.value.seriesIndex === undefined ? DASHBOARD_TABLE_CATEGORY_KEY : String(order.value.seriesIndex);
 });
 const directionItems = DatasetOrderDirections.map((value) => ({ title: value, value }));
-// Changing what the categories rank by keeps the direction the owner already chose
-const setOrderBy = (choice: string) => {
-  if (!choice) {
-    order.value = undefined;
-    return;
-  }
-
-  const direction = order.value?.direction ?? DatasetOrderDirection.Ascending;
-  order.value = choice === DASHBOARD_TABLE_CATEGORY_KEY ? { direction } : { direction, seriesIndex: Number(choice) };
-};
 </script>
 
 <template>
   <div flex flex-wrap gap-2 items-end>
     <div flex flex-col gap-1 w-64>
-      <span text-sm text-muted>Order by</span>
+      <span text-muted>Order by</span>
       <UiSelect
         :items="orderByItems"
         :model-value="orderByValue"
         label="Order by"
-        @update:model-value="(choice) => setOrderBy(choice)"
+        @update:model-value="
+          (choice) => {
+            // Changing what the categories rank by keeps the direction the owner already chose
+            if (!choice) {
+              order = undefined;
+              return;
+            }
+
+            const direction = order?.direction ?? DatasetOrderDirection.Ascending;
+            order =
+              choice === DASHBOARD_TABLE_CATEGORY_KEY ? { direction } : { direction, seriesIndex: Number(choice) };
+          }
+        "
       />
     </div>
     <div v-if="order" flex flex-col gap-1 w-48>
-      <span text-sm text-muted>Direction</span>
+      <span text-muted>Direction</span>
       <UiSelect v-model="order.direction" :items="directionItems" label="Direction" />
     </div>
   </div>

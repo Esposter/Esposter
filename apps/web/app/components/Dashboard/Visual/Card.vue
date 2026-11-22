@@ -23,7 +23,7 @@ const displayValue = computed(() =>
 
 <template>
   <div p-3 text-center flex flex-col gap-1 size-full items-center justify-center>
-    <span text-4xl fw-semibold>{{ displayValue }}</span>
+    <span ui-display>{{ displayValue }}</span>
     <span text-muted>{{ visual.chart.configuration.title || `${series.name}` }}</span>
   </div>
 </template>

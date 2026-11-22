@@ -27,13 +27,7 @@ onClickExceptDrag(
 </script>
 
 <template>
-  <div
-    ref="container"
-    size-full
-    cursor-pointer
-    ui-frame
-    active="not-focus-within:[background-image:var(--ui-pressed-overlay)]"
-  >
+  <div ref="container" class="visual-preview" size-full cursor-pointer ui-frame>
     <!-- The chart is drawn as it is published, but takes no pointer: a press on it is the tile's drag, and its click
       opens the edit form. The corner's menu sits above it again -->
     <div size-full pointer-events-none>
@@ -49,7 +43,7 @@ onClickExceptDrag(
         <template #actions="{ dataset }">
           <!-- Clicking the tile opens its edit form, which nothing on screen says on its own, so the one menu on the corner
             holds the edit beside the occasional actions. A press here never reaches the tile's drag tracking -->
-          <div data-nested-interaction="true" flex gap-1 @mousedown.stop @mousemove.stop>
+          <div data-nested-interaction="true" flex @mousedown.stop @mousemove.stop>
             <DashboardVisualPreviewActionsMenu :dataset :visual />
           </div>
         </template>
@@ -67,3 +61,10 @@ onClickExceptDrag(
     </div>
   </div>
 </template>
+
+<style scoped>
+/* The frame takes the style's pressed layer while it is held, unless a control inside it holds focus */
+.visual-preview:active:not(:focus-within) {
+  background-image: var(--ui-pressed-overlay);
+}
+</style>

@@ -16,11 +16,6 @@ const visualStore = useVisualStore();
 const { moveVisual } = visualStore;
 const { visuals } = storeToRefs(visualStore);
 const targets = computed(() => getVisualMoveTargets(visuals.value, visual.id));
-// A radio option's value is a string, so the dashboard's own option carries "", which the dialog converts to no group
-const moveTo = (targetGroupId: string) => {
-  moveVisual({ id: visual.id }, targetGroupId || undefined);
-  isOpen.value = false;
-};
 </script>
 
 <template>
@@ -30,7 +25,12 @@ const moveTo = (targetGroupId: string) => {
       :items="targets"
       @update:model-value="
         (targetGroupId) => {
-          if (targetGroupId !== undefined) moveTo(targetGroupId);
+          if (targetGroupId !== undefined) {
+            // A radio option's value is a string, so the dashboard's own option carries an empty one, which the dialog
+            // Converts to no group
+            moveVisual({ id: visual.id }, targetGroupId || undefined);
+            isOpen = false;
+          }
         }
       "
     />

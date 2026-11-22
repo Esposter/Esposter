@@ -38,7 +38,7 @@ const columnNumber = computed(() => (isEditable ? DASHBOARD_NO_COLUMNS : getBrea
   <div ref="container" flex flex-col size-full role="group" :aria-label="groupTitle">
     <!-- The header keeps clear of the corner's menu, and a published group without a title has no header to draw -->
     <header v-if="isEditable || title" py-1 pe-10 ps-3 min-w-0 ui-bar>
-      <p text-sm truncate :class="{ 'text-muted': !title }">{{ groupTitle }}</p>
+      <p truncate :class="{ 'text-muted': !title }">{{ groupTitle }}</p>
     </header>
     <div flex-1 min-h-0 relative of-y-auto>
       <UiEmptyState
