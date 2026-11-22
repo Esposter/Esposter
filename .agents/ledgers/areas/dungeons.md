@@ -34,9 +34,5 @@ because a model every group shares belongs to none of their rows.
 - `apps/web/app/models/resolvers/dungeons`
 - `apps/web/app/assets/dungeons/data`
 - `apps/web/scripts/phaser`
-- `apps/web/app/assets` — `about`, `clicker`, `css`, `dashboard`
 - `apps/web/app/assets/dungeons/UI`, `apps/web/app/assets/dungeons/scene`, `apps/web/app/assets/dungeons/sound`, `apps/web/app/assets/dungeons/styles`, `apps/web/app/assets/dungeons/thirdParty`, `apps/web/app/assets/dungeons/tilesets`, `apps/web/app/assets/icons`
-- `apps/web/app/assets` — `message`, `visual`
 - `apps/web/app/services/dungeons/gridEngine`, `apps/web/app/store/dungeons/title`, `apps/web/app/store/dungeons/world`
-- `apps/web/scripts` — `constants.ts`, `flowMap`, `hydration`, `models`, `services`, `tiled`, `unocss`, `unrenderedComponents`
-- `apps/web/scripts` — `util`, `zstd`

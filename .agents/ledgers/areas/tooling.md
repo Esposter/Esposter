@@ -263,3 +263,4 @@
 - `vite` — `buildTasks.ts`, `checkTasks.ts`
 - `vite/models` — `CacheBase.ts`, `CachePattern.ts`, `PackageManifest.ts`, `RunTask.ts`, `RunTasks.ts`
 - `vite/services` — `constants.ts`, `createBuildCache.ts`, `createTask.ts`, `getBuildTaskName.ts`, `readManifest.ts`, `readPackageBuildManifests.ts`, `readPackageBuildTasks.ts`
+- `apps/web/scripts` — `constants.ts`, `flowMap`, `hydration`, `models`, `services`, `tiled`, `unocss`, `unrenderedComponents`, `util`, `zstd`

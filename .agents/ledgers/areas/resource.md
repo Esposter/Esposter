@@ -97,3 +97,4 @@
 - `apps/web/modules` — `devSession.test.ts`, `devSession.ts`, `serveGenshinExtractions.test.ts`, `serveGenshinExtractions.ts`
 - `apps/web/public` — `favicon.ico`, `page-builder`, `pdfjs`, `polyfills`, `pwa`
 - `apps/web/service-worker` — `sw.ts`
+- `apps/web/app/assets/dashboard`

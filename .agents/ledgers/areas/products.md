@@ -32,3 +32,4 @@
 - `apps/web/app/services/anime`
 - `apps/web/app/services/about`
 - `apps/web/app/services/login`
+- `apps/web/app/assets/about`, `apps/web/app/assets/clicker`, `apps/web/app/assets/visual`

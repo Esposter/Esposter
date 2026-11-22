@@ -57,3 +57,4 @@ ledger of the feature that owns them.
 - `apps/web/app/components/Ui/EditDeleteMenu.test.ts`, `apps/web/app/components/Ui/EditDeleteMenu.vue`, `apps/web/app/components/Ui/getDialogSizeClasses.test.ts`, `apps/web/app/models/post`
 - `apps/web/app/services/shared` — `applyIfUnchanged.ts`, `findButton.test.ts`, `overlay`, `parsePositiveInteger.test.ts`, `parsePositiveInteger.ts`
 - `apps/web/app/services/ui` — `getEditDeleteItems.ts`, `handleKeyAction.ts`
+- `apps/web/app/assets/css`
