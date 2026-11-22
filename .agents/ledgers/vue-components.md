@@ -62,8 +62,10 @@ grep -rn -A 20 "v-for" --include=*.vue apps/web/app | grep "@click"
 # a v-for whose item body calls a helper per row — the computed sweep's handover
 grep -rn -A 18 'v-for=' --include=*.vue apps/web/app |
   grep -E '\b[a-z][a-zA-Z0-9]*\(' | grep -vE 'onClick|\$emit|emit\('
-# a dialog mounted per row
-grep -rn -A 25 'v-for=' --include=*.vue apps/web/app | grep -E '<(UiDialog|UiMenu|UiOverflowMenu|StyledDialog)[ >]'
+# a dialog mounted per row, in the same file as its v-for
+grep -rn -A 25 'v-for=' --include=*.vue apps/web/app | grep -E '<([A-Za-z]*Dialog|UiMenu|UiOverflowMenu)([[:space:]>]|$)'
+# a dialog mounted in a component a list renders per row, one hop down: the message row's own tree, where each file is one row
+grep -rnE '<[A-Za-z]*Dialog([[:space:]>]|$)' --include=*.vue apps/web/app/components/Message/Model/Message
 # a page or layout owning an element's state
 grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue apps/web/app/pages apps/web/app/layouts
 ```
@@ -80,6 +82,10 @@ all allowed: a `<Head><Title>` computed and route orchestration in `pages/`, and
 measurements and the drawer-open flags — a flag shared by a hamburger and the drawer it opens belongs to their
 common ancestor, which is the layout. The `-A 18` window on the loop greps is a false-negative boundary: an item
 body longer than that is only reached by reading the file.
+
+A dialog a row renders sits one component down from the list's `v-for`, so the first grep misses it. The row tree's
+hits are mostly each dialog file's own root, which defines the dialog rather than mounting it, and the list's and
+composer's dialogs, which mount once. A mount is a dialog tag inside a component another file renders per row.
 
 On the third: the same helper called **twice** in one row body is the strongest signal, because extracting the
 row collapses both calls into one `computed`. A row already rendering a single child component is not a finding —
