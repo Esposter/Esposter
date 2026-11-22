@@ -43,10 +43,10 @@ The selected **id** is store state with `""` as nothing selected, owned by the s
 
 ## Server Rows Live in the Overlay
 
-- **A write to a server row names an entry, never a key** — `writeOptimistic` takes an entry, a pure function over the keyed view, the registry infers the rows it touches and queues the writes that overlap, and the answer's versions drop it (`references/mutation-actions.md`).
-- **A refused write drops its entry and restores nothing** — there is no rollback closure to write (`references/mutation-actions.md`).
-- **A removal is a tombstone a read returns, never an absent row** — absence never removes a held row, so a removal reaches the store as a row at its version (`references/mutation-actions.md`).
-- **An awaited write takes no entry, and a whole-value read orders through a run scope** — `writeAwaited` has no key, and a newer run of a read's key aborts the one before it (`references/mutation-actions.md`).
+- **A write to a server row names an entry, never a key** — `writeOptimistic` takes an entry, not a key (`references/mutation-actions.md`).
+- **A refused write drops its entry and restores nothing** (`references/mutation-actions.md`).
+- **A removal is a tombstone a read returns, never an absent row** (`references/mutation-actions.md`).
+- **An awaited write takes no entry, and a whole-value read orders through a run scope** (`references/mutation-actions.md`).
 
 ## tRPC Mutation Placement
 

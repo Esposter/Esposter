@@ -13,7 +13,7 @@ description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure f
 
 ## Package Shape
 
-One private package, one `prod` stack, `src/` split by provider (`src/cloudflare/`, `src/github/`) with a generated barrel, `dist/index.js` as the entrypoint, and a clean preview before every `infra:up` (`references/package-shape.md`; the preview is `references/operations.md`). The stack holds only what the program declares, so an apply is untargeted once its preview reads clean; `--target` narrows one only when a preview shows a change the apply must not make yet (`references/operations.md`), and the first deploy holds back the queue consumers and Workers custom domains with `--exclude` (`apps/infra/docs/stacks.md`, "First deploy").
+The package's shape is `references/package-shape.md`. The stack holds only what the program declares, so an apply is untargeted once its preview reads clean; `--target` narrows one only when a preview shows a change the apply must not make yet (`references/operations.md`).
 
 ## Cloudflare Rules
 
@@ -27,7 +27,7 @@ One private package, one `prod` stack, `src/` split by provider (`src/cloudflare
 - One resource declaration per tracked source file; export exactly one resource constant per file, named as the file minus `.ts`. Cloudflare resources live under `src/cloudflare/resources/<resourceType>/`, the folder named for the provider type (`r2Buckets`, `queueConsumers`, …), and each file is the camelCase of its Cloudflare name (`prod-r2-esposter-message-assets` is `prodR2EsposterMessageAssets.ts`).
 - A child resource takes its parent's name with its own resource type as a suffix (`prodQEsposterProcessWebhookConsumer`, `prodR2EsposterMessageAssetsLifecycle`).
 - Every resource carries `protect: true` unless the user explicitly asks for a lifecycle change. An R2 bucket is built by `createR2Bucket` (`src/cloudflare/services/createR2Bucket.ts`), and a queue consumer by `createQueueConsumer`, or `createDeadLetterQueueConsumer` for a dead-letter queue, in the same folder; each sets it, and `scripts/src/workspace/resourceProtection.test.ts` fails on a constructor its file leaves unprotected.
-- **Never add `aliases` to any resource** (`no-restricted-syntax`) — the Pulumi logical name **is** the Cloudflare name here, so an alias can never serve the rename it is suggested for. The recurring review suggestion to add one is closed, never applied.
+- **Never add `aliases` to any resource** (`no-restricted-syntax`), and the reason, with the closed review suggestion, is `references/migrations.md`'s.
 - **A deployed resource is renamed like any other identifier** — rename, preview, read the plan (`references/migrations.md`).
 
 ## Pointing at Another Resource

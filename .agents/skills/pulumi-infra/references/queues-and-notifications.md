@@ -10,7 +10,7 @@ A consumer takes its queue and dead-letter queue from one entry of `queueJobReso
 
 Its retries are two settings. `maxRetries` is the job's entry in `QueueJobMaxRetriesMap`, the number of redeliveries before the message goes to the dead-letter queue, and `retryDelay` is `QueueConsumerRetryDelay`, the wait before each one. A job whose entry is `0` (`ProcessWebhook`) goes to its dead-letter queue on its first failure.
 
-The consumer waits for the jobs Worker's first deploy, and so do the Workers custom domains for the web Worker (`apps/infra/docs/stacks.md`, "First deploy").
+The consumer waits for the jobs Worker's first deploy, which `references/operations.md` holds back with `--exclude`.
 
 ## A batch's queue must name a job or its dead-letter queue
 
@@ -18,13 +18,13 @@ The consumer waits for the jobs Worker's first deploy, and so do the Workers cus
 
 ## Each message is acknowledged or retried alone
 
-A message is acknowledged when its job's handler resolves and retried when it throws. The failure is logged once with `console.error` in the same batch handler (`.agents/skills/error-handling/references/logging-sinks.md`), and a message that exhausts its retries is the dead-letter queue's. A dead letter is settled the same way by its replay: acknowledged once it is republished or quarantined, retried when the republish throws.
+The failure is logged once with `console.error` in the same batch handler (`.agents/skills/error-handling/references/logging-sinks.md`); how a message is acknowledged, retried or dead-lettered is `openspec/specs/architecture/cloudflare-services/design.md`'s.
 
 ## Dead letters are replayed, then quarantined
 
 Each job's dead-letter queue has its own consumer, `cloudflare.QueueConsumer` with logical name `<dead-letter-queue>-consumer` under `queueConsumers/`, `queueId` the dead-letter queue, `scriptName` the jobs Worker and no `deadLetterQueue`. Its `maxRetries` is `DEAD_LETTER_CONSUMER_MAX_RETRIES` from `@esposter/db-schema`, which the replay reads too, and its `retryDelay` is `QueueConsumerRetryDelay`. A dead-letter queue has no dead-letter queue of its own, which is why the replay never leaves the last delivery to the queue.
 
-The jobs Worker's replay (`apps/jobs/src/services/queue/handleDeadLetterMessage.ts`) handles each message alone. It quarantines when the body fails its job's schema, when the delivery reaches `DEAD_LETTER_CONSUMER_MAX_RETRIES`, or when the body's `attempt` has reached `MAX_DEAD_LETTER_ATTEMPTS`. Quarantine is written create-only as the raw body to `quarantine/<queue>/<id>.json` in the private `user-assets` bucket, and logged once with `console.error`. The nightly Cron purges a quarantined body past `QUARANTINE_RETENTION_MS`. Any other dead letter is republished to its job's queue with `attempt` raised. Only a quarantine write that fails on the final delivery drops a message. Nothing alerts off the quarantine (observability is off, `openspec/specs/infra/observability/design.md`), so read its prefix by hand when a job fails repeatedly.
+The replay's rules are `openspec/specs/architecture/cloudflare-services/design.md`'s, read against `apps/jobs/src/services/queue/handleDeadLetterMessage.ts`; the one detail that page does not hold is that a quarantine is written create-only.
 
 Pulumi owns every queue consumer, as it does for the job queues. `apps/jobs/wrangler.jsonc` declares only the producers, one per job's queue, since the replay republishes through the jobs Worker's bindings. `apps/jobs/src/wrangler.test.ts` checks those producers by queue name.
 

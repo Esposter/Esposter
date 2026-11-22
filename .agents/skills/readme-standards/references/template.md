@@ -50,6 +50,10 @@ Licensed under [Apache-2.0][url-license].
 [badge references — see "Badges"]
 ```
 
+## The root README's header
+
+The root README opens with a centred header, as the Oxc, Rolldown and Vite+ READMEs do: the app's own mark (`apps/web/public/pwa/manifest-icon-512.png`, the largest unpadded artwork, drawn at a fixed height so a high-density screen stays sharp, and linked to the site), the title as an `<h1 align="center">`, the name's pronunciation as one italic IPA line, the site's one-sentence description in bold, then the badges in a `<div align="center">`. The mark is the repository's own file, so there is no copy under `.github/assets/`.
+
 ## Badges
 
 **Published packages** (no `"private": true`) — all four:
