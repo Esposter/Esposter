@@ -1,6 +1,5 @@
 import { SIN_NAMES, SinName } from "../../models/SinName";
 import { SIN_CRITERIA } from "./constants";
-
 // The question each sin asks Jev about a prompt, held beside the one call that asks them all
 const SinQuestionMap = {
   [SinName.Envy]:
@@ -17,7 +16,6 @@ const SinQuestionMap = {
   [SinName.Wrath]:
     'How heated is the prompt\'s register, as in runs of punctuation, words in capitals, "again", "still broken" or "why won\'t"?',
 } as const satisfies Record<SinName, string>;
-
 // The seven `score` questions one call answers, keyed by sin name, each graded on the same five levels
 export const getSinQuestions = (): Record<
   string,

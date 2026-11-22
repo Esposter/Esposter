@@ -14,7 +14,6 @@ import { SinStatusTextMap } from "./SinStatusTextMap";
 
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
 const sinHistoryAtom = atom({ key: "sinHistory", plugin: "genshin-mods" } as const, InitialState.sinHistory);
-
 // The seven sins in full: one bar per measured sin in the same order every time, its spread as the tinted tail, and its
 // Last thirty prompts as a trend. It is drawn from the state alone, so a reload redraws it as it was, and it says so
 // Rather than drawing stale bars once the switch is off

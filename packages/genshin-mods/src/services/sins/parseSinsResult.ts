@@ -2,7 +2,6 @@ import type { SinsResult } from "../../models/SinsResult";
 
 import { SinStatusKind } from "../../models/SinStatusKind";
 import { checkIsSinsResult } from "./checkIsSinsResult";
-
 // The node script writes one JSON result when it exits cleanly, so a run that exited otherwise never reaches this. A
 // Result that is not the shape the script writes reads as a failed run, the same as a run that exited otherwise
 export const parseSinsResult = (stdout: string): SinsResult => {

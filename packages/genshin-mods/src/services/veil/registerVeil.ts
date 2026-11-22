@@ -7,7 +7,6 @@ import { veilText } from "./veilText";
 import { veilValue } from "./veilValue";
 
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
-
 // Only the drawing changes: the transcript and what the model reads keep the real values. Each read subscribes the
 // Row, so switching the veil redraws every row already on screen. The instruction the veil adds to the system prompt is
 // An unmatched hook, so it is the lifecycle file's
