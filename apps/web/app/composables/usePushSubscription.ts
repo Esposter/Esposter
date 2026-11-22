@@ -7,7 +7,7 @@ export const usePushSubscription = () => {
   const { $trpc } = useNuxtApp();
   const runtimeConfig = useRuntimeConfig();
   const notificationPermission = usePermission("notifications");
-  const { executeMutation } = useMutation();
+  const { executeBackgroundMutation } = useMutation();
   const removeSubscription = async (subscription: PushSubscription) => {
     await $trpc.pushSubscription.unsubscribe.mutate(subscription.endpoint);
     await subscription.unsubscribe();
@@ -16,7 +16,7 @@ export const usePushSubscription = () => {
   watch(notificationPermission, (newNotificationPermission) => {
     if (!newNotificationPermission) return;
 
-    executeMutation(
+    executeBackgroundMutation(
       async () => {
         const { pushManager } = await window.navigator.serviceWorker.ready;
         const subscription = await pushManager.getSubscription();

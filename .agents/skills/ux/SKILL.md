@@ -11,8 +11,9 @@ person actually do this thing, and is that where they were already looking?
 
 ## Settled — do not re-propose
 
-- **Resolving `executeMutation` at the optimistic apply**, so the dialog could infer the mode. Every awaiting caller
-  and test reads that promise as "the server answered", and one declared prop states the fact at the site for less.
+- **Resolving a background write (`executeBackgroundMutation`) to its answer**, so the dialog could infer the mode. Every
+  awaiting caller and test reads that promise as "the server answered", and one declared prop states the fact at the
+  site for less.
 - **A deferred-commit undo** (hide the row, wait out the toast, then send) for writes the server cannot reverse, such
   as a message delete. A tab closed inside the window silently drops the write, and the server has no restore to
   fall back on. What has no server-side undo confirms.

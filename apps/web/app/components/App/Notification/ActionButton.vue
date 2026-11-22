@@ -10,7 +10,7 @@ interface Props {
 
 const { action } = defineProps<Props>();
 const emit = defineEmits<{ complete: [] }>();
-const { executeMutation, isPending } = useMutation();
+const { executeBackgroundMutation, isPending } = useMutation();
 // One button runs one action, so a second press while it is out joins nothing and is dropped
 const key = Symbol("action");
 const navigateToAction = getSynchronizedFunction(async (to: string) => {
@@ -21,7 +21,7 @@ const navigateToAction = getSynchronizedFunction(async (to: string) => {
 const runAction = () => {
   emit("complete");
   if (action.to) navigateToAction(action.to);
-  executeMutation(
+  executeBackgroundMutation(
     async () => {
       await action.handler?.();
     },

@@ -22,7 +22,7 @@ export const usePaginationCache = <
   const online = useOnline();
   // The partition is the target: its writes run one at a time so each rewrite lands on the set the one before
   // It stored, while another partition's cache is a different target and never waits behind it
-  const { executeMutation, executeQuery } = useMutation();
+  const { executeBackgroundMutation, executeQuery } = useMutation();
   const runScope = useRunScope();
   // Neither half of the cache is something the user acted on — one mirrors a list they are already looking at,
   // The other restores what they already had — so a failure is logged, never alerted
@@ -33,7 +33,7 @@ export const usePaginationCache = <
     newItems: IndexedDbDatabaseSchema[TStore]["value"][],
     partitionKeyValue: PartitionKey<TStore, TIndex>,
   ) => {
-    executeMutation(() => writeIndexedDb(configuration, newItems, partitionKeyValue), {
+    executeBackgroundMutation(() => writeIndexedDb(configuration, newItems, partitionKeyValue), {
       key: partitionKeyValue,
       onError,
     });

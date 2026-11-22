@@ -17,11 +17,11 @@ export default defineNuxtPlugin(() => {
   // The badge is one value, so its writes are a queue rather than a race: the API orders nothing across
   // Concurrent calls, and a dismissal that resolves after the count it replaced would leave the icon showing a
   // Number the panel no longer has. Queued under one key, the last count written is the last count shown
-  const { executeMutation } = useMutation();
+  const { executeBackgroundMutation } = useMutation();
   // Immediate because the store is session-scoped, so a launch starts at zero — which is exactly the badge a
   // Previous session left behind and never got to clear
   watchImmediate(unreadCount, (newUnreadCount) => {
-    executeMutation(
+    executeBackgroundMutation(
       () =>
         // Clearing rather than badging zero: the two are equivalent per spec, but only one of them says so
         newUnreadCount > 0 ? window.navigator.setAppBadge(newUnreadCount) : window.navigator.clearAppBadge(),

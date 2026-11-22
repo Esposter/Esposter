@@ -1,47 +1,30 @@
 import type { OnlineSubscribableContext } from "#src/models/shared/OnlineSubscribableContext";
-import type { OnlineSubscribableSource } from "#src/models/shared/OnlineSubscribableSource";
-import type { OnlineSubscribableValues } from "#src/models/shared/OnlineSubscribableValues";
 import type { Promisable } from "type-fest";
-import type { MultiWatchSources, WatchSource } from "vue";
+import type { WatchSource } from "vue";
 
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
-interface UseOnlineSubscribable {
-  <const TSources extends readonly OnlineSubscribableSource[]>(
-    source: TSources,
-    callback: (value: OnlineSubscribableValues<TSources>) => Promisable<(() => Promisable<void>) | undefined>,
-    context?: OnlineSubscribableContext,
-  ): void;
-  <TSource>(
-    source: WatchSource<TSource>,
-    callback: (value: TSource) => Promisable<(() => Promisable<void>) | undefined>,
-    context?: OnlineSubscribableContext,
-  ): void;
-}
-
-export const useOnlineSubscribable: UseOnlineSubscribable = (
-  source: MultiWatchSources | WatchSource,
-  // oxlint-disable-next-line typescript/no-explicit-any -- the implementation signature behind the overloads, which carry the types
-  callback: (value: any) => Promisable<(() => Promisable<void>) | undefined>,
+export const useOnlineSubscribable = <TSource>(
+  source: WatchSource<TSource>,
+  callback: (value: TSource) => Promisable<(() => Promisable<void>) | undefined>,
   context?: OnlineSubscribableContext,
 ) => {
   const instance = context?.instance ?? getCurrentInstance();
   const scope = context?.scope ?? getCurrentScope();
   // One subscription is one target, so tearing the previous one down and establishing the next run as a single
   // Queued unit — and a subscribe that rejects unwinds on its own instead of wedging every later one behind it
-  const { executeMutation } = useMutation();
+  const { executeBackgroundMutation } = useMutation();
   // A subscription established after an await has no active scope of its own, so the online listeners and the watch
   // It creates are made inside the captured one and stopped with it
   const setup = () => {
     const online = useOnline();
-    const sources: MultiWatchSources = Array.isArray(source) ? [...source, online] : [source, online];
     const key = "subscription";
 
     let currentCleanup: (() => Promisable<void>) | undefined;
     let isActive = true;
 
-    const resubscribe = (value: unknown, isOnline: boolean) => {
-      executeMutation(
+    const resubscribe = (value: TSource, isOnline: boolean) => {
+      executeBackgroundMutation(
         async () => {
           const previousCleanup = currentCleanup;
           currentCleanup = undefined;
@@ -60,12 +43,9 @@ export const useOnlineSubscribable: UseOnlineSubscribable = (
         { key, onError: console.error },
       );
     };
-    const { trigger } = watchTriggerable(sources, (values) => {
-      const isOnline = online.value;
-      // `online` is watched alongside the caller's own sources, so it is dropped again before the value reaches
-      // Them — and an offline tick has nothing to hand over, since the resubscribe returns before reading it
-      const value = isOnline ? (Array.isArray(source) ? values.slice(0, -1) : values[0]) : undefined;
-
+    // Online is watched alongside the caller's own source, and an offline tick takes no call, since the resubscribe
+    // Returns before reading the value
+    const { trigger } = watchTriggerable([source, online], ([value, isOnline]) => {
       resubscribe(value, isOnline);
     });
 

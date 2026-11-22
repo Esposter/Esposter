@@ -9,7 +9,7 @@ import { ASSET_HASH_REGEX } from "@esposter/shared";
 // Rejected where the composable is called rather than silently doing nothing once it runs
 export const useDeleteResourceFile = (type: FileAssetsResourceType, id: MaybeRefOrGetter<string>) => {
   const getResourceRouter = useResourceRouter();
-  const { executeMutation } = useMutation();
+  const { executeBackgroundMutation } = useMutation();
   return (url: string) => {
     const idValue = toValue(id);
     // Only the stable asset url survives in the editor model, so the blob path is recovered from it.
@@ -21,7 +21,7 @@ export const useDeleteResourceFile = (type: FileAssetsResourceType, id: MaybeRef
     // The server rejects, and drifts the moment either side is tightened
     const blobPath = getDecodedUriComponent(url.slice(filesDirectoryPrefix.length), "");
     if (!ASSET_HASH_REGEX.test(blobPath)) return;
-    executeMutation(() => getResourceRouter(type).deleteFile.mutate({ blobPath, id: idValue }), {
+    executeBackgroundMutation(() => getResourceRouter(type).deleteFile.mutate({ blobPath, id: idValue }), {
       // Nothing on screen waits on the delete, and the editor that asked for it may be gone by the time it answers, so a
       // Failure is logged rather than alerted
       key: blobPath,

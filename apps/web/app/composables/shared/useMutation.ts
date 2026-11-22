@@ -35,14 +35,6 @@ interface BaseMutationOptions {
   onError?: ((error: Error) => Promisable<void>) | undefined;
 }
 
-interface ExecuteMutation {
-  <TResult>(
-    mutate: () => Promise<TResult>,
-    options: AwaitedMutationOptions<TResult>,
-  ): Promise<MutationOutcome<TResult>>;
-  <TResult>(mutate: () => Promise<TResult>, options: BackgroundMutationOptions<TResult>): void;
-}
-
 interface QueryOptions<TResult> {
   isExclusive?: true | undefined;
   // A one-shot read keeps no watch on its topics: a read whose owner outlives the screen it serves, such as a store's,
@@ -180,17 +172,19 @@ export const useMutation = () => {
     // Throws, so a thrown callback can never strand the key as permanently pending or wedge its queue
     return enqueue(key, run);
   };
-  // The two forms of a write, the background one last. It hands its caller nothing, so no step the screen takes can
-  // Wait on its answer: the write still runs on its key's queue, and whatever the answer brings is the alert's or
-  // `reconcile`'s. It floats as a synchronized function, so a test or a shutdown that needs every write landed drains it
-  // With the rest
-  const executeMutation = (<TResult>(
+  // The awaited form, whose outcome its caller acts on once the write has landed
+  const executeMutation = <TResult>(
     mutate: () => Promise<TResult>,
-    options: AwaitedMutationOptions<TResult> | BackgroundMutationOptions<TResult>,
-  ): Promise<MutationOutcome<TResult>> | void => {
-    if (options.awaitedBecause) return runMutation(mutate, options);
+    options: AwaitedMutationOptions<TResult>,
+  ): Promise<MutationOutcome<TResult>> => runMutation(mutate, options);
+  // The background form, last. It hands its caller nothing, so no step the screen takes can wait on its answer: the
+  // Write still runs on its key's queue, and whatever the answer brings is the alert's or `reconcile`'s. It floats as a
+  // Synchronized function, so a test or a shutdown that needs every write landed drains it with the rest
+  const executeBackgroundMutation = <TResult>(
+    mutate: () => Promise<TResult>,
+    options: BackgroundMutationOptions<TResult>,
+  ): void => {
     getSynchronizedFunction(() => runMutation(mutate, { ...options, onSuccess: options.reconcile }))();
-    return undefined;
-  }) as ExecuteMutation;
-  return { checkIsPending, executeMutation, executeQuery, isPending, whenSettled };
+  };
+  return { checkIsPending, executeBackgroundMutation, executeMutation, executeQuery, isPending, whenSettled };
 };

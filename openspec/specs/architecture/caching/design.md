@@ -59,7 +59,7 @@ writeOptimistic(
 | `Resources` | which resources exist, are live, and their name and tags as the cached rows carry them | delete, restore, purge, rename, tag edit |
 | `Recents`   | the recency ordering, without membership changing                                      | `recordAccess` — a recorded visit        |
 
-`invalidates` lives on `useMutation`'s write options and **never** on its read options: a read has no reason to invalidate anything. The writes still on `executeMutation` carry it (`recordAccess` is one), and it fires only after the write's success, so a refused write there invalidates nothing, since it changed nothing to be stale about. The overlay writes that can persist part of themselves before a refusal name their tags from a finalizer instead, which runs whether the write was kept or refused (see below).
+`invalidates` lives on `useMutation`'s write options and **never** on its read options: a read has no reason to invalidate anything. The writes still on `useMutation` carry it (`recordAccess` is one), and it fires only after the write's success, so a refused write there invalidates nothing, since it changed nothing to be stale about. The overlay writes that can persist part of themselves before a refusal name their tags from a finalizer instead, which runs whether the write was kept or refused (see below).
 
 The registry itself is a Pinia store (`apps/web/app/store/cache.ts`) rather than a module-level `Map`, because a module map is shared across Pinia instances: it would leak registrations between tests and, on the server, from one request's app into the next's.
 

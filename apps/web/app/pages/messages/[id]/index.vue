@@ -12,8 +12,8 @@ usePageMark(() => ({ id: roomId, type: PageMarkType.Room }));
 // The room leaves the list when its membership is tombstoned, and the reader is taken off it from here
 useNavigateFromRemovedRoom();
 // Marking the room read is a write nothing on the page waits for, so it is sent without holding up the render
-const { executeMutation } = useMutation();
-executeMutation(
+const { executeBackgroundMutation } = useMutation();
+executeBackgroundMutation(
   () =>
     Promise.all([
       $trpc.userToRoom.updateUserToRoom.mutate({ lastReadAt: new Date(), roomId }),

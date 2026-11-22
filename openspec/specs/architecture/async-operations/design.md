@@ -69,9 +69,9 @@ Two things `isExclusive` deliberately does **not** do:
 
 ## Writes — the overlay and `executeMutation`
 
-The overlay writes described above are the path for every store that has moved. `executeMutation(mutate, { isExclusive, key, onError, reconcile })` without an `awaitedBecause` is the background form: the path of the writers that have not moved yet, and of the writes no screen waits on. Its rules are these.
+The overlay writes described above are the path for every store that has moved. `executeBackgroundMutation(mutate, { isExclusive, key, onError, reconcile })` is the background form: the path of the writers that have not moved yet, and of the writes no screen waits on. Its rules are these.
 
-`executeMutation` queues per key, and returns nothing: its promise floats through `getSynchronizedFunction`, so `waitForSynchronizedFunctions()` drains it with every other fire-and-forget. The awaited form takes `awaitedBecause` and `onSuccess` in place of `reconcile`, and resolves to its outcome ([client data](../client-data/design.md#optimistic-by-default)). A background write's `mutate` runs when the write is **sent**, not when it was issued, so a write that reads a version token or resolves a create-or-update branch does that **inside** `mutate`, not before the call.
+`executeBackgroundMutation` queues per key, and returns nothing: its promise floats through `getSynchronizedFunction`, so `waitForSynchronizedFunctions()` drains it with every other fire-and-forget. The awaited form, `executeMutation`, takes `awaitedBecause` and `onSuccess` in place of `reconcile`, and resolves to its outcome ([client data](../client-data/design.md#optimistic-by-default)). A background write's `mutate` runs when the write is **sent**, not when it was issued, so a write that reads a version token or resolves a create-or-update branch does that **inside** `mutate`, not before the call.
 
 One opt-in narrows this, and nothing else does:
 

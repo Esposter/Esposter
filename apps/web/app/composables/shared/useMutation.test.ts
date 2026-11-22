@@ -48,8 +48,8 @@ describe(useMutation, () => {
 
     const reconcile = vi.fn<(result: string) => void>();
     const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<string>();
-    const { executeMutation } = useMutation();
-    executeMutation(() => mutatePromise, { key, reconcile });
+    const { executeBackgroundMutation } = useMutation();
+    executeBackgroundMutation(() => mutatePromise, { key, reconcile });
     await flushPromises();
     expect(reconcile).not.toHaveBeenCalled();
 
@@ -62,10 +62,10 @@ describe(useMutation, () => {
   test("alerts a failed write that has no onError", async () => {
     expect.hasAssertions();
 
-    const { executeMutation } = useMutation();
+    const { executeBackgroundMutation } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    executeMutation(() => Promise.reject(error), { key });
+    executeBackgroundMutation(() => Promise.reject(error), { key });
     await flushPromises();
 
     expect(alerts.value).toHaveLength(1);
@@ -75,10 +75,10 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const onError = vi.fn<(error: Error) => void>();
-    const { executeMutation } = useMutation();
+    const { executeBackgroundMutation } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    executeMutation(() => Promise.reject(error), { key, onError });
+    executeBackgroundMutation(() => Promise.reject(error), { key, onError });
     await flushPromises();
 
     expect(onError).toHaveBeenCalledExactlyOnceWith(error);
@@ -89,16 +89,16 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const startOrder: string[] = [];
-    const { executeMutation } = useMutation();
+    const { executeBackgroundMutation } = useMutation();
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
-    executeMutation(
+    executeBackgroundMutation(
       () => {
         startOrder.push("first");
         return firstPromise;
       },
       { key },
     );
-    executeMutation(
+    executeBackgroundMutation(
       () => {
         startOrder.push("second");
         return Promise.resolve();
@@ -143,10 +143,10 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const mutate = vi.fn<() => Promise<void>>(() => Promise.resolve());
-    const { executeMutation } = useMutation();
+    const { executeBackgroundMutation } = useMutation();
     const { promise: firstPromise, reject: rejectFirst } = Promise.withResolvers<void>();
-    executeMutation(() => firstPromise, { key, onError: noop });
-    executeMutation(mutate, { key });
+    executeBackgroundMutation(() => firstPromise, { key, onError: noop });
+    executeBackgroundMutation(mutate, { key });
     await flushPromises();
     expect(mutate).not.toHaveBeenCalled();
     rejectFirst(error);
@@ -159,16 +159,16 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const startOrder: string[] = [];
-    const { executeMutation } = useMutation();
+    const { executeBackgroundMutation } = useMutation();
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
-    executeMutation(
+    executeBackgroundMutation(
       () => {
         startOrder.push("first");
         return firstPromise;
       },
       { key },
     );
-    executeMutation(
+    executeBackgroundMutation(
       () => {
         startOrder.push("second");
         return Promise.resolve();
@@ -287,9 +287,9 @@ describe(useMutation, () => {
   test("tracks pending state across a call's lifecycle, scoped to its key while isPending aggregates", async () => {
     expect.hasAssertions();
 
-    const { checkIsPending, executeMutation, isPending } = useMutation();
+    const { checkIsPending, executeBackgroundMutation, isPending } = useMutation();
     const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<void>();
-    executeMutation(() => mutatePromise, { key });
+    executeBackgroundMutation(() => mutatePromise, { key });
     const isPendingWhileInFlight = isPending.value;
     const isKeyPendingWhileInFlight = checkIsPending(key);
     const isOtherKeyPendingWhileInFlight = checkIsPending(otherKey);
@@ -346,7 +346,7 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const mutate = vi.fn<() => Promise<void>>(() => Promise.resolve());
-    const { executeMutation } = useMutation();
+    const { executeBackgroundMutation, executeMutation } = useMutation();
 
     await expect(
       executeMutation(() => Promise.resolve(), {
@@ -357,7 +357,7 @@ describe(useMutation, () => {
         },
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
-    executeMutation(mutate, { key });
+    executeBackgroundMutation(mutate, { key });
     await flushPromises();
 
     expect(mutate).toHaveBeenCalledTimes(1);
@@ -391,11 +391,11 @@ describe(useMutation, () => {
   test("drops a concurrent exclusive call with the same key, reporting it as distinct from success", async () => {
     expect.hasAssertions();
 
-    const { executeMutation } = useMutation();
+    const { executeBackgroundMutation, executeMutation } = useMutation();
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
     const mutate = vi.fn<() => Promise<void>>();
     mutate.mockReturnValueOnce(firstPromise);
-    executeMutation(mutate, { isExclusive: true, key });
+    executeBackgroundMutation(mutate, { isExclusive: true, key });
     await flushPromises();
     const outcome = await executeMutation(mutate, {
       awaitedBecause: AwaitedReason.ServerIssuedValue,
@@ -414,8 +414,8 @@ describe(useMutation, () => {
   test("a target's writes have settled once its queue resolves", async () => {
     expect.hasAssertions();
 
-    const { checkIsPending, executeMutation, whenSettled } = useMutation();
-    executeMutation(() => Promise.resolve(), { key });
+    const { checkIsPending, executeBackgroundMutation, whenSettled } = useMutation();
+    executeBackgroundMutation(() => Promise.resolve(), { key });
     await whenSettled(key);
 
     expect(checkIsPending(key)).toBe(false);

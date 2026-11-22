@@ -6,7 +6,7 @@ import { noop } from "@esposter/shared";
 // Feeds the Recent list route, Home's Recent tab and the palette scope's Recently opened group.
 export const useRecordResourceAccess = (resource: Ref<ResourceInResource | undefined>) => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation } = useMutation();
+  const { executeBackgroundMutation } = useMutation();
   // Watches the identity, not the object: every autosave, rename and tag edit replaces the ref with a new
   // Object, and re-recording on those would order Recent by last autosave rather than last open — this
   // Records what you opened, not what happened to it while it was open
@@ -16,7 +16,7 @@ export const useRecordResourceAccess = (resource: Ref<ResourceInResource | undef
     // Report a problem on a page that opened perfectly well
     (id) => {
       if (id)
-        executeMutation(() => $trpc.resource.recordAccess.mutate({ id }), {
+        executeBackgroundMutation(() => $trpc.resource.recordAccess.mutate({ id }), {
           // Nothing on screen changes for the visit itself, so nothing is drawn ahead of the record
           // The row this writes is the one Recent is ordered by, so every cache of that ordering now predates
           // This visit

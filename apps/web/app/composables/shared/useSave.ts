@@ -36,7 +36,7 @@ export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = 
   { auth, toSave, unauth }: UseSaveOptions<TState, T>,
 ) => {
   const session = authClient.useSession();
-  const { executeMutation: executeSaveMutation } = useMutation();
+  const { executeBackgroundMutation: executeSaveMutation } = useMutation();
   const saveToLocalStorage = useSaveToLocalStorage();
   // The etag of the save the state was last read or written under, which the next remote save is sent under
   let etag: string | undefined;
