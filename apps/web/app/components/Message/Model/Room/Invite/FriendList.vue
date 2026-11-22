@@ -41,7 +41,11 @@ const memberIdSet = computed(
   () => new Set((roomUsers.value ?? []).filter(({ isMember }) => isMember).map(({ id }) => id)),
 );
 // The list shows skeleton rows rather than its empty state while the first read of the friends is on its way
-const { isPending: isFriendsPending } = useQuery(useReadFriends(), {
+const {
+  error: friendsError,
+  isPending: isFriendsPending,
+  refresh: refreshFriends,
+} = useQuery(useReadFriends(), {
   onSuccess: () => {
     if (friends.value.length > 0) getSynchronizedFunction(readRoomUsers)();
   },
@@ -66,6 +70,7 @@ const { isPending: isFriendsPending } = useQuery(useReadFriends(), {
       />
     </ul>
     <MessageFriendsListSkeleton v-else-if="isFriendsPending" />
+    <UiErrorState v-else-if="friendsError" :error="friendsError" @retry="refreshFriends()" />
     <UiEmptyState
       v-else
       :description="searchQuery ? 'No friend or group of yours goes by that name.' : undefined"

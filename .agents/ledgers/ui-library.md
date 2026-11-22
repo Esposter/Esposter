@@ -43,3 +43,10 @@ grep -rnE 'i-[a-z0-9]+:[a-z0-9-]+' --include=*.vue apps/web/app/components apps/
 ```
 
 Each hit of 4 is read against `UiIconMeaning`: a class with no meaning yet is written whole until one is added, which is a feature change and not a sweep fix.
+
+```bash
+# 6. a read's empty state with no failure branch: a file that draws an empty state and reads isPending, and never names its error
+for f in $(grep -rlE 'UiEmptyState' --include='*.vue' apps/web/app/components apps/web/app/pages apps/web/app/layouts); do grep -qE 'isPending|is-pending' "$f" && ! grep -qE '\berror\b|isError|is-error' "$f" && echo "$f"; done
+```
+
+Each hit of 6 is read for the read it draws: a failed read that falls through to the empty state is a hit, and the fix binds the read's error and draws `UiErrorState` ahead of the empty state.

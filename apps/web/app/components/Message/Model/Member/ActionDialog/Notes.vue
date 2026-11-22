@@ -25,7 +25,7 @@ const isNoteValid = computed(() => createModerationNoteInputSchema.shape.note.sa
 // Deliberately not cleared on unmount: a dialog for another member can mount before this one tears down, and a teardown
 // That blanked the ref would blank the list the new dialog has already claimed
 currentTargetUserId.value = user.id;
-const { isPending } = useQuery(readModerationNotes);
+const { error, isPending, refresh } = useQuery(readModerationNotes);
 // The field keeps the note until the server has it, so a refused note stays in place to be sent again. A note the reader has
 // Typed since is left alone when the sent one is kept
 const sendNote = async () => {
@@ -54,6 +54,7 @@ const sendNote = async () => {
         </ul>
         <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreModerationNotes(onComplete)" />
       </div>
+      <UiErrorState v-else-if="error" :error @retry="refresh()" />
       <UiEmptyState
         v-else
         description="Add one below to keep track of this member."
