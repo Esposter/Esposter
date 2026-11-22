@@ -110,10 +110,10 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-text               | index.js                  |    1561 |    1.5 |
 | pitch-transcription        | notes.js                  |    1428 |    1.4 |
 | pitch-transcription        | constants.d.ts            |    1389 |    1.4 |
+| @esposter/shared-node      | bench-smoke-provider.js   |    1184 |    1.2 |
 | genshin-engine             | terrainWorker.js          |    1171 |    1.1 |
 | genshin-engine             | terrainWorker.d.ts        |    1170 |    1.1 |
 | keyframe-store             | index.js                  |    1148 |    1.1 |
-| @esposter/shared-node      | bench-smoke-provider.js   |    1138 |    1.1 |
 | @esposter/db-mock          | index.js                  |    1075 |    1.0 |
 | genshin-world              | sceneExport.d.ts          |    1018 |    1.0 |
 | grid-engine-headless       | index.d.ts                |     888 |    0.9 |
@@ -167,4 +167,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 162 files, 13315359 bytes, 13003.3 KiB, 12.70 MiB
+**Total:** 162 files, 13315405 bytes, 13003.3 KiB, 12.70 MiB
