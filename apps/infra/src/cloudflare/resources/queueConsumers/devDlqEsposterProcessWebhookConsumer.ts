@@ -1,30 +1,9 @@
-import DevJobsWorkerScriptName from "#src/cloudflare/constants/DevJobsWorkerScriptName";
-import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
-import { devDlqEsposterProcessWebhook } from "#src/cloudflare/resources/queues/devDlqEsposterProcessWebhook";
-import {
-  CLOUDFLARE_ACCOUNT_ID,
-  CloudflareAssetType,
-  CloudflareEnvironment,
-  DEAD_LETTER_CONSUMER_MAX_RETRIES,
-  getCloudflareResourceName,
-  QueueJob,
-} from "@esposter/db-schema";
-import * as cloudflare from "@pulumi/cloudflare";
+import type * as cloudflare from "@pulumi/cloudflare";
 
-const deadLetterQueueName = getCloudflareResourceName(
+import { createDeadLetterQueueConsumer } from "#src/cloudflare/services/createDeadLetterQueueConsumer";
+import { CloudflareEnvironment, QueueJob } from "@esposter/db-schema";
+
+export const devDlqEsposterProcessWebhookConsumer: cloudflare.QueueConsumer = createDeadLetterQueueConsumer(
   CloudflareEnvironment.Development,
-  CloudflareAssetType.DeadLetterQueue,
   QueueJob.ProcessWebhook,
-);
-
-export const devDlqEsposterProcessWebhookConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
-  `${deadLetterQueueName}-consumer`,
-  {
-    accountId: CLOUDFLARE_ACCOUNT_ID,
-    queueId: devDlqEsposterProcessWebhook.queueId,
-    scriptName: DevJobsWorkerScriptName,
-    settings: { maxRetries: DEAD_LETTER_CONSUMER_MAX_RETRIES, retryDelay: QueueConsumerRetryDelay },
-    type: "worker",
-  },
-  { parent: devDlqEsposterProcessWebhook, protect: true },
 );
