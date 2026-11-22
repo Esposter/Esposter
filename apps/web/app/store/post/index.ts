@@ -12,7 +12,6 @@ import { postTable } from "#src/services/post/overlay/constants";
 import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
-import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useOverlayStore } from "#src/store/overlay";
 import { compareBySort } from "@esposter/db-schema";
@@ -106,19 +105,22 @@ export const usePostStore = defineStore("post", () => {
       },
     );
   };
-  // The post leaves the feed at once: its row is drawn removed, and the server's answer is the tombstone of each post the
-  // Removal took, which arrives in its place and leaves the feed's keys. A refused delete restores nothing, since the row
-  // Was never changed on the server and the entry dropping at once leaves the row as held
-  const deletePost = (input: DeletePostInput) => {
-    writeOptimistic(
+  // The answer names each post the removal took, the post and every reply beneath it, and no entry can name the replies a
+  // Removal takes, so the post stays on the feed until the server answers and leaves it then. A refused delete alerts and
+  // Resolves false, which keeps the dialog asking open
+  const deletePost = async (input: DeletePostInput) => {
+    const outcome: { isRemoved?: boolean } = {};
+    await writeAwaited(
       async () => {
         const removedPosts = await $trpc.post.deletePost.mutate(input);
         const removedIds = new Set(removedPosts.map(({ id }) => id));
         postKeys.value = postKeys.value.filter(({ id }) => !removedIds.has(id));
-        return createRowsResponse(postTable, removedPosts);
+        outcome.isRemoved = true;
+        return removedPosts.map((post) => createArrival(postTable, post));
       },
-      { entry: getPostPatchEntry(input, { deletedAt: new Date() }), onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
     );
+    return outcome.isRemoved === true;
   };
   return {
     createPost,

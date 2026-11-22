@@ -7,12 +7,12 @@ import type { Except } from "type-fest";
 
 import { PostSortType } from "#shared/models/post/PostSortType";
 import { usePostRows } from "#src/composables/post/usePostRows";
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { authClient } from "#src/services/auth/authClient";
 import { postTable } from "#src/services/post/overlay/constants";
-import { getPostPatchEntry } from "#src/services/post/overlay/getPostPatchEntry";
 import { getSetPostEntry } from "#src/services/post/overlay/getSetPostEntry";
+import { createArrival } from "#src/services/shared/overlay/createArrival";
 import { createRowResponse } from "#src/services/shared/overlay/createRowResponse";
-import { createRowsResponse } from "#src/services/shared/overlay/createRowsResponse";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useUserStore } from "#src/store/message/user/index";
 import { useOverlayStore } from "#src/store/overlay";
@@ -26,7 +26,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   const { $trpc } = useNuxtApp();
   const session = authClient.useSession();
   const overlayStore = useOverlayStore();
-  const { arrive, writeOptimistic } = overlayStore;
+  const { arrive, writeAwaited, writeOptimistic } = overlayStore;
   const postCountStore = usePostCountStore();
   const { refreshPostCountsInBackground } = postCountStore;
   const userStore = useUserStore();
@@ -81,8 +81,8 @@ export const useCommentStore = defineStore("post/comment", () => {
       const { isLoaded, items: branchItems } = getSlice(key);
       for (const { id } of branchItems.value) deleteLoadedBranch(id);
       branchItems.value = [];
-      // Emptied rather than answered: a branch that keeps saying it is loaded is one a re-expansion will not read
-      // Again, so a delete the server rejects would leave the replies underneath it invisible until a reload
+      // Emptied rather than kept: a branch that still says it is loaded is one a re-expansion will not read again, and the
+      // Removal that calls this has taken the replies it held
       isLoaded.value = false;
     };
     deleteLoadedBranch(parentId);
@@ -171,21 +171,23 @@ export const useCommentStore = defineStore("post/comment", () => {
         return false;
       },
     );
-  const deleteComment = (input: DeleteCommentInput) => {
-    // The replies beneath the comment are not read again until their branch is opened, so none keeps a row a removal
-    // Has left behind
-    deleteBranch(input);
-    writeOptimistic(
+  // The answer names each reply a removal takes as well as the comment and the posts above it, and no entry can name the
+  // Replies, so the removal waits for the answer. The branch beneath the comment is emptied only once the server keeps the
+  // Removal, and the counters above it are read back then
+  const deleteComment = async (input: DeleteCommentInput) => {
+    const outcome: { isRemoved?: boolean } = {};
+    await writeAwaited(
       async () => {
-        // The counters and the replies a removal takes are only knowable here, so they move when the server answers, and
-        // The answer is the tombstone of every reply it took, which arrives in place of each row
         const { ancestorIds, removedPosts } = await $trpc.post.deleteComment.mutate(input);
         refreshPostCountsInBackground(ancestorIds);
+        deleteBranch(input);
         dropBranchKeys(removedPosts.map(({ id }) => id));
-        return createRowsResponse(postTable, removedPosts);
+        outcome.isRemoved = true;
+        return removedPosts.map((post) => createArrival(postTable, post));
       },
-      { entry: getPostPatchEntry(input, { deletedAt: new Date() }), onError: createErrorAlert },
+      { awaitedBecause: AwaitedReason.ServerDecidedOutcome, onError: createErrorAlert },
     );
+    return outcome.isRemoved === true;
   };
 
   return {

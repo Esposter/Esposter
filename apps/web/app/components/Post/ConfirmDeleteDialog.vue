@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useCommentStore } from "#src/store/post/comment/index";
 import { usePostDialogStore } from "#src/store/post/dialog";
 import { usePostStore } from "#src/store/post/index";
@@ -27,14 +28,15 @@ const { isOpen, item: post } = useSingletonDialog(
   <UiConfirmDialog
     v-if="post"
     v-model="isOpen"
+    :awaited-because="AwaitedReason.ServerDecidedOutcome"
     confirm-label="Delete"
     title="Delete post"
     :confirm="
       async () => {
         if (!post) return;
-        const postId = post.id;
-        deletePost(postId);
-        await navigateTo(RoutePath.Index);
+        const isDeleted = await deletePost(post.id);
+        if (isDeleted) await navigateTo(RoutePath.Index);
+        return isDeleted;
       }
     "
   >

@@ -99,8 +99,7 @@ describe(useCommentStore, () => {
     const { deleteComment, getBranchItems } = commentStore;
     seedBranch(postId, [comment, otherComment]);
     const branchComments = getBranchItems(postId);
-    deleteComment(comment.id);
-    deleteComment(otherComment.id);
+    await Promise.all([deleteComment(comment.id), deleteComment(otherComment.id)]);
 
     await isRefusedDeleteReceived.promise;
     await until(() => branchComments.value.length).toBe(1);
@@ -127,22 +126,20 @@ describe(useCommentStore, () => {
     seedBranch(comment.id, [reply]);
     const branchComments = getBranchItems(postId);
 
-    deleteComment(comment.id);
+    await deleteComment(comment.id);
 
     await until(() => currentPost.value?.commentCount).toBe(0);
     expect(branchComments.value).toStrictEqual([]);
     expect(getSlice(comment.id).items.value).toStrictEqual([]);
   });
 
-  // The rows beneath a deleted comment go with it at once, and a branch that still claims to be loaded is one a
-  // Re-expansion will not read again. So a rejected delete leaves those branches unread rather than merely empty
-  test("leaves the branches under a rejected delete unread", async () => {
+  // A removal takes the rows beneath a comment only when the server keeps it, so a rejected delete leaves the branches
+  // Beneath it as they were, loaded and listing their replies
+  test("leaves the branches under a rejected delete as they were", async () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 2, parentId: comment.id });
-    const isRefusedDeleteReceived = Promise.withResolvers<void>();
     trpcMsw.post.deleteComment.mutation(() => {
-      isRefusedDeleteReceived.resolve();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const commentStore = useCommentStore();
@@ -153,12 +150,12 @@ describe(useCommentStore, () => {
     const branchComments = getBranchItems(postId);
     const replyBranch = getSlice(comment.id);
 
-    deleteComment(comment.id);
+    const isRemoved = await deleteComment(comment.id);
 
-    await isRefusedDeleteReceived.promise;
-    await until(() => branchComments.value.length).toBe(1);
-    expect(replyBranch.items.value).toStrictEqual([]);
-    expect(replyBranch.isLoaded.value).toBe(false);
+    expect(isRemoved).toBe(false);
+    expect(branchComments.value).toHaveLength(1);
+    expect(replyBranch.items.value).toStrictEqual([{ id: reply.id }]);
+    expect(replyBranch.isLoaded.value).toBe(true);
   });
 
   // The counters the server moved are the ones on screen, so a reply reaches the post above its own parent as well: a

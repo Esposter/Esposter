@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useCommentDialogStore } from "#src/store/post/comment/dialog";
 import { useCommentStore } from "#src/store/post/comment/index";
 
@@ -17,6 +18,7 @@ const { isOpen, item: comment } = useSingletonDialog(deletingId, () =>
   <UiConfirmDialog
     v-if="comment"
     v-model="isOpen"
+    :awaited-because="AwaitedReason.ServerDecidedOutcome"
     confirm-label="Delete"
     title="Delete comment"
     :confirm="() => comment && deleteComment(comment.id)"

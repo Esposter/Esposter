@@ -82,8 +82,8 @@ describe(usePostStore, () => {
     expect(takeOne(items.value).version).toBe(1);
   });
 
-  // A refused delete leaves its post on the feed, since the row was never removed on the server and its entry drops
-  // With the refusal. Deletes of different posts carry different keys, so the accepted one is not held behind it
+  // A refused delete leaves its post on the feed, since the row was never removed on the server. The accepted delete of
+  // Another post removes only that post, so the refused one is still listed
   test("keeps a post whose delete is refused, and drops one whose delete the server kept", async () => {
     expect.hasAssertions();
 
@@ -100,10 +100,8 @@ describe(usePostStore, () => {
     const { items } = storeToRefs(postStore);
     const { deletePost, readItems, readPostPage } = postStore;
     await readItems(() => Promise.resolve(readPostPage({ items: [post, otherPost], nextCursor: "" })));
-    deletePost(post.id);
-    deletePost(otherPost.id);
-
-    // The refused post is drawn again once its refusal lands, so the list holds the one post only after both are settled
+    // The list holds the one post only once both deletes are settled, the refused one still on it
+    await Promise.all([deletePost(post.id), deletePost(otherPost.id)]);
     await isRefusedDeleteReceived.promise;
     await until(() => items.value.length).toBe(1);
     expect(takeOne(items.value).id).toBe(post.id);
@@ -114,13 +112,14 @@ describe(usePostStore, () => {
   test("does not relist a removed post when a read answered before the removal arrives after it", async () => {
     expect.hasAssertions();
 
-    trpcMsw.post.deletePost.mutation(() => [createRemovedPost(post)]);
+    // The tombstone is dated now, as the server dates a removal: one dated past the retention counts as nothing held, and
+    // A read that arrives late would then bring the post back
+    trpcMsw.post.deletePost.mutation(() => [{ ...createRemovedPost(post), deletedAt: new Date() }]);
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const { deletePost, readItems, readPostPage } = postStore;
     await readItems(() => Promise.resolve(readPostPage({ items: [post], nextCursor: "" })));
-    deletePost(post.id);
-    await until(() => items.value.length).toBe(0);
+    await deletePost(post.id);
     await flushPromises();
 
     await readItems(() => Promise.resolve(readPostPage({ items: [post], nextCursor: "" })));
