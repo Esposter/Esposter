@@ -10,7 +10,7 @@ The migration runs in phases. Each phase ends at a gate that decides whether the
 
 1. **Plain `tsc` typecheck to `tsrs --fast`.** Every package whose `typecheck` is plain `tsc` runs `tsrs --fast` instead, and the `noEmit` setting comes from the shared `tsconfig`. Its gate is a green workspace typecheck through the package scripts. Every package runs `tsrs --fast` today; `packages/db` spells two return types for it, and the comment on `upsertThreadFollow` says why.
 2. **Carry the Vue checks through `vize`.** `tsrs` runs the `vize` content mapper for every Vue type check and every `.vue` declaration, and no package depends on `vue-tsc`. The gate was a result that matches `vue-tsc` on each package.
-3. **Retire the `typescript-native-bridge` override only if nothing reads the classic API through it.** `typescript-eslint`, `attw` and `rolldown-plugin-dts` read the classic API from it, so the override stays until they stop.
+3. **Retire the `typescript-native-bridge` override only if nothing reads the classic API through it.** ESLint's parser is the one reader left, so the override goes with ESLint, in the [ESLint retirement change](../architecture-eslint-retirement/proposal.md).
 4. **Drop the `typescript` package only if nothing in-process needs it.** `scripts/` reads source through `oxc-parser` rather than `typescript`, and the build and lint tooling reach the package through peers. The gate is either a replacement for each in-process use or a decision to keep the package.
 
 ## Out of scope
