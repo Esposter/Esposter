@@ -89,7 +89,7 @@ Co-Authored-By: Claude ${model} (d) <e>
 
     expect(
       getLedgerEvents(getRecord(`${LedgerEventType.Ledger}: a/b${TRAILER_VALUE_SEPARATOR}\`c\`\n`), ["b"]),
-    ).toStrictEqual([{ date, ledger: "a", model: "", type: LedgerEventType.Ledger, unit: "c" }]);
+    ).toStrictEqual([{ area: "b", date, ledger: "a", model: "", type: LedgerEventType.Ledger, unit: "c" }]);
   });
 
   test("reads a sample as its ledger and the defects it found", () => {

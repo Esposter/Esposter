@@ -12,11 +12,16 @@ import { normalizeLedgerUnit } from "#src/services/sweeps/ledgerCoverage/normali
 // One; a reopen clears it when it is not older than the sweep, so a sweep landing after a same-day reopen dates the unit
 // Again. A unit no sweep dates is sampled while the ledger's latest sample found no defect and neither a reopen nor a
 // Commit touching a path the unit names came after it; a unit naming no path cannot be told changed, so it stays sampled.
+// A reopen naming a whole area reopens only the units in that area; one naming a whole question reopens them all.
 export const getLedgerCoverage = (
   ledger: string,
   units: readonly string[],
   events: readonly LedgerEvent[],
-  { checkIsForcedOpen = () => false, readChangedPaths = () => [] }: GetLedgerCoverageOptions = {},
+  {
+    checkIsForcedOpen = () => false,
+    readChangedPaths = () => [],
+    readUnitArea = () => undefined,
+  }: GetLedgerCoverageOptions = {},
 ): UnitCoverage[] => {
   const ledgerEvents = events
     .filter((event) => event.ledger === ledger)
@@ -32,6 +37,8 @@ export const getLedgerCoverage = (
     let reopenDate: string | undefined;
     for (const event of ledgerEvents) {
       if (event.type === LedgerEventType.Sampled || (event.unit !== undefined && event.unit !== bareUnit)) continue;
+      // A reopen naming only an area of the question reopens the units that area holds, and no other
+      if (event.unit === undefined && event.area !== undefined && readUnitArea(unit) !== event.area) continue;
 
       if (event.type === LedgerEventType.Reopens) {
         reopenDate = event.date;

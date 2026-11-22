@@ -2,6 +2,8 @@ import type { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEv
 
 // One trailer on one commit
 export interface LedgerEvent {
+  // The area a `<question>/<area>` trailer names, which only a reopen without a unit reads: it reopens that area's units
+  area?: string | undefined;
   // The commit's author date, which a rebase keeps, or the date a carried trailer names for a pass no trailer recorded
   date: string;
   // The defects a sample found, which only a `Sampled` trailer carries

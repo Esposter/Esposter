@@ -107,6 +107,27 @@ describe(getLedgerCoverage, () => {
     ]);
   });
 
+  // A reopen naming only an area clears the units that area holds, and leaves another area's units dated
+  test("reopens only the units of the area a whole-area reopen names", () => {
+    expect.hasAssertions();
+
+    const otherUnit = "`e`";
+    const events = [
+      getEvent(LedgerEventType.Ledger, earlier, bareUnit),
+      getEvent(LedgerEventType.Ledger, earlier, "e"),
+      { ...getEvent(LedgerEventType.Reopens, later), area: "app-shell" },
+    ];
+
+    expect(
+      getLedgerCoverage(ledger, [unit, otherUnit], events, {
+        readUnitArea: (candidate) => (candidate === unit ? "app-shell" : "tooling"),
+      }),
+    ).toStrictEqual([
+      { state: UnitState.Open, unit },
+      { date: earlier, model: "", state: UnitState.Swept, unit: otherUnit },
+    ]);
+  });
+
   test("dates a unit swept again after a reopen on the same day", () => {
     expect.hasAssertions();
 

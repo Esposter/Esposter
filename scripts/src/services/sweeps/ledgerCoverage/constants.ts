@@ -15,3 +15,6 @@ export const SAMPLE_SIZE = 30;
 // The index rows that are not questions of the area list: a ledger with a table of its own, and `docs`, whose rows are
 // Its `docs/content` and `docs/skills` ledgers
 export const OWN_TABLE_LEDGERS: readonly string[] = ["component-reference", "docs"];
+// The area the derived openspec folder units sit in: `tooling.md` holds the rest of the openspec tree, its `.openspec.yaml`
+// Files among them, so a folder belongs with its tooling
+export const OPENSPEC_AREA = "tooling";
