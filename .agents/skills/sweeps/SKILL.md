@@ -61,6 +61,8 @@ The convention a pass carries is evidence rather than authority: a unit that wil
 
 **A sweep shrinks by handing what is decidable to an enforcer**, and the second time a pass writes the same finding it writes the enforcer instead; which part earns one is the decision tree in the `oxlint` skill (`references/custom-js-plugins.md`), and the handover is `references/handing-to-an-enforcer.md`.
 
+**A sample's defects are classes, never instances.** Fixing what the sample read ends nothing: its defects are grouped by mechanical shape, each class takes the highest rung that catches every instance (the `invariants` skill's ladder: construction, lint, then a find recipe), that rung is run across the question's whole scope with every hit fixed, and the question is sampled again. The loop recurs until a sample finds no defect of a class that already holds a rung; a rung that let an instance through is moved up, and a new class starts its own pass.
+
 ## Reference pages
 
 - `references/one-pass.md` — when running a pass: the loop, the `Ledger:` trailer, a clean unit's trailer, and when the checks run.
