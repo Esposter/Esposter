@@ -7,7 +7,7 @@ Script and UnoCSS utilities agree on where a viewport becomes narrow because the
 ```mermaid
 flowchart TD
   scale["configuration/breakpoints.ts — one scale"]
-  scale -->|"BREAKPOINTS"| plugin["plugins/ui.ts — Vuetify 0's breakpoints plugin"]
+  scale -->|"BREAKPOINTS"| plugin["plugins/03.ui.ts — Vuetify 0's breakpoints plugin"]
   scale -->|"UNOCSS_BREAKPOINTS"| uno["uno.config.ts — theme.breakpoint"]
   plugin -->|"useUiDisplay"| script["script setup"]
   uno -->|"variant prefixes"| template["template"]
@@ -15,7 +15,7 @@ flowchart TD
   template --> values["the same layout with different values"]
 ```
 
-`app/plugins/ui.ts` installs Vuetify 0's breakpoints plugin with `BREAKPOINTS` and `mobileBreakpoint: "lg"`, which makes `isMobile` true below the `lg` threshold: the width under which a page's drawers become sheets. `uno.config.ts` passes `UNOCSS_BREAKPOINTS` as `theme.breakpoint`, which is what makes `sm:`/`md:`/`lg:`/`xl:` prefixes resolve to those same widths.
+`app/plugins/03.ui.ts` installs Vuetify 0's breakpoints plugin with `BREAKPOINTS` and `mobileBreakpoint: "lg"`, which makes `isMobile` true below the `lg` threshold: the width under which a page's drawers become sheets. `uno.config.ts` passes `UNOCSS_BREAKPOINTS` as `theme.breakpoint`, which is what makes `sm:`/`md:`/`lg:`/`xl:` prefixes resolve to those same widths.
 
 The server has no screen, so the plugin starts both renders at no width, where every page is narrow, and the client measures once hydration has finished, when Nuxt's root suspense resolves. Mounting is too early: a layout or page Nuxt loads lazily hydrates after the app has mounted, and a wide screen hydrated its drawers as docked columns over the server's sheets, so for a server-rendered page the plugin's own measure at mount is set aside. A mount with nothing server-rendered, a component test's included, keeps it. A branch on width therefore hydrates as the narrow layout and switches once hydration is done, never mismatching.
 
@@ -68,7 +68,7 @@ Paths relative to `apps/web`.
 | File                                 | Role                                                             |
 | ------------------------------------ | ---------------------------------------------------------------- |
 | `configuration/breakpoints.ts`       | the single scale, exported for both                              |
-| `app/plugins/ui.ts`                  | the breakpoints plugin, its `mobileBreakpoint` and its SSR width |
+| `app/plugins/03.ui.ts`               | the breakpoints plugin, its `mobileBreakpoint` and its SSR width |
 | `app/composables/ui/useUiDisplay.ts` | the library's reading of it, for script                          |
 | `uno.config.ts`                      | `theme.breakpoint`, the source of the variant prefixes           |
 | `app/store/layout.ts`                | the consumer of `isMobile`, and `isTouchScreen` for the input    |

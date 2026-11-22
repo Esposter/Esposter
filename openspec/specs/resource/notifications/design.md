@@ -39,7 +39,7 @@ flowchart TD
   PANEL -->|closed| READ["updateNotificationsReadStatus"]
 ```
 
-The service worker has always posted every delivered push to each open tab before showing the OS notification; the tab end of that wire is `plugins/pushNotification.client.ts`. It **re-reads** rather than rendering the payload it was handed — the row the Function wrote is the one the panel dismisses and marks read, so adopting the wire copy would put an entry in the list with an id the server would not recognise. Pushes whose type never asked for the bell are ignored there, which is what stops a query per chat message received. The read is the bell's own where one has landed: its first page watches the notification rows the push writes, and that read brings the push in and toasts what the tab did not hold, so a push is read once. The plugin reads only in a tab whose list has never loaded.
+The service worker has always posted every delivered push to each open tab before showing the OS notification; the tab end of that wire is `plugins/06.pushNotification.client.ts`. It **re-reads** rather than rendering the payload it was handed — the row the Function wrote is the one the panel dismisses and marks read, so adopting the wire copy would put an entry in the list with an id the server would not recognise. Pushes whose type never asked for the bell are ignored there, which is what stops a query per chat message received. The read is the bell's own where one has landed: its first page watches the notification rows the push writes, and that read brings the push in and toasts what the tab did not hold, so a push is read once. The plugin reads only in a tab whose list has never loaded.
 
 ## UI
 
@@ -58,8 +58,8 @@ The service worker has always posted every delivered push to each open tab befor
 | `app/components/App/Notification/Toast.vue`    | the one toast rendering the store's queue head                                             |
 | `app/components/App/Notification/BellItem.vue` | one panel row (severity icon, time, action, dismiss)                                       |
 | `app/models/notification/AppNotification.ts`   | client model                                                                               |
-| `app/plugins/pushNotification.client.ts`       | service-worker bridge into the running tab                                                 |
-| `app/plugins/appBadge.client.ts`               | mirrors the unread count onto the PWA icon badge                                           |
+| `app/plugins/06.pushNotification.client.ts`    | service-worker bridge into the running tab                                                 |
+| `app/plugins/04.appBadge.client.ts`            | mirrors the unread count onto the PWA icon badge                                           |
 
 ## Notes
 

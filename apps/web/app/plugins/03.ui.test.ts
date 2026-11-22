@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import uiPlugin from "#src/plugins/ui";
+import uiPlugin from "#src/plugins/03.ui";
 import { createNuxtApp } from "nuxt/app";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { createApp } from "vue";

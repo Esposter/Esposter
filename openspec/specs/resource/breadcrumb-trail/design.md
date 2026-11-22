@@ -81,7 +81,7 @@ A link you send someone lands them on the direct view: they did not walk your pa
 
 | File                                                     | Role                                                                           |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `apps/web/app/plugins/navigationTrail.client.ts`         | the only writer — resolves after each navigation, records on the entry         |
+| `apps/web/app/plugins/05.navigationTrail.client.ts`      | the only writer — resolves after each navigation, records on the entry         |
 | `apps/web/app/services/shared/getNextNavigationTrail.ts` | the rules, as a pure function                                                  |
 | `apps/web/app/services/shared/NavigationTrailPageMap.ts` | slug → path + crumb title                                                      |
 | `apps/web/app/models/shared/NavigationTrailPage.ts`      | the slugs a trail may contain                                                  |

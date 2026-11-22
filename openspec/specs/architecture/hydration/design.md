@@ -25,7 +25,7 @@ The client's first render reads only what the server rendered from: the payload,
 | The game language, resolved from `Accept-Language` on the server                 | The resolved language and its text chunk ride the payload through `useGameText`                                       | [game text](../../genshin/game-text/design.md)      |
 | An image that loaded before hydration never firing `load` in Vuetify 0's `<img>` | `NuxtImg` as the image part's `as`, with `as="img"` lint-banned                                                       | the `styling` skill                                 |
 
-The Vuetify 0 rows are where its defaults assume a browser-only app: its breakpoints measure the window at mount, its theme adapter writes stylesheets in the browser, and its image part listens for a `load` the server-rendered image already had. Each is configured in `apps/web/app/plugins/ui.ts` or replaced at the component, never patched per page. The breakpoints' measure runs on the instance the plugin provides, taken in the plugin's own body: a Nuxt hook callback can run with no injection context, where `useBreakpoints` returns a fallback whose `update` does nothing.
+The Vuetify 0 rows are where its defaults assume a browser-only app: its breakpoints measure the window at mount, its theme adapter writes stylesheets in the browser, and its image part listens for a `load` the server-rendered image already had. Each is configured in `apps/web/app/plugins/03.ui.ts` or replaced at the component, never patched per page. The breakpoints' measure runs on the instance the plugin provides, taken in the plugin's own body: a Nuxt hook callback can run with no injection context, where `useBreakpoints` returns a fallback whose `update` does nothing.
 
 ### A deploy proves it, page by page
 
@@ -50,6 +50,6 @@ flowchart LR
 | `apps/web/scripts/hydration/index.ts`            | The check: the sitemap's pages at two sizes                      |
 | `apps/web/scripts/hydration/observeHydration.ts` | The init script reporting Nuxt's hydration end as an event       |
 | `.github/workflows/Deploy.yaml`                  | Runs the check against the environment it just deployed          |
-| `apps/web/app/plugins/ui.ts`                     | Vuetify 0's breakpoints and theme configured for a server render |
+| `apps/web/app/plugins/03.ui.ts`                  | Vuetify 0's breakpoints and theme configured for a server render |
 | `apps/web/configuration/vite.ts`                 | `viteHooks`: one asset URL on both renders                       |
 | `apps/web/configuration/routeRules.ts`           | The routes that render on the client alone                       |

@@ -87,5 +87,5 @@ There is no new queue, no new consumer and no new delivery path. The bell's type
 | `apps/jobs/src/services/notification/sendNotification.ts`                       | the fan-out — bell rows, then devices                |
 | `packages/db/src/services/notification/getMessageRecipientUserIds.ts`           | a message's recipients, thread followers included    |
 | `packages/db/src/services/notification/getPushSubscriptionsForUsers.ts`         | the one device lookup, minus the originating session |
-| `apps/web/app/plugins/pushNotification.client.ts`                               | the tab end of the service worker's postMessage      |
+| `apps/web/app/plugins/06.pushNotification.client.ts`                            | the tab end of the service worker's postMessage      |
 | `apps/web/app/services/notification/getToastedNotificationIds.ts`               | the rows a push toasts, from what its read brought   |

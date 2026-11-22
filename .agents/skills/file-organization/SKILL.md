@@ -51,6 +51,7 @@ Before writing a helper, grep for an existing one; before finishing a feature, g
 - **A shared package is for code with ≥2 consuming packages** — name the second consumer or leave the code beside its sole one, and when a second appears move the implementation rather than writing another (`references/cross-package-placement.md`); `scripts/src/workspace/sharedExportConsumers.test.ts` holds `packages/shared` to it.
 - **A package is created by `pnpm ai:package:new`** — the manifest, configs, inventory rows and docs section are written there, and the invariant each one meets is the suite that reads it (`references/new-package.md`). **npm learns of a package, a rename or a removal by the owner's hand, and the sequence is `references/npm-lifecycle.md`.**
 - **`scripts/` is laid out by layer like the app, keyed by command** (`references/scripts-layout.md`).
+- **An app plugin's filename starts with its two-digit place, from `00.`** — Nuxt runs `apps/web/app/plugins` in filename order, and `02.trpc.ts` comes before any plugin that creates a store, since a store reads `$trpc` once in its setup (`scripts/src/workspace/nuxtPluginOrder.test.ts`).
 - **A symlink is made with PowerShell's `New-Item -ItemType SymbolicLink`, never `ln -s` on Windows**, which copies the file and commits duplicate content silently (`references/symlinks.md`).
 
 ## Maps, registries and classes

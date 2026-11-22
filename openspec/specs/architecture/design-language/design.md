@@ -215,7 +215,7 @@ The theme-mode store holds the reader's mode — system, light or dark — as a 
 | `apps/web/app/store/ui/themeMode.ts`                    | The reader's theme mode and its resolution                                                |
 | `apps/web/app/store/ui/readableText.ts`                 | Whether voxel's text is in the system's faces, kept in a cookie                           |
 | `apps/web/app/composables/ui/useSelectUiTheme.ts`       | Selects a style in a mode, and paints a system reader's first response dark               |
-| `apps/web/app/plugins/ui.ts`                            | Vuetify 0's theme plugin, one theme per style and mode, through the Unhead adapter        |
+| `apps/web/app/plugins/03.ui.ts`                         | Vuetify 0's theme plugin, one theme per style and mode, through the Unhead adapter        |
 | `apps/web/app/components/Nuxt/Theme.vue`                | Puts the style on the root and keeps the system's scheme in step                          |
 | `apps/web/uno.config.ts`                                | One theme colour per token; each style's rule; the surfaces, type rules and shortcuts     |
 | `apps/web/uno.config.test.ts`                           | The resolved rules and style rules, snapshotted                                           |

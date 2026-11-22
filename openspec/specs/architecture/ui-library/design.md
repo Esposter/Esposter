@@ -269,7 +269,7 @@ flowchart TD
 | `apps/web/app/services/ui/getNextGridCellPosition.ts` | Where a key moves a data table grid's active cell                                                                    |
 | `apps/web/app/composables/ui/useGridKeyboard.ts`      | One tab stop in a grid, walked by the keys each grid maps; the calendars and the data table share it                 |
 | `apps/web/app/composables/ui/useDataTableGrid.ts`     | A data table's tab stop and the keys that walk its drawn cells, over `useGridKeyboard`                               |
-| `apps/web/app/plugins/ui.ts`                          | Vuetify 0's hydration, breakpoints and theme plugins                                                                 |
+| `apps/web/app/plugins/03.ui.ts`                       | Vuetify 0's hydration, breakpoints and theme plugins                                                                 |
 | `apps/web/app/composables/ui/useUiDisplay.ts`         | The library's reading of Vuetify 0's breakpoints                                                                     |
 | `apps/web/uno.config.ts`                              | The icons preset, the app's own icon set and the body and footer shortcuts every container shares                    |
 | `apps/web/uno.config.test.ts`                         | Every icon a source file names generates its rule                                                                    |
@@ -284,7 +284,7 @@ flowchart TD
 | `apps/web/app/store/pageMark.ts`                      | The mark each mounted page declares, found by path                                                                   |
 | `apps/web/app/services/app/getPageIcon.ts`            | A place's icon: the path's own, then its mark's (a resource's class, a room's meaning), else none                    |
 | `apps/web/app/store/recentPage.ts`                    | The device's recent pages, ranked by frecency                                                                        |
-| `apps/web/app/plugins/recentPages.client.ts`          | Records each visit, and the title the page's head settles on beside the page's mark; forgets a page no route matches |
+| `apps/web/app/plugins/07.recentPages.client.ts`       | Records each visit, and the title the page's head settles on beside the page's mark; forgets a page no route matches |
 | `apps/web/server/trpc/routers/bookmark.ts`            | Reads bookmarks in one query with their availability, and toggles them, capped per reader                            |
 | `packages/db-schema/src/schema/app/bookmarksInApp.ts` | One row per bookmarked page, with the resource or room it names, cascading with that target                          |
 | `apps/web/app/components/Styled/Dialog.vue`           | The dialog shell over the library's dialog                                                                           |
