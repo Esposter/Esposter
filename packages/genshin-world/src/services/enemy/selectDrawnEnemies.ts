@@ -19,7 +19,8 @@ export const selectDrawnEnemies = (
     const farthest = drawn.at(-1);
     if (drawn.length === capacity && farthest !== undefined && distance >= farthest.distance) continue;
     const index = drawn.findIndex((kept) => kept.distance > distance);
-    drawn = drawn.toSpliced(index === -1 ? drawn.length : index, 0, { distance, enemy }).slice(0, capacity);
+    drawn = drawn.toSpliced(index === -1 ? drawn.length : index, 0, { distance, enemy });
+    if (drawn.length > capacity) drawn.pop();
   }
   return drawn.map(({ enemy }) => enemy);
 };

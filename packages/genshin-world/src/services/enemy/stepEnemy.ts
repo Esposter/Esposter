@@ -64,8 +64,12 @@ export const stepEnemy = (
 ): EnemyEvent | undefined => {
   enemy.hitSeconds += stepSeconds;
   enemy.stateSeconds += stepSeconds;
-  for (const status of enemy.statuses) status.secondsRemaining = runDownSeconds(status.secondsRemaining, stepSeconds);
-  enemy.statuses = enemy.statuses.filter(({ secondsRemaining }) => secondsRemaining > 0);
+  let hasRunOut = false;
+  for (const status of enemy.statuses) {
+    status.secondsRemaining = runDownSeconds(status.secondsRemaining, stepSeconds);
+    hasRunOut ||= !(status.secondsRemaining > 0);
+  }
+  if (hasRunOut) enemy.statuses = enemy.statuses.filter(({ secondsRemaining }) => secondsRemaining > 0);
   enemy.attackCooldownSeconds = Math.max(0, runDownSeconds(enemy.attackCooldownSeconds, stepSeconds));
   if (enemy.state !== EnemyState.Dead) stepPoise(enemy, stepSeconds);
 
