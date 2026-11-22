@@ -2,6 +2,7 @@ import type { UsageTally } from "#src/models/usage/UsageTally";
 
 import { UsageBucket } from "#src/models/usage/UsageBucket";
 import { accumulateTranscriptLines } from "#src/services/usage/accumulateTranscriptLines";
+import { SYNTHETIC_MODEL } from "#src/services/usage/constants";
 import { describe, expect, test } from "vitest";
 
 const createUsageLine = (
@@ -30,7 +31,7 @@ describe(accumulateTranscriptLines, () => {
       createUsageLine("first", "request", "claude-opus-5-5", 2000),
       createUsageLine("first", "request", "claude-opus-5-5", 2000),
       createUsageLine("second", "request", "claude-sonnet-5-5", 3000),
-      createUsageLine("third", "request", "<synthetic>", 3000),
+      createUsageLine("third", "request", SYNTHETIC_MODEL, 3000),
       createUsageLine("fourth", "request", "claude-opus-5-5", 500),
       '{"message":{"usage":',
       '{"type":"user"}',

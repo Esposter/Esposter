@@ -1,11 +1,12 @@
+import { importRegex } from "#src/services/workspace/importRegex";
+import { wholeNameRegex } from "#src/services/workspace/wholeNameRegex";
+
 // The word that makes a package headless when it is in the package's name or among its keywords
 export const HEADLESS_KEYWORD = "headless";
 // The prefix a headless package that ships a Vue abstraction takes, so its name says Vue
 export const VUE_PACKAGE_PREFIX = "vue-";
 // One or more kebab segments: what a headless package's name says it is
 const THING_NAME_SOURCE = String.raw`[a-z\d]+(?:-[a-z\d]+)*`;
-// A whole package name that a regex source matches
-const wholeNameRegex = (nameSource: string): RegExp => new RegExp(String.raw`^${nameSource}$`, "u");
 // Vue, then what it is, then -headless: the name of a headless package that ships a Vue abstraction
 export const VUE_HEADLESS_NAME_REGEX: RegExp = wholeNameRegex(
   `${RegExp.escape(VUE_PACKAGE_PREFIX)}${THING_NAME_SOURCE}-${RegExp.escape(HEADLESS_KEYWORD)}`,
@@ -14,9 +15,6 @@ export const VUE_HEADLESS_NAME_REGEX: RegExp = wholeNameRegex(
 export const FRAMEWORK_FREE_HEADLESS_NAME_REGEX: RegExp = wholeNameRegex(
   `${THING_NAME_SOURCE}-${RegExp.escape(HEADLESS_KEYWORD)}`,
 );
-// The import site of a module named by `from "…"`, `import "…"` or `import("…")`, with the name a regex source
-const importRegex = (nameSource: string): RegExp =>
-  new RegExp(String.raw`(?:\bfrom\s*|\bimport\s*\(?\s*)["']${nameSource}["']`, "u");
 export const VUE_PACKAGE_NAME = "vue";
 const VUE_SCOPE = "@vue/";
 // A module named by `from "vue"`, `import "vue"` or `import("vue")`: a source file that holds one uses Vue
@@ -45,3 +43,5 @@ export const FRAMEWORK_IMPORT_REGEX: RegExp = importRegex(
     ...FRAMEWORK_SCOPES.map((scope) => String.raw`${RegExp.escape(scope)}[^"'\n]*`),
   ].join("|")})(?:/[^"'\n]*)?`,
 );
+// The name a package reads as when its manifest names none, so a failure still names the package
+export const UNNAMED_PACKAGE_NAME = "(unnamed package)";

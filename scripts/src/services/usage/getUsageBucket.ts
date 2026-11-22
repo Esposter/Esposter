@@ -6,6 +6,6 @@ import { SUBAGENT_FOLDER, WORKFLOW_FOLDER } from "#src/services/usage/constants"
 export const getUsageBucket = (path: string): UsageBucket => {
   const folders = path.split(/[/\\]/u);
   if (folders.includes(WORKFLOW_FOLDER)) return UsageBucket.Workflow;
-  if (folders.includes(SUBAGENT_FOLDER)) return UsageBucket.Subagent;
-  return UsageBucket.Main;
+  else if (folders.includes(SUBAGENT_FOLDER)) return UsageBucket.Subagent;
+  else return UsageBucket.Main;
 };

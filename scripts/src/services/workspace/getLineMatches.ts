@@ -1,5 +1,7 @@
-// Every `<path>:<line> → <text>` where a hand-written page matches the regex, the text being what its named group captured
-export const getLineMatches = (files: { markdown: string; path: string }[], regex: RegExp, group: string): string[] =>
+import type { HandWrittenPage } from "#src/models/workspace/HandWrittenPage";
+
+// Every `<path>:<line> → <text>` where a hand-written page matches the regex, the text being its named group's capture
+export const getLineMatches = (files: HandWrittenPage[], regex: RegExp, group: string): string[] =>
   files
     .flatMap(({ markdown, path }) =>
       markdown

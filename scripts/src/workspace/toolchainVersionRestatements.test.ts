@@ -1,3 +1,5 @@
+import type { HandWrittenPage } from "#src/models/workspace/HandWrittenPage";
+
 import { getLineMatches } from "#src/services/workspace/getLineMatches";
 import { readHandWrittenPages } from "#src/services/workspace/readHandWrittenPages";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
@@ -13,7 +15,7 @@ describe("getToolchainVersionRestatements", () => {
   const TOOLCHAIN_VERSION_REGEX =
     /(?<restatement>(?:node(?:\.?js)?|pnpm)(?:\]\([^)\s]*\))?[ `*(’']{0,3}(?:v|>=?)?(?:\^\d+(?:\.\d+)*|~\d+(?:\.\d+)*|\d+(?:\.\d+)+))/giu;
   // Every `<path>:<line> → <text>` where a page states a version instead of naming the field that declares it.
-  const getToolchainVersionRestatements = (files: { markdown: string; path: string }[]): string[] =>
+  const getToolchainVersionRestatements = (files: HandWrittenPage[]): string[] =>
     getLineMatches(files, TOOLCHAIN_VERSION_REGEX, "restatement");
 
   test.each([

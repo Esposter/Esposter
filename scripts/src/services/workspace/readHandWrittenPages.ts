@@ -1,3 +1,5 @@
+import type { HandWrittenPage } from "#src/models/workspace/HandWrittenPage";
+
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { AGENT_DIRECTORY } from "@esposter/configuration/constants";
 import { glob, readFile } from "node:fs/promises";
@@ -10,9 +12,8 @@ import { join } from "node:path";
 // Set, so a page added to it is checked by all of them
 const ROOT_PAGES = ["AGENTS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "SCORE.md", "SECURITY.md"];
 const ARCHIVE_DIRECTORY = "openspec/changes/archive";
-
 // The walk skips the archive itself, rather than listing its pages and dropping them after
-export const readHandWrittenPages = async (): Promise<{ markdown: string; path: string }[]> => {
+export const readHandWrittenPages = async (): Promise<HandWrittenPage[]> => {
   const globbedPaths = await Array.fromAsync(
     glob(
       [

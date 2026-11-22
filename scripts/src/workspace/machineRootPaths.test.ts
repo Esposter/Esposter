@@ -1,3 +1,5 @@
+import type { HandWrittenPage } from "#src/models/workspace/HandWrittenPage";
+
 import { getLineMatches } from "#src/services/workspace/getLineMatches";
 import { readHandWrittenPages } from "#src/services/workspace/readHandWrittenPages";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
@@ -8,8 +10,7 @@ describe("getMachineRootPaths", () => {
   // By a name, or an absolute user folder with its name spelled out. The root is written as its placeholder instead
   // (`repo-owned-facts`, "Machine roots"). A `<placeholder>` is not a name, and `~~/` is Nuxt's own import alias
   const MACHINE_ROOT_REGEX = /(?<path>(?<![~\w])~\/[.\w-]+|(?:[A-Za-z]:\\Users|\/c\/Users|\/Users)[\\/][\w.-]+)/giu;
-  const getMachineRootPaths = (files: { markdown: string; path: string }[]): string[] =>
-    getLineMatches(files, MACHINE_ROOT_REGEX, "path");
+  const getMachineRootPaths = (files: HandWrittenPage[]): string[] => getLineMatches(files, MACHINE_ROOT_REGEX, "path");
 
   test.each([
     ["a home-folder path", "Store it in `~/Workspace/cache`.", "~/Workspace"],

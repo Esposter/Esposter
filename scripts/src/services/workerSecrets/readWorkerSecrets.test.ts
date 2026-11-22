@@ -20,8 +20,8 @@ describe(readWorkerSecrets, () => {
 
     const file = join(directory, "secrets.json");
     const isoTimestamp = new Date(0).toISOString();
-    writeFileSync(file, JSON.stringify({ ROTATED_AT: isoTimestamp }));
+    writeFileSync(file, JSON.stringify({ a: isoTimestamp }));
 
-    expect(readWorkerSecrets(file)).toStrictEqual({ ROTATED_AT: isoTimestamp });
+    expect(readWorkerSecrets(file)).toStrictEqual({ a: isoTimestamp });
   });
 });

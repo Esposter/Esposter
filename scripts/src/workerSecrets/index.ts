@@ -1,12 +1,13 @@
 import { runCommand } from "#src/services/timing/runCommand";
-import { checkWorkerSecrets } from "#src/services/workerSecrets/checkWorkerSecrets";
 import { WORKER_ENVIRONMENT_SCHEMAS } from "#src/services/workerSecrets/constants";
+import { getWorkerSecretFailures } from "#src/services/workerSecrets/getWorkerSecretFailures";
 import { readWorkerSecrets } from "#src/services/workerSecrets/readWorkerSecrets";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
-// `pnpm worker-secrets:check <worker> <file>` checks the secrets a Worker's deploy is about to upload against its schema.
-// It runs before the Worker deploys, so a value the schema refuses stops the deploy. It names each refused variable, never a value
+// `pnpm worker-secrets:check <worker> <file>` checks the secrets a Worker's deploy is about to upload against its
+// Schema. It runs before the Worker deploys, so a value the schema refuses stops the deploy. It names each refused
+// Variable, never a value
 await runCommand(
   defineCommand({
     args: {
@@ -35,7 +36,7 @@ await runCommand(
           "it has no environment schema in WORKER_ENVIRONMENT_SCHEMAS, so its secrets cannot be checked",
         );
 
-      const refusals = checkWorkerSecrets(schema, readWorkerSecrets(args.file));
+      const refusals = getWorkerSecretFailures(schema, readWorkerSecrets(args.file));
       if (refusals.length > 0)
         throw new InvalidOperationError(
           Operation.Read,

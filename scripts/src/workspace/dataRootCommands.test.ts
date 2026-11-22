@@ -1,3 +1,5 @@
+import type { HandWrittenPage } from "#src/models/workspace/HandWrittenPage";
+
 import { getLineMatches } from "#src/services/workspace/getLineMatches";
 import { readHandWrittenPages } from "#src/services/workspace/readHandWrittenPages";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
@@ -8,7 +10,7 @@ describe("dataRootCommands", () => {
   // A root placeholder, so a command copied as written writes into a folder literally named that
   const DATA_ROOT_COMMAND_REGEX =
     /(?:^\s*(?:\$ )?|`)(?<command>(?:pnpm|node|npx|git) [^`]*\{(?:cache|data|state)-root\}[^`]*)/gu;
-  const getDataRootCommands = (files: { markdown: string; path: string }[]): string[] =>
+  const getDataRootCommands = (files: HandWrittenPage[]): string[] =>
     getLineMatches(files, DATA_ROOT_COMMAND_REGEX, "command");
 
   test.each([

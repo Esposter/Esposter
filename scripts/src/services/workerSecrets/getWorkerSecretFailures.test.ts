@@ -1,5 +1,5 @@
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { checkWorkerSecrets } from "#src/services/workerSecrets/checkWorkerSecrets";
+import { getWorkerSecretFailures } from "#src/services/workerSecrets/getWorkerSecretFailures";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -7,7 +7,7 @@ import { describe, expect, test } from "vitest";
 import { jobsEnvironmentVariablesSchema } from "../../../../apps/jobs/src/models/environment/JobsEnvironmentVariables.ts";
 import { webEnvironmentVariablesSchema } from "../../../../apps/web/shared/models/environment/WebEnvironmentVariables.ts";
 
-describe(checkWorkerSecrets, () => {
+describe(getWorkerSecretFailures, () => {
   const workerSecrets = parseMachineJson<{ web: string[] }>(
     readFileSync(join(import.meta.dirname, "../../../../.github/worker-secrets.json"), "utf8"),
   );
@@ -17,13 +17,13 @@ describe(checkWorkerSecrets, () => {
     expect.hasAssertions();
 
     expect(
-      checkWorkerSecrets(jobsEnvironmentVariablesSchema, { VAPID_PRIVATE_KEY: "", VAPID_PUBLIC_KEY: " " }),
+      getWorkerSecretFailures(jobsEnvironmentVariablesSchema, { VAPID_PRIVATE_KEY: "", VAPID_PUBLIC_KEY: " " }),
     ).toStrictEqual(["VAPID_PRIVATE_KEY: too_small"]);
   });
 
   test("passes the web Worker's uploaded set once every secret has a value", () => {
     expect.hasAssertions();
 
-    expect(checkWorkerSecrets(webEnvironmentVariablesSchema, webSecrets)).toStrictEqual([]);
+    expect(getWorkerSecretFailures(webEnvironmentVariablesSchema, webSecrets)).toStrictEqual([]);
   });
 });

@@ -1,3 +1,5 @@
+import type { HandWrittenPage } from "#src/models/workspace/HandWrittenPage";
+
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getLineMatches } from "#src/services/workspace/getLineMatches";
 import { readFile } from "node:fs/promises";
@@ -66,8 +68,7 @@ describe("getPreciseCounts", () => {
     "giu",
   );
   // Every `<path>:<line> → <text>` where the page measures instead of stating a magnitude.
-  const getPreciseCounts = (files: { markdown: string; path: string }[]): string[] =>
-    getLineMatches(files, PRECISE_COUNT_REGEX, "count");
+  const getPreciseCounts = (files: HandWrittenPage[]): string[] => getLineMatches(files, PRECISE_COUNT_REGEX, "count");
 
   test.each([
     ["a digit count", "The repo has 17 packages.", "17 packages"],

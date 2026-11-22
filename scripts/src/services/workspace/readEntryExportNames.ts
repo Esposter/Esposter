@@ -4,8 +4,8 @@ import { resolveReExportSource } from "#src/services/workspace/resolveReExportSo
 import { readFileSync } from "node:fs";
 
 // Every name a source entry exports, read from the entry and each module it re-exports with `export * from`, so a
-// Barrel's names are the names a consumer imports from it. A name that is only re-exported is named where it is declared,
-// And a default export is named `default`, as well as by the identifier or class it is declared with
+// Barrel's names are the names a consumer imports from it. A name that is only re-exported is named where it is
+// Declared, and a default export is named `default`, as well as by the identifier or class it is declared with
 export const readEntryExportNames = (entryPath: string, sourceDirectory: string): Set<string> => {
   const names = new Set<string>();
   const pending = [entryPath];
