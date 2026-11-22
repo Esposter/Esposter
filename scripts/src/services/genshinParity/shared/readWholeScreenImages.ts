@@ -6,6 +6,28 @@ import { getWholeScreenImages } from "#src/services/genshinParity/shared/getWhol
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { WIKI_ORIGIN } from "genshin-persona/src/services/constants.ts";
 import { readWikiJson } from "genshin-persona/src/services/readWikiJson.ts";
+import { z } from "zod";
+
+// The answer's shape, checked so a batch the API answers otherwise fails the read rather than reading as empty
+const wikiImagesResponseSchema = z.object({
+  continue: z.record(z.string(), z.string()).exactOptional(),
+  error: z.object({ code: z.string(), info: z.string() }).exactOptional(),
+  query: z
+    .object({
+      pages: z
+        .record(
+          z.string(),
+          z.object({
+            imageinfo: z.array(z.object({ height: z.number(), url: z.string(), width: z.number() })).exactOptional(),
+            title: z.string().exactOptional(),
+          }),
+        )
+        .exactOptional(),
+    })
+    .exactOptional(),
+});
+const checkIsWikiImagesResponse = (value: unknown): value is WikiImagesResponse =>
+  wikiImagesResponseSchema.safeParse(value).success;
 
 // The whole-screen screenshots of one wiki article, read through the same wiki client `fetch` reads its references by.
 // An article holding more images than one response answers is read batch after batch by the continuation each gives,
@@ -18,7 +40,9 @@ export const readWholeScreenImages = async (articleTitle: string): Promise<Whole
   while (continueParameters) {
     const query: string = new URLSearchParams(continueParameters).toString();
     // oxlint-disable-next-line no-await-in-loop -- Pagination: each batch is asked for by the continuation the one before it gave
-    const response: WikiImagesResponse = await readWikiJson<WikiImagesResponse>(query ? `${url}&${query}` : url);
+    const response = await readWikiJson(query ? `${url}&${query}` : url, checkIsWikiImagesResponse);
+    if (!response)
+      throw new InvalidOperationError(Operation.Read, articleTitle, "the images answer is not an images batch");
     if (response.error)
       throw new InvalidOperationError(Operation.Read, articleTitle, `${response.error.code}: ${response.error.info}`);
     for (const [id, page] of Object.entries(response.query?.pages ?? {})) pageMap[id] = { ...pageMap[id], ...page };

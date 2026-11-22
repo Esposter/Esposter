@@ -19,9 +19,13 @@ export const readWishPageTitles = async (): Promise<string[]> => {
     formatversion: "2",
     list: "categorymembers",
   });
-  const { continue: continuation, query } = categoryMembersSchema.parse(
-    await readWikiJson<unknown>(`${WIKI_API_URL}?${searchParams}`),
+  const response = await readWikiJson(
+    `${WIKI_API_URL}?${searchParams}`,
+    (value): value is z.infer<typeof categoryMembersSchema> => categoryMembersSchema.safeParse(value).success,
   );
+  if (!response)
+    throw new InvalidOperationError(Operation.Read, WISH_CATEGORY, "the category answer is not a member list");
+  const { continue: continuation, query } = response;
   if (continuation !== undefined)
     throw new InvalidOperationError(
       Operation.Read,
