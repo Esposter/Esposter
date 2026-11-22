@@ -28,7 +28,7 @@ describe(compileEmailDocument, () => {
       bench("compile to HTML", async () => {
         await compileEmailDocument(result.data, { origin: TEST_ORIGIN });
       }),
-      { ...BENCHMARK_RUN_OPTIONS, iterations: 10 },
+      BENCHMARK_RUN_OPTIONS,
     );
   });
 });
