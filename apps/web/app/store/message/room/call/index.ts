@@ -1,5 +1,5 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
-import type { CallParticipant } from "@esposter/db-schema";
+import type { CallParticipantRow } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
 import { AdminActionHookMap } from "#src/services/message/moderation/AdminActionHookMap";
@@ -67,7 +67,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const writeParticipantFlag = (
     participantId: string,
     flags: Parameters<typeof getParticipantFlagEntry>[1],
-    mutate: (callSessionId: string) => Promise<CallParticipant>,
+    mutate: (callSessionId: string) => Promise<CallParticipantRow>,
   ) => {
     const callSessionId = activeCallSessionId.value;
     if (!callSessionId || !participantId) return;
