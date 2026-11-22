@@ -47,7 +47,7 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
 </script>
 
 <template>
-  <div flex flex-wrap gap-3 items-end>
+  <div flex flex-wrap gap-3 items-start>
     <div flex flex-col gap-1>
       <span text-sm text-muted>Data source</span>
       <UiSelect
