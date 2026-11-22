@@ -17,7 +17,10 @@ describe(useAchievementStore, () => {
     achievement: { ...achievementDefinition, name: EmailAchievementName.EmailMarketer },
     achievementId,
     amount: 1,
+    createdAt: epoch,
+    deletedAt: null,
     unlockedAt,
+    updatedAt: epoch,
     userId,
     version,
   });

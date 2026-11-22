@@ -8,6 +8,7 @@ import { checkIsUnlockedUserAchievement } from "#src/services/achievement/checkI
 import { getUnlockedUserAchievements } from "#src/services/achievement/getUnlockedUserAchievements";
 import { userAchievementTable } from "#src/services/achievement/overlay/constants";
 import { toUserAchievementWithDefinition } from "#src/services/achievement/toUserAchievementWithDefinition";
+import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { useOverlayStore } from "#src/store/overlay";
 
 export const useAchievementStore = defineStore("achievement", () => {
@@ -20,7 +21,11 @@ export const useAchievementStore = defineStore("achievement", () => {
   };
   const overlayStore = useOverlayStore();
   const { arrive, view } = overlayStore;
-  const userAchievements = view(userAchievementTable);
+  const userAchievementRows = view(userAchievementTable);
+  // The view's rows are drafts that may hold no version yet, so the list keeps the rows the server has versioned
+  const userAchievements = computed(() =>
+    userAchievementRows.value.filter((userAchievement) => checkIsVersioned(userAchievement)),
+  );
   // Each row is an arrival, so a read that answers older than a row a push already brought keeps the newer one
   const initializeUserAchievements = (newUserAchievements: UserAchievementWithDefinition[]) => {
     for (const userAchievement of newUserAchievements) arrive(userAchievementTable, userAchievement);
