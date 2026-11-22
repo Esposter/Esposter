@@ -6,7 +6,6 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
-import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
 import { MockJobQueue } from "#server/services/queue/getJobQueue.test";
 import { getMockPublishedTopics, MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getBucket } from "#server/services/storage/getBucket";
@@ -41,6 +40,7 @@ import {
   dataExportsInUser,
   DataExportStatus,
   getBlobTopic,
+  getCallBackgroundPrefix,
   getStorageBucketBindingName,
   getUserProfileImageBlobName,
   McpScope,

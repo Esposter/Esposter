@@ -1,8 +1,8 @@
 import type { Context } from "#server/trpc/context";
 
 import { useCallObject } from "#server/composables/realtime/useCallObject";
-import { readRoomCallSessionIds } from "#server/services/message/call/readRoomCallSessionIds";
 import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
+import { readRoomCallSessionIds } from "#server/services/message/moderation/readRoomCallSessionIds";
 
 // Takes a member out of every call in a room on the server's authority rather than their client's: a client that ignored
 // The admin action would otherwise stay connected and publishing. Each call's object drops the member's connections, and

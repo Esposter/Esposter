@@ -2,9 +2,9 @@ import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgro
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
 import { MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { listR2Objects } from "@esposter/db";
+import { getCallBackgroundPrefix } from "@esposter/db-schema";
 
 // The listing is the whole index. A slot's blob name holds its number, and the size the listing already carries is the
 // Size the background takes - so a background needs no row, no id and nothing to reconcile, and reading the set back

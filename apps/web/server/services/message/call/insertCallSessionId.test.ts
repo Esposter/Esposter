@@ -23,11 +23,7 @@ describe(insertCallSessionId, () => {
     expect.hasAssertions();
 
     // Drizzle hands the driver's error up as the cause of its own
-    const db = createDb(() =>
-      Promise.reject(
-        new Error(" ", { cause: new Error("D1_ERROR: UNIQUE constraint failed: callSessionsInMessage.id") }),
-      ),
-    );
+    const db = createDb(() => Promise.reject(new Error(" ", { cause: new Error("UNIQUE constraint failed") })));
 
     await expect(insertCallSessionId(db, { userId })).resolves.toBeUndefined();
   });

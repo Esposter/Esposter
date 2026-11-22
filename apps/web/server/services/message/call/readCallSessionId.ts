@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { CallSessionInMessage } from "@esposter/db-schema";
 
-// A room runs its own call and one per thread, so a session is addressed by both — the empty root rowKey is
+// A room runs its own call and one per thread, so a session is addressed by both — a threadRootId of 0 is
 // The room's own call
 export const readCallSessionId = async (
   db: Context["db"],

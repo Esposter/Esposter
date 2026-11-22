@@ -4,7 +4,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { getBucket } from "#src/services/storage/getBucket";
 import { writeBlobEntriesUnderPrefix } from "#src/services/user/writeBlobEntriesUnderPrefix";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
-import { getUserProfileImageBlobName, StorageBucket } from "@esposter/db-schema";
+import { getCallBackgroundPrefix, getUserProfileImageBlobName, StorageBucket } from "@esposter/db-schema";
 
 // The person's profile image, when they have one, and each call background they have set.
 // A profile image is optional, so its absence is no entry rather than a failed export
@@ -17,7 +17,7 @@ export const writeImageEntries = async (archive: UserDataArchive, userId: UserIn
   await writeBlobEntriesUnderPrefix(
     archive,
     getBucket(StorageBucket.UserAssets),
-    `${userId}/CallBackground/`,
+    getCallBackgroundPrefix(userId),
     "images/CallBackground",
   );
 };

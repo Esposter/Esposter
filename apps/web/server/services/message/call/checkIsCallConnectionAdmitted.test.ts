@@ -14,7 +14,7 @@ describe(checkIsCallConnectionAdmitted, () => {
   const createRoomCallSessionId = async () => {
     const room = await createCallerFactory(roomRouter)(mockContext).createRoom({ name });
     const userId = getMockSession().user.id;
-    return { callSessionId: await createCallSessionId(mockContext.db, room.id, userId), roomId: room.id, userId };
+    return { callSessionId: await createCallSessionId(mockContext.db, room.id, userId), userId };
   };
 
   beforeAll(async () => {

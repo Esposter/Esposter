@@ -1,4 +1,3 @@
-/* oxlint-disable no-await-in-loop -- Retry: the next attempt runs only because this one lost the race for the room's id */
 import type { Context } from "#server/trpc/context";
 import type { CallSessionInMessage } from "@esposter/db-schema";
 
@@ -15,12 +14,14 @@ export const createCallSessionId = async (
   userId: string,
   threadRootId: CallSessionInMessage["threadRootId"] = 0,
 ): Promise<string> => {
+  // oxlint-disable no-await-in-loop -- Retry: the next attempt runs only because this one lost the race for the room's id
   for (let attempt = 0; attempt < MAX_CALL_SESSION_ID_ATTEMPTS; attempt++) {
     const existingCallSessionId = await readCallSessionId(db, roomId, threadRootId);
     if (existingCallSessionId) return existingCallSessionId;
     const callSessionId = await insertCallSessionId(db, { roomId, threadRootId, userId });
     if (callSessionId) return callSessionId;
   }
+  // oxlint-enable no-await-in-loop
   // Every attempt lost the race to another creator, so the session is whatever they landed
   const callSessionId = await readCallSessionId(db, roomId, threadRootId);
   if (!callSessionId)
