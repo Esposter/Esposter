@@ -29,19 +29,13 @@ const fileMessage = ref("");
     <div flex flex-wrap gap-4 items-center>
       <UiAvatar :image="(isEditMode ? modelValue : value) ?? ''" :name="label" />
       <template v-if="isEditMode">
-        <!-- The browser's own file input, hidden behind the library's button, so choosing a file is its dialog -->
-        <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -- hidden, and only ever opened by the labelled button beside it -->
-        <input
+        <UiHiddenFileInput
           ref="fileInput"
-          type="file"
           :accept="IMAGE_UPLOAD_MIME_TYPES.join(',')"
-          hidden
-          @change="
-            async () => {
-              if (!fileInput) return;
-              const file = fileInput.files?.[0];
+          @select="
+            async (file) => {
               // Cleared, so choosing the same file again after a refusal is a change too
-              fileInput.value = '';
+              fileInput?.reset();
               if (!file) return;
 
               const fileValidation = validateFile(file.size);
@@ -54,7 +48,7 @@ const fileMessage = ref("");
             }
           "
         />
-        <UiButton :is-pending="isLoading" @click="fileInput?.click()">
+        <UiButton :is-pending="isLoading" @click="fileInput?.open()">
           <UiIcon v-if="!isLoading" :meaning="UiIconMeaning.Upload" />
           Upload image
         </UiButton>

@@ -10,18 +10,18 @@ import { LoginButtonItems } from "#src/services/login/LoginButtonItems";
 import { LINKED_ACCOUNTS_MUTATION_KEY } from "#src/services/user/constants";
 import { useAlertStore } from "#src/store/alert";
 import { useUserLinkedAccountDialogStore } from "#src/store/user/linkedAccountDialog";
-import { getOwnValue, RoutePath } from "@esposter/shared";
+import { getOwnValue } from "@esposter/shared";
 
 interface Props {
   section?: undefined | UserSettingsPageSection;
 }
 
 defineProps<Props>();
-const router = useRouter();
-const { linkSocial, listAccounts, unlinkAccount } = authClient;
+const { currentRoute, replace } = useRouter();
+const { listAccounts, unlinkAccount } = authClient;
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
-const { checkIsPending, executeMutation } = useMutation();
+const { executeMutation } = useMutation();
 const { data: accounts, error, refresh } = useQuery(() => requireAuthData(listAccounts()), { isInlineError: true });
 const userLinkedAccountDialogStore = useUserLinkedAccountDialogStore();
 const { unlinkingProvider } = storeToRefs(userLinkedAccountDialogStore);
@@ -53,13 +53,13 @@ const unlinkSelectedAccount = async () => {
 };
 // A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its outcome never
 // Reaches the write that issued it
-const linkError = router.currentRoute.value.query.error;
+const linkError = currentRoute.value.query.error;
 if (typeof linkError === "string") {
   createAlert(getOwnValue(AccountLinkErrorMessageMap, linkError) ?? "Your account could not be linked.", "error");
   // The alert is this outcome's delivery, so the param has done its job — left in the url it replays the toast on
   // Every reload of it. Client-side only: rewriting it during ssr answers the request with a redirect instead
   onMounted(async () => {
-    await router.replace({ query: {} });
+    await replace({ query: {} });
   });
 }
 </script>
@@ -79,23 +79,7 @@ if (typeof linkError === "string") {
           :key="loginButtonProps.provider"
           :="loginButtonProps"
           :is-linked="linkedProviders.has(loginButtonProps.provider) ? true : undefined"
-          :is-pending="checkIsPending(loginButtonProps.provider) ? true : undefined"
           :linked-account-count="accounts?.length ?? 0"
-          @link="
-            executeMutation(
-              () =>
-                requireAuthData(
-                  linkSocial({
-                    callbackURL: RoutePath.UserSettings,
-                    errorCallbackURL: RoutePath.UserSettings,
-                    provider: loginButtonProps.provider,
-                  }),
-                ),
-              // The provider's address is minted by the server, and the browser is sent to it once it arrives. Keyed by
-              // The provider, so the row that asked is the one that reads pending
-              { awaitedBecause: AwaitedReason.ServerIssuedValue, key: loginButtonProps.provider },
-            )
-          "
           @unlink="unlinkingProvider = loginButtonProps.provider"
         />
       </ul>

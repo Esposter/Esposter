@@ -1,18 +1,32 @@
 <script setup lang="ts">
 import type { LoginButtonProps } from "#src/models/auth/LoginButtonProps";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
+import { authClient } from "#src/services/auth/authClient";
+import { requireAuthData } from "#src/services/auth/requireAuthData";
 import { toTitleCase } from "#src/util/text/toTitleCase";
+import { RoutePath } from "@esposter/shared";
 
 interface Props extends LoginButtonProps {
   isLinked?: true | undefined;
-  // A link or unlink this row issued is still out, queued behind the other rows' or running
-  isPending?: true | undefined;
   linkedAccountCount: number;
 }
 
-defineProps<Props>();
-const emit = defineEmits<{ link: []; unlink: [] }>();
+const { provider } = defineProps<Props>();
+const emit = defineEmits<{ unlink: [] }>();
+const { linkSocial } = authClient;
+const { checkIsPending, executeMutation } = useMutation();
+// The provider's address is minted by the server, and the browser is sent to it once it arrives.
+// Keyed by the provider, so the row that asked is the one that reads pending
+const link = () =>
+  executeMutation(
+    () =>
+      requireAuthData(
+        linkSocial({ callbackURL: RoutePath.UserSettings, errorCallbackURL: RoutePath.UserSettings, provider }),
+      ),
+    { awaitedBecause: AwaitedReason.ServerIssuedValue, key: provider },
+  );
 </script>
 
 <template>
@@ -30,12 +44,12 @@ const emit = defineEmits<{ link: []; unlink: [] }>();
     <UiButton
       v-if="isLinked"
       :disabled="linkedAccountCount === 1"
-      :is-pending
+      :is-pending="checkIsPending(provider) ? true : undefined"
       :variant="UiButtonVariant.Danger"
       @click="emit('unlink')"
     >
       Unlink
     </UiButton>
-    <UiButton v-else :is-pending @click="emit('link')">Link</UiButton>
+    <UiButton v-else :is-pending="checkIsPending(provider) ? true : undefined" @click="link()">Link</UiButton>
   </li>
 </template>
