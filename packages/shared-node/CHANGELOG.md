@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
+
+### Bug Fixes
+
+* **lint:** the bench smoke provider names an unfinished bench with InvalidOperationError, not a bare Error ([00eb99a](https://github.com/Esposter/Esposter/commit/00eb99a9149f941ba2f34d738d871a1f69a56c98))
+
+### Features
+
+* **bench:** a CI bench run executes every bench once through a smoke provider and writes no report ([6154630](https://github.com/Esposter/Esposter/commit/615463083f0f270c612e7074cbb777bb6461ab66))
+
 # [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
 
 **Note:** Version bump only for package @esposter/shared-node

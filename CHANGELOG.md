@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
+
+### Bug Fixes
+
+* **bench:** a sheet command bench builds its fixture in the task's beforeEach, outside the timing ([e970492](https://github.com/Esposter/Esposter/commit/e9704923c4f229df60f445ec2b5774ce3715204d))
+* **lint:** the bench smoke provider names an unfinished bench with InvalidOperationError, not a bare Error ([00eb99a](https://github.com/Esposter/Esposter/commit/00eb99a9149f941ba2f34d738d871a1f69a56c98))
+* **lint:** the UI layer's lint override names the plugin's path after its rename to 03.ui.ts ([12af397](https://github.com/Esposter/Esposter/commit/12af3977d286a0c96b05b2d936c475f0fd31231d))
+* **sweeps:** the docs index row is no question of the area list, since its rows are the docs/content and docs/skills ledgers ([fcb28ae](https://github.com/Esposter/Esposter/commit/fcb28aee32c81b5dad7771833043602c3908aca8))
+* **web:** the app's plugins carry their order in their names, and the tRPC plugin runs before any that creates a store ([2b727b4](https://github.com/Esposter/Esposter/commit/2b727b406556b5f4d1eae12ac6bce48d18b56f5e))
+
+### Features
+
+* **bench:** a CI bench run executes every bench once through a smoke provider and writes no report ([6154630](https://github.com/Esposter/Esposter/commit/615463083f0f270c612e7074cbb777bb6461ab66))
+* **infra:** esposter.com signs with DNSSEC and publishes a no-mail baseline, now that Cloudflare is its registrar ([930d0c9](https://github.com/Esposter/Esposter/commit/930d0c90b5312b8825ed73647a9b7d091db402e4))
+* **sweeps:** each question's cells are the area list's units holding its scope, and ai:sweep:sample draws them ([2c80880](https://github.com/Esposter/Esposter/commit/2c80880ef08164a3c5e8d5980de506127e0ce6f7))
+* **sweeps:** the area list is one bullet per unit, and readAreaUnits reads the bullets ([6c0d28b](https://github.com/Esposter/Esposter/commit/6c0d28bafc23289b4e72e2ace4091365e0c86845))
+
+### Performance Improvements
+
+* **note:** a note renders from a schema built once, not one TipTap rebuilds on every call ([67c0918](https://github.com/Esposter/Esposter/commit/67c0918248b24e9a65198d28004b9f1f60bd1d4e))
+* **note:** the note renderer is assembled once from the static renderer's exported pieces ([127ad46](https://github.com/Esposter/Esposter/commit/127ad46e11b4151c029e252420517a61d2e3a2b0))
+* **note:** the renderer reads the writing kit's extensions from the schema module, so the list is built once ([f630538](https://github.com/Esposter/Esposter/commit/f630538d2e225be72fe88799465378bafb05b3f9))
+* **shared:** a text's UTF-8 byte length is counted by getUtf8ByteLength, and lint bans encoding only to count ([3f0f7a3](https://github.com/Esposter/Esposter/commit/3f0f7a3f958d4db681bd7571614ecae497dfc2ca))
+* **sheet:** a cell's size counts its UTF-8 bytes from the code units rather than encoding them ([9ec3b71](https://github.com/Esposter/Esposter/commit/9ec3b71949aa20c8adb9f9c7a402fd6d03063734))
+* **sweeps:** readQuestionUnits reads the vendored skill names once per run ([e363b71](https://github.com/Esposter/Esposter/commit/e363b71fa861f3577d891437193d0df30954b466))
+
 # [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
 
 ### Bug Fixes

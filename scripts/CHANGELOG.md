@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
+
+### Bug Fixes
+
+* **sweeps:** the docs index row is no question of the area list, since its rows are the docs/content and docs/skills ledgers ([fcb28ae](https://github.com/Esposter/Esposter/commit/fcb28aee32c81b5dad7771833043602c3908aca8))
+* **web:** the app's plugins carry their order in their names, and the tRPC plugin runs before any that creates a store ([2b727b4](https://github.com/Esposter/Esposter/commit/2b727b406556b5f4d1eae12ac6bce48d18b56f5e))
+
+### Features
+
+* **sweeps:** each question's cells are the area list's units holding its scope, and ai:sweep:sample draws them ([2c80880](https://github.com/Esposter/Esposter/commit/2c80880ef08164a3c5e8d5980de506127e0ce6f7))
+* **sweeps:** the area list is one bullet per unit, and readAreaUnits reads the bullets ([6c0d28b](https://github.com/Esposter/Esposter/commit/6c0d28bafc23289b4e72e2ace4091365e0c86845))
+
+### Performance Improvements
+
+* **sweeps:** readQuestionUnits reads the vendored skill names once per run ([e363b71](https://github.com/Esposter/Esposter/commit/e363b71fa861f3577d891437193d0df30954b466))
+
 # [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
 
 ### Bug Fixes

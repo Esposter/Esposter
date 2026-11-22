@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.16.0](https://github.com/Esposter/Esposter/compare/v4.15.0...v4.16.0) (2026-11-22)
+
+### Features
+
+* **infra:** esposter.com signs with DNSSEC and publishes a no-mail baseline, now that Cloudflare is its registrar ([930d0c9](https://github.com/Esposter/Esposter/commit/930d0c90b5312b8825ed73647a9b7d091db402e4))
+
 # [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
 
 **Note:** Version bump only for package @esposter/infra
