@@ -273,7 +273,7 @@ describe("unoConfig", () => {
       { preflights: false, safelist: false },
     );
 
-    expect(matched).toContain('[pb~="[var(--a)]"]');
+    expect(matched).toStrictEqual(new Set(["[d:e]", '[pb~="[var(--a)]"]', "b"]));
   });
 
   // Forced colours paint over every fill and drop every shadow, so a surface keeps its outline only through the
