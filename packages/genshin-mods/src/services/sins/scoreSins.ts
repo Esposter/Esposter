@@ -2,8 +2,8 @@ import type { EngineInterface } from "claude-code";
 
 import { atom, read, update } from "claude-code";
 
+import { SinStatusKind } from "../../models/SinStatusKind";
 import { InitialState } from "../InitialState";
-import { SinStatusKind } from "../models/SinStatusKind";
 import { readHome } from "../readHome";
 import { veilText } from "../veil/veilText";
 import { appendSinEvidence } from "./appendSinEvidence";
