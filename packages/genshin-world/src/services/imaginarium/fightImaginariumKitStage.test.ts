@@ -56,6 +56,10 @@ describe(fightImaginariumKitStage, () => {
   // The level the stage's enemy is fought at, and one far above the performers' that outlasts the short time limit
   const STAGE_LEVEL = 1;
   const FAR_ABOVE_LEVEL = 90;
+  // The level of an enemy the performers beat only once their skill has come round again after its cooldown, within a
+  // Time limit the first use alone would outlast
+  const RECAST_LEVEL = 40;
+  const RECAST_TIME_LIMIT_MILLISECONDS = 58000;
   // The four performers after a fight they took part in: each spent its one point of Vigor and filled its Burst energy
   const PERFORMED_CAST: ImaginariumMember[] = [
     { burstEnergyCost: 40, energy: 40, healthShare: 1, isSpecialGuest: false, maxHealth: 0, vigor: 1 },
@@ -111,6 +115,24 @@ describe(fightImaginariumKitStage, () => {
     expect(fight).toStrictEqual({
       isFought: true,
       outcome: DomainChallengeOutcome.TimedOut,
+      principalCast: PERFORMED_CAST,
+    });
+  });
+
+  test("a performer's skill comes round again once its cooldown runs off, so the stage's enemy is beaten in time", () => {
+    expect.hasAssertions();
+
+    const fight = fightImaginariumKitStage(
+      createPrincipalCast(2),
+      createPerformers(),
+      createStageEnemies(RECAST_LEVEL),
+      enemyTables,
+      RECAST_TIME_LIMIT_MILLISECONDS,
+    );
+
+    expect(fight).toStrictEqual({
+      isFought: true,
+      outcome: DomainChallengeOutcome.Cleared,
       principalCast: PERFORMED_CAST,
     });
   });
