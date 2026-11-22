@@ -8,6 +8,7 @@ import { RIDGE, SKY_LOBE_DIRECTIONS } from "#src/services/genshinParity/witness/
 import { groupStoneBins } from "#src/services/genshinParity/witness/groupStoneBins";
 import { writeStoneRampWeights } from "#src/services/genshinParity/witness/writeStoneRampWeights";
 import { solveNonNegativeSystem } from "#src/services/recreation/solve/solveNonNegativeSystem";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import {
   computeStoneDarkening,
   STONE_HARMONIC_COUNT,
@@ -34,29 +35,24 @@ const BEND_STENCIL = [
 // Both. Every unknown is a light none of which is negative, solved by non-negative least squares
 // (`solveNonNegativeSystem`): the ramp rises from none at its dark end by steps none of which falls, the sky is a sum
 // Of lights from directions all round (`computeSkyLobeHarmonics`), the light fading with height adds, and the haze's
-// Two colours are colours. Solved free, one light cancelled another, the night's fading light red below none under a
-// Sky redder than its frame, which turned every tower's colour as it rose. Each part's pixels are binned apart from the
-// Others', each bin weighed by its pixels: weighing every part as much as the walkway filling the frame's foot lit the
-// Far towers too bright, scoring the night six hundredths worse. The haze over the stone is its own, drawn apart from
-// The cloud sea's (`createHeightFogNode`'s stone mask): held to the cloud sea's, the far stone stood too bright under
-// It by day, and a light that cannot fall below none to darken it again left the error standing. Bins
-// Average the pixels whose texels do not line up with the reference's, so their shading is read rather than their
-// Texels. A bin's colour is its pixels' mean as the screen shows them, taken back through the tone curve once
-// (`groupStoneBins`): taken back pixel by pixel, the bins' means followed their brightest pixels and turned the night's
-// Walkway blue, and weighed by the curve's slope as well, the solve followed its darkest bins instead, the curve rising
-// Thirty times as steeply at black as in the middle. It is then taken back through the white balance the frame passes
-// Through before the curve, so the light solved is the one under it: the night's balance takes its stone's red under
-// The curve's black, which no light that cannot fall below none reaches on its own. Returns the light, the pixels its
-// Bins kept, and the residual over the bins beside their spread about their mean, the share the light leaves
-// Unexplained
+// Two colours are colours. Solved free, one light could cancel another, and a light could fall below none under a sky
+// Redder than the frame, so none of them may be negative. Each part's pixels are binned apart from the others', each bin
+// Weighed by its pixels, so one part filling the frame's foot cannot outweigh the far towers. The haze over the stone is
+// Its own, drawn apart from the cloud sea's (`createHeightFogNode`'s stone mask), because a light that cannot fall below
+// None cannot darken a stone a shared haze holds too bright. Bins average the pixels whose texels do not line up with the
+// Reference's, so their shading is read rather than their texels. A bin's colour is its pixels' mean as the screen shows
+// Them, taken back through the tone curve once (`groupStoneBins`) rather than pixel by pixel, since the brightest pixels
+// Would then set the mean, and not weighed by the curve's slope, which rises far more steeply at black than in the middle.
+// It is then taken back through the white balance the frame passes through before the curve, so the light solved is the
+// One under it: a balance can take the stone's red under the curve's black, which no light that cannot fall below none
+// Reaches on its own. Returns the light, the pixels its bins kept, and the residual over the bins beside their spread about
+// Their mean, the share the light leaves unexplained
 export const solveStoneLight = (
   samples: readonly StoneLightSample[],
   whiteBalance: Matrix3 = new Matrix3(),
   heightDarkening = 0,
 ): { count: number; deviation: number; light: StoneLight; residual: number } => {
   const stoneBins = groupStoneBins(samples, whiteBalance);
-  const bins = stoneBins.map(({ samples: binSamples }) => binSamples);
-  const total = bins.reduce((sum, binSamples) => sum + binSamples.length, 0);
   // The ramp's steps up from its dark end, then the sky's lights, the light fading with height, and the haze's colour
   // Away from the sun and toward it
   const stepCount = STONE_RAMP_KNOT_COUNT - 1;
@@ -64,37 +60,43 @@ export const solveStoneLight = (
   const hazeUnknown = heightFadeUnknown + 1;
   const unknownCount = hazeUnknown + 2;
   const weights = Array.from({ length: STONE_RAMP_KNOT_COUNT }, () => 0);
+  // The terms no channel scales, computed once per sample rather than once per channel: each step's lift (a step lifts
+  // Every knot from its own up, so its weight is theirs together), each sky lobe's dot product, the height fall and the
+  // Darkening with height
+  const bins = stoneBins.map(({ samples: binSamples }) =>
+    binSamples.map((sample) => {
+      writeStoneRampWeights(sample.rampCoordinate, weights);
+      const steps = Array.from({ length: stepCount }, () => 0);
+      let above = 0;
+      for (let step = stepCount - 1; step >= 0; step--) {
+        above += weights[step + 1] ?? 0;
+        steps[step] = above;
+      }
+      return {
+        ...sample,
+        darkening: computeStoneDarkening(sample.height, heightDarkening),
+        fall: Math.exp(-sample.height * STONE_HEIGHT_FALLOFF),
+        lobeDots: SKY_LOBES.map((lobeTerms) =>
+          lobeTerms.reduce((sum, value, term) => sum + value * (sample.harmonics[term] ?? 0), 0),
+        ),
+        steps,
+      };
+    }),
+  );
+  const total = bins.reduce((sum, binSamples) => sum + binSamples.length, 0);
   let squared = 0;
   let spread = 0;
   const solutions = CHANNELS.map((channel) => {
     const rows = bins.map((binSamples, binIndex) => {
       const row = Array.from({ length: unknownCount }, () => 0);
       let target = 0;
-      for (const {
-        albedo,
-        emission,
-        harmonics: terms,
-        height,
-        occlusion,
-        opacity,
-        rampCoordinate,
-        scatter,
-      } of binSamples) {
+      for (const { albedo, darkening, emission, fall, lobeDots, occlusion, opacity, scatter, steps } of binSamples) {
         const through = albedo[channel] * occlusion * (1 - opacity);
         // The light alone darkens with height, not the glow the material adds after it nor the haze over it
-        const lit = through * computeStoneDarkening(height, heightDarkening);
-        writeStoneRampWeights(rampCoordinate, weights);
-        // A step lifts every knot from its own up, so its weight is theirs together
-        let above = 0;
-        for (let step = stepCount - 1; step >= 0; step--) {
-          above += weights[step + 1] ?? 0;
-          row[step] = (row[step] ?? 0) + above * lit;
-        }
-        for (const [lobe, lobeTerms] of SKY_LOBES.entries())
-          row[stepCount + lobe] =
-            (row[stepCount + lobe] ?? 0) +
-            lobeTerms.reduce((sum, value, term) => sum + value * (terms[term] ?? 0), 0) * lit;
-        row[heightFadeUnknown] = (row[heightFadeUnknown] ?? 0) + Math.exp(-height * STONE_HEIGHT_FALLOFF) * lit;
+        const lit = through * darkening;
+        for (const [step, above] of steps.entries()) row[step] = (row[step] ?? 0) + above * lit;
+        for (const [lobe, dot] of lobeDots.entries()) row[stepCount + lobe] = (row[stepCount + lobe] ?? 0) + dot * lit;
+        row[heightFadeUnknown] = (row[heightFadeUnknown] ?? 0) + fall * lit;
         row[hazeUnknown] = (row[hazeUnknown] ?? 0) + opacity * (1 - scatter);
         row[hazeUnknown + 1] = (row[hazeUnknown + 1] ?? 0) + opacity * scatter;
         // The glow and the rim the material adds after lighting are known, so they leave the colour the light explains
@@ -112,7 +114,9 @@ export const solveStoneLight = (
     for (let step = 0; step < stepCount - 1; step++)
       for (const [first, firstWeight] of BEND_STENCIL)
         for (const [second, secondWeight] of BEND_STENCIL) {
-          const gramRow = gram[step + first] ?? [];
+          const gramRow = gram[step + first];
+          if (!gramRow)
+            throw new InvalidOperationError(Operation.Read, "gram", `no row ${step + first} of ${unknownCount}`);
           gramRow[step + second] = (gramRow[step + second] ?? 0) + RAMP_SMOOTHNESS * total * firstWeight * secondWeight;
         }
     const solution = solveNonNegativeSystem(gram, right);

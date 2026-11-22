@@ -2,7 +2,7 @@ import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLi
 import type { Vector } from "#src/models/shared/Vector";
 
 import { computeSkyLobeHarmonics } from "#src/services/genshinParity/witness/computeSkyLobeHarmonics";
-import { SKY_LOBE_DIRECTIONS } from "#src/services/genshinParity/witness/constants";
+import { MIN_BIN_COUNT, SKY_LOBE_DIRECTIONS } from "#src/services/genshinParity/witness/constants";
 import { solveStoneLight } from "#src/services/genshinParity/witness/solveStoneLight";
 import {
   computeStoneDarkening,
@@ -80,7 +80,7 @@ describe(solveStoneLight, () => {
         );
       }) as Vector;
       const { x, y, z } = new Vector3(...sceneColor).applyMatrix3(whiteBalance);
-      return Array.from({ length: 30 }, () => ({
+      return Array.from({ length: MIN_BIN_COUNT }, () => ({
         albedo,
         bin: String(index),
         display: toneMapGenshin([x, y, z]),
@@ -143,7 +143,7 @@ describe(solveStoneLight, () => {
     expect.hasAssertions();
 
     expect(() =>
-      solveStoneLight(samples.filter((_sample, index) => index % 30 !== 0)),
+      solveStoneLight(samples.filter((_sample, index) => index % MIN_BIN_COUNT !== 0)),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: bins, none of 96 holds 30 pixels]`,
     );

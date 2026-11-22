@@ -63,11 +63,15 @@ export const readReferenceLandmarks = async (
           (landmarks) => window.computeWitnessPoints(landmarks),
           landmarkEntries.map(({ definition }) => definition),
         );
-  const correspondences = landmarkEntries.map(({ definition, pixel }, index) => ({
-    isEdge: definition.isEdge,
-    pixel: definition.isEdge || definition.isInterior ? pixel : snapToCorner(grey, width, height, pixel, SNAP_RADIUS),
-    point: points[index] ?? [0, 0, 0],
-  }));
+  const correspondences = landmarkEntries.map(({ definition, name, pixel }, index) => {
+    const point = points[index];
+    if (!point) throw new InvalidOperationError(Operation.Read, name, "the scene placed no point for it");
+    return {
+      isEdge: definition.isEdge,
+      pixel: definition.isEdge || definition.isInterior ? pixel : snapToCorner(grey, width, height, pixel, SNAP_RADIUS),
+      point,
+    };
+  });
   return {
     correspondences,
     given: landmarkEntries.map(({ pixel }) => pixel),

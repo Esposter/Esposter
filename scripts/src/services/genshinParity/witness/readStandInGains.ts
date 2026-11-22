@@ -1,16 +1,16 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
-import { COMPARISONS_DIRECTORY, FULL_FRAME_WIDTH } from "#src/services/genshinParity/shared/constants";
+import { COMPARISONS_DIRECTORY, FULL_FRAME_WIDTH, UNNAMED_FAMILY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitnessFamilies";
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { withReferencePage } from "#src/services/genshinParity/shared/withReferencePage";
 import { computeLabelSimilarity } from "#src/services/genshinParity/witness/computeLabelSimilarity";
 import { readGrey } from "#src/services/genshinParity/witness/readGrey";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
-import { getOrCreate, withFinalizerAsync } from "@esposter/shared";
+import { getOrCreate } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -27,9 +27,10 @@ export const readStandInGains = async (
   witness: DerivedAssetComponent,
 ): Promise<{ gap: number; mean: number; name: string; share: number; similarity: number }[]> => {
   await fetchReferences();
-  const { checkIsScored, close, height, page } = await openWitnessPage(referenceId, witness, FULL_FRAME_WIDTH);
-  return withFinalizerAsync(
-    async () => {
+  return withReferencePage(
+    referenceId,
+    witness,
+    async ({ checkIsScored, height, page }) => {
       const families = await readWitnessFamilies(page);
       await setPageWitnessView(page, { families });
       const { families: layerFamilies, part, width } = await readWitnessPartTarget(page);
@@ -68,7 +69,7 @@ export const readStandInGains = async (
         scoredCount++;
         if (!part[pixel * 4]) continue;
         const family = part[pixel * 4 + 1] ?? 0;
-        const name = layerFamilies[family] ?? "unnamed";
+        const name = layerFamilies[family] ?? UNNAMED_FAMILY;
         const term = getOrCreate(nameTermMap, name, () => ({
           count: 0,
           error: 0,
@@ -85,6 +86,6 @@ export const readStandInGains = async (
         similarity,
       })).toSorted((firstTerm, secondTerm) => secondTerm.gap - firstTerm.gap);
     },
-    () => close(),
+    FULL_FRAME_WIDTH,
   );
 };

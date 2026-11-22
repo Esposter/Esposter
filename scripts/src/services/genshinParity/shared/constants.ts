@@ -117,6 +117,8 @@ export const FLIP_PIXELS_PER_DEGREE: number = 0.7 * (FLIP_SCREEN_WIDTH / 0.7) * 
 export const SKY_LAYER = "sky";
 // The layer the whole frame is scored as, every pixel counted
 export const FRAME_LAYER = "frame";
+// The name of a family whose part the scene left unnamed
+export const UNNAMED_FAMILY = "unnamed";
 // A recording's or a sound's pitch classes are read at 12 kHz, mono, in frames of 4096 samples a tenth of a second
 // Apart, over 60 Hz to 2.5 kHz, where a mix's notes carry their pitch; a frame quieter than a fiftieth of the loudest
 // Is left out of a match, and a match compares twenty seconds of a recording at a time

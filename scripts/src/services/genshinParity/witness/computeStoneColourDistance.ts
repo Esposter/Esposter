@@ -9,6 +9,7 @@ import { STONE_HEIGHT_BANDS } from "#src/services/genshinParity/witness/constant
 import { groupStoneBins } from "#src/services/genshinParity/witness/groupStoneBins";
 import { toLab } from "#src/services/shared/toLab";
 import { toXyz } from "#src/services/shared/toXyz";
+import { getOrCreate } from "@esposter/shared";
 import { toneMapGenshin } from "genshin-engine";
 import { Vector3 } from "three";
 
@@ -17,8 +18,8 @@ import { Vector3 } from "three";
 // Casts it through the white balance and the tone curve (`computeStoneSampleColor`), weighed by the bin's pixels, over
 // The whole stone and in each band of height (`STONE_HEIGHT_BANDS`, by its top). Over bins rather than bands of how
 // Bright the reference shows, which pick out the pixels its own texels darken and leave ours, a pixel off, at the
-// Frame's mean: banded so, the day title's stone read flat across bands the game spans from near black to near white
-export const readStoneColourDistance = (
+// Frame's mean
+export const computeStoneColourDistance = (
   samples: readonly StoneLightSample[],
   light: StoneLight,
   whiteBalance: Matrix3,
@@ -38,10 +39,9 @@ export const readStoneColourDistance = (
     const [oursLightness, oursA, oursB] = toLab(toXyz(ours));
     const distance = Math.hypot(referenceLightness - oursLightness, referenceA - oursA, referenceB - oursB);
     const top = STONE_HEIGHT_BANDS.find((bandTop) => (binSamples[0]?.height ?? 0) < bandTop) ?? Infinity;
-    const height = heightDistanceMap.get(top) ?? { count: 0, sum: 0 };
+    const height = getOrCreate(heightDistanceMap, top, () => ({ count: 0, sum: 0 }));
     height.count += binSamples.length;
     height.sum += distance * binSamples.length;
-    heightDistanceMap.set(top, height);
     count += binSamples.length;
     sum += distance * binSamples.length;
   }

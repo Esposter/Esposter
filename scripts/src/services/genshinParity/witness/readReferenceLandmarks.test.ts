@@ -4,6 +4,7 @@ import type { Page } from "playwright";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { readReferenceLandmarks } from "#src/services/genshinParity/witness/readReferenceLandmarks";
+import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -28,15 +29,11 @@ vi.mock(import("#src/services/genshinAssets/witness/DerivedAssetLandmarkMap"), a
 
 vi.mock(import("#src/services/genshinParity/shared/ParityReferenceMap"), () => ({
   ParityReferenceMap: {
-    "none-held": {
-      landmarks: { houseFrontLeft: [1631, 1145] },
-      screen: "WorldScreen",
-      wikiTitle: "File:None held.png",
-    },
+    "none-held": { landmarks: { houseFrontLeft: [1631, 1145] }, screen: "screen", wikiTitle: "wikiTitle" },
     "one-held": {
       landmarks: { houseFrontLeft: [1631, 1145], keepEaveLeft: [1374, 160] },
-      screen: "WorldScreen",
-      wikiTitle: "File:One held.png",
+      screen: "screen",
+      wikiTitle: "wikiTitle",
     },
   } satisfies Record<string, ParityReference>,
 }));
@@ -46,7 +43,7 @@ describe(readReferenceLandmarks, () => {
 
   beforeEach(async () => {
     directory = mkdtempSync(join(tmpdir(), "parity-landmarks-"));
-    const referencePath = join(directory, "reference.png");
+    const referencePath = join(directory, TEST_FILENAME);
     await sharp({ create: { background: { b: 0, g: 0, r: 0 }, channels: 3, height: 2, width: 2 } })
       .png()
       .toFile(referencePath);

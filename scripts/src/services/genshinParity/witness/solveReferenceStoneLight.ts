@@ -14,6 +14,6 @@ export const solveReferenceStoneLight = async (
   isSelf = false,
   heightDarkening = 0,
 ): Promise<{ count: number; deviation: number; light: StoneLight; residual: number }> => {
-  const { samples, whiteBalance } = await readReferenceStoneSamples(referenceId, witness, isSelf);
+  const { samples, whiteBalance } = await readReferenceStoneSamples(referenceId, witness, { isSelf });
   return solveStoneLight(samples, whiteBalance, heightDarkening);
 };

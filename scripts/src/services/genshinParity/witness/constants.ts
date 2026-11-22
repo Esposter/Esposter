@@ -41,3 +41,9 @@ export const FAMILY_COLORS: readonly [number, number, number][] = [
 
 // A sky pixel the reference shows at least this many times as bright as our clear sky is one of its clouds
 export const CLOUD_BRIGHTNESS_RATIO = 1.4;
+// The least denominator a ratio divides by, so a dark part's ratio stays finite
+export const MIN_DENOMINATOR = 1e-6;
+// The heights, in metres, a part's pixels are banded by, each pixel's band the count of these edges it passes
+export const HEIGHT_EDGES = [-20, -10, -5, 0, 5, 10, 20, 40];
+// The depths the height bands' table splits each band by, in metres, coarse enough that each cell holds many pixels
+export const TABLE_DEPTH_EDGES = [20, 40, 80];

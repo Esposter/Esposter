@@ -1,6 +1,6 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
 
-import { GBUFFER_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { GBUFFER_DIRECTORY, UNNAMED_FAMILY } from "#src/services/genshinParity/shared/constants";
 import { readStructureEdges } from "#src/services/genshinParity/shared/readStructureEdges";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { computeDistanceTransform } from "#src/services/genshinParity/witness/computeDistanceTransform";
@@ -64,7 +64,7 @@ export const writeOverlay = async (
   return {
     families: familyNames.map((name, index) => {
       const { count, sum } = familySums[index] ?? { count: 0, sum: 0 };
-      return { distance: count ? sum / count : 0, name: name || "unnamed", pixelCount: count };
+      return { distance: count ? sum / count : 0, name: name || UNNAMED_FAMILY, pixelCount: count };
     }),
     path,
   };

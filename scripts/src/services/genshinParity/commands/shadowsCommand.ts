@@ -18,7 +18,7 @@ export const shadowsCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     const { direction, distance, edgeCount, grid, imagePath, ourEdgeCount, probes, solved } =
-      await solveReferenceShadows(args.reference, args.witness, true);
+      await solveReferenceShadows(args.reference, args.witness, { isSolved: true });
     if (edgeCount === 0) {
       console.log(`${args.reference} shows no shadow's edge on a flat receiver`);
       return;

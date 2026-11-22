@@ -6,7 +6,7 @@ import { blurGrey } from "#src/services/genshinParity/shared/blurGrey";
 import { halve } from "#src/services/genshinParity/witness/halve";
 
 // The CPU reference of each label's similarity, which the parity page computes on its GPU (`computeLabelSimilarity`).
-// Only the unit test reads it, to check the definition the page must agree with
+// Only tests read it, to check the definition the page must agree with
 // Multi-scale structural similarity (Wang, Simoncelli and Bovik, 2003) over two grey images, read apart for each label
 // Of a map: at each of five scales, halving the size each time, a Gaussian window's means, variances and covariance
 // Give each pixel its contrast and structure term, the coarsest its luminance term too, each scale's terms averaged

@@ -1,8 +1,8 @@
 import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLightSample";
 import type { Vector } from "#src/models/shared/Vector";
 
+import { computeStoneColourDistance } from "#src/services/genshinParity/witness/computeStoneColourDistance";
 import { MIN_BIN_COUNT } from "#src/services/genshinParity/witness/constants";
-import { readStoneColourDistance } from "#src/services/genshinParity/witness/readStoneColourDistance";
 import { STONE_HARMONIC_COUNT, STONE_RAMP_KNOT_COUNT, toneMapGenshin } from "genshin-engine";
 import { Matrix3 } from "three";
 import { describe, expect, test } from "vitest";
@@ -23,7 +23,7 @@ const createSamples = (bin: string, albedo: Vector, display: Vector, height: num
     scatter: 0,
   }));
 
-describe(readStoneColourDistance, () => {
+describe(computeStoneColourDistance, () => {
   test("reads each bin's shown colour against the light's, weighed by its pixels, over the stone and by height", () => {
     expect.hasAssertions();
 
@@ -40,7 +40,7 @@ describe(readStoneColourDistance, () => {
       ...createSamples("low", [0, 0, 0], toneMapGenshin([0, 0, 0]), 0),
       ...createSamples("high", [1, 1, 1], [0, 0, 0], 50),
     ];
-    const { distance, heights } = readStoneColourDistance(samples, light, new Matrix3());
+    const { distance, heights } = computeStoneColourDistance(samples, light, new Matrix3());
 
     expect({
       distance: Math.round(distance),

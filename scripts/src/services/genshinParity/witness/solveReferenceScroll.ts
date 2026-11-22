@@ -1,15 +1,13 @@
-/* oxlint-disable no-await-in-loop -- One device: each distance is drawn on the one page in turn, and read after the view it drew, since the page holds one view at a time */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
+import { withReferencePage } from "#src/services/genshinParity/shared/withReferencePage";
 import { computeMaskedMean } from "#src/services/genshinParity/witness/computeMaskedMean";
 import { readFamilyBoundaries } from "#src/services/genshinParity/witness/readFamilyBoundaries";
 import { readFamilyEdgeDistances } from "#src/services/genshinParity/witness/readFamilyEdgeDistances";
-import { withFinalizerAsync } from "@esposter/shared";
 
 // How far the scene's scrolling rows stood from where it draws them in a reference's state, along the glide, read off
 // The reference's edges: at its camera (`solveReferenceCamera`), the witness's families given moved together along the
@@ -23,26 +21,24 @@ export const solveReferenceScroll = async (
   offsets: readonly number[],
 ): Promise<{ distance: number; offset: number }[]> => {
   await fetchReferences();
-  const { close, image, page } = await openWitnessPage(referenceId, component);
-  return withFinalizerAsync(
-    async () => {
-      const { pose } = await solveReferenceCamera(page, referenceId, component);
-      const camera = toPageCamera(pose);
-      await setPageWitnessView(page, { camera });
-      const { edgeDistances } = await readFamilyEdgeDistances(page, image, families, 0);
-      const readings: { distance: number; offset: number }[] = [];
-      for (const offset of offsets) {
-        await setPageWitnessView(page, {
-          camera,
-          familyOffsets: Object.fromEntries(
-            families.map((family): [string, [number, number, number]] => [family, [0, 0, offset]]),
-          ),
-        });
-        const boundaries = await readFamilyBoundaries(page, families, 0);
-        readings.push({ distance: computeMaskedMean(boundaries, edgeDistances), offset });
-      }
-      return readings;
-    },
-    () => close(),
-  );
+  return withReferencePage(referenceId, component, async ({ image, page }) => {
+    const { pose } = await solveReferenceCamera(page, referenceId, component);
+    const camera = toPageCamera(pose);
+    await setPageWitnessView(page, { camera });
+    const { edgeDistances } = await readFamilyEdgeDistances(page, image, families, 0);
+    const readings: { distance: number; offset: number }[] = [];
+    // oxlint-disable no-await-in-loop -- One device: each distance is drawn on the one page in turn, and read after the view it drew, since the page holds one view at a time
+    for (const offset of offsets) {
+      await setPageWitnessView(page, {
+        camera,
+        familyOffsets: Object.fromEntries(
+          families.map((family): [string, [number, number, number]] => [family, [0, 0, offset]]),
+        ),
+      });
+      const boundaries = await readFamilyBoundaries(page, families, 0);
+      readings.push({ distance: computeMaskedMean(boundaries, edgeDistances), offset });
+    }
+    // oxlint-enable no-await-in-loop
+    return readings;
+  });
 };

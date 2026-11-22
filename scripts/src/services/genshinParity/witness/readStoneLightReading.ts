@@ -21,9 +21,9 @@ import { computeStoneHarmonics, computeStoneRampCoordinate, STONE_HARMONIC_COUNT
 import { WitnessTarget } from "genshin-world/sceneExport";
 import { Matrix3, Matrix4, Vector3 } from "three";
 
-// A pixel's bin: its depth band (`DEPTH_BANDS`), its height band (`STONE_HEIGHT_BANDS`), its ramp coordinate in this many
-// Steps, and how far its face turns up in this many, so each bin holds faces the light and the haze treat alike, and the
-// Light solved over it stands neither too dark below nor too bright above
+// A pixel's bin: its depth band (`STONE_LIGHT_DEPTH_BANDS`), its height band (`STONE_HEIGHT_BANDS`), its ramp coordinate
+// In this many steps, and how far its face turns up in this many, so each bin holds faces the light and the haze treat
+// Alike, and the light solved over it stands neither too dark below nor too bright above
 const RAMP_BIN_COUNT = 12;
 const UPWARD_BIN_COUNT = 4;
 // A reference's stone as the game's deferred pass casts it, read over the parts the witness draws from the game's
@@ -97,7 +97,7 @@ export const readStoneLightReading = async (
         const rampCoordinate = computeStoneRampCoordinate(faceNormal.dot(sun), shadow[pixel * 4] ?? 0);
         const ray = point.clone().sub(eye).normalize();
         const scatter = Math.min(Math.max(ray.dot(scatterDirection), 0) ** fog.scatterPower * fog.scatterStrength, 1);
-        const band = STONE_LIGHT_DEPTH_BANDS.findIndex((far) => pixelDepth < far);
+        const depthBand = STONE_LIGHT_DEPTH_BANDS.findIndex((far) => pixelDepth < far);
         const heightBand = STONE_HEIGHT_BANDS.findIndex((top) => point.y < top);
         const rampBin = Math.min(Math.floor(rampCoordinate * RAMP_BIN_COUNT), RAMP_BIN_COUNT - 1);
         const upwardBin = Math.min(Math.floor(((faceNormal.y + 1) / 2) * UPWARD_BIN_COUNT), UPWARD_BIN_COUNT - 1);
@@ -105,7 +105,7 @@ export const readStoneLightReading = async (
           point: point.toArray(),
           sample: {
             albedo: [albedo[pixel * 4] ?? 0, albedo[pixel * 4 + 1] ?? 0, albedo[pixel * 4 + 2] ?? 0],
-            bin: `${band}${ID_SEPARATOR}${heightBand}${ID_SEPARATOR}${rampBin}${ID_SEPARATOR}${upwardBin}`,
+            bin: `${depthBand}${ID_SEPARATOR}${heightBand}${ID_SEPARATOR}${rampBin}${ID_SEPARATOR}${upwardBin}`,
             display: getPixelDisplayColor(referenceShot, pixel),
             emission: [emission[pixel * 4] ?? 0, emission[pixel * 4 + 1] ?? 0, emission[pixel * 4 + 2] ?? 0],
             harmonics,

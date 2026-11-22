@@ -1,7 +1,7 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
 import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
-import { FRAME_LAYER, SKY_LAYER, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
+import { FRAME_LAYER, SKY_LAYER, STRUCTURE_WIDTH, UNNAMED_FAMILY } from "#src/services/genshinParity/shared/constants";
 
 // Each layer's pixels over a reference's scored region read at the structure's width, so many rows high: the frame's
 // Every one (no mask), each family's those whose G-buffer pixel, at the pixel's middle's place in the frame, holds a
@@ -30,7 +30,7 @@ export const computeLayerMasks = (
       mask: Uint8Array.from(gbufferPixels, (gbufferPixel) =>
         Number(part[gbufferPixel * 4] !== 0 && part[gbufferPixel * 4 + 1] === familyIndex),
       ),
-      name: name || "unnamed",
+      name: name || UNNAMED_FAMILY,
     })),
     { mask: Uint8Array.from(gbufferPixels, (gbufferPixel) => Number(part[gbufferPixel * 4] === 0)), name: SKY_LAYER },
   ];

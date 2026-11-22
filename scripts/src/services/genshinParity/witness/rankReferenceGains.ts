@@ -2,7 +2,13 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
-import { CHANNELS, FULL_FRAME_WIDTH, LUMINANCE, SKY_LAYER } from "#src/services/genshinParity/shared/constants";
+import {
+  CHANNELS,
+  FULL_FRAME_WIDTH,
+  LUMINANCE,
+  SKY_LAYER,
+  UNNAMED_FAMILY,
+} from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
@@ -148,7 +154,7 @@ export const rankReferenceGains = async (
           );
           continue;
         }
-        const family = layerFamilies[part[pixel * 4 + 1] ?? 0] ?? "unnamed";
+        const family = layerFamilies[part[pixel * 4 + 1] ?? 0] ?? UNNAMED_FAMILY;
         const witnessError = witnessErrors[pixel] ?? 0;
         add(`${family}: stand-in`, ourError - witnessError);
         const [band = "far"] = DEPTH_BANDS.find(([, far]) => (depth[pixel * 4] ?? 0) < far) ?? [];

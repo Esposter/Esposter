@@ -9,15 +9,15 @@ import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/
 import { measureGlow } from "#src/services/genshinParity/passes/measureGlow";
 import { mergeParityPassMeasures } from "#src/services/genshinParity/passes/mergeParityPassMeasures";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { computeStoneColourDistance } from "#src/services/genshinParity/witness/computeStoneColourDistance";
 import { STONE_LIGHT_KEY } from "#src/services/genshinParity/witness/constants";
 import { readReferenceStoneSamples } from "#src/services/genshinParity/witness/readReferenceStoneSamples";
-import { readStoneColourDistance } from "#src/services/genshinParity/witness/readStoneColourDistance";
 import { solveReferenceShadows } from "#src/services/genshinParity/witness/solveReferenceShadows";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The light pass: at each current build's reference's camera, the stone light written for its hour cast over the
 // Exports' stone and shown through the white balance and the tone curve, against the reference's stone, bin by bin
-// (`readStoneColourDistance`). It is gated where two colours side by side are just told apart, or at what the same light
+// (`computeStoneColourDistance`). It is gated where two colours side by side are just told apart, or at what the same light
 // Reads against our own render of the exports under it, whichever is wider, since the light's model leaves out what the
 // Render draws beside it (the normal maps, the highlight) and no light read through it comes nearer than that. Then the
 // Sun's direction, by where the exports' shadows cast from it fall on the flat receivers against the reference's shadows'
@@ -31,11 +31,11 @@ export const measureLight = async (component: DerivedAssetComponent, pageRoot?: 
     const timeOfDay = ParityReferenceMap[referenceId]?.props?.timeOfDay;
     const light = typeof timeOfDay === "string" ? lights[timeOfDay] : undefined;
     if (!light) throw new InvalidOperationError(Operation.Read, STONE_LIGHT_KEY, `no light for ${referenceId}`);
-    const reference = await readReferenceStoneSamples(referenceId, component, false, pageRoot);
-    const self = await readReferenceStoneSamples(referenceId, component, true, pageRoot);
-    const { distance, heights } = readStoneColourDistance(reference.samples, light, reference.whiteBalance);
-    const floor = readStoneColourDistance(self.samples, light, self.whiteBalance).distance;
-    const shadows = await solveReferenceShadows(referenceId, component, false, pageRoot);
+    const reference = await readReferenceStoneSamples(referenceId, component, { pageRoot });
+    const self = await readReferenceStoneSamples(referenceId, component, { isSelf: true, pageRoot });
+    const { distance, heights } = computeStoneColourDistance(reference.samples, light, reference.whiteBalance);
+    const floor = computeStoneColourDistance(self.samples, light, self.whiteBalance).distance;
+    const shadows = await solveReferenceShadows(referenceId, component, { isSolved: false, pageRoot });
     measures.push({
       notes: [
         `${referenceId} shadows: ${shadows.edgeCount} edge pixels on its flat receivers, the scene's beside them: ${shadows.imagePath}`,

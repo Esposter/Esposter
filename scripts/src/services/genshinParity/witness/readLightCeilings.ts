@@ -2,31 +2,25 @@ import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbu
 import type { Vector } from "#src/models/shared/Vector";
 
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
-import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
+import { createFlipScorer } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readRawRgb } from "#src/services/genshinParity/shared/readRawRgb";
+import { computeHeightBands } from "#src/services/genshinParity/witness/computeHeightBands";
+import { computeRatioMap } from "#src/services/genshinParity/witness/computeRatioMap";
+import { HEIGHT_EDGES, MIN_DENOMINATOR, TABLE_DEPTH_EDGES } from "#src/services/genshinParity/witness/constants";
 import { countPassed } from "#src/services/genshinParity/witness/countPassed";
-import { readLuminance } from "#src/services/genshinParity/witness/readLuminance";
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
 import { toSrgb } from "#src/services/shared/toSrgb";
 import { getOrCreate, ID_SEPARATOR } from "@esposter/shared";
 import sharp from "sharp";
 
-// The edges each binning splits by: depth in metres, the cosine to the light, how far a face turns up and height in
-// Metres, each pixel's band the count of edges it passes
+// The edges each binning splits by: depth in metres, the cosine to the light and how far a face turns up, each pixel's
+// Band the count of edges it passes
 const DEPTH_EDGES = [10, 20, 35, 50, 80, 120, 200];
 const FACING_EDGES = [-0.6, -0.3, 0, 0.3, 0.6];
 const UPWARD_EDGES = [-0.3, 0.3];
-const HEIGHT_EDGES = [-20, -10, -5, 0, 5, 10, 20, 40];
-// The depths the height bands' table splits each band by, in metres, coarse enough that each cell holds many pixels
-const TABLE_DEPTH_EDGES = [20, 40, 80];
 // How far the smooth field reaches either side of a pixel, in the structure's pixels
 const FIELD_RADIUS = 4;
-const MIN_DENOMINATOR = 1e-6;
-// The ratio the map draws at full strength, ours twice or half the reference's, by its base-two logarithm
-const RATIO_MAP_STOPS = 1;
-// How bright the reference shows round the parts on the map, a share of its own brightness
-const RATIO_MAP_BACKDROP = 0.4;
 
 // What any light could still recover of a reference's frame: the exports' frame corrected, channel by channel in linear
 // Colour, to the reference's own mean over every part pixel of a bin, and scored again. A light, a haze or a grade
@@ -66,6 +60,7 @@ export const readLightCeilings = async ({
   };
   const [reference, exports] = await Promise.all([readLinear(image), readLinear(exportsShot)]);
   const checkIsPart = (pixel: number): boolean => Boolean(part[pixel * 4]) && checkIsScored(pixel, width);
+  const scoreAgainstImage = await createFlipScorer(image, width, height);
   const score = async (linear: Float32Array): Promise<number> => {
     const encoded = await sharp(
       Buffer.from(Array.from(linear, (value) => Math.round(Math.min(Math.max(toSrgb(value), 0), 1) * BYTE))),
@@ -73,7 +68,7 @@ export const readLightCeilings = async ({
     )
       .png()
       .toBuffer();
-    const { errorMap } = await readFlipErrorMap(image, encoded, width, height);
+    const { errorMap } = await scoreAgainstImage(encoded);
     let [error, scoredCount] = [0, 0];
     for (let pixel = 0; pixel < count; pixel++) {
       if (!checkIsScored(pixel, width)) continue;
@@ -154,45 +149,8 @@ export const readLightCeilings = async ({
       }),
     ],
   ];
-  const heightBands = [-Infinity, ...HEIGHT_EDGES].map((bottom) => ({
-    bottom,
-    cells: Array.from({ length: TABLE_DEPTH_EDGES.length + 1 }, () => ({ count: 0, exports: 0, reference: 0 })),
-  }));
-  for (let pixel = 0; pixel < count; pixel++) {
-    if (!checkIsPart(pixel)) continue;
-    const heightBand = heightBands[countPassed(HEIGHT_EDGES, heights[pixel] ?? 0)];
-    const cell = heightBand?.cells[countPassed(TABLE_DEPTH_EDGES, depth[pixel * 4] ?? 0)];
-    if (!cell) continue;
-    cell.count++;
-    cell.exports += readLuminance(exports, pixel);
-    cell.reference += readLuminance(reference, pixel);
-  }
-  for (const { cells } of heightBands)
-    for (const cell of cells) {
-      cell.exports /= Math.max(cell.count, 1);
-      cell.reference /= Math.max(cell.count, 1);
-    }
-  const ratioPixels = Buffer.alloc(count * CHANNELS.length);
-  for (let pixel = 0; pixel < count; pixel++) {
-    if (!checkIsPart(pixel)) {
-      // The rest of the reference, grey and dimmed, so the parts stand out against where they stand
-      const shade = Math.round(toSrgb(readLuminance(reference, pixel)) * BYTE * RATIO_MAP_BACKDROP);
-      ratioPixels.set([shade, shade, shade], pixel * CHANNELS.length);
-      continue;
-    }
-    const stops = Math.log2(
-      Math.max(readLuminance(blurredExports, pixel), MIN_DENOMINATOR) /
-        Math.max(readLuminance(blurredReference, pixel), MIN_DENOMINATOR),
-    );
-    const strength = Math.round(Math.min(Math.abs(stops) / RATIO_MAP_STOPS, 1) * BYTE);
-    ratioPixels.set(
-      stops > 0 ? [BYTE, BYTE - strength, BYTE - strength] : [BYTE - strength, BYTE - strength, BYTE],
-      pixel * CHANNELS.length,
-    );
-  }
-  const ratioMap = await sharp(ratioPixels, { raw: { channels: CHANNELS.length, height, width } })
-    .png()
-    .toBuffer();
+  const heightBands = computeHeightBands({ checkIsPart, depth, exports, height, heights, reference, width });
+  const ratioMap = await computeRatioMap({ blurredExports, blurredReference, checkIsPart, height, reference, width });
   const drawn = await score(exports);
   const rows: { frame: number; name: string }[] = [];
   for (const [name, corrected] of corrections)
