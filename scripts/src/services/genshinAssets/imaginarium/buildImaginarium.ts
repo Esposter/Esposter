@@ -39,7 +39,7 @@ export const buildImaginarium = (): Record<string, unknown> => {
     ).map((row) => [row.avatarConfigId, row]),
   );
   const characterElementMap = new Map(getCharacterDatas([]).map(({ element, id }) => [id, element]));
-  const trials = new Map(
+  const trialAvatarRowMap = new Map(
     readExcelTable<ExcelTrialAvatarRow>(TRIAL_AVATAR_TABLE_NAME).map((row) => [row.trialAvatarId, row]),
   );
   const seasons = readExcelTable<ExcelRoleCombatScheduleRow>(
@@ -54,7 +54,7 @@ export const buildImaginarium = (): Record<string, unknown> => {
           String(row.scheduleId),
           `joins avatar config ${row.avatarConfigId}, which the table lacks`,
         );
-      return toImaginariumSeason(row, avatarConfigRow, trials);
+      return toImaginariumSeason(row, avatarConfigRow, trialAvatarRowMap);
     })
     .toSorted((firstSeason, secondSeason) => firstSeason.id - secondSeason.id);
   for (const season of seasons) {

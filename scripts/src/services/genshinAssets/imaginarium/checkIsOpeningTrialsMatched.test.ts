@@ -7,10 +7,10 @@ describe(checkIsOpeningTrialsMatched, () => {
 
     expect(
       checkIsOpeningTrialsMatched(
-        [10000096, 10000050],
+        [1, 2],
         [
-          { characterId: 10000096, level: 80, trialAvatarId: 6080 },
-          { characterId: 10000026, level: 80, trialAvatarId: 6026 },
+          { characterId: 1, level: 0, trialAvatarId: 0 },
+          { characterId: 3, level: 0, trialAvatarId: 0 },
         ],
       ),
     ).toBe(false);
@@ -21,10 +21,10 @@ describe(checkIsOpeningTrialsMatched, () => {
 
     expect(
       checkIsOpeningTrialsMatched(
-        [10000096, 10000050],
+        [1, 2],
         [
-          { characterId: 10000050, level: 80, trialAvatarId: 6050 },
-          { characterId: 10000096, level: 80, trialAvatarId: 6080 },
+          { characterId: 2, level: 0, trialAvatarId: 0 },
+          { characterId: 1, level: 0, trialAvatarId: 0 },
         ],
       ),
     ).toBe(true);

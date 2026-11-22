@@ -7,7 +7,7 @@ import { WEAPON_TABLE_NAME } from "#src/services/genshinAssets/archive/constants
 import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { buildItems } from "#src/services/genshinAssets/items/buildItems";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
-import { GOOD_HUNTER_SHOP_TYPE } from "#src/services/genshinAssets/shops/constants";
+import { FISHING_ASSOCIATION_SHOPS, GOOD_HUNTER_SHOP_TYPE } from "#src/services/genshinAssets/shops/constants";
 import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { takeOne } from "@esposter/shared";
@@ -53,11 +53,14 @@ describe(buildItems, () => {
   const DESTROYABLE_ITEM_ID = 100_001;
 
   const FISH_ITEM_ID = 3001;
-  const FONTAINE_FISHING_SHOP_TYPE = 1090;
+  const FONTAINE_FISHING_SHOP_TYPE = takeOne(
+    FISHING_ASSOCIATION_SHOPS.filter(({ stem }) => stem === "fontaineFishing"),
+    0,
+  ).shopType;
   const UNKNOWN_ITEM_ID = 99_999;
   const WEAPON_ITEM_ID = 11_426;
 
-  const toShopGood = (shopType: number, itemId: number): ExcelShopGoodsRow => ({
+  const createShopGood = (shopType: number, itemId: number): ExcelShopGoodsRow => ({
     beginTime: "1970-01-01 00:00:00",
     buyLimit: 0,
     costHcoin: 0,
@@ -183,7 +186,7 @@ describe(buildItems, () => {
       if (key === "offerings/frostbearingTree")
         return Promise.resolve([
           {
-            items: [{ itemCount: 0, itemId: TREE_ITEM_ID }],
+            items: [{ itemCount: 1, itemId: TREE_ITEM_ID }],
             level: 1,
             reward: { kind: "fixed", rewards: [{ itemCount: 1, itemId: ADVENTURE_EXP_ID }] },
           },
@@ -233,14 +236,14 @@ describe(buildItems, () => {
     });
   });
 
-  test("publishes the items the Frostbearing Tree takes and pays, less the wallet's", async () => {
+  test("publishes every item the sources name, less the wallet's", async () => {
     expect.hasAssertions();
 
     const built = await buildItems();
 
-    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+    const items = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.map(({ id }) => id)).toMatchInlineSnapshot(`
+    expect(items.map(({ id }) => id)).toMatchInlineSnapshot(`
       [
         1001,
         2000,
@@ -326,9 +329,9 @@ describe(buildItems, () => {
 
     const built = await buildItems();
 
-    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+    const items = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.filter(({ id }) => id === DISH_ITEM_ID)).toMatchInlineSnapshot(`
+    expect(items.filter(({ id }) => id === DISH_ITEM_ID)).toMatchInlineSnapshot(`
       [
         {
           "id": 108011,
@@ -365,9 +368,9 @@ describe(buildItems, () => {
     ]);
     const built = await buildItems();
 
-    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+    const items = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.filter(({ id }) => id === INSTRUCTION_ITEM_ID)).toMatchInlineSnapshot(`
+    expect(items.filter(({ id }) => id === INSTRUCTION_ITEM_ID)).toMatchInlineSnapshot(`
       [
         {
           "id": 109101,
@@ -386,9 +389,9 @@ describe(buildItems, () => {
 
     const built = await buildItems();
 
-    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+    const items = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.filter(({ id }) => id === REPUTATION_REWARD_ITEM_ID)).toMatchInlineSnapshot(`
+    expect(items.filter(({ id }) => id === REPUTATION_REWARD_ITEM_ID)).toMatchInlineSnapshot(`
       [
         {
           "id": 140004,
@@ -407,9 +410,9 @@ describe(buildItems, () => {
 
     const built = await buildItems();
 
-    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+    const items = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.filter(({ id }) => id === GROCERY_ITEM_ID)).toMatchInlineSnapshot(`
+    expect(items.filter(({ id }) => id === GROCERY_ITEM_ID)).toMatchInlineSnapshot(`
       [
         {
           "id": 3000,
@@ -427,7 +430,7 @@ describe(buildItems, () => {
     expect.hasAssertions();
     itemTables[MATERIAL_TABLE_NAME] = [
       ...materialTable.filter(({ id }) => id !== TREE_ITEM_ID),
-      { ...materialRows[1], materialType: undefined },
+      { ...takeOne(materialRows, 1), materialType: undefined },
     ];
 
     await expect(buildItems()).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -446,14 +449,14 @@ describe(buildItems, () => {
     );
   });
 
-  test("publishes a consumable whose use adds an item, filed under the consume tab", async () => {
+  test("files a batch-use consumable under the consume tab", async () => {
     expect.hasAssertions();
     itemTables[MATERIAL_TABLE_NAME] = [
       ...materialTable,
       {
         foodQuality: "",
         id: BATCH_CONSUMABLE_ITEM_ID,
-        itemUse: [{ useOp: "ITEM_USE_ADD_ITEM", useParam: [String(GADGET_ITEM_ID), "1"] }],
+        itemUse: [],
         materialType: "MATERIAL_CONSUME_BATCH_USE",
         nameTextMapHash: 7,
         rank: 1,
@@ -485,7 +488,7 @@ describe(buildItems, () => {
       {
         foodQuality: "",
         id: QUEST_CONSUMABLE_ITEM_ID,
-        itemUse: [{ useOp: "ITEM_USE_ADD_ITEM", useParam: [String(GADGET_ITEM_ID), "1"] }],
+        itemUse: [],
         materialType: "MATERIAL_QUEST",
         nameTextMapHash: 8,
         rank: 1,
@@ -496,27 +499,30 @@ describe(buildItems, () => {
 
     const built = await buildItems();
 
-    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+    const items = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.filter(({ id }) => id === QUEST_CONSUMABLE_ITEM_ID)).toStrictEqual([]);
+    expect(items.filter(({ id }) => id === QUEST_CONSUMABLE_ITEM_ID)).toStrictEqual([]);
   });
 
   test("a fishing good that is a weapon is held by the weapon table, so the bag holds no item for it", async () => {
     expect.hasAssertions();
     itemTables[WEAPON_TABLE_NAME] = [{ id: WEAPON_ITEM_ID }];
-    itemTables[SHOP_GOODS_TABLE_NAME] = [toShopGood(FONTAINE_FISHING_SHOP_TYPE, WEAPON_ITEM_ID)];
-    itemTables[MATERIAL_TABLE_NAME] = [...materialTable, { ...materialRows[0], id: FISH_ITEM_ID, nameTextMapHash: 9 }];
+    itemTables[SHOP_GOODS_TABLE_NAME] = [createShopGood(FONTAINE_FISHING_SHOP_TYPE, WEAPON_ITEM_ID)];
+    itemTables[MATERIAL_TABLE_NAME] = [
+      ...materialTable,
+      { ...takeOne(materialRows, 0), id: FISH_ITEM_ID, nameTextMapHash: 9 },
+    ];
 
     const built = await buildItems();
 
-    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+    const items = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
-    expect(ids.filter(({ id }) => id === WEAPON_ITEM_ID)).toStrictEqual([]);
+    expect(items.filter(({ id }) => id === WEAPON_ITEM_ID)).toStrictEqual([]);
   });
 
   test("a good whose item no item table holds fails the publish, naming the id", async () => {
     expect.hasAssertions();
-    itemTables[SHOP_GOODS_TABLE_NAME] = [toShopGood(GOOD_HUNTER_SHOP_TYPE, UNKNOWN_ITEM_ID)];
+    itemTables[SHOP_GOODS_TABLE_NAME] = [createShopGood(GOOD_HUNTER_SHOP_TYPE, UNKNOWN_ITEM_ID)];
 
     await expect(buildItems()).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 99999, is in no item table]`,

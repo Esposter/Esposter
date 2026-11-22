@@ -14,7 +14,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export const toImaginariumSeason = (
   row: ExcelRoleCombatScheduleRow,
   avatarConfigRow: ExcelRoleCombatAvatarConfigRow,
-  trials: Map<number, ExcelTrialAvatarRow>,
+  trialAvatarRowMap: Map<number, ExcelTrialAvatarRow>,
 ): ImaginariumSeason => ({
   beginsAt: row.beginTimeStr.replace(" ", "T"),
   difficultyIds: row.difficultyIds,
@@ -33,7 +33,7 @@ export const toImaginariumSeason = (
   endsAt: row.endTimeStr.replace(" ", "T"),
   id: row.scheduleId,
   openingCharacterIds: avatarConfigRow.openingCharacterIds,
-  openingTrials: toImaginariumOpeningTrials(avatarConfigRow.openingTrialIds, trials),
+  openingTrials: toImaginariumOpeningTrials(avatarConfigRow.openingTrialIds, trialAvatarRowMap),
   rewardGroup: row.rewardGroupId,
   specialGuestIds: avatarConfigRow.specialGuestIds,
 });

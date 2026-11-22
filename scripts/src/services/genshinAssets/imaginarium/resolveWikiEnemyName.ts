@@ -12,5 +12,5 @@ export const resolveWikiEnemyName = (
   ];
   const [describeId, ...otherDescribeIds] = describeIds;
   if (describeId !== undefined && otherDescribeIds.length === 0) return { describeId, isResolved: true };
-  return { count: describeIds.length, isResolved: false };
+  else return { count: describeIds.length, isResolved: false };
 };

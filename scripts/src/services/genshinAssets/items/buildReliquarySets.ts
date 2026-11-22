@@ -9,6 +9,7 @@ import {
 } from "#src/services/genshinAssets/archive/constants";
 import { toReliquaryPiece } from "#src/services/genshinAssets/items/toReliquaryPiece";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { getOrCreate } from "@esposter/shared";
 import { GameDataset, reliquarySetDataSchema } from "genshin-world";
 
 // Every artifact set the game's set table holds, each with the text id of its name from its equip affix, the counts its
@@ -22,7 +23,7 @@ export const buildReliquarySets = (): Record<string, unknown> => {
   const setRowsMap = new Map<number, ExcelReliquaryRow[]>();
   for (const row of readExcelTable<ExcelReliquaryRow>(RELIQUARY_TABLE_NAME)) {
     if (!row.setId) continue;
-    setRowsMap.set(row.setId, [...(setRowsMap.get(row.setId) ?? []), row]);
+    getOrCreate(setRowsMap, row.setId, () => []).push(row);
   }
   const sets = readExcelTable<ExcelReliquarySetRow>(RELIQUARY_SET_TABLE_NAME)
     .flatMap(({ equipAffixId, setId, setNeedNum }) => {

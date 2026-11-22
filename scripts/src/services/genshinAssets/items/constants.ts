@@ -13,7 +13,7 @@ export const ITEM_TABLE_NAMES: readonly string[] = [
   RELIQUARY_TABLE_NAME,
 ];
 // The bag's tab for a table type the bag has no tab of its own for: the batch-use consumables are filed with the consume
-export const BAG_TAB_BY_TABLE_TYPE: Partial<Record<string, MaterialType>> = {
+export const TABLE_TYPE_BAG_TAB_MAP: Partial<Record<string, MaterialType>> = {
   MATERIAL_CONSUME_BATCH_USE: MaterialType.Consume,
 };
 // The bag's tabs, each a material type the bag shows a tab for

@@ -24,6 +24,8 @@ import {
   gadgetRowSchema,
   GameDataset,
   MAX_ITEM_QUANTITY,
+  offeringLevelItemSchema,
+  offeringRewardSchema,
   reputationCitySchema,
   WALLET_ITEM_IDS,
 } from "genshin-world";
@@ -61,8 +63,8 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
   const frostbearingTreeLevels = z
     .array(
       z.object({
-        items: z.array(z.object({ itemId: z.int() })),
-        reward: z.object({ kind: z.literal("fixed"), rewards: z.array(z.object({ itemId: z.int() })) }),
+        items: z.array(offeringLevelItemSchema),
+        reward: z.object({ kind: z.literal("fixed"), rewards: z.array(offeringRewardSchema) }),
       }),
     )
     .parse(await readPublishedGameData("offerings/frostbearingTree"));

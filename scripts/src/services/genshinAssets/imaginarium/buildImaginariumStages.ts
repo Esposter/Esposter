@@ -12,8 +12,8 @@ import { readWikiPageContent } from "#src/services/genshinAssets/enemies/readWik
 import { toLevelCurves } from "#src/services/genshinAssets/enemies/toLevelCurves";
 import { ROLE_COMBAT_SCHEDULE_TABLE_NAME } from "#src/services/genshinAssets/imaginarium/constants";
 import { ExcelRoleCombatScheduleRowFieldDumpKeyMap } from "#src/services/genshinAssets/imaginarium/ExcelRoleCombatScheduleRowFieldDumpKeyMap";
-import { fetchImaginariumSeasonTitles } from "#src/services/genshinAssets/imaginarium/fetchImaginariumSeasonTitles";
 import { parseWikiImaginariumStages } from "#src/services/genshinAssets/imaginarium/parseWikiImaginariumStages";
+import { readImaginariumSeasonTitles } from "#src/services/genshinAssets/imaginarium/readImaginariumSeasonTitles";
 import { toImaginariumStage } from "#src/services/genshinAssets/imaginarium/toImaginariumStage";
 import { toImaginariumStageEnemy } from "#src/services/genshinAssets/imaginarium/toImaginariumStageEnemy";
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
@@ -31,7 +31,7 @@ export const buildImaginariumStages = async (): Promise<Record<string, unknown>>
       ExcelRoleCombatScheduleRowFieldDumpKeyMap,
     ).map(({ beginTimeStr, scheduleId }) => [beginTimeStr.slice(0, 10), scheduleId]),
   );
-  const titles = await fetchImaginariumSeasonTitles();
+  const titles = await readImaginariumSeasonTitles();
   await fetchEnemyWikiPages(titles, false);
   const monsters = readMonsterNames();
   const monsterRows = readExcelTable<MonsterRow>(MONSTER_TABLE_NAME);

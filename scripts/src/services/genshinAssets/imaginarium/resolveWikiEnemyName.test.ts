@@ -8,7 +8,6 @@ describe(resolveWikiEnemyName, () => {
     { describeId: 202, id: 3, name: "Ruin Guard" },
     { describeId: 303, id: 4, name: "Ruin Drake" },
     { describeId: 304, id: 5, name: "Ruin Drake" },
-    { describeId: 404, id: 6, name: "" },
   ];
 
   test("a name whose monsters share one describe entry resolves to that entry", () => {

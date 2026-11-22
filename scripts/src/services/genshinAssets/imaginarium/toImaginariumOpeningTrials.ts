@@ -8,10 +8,10 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Read from the trial avatar table: the character it is and the level it holds. A trial id the table lacks is refused
 export const toImaginariumOpeningTrials = (
   openingTrialIds: number[],
-  trials: Map<number, ExcelTrialAvatarRow>,
+  trialAvatarRowMap: Map<number, ExcelTrialAvatarRow>,
 ): TrialAvatar[] =>
   openingTrialIds.map((trialAvatarId) => {
-    const row = trials.get(trialAvatarId);
+    const row = trialAvatarRowMap.get(trialAvatarId);
     if (!row)
       throw new InvalidOperationError(
         Operation.Read,

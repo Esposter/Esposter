@@ -3,7 +3,6 @@ import type { WikiImaginariumStage } from "#src/models/genshinAssets/imaginarium
 // A member of a domain enemies line, as the wiki writes it: its name, then a count, an aura or a Lua table annotation, which
 // The name ends before. The count is not read, since the stage's enemies are named, not counted
 const cleanWikiEnemyName = (member: string): string => member.replace(/[*/{].*$/u, "").trim();
-
 // The stages of a season's wiki page: each domain enemies block's variants, under the act and battle the block sits in. Its
 // Enemies are the names of its members in order, split at a semicolon and at the double slash that starts a second wave
 export const parseWikiImaginariumStages = (page: string): WikiImaginariumStage[] => {
