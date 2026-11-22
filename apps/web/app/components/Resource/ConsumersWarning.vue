@@ -1,44 +1,21 @@
 <script setup lang="ts">
-import type { LinkedResource } from "#shared/models/resource/LinkedResource";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
-import { READ_RESOURCE_CONSUMERS_IDS_MAX_LENGTH } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { pluralize } from "#shared/util/text/pluralize";
-import { chunk, settleAll } from "@esposter/shared";
 
 interface Props {
   ids: ResourceInResource["id"][];
 }
 
 const { ids } = defineProps<Props>();
-const { $trpc } = useNuxtApp();
-const { data: consumers } = useQuery(async () => {
-  const idSet = new Set(ids);
-  const idConsumerMap = new Map<ResourceInResource["id"], LinkedResource>();
-  // One chunk at a time, since requests issued in one tick join a single batch and its URL again; the answers fold in
-  // Chunk order
-  const chunkConsumers = await settleAll(
-    chunk(ids, READ_RESOURCE_CONSUMERS_IDS_MAX_LENGTH).map(
-      (chunkIds) => () => $trpc.resource.readResourceConsumers.query({ ids: chunkIds }),
-    ),
-    1,
-  );
-  for (const consumer of chunkConsumers.flat())
-    // A chunk leaves out only its own ids, so one deleted in another chunk is left out here, and one using several
-    // Of the ids is named once
-    if (!idSet.has(consumer.id)) idConsumerMap.set(consumer.id, consumer);
-  return [...idConsumerMap.values()].toSorted((firstConsumer, secondConsumer) =>
-    EN_US_COMPARATOR.compare(firstConsumer.name, secondConsumer.name),
-  );
-});
+const { consumers } = useReadResourceConsumers(ids);
 </script>
 
 <!-- What a delete leaves dangling, said before it happens, as Airtable lists what depends on a field before it goes.
   Nothing is said until the read lands, and nothing at all when no other resource uses what is being deleted -->
 <template>
-  <UiAlert v-if="consumers?.length" status="warning">
+  <UiAlert v-if="consumers.length" status="warning">
     <p>
       Used by {{ consumers.length }} other {{ pluralize("resource", consumers.length) }}, which will show
       {{ ids.length === 1 ? "it" : "them" }} as missing until restored:

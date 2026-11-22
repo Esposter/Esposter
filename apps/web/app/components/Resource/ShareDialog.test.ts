@@ -12,6 +12,7 @@ import { useNotificationStore } from "#src/store/notification";
 import { MessageType, NotificationSeverity, ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
@@ -50,5 +51,18 @@ describe("resourceShareDialog", () => {
       severity: NotificationSeverity.Success,
       title: `Shared to ${room.name}`,
     });
+  });
+
+  // A failed read of the rooms is drawn as the failure with its retry, not as a reader in no rooms
+  test("a failed read of the rooms is drawn as the failure rather than as having no rooms", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.room.readRooms.query(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const component = await mountSuspended(ResourceShareDialog, { props: { modelValue: true, resource } });
+    await flushPromises();
+
+    expect(component.text()).toMatchInlineSnapshot(`"Share “Survey”Full screenCloseSomething went wrong Try again"`);
   });
 });

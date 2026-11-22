@@ -60,4 +60,20 @@ describe("resourceAskClaudeDialog", () => {
     expect(footer?.textContent).toBe("Close");
     expect(footer?.closest("[ui-region-body]")).toBeNull();
   });
+
+  // A failed read of the keys is drawn as the failure with its retry, not as a key that holds the scope
+  test("a failed read of the keys is drawn as the failure rather than offering the prompt", async () => {
+    expect.hasAssertions();
+
+    apiKeyList.mockResolvedValue({ data: null, error: { message: " " } });
+    await mountSuspended(ResourceAskClaudeDialog, {
+      attachTo: document.body,
+      props: { modelValue: true, resource: createResourceListItem() },
+    });
+    await flushPromises();
+
+    expect(document.body.textContent).toMatchInlineSnapshot(
+      `"Ask ClaudeFull screenCloseSomething went wrong Try againClose"`,
+    );
+  });
 });

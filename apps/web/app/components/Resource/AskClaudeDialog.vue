@@ -22,7 +22,13 @@ const {
   apiKey: { list },
 } = authClient;
 // The keys the person holds, read once a dialog opens so the steps to make one show only when none holds the scope
-const { data: apiKeysData } = useQuery(() => requireAuthData(list()), { isInlineError: true });
+const {
+  data: apiKeysData,
+  error,
+  isPending,
+  refresh,
+} = useQuery(() => requireAuthData(list()), { isInlineError: true });
+// The body draws its loading or error state until the read settles, so the steps and the prompt come only from a settled read
 const hasResourcesKey = computed(() => (apiKeysData.value ? checkHasResourcesKey(apiKeysData.value.apiKeys) : true));
 const line = ref("");
 const lineRules = [UiRules.required()];
@@ -33,23 +39,28 @@ const prompt = computed(() => getAssistantPrompt(resource, line.value));
      person's own key, so the one step shown first is that key, and the prompt is offered once there is a line -->
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Ask Claude" :size="UiDialogSize.Medium">
-    <ol v-if="!hasResourcesKey" pl-6 list-decimal flex flex-col gap-2>
-      <li>
-        Create an API key with the Resources scope for the agent to edit with, and keep it for its connection.
-        <div mt-2>
-          <UiButtonLink :to="{ hash: `#${UserSettingsPageSection.ApiKeys}`, path: RoutePath.UserSettings }">
-            API keys
-          </UiButtonLink>
+    <UiAsyncBody :error :is-pending="isPending ? true : undefined" @retry="refresh()">
+      <template #loading>
+        <UiSkeleton h-8 />
+      </template>
+      <ol v-if="!hasResourcesKey" pl-6 list-decimal flex flex-col gap-2>
+        <li>
+          Create an API key with the Resources scope for the agent to edit with, and keep it for its connection.
+          <div mt-2>
+            <UiButtonLink :to="{ hash: `#${UserSettingsPageSection.ApiKeys}`, path: RoutePath.UserSettings }">
+              API keys
+            </UiButtonLink>
+          </div>
+        </li>
+      </ol>
+      <template v-else>
+        <UiTextField v-model="line" is-autofocus label="Ask Claude" :rules="lineRules" />
+        <div v-if="line" py-1 pl-3 pr-1 flex gap-2 items-center ui-field>
+          <code flex-1 break-all>{{ prompt }}</code>
+          <UiCopyButton label="Copy prompt" :source="prompt" />
         </div>
-      </li>
-    </ol>
-    <template v-else>
-      <UiTextField v-model="line" is-autofocus label="Ask Claude" :rules="lineRules" />
-      <div v-if="line" py-1 pl-3 pr-1 flex gap-2 items-center ui-field>
-        <code flex-1 break-all>{{ prompt }}</code>
-        <UiCopyButton label="Copy prompt" :source="prompt" />
-      </div>
-    </template>
+      </template>
+    </UiAsyncBody>
     <template v-if="hasResourcesKey" #footer>
       <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Close</UiButton>
     </template>

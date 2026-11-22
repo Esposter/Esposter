@@ -2,13 +2,11 @@
 import type { TagRow } from "#src/models/resource/TagRow";
 import type { ResourceTags } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiDialogSize } from "#src/models/ui/UiDialogSize";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getResourceTags } from "#src/services/resource/tag/getResourceTags";
 import { getTagRows } from "#src/services/resource/tag/getTagRows";
-import { UiRules } from "#src/services/ui/UiRules";
-import { MAX_TAG_NAME_LENGTH, MAX_TAG_VALUE_LENGTH, MAX_TAGS_COUNT } from "@esposter/db-schema";
+import { MAX_TAGS_COUNT } from "@esposter/db-schema";
 import { v7 } from "uuid";
 
 interface Props {
@@ -18,8 +16,6 @@ interface Props {
 
 const isOpen = defineModel<boolean>({ default: false });
 const { tags } = defineProps<Props>();
-const nameRules = [UiRules.maxLength(MAX_TAG_NAME_LENGTH)];
-const valueRules = [UiRules.maxLength(MAX_TAG_VALUE_LENGTH)];
 // The caller mounts this only while it is open, so the rows start from the current tags on every open.
 // An empty trailing row means the first thing the user sees is somewhere to type.
 // A row is keyed by its own id rather than its place, so removing one leaves each remaining row's field, and the error
@@ -36,19 +32,13 @@ const rows = ref(Object.keys(tags).length > 0 ? getTagRows(tags).map((row) => cr
     title="Edit tags"
     :size="UiDialogSize.Large"
   >
-    <div v-for="(row, index) of rows" :key="row.id" flex gap-2 items-start>
-      <UiTextField v-model="row.name" label="Name" :rules="nameRules" flex-1 />
-      <UiTextField v-model="row.value" label="Value" :rules="valueRules" flex-1>
-        <template #trailing>
-          <UiIconButton
-            label="Remove tag"
-            :meaning="UiIconMeaning.Delete"
-            :variant="UiButtonVariant.Quiet"
-            @click="rows = rows.toSpliced(index, 1)"
-          />
-        </template>
-      </UiTextField>
-    </div>
+    <ResourceTagsEditorDialogRow
+      v-for="(row, index) of rows"
+      :key="row.id"
+      v-model:name="row.name"
+      v-model:value="row.value"
+      @remove="rows = rows.toSpliced(index, 1)"
+    />
     <UiButton v-if="rows.length < MAX_TAGS_COUNT" self-start @click="rows = [...rows, createRow()]">
       <UiIcon :meaning="UiIconMeaning.Create" />
       Add tag

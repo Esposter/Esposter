@@ -9,7 +9,7 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getShareMessage } from "#src/services/resource/getShareMessage";
 import { useNotificationStore } from "#src/store/notification";
 import { MESSAGE_MAX_LENGTH, NotificationSeverity } from "@esposter/db-schema";
-import { getResultAsync, MAX_READ_LIMIT, noop, RoutePath } from "@esposter/shared";
+import { getResultAsync, MAX_READ_LIMIT, RoutePath } from "@esposter/shared";
 
 interface Props {
   resource: ResourceInResource;
@@ -21,8 +21,16 @@ const { $trpc } = useNuxtApp();
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 const { answer, isPending } = useDialogAnswer(isOpen);
-const roomItems = ref<UiSelectItem<string>[]>([]);
-const isLoadingRooms = ref(true);
+// The caller mounts this only while open, so the rooms are read once per open rather than watched
+const {
+  data: rooms,
+  error: roomsError,
+  isPending: isLoadingRooms,
+  refresh: refreshRooms,
+} = useQuery(() => $trpc.room.readRooms.query({ limit: MAX_READ_LIMIT }), { isInlineError: true });
+const roomItems = computed<UiSelectItem<string>[]>(() =>
+  (rooms.value?.items ?? []).map(({ id, image, name }) => ({ image: image ?? "", title: name, value: id })),
+);
 const roomId = ref("");
 const note = ref("");
 const { origin } = useRequestURL();
@@ -35,14 +43,6 @@ const noteRules = computed(() => [
     shareMessage.value.length <= MESSAGE_MAX_LENGTH ||
     "The note and link together exceed the message limit, so the note needs to be shorter",
 ]);
-// The caller mounts this only while open, so the rooms are read once per open rather than watched
-onMounted(async () => {
-  await getResultAsync(async () => {
-    const { items } = await $trpc.room.readRooms.query({ limit: MAX_READ_LIMIT });
-    roomItems.value = items.map(({ id, image, name }) => ({ image: image ?? "", title: name, value: id }));
-  }).match(noop, createErrorNotification);
-  isLoadingRooms.value = false;
-});
 // The message is the room's to accept, so the notice shows once the server has accepted it, and a refused share shows its error
 const share = () => {
   const room = roomItems.value.find(({ value }) => value === roomId.value);
@@ -76,6 +76,7 @@ const share = () => {
         <UiSkeleton h-8 />
         <UiSkeleton h-20 />
       </div>
+      <UiErrorState v-else-if="roomsError" :error="roomsError" @retry="refreshRooms()" />
       <!-- Nothing to pick from is a reason to go make a room, not a disabled button with no explanation -->
       <UiEmptyState
         v-else-if="roomItems.length === 0"
