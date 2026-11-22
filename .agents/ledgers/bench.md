@@ -59,6 +59,14 @@ Its hits are judged by what the helper does inside the timed callback. A helper 
 mutates is a finding, and no grep sees inside it; a constant, or a helper only the module scope or a `beforeEach`
 calls, is not.
 
+```bash
+# a comment stating a file's line count, which drifts with the file and so says nothing the file does not
+git grep -n -E '//.*[0-9][0-9.,]*k?[ -]?lines?' -- '*.bench.ts'
+```
+
+A hit is a finding whatever its figure. The fix states the scale in words, or drops the figure, since the file is the
+measure.
+
 ## Judging a match
 
 - **A fixture helper that spreads a container is not isolation.** Copy every level the benched code writes
