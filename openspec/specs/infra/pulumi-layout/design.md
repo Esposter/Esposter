@@ -13,16 +13,18 @@ Every Cloudflare resource Esposter runs, and every GitHub repository setting, is
 
 What each folder under `src/cloudflare/resources/` holds:
 
-| Folder                               | Resources                                                                                            |
-| :----------------------------------- | :--------------------------------------------------------------------------------------------------- |
-| `zones/`, `dnsRecords/`, `rulesets/` | The `esposter.com` zone, its apex and `www` records, and the redirect ruleset                        |
-| `workersCustomDomains/`              | The custom domains of the web Worker                                                                 |
-| `d1Databases/`                       | The `core` database, one per environment                                                             |
-| `r2Buckets/`                         | One bucket per storage bucket name, per environment, the `public-` buckets served on a custom domain |
-| `r2BucketLifecycles/`                | The message-assets rule moving objects to Infrequent Access after thirty days                        |
-| `r2BucketEventNotifications/`        | The object-create notifications that send bucket writes to a queue                                   |
-| `queues/`                            | One queue and one dead-letter queue per job, per environment                                         |
-| `queueConsumers/`                    | Each queue's consumer, which is the jobs Worker                                                      |
+| Folder                                               | Resources                                                                                                                                                    |
+| :--------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `zones/`, `zoneDnssecs/`, `dnsRecords/`, `rulesets/` | The `esposter.com` zone, its DNSSEC signing, its `www` record and its no-mail records (a null MX, SPF and DMARC), and its redirect and URL-rewrite rulesets  |
+| `botManagements/`                                    | The zone's bot settings                                                                                                                                      |
+| `workersCustomDomains/`                              | The custom domains of the web Worker                                                                                                                         |
+| `d1Databases/`                                       | The `core` database, one per environment                                                                                                                     |
+| `r2Buckets/`                                         | One bucket per storage bucket name, per environment, the `public-` buckets served on a custom domain                                                         |
+| `r2BucketLifecycles/`                                | The message-assets rule moving objects to Infrequent Access after thirty days, and the user-assets rule deleting a data export once its retention has passed |
+| `r2BucketCors/`                                      | The CORS rule of each bucket a browser reaches through a presigned url, built by `getR2BucketCorsRules`                                                      |
+| `r2BucketEventNotifications/`                        | The object-create notifications that send bucket writes to a queue                                                                                           |
+| `queues/`                                            | One queue and one dead-letter queue per job, per environment                                                                                                 |
+| `queueConsumers/`                                    | Each queue's consumer, which is the jobs Worker                                                                                                              |
 
 The Workers' code is not in this list. Nitro writes the web Worker's configuration file, the realtime and jobs Workers have their own, and each names the binding ids the program exports.
 

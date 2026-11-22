@@ -13,7 +13,7 @@ Mail sent to any address at the domain arrives as a message in one private room,
 
 ## What works today against what the design adds
 
-Today the domain publishes no mail records and receives nothing. The jobs Worker already holds everything a mail handler needs: the `PROCESS_WEBHOOK_QUEUE` producer binding, the D1 `CORE` binding and the private `USER_ASSETS` bucket. A webhook already turns a payload into a message from a bot identity, with retries, a dead-letter queue and a redelivery-safe write.
+Today the domain publishes only the registrar change's no-mail baseline, a null MX, an SPF record that authorises no sender and a DMARC record that rejects, and receives nothing. The jobs Worker already holds everything a mail handler needs: the `PROCESS_WEBHOOK_QUEUE` producer binding, the D1 `CORE` binding and the private `USER_ASSETS` bucket. A webhook already turns a payload into a message from a bot identity, with retries, a dead-letter queue and a redelivery-safe write.
 
 The design adds an `email` handler to the jobs Worker, one variable naming the webhook, two Email Routing resources and a lifecycle rule. It adds no table, no permission, no queue and no page.
 

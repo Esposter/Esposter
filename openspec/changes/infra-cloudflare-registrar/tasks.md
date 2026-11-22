@@ -10,7 +10,7 @@
 - [ ] 2.2 The owner keeps admin roles to those who need one and checks that the deploy token carries no registrar permission. Verify: the owner reads each setting back in the dashboard.
 - [x] 2.3 Declare the zone's DNSSEC in `zoneDnssecs/esposterComDnssec.ts`. Verify: `pnpm infra:preview --suppress-outputs` lists one create and nothing else, and after `pnpm infra:up` a DNSKEY lookup for `esposter.com` returns keys.
 - [x] 2.4 Declare the no-mail baseline in `dnsRecords/esposterComNullMx.ts`, `esposterComSpf.ts` and `esposterComDmarc.ts`. Verify: the preview lists three creates and nothing else, and after the apply `Resolve-DnsName esposter.com -Type MX` returns the null MX and the TXT lookups return the SPF and DMARC values.
-- [ ] 2.5 Cloudflare publishes the zone's DS record at the registry. Verify: a DS lookup for `esposter.com` returns a record, and the domain's RDAP record reads `delegationSigned: true`, within two days of 2.3's apply.
+- [x] 2.5 Cloudflare publishes the zone's DS record at the registry. Verify: a DS lookup for `esposter.com` returns a record, and the domain's RDAP record reads `delegationSigned: true`, within two days of 2.3's apply. Done 2026-11-22: the DS lookup returns `2371 13 2`, and RDAP reads `delegationSigned: true`.
 
 ## 3. The specs and docs carry it
 

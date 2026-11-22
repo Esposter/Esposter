@@ -16,7 +16,7 @@ None. The change is infrastructure and documentation, so it carries no spec delt
 
 ## Waiting on
 
-The owner reading the account's admin roles and the deploy token's permissions back in the dashboard, and Cloudflare publishing the DS record at the registry, which its DNSSEC page puts at one to two days and which cannot be hurried.
+The owner reading the account's admin roles and the deploy token's permissions back in the dashboard.
 
 ## Impact
 

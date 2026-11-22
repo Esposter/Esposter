@@ -4,7 +4,7 @@ Closes the gaps a registrar move leaves, after the [Cloudflare program](../archi
 
 ## What works today against what the change adds
 
-Today the domain is registered at Cloudflare, the zone is declared in Pulumi with `protect: true`, its nameservers point at Cloudflare, its DNSSEC is declared and signing, and it publishes the no-mail baseline. The DS record at the registry is Cloudflare's to publish, and the registration stays outside the program.
+Today the domain is registered at Cloudflare, the zone is declared in Pulumi with `protect: true`, its nameservers point at Cloudflare, its DNSSEC is declared and signing, and it publishes the no-mail baseline. Cloudflare has published the DS record at the registry, and the registration stays outside the program.
 
 The change adds a handful of resources to the program and records everything else on the posture page. It adds no Worker code.
 
