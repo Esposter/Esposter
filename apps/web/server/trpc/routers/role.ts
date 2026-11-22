@@ -14,7 +14,7 @@ import { assertCanManageRole } from "#server/services/room/rbac/assertCanManageR
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
 import { checkIsRoomOwner } from "#server/services/room/rbac/checkIsRoomOwner";
 import { getRoomMemberAuthority } from "#server/services/room/rbac/getRoomMemberAuthority";
-import { getTopRolePosition } from "#server/services/room/rbac/getTopRolePosition";
+import { getTopRolePositionByRoomId } from "#server/services/room/rbac/getTopRolePositionByRoomId";
 import { readRoleWithAuthority } from "#server/services/room/rbac/readRoleWithAuthority";
 import { setMemberPermissionOverride } from "#server/services/room/rbac/setMemberPermissionOverride";
 import { requireUserToRoom } from "#server/services/room/requireUserToRoom";
@@ -35,7 +35,7 @@ import { readMyPermissionsInputSchema } from "#shared/models/db/role/ReadMyPermi
 import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { upsertMemberPermissionOverrideInputSchema } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
-import { getPermissions, inJsonArray } from "@esposter/db";
+import { getPermissionsByRoomId, inJsonArray } from "@esposter/db";
 import {
   DatabaseEntityType,
   getLiveRowWhere,
@@ -209,8 +209,8 @@ export const roleRouter = router({
           columns: { id: true, userId: true },
           where: { RAW: (room) => inJsonArray(room.id, roomIds) },
         }),
-        getPermissions(ctx.db, userId, roomIds),
-        getTopRolePosition(ctx.db, userId, roomIds),
+        getPermissionsByRoomId(ctx.db, userId, roomIds),
+        getTopRolePositionByRoomId(ctx.db, userId, roomIds),
       ]);
       return roomIds.map((roomId) => ({
         isRoomOwner: checkIsRoomOwner(
