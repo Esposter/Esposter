@@ -8,7 +8,7 @@ import type {
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
-import { pickColumns } from "#server/services/db/pickColumns";
+import { publicWebhookColumns } from "#server/services/webhook/publicWebhookColumns";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
@@ -34,10 +34,6 @@ import {
 import { generateSecretToken, hashSecretToken, Operation } from "@esposter/shared";
 import { and, eq, getColumns, inArray, sql } from "drizzle-orm";
 import { v7 } from "uuid";
-
-// Every column of a webhook a response carries: the allowlist a relational read takes, so a write answers with the
-// Columns a read does
-const publicWebhookColumns = pickColumns(getColumns(webhooksInMessage), PublicWebhookColumns);
 
 export const webhookRouter = router({
   createWebhook: getPermissionsProcedure(

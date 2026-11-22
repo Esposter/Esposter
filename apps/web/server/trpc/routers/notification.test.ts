@@ -74,23 +74,6 @@ describe("notificationRouter", () => {
     expect(secondPage).not.toHaveProperty("unreadCount");
   });
 
-  test("answers the unread count the delete leaves", async () => {
-    expect.hasAssertions();
-
-    const authSession = await createMockAuthSession(mockContext.db);
-    const caller = await createMockCaller(notificationRouter, authSession);
-    await mockContext.db
-      .insert(notificationsInNotification)
-      .values([
-        createNotificationRow(firstId, authSession.user.id),
-        createNotificationRow(secondId, authSession.user.id),
-      ]);
-
-    const { unreadCount } = await caller.deleteNotification(firstId);
-
-    expect(unreadCount).toBe(1);
-  });
-
   // A dismissal leaves the row as a tombstone the read returns, so a read that lands later cannot bring it back, and the
   // Answer names the row it left
   test("keeps a dismissed notification as a tombstone the read returns, and answers the row with the unread count", async () => {

@@ -4,8 +4,7 @@ import type { UserAchievementInAchievementWithRelations } from "@esposter/db-sch
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
-import { createMockAuthSession, createMockContext, createMockUser, getMockSession } from "#server/trpc/context.test";
-import { createCallerFactory } from "#server/trpc/index";
+import { createMockAuthSession, createMockCaller, createMockUser, getMockSession } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers/index";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
@@ -125,9 +124,8 @@ describe("achievementRouter", () => {
     expect(ownAchievements.some(({ unlockedAt }) => !unlockedAt)).toBe(true);
 
     const otherUserAuthSession = await createMockAuthSession(mockContext.db);
-    const otherAchievements = await createCallerFactory(trpcRouter)(
-      await createMockContext(otherUserAuthSession),
-    ).achievement.readUserAchievements(ownerId);
+    const otherUserCaller = await createMockCaller(trpcRouter, otherUserAuthSession);
+    const otherAchievements = await otherUserCaller.achievement.readUserAchievements(ownerId);
 
     expect(otherAchievements).not.toStrictEqual([]);
     expect(otherAchievements).toStrictEqual(ownAchievements.filter(({ unlockedAt }) => unlockedAt));

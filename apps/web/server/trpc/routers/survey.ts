@@ -13,8 +13,8 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
-import { slowRateLimitedProcedure } from "#server/trpc/procedure/slowRateLimitedProcedure";
-import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
+import { slowRespondentProcedure } from "#server/trpc/procedure/survey/slowRespondentProcedure";
+import { standardRespondentProcedure } from "#server/trpc/procedure/survey/standardRespondentProcedure";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { createSurveyResponseInputSchema } from "#shared/models/db/survey/CreateSurveyResponseInput";
 import { deleteSurveyResponseInputSchema } from "#shared/models/db/survey/DeleteSurveyResponseInput";
@@ -23,11 +23,6 @@ import { updateSurveyResponseInputSchema } from "#shared/models/db/survey/Update
 import { DatabaseEntityType, McpScope, ResourceType, surveyResponsesInResource } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
-
-// A respondent's procedures answer for the person filling the survey in, never for the owner acting on it
-const RESPONDENT_PROCEDURE_REASON = "A respondent's procedure, not the owner's act";
-const slowRespondentProcedure = slowRateLimitedProcedure.meta({ humanOnly: RESPONDENT_PROCEDURE_REASON });
-const standardRespondentProcedure = standardRateLimitedProcedure.meta({ humanOnly: RESPONDENT_PROCEDURE_REASON });
 
 export const surveyRouter = router({
   // Survey uploads come from the shared fileAssets capability rather than a bespoke set here —
@@ -104,24 +99,23 @@ export const surveyRouter = router({
         DatabaseEntityType.SurveyResponse,
         JSON.stringify({ id, resourceId }),
       );
+      // A submitted response stays submitted, whatever a later save says
+      const isUpdatedDraft = surveyResponse.isDraft && isDraft;
+      const modelVersion = input.modelVersion + 1;
       // A resume must carry the identity it started with, so swapping tokens mid-response is a forgery.
       // Only Identified mode resolves a token to compare — Anonymous carries no identity to contradict
       if (participantTokenHash && participantTokenHash !== surveyResponse.participantTokenHash)
         throw getInvalidParticipantTokenError();
-      // A submitted response stays submitted, whatever a later save says
-      const isUpdatedDraft = surveyResponse.isDraft && isDraft;
       // Response models are plain records, so duplicates are detected structurally rather than by reference.
       // A page-only write persists only when it advances the resume position — identical answers on the same
       // Or an earlier page are a no-op (and must not regress a stored later page) unless they submit the draft
-      if (
+      else if (
         JSON.stringify(input.model) === JSON.stringify(surveyResponse.model) &&
         input.pageNo <= surveyResponse.pageNo &&
         isUpdatedDraft === surveyResponse.isDraft
       )
         throw getInvalidOperationError(Operation.Update, DatabaseEntityType.SurveyResponse, "duplicate model");
-
-      const modelVersion = input.modelVersion + 1;
-      if (modelVersion <= surveyResponse.modelVersion)
+      else if (modelVersion <= surveyResponse.modelVersion)
         throw getInvalidOperationError(
           Operation.Update,
           DatabaseEntityType.SurveyResponse,

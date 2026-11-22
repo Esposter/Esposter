@@ -58,11 +58,13 @@ describe("pushSubscriptionRouter", () => {
 
   // The server pushes to whatever endpoint it stores, so an endpoint off the browsers' push services is refused at the
   // Input rather than stored, where the jobs worker would POST to it
-  test("refuses an endpoint whose host is not a browser's push service", async () => {
-    expect.hasAssertions();
+  test.each(["https://attacker.example", "http://fcm.googleapis.com"])(
+    "refuses the push endpoint %s",
+    async (invalidEndpoint) => {
+      expect.hasAssertions();
 
-    await expect(pushSubscriptionCaller.subscribe({ endpoint: "https://attacker.example", keys: { auth, p256dh } }))
-      .rejects.toThrowErrorMatchingInlineSnapshot(`
+      await expect(pushSubscriptionCaller.subscribe({ endpoint: invalidEndpoint, keys: { auth, p256dh } })).rejects
+        .toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: [
         {
           "code": "custom",
@@ -73,26 +75,9 @@ describe("pushSubscriptionRouter", () => {
         }
       ]]
     `);
-    await expect(mockContext.db.query.pushSubscriptionsInNotification.findFirst()).resolves.toBeUndefined();
-  });
-
-  test("refuses a push endpoint that is not https", async () => {
-    expect.hasAssertions();
-
-    await expect(pushSubscriptionCaller.subscribe({ endpoint: "http://fcm.googleapis.com", keys: { auth, p256dh } }))
-      .rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "code": "custom",
-          "path": [
-            "endpoint"
-          ],
-          "message": "Invalid input: expected the endpoint of a browser's push service"
-        }
-      ]]
-    `);
-    await expect(mockContext.db.query.pushSubscriptionsInNotification.findFirst()).resolves.toBeUndefined();
-  });
+      await expect(mockContext.db.query.pushSubscriptionsInNotification.findFirst()).resolves.toBeUndefined();
+    },
+  );
 
   test("unsubscribes, and an endpoint with no subscription unsubscribes as a no-op", async () => {
     expect.hasAssertions();

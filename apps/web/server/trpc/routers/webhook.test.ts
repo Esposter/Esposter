@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { CreateWebhookInput } from "#shared/models/db/webhook/CreateWebhookInput";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
@@ -24,19 +24,13 @@ describe("webhookRouter", () => {
   const name = "name";
   const updatedName = "updatedName";
   const updatedIsActive = false;
-  // A member of the room who holds no permission, as the caller of the guarded call the test makes next
-  const createMemberWebhookCaller = async () => {
-    const member = await createMember();
-    const memberAuthSession = await createMockAuthSession(mockContext.db, member);
-    return createCallerFactory(webhookRouter)(await createMockContext(memberAuthSession));
-  };
-
   beforeAll(() => {
     mockContext = getMockContext();
     webhookCaller = createCallerFactory(webhookRouter)(mockContext);
   });
 
   beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     roomId = getRoomId();
   });
 
@@ -87,7 +81,8 @@ describe("webhookRouter", () => {
   test(`fails create for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {
     expect.hasAssertions();
 
-    const memberWebhookCaller = await createMemberWebhookCaller();
+    const memberAuthSession = await createMockAuthSession(mockContext.db, await createMember());
+    const memberWebhookCaller = await createMockCaller(webhookRouter, memberAuthSession);
 
     await expect(memberWebhookCaller.createWebhook({ name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -137,7 +132,8 @@ describe("webhookRouter", () => {
     expect.hasAssertions();
 
     const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
-    const memberWebhookCaller = await createMemberWebhookCaller();
+    const memberAuthSession = await createMockAuthSession(mockContext.db, await createMember());
+    const memberWebhookCaller = await createMockCaller(webhookRouter, memberAuthSession);
 
     await expect(
       memberWebhookCaller.updateWebhook({ id: newWebhook.id, name: updatedName, roomId }),
@@ -161,7 +157,8 @@ describe("webhookRouter", () => {
     expect.hasAssertions();
 
     const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
-    const memberWebhookCaller = await createMemberWebhookCaller();
+    const memberAuthSession = await createMockAuthSession(mockContext.db, await createMember());
+    const memberWebhookCaller = await createMockCaller(webhookRouter, memberAuthSession);
 
     await expect(
       memberWebhookCaller.regenerateToken({ id: newWebhook.id, roomId }),
@@ -173,7 +170,6 @@ describe("webhookRouter", () => {
   test("deletes, keeping the webhook and its app user as tombstones", async () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     const deletedWebhook = await webhookCaller.deleteWebhook({ id: newWebhook.id, roomId });
     const webhooks = await webhookCaller.readWebhooks({ roomId });
@@ -216,7 +212,8 @@ describe("webhookRouter", () => {
     expect.hasAssertions();
 
     const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
-    const memberWebhookCaller = await createMemberWebhookCaller();
+    const memberAuthSession = await createMockAuthSession(mockContext.db, await createMember());
+    const memberWebhookCaller = await createMockCaller(webhookRouter, memberAuthSession);
 
     await expect(
       memberWebhookCaller.deleteWebhook({ id: newWebhook.id, roomId }),
@@ -248,7 +245,7 @@ describe("webhookRouter", () => {
 
     const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     const nonMemberAuthSession = await createMockAuthSession(mockContext.db);
-    const nonMemberWebhookCaller = createCallerFactory(webhookRouter)(await createMockContext(nonMemberAuthSession));
+    const nonMemberWebhookCaller = await createMockCaller(webhookRouter, nonMemberAuthSession);
 
     await expect(
       nonMemberWebhookCaller.readAppUsers({ ids: [newWebhook.userId], roomId }),

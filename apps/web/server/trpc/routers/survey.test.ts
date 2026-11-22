@@ -6,7 +6,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "#server/services/survey/constants";
-import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
@@ -652,7 +652,7 @@ describe("surveyRouter", () => {
     const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
     await expect(
-      createCallerFactory(surveyRouter)(await createMockContext(otherUserAuthSession)).deleteSurveyResponse({
+      (await createMockCaller(surveyRouter, otherUserAuthSession)).deleteSurveyResponse({
         id: newResource.id,
         responseId: newSurveyResponse.id,
       }),

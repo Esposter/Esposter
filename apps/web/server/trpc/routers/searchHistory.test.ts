@@ -2,7 +2,7 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { searchHistoryRouter } from "#server/trpc/routers/searchHistory";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
@@ -78,7 +78,7 @@ describe("searchHistoryRouter", () => {
 
     const member = await createMember();
     const memberAuthSession = await createMockAuthSession(mockContext.db, member);
-    const memberCaller = createCallerFactory(searchHistoryRouter)(await createMockContext(memberAuthSession));
+    const memberCaller = await createMockCaller(searchHistoryRouter, memberAuthSession);
     await memberCaller.createSearchHistory({ query, roomId });
     const searchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
 
@@ -89,7 +89,7 @@ describe("searchHistoryRouter", () => {
     expect.hasAssertions();
 
     const nonMemberAuthSession = await createMockAuthSession(mockContext.db);
-    const nonMemberCaller = createCallerFactory(searchHistoryRouter)(await createMockContext(nonMemberAuthSession));
+    const nonMemberCaller = await createMockCaller(searchHistoryRouter, nonMemberAuthSession);
 
     await expect(nonMemberCaller.readSearchHistories({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
