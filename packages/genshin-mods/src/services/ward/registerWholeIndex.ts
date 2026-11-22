@@ -1,48 +1,6 @@
-import type { EngineInterface, On, ToolCallResult } from "claude-code";
+import type { EngineInterface, On } from "claude-code";
 
-import { atom, read } from "claude-code";
-
-import { InitialState } from "../InitialState";
-import { joinDirectory } from "../shell/joinDirectory";
-import { getCheckoutPeer } from "./getCheckoutPeer";
-import { getParentFolder } from "./getParentFolder";
-import { getWholeIndexDenyReason } from "./getWholeIndexDenyReason";
-import { getWholeIndexRefusal } from "./getWholeIndexRefusal";
-import { readRecords } from "./readRecords";
-import { resolveRecordsPath } from "./resolveRecordsPath";
-
-const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
-
-// The nearest folder at or above `folder` holding a `.git`, a worktree's file included, undefined when none does
-const findCheckoutRoot = async ($: EngineInterface, folder: string): Promise<string | undefined> => {
-  let current: string | undefined = folder;
-  while (current !== undefined) {
-    // oxlint-disable-next-line no-await-in-loop -- Stop at the first: the nearest folder holding a `.git` is the checkout, and the walk ends there
-    if (await $.fs.exists(`${current}/.git`)) return current;
-    current = getParentFolder(current);
-  }
-  return undefined;
-};
-
-// The checkout a session's git commands run in: the folder with the `.git`, or the session's own folder where none is
-const getCheckoutRoot = async ($: EngineInterface, cwd: string): Promise<string> =>
-  (await findCheckoutRoot($, cwd)) ?? cwd;
-
-// A whole-index git command is refused while the ward's records show another session editing the checkout it runs in,
-// The session's folder moved by a `cd` before it and by its `-C`. With the Ward off nothing is recorded, so there is no
-// Peer to see and the command runs
-const wholeIndex = async (
-  $: EngineInterface,
-  command: string,
-  proceed: () => Promise<ToolCallResult>,
-): Promise<ToolCallResult> => {
-  const refusal = getWholeIndexRefusal(command);
-  if (refusal === undefined || !(await read($, enabledModsAtom)).ward) return proceed();
-  const records = await readRecords($, await resolveRecordsPath($));
-  const checkoutRoot = await getCheckoutRoot($, joinDirectory(await $.session.cwd(), refusal.directory));
-  const peerPath = getCheckoutPeer(records, checkoutRoot, await $.session.id(), await $.clock.now());
-  return peerPath === undefined ? proceed() : { deny: getWholeIndexDenyReason(refusal.form, peerPath) };
-};
+import { wholeIndex } from "./wholeIndex";
 
 // A hook that rejects lets its call through: a guard that blocked on its own failure would block every call after it
 const letThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);

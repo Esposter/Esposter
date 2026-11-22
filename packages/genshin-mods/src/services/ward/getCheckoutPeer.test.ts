@@ -4,10 +4,10 @@ import { WARD_WINDOW_MS } from "../constants";
 import { getCheckoutPeer } from "./getCheckoutPeer";
 
 describe(getCheckoutPeer, () => {
-  const CHECKOUT_ROOT = String.raw`C:\Users\jimmy\checkout`;
-  const EDITED_PATH = String.raw`C:\Users\jimmy\checkout\packages\genshin-mods\src\register.ts`;
-  const OWN_SESSION_ID = "own";
-  const PEER_SESSION_ID = "peer";
+  const CHECKOUT_ROOT = String.raw`C:\Users\a\checkout`;
+  const EDITED_PATH = String.raw`C:\Users\a\checkout\packages\genshin-mods\src\register.ts`;
+  const OWN_SESSION_ID = "00000000-0000-4000-8000-000000000000";
+  const PEER_SESSION_ID = "00000000-0000-4000-8000-000000000001";
   const NOW = WARD_WINDOW_MS * 10;
 
   test("refuses nothing with no peer session, the checkout's own edits alone", () => {
