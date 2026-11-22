@@ -523,13 +523,11 @@ onRender(({ delta: frameDelta }) => {
   rushMs.value = isDoorLit ? rushMs.value + delta * 1000 : 0;
   isDoorRising.value = isDoorDue && (isDoorRising.value || doorAheadOfCamera <= LOGIN_WALKWAY_SUNK_DISTANCE);
   riseMs = isDoorRising.value ? riseMs + delta * 1000 : 0;
-  if (!isDoorFormed) {
-    let pieceIndex = 0;
-    for (const piece of doorPieces) {
-      applyLoginDoorLift(door, piece, door.pieces[pieceIndex]?.lift ?? LOGIN_NO_LIFT, riseMs);
-      pieceIndex++;
+  if (!isDoorFormed)
+    for (let pieceIndex = 0; pieceIndex < doorPieces.length; pieceIndex++) {
+      const piece = doorPieces[pieceIndex];
+      if (piece) applyLoginDoorLift(door, piece, door.pieces[pieceIndex]?.lift ?? LOGIN_NO_LIFT, riseMs);
     }
-  }
   // The door's own interface waits on the door, once its last piece has risen into place
   if (!isDoorFormed && isDoorRising.value && riseMs >= doorLiftMs) {
     isDoorFormed = true;
