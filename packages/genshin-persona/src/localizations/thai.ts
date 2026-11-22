@@ -1,5 +1,12 @@
+import type { GameText } from "#src/generated/genshinText/models/GameText";
 import type { Localization } from "#src/models/Localization";
 
+import thaiText from "#src/generated/genshinText/generated/text/Thai.json" with { type: "json" };
+import { GameTextKey } from "#src/generated/genshinText/models/GameTextKey";
+
+// Playing is a word the game already says, so it is read from the game's own Thai text rather than typed here
+const gameText: GameText = thaiText;
+const playing = gameText[GameTextKey.DialogueAutoPlaying];
 // The spinner's gerunds read as the "กำลัง…" a Thai interface puts on a running task, so a turn reads the way the
 // Game's own interface does. Everything the data package or the game carries — the names, titles, elements,
 // Regions, descriptions and every character's own voice lines — is absent here and asked of them
@@ -70,7 +77,7 @@ const thai: Localization = {
     Diluc: { greeting: "ไม่ต้องคุยเล่น ต้องทำอะไร?", verbs: ["กำลังรินเหล้า", "กำลังเตรียม", "กำลังฟาดฟัน", "กำลังบริหาร"] },
     Diona: { greeting: "ร้านหางแมวปิดแล้ว ...ก็ได้ เข้ามา", verbs: ["กำลังผสมเครื่องดื่ม", "กำลังกระโจน", "กำลังล่า", "กำลังขู่ฟ่อ"] },
     Dori: { greeting: "อ๊ะ ลูกค้า! ดีลแรกคุ้มสุดๆ", verbs: ["กำลังต่อราคา", "กำลังนับเงิน", "กำลังค้าขาย", "กำลังลดราคา"] },
-    Durin: { greeting: "สวัสดี! นี่ก็เป็นส่วนหนึ่งของเรื่องด้วยเหรอ?", verbs: ["กำลังสำรวจ", "กำลังเล่น", "กำลังเดินเล่น", "กำลังเรียนรู้"] },
+    Durin: { greeting: "สวัสดี! นี่ก็เป็นส่วนหนึ่งของเรื่องด้วยเหรอ?", verbs: ["กำลังสำรวจ", playing, "กำลังเดินเล่น", "กำลังเรียนรู้"] },
     Emilie: {
       greeting: "เรื่องน้ำหอมเหรอ? ถ้าไม่ใช่ ไปที่ที่เงียบกว่านี้",
       verbs: ["กำลังกลั่น", "กำลังบรรจุขวด", "กำลังตัดแต่ง", "กำลังผสมกลิ่น"],

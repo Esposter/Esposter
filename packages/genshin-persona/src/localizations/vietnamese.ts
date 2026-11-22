@@ -1,5 +1,12 @@
+import type { GameText } from "#src/generated/genshinText/models/GameText";
 import type { Localization } from "#src/models/Localization";
 
+import vietnameseText from "#src/generated/genshinText/generated/text/Vietnamese.json" with { type: "json" };
+import { GameTextKey } from "#src/generated/genshinText/models/GameTextKey";
+
+// Forging is a word the game already says, so it is read from the game's own Vietnamese text rather than typed here
+const gameText: GameText = vietnameseText;
+const forging = gameText[GameTextKey.ForgeQueueForging];
 // The spinner's gerunds read as the "Đang …" a Vietnamese interface puts on a running task, so a turn reads the way
 // The game's own interface does. Everything the data package or the game carries — the names, titles, elements,
 // Regions, descriptions and every character's own voice lines — is absent here and asked of them
@@ -444,7 +451,7 @@ const vietnamese: Localization = {
     },
     Xilonen: {
       greeting: "Dụng cụ à? Đang tồn đọng. Nhưng mà, chào.",
-      verbs: ["Đang rèn", "Đang đập búa", "Đang ngủ trưa", "Đang tắm nắng"],
+      verbs: [forging, "Đang đập búa", "Đang ngủ trưa", "Đang tắm nắng"],
     },
     Xingqiu: {
       greeting: "Xin phục vụ, thưa chủ nhân. Khiêm tốn, dĩ nhiên.",
@@ -583,7 +590,7 @@ const vietnamese: Localization = {
     "Đang cày",
     "Đang câu cá",
     "Đang hái lượm",
-    "Đang rèn",
+    forging,
     "Đang thu thập",
     "Đang lượn",
     "Đang thu hoạch",
