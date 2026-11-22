@@ -36,4 +36,13 @@ export default [
     selector:
       "CallExpression[callee.object.name='vi'][callee.property.name='useFakeTimers'] > ObjectExpression > Property[key.name='now'] > :matches(NewExpression, BinaryExpression, UnaryExpression, Literal[value!=0], CallExpression[callee.property.name='total'], MemberExpression[property.name='epochMilliseconds'])",
   },
+  {
+    // A test's timeout is a named Temporal duration, so the constant's name says what the bench measured. A number in
+    // The timeout slot says nothing of the cost, and a slow test that passes at the default has no timeout at all (the
+    // Testing skill's timeouts page). Both places a timeout is written: the third argument and the `timeout` option
+    message:
+      "Name a test's timeout as a constant — `const SLOW_MS = Temporal.Duration.from({ seconds: 60 }).total(\"milliseconds\")` — never a literal. See the testing skill's timeouts page.",
+    selector:
+      "CallExpression:matches([callee.name='it'], [callee.name='test'], [callee.object.name='it'], [callee.object.name='test'])[arguments.2.type='Literal'], CallExpression:matches([callee.name='it'], [callee.name='test'], [callee.object.name='it'], [callee.object.name='test']) > ObjectExpression > Property[key.name='timeout'][value.type='Literal']",
+  },
 ];

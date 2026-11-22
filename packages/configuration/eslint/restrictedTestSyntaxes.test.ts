@@ -9,6 +9,13 @@ const createClockFixture = (name: string, statement: string, violations: number)
   violations,
 });
 
+const createTimeoutFixture = (name: string, statement: string, violations: number) => ({
+  filePath: "a.test.ts",
+  name,
+  source: `import { test } from "vitest";\n${statement}`,
+  violations,
+});
+
 describe("restrictedTestSyntaxes", () => {
   setupSyntaxSuite({
     entries: restrictedTestSyntaxes,
@@ -32,6 +39,10 @@ describe("restrictedTestSyntaxes", () => {
         0,
       ),
       createClockFixture("fakeTimersNowAbsent", 'vi.useFakeTimers({ toFake: ["Date"] });', 0),
+      createTimeoutFixture("timeoutThirdArgumentLiteral", 'test("slow", () => {}, 60_000);', 1),
+      createTimeoutFixture("timeoutOptionLiteral", 'test("slow", { timeout: 60_000 }, () => {});', 1),
+      createTimeoutFixture("timeoutNamedConstant", 'test("slow", { timeout: SLOW_MS }, () => {});', 0),
+      createTimeoutFixture("timeoutAbsent", 'test("slow", () => {});', 0),
     ],
   });
 });
