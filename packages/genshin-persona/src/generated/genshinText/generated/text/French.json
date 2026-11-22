@@ -399,6 +399,8 @@
   "UI_BUTTON_FAST_TEAM": "Formation rapide",
   "UI_BUTTON_FILTER": "Filtrer",
   "UI_BUTTON_GOTO": "Se téléporter",
+  "UI_BUTTON_INCREASE": "Augmenter",
+  "UI_BUTTON_REDUCE": "Réduire",
   "UI_BUTTON_TEAM_ACTIVATED": "Déployée",
   "UI_BUTTON_ZOOM": "Zoomer",
   "UI_CHARACTER_DETAIL": "Détails",

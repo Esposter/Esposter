@@ -399,6 +399,8 @@
   "UI_BUTTON_FAST_TEAM": "Быстрый отряд",
   "UI_BUTTON_FILTER": "Фильтр",
   "UI_BUTTON_GOTO": "Телепорт",
+  "UI_BUTTON_INCREASE": "Увеличить",
+  "UI_BUTTON_REDUCE": "Уменьшить",
   "UI_BUTTON_TEAM_ACTIVATED": "Уже в бою",
   "UI_BUTTON_ZOOM": "Масштаб",
   "UI_CHARACTER_DETAIL": "Подробнее",

@@ -399,6 +399,8 @@
   "UI_BUTTON_FAST_TEAM": "Quick Setup",
   "UI_BUTTON_FILTER": "Filter",
   "UI_BUTTON_GOTO": "Teleport",
+  "UI_BUTTON_INCREASE": "Increase",
+  "UI_BUTTON_REDUCE": "Decrease",
   "UI_BUTTON_TEAM_ACTIVATED": "Deployed",
   "UI_BUTTON_ZOOM": "Zoom",
   "UI_CHARACTER_DETAIL": "Details",

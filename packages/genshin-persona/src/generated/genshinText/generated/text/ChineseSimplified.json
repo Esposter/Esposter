@@ -399,6 +399,8 @@
   "UI_BUTTON_FAST_TEAM": "快速编队",
   "UI_BUTTON_FILTER": "筛选",
   "UI_BUTTON_GOTO": "传送",
+  "UI_BUTTON_INCREASE": "增加",
+  "UI_BUTTON_REDUCE": "减少",
   "UI_BUTTON_TEAM_ACTIVATED": "已出战",
   "UI_BUTTON_ZOOM": "缩放",
   "UI_CHARACTER_DETAIL": "详细信息",

@@ -24,10 +24,14 @@ interface Props {
   autoRecoverLabel: string;
   // The way out of the screen in the reader's language
   closeLabel: string;
+  // The label on the threshold's lower step, in the reader's language
+  decreaseLabel: string;
   // The hint beside the deployed team's heading: a click on a member's portrait restores its HP
   healHint: string;
   // The heading over the deployed team, which the game lists as in combat
   inCombatLabel: string;
+  // The label on the threshold's higher step, in the reader's language
+  increaseLabel: string;
   // Whether auto-recover's switch is on
   isAutoRecoverOn: boolean;
   // The members of the deployed team, which the game lists as in combat
@@ -103,6 +107,8 @@ const emit = defineEmits<{
     <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     <AutoRecover
       :auto-recover-label
+      :decrease-label
+      :increase-label
       :is-auto-recover-on
       :pool-amount
       :pool-label

@@ -6,6 +6,10 @@ import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "#src/serv
 interface Props {
   // The label under the auto-recover switch, in the reader's language
   autoRecoverLabel: string;
+  // The label on the threshold's lower step, in the reader's language
+  decreaseLabel: string;
+  // The label on the threshold's higher step, in the reader's language
+  increaseLabel: string;
   // Whether auto-recover's switch is on
   isAutoRecoverOn: boolean;
   // The Restorative Power the pool holds now, and the most it holds
@@ -40,14 +44,14 @@ const emit = defineEmits<{ stepThreshold: [direction: -1 | 1]; toggleAutoRecover
   <button
     class="step decrease ring-button"
     type="button"
-    aria-label="Lower the threshold"
+    :aria-label="decreaseLabel"
     @click="emit('stepThreshold', -1)"
   />
   <span class="percent">{{ thresholdPercent }}%</span>
   <button
     class="step increase ring-button"
     type="button"
-    aria-label="Raise the threshold"
+    :aria-label="increaseLabel"
     @click="emit('stepThreshold', 1)"
   />
 </template>

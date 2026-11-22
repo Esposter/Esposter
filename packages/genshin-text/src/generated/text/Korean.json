@@ -399,6 +399,8 @@
   "UI_BUTTON_FAST_TEAM": "빠른 편성",
   "UI_BUTTON_FILTER": "필터링",
   "UI_BUTTON_GOTO": "워프",
+  "UI_BUTTON_INCREASE": "증가",
+  "UI_BUTTON_REDUCE": "감소",
   "UI_BUTTON_TEAM_ACTIVATED": "출전 중",
   "UI_BUTTON_ZOOM": "화면 조절",
   "UI_CHARACTER_DETAIL": "상세 정보",

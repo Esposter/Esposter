@@ -3,8 +3,10 @@
 export const props = {
   autoRecoverLabel: "Auto-recover when nearby",
   closeLabel: "Back",
+  decreaseLabel: "Decrease",
   healHint: "Click on the character portrait to restore HP",
   inCombatLabel: "In combat",
+  increaseLabel: "Increase",
   isAutoRecoverOn: true,
   members: [
     { healthShare: 1, id: 1, levelText: "Lv. 5", name: "Diluc" },

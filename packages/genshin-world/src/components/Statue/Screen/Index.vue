@@ -83,6 +83,8 @@ const heal = (characterId: number) => {
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.StatueBlessing]">
     <BlessingScreen
       :auto-recover-label="gameText[GameTextKey.AutoRecoverWhenNearby]"
+      :decrease-label="gameText[GameTextKey.Decrease]"
+      :increase-label="gameText[GameTextKey.Increase]"
       :close-label="gameText[GameTextKey.Back]"
       :heal-hint="gameText[GameTextKey.ClickPortraitToRestoreHp]"
       :in-combat-label="gameText[GameTextKey.InCombat]"

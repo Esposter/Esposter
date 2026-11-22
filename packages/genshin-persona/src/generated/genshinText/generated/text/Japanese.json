@@ -399,6 +399,8 @@
   "UI_BUTTON_FAST_TEAM": "クイック編成",
   "UI_BUTTON_FILTER": "フィルター",
   "UI_BUTTON_GOTO": "ワープ",
+  "UI_BUTTON_INCREASE": "増やす",
+  "UI_BUTTON_REDUCE": "減らす",
   "UI_BUTTON_TEAM_ACTIVATED": "出撃済",
   "UI_BUTTON_ZOOM": "画面調整",
   "UI_CHARACTER_DETAIL": "詳細情報",
