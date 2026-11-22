@@ -9,10 +9,10 @@ import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getCascadeTombstones } from "#server/services/tombstone/getCascadeTombstones";
+import { getWebhookAppUserTombstone } from "#server/services/tombstone/getWebhookAppUserTombstone";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getRoomMemberIds } from "@esposter/db";
 import {
-  appUsersInMessage,
   DatabaseEntityType,
   getLiveRowWhere,
   roomsInMessage,
@@ -21,7 +21,7 @@ import {
   webhooksInMessage,
 } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 // A room's deletion is a tombstone, so every member's copy of the room leaves their list at the version the batch names.
 // The membership a member held is tombstoned with it, and so is every child the room's cascade would remove: its roles,
@@ -37,7 +37,6 @@ export const deleteRoom = async (
     .from(roomsInMessage)
     .where(and(ownedBy(roomsInMessage, id, user.id), getLiveRowWhere(roomsInMessage)));
   requireMutation(ownedRooms[0], Operation.Delete, DatabaseEntityType.Room, id);
-
   // The object is emptied before the row is tombstoned, and so is each member's object of what it holds for the room. A
   // Sender's or a member's index that refuses its removal fails the delete with the row still standing, so the owner's retry
   // Finds the room and empties it again, rather than leaving its messages in the object
@@ -57,18 +56,7 @@ export const deleteRoom = async (
     // A webhook's app user is not the room's cascade's to reach: the foreign key runs from the webhook to its app user, so the
     // Cascade walks down to the webhook and never up to the app user. The live webhooks name them, so this runs first, while the
     // Webhook is still live, in the order deleteWebhook keeps
-    db
-      .update(appUsersInMessage)
-      .set({ deletedAt: new Date() })
-      .where(
-        inArray(
-          appUsersInMessage.id,
-          db
-            .select({ userId: webhooksInMessage.userId })
-            .from(webhooksInMessage)
-            .where(and(eq(webhooksInMessage.roomId, id), getLiveRowWhere(webhooksInMessage))),
-        ),
-      ),
+    getWebhookAppUserTombstone(db, eq(webhooksInMessage.roomId, id)),
     ...getCascadeTombstones(db, roomsInMessage, eq(roomsInMessage.id, id), [usersToRoomsInMessage]),
   ] as const);
   requireMutation(deletedRoomRows[0], Operation.Delete, DatabaseEntityType.Room, id);
@@ -79,7 +67,6 @@ export const deleteRoom = async (
   );
   const callerMembership = removedMemberships.find(({ userId }: UserToRoomInMessage) => userId === user.id);
   const removedMembership = requireMutation(callerMembership, Operation.Delete, DatabaseEntityType.UserToRoom, id);
-
   // A dropped listing or publish leaves orphaned room assets, never the deletion that already landed. So both run after
   // The row is gone, where a member's UI does not wait on a blob listing and two queue publishes
   await Promise.all([

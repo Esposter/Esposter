@@ -39,7 +39,6 @@ const announceRoomMemberJoined = async (
     console.error("A joined member failed to attach to the room", { error, roomId, userId: user.id });
   });
 };
-
 // A join is announced one member at a time: the room's online members hear of it, then the joiner's own tabs do.
 // The joiner is attached to the room if they are online, so the joins after theirs reach them. A joiner is attached
 // Only after the fan-out, so the fan-out never sends their own join to them twice

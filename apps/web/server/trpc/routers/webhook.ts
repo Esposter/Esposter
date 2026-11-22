@@ -8,6 +8,7 @@ import type {
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
+import { getWebhookAppUserTombstone } from "#server/services/tombstone/getWebhookAppUserTombstone";
 import { publicWebhookColumns } from "#server/services/webhook/publicWebhookColumns";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
@@ -32,7 +33,7 @@ import {
   webhooksInMessage,
 } from "@esposter/db-schema";
 import { generateSecretToken, hashSecretToken, Operation } from "@esposter/shared";
-import { and, eq, getColumns, inArray, sql } from "drizzle-orm";
+import { and, eq, getColumns, sql } from "drizzle-orm";
 import { v7 } from "uuid";
 
 export const webhookRouter = router({
@@ -95,18 +96,7 @@ export const webhookRouter = router({
     "roomId",
   ).mutation<PublicWebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
     const [, deletedWebhooks] = await ctx.db.batch([
-      ctx.db
-        .update(appUsersInMessage)
-        .set({ deletedAt: new Date() })
-        .where(
-          inArray(
-            appUsersInMessage.id,
-            ctx.db
-              .select({ userId: webhooksInMessage.userId })
-              .from(webhooksInMessage)
-              .where(and(inRoom(webhooksInMessage, id, roomId), getLiveRowWhere(webhooksInMessage))),
-          ),
-        ),
+      getWebhookAppUserTombstone(ctx.db, inRoom(webhooksInMessage, id, roomId)),
       ctx.db
         .update(webhooksInMessage)
         .set({ deletedAt: new Date() })
