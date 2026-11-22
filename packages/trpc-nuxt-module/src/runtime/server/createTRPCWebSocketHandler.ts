@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types `wss` and `res` as the `ws` package's classes, which the adapter and the peer are not; tRPC reads only the members it names and the callbacks read only what the peer declares */
 import type { TRPCWebSocketHandler } from "#src/runtime/server/models/TRPCWebSocketHandler";
 import type { TRPCWebSocketHandlerOptions } from "#src/runtime/server/models/TRPCWebSocketHandlerOptions";
 import type { AnyTRPCRouter, inferRouterContext } from "@trpc/server";

@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-type-assertion -- h3 types its request as its own `TypedServerRequest`, which fetchdts's `Request` does not accept without an assertion, and the options are checked against the router at the call site while TRouter's conditional context requirement never resolves inside this generic handler */
 import type { TRPCEventHandlerOptions } from "#src/runtime/server/models/TRPCEventHandlerOptions";
 import type { AnyTRPCRouter } from "@trpc/server";
 import type { FetchCreateContextFnOptions, FetchHandlerRequestOptions } from "@trpc/server/adapters/fetch";

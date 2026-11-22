@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-type-assertion -- tRPC's proxy types each argument as `unknown[]`, so each is asserted to the type its call's signature declares; `TRPCNuxtClient` checked every call's arguments where the call was written, and the static type of the returned client is that check */
 import type { TRPCNuxtClient } from "#src/runtime/client/models/TRPCNuxtClient";
 import type { UseMutationOptions } from "#src/runtime/client/models/UseMutationOptions";
 import type { UseQueryOptions } from "#src/runtime/client/models/UseQueryOptions";

@@ -28,6 +28,7 @@ export const createMockRouter = <TContext extends object>(
         // Each `.input()` returns a builder typed by its parser's output, which the root procedure type the accumulator
         // Carries does not name, so each step is cast back to it
         const procedure = parsers.reduce<TRPCMswRoot<TContext>["procedure"]>(
+          // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- tRPC types each `.input()` as a builder over the parser's output, which the accumulator's root procedure type does not name
           (builder, parser) => builder.input(parser) as TRPCMswRoot<TContext>["procedure"],
           baseProcedure,
         );

@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types `wss` as the `ws` package's server class, which the adapter is not, and tRPC's proxy types each resolver as `unknown`; `TRPCMsw`'s record type checked every registration where it was written */
 import type { ProcedureRegistration } from "#src/models/ProcedureRegistration";
 import type { SubscriptionRegistration } from "#src/models/SubscriptionRegistration";
 import type { TRPCMsw } from "#src/models/TRPCMsw";

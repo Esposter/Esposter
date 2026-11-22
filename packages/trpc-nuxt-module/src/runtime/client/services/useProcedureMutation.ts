@@ -37,6 +37,7 @@ export const useProcedureMutation = (
       if (!options.pick) return transformed;
       const picked: Record<string, unknown> = {};
       // The keys `pick` names are the transformed result's own, which its `unknown` type does not say
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the result's shape is the procedure's, which `unknown` does not carry; `pick` names keys of it, and a result that lacks one reads as undefined, as the entry reads it
       for (const key of options.pick) picked[key] = (transformed as Record<string, unknown>)[key];
       return picked;
     },
