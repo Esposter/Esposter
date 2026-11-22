@@ -3,21 +3,22 @@ import type { VoiceDeviceLadder } from "#src/models/VoiceDeviceLadder";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
 
 import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
+import { MUTED_FILE_NAME, STATE_DIRECTORY_NAME, VOICE_LANGUAGE_FILE_NAME } from "#src/util/stateNames";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
 // The state files live on the user's machine, so an older shape is read, not rewritten
-export const STATE_DIRECTORY: string = join(homedir(), ".claude", "genshin-persona");
+export const STATE_DIRECTORY: string = join(homedir(), STATE_DIRECTORY_NAME);
 export const PICK_RECORDS_PATH: string = join(STATE_DIRECTORY, "picks.tsv");
 export const PIN_PATH: string = join(STATE_DIRECTORY, "pin");
-export const MUTED_PATH: string = join(STATE_DIRECTORY, "muted");
+export const MUTED_PATH: string = join(STATE_DIRECTORY, MUTED_FILE_NAME);
 // The persona's rather than the voice's, so `teardown` leaves them: the language every word the plugin writes is in,
 // And the language the model answers in, which follows the first until it is set on its own
 export const INTERFACE_LANGUAGE_PATH: string = join(STATE_DIRECTORY, "interface-language");
 export const REPLY_LANGUAGE_PATH: string = join(STATE_DIRECTORY, "reply-language");
 export const VOLUME_PATH: string = join(STATE_DIRECTORY, "volume");
 // The voice half of the state directory: written by the `voice` verb, removed by `teardown`
-export const VOICE_LANGUAGE_PATH: string = join(STATE_DIRECTORY, "voice-language");
+export const VOICE_LANGUAGE_PATH: string = join(STATE_DIRECTORY, VOICE_LANGUAGE_FILE_NAME);
 export const VOICE_DEVICE_PATH: string = join(STATE_DIRECTORY, "device");
 export const RUNTIME_DIRECTORY: string = join(STATE_DIRECTORY, "runtime");
 export const RUNTIME_MANIFEST_PATH: string = join(RUNTIME_DIRECTORY, "package.json");

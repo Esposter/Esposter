@@ -1,4 +1,3 @@
-/* oxlint-disable no-restricted-properties -- The plugin's own script prints this shape, with no date in it, and a mod cannot import the shared reviver */
 import type { EngineInterface, Register } from "claude-code";
 
 import { atom, read, update } from "claude-code";
@@ -6,6 +5,8 @@ import { atom, read, update } from "claude-code";
 import type { PersonaSpinner, PersonaStatus } from "../types";
 
 import { hashString } from "../src/util/hashString";
+import { parseScriptOutput } from "../src/util/parseScriptOutput";
+import { MUTED_FILE_NAME, STATE_DIRECTORY_NAME, VOICE_LANGUAGE_FILE_NAME } from "../src/util/stateNames";
 import { CardVerbs } from "./CardVerbs";
 import { VerbDescriptionMap } from "./VerbDescriptionMap";
 
@@ -26,7 +27,7 @@ const SPINNER_TIMEOUT_MS = Temporal.Duration.from({ minutes: 10 }).total("millis
 
 const readStateDirectory = async ($: EngineInterface) => {
   const home = (await $.env.get("HOME")) ?? (await $.env.get("USERPROFILE")) ?? "";
-  return `${home}/.claude/genshin-persona`;
+  return `${home}/${STATE_DIRECTORY_NAME}`;
 };
 
 // The session's character, from the record its start hook wrote, else the pin, else the birthday pick; the spinner
@@ -41,11 +42,9 @@ const refresh = async ($: EngineInterface) => {
     }),
   ]);
   if (statusRun.status === "rejected") return;
-  // oxlint-disable typescript/no-unsafe-type-assertion -- the status script prints JSON the mod reads as the PersonaStatus it writes, which JSON.parse types as any
   const [statusOutcome] = await Promise.allSettled([
-    Promise.try(() => JSON.parse(statusRun.value.stdout) as PersonaStatus),
+    Promise.try(() => parseScriptOutput<PersonaStatus>(statusRun.value.stdout)),
   ]);
-  // oxlint-enable typescript/no-unsafe-type-assertion
   if (statusOutcome.status === "rejected") return;
   const { character, isRecorded } = statusOutcome.value;
   await update($, isCharacterRecordedAtom, () => isRecorded);
@@ -57,11 +56,9 @@ const refresh = async ($: EngineInterface) => {
     $.process.run(["node", `${$.plugin.root}/scripts/spinner.mjs`, character.name], { timeoutMs: SPINNER_TIMEOUT_MS }),
   ]);
   if (spinnerRun.status === "rejected") return;
-  // oxlint-disable typescript/no-unsafe-type-assertion -- the spinner script prints JSON the mod reads as the PersonaSpinner it writes, which JSON.parse types as any
   const [spinnerOutcome] = await Promise.allSettled([
-    Promise.try(() => JSON.parse(spinnerRun.value.stdout) as PersonaSpinner),
+    Promise.try(() => parseScriptOutput<PersonaSpinner>(spinnerRun.value.stdout)),
   ]);
-  // oxlint-enable typescript/no-unsafe-type-assertion
   if (spinnerOutcome.status === "fulfilled") await update($, spinnerAtom, () => spinnerOutcome.value);
 };
 
@@ -148,7 +145,8 @@ export const register: Register = (on) => {
   on("classic.MessageDisplay", async ($, e, next) => {
     const stateDirectory = await readStateDirectory($);
     const isSpeaking =
-      (await $.fs.exists(`${stateDirectory}/voice-language`)) && !(await $.fs.exists(`${stateDirectory}/muted`));
+      (await $.fs.exists(`${stateDirectory}/${VOICE_LANGUAGE_FILE_NAME}`)) &&
+      !(await $.fs.exists(`${stateDirectory}/${MUTED_FILE_NAME}`));
     if (isSpeaking) await $.process.run(["node", `${$.plugin.root}/scripts/speak.mjs`], { stdin: JSON.stringify(e) });
     return next(e);
   });
