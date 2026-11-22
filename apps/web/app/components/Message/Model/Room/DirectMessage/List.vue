@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 
-interface Props {
-  isCollapsed?: boolean | undefined;
-}
-
-defineSlots<{ prepend: () => VNode }>();
-const { isCollapsed = false } = defineProps<Props>();
 const directMessageStore = useDirectMessageStore();
 const { directMessages, hasMore } = storeToRefs(directMessageStore);
 const { readDirectMessages, readMoreDirectMessages } = useReadDirectMessages();
@@ -14,15 +8,7 @@ const { isPending } = await readDirectMessages();
 </script>
 
 <template>
-  <MessageModelRoomBaseList
-    :has-more
-    :is-collapsed
-    :is-pending
-    @load-more="(onComplete) => readMoreDirectMessages(onComplete)"
-  >
-    <template #prepend>
-      <slot name="prepend" />
-    </template>
+  <MessageModelRoomBaseList :has-more :is-pending @load-more="(onComplete) => readMoreDirectMessages(onComplete)">
     <MessageModelRoomDirectMessageListItem
       v-for="directMessage of directMessages"
       :key="directMessage.id"

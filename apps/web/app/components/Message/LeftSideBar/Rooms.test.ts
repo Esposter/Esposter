@@ -28,7 +28,7 @@ describe("messageLeftSideBarRooms", () => {
     await flushPromises();
 
     expect(component.text()).toMatchInlineSnapshot(
-      `"Rooms Create categoryNew categoryCloseCreate roomSomething went wrongThe rooms could not be loaded.Try again"`,
+      `"RoomsCreate categoryNew categoryCloseCreate roomSomething went wrongThe rooms could not be loaded.Try again"`,
     );
   });
 
@@ -46,7 +46,7 @@ describe("messageLeftSideBarRooms", () => {
     await flushPromises();
 
     expect(component.text()).toMatchInlineSnapshot(
-      `"Rooms Create categoryNew categoryCloseCreate roomNo rooms yetCreate a room or join one with an invite link.Something went wrongThe room categories could not be loaded.Try again"`,
+      `"RoomsCreate categoryNew categoryCloseCreate roomNo rooms yetCreate a room or join one with an invite link.Something went wrongThe room categories could not be loaded.Try again"`,
     );
   });
 });

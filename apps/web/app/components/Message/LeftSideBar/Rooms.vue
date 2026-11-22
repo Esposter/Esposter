@@ -1,101 +1,58 @@
 <script setup lang="ts">
-import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
-
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import { resolveRoomCategoryId } from "#src/services/message/roomCategory/resolveRoomCategoryId";
-import { getMovedItems } from "#src/services/shared/getMovedItems";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
-import { REORDER_HANDLE_CLASS } from "#src/services/ui/constants";
 import { useRoomStore } from "#src/store/message/room/index";
-import { useUserToRoomStore } from "#src/store/message/room/userToRoom";
-import { useRoomCategoryStore } from "#src/store/message/roomCategory";
-import { getOrCreate } from "@esposter/shared";
 
 const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarRoomsCollapsed, false);
+const isOpen = computed({
+  get: () => !isCollapsed.value,
+  set: (newIsOpen) => {
+    isCollapsed.value = !newIsOpen;
+  },
+});
 const { isError: isRoomCategoriesError, readRoomCategories } = useReadRoomCategories();
-const roomCategoryStore = useRoomCategoryStore();
-const { roomCategories } = storeToRefs(roomCategoryStore);
-const { reorderRoomCategories } = roomCategoryStore;
 const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);
-const userToRoomStore = useUserToRoomStore();
-const { getMyUserToRoom } = userToRoomStore;
-const getDragReorderProps = useDragReorder();
 const { readMoreRooms, readRooms } = await useReadRooms();
 const [{ isError, isPending, refresh }] = await Promise.all([readRooms(), readRoomCategories()]);
-const categoryIdRoomsMap = computed(() => {
-  const newCategoryIdRoomsMap = new Map<null | string, RoomInMessage[]>();
-  // The category a room is listed under is the reader's own for it: another member's assignment is theirs alone
-  for (const room of rooms.value)
-    getOrCreate(
-      newCategoryIdRoomsMap,
-      resolveRoomCategoryId(roomCategories.value, getMyUserToRoom(room.id)?.categoryId),
-      () => [],
-    ).push(room);
-  return newCategoryIdRoomsMap;
-});
-const uncategorizedRooms = computed(() => categoryIdRoomsMap.value.get(null) ?? []);
-const displayRoomCategories = computed(() =>
-  roomCategories.value.toSorted(
-    (firstRoomCategory, secondRoomCategory) =>
-      firstRoomCategory.position - secondRoomCategory.position ||
-      firstRoomCategory.name.localeCompare(secondRoomCategory.name),
-  ),
-);
-const roomCategoryGroups = computed(() =>
-  displayRoomCategories.value.map((roomCategory) => ({
-    roomCategory,
-    rooms: categoryIdRoomsMap.value.get(roomCategory.id) ?? [],
-  })),
-);
-// The categories drag by their headers' handles, and a drop persists their new order
-const roomCategoryReorderProps = computed(() =>
-  getDragReorderProps(displayRoomCategories.value, reorderRoomCategories, `.${REORDER_HANDLE_CLASS}`),
-);
-// Undefined means the move cannot happen — already at the edge it is moving towards — so nothing is persisted
-const moveRoomCategory = (roomCategoryId: RoomCategoryInMessage["id"], direction: -1 | 1) => {
-  const index = displayRoomCategories.value.findIndex(({ id }) => id === roomCategoryId);
-  const reorderedRoomCategories = getMovedItems(displayRoomCategories.value, index, index + direction);
-  if (reorderedRoomCategories) reorderRoomCategories(reorderedRoomCategories);
-};
+const { moveRoomCategory, roomCategoryGroups, roomCategoryReorderProps, uncategorizedRooms } = useRoomCategoryGroups();
 </script>
 
 <template>
-  <MessageModelRoomBaseList :has-more :is-collapsed :is-pending @load-more="(onComplete) => readMoreRooms(onComplete)">
-    <template #prepend>
-      <MessageLeftSideBarCollapsibleHeader v-model:collapsed="isCollapsed" title="Rooms">
-        <template #append>
-          <MessageModelRoomCategoryCreateDialogButton />
-          <MessageModelRoomCreateButton />
-        </template>
-      </MessageLeftSideBarCollapsibleHeader>
+  <UiCollapsible v-model="isOpen">
+    <template #title>Rooms</template>
+    <template #actions>
+      <MessageModelRoomCategoryCreateDialogButton />
+      <MessageModelRoomCreateButton />
     </template>
-    <!-- A failed read is not a reader with no rooms: it says so and tries again, as the message list does -->
-    <UiErrorState v-if="isError" error="The rooms could not be loaded." @retry="refresh()" />
-    <UiEmptyState
-      v-else-if="rooms.length === 0"
-      description="Create a room or join one with an invite link."
-      :meaning="UiIconMeaning.Comment"
-      title="No rooms yet"
-    />
-    <!-- The categories are the headers the rooms group under, so a failed read leaves every room listed and says
-         what is missing -->
-    <UiErrorState
-      v-if="isRoomCategoriesError"
-      error="The room categories could not be loaded."
-      @retry="readRoomCategories()"
-    />
-    <MessageModelRoomCategoryRoomGroup :rooms="uncategorizedRooms" />
-    <div :="roomCategoryReorderProps">
-      <MessageModelRoomCategoryRoomGroup
-        v-for="{ roomCategory, rooms: roomCategoryRooms } of roomCategoryGroups"
-        :key="roomCategory.id"
-        :category="roomCategory"
-        :rooms="roomCategoryRooms"
-        @move="moveRoomCategory(roomCategory.id, $event)"
+    <MessageModelRoomBaseList :has-more :is-pending @load-more="(onComplete) => readMoreRooms(onComplete)">
+      <!-- A failed read is not a reader with no rooms: it says so and tries again, as the message list does -->
+      <UiErrorState v-if="isError" error="The rooms could not be loaded." @retry="refresh()" />
+      <UiEmptyState
+        v-else-if="rooms.length === 0"
+        description="Create a room or join one with an invite link."
+        :meaning="UiIconMeaning.Comment"
+        title="No rooms yet"
       />
-    </div>
-  </MessageModelRoomBaseList>
+      <!-- The categories are the headers the rooms group under, so a failed read leaves every room listed and says
+           what is missing -->
+      <UiErrorState
+        v-if="isRoomCategoriesError"
+        error="The room categories could not be loaded."
+        @retry="readRoomCategories()"
+      />
+      <MessageModelRoomCategoryRoomGroup :rooms="uncategorizedRooms" />
+      <div :="roomCategoryReorderProps">
+        <MessageModelRoomCategoryRoomGroup
+          v-for="{ roomCategory, rooms: roomCategoryRooms } of roomCategoryGroups"
+          :key="roomCategory.id"
+          :category="roomCategory"
+          :rooms="roomCategoryRooms"
+          @move="moveRoomCategory(roomCategory.id, $event)"
+        />
+      </div>
+    </MessageModelRoomBaseList>
+  </UiCollapsible>
   <MessageModelRoomInviteDialog />
   <MessageModelRoomSettingsDialog />
   <MessageModelRoomCategoryConfirmDeleteDialog />

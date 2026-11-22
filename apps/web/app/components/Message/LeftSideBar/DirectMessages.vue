@@ -2,16 +2,20 @@
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 
 const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarDirectMessagesCollapsed, false);
+const isOpen = computed({
+  get: () => !isCollapsed.value,
+  set: (newIsOpen) => {
+    isCollapsed.value = !newIsOpen;
+  },
+});
 </script>
 
 <template>
-  <MessageModelRoomDirectMessageList :is-collapsed>
-    <template #prepend>
-      <MessageLeftSideBarCollapsibleHeader v-model:collapsed="isCollapsed" title="Direct Messages">
-        <template #append>
-          <MessageModelRoomCreateDirectMessageButton />
-        </template>
-      </MessageLeftSideBarCollapsibleHeader>
+  <UiCollapsible v-model="isOpen">
+    <template #title>Direct Messages</template>
+    <template #actions>
+      <MessageModelRoomCreateDirectMessageButton />
     </template>
-  </MessageModelRoomDirectMessageList>
+    <MessageModelRoomDirectMessageList />
+  </UiCollapsible>
 </template>

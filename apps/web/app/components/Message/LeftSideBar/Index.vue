@@ -49,7 +49,7 @@ onMounted(() => readScheduledMessageJobCount());
 <template>
   <div flex flex-col h-full ui-body>
     <MessageLeftSideBarHeader />
-    <div px-2 flex-1 of-y-auto>
+    <div px-2 flex flex-1 flex-col gap-2 of-y-auto>
       <UiList :items label="Messages">
         <template #append="{ item }">
           <template v-if="item.value === RoutePath.MessagesDraftsAndSent">
