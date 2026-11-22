@@ -16,6 +16,6 @@ No behaviour changes. This is a tooling and documentation change, so it carries 
 
 ## Out of scope
 
-- Row progress. It stays in the ledgers, dated from commit trailers, as the `sweeps` skill requires; this change holds the redesign decisions and the batch order, never a copy of a row's state.
+- Row progress. It is read from commit trailers by `pnpm ai:sweep:status`, as the `sweeps` skill requires; this change holds the redesign decisions and the batch order, never a copy of a row's state.
 - The testing ledger, swept in full under the current rules just before this change, and the write-once ledger, whose rows are all open already and are read by its own batch.
 - New conventions. A gap a pass finds in a rule goes to the skill that owns the rule (the `sweeps` skill's rule-gaps page), not into this change.

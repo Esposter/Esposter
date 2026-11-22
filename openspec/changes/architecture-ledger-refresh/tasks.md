@@ -12,9 +12,9 @@
 
 ## 2. Rows
 
-- [ ] 2.1 Read the `write-once` rows. Verified by `pnpm ai:sweep:ledger-coverage` listing no open `write-once` row.
-- [ ] 2.2 Read the language ledgers: `typescript`, `naming`, `invariants`, `test-values` and `error-handling`. Verified by the coverage command listing none of their rows as open.
+- [ ] 2.1 Read the `write-once` rows. Verified by `pnpm ai:sweep:status write-once` listing no open unit.
+- [ ] 2.2 Read the language ledgers: `typescript`, `naming`, `invariants`, `test-values` and `error-handling`. Verified by `pnpm ai:sweep:status` listing none of their units as open.
 - [ ] 2.3 Read `quality`, `security` and `file-organization`. Verified the same way.
 - [ ] 2.4 Read the framework ledgers: `pinia`, `trpc`, `routing`, `tiptap`, `pagination`, `schemas`, `vue-components`, `vue-composable-patterns`, `vue-phaserjs`, `styling`, `ui-library`, `ux`, `slash-commands`, `string-utils`, `esbabbler`, `esbabbler-call` and `runtime-efficiency`. Verified the same way.
 - [ ] 2.5 Read the Genshin ledgers and the tooling ledgers: the Genshin engine, parity, text, evidence, kit, summon and component ledgers, then `build`, `bench`, `cli`, `oxlint`, `package-scripts`, `github-actions`, `dependency-updates`, `dependencies`, `pulumi-infra`, `claude-mods`, `claude-permissions`, `comments`, `embedded-recipes`, `type-level` and `docs`. Verified the same way.
-- [ ] 2.6 Archive this change once the coverage command lists no row older than the current rules. Verified by `pnpm exec openspec archive architecture-ledger-refresh --yes` succeeding.
+- [ ] 2.6 Archive this change once `pnpm ai:sweep:status` lists no unit older than the current rules. Verified by `pnpm exec openspec archive architecture-ledger-refresh --yes` succeeding.

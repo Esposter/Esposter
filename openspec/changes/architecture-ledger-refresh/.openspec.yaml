@@ -2,3 +2,4 @@ schema: spec-driven
 affected_areas: [architecture]
 x-model: claude-opus-5-5
 skip_specs: true
+x-waiting: "2.1 to 2.6 wait for architecture-ledger-redesign, so no row is read before the ledgers take their new shape"
