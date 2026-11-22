@@ -105,10 +105,7 @@ describe("dashboardGrid", () => {
       props: { collision, columnNumber, compactType, rowHeight, visuals: [new Visual({ h: 2, w: 2, x: 0, y: 0 })] },
     });
 
-    const tile = wrapper.get(".dashboard-grid-tile");
-    assert(tile.element instanceof HTMLElement);
-
-    expect(tile.element.style.touchAction).toBe("");
+    expect(wrapper.get(".dashboard-grid-tile").classes()).not.toContain("touch-none");
   });
 
   test("an editable tile takes a touch as its drag, so the page does not scroll under it", async () => {
@@ -125,10 +122,7 @@ describe("dashboardGrid", () => {
       },
     });
 
-    const tile = wrapper.get(".dashboard-grid-tile");
-    assert(tile.element instanceof HTMLElement);
-
-    expect(tile.element.style.touchAction).toBe("none");
+    expect(wrapper.get(".dashboard-grid-tile").classes()).toContain("touch-none");
   });
 
   // The south-west handle moves the west edge and the south edge, so the visual keeps its top and its east edge

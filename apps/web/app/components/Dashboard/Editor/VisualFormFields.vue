@@ -48,7 +48,7 @@ const chartTypeItems = computed(() =>
   <UiForm p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
     <div flex flex-wrap gap-3>
       <div flex flex-col gap-1 w-64>
-        <span text-sm text-muted>Visual type</span>
+        <span text-muted>Visual type</span>
         <UiSelect
           :items="visualTypeItems"
           label="Visual type"
@@ -57,7 +57,7 @@ const chartTypeItems = computed(() =>
         />
       </div>
       <div v-if="isChartVisual" flex flex-col gap-1 w-64>
-        <span text-sm text-muted>Chart type</span>
+        <span text-muted>Chart type</span>
         <UiSelect v-model="editedItem.chart.type" :items="chartTypeItems" label="Chart type" />
       </div>
     </div>

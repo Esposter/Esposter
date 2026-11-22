@@ -46,6 +46,7 @@ useResizeObserver(tile, (entries) => {
   <div
     ref="tile"
     class="dashboard-grid-tile"
+    :class="{ 'touch-none': isEditable }"
     absolute
     :aria-label="isEditable ? label : altText || label"
     :data-editable="isEditable || undefined"
@@ -54,7 +55,6 @@ useResizeObserver(tile, (entries) => {
     :tabindex="isEditable ? 0 : undefined"
     :style="{
       ...getGeometryStyle(geometry, isAutoHeight),
-      touchAction: isEditable ? 'none' : undefined,
       transform: isDragged ? `translate(${offset.x}px, ${offset.y}px)` : undefined,
       zIndex: isDragged ? 2 : undefined,
     }"

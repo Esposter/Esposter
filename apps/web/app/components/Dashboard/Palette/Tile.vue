@@ -30,7 +30,7 @@ onClickExceptDrag(
 <template>
   <UiButton
     ref="button"
-    :style="{ touchAction: 'none' }"
+    touch-none
     :variant="UiButtonVariant.Quiet"
     @pointerdown="
       (event) => {
