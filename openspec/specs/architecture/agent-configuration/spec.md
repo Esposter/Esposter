@@ -58,8 +58,9 @@ Explanatory documentation SHALL live in the OpenSpec tree, which the repository 
 
 #### Scenario: A sweep ledger lives in the agent tree
 
-- **WHEN** progress through a repository-wide sweep is recorded
-- **THEN** the progress is kept as a ledger in the agent tree
+- **WHEN** a repository-wide sweep's units are recorded
+- **THEN** they are kept as a ledger in the agent tree
+- **AND** the sweep's progress is read from its commit trailers rather than stored there
 
 ### Requirement: Vendored skills are committed and excluded from repository scans
 

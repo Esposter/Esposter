@@ -10,11 +10,9 @@
 - [x] 1.6 Reopen every remaining row dated before the current rules, setting its `Swept` cell to `—`. Verified by `pnpm ai:sweep:ledger-coverage` listing those rows as open.
 - [x] 1.7 Re-chunk `scripts/src/services/genshinAssets/fit` in the seven ledgers that list it (`typescript/packages`, `naming/tooling`, `invariants/tooling`, `test-values/tooling`, `write-once/tooling`, `quality/tooling` and `security/tooling`), so `getPointDistance.ts` sits in the name-ordered chunk its name falls in. The chunk holding `getMean.ts` and `getStandardDeviation.ts` and every chunk after it are full at 40 files, except the last, which holds 10 and has room, so the move cascades one file per chunk down to that last chunk, which absorbs the overflow and ends the shift. Each reshaped chunk is a new unit that reopens at `—`. Decide whether the cascade runs as one pass or after splitting the folder at a shallower boundary first. Verified by a read of each re-chunked row's names against its neighbours, since no test checks chunk order.
 
-## 2. Rows
+## 2. Resweep
 
-- [ ] 2.1 Read the `write-once` rows. Verified by `pnpm ai:sweep:status write-once` listing no open unit.
-- [ ] 2.2 Read the language ledgers: `typescript`, `naming`, `invariants`, `test-values` and `error-handling`. Verified by `pnpm ai:sweep:status` listing none of their units as open.
-- [ ] 2.3 Read `quality`, `security` and `file-organization`. Verified the same way.
-- [ ] 2.4 Read the framework ledgers: `pinia`, `trpc`, `routing`, `tiptap`, `pagination`, `schemas`, `vue-components`, `vue-composable-patterns`, `vue-phaserjs`, `styling`, `ui-library`, `ux`, `slash-commands`, `string-utils`, `esbabbler`, `esbabbler-call` and `runtime-efficiency`. Verified the same way.
-- [ ] 2.5 Read the Genshin ledgers and the tooling ledgers: the Genshin engine, parity, text, evidence, kit, summon and component ledgers, then `build`, `bench`, `cli`, `oxlint`, `package-scripts`, `github-actions`, `dependency-updates`, `dependencies`, `pulumi-infra`, `claude-mods`, `claude-permissions`, `comments`, `embedded-recipes`, `type-level` and `docs`. Verified the same way.
-- [ ] 2.6 Archive this change once `pnpm ai:sweep:status` lists no unit older than the current rules. Verified by `pnpm exec openspec archive architecture-ledger-refresh --yes` succeeding.
+- [ ] 2.1 Reopen every ledger with one `Reopens: <ledger>` trailer each, on a trailer-only record commit. Verified by `pnpm ai:sweep:status` counting no swept unit in any ledger.
+- [ ] 2.2 Sample every ledger: thirty random units each, read in full, each unit read once for every question whose scope holds it, and a `Sampled:` trailer per ledger naming its defects. Verified by `pnpm ai:sweep:status` listing each ledger's unread units as sampled or open.
+- [ ] 2.3 Read every unit of the ledgers whose sample found a defect, area-split questions first (`invariants`, `quality`, `security`, `write-once`), then the language, framework, Genshin and tooling ledgers. Verified by `pnpm ai:sweep:status` listing no open unit.
+- [ ] 2.4 Archive this change once `pnpm ai:sweep:status` lists no open unit. Verified by `pnpm exec openspec archive architecture-ledger-refresh --yes` succeeding.

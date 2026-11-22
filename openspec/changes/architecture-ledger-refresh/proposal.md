@@ -9,7 +9,7 @@ Some ledgers also break those rules in their own shape. A few hold hand-listed t
 ## What changes
 
 - Each ledger's shape is judged against the current rules before its rows are read again: whether it should be merged, split, derived from the tree, handed to an enforcer or retired. The design lists the candidates and the questions each one answers.
-- Every ledger whose rows predate the current rules is reopened and read again under them. The batches are ordered so that a redesign lands before the rows it reshapes are read.
+- Every ledger is reopened and read again in full under the current rules and the current model, whatever its units' dates, so no unit keeps a date earned under a narrower rule set. The batches follow the [ledger redesign](../archive/2026-11-22-architecture-ledger-redesign/design.md)'s sitting rules: a unit is read once for every question whose scope holds it, a clean unit's trailer rides a record commit, and a ledger whose sample of thirty finds no defect is sampled clean instead of read unit by unit.
 - A pass that finds a shape needing more than a mechanical fix — a manual registry, an allowlist, an abstraction with one consumer — fixes it in that pass, as its own commit ahead of the row's sweep commit. A change of behaviour leaves the sweep for a proposal, as the [engineering loops](../../specs/architecture/engineering-loops/spec.md) require.
 
 No behaviour changes. This is a tooling and documentation change, so it carries no spec delta.
@@ -17,5 +17,4 @@ No behaviour changes. This is a tooling and documentation change, so it carries 
 ## Out of scope
 
 - Row progress. It is read from commit trailers by `pnpm ai:sweep:status`, as the `sweeps` skill requires; this change holds the redesign decisions and the batch order, never a copy of a row's state.
-- The testing ledger, swept in full under the current rules just before this change, and the write-once ledger, whose rows are all open already and are read by its own batch.
 - New conventions. A gap a pass finds in a rule goes to the skill that owns the rule (the `sweeps` skill's rule-gaps page), not into this change.
