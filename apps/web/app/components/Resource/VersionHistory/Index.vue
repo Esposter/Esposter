@@ -24,7 +24,7 @@ const displayVersions = computed(() =>
     : versions.value,
 );
 onMounted(async () => {
-  await readSnapshotHistory(resource);
+  await readSnapshotHistory({ id: resource.id });
 });
 // The panel's state is its resource's, and the panel is what opened it. Named rather than read off the store: a
 // Keyed page swap loads the next resource before this panel unmounts

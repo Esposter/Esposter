@@ -75,7 +75,7 @@ describe(useVersionHistoryStore, () => {
     const { versions } = storeToRefs(versionHistoryStore);
     const { readSnapshotHistory } = versionHistoryStore;
     applyResource(resource, null);
-    await readSnapshotHistory(resource);
+    await readSnapshotHistory({ id: resource.id });
     isRevisionSaved = true;
     onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
     await waitForSynchronizedFunctions();
@@ -107,11 +107,11 @@ describe(useVersionHistoryStore, () => {
     const { versions } = storeToRefs(versionHistoryStore);
     const { readSnapshotHistory } = versionHistoryStore;
     applyResource(firstResource, null);
-    const firstRead = readSnapshotHistory(firstResource);
+    const firstRead = readSnapshotHistory({ id: firstResource.id });
     // A read issued in the same tick would share the held one's batch and settle with it
     await isReadReached;
     applyResource(secondResource, null);
-    await readSnapshotHistory(secondResource);
+    await readSnapshotHistory({ id: secondResource.id });
     releaseRead();
     await firstRead;
 

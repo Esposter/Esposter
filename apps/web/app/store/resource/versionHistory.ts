@@ -40,14 +40,14 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
   const restoringSnapshotVersionId = ref("");
   // The resource is named by the caller rather than read off the store, so the response is filed under the
   // Resource it was read for whichever one is on screen when it lands
-  const readSnapshotHistory = (resource: ResourceInResource) => {
-    const resourceVersions = getVersionsRef(resource.id);
+  const readSnapshotHistory = ({ id }: Pick<ResourceInResource, "id">) => {
+    const resourceVersions = getVersionsRef(id);
     const read = Symbol("readSnapshotHistory");
     latestRead = read;
-    readingResourceId.value = resource.id;
+    readingResourceId.value = id;
     return withFinalizerAsync(
       () =>
-        executeQuery((signal) => $trpc.resource.readSnapshotHistory.query({ id: resource.id }, { signal }), {
+        executeQuery((signal) => $trpc.resource.readSnapshotHistory.query({ id }, { signal }), {
           key,
           onSuccess: (newVersions) => {
             resourceVersions.value = newVersions;
@@ -106,7 +106,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
         // The restore visible where it happened, and it is owed only to the resource still on screen
         if (resourceStore.currentResourceId === resource.id) {
           await reloadResourceContent();
-          await readSnapshotHistory(resource);
+          await readSnapshotHistory({ id: resource.id });
         }
         return [createArrival(resourceTable, restoredResource)];
       },
@@ -126,7 +126,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
       async () => {
         await $trpc.resource.saveResourceRevision.mutate({ id: resource.id });
         isSaved = true;
-        await readSnapshotHistory(resource);
+        await readSnapshotHistory({ id: resource.id });
         return [];
       },
       { awaitedBecause: AwaitedReason.IrreversibleStep, onError: createErrorNotification },
