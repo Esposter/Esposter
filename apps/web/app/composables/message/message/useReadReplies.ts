@@ -5,13 +5,12 @@ import { checkIsNewerThanCopy } from "#src/services/message/checkIsNewerThanCopy
 import { useReplyStore } from "#src/store/message/input/reply";
 
 export const useReadReplies = () => {
-  const { $trpc } = useNuxtApp();
   const replyStore = useReplyStore();
-  const { getReplyMapRef } = replyStore;
+  const { getReplyMapRef, readMessagesInFlight } = replyStore;
   return async (roomId: RoomInMessage["id"], replyToIds: ClientMessage["id"][]) => {
     if (replyToIds.length === 0) return;
 
-    const messages = await $trpc.message.readMessagesByIds.query({ messageIds: replyToIds, roomId });
+    const messages = await readMessagesInFlight(roomId, replyToIds);
     const replyMap = getReplyMapRef(roomId);
     for (const message of messages)
       if (checkIsNewerThanCopy(replyMap.value.get(message.id), message))

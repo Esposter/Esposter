@@ -2,6 +2,7 @@ import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { MessageHook } from "#src/models/message/MessageHook";
 import { checkIsNewerThanCopy } from "#src/services/message/checkIsNewerThanCopy";
+import { createInFlightChanges } from "#src/services/message/createInFlightChanges";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { updateMessageCopy } from "#src/services/message/updateMessageCopy";
@@ -31,6 +32,17 @@ export const useReplyStore = defineStore("message/input/reply", () => {
     () => roomStore.currentRoomId,
     new Map<ClientMessage["id"], ClientMessage>(),
   );
+  // A read of replied messages takes the room's deletes and edits made while it is in flight, so its answer cannot
+  // Restore a reply the room removed, nor hold a copy the room has since edited
+  const inFlightChanges = createInFlightChanges();
+  const readMessagesInFlight = async (roomId: ClientMessage["roomId"], messageIds: ClientMessage["id"][]) => {
+    const { messages } = await inFlightChanges.read(
+      roomId,
+      () => $trpc.message.readMessagesByIds.query({ messageIds, roomId }),
+      (answer) => answer,
+    );
+    return messages;
+  };
   MessageHookMap[Operation.Create].register(async ({ replyToId: repliedMessageId, roomId }) => {
     if (!repliedMessageId) return;
     const reply = getSlice(roomId).items.value.find(({ id }) => id === repliedMessageId);
@@ -42,16 +54,18 @@ export const useReplyStore = defineStore("message/input/reply", () => {
     // Reply lands, so the reply never renders as deleted while its target is in flight. A failed read is logged rather
     // Than thrown, since a throwing hook keeps the message out of the list
     await getResultAsync(async () => {
-      const [repliedMessage] = await $trpc.message.readMessagesByIds.query({ messageIds: [repliedMessageId], roomId });
+      const [repliedMessage] = await readMessagesInFlight(roomId, [repliedMessageId]);
       if (repliedMessage && checkIsNewerThanCopy(getReplyMapRef(roomId).value.get(repliedMessageId), repliedMessage))
         getReplyMapRef(roomId).value.set(repliedMessageId, { ...repliedMessage, roomId });
     }).match(noop, console.error);
   });
   MessageHookMap[Operation.Delete].register(({ id: messageId, roomId }) => {
+    inFlightChanges.recordDelete({ id: messageId, roomId });
     getReplyMapRef(roomId).value.delete(messageId);
   });
   // A quoted message read from the server is its own copy, so an edit of it reaches the quote through this hook
   MessageHookMap[Operation.Update].register((input) => {
+    inFlightChanges.recordUpdate(input);
     updateMessageCopy(getReplyMapRef(input.roomId).value.get(input.id), input);
   });
   messageHolderRegistry.register((roomId, hold) => {
@@ -60,5 +74,5 @@ export const useReplyStore = defineStore("message/input/reply", () => {
 
   const isIndicatorActive = ref(false);
 
-  return { getReplyMapRef, isIndicatorActive, replyToId };
+  return { getReplyMapRef, isIndicatorActive, readMessagesInFlight, replyToId };
 });
