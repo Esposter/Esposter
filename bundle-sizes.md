@@ -167,4 +167,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 162 files, 13314041 bytes, 13002.0 KiB, 12.70 MiB
+**Total:** 162 files, 13315359 bytes, 13003.3 KiB, 12.70 MiB
