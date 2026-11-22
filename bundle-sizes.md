@@ -4,9 +4,9 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                      |   Bytes |    KiB |
 | :------------------------- | :------------------------ | ------: | -----: |
-| genshin-world              | **/*.js                   | 4138535 | 4041.5 |
-| genshin-world              | **/*.d.ts                 | 2837694 | 2771.2 |
-| @esposter/db               | **/*.js                   |  826824 |  807.4 |
+| genshin-world              | **/*.js                   | 4138471 | 4041.5 |
+| genshin-world              | **/*.d.ts                 | 2837568 | 2771.1 |
+| @esposter/db               | **/*.js                   |  826968 |  807.6 |
 | genshin-text               | **/*.js                   |  695737 |  679.4 |
 | genshin-engine             | **/*.js                   |  358110 |  349.7 |
 | genshin-interface          | **/*.d.ts                 |  319756 |  312.3 |
@@ -54,9 +54,9 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | trpc-nuxt-module           | **/*.js                   |   17808 |   17.4 |
 | pitch-transcription        | **/*.js                   |   17259 |   16.9 |
 | vue-block-editor-headless  | index.d.ts                |   17146 |   16.7 |
+| @esposter/db               | index.js                  |   15667 |   15.3 |
 | trpc-nuxt-module           | **/*.d.ts                 |   15629 |   15.3 |
 | survey-expression          | index.d.ts                |   15558 |   15.2 |
-| @esposter/db               | index.js                  |   15554 |   15.2 |
 | vue-block-editor-headless  | index.js                  |   15047 |   14.7 |
 | genshin-interface          | index.js                  |   14743 |   14.4 |
 | mjml-blocks                | index.d.ts                |   14642 |   14.3 |
@@ -165,4 +165,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 160 files, 13246092 bytes, 12935.6 KiB, 12.63 MiB
+**Total:** 160 files, 13246159 bytes, 12935.7 KiB, 12.63 MiB
