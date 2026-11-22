@@ -18,14 +18,12 @@ const { error, node } = defineProps<Props>();
 const isDate = computed(
   () => node.props.inputType === SurveyTextInputType.Date || node.props.inputType === SurveyTextInputType.DatetimeLocal,
 );
-const isDateTime = computed(() => node.props.inputType === SurveyTextInputType.DatetimeLocal);
-const isNumber = computed(() => node.props.inputType === SurveyTextInputType.Number);
 // The text the reader has typed is held here while they type, so a number's partial text such as "1." is not rewritten
 // By the answer it has not yet become
 const text = ref(answer.value === undefined ? "" : String(answer.value));
 const toAnswer = (value: string): SurveyAnswerValue | undefined => {
   if (value === "") return undefined;
-  return isNumber.value ? Number(value) : value;
+  return node.props.inputType === SurveyTextInputType.Number ? Number(value) : value;
 };
 const updateText = (value: string) => {
   text.value = value;
@@ -55,7 +53,7 @@ const date = computed<Date | undefined>({
       :aria-invalid="error ? true : undefined"
       is-clearable
       :is-disabled="isDisabled || undefined"
-      :is-time="isDateTime || undefined"
+      :is-time="node.props.inputType === SurveyTextInputType.DatetimeLocal || undefined"
       :label="getSurveyQuestionTitle(node.props)"
     />
     <UiTextField

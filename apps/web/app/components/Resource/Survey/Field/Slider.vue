@@ -19,8 +19,6 @@ const value = computed<number>({
     answer.value = next;
   },
 });
-// A hidden value is an empty reading, so assistive technology reads the thumb by its own number instead
-const valueText = computed(() => (node.props.isValueVisible ? String(value.value) : ""));
 // The description and the error the thumb is described by, so a reader of speech hears both with its value
 const { describedBy, descriptionId, errorId } = useSurveyDescribedBy(
   () => node.props.description,
@@ -31,6 +29,7 @@ const { describedBy, descriptionId, errorId } = useSurveyDescribedBy(
 <template>
   <div flex flex-col gap-1>
     <span v-if="node.props.description" :id="descriptionId" text-sm text-muted>{{ node.props.description }}</span>
+    <!-- A hidden value is an empty reading, so assistive technology reads the thumb by its own number instead -->
     <UiSlider
       v-model="value"
       :described-by
@@ -41,7 +40,7 @@ const { describedBy, descriptionId, errorId } = useSurveyDescribedBy(
       :max="node.props.max"
       :min="node.props.min"
       :step="node.props.step"
-      :value-text
+      :value-text="node.props.isValueVisible ? String(value) : ''"
     />
     <span v-if="error" :id="errorId" role="alert" text-sm text-error>{{ error }}</span>
   </div>
