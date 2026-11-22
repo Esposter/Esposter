@@ -73,7 +73,7 @@ describe("resourceProgramStatus", () => {
     // The blade reads its id off the resource page's route, which the auth middleware guards
     useSession.mockReturnValue({ data: ref({ user: { id: resource.userId } }) });
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...resource, favorite: null, publication: null }));
     trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn, surveyId }));
     setSurveyMode(SurveyResponseMode.Identified);
     // The page reads the row before any blade mounts, and a content load reads only the blob

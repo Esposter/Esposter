@@ -19,6 +19,7 @@ describe("resourceWebpageSettings", () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Webpage }),
+      favorite: null,
       publication: null,
     }));
     trpcMsw.webpage.readResourceContent.query(() => new WebpageEditor());

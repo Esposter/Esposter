@@ -25,7 +25,7 @@ describe("resourceProgramSetup", () => {
     const session = { user: { id: resource.userId } };
     useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...resource, favorite: null, publication: null }));
     trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn: "", surveyId }));
     trpcMsw.email.readResources.query(() => createEmptyPage());
     trpcMsw.survey.readResources.query(() => createEmptyPage());

@@ -23,7 +23,7 @@ describe(useFindReplaceStore, () => {
     findValue.value = " ";
     isFindReplaceOpen.value = true;
     replaceValue.value = " ";
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
 
     expect({
       findValue: findValue.value,
@@ -47,9 +47,9 @@ describe(useFindReplaceStore, () => {
     const { goToOccurrence } = findReplaceStore;
     findValue.value = "0";
     goToOccurrence(1);
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
     await nextTick();
-    applyResource(sheetResource, null);
+    applyResource(sheetResource, null, null);
     await nextTick();
 
     expect(currentOccurrenceIndex.value).toBe(1);
@@ -69,7 +69,7 @@ describe(useFindReplaceStore, () => {
     const { applyResource } = resourceStore;
     const findReplaceStore = useFindReplaceStore();
     const { currentOccurrenceIndex, findValue } = storeToRefs(findReplaceStore);
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
     findValue.value = "0";
     currentOccurrenceIndex.value = 2;
     await nextTick();

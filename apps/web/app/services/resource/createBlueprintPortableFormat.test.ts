@@ -33,7 +33,7 @@ describe(createBlueprintPortableFormat, () => {
 
   beforeEach(() => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...resource, favorite: null, publication: null }));
     trpcMsw.blueprint.readResourceContent.query(() => savedManifest);
     trpcMsw.resource.saveResourceRevision.mutation(() => 1);
   });

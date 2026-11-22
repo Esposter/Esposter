@@ -21,7 +21,7 @@ describe(useColumnStore, () => {
     search.value = " ";
     selectedColumnIds.value = [""];
     sortBy.value = [{ key: "", order: SortOrder.Asc }];
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
 
     expect({ search: search.value, selectedColumnIds: selectedColumnIds.value, sortBy: sortBy.value }).toStrictEqual({
       search: "",

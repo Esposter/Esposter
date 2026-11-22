@@ -1,5 +1,6 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
+import { useArriveResourceListItems } from "#src/composables/resource/useArriveResourceListItems";
 import { CacheTag } from "#src/models/cache/CacheTag";
 import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 import { RECENT_RESOURCES_LIMIT } from "#src/services/resource/constants";
@@ -17,8 +18,9 @@ import { useOverlayStore } from "#src/store/overlay";
 export const useRecentStore = defineStore("resource/recent", () => {
   const { $trpc } = useNuxtApp();
   const overlayStore = useOverlayStore();
-  const { arrive, view } = overlayStore;
+  const { view } = overlayStore;
   const resourceRows = view(resourceTable);
+  const arriveResourceListItems = useArriveResourceListItems();
   const recentIds = ref<string[]>([]);
   // The last access each read joined, by resource id, which each read replaces. It is the access row's, not the resource's, so
   // It is held beside the resource rows rather than on them
@@ -53,13 +55,9 @@ export const useRecentStore = defineStore("resource/recent", () => {
         isReadSettled.value = true;
       },
       onSuccess: ({ items }) => {
-        const accesses = new Map<string, ResourceListItem["lastAccessedAt"]>();
-        for (const { lastAccessedAt, ...row } of items) {
-          arrive(resourceTable, row);
-          accesses.set(row.id, lastAccessedAt);
-        }
+        arriveResourceListItems(items);
         recentIds.value = items.map(({ id }) => id);
-        lastAccessedAts.value = accesses;
+        lastAccessedAts.value = new Map(items.map(({ id, lastAccessedAt }) => [id, lastAccessedAt] as const));
         error.value = "";
         isReadSettled.value = true;
       },

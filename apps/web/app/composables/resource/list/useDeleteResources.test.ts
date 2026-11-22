@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import type { ResourceFavoriteListItem } from "#shared/models/resource/ResourceFavoriteListItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { Router } from "vue-router";
 
@@ -8,7 +7,6 @@ import { useDeleteResources } from "#src/composables/resource/list/useDeleteReso
 import { resourceTable } from "#src/services/resource/overlay/constants";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useOverlayStore } from "#src/store/overlay";
-import { useFavoriteStore } from "#src/store/resource/favorite";
 import { MAX_READ_LIMIT, RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -94,32 +92,6 @@ describe(useDeleteResources, () => {
     await isCalled;
     await flushPromises();
     expect(getLiveIds()).toStrictEqual([otherResource.id]);
-  });
-
-  // The ids go out chunk-by-chunk and each chunk commits independently, so a failure still leaves earlier chunks
-  // Deleted server-side — the one write that has to invalidate even though it reports as failed. The favorite set is
-  // Read once per session, so nothing else drops the stars those rows held and Home would keep listing resources whose
-  // Blade rejects every read until a reload
-  test("invalidates the resources tag when a delete fails", async () => {
-    expect.hasAssertions();
-
-    const readFavorites = vi.fn<() => ResourceFavoriteListItem[]>(() => []);
-    trpcMsw.resource.deleteResources.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    trpcMsw.resource.readFavorites.query(() => ({ items: readFavorites(), nextCursor: "" }));
-    // The table the delete is issued from renders the stars, so the favorites cache is loaded by this point —
-    // A cache that was never constructed holds nothing stale and is nothing to invalidate
-    const favoriteStore = useFavoriteStore();
-    const { readFavorites: readCachedFavorites } = favoriteStore;
-    await readCachedFavorites();
-    const { isCalled, refresh } = createRefresh();
-    useDeleteResources(refresh)([resource]);
-
-    // The refresh is the error path's last step, and it runs after the invalidation has re-read the favorites
-    await isCalled;
-    expect(readFavorites).toHaveBeenCalledTimes(2);
-    expect(refresh).toHaveBeenCalledExactlyOnceWith();
   });
 
   // A batch delete spans an arbitrary selection with no shared key, so two of them run beside each other. A failed one

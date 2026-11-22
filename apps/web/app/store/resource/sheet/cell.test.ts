@@ -21,7 +21,7 @@ describe(useCellStore, () => {
     const { selectedCellRange } = storeToRefs(cellStore);
     const { startCellSelection } = cellStore;
     startCellSelection(0, 0);
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
 
     expect(selectedCellRange.value).toBeUndefined();
   });

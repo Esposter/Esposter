@@ -22,7 +22,7 @@ describe("resourceSheetImportDatasetDialog", () => {
     const { promise: isSurveysRead, resolve: onSurveysRead } = Promise.withResolvers<void>();
     trpcMsw.survey.readResources.query(() => {
       onSurveysRead();
-      return { items: [{ ...survey, publication: null }], nextCursor: "" };
+      return { items: [{ ...survey, favorite: null, publication: null }], nextCursor: "" };
     });
     const { promise: isDatasetRead, resolve: onDatasetRead } = Promise.withResolvers<void>();
     trpcMsw.dataset.readDataset.query(() => {
@@ -55,7 +55,7 @@ describe("resourceSheetImportDatasetDialog", () => {
     const { promise: isSurveysRead, resolve: onSurveysRead } = Promise.withResolvers<void>();
     trpcMsw.survey.readResources.query(() => {
       onSurveysRead();
-      return { items: [{ ...survey, publication: null }], nextCursor: "" };
+      return { items: [{ ...survey, favorite: null, publication: null }], nextCursor: "" };
     });
     const { promise: isRevisionRejected, resolve: onRevisionRejected } = Promise.withResolvers<void>();
     trpcMsw.resource.saveResourceRevision.mutation(() => {
@@ -99,7 +99,7 @@ describe("resourceSheetImportDatasetDialog", () => {
     const { promise: isSurveysRead, resolve: onSurveysRead } = Promise.withResolvers<void>();
     trpcMsw.survey.readResources.query(() => {
       onSurveysRead();
-      return { items: [{ ...survey, publication: null }], nextCursor: "" };
+      return { items: [{ ...survey, favorite: null, publication: null }], nextCursor: "" };
     });
     const wrapper = await mountSuspended(ResourceSheetImportDatasetDialog, { props: { modelValue: false } });
     await wrapper.setProps({ modelValue: true });

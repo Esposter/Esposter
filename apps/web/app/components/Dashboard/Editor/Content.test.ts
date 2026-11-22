@@ -46,7 +46,7 @@ describe("dashboardEditorContent", () => {
   beforeEach(() => {
     stubApexChartEngine();
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), favorite: null, publication: null }));
     trpcMsw.dashboard.readResourcePublication.query(() => undefined);
     trpcMsw.dashboard.saveResourceContent.mutation(() => createResource(1));
   });

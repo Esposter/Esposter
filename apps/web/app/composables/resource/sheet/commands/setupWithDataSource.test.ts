@@ -14,7 +14,7 @@ export const setupWithDataSource = (dataSource?: DataSource) => {
   const resourceStore = useResourceStore();
   const { resource } = storeToRefs(resourceStore);
   const { applyResource } = resourceStore;
-  if (!resource.value) applyResource(createResourceListItem(), null);
+  if (!resource.value) applyResource(createResourceListItem(), null, null);
   const sheetStore = useSheetStore();
   const { dataSource: storedDataSource, sheetResource } = storeToRefs(sheetStore);
   sheetResource.value.data =

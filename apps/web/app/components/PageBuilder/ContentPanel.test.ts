@@ -248,8 +248,8 @@ describe("pageBuilderContentPanel", () => {
     const resourceId = v7();
     const published = createResourceListItem({ type: ResourceType.Survey });
     const unpublished = createResourceListItem({ type: ResourceType.Survey });
-    const publishedInList = { ...published, publication: createPublication(published.id) };
-    const unpublishedInList = { ...unpublished, publication: null };
+    const publishedInList = { ...published, favorite: null, publication: createPublication(published.id) };
+    const unpublishedInList = { ...unpublished, favorite: null, publication: null };
     trpcMsw.survey.readResources.query(({ input }) => ({
       items: input?.isPublished ? [publishedInList] : [publishedInList, unpublishedInList],
       nextCursor: "",
@@ -308,7 +308,7 @@ describe("pageBuilderContentPanel", () => {
     const resourceId = v7();
     const survey = createResourceListItem({ type: ResourceType.Survey });
     trpcMsw.survey.readResources.query(() => createEmptyPage());
-    trpcMsw.resource.readResource.query(() => ({ ...survey, publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...survey, favorite: null, publication: null }));
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument, setDocument } = pageBuilderDocumentStore;
     const document = createSurveyInviteDocument(survey.id);

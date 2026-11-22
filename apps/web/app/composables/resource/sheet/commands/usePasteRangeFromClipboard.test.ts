@@ -185,7 +185,7 @@ describe(usePasteRangeFromClipboard, () => {
     const { sheetResource } = storeToRefs(sheetStore);
     const otherDataSource = createSingleCellDataSource();
     readTextMock.mockImplementationOnce(() => {
-      applyResource(createResourceListItem(), null);
+      applyResource(createResourceListItem(), null, null);
       sheetResource.value.data = otherDataSource;
       return Promise.resolve("2");
     });
@@ -203,14 +203,14 @@ describe(usePasteRangeFromClipboard, () => {
     const resourceStore = useResourceStore();
     const { applyResource, clearResource } = resourceStore;
     const resource = createResourceListItem();
-    applyResource(resource, null);
+    applyResource(resource, null, null);
     const sheetStore = useSheetStore();
     const { sheetResource } = storeToRefs(sheetStore);
     sheetResource.value.data = createSingleCellDataSource();
     const reopenedDataSource = createSingleCellDataSource();
     readTextMock.mockImplementationOnce(() => {
       clearResource(resource.id);
-      applyResource(resource, null);
+      applyResource(resource, null, null);
       sheetResource.value.data = reopenedDataSource;
       return Promise.resolve("2");
     });

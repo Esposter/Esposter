@@ -12,13 +12,13 @@ describe(useRowDialogStore, () => {
 
     const resourceStore = useResourceStore();
     const { applyResource } = resourceStore;
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
     const rowDialogStore = useRowDialogStore();
     const { deletingIds, editingId } = storeToRefs(rowDialogStore);
     const { id } = createRow({ "": 0 });
     editingId.value = id;
     deletingIds.value = [id];
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
 
     expect({ deletingIds: deletingIds.value, editingId: editingId.value }).toStrictEqual({
       deletingIds: [],

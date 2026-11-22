@@ -1,16 +1,16 @@
 // @vitest-environment nuxt
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { createResourceFavoriteListItem } from "#shared/services/resource/list/createResourceFavoriteListItem.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { createResourceListItemWithFavorite } from "#shared/services/resource/list/createResourceListItemWithFavorite.test";
 import { useRenameResource } from "#src/composables/resource/list/useRenameResource";
+import { useReadFavorites } from "#src/composables/resource/useReadFavorites";
 import { resourceTable } from "#src/services/resource/overlay/constants";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useOverlayStore } from "#src/store/overlay";
 import { useFavoriteStore } from "#src/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 // The refresh a write runs once it settles, announcing its call so a test awaits that rather than polling for it
@@ -79,38 +79,27 @@ describe(useRenameResource, () => {
     expect(refresh).toHaveBeenCalledExactlyOnceWith();
   });
 
-  // The favorites rows carry the name, and only the list's own refresh re-reads the list it renders, so a rename has
-  // To invalidate the resources tag or the star set keeps the old name for the rest of the session
-  test("re-reads the cached favorites so they carry the new name", async () => {
+  // The favorites list draws each row from the overlay, so the rename shows on it as the rename is sent, with no re-read
+  test("shows the new name on the favorites list as the rename is sent", async () => {
     expect.hasAssertions();
 
     const resource = createResource();
-    let serverName = name;
-    // One star of one user, so each read answers the same row the first one held
-    const starOwnerId = v7();
     trpcMsw.resource.readFavorites.query(() => ({
-      items: [
-        createResourceFavoriteListItem(createResourceListItem({ id: resource.value.id, name: serverName }), {
-          userId: starOwnerId,
-        }),
-      ],
+      items: [createResourceListItemWithFavorite(createResourceListItem({ id: resource.value.id, name }))],
       nextCursor: "",
     }));
-    trpcMsw.sheet.updateResource.mutation(() => {
-      serverName = newName;
-      return { ...resource.value, name: newName };
-    });
+    trpcMsw.sheet.updateResource.mutation(() => ({ ...resource.value, name: newName, version: 1 }));
+    const { readFavorites } = useReadFavorites();
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
-    const { readFavorites } = favoriteStore;
     await readFavorites();
-    useRenameResource(
-      resource,
-      vi.fn<() => Promise<void>>(() => Promise.resolve()),
-    )(newName);
+    const { isCalled, refresh } = createRefresh();
+    useRenameResource(resource, refresh)(newName);
 
-    // The favorites are re-read once the invalidation the rename makes lands, so the new name is the one change to await
-    await until(() => favorites.value[0]?.name).toBe(newName);
     expect(favorites.value.map((favorite) => favorite.name)).toStrictEqual([newName]);
+
+    // The rename settles within the test, so its request is answered before the test ends
+    await isCalled;
+    await flushPromises();
   });
 });

@@ -15,17 +15,17 @@ describe(useEmailExportDialogStore, () => {
     const resourceStore = useResourceStore();
     const { applyResource } = resourceStore;
     const email = createResourceListItem();
-    applyResource(email, null);
+    applyResource(email, null, null);
     const emailExportDialogStore = useEmailExportDialogStore();
     const { setPendingDataset } = emailExportDialogStore;
     const { pendingDataset } = storeToRefs(emailExportDialogStore);
     const dataset: Dataset = { columns: [], rows: [] };
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
     setPendingDataset(email.id, dataset);
 
     expect(pendingDataset.value).toBeUndefined();
 
-    applyResource(email, null);
+    applyResource(email, null, null);
 
     expect(pendingDataset.value).toStrictEqual(dataset);
   });

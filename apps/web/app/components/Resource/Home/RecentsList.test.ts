@@ -25,7 +25,7 @@ describe("resourceHomeRecentsList", () => {
       // The first read lands at once, so the list holds its rows; the read a remount issues after the invalidation waits
       if (!isFirstRead) await readGate;
       isFirstRead = false;
-      return { items: [recent], nextCursor: "" };
+      return { items: [{ ...recent, favorite: null }], nextCursor: "" };
     });
     const recentStore = useRecentStore();
     const { readRecents } = recentStore;

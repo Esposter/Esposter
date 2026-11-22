@@ -28,6 +28,7 @@ describe("resourceBlueprintEditor", () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Blueprint }),
+      favorite: null,
       publication: null,
     }));
     trpcMsw.blueprint.readResourceContent.query(() => createEmptyBlueprint());

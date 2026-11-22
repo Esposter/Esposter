@@ -29,7 +29,7 @@ describe("resourceTodoListItems", () => {
   beforeEach(async () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     const content: TodoListResource = { items: [new TodoListItem({ name: itemName })] };
-    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), favorite: null, publication: null }));
     trpcMsw.todoList.readResourceContent.query(() => content);
     const { readResource } = useReadOpenResource();
     await readResource();

@@ -50,6 +50,7 @@ describe("dashboardEditorSettings", () => {
     );
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Dashboard }),
+      favorite: null,
       publication: null,
     }));
     trpcMsw.dashboard.readResourcePublication.query(() => undefined);

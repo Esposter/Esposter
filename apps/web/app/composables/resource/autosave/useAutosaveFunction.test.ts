@@ -50,7 +50,7 @@ describe(useAutosaveFunction, () => {
     // The indicator reads the resource on screen, so an edit is only ever held for a loaded one
     const resourceStore = useResourceStore();
     const { applyResource } = resourceStore;
-    applyResource(createResourceListItem({ id: resourceId, type: ResourceType.Sheet }), null);
+    applyResource(createResourceListItem({ id: resourceId, type: ResourceType.Sheet }), null, null);
   });
 
   afterEach(() => {

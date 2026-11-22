@@ -81,7 +81,7 @@ describe("resourceDashboardEditor", () => {
     // A visual's dataset form reads the session, and a signed-out one is all the editor's own checks need
     useSession.mockReturnValue(ref({ data: null }));
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), favorite: null, publication: null }));
     trpcMsw.dashboard.readResourcePublication.query(() => undefined);
     trpcMsw.dashboard.saveResourceContent.mutation(() => createResource(1));
   });

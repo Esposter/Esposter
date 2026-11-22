@@ -39,7 +39,7 @@ describe(useWebpageEditorStore, () => {
     content = new WebpageEditor();
     savedContents = [];
     saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));
-    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), favorite: null, publication: null }));
     trpcMsw.webpage.readResourceContent.query(() => content);
     trpcMsw.webpage.readResourcePublication.query(() => undefined);
     trpcMsw.webpage.saveResourceContent.mutation(({ input }) => {

@@ -36,7 +36,7 @@ describe(useRowStore, () => {
     search.value = " ";
     selectedRowIds.value = [""];
     sortBy.value = [{ key: "", order: SortOrder.Asc }];
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
 
     expect({
       page: page.value,
@@ -62,10 +62,10 @@ describe(useRowStore, () => {
     const rowStore = useRowStore();
     const { page } = storeToRefs(rowStore);
     page.value = 2;
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
     setColumnFilter("", { type: ColumnType.String, value: "value" });
     await flushPromises();
-    applyResource(firstResource, null);
+    applyResource(firstResource, null, null);
     await flushPromises();
 
     expect(page.value).toBe(2);

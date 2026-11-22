@@ -44,7 +44,7 @@ describe(useVisualStore, () => {
   beforeEach(async () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     content = new Dashboard({ visuals: [new Visual({ type: VisualType.Area })] });
-    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), favorite: null, publication: null }));
     trpcMsw.dashboard.readResourceContent.query(() => content);
     trpcMsw.dashboard.readResourcePublication.query(() => undefined);
     trpcMsw.dashboard.saveResourceContent.mutation(() => createResource(1));
@@ -203,6 +203,7 @@ describe(useVisualStore, () => {
     const { promise: isSaveReached, resolve: onSaveReached } = Promise.withResolvers<void>();
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResourceListItem({ id: input.id, type: ResourceType.Dashboard }),
+      favorite: null,
       publication: null,
     }));
     trpcMsw.dashboard.readResourceContent.query(({ input }) => (input.id === resourceId ? content : otherContent));

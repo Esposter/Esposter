@@ -25,12 +25,12 @@ describe(useSheetPortableDialogStore, () => {
     const sheetPortableDialogStore = useSheetPortableDialogStore();
     const { openPreview } = sheetPortableDialogStore;
     const { isPreviewOpen } = storeToRefs(sheetPortableDialogStore);
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
     openPreview(resourceId, createDataSource(), "");
 
     expect(isPreviewOpen.value).toBe(false);
 
-    applyResource(sheetResource, null);
+    applyResource(sheetResource, null, null);
 
     expect(isPreviewOpen.value).toBe(true);
   });
@@ -51,9 +51,9 @@ describe(useSheetPortableDialogStore, () => {
     const { closeSurveyImport, openSurveyImport } = sheetPortableDialogStore;
     const { isSurveyImportOpen } = storeToRefs(sheetPortableDialogStore);
     openSurveyImport(resourceId);
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
     closeSurveyImport(resourceId);
-    applyResource(sheetResource, null);
+    applyResource(sheetResource, null, null);
 
     expect(isSurveyImportOpen.value).toBe(false);
   });

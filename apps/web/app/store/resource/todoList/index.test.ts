@@ -40,7 +40,7 @@ describe(useTodoListStore, () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     content = { items: [new TodoListItem({ name: itemName })] };
     saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));
-    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), favorite: null, publication: null }));
     trpcMsw.todoList.readResourceContent.query(() => content);
     trpcMsw.todoList.saveResourceContent.mutation(saveResourceContent);
     // The page reads the row before any blade mounts, and a content load reads only the blob
@@ -152,6 +152,7 @@ describe(useTodoListStore, () => {
     trpcMsw.resource.readResource.query(() => ({
       ...createResource(1),
       contentHash: otherDeviceHash,
+      favorite: null,
       publication: null,
     }));
     await useReadOpenResource().readResource();
@@ -250,6 +251,7 @@ describe(useTodoListStore, () => {
     trpcMsw.resource.readResource.query(() => ({
       ...createResource(1),
       contentHash: otherDeviceHash,
+      favorite: null,
       publication: null,
     }));
     await useReadOpenResource().readResource();
@@ -383,11 +385,11 @@ describe(useTodoListStore, () => {
     const todoListStore = await setupStore();
     const { searchQuery } = storeToRefs(todoListStore);
     searchQuery.value = itemName;
-    applyResource(createResourceListItem({ type: ResourceType.TodoList }), null);
+    applyResource(createResourceListItem({ type: ResourceType.TodoList }), null, null);
 
     expect(searchQuery.value).toBe("");
 
-    applyResource(firstResource, null);
+    applyResource(firstResource, null, null);
 
     expect(searchQuery.value).toBe(itemName);
   });

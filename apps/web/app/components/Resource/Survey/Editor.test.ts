@@ -54,7 +54,7 @@ describe("resourceSurveyEditor", () => {
     saveResourceContent = vi.fn<(options: { input: { content: unknown } }) => ResourceInResource>(() =>
       createResource(1),
     );
-    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), favorite: null, publication: null }));
     trpcMsw.survey.readResourcePublication.query(() => undefined);
     trpcMsw.survey.readResourceContent.query(() => ({
       document: surveyDocument,

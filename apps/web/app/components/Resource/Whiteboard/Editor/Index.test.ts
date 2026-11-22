@@ -84,6 +84,7 @@ describe("resourceWhiteboardEditor", () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Whiteboard }),
+      favorite: null,
       publication: null,
     }));
     trpcMsw.whiteboard.saveResourceContent.mutation(() =>

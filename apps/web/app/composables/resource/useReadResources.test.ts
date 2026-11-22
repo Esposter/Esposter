@@ -14,7 +14,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useReadResources, () => {
   const { trpcMsw } = setupMswTrpc();
-  const items = [createResourceListItem()];
+  const items = [{ ...createResourceListItem(), favorite: null }];
   const nextPageCursor: PageCursor = { isBackward: false, values: [0, v7()] };
   const firstOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 1, sortBy: [] };
   const secondOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 2, sortBy: [] };
@@ -56,7 +56,7 @@ describe(useReadResources, () => {
     expect.hasAssertions();
 
     const item = createResourceListItem();
-    trpcMsw.resource.readResources.query(() => ({ count: 1, items: [item], nextCursor: "" }));
+    trpcMsw.resource.readResources.query(() => ({ count: 1, items: [{ ...item, favorite: null }], nextCursor: "" }));
     const { items: listItems, readResources } = useReadResources();
     await readResources(firstOptions);
     const overlayStore = useOverlayStore();

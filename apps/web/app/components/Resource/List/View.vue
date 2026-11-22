@@ -8,7 +8,6 @@ import { deserializeResourceColumnKeyWidthMap } from "#src/services/resource/lis
 import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
 import { serializeResourceColumnKeyWidthMap } from "#src/services/resource/list/serializeResourceColumnKeyWidthMap";
 import { NO_ACTION_ITEMS } from "#src/services/shared/constants";
-import { useFavoriteStore } from "#src/store/resource/favorite";
 import { useListDialogStore } from "#src/store/resource/listDialog";
 import { RoutePath, takeOne } from "@esposter/shared";
 
@@ -21,12 +20,6 @@ const { source = ResourceListSource.All } = defineProps<Props>();
 const { sortBy: defaultSortBy } = ResourceListSourceDefinitionMap[source];
 const listDialogStore = useListDialogStore();
 const { deletingIds, renamingId } = storeToRefs(listDialogStore);
-const favoriteStore = useFavoriteStore();
-const { readFavorites } = favoriteStore;
-// Every row renders a star, so the favorites are read once for the list rather than once per row
-onMounted(async () => {
-  await readFavorites();
-});
 // The filter state mirrors to query params, so a global-search deep link lands the list filtered
 const {
   clearFilters,

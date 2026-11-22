@@ -15,7 +15,8 @@ describe(useRecentStore, () => {
   // A plain object literal, as the server sends it: superjson only walks plain objects, so an unregistered class
   // Instance crosses the wire without type annotations for its children and every nested `Date` arrives as a string.
   // Matching what the server actually sends keeps the assertion below able to compare whole rows
-  const createReadRecentsHandler = () => vi.fn<() => ResourceListPage>(() => ({ items: [resource], nextCursor: "" }));
+  const createReadRecentsHandler = () =>
+    vi.fn<() => ResourceListPage>(() => ({ items: [{ ...resource, favorite: null }], nextCursor: "" }));
 
   // Home's card and the inline search box mount together and both want the same capped list, so the second
   // Caller joins the request already in flight instead of issuing its own — and a settled read is not re-run

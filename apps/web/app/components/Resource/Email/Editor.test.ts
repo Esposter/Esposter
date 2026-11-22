@@ -30,7 +30,7 @@ describe("resourceEmailEditor", () => {
   beforeEach(async () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     useSession.mockReturnValue({ data: null });
-    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), favorite: null, publication: null }));
     trpcMsw.email.readResourceContent.query(
       () => new EmailEditor({ content: [], root: { props: { lang: "", title: "" } } }),
     );

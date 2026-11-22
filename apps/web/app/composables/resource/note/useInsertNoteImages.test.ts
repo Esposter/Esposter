@@ -43,7 +43,7 @@ describe(useInsertNoteImages, () => {
   const setupNote = (content: JSONContent = EMPTY_NOTE_DOC) => {
     const resourceStore = useResourceStore();
     const { applyResource } = resourceStore;
-    applyResource(createResourceListItem({ id: resourceId, type: ResourceType.Note }), null);
+    applyResource(createResourceListItem({ id: resourceId, type: ResourceType.Note }), null, null);
     return new Editor({ content, extensions: getNoteExtensions() });
   };
 

@@ -26,7 +26,7 @@ describe(useProgramStatus, () => {
   test("a refused export or regeneration resolves false, so its dialog stays open", async () => {
     expect.hasAssertions();
 
-    trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...resource, favorite: null, publication: null }));
     trpcMsw.program.readResourceContent.query(() => ({
       audience: { id: v7(), type: DatasetProviderType.Sheet },
       emailId: v7(),

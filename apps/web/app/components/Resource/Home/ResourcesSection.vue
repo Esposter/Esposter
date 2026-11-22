@@ -5,7 +5,6 @@ import { ResourceHomeTab, ResourceHomeTabs } from "#src/models/resource/Resource
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { TAB_QUERY_PARAMETER_KEY } from "#src/services/route/constants";
-import { useFavoriteStore } from "#src/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 
 const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, ResourceHomeTabs, ResourceHomeTab.Recent);
@@ -13,13 +12,6 @@ const items: UiMenuItem<ResourceHomeTab>[] = [
   { meaning: UiIconMeaning.Recent, title: "Recent", value: ResourceHomeTab.Recent },
   { meaning: UiIconMeaning.Favorite, title: "Favorites", value: ResourceHomeTab.Favorites },
 ];
-const favoriteStore = useFavoriteStore();
-const { readFavorites } = favoriteStore;
-// Every row's context menu says whether it is a favorite, on the Recent tab too, so the set is read with the section;
-// The read is cached, so the Favorites tab's own read shares it
-onMounted(async () => {
-  await readFavorites();
-});
 </script>
 
 <!-- Home's preview of the two sets the service menu gives full list routes. Each tab is the top few rows; See all opens

@@ -32,7 +32,7 @@ describe(useEmailEditorStore, () => {
     content = new EmailEditor({ content: [], root: { props: { lang: "", title: "" } } });
     savedContents = [];
     saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));
-    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), favorite: null, publication: null }));
     trpcMsw.email.readResourceContent.query(() => content);
     trpcMsw.email.readResourcePublication.query(() => undefined);
     trpcMsw.email.saveResourceContent.mutation(({ input }) => {

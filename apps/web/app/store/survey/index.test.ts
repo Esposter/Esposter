@@ -46,7 +46,7 @@ describe(useSurveyStore, () => {
     saveResourceContent = vi.fn<(options: { input: { content: unknown } }) => ResourceInResource>(() =>
       createResource(1),
     );
-    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), favorite: null, publication: null }));
     trpcMsw.survey.readResourcePublication.query(() => undefined);
     trpcMsw.survey.readResourceContent.query(() => content);
     trpcMsw.survey.saveResourceContent.mutation(saveResourceContent);
@@ -96,7 +96,12 @@ describe(useSurveyStore, () => {
     const otherContent = { document: createSurveyDocument(), settings: surveySettingsSchema.parse({}) };
     const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
     const { promise: isSaveReached, resolve: onSaveReached } = Promise.withResolvers<void>();
-    trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null }));
+    trpcMsw.resource.readResource.query(({ input }) => ({
+      ...createResource(),
+      favorite: null,
+      id: input.id,
+      publication: null,
+    }));
     trpcMsw.survey.readResourceContent.query(({ input }) => (input.id === resourceId ? content : otherContent));
     trpcMsw.survey.saveResourceContent.mutation(async () => {
       onSaveReached();
@@ -178,7 +183,12 @@ describe(useSurveyStore, () => {
     const otherResourceId = v7();
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
-    trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null }));
+    trpcMsw.resource.readResource.query(({ input }) => ({
+      ...createResource(),
+      favorite: null,
+      id: input.id,
+      publication: null,
+    }));
     trpcMsw.survey.readResourceContent.query(async ({ input }) => {
       if (input.id !== resourceId) return { ...content, document: newDocument };
       onReadReached();

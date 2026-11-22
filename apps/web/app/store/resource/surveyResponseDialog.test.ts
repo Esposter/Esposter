@@ -13,13 +13,13 @@ describe(useSurveyResponseDialogStore, () => {
 
     const resourceStore = useResourceStore();
     const { applyResource } = resourceStore;
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
     const surveyResponseDialogStore = useSurveyResponseDialogStore();
     const { deletingResponseId, detailResponseId } = storeToRefs(surveyResponseDialogStore);
     const responseId = v7();
     deletingResponseId.value = responseId;
     detailResponseId.value = responseId;
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
 
     expect({ deletingResponseId: deletingResponseId.value, detailResponseId: detailResponseId.value }).toStrictEqual({
       deletingResponseId: "",

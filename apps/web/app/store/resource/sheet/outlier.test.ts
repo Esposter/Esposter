@@ -60,7 +60,7 @@ describe(useOutlierStore, () => {
     const outlierStore = useOutlierStore();
     const { isOutlierHighlightEnabled } = storeToRefs(outlierStore);
     isOutlierHighlightEnabled.value = true;
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
 
     expect(isOutlierHighlightEnabled.value).toBe(false);
   });

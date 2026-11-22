@@ -2,6 +2,7 @@ import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ContentBaseline } from "#src/models/resource/ContentBaseline";
 import type { ResourceSave } from "#src/models/resource/ResourceSave";
 import type {
+  ResourceFavoriteInResource,
   ResourceInResource,
   ResourcePublicationInResource,
   ResourceTags,
@@ -20,7 +21,7 @@ import { ResourceSaveState } from "#src/models/resource/ResourceSaveState";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { getFileSize } from "#src/services/file/getFileSize";
 import { copyLinkToClipboard } from "#src/services/resource/copyLinkToClipboard";
-import { publicationTable, resourceTable } from "#src/services/resource/overlay/constants";
+import { favoriteTable, publicationTable, resourceTable } from "#src/services/resource/overlay/constants";
 import { getDeleteResourcesEntry } from "#src/services/resource/overlay/getDeleteResourcesEntry";
 import { getHeldResource } from "#src/services/resource/overlay/getHeldResource";
 import { getPublicationPatchEntry } from "#src/services/resource/overlay/getPublicationPatchEntry";
@@ -193,11 +194,16 @@ export const useResourceStore = defineStore("resource", () => {
   // The block a row lands in, whichever read fetched it. A row that is not the one open starts a new opening, and takes
   // The content state with it: a fresh row carries the current contentVersion, so saving is meaningful again, and what it
   // Carries is by definition what is written
-  const assignResource = (newResource: ResourceInResource, newPublication: null | ResourcePublicationInResource) => {
+  const assignResource = (
+    newResource: ResourceInResource,
+    newFavorite: null | ResourceFavoriteInResource,
+    newPublication: null | ResourcePublicationInResource,
+  ) => {
     if (!checkIsLoaded(newResource.id)) startOpening();
     resourceId.value = newResource.id;
     const isResourceApplied = arrive(resourceTable, newResource);
     if (newPublication) arrive(publicationTable, newPublication);
+    if (newFavorite) arrive(favoriteTable, newFavorite);
     // A reload answer the gate discards is older than the row held, so the newer state a read or a save left stands
     if (!isResourceApplied) return;
 
@@ -223,11 +229,11 @@ export const useResourceStore = defineStore("resource", () => {
         // The store outlives the page, and the page's own read keeps the open row live, so this one-shot read holds no watch
         isUnwatched: true,
         key: reloadKey,
-        onSuccess: ({ publication: newPublication, ...newResource }) => {
+        onSuccess: ({ favorite: newFavorite, publication: newPublication, ...newResource }) => {
           // Reads for two resources are not one target, so a navigation away can let the earlier one land last
           if (getRouteParam(currentRoute.value.params, "id") !== id) return;
 
-          assignResource(newResource, newPublication);
+          assignResource(newResource, newFavorite, newPublication);
         },
         runScope: reloadRunScope,
       }),
@@ -378,14 +384,19 @@ export const useResourceStore = defineStore("resource", () => {
   // The page's read of the open row lands here. A read of the resource already open is a refresh: its row and publication
   // Arrive as any other row does, and the content is then checked against the hash the store holds. A reset would drop the
   // Notice another save is held behind
-  const applyResource = (newResource: ResourceInResource, newPublication: null | ResourcePublicationInResource) => {
+  const applyResource = (
+    newResource: ResourceInResource,
+    newFavorite: null | ResourceFavoriteInResource,
+    newPublication: null | ResourcePublicationInResource,
+  ) => {
     if (!checkIsLoaded(newResource.id)) {
-      assignResource(newResource, newPublication);
+      assignResource(newResource, newFavorite, newPublication);
       return;
     }
 
     arrive(resourceTable, newResource);
     if (newPublication) arrive(publicationTable, newPublication);
+    if (newFavorite) arrive(favoriteTable, newFavorite);
     applyOtherContent(newResource);
   };
 

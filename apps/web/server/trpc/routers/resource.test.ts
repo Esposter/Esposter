@@ -196,7 +196,7 @@ describe("resourceRouter", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     const resource = await caller.readResource({ id: dashboardResource.id });
 
-    expect(resource).toStrictEqual({ ...dashboardResource, publication: null });
+    expect(resource).toStrictEqual({ ...dashboardResource, favorite: null, publication: null });
   });
 
   test("reads a resource with its publication", async () => {
@@ -867,6 +867,25 @@ describe("resourceRouter", () => {
     expect(takeOne(items).id).toBe(nearMatchResource.id);
   });
 
+  // A row read answers each row with the viewer's own star beside it: a starred row its live star, a row never starred null,
+  // And a removed star its tombstone, so a client applies the removal
+  test("answers each row's star, a removed one as its tombstone", async () => {
+    expect.hasAssertions();
+
+    const starredResource = await dashboardCaller.createResource({ name: "starred" });
+    const removedResource = await dashboardCaller.createResource({ name: "removed" });
+    const unstarredResource = await dashboardCaller.createResource({ name: "unstarred" });
+    await caller.toggleFavorite({ id: starredResource.id });
+    await caller.toggleFavorite({ id: removedResource.id });
+    await caller.toggleFavorite({ id: removedResource.id });
+    const { items } = await caller.readResources({});
+    const starOf = (id: string) => items.find((item) => item.id === id)?.favorite;
+
+    expect(starOf(starredResource.id)?.deletedAt).toBeNull();
+    expect(starOf(removedResource.id)?.deletedAt).not.toBeNull();
+    expect(starOf(unstarredResource.id)).toBeNull();
+  });
+
   test("toggles a favorite on and off", async () => {
     expect.hasAssertions();
 
@@ -876,9 +895,8 @@ describe("resourceRouter", () => {
     await caller.toggleFavorite({ id: dashboardResource.id });
     const { items: favoritesAfterUnstar } = await caller.readFavorites();
 
-    expect(favoritesAfterStar.map(({ resource }) => resource.id)).toStrictEqual([dashboardResource.id]);
-    expect(favoritesAfterUnstar).toHaveLength(1);
-    expect(favoritesAfterUnstar[0]?.favorite.deletedAt).not.toBeNull();
+    expect(favoritesAfterStar.map(({ id }) => id)).toStrictEqual([dashboardResource.id]);
+    expect(favoritesAfterUnstar).toStrictEqual([]);
   });
 
   // A page answers the most recently set stars first, and its cursor continues the walk past the stars it answered
@@ -897,8 +915,8 @@ describe("resourceRouter", () => {
     const firstPage = await caller.readFavorites({ limit: 2 });
     const secondPage = await caller.readFavorites({ cursor: firstPage.nextCursor, limit: 2 });
 
-    expect(firstPage.items.map(({ resource }) => resource.id)).toStrictEqual([newestResource.id, middleResource.id]);
-    expect(secondPage.items.map(({ resource }) => resource.id)).toStrictEqual([oldestResource.id]);
+    expect(firstPage.items.map(({ id }) => id)).toStrictEqual([newestResource.id, middleResource.id]);
+    expect(secondPage.items.map(({ id }) => id)).toStrictEqual([oldestResource.id]);
     expect(secondPage.nextCursor).toBe("");
   });
 

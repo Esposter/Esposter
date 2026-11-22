@@ -6,6 +6,7 @@ import type { ResourceStatusFilter } from "#src/models/resource/list/ResourceSta
 import type { ResourceUpdatedFilter } from "#src/models/resource/list/ResourceUpdatedFilter";
 import type { ResourceType } from "@esposter/db-schema";
 
+import { useArriveResourceListItems } from "#src/composables/resource/useArriveResourceListItems";
 import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 import { getResourceFilterInput } from "#src/services/resource/list/getResourceFilterInput";
 import { getResourceFilterKey } from "#src/services/resource/list/getResourceFilterKey";
@@ -54,8 +55,9 @@ export const useReadResources = (
       ...filterInput,
     });
   const overlayStore = useOverlayStore();
-  const { arrive, view } = overlayStore;
+  const { view } = overlayStore;
   const resourceRows = view(resourceTable);
+  const arriveResourceListItems = useArriveResourceListItems();
   const {
     count,
     error,
@@ -68,12 +70,12 @@ export const useReadResources = (
     getFilterInput,
     // The total depends on the filter alone, so the filter the user picked is exactly what it is keyed by
     getFilterKey: () => getResourceFilterKey(getFilterValues()),
-    // Each row a page answers is held on the overlay as it arrives, so an edit or a removal of the row, by this list or
-    // Any other surface, reaches the list without a patch of its own. The last access is the read's, not the row's, so
-    // It is left off the held row and kept on the page beside it
+    // Each row a page answers is held on the overlay as it arrives, with its star, so an edit or a removal of the row, by
+    // This list or any other surface, reaches the list without a patch of its own. The last access is the read's, not the
+    // Row's, so it is left off the held row and kept on the page beside it
     readPage: async (cursor, filterInput, { itemsPerPage, sortBy }) => {
       const page = await readListPage({ cursor, limit: itemsPerPage, sortBy }, filterInput);
-      for (const { lastAccessedAt: _lastAccessedAt, ...row } of page.items) arrive(resourceTable, row);
+      arriveResourceListItems(page.items);
       return page;
     },
   });

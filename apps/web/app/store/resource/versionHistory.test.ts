@@ -74,7 +74,7 @@ describe(useVersionHistoryStore, () => {
     const versionHistoryStore = useVersionHistoryStore();
     const { versions } = storeToRefs(versionHistoryStore);
     const { readSnapshotHistory } = versionHistoryStore;
-    applyResource(resource, null);
+    applyResource(resource, null, null);
     await readSnapshotHistory({ id: resource.id });
     isRevisionSaved = true;
     onFrame?.(JSON.stringify({ data: { topic }, type: "invalidate" }));
@@ -106,18 +106,18 @@ describe(useVersionHistoryStore, () => {
     const versionHistoryStore = useVersionHistoryStore();
     const { versions } = storeToRefs(versionHistoryStore);
     const { readSnapshotHistory } = versionHistoryStore;
-    applyResource(firstResource, null);
+    applyResource(firstResource, null, null);
     const firstRead = readSnapshotHistory({ id: firstResource.id });
     // A read issued in the same tick would share the held one's batch and settle with it
     await isReadReached;
-    applyResource(secondResource, null);
+    applyResource(secondResource, null, null);
     await readSnapshotHistory({ id: secondResource.id });
     releaseRead();
     await firstRead;
 
     expect(versions.value.map(({ summary }) => summary)).toStrictEqual([secondResource.id]);
 
-    applyResource(firstResource, null);
+    applyResource(firstResource, null, null);
 
     expect(versions.value).toStrictEqual([]);
   });
@@ -181,7 +181,7 @@ describe(useVersionHistoryStore, () => {
 
     const resource = createResourceListItem({ type });
     Object.assign(useRouter().currentRoute.value.params, { id: resource.id });
-    trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
+    trpcMsw.resource.readResource.query(() => ({ ...resource, favorite: null, publication: null }));
     trpcMsw.resource.restoreSnapshotVersion.mutation(() => ({ resource, undoRevisionVersion: undefined }));
     trpcMsw.resource.readSnapshotHistory.query(() => []);
     await useReadOpenResource().readResource();

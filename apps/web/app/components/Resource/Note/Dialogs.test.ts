@@ -26,6 +26,7 @@ describe("resourceNoteDialogs", () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Note }),
+      favorite: null,
       publication: null,
     }));
     trpcMsw.note.readResourceContent.query(() => ({ doc: EMPTY_NOTE_DOC }));

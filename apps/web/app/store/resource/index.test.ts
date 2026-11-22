@@ -49,7 +49,7 @@ vi.mock(import("#src/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: 
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
 const createResource = (id: string, type: ResourceType = ResourceType.Sheet) => createResourceListItem({ id, type });
 // The unpublished answer the read carries, which is what a publishable type's test overrides
-type ReadResourceResult = ReturnType<typeof createResource> & { publication: null };
+type ReadResourceResult = ReturnType<typeof createResource> & { favorite: null; publication: null };
 // The route is what the store loads from, so switching resources in a test is switching the route
 const setRouteId = (id: string) => {
   Object.assign(useRouter().currentRoute.value.params, { id });
@@ -93,6 +93,7 @@ describe(useResourceStore, () => {
   const setupNoteResource = () => {
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResource(input.id, ResourceType.Note),
+      favorite: null,
       publication: null,
     }));
     trpcMsw.note.readResourcePublication.query(() => undefined);
@@ -133,6 +134,7 @@ describe(useResourceStore, () => {
     setRouteId(resourceId);
     readResourceQuery = vi.fn<(options: { input: { id: string } }) => ReadResourceResult>(({ input }) => ({
       ...createResource(input.id),
+      favorite: null,
       publication: null,
     }));
     saveResourceContent = vi.fn<() => ResourceInResource>(() => ({ ...createResource(resourceId), contentVersion: 1 }));
@@ -188,7 +190,7 @@ describe(useResourceStore, () => {
         onReadReached();
         await readGate;
       }
-      return { ...createResource(input.id), publication: null };
+      return { ...createResource(input.id), favorite: null, publication: null };
     });
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
@@ -340,6 +342,7 @@ describe(useResourceStore, () => {
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResource(input.id),
       contentSize: loadedContentBytes.byteLength,
+      favorite: null,
       publication: null,
     }));
     trpcMsw.sheet.generateReadContentPresignedUrl.query(() => presignedUrl);
@@ -694,6 +697,7 @@ describe(useResourceStore, () => {
     readResourceQuery.mockImplementation(({ input }) => ({
       ...createResource(input.id),
       contentVersion: serverContentVersion,
+      favorite: null,
       publication: null,
       version: 1,
     }));
@@ -871,7 +875,7 @@ describe(useResourceStore, () => {
         return olderAnswer;
       }
 
-      return { ...createResource(input.id), publication: null, version: 2 };
+      return { ...createResource(input.id), favorite: null, publication: null, version: 2 };
     });
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
@@ -886,7 +890,7 @@ describe(useResourceStore, () => {
 
     expect(saveState.value).toBe(ResourceSaveState.Stale);
 
-    answerOlderReload({ ...createResource(resourceId), publication: null, version: 1 });
+    answerOlderReload({ ...createResource(resourceId), favorite: null, publication: null, version: 1 });
     await reload;
 
     expect(saveState.value).toBe(ResourceSaveState.Stale);
@@ -1032,6 +1036,7 @@ describe(useResourceStore, () => {
     const { readResource } = useReadOpenResource();
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResource(input.id, ResourceType.Note),
+      favorite: null,
       publication,
     }));
     trpcMsw.note.unpublishResource.mutation(() => {
@@ -1132,6 +1137,7 @@ describe(useResourceStore, () => {
     const { readResource } = useReadOpenResource();
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResource(input.id, ResourceType.Note),
+      favorite: null,
       publication,
     }));
     trpcMsw.note.readResourcePublication.query(readResourcePublication);
@@ -1187,6 +1193,7 @@ describe(useResourceStore, () => {
     const { readResource } = useReadOpenResource();
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResource(input.id, ResourceType.Note),
+      favorite: null,
       publication,
     }));
     await readResource();
@@ -1301,7 +1308,12 @@ describe(useResourceStore, () => {
   // The page's watch of the open row re-runs its read when a write publishes that row's topic, and every content write
   // Updates the row. A refetch of the open row is therefore what a write to the content looks like to the store
   const serveOpenRow = (row: Partial<ResourceInResource>) => {
-    trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(input.id), ...row, publication: null }));
+    trpcMsw.resource.readResource.query(({ input }) => ({
+      ...createResource(input.id),
+      ...row,
+      favorite: null,
+      publication: null,
+    }));
   };
   const otherDeviceHash = "other-device-content-hash";
 
@@ -1520,7 +1532,11 @@ describe(useResourceStore, () => {
     async (type) => {
       expect.hasAssertions();
 
-      trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(input.id, type), publication: null }));
+      trpcMsw.resource.readResource.query(({ input }) => ({
+        ...createResource(input.id, type),
+        favorite: null,
+        publication: null,
+      }));
       trpcMsw.note.readResourceContent.query(() => undefined);
       trpcMsw.sheet.readResourceContent.query(() => undefined);
       trpcMsw.todoList.readResourceContent.query(() => undefined);
@@ -1536,6 +1552,7 @@ describe(useResourceStore, () => {
           ...createResource(input.id, type),
           contentHash: otherDeviceHash,
           contentVersion: 1,
+          favorite: null,
           publication: null,
         }));
         await readResource();
@@ -1567,6 +1584,7 @@ describe(useResourceStore, () => {
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResource(input.id),
       contentSize: loadedContentBytes.byteLength,
+      favorite: null,
       publication: null,
     }));
     trpcMsw.sheet.generateReadContentPresignedUrl.query(() => presignedUrl);

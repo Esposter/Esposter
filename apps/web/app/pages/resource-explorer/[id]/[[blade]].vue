@@ -4,7 +4,6 @@ import { useReadOpenResource } from "#src/composables/resource/useReadOpenResour
 import { ResourceBladeType } from "#src/models/resource/ResourceBladeType";
 import { parseResourceBlade } from "#src/services/resource/parseResourceBlade";
 import { checkIsUuidRouteId } from "#src/services/router/checkIsUuidRouteId";
-import { useFavoriteStore } from "#src/store/resource/favorite";
 import { useResourceStore } from "#src/store/resource/index";
 import { getRouteParam } from "#src/util/router/getRouteParam";
 
@@ -37,12 +36,6 @@ useRecordResourceAccess(resource);
 usePageMark(
   () => resource.value && { id: resource.value.id, resourceType: resource.value.type, type: PageMarkType.Resource },
 );
-const favoriteStore = useFavoriteStore();
-const { readFavorites } = favoriteStore;
-// The toolbar's star needs to know whether this resource is already starred
-onMounted(async () => {
-  await readFavorites();
-});
 // The store is app-lifetime and this state is the blade's, so the page that opened the resource takes it down
 // Again. Keyed by the id it opened, because a page swap mounts the next resource's page first
 onUnmounted(() => {

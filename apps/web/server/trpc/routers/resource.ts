@@ -2,12 +2,12 @@ import type { LinkedResource } from "#shared/models/resource/LinkedResource";
 import type { ReadCritiqueResult } from "#shared/models/resource/ReadCritiqueResult";
 import type { ReadResourceContentResult } from "#shared/models/resource/ReadResourceContentResult";
 import type { ReadResourceContentSchemaResult } from "#shared/models/resource/ReadResourceContentSchemaResult";
-import type { ResourceFavoriteListItem } from "#shared/models/resource/ResourceFavoriteListItem";
+import type { ResourceListItemWithFavorite } from "#shared/models/resource/ResourceListItemWithFavorite";
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
-import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
+import type { ResourceWithState } from "#shared/models/resource/ResourceWithState";
 import type { RestoreSnapshotVersionResult } from "#shared/models/resource/RestoreSnapshotVersionResult";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
@@ -237,11 +237,11 @@ export const resourceRouter = router({
     .query<ResourceListPage>(({ ctx, input: { cursor, limit, sort } }) =>
       readDeletedResourcePage(ctx.db, { cursor, limit, sort, userId: ctx.user.id }),
     ),
-  // The stars a page at a time, the most recently set first. A removed star comes back as a tombstone, so the client applies
-  // Its removal. Every row's star state needs the whole set, so the client reads the set to its end, page by page
+  // The viewer's live stars a page at a time, the most recently set first. Each row answers its own star, so a list shows
+  // Every star from the page it holds, and a star removed elsewhere reaches a row as its tombstone
   readFavorites: standardAuthedProcedure
     .input(readFavoritesInputSchema)
-    .query<Page<ResourceFavoriteListItem>>(async ({ ctx, input: { cursor, limit } }) => {
+    .query<Page<ResourceListItemWithFavorite>>(async ({ ctx, input: { cursor, limit } }) => {
       const userId = ctx.user.id;
       const boundSort = createPageSort(
         { createdAt: resourceFavoritesInResource.createdAt, resourceId: resourceFavoritesInResource.resourceId },
@@ -262,17 +262,18 @@ export const resourceRouter = router({
             eq(resourceFavoritesInResource.userId, userId),
             eq(resourcesInResource.userId, userId),
             isNull(resourcesInResource.deletedAt),
+            isNull(resourceFavoritesInResource.deletedAt),
             getPageWhere(boundSort, cursor),
           ),
         )
         .orderBy(...getPageOrderBy(boundSort, cursor))
         .limit(limit + 1);
-      // The sort's keys are read off each row for the cursor, so the page answers the stars without them
+      // The sort's keys are read off each row for the cursor, so the page answers the rows without them
       const page = toPage(rows, FAVORITE_PAGE_SORT, cursor, limit);
-      return { ...page, items: page.items.map(({ favorite, resource }) => ({ favorite, resource })) };
+      return { ...page, items: page.items.map(({ favorite, resource }) => ({ ...resource, favorite })) };
     }),
-  // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
-  // For every type, so this cross-type read resolves it whatever the resource turns out to be
+  // Publish state and the viewer's star ride the row rather than answering a second request: `resourcePublications` and
+  // `resourceFavorites` are each one table for every type, so this cross-type read resolves them whatever the resource is
   readResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
     .meta({
       mcp: {
@@ -281,8 +282,12 @@ export const resourceRouter = router({
         scope: McpScope.Resources,
       },
     })
-    .query<ResourceWithPublication>(async ({ ctx }) => ({
+    .query<ResourceWithState>(async ({ ctx }) => ({
       ...ctx.resource,
+      favorite:
+        (await ctx.db.query.resourceFavoritesInResource.findFirst({
+          where: { resourceId: { eq: ctx.resource.id }, userId: { eq: ctx.user.id } },
+        })) ?? null,
       publication:
         (await ctx.db.query.resourcePublicationsInResource.findFirst({
           where: { resourceId: { eq: ctx.resource.id } },

@@ -41,7 +41,7 @@ describe(useFilterStore, () => {
     const { setColumnFilter } = filterStore;
     const { columnFilters } = storeToRefs(filterStore);
     setColumnFilter("", filter);
-    applyResource(createResourceListItem(), null);
+    applyResource(createResourceListItem(), null, null);
 
     expect(columnFilters.value).toStrictEqual({});
   });

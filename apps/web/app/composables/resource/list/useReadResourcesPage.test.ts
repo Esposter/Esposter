@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
+import type { ResourceListItemWithFavorite } from "#shared/models/resource/ResourceListItemWithFavorite";
 import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 import type { ReadResourcesOptions } from "#src/models/resource/list/ReadResourcesOptions";
 
@@ -7,6 +7,9 @@ import { createResourceListItem } from "#shared/services/resource/list/createRes
 import { useReadResourcesPage } from "#src/composables/resource/list/useReadResourcesPage";
 import { createEmptyPage, SortOrder } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
+
+// A row as a page answers it, unstarred, the star a list read carries beside it
+const createPageRow = (): ResourceListItemWithFavorite => ({ ...createResourceListItem(), favorite: null });
 
 const createOptions = (page: number, sortBy: ReadResourcesOptions["sortBy"] = []): ReadResourcesOptions => ({
   itemsPerPage: 1,
@@ -19,12 +22,7 @@ describe(useReadResourcesPage, () => {
   const THIRD_CURSOR = "a";
   const FOURTH_CURSOR = "b";
   const TOTAL = 4;
-  const [first, second, third, fourth] = [
-    createResourceListItem(),
-    createResourceListItem(),
-    createResourceListItem(),
-    createResourceListItem(),
-  ];
+  const [first, second, third, fourth] = [createPageRow(), createPageRow(), createPageRow(), createPageRow()];
   // Four pages, each naming the cursor of the next, and the first answering the total
   const pages = new Map<string, ResourceListPage>([
     ["", { count: TOTAL, items: [first], nextCursor: SECOND_CURSOR }],
@@ -32,7 +30,8 @@ describe(useReadResourcesPage, () => {
     [SECOND_CURSOR, { items: [second], nextCursor: THIRD_CURSOR }],
     [THIRD_CURSOR, { items: [third], nextCursor: FOURTH_CURSOR }],
   ]);
-  const readFromPages = (cursor: string) => Promise.resolve(pages.get(cursor) ?? createEmptyPage<ResourceListItem>());
+  const readFromPages = (cursor: string) =>
+    Promise.resolve(pages.get(cursor) ?? createEmptyPage<ResourceListItemWithFavorite>());
 
   // The bin pages quickly, or a Refresh lands while a page read is in flight: the slower earlier response arriving
   // Last would leave the table showing page 1 while the pager reads page 2, and a purge issued from that row would

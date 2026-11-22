@@ -25,8 +25,12 @@ describe(useReadDeletedResources, () => {
     trpcMsw.resource.readDeletedResources.query(({ input }) => {
       sentCursors.push(input?.cursor);
       return sentCursors.length === 1
-        ? { count: 2, items: [createResourceListItem()], nextCursor: encodePageCursor(nextPageCursor) }
-        : { items: [createResourceListItem()], nextCursor: "" };
+        ? {
+            count: 2,
+            items: [{ ...createResourceListItem(), favorite: null }],
+            nextCursor: encodePageCursor(nextPageCursor),
+          }
+        : { items: [{ ...createResourceListItem(), favorite: null }], nextCursor: "" };
     });
     const { readDeletedResources } = useReadDeletedResources();
     await readDeletedResources(firstOptions);

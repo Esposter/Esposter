@@ -28,11 +28,11 @@ export const useReadOpenResource = () => {
         // Logs and does not throw: a watch re-runs these same options with no caller to rethrow to, so a throw here would
         // Be an unhandled rejection. The page's own failure still reaches its caller through rethrowFailedRead
         onError: console.error,
-        onSuccess: ({ publication, ...fetchedResource }) => {
+        onSuccess: ({ favorite, publication, ...fetchedResource }) => {
           // Reads for two resources are not one target, so a navigation away can let the earlier one land last
           if (getRouteParam(currentRoute.value.params, "id") !== id) return;
 
-          applyResource(fetchedResource, publication);
+          applyResource(fetchedResource, favorite, publication);
         },
         runScope,
       }),

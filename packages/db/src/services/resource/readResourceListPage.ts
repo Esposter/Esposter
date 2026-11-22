@@ -9,7 +9,7 @@ import { toPage } from "#src/services/pagination/toPage";
 import { getLastAccessedJoin } from "#src/services/resource/getLastAccessedJoin";
 import { getResourceNameSearchMatch } from "#src/services/resource/getResourceNameSearchMatch";
 import { resourceListSelection } from "#src/services/resource/resourceListSelection";
-import { resourceAccessesInResource, resourcesInResource } from "@esposter/db-schema";
+import { resourceAccessesInResource, resourceFavoritesInResource, resourcesInResource } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { and, count, eq, sql } from "drizzle-orm";
 
@@ -25,7 +25,8 @@ interface ReadResourceListPageOptions {
 
 // One page of the owner's resources in the order the sort declares, with the cursor for the next. The read without a
 // Cursor is the first page, and it also answers how many rows the where matches. A search's relevance keys are read off
-// Each row so the cursor can continue from the last one, and they are left out of the page
+// Each row so the cursor can continue from the last one, and they are left out of the page. Each row carries the viewer's
+// Own star beside it, so a list shows every row's star from the page alone
 export const readResourceListPage = async (
   db: Database,
   { cursor, limit, search, sort, userId, where }: ReadResourceListPageOptions,
@@ -42,10 +43,23 @@ export const readResourceListPage = async (
     updatedAt: resourcesInResource.updatedAt,
   } satisfies Record<ResourceListColumnKey, SQLWrapper>;
   const boundSort = createPageSort(columns, sort);
+  // The star is the viewer's row for the resource, tombstones included: a removed star reads as one, so a client applies its removal
   const query = db
-    .select({ ...resourceListSelection, nameMatch: columns.nameMatch, negRank: columns.negRank })
+    .select({
+      ...resourceListSelection,
+      favorite: resourceFavoritesInResource,
+      nameMatch: columns.nameMatch,
+      negRank: columns.negRank,
+    })
     .from(resourcesInResource)
     .leftJoin(resourceAccessesInResource, getLastAccessedJoin(userId))
+    .leftJoin(
+      resourceFavoritesInResource,
+      and(
+        eq(resourceFavoritesInResource.resourceId, resourcesInResource.id),
+        eq(resourceFavoritesInResource.userId, userId),
+      ),
+    )
     .$dynamic();
   const rows = await (search ? query.leftJoin(search.hits, eq(search.hits.id, resourcesInResource.id)) : query)
     .where(and(where, getPageWhere(boundSort, cursor)))

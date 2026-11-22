@@ -41,6 +41,7 @@ describe("resourceCreateForm", () => {
     // The new resource opens on the Whiteboard editor, where a freshly created one has no content blob and so an empty canvas
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Whiteboard }),
+      favorite: null,
       publication: null,
     }));
     trpcMsw.whiteboard.readResourceContent.query(() => undefined);
