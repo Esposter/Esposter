@@ -16,3 +16,7 @@
 
 - [x] 3.1 Add the posture rows for the registration, expiry warnings and the account's sign-in to the cost and security posture page, and name the registrar in the infra README's opening. Verify: `pnpm -C scripts exec vitest run src/workspace` passes.
 - [x] 3.2 Add the DNSSEC resource type's folder to the naming conventions page. Verify: the same run passes.
+
+## 4. The no-mail records take the names they answer
+
+- [ ] 4.1 Decide the logical names of the no-mail records. The naming conventions page names a DNS record for what it answers, so `esposter.com-dmarc` should be `_dmarc.esposter.com`, and `esposter.com-spf` and `esposter.com-null-mx` should both be `esposter.com`. Pulumi cannot give two records of one type the same logical name, so the apex pair needs a rule for how they are named, which the naming conventions page then states. Each rename replaces a live record that `protect: true` guards, so it is a deploy decision, taken before the inbound-mail revival that deletes these records. Verify: `pnpm infra:preview --suppress-outputs` lists exactly the replacements the chosen names cause, and the naming conventions page states the apex rule.
