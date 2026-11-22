@@ -5,10 +5,12 @@ import { advanceElementalState } from "#src/services/combat/aura/advanceElementa
 import { ELEMENTAL_MONUMENT_LIT_SECONDS } from "#src/services/puzzle/constants";
 import { lightElementalMonument } from "#src/services/puzzle/lightElementalMonument";
 
+// The reactions a step brings, held once and emptied on each step, so a quiet step allocates nothing
+const reactions: Reaction[] = [];
 // A monument's elemental state moved on the fixed step, its auras decaying and its reactions, such as a Burning tick's
 // Pyro, lighting it as a strike would. A timed monument that is not struck again goes out once its time has passed
 export const stepElementalMonument = (monument: ElementalMonument, deltaSeconds: number): void => {
-  const reactions: Reaction[] = [];
+  reactions.length = 0;
   advanceElementalState(monument.elementalState, deltaSeconds, reactions);
   if (reactions.some((reaction) => reaction.element === monument.element)) lightElementalMonument(monument);
   else if (
