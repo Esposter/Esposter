@@ -1,36 +1,34 @@
 # Products
 
-| Unit                                                                                                                                                                                                                                              |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Post`                                                                                                                                                                                                                    |
-| `apps/web/app/store/post`                                                                                                                                                                                                                         |
-| `apps/web/app/composables/post`                                                                                                                                                                                                                   |
-| `apps/web/app/services/post`                                                                                                                                                                                                                      |
-| `apps/web/app/pages/post`                                                                                                                                                                                                                         |
-| `apps/web/app/components/Clicker`                                                                                                                                                                                                                 |
-| `apps/web/app/store/clicker`                                                                                                                                                                                                                      |
-| `apps/web/app/composables/clicker`                                                                                                                                                                                                                |
-| `apps/web/app/services/clicker/building`, `apps/web/app/services/clicker/effect`, `apps/web/app/services/clicker/icon`, `apps/web/app/services/clicker/properties`, `apps/web/app/services/clicker/save`, `apps/web/app/services/clicker/upgrade` |
-| `apps/web/app/services/clicker` — `SoundUrlMap.ts`, `applyGameTick.test.ts`, `applyGameTick.ts`, `constants.ts`, `createBuildingWithStatistics.test.ts`, `createClicker.ts`, `formatNumberLong.test.ts`, `formatNumberLong.ts`                    |
-| `apps/web/app/pages/clicker.vue`                                                                                                                                                                                                                  |
-| `apps/web/app/components/User`                                                                                                                                                                                                                    |
-| `apps/web/app/components/Achievement`                                                                                                                                                                                                             |
-| `apps/web/app/store/achievement`                                                                                                                                                                                                                  |
-| `apps/web/app/store/user`                                                                                                                                                                                                                         |
-| `apps/web/app/composables/achievement`, `apps/web/app/services/achievement`                                                                                                                                                                       |
-| `apps/web/app/services/room`                                                                                                                                                                                                                      |
-| `apps/web/app/pages/user`                                                                                                                                                                                                                         |
-| `apps/web/app/composables/user`, `apps/web/app/services/user`                                                                                                                                                                                     |
-| `apps/web/app/pages/achievements.vue`                                                                                                                                                                                                             |
-| `apps/web/app/error.vue`                                                                                                                                                                                                                          |
-| `apps/web/app/components/RichTextEditor`, `apps/web/app/services/codemirror`                                                                                                                                                                      |
-| `apps/web/app/components/Visual`                                                                                                                                                                                                                  |
-| `apps/web/app/components/Anime`                                                                                                                                                                                                                   |
-| `apps/web/app/components/About`                                                                                                                                                                                                                   |
-| `apps/web/app/components/Login`                                                                                                                                                                                                                   |
-| `apps/web/app/components/Transition`                                                                                                                                                                                                              |
-| `apps/web/app/composables/visual`                                                                                                                                                                                                                 |
-| `apps/web/app/services/visual`                                                                                                                                                                                                                    |
-| `apps/web/app/services/anime`                                                                                                                                                                                                                     |
-| `apps/web/app/services/about`                                                                                                                                                                                                                     |
-| `apps/web/app/services/login`                                                                                                                                                                                                                     |
+- `apps/web/app/components/Post`
+- `apps/web/app/store/post`
+- `apps/web/app/composables/post`
+- `apps/web/app/services/post`
+- `apps/web/app/pages/post`
+- `apps/web/app/components/Clicker`
+- `apps/web/app/store/clicker`
+- `apps/web/app/composables/clicker`
+- `apps/web/app/services/clicker/building`, `apps/web/app/services/clicker/effect`, `apps/web/app/services/clicker/icon`, `apps/web/app/services/clicker/properties`, `apps/web/app/services/clicker/save`, `apps/web/app/services/clicker/upgrade`
+- `apps/web/app/services/clicker` — `SoundUrlMap.ts`, `applyGameTick.test.ts`, `applyGameTick.ts`, `constants.ts`, `createBuildingWithStatistics.test.ts`, `createClicker.ts`, `formatNumberLong.test.ts`, `formatNumberLong.ts`
+- `apps/web/app/pages/clicker.vue`
+- `apps/web/app/components/User`
+- `apps/web/app/components/Achievement`
+- `apps/web/app/store/achievement`
+- `apps/web/app/store/user`
+- `apps/web/app/composables/achievement`, `apps/web/app/services/achievement`
+- `apps/web/app/services/room`
+- `apps/web/app/pages/user`
+- `apps/web/app/composables/user`, `apps/web/app/services/user`
+- `apps/web/app/pages/achievements.vue`
+- `apps/web/app/error.vue`
+- `apps/web/app/components/RichTextEditor`, `apps/web/app/services/codemirror`
+- `apps/web/app/components/Visual`
+- `apps/web/app/components/Anime`
+- `apps/web/app/components/About`
+- `apps/web/app/components/Login`
+- `apps/web/app/components/Transition`
+- `apps/web/app/composables/visual`
+- `apps/web/app/services/visual`
+- `apps/web/app/services/anime`
+- `apps/web/app/services/about`
+- `apps/web/app/services/login`
