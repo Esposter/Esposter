@@ -45,8 +45,14 @@ const { getContextMenuProps } = useContextMenu();
 
 <template>
   <div flex flex-col gap-2>
-    <UiTextField v-model="search" label="Search columns" :type="UiTextFieldType.Search" />
-    <ResourceSheetColumnTopSlot v-if="selectedColumnIds.length > 0" />
+    <!-- The selection toolbar takes the search field's place rather than a row of its own, so the table holds still when a selection starts -->
+    <UiTextField
+      v-if="selectedColumnIds.length === 0"
+      v-model="search"
+      label="Search columns"
+      :type="UiTextFieldType.Search"
+    />
+    <ResourceSheetColumnTopSlot v-else />
     <UiDataTable
       v-model:selected-ids="selectedColumnIds"
       v-model:sort-by="sortBy"
