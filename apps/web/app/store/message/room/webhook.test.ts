@@ -114,6 +114,29 @@ describe(useWebhookStore, () => {
     ]);
   });
 
+  // A failed read is held as an error rather than an empty list, until a read lands and clears it
+  test("holds a failed read as an error until a read lands", async () => {
+    expect.hasAssertions();
+
+    let isReadFailing = true;
+    trpcMsw.webhook.readWebhooks.query(() => {
+      if (isReadFailing) throw trpcError;
+
+      return [toWebhookInMessageWithRelations(first)];
+    });
+    const webhookStore = useWebhookStore();
+    const { isReadError } = storeToRefs(webhookStore);
+    const { readWebhooks } = webhookStore;
+    await readWebhooks(roomId);
+
+    expect(isReadError.value).toBe(true);
+
+    isReadFailing = false;
+    await readWebhooks(roomId);
+
+    expect(isReadError.value).toBe(false);
+  });
+
   // An update names only the fields it changes, so the active switch leaves the name the row shows where it is while
   // Its own write is in flight
   test("an update changes only the fields it names while its write is in flight", async () => {

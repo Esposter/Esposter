@@ -32,7 +32,7 @@ describe("messageModelRoomSettingsTypeOverviewIndex", () => {
     );
   });
 
-  // A failed read of the categories leaves the field offering only none, which reads as an uncategorized room
+  // A failed read of the categories leaves the field offering only none, which reads as an uncategorized room.
   // So the panel says the categories did not load rather than showing that
   test("says so when the room categories could not be read", async () => {
     expect.hasAssertions();
@@ -44,7 +44,7 @@ describe("messageModelRoomSettingsTypeOverviewIndex", () => {
     await flushPromises();
 
     expect(component.text()).toMatchInlineSnapshot(
-      `"Something went wrongThe room categories could not be loaded.Try againCategoryNone (uncategorized) Assign this room to a category to group it in the sidebar.Topic Visible below the room name. Use /topic to update from chat.0 / 500Slowmode Seconds between messages. Leave empty to disable.Read-onlyOnly members with Manage Messages permission can post."`,
+      `"Something went wrongThe room categories could not be loaded.Try againCategory None (uncategorized) Assign this room to a category to group it in the sidebar.Topic Visible below the room name. Use /topic to update from chat.0 / 500Slowmode Seconds between messages. Leave empty to disable.Read-onlyOnly members with Manage Messages permission can post."`,
     );
   });
 

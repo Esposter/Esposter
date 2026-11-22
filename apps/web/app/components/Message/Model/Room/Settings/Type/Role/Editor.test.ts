@@ -1,30 +1,16 @@
 // @vitest-environment nuxt
-import type { RoomRoleInMessage } from "@esposter/db-schema";
-
 import MessageModelRoomSettingsTypeRoleEditor from "#src/components/Message/Model/Room/Settings/Type/Role/Editor.vue";
 import MessageModelRoomSettingsTypeRolePermissionList from "#src/components/Message/Model/Room/Settings/Type/Role/Permission/List.vue";
+import { createRoomRole } from "#src/services/message/room/createRoomRole.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelRoomSettingsTypeRoleEditor", () => {
   const { trpcMsw } = setupMswTrpc();
-  const role: RoomRoleInMessage = {
-    color: "",
-    createdAt: new Date(0),
-    deletedAt: null,
-    id: v7(),
-    isEveryone: false,
-    name: "name",
-    permissions: RoomPermission.ReadMessages,
-    position: 1,
-    roomId: v7(),
-    updatedAt: new Date(0),
-    version: 0,
-  };
+  const role = createRoomRole({ permissions: RoomPermission.ReadMessages, position: 1 });
 
   // Another moderator's change to the role reaches an editor the reader has not touched: the switches show the stored
   // Permissions, and no save bar offers to write back the copy the editor was opened on
@@ -43,8 +29,6 @@ describe("messageModelRoomSettingsTypeRoleEditor", () => {
     expect(component.find('[role="status"]').exists()).toBe(false);
   });
 
-  // `updateRole` refuses a role at or above the reader's top role, so the switches are held for a reader who does not
-  // Outrank the role, and left to their own holds for one who does
   test.each([
     ["holds every switch of a role the reader's top role does not outrank", role.position, true],
     ["leaves the switches to their own holds for a role the reader's top role outranks", role.position + 1, undefined],

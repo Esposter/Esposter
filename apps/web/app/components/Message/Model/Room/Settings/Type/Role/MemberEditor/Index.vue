@@ -93,7 +93,7 @@ const setState = (permission: bigint, state: PermissionOverrideState) =>
           :is-allow-disabled="!checkHasMyPermission(roomId, permission) || undefined"
           :is-disabled="!isManageable || undefined"
           :title
-          @update:model-value="(state) => setState(permission, state)"
+          @update:model-value="(newState) => setState(permission, newState)"
         />
       </section>
     </div>

@@ -1,8 +1,7 @@
 // @vitest-environment nuxt
-import type { RoomRoleInMessage } from "@esposter/db-schema";
-
 import MessageModelRoomSettingsTypeRoleDeleteButton from "#src/components/Message/Model/Room/Settings/Type/Role/DeleteButton.vue";
 import MessageModelRoomSettingsTypeRoleListIndex from "#src/components/Message/Model/Room/Settings/Type/Role/List/Index.vue";
+import { createRoomRole } from "#src/services/message/room/createRoomRole.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useRoleStore } from "#src/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
@@ -13,21 +12,7 @@ import { describe, expect, test } from "vitest";
 describe("messageModelRoomSettingsTypeRoleListIndex", () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
-  const createRole = (position: number): RoomRoleInMessage => ({
-    color: "",
-    createdAt: new Date(0),
-    deletedAt: null,
-    id: v7(),
-    isEveryone: false,
-    name: `position ${position}`,
-    permissions: 0n,
-    position,
-    roomId,
-    updatedAt: new Date(0),
-    version: 0,
-  });
 
-  // `deleteRole` refuses a role at or above the reader's top role, so a row above it is listed without its Delete
   test("offers Delete only for a role the reader's top role outranks", async () => {
     expect.hasAssertions();
 
@@ -37,9 +22,9 @@ describe("messageModelRoomSettingsTypeRoleListIndex", () => {
     const roleStore = useRoleStore();
     const { readMyPermissions } = roleStore;
     await readMyPermissions({ roomIds: [roomId] });
-    const outrankedRole = createRole(1);
+    const outrankedRole = createRoomRole({ position: 1, roomId });
     const component = await mountSuspended(MessageModelRoomSettingsTypeRoleListIndex, {
-      props: { roles: [outrankedRole, createRole(5)], roomId },
+      props: { roles: [outrankedRole, createRoomRole({ position: 5, roomId })], roomId },
     });
 
     expect(

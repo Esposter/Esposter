@@ -11,12 +11,13 @@ interface Props {
 const { roomId, userToRoom } = defineProps<Props>();
 const userToRoomStore = useUserToRoomStore();
 const { updateUserToRoom } = userToRoomStore;
-const editedDisplayName = ref(userToRoom.displayName);
+const { draft: editedDisplayName, isDirty, settle } = useStoredDraft(() => userToRoom.displayName);
 const save = () => {
   // The field emits save from both blur and Enter, so the same value would otherwise be written twice
-  if (editedDisplayName.value === userToRoom.displayName) return;
+  if (!isDirty.value) return;
 
   updateUserToRoom({ displayName: editedDisplayName.value, roomId });
+  settle();
 };
 </script>
 

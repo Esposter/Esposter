@@ -18,8 +18,8 @@ const { memberPermissionOverrideMap, selectedMemberId, selectedRoleId } = storeT
 const userStore = useUserStore();
 const { getRoomMemberName } = userStore;
 const roleMap = computed(() => new Map(roles.map((role) => [role.id, role])));
-// `deleteRole` refuses a role at or above the reader's top role, so a row offers Delete only for one they outrank
-const isDeletable = (roleId: string) => {
+// A row offers Delete only for a role the reader outranks
+const checkIsDeletable = (roleId: string) => {
   const role = roleMap.value.get(roleId);
   return Boolean(role && checkIsAssignableRole(role) && checkIsRoleManageable(roomId, role.position));
 };
@@ -55,7 +55,7 @@ const memberItems = computed(() =>
       <MessageModelRoomSettingsTypeRoleColorDot :color="roleMap.get(item.value)?.color ?? ''" />
     </template>
     <template #actions="{ item }">
-      <MessageModelRoomSettingsTypeRoleDeleteButton v-if="isDeletable(item.value)" :role-id="item.value" />
+      <MessageModelRoomSettingsTypeRoleDeleteButton v-if="checkIsDeletable(item.value)" :role-id="item.value" />
     </template>
   </UiList>
   <UiList v-if="memberItems.length > 0" :items="memberItems" label="Members" @select="(userId) => selectMember(userId)">

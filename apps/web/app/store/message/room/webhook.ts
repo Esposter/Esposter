@@ -43,9 +43,19 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const showIssuedUrl = ({ token, webhook }: IssuedWebhookInMessage) => {
     webhookDialogStore.issuedUrl = `${runtimeConfig.public.baseUrl}/api/webhooks/${webhook.id}/${token}`;
   };
+  // Whether the last read failed, so the list says so rather than reading as having no webhooks.
+  // A read that lands clears it
+  const isReadError = ref(false);
   const readWebhookRows = useOverlayRead(webhookTable, (webhook: WebhookInMessageWithRelations) => webhook);
   const readWebhooks = (roomId: RoomInMessage["id"]) =>
-    readWebhookRows(() => $trpc.webhook.readWebhooks.query({ roomId }));
+    readWebhookRows(() => $trpc.webhook.readWebhooks.query({ roomId }), {
+      onError: () => {
+        isReadError.value = true;
+      },
+      onSuccess: () => {
+        isReadError.value = false;
+      },
+    });
   // The credential is the server's to mint, so the URL that carries it is shown once the write answers with it
   const writeIssuedWebhook = (mutate: () => Promise<IssuedWebhookInMessage>) =>
     writeAwaited(
@@ -86,5 +96,14 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
       onError: createErrorAlert,
     });
   };
-  return { createWebhook, deleteWebhook, isCreateWebhookPending, items, readWebhooks, regenerateToken, updateWebhook };
+  return {
+    createWebhook,
+    deleteWebhook,
+    isCreateWebhookPending,
+    isReadError,
+    items,
+    readWebhooks,
+    regenerateToken,
+    updateWebhook,
+  };
 });

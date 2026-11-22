@@ -42,4 +42,26 @@ describe("messageModelRoomSettingsTypeProfileIndex", () => {
 
     expect(updateCount).toBe(1);
   });
+
+  // The field shows a rename another client made, so a blur writes nothing back over it
+  test("writes nothing when a rename reaches the field the reader has not edited", async () => {
+    expect.hasAssertions();
+
+    let updateCount = 0;
+    trpcMsw.userToRoom.updateUserToRoom.mutation(() => {
+      updateCount += 1;
+      return userToRoom;
+    });
+    const userToRoomStore = useUserToRoomStore();
+    const { arriveUserToRooms } = userToRoomStore;
+    arriveUserToRooms([userToRoom]);
+
+    const component = await mountSuspended(MessageModelRoomSettingsTypeProfileIndex, { props: { room } });
+    arriveUserToRooms([{ ...userToRoom, displayName: "renamed", version: 1 }]);
+    await flushPromises();
+    await component.get("input").trigger("focusout");
+    await flushPromises();
+
+    expect(updateCount).toBe(0);
+  });
 });

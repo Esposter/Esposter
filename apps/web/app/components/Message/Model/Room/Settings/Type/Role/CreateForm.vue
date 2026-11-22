@@ -60,6 +60,6 @@ const memberItems = computed(() =>
     :items="memberItems"
     :model-value="''"
     label="Add member"
-    @update:model-value="(userId) => selectMember(userId)"
+    @update:model-value="(newUserId) => selectMember(newUserId)"
   />
 </template>

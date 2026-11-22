@@ -11,12 +11,14 @@ interface Props {
 
 defineProps<Props>();
 const webhookStore = useWebhookStore();
-const { items } = storeToRefs(webhookStore);
+const { readWebhooks } = webhookStore;
+const { isReadError, items } = storeToRefs(webhookStore);
 </script>
 
 <template>
+  <UiErrorState v-if="isReadError" error="The webhooks could not be loaded." @retry="readWebhooks(roomId)" />
   <UiEmptyState
-    v-if="items.length === 0"
+    v-else-if="items.length === 0"
     description="Create one and paste its URL into the service that should post here."
     :meaning="UiIconMeaning.Link"
     title="No webhooks yet"

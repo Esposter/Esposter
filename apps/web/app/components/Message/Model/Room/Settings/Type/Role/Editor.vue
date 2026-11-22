@@ -11,9 +11,8 @@ interface Props {
 const { role, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { checkIsRoleManageable, updateRole } = roleStore;
-const { draft: permissions, isDirty, reset, settle } = useStoredDraft(() => role.permissions);
-// `updateRole` refuses a role at or above the reader's top role, so a role the reader does not outrank is held read-only
-// Rather than offered a save that cannot land
+const { draft: editedPermissions, isDirty, reset, settle } = useStoredDraft(() => role.permissions);
+// A role the reader does not outrank is held read-only, rather than offered a save that cannot land
 const isRoleManageable = computed(() => checkIsRoleManageable(roomId, role.position));
 </script>
 
@@ -21,7 +20,7 @@ const isRoleManageable = computed(() => checkIsRoleManageable(roomId, role.posit
   <div flex flex-col gap-4>
     <h3 truncate ui-heading>{{ role.name }}</h3>
     <MessageModelRoomSettingsTypeRolePermissionList
-      v-model="permissions"
+      v-model="editedPermissions"
       :is-disabled="!isRoleManageable || undefined"
       :room-id
     />
@@ -30,7 +29,7 @@ const isRoleManageable = computed(() => checkIsRoleManageable(roomId, role.posit
       @reset="reset()"
       @save="
         () => {
-          updateRole({ id: role.id, permissions, roomId });
+          updateRole({ id: role.id, permissions: editedPermissions, roomId });
           settle();
         }
       "

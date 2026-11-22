@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useRoleStore } from "#src/store/message/room/role";
+import { getResultAsync, noop } from "@esposter/shared";
 
 interface Props {
   room: RoomInMessage;
@@ -16,7 +17,7 @@ const roles = computed(() =>
   getRoles(room.id).toSorted((firstRole, secondRole) => (firstRole.isEveryone ? -1 : secondRole.isEveryone ? 1 : 0)),
 );
 // The entries are the members a panel opened on, read once so the list shows every override the room holds
-onMounted(() => readMemberPermissionOverrides({ roomId: room.id }));
+onMounted(() => getResultAsync(() => readMemberPermissionOverrides({ roomId: room.id })).match(noop, console.error));
 </script>
 
 <!-- Discord's roles editor: the roles and members down one side, under the field that adds one, and the picked one's
