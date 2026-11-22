@@ -5,6 +5,7 @@ import type { MemberDialogType } from "#src/models/message/user/MemberDialogType
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { useModerationNoteStore } from "#src/store/message/moderation/note";
 import { useRoomStore } from "#src/store/message/room/index";
+import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 
 interface Props {
   isSelf: boolean;
@@ -17,6 +18,8 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const moderationNoteStore = useModerationNoteStore();
 const { currentTargetUserId } = storeToRefs(moderationNoteStore);
+const friendRequestStore = useFriendRequestStore();
+const { checkIsSendFriendRequestPending } = friendRequestStore;
 const { copyUserIdItem, friendItem, isKickable, moderationItems } = useMemberActionItems(
   () => user,
   currentRoomId,
@@ -37,7 +40,12 @@ watchImmediate(isKickable, async (newIsKickable) => {
 
 <template>
   <template v-if="!isSelf">
-    <UiButton v-if="friendItem" :variant="UiButtonVariant.Accent" @click="friendItem.onClick?.($event)">
+    <UiButton
+      v-if="friendItem"
+      :is-pending="checkIsSendFriendRequestPending(user.id)"
+      :variant="UiButtonVariant.Accent"
+      @click="friendItem.onClick?.($event)"
+    >
       {{ friendItem.title }}
     </UiButton>
     <UiOverflowMenu :items="overflowItems" :label="`${user.displayName} actions`" />

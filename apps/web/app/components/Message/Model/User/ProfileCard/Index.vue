@@ -31,7 +31,11 @@ const isFriend = computed(() => checkIsFriend(user.id));
 const hasSentFriendRequest = computed(() => checkHasSentFriendRequest(user.id));
 // The card must appear the moment it is opened, so the mutual rooms load behind it rather than blocking setup — the
 // Section simply appears once they land
-const { data: mutualRooms } = useQuery(() => $trpc.room.readMutualRooms.query({ userId: user.id }));
+const {
+  data: mutualRooms,
+  error: mutualRoomsError,
+  refresh: readMutualRooms,
+} = useQuery(() => $trpc.room.readMutualRooms.query({ userId: user.id }));
 // The member's roles load behind the card too, and they decide which moderation actions it offers. Nothing awaits
 // The read and nobody asked for it, so it reports its own failure — the roles render empty, which is also what a
 // Member with no roles looks like
@@ -64,6 +68,11 @@ if (currentRoomId.value)
       </div>
     </template>
     <MessageModelUserProfileCardRoles v-if="currentRoomId" :room-id="currentRoomId" :user-id="user.id" />
-    <MessageModelUserProfileCardMutualRooms v-if="!isSelf && mutualRooms && mutualRooms.length > 0" :mutual-rooms />
+    <MessageModelUserProfileCardMutualRooms
+      v-if="!isSelf && (!mutualRooms || mutualRooms.length > 0)"
+      :error="mutualRoomsError"
+      :mutual-rooms
+      @retry="readMutualRooms()"
+    />
   </div>
 </template>

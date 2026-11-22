@@ -31,7 +31,7 @@ const isEditable = computed(
 <template>
   <section v-if="memberRoles.length > 0 || isEditable" flex flex-col gap-1>
     <div flex gap-2 items-center>
-      <h3 text-sm text-muted flex-1>Roles</h3>
+      <h3 text-muted flex-1 ui-title>Roles</h3>
       <UiPopover v-if="isEditable" label="Edit roles" :variant="UiButtonVariant.Quiet" px-0>
         <template #trigger><UiIcon :meaning="UiIconMeaning.Edit" /></template>
         <div w="[min(16rem,70dvw)]" flex flex-col>

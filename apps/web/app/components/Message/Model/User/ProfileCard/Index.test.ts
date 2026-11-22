@@ -1,6 +1,9 @@
 // @vitest-environment nuxt
+import type { FriendRequestInSocialWithRelations } from "@esposter/db-schema";
+
 import MessageModelUserProfileCard from "#src/components/Message/Model/User/ProfileCard/Index.vue";
 import { setCurrentRoomId } from "#src/services/message/room/setCurrentRoomId.test";
+import { createFriendRequest } from "#src/services/message/user/createFriendRequest.test";
 import { createUser } from "#src/services/message/user/createUser.test";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -25,5 +28,25 @@ describe("messageModelUserProfileCard", () => {
     await flushPromises();
 
     expect(component.text()).toMatchInlineSnapshot(`"DAdd frienddisplayName actionsCopy user ID displayNameOnline"`);
+  });
+
+  // The add friend write is awaited and shows nothing until the server answers, so its button holds busy meanwhile
+  test("holds the add friend button busy while its request is out", async () => {
+    expect.hasAssertions();
+
+    const { promise: sendAnswered, resolve: answerSend } = Promise.withResolvers<FriendRequestInSocialWithRelations>();
+    trpcMsw.room.readMutualRooms.query(() => []);
+    trpcMsw.friendRequest.sendFriendRequest.mutation(() => sendAnswered);
+    const component = await mountSuspended(MessageModelUserProfileCard, { props: { user: { ...user, displayName } } });
+    setCurrentRoomId(roomId);
+    await flushPromises();
+    const addFriendButton = component.findAll("button").find((button) => button.text() === "Add friend");
+    await addFriendButton?.trigger("click");
+    await flushPromises();
+
+    expect(addFriendButton?.attributes("aria-busy")).toBe("true");
+
+    answerSend(createFriendRequest(createUser(), user));
+    await flushPromises();
   });
 });

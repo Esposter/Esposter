@@ -3,6 +3,7 @@ import type { SettingsSection } from "#src/models/message/user/settings/Settings
 import type { UserSettingsType } from "#src/models/message/user/UserSettingsType";
 
 import { UserSettingsTypes } from "#src/models/message/user/UserSettingsType";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { SETTINGS_CONTENT_ID } from "#src/services/message/settings/constants";
 import { UserSettingsListItemMap } from "#src/services/message/user/settings/UserSettingsListItemMap";
 import { UserSettingsSectionMap } from "#src/services/message/user/settings/UserSettingsSectionMap";
@@ -23,16 +24,17 @@ const typeItems = computed(() =>
 // The page, so the scrollspy is bounded by that container
 const visibleSectionIds = useVisibleSectionIds(() => UserSettingsSectionMap[modelValue.value], SETTINGS_CONTENT_ID);
 // A panel of one section needs no way through it
-const sectionItems = computed(() =>
-  UserSettingsSectionMap[modelValue.value].length > 1
-    ? UserSettingsSectionMap[modelValue.value].map((section) => ({
-        icon: "i-mdi:pound",
+const sectionItems = computed(() => {
+  const sections = UserSettingsSectionMap[modelValue.value];
+  return sections.length > 1
+    ? sections.map((section) => ({
         isCurrent: visibleSectionIds.value.includes(section),
+        meaning: UiIconMeaning.Section,
         title: section,
         value: section,
       }))
-    : [],
-);
+    : [];
+});
 const scrollToSection = (section: SettingsSection) => {
   window.document.getElementById(section)?.scrollIntoView({ behavior: "smooth" });
   // Close the narrow screen's sidebar once the section is on its way into view
@@ -54,7 +56,7 @@ const scrollToSection = (section: SettingsSection) => {
         "
       />
       <section v-if="sectionItems.length > 0" flex flex-col gap-1>
-        <h3 text-sm text-muted px-2>On this page</h3>
+        <h3 text-muted px-2 ui-title>On this page</h3>
         <UiList :items="sectionItems" label="Sections" @select="(section) => scrollToSection(section)" />
       </section>
     </nav>
