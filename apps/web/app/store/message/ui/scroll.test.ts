@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { Router } from "vue-router";
 
+import { ACTIVE_MESSAGE_HIGHLIGHT_MS } from "#src/services/message/constants";
 import { useDataStore } from "#src/store/message/data";
 import { useScrollStore } from "#src/store/message/ui/scroll";
 import { RoutePath } from "@esposter/shared";
@@ -17,7 +18,6 @@ describe(useScrollStore, () => {
   const messageId = 1;
   const newerCursor = v7();
   const secondMessageId = 2;
-  const highlightMs = Temporal.Duration.from({ seconds: 2 }).total("milliseconds");
   let router: Router;
 
   beforeAll(() => {
@@ -43,7 +43,7 @@ describe(useScrollStore, () => {
 
     expect(activeMessageId.value).toBe(messageId);
 
-    vi.advanceTimersByTime(highlightMs - 1);
+    vi.advanceTimersByTime(ACTIVE_MESSAGE_HIGHLIGHT_MS - 1);
 
     expect(activeMessageId.value).toBe(messageId);
 
@@ -59,13 +59,13 @@ describe(useScrollStore, () => {
     const { setActiveMessageId } = scrollStore;
     const { activeMessageId } = storeToRefs(scrollStore);
     setActiveMessageId(messageId);
-    vi.advanceTimersByTime(highlightMs - 1);
+    vi.advanceTimersByTime(ACTIVE_MESSAGE_HIGHLIGHT_MS - 1);
     setActiveMessageId(secondMessageId);
     vi.advanceTimersByTime(1);
 
     expect(activeMessageId.value).toBe(secondMessageId);
 
-    vi.advanceTimersByTime(highlightMs - 1);
+    vi.advanceTimersByTime(ACTIVE_MESSAGE_HIGHLIGHT_MS - 1);
 
     expect(activeMessageId.value).toBe(0);
   });

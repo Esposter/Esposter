@@ -11,7 +11,7 @@ Esbabbler is a Discord clone: an undecided behaviour, name, default or layout ta
 
 ## Display Name Resolution
 
-The procedure for a screen that shows room members returns the room's `displayName` alongside the account `name` when that screen needs both. Render those fields directly; do not keep a frontend room-name overlay or a wrapper that derives the name (`references/display-names.md`).
+The procedure for a screen that shows room members returns the room's `displayName` alongside the account `name` when that screen needs both. Render those fields directly; do not add a second frontend room-name overlay or wrapper beside `getRoomMemberName`, the one derivation (`references/display-names.md`).
 
 ## What May Be Done To A Message
 

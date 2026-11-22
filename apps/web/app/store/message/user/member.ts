@@ -1,5 +1,6 @@
 import type { MemberRow } from "#shared/models/db/room/MemberRow";
 import type { MemberRowInRoom } from "#shared/models/db/room/MemberRowInRoom";
+import type { MemberKey } from "#src/models/message/user/MemberKey";
 import type { CursorPaginationSlice } from "#src/models/pagination/cursor/CursorPaginationSlice";
 import type { Draft } from "#src/models/shared/overlay/Draft";
 import type { Page, PublicUser } from "@esposter/db-schema";
@@ -22,9 +23,6 @@ import { useUserStore } from "#src/store/message/user/index";
 import { useOverlayStore } from "#src/store/overlay";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
-// A list names each of its members by the room and the user, and the rows themselves are the overlay's
-type MemberKey = Pick<MemberRow, "roomId" | "userId">;
-
 // A room's rows by user, from the rows the view shows. A removed membership is not shown, so it is not in the map
 const getRoomMemberRows = (memberRows: readonly Readonly<Draft<MemberRow>>[], roomId: string | undefined) =>
   new Map(
@@ -32,7 +30,6 @@ const getRoomMemberRows = (memberRows: readonly Readonly<Draft<MemberRow>>[], ro
       checkIsVersioned(row) && row.roomId === roomId ? [[row.userId, row]] : [],
     ),
   );
-
 // Joins a list's keys to the room's rows and their users, each pair shaped by `project`. A key without both is left out
 const joinListedMembers = <T>(
   keys: readonly MemberKey[],

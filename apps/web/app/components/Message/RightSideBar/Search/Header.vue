@@ -4,14 +4,14 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useSearchMessageStore } from "#src/store/message/search/index";
 
 const searchMessageStore = useSearchMessageStore();
-const { count, isSearching } = storeToRefs(searchMessageStore);
+const { count, isPending } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
   <div p-2 flex flex-col gap-2 ui-bar>
     <MessageRightSideBarSearchInput />
     <div text-sm text-muted px-2 flex gap-2 h-6 items-center>
-      <template v-if="isSearching">
+      <template v-if="isPending">
         <UiSpinner />
         Searching
       </template>

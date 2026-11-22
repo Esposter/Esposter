@@ -1,12 +1,9 @@
-import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
 import type { ClientMessage } from "#src/models/message/ClientMessage";
+import type { ResultSearch } from "#src/models/message/search/ResultSearch";
 import type { Filter, FilterType } from "@esposter/db-schema";
 
 import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQueryEmpty";
 import { useRoomStore } from "#src/store/message/room/index";
-
-// The search a room's results were read for, held beside them so a continuation is read for that search
-type ResultSearch = Pick<SearchMessagesInput, "filters" | "query">;
 
 export const useSearchMessageStore = defineStore("message/search", () => {
   const roomStore = useRoomStore();
@@ -33,7 +30,7 @@ export const useSearchMessageStore = defineStore("message/search", () => {
   // Pending belongs to the room the search was issued for, like the totals above it: held globally, a search
   // Still running in the room the reader just left renders the room they arrived in as loading, and the first
   // Of two overlapping searches to finish clears the flag for both
-  const { data: isSearching, getBoundData: getBoundIsSearching } = useDataMap(() => roomStore.currentRoomId, false);
+  const { data: isPending, getBoundData: getBoundIsPending } = useDataMap(() => roomStore.currentRoomId, false);
   // A room's newest search cancels the one still in flight for it, from whichever surface issued it, so the response
   // To an earlier search never lands over the results of the search that replaced it
   const searchAbortControllerMap = new Map<string, AbortController>();
@@ -49,12 +46,12 @@ export const useSearchMessageStore = defineStore("message/search", () => {
     count,
     createFilter,
     getBoundCount,
-    getBoundIsSearching,
+    getBoundIsPending,
     getBoundResultSearch,
     getResultSearchRef,
     getSlice,
     isMenuOpen,
-    isSearching,
+    isPending,
     isSearchQueryEmpty,
     items,
     searchQuery,

@@ -1,5 +1,6 @@
 import type { DeleteBanInput } from "#shared/models/db/moderation/DeleteBanInput";
 import type { BanInRoom } from "#shared/models/db/room/BanInRoom";
+import type { BanKey } from "#src/models/message/user/BanKey";
 import type { Page } from "@esposter/db-schema";
 
 import { banTable } from "#src/services/message/user/ban/constants";
@@ -10,9 +11,6 @@ import { createHeaderConfirmations } from "#src/services/shared/overlay/createHe
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useOverlayStore } from "#src/store/overlay";
-
-// A list names each of its rows by the room and the user it bans, and the rows themselves are the overlay's
-type BanKey = Pick<BanInRoom, "roomId" | "userId">;
 
 export const useBanStore = defineStore("message/user/ban", () => {
   const { $trpc } = useNuxtApp();

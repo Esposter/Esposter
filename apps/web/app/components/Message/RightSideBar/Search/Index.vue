@@ -5,7 +5,7 @@ import { useSearchMessageStore } from "#src/store/message/search/index";
 const layoutStore = useLayoutStore();
 const { isRightDrawerOpen } = storeToRefs(layoutStore);
 const searchMessageStore = useSearchMessageStore();
-const { isSearching } = storeToRefs(searchMessageStore);
+const { isPending } = storeToRefs(searchMessageStore);
 </script>
 
 <!-- One surface, not two tabs. Browsing a room's attachments is a filter like every other narrowing — `has: file`
@@ -15,6 +15,6 @@ const { isSearching } = storeToRefs(searchMessageStore);
     <template #header>
       <MessageRightSideBarSearchHeader />
     </template>
-    <MessageRightSideBarSearchMessageList v-if="!isSearching" />
+    <MessageRightSideBarSearchMessageList v-if="!isPending" />
   </MessageRightSideBarPane>
 </template>

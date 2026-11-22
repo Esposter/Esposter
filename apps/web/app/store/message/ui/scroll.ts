@@ -1,5 +1,6 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
+import { ACTIVE_MESSAGE_HIGHLIGHT_MS } from "#src/services/message/constants";
 import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
 import { RoutePath } from "@esposter/shared";
@@ -44,7 +45,7 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
     () => {
       activeMessageId.value = 0;
     },
-    Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
+    ACTIVE_MESSAGE_HIGHLIGHT_MS,
     { immediate: false },
   );
   const jumpToPresent = async () => {

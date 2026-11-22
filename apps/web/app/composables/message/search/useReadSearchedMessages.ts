@@ -21,7 +21,7 @@ export const useReadSearchedMessages = () => {
   const {
     beginSearch,
     getBoundCount,
-    getBoundIsSearching,
+    getBoundIsPending,
     getBoundResultSearch,
     getResultSearchRef,
     getSlice,
@@ -61,7 +61,7 @@ export const useReadSearchedMessages = () => {
     if (checkIsSearchQueryEmpty(query, filters)) {
       // A search this read supersedes was aborted by beginSearch, and an aborted search skips clearing the flag it
       // Raised, so the read that raised none clears it here rather than leaving the room rendered as searching
-      getBoundIsSearching().value = false;
+      getBoundIsPending().value = false;
       getSlice(roomId).resetCursorPaginationData();
       getBoundResultSearch().value = undefined;
       return;
@@ -70,8 +70,8 @@ export const useReadSearchedMessages = () => {
     isMenuOpen.value = false;
     // The pending flag is raised and cleared inside the read that owns it, since two searches overlapping across a room
     // Switch would otherwise have the first to land clear the second's flag and leave its own room rendering as loading
-    const boundIsSearching = getBoundIsSearching();
-    boundIsSearching.value = true;
+    const boundIsPending = getBoundIsPending();
+    boundIsPending.value = true;
     openRightDrawer(RightDrawer.Search);
     // Everything the search writes back is bound before its first await, to the room it was issued for
     const boundCount = getBoundCount();
@@ -89,7 +89,7 @@ export const useReadSearchedMessages = () => {
         },
         () => {
           // The newer search that cancelled this one raised the flag itself, and clears it when it lands
-          if (!signal.aborted) boundIsSearching.value = false;
+          if (!signal.aborted) boundIsPending.value = false;
         },
       ),
     ).match(noop, (error) => {

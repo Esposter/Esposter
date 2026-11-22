@@ -5,11 +5,11 @@ import type { NamedAppUserInMessage } from "#shared/models/db/webhook/NamedAppUs
 // Each carries the webhook's name beside the image the identity owns, which the read that answers it joins in
 export const useAppUserStore = defineStore("message/user/appUser", () => {
   const appUserMap = ref(new Map<string, NamedAppUserInMessage>());
-  const storeAppUser = (appUser: NamedAppUserInMessage) => {
+  const setAppUser = (appUser: NamedAppUserInMessage) => {
     appUserMap.value.set(appUser.id, appUser);
   };
-  const storeAppUsers = (appUsers: NamedAppUserInMessage[]) => {
-    for (const appUser of appUsers) storeAppUser(appUser);
+  const setAppUsers = (appUsers: NamedAppUserInMessage[]) => {
+    for (const appUser of appUsers) setAppUser(appUser);
   };
-  return { appUserMap, storeAppUsers };
+  return { appUserMap, setAppUsers };
 });

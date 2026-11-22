@@ -8,7 +8,7 @@ export const useUserStore = defineStore("message/user", () => {
   const roomStore = useRoomStore();
   const userMap = ref(new Map<string, PublicUser>());
   // Each room's rows as the room's reads returned them, keyed by user id, a user who has left the room included
-  // A user's name differs by room, so each row carries the name its own room gave it; nothing here derives a room name
+  // A user's name differs by room, so each row carries the name its own room gave it
   const { getData: getRoomMemberMap, setData: setRoomMemberMap } = useDataMap(
     () => roomStore.currentRoomId,
     () => new Map<string, MemberInRoom>(),

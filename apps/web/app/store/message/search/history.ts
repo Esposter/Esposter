@@ -1,4 +1,5 @@
 import type { CreateSearchHistoryInput } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
+import type { SearchHistoryKey } from "#src/models/message/search/SearchHistoryKey";
 import type { Page, SearchHistoryInMessage } from "@esposter/db-schema";
 
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
@@ -11,9 +12,6 @@ import { searchHistoriesInMessage } from "@esposter/db-schema";
 import { compareText } from "@esposter/shared";
 
 const searchHistoryTable = createTable(searchHistoriesInMessage);
-
-// A search is held by its id, which the server mints, so the cursor's page names each search by its id
-type SearchHistoryKey = Pick<SearchHistoryInMessage, "id">;
 
 export const useSearchHistoryStore = defineStore("message/search/history", () => {
   const { $trpc } = useNuxtApp();

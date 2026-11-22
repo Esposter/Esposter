@@ -20,7 +20,7 @@ import { afterEach, assert, describe, expect, test, vi } from "vitest";
 describe(useReadSearchedMessages, () => {
   const { trpcMsw } = setupMswTrpc();
   let count: Ref<number>;
-  let isSearching: Ref<boolean>;
+  let isPending: Ref<boolean>;
   let items: ComputedRef<readonly ClientMessage[]>;
   let searchQuery: Ref<string>;
   let selectedFilters: Ref<Filter[]>;
@@ -42,7 +42,7 @@ describe(useReadSearchedMessages, () => {
         setup: () => {
           setRouteId(roomId);
           const searchMessageStore = useSearchMessageStore();
-          ({ count, isSearching, items, searchQuery, selectedFilters } = storeToRefs(searchMessageStore));
+          ({ count, isPending, items, searchQuery, selectedFilters } = storeToRefs(searchMessageStore));
           const searchHistoryStore = useSearchHistoryStore();
           createSearchHistory = vi.spyOn(searchHistoryStore, "createSearchHistory").mockResolvedValue(true);
           ({ readMoreSearchedMessages, readSearchedMessages } = useReadSearchedMessages());
@@ -116,17 +116,17 @@ describe(useReadSearchedMessages, () => {
     releaseRoomSearch();
     await pendingRoomSearch;
 
-    expect(isSearching.value).toBe(true);
+    expect(isPending.value).toBe(true);
 
     setRouteId(roomId);
 
-    expect(isSearching.value).toBe(false);
+    expect(isPending.value).toBe(false);
 
     setRouteId(otherRoomId);
     releaseOtherRoomSearch();
     await pendingOtherRoomSearch;
 
-    expect(isSearching.value).toBe(false);
+    expect(isPending.value).toBe(false);
   });
 
   // An empty read raises no flag of its own, and the search it supersedes skips clearing the one it raised once aborted,
@@ -144,12 +144,12 @@ describe(useReadSearchedMessages, () => {
     const pendingSearch = readSearchedMessages();
     await flushPromises();
 
-    expect(isSearching.value).toBe(true);
+    expect(isPending.value).toBe(true);
 
     searchQuery.value = "";
     await readSearchedMessages();
 
-    expect(isSearching.value).toBe(false);
+    expect(isPending.value).toBe(false);
 
     releaseSearch();
     await pendingSearch;
