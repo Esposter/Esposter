@@ -31,7 +31,7 @@ export const buildServiceWorker = async (context: PwaContext, nuxt: Nuxt, nitro:
       ...payloadPatterns,
       `${immutableAssets}/${BUILD_META_DIRECTORY}/*.json`,
     ];
-    options.manifestTransforms ??= [createManifestTransform(baseURL, `${immutableAssets}/`)];
+    options.manifestTransforms ??= [createManifestTransform(baseURL, immutableAssets)];
   }
   const { generateSW } = context.resolvedOptions;
   if (context.strategy === "generate-sw" && generateSW) {

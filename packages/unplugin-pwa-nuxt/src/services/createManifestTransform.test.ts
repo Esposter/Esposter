@@ -2,7 +2,7 @@ import { createManifestTransform } from "#src/services/createManifestTransform";
 import { describe, expect, test } from "vitest";
 
 describe(createManifestTransform, () => {
-  const transform = createManifestTransform("/app/", "_nuxt/");
+  const transform = createManifestTransform("/app/", "_nuxt");
 
   test("the app's own page is keyed as the base URL and another page as its route", async () => {
     expect.hasAssertions();
