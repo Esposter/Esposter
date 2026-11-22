@@ -8,9 +8,10 @@ describe(useWebhookDialogStore, () => {
     expect.hasAssertions();
 
     const webhookDialogStore = useWebhookDialogStore();
-    webhookDialogStore.getSelectedId(WebhookDialogAction.Delete).value = "deleting";
+    const { getSelectedId } = webhookDialogStore;
+    getSelectedId(WebhookDialogAction.Delete).value = "deleting";
 
-    expect(webhookDialogStore.getSelectedId(WebhookDialogAction.Delete).value).toBe("deleting");
-    expect(webhookDialogStore.getSelectedId(WebhookDialogAction.Regenerate).value).toBe("");
+    expect(getSelectedId(WebhookDialogAction.Delete).value).toBe("deleting");
+    expect(getSelectedId(WebhookDialogAction.Regenerate).value).toBe("");
   });
 });

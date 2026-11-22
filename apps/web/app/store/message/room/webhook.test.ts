@@ -63,8 +63,9 @@ describe(useWebhookStore, () => {
       [first, second, deletedFirst].map((webhook) => toWebhookInMessageWithRelations(webhook)),
     );
     const webhookStore = useWebhookStore();
+    const { readWebhooks } = webhookStore;
     const { items } = storeToRefs(webhookStore);
-    await webhookStore.readWebhooks(roomId);
+    await readWebhooks(roomId);
 
     expect(items.value).toStrictEqual([toWebhookInMessageWithRelations(second)]);
   });
