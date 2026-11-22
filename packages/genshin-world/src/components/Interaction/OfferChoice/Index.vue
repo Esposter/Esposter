@@ -6,15 +6,15 @@ import { GameButton, GameButtonKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
-  // Whether a row restores Original Resin with a Fragile Resin, where the held Original Resin covers no claim
-  canRestore?: boolean | undefined;
   // The text of the rows: the one that leaves the choice unmade, the two resins a row is paid in and the restore row
   gameText: GameText;
+  // Whether a row restores Original Resin with a Fragile Resin, where the held Original Resin covers no claim
+  isRestorable?: true | undefined;
   // The claims the held resin affords, one row each
   offers: BlossomClaimOffer[];
 }
 
-const { canRestore = false } = defineProps<Props>();
+const { isRestorable } = defineProps<Props>();
 const emit = defineEmits<{
   // A row chosen, which spends its resin and grants its rewards
   choose: [offer: BlossomClaimOffer];
@@ -40,7 +40,7 @@ const emit = defineEmits<{
     >
       {{ gameText[offer.condensedResinCount > 0 ? GameTextKey.UseCondensedResin : GameTextKey.UseOriginalResin] }}
     </GameButton>
-    <GameButton v-if="canRestore" class="offer" :kind="GameButtonKind.Row" tip="" @click="emit('restore')">
+    <GameButton v-if="isRestorable" class="offer" :kind="GameButtonKind.Row" tip="" @click="emit('restore')">
       {{ gameText[GameTextKey.FragileResinRestore] }}
     </GameButton>
     <GameButton class="offer" :kind="GameButtonKind.Row" tip="" @click="emit('close')">{{

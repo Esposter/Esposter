@@ -1206,8 +1206,8 @@ useWorldSaveSync({
       :tracked-quest="trackerQuest"
       :traveler-name="savedState.travelerName"
       :trial-seconds-remaining
-      @map="screenKind = ScreenKind.Map"
-      @menu="screenKind = ScreenKind.PaimonMenu"
+      @open-map="screenKind = ScreenKind.Map"
+      @open-menu="screenKind = ScreenKind.PaimonMenu"
       @press="(id) => pressInteractable(id)"
     >
       <template #prompts>
@@ -1220,7 +1220,7 @@ useWorldSaveSync({
         />
         <OfferChoice
           v-if="claimPrompt"
-          :can-restore="claimPrompt.canRestore"
+          :is-restorable="claimPrompt.canRestore ? true : undefined"
           :game-text
           :offers="claimPrompt.offers"
           @choose="(offer) => chooseOutcropClaim(offer, getWorldNow(), worldLevel, kitContext.random)"

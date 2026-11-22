@@ -6,8 +6,8 @@ import type { GameText } from "genshin-text";
 import HudGlyph from "#src/components/Hud/Glyph/Index.vue";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { ACTION_BUTTON_BACKGROUND } from "#src/services/hud/constants";
+import { getHeldKeyListeners } from "#src/services/hud/getHeldKeyListeners";
 import { InputActionGlyphLayersMap } from "#src/services/hud/InputActionGlyphLayersMap";
-import { pressCapturedPointer } from "#src/services/hud/pressCapturedPointer";
 import { WeaponTypeGlyphLayersMap } from "#src/services/hud/WeaponTypeGlyphLayersMap";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 import { InputAction } from "genshin-engine";
@@ -89,11 +89,7 @@ onUnmounted(() => {
     :class="['action', 'lit-disc', name]"
     :aria-label="label"
     type="button"
-    @blur="input.release(code)"
-    @keydown.enter.space.stop="input.press(code)"
-    @keyup.enter.space.stop="input.release(code)"
-    @lostpointercapture="input.release(code)"
-    @pointerdown="(event) => pressCapturedPointer(input, code, event)"
+    v-on="getHeldKeyListeners(input, code)"
   >
     <HudGlyph class="glyph" :glyph-layers />
   </button>

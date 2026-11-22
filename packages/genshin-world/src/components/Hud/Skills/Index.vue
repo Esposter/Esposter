@@ -8,7 +8,7 @@ import HudGlyph from "#src/components/Hud/Glyph/Index.vue";
 import HudKeyCap from "#src/components/Hud/KeyCap/Index.vue";
 import { ACTION_BUTTON_BACKGROUND } from "#src/services/hud/constants";
 import { ElementBurstColorsMap } from "#src/services/hud/ElementBurstColorsMap";
-import { pressCapturedPointer } from "#src/services/hud/pressCapturedPointer";
+import { getHeldKeyListeners } from "#src/services/hud/getHeldKeyListeners";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 import { InputAction } from "genshin-engine";
 import {
@@ -71,11 +71,7 @@ onUnmounted(() => {
       :aria-label="gameText[GameTextKey.ElementalSkill]"
       :style="{ '--cooldown': getCooldownShare(skillCooldown, skillCooldownSeconds) }"
       type="button"
-      @blur="input.release(skillCode)"
-      @keydown.enter.space.stop="input.press(skillCode)"
-      @keyup.enter.space.stop="input.release(skillCode)"
-      @lostpointercapture="input.release(skillCode)"
-      @pointerdown="(event) => pressCapturedPointer(input, skillCode, event)"
+      v-on="getHeldKeyListeners(input, skillCode)"
     >
       <HudGlyph v-if="skillGlyphs" class="glyph" :glyph-layers="skillGlyphs.skill" />
       <span v-if="skillCooldown > 0" class="cooldown">{{ skillCooldown.toFixed(1) }}</span>
@@ -91,11 +87,7 @@ onUnmounted(() => {
         '--energy': Math.min(energy / energyCost, 1),
       }"
       type="button"
-      @blur="input.release(burstCode)"
-      @keydown.enter.space.stop="input.press(burstCode)"
-      @keyup.enter.space.stop="input.release(burstCode)"
-      @lostpointercapture="input.release(burstCode)"
-      @pointerdown="(event) => pressCapturedPointer(input, burstCode, event)"
+      v-on="getHeldKeyListeners(input, burstCode)"
     >
       <HudGlyph v-if="skillGlyphs" class="glyph" :glyph-layers="skillGlyphs.burst" />
       <span v-if="burstCooldown > 0" class="cooldown">{{ burstCooldown.toFixed(1) }}</span>

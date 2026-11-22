@@ -90,8 +90,8 @@ defineSlots<{
 }>();
 defineProps<Props>();
 const emit = defineEmits<{
-  map: [];
-  menu: [];
+  openMap: [];
+  openMenu: [];
   // A row of the prompts pressed itself, which acts on it as F acts on the selected row
   press: [id: string];
 }>();
@@ -116,7 +116,7 @@ const emit = defineEmits<{
     <GameRect #default="{ rect: hudRect }" :rect="interfaceRects[HudInterfaceRectName.MainPage]">
       <GameRect #default="{ rect: mapInfoRect }" :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.MapInfo]">
         <GameRect :parent="mapInfoRect" :rect="interfaceRects[HudInterfaceRectName.PlayerProfileButton]">
-          <HudPaimonButton :game-text @press="emit('menu')" />
+          <HudPaimonButton :game-text @press="emit('openMenu')" />
         </GameRect>
         <GameRect
           #default="{ rect: miniMapRect }"
@@ -131,7 +131,7 @@ const emit = defineEmits<{
             :landmarks
             :near-oculus-places
             :parent="miniMapRect"
-            @open="emit('map')"
+            @open="emit('openMap')"
           />
         </GameRect>
       </GameRect>
