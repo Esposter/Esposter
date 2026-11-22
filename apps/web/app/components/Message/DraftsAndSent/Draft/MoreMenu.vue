@@ -17,7 +17,7 @@ const emit = defineEmits<{ delete: [] }>();
 const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = draftsAndSentScheduleDialogStore;
 const editDraft = async () => {
-  await getResultAsync(() => navigateTo(getDraftItemRoute(draftItem))).match(noop, createErrorAlert);
+  await getResultAsync(async () => navigateTo(getDraftItemRoute(draftItem))).match(noop, createErrorAlert);
 };
 const items = computed<Item[]>(() => [
   {

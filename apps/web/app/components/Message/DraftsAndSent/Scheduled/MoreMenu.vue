@@ -20,7 +20,10 @@ const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = draftsAndSentScheduleDialogStore;
 // Leaving for the room is at once, beside the cancel rather than after it
 const navigateToRoom = getSynchronizedFunction(async () => {
-  await getResultAsync(() => navigateTo(RoutePath.Messages(scheduledMessageJob.roomId))).match(noop, createErrorAlert);
+  await getResultAsync(async () => navigateTo(RoutePath.Messages(scheduledMessageJob.roomId))).match(
+    noop,
+    createErrorAlert,
+  );
 });
 // Only a scheduled message reschedules, and it keeps the thread it was scheduled into. A reminder posts no message to
 // Move, so it is set again instead
