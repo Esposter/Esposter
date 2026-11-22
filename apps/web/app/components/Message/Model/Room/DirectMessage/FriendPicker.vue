@@ -33,12 +33,10 @@ const friendItems = computed(() =>
 // The model are read and written here, in one place, rather than cast at every binding
 // oxlint-disable typescript/no-unsafe-type-assertion -- the model is a list or an id by TMultiple, a conditional type that the compiler cannot narrow by the mode's runtime flag; the value written is the shape the mode holds, which FriendPickerModelValue<TMultiple> selects at runtime
 const readModelValue = () => modelValue.value as string | string[] | undefined;
-// oxlint-enable typescript/no-unsafe-type-assertion
 const writeModelValue = (value: string | string[] | undefined) => {
-  // oxlint-disable typescript/no-unsafe-type-assertion -- the model is a list or an id by TMultiple, a conditional type that the compiler cannot narrow by the mode's runtime flag; the value written is the shape the mode holds, which FriendPickerModelValue<TMultiple> selects at runtime
   modelValue.value = value as FriendPickerModelValue<TMultiple>;
-  // oxlint-enable typescript/no-unsafe-type-assertion
 };
+// oxlint-enable typescript/no-unsafe-type-assertion
 const selectedUserIds = computed(() => {
   const value = readModelValue();
   if (Array.isArray(value)) return value;
