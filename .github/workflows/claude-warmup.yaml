@@ -28,4 +28,4 @@ jobs:
       - name: 🔥 Warm up Claude Code session
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        run: pnpm exec claude -p "hi"
+        run: pnpm dlx @anthropic-ai/claude-code -p "hi"

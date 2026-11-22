@@ -113,7 +113,6 @@
     "update:node": "pnpm -C scripts update:node"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@fission-ai/openspec": "catalog:",
