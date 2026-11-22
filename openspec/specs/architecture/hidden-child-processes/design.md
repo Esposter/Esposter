@@ -19,7 +19,7 @@ flowchart LR
   Insert --> Node
 ```
 
-Each wrapper (`spawn`, `spawnSync`, `execFile`, `execFileSync` and `execSync`) takes the command or file first and passes the rest to `withHiddenWindow`, which works out the options slot by node's own argument shapes. An args array as the first of those arguments, or an undefined one with more arguments after it, means the options come second; otherwise they come first. The window flag is written after the caller's keys, so a caller passing `windowsHide: false` is overridden. The wrapper is typed as node's own function, so every overload callers rely on still type-checks. The wrapper adds an option and nothing else.
+Each wrapper (`spawn`, `spawnSync`, `execFile`, `execFileSync` and `execSync`) is built by `withHiddenWindowFunction` from node's own function. It forwards the command or file and the rest to node, and the rest pass through `withHiddenWindow`, which works out the options slot by node's own argument shapes. An args array as the first of those arguments, or an undefined one with more arguments after it, means the options come second; otherwise they come first. The window flag is written after the caller's keys, so a caller passing `windowsHide: false` is overridden. The wrapper is typed as node's own function, so every overload callers rely on still type-checks, and the one assertion that keeps that type sits in `withHiddenWindowFunction`. The wrapper adds an option and nothing else.
 
 `execFile` carries one more thing. Node's promisified form resolves `{ stdout, stderr }` through a symbol on the function, and a plain wrapper would lose it and resolve stdout alone. The wrapper defines that symbol again, so `promisify(execFile)` keeps node's result and still hides the window. The package exports that promisified form once as `execFileAsync`, so no caller promisifies it again.
 
@@ -32,11 +32,12 @@ The lint rule is written in `oxlint/importRestrictions.ts`. It bans `child_proce
 
 ## Key files
 
-| File                                                                 | Role                                                          |
-| -------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `packages/shared-node/src/childProcess.ts`                           | re-exports the five wrappers under the subpath                |
-| `packages/shared-node/src/services/childProcess/withHiddenWindow.ts` | decides where the window flag goes in a call's arguments      |
-| `packages/shared-node/src/services/childProcess/spawn.ts`            | wraps spawn; the other four wrappers follow the same shape    |
-| `packages/shared-node/src/services/childProcess/execFile.ts`         | wraps execFile and keeps node's promisified result            |
-| `oxlint/importRestrictions.ts`                                       | the restricted import entries for `child_process`             |
-| `scripts/src/workspace/childProcessImport.test.ts`                   | the lint probe whose title is this capability's lint scenario |
+| File                                                                         | Role                                                               |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `packages/shared-node/src/childProcess.ts`                                   | re-exports the five wrappers under the subpath                     |
+| `packages/shared-node/src/services/childProcess/withHiddenWindow.ts`         | decides where the window flag goes in a call's arguments           |
+| `packages/shared-node/src/services/childProcess/withHiddenWindowFunction.ts` | builds each wrapper as node's own function type, the one assertion |
+| `packages/shared-node/src/services/childProcess/spawn.ts`                    | wraps spawn; the other four wrappers follow the same shape         |
+| `packages/shared-node/src/services/childProcess/execFile.ts`                 | wraps execFile and keeps node's promisified result                 |
+| `oxlint/importRestrictions.ts`                                               | the restricted import entries for `child_process`                  |
+| `scripts/src/workspace/childProcessImport.test.ts`                           | the lint probe whose title is this capability's lint scenario      |
