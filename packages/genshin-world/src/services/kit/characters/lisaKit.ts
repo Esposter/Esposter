@@ -23,17 +23,10 @@ const CONDUCTIVE_STACK: EnemyStatus = {
   stacks: 1,
 };
 
-// Measured: gcsim v2.47.2 (MIT) lisa/asc.go, from Ascension 4 each opponent Lightning Rose hits has its DEF decreased by 15%
-// For 10 seconds, as the dump's Lisa passive text gives it. Each discharge refreshes the status rather than stacking it
+// Measured: gcsim v2.47.2 (MIT) lisa/asc.go, from Ascension 4 each opponent Lightning Rose hits has its DEF decreased by
+// Its record's defense reduction for the record's seconds, as the dump's Lisa passive text gives them. Each discharge
+// Refreshes the status rather than stacking it
 const LIGHTNING_ROSE_ASCENSION = 4;
-const LIGHTNING_ROSE_DEFENSE_STATUS: EnemyStatus = {
-  damageTakenBonus: 0,
-  defenseReduction: 0.15,
-  id: "lisa-lightning-rose",
-  secondsRemaining: 10,
-};
-const getLightningRoseStatus = ({ ascension }: Combatant): EnemyStatus | undefined =>
-  ascension >= LIGHTNING_ROSE_ASCENSION ? LIGHTNING_ROSE_DEFENSE_STATUS : undefined;
 
 export const LISA_CHARACTER_ID = 10_000_006;
 
@@ -59,7 +52,15 @@ const CONSTELLATION_1_MAX_ENERGY = 10;
 // Not carry the length of. Constellation 4 needs the simultaneous bolt count of Lightning Rose, which the kit does not read
 // Measured: gcsim v2.47.2 (MIT) lisa/burst.go lines 60 to 62: the discharges are queued from the cast, the first at 119
 // Frames and one every 30 frames after it, thirty in all. The record's discharge hitmarks are that schedule
-export const createLisaKitBehaviour = ({ readHits, readSeconds }: KitRecordReader): KitBehaviour => {
+export const createLisaKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
+  const lightningRoseDefenseStatus: EnemyStatus = {
+    damageTakenBonus: 0,
+    defenseReduction: readParameter("lightningRoseDefenseReduction"),
+    id: "lisa-lightning-rose",
+    secondsRemaining: readParameter("lightningRoseDefenseSeconds"),
+  };
+  const getLightningRoseStatus = ({ ascension }: Combatant): EnemyStatus | undefined =>
+    ascension >= LIGHTNING_ROSE_ASCENSION ? lightningRoseDefenseStatus : undefined;
   const discharges = readHits("discharges", { enemyStatus: getLightningRoseStatus });
   const lightningRoseSeconds = readSeconds("lightningRose");
   // Constellation 1's Energy the hold in progress has regenerated, which its start clears

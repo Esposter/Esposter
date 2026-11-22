@@ -244,5 +244,7 @@
   "skillHolds.0.action.hits.0.stackedHit.poiseDamages.3": { "cause": "Unsourced", "value": 300 },
   "skillHolds.0.cooldownSeconds": { "file": "skill.go", "line": 167, "source": "Gcsim", "value": 16 },
   "skillHolds.0.minimumHeldSeconds": { "cause": "Unsourced", "value": 1.9 },
+  "parameters.lightningRoseDefenseReduction": { "cause": "Unsourced", "value": 0.15 },
+  "parameters.lightningRoseDefenseSeconds": { "cause": "Unsourced", "value": 10 },
   "skillMaximumHeldSeconds": { "cause": "Unsourced", "value": 4 }
 }
