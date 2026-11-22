@@ -9,7 +9,8 @@ import { RoomPermissionDefinition } from "#src/models/message/room/role/RoomPerm
 export const RoomPermissionDefinitionMap = {
   [RoomPermissionDefinition.Administrator]: {
     category: RoomPermissionCategory.Advanced,
-    description: "Grants every permission and bypasses the role hierarchy. Owners keep this over anyone who has it.",
+    description:
+      "Grants every permission, though role hierarchy still applies to acting on members. Owners keep this over anyone who has it.",
   },
   [RoomPermissionDefinition.BanMembers]: {
     category: RoomPermissionCategory.Moderation,
