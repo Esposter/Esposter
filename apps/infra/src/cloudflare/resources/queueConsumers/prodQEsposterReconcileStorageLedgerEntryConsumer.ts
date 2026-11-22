@@ -1,7 +1,6 @@
 import ProdJobsWorkerScriptName from "#src/cloudflare/constants/ProdJobsWorkerScriptName";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
-import { prodDlqEsposterReconcileStorageLedgerEntry } from "#src/cloudflare/resources/queues/prodDlqEsposterReconcileStorageLedgerEntry";
-import { prodQEsposterReconcileStorageLedgerEntry } from "#src/cloudflare/resources/queues/prodQEsposterReconcileStorageLedgerEntry";
+import { queueJobResources } from "#src/cloudflare/services/queueJobResources";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
@@ -17,13 +16,15 @@ const queueName = getCloudflareResourceName(
   CloudflareAssetType.Queue,
   QueueJob.ReconcileStorageLedgerEntry,
 );
+const { deadLetterQueue, queue } =
+  queueJobResources[CloudflareEnvironment.Production][QueueJob.ReconcileStorageLedgerEntry];
 
 export const prodQEsposterReconcileStorageLedgerEntryConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
   {
     accountId: CLOUDFLARE_ACCOUNT_ID,
-    deadLetterQueue: prodDlqEsposterReconcileStorageLedgerEntry.queueName,
-    queueId: prodQEsposterReconcileStorageLedgerEntry.queueId,
+    deadLetterQueue: deadLetterQueue.queueName,
+    queueId: queue.queueId,
     scriptName: ProdJobsWorkerScriptName,
     settings: {
       maxRetries: QueueJobMaxRetriesMap[QueueJob.ReconcileStorageLedgerEntry],
@@ -31,5 +32,5 @@ export const prodQEsposterReconcileStorageLedgerEntryConsumer: cloudflare.QueueC
     },
     type: "worker",
   },
-  { parent: prodQEsposterReconcileStorageLedgerEntry, protect: true },
+  { parent: queue, protect: true },
 );

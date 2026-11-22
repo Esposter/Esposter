@@ -1,7 +1,6 @@
 import DevJobsWorkerScriptName from "#src/cloudflare/constants/DevJobsWorkerScriptName";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
-import { devDlqEsposterProcessNotification } from "#src/cloudflare/resources/queues/devDlqEsposterProcessNotification";
-import { devQEsposterProcessNotification } from "#src/cloudflare/resources/queues/devQEsposterProcessNotification";
+import { queueJobResources } from "#src/cloudflare/services/queueJobResources";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
@@ -17,16 +16,17 @@ const queueName = getCloudflareResourceName(
   CloudflareAssetType.Queue,
   QueueJob.ProcessNotification,
 );
+const { deadLetterQueue, queue } = queueJobResources[CloudflareEnvironment.Development][QueueJob.ProcessNotification];
 
 export const devQEsposterProcessNotificationConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
   {
     accountId: CLOUDFLARE_ACCOUNT_ID,
-    deadLetterQueue: devDlqEsposterProcessNotification.queueName,
-    queueId: devQEsposterProcessNotification.queueId,
+    deadLetterQueue: deadLetterQueue.queueName,
+    queueId: queue.queueId,
     scriptName: DevJobsWorkerScriptName,
     settings: { maxRetries: QueueJobMaxRetriesMap[QueueJob.ProcessNotification], retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },
-  { parent: devQEsposterProcessNotification, protect: true },
+  { parent: queue, protect: true },
 );

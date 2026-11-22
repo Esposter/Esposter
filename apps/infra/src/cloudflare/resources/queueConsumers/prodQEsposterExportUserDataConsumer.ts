@@ -1,7 +1,6 @@
 import ProdJobsWorkerScriptName from "#src/cloudflare/constants/ProdJobsWorkerScriptName";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
-import { prodDlqEsposterExportUserData } from "#src/cloudflare/resources/queues/prodDlqEsposterExportUserData";
-import { prodQEsposterExportUserData } from "#src/cloudflare/resources/queues/prodQEsposterExportUserData";
+import { queueJobResources } from "#src/cloudflare/services/queueJobResources";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
@@ -17,16 +16,17 @@ const queueName = getCloudflareResourceName(
   CloudflareAssetType.Queue,
   QueueJob.ExportUserData,
 );
+const { deadLetterQueue, queue } = queueJobResources[CloudflareEnvironment.Production][QueueJob.ExportUserData];
 
 export const prodQEsposterExportUserDataConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
   {
     accountId: CLOUDFLARE_ACCOUNT_ID,
-    deadLetterQueue: prodDlqEsposterExportUserData.queueName,
-    queueId: prodQEsposterExportUserData.queueId,
+    deadLetterQueue: deadLetterQueue.queueName,
+    queueId: queue.queueId,
     scriptName: ProdJobsWorkerScriptName,
     settings: { maxRetries: QueueJobMaxRetriesMap[QueueJob.ExportUserData], retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },
-  { parent: prodQEsposterExportUserData, protect: true },
+  { parent: queue, protect: true },
 );

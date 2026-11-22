@@ -1,7 +1,6 @@
 import DevJobsWorkerScriptName from "#src/cloudflare/constants/DevJobsWorkerScriptName";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
-import { devDlqEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/devDlqEsposterDeleteOrphanedProfileImage";
-import { devQEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/devQEsposterDeleteOrphanedProfileImage";
+import { queueJobResources } from "#src/cloudflare/services/queueJobResources";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
@@ -17,13 +16,15 @@ const queueName = getCloudflareResourceName(
   CloudflareAssetType.Queue,
   QueueJob.DeleteOrphanedProfileImage,
 );
+const { deadLetterQueue, queue } =
+  queueJobResources[CloudflareEnvironment.Development][QueueJob.DeleteOrphanedProfileImage];
 
 export const devQEsposterDeleteOrphanedProfileImageConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
   {
     accountId: CLOUDFLARE_ACCOUNT_ID,
-    deadLetterQueue: devDlqEsposterDeleteOrphanedProfileImage.queueName,
-    queueId: devQEsposterDeleteOrphanedProfileImage.queueId,
+    deadLetterQueue: deadLetterQueue.queueName,
+    queueId: queue.queueId,
     scriptName: DevJobsWorkerScriptName,
     settings: {
       maxRetries: QueueJobMaxRetriesMap[QueueJob.DeleteOrphanedProfileImage],
@@ -31,5 +32,5 @@ export const devQEsposterDeleteOrphanedProfileImageConsumer: cloudflare.QueueCon
     },
     type: "worker",
   },
-  { parent: devQEsposterDeleteOrphanedProfileImage, protect: true },
+  { parent: queue, protect: true },
 );

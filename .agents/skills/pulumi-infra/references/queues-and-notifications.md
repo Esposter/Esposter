@@ -6,6 +6,8 @@ Read when a job's messages reach its dead-letter queue, a consumer or an R2 noti
 
 Each `QueueJob` has a queue (`cloudflare.Queue`, `prod-q-esposter-<job>`) and a dead-letter queue beside it (`prod-dlq-esposter-<job>`), declared under `src/cloudflare/resources/queues/`. The queue's consumer (`cloudflare.QueueConsumer`, logical name `<queue>-consumer`, under `queueConsumers/`) names the jobs Worker's script as `scriptName`, the queue as `queueId` and the dead-letter queue as `deadLetterQueue`.
 
+A consumer takes its queue and dead-letter queue from one entry of `queueJobResources` (`apps/infra/src/cloudflare/services/queueJobResources.ts`), keyed by environment and job, so the pair is written once and a consumer cannot pair a queue with another job's dead letters.
+
 Its retries are two settings. `maxRetries` is the job's entry in `QueueJobMaxRetriesMap`, the number of redeliveries before the message goes to the dead-letter queue, and `retryDelay` is `QueueConsumerRetryDelay`, the wait before each one. A job whose entry is `0` (`ProcessWebhook`) goes to its dead-letter queue on its first failure.
 
 The consumer waits for the jobs Worker's first deploy, and so do the Workers custom domains for the web Worker (`apps/infra/docs/stacks.md`, "First deploy").
