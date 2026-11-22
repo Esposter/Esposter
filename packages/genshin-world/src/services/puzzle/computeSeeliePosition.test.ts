@@ -9,7 +9,7 @@ describe(computeSeeliePosition, () => {
   const COURT = { x: 10, z: 4 };
   const createSeelie = (progress: number): Seelie => ({
     court: COURT,
-    id: "seelie",
+    id: "id",
     progress,
     start: START,
     state: SeelieState.Led,

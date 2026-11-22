@@ -9,7 +9,7 @@ describe(checkIsSeelieFollowed, () => {
   const START = { x: 0, z: 0 };
   const seelie: Seelie = {
     court: { x: 100, z: 0 },
-    id: "seelie",
+    id: "id",
     progress: 0,
     start: START,
     state: SeelieState.Resting,

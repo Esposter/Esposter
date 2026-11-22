@@ -17,10 +17,12 @@ const createChallenge = (limitSeconds: number, targetCount: number): TimeTrialCh
   targetCount,
 });
 
-describe(startTimeTrialChallenge, () => {
-  const LIMIT_SECONDS = 10;
-  const TARGET_COUNT = 2;
+const LIMIT_SECONDS = 10;
+const TARGET_COUNT = 2;
+const MARKER_ID = "id";
+const MARKER_POSITION = { x: 3, z: -4 };
 
+describe(startTimeTrialChallenge, () => {
   test("starts its clock at its limit", () => {
     expect.hasAssertions();
 
@@ -35,11 +37,6 @@ describe(startTimeTrialChallenge, () => {
 });
 
 describe(strikeTimeTrialTarget, () => {
-  const LIMIT_SECONDS = 10;
-  const TARGET_COUNT = 2;
-  const MARKER_ID = "marker";
-  const MARKER_POSITION = { x: 3, z: -4 };
-
   test("finishing every target in time spawns the chest", () => {
     expect.hasAssertions();
 
@@ -61,11 +58,6 @@ describe(strikeTimeTrialTarget, () => {
 });
 
 describe(stepTimeTrialChallenge, () => {
-  const LIMIT_SECONDS = 10;
-  const TARGET_COUNT = 2;
-  const MARKER_ID = "marker";
-  const MARKER_POSITION = { x: 3, z: -4 };
-
   test("a missed target before the timer ends gives no chest", () => {
     expect.hasAssertions();
 
