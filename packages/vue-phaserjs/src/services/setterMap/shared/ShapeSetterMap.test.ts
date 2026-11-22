@@ -21,4 +21,15 @@ describe("shapeSetterMap", () => {
     expect(circle.fillAlpha).toBe(alpha);
     expect(circle.isFilled).toBe(false);
   });
+
+  test("clearing the fill colour leaves the shape filled as it was", () => {
+    expect.hasAssertions();
+
+    const scene = startTestScene(sceneKey);
+    const circle = scene.add.circle();
+    ShapeSetterMap[ShapeSetter.FillColor](circle)(0);
+    ShapeSetterMap[ShapeSetter.FillColor](circle)(undefined);
+
+    expect(circle.isFilled).toBe(true);
+  });
 });

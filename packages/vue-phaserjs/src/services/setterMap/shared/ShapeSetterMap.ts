@@ -25,6 +25,8 @@ export const ShapeSetterMap = {
     gameObject.fillAlpha = value;
   },
   [ShapeSetter.FillColor]: (gameObject) => (value) => {
+    if (value === undefined) return;
+
     gameObject.setFillStyle(value, gameObject.fillAlpha);
   },
   [ShapeSetter.StrokeStyle]: (gameObject) => (value) => {
