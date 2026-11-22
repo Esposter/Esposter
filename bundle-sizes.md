@@ -18,13 +18,13 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-world              | index.js                  |  232293 |  226.8 |
 | genshin-interface          | style.css                 |  194226 |  189.7 |
 | genshin-engine             | **/*.d.ts                 |  134341 |  131.2 |
-| @esposter/shared           | **/*.js                   |  129332 |  126.3 |
+| @esposter/shared           | **/*.js                   |  129925 |  126.9 |
 | math-expression-compiler   | **/*.js                   |  111982 |  109.4 |
 | vue-survey-engine-headless | **/*.js                   |  108878 |  106.3 |
 | vue-phaserjs               | **/*.js                   |   92657 |   90.5 |
 | vue-block-editor-headless  | **/*.js                   |   86836 |   84.8 |
 | mjml-blocks                | **/*.js                   |   80633 |   78.7 |
-| @esposter/shared           | **/*.d.ts                 |   79969 |   78.1 |
+| @esposter/shared           | **/*.d.ts                 |   79942 |   78.1 |
 | vue-survey-engine-headless | **/*.d.ts                 |   74241 |   72.5 |
 | mjml-blocks                | **/*.d.ts                 |   72461 |   70.8 |
 | survey-expression          | **/*.js                   |   72155 |   70.5 |
@@ -65,7 +65,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | survey-expression          | index.js                  |   13119 |   12.8 |
 | nuxt-security-module       | **/*.d.ts                 |   13021 |   12.7 |
 | vue-editor-layout-headless | **/*.js                   |   12877 |   12.6 |
-| @esposter/shared-node      | **/*.js                   |   11914 |   11.6 |
+| @esposter/shared-node      | **/*.js                   |   12188 |   11.9 |
 | vue-pdfjs-headless         | **/*.d.ts                 |   11117 |   10.9 |
 | unplugin-pwa-nuxt          | **/*.js                   |   10278 |   10.0 |
 | vue-editor-layout-headless | **/*.d.ts                 |    9910 |    9.7 |
@@ -165,4 +165,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 160 files, 13246120 bytes, 12935.7 KiB, 12.63 MiB
+**Total:** 160 files, 13246960 bytes, 12936.5 KiB, 12.63 MiB
