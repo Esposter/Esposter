@@ -805,7 +805,7 @@ export class RoomObject extends RealtimeObject<RoomEvent, RoomObjectRpc> impleme
     await getResultAsync(() => notify(this.#getUser(userId))).match(noop, console.error);
   }
 
-  // The notification a written message owes its recipients, published best-effort after the write.
+  // The notification a written message owes its recipients.
   // A failed publish costs one notification, never the message that landed
   async #publishMessageNotification(message: RoomMessage): Promise<void> {
     await getResultAsync(() =>

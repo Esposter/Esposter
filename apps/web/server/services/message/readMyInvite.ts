@@ -20,7 +20,6 @@ export const readMyInvite = async (
     .orderBy(asc(invitesInMessage.deletedAt), desc(invitesInMessage.createdAt))
     .limit(1);
   if (!invite || invite.deletedAt || checkIsInviteUsable(invite)) return invite;
-
   // Tombstoned by primary key under the live guard, so a create that minted a fresh link meanwhile is never the row removed
   const [lapsedInvite] = await db
     .update(invitesInMessage)
@@ -28,7 +27,6 @@ export const readMyInvite = async (
     .where(and(eq(invitesInMessage.id, invite.id), getLiveRowWhere(invitesInMessage)))
     .returning();
   if (lapsedInvite) return lapsedInvite;
-
   // The guard matched nothing, so a create replaced the link meanwhile and tombstoned it: the row as it now stands is the answer
   const [replacedInvite] = await db.select().from(invitesInMessage).where(eq(invitesInMessage.id, invite.id)).limit(1);
   return replacedInvite;

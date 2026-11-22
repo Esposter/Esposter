@@ -15,7 +15,6 @@ const getSearchRoomIds = (filters: Filter[], roomId: string): string[] => {
   const inRoomIds = getInFilterRoomIds(filters);
   return inRoomIds.length > 0 ? inRoomIds : [roomId];
 };
-
 // Each room is asked for its matches after the cursor, and they merge into one page in the order the query gives them.
 // The count of every match is answered with the first page only, since it is the same for every page of the search
 export const searchMessages = async ({
