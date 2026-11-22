@@ -26,7 +26,6 @@ const runAction = () => {
       await action.handler?.();
     },
     {
-      applyOptimistic: () => noop,
       isExclusive: true,
       key,
       onError: (error) => {

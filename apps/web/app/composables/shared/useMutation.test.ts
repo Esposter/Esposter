@@ -29,19 +29,6 @@ describe(useMutation, () => {
   const result = "result";
   const error = new Error(" ");
 
-  test("applies optimistically and keeps the change on success", async () => {
-    expect.hasAssertions();
-
-    const rollback = vi.fn<() => void>();
-    const applyOptimistic = vi.fn<() => () => void>(() => rollback);
-    const { executeMutation } = useMutation();
-    executeMutation(() => Promise.resolve(), { applyOptimistic, key });
-    await flushPromises();
-
-    expect(applyOptimistic).toHaveBeenCalledExactlyOnceWith();
-    expect(rollback).not.toHaveBeenCalled();
-  });
-
   test("passes the resolved result to onSuccess", async () => {
     expect.hasAssertions();
 
@@ -62,7 +49,7 @@ describe(useMutation, () => {
     const reconcile = vi.fn<(result: string) => void>();
     const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<string>();
     const { executeMutation } = useMutation();
-    executeMutation(() => mutatePromise, { applyOptimistic: () => noop, key, reconcile });
+    executeMutation(() => mutatePromise, { key, reconcile });
     await flushPromises();
     expect(reconcile).not.toHaveBeenCalled();
 
@@ -72,18 +59,15 @@ describe(useMutation, () => {
     expect(reconcile).toHaveBeenCalledExactlyOnceWith(result);
   });
 
-  test("rolls back and alerts on failure", async () => {
+  test("alerts a failed write that has no onError", async () => {
     expect.hasAssertions();
 
-    const rollback = vi.fn<() => void>();
-    const applyOptimistic = vi.fn<() => () => void>(() => rollback);
     const { executeMutation } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    executeMutation(() => Promise.reject(error), { applyOptimistic, key });
+    executeMutation(() => Promise.reject(error), { key });
     await flushPromises();
 
-    expect(rollback).toHaveBeenCalledExactlyOnceWith();
     expect(alerts.value).toHaveLength(1);
   });
 
@@ -94,7 +78,7 @@ describe(useMutation, () => {
     const { executeMutation } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    executeMutation(() => Promise.reject(error), { applyOptimistic: () => noop, key, onError });
+    executeMutation(() => Promise.reject(error), { key, onError });
     await flushPromises();
 
     expect(onError).toHaveBeenCalledExactlyOnceWith(error);
@@ -112,14 +96,14 @@ describe(useMutation, () => {
         startOrder.push("first");
         return firstPromise;
       },
-      { applyOptimistic: () => noop, key },
+      { key },
     );
     executeMutation(
       () => {
         startOrder.push("second");
         return Promise.resolve();
       },
-      { applyOptimistic: () => noop, key },
+      { key },
     );
     await flushPromises();
     const startOrderWhileFirstInFlight = [...startOrder];
@@ -155,32 +139,14 @@ describe(useMutation, () => {
     expect(secondOnSuccess).toHaveBeenCalledTimes(1);
   });
 
-  test("rolls back and alerts a queued write that fails behind another", async () => {
-    expect.hasAssertions();
-
-    const rollback = vi.fn<() => void>();
-    const { executeMutation } = useMutation();
-    const alertStore = useAlertStore();
-    const { alerts } = storeToRefs(alertStore);
-    const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
-    executeMutation(() => firstPromise, { applyOptimistic: () => noop, key });
-    executeMutation(() => Promise.reject(error), { applyOptimistic: () => rollback, key });
-    await flushPromises();
-    resolveFirst();
-    await flushPromises();
-
-    expect(rollback).toHaveBeenCalledExactlyOnceWith();
-    expect(alerts.value).toHaveLength(1);
-  });
-
   test("runs the next queued write once the one ahead of it fails", async () => {
     expect.hasAssertions();
 
     const mutate = vi.fn<() => Promise<void>>(() => Promise.resolve());
     const { executeMutation } = useMutation();
     const { promise: firstPromise, reject: rejectFirst } = Promise.withResolvers<void>();
-    executeMutation(() => firstPromise, { applyOptimistic: () => noop, key, onError: noop });
-    executeMutation(mutate, { applyOptimistic: () => noop, key });
+    executeMutation(() => firstPromise, { key, onError: noop });
+    executeMutation(mutate, { key });
     await flushPromises();
     expect(mutate).not.toHaveBeenCalled();
     rejectFirst(error);
@@ -200,14 +166,14 @@ describe(useMutation, () => {
         startOrder.push("first");
         return firstPromise;
       },
-      { applyOptimistic: () => noop, key },
+      { key },
     );
     executeMutation(
       () => {
         startOrder.push("second");
         return Promise.resolve();
       },
-      { applyOptimistic: () => noop, key: otherKey },
+      { key: otherKey },
     );
     await flushPromises();
     const startOrderWhileFirstInFlight = [...startOrder];
@@ -323,7 +289,7 @@ describe(useMutation, () => {
 
     const { checkIsPending, executeMutation, isPending } = useMutation();
     const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<void>();
-    executeMutation(() => mutatePromise, { applyOptimistic: () => noop, key });
+    executeMutation(() => mutatePromise, { key });
     const isPendingWhileInFlight = isPending.value;
     const isKeyPendingWhileInFlight = checkIsPending(key);
     const isOtherKeyPendingWhileInFlight = checkIsPending(otherKey);
@@ -376,25 +342,6 @@ describe(useMutation, () => {
     expect(isPending.value).toBe(false);
   });
 
-  test("clears pending state when applyOptimistic throws", async () => {
-    expect.hasAssertions();
-
-    const { checkIsPending, executeMutation, isPending } = useMutation();
-
-    await expect(
-      executeMutation(() => Promise.resolve(), {
-        applyOptimistic: () => {
-          throw error;
-        },
-        awaitedBecause: AwaitedReason.ServerIssuedValue,
-        key,
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
-
-    expect(isPending.value).toBe(false);
-    expect(checkIsPending(key)).toBe(false);
-  });
-
   test("keeps a target's queue running after a write throws from a callback", async () => {
     expect.hasAssertions();
 
@@ -410,7 +357,7 @@ describe(useMutation, () => {
         },
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
-    executeMutation(mutate, { applyOptimistic: () => noop, key });
+    executeMutation(mutate, { key });
     await flushPromises();
 
     expect(mutate).toHaveBeenCalledTimes(1);
@@ -448,7 +395,7 @@ describe(useMutation, () => {
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
     const mutate = vi.fn<() => Promise<void>>();
     mutate.mockReturnValueOnce(firstPromise);
-    executeMutation(mutate, { applyOptimistic: () => noop, isExclusive: true, key });
+    executeMutation(mutate, { isExclusive: true, key });
     await flushPromises();
     const outcome = await executeMutation(mutate, {
       awaitedBecause: AwaitedReason.ServerIssuedValue,
@@ -468,7 +415,7 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { checkIsPending, executeMutation, whenSettled } = useMutation();
-    executeMutation(() => Promise.resolve(), { applyOptimistic: () => noop, key });
+    executeMutation(() => Promise.resolve(), { key });
     await whenSettled(key);
 
     expect(checkIsPending(key)).toBe(false);

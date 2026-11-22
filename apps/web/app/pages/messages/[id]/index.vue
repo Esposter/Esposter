@@ -20,7 +20,7 @@ executeMutation(
       $trpc.userToRoom.updateUserToRoom.mutate({ lastReadAt: new Date(), roomId }),
       $trpc.userToRoom.clearMentionCount.mutate({ roomId }),
     ]),
-  { applyOptimistic: () => noop, key: roomId },
+  { key: roomId },
 );
 </script>
 

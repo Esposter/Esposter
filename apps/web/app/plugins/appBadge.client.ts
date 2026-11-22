@@ -1,5 +1,4 @@
 import { useNotificationStore } from "#src/store/notification";
-import { noop } from "@esposter/shared";
 
 // The installed app's icon badge mirrors the bell's unread count, so an install that is not in the foreground
 // Still shows what is waiting. Only the count the running tab knows about: a push that arrives while the app is
@@ -28,7 +27,6 @@ export default defineNuxtPlugin(() => {
         newUnreadCount > 0 ? window.navigator.setAppBadge(newUnreadCount) : window.navigator.clearAppBadge(),
       {
         // Nothing is drawn ahead of the badge: the icon is the platform's, and it is the write that sets it
-        applyOptimistic: () => noop,
         key: "appBadge",
         onError: (error) => {
           console.error(error);

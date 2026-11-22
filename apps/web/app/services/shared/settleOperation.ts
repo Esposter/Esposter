@@ -5,23 +5,19 @@ import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { getResultAsync } from "@esposter/shared";
 
-export const settleOperation = async <TResult>(
+export const settleOperation = <TResult>(
   operate: () => Promise<TResult>,
-  { applyOptimistic, onError, onSuccess }: OperationContext<TResult>,
-) => {
-  const rollback = await applyOptimistic?.();
-  return getResultAsync(operate).match<Promise<MutationOutcome<TResult>>>(
+  { onError, onSuccess }: OperationContext<TResult>,
+) =>
+  getResultAsync(operate).match<Promise<MutationOutcome<TResult>>>(
     async (result) => {
       await onSuccess?.(result);
       return { result, status: MutationStatus.Succeeded };
     },
     async (error) => {
-      // A write always unwinds and reports: its rollback and its error are the only record that the value the user is
-      // Looking at was never persisted
-      rollback?.();
+      // A failed write always reports its error, the only record that the change it asked for was never persisted
       if (onError) await onError(error);
       else createErrorAlert(error);
       return { error, status: MutationStatus.Failed };
     },
   );
-};

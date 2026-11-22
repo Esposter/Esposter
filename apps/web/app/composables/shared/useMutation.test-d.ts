@@ -9,11 +9,11 @@ const mutate = () => Promise.resolve("");
 describe("useMutation type", () => {
   type ExecuteMutation = ReturnType<typeof useMutation>["executeMutation"];
 
-  // The optimistic form is the last overload, which is the one `ReturnType` reads
-  test("an optimistic write gives its caller nothing to await", () => {
+  // The background form is the last overload, which is the one `ReturnType` reads
+  test("a background write gives its caller nothing to await", () => {
     expect.hasAssertions();
 
-    expectTypeOf<ExecuteMutation>().toBeCallableWith(mutate, { applyOptimistic: () => noop, key: "" });
+    expectTypeOf<ExecuteMutation>().toBeCallableWith(mutate, { key: "" });
     expectTypeOf<ReturnType<ExecuteMutation>>().toEqualTypeOf<void>();
   });
 
@@ -26,10 +26,16 @@ describe("useMutation type", () => {
     });
   });
 
-  test("options naming neither form are refused", () => {
+  test("a write takes no rollback in either form", () => {
     expect.hasAssertions();
 
-    // @ts-expect-error A write names how it shows: an optimistic apply or a reason to wait
-    expectTypeOf<ExecuteMutation>().toBeCallableWith(mutate, { key: "" });
+    // @ts-expect-error A failed write is reported, and nothing on screen is put back, so a rollback is not a member
+    expectTypeOf<ExecuteMutation>().toBeCallableWith(mutate, { applyOptimistic: noop, key: "" });
+    // @ts-expect-error A failed awaited write is reported, and nothing on screen is put back, so a rollback is not a member
+    expectTypeOf<ExecuteMutation>().toBeCallableWith(mutate, {
+      applyOptimistic: noop,
+      awaitedBecause: AwaitedReason.ServerIssuedValue,
+      key: "",
+    });
   });
 });

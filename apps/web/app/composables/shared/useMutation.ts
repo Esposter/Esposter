@@ -12,11 +12,17 @@ import { useCacheStore } from "#src/store/cache";
 import { getSynchronizedFunction, noop, withFinalizerAsync } from "@esposter/shared";
 
 // A write that waits for the server's answer before the screen changes names why, from the closed set, and gets the
-// Outcome to act on. It may still apply part of its change at once
+// Outcome to act on
 interface AwaitedMutationOptions<TResult> extends BaseMutationOptions {
-  applyOptimistic?: () => Promisable<() => void>;
   awaitedBecause: AwaitedReason;
   onSuccess?: (result: TResult) => Promisable<void>;
+}
+
+// A write nothing on the screen waits for, so its only outcome is `onError`. `reconcile` takes what only the server
+// Issues, such as a version token the next write reads, and is never where a dialog closes or a row moves
+interface BackgroundMutationOptions<TResult> extends BaseMutationOptions {
+  awaitedBecause?: never;
+  reconcile?: (result: TResult) => Promisable<void>;
 }
 
 interface BaseMutationOptions {
@@ -34,15 +40,7 @@ interface ExecuteMutation {
     mutate: () => Promise<TResult>,
     options: AwaitedMutationOptions<TResult>,
   ): Promise<MutationOutcome<TResult>>;
-  <TResult>(mutate: () => Promise<TResult>, options: OptimisticMutationOptions<TResult>): void;
-}
-
-// A write the screen shows when it is sent. `reconcile` takes what only the server issues, such as a version token the
-// Next write reads, and is never where a dialog closes or a row moves
-interface OptimisticMutationOptions<TResult> extends BaseMutationOptions {
-  applyOptimistic: () => Promisable<() => void>;
-  awaitedBecause?: never;
-  reconcile?: (result: TResult) => Promisable<void>;
+  <TResult>(mutate: () => Promise<TResult>, options: BackgroundMutationOptions<TResult>): void;
 }
 
 interface QueryOptions<TResult> {
@@ -154,20 +152,16 @@ export const useMutation = () => {
     if (isExclusive) keySharedQueryMap.set(key, outcome as Promise<MutationOutcome<never>>);
     return outcome;
   };
-  // Writes queue per target: discarding one loses its error and its rollback, so it is never dropped by default
+  // Writes queue per target: discarding one loses its error, so it is never dropped by default
   const runMutation = <TResult>(
     mutate: () => Promise<TResult>,
     {
-      applyOptimistic,
       invalidates,
       isExclusive,
       key,
       onError,
       onSuccess,
-    }: BaseMutationOptions & {
-      applyOptimistic?: () => Promisable<() => void>;
-      onSuccess?: ((result: TResult) => Promisable<void>) | undefined;
-    },
+    }: BaseMutationOptions & { onSuccess?: ((result: TResult) => Promisable<void>) | undefined },
   ): Promise<MutationOutcome<TResult>> => {
     if (isExclusive && keyPendingCountMap.value.has(key)) return Promise.resolve({ status: MutationStatus.Dropped });
 
@@ -181,18 +175,18 @@ export const useMutation = () => {
           await invalidateTags(invalidates);
         }
       : onSuccess;
-    const run = () => settleOperation(mutate, { applyOptimistic, onError, onSuccess: onSettled });
-    // The finalizer guarantees pending and queue bookkeeping unwind even when applyOptimistic or a callback
+    const run = () => settleOperation(mutate, { onError, onSuccess: onSettled });
+    // The finalizer guarantees pending and queue bookkeeping unwind even when a callback
     // Throws, so a thrown callback can never strand the key as permanently pending or wedge its queue
     return enqueue(key, run);
   };
-  // The two forms of a write, the optimistic one last. It hands its caller nothing, so no step the screen takes can
-  // Wait on its answer: the write still runs on its key's queue, and whatever the answer brings is the rollback's,
-  // The alert's or `reconcile`'s. It floats as a synchronized function, so a test or a shutdown that needs every write
-  // Landed drains it with the rest
+  // The two forms of a write, the background one last. It hands its caller nothing, so no step the screen takes can
+  // Wait on its answer: the write still runs on its key's queue, and whatever the answer brings is the alert's or
+  // `reconcile`'s. It floats as a synchronized function, so a test or a shutdown that needs every write landed drains it
+  // With the rest
   const executeMutation = (<TResult>(
     mutate: () => Promise<TResult>,
-    options: AwaitedMutationOptions<TResult> | OptimisticMutationOptions<TResult>,
+    options: AwaitedMutationOptions<TResult> | BackgroundMutationOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> | void => {
     if (options.awaitedBecause) return runMutation(mutate, options);
     getSynchronizedFunction(() => runMutation(mutate, { ...options, onSuccess: options.reconcile }))();

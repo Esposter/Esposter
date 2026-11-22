@@ -3,7 +3,7 @@ import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsR
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getDecodedUriComponent } from "#shared/util/text/getDecodedUriComponent";
 import { getResourceFilesPrefix } from "@esposter/db-schema";
-import { ASSET_HASH_REGEX, noop } from "@esposter/shared";
+import { ASSET_HASH_REGEX } from "@esposter/shared";
 
 // Only a FileAssets type has files to delete, so the capability is the parameter type — a type without it is
 // Rejected where the composable is called rather than silently doing nothing once it runs
@@ -24,7 +24,6 @@ export const useDeleteResourceFile = (type: FileAssetsResourceType, id: MaybeRef
     executeMutation(() => getResourceRouter(type).deleteFile.mutate({ blobPath, id: idValue }), {
       // Nothing on screen waits on the delete, and the editor that asked for it may be gone by the time it answers, so a
       // Failure is logged rather than alerted
-      applyOptimistic: () => noop,
       key: blobPath,
       onError: console.error,
     });

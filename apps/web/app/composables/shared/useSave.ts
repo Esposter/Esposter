@@ -6,7 +6,6 @@ import { authClient } from "#src/services/auth/authClient";
 import { saveItemMetadata } from "#src/services/shared/metadata/saveItemMetadata";
 import { checkIsTRPCConflict } from "#src/services/trpc/checkIsTRPCConflict";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
-import { noop } from "@esposter/shared";
 
 // What saving stamps, which every saved state carries whether it is a content item or a row
 type SavedMetadata = Pick<ItemMetadata, "updatedAt">;
@@ -57,7 +56,6 @@ export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = 
       // This composable persists a single state, so its saves queue behind one another under a stable key. The save
       // Is read at send time, so a save queued behind another is sent under the etag that one answered
       executeSaveMutation(() => auth.save(value, etag), {
-        applyOptimistic: () => noop,
         key: "save",
         // Another session wrote the save since it was read, so the page reloads and takes the server's copy
         onError: (error) => {

@@ -7,7 +7,7 @@ import type { DatabaseIndexName } from "@esposter/shared";
 import { getCachedItems } from "#src/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "#src/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "#src/services/cache/indexedDb/writeIndexedDb";
-import { getSynchronizedFunction, noop } from "@esposter/shared";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 export const usePaginationCache = <
   TStore extends IndexedDbStoreName,
@@ -34,7 +34,6 @@ export const usePaginationCache = <
     partitionKeyValue: PartitionKey<TStore, TIndex>,
   ) => {
     executeMutation(() => writeIndexedDb(configuration, newItems, partitionKeyValue), {
-      applyOptimistic: () => noop,
       key: partitionKeyValue,
       onError,
     });

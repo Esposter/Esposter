@@ -1,5 +1,4 @@
 import { pushSubscriptionInputSchema } from "#shared/models/db/pushSubscription/PushSubscriptionInput";
-import { noop } from "@esposter/shared";
 
 // Keeps this device's push subscription in step with the notification permission. The permission is read live, so a
 // Grant from the app's own ask (`MessageContentPushPermissionAlert`) or from the browser's site settings subscribes the
@@ -45,7 +44,7 @@ export const usePushSubscription = () => {
       },
       // Queued per key, so a revoke that lands while a grant's subscribe is still awaiting runs after it and finds that
       // Subscription and removes it. Nothing is drawn ahead of it, being a connection rather than a value on screen
-      { applyOptimistic: () => noop, key: "pushSubscription", onError: console.error },
+      { key: "pushSubscription", onError: console.error },
     );
   });
 };

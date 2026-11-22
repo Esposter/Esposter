@@ -57,7 +57,7 @@ export const useOnlineSubscribable: UseOnlineSubscribable = (
         // A subscription that cannot be established is a background failure of a connection that retries on the
         // Next online or source change, not something to put in front of the user
         // Nothing is drawn ahead of the subscription, which is a connection rather than a value on screen
-        { applyOptimistic: () => noop, key, onError: console.error },
+        { key, onError: console.error },
       );
     };
     const { trigger } = watchTriggerable(sources, (values) => {

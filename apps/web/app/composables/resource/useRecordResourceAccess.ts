@@ -18,7 +18,6 @@ export const useRecordResourceAccess = (resource: Ref<ResourceInResource | undef
       if (id)
         executeMutation(() => $trpc.resource.recordAccess.mutate({ id }), {
           // Nothing on screen changes for the visit itself, so nothing is drawn ahead of the record
-          applyOptimistic: () => noop,
           // The row this writes is the one Recent is ordered by, so every cache of that ordering now predates
           // This visit
           invalidates: [CacheTag.Recents],
