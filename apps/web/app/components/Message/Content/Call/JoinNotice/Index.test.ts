@@ -26,7 +26,7 @@ describe("messageContentCallJoinNotice", () => {
     storeJoinedCallParticipant(v7(), {
       deletedAt: null,
       id: v7(),
-      image: null,
+      image: user.image,
       isCameraEnabled: false,
       isHandRaised: false,
       isMuted: false,

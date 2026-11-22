@@ -18,21 +18,21 @@ describe(useReadReplies, () => {
 
     const message = createMessage(roomId);
     trpcMsw.message.readMessagesByIds.query(() => [{ ...message, message: "older" }]);
-    let replyStore: ReturnType<typeof useReplyStore>;
-    let readReplies: ReturnType<typeof useReadReplies>;
-    await mountSuspended(
+    const wrapper = await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
           setRouteId(roomId);
-          replyStore = useReplyStore();
-          readReplies = useReadReplies();
+          const replyStore = useReplyStore();
+          const { getReplyMapRef } = replyStore;
+          return { getReplyMapRef, readReplies: useReadReplies() };
         },
       }),
     );
-    replyStore.getReplyMapRef(roomId).value.set(message.id, { ...message, message: "newer", version: 1 });
+    const { getReplyMapRef, readReplies } = wrapper.vm;
+    getReplyMapRef(roomId).value.set(message.id, { ...message, message: "newer", version: 1 });
     await readReplies(roomId, [message.id]);
 
-    expect(replyStore.getReplyMapRef(roomId).value.get(message.id)?.message).toBe("newer");
+    expect(getReplyMapRef(roomId).value.get(message.id)?.message).toBe("newer");
   });
 });

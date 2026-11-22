@@ -67,6 +67,7 @@ describe("overlayStore type", () => {
 
     expectTypeOf<OverlayStore["writeAwaited"]>().toBeCallableWith(() => Promise.resolve([]), {
       awaitedBecause: AwaitedReason.ServerIssuedValue,
+      onError: noop,
     });
     // @ts-expect-error An awaited write names why it waits, since nothing else in the call says the screen holds
     expectTypeOf<OverlayStore["writeAwaited"]>().toBeCallableWith(() => Promise.resolve([]), { onError: noop });
