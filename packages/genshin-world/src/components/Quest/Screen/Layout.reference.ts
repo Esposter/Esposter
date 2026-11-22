@@ -78,7 +78,7 @@ export const layoutTopic: ReferenceTopic = {
       method: "The screen's own words in the installed client's English text map",
       outcome: InvestigationOutcome.Found,
       result:
-        "Quest Overview is UI_QUESTHUB_BUTTON_NAME, Cancel Navigation TASK_TRACK_CLEAR and each list's heading its TASK_TYPE line. In Progress and a distance's {0}m have no line named for the quest screen, so the plainest In Progress (UI_TEXT_DOING) and the Miliastra editor's metre length {0}m (UI_BEYOND_EDITOR_PROTOTYPE_LINE_METER) stand in, provisionally. The rewards' caption, Complete the quest series to unlock … and obtain rewards, is in no line the install holds",
+        "Quest Overview is UI_QUESTHUB_BUTTON_NAME, Cancel Navigation TASK_TRACK_CLEAR and each list's heading its TASK_TYPE line. In Progress and a distance's {0}m have no line named for the quest screen, so the plainest In Progress (UI_TEXT_DOING) and the Miliastra editor's metre length {0}m (UI_BEYOND_EDITOR_PROTOTYPE_LINE_METER) stand in, provisionally. The rewards' caption, Complete the quest series to unlock … and obtain rewards, is the UI_SNEZHNAYA_BOOK_TASK_TIPS line, which the Rewards pane draws",
     },
     {
       method:
@@ -92,7 +92,6 @@ export const layoutTopic: ReferenceTopic = {
     "Whether the commissions' heading is Commission Quests under the Commission tab's mark, as the World Quests heading is the World tab's",
     "The blue bar with a white diamond along the first quest of each series: what it marks is not known, so it is not drawn",
     "The selected row's look: the still shows no selected row, so the selected one is ringed in the game's cream",
-    "The rewards' caption's line, which the install's text map does not hold, so it is not drawn",
     "Whether a world quest in no series lists before or after the series, which the still does not show",
     "The art not drawn: the region's on a series' row, the journal's emblem and each reward's item",
     "The list's scroll bar and arrows",

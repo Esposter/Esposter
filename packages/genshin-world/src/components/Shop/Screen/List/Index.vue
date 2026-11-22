@@ -43,7 +43,7 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
   <!-- The General Goods list a single-list shop opens on: its goods one under another down the left, the shown good's
        detail beside them with its picture and Owned strip, the balances across the head, the item-refresh line and the
        Purchase button at the foot. The pixels are measured from the public General Goods clip at 34 seconds (the frame is
-       kept outside the repo, its reference is `genshin-parity/references/shop-screen.png`) -->
+       kept outside the repo, its reference is `packages/genshin-world/src/components/Shop/Screen/Index.reference.webp`) -->
   <div class="shop-list">
     <ScreenTitle class="heading" role="heading" aria-level="1">{{ title }}</ScreenTitle>
     <ul class="balances">
