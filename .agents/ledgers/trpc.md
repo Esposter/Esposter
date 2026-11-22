@@ -19,7 +19,7 @@ Router structure, the procedure builder each route picks, ownership guards, and 
 
 Notes on a tree several units share:
 
-- `apps/web/server/trpc/routers/call`, `role`, `userToRoom`, `webhook`, `searchHistory`: the call routers key on a session rather than a room, so the room builders do not reach them
+- `apps/web/server/trpc/routers/call`, `role`, `userToRoom`, `webhook`, `searchHistory`: the procedures key on a session rather than a room, so the room builders do not reach them, except the call router's `joinCallByRoomId` and `readCallSessionId`, which take `getMemberProcedure` over `roomId`
 - `apps/web/server/trpc/routers/achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage`: the two game saves are the shared blob-state builders
 
 ## Exclusions

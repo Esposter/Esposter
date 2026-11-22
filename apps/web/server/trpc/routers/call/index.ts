@@ -37,9 +37,6 @@ import {
 import { noop } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
-// A member timed out of the room is refused a join with the sentence the message gate gives a timed-out sender
-const timedOutMessage = MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout];
-
 const baseCallRouter = router({
   createCall: standardAuthedProcedure
     .meta({
@@ -87,7 +84,7 @@ const baseCallRouter = router({
       // Nobody knocks on a room call — membership is its door, asked here as the webhook asks it of every connection,
       // So a member timed out of the room is refused a token rather than handed one the webhook then disconnects
       if (!(await checkIsCallConnectionAdmitted(ctx.db, callSessionId, user.id)))
-        throw getForbiddenError(timedOutMessage);
+        throw getForbiddenError(MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout]);
 
       const join = await useCallObject(callSessionId).joinCall({
         callSessionId,
@@ -95,7 +92,7 @@ const baseCallRouter = router({
         participant: createParticipant(user),
         sessionId: session.id,
       });
-      if (!join) throw getForbiddenError(timedOutMessage);
+      if (!join) throw getForbiddenError(MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout]);
       // A call's first join announces it in the thread the call is in, or the room, as a line with no duration yet
       if (join.isFirstJoiner)
         await createSystemRoomMessage(roomId, user.id, "", {
