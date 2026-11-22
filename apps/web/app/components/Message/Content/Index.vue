@@ -15,7 +15,7 @@ import { COMPOSER_ATTRIBUTE } from "#src/services/app/constants";
       <MessageModelMessageList />
       <MessageModelMessageJumpToPresentSnackbar />
     </div>
-    <footer :[COMPOSER_ATTRIBUTE]="true" px-4 pt-2 bg-panel shrink-0>
+    <footer :[COMPOSER_ATTRIBUTE]="true" px-4 pt-2 shrink-0>
       <MessageModelMessageInput />
     </footer>
   </div>
