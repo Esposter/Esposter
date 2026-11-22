@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { authClient } from "#src/services/auth/authClient";
 import { MAX_COMMENT_INDENT_DEPTH } from "#src/services/post/constants";
@@ -48,7 +49,7 @@ const contextMenuProps = getContextMenuProps(comment.id, () =>
     <div flex gap-2>
       <div flex shrink-0 flex-col>
         <PostAvatar is-link :post="comment" />
-        <div v-if="isExpanded" ml-4 bg-divider flex-1 w="[var(--ui-border-width)]" />
+        <div v-if="isExpanded" ml-4 bg-divider flex-1 shrink-0 w="[var(--ui-border-width)]" />
       </div>
       <div :="isCreator ? contextMenuProps : {}" pb-2 flex flex-1 flex-col gap-1 min-w-0>
         <PostByline is-link :post="comment" />
@@ -79,20 +80,15 @@ const contextMenuProps = getContextMenuProps(comment.id, () =>
           :replies-id
           self-start
         />
-        <NuxtLink
+        <UiButtonLink
           v-else-if="comment.commentCount > 0"
           :to="RoutePath.Post(comment.id)"
-          text-info
-          no-underline
-          flex
-          gap-1
-          items-center
+          :variant="UiButtonVariant.Quiet"
           self-start
-          hover:underline
         >
           Continue this thread
           <UiIcon :meaning="UiIconMeaning.Next" />
-        </NuxtLink>
+        </UiButtonLink>
       </div>
     </div>
     <!-- Always there for the toggle to name, and read only once opened. Without a boundary of its own, every

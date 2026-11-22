@@ -11,7 +11,7 @@ const postStore = usePostStore();
 const { sortType } = storeToRefs(postStore);
 const { resetCursorPaginationData } = postStore;
 const { readMorePosts, readPosts } = useReadPosts();
-const { isPending, refresh } = await readPosts();
+const { isError, isPending, refresh } = await readPosts();
 
 watch(sortType, async () => {
   resetCursorPaginationData();
@@ -36,8 +36,10 @@ watch(sortType, async () => {
     <!-- A sort change empties the feed before it reads again, so the empty state waits for a read that settled -->
     <PostFeed
       empty-description="A post someone creates shows up here."
+      :is-error
       :is-pending
       @read-more="(onComplete) => readMorePosts(onComplete)"
+      @retry="refresh()"
     />
   </div>
   <PostConfirmDeleteDialog />

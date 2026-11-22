@@ -5,11 +5,12 @@ import { usePostStore } from "#src/store/post/index";
 
 interface Props {
   emptyDescription: string;
+  isError: boolean;
   isPending: boolean;
 }
 
 defineProps<Props>();
-const emit = defineEmits<{ readMore: [onComplete: () => void] }>();
+const emit = defineEmits<{ readMore: [onComplete: () => void]; retry: [] }>();
 const postStore = usePostStore();
 const { hasMore, items } = storeToRefs(postStore);
 </script>
@@ -21,8 +22,9 @@ const { hasMore, items } = storeToRefs(postStore);
     <PostCardSkeleton v-for="index of POST_SKELETON_COUNT" :key="index" />
   </div>
   <PostCard v-for="post of items" :key="post.id" :post />
+  <UiErrorState v-if="isError" error="The posts could not be loaded." @retry="emit('retry')" />
   <UiEmptyState
-    v-if="!isPending && items.length === 0"
+    v-else-if="!isPending && items.length === 0"
     :description="emptyDescription"
     :meaning="UiIconMeaning.Comment"
     title="Nothing posted yet"

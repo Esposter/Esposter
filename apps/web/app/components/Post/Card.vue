@@ -47,7 +47,7 @@ const contextMenuProps = getContextMenuProps(post.id, () =>
     </header>
     <h1 v-if="isPage" ui-title>{{ post.title }}</h1>
     <h2 v-else ui-heading>
-      <NuxtLink :to="RoutePath.Post(post.id)" text-inherit no-underline hover:underline>{{ post.title }}</NuxtLink>
+      <NuxtLink :to="RoutePath.Post(post.id)" text-info no-underline hover:underline>{{ post.title }}</NuxtLink>
     </h2>
     <PostDescription :description="post.description" />
     <footer flex gap-2 items-center>

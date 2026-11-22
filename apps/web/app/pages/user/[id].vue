@@ -8,7 +8,7 @@ const userId = route.params.id;
 const user = await useReadUser(userId);
 const userAchievements = await useReadUserAchievements(userId);
 const { readMorePosts, readPosts } = useReadPosts(userId);
-const { isPending } = await readPosts();
+const { isError, isPending, refresh } = await readPosts();
 </script>
 
 <template>
@@ -23,8 +23,10 @@ const { isPending } = await readPosts();
         <h2 ui-heading>Posts</h2>
         <PostFeed
           :empty-description="`A post ${user.name} creates shows up here.`"
+          :is-error
           :is-pending
           @read-more="(onComplete) => readMorePosts(onComplete)"
+          @retry="refresh()"
         />
       </section>
     </div>
