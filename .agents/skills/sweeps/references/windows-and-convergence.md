@@ -52,4 +52,13 @@ A sitting loads a unit once and judges it against each question whose `Scope` ho
 
 ## Sampled clean
 
-`pnpm ai:sweep:sample` draws the next sample: thirty open cells per question, or every one where a question holds fewer, taken by units with the rarest question first, each unit printed with the questions it is judged for. Each is a full pass with its own trailers, and the sitting counts each question's **defects** — fixes that change behaviour toward correct, or findings raised; a rename or a tidier literal is not one. The record commit ending the sample carries one `Sampled: <question> | <size> · <defects>` per question. While a question's latest sample found none, `pnpm ai:sweep:status` lists its unread cells as `sampled`: undated, and owed again on a `Reopens:` naming them or their question, or a commit touching a path they name. Zero defects in `n` bounds the rate below about `3/n`, so sample at least thirty; the tidies left behind drain with the next edit (`references/draining.md`).
+`pnpm ai:sweep:sample` draws the next sample: thirty open cells per question, or every one where a question holds fewer, taken by units with the rarest question first, each unit printed with the questions it is judged for. A sample sitting runs these steps in order, with one directory for its batch files and the readers' output, and one for the fixers':
+
+1. `pnpm ai:sweep:sample > sample.txt`: the draw, saved to a file.
+2. `pnpm ai:sweep:batch sample.txt <directory>`: batch files `01.txt`, `02.txt`…, each holding whole units up to twenty judgements (`--judgements`).
+3. One reader per batch, writing its judgements beside it as `<n>.jsonl` (`references/sample-reader.md`).
+4. `pnpm ai:sweep:record <directory> --fixer <fixers>`: the `Ledger:` trailer of every cell its readers judged clean, once each, and the other cells written as fixer units, `01.json`…, each holding whole units up to forty findings (`--findings`).
+5. One fixer per fixer unit file, writing its outcomes into `<n>.result.jsonl` beside it (`references/sample-fixer.md`).
+6. `pnpm ai:sweep:sampled sample.txt <fixers>`: one `Sampled:` trailer per question, for the record commit that ends the sample.
+
+Each cell is a full pass with its own trailers, and the sitting counts each question's **defects**: findings a fixer fixed in the code or settled in the rule that owns it, the `fixed` and `skill` outcomes. A refuted finding and a tidy are not defects. The `Sampled:` size is the cells the sample drew for the question. While a question's latest sample found none, `pnpm ai:sweep:status` lists its unread cells as `sampled`: undated, and owed again on a `Reopens:` naming them or their question, or a commit touching a path they name. Zero defects in `n` bounds the rate below about `3/n`, so sample at least thirty; the tidies left behind drain with the next edit (`references/draining.md`).

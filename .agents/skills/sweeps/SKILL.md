@@ -49,6 +49,8 @@ A sitting reads units, not ledgers: `pnpm ai:sweep:sample` prints the units to r
 judged for, and a unit is never left half-read. **Planning a sitting**, sampling a question, and why a resume that
 reports nothing is the sweep converging rather than failing, is `references/windows-and-convergence.md`.
 
+A sample sitting runs `pnpm ai:sweep:sample`, `ai:sweep:batch`, the readers (`references/sample-reader.md`), `ai:sweep:record`, the fixers (`references/sample-fixer.md`), then `ai:sweep:sampled`, in the order `references/windows-and-convergence.md` ("Sampled clean") gives.
+
 ## Draining beats scheduling
 
 **A change that edits a file inside an unswept unit sweeps that file first**, in its own commit ahead of the behaviour change, and leaves the cell `—` (`references/draining.md`).
@@ -72,4 +74,6 @@ The convention a pass carries is evidence rather than authority: a unit that wil
 - `references/standing-resume.md` — when picking a sweep back up, or writing or widening a ledger's `Scope`.
 - `references/windows-and-convergence.md` — when planning a sitting, or a finding lands in another session's file.
 - `references/rule-gaps.md` — when the convention a pass carries is silent or produces something nobody would defend.
+- `references/sample-reader.md` — when judging a batch as a read-only reader in a sample sitting: the unit grammar, one question at a time, refuting first, and the output line.
+- `references/sample-fixer.md` — when fixing a sample sitting's units: refuting first, the three outcomes, the unread cells, and the trailers a fix carries.
 - `references/handing-to-an-enforcer.md` — when a pass writes the same finding a second time.
