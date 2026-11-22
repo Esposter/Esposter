@@ -8,7 +8,6 @@ export const useCallSubscribables = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const callStore = useCallStore();
   const { setCurrentRoomCallSessionId } = callStore;
-
   // Only the joined call's participants are subscribed: the call socket opens to a joined or knocking connection alone,
   // So a viewed room whose call the user has not joined has no participants to read
   useCallParticipantSubscribables(onlineSubscribableContext);

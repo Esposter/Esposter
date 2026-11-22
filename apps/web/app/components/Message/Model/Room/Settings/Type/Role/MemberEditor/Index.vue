@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
 import { PermissionOverrideState } from "#src/models/message/room/role/PermissionOverrideState";
+import { checkIsRoomOwner } from "#src/services/message/room/checkIsRoomOwner";
 import { RoomPermissionCategoryItems } from "#src/services/message/room/role/RoomPermissionCategoryItems";
 import { useRoleStore } from "#src/store/message/room/role";
 import { useUserStore } from "#src/store/message/user/index";
@@ -14,7 +15,6 @@ interface Props {
 }
 
 const { roomId, userId } = defineProps<Props>();
-const checkIsRoomOwner = useCheckIsRoomOwner();
 const roleStore = useRoleStore();
 const {
   checkHasMyPermission,

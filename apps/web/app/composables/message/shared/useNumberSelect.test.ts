@@ -3,8 +3,8 @@ import { describe, expect, test } from "vitest";
 
 describe(useNumberSelect, () => {
   const items = [
-    { title: "1 minute", value: 60 },
-    { title: "1 hour", value: 3600 },
+    { title: "", value: 60 },
+    { title: "", value: 3600 },
   ];
 
   test("reads the selected number as its string", () => {

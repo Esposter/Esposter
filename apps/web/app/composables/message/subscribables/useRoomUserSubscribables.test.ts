@@ -23,7 +23,7 @@ describe(useRoomUserSubscribables, () => {
   const roomId = v7();
   const readAt = 0;
   const topic = getTopic(TopicKind.Room, roomId);
-  const user = createUser({ name: "accountName" });
+  const user = createUser();
 
   // The room's copy of the member changes only through the store's own write, so each read is awaited on that write
   const whenDisplayName = (displayName: string) => {

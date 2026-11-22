@@ -33,7 +33,7 @@ describe(useReadSearchedMessages, () => {
   const query = "a";
   const pendingFilter = { type: FilterType.Has, value: "" };
   const filter = { type: FilterType.Pinned, value: false };
-  const latestQuery = "latest";
+  const latestQuery = "b";
 
   const mountRead = async () => {
     await mountSuspended(

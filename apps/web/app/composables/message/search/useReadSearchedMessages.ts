@@ -97,7 +97,6 @@ export const useReadSearchedMessages = () => {
       if (!signal.aborted) createErrorAlert(error);
     });
   };
-
   // The continuation is read for the search its results were read for, not for whatever the reader has typed since
   const readMoreSearchedMessages = async (onComplete: () => void) => {
     const roomId = requirePartitionKey(currentRoomId.value, readMoreSearchedMessages.name);

@@ -103,7 +103,7 @@ describe(useCallSubscribables, () => {
     activeCallSessionId.value = callSessionId;
     setCurrentRoomId(roomId);
     await opened.reach(1);
-    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await connect("", vi.fn<() => Promise<void>>(), false);
     const peerId = v7();
     meeting.participants.joined.set(peerId, createParticipant(participantId));
     meeting.participants.emit("activeSpeaker", { peerId });

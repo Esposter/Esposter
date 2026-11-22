@@ -1,4 +1,3 @@
-import { useRefreshRoomUsers } from "#src/composables/message/room/useRefreshRoomUsers";
 import { setRoomUsers } from "#src/services/message/room/setRoomUsers";
 import { useRoomStore } from "#src/store/message/room/index";
 import { getSynchronizedFunction } from "@esposter/shared";

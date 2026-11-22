@@ -9,7 +9,7 @@ import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared"
 // The stream itself is the store's: every panel reading a level holds the one microphone, so two panels open it once.
 export const useMicrophoneLevel = () => {
   const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
-  const { holdMicrophone, isMicrophoneHeldBy, releaseMicrophone } = voiceDeviceSettingsStore;
+  const { checkIsMicrophoneHeldBy, holdMicrophone, releaseMicrophone } = voiceDeviceSettingsStore;
   const holder = Symbol("microphone level");
   const isTesting = ref(false);
   const level = ref(MIN_INPUT_SENSITIVITY_DECIBELS);
@@ -42,7 +42,7 @@ export const useMicrophoneLevel = () => {
       onSuccess: async (stream) => {
         // A stop or a dispose that lands while the request is pending releases this panel's hold, and the store closes
         // The stream it resolves once no panel holds it, so a stream this panel no longer holds starts nothing
-        if (!stream || !isMicrophoneHeldBy(holder)) return;
+        if (!stream || !checkIsMicrophoneHeldBy(holder)) return;
         // A start that lands on a running test reuses its stream, so the context it replaces is taken out here
         const previousAudioContext = audioContext;
         audioContext = new window.AudioContext();
