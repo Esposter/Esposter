@@ -23,7 +23,7 @@ The row every other part of the TodoList draws on. The Items blade is a `UiList`
 | File                                                       | Role                                                          |
 | ---------------------------------------------------------- | ------------------------------------------------------------- |
 | `apps/web/app/components/Resource/TodoList/Items.vue`      | The blade: the add field and search, then a `UiList` of rows  |
-| `apps/web/app/components/Resource/TodoList/ItemTitle.vue`  | One row's title, its metadata line and its notes              |
+| `apps/web/app/components/Resource/TodoList/Item/Title.vue` | One row's title, its metadata line and its notes              |
 | `apps/web/app/components/Ui/List/Index.vue`                | The list the rows are, with its keyboard contract             |
 | `apps/web/shared/models/resource/todoList/TodoListItem.ts` | The item: a name, notes, a due date and when it was completed |
 

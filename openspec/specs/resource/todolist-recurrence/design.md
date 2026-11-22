@@ -36,8 +36,8 @@ flowchart LR
 | `apps/web/shared/services/resource/todoList/getNextDueAt.ts` | The next occurrence, in the time zone it is handed            |
 | `apps/web/app/store/resource/todoList/index.ts`              | `toggleCompleted`, which rolls a repeating todo forward       |
 | `apps/web/app/components/Resource/TodoList/RepeatField.vue`  | The Repeat select and the Every field                         |
-| `apps/web/app/components/Resource/TodoList/EditForm.vue`     | Places Repeat under the due date, and moves its start with it |
-| `apps/web/app/components/Resource/TodoList/ItemTitle.vue`    | The repeat mark on the metadata line                          |
+| `apps/web/app/components/Resource/TodoList/Edit/Form.vue`    | Places Repeat under the due date, and moves its start with it |
+| `apps/web/app/components/Resource/TodoList/Item/Title.vue`   | The repeat mark on the metadata line                          |
 
 ## Sources
 

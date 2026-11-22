@@ -24,10 +24,10 @@ Built on [completion](../todolist-completion/design.md). A list with no way to s
 | `apps/web/shared/models/resource/todoList/TodoListItem.ts`     | The item, with `isImportant`                         |
 | `apps/web/app/store/resource/todoList/index.ts`                | `toggleImportant`, and the kept sort                 |
 | `apps/web/app/services/resource/todoList/sortTodoListItems.ts` | Every sort, stable over the list's own order         |
-| `apps/web/app/components/Resource/TodoList/Rows.vue`           | The star trailing each row and its context-menu twin |
+| `apps/web/app/components/Resource/TodoList/Rows/Index.vue`     | The star trailing each row and its context-menu twin |
 | `apps/web/app/components/Resource/TodoList/TopSlot/Index.vue`  | The Sort menu                                        |
 | `apps/web/app/components/Resource/TodoList/Items.vue`          | The open todos in the chosen sort                    |
-| `apps/web/app/components/Resource/TodoList/EditForm.vue`       | The star beside the name in the dialog               |
+| `apps/web/app/components/Resource/TodoList/Edit/Form.vue`      | The star beside the name in the dialog               |
 
 ## Sources
 

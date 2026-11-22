@@ -44,7 +44,7 @@ A Phaser object assigned to reactive store state is `markRaw`ed — the rule is 
 
 `phaser` must stay externalized. It reads `window` at import (its device detection runs in `init()` at module evaluation), so a page that imports it stays `ssr: false`: `import("phaser")` throws `window is not defined` in plain Node, and the route rule's comment names that import.
 
-Nothing in this package configures that: it is a `peerDependency`, which tsdown externalizes. Keep it a peer.
+Nothing in this package configures that: it is a peer dependency, which tsdown externalizes. Keep it a peer.
 
 ## Reference pages
 

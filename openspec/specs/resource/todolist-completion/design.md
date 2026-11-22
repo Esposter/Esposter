@@ -43,8 +43,8 @@ stateDiagram-v2
 | `apps/web/app/components/Resource/TodoList/Items.vue`                 | The open group, the Completed group, the hold, the chime and Delete completed   |
 | `apps/web/app/services/resource/todoList/playTodoCompletionChime.ts`  | The completion chime, synthesized                                               |
 | `apps/web/app/components/Ui/Checkbox.vue`                             | The outlined box and its tick, drawn in and previewed on hover                  |
-| `apps/web/app/components/Resource/TodoList/Rows.vue`                  | One group's rows: the checkbox, the title and the context menu                  |
-| `apps/web/app/components/Resource/TodoList/ItemTitle.vue`             | The strike, the Completed line and the notes                                    |
+| `apps/web/app/components/Resource/TodoList/Rows/Index.vue`            | One group's rows: the checkbox, the title and the context menu                  |
+| `apps/web/app/components/Resource/TodoList/Item/Title.vue`            | The strike, the Completed line and the notes                                    |
 | `apps/web/app/components/Resource/TodoList/ConfirmDeleteDialog.vue`   | The one delete confirmation, for a todo or every completed one shown            |
 | `apps/web/app/components/Ui/List/Row.vue`                             | The `leading` slot, beside the row's button                                     |
 | `apps/web/app/components/Resource/TodoList/Calendar.vue`              | Completed todos struck through on their due date                                |

@@ -26,14 +26,14 @@ flowchart LR
 
 ## Key files
 
-| File                                                       | Role                                               |
-| ---------------------------------------------------------- | -------------------------------------------------- |
-| `apps/web/shared/models/resource/todoList/TodoListStep.ts` | A step and its schema                              |
-| `apps/web/shared/models/resource/todoList/TodoListItem.ts` | `steps`, absent while a todo has none              |
-| `apps/web/shared/services/resource/item/constants.ts`      | `TODO_LIST_ITEM_STEPS_MAX_LENGTH`                  |
-| `apps/web/app/components/Resource/TodoList/Steps.vue`      | The checklist and its Add step field in the dialog |
-| `apps/web/app/components/Resource/TodoList/EditForm.vue`   | Places the steps under the title                   |
-| `apps/web/app/components/Resource/TodoList/ItemTitle.vue`  | The "n of m" count on the row's metadata line      |
+| File                                                        | Role                                               |
+| ----------------------------------------------------------- | -------------------------------------------------- |
+| `apps/web/shared/models/resource/todoList/TodoListStep.ts`  | A step and its schema                              |
+| `apps/web/shared/models/resource/todoList/TodoListItem.ts`  | `steps`, absent while a todo has none              |
+| `apps/web/shared/services/resource/item/constants.ts`       | `TODO_LIST_ITEM_STEPS_MAX_LENGTH`                  |
+| `apps/web/app/components/Resource/TodoList/Steps/Index.vue` | The checklist and its Add step field in the dialog |
+| `apps/web/app/components/Resource/TodoList/Edit/Form.vue`   | Places the steps under the title                   |
+| `apps/web/app/components/Resource/TodoList/Item/Title.vue`  | The "n of m" count on the row's metadata line      |
 
 ## Sources
 
