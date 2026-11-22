@@ -8,7 +8,7 @@ import type { ResourceReferences } from "#shared/models/resource/ResourceReferen
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
-import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
+import type { RestoreSnapshotVersionResult } from "#shared/models/resource/RestoreSnapshotVersionResult";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
 import type {
@@ -461,7 +461,7 @@ export const resourceRouter = router({
         scope: McpScope.Resources,
       },
     })
-    .mutation<SnapshotRestoration>(async ({ ctx, input: { channel, id, version } }) => {
+    .mutation<RestoreSnapshotVersionResult>(async ({ ctx, input: { channel, id, version } }) => {
       const snapshotContent = await requireEntity(
         readSnapshotVersionContent(ctx.db, ctx.resource, { channel, version }),
         DatabaseEntityType.Resource,
