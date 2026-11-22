@@ -15,7 +15,7 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { takeOne } from "@esposter/shared";
-import { beforeAll, describe, expect, test } from "vitest";
+import { assert, beforeAll, describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 // The dashboard-specific wiring, and the transformPublishedContent dataset-snapshot baking.
@@ -95,7 +95,10 @@ describe("dashboardRouter", () => {
     await caller.publishResource({ id: newResource.id });
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
-    expect(takeOne(takeOne(publishedContent.content.visuals).visuals ?? []).dataset?.snapshot).toStrictEqual({
+    const group = takeOne(publishedContent.content.visuals);
+    assert.exists(group.visuals);
+
+    expect(takeOne(group.visuals).dataset?.snapshot).toStrictEqual({
       columns: [{ name, type: ColumnType.Number }],
       rows: [{ [name]: 1 }],
       totalRows: 1,

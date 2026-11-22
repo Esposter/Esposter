@@ -108,7 +108,7 @@ describe("datasetRouter", () => {
     expect(dataset.rows).toHaveLength(MAX_READ_LIMIT);
     // The capped read reports the uncapped total so consumers can say what they are not showing
     expect(dataset.totalRows).toBe(MAX_READ_LIMIT + 1);
-  }, 60_000);
+  });
 
   test("reads survey responses dataset with no responses", async () => {
     expect.hasAssertions();

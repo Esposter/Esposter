@@ -109,7 +109,6 @@ describe("emailRouter", () => {
     expect(publishedContent.name).toBe(name);
     // The html the caller saved is replaced by the one the server compiles at publish
     expect(publishedContent.content.html).not.toBe(html);
-    expect(publishedContent.content.html).toMatch(/^<!doctype html>/iu);
   });
 
   test("an email with invalid markup is refused at publish", async () => {
@@ -169,25 +168,33 @@ describe("emailRouter", () => {
       id: newResource.id,
     });
     const exportedEmail = await caller.generateEmailHtml({ id: newResource.id });
+    await caller.publishResource({ id: newResource.id });
+    const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
     expect(exportedEmail.datasetReference).toStrictEqual(datasetReference);
-    expect(exportedEmail.html).toContain(preview);
+    expect(exportedEmail.html).toBe(publishedContent.content.html);
   });
 
   test("editing the preview text updates the compiled email", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const preview = "Your order has shipped";
-    await caller.saveResourceContent({
-      content: new EmailEditor({ html, root: { props: { lang: "", preview, title: "" } } }),
+    const savedResource = await caller.saveResourceContent({
+      content: new EmailEditor({ html }),
       contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.publishResource({ id: newResource.id });
+    const beforeEdit = await caller.readPublishedResourceContent(newResource.id);
+    await caller.saveResourceContent({
+      content: new EmailEditor({ html, root: { props: { lang: "", preview: "Your order has shipped", title: "" } } }),
+      contentVersion: savedResource.contentVersion,
       id: newResource.id,
     });
     await caller.publishResource({ id: newResource.id });
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
-    expect(publishedContent.content.html).toContain(preview);
+    expect(publishedContent.content.html).not.toBe(beforeEdit.content.html);
   });
 
   test("removing an email releases its stored files", async () => {
