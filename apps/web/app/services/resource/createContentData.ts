@@ -25,7 +25,8 @@ export const createContentData = <
     saveContent: saveResourceContent,
     setPersistedContent,
   } = resourceStore;
-  // Cast avoids the excessively deep UnwrapRef instantiation on content types with nested class members
+  // The cast avoids the excessively deep UnwrapRef instantiation on content types with nested class members
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- UnwrapRef over the generic content type is deferred, so the compiler cannot prove the ref holds the TContent it is typed as
   const content = ref(createContent()) as Ref<TContent>;
   const readContentData = () =>
     readContent<TType>((data) => {

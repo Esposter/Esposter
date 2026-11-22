@@ -22,6 +22,7 @@ export const createSlot = <TRow extends Versioned>(
   heldTables: { value: HeldTables },
 ): Slot<TRow> => {
   // The trie of this table's rows, typed by the row: the table's name is the one table whose rows the trie holds
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the held tables are keyed by table name, which relates the trie to its rows at runtime only, so the trie is typed as the table's rows here
   const readHeldTrie = () => (heldTables.value[table.name] ?? createKeyTrieNode<Versioned>()) as KeyTrieNode<TRow>;
   const writeHeldRow = (key: RowKey, row: TRow) => {
     const heldTrie = readHeldTrie();

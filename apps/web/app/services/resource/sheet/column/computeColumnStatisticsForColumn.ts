@@ -16,6 +16,7 @@ import { computeTopFrequencies } from "#src/services/resource/sheet/column/compu
 export const computeColumnStatisticsForColumn = (column: ToData<Column>, values: ColumnValue[]): ColumnStatistics => {
   const effectiveColumnType = getEffectiveColumnType(column);
   const context = buildColumnStatisticsComputeContext(effectiveColumnType, values);
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- each definition's key is a runtime value, so the record is built keyed by the statistics the definitions name, which the compiler cannot relate to the Pick
   const statisticsValues = Object.fromEntries(
     ColumnStatisticsDefinitions.map(({ applicableColumnTypes, compute, key }) => [
       key,

@@ -37,6 +37,7 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
         .map(([name, property]) => [property, attribute(name)]),
     );
     const context: EmailCanvasContext = { attribute, childNodes: Object.values(slots).flat(), isStacked, kind, style };
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the drawing is picked by the node's runtime type, and a call through the union of the drawings takes the intersection of their node parameters
     const drawing = EmailCanvasDrawingMap[node.type](node as never, context);
     // Each drawn node's root element carries the node's id, so the canvas can outline it on hover and select it on click
     return cloneVNode(drawing, { "data-node-id": node.props.id });

@@ -11,6 +11,7 @@ export const filterDataSourceRows = (rows: ToData<Row>[], columnFilters: Record<
   if (activeFilters.length === 0) return rows;
   return rows.filter((row) =>
     activeFilters.every(([columnName, filter]) =>
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the predicate is picked by the filter's runtime type, and a call through the union of the predicates takes the intersection of their filter parameters
       ColumnFilterPredicateMap[filter.type](filter as never, takeOne(row.data, columnName)),
     ),
   );

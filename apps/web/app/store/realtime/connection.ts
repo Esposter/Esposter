@@ -34,6 +34,7 @@ const createEventHub = <TEvent extends { data: unknown; type: string }, TContext
   const dispatch = (text: string, context: TContext) => {
     const frame = schema.safeParse(jsonDateParse(text));
     if (frame.success)
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- handlers are held by the frame's runtime type, so a handler takes the union of the frames' data it is handed, which no one handler's data type accepts
       for (const handler of handlers.get(frame.data.type) ?? []) handler(frame.data.data as never, context);
     else console.error(frame.error);
   };
