@@ -1,17 +1,43 @@
 import type { KeyframeStore } from "#src/models/KeyframeStore";
 import type { ObjectStore } from "#src/models/ObjectStore";
-import type { VersionAnchor } from "#src/models/VersionAnchor";
 import type { WrittenVersion } from "#src/models/WrittenVersion";
+import type { ResultAsync } from "neverthrow";
 
 import { createKeyframeStore } from "#src/createKeyframeStore";
 import { DELTA_FLAG, OBJECT_FLAGS_OFFSET, OBJECT_MAGIC } from "#src/services/constants";
+import { EMPTY_ANCHOR } from "#src/services/constants.test";
 import { createDocumentVersions } from "#src/services/createDocumentVersions.test";
 import { createMemoryObjectStore } from "#src/services/createMemoryObjectStore.test";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
+// The value a call resolves to, or the error it failed with thrown, so a test reads a result in one call
+const unwrap = <T>(result: ResultAsync<T, Error>): Promise<T> =>
+  result.match(
+    (value) => value,
+    (error) => {
+      throw error;
+    },
+  );
+
 const countKeyframes = (writtenVersions: WrittenVersion[]) =>
   writtenVersions.filter(({ baseHash }) => !baseHash).length;
+
+// Writes a session the way a caller does: the anchor is derived from what the previous write reported, and
+// Resets whenever a write comes back with an empty base
+const writeVersions = async (keyframeStore: KeyframeStore, sessionVersions: Uint8Array[]) => {
+  let anchor = EMPTY_ANCHOR;
+  const writtenVersions: WrittenVersion[] = [];
+  for (const version of sessionVersions) {
+    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every write anchors on the one before it
+    const writtenVersion = await unwrap(keyframeStore.write(version, anchor));
+    anchor = writtenVersion.baseHash
+      ? { anchoredBytes: anchor.anchoredBytes + writtenVersion.storedBytes, hash: anchor.hash }
+      : { anchoredBytes: 0, hash: writtenVersion.hash };
+    writtenVersions.push(writtenVersion);
+  }
+  return writtenVersions;
+};
 
 describe(createKeyframeStore, () => {
   const seed = 1;
@@ -22,27 +48,6 @@ describe(createKeyframeStore, () => {
   const baseVersion = takeOne(versions);
   const editedVersion = takeOne(versions, 1);
   const rewrittenVersion = takeOne(createDocumentVersions({ editCount, rowCount, seed: 2, versionCount: 1 }));
-  const emptyAnchor: VersionAnchor = { anchoredBytes: 0, hash: "" };
-  // Writes a session the way a caller does: the anchor is derived from what the previous write reported, and
-  // Resets whenever a write comes back with an empty base
-  const writeVersions = async (keyframeStore: KeyframeStore, sessionVersions: Uint8Array[]) => {
-    let anchor = emptyAnchor;
-    const writtenVersions: WrittenVersion[] = [];
-    for (const version of sessionVersions) {
-      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every write anchors on the one before it
-      const writtenVersion = await keyframeStore.write(version, anchor).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      );
-      anchor = writtenVersion.baseHash
-        ? { anchoredBytes: anchor.anchoredBytes + writtenVersion.storedBytes, hash: anchor.hash }
-        : { anchoredBytes: 0, hash: writtenVersion.hash };
-      writtenVersions.push(writtenVersion);
-    }
-    return writtenVersions;
-  };
 
   test("round-trips a keyframe and the delta anchored to it to the exact input bytes", async () => {
     expect.hasAssertions();
@@ -57,22 +62,8 @@ describe(createKeyframeStore, () => {
     expect(keyframe.storedBytes).toBe(13986);
     // A delta costs the edit, not the document
     expect(delta.storedBytes).toBe(517);
-    await expect(
-      keyframeStore.read(keyframe.hash).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
-    ).resolves.toStrictEqual(baseVersion);
-    await expect(
-      keyframeStore.read(delta.hash).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
-    ).resolves.toStrictEqual(editedVersion);
+    await expect(unwrap(keyframeStore.read(keyframe.hash))).resolves.toStrictEqual(baseVersion);
+    await expect(unwrap(keyframeStore.read(delta.hash))).resolves.toStrictEqual(editedVersion);
   });
 
   // A version that repeats content the store already holds is free, in bytes and in charge — and it reports the
@@ -86,18 +77,8 @@ describe(createKeyframeStore, () => {
     const [keyframe, delta] = await writeVersions(keyframeStore, [baseVersion, editedVersion]);
     assert.exists(keyframe);
     assert.exists(delta);
-    const rewrittenKeyframe = await keyframeStore.write(baseVersion, emptyAnchor).match(
-      (value) => value,
-      (error) => {
-        throw error;
-      },
-    );
-    const rewrittenDelta = await keyframeStore.write(editedVersion, emptyAnchor).match(
-      (value) => value,
-      (error) => {
-        throw error;
-      },
-    );
+    const rewrittenKeyframe = await unwrap(keyframeStore.write(baseVersion, EMPTY_ANCHOR));
+    const rewrittenDelta = await unwrap(keyframeStore.write(editedVersion, EMPTY_ANCHOR));
 
     expect(rewrittenKeyframe).toStrictEqual({ ...keyframe, isDeduplicated: true, storedBytes: 0 });
     expect(rewrittenDelta).toStrictEqual({ ...delta, isDeduplicated: true, storedBytes: 0 });
@@ -151,14 +132,7 @@ describe(createKeyframeStore, () => {
     // Check can catch it
     memoryObjectStore.objects.set(delta.hash, keyframeBytes);
 
-    await expect(
-      keyframeStore.read(delta.hash).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(unwrap(keyframeStore.read(delta.hash))).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: ${delta.hash}, object does not hash to its key]`,
     );
 
@@ -167,14 +141,9 @@ describe(createKeyframeStore, () => {
     alteredBytes.fill(0xff, -1);
     memoryObjectStore.objects.set(keyframe.hash, alteredBytes);
 
-    await expect(
-      keyframeStore.read(keyframe.hash).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Data corruption detected]`);
+    await expect(unwrap(keyframeStore.read(keyframe.hash))).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Data corruption detected]`,
+    );
 
     // A flag nobody defined is refused, never read as a keyframe with its payload cut at the wrong offset
     const strangerFlag = DELTA_FLAG + 1;
@@ -182,27 +151,13 @@ describe(createKeyframeStore, () => {
     strangerFlagBytes[OBJECT_FLAGS_OFFSET] = strangerFlag;
     memoryObjectStore.objects.set(keyframe.hash, strangerFlagBytes);
 
-    await expect(
-      keyframeStore.read(keyframe.hash).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(unwrap(keyframeStore.read(keyframe.hash))).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: ${keyframe.hash}, unknown object flags ${strangerFlag}]`,
     );
 
     memoryObjectStore.objects.set(keyframe.hash, Buffer.from(""));
 
-    await expect(
-      keyframeStore.read(keyframe.hash).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(unwrap(keyframeStore.read(keyframe.hash))).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: ${keyframe.hash}, not a keyframe store object]`,
     );
   });
@@ -227,12 +182,7 @@ describe(createKeyframeStore, () => {
     memoryObjectStore.objects.set(keyframe.hash, strangerBytes);
 
     await expect(
-      keyframeStore.write(editedVersion, { anchoredBytes: 0, hash: keyframe.hash }).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
+      unwrap(keyframeStore.write(editedVersion, { anchoredBytes: 0, hash: keyframe.hash })),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: ${keyframe.hash}, object does not hash to its key]`,
     );
@@ -254,14 +204,7 @@ describe(createKeyframeStore, () => {
     strangerBytes.fill(0, 0, OBJECT_MAGIC.byteLength);
     memoryObjectStore.objects.set(keyframe.hash, strangerBytes);
 
-    await expect(
-      keyframeStore.read(keyframe.hash).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(unwrap(keyframeStore.read(keyframe.hash))).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: ${keyframe.hash}, not a keyframe store object]`,
     );
   });
@@ -293,14 +236,7 @@ describe(createKeyframeStore, () => {
     };
 
     await expect(
-      createKeyframeStore(racedObjectStore)
-        .write(editedVersion, emptyAnchor)
-        .match(
-          (value) => value,
-          (error) => {
-            throw error;
-          },
-        ),
+      unwrap(createKeyframeStore(racedObjectStore).write(editedVersion, EMPTY_ANCHOR)),
     ).resolves.toStrictEqual({ ...delta, isDeduplicated: true, storedBytes: 0 });
   });
 
@@ -315,22 +251,13 @@ describe(createKeyframeStore, () => {
     assert.exists(keyframe);
     assert.exists(delta);
 
-    await expect(
-      keyframeStore.collect([keyframe.hash], [delta.hash, keyframe.hash]).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
-    ).resolves.toStrictEqual([]);
-    await expect(
-      keyframeStore.collect([keyframe.hash, delta.hash], []).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
-    ).resolves.toStrictEqual([keyframe.hash, delta.hash]);
+    await expect(unwrap(keyframeStore.collect([keyframe.hash], [delta.hash, keyframe.hash]))).resolves.toStrictEqual(
+      [],
+    );
+    await expect(unwrap(keyframeStore.collect([keyframe.hash, delta.hash], []))).resolves.toStrictEqual([
+      keyframe.hash,
+      delta.hash,
+    ]);
     expect(memoryObjectStore.objects.size).toBe(0);
   });
 
@@ -349,27 +276,13 @@ describe(createKeyframeStore, () => {
     assert.exists(delta);
     memoryObjectStore.objects.delete(keyframe.hash);
 
-    await expect(
-      keyframeStore.read(delta.hash).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(unwrap(keyframeStore.read(delta.hash))).rejects.toThrowErrorMatchingInlineSnapshot(
       `[ObjectNotStoredError: Invalid operation: Read, name: ${delta.hash}, keyframe ${keyframe.hash} is not stored]`,
     );
 
     memoryObjectStore.objects.delete(delta.hash);
 
-    await expect(
-      keyframeStore.read(delta.hash).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(unwrap(keyframeStore.read(delta.hash))).rejects.toThrowErrorMatchingInlineSnapshot(
       `[ObjectNotStoredError: Invalid operation: Read, name: ${delta.hash}, object is not stored]`,
     );
   });
@@ -391,12 +304,7 @@ describe(createKeyframeStore, () => {
       },
     });
 
-    await keyframeStore.read(delta.hash).match(
-      (value) => value,
-      (error) => {
-        throw error;
-      },
-    );
+    await unwrap(keyframeStore.read(delta.hash));
 
     expect(readKeys).toStrictEqual([delta.hash, keyframe.hash]);
   });
@@ -413,12 +321,7 @@ describe(createKeyframeStore, () => {
     assert.exists(delta);
 
     await expect(
-      keyframeStore.write(rewrittenVersion, { anchoredBytes: 0, hash: delta.hash }).match(
-        (value) => value,
-        (error) => {
-          throw error;
-        },
-      ),
+      unwrap(keyframeStore.write(rewrittenVersion, { anchoredBytes: 0, hash: delta.hash })),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: ${delta.hash}, is a delta against ${keyframe.hash}, not a keyframe]`,
     );
@@ -435,12 +338,7 @@ describe(createKeyframeStore, () => {
     assert.exists(keyframe);
     memoryObjectStore.objects.delete(keyframe.hash);
 
-    const writtenVersion = await keyframeStore.write(editedVersion, { anchoredBytes: 0, hash: keyframe.hash }).match(
-      (value) => value,
-      (error) => {
-        throw error;
-      },
-    );
+    const writtenVersion = await unwrap(keyframeStore.write(editedVersion, { anchoredBytes: 0, hash: keyframe.hash }));
 
     expect(writtenVersion.baseHash).toBe("");
     expect(writtenVersion.isDeduplicated).toBe(false);
