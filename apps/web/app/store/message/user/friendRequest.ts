@@ -38,13 +38,24 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const checkHasSentFriendRequest = (targetUserId: PublicUser["id"]) =>
     friendRequests.value.some(({ receiverId, senderId }) => senderId === userId.value && receiverId === targetUserId);
   // Answered requests come back as tombstones, which the arrival keeps, so an older copy of a request cannot bring it back
-  const readFriendRequests = useOverlayRead(
+  const readFriendRequestRows = useOverlayRead(
     friendRequestTable,
     ({ sender, ...friendRequest }: FriendRequestInSocialWithRelations) => {
       storeUser(sender);
       return friendRequest;
     },
   );
+  // A failed read is held as its message, so the list draws the failure rather than showing no requests
+  const friendRequestsError = ref("");
+  const readFriendRequests = (read: () => Promise<FriendRequestInSocialWithRelations[]>) =>
+    readFriendRequestRows(read, {
+      onError: (error) => {
+        friendRequestsError.value = error.message;
+      },
+      onSuccess: () => {
+        friendRequestsError.value = "";
+      },
+    });
   const sendFriendRequest = async (receiverId: PublicUser["id"]) => {
     // A call while a send to this receiver is out sends nothing, so the set's removal ends the one send in flight
     if (sendingReceiverIds.value.has(receiverId)) return;
@@ -94,6 +105,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     checkHasSentFriendRequest,
     checkIsSendFriendRequestPending,
     declineFriendRequest,
+    friendRequestsError,
     readFriendRequests,
     receivedFriendRequests,
     sendFriendRequest,

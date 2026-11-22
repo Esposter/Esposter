@@ -2,7 +2,8 @@
 import { useBlockStore } from "#src/store/message/user/block";
 
 const blockStore = useBlockStore();
-const { blockedUsers } = storeToRefs(blockStore);
+const { blockedUsers, blockedUsersError } = storeToRefs(blockStore);
+const readFriends = useReadFriends();
 </script>
 
 <template>
@@ -16,4 +17,5 @@ const { blockedUsers } = storeToRefs(blockStore);
     </ul>
     <MessageFriendsConfirmUnblockDialog />
   </MessageFriendsSection>
+  <UiErrorState v-else-if="blockedUsersError" :error="blockedUsersError" @retry="readFriends()" />
 </template>

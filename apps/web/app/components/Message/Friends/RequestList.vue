@@ -3,7 +3,8 @@ import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { useFriendRequestStore } from "#src/store/message/user/friendRequest";
 
 const friendRequestStore = useFriendRequestStore();
-const { receivedFriendRequests } = storeToRefs(friendRequestStore);
+const { friendRequestsError, receivedFriendRequests } = storeToRefs(friendRequestStore);
+const readFriends = useReadFriends();
 const displayReceivedFriendRequests = computed(() =>
   receivedFriendRequests.value.toSorted((firstFriendRequest, secondFriendRequest) =>
     compareCreatedAt(secondFriendRequest, firstFriendRequest),
@@ -30,4 +31,5 @@ const displayReceivedFriendRequests = computed(() =>
       </MessageFriendsUserListItem>
     </ul>
   </MessageFriendsSection>
+  <UiErrorState v-else-if="friendRequestsError" :error="friendRequestsError" @retry="readFriends()" />
 </template>

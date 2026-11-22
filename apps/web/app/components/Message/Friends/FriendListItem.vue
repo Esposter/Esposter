@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { useContextMenu } from "#src/composables/ui/useContextMenu";
 import type { Item } from "#src/models/shared/Item";
 import type { PublicUser } from "@esposter/db-schema";
 

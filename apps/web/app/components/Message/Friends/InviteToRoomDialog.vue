@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UiListItem } from "#src/models/ui/UiListItem";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useDirectMessageStore } from "#src/store/message/room/directMessage";
 import { useInviteStore } from "#src/store/message/room/invite";
@@ -14,6 +15,7 @@ const { invitingUserId } = storeToRefs(friendDialogStore);
 const { isOpen, item: friend } = useSingletonDialog(invitingUserId, () =>
   friends.value.find(({ id }) => id === invitingUserId.value),
 );
+const { answer } = useDialogAnswer(isOpen);
 const directMessageStore = useDirectMessageStore();
 const { inviteFriend } = directMessageStore;
 const inviteStore = useInviteStore();
@@ -37,9 +39,10 @@ const roomItems = computed<UiListItem<string>[]>(() =>
           if (!room || !friend) return;
 
           const { id: friendId } = friend;
-          isOpen = false;
-          const inviteLink = await getUsableInviteLink(room);
-          if (inviteLink) await inviteFriend(friendId, inviteLink);
+          await answer(async () => {
+            const inviteLink = await getUsableInviteLink(room);
+            if (inviteLink) await inviteFriend(friendId, inviteLink);
+          }, AwaitedReason.ServerIssuedValue);
         }
       "
     />

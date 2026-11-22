@@ -16,7 +16,7 @@ const { id } = defineProps<Props>();
 const blockStore = useBlockStore();
 const { blockedUsers } = storeToRefs(blockStore);
 const friendRequestStore = useFriendRequestStore();
-const { checkHasSentFriendRequest, checkIsSendFriendRequestPending, sendFriendRequest } = friendRequestStore;
+const { checkHasSentFriendRequest } = friendRequestStore;
 const friendStore = useFriendStore();
 const { checkIsFriend } = friendStore;
 const hasSentFriendRequest = computed(() => checkHasSentFriendRequest(id));
@@ -28,13 +28,7 @@ const isBlocked = computed(() => blockedUsers.value.some((blockedUser) => blocke
   <MessageFriendsUserListItem :image :name>
     <template #append>
       <MessageFriendsBlockUserButton v-if="!isBlocked" :user-id="id" />
-      <UiButton
-        v-if="!isFriend && !hasSentFriendRequest"
-        :is-pending="checkIsSendFriendRequestPending(id)"
-        @click="sendFriendRequest(id)"
-      >
-        Send Request
-      </UiButton>
+      <MessageFriendsSendFriendRequestButton v-if="!isFriend && !hasSentFriendRequest" :user-id="id" />
       <UiChip v-else-if="hasSentFriendRequest" :meaning="UiIconMeaning.Awaiting">Request Sent</UiChip>
       <UiChip v-else :meaning="UiIconMeaning.Success">Friends</UiChip>
     </template>

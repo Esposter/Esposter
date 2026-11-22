@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { useUserSearchStore } from "#src/store/message/user/search";
 
@@ -22,5 +23,11 @@ const { readMoreSearchedItems, retry } = userSearchStore;
     </template>
     <!-- The first search on its way: rows in the results' own shape, where a later one keeps the rows it replaces -->
     <MessageFriendsListSkeleton v-else-if="isPending" />
+    <UiEmptyState
+      v-else-if="searchQuery"
+      description="No one goes by that name."
+      :meaning="UiIconMeaning.Person"
+      title="No users found"
+    />
   </MessageFriendsSection>
 </template>

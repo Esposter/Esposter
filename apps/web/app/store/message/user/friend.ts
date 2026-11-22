@@ -42,13 +42,24 @@ export const useFriendStore = defineStore("message/user/friend", () => {
     );
   };
   // The read's rows are the friendships with their tombstones, each with both of its users, which the user map takes
-  const readFriends = useOverlayRead(
+  const readFriendRows = useOverlayRead(
     friendTable,
     ({ receiver, sender, ...friendship }: FriendInSocialWithRelations) => {
       storeUsers([receiver, sender]);
       return friendship;
     },
   );
+  // A failed read is held as its message and drawn by the list in place of its empty state, so no failure reads as no friends
+  const friendsError = ref("");
+  const readFriends = (read: () => Promise<FriendInSocialWithRelations[]>) =>
+    readFriendRows(read, {
+      onError: (error) => {
+        friendsError.value = error.message;
+      },
+      onSuccess: () => {
+        friendsError.value = "";
+      },
+    });
 
-  return { checkIsFriend, deleteFriend, friends, readFriends };
+  return { checkIsFriend, deleteFriend, friends, friendsError, readFriends };
 });

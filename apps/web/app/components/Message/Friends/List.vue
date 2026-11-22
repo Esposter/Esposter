@@ -4,8 +4,9 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { useFriendStore } from "#src/store/message/user/friend";
 
 const friendStore = useFriendStore();
-const { friends } = storeToRefs(friendStore);
+const { friends, friendsError } = storeToRefs(friendStore);
 const { getContextMenuProps } = useContextMenu();
+const readFriends = useReadFriends();
 const { invitableRooms } = useInvitableRooms();
 const hasInvitableRoom = computed(() => invitableRooms.value.length > 0);
 const displayFriends = computed(() =>
@@ -26,6 +27,7 @@ const displayFriends = computed(() =>
         :name
       />
     </ul>
+    <UiErrorState v-else-if="friendsError" :error="friendsError" @retry="readFriends()" />
     <UiEmptyState
       v-else
       description="Search for someone above to add them."

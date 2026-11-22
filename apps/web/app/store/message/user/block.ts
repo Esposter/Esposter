@@ -47,10 +47,21 @@ export const useBlockStore = defineStore("message/user/block", () => {
     );
   };
   // The read's rows are the blocks with their tombstones, each with the user it blocks
-  const readBlockedUsers = useOverlayRead(blockTable, ({ blocked, ...block }: BlockInSocialWithRelations) => {
+  const readBlockRows = useOverlayRead(blockTable, ({ blocked, ...block }: BlockInSocialWithRelations) => {
     storeUser(blocked);
     return block;
   });
+  // A failed read is held as its message, so the list draws the failure rather than showing no blocked users
+  const blockedUsersError = ref("");
+  const readBlockedUsers = (read: () => Promise<BlockInSocialWithRelations[]>) =>
+    readBlockRows(read, {
+      onError: (error) => {
+        blockedUsersError.value = error.message;
+      },
+      onSuccess: () => {
+        blockedUsersError.value = "";
+      },
+    });
 
-  return { blockedUsers, createBlock, deleteBlock, readBlockedUsers };
+  return { blockedUsers, blockedUsersError, createBlock, deleteBlock, readBlockedUsers };
 });
