@@ -7,12 +7,12 @@ import {
   resourceTypeSchema,
   selectResourceInResourceSchema,
 } from "@esposter/db-schema";
-import { createRecordSchema, createUniqueArraySchema, MAX_READ_LIMIT } from "@esposter/shared";
+import { createRecordSchema, createUniquePrimitiveArraySchema, MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
 export const resourceFilterInputSchema = z.object({
   // Narrows a read to an explicit set — the search dropdown resolves its own ids this way
-  ids: createUniqueArraySchema(selectResourceInResourceSchema.shape.id).max(MAX_READ_LIMIT).optional(),
+  ids: createUniquePrimitiveArraySchema(selectResourceInResourceSchema.shape.id).max(MAX_READ_LIMIT).optional(),
   // Whether the caller has ever opened it, and whether they have starred it. The Recent and Favorites list
   // Views are these two filters and nothing else, so each inherits every other filter, the row count and the
   // Summary cards rather than re-implementing the workbench against its own read
@@ -33,7 +33,7 @@ export const resourceFilterInputSchema = z.object({
     z.string().max(MAX_TAG_VALUE_LENGTH),
     MAX_TAGS_COUNT,
   ).optional(),
-  types: createUniqueArraySchema(resourceTypeSchema).max(ResourceTypes.length).optional(),
+  types: createUniquePrimitiveArraySchema(resourceTypeSchema).max(ResourceTypes.length).optional(),
   // Coerced, so an agent's ISO string through the MCP endpoint, which hands tRPC raw JSON, reads as the Date the
   // Browser's transformer revives
   updatedAfter: z.coerce.date<Date | string>().optional(),

@@ -6,7 +6,7 @@ import {
   WordFilterAction,
   wordFilterActionSchema,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema } from "@esposter/shared";
+import { createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export const upsertRoomFilterInputSchema = z
@@ -14,7 +14,7 @@ export const upsertRoomFilterInputSchema = z
     ...roomIdSchema.shape,
     action: wordFilterActionSchema.default(WordFilterAction.Reject),
     timeoutDurationMs: z.int().positive().max(MAX_TIMEOUT_DURATION_MS).optional(),
-    words: createUniqueArraySchema(roomFilterWordSchema).max(FILTER_WORDS_MAX_LENGTH),
+    words: createUniquePrimitiveArraySchema(roomFilterWordSchema).max(FILTER_WORDS_MAX_LENGTH),
   })
   // A Timeout action is meaningless without a duration — mirror the database CHECK at the input boundary.
   .refine(({ action, timeoutDurationMs }) => action !== WordFilterAction.Timeout || Boolean(timeoutDurationMs), {

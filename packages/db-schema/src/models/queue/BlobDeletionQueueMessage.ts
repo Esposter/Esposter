@@ -3,7 +3,7 @@ import type { StorageBucket } from "#src/models/storage/StorageBucket";
 import { queueMessageEnvelopeSchema } from "#src/models/queue/QueueMessageEnvelope";
 import { storageBucketSchema } from "#src/models/storage/StorageBucket";
 import { MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES } from "#src/services/queue/constants";
-import { createUniqueArraySchema } from "@esposter/shared";
+import { createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // Two ways to name what to delete. **Names** for a caller that already knows them — the blobs of one message,
@@ -19,7 +19,7 @@ export type BlobDeletionQueueMessage = (
 export const blobDeletionQueueMessageSchema = z.union([
   z.object({
     ...queueMessageEnvelopeSchema.shape,
-    blobNames: createUniqueArraySchema(z.string()).min(1).max(MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES),
+    blobNames: createUniquePrimitiveArraySchema(z.string()).min(1).max(MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES),
     // The instant the publisher decided these names were unreferenced. Delivery is at-least-once and a retry can
     // Arrive long after that decision, so a blob written since — a re-upload or a re-copy the decision never saw — is
     // Kept rather than deleted. Omitted by a named deletion that carries no such judgement, which deletes as it always has

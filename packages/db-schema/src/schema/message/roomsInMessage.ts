@@ -12,7 +12,7 @@ import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSq
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createTombstoneIndex } from "#src/services/tombstone/createTombstoneIndex";
 import { sqliteTable } from "#src/sqliteTable";
-import { createNormalizedStringSchema, createUniqueArraySchema } from "@esposter/shared";
+import { createNormalizedStringSchema, createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { check, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -77,7 +77,7 @@ export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
   // Unique over an enum, so the enum's size is the most it can hold
-  allowedMimeCategories: createUniqueArraySchema(mimeCategorySchema).max(mimeCategorySchema.options.length),
+  allowedMimeCategories: createUniquePrimitiveArraySchema(mimeCategorySchema).max(mimeCategorySchema.options.length),
   id: () => z.uuidv7(),
   image: (schema) => schema.max(URL_MAX_LENGTH),
   maxFileSizeBytes: (schema) => schema.nonnegative(),

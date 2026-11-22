@@ -5,7 +5,7 @@ import type { SceneGroupSource } from "#src/models/sceneGroup/SceneGroupSource";
 import { sceneGroupMemberKindSchema } from "#src/models/sceneGroup/SceneGroupMemberKind";
 import { sceneGroupPlaceSchema } from "#src/models/sceneGroup/SceneGroupPlace";
 import { sceneGroupSourceSchema } from "#src/models/sceneGroup/SceneGroupSource";
-import { createUniqueArraySchema } from "@esposter/shared";
+import { createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // One member of a scene group: its kind, its id in its kind's own table (the NPC's, the gadget's or the trigger's), its
@@ -27,5 +27,5 @@ export const sceneGroupMemberSchema = z.object({
   objectId: z.int().positive(),
   place: sceneGroupPlaceSchema.optional(),
   source: sceneGroupSourceSchema,
-  suiteIds: createUniqueArraySchema(z.int().positive()).optional(),
+  suiteIds: createUniquePrimitiveArraySchema(z.int().positive()).optional(),
 }) satisfies z.ZodType<SceneGroupMember>;

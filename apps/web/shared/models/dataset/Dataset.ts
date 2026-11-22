@@ -4,7 +4,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import { datasetColumnSchema } from "#shared/models/dataset/DatasetColumn";
 import { columnValueSchema } from "#shared/models/resource/sheet/column/ColumnValue";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
-import { createRecordSchema, createUniqueArraySchema } from "@esposter/shared";
+import { createRecordSchema, createUniqueArraySchema, createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface Dataset {
@@ -28,7 +28,7 @@ export const datasetSchema = z.object({
   // Declares is the one the row shape already depends on
   columns: createUniqueArraySchema(datasetColumnSchema, "name").max(MAX_RESOURCE_CONTENT_SIZE),
   isCountCapped: z.boolean().optional(),
-  partialColumns: createUniqueArraySchema(z.string().max(MAX_RESOURCE_CONTENT_SIZE))
+  partialColumns: createUniquePrimitiveArraySchema(z.string().max(MAX_RESOURCE_CONTENT_SIZE))
     .max(MAX_RESOURCE_CONTENT_SIZE)
     .optional(),
   // The one array here duplicates are valid in: two rows holding identical values are two rows

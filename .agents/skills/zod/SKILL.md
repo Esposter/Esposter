@@ -40,9 +40,9 @@ description: Apply when writing Zod schemas. Esposter's Zod conventions for sche
 
 `.transform(fn).pipe(refinedSchema)`, never `.refine()` for normalisation, with every string constraint on the single final `.pipe()` output. Reach for `createNameSchema(maxLength)` (`@esposter/db-schema`, required) or `createNormalizedStringSchema(maxLength)` (`@esposter/shared`, optional prose) before writing the chain by hand; the page says which one fits.
 
-## Arrays — Always `createUniqueArraySchema`
+## Arrays — Always `createUniqueArraySchema` or `createUniquePrimitiveArraySchema`
 
-Never `.array()` directly — `createUniqueArraySchema(schema, key?)` from `@esposter/shared`, unless duplicates are genuinely valid (`references/arrays.md`).
+Never `.array()` directly — `createUniqueArraySchema(schema, key)` for an array of objects, `createUniquePrimitiveArraySchema(schema)` for an array of primitives, both from `@esposter/shared`, unless duplicates are genuinely valid (`references/arrays.md`).
 
 ## Records — Always `createRecordSchema`
 

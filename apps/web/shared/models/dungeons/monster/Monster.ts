@@ -8,7 +8,7 @@ import { monsterKeySchema } from "#shared/models/dungeons/keys/image/UI/MonsterK
 import { statisticsSchema } from "#shared/models/dungeons/monster/Statistics";
 import { statusSchema } from "#shared/models/dungeons/monster/Status";
 import { getMonsterData } from "#shared/services/dungeons/monster/getMonsterData";
-import { createUniqueArraySchema } from "@esposter/shared";
+import { createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { v7 } from "uuid";
 import { z } from "zod";
 
@@ -25,7 +25,7 @@ export class Monster {
 }
 
 export const monsterSchema = z.object({
-  attackIds: createUniqueArraySchema(attackIdSchema).max(attackIdSchema.options.length),
+  attackIds: createUniquePrimitiveArraySchema(attackIdSchema).max(attackIdSchema.options.length),
   id: z.uuidv7(),
   key: monsterKeySchema,
   statistics: statisticsSchema,

@@ -1,4 +1,4 @@
-import type { CreateUniqueArraySchema } from "#src/models/zod/CreateUniqueArraySchema";
+import type { UniqueArraySchemaKey } from "#src/models/zod/UniqueArraySchemaKey";
 import type { z } from "zod";
 
 import { ID_SEPARATOR } from "#src/util/id/constants";
@@ -10,14 +10,14 @@ const getItemKey = (item: unknown, key: readonly string[] | string): unknown => 
   return typeof key === "string" ? item[key] : key.map((part) => item[part]).join(ID_SEPARATOR);
 };
 
-export const createUniqueArraySchema: CreateUniqueArraySchema = <TSchema extends z.ZodType>(
+// Items are told apart by a key, because a Set compares an object by reference: a schema of objects with no key would
+// Pass two equal objects as unique. An array of primitives takes `createUniquePrimitiveArraySchema` instead
+export const createUniqueArraySchema = <TSchema extends z.ZodType<object>>(
   schema: TSchema,
-  key?: readonly string[] | string,
+  key: readonly UniqueArraySchemaKey<TSchema>[] | UniqueArraySchemaKey<TSchema>,
 ): z.ZodArray<TSchema> =>
   schema
     .array()
-    .refine(
-      (array) =>
-        new Set<unknown>(key === undefined ? array : array.map((item) => getItemKey(item, key))).size === array.length,
-      { error: "Array items must be unique" },
-    );
+    .refine((array) => new Set<unknown>(array.map((item) => getItemKey(item, key))).size === array.length, {
+      error: "Array items must be unique",
+    });

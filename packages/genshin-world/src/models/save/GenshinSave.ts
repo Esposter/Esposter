@@ -56,7 +56,7 @@ import {
   MAX_TRAVELER_NAME_LENGTH,
   MAX_WISH_HISTORY_COUNT,
 } from "#src/services/save/constants";
-import { createUniqueArraySchema } from "@esposter/shared";
+import { createUniqueArraySchema, createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // The whole of a player's Genshin save: one key per system, each system's slice owned beside its model. The save holds
@@ -65,7 +65,7 @@ export const genshinSaveSchema = z
   .object({
     achievements: achievementProgressSaveSchema,
     adventureExp: adventureExpSaveSchema,
-    adventureRankRewardsClaimed: createUniqueArraySchema(z.int().min(2).max(MAX_ADVENTURE_RANK)).max(
+    adventureRankRewardsClaimed: createUniquePrimitiveArraySchema(z.int().min(2).max(MAX_ADVENTURE_RANK)).max(
       MAX_ADVENTURE_RANK - 1,
     ),
     // The entries the Archive has opened and the defeats it has counted
@@ -74,7 +74,7 @@ export const genshinSaveSchema = z
     // Claim or a teleport out of its area after the defeat, so a reload keeps it down. Absent until a boss is defeated
     bossDefeats: bossDefeatSaveSchema.optional(),
     cardGameExp: cardGameExpSaveSchema,
-    cardGameRewardedGameIds: createUniqueArraySchema(z.int().positive()).max(GCG_REWARDABLE_GAME_COUNT),
+    cardGameRewardedGameIds: createUniquePrimitiveArraySchema(z.int().positive()).max(GCG_REWARDABLE_GAME_COUNT),
     // The characters the player holds, each once by its id, with the copies a wish has granted it
     characters: createUniqueArraySchema(characterSaveSchema, "id").max(MAX_CHARACTER_COUNT),
     // The character trials' stages whose first clear has paid its reward, each by its id

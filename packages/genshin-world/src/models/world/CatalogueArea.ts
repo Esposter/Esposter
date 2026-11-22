@@ -4,7 +4,7 @@ import type { GroundPoint } from "genshin-engine";
 import { catalogueSubareaSchema } from "#src/models/world/CatalogueSubarea";
 import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { WorldLayer } from "#src/models/world/WorldLayer";
-import { createUniqueArraySchema } from "@esposter/shared";
+import { createUniqueArraySchema, createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { WeatherKind } from "genshin-engine";
 import { z } from "zod";
 
@@ -30,5 +30,5 @@ export const catalogueAreaSchema = z.object({
   outline: z.array(groundPointSchema),
   subareas: createUniqueArraySchema(catalogueSubareaSchema, "id"),
   subregion: z.string(),
-  weathers: createUniqueArraySchema(z.enum(WeatherKind)).min(1),
+  weathers: createUniquePrimitiveArraySchema(z.enum(WeatherKind)).min(1),
 }) satisfies z.ZodType<CatalogueArea>;

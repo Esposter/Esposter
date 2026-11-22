@@ -6,7 +6,7 @@ import {
   MAX_BLUEPRINT_PARAMETER_TEXT_LENGTH,
 } from "#shared/services/resource/blueprint/constants";
 import { createNameSchema } from "@esposter/db-schema";
-import { createNormalizedStringSchema, createUniqueArraySchema } from "@esposter/shared";
+import { createNormalizedStringSchema, createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // A deploy-time input: `key` names the `{{parameter:key}}` token, `title`/`description` label its form
@@ -22,7 +22,7 @@ export interface BlueprintParameter {
 
 export const blueprintParameterSchema = z
   .object({
-    allowedValues: createUniqueArraySchema(
+    allowedValues: createUniquePrimitiveArraySchema(
       createNormalizedStringSchema(MAX_BLUEPRINT_PARAMETER_TEXT_LENGTH, z.string().min(1)),
     )
       .min(1)

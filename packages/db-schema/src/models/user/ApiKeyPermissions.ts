@@ -1,7 +1,7 @@
 import type { McpScope } from "#src/models/user/McpScope";
 
 import { McpScopes, mcpScopeSchema } from "#src/models/user/McpScope";
-import { createUniqueArraySchema } from "@esposter/shared";
+import { createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // A key's permissions as better-auth stores them, a record of resource to actions. The plugin sets them only from the
@@ -11,5 +11,5 @@ export interface ApiKeyPermissions {
 }
 
 export const apiKeyPermissionsSchema = z.object({
-  mcp: createUniqueArraySchema(mcpScopeSchema).max(McpScopes.length),
+  mcp: createUniquePrimitiveArraySchema(mcpScopeSchema).max(McpScopes.length),
 }) satisfies z.ZodType<ApiKeyPermissions>;

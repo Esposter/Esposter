@@ -1,5 +1,5 @@
 import { MAX_FOUND_OCULUS_COUNT, MAX_SAVE_ID_LENGTH, MAX_STATUE_REGION_COUNT } from "#src/services/save/constants";
-import { createRecordSchema, createUniqueArraySchema } from "@esposter/shared";
+import { createRecordSchema, createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // A region's statues as the save holds them: the Oculi held toward its next level, the level it has reached, and the level
@@ -16,7 +16,9 @@ export type StatueRegionProgressSave = z.infer<typeof statueRegionProgressSaveSc
 // The Statues of The Seven as the save holds them: each region's progress, by the region's id, and the ids of the Oculi
 // Found, each unique
 export const statueProgressSaveSchema = z.object({
-  foundOculusIds: createUniqueArraySchema(z.string().min(1).max(MAX_SAVE_ID_LENGTH)).max(MAX_FOUND_OCULUS_COUNT),
+  foundOculusIds: createUniquePrimitiveArraySchema(z.string().min(1).max(MAX_SAVE_ID_LENGTH)).max(
+    MAX_FOUND_OCULUS_COUNT,
+  ),
   regions: createRecordSchema(
     z.string().min(1).max(MAX_SAVE_ID_LENGTH),
     statueRegionProgressSaveSchema,

@@ -2,10 +2,10 @@
 
 Read when a schema holds an array.
 
-**Never call `.array()` directly** unless duplicates are genuinely valid. Use `createUniqueArraySchema(schema)` from `@esposter/shared` — it wraps `.array()` with a uniqueness refine, and all chaining (`.min()`, `.max()`, `.nullable()`, `.optional()`, `.default()`) works identically after (Zod 4's `.refine()` returns the same `ZodArray` type). For object arrays, pass the uniquely-identifying field name as the second argument:
+**Never call `.array()` directly** unless duplicates are genuinely valid. Use `createUniquePrimitiveArraySchema(schema)` for an array of primitives, and `createUniqueArraySchema(schema, key)` for an array of objects, both from `@esposter/shared` — each wraps `.array()` with a uniqueness refine, and all chaining (`.min()`, `.max()`, `.nullable()`, `.optional()`, `.default()`) works identically after (Zod 4's `.refine()` returns the same `ZodArray` type). An array of objects passes the uniquely-identifying field name as the second argument, and an array of primitives takes no key, so an object schema with no key is a type error:
 
 ```ts
-createUniqueArraySchema(z.string()).max(MAX_READ_LIMIT); // not z.string().array()
+createUniquePrimitiveArraySchema(z.string()).max(MAX_READ_LIMIT); // not z.string().array()
 createUniqueArraySchema(fooSchema, "id").max(FOO_MAX_LENGTH).default([]);
 ```
 

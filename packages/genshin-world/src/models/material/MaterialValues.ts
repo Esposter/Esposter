@@ -2,7 +2,7 @@ import type { Vector4Tuple } from "three";
 
 import { materialFloatSchema } from "#src/models/material/MaterialFloat";
 import { MAX_MATERIAL_PROPERTY_COUNT } from "#src/services/constants";
-import { createRecordSchema, createUniqueArraySchema } from "@esposter/shared";
+import { createRecordSchema, createUniquePrimitiveArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // The values a game shader reads from a material, as an avatar's and a scene's exports both hold them: its colours and
@@ -20,5 +20,5 @@ export const materialValuesSchema = z.object({
     MAX_MATERIAL_PROPERTY_COUNT,
   ),
   floats: createRecordSchema(z.string().min(1), materialFloatSchema, MAX_MATERIAL_PROPERTY_COUNT),
-  keywords: createUniqueArraySchema(z.string().min(1)),
+  keywords: createUniquePrimitiveArraySchema(z.string().min(1)),
 }) satisfies z.ZodType<MaterialValues>;
