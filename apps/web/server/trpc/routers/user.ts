@@ -138,7 +138,7 @@ export const userRouter = router({
         "A presigned upload url: the blob changes when the client uploads to it, which confirmCallBackgroundUpload publishes",
     })
     .input(generateCallBackgroundUploadUrlInputSchema)
-    .mutation<string>(async ({ ctx, input: { mimetype, size, slot } }) => {
+    .mutation<string>(({ ctx, input: { mimetype, size, slot } }) => {
       if (size > MAX_CALL_BACKGROUND_SIZE_BYTES || !IMAGE_UPLOAD_MIME_TYPES.includes(mimetype))
         throw getInvalidOperationError(
           Operation.Create,
@@ -323,22 +323,6 @@ export const userRouter = router({
       ctx.user.id,
     );
   }),
-  updateUserSettings: standardAuthedProcedure
-    .input(updateUserSettingsInputSchema)
-    .mutation<UserSettingsInMessage>(async ({ ctx, input }) =>
-      requireMutation(
-        (
-          await ctx.db
-            .insert(userSettingsInMessage)
-            .values({ ...input, userId: ctx.user.id })
-            .onConflictDoUpdate({ set: input, target: userSettingsInMessage.userId })
-            .returning()
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.UserSettings,
-        JSON.stringify(input),
-      ),
-    ),
   upsertStatus: standardAuthedProcedure
     .meta({ staticReason: "The user object pushes each status change to its sockets as a typed event" })
     .input(upsertStatusInputSchema)
@@ -360,4 +344,20 @@ export const userRouter = router({
       await callUserObjects([ctx.user.id], (userObject) => userObject.upsertStatus(detectedStatus));
       return detectedStatus;
     }),
+  upsertUserSettings: standardAuthedProcedure
+    .input(updateUserSettingsInputSchema)
+    .mutation<UserSettingsInMessage>(async ({ ctx, input }) =>
+      requireMutation(
+        (
+          await ctx.db
+            .insert(userSettingsInMessage)
+            .values({ ...input, userId: ctx.user.id })
+            .onConflictDoUpdate({ set: input, target: userSettingsInMessage.userId })
+            .returning()
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.UserSettings,
+        JSON.stringify(input),
+      ),
+    ),
 });

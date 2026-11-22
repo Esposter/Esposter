@@ -21,7 +21,7 @@ stateDiagram-v2
 
 ## Data model
 
-`userSettings.pushToTalkKeybind` (text, `""` = unbound) and `userSettings.pushToTalkReleaseDelayMs` (integer, CHECK 0..2000, default 20) — see [user settings](../settings/design.md). No procedure beyond `updateUserSettings`.
+`userSettings.pushToTalkKeybind` (text, `""` = unbound) and `userSettings.pushToTalkReleaseDelayMs` (integer, CHECK 0..2000, default 20) — see [user settings](../settings/design.md). No procedure beyond `upsertUserSettings`.
 
 ## Key files
 

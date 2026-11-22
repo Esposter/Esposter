@@ -42,9 +42,9 @@ On the `user` router:
 | Procedure            | Auth   | Input                                                                  | Purpose                                 |
 | -------------------- | ------ | ---------------------------------------------------------------------- | --------------------------------------- |
 | `readUserSettings`   | authed | —                                                                      | the user's row, or defaults if none yet |
-| `updateUserSettings` | authed | partial settings (`updateUserSettingsInputSchema`, `refineAtLeastOne`) | upsert; returns the full row            |
+| `upsertUserSettings` | authed | partial settings (`updateUserSettingsInputSchema`, `refineAtLeastOne`) | upsert; returns the full row            |
 
-The client store (`store/message/user/settings/index.ts`) applies updates optimistically as overlay entries, and a refused update drops its entry and alerts. The read is one record for the whole session, so it goes through [`useCachedRead`](../../architecture/caching/design.md) — every surface that raises the dialog asks for it, the concurrent asks join one request, and no write invalidates it because `updateUserSettings` stores the row it is answered with.
+The client store (`store/message/user/settings/index.ts`) applies updates optimistically as overlay entries, and a refused update drops its entry and alerts. The read is one record for the whole session, so it goes through [`useCachedRead`](../../architecture/caching/design.md) — every surface that raises the dialog asks for it, the concurrent asks join one request, and no write invalidates it because `upsertUserSettings` stores the row it is answered with.
 
 ```mermaid
 flowchart TD
@@ -52,7 +52,7 @@ flowchart TD
   C -->|one request for the session| R["readUserSettings"]
   R --> S["store userSettings"]
   W["control changed"] --> O["optimistic update in the store"]
-  O --> U["updateUserSettings"]
+  O --> U["upsertUserSettings"]
   U -->|returned row stored| S
   U -->|failure| V["entry dropped, stored value shows, and alert"]
 ```
@@ -69,7 +69,7 @@ The dialog uses a Discord-style two-level nav: a `UiList` of the `UserSettingsLi
 | File                                                             | Role                                                       |
 | :--------------------------------------------------------------- | :--------------------------------------------------------- |
 | `packages/db-schema/src/schema/message/userSettingsInMessage.ts` | table + value sets + range constants                       |
-| `apps/web/server/trpc/routers/user.ts`                           | `readUserSettings` + `updateUserSettings`                  |
+| `apps/web/server/trpc/routers/user.ts`                           | `readUserSettings` + `upsertUserSettings`                  |
 | `apps/web/app/models/message/user/UserSettingsType.ts`           | the panel value set; a value is its own title              |
 | `apps/web/app/services/message/user/settings/`                   | list-item / content / section maps                         |
 | `apps/web/app/store/message/user/settings/index.ts`              | DB-backed store (optimistic overlay entry)                 |

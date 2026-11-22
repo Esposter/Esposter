@@ -74,7 +74,7 @@ export const roleRouter = router({
 
     await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
 
-    const [assigned] = await ctx.db
+    const [newUserToRoomRole] = await ctx.db
       .insert(usersToRoomRolesInMessage)
       .values({ roleId, roomId, userId })
       .onConflictDoUpdate({
@@ -84,7 +84,7 @@ export const roleRouter = router({
       })
       .returning();
     const memberRole =
-      assigned ??
+      newUserToRoomRole ??
       (await requireEntity(
         ctx.db.query.usersToRoomRolesInMessage.findFirst({ where: { RAW: getLiveRowWhere, roleId, roomId, userId } }),
         DatabaseEntityType.UserToRoomRole,

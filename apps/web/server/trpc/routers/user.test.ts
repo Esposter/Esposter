@@ -4,7 +4,6 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createMockSession } from "#server/auth.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
@@ -88,17 +87,7 @@ describe("userRouter", () => {
   const userId = getMockSession().user.id;
   // A second session the caller holds, and a revoke that deletes its row the way better-auth would
   const holdOtherSession = async () => {
-    const otherSession = createMockSession(userId);
-    await mockContext.db
-      .insert(sessionsInAuth)
-      .values({
-        expiresAt: otherSession.expiresAt,
-        id: otherSession.id,
-        ipAddress: "",
-        token: otherSession.token,
-        updatedAt: otherSession.updatedAt,
-        userId,
-      });
+    const { session: otherSession } = await createMockAuthSession(mockContext.db, getMockSession().user);
     getMockRevokeSession().mockImplementation(async ({ body: { token } }) => {
       await mockContext.db.delete(sessionsInAuth).where(eq(sessionsInAuth.token, token));
     });
@@ -197,7 +186,7 @@ describe("userRouter", () => {
 
   // The marker is set before the sweep is published, so a publish that fails must fail the request and leave the caller
   // The sessions are ended only once the event is accepted, so the person can ask again
-  test("deleteAccount fails when the sweep is not published, and the caller's sessions stay open", async () => {
+  test("deleteAccount fails with an unpublished sweep, and the caller's sessions stay open", async () => {
     expect.hasAssertions();
 
     const otherSession = await holdOtherSession();
@@ -206,8 +195,9 @@ describe("userRouter", () => {
     await expect(caller.deleteAccount()).rejects.toMatchObject({ cause: publishError });
 
     const sessions = await mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } });
+
     expect(MockJobQueueDatabase.size).toBe(0);
-    expect(sessions.map(({ id }) => id)).toContain(otherSession.id);
+    expect(sessions.map(({ id }) => id)).toStrictEqual([otherSession.id]);
   });
 
   test("deleteAccount succeeds on retry after a failed publish, and publishes the sweep once", async () => {
@@ -410,8 +400,9 @@ describe("userRouter", () => {
     await roomCaller.readMembers({ roomId: room.id });
     await caller.updateUser({ name: savedName });
 
-    const { items } = await roomCaller.readMembers({ roomId: room.id });
-    expect(items.map((member) => member.name)).toContain(savedName);
+    const members = await roomCaller.readMembers({ roomId: room.id });
+
+    expect(members.items.map((member) => member.name)).toStrictEqual([savedName]);
   });
 
   // A pending request shows the saver's name on the receiver's list, so the save wakes the list the receiver read before it
@@ -426,6 +417,7 @@ describe("userRouter", () => {
     await caller.updateUser({ name: savedName });
 
     const requests = await receiverCaller.readFriendRequests();
+
     expect(requests.map(({ sender }) => sender.name)).toStrictEqual([savedName]);
   });
 
@@ -441,13 +433,14 @@ describe("userRouter", () => {
     await caller.updateUser({ name: savedName });
 
     const blockedUsers = await blockerCaller.readBlockedUsers();
+
     expect(blockedUsers.map(({ blocked }) => blocked.name)).toStrictEqual([savedName]);
   });
 
   test("updates settings and reads them back", async () => {
     expect.hasAssertions();
 
-    await caller.updateUserSettings({ isMuteOnJoin: true });
+    await caller.upsertUserSettings({ isMuteOnJoin: true });
     const userSettings = await caller.readUserSettings();
 
     expect(userSettings.isMuteOnJoin).toBe(true);
@@ -623,7 +616,7 @@ describe("userRouter", () => {
 
   // The row is deleted when its event is refused, so a retry queues a new export rather than returning one that
   // Nothing builds
-  test("requestDataExport fails when the event is not published, and a retry queues the export again", async () => {
+  test("requestDataExport fails with an unpublished event, and a retry queues the export again", async () => {
     expect.hasAssertions();
 
     vi.spyOn(MockJobQueue.prototype, "send").mockRejectedValueOnce(publishError);
@@ -684,7 +677,7 @@ describe("userRouter", () => {
   // Every row inserts under this one id, since an inline snapshot takes its message from its call site
   // The rows therefore produce the same message, and afterEach deletes each row's export before the next is inserted
   test.each([DataExportStatus.Building, DataExportStatus.Failed, DataExportStatus.Queued])(
-    "generateDataExportLink refuses a %s export",
+    "generateDataExportLink fails with a %s export",
     async (status) => {
       expect.hasAssertions();
 
@@ -696,7 +689,7 @@ describe("userRouter", () => {
     },
   );
 
-  test("generateDataExportLink refuses another person's export", async () => {
+  test("generateDataExportLink fails with another person's export", async () => {
     expect.hasAssertions();
 
     const otherUser = await createMockUser(mockContext.db);
@@ -707,7 +700,7 @@ describe("userRouter", () => {
     );
   });
 
-  test("generateDataExportLink refuses an expired export", async () => {
+  test("generateDataExportLink fails with an expired export", async () => {
     expect.hasAssertions();
 
     const dataExport = await insertReadyDataExport(userId, expiredAt);
@@ -723,10 +716,10 @@ describe("userRouter", () => {
 
     const input = { isMuteOnJoin: true };
     const { named, uncovered } = await getUncoveredWrites({
-      call: (context) => createCallerFactory(userRouter)(context).updateUserSettings(input),
+      call: (context) => createCallerFactory(userRouter)(context).upsertUserSettings(input),
       context: mockContext,
       entry: getUpdateUserSettingsEntry(userId, input),
-      path: "updateUserSettings",
+      path: "upsertUserSettings",
       tables: [userSettingsTable],
     });
 

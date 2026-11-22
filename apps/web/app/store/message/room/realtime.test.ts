@@ -185,7 +185,7 @@ describe(useRealtimeStore, () => {
     vi.spyOn(callBackgroundStore, "readVirtualBackgroundImagePath").mockResolvedValue(imagePath);
     const saveUserSettings = vi.fn<() => UserSettingsInMessage>(() => userSettings);
     trpcMsw.user.readUserSettings.query(() => userSettings);
-    trpcMsw.user.updateUserSettings.mutation(saveUserSettings);
+    trpcMsw.user.upsertUserSettings.mutation(saveUserSettings);
     const { meeting } = createMeeting();
     meeting.self.addVideoMiddleware.mockRejectedValue(new Error(" "));
     spyOnMeetingInit(meeting);
