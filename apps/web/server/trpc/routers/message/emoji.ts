@@ -15,7 +15,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const emojiRouter = router({
   addReaction: getMemberProcedure(addReactionInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes the reaction to its sockets as a typed event" })
-    .mutation<RoomReaction>(async ({ ctx, input }) =>
+    .mutation<RoomReaction>(({ ctx, input }) =>
       requireEntity(
         useRoomObject(input.roomId).addReaction(
           { emojiTag: input.emojiTag, messageId: input.messageId },
@@ -32,7 +32,7 @@ export const emojiRouter = router({
   // The reaction with no reactor at the version the removal raised
   removeReaction: getMemberProcedure(removeReactionInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes the reaction it now holds to its sockets as a typed event" })
-    .mutation<RoomReaction>(async ({ ctx, input }) =>
+    .mutation<RoomReaction>(({ ctx, input }) =>
       requireEntity(
         useRoomObject(input.roomId).removeReaction(
           { emojiTag: input.emojiTag, messageId: input.messageId },

@@ -137,7 +137,7 @@ const baseMessageRouter = router({
     .meta({
       staticReason: "The room object pushes the message with its preview cleared to its sockets as a typed event",
     })
-    .mutation<RoomMessage>(async ({ ctx, input }) =>
+    .mutation<RoomMessage>(({ ctx, input }) =>
       requireEntity(
         useRoomObject(input.roomId).deleteLinkPreview(input.id, getRoomActor(ctx)),
         DatabaseEntityType.Message,
@@ -397,7 +397,7 @@ const baseMessageRouter = router({
           DatabaseEntityType.Message,
           JSON.stringify(inFilterRoomIds.length),
         );
-      if (inFilterRoomIds.length > 0) await assertIsMember(ctx, inFilterRoomIds);
+      else if (inFilterRoomIds.length > 0) await assertIsMember(ctx, inFilterRoomIds);
       return searchMessages(input);
     }),
   unfollowThread: getMemberProcedure(unfollowThreadInputSchema, "roomId").mutation<ThreadFollowInMessage>(
@@ -406,7 +406,7 @@ const baseMessageRouter = router({
   ),
   unpinMessage: getMessageProcedure(unpinMessageInputSchema, MessageOperation.Pin)
     .meta({ staticReason: "The room object pushes the unpin to its sockets as a typed event" })
-    .mutation<RoomMessage>(async ({ ctx, input }) =>
+    .mutation<RoomMessage>(({ ctx, input }) =>
       requireEntity(
         useRoomObject(input.roomId).unpinMessage(input.id, getRoomActor(ctx)),
         DatabaseEntityType.Message,

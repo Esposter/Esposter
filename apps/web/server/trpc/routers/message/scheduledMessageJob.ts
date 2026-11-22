@@ -1,5 +1,6 @@
+import type { CancelScheduledMessageJobResult } from "#shared/models/db/message/scheduledMessageJob/CancelScheduledMessageJobResult";
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
-import type { Page, ScheduledReminder, ScheduledRoomMessage } from "@esposter/db-schema";
+import type { Page, ScheduledReminder } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
@@ -16,11 +17,6 @@ import { scheduleReminderInputSchema } from "#shared/models/db/message/scheduled
 import { DatabaseEntityType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 
-// What a cancel left as a tombstone, tagged by the kind of job it cancelled: a reminder's row, or a scheduled message's
-type CancelledScheduledMessageJob =
-  | { kind: typeof ScheduledMessageJobType.Reminder; row: ScheduledReminder }
-  | { kind: typeof ScheduledMessageJobType.ScheduledMessage; row: ScheduledRoomMessage };
-
 // The Scheduled tab's rows are held by their owners: a reminder in the person's object, a scheduled message in its room's.
 // Both are listed and cancelled here, so the tab reads and writes each kind through this router alone
 export const scheduledMessageJobRouter = router({
@@ -28,7 +24,7 @@ export const scheduledMessageJobRouter = router({
   // Its room's object tombstones for the sender who scheduled it and for nobody else. Either answers with the tombstone it left
   cancelScheduledMessageJob: standardAuthedProcedure
     .input(scheduledMessageIdentityInputSchema)
-    .mutation<CancelledScheduledMessageJob>(async ({ ctx, input: { id, roomId } }) => {
+    .mutation<CancelScheduledMessageJobResult>(async ({ ctx, input: { id, roomId } }) => {
       const reminder = await useUserObject(ctx.user.id).removeReminder(id);
       if (reminder) return { kind: ScheduledMessageJobType.Reminder, row: reminder };
 

@@ -414,8 +414,10 @@ describe("moderationRouter", () => {
 
     const result = await moderationCaller.readBans({ roomId });
 
-    expect(removedBan?.deletedAt).not.toBeNull();
-    expect(removedBan?.version).toBeGreaterThan(createdBan?.version ?? Number.POSITIVE_INFINITY);
+    assert.exists(createdBan);
+    assert.exists(removedBan);
+    expect(removedBan.deletedAt).not.toBeNull();
+    expect(removedBan.version).toBe(createdBan.version + 1);
     expect(result.items.map(({ deletedAt, userId }) => ({ isRemoved: deletedAt !== null, userId }))).toStrictEqual([
       { isRemoved: true, userId: member.id },
     ]);
@@ -432,8 +434,10 @@ describe("moderationRouter", () => {
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
     const [revivedBan] = await readBanRows(member.id);
 
-    expect(revivedBan?.deletedAt).toBeNull();
-    expect(revivedBan?.version).toBeGreaterThan(removedBan?.version ?? Number.POSITIVE_INFINITY);
+    assert.exists(removedBan);
+    assert.exists(revivedBan);
+    expect(revivedBan.deletedAt).toBeNull();
+    expect(revivedBan.version).toBeGreaterThan(removedBan.version);
   });
 
   test("fails deleteBan when no ban was ever created", async () => {
