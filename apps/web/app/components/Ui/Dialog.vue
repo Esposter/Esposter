@@ -92,7 +92,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
     >
       <section ref="frame" :class="frameClass" flex flex-col ui-lifted>
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
-        <header v-else px-3 py-2 flex flex-wrap gap-2 ui-bar items-center>
+        <header v-else px-3 py-2 flex gap-2 ui-bar items-center>
           <hgroup flex-1 min-w-0>
             <p v-if="overline" text-sm text-muted>{{ overline }}</p>
             <Dialog.Title text-heading-color truncate>{{ title }}</Dialog.Title>

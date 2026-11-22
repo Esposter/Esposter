@@ -1,5 +1,5 @@
 // @unocss-include
-import type { MenuItem } from "#src/models/shared/MenuItem";
+import type { Item } from "#src/models/shared/Item";
 import type { Editor } from "@tiptap/core";
 
 // The block-level items the Note's menu bar and its slash menu both offer, in the order both draw them. The list items
@@ -8,7 +8,7 @@ import type { Editor } from "@tiptap/core";
 export const getNoteBlockMenuItems = (
   editor: Editor | undefined,
   { isTaskListOffered = true }: { isTaskListOffered?: boolean } = {},
-): MenuItem[] => [
+): Item[] => [
   {
     active: editor?.isActive("paragraph"),
     icon: "i-mdi:format-paragraph",

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MenuItem } from "#src/models/shared/MenuItem";
+import type { Item } from "#src/models/shared/Item";
 import type { Editor } from "@tiptap/core";
 
 import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
@@ -21,30 +21,32 @@ const { onChange, open: openImagePicker } = useFileDialog({
 onChange((pickedFiles) => {
   if (editor && pickedFiles) insertNoteImages(editor, [...pickedFiles]);
 });
-const items = computed<MenuItem[]>(() => [
-  ...getNoteBlockMenuItems(editor),
-  {
-    icon: "i-mdi:table",
-    isSelectionFree: true,
-    onClick: () => {
-      editor?.chain().focus().insertTable({ cols: 3, rows: 3, withHeaderRow: true }).run();
+const items = computed(() => getTextFormatMenuItems(editor));
+// The block, insert and list commands wait in the overflow menu on every width, so the bar keeps its marks and one row
+const listItems = computed<Item[]>(() =>
+  [
+    ...getNoteBlockMenuItems(editor),
+    {
+      icon: "i-mdi:table",
+      isSelectionFree: true,
+      onClick: () => {
+        editor?.chain().focus().insertTable({ cols: 3, rows: 3, withHeaderRow: true }).run();
+      },
+      title: "Table",
     },
-    title: "Table",
-  },
-  { isSelectionFree: true, meaning: UiIconMeaning.Image, onClick: () => openImagePicker(), title: "Image" },
-  { isDivider: true },
-  ...getTextFormatMenuItems(editor),
-  { isDivider: true },
-  ...getListMenuItems(editor),
-]);
+    { isSelectionFree: true, meaning: UiIconMeaning.Image, onClick: () => openImagePicker(), title: "Image" },
+    ...getListMenuItems(editor),
+  ].map((item) => ({ ...item, isChecked: item.active })),
+);
 </script>
 
 <template>
-  <div p-1 flex flex-wrap w-full items-center>
+  <div p-1 flex w-full items-center>
     <RichTextEditorMenuBarButtons :editor :items />
     <ResourceNoteTableMenuButton :editor />
     <div aria-hidden="true" mx-1 bg-divider shrink-0 h-6 w="[var(--ui-border-width)]" self-center />
     <ResourceNoteLinkMenuButton :editor />
     <ResourceNoteAltTextMenuButton :editor />
+    <UiOverflowMenu :items="listItems" label="More commands" />
   </div>
 </template>

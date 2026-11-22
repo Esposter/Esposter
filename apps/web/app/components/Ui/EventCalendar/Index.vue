@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Item } from "#src/models/shared/Item";
 import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 import type { UiCalendarSlotEmits } from "#src/models/ui/UiCalendarSlotEmits";
 import type { UiCommand } from "#src/models/ui/UiCommand";
@@ -119,6 +120,11 @@ const stepBack = (duration: Temporal.DurationLike) => {
 const stepForward = (duration: Temporal.DurationLike) => {
   date.value = date.value.add(duration);
 };
+// A year is a long step, so its two steps wait in the overflow menu on every width, which keeps the header one row
+const yearItems: Item[] = [
+  { meaning: UiIconMeaning.SkipBackward, onClick: () => stepBack({ years: 1 }), title: "Previous year" },
+  { meaning: UiIconMeaning.SkipForward, onClick: () => stepForward({ years: 1 }), title: "Next year" },
+];
 // Outlook numbers its views from the shortest; stepping and today are Google Calendar's single keys, which Outlook has
 // No equivalent of
 useCommands((): UiCommand[] => [
@@ -182,19 +188,13 @@ useCommands((): UiCommand[] => [
       <UiCalendar v-model="date" label="Go to a day" :marked-dates />
     </aside>
     <div flex flex-1 flex-col gap-3 min-w-0>
-      <header flex flex-wrap gap-2 items-center>
+      <header flex gap-2 items-center>
         <!-- Read out as the reader steps, since the days change under the buttons without focus moving -->
         <h2 aria-live="polite" flex-1 min-w-0 truncate ui-title>
           <NuxtTime v-if="view === UiCalendarView.Day" :datetime="date.toString()" date-style="full" time-zone="UTC" />
           <NuxtTime v-else :datetime="date.toString()" month="long" time-zone="UTC" year="numeric" />
         </h2>
         <div flex gap-1 items-center>
-          <UiIconButton
-            label="Previous year"
-            :meaning="UiIconMeaning.SkipBackward"
-            :variant="UiButtonVariant.Quiet"
-            @click="stepBack({ years: 1 })"
-          />
           <UiIconButton
             :label="`Previous ${view.toLowerCase()}`"
             :meaning="UiIconMeaning.Previous"
@@ -210,12 +210,7 @@ useCommands((): UiCommand[] => [
             :variant="UiButtonVariant.Quiet"
             @click="stepForward(step)"
           />
-          <UiIconButton
-            label="Next year"
-            :meaning="UiIconMeaning.SkipForward"
-            :variant="UiButtonVariant.Quiet"
-            @click="stepForward({ years: 1 })"
-          />
+          <UiOverflowMenu :items="yearItems" label="More periods" />
         </div>
         <UiToggleGroup v-model="view" :items="viewItems" label="View" />
       </header>

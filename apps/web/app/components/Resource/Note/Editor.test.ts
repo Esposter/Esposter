@@ -78,7 +78,12 @@ describe("resourceNoteEditor", () => {
     uploadResourceFileMock.mockResolvedValue(assetUrl);
     choosesFile(file);
     const component = await mountSuspended(ResourceNoteEditor, { attachTo: document.body });
-    await component.get('[aria-label="Image"]').trigger("click");
+    await component.get('[aria-label="More commands"]').trigger("click");
+    await flushPromises();
+    await component
+      .findAll('[role="menuitem"]')
+      .find((item) => item.text() === "Image")
+      ?.trigger("click");
     await flushPromises();
 
     expect(component.findAll(".ProseMirror img").map((image) => image.attributes("src"))).toStrictEqual([assetUrl]);
