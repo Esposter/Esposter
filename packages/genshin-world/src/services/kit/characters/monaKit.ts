@@ -43,9 +43,6 @@ const A4_HYDRO_BONUS_OF_ENERGY_RECHARGE = 0.2;
 // Mona/cons.go gives them. A Swirl counts only for the Hydro it absorbs, as a reaction carries that element
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/cons.go
 const CONSTELLATION_1 = 1;
-const CONSTELLATION_1_DAMAGE_BONUS = 0.15;
-const CONSTELLATION_1_HEXEREI_MULTIPLIER = 1.6;
-const CONSTELLATION_1_SECONDS = 8;
 const CONSTELLATION_1_STATUS_ID = "mona-constellation-1";
 const CONSTELLATION_1_REACTION_TYPES = new Set<ReactionType>([
   AmplifyingReactionType.Vaporize,
@@ -168,6 +165,7 @@ const getConstellation1ReactionBonus = (
   member: Combatant,
   reaction: KitReaction,
   context: KitContext,
+  { damageBonus, hexereiMultiplier }: { damageBonus: number; hexereiMultiplier: number },
 ): { damageBonus?: number } => {
   const { combatant } = reaction;
   if (member.constellationCount < CONSTELLATION_1 || !checkIsConstellation1Reaction(reaction)) return {};
@@ -177,7 +175,7 @@ const getConstellation1ReactionBonus = (
     checkIsKitHexerei(member.characterId) &&
     checkIsKitSecretRite(getDeployedCharacterIds(context.party)) &&
     context.activeCombatant.characterId !== combatant.characterId;
-  return { damageBonus: CONSTELLATION_1_DAMAGE_BONUS * (isEnhanced ? CONSTELLATION_1_HEXEREI_MULTIPLIER : 1) };
+  return { damageBonus: damageBonus * (isEnhanced ? hexereiMultiplier : 1) };
 };
 
 // Constellation 4's CRIT on a Lunar reaction a member makes on an enemy under the Omen, which no strike hook reaches
@@ -198,9 +196,19 @@ export const MONA_CHARACTER_ID = 10_000_041;
 // DMG Bonus
 // Constellation 1 is built but for the Frozen duration, which no reaction or status carries, and Constellation 4 is
 // Built in full, its Lunar reactions included
-export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitBehaviour => {
+export const createMonaKitBehaviour = ({
+  kit,
+  readHits,
+  readParameter,
+  readSeconds,
+}: KitRecordReader): KitBehaviour => {
   const mirrorReflectionHits = readHits("mirrorReflectionPhantom");
   const sprintPhantomHits = readHits("sprintPhantom");
+  const constellation1 = {
+    damageBonus: readParameter("constellation1DamageBonus"),
+    hexereiMultiplier: readParameter("constellation1HexereiMultiplier"),
+  };
+  const constellation1Seconds = readSeconds("constellation1Duration");
   return {
     burst: { hits: [{ bubbleOmenId: OMEN_STATUS_ID }] },
     // Constellation 6: her Charged Attack's damage grows with her sprint's stacks, and the attack that strikes resets them
@@ -240,7 +248,7 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
     // Member when Mona is Hexerei with a second Hexerei member
     // Constellation 4: a Lunar reaction a member makes on an enemy under the Omen gains CRIT
     getPartyReactionBonus: (member, reaction, context) => ({
-      ...getConstellation1ReactionBonus(member, reaction, context),
+      ...getConstellation1ReactionBonus(member, reaction, context, constellation1),
       ...getConstellation4ReactionBonus(member, reaction, context),
     }),
     // Constellation 4: a deployed member's strike on an enemy under the Omen or her bubble, other than Mona's own strike,
@@ -262,7 +270,7 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
       if (!event.enemy.statuses.some(({ id }) => id === OMEN_STATUS_ID)) return;
       addKitStatus(context.kitEffectState, event.striker.characterId, {
         id: CONSTELLATION_1_STATUS_ID,
-        secondsRemaining: CONSTELLATION_1_SECONDS,
+        secondsRemaining: constellation1Seconds,
       });
     },
     // Ascension 1: a phantom for every 2 seconds of sprint, which the kit spends from the sprint's seconds as it goes,

@@ -31,7 +31,10 @@
     "value": { "index": 3, "proudSkillGroupId": 4139 }
   },
   "burst.hits.0.bubble.secondsRemaining": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 4139 } },
+  "frames.constellation1Duration": { "file": "cons.go", "line": 59, "source": "Gcsim", "value": 480 },
   "hits.mirrorReflectionPhantom.length": { "cause": "Unsourced", "value": 5 },
+  "parameters.constellation1DamageBonus": { "file": "cons.go", "line": 61, "source": "Gcsim", "value": 0.15 },
+  "parameters.constellation1HexereiMultiplier": { "file": "cons.go", "line": 67, "source": "Gcsim", "value": 1.6 },
   "hits.mirrorReflectionPhantom.0.area": {
     "file": "skill.go",
     "line": 58,
