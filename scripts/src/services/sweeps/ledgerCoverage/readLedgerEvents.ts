@@ -3,6 +3,7 @@ import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent"
 import { LedgerEventTypes } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { runGit } from "#src/services/shared/runGit";
 import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEvents";
+import { readLedgerAreas } from "#src/services/sweeps/ledgerCoverage/readLedgerAreas";
 
 // Oldest first so a later trailer wins, ordered and dated by author date so a rebase moves neither — the default
 // Traversal is committer-dated, which replays a rebased pass after the reopen that was meant to undo it — and only
@@ -19,4 +20,5 @@ export const readLedgerEvents = (revisionRange: string[] = []): LedgerEvent[] =>
       ...revisionRange,
       ...LedgerEventTypes.map((type) => `--grep=^${type}: `),
     ]),
+    readLedgerAreas(),
   );

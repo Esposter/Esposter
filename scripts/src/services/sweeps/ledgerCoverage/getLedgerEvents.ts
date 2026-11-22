@@ -3,6 +3,7 @@ import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent"
 import { LedgerEventType, LedgerEventTypes } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { getGitRecords } from "#src/services/shared/getGitRecords";
 import { SWEPT_CELL_SEPARATOR, TRAILER_VALUE_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
+import { getLedgerQuestion } from "#src/services/sweeps/ledgerCoverage/getLedgerQuestion";
 import { normalizeLedgerUnit } from "#src/services/sweeps/ledgerCoverage/normalizeLedgerUnit";
 
 const TRAILER_REGEX = new RegExp(String.raw`^(?<type>${LedgerEventTypes.join("|")}):(?<value>.*)$`, "gmu");
@@ -36,12 +37,15 @@ const getLedgerEvent = (type: LedgerEventType, value: string, date: string, mode
 };
 
 // The events in the order the log lists them. Every trailer line of a record is read, since a trailer often sits in a
-// Paragraph of its own above the co-author lines, which `git interpret-trailers` does not read.
-export const getLedgerEvents = (log: string): LedgerEvent[] =>
+// Paragraph of its own above the co-author lines, which `git interpret-trailers` does not read. A trailer naming an
+// Area of a question is read as that question's, so the question's cell it names is the one it dates.
+export const getLedgerEvents = (log: string, areas: readonly string[]): LedgerEvent[] =>
   getGitRecords(log).flatMap(([date = "", body = ""]) => {
     const model = CO_AUTHOR_MODEL_REGEX.exec(body)?.groups?.model ?? "";
     return Array.from(body.matchAll(TRAILER_REGEX), ({ groups }) => {
       const type = LedgerEventTypes.find((candidate) => candidate === groups?.type);
       return type === undefined ? undefined : getLedgerEvent(type, groups?.value ?? "", date, model);
-    }).filter((event) => event !== undefined);
+    })
+      .filter((event) => event !== undefined)
+      .map((event) => ({ ...event, ledger: getLedgerQuestion(event.ledger, areas) }));
   });

@@ -53,6 +53,7 @@ describe(getLedgerCoverage, () => {
 
     const events = getLedgerEvents(
       `${earlier}${FIELD_SEPARATOR}${LedgerEventType.Ledger}: ${ledger}${TRAILER_VALUE_SEPARATOR}${trailerUnit}${RECORD_SEPARATOR}`,
+      [],
     );
 
     expect(getLedgerCoverage(ledger, [ledgerUnit], events)).toStrictEqual([
@@ -82,17 +83,10 @@ describe(getLedgerCoverage, () => {
     expect(getLedgerCoverage(ledger, [unit], events)).toStrictEqual([{ state: UnitState.Open, unit }]);
   });
 
-  // A promoted ledger is a folder of area files, and a rule change names the folder
-  test.each([
-    ["the whole ledger", ledger],
-    ["the folder above the ledger", "a"],
-  ])("reopens a unit from a reopen naming %s", (_description, reopenedLedger) => {
+  test("reopens a unit from a reopen naming the whole ledger", () => {
     expect.hasAssertions();
 
-    const events = [
-      getEvent(LedgerEventType.Ledger, earlier, bareUnit),
-      { ...getEvent(LedgerEventType.Reopens, later), ledger: reopenedLedger },
-    ];
+    const events = [getEvent(LedgerEventType.Ledger, earlier, bareUnit), getEvent(LedgerEventType.Reopens, later)];
 
     expect(getLedgerCoverage(ledger, [unit], events)).toStrictEqual([{ state: UnitState.Open, unit }]);
   });

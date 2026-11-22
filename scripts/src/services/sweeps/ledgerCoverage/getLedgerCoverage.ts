@@ -4,10 +4,8 @@ import type { UnitCoverage } from "#src/models/sweeps/ledgerCoverage/UnitCoverag
 
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { UnitState } from "#src/models/sweeps/ledgerCoverage/UnitState";
-import { checkIsLedgerEventFor } from "#src/services/sweeps/ledgerCoverage/checkIsLedgerEventFor";
+import { getUnitPaths } from "#src/services/sweeps/ledgerCoverage/getUnitPaths";
 import { normalizeLedgerUnit } from "#src/services/sweeps/ledgerCoverage/normalizeLedgerUnit";
-
-const UNIT_PATH_REGEX = /`(?<path>[^`]+)`/gu;
 
 // Each unit's state from the ledger's events, taken in the order their dates fall rather than the order the log lists
 // Them, so a carried date sits where its pass happened. A sweep raises a unit to its date and model and never lowers
@@ -21,7 +19,7 @@ export const getLedgerCoverage = (
   { checkIsForcedOpen = () => false, readChangedPaths = () => [] }: GetLedgerCoverageOptions = {},
 ): UnitCoverage[] => {
   const ledgerEvents = events
-    .filter((event) => checkIsLedgerEventFor(event, ledger))
+    .filter((event) => event.ledger === ledger)
     .toSorted((firstEvent, secondEvent) => firstEvent.date.localeCompare(secondEvent.date));
   const sample = ledgerEvents.findLast(({ type }) => type === LedgerEventType.Sampled);
   const isSampledClean = sample?.defects === 0;
@@ -51,7 +49,7 @@ export const getLedgerCoverage = (
 
     changedPaths ??= readChangedPaths(sample.date);
     const touched = changedPaths;
-    const isChanged = Array.from(unit.matchAll(UNIT_PATH_REGEX), ({ groups }) => groups?.path ?? "").some((path) =>
+    const isChanged = getUnitPaths(unit).some((path) =>
       touched.some((changedPath) => changedPath === path || changedPath.startsWith(`${path}/`)),
     );
     return { state: isChanged ? UnitState.Open : UnitState.Sampled, unit };

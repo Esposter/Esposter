@@ -51,6 +51,7 @@
     "ai:sweep:file-organization": "node src/sweeps/fileOrganization/index.ts",
     "ai:sweep:kit-design": "node src/sweeps/kitDesign/index.ts",
     "ai:sweep:repeated-list-items": "node src/sweeps/repeatedListItems/index.ts",
+    "ai:sweep:sample": "node src/sweeps/ledgerSample/index.ts",
     "ai:sweep:shared-export-consumers": "node src/sweeps/sharedExportConsumers/index.ts",
     "ai:sweep:skill-docs": "node src/sweeps/skillDocs/index.ts",
     "ai:sweep:status": "node src/sweeps/ledgerStatus/index.ts",

@@ -72,6 +72,7 @@
     "ai:sweep:file-organization": "pnpm -C scripts ai:sweep:file-organization",
     "ai:sweep:kit-design": "pnpm -C scripts ai:sweep:kit-design",
     "ai:sweep:repeated-list-items": "pnpm -C scripts ai:sweep:repeated-list-items",
+    "ai:sweep:sample": "pnpm -C scripts ai:sweep:sample",
     "ai:sweep:shared-export-consumers": "pnpm -C scripts ai:sweep:shared-export-consumers",
     "ai:sweep:skill-docs": "pnpm -C scripts ai:sweep:skill-docs",
     "ai:sweep:status": "pnpm -C scripts ai:sweep:status",

@@ -7,20 +7,21 @@ import { describe, expect, test } from "vitest";
 
 describe(getLedgerEvents, () => {
   const date = EPOCH_DATE;
+  const areas: string[] = [];
   const getRecord = (body: string) => `${date}${FIELD_SEPARATOR}${body}${RECORD_SEPARATOR}`;
 
   test("reads a sweep trailer as the ledger, the unit and the commit date", () => {
     expect.hasAssertions();
 
-    expect(getLedgerEvents(getRecord(`${LedgerEventType.Ledger}: a/b${TRAILER_VALUE_SEPARATOR}\`c\`\n`))).toStrictEqual(
-      [{ date, ledger: "a/b", model: "", type: LedgerEventType.Ledger, unit: "c" }],
-    );
+    expect(
+      getLedgerEvents(getRecord(`${LedgerEventType.Ledger}: a/b${TRAILER_VALUE_SEPARATOR}\`c\`\n`), areas),
+    ).toStrictEqual([{ date, ledger: "a/b", model: "", type: LedgerEventType.Ledger, unit: "c" }]);
   });
 
   test("reads a reopen naming a whole ledger", () => {
     expect.hasAssertions();
 
-    expect(getLedgerEvents(getRecord(`${LedgerEventType.Reopens}: a\n`))).toStrictEqual([
+    expect(getLedgerEvents(getRecord(`${LedgerEventType.Reopens}: a\n`), areas)).toStrictEqual([
       { date, ledger: "a", model: "", type: LedgerEventType.Reopens, unit: undefined },
     ]);
   });
@@ -30,7 +31,7 @@ describe(getLedgerEvents, () => {
 
     const body = `${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}\`b\`\n${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}\`c\`\n`;
 
-    expect(getLedgerEvents(getRecord(body))).toStrictEqual([
+    expect(getLedgerEvents(getRecord(body), areas)).toStrictEqual([
       { date, ledger: "a", model: "", type: LedgerEventType.Ledger, unit: "b" },
       { date, ledger: "a", model: "", type: LedgerEventType.Ledger, unit: "c" },
     ]);
@@ -45,7 +46,7 @@ describe(getLedgerEvents, () => {
 Co-Authored-By: Claude ${model} (d) <e>
 `;
 
-    expect(getLedgerEvents(getRecord(body))).toStrictEqual([
+    expect(getLedgerEvents(getRecord(body), areas)).toStrictEqual([
       { date, ledger: "b", model, type: LedgerEventType.Ledger, unit: "c" },
     ]);
   });
@@ -54,9 +55,9 @@ Co-Authored-By: Claude ${model} (d) <e>
   test("skips a sweep trailer that names no unit", () => {
     expect.hasAssertions();
 
-    expect(getLedgerEvents(getRecord(`${LedgerEventType.Ledger}: \`a\`\n${LedgerEventType.Ledger}:\n`))).toStrictEqual(
-      [],
-    );
+    expect(
+      getLedgerEvents(getRecord(`${LedgerEventType.Ledger}: \`a\`\n${LedgerEventType.Ledger}:\n`), areas),
+    ).toStrictEqual([]);
   });
 
   // A pass no trailer recorded is carried by a later commit, which names the date and the model of the pass itself
@@ -68,7 +69,7 @@ Co-Authored-By: Claude ${model} (d) <e>
     const body = `${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}b${TRAILER_VALUE_SEPARATOR}${carriedDate}${SWEPT_CELL_SEPARATOR}${model}
 `;
 
-    expect(getLedgerEvents(getRecord(body))).toStrictEqual([
+    expect(getLedgerEvents(getRecord(body), areas)).toStrictEqual([
       { date: carriedDate, ledger: "a", model, type: LedgerEventType.Ledger, unit: "b" },
     ]);
   });
@@ -79,7 +80,16 @@ Co-Authored-By: Claude ${model} (d) <e>
     const body = `${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}b${TRAILER_VALUE_SEPARATOR}c
 `;
 
-    expect(getLedgerEvents(getRecord(body))).toStrictEqual([]);
+    expect(getLedgerEvents(getRecord(body), areas)).toStrictEqual([]);
+  });
+
+  // A trailer naming an area of a question dates the question's cell, since an area is a grouping and not a ledger
+  test("reads a trailer naming a question's area as the question", () => {
+    expect.hasAssertions();
+
+    expect(
+      getLedgerEvents(getRecord(`${LedgerEventType.Ledger}: a/b${TRAILER_VALUE_SEPARATOR}\`c\`\n`), ["b"]),
+    ).toStrictEqual([{ date, ledger: "a", model: "", type: LedgerEventType.Ledger, unit: "c" }]);
   });
 
   test("reads a sample as its ledger and the defects it found", () => {
@@ -88,7 +98,7 @@ Co-Authored-By: Claude ${model} (d) <e>
     const body = `${LedgerEventType.Sampled}: a${TRAILER_VALUE_SEPARATOR}30${SWEPT_CELL_SEPARATOR}0
 `;
 
-    expect(getLedgerEvents(getRecord(body))).toStrictEqual([
+    expect(getLedgerEvents(getRecord(body), areas)).toStrictEqual([
       { date, defects: 0, ledger: "a", model: "", type: LedgerEventType.Sampled },
     ]);
   });
@@ -100,6 +110,7 @@ Co-Authored-By: Claude ${model} (d) <e>
       getLedgerEvents(
         getRecord(`${LedgerEventType.Sampled}: a
 `),
+        areas,
       ),
     ).toStrictEqual([]);
   });
