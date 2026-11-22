@@ -48,3 +48,11 @@ denies a partially-swept state denies a half-read one, and a unit abandoned mid-
 to tell what was already looked at.
 
 The handover names where each ledger was left, so the next sitting opens on a row rather than re-deriving scope.
+
+## One read, several questions
+
+A sitting may load a unit once and judge it against each question whose `Scope` holds it, one question at a time, writing one `Ledger:` trailer per question. A merged checklist of every question at once is a skim: twenty questions read past what one would find.
+
+## Sampled clean
+
+A sitting may read a random sample of a ledger's never-swept units, each a full pass with its own trailer, and count its **defects** — fixes that change behaviour toward correct, or findings raised; a rename or a tidier literal is not one. The record commit ending the sample carries `Sampled: <ledger> | <size> · <defects>`. While the latest sample found none, `pnpm ai:sweep:status` lists the unread units as `sampled`: undated, and owed again on a `Reopens:` naming them or their ledger, or a commit touching a path they name. Zero defects in `n` bounds the rate below about `3/n`, so sample at least thirty; the tidies left behind drain with the next edit (`references/draining.md`).

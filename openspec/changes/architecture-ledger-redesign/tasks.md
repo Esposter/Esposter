@@ -12,5 +12,5 @@
 
 ## 3. Sittings
 
-- [ ] 3.1 Rewrite the `sweeps` skill for the record commit, the reopen by recipe, the unit read once for several questions and the sampled-clean ledger, and point every page that names the old command or column at the status. Verified by `scripts/src/workspace/skillDocs.test.ts` passing and no page outside the archive naming `ai:sweep:ledger-coverage`.
+- [x] 3.1 Rewrite the `sweeps` skill for the record commit, the reopen by recipe, the unit read once for several questions and the sampled-clean ledger, and point every page that names the old command or column at the status. Verified by `scripts/src/workspace/skillDocs.test.ts` passing and no page outside the archive naming `ai:sweep:ledger-coverage`.
 - [ ] 3.2 Archive this change. Verified by `pnpm exec openspec archive architecture-ledger-redesign --yes` succeeding.

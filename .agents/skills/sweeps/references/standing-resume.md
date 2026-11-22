@@ -5,7 +5,7 @@ page holds why every sweep is standing and how one resumes.
 
 ## The command
 
-`pnpm ai:sweep:ledger-coverage` runs first, so the date the command takes is the one the trailers hold; a trailer it reports as naming no row is a unit reworded since its pass, and reopens at `—`. A pass then resumes from what changed since the row's date rather than re-reading the unit, over the pathspecs the
+`pnpm ai:sweep:status <ledger>` runs first and prints each unit's date and model from the trailers; a trailer it reports as naming no unit is a unit reworded since its pass, which opens at `—`. A pass then resumes from what changed since the unit's date rather than re-reading it, over the pathspecs the
 sweep's **`Scope`** declares in `.agents/ledgers/README.md`:
 
 ```bash
@@ -13,7 +13,7 @@ git log --since=<Last swept date> --name-only --pretty=format: -- '<pathspec>' '
 ```
 
 Everything outside that list was swept at the last pass — skip it rather than re-reading it. A row still at `—`
-has no date to resume from and is a first pass over the whole unit, and so is a row whose `Swept` model is older
+has no date to resume from and is a first pass over the whole unit, and so is a unit whose model is older
 than the sitting's (`SKILL.md`).
 
 **Each pathspec is quoted, one argument each.** Git does its own matching, and a wildcard that reaches it
@@ -79,9 +79,13 @@ reads exactly like a swept tree, and nothing else would notice, because a scope 
 `scripts/src/workspace/ledgerScopes.test.ts` holds every pathspec in the index to something that exists, and holds every ledger
 to declaring one.
 
+## A rule change reopens what its recipe finds
+
+A change to a rule runs that rule's find recipe and writes one `Reopens: <ledger> | <unit>` trailer for each unit the recipe hits, in the commit that changes the rule. A rule with no recipe reopens its whole ledger with `Reopens: <ledger>`. A skill edit therefore costs a pass over what it touched rather than over every unit, and a rule earns a recipe, or a lint rule, by being cheaper to reopen. The recipe stays where the rule's owning skill or the ledger's `README.md` keeps it; the status runs none itself (`SKILL.md`, Settled).
+
 ## A fully dated ledger is kept
 
-A `—` in `Swept` is unswept, and **a fully dated ledger is kept, not deleted**: it is the index that answers "was this area swept, and when" in one read, which git can only answer by archaeology from someone who already knows what to look for. Those dates are also what the next convention change is scoped against. Add a coverage line rather than widening an existing one when a unit turns out too big, and split it into its own file when the lines stop fitting.
+A `—` in the status is unswept, and **a fully dated ledger is kept, not deleted**: its units and its trailers answer "was this area swept, and when" in one `pnpm ai:sweep:status` read, which `git log` alone answers only by archaeology from someone who already knows what to look for. Those dates are also what the next convention change is scoped against. Add a coverage line rather than widening an existing one when a unit turns out too big, and split it into its own file when the lines stop fitting.
 
 ## Every sweep is standing
 
@@ -90,6 +94,6 @@ written before it, so a ledger that could be finished would only be re-opened by
 column whose every row says the same thing is noise. A unit's row carries a date rather than an end: it means
 the rules held there on that date, nothing more.
 
-**A row is only as current as the model that read it.** `Swept` names the model beside the date, taken from the sweep commit's `Co-Authored-By` trailer, and a row whose model is older than the sitting's is open for a first pass over the whole unit rather than a resume from its date — a stronger model finds what the weaker one read past, so an upgrade reopens every ledger with no trailer and no edit to any row.
+**A unit is only as current as the model that read it.** The status names the model beside the date, taken from the sweep commit's `Co-Authored-By` trailer or the model a carried trailer names, and a unit whose model is older than the sitting's is open for a first pass over the whole unit rather than a resume from its date — a stronger model finds what the weaker one read past, so an upgrade reopens every ledger with no trailer and no edit to any file.
 
 Which ledger a new convention joins, and why that resets its dates, is `references/ledger-files.md`.

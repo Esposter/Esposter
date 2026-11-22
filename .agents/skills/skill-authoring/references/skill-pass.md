@@ -4,7 +4,7 @@ Read when cleaning up a skill — or the whole tree — so every page holds one 
 
 ```mermaid
 flowchart TD
-  QUEUE["pnpm ai:sweep:ledger-coverage — pick an open row of docs/skills"] --> READ["read SKILL.md and every references page whole"]
+  QUEUE["pnpm ai:sweep:status docs/skills — pick an open unit"] --> READ["read SKILL.md and every references page whole"]
   READ --> FIND["list what the read found"]
   FIND --> STALE{"does a claim disagree with the code?"}
   STALE -->|"yes"| VERIFY["verify against the tree, fix the claim"]
@@ -43,7 +43,7 @@ A pass reads the skill **whole** before it edits anything — `SKILL.md` and eve
 
 | Step                               | Command                                                        |
 | ---------------------------------- | -------------------------------------------------------------- |
-| What is open                       | `pnpm ai:sweep:ledger-coverage`                                |
+| What is open                       | `pnpm ai:sweep:status docs/skills`                             |
 | Move blocks onto pages             | `pnpm ai:skills:extract <spec.json>`                           |
 | Structure: budget, index, triggers | `pnpm ai:sweep:skill-docs`                                     |
 | Copies between pages               | `pnpm ai:sweep:duplicate-prose`                                |

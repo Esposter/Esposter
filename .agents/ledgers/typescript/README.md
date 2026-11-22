@@ -4,7 +4,7 @@ Most of the `typescript` skill is lint- or typecheck-decided; what this sweep ca
 
 ## Areas
 
-Coverage lives in the area file, never here. A pass loads this file and the one area it is sweeping. The
+Units live in the area file and where each stands is `pnpm ai:sweep:status`, never here. A pass loads this file and the one area it is sweeping. The
 area names are [quality](../quality/)'s, so "was this area swept, for which question, and when" reads off
 one set of names across every promoted ledger.
 

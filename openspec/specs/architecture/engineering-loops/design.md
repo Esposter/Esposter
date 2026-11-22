@@ -75,7 +75,7 @@ Work waiting to be done is never one generic tracker, and never a list kept by h
 | The work                  | Its one record                         | Done when                                            | Read by                           |
 | ------------------------- | -------------------------------------- | ---------------------------------------------------- | --------------------------------- |
 | A proposal                | its folder under `openspec/changes/`   | archived into `openspec/specs/`                      | `pnpm ai:proposals:report`        |
-| A sweep                   | its ledger under `.agents/ledgers/`    | every row dated by a commit trailer                  | `pnpm ai:sweep:ledger-coverage`   |
+| A sweep                   | its ledger under `.agents/ledgers/`    | every unit dated by a commit trailer                 | `pnpm ai:sweep:status`            |
 | A workaround for upstream | the `@TODO` marker on it, and its link | the linked issue or pull request is closed or merged | `pnpm ai:todos:report`            |
 | Our own work              | a GitHub issue                         | the issue is closed                                  | `pnpm ai:triage:label`, then `gh` |
 | A dependency version      | the catalog and the lockfile           | the registry has nothing newer Renovate would take   | `pnpm outdated:dependencies`      |
@@ -102,7 +102,7 @@ A session that finishes a unit of work does not stop to ask whether to go on. It
 4. **An area owed a product-review pass**, as `pnpm ai:proposals:report` lists it, so the specs match the shipped surface before anything is built from them.
 5. **The cheapest valuable proposal** that the same report lists (`building-proposals` skill).
 6. **A workaround upstream has finished with**, as `pnpm ai:todos:report` lists it first: removed once the fix is in the version the catalog resolves (`todos` skill, `references/revisiting.md`).
-7. **An open ledger row**, as `pnpm ai:sweep:ledger-coverage` dates them (`sweeps` skill); the skills' own rows are the skill sweep.
+7. **An open ledger unit**, as `pnpm ai:sweep:status` reads them (`sweeps` skill); the skills' own units are the skill sweep.
 
 Beside every step, never one of them: **the machine's compute queue.** Once the leftovers are clear, the session claims entries with `pnpm ai:fleet:next`, and a `haiku` agent takes each one it claims, claiming again as each agent reports, until the closing pass below. The runners keep going through every later step, and a pause the session takes for any of them, or a stop on one lane, leaves them running: only the user stops the queue (`.agents/skills/genshin-parity/references/compute-queue.md`, "Keeping it busy").
 

@@ -34,21 +34,9 @@ No ledger file has a `Swept` column, and `pnpm ai:sweep:ledger-coverage` is dele
 
 A trailer may carry the date and model of a pass: `Ledger: <ledger> | <unit> | <date> · <model>`. The status orders events by their own date, so a carried date sits where the pass happened rather than where the trailer was written. Before any column is dropped, a trailer-only record commit carries every dated cell the trailers alone do not reproduce: the older dates kept when ledgers merged, and the dates written by hand. The status is then compared with every cell about to be deleted, once, and no table goes until the two agree on every unit's date and model.
 
-### A clean unit's trailer rides a record commit
+### The sitting rules
 
-A unit a pass reads and leaves unchanged has nothing to commit. Its trailer rides the sitting's next commit, and when there is none, a trailer-only record commit made with `--allow-empty`. Git keeps a commit that was empty from the start through `pull --rebase`, which is what `pnpm ai:land` runs, and the review fast-forwards `main` without rewriting it. Trailers never conflict, so parallel agents can each record their own units.
-
-### A rule change reopens what its recipe finds
-
-A change to a rule runs that rule's find recipe and writes one `Reopens: <ledger> | <unit>` for each unit the recipe hits. A rule with no recipe reopens its whole ledger with `Reopens: <ledger>`. A skill edit therefore costs a pass over what it touched, and a rule earns a recipe, or a lint rule, by being cheaper to reopen.
-
-### A sitting may read a unit once for several questions
-
-A sitting may load a unit once and judge it against each question whose scope holds it, one question at a time, writing one `Ledger:` trailer per question. Each question stays its own pass with its own rules. A merged checklist of every question at once is still the skim the `sweeps` skill's attention rule forbids.
-
-### Sampled clean
-
-A ledger whose random sample of never-swept units comes back with no defect is sampled clean. A defect is a fix that changes behaviour toward correct, or a finding raised as one. A rename, a cast or a tidier test literal is a tidy, not a defect. The record commit that ends the sample carries `Sampled: <ledger> | <size> · <defects>`, alongside the `Ledger:` trailer of each sampled unit. While the latest sample of a ledger found no defect, `pnpm ai:sweep:status` lists that ledger's unread units as sampled rather than owed. A unit is owed again when a reopen names it or its ledger, or when a commit after the sample touches a path the unit names.
+Four rules make a sweep cost what it finds, and the `sweeps` skill states each one. A clean unit's trailer rides a trailer-only record commit when the sitting has no other, since git keeps a commit that starts empty through `pull --rebase` and trailers never conflict. A rule change reopens only the units its find recipe hits. A unit may be read once and judged against several questions in turn. A ledger whose random sample finds no defect is sampled clean, its unread units owed again only on a reopen or a change to their code; `pnpm ai:sweep:status` reads the `Sampled:` trailer and the paths changed since.
 
 ## Rejected alternatives
 

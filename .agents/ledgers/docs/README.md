@@ -11,12 +11,12 @@ page that has one.
 
 ## Areas
 
-Coverage lives in the area file, never here. A pass loads this file and the one area it is sweeping.
+Where each unit stands is `pnpm ai:sweep:status docs`. A pass loads this file and the one area it is sweeping.
 
-| Area                  | What it holds                                                                               |
-| --------------------- | ------------------------------------------------------------------------------------------- |
-| [content](content.md) | `openspec/`, the root markdown, every package README                                        |
-| [skills](skills.md)   | `.agents/skills` — one skill per row, its `SKILL.md` and its `references/` read as one unit |
+| Area                  | What it holds                                                                                                                   |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| [content](content.md) | `openspec/`, the root markdown, every package README                                                                            |
+| `skills`              | `.agents/skills` — one skill per unit, derived from the skills directory, its `SKILL.md` and its `references/` read as one unit |
 
 Greps, over `*.md`. Each finds a candidate, not a defect — the failures are prose-shaped and the pass is reading.
 What each pattern means is the owning skill's to say:

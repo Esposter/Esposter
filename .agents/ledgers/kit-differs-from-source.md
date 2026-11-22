@@ -10,7 +10,7 @@ grep -n '"DiffersFromSource"' packages/genshin-world/src/data/kits/$kit.json
 grep -n -i 'poise\|cooldown\|gauge\|area\|element' $d/<folder>/design.md
 ```
 
-`scripts/src/workspace/ledgerUnits.test.ts` fails a dated row whose overlay still holds an `Unclassified` entry.
+`pnpm ai:sweep:status` holds a kit open while its overlay still holds an `Unclassified` entry, whatever its trailer says.
 
 | Unit        | Notes                                                                    |
 | ----------- | ------------------------------------------------------------------------ |

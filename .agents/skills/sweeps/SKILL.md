@@ -7,7 +7,7 @@ description: Apply when running, resuming, ticking, adding or retiring a repo-wi
 
 A **sweep** carries one already-settled convention across a tree too large to finish in one commit. It decides nothing: the convention is owned by a skill or spec, and the sweep only applies it to code that predates it, changing no behaviour.
 
-Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row in its `README.md` index. A ledger that outgrows a screen, or that two agents want to work at once, becomes a folder of one file per area — the index row still carries the metadata, each area file is a coverage table and nothing else, and everything else the ledger holds moves to the folder's own `README.md` (`references/ledger-files.md`). It grows the way source does: split when a unit earns its own home, never to hit a number.
+Each sweep is a **ledger**: one file in `.agents/ledgers/`, one row in its `README.md` index, and its progress is the `Ledger:` and `Reopens:` trailers on the commits that swept and reopened its units, which `pnpm ai:sweep:status` reads. A ledger that outgrows a screen, or that two agents want to work at once, becomes a folder of one file per area, and the questions that share one area list read `.agents/ledgers/areas/` instead of keeping their own — the index row still carries the metadata, each area file is a unit table and nothing else, and everything else the ledger holds moves to the folder's own `README.md` (`references/ledger-files.md`). It grows the way source does: split when a unit earns its own home, never to hit a number.
 
 **A ledger is named after the skill that owns its rules**, where one skill does — `pinia`, `naming`, `trpc`, `testing`. A second name for the same subject makes the ledger and the skill read as two topics, and the index row is where the pairing is stated. A ledger several skills own takes the name of the question instead (`schemas`, `styling`). Areas inside a promoted folder reuse the area names another ledger already established, so "was this area swept, for which question, and when" reads off one set of names.
 
@@ -17,13 +17,14 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 - **Filing a sweep as an OpenSpec change.** A sweep changes no behaviour and never ends, so it is repo state in `.agents/ledgers/` rather than something that leaves when it ships (`openspec/changes/`).
 - **A progress column, percentage or tick count on the index row.** A rolled-up number is a second copy of the truth that drifts; state lives at the leaf (`references/ledger-files.md`).
 - **Splitting a ledger's units across parallel agents before a pilot has set the carve-outs.** A unit's carve-outs carry to the next, so one row is read first and its findings written into the brief; only then do the rows run one agent each, in parallel (`references/one-pass.md`, "Who decides the edit").
-- **Dating the `Swept` cell by hand in the sweep commit.** It is a second file in every sweep commit, the one every other pass is also writing, and it is the part a pass forgets; the commit's trailer dates the row and `pnpm ai:sweep:ledger-coverage` writes it in (`references/one-pass.md`).
-- **An empty commit to carry a clean unit's trailer.** A commit with no change is not a reliable carrier, so the trailer goes on the sitting's next commit (`references/one-pass.md`).
-- **A test holding the `Swept` dates to the trailers.** CI checks out one commit deep, so there `git log` holds no trailer and the test would reopen every row; the rows are held to the tree (`scripts/src/workspace/ledgerUnits.test.ts`) and the dates are written at the sitting.
-- **Running `ai:sweep:ledger-coverage` from a git hook.** Before the commit it rewrites a ledger the commit did not stage; after it, the ledger is a change the commit just closed. The sitting runs it, at the start and at the end (`references/standing-resume.md`).
+- **Storing a unit's date in a ledger file.** The trailers hold it; a stored copy is a cache of `git log` that every sitting rewrites, parallel sessions conflict over, and a skipped rewrite leaves stale (`references/ledger-files.md`).
+- **A test reading the trailers.** CI checks out one commit deep, so there `git log` holds no trailer and every unit would read as open; the derived rows are held to the tree (`scripts/src/workspace/ledgerUnits.test.ts`), and the status runs locally, over full history.
+- **Running a find recipe from the status, keyed by a rule id.** It needs a registry of every rule with a runnable query beside the skills that state the rules, a second copy of them. The sitting that changes a rule already holds its recipe, and one `Reopens: <ledger> | <unit>` per hit gives the same reopen (`references/standing-resume.md`).
 - **Deriving a hand-unit ledger's rows from its directories.** A unit is sized to what one pass can read, and a directory is not that size; only a ledger whose units are the tree's own entries (`LedgerUnitsMap`) derives its rows (`references/ledger-files.md`).
 - **Deriving a row's reopen from its pages' `Key files` dates.** A source carrying a commit newer than the page naming it reads like drift and is not: most commits to a file change nothing any page says, so the comparison flags the last tree-wide pass rather than prose gone wrong, and a ledger that is always open is read by nobody; a behaviour change declares its own reopen with the trailer (`references/ledger-files.md`).
-- **Inheriting a split row's date onto the children.** The parent was split because it could never have been read, so carrying its date down records the skim as coverage. Children reopen at `—` (`references/ledger-files.md`).
+- **Moving a ledger's scope into its owning skill's `paths:` frontmatter.** Claude Code loads a skill with `paths:` only once a matching file is touched, so it changes when every skill loads, and a scope is a question's domain, not a loading trigger: `quality` reads the whole repository, and several ledgers have more than one owner.
+- **A sampled unit counted as swept.** A clean sample bounds how many defects the unread units hold; it does not read them, so a sampled unit carries no date and is owed again on a reopen or a change to its code (`references/windows-and-convergence.md`).
+- **Carrying a split row's date onto the children.** The parent was split because it could never have been read, so a carried trailer dating the children records the skim as coverage. A child is a new unit, open until a pass reads it (`references/ledger-files.md`).
 
 ## The find recipe — `references/find-recipes.md`
 
@@ -31,7 +32,7 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 
 ## One pass
 
-Behaviour-preserving only (a unit correcting toward the reference or spec is named in its commit body), one unit per commit with a `Ledger: <ledger> | <unit>` trailer, a clean unit's trailer riding the next commit, and the checks once when the sitting goes out — the loop and every rule inside it are `references/one-pass.md`.
+Behaviour-preserving only (a unit correcting toward the reference or spec is named in its commit body), one unit per commit with a `Ledger: <ledger> | <unit>` trailer, a clean unit's trailer riding the next commit or a trailer-only record commit, and the checks once when the sitting goes out — the loop and every rule inside it are `references/one-pass.md`.
 
 ## The ledger file — `references/ledger-files.md`
 
@@ -39,7 +40,7 @@ A ledger holds only what exists nowhere else, never explanatory prose, and is ke
 
 ## Every sweep is standing
 
-There is no one-shot mode: a row carries a date and the model that read it, a pass resumes from what changed since over the index row's `Scope`, and a row an older model read is open for a full pass (`references/standing-resume.md`).
+There is no one-shot mode: a unit's trailers give it a date and the model that read it, which `pnpm ai:sweep:status` prints, a pass resumes from what changed since over the index row's `Scope`, and a row an older model read is open for a full pass (`references/standing-resume.md`).
 
 ## A sitting crosses ledgers — `references/windows-and-convergence.md`
 

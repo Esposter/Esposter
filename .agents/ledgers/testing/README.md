@@ -28,7 +28,7 @@ of environment, so the rule cannot fail anywhere else and the rows outside it ke
 
 ## Areas
 
-Coverage lives in the area file, never here. A pass loads this file and the one area it is sweeping.
+Units live in the area file and where each stands is `pnpm ai:sweep:status`, never here. A pass loads this file and the one area it is sweeping.
 
 | Area                      | What it holds                                                                                                                                                     |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |

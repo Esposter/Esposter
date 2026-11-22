@@ -11,7 +11,7 @@ Conventional-commits format and the type list are in `CONTRIBUTING.md` ("Commit 
 
 A count in a subject or body is written as its magnitude — "a handful of proposals", never the number — for the same reason a spec does (the `openspec` skill, `references/repo-owned-facts.md`).
 
-**Every commit ends with the `Co-Authored-By` trailer the session's attribution reminder gives**, written as the message's last line and never stripped: it is what names the model in a ledger's `Swept` cell (the `sweeps` skill, `references/ledger-files.md`).
+**Every commit ends with the `Co-Authored-By` trailer the session's attribution reminder gives**, written as the message's last line and never stripped: it is what names the model `pnpm ai:sweep:status` prints beside a ledger unit's date (the `sweeps` skill, `references/ledger-files.md`).
 
 ## Multi-line Commit Messages — Tool-Specific Syntax
 

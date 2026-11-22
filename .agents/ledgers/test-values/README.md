@@ -25,7 +25,7 @@ current one, and there is no partially-swept state.
 
 ## Areas
 
-Coverage lives in the area file, never here. A pass loads this file and the one area it is sweeping. The area
+Units live in the area file and where each stands is `pnpm ai:sweep:status`, never here. A pass loads this file and the one area it is sweeping. The area
 names and units are [testing](../testing/)'s, so "was this area swept, for which question, and when" reads off
 one set of names across both ledgers.
 

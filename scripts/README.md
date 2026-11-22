@@ -44,10 +44,10 @@ pnpm ai:sweep:duplicate-code
 pnpm ai:sweep:duplicate-prose
 pnpm ai:sweep:file-organization
 pnpm ai:sweep:kit-design
-pnpm ai:sweep:ledger-coverage
 pnpm ai:sweep:repeated-list-items
 pnpm ai:sweep:shared-export-consumers
 pnpm ai:sweep:skill-docs
+pnpm ai:sweep:status
 pnpm ai:sweep:unterminated-results
 pnpm ai:triage:label
 pnpm ai:usage

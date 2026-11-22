@@ -16,7 +16,7 @@ The runnable form of the skill pass over the whole tree. What one skill's pass d
 
 ## The run
 
-1. **Setup.** `pnpm ai:sweep:ledger-coverage` to date the rows from the trailers (the `sweeps` skill, `references/ledger-files.md`).
+1. **Setup.** `pnpm ai:sweep:status docs/skills` for where each skill stands, read from the trailers (the `sweeps` skill, `references/ledger-files.md`).
 2. **Mechanical checks first**, and fix what they report before reading prose: `pnpm ai:sweep:skill-docs`, `pnpm ai:sweep:duplicate-prose`, and from `scripts/` `pnpm test src/workspace --run` — citations, ledger units, package scripts. A timeout on a cold cache reruns the one file alone before it is read as a failure.
 3. **Per skill, through the `skill-authoring` skill's pass** (`references/skill-pass.md`), a haiku reader per batch of skills running in parallel; concurrent writes are allowed, since readers edit disjoint skill folders and a clash is settled when the run converges:
    - read `SKILL.md` and every `references/` page whole;
@@ -24,7 +24,7 @@ The runnable form of the skill pass over the whole tree. What one skill's pass d
    - verify every code claim against the tree — identifiers, paths, signatures and example code as they exist now, written in the newest APIs and the `error-handling` skill's result chains;
    - apply the fixes the audit settles, code included when the claim is right and the code is wrong, and report every call it did not settle.
    - The main session then reads each skill's diff and report, decides every reported call, and commits the skill's fixes in one commit carrying `Ledger: docs/skills | `<skill>``; a clean skill's trailer rides the next commit, never an empty one. A round that leaves findings runs again until a full pass finds nothing.
-4. **Finish.** `pnpm ai:sweep:ledger-coverage` again and commit the ledger dates; run the `finishing` skill; then the touched tests in the background per the `running-checks` skill; commit by pathspec and push the queue (the `review-queue` skill).
+4. **Finish.** A clean skill's trailer rides the next commit, or a trailer-only record commit; run the `finishing` skill; then the touched tests in the background per the `running-checks` skill; commit by pathspec and push the queue (the `review-queue` skill).
 5. **Report** a table of every skill — clean or fixed, with one line on what changed — and whether the run reached zero findings. A run that did not ends with the prompt for the next: this skill, rerun.
 
 ## The audit
@@ -49,4 +49,4 @@ Every row is answered per skill, and "nothing owed" is an answer.
 
 ## After a clean run
 
-The ledger resweep is next: `pnpm ai:sweep:ledger-coverage` dates each ledger's rows from the commit trailers and prints the entries it could not match. The open rows are the `—` cells in `.agents/ledgers/docs/skills.md`, and the unmatched entries are cleaned up first (the `sweeps` skill, `references/ledger-files.md`).
+The ledger resweep is next: `pnpm ai:sweep:status` reads each ledger's units from the commit trailers and prints the entries it could not match. The open units are the `—` lines of `pnpm ai:sweep:status docs/skills`, and the unmatched entries are cleaned up first (the `sweeps` skill, `references/ledger-files.md`).
