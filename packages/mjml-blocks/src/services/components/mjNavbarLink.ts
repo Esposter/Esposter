@@ -67,5 +67,5 @@ const mjmlNavbarLinkTypeFields = {
 
 export const mjmlNavbarLinkType: MjmlBlockTypeDefinition<MjmlNavbarLinkNode> = {
   ...mjmlNavbarLinkTypeFields,
-  render: renderMjmlNode({ ...mjmlNavbarLinkTypeFields, hasChildren: false, tagName: MjmlNodeType.NavbarLink }),
+  render: renderMjmlNode({ ...mjmlNavbarLinkTypeFields, hasChildren: false, tagName: mjmlNavbarLinkTypeFields.type }),
 };

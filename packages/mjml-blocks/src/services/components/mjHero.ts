@@ -76,6 +76,6 @@ export const createMjmlHeroType = (leafTypes: MjmlLeafNode["type"][]): MjmlBlock
 
   return {
     ...heroTypeFields,
-    render: renderMjmlNode({ ...heroTypeFields, hasChildren: true, tagName: MjmlNodeType.Hero }),
+    render: renderMjmlNode({ ...heroTypeFields, hasChildren: true, tagName: heroTypeFields.type }),
   };
 };

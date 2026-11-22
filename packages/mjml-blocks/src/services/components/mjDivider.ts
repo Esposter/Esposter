@@ -52,5 +52,5 @@ const mjmlDividerTypeFields = {
 
 export const mjmlDividerType: MjmlBlockTypeDefinition<MjmlDividerNode> = {
   ...mjmlDividerTypeFields,
-  render: renderMjmlNode({ ...mjmlDividerTypeFields, hasChildren: false, tagName: MjmlNodeType.Divider }),
+  render: renderMjmlNode({ ...mjmlDividerTypeFields, hasChildren: false, tagName: mjmlDividerTypeFields.type }),
 };

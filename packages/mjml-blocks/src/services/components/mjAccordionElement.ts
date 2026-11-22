@@ -48,6 +48,6 @@ export const mjmlAccordionElementType: MjmlBlockTypeDefinition<MjmlAccordionElem
   render: renderMjmlNode({
     ...mjmlAccordionElementTypeFields,
     hasChildren: true,
-    tagName: MjmlNodeType.AccordionElement,
+    tagName: mjmlAccordionElementTypeFields.type,
   }),
 };

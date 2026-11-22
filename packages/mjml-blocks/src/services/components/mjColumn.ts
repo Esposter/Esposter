@@ -73,6 +73,6 @@ export const createMjmlColumnType = (leafTypes: MjmlLeafNode["type"][]): MjmlBlo
 
   return {
     ...columnTypeFields,
-    render: renderMjmlNode({ ...columnTypeFields, hasChildren: true, tagName: MjmlNodeType.Column }),
+    render: renderMjmlNode({ ...columnTypeFields, hasChildren: true, tagName: columnTypeFields.type }),
   };
 };

@@ -88,5 +88,5 @@ const mjmlButtonTypeFields = {
 
 export const mjmlButtonType: MjmlBlockTypeDefinition<MjmlButtonNode> = {
   ...mjmlButtonTypeFields,
-  render: renderMjmlNode({ ...mjmlButtonTypeFields, hasChildren: false, tagName: MjmlNodeType.Button }),
+  render: renderMjmlNode({ ...mjmlButtonTypeFields, hasChildren: false, tagName: mjmlButtonTypeFields.type }),
 };

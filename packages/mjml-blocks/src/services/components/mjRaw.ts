@@ -36,5 +36,5 @@ const mjmlRawTypeFields = {
 
 export const mjmlRawType: MjmlBlockTypeDefinition<MjmlRawNode> = {
   ...mjmlRawTypeFields,
-  render: renderMjmlNode({ ...mjmlRawTypeFields, hasChildren: false, tagName: MjmlNodeType.Raw }),
+  render: renderMjmlNode({ ...mjmlRawTypeFields, hasChildren: false, tagName: mjmlRawTypeFields.type }),
 };

@@ -64,5 +64,5 @@ const mjmlCarouselTypeFields = {
 
 export const mjmlCarouselType: MjmlBlockTypeDefinition<MjmlCarouselNode> = {
   ...mjmlCarouselTypeFields,
-  render: renderMjmlNode({ ...mjmlCarouselTypeFields, hasChildren: true, tagName: MjmlNodeType.Carousel }),
+  render: renderMjmlNode({ ...mjmlCarouselTypeFields, hasChildren: true, tagName: mjmlCarouselTypeFields.type }),
 };

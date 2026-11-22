@@ -73,5 +73,5 @@ const mjmlImageTypeFields = {
 
 export const mjmlImageType: MjmlBlockTypeDefinition<MjmlImageNode> = {
   ...mjmlImageTypeFields,
-  render: renderMjmlNode({ ...mjmlImageTypeFields, hasChildren: false, tagName: MjmlNodeType.Image }),
+  render: renderMjmlNode({ ...mjmlImageTypeFields, hasChildren: false, tagName: mjmlImageTypeFields.type }),
 };

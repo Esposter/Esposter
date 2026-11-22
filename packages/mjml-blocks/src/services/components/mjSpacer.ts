@@ -46,5 +46,5 @@ const mjmlSpacerTypeFields = {
 
 export const mjmlSpacerType: MjmlBlockTypeDefinition<MjmlSpacerNode> = {
   ...mjmlSpacerTypeFields,
-  render: renderMjmlNode({ ...mjmlSpacerTypeFields, hasChildren: false, tagName: MjmlNodeType.Spacer }),
+  render: renderMjmlNode({ ...mjmlSpacerTypeFields, hasChildren: false, tagName: mjmlSpacerTypeFields.type }),
 };

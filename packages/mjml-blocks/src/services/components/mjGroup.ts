@@ -36,5 +36,5 @@ const mjmlGroupTypeFields = {
 
 export const mjmlGroupType: MjmlBlockTypeDefinition<MjmlGroupNode> = {
   ...mjmlGroupTypeFields,
-  render: renderMjmlNode({ ...mjmlGroupTypeFields, hasChildren: true, tagName: MjmlNodeType.Group }),
+  render: renderMjmlNode({ ...mjmlGroupTypeFields, hasChildren: true, tagName: mjmlGroupTypeFields.type }),
 };

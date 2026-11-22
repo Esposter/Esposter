@@ -85,5 +85,9 @@ const mjmlSocialElementTypeFields = {
 
 export const mjmlSocialElementType: MjmlBlockTypeDefinition<MjmlSocialElementNode> = {
   ...mjmlSocialElementTypeFields,
-  render: renderMjmlNode({ ...mjmlSocialElementTypeFields, hasChildren: false, tagName: MjmlNodeType.SocialElement }),
+  render: renderMjmlNode({
+    ...mjmlSocialElementTypeFields,
+    hasChildren: false,
+    tagName: mjmlSocialElementTypeFields.type,
+  }),
 };

@@ -31,5 +31,5 @@ const mjmlSectionTypeFields = {
 
 export const mjmlSectionType: MjmlBlockTypeDefinition<MjmlSectionNode> = {
   ...mjmlSectionTypeFields,
-  render: renderMjmlNode({ ...mjmlSectionTypeFields, hasChildren: true, tagName: MjmlNodeType.Section }),
+  render: renderMjmlNode({ ...mjmlSectionTypeFields, hasChildren: true, tagName: mjmlSectionTypeFields.type }),
 };

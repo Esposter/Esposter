@@ -70,5 +70,5 @@ const mjmlTableTypeFields = {
 
 export const mjmlTableType: MjmlBlockTypeDefinition<MjmlTableNode> = {
   ...mjmlTableTypeFields,
-  render: renderMjmlNode({ ...mjmlTableTypeFields, hasChildren: false, tagName: MjmlNodeType.Table }),
+  render: renderMjmlNode({ ...mjmlTableTypeFields, hasChildren: false, tagName: mjmlTableTypeFields.type }),
 };

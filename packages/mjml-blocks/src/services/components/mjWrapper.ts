@@ -40,5 +40,5 @@ const mjmlWrapperTypeFields = {
 
 export const mjmlWrapperType: MjmlBlockTypeDefinition<MjmlWrapperNode> = {
   ...mjmlWrapperTypeFields,
-  render: renderMjmlNode({ ...mjmlWrapperTypeFields, hasChildren: true, tagName: MjmlNodeType.Wrapper }),
+  render: renderMjmlNode({ ...mjmlWrapperTypeFields, hasChildren: true, tagName: mjmlWrapperTypeFields.type }),
 };

@@ -64,5 +64,5 @@ const mjmlAccordionTypeFields = {
 
 export const mjmlAccordionType: MjmlBlockTypeDefinition<MjmlAccordionNode> = {
   ...mjmlAccordionTypeFields,
-  render: renderMjmlNode({ ...mjmlAccordionTypeFields, hasChildren: true, tagName: MjmlNodeType.Accordion }),
+  render: renderMjmlNode({ ...mjmlAccordionTypeFields, hasChildren: true, tagName: mjmlAccordionTypeFields.type }),
 };
