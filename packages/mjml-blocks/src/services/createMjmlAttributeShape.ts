@@ -12,6 +12,6 @@ export const createMjmlAttributeShape = <TAttributes extends Record<string, stri
       createMjmlAttributeSchema(grammar, name).optional(),
     ]),
   );
-  // Object.fromEntries cannot name the table's keys, so the shape is asserted to the mapped type of them
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Object.fromEntries cannot name the table's keys, so the shape is asserted to the mapped type of them
   return shape as { [K in keyof TAttributes]: MjmlAttributeSchema };
 };

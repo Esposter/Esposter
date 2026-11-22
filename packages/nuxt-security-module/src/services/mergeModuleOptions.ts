@@ -13,5 +13,6 @@ export const mergeModuleOptions = (defaults: ModuleOptions, overrides: Partial<M
   ...defaults,
   ...overrides,
   headers: mergeHeaders(defaults.headers, overrides.headers),
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- `defaults.ssg` is typed `false | SsgOptions`, so its spread reads each key as optional; the defaults always set the object, which holds every key
   ssg: overrides.ssg === false ? false : ({ ...defaults.ssg, ...overrides.ssg } as ModuleOptions["ssg"]),
 });

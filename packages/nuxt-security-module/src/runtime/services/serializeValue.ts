@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-type-assertion -- the key picks which policy the value is, and TypeScript cannot tie a value's type to a key read from a separate parameter, so each policy's value is asserted to the type its key names */
 import type { ContentSecurityPolicy } from "#src/models/ContentSecurityPolicy";
 import type { PermissionsPolicy } from "#src/models/PermissionsPolicy";
 import type { StrictTransportSecurity } from "#src/models/StrictTransportSecurity";

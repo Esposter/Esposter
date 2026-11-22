@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-type-assertion -- the fakes stand in for Nitro's app and h3's event with only the members the plugin reads, which are subsets of the full types */
 import type { ContentSecurityPolicy } from "#src/models/ContentSecurityPolicy";
 import type { SecurityHeaders } from "#src/models/SecurityHeaders";
 import type { SecurityRules } from "#src/models/SecurityRules";

@@ -36,5 +36,6 @@ export const readTmxAttributes = <Table extends Record<string, AttributeKind>>(
     } else values[name] = text;
   }
   // The table names every required key, which the loop above always writes, so the record is the model's shape
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the keys come from the table at runtime, so the record is asserted to the model the table types; the loop above writes every required key
   return values as TMXAttributeValues<Table>;
 };
