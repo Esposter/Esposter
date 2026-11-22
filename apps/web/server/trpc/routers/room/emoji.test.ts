@@ -274,6 +274,7 @@ describe("emojiRouter", () => {
     assert.exists(blobDeletionEvents);
 
     const roomEmojis = await roomEmojiCaller.readRoomEmojis({ roomId });
+
     expect(deletedRoomEmoji.version).toBe(roomEmoji.version + 1);
     expect(deletedRoomEmoji.deletedAt).toStrictEqual(new Date(0));
     expect(takeOne(roomEmojis).deletedAt).toStrictEqual(new Date(0));

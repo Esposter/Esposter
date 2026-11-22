@@ -3,7 +3,7 @@ import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
-import { checkIsUnicodeEmojiSlug } from "#server/services/message/emoji/checkIsUnicodeEmojiSlug";
+import { assertIsNotUnicodeEmojiSlug } from "#server/services/message/emoji/assertIsNotUnicodeEmojiSlug";
 import { getRoomEmojiNameQuery } from "#server/services/message/emoji/getRoomEmojiNameQuery";
 import { getRoomEmojiWithPresignedUrl } from "#server/services/message/emoji/getRoomEmojiWithPresignedUrl";
 import { readRoomEmojiCount } from "#server/services/message/emoji/readRoomEmojiCount";
@@ -35,10 +35,6 @@ import {
 import { noop, Operation } from "@esposter/shared";
 import { and, eq, notExists, sql } from "drizzle-orm";
 import { v7 } from "uuid";
-
-const assertIsNotUnicodeEmojiSlug = (operation: Operation, name: string) => {
-  if (checkIsUnicodeEmojiSlug(name)) throw getInvalidOperationError(operation, DatabaseEntityType.RoomEmoji, name);
-};
 
 export const emojiRouter = router({
   createRoomEmoji: getPermissionsProcedure(
