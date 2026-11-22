@@ -1,8 +1,9 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { LEDGER_AREA_DIRECTORY, LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
 import { LedgerUnitsMap } from "#src/services/sweeps/ledgerCoverage/LedgerUnitsMap";
+import { readLedgerIndex } from "#src/services/sweeps/ledgerCoverage/readLedgerIndex";
 import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -24,14 +25,11 @@ const checkIsResolved = (pathspec: string): Promise<boolean> => {
  * Resolved against the working tree rather than against `git ls-files`.
  */
 describe("ledgerScopes", () => {
-  const LEDGER_ROW_REGEX = /^\| \[(?<ledger>[^\]]+)\]\([^)]+\)\s*\|[^|]*\|[^|]*\|(?<scope>[^|]*)\|$/u;
   const MARKDOWN_EXTENSION_REGEX = /\.md$/u;
-  const PATHSPEC_REGEX = /`(?<pathspec>[^`]+)`/gu;
   const ledgerDirectory = join(REPOSITORY_ROOT, LEDGER_DIRECTORY);
-  const index = readFileSync(join(ledgerDirectory, "README.md"), "utf8");
-  // A ledger is one file, a promoted folder of area files, or a derived ledger that keeps no file while it has nothing
-  // To note, so all three are a name the index owes a row to — a folder's own README is its metadata, and the area list
-  // Is the units the area-split ledgers share, not a ledger of its own.
+  // A ledger is one file, a folder of a question's area notes, or a derived ledger that keeps no file while it has
+  // Nothing to note, so all three are a name the index owes a row to — a folder's own README is its metadata, and the
+  // Area list is the partition every question reads, not a ledger of its own.
   const areaDirectoryName = LEDGER_AREA_DIRECTORY.slice(LEDGER_DIRECTORY.length + 1);
   const ledgers = [
     ...new Set([
@@ -41,14 +39,7 @@ describe("ledgerScopes", () => {
       ...Object.keys(LedgerUnitsMap).map((ledger) => ledger.split("/")[0] ?? ledger),
     ]),
   ];
-  const rows = index
-    .split("\n")
-    .map((line) => LEDGER_ROW_REGEX.exec(line)?.groups)
-    .filter((groups) => groups !== undefined)
-    .map(({ ledger, scope }) => ({
-      ledger: String(ledger),
-      pathspecs: Array.from(String(scope).matchAll(PATHSPEC_REGEX), (match) => String(match.groups?.pathspec)),
-    }));
+  const rows = readLedgerIndex();
 
   test("every ledger in the index declares one", () => {
     expect.hasAssertions();
