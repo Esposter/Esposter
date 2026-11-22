@@ -11,7 +11,6 @@ const { scale = 0.1 } = defineProps<Props>();
 const ballStore = useBallStore();
 const { endPosition, startPosition } = ballStore;
 const { isVisible, pathFollower, texture } = storeToRefs(ballStore);
-const alpha = ref(1);
 const startPoint = new Math.Vector2(startPosition.x, startPosition.y);
 const controlPoint1 = new Math.Vector2(200, 100);
 const controlPoint2 = new Math.Vector2(endPosition.x, endPosition.y);
@@ -21,12 +20,13 @@ const path = new Curves.Path(startPosition.x, startPosition.y).add(curve);
 
 onUnmounted(() => {
   isVisible.value = false;
+  pathFollower.value = undefined;
 });
 </script>
 
 <template>
   <PathFollower
-    :configuration="{ visible: isVisible, path, texture, scale, alpha }"
+    :configuration="{ visible: isVisible, path, texture, scale, alpha: 1 }"
     @complete="
       (_scene, newPathFollower) => {
         pathFollower = markRaw(newPathFollower);
