@@ -1,8 +1,9 @@
-// Bit order is the wire format and is fixed by `openspec/specs/esbabbler/rbac/design.md`; the sort is
-// Disabled because that order, not the alphabet, is the contract. It runs category by category — text channel,
-// General, moderation, advanced — and what each bit grants is said once, on the screen that grants it, by
+// The bits run by category, the text-channel permissions first and Administrator last, as
+// `openspec/specs/esbabbler/rbac/design.md` orders them.
+// Adding one mid-list renumbers the bits after it, since a stored bitfield is read as the current shape.
+// What each bit grants is said once, on the screen that grants it, by
 // `apps/web/app/services/message/room/role/RoomPermissionDefinitionMap.ts`.
-/* eslint-disable perfectionist/sort-objects -- bit order is the wire format */
+/* eslint-disable perfectionist/sort-objects -- the list runs by category, not alphabetically */
 export const RoomPermission = {
   ReadMessages: 1n << 0n,
   SendMessages: 1n << 1n,
@@ -18,9 +19,7 @@ export const RoomPermission = {
   ManageDisplayNames: 1n << 11n,
   ManageWebhooks: 1n << 12n,
   ManageEmojis: 1n << 13n,
-  // Last, and it moves up as the list grows: stored values are read as the current shape rather than migrated,
-  // So the bits are free to be the order the list should be in rather than the order it was written in.
-  // `permissions` is a signed 64-bit bigint, so bit 62 is the ceiling this can grow to
+  // `permissions` is a signed 64-bit bigint, so bit 62 is the highest bit the list can grow to
   Administrator: 1n << 14n,
 } as const;
 /* eslint-enable perfectionist/sort-objects */
