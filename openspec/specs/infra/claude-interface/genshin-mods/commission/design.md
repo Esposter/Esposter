@@ -15,9 +15,11 @@ The row reads `goal · 3 of 4 · 75% · 12m`, the clock counting whole minutes f
 
 ## Key files
 
-| File                                                                  | Role                                                    |
-| :-------------------------------------------------------------------- | :------------------------------------------------------ |
-| `packages/genshin-mods/src/services/commission/registerCommission.ts` | The task tools' calls folded in, opening the commission |
-| `packages/genshin-mods/src/services/commission/foldTaskCall.ts`       | One call and its result into the list                   |
-| `packages/genshin-mods/src/services/band/getCommissionSummary.ts`     | The row's line: goal, tasks done, share and minutes     |
-| `packages/genshin-mods/src/services/registerLifecycle.ts`             | The prompt the goal is read from, and the close         |
+| File                                                                  | Role                                                        |
+| :-------------------------------------------------------------------- | :---------------------------------------------------------- |
+| `packages/genshin-mods/src/services/commission/registerCommission.ts` | The task tools' calls folded in, opening the commission     |
+| `packages/genshin-mods/src/services/commission/checkIsAnswered.ts`    | A denied or errored call is not folded in                   |
+| `packages/genshin-mods/src/services/commission/foldCommission.ts`     | A call folded into the commission's goal, opening and tasks |
+| `packages/genshin-mods/src/services/commission/foldTaskCall.ts`       | One call and its result into the list                       |
+| `packages/genshin-mods/src/services/band/getCommissionSummary.ts`     | The row's line: goal, tasks done, share and minutes         |
+| `packages/genshin-mods/src/services/registerLifecycle.ts`             | The prompt the goal is read from, and the close             |
