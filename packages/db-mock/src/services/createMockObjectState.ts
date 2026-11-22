@@ -59,7 +59,7 @@ export const createMockObjectState = (name: string): MockObjectState => {
       },
       sql: {
         exec: (query, ...bindings) => {
-          const rows = database.prepare(query).all(...bindings) as Record<string, unknown>[];
+          const rows = database.prepare(query).all(...bindings);
           return { ...createCursor(rows), raw: () => createCursor(rows.map((row) => Object.values(row))) };
         },
       },

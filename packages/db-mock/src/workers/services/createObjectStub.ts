@@ -9,6 +9,7 @@ export const createObjectStub = <ObjectRpc>(
   objectCalls: ObjectCall[],
   objectReplies: Map<string, ObjectReply>,
 ): DurableObjectStub<ObjectRpc & Rpc.DurableObjectBranded> =>
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a Workers stub carries a brand (`Rpc.DurableObjectBranded`) that no object literal satisfies, so the proxy's target is typed as the stub it stands in for
   new Proxy({} as DurableObjectStub<ObjectRpc & Rpc.DurableObjectBranded>, {
     get: (_target, method: string | symbol) => {
       // A stub is not a thenable, so `then` is unanswered and awaiting it resolves to the stub, and a symbol is not an RPC
