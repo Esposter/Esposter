@@ -40,14 +40,16 @@ claude plugin install genshin-mods@esposter
 
 `/sins` scores with [TypeSafe](https://typesafe.ai). It needs a key. Set the key with one of these:
 
-- the plugin's `typesafe_key` option, the same option as [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona)
 - the `TYPESAFE_API_KEY` variable, when the option is empty
+- the plugin's `typesafe_key` option, the same option as [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona), stored in the credential store
 
 Set the option at install:
 
 ```bash
 claude plugin install genshin-mods@esposter --config typesafe_key=<key>
 ```
+
+A key typed after `--config` stays in the shell's history. A key read from a file or a secret store does not.
 
 A clone of this repository needs neither command. Once you trust the repository, `.agents/settings.json` enables the plugin at project scope.
 
