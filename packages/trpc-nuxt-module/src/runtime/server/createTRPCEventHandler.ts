@@ -1,4 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-type-assertion -- h3 types its request as its own `TypedServerRequest`, which fetchdts's `Request` does not accept without an assertion, and the options are checked against the router at the call site while TRouter's conditional context requirement never resolves inside this generic handler */
 import type { TRPCEventHandlerOptions } from "#src/runtime/server/models/TRPCEventHandlerOptions";
 import type { AnyTRPCRouter } from "@trpc/server";
 import type { FetchCreateContextFnOptions, FetchHandlerRequestOptions } from "@trpc/server/adapters/fetch";
@@ -17,6 +16,10 @@ export const createTRPCEventHandler = <TRouter extends AnyTRPCRouter>({
   ...options
 }: TRPCEventHandlerOptions<TRouter>): EventHandler =>
   defineHandler(async (event) => {
+    // The two casts below are scoped to this call: h3 types its request as its own `TypedServerRequest`, which fetchdts's
+    // `Request` does not accept without an assertion, and the options are checked against the router at the call site
+    // Since TRouter's conditional context requirement never resolves inside this generic handler
+    // oxlint-disable typescript/no-unsafe-type-assertion -- h3's request and the options are typed as the handler's own, which fetchdts and TRouter's open conditional context do not accept
     const response = await fetchRequestHandler({
       ...options,
       createContext:
@@ -30,6 +33,7 @@ export const createTRPCEventHandler = <TRouter extends AnyTRPCRouter>({
       // Whether tRPC demands a context callback is a conditional type over the router's context, which never resolves
       // While `TRouter` is open; the caller's options were checked against its own router at the call site
     } as FetchHandlerRequestOptions<TRouter>);
+    // oxlint-enable typescript/no-unsafe-type-assertion
     // H3 merges the headers a procedure set through the event into the response only below status 400, since an error
     // Status takes its error headers instead. It merges no status either, so a status a procedure set itself, such as a
     // Redirect, replaces tRPC's

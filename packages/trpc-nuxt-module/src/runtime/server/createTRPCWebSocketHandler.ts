@@ -1,4 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types `wss` and `res` as the `ws` package's classes, which the adapter and the peer are not; tRPC reads only the members it names and the callbacks read only what the peer declares */
 import type { TRPCWebSocketHandler } from "#src/runtime/server/models/TRPCWebSocketHandler";
 import type { TRPCWebSocketHandlerOptions } from "#src/runtime/server/models/TRPCWebSocketHandlerOptions";
 import type { AnyTRPCRouter, inferRouterContext } from "@trpc/server";
@@ -32,7 +31,9 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
     createContext,
     // @TODO: https://github.com/trpc/trpc/issues/8057 — tRPC types `wss` and its clients as the `ws` classes, though
     // It reads only a few members of each, so a server that is not a `ws` one is cast until they are typed by those
+    // oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types `wss` as the `ws` package's server class, which the adapter is not; tRPC reads only the members it names
     wss: webSocketServer as WSSHandlerOptions<TRouter>["wss"],
+    // oxlint-enable typescript/no-unsafe-type-assertion
   });
   const peerConnections = new Map<string, PeerConnection<inferRouterContext<TRouter>>>();
   return {
@@ -79,7 +80,9 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
               req: request,
               // The peer presented as the socket tRPC hands its context. The compiler cannot see that the callbacks
               // Read only the members `PeerWebSocketAdapter` declares
+              // oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types `res` as the `ws` package's class, which the peer is not; the callbacks read only what the peer declares
               res: client as CreateWSSContextFnOptions["res"],
+              // oxlint-enable typescript/no-unsafe-type-assertion
             }),
           ),
         );

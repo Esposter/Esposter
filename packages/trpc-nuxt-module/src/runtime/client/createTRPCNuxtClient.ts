@@ -1,4 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-type-assertion -- tRPC's proxy types each argument as `unknown[]`, so each is asserted to the type its call's signature declares; `TRPCNuxtClient` checked every call's arguments where the call was written, and the static type of the returned client is that check */
 import type { TRPCNuxtClient } from "#src/runtime/client/models/TRPCNuxtClient";
 import type { UseMutationOptions } from "#src/runtime/client/models/UseMutationOptions";
 import type { UseQueryOptions } from "#src/runtime/client/models/UseQueryOptions";
@@ -6,6 +5,7 @@ import type { UseSubscriptionOptions } from "#src/runtime/client/models/UseSubsc
 import type { CreateTRPCClientOptions, TRPCRequestOptions, TRPCResolverDef } from "@trpc/client";
 import type { AnyTRPCRouter } from "@trpc/server";
 
+import { declaredArgument } from "#src/runtime/client/services/declaredArgument";
 import { useProcedureMutation } from "#src/runtime/client/services/useProcedureMutation";
 import { useProcedureQuery } from "#src/runtime/client/services/useProcedureQuery";
 import { useProcedureSubscription } from "#src/runtime/client/services/useProcedureSubscription";
@@ -26,27 +26,36 @@ export const createTRPCNuxtClient = <TRouter extends AnyTRPCRouter>(
       case "_def":
         return { path: procedurePath };
       case "mutate":
-        return client.mutation(procedure, first, second as TRPCRequestOptions | undefined);
+        return client.mutation(procedure, first, declaredArgument<TRPCRequestOptions | undefined>(second));
       case "query":
-        return client.query(procedure, first, second as TRPCRequestOptions | undefined);
+        return client.query(procedure, first, declaredArgument<TRPCRequestOptions | undefined>(second));
       case "subscribe":
         // The client tells its two overloads apart by whether the options carry callbacks, which the call site checked
-        return client.subscription(procedure, first, second as TRPCRequestOptions | undefined);
+        return client.subscription(procedure, first, declaredArgument<TRPCRequestOptions | undefined>(second));
       case "useLazyQuery":
         return useProcedureQuery(client, procedure, first, {
-          ...(second as undefined | UseQueryOptions<TRPCResolverDef>),
+          ...declaredArgument<undefined | UseQueryOptions<TRPCResolverDef>>(second),
           lazy: true,
         });
       case "useMutation":
-        return useProcedureMutation(client, procedure, first as undefined | UseMutationOptions<TRPCResolverDef>);
+        return useProcedureMutation(
+          client,
+          procedure,
+          declaredArgument<undefined | UseMutationOptions<TRPCResolverDef>>(first),
+        );
       case "useQuery":
-        return useProcedureQuery(client, procedure, first, second as undefined | UseQueryOptions<TRPCResolverDef>);
+        return useProcedureQuery(
+          client,
+          procedure,
+          first,
+          declaredArgument<undefined | UseQueryOptions<TRPCResolverDef>>(second),
+        );
       case "useSubscription":
         return useProcedureSubscription(
           client,
           procedure,
           first,
-          second as undefined | UseSubscriptionOptions<TRPCResolverDef>,
+          declaredArgument<undefined | UseSubscriptionOptions<TRPCResolverDef>>(second),
         );
       default:
         throw new TypeError(`"${path.join(".")}" is not a procedure call`);

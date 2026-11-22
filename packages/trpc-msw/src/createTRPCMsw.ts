@@ -1,6 +1,4 @@
-/* oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types `wss` as the `ws` package's server class, which the adapter is not, and tRPC's proxy types each resolver as `unknown`; `TRPCMsw`'s record type checked every registration where it was written */
 import type { ProcedureRegistration } from "#src/models/ProcedureRegistration";
-import type { SubscriptionRegistration } from "#src/models/SubscriptionRegistration";
 import type { TRPCMsw } from "#src/models/TRPCMsw";
 import type { TRPCMswOptions } from "#src/models/TRPCMswOptions";
 import type { AnyTRPCRouter, TRPCProcedureType } from "@trpc/server";
@@ -64,7 +62,9 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
       router: createMockRouter(t, new Map(procedureTypes), registrations, router),
       // @TODO: https://github.com/trpc/trpc/issues/8057 — tRPC types `wss` and its clients as the `ws` classes, though
       // It reads only a few members of each, so a server that is not a `ws` one is cast until they are typed by those
+      // oxlint-disable typescript/no-unsafe-type-assertion -- tRPC types `wss` as the `ws` package's server class, which the adapter is not; tRPC reads only the members it names
       wss: webSocketServer as WSSHandlerOptions<AnyTRPCRouter>["wss"],
+      // oxlint-enable typescript/no-unsafe-type-assertion
     });
     return webSocketServer;
   };
@@ -107,13 +107,10 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
         throw new TypeError(
           `Expected a resolver registered with query, mutation or subscription at "${path.join(".")}"`,
         );
-      // The proxy hands its arguments over untyped; `TRPCMsw`'s record type is what checked them at the call site
-      register(
-        path.slice(0, -1).join("."),
-        type === "subscription"
-          ? { resolver: resolver as SubscriptionRegistration["resolver"], type }
-          : { resolver: resolver as Exclude<ProcedureRegistration, SubscriptionRegistration>["resolver"], type },
-      );
+      // The proxy hands its arguments over untyped; `TRPCMsw`'s record type is what checked them at the call site. The
+      // Resolver is the one its procedure type names, which the proxy's plain string type does not carry to the compiler
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the proxy types the resolver as unknown and the type as a string, so the registration's variant is the one its type names
+      register(path.slice(0, -1).join("."), { resolver, type } as ProcedureRegistration);
     }),
   };
 };
