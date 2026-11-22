@@ -3,8 +3,8 @@ import type { WikiTalentPage } from "#src/models/genshinAssets/kits/wiki/WikiTal
 import { InfoboxTypeCombatTalent } from "#src/models/genshinAssets/kits/wiki/InfoboxTypeCombatTalent";
 import { WIKI_API_URL } from "#src/services/genshinAssets/kits/constants";
 import { parseAdvancedProperties } from "#src/services/genshinAssets/kits/wiki/parseAdvancedProperties";
-import { fetchOk } from "#src/services/shared/fetchOk";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { CombatTalent } from "genshin-world";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -54,11 +54,9 @@ export const readWikiTalentPages = async (name: string, cacheDirectory: string):
       rvprop: "content|ids",
       rvslots: "main",
     });
-    const response = await fetchOk(`${WIKI_API_URL}?${searchParams}`);
-    const answer = await response.text();
-    categoryResponseSchema.parse(parseMachineJson(answer));
+    const answer = await readWikiApi(`${WIKI_API_URL}?${searchParams}`, categoryResponseSchema);
     mkdirSync(cacheDirectory, { recursive: true });
-    writeFileSync(cachePath, answer);
+    writeFileSync(cachePath, JSON.stringify(answer));
   }
   const { query } = categoryResponseSchema.parse(parseMachineJson(readFileSync(cachePath, "utf8")));
   return (query?.pages ?? []).flatMap(({ revisions: [revision], title }) => {

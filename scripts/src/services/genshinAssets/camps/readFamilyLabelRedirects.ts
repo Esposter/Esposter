@@ -4,8 +4,8 @@ import {
   FAMILY_LABEL_REDIRECTS_PATH,
 } from "#src/services/genshinAssets/camps/constants";
 import { WIKI_API_URL, WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
-import { fetchOk } from "#src/services/shared/fetchOk";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 // The title each label was asked about redirects to, or null when the wiki has no redirect from it
@@ -20,10 +20,8 @@ const fetchRedirectBatch = async (labels: readonly string[]): Promise<FamilyLabe
     redirects: "1",
     titles: labels.join("|"),
   });
-  const text = await (await fetchOk(`${WIKI_API_URL}?${searchParams}`)).text();
-  const targets = new Map(
-    (wikiRedirectResponseSchema.parse(parseMachineJson(text)).query.redirects ?? []).map(({ from, to }) => [from, to]),
-  );
+  const { query } = await readWikiApi(`${WIKI_API_URL}?${searchParams}`, wikiRedirectResponseSchema);
+  const targets = new Map((query.redirects ?? []).map(({ from, to }) => [from, to]));
   return Object.fromEntries(labels.map((label) => [label, targets.get(label) ?? null]));
 };
 

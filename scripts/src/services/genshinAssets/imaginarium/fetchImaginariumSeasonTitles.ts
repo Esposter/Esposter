@@ -1,6 +1,5 @@
 import { WIKI_API_URL } from "#src/services/genshinAssets/kits/constants";
-import { fetchOk } from "#src/services/shared/fetchOk";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { z } from "zod";
 
 const SEASON_PAGE_PREFIX = "Imaginarium Theater/Seasons/";
@@ -18,10 +17,9 @@ export const fetchImaginariumSeasonTitles = async (): Promise<string[]> => {
     formatversion: "2",
     list: "allpages",
   });
-  const text = await (await fetchOk(`${WIKI_API_URL}?${searchParams}`)).text();
-  return allPagesResponseSchema
-    .parse(parseMachineJson(text))
-    .query.allpages.map(({ title }) => title)
+  const { query } = await readWikiApi(`${WIKI_API_URL}?${searchParams}`, allPagesResponseSchema);
+  return query.allpages
+    .map(({ title }) => title)
     .filter((title) => SEASON_PAGE_TITLE_REGEX.test(title))
     .toSorted();
 };

@@ -1,7 +1,6 @@
 import { wikiPageResponseSchema } from "#src/models/genshinAssets/enemies/WikiPageResponse";
 import { WIKI_API_URL } from "#src/services/genshinAssets/kits/constants";
-import { fetchOk } from "#src/services/shared/fetchOk";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 
@@ -18,9 +17,9 @@ export const fetchWikiPage = async (title: string, cachePath: string): Promise<v
     rvslots: "main",
     titles: title,
   });
-  const text = await (await fetchOk(`${WIKI_API_URL}?${searchParams}`)).text();
-  const [page] = wikiPageResponseSchema.parse(parseMachineJson(text)).query.pages;
+  const response = await readWikiApi(`${WIKI_API_URL}?${searchParams}`, wikiPageResponseSchema);
+  const [page] = response.query.pages;
   if (page?.missing || !page?.revisions?.length)
     throw new InvalidOperationError(Operation.Read, title, "is not a page on the wiki");
-  writeFileSync(cachePath, text);
+  writeFileSync(cachePath, JSON.stringify(response));
 };

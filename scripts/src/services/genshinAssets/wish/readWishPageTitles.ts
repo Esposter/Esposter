@@ -1,7 +1,7 @@
 import { WIKI_API_URL } from "#src/services/genshinAssets/kits/constants";
 import { WISH_CATEGORY, WISH_CATEGORY_LIMIT } from "#src/services/genshinAssets/wish/constants";
+import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { readWikiJson } from "genshin-persona/src/services/readWikiJson.ts";
 import { z } from "zod";
 
 const categoryMembersSchema = z.object({
@@ -19,13 +19,7 @@ export const readWishPageTitles = async (): Promise<string[]> => {
     formatversion: "2",
     list: "categorymembers",
   });
-  const response = await readWikiJson(
-    `${WIKI_API_URL}?${searchParams}`,
-    (value): value is z.infer<typeof categoryMembersSchema> => categoryMembersSchema.safeParse(value).success,
-  );
-  if (!response)
-    throw new InvalidOperationError(Operation.Read, WISH_CATEGORY, "the category answer is not a member list");
-  const { continue: continuation, query } = response;
+  const { continue: continuation, query } = await readWikiApi(`${WIKI_API_URL}?${searchParams}`, categoryMembersSchema);
   if (continuation !== undefined)
     throw new InvalidOperationError(
       Operation.Read,
