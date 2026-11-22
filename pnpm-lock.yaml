@@ -1721,6 +1721,9 @@ importers:
       defu:
         specifier: 'catalog:'
         version: 6.1.7
+      h3:
+        specifier: 'catalog:'
+        version: 2.0.8(crossws@0.4.17(srvx@1.0.8))(ocache@0.3.2)
       nitro:
         specifier: 'catalog:'
         version: nitro-nightly@3.0.1-20261120-203731-571aade6(nitro-nightly@3.0.1-20261120-203731-571aade6)
@@ -1746,9 +1749,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
-      h3:
-        specifier: 'catalog:'
-        version: 2.0.8(crossws@0.4.17(srvx@1.0.8))(ocache@0.3.2)
       tsdown:
         specifier: 'catalog:'
         version: 0.23.7(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.7)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@7.1.0-beta.tsrs4)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
