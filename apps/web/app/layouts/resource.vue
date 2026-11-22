@@ -26,10 +26,10 @@ const isServiceMenuOpen = ref(false);
   <NuxtLayout>
     <div flex flex-col h-full>
       <header px-4 pt-2 flex flex-col gap-2 ui-body :class="{ 'pb-2': !slots.navigation }">
-        <!-- The trail and its menu are one group with a width of its own, so the meter sits at the row's end while both
-             Fit and takes a line of its own under the trail when they do not, never laid over it -->
-        <div flex flex-wrap gap-2 min-h-8 items-center>
-          <div flex grow basis-64 gap-2 min-w-0 items-center>
+        <!-- The trail and its menu are one group with a width of its own, so the meter sits at the row's end. The trail
+             yields to it, truncating rather than wrapping the meter onto a line of its own -->
+        <div flex gap-2 min-h-8 items-center>
+          <div flex grow basis-64 gap-2 min-w-0 truncate items-center>
             <UiIconButton
               v-if="isServiceMenuShown"
               label="Resource menu"
@@ -39,7 +39,7 @@ const isServiceMenuOpen = ref(false);
             />
             <AppBreadcrumbs />
           </div>
-          <ResourceStorageMeter />
+          <ResourceStorageMeter shrink-0 />
         </div>
         <slot v-if="slots.heading" name="heading" />
         <h1 v-else-if="title" ui-title>{{ title }}</h1>

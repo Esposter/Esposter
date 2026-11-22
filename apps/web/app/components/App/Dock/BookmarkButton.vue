@@ -15,16 +15,13 @@ const pageMarkStore = usePageMarkStore();
 const { getPageMark } = pageMarkStore;
 const recentPageStore = useRecentPageStore();
 const { displayRecentPages } = storeToRefs(recentPageStore);
-const isBookmarkable = computed(
-  () => Boolean(session.value) && !RECENT_PAGE_EXCLUDED_PATHS.includes(currentRoute.value.path),
-);
 </script>
 
 <!-- Keeping the page open now among the reader's places, said in words: a mark alone on the rail read as anything
      but what it did. The launcher's first row, so it reads as one more thing the panel does rather than a button -->
 <template>
   <button
-    v-if="isBookmarkable"
+    v-if="session && !RECENT_PAGE_EXCLUDED_PATHS.includes(currentRoute.path)"
     type="button"
     ui-item
     @click="

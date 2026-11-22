@@ -43,18 +43,20 @@ flowchart TD
 
 ## Key files
 
-| File                                                       | Role                                                                                          |
-| :--------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
-| `apps/web/app/models/ui/UiCommand.ts`                      | One command: a title, a group, a mark, and somewhere to go or something to run                |
-| `apps/web/app/models/ui/UiCommandScope.ts`                 | A surface's search, handed to the palette                                                     |
-| `apps/web/app/store/ui/command.ts`                         | The registered commands and scopes, and whether the palette and the shortcuts dialog are open |
-| `apps/web/app/composables/ui/useCommands.ts`               | Registers a surface's commands and binds their shortcuts while it is mounted                  |
-| `apps/web/app/services/ui/getAltLetterChordMatcher.ts`     | Matches an Alt chord on a letter by the letter's key, whatever character it types             |
-| `apps/web/app/composables/ui/useCommandScope.ts`           | Hands a surface's search to the palette while it is mounted                                   |
-| `apps/web/app/composables/ui/useCommandPaletteShortcut.ts` | The palette's own key, bound in a field too                                                   |
-| `apps/web/app/components/App/CommandPalette.vue`           | The palette, and the app's own commands                                                       |
-| `apps/web/app/components/App/ShortcutsDialog.vue`          | Every registered shortcut, grouped by surface                                                 |
-| `apps/web/app/components/Ui/CommandList.vue`               | The search field over the commands it finds                                                   |
+| File                                                       | Role                                                                                                            |
+| :--------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/models/ui/UiCommand.ts`                      | One command: a title, a group, a mark, and somewhere to go or something to run                                  |
+| `apps/web/app/models/ui/UiCommandScope.ts`                 | A surface's search, handed to the palette                                                                       |
+| `apps/web/app/store/ui/command.ts`                         | The registered commands and scopes, and whether the palette and the shortcuts dialog are open                   |
+| `apps/web/app/composables/ui/useCommands.ts`               | Registers a surface's commands and binds their shortcuts while it is mounted                                    |
+| `apps/web/app/services/ui/getAltLetterChordMatcher.ts`     | Matches an Alt chord on a letter by the letter's key, whatever character it types                               |
+| `apps/web/app/composables/ui/useCommandScope.ts`           | Hands a surface's search to the palette while it is mounted                                                     |
+| `apps/web/app/composables/ui/useCommandPaletteShortcut.ts` | The palette's own key, bound in a field too                                                                     |
+| `apps/web/app/components/App/CommandPalette.vue`           | The palette: its search, its scope and its list                                                                 |
+| `apps/web/app/composables/app/useAppCommands.ts`           | The app's own commands: the products, the reader's places, the theme, style and account, and the palette's keys |
+| `apps/web/app/services/app/getPlaceCommand.ts`             | A bookmarked or recent place as a command, muted when its page cannot be reached                                |
+| `apps/web/app/components/App/ShortcutsDialog.vue`          | Every registered shortcut, grouped by surface                                                                   |
+| `apps/web/app/components/Ui/CommandList.vue`               | The search field over the commands it finds                                                                     |
 
 ## Sources
 

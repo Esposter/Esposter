@@ -29,10 +29,6 @@ const isBookmarked = computed(() => bookmarkPaths.value.has(page.path));
 const togglePageBookmark = () => toggleBookmark({ mark: page.mark, path: page.path, title: label.value });
 // A place that cannot be reached has no page to visit, so pressing it takes its bookmark away instead
 const placeProps = computed(() => (isUnavailable ? { onClick: togglePageBookmark } : { to: page.path }));
-const ariaLabel = computed(() => {
-  if (isUnavailable) return `${label.value} (${UNAVAILABLE_PAGE_LABEL})`;
-  return isBookmarked.value ? `${label.value} (bookmarked)` : label.value;
-});
 const { getContextMenuProps } = useContextMenu();
 // A place on the dock can be opened beside the current page, and kept or let go without visiting it first
 const contextMenuProps = getContextMenuProps(page.path, () => {
@@ -67,7 +63,9 @@ const contextMenuProps = getContextMenuProps(page.path, () => {
       :="mergeProps(activatorProps, contextMenuProps, placeProps)"
       class="page-link"
       :class="isUnavailable && 'op-disabled'"
-      :aria-label
+      :aria-label="
+        isUnavailable ? `${label} (${UNAVAILABLE_PAGE_LABEL})` : isBookmarked ? `${label} (bookmarked)` : label
+      "
       :variant="UiButtonVariant.Quiet"
       px-0
       size-10

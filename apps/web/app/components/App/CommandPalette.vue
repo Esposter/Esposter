@@ -1,32 +1,14 @@
 <script setup lang="ts">
-import type { PageLink } from "#shared/models/app/PageLink";
-import type { UiCommand } from "#src/models/ui/UiCommand";
-
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
-import {
-  COMMAND_PALETTE_SHORTCUT,
-  GENERAL_COMMAND_GROUP,
-  PLACES_COMMAND_GROUP,
-  UNAVAILABLE_PAGE_LABEL,
-} from "#src/services/app/constants";
-import { getPageIcon } from "#src/services/app/getPageIcon";
-import { getPageLabel } from "#src/services/app/getPageLabel";
-import { ProductGroups } from "#src/services/app/ProductGroups";
 import { runCommand } from "#src/services/ui/runCommand";
-import { useBookmarkStore } from "#src/store/bookmark";
 import { useCommandStore } from "#src/store/ui/command";
-import { RoutePath, SITE_NAME } from "@esposter/shared";
 import MiniSearch from "minisearch";
 
 const commandStore = useCommandStore();
-const { commands, isCommandPaletteOpen, isScoped, isShortcutsDialogOpen, scope } = storeToRefs(commandStore);
+const { commands, isCommandPaletteOpen, isScoped, scope } = storeToRefs(commandStore);
 const { openCommandPalette } = commandStore;
-const bookmarkStore = useBookmarkStore();
-const { displayBookmarks } = storeToRefs(bookmarkStore);
-const unbookmarkedRecentPages = useUnbookmarkedRecentPages();
-const themeModeCommands = useThemeModeCommands();
-const uiStyleCommands = useUiStyleCommands();
 const accountCommands = await useAccountCommands();
+useAppCommands(accountCommands);
 const query = ref("");
 // The palette searches the scope's own query while it is in one, and its own otherwise
 const fieldQuery = computed({
@@ -62,54 +44,6 @@ const foundCommands = computed(() => {
   return offeredCommands.value.filter((_command, commandIndex) => foundIndexes.has(commandIndex));
 });
 
-// A place as the palette lists it: a page to go to, or one that cannot be reached, listed muted with nothing to go to
-const getPlaceCommand = ({ mark, path, title }: PageLink, isAvailable: boolean): UiCommand => {
-  const pageIcon = getPageIcon({ mark, path });
-  return {
-    group: PLACES_COMMAND_GROUP,
-    id: `${PLACES_COMMAND_GROUP}${path}`,
-    title: getPageLabel(path, title),
-    ...(isAvailable ? { to: path } : { description: UNAVAILABLE_PAGE_LABEL, isDisabled: true }),
-    ...(pageIcon ?? { image: "" }),
-  };
-};
-
-useCommands(() => [
-  { group: SITE_NAME, id: RoutePath.Index, meaning: UiIconMeaning.Home, title: "Home", to: RoutePath.Index },
-  ...ProductGroups.flatMap(({ items, title }) =>
-    items.map(({ href, icon, title: itemTitle }) => ({ group: title, icon, id: href, title: itemTitle, to: href })),
-  ),
-  // The reader's places, as the dock keeps them: bookmarks, then the pages they come back to most
-  ...displayBookmarks.value.map((bookmark) => getPlaceCommand(bookmark, bookmark.isAvailable)),
-  ...unbookmarkedRecentPages.value.map((recentPage) => getPlaceCommand(recentPage, true)),
-  ...themeModeCommands.value,
-  ...uiStyleCommands.value,
-  ...accountCommands.value,
-  {
-    group: GENERAL_COMMAND_GROUP,
-    id: "command-palette",
-    meaning: UiIconMeaning.Command,
-    shortcut: COMMAND_PALETTE_SHORTCUT,
-    title: "Command palette",
-  },
-  {
-    group: GENERAL_COMMAND_GROUP,
-    id: "keyboard-shortcuts",
-    meaning: UiIconMeaning.Keyboard,
-    run: () => {
-      isShortcutsDialogOpen.value = true;
-    },
-    shortcut: "shift+?",
-    title: "Keyboard shortcuts",
-  },
-  {
-    group: GENERAL_COMMAND_GROUP,
-    id: "dismiss",
-    meaning: UiIconMeaning.Close,
-    shortcut: "escape",
-    title: "Dismiss or close",
-  },
-]);
 useCommandPaletteShortcut(() => {
   if (isCommandPaletteOpen.value) isCommandPaletteOpen.value = false;
   else openCommandPalette();
