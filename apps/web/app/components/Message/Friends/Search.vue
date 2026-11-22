@@ -1,17 +1,10 @@
 <script setup lang="ts">
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
+import { useUserSearchStore } from "#src/store/message/user/search";
 
-const { $trpc } = useNuxtApp();
-const searchQuery = ref("");
-const searchResults = ref<Awaited<ReturnType<typeof $trpc.friend.searchUsers.query>>>([]);
-const { isError, isPending, retry } = useAutoSearch(searchQuery, {
-  reset: () => {
-    searchResults.value = [];
-  },
-  search: async (sanitizedSearchQuery, signal) => {
-    searchResults.value = await $trpc.friend.searchUsers.query(sanitizedSearchQuery, { signal });
-  },
-});
+const userSearchStore = useUserSearchStore();
+const { hasMore, isError, isPending, items, searchQuery } = storeToRefs(userSearchStore);
+const { readMoreSearchedItems, retry } = userSearchStore;
 </script>
 
 <template>
@@ -19,9 +12,14 @@ const { isError, isPending, retry } = useAutoSearch(searchQuery, {
     <UiTextField v-model="searchQuery" label="Search by name" :type="UiTextFieldType.Search" />
     <!-- A failed search shows that rather than the rows of the query before it, which the field no longer says -->
     <UiErrorState v-if="isError" error="The users could not be searched." @retry="retry()" />
-    <ul v-else-if="searchResults.length > 0" flex flex-col>
-      <MessageFriendsSearchResultListItem v-for="{ id, name, image } of searchResults" :id :key="id" :image :name />
-    </ul>
+    <template v-else-if="items.length > 0">
+      <ul flex flex-col>
+        <MessageFriendsSearchResultListItem v-for="{ id, name, image } of items" :id :key="id" :image :name />
+      </ul>
+      <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreSearchedItems(onComplete)">
+        <MessageFriendsListSkeleton />
+      </StyledWaypoint>
+    </template>
     <!-- The first search on its way: rows in the results' own shape, where a later one keeps the rows it replaces -->
     <MessageFriendsListSkeleton v-else-if="isPending" />
   </MessageFriendsSection>

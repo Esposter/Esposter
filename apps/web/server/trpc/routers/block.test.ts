@@ -215,7 +215,7 @@ describe("blockRouter", () => {
 
     const blockedUser = await createMockUser(mockContext.db);
     await blockCaller.createBlock(blockedUser.id);
-    const searchedUsers = await friendCaller.searchUsers(blockedUser.name);
+    const { items: searchedUsers } = await friendCaller.searchUsers({ name: blockedUser.name });
 
     expect(searchedUsers).toStrictEqual([]);
   });
@@ -230,7 +230,7 @@ describe("blockRouter", () => {
     const userAuthSession = await createMockAuthSession(mockContext.db, user);
     const userCaller = createCallerFactory(friendRouter)(await createMockContext(userAuthSession));
 
-    const searchedUsers = await userCaller.searchUsers(blockerAuthSession.user.name);
+    const { items: searchedUsers } = await userCaller.searchUsers({ name: blockerAuthSession.user.name });
 
     expect(searchedUsers).toStrictEqual([]);
   });
@@ -258,7 +258,7 @@ describe("blockRouter", () => {
     const blockedUser = await createMockUser(mockContext.db);
     await blockCaller.createBlock(blockedUser.id);
     await blockCaller.deleteBlock(blockedUser.id);
-    const searchedUsers = await friendCaller.searchUsers(blockedUser.name);
+    const { items: searchedUsers } = await friendCaller.searchUsers({ name: blockedUser.name });
 
     expect(searchedUsers.map(({ id }) => id)).toStrictEqual([blockedUser.id]);
   });

@@ -2,7 +2,7 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers/index";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext, createMockUser, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { createFriends } from "#server/trpc/routers/createFriends.test";
@@ -17,9 +17,10 @@ import {
   friendRequestsInSocial,
   friendsInSocial,
   PublicUserColumns,
+  usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, InvalidOperationError, jsonDateParse, Operation, takeOne } from "@esposter/shared";
-import { getTableName } from "drizzle-orm";
+import { eq, getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -163,18 +164,41 @@ describe("friendRouter", () => {
     const user = getMockSession().user;
     const searcherAuthSession = await createMockAuthSession(mockContext.db);
     const searcherCaller = createCallerFactory(friendRouter)(await createMockContext(searcherAuthSession));
-    const searchedUsers = await searcherCaller.searchUsers(user.name);
+    const { items: searchedUsers } = await searcherCaller.searchUsers({ name: user.name });
 
     expect(searchedUsers).toHaveLength(1);
     expect(takeOne(searchedUsers).id).toBe(user.id);
     expect(Object.keys(takeOne(searchedUsers)).toSorted()).toStrictEqual(Object.keys(PublicUserColumns).toSorted());
   });
 
+  // A name many accounts share reaches all of them a page at a time, in name order, rather than the first few alone
+  test("pages user search results by cursor", async () => {
+    expect.hasAssertions();
+
+    const searcherAuthSession = await createMockAuthSession(mockContext.db);
+    const searcherCaller = createCallerFactory(friendRouter)(await createMockContext(searcherAuthSession));
+    await Promise.all(
+      ["1", "2", "3"].map(async (suffix) => {
+        const user = await createMockUser(mockContext.db);
+        await mockContext.db
+          .update(usersInAuth)
+          .set({ name: `Pager ${suffix}` })
+          .where(eq(usersInAuth.id, user.id));
+      }),
+    );
+
+    const firstPage = await searcherCaller.searchUsers({ limit: 2, name: "Pager" });
+    expect(firstPage.items.map(({ name }) => name)).toStrictEqual(["Pager 1", "Pager 2"]);
+    const secondPage = await searcherCaller.searchUsers({ cursor: firstPage.nextCursor, limit: 2, name: "Pager" });
+    expect(secondPage.items.map(({ name }) => name)).toStrictEqual(["Pager 3"]);
+    expect(secondPage.nextCursor).toBe("");
+  });
+
   test("excludes self from search results", async () => {
     expect.hasAssertions();
 
     const user = getMockSession().user;
-    const searchedUsers = await friendCaller.searchUsers(user.name);
+    const { items: searchedUsers } = await friendCaller.searchUsers({ name: user.name });
 
     expect(searchedUsers).toStrictEqual([]);
   });

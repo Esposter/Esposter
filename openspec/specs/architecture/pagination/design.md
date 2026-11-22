@@ -2,7 +2,7 @@
 
 ## Context
 
-Every list the app shows — messages, rooms, members, direct messages, invites, bans, the moderation log and notes, posts, resources, notifications, search history, bookmarks, the scheduled tab and the sent list — pages the same way, over D1 and over the objects' own SQLite alike. One wire shape, one cursor and one way to declare an order serve all of them, so a list that changes while it is read neither skips nor repeats, and no client chooses an order no index serves. Friends, friend requests and blocked users are read whole and take no page input, since the add-friend, request and block checks answer from the complete list, and a page of it would answer them wrongly.
+Every list the app shows — messages, rooms, members, direct messages, invites, bans, the moderation log and notes, posts, resources, notifications, search history, bookmarks, the scheduled tab, the sent list and the user name search — pages the same way, over D1 and over the objects' own SQLite alike. One wire shape, one cursor and one way to declare an order serve all of them, so a list that changes while it is read neither skips nor repeats, and no client chooses an order no index serves. Friends, friend requests and blocked users are read whole and take no page input, since the add-friend, request and block checks answer from the complete list, and a page of it would answer them wrongly.
 
 ## Goals
 

@@ -113,7 +113,7 @@ describe("topicMatch", () => {
       (database) => createCallerFactory(bookmarkRouter)({ ...context, db: database }).readBookmarks(),
       (database) => createCallerFactory(postRouter)({ ...context, db: database }).readPosts(),
       (database) => createCallerFactory(roomRouter)({ ...context, db: database }).readRooms(),
-      (database) => createCallerFactory(friendRouter)({ ...context, db: database }).searchUsers("User"),
+      (database) => createCallerFactory(friendRouter)({ ...context, db: database }).searchUsers({ name: "User" }),
       (database) =>
         createCallerFactory(inviteRouter)({
           ...context,

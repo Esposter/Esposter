@@ -1,4 +1,4 @@
-import type { FriendInSocial, FriendInSocialWithRelations, PublicUser } from "@esposter/db-schema";
+import type { FriendInSocial, FriendInSocialWithRelations, Page, PublicUser } from "@esposter/db-schema";
 
 import { containsLike } from "#server/services/db/containsLike";
 import { assertIsNotSelf } from "#server/services/friend/assertIsNotSelf";
@@ -8,7 +8,8 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { router } from "#server/trpc/index";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
-import { searchUsersInputSchema } from "#shared/models/db/friend/SearchUsersInput";
+import { SEARCH_USERS_PAGE_SORT, searchUsersInputSchema } from "#shared/models/db/friend/SearchUsersInput";
+import { createPageSort, getPageOrderBy, getPageWhere, toPage } from "@esposter/db";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -17,8 +18,8 @@ import {
   getPublicUserColumns,
   usersInAuth,
 } from "@esposter/db-schema";
-import { getFriendshipId, MAX_READ_LIMIT, Operation } from "@esposter/shared";
-import { and, eq, isNull, ne } from "drizzle-orm";
+import { getFriendshipId, Operation } from "@esposter/shared";
+import { and, eq, isNull, ne, sql } from "drizzle-orm";
 
 export const friendRouter = router({
   deleteFriend: standardAuthedProcedure
@@ -58,7 +59,7 @@ export const friendRouter = router({
         "A name search, answered on each call rather than watched: a mutation names one user, never the users a search matches",
     })
     .input(searchUsersInputSchema)
-    .query<PublicUser[]>(({ ctx, input: name }) => {
+    .query<Page<PublicUser>>(async ({ ctx, input: { cursor, limit, name } }) => {
       const userId = ctx.user.id;
       const blockedSubquery = ctx.db
         .select({ id: blocksInSocial.blockedId })
@@ -71,11 +72,25 @@ export const friendRouter = router({
             .where(getLiveBlockWhere({ blockedId: userId })),
         )
         .as("blocked_users");
-      return ctx.db
+      // The name compares without case, as the room search's names do
+      const boundSort = createPageSort(
+        { id: usersInAuth.id, name: sql<string>`${usersInAuth.name} collate nocase` },
+        SEARCH_USERS_PAGE_SORT,
+      );
+      const rows = await ctx.db
         .select(getPublicUserColumns(usersInAuth))
         .from(usersInAuth)
         .leftJoin(blockedSubquery, eq(blockedSubquery.id, usersInAuth.id))
-        .where(and(containsLike(usersInAuth.name, name), ne(usersInAuth.id, userId), isNull(blockedSubquery.id)))
-        .limit(MAX_READ_LIMIT);
+        .where(
+          and(
+            containsLike(usersInAuth.name, name),
+            ne(usersInAuth.id, userId),
+            isNull(blockedSubquery.id),
+            getPageWhere(boundSort, cursor),
+          ),
+        )
+        .orderBy(...getPageOrderBy(boundSort, cursor))
+        .limit(limit + 1);
+      return toPage(rows, SEARCH_USERS_PAGE_SORT, cursor, limit);
     }),
 });

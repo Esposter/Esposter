@@ -258,7 +258,7 @@ describe(computeReadSet, () => {
     const userId = getMockSession().user.id;
     const context = await createMockContext();
     const { database, statements } = recordStatements(context.db);
-    await createCallerFactory(friendRouter)({ ...context, db: database }).searchUsers("User");
+    await createCallerFactory(friendRouter)({ ...context, db: database }).searchUsers({ name: "User" });
 
     // The blocks subquery's second operand names its column by name, not by column, so its join is not read here. Its
     // Scope equality is, and that equality already covers every block the join would name
