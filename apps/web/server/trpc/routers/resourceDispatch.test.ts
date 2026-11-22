@@ -6,6 +6,7 @@ import type { ResourcePublicationInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
+import { getMcpTools } from "#server/services/mcp/getMcpTools";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { resourceDispatchRouter } from "#server/trpc/routers/resourceDispatch";
@@ -60,6 +61,16 @@ describe("resourceDispatchRouter", () => {
 
   const readPublication = (resourceId: string) =>
     mockContext.db.query.resourcePublicationsInResource.findFirst({ where: { resourceId: { eq: resourceId } } });
+
+  test("the upload address is asked for as a read, so a client that lets reads through lets it through", () => {
+    expect.hasAssertions();
+
+    const uploadTool = getMcpTools(resourceDispatchRouter).find(
+      (tool) => tool.name === "generateUploadFilePresignedUrlEntities",
+    );
+
+    expect(uploadTool?.annotations).toStrictEqual({ readOnlyHint: true });
+  });
 
   test("a type that does not publish is refused in words", async () => {
     expect.hasAssertions();

@@ -1,70 +1,17 @@
-import type { Context } from "#server/trpc/context";
-import type { DeleteFileInput } from "#shared/models/db/resource/DeleteFileInput";
-import type { GenerateUploadFilePresignedUrlEntitiesInput } from "#shared/models/db/resource/GenerateUploadFilePresignedUrlEntitiesInput";
-import type { ResourceIdInput } from "#shared/models/db/resource/ResourceIdInput";
-import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
-import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 import type { ResourcePublicationInResource } from "@esposter/db-schema";
 
+import { getPublishCaller } from "#server/services/resource/getPublishCaller";
+import { fileCallers } from "#server/services/resource/resourceCallers";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
-import { createCallerFactory, router } from "#server/trpc/index";
+import { router } from "#server/trpc/index";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
-import { dashboardRouter } from "#server/trpc/routers/dashboard";
-import { emailRouter } from "#server/trpc/routers/email";
-import { noteRouter } from "#server/trpc/routers/note";
-import { surveyRouter } from "#server/trpc/routers/survey";
-import { webpageRouter } from "#server/trpc/routers/webpage";
-import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
 import { deleteFileInputSchema } from "#shared/models/db/resource/DeleteFileInput";
 import { generateUploadFilePresignedUrlEntitiesInputSchema } from "#shared/models/db/resource/GenerateUploadFilePresignedUrlEntitiesInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
-import { McpScope, ResourceType } from "@esposter/db-schema";
+import { McpScope } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-
-// The file procedures each type with file assets generates, called the same way
-interface FileCaller {
-  deleteFile: (input: DeleteFileInput) => Promise<void>;
-  generateUploadFilePresignedUrlEntities: (
-    input: GenerateUploadFilePresignedUrlEntitiesInput,
-  ) => Promise<ResourceFilePresignedUrlEntity[]>;
-}
-
-// The publish procedures each publishable type's own router generates, called in process as the browser's per-type
-// Router calls them, so the type's publish transform runs unchanged
-interface PublishCaller {
-  publishResource: (input: ResourceIdInput) => Promise<ResourcePublicationInResource>;
-  unpublishResource: (input: ResourceIdInput) => Promise<ResourcePublicationInResource | undefined>;
-}
-
-// The one record of every router the dispatch reaches, keyed by resource type; each router is named once, here
-const resourceCallers = {
-  [ResourceType.Dashboard]: (ctx: Context) => createCallerFactory(dashboardRouter)(ctx),
-  [ResourceType.Email]: (ctx: Context) => createCallerFactory(emailRouter)(ctx),
-  [ResourceType.Note]: (ctx: Context) => createCallerFactory(noteRouter)(ctx),
-  [ResourceType.Survey]: (ctx: Context) => createCallerFactory(surveyRouter)(ctx),
-  [ResourceType.Webpage]: (ctx: Context) => createCallerFactory(webpageRouter)(ctx),
-  [ResourceType.Whiteboard]: (ctx: Context) => createCallerFactory(whiteboardRouter)(ctx),
-};
-
-const publishCallers: Record<PublishableResourceType, (ctx: Context) => PublishCaller> = resourceCallers;
-
-// The one publish refusal: a type that does not publish is refused in words, and one that does is given its own router's
-// Caller, so the type's publish transform runs
-const getPublishCaller = (type: ResourceType, ctx: Context): PublishCaller => {
-  if (!checkHasCapability(type, "publishable"))
-    throw getInvalidOperationError(Operation.Update, type, "does not publish");
-  return publishCallers[type](ctx);
-};
-
-const fileCallers: Record<FileAssetsResourceType, (ctx: Context) => FileCaller> = {
-  [ResourceType.Email]: resourceCallers[ResourceType.Email],
-  [ResourceType.Note]: resourceCallers[ResourceType.Note],
-  [ResourceType.Survey]: resourceCallers[ResourceType.Survey],
-  [ResourceType.Webpage]: resourceCallers[ResourceType.Webpage],
-  [ResourceType.Whiteboard]: resourceCallers[ResourceType.Whiteboard],
-};
 
 // Typeless, so one tool serves a resource of any type: the type decides whether the operation exists at all, and a type
 // Without the capability is refused in words before the type's procedure is reached
@@ -97,7 +44,7 @@ export const resourceDispatchRouter = router({
       },
       staticReason: "The upload addresses of a file, which no reader shows until the file is saved",
     })
-    .mutation<ResourceFilePresignedUrlEntity[]>(({ ctx, input }) => {
+    .query<ResourceFilePresignedUrlEntity[]>(({ ctx, input }) => {
       const { type } = ctx.resource;
       if (!checkHasCapability(type, "fileAssets"))
         throw getInvalidOperationError(Operation.Read, type, "does not take files");
