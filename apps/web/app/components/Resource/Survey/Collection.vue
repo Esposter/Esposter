@@ -36,7 +36,6 @@ const save = () => {
       @focusout="save()"
     />
     <div flex flex-col gap-1>
-      <span text-sm text-muted>Response mode</span>
       <div w-64>
         <UiSelect
           v-model="editedSettings.responseMode"
