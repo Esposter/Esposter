@@ -1,9 +1,10 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 
-// An SVG drawn onto a canvas of the given size at twice the device's pixel density, and written out as a PNG by the canvas's own blob export.
-// The SVG must reference no remote resource, since an image drawn from it cannot load one
-export const rasterizeSvg = async (svg: Blob, width: number, height: number) => {
+// An SVG drawn onto a canvas of the given size, at twice the device's pixel density unless a scale is given, and
+// Written out as a PNG by the canvas's own blob export. The SVG must reference no remote resource, since an image
+// Drawn from it cannot load one
+export const rasterizeSvg = async (svg: Blob, width: number, height: number, scale = window.devicePixelRatio * 2) => {
   const svgUrl = URL.createObjectURL(svg);
   const image = new Image();
   const loadedImage = await withFinalizerAsync(
@@ -21,7 +22,6 @@ export const rasterizeSvg = async (svg: Blob, width: number, height: number) => 
       URL.revokeObjectURL(svgUrl);
     },
   );
-  const scale = window.devicePixelRatio * 2;
   const canvas = window.document.createElement("canvas");
   canvas.width = Math.ceil(width * scale);
   canvas.height = Math.ceil(height * scale);
