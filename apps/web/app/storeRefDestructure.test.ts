@@ -1,5 +1,5 @@
 import { glob, readFile } from "node:fs/promises";
-import { join, relative, sep } from "node:path";
+import { join, relative } from "node:path";
 import type { Expression, Node, ObjectBindingPattern, SourceFile } from "tsrs/ast";
 import type { Project, Type } from "tsrs/sync";
 
@@ -26,8 +26,6 @@ const toVueScanText = (text: string) => {
     .map((character, offset) => (isScript(offset) || character === "\n" ? character : " "))
     .join("");
 };
-
-const isFixture = (file: string) => file.startsWith("app/storeRefDestructure.fixture.");
 
 // A store's ref or computed destructured straight off the store is a snapshot: the binding keeps the value it had when
 // The destructure ran, and a later write to the store is not seen. `const { customEmojis } = roomEmojiStore` and
@@ -144,7 +142,7 @@ const { customEmojis } = useRoomEmojiStore();
     };
     const scanPattern = (sourceFile: SourceFile, pattern: ObjectBindingPattern, initializer: Expression) => {
       const initializerType = checker.getTypeAtLocation(initializer);
-      if (!initializerType || !isStoreType(initializerType)) return;
+      if (!isStoreType(initializerType)) return;
 
       // Pinia's `Store<Id, S, G, A>` keeps the raw member types the setup returned as its type arguments
       const [, stateType, getterType] = initializerType.getAliasTypeArguments();
@@ -161,7 +159,7 @@ const { customEmojis } = useRoomEmojiStore();
           report(sourceFile, element, "unresolved", propName);
           continue;
         }
-        if (checker.getTypeOfSymbolAtLocation(property, element)?.getCallSignatures().length) continue;
+        if (checker.getTypeOfSymbolAtLocation(property, element).getCallSignatures().length > 0) continue;
 
         const getter = getterType && checker.getPropertyOfType(getterType, propName);
         const state = stateType && checker.getPropertyOfType(stateType, propName);
@@ -193,9 +191,10 @@ const { customEmojis } = useRoomEmojiStore();
 
   let hits: StoreHit[] = [];
 
-  const api = new API({ cwd: WEB_ROOT });
+  let api: API | undefined;
 
   beforeAll(async () => {
+    api = new API({ cwd: WEB_ROOT });
     const { scriptPaths, vueScanEntries } = await readStoreSources();
     const fixtureVueScanPath = `${FIXTURE_VUE_PATH}${VUE_SCAN_SUFFIX}`;
     const project = openStoreProject(
@@ -211,13 +210,15 @@ const { customEmojis } = useRoomEmojiStore();
   });
 
   afterAll(() => {
-    api.close();
+    api?.close();
   });
 
   test("destructures no store ref or computed off a store as a snapshot", () => {
     expect.hasAssertions();
 
-    expect(hits.filter(({ file }) => !isFixture(file))).toStrictEqual([]);
+    const fixtureFiles = new Set([relative(WEB_ROOT, FIXTURE_PATH), relative(WEB_ROOT, FIXTURE_VUE_PATH)]);
+
+    expect(hits.filter(({ file }) => !fixtureFiles.has(file))).toStrictEqual([]);
   });
 
   test("reports a getter and a state ref destructured off a store, in a script and in a component, and passes a method, a plain value and storeToRefs", () => {

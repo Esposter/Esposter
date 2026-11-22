@@ -51,7 +51,7 @@ The upstream request-body XSS validator is out of scope, and it costs no point: 
 
 ## Dependencies — 8 / 10
 
-Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents drift; every version lives in the catalog, so the lockfile is the only place a number is worth reading. Vue, Vuetify 0, Phaser, Survey and `rolldown` are all on stable lines. `typecheck` runs the `tsrs` beta, and `typescript` is overridden to the tsgo-backed native bridge for the two classic-API readers left, ESLint's parser and one checker-driven test. Both are prerelease tooling, not production paths. Every hold on the Nuxt 5 line, a pnpm override or a patch of a module written for Nitro 2, is an `@TODO` naming the release that ends it.
+Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents drift; every version lives in the catalog, so the lockfile is the only place a number is worth reading. Vue, Vuetify 0, Phaser, Survey and `rolldown` are all on stable lines. `typecheck` runs the `tsrs` beta, and `typescript` is overridden to the tsgo-backed native bridge for the one classic-API reader left, ESLint's parser. Both are prerelease tooling, not production paths. Every hold on the Nuxt 5 line, a pnpm override or a patch of a module written for Nitro 2, is an `@TODO` naming the release that ends it.
 
 These **pre-release packages sit in production paths**:
 
