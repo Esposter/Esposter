@@ -8,8 +8,8 @@ export interface LayoutItem {
 }
 
 export const layoutItemSchema = z.object({
-  h: z.int().nonnegative(),
-  w: z.int().nonnegative(),
+  h: z.int().positive(),
+  w: z.int().positive(),
   x: z.int().nonnegative(),
   y: z.int().nonnegative(),
 }) satisfies z.ZodType<LayoutItem>;
