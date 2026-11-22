@@ -1,3 +1,5 @@
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+
 import { useDataStore } from "#src/store/message/data";
 import { useRoomStore } from "#src/store/message/room/index";
 import { RoutePath } from "@esposter/shared";
@@ -59,6 +61,21 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
     activeMessageId.value = messageId;
     startClearActiveMessageId();
   };
+  // The row last focused, by its room as well as its id: a message id is only unique within its room, and this store
+  // Outlives the list that holds one room's messages
+  const focusedMessage = shallowRef<Pick<ClientMessage, "id" | "roomId">>();
+  // The message whose row holds the list's one tab stop: the row last focused while the list still holds it, else the
+  // Newest message, which is where a reader tabbing into the list lands
+  const tabStopMessage = computed(() => {
+    const focused = focusedMessage.value;
+    return (
+      dataStore.items.find(({ id, roomId }) => id === focused?.id && roomId === focused?.roomId) ??
+      dataStore.items.at(0)
+    );
+  });
+  const setFocusedMessage = ({ id, roomId }: ClientMessage) => {
+    focusedMessage.value = { id, roomId };
+  };
   return {
     activeMessageId,
     bottomSentinel,
@@ -68,5 +85,7 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
     jumpToPresent,
     messageContainerElement,
     setActiveMessageId,
+    setFocusedMessage,
+    tabStopMessage,
   };
 });

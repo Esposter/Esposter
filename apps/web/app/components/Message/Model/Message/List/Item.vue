@@ -31,7 +31,8 @@ const { checkIsContextMenuOpen, getContextMenuGestureProps } = useContextMenu();
 const messageDialogStore = useMessageDialogStore();
 const { deletingMessageId } = storeToRefs(messageDialogStore);
 const scrollStore = useScrollStore();
-const { activeMessageId } = storeToRefs(scrollStore);
+const { activeMessageId, tabStopMessage } = storeToRefs(scrollStore);
+const { setFocusedMessage } = scrollStore;
 const isUpdateMode = computed({
   get: () => editingMessageId.value === message.id,
   set: (value) => {
@@ -56,15 +57,21 @@ const contextMenuProps = getContextMenuGestureProps((point) => {
   if (message.isLoading || isUpdateMode.value || isDeleting.value) return;
   contextMenuRequest.value = { ...point, messageId: message.id };
 });
-// The row is a tab stop, so focus mounts its options bar as a hover does. Focus that moves into the bar stays in the row,
-// which keeps the bar mounted for the keys that reach it
+// The list has one tab stop, so a row takes focus by Tab or the arrows, and focus mounts its options bar as a hover does.
+// Focus that moves into the bar stays in the row, which keeps the bar mounted for the keys that reach it
 const isFocused = ref(false);
+// Focus landing anywhere in the row makes it the stop, so the arrows that follow start from the row the reader is in
+const onFocusin = () => {
+  isFocused.value = true;
+  setFocusedMessage(message);
+};
 const onFocusout = (event: FocusEvent) => {
   isFocused.value =
     event.currentTarget instanceof Node &&
     event.relatedTarget instanceof Node &&
     event.currentTarget.contains(event.relatedTarget);
 };
+const isTabbable = computed(() => tabStopMessage.value?.id === message.id);
 const isActive = computed(
   () =>
     !isDisabled.value &&
@@ -84,13 +91,13 @@ const optionsMenuTop = computed(() => (isSameBatch.value ? -9 : -2));
     contents
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
-    @focusin="isFocused = true"
+    @focusin="onFocusin()"
     @focusout="onFocusout($event)"
   >
     <component
       :is="MessageComponentMap[message.type]"
       :id="message.id"
-      tabindex="0"
+      :tabindex="isTabbable ? 0 : -1"
       :mt="isSameBatch ? undefined : isCompact ? 2 : 4"
       :py="isCompact ? 0.5 : 1"
       :class="message.isLoading ? 'op-loading' : undefined"

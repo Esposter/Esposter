@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ClientMessage } from "#src/models/message/ClientMessage";
+
 import { useDataStore } from "#src/store/message/data";
 import { useRoomEmojiDialogStore } from "#src/store/message/room/emojiDialog";
 import { useRoomStore } from "#src/store/message/room/index";
@@ -16,7 +18,9 @@ const { isCreateOpen } = storeToRefs(roomEmojiDialogStore);
 const scrollStore = useScrollStore();
 // The sentinel and the container are the store's: whether the reader is looking at the present is one fact, read
 // By the jump-to-present affordance as much as by the anchoring below
-const { bottomSentinel, isPinnedToBottom, isScrolling, messageContainerElement } = storeToRefs(scrollStore);
+const { bottomSentinel, isPinnedToBottom, isScrolling, messageContainerElement, tabStopMessage } =
+  storeToRefs(scrollStore);
+const { setFocusedMessage } = scrollStore;
 const setBottomSentinel = (element: unknown) => {
   bottomSentinel.value = element instanceof HTMLDivElement ? element : null;
 };
@@ -49,6 +53,29 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
     });
   });
 };
+// The list is column-reversed and its items run newest first, so Up reads an older message and Down a newer one. Home
+// Goes to the oldest loaded message and End to the newest, the ends a reader sees at the top and at the bottom
+const onMessageListKeydown = useGridKeyboard<ClientMessage>({
+  getCellSelector: ({ id }) => `[id="${id}"]`,
+  getFocusedCell: () => tabStopMessage.value,
+  getNextCell: (event, { id }) => {
+    const index = items.value.findIndex((message) => message.id === id);
+    switch (event.key) {
+      case "ArrowDown":
+        return index > 0 ? items.value[index - 1] : undefined;
+      case "ArrowUp":
+        return items.value[index + 1];
+      case "End":
+        return items.value.at(0);
+      case "Home":
+        return items.value.at(-1);
+      default:
+        return undefined;
+    }
+  },
+  root: messageContainerElement,
+  setFocusedCell: setFocusedMessage,
+});
 </script>
 
 <template>
@@ -70,6 +97,7 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
     of-x-hidden
     of-y-auto
     ui-body
+    @keydown="onMessageListKeydown($event)"
   >
     <div :ref="setBottomSentinel" />
     <template v-if="isPending">

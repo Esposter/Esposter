@@ -45,7 +45,7 @@ describe("messageModelMessageListItemContainer", () => {
     const clientMessage = createOptimisticMessage({ message: "message", roomId, type: MessageType.Message }, v7());
     const component = await mountSuspended(MessageModelMessageListItemContainer, { props: { message: clientMessage } });
 
-    await component.get('[tabindex="0"]').trigger("focusin");
+    await component.get(`[id="${clientMessage.id}"]`).trigger("focusin");
     await flushPromises();
 
     expect(component.findComponent(MessageModelMessageOptionsMenu).exists()).toBe(true);

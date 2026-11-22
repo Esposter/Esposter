@@ -37,6 +37,24 @@ Hovering a message SHALL reveal a single action bar with quick reactions, an emo
 - **WHEN** the reader moves the pointer from the message onto the bar
 - **THEN** the bar stays visible
 
+### Requirement: The message list is one tab stop, and the arrow keys walk its rows
+
+The message list SHALL be one tab stop: Tab lands on the newest message, the arrow keys move the stop between rows, and Home and End go to the oldest and the newest loaded message. Focus on a row SHALL show its action bar as a hover does, and Tab SHALL walk that bar's controls before it leaves the list.
+
+#### Scenario: Arrow keys move the one tab stop
+
+- **GIVEN** the reader has tabbed onto the list
+- **WHEN** the reader presses Up, then Down
+- **THEN** focus moves to the next older message, then back to the newer one
+- **AND** only the focused row is a tab stop
+
+#### Scenario: Focusing a row shows its action bar
+
+- **GIVEN** a message row holds the tab stop
+- **WHEN** the row takes focus
+- **THEN** its action bar appears
+- **AND** Tab moves from the row to the bar's controls
+
 ### Requirement: Right-clicking a message opens its action menu at that point
 
 A right-click, a long press or the menu key on a message SHALL open the message's action menu at that point, with the same actions as its More menu.
