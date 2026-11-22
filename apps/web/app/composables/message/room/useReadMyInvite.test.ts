@@ -55,11 +55,11 @@ describe(useReadMyInvite, () => {
     const { arrive } = overlayStore;
     arrive(inviteTable, heldInvite);
     const inviteStore = useInviteStore();
-    const { invites } = storeToRefs(inviteStore);
+    const { inviteMap } = storeToRefs(inviteStore);
     await mountRead();
     await flushPromises();
 
-    expect(invites.value.get(roomId)).toBeUndefined();
+    expect(inviteMap.value.get(roomId)).toBeUndefined();
   });
 
   // Absence never removes: a read that answers no link says nothing about the one held
@@ -71,10 +71,10 @@ describe(useReadMyInvite, () => {
     const { arrive } = overlayStore;
     arrive(inviteTable, heldInvite);
     const inviteStore = useInviteStore();
-    const { invites } = storeToRefs(inviteStore);
+    const { inviteMap } = storeToRefs(inviteStore);
     await mountRead();
     await flushPromises();
 
-    expect(invites.value.get(roomId)).toStrictEqual(heldInvite);
+    expect(inviteMap.value.get(roomId)).toStrictEqual(heldInvite);
   });
 });

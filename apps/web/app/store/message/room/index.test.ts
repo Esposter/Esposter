@@ -12,12 +12,20 @@ import { setRouteId } from "#src/util/router/setRouteId.test";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useRoomStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const first = createRoom("name");
   const second = createRoom("name");
+  const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   // The cog on a room row opens settings for that room without taking the reader there, so every room-scoped
   // Slice a panel reads has to follow the dialog rather than the route — reading the route's room instead is what
@@ -49,7 +57,7 @@ describe(useRoomStore, () => {
     expect.hasAssertions();
 
     trpcMsw.room.deleteRoom.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     const roomStore = useRoomStore();
     const { deleteRoom } = roomStore;
@@ -67,7 +75,7 @@ describe(useRoomStore, () => {
     const session = { user: { id: v7() } };
     useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
     trpcMsw.room.leaveRoom.mutation(() =>
-      createUserToRoom({ deletedAt: new Date(), roomId: first.id, userId: session.user.id, version: 1 }),
+      createUserToRoom({ deletedAt: new Date(0), roomId: first.id, userId: session.user.id, version: 1 }),
     );
     const roomStore = useRoomStore();
     const { leaveRoom } = roomStore;
@@ -84,7 +92,7 @@ describe(useRoomStore, () => {
     expect.hasAssertions();
 
     trpcMsw.room.leaveRoom.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     const roomStore = useRoomStore();
     const { leaveRoom } = roomStore;
@@ -107,14 +115,14 @@ describe(useRoomStore, () => {
     const session = { user: { id: v7() } };
     useSession.mockImplementation((fetcher) => (fetcher ? { data: ref(session) } : ref({ data: session })));
     const liveMembership = createUserToRoom({ roomId: first.id, userId: session.user.id });
-    const { promise: isLateReadHeld, resolve: onLateReadHeld } = Promise.withResolvers<true>();
-    const { promise: isTombstoneArrived, resolve: onTombstoneArrived } = Promise.withResolvers<true>();
+    const { promise: lateReadHeld, resolve: onLateReadHeld } = Promise.withResolvers<true>();
+    const { promise: tombstoneArrived, resolve: onTombstoneArrived } = Promise.withResolvers<true>();
     let readCount = 0;
     trpcMsw.room.readRooms.query(async () => {
       readCount++;
       if (readCount > 1) {
         onLateReadHeld(true);
-        await isTombstoneArrived;
+        await tombstoneArrived;
       }
       return { items: [{ ...first, displayName: first.name }], nextCursor: "" };
     });
@@ -129,11 +137,11 @@ describe(useRoomStore, () => {
     expect(rooms.value.map(({ id }) => id)).toStrictEqual([first.id]);
 
     const lateRead = readRooms();
-    await isLateReadHeld;
+    await lateReadHeld;
     const userToRoomStore = useUserToRoomStore();
     const { arriveUserToRooms } = userToRoomStore;
     arriveUserToRooms([
-      createUserToRoom({ deletedAt: new Date(), roomId: first.id, userId: session.user.id, version: 1 }),
+      createUserToRoom({ deletedAt: new Date(0), roomId: first.id, userId: session.user.id, version: 1 }),
     ]);
     onTombstoneArrived(true);
     await lateRead;

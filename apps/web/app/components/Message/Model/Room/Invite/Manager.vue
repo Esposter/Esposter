@@ -24,12 +24,12 @@ const { room } = defineProps<Props>();
 const runtimeConfig = useRuntimeConfig();
 const inviteStore = useInviteStore();
 const { checkIsCreateInvitePending, createInvite } = inviteStore;
-const { invites } = storeToRefs(inviteStore);
+const { inviteMap } = storeToRefs(inviteStore);
 const roleStore = useRoleStore();
 const { checkHasMyPermission } = roleStore;
 // Display reads the shared per-room map so a link regenerated in one mount updates every other one open on the
 // Same room
-const invite = computed(() => invites.value.get(room.id));
+const invite = computed(() => inviteMap.value.get(room.id));
 const expireAfterMinutes = ref<CreateInviteInput["expireAfterMinutes"]>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
 const maxUses = ref<CreateInviteInput["maxUses"]>(0);
 const expireAfterItems = getNumberSelectItems(InviteExpireAfterSelectItems, UiIconMeaning.Timer);

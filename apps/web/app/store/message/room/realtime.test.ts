@@ -45,7 +45,9 @@ const createTransformer = () => ({
 
 describe(useRealtimeStore, () => {
   const { trpcMsw } = setupMswTrpc();
+  const authToken = "authToken";
   const imagePath = "imagePath";
+  const rejoinToken = "rejoinToken";
   const userSettings: UserSettingsInMessage = {
     autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
     createdAt: new Date(0),
@@ -104,7 +106,7 @@ describe(useRealtimeStore, () => {
     spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect, setCamera, setVirtualBackground } = realtimeStore;
-    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await connect(authToken, vi.fn<() => Promise<void>>(), false);
     await setCamera(true);
     setVirtualBackground(imagePath);
     await readStarted.promise;
@@ -138,7 +140,7 @@ describe(useRealtimeStore, () => {
     spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect, setCamera, setVirtualBackground } = realtimeStore;
-    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await connect(authToken, vi.fn<() => Promise<void>>(), false);
     await setCamera(true);
     setVirtualBackground("first");
     await readStarted.promise;
@@ -165,7 +167,7 @@ describe(useRealtimeStore, () => {
     spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect, setCamera, setVirtualBackground } = realtimeStore;
-    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await connect(authToken, vi.fn<() => Promise<void>>(), false);
     await setCamera(true);
     setVirtualBackground(imagePath);
     await waitForSynchronizedFunctions();
@@ -196,13 +198,45 @@ describe(useRealtimeStore, () => {
     const realtimeStore = useRealtimeStore();
     const { connect, setCamera, setVirtualBackground } = realtimeStore;
     await readUserSettings();
-    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await connect(authToken, vi.fn<() => Promise<void>>(), false);
     await setCamera(true);
     setVirtualBackground(imagePath);
     await waitForSynchronizedFunctions();
 
     expect(alerts.value).toHaveLength(1);
     expect(saveUserSettings).not.toHaveBeenCalled();
+  });
+
+  // A refused pick takes the background off the video, so a camera starting again applies the saved one rather than
+  // Trusting the video still composites it
+  test("a camera starting again re-applies the saved background once a refused pick has taken it off the video", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(RealtimeKitVideoBackgroundTransformer, "isSupported").mockReturnValue(true);
+    vi.spyOn(RealtimeKitVideoBackgroundTransformer, "init").mockResolvedValue(
+      createTransformer() as unknown as RealtimeKitVideoBackgroundTransformer,
+    );
+    const callBackgroundStore = useCallBackgroundStore();
+    vi.spyOn(callBackgroundStore, "readVirtualBackgroundImagePath").mockResolvedValue(imagePath);
+    trpcMsw.user.readUserSettings.query(() => ({ ...userSettings, virtualBackground: imagePath }));
+    const { meeting } = createMeeting();
+    spyOnMeetingInit(meeting);
+    const userSettingsStore = useUserSettingsStore();
+    const { readUserSettings } = userSettingsStore;
+    const realtimeStore = useRealtimeStore();
+    const { connect, setCamera, setVirtualBackground } = realtimeStore;
+    await readUserSettings();
+    await connect(authToken, vi.fn<() => Promise<void>>(), false);
+    await setCamera(true);
+    await waitForSynchronizedFunctions();
+    meeting.self.addVideoMiddleware.mockRejectedValueOnce(new Error(" "));
+    setVirtualBackground(imagePath);
+    await waitForSynchronizedFunctions();
+    await setCamera(false);
+    await setCamera(true);
+    await waitForSynchronizedFunctions();
+
+    expect(meeting.self.addVideoMiddleware).toHaveBeenCalledTimes(3);
   });
 
   // Two picks committed close together apply one after the other: the second pick's remove waits for the first's add,
@@ -222,7 +256,7 @@ describe(useRealtimeStore, () => {
     spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect, setCamera, setVirtualBackground } = realtimeStore;
-    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await connect(authToken, vi.fn<() => Promise<void>>(), false);
     await setCamera(true);
     setVirtualBackground("first");
     await flushPromises();
@@ -251,7 +285,7 @@ describe(useRealtimeStore, () => {
     const realtimeStore = useRealtimeStore();
     const { connect, startAudio } = realtimeStore;
     const { isAudioPlaybackBlocked } = storeToRefs(realtimeStore);
-    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await connect(authToken, vi.fn<() => Promise<void>>(), false);
     const participant = createParticipant("identity");
     joinedEvents.emit("participantJoined", participant);
 
@@ -275,7 +309,7 @@ describe(useRealtimeStore, () => {
     spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect } = realtimeStore;
-    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await connect(authToken, vi.fn<() => Promise<void>>(), false);
     joinedEvents.emit("participantJoined", createParticipant("identity"));
 
     expect(document.querySelector("audio")?.muted).toBe(true);
@@ -289,7 +323,7 @@ describe(useRealtimeStore, () => {
     spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect } = realtimeStore;
-    await connect("authToken", vi.fn<() => Promise<void>>(), false);
+    await connect(authToken, vi.fn<() => Promise<void>>(), false);
     const participant = createParticipant("identity");
     joinedEvents.emit("participantJoined", participant);
 
@@ -309,9 +343,9 @@ describe(useRealtimeStore, () => {
       const init = spyOnMeetingInit(meeting);
       const realtimeStore = useRealtimeStore();
       const { connect } = realtimeStore;
-      await connect("authToken", vi.fn<() => Promise<void>>(), isMicrophoneEnabled);
+      await connect(authToken, vi.fn<() => Promise<void>>(), isMicrophoneEnabled);
 
-      expect(init.mock.lastCall?.[0].authToken).toBe("authToken");
+      expect(init.mock.lastCall?.[0].authToken).toBe(authToken);
       expect(meeting.self.enableAudio).toHaveBeenCalledTimes(isMicrophoneEnabled ? 1 : 0);
     },
   );
@@ -330,14 +364,14 @@ describe(useRealtimeStore, () => {
     const realtimeStore = useRealtimeStore();
     const { connect, rejoin } = realtimeStore;
     const disconnectHandler = vi.fn<() => Promise<void>>();
-    await connect("authToken", disconnectHandler, false);
+    await connect(authToken, disconnectHandler, false);
 
     first.meeting.self.emit("roomLeft", { state: "kicked" });
-    rejoin("rejoinToken", false);
+    rejoin(rejoinToken, false);
     await waitForSynchronizedFunctions();
 
     expect(disconnectHandler).not.toHaveBeenCalled();
-    expect(init.mock.lastCall?.[0].authToken).toBe("rejoinToken");
+    expect(init.mock.lastCall?.[0].authToken).toBe(rejoinToken);
   });
 
   test("a lost connection still ends the call", async () => {
@@ -348,7 +382,7 @@ describe(useRealtimeStore, () => {
     const realtimeStore = useRealtimeStore();
     const { connect } = realtimeStore;
     const disconnectHandler = vi.fn<() => Promise<void>>();
-    await connect("authToken", disconnectHandler, false);
+    await connect(authToken, disconnectHandler, false);
 
     meeting.self.emit("roomLeft", { state: "disconnected" });
     await waitForSynchronizedFunctions();
@@ -370,11 +404,11 @@ describe(useRealtimeStore, () => {
         .mockResolvedValueOnce(second.meeting as unknown as RealtimeKitClient);
       const realtimeStore = useRealtimeStore();
       const { connect, rejoin, setCamera } = realtimeStore;
-      await connect("authToken", vi.fn<() => Promise<void>>(), true);
+      await connect(authToken, vi.fn<() => Promise<void>>(), true);
       Object.assign(first.meeting.self, { audioEnabled: true });
       await setCamera(true);
 
-      rejoin("rejoinToken", canPublishMicrophone);
+      rejoin(rejoinToken, canPublishMicrophone);
       await waitForSynchronizedFunctions();
 
       expect(first.meeting.leave).toHaveBeenCalledExactlyOnceWith();

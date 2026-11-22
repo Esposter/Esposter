@@ -17,8 +17,8 @@ describe(useRoomInviteStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   const unreadRoomId = v7();
-  const user = createUser({ id: "userId" });
-  const otherUser = createUser({ id: "otherUserId" });
+  const user = createUser({ id: v7() });
+  const otherUser = createUser({ id: v7() });
   const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
   const createRoomInvite = (id: string, creator = user): InviteInMessageWithCreator => ({
     createdAt: new Date(0),

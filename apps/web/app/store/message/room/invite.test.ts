@@ -15,7 +15,7 @@ import { describe, expect, test } from "vitest";
 
 describe(useInviteStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const creator = createUser({ name: "creator" });
+  const creator = createUser({ name: "name" });
   const roomId = v7();
   setupSession(creator.id);
   const createInviteRow = (overrides: Partial<InviteInMessage>): InviteInMessage => ({
@@ -45,17 +45,17 @@ describe(useInviteStore, () => {
     });
     const inviteStore = useInviteStore();
     const { checkIsCreateInvitePending, createInvite } = inviteStore;
-    const { invites } = storeToRefs(inviteStore);
+    const { inviteMap } = storeToRefs(inviteStore);
     const inviteCreation = createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
     await flushPromises();
 
-    expect(invites.value.get(roomId)).toBeUndefined();
+    expect(inviteMap.value.get(roomId)).toBeUndefined();
     expect(checkIsCreateInvitePending(roomId)).toBe(true);
 
     resolve();
     await inviteCreation;
 
-    expect(invites.value.get(roomId)).toStrictEqual({ ...invite, user: creator });
+    expect(inviteMap.value.get(roomId)).toStrictEqual({ ...invite, user: creator });
     expect(checkIsCreateInvitePending(roomId)).toBe(false);
   });
 
@@ -74,10 +74,10 @@ describe(useInviteStore, () => {
     arrive(inviteTable, invite);
     const inviteStore = useInviteStore();
     const { createInvite } = inviteStore;
-    const { invites } = storeToRefs(inviteStore);
+    const { inviteMap } = storeToRefs(inviteStore);
     await createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
 
-    expect(invites.value.get(roomId)).toStrictEqual({ ...freshInvite, user: creator });
+    expect(inviteMap.value.get(roomId)).toStrictEqual({ ...freshInvite, user: creator });
   });
 
   test("hands out the link the member holds without minting one", async () => {

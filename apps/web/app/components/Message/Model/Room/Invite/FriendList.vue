@@ -22,9 +22,9 @@ const directMessageStore = useDirectMessageStore();
 const { directMessages } = storeToRefs(directMessageStore);
 const { checkIsGroupDirectMessage, getDirectMessageParticipants } = directMessageStore;
 const inviteStore = useInviteStore();
-const { invites } = storeToRefs(inviteStore);
+const { inviteMap } = storeToRefs(inviteStore);
 // A paused room has no usable link to send, and the invite the reader holds is the one the send carries
-const isInviteSendable = computed(() => Boolean(invites.value.get(room.id)) && !room.isInvitePaused);
+const isInviteSendable = computed(() => Boolean(inviteMap.value.get(room.id)) && !room.isInvitePaused);
 const searchQuery = ref("");
 const recipients = computed(() =>
   getInviteRecipients(friends.value, directMessages.value, checkIsGroupDirectMessage, getDirectMessageParticipants),

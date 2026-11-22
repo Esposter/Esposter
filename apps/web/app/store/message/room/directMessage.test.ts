@@ -24,7 +24,7 @@ import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(
   import("#src/services/realtime/openRealtimeSocket"),
@@ -57,13 +57,21 @@ describe(useDirectMessageStore, () => {
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
   const third = createUser({ name: "third" });
+  const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   // A removal is awaited, and the membership its answer tombstones takes the participant off the list
   test("takes a participant off the list when the removal's answer tombstones their membership", async () => {
     expect.hasAssertions();
 
     trpcMsw.room.directMessage.deleteDirectMessageParticipant.mutation(() => ({
-      deletedAt: new Date(),
+      deletedAt: new Date(0),
       displayName: second.name,
       roomId,
       userId: second.id,
@@ -86,7 +94,7 @@ describe(useDirectMessageStore, () => {
     expect.hasAssertions();
 
     trpcMsw.room.directMessage.deleteDirectMessageParticipant.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
@@ -107,12 +115,12 @@ describe(useDirectMessageStore, () => {
     expect.hasAssertions();
 
     const directMessage = createRoom("", RoomType.DirectMessage);
-    const { promise: isLateReadAnswered, resolve: onLateReadAnswered } = Promise.withResolvers<true>();
+    const { promise: lateReadAnswered, resolve: onLateReadAnswered } = Promise.withResolvers<true>();
     let directMessageReads = 0;
     trpcMsw.room.directMessage.readDirectMessages.query(async () => {
       directMessageReads++;
       // The first read holds both participants. The second is the late one, held until the removal has landed
-      if (directMessageReads > 1) await isLateReadAnswered;
+      if (directMessageReads > 1) await lateReadAnswered;
       return {
         items: [directMessage],
         nextCursor: "",
@@ -136,7 +144,7 @@ describe(useDirectMessageStore, () => {
     onUserFrame?.(
       JSON.stringify({
         data: {
-          deletedAt: new Date(),
+          deletedAt: new Date(0),
           displayName: second.name,
           roomId: directMessage.id,
           userId: second.id,
@@ -162,7 +170,7 @@ describe(useDirectMessageStore, () => {
     const session = mockReaderSession();
     const directMessage = createRoom("", RoomType.DirectMessage);
     trpcMsw.room.directMessage.hideDirectMessage.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      throw trpcError;
     });
     const directMessageStore = useDirectMessageStore();
     const { directMessages } = storeToRefs(directMessageStore);
@@ -185,15 +193,15 @@ describe(useDirectMessageStore, () => {
     const session = mockReaderSession();
     const firstDirectMessage = createRoom("", RoomType.DirectMessage);
     const secondDirectMessage = createRoom("", RoomType.DirectMessage);
-    const { promise: isSecondHidden, resolve: onSecondHidden } = Promise.withResolvers<true>();
-    const { promise: isFirstCalled, resolve: onFirstCalled } = Promise.withResolvers<true>();
+    const { promise: secondHidden, resolve: onSecondHidden } = Promise.withResolvers<true>();
+    const { promise: firstCalled, resolve: onFirstCalled } = Promise.withResolvers<true>();
     trpcMsw.room.directMessage.hideDirectMessage.mutation(async ({ input }) => {
       if (input !== firstDirectMessage.id)
         return createUserToRoom({ isHidden: true, roomId: input, userId: session.user.id, version: 1 });
 
       onFirstCalled(true);
-      await isSecondHidden;
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      await secondHidden;
+      throw trpcError;
     });
     const directMessageStore = useDirectMessageStore();
     const { directMessages } = storeToRefs(directMessageStore);
@@ -206,7 +214,7 @@ describe(useDirectMessageStore, () => {
       createUserToRoom({ roomId: secondDirectMessage.id, userId: session.user.id }),
     ]);
     hideDirectMessage(firstDirectMessage.id);
-    await isFirstCalled;
+    await firstCalled;
     hideDirectMessage(secondDirectMessage.id);
     await flushPromises();
     onSecondHidden(true);
@@ -226,7 +234,7 @@ describe(useDirectMessageStore, () => {
       createUserToRoom({ isHidden: true, roomId: input, userId: session.user.id, version: 1 }),
     );
     const router = useRouter();
-    const { promise: isInLanding, resolve: onInLanding } = Promise.withResolvers<true>();
+    const { promise: inLanding, resolve: onInLanding } = Promise.withResolvers<true>();
     const removeLandingListener = router.afterEach((to) => {
       if (getRouteParam(to.params, "id") !== landingDirectMessage.id) return;
       removeLandingListener();
@@ -245,7 +253,7 @@ describe(useDirectMessageStore, () => {
     await flushPromises();
     setRouteId(hiddenDirectMessage.id);
     hideDirectMessage(hiddenDirectMessage.id);
-    await isInLanding;
+    await inLanding;
 
     expect(currentDirectMessageId.value).toBe(landingDirectMessage.id);
   });
@@ -259,14 +267,14 @@ describe(useDirectMessageStore, () => {
     const leftDirectMessage = createRoom("", RoomType.DirectMessage);
     const landingDirectMessage = createRoom("", RoomType.DirectMessage);
     trpcMsw.room.directMessage.deleteDirectMessageParticipant.mutation(({ input }) => ({
-      deletedAt: new Date(),
-      displayName: session.user.id,
+      deletedAt: new Date(0),
+      displayName: "displayName",
       roomId: input.roomId,
       userId: input.userId,
       version: 1,
     }));
     const router = useRouter();
-    const { promise: isInLanding, resolve: onInLanding } = Promise.withResolvers<true>();
+    const { promise: inLanding, resolve: onInLanding } = Promise.withResolvers<true>();
     const removeLandingListener = router.afterEach((to) => {
       if (getRouteParam(to.params, "id") !== landingDirectMessage.id) return;
       removeLandingListener();
@@ -285,7 +293,7 @@ describe(useDirectMessageStore, () => {
     await flushPromises();
     setRouteId(leftDirectMessage.id);
     await leaveDirectMessage(leftDirectMessage.id);
-    await isInLanding;
+    await inLanding;
 
     expect(currentDirectMessageId.value).toBe(landingDirectMessage.id);
   });
@@ -299,7 +307,7 @@ describe(useDirectMessageStore, () => {
     const sender = createUser({ name: "sender" });
     useSession.mockReturnValue(ref({ data: { user: { id: sender.id } } }));
     const friendDirectMessage = createRoom("", RoomType.DirectMessage);
-    const inviteLink = "https://esposter.test/messages/invite/abcd1234";
+    const inviteLink = "";
     const sentMessages: unknown[] = [];
     trpcMsw.room.directMessage.createDirectMessage.mutation(() => friendDirectMessage);
     trpcMsw.userToRoom.readMyUsersToRooms.query(() => [

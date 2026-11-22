@@ -1,3 +1,5 @@
+import type { VideoChange } from "#src/models/message/room/realtime/VideoChange";
+import type { VirtualBackgroundPick } from "#src/models/message/room/realtime/VirtualBackgroundPick";
 import type { RTKParticipant, RTKSelf } from "@cloudflare/realtimekit";
 import type { Promisable } from "type-fest";
 
@@ -13,7 +15,9 @@ import { getAudioCaptureDefaults } from "#src/services/message/room/call/getAudi
 import { VoiceDeviceKinds, VoiceDeviceSettingsKeyMap } from "#src/services/message/room/call/VoiceDeviceSettingsKeyMap";
 import { POOR_CONNECTION_SCORE } from "#src/services/message/room/realtime/constants";
 import { getLocalDevices } from "#src/services/message/room/realtime/getLocalDevices";
+import { getRemoteAudioKey } from "#src/services/message/room/realtime/getRemoteAudioKey";
 import { rasterizeSvg } from "#src/services/message/room/realtime/rasterizeSvg";
+import { releaseVirtualBackgroundPick } from "#src/services/message/room/realtime/releaseVirtualBackgroundPick";
 import { SocketConnectionStateMap } from "#src/services/message/room/realtime/SocketConnectionStateMap";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useMediaStore } from "#src/store/message/room/call/media";
@@ -29,28 +33,7 @@ import {
   NoiseSuppressionMode,
   VoiceInputMode,
 } from "@esposter/db-schema";
-import { getResultAsync, getSynchronizedFunction, ID_SEPARATOR, noop, withFinalizerAsync } from "@esposter/shared";
-
-const getRemoteAudioKey = (identity: string, source: RemoteAudioSource) => `${identity}${ID_SEPARATOR}${source}`;
-
-// How a pick leaves the camera's video: with the middleware it composites, or with none, which clears the one in place
-interface VideoChange {
-  middleware?: VideoMiddleware;
-}
-type VideoMiddleware = Awaited<
-  ReturnType<RealtimeKitVideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>
->;
-// A pick as its pipeline resolved it. A pick with no `videoChange` leaves the video as it is
-interface VirtualBackgroundPick {
-  // Set only when the run built the transformer itself, so the commit keeps it and an uncommitted run releases it
-  createdTransformer?: RealtimeKitVideoBackgroundTransformer | undefined;
-  meeting: RealtimeKitClient;
-  videoChange?: undefined | VideoChange;
-}
-// What a run built and did not keep: its transformer, released as the run scope hands it back
-const releaseVirtualBackgroundPick = (pick: undefined | VirtualBackgroundPick) => {
-  pick?.createdTransformer?.destruct();
-};
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useRealtimeStore = defineStore("message/room/realtime", () => {
   let activeMeeting: RealtimeKitClient | undefined;
@@ -70,18 +53,18 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   // Persisted (localStorage) device selections are the single source of truth, shared with the settings
   // Panel, mic test, and pre-join preview - so the call captures the device the user actually picked.
   const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
-  const remoteAudioElements = new Map<string, { element: HTMLAudioElement; identity: string }>();
+  const remoteAudioElementMap = new Map<string, { element: HTMLAudioElement; identity: string }>();
   const connectionQuality = ref<ConnectionQuality>(ConnectionQuality.Unknown);
   const connectionState = ref<ConnectionState>(ConnectionState.Disconnected);
   // The browser refused to play the call's sound without a gesture of the reader's own: it stays silent until they
   // Press the notice's button, whose click is the gesture play() needs
   const isAudioPlaybackBlocked = ref(false);
   const clearRemoteAudio = () => {
-    for (const { element } of remoteAudioElements.values()) element.remove();
-    remoteAudioElements.clear();
+    for (const { element } of remoteAudioElementMap.values()) element.remove();
+    remoteAudioElementMap.clear();
   };
   const setRemoteAudioMuted = (isDeafened: boolean) => {
-    for (const { element } of remoteAudioElements.values()) element.muted = isDeafened;
+    for (const { element } of remoteAudioElementMap.values()) element.muted = isDeafened;
   };
   // Master output volume × per-participant multiplier — HTMLMediaElement.volume caps at 1,
   // So combined values above 100% clamp to full.
@@ -93,7 +76,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     element.volume = Math.min(1, (speakerVolumePercentage / 100) * (participantVolumePercentage / 100));
   };
   const applySpeakerVolume = () => {
-    for (const { element, identity } of remoteAudioElements.values()) applyRemoteAudioVolume(element, identity);
+    for (const { element, identity } of remoteAudioElementMap.values()) applyRemoteAudioVolume(element, identity);
   };
   const playRemoteAudio = (element: HTMLAudioElement) =>
     getResultAsync(async () => {
@@ -110,8 +93,8 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   // A speaker picked mid-call reaches the elements already on the page through the SDK, so an element attached later
   // Takes the picked output here rather than the system default
   const setRemoteAudio = (key: string, identity: string, track: MediaStreamTrack | undefined) => {
-    remoteAudioElements.get(key)?.element.remove();
-    remoteAudioElements.delete(key);
+    remoteAudioElementMap.get(key)?.element.remove();
+    remoteAudioElementMap.delete(key);
     if (!track) return;
     const element = window.document.createElement("audio");
     element.autoplay = true;
@@ -120,7 +103,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     applyRemoteAudioVolume(element, identity);
     const outputDeviceId = voiceDeviceSettingsStore.outputDeviceId;
     if (outputDeviceId) setSinkIdInBackground(element, outputDeviceId);
-    remoteAudioElements.set(key, { element, identity });
+    remoteAudioElementMap.set(key, { element, identity });
     window.document.body.append(element);
     playRemoteAudioInBackground(element);
   };
@@ -249,7 +232,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   // Plays every remote element. The press that calls this is the gesture the browser needs, and a failure reports
   // Through the notice rather than as an error
   const startAudio = () =>
-    Promise.all(Array.from(remoteAudioElements.values(), ({ element }) => playRemoteAudio(element)));
+    Promise.all(Array.from(remoteAudioElementMap.values(), ({ element }) => playRemoteAudio(element)));
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeMeeting) return;
     if (!isCameraEnabled) {
@@ -283,8 +266,11 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   ) =>
     getResultAsync(async () => {
       await meeting.self.removeAllVideoMiddlewares();
-      if (middleware) await meeting.self.addVideoMiddleware(middleware);
-      hasVirtualBackground = Boolean(middleware);
+      hasVirtualBackground = false;
+      if (middleware) {
+        await meeting.self.addVideoMiddleware(middleware);
+        hasVirtualBackground = true;
+      }
       setLocalVideo(meeting.self);
       onApplied();
     }).match(noop, createErrorAlert);
@@ -452,19 +438,10 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
       if (isCameraEnabled) await setCamera(true);
       setLocalScreenShare(false, {});
     }).match(noop, console.error);
-  let rejoinQueue: Promise<void> = Promise.resolve();
-  const rejoin = getSynchronizedFunction(async (authToken: string, canPublishMicrophone: boolean) => {
-    const { promise: settled, resolve: settle } = Promise.withResolvers<void>();
-    const previousRejoin = rejoinQueue;
-    rejoinQueue = settled;
-    await previousRejoin;
-    await withFinalizerAsync(
-      () => rejoinMeeting(authToken, canPublishMicrophone),
-      () => {
-        settle();
-      },
-    );
-  });
+  const { executeBackgroundMutation } = useMutation();
+  const rejoin = (authToken: string, canPublishMicrophone: boolean) => {
+    executeBackgroundMutation(() => rejoinMeeting(authToken, canPublishMicrophone), { key: "rejoin" });
+  };
   watch(
     () => userSettingsStore.userSettings?.speakerVolumePercentage,
     () => {

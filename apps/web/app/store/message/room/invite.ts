@@ -25,7 +25,7 @@ export const useInviteStore = defineStore("message/room/invite", () => {
   const inviteRows = view(inviteTable);
   // The reader's own link of each room. The server keeps one live link per member per room, so a room with no live link
   // Holds no entry, and `has` answers only for a link that exists
-  const invites = computed(
+  const inviteMap = computed(
     () =>
       new Map<RoomInMessage["id"], InviteInMessage>(
         inviteRows.value
@@ -65,7 +65,7 @@ export const useInviteStore = defineStore("message/room/invite", () => {
   const readStoredInvite = async (roomId: RoomInMessage["id"]) => {
     const readInvite = await $trpc.invite.readMyInvite.query({ roomId });
     if (readInvite) arrive(inviteTable, readInvite);
-    return invites.value.get(roomId);
+    return inviteMap.value.get(roomId);
   };
   // The absolute link a friend is sent, minted anew only when the one the member holds has lapsed or run out, at the
   // Default expiry and the same use limit. Undefined when no usable link can be sent: the room is paused, or the
@@ -73,7 +73,7 @@ export const useInviteStore = defineStore("message/room/invite", () => {
   const getUsableInviteLink = async ({ id, isInvitePaused }: Pick<RoomInMessage, "id" | "isInvitePaused">) => {
     if (isInvitePaused) return undefined;
 
-    const invite = invites.value.get(id) ?? (await readStoredInvite(id));
+    const invite = inviteMap.value.get(id) ?? (await readStoredInvite(id));
     if (invite && checkIsInviteUsable(invite)) return getInviteLink(runtimeConfig.public.baseUrl, invite.id);
 
     await createInvite({
@@ -81,11 +81,11 @@ export const useInviteStore = defineStore("message/room/invite", () => {
       maxUses: INVITE_MAX_USES_OPTIONS.find((uses) => uses === invite?.maxUses) ?? 0,
       roomId: id,
     });
-    const newInvite = invites.value.get(id);
+    const newInvite = inviteMap.value.get(id);
     return newInvite && checkIsInviteUsable(newInvite)
       ? getInviteLink(runtimeConfig.public.baseUrl, newInvite.id)
       : undefined;
   };
 
-  return { checkIsCreateInvitePending, createInvite, getUsableInviteLink, invites, readStoredInvite };
+  return { checkIsCreateInvitePending, createInvite, getUsableInviteLink, inviteMap, readStoredInvite };
 });

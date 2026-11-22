@@ -17,13 +17,10 @@ import type {
 import type { Except } from "type-fest";
 
 import { checkIsManageable as baseCheckIsManageable } from "#shared/services/room/rbac/checkIsManageable";
-import { memberRoleChangeHooks } from "#src/services/message/member/memberRoleChangeHooks";
-import {
-  roleTables,
-  roomMemberPermissionTable,
-  roomRoleTable,
-  userToRoomRoleTable,
-} from "#src/services/message/role/constants";
+import { notifyMemberRoleChange } from "#src/services/message/member/notifyMemberRoleChange";
+import { comparePositionDescending } from "#src/services/message/role/comparePositionDescending";
+import { roomMemberPermissionTable, roomRoleTable, userToRoomRoleTable } from "#src/services/message/role/constants";
+import { createRoleWriteResponse } from "#src/services/message/role/createRoleWriteResponse";
 import { getAssignRoomRoleEntry } from "#src/services/message/role/getAssignRoomRoleEntry";
 import { getCreateRoomRoleEntry } from "#src/services/message/role/getCreateRoomRoleEntry";
 import { getDeleteMemberPermissionOverrideEntry } from "#src/services/message/role/getDeleteMemberPermissionOverrideEntry";
@@ -32,30 +29,16 @@ import { getRevokeRoomRoleEntry } from "#src/services/message/role/getRevokeRoom
 import { getUpdateRoomRoleEntry } from "#src/services/message/role/getUpdateRoomRoleEntry";
 import { getUpsertMemberPermissionOverrideEntry } from "#src/services/message/role/getUpsertMemberPermissionOverrideEntry";
 import { setRoomUsers } from "#src/services/message/room/setRoomUsers";
-import { collectRowVersions } from "#src/services/realtime/collectRowVersions";
 import { MANAGEMENT_PERMISSIONS } from "#src/services/room/rbac/constants";
 import { checkIsVersioned } from "#src/services/shared/overlay/checkIsVersioned";
 import { createArrival } from "#src/services/shared/overlay/createArrival";
-import { createHeaderConfirmations } from "#src/services/shared/overlay/createHeaderConfirmations";
 import { rethrowFailedRead } from "#src/services/shared/rethrowFailedRead";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useRoomStore } from "#src/store/message/room/index";
 import { useOverlayStore } from "#src/store/overlay";
 import { checkHasPermission, NO_ROW_VERSION } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { getOrCreate, getResultAsync } from "@esposter/shared";
 import { v7 } from "uuid";
-
-// The room's derived totals are re-read through the registered hooks, since only the server's totals say what a
-// Role-membership change did. Two things fire them: a refresh of the room's roles, which a write to a member's roles
-// Brings about by the topic the server infers for it and the refresh watches, and a member leaving the room. A read
-// Of one member's roles does not, its counts the server already includes
-const notifyMemberRoleChange = (roomId: string) => {
-  for (const memberRoleChangeHook of memberRoleChangeHooks.hooks) memberRoleChangeHook(roomId);
-};
-
-// Each list is shown highest position first, as the server orders its roles
-const comparePositionDescending = (firstRole: { position: number }, secondRole: { position: number }) =>
-  secondRole.position - firstRole.position;
 
 export const useRoleStore = defineStore("message/room/role", () => {
   const { $trpc } = useNuxtApp();
@@ -80,9 +63,12 @@ export const useRoleStore = defineStore("message/room/role", () => {
       const roomRole = roleMap.value.get(memberRole.roleId);
       if (!roomRole) continue;
 
-      const roomMemberRoles = map.get(memberRole.roomId) ?? new Map<string, (typeof liveRoles.value)[number][]>();
-      roomMemberRoles.set(memberRole.userId, [...(roomMemberRoles.get(memberRole.userId) ?? []), roomRole]);
-      map.set(memberRole.roomId, roomMemberRoles);
+      const roomMemberRoles = getOrCreate(
+        map,
+        memberRole.roomId,
+        () => new Map<string, (typeof liveRoles.value)[number][]>(),
+      );
+      getOrCreate(roomMemberRoles, memberRole.userId, () => []).push(roomRole);
     }
     return map;
   });
@@ -250,39 +236,31 @@ export const useRoleStore = defineStore("message/room/role", () => {
     };
     setSelectedRoleId(input.roomId, roomRole.id);
     writeOptimistic(
-      async () => {
-        const { result, rowVersions } = await collectRowVersions(() =>
-          $trpc.role.createRole.mutate({ ...input, id: roomRole.id }),
-        );
-        return {
-          arrivals: [createArrival(roomRoleTable, result)],
-          confirmed: createHeaderConfirmations(roleTables, rowVersions),
-        };
-      },
+      () =>
+        createRoleWriteResponse(
+          () => $trpc.role.createRole.mutate({ ...input, id: roomRole.id }),
+          (result) => [createArrival(roomRoleTable, result)],
+        ),
       { entry: getCreateRoomRoleEntry(roomRole), onError: createErrorAlert },
     );
   };
   const updateRole = (input: UpdateRoleInput) => {
     writeOptimistic(
-      async () => {
-        const { result, rowVersions } = await collectRowVersions(() => $trpc.role.updateRole.mutate(input));
-        return {
-          arrivals: [createArrival(roomRoleTable, result)],
-          confirmed: createHeaderConfirmations(roleTables, rowVersions),
-        };
-      },
+      () =>
+        createRoleWriteResponse(
+          () => $trpc.role.updateRole.mutate(input),
+          (result) => [createArrival(roomRoleTable, result)],
+        ),
       { entry: getUpdateRoomRoleEntry(input), onError: createErrorAlert },
     );
   };
   const deleteRole = (input: DeleteRoleInput) => {
     writeOptimistic(
-      async () => {
-        const { result, rowVersions } = await collectRowVersions(() => $trpc.role.deleteRole.mutate(input));
-        return {
-          arrivals: [createArrival(roomRoleTable, result)],
-          confirmed: createHeaderConfirmations(roleTables, rowVersions),
-        };
-      },
+      () =>
+        createRoleWriteResponse(
+          () => $trpc.role.deleteRole.mutate(input),
+          (result) => [createArrival(roomRoleTable, result)],
+        ),
       { entry: getDeleteRoomRoleEntry(input.id, new Date()), onError: createErrorAlert },
     );
   };
@@ -292,14 +270,14 @@ export const useRoleStore = defineStore("message/room/role", () => {
     if (getMemberRoles(input.roomId, input.userId).some(({ id }) => id === input.roleId)) return;
 
     writeOptimistic(
-      async () => {
-        const { result, rowVersions } = await collectRowVersions(() => $trpc.role.assignRole.mutate(input));
-        const { role, ...memberRole } = result;
-        return {
-          arrivals: [createArrival(roomRoleTable, role), createArrival(userToRoomRoleTable, memberRole)],
-          confirmed: createHeaderConfirmations(roleTables, rowVersions),
-        };
-      },
+      () =>
+        createRoleWriteResponse(
+          () => $trpc.role.assignRole.mutate(input),
+          ({ role, ...memberRole }) => [
+            createArrival(roomRoleTable, role),
+            createArrival(userToRoomRoleTable, memberRole),
+          ],
+        ),
       {
         entry: getAssignRoomRoleEntry(input.roomId, input.userId, input.roleId, new Date()),
         onError: createErrorAlert,
@@ -308,13 +286,11 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   const revokeRole = (input: RevokeRoleInput) => {
     writeOptimistic(
-      async () => {
-        const { result, rowVersions } = await collectRowVersions(() => $trpc.role.revokeRole.mutate(input));
-        return {
-          arrivals: result.map((memberRole) => createArrival(userToRoomRoleTable, memberRole)),
-          confirmed: createHeaderConfirmations(roleTables, rowVersions),
-        };
-      },
+      () =>
+        createRoleWriteResponse(
+          () => $trpc.role.revokeRole.mutate(input),
+          (result) => result.map((memberRole) => createArrival(userToRoomRoleTable, memberRole)),
+        ),
       {
         entry: getRevokeRoomRoleEntry(input.roomId, input.userId, input.roleId, new Date()),
         onError: createErrorAlert,
@@ -325,29 +301,21 @@ export const useRoleStore = defineStore("message/room/role", () => {
   // Answer corrects the drawn row, and a rejection drops the drawn row
   const upsertMemberPermissionOverride = (input: UpsertMemberPermissionOverrideInput) => {
     writeOptimistic(
-      async () => {
-        const { result, rowVersions } = await collectRowVersions(() =>
-          $trpc.role.upsertMemberPermissionOverride.mutate(input),
-        );
-        return {
-          arrivals: result.map((memberPermission) => createArrival(roomMemberPermissionTable, memberPermission)),
-          confirmed: createHeaderConfirmations(roleTables, rowVersions),
-        };
-      },
+      () =>
+        createRoleWriteResponse(
+          () => $trpc.role.upsertMemberPermissionOverride.mutate(input),
+          (result) => result.map((memberPermission) => createArrival(roomMemberPermissionTable, memberPermission)),
+        ),
       { entry: getUpsertMemberPermissionOverrideEntry(input, new Date()), onError: createErrorAlert },
     );
   };
   const deleteMemberPermissionOverride = (input: DeleteMemberPermissionOverrideInput) => {
     writeOptimistic(
-      async () => {
-        const { result, rowVersions } = await collectRowVersions(() =>
-          $trpc.role.deleteMemberPermissionOverride.mutate(input),
-        );
-        return {
-          arrivals: result.map((memberPermission) => createArrival(roomMemberPermissionTable, memberPermission)),
-          confirmed: createHeaderConfirmations(roleTables, rowVersions),
-        };
-      },
+      () =>
+        createRoleWriteResponse(
+          () => $trpc.role.deleteMemberPermissionOverride.mutate(input),
+          (result) => result.map((memberPermission) => createArrival(roomMemberPermissionTable, memberPermission)),
+        ),
       {
         entry: getDeleteMemberPermissionOverrideEntry(input.roomId, input.userId, new Date()),
         onError: createErrorAlert,

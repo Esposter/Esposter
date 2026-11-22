@@ -3,12 +3,11 @@ import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMe
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
-import { useSessionUserId } from "#src/composables/auth/useSessionUserId";
-import { useReadMyUsersToRooms } from "#src/composables/message/room/useReadMyUsersToRooms";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { compareMemberNames } from "#src/services/message/member/compareMemberNames";
 import { memberTable } from "#src/services/message/member/memberTable";
 import { toMemberRow } from "#src/services/message/member/toMemberRow";
+import { compareLastMessageAtDescending } from "#src/services/message/room/compareLastMessageAtDescending";
 import { roomTable } from "#src/services/message/room/constants";
 import { userToRoomTable } from "#src/services/message/userToRoom/constants";
 import { getUserToRoomPatchEntry } from "#src/services/message/userToRoom/getUserToRoomPatchEntry";
@@ -47,10 +46,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
         const myUserToRoom = getMyUserToRoom(room.id);
         return myUserToRoom && !myUserToRoom.isHidden ? [room] : [];
       })
-      .toSorted(
-        (firstDirectMessage, secondDirectMessage) =>
-          secondDirectMessage.lastMessageAt.getTime() - firstDirectMessage.lastMessageAt.getTime(),
-      ),
+      .toSorted(compareLastMessageAtDescending),
   );
   // The other participants of each direct message come from the member rows the overlay holds.
   // A removal is the tombstone that arrives, and the view drops it like any row.
@@ -107,8 +103,9 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   // Each is held here while it is out, which is the one pending state they show.
   const creatingFriendIds = ref(new Set<PublicUser["id"]>());
   const invitingDirectMessageIds = ref(new Set<RoomInMessage["id"]>());
-  // The room the server answers with is drawn once it arrives, with the viewer's membership of it, which the list needs
-  const createDirectMessage = async (userIds: string[]) => {
+  // The room the server answers with is drawn once it arrives, with the viewer's membership of it, which the list needs.
+  // Its id is returned, or nothing when the server refused
+  const createDirectMessageRoom = async (userIds: string[]) => {
     let createdRoomId = "";
     await writeAwaited(
       async () => {
@@ -119,6 +116,10 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
       },
       { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
     );
+    return createdRoomId;
+  };
+  const createDirectMessage = async (userIds: string[]) => {
+    const createdRoomId = await createDirectMessageRoom(userIds);
     // Whether the server kept it, so the dialog that asked stays open over a refusal
     if (!createdRoomId) return false;
 
@@ -138,16 +139,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   // So unlike createDirectMessage this does not navigate, and the message is the reader's own.
   const inviteFriend = async (friendId: PublicUser["id"], inviteLink: string) => {
     creatingFriendIds.value.add(friendId);
-    let roomId = "";
-    await writeAwaited(
-      async () => {
-        const room = await $trpc.room.directMessage.createDirectMessage.mutate([friendId]);
-        await readMyUsersToRooms([room.id]);
-        roomId = room.id;
-        return [createArrival(roomTable, room)];
-      },
-      { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
-    );
+    const roomId = await createDirectMessageRoom([friendId]);
     creatingFriendIds.value.delete(friendId);
     if (roomId) await inviteDirectMessage(roomId, inviteLink);
   };

@@ -6,9 +6,9 @@ import type { CursorPaginationSlice } from "#src/models/pagination/cursor/Cursor
 import type { RoomInMessage, UpdateRoomInput } from "@esposter/db-schema";
 
 import { checkIsUuidV7 } from "#shared/services/id/checkIsUuidV7";
-import { useSessionUserId } from "#src/composables/auth/useSessionUserId";
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { authClient } from "#src/services/auth/authClient";
+import { compareLastMessageAtDescending } from "#src/services/message/room/compareLastMessageAtDescending";
 import { roomTable } from "#src/services/message/room/constants";
 import { getRoomPatchEntry } from "#src/services/message/room/getRoomPatchEntry";
 import { userToRoomTable } from "#src/services/message/userToRoom/constants";
@@ -50,7 +50,7 @@ export const useRoomStore = defineStore("message/room", () => {
       .flatMap((room) =>
         checkIsVersioned(room) && room.type === RoomType.Room && myRoomIds.value.has(room.id) ? [room] : [],
       )
-      .toSorted((firstRoom, secondRoom) => secondRoom.lastMessageAt.getTime() - firstRoom.lastMessageAt.getTime()),
+      .toSorted(compareLastMessageAtDescending),
   );
   // Reads and events hand over rows as they stand, tombstones included, so each one arrives at its version
   const arriveRooms = (newRooms: RoomInMessage[]) => {
@@ -70,9 +70,9 @@ export const useRoomStore = defineStore("message/room", () => {
       resetCursorPaginationData,
     };
   };
-  const router = useRouter();
+  const { currentRoute } = useRouter();
   const currentRoomId = computed(() => {
-    const roomId = getRouteParam(router.currentRoute.value.params, "id");
+    const roomId = getRouteParam(currentRoute.value.params, "id");
     return checkIsUuidV7(roomId) ? roomId : "";
   });
   const roomDialogStore = useRoomDialogStore();

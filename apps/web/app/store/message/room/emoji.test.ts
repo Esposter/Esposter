@@ -14,7 +14,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 describe(useRoomEmojiStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
-  const presignedUrl = "https://example.com/emoji.png";
+  const presignedUrl = "presignedUrl";
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
@@ -44,7 +44,7 @@ describe(useRoomEmojiStore, () => {
     const { arrive } = overlayStore;
     const kept = createRoomEmoji();
     const removed = createRoomEmoji();
-    const addedRoomEmoji = { ...createRoomEmoji(), name: "addedRoomEmoji" };
+    const addedRoomEmoji = createRoomEmoji();
     trpcMsw.room.emoji.readRoomEmojis.query(() => {
       arrive(roomEmojiTable, { ...removed, deletedAt: new Date(0), version: 1 });
       arrive(roomEmojiTable, addedRoomEmoji);

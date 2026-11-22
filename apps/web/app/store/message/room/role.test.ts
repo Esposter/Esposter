@@ -24,8 +24,8 @@ const removed = <TRow extends { deletedAt: Date | null; version: number }>(row: 
 describe(useRoleStore, () => {
   const roomId = v7();
   const { trpcMsw } = setupMswTrpc();
-  const first = createRoomRole({ name: "first", position: 1, roomId });
-  const second = createRoomRole({ name: "second", position: 2, roomId });
+  const first = createRoomRole({ name: "name", position: 1, roomId });
+  const second = createRoomRole({ name: "name", position: 2, roomId });
   const trpcError = new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
   // Every role is its own target, so a settings panel's writes overlap and a rejected edit leaves only its own role as it was
@@ -177,7 +177,7 @@ describe(useRoleStore, () => {
     expect.hasAssertions();
 
     const otherRoomId = v7();
-    const otherRole = createRoomRole({ name: "other", position: 1, roomId: otherRoomId });
+    const otherRole = createRoomRole({ name: "name", position: 1, roomId: otherRoomId });
     trpcMsw.role.readRoles.query(({ input }) => (input.roomIds[0] === roomId ? [first] : [otherRole]));
     const roleStore = useRoleStore();
     const { getRoles, readRoles } = roleStore;
