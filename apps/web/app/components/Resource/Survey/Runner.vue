@@ -68,7 +68,7 @@ const focusFirstError = () => {
       :value="progressValue"
     />
     <header v-if="rootProps.logo || rootProps.title || rootProps.description" flex flex-col gap-2>
-      <NuxtImg v-if="rootProps.logo" :src="rootProps.logo" alt="" h-12 w-auto self-start object-contain />
+      <NuxtImg v-if="rootProps.logo" h-12 w-auto self-start object-contain alt="" :src="rootProps.logo" />
       <h1 v-if="rootProps.title" ui-heading>{{ rootProps.title }}</h1>
       <p v-if="rootProps.description" text-muted>{{ rootProps.description }}</p>
     </header>

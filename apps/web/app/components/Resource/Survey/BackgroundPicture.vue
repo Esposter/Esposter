@@ -8,5 +8,5 @@ defineProps<Props>();
 
 <template>
   <!-- The lowest layer of an isolated, positioned container: over its colour and under everything it holds -->
-  <NuxtImg v-if="src" :src alt="" size-full inset-0 absolute z="[-1]" object-cover />
+  <NuxtImg v-if="src" size-full inset-0 absolute z="[-1]" object-cover alt="" :src />
 </template>
