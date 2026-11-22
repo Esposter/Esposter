@@ -15,7 +15,7 @@ import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "#server
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
-import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
@@ -54,7 +54,9 @@ import { getDeleteResourcesEntry } from "#src/services/resource/overlay/getDelet
 import { getPublicationPatchEntry } from "#src/services/resource/overlay/getPublicationPatchEntry";
 import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
 import { getRestoreResourcesEntry } from "#src/services/resource/overlay/getRestoreResourcesEntry";
+import { getSaveResourceEntry } from "#src/services/resource/overlay/getSaveResourceEntry";
 import { getToggleFavoriteEntry } from "#src/services/resource/overlay/getToggleFavoriteEntry";
+import { userTable } from "#src/services/user/overlay/constants";
 import { getContentBlobName, listBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
@@ -1832,6 +1834,29 @@ describe("resourceRouter", () => {
     });
 
     expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  // The save's entry is the one the store issues. The save also names the owner's row, which carries the storage total it
+  // Moves, so the entry reads that row by its key beside the resource's own
+  test("the content save entry covers every row a save names", async () => {
+    expect.hasAssertions();
+
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) =>
+        createCallerFactory(dashboardRouter)(context).saveResourceContent({
+          content: new Dashboard(),
+          contentVersion: dashboardResource.contentVersion,
+          id: dashboardResource.id,
+        }),
+      context: mockContext,
+      entry: getSaveResourceEntry(dashboardResource.id, getMockSession().user.id),
+      path: "saveResourceContent",
+      tables: [resourceTable, userTable],
+    });
+
+    expect(named).toHaveLength(2);
     expect(uncovered).toStrictEqual([]);
   });
 });

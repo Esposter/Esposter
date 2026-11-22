@@ -57,6 +57,7 @@ import {
 // Them. Blade-scoped: the store is app-lifetime, this state is not, so the page clears it on unmount
 export const useResourceStore = defineStore("resource", () => {
   const { $trpc } = useNuxtApp();
+  const userId = useSessionUserId();
   const overlayStore = useOverlayStore();
   const { arrive, view, writeAwaited, writeOptimistic } = overlayStore;
   const resourceRows = view(resourceTable);
@@ -494,8 +495,8 @@ export const useResourceStore = defineStore("resource", () => {
         return createRowResponse(resourceTable, savedResource);
       },
       {
-        // A content save changes no row the screen shows, so its entry only reads the row, which orders it on that row
-        entry: getSaveResourceEntry(id),
+        // A content save shows no change, so its entry only reads the rows its answer names, which orders it on each
+        entry: getSaveResourceEntry(id, userId.value),
         onError: (error) => {
           if (error.message === STALE_CONTENT_VERSION_ERROR_MESSAGE) {
             if (checkIsLoaded(id)) isContentStale.value = true;

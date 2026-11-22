@@ -1,12 +1,8 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { createTable } from "#src/services/shared/overlay/createTable";
+import { userTable } from "#src/services/user/overlay/constants";
 import { useOverlayStore } from "#src/store/overlay";
-import { StorageTierQuotaMap, usersInAuth } from "@esposter/db-schema";
-
-// The owner's user row, whose total the meter shows. The row is the table's own, so a total arrives with the version it
-// Was written at, and an older row cannot replace a newer one
-const storageUserTable = createTable(usersInAuth);
+import { StorageTierQuotaMap } from "@esposter/db-schema";
 
 // The usage meter mounts on every resource page, and the layout it sits in is declared per page — so it is
 // Remounted on every navigation within the explorer. The number lives here rather than in the component so
@@ -18,7 +14,7 @@ export const useStorageStore = defineStore("storage", () => {
   const overlayStore = useOverlayStore();
   const { arrive, view } = overlayStore;
   // The table may hold other users' rows, so the meter reads the row its session owns
-  const storageUserRows = view(storageUserTable);
+  const storageUserRows = view(userTable);
   const storageUser = computed(() => storageUserRows.value.find(({ id }) => id === userId.value));
   // The bar's figures, read off the row. The quota is the tier's, from the map the server gates on
   const storageUsage = computed(() => {
@@ -29,13 +25,13 @@ export const useStorageStore = defineStore("storage", () => {
   });
   const { read: readStorageUsage } = useCachedRead(() => $trpc.storage.readUsage.query(), {
     onSuccess: (user) => {
-      arrive(storageUserTable, user);
+      arrive(userTable, user);
     },
   });
   // The subscription is established before the first read is issued, so a charge can land between the two. The pushed
   // Row is the newer of the pair when its version is, and the overlay's arrival gate keeps it whichever order they land in
   const storeUpdateStorageUsage = (user: UserInAuth) => {
-    arrive(storageUserTable, user);
+    arrive(userTable, user);
   };
   return { readStorageUsage, storageUsage, storeUpdateStorageUsage };
 });
