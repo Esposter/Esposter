@@ -24,15 +24,11 @@ describe(useSelectEmoji, () => {
     expect.hasAssertions();
 
     const emojiStore = useEmojiStore();
+    const { storeEmoji } = emojiStore;
     const createEmoji = vi.spyOn(emojiStore, "createEmoji").mockResolvedValue(undefined);
     const selectEmoji = useSelectEmoji(message);
     await selectEmoji(THUMBS_UP);
-    emojiStore.storeEmoji(message.roomId, {
-      emojiTag: THUMBS_UP,
-      messageId: message.id,
-      userIds: [userId],
-      version: 0,
-    });
+    storeEmoji(message.roomId, { emojiTag: THUMBS_UP, messageId: message.id, userIds: [userId], version: 0 });
     await selectEmoji(THUMBS_UP_MEDIUM);
 
     expect(createEmoji.mock.calls.map(([{ emojiTag }]) => emojiTag)).toStrictEqual([THUMBS_UP, THUMBS_UP_MEDIUM]);
@@ -43,7 +39,8 @@ describe(useSelectEmoji, () => {
 
     const foundEmoji = { emojiTag: THUMBS_UP, messageId: message.id, userIds: [userId], version: 0 };
     const emojiStore = useEmojiStore();
-    emojiStore.storeEmoji(message.roomId, foundEmoji);
+    const { storeEmoji } = emojiStore;
+    storeEmoji(message.roomId, foundEmoji);
     const createEmoji = vi.spyOn(emojiStore, "createEmoji").mockResolvedValue(undefined);
     const toggleEmoji = vi.spyOn(emojiStore, "toggleEmoji").mockResolvedValue(undefined);
     const selectEmoji = useSelectEmoji(message);

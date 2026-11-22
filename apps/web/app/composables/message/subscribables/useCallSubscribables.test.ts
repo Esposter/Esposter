@@ -77,9 +77,10 @@ describe(useCallSubscribables, () => {
 
     wrapper = await mountCallSubscribables();
     const callStore = useCallStore();
-    callStore.activeCallSessionId = callSessionId;
+    const { activeCallSessionId } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
     await opened.reach(1);
-    callStore.activeCallSessionId = "";
+    activeCallSessionId.value = "";
     await closed.reach(1);
 
     expect([opened.value, closed.value]).toStrictEqual([1, 1]);
@@ -92,13 +93,14 @@ describe(useCallSubscribables, () => {
 
     wrapper = await mountCallSubscribables();
     const callStore = useCallStore();
+    const { activeCallSessionId } = storeToRefs(callStore);
     const participantStore = useParticipantStore();
     const { speakingIds } = storeToRefs(participantStore);
     const { meeting } = createMeeting();
     spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();
     const { connect } = realtimeStore;
-    callStore.activeCallSessionId = callSessionId;
+    activeCallSessionId.value = callSessionId;
     setCurrentRoomId(roomId);
     await opened.reach(1);
     await connect("authToken", vi.fn<() => Promise<void>>(), false);

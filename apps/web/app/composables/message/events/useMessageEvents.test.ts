@@ -32,8 +32,10 @@ describe(useMessageEvents, () => {
       useMessageEvents();
     });
     const connectionStore = useConnectionStore();
+    const { openRoom } = connectionStore;
     const dataStore = useDataStore();
-    await connectionStore.openRoom(
+    const { getSlice } = dataStore;
+    await openRoom(
       otherRoomId,
       () => undefined,
       () => undefined,
@@ -43,10 +45,10 @@ describe(useMessageEvents, () => {
     onFrame?.(JSON.stringify({ data: [createRoomMessage({ id: messageId, message })], type: "createMessage" }));
     await flushPromises();
 
-    expect(dataStore.getSlice(roomId).items.value).toHaveLength(0);
-    expect(
-      dataStore.getSlice(otherRoomId).items.value.map(({ id, roomId: messageRoomId }) => [id, messageRoomId]),
-    ).toStrictEqual([[messageId, otherRoomId]]);
+    expect(getSlice(roomId).items.value).toHaveLength(0);
+    expect(getSlice(otherRoomId).items.value.map(({ id, roomId: messageRoomId }) => [id, messageRoomId])).toStrictEqual(
+      [[messageId, otherRoomId]],
+    );
     scope.stop();
   });
 
@@ -60,8 +62,10 @@ describe(useMessageEvents, () => {
       useMessageEvents();
     });
     const connectionStore = useConnectionStore();
+    const { openRoom } = connectionStore;
     const dataStore = useDataStore();
-    await connectionStore.openRoom(
+    const { getSlice } = dataStore;
+    await openRoom(
       roomId,
       () => undefined,
       () => undefined,
@@ -72,7 +76,7 @@ describe(useMessageEvents, () => {
     );
     await flushPromises();
 
-    expect(dataStore.getSlice(roomId).items.value.map(({ id }) => id)).toStrictEqual([messageId]);
+    expect(getSlice(roomId).items.value.map(({ id }) => id)).toStrictEqual([messageId]);
     onFrame?.(
       JSON.stringify({
         data: { ...createRoomMessage({ id: messageId, message: "message" }), deletedAt: new Date(0) },
@@ -81,7 +85,7 @@ describe(useMessageEvents, () => {
     );
     await flushPromises();
 
-    expect(dataStore.getSlice(roomId).items.value).toHaveLength(0);
+    expect(getSlice(roomId).items.value).toHaveLength(0);
     scope.stop();
   });
 
@@ -100,8 +104,10 @@ describe(useMessageEvents, () => {
       useMessageEvents();
     });
     const connectionStore = useConnectionStore();
+    const { openRoom } = connectionStore;
     const dataStore = useDataStore();
-    await connectionStore.openRoom(
+    const { getSlice } = dataStore;
+    await openRoom(
       roomId,
       () => undefined,
       () => undefined,
@@ -115,7 +121,7 @@ describe(useMessageEvents, () => {
     );
     await waitForSynchronizedFunctions();
 
-    expect(dataStore.getSlice(roomId).items.value.map(({ id }) => id)).toStrictEqual([messageId]);
+    expect(getSlice(roomId).items.value.map(({ id }) => id)).toStrictEqual([messageId]);
     scope.stop();
   });
 });

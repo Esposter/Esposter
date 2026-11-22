@@ -28,9 +28,10 @@ describe(useRoomUserSubscribables, () => {
   // The room's copy of the member changes only through the store's own write, so each read is awaited on that write
   const whenDisplayName = (displayName: string) => {
     const userStore = useUserStore();
+    const { getRoomMemberMap } = userStore;
     const { promise, resolve } = Promise.withResolvers<void>();
     const stopWatch = watch(
-      () => userStore.getRoomMemberMap(roomId)?.get(user.id)?.displayName,
+      () => getRoomMemberMap(roomId)?.get(user.id)?.displayName,
       (newDisplayName) => {
         if (newDisplayName !== displayName) return;
 
@@ -47,10 +48,12 @@ describe(useRoomUserSubscribables, () => {
     expect.hasAssertions();
 
     const userStore = useUserStore();
-    userStore.storeUsers([user]);
-    userStore.storeRoomMembers(roomId, [{ ...user, displayName: "staleAccount" }]);
+    const { getRoomMemberMap, storeRoomMembers, storeUsers } = userStore;
+    storeUsers([user]);
+    storeRoomMembers(roomId, [{ ...user, displayName: "staleAccount" }]);
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     let displayName = user.name;
     trpcMsw.room.readUsersByIds.query(({ ctx }) => {
@@ -73,6 +76,6 @@ describe(useRoomUserSubscribables, () => {
     await waitForSynchronizedFunctions();
     scope.stop();
 
-    expect(userStore.getRoomMemberMap(roomId)?.get(user.id)?.displayName).toBe("renamedAccount");
+    expect(getRoomMemberMap(roomId)?.get(user.id)?.displayName).toBe("renamedAccount");
   });
 });

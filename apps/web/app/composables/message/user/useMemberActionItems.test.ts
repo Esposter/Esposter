@@ -29,7 +29,8 @@ describe(useMemberActionItems, () => {
       { isRoomOwner: false, permissions, roomId, topRolePosition: position + 1 },
     ]);
     const roleStore = useRoleStore();
-    await roleStore.readMyPermissions({ roomIds: [roomId] });
+    const { readMyPermissions } = roleStore;
+    await readMyPermissions({ roomIds: [roomId] });
   };
   // The target's roles are read the way the member list reads them, so the item sees the roles the room holds
   const setupTargetRole = async (targetUserId: string) => {

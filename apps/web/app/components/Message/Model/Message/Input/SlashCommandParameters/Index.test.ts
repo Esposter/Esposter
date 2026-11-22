@@ -62,6 +62,7 @@ describe("messageModelMessageInputSlashCommandParameters", () => {
     await flushPromises();
     expect(pendingSlashCommand.value).toBeUndefined();
     const inputStore = useInputStore();
-    expect(inputStore.input).toBe(`/${SlashCommandType.Me}`);
+    const { input } = storeToRefs(inputStore);
+    expect(input.value).toBe(`/${SlashCommandType.Me}`);
   });
 });

@@ -41,12 +41,14 @@ describe(usePinStore, () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
+    const { getSlice: getDataSlice } = dataStore;
     const pinStore = usePinStore();
+    const { getSlice: getPinSlice } = pinStore;
     const { items } = storeToRefs(pinStore);
     const olderPin = { ...createMessage(), id: 3 };
     const newerMessage = { ...createMessage(), id: 5 };
-    pinStore.getSlice(roomId).items.value = [olderPin];
-    dataStore.getSlice(roomId).items.value = [newerMessage];
+    getPinSlice(roomId).items.value = [olderPin];
+    getDataSlice(roomId).items.value = [newerMessage];
     await MessageHookMap[Operation.Update].run({ id: newerMessage.id, isPinned: true, roomId });
 
     expect(items.value.map(({ id }) => id)).toStrictEqual([newerMessage.id, olderPin.id]);
@@ -58,10 +60,11 @@ describe(usePinStore, () => {
     expect.hasAssertions();
 
     const pinStore = usePinStore();
+    const { getSlice } = pinStore;
     const { items } = storeToRefs(pinStore);
     const newerPin = { ...createMessage(), id: 5 };
     const editedPin = { ...createMessage(), id: 3 };
-    pinStore.getSlice(roomId).items.value = [newerPin, editedPin];
+    getSlice(roomId).items.value = [newerPin, editedPin];
     await MessageHookMap[Operation.Update].run({ id: editedPin.id, message: "edited", roomId });
 
     expect(items.value.map(({ id, message: text }) => ({ id, message: text }))).toStrictEqual([
@@ -75,10 +78,11 @@ describe(usePinStore, () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
+    const { getSlice } = dataStore;
     const pinStore = usePinStore();
     const { items } = storeToRefs(pinStore);
     const unpinnedMessage = { ...createMessage(), version: 1 };
-    dataStore.getSlice(roomId).items.value = [unpinnedMessage];
+    getSlice(roomId).items.value = [unpinnedMessage];
     await MessageHookMap[Operation.Update].run({ id: unpinnedMessage.id, isPinned: true, roomId, version: 0 });
 
     expect(items.value).toStrictEqual([]);
@@ -89,9 +93,10 @@ describe(usePinStore, () => {
     expect.hasAssertions();
 
     const pinStore = usePinStore();
+    const { getSlice } = pinStore;
     const { items } = storeToRefs(pinStore);
     const pinnedMessage = { ...createMessage(), id: 3 };
-    pinStore.getSlice(roomId).items.value = [pinnedMessage];
+    getSlice(roomId).items.value = [pinnedMessage];
     await MessageHookMap[Operation.Delete].run({ id: pinnedMessage.id, roomId });
 
     expect(items.value).toStrictEqual([]);

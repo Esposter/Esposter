@@ -55,7 +55,8 @@ describe(useNavigateFromRemovedRoom, () => {
       useNavigateFromRemovedRoom();
     });
     const userToRoomStore = useUserToRoomStore();
-    userToRoomStore.arriveUserToRooms([tombstoneMembership(room.id)]);
+    const { arriveUserToRooms } = userToRoomStore;
+    arriveUserToRooms([tombstoneMembership(room.id)]);
     await isLanded;
     await flushPromises();
 
@@ -73,7 +74,8 @@ describe(useNavigateFromRemovedRoom, () => {
       useNavigateFromRemovedRoom();
     });
     const userToRoomStore = useUserToRoomStore();
-    userToRoomStore.arriveUserToRooms([tombstoneMembership(otherRoom.id)]);
+    const { arriveUserToRooms } = userToRoomStore;
+    arriveUserToRooms([tombstoneMembership(otherRoom.id)]);
     await flushPromises();
     await new Promise((resolve) => {
       setTimeout(resolve, 0);

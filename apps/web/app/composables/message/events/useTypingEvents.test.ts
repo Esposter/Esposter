@@ -30,7 +30,8 @@ describe(useTypingEvents, () => {
       useTypingEvents();
     });
     const connectionStore = useConnectionStore();
-    await connectionStore.openRoom(
+    const { openRoom } = connectionStore;
+    await openRoom(
       roomId,
       () => undefined,
       () => undefined,

@@ -50,7 +50,8 @@ describe(useToggleMemberRole, () => {
     trpcMsw.role.readMyPermissions.query(() => [{ isRoomOwner: false, permissions: 0n, roomId, topRolePosition }]);
     pushRooms({ ...createRoom(""), id: roomId, userId: v7() });
     const roleStore = useRoleStore();
-    await roleStore.readMyPermissions({ roomIds: [roomId] });
+    const { readMyPermissions } = roleStore;
+    await readMyPermissions({ roomIds: [roomId] });
   };
 
   // The member's top role is above the actor's, so the server refuses an assign and a revoke alike. The switch must

@@ -24,11 +24,12 @@ describe("messageDraftsAndSentDraftSendButton", () => {
 
     useSession.mockReturnValue(ref({ data: null }));
     const inputStore = useInputStore();
-    inputStore.setDraft(room.id, content);
+    const { getComposerInput, setDraft } = inputStore;
+    setDraft(room.id, content);
     const component = await mountSuspended(MessageDraftsAndSentDraftSendButton, { props: { draftItem } });
     await component.get("button").trigger("click");
     await flushPromises();
 
-    expect(inputStore.getComposerInput({ roomId: room.id, threadRootId })).toBe(content);
+    expect(getComposerInput({ roomId: room.id, threadRootId })).toBe(content);
   });
 });

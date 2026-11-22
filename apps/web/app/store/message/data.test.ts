@@ -97,14 +97,15 @@ describe(useDataStore, () => {
 
     vi.spyOn(URL, "createObjectURL").mockReturnValue("");
     const uploadFileStore = useUploadFileStore();
+    const { getComposerFiles, storeUploadFiles, toggleUploadFileSpoiler } = uploadFileStore;
     const spoilerFileId = v7();
-    uploadFileStore.storeUploadFiles(target, [
+    storeUploadFiles(target, [
       { file: createFile(`${SPOILER_FILENAME_PREFIX}${filename}`), id: spoilerFileId, token: "" },
     ]);
-    expect(uploadFileStore.getComposerFiles(target).map(({ isSpoiler }) => isSpoiler)).toStrictEqual([true]);
-    uploadFileStore.toggleUploadFileSpoiler(target, spoilerFileId);
+    expect(getComposerFiles(target).map(({ isSpoiler }) => isSpoiler)).toStrictEqual([true]);
+    toggleUploadFileSpoiler(target, spoilerFileId);
 
-    expect(uploadFileStore.getComposerFiles(target).map(({ isSpoiler }) => isSpoiler)).toStrictEqual([false]);
+    expect(getComposerFiles(target).map(({ isSpoiler }) => isSpoiler)).toStrictEqual([false]);
   });
 
   // The mutation spans the server commit, so a rejection can equally be a lost response for a message that
@@ -188,6 +189,7 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
+    const { storeUploadFiles } = uploadFileStore;
     const { sendMessage } = dataStore;
     const { getComposerFiles } = uploadFileStore;
     stubObjectUrls();
@@ -197,7 +199,7 @@ describe(useDataStore, () => {
       heldFileIds = getComposerFiles(target).map(({ id }) => id);
       return createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
     });
-    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
+    storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     await sendMessage({
       files: [{ ...baseFile, id: sentFileId }],
       message,
@@ -217,6 +219,7 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
+    const { storeUploadFiles } = uploadFileStore;
     const { sendMessage } = dataStore;
     const { getComposerFiles } = uploadFileStore;
     stubObjectUrls();
@@ -224,7 +227,7 @@ describe(useDataStore, () => {
     trpcMsw.message.createMessage.mutation(() => {
       throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
     });
-    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
+    storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     await sendMessage({
       files: [{ ...baseFile, id: sentFileId }],
       message,
@@ -278,6 +281,7 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
+    const { storeUploadFiles } = uploadFileStore;
     const { createMessage } = dataStore;
     const { getComposerFiles } = uploadFileStore;
     trpcMsw.message.createMessage.mutation(() =>
@@ -288,7 +292,7 @@ describe(useDataStore, () => {
     stubObjectUrls();
     const sentFileId = v7();
     const nextFileId = v7();
-    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
+    storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     const createPromise = createMessage({
       files: [{ ...baseFile, id: sentFileId }],
       message,
@@ -296,7 +300,7 @@ describe(useDataStore, () => {
       roomId,
       type: MessageType.Message,
     });
-    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: nextFileId, token: "" }]);
+    storeUploadFiles(target, [{ file: createFile(), id: nextFileId, token: "" }]);
 
     await expect(createPromise).resolves.toBe(true);
     expect(getComposerFiles(target).map(({ id }) => id)).toStrictEqual([nextFileId]);
@@ -311,6 +315,7 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
+    const { getComposerFiles, storeUploadFiles } = uploadFileStore;
     const { createMessage } = dataStore;
     stubObjectUrls();
     const sentFileId = v7();
@@ -320,15 +325,15 @@ describe(useDataStore, () => {
       payloadFileIds = input.files?.map(({ id }) => id) ?? [];
       return createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
     });
-    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
+    storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     const createPromise = createMessage({
-      files: uploadFileStore.getComposerFiles(target),
+      files: getComposerFiles(target),
       message,
       replyToId: null,
       roomId,
       type: MessageType.Message,
     });
-    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: nextFileId, token: "" }]);
+    storeUploadFiles(target, [{ file: createFile(), id: nextFileId, token: "" }]);
     await createPromise;
 
     expect(payloadFileIds).toStrictEqual([sentFileId]);
@@ -418,9 +423,10 @@ describe(useDataStore, () => {
 
     goOnline();
     const dataStore = useDataStore();
+    const { readMoreNewerItems } = dataStore;
     const onComplete = vi.fn<() => void>();
     await expect(
-      dataStore.readMoreNewerItems(roomId, () => Promise.reject(new Error(" ")), onComplete),
+      readMoreNewerItems(roomId, () => Promise.reject(new Error(" ")), onComplete),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     expect(onComplete).toHaveBeenCalledExactlyOnceWith();
@@ -433,6 +439,7 @@ describe(useDataStore, () => {
 
     goOnline();
     const dataStore = useDataStore();
+    const { readMoreNewerItems } = dataStore;
     const { getPreviousCursorRef, getSlice } = dataStore;
     const heldMessage = { ...createRoomMessage(roomId), id: 2 };
     const newerMessage = { ...createRoomMessage(roomId), id: 3 };
@@ -440,7 +447,7 @@ describe(useDataStore, () => {
     roomItems.value = [heldMessage];
     getPreviousCursorRef(roomId).value = newerCursor;
     const { query, resolveQuery } = createPendingQuery<Page<ClientMessage>>({ items: [newerMessage], nextCursor: "" });
-    const pendingRead = dataStore.readMoreNewerItems(roomId, query);
+    const pendingRead = readMoreNewerItems(roomId, query);
     getPreviousCursorRef(roomId).value = v7();
     resolveQuery();
     await pendingRead;
@@ -727,6 +734,7 @@ describe(useDataStore, () => {
     const threadStore = useThreadStore();
     const { activeRoomId, threadMessages } = storeToRefs(threadStore);
     const dataStore = useDataStore();
+    const { refreshLoadedMessages } = dataStore;
     const deletedReply = {
       ...createOptimisticMessage({ replyToId: roomMessageId, roomId, type: MessageType.Message }, userId),
       id: 2,
@@ -741,7 +749,7 @@ describe(useDataStore, () => {
     trpcMsw.message.readMessagesByIds.query(() => [
       { ...editedReply, message: updatedMessage, updatedAt: new Date(1), version: 1 },
     ]);
-    dataStore.refreshLoadedMessages(roomId);
+    refreshLoadedMessages(roomId);
     await waitForSynchronizedFunctions();
 
     expect(threadMessages.value.map(({ id, message: text }) => ({ id, message: text }))).toStrictEqual([

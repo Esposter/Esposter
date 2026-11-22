@@ -26,11 +26,12 @@ describe("messageDraftsAndSentScheduleDialog", () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const inputStore = useInputStore();
+    const { getComposerInput, setDraft } = inputStore;
     const { drafts } = storeToRefs(inputStore);
     const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
     const { isOpen, target } = storeToRefs(draftsAndSentScheduleDialogStore);
     const { open } = draftsAndSentScheduleDialogStore;
-    inputStore.setDraft(room.id, content);
+    setDraft(room.id, content);
     const component = await mountSuspended(MessageDraftsAndSentScheduleDialog, { attachTo: document.body });
     open({ content, ...composerTarget });
     await flushPromises();
@@ -42,7 +43,7 @@ describe("messageDraftsAndSentScheduleDialog", () => {
 
     expect(isOpen.value).toBe(true);
     expect(target.value).toStrictEqual({ content, ...composerTarget });
-    expect(inputStore.getComposerInput(composerTarget)).toBe(content);
+    expect(getComposerInput(composerTarget)).toBe(content);
     expect(drafts.value.get(room.id)?.content).toBe(content);
   });
 });

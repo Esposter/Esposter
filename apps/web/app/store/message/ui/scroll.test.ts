@@ -76,7 +76,8 @@ describe(useScrollStore, () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
-    dataStore.getPreviousCursorRef(roomId).value = newerCursor;
+    const { getPreviousCursorRef } = dataStore;
+    getPreviousCursorRef(roomId).value = newerCursor;
     Object.assign(router.currentRoute.value.params, { messageId });
     const scrollStore = useScrollStore();
     const { jumpToPresent } = scrollStore;

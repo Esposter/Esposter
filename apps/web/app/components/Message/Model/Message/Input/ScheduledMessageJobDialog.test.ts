@@ -30,8 +30,9 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const scheduledMessageJobDialogStore = useScheduledMessageJobDialogStore();
+    const { open } = scheduledMessageJobDialogStore;
     const { isOpen } = storeToRefs(scheduledMessageJobDialogStore);
-    scheduledMessageJobDialogStore.open(ScheduledMessageJobType.ScheduledMessage);
+    open(ScheduledMessageJobType.ScheduledMessage);
     const component = await mountSuspended(MessageModelMessageInputScheduledMessageJobDialog, {
       attachTo: document.body,
     });
@@ -67,7 +68,8 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
     };
     trpcMsw.message.scheduledMessage.createScheduledMessage.mutation(() => isKept);
     const scheduledMessageJobDialogStore = useScheduledMessageJobDialogStore();
-    scheduledMessageJobDialogStore.open(ScheduledMessageJobType.ScheduledMessage);
+    const { open } = scheduledMessageJobDialogStore;
+    open(ScheduledMessageJobType.ScheduledMessage);
     const component = await mountSuspended(MessageModelMessageInputScheduledMessageJobDialog, {
       attachTo: document.body,
     });
@@ -82,7 +84,7 @@ describe("messageModelMessageInputScheduledMessageJobDialog", () => {
     keepSchedule(keptSchedule);
     await flushPromises();
     await waitForSynchronizedFunctions();
-    scheduledMessageJobDialogStore.open(ScheduledMessageJobType.ScheduledMessage);
+    open(ScheduledMessageJobType.ScheduledMessage);
     await flushPromises();
 
     expect(component.get("textarea").element.value).toBe("ab");

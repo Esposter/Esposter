@@ -18,18 +18,16 @@ describe(useRefreshRoomUsers, () => {
     expect.hasAssertions();
 
     const userStore = useUserStore();
-    userStore.storeUsers([user]);
-    userStore.storeRoomMembers(roomId, [{ ...user, displayName: user.name }]);
+    const { userMap } = storeToRefs(userStore);
+    const { getRoomMemberMap, storeRoomMembers, storeUsers } = userStore;
+    storeUsers([user]);
+    storeRoomMembers(roomId, [{ ...user, displayName: user.name }]);
     const renamedUser = { ...user, image: "a", name: "renamedAccount" };
     trpcMsw.room.readUsersByIds.query(() => [{ ...renamedUser, displayName: renamedUser.name, isMember: true }]);
 
     setRoomUsers(roomId, await useRefreshRoomUsers()(roomId));
 
-    expect(userStore.getRoomMemberMap(roomId)?.get(user.id)?.displayName).toBe(renamedUser.name);
-    expect(userStore.userMap.get(user.id)).toStrictEqual({
-      ...renamedUser,
-      displayName: renamedUser.name,
-      isMember: true,
-    });
+    expect(getRoomMemberMap(roomId)?.get(user.id)?.displayName).toBe(renamedUser.name);
+    expect(userMap.value.get(user.id)).toStrictEqual({ ...renamedUser, displayName: renamedUser.name, isMember: true });
   });
 });

@@ -64,7 +64,8 @@ describe(useCreateModerationNote, () => {
     expect(isKept).toBe(false);
     expect(isCreatePending.value).toBe(false);
     const alertStore = useAlertStore();
-    expect(alertStore.alerts).toHaveLength(1);
+    const { alerts } = storeToRefs(alertStore);
+    expect(alerts.value).toHaveLength(1);
   });
 
   test("resolves to true once the server keeps the note", async () => {

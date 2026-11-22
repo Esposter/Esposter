@@ -39,12 +39,13 @@ describe(useForwardStore, () => {
     const destinationRoomId = v7();
     setCurrentRoomId(sourceRoomId);
     const forwardStore = useForwardStore();
+    const { clearForward } = forwardStore;
     const { messageInput, roomIds } = storeToRefs(forwardStore);
     messageInput.value = "composed";
     roomIds.value = [destinationRoomId];
     setCurrentRoomId(destinationRoomId);
 
-    forwardStore.clearForward(sourceRoomId, { message: "composed", roomIds: [destinationRoomId] });
+    clearForward(sourceRoomId, { message: "composed", roomIds: [destinationRoomId] });
     setCurrentRoomId(sourceRoomId);
 
     expect(messageInput.value).toBe("");
@@ -61,13 +62,14 @@ describe(useForwardStore, () => {
     const pickedRoomId = v7();
     setCurrentRoomId(sourceRoomId);
     const forwardStore = useForwardStore();
+    const { clearForward } = forwardStore;
     const { messageInput, roomIds } = storeToRefs(forwardStore);
     messageInput.value = "a";
     roomIds.value = [sentRoomId];
     messageInput.value = "ab";
     roomIds.value = [pickedRoomId];
 
-    forwardStore.clearForward(sourceRoomId, { message: "a", roomIds: [sentRoomId] });
+    clearForward(sourceRoomId, { message: "a", roomIds: [sentRoomId] });
 
     expect(messageInput.value).toBe("ab");
     expect(roomIds.value).toStrictEqual([pickedRoomId]);

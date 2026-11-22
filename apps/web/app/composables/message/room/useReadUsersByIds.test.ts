@@ -20,7 +20,9 @@ describe(useReadUsersByIds, () => {
     await useReadUsersByIds()(roomId, [user.id]);
 
     const userStore = useUserStore();
-    expect(userStore.getRoomMemberMap(roomId)?.has(user.id)).not.toBe(true);
-    expect(userStore.userMap.get(user.id)?.name).toBe(user.name);
+    const { userMap } = storeToRefs(userStore);
+    const { getRoomMemberMap } = userStore;
+    expect(getRoomMemberMap(roomId)?.has(user.id)).not.toBe(true);
+    expect(userMap.value.get(user.id)?.name).toBe(user.name);
   });
 });

@@ -113,9 +113,10 @@ describe(useUploadFiles, () => {
     // Answered, so it is drained here rather than left to run once the environment is torn down
     await waitForSynchronizedFunctions();
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
 
     expect(getComposerFiles(target)).toHaveLength(0);
-    expect(alertStore.alerts.map(({ text }) => text)).toStrictEqual([STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE]);
+    expect(alerts.value.map(({ text }) => text)).toStrictEqual([STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE]);
   });
 
   // Crossing the two features that meet on this path: attachments are keyed by composer, and a revert runs

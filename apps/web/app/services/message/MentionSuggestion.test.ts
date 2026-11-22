@@ -61,7 +61,8 @@ describe("mentionSuggestion", () => {
     trpcMsw.room.readMembers.query(() => ({ hasMore: false, items: [], nextCursor: "" }));
     trpcMsw.role.readMyPermissions.query(() => [{ isRoomOwner: false, permissions, roomId, topRolePosition: 0 }]);
     const roleStore = useRoleStore();
-    await roleStore.readMyPermissions({ roomIds: [roomId] });
+    const { readMyPermissions } = roleStore;
+    await readMyPermissions({ roomIds: [roomId] });
     assert.exists(MentionSuggestion?.items);
     const items = await MentionSuggestion.items({
       editor: {} as Editor,
