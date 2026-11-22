@@ -15,6 +15,7 @@ interface Props {
   resources?: Page<UiSelectItem<string>> | undefined;
 }
 
+defineSlots<{ warning?: () => VNode }>();
 const modelValue = defineModel<string>({ required: true });
 const { isRequired, isUnpublished, resources } = defineProps<Props>();
 const items = computed(() => (isRequired ? (resources?.items ?? []) : prependNoneSelectItem(resources?.items ?? [])));
