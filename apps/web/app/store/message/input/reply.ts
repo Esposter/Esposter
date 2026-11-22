@@ -1,6 +1,7 @@
 import type { ClientMessage } from "#src/models/message/ClientMessage";
 
 import { MessageHook } from "#src/models/message/MessageHook";
+import { checkIsNewerThanCopy } from "#src/services/message/checkIsNewerThanCopy";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
 import { updateMessageCopy } from "#src/services/message/updateMessageCopy";
@@ -42,7 +43,8 @@ export const useReplyStore = defineStore("message/input/reply", () => {
     // Than thrown, since a throwing hook keeps the message out of the list
     await getResultAsync(async () => {
       const [repliedMessage] = await $trpc.message.readMessagesByIds.query({ messageIds: [repliedMessageId], roomId });
-      if (repliedMessage) getReplyMapRef(roomId).value.set(repliedMessageId, { ...repliedMessage, roomId });
+      if (repliedMessage && checkIsNewerThanCopy(getReplyMapRef(roomId).value.get(repliedMessageId), repliedMessage))
+        getReplyMapRef(roomId).value.set(repliedMessageId, { ...repliedMessage, roomId });
     }).match(noop, console.error);
   });
   MessageHookMap[Operation.Delete].register(({ id: messageId, roomId }) => {
