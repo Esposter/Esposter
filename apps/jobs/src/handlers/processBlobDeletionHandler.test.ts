@@ -49,8 +49,8 @@ const createDeletingBucket = (deleteNames: (names: string | string[]) => Promise
   ({ delete: deleteNames }) as R2Bucket;
 
 describe(processBlobDeletionHandler, () => {
-  const blobName = "";
-  const secondBlobName = " ";
+  const blobName = " ";
+  const secondBlobName = "  ";
   const prefix = "a";
   const prefixedBlobName = `${prefix}/${blobName}`;
   const userId = v7();
