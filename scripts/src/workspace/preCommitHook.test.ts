@@ -1,3 +1,5 @@
+import { NODE_MODULES_DIRECTORY } from "#src/services/dependencies/score/constants";
+import { HOOKS_PATH } from "#src/services/setup/constants";
 import { OXFMT_CONFIGURATION_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { execFileSync } from "@esposter/shared-node/child-process";
 import { copyFileSync, mkdtempSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
@@ -12,7 +14,7 @@ const runGit = (root: string, args: string[]): string =>
 // The first is the staged hunk; the last is the unstaged one.
 describe("pre-commit hook", () => {
   const FILE_NAME = "module.ts";
-  const HOOKS_DIRECTORY = join(REPOSITORY_ROOT, ".githooks");
+  const HOOKS_DIRECTORY = join(REPOSITORY_ROOT, HOOKS_PATH);
   let root: string;
 
   beforeEach(() => {
@@ -22,7 +24,7 @@ describe("pre-commit hook", () => {
     runGit(root, ["config", "user.name", "Hook"]);
     runGit(root, ["config", "core.hooksPath", HOOKS_DIRECTORY]);
     copyFileSync(join(REPOSITORY_ROOT, OXFMT_CONFIGURATION_FILE), join(root, OXFMT_CONFIGURATION_FILE));
-    symlinkSync(join(REPOSITORY_ROOT, "node_modules"), join(root, "node_modules"), "junction");
+    symlinkSync(join(REPOSITORY_ROOT, NODE_MODULES_DIRECTORY), join(root, NODE_MODULES_DIRECTORY), "junction");
   });
 
   afterEach(() => {

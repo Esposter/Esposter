@@ -1,5 +1,6 @@
 import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
+import { matchImportPattern } from "#src/workspace/matchImportPattern.test";
 import { readJsonFile } from "#src/workspace/readJsonFile.test";
 import { getResult } from "@esposter/shared";
 import { existsSync, readFileSync } from "node:fs";
@@ -120,18 +121,8 @@ describe("packageScripts", () => {
       if (specifier.startsWith(".")) return join(dirname(importerPath), specifier);
       const manifestDirectory = findManifestDirectory(importerPath);
       for (const [key, target] of readImportsPatterns(manifestDirectory)) {
-        const starIndex = key.indexOf("*");
-        if (starIndex === -1) {
-          if (key === specifier) return join(manifestDirectory, target);
-          continue;
-        }
-        const prefix = key.slice(0, starIndex);
-        const suffix = key.slice(starIndex + 1);
-        if (specifier.startsWith(prefix) && specifier.endsWith(suffix) && specifier.length >= key.length - 1)
-          return join(
-            manifestDirectory,
-            target.replaceAll("*", specifier.slice(prefix.length, specifier.length - suffix.length)),
-          );
+        const captured = matchImportPattern(key, specifier);
+        if (captured !== undefined) return join(manifestDirectory, target.replaceAll("*", captured));
       }
       return undefined;
     };

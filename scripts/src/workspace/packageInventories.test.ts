@@ -1,3 +1,4 @@
+import { AGENTS_FILE, README_FILE } from "#src/services/package/new/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readFileSync } from "node:fs";
@@ -17,7 +18,7 @@ describe("packageInventories", () => {
     }),
   );
 
-  test.each(["AGENTS.md", "README.md"])("%s names every workspace member", (filename) => {
+  test.each([AGENTS_FILE, README_FILE])("%s names every workspace member", (filename) => {
     expect.hasAssertions();
 
     const text = readFileSync(resolve(REPOSITORY_ROOT, filename), "utf8");
@@ -32,7 +33,7 @@ describe("packageInventories", () => {
   test("the root README marks each member published exactly when its manifest is not private", () => {
     expect.hasAssertions();
 
-    const lines = readFileSync(resolve(REPOSITORY_ROOT, "README.md"), "utf8").split("\n");
+    const lines = readFileSync(resolve(REPOSITORY_ROOT, README_FILE), "utf8").split("\n");
     const mismatches = workspacePackages.flatMap(({ manifest, path }) => {
       const row = lines.find((line) => line.split("|")[1]?.includes(`\`${path}\``));
       if (!row) return [`${path}: no row`];

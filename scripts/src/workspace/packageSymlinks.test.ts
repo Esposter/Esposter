@@ -1,3 +1,4 @@
+import { NODE_MODULES_DIRECTORY } from "#src/services/dependencies/score/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
 import { readdirSync, readlinkSync } from "node:fs";
@@ -14,7 +15,6 @@ import { describe, expect, test } from "vitest";
  * fetcher.
  */
 describe("packageSymlinks", () => {
-  const NODE_MODULES_DIRECTORY = "node_modules";
   const PARENT_DIRECTORY = "..";
   // `node_modules` is the one prune: it is the fetcher's own output rather than package source, and every dependency
   // Under it is a store link that escapes by design.

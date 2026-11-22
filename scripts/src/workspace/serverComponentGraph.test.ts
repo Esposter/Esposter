@@ -5,6 +5,7 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
+import { matchImportPattern } from "#src/workspace/matchImportPattern.test";
 import { SOURCE_CONDITION } from "@esposter/configuration/constants";
 import { readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
@@ -53,17 +54,9 @@ const resolveWorkspaceSpecifier = (specifier: string, packages: PackageSource[])
 
 // A package's own `#` imports, by the most specific pattern its manifest's `imports` has for the specifier
 const resolveImportSpecifier = (specifier: string, owner: PackageSource): SourceModule | undefined => {
-  const wildcard = "*";
   const matches = Object.entries(owner.imports).flatMap(([pattern, target]) => {
-    const [prefix = "", suffix = ""] = pattern.split(wildcard);
-    return specifier.startsWith(prefix) && specifier.endsWith(suffix) && specifier.length >= pattern.length - 1
-      ? [
-          {
-            length: pattern.length,
-            path: target.replace(wildcard, specifier.slice(prefix.length, specifier.length - suffix.length)),
-          },
-        ]
-      : [];
+    const captured = matchImportPattern(pattern, specifier);
+    return captured === undefined ? [] : [{ length: pattern.length, path: target.replace("*", captured) }];
   });
   const best = matches.toSorted((firstMatch, secondMatch) => secondMatch.length - firstMatch.length)[0];
   const file = best ? resolve(owner.directory, best.path) : "";

@@ -1,24 +1,21 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { CI_WORKFLOW_FILE } from "#src/services/ci/constants";
+import { readRepositoryFile } from "#src/workspace/readRepositoryFile.test";
 import { assert, describe, expect, test } from "vitest";
 
-const readRepositoryFile = (path: string): string => readFileSync(join(REPOSITORY_ROOT, path), "utf8");
-
 describe("requiredChecks", () => {
+  const CI_WORKFLOW_PATH = `.github/workflows/${CI_WORKFLOW_FILE}`;
   // The branch ruleset requires each check by the name a CI job reports, and nothing else ties the two files: a
   // Context no job reports is never satisfied and blocks every merge, and a shard CI adds past the count is a check
   // The ruleset never asks for
   const rulesetSource = readRepositoryFile("apps/infra/src/github/rulesets/queueStatusChecks.ts");
-  const workflowSource = [".github/workflows/CI.yaml", ".github/workflows/build-packages.yaml"]
+  const workflowSource = [CI_WORKFLOW_PATH, ".github/workflows/build-packages.yaml"]
     .map((path) => readRepositoryFile(path))
     .join("\n");
 
   test("the ruleset requires one coverage context per CI shard", () => {
     expect.hasAssertions();
 
-    const shards = /^\s+shard: \[(?<shards>[\d, ]+)\]$/mu.exec(readRepositoryFile(".github/workflows/CI.yaml"))?.groups
-      ?.shards;
+    const shards = /^\s+shard: \[(?<shards>[\d, ]+)\]$/mu.exec(readRepositoryFile(CI_WORKFLOW_PATH))?.groups?.shards;
     const shardCount = /^const CoverageShardCount = (?<count>\d+);$/mu.exec(
       readRepositoryFile("apps/infra/src/github/constants/CoverageShardCount.ts"),
     )?.groups?.count;

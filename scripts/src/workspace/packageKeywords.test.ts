@@ -1,9 +1,9 @@
 import { GITHUB_ISSUES_URL } from "#src/services/package/new/constants";
 import { getPackageHomepage } from "#src/services/package/new/getPackageHomepage";
 import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readJsonFile } from "#src/workspace/readJsonFile.test";
 import { SITE_NAME } from "@esposter/shared";
-import { existsSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -36,29 +36,11 @@ describe("package keywords", () => {
     "ts",
     "typescript",
   ]);
-  const WORKSPACE_DIRECTORIES = ["apps", "packages"];
-
-  const readManifests = () =>
-    [
-      ...WORKSPACE_DIRECTORIES.flatMap((directory) =>
-        readdirSync(resolve(REPOSITORY_ROOT, directory), { withFileTypes: true })
-          .filter(
-            (entry) =>
-              entry.isDirectory() && existsSync(resolve(REPOSITORY_ROOT, directory, entry.name, PACKAGE_JSON_FILENAME)),
-          )
-          .map(({ name }) => ({
-            directory,
-            manifest: readJsonFile(resolve(REPOSITORY_ROOT, directory, name, PACKAGE_JSON_FILENAME)),
-            name,
-          })),
-      ),
-      {
-        directory: "",
-        manifest: readJsonFile(resolve(REPOSITORY_ROOT, "scripts", PACKAGE_JSON_FILENAME)),
-        name: "scripts",
-      },
-    ].map((entry) => ({ ...entry, isPrivate: entry.manifest.private === true }));
-  const MANIFESTS = readManifests();
+  // The members pnpm reads, each manifest read raw: its keywords are not in the build's manifest type
+  const MANIFESTS = readWorkspacePackages(REPOSITORY_ROOT).map(({ directory, workspaceDirectory }) => {
+    const manifest = readJsonFile(resolve(REPOSITORY_ROOT, workspaceDirectory, directory, PACKAGE_JSON_FILENAME));
+    return { directory: workspaceDirectory, isPrivate: manifest.private === true, manifest, name: directory };
+  });
   const PUBLISHED_PACKAGES = MANIFESTS.filter(({ directory, isPrivate }) => directory === "packages" && !isPrivate);
   // Named rather than counted: the package that fails names itself in the failure
   const getFailingNames = (checkIsFailing: (keywords: string[]) => boolean): string[] =>

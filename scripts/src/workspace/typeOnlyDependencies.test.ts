@@ -9,6 +9,7 @@ import { readVueSegments } from "#src/services/shared/readVueSegments";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
+import { NON_SOURCE_SUFFIXES } from "@esposter/configuration/constants";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -44,7 +45,10 @@ const readPackages = (checkIsKept: (manifest: PackageManifest) => boolean) =>
  */
 describe("typeOnlyDependencies", () => {
   const SOURCE_PATH_REGEX = /\.(?:[cm]?[jt]s|vue)$/u;
-  const TEST_PATH_REGEX = /\.(?:bench|test-d|test|typebench)\.ts$|\/(?:fixtures|tests?)\//u;
+  const TEST_PATH_REGEX = new RegExp(
+    `(?:${NON_SOURCE_SUFFIXES.map((suffix) => RegExp.escape(suffix)).join("|")})$|/(?:fixtures|tests?)/`,
+    "u",
+  );
   const DECLARATION_PATH_REGEX = /\.d\.[cm]?ts$/u;
   // Only a source that writes `import(` can hold a dynamic import or an import type, and either sits anywhere in its tree
   const IMPORT_CALL_REGEX = /\bimport\s*\(/u;

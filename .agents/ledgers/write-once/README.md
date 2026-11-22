@@ -43,7 +43,6 @@ A copy an outside reader must hold is not removed. Each keeps the test that hold
 Each is a copy the code could be read instead of. Each needs a call, or belongs to another area's pass. Named by the test that holds it, or by the file where no test does:
 
 - `deployedPictures.test.ts` — `UI_AvatarIcon_` is a literal in this test, beside the two `genshinAssets` files that import `AVATAR_ICON_PREFIX` from `genshinAssets/shared/constants`. Import it from there too (`tooling`).
-- `packageKeywords.test.ts` — `WORKSPACE_DIRECTORIES` restates the `apps/*` and `packages/*` globs. `readWorkspacePackages` yields the same members, but it types its manifest as `PackageManifest`, which has no `keywords`, `bugs` or `homepage`, so the switch needs that type widened in the shared reader first (`tooling`).
 - `requiredChecks.test.ts` — `CI.yaml`'s coverage shard list restates `CoverageShardCount`. The ruleset in `apps/infra` could read the list from the workflow (the `pulumi-infra` skill).
 - `genshinExitGates.test.ts` — the progress report carries copies of the phase gate clauses from the `genshin-phases` design. Reading the design at run time binds the report to a folder that archives. Owner call.
 - `packageInventories.test.ts` — the member tables in `AGENTS.md` and `README.md` hold each path by hand. Generated tables would drop the copy. Owner call.
