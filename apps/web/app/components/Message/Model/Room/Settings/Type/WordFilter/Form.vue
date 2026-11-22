@@ -45,7 +45,7 @@ const isDirty = computed(
     (isTimeout.value && editedFormData.value.timeoutDurationMs !== initialFormData.value.timeoutDurationMs),
 );
 const { executeMutation } = useMutation();
-// A save for the room waits behind the save in flight rather than being dropped, and each one merges against the baseline
+// A save for the room waits behind the save in flight rather than being dropped, and each merges against the baseline
 // The save before it kept, read when it is sent, so it never merges against a list the save before it has yet to write
 const saveFilter = () => {
   // The edit as it stood when the save was issued
@@ -73,10 +73,10 @@ const saveFilter = () => {
       awaitedBecause: AwaitedReason.ServerDecidedOutcome,
       key: roomId,
       onSuccess: (savedFilter) => {
-        // The saved filter is the server's, and it may hold other moderators' words the write merged in, so it becomes the
-        // Baseline once it answers
+        // The saved filter is the server's, and it may hold other moderators' words the write merged in.
+        // Once it answers, it becomes the baseline
         initialFormData.value = getWordFilterFormData(savedFilter);
-        // The form takes the saved list, unless the reader has edited it since the save was issued, and that edit is kept
+        // The form takes the saved list, unless the reader has edited it since the save was issued. That edit is kept
         applyIfUnchanged(editedFormData, issuedFormData, structuredClone(toRawDeep(initialFormData.value)));
       },
     },
