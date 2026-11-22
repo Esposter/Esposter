@@ -448,8 +448,7 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { currentResourceId } = storeToRefs(resourceStore);
-    const { saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
+    const { currentResourceId, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
     const { readContent, saveContent, setPersistedContent } = resourceStore;
     const { readResource } = useReadOpenResource();
     await readResource();
@@ -493,8 +492,7 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { currentResourceId } = storeToRefs(resourceStore);
-    const { saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
+    const { currentResourceId, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
     const { readResource } = useReadOpenResource();
     await readResource();
     const heldResourceId = currentResourceId.value;

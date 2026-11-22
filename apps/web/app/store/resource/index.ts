@@ -117,10 +117,11 @@ export const useResourceStore = defineStore("resource", () => {
   // Opening: its in-flight writes are still the ones on screen
   let opening = Symbol("opening");
   const getOpening = () => opening;
-  // The latest content read issued. A restore re-reads within the one opening, so the opening alone cannot drop a
-  // Read issued before the restore that lands after it: taken then, it would replace the restored content and the
-  // Baseline it was persisted against with the document from before
-  let latestContentRead = Symbol("contentRead");
+  // A restore re-reads within the one opening, so the opening alone cannot drop a read issued before the restore that
+  // Lands after it: the scope aborts a read a newer one replaces, so only the newest read's content applies
+  const { executeQuery: executeContentQuery } = useMutation();
+  const contentReadRunScope = useRunScope();
+  const contentReadKey = Symbol("readContent");
   // The last content shape known to be persisted — saveContent() skips the write when nothing changed, so a
   // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
   // Content stores seed it after hydrating so the first debounced watch tick has something to compare against
@@ -287,34 +288,44 @@ export const useResourceStore = defineStore("resource", () => {
 
     const { contentHash, contentSize, contentVersion, id, type } = resourceValue;
     const readOpening = opening;
-    const contentRead = Symbol("contentRead");
-    latestContentRead = contentRead;
     const resourceRouter = getResourceRouter(type);
     // A read crosses the way a save of the same document would: through the server while one body carries it,
     // Straight from R2 above that (openspec/specs/architecture/large-documents/design.md). The stored bytes are then the
     // Delta baseline as well, so a session's first large save can already be a delta
-    let storedContent: ContentBaseline | undefined;
-    let content: unknown;
-    if (contentSize >= MAX_REQUEST_SIZE) {
-      const bytes = await readStoredResourceContent(resourceRouter, id);
-      storedContent = { bytes, hash: await getSha256Hex(bytes), id };
-      const serializedContent = new TextDecoder().decode(bytes);
-      // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, so free-text ISO strings survive
-      content = ResourceDefinitionMap[type].contentSchema.parse(JSON.parse(serializedContent));
-    } else content = await resourceRouter.readResourceContent.query({ id });
-    // A read that lands after the blade moved on — to another resource, to a reopening of this one, or past a later
-    // Read of the same opening — holds content that is not the open blade's
-    if (opening !== readOpening || latestContentRead !== contentRead) return;
+    await rethrowFailedRead(
+      executeContentQuery(
+        async () => {
+          if (contentSize < MAX_REQUEST_SIZE)
+            return { content: await resourceRouter.readResourceContent.query({ id }) };
 
-    contentResourceId = id;
-    // The hash is the row's as it was before the blob was read, so a save that lands during the read leaves the hash behind
-    // The content, and the next refetch of the row reads it again rather than missing it
-    persistedContentHash = contentHash;
-    confirmedContentVersions.set(id, contentVersion);
-    if (storedContent) contentBaseline = storedContent;
-    // oxlint-disable typescript/no-unsafe-type-assertion -- the content read is the resource type TType the caller names, which the store's runtime type cannot carry to the compiler; the union of every type's content write takes the one argument each arm accepts, so the input is named as never where it is saved
-    applyContent(content as ResourceContent<TType> | undefined);
-    // oxlint-enable typescript/no-unsafe-type-assertion
+          const bytes = await readStoredResourceContent(resourceRouter, id);
+          const storedContent: ContentBaseline = { bytes, hash: await getSha256Hex(bytes), id };
+          const serializedContent = new TextDecoder().decode(bytes);
+          // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, so free-text ISO strings survive
+          const content: unknown = ResourceDefinitionMap[type].contentSchema.parse(JSON.parse(serializedContent));
+          return { content, storedContent };
+        },
+        {
+          key: contentReadKey,
+          onSuccess: ({ content, storedContent }) => {
+            // A read that lands after the blade moved on — to another resource, to a reopening of this one, or past a later
+            // Read of the same opening — holds content that is not the open blade's
+            if (opening !== readOpening) return;
+
+            contentResourceId = id;
+            // The hash is the row's as it was before the blob was read, so a save that lands during the read leaves the hash behind
+            // The content, and the next refetch of the row reads it again rather than missing it
+            persistedContentHash = contentHash;
+            confirmedContentVersions.set(id, contentVersion);
+            if (storedContent) contentBaseline = storedContent;
+            // oxlint-disable typescript/no-unsafe-type-assertion -- the content read is the resource type TType the caller names, which the store's runtime type cannot carry to the compiler; the union of every type's content write takes the one argument each arm accepts, so the input is named as never where it is saved
+            applyContent(content as ResourceContent<TType> | undefined);
+            // oxlint-enable typescript/no-unsafe-type-assertion
+          },
+          runScope: contentReadRunScope,
+        },
+      ),
+    );
   };
   // Every blade of a resource renders the one content, so it is read once per opened resource rather than once
   // Per blade mount — switching blades renders from the store at once. What changes it after that is the store's own
