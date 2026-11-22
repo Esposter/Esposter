@@ -1,4 +1,4 @@
-import type { ButtonProps } from "#src/components/Login/ButtonProps";
+import type { LoginButtonProps } from "#src/models/auth/LoginButtonProps";
 
 import { SocialProvider } from "#shared/models/auth/SocialProvider";
 
@@ -9,7 +9,7 @@ const LoginButtonLogos = {
   [SocialProvider.Google]: markRaw(defineAsyncComponent(() => import("#src/components/Visual/Logo/Google.vue"))),
 } satisfies Record<SocialProvider, Component>;
 
-export const LoginButtonItems: ButtonProps[] = Object.values(SocialProvider).map((provider) => ({
+export const LoginButtonItems: LoginButtonProps[] = Object.values(SocialProvider).map((provider) => ({
   logo: LoginButtonLogos[provider],
   provider,
 }));

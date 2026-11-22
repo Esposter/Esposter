@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ButtonProps } from "#src/components/Login/ButtonProps";
+import type { LoginButtonProps } from "#src/models/auth/LoginButtonProps";
 
 import { authClient } from "#src/services/auth/authClient";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -7,7 +7,7 @@ import { useAlertStore } from "#src/store/alert";
 import { toTitleCase } from "#src/util/text/toTitleCase";
 import { getResultAsync, noop } from "@esposter/shared";
 
-defineProps<ButtonProps>();
+defineProps<LoginButtonProps>();
 const { signIn } = authClient;
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
