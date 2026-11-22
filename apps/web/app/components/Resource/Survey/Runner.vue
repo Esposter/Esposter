@@ -10,11 +10,13 @@ interface Props {
   // The answers and page a respondent resumes from, when a draft was stored
   initialAnswers?: SurveyAnswers | undefined;
   initialPageIndex?: number | undefined;
+  // Whether the save that completes the survey is still out, which the Complete button shows as pending
+  isCompleting?: boolean | undefined;
   // What a shuffled choice list is ordered by, a resumed response's id, so a respondent sees one order across visits
   seed?: string | undefined;
 }
 
-const { document, initialAnswers, initialPageIndex, seed: initialSeed } = defineProps<Props>();
+const { document, initialAnswers, initialPageIndex, isCompleting, seed: initialSeed } = defineProps<Props>();
 const emit = defineEmits<{
   change: [value: { answers: SurveyAnswers; pageIndex: number }];
   complete: [answers: SurveyAnswers];
@@ -54,12 +56,6 @@ const focusFirstError = () => {
     (element) => element.dataset.pointer === firstError.pointer,
   );
   wrapper?.querySelector<HTMLElement>(SURVEY_FOCUSABLE_SELECTOR)?.focus();
-};
-// A passing completion hands its answers to the page; a blocked one leaves focus where the error is
-const submit = () => {
-  const answers = complete();
-  if (answers) emit("complete", answers);
-  nextTick(focusFirstError);
 };
 </script>
 
@@ -109,7 +105,19 @@ const submit = () => {
       >
         {{ rootProps.pagePrevText || "Previous" }}
       </UiButton>
-      <UiButton v-if="isLastPage" :variant="UiButtonVariant.Accent" @click="submit()">
+      <!-- A passing completion hands its answers to the page; a blocked one leaves focus where the error is -->
+      <UiButton
+        v-if="isLastPage"
+        :is-pending="isCompleting"
+        :variant="UiButtonVariant.Accent"
+        @click="
+          () => {
+            const answers = complete();
+            if (answers) emit('complete', answers);
+            nextTick(focusFirstError);
+          }
+        "
+      >
         {{ rootProps.completeText || "Complete" }}
       </UiButton>
       <UiButton

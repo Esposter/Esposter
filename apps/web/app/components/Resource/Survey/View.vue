@@ -46,6 +46,7 @@ const resumedDraft = ref<{ answers: SurveyAnswers; pageIndex: number; seed: stri
 const isLoading = ref(true);
 const isSubmitted = ref(false);
 const isSubmitFailed = ref(false);
+const isCompleting = ref(false);
 
 // Every answer and page move saves a draft, so a respondent who leaves resumes where they were
 const onChange = ({ answers, pageIndex }: { answers: SurveyAnswers; pageIndex: number }) => {
@@ -57,10 +58,12 @@ const onChange = ({ answers, pageIndex }: { answers: SurveyAnswers; pageIndex: n
 // And send them back to a blank survey
 const onComplete = async (answers: SurveyAnswers) => {
   isSubmitFailed.value = false;
+  isCompleting.value = true;
   if (await saveSurveyResponse({ answers, isSubmitting: true, pageIndex: lastPageIndex })) {
     clearSurveyResponseId();
     isSubmitted.value = true;
   } else isSubmitFailed.value = true;
+  isCompleting.value = false;
 };
 
 onMounted(async () => {
@@ -108,6 +111,7 @@ onMounted(async () => {
       :document="content.document"
       :initial-answers="resumedDraft?.answers"
       :initial-page-index="resumedDraft?.pageIndex"
+      :is-completing
       :seed="resumedDraft?.seed ?? seed"
       @change="(value) => onChange(value)"
       @complete="(answers) => onComplete(answers)"
