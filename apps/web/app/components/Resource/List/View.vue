@@ -4,9 +4,7 @@ import type { ResourceFilterValues } from "#src/models/resource/list/ResourceFil
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
 import { ResourceListSource } from "#src/models/resource/list/ResourceListSource";
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "#src/services/resource/constants";
-import { deserializeResourceColumnKeyWidthMap } from "#src/services/resource/list/deserializeResourceColumnKeyWidthMap";
 import { ResourceListSourceDefinitionMap } from "#src/services/resource/list/ResourceListSourceDefinitionMap";
-import { serializeResourceColumnKeyWidthMap } from "#src/services/resource/list/serializeResourceColumnKeyWidthMap";
 import { NO_ACTION_ITEMS } from "#src/services/shared/constants";
 import { useListDialogStore } from "#src/store/resource/listDialog";
 import { RoutePath, takeOne } from "@esposter/shared";
@@ -23,6 +21,7 @@ const { deletingIds, renamingId } = storeToRefs(listDialogStore);
 // The filter state mirrors to query params, so a global-search deep link lands the list filtered
 const {
   clearFilters,
+  columnKeyWidthMap,
   hasActiveFilters,
   page,
   searchQuery,
@@ -73,15 +72,6 @@ watch([isSummaryView, filterKey], async ([newIsSummaryView]) => {
   if (newIsSummaryView) await refreshTypeCounts();
 });
 const { visibleHeaders } = useResourceListColumns(source);
-// The widths the reader dragged the columns to are the address's too, as "key:width,...", so a reload or a shared link
-// Lays the list out the same
-const columnWidthsQuery = useRouteQuery("columnWidths", "", { transform: String });
-const columnKeyWidthMap = computed({
-  get: () => deserializeResourceColumnKeyWidthMap(columnWidthsQuery.value),
-  set: (newColumnKeyWidthMap) => {
-    columnWidthsQuery.value = serializeResourceColumnKeyWidthMap(newColumnKeyWidthMap);
-  },
-});
 const { clearSelection, selectedIds, selectedResources, updateSelection } = useResourceSelection(items);
 const { getContextMenuProps } = useContextMenu();
 // Held open across a list read — typing into the search box replaces `items` — so the target is dropped with

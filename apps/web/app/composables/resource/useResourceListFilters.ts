@@ -7,7 +7,9 @@ import type { ResourceType } from "@esposter/db-schema";
 import { ResourceStatusFilters } from "#src/models/resource/list/ResourceStatusFilter";
 import { ResourceUpdatedFilters } from "#src/models/resource/list/ResourceUpdatedFilter";
 import { createUpdatedBound } from "#src/services/resource/list/createUpdatedBound";
+import { deserializeResourceColumnKeyWidthMap } from "#src/services/resource/list/deserializeResourceColumnKeyWidthMap";
 import { deserializeResourceSortBy } from "#src/services/resource/list/deserializeResourceSortBy";
+import { serializeResourceColumnKeyWidthMap } from "#src/services/resource/list/serializeResourceColumnKeyWidthMap";
 import { serializeResourceSortBy } from "#src/services/resource/list/serializeResourceSortBy";
 import { parsePositiveInteger } from "#src/services/shared/parsePositiveInteger";
 import { resourceTypeSchema } from "@esposter/db-schema";
@@ -44,6 +46,15 @@ export const useResourceListFilters = (defaultSortBy: readonly SortItem<keyof Re
   const updatedFilter = useEnumRouteQuery<"" | ResourceUpdatedFilter>("updated", ResourceUpdatedFilters, "");
   const updatedAfter = createUpdatedBound("updatedAfter");
   const updatedBefore = createUpdatedBound("updatedBefore");
+  // The widths the reader dragged the columns to are the address's too, as "key:width,...", so a reload or a shared link
+  // Lays the list out the same
+  const columnWidthsQuery = useRouteQuery("columnWidths", "", { transform: String });
+  const columnKeyWidthMap = computed({
+    get: () => deserializeResourceColumnKeyWidthMap(columnWidthsQuery.value),
+    set: (newColumnKeyWidthMap) => {
+      columnWidthsQuery.value = serializeResourceColumnKeyWidthMap(newColumnKeyWidthMap);
+    },
+  });
   const hasActiveFilters = computed(() =>
     Boolean(searchQuery.value || types.value.length > 0 || status.value || updatedFilter.value || tagName.value),
   );
@@ -59,6 +70,7 @@ export const useResourceListFilters = (defaultSortBy: readonly SortItem<keyof Re
   };
   return {
     clearFilters,
+    columnKeyWidthMap,
     hasActiveFilters,
     page,
     searchQuery,

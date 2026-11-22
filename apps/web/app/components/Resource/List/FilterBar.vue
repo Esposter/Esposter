@@ -72,10 +72,6 @@ const clearFilter = (filterType: ResourceListFilterType) => {
   filterTypeDefinitionMap[filterType].reset();
   addedFilterTypes.value = addedFilterTypes.value.filter((addedFilterType) => addedFilterType !== filterType);
 };
-const clearFilters = () => {
-  addedFilterTypes.value = [];
-  emit("clear");
-};
 </script>
 
 <!-- The pills flow on from each other and wrap as one run, so nothing is pushed to the far end of a second line -->
@@ -115,7 +111,16 @@ const clearFilters = () => {
       <UiIcon :meaning="UiIconMeaning.Create" />
       Add filter
     </UiMenu>
-    <UiButton v-if="hasActiveFilters" :variant="UiButtonVariant.Quiet" @click="clearFilters()">
+    <UiButton
+      v-if="hasActiveFilters"
+      :variant="UiButtonVariant.Quiet"
+      @click="
+        () => {
+          addedFilterTypes = [];
+          emit('clear');
+        }
+      "
+    >
       Clear filters
     </UiButton>
   </div>
