@@ -1,6 +1,6 @@
 import { compactSvgPath } from "#src/services/genshinParity/shared/compactSvgPath";
 import { SPECK_SHARE } from "#src/services/genshinParity/shared/constants";
-import { removeMaskSpecks } from "#src/services/genshinParity/shared/removeMaskSpecks";
+import { removeMaskSpecks } from "#src/services/recreation/image/removeMaskSpecks";
 import ImageTracer from "imagetracerjs";
 
 const INK = { a: 255, b: 0, g: 0, r: 0 };

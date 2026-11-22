@@ -1,5 +1,5 @@
 import { SPECK_SHARE } from "#src/services/genshinParity/shared/constants";
-import { removeMaskSpecks } from "#src/services/genshinParity/shared/removeMaskSpecks";
+import { removeMaskSpecks } from "#src/services/recreation/image/removeMaskSpecks";
 
 // A glyph's strokes in an image, 1 for ink: each pixel goes to the nearer of the glyph's colour and its ground's, the
 // Ground being the colour `computeGroundColour` reads off the region's terrain between its glyphs, so a glyph over a

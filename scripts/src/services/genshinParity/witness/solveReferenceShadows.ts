@@ -11,7 +11,6 @@ import { getReferencePath } from "#src/services/genshinParity/shared/getReferenc
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
-import { removeMaskSpecks } from "#src/services/genshinParity/shared/removeMaskSpecks";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
@@ -25,6 +24,7 @@ import { solveCameraPose } from "#src/services/genshinParity/witness/solveCamera
 import { toAngles } from "#src/services/genshinParity/witness/toAngles";
 import { toLuminance } from "#src/services/genshinParity/witness/toLuminance";
 import { toSunDirection } from "#src/services/genshinParity/witness/toSunDirection";
+import { removeMaskSpecks } from "#src/services/recreation/image/removeMaskSpecks";
 import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { computeOtsuThreshold } from "#src/services/recreation/statistics/computeOtsuThreshold";
 import { BYTE } from "#src/services/shared/constants";

@@ -1,4 +1,4 @@
-import { removeMaskSpecks } from "#src/services/genshinParity/shared/removeMaskSpecks";
+import { removeMaskSpecks } from "#src/services/recreation/image/removeMaskSpecks";
 import { describe, expect, test } from "vitest";
 
 describe(removeMaskSpecks, () => {
