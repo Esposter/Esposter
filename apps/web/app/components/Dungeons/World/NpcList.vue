@@ -2,7 +2,6 @@
 import { readNpcs } from "#src/services/dungeons/scene/world/readNpcs";
 import { useNpcStore } from "#src/store/dungeons/world/npc";
 import { useWorldSceneStore } from "#src/store/dungeons/world/scene";
-import { takeOne } from "@esposter/shared";
 import { onCreate } from "vue-phaserjs";
 
 const worldSceneStore = useWorldSceneStore();
@@ -29,10 +28,10 @@ onUnmounted(() => {
 
 <template>
   <DungeonsWorldCharacterNpc
-    v-for="(npc, index) of items"
+    v-for="npc of items"
     :key="npc.id"
-    v-model:direction="takeOne(items, index).direction"
-    v-model:is-moving="takeOne(items, index).isMoving"
+    v-model:direction="npc.direction"
+    v-model:is-moving="npc.isMoving"
     :npc
   />
 </template>
