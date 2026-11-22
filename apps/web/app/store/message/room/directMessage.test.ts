@@ -70,6 +70,7 @@ describe(useDirectMessageStore, () => {
       version: 1,
     }));
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const directMessageStore = useDirectMessageStore();
     const { arriveDirectMessageParticipants, deleteDirectMessageParticipant, getDirectMessageParticipants } =
       directMessageStore;
@@ -77,7 +78,7 @@ describe(useDirectMessageStore, () => {
     await deleteDirectMessageParticipant(roomId, second.id);
 
     expect(getDirectMessageParticipants(roomId).map(({ id }) => id)).toStrictEqual([first.id, third.id]);
-    expect(alertStore.alerts).toHaveLength(0);
+    expect(alerts.value).toHaveLength(0);
   });
 
   // A refused removal leaves the membership as it was, so the participant stays in the conversation
@@ -88,6 +89,7 @@ describe(useDirectMessageStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const directMessageStore = useDirectMessageStore();
     const { arriveDirectMessageParticipants, deleteDirectMessageParticipant, getDirectMessageParticipants } =
       directMessageStore;
@@ -95,7 +97,7 @@ describe(useDirectMessageStore, () => {
     await deleteDirectMessageParticipant(roomId, second.id);
 
     expect(getDirectMessageParticipants(roomId).map(({ id }) => id)).toStrictEqual([first.id, second.id, third.id]);
-    expect(alertStore.alerts).toHaveLength(1);
+    expect(alerts.value).toHaveLength(1);
   });
 
   // A participant's row is a membership, so a removal is its tombstone arriving.
@@ -119,7 +121,8 @@ describe(useDirectMessageStore, () => {
     });
     trpcMsw.userToRoom.readMyUsersToRooms.query(() => []);
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onUserFrame] = getLastOpenRealtimeSocketCall();
     effectScope().run(() => {
       useRoomListEvents();
@@ -166,7 +169,8 @@ describe(useDirectMessageStore, () => {
     const { arriveDirectMessages, hideDirectMessage } = directMessageStore;
     arriveDirectMessages([directMessage]);
     const userToRoomStore = useUserToRoomStore();
-    userToRoomStore.arriveUserToRooms([createUserToRoom({ roomId: directMessage.id, userId: session.user.id })]);
+    const { arriveUserToRooms } = userToRoomStore;
+    arriveUserToRooms([createUserToRoom({ roomId: directMessage.id, userId: session.user.id })]);
     hideDirectMessage(directMessage.id);
     await flushPromises();
 
@@ -196,7 +200,8 @@ describe(useDirectMessageStore, () => {
     const { arriveDirectMessages, hideDirectMessage } = directMessageStore;
     arriveDirectMessages([firstDirectMessage, secondDirectMessage]);
     const userToRoomStore = useUserToRoomStore();
-    userToRoomStore.arriveUserToRooms([
+    const { arriveUserToRooms } = userToRoomStore;
+    arriveUserToRooms([
       createUserToRoom({ roomId: firstDirectMessage.id, userId: session.user.id }),
       createUserToRoom({ roomId: secondDirectMessage.id, userId: session.user.id }),
     ]);
@@ -232,7 +237,8 @@ describe(useDirectMessageStore, () => {
     const { arriveDirectMessages, hideDirectMessage } = directMessageStore;
     arriveDirectMessages([hiddenDirectMessage, landingDirectMessage]);
     const userToRoomStore = useUserToRoomStore();
-    userToRoomStore.arriveUserToRooms([
+    const { arriveUserToRooms } = userToRoomStore;
+    arriveUserToRooms([
       createUserToRoom({ roomId: hiddenDirectMessage.id, userId: session.user.id }),
       createUserToRoom({ roomId: landingDirectMessage.id, userId: session.user.id }),
     ]);
@@ -271,7 +277,8 @@ describe(useDirectMessageStore, () => {
     const { arriveDirectMessages, leaveDirectMessage } = directMessageStore;
     arriveDirectMessages([leftDirectMessage, landingDirectMessage]);
     const userToRoomStore = useUserToRoomStore();
-    userToRoomStore.arriveUserToRooms([
+    const { arriveUserToRooms } = userToRoomStore;
+    arriveUserToRooms([
       createUserToRoom({ roomId: leftDirectMessage.id, userId: session.user.id }),
       createUserToRoom({ roomId: landingDirectMessage.id, userId: session.user.id }),
     ]);
@@ -333,7 +340,8 @@ describe(useDirectMessageStore, () => {
     const directMessage = createRoom("", RoomType.DirectMessage);
     const membershipTopic = getScopeTopic(getTableName(usersToRoomsInMessage), "roomId", directMessage.id);
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onUserFrame] = getLastOpenRealtimeSocketCall();
     effectScope().run(() => {
       useRoomListEvents();

@@ -131,7 +131,8 @@ describe(useRoomStore, () => {
     const lateRead = readRooms();
     await isLateReadHeld;
     const userToRoomStore = useUserToRoomStore();
-    userToRoomStore.arriveUserToRooms([
+    const { arriveUserToRooms } = userToRoomStore;
+    arriveUserToRooms([
       createUserToRoom({ deletedAt: new Date(), roomId: first.id, userId: session.user.id, version: 1 }),
     ]);
     onTombstoneArrived(true);
@@ -181,7 +182,8 @@ describe(useRoomStore, () => {
     expect(items.value).toStrictEqual([]);
 
     const userToRoomStore = useUserToRoomStore();
-    userToRoomStore.arriveUserToRooms([createUserToRoom({ roomId: first.id, userId: session.user.id })]);
+    const { arriveUserToRooms } = userToRoomStore;
+    arriveUserToRooms([createUserToRoom({ roomId: first.id, userId: session.user.id })]);
 
     expect(rooms.value.map(({ id }) => id)).toStrictEqual([first.id]);
   });

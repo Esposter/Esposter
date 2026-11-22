@@ -51,8 +51,9 @@ describe(useRoomEmojiStore, () => {
       return [kept, removed];
     });
     const roomEmojiStore = useRoomEmojiStore();
+    const { readRoomEmojis } = roomEmojiStore;
     const { items } = storeToRefs(roomEmojiStore);
-    await roomEmojiStore.readRoomEmojis(roomId);
+    await readRoomEmojis(roomId);
 
     // The set has no order of its own, so the two live emoji are named as members of it
     expect(items.value).toHaveLength(2);

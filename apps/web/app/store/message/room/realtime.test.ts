@@ -269,7 +269,8 @@ describe(useRealtimeStore, () => {
 
     vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
     const mediaStore = useMediaStore();
-    mediaStore.isDeafened = true;
+    const { isDeafened } = storeToRefs(mediaStore);
+    isDeafened.value = true;
     const { joinedEvents, meeting } = createMeeting();
     spyOnMeetingInit(meeting);
     const realtimeStore = useRealtimeStore();

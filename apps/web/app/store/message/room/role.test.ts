@@ -240,10 +240,12 @@ describe(useRoleStore, () => {
     ]);
     trpcMsw.room.readUsersByIds.query(() => [{ ...leftUser, displayName: leftUser.name, isMember: false }]);
     const roleStore = useRoleStore();
+    const { readMemberPermissionOverrides } = roleStore;
     const userStore = useUserStore();
-    await roleStore.readMemberPermissionOverrides({ roomId });
+    const { getRoomMemberMap } = userStore;
+    await readMemberPermissionOverrides({ roomId });
     await flushPromises();
 
-    expect(userStore.getRoomMemberMap(roomId)?.get(leftUser.id)).toBeUndefined();
+    expect(getRoomMemberMap(roomId)?.get(leftUser.id)).toBeUndefined();
   });
 });
