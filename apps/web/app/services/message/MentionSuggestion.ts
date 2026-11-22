@@ -5,6 +5,7 @@ import type { RoleMentionItem } from "#src/models/message/RoleMentionItem";
 import type { MentionOptions } from "@tiptap/extension-mention";
 
 import MentionList from "#src/components/Message/Model/Message/Suggestion/MentionList.vue";
+import { SuggestionTrigger } from "#src/models/shared/SuggestionTrigger";
 import { getBroadcastMentionItems } from "#src/services/message/getBroadcastMentionItems";
 import { getRender } from "#src/services/message/getRender";
 import { getRoleMentionItems } from "#src/services/message/getRoleMentionItems";
@@ -16,6 +17,7 @@ export const MentionSuggestion: MentionOptions<
   BroadcastMentionItem | MemberInRoom | RoleMentionItem,
   MentionNodeAttributes
 >["suggestion"] = {
+  char: SuggestionTrigger.Mention,
   items: async ({ query }) => {
     const roomStore = useRoomStore();
     const { currentRoomId } = storeToRefs(roomStore);

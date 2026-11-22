@@ -74,3 +74,4 @@ The emoji index follows the same once-for-the-whole-list rule from the other dir
 - One options-menu or context-menu store write must never fan out re-renders: per-item computeds (`isDisabled`, `isMenuTarget`) only propagate when their own value changes, so untargeted items stay untouched.
 - Where the list is anchored — present detection, jump-to-present, bidirectional paging — is
   [message list scrolling](../message-list-scrolling/design.md).
+- **Open question: the same-batch window.** `SAME_BATCH_WINDOW_MS` (five minutes) decides when one author's messages render as one batch, and no decision records that value. Discord's grouping window is not verifiable in this repo, so the value is an open question until a window is decided and recorded here.
