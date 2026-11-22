@@ -17,6 +17,8 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
   const inventorySceneStore = useInventorySceneStore();
   const { itemOptionGrid } = inventorySceneStore;
   const { launchScene, switchToPreviousScene } = transitionFrom(SceneKey.Inventory);
+  // Capture items are only used in battle, where the enemy is the monster being caught
+  const enemyMonster = useEnemyActiveMonster(SceneKey.Inventory);
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) =>
     getResultAsync(async () => {
@@ -35,8 +37,6 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
           switch (itemOptionGrid.value.effect.type) {
             // Capture items can only be used in the battle scene (the previous scene).
             case ItemEffectType.Capture: {
-              // Capture items are only used in battle, where the enemy is the monster being caught
-              const enemyMonster = useEnemyActiveMonster(SceneKey.Inventory);
               await activateItem(scene, toRef(itemOptionGrid.value), enemyMonster);
               break;
             }
