@@ -1,0 +1,33 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/dialogue/getTalkRevealedLength.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.006245799999896917,
+              "name": "the whole line",
+              "p99": 0.011821249999761677,
+              "rme": 30.56192085429214,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "getTalkRevealedLength > revealing a short line"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.19681659999996556,
+              "name": "the whole line",
+              "p99": 0.204330659999996,
+              "rme": 1.3297749926844233,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "getTalkRevealedLength > revealing a long line"
+        }
+      ]
+    }
+  ]
+}
