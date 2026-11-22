@@ -1,3 +1,4 @@
+import { UNSIGNED_PAYLOAD } from "#src/services/sigv4/constants";
 import { signSigV4Request } from "#src/services/sigv4/signSigV4Request";
 import { describe, expect, test } from "vitest";
 
@@ -39,6 +40,6 @@ describe(signSigV4Request, () => {
       url: "https://examplebucket.s3.amazonaws.com/a",
     });
 
-    expect(headers.get("X-Amz-Content-Sha256")).toBe("UNSIGNED-PAYLOAD");
+    expect(headers.get("X-Amz-Content-Sha256")).toBe(UNSIGNED_PAYLOAD);
   });
 });

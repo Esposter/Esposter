@@ -3,7 +3,12 @@ import type { SigV4Request } from "#src/models/sigv4/SigV4Request";
 
 import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
 import { Operation } from "#src/models/shared/Operation";
-import { MAX_PRESIGNED_URL_EXPIRES_MS, SIGV4_ALGORITHM, UNSIGNED_PAYLOAD } from "#src/services/sigv4/constants";
+import {
+  MAX_PRESIGNED_URL_EXPIRES_MS,
+  SIGV4_ALGORITHM,
+  SIGV4_DATE_HEADER,
+  UNSIGNED_PAYLOAD,
+} from "#src/services/sigv4/constants";
 import { getAmzDate } from "#src/services/sigv4/getAmzDate";
 import { getCanonicalRequest } from "#src/services/sigv4/getCanonicalRequest";
 import { getCredentialScope } from "#src/services/sigv4/getCredentialScope";
@@ -37,7 +42,7 @@ export const presignSigV4Url = async (
   const amzDate = getAmzDate(signedAt);
   url.searchParams.set("X-Amz-Algorithm", SIGV4_ALGORITHM);
   url.searchParams.set("X-Amz-Credential", `${credentials.accessKeyId}/${getCredentialScope(credentials, amzDate)}`);
-  url.searchParams.set("X-Amz-Date", amzDate);
+  url.searchParams.set(SIGV4_DATE_HEADER, amzDate);
   url.searchParams.set("X-Amz-Expires", String(expiresInSeconds));
   url.searchParams.set("X-Amz-SignedHeaders", getSignedHeaders(headers).join(";"));
   const { canonicalQuery, canonicalRequest } = getCanonicalRequest(method, url, headers, UNSIGNED_PAYLOAD);

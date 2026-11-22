@@ -32,7 +32,9 @@ describe(presignSigV4Url, () => {
       await presignSigV4Url(credentials, { expiresInMs, method: "GET", signedAt, url: withDisposition }),
     );
 
-    expect(presignedUrl.search).toContain("response-content-disposition=attachment%3B%20filename%3D%22a%20b%2A.txt%22");
+    expect(presignedUrl.search).toBe(
+      "?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20130524%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20130524T000000Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22a%20b%2A.txt%22&X-Amz-Signature=9c392e57dfd35ae5b8eefebab3390c6051d820cf2ee0f9b6a7410f1316f575c3",
+    );
   });
 
   test("#55 #74 signs every header given, which the request must then send", async () => {

@@ -2,7 +2,12 @@ import { createSigV4Fetch } from "#src/services/sigv4/createSigV4Fetch";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(createSigV4Fetch, () => {
-  const credentials = { accessKeyId: "accessKeyId", region: "auto", secretAccessKey: "secretAccessKey", service: "s3" };
+  const credentials = {
+    accessKeyId: "accessKeyId",
+    region: "region",
+    secretAccessKey: "secretAccessKey",
+    service: "service",
+  };
   const url = "https://bucket.example.com/key";
   const fetchMock = vi.fn<typeof fetch>();
 

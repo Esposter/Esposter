@@ -6,7 +6,7 @@ describe("createUniqueArraySchema type", () => {
   test("object", () => {
     expect.hasAssertions();
 
-    expectTypeOf(createUniqueArraySchema(z.object({ id: z.string() }), "id")).toEqualTypeOf<
+    expectTypeOf<ReturnType<typeof createUniqueArraySchema<z.ZodObject<{ id: z.ZodString }>>>>().toEqualTypeOf<
       z.ZodArray<z.ZodObject<{ id: z.ZodString }>>
     >();
   });

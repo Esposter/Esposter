@@ -1,4 +1,3 @@
-/* oxlint-disable no-await-in-loop -- Retry: the next attempt is sent only because the one before it was refused */
 import type { SigV4Credentials } from "#src/models/sigv4/SigV4Credentials";
 
 import { SIGV4_FETCH_FIRST_RETRY_CEILING_MS, SIGV4_FETCH_RETRY_COUNT } from "#src/services/sigv4/constants";
@@ -16,6 +15,7 @@ export const createSigV4Fetch =
   async (url, init = {}) => {
     const method = init.method ?? "GET";
     const attemptCount = init.body instanceof ReadableStream ? 1 : retryCount + 1;
+    // oxlint-disable no-await-in-loop -- Retry: the next attempt is sent only because the one before it was refused
     for (let attempt = 0; ; attempt++) {
       const headers = await signSigV4Request(credentials, { headers: init.headers, method, url });
       const response = await fetch(url, { ...init, headers, method });
@@ -23,4 +23,5 @@ export const createSigV4Fetch =
       await response.body?.cancel();
       await sleep(Math.random() * SIGV4_FETCH_FIRST_RETRY_CEILING_MS * 2 ** attempt);
     }
+    // oxlint-enable no-await-in-loop
   };

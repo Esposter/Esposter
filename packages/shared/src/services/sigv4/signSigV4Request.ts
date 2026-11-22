@@ -1,7 +1,12 @@
 import type { SigV4Credentials } from "#src/models/sigv4/SigV4Credentials";
 import type { SigV4Request } from "#src/models/sigv4/SigV4Request";
 
-import { SIGV4_ALGORITHM, SIGV4_CONTENT_SHA256_HEADER, UNSIGNED_PAYLOAD } from "#src/services/sigv4/constants";
+import {
+  SIGV4_ALGORITHM,
+  SIGV4_CONTENT_SHA256_HEADER,
+  SIGV4_DATE_HEADER,
+  UNSIGNED_PAYLOAD,
+} from "#src/services/sigv4/constants";
 import { getAmzDate } from "#src/services/sigv4/getAmzDate";
 import { getCanonicalRequest } from "#src/services/sigv4/getCanonicalRequest";
 import { getCredentialScope } from "#src/services/sigv4/getCredentialScope";
@@ -15,7 +20,7 @@ export const signSigV4Request = async (
 ): Promise<Headers> => {
   const headers = new Headers(headersInit);
   const amzDate = getAmzDate(signedAt);
-  headers.set("X-Amz-Date", amzDate);
+  headers.set(SIGV4_DATE_HEADER, amzDate);
   if (!headers.has(SIGV4_CONTENT_SHA256_HEADER)) headers.set(SIGV4_CONTENT_SHA256_HEADER, UNSIGNED_PAYLOAD);
   const { canonicalRequest, signedHeaders } = getCanonicalRequest(
     method,

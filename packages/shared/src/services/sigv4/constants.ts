@@ -4,6 +4,8 @@ export const SIGV4_SCOPE_TERMINATOR = "aws4_request";
 // S3 accepts a payload left out of the signature, so a body is streamed as it is rather than read and hashed first
 export const UNSIGNED_PAYLOAD = "UNSIGNED-PAYLOAD";
 export const SIGV4_CONTENT_SHA256_HEADER = "X-Amz-Content-Sha256";
+export const SIGV4_DATE_HEADER = "X-Amz-Date";
+export const SIGV4_HOST_HEADER = "host";
 // The longest a presigned URL may live, which S3 and R2 both refuse past
 export const MAX_PRESIGNED_URL_EXPIRES_MS: number = 7 * 24 * 60 * 60 * 1000;
 // A 5xx or a 429 is retried this many times, each wait drawn at random below a ceiling that doubles from the first

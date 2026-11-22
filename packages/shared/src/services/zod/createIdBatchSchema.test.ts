@@ -8,7 +8,7 @@ describe(createIdBatchSchema, () => {
 
   test("accepts a batch of unique ids", () => {
     expect.hasAssertions();
-    expect(schema.safeParse(["a", "b"]).success).toBe(true);
+    expect(schema.safeParse(["", " "]).success).toBe(true);
   });
 
   test("refuses an empty batch", () => {
