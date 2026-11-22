@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/login/tower/createLoginTowerSlabGeometry.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.026087299999994686,
+              "name": "4 cells",
+              "p99": 0.052801249999963606,
+              "rme": 31.88411250381441,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.06899169999994684,
+              "name": "the whole turn",
+              "p99": 0.11922746999982337,
+              "rme": 24.908725054153344,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createLoginTowerSlabGeometry > a window's span against the whole turn"
+        }
+      ]
+    }
+  ]
+}
