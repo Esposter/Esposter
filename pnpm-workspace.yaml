@@ -34,7 +34,7 @@ catalog:
   "@better-auth/drizzle-adapter": ^1.7.27
   "@cloudflare/realtimekit": ^2.1.0
   "@cloudflare/realtimekit-virtual-background": ^0.0.3
-  "@cloudflare/workers-types": ^5.20261121.1
+  "@cloudflare/workers-types": ^5.20261122.2
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.13.1
   "@codemirror/language-data": ^6.5.2
@@ -145,7 +145,7 @@ catalog:
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
   jscpd: ^5.4.3
-  knip: ^6.47.0
+  knip: ^6.48.0
   link-preview-js: ^6.0.0
   linkifyjs: ^4.4.0
   lowlight: ^3.3.0
@@ -332,6 +332,7 @@ packageExtensions:
   "three-stdlib":
     peerDependencies:
       "@types/three": "*"
+
 permissions:
   "@nuxtjs/seo":
     skills: true
@@ -345,8 +346,8 @@ permissions:
     skills: true
   tsdown:
     skills: true
-shellEmulator: true
 
+shellEmulator: true
 # Every checkout on a machine, and every CI job, links its packages from one virtual store under the pnpm store's
 # `links` folder, so a worktree's install only writes symlinks and the machine holds one copy of each resolved package
 # rather than one per checkout. This file is the one place the layout is set: a `vp run` task starts a pnpm of its own,
