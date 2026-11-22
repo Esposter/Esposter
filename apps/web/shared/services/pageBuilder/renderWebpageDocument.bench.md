@@ -9,7 +9,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 1aa7042241
+- Commit: 67c0918248
 - Node: v26.13.1
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -17,7 +17,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## renderWebpageDocument > 2000 nodes
 
-| task                 | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| -------------------- | ------- | --------- | ------ | -------- | ------- |
-| a tenth of the nodes | 1.00×   | 46.3334   | ±9.96% | 47.9113  | 3       |
-| all the nodes        | 0.1×    | 447.9989  | ±0.90% | 449.1894 | 3       |
+| task                 | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------------- | ------- | --------- | ------- | -------- | ------- |
+| a tenth of the nodes | 1.00×   | 5.0004    | ±28.38% | 5.4061   | 3       |
+| all the nodes        | 0.1×    | 47.8716   | ±4.81%  | 48.7513  | 3       |
