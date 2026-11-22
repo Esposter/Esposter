@@ -1,6 +1,7 @@
 import { ENEMY_CAPSULE_HEIGHT } from "#src/services/enemy/constants";
 
-// Provisional: how long each stand-in effect shows, until task 1.1 reads them off the held world attacks capture
+// Provisional: how long each stand-in effect shows, in seconds. Each is an estimate, not a measurement, until the held
+// World attacks capture is read with `genshin:parity frames`
 export const SPARK_SECONDS = 0.2;
 export const DAMAGE_NUMBER_SECONDS = 0.8;
 export const FLASH_SECONDS = 0.3;

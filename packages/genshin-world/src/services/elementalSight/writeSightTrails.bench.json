@@ -1,0 +1,33 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/elementalSight/writeSightTrails.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.028845499999988533,
+              "name": "write",
+              "p99": 0.07717375000050197,
+              "rme": 47.86470967528899,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "writeSightTrails > 1 trails"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.22495419999995647,
+              "name": "write",
+              "p99": 0.295701310000195,
+              "rme": 16.168123864465876,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "writeSightTrails > 32 trails"
+        }
+      ]
+    }
+  ]
+}

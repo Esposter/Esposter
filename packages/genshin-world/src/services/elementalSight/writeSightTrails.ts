@@ -1,31 +1,38 @@
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { SightTrailRibbon } from "#src/models/sight/SightTrailRibbon";
 import type { GroundPoint } from "genshin-engine";
-import type { Vector3Like } from "three";
 
-import { computeGroundRun } from "#src/services/elementalSight/computeGroundRun";
 import { computeSightTrail } from "#src/services/elementalSight/computeSightTrail";
 import {
   SIGHT_TRAIL_CAPACITY,
   SIGHT_TRAIL_FADE,
   SIGHT_TRAIL_LIFT,
+  SIGHT_TRAIL_POINT_CAPACITY,
   SIGHT_TRAIL_WIDTH,
 } from "#src/services/elementalSight/constants";
+import { computeGroundDistance } from "genshin-engine";
+
+// The x, y and z of each point a trail is worked out in, one set reused for every trail a frame draws
+const trailPoints = new Float32Array(SIGHT_TRAIL_POINT_CAPACITY * 3);
 
 // A trail's points as a strip of two vertices each, the pair across the trail at its width and as bright as the trail's
 // Fade leaves it there, from the vertex and index it starts at. Each segment between two pairs is two triangles
 const writeTrail = (
   { colors, indices, positions }: SightTrailRibbon,
-  points: readonly Vector3Like[],
+  points: Float32Array,
+  pointCount: number,
   acrossX: number,
   acrossZ: number,
   vertexStart: number,
   indexStart: number,
 ): void => {
-  for (const [index, { x, y, z }] of points.entries()) {
+  for (let index = 0; index < pointCount; index++) {
+    const x = points[index * 3] ?? 0;
+    const y = points[index * 3 + 1] ?? 0;
+    const z = points[index * 3 + 2] ?? 0;
     const left = (vertexStart + index * 2) * 3;
     const right = left + 3;
-    const brightness = 1 - SIGHT_TRAIL_FADE * (index / (points.length - 1));
+    const brightness = 1 - SIGHT_TRAIL_FADE * (index / (pointCount - 1));
     positions[left] = x + acrossX;
     positions[left + 1] = y + SIGHT_TRAIL_LIFT;
     positions[left + 2] = z + acrossZ;
@@ -35,7 +42,7 @@ const writeTrail = (
     colors.fill(brightness, left, left + 3);
     colors.fill(brightness, right, right + 3);
   }
-  for (let segment = 0; segment < points.length - 1; segment++) {
+  for (let segment = 0; segment < pointCount - 1; segment++) {
     const first = vertexStart + segment * 2;
     const offset = indexStart + segment * 6;
     indices[offset] = first;
@@ -63,13 +70,23 @@ export const writeSightTrails = (
   let indexCount = 0;
   for (const end of ends) {
     if (trailCount === SIGHT_TRAIL_CAPACITY) break;
-    const points = computeSightTrail(character, end, getGroundHeight);
-    if (points.length === 0) continue;
-    const { directionX, directionZ } = computeGroundRun(character, end);
-    writeTrail(ribbon, points, -directionZ * halfWidth, directionX * halfWidth, vertexCount, indexCount);
+    const pointCount = computeSightTrail(character, end, getGroundHeight, trailPoints);
+    if (pointCount === 0) continue;
+    const distance = computeGroundDistance(end, character);
+    const directionX = (end.x - character.x) / distance;
+    const directionZ = (end.z - character.z) / distance;
+    writeTrail(
+      ribbon,
+      trailPoints,
+      pointCount,
+      -directionZ * halfWidth,
+      directionX * halfWidth,
+      vertexCount,
+      indexCount,
+    );
     trailCount++;
-    vertexCount += points.length * 2;
-    indexCount += (points.length - 1) * 6;
+    vertexCount += pointCount * 2;
+    indexCount += (pointCount - 1) * 6;
   }
   return indexCount;
 };
