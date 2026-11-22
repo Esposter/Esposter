@@ -65,7 +65,7 @@ describe("resourceDispatchRouter", () => {
   test("the upload address is asked for as a read, so a client that lets reads through lets it through", () => {
     expect.hasAssertions();
 
-    const uploadTool = getMcpTools(resourceDispatchRouter).find(
+    const uploadTool = getMcpTools(resourceDispatchRouter, [McpScope.Resources]).find(
       (tool) => tool.name === "generateUploadFilePresignedUrlEntities",
     );
 
