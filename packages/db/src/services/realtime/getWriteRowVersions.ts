@@ -25,10 +25,15 @@ const getRowVersion = (table: SQLiteTable, row: Record<string, unknown>): RowVer
   )
     return undefined;
 
-  const keyValues = keyFieldNames.map((fieldName) => row[fieldName]);
-  if (!keyValues.every((value): value is number | string => typeof value === "string" || typeof value === "number"))
+  const keyEntries = keyFieldNames.map((fieldName) => [fieldName, row[fieldName]] as const);
+  if (
+    !keyEntries.every(
+      (entry): entry is readonly [string, number | string] =>
+        typeof entry[1] === "string" || typeof entry[1] === "number",
+    )
+  )
     return undefined;
-  const key = Object.fromEntries(keyFieldNames.map((fieldName, index) => [fieldName, keyValues[index]]));
+  const key = Object.fromEntries(keyEntries);
   return { key, table: tableName, version };
 };
 
