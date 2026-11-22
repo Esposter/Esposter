@@ -12,10 +12,10 @@ describe(pickTypeSafeKey, () => {
     expect(pickTypeSafeKey(OPTION_KEY, VARIABLE_KEY)).toBe(OPTION_KEY);
   });
 
-  test("a blank option falls back to the variable's key", () => {
+  test.each(["", " "])("a blank option (%j) falls back to the variable's key", (typeSafeKey) => {
     expect.hasAssertions();
 
-    expect(pickTypeSafeKey("", VARIABLE_KEY)).toBe(VARIABLE_KEY);
+    expect(pickTypeSafeKey(typeSafeKey, VARIABLE_KEY)).toBe(VARIABLE_KEY);
   });
 
   test("no key when neither is set", () => {
