@@ -1,8 +1,8 @@
 import type { ItemMetadata } from "#shared/models/shared/ItemMetadata";
 import type { z } from "zod";
 
-import { ItemMetadataPropertyNames } from "#shared/models/shared/ItemMetadataPropertyNames";
 import { authClient } from "#src/services/auth/authClient";
+import { getSnapshotJson } from "#src/services/shared/getSnapshotJson";
 import { saveItemMetadata } from "#src/services/shared/metadata/saveItemMetadata";
 import { checkIsTRPCConflict } from "#src/services/trpc/checkIsTRPCConflict";
 import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
@@ -25,12 +25,6 @@ interface UseSaveUnauthOptions<T extends SavedMetadata> {
   key: string;
   schema: z.ZodType<T>;
 }
-// `updatedAt` is bumped by saving itself (`saveItemMetadata`) so it never participates in the dirty check
-const getSnapshotJson = (value: SavedMetadata) =>
-  JSON.stringify(value, (key, propertyValue: unknown) =>
-    key === ItemMetadataPropertyNames.updatedAt ? undefined : propertyValue,
-  );
-
 export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = TState>(
   state: Ref<TState>,
   { auth, toSave, unauth }: UseSaveOptions<TState, T>,

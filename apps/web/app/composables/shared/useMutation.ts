@@ -17,7 +17,6 @@ interface AwaitedMutationOptions<TResult> extends BaseMutationOptions {
   awaitedBecause: AwaitedReason;
   onSuccess?: (result: TResult) => Promisable<void>;
 }
-
 // A write nothing on the screen waits for, so its only outcome is `onError`. `reconcile` takes what only the server
 // Issues, such as a version token the next write reads, and is never where a dialog closes or a row moves
 interface BackgroundMutationOptions<TResult> extends BaseMutationOptions {

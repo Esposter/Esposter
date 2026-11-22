@@ -2,6 +2,13 @@ import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { assert, describe, expect, test, vi } from "vitest";
 
+// A run scope held by one test, so each read orders only within that test
+const createRunScope = () => {
+  const runScope = effectScope().run(useRunScope);
+  assert.exists(runScope);
+  return runScope;
+};
+
 describe(useRunScope, () => {
   const result = "";
   const newerResult = " ";
@@ -9,8 +16,7 @@ describe(useRunScope, () => {
   test("a new run aborts the run before it, and only the newest run's result is committed", async () => {
     expect.hasAssertions();
 
-    const runScope = effectScope().run(useRunScope);
-    assert.exists(runScope);
+    const runScope = createRunScope();
     const commit = vi.fn<(value: string) => void>();
     const first = Promise.withResolvers<string>();
     const second = Promise.withResolvers<string>();
@@ -27,8 +33,7 @@ describe(useRunScope, () => {
   test("a new run aborts the signal of the run before it", async () => {
     expect.hasAssertions();
 
-    const runScope = effectScope().run(useRunScope);
-    assert.exists(runScope);
+    const runScope = createRunScope();
     const { promise: pending, resolve } = Promise.withResolvers<string>();
     let firstSignal: AbortSignal | undefined;
     const firstRun = runScope.run((signal) => {
@@ -65,8 +70,7 @@ describe(useRunScope, () => {
   test("an aborted run's result goes to release rather than commit", async () => {
     expect.hasAssertions();
 
-    const runScope = effectScope().run(useRunScope);
-    assert.exists(runScope);
+    const runScope = createRunScope();
     const commit = vi.fn<(value: string) => void>();
     const release = vi.fn<(value: string) => void>();
     const first = Promise.withResolvers<string>();
@@ -79,12 +83,11 @@ describe(useRunScope, () => {
     expect(commit).toHaveBeenCalledExactlyOnceWith(newerResult);
   });
 
-  // A commit still applying holds the scope's next commit until it settles, so two picks' applies never overlap
+  // A commit still applying holds the scope's next commit until it settles, so two runs' commits never overlap
   test("a commit still applying holds the next commit of its scope until it settles", async () => {
     expect.hasAssertions();
 
-    const runScope = effectScope().run(useRunScope);
-    assert.exists(runScope);
+    const runScope = createRunScope();
     const firstApply = Promise.withResolvers<void>();
     const firstCommit = vi.fn<(value: string) => Promise<void>>().mockReturnValueOnce(firstApply.promise);
     const secondCommit = vi.fn<(value: string) => void>();
@@ -105,8 +108,7 @@ describe(useRunScope, () => {
   test("a run of one key does not abort the run of another key", async () => {
     expect.hasAssertions();
 
-    const runScope = effectScope().run(useRunScope);
-    assert.exists(runScope);
+    const runScope = createRunScope();
     const commit = vi.fn<(value: string) => void>();
     const firstRunKey = Symbol("firstRunKey");
     const otherRunKey = Symbol("otherRunKey");
@@ -122,8 +124,7 @@ describe(useRunScope, () => {
   test("a new run of a key aborts the run of that key before it", async () => {
     expect.hasAssertions();
 
-    const runScope = effectScope().run(useRunScope);
-    assert.exists(runScope);
+    const runScope = createRunScope();
     const commit = vi.fn<(value: string) => void>();
     const runKey = Symbol("runKey");
     const first = Promise.withResolvers<string>();

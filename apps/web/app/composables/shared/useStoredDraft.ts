@@ -14,11 +14,11 @@ export const useStoredDraft = <T>(stored: () => T, normalize: (value: T) => unkn
       edited.value = value;
     },
   });
-  const isSaved = (value: T) => checkIsDeepEqual(normalize(value), normalize(stored()));
-  const isDirty = computed(() => edited.value !== undefined && !isSaved(edited.value));
+  const checkIsSaved = (value: T) => checkIsDeepEqual(normalize(value), normalize(stored()));
+  const isDirty = computed(() => edited.value !== undefined && !checkIsSaved(edited.value));
   // Called once a save has answered, when the stored value is the one that save left
   const settle = () => {
-    if (edited.value !== undefined && isSaved(edited.value)) edited.value = undefined;
+    if (edited.value !== undefined && checkIsSaved(edited.value)) edited.value = undefined;
   };
   const reset = () => {
     edited.value = undefined;

@@ -10,7 +10,6 @@ interface QueryOptions<TResult> {
   isLazy?: true;
   onSuccess?: (result: TResult) => void;
 }
-
 // A read for a surface: fetched without blocking setup, held as reactive data, and live through `executeQuery` — the
 // Topics its answer came from are watched while the surface is mounted, and a write that changed one refreshes it
 export const useQuery = <TResult>(

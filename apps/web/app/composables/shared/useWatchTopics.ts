@@ -1,11 +1,8 @@
+import type { TopicsWatch } from "#src/models/shared/TopicsWatch";
 import type { TopicRead } from "@esposter/db-schema";
 
 import { useConnectionStore } from "#src/store/realtime/connection";
 import { noop } from "@esposter/shared";
-
-interface TopicsWatch {
-  unwatch: () => void;
-}
 
 // Keeps the topics a read came from watched for as long as the scope that made the read lives, one watch per target, of
 // Every read the target's calls made. A scope is the surface or the store the read belongs to: a read made with none has
