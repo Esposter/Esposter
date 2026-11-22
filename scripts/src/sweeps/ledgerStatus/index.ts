@@ -10,12 +10,12 @@ import { defineCommand } from "citty";
 // Where every ledger's units stand, read from the commit trailers in this clone's full history, since no file stores
 // It. With no ledger, one line per ledger counting its units by state, then one summary line counting the trailers that
 // Name a unit no ledger holds, whose detail is listed under `--unmatched`; with one, a line per unit of each ledger it
-// Names, a promoted ledger's folder naming every ledger in it.
+// Names, a folder of ledgers naming every ledger in it.
 await runCommand(
   defineCommand({
     args: {
       ledger: {
-        description: "A ledger, e.g. pinia, or a promoted ledger's folder, e.g. quality",
+        description: "A ledger, e.g. pinia, or a folder of ledgers, e.g. docs",
         required: false,
         type: "positional",
       },

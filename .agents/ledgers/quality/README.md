@@ -4,7 +4,7 @@ The question is the code-review skill's quality lane: reuse, simplification, eff
 
 ## Areas
 
-The areas and their units are the shared [area list](../areas/), and `pnpm ai:sweep:status quality` says where each unit stands. It keeps an area file only for the units it holds a note on: [app-shell](app-shell.md), [dungeons](dungeons.md), [packages](packages.md), [products](products.md), [resource](resource.md), [shared](shared.md) and [tooling](tooling.md). A pass loads this file, the area's file in the list and this ledger's file for the area where it has one.
+The areas and their units are the shared [area list](../areas/), and `pnpm ai:sweep:status quality` says where each unit stands. It keeps an area file only for the units it holds a note on: [app-shell](app-shell.md), [dungeons](dungeons.md), [packages](packages.md), [products](products.md), [resource](resource.md), [shared](shared.md) and [tooling](tooling.md).md), [dungeons](dungeons.md), [packages](packages.md), [products](products.md), [resource](resource.md), [shared](shared.md) and [tooling](tooling.md). A pass loads this file, the area's file in the list and this ledger's file for the area where it has one.
 
 [duplicate-code](duplicate-code.md) is this ledger's own area: every run of code two files share, found by `pnpm ai:sweep:duplicate-code` over the code scopes. Its rules are in the section below.
 

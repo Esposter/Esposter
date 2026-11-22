@@ -7,9 +7,8 @@ import { describe, expect, test } from "vitest";
 
 /**
  * The area list's units are written by hand, sized to what one pass reads, so nothing opens one for a workspace
- * member added after the list was — and a member no unit names is a tree no area-split question reads, which looks
- * exactly like a swept one. The quality question reads the whole repository through that list, so it is the list
- * every member owes a unit to; the other ledgers take their units from it when a sitting opens them.
+ * member added after the list was — and a member no unit names is a tree no question reads, which looks exactly like
+ * a swept one. Every file-based question takes its cells from that list, so it is the list every member owes a unit to.
  */
 describe("ledgerMembers", () => {
   test("the area list names every workspace member", () => {

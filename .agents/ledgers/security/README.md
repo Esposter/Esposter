@@ -2,7 +2,7 @@
 
 ## Areas
 
-The areas and their units are the shared [area list](../areas/), and `pnpm ai:sweep:status security` says where each unit stands. It keeps an area file only for the units it holds a note on: [shared](shared.md) and [tooling](tooling.md). A pass loads this file, the `security` skill's checklist
+The areas and their units are the shared [area list](../areas/), and `pnpm ai:sweep:status security` says where each unit stands. It keeps an area file only for the units it holds a note on: [tooling](tooling.md).md) and [tooling](tooling.md). A pass loads this file, the `security` skill's checklist
 (`.agents/skills/security/references/owasp-top-10.md`), the register of verified boundaries
 (`openspec/specs/architecture/security/README.md`) and the area's file in the list. A flow the register
 already answers is cited from its row rather than read again.

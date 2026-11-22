@@ -71,7 +71,7 @@ Documentation is **public by default**. Everything explanatory lives in `openspe
 | ---------------------------------------------------- | -------------------------------------------------- |
 | Skills — conventions written as agent instructions   | The decision a convention encodes, and its why     |
 | The `ai:`-prefixed scripts' invocations              | What a script is for and when to reach for it      |
-| Sweep ledgers — each sweep's units and notes         | The convention a sweep is carrying across the repo |
+| Sweep ledgers — the area list, each question's notes | The convention a sweep is carrying across the repo |
 | Harness settings and the permission allowlist        | Nothing — it is pure tool configuration            |
 | Issue tracker, triage label, and domain-doc pointers | Nothing — command recipes for one toolchain        |
 

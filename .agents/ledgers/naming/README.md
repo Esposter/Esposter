@@ -2,21 +2,7 @@
 
 ## Areas
 
-Units live in the area file and where each stands is `pnpm ai:sweep:status`, never here. A pass loads this file and the one area it is sweeping. The
-area names are [quality](../quality/)'s, so "was this area swept, for which question, and when" reads off
-one set of names across every promoted ledger.
-
-| Area                      | What it holds                                                                                                                                              |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [app-shell](app-shell.md) | Everything a product mounts inside rather than owns: the chrome, the routes, and the cross-cutting service and composable layers no single feature claims. |
-| [messaging](messaging.md) | Esbabbler — its components, store, composables, services and models.                                                                                       |
-| [resource](resource.md)   | The resource explorer, the sheet editor and the other editors.                                                                                             |
-| [products](products.md)   | The app's smaller products — posts, the clicker, achievements, the user pages and the standalone editors.                                                  |
-| [dungeons](dungeons.md)   | The game.                                                                                                                                                  |
-| [server](server.md)       | `apps/web/server` — routers, procedure builders, guards and services.                                                                                      |
-| [shared](shared.md)       | `apps/web/shared`, `app/components/Styled` and `packages/shared` — what both halves of the app read.                                                       |
-| [packages](packages.md)   | Every workspace package outside `apps/web` and `packages/shared`.                                                                                          |
-| [tooling](tooling.md)     | `scripts/`, `.agents/` and the app's root configuration.                                                                                                   |
+The areas and their units are the shared [area list](../areas/), and `pnpm ai:sweep:status naming` says where each unit stands. It keeps an area file only for the units it holds a note on: [app-shell](app-shell.md), [dungeons](dungeons.md), [messaging](messaging.md), [packages](packages.md), [products](products.md), [resource](resource.md), [server](server.md), [shared](shared.md) and [tooling](tooling.md). A pass loads this file, the unit's bullet in the list and this ledger's file for the area where it has one.
 
 A component file name is in scope for its **words** — the rule spelling `Navigation` over `Nav` reads a filename
 the same way it reads any other identifier. The prefix-and-fold question over that same tree stays
