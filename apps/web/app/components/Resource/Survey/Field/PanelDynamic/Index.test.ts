@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { SurveyAnswerValue, SurveyPanelDynamicNode } from "vue-survey-engine-headless";
 
-import ResourceSurveyFieldPanelDynamic from "#src/components/Resource/Survey/Field/PanelDynamic.vue";
+import ResourceSurveyFieldPanelDynamic from "#src/components/Resource/Survey/Field/PanelDynamic/Index.vue";
 import { setupUiStyle } from "#src/components/Ui/setupUiStyle.test";
 import { UiStyles } from "#src/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

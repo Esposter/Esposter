@@ -54,7 +54,7 @@ describe("runner", () => {
   // A field loads on demand through a dynamic import, which is module I/O rather than a microtask
   // So the text field's and the dynamic panel's modules are awaited once up front, and each mount then resolves them within its flush
   beforeAll(async () => {
-    await import("#src/components/Resource/Survey/Field/PanelDynamic.vue");
+    await import("#src/components/Resource/Survey/Field/PanelDynamic/Index.vue");
     await import("#src/components/Resource/Survey/Field/Text.vue");
   });
 

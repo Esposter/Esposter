@@ -22,13 +22,13 @@ export const SurveyFieldComponentMap: Record<SurveyQuestionNode["type"], Compone
   ),
   [SurveyNodeType.Matrix]: defineAsyncComponent(() => import("#src/components/Resource/Survey/Field/Matrix.vue")),
   [SurveyNodeType.MatrixDynamic]: defineAsyncComponent(
-    () => import("#src/components/Resource/Survey/Field/MatrixDynamic.vue"),
+    () => import("#src/components/Resource/Survey/Field/MatrixDynamic/Index.vue"),
   ),
   [SurveyNodeType.MultipleText]: defineAsyncComponent(
     () => import("#src/components/Resource/Survey/Field/MultipleText.vue"),
   ),
   [SurveyNodeType.PanelDynamic]: defineAsyncComponent(
-    () => import("#src/components/Resource/Survey/Field/PanelDynamic.vue"),
+    () => import("#src/components/Resource/Survey/Field/PanelDynamic/Index.vue"),
   ),
   [SurveyNodeType.RadioGroup]: defineAsyncComponent(
     () => import("#src/components/Resource/Survey/Field/RadioGroup.vue"),

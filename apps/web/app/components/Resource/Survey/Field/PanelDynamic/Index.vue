@@ -6,10 +6,7 @@ import type {
   SurveyPanelRowView,
 } from "vue-survey-engine-headless";
 
-import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getSurveyAnswerRows } from "#src/services/resource/survey/getSurveyAnswerRows";
-import { withSurveyAnswer } from "#src/services/resource/survey/withSurveyAnswer";
 import { withSurveyRequired } from "#src/services/resource/survey/withSurveyRequired";
 import { takeOne } from "@esposter/shared";
 
@@ -83,31 +80,19 @@ const addPanel = () => {
     And described by the error, the one message the shell draws for the panel, since a row's controls would each repeat it -->
     <template #default="{ describedBy, labelledBy }">
       <div role="group" :aria-describedby="describedBy" :aria-labelledby="labelledBy" flex flex-col gap-4>
-        <div v-for="(row, panelIndex) of rows" :key="row.key" p-4 flex flex-col gap-4 ui-frame>
-          <ResourceSurveyField
-            v-for="field of row.fields"
-            :key="field.node.props.id"
-            error=""
-            :is-disabled="field.isDisabled"
-            :model-value="row.panel[field.node.props.name]"
-            :node="field.node"
-            :seed
-            @update:model-value="
-              (value) => setPanel(panelIndex, withSurveyAnswer(row.panel, field.node.props.name, value))
-            "
-          />
-          <!-- eslint-disable vue/no-restricted-syntax -- removes a panel from the unsaved answer draft, which nothing persists until the survey is submitted -->
-          <UiIconButton
-            :disabled="isDisabled || panels.length <= node.props.minPanelCount"
-            :label="node.props.removePanelText || 'Remove panel'"
-            :meaning="UiIconMeaning.Remove"
-            :variant="UiButtonVariant.Quiet"
-            type="button"
-            self-end
-            @click="removePanel(panelIndex)"
-          />
-          <!-- eslint-enable vue/no-restricted-syntax -->
-        </div>
+        <!-- eslint-disable vue/no-restricted-syntax -- removes a panel from the unsaved answer draft, which nothing persists until the survey is submitted -->
+        <ResourceSurveyFieldPanelDynamicRow
+          v-for="(row, panelIndex) of rows"
+          :key="row.key"
+          :fields="row.fields"
+          :is-remove-disabled="isDisabled || panels.length <= node.props.minPanelCount"
+          :panel="row.panel"
+          :remove-label="node.props.removePanelText || 'Remove panel'"
+          :seed
+          @remove="removePanel(panelIndex)"
+          @update="(panel) => setPanel(panelIndex, panel)"
+        />
+        <!-- eslint-enable vue/no-restricted-syntax -->
         <UiButton
           :disabled="isDisabled || panels.length >= node.props.maxPanelCount"
           type="button"
