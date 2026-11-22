@@ -8,3 +8,4 @@ export const WildlifeKind = {
   WhitePigeon: "WhitePigeon",
 } as const;
 export type WildlifeKind = (typeof WildlifeKind)[keyof typeof WildlifeKind];
+export const WildlifeKinds = Object.values(WildlifeKind);

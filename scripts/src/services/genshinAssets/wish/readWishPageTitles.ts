@@ -1,4 +1,4 @@
-import { WIKI_API_URL } from "#src/services/genshinAssets/kits/constants";
+import { WIKI_API_URL } from "#src/services/genshinAssets/shared/constants";
 import { WISH_CATEGORY, WISH_CATEGORY_LIMIT } from "#src/services/genshinAssets/wish/constants";
 import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -8,7 +8,6 @@ const categoryMembersSchema = z.object({
   continue: z.unknown().optional(),
   query: z.object({ categorymembers: z.array(z.object({ title: z.string() })) }),
 });
-
 // The title of every page the wish category holds, in the category's own order, read in one request
 export const readWishPageTitles = async (): Promise<string[]> => {
   const searchParams = new URLSearchParams({
@@ -21,11 +20,7 @@ export const readWishPageTitles = async (): Promise<string[]> => {
   });
   const { continue: continuation, query } = await readWikiApi(`${WIKI_API_URL}?${searchParams}`, categoryMembersSchema);
   if (continuation !== undefined)
-    throw new InvalidOperationError(
-      Operation.Read,
-      WISH_CATEGORY,
-      `holds more than ${String(WISH_CATEGORY_LIMIT)} pages`,
-    );
+    throw new InvalidOperationError(Operation.Read, WISH_CATEGORY, `holds more than ${WISH_CATEGORY_LIMIT} pages`);
 
   return query.categorymembers.map(({ title }) => title);
 };

@@ -10,8 +10,7 @@ import { GameDataset } from "genshin-world";
 // The event banners of the wiki's wish category, each page read into its kind, its window and its featured items and
 // Joined to the ids its names are, as the record the schedule publishes under its own dataset
 export const buildWishSchedule = async (): Promise<Record<string, unknown>> => {
-  const nameIdsMap = await readWishNameItemIdsMap();
-  const titles = await readWishPageTitles();
+  const [nameIdsMap, titles] = await Promise.all([readWishNameItemIdsMap(), readWishPageTitles()]);
   const events = await chunk(titles, WISH_PAGE_BATCH_SIZE).reduce(
     async (previousEvents, batch) => [
       ...(await previousEvents),

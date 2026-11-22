@@ -1,8 +1,8 @@
 import type { WikiTalentPage } from "#src/models/genshinAssets/kits/wiki/WikiTalentPage";
 
 import { InfoboxTypeCombatTalent } from "#src/models/genshinAssets/kits/wiki/InfoboxTypeCombatTalent";
-import { WIKI_API_URL } from "#src/services/genshinAssets/kits/constants";
 import { parseAdvancedProperties } from "#src/services/genshinAssets/kits/wiki/parseAdvancedProperties";
+import { WIKI_API_URL } from "#src/services/genshinAssets/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { CombatTalent } from "genshin-world";

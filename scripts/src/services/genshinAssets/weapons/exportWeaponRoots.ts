@@ -16,17 +16,18 @@ import { deriveWeaponRoots } from "#src/services/genshinAssets/weapons/deriveWea
 import { readPrefabBlocks } from "#src/services/genshinAssets/world/readPrefabBlocks";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { formatGeneratedSource } from "#src/services/shared/formatGeneratedSource";
+import { toJson } from "#src/services/shared/toJson";
 import { existsSync } from "node:fs";
-import { mkdir, readFile, rm } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The root of every prefab that holds a held weapon's mesh, derived from the layouts of the blocks the index puts the
 // Meshes and the weapons' animators in and of the blocks of the prefab files depending on the meshes' (the files the
-// Index lists nothing in, which `readPrefabBlocks` follows), and written to the record the weapons' component reads. The
-// Layouts are dumped where `extract` dumps the component's, so the extract that follows reads them again. Each held mesh
-// No game object of those layouts draws is reported in the result, since no root reaches it, and so is each block the
-// Install lacks
+// Index lists nothing in, which `readPrefabBlocks` follows), and written to the record the weapons' component reads.
+// The layouts are dumped where `extract` dumps the component's, so the extract that follows reads them again.
+// Each held mesh that no game object of those layouts draws is reported in the result, since no root reaches it, and
+// Each block the install lacks is skipped and named too
 export const exportWeaponRoots = async (): Promise<string> => {
   const assets = await readIndexedAssets(
     (asset) =>
@@ -42,13 +43,15 @@ export const exportWeaponRoots = async (): Promise<string> => {
   await mkdir(layout, { recursive: true });
   // The index lists blocks of the game's other builds, so a block the install lacks is skipped and named, not fatal
   const blocks = [...new Set([...prefabBlockMap.values()].flat())];
-  const absentBlocks = blocks.filter((block) => !existsSync(join(INSTALLED_BLOCKS_DIRECTORY, block)));
-  for (const block of blocks.filter((installable) => !absentBlocks.includes(installable)))
-    // oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio reads one block at a time, each run blocking the thread
-    await exportBlockBySource(block, LAYOUT_ASSET_TYPES, AnimeStudioExportType.Json, layout);
+  const absentBlocks: string[] = [];
+  for (const block of blocks)
+    if (existsSync(join(INSTALLED_BLOCKS_DIRECTORY, block)))
+      // oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio reads one block at a time
+      await exportBlockBySource(block, LAYOUT_ASSET_TYPES, AnimeStudioExportType.Json, layout);
+    else absentBlocks.push(block);
   const sceneLayout = await readSceneLayout(layout);
   const { roots, unreachedMeshes } = deriveWeaponRoots(sceneLayout, cabMap, heldMeshes);
-  writeJsonFile(WEAPON_ROOTS_PATH, roots);
+  await writeFile(WEAPON_ROOTS_PATH, await formatGeneratedSource(WEAPON_ROOTS_PATH, toJson(roots)));
   return [
     ...(absentBlocks.length > 0
       ? [`${absentBlocks.length} blocks the install lacks, skipped: ${absentBlocks.join(", ")}`]

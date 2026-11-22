@@ -61,7 +61,6 @@ export const KIT_HIT_MULTIPLIER_REGEX: RegExp =
 // Moves, and a wiki page is read again only once its cached answer is deleted
 export const GCSIM_CACHE_DIRECTORY: string = join(CACHE_ROOT, `gcsim-${GCSIM_TAG}`);
 export const WIKI_CACHE_DIRECTORY: string = join(CACHE_ROOT, "genshin-wiki");
-export const WIKI_API_URL = "https://genshin-impact.fandom.com/api.php";
 // The attack tags gcsim writes each kit slot's hits with
 export const GCSIM_CHARGED_ATTACK_TAG = "attacks.AttackTagExtra";
 // The stance path the blessing's normal attacks are written under, which the Blade Roller and the Loop Shot read

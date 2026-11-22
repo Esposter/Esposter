@@ -12,7 +12,7 @@ describe(getWeaponIconPlan, () => {
 
     const { blockNamesMap, missingNames } = getWeaponIconPlan(
       [HELD_NAME, MISSING_NAME],
-      [{ block: BLOCK, name: HELD_NAME, offset: 0, pathId: "7150199236348243771", type: AssetType.Texture2D }],
+      [{ block: BLOCK, name: HELD_NAME, offset: 0, pathId: "pathId", type: AssetType.Texture2D }],
     );
 
     expect(missingNames).toStrictEqual([MISSING_NAME]);

@@ -1,4 +1,4 @@
-import { WIKI_API_URL } from "#src/services/genshinAssets/kits/constants";
+import { WIKI_API_URL } from "#src/services/genshinAssets/shared/constants";
 import { readWikiApi } from "#src/services/shared/readWikiApi";
 import { z } from "zod";
 

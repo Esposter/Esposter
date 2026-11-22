@@ -495,3 +495,5 @@ export const COMPONENT_NAMES: readonly string[] = Object.values(DerivedAssetComp
 // The table that pays each character's card its reward, and the material kind of a namecard among the reward's items
 export const FETTER_CHARACTER_CARD_TABLE_NAME = "FetterCharacterCardExcelConfigData";
 export const NAMECARD_MATERIAL_TYPE = "MATERIAL_NAMECARD";
+// The wiki's API, which each wiki reader queries under its own category or page
+export const WIKI_API_URL = "https://genshin-impact.fandom.com/api.php";

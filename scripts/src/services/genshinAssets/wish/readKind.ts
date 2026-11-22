@@ -2,7 +2,7 @@ import { WikiTypeWishEventKind } from "#src/models/genshinAssets/wish/WikiTypeWi
 import { WishEventKind } from "#src/models/genshinAssets/wish/WishEventKind";
 import { checkHasFeaturedFiveStars } from "#src/services/genshinAssets/wish/checkHasFeaturedFiveStars";
 import { readParameter } from "#src/services/genshinAssets/wish/readParameter";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 // The wiki's `type` for each event banner. Chronicled Wish and the standard wishes are not read by the schedule
 const WikiTypeWishEventKindMap: Partial<Record<string, WishEventKind>> = {
@@ -32,5 +32,5 @@ export const readKind = (
       "names its type more than once, and its Item Pool does not match exactly one of them",
     );
 
-  return [...matchingKinds][0];
+  return takeOne([...matchingKinds], 0);
 };

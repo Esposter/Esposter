@@ -9,7 +9,7 @@ import { describe, expect, test } from "vitest";
 describe(deriveWeaponRoots, () => {
   const FILE = "cab-a";
   const BLOCK = "00/00000001.blk";
-  const ROOT_NAME = "Equip_Sword_Blunt_Model";
+  const ROOT_NAME = "name";
   const ROOT_GAME_OBJECT_ID = "10";
   const DRAWN_MESH = { block: BLOCK, pathId: "30" };
   const UNDRAWN_MESH = { block: BLOCK, pathId: "31" };

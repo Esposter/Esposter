@@ -19,18 +19,19 @@ const createWishPage = (timeStartOffset: string) => `{{Wish
 describe(parseWishPage, () => {
   // The made-up page's title, which a refused page names
   const title = "a";
+  const expectedPage = {
+    endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
+    fiveStarNames: ["a", "b"],
+    fourStarNames: ["c", "d", "e"],
+    kind: WishEventKind.WeaponEvent,
+    kindNumber: 1,
+    startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
+  };
 
   test("an event banner page is read into its window and featured items", () => {
     expect.hasAssertions();
 
-    expect(parseWishPage(title, createWishPage("GMT+8"))).toStrictEqual({
-      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
-      fiveStarNames: ["a", "b"],
-      fourStarNames: ["c", "d", "e"],
-      kind: WishEventKind.WeaponEvent,
-      kindNumber: 1,
-      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
-    });
+    expect(parseWishPage(title, createWishPage("GMT+8"))).toStrictEqual(expectedPage);
   });
 
   test("a character event banner's featured items are read from its character parameters", () => {
@@ -43,14 +44,7 @@ describe(parseWishPage, () => {
           .replace("|type = Weapon Event", "|type = Character Event")
           .replaceAll("|weapon_", "|character_"),
       ),
-    ).toStrictEqual({
-      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
-      fiveStarNames: ["a", "b"],
-      fourStarNames: ["c", "d", "e"],
-      kind: WishEventKind.CharacterEvent,
-      kindNumber: 1,
-      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
-    });
+    ).toStrictEqual({ ...expectedPage, kind: WishEventKind.CharacterEvent });
   });
 
   test("a page whose summary names its items in prose is read from its item pool", () => {
@@ -61,43 +55,24 @@ describe(parseWishPage, () => {
         title,
         createWishPage("GMT+8").replace(
           "===Item Pool===",
-          '===Summary===\n* The 5-star weapon "a" [[a]] will get a huge drop-rate boost!\n===Item Pool===',
+          '===Summary===\n* The 5-star weapon "a" [[a]]\n===Item Pool===',
         ),
       ),
-    ).toStrictEqual({
-      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
-      fiveStarNames: ["a", "b"],
-      fourStarNames: ["c", "d", "e"],
-      kind: WishEventKind.WeaponEvent,
-      kindNumber: 1,
-      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
-    });
+    ).toStrictEqual(expectedPage);
   });
 
   test("a page naming no offset is read at the Asia server's GMT+8", () => {
     expect.hasAssertions();
 
-    expect(parseWishPage(title, createWishPage("GMT+8").replace("|time_start_offset = GMT+8\n", ""))).toStrictEqual({
-      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
-      fiveStarNames: ["a", "b"],
-      fourStarNames: ["c", "d", "e"],
-      kind: WishEventKind.WeaponEvent,
-      kindNumber: 1,
-      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
-    });
+    expect(parseWishPage(title, createWishPage("GMT+8").replace("|time_start_offset = GMT+8\n", ""))).toStrictEqual(
+      expectedPage,
+    );
   });
 
   test("an offset written as UTC is read at the same offset", () => {
     expect.hasAssertions();
 
-    expect(parseWishPage(title, createWishPage("UTC+8"))).toStrictEqual({
-      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
-      fiveStarNames: ["a", "b"],
-      fourStarNames: ["c", "d", "e"],
-      kind: WishEventKind.WeaponEvent,
-      kindNumber: 1,
-      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
-    });
+    expect(parseWishPage(title, createWishPage("UTC+8"))).toStrictEqual(expectedPage);
   });
 
   test("a name a stray separator leaves empty is not an item", () => {
@@ -105,14 +80,7 @@ describe(parseWishPage, () => {
 
     expect(
       parseWishPage(title, createWishPage("GMT+8").replace("|weapon_4_F = c; d; e\n", "|weapon_4_F = c; d; e;\n")),
-    ).toStrictEqual({
-      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
-      fiveStarNames: ["a", "b"],
-      fourStarNames: ["c", "d", "e"],
-      kind: WishEventKind.WeaponEvent,
-      kindNumber: 1,
-      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
-    });
+    ).toStrictEqual(expectedPage);
   });
 
   test("a page naming a second type of its kind is read as the second banner of that kind", () => {
@@ -121,16 +89,9 @@ describe(parseWishPage, () => {
     expect(
       parseWishPage(
         title,
-        createWishPage("GMT+8").replace("|type = Weapon Event\n", "|type = Weapon Event\n|type2 = Weapon Event-2\n"),
+        createWishPage("GMT+8").replace("|type = Weapon Event\n", "|type = Weapon Event\n|type2 =\n"),
       ),
-    ).toStrictEqual({
-      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
-      fiveStarNames: ["a", "b"],
-      fourStarNames: ["c", "d", "e"],
-      kind: WishEventKind.WeaponEvent,
-      kindNumber: 2,
-      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
-    });
+    ).toStrictEqual({ ...expectedPage, kindNumber: 2 });
   });
 
   test("a page naming its type twice is read as the type its item pool holds the featured five-stars of", () => {
@@ -141,14 +102,7 @@ describe(parseWishPage, () => {
         title,
         createWishPage("GMT+8").replace("|type = Weapon Event\n", "|type = Weapon Event\n|type = Character Event\n"),
       ),
-    ).toStrictEqual({
-      endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 9 }).epochMilliseconds,
-      fiveStarNames: ["a", "b"],
-      fourStarNames: ["c", "d", "e"],
-      kind: WishEventKind.WeaponEvent,
-      kindNumber: 1,
-      startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 3 }).epochMilliseconds,
-    });
+    ).toStrictEqual(expectedPage);
   });
 
   test("a page naming its type twice with an item pool holding neither type's featured five-stars is refused", () => {
@@ -170,11 +124,8 @@ describe(parseWishPage, () => {
     expect.hasAssertions();
 
     expect(parseWishPage(title, createWishPage("GMT-1"))).toStrictEqual({
+      ...expectedPage,
       endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 18 }).epochMilliseconds,
-      fiveStarNames: ["a", "b"],
-      fourStarNames: ["c", "d", "e"],
-      kind: WishEventKind.WeaponEvent,
-      kindNumber: 1,
       startTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 12 }).epochMilliseconds,
     });
   });

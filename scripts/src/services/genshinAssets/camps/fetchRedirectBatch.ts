@@ -1,5 +1,5 @@
 import { wikiRedirectResponseSchema } from "#src/models/genshinAssets/enemies/WikiRedirectResponse";
-import { WIKI_API_URL } from "#src/services/genshinAssets/kits/constants";
+import { WIKI_API_URL } from "#src/services/genshinAssets/shared/constants";
 import { readWikiApi } from "#src/services/shared/readWikiApi";
 
 // The redirect target of each label in one batch, read from the wiki's answer for the batch, or null where the wiki

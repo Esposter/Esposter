@@ -1,6 +1,7 @@
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { checkHasKit } from "#src/services/genshinAssets/wish/checkHasKit";
 import { keepKitRecords } from "#src/services/genshinAssets/wish/keepKitRecords";
+import { getOrCreate } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
 import { characterDataSchema, GameDataKeys, GameDataset, weaponDataSchema } from "genshin-world";
 import { z } from "zod";
@@ -10,17 +11,19 @@ import { z } from "zod";
 // Joins no name, so no banner can name it. A name joining several records keeps the one its kit names, the playable
 // Character, since the duplicate copy of a character carries the same name
 export const readWishNameItemIdsMap = async (): Promise<Map<string, number[]>> => {
-  const englishNames = await readPublishedGameData<Record<string, string>>(
-    `${GameDataset.NameText}/${GameLanguage.English}`,
-  );
-  const characters = z.array(characterDataSchema).parse(await readPublishedGameData(GameDataKeys.stats.characters));
-  const weapons = z.array(weaponDataSchema).parse(await readPublishedGameData(GameDataKeys.stats.weapons));
+  const [englishNames, characterData, weaponData] = await Promise.all([
+    readPublishedGameData<Record<string, string>>(`${GameDataset.NameText}/${GameLanguage.English}`),
+    readPublishedGameData(GameDataKeys.stats.characters),
+    readPublishedGameData(GameDataKeys.stats.weapons),
+  ]);
+  const characters = z.array(characterDataSchema).parse(characterData);
+  const weapons = z.array(weaponDataSchema).parse(weaponData);
   const nameIdsMap = new Map<string, number[]>();
   for (const { id, nameTextId } of [...characters, ...weapons]) {
     const name = englishNames[nameTextId];
     if (name === undefined || name === "") continue;
 
-    nameIdsMap.set(name, [...(nameIdsMap.get(name) ?? []), id]);
+    getOrCreate(nameIdsMap, name, () => []).push(id);
   }
   return new Map(Array.from(nameIdsMap, ([name, ids]) => [name, keepKitRecords(ids, checkHasKit)]));
 };
