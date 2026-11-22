@@ -9,10 +9,15 @@ import { describe, test } from "vitest";
 describe(getSecurityRules, () => {
   test("a request's route rules", async ({ bench }) => {
     setSecurityRouteMatcher(PAGE_ROUTE_RULES);
+    let event = createPageEvent();
+    // Each iteration gets its own event, built outside the timing, so the per-event cache misses as it does for a request
+    const beforeEach = () => {
+      event = createPageEvent();
+    };
 
     await bench.compare(
       bench("native — matching the path alone", () => findSecurityRules(PAGE_PATHNAME)),
-      bench("rules of a request's path", () => getSecurityRules(createPageEvent())),
+      bench("rules of a request's path", { beforeEach }, () => getSecurityRules(event)),
       { ...BENCHMARK_RUN_OPTIONS, iterations: 2000, warmupIterations: 200 },
     );
   });
