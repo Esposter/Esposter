@@ -13,10 +13,16 @@ export const getHeldKeyListeners = (input: Input, code: string) => {
     else input.release(code);
   };
   return {
-    blur: () => input.release(code),
+    blur: () => {
+      input.release(code);
+    },
     keydown: holdOnKey(true),
     keyup: holdOnKey(false),
-    lostpointercapture: () => input.release(code),
-    pointerdown: (event: PointerEvent) => pressCapturedPointer(input, code, event),
+    lostpointercapture: () => {
+      input.release(code);
+    },
+    pointerdown: (event: PointerEvent) => {
+      pressCapturedPointer(input, code, event);
+    },
   };
 };

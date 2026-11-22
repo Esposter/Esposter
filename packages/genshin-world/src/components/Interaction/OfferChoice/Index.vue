@@ -14,7 +14,7 @@ interface Props {
   offers: BlossomClaimOffer[];
 }
 
-const { isRestorable } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{
   // A row chosen, which spends its resin and grants its rewards
   choose: [offer: BlossomClaimOffer];
