@@ -6,8 +6,8 @@ import { readPackageManifest } from "#src/services/readPackageManifest";
 import { mergeConfig } from "tsdown";
 
 const { devDependencies } = readPackageManifest();
-// The bootstrap package: private, never published, and its dist imports nothing but build tooling every
-// Workspace member already has installed, so everything stays external, `devDependencies` included.
+// The bootstrap package: private, never published, and its dist imports nothing but its own `devDependencies`, so
+// Everything stays external, `devDependencies` included.
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode(), {
   // The base derives `onlyImport` from the manifest's runtime dependency fields, and this package declares none,
   // So the gate would reject every import it makes. `mergeConfig` replaces a colliding array outright rather

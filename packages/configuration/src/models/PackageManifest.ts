@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export interface PackageManifest {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
@@ -14,3 +16,21 @@ export interface PackageManifest {
   private?: boolean;
   scripts?: Record<string, string>;
 }
+
+const stringRecordSchema = z.record(z.string(), z.string());
+
+// The fields the build reads, each of the type the interface names. A field the build does not read is stripped
+export const packageManifestSchema: z.ZodType<PackageManifest> = z.object({
+  dependencies: stringRecordSchema.exactOptional(),
+  devDependencies: stringRecordSchema.exactOptional(),
+  engines: stringRecordSchema.exactOptional(),
+  exports: z.record(z.string(), z.union([z.string(), stringRecordSchema])).exactOptional(),
+  main: z.string().exactOptional(),
+  name: z.string().exactOptional(),
+  optionalDependencies: stringRecordSchema.exactOptional(),
+  packageManager: z.string().exactOptional(),
+  peerDependencies: stringRecordSchema.exactOptional(),
+  peerDependenciesMeta: z.record(z.string(), z.object({ optional: z.boolean().exactOptional() })).exactOptional(),
+  private: z.boolean().exactOptional(),
+  scripts: stringRecordSchema.exactOptional(),
+});

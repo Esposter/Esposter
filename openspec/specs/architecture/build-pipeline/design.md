@@ -163,7 +163,7 @@ A package keeps the flat `.` export by default. A subpath export or entry is add
 | `vite/services/constants.ts`                                    | The files every package's build rewrites, its barrels among them, which the build cache leaves out of its inputs                    |
 | `packages/configuration/src/services/getTsdownConfiguration.ts` | The base every config composes onto                                                                                                 |
 | `packages/configuration/src/services/getPackagePatterns.ts`     | Turns package names into subpath-aware patterns                                                                                     |
-| `packages/configuration/src/services/readPackageManifest.ts`    | Reads the manifest every derivation starts from                                                                                     |
+| `packages/configuration/src/services/readPackageManifest.ts`    | Reads the manifest every derivation starts from, parsed through its schema                                                          |
 | `packages/configuration/tsconfig.base.json`                     | Root of the preset chain                                                                                                            |
 | `packages/configuration/tsconfig.build.base.json`               | The excludes of the Vue declaration program                                                                                         |
 | `packages/configuration/src/services/generateExports.ts`        | Writes the barrels, leaving out a package's on-demand directories                                                                   |
