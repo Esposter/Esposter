@@ -75,7 +75,7 @@ import {
   UserToRoomInMessageRelations,
   WRITE_PRESIGNED_URL_DURATION_MS,
 } from "@esposter/db-schema";
-import { getResultAsync, InvalidOperationError, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
+import { getResultAsync, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { and, count, desc, eq, getColumns, inArray, ne, not, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
@@ -350,7 +350,7 @@ export const baseRoomRouter = router({
                     ),
                 ),
               );
-              if (!where) throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, input);
+              if (!where) throw getInvalidOperationError(Operation.Read, DatabaseEntityType.Room, input);
               return where;
             },
           },
@@ -392,7 +392,6 @@ export const baseRoomRouter = router({
         },
         sort,
       );
-      let room: (RoomInMessage & { displayName: string }) | undefined;
       // The route's room and the page are read from the same joins, so each read builds its own statement from this
       const selectRooms = () =>
         ctx.db
@@ -401,13 +400,6 @@ export const baseRoomRouter = router({
           .innerJoin(usersToRoomsInMessage, innerJoinCondition)
           .leftJoin(directMessageDisplayNames, eq(directMessageDisplayNames.roomId, roomsInMessage.id));
 
-      if (roomId) {
-        const routeRoom = (await selectRooms().where(eq(roomsInMessage.id, roomId)))[0];
-        if (!routeRoom) throw getNotFoundError(DatabaseEntityType.Room, roomId);
-        if (routeRoom.type === RoomType.Room || (includeDirectMessages && routeRoom.type === RoomType.DirectMessage))
-          room = routeRoom;
-      }
-
       const wheres: (SQL | undefined)[] = [
         inArray(roomsInMessage.type, includeDirectMessages ? [RoomType.Room, RoomType.DirectMessage] : [RoomType.Room]),
       ];
@@ -415,14 +407,24 @@ export const baseRoomRouter = router({
         wheres.push(or(ne(roomsInMessage.type, RoomType.DirectMessage), eq(usersToRoomsInMessage.isHidden, false)));
       wheres.push(getPageWhere(boundSort, cursor));
       if (filter?.name) wheres.push(containsLike(displayName, filter.name));
-      if (room) wheres.push(ne(roomsInMessage.id, room.id));
+      // The route's room is left out of the page by the id the input names, so the page does not wait on that read
+      if (roomId) wheres.push(ne(roomsInMessage.id, roomId));
 
-      const rooms = await selectRooms()
-        .where(and(...wheres))
-        .orderBy(...getPageOrderBy(boundSort, cursor))
-        .limit(limit + 1);
+      const [routeRooms, rooms] = await Promise.all([
+        roomId ? selectRooms().where(eq(roomsInMessage.id, roomId)) : [],
+        selectRooms()
+          .where(and(...wheres))
+          .orderBy(...getPageOrderBy(boundSort, cursor))
+          .limit(limit + 1),
+      ]);
       const page = toPage(rooms, sort, cursor, limit);
-      return room ? { ...page, items: [...page.items, room] } : page;
+      if (!roomId) return page;
+
+      const routeRoom = routeRooms[0];
+      if (!routeRoom) throw getNotFoundError(DatabaseEntityType.Room, roomId);
+      const isRouteRoomShown =
+        routeRoom.type === RoomType.Room || (includeDirectMessages && routeRoom.type === RoomType.DirectMessage);
+      return isRouteRoomShown ? { ...page, items: [...page.items, routeRoom] } : page;
     },
   ),
   // A row comes back for every id that has an account, a user who has left the room included, so a message whose author

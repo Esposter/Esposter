@@ -16,6 +16,10 @@ Every list the app shows — messages, rooms, members, direct messages, invites,
 
 Every list pages by keyset: the next page is the rows after the last row answered, in the list's order. **Rejected — offset pages for the numbered tables and the search:** an offset re-reads and discards every row before the page, has no depth ceiling of its own, and skips or repeats a row whenever the list changes above the page, which a live app's lists always do. A table pages forward and back with its cursors, as Stripe's and GitHub's API-backed tables do, and a total, where a surface shows one, is answered with the first page rather than derived from page numbers.
 
+**The one list read whole.** `readMutualRooms` answers at most `MAX_READ_LIMIT` rooms in one read with no cursor, and the
+profile card shows every room it answers. That is an exemption from keyset paging: a viewer sharing more rooms with a user
+than the cap sees the first `MAX_READ_LIMIT` of them, and no other list is read this way.
+
 ### The wire
 
 The input is `{ cursor: string, limit: number }`, `cursor` defaulting to `""` (the start) and `limit` bounded by `MAX_READ_LIMIT`. The output is `{ items, nextCursor }` with `""` as the end, the app's absent string (the `absent-values` skill). `hasMore` is not on the wire: it is `Boolean(nextCursor)`, and two fields saying one thing can disagree. A read whose surface shows a total adds `count`, answered on the first page only. **Rejected — `nextCursor?: string`:** `""` is the app's one absent form for an owned string.
