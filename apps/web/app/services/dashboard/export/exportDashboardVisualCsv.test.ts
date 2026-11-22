@@ -162,8 +162,9 @@ describe(exportDashboardVisualCsv, () => {
     exportDashboardVisualCsv(card, cappedDataset);
 
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
 
-    expect(alertStore.alerts.map(({ text, type }) => ({ text, type }))).toStrictEqual([
+    expect(alerts.value.map(({ text, type }) => ({ text, type }))).toStrictEqual([
       { text: "Showing 2 of 3 rows", type: "warning" },
     ]);
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(

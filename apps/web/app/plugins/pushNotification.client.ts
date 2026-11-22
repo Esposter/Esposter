@@ -14,6 +14,7 @@ export default defineNuxtPlugin(() => {
   if (!("serviceWorker" in window.navigator)) return;
 
   const notificationStore = useNotificationStore();
+  const { isLoaded } = storeToRefs(notificationStore);
   const { readNotifications, storeDeliveredNotifications } = notificationStore;
   window.navigator.serviceWorker.addEventListener("message", (event) => {
     // The payload crosses a postMessage boundary, so it is parsed rather than trusted — an extension or another
@@ -27,7 +28,7 @@ export default defineNuxtPlugin(() => {
     // Push in and toasts it. Only a tab whose list never loaded has no watch, and reads the push itself. The listener
     // Slot is synchronous, so that read is handed to the store without a wait, and the store owns queueing overlapping
     // Pushes and reporting a read that failed
-    if (notificationStore.isLoaded) return;
+    if (isLoaded.value) return;
     storeDeliveredNotifications(readNotifications);
   });
 });

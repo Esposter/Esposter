@@ -503,7 +503,8 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     const topic = getTopic(TopicKind.Post, v7());
     const query = vi.fn<() => Promise<string>>(() => {

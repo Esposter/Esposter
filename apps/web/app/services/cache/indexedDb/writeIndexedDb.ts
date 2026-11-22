@@ -18,20 +18,20 @@ export const writeIndexedDb = async <
   const { indexName, limit, storeName } = configuration;
   const database = await openIndexedDb();
   const transaction = database.transaction(storeName, "readwrite");
-  const objectStore = transaction.objectStore(storeName);
-  const existingKeys = await objectStore.index(indexName).getAllKeys(partitionKey);
+  const objects = transaction.objectStore(storeName);
+  const existingKeys = await objects.index(indexName).getAllKeys(partitionKey);
   const itemsToCache = getCachedItems(items, limit);
   // Requests run in the order they are placed on the transaction, so issuing each phase together still
   // Deletes before it puts — awaiting them one at a time only bought a round trip per row, and a full
   // Rewrite runs on every store write the cached list absorbs
-  await Promise.all(existingKeys.map((key) => objectStore.delete(key)));
+  await Promise.all(existingKeys.map((key) => objects.delete(key)));
   // A shallow copy is all the partition stamp needs: `put` structured-clones the record itself, so
   // Cloning deeply first duplicated that work and produced a copy nothing else ever read
   await Promise.all(
     itemsToCache.map((item) =>
       // The stored record is data, not an entity — `put` structured-clones away the prototype regardless
       // oxlint-disable-next-line typescript/no-misused-spread -- `put` stores the fields alone
-      objectStore.put({ ...toRawDeep(item), [indexName]: partitionKey }),
+      objects.put({ ...toRawDeep(item), [indexName]: partitionKey }),
     ),
   );
   await transaction.done;

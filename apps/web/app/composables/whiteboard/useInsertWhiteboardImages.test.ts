@@ -33,9 +33,10 @@ describe(useInsertWhiteboardImages, () => {
     await insertImages([file]);
 
     const whiteboardStore = useWhiteboardStore();
-    const [image] = whiteboardStore.whiteboard.elements;
+    const { whiteboard } = storeToRefs(whiteboardStore);
+    const [image] = whiteboard.value.elements;
     expect(uploadResourceFileMock).toHaveBeenCalledExactlyOnceWith(file, fileId);
-    expect(whiteboardStore.whiteboard.elements).toHaveLength(1);
+    expect(whiteboard.value.elements).toHaveLength(1);
     expect(image).toHaveProperty("fileId", fileId);
     expect(image).toHaveProperty("type", "image");
   });
@@ -49,9 +50,10 @@ describe(useInsertWhiteboardImages, () => {
     await insertImages([file], { x: 300, y: 200 });
 
     const whiteboardStore = useWhiteboardStore();
-    const [image] = whiteboardStore.whiteboard.elements;
+    const { whiteboard } = storeToRefs(whiteboardStore);
+    const [image] = whiteboard.value.elements;
     expect(uploadResourceFileMock).toHaveBeenCalledExactlyOnceWith(file, fileId);
-    expect(whiteboardStore.whiteboard.elements).toHaveLength(1);
+    expect(whiteboard.value.elements).toHaveLength(1);
     expect(image).toHaveProperty("fileId", fileId);
     expect(image).toHaveProperty("x", 300 - WHITEBOARD_IMAGE_SIZE.width / 2);
     expect(image).toHaveProperty("y", 200 - WHITEBOARD_IMAGE_SIZE.height / 2);
@@ -64,9 +66,10 @@ describe(useInsertWhiteboardImages, () => {
     const insertImages = useInsertWhiteboardImages();
     await insertImages([textFile], { x: 300, y: 200 });
     const whiteboardStore = useWhiteboardStore();
+    const { whiteboard } = storeToRefs(whiteboardStore);
 
     expect(uploadResourceFileMock).not.toHaveBeenCalled();
-    expect(whiteboardStore.whiteboard.elements).toStrictEqual([]);
+    expect(whiteboard.value.elements).toStrictEqual([]);
   });
 
   test("an image that fails to upload alerts and places nothing", async () => {
@@ -76,10 +79,12 @@ describe(useInsertWhiteboardImages, () => {
     const insertImages = useInsertWhiteboardImages();
     await insertImages([file], { x: 300, y: 200 });
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const whiteboardStore = useWhiteboardStore();
+    const { whiteboard } = storeToRefs(whiteboardStore);
 
-    expect(whiteboardStore.whiteboard.elements).toStrictEqual([]);
-    expect(alertStore.alerts.map(({ text }) => text)).toStrictEqual(["The upload was refused"]);
+    expect(whiteboard.value.elements).toStrictEqual([]);
+    expect(alerts.value.map(({ text }) => text)).toStrictEqual(["The upload was refused"]);
   });
 
   test("images pasted together are placed in the order they were picked, each a step further along from the one before", async () => {
@@ -92,10 +97,11 @@ describe(useInsertWhiteboardImages, () => {
     await insertImages([file, secondFile]);
 
     const whiteboardStore = useWhiteboardStore();
-    const bounds = whiteboardStore.whiteboard.elements.map((element) => getElementBounds(element));
+    const { whiteboard } = storeToRefs(whiteboardStore);
+    const bounds = whiteboard.value.elements.map((element) => getElementBounds(element));
     const firstBounds = takeOne(bounds, 0);
-    const [firstImage, secondImage] = whiteboardStore.whiteboard.elements;
-    expect(whiteboardStore.whiteboard.elements).toHaveLength(2);
+    const [firstImage, secondImage] = whiteboard.value.elements;
+    expect(whiteboard.value.elements).toHaveLength(2);
     expect(firstImage).toHaveProperty("fileId", firstFileId);
     expect(secondImage).toHaveProperty("fileId", secondFileId);
     expect(takeOne(bounds, 1)).toStrictEqual({

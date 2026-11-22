@@ -20,7 +20,8 @@ const readCrumbs = (element: Element) =>
 // A crumb is a real link, so the trail needs the real RouterLink — mountSuspended otherwise swaps in a stub
 const mountBreadcrumbs = (route: string, trail: NavigationTrailPage[]) => {
   const navigationTrailStore = useNavigationTrailStore();
-  navigationTrailStore.setTrail(trail);
+  const { setTrail } = navigationTrailStore;
+  setTrail(trail);
   currentRoute.path = route;
   return mountSuspended(AppBreadcrumbs, { global: { components: { RouterLink } }, route });
 };

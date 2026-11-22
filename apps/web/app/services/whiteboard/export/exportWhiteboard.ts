@@ -19,12 +19,14 @@ export const exportWhiteboard = async (format: WhiteboardExportFormat) => {
   if (!resource) return;
 
   const whiteboardStore = useWhiteboardStore();
+  const { editState } = storeToRefs(whiteboardStore);
+  const { loadContent } = whiteboardStore;
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   const fileName = sanitizeFilename(resource.name);
   await getResultAsync(async () => {
-    await whiteboardStore.loadContent();
-    const savedDocument = whiteboardStore.editState.document;
+    await loadContent();
+    const savedDocument = editState.value.document;
     const { failedFileIds, imageUrls } = await getWhiteboardImageUrls(savedDocument, resource.id);
     // An image that could not be loaded is left out with its element, so neither file draws it, and the owner is told how many
     const positionedDocument = {

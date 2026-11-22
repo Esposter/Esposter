@@ -44,12 +44,13 @@ describe(useStorageStore, () => {
     const handler = vi.fn<() => UserInAuth>(() => storageUser);
     trpcMsw.storage.readUsage.query(handler);
     const storageStore = useStorageStore();
+    const { storageUsage } = storeToRefs(storageStore);
     const { readStorageUsage } = storageStore;
     await Promise.all([readStorageUsage(), readStorageUsage()]);
     await readStorageUsage();
 
     expect(handler).toHaveBeenCalledTimes(1);
-    expect(storageStore.storageUsage).toStrictEqual({
+    expect(storageUsage.value).toStrictEqual({
       bytesUsed: storageUser.storageBytesUsed,
       quotaBytes: StorageTierQuotaMap[StorageTier.Free],
       tier: StorageTier.Free,
@@ -64,12 +65,13 @@ describe(useStorageStore, () => {
 
     trpcMsw.storage.readUsage.query(() => storageUser);
     const storageStore = useStorageStore();
+    const { storageUsage } = storeToRefs(storageStore);
     const { readStorageUsage, storeUpdateStorageUsage } = storageStore;
     await readStorageUsage();
     storeUpdateStorageUsage(pushedStorageUser);
     storeUpdateStorageUsage(storageUser);
 
-    expect(storageStore.storageUsage).toStrictEqual({
+    expect(storageUsage.value).toStrictEqual({
       bytesUsed: pushedStorageUser.storageBytesUsed,
       quotaBytes: StorageTierQuotaMap[StorageTier.Free],
       tier: StorageTier.Free,
@@ -82,13 +84,14 @@ describe(useStorageStore, () => {
     const readResult = Promise.withResolvers<UserInAuth>();
     trpcMsw.storage.readUsage.query(() => readResult.promise);
     const storageStore = useStorageStore();
+    const { storageUsage } = storeToRefs(storageStore);
     const { readStorageUsage, storeUpdateStorageUsage } = storageStore;
     const readPromise = readStorageUsage();
     storeUpdateStorageUsage(pushedStorageUser);
     readResult.resolve(storageUser);
     await readPromise;
 
-    expect(storageStore.storageUsage).toStrictEqual({
+    expect(storageUsage.value).toStrictEqual({
       bytesUsed: pushedStorageUser.storageBytesUsed,
       quotaBytes: StorageTierQuotaMap[StorageTier.Free],
       tier: StorageTier.Free,

@@ -55,8 +55,8 @@ export const openIndexedDb = () => {
       // Yet. A cache is refilled from the server, so every store that exists is cleared rather than migrated
       for (const storeName of database.objectStoreNames) database.deleteObjectStore(storeName);
       for (const { indexName, keyPath, storeName } of storeConfigurations) {
-        const objectStore = database.createObjectStore(storeName, { keyPath });
-        objectStore.createIndex(indexName, indexName);
+        const objects = database.createObjectStore(storeName, { keyPath });
+        objects.createIndex(indexName, indexName);
       }
     },
   });

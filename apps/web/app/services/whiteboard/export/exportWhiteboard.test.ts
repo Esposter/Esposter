@@ -98,8 +98,9 @@ describe(exportWhiteboard, () => {
     await exportWhiteboard(WhiteboardExportFormat.Svg);
 
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
 
-    expect(alertStore.alerts.map(({ text, type }) => ({ text, type }))).toStrictEqual([{ text: " ", type: "error" }]);
+    expect(alerts.value.map(({ text, type }) => ({ text, type }))).toStrictEqual([{ text: " ", type: "error" }]);
   });
 
   test("an image that fails to load is left out of the export and reported", async () => {
@@ -140,8 +141,9 @@ describe(exportWhiteboard, () => {
     await expect(svgBlob.text()).resolves.toBe(toPositionedSvg(positionedDocument, () => ""));
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(`${resourceName}.png`, png, MimeType.Png);
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
 
-    expect(alertStore.alerts.map(({ text, type }) => ({ text, type }))).toStrictEqual([
+    expect(alerts.value.map(({ text, type }) => ({ text, type }))).toStrictEqual([
       { text: "1 image could not be loaded and left out of the export", type: "warning" },
     ]);
   });

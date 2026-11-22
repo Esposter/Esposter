@@ -16,11 +16,12 @@ describe(useMouseStore, () => {
     const clickerStore = useClickerStore();
     const { clicker } = storeToRefs(clickerStore);
     const mouseStore = useMouseStore();
+    const { mousePower } = storeToRefs(mouseStore);
 
-    expect(mouseStore.mousePower).toBe(1);
+    expect(mousePower.value).toBe(1);
 
     clicker.value.boughtUpgrades.push(upgrade);
 
-    expect(mouseStore.mousePower).toBe(2);
+    expect(mousePower.value).toBe(2);
   });
 });

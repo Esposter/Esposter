@@ -79,8 +79,9 @@ describe(exportDashboardPng, () => {
 
     expect(downloadFile).not.toHaveBeenCalled();
     const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
 
-    expect(alertStore.alerts.map(({ text, type }) => ({ text, type }))).toStrictEqual([
+    expect(alerts.value.map(({ text, type }) => ({ text, type }))).toStrictEqual([
       { text: "Couldn't export this dashboard", type: "error" },
     ]);
   });

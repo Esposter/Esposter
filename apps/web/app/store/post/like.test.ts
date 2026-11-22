@@ -42,9 +42,10 @@ describe(useLikeStore, () => {
     const { items } = storeToRefs(postStore);
     const { readItems, readPostPage } = postStore;
     const commentStore = useCommentStore();
+    const { openPost } = commentStore;
     const { currentPost } = storeToRefs(commentStore);
     await readItems(() => Promise.resolve(readPostPage({ items: [createPost({ id: postId })], nextCursor: "" })));
-    commentStore.openPost(createPost({ id: postId }));
+    openPost(createPost({ id: postId }));
     const likeStore = useLikeStore();
     const { createLike } = likeStore;
 

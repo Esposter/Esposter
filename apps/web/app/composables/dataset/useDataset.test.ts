@@ -63,7 +63,8 @@ describe(useDataset, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     let dataset: Dataset = { columns: [], rows: [] };
     trpcMsw.dataset.readDataset.query(({ ctx }) => {

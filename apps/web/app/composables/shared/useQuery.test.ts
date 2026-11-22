@@ -103,7 +103,8 @@ describe(useQuery, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     const topic = getTopic(TopicKind.Post, v7());
     let value = result;
@@ -128,7 +129,8 @@ describe(useQuery, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const topic = getTopic(TopicKind.Post, v7());
     const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
     const { promise, resolve }: PromiseWithResolvers<string> = Promise.withResolvers();

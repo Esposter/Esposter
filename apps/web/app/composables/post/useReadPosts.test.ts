@@ -21,10 +21,12 @@ describe(useReadPosts, () => {
       return createEmptyPage();
     });
     const postStore = usePostStore();
+    const { sortType } = storeToRefs(postStore);
+    const { resetCursorPaginationData } = postStore;
     const { readPosts } = useReadPosts();
     const { refresh } = await readPosts();
-    postStore.sortType = PostSortType.New;
-    postStore.resetCursorPaginationData();
+    sortType.value = PostSortType.New;
+    resetCursorPaginationData();
     await refresh();
 
     expect(sentSortNames).toStrictEqual([PostSortType.Hot, PostSortType.New]);

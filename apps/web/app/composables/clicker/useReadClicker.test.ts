@@ -63,8 +63,9 @@ describe(useReadClicker, () => {
     await mountReadClicker();
 
     const clickerStore = useClickerStore();
+    const { clicker } = storeToRefs(clickerStore);
 
-    expect(clickerStore.clicker.pointCount).toBe(42);
+    expect(clicker.value.pointCount).toBe(42);
   });
 
   // An absence is paid out as production, and the dialog reports what it was paid. The clock is pinned to the hour
@@ -83,9 +84,10 @@ describe(useReadClicker, () => {
     const offlineProgressStore = useOfflineProgressStore();
     const { awardedPoints } = storeToRefs(offlineProgressStore);
     const clickerStore = useClickerStore();
+    const { clicker } = storeToRefs(clickerStore);
 
     expect(awardedPoints.value).toBe(180);
-    expect(clickerStore.clicker.pointCount).toBe(awardedPoints.value);
+    expect(clicker.value.pointCount).toBe(awardedPoints.value);
   });
 
   // A signed-in player's save is the server's copy, so when its read fails the page does not open over a new game, and
@@ -164,7 +166,8 @@ describe(useReadClicker, () => {
     await mountReadClicker();
 
     const clickerStore = useClickerStore();
+    const { clicker } = storeToRefs(clickerStore);
 
-    expect(clickerStore.clicker.pointCount).toBe(0);
+    expect(clicker.value.pointCount).toBe(0);
   });
 });

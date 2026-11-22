@@ -94,13 +94,14 @@ describe("styledEmojiPickerPanel", () => {
     expect.hasAssertions();
 
     const emojiPickerStore = useEmojiPickerStore();
-    emojiPickerStore.skinTone = SkinTone.Medium;
+    const { recentEmojiSlugs, skinTone } = storeToRefs(emojiPickerStore);
+    skinTone.value = SkinTone.Medium;
     const component = await mountSuspended(StyledEmojiPickerPanel);
     await component.find("input").setValue("technologist");
     await component.findComponent(StyledEmojiPickerGrid).find("button[aria-label]").trigger("click");
 
     expect(component.emitted("select")).toStrictEqual([["🧑🏽‍💻", takeOne(searchEmojis("technologist"))]]);
-    expect(emojiPickerStore.recentEmojiSlugs).toStrictEqual(["technologist"]);
+    expect(recentEmojiSlugs.value).toStrictEqual(["technologist"]);
   });
 
   // A custom emoji emits the id-keyed tag a reaction stores, never its name — a rename must not strand one
@@ -209,12 +210,13 @@ describe("styledEmojiPickerPanel", () => {
     expect.hasAssertions();
 
     const emojiPickerStore = useEmojiPickerStore();
-    emojiPickerStore.skinTone = SkinTone.Medium;
+    const { recentEmojiSlugs, skinTone } = storeToRefs(emojiPickerStore);
+    skinTone.value = SkinTone.Medium;
     const component = await mountSuspended(StyledEmojiPickerPanel, { attachTo: document.body });
     await component.find("input").setValue("technologist");
     await component.get('button[data-index="0"]').trigger("keydown", { key: "Enter" });
 
     expect(component.emitted("select")).toStrictEqual([["🧑🏽‍💻", takeOne(searchEmojis("technologist"))]]);
-    expect(emojiPickerStore.recentEmojiSlugs).toStrictEqual(["technologist"]);
+    expect(recentEmojiSlugs.value).toStrictEqual(["technologist"]);
   });
 });

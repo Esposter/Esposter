@@ -25,6 +25,7 @@ export const useWatchTopics = () => {
     });
   return (target: PropertyKey, reads: TopicRead[] | undefined, refetch: () => void) => {
     if (!connectionStore || isDisposed) return;
+    const { watchTopics } = connectionStore;
 
     const previousTopicsWatch = topicsWatchMap.get(target);
     if (!reads?.length) {
@@ -35,7 +36,7 @@ export const useWatchTopics = () => {
 
     const newTopicsWatch: TopicsWatch = { unwatch: noop };
     // Every read hands the same refetch, which the connection store dedupes by identity, so a change refetches the query once
-    const unwatchReads = reads.map((read) => connectionStore.watchTopics(read, refetch));
+    const unwatchReads = reads.map((read) => watchTopics(read, refetch));
     newTopicsWatch.unwatch = () => {
       for (const unwatchRead of unwatchReads) unwatchRead();
     };

@@ -34,16 +34,18 @@ const readRowCount = (view: { readonly value: readonly unknown[] }) => view.valu
 const createOverlay = (entries: Entry[]) => {
   setActivePinia(createPinia());
   const overlayStore = useOverlayStore();
-  for (const friend of friends) overlayStore.arrive(table, friend);
-  for (const entry of entries) overlayStore.writeOptimistic(neverSettles, { entry });
-  const view = overlayStore.view(table);
+  const { arrive, view: readView, writeOptimistic } = overlayStore;
+  for (const friend of friends) arrive(table, friend);
+  for (const entry of entries) writeOptimistic(neverSettles, { entry });
+  const view = readView(table);
   // Read once, so the arrival in a unit dirties a view that holds a value and the unit's read recomputes it
   readRowCount(view);
   return { overlayStore, view };
 };
 type Overlay = ReturnType<typeof createOverlay>;
 const recomputeAfterArrival = ({ overlayStore, view }: Overlay) => {
-  overlayStore.arrive(table, newerFriend);
+  const { arrive } = overlayStore;
+  arrive(table, newerFriend);
   return readRowCount(view);
 };
 

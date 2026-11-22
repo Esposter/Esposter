@@ -68,7 +68,8 @@ describe(useCursorPaginationOperationData, () => {
     const serverPage: Page<string> = { items: [item], nextCursor: "" };
     const topic = getTopic(TopicKind.Feed, "posts");
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     await mountSuspended(
       defineComponent({
         render: () => h("div"),
@@ -118,7 +119,8 @@ describe(useCursorPaginationOperationData, () => {
     const firstRow: Row = { description: "before", id: "first" };
     const laterRow: Row = { description: "later", id: "later" };
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     let rowOperationData: ReturnType<typeof useCursorPaginationOperationData<Row>> | undefined;
     await mountSuspended(
@@ -163,7 +165,8 @@ describe(useCursorPaginationOperationData, () => {
     const addedRow: Row = { id: "added" };
     const laterRow: Row = { id: "later" };
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     let rowOperationData: ReturnType<typeof useCursorPaginationOperationData<Row>> | undefined;
     await mountSuspended(
@@ -204,7 +207,8 @@ describe(useCursorPaginationOperationData, () => {
 
     const topic = getTopic(TopicKind.Feed, "posts");
     const connectionStore = useConnectionStore();
-    connectionStore.openUser();
+    const { openUser } = connectionStore;
+    openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
     let itemOperationData: ReturnType<typeof useCursorPaginationOperationData<string>> | undefined;
     await mountSuspended(

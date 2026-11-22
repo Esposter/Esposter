@@ -299,12 +299,13 @@ describe(useWhiteboardKeyboard, () => {
     const deletingIds = ref<string[]>([]);
     const tool = ref<GestureTool>(GestureTool.Shape);
     const whiteboardEditorStore = useWhiteboardEditorStore();
-    whiteboardEditorStore.isToolLocked = false;
+    const { isToolLocked } = storeToRefs(whiteboardEditorStore);
+    isToolLocked.value = false;
     await mountKeyboard(editState, selectedIds, deletingIds, tool);
 
     pressKey({ bubbles: true, key: "q" });
 
-    expect(whiteboardEditorStore.isToolLocked).toBe(true);
+    expect(isToolLocked.value).toBe(true);
     expect(tool.value).toBe(GestureTool.Shape);
   });
 
@@ -315,12 +316,13 @@ describe(useWhiteboardKeyboard, () => {
     const selectedIds = ref<string[]>([]);
     const deletingIds = ref<string[]>([]);
     const whiteboardEditorStore = useWhiteboardEditorStore();
-    whiteboardEditorStore.isToolLocked = true;
+    const { isToolLocked } = storeToRefs(whiteboardEditorStore);
+    isToolLocked.value = true;
     await mountKeyboard(editState, selectedIds, deletingIds);
 
     pressKey({ bubbles: true, key: "q" });
 
-    expect(whiteboardEditorStore.isToolLocked).toBe(false);
+    expect(isToolLocked.value).toBe(false);
   });
 
   test("q typed into a text edit is not a lock", async () => {
@@ -336,12 +338,13 @@ describe(useWhiteboardKeyboard, () => {
     const selectedIds = ref([WHITEBOARD_PROCESS_ID]);
     const deletingIds = ref<string[]>([]);
     const whiteboardEditorStore = useWhiteboardEditorStore();
-    whiteboardEditorStore.isToolLocked = false;
+    const { isToolLocked } = storeToRefs(whiteboardEditorStore);
+    isToolLocked.value = false;
     await mountKeyboard(editState, selectedIds, deletingIds);
 
     pressKey({ bubbles: true, key: "q" }, textarea);
 
-    expect(whiteboardEditorStore.isToolLocked).toBe(false);
+    expect(isToolLocked.value).toBe(false);
   });
 
   test("select all selects every element", async () => {

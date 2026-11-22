@@ -68,40 +68,44 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 2 });
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name: otherName, version: 1 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(table, { deletedAt: null, id: "a", name, version: 2 });
+    arrive(table, { deletedAt: null, id: "a", name: otherName, version: 1 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 2 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 2 }]);
   });
 
   test("an equal arrival changes no column the held row has", () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name: otherName, version: 1 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    arrive(table, { deletedAt: null, id: "a", name: otherName, version: 1 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
   });
 
   test("a newer arrival replaces the row held", () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name: otherName, version: 2 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    arrive(table, { deletedAt: null, id: "a", name: otherName, version: 2 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 2 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 2 }]);
   });
 
   test("a newer projected arrival keeps the columns it does not carry", () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(membershipTable, { deletedAt: null, id: "a", isHidden: true, name, version: 1 });
-    overlayStore.arrive(membershipProjectionTable, { deletedAt: null, id: "a", name: otherName, version: 2 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(membershipTable, { deletedAt: null, id: "a", isHidden: true, name, version: 1 });
+    arrive(membershipProjectionTable, { deletedAt: null, id: "a", name: otherName, version: 2 });
 
-    expect(overlayStore.view(membershipTable).value).toStrictEqual([
+    expect(readView(membershipTable).value).toStrictEqual([
       { deletedAt: null, id: "a", isHidden: true, name: otherName, version: 2 },
     ]);
   });
@@ -110,10 +114,11 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(membershipProjectionTable, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.arrive(membershipTable, { deletedAt: null, id: "a", isHidden: true, name, version: 1 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(membershipProjectionTable, { deletedAt: null, id: "a", name, version: 1 });
+    arrive(membershipTable, { deletedAt: null, id: "a", isHidden: true, name, version: 1 });
 
-    expect(overlayStore.view(membershipTable).value).toStrictEqual([
+    expect(readView(membershipTable).value).toStrictEqual([
       { deletedAt: null, id: "a", isHidden: true, name, version: 1 },
     ]);
   });
@@ -122,10 +127,11 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(membershipProjectionTable, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.arrive(membershipTable, { deletedAt: null, id: "a", isHidden: true, name: otherName, version: 2 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(membershipProjectionTable, { deletedAt: null, id: "a", name, version: 1 });
+    arrive(membershipTable, { deletedAt: null, id: "a", isHidden: true, name: otherName, version: 2 });
 
-    expect(overlayStore.view(membershipTable).value).toStrictEqual([
+    expect(readView(membershipTable).value).toStrictEqual([
       { deletedAt: null, id: "a", isHidden: true, name: otherName, version: 2 },
     ]);
   });
@@ -135,32 +141,33 @@ describe(useOverlayStore, () => {
 
     vi.setSystemTime(clockNow);
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(membershipTable, { deletedAt: expiredDeletedAt, id: "a", isHidden: true, name, version: 5 });
-    overlayStore.arrive(membershipProjectionTable, { deletedAt: null, id: "a", name: serverName, version: 0 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(membershipTable, { deletedAt: expiredDeletedAt, id: "a", isHidden: true, name, version: 5 });
+    arrive(membershipProjectionTable, { deletedAt: null, id: "a", name: serverName, version: 0 });
 
-    expect(overlayStore.view(membershipTable).value).toStrictEqual([
-      { deletedAt: null, id: "a", name: serverName, version: 0 },
-    ]);
+    expect(readView(membershipTable).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 0 }]);
   });
 
   test("a tombstone removes its row from the view", () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.arrive(table, { deletedAt: new Date(0), id: "a", name, version: 2 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    arrive(table, { deletedAt: new Date(0), id: "a", name, version: 2 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([]);
+    expect(readView(table).value).toStrictEqual([]);
   });
 
   test("an older live arrival cannot revive a tombstone", () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: new Date(0), id: "a", name, version: 2 });
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(table, { deletedAt: new Date(0), id: "a", name, version: 2 });
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([]);
+    expect(readView(table).value).toStrictEqual([]);
   });
 
   test("a revived row at version zero arrives as new once the tombstone held for its key is past the retention", () => {
@@ -168,10 +175,11 @@ describe(useOverlayStore, () => {
 
     vi.setSystemTime(clockNow);
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: expiredDeletedAt, id: "a", name, version: 5 });
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name: serverName, version: 0 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(table, { deletedAt: expiredDeletedAt, id: "a", name, version: 5 });
+    arrive(table, { deletedAt: null, id: "a", name: serverName, version: 0 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 0 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 0 }]);
   });
 
   test("a revived row at version zero is still rejected while the tombstone held for its key is inside the retention", () => {
@@ -179,10 +187,11 @@ describe(useOverlayStore, () => {
 
     vi.setSystemTime(clockNow);
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: freshDeletedAt, id: "a", name, version: 5 });
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name: serverName, version: 0 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(table, { deletedAt: freshDeletedAt, id: "a", name, version: 5 });
+    arrive(table, { deletedAt: null, id: "a", name: serverName, version: 0 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([]);
+    expect(readView(table).value).toStrictEqual([]);
   });
 
   test("a revived row's write stays pending until the row arrives, though its answer names version zero", async () => {
@@ -190,33 +199,32 @@ describe(useOverlayStore, () => {
 
     vi.setSystemTime(clockNow);
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: expiredDeletedAt, id: "a", name, version: 5 });
-    overlayStore.writeOptimistic(
-      () => Promise.resolve({ arrivals: [], confirmed: [createConfirmation(table, ["a"], 0)] }),
-      {
-        entry: (view) => {
-          setRowName(view, otherName);
-        },
+    const { arrive, view: readView, writeOptimistic } = overlayStore;
+    arrive(table, { deletedAt: expiredDeletedAt, id: "a", name, version: 5 });
+    writeOptimistic(() => Promise.resolve({ arrivals: [], confirmed: [createConfirmation(table, ["a"], 0)] }), {
+      entry: (view) => {
+        setRowName(view, otherName);
       },
-    );
+    });
     await flushPromises();
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 1 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 1 }]);
 
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name: serverName, version: 0 });
+    arrive(table, { deletedAt: null, id: "a", name: serverName, version: 0 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 0 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 0 }]);
   });
 
   test("absence removes nothing: a row a later arrival does not name stays held", () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.arrive(table, { deletedAt: null, id: "b", name, version: 1 });
-    overlayStore.arrive(table, { deletedAt: null, id: "b", name: otherName, version: 2 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    arrive(table, { deletedAt: null, id: "b", name, version: 1 });
+    arrive(table, { deletedAt: null, id: "b", name: otherName, version: 2 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([
+    expect(readView(table).value).toStrictEqual([
       { deletedAt: null, id: "a", name, version: 1 },
       { deletedAt: null, id: "b", name: otherName, version: 2 },
     ]);
@@ -226,20 +234,22 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 0 });
+    const { arrive, view: readView } = overlayStore;
+    arrive(table, { deletedAt: null, id: "a", name, version: 0 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 0 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 0 }]);
   });
 
   test("two Table objects over one table share the rows held for it", () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
+    const { arrive, view: readView } = overlayStore;
     const sameTable = createTable(rowTable);
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.arrive(sameTable, { deletedAt: null, id: "b", name, version: 1 });
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    arrive(sameTable, { deletedAt: null, id: "b", name, version: 1 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([
+    expect(readView(table).value).toStrictEqual([
       { deletedAt: null, id: "a", name, version: 1 },
       { deletedAt: null, id: "b", name, version: 1 },
     ]);
@@ -251,42 +261,45 @@ describe(useOverlayStore, () => {
     const serverPinia = createPinia();
     setActivePinia(serverPinia);
     const serverOverlayStore = useOverlayStore();
-    serverOverlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    const { $state, arrive } = serverOverlayStore;
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
     // The payload carries the store's state as plain data, so the server's held tables are cloned out of Pinia's reactive state
-    const payload = structuredClone(serverOverlayStore.$state.heldTables);
+    const payload = structuredClone($state.heldTables);
     const clientPinia = createPinia();
     clientPinia.state.value = { overlay: { heldTables: payload } };
     setActivePinia(clientPinia);
     const clientOverlayStore = useOverlayStore();
+    const { view: readView } = clientOverlayStore;
 
-    expect(clientOverlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
   });
 
   test("an entry that throws in the view leaves the view equal to held state and reports its error once to its write", async () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
+    const { arrive, view: readView, writeOptimistic } = overlayStore;
     const onError = vi.fn<(error: Error) => void>();
     const thrown = new Error(" ");
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.arrive(table, { deletedAt: null, id: "b", name, version: 1 });
-    overlayStore.writeOptimistic(() => neverSettles(), {
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    arrive(table, { deletedAt: null, id: "b", name, version: 1 });
+    writeOptimistic(() => neverSettles(), {
       entry: (view) => {
         setRowName(view, otherName);
         if (view.get(table, ["b"])?.deletedAt) throw thrown;
       },
       onError,
     });
-    overlayStore.arrive(table, { deletedAt: new Date(0), id: "b", name, version: 2 });
+    arrive(table, { deletedAt: new Date(0), id: "b", name, version: 2 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
     await flushPromises();
     expect(onError).toHaveBeenCalledExactlyOnceWith(thrown);
 
     // The entry stays pending, so each recomputation runs it again, and its error is still reported once
-    overlayStore.arrive(table, { deletedAt: null, id: "c", name, version: 1 });
+    arrive(table, { deletedAt: null, id: "c", name, version: 1 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([
+    expect(readView(table).value).toStrictEqual([
       { deletedAt: null, id: "a", name, version: 1 },
       { deletedAt: null, id: "c", name, version: 1 },
     ]);
@@ -298,11 +311,12 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
+    const { arrive, view: readView, writeOptimistic } = overlayStore;
     const onError = vi.fn<(error: Error) => void>();
     const mutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
     const thrown = new Error(" ");
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.writeOptimistic(mutate, {
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    writeOptimistic(mutate, {
       entry: (view) => {
         setRowName(view, otherName);
         throw thrown;
@@ -312,18 +326,19 @@ describe(useOverlayStore, () => {
 
     expect(mutate).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledExactlyOnceWith(thrown);
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
   });
 
   test("a write to one row waits for the earlier write to that row, whichever caller issues it", async () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
+    const { writeOptimistic } = overlayStore;
     const { promise: firstWritten, resolve: resolveFirst } = Promise.withResolvers<WriteResponse>();
     const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => firstWritten);
     const secondMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.resolve(noChange));
-    overlayStore.writeOptimistic(firstMutate, { entry: writeFirstRow });
-    overlayStore.writeOptimistic(secondMutate, { entry: writeFirstRow });
+    writeOptimistic(firstMutate, { entry: writeFirstRow });
+    writeOptimistic(secondMutate, { entry: writeFirstRow });
     await flushPromises();
 
     expect(secondMutate).not.toHaveBeenCalled();
@@ -338,10 +353,11 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
+    const { writeOptimistic } = overlayStore;
     const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
     const secondMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
-    overlayStore.writeOptimistic(firstMutate, { entry: writeFirstRow });
-    overlayStore.writeOptimistic(secondMutate, { entry: writeOtherRow });
+    writeOptimistic(firstMutate, { entry: writeFirstRow });
+    writeOptimistic(secondMutate, { entry: writeOtherRow });
     await flushPromises();
 
     expect(firstMutate).toHaveBeenCalledExactlyOnceWith();
@@ -352,10 +368,11 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
+    const { writeOptimistic } = overlayStore;
     const firstMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
     const readMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.resolve(noChange));
-    overlayStore.writeOptimistic(firstMutate, { entry: writeFirstRow });
-    overlayStore.writeOptimistic(readMutate, { entry: readFirstRow });
+    writeOptimistic(firstMutate, { entry: writeFirstRow });
+    writeOptimistic(readMutate, { entry: readFirstRow });
     await flushPromises();
 
     expect(readMutate).not.toHaveBeenCalled();
@@ -365,11 +382,12 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
+    const { writeOptimistic } = overlayStore;
     const onError = vi.fn<(error: Error) => void>();
     const failingMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.reject(new Error(name)));
     const nextMutate = vi.fn<() => Promise<WriteResponse>>(() => Promise.resolve(noChange));
-    overlayStore.writeOptimistic(failingMutate, { entry: writeFirstRow, onError });
-    overlayStore.writeOptimistic(nextMutate, { entry: writeFirstRow });
+    writeOptimistic(failingMutate, { entry: writeFirstRow, onError });
+    writeOptimistic(nextMutate, { entry: writeFirstRow });
     await flushPromises();
 
     expect(nextMutate).toHaveBeenCalledExactlyOnceWith();
@@ -379,39 +397,41 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.writeOptimistic(() => neverSettles(), {
+    const { arrive, view: readView, writeOptimistic } = overlayStore;
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    writeOptimistic(() => neverSettles(), {
       entry: (view) => {
         setRowName(view, otherName);
       },
     });
-    overlayStore.writeOptimistic(() => neverSettles(), {
+    writeOptimistic(() => neverSettles(), {
       entry: (view) => {
         setRowName(view, serverName);
       },
     });
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 1 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 1 }]);
   });
 
   test("a failed write drops its entry, leaving the view as held state was", async () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
+    const { arrive, view: readView, writeOptimistic } = overlayStore;
     const onError = vi.fn<(error: Error) => void>();
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.writeOptimistic(() => Promise.reject(new Error(name)), {
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    writeOptimistic(() => Promise.reject(new Error(name)), {
       entry: (view) => {
         setRowName(view, otherName);
       },
       onError,
     });
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 1 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 1 }]);
 
     await flushPromises();
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
     expect(onError).toHaveBeenCalledExactlyOnceWith(new Error(name));
   });
 
@@ -419,22 +439,20 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.writeOptimistic(
-      () => Promise.resolve({ arrivals: [], confirmed: [createConfirmation(table, ["a"], 2)] }),
-      {
-        entry: (view) => {
-          setRowName(view, otherName);
-        },
+    const { arrive, view: readView, writeOptimistic } = overlayStore;
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    writeOptimistic(() => Promise.resolve({ arrivals: [], confirmed: [createConfirmation(table, ["a"], 2)] }), {
+      entry: (view) => {
+        setRowName(view, otherName);
       },
-    );
+    });
     await flushPromises();
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 1 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 1 }]);
 
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name: serverName, version: 2 });
+    arrive(table, { deletedAt: null, id: "a", name: serverName, version: 2 });
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 2 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 2 }]);
   });
 
   // A write whose header named no row, as one past the header's budget does, confirms nothing: its entry drops with its
@@ -443,26 +461,28 @@ describe(useOverlayStore, () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.writeOptimistic(() => Promise.resolve(noChange), {
+    const { arrive, view: readView, writeOptimistic } = overlayStore;
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    writeOptimistic(() => Promise.resolve(noChange), {
       entry: (view) => {
         setRowName(view, otherName);
       },
     });
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 1 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: otherName, version: 1 }]);
 
     await flushPromises();
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name, version: 1 }]);
   });
 
   test("a response that carries its row settles the entry at once", async () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
-    overlayStore.arrive(table, { deletedAt: null, id: "a", name, version: 1 });
-    overlayStore.writeOptimistic(
+    const { arrive, view: readView, writeOptimistic } = overlayStore;
+    arrive(table, { deletedAt: null, id: "a", name, version: 1 });
+    writeOptimistic(
       () =>
         Promise.resolve({
           arrivals: [createArrival(table, { deletedAt: null, id: "a", name: serverName, version: 2 })],
@@ -476,37 +496,35 @@ describe(useOverlayStore, () => {
     );
     await flushPromises();
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 2 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 2 }]);
   });
 
   test("two awaited responses for one row hold the higher version, whichever arrives first", async () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
+    const { view: readView, writeAwaited } = overlayStore;
     const first = Promise.withResolvers<Arrival[]>();
     const second = Promise.withResolvers<Arrival[]>();
-    const firstWrite = overlayStore.writeAwaited(() => first.promise, {
-      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
-    });
-    const secondWrite = overlayStore.writeAwaited(() => second.promise, {
-      awaitedBecause: AwaitedReason.ServerDecidedOutcome,
-    });
+    const firstWrite = writeAwaited(() => first.promise, { awaitedBecause: AwaitedReason.ServerDecidedOutcome });
+    const secondWrite = writeAwaited(() => second.promise, { awaitedBecause: AwaitedReason.ServerDecidedOutcome });
     second.resolve([createArrival(table, { deletedAt: null, id: "a", name: serverName, version: 2 })]);
     await secondWrite;
     first.resolve([createArrival(table, { deletedAt: null, id: "a", name, version: 1 })]);
     await firstWrite;
 
-    expect(overlayStore.view(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 2 }]);
+    expect(readView(table).value).toStrictEqual([{ deletedAt: null, id: "a", name: serverName, version: 2 }]);
   });
 
   test("an awaited write is issued at once, since it has no entry and so no queue key", async () => {
     expect.hasAssertions();
 
     const overlayStore = useOverlayStore();
+    const { writeAwaited, writeOptimistic } = overlayStore;
     const optimisticMutate = vi.fn<() => Promise<WriteResponse>>(() => neverSettles());
     const awaitedMutate = vi.fn<() => Promise<Arrival[]>>(() => Promise.resolve([]));
-    overlayStore.writeOptimistic(optimisticMutate, { entry: writeFirstRow });
-    await overlayStore.writeAwaited(awaitedMutate, { awaitedBecause: AwaitedReason.ServerDecidedOutcome });
+    writeOptimistic(optimisticMutate, { entry: writeFirstRow });
+    await writeAwaited(awaitedMutate, { awaitedBecause: AwaitedReason.ServerDecidedOutcome });
 
     expect(awaitedMutate).toHaveBeenCalledExactlyOnceWith();
   });

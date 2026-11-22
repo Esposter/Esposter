@@ -32,6 +32,7 @@ describe(useDashboardStore, () => {
     expect.hasAssertions();
 
     const dashboardStore = useDashboardStore();
+    const { dashboard } = storeToRefs(dashboardStore);
     const { loadContent, setLayout } = dashboardStore;
     await loadContent();
     const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
@@ -49,6 +50,6 @@ describe(useDashboardStore, () => {
     releaseSave();
     await waitForSynchronizedFunctions();
 
-    expect(dashboardStore.dashboard.collision).toBe(CollisionMode.Swap);
+    expect(dashboard.value.collision).toBe(CollisionMode.Swap);
   });
 });

@@ -16,9 +16,8 @@ import { describe, expect, test } from "vitest";
 // Holds a branch's replies on the overlay, and lists them under their parent the way a page of the branch does
 const seedBranch = (parentId: string, replies: ReturnType<typeof createPost>[]) => {
   const commentStore = useCommentStore();
-  commentStore
-    .getSlice(parentId)
-    .initializeCursorPaginationData(commentStore.readCommentPage({ items: replies, nextCursor: "" }));
+  const { getSlice, readCommentPage } = commentStore;
+  getSlice(parentId).initializeCursorPaginationData(readCommentPage({ items: replies, nextCursor: "" }));
 };
 
 describe(useCommentStore, () => {
@@ -213,7 +212,8 @@ describe(useCommentStore, () => {
     );
 
     const commentStore = useCommentStore();
-    commentStore.createComment({ description: "a", parentId: postId });
+    const { createComment } = commentStore;
+    createComment({ description: "a", parentId: postId });
     await waitForSynchronizedFunctions();
 
     await until(() => takeOne(items.value).commentCount).toBe(1);
