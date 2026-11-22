@@ -93,7 +93,7 @@ A web worker that generates the ground imports its generators from the `genshin-
 | `createPostUniforms`     | function | The post chain's uniforms: outline colour and thickness, god-ray colour, grade and white balance           |
 | `createRampTexture`      | function | A one-row texture of the irradiance that the toon lighting steps between                                   |
 | `createToonMaterial`     | function | The environment's toon material, stepping from shade to lit on the world's ramp, and drawing the sky's rim |
-| `QualityTier`            | enum     | The three quality tiers that set a renderer's cost                                                         |
+| `QualityTier`            | const    | The three quality tiers that set a renderer's cost                                                         |
 | `QualityTierSettingsMap` | const    | What each quality tier spends: shadow maps, cascades, god-ray steps, bloom and anti-aliasing               |
 
 ## <a name="license">⚖️ License</a>
