@@ -37,7 +37,9 @@ const refresh = async ($: EngineInterface) => {
   const status = await $.process.run(["node", `${$.plugin.root}/scripts/status.mjs`], {
     stdin: JSON.stringify({ session_id: sessionId }),
   });
+  // oxlint-disable typescript/no-unsafe-type-assertion -- the status script prints JSON the mod reads as the PersonaStatus it writes, which JSON.parse types as any
   const [statusOutcome] = await Promise.allSettled([Promise.try(() => JSON.parse(status.stdout) as PersonaStatus)]);
+  // oxlint-enable typescript/no-unsafe-type-assertion
   if (statusOutcome.status === "rejected") return;
   const { character, isRecorded } = statusOutcome.value;
   await update($, isCharacterRecordedAtom, () => isRecorded);
@@ -48,7 +50,9 @@ const refresh = async ($: EngineInterface) => {
   const spinner = await $.process.run(["node", `${$.plugin.root}/scripts/spinner.mjs`, character.name], {
     timeoutMs: SPINNER_TIMEOUT_MS,
   });
+  // oxlint-disable typescript/no-unsafe-type-assertion -- the spinner script prints JSON the mod reads as the PersonaSpinner it writes, which JSON.parse types as any
   const [spinnerOutcome] = await Promise.allSettled([Promise.try(() => JSON.parse(spinner.stdout) as PersonaSpinner)]);
+  // oxlint-enable typescript/no-unsafe-type-assertion
   if (spinnerOutcome.status === "fulfilled") await update($, spinnerAtom, () => spinnerOutcome.value);
 };
 

@@ -31,8 +31,10 @@ export const createMockBuckets = async <BucketName extends string>(
         async (bucketName) =>
           [
             bucketName,
+            // oxlint-disable typescript/no-unsafe-type-assertion -- Miniflare types its bucket over undici's `Headers`, which the Workers `R2Bucket`'s iterators do not satisfy; the binding is the same object
             // eslint-disable-next-line no-restricted-syntax -- Miniflare types its bucket over undici's `Headers`, which the Workers `R2Bucket`'s iterators do not satisfy; the binding is the same object
             (await miniflare.getR2Bucket(bucketName)) as unknown as R2Bucket,
+            // oxlint-enable typescript/no-unsafe-type-assertion
           ] as const,
       ),
     ),
