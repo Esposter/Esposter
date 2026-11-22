@@ -12,9 +12,9 @@ import {
 
 // What each chest tier pours out, from the wiki's Chests page: the one-star weapons Common and Exquisite chests name,
 // The artifact sets and the Character EXP materials by star with their count ranges. Provisional: the wiki gives no
-// Chance that a chest pours a weapon or an artifact, so each pool is taken as one roll per opening until a recording of
-// Openings measures it. Precious and Luxurious name no weapon, so their weapon pools are empty, and Remarkable names no
-// Drop at all, its other reward being its blueprints
+// Chance that a chest pours a weapon or an artifact, so each pool is taken as one roll per opening. Precious and
+// Luxurious name no weapon, so their weapon pools are empty, and Remarkable names no drop at all, its other reward
+// Being its blueprints
 export const ChestDropPoolMap: Partial<Record<ChestKind, ChestDropPool>> = {
   [ChestKind.Common]: {
     artifactSetIds: CHEST_LOW_RARITY_ARTIFACT_SET_IDS,
