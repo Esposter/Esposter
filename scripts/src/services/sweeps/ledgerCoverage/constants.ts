@@ -18,3 +18,15 @@ export const OWN_TABLE_LEDGERS: readonly string[] = ["component-reference", "doc
 // The area the derived openspec folder units sit in. `tooling.md` holds the rest of the openspec tree.
 // Its `.openspec.yaml` files among them, so a folder belongs with its tooling
 export const OPENSPEC_AREA = "tooling";
+// The separator a sample line puts between its unit and its questions, `<unit> :: <question>, <question>…`
+export const SAMPLE_UNIT_SEPARATOR = " :: ";
+// The separator between a sample line's questions
+export const SAMPLE_LEDGER_SEPARATOR = ", ";
+// The file a sample is cut into for a reader, one batch a file, named by its number and this extension
+export const BATCH_FILE_EXTENSION = ".txt";
+// The file a reader writes its judgements into, one a line, beside the batch it was handed
+export const READER_OUTPUT_EXTENSION = ".jsonl";
+// The file a fixer is handed its units in, one batch of units a file
+export const FIXER_UNIT_FILE_EXTENSION = ".json";
+// The file a fixer writes its answers into, one finding a line
+export const FIXER_RESULT_FILE_EXTENSION = ".result.jsonl";

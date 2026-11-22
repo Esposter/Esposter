@@ -1,4 +1,5 @@
 import { SAMPLE_SIZE } from "#src/services/sweeps/ledgerCoverage/constants";
+import { formatLedgerSample } from "#src/services/sweeps/ledgerCoverage/formatLedgerSample";
 import { getLedgerSample } from "#src/services/sweeps/ledgerCoverage/getLedgerSample";
 import { readLedgerEvents } from "#src/services/sweeps/ledgerCoverage/readLedgerEvents";
 import { readLedgerStatus } from "#src/services/sweeps/ledgerCoverage/readLedgerStatus";
@@ -25,8 +26,8 @@ await runCommand(
     },
     run: ({ args }) => {
       const ledgerCoverages = readLedgerStatus(readLedgerEvents(), readQuestionUnits());
-      for (const { ledgers, unit } of getLedgerSample(ledgerCoverages, args.seed, SAMPLE_SIZE))
-        console.info(`${unit} :: ${ledgers.join(", ")}`);
+      for (const ledgerSample of getLedgerSample(ledgerCoverages, args.seed, SAMPLE_SIZE))
+        console.info(formatLedgerSample(ledgerSample));
     },
   }),
 );

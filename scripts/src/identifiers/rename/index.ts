@@ -3,6 +3,7 @@ import type { RenameMap } from "#src/models/identifiers/rename/RenameMap";
 import { renameSource } from "#src/services/identifiers/rename/renameSource";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { resolveInvocationPath } from "#src/services/shared/resolveInvocationPath";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
@@ -21,9 +22,7 @@ await runCommand(
       name: "ai:identifiers:rename",
     },
     run: ({ args }) => {
-      const renameMap = parseMachineJson<RenameMap>(
-        readFileSync(resolve(process.env.INIT_CWD ?? process.cwd(), args.renameMap), "utf8"),
-      );
+      const renameMap = parseMachineJson<RenameMap>(readFileSync(resolveInvocationPath(args.renameMap), "utf8"));
       for (const path of readSweepFilePaths("*.ts", "*.mts", "*.vue")) {
         const absolutePath = resolve(REPOSITORY_ROOT, path);
         const text = readFileSync(absolutePath, "utf8");

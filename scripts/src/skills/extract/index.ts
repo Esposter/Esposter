@@ -2,13 +2,14 @@ import type { ExtractSpec } from "#src/models/skills/extract/ExtractSpec";
 
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { resolveInvocationPath } from "#src/services/shared/resolveInvocationPath";
 import { extractMoves } from "#src/services/skills/extract/extractMoves";
 import { indexPages } from "#src/services/skills/extract/indexPages";
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 
 await runCommand(
   defineCommand({
@@ -22,9 +23,7 @@ await runCommand(
       name: "ai:skills:extract",
     },
     run: ({ args }) => {
-      const extractSpec = parseMachineJson<ExtractSpec>(
-        readFileSync(resolve(process.env.INIT_CWD ?? process.cwd(), args.spec), "utf8"),
-      );
+      const extractSpec = parseMachineJson<ExtractSpec>(readFileSync(resolveInvocationPath(args.spec), "utf8"));
       const skillDirectory = join(REPOSITORY_ROOT, SKILLS_DIRECTORY, extractSpec.skill);
       const referencesDirectory = join(skillDirectory, "references");
       const skillPath = join(skillDirectory, "SKILL.md");
