@@ -1,11 +1,14 @@
 import type { ContentSecurityPolicy } from "#src/models/ContentSecurityPolicy";
 import type { SecurityHeaders } from "#src/models/SecurityHeaders";
 import type { SecurityRules } from "#src/models/SecurityRules";
+import type { HTML_SECTIONS } from "#src/runtime/constants";
 import type { H3Event } from "nitro/h3";
 import type { NitroAppPlugin } from "nitro/types";
 
 import { XFrameOptions } from "#src/models/XFrameOptions";
 import { NONCE_PLACEHOLDER } from "#src/runtime/constants";
+import nonce from "#src/runtime/nitro/plugins/nonce";
+import { createRouteRulesPlugin } from "#src/runtime/nitro/plugins/routeRules";
 
 // A rendered docs page, the shape the app's SSR emits: a head of stylesheets, preloads, entry scripts and an inline
 // State script, then a body of nested sections with their own inline scripts. Built from its shape so every bench reads
@@ -36,7 +39,7 @@ const BODY: string[] = [
   '<script>window.__NUXT__={config:{app:{baseURL:"/"}}};</script>',
 ];
 
-const PAGE_SECTIONS: Record<"body" | "bodyAppend" | "bodyPrepend" | "head", string[]> = {
+const PAGE_SECTIONS: Record<(typeof HTML_SECTIONS)[number], string[]> = {
   body: BODY,
   bodyAppend: [],
   bodyPrepend: [],
@@ -82,6 +85,8 @@ export const PAGE_ROUTE_RULES: Record<string, SecurityRules> = {
   "/docs/**": { headers: { xFrameOptions: XFrameOptions.SameOrigin } },
 };
 
+// The origin a request arrives at, which the page's paths are resolved against
+export const PAGE_ORIGIN = "http://localhost";
 // A request's path, one the default route and a narrowed route both match, so the merge does real work
 export const PAGE_PATHNAME = "/docs/section-7";
 
@@ -116,7 +121,17 @@ export const createNitroApp = (): {
 // A fresh request event for the page's path, the way each request arrives: its own response headers, no rules cached yet
 export const createPageEvent = (): H3Event =>
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the fakes stand in for Nitro's app and h3's event with only the members the plugin reads, which are subsets of the full types
-  ({ res: { headers: new Headers() }, url: new URL(`http://localhost${PAGE_PATHNAME}`) }) as H3Event;
+  ({ res: { headers: new Headers() }, url: new URL(PAGE_PATHNAME, PAGE_ORIGIN) }) as H3Event;
+
+// The app a page's response is built on, with its route rules applied and its request's nonce generated, for a bench to
+// Add its own plugin to
+export const createNoncedPageApp = async (): Promise<ReturnType<typeof createNitroApp>> => {
+  const app = createNitroApp();
+  await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
+  await app.nitroApp.hooks.callHook("request", createPageEvent());
+  await nonce(app.nitroApp);
+  return app;
+};
 
 // A fresh copy of the page's sections, since a render hook replaces each section's array as it rewrites it
 export const createPageHtml = (): Record<string, string[]> =>

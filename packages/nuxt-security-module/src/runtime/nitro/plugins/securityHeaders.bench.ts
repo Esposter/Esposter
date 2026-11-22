@@ -1,11 +1,4 @@
-import nonce from "#src/runtime/nitro/plugins/nonce";
-import {
-  createNitroApp,
-  createPageEvent,
-  PAGE_HEADERS,
-  PAGE_ROUTE_RULES,
-} from "#src/runtime/nitro/plugins/page.fixture";
-import { createRouteRulesPlugin } from "#src/runtime/nitro/plugins/routeRules";
+import { createNoncedPageApp, createPageEvent, PAGE_HEADERS } from "#src/runtime/nitro/plugins/page.fixture";
 import securityHeaders from "#src/runtime/nitro/plugins/securityHeaders";
 import { serializeSecurityHeaders } from "#src/runtime/services/serializeSecurityHeaders";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
@@ -15,10 +8,7 @@ import { describe, test } from "vitest";
 // Iteration so no rules or state are cached from an earlier request. The native baseline is the serialization alone.
 describe("security headers plugin", () => {
   test("a page's response", async ({ bench }) => {
-    const app = createNitroApp();
-    await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
-    await app.nitroApp.hooks.callHook("request", createPageEvent());
-    await nonce(app.nitroApp);
+    const app = await createNoncedPageApp();
     await securityHeaders(app.nitroApp);
 
     let event = createPageEvent();

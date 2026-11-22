@@ -1,12 +1,9 @@
-import nonce from "#src/runtime/nitro/plugins/nonce";
 import {
-  createNitroApp,
+  createNoncedPageApp,
   createPageEvent,
   createPageHtml,
-  PAGE_ROUTE_RULES,
   PAGE_SRI_HASHES,
 } from "#src/runtime/nitro/plugins/page.fixture";
-import { createRouteRulesPlugin } from "#src/runtime/nitro/plugins/routeRules";
 import { createSubresourceIntegrityPlugin } from "#src/runtime/nitro/plugins/subresourceIntegrity";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
@@ -15,10 +12,7 @@ import { describe, test } from "vitest";
 // The nonce and SRI plugins rewrite each section of the page, a fresh page and event per iteration.
 describe("nonce plugin", () => {
   test("a rendered page's nonce and SRI attributes", async ({ bench }) => {
-    const app = createNitroApp();
-    await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
-    await app.nitroApp.hooks.callHook("request", createPageEvent());
-    await nonce(app.nitroApp);
+    const app = await createNoncedPageApp();
     await createSubresourceIntegrityPlugin(PAGE_SRI_HASHES)(app.nitroApp);
 
     let event = createPageEvent();
