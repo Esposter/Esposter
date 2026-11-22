@@ -8,7 +8,7 @@ interface Props {
   viewer: PdfViewerState;
 }
 
-const isOpen = defineModel<boolean>({ default: false });
+const modelValue = defineModel<boolean>({ default: false });
 defineProps<Props>();
 // The text is asked before the one download it stamps, and nothing is saved for an empty text. A text of only spaces is
 // Empty too, so the field's rules refuse it and the form's validity holds the download
@@ -17,7 +17,7 @@ const watermark = ref("");
 
 <template>
   <StyledFormDialog
-    v-model="isOpen"
+    v-model="modelValue"
     confirm-label="Download"
     :is-confirm-disabled="!watermark || undefined"
     :submit="() => viewer.download(filename, watermark)"

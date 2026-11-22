@@ -243,7 +243,7 @@ describe("pdfViewer", () => {
       const component = await mountViewer({});
       await component.get('[aria-label="Sidebar"]').trigger("click");
       // The outline and the thumbnails report a page chosen through the sidebar, which the dialog answers by closing it
-      component.findComponent(PdfViewerSidebar).vm.$emit("chosePage");
+      component.findComponent(PdfViewerSidebar).vm.$emit("choosePage");
       await flushPromises();
 
       expect(component.find('[role="tablist"]').exists()).toBe(false);
@@ -253,7 +253,7 @@ describe("pdfViewer", () => {
       expect.hasAssertions();
 
       const component = await mountViewer({});
-      component.findComponent(PdfViewerSidebar).vm.$emit("chosePage");
+      component.findComponent(PdfViewerSidebar).vm.$emit("choosePage");
       await flushPromises();
 
       expect(component.find('[role="tablist"]').exists()).toBe(true);

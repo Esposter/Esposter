@@ -15,18 +15,18 @@ interface Props {
 
 const tab = defineModel<PdfSidebarTab>("tab", { required: true });
 const { viewer } = defineProps<Props>();
-const emit = defineEmits<{ chosePage: [] }>();
+const emit = defineEmits<{ choosePage: [] }>();
 // The outline, the thumbnails and the comments go to their pages through this viewer, which also tells the dialog that
 // A page was chosen
 const pageViewer: PdfViewerState = {
   ...viewer,
   followBookmark: (item) => {
     viewer.followBookmark(item);
-    emit("chosePage");
+    emit("choosePage");
   },
   goToPage: (pageNumber) => {
     viewer.goToPage(pageNumber);
-    emit("chosePage");
+    emit("choosePage");
   },
 };
 const items: UiTabItem<PdfSidebarTab>[] = [
@@ -53,7 +53,7 @@ const items: UiTabItem<PdfSidebarTab>[] = [
     of-hidden
     ui-frame
     md:shrink-0
-    md:w-56
+    md:w="[min(14rem,25%)]"
     md:static
   >
     <UiTabs v-model="tab" :items label="Sidebar" :variant="UiTabsVariant.Header" is-filling>

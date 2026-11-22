@@ -94,7 +94,7 @@ const closeSidebarOnPhone = () => {
         :annotations
         :pdf-document
         :viewer="state"
-        @chose-page="() => closeSidebarOnPhone()"
+        @choose-page="() => closeSidebarOnPhone()"
       />
       <!-- pdf.js takes its container only when the container is absolutely positioned, so the pages' region is a cell
         the container fills -->

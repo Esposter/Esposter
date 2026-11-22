@@ -72,7 +72,7 @@ describe("pdfViewerSidebar", () => {
         .find((button) => button.text() === "Page 2 a")
         ?.trigger("click");
 
-      expect(component.emitted("chosePage")).toStrictEqual([[]]);
+      expect(component.emitted("choosePage")).toStrictEqual([[]]);
     });
   });
 });
