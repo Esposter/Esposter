@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { UiCommand } from "#src/models/ui/UiCommand";
 
-import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { handleKeyAction } from "#src/services/ui/handleKeyAction";
 import { useVirtualFocus } from "@vuetify/v0";
 
@@ -25,7 +24,6 @@ const { clear, first, highlightedId, next, prev } = useVirtualFocus(
   () => commands.map(({ id }, index) => ({ el: () => window.document.getElementById(getOptionId(index)), id })),
   { circular: true, control: field, orientation: "vertical", target: () => undefined },
 );
-const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
 // Only a group's first command carries its heading
 const checkIsGroupStart = (index: number) => commands[index - 1]?.group !== commands[index]?.group;
 const highlightFirst = () => {
@@ -81,35 +79,12 @@ watch(
     <div :id="listboxId" :aria-label="label" role="listbox" pb-2 flex flex-col of-y-auto>
       <template v-for="(command, index) of commands" :key="command.id">
         <div v-if="checkIsGroupStart(index)" role="presentation" text-sm text-muted px-3 pt-2>{{ command.group }}</div>
-        <component
-          :is="command.to ? NuxtInvisibleLink : 'div'"
+        <UiCommandListOption
           :id="getOptionId(index)"
-          :="command.to ? { to: command.to } : {}"
-          :aria-disabled="command.isDisabled || undefined"
-          :aria-selected="command.id === highlightedId"
-          class="aria-disabled:op-disabled"
-          role="option"
-          ui-item
-          @click="
-            () => {
-              if (!command.isDisabled) emit('select', command);
-            }
-          "
-          @mousedown.prevent
-        >
-          <UiItemContent
-            :description="command.description"
-            :icon="command.icon"
-            :image="command.image"
-            :meaning="command.meaning"
-            :shortcut="command.shortcut"
-            :title="command.title"
-          >
-            <template v-if="command.isSelected" #append>
-              <UiIcon :meaning="UiIconMeaning.Selected" label="Chosen" text-accent />
-            </template>
-          </UiItemContent>
-        </component>
+          :command
+          :is-highlighted="command.id === highlightedId"
+          @select="emit('select', $event)"
+        />
       </template>
       <slot name="append" />
     </div>

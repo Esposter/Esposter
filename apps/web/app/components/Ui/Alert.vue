@@ -27,7 +27,7 @@ defineProps<Props>();
     >
       <!-- A block of the status colour down its start, the one mark a glance down the page catches -->
       <span aria-hidden="true" bg="[var(--ui-alert-color)]" rd="l-[var(--ui-container-radius)]" shrink-0 w-1 />
-      <span style="color: var(--ui-alert-color)" py-2 flex>
+      <span py-2 flex text="[var(--ui-alert-color)]">
         <UiIcon :meaning="UiStatusIconMeaningMap[status]" />
       </span>
       <div py-2 flex-1 self-center>

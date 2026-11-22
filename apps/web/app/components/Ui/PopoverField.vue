@@ -21,7 +21,7 @@ interface Props {
 }
 // What a call site passes, such as an invalid mark, goes to the trigger, which is the field's button
 defineOptions({ inheritAttrs: false });
-defineSlots<{ default: () => VNode; value: () => VNode }>();
+defineSlots<{ default: () => VNode; footer?: () => VNode; value: () => VNode }>();
 // A field drawn as a select's trigger, whose value opens a panel of its own, with its label above it. The value is the
 // Value slot and the panel is the default slot; the caller answers the clear button through its clear event
 const isOpen = defineModel<boolean>("isOpen", { default: false });
@@ -66,6 +66,9 @@ defineExpose({ element });
           </span>
         </template>
         <slot />
+        <template v-if="$slots.footer" #footer>
+          <slot name="footer" />
+        </template>
       </UiPopover>
       <UiIconButton
         v-if="isClearable"

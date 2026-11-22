@@ -57,9 +57,6 @@ const choose = (newZonedDateTime: Temporal.ZonedDateTime) => {
     clampedZonedDateTime = maxZonedDateTime.value;
   writeModelValue(new Date(clampedZonedDateTime.epochMilliseconds));
 };
-const clear = () => {
-  writeModelValue(undefined);
-};
 // A new day keeps the time already chosen, or the current one's to the minute when there is none yet
 const chooseDate = (date: Temporal.PlainDate) => {
   const plainTime = zonedDateTime.value?.toPlainTime() ?? Temporal.Now.plainTimeISO().round({ smallestUnit: "minute" });
@@ -86,7 +83,7 @@ defineExpose({ element });
     :is-required
     :label
     :placeholder
-    @clear="clear()"
+    @clear="writeModelValue(undefined)"
   >
     <template #value>
       <NuxtTime v-if="modelValue" :datetime="modelValue" date-style="medium" :="isTime ? { timeStyle: 'short' } : {}" />
@@ -109,9 +106,9 @@ defineExpose({ element });
       label="Time"
       :type="UiTextFieldType.Time"
     />
-    <footer flex gap-2 justify-end>
+    <template #footer>
       <UiButton :variant="UiButtonVariant.Quiet" @click="chooseToday()">Today</UiButton>
       <UiButton v-if="isTime" :variant="UiButtonVariant.Accent" @click="isOpen = false">Done</UiButton>
-    </footer>
+    </template>
   </UiPopoverField>
 </template>

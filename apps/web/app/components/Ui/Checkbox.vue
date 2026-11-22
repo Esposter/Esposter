@@ -21,8 +21,20 @@ defineProps<Props>();
 <template>
   <Checkbox.Root #default="{ attrs }" v-model="modelValue" :indeterminate="isMixed" :label renderless>
     <button :="{ ...attrs, ...$attrs }" type="button" flex gap-2 cursor-pointer items-center>
-      <span class="box" :data-state="attrs['data-state']" flex shrink-0 size-6 ui-field>
-        <UiIcon class="mark" :meaning="isMixed ? UiIconMeaning.Mixed : UiIconMeaning.Success" />
+      <span
+        class="box"
+        :data-state="attrs['data-state']"
+        flex
+        shrink-0
+        size-6
+        ui-field
+        transition="[box-shadow_var(--ui-motion-short)]"
+      >
+        <UiIcon
+          class="mark"
+          :meaning="isMixed ? UiIconMeaning.Mixed : UiIconMeaning.Success"
+          transition="[clip-path_var(--ui-motion-medium)]"
+        />
       </span>
       <span v-if="isLabelVisible">{{ label }}</span>
     </button>
@@ -33,7 +45,6 @@ defineProps<Props>();
 /* The outline is inset so it takes no room from the glyph, and turns the accent once the box holds a mark */
 .box {
   box-shadow: inset 0 0 0 var(--ui-border-width) var(--ui-border);
-  transition: box-shadow var(--ui-motion-short);
 }
 
 .box:is([data-state="checked"], [data-state="indeterminate"]) {
@@ -44,7 +55,6 @@ defineProps<Props>();
 .mark {
   color: var(--ui-accent);
   clip-path: inset(0 100% 0 0);
-  transition: clip-path var(--ui-motion-medium);
 }
 
 .box:is([data-state="checked"], [data-state="indeterminate"]) .mark {

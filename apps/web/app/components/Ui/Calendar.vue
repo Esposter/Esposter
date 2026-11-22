@@ -189,7 +189,7 @@ watch(from, (newFrom) => {
           </tr>
         </thead>
         <!-- A new month's days fade in over the old one's place, so a jump reads as a turn of the page -->
-        <tbody :key="month.toString()" class="month">
+        <tbody :key="month.toString()" class="month" transition="[opacity_var(--ui-motion-short)]">
           <tr v-for="week of weeks" :key="week[0]?.date.toString()">
             <td
               v-for="{ date, disabled, outside, selected } of week"
@@ -198,35 +198,25 @@ watch(from, (newFrom) => {
               role="gridcell"
               p-0
             >
-              <button
+              <UiCalendarDay
                 v-if="checkIsShown(outside)"
-                :aria-current="date.equals(today) ? 'date' : undefined"
-                :aria-disabled="disabled || undefined"
-                class="day aria-disabled:line-through aria-disabled:cursor-default aria-disabled:op-disabled"
-                :data-date="date.toString()"
-                :data-end="checkIsEnd(date) || undefined"
-                :data-in-span="checkIsInSpan(date) || undefined"
-                :data-outside="outside || undefined"
-                :data-marked="markedDates.includes(date.toString()) || undefined"
-                :data-preview="checkIsPreviewed(date) || undefined"
-                :data-variant="UiButtonVariant.Quiet"
-                :tabindex="date.equals(focusedDate) ? 0 : -1"
-                type="button"
-                ui-button
-                px-0
-                size-9
-                @click="
+                :date
+                :is-current="date.equals(today)"
+                :is-disabled="disabled"
+                :is-end="checkIsEnd(date)"
+                :is-focused="date.equals(focusedDate)"
+                :is-in-span="checkIsInSpan(date)"
+                :is-marked="markedDates.includes(date.toString())"
+                :is-outside="outside"
+                :is-previewed="checkIsPreviewed(date)"
+                @press="
                   () => {
                     setFocusedDate(date);
                     if (!disabled) choose(date);
                   }
                 "
-                @focus="previewDate = date"
-                @mouseenter="previewDate = date"
-              >
-                <span aria-hidden="true">{{ date.day }}</span>
-                <NuxtTime :datetime="date.toString()" date-style="full" time-zone="UTC" sr-only />
-              </button>
+                @preview="previewDate = $event"
+              />
             </td>
           </tr>
         </tbody>
@@ -236,59 +226,9 @@ watch(from, (newFrom) => {
 </template>
 
 <style scoped>
-.month {
-  transition: opacity var(--ui-motion-short);
-}
-
 @starting-style {
   .month {
     opacity: 0;
   }
-}
-
-/* Another month's days fill the grid's edges, fainter, so the six weeks keep their shape */
-.day[data-outside] {
-  opacity: 0.5;
-}
-
-/* Today is ringed in the accent */
-.day[aria-current="date"] {
-  box-shadow: inset 0 0 0 var(--ui-border-width) var(--ui-accent);
-}
-
-.day[data-marked] {
-  position: relative;
-}
-
-.day[data-marked]::after {
-  background-color: currentColor;
-  border-radius: var(--ui-control-radius);
-  bottom: var(--ui-step);
-  content: "";
-  height: var(--ui-step);
-  left: 50%;
-  position: absolute;
-  transform: translateX(-50%);
-  width: var(--ui-step);
-}
-
-/* The days between a range's ends are one band in the accent, square so it reads as a span rather than a row of
-   choices; a span still waiting for its end is the lighter tint out to the day under the pointer */
-.day[data-in-span]:not([data-end]) {
-  background-color: color-mix(in srgb, var(--ui-accent) 20%, transparent);
-  border-radius: 0;
-  color: var(--ui-text);
-  opacity: 1;
-}
-
-.day[data-preview]:not([data-end]) {
-  background-color: color-mix(in srgb, var(--ui-tint) 10%, transparent);
-}
-
-/* A single day, or a range's two ends, filled in the accent as a pressed toggle is */
-.day[data-end] {
-  background-color: var(--ui-accent);
-  color: var(--ui-background);
-  opacity: 1;
 }
 </style>

@@ -31,13 +31,13 @@ defineProps<Props>();
           <!-- A link, tinted behind while hovered as a quiet button is, so the crumb under the pointer reads as a target -->
           <NuxtLink
             :to
-            class="crumb"
             rd="[var(--ui-control-radius)]"
             text-info
             px-2
             py-1
             hover:underline
             hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
+            transition="[background-color_var(--ui-motion-short)]"
             >{{ title }}</NuxtLink
           >
         </Breadcrumbs.Item>
@@ -45,9 +45,3 @@ defineProps<Props>();
     </Breadcrumbs.List>
   </Breadcrumbs.Root>
 </template>
-
-<style scoped>
-.crumb {
-  transition: background-color var(--ui-motion-short);
-}
-</style>
