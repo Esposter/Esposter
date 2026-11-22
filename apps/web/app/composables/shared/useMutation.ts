@@ -141,6 +141,7 @@ export const useMutation = () => {
     );
     // The compiler cannot state that a target's entry carries the result type its registrant read — the map is
     // Heterogeneous by key, which is the contract every caller sharing one key already lives under
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The shared query map is keyed by target and holds each caller's result type, which no single map type states
     if (isExclusive) keySharedQueryMap.set(key, outcome as Promise<MutationOutcome<never>>);
     return outcome;
   };
