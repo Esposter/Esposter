@@ -6,8 +6,8 @@ import { useRovingFocus } from "@vuetify/v0";
 // A list's keyboard, and the reorder its rows take by a key or a drag: the arrows, Home and End walk the rows, typing
 // Jumps to a title, and Alt with an arrow moves a row within its group. Rows sharing a group sit together under its
 // Heading, in the order they come
-export const useListKeyboard = <T extends string, TItem extends UiListItem<T>>(
-  getItems: () => TItem[],
+export const useListKeyboard = <T extends string, TListItem extends UiListItem<T>>(
+  getItems: () => TListItem[],
   getIsReorderable: () => true | undefined,
   onReorder: (values: T[]) => void,
 ) => {
@@ -21,7 +21,7 @@ export const useListKeyboard = <T extends string, TItem extends UiListItem<T>>(
   const { announcement, reorderByKey } = useReorder();
   const getDragReorderProps = useDragReorder();
   const groups = computed(() => {
-    const rowGroups: { group?: string | undefined; items: TItem[] }[] = [];
+    const rowGroups: { group?: string | undefined; items: TListItem[] }[] = [];
     for (const item of getItems()) {
       const lastRowGroup = rowGroups.at(-1);
       if (lastRowGroup && lastRowGroup.group === item.group) lastRowGroup.items.push(item);
@@ -37,7 +37,7 @@ export const useListKeyboard = <T extends string, TItem extends UiListItem<T>>(
     onReorder(values);
   };
   // What a group's rows take while they drag: their new order is handed back as the whole list's
-  const getReorderProps = (groupIndex: number, groupItems: TItem[]) =>
+  const getReorderProps = (groupIndex: number, groupItems: TListItem[]) =>
     getDragReorderProps(groupItems, (newGroupItems) => {
       reorder(
         groupIndex,
