@@ -497,7 +497,8 @@ onRender(({ delta: frameDelta }) => {
   // Bridges the row and their walkway the walkway's copies, assembling as ours does. Their door rides ours, its copies
   // At the offset too
   for (const group of exportedParts.value?.children ?? []) {
-    const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
+    const offset: [number, number, number] | undefined = group.userData.offset;
+    const [x = 0, y = 0, z = 0] = offset ?? [];
     group.position.set(x, y, z);
     if (group.name === LoginPartFamily.Towers || group.name === LoginPartFamily.Bridges)
       group.position.add(towersGroup.position);

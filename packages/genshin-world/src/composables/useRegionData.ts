@@ -44,6 +44,8 @@ export const useRegionData = (
   const groundKeys = selectLaidGroundKeys(gameDataLockKeys);
   const pendingGroundKeys = new Set<string>();
   const pendingChestRegionIds = new Set<string>();
+  // The lock's chest key by region id, where a region the lock holds no chest record for has none
+  const chestKeys: Partial<Record<string, GameDataKey>> = GameDataKeys.chests;
   const pendingRegionIds = new Set<string>();
   const wantedRegionIds = new Set<string>();
   const isRegionDataSettled = ref(false);
@@ -102,7 +104,7 @@ export const useRegionData = (
 
       wantedRegionIds.add(id);
       // A region the lock holds no chest record for has no chests to read
-      const chestKey = (GameDataKeys.chests as Partial<Record<string, GameDataKey>>)[id];
+      const chestKey = chestKeys[id];
       if (chestKey !== undefined && !regionChestMap.has(id) && !pendingChestRegionIds.has(id))
         requestLoad(
           pendingChestRegionIds,

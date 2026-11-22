@@ -3,7 +3,7 @@ import type { BuildingLandmark } from "#src/models/world/BuildingLandmark";
 import type { RegionPaletteMap } from "#src/models/world/RegionPaletteMap";
 import type { ToonNodeMaterial } from "genshin-engine";
 
-import { BuildingKitPartsMap } from "#src/services/world/BuildingKitPartsMap";
+import { createBuildingParts } from "#src/services/world/createBuildingParts";
 import { setObjectSurface } from "genshin-engine";
 import { Mesh } from "three";
 
@@ -23,15 +23,14 @@ const { building, heightOffset, position, rotation } = landmark;
 const groundHeight = getGroundHeight(position.x, position.z);
 // The building's region kit decides its parts, each drawn in its own colour, from its own kit's palette, which arrived
 // With the building's region
-const buildingMeshes = BuildingKitPartsMap[building.kit](building.options as never, regionPalettes as never).map(
-  ({ color, geometry }) => {
-    const mesh = new Mesh(geometry, partMaterial);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    setObjectSurface(mesh, color);
-    return mesh;
-  },
-);
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the palette record of the building's own region is in reach with it, which a Partial over every region cannot tie to its kit
+const buildingMeshes = createBuildingParts(building, regionPalettes as RegionPaletteMap).map(({ color, geometry }) => {
+  const mesh = new Mesh(geometry, partMaterial);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  setObjectSurface(mesh, color);
+  return mesh;
+});
 
 onUnmounted(() => {
   for (const { geometry } of buildingMeshes) geometry.dispose();

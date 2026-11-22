@@ -8,5 +8,6 @@ export const sumKitBonuses = <Bonus extends Partial<Record<string, number>>>(
   for (const bonus of bonuses)
     for (const [key, value] of Object.entries<number | undefined>(bonus ?? {}))
       sum[key] = (sum[key] ?? 0) + (value ?? 0);
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the sum holds every key a bonus adds, and a bonus may add a key the generic `Bonus` does not name, so no type it can be written as covers the record
   return sum as Bonus;
 };

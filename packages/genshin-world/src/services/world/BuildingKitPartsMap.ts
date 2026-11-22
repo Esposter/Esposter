@@ -19,7 +19,12 @@ import { createBuildingGeometry } from "genshin-engine";
 // Each region's kit as the parts its building is drawn in: every geometry the kit returns, with its colour for the
 // Material that geometry is drawn in. A colour its region's palette record samples is read from that record, and one it
 // Leaves provisional or does not extract is the kit's own constant
-export const BuildingKitPartsMap = {
+export const BuildingKitPartsMap: {
+  [TBuildingKit in BuildingKit]: (
+    options: BuildingKitOptionsMap[TBuildingKit],
+    regionPalettes: RegionPaletteMap,
+  ) => BuildingPart[];
+} = {
   [BuildingKit.Fontaine]: (options, regionPalettes) => {
     const { awningGeometry, goldGeometry, ironGeometry, slateGeometry, stoneGeometry } =
       createFontaineBuildingGeometries(options);
@@ -70,9 +75,4 @@ export const BuildingKitPartsMap = {
   [BuildingKit.Sumeru]: (options, regionPalettes) => [
     { color: regionPalettes[BuildingKit.Sumeru].terrace, geometry: createRainforestCityGeometry(options) },
   ],
-} as const satisfies {
-  [TBuildingKit in BuildingKit]: (
-    options: BuildingKitOptionsMap[TBuildingKit],
-    regionPalettes: RegionPaletteMap,
-  ) => BuildingPart[];
 };

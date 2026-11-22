@@ -28,7 +28,7 @@ export const sinkLoginWitnessWalkway = (
 ): void => {
   group.getWorldPosition(groupPosition);
   for (const part of group.children) {
-    let piece = part.userData.walkwayPiece as undefined | WitnessPiece;
+    let piece: undefined | WitnessPiece = part.userData.walkwayPiece;
     if (!piece) {
       part.updateWorldMatrix(true, true);
       box.setFromObject(part).getCenter(center).sub(groupPosition);

@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-type-assertion -- three types a material's colour and emission nodes as a union of every node type, and its normal map's output untyped; the stand-ins draw vec3 nodes there, which the annotation and assertions name */
 import type { WitnessMaterial } from "#src/models/scene/WitnessMaterial";
 import type { WitnessMaterialFactory } from "#src/models/scene/WitnessMaterialFactory";
 import type { SceneMaterial } from "genshin-engine";

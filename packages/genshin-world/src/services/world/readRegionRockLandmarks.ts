@@ -29,6 +29,7 @@ export const toRockLandmarks = (regionId: string, { hulls, placements }: RockRec
 // A region's rock landmarks, read from its rocks record by the key the lock holds for it, as the region comes within reach.
 // A region the lock holds no rocks record for draws none
 export const readRegionRockLandmarks = async (gameDataBaseUrl: string, regionId: string): Promise<RockLandmark[]> => {
-  const key = (GameDataKeys.regions as Partial<Record<string, { rocks?: GameDataKey }>>)[regionId]?.rocks;
+  const regionKeys: Partial<Record<string, Record<string, GameDataKey>>> = GameDataKeys.regions;
+  const key = regionKeys[regionId]?.rocks;
   return key === undefined ? [] : toRockLandmarks(regionId, await readGameData(gameDataBaseUrl, key, rockRecordSchema));
 };
