@@ -48,6 +48,7 @@ describe("sinsScript", () => {
     await new Promise<void>((resolve) => {
       server.listen(0, "127.0.0.1", resolve);
     });
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- listening on a TCP host gives an AddressInfo, and the unix-socket string and the unlistened null that address() also types are never what this server holds
     apiUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}/v1/systemone`;
   });
 
