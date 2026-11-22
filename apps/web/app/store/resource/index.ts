@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-unsafe-type-assertion -- the content read is the resource type TType the caller names, which the store's runtime type cannot carry to the compiler; the union of every type's content write takes the one argument each arm accepts, so the input is named as never where it is saved */
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ContentBaseline } from "#src/models/resource/ContentBaseline";
 import type { ResourceSave } from "#src/models/resource/ResourceSave";

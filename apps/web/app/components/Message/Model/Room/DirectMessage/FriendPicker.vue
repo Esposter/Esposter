@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="TMultiple extends boolean = false">
+/* oxlint-disable typescript/no-unsafe-type-assertion -- the model is a list or an id by TMultiple, a conditional type that the compiler cannot narrow by the mode's runtime flag; the value written is the shape the mode holds, which FriendPickerModelValue<TMultiple> selects at runtime */
 import type { FriendPickerModelValue } from "#src/models/message/room/directMessage/FriendPickerModelValue";
 import type { UiListItem } from "#src/models/ui/UiListItem";
 import type { PublicUser } from "@esposter/db-schema";
@@ -31,21 +32,23 @@ const friendItems = computed(() =>
 );
 // The single/multiple split is the component's generic, which the template cannot narrow — so the two shapes of
 // The model are read and written here, in one place, rather than cast at every binding
-const selectedUserIds = computed(() =>
-  isMultipleMode.value
-    ? ((modelValue.value as string[] | undefined) ?? [])
-    : modelValue.value
-      ? [modelValue.value as string]
-      : [],
-);
+const readModelValue = () => modelValue.value as string[] | string | undefined;
+const writeModelValue = (value: string[] | string | undefined) => {
+  modelValue.value = value as FriendPickerModelValue<TMultiple>;
+};
+const selectedUserIds = computed(() => {
+  const value = readModelValue();
+  if (Array.isArray(value)) return value;
+  return value ? [value] : [];
+});
 const toggleFriend = (id: string) => {
   if (isMultipleMode.value)
-    modelValue.value = (
+    writeModelValue(
       selectedUserIds.value.includes(id)
         ? selectedUserIds.value.filter((userId) => userId !== id)
-        : [...selectedUserIds.value, id]
-    ) as FriendPickerModelValue<TMultiple>;
-  else modelValue.value = (modelValue.value === id ? undefined : id) as FriendPickerModelValue<TMultiple>;
+        : [...selectedUserIds.value, id],
+    );
+  else writeModelValue(readModelValue() === id ? undefined : id);
 };
 
 const reset = () => {
