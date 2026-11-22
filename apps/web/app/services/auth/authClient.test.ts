@@ -14,13 +14,16 @@ export const useSession = vi.fn<(fetcher?: unknown) => unknown>((fetcher) =>
   fetcher === undefined ? ref({ data: null }) : { data: ref<null>(null) },
 );
 export const apiKeyList = vi.fn<() => Promise<unknown>>();
+export const apiKeyDelete = vi.fn<(input: unknown) => Promise<unknown>>();
 export const listAccounts = vi.fn<() => Promise<unknown>>();
+export const unlinkAccount = vi.fn<(input: unknown) => Promise<unknown>>();
 export const updateUser = vi.fn<(input: unknown) => Promise<unknown>>();
 export const authClient = {
-  apiKey: { list: apiKeyList },
+  apiKey: { delete: apiKeyDelete, list: apiKeyList },
   getSession,
   listAccounts,
   signOut,
+  unlinkAccount,
   updateUser,
   useSession,
 } as unknown as typeof baseAuthClient;

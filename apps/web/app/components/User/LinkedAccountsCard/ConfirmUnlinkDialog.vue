@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Promisable } from "type-fest";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useUserLinkedAccountDialogStore } from "#src/store/user/linkedAccountDialog";
 import { toTitleCase } from "#src/util/text/toTitleCase";
 
@@ -17,7 +18,13 @@ const { isOpen } = useSingletonDialog(unlinkingProvider);
 </script>
 
 <template>
-  <UiConfirmDialog v-model="isOpen" confirm-label="Unlink" :title="`Unlink ${toTitleCase(provider)}`" :confirm="unlink">
+  <UiConfirmDialog
+    v-model="isOpen"
+    confirm-label="Unlink"
+    :awaited-because="AwaitedReason.ServerDecidedOutcome"
+    :confirm="unlink"
+    :title="`Unlink ${toTitleCase(provider)}`"
+  >
     <p>Unlink {{ toTitleCase(provider) }} from this account? You can link it again later.</p>
   </UiConfirmDialog>
 </template>

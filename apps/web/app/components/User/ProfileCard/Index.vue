@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { RowValueType } from "#src/models/user/ProfileCard/RowValueType";
@@ -19,7 +20,7 @@ interface Props {
 defineProps<Props>();
 const { data: session } = await useAuthSession();
 const { updateUser } = authClient;
-const { executeMutation } = useMutation();
+const { checkIsPending, executeMutation } = useMutation();
 // The profile a save sent, shown in place of the session's until the session reads it back
 const savedProfile = shallowRef<Pick<NonNullable<typeof session.value>["user"], "biography" | "image" | "name">>();
 watch(
@@ -48,26 +49,20 @@ const isEditFormValid = ref(true);
 const disabled = computed(
   () => !isEditFormValid.value || checkIsDeepEqual(profileCardValues.value, editedProfileCardRows.value),
 );
-// The form closes as the save is sent, and the card shows what it sent. A refused save puts the session's profile back
-// And reopens the form on the edits it could not persist
-const saveProfile = () => {
+// The form stays open on its edits until the server keeps the save, and the card shows what it kept. A refused save
+// Leaves the form open on the edits it could not persist
+const saveProfile = async () => {
   const editedProfile = structuredClone(toRaw(editedProfileCardRows.value));
-  executeMutation(() => requireAuthData(updateUser(editedProfile)), {
-    applyOptimistic: () => {
+  await executeMutation(() => requireAuthData(updateUser(editedProfile)), {
+    awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+    key: PROFILE_MUTATION_KEY,
+    onSuccess: () => {
       savedProfile.value = editedProfile;
       isEditMode.value = false;
-      return () => {
-        if (savedProfile.value === editedProfile) savedProfile.value = undefined;
-        // A form the reader has opened again since holds their new draft, which the refused one does not replace
-        if (isEditMode.value) return;
-
-        isEditMode.value = true;
-        editedProfileCardRows.value = structuredClone(editedProfile);
-      };
     },
-    key: PROFILE_MUTATION_KEY,
   });
 };
+const isSavePending = computed(() => checkIsPending(PROFILE_MUTATION_KEY));
 </script>
 
 <template>
@@ -77,7 +72,14 @@ const saveProfile = () => {
       <template #actions>
         <template v-if="isEditMode">
           <UiButton :variant="UiButtonVariant.Quiet" @click="isEditMode = false">Cancel</UiButton>
-          <UiButton type="submit" :disabled :variant="UiButtonVariant.Accent">Save</UiButton>
+          <UiButton
+            type="submit"
+            :disabled
+            :is-pending="isSavePending ? true : undefined"
+            :variant="UiButtonVariant.Accent"
+          >
+            Save
+          </UiButton>
         </template>
         <UiButton v-else :variant="UiButtonVariant.Accent" @click="isEditMode = true">
           <UiIcon :meaning="UiIconMeaning.Edit" />

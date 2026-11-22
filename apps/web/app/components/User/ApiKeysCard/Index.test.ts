@@ -1,11 +1,12 @@
 // @vitest-environment nuxt
 import UiEmptyState from "#src/components/Ui/EmptyState.vue";
 import UiErrorState from "#src/components/Ui/ErrorState.vue";
+import UserApiKeysCardConfirmDeleteDialog from "#src/components/User/ApiKeysCard/ConfirmDeleteDialog.vue";
 import UserApiKeysCard from "#src/components/User/ApiKeysCard/Index.vue";
 import UserApiKeysCardRow from "#src/components/User/ApiKeysCard/Row.vue";
 import UserSettingsListSkeleton from "#src/components/User/Settings/ListSkeleton.vue";
 import { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
-import { apiKeyList } from "#src/services/auth/authClient.test";
+import { apiKeyDelete, apiKeyList } from "#src/services/auth/authClient.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -58,5 +59,33 @@ describe("userApiKeysCard", () => {
     await flushPromises();
 
     expect(component.findComponent(UiEmptyState).props("title")).toBe("No API keys");
+  });
+
+  // The key stays listed while its delete is out, and a refused delete leaves it listed rather than putting it back
+  test("a delete keeps the key listed until the server answers, and a refused one leaves it listed", async () => {
+    expect.hasAssertions();
+
+    const { promise: heldDelete, resolve: answerDelete } = Promise.withResolvers<unknown>();
+    const { promise: deleteReceived, resolve: onDeleteReceived } = Promise.withResolvers<void>();
+    apiKeyList.mockResolvedValue({ data: { apiKeys: [apiKey] }, error: null });
+    apiKeyDelete.mockImplementationOnce(async () => {
+      onDeleteReceived();
+      return heldDelete;
+    });
+    const component = await mountCard();
+    await flushPromises();
+    component.findComponent(UserApiKeysCardRow).vm.$emit("delete");
+    await flushPromises();
+    const deleting = component.findComponent(UserApiKeysCardConfirmDeleteDialog).props("deleteKey")();
+    await deleteReceived;
+    await flushPromises();
+
+    expect(component.findAllComponents(UserApiKeysCardRow)).toHaveLength(1);
+
+    answerDelete({ data: null, error: { message: " " } });
+    await deleting;
+    await flushPromises();
+
+    expect(component.findAllComponents(UserApiKeysCardRow)).toHaveLength(1);
   });
 });

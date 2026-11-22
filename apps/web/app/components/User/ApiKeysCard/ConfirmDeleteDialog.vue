@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Promisable } from "type-fest";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useUserApiKeyDialogStore } from "#src/store/user/apiKeyDialog";
 
 interface Props {
@@ -16,7 +17,13 @@ const { isOpen } = useSingletonDialog(deletingId);
 </script>
 
 <template>
-  <UiConfirmDialog v-model="isOpen" confirm-label="Delete" title="Delete API key" :confirm="deleteKey">
+  <UiConfirmDialog
+    v-model="isOpen"
+    confirm-label="Delete"
+    :awaited-because="AwaitedReason.ServerDecidedOutcome"
+    :confirm="deleteKey"
+    title="Delete API key"
+  >
     <p>Delete {{ name }}? An agent using it is refused from its next call.</p>
   </UiConfirmDialog>
 </template>

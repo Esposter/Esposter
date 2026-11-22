@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Promisable } from "type-fest";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 
 interface Props {
@@ -18,7 +19,13 @@ const isOpen = ref(false);
     <UiIcon :meaning="UiIconMeaning.SignOut" />
     Sign out everywhere else
   </UiButton>
-  <UiConfirmDialog v-model="isOpen" confirm-label="Sign out" title="Sign out everywhere else" :confirm="signOut">
+  <UiConfirmDialog
+    v-model="isOpen"
+    confirm-label="Sign out"
+    :awaited-because="AwaitedReason.ServerDecidedOutcome"
+    :confirm="signOut"
+    title="Sign out everywhere else"
+  >
     <p>
       Sign out every device except this one? That is
       {{ otherSessionCount === 1 ? "one other session" : `${otherSessionCount} other sessions` }}.

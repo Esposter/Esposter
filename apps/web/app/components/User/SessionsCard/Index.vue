@@ -2,8 +2,8 @@
 import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { signOutOfBrowser } from "#src/services/auth/signOutOfBrowser";
-import { applyOptimisticReplacement } from "#src/services/shared/applyOptimisticReplacement";
 import { SESSIONS_MUTATION_KEY } from "#src/services/user/constants";
 import { useUserSessionDialogStore } from "#src/store/user/sessionDialog";
 import { RoutePath } from "@esposter/shared";
@@ -25,34 +25,34 @@ const { item: revokingSession } = useSingletonDialog(revokingId, () =>
 );
 const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) => !isCurrent).length ?? 0);
 const sessionRows = computed(() => sessions.value ?? []);
-// The rows leave the listing as their revoke is sent, and come back if the server refuses it
-const removeSessions = (ids: string[]) =>
-  applyOptimisticReplacement(sessions, (previousSessions) => previousSessions.filter(({ id }) => !ids.includes(id)));
-// Read as the write is sent rather than as the button was pressed, so the rows it takes out are the ones listed then
-const signOutOtherSessions = () =>
-  executeMutation(() => $trpc.session.deleteOtherSessions.mutate(), {
-    applyOptimistic: () => removeSessions(sessionRows.value.filter(({ isCurrent }) => !isCurrent).map(({ id }) => id)),
+// The sessions stay listed until the server has revoked them, and a refused sign out leaves them listed
+const signOutOtherSessions = async () => {
+  const outcome = await executeMutation(() => $trpc.session.deleteOtherSessions.mutate(), {
+    awaitedBecause: AwaitedReason.ServerDecidedOutcome,
     key: SESSIONS_MUTATION_KEY,
+    onSuccess: async () => {
+      await refresh();
+    },
   });
-const revokeSession = () => {
+  return outcome.status === MutationStatus.Succeeded;
+};
+const revokeSession = async () => {
   const session = revokingSession.value;
-  if (!session) return;
+  if (!session) return false;
 
   const { id, isCurrent } = session;
-  const mutate = () => $trpc.session.deleteSession.mutate(id);
-  const applyOptimistic = () => removeSessions([id]);
   // Revoking your own session leaves the page authenticated against a session that no longer exists, and only the sign
   // Out clears the cookie and the fetched session, so it signs this browser out. That cannot be taken back, so it waits
-  // For the server to keep the revoke. Its row still leaves the listing at once
-  if (isCurrent)
-    return executeMutation(mutate, {
-      applyOptimistic,
-      awaitedBecause: AwaitedReason.IrreversibleStep,
-      key: SESSIONS_MUTATION_KEY,
-      onSuccess: () => signOutOfBrowser(RoutePath.Login),
-    });
-
-  return executeMutation(mutate, { applyOptimistic, key: SESSIONS_MUTATION_KEY });
+  // For the server to keep the revoke, and the row stays listed until then
+  const outcome = await executeMutation(() => $trpc.session.deleteSession.mutate(id), {
+    awaitedBecause: isCurrent ? AwaitedReason.IrreversibleStep : AwaitedReason.ServerDecidedOutcome,
+    key: SESSIONS_MUTATION_KEY,
+    onSuccess: async () => {
+      if (isCurrent) await signOutOfBrowser(RoutePath.Login);
+      else await refresh();
+    },
+  });
+  return outcome.status === MutationStatus.Succeeded;
 };
 </script>
 

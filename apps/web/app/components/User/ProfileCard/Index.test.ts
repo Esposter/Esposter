@@ -7,9 +7,9 @@ import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("userProfileCard", () => {
-  // The form closes as the save is sent, so the reader can open it again and start another draft before the refusal of
-  // The first lands. The refusal reopens the form on its own edits only while the form is still closed
-  test("a refused save leaves a draft the reader has started since", async () => {
+  // The form stays open on its edits until the server keeps the save, so a reader sees what they sent only once it is
+  // Kept, and a refused save leaves the form open on the edits it could not persist
+  test("a save keeps the form open on its edits until the server answers, and a refused save leaves them there", async () => {
     expect.hasAssertions();
 
     const { promise: heldUpdate, resolve: releaseUpdate } = Promise.withResolvers<void>();
@@ -26,12 +26,13 @@ describe("userProfileCard", () => {
     await wrapper.get('button[type="submit"]').trigger("click");
     await updateReceived;
     await flushPromises();
-    await wrapper.get("button").trigger("click");
-    await wrapper.get("input").setValue("c");
+
+    expect(wrapper.get("input").element.value).toBe("b");
+
     releaseUpdate();
     await waitForSynchronizedFunctions();
     await flushPromises();
 
-    expect(wrapper.get("input").element.value).toBe("c");
+    expect(wrapper.get("input").element.value).toBe("b");
   });
 });

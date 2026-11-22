@@ -2,6 +2,7 @@
 import type { SessionSummary } from "#server/models/session/SessionSummary";
 
 import UiErrorState from "#src/components/Ui/ErrorState.vue";
+import UserSessionsCardConfirmRevokeDialog from "#src/components/User/SessionsCard/ConfirmRevokeDialog.vue";
 import UserSessionsCard from "#src/components/User/SessionsCard/Index.vue";
 import UserSessionsCardRow from "#src/components/User/SessionsCard/Row.vue";
 import UserSettingsListSkeleton from "#src/components/User/Settings/ListSkeleton.vue";
@@ -55,6 +56,34 @@ describe("userSessionsCard", () => {
     await flushPromises();
 
     expect(readSessions).toHaveBeenCalledTimes(2);
+    expect(component.findAllComponents(UserSessionsCardRow)).toHaveLength(1);
+  });
+
+  // The session stays listed while its revoke is out, and a refused revoke leaves it listed
+  test("a revoke keeps the session listed until the server answers, and a refused one leaves it listed", async () => {
+    expect.hasAssertions();
+
+    const { promise: heldRevoke, reject: refuseRevoke } = Promise.withResolvers<void>();
+    const { promise: revokeReceived, resolve: onRevokeReceived } = Promise.withResolvers<void>();
+    trpcMsw.session.readSessions.query(() => [session]);
+    trpcMsw.session.deleteSession.mutation(() => {
+      onRevokeReceived();
+      return heldRevoke;
+    });
+    const component = await mountCard();
+    await flushPromises();
+    component.findComponent(UserSessionsCardRow).vm.$emit("revoke");
+    await flushPromises();
+    const revoking = component.findComponent(UserSessionsCardConfirmRevokeDialog).props("revoke")();
+    await revokeReceived;
+    await flushPromises();
+
+    expect(component.findAllComponents(UserSessionsCardRow)).toHaveLength(1);
+
+    refuseRevoke(new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " }));
+    await revoking;
+    await flushPromises();
+
     expect(component.findAllComponents(UserSessionsCardRow)).toHaveLength(1);
   });
 });

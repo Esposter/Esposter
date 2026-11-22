@@ -7,7 +7,6 @@ import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { authClient } from "#src/services/auth/authClient";
 import { requireAuthData } from "#src/services/auth/requireAuthData";
-import { applyOptimisticReplacement } from "#src/services/shared/applyOptimisticReplacement";
 import { API_KEYS_MUTATION_KEY } from "#src/services/user/constants";
 import { useUserApiKeyDialogStore } from "#src/store/user/apiKeyDialog";
 
@@ -25,12 +24,6 @@ const userApiKeyDialogStore = useUserApiKeyDialogStore();
 const { deletingId } = storeToRefs(userApiKeyDialogStore);
 const { data: apiKeyList, error, refresh } = useQuery(() => requireAuthData(list()), { isInlineError: true });
 const apiKeys = computed(() => apiKeyList.value?.apiKeys ?? []);
-// The key leaves the list as its delete is sent, and comes back if the server refuses it
-const removeApiKey = (id: string) =>
-  applyOptimisticReplacement(apiKeyList, (previousData) => ({
-    ...previousData,
-    apiKeys: previousData.apiKeys.filter((apiKey) => apiKey.id !== id),
-  }));
 const emptyState = {
   description: "An agent such as a Claude Code session reaches your follow-ups or your resources with one",
   meaning: UiIconMeaning.Terminal,
@@ -40,6 +33,20 @@ const emptyState = {
 const { item: deletingApiKey } = useSingletonDialog(deletingId, () =>
   apiKeyList.value?.apiKeys.find(({ id }) => id === deletingId.value),
 );
+// The key stays listed until the server has deleted it, and a refused delete leaves it listed
+const deleteKey = async () => {
+  const apiKey = deletingApiKey.value;
+  if (!apiKey) return false;
+
+  const outcome = await executeMutation(() => requireAuthData(deleteApiKey({ keyId: apiKey.id })), {
+    awaitedBecause: AwaitedReason.ServerDecidedOutcome,
+    key: API_KEYS_MUTATION_KEY,
+    onSuccess: async () => {
+      await refresh();
+    },
+  });
+  return outcome.status === MutationStatus.Succeeded;
+};
 </script>
 
 <template>
@@ -84,18 +91,5 @@ const { item: deletingApiKey } = useSingletonDialog(deletingId, () =>
       </ul>
     </UiAsyncBody>
   </UserSettingsSection>
-  <UserApiKeysCardConfirmDeleteDialog
-    v-if="deletingApiKey"
-    :delete-key="
-      () => {
-        if (!deletingApiKey) return;
-        const { id } = deletingApiKey;
-        executeMutation(() => requireAuthData(deleteApiKey({ keyId: id })), {
-          applyOptimistic: () => removeApiKey(id),
-          key: API_KEYS_MUTATION_KEY,
-        });
-      }
-    "
-    :name="deletingApiKey.name ?? ''"
-  />
+  <UserApiKeysCardConfirmDeleteDialog v-if="deletingApiKey" :delete-key :name="deletingApiKey.name ?? ''" />
 </template>

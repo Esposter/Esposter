@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Promisable } from "type-fest";
 
+import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { useUserSessionDialogStore } from "#src/store/user/sessionDialog";
 
 interface Props {
@@ -19,6 +20,7 @@ const { isOpen } = useSingletonDialog(revokingId);
 <template>
   <UiConfirmDialog
     v-model="isOpen"
+    :awaited-because="isCurrent ? AwaitedReason.IrreversibleStep : AwaitedReason.ServerDecidedOutcome"
     :confirm-label="isCurrent ? 'Sign out' : 'Revoke'"
     :title="isCurrent ? 'Sign out' : 'Revoke session'"
     :confirm="revoke"
