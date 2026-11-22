@@ -21,8 +21,8 @@ import { describe } from "vitest";
 //   (Move, Update). Copying only the array leaves every iteration after the first working on rows already deleted.
 //   Rows it rewrote are no better, so it measures a cheaper operation than the one it names.
 //
-// Rebuilding the rows is O(rows) inside the timing, which the bench conventions accept for a mutating op.
-// It is the same order as the row rebuild the commands do, so it does not drown the signal it costs.
+// Rebuilding the rows is O(rows), and at ten thousand rows it cost more than most commands, so `setupCommandBench`
+// Calls this in each task's `beforeEach`, outside the timing.
 export const createBenchDataSource = (rows: ToData<Row>[]) =>
   createDataSource(
     benchColumns.map(({ name }) => createColumn(name)),

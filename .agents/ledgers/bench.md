@@ -10,7 +10,7 @@ the two ways a bench quietly stops measuring what it names.
 | ------------------------------------------------------------------------ | ----------------------------------------- |
 | One `test()` per group, one `bench.compare()` inside it                  | `bench` — "Writing benchmarks"            |
 | `BENCHMARK_RUN_OPTIONS` last; a heavier group spreads its own counts     | `bench` — "Writing benchmarks"            |
-| Mutating ops rebuild the fixture inside the callback, at every level     | `bench` — "Writing benchmarks"            |
+| Mutating ops rebuild the fixture in the task's `beforeEach`, every level | `bench` — "Writing benchmarks"            |
 | Read-only inputs hoisted to module scope, not rebuilt in the callback    | `bench` — "Writing benchmarks"            |
 | One test per scale; shape varied inside a group                          | `bench` — "Writing benchmarks"            |
 | The unit, never its `use*` composable wrapper                            | `bench` — "Writing benchmarks"            |
