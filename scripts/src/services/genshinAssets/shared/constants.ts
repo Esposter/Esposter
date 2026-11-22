@@ -143,6 +143,8 @@ export const CUTOFF_PROPERTY = "_Cutoff";
 export const SOURCE_EXPORT_SUFFIX = ".blk_export";
 // The extension of the PNG an export writes its textures and sprites as, which the palette and the namecards pick out by
 export const PNG_EXTENSION = ".png";
+// The prefix a character's portrait takes in the game's UI, which the character component exports by name
+export const AVATAR_ICON_PREFIX = "UI_AvatarIcon_";
 // The installed game's asset blocks, every one AnimeStudio reads
 export const GAME_BLOCKS_DIRECTORY: string = join(
   dirname(GAME_EXECUTABLE_PATH),

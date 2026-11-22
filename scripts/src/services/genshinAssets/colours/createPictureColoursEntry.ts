@@ -4,7 +4,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { fitPictureColour } from "#src/services/genshinAssets/colours/fitPictureColour";
 import { readTexture } from "#src/services/genshinAssets/fit/readTexture";
-import { PNG_EXTENSION } from "#src/services/genshinAssets/shared/constants";
+import { AVATAR_ICON_PREFIX, PNG_EXTENSION } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -21,7 +21,7 @@ export const createPictureColoursEntry = (component: DerivedAssetComponent): Run
     // A portrait is the exported texture under the name its picture takes; a folder with none of them has nothing to measure
     const files = existsSync(directory)
       ? (await readdir(directory)).filter(
-          (file) => file.startsWith("UI_AvatarIcon_") && parse(file).ext === PNG_EXTENSION,
+          (file) => file.startsWith(AVATAR_ICON_PREFIX) && parse(file).ext === PNG_EXTENSION,
         )
       : [];
     if (files.length === 0)

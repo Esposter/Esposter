@@ -1,7 +1,12 @@
 import type { DerivedAssetComponentOptions } from "#src/models/genshinAssets/shared/DerivedAssetComponentOptions";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { LOGIN_DOOR_MESH, SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/services/genshinAssets/shared/constants";
+import {
+  AVATAR_ICON_PREFIX,
+  LOGIN_DOOR_MESH,
+  SCENE_POINT_CATEGORY,
+  SCENE_POINT_FILE,
+} from "#src/services/genshinAssets/shared/constants";
 import { readWeaponRoots } from "#src/services/genshinAssets/weapons/readWeaponRoots";
 
 // The one definition every capital and sub-area of the open world shares: a part derived from its place,
@@ -45,7 +50,7 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   // Its portraits are the textures the character screen's discs take their colour from, so the component exports them by name
   [DerivedAssetComponent.Character]: {
     interface: { anchorPattern: "^AvatarInfoDialogV2$", root: "AvatarInfoDialogV2" },
-    namePattern: String.raw`^UI_AvatarIcon_`,
+    namePattern: `^${AVATAR_ICON_PREFIX}`,
     roots: [],
     screen: "CharacterScreen",
   },
