@@ -9,7 +9,7 @@ export const createPollMessageContent = (
   overrides: Partial<PollMessageContent> = {},
 ): PollMessageContent => ({
   options: Array.from({ length: optionCount }, (_value, index) => ({ id: v7(), label: `Option ${index}` })),
-  question: "Which one?",
+  question: "a",
   votes: {},
   ...overrides,
 });
