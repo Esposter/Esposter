@@ -4,6 +4,8 @@ import type { InviteInMessage, InviteInMessageWithCreator, Page } from "@esposte
 
 import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolation";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
+import { inRoom } from "#server/services/db/inRoom";
+import { ownedBy } from "#server/services/db/ownedBy";
 import { readMyInvite } from "#server/services/message/readMyInvite";
 import { MAX_INVITE_ID_RETRIES } from "#server/services/room/constants";
 import { resolveLiveInvite } from "#server/services/room/resolveLiveInvite";
@@ -182,15 +184,15 @@ export const inviteRouter = router({
       // For a control over other people's links
       const { user } = ctx;
       const isInviteManager = await checkHasPermission(ctx.db, user.id, roomId, RoomPermission.ManageRoom);
-      const wheres = [eq(invitesInMessage.id, id), eq(invitesInMessage.roomId, roomId)];
-      if (!isInviteManager) wheres.push(eq(invitesInMessage.userId, user.id));
+      const wheres = [inRoom(invitesInMessage, id, roomId), getLiveRowWhere(invitesInMessage)];
+      if (!isInviteManager) wheres.push(ownedBy(invitesInMessage, id, user.id));
 
       return requireMutation(
         (
           await ctx.db
             .update(invitesInMessage)
             .set({ deletedAt: new Date() })
-            .where(and(...wheres, getLiveRowWhere(invitesInMessage)))
+            .where(and(...wheres))
             .returning()
         )[0],
         Operation.Delete,

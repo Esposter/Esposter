@@ -390,7 +390,7 @@ describe("programRouter", () => {
     const { program } = await createInviteProgram();
     const readEmailId = async () => (await caller.readResourceContent({ id: program.id }))?.emailId;
     const emailId = await readEmailId();
-    if (!emailId) throw new Error("the program holds no email");
+    assert.exists(emailId);
 
     await resourceCaller.deleteResources({ ids: [emailId] });
     await resourceCaller.purgeResource({ id: emailId });

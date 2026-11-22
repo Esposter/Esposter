@@ -20,7 +20,8 @@ import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test"
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { moderationRouter } from "#server/trpc/routers/message/moderation";
-import { readRoomMembership, readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
+import { readRoomMembership } from "#server/trpc/routers/readRoomMembership.test";
+import { readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { roomRouter } from "#server/trpc/routers/room/index";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";

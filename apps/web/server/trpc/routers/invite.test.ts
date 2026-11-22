@@ -6,7 +6,6 @@ import { banRoomMember } from "#server/services/message/moderation/banRoomMember
 import {
   createMockAuthSession,
   createMockCaller,
-  createMockContext,
   createMockOtherUserCaller,
   getMockSession,
 } from "#server/trpc/context.test";
@@ -15,10 +14,11 @@ import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { roomRouter } from "#server/trpc/routers/room/index";
+import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { readRowVersionsHeader } from "#shared/services/realtime/readRowVersionsHeader";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
-import { DatabaseEntityType, friendsInSocial, invitesInMessage, roomsInMessage } from "@esposter/db-schema";
+import { DatabaseEntityType, friendsInSocial, invitesInMessage } from "@esposter/db-schema";
 import { generateSecretToken, InvalidOperationError, Operation, SECRET_TOKEN_LENGTH, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -35,6 +35,7 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => {
 });
 
 describe("inviteRouter", () => {
+  const { getMockContext, getRoomCaller } = setupRoomSuite();
   let mockContext: Context;
   let inviteCaller: DecorateRouterRecord<TRPCRouter["invite"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -49,10 +50,10 @@ describe("inviteRouter", () => {
   const createUnlimitedInvite = async (inviteRoomId: string, caller = inviteCaller) =>
     (await caller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId })).invite;
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
+  beforeAll(() => {
+    mockContext = getMockContext();
     inviteCaller = createCallerFactory(inviteRouter)(mockContext);
-    roomCaller = createCallerFactory(roomRouter)(mockContext);
+    roomCaller = getRoomCaller();
   });
 
   beforeEach(() => {
@@ -62,7 +63,6 @@ describe("inviteRouter", () => {
   afterEach(async () => {
     vi.useRealTimers();
     await mockContext.db.delete(friendsInSocial);
-    await mockContext.db.delete(roomsInMessage);
   });
 
   test("reads invite", async () => {

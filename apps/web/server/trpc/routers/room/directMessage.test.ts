@@ -14,7 +14,7 @@ import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test"
 import { blockRouter } from "#server/trpc/routers/block";
 import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { friendRouter } from "#server/trpc/routers/friend";
-import { readRoomMembership } from "#server/trpc/routers/readRoomMembershipRows.test";
+import { readRoomMembership } from "#server/trpc/routers/readRoomMembership.test";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { directMessageRouter } from "#server/trpc/routers/room/directMessage";
 import { roomRouter } from "#server/trpc/routers/room/index";
