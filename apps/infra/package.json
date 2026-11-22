@@ -13,12 +13,8 @@
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "files": [
-    "dist"
-  ],
   "type": "module",
   "sideEffects": false,
-  "types": "dist/index.d.ts",
   "imports": {
     "#src/*": "./src/*.ts"
   },
