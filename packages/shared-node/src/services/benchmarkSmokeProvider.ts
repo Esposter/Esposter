@@ -1,6 +1,6 @@
 import type { BenchmarkProvider, BenchResult } from "vitest";
 
-import { takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { Bench } from "tinybench";
 
 // The run a smoke check needs: one measured iteration and no warmup, with no time budget to fill. These are spread last,
@@ -28,7 +28,10 @@ const benchmarkSmokeProvider: BenchmarkProvider = {
     for (const { name, result } of bench.tasks)
       if (result.state === "completed") results.push({ ...result, name });
       else if (result.state === "errored") errors.push(result.error);
-      else errors.push(new Error(`The bench "${name}" did not complete: its state is "${result.state}"`));
+      else
+        errors.push(
+          new InvalidOperationError(Operation.Read, name, `the bench did not complete: its state is "${result.state}"`),
+        );
 
     if (errors.length === 1) throw takeOne(errors);
     else if (errors.length > 1) throw new AggregateError(errors, "Some benchmarks failed");
