@@ -23,7 +23,7 @@ const DevMoveDirectionKeyCodeMap = {
 
 // The codes a control names holds: a move direction's key, or an input action's first chord, which is its default binding.
 // A control that is neither answers nothing
-export const resolveHoldCodes = (control: string) => {
+export const resolveHoldCodes = (control: string): readonly string[] | undefined => {
   const direction = DevMoveDirections.find((devMoveDirection) => devMoveDirection === control);
   if (direction !== undefined) return [DevMoveDirectionKeyCodeMap[direction]];
 

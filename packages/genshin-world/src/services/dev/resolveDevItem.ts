@@ -1,4 +1,5 @@
 import type { DevItemTables } from "#src/models/dev/DevItemTables";
+import type { DevNameResolution } from "#src/models/dev/DevNameResolution";
 
 import { Currencies } from "#src/models/inventory/Currency";
 import { resolveDevName } from "#src/services/dev/resolveDevName";
@@ -8,7 +9,10 @@ import { getItemName } from "#src/services/inventory/getItemName";
 
 // The item a line's name names, among the wallet's currencies and the bag's materials, by the name the game shows each
 // Under. A name no item holds is unknown, and one several hold is refused with the nearest names, as `resolveDevName` does
-export const resolveDevItem = (item: string, tables: DevItemTables) => {
+export const resolveDevItem = (
+  item: string,
+  tables: DevItemTables,
+): DevNameResolution<{ id: number; name: string }> => {
   const currencyCandidates = Currencies.map((currency) => ({
     id: CurrencyItemIdMap[currency],
     name: tables.gameText[CurrencyGameTextKeyMap[currency]],
