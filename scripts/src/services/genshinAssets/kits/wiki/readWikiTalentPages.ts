@@ -17,7 +17,9 @@ const InfoboxTypeCombatTalentMap: Partial<Record<string, CombatTalent>> = {
   [InfoboxTypeCombatTalent.NormalAttack]: CombatTalent.NormalAttack,
 };
 
+// A failed call answers HTTP 200 too, with an error in place of the query, so the answer is refused by that key
 const categoryResponseSchema = z.object({
+  error: z.undefined(),
   query: z
     .object({
       pages: z.array(
@@ -53,8 +55,10 @@ export const readWikiTalentPages = async (name: string, cacheDirectory: string):
       rvslots: "main",
     });
     const response = await fetchOk(`${WIKI_API_URL}?${searchParams}`);
+    const answer = await response.text();
+    categoryResponseSchema.parse(parseMachineJson(answer));
     mkdirSync(cacheDirectory, { recursive: true });
-    writeFileSync(cachePath, await response.text());
+    writeFileSync(cachePath, answer);
   }
   const { query } = categoryResponseSchema.parse(parseMachineJson(readFileSync(cachePath, "utf8")));
   return (query?.pages ?? []).flatMap(({ revisions: [revision], title }) => {

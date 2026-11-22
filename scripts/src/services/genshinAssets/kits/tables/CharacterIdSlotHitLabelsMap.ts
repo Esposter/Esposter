@@ -196,7 +196,7 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
     },
   ],
   // Aino. Her Water Ball reads its multiplier from her burst's label, which gcsim's join does not reach, since her burst's
-  // Cooldown tag is a tuple return the reader does not resolve, so the attack is left out of the kit
+  // Cooldown tag is a tuple return the reader does not resolve, so the attack carries its multiplier here and no cooldown tag
   [10_000_121, { values: { "hits.waterBall.multiplier": { combatTalent: BURST, label: "Water Ball DMG" } } }],
   // Nefer
   [
