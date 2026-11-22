@@ -33,7 +33,7 @@ This is not the treadmill `references/handing-to-an-enforcer.md` rejects. What m
 good. A reading pass whose findings thin out each cycle is the opposite shape: each cycle is cheaper than the last,
 and it ends.
 
-## A sitting crosses ledgers
+## A sitting reads units, not ledgers
 
 A ledger is not finished in a sitting. Every sweep is standing and most questions hold more cells than any one
 sitting reads, so "work this ledger until it is done" is not a plan. **A question left half-drained is the normal

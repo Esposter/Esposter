@@ -43,7 +43,7 @@ A ledger holds only what exists nowhere else, never explanatory prose, and is ke
 
 There is no one-shot mode: a unit's trailers give it a date and the model that read it, which `pnpm ai:sweep:status` prints, a pass resumes from what changed since over the index row's `Scope`, and a row an older model read is open for a full pass (`references/standing-resume.md`).
 
-## A sitting crosses ledgers — `references/windows-and-convergence.md`
+## A sitting reads units, not ledgers — `references/windows-and-convergence.md`
 
 A sitting reads units, not ledgers: `pnpm ai:sweep:sample` prints the units to read, each with every question it is
 judged for, and a unit is never left half-read. **Planning a sitting**, sampling a question, and why a resume that
