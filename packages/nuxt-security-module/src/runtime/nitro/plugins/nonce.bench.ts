@@ -21,10 +21,15 @@ describe("nonce plugin", () => {
     await nonce(app.nitroApp);
     await createSubresourceIntegrityPlugin(PAGE_SRI_HASHES)(app.nitroApp);
 
+    let event = createPageEvent();
+    // Each iteration gets its own event, built outside the timing, as the page's markup is built inside it on both sides
+    const beforeEach = () => {
+      event = createPageEvent();
+    };
+
     await bench.compare(
       bench("native — a page's markup copied", () => createPageHtml()),
-      bench("a page's markup rewritten", () => {
-        const event = createPageEvent();
+      bench("a page's markup rewritten", { beforeEach }, () => {
         app.run("render:route", {}, { event });
         app.run("render:html", createPageHtml(), { event });
       }),

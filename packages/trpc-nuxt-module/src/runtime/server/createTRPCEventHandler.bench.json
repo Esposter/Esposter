@@ -6,17 +6,17 @@
         {
           "benchmarks": [
             {
-              "mean": 0.15700000000001638,
-              "name": "createTRPCEventHandler — through an h3 event",
-              "p99": 0.21466599999994287,
-              "rme": 15.511537498484316,
+              "mean": 0.09573320000000649,
+              "name": "native — tRPC's fetch adapter",
+              "p99": 0.15618984000001546,
+              "rme": 23.72867110606041,
               "sampleCount": 10
             },
             {
-              "mean": 0.1613900000000513,
-              "name": "native — tRPC's fetch adapter",
-              "p99": 0.21179400000017495,
-              "rme": 9.937607232867478,
+              "mean": 0.157279200000022,
+              "name": "createTRPCEventHandler — through an h3 event",
+              "p99": 0.32916128000001094,
+              "rme": 40.92280397216436,
               "sampleCount": 10
             }
           ],

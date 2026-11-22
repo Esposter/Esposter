@@ -9,50 +9,50 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: fc966ae9e
-- Node: v26.8.2
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- Commit: eb7dc6d3bd
+- Node: v26.13.1
+- OS: darwin 27.0.0 (arm64)
+- CPU: Apple M1 × 8
+- RAM: 16.0 GiB
 
 ## createKeyframeStore > 1000 rows
 
-| task                                         | vs base  | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------------------------------------------- | -------- | --------- | ------- | -------- | ------- |
-| read — a full copy from the backend          | 1.00×    | 0.0018    | ±84.24% | 0.0055   | 10      |
-| native — a full copy written to the backend  | 0.88×    | 0.0020    | ±68.20% | 0.0057   | 10      |
-| read — a keyframe                            | 0.0046×  | 0.3909    | ±9.98%  | 0.4697   | 10      |
-| read — a delta                               | 0.0028×  | 0.6405    | ±6.41%  | 0.7224   | 10      |
-| write — content already held                 | 0.0024×  | 0.7576    | ±25.19% | 1.2473   | 10      |
-| write — an incompressible payload, promoting | 0.00015× | 11.9553   | ±3.76%  | 12.8651  | 10      |
-| write — a wholesale rewrite, promoting       | 0.00011× | 16.5833   | ±5.49%  | 18.5546  | 10      |
-| write — a broad edit, as a delta             | 0.0001×  | 17.2113   | ±5.37%  | 19.1569  | 10      |
-| write — a single-cell edit, as a delta       | 0.0001×  | 17.3390   | ±3.92%  | 18.9481  | 10      |
+| task                                         | vs base   | mean (ms) | ±rme     | p99 (ms) | samples |
+| -------------------------------------------- | --------- | --------- | -------- | -------- | ------- |
+| native — a full copy written to the backend  | 1.00×     | 0.0007    | ±68.46%  | 0.0020   | 10      |
+| read — a full copy from the backend          | 0.33×     | 0.0021    | ±69.33%  | 0.0056   | 10      |
+| read — a keyframe                            | 0.0015×   | 0.4555    | ±33.64%  | 0.8036   | 10      |
+| write — content already held                 | 0.00049×  | 1.3672    | ±60.35%  | 3.7237   | 10      |
+| read — a delta                               | 0.00025×  | 2.6754    | ±104.63% | 12.0389  | 10      |
+| write — an incompressible payload, promoting | 0.000056× | 11.8489   | ±18.89%  | 17.9576  | 10      |
+| write — a broad edit, as a delta             | 0.000049× | 13.6372   | ±17.52%  | 21.1278  | 10      |
+| write — a single-cell edit, as a delta       | 0.000047× | 14.2500   | ±23.59%  | 24.1230  | 10      |
+| write — a wholesale rewrite, promoting       | 0.000036× | 18.4919   | ±21.21%  | 27.4683  | 10      |
 
 ## createKeyframeStore > 10000 rows
 
-| task                                         | vs base   | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------------------------------------------- | --------- | --------- | ------- | -------- | ------- |
-| read — a full copy from the backend          | 1.00×     | 0.0010    | ±81.04% | 0.0040   | 10      |
-| native — a full copy written to the backend  | 0.75×     | 0.0014    | ±82.17% | 0.0054   | 10      |
-| read — a keyframe                            | 0.00034×  | 3.0229    | ±27.65% | 5.9765   | 10      |
-| write — content already held                 | 0.00027×  | 3.7345    | ±29.59% | 7.6419   | 10      |
-| read — a delta                               | 0.00017×  | 6.1752    | ±20.24% | 9.6464   | 10      |
-| write — an incompressible payload, promoting | 0.000046× | 22.1754   | ±10.70% | 28.3167  | 10      |
-| write — a single-cell edit, as a delta       | 0.000023× | 43.4832   | ±6.25%  | 50.7739  | 10      |
-| write — a broad edit, as a delta             | 0.000019× | 55.1339   | ±9.92%  | 63.7170  | 10      |
-| write — a wholesale rewrite, promoting       | 0.000017× | 60.4047   | ±4.68%  | 66.4831  | 10      |
+| task                                         | vs base    | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------------------------------------- | ---------- | --------- | ------- | -------- | ------- |
+| native — a full copy written to the backend  | 1.00×      | 0.0004    | ±85.88% | 0.0017   | 10      |
+| read — a full copy from the backend          | 0.57×      | 0.0007    | ±90.41% | 0.0030   | 10      |
+| write — content already held                 | 0.000098×  | 4.3285    | ±30.52% | 8.4835   | 10      |
+| read — a keyframe                            | 0.00009×   | 4.7150    | ±58.66% | 13.0069  | 10      |
+| read — a delta                               | 0.000073×  | 5.8548    | ±41.31% | 12.7027  | 10      |
+| write — an incompressible payload, promoting | 0.000028×  | 15.0192   | ±25.19% | 24.5014  | 10      |
+| write — a broad edit, as a delta             | 0.000012×  | 34.3182   | ±10.92% | 42.8027  | 10      |
+| write — a single-cell edit, as a delta       | 0.000012×  | 35.8325   | ±10.40% | 42.5803  | 10      |
+| write — a wholesale rewrite, promoting       | 0.0000078× | 54.7216   | ±9.74%  | 68.4325  | 10      |
 
 ## createKeyframeStore > 100000 rows
 
-| task                                         | vs base    | mean (ms) | ±rme     | p99 (ms)  | samples |
-| -------------------------------------------- | ---------- | --------- | -------- | --------- | ------- |
-| read — a full copy from the backend          | 1.00×      | 0.0007    | ±106.04% | 0.0034    | 10      |
-| native — a full copy written to the backend  | 0.43×      | 0.0017    | ±91.21%  | 0.0071    | 10      |
-| read — a keyframe                            | 0.00003×   | 24.0194   | ±7.23%   | 29.3658   | 10      |
-| write — content already held                 | 0.000026×  | 27.5656   | ±6.44%   | 31.8128   | 10      |
-| read — a delta                               | 0.000017×  | 41.7500   | ±7.50%   | 50.3224   | 10      |
-| write — an incompressible payload, promoting | 0.0000036× | 198.9874  | ±10.98%  | 269.4202  | 10      |
-| write — a single-cell edit, as a delta       | 0.0000014× | 519.1232  | ±16.41%  | 766.8342  | 10      |
-| write — a broad edit, as a delta             | 0.0000013× | 561.7679  | ±5.28%   | 638.4070  | 10      |
-| write — a wholesale rewrite, promoting       | 7.5e-7×    | 953.0178  | ±7.40%   | 1120.9550 | 10      |
+| task                                         | vs base    | mean (ms) | ±rme    | p99 (ms)  | samples |
+| -------------------------------------------- | ---------- | --------- | ------- | --------- | ------- |
+| native — a full copy written to the backend  | 1.00×      | 0.0004    | ±99.49% | 0.0020    | 10      |
+| read — a full copy from the backend          | 0.81×      | 0.0005    | ±93.19% | 0.0024    | 10      |
+| write — content already held                 | 0.000022×  | 19.6622   | ±10.85% | 25.1968   | 10      |
+| read — a keyframe                            | 0.000021×  | 20.6128   | ±23.60% | 34.7174   | 10      |
+| read — a delta                               | 0.0000098× | 44.8282   | ±17.27% | 58.2550   | 10      |
+| write — an incompressible payload, promoting | 0.0000041× | 105.8628  | ±17.33% | 159.1918  | 10      |
+| write — a single-cell edit, as a delta       | 0.000001×  | 423.1510  | ±17.16% | 568.8694  | 10      |
+| write — a broad edit, as a delta             | 7e-7×      | 623.6113  | ±15.70% | 894.1900  | 10      |
+| write — a wholesale rewrite, promoting       | 4.6e-7×    | 952.0476  | ±14.90% | 1250.6099 | 10      |

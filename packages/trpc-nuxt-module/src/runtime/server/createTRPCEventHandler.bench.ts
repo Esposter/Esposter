@@ -15,18 +15,31 @@ const headers = { "content-type": "application/json" };
 const app = new H3().all(`${DEFAULT_ENDPOINT}/**`, createTRPCEventHandler({ router }));
 // The handler is the request hot path, so what it costs is measured against tRPC's own fetch adapter answering the
 // Same request with no h3 event in front of it, which is h3's routing and event alone, since the handler hands tRPC
-// The request h3 holds. A request's body is read once, so each iteration builds its own
+// The request h3 holds. A request's body is read once, so each iteration's request is built outside the timing
+const createRequest = () => new Request(`http://localhost${path}`, { body, headers, method: "POST" });
 describe(createTRPCEventHandler, () => {
   test("a mutation", async ({ bench }) => {
+    let nativeRequest = createRequest();
+    let eventRequest = createRequest();
     await bench.compare(
-      bench("native — tRPC's fetch adapter", () =>
-        fetchRequestHandler({
-          endpoint: DEFAULT_ENDPOINT,
-          req: new Request(`http://localhost${path}`, { body, headers, method: "POST" }),
-          router,
-        })),
-      bench("createTRPCEventHandler — through an h3 event", () =>
-        app.fetch(new Request(`http://localhost${path}`, { body, headers, method: "POST" }))),
+      bench(
+        "native — tRPC's fetch adapter",
+        {
+          beforeEach: () => {
+            nativeRequest = createRequest();
+          },
+        },
+        () => fetchRequestHandler({ endpoint: DEFAULT_ENDPOINT, req: nativeRequest, router }),
+      ),
+      bench(
+        "createTRPCEventHandler — through an h3 event",
+        {
+          beforeEach: () => {
+            eventRequest = createRequest();
+          },
+        },
+        () => app.fetch(eventRequest),
+      ),
       BENCHMARK_RUN_OPTIONS,
     );
   });

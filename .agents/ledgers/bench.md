@@ -38,7 +38,17 @@ git ls-files "*.bench.ts"
 Enumeration is the whole recipe, and deliberately: none of these rules is decidable by a grep or a lint rule (the
 `bench` skill's Settled list says why), and the population is small enough that reading every file costs less than
 a scan that would have to be believed. So a pass reads every file its unit names; there is no "the scan came back
-clean".
+clean". The grep below only orders what a pass reads first, and what it misses is still read:
+
+```bash
+# a construction inside a timed callback, which a value the timed call mutates or consumes belongs before the timing
+git grep -n -A 4 -E '(^|[^A-Za-z_.])bench\(' -- '*.bench.ts' | grep -E '(create|make|build)[A-Za-z]*\(|new [A-Z][A-Za-z]*\('
+```
+
+Its hits are judged in the callback. A hit inside a task's `beforeEach` is not timed and is not a finding. A value the
+timed call mutates or consumes is a finding; a construction that is the thing measured (a `built` group, a `native`
+baseline building the same markup as the unit) is not, and neither is a fresh output accumulator the call's contract
+takes.
 
 ## Judging a match
 

@@ -9,7 +9,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 566d3aa627
+- Commit: eb7dc6d3bd
 - Node: v26.13.1
 - OS: darwin 27.0.0 (arm64)
 - CPU: Apple M1 × 8
@@ -17,7 +17,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## nonce plugin > a rendered page's nonce and SRI attributes
 
-| task                            | vs base  | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------------------------- | -------- | --------- | ------- | -------- | ------- |
-| native — a page's markup copied | 1.00×    | 0.0027    | ±9.35%  | 0.0072   | 200     |
-| a page's markup rewritten       | 0.00081× | 3.3441    | ±53.86% | 41.6160  | 200     |
+| task                            | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ------------------------------- | ------- | --------- | ------- | -------- | ------- |
+| native — a page's markup copied | 1.00×   | 0.0025    | ±74.69% | 0.0188   | 200     |
+| a page's markup rewritten       | 0.0076× | 0.3295    | ±14.80% | 2.3816   | 200     |

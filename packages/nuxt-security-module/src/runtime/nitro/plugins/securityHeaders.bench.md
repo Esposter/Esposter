@@ -9,7 +9,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 566d3aa627
+- Commit: eb7dc6d3bd
 - Node: v26.13.1
 - OS: darwin 27.0.0 (arm64)
 - CPU: Apple M1 × 8
@@ -17,7 +17,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## security headers plugin > a page's response
 
-| task                                    | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| --------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| native — serializing the page's headers | 1.00×   | 0.0178    | ±45.57% | 0.0846   | 500     |
-| headers applied to a response           | 0.095×  | 0.1866    | ±65.99% | 1.2980   | 500     |
+| task                                    | vs base | mean (ms) | ±rme     | p99 (ms) | samples |
+| --------------------------------------- | ------- | --------- | -------- | -------- | ------- |
+| native — serializing the page's headers | 1.00×   | 0.0172    | ±104.80% | 0.1543   | 500     |
+| headers applied to a response           | 0.32×   | 0.0534    | ±32.59%  | 0.8286   | 500     |

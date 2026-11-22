@@ -21,10 +21,16 @@ describe("security headers plugin", () => {
     await nonce(app.nitroApp);
     await securityHeaders(app.nitroApp);
 
+    let event = createPageEvent();
+    // Each iteration gets its own event, built outside the timing, so the event's cache misses as it does for a request
+    const beforeEach = () => {
+      event = createPageEvent();
+    };
+
     await bench.compare(
       bench("native — serializing the page's headers", () => serializeSecurityHeaders(PAGE_HEADERS)),
-      bench("headers applied to a response", () => {
-        app.run("render:route", {}, { event: createPageEvent() });
+      bench("headers applied to a response", { beforeEach }, () => {
+        app.run("render:route", {}, { event });
       }),
       { ...BENCHMARK_RUN_OPTIONS, iterations: 500, warmupIterations: 50 },
     );

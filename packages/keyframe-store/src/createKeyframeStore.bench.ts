@@ -54,54 +54,59 @@ describe(createKeyframeStore, () => {
     const createSeededKeyframeStore = () => createKeyframeStore(createMemoryObjectStore(new Map(keyframeObjects)));
     const copyObjectStore = createMemoryObjectStore();
     await copyObjectStore.write(COPY_KEY, singleEditVersion);
+    // Each iteration's backend is built in its beforeEach, outside the timing, so a write's copy is never part of its time
+    let nativeStore = createMemoryObjectStore();
+    let writeStore = createSeededKeyframeStore();
+    const beforeEachNative = () => {
+      nativeStore = createMemoryObjectStore();
+    };
+    const beforeEachWrite = () => {
+      writeStore = createSeededKeyframeStore();
+    };
     await bench.compare(
-      bench("native — a full copy written to the backend", () =>
-        createMemoryObjectStore().write(COPY_KEY, singleEditVersion)),
-      bench("write — content already held", () =>
-        createSeededKeyframeStore()
-          .write(baseVersion, EMPTY_ANCHOR)
-          .match(
-            (value) => value,
-            (error) => {
-              throw error;
-            },
-          )),
-      bench("write — a single-cell edit, as a delta", () =>
-        createSeededKeyframeStore()
-          .write(singleEditVersion, anchor)
-          .match(
-            (value) => value,
-            (error) => {
-              throw error;
-            },
-          )),
-      bench("write — a broad edit, as a delta", () =>
-        createSeededKeyframeStore()
-          .write(broadEditVersion, anchor)
-          .match(
-            (value) => value,
-            (error) => {
-              throw error;
-            },
-          )),
-      bench("write — a wholesale rewrite, promoting", () =>
-        createSeededKeyframeStore()
-          .write(rewrittenVersion, anchor)
-          .match(
-            (value) => value,
-            (error) => {
-              throw error;
-            },
-          )),
-      bench("write — an incompressible payload, promoting", () =>
-        createSeededKeyframeStore()
-          .write(incompressibleVersion, anchor)
-          .match(
-            (value) => value,
-            (error) => {
-              throw error;
-            },
-          )),
+      bench("native — a full copy written to the backend", { beforeEach: beforeEachNative }, () =>
+        nativeStore.write(COPY_KEY, singleEditVersion),
+      ),
+      bench("write — content already held", { beforeEach: beforeEachWrite }, () =>
+        writeStore.write(baseVersion, EMPTY_ANCHOR).match(
+          (value) => value,
+          (error) => {
+            throw error;
+          },
+        ),
+      ),
+      bench("write — a single-cell edit, as a delta", { beforeEach: beforeEachWrite }, () =>
+        writeStore.write(singleEditVersion, anchor).match(
+          (value) => value,
+          (error) => {
+            throw error;
+          },
+        ),
+      ),
+      bench("write — a broad edit, as a delta", { beforeEach: beforeEachWrite }, () =>
+        writeStore.write(broadEditVersion, anchor).match(
+          (value) => value,
+          (error) => {
+            throw error;
+          },
+        ),
+      ),
+      bench("write — a wholesale rewrite, promoting", { beforeEach: beforeEachWrite }, () =>
+        writeStore.write(rewrittenVersion, anchor).match(
+          (value) => value,
+          (error) => {
+            throw error;
+          },
+        ),
+      ),
+      bench("write — an incompressible payload, promoting", { beforeEach: beforeEachWrite }, () =>
+        writeStore.write(incompressibleVersion, anchor).match(
+          (value) => value,
+          (error) => {
+            throw error;
+          },
+        ),
+      ),
       bench("read — a full copy from the backend", () => copyObjectStore.read(COPY_KEY)),
       bench("read — a keyframe", () =>
         seededKeyframeStore.read(keyframe.hash).match(
