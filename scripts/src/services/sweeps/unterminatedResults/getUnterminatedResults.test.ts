@@ -2,6 +2,8 @@ import { getUnterminatedResults } from "#src/services/sweeps/unterminatedResults
 import { describe, expect, test } from "vitest";
 
 describe(getUnterminatedResults, () => {
+  const RESULT_BINDING = "const result = getResult(fn);";
+
   // The whole reason this scan exists: a scan that reports nothing reads exactly like a terminated tree, so the
   // First thing it owes is a planted violation it does report
   test("reports a call nothing chains onto", () => {
@@ -34,7 +36,7 @@ describe(getUnterminatedResults, () => {
     },
   );
 
-  // A fixed window around the call is what this replaces: the terminator sits wherever the callback ends
+  // The terminator is found wherever the callback ends, not within a window of lines after the call
   test("finds a terminator many lines below the call", () => {
     expect.hasAssertions();
 
@@ -61,7 +63,7 @@ describe(getUnterminatedResults, () => {
   test("reports a call whose argument is a bare identifier", () => {
     expect.hasAssertions();
 
-    expect(getUnterminatedResults("const result = getResult(fn);")).toStrictEqual([{ after: ";", line: 1 }]);
+    expect(getUnterminatedResults(RESULT_BINDING)).toStrictEqual([{ after: ";", line: 1 }]);
   });
 
   // A longer or like-named identifier is neither the call, the binding nor its terminator, and only the name read whole
@@ -77,17 +79,17 @@ describe(getUnterminatedResults, () => {
     ],
     [
       "does not read a longer name on the binding as its terminator",
-      "const result = getResult(fn);\nresult.matching(noop);",
+      `${RESULT_BINDING}\nresult.matching(noop);`,
       [{ after: "; result.matching(noop);", line: 1 }],
     ],
     [
       "does not read a longer non-ASCII name as the binding",
-      "const result = getResult(fn);\néresult.match(noop, log);",
+      `${RESULT_BINDING}\néresult.match(noop, log);`,
       [{ after: "; éresult.match(noop, log);", line: 1 }],
     ],
     [
       "does not read a like-named property as the binding",
-      "const result = getResult(fn);\nother.result.match(noop, log);",
+      `${RESULT_BINDING}\nother.result.match(noop, log);`,
       [{ after: "; other.result.match(noop, log);", line: 1 }],
     ],
   ])("%s", (_title, source, expected) => {
@@ -142,23 +144,19 @@ describe(getUnterminatedResults, () => {
   test("reports nothing for a binding terminated on a later line", () => {
     expect.hasAssertions();
 
-    expect(getUnterminatedResults(`const result = getResult(fn);\nresult.match(noop, console.error);`)).toStrictEqual(
-      [],
-    );
+    expect(getUnterminatedResults(`${RESULT_BINDING}\nresult.match(noop, console.error);`)).toStrictEqual([]);
   });
 
   test("reads an optional call on the binding as the terminator", () => {
     expect.hasAssertions();
 
-    expect(getUnterminatedResults(`const result = getResult(fn);\nresult?.match(noop, console.error);`)).toStrictEqual(
-      [],
-    );
+    expect(getUnterminatedResults(`${RESULT_BINDING}\nresult?.match(noop, console.error);`)).toStrictEqual([]);
   });
 
   test("reports a binding no later line reads", () => {
     expect.hasAssertions();
 
-    expect(getUnterminatedResults(`const result = getResult(fn);\nreadSomethingElse();`)).toStrictEqual([
+    expect(getUnterminatedResults(`${RESULT_BINDING}\nreadSomethingElse();`)).toStrictEqual([
       { after: "; readSomethingElse();", line: 1 },
     ]);
   });
@@ -167,7 +165,7 @@ describe(getUnterminatedResults, () => {
   test("reports a binding only inspected in an if test", () => {
     expect.hasAssertions();
 
-    expect(getUnterminatedResults(`const result = getResult(fn);\nif (result.isErr()) read();`)).toStrictEqual([
+    expect(getUnterminatedResults(`${RESULT_BINDING}\nif (result.isErr()) read();`)).toStrictEqual([
       { after: "; if (result.isErr()) read();", line: 1 },
     ]);
   });
@@ -217,7 +215,7 @@ describe(getUnterminatedResults, () => {
   test("reports a binding only a combinator is called on", () => {
     expect.hasAssertions();
 
-    expect(getUnterminatedResults(`const result = getResult(fn);\nresult.orTee(console.error);`)).toStrictEqual([
+    expect(getUnterminatedResults(`${RESULT_BINDING}\nresult.orTee(console.error);`)).toStrictEqual([
       { after: "; result.orTee(console.error);", line: 1 },
     ]);
   });
@@ -226,9 +224,9 @@ describe(getUnterminatedResults, () => {
   test("reports nothing for a binding whose combinator chain a terminator ends", () => {
     expect.hasAssertions();
 
-    expect(
-      getUnterminatedResults(`const result = getResult(fn);\nresult.andThen(read).match(noop, console.error);`),
-    ).toStrictEqual([]);
+    expect(getUnterminatedResults(`${RESULT_BINDING}\nresult.andThen(read).match(noop, console.error);`)).toStrictEqual(
+      [],
+    );
   });
 
   // A combinator's Result that a `return` takes leaves the function, and its caller owns the terminator
@@ -236,7 +234,7 @@ describe(getUnterminatedResults, () => {
     expect.hasAssertions();
 
     expect(
-      getUnterminatedResults(`const read = () => {\n  const result = getResult(fn);\n  return result.map(parse);\n};`),
+      getUnterminatedResults(`const read = () => {\n  ${RESULT_BINDING}\n  return result.map(parse);\n};`),
     ).toStrictEqual([]);
   });
 
@@ -248,16 +246,28 @@ describe(getUnterminatedResults, () => {
   ])("reports nothing for a binding's value a function returns as $shape", ({ statement }) => {
     expect.hasAssertions();
 
-    expect(
-      getUnterminatedResults(`const read = () => {\n  const result = getResult(fn);\n  ${statement}\n};`),
-    ).toStrictEqual([]);
+    expect(getUnterminatedResults(`const read = () => {\n  ${RESULT_BINDING}\n  ${statement}\n};`)).toStrictEqual([]);
+  });
+
+  // A value bound by an assignment or a destructuring declaration is held by its statement, so nothing else answers for it
+  test.each([
+    {
+      line: 2,
+      shape: "an assignment to a declared name",
+      source: "let result;\nresult = getResult(fn);\nreadSomethingElse();",
+    },
+    { line: 1, shape: "a destructuring declaration", source: "const { value } = getResult(fn);\nreadSomethingElse();" },
+  ])("reports a result held by $shape nothing terminates", ({ line, source }) => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(source)).toStrictEqual([{ after: "; readSomethingElse();", line }]);
   });
 
   // A field a destructuring assignment writes into takes nothing into a return, so a plain write and this one agree
   test("reports a binding whose value is written into a destructuring target", () => {
     expect.hasAssertions();
 
-    expect(getUnterminatedResults(`const result = getResult(fn);\n({ value: result.value } = src);`)).toStrictEqual([
+    expect(getUnterminatedResults(`${RESULT_BINDING}\n({ value: result.value } = src);`)).toStrictEqual([
       { after: "; ({ value: result.value } = src);", line: 1 },
     ]);
   });
@@ -269,7 +279,7 @@ describe(getUnterminatedResults, () => {
     expect(getUnterminatedResults(`const $result = getResult(fn);\n$result.match(noop, log);`)).toStrictEqual([]);
   });
 
-  // `await` is not what receives the value, so stripping it is what leaves the call standing as a statement
+  // `await` does not receive the value, so the chain climbs through it and the call still stands as the statement's value
   test("reports an awaited call nothing terminates", () => {
     expect.hasAssertions();
 

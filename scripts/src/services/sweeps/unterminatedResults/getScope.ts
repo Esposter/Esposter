@@ -6,5 +6,5 @@ import { parents } from "#src/services/shared/parents";
 export const getScope = (node: Node): Node => {
   const parent = parents.get(node);
   if (parent?.type === "BlockStatement" || parent?.type === "Program") return parent;
-  return parent === undefined ? node : getScope(parent);
+  else return parent === undefined ? node : getScope(parent);
 };

@@ -7,10 +7,11 @@ import { parents } from "#src/services/shared/parents";
 export const checkIsSubjectOfParent = (node: Node): boolean => {
   const parent = parents.get(node);
   if (parent?.type === "MemberExpression") return !parent.computed && parent.object === node;
-  if (parent?.type === "CallExpression") return parent.callee === node;
-  return (
-    parent?.type === "ParenthesizedExpression" ||
-    parent?.type === "AwaitExpression" ||
-    parent?.type === "TSNonNullExpression"
-  );
+  else if (parent?.type === "CallExpression") return parent.callee === node;
+  else
+    return (
+      parent?.type === "ParenthesizedExpression" ||
+      parent?.type === "AwaitExpression" ||
+      parent?.type === "TSNonNullExpression"
+    );
 };
