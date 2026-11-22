@@ -63,7 +63,7 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { ResourceSortName } from "#shared/models/resource/ResourceSortName";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
-import { ResourceContentSchemaMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { getResourceContentSchema } from "#shared/services/resource/getResourceContentSchema";
 import { ResourceFileMimeTypeMap } from "#shared/services/resource/ResourceFileMimeTypeMap";
 import { ResourceSortNamePageSortMap } from "#shared/services/resource/ResourceSortNamePageSortMap";
 import { createPresignedGetUrl, getContentBlobName, getLivePublicationWhere, readResourceListPage } from "@esposter/db";
@@ -115,7 +115,7 @@ const createProcedureGroups = <TType extends ResourceType>(
   type: TType,
   options?: PublishableResourceProcedureOptions<ResourceContent<TType>>,
 ) => {
-  const { contentSchema } = ResourceContentSchemaMap[type];
+  const contentSchema = getResourceContentSchema(type);
   const transformPublishedContent = options?.transformPublishedContent;
   // The input side is the accessor's declared input rather than zod's default, since defaulting it to unknown would erase
   // The procedure's input type for consumers like achievement condition paths
