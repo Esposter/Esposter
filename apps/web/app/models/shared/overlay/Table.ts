@@ -7,7 +7,8 @@ import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 // Table objects over one source are one table and share the rows held for it. Its type carries the key a row is read by
 export interface Table<TRow extends Versioned, TSource extends SQLiteTable = SQLiteTable> {
   keyOf: (row: TRow) => RowKey;
-  // The key a write's header names a row by: its primary key's fields, read off the header. None when a field is left out
+  // The key a write's header names a row by: its primary key's fields, read off the header
+  // None when a field is left out
   keyOfScope: (scope: Record<string, KeyValue>) => RowKey | undefined;
   name: string;
   source: TSource;

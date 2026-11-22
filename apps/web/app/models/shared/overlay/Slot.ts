@@ -6,7 +6,8 @@ import type { Versioned } from "#src/models/shared/overlay/Versioned";
 
 // The held rows of one table, typed by its row. `read` and `write` go through a draft, which records the key touched
 export interface Slot<TRow extends Versioned> {
-  // False only when the row was discarded as older than the one held, so a reader can tell a current answer from a late one
+  // False only when the row was discarded as older than the one held, so a reader can tell a current answer
+  // From a late one
   arrive: (row: TRow) => boolean;
   list: () => Draft<TRow>[];
   read: (draft: OverlayDraft, key: RowKey) => Draft<TRow> | undefined;
