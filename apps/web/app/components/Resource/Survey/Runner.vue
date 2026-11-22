@@ -16,7 +16,7 @@ interface Props {
   seed?: string | undefined;
 }
 
-const { document, initialAnswers, initialPageIndex, isCompleting, seed: initialSeed } = defineProps<Props>();
+const { document, initialAnswers, initialPageIndex, seed: initialSeed } = defineProps<Props>();
 const emit = defineEmits<{
   change: [value: { answers: SurveyAnswers; pageIndex: number }];
   complete: [answers: SurveyAnswers];

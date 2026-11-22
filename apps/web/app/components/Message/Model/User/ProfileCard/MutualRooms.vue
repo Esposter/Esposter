@@ -10,7 +10,7 @@ interface Props {
   mutualRooms?: Pick<RoomInMessage, "id" | "image" | "name">[] | undefined;
 }
 
-const { error, mutualRooms } = defineProps<Props>();
+const { mutualRooms } = defineProps<Props>();
 const emit = defineEmits<{ retry: [] }>();
 const items = computed(() =>
   (mutualRooms ?? []).map(({ id, image, name }) => ({ image, title: name, to: RoutePath.Messages(id), value: id })),

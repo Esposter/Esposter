@@ -12,11 +12,11 @@ export const useVotePoll = async (message: () => ClientMessage, isPreview: boole
   const isVoting = computed(() => checkIsVotePending(toValue(message)));
   // An empty option id withdraws the reader's vote, as the server takes it. Nothing is drawn before the room's answer,
   // Which is the poll it stores, so the poll on screen never shows a vote the room did not keep
-  const vote = (optionId: string) => {
+  const vote = async (optionId: string) => {
     if (!session.value?.user.id || isPreview) return;
 
     const messageValue = toValue(message);
-    votePoll({ id: messageValue.id, optionId, roomId: messageValue.roomId });
+    await votePoll({ id: messageValue.id, optionId, roomId: messageValue.roomId });
   };
   return { isVoting, vote };
 };
