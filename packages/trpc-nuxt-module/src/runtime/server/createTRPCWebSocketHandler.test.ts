@@ -75,11 +75,11 @@ describe(createTRPCWebSocketHandler, () => {
   // A context that fails is answered and closed as tRPC does it, and its onOpen never runs. The rejection must not
   // Escape the open hook, which crossws never awaits
   test.each([
-    ["rejects", () => Promise.reject(new TRPCError({ code: "UNAUTHORIZED", message: "The session is unreadable" }))],
+    ["rejects", () => Promise.reject(new TRPCError({ code: "UNAUTHORIZED", message: " " }))],
     [
       "throws",
       () => {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "The session is unreadable" });
+        throw new TRPCError({ code: "UNAUTHORIZED", message: " " });
       },
     ],
   ])("a context that %s closes its peer and opens no connection", async (_label, createContext) => {

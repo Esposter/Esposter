@@ -3,12 +3,9 @@ import type { AnyTRPCRouter } from "@trpc/server";
 import type { FetchCreateContextFnOptions, FetchHandlerRequestOptions } from "@trpc/server/adapters/fetch";
 import type { EventHandler } from "nitro/h3";
 
-import { DEFAULT_ENDPOINT } from "#src/runtime/constants";
+import { DEFAULT_ENDPOINT, NULL_BODY_STATUSES } from "#src/runtime/constants";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { defineHandler } from "nitro/h3";
-
-// The statuses a `Response` may be constructed with that forbid a body, which its constructor throws on
-const NULL_BODY_STATUSES = new Set([204, 205, 304]);
 
 export const createTRPCEventHandler = <TRouter extends AnyTRPCRouter>({
   createContext,

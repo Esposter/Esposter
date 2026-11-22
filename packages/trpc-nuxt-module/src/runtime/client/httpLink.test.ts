@@ -1,4 +1,4 @@
-import type { TrpcServerFetch } from "#src/models/TrpcServerFetch";
+import type { serverFetch as baseServerFetch } from "nitro/app";
 import type { useRequestEvent as baseUseRequestEvent } from "nuxt/app";
 
 import { httpLink } from "#src/runtime/client/httpLink";
@@ -10,7 +10,7 @@ import { describe, expect, test, vi } from "vitest";
 
 const { useRequestEvent, useTrpcServerFetch } = vi.hoisted(() => ({
   useRequestEvent: vi.fn<typeof baseUseRequestEvent>(),
-  useTrpcServerFetch: vi.fn<() => TrpcServerFetch>(),
+  useTrpcServerFetch: vi.fn<() => typeof baseServerFetch>(),
 }));
 vi.mock(import("nuxt/app"), () => ({ useRequestEvent }));
 vi.mock(import("#src/runtime/client/services/useTrpcServerFetch"), () => ({ useTrpcServerFetch }));
@@ -54,7 +54,9 @@ describe(httpLink, () => {
   test("sends through the Nitro app in-process, cookies included, when the request event has no app", async () => {
     expect.hasAssertions();
 
-    const trpcServerFetch = vi.fn<TrpcServerFetch>().mockResolvedValueOnce(Response.json({ result: { data: 0 } }));
+    const trpcServerFetch = vi
+      .fn<typeof baseServerFetch>()
+      .mockResolvedValueOnce(Response.json({ result: { data: 0 } }));
     useTrpcServerFetch.mockReturnValueOnce(trpcServerFetch);
     useRequestEvent.mockReturnValueOnce(
       new H3Event(new Request("http://localhost/", { headers: { cookie: "session=1" } })),

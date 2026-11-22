@@ -1,7 +1,7 @@
 import type { getFetch } from "@trpc/client";
 import type { H3Event } from "nitro/h3";
 
-import { DEFAULT_ENDPOINT } from "#src/runtime/constants";
+import { DEFAULT_ENDPOINT, NULL_BODY_STATUSES } from "#src/runtime/constants";
 import { createTRPCEventHandler } from "#src/runtime/server/createTRPCEventHandler";
 import { omitUndefined } from "@esposter/shared";
 import { createTRPCClient, httpBatchLink, httpLink } from "@trpc/client";
@@ -14,8 +14,7 @@ import { z } from "zod";
 const createContext = (event: H3Event) => ({ event });
 // The fetch tRPC calls takes the init of its own request, whose optional fields may hold undefined, where the app takes
 // The standard one
-type FetchEsque = ReturnType<typeof getFetch>;
-const toRequestInit = (init: Parameters<FetchEsque>[1]) => init && omitUndefined(init);
+const toRequestInit = (init: Parameters<ReturnType<typeof getFetch>>[1]) => init && omitUndefined(init);
 
 describe(createTRPCEventHandler, () => {
   const t = initTRPC.context<{ event: H3Event }>().create({ transformer: superjson });
@@ -62,7 +61,8 @@ describe(createTRPCEventHandler, () => {
       ),
     );
   // The app answers in-process, so a client's abort reaches the handler as the request's own signal
-  const fetchInProcess: FetchEsque = (input, init) => Promise.resolve(app.request(input, toRequestInit(init)));
+  const fetchInProcess: ReturnType<typeof getFetch> = (input, init) =>
+    Promise.resolve(app.request(input, toRequestInit(init)));
 
   test("answers a batch through the transformer in both directions", async () => {
     expect.hasAssertions();
@@ -138,7 +138,7 @@ describe(createTRPCEventHandler, () => {
     expect(response.headers.get("location")).toBe(baseUrl);
   });
 
-  test.each([204, 205, 304])("answers a staged %i without a body or its length", async (status) => {
+  test.each([...NULL_BODY_STATUSES])("answers a staged %i without a body or its length", async (status) => {
     expect.hasAssertions();
 
     const response = await app.request(`${DEFAULT_ENDPOINT}/stage`, {
