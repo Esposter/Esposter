@@ -1,9 +1,9 @@
 // @unocss-include
-import type { MenuItem } from "#src/models/shared/MenuItem";
+import type { Item } from "#src/models/shared/Item";
 import type { Editor } from "@tiptap/core";
 
 // The two list nodes every editor menu here offers, in the order both menus draw them.
-export const getListMenuItems = (editor: Editor | undefined): MenuItem[] => [
+export const getListMenuItems = (editor: Editor | undefined): Item[] => [
   {
     active: editor?.isActive("bulletList"),
     icon: "i-mdi:format-list-bulleted",

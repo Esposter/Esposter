@@ -40,7 +40,8 @@ defineProps<Props>();
         @click="item.onClick?.($event)"
         @mousedown.prevent
       >
-        <span :class="item.icon" aria-hidden="true" align-middle size-6 inline-block />
+        <UiIcon v-if="item.meaning" :meaning="item.meaning" />
+        <span v-else :class="item.icon" aria-hidden="true" align-middle size-6 inline-block />
       </UiButton>
     </UiTooltip>
   </template>

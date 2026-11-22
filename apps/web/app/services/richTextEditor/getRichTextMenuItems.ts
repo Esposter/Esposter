@@ -2,10 +2,10 @@
 import type { MenuItem } from "#src/models/shared/MenuItem";
 import type { Editor } from "@tiptap/core";
 
-import { getListMenuItems } from "#src/services/richTextEditor/getListMenuItems";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getTextFormatMenuItems } from "#src/services/richTextEditor/getTextFormatMenuItems";
 
-// The rich text menu bar's items: the marks, the lists, then undo and redo, split into the three groups it draws.
+// The rich text menu bar's items: the marks, then undo and redo. The lists are the bar's overflow menu's, beside it.
 export const getRichTextMenuItems = (editor: Editor | undefined): MenuItem[] => [
   ...getTextFormatMenuItems(editor),
   {
@@ -17,12 +17,10 @@ export const getRichTextMenuItems = (editor: Editor | undefined): MenuItem[] => 
     title: "Strike",
   },
   { isDivider: true },
-  ...getListMenuItems(editor),
-  { isDivider: true },
   {
     disabled: !editor?.can().undo(),
-    icon: "i-mdi:undo",
     isSelectionFree: true,
+    meaning: UiIconMeaning.Undo,
     onClick: () => {
       editor?.chain().focus().undo().run();
     },
@@ -30,8 +28,8 @@ export const getRichTextMenuItems = (editor: Editor | undefined): MenuItem[] => 
   },
   {
     disabled: !editor?.can().redo(),
-    icon: "i-mdi:redo",
     isSelectionFree: true,
+    meaning: UiIconMeaning.Redo,
     onClick: () => {
       editor?.chain().focus().redo().run();
     },

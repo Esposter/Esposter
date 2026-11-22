@@ -7,7 +7,7 @@ import type { CSSProperties } from "vue";
 import { autofocusEditor } from "#src/services/richTextEditor/autofocusEditor";
 import { omitUndefined } from "@esposter/shared";
 import { FileHandler } from "@tiptap/extension-file-handler";
-import { CharacterCount, Placeholder } from "@tiptap/extensions";
+import { Placeholder } from "@tiptap/extensions";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
@@ -31,23 +31,7 @@ const modelValue = defineModel<string>({ required: true });
 const { extensions, focusPosition, height = "auto", limit, placeholder = "Text (optional)" } = defineProps<Props>();
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
-// CharacterCount copies its options into the plugin it builds, so a limit given at mount stays the limit.
-// Its plugin is built here with the limit read through a getter, which follows the prop after mount
-const characterCount = CharacterCount.extend({
-  addProseMirrorPlugins() {
-    return (
-      CharacterCount.config.addProseMirrorPlugins?.call({
-        ...this,
-        options: {
-          ...this.options,
-          get limit() {
-            return limit;
-          },
-        },
-      }) ?? []
-    );
-  },
-}).configure({ limit });
+const characterCount = useCharacterCountExtension(() => limit);
 const editor = useEditor({
   content: modelValue.value,
   extensions: [
@@ -82,7 +66,7 @@ watch(
 <template>
   <div flex flex-col gap-1 w-full>
     <!-- Tiptap draws only the document, so the chrome around it is the library's — drawn as one field, with its menu
-      bar across the top, so the whole of it reads as somewhere to type and takes the focus ring as a unit when the
+      bar across the top, so the whole of it reads as somewhere to type and takes the focus fill as a unit when the
       document is focused — and what the document holds is themed from outside by the rich text rules -->
     <div flex flex-col ui-field>
       <RichTextEditorMenuBar :editor />
@@ -114,7 +98,7 @@ watch(
   height: v-bind(height);
   max-height: 15rem;
   overflow-y: auto;
-  /* The field around it draws the focus ring for the whole editor, so the document inside draws none of its own */
+  /* The field around it takes the focus fill for the whole editor, so the document inside draws no outline of its own */
   outline: none;
 
   p.is-editor-empty:first-child::before {
