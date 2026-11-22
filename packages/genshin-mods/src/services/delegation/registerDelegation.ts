@@ -5,7 +5,7 @@ import { atom, update } from "claude-code";
 import type { DelegationCall } from "../../models/DelegationCall";
 
 import { DelegationStep } from "../../models/DelegationStep";
-import { LOOKUP_TOOLS, RESET_TOOLS, SHELL_TOOLS } from "../constants";
+import { AGENT_TOOL, LOOKUP_TOOLS, RESET_TOOLS, SHELL_TOOLS } from "../constants";
 import { InitialState } from "../InitialState";
 import { getCallStep } from "./getCallStep";
 import { getLaunchRefusal } from "./getLaunchRefusal";
@@ -31,7 +31,7 @@ export const registerDelegation = (on: On): void => {
   // Context the model reads after it, and never blocks the call
   // eslint-disable-next-line no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise
   on("tool.call", { tool: [...LOOKUP_TOOLS, ...RESET_TOOLS, ...SHELL_TOOLS] }, async ($, e, next) => {
-    const refusal = e.tool === "Agent" ? getLaunchRefusal(e) : undefined;
+    const refusal = e.tool === AGENT_TOOL ? getLaunchRefusal(e) : undefined;
     if (refusal !== undefined) return { deny: refusal };
     const nudge = await countCall($, e);
     const result = await next(e);

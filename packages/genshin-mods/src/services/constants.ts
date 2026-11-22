@@ -29,9 +29,11 @@ export const HANDOFF_QUESTION =
 export const VEIL_SECTION_ID = "genshin-mods-veil";
 export const VEIL_SYSTEM_SECTION =
   "Recording mode is on: the screen is being recorded or shared. Never write an email address, a phone number, a money amount, an API key, a token or a password in a reply; write a placeholder such as [email], [phone], [amount] or [secret] instead, even when asked for the value. Tool calls still use the real values.";
+// The tool a session launches a subagent with
+export const AGENT_TOOL = "Agent";
 // The tools that look something up, the tools that change files, and the shell whose command decides which it is
 export const LOOKUP_TOOLS = ["Read", "WebFetch"] as const;
-export const RESET_TOOLS = ["Agent", "Edit", "NotebookEdit", "Write"] as const;
+export const RESET_TOOLS = [AGENT_TOOL, "Edit", "NotebookEdit", "Write"] as const;
 export const SHELL_TOOLS = ["Bash"] as const;
 // The `export` and `cd` a session chains ahead of its command, each stripped as one leading segment
 export const LEADING_SEGMENT_REGEX: RegExp = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;

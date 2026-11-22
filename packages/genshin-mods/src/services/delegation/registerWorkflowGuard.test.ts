@@ -36,8 +36,8 @@ const createEngine = (files: Record<string, string>): GuardEngine => ({
 });
 
 describe(registerWorkflowGuard, () => {
-  const HAIKU_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'haiku' });";
-  const MIXED_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'opus' });";
+  const HAIKU_SCRIPT = "await agent('', { model: 'haiku' });\nawait agent('', { model: 'haiku' });";
+  const MIXED_SCRIPT = "await agent('', { model: 'haiku' });\nawait agent('', { model: 'opus' });";
 
   test("a workflow whose every agent is haiku launches", async () => {
     expect.hasAssertions();
