@@ -1,4 +1,4 @@
 export const useInventoryInfoPanelStore = defineStore("dungeons/inventory/infoPanel", () => {
-  const { infoDialogMessage } = useDialogMessage("info");
+  const { dialogMessage: infoDialogMessage } = useDialogMessage();
   return { infoDialogMessage };
 });

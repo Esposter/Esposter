@@ -6,7 +6,7 @@ import { useDialogStore } from "#src/store/dungeons/dialog";
 export const useMonsterPartyInfoPanelStore = defineStore("dungeons/monsterParty/infoPanel", () => {
   const dialogStore = useDialogStore();
   const { updateQueuedMessagesAndShowMessage } = dialogStore;
-  const { infoDialogMessage, infoTextDisplayWidth } = useDialogMessage("info");
+  const { dialogMessage: infoDialogMessage, textDisplayWidth: infoTextDisplayWidth } = useDialogMessage();
   const inputPromptCursorX = computed(
     () => (infoTextDisplayWidth.value ?? 0) + (dialogStore.inputPromptCursorDisplayWidth ?? 0) * 2.7,
   );
