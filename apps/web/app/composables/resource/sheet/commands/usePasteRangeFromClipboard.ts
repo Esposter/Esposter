@@ -11,7 +11,7 @@ import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 
 export const usePasteRangeFromClipboard = () => {
   const resourceStore = useResourceStore();
-  const { currentResourceId } = storeToRefs(resourceStore);
+  const { getOpening } = resourceStore;
   const sheetStore = useSheetStore();
   const { dataSource } = storeToRefs(sheetStore);
   const columnStore = useColumnStore();
@@ -21,8 +21,9 @@ export const usePasteRangeFromClipboard = () => {
   const createRows = useCreateRows();
   const pasteRange = usePasteRange();
   return async (pasteMode: PasteMode = PasteMode.Overwrite) => {
-    // The sheet and its anchor are read before the clipboard await, since a switch during it moves both to another sheet
-    const resourceId = currentResourceId.value;
+    // The sheet, its anchor and its opening are read before the clipboard await, since a switch during it moves them to
+    // Another sheet, and a close and reopen of this one keeps the id while it moves the opening on
+    const opening = getOpening();
     const dataSourceValue = dataSource.value;
     const anchorRowIndex = selectedCellRange.value?.rowStart ?? dataSourceValue.rows.length;
     const anchorColumnIndex = selectedCellRange.value?.columnStart ?? 0;
@@ -30,8 +31,8 @@ export const usePasteRangeFromClipboard = () => {
     await getResultAsync(async () => {
       const pastedValues = await readPastedValues();
       if (pastedValues.length === 0) return;
-      // The paste is for the sheet it was issued on, so a sheet that replaced it during the read takes none of it
-      if (currentResourceId.value !== resourceId) return;
+      // The paste is for the opening it was issued on, so a sheet that replaced it during the read takes none of it
+      if (getOpening() !== opening) return;
       switch (pasteMode) {
         case PasteMode.Overwrite: {
           pasteRange(anchorRowIndex, anchorColumnIndex, pastedValues, targetColumnNames);

@@ -196,6 +196,31 @@ describe(usePasteRangeFromClipboard, () => {
     expect(otherDataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }]);
   });
 
+  // A reopened sheet has the same id as the one closed, so the id cannot tell its paste from one issued before the close
+  test("writes nothing to a sheet closed and reopened while the clipboard is read", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { applyResource, clearResource } = resourceStore;
+    const resource = createResourceListItem();
+    applyResource(resource, null);
+    const sheetStore = useSheetStore();
+    const { sheetResource } = storeToRefs(sheetStore);
+    sheetResource.value.data = createSingleCellDataSource();
+    const reopenedDataSource = createSingleCellDataSource();
+    readTextMock.mockImplementationOnce(() => {
+      clearResource(resource.id);
+      applyResource(resource, null);
+      sheetResource.value.data = reopenedDataSource;
+      return Promise.resolve("2");
+    });
+    selectAnchor(0, 0);
+    const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+    await pasteRangeFromClipboard();
+
+    expect(reopenedDataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }]);
+  });
+
   // A copy writes the exact values under the sheet's own format beside its text, and an in-app paste reads that format,
   // So a value the text is made formula-safe for comes back unchanged
   test("pastes the exact values an in-app copy wrote, not the formula-safe text", async () => {
