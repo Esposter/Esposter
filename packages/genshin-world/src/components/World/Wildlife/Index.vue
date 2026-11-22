@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { Wildlife } from "#src/models/wildlife/Wildlife";
+import type { WildlifeKind } from "#src/models/wildlife/WildlifeKind";
 import type { GroundPoint, LightUniforms, SilhouetteSize } from "genshin-engine";
 import type { DataTexture, InstancedMesh } from "three";
 
-import { WildlifeKind } from "#src/models/wildlife/WildlifeKind";
+import { WildlifeKinds } from "#src/models/wildlife/WildlifeKind";
 import { WildlifeShape } from "#src/models/wildlife/WildlifeShape";
 import { WildlifeState } from "#src/models/wildlife/WildlifeState";
 import {
@@ -60,7 +61,7 @@ const capsuleMesh = createInstancedMesh(
   WILDLIFE_CAPACITY,
 );
 const silhouetteMeshes = new Map<WildlifeKind, InstancedMesh>();
-for (const kind of Object.values(WildlifeKind)) {
+for (const kind of WildlifeKinds) {
   const size = silhouetteSizes[kind];
   if (size)
     silhouetteMeshes.set(kind, createInstancedMesh(createSilhouetteGeometry(size), material, WILDLIFE_CAPACITY));
