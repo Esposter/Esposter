@@ -11,11 +11,15 @@ import { press } from "./press";
 import { warmCache } from "./warmCache";
 
 const isHandingOffAtom = atom({ key: "isHandingOff", plugin: "genshin-mods" } as const, InitialState.isHandingOff);
+// The engine traces a state reference only to an atom made in its own file, so a file declares the atoms it reads.
+// These copies of another file's atoms are required, and the duplicate-code gate skips them
+// `jscpd:ignore-start`
 const lastCacheRequestAtAtom = atom(
   { key: "lastCacheRequestAt", plugin: "genshin-mods" } as const,
   InitialState.lastCacheRequestAt,
 );
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
+// `jscpd:ignore-end`
 // oxlint-disable-next-line func-style -- A declaration, not an arrow: the hooks module's bundle follows an imported helper that takes `$` only into a function declaration
 export async function drawResinRow(
   $: EngineInterface,

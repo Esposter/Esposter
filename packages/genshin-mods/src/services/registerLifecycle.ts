@@ -17,9 +17,13 @@ import { scoreSins } from "./sins/scoreSins";
 import { turnState } from "./turnState";
 import { suggestWaypoints } from "./waypoints/suggestWaypoints";
 
+// The engine traces a state reference only to an atom made in its own file, so a file declares the atoms it reads.
+// These copies of another file's atoms are required, and the duplicate-code gate skips them
+// `jscpd:ignore-start`
 const commissionAtom = atom({ key: "commission", plugin: "genshin-mods" } as const, InitialState.commission);
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
 const lastPromptAtom = atom({ key: "lastPrompt", plugin: "genshin-mods" } as const, InitialState.lastPrompt);
+// `jscpd:ignore-end`
 const lastCacheRequestAtAtom = atom(
   { key: "lastCacheRequestAt", plugin: "genshin-mods" } as const,
   InitialState.lastCacheRequestAt,

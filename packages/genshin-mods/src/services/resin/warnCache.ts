@@ -11,11 +11,15 @@ import { getCacheRemainingMs } from "./getCacheRemainingMs";
 let warnedLastCacheRequestAt = 0;
 
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
+// The engine traces a state reference only to an atom made in its own file, so a file declares the atoms it reads.
+// These copies of another file's atoms are required, and the duplicate-code gate skips them
+// `jscpd:ignore-start`
 const lastCacheRequestAtAtom = atom(
   { key: "lastCacheRequestAt", plugin: "genshin-mods" } as const,
   InitialState.lastCacheRequestAt,
 );
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
+// `jscpd:ignore-end`
 // The cache goes cold at a known instant, so its warning is one timer armed for that instant at each turn's end, from the
 // Request that last read or wrote the cache, rather than a check on a clock. The timer warns once for that request, and
 // Stands down while a turn runs, since that turn's end arms it again. A timer left from an earlier turn finds the cache
