@@ -29,10 +29,6 @@ const selectedItems = computed(() =>
 // The one chosen option as its row shows it; several by their titles, past a few by how many, and the label while
 // Nothing is chosen
 const selectedItem = computed(() => (selectedItems.value.length === 1 ? selectedItems.value[0] : undefined));
-// A chosen option with no mark leaves the trigger no column for one, so its title starts at the field's edge
-const isMarkless = computed(() =>
-  selectedItem.value?.icon || selectedItem.value?.image !== undefined || selectedItem.value?.meaning ? undefined : true,
-);
 const isPlaceholderShown = computed(() => selectedItems.value.length === 0 && Boolean(placeholder));
 const title = computed(() => {
   if (selectedItems.value.length === 0) return placeholder || label;
@@ -57,10 +53,11 @@ popover.positionTry.value = POPOVER_POSITION_TRY;
       }
     "
   >
+    <!-- A chosen option with no mark leaves the trigger no column for one, so its title starts at the field's edge -->
     <UiItemContent
       :icon="selectedItem?.icon"
       :image="selectedItem?.image"
-      :is-markless
+      :is-markless="selectedItem?.icon || selectedItem?.image !== undefined || selectedItem?.meaning ? undefined : true"
       :meaning="selectedItem?.meaning"
       :title
     >

@@ -1,9 +1,6 @@
 <script setup lang="ts" generic="T extends string, TExtra = unknown">
 import type { UiListItem } from "#src/models/ui/UiListItem";
 
-import { takeOne } from "@esposter/shared";
-import { useRovingFocus } from "@vuetify/v0";
-
 // A row as the list gets it: the list's own fields, plus whatever its caller gives the row beside them
 type ExtendedListItem = TExtra & UiListItem<T>;
 
@@ -36,25 +33,14 @@ defineSlots<{
 const modelValue = defineModel<T[] | undefined>();
 const { isMultiple, isReorderable, items } = defineProps<Props>();
 const emit = defineEmits<{ reorder: [values: T[]]; select: [value: T, event: KeyboardEvent | MouseEvent] }>();
-const listId = useId();
-const getRowId = (value: T) => `${listId}-${value}`;
-const { focus, focusedId, onKeydown } = useRovingFocus(
-  () => items.map(({ value }) => ({ el: () => window.document.getElementById(getRowId(value)), id: value })),
-  { orientation: "vertical" },
+const { announcement, focus, focusedId, getReorderProps, getRowId, groups, onListKeydown } = useListKeyboard<
+  T,
+  ExtendedListItem
+>(
+  () => items,
+  () => isReorderable,
+  (values) => emit("reorder", values),
 );
-const typeahead = useTypeahead();
-const { announcement, reorderByKey } = useReorder();
-const getDragReorderProps = useDragReorder();
-// Rows sharing a group sit together under its heading, in the order they come
-const groups = computed(() => {
-  const rowGroups: { group?: string | undefined; items: ExtendedListItem[] }[] = [];
-  for (const item of items) {
-    const lastRowGroup = rowGroups.at(-1);
-    if (lastRowGroup && lastRowGroup.group === item.group) lastRowGroup.items.push(item);
-    else rowGroups.push({ group: item.group, items: [item] });
-  }
-  return rowGroups;
-});
 // Where Tab lands: the row last focused while still listed, else the first selected or current one, or the first
 const tabbableValue = computed(
   () =>
@@ -62,21 +48,6 @@ const tabbableValue = computed(
     items.find(({ isCurrent, value }) => (modelValue.value ? modelValue.value.includes(value) : isCurrent))?.value ??
     items[0]?.value,
 );
-// The whole list's order with one group's rows in their new order
-const reorder = (groupIndex: number, groupValues: T[]) => {
-  const values = groups.value.flatMap(({ items: groupItems }, index) =>
-    index === groupIndex ? groupValues : groupItems.map(({ value: groupValue }) => groupValue),
-  );
-  emit("reorder", values);
-};
-// What a group's rows take while they drag: their new order is handed back as the whole list's
-const getReorderProps = (groupIndex: number, groupItems: ExtendedListItem[]) =>
-  getDragReorderProps(groupItems, (newGroupItems) => {
-    reorder(
-      groupIndex,
-      newGroupItems.map(({ value }) => value),
-    );
-  });
 const pick = (value: T, event: KeyboardEvent | MouseEvent) => {
   emit("select", value, event);
   if (!modelValue.value) return;
@@ -84,43 +55,6 @@ const pick = (value: T, event: KeyboardEvent | MouseEvent) => {
   else if (modelValue.value.includes(value))
     modelValue.value = modelValue.value.filter((selectedValue) => selectedValue !== value);
   else modelValue.value = [...modelValue.value, value];
-};
-const onListKeydown = async (event: KeyboardEvent) => {
-  const row = event.target;
-  // Only a row's own keys: the actions beside it keep theirs
-  if (!(row instanceof HTMLElement)) return;
-  const index = items.findIndex(({ value }) => getRowId(value) === row.id);
-  if (index === -1) return;
-
-  const groupIndex = groups.value.findIndex(({ items: groupItems }) =>
-    groupItems.some(({ value }) => getRowId(value) === row.id),
-  );
-  const groupValues = groups.value[groupIndex]?.items.map(({ value }) => value) ?? [];
-  const value = takeOne(items, index).value;
-  const movedRow = isReorderable
-    ? reorderByKey(
-        event,
-        groupValues,
-        value,
-        (keyedOrder) => reorder(groupIndex, keyedOrder),
-        () => focus(value),
-      )
-    : undefined;
-  if (movedRow) await movedRow;
-  else if (event.key === "Enter" || event.key === " ") {
-    // A button presses itself on either; an option and a link are pressed here
-    if (row instanceof HTMLButtonElement) return;
-    event.preventDefault();
-    row.click();
-  } else {
-    const typedIndex = typeahead(
-      event,
-      items.map(({ title }) => title),
-      index,
-    );
-    if (typedIndex === undefined) onKeydown(event);
-    else focus(takeOne(items, typedIndex).value);
-  }
 };
 </script>
 

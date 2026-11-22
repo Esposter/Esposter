@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { PaletteGroup } from "#src/models/ui/palette/PaletteGroup";
 
-import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { checkIsPaletteSearching } from "#src/services/ui/palette/checkIsPaletteSearching";
 import { filterPaletteGroups } from "#src/services/ui/palette/filterPaletteGroups";
@@ -36,34 +35,31 @@ const startDrag = (kind: string, event: PointerEvent) => {
     <UiTextField v-model="query" label="Search" :type="UiTextFieldType.Search" />
     <p v-if="filteredGroups.length === 0" text-sm text-muted>No match</p>
     <section v-for="{ items, title } of filteredGroups" :key="title" flex flex-col gap-1>
-      <button
-        :aria-expanded="isGroupOpen(title)"
-        :disabled="isSearching"
-        class="disabled:cursor-default"
-        text-sm
-        text-muted
-        ui-item
-        @click="toggleGroup(title)"
+      <UiCollapsible
+        :is-disabled="isSearching"
+        :model-value="isGroupOpen(title)"
+        @update:model-value="toggleGroup(title)"
       >
-        <UiIcon :meaning="isGroupOpen(title) ? UiIconMeaning.Collapse : UiIconMeaning.Expand" />
-        {{ title }}
-      </button>
-      <div v-if="isGroupOpen(title)" cols="[repeat(auto-fill,minmax(4.25rem,1fr))]" gap-1 grid>
-        <UiButton
-          v-for="item of items"
-          :key="item.kind"
-          px-1
-          min-w-0
-          w-full
-          @click="emit('insert', item.kind)"
-          @pointerdown="startDrag(item.kind, $event)"
-        >
-          <span text-sm text-center flex flex-col gap-1 min-w-0 items-center>
-            <UiIcon :meaning="item.icon" />
-            <span break-words line-clamp-2>{{ item.title.replaceAll("/", "/\u200B") }}</span>
-          </span>
-        </UiButton>
-      </div>
+        <template #title>
+          <span text-sm text-muted>{{ title }}</span>
+        </template>
+        <div cols="[repeat(auto-fill,minmax(4.25rem,1fr))]" gap-1 grid>
+          <UiButton
+            v-for="item of items"
+            :key="item.kind"
+            px-1
+            min-w-0
+            w-full
+            @click="emit('insert', item.kind)"
+            @pointerdown="startDrag(item.kind, $event)"
+          >
+            <span text-sm text-center flex flex-col gap-1 min-w-0 items-center>
+              <UiIcon :meaning="item.icon" />
+              <span break-words line-clamp-2>{{ item.title.replaceAll("/", "/\u200B") }}</span>
+            </span>
+          </UiButton>
+        </div>
+      </UiCollapsible>
     </section>
   </div>
 </template>

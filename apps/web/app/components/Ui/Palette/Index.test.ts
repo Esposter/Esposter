@@ -29,6 +29,20 @@ describe("uiPalette", () => {
     ).toStrictEqual([["Content", "Image"]]);
   });
 
+  test("a search holds every group's header disabled, since a search opens each group", async () => {
+    expect.hasAssertions();
+    const component = mount(UiPalette, { props: { groups } });
+
+    await component.get("input").setValue("image");
+
+    expect(
+      component
+        .findAll("button")
+        .find((button) => button.text() === "Content")
+        ?.attributes("disabled"),
+    ).toBeDefined();
+  });
+
   test("a tile click emits the kind it carries", async () => {
     expect.hasAssertions();
     const component = mount(UiPalette, { props: { groups } });
