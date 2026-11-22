@@ -28,8 +28,8 @@ export const getMessageNotificationAuthor = async ({
     const webhook = await getDb().query.webhooksInMessage.findFirst({
       columns: { name: true },
       where: { RAW: getLiveRowWhere, userId: { eq: appUserId } },
-      with: { appUser: { columns: { image: true } } },
+      with: { user: { columns: { image: true } } },
     });
-    return { icon: webhook?.appUser.image, title: webhook?.name ?? "" };
+    return { icon: webhook?.user.image, title: webhook?.name ?? "" };
   } else return { title: "" };
 };

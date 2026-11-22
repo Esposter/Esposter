@@ -4,7 +4,7 @@ import { defineRelationsPart } from "drizzle-orm";
 
 export const postsInPostRelation = defineRelationsPart(schema, (r) => ({
   postsInPost: {
-    likes: r.many.likesInPost({ from: r.postsInPost.id, to: r.likesInPost.postId }),
+    likesInPost: r.many.likesInPost({ from: r.postsInPost.id, to: r.likesInPost.postId }),
     user: r.one.usersInAuth({ from: r.postsInPost.userId, optional: false, to: r.usersInAuth.id }),
     usersViaLikes: r.many.usersInAuth({
       alias: "posts_id_users_id_via_likes",

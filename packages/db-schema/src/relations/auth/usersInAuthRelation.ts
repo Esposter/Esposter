@@ -12,7 +12,7 @@ export const usersInAuthRelation = defineRelationsPart(schema, (r) => ({
       to: r.achievementsInAchievement.id.through(r.userAchievementsInAchievement.achievementId),
     }),
     bansInMessage: r.many.bansInMessage({ from: r.usersInAuth.id, to: r.bansInMessage.userId }),
-    blocks: r.many.blocksInSocial({ from: r.usersInAuth.id, to: r.blocksInSocial.blockerId }),
+    blocksInSocial: r.many.blocksInSocial({ from: r.usersInAuth.id, to: r.blocksInSocial.blockerId }),
     callSessionsInMessage: r.many.callSessionsInMessage({ from: r.usersInAuth.id, to: r.callSessionsInMessage.userId }),
     friendRequests: r.many.friendRequestsInSocial({ from: r.usersInAuth.id, to: r.friendRequestsInSocial.senderId }),
     postsViaLikes: r.many.postsInPost({
@@ -25,7 +25,7 @@ export const usersInAuthRelation = defineRelationsPart(schema, (r) => ({
       from: r.usersInAuth.id.through(r.postsInPost.userId),
       to: r.postsInPost.id.through(r.postsInPost.parentId),
     }),
-    pushSubscriptions: r.many.pushSubscriptionsInNotification({
+    pushSubscriptionsInNotification: r.many.pushSubscriptionsInNotification({
       from: r.usersInAuth.id,
       to: r.pushSubscriptionsInNotification.userId,
     }),
@@ -54,7 +54,7 @@ export const usersInAuthRelation = defineRelationsPart(schema, (r) => ({
       to: r.roomsInMessage.id.through(r.usersToRoomsInMessage.roomId),
     }),
     sessionsInAuth: r.many.sessionsInAuth({ from: r.usersInAuth.id, to: r.sessionsInAuth.userId }),
-    userAchievements: r.many.userAchievementsInAchievement({
+    userAchievementsInAchievement: r.many.userAchievementsInAchievement({
       from: r.usersInAuth.id,
       to: r.userAchievementsInAchievement.userId,
     }),
