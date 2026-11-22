@@ -1,6 +1,7 @@
 import { describe, expect, expectTypeOf, test } from "vitest";
 
-import type { CommissionTask, SinStatus } from "../../types";
+import type { CommissionTask, EnabledMods, SinStatus } from "../../types";
+import type { ModName } from "./ModName";
 import type { SinStatusKind } from "./SinStatusKind";
 import type { TaskStatus } from "./TaskStatus";
 
@@ -17,5 +18,11 @@ describe("state contract", () => {
     expect.hasAssertions();
 
     expectTypeOf<CommissionTask["status"]>().toEqualTypeOf<TaskStatus>();
+  });
+
+  test("enabledMods holds exactly the mod names", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<keyof EnabledMods>().toEqualTypeOf<ModName>();
   });
 });
