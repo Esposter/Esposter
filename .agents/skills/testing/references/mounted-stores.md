@@ -21,14 +21,14 @@ throws `getActivePinia()` at mount. `beforeEach(() => { setActivePinia(createPin
 change that makes a library component reach a store owes this to every happy-dom suite that mounts it or a wrapper
 of it. The nuxt environment is the opposite case ("The nuxt environment has one Pinia — the app's, emptied before every test", on this page).
 
-## A room-scoped store has no state until a room is current — `setCurrentRoomId`
+## A room-scoped store has no state until a room is current — `setRouteId`
 
-Every room-scoped store keys its state by the room id in the route, so before one is set the store's maps are empty and any assertion against them passes vacuously. Two things make the obvious assignment silently do nothing, which is why this is a shared helper (`app/services/message/room/setCurrentRoomId.test.ts`) rather than a line each test writes:
+Every room- and resource-scoped store keys its state by the id in the route, so before one is set the store's maps are empty and any assertion against them passes vacuously. Two things make the obvious assignment silently do nothing, which is why this is a shared helper (`app/util/router/setRouteId.test.ts`) rather than a line each test writes:
 
 - **Mounting resets the route**, so the id has to be set _after_ `mountSuspended`, not in a `beforeEach` above it.
 - **`router.currentRoute` is a `shallowRef`**, so writing `params.id` into the existing params object mutates a value nothing is tracking. The helper's `triggerRef` is what makes the computed re-read.
 
 ```ts
 const wrapper = await mountSuspended(Foo);
-setCurrentRoomId(roomId); // after the mount, and never a bare `currentRoute.value.params.id = roomId`
+setRouteId(roomId); // after the mount, and never a bare `currentRoute.value.params.id = roomId`
 ```
