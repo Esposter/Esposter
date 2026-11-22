@@ -23,7 +23,7 @@ const items = VoiceInputModes.map((voiceInputMode) => ({
     :model-value="userSettings.voiceInputMode"
     :items
     label="Input mode"
-    @update:model-value="(voiceInputMode) => updateUserSettings({ voiceInputMode })"
+    @update:model-value="(newModelValue) => updateUserSettings({ voiceInputMode: newModelValue })"
   />
   <template v-if="userSettings.voiceInputMode === VoiceInputMode.PushToTalk">
     <MessageModelUserSettingsTypeVoicePushToTalkKeybindButton :keybind="userSettings.pushToTalkKeybind" />

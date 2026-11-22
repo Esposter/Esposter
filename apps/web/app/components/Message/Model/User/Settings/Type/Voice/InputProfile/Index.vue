@@ -19,6 +19,6 @@ const items = NoiseSuppressionModeItems.map(({ subtitle, title, value }) => ({ d
     :model-value="userSettings.noiseSuppressionMode"
     :items
     label="Input profile"
-    @update:model-value="(noiseSuppressionMode) => updateUserSettings({ noiseSuppressionMode })"
+    @update:model-value="(newModelValue) => updateUserSettings({ noiseSuppressionMode: newModelValue })"
   />
 </template>

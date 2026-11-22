@@ -18,13 +18,13 @@ const { updateUserSettings } = userSettingsStore;
       :model-value="userSettings.isMuteOnJoin"
       is-label-visible
       label="Mute on join"
-      @update:model-value="(isMuteOnJoin) => updateUserSettings({ isMuteOnJoin })"
+      @update:model-value="(newModelValue) => updateUserSettings({ isMuteOnJoin: newModelValue })"
     />
     <UiSwitch
       :model-value="userSettings.isDeafenOnJoin"
       is-label-visible
       label="Deafen on join"
-      @update:model-value="(isDeafenOnJoin) => updateUserSettings({ isDeafenOnJoin })"
+      @update:model-value="(newModelValue) => updateUserSettings({ isDeafenOnJoin: newModelValue })"
     />
   </div>
 </template>

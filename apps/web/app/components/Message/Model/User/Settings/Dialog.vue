@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { USER_SETTINGS_LABEL } from "#src/services/message/user/settings/constants";
 import { useUserSettingsDialogStore } from "#src/store/message/user/settings/dialog";
 import { useUserSettingsStore } from "#src/store/message/user/settings/index";
 
@@ -14,7 +15,7 @@ watch(isVisible, async (newIsVisible) => {
 </script>
 
 <template>
-  <MessageModelSettingsDialog v-model="isVisible" title="User settings">
+  <MessageModelSettingsDialog v-model="isVisible" :title="USER_SETTINGS_LABEL">
     <!-- The dialog is always in the document, so the panels mount only while it is open: the voice panel alone starts
          the microphone -->
     <template v-if="isVisible">

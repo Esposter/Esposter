@@ -5,6 +5,7 @@ import type { UserSettingsType } from "#src/models/message/user/UserSettingsType
 import { UserSettingsTypes } from "#src/models/message/user/UserSettingsType";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { SETTINGS_CONTENT_ID } from "#src/services/message/settings/constants";
+import { USER_SETTINGS_LABEL } from "#src/services/message/user/settings/constants";
 import { UserSettingsListItemMap } from "#src/services/message/user/settings/UserSettingsListItemMap";
 import { UserSettingsSectionMap } from "#src/services/message/user/settings/UserSettingsSectionMap";
 import { useUserSettingsDialogStore } from "#src/store/message/user/settings/dialog";
@@ -44,7 +45,7 @@ const scrollToSection = (section: SettingsSection) => {
 
 <template>
   <MessageModelSettingsLeftSideBar v-model:is-open="isDrawerOpen">
-    <nav aria-label="User settings" p-2 flex flex-col gap-3>
+    <nav :aria-label="USER_SETTINGS_LABEL" p-2 flex flex-col gap-3>
       <UiList
         :items="typeItems"
         label="Settings"
