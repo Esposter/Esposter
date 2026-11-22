@@ -19,6 +19,14 @@ Read when a workspace package is created, renamed or removed and npm has to lear
 7. **Run the pipeline now, not at the nightly.** The last run's gate is read first (`gh run view <id> --log-failed`), since the dispatch repeats it. Then `gh workflow run Release.yaml --ref main`, and `gh run view <id>` until it completes. `version` gates and bumps (`forcePublish` moves every package together; a `feat` commit since the last tag makes the bump a minor, a breaking footer a major), `push` lands the version commit and its tag on `main`, and `finish` publishes through the trust entries with provenance. That first CI publish through each entry makes it permanent. Nothing lands on `ai/queue` between the dispatch and `push`: the review fast-forwards `main` with every queue commit, and `push` refuses a version commit made on an older `main` (`main moved since the version commit was made`). Nothing is pushed or tagged then, and the fix is a re-dispatch.
 8. **Done** when the registry shows the new version on each new name with `dist.attestations` in its `dist`, and `git fetch origin main:main` brings the version commit local.
 
+## A new name the nightly reached first
+
+A release whose tag holds a name npm has never seen stops in `finish` with `E404 Not found`, and no package of that tag is published. The tag's version is then on no name, so the sequence above runs from the tag rather than the tree, with these changes:
+
+- Steps 2 to 4 are done in a worktree on a branch at the tag (`git worktree add -b <branch> <path> v<version>`), with `pnpm i --frozen-lockfile --ignore-scripts --filter "<name>..."`, then `@esposter/configuration` and the package built, so the version npm gets is the tagged code.
+- The publish is that one package's own: `pnpm publish --access public --no-git-checks --otp=<code>` from its folder. A `lerna publish from-package` there would hand-publish every name of the tag without provenance.
+- Step 7 re-runs the tag's failed `finish` (`gh run rerun <id> --failed`) instead of dispatching. lerna skips the hand-published name and publishes the rest with provenance. The new name's entry turns permanent at the next release.
+
 ## A rename
 
 The new name is a new package: the sequence above. The old name is kept: once the new name has a CI-published version and every published package that depended on the old name has a release depending on the new one, `npm deprecate "<old>@*" "Renamed to <new>" --otp=<code>`. A deprecation is reversed with an empty message and breaks no installed tree.
