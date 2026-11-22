@@ -50,6 +50,8 @@ A [TypeSafe](https://typesafe.ai) API key makes the pick use lore instead of the
 claude plugin install genshin-persona@esposter --config typesafe_key=<key>
 ```
 
+A key typed after `--config` stays in the shell's history. A key read from a file or a secret store does not.
+
 An install is a copy pinned to one commit. Uncommitted work never reaches it. To develop from a checkout, disable the installed copy and load the checkout directory for the session only, so only one of them answers:
 
 ```bash
