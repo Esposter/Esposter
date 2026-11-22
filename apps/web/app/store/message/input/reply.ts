@@ -37,7 +37,6 @@ export const useReplyStore = defineStore("message/input/reply", () => {
       getReplyMapRef(roomId).value.set(repliedMessageId, reply);
       return;
     }
-
     // A target the room has not loaded is read from the server, in the room the reply is in. It is awaited before the
     // Reply lands, so the reply never renders as deleted while its target is in flight. A failed read is logged rather
     // Than thrown, since a throwing hook keeps the message out of the list

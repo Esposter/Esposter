@@ -14,12 +14,12 @@ describe(useSlashCommandStore, () => {
     setCurrentRoomId(v7());
   });
 
-  const description = "description";
-  const icon = "icon";
+  const description = "";
+  const icon = "";
   const parameter1 = "parameter1";
   const parameter2 = "parameter2";
   const parameter3 = "parameter3";
-  const title = "title";
+  const title = "";
   const mockSlashCommand: SlashCommand = {
     description,
     icon,

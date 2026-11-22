@@ -9,6 +9,7 @@ import { useFileStore } from "#src/store/message/file/index";
 import { useThreadStore } from "#src/store/message/thread";
 import { MessageType, READ_PRESIGNED_URL_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -80,7 +81,7 @@ describe(useFileStore, () => {
     const { getSlice } = dataStore;
     const files = [
       { mimetype: MimeType.Png, name: "image" },
-      { mimetype: "video/mp4", name: "video" },
+      { mimetype: MimeType.VideoMp4, name: "video" },
       { mimetype: MimeType.Pdf, name: "document" },
       { mimetype: "audio/mpeg", name: "audio" },
     ].map(({ mimetype, name }) => ({
@@ -204,6 +205,22 @@ describe(useFileStore, () => {
     );
 
     expect([...new Set(queriedRoomIds)]).toStrictEqual([otherRoomId]);
+  });
+
+  // The Create hook is awaited before an incoming message lands, so a read that fails must not hold the message out
+  test("lands an incoming message whose urls cannot be read", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.generateDownloadFilePresignedUrls.query(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    useFileStore();
+
+    await expect(
+      MessageHookMap[Operation.Create].run(
+        createOptimisticMessage({ files: [plainTextFile], message: filename, roomId, type: MessageType.Message }, v7()),
+      ),
+    ).resolves.toBeUndefined();
   });
 
   // A rolled-back send is deleted after the Create hook's await, by which time the reader can be in another room —

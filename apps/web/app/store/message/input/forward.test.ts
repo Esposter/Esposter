@@ -8,6 +8,7 @@ import { describe, expect, test } from "vitest";
 
 describe(useForwardStore, () => {
   const { trpcMsw } = setupMswTrpc();
+  const composedMessage = "composed";
 
   // The panel keeps its draft while the forward is out, and empties once the server answers. A refused forward has
   // Nothing to put back, since the draft never left the panel
@@ -19,7 +20,7 @@ describe(useForwardStore, () => {
     setCurrentRoomId(sourceRoomId);
     const forwardStore = useForwardStore();
     const { messageInput, roomIds } = storeToRefs(forwardStore);
-    messageInput.value = "composed";
+    messageInput.value = composedMessage;
     roomIds.value = [destinationRoomId];
 
     setCurrentRoomId(destinationRoomId);
@@ -27,7 +28,7 @@ describe(useForwardStore, () => {
     expect(messageInput.value).toBe("");
     setCurrentRoomId(sourceRoomId);
 
-    expect(messageInput.value).toBe("composed");
+    expect(messageInput.value).toBe(composedMessage);
     expect(roomIds.value).toStrictEqual([destinationRoomId]);
   });
 
@@ -41,11 +42,11 @@ describe(useForwardStore, () => {
     const forwardStore = useForwardStore();
     const { clearForward } = forwardStore;
     const { messageInput, roomIds } = storeToRefs(forwardStore);
-    messageInput.value = "composed";
+    messageInput.value = composedMessage;
     roomIds.value = [destinationRoomId];
     setCurrentRoomId(destinationRoomId);
 
-    clearForward(sourceRoomId, { message: "composed", roomIds: [destinationRoomId] });
+    clearForward(sourceRoomId, { message: composedMessage, roomIds: [destinationRoomId] });
     setCurrentRoomId(sourceRoomId);
 
     expect(messageInput.value).toBe("");

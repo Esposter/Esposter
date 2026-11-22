@@ -22,6 +22,7 @@ describe(useInputStore, () => {
   const roomId1 = v7();
   const roomId2 = v7();
   const draftContent = marked.parse("draftContent", { async: false });
+  const scriptTag = "<script></script>";
 
   beforeEach(() => {
     // Frozen rather than merely faked, so a draft's `updatedAt` is an exact value instead of "some Date"
@@ -58,7 +59,7 @@ describe(useInputStore, () => {
     expect(readStoredDraft(roomId1)?.updatedAt).toStrictEqual(new Date(0));
   });
 
-  test.each([marked.parse("", { async: false }), "<script></script>"])(
+  test.each([marked.parse("", { async: false }), scriptTag])(
     "removes stored draft content that sanitizes to empty: %s",
     (content) => {
       expect.hasAssertions();
@@ -151,30 +152,27 @@ describe(useInputStore, () => {
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
     const { setDraft } = inputStore;
-    setDraft(roomId1, "<script></script>");
+    setDraft(roomId1, scriptTag);
 
     expect(readStoredDraft(roomId1)).toBeUndefined();
     expect(input.value).toBe("");
     expect(drafts.value.has(roomId1)).toBe(false);
   });
 
-  test.each(["", "<script></script>"])(
-    "removes localStorage draft when input is empty after sanitizing: %s",
-    async (content) => {
-      expect.hasAssertions();
+  test.each(["", scriptTag])("removes localStorage draft when input is empty after sanitizing: %s", async (content) => {
+    expect.hasAssertions();
 
-      setStoredDraft(roomId1, draftContent);
-      const inputStore = useInputStore();
-      const { drafts, input } = storeToRefs(inputStore);
-      input.value = content;
-      await nextTick();
-      vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
-      await nextTick();
+    setStoredDraft(roomId1, draftContent);
+    const inputStore = useInputStore();
+    const { drafts, input } = storeToRefs(inputStore);
+    input.value = content;
+    await nextTick();
+    vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
+    await nextTick();
 
-      expect(readStoredDraft(roomId1)).toBeUndefined();
-      expect(drafts.value.has(roomId1)).toBe(false);
-    },
-  );
+    expect(readStoredDraft(roomId1)).toBeUndefined();
+    expect(drafts.value.has(roomId1)).toBe(false);
+  });
 
   // The editor holds what the user typed and the store persists the sanitized form of it. The autosave writing
   // That sanitized text back into `input` would rewrite the composer under a user who is still typing in it —
@@ -195,9 +193,6 @@ describe(useInputStore, () => {
     expect(readStoredDraft(roomId1)?.content).toBe(draftContent);
   });
 
-  // The room is one of the watched sources, so switching it inside the debounce window cancels the pending save
-  // And reschedules it against the room moved to. The outgoing keystrokes stay in the map, so nothing looks
-  // Wrong until a reload finds they were never persisted
   test("persists the outgoing room's draft when the room changes within the debounce window", async () => {
     expect.hasAssertions();
 

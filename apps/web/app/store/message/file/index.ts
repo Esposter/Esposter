@@ -53,12 +53,12 @@ export const useFileStore = defineStore("message/file", () => {
   };
   // The room the message was sent to, never the current one: a subscription handler is queued behind the ones
   // Before it, so a message that arrives just before a room switch is handled after `currentRoomId` has already
-  // Moved on. Read against the wrong room the presigned url query names file ids that room does not own, so it rejects
-  // And every attachment on that message renders broken.
+  // Moved on. Read against the wrong room the presigned url query names file ids that room does not own, so it rejects,
+  // Is logged here, and every attachment on that message renders broken while the message itself still lands.
   MessageHookMap[Operation.Create].register(async ({ files, roomId }) => {
     if (files.length === 0) return;
 
-    await readFileUrls(roomId, files);
+    await getResultAsync(() => readFileUrls(roomId, files)).match(noop, console.error);
   });
   // The message's own room for the same reason: a rolled-back send is deleted after the Create hook's await
   MessageHookMap[Operation.Delete].register(({ id: messageId, roomId }) => {
@@ -118,7 +118,7 @@ export const useFileStore = defineStore("message/file", () => {
   // Whether one file is in the gallery, read from its own url and mimetype, so a tile asks of its own file and never walks the room
   const checkIsViewableFile = (roomId: RoomInMessage["id"], { id, mimetype }: Pick<FileEntity, "id" | "mimetype">) => {
     const inferredMimetype = getInferredMimetype(mimetype);
-    return Boolean(getData(roomId)?.has(id)) && (inferredMimetype === "image" || inferredMimetype === "video");
+    return Boolean(getData(roomId)?.has(id)) && ["image", "video"].includes(inferredMimetype);
   };
   const getViewableFiles = (roomId: RoomInMessage["id"]) =>
     getRoomFiles(roomId)
