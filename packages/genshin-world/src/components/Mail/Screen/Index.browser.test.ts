@@ -4,7 +4,7 @@ import type { MailSave } from "#src/models/mail/MailSave";
 import MailScreen from "#src/components/Mail/Screen/Index.vue";
 import { Currency } from "#src/models/inventory/Currency";
 import { CurrencyItemIdMap } from "#src/services/inventory/constants";
-import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
+import { ENGLISH_GAME_TEXT, fillGameTextValues, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
@@ -79,7 +79,11 @@ describe("mailScreen", () => {
     const onClaim = vi.fn<(held: MailSave) => void>();
     await render(MailScreen, { attrs: { onClaim }, props: unclaimedMailProps });
 
-    await page.getByRole("tab", { name: "Best Wishes on Your Birthday Mailing System Expires in 364 day(s)" }).click();
+    await page
+      .getByRole("tab", {
+        name: `Best Wishes on Your Birthday Mailing System ${fillGameTextValues(ENGLISH_GAME_TEXT[GameTextKey.MailExpiresInDay], 364)}`,
+      })
+      .click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailClaim] }).click();
 
     expect(onClaim).toHaveBeenCalledExactlyOnceWith(createMail(false));
@@ -141,12 +145,20 @@ describe("mailScreen", () => {
     await render(MailScreen, { props: claimedMailProps });
 
     await expect
-      .element(page.getByRole("tab", { name: "Best Wishes on Your Birthday Mailing System Gift Mail Box" }))
+      .element(
+        page.getByRole("tab", {
+          name: `Best Wishes on Your Birthday Mailing System ${ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox]}`,
+        }),
+      )
       .not.toBeInTheDocument();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();
 
     await expect
-      .element(page.getByRole("tab", { name: "Best Wishes on Your Birthday Mailing System Gift Mail Box" }))
+      .element(
+        page.getByRole("tab", {
+          name: `Best Wishes on Your Birthday Mailing System ${ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox]}`,
+        }),
+      )
       .toBeVisible();
   });
 

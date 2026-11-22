@@ -89,10 +89,10 @@ const selectTab = (isGift: boolean) => {
        mark, its mails down the left, pinned first and each with its sender and time left, and the selected mail on the
        right with its text, its date and the items it gives, claimed once. Claim All claims every mail's items the bag can
        take, and Delete Read, once confirmed, removes every read mail with nothing left to claim. Delete on a Gift Mail Box
-       mail, once its warning is confirmed, removes that one mail. A pin keeps a mail at the top of the list. The header's
-       envelope and its help and folder marks, the list's star and person marks, the item icons and the button icons are
-       the game's own art, which does not ship, so their places stay bare; the pills' dark discs are the pill's own disc
-       (`pill-disc`), and the pin's cream disc is a plain shape, drawn here -->
+       mail, once its warning is confirmed, removes that one mail. A pin keeps a mail at the top of the list. The envelope and
+       the nine marks are traced vectors, and the items' icons are the game's art, which does not ship, so an item tile draws
+       its face and count without one; the pills' dark discs are the pill's own disc (`pill-disc`), and the pin's cream disc
+       is a plain shape, drawn here -->
   <GameScreen class="mail-screen">
     <span class="band" />
     <svg class="mailbox-glyph" aria-hidden="true" viewBox="0 0 72 56" preserveAspectRatio="none">
