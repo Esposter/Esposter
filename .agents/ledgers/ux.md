@@ -34,11 +34,13 @@ server answers?** If not, and the button is not a dialog's answer, it binds `is-
 
 ## Find recipe
 
-```bash
-rg -n -A12 '<Ui(Icon)?Button\b' apps/web/app/components apps/web/app/pages -g '*.vue' | rg -i '@click="(async|.*(save|delete|remove|create|update|submit|send|revoke|publish|upload|import|generate|restore|leave|join|accept|decline))' | rg -v 'is-pending|isOpen = |Open = true|open[A-Z]\w*\('
-```
+1. A write button with no pending state. A tag's attributes run across lines, so the pattern reads one tag whole:
 
-Each hit is a question, not a finding: read the write it calls for an optimistic entry or a local-only change.
+   ```bash
+   rg -U -P --pcre2 -n '<Ui(?:Icon)?Button\b(?![^>]*is-pending)[^>]*@click="(?:async|[^"]*?(?:save|delete|remove|create|update|submit|send|revoke|publish|upload|import|generate|restore|leave|join|accept|decline|block|request))' apps/web/app/components apps/web/app/pages -g '*.vue'
+   ```
+
+   Each hit is a question, not a finding: read the write it calls. An optimistic write (`writeOptimistic`), a dialog's answer and a local-only change take no pending state. So does a save the surface queues while one is out, such as the word filter's, since `UiButton`'s pending disables the button the queue needs to stay open. A write reached through a composable's item handler, such as `friendItem.onClick`, matches no pattern, so the unit read is the only check for it.
 
 ## Coverage
 
