@@ -56,7 +56,7 @@ const resolveWorkspaceSpecifier = (specifier: string, packages: PackageSource[])
 const resolveImportSpecifier = (specifier: string, owner: PackageSource): SourceModule | undefined => {
   const matches = Object.entries(owner.imports).flatMap(([pattern, target]) => {
     const captured = matchImportPattern(pattern, specifier);
-    return captured === undefined ? [] : [{ length: pattern.length, path: target.replace("*", captured) }];
+    return captured === undefined ? [] : [{ length: pattern.length, path: target.replaceAll("*", captured) }];
   });
   const best = matches.toSorted((firstMatch, secondMatch) => secondMatch.length - firstMatch.length)[0];
   const file = best ? resolve(owner.directory, best.path) : "";
