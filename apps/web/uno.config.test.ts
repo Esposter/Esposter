@@ -123,6 +123,13 @@ describe("unoConfig", () => {
             ],
           ],
           [
+            "ui-scrim",
+            {
+              "background": "var(--ui-scrim)",
+              "opacity": "0.85",
+            },
+          ],
+          [
             "ui-pill",
             {
               "border-radius": "var(--ui-pill-radius)",
@@ -215,6 +222,7 @@ describe("unoConfig", () => {
             "heading-color": "var(--ui-heading-color)",
             "info": "var(--ui-info)",
             "lifted": "var(--ui-lifted)",
+            "media-overlay": "var(--ui-media-overlay)",
             "muted": "var(--ui-muted)",
             "panel": "var(--ui-panel)",
             "success": "var(--ui-success)",
