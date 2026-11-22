@@ -44,7 +44,7 @@ describe(useReadSearchedMessages, () => {
           const searchMessageStore = useSearchMessageStore();
           ({ count, isSearching, items, searchQuery, selectedFilters } = storeToRefs(searchMessageStore));
           const searchHistoryStore = useSearchHistoryStore();
-          createSearchHistory = vi.spyOn(searchHistoryStore, "createSearchHistory").mockResolvedValue();
+          createSearchHistory = vi.spyOn(searchHistoryStore, "createSearchHistory").mockResolvedValue(true);
           ({ readMoreSearchedMessages, readSearchedMessages } = useReadSearchedMessages());
         },
       }),
