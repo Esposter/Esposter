@@ -10,6 +10,7 @@ import {
   STYLE_SECTORS,
 } from "#src/services/pageBuilder/constants";
 import { usePageBuilderCanvasStore } from "#src/store/pageBuilder/canvas";
+import { takeOne } from "@esposter/shared";
 
 interface Props {
   resourceId: string;
@@ -45,9 +46,13 @@ const getColorValue = (property: StyleProperty) => {
   const { inheritedValue, value } = getField(property);
   return value || inheritedValue || DEFAULT_THEME_COLOR;
 };
-// Each choice of a property is a segment of its toggle group, titled as the value it sets
-const getChoiceItems = (property: StyleProperty) =>
-  (STYLE_CHOICES[property] ?? []).map((choice) => ({ title: choice, value: choice }));
+// Each choice of a property is a segment of its toggle group, titled as the value it sets, built once rather than per render
+const choiceItemsMap = Object.fromEntries(
+  Object.entries(STYLE_CHOICES).map<[string, { title: string; value: string }[]]>(([property, choices = []]) => [
+    property,
+    choices.map((choice) => ({ title: choice, value: choice })),
+  ]),
+);
 const styleState = computed({ get: () => getStyleState(resourceId), set: (value) => setStyleState(resourceId, value) });
 const stateItems = [
   { title: "Default", value: StyleState.Default },
@@ -83,7 +88,7 @@ const setSectorOpen = (title: string, isOpen: boolean) => {
           />
           <UiToggleGroup
             v-else-if="property in STYLE_CHOICES"
-            :items="getChoiceItems(property)"
+            :items="takeOne(choiceItemsMap, property)"
             :label="property"
             :model-value="getField(property).value"
             @update:model-value="(value) => setField(property, value)"
@@ -119,7 +124,7 @@ const setSectorOpen = (title: string, isOpen: boolean) => {
             :model-value="getField(property).value"
             @update:model-value="(value) => setField(property, value)"
           />
-          <UiButton v-if="getField(property).value !== ''" @click="resetField(property)">Reset</UiButton>
+          <UiButton v-if="getField(property).value" @click="resetField(property)">Reset</UiButton>
         </div>
       </div>
     </UiCollapsible>

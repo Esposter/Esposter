@@ -2,10 +2,17 @@
 import type { SuggestionProps } from "@tiptap/suggestion";
 
 import { SuggestionTrigger } from "#src/models/shared/SuggestionTrigger";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getSuggestionListTitle } from "#src/services/message/getSuggestionListTitle";
 import { takeOne } from "@esposter/shared";
 
-const { command, items } = defineProps<Pick<SuggestionProps<string>, "command" | "items" | "query">>();
+// @TODO: https://github.com/vuejs/core/issues/11371
+interface Props {
+  command: SuggestionProps<string>["command"];
+  items: SuggestionProps<string>["items"];
+  query: SuggestionProps<string>["query"];
+}
+const { command, items } = defineProps<Props>();
 const selectItem = (index: number) => {
   command(takeOne(items, index));
 };
@@ -31,7 +38,7 @@ defineExpose({ onKeyDown });
       @click="selectItem(index)"
       @mousedown.prevent
     >
-      <UiItemContent :title="column" />
+      <UiItemContent :meaning="UiIconMeaning.Tag" :title="column" />
     </div>
   </MessageModelMessageSuggestionList>
 </template>

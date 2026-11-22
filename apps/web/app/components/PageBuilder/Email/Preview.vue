@@ -61,6 +61,6 @@ defineExpose({ findings });
       :style="{ width: frameWidth }"
       title="Email preview"
     />
-    <UiSkeleton v-else-if="!isRefused" h-full w-full />
+    <UiSkeleton v-else-if="!isRefused" shrink-0 h-full w-full />
   </div>
 </template>
