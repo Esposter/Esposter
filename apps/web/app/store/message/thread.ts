@@ -2,6 +2,7 @@ import type { ClientMessage } from "#src/models/message/ClientMessage";
 import type { ClientThread } from "#src/models/message/ClientThread";
 
 import { RightDrawer } from "#src/models/message/RightDrawer";
+import { MutationStatus } from "#src/models/shared/MutationStatus";
 import { createInFlightChanges } from "#src/services/message/createInFlightChanges";
 import { messageHolderRegistry } from "#src/services/message/messageHolderRegistry";
 import { MessageHookMap } from "#src/services/message/MessageHookMap";
@@ -9,7 +10,7 @@ import { updateMessageCopy } from "#src/services/message/updateMessageCopy";
 import { useLayoutStore } from "#src/store/layout";
 import { useThreadFollowStore } from "#src/store/message/threadFollow";
 import { useMessageLayoutStore } from "#src/store/message/ui/layout";
-import { Operation, withFinalizerAsync } from "@esposter/shared";
+import { Operation } from "@esposter/shared";
 
 export const useThreadStore = defineStore("message/thread", () => {
   // The drawer shows one thread at a time, so each open is a run of this scope: a newer open aborts the read the one
@@ -20,7 +21,6 @@ export const useThreadStore = defineStore("message/thread", () => {
   // One key for the drawer, which reads one thread at a time, so a newer open's topic watch replaces the one before it
   const readThreadKey = Symbol("readThread");
   const isReadThreadPending = ref(false);
-  let latestReadThreadId = 0;
   const activeThreadRootId = ref<0 | ClientMessage["id"]>(0);
   // The open thread's read takes the room's deletes and edits made while it is in flight into its answer as it lands
   const inFlightChanges = createInFlightChanges();
@@ -61,30 +61,29 @@ export const useThreadStore = defineStore("message/thread", () => {
       messageLayoutStore.previousRightDrawer = messageLayoutStore.rightDrawer;
     messageLayoutStore.rightDrawer = RightDrawer.Thread;
     layoutStore.isRightDrawerOpen = true;
-    // The flag belongs to the newest read: an aborted one settles after the read that replaced it, and must not clear
-    // It
-    const readThreadId = ++latestReadThreadId;
+    // The flag belongs to the newest read: a read a newer open superseded settles dropped, and that newer read clears it
     isReadThreadPending.value = true;
-    await Promise.all([
-      withFinalizerAsync(
-        () =>
-          executeQuery(() => inFlightChanges.read(roomId, readThreadMessages, (answer) => answer), {
-            key: readThreadKey,
-            onSuccess: ({ messages }) => {
-              // The read spans the whole open, so the user can close the drawer while it is still in flight — a
-              // Response applied afterwards reopens a thread they just dismissed
-              if (!activeThreadRootId.value) return;
-              // A reply can land while the read is in flight, and the create hook has already pushed it here. The
-              // Response is a snapshot from before it, so assigning it wholesale drops the reply until a reopen
-              const readMessageIds = new Set(messages.map(({ id }) => id));
-              threadMessages.value = [...messages, ...threadMessages.value.filter(({ id }) => !readMessageIds.has(id))];
-            },
-            runScope: readThreadScope,
-          }),
-        () => {
-          if (readThreadId === latestReadThreadId) isReadThreadPending.value = false;
+    const readThread = async () => {
+      const { status } = await executeQuery(
+        () => inFlightChanges.read(roomId, readThreadMessages, (answer) => answer),
+        {
+          key: readThreadKey,
+          onSuccess: ({ messages }) => {
+            // The read spans the whole open, so the user can close the drawer while it is still in flight — a
+            // Response applied afterwards reopens a thread they just dismissed
+            if (!activeThreadRootId.value) return;
+            // A reply can land while the read is in flight, and the create hook has already pushed it here. The
+            // Response is a snapshot from before it, so assigning it wholesale drops the reply until a reopen
+            const readMessageIds = new Set(messages.map(({ id }) => id));
+            threadMessages.value = [...messages, ...threadMessages.value.filter(({ id }) => !readMessageIds.has(id))];
+          },
+          runScope: readThreadScope,
         },
-      ),
+      );
+      if (status !== MutationStatus.Dropped) isReadThreadPending.value = false;
+    };
+    await Promise.all([
+      readThread(),
       // The pane's header shows the follow toggle, so the follow state it reads loads with the thread — cached per
       // Room, so this is free after the first thread
       readFollowedThreads(roomId),

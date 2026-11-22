@@ -89,8 +89,10 @@ export const useCursorPaginationOperationData = <TItem>(
   // Of another partition replaces the watch of the one before it
   const watchTopics = useWatchTopics();
   const topicsTarget = Symbol("readItems");
-  // The newest refresh of the first page: a refresh a newer one has overtaken lands nothing, whichever settles last
-  let latestRefreshId = 0;
+  // The first page's reads run under one run scope, so a refresh a newer one has overtaken lands nothing, whichever
+  // Settles last
+  const firstPageScope = useRunScope();
+  const refreshKey = Symbol("refresh");
   const readItems = async (
     query: () => Promise<Page<TItem>>,
     { key, onComplete, onTopicChange }: ReadItemsOptions<TItem> = {},
@@ -108,20 +110,26 @@ export const useCursorPaginationOperationData = <TItem>(
     };
     // One read of the first page: `apply` lands its rows, then its topics are watched. A read issued against data
     // A reset has retired answers a partition that no longer holds that data, so it lands nothing and watches nothing
+    // Under a `runKey` a read lands only while it is that key's newest run
     const readFirstPage = (
       apply: (read: { issued: Page<TItem>; page: Page<TItem>; topicReads: TopicRead[] }) => Promisable<void>,
-      isSuperseded = () => false,
+      runKey?: PropertyKey,
     ) => {
       const issuedCursorPaginationData = boundCursorPaginationData.value;
-      return getResultAsync(async () => {
-        const { reads: topicReads, result: page } = await collectTopics(query);
-        // Answers a reset that landed while the read was in flight, or a newer read that overtook it: the rows are of
-        // The order the reset left behind, or the newer read's own
-        if (retiredCursorPaginationData.has(issuedCursorPaginationData) || isSuperseded()) return;
+      return getResultAsync(() =>
+        firstPageScope.run(
+          () => collectTopics(query),
+          async ({ reads: topicReads, result: page }) => {
+            // Answers a reset that landed while the read was in flight: the rows are of the order the reset left behind
+            if (retiredCursorPaginationData.has(issuedCursorPaginationData)) return;
 
-        await apply({ issued: issuedCursorPaginationData, page, topicReads });
-        watchTopics(topicsTarget, topicReads, getSynchronizedFunction(changeOnTopic));
-      });
+            await apply({ issued: issuedCursorPaginationData, page, topicReads });
+            watchTopics(topicsTarget, topicReads, getSynchronizedFunction(changeOnTopic));
+          },
+          noop,
+          runKey,
+        ),
+      );
     };
     // A write that changed a topic the first page came from reads it again and updates, by id, the rows it names: a
     // Reader who has paged on keeps their place, since the later pages and the cursor are left as they are. A row
@@ -157,19 +165,15 @@ export const useCursorPaginationOperationData = <TItem>(
     // A failed read is recorded rather than thrown, so component setup never fails on it and a retry is a plain call;
     // The tRPC link chain still alerts it
     const refresh = async () => {
-      const refreshId = ++latestRefreshId;
       isPending.value = true;
       isError.value = false;
-      await readFirstPage(
-        async ({ page, topicReads }) => {
-          await storeCursorPaginationData(page);
-          // The page the html was rendered from rides to the client with the reads it came from, so hydration adopts
-          // The rows already on screen, and watches their topics from the time the render read them, with no second read
-          if (key && checkIsServer())
-            nuxtApp.payload.data[key] = { page, reads: topicReads } satisfies HydratedPage<TItem>;
-        },
-        () => refreshId !== latestRefreshId,
-      ).match(noop, () => {
+      await readFirstPage(async ({ page, topicReads }) => {
+        await storeCursorPaginationData(page);
+        // The page the html was rendered from rides to the client with the reads it came from, so hydration adopts
+        // The rows already on screen, and watches their topics from the time the render read them, with no second read
+        if (key && checkIsServer())
+          nuxtApp.payload.data[key] = { page, reads: topicReads } satisfies HydratedPage<TItem>;
+      }, refreshKey).match(noop, () => {
         isError.value = true;
       });
       isPending.value = false;

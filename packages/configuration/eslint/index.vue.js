@@ -7,6 +7,7 @@ import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDat
 import restrictedFocusSyntaxes from "@esposter/configuration/eslint/restrictedFocusSyntaxes.js";
 import restrictedModuleSyntaxes from "@esposter/configuration/eslint/restrictedModuleSyntaxes.js";
 import restrictedOverloadSyntaxes from "@esposter/configuration/eslint/restrictedOverloadSyntaxes.js";
+import restrictedSequencingSyntaxes from "@esposter/configuration/eslint/restrictedSequencingSyntaxes.js";
 import restrictedSourceSyntaxes from "@esposter/configuration/eslint/restrictedSourceSyntaxes.js";
 import restrictedStoreCallSyntaxes from "@esposter/configuration/eslint/restrictedStoreCallSyntaxes.js";
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
@@ -70,6 +71,7 @@ export default withNuxt(plugins)
         "error",
         ...scriptSyntaxBans,
         ...restrictedModuleSyntaxes,
+        ...restrictedSequencingSyntaxes,
         ...restrictedSourceSyntaxes,
         ...restrictedStoreSyntaxes,
         ...restrictedWatchSyntaxes,
@@ -85,6 +87,7 @@ export default withNuxt(plugins)
         ...scriptSyntaxBans,
         ...restrictedModuleSyntaxes,
         ...restrictedSourceSyntaxes,
+        ...restrictedSequencingSyntaxes,
         ...restrictedStoreCallSyntaxes,
         ...restrictedWatchSyntaxes,
       ],
@@ -116,6 +119,7 @@ export default withNuxt(plugins)
         ...scriptSyntaxBans,
         ...restrictedConstantSyntaxes,
         ...restrictedFocusSyntaxes,
+        ...restrictedSequencingSyntaxes,
         ...restrictedSourceSyntaxes,
         ...restrictedDateSyntaxes,
         ...restrictedStoreSyntaxes,
@@ -134,6 +138,7 @@ export default withNuxt(plugins)
         ...restrictedConstantSyntaxes,
         ...restrictedFocusSyntaxes,
         ...restrictedModuleSyntaxes,
+        ...restrictedSequencingSyntaxes,
         ...restrictedSourceSyntaxes,
         ...restrictedStoreSyntaxes,
         ...restrictedWatchSyntaxes,

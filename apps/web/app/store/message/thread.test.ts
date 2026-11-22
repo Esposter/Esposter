@@ -134,6 +134,31 @@ describe(useThreadStore, () => {
     expect(threadMessages.value.map(({ id }) => id)).toStrictEqual([laterReply.id]);
   });
 
+  test("keeps the drawer pending while the newest open's read is in flight, once an earlier one settles", async () => {
+    expect.hasAssertions();
+
+    const laterThreadRootId = 2;
+    const earlierRead = Promise.withResolvers<ClientMessage[]>();
+    const laterRead = Promise.withResolvers<ClientMessage[]>();
+    trpcMsw.message.readThread.query(({ input }) =>
+      input.threadRootId === threadRootId ? earlierRead.promise : laterRead.promise,
+    );
+    await mountThreadDrawer();
+    const { isReadThreadPending } = storeToRefs(useThreadStore());
+    const openThread = useOpenThread();
+    const earlierOpen = openThread(roomId, threadRootId);
+    const laterOpen = openThread(roomId, laterThreadRootId);
+    earlierRead.resolve([]);
+    await earlierOpen;
+
+    expect(isReadThreadPending.value).toBe(true);
+
+    laterRead.resolve([]);
+    await laterOpen;
+
+    expect(isReadThreadPending.value).toBe(false);
+  });
+
   // A reply renders its attachments, the message it quotes and its reactions from the room's metadata, and a thread
   // Can hold replies the room's list never paged to — so the open reads them the way a page read does
   test("reads the metadata of the replies it opens on", async () => {
