@@ -11,11 +11,6 @@ interface Props {
 const { editor } = defineProps<Props>();
 const isLinkMenuOpen = ref(false);
 const linkUrl = ref("");
-const applyLink = () => {
-  if (linkUrl.value) editor?.chain().focus().extendMarkRange("link").setLink({ href: linkUrl.value }).run();
-  else editor?.chain().focus().extendMarkRange("link").unsetLink().run();
-  isLinkMenuOpen.value = false;
-};
 </script>
 
 <template>
@@ -32,11 +27,22 @@ const applyLink = () => {
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Link" />
     </template>
-    <form flex gap-2 items-end @submit.prevent="applyLink()">
+    <UiForm
+      flex
+      gap-2
+      items-end
+      @submit="
+        () => {
+          if (linkUrl) editor?.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run();
+          else editor?.chain().focus().extendMarkRange('link').unsetLink().run();
+          isLinkMenuOpen = false;
+        }
+      "
+    >
       <div w-64>
         <UiTextField v-model="linkUrl" is-autofocus label="Link address" placeholder="https://example.com" />
       </div>
       <UiButton :variant="UiButtonVariant.Accent" type="submit">Apply</UiButton>
-    </form>
+    </UiForm>
   </UiPopover>
 </template>

@@ -11,10 +11,6 @@ interface Props {
 const { editor } = defineProps<Props>();
 const isAltTextMenuOpen = ref(false);
 const altText = ref("");
-const applyAltText = () => {
-  editor?.chain().focus().updateAttributes("image", { alt: altText.value }).run();
-  isAltTextMenuOpen.value = false;
-};
 </script>
 
 <template>
@@ -31,11 +27,21 @@ const applyAltText = () => {
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Edit" />
     </template>
-    <form flex gap-2 items-end @submit.prevent="applyAltText()">
+    <UiForm
+      flex
+      gap-2
+      items-end
+      @submit="
+        () => {
+          editor?.chain().focus().updateAttributes('image', { alt: altText }).run();
+          isAltTextMenuOpen = false;
+        }
+      "
+    >
       <div w-64>
         <UiTextField v-model="altText" is-autofocus label="Alt text" placeholder="Describe the image" />
       </div>
       <UiButton :variant="UiButtonVariant.Accent" type="submit">Apply</UiButton>
-    </form>
+    </UiForm>
   </UiPopover>
 </template>
