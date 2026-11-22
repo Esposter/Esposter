@@ -51,5 +51,5 @@ export const useColumnActionItems = () => {
       { ...deleteColumnItem, isGroupStart: true },
     ];
   };
-  return { getColumnActionItems };
+  return getColumnActionItems;
 };

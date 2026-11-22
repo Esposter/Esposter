@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { createDefaultSheetSettings } from "#shared/services/resource/sheet/createDefaultSheetSettings";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { DataSourceConfigurationMap } from "#src/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import {
   DataSourceTypeItemCategoryDefinitionMap,
   DataSourceTypeItemCategoryDefinitions,
@@ -10,7 +11,7 @@ import { useSheetStore } from "#src/store/resource/sheet/index";
 const sheetStore = useSheetStore();
 const { loadContent, saveSheet } = sheetStore;
 const { settings, sheetResource } = storeToRefs(sheetStore);
-const configuration = useDataSourceConfiguration(settings);
+const configuration = computed(() => DataSourceConfigurationMap[settings.value.type]);
 // A format such as JSON reads every file the same way, so its card says so rather than standing empty
 const hasOptions = computed(() => Object.keys(configuration.value.schema.shape).length > 0);
 // Autosave settings edits; the store's dirty check drops the load echo, so no loading guard is needed here

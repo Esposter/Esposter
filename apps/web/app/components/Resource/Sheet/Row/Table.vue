@@ -110,7 +110,7 @@ const getCellProps = (tableColumn: UiDataTableColumn<ToData<Row>>, row: ToData<R
   };
 };
 
-const { getColumnActionItems } = useColumnActionItems();
+const getColumnActionItems = useColumnActionItems();
 const { getContextMenuProps } = useContextMenu();
 // A data column's header is the column itself, so a right-click on it opens the column's commands
 const getHeaderProps = (tableColumn: UiDataTableColumn<ToData<Row>>) => {

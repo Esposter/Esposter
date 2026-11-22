@@ -39,7 +39,7 @@ const { item: editingColumn } = useSingletonDialog(editingColumnName, () =>
 );
 const reorderColumns = useReorderColumns();
 const isDraggable = computed(() => !search.value && sortBy.value.length === 0);
-const { getColumnActionItems } = useColumnActionItems();
+const getColumnActionItems = useColumnActionItems();
 const { getContextMenuProps } = useContextMenu();
 </script>
 
