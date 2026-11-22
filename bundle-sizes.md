@@ -4,18 +4,18 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                      |   Bytes |    KiB |
 | :------------------------- | :------------------------ | ------: | -----: |
-| genshin-world              | **/*.js                   | 4141180 | 4044.1 |
-| genshin-world              | **/*.d.ts                 | 2822319 | 2756.2 |
+| genshin-world              | **/*.js                   | 4141692 | 4044.6 |
+| genshin-world              | **/*.d.ts                 | 2822579 | 2756.4 |
 | @esposter/db               | **/*.js                   |  826760 |  807.4 |
 | genshin-text               | **/*.js                   |  574953 |  561.5 |
 | genshin-engine             | **/*.js                   |  358702 |  350.3 |
 | genshin-interface          | **/*.d.ts                 |  338916 |  331.0 |
 | vue-phaserjs               | **/*.d.ts                 |  324675 |  317.1 |
-| genshin-world              | index.d.ts                |  283853 |  277.2 |
-| genshin-world              | style.css                 |  272935 |  266.5 |
+| genshin-world              | index.d.ts                |  283767 |  277.1 |
+| genshin-world              | style.css                 |  272934 |  266.5 |
 | genshin-interface          | **/*.js                   |  267986 |  261.7 |
 | @esposter/db-schema        | **/*.js                   |  233476 |  228.0 |
-| genshin-world              | index.js                  |  232877 |  227.4 |
+| genshin-world              | index.js                  |  232859 |  227.4 |
 | genshin-interface          | style.css                 |  194226 |  189.7 |
 | genshin-engine             | **/*.d.ts                 |  134341 |  131.2 |
 | @esposter/shared           | **/*.js                   |  131855 |  128.8 |
@@ -113,9 +113,9 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | @esposter/shared-node      | bench-smoke-provider.js   |    1184 |    1.2 |
 | genshin-engine             | terrainWorker.js          |    1171 |    1.1 |
 | genshin-engine             | terrainWorker.d.ts        |    1170 |    1.1 |
+| genshin-world              | sceneExport.d.ts          |    1153 |    1.1 |
 | keyframe-store             | index.js                  |    1148 |    1.1 |
 | @esposter/db-mock          | index.js                  |    1075 |    1.0 |
-| genshin-world              | sceneExport.d.ts          |    1018 |    1.0 |
 | grid-engine-headless       | index.d.ts                |     888 |    0.9 |
 | parse-tmx                  | parseTmx.js               |     877 |    0.9 |
 | trpc-msw                   | index.js                  |     805 |    0.8 |
@@ -124,12 +124,12 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | @esposter/db-schema        | createMetadataSchema.js   |     717 |    0.7 |
 | genshin-world              | save.d.ts                 |     712 |    0.7 |
 | @esposter/db-mock          | createMockDb.js           |     664 |    0.6 |
+| genshin-world              | sceneExport.js            |     659 |    0.6 |
 | genshin-world              | save.js                   |     589 |    0.6 |
 | @esposter/db-schema        | sqliteTable.js            |     574 |    0.6 |
 | vue-grid-layout-headless   | index.js                  |     563 |    0.5 |
 | @esposter/shared-node      | reporter.js               |     554 |    0.5 |
 | @esposter/shared-node      | find-repository-root.js   |     539 |    0.5 |
-| genshin-world              | sceneExport.js            |     524 |    0.5 |
 | @esposter/shared-node      | cache.js                  |     516 |    0.5 |
 | @esposter/shared-node      | cache.d.ts                |     515 |    0.5 |
 | nuxt-security-module       | index.d.ts                |     492 |    0.5 |
@@ -167,4 +167,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 162 files, 13132253 bytes, 12824.5 KiB, 12.52 MiB
+**Total:** 162 files, 13133190 bytes, 12825.4 KiB, 12.52 MiB
