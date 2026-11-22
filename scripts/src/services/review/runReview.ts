@@ -7,12 +7,7 @@ import { ReviewWindowStatus } from "#src/models/review/ReviewWindowStatus";
 import { checkIsBacklogOwed } from "#src/services/review/checkIsBacklogOwed";
 import { checkIsMainAncestor } from "#src/services/review/checkIsMainAncestor";
 import { checkIsRecordVerified } from "#src/services/review/checkIsRecordVerified";
-import {
-  REVIEW_FIX_MATRIX_CAP,
-  REVIEW_ISSUE_LABEL,
-  REVIEW_RUN_DEADLINE,
-  REVIEW_RUN_WINDOW_CAP,
-} from "#src/services/review/constants";
+import { REVIEW_FIX_MATRIX_CAP, REVIEW_ISSUE_LABEL, REVIEW_RUN_DEADLINE } from "#src/services/review/constants";
 import { dispatchReview } from "#src/services/review/dispatchReview";
 import { formatReviewWindow } from "#src/services/review/formatReviewWindow";
 import { getFindings } from "#src/services/review/getFindings";
@@ -20,6 +15,7 @@ import { getMode } from "#src/services/review/getMode";
 import { getNewlyPassedWindowIndices } from "#src/services/review/getNewlyPassedWindowIndices";
 import { getPassedWindowCount } from "#src/services/review/getPassedWindowCount";
 import { getReviewWindowStatus } from "#src/services/review/getReviewWindowStatus";
+import { getRunWindowCount } from "#src/services/review/getRunWindowCount";
 import { getWindowRow } from "#src/services/review/getWindowRow";
 import { advanceMain } from "#src/services/review/git/advanceMain";
 import { assertCheckoutIsDisposable } from "#src/services/review/git/assertCheckoutIsDisposable";
@@ -97,7 +93,13 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
 
   if (!isDryRun) checkoutQueue();
   const owedWindows = readReviewWindows(range);
-  const windows = owedWindows.slice(0, REVIEW_RUN_WINDOW_CAP);
+  // In steady mode `main` moves only to a window's end that holds it and a current record. Once `main` was merged into the
+  // Queue, the windows before the merge do not hold it, so they wait for the window that does. A window whose end holds a
+  // Stale record waits the same way, for a window that ends on a current one. A range run never moves `main`, so nothing waits.
+  const advanceables = owedWindows.map(
+    ({ end }) => mode !== ReviewMode.Steady || (checkIsMainAncestor(end) && checkIsRecordVerified(end, verifiedTip)),
+  );
+  const windows = owedWindows.slice(0, getRunWindowCount(advanceables));
   const hasWindowsPastCap = owedWindows.length > windows.length;
   if (windows.length === 0) {
     console.info("nothing owed");
@@ -144,15 +146,7 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
     );
   };
 
-  // In steady mode `main` moves only to a window's end that holds it and a current record. Once `main` was merged into the
-  // Queue, the windows before the merge do not hold it, so they wait for the window that does. A window whose end holds a
-  // Stale record waits the same way, for a window that ends on a current one. A range run never moves `main`, so nothing waits.
-  const checkIsAdvanceable = (index: number): boolean => {
-    if (mode !== ReviewMode.Steady) return true;
-
-    const { end } = takeOne(windows, index);
-    return checkIsMainAncestor(end) && checkIsRecordVerified(end, verifiedTip);
-  };
+  const checkIsAdvanceable = (index: number): boolean => takeOne(advanceables, index);
 
   // The one place the run acts on windows, called as each window settles. The pool's callbacks are synchronous, so the
   // Issues and advances run one at a time in window order without a queue of their own. A window's issues open before
