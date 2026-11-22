@@ -205,29 +205,12 @@ const { arrivedState } = useScroll(scrollContainer);
 // A sticky first column sits past the selection column, which sticks beside it, so it starts where that one ends
 const selectionHeaderCell = useTemplateRef("selectionHeaderCell");
 const { width: selectionColumnWidth } = useElementSize(selectionHeaderCell, undefined, { box: "border-box" });
-// A column the reader has not sized yet is as wide as its content, which its handle starts a drag or a step from
 const headerCells = useTemplateRef("headerCells");
-const measuredColumnKeyWidthMap = ref<Record<string, number>>({});
-useResizeObserver(
-  () => (isResizable ? (headerCells.value ?? []) : []),
-  (entries) => {
-    const newMeasuredColumnKeyWidthMap = { ...measuredColumnKeyWidthMap.value };
-    for (const { target } of entries)
-      if (target instanceof HTMLElement && target.dataset.columnKey)
-        newMeasuredColumnKeyWidthMap[target.dataset.columnKey] = target.offsetWidth;
-    measuredColumnKeyWidthMap.value = newMeasuredColumnKeyWidthMap;
-  },
-);
+const { getColumnWidth } = useDataTableColumnWidth(headerCells, () => isResizable, columnKeyWidthMap);
 // A sticky first column pins its cells in every row: the selection column pins beside it, and the first data column
 // Pins too, with the edge its shade sits on
 const selectionPinClass = computed(() => ({ pinned: isFirstColumnSticky }));
 const getColumnPinClass = (columnIndex: number) => ({ "pinned pinned-edge": isFirstColumnSticky && columnIndex === 0 });
-const getColumnWidth = (key: string) =>
-  columnKeyWidthMap.value[key] ??
-  Math.min(
-    Math.max(measuredColumnKeyWidthMap.value[key] ?? MIN_DATA_TABLE_COLUMN_WIDTH, MIN_DATA_TABLE_COLUMN_WIDTH),
-    MAX_DATA_TABLE_COLUMN_WIDTH,
-  );
 // The rows a grid walks, those drawn, in the order they are drawn
 const navigableItems = computed(() =>
   groups.value.flatMap((group) => (closedGroupValues.value.has(group.value) ? [] : group.items)),

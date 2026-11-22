@@ -3,7 +3,7 @@ import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 import type { UiCalendarSlotEmits } from "#src/models/ui/UiCalendarSlotEmits";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
-import { CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION } from "#src/services/ui/constants";
+import { CALENDAR_NO_EVENTS, CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION } from "#src/services/ui/constants";
 import { checkHasChordModifier } from "#src/util/dom/checkHasChordModifier";
 import { takeOne } from "@esposter/shared";
 
@@ -156,7 +156,7 @@ onMounted(() => {
           v-for="day of days"
           :key="day.toString()"
           :day
-          :events="eventDayMap.get(day.toString()) ?? []"
+          :events="eventDayMap.get(day.toString()) ?? CALENDAR_NO_EVENTS"
           :focused-slot
           :is-creatable
           :is-today="day.equals(today)"

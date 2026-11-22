@@ -2,7 +2,7 @@
 import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 import type { UiCalendarSlotEmits } from "#src/models/ui/UiCalendarSlotEmits";
 
-import { CALENDAR_FIRST_DAY_OF_WEEK } from "#src/services/ui/constants";
+import { CALENDAR_FIRST_DAY_OF_WEEK, CALENDAR_NO_EVENTS } from "#src/services/ui/constants";
 import { getNextGridDate } from "#src/util/date/getNextGridDate";
 import { createCalendar } from "@vuetify/v0";
 
@@ -93,7 +93,7 @@ const onGridKeydown = useGridKeyboard({
           v-for="{ date: day, outside } of week"
           :key="day.toString()"
           :day
-          :events="eventDayMap.get(day.toString()) ?? []"
+          :events="eventDayMap.get(day.toString()) ?? CALENDAR_NO_EVENTS"
           :is-creatable
           :is-focused="day.equals(focusedDay)"
           :is-outside="outside"

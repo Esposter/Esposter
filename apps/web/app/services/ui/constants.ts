@@ -1,3 +1,4 @@
+import type { UiCalendarEvent } from "#src/models/ui/UiCalendarEvent";
 import type { UiDialogContext } from "#src/models/ui/UiDialogContext";
 import type { UiStyle } from "#src/models/ui/UiStyle";
 
@@ -130,6 +131,8 @@ export const HISTORY_REDO_SHORTCUT = "cmd+shift+z";
 export const HISTORY_REDO_Y_SHORTCUT = "cmd+y";
 // How often a calendar reads the clock, so today's ring and the current-time line move on without a reload
 export const CALENDAR_CLOCK_INTERVAL_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
+// The events of a day with none, the one array every empty day's cell takes rather than a fresh one per render
+export const CALENDAR_NO_EVENTS: UiCalendarEvent[] = [];
 // The colour a colour field's picker shows for a colour the browser cannot read: the black a picker holds for a value
 // It refuses
 export const DEFAULT_PICKER_COLOR = "#000000";
