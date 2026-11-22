@@ -19,7 +19,7 @@ const { excludedUserIds = [], isMultiple } = defineProps<Props>();
 // Is on, as for an HTML attribute; only an absent or bound-false prop picks one
 const isMultipleMode = computed(() => isMultiple !== undefined && isMultiple !== false);
 const friendStore = useFriendStore();
-const { friends } = storeToRefs(friendStore);
+const { friends, friendsError } = storeToRefs(friendStore);
 const searchQuery = ref("");
 const excludedUserIdSet = computed(() => new Set(excludedUserIds));
 const friendItems = computed(() =>
@@ -64,8 +64,7 @@ await readFriends();
 
 <template>
   <div flex flex-col>
-    <!-- The field stays at the top of the body as the list scrolls under it. Its own fill is translucent, so the band
-      behind it takes the frame's surface -->
+    <!-- The field stays at the top of the body as the list scrolls under it -->
     <div pb-2 bg-lifted top-0 sticky z-1>
       <UiTextField v-model="searchQuery" is-autofocus label="Search friends" :type="UiTextFieldType.Search" />
     </div>
@@ -79,6 +78,7 @@ await readFriends();
       :model-value="selectedUserIds"
       @select="(id) => toggleFriend(id)"
     />
+    <UiErrorState v-else-if="friendsError" :error="friendsError" @retry="readFriends()" />
     <UiEmptyState
       v-else
       :description="searchQuery ? 'No friend of yours goes by that name.' : undefined"

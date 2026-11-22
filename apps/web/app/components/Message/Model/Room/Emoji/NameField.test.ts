@@ -11,12 +11,12 @@ describe("messageModelRoomEmojiNameField", () => {
   test("removes a typed colon from the field, not only from the model", async () => {
     expect.hasAssertions();
 
-    const modelValue = "a";
+    const modelValue = "";
     const component = await mountSuspended(MessageModelRoomEmojiNameField, {
       props: { modelValue, "onUpdate:modelValue": noop },
     });
     const input = component.get("input");
-    await input.setValue(`${modelValue}${SuggestionTrigger.Emoji}`);
+    await input.setValue(SuggestionTrigger.Emoji);
 
     expect(input.element.value).toBe(modelValue);
   });

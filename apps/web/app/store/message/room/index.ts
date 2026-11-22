@@ -94,14 +94,19 @@ export const useRoomStore = defineStore("message/room", () => {
   };
   const isJoinRoomPending = ref(false);
   // The room's id is the server's, so the room is drawn once the server answers with it
-  const createRoom = (input: CreateRoomInput) =>
-    writeAwaited(
+  // The room list changes only once the server answers, so the create button holds its pending state until then
+  const isCreateRoomPending = ref(false);
+  const createRoom = async (input: CreateRoomInput) => {
+    isCreateRoomPending.value = true;
+    await writeAwaited(
       async () => {
         const newRoom = await $trpc.room.createRoom.mutate(input);
         return [createArrival(roomTable, newRoom), ...(await readMyMembershipArrivals(newRoom.id))];
       },
       { awaitedBecause: AwaitedReason.ServerIssuedValue, onError: createErrorAlert },
     );
+    isCreateRoomPending.value = false;
+  };
   const joinRoom = async (input: JoinRoomInput) => {
     let joinedRoomId = "";
     isJoinRoomPending.value = true;
@@ -145,6 +150,7 @@ export const useRoomStore = defineStore("message/room", () => {
     deleteRoom,
     getSlice,
     isCreator,
+    isCreateRoomPending,
     isJoinRoomPending,
     joinRoom,
     leaveRoom,

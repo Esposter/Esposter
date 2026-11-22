@@ -24,9 +24,8 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
     maxFileSizeBytes,
   };
 
-  // Both fields save through one mutation key, so overlapping saves mark the earlier call
-  // Stale — it never rolls back and never alerts, leaving the rejected value rendered as if it persisted.
-  // Queued saves each settle as the latest for their key
+  // Both fields save through one mutation key, so an overlapping save queues behind the one in flight, and each
+  // Rejection alerts
   test("surfaces a rejected save even when the next control saves straight after", async () => {
     expect.hasAssertions();
 

@@ -22,7 +22,7 @@ const moderationLogStore = useModerationLogStore();
 const { hasMore, items } = storeToRefs(moderationLogStore);
 const { readMembers } = useReadMembers();
 
-await Promise.all([readModerationLog(), readMembers()]);
+const [{ isError, refresh }] = await Promise.all([readModerationLog(), readMembers()]);
 </script>
 
 <template>
@@ -33,8 +33,9 @@ await Promise.all([readModerationLog(), readMembers()]);
       v-model:target-user-id="targetUserId"
       @update="readModerationLog()"
     />
+    <UiErrorState v-if="isError" error="The audit log could not be loaded." @retry="refresh()" />
     <UiEmptyState
-      v-if="items.length === 0"
+      v-else-if="items.length === 0"
       :meaning="UiIconMeaning.Recent"
       :title="type || actorUserId || targetUserId ? 'No audit log entries match the filters.' : 'No audit log entries.'"
     />

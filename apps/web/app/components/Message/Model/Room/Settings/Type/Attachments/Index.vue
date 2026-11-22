@@ -32,7 +32,6 @@ const isMaxFileSizeValid = computed(() => maxFileSizeRules.every((rule) => rule(
 const save = () => {
   const isMaxFileSizeBytesSavable = isMaxFileSizeBytesDirty.value && isMaxFileSizeValid.value;
   if (!isMaxFileSizeBytesSavable && !isAllowedMimeCategoriesDirty.value) return;
-
   // The fields this session edited and no others, so one another client changed since the panel opened is not written
   // Back with the value this panel was opened on. A size the field refuses stays in the draft under its message
   saveRoom({
@@ -70,8 +69,8 @@ const save = () => {
           :label="category"
           :model-value="editedAllowedMimeCategories.includes(category)"
           @update:model-value="
-            (isAllowed) => {
-              editedAllowedMimeCategories = isAllowed
+            (newModelValue) => {
+              editedAllowedMimeCategories = newModelValue
                 ? MimeCategories.filter(
                     (mimeCategory) => mimeCategory === category || editedAllowedMimeCategories.includes(mimeCategory),
                   )

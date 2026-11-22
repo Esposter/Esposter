@@ -64,8 +64,8 @@ const onClick = (settingsType: SettingsType) => {
         :title="getCategoryTitle(category)"
         @select="(settingsType) => onClick(settingsType)"
         @update:is-open="
-          (isOpen) => {
-            openedCategories = isOpen
+          (newIsOpen) => {
+            openedCategories = newIsOpen
               ? [...openedCategories, category]
               : openedCategories.filter((openedCategory) => openedCategory !== category);
           }

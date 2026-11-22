@@ -33,3 +33,7 @@ A row that reads as one sentence (avatar + "Posted by" + name + timestamp, an in
 Do not use `flex`: every item becomes a shrinkable box, so narrow viewports break each one internally ("Posted / by", "4 minutes / ago" stacked in columns) instead of wrapping mid-sentence like prose.
 
 `flex` is for rows of independent boxes (toolbars, cards, controls) — there each item wrapping as a unit is what you want. `gap-*` has no effect in inline flow, which is why this is the one place `space-x-*` is the right utility.
+
+## A sticky field's band
+
+A field pinned to the top of a scrolling body is wrapped in a `sticky` band that takes the frame's surface. The field's own fill is translucent, so without the band the list would show through it as it scrolls under the field.

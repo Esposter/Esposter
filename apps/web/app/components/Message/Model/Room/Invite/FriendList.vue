@@ -17,7 +17,7 @@ interface Props {
 const { room } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const friendStore = useFriendStore();
-const { friends } = storeToRefs(friendStore);
+const { friends, friendsError } = storeToRefs(friendStore);
 const directMessageStore = useDirectMessageStore();
 const { directMessages } = storeToRefs(directMessageStore);
 const { checkIsGroupDirectMessage, getDirectMessageParticipants } = directMessageStore;
@@ -41,11 +41,7 @@ const memberIdSet = computed(
   () => new Set((roomUsers.value ?? []).filter(({ isMember }) => isMember).map(({ id }) => id)),
 );
 // The list shows skeleton rows rather than its empty state while the first read of the friends is on its way
-const {
-  error: friendsError,
-  isPending: isFriendsPending,
-  refresh: refreshFriends,
-} = useQuery(useReadFriends(), {
+const { isPending: isFriendsPending, refresh: refreshFriends } = useQuery(useReadFriends(), {
   onSuccess: () => {
     if (friends.value.length > 0) getSynchronizedFunction(readRoomUsers)();
   },
@@ -54,8 +50,7 @@ const {
 
 <template>
   <div flex flex-col>
-    <!-- The field stays at the top of the body as the list scrolls under it. Its own fill is translucent, so the band
-      behind it takes the frame's surface -->
+    <!-- The field stays at the top of the body as the list scrolls under it -->
     <div pb-2 bg-lifted top-0 sticky z-1>
       <UiTextField v-model="searchQuery" label="Search friends" :type="UiTextFieldType.Search" />
     </div>

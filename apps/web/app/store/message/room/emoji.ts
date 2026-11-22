@@ -43,8 +43,22 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   );
   const readRoomEmojiRows = useOverlayRead(roomEmojiTable, (roomEmoji: RoomEmojiWithPresignedUrl) => roomEmoji);
   // The room's set with its tombstones, so a removal the answer names reaches the emoji the room's subscription missed
-  const readRoomEmojis = (roomId: RoomInMessage["id"]) =>
-    readRoomEmojiRows(() => $trpc.room.emoji.readRoomEmojis.query({ roomId }));
+  // A failed read is held as its message, so the panel draws the failure rather than reading as no emoji, and it still alerts
+  const roomEmojisError = ref("");
+  const isRoomEmojisPending = ref(false);
+  const readRoomEmojis = async (roomId: RoomInMessage["id"]) => {
+    isRoomEmojisPending.value = true;
+    await readRoomEmojiRows(() => $trpc.room.emoji.readRoomEmojis.query({ roomId }), {
+      onError: (error) => {
+        roomEmojisError.value = error.message;
+        createErrorAlert(error);
+      },
+      onSuccess: () => {
+        roomEmojisError.value = "";
+      },
+    });
+    isRoomEmojisPending.value = false;
+  };
   // Three steps in one action, because the row may only ever name a blob that landed: mint the write target,
   // Put the image there, then create the row that names it. A failure before the last step leaves a blob no row
   // Reaches, under the `{roomId}/…` prefix the room's own teardown sweeps
@@ -82,5 +96,15 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
       { entry: getRoomEmojiPatchEntry(input.id, { deletedAt: new Date() }), onError: createErrorAlert },
     );
   };
-  return { createRoomEmoji, customEmojiMap, customEmojis, deleteRoomEmoji, items, readRoomEmojis, updateRoomEmoji };
+  return {
+    createRoomEmoji,
+    customEmojiMap,
+    customEmojis,
+    deleteRoomEmoji,
+    isRoomEmojisPending,
+    items,
+    readRoomEmojis,
+    roomEmojisError,
+    updateRoomEmoji,
+  };
 });

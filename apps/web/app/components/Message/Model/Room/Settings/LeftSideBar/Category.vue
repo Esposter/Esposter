@@ -13,7 +13,7 @@ const emit = defineEmits<{ select: [settingsType: SettingsType]; "update:isOpen"
 </script>
 
 <template>
-  <UiCollapsible :model-value="isOpen" @update:model-value="(value) => emit('update:isOpen', value)">
+  <UiCollapsible :model-value="isOpen" @update:model-value="(newModelValue) => emit('update:isOpen', newModelValue)">
     <template #title>
       <span text-sm text-muted truncate uppercase>{{ title }}</span>
     </template>
