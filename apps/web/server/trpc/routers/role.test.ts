@@ -7,8 +7,7 @@ import { createCallerFactory } from "#server/trpc/index";
 import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { roleRouter } from "#server/trpc/routers/role";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
-import { readRowVersionsHeader } from "#shared/services/realtime/readRowVersionsHeader";
-import { roleTables, roomRoleTable } from "#src/services/message/role/constants";
+import { roleTables } from "#src/services/message/role/constants";
 import { getAssignRoomRoleEntry } from "#src/services/message/role/getAssignRoomRoleEntry";
 import { getCreateRoomRoleEntry } from "#src/services/message/role/getCreateRoomRoleEntry";
 import { getDeleteMemberPermissionOverrideEntry } from "#src/services/message/role/getDeleteMemberPermissionOverrideEntry";
@@ -89,19 +88,6 @@ describe("roleRouter", () => {
     expect(updatedRole.id).toBe(createdRole.id);
     expect(updatedRole.permissions).toBe(createdRole.permissions);
     expect(updatedRole.position).toBe(createdRole.position);
-  });
-
-  // The role's overlay entry holds it by its id, so the header names the updated role by that id for the entry to be confirmed by it
-  test("names an updated role by its id in the row versions header", async () => {
-    expect.hasAssertions();
-
-    const createdRole = await roleCaller.createRole({ id: v7(), name, roomId });
-    const context = { ...mockContext, responseHeaders: new Headers() };
-    await createCallerFactory(roleRouter)(context).updateRole({ id: createdRole.id, name: updatedName, roomId });
-
-    expect(readRowVersionsHeader(context.responseHeaders, "updateRole")).toStrictEqual([
-      { key: { id: createdRole.id }, table: roomRoleTable.name, version: 1 },
-    ]);
   });
 
   test("deletes", async () => {

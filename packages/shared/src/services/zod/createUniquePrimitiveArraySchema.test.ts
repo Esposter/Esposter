@@ -5,13 +5,9 @@ import { z } from "zod";
 describe(createUniquePrimitiveArraySchema, () => {
   const primitiveSchema = createUniquePrimitiveArraySchema(z.string());
 
-  test("accepts unique primitive items", () => {
+  test("accepts unique primitive items and rejects a repeated one", () => {
     expect.hasAssertions();
     expect(primitiveSchema.safeParse(["", " "]).success).toBe(true);
-  });
-
-  test("rejects duplicate primitive items", () => {
-    expect.hasAssertions();
     expect(primitiveSchema.safeParse(["", ""]).success).toBe(false);
   });
 });

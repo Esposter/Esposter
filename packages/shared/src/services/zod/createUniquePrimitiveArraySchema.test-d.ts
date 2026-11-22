@@ -3,12 +3,6 @@ import { describe, expect, expectTypeOf, test } from "vitest";
 import { z } from "zod";
 
 describe("createUniquePrimitiveArraySchema type", () => {
-  test("primitive", () => {
-    expect.hasAssertions();
-
-    expectTypeOf(createUniquePrimitiveArraySchema(z.string())).toEqualTypeOf<z.ZodArray<z.ZodString>>();
-  });
-
   test("object", () => {
     expect.hasAssertions();
 

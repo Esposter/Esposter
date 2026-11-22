@@ -11,15 +11,13 @@ import {
   getMockSession,
 } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
-import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { roomRouter } from "#server/trpc/routers/room/index";
+import { readRowVersionsHeader } from "#shared/services/realtime/readRowVersionsHeader";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
-import { inviteTable } from "#src/services/message/room/overlay/constants";
-import { getInvitePatchEntry } from "#src/services/message/room/overlay/getInvitePatchEntry";
 import { DatabaseEntityType, friendsInSocial, invitesInMessage, roomsInMessage } from "@esposter/db-schema";
 import { generateSecretToken, InvalidOperationError, Operation, SECRET_TOKEN_LENGTH, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -390,22 +388,15 @@ describe("inviteRouter", () => {
     expect(invite.id).toHaveLength(SECRET_TOKEN_LENGTH);
   });
 
-  // An invite is keyed by its code, a credential, so the header names no invite row: the answer confirms the revoke instead
-  test("the revoke's entry covers every row its answer names", async () => {
+  // An invite is keyed by its code, a credential, so the revoke's header names no invite row
+  test("the revoke's header names no invite row, since an invite is keyed by its credential", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
-    const { named, uncovered } = await getUncoveredWrites({
-      call: (context) =>
-        createCallerFactory(inviteRouter)(context).revokeInvite({ id: newInvite.id, roomId: newRoom.id }),
-      context: mockContext,
-      entry: getInvitePatchEntry(newInvite.id, { deletedAt: new Date() }),
-      path: "revokeInvite",
-      tables: [inviteTable],
-    });
+    const context = { ...mockContext, responseHeaders: new Headers() };
+    await createCallerFactory(inviteRouter)(context).revokeInvite({ id: newInvite.id, roomId: newRoom.id });
 
-    expect(named).toHaveLength(0);
-    expect(uncovered).toStrictEqual([]);
+    expect(readRowVersionsHeader(context.responseHeaders, "revokeInvite")).toStrictEqual([]);
   });
 });

@@ -11,7 +11,7 @@ describe("createUniqueArraySchema type", () => {
     >();
   });
 
-  test("primitive", () => {
+  test("refuses a key on primitive items", () => {
     expect.hasAssertions();
 
     // @ts-expect-error an array of primitives is unique by its items, so the keyed form takes objects only

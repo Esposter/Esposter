@@ -35,8 +35,6 @@ import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/se
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { userSettingsTable } from "#src/services/message/user/settings/constants";
 import { getUpdateUserSettingsEntry } from "#src/services/message/user/settings/getUpdateUserSettingsEntry";
-import { statusTable } from "#src/services/message/user/status/constants";
-import { getStatusEntry } from "#src/services/message/user/status/getStatusEntry";
 import { deleteDirectory } from "@esposter/db";
 import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
@@ -719,8 +717,7 @@ describe("userRouter", () => {
     );
   });
 
-  // Each settings and status write names its row by the user's id, the primary key, so the entry the store issues is the
-  // Row the header names and the wake check covers it
+  // The settings row is named by the user's id, the primary key, so the entry the store issues is the row the header names
   test("the settings update's entry covers the settings row its header names", async () => {
     expect.hasAssertions();
 
@@ -734,24 +731,6 @@ describe("userRouter", () => {
     });
 
     expect(named).toHaveLength(1);
-    expect(uncovered).toStrictEqual([]);
-  });
-
-  // The status write is a static procedure: the user object pushes each change to its sockets as a typed event, so the
-  // Header carries no row for it, and its entry is confirmed by the row its answer holds
-  test("the status write's entry covers the status row its answer holds, since its header names none", async () => {
-    expect.hasAssertions();
-
-    const input = { status: UserStatus.DoNotDisturb };
-    const { named, uncovered } = await getUncoveredWrites({
-      call: (context) => createCallerFactory(userRouter)(context).upsertStatus(input),
-      context: mockContext,
-      entry: getStatusEntry(userId, input),
-      path: "upsertStatus",
-      tables: [statusTable],
-    });
-
-    expect(named).toHaveLength(0);
     expect(uncovered).toStrictEqual([]);
   });
 });

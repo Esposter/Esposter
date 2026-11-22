@@ -1726,39 +1726,27 @@ describe("resourceRouter", () => {
     expect(uncovered).toStrictEqual([]);
   });
 
-  // A star is a row keyed by its member and its resource, so the header names it by those, and the entry touches that key
-  test("the star's entry covers the favorite row its header names", async () => {
-    expect.hasAssertions();
+  // A star is a row keyed by its member and its resource, so the header names it by those, and the entry touches that key.
+  // The toggle writes that row both ways, so the star and the unstar are each checked
+  test.each([false, true])(
+    "the toggle's entry covers the favorite row its header names when starred is %s",
+    async (isStarred) => {
+      expect.hasAssertions();
 
-    const dashboardResource = await dashboardCaller.createResource({ name });
-    const { named, uncovered } = await getUncoveredWrites({
-      call: (context) => createCallerFactory(resourceRouter)(context).toggleFavorite({ id: dashboardResource.id }),
-      context: mockContext,
-      entry: getToggleFavoriteEntry(dashboardResource.userId, dashboardResource.id, new Date(0)),
-      path: "toggleFavorite",
-      tables: [favoriteTable],
-    });
+      const dashboardResource = await dashboardCaller.createResource({ name });
+      if (isStarred) await caller.toggleFavorite({ id: dashboardResource.id });
+      const { named, uncovered } = await getUncoveredWrites({
+        call: (context) => createCallerFactory(resourceRouter)(context).toggleFavorite({ id: dashboardResource.id }),
+        context: mockContext,
+        entry: getToggleFavoriteEntry(dashboardResource.userId, dashboardResource.id, new Date(0)),
+        path: "toggleFavorite",
+        tables: [favoriteTable],
+      });
 
-    expect(named).toHaveLength(1);
-    expect(uncovered).toStrictEqual([]);
-  });
-
-  test("the unstar's entry covers the favorite row its header names", async () => {
-    expect.hasAssertions();
-
-    const dashboardResource = await dashboardCaller.createResource({ name });
-    await caller.toggleFavorite({ id: dashboardResource.id });
-    const { named, uncovered } = await getUncoveredWrites({
-      call: (context) => createCallerFactory(resourceRouter)(context).toggleFavorite({ id: dashboardResource.id }),
-      context: mockContext,
-      entry: getToggleFavoriteEntry(dashboardResource.userId, dashboardResource.id, new Date(0)),
-      path: "toggleFavorite",
-      tables: [favoriteTable],
-    });
-
-    expect(named).toHaveLength(1);
-    expect(uncovered).toStrictEqual([]);
-  });
+      expect(named).toHaveLength(1);
+      expect(uncovered).toStrictEqual([]);
+    },
+  );
 
   test("the batch delete entry covers every row the delete names", async () => {
     expect.hasAssertions();
