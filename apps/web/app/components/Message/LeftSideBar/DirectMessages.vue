@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 
-const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarDirectMessagesCollapsed, false);
-const isOpen = computed({
-  get: () => !isCollapsed.value,
-  set: (newIsOpen) => {
-    isCollapsed.value = !newIsOpen;
-  },
-});
+const isOpen = useSidebarSectionOpen(LocalStorageKey.MessageSidebarDirectMessagesCollapsed);
 </script>
 
 <template>

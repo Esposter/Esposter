@@ -13,8 +13,7 @@ describe("messageLeftSideBarRooms", () => {
   const { trpcMsw } = setupMswTrpc();
   const userId = v7();
 
-  // A read that failed is not a reader with no rooms: the list says so and offers a retry, where it would otherwise read
-  // As the empty state's "No rooms yet"
+  // A failed read draws its error and a retry, not the empty state's "No rooms yet"
   test("a failed read of the rooms says so rather than reading as empty", async () => {
     expect.hasAssertions();
 

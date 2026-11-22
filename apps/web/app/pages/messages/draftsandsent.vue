@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { DraftsAndSentTab, DraftsAndSentTabs } from "#src/models/message/draftsAndSent/DraftsAndSentTab";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { DRAFTS_AND_SENT_LABEL } from "#src/services/message/draftsAndSent/constants";
 import { TAB_QUERY_PARAMETER_KEY } from "#src/services/route/constants";
 
 definePageMeta({ middleware: "auth" });
-useHead({ title: "Drafts & sent" });
+useHead({ title: DRAFTS_AND_SENT_LABEL });
 
 const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, DraftsAndSentTabs, DraftsAndSentTab.Drafts);
 const readDraftsAndSent = useReadDraftsAndSent();
@@ -19,7 +20,7 @@ await readDraftsAndSent();
     <div p-6 flex flex-col gap-4 ui-body>
       <div flex gap-2 items-center>
         <AppDrawerButton label="Show Room List" :meaning="UiIconMeaning.Menu" />
-        <h1 ui-title>Drafts & sent</h1>
+        <h1 ui-title>{{ DRAFTS_AND_SENT_LABEL }}</h1>
       </div>
       <MessageDraftsAndSentTabs v-model="tab">
         <template #default="{ value }">

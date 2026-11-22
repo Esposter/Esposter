@@ -3,13 +3,7 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { useRoomStore } from "#src/store/message/room/index";
 
-const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarRoomsCollapsed, false);
-const isOpen = computed({
-  get: () => !isCollapsed.value,
-  set: (newIsOpen) => {
-    isCollapsed.value = !newIsOpen;
-  },
-});
+const isOpen = useSidebarSectionOpen(LocalStorageKey.MessageSidebarRoomsCollapsed);
 const { isError: isRoomCategoriesError, readRoomCategories } = useReadRoomCategories();
 const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);

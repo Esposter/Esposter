@@ -3,6 +3,7 @@ import type { UiListItem } from "#src/models/ui/UiListItem";
 
 import { DraftsAndSentTab } from "#src/models/message/draftsAndSent/DraftsAndSentTab";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { DRAFTS_AND_SENT_LABEL } from "#src/services/message/draftsAndSent/constants";
 import { DraftsAndSentTabMetadataMap } from "#src/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
 import { useInputStore } from "#src/store/message/input/index";
 import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
@@ -26,13 +27,13 @@ const items = computed<UiListItem<string>[]>(() => [
   {
     icon: DraftsAndSentTabMetadataMap[DraftsAndSentTab.Sent].icon,
     isCurrent: currentRoute.value.path === RoutePath.MessagesDraftsAndSent,
-    title: "Drafts & sent",
+    title: DRAFTS_AND_SENT_LABEL,
     to: RoutePath.MessagesDraftsAndSent,
     value: RoutePath.MessagesDraftsAndSent,
   },
 ]);
 // What waits in drafts and in the schedule, read at the row's end as a channel's unread count is
-const badges = computed(() =>
+const displayBadges = computed(() =>
   [DraftsAndSentTab.Drafts, DraftsAndSentTab.Scheduled]
     .map((tab) => ({
       count: tab === DraftsAndSentTab.Drafts ? drafts.value.size : scheduledMessageJobCount.value,
@@ -53,7 +54,7 @@ onMounted(() => readScheduledMessageJobCount());
       <UiList :items label="Messages">
         <template #append="{ item }">
           <template v-if="item.value === RoutePath.MessagesDraftsAndSent">
-            <UiChip v-for="{ count, icon, title } of badges" :key="title">
+            <UiChip v-for="{ count, icon, title } of displayBadges" :key="title">
               <span :class="icon" aria-hidden="true" size-6 />
               {{ count }}
               <span sr-only>{{ title }}</span>

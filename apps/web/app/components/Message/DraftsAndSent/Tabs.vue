@@ -2,6 +2,7 @@
 import type { UiTabItem } from "#src/models/ui/UiTabItem";
 
 import { DraftsAndSentTab, DraftsAndSentTabs } from "#src/models/message/draftsAndSent/DraftsAndSentTab";
+import { DRAFTS_AND_SENT_LABEL } from "#src/services/message/draftsAndSent/constants";
 import { DraftsAndSentTabMetadataMap } from "#src/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
 import { useScheduledMessageJobStore } from "#src/store/message/scheduledMessageJob";
 
@@ -24,7 +25,7 @@ const items = computed<UiTabItem<DraftsAndSentTab>[]>(() => {
 </script>
 
 <template>
-  <UiTabs v-model="tab" :items label="Drafts & sent">
+  <UiTabs v-model="tab" :items :label="DRAFTS_AND_SENT_LABEL">
     <template #default="{ value }">
       <slot :value />
     </template>

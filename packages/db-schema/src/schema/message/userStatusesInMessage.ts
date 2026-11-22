@@ -6,6 +6,7 @@ import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { STATUS_MESSAGE_MAX_LENGTH } from "#src/services/user/constants";
 import { sqliteTable } from "#src/sqliteTable";
+import { createNormalizedStringSchema } from "@esposter/shared";
 import { check, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
@@ -35,6 +36,6 @@ export type UserStatusInMessage = typeof userStatusesInMessage.$inferSelect;
 export const selectUserStatusInMessageSchema = createSelectSchema(userStatusesInMessage, {
   // The wire carries ISO dates, so the expiry is read back into a date
   expiresAt: () => z.coerce.date().nullable(),
-  message: (schema) => schema.max(STATUS_MESSAGE_MAX_LENGTH),
+  message: (schema) => createNormalizedStringSchema(STATUS_MESSAGE_MAX_LENGTH, schema),
   status: userStatusSchema.nullable(),
 });
