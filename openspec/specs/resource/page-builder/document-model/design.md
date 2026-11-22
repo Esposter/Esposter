@@ -67,7 +67,7 @@ Every webpage node holds an element id, which its published element carries as i
 
 `render` returns a small element tree, a tag, typed attributes and children, or raw HTML the serialiser writes as it is. One serialiser, `serializeHtml`, turns a tree into HTML and escapes every text node and attribute value through the shared sanitiser's `escapeText` and `escapeAttribute`. Attribute names come from a typed set with no event handler in it. A render's context is the site's origin, which the survey invite's link to the published survey is written against.
 
-Two types hand the serialiser HTML rather than a tree. Text's HTML is the Note's rich text rendered by `renderNoteHtml`, which is `sanitizeTextHtml` over `generateHTML` with the Note's writing kit, and so is the email's rich text, and the Note's own view renders through the same function. Custom HTML's HTML is the sanitised raw markup.
+Two types hand the serialiser HTML rather than a tree. Text's HTML is the Note's rich text rendered by `renderNoteHtml`, which is `sanitizeTextHtml` over TipTap's static renderer with the Note's writing kit, and so is the email's rich text, and the Note's own view renders through the same function. Custom HTML's HTML is the sanitised raw markup.
 
 A webpage renders to one document through `renderWebpageDocument`, a pure function that the browser's export can run as well as the server. The document opens with `<html lang>` from the root, then one stylesheet: the root's tokens, colours and font stacks, as custom properties on `:root`, each present type's structural CSS, and the rules of the styled nodes, then the body, and each present type's script once.
 

@@ -1,9 +1,8 @@
 import type { JSONContent } from "@tiptap/core";
 
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
-import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
+import { noteProseMirrorSchema } from "#shared/services/resource/note/noteProseMirrorSchema";
 import { createRecordSchema, getResult, noop } from "@esposter/shared";
-import { getSchema } from "@tiptap/core";
 import { z } from "zod";
 
 const attributesSchema = createRecordSchema(
@@ -31,12 +30,11 @@ const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>
   }),
 );
 
-const noteSchema = getSchema(getNoteExtensions());
 // A note's ProseMirror document, refused when the writing kit cannot build it, so a node it does not load never reaches
 // A renderer. A text node of a webpage holds the same document, so both read this one schema
 export const noteDocumentSchema = jsonContentSchema.superRefine((doc, context) => {
   getResult(() => {
-    noteSchema.nodeFromJSON(doc).check();
+    noteProseMirrorSchema.nodeFromJSON(doc).check();
   }).match(noop, (error) => {
     context.addIssue({ code: "custom", message: error.message, path: [] });
   });

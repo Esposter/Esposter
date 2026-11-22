@@ -9,15 +9,15 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 24af351dc5
-- Node: v26.12.1
-- OS: linux 6.17.0-1022-azure (x64)
-- CPU: INTEL(R) XEON(R) PLATINUM 8573C × 4
-- RAM: 15.6 GiB
+- Commit: 1aa7042241
+- Node: v26.13.1
+- OS: win32 10.0.19045 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 31.9 GiB
 
 ## renderWebpageDocument > 2000 nodes
 
-| task                 | vs base | mean (ms) | ±rme    | p99 (ms)  | samples |
-| -------------------- | ------- | --------- | ------- | --------- | ------- |
-| a tenth of the nodes | 1.00×   | 414.2109  | ±52.43% | 476.2164  | 3       |
-| all the nodes        | 0.12×   | 3585.9958 | ±43.72% | 4292.7380 | 3       |
+| task                 | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| -------------------- | ------- | --------- | ------ | -------- | ------- |
+| a tenth of the nodes | 1.00×   | 46.3334   | ±9.96% | 47.9113  | 3       |
+| all the nodes        | 0.1×    | 447.9989  | ±0.90% | 449.1894 | 3       |
