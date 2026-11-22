@@ -6,12 +6,10 @@ import { readFile, writeFile } from "node:fs/promises";
 const NUMBER_REGEX = new RegExp(NUMBER_SOURCE, "gu");
 const ENTRY_REGEX = /\[(?<key>[^\]]+)\]:\s*"(?<path>[^"]*)"/gu;
 const PATH_DECIMALS = 2;
-
 // A traced path, whose numbers are in the enlarged pixels its trace was made at, divided by that scale into the
 // Reference's own pixels, each to a hundredth of one
 const toReferencePath = (path: string, scale: number): string =>
   path.replaceAll(NUMBER_REGEX, (value) => String(Number((Number(value) / scale).toFixed(PATH_DECIMALS))));
-
 // Writes a traced path into the keyed record its map source declares, as the entry under `key`, divided by its scale into
 // The reference's pixels (`toReferencePath`). The key is written as the source's own text, such as `InterfaceIcon.Exit`.
 // The record's entries are read in whatever layout the formatter last gave it and written back in order through it, since

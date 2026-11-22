@@ -10,14 +10,14 @@ const PAPER = { a: 255, b: 255, g: 255, r: 255 };
 // The mask's pixels unless the caller draws in units of its own, each coordinate then scaled while the path is still
 // Absolute and spaced, before its compact form runs numbers together
 export const traceMask = (
-  isInk: Uint8Array,
+  inkMask: Uint8Array,
   width: number,
   height: number,
   { decimals = 2, unitsPerPixel = 1 }: { decimals?: number; unitsPerPixel?: number } = {},
 ): string[] => {
-  removeMaskSpecks(isInk, width, height, width * height * SPECK_SHARE);
-  const pixels = new Uint8ClampedArray(isInk.length * 4);
-  for (const [pixel, ink] of isInk.entries()) {
+  removeMaskSpecks(inkMask, width, height, width * height * SPECK_SHARE);
+  const pixels = new Uint8ClampedArray(inkMask.length * 4);
+  for (const [pixel, ink] of inkMask.entries()) {
     const { a, b, g, r } = ink ? INK : PAPER;
     pixels.set([r, g, b, a], pixel * 4);
   }

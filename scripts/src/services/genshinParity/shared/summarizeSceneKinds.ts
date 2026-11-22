@@ -8,7 +8,6 @@ import { roundHundredths } from "#src/services/genshinParity/shared/roundHundred
 import { sumMs } from "#src/services/genshinParity/shared/sumMs";
 
 const MS_PER_SECOND = 1000;
-
 // Each kind of the scene's objects priced on each pass by the GPU's time a frame its hiding saved there, against the
 // Ranges with every kind drawn either side of it, so the GPU's drift over the run cancels: first the passes, lettered,
 // With their time and count a frame over every range with all drawn and their count a second, then a row a kind, the

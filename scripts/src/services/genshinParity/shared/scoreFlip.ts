@@ -26,7 +26,6 @@ const PT = 0.95;
 const QF = 0.5;
 // The farthest two colours can be, green from blue, compressed as every difference is
 const MAX_DISTANCE = getHyab(toHuntLab([0, 1, 0]), toHuntLab([0, 0, 1])) ** QC;
-
 // The FLIP error map of a test image against a reference, both sRGB with three channels a pixel in [0, 1], and its mean
 export const scoreFlip = (
   reference: Float32Array,

@@ -6,8 +6,8 @@ import { describe, expect, test } from "vitest";
 describe(summarizeStallState, () => {
   const STATE_NAME = "orbit";
   const FRAME_MS = 16;
-  const SLOW_FRAME_MS = 60;
-  const STALLED_FRAME_MS = 300;
+  const SLOW_GAP_MS = 60;
+  const STALLED_GAP_MS = 300;
   const PROGRAMS = 73;
 
   test("counts the gaps between frames, not the first frame of the state", () => {
@@ -16,14 +16,14 @@ describe(summarizeStallState, () => {
     const frames: FrameSample[] = [
       { programs: PROGRAMS, time: 0 },
       { programs: PROGRAMS, time: FRAME_MS },
-      { programs: PROGRAMS, time: FRAME_MS + SLOW_FRAME_MS },
-      { programs: PROGRAMS, time: FRAME_MS + SLOW_FRAME_MS + STALLED_FRAME_MS },
+      { programs: PROGRAMS, time: FRAME_MS + SLOW_GAP_MS },
+      { programs: PROGRAMS, time: FRAME_MS + SLOW_GAP_MS + STALLED_GAP_MS },
     ];
 
     expect(summarizeStallState(STATE_NAME, frames, PROGRAMS, PROGRAMS)).toStrictEqual({
       frames: 3,
       growthAt: [],
-      maxFrameMs: STALLED_FRAME_MS,
+      maxFrameMs: STALLED_GAP_MS,
       name: STATE_NAME,
       over50: 2,
       over250: 1,

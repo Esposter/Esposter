@@ -6,8 +6,8 @@ import { describe, expect, test } from "vitest";
 
 describe(summarizeGpuTrace, () => {
   const FRAME_MS = 16;
-  const SLOW_FRAME_MS = 60;
-  const TIMES = [0, FRAME_MS, FRAME_MS + SLOW_FRAME_MS];
+  const SLOW_GAP_MS = 60;
+  const TIMES = [0, FRAME_MS, FRAME_MS + SLOW_GAP_MS];
   const PIPELINE_MS = 12;
   const TRACE: GpuTrace = {
     calls: [
@@ -42,7 +42,7 @@ describe(summarizeGpuTrace, () => {
       "walk 20 s: 4 traced calls started in its frames, pipelines 1 (12 ms), buffers 1 (1 ms), node builds 1 (1 ms), programs 1 (0 ms)",
       "  built 1x for 1 ms: MeshToonNodeMaterial | Mesh unnamed 3 vertices",
       "walk 20 s: 1 frame(s) traced",
-      `frame #1 at ${FRAME_MS} ms: ${SLOW_FRAME_MS} ms, 4 traced calls for ${PIPELINE_MS + 2} ms`,
+      `frame #1 at ${FRAME_MS} ms: ${SLOW_GAP_MS} ms, 4 traced calls for ${PIPELINE_MS + 2} ms`,
       "  pipelines 1 (12 ms), buffers 1 (1 ms), node builds 1 (1 ms), programs 1 (0 ms)",
       `  ${PIPELINE_MS} ms createRenderPipeline | terrain | entry main`,
       "  1 ms writeBuffer |  | 4096 B",
@@ -84,7 +84,7 @@ describe(summarizeGpuTrace, () => {
       `  gpu 1x for 8 ms, at most 8 ms: ${SHADOW_PASS}`,
       `  gpu 1x for 2 ms, at most 2 ms: ${VIEW_PASS}`,
       "walk 20 s: 1 frame(s) traced",
-      `frame #1 at ${FRAME_MS} ms: ${SLOW_FRAME_MS} ms, 0 traced calls for 0 ms`,
+      `frame #1 at ${FRAME_MS} ms: ${SLOW_GAP_MS} ms, 0 traced calls for 0 ms`,
       "  no traced calls",
       `  gpu frame #0: 2 ms in 1 passes, begun up to 0 ms after submit, heaviest 2 ms ${VIEW_PASS}`,
       `  gpu frame #1: 8 ms in 1 passes, begun up to 30 ms after submit, heaviest 8 ms ${SHADOW_PASS}`,

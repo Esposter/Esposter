@@ -1,4 +1,3 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: each write reads the map the one before it wrote, so the scales go in turn */
 import { traceInk } from "#src/services/genshinParity/shared/traceImage";
 import { writeTracedPath } from "#src/services/genshinParity/shared/writeTracedPath";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -51,11 +50,13 @@ describe(writeTracedPath, () => {
     expect.hasAssertions();
 
     for (const scale of SCALES) {
+      // oxlint-disable no-await-in-loop -- Each step reads the last: each write reads the map the one before it wrote, so the scales go in turn
       const region = sharp(markPath)
         .flatten({ background: "#fff" })
         .extract({ height: MARK_SIZE, left: 0, top: 0, width: MARK_SIZE });
       const { inkPaths } = await traceInk(region, MARK_SIZE, MARK_SIZE, scale, 0.5);
       await writeTracedPath(mapPath, `Mark${scale}`, inkPaths.join(" "), scale);
+      // oxlint-enable no-await-in-loop
     }
 
     const source = await readFile(mapPath, "utf8");
@@ -92,12 +93,8 @@ describe(writeTracedPath, () => {
       'export const Commented: Record<string, string> = {\n  // kept by hand\n  [First]: "m0 0h1v1z",\n};\n';
     await writeFile(commentedPath, commentedSource);
 
-    await expect(writeTracedPath(commentedPath, "Second", "m0 0h2v2z", 1)).rejects.toStrictEqual(
-      new InvalidOperationError(
-        Operation.Update,
-        commentedPath,
-        "holds content other than keyed entries, which a write drops",
-      ),
+    await expect(writeTracedPath(commentedPath, "Second", "m0 0h2v2z", 1)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Update, commentedPath, "holds content other than keyed entries, which a write drops").message}]`,
     );
     await expect(readFile(commentedPath, "utf8")).resolves.toBe(commentedSource);
   });

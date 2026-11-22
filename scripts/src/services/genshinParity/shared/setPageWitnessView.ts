@@ -6,7 +6,6 @@ declare global {
     setWitnessView: (view: WitnessView) => Promise<void>;
   }
 }
-
 // Sets the parity page's witness view and waits for the frames that draw it
 export const setPageWitnessView = (page: Page, view: WitnessView): Promise<void> =>
   page.evaluate((pageView) => window.setWitnessView(pageView), view);

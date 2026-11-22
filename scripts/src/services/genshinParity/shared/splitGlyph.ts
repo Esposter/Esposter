@@ -16,9 +16,9 @@ export const splitGlyph = (
   const channelAt = (pixel: number, channel: number): number => data[pixel * channels + channel] ?? 0;
   const distanceTo = (pixel: number, colour: readonly number[]): number =>
     Math.hypot(...colour.map((value, channel) => channelAt(pixel, channel) - value));
-  const isInk = Uint8Array.from({ length: pixelCount }, (_value, pixel) =>
+  const inkMask = Uint8Array.from({ length: pixelCount }, (_value, pixel) =>
     Number(distanceTo(pixel, ink) < distanceTo(pixel, ground)),
   );
-  removeMaskSpecks(isInk, width, height, pixelCount * SPECK_SHARE);
-  return isInk;
+  removeMaskSpecks(inkMask, width, height, pixelCount * SPECK_SHARE);
+  return inkMask;
 };

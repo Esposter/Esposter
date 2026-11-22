@@ -3,6 +3,7 @@ import type { Sharp } from "sharp";
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { resolveSource } from "#src/services/genshinParity/shared/resolveSource";
 import { traceMask } from "#src/services/genshinParity/shared/traceMask";
+import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { writeFile } from "node:fs/promises";
 import { basename, extname, join } from "node:path";
 import sharp from "sharp";
@@ -50,7 +51,6 @@ export const traceInk = async (
   );
   return { inkPaths, tracedHeight, tracedWidth };
 };
-
 // A glyph in a region of an image as one filled path, so a mark is derived from the game's own shape rather than
 // Guessed: the region is split into ink and paper (`traceInk`), and the ink's paths returned. The SVG is written beside
 // The references, with the region and the trace side by side to check it against
@@ -75,10 +75,7 @@ export const traceImage = async (
     sharp(Buffer.from(svg)).flatten({ background: "#fff" }).resize(tracedWidth, tracedHeight).png().toBuffer(),
   ]);
   const checkPath = join(PARITY_DIRECTORY, `${name}.png`);
-  await sharp({ create: { background: "#fff", channels: 3, height: tracedHeight, width: tracedWidth * 2 } })
-    .composite(panels.map((input, index) => ({ input, left: index * tracedWidth, top: 0 })))
-    .png()
-    .toFile(checkPath);
+  await writeSideBySide(panels, { background: "#fff", height: tracedHeight, width: tracedWidth }, checkPath);
   console.log(`${inkPaths.length} paths, ${svg.length} bytes: ${svgPath}`);
   console.log(`region | trace: ${checkPath}`);
   return inkPaths.join(" ");

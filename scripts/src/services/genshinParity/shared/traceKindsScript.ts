@@ -39,9 +39,12 @@ export const TRACE_KINDS_SCRIPT = `
     window.__setSceneKindHidden = (kind, isHidden) => {
       for (const object of kindDrawables.get(kind) ?? []) {
         if (isHidden) {
-          layerMasks.set(object, object.layers.mask);
+          if (!layerMasks.has(object)) layerMasks.set(object, object.layers.mask);
           object.layers.disableAll();
-        } else object.layers.mask = layerMasks.get(object) ?? object.layers.mask;
+        } else {
+          object.layers.mask = layerMasks.get(object) ?? object.layers.mask;
+          layerMasks.delete(object);
+        }
       }
     };
     window.__waitFrames = (count) =>

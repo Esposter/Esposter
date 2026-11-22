@@ -8,12 +8,12 @@ describe(traceMask, () => {
 
     const size = 20;
     // Two squares of ink apart on the mask, the first over pixels 2 to 7 and the second over 12 to 17
-    const isInk = Uint8Array.from({ length: size * size }, (_value, pixel) => {
+    const inkMask = Uint8Array.from({ length: size * size }, (_value, pixel) => {
       const x = pixel % size;
       const y = Math.floor(pixel / size);
       return Number((x >= 2 && x < 8 && y >= 2 && y < 8) || (x >= 12 && x < 18 && y >= 12 && y < 18));
     });
-    const { scale, segments } = parseSvgPath(traceMask(isInk, size, size, { unitsPerPixel: 0.5 }).join(" "));
+    const { scale, segments } = parseSvgPath(traceMask(inkMask, size, size, { unitsPerPixel: 0.5 }).join(" "));
     const xs = segments
       .flatMap(({ values }) => values.filter((_value, index) => index % 2 === 0))
       .map((x) => x / scale);

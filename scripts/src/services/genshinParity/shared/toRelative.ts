@@ -4,7 +4,7 @@ import type { Token } from "#src/models/genshinParity/shared/Token";
 import { SvgPathCommand } from "#src/models/genshinParity/shared/SvgPathCommand";
 import { SvgPathTokenType } from "#src/models/genshinParity/shared/SvgPathTokenType";
 import { toNumber } from "#src/services/genshinParity/shared/toNumber";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { exhaustiveGuard } from "@esposter/shared";
 
 // The relative letter and operands of one segment from the current point it starts at, a horizontal or vertical line
 // Where its run is along an axis, and an arc's flags kept as written
@@ -49,6 +49,6 @@ export const toRelative = (
       return ["l", [toNumber(deltaX, scale), toNumber(deltaY, scale)]];
     }
     default:
-      throw new InvalidOperationError(Operation.Read, "path segment", "a command the codec does not write");
+      return exhaustiveGuard(command);
   }
 };

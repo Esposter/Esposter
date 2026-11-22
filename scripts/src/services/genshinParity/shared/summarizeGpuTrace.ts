@@ -16,27 +16,25 @@ import { summarizeSceneKinds } from "#src/services/genshinParity/shared/summariz
 export const summarizeGpuTrace = (trace: GpuTrace, states: TracedState[]): string[] => {
   const timeFrameIndexMap = new Map(trace.times.map((time, index) => [time, index]));
   const lines: string[] = trace.passes ? [] : ["the adapter has no timestamp queries, so no pass is timed on the GPU"];
-  const statePassesList = states.map(({ frames }) => {
+  const stateWindows = states.map(({ frames, name }) => {
     const firstTime = frames[0]?.time ?? 0;
     const lastTime = frames.at(-1)?.time ?? 0;
-    return (trace.passes ?? []).filter((pass) => {
+    const passes = (trace.passes ?? []).filter((pass) => {
       const time = trace.times[pass.frame] ?? -1;
       return time >= firstTime && time <= lastTime;
     });
+    return { firstTime, frames, lastTime, name, passes };
   });
   // Read over the states alone: the passes drawn while the page loads hold times on another clock's reading
-  const offsetMs = statePassesList
-    .flat()
+  const offsetMs = stateWindows
+    .flatMap(({ passes }) => passes)
     .reduce((least, { beginMs, submittedMs }) => Math.min(least, beginMs - submittedMs), Number.POSITIVE_INFINITY);
-  for (const [stateIndex, { frames, name }] of states.entries()) {
-    const firstTime = frames[0]?.time ?? 0;
-    const lastTime = frames.at(-1)?.time ?? 0;
+  for (const { firstTime, frames, lastTime, name, passes } of stateWindows) {
     const stateCalls = trace.calls.filter((call) => call.start >= firstTime && call.start <= lastTime);
-    const statePasses = statePassesList[stateIndex] ?? [];
     lines.push(
       `${name}: ${stateCalls.length} traced calls started in its frames, ${describeCategories(stateCalls) || "none"}`,
       ...describeBuilds(stateCalls),
-      ...(statePasses.length > 0 ? describePasses(statePasses, offsetMs) : []),
+      ...(passes.length > 0 ? describePasses(passes, offsetMs) : []),
     );
     const gaps = frames
       .slice(0, -1)
