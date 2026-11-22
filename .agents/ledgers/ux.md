@@ -42,6 +42,14 @@ server answers?** If not, and the button is not a dialog's answer, it binds `is-
 
    Each hit is a question, not a finding: read the write it calls. An optimistic write (`writeOptimistic`), a dialog's answer and a local-only change take no pending state. So does a save the surface queues while one is out, such as the word filter's, since `UiButton`'s pending disables the button the queue needs to stay open. A write reached through a composable's item handler, such as `friendItem.onClick`, matches no pattern, so the unit read is the only check for it.
 
+2. A row aligned to its bottom beside a field that can grow. A `UiTextField` draws a line under its input when it has `rules`, `error`, `hint` or a counter, and that line grows the row, so `items-end` drags each bottom-aligned sibling down with it:
+
+   ```bash
+   rg -n 'items-end' apps/web/app/components apps/web/app/pages apps/web/app/layouts -g '*.vue'
+   ```
+
+   Each hit is a question: read the row for a text field with one of those props beside a sibling. A labelled text field beside an unlabelled control has no single fix, since a `UiSelect` trigger draws no label above it and `items-start` would put it beside the label rather than the input. A row of labelled fields, each with its label above, is the case `items-start` fixes.
+
 ## Coverage
 
 Notes on a tree several units share:
