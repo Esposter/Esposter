@@ -9,29 +9,29 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 0301845672
+- Commit: 127ad46e11
 - Node: v26.13.1
-- OS: darwin 27.0.0 (arm64)
-- CPU: Apple M1 × 8
-- RAM: 16.0 GiB
+- OS: win32 10.0.19045 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 31.9 GiB
 
 ## MoveColumnCommand > move column 0→4, 100 rows
 
-| task                                  | vs base | mean (ms) | ±rme     | p99 (ms) | samples |
-| ------------------------------------- | ------- | --------- | -------- | -------- | ------- |
-| move first column last execute        | 1.00×   | 0.5879    | ±21.05%  | 0.9709   | 10      |
-| move first column last execute + undo | 0.16×   | 3.5827    | ±183.78% | 27.1814  | 10      |
+| task                                  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ------------------------------------- | ------- | --------- | ------- | -------- | ------- |
+| move first column last execute        | 1.00×   | 0.0366    | ±6.61%  | 0.0451   | 10      |
+| move first column last execute + undo | 0.45×   | 0.0815    | ±13.30% | 0.1119   | 10      |
 
 ## MoveColumnCommand > move column 0→4, 1000 rows
 
-| task                                  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| move first column last execute        | 1.00×   | 14.0417   | ±52.99% | 39.8458  | 10      |
-| move first column last execute + undo | 0.73×   | 19.1745   | ±89.43% | 78.5698  | 10      |
+| task                                  | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------------------------------------- | ------- | --------- | ------ | -------- | ------- |
+| move first column last execute        | 1.00×   | 0.3476    | ±1.67% | 0.3609   | 10      |
+| move first column last execute + undo | 0.56×   | 0.6232    | ±8.85% | 0.8054   | 10      |
 
 ## MoveColumnCommand > move column 0→4, 10000 rows
 
 | task                                  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| move first column last execute + undo | 1.00×   | 187.8974  | ±45.12% | 418.7950 | 10      |
-| move first column last execute        | 0.77×   | 244.8236  | ±42.97% | 542.8785 | 10      |
+| move first column last execute        | 1.00×   | 3.6607    | ±12.26% | 5.2394   | 10      |
+| move first column last execute + undo | 0.55×   | 6.7151    | ±4.19%  | 7.3154   | 10      |

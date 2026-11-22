@@ -9,29 +9,29 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 0301845672
+- Commit: 127ad46e11
 - Node: v26.13.1
-- OS: darwin 27.0.0 (arm64)
-- CPU: Apple M1 × 8
-- RAM: 16.0 GiB
+- OS: win32 10.0.19045 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 31.9 GiB
 
 ## DeleteRowsCommand > delete 50 rows from 100
 
 | task                           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------------------------------ | ------- | --------- | ------- | -------- | ------- |
-| every other row execute + undo | 1.00×   | 1.2669    | ±21.99% | 1.7182   | 10      |
-| every other row execute        | 0.58×   | 2.1941    | ±42.76% | 5.0335   | 10      |
+| every other row execute        | 1.00×   | 0.0348    | ±7.36%  | 0.0438   | 10      |
+| every other row execute + undo | 0.46×   | 0.0765    | ±10.92% | 0.0997   | 10      |
 
 ## DeleteRowsCommand > delete 500 rows from 1000
 
-| task                           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------------------------ | ------- | --------- | ------- | -------- | ------- |
-| every other row execute + undo | 1.00×   | 13.7208   | ±33.40% | 25.5096  | 10      |
-| every other row execute        | 0.74×   | 18.4602   | ±52.67% | 43.6942  | 10      |
+| task                           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------------------------------ | ------- | --------- | ------ | -------- | ------- |
+| every other row execute        | 1.00×   | 0.3364    | ±5.13% | 0.3740   | 10      |
+| every other row execute + undo | 0.58×   | 0.5830    | ±1.25% | 0.6008   | 10      |
 
 ## DeleteRowsCommand > delete 5000 rows from 10000
 
-| task                           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------------------------ | ------- | --------- | ------- | -------- | ------- |
-| every other row execute        | 1.00×   | 193.6442  | ±23.77% | 308.5791 | 10      |
-| every other row execute + undo | 0.88×   | 219.1681  | ±36.83% | 449.4433 | 10      |
+| task                           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------------------------------ | ------- | --------- | ------ | -------- | ------- |
+| every other row execute        | 1.00×   | 3.3692    | ±2.53% | 3.6328   | 10      |
+| every other row execute + undo | 0.49×   | 6.8753    | ±8.13% | 8.4417   | 10      |

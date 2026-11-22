@@ -6,17 +6,17 @@
         {
           "benchmarks": [
             {
-              "mean": 1.2668750000000728,
-              "name": "every other row execute + undo",
-              "p99": 1.7182356900005653,
-              "rme": 21.992814624602175,
+              "mean": 0.03482999999998811,
+              "name": "every other row execute",
+              "p99": 0.043781000000153655,
+              "rme": 7.358317360656158,
               "sampleCount": 10
             },
             {
-              "mean": 2.194070600000123,
-              "name": "every other row execute",
-              "p99": 5.033502470000094,
-              "rme": 42.75524670870347,
+              "mean": 0.07654000000004545,
+              "name": "every other row execute + undo",
+              "p99": 0.09973800000014307,
+              "rme": 10.920353513779627,
               "sampleCount": 10
             }
           ],
@@ -25,17 +25,17 @@
         {
           "benchmarks": [
             {
-              "mean": 13.720762399999511,
-              "name": "every other row execute + undo",
-              "p99": 25.509551719997543,
-              "rme": 33.40415602550999,
+              "mean": 0.3364000000000487,
+              "name": "every other row execute",
+              "p99": 0.37404600000001664,
+              "rme": 5.1257393061630925,
               "sampleCount": 10
             },
             {
-              "mean": 18.460150000000066,
-              "name": "every other row execute",
-              "p99": 43.694201409998456,
-              "rme": 52.66781231527001,
+              "mean": 0.5829899999999726,
+              "name": "every other row execute + undo",
+              "p99": 0.6007569999999055,
+              "rme": 1.251996241685864,
               "sampleCount": 10
             }
           ],
@@ -44,17 +44,17 @@
         {
           "benchmarks": [
             {
-              "mean": 193.6441833000001,
+              "mean": 3.369209999999976,
               "name": "every other row execute",
-              "p99": 308.5791367799992,
-              "rme": 23.768542440669332,
+              "p99": 3.6327560000000814,
+              "rme": 2.529326818221407,
               "sampleCount": 10
             },
             {
-              "mean": 219.1681414999999,
+              "mean": 6.875339999999984,
               "name": "every other row execute + undo",
-              "p99": 449.44331074999815,
-              "rme": 36.82703000280319,
+              "p99": 8.441711000000309,
+              "rme": 8.128870358663491,
               "sampleCount": 10
             }
           ],

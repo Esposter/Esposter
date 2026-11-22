@@ -9,33 +9,33 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 0301845672
+- Commit: 127ad46e11
 - Node: v26.13.1
-- OS: darwin 27.0.0 (arm64)
-- CPU: Apple M1 × 8
-- RAM: 16.0 GiB
+- OS: win32 10.0.19045 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 31.9 GiB
 
 ## DeleteColumnsCommand > delete columns, 100 rows
 
 | task                          | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ----------------------------- | ------- | --------- | ------- | -------- | ------- |
-| 1 of 5 columns execute + undo | 1.00×   | 0.8080    | ±23.34% | 1.3089   | 10      |
-| 1 of 5 columns execute        | 0.91×   | 0.8851    | ±29.47% | 1.6510   | 10      |
+| 1 of 5 columns execute        | 1.00×   | 0.0545    | ±47.69% | 0.1458   | 10      |
+| 1 of 5 columns execute + undo | 0.63×   | 0.0864    | ±9.86%  | 0.1040   | 10      |
 
 ## DeleteColumnsCommand > delete columns, 1000 rows
 
-| task                          | vs base | mean (ms) | ±rme     | p99 (ms) | samples |
-| ----------------------------- | ------- | --------- | -------- | -------- | ------- |
-| 1 of 5 columns execute        | 1.00×   | 10.2426   | ±29.10%  | 17.1165  | 10      |
-| 1 of 5 columns execute + undo | 0.5×    | 20.4932   | ±80.93%  | 78.9880  | 10      |
-| 3 of 5 columns execute        | 0.45×   | 23.0042   | ±158.18% | 153.5227 | 10      |
-| 3 of 5 columns execute + undo | 0.43×   | 23.8186   | ±121.07% | 127.3344 | 10      |
+| task                          | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ----------------------------- | ------- | --------- | ------- | -------- | ------- |
+| 3 of 5 columns execute        | 1.00×   | 0.3268    | ±11.57% | 0.4524   | 10      |
+| 1 of 5 columns execute        | 0.97×   | 0.3358    | ±7.96%  | 0.4281   | 10      |
+| 3 of 5 columns execute + undo | 0.45×   | 0.7209    | ±9.64%  | 0.9480   | 10      |
+| 1 of 5 columns execute + undo | 0.4×    | 0.8250    | ±12.63% | 1.0615   | 10      |
 
 ## DeleteColumnsCommand > delete columns, 10000 rows
 
-| task                          | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ----------------------------- | ------- | --------- | ------- | -------- | ------- |
-| 3 of 5 columns execute + undo | 1.00×   | 147.0402  | ±48.76% | 395.8006 | 10      |
-| 3 of 5 columns execute        | 0.82×   | 178.3293  | ±24.54% | 298.2081 | 10      |
-| 1 of 5 columns execute        | 0.61×   | 240.2887  | ±50.48% | 612.5133 | 10      |
-| 1 of 5 columns execute + undo | 0.48×   | 303.4347  | ±39.29% | 602.7265 | 10      |
+| task                          | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ----------------------------- | ------- | --------- | ------ | -------- | ------- |
+| 3 of 5 columns execute        | 1.00×   | 4.2675    | ±3.85% | 4.6330   | 10      |
+| 1 of 5 columns execute        | 0.97×   | 4.4117    | ±6.21% | 4.8396   | 10      |
+| 3 of 5 columns execute + undo | 0.54×   | 7.8405    | ±4.35% | 8.7719   | 10      |
+| 1 of 5 columns execute + undo | 0.51×   | 8.3052    | ±7.02% | 9.9278   | 10      |

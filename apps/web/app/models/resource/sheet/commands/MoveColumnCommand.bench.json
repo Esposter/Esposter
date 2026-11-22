@@ -6,17 +6,17 @@
         {
           "benchmarks": [
             {
-              "mean": 0.5878998999998658,
+              "mean": 0.036609999999973296,
               "name": "move first column last execute",
-              "p99": 0.9709105299996645,
-              "rme": 21.050742425048867,
+              "p99": 0.045099000000070645,
+              "rme": 6.609935340614574,
               "sampleCount": 10
             },
             {
-              "mean": 3.582708199999797,
+              "mean": 0.08154000000001815,
               "name": "move first column last execute + undo",
-              "p99": 27.18136380999985,
-              "rme": 183.7831093273502,
+              "p99": 0.11187799999998788,
+              "rme": 13.297074196658068,
               "sampleCount": 10
             }
           ],
@@ -25,17 +25,17 @@
         {
           "benchmarks": [
             {
-              "mean": 14.041720699999768,
+              "mean": 0.3475600000000213,
               "name": "move first column last execute",
-              "p99": 39.845770719999585,
-              "rme": 52.98882595246831,
+              "p99": 0.3608570000000782,
+              "rme": 1.667831775158702,
               "sampleCount": 10
             },
             {
-              "mean": 19.174508500000048,
+              "mean": 0.6232300000000351,
               "name": "move first column last execute + undo",
-              "p99": 78.56982450000038,
-              "rme": 89.42716827130151,
+              "p99": 0.8053859999998895,
+              "rme": 8.854678728620687,
               "sampleCount": 10
             }
           ],
@@ -44,17 +44,17 @@
         {
           "benchmarks": [
             {
-              "mean": 187.8973915999999,
-              "name": "move first column last execute + undo",
-              "p99": 418.7950138099992,
-              "rme": 45.124495657426536,
+              "mean": 3.660749999999984,
+              "name": "move first column last execute",
+              "p99": 5.239446999999923,
+              "rme": 12.262634368957427,
               "sampleCount": 10
             },
             {
-              "mean": 244.8236167,
-              "name": "move first column last execute",
-              "p99": 542.8784542499995,
-              "rme": 42.97305466722161,
+              "mean": 6.715060000000039,
+              "name": "move first column last execute + undo",
+              "p99": 7.315441999999866,
+              "rme": 4.191312279599428,
               "sampleCount": 10
             }
           ],
