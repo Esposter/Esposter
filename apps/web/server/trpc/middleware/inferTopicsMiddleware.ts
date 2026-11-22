@@ -56,7 +56,7 @@ export const inferTopicsMiddleware = t.middleware(async ({ ctx, meta, next, path
   // Topic refetch the publish below wakes. A failed mutation names none: its entry drops, and a write that landed before the failure
   // Is published below
   if (type === "mutation" && result.ok) {
-    const rowVersions = await getWriteRowVersions(recorded.statements);
+    const rowVersions = getWriteRowVersions(recorded.statements);
     if (rowVersions.length <= MAX_WRITE_ROW_VERSIONS)
       for (const rowVersion of rowVersions)
         ctx.responseHeaders.append(ROW_VERSIONS_HEADER, formatRowVersionHeaderValue(path, rowVersion));

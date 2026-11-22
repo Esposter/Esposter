@@ -16,6 +16,7 @@ import {
   getMockSession,
 } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { messageRouter } from "#server/trpc/routers/message/index";
@@ -29,6 +30,8 @@ import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
 import { MimeType } from "#shared/models/file/MimeType";
 import { createPollMessageContent } from "#shared/models/message/poll/createPollMessageContent.test";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
+import { threadFollowTable } from "#src/services/message/threadFollow/constants";
+import { getThreadFollowEntry } from "#src/services/message/threadFollow/getThreadFollowEntry";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import { createMockBucket, MockJobQueueDatabase } from "@esposter/db-mock";
 import {
@@ -624,6 +627,39 @@ describe("messageRouter", () => {
     expect(unfollowedRow.version).toBeGreaterThan(followedRow.version);
     expect(follows).toStrictEqual([unfollowedRow]);
     expect(threads).toStrictEqual([]);
+  });
+
+  // The follow's header names its row by the thread's root id as the row holds it, a number, so the entry touches the row
+  test("the follow's entry covers the follow row its header names", async () => {
+    expect.hasAssertions();
+
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(messageRouter)(context).followThread({ roomId, threadRootId: messageId }),
+      context: mockContext,
+      entry: getThreadFollowEntry(roomId, messageId, userId, false, new Date(0)),
+      path: "followThread",
+      tables: [threadFollowTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the unfollow's entry covers the follow row its header names", async () => {
+    expect.hasAssertions();
+
+    await messageCaller.followThread({ roomId, threadRootId: messageId });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) =>
+        createCallerFactory(messageRouter)(context).unfollowThread({ roomId, threadRootId: messageId }),
+      context: mockContext,
+      entry: getThreadFollowEntry(roomId, messageId, userId, true, new Date(0)),
+      path: "unfollowThread",
+      tables: [threadFollowTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
   });
 
   test("asks the room for the followed threads newest first, whichever order they were followed in", async () => {

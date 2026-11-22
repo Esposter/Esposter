@@ -35,7 +35,7 @@ describe(readRowVersionsHeader, () => {
   test.each([
     ["a version below zero", { key: { id: v7() }, table, version: -1 }],
     ["a version that is not whole", { key: { id: v7() }, table, version: 0.1 }],
-    ["a key value that is not a string", { key: { id: 0 }, table, version: 0 }],
+    ["a key value that is neither a string nor a number", { key: { id: true }, table, version: 0 }],
     ["no table", { key: { id: v7() }, version: 0 }],
   ])("drops an entry that does not read back, and keeps the rest: %s", (_title, invalidRowVersion) => {
     expect.hasAssertions();

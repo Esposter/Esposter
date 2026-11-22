@@ -1,3 +1,4 @@
+import type { KeyValue } from "#src/models/shared/overlay/KeyValue";
 import type { RowKey } from "#src/models/shared/overlay/RowKey";
 import type { Versioned } from "#src/models/shared/overlay/Versioned";
 import type { SQLiteTable } from "drizzle-orm/sqlite-core";
@@ -7,7 +8,7 @@ import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 export interface Table<TRow extends Versioned, TSource extends SQLiteTable = SQLiteTable> {
   keyOf: (row: TRow) => RowKey;
   // The key a write's header names a row by: its primary key's fields, read off the header. None when a field is left out
-  keyOfScope: (scope: Record<string, string>) => RowKey | undefined;
+  keyOfScope: (scope: Record<string, KeyValue>) => RowKey | undefined;
   name: string;
   source: TSource;
 }

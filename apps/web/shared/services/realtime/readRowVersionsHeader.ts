@@ -8,10 +8,10 @@ import { z } from "zod";
 // The most scope columns any table declares, which bounds the entries a row's key can hold
 const MAX_ROW_KEY_ENTRIES = 4;
 
-// A row as the header carries it: its key's scope values, its table and the version its write left it at. A scope value
-// Can be any text, a file's path a person chose among them, so a value is checked only as a string
+// A row as the header carries it: its key's values, its table and the version its write left it at. A key value is the row's
+// Own, a string or a number as its column holds it, and a string can be any text, a file's path a person chose among them
 const rowVersionSchema = z.object({
-  key: createRecordSchema(z.string().min(1), z.string(), MAX_ROW_KEY_ENTRIES),
+  key: createRecordSchema(z.string().min(1), z.union([z.string(), z.number()]), MAX_ROW_KEY_ENTRIES),
   table: z.string().min(1),
   version: z.int().nonnegative(),
 }) satisfies z.ZodType<RowVersion>;
