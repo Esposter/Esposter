@@ -3,24 +3,30 @@
 Read when writing a function's parameters: a second call shape, an options object, a default, or a boolean
 flag.
 
-## Overloads
+## One or many: two functions, never overloads
 
-An overload is a `function` declaration, and that is the one overload form: no arrow overload, no interface of call signatures, no `as`. Write one overload signature per call shape, each with its own precise return, then one implementation with no return annotation, whose parameters accept every shape:
+**Overloads are banned in authored code.** A function declared with several call signatures is trusted rather than checked: the compiler never verifies that the implementation returns each overload's narrowed type, so each overload is a cast in disguise. The same holds for an interface with two or more call signatures. Each of those is one function with one exact type, and the compiler checks it in full.
+
+When one function takes one value or many and returns a different shape for each, write two:
+
+- The **batch** function takes the array and returns the map, named for the selector it takes (`getPermissionsByRoomId(db, userId, roomIds)` returns `Map<string, bigint>`).
+- The **single** function takes one value, calls the batch with a one-element array, and reads its entry (`getPermissions(db, userId, roomId)` returns `bigint`).
 
 ```ts
-export function getFoo(db: Db, id: string): Promise<bigint>;
-export function getFoo(db: Db, ids: string[]): Promise<Map<string, bigint>>;
-export async function getFoo(db: Db, ids: string | string[]) {
-  const idArray = Array.isArray(ids) ? ids : [ids];
-  // ...shared implementation, producing `result: Map<string, bigint>`...
-  return Array.isArray(ids) ? result : (result.get(ids) ?? 0n);
-}
+export const getPermissionsByRoomId = async (db: Db, userId: string, roomIds: string[]) => {
+  // ...the shared read, producing `roomIdPermissionsMap: Map<string, bigint>`...
+  return roomIdPermissionsMap;
+};
+
+export const getPermissions = async (db: Db, userId: string, roomId: string) =>
+  (await getPermissionsByRoomId(db, userId, [roomId])).get(roomId) ?? 0n;
 ```
 
-- The implementation signature is not visible to callers: they see only the overload signatures, so each keeps its precise return.
-- The implementation's return is **inferred**, not written out. TypeScript checks each overload against the implementation loosely, so the implementation's union return and each overload's narrower return need no cast between them.
-- Use `Array.isArray` to branch; each branch returns its specific type.
-- `apps/web/app/composables/dungeons/useDialogMessage.ts` is the example for a mapped-type return, and `apps/web/app/composables/message/room/useCreator.ts` the same shape for a union return.
+Each is an `export const` arrow, one per file. The names follow the `naming` skill (`references/verb-families.md`), where a `By<Selector>` that separates two reads of the same rows is kept.
+
+**Nullability that only a caller knows becomes a guard at the caller.** A function does not split into a defined-input form and a maybe-undefined one. It takes the widest input it accepts and returns the type that input produces, and the caller narrows it where it reads the result: `v-if="creator"` in a template, or an early return in a script. `apps/web/app/composables/message/room/useCreator.ts` is the example: it returns `ComputedRef<Creator | undefined>`, because a message that names no author has no creator, and each component that reads the creator guards it.
+
+**The one exception is a declaration file's augmentation.** A `.d.ts` file, and a `declare module` block, may declare overloads, because augmenting a third-party API that is already overloaded has to match its shape. Nothing else may.
 
 ## Options argument defaults
 

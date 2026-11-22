@@ -18,7 +18,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - `references/collections.md` — when mutating an array, reading-or-inserting on a `Map`, choosing a `Set` over `.some()`, or narrowing what a `.filter()` returns.
 - `references/type-modelling.md` — when reaching for a cast, re-declaring fields a source/SDK type already has, dispatching per variant, a `NuxtConfig` key the compiler can't see, or a TS2590 the compiler cannot represent.
 - `references/control-flow.md` — when writing or reshaping a guard, an `if/else`, or a chain.
-- `references/function-signatures.md` — when writing a function's parameters: overloads, an options object, a default, or a boolean flag.
+- `references/function-signatures.md` — when writing a function's parameters: one-or-many input (two functions, never an overload), nullability a caller narrows, an options object, a default, or a boolean flag.
 - `references/floating-promises.md` — when a lint error flags a floating promise, or an async function must be called from a sync slot.
 - `references/dynamic-imports.md` — when reaching for `await import(...)`, or a dependency's docs mention `optimizeDeps`.
 - `references/class-fields.md` — when adding a field to a class.

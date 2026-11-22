@@ -22,7 +22,7 @@ flowchart TD
   effective --> check["checkHasPermission reads it"]
 ```
 
-The fold happens in `getPermissions`, so `checkHasPermission`, `readMyPermissions` and the client's role store read one answer. The owner is still answered before any row is read, and an Administrator bit comes from a role only: the override bits never include it, so an override can neither grant Administrator nor strip it.
+The fold happens in `getPermissionsByRoomId`, which `getPermissions` reads one room of, so `checkHasPermission`, `readMyPermissions` and the client's role store read one answer. The owner is still answered before any row is read, and an Administrator bit comes from a role only: the override bits never include it, so an override can neither grant Administrator nor strip it.
 
 ## Writing one
 
@@ -58,7 +58,7 @@ The member editor leaves out the Administrator bit, which no override can hold.
 | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | `packages/db-schema/src/schema/message/roomMemberPermissionsInMessage.ts`                       | the table; disjointness is held by the writer, not a `CHECK`          |
 | `packages/db-schema/src/relations/message/roomMemberPermissionsInMessageRelation.ts`            | the room relation the relational read takes                           |
-| `packages/db/src/services/room/rbac/getPermissions.ts`                                          | folds the member's row into the effective bitfield                    |
+| `packages/db/src/services/room/rbac/getPermissionsByRoomId.ts`                                  | folds the member's row into the effective bitfield                    |
 | `apps/web/server/services/room/rbac/setMemberPermissionOverride.ts`                             | the three-state write, the empty-row removal and the state it returns |
 | `apps/web/server/trpc/routers/role.ts`                                                          | the upsert, delete and read procedures                                |
 | `apps/web/app/store/message/room/role.ts`                                                       | the override map, its reads and writes                                |
