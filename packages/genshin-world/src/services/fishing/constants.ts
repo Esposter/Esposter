@@ -13,8 +13,8 @@ export const FISHING_NIGHT_START_HOUR = 18;
 // A caught fish comes back to its stock this long after it is caught, as the wiki gives it
 export const FISH_RESPAWN_DURATION: Temporal.Duration = Temporal.Duration.from({ hours: 72 });
 // Provisional: the tension bar's full range, in the units the fish's zone widths, offsets and speeds are read in, which
-// The table's widths and offsets fit a bar of one hundred. The fishing-reel recording on the roadmap's Recordings owed
-// List sets its scale
+// The table's widths and offsets fit a bar of one hundred. The fishing-reel recording on the roadmap's
+// References sought list sets its scale
 export const REEL_BAR_MAX = 100;
 // Provisional: the same recording sets how many seconds the line may lie out of its zone before it breaks
 export const REEL_LOST_OUT_OF_ZONE_SECONDS = 3;

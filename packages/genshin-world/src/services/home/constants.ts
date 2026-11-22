@@ -5,7 +5,7 @@ export const HOME_MINIMUM_RANK = 1;
 // The Adventure Rank the Serenitea Pot opens the realm at, and below which it does not
 export const HOME_REALM_UNLOCK_RANK = 28;
 // Provisional: a Realm Currency or Realm Bounty rate counts per real hour, which a recording of a realm's store across one
-// Hour settles, on the roadmap's recordings owed
+// Hour settles, on the roadmap's References sought list
 export const HOME_RATE_PERIOD_SECONDS = 3600;
 // The bound's counts: eight realms, each with four exterior areas and seven interior ones, and the furnishings an area
 // Holds at most as the wiki's Load page gives them, 449 an exterior area and 149 a room. A save's placements are
