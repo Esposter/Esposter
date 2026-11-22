@@ -69,6 +69,31 @@ const recordSidebarRead = async (
   return read;
 };
 
+// The bookmark dock's read as the viewer, recorded for the write that follows it
+const recordBookmarkRead = async (context: Awaited<ReturnType<typeof createMockContext>>) => {
+  const read = recordStatements(context.db);
+  await createCallerFactory(bookmarkRouter)({ ...context, db: read.database }).readBookmarks();
+  return read;
+};
+
+// A room the viewer is a member of and has bookmarked, so the bookmark dock reads it
+const createBookmarkedRoom = async (context: Awaited<ReturnType<typeof createMockContext>>) => {
+  const userId = getMockSession().user.id;
+  const roomId = v7();
+  await context.db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
+  await context.db
+    .insert(usersToRoomsInMessage)
+    .values({ notificationType: NotificationType.DirectMessage, roomId, userId });
+  await context.db.insert(bookmarksInApp).values({ path: `/${roomId}`, roomId, title: roomId, userId });
+  return roomId;
+};
+
+// The topics a recorded write wakes in a recorded read
+const getRecordedWokenTopics = async (
+  read: ReturnType<typeof recordStatements>,
+  write: ReturnType<typeof recordStatements>,
+) => getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements));
+
 describe("topicMatch", () => {
   // A read's read set names every table its SQL reads. A table the walker misses is one the read never watches, and no
   // Test of a single read's rows would show it, so the five reads the golden read sets pin are checked against their SQL
@@ -131,8 +156,7 @@ describe("topicMatch", () => {
       .insert(resourcesInResource)
       .values({ id: resourceId, name: resourceId, type: ResourceType.Note, userId });
     await context.db.insert(bookmarksInApp).values({ path: `/${resourceId}`, resourceId, title: resourceId, userId });
-    const read = recordStatements(context.db);
-    await createCallerFactory(bookmarkRouter)({ ...context, db: read.database }).readBookmarks();
+    const read = await recordBookmarkRead(context);
     const write = recordStatements(context.db);
 
     await write.database
@@ -140,9 +164,7 @@ describe("topicMatch", () => {
       .set({ name: "renamed" })
       .where(eq(resourcesInResource.id, resourceId));
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([]);
   });
 
   // The dock reads the viewer's own memberships of the rooms it bookmarks, by their room and their user. Removing one is a
@@ -152,23 +174,15 @@ describe("topicMatch", () => {
 
     const userId = getMockSession().user.id;
     const context = await createMockContext();
-    const roomId = v7();
-    await context.db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
-    await context.db
-      .insert(usersToRoomsInMessage)
-      .values({ notificationType: NotificationType.DirectMessage, roomId, userId });
-    await context.db.insert(bookmarksInApp).values({ path: `/${roomId}`, roomId, title: roomId, userId });
-    const read = recordStatements(context.db);
-    await createCallerFactory(bookmarkRouter)({ ...context, db: read.database }).readBookmarks();
+    const roomId = await createBookmarkedRoom(context);
+    const read = await recordBookmarkRead(context);
     const write = recordStatements(context.db);
 
     await write.database
       .delete(usersToRoomsInMessage)
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([`message_usersToRooms:userId=${userId}`]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([`message_usersToRooms:userId=${userId}`]);
   });
 
   // The dock does not read a membership's display name, so renaming the viewer's membership wakes it through no topic
@@ -177,14 +191,8 @@ describe("topicMatch", () => {
 
     const userId = getMockSession().user.id;
     const context = await createMockContext();
-    const roomId = v7();
-    await context.db.insert(roomsInMessage).values({ id: roomId, name: roomId, type: RoomType.Room, userId });
-    await context.db
-      .insert(usersToRoomsInMessage)
-      .values({ notificationType: NotificationType.DirectMessage, roomId, userId });
-    await context.db.insert(bookmarksInApp).values({ path: `/${roomId}`, roomId, title: roomId, userId });
-    const read = recordStatements(context.db);
-    await createCallerFactory(bookmarkRouter)({ ...context, db: read.database }).readBookmarks();
+    const roomId = await createBookmarkedRoom(context);
+    const read = await recordBookmarkRead(context);
     const write = recordStatements(context.db);
 
     await write.database
@@ -192,9 +200,7 @@ describe("topicMatch", () => {
       .set({ displayName: "renamed" })
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([]);
   });
 
   // The landing page counts its room's members, which another member's join changes. The page reads the count through
@@ -224,9 +230,9 @@ describe("topicMatch", () => {
       .insert(usersToRoomsInMessage)
       .values({ notificationType: NotificationType.DirectMessage, roomId: room.id, userId: joiner.user.id });
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([`message_usersToRooms:roomId=${room.id}`]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([
+      `message_usersToRooms:roomId=${room.id}`,
+    ]);
   });
 
   // The dock reads a binned resource's row to draw its bookmark unavailable, so its restore wakes that one row's topic
@@ -245,8 +251,7 @@ describe("topicMatch", () => {
       { path: `/${bookedResourceId}`, resourceId: bookedResourceId, title: bookedResourceId, userId },
       { path: `/${binnedResourceId}`, resourceId: binnedResourceId, title: binnedResourceId, userId },
     ]);
-    const read = recordStatements(context.db);
-    await createCallerFactory(bookmarkRouter)({ ...context, db: read.database }).readBookmarks();
+    const read = await recordBookmarkRead(context);
     const write = recordStatements(context.db);
 
     await write.database
@@ -254,9 +259,9 @@ describe("topicMatch", () => {
       .set({ deletedAt: null })
       .where(eq(resourcesInResource.id, binnedResourceId));
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([`${getTableName(resourcesInResource)}:id=${binnedResourceId}`]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([
+      `${getTableName(resourcesInResource)}:id=${binnedResourceId}`,
+    ]);
   });
 
   // The sidebar names the memberships of each room it lists by that room, so another member joining a listed room wakes the
@@ -277,9 +282,9 @@ describe("topicMatch", () => {
       .insert(usersToRoomsInMessage)
       .values({ notificationType: NotificationType.DirectMessage, roomId: room.id, userId: joiner.user.id });
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([`message_usersToRooms:roomId=${room.id}`]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([
+      `message_usersToRooms:roomId=${room.id}`,
+    ]);
   });
 
   // A direct message the viewer has hidden is not in the sidebar. Unhiding it is a write to the viewer's own membership, which
@@ -299,9 +304,9 @@ describe("topicMatch", () => {
       .set({ isHidden: false })
       .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, reader.user.id)));
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([`message_usersToRooms:userId=${reader.user.id}`]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([
+      `message_usersToRooms:userId=${reader.user.id}`,
+    ]);
     const refetch = recordStatements(context.db);
     const { items } = await createCallerFactory(roomRouter)({ ...readerContext, db: refetch.database }).readRooms({
       includeDirectMessages: true,
@@ -341,9 +346,7 @@ describe("topicMatch", () => {
       .insert(usersToRoomsInMessage)
       .values({ notificationType: NotificationType.DirectMessage, roomId: emptyRoomId, userId });
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual(["message_usersToRooms:*"]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual(["message_usersToRooms:*"]);
   });
 
   // The read filters the memberships to the ones not hidden, so it returns the rooms whose membership is visible and names
@@ -377,9 +380,7 @@ describe("topicMatch", () => {
       .set({ isHidden: false })
       .where(and(eq(usersToRoomsInMessage.roomId, hiddenRoomId), eq(usersToRoomsInMessage.userId, userId)));
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual(["message_usersToRooms:*"]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual(["message_usersToRooms:*"]);
   });
 
   // The sidebar names the viewer's membership of each room it lists by that room, so a member joining or leaving it wakes the
@@ -397,9 +398,9 @@ describe("topicMatch", () => {
       .insert(usersToRoomsInMessage)
       .values({ notificationType: NotificationType.DirectMessage, roomId: directMessageId, userId: newcomer.user.id });
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([`${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([
+      `${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`,
+    ]);
   });
 
   test("a member leaving a shared direct message wakes the sidebar through the room it lists", async () => {
@@ -414,9 +415,9 @@ describe("topicMatch", () => {
       .delete(usersToRoomsInMessage)
       .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)));
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([`${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([
+      `${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`,
+    ]);
   });
 
   // The sidebar reads a membership's display name and its visibility, not its last read time, so another member's last-read
@@ -434,9 +435,7 @@ describe("topicMatch", () => {
       .set({ lastReadAt: new Date() })
       .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)));
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([]);
   });
 
   // The sidebar shows each participant by the display name the membership holds, so another member renaming it wakes the
@@ -454,9 +453,9 @@ describe("topicMatch", () => {
       .set({ displayName: "renamed" })
       .where(and(eq(usersToRoomsInMessage.roomId, directMessageId), eq(usersToRoomsInMessage.userId, joiner.user.id)));
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toStrictEqual([`${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`]);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([
+      `${getTableName(usersToRoomsInMessage)}:roomId=${directMessageId}`,
+    ]);
   });
 
   test("a participant's rename wakes the sidebar through the name column its display name reads", async () => {
@@ -469,8 +468,6 @@ describe("topicMatch", () => {
 
     await write.database.update(usersInAuth).set({ name: "renamed" }).where(eq(usersInAuth.id, joiner.user.id));
 
-    expect(
-      getWokenTopics(await computeReadTopics(read.statements), await computeWriteTopics(write.statements)),
-    ).toContain(`${getTableName(usersInAuth)}:*`);
+    await expect(getRecordedWokenTopics(read, write)).resolves.toStrictEqual([`${getTableName(usersInAuth)}:*`]);
   });
 });

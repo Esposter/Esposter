@@ -61,9 +61,7 @@ describe("todoListRouter", () => {
   test("adds a follow-up at the foot with its notes escaped, and reads it back for its repository alone", async () => {
     expect.hasAssertions();
 
-    const { contentVersion, id } = await caller.createResource({ name });
-    const ownerItem = new TodoListItem({ name });
-    await caller.saveResourceContent({ content: { items: [ownerItem] }, contentVersion, id });
+    const { id, item: ownerItem } = await createOwnerTodo(new TodoListItem({ name }));
 
     const itemId = await caller.addFollowUp({ id, name, notes: "<", repository, sessionId });
     const content = await caller.readResourceContent({ id });
@@ -85,9 +83,7 @@ describe("todoListRouter", () => {
   test("completes a follow-up with its summary, and refuses a todo the owner wrote", async () => {
     expect.hasAssertions();
 
-    const { contentVersion, id } = await caller.createResource({ name });
-    const ownerItem = new TodoListItem({ name });
-    await caller.saveResourceContent({ content: { items: [ownerItem] }, contentVersion, id });
+    const { id, item: ownerItem } = await createOwnerTodo(new TodoListItem({ name }));
     const itemId = await caller.addFollowUp({ id, name, notes: "", repository, sessionId });
 
     await caller.completeFollowUp({ id, itemId, summary: " ", timeZone });
@@ -124,19 +120,23 @@ describe("todoListRouter", () => {
     );
   });
 
-  // A repeating todo the owner wrote, due on the epoch and repeating daily, for a tick to roll
-  const createRepeatingTodo = async () => {
+  // A todo the owner wrote as the resource's only item
+  const createOwnerTodo = async (item: TodoListItem) => {
     const { contentVersion, id } = await caller.createResource({ name });
-    const item = new TodoListItem({
-      dueAt: new Date(0),
-      name,
-      recurrence: { interval: 1, startsAt: new Date(0), unit: RecurrenceUnit.Day },
-    });
     await caller.saveResourceContent({ content: { items: [item] }, contentVersion, id });
     return { id, item };
   };
+  // A repeating todo the owner wrote, due on the epoch and repeating daily, for a tick to roll
+  const createRepeatingTodo = () =>
+    createOwnerTodo(
+      new TodoListItem({
+        dueAt: new Date(0),
+        name,
+        recurrence: { interval: 1, startsAt: new Date(0), unit: RecurrenceUnit.Day },
+      }),
+    );
 
-  test("an agent ticks a repeating todo", async () => {
+  test("the checkbox ticks a repeating todo", async () => {
     expect.hasAssertions();
 
     const { id, item } = await createRepeatingTodo();
