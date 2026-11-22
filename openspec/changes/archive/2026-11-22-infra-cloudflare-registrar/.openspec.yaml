@@ -2,4 +2,3 @@ schema: spec-driven
 affected_areas: [infra]
 skip_specs: true
 x-model: claude-sonnet-5-5
-x-waiting: "task 2.2 waits on the owner's dashboard read-back"

@@ -14,10 +14,6 @@
 
 None. The change is infrastructure and documentation, so it carries no spec delta. Its decisions land in the posture page.
 
-## Waiting on
-
-The owner reading the account's admin roles and the deploy token's permissions back in the dashboard.
-
 ## Impact
 
 Adds a few small Pulumi resources and a folder for the DNSSEC resource's type. No Worker, table or queue changes.
