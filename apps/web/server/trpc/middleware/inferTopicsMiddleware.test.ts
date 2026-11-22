@@ -31,7 +31,7 @@ import { TRPCError } from "@trpc/server";
 import { and, eq, getTableName } from "drizzle-orm";
 import { createHmac } from "node:crypto";
 import { v7 } from "uuid";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
 type UserRow = typeof usersInAuth.$inferSelect;
@@ -114,7 +114,6 @@ describe("inferTopicsMiddleware", () => {
   const userTable = getTableName(usersInAuth);
   const usersToRoomTable = getTableName(usersToRoomsInMessage);
   const userAssetsRootTopic = getBlobTopic(getStorageBucketBindingName(StorageBucket.UserAssets), "");
-  const inviteTable = getTableName(invitesInMessage);
 
   beforeAll(async () => {
     ({ bucket: mockBuckets[StorageBucket.UserAssets] } = await createMockBucket(StorageBucket.UserAssets));
@@ -122,7 +121,6 @@ describe("inferTopicsMiddleware", () => {
 
   afterEach(() => {
     MockPublishedTopics.length = 0;
-    vi.unstubAllEnvs();
   });
 
   // A query's topics are the rows its statements selected, named by the scope values of the table, so the answer is
@@ -223,9 +221,7 @@ describe("inferTopicsMiddleware", () => {
     await context.db.insert(invitesInMessage).values({ id: token, roomId: room.id, userId: user.id });
     await createTestCaller(context).useInvite(token);
 
-    const rowVersionsHeader = context.responseHeaders.get(ROW_VERSIONS_HEADER) ?? "";
-    expect(rowVersionsHeader).not.toContain(inviteTable);
-    expect(rowVersionsHeader).not.toContain(token);
+    expect(context.responseHeaders.get(ROW_VERSIONS_HEADER)).toBeNull();
   });
 
   // A read's topics are watched only by the person who read them, so the header signs them for that person: the realtime
@@ -241,9 +237,11 @@ describe("inferTopicsMiddleware", () => {
     await createTestCaller(signedInContext).readUser(user.id);
     const [read] = readTopicsHeader(signedInContext.responseHeaders, "readUser");
 
-    expect(read?.signature).toBe(
+    assert.exists(read);
+
+    expect(read.signature).toBe(
       createHmac("sha256", topicWatchSecret)
-        .update(getTopicWatchPayload(user.id, read?.readAt ?? 0, read?.topics ?? []))
+        .update(getTopicWatchPayload(user.id, read.readAt, read.topics))
         .digest("base64url"),
     );
   });
