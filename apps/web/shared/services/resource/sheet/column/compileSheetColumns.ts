@@ -1,4 +1,3 @@
-/* oxlint-disable typescript/no-unsafe-type-assertion -- a call through the transformation's runtime type: each entry takes its own variant, so the call's parameter is the intersection of those, which is never for disjoint variants */
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnCellReader } from "#shared/models/resource/sheet/column/ColumnCellReader";
 import type { SheetCellReader } from "#shared/models/resource/sheet/column/SheetCellReader";
@@ -11,6 +10,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { getCyclicColumnIds } from "#shared/services/resource/sheet/column/getCyclicColumnIds";
 import { ColumnTransformationCompileMap } from "#shared/services/resource/sheet/column/transformation/ColumnTransformationCompileMap";
 import { ColumnTransformationSourceIdsMap } from "#shared/services/resource/sheet/column/transformation/ColumnTransformationSourceIdsMap";
+import { dispatchByType } from "#shared/util/object/dispatchByType";
 import { getOrCreate, takeOne } from "@esposter/shared";
 
 // Compiles a sheet's computed columns once and binds them to a row list once, so a cell read is a lookup.
@@ -23,11 +23,8 @@ export const compileSheetColumns = (columns: ToData<Column>[]) => {
   for (const column of columns) {
     if (column.type !== ColumnType.Computed) continue;
     const { transformation } = column;
-    compiledMap.set(
-      column.id,
-      ColumnTransformationCompileMap[transformation.type](transformation as never, findSource),
-    );
-    sourceIdsMap.set(column.id, ColumnTransformationSourceIdsMap[transformation.type](transformation as never));
+    compiledMap.set(column.id, dispatchByType(ColumnTransformationCompileMap, transformation, findSource));
+    sourceIdsMap.set(column.id, dispatchByType(ColumnTransformationSourceIdsMap, transformation));
   }
   const cyclicColumnIds = getCyclicColumnIds(sourceIdsMap);
 

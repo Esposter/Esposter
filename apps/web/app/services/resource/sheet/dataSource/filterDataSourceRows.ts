@@ -2,6 +2,7 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { ColumnFilter } from "#src/models/resource/sheet/column/ColumnFilter";
 import type { ToData } from "@esposter/shared";
 
+import { dispatchByType } from "#shared/util/object/dispatchByType";
 import { checkIsActiveColumnFilter } from "#src/services/resource/sheet/column/checkIsActiveColumnFilter";
 import { ColumnFilterPredicateMap } from "#src/services/resource/sheet/dataSource/ColumnFilterPredicateMap";
 import { takeOne } from "@esposter/shared";
@@ -11,8 +12,7 @@ export const filterDataSourceRows = (rows: ToData<Row>[], columnFilters: Record<
   if (activeFilters.length === 0) return rows;
   return rows.filter((row) =>
     activeFilters.every(([columnName, filter]) =>
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the predicate is picked by the filter's runtime type, and a call through the union of the predicates takes the intersection of their filter parameters
-      ColumnFilterPredicateMap[filter.type](filter as never, takeOne(row.data, columnName)),
+      dispatchByType(ColumnFilterPredicateMap, filter, takeOne(row.data, columnName)),
     ),
   );
 };

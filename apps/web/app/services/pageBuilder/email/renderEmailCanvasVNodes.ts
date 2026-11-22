@@ -4,6 +4,7 @@ import type { EmailKind } from "#src/models/pageBuilder/EmailKind";
 
 import { checkIsStackedColumns } from "#shared/services/pageBuilder/email/checkIsStackedColumns";
 import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";
+import { dispatchByType } from "#shared/util/object/dispatchByType";
 import { EmailCanvasDrawingMap } from "#src/services/pageBuilder/email/canvasDrawing/EmailCanvasDrawingMap";
 import { cloneVNode } from "vue";
 import { renderBlockNodes } from "vue-block-editor-headless";
@@ -37,8 +38,7 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
         .map(([name, property]) => [property, attribute(name)]),
     );
     const context: EmailCanvasContext = { attribute, childNodes: Object.values(slots).flat(), isStacked, kind, style };
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the drawing is picked by the node's runtime type, and a call through the union of the drawings takes the intersection of their node parameters
-    const drawing = EmailCanvasDrawingMap[node.type](node as never, context);
+    const drawing = dispatchByType(EmailCanvasDrawingMap, node, context);
     // Each drawn node's root element carries the node's id, so the canvas can outline it on hover and select it on click
     return cloneVNode(drawing, { "data-node-id": node.props.id });
   });
