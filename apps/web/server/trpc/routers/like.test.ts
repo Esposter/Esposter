@@ -4,9 +4,13 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
+import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test";
 import { likeRouter } from "#server/trpc/routers/like";
 import { postRouter } from "#server/trpc/routers/post";
-import { DatabaseEntityType } from "@esposter/db-schema";
+import { likeTable, postTable } from "#src/services/post/overlay/constants";
+import { getLikePatchEntry } from "#src/services/post/overlay/getLikePatchEntry";
+import { getSetLikeEntry } from "#src/services/post/overlay/getSetLikeEntry";
+import { DatabaseEntityType, NO_ROW_VERSION } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";
 
@@ -35,6 +39,32 @@ describe("likeRouter", () => {
     expect(post.likeCount).toBe(value);
   });
 
+  // The vote's entry is the one the store issues. The post it moves is named twice, for its count and then its ranking,
+  // So the entry reads the post by its key, and a write to that post queues behind the vote
+  test("the create entry covers every row the vote names", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(likeRouter)(context).createLike({ postId: newPost.id, value }),
+      context: mockContext,
+      entry: getSetLikeEntry({
+        createdAt: new Date(0),
+        deletedAt: null,
+        postId: newPost.id,
+        updatedAt: new Date(0),
+        userId: getMockSession().user.id,
+        value,
+        version: NO_ROW_VERSION,
+      }),
+      path: "createLike",
+      tables: [likeTable, postTable],
+    });
+
+    expect(named).toHaveLength(3);
+    expect(uncovered).toStrictEqual([]);
+  });
+
   test("fails create with existing like", async () => {
     expect.hasAssertions();
 
@@ -58,6 +88,24 @@ describe("likeRouter", () => {
 
     expect(updatedLike.value).toBe(updatedValue);
     expect(post.likeCount).toBe(updatedValue);
+  });
+
+  test("the update entry covers every row the update names", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    await likeCaller.createLike({ postId: newPost.id, value });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) =>
+        createCallerFactory(likeRouter)(context).updateLike({ postId: newPost.id, value: updatedValue }),
+      context: mockContext,
+      entry: getLikePatchEntry(getMockSession().user.id, newPost.id, { value: updatedValue }),
+      path: "updateLike",
+      tables: [likeTable, postTable],
+    });
+
+    expect(named).toHaveLength(3);
+    expect(uncovered).toStrictEqual([]);
   });
 
   test("fails update with wrong user", async () => {
@@ -84,6 +132,23 @@ describe("likeRouter", () => {
     expect(deletedLike.value).toBe(value);
     expect(deletedLike.userId).toBe(userId);
     expect(deletedLike.postId).toBe(newPost.id);
+  });
+
+  test("the delete entry covers every row the removal names", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    await likeCaller.createLike({ postId: newPost.id, value });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(likeRouter)(context).deleteLike(newPost.id),
+      context: mockContext,
+      entry: getLikePatchEntry(getMockSession().user.id, newPost.id, { deletedAt: new Date(0) }),
+      path: "deleteLike",
+      tables: [likeTable, postTable],
+    });
+
+    expect(named).toHaveLength(3);
+    expect(uncovered).toStrictEqual([]);
   });
 
   // A removal keeps the vote as a tombstone, so the version it leaves is the one a later arrival of the row is ordered against
