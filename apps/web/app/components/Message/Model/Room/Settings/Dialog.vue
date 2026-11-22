@@ -24,7 +24,7 @@ const isSettingsDrawerOpen = ref(false);
   <MessageModelSettingsDialog v-if="room" v-model="isOpen" :title="`${room.name} settings`">
     <MessageModelRoomSettingsLeftSideBar
       v-model="settingsType"
-      v-model:open="isSettingsDrawerOpen"
+      v-model:is-open="isSettingsDrawerOpen"
       :room
       @open:delete="isDeleteOpen = true"
     />

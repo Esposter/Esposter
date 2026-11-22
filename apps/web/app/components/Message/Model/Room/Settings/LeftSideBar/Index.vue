@@ -16,7 +16,7 @@ interface Props {
 }
 
 const modelValue = defineModel<keyof typeof SettingsContentMap>({ required: true });
-const isDrawerOpen = defineModel<boolean>("open", { default: false });
+const isOpen = defineModel<boolean>("isOpen", { default: false });
 const { room } = defineProps<Props>();
 const emit = defineEmits<{ "open:delete": [] }>();
 const roleStore = useRoleStore();
@@ -49,12 +49,12 @@ const openedCategories = ref([...SettingsCategories]);
 const onClick = (settingsType: SettingsType) => {
   if (settingsType === SettingsType.Delete) emit("open:delete");
   else modelValue.value = settingsType;
-  isDrawerOpen.value = false;
+  isOpen.value = false;
 };
 </script>
 
 <template>
-  <MessageModelSettingsLeftSideBar v-model:is-open="isDrawerOpen">
+  <MessageModelSettingsLeftSideBar v-model:is-open="isOpen">
     <nav aria-label="Room settings" p-2 flex flex-col gap-1 ui-body>
       <MessageModelRoomSettingsLeftSideBarCategory
         v-for="{ category, items } of visibleCategories"
