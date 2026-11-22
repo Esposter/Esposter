@@ -9,7 +9,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 127ad46e11
+- Commit: 9ec3b71949
 - Node: v26.13.1
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
