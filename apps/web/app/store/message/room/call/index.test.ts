@@ -10,6 +10,7 @@ import { AdminActionHookMap } from "#src/services/message/moderation/AdminAction
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";
 import { useAlertStore } from "#src/store/alert";
 import { useCallStore } from "#src/store/message/room/call/index";
+import { useKnockerStore } from "#src/store/message/room/call/knocker";
 import { useMediaStore } from "#src/store/message/room/call/media";
 import { useParticipantStore } from "#src/store/message/room/call/participant";
 import { useRealtimeStore } from "#src/store/message/room/realtime";
@@ -169,6 +170,32 @@ describe(useCallStore, () => {
     expect(activeCallSessionId.value).toBe("");
     expect(isConnecting.value).toBe(false);
     expect(takeOne(alerts.value).type).toBe("error");
+  });
+
+  // A camera the device refuses is its own step, so the call the user just joined stays joined rather than being left
+  test("keeps a joined call when the device refuses its camera", async () => {
+    expect.hasAssertions();
+
+    const selfId = v7();
+    trpcMsw.callSession.joinCall.mutation(() => ({
+      authToken: "",
+      callSessionId,
+      isDoorkeeper: false,
+      meetingId: "",
+      participantId: selfId,
+      participantMap: new Map([[selfId, createParticipant(selfId)]]),
+    }));
+    const realtimeStore = useRealtimeStore();
+    vi.spyOn(realtimeStore, "connect").mockResolvedValue();
+    vi.spyOn(realtimeStore, "setCamera").mockRejectedValue(new Error(" "));
+    const { joinCallOptions } = storeToRefs(useKnockerStore());
+    joinCallOptions.value.isCameraEnabled = true;
+    const callStore = useCallStore();
+    const { activeCallSessionId } = storeToRefs(callStore);
+    const { joinCall } = callStore;
+    await joinCall(callSessionId);
+
+    expect(activeCallSessionId.value).toBe(callSessionId);
   });
 
   // The disconnect is tearing down an attempt that already failed, so its own rejection is not the failure the

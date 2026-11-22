@@ -157,12 +157,13 @@ export const useCallStore = defineStore("message/room/call", () => {
       joinedCallSessionId = callSessionId;
       isJoined = true;
       // The call is connected by here, so these only sync the participant row, which is drawn at once and unwinds itself
-      // If it is refused — a rejected flag must not tear down a call that is already up
+      // If it is refused — a rejected flag must not tear down a call that is already up. The camera's device step is its
+      // Own result, so a device that refuses it logs and the join keeps the call
       if (!isMicrophoneEnabled) setMuted(true);
-      if (isCameraEnabled) {
-        await setCamera(true);
-        setCameraEnabled(true);
-      }
+      if (isCameraEnabled)
+        await getResultAsync(() => setCamera(true)).match(() => {
+          setCameraEnabled(true);
+        }, console.error);
     }).match(noop, (error) => unwindJoin(isJoined, error));
     // Set after the await rather than through a finalizer: the chain above resolves to a Result rather than
     // Rejecting, so no path skips this line
