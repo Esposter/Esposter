@@ -17,7 +17,7 @@ defineSlots<{ panel: (props: { focus: () => void }) => VNode }>();
 const text = defineModel<string>("text", { required: true });
 const tokens = defineModel<T[]>("tokens", { required: true });
 const isOpen = defineModel<boolean>("isOpen", { default: false });
-defineProps<Props>();
+const { getTokenTitle } = defineProps<Props>();
 const emit = defineEmits<{ submit: [] }>();
 const container = useTemplateRef("container");
 const field = useTemplateRef("field");
@@ -26,6 +26,7 @@ const { focused: isFocusWithin } = useFocusWithin(container);
 const focus = () => {
   input.value?.focus();
 };
+const chips = computed(() => tokens.value.map((token, index) => ({ index, title: getTokenTitle(token) })));
 
 watch(isFocusWithin, (newIsFocusWithin) => {
   if (!newIsFocusWithin) isOpen.value = false;
@@ -50,7 +51,6 @@ watch(isFocusWithin, (newIsFocusWithin) => {
   >
     <div
       ref="field"
-      class="field"
       px-2
       py-1
       flex
@@ -65,9 +65,9 @@ watch(isFocusWithin, (newIsFocusWithin) => {
     >
       <UiIcon :meaning="UiIconMeaning.Search" text-muted />
       <UiChip
-        v-for="(token, index) of tokens"
+        v-for="{ index, title } of chips"
         :key="index"
-        :remove-label="`Remove ${getTokenTitle(token)}`"
+        :remove-label="`Remove ${title}`"
         @remove="
           () => {
             tokens = tokens.toSpliced(index, 1);
@@ -75,7 +75,7 @@ watch(isFocusWithin, (newIsFocusWithin) => {
           }
         "
       >
-        {{ getTokenTitle(token) }}
+        {{ title }}
       </UiChip>
       <input
         ref="input"
@@ -127,10 +127,3 @@ watch(isFocusWithin, (newIsFocusWithin) => {
     </UiPopover>
   </div>
 </template>
-
-<style scoped>
-/* A field the reader is in is tinted and ringed as every field is, since its input draws no ring of its own */
-.field:focus-within {
-  background-color: color-mix(in srgb, var(--ui-tint) 10%, var(--ui-panel));
-}
-</style>
