@@ -56,6 +56,8 @@ Greps, per unit:
 
 10. `^[ \t]*//[^\n]*\n[ \t]*export\b` multiline (`rg -U`) over `*.ts` — a `//` line directly above an export, the shape `formatting`'s doc-block rule says the swept tree holds there. A `*/` line directly above an export is not this count: the hits of `\*/[ \t]*\n[ \t]*export\b` are the `/** */` doc blocks grep 6 keeps on an exported surface and the one-line `/* */` directives the Excluded list sets aside. Set those aside and no other `/* */` block sits above an export, so that count is zero.
 
+11. `^\s*(//|/\*|\*|<!--).*(reject|settles every|resolves (each|its|every))` over `*.ts`, `*.vue`, plus `git grep -n no-floating-promises` for the directives — a comment saying what a call, a press or a hook does when it rejects, or that a promise cannot reject. Read each claim against the code it names: it holds only where the rejection is caught, logged or settled at the place the comment says, and a directive's reason is the same claim. A schema, validator or path that rejects is a different sentence and most hits are that; skip those by their subject.
+
 Never swept anywhere: 3-line `//` blocks with every line short.
 
 Excluded: `apps/web/app/types/desmos.d.ts`, `packages/configuration/types/global.d.ts`, `packages/vue-phaserjs/auto-imports.d.ts` (vendored/generated) · `apps/web/app/util/math/random/getRandomValues.ts` (source-URL references) · `*/tsdown.config.ts`, `@ts-expect-error` / `oxlint-disable` lines (directives) · doc blocks copied verbatim from an upstream type (the Desmos enums) — they are kept diff-identical to their source, same ground as an unimplemented interface stub.
