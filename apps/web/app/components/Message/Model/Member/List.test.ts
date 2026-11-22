@@ -13,7 +13,7 @@ import { describe, expect, test } from "vitest";
 
 describe("messageModelMemberList", () => {
   const { trpcMsw } = setupMswTrpc();
-  const room = createRoom("room");
+  const room = createRoom("");
   const firstMember = { ...createUser({ name: "first" }), displayName: "first" };
   const secondMember = { ...createUser({ name: "second" }), displayName: "second" };
 

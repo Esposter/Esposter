@@ -26,6 +26,12 @@ const seedMemberRoles = (memberRoles: UserToRoomRoleInMessageWithRelations[]) =>
   }
 };
 
+// The server refuses the write, so a mock that throws stands in for its answer
+const createRefusingMock = () =>
+  vi.fn<() => never>(() => {
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+  });
+
 describe(useToggleMemberRole, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
@@ -63,12 +69,8 @@ describe(useToggleMemberRole, () => {
     expect.hasAssertions();
 
     await readActor(5);
-    const assignRole = vi.fn<() => never>(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    const revokeRole = vi.fn<() => never>(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
+    const assignRole = createRefusingMock();
+    const revokeRole = createRefusingMock();
     trpcMsw.role.assignRole.mutation(assignRole);
     trpcMsw.role.revokeRole.mutation(revokeRole);
     seedMemberRoles(memberRoles.map((memberRole) => assignmentOf(memberRole)));

@@ -47,7 +47,6 @@ describe("messageModelMemberActionDialogShell", () => {
       expect(document.activeElement).not.toBe(component.get("dialog").element);
     });
 
-    // The submit sits in the footer, outside the form it submits, so it reaches the form through its id
     test("submits the body's form from the footer", async () => {
       expect.hasAssertions();
 

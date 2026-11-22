@@ -17,6 +17,17 @@ describe("messageModelStatusPickerForm", () => {
   const message = "message";
   const draftMessage = "draftMessage";
   const rejectedMessage = "rejectedMessage";
+  const createStoredStatus = (isConnected: boolean) => ({
+    createdAt: new Date(0),
+    deletedAt: null,
+    expiresAt: null,
+    isConnected,
+    message,
+    status: UserStatus.Online,
+    updatedAt: new Date(0),
+    userId,
+    version: 0,
+  });
 
   beforeEach(() => {
     // Every test in the file shares the nuxt app's pinia, so each files its status under a user no earlier test wrote
@@ -31,17 +42,7 @@ describe("messageModelStatusPickerForm", () => {
 
     const statusStore = useStatusStore();
     const { getUserStatus, storeStatus } = statusStore;
-    const storedStatus = {
-      createdAt: new Date(0),
-      deletedAt: null,
-      expiresAt: null,
-      isConnected: true,
-      message,
-      status: UserStatus.Online,
-      updatedAt: new Date(0),
-      userId,
-      version: 0,
-    };
+    const storedStatus = createStoredStatus(true);
     storeStatus(storedStatus);
     trpcMsw.user.upsertStatus.mutation(() => {
       storeStatus({ ...storedStatus, status: UserStatus.Idle, version: 1 });
@@ -64,17 +65,7 @@ describe("messageModelStatusPickerForm", () => {
 
     const statusStore = useStatusStore();
     const { storeStatus } = statusStore;
-    const storedStatus = {
-      createdAt: new Date(0),
-      deletedAt: null,
-      expiresAt: null,
-      isConnected: false,
-      message,
-      status: UserStatus.Online,
-      updatedAt: new Date(0),
-      userId,
-      version: 0,
-    };
+    const storedStatus = createStoredStatus(false);
     storeStatus(storedStatus);
     const component = await mountSuspended(MessageModelStatusPickerForm);
     const messageField = component.get("input");

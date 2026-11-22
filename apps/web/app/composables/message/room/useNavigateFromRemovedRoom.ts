@@ -9,8 +9,8 @@ export const useNavigateFromRemovedRoom = () => {
   const { currentRoomId, rooms } = storeToRefs(roomStore);
   watch(rooms, async (nextRooms, previousRooms) => {
     const roomId = currentRoomId.value;
-    const wasListed = previousRooms.some(({ id }) => id === roomId);
+    const isPreviouslyListed = previousRooms.some(({ id }) => id === roomId);
     const isListed = nextRooms.some(({ id }) => id === roomId);
-    if (wasListed && !isListed) await navigateTo(RoutePath.MessagesIndex, { replace: true });
+    if (isPreviouslyListed && !isListed) await navigateTo(RoutePath.MessagesIndex, { replace: true });
   });
 };

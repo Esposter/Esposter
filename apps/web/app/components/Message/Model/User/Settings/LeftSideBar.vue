@@ -41,7 +41,7 @@ const scrollToSection = (section: SettingsSection) => {
 </script>
 
 <template>
-  <MessageModelSettingsLeftSideBar v-model:open="isDrawerOpen">
+  <MessageModelSettingsLeftSideBar v-model:is-open="isDrawerOpen">
     <nav aria-label="User settings" p-2 flex flex-col gap-3>
       <UiList
         :items="typeItems"

@@ -36,6 +36,16 @@ describe("messageModelFileRendererPdf", () => {
       props: { file, isPreview, url: mountedUrl },
     });
 
+  // The viewer holds a closed watermark dialog of its own, so the viewer is the dialog the file's name titles
+  const findViewerDialog = () =>
+    [...document.body.querySelectorAll("dialog")].find(
+      (dialog) => dialog.querySelector("h2")?.textContent === filename,
+    );
+  const openViewer = async () => {
+    const component = await mountPdf(false);
+    await component.find("canvas").trigger("click");
+  };
+
   afterEach(() => {
     document.body.innerHTML = "";
   });
@@ -55,13 +65,8 @@ describe("messageModelFileRendererPdf", () => {
   test("opens the viewer as a dialog with no footer and a close button", async () => {
     expect.hasAssertions();
 
-    const component = await mountPdf(false);
-    await component.find("canvas").trigger("click");
-
-    // The viewer holds a closed watermark dialog of its own, so the footer read is the one directly under the viewer's frame
-    const viewerDialog = [...document.body.querySelectorAll("dialog")].find(
-      (dialog) => dialog.querySelector("h2")?.textContent === filename,
-    );
+    await openViewer();
+    const viewerDialog = findViewerDialog();
 
     expect(viewerDialog).toBeDefined();
     expect(viewerDialog?.querySelector(":scope > section > footer")).toBeNull();
@@ -72,11 +77,8 @@ describe("messageModelFileRendererPdf", () => {
   test("the viewer's frame stands at a definite height", async () => {
     expect.hasAssertions();
 
-    const component = await mountPdf(false);
-    await component.find("canvas").trigger("click");
-    const viewerDialog = [...document.body.querySelectorAll("dialog")].find(
-      (dialog) => dialog.querySelector("h2")?.textContent === filename,
-    );
+    await openViewer();
+    const viewerDialog = findViewerDialog();
 
     expect(viewerDialog?.querySelector(":scope > section")?.classList).toContain(
       UiDialogFrameClassMap[UiDialogPlacement.Middle].tallHeight,

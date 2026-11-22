@@ -41,7 +41,7 @@ describe(useNavigateFromRemovedRoom, () => {
     await readRooms();
   };
   const tombstoneMembership = (roomId: string) =>
-    createUserToRoom({ deletedAt: new Date(), roomId, userId: session.user.id, version: 1 });
+    createUserToRoom({ deletedAt: new Date(0), roomId, userId: session.user.id, version: 1 });
 
   // A leave, a kick or a room delete reaches the reader's tabs as the tombstone of its membership. The room leaves the
   // List at once, and the reader is taken off it a single time, since the tombstone arrives once

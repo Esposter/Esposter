@@ -35,6 +35,7 @@ describe("messageModelMemberActionDialogDisplayName", () => {
       props: { displayName, modelValue: true, roomId, user },
     });
   const memberRow: MemberRowInRoom = { ...user, deletedAt: null, displayName, roomId, userId: user.id, version: 0 };
+  const expectedUpdate = { displayName: newDisplayName, roomId, targetUserId: user.id };
   // The member the dialog was opened on, as the room's first page read left it: the person, and the membership row the
   // Page held. The list is the room's, so the room is made current here, after the dialog mounts, since a mount resets the route
   const seedMember = async () => {
@@ -70,14 +71,9 @@ describe("messageModelMemberActionDialogDisplayName", () => {
     await component.get("input").trigger("keydown", { key: "Enter" });
     await written;
 
-    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({
-      displayName: newDisplayName,
-      roomId,
-      targetUserId: user.id,
-    });
+    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith(expectedUpdate);
   });
 
-  // The save sits in the footer, outside the form it submits, so a click on it has to reach the form through its id
   test("saves the typed name from the footer's Save", async () => {
     expect.hasAssertions();
 
@@ -87,11 +83,7 @@ describe("messageModelMemberActionDialogDisplayName", () => {
     await component.get('button[type="submit"]').trigger("click");
     await written;
 
-    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({
-      displayName: newDisplayName,
-      roomId,
-      targetUserId: user.id,
-    });
+    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith(expectedUpdate);
   });
 
   test("clears the member's display name on an empty save", async () => {
@@ -120,11 +112,7 @@ describe("messageModelMemberActionDialogDisplayName", () => {
     await component.get("input").trigger("keydown", { key: "Enter" });
     await written;
 
-    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({
-      displayName: newDisplayName,
-      roomId,
-      targetUserId: user.id,
-    });
+    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith(expectedUpdate);
   });
 
   // A blank name is stored as the account's own name, so the row shows that name from the save, before the server answers

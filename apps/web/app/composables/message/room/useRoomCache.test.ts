@@ -15,7 +15,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useRoomCache, () => {
   const session = { user: { id: v7() } };
-  const room = createRoom("name");
+  const room = createRoom("");
   const userToRoom = createUserToRoom({ roomId: room.id, userId: session.user.id });
 
   beforeEach(() => {

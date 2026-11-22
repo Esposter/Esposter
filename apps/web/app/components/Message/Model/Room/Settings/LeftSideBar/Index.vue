@@ -54,7 +54,7 @@ const onClick = (settingsType: SettingsType) => {
 </script>
 
 <template>
-  <MessageModelSettingsLeftSideBar v-model:open="isDrawerOpen">
+  <MessageModelSettingsLeftSideBar v-model:is-open="isDrawerOpen">
     <nav aria-label="Room settings" p-2 flex flex-col gap-1 ui-body>
       <MessageModelRoomSettingsLeftSideBarCategory
         v-for="{ category, items } of visibleCategories"
