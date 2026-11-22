@@ -56,8 +56,9 @@ import { takeOne } from "@esposter/shared";
 // Strikes the Ores, the Dendro Cores and the enemies in its area, a normal or charged attack's that struck an enemy
 // Rolling for its Energy, the ores an Overloaded's explosion reached are struck, and the changes to the members' HP are
 // Sent last. A character whose combatant is not built yet, its talent multipliers still in flight, plays nothing until
-// They arrive. The body and every list the step fills are the context's and the controls' own, written in place and
-// Emptied by their length, so a step where nothing lands allocates nothing
+// They arrive. The body, the field's last position and every list the step fills are the context's and the controls'
+// Own, written in place and Emptied by their length, so a step where nothing lands allocates nothing once the field
+// Has a position
 export const stepActiveKit = (
   kitState: KitState,
   input: KitInput,
@@ -99,13 +100,17 @@ export const stepActiveKit = (
   const combatant = findKitStance(kitEffectState.effects, characterId)?.combatant ?? fieldCombatant;
   const { kit } = combatant;
   const { position } = characterController;
+  const { fieldPosition } = kitEffectState;
   const movement = measureKitStepMovement(
     characterId,
     kitEffectState.fieldCharacterId,
-    kitEffectState.fieldPosition ?? position,
+    fieldPosition ?? position,
     position,
   );
-  kitEffectState.fieldPosition = { x: position.x, z: position.z };
+  if (fieldPosition) {
+    fieldPosition.x = position.x;
+    fieldPosition.z = position.z;
+  } else kitEffectState.fieldPosition = { x: position.x, z: position.z };
   body.facing = characterController.facing;
   body.height = input.height;
   body.position = position;

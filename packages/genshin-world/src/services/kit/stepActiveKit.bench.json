@@ -6,26 +6,21 @@
         {
           "benchmarks": [
             {
-              "mean": 19.282596899999984,
-              "name": "the fixed step",
-              "p99": 24.428314629999964,
-              "rme": 2.572817188151238,
+              "mean": 264.75547812500037,
+              "name": "idle",
+              "p99": 669.3068854900012,
+              "rme": 16.96031163709012,
               "sampleCount": 40
-            }
-          ],
-          "fullName": "stepActiveKit > a minute of the proof party, idle"
-        },
-        {
-          "benchmarks": [
+            },
             {
-              "mean": 30.08452605000004,
-              "name": "the fixed step",
-              "p99": 37.88699662000003,
-              "rme": 2.5926961828876958,
+              "mean": 548.959000975,
+              "name": "in combat",
+              "p99": 1547.737069740001,
+              "rme": 17.807322906988865,
               "sampleCount": 40
             }
           ],
-          "fullName": "stepActiveKit > a minute of the proof party, in combat"
+          "fullName": "stepActiveKit > a minute of the proof party"
         }
       ]
     }

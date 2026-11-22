@@ -4,13 +4,13 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { PROOF_PARTY_CHARACTER_IDS } from "#src/services/kit/constants.test";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
-import { replayScriptedMinute } from "#src/services/kit/replayScriptedMinute.test";
+import { createScriptedMinute, replayScriptedMinute } from "#src/services/kit/replayScriptedMinute.test";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 
-// The kits and tables the minute only reads, built and read once from the mirror; the minute builds the world it steps
-// Afresh each run
+// The kits and tables the minute only reads, built and read once from the mirror; the minute itself is built fresh for
+// Every iteration, outside the timing
 const [characterIdKitMap, statTables, enemyTables] = await Promise.all([
   readCharacterKits(
     GAME_DATA_LOCAL_BASE_URL,
@@ -28,11 +28,17 @@ describe(stepActiveKit, () => {
       ...[
         { isInCombat: false, shape: "idle" },
         { isInCombat: true, shape: "in combat" },
-      ].map(({ isInCombat, shape }) =>
-        bench(shape, () => {
-          replayScriptedMinute({ characterIdKitMap, enemyTables, isInCombat, statTables });
-        }),
-      ),
+      ].map(({ isInCombat, shape }) => {
+        const createMinute = () => createScriptedMinute({ characterIdKitMap, enemyTables, isInCombat, statTables });
+        let minute = createMinute();
+        // A minute mutates the world it steps, so each iteration builds its own outside the timing
+        const beforeEach = () => {
+          minute = createMinute();
+        };
+        return bench(shape, { beforeEach }, () => {
+          replayScriptedMinute(minute);
+        });
+      }),
       { ...BENCHMARK_RUN_OPTIONS, iterations: 40, warmupIterations: 1 },
     );
   });

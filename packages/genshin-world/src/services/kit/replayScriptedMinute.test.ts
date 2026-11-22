@@ -38,17 +38,9 @@ import { describe } from "vitest";
 // The fixed steps a span of seconds takes
 const toStepCount = (seconds: number): number => Math.round(seconds / FIXED_STEP_SECONDS);
 
-// One minute of the world's fixed step for a team standing at the origin, run as the world runs it: the session's
-// Switch, then the character's step, where the body steps, the party's cooldowns run down, a switch starts the kit on
-// The field over and that kit steps, in the context the world builds, its combatants built as `useWorldCombat` builds
-// Them and its rolls on the world's seeded random source. In combat, three enemies stand in reach and never step, every
-// Member starts with its burst charged, and the team plays the minute in turns of seven and a half seconds, the next
-// Member switched in at each. A turn presses the skill every step of its first second and a half, held for a tap through
-// The minute's first half and for three and a quarter seconds through its second, then presses the burst every step to
-// The turn's end, so it plays whenever it is charged, mashes the string from a quarter second after the skill's release
-// To 4.75, and presses an attack at 5 and holds it for a second and a half, into a charged attack. Idle, no enemy
-// Stands near, nothing is pressed and no one is switched in
-export const replayScriptedMinute = ({
+// The team standing at the origin, built fresh for one minute: a replay mutates everything it is handed, so each run
+// Gets its own, and a bench builds it outside the timing
+export const createScriptedMinute = ({
   characterIdKitMap,
   enemyTables,
   isInCombat,
@@ -58,7 +50,7 @@ export const replayScriptedMinute = ({
   enemyTables: EnemyTables;
   isInCombat: boolean;
   statTables: StatTables;
-}): void => {
+}) => {
   const { characterDataMap } = statTables;
   const characterIds = [...characterIdKitMap.keys()];
   const elementalResonances = getElementalResonances(
@@ -102,7 +94,7 @@ export const replayScriptedMinute = ({
   const inputState: InputState = createIdleInputState();
   const startingCombatant = characterIdCombatantMap.get(getActiveCharacterId(party));
   if (!startingCombatant)
-    throw new InvalidOperationError(Operation.Read, replayScriptedMinute.name, `${getActiveCharacterId(party)}`);
+    throw new InvalidOperationError(Operation.Read, createScriptedMinute.name, `${getActiveCharacterId(party)}`);
   const context: KitContext = {
     activeCombatant: startingCombatant,
     body: createKitBody({ x: 0, z: 0 }),
@@ -125,6 +117,41 @@ export const replayScriptedMinute = ({
     worldEffects: [],
   };
   const landedHits: KitHit[] = [];
+  return {
+    characterController,
+    characterDataMap,
+    characterIds,
+    context,
+    ground,
+    inputState,
+    isInCombat,
+    landedHits,
+    party,
+  };
+};
+
+// One minute of the world's fixed step for the team createScriptedMinute builds, run as the world runs it: the session's
+// Switch, then the character's step, where the body steps, the party's cooldowns run down, a switch starts the kit on
+// The field over and that kit steps, in the context the world builds, its combatants built as `useWorldCombat` builds
+// Them and its rolls on the world's seeded random source. In combat, three enemies stand in reach and never step, every
+// Member starts with its burst charged, and the team plays the minute in turns of seven and a half seconds, the next
+// Member switched in at each. A turn presses the skill every step of its first second and a half, held for a tap through
+// The minute's first half and for three and a quarter seconds through its second, then presses the burst every step to
+// The turn's end, so it plays whenever it is charged, mashes the string from a quarter second after the skill's release
+// To 4.75, and presses an attack at 5 and holds it for a second and a half, into a charged attack. Idle, no enemy
+// Stands near, nothing is pressed and no one is switched in
+export const replayScriptedMinute = (minute: ReturnType<typeof createScriptedMinute>): void => {
+  const {
+    characterController,
+    characterDataMap,
+    characterIds,
+    context,
+    ground,
+    inputState,
+    isInCombat,
+    landedHits,
+    party,
+  } = minute;
   const turnStepCount = toStepCount(7.5);
   // Whether a step at this place in its turn falls in the script's span of seconds, which idle never does
   const checkIsInSpan = (turnStep: number, fromSeconds: number, toSeconds: number): boolean =>

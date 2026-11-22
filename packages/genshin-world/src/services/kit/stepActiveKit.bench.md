@@ -9,20 +9,15 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Commit: 96a4ee12b9
-- Node: v26.11.1
+- Commit: 6ce37d3dae
+- Node: v26.13.1
 - OS: darwin 27.0.0 (arm64)
 - CPU: Apple M1 × 8
 - RAM: 16.0 GiB
 
-## stepActiveKit > a minute of the proof party, idle
+## stepActiveKit > a minute of the proof party
 
-| task           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------ | -------- | ------- |
-| the fixed step | 1.00×   | 19.2826   | ±2.57% | 24.4283  | 40      |
-
-## stepActiveKit > a minute of the proof party, in combat
-
-| task           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------ | -------- | ------- |
-| the fixed step | 1.00×   | 30.0845   | ±2.59% | 37.8870  | 40      |
+| task      | vs base | mean (ms) | ±rme    | p99 (ms)  | samples |
+| --------- | ------- | --------- | ------- | --------- | ------- |
+| idle      | 1.00×   | 264.7555  | ±16.96% | 669.3069  | 40      |
+| in combat | 0.48×   | 548.9590  | ±17.81% | 1547.7371 | 40      |
