@@ -119,6 +119,7 @@ const nowSlotOffset = computed(() => getSlotOffset(now.toPlainTime()));
       <UiEventCalendarEvent
         :event
         is-block
+        :now
         @drag-start="emit('dragStart', event.id)"
         @nudge="emit('nudge', event.id, $event)"
         @open="emit('open', event.id)"

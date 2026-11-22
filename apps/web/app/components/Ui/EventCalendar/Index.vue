@@ -227,6 +227,7 @@ useCommands((): UiCommand[] => [
             v-model:date="date"
             :event-day-map
             :is-creatable="Boolean(onCreate)"
+            :now
             :today
             @create="create($event)"
             @drag-start="draggedId = $event"

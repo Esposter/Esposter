@@ -18,6 +18,8 @@ interface Props {
   // The day a click on its empty space picked, which Outlook fills as the one a new event would go on
   isSelected: boolean;
   isToday: boolean;
+  // The calendar's clock, which its events fade against
+  now: Temporal.ZonedDateTime;
 }
 // One day of a month, a cell of the month's grid: its number, which opens the day, the first of its events and a count
 // Of the rest, which opens it too. A click on its empty space selects it, and an event dragged over it tints it and
@@ -89,6 +91,7 @@ const create = () => {
       v-for="event of visibleEvents"
       :key="event.id"
       :event
+      :now
       @drag-start="emit('dragStart', event.id)"
       @nudge="emit('nudge', event.id, $event)"
       @open="emit('open', event.id)"

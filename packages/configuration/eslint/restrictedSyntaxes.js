@@ -180,4 +180,13 @@ export default [
     selector:
       "Property[key.name=/^update[A-Z]/] > CallExpression[callee.property.name='mutation'] CallExpression[callee.property.name='onConflictDoUpdate']",
   },
+  {
+    // A computed reads its clock once, when it first runs, and not again as the clock moves: a `Date.now()` or `new Date()`
+    // In its callback holds the reading until something else recomputes it. A ticking clock is a reactive source, such as
+    // `useNow` on a scheduler (`useCalendarClock`, `useCountdown`), which the computed reads as a ref.
+    message:
+      "Don't read the clock inside a `computed` — it holds the reading it took first. Read a ticking clock instead (`useNow` on a scheduler, as `useCalendarClock` does).",
+    selector:
+      "CallExpression[callee.name='computed'] :matches(CallExpression[callee.object.name='Date'][callee.property.name='now'], NewExpression[callee.name='Date'][arguments.length=0])",
+  },
 ];

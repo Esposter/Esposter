@@ -105,6 +105,24 @@ describe("restrictedSyntaxes", () => {
           "const router = { upsertSettings: procedure.mutation(({ ctx, input }) => ctx.db.insert(settings).values(input).onConflictDoUpdate({ set: input, target: settings.userId })) };",
         violations: 0,
       },
+      {
+        filePath: "computedDateNow.ts",
+        name: "computedDateNow",
+        source: "const isPast = computed(() => event.start.getTime() < Date.now());",
+        violations: 1,
+      },
+      {
+        filePath: "computedNewDate.ts",
+        name: "computedNewDate",
+        source: "const isExpired = computed(() => expiresAt > new Date());",
+        violations: 1,
+      },
+      {
+        filePath: "dateNowOutsideComputed.ts",
+        name: "dateNowOutsideComputed",
+        source: "const startedAt = Date.now();",
+        violations: 0,
+      },
     ],
   });
 });

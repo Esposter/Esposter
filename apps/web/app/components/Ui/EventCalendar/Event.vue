@@ -12,14 +12,16 @@ interface Props {
   // Drawn as a block filling the room it is placed in, its title over its time, as the hours draw one; otherwise a
   // Line, its time before its title, as a day of the month lists one
   isBlock?: true | undefined;
+  // The calendar's clock, read again each minute, which the fade is checked against
+  now: Temporal.ZonedDateTime;
 }
 // One event as a block of the accent: its time and its title, its description on hover, opened by a click or Enter,
 // Dragged to move it, and moved by Alt and an arrow as well
-const { event, isBlock } = defineProps<Props>();
+const { event, isBlock, now } = defineProps<Props>();
 const emit = defineEmits<{ dragStart: []; nudge: [duration: Temporal.Duration]; open: [] }>();
-// Faded once it has started, as Outlook fades what is behind the current time. Read once as the event draws, which
-// Only the browser does, so the fade never has to agree with a server render
-const isPast = computed(() => event.start.getTime() < Date.now());
+// Faded once it has started, as Outlook fades what is behind the current time. The calendar renders only in the browser,
+// So the fade never has to agree with a server render, and it follows the clock as time passes
+const isPast = computed(() => event.start.getTime() < now.epochMilliseconds);
 // The description is rich text from whichever caller passes it, so it is sanitized where it is drawn rather than trusted
 // To have been sanitized at its source
 const hasDescription = computed(() => Boolean(event.description && !EMPTY_TEXT_REGEX.test(event.description)));

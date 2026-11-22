@@ -23,7 +23,8 @@ describe("uiEventCalendarEvent", () => {
         start: new Date(0),
         title: "title",
       };
-      const component = await mountSuspended(UiEventCalendarEvent, { attachTo: document.body, props: { event } });
+      const now = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC");
+      const component = await mountSuspended(UiEventCalendarEvent, { attachTo: document.body, props: { event, now } });
       await component.get("button").trigger("pointerenter");
       await flushPromises();
 

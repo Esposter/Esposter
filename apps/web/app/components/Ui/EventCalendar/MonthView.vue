@@ -9,6 +9,8 @@ import { createCalendar } from "@vuetify/v0";
 interface Props {
   eventDayMap: Map<string, UiCalendarEvent[]>;
   isCreatable: boolean;
+  // The calendar's clock, which its events fade against
+  now: Temporal.ZonedDateTime;
   today: Temporal.PlainDate;
 }
 // The month as a grid of days with one stop in the tab order, walked as the date grid is walked: the arrows a day or a
@@ -96,6 +98,7 @@ const onGridKeydown = useGridKeyboard({
           :events="eventDayMap.get(day.toString()) ?? CALENDAR_NO_EVENTS"
           :is-creatable
           :is-focused="day.equals(focusedDay)"
+          :now
           :is-outside="outside"
           :is-selected="Boolean(selectedDay?.equals(day))"
           :is-today="day.equals(today)"

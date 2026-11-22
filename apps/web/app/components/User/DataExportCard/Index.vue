@@ -2,6 +2,7 @@
 import type { UserSettingsPageSection } from "#src/models/user/UserSettingsPageSection";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
+import { DATA_EXPORT_CLOCK_INTERVAL_MS } from "#src/services/user/constants";
 import { DataExportOmittedItems } from "#src/services/user/settings/DataExportOmittedItems";
 import { DataExportStatus } from "@esposter/db-schema";
 
@@ -20,12 +21,14 @@ const {
 const isInFlight = computed(
   () => dataExport.value?.status === DataExportStatus.Queued || dataExport.value?.status === DataExportStatus.Building,
 );
-// The check the server makes before it signs a link, so a ready export past its expiry offers none
+// The check the server makes before it signs a link, so a ready export past its expiry offers none. The clock is read
+// Again each minute, so a link that expires while the page is open stops being offered
+const now = useNow({ scheduler: (callback) => useIntervalFn(callback, DATA_EXPORT_CLOCK_INTERVAL_MS) });
 const isDownloadable = computed(
   () =>
     dataExport.value?.status === DataExportStatus.Ready &&
     dataExport.value.expiresAt !== null &&
-    dataExport.value.expiresAt > new Date(),
+    dataExport.value.expiresAt > now.value,
 );
 </script>
 

@@ -5,6 +5,8 @@ export const ACCOUNT_DELETION_MUTATION_KEY = "accountDeletion";
 
 export const API_KEYS_MUTATION_KEY = "apiKeys";
 
+export const DATA_EXPORT_CLOCK_INTERVAL_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
+
 export const DATA_EXPORT_MUTATION_KEY = "dataExport";
 
 export const LINKED_ACCOUNTS_MUTATION_KEY = "linkedAccounts";
