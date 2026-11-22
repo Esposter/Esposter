@@ -10,6 +10,8 @@ import type { R2Bucket, R2Object } from "@cloudflare/workers-types";
 import type { ResourceInResource, ResourcePublicationInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { FileProcedureNames } from "#server/models/resource/FileProcedureNames";
+import { PublishProcedureNames } from "#server/models/resource/PublishProcedureNames";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -147,6 +149,12 @@ describe(createResourceProcedures, () => {
   const hash = "a".repeat(64);
   const mimetype = MimeType.Png;
   const size = 1;
+  // A dashboard resource with its first content saved, the setup most of these tests start from
+  const createSavedResource = async () => {
+    const newResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    return newResource;
+  };
   // Each type's caller, made by its own router over the mock context once its row runs. Each entry is checked at its own
   // Router against the procedures its capabilities generate, so a router that renames or drops one fails at that entry
   const resourceTypeCallerMap = {
@@ -531,8 +539,7 @@ describe(createResourceProcedures, () => {
   test("fails commit staged content with old content version", async () => {
     expect.hasAssertions();
 
-    const newResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    const newResource = await createSavedResource();
     const stagedHash = await stageContent(dashboardCaller, newResource.id, gzipSync(JSON.stringify(new Dashboard())));
 
     await expect(
@@ -597,8 +604,7 @@ describe(createResourceProcedures, () => {
   test("bumps publish version on republish", async () => {
     expect.hasAssertions();
 
-    const newResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    const newResource = await createSavedResource();
     await dashboardCaller.publishResource({ id: newResource.id });
     const republication = await dashboardCaller.publishResource({ id: newResource.id });
 
@@ -635,8 +641,7 @@ describe(createResourceProcedures, () => {
   test("unpublishes resource without collecting an object the revision channel still names", async () => {
     expect.hasAssertions();
 
-    const newResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    const newResource = await createSavedResource();
     await resourceCaller.saveResourceRevision({ id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
     const [revisionVersion, publishedVersion] = await mockContext.db.query.resourceVersionsInResource.findMany({
@@ -668,8 +673,7 @@ describe(createResourceProcedures, () => {
   test("unpublishing tombstones the publication and removes its version rows in one transaction", async () => {
     expect.hasAssertions();
 
-    const newResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    const newResource = await createSavedResource();
     await dashboardCaller.publishResource({ id: newResource.id });
 
     await dashboardCaller.unpublishResource({ id: newResource.id });
@@ -688,8 +692,7 @@ describe(createResourceProcedures, () => {
   test("a removed publication is a tombstone that a republish revives at a higher version", async () => {
     expect.hasAssertions();
 
-    const newResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    const newResource = await createSavedResource();
     await dashboardCaller.publishResource({ id: newResource.id });
 
     await dashboardCaller.unpublishResource({ id: newResource.id });
@@ -724,8 +727,7 @@ describe(createResourceProcedures, () => {
   test("fails read published content with a swept snapshot", async () => {
     expect.hasAssertions();
 
-    const newResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    const newResource = await createSavedResource();
     await dashboardCaller.publishResource({ id: newResource.id });
     await deleteDirectory(bucket);
 
@@ -756,8 +758,7 @@ describe(createResourceProcedures, () => {
   test("a publish that lands after its resource is deleted leaves nothing publicly served", async () => {
     expect.hasAssertions();
 
-    const newResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    const newResource = await createSavedResource();
     // The delete lands once the publish has passed its owner guard and stored its object, and before the batch that writes
     // The publication: the window a delete from another request can take
     interceptPut(async () => {
@@ -789,14 +790,7 @@ describe(createResourceProcedures, () => {
     const nonPublishableProcedures = new Set(Object.keys(sheetRouter._def.procedures));
 
     // View counting rides the publishable capability, so it is gated by the same seam
-    const publishProcedures = new Set([
-      "publishResource",
-      "readPublishedResourceContent",
-      "readPublishedVersionContent",
-      "readResourcePublication",
-      "readResourceViewCount",
-      "unpublishResource",
-    ]);
+    const publishProcedures = new Set(PublishProcedureNames);
     // Sheet has commands of its own beside the generic matrix, so this also checks that none of them is a publish procedure
     expect(publishableProcedures.difference(nonPublishableProcedures)).toStrictEqual(publishProcedures);
   });
@@ -805,8 +799,7 @@ describe(createResourceProcedures, () => {
   test("a public read's view is in the owner's count once the read returns", async () => {
     expect.hasAssertions();
 
-    const newResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    const newResource = await createSavedResource();
     await dashboardCaller.publishResource({ id: newResource.id });
     await dashboardCaller.readResourceViewCount({ id: newResource.id });
 
@@ -818,8 +811,7 @@ describe(createResourceProcedures, () => {
   test("counts each public read", async () => {
     expect.hasAssertions();
 
-    const newResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    const newResource = await createSavedResource();
     await dashboardCaller.publishResource({ id: newResource.id });
     const initialViewCount = await dashboardCaller.readResourceViewCount({ id: newResource.id });
 
@@ -871,8 +863,7 @@ describe(createResourceProcedures, () => {
   test("purges view counts with the resource", async () => {
     expect.hasAssertions();
 
-    const newResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    const newResource = await createSavedResource();
     await dashboardCaller.publishResource({ id: newResource.id });
     await dashboardCaller.readPublishedResourceContent(newResource.id);
     const viewsBeforePurge = await readResourceViews(newResource.id);
@@ -1060,9 +1051,7 @@ describe(createResourceProcedures, () => {
     const fileAssetsProcedures = new Set(Object.keys(webpageRouter._def.procedures));
     const nonFileAssetsProcedures = new Set(Object.keys(dashboardRouter._def.procedures));
 
-    expect(fileAssetsProcedures.difference(nonFileAssetsProcedures)).toStrictEqual(
-      new Set(["deleteFile", "generateUploadFilePresignedUrlEntities", "readResourceFiles"]),
-    );
+    expect(fileAssetsProcedures.difference(nonFileAssetsProcedures)).toStrictEqual(new Set(FileProcedureNames));
     expect(nonFileAssetsProcedures.difference(fileAssetsProcedures)).toStrictEqual(new Set());
   });
 

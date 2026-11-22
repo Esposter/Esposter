@@ -1,10 +1,8 @@
 import type { ResourceType } from "@esposter/db-schema";
 
-import {
-  BASE_PROCEDURE_NAMES,
-  FILE_PROCEDURE_NAMES,
-  PUBLISH_PROCEDURE_NAMES,
-} from "#server/trpc/procedure/resource/createResourceProcedures";
+import { BaseProcedureNames } from "#server/models/resource/BaseProcedureNames";
+import { FileProcedureNames } from "#server/models/resource/FileProcedureNames";
+import { PublishProcedureNames } from "#server/models/resource/PublishProcedureNames";
 import { trpcRouter } from "#server/trpc/routers/index";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { CreatableResourceTypes } from "#src/models/resource/CreatableResourceType";
@@ -30,7 +28,7 @@ describe(useResourceRouter, () => {
   test.each(ResourceTypes)("%s: exposes the base procedures", (type) => {
     expect.hasAssertions();
 
-    expect(getResourceRouterProcedureNames(type)).toStrictEqual(expect.arrayContaining([...BASE_PROCEDURE_NAMES]));
+    expect(getResourceRouterProcedureNames(type)).toStrictEqual(expect.arrayContaining([...BaseProcedureNames]));
   });
 
   // `useCreateResource` dispatches a create the same way, so a gallery entry whose router cannot create it would
@@ -48,8 +46,8 @@ describe(useResourceRouter, () => {
 
     const procedureNames = getResourceRouterProcedureNames(type);
 
-    expect(PUBLISH_PROCEDURE_NAMES.filter((procedureName) => procedureNames.includes(procedureName))).toStrictEqual(
-      checkHasCapability(type, "publishable") ? PUBLISH_PROCEDURE_NAMES : [],
+    expect(PublishProcedureNames.filter((procedureName) => procedureNames.includes(procedureName))).toStrictEqual(
+      checkHasCapability(type, "publishable") ? PublishProcedureNames : [],
     );
   });
 
@@ -58,8 +56,8 @@ describe(useResourceRouter, () => {
 
     const procedureNames = getResourceRouterProcedureNames(type);
 
-    expect(FILE_PROCEDURE_NAMES.filter((procedureName) => procedureNames.includes(procedureName))).toStrictEqual(
-      checkHasCapability(type, "fileAssets") ? FILE_PROCEDURE_NAMES : [],
+    expect(FileProcedureNames.filter((procedureName) => procedureNames.includes(procedureName))).toStrictEqual(
+      checkHasCapability(type, "fileAssets") ? FileProcedureNames : [],
     );
   });
 });
