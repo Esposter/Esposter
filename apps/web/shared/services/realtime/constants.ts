@@ -10,3 +10,6 @@ export const ROW_VERSIONS_HEADER = `x-${SITE_NAME.toLowerCase()}-row-versions`;
 export const TOPICS_HEADER_SEPARATOR = " ";
 // Separates a topic from the columns it names, and the columns from each other. An encoded topic or column holds none
 export const TOPICS_HEADER_COLUMNS_SEPARATOR = ";";
+// The header a page sends with every request, naming the browser tab that made it, so an object does not send that
+// Tab the echo of a write it made
+export const DEVICE_ID_HEADER = `x-${SITE_NAME.toLowerCase()}-device-id`;

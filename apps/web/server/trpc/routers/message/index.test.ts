@@ -29,7 +29,7 @@ import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessag
 import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
 import { MimeType } from "#shared/models/file/MimeType";
 import { createPollMessageContent } from "#shared/models/message/poll/createPollMessageContent.test";
-import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
+import { DEVICE_ID_HEADER } from "#shared/services/realtime/constants";
 import { threadFollowTable } from "#src/services/message/threadFollow/constants";
 import { getThreadFollowEntry } from "#src/services/message/threadFollow/getThreadFollowEntry";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";

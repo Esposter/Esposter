@@ -28,7 +28,6 @@ import type { ResourceInResource, ResourceType, updateRoomInputSchema } from "@e
 import type { z } from "zod";
 
 export type TRPCPath = keyof TRPCProcedureInputs;
-
 // The input of every procedure an achievement can be triggered by, keyed by the path the router gives it. The
 // Achievement definitions read this instead of the router, so a router's types never depend on the achievement
 // Plugin that uses them. test-d beside this file checks each entry against the real router
@@ -74,7 +73,6 @@ export interface TRPCProcedureInputs {
     (typeof ResourceDefinitionMap)[typeof ResourceType.Webpage]["contentSchema"]
   >;
 }
-
 // A resource's save input is its own content schema under the shared save schema, so each save path reads through here
 interface ResourceContentSaveInput<TContentSchema extends z.ZodType> {
   content: z.input<TContentSchema>;

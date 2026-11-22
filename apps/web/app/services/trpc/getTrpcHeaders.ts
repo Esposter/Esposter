@@ -1,4 +1,4 @@
-import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
+import { DEVICE_ID_HEADER } from "#shared/services/realtime/constants";
 import { getDeviceId } from "#src/services/realtime/getDeviceId";
 import { checkIsServer } from "@esposter/shared";
 

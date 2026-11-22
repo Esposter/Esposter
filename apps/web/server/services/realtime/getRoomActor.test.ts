@@ -1,7 +1,7 @@
 import type { AuthSession } from "#server/models/auth/AuthSession";
 
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
-import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
+import { DEVICE_ID_HEADER } from "#shared/services/realtime/constants";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 

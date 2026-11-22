@@ -9,7 +9,7 @@ describe("whiteboardResourceSchema", () => {
     const arrow = {
       color: "",
       dashPattern: "solid",
-      end: { hasArrowhead: true, point: { x: 100, y: 0 } },
+      end: { hasArrowhead: true, point: { x: 0, y: 0 } },
       id: v7(),
       label: "",
       pathKind: "straight",

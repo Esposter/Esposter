@@ -1,4 +1,5 @@
-import { DEVICE_ID_HEADER, deviceIdSchema } from "#shared/models/realtime/DeviceId";
+import { deviceIdSchema } from "#shared/models/realtime/DeviceId";
+import { DEVICE_ID_HEADER } from "#shared/services/realtime/constants";
 
 // The browser tab a write came from, as the page named it in the device header. A missing or malformed header names no
 // Tab, so the write's echo reaches every socket and the client absorbs it by id

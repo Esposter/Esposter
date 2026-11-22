@@ -1,7 +1,8 @@
 import type { CallParticipantRow } from "@esposter/db-schema";
 
 export interface JoinCallResult {
-  // The participant's RealtimeKit auth token, which the client hands to its meeting; empty when RealtimeKit is not configured
+  // The participant's RealtimeKit auth token, which the client hands to its meeting; empty when
+  // RealtimeKit is not configured
   authToken: string;
   callSessionId: string;
   // Whether this participant decides who gets in, which is what lets the client open the knock stream only where

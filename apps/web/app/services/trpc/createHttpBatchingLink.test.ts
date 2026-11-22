@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { TRPCRouter } from "#server/trpc/routers/index";
 
-import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
+import { DEVICE_ID_HEADER } from "#shared/services/realtime/constants";
 import { getDeviceId } from "#src/services/realtime/getDeviceId";
 import { createHttpBatchingLink } from "#src/services/trpc/createHttpBatchingLink";
 import { setupMswTrpc } from "#src/services/trpc/mswTrpc.test";

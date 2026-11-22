@@ -12,8 +12,8 @@ import { getUncoveredWrites } from "#server/trpc/optimisticWriteCrossCheck.test"
 import { emojiRouter } from "#server/trpc/routers/room/emoji";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { MimeType } from "#shared/models/file/MimeType";
-import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
+import { DEVICE_ID_HEADER } from "#shared/services/realtime/constants";
 import { roomEmojiTable } from "#src/services/message/room/overlay/constants";
 import { getRoomEmojiPatchEntry } from "#src/services/message/room/overlay/getRoomEmojiPatchEntry";
 import { getRowsPerStatement } from "@esposter/db";

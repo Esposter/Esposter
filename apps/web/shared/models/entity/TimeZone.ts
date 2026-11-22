@@ -5,7 +5,6 @@ import { z } from "zod";
 export interface TimeZone {
   timeZone: string;
 }
-
 // A reader's IANA time zone, as their own clock gives it. It is resolved as Temporal resolves it, so any id a zoned
 // Read accepts passes and none it rejects does
 export const timeZoneSchema = z.object({
