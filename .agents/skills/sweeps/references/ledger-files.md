@@ -16,8 +16,8 @@ Read when writing, splitting, merging, promoting or retiring a ledger in `.agent
 - **Next enforceable** — the part of the convention a lint rule or test could take over, and only while something is left to hand over. A part judged undecidable is a decision rather than progress, so it goes to the owning skill's `## Settled — do not re-propose` list with its one clause of why (the `skill-authoring` skill, `references/settled-lists.md`), never to a second list here that would read as pending.
 - **Open findings** — only while one is genuinely open. A closed finding is deleted: its rule is in a skill, its invariant is in a test, and git holds the argument.
 
-**Promotion to a folder splits that list, it never shortens it.** Units are what an area file holds — a table
-and nothing else — and every other item in "What a ledger holds" moves to the folder's own `README.md`, open findings included. A
+**Promotion to a folder splits that list, it never shortens it.** Units are what an area file holds — a bullet list of
+units and nothing else — and every other item in "What a ledger holds" moves to the folder's own `README.md`, open findings included. A
 finding has nowhere to sit on an area file, so a promoted ledger that keeps one on a leaf has put it in the one
 place the shape does not allow.
 
