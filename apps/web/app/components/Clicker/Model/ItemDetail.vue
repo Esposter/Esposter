@@ -39,7 +39,7 @@ const displayPrice = computed(() => formatNumberLong(price));
         aria-hidden="true"
       />
       <h3 flex-1 truncate ui-title>{{ id }}</h3>
-      <span v-if="amount" text-sm text-muted>{{ amount }} owned</span>
+      <span v-if="amount" text-muted>{{ amount }} owned</span>
     </header>
     <div v-if="description" v-html="descriptionHtml" />
     <div text-muted text-right italic v-html="flavorDescriptionHtml" />

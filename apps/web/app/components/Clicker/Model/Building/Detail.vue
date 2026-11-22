@@ -39,7 +39,7 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
     :amount
   >
     <template v-if="buildingStatisticsHtml.length > 0" #append-text>
-      <div text-sm flex flex-col gap-1>
+      <div flex flex-col gap-1>
         <div
           v-for="(buildingStatisticHtml, index) of buildingStatisticsHtml"
           :key="index"

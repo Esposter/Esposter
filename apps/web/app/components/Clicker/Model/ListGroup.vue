@@ -17,7 +17,7 @@ const isOpen = ref(true);
     <template #title>
       <UiIcon :meaning />
       <span text-heading-color flex-1 truncate>{{ title }}</span>
-      <span text-sm text-muted>{{ count }}</span>
+      <span text-muted>{{ count }}</span>
     </template>
     <slot />
   </UiCollapsible>

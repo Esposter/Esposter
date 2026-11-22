@@ -14,12 +14,13 @@ const priceClass = computed(() => {
   else if (item.isAffordable) return "text-success";
   else return "text-error";
 });
+const displayPrice = computed(() => formatNumberLong(item.price));
 </script>
 
 <template>
   <span text-text block truncate>{{ item.id }}</span>
-  <span :class="priceClass" text-sm flex gap-1 items-center>
-    {{ formatNumberLong(item.price) }}
+  <span :class="priceClass" flex gap-1 items-center>
+    {{ displayPrice }}
     <ClickerModelItem size-4 />
   </span>
 </template>
