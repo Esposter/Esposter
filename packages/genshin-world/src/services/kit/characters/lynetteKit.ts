@@ -10,9 +10,6 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 
-// The Bogglecat Box stands 1.8 metres ahead of the body, as gcsim (MIT) lynette/burst.go sets it
-// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lynette
-const BOGGLECAT_BOX_OFFSET_METRES = 1.8;
 // Sophisticated Synergy, Lynette's Ascension 1 passive as gcsim v2.47.2 (MIT) lynette/asc.go gives it: Magic Trick gives the
 // Team 8% ATK for one Elemental Type in the party, 4% more for each further type, for 10 seconds, counted as it is cast
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lynette
@@ -34,7 +31,9 @@ export const LYNETTE_CHARACTER_ID = 10_000_083;
 // Constellation 1 needs Enigma Thrust's Shadowsign hit and the vortex it makes, which Hold E does not build
 // Constellation 2 needs the Bogglecat Box's Vivid Shots, which the kit does not build
 // Constellation 6 needs Enigma Thrust's Anemo infusion and DMG Bonus, which Hold E does not build
-export const createLynetteKitBehaviour = ({ readHit, readSeconds }: KitRecordReader): KitBehaviour => {
+export const createLynetteKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
+  // The Bogglecat Box stands this many metres ahead of the body, as gcsim (MIT) lynette/bogglecatbox.go sets it
+  const bogglecatBoxOffsetMetres = readParameter("bogglecatBoxOffsetMetres");
   const bogglecatTick = readHit("bogglecatTick");
   const bogglecatFirstTickSeconds = readSeconds("bogglecatFirstTick");
   const bogglecatTickIntervalSeconds = readSeconds("bogglecatTickInterval");
@@ -56,7 +55,7 @@ export const createLynetteKitBehaviour = ({ readHit, readSeconds }: KitRecordRea
             source: "lynette-sophisticated-synergy",
           });
         }
-        const box = createAheadBody(body, BOGGLECAT_BOX_OFFSET_METRES);
+        const box = createAheadBody(body, bogglecatBoxOffsetMetres);
         castKitField(kitEffectState, combatant.characterId, box.position, {
           nextTickSeconds: bogglecatFirstTickSeconds,
           onTick: ({ kitEffectState: tickKitEffectState }) => {

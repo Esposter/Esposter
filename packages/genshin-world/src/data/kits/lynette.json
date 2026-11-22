@@ -3,6 +3,7 @@
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
   "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
   "frames.bogglecatFirstTick": { "cause": "Unsourced", "value": 122 },
+  "parameters.bogglecatBoxOffsetMetres": { "file": "bogglecatbox.go", "line": 28, "source": "Gcsim", "value": 1.8 },
   "frames.bogglecatBoxDuration": { "file": "burst.go", "line": 13, "source": "Gcsim", "value": 754 },
   "frames.bogglecatTickInterval": { "cause": "Unsourced", "value": 59 },
   "hits.bogglecatTick.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
