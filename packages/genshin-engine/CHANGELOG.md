@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
+
+### Bug Fixes
+
+* **genshin-engine:** the cloud layer texels are written through a writer, so no texel allocates an array ([8ba747a](https://github.com/Esposter/Esposter/commit/8ba747ae77637ee5e4bc23c047e6e968dc70859d))
+* **genshin-engine:** the spectral noise synthesis allocates nothing per value, and it has a bench at two scales ([e17e17f](https://github.com/Esposter/Esposter/commit/e17e17f8793344f50b31a1462402491ed71c54db))
+
 # [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
 
 **Note:** Version bump only for package genshin-engine

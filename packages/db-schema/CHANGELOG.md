@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
+
+### Bug Fixes
+
+* **esbabbler:** the typing event's username is typed as the name the room shows, which is the display name or the account name ([5ffb19d](https://github.com/Esposter/Esposter/commit/5ffb19ddd513bec38b2350a638d132a01e1fcf44))
+* **overlay:** a row's key value in the row versions header is typed as the row holds it, so a thread follow's header confirms its entry ([6677541](https://github.com/Esposter/Esposter/commit/66775412514983636478b51cfb2e5038d2bc9008))
+* **overlay:** a settings or favorite write names its row by the user's id, so its header confirms the entry ([89555c2](https://github.com/Esposter/Esposter/commit/89555c25966aaf5faaf3fc21e14e524f43fbe01c))
+* **overlay:** a write's header names each row by its primary key, so a role write's header confirms its role entry ([afd05a6](https://github.com/Esposter/Esposter/commit/afd05a6edd69be59bc344bc02ee255d39b7f0bd9))
+
 # [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
 
 ### Bug Fixes

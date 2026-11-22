@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
+
+### Bug Fixes
+
+* **db:** a row's key is built from the key entries the guard narrowed, so its values typecheck as a string or a number ([8c4628f](https://github.com/Esposter/Esposter/commit/8c4628ff55c376e7a5c90670403c85b59853247e))
+* **overlay:** a row's key value in the row versions header is typed as the row holds it, so a thread follow's header confirms its entry ([6677541](https://github.com/Esposter/Esposter/commit/66775412514983636478b51cfb2e5038d2bc9008))
+* **overlay:** a write's header names each row by its primary key, so a role write's header confirms its role entry ([afd05a6](https://github.com/Esposter/Esposter/commit/afd05a6edd69be59bc344bc02ee255d39b7f0bd9))
+
 # [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
 
 ### Bug Fixes

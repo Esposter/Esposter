@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
+
+### Bug Fixes
+
+* **configuration:** the generator's subpath is a customExports arm, so the build keeps it in the manifest ([184bdfa](https://github.com/Esposter/Esposter/commit/184bdfad4fdd65e48aa30f728c6daaf50ef5443a))
+* **configuration:** the overload ban exempts only a declare module's ambient overloads, not every namespace's ([13d9210](https://github.com/Esposter/Esposter/commit/13d92108d6de1ff2169240cb1429f80afd5cde5e))
+* **lint:** the thirteen errors of the CI lint red are fixed at their causes, with no directive ([9d58889](https://github.com/Esposter/Esposter/commit/9d588890d12a8b774e520278d47e35d5f200f842))
+* **scripts:** the precheck's barrel generator is the checkout's own source, not the built package ([b8230d1](https://github.com/Esposter/Esposter/commit/b8230d185c7d55368c1db6f9f7412f893e2c4d67))
+
+### Features
+
+* **configuration:** an overload is banned outside a declaration file, class methods included ([3a0a846](https://github.com/Esposter/Esposter/commit/3a0a8462e121b64222d8be73b95deaca9beef8a8))
+* **lint:** a store read by dot is banned in app .ts too, and a store's own source keeps its nested refs by dot ([a47d55c](https://github.com/Esposter/Esposter/commit/a47d55cf99988662fa4ff2c3f5fbd3ac965b5b7a))
+* **overlay:** an optimistic entry that iterates its view or assigns a ref fails lint ([4b5b4ec](https://github.com/Esposter/Esposter/commit/4b5b4ece63771ed04efe2a304713a52a146c6e52))
+
 # [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
 
 ### Bug Fixes

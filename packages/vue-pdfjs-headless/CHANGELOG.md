@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
+
+### Bug Fixes
+
+* **xml:** the XML writers escape with one XML escape that leaves a no-break space as itself ([e4dd503](https://github.com/Esposter/Esposter/commit/e4dd5039a680c98132955814234416069aed063f))
+
 # [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
 
 **Note:** Version bump only for package vue-pdfjs-headless

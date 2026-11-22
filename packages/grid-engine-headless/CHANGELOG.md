@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
+
+### Bug Fixes
+
+* **grid-engine-headless:** a character keeps its own copy of the tile it is added or sent to ([af98446](https://github.com/Esposter/Esposter/commit/af9844629efde1737f152c291c52db89f9909f0d))
+* **grid-engine-headless:** a function subscribed twice is kept once per subscription ([436eeeb](https://github.com/Esposter/Esposter/commit/436eeeb441487946d7d3771caf5bc9454c865476))
+* **grid-engine-headless:** a raise reads the listeners before the first one runs ([ce6b28f](https://github.com/Esposter/Esposter/commit/ce6b28fdfe39b408e300b1cd016dbf67ea7a8751))
+* **grid-engine-headless:** a teleport from a listener that starts a step is not undone by that step ([372c1ed](https://github.com/Esposter/Esposter/commit/372c1ed308294cb8e34312dc1a4818ccfeb11825))
+* **lint:** the thirteen errors of the CI lint red are fixed at their causes, with no directive ([9d58889](https://github.com/Esposter/Esposter/commit/9d588890d12a8b774e520278d47e35d5f200f842))
+
 # [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
 
 ### Bug Fixes

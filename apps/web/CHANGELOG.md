@@ -3,6 +3,53 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
+
+### Bug Fixes
+
+* **app:** the message page and the notification action button drop the noop imports nothing reads ([f255a66](https://github.com/Esposter/Esposter/commit/f255a6620e4891aefdc23cca35f0567bae09a15e))
+* **bench:** the sheet command fixtures copy each column, so no iteration shares a size counter ([eb723a8](https://github.com/Esposter/Esposter/commit/eb723a847e0ac08486716af1156da99336075aa2))
+* **cache:** an offline restore takes only the cached records that carry a version ([7bbb6aa](https://github.com/Esposter/Esposter/commit/7bbb6aa94b67445164dbb1f149c701da2e75f3ab))
+* **cache:** the message cache restore tests seed server rows, which carry a version ([9e16b76](https://github.com/Esposter/Esposter/commit/9e16b765aeef4eba31a85e70f55f86b87fc32fa7))
+* **dungeons:** a character's sprite is drawn from its top-left corner ([4fe122c](https://github.com/Esposter/Esposter/commit/4fe122cc02c93335fd3890510eb1952cf20d33df))
+* **dungeons:** a character's sprite is placed, depth-sorted and framed when it is attached ([ac4ac60](https://github.com/Esposter/Esposter/commit/ac4ac60f77c2a1b31bb1bd30e7ee5650884bbcc5))
+* **dungeons:** a door or respawn places the player on the new tilemap before its character joins ([08ad9f5](https://github.com/Esposter/Esposter/commit/08ad9f5d7bda00ee455a5c668ee49287a88eb964))
+* **dungeons:** a layer that was never drawn is refused, since Phaser holds its tilemap layer as null ([c5d99c2](https://github.com/Esposter/Esposter/commit/c5d99c200946399c8474582a8317a5b267a90d25)), closes [#428](https://github.com/Esposter/Esposter/issues/428)
+* **dungeons:** a step's foot is planted once, even when its first reading is past the midpoint ([2a59c60](https://github.com/Esposter/Esposter/commit/2a59c60addc1ab291d3c19c2f2719acd184203fb))
+* **dungeons:** each tile layer takes its depth from its place in the tilemap ([ef401d2](https://github.com/Esposter/Esposter/commit/ef401d224f08524e9cdf419d1796559c3dc92334))
+* **dungeons:** the controls and tilemap stores hold their refs without a cast, and a read before the scene makes them throws a named error ([15c378d](https://github.com/Esposter/Esposter/commit/15c378d5b179d5f73b84f9076e22cb50cc090326))
+* **dungeons:** the dialog message composable types its refs by overload, with no cast ([d6dc343](https://github.com/Esposter/Esposter/commit/d6dc3437acde9422636bb40ca261a8eab0962426))
+* **dungeons:** the mobile joystick's Phaser objects are markRaw'd as they enter its refs ([f0c9579](https://github.com/Esposter/Esposter/commit/f0c9579768c590f65902c5492a9547770442a3fa))
+* **esbabbler:** a forward is sent once per panel, and the store holds the in-flight guard ([0c7e4d5](https://github.com/Esposter/Esposter/commit/0c7e4d5f56f47b2ccc004d8ea47b46ca2158a372))
+* **esbabbler:** a lobby shows only the knockers it was told of, and a knock cancelled in flight takes no waiting screen ([83c83fc](https://github.com/Esposter/Esposter/commit/83c83fc29960482f55495a0adb03aa560373f56f))
+* **esbabbler:** a reaction press is held per room, so the same message id in another room is sent ([49206af](https://github.com/Esposter/Esposter/commit/49206af695a791763672e4e24c6c4b279bcf6233))
+* **esbabbler:** a word filter save queues behind the save in flight, and keeps an edit made while it was out ([6bc09a7](https://github.com/Esposter/Esposter/commit/6bc09a78fa4100a8f0603c42448b0c1ba7e25bb4))
+* **esbabbler:** an awaited write empties only what it sent, and keeps an edit made while it was out ([a637246](https://github.com/Esposter/Esposter/commit/a6372463224dce13a4f5d8d09c66ee5ae7071b74))
+* **esbabbler:** the thread drawer's read is live again, so a publish of its room's topic reads the thread again ([2bb8f03](https://github.com/Esposter/Esposter/commit/2bb8f034cb53b7c3de0b92f798fd7504f9909fc6))
+* **lint:** the thirteen errors of the CI lint red are fixed at their causes, with no directive ([9d58889](https://github.com/Esposter/Esposter/commit/9d588890d12a8b774e520278d47e35d5f200f842))
+* **overlay:** a row's key value in the row versions header is typed as the row holds it, so a thread follow's header confirms its entry ([6677541](https://github.com/Esposter/Esposter/commit/66775412514983636478b51cfb2e5038d2bc9008))
+* **overlay:** a settings or favorite write names its row by the user's id, so its header confirms the entry ([89555c2](https://github.com/Esposter/Esposter/commit/89555c25966aaf5faaf3fc21e14e524f43fbe01c))
+* **overlay:** a write's header names each row by its primary key, so a role write's header confirms its role entry ([afd05a6](https://github.com/Esposter/Esposter/commit/afd05a6edd69be59bc344bc02ee255d39b7f0bd9))
+* **post:** a post's removal and a comment's removal wait for the server's answer, since each names the replies it takes ([b2ba976](https://github.com/Esposter/Esposter/commit/b2ba97664e7e6c5fe7236e1fe3d987d631e7cefc))
+* **post:** a reply is written only while its parent is live ([8ec36d9](https://github.com/Esposter/Esposter/commit/8ec36d949d80cb0d32698ff176d415399a891260))
+* **resource:** the content schema getter declares its return type, so a procedure's input reads its own type's schema ([a69b994](https://github.com/Esposter/Esposter/commit/a69b994dc3e4398c578b4c0719e3f532c64375fb))
+* **resource:** the content schema is read per key through getResourceContentSchema, so the definition map is exported once ([f23f45b](https://github.com/Esposter/Esposter/commit/f23f45b06b7632e368a784e1aef46c1de42a0c87))
+* **server:** a message's delete and edit answer as written when their mention counts cannot be taken back ([c09f118](https://github.com/Esposter/Esposter/commit/c09f11800e78ee002c2235127b319d0c5c15c1de))
+* **server:** a room's delete tombstones its children from the foreign keys, and a revival's conflict from the scope ([8e3979c](https://github.com/Esposter/Esposter/commit/8e3979c692d53e8d27646b3e18f36939a3325c42))
+* **shared:** settleOperation returns its outcome in one promise again, and the type test drops the rollback case it never checked ([f17cda7](https://github.com/Esposter/Esposter/commit/f17cda752be33f4d6b932cdd5f532407b228af9d))
+* **web:** a created post joins the feed where its sort places it, not at the bottom ([983d2fd](https://github.com/Esposter/Esposter/commit/983d2fdc7132a11152485a59b704d11de697185a))
+* **web:** a dataset read and a version history read forward their run's signal, so a newer read aborts the one before it ([9ce93bd](https://github.com/Esposter/Esposter/commit/9ce93bd12cc2ecb66540313c4c15f156f0112618))
+* **web:** a rejected survey autosave alerts again ([53fa311](https://github.com/Esposter/Esposter/commit/53fa3118c65257911983d26cd9dc3784cc67dd33))
+* **web:** the cast-removal batch's union and intersection members sort, and the date field calls its clear handler ([61b2ac9](https://github.com/Esposter/Esposter/commit/61b2ac9ea04d7a263da2d8db3b5342a874d330ea))
+* **web:** the read fixtures and the room refresh's release type-check ([e96ba78](https://github.com/Esposter/Esposter/commit/e96ba784081632edb862b01a6ebb0af7bbabf9b7))
+* **web:** the reads moved onto a bare run scope are live again ([b5bca54](https://github.com/Esposter/Esposter/commit/b5bca54881092407ab07a1718b92224befdfb11a))
+* **web:** the role and member stores' imports sort, and the animation suite writes the ref its settings double hands out ([fe6f40d](https://github.com/Esposter/Esposter/commit/fe6f40dde32659747bf51fbfab59359a49946357))
+* **web:** the search history spy resolves the kept flag an awaited write now answers ([ac310dd](https://github.com/Esposter/Esposter/commit/ac310dde3caff577f9791307797fc8c2f9c1054f))
+* **web:** the server typecheck program names the app's auto-import declarations, so the wake check's imports of the overlay's slot resolve Ref and triggerRef ([773e962](https://github.com/Esposter/Esposter/commit/773e962c54c9e6353cea1a088e5c0a241676c96e))
+* **web:** the server typecheck reads no auto-import declaration, since the overlay slot assigns its held tables rather than naming Ref and triggerRef ([a920e55](https://github.com/Esposter/Esposter/commit/a920e550727c117e80075e88a5d6f63c54f40d6d))
+* **web:** the setupCommandBench comment's continuation lines each open on a capital, so capitalized-comments passes ([f342a65](https://github.com/Esposter/Esposter/commit/f342a65efce8bf5ca6fbba3d1688ca0ff0176ceb))
+* **xml:** the XML writers escape with one XML escape that leaves a no-break space as itself ([e4dd503](https://github.com/Esposter/Esposter/commit/e4dd5039a680c98132955814234416069aed063f))
+
 # [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
 
 ### Bug Fixes

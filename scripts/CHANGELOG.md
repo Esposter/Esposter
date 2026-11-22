@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
+
+### Bug Fixes
+
+* **bench:** the sweep commands bench passes kit-design the kit it needs ([ba213f6](https://github.com/Esposter/Esposter/commit/ba213f64ec6cff60afa71f1aae5bbfe7547f002e))
+* **ci:** the lint and stale-name reds on ba213f64ec ([1ae4997](https://github.com/Esposter/Esposter/commit/1ae4997bc18edcacab18d2bb3b24d15f48c65f3b))
+* **lint:** the precheck's two regex constants drop their inferrable RegExp annotation ([21cbd96](https://github.com/Esposter/Esposter/commit/21cbd966e37ceadce1d489a9cef9b5f743c60087))
+* **scripts:** a gathered secret whose value looks like a timestamp is read as its text ([c09ce2c](https://github.com/Esposter/Esposter/commit/c09ce2c7c22b0110c0df1e7671737beba5589403))
+* **scripts:** the barrel check imports the generator from the subpath the root barrel no longer exports ([25605dc](https://github.com/Esposter/Esposter/commit/25605dc483c6eacd669b8972b3e2bbe248e891e9))
+* **scripts:** the framework-free headless check reads a framework's scoped packages ([c2722d7](https://github.com/Esposter/Esposter/commit/c2722d7ff56ea5d9014bd57fa1b6d29fdd85efca))
+* **scripts:** the precheck's barrel generator is the checkout's own source, not the built package ([b8230d1](https://github.com/Esposter/Esposter/commit/b8230d185c7d55368c1db6f9f7412f893e2c4d67))
+* **scripts:** the wiki images answer schema marks its optional keys with optional, which the absent-values rule requires ([834d552](https://github.com/Esposter/Esposter/commit/834d55275c829f1e49e1c10d7fe8f4fbc4e4370a))
+* **scripts:** the wish and whole-screen wiki reads pass the guard the wiki client now takes, and an answer of another shape fails the read ([4536824](https://github.com/Esposter/Esposter/commit/4536824911323f558d90d28069196b7726376a20))
+
 # [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
 
 ### Bug Fixes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
+
+### Bug Fixes
+
+* **genshin-mods:** each registration's catch handler is a module-level const of its file ([d70654c](https://github.com/Esposter/Esposter/commit/d70654cebba5ed25e880cb02e8af9b16964d3385))
+
 # [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
 
 **Note:** Version bump only for package genshin-mods

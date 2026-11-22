@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
+
+### Features
+
+* **configuration:** an overload is banned outside a declaration file, class methods included ([3a0a846](https://github.com/Esposter/Esposter/commit/3a0a8462e121b64222d8be73b95deaca9beef8a8))
+
 # [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
 
 **Note:** Version bump only for package trpc-nuxt-module

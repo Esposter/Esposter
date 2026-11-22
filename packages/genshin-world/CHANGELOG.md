@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.15.0](https://github.com/Esposter/Esposter/compare/v4.14.0...v4.15.0) (2026-11-22)
+
+### Bug Fixes
+
+* **ci:** the lint and stale-name reds on ba213f64ec ([1ae4997](https://github.com/Esposter/Esposter/commit/1ae4997bc18edcacab18d2bb3b24d15f48c65f3b))
+* **genshin-world:** the login's density profile holds exactly four channels, one for each of a texel's ([6031324](https://github.com/Esposter/Esposter/commit/60313245c3b2716585273defb39c1be8e573823c))
+* **genshin-world:** the tsdown config imports the generator from its subpath, which the root barrel no longer exports ([4a1362c](https://github.com/Esposter/Esposter/commit/4a1362c4fbdb3c2dea14c33830cc89e86618fc5c))
+
 # [4.14.0](https://github.com/Esposter/Esposter/compare/v4.13.0...v4.14.0) (2026-11-21)
 
 ### Bug Fixes
