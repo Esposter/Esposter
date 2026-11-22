@@ -63,12 +63,12 @@ export const createNotes = (
       const reading = takeOne(row, pitch);
       if (reading > frameThreshold) candidates.push([reading, frame, pitch]);
     }
-  const sortedCandidates = candidates.toSorted(
+  const candidatesByStrength = candidates.toSorted(
     ([firstReading, firstFrame, firstPitch], [secondReading, secondFrame, secondPitch]) =>
       secondReading - firstReading || firstFrame - secondFrame || firstPitch - secondPitch,
   );
 
-  for (const [reading, middle, pitch] of sortedCandidates) {
+  for (const [reading, middle, pitch] of candidatesByStrength) {
     const middleRow = takeOne(energy, middle);
     if (takeOne(middleRow, pitch) !== reading) continue;
     middleRow[pitch] = 0;
