@@ -1,5 +1,5 @@
 import type { PlayerInput } from "#src/models/dungeons/UI/input/PlayerInput";
-import type Slider from "phaser4-rex-plugins/plugins/slider";
+import type { Slider } from "vue-phaserjs";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { useSettingsStore } from "#src/store/dungeons/settings/index";
@@ -13,8 +13,7 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const volumePercentage = computed(() => settingsStore.settings[SettingsOption.VolumePercentage]);
   const volumeDelta = ref(0);
   const volumeIncrementCooldown = ref(0);
-  // Only what the store reads of the slider, so a test can hand it a slider without the rest of the plugin's type
-  const volumeSlider = ref<Pick<Slider, "destroy" | "value">>();
+  const volumeSlider = ref<Slider>();
   const setVolume = (baseVolumePercentage: number, isUpdateSlider = true) => {
     const clampedVolumePercentage = clamp(baseVolumePercentage, 0, 100);
     setSettings(SettingsOption.VolumePercentage, clampedVolumePercentage);

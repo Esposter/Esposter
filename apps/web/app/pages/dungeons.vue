@@ -4,9 +4,6 @@ import { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import { SceneComponentEntries } from "#src/services/dungeons/scene/SceneComponentMap";
 import { checkIsMobile } from "#src/util/device/checkIsMobile";
 import { AUTO, Scale } from "phaser";
-import ClickOutsidePlugin from "phaser4-rex-plugins/plugins/clickoutside-plugin.js";
-import SliderPlugin from "phaser4-rex-plugins/plugins/slider-plugin";
-import VirtualJoystickPlugin from "phaser4-rex-plugins/plugins/virtualjoystick-plugin";
 import { Game, usePhaserStore, useTextStore } from "vue-phaserjs";
 
 await useReadDungeons();
@@ -34,13 +31,6 @@ defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
           // We need to support multi-touch for mobile joystick
           // https://phaser.discourse.group/t/how-to-enable-multitouch-jsfiddle-inside/2422
           activePointers: checkIsMobile() ? 3 : 2,
-        },
-        plugins: {
-          global: [{ key: 'clickOutsidePlugin', plugin: ClickOutsidePlugin, start: true }],
-          scene: [
-            { key: 'virtualJoystickPlugin', plugin: VirtualJoystickPlugin, mapping: 'virtualJoystickPlugin' },
-            { key: 'sliderPlugin', plugin: SliderPlugin, mapping: 'sliderPlugin' },
-          ],
         },
       }"
     >

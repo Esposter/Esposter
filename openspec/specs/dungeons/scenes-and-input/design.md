@@ -1,6 +1,6 @@
 # Scenes and Input
 
-Every Phaser scene is a Vue component registered in `SceneComponentMap` and rendered inside vue-phaserjs's `<Game>` on `pages/dungeons.vue`, which also registers the Phaser plugins the game relies on (rex virtual joystick, slider, click-outside). Tile movement is the headless grid engine, held by the world's store and stepped by the world scene each frame.
+Every Phaser scene is a Vue component registered in `SceneComponentMap` and rendered inside vue-phaserjs's `<Game>` on `pages/dungeons.vue`. The mobile joystick, the volume slider and the menus' click outside are vue-phaserjs's [input helpers](../../vue-phaserjs/input/design.md), so the game registers no Phaser plugin. Tile movement is the headless grid engine, held by the world's store and stepped by the world scene each frame.
 
 ## How it works
 
@@ -32,7 +32,7 @@ Paths relative to `apps/web/app`.
 
 | File                                              | Role                                              |
 | ------------------------------------------------- | ------------------------------------------------- |
-| `pages/dungeons.vue`                              | `<Game>` configuration + plugin registration      |
+| `pages/dungeons.vue`                              | `<Game>` configuration                            |
 | `services/dungeons/scene/SceneComponentMap.ts`    | scene key → async Vue component                   |
 | `services/dungeons/scene/initializeControls.ts`   | keyboard vs joystick selection                    |
 | `models/dungeons/input/`                          | `Controls` implementations                        |

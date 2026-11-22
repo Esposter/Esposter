@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { GameObjects } from "phaser";
-import type VirtualJoystick from "phaser4-rex-plugins/plugins/virtualjoystick";
+import type { VirtualJoystick } from "vue-phaserjs";
 
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { JOYSTICK_DEPTH, JOYSTICK_RADIUS } from "#src/services/dungeons/scene/joystick/constants";
+import { JOYSTICK_DEAD_ZONE, JOYSTICK_DEPTH, JOYSTICK_RADIUS } from "#src/services/dungeons/scene/joystick/constants";
 import { getJoystickX } from "#src/services/dungeons/scene/joystick/getJoystickX";
 import { getJoystickY } from "#src/services/dungeons/scene/joystick/getJoystickY";
 import { useControlsStore } from "#src/store/dungeons/controls";
-import { getScene, Image, useInjectSceneKey } from "vue-phaserjs";
+import { createVirtualJoystick, getScene, Image, useInjectSceneKey } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
@@ -20,21 +20,21 @@ watch([base, thumb], ([newBase, newThumb]) => {
   if (!(newBase && newThumb)) return;
 
   const scene = getScene(sceneKey);
+  newBase.setPosition(getJoystickX(), getJoystickY(scene));
   virtualJoystick.value?.destroy();
   virtualJoystick.value = markRaw(
-    scene.virtualJoystickPlugin.add(scene, {
+    createVirtualJoystick(scene, {
       base: newBase,
+      deadZone: JOYSTICK_DEAD_ZONE,
       radius: JOYSTICK_RADIUS,
       thumb: newThumb,
-      x: getJoystickX(),
-      y: getJoystickY(scene),
     }),
   );
 });
 
 watch([virtualJoystick, controls], ([newVirtualJoystick, newControls]) => {
   if (!newVirtualJoystick) return;
-  newControls.cursorKeys = newVirtualJoystick.createCursorKeys();
+  newControls.cursorKeys = newVirtualJoystick.cursorKeys;
 });
 
 onUnmounted(() => {

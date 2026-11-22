@@ -3,10 +3,7 @@ import { join } from "node:path";
 import { mergeConfig } from "vitest/config";
 
 export default mergeConfig(
-  getVitestConfiguration(import.meta.dirname, {
-    environment: "happy-dom",
-    setupFiles: ["./src/test/setupCanvas.ts", "./src/test/setup.ts"],
-  }),
+  getVitestConfiguration(import.meta.dirname, { environment: "happy-dom", setupFiles: ["./src/test/setupCanvas.ts"] }),
   {
     plugins: getVuePlugins(),
     resolve: {

@@ -2,8 +2,6 @@ import type { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/Sp
 import type { SceneKey } from "#src/models/dungeons/keys/SceneKey";
 import type { TilesetKey } from "#src/models/dungeons/keys/TilesetKey";
 import type { Scene } from "phaser";
-import type SliderPlugin from "phaser4-rex-plugins/plugins/slider-plugin";
-import type VirtualJoystickPlugin from "phaser4-rex-plugins/plugins/virtualjoystick-plugin";
 
 import "vue-phaserjs";
 
@@ -16,11 +14,6 @@ type BaseAnimationKeyMap = {
 
 declare module "vue-phaserjs" {
   interface AnimationKeyMap extends BaseAnimationKeyMap {}
-
-  interface ScenePlugins {
-    sliderPlugin: SliderPlugin;
-    virtualJoystickPlugin: VirtualJoystickPlugin;
-  }
 
   interface SceneWithPlugins {
     scene: Scene["scene"] & { key: SceneKey };

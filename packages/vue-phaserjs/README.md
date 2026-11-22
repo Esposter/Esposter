@@ -22,7 +22,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 1. Install the packages.
 
 ```bash
-pnpm i vue-phaserjs @esposter/shared parse-tmx vue phaser phaser4-rex-plugins pinia
+pnpm i vue-phaserjs @esposter/shared parse-tmx vue phaser pinia
 ```
 
 Check: the install ends with no peer or version conflict, and `package.json` lists `vue-phaserjs`.
@@ -53,6 +53,8 @@ For a complete example, see [the dungeons page](https://github.com/Esposter/Espo
 
 | Export                                                                    | Kind       | Purpose                                                                                              |
 | ------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------- |
+| `createSlider`                                                            | function   | Makes a game object a thumb dragged along a segment. Reports the value from 0 to 1 a drag sets.      |
+| `createVirtualJoystick`                                                   | function   | Makes a base and a thumb a four-way joystick that holds the four arrow keys as a keyboard would.     |
 | `Game`                                                                    | component  | Starts a Phaser game in its element. Renders its slot once the game is ready.                        |
 | `onCreate`, `onInit`, `onNextTick`, `onPreload`, `onShutdown`, `onUpdate` | function   | Runs a callback at one stage of a scene's lifecycle. Returns the function that removes the callback. |
 | `Scene`                                                                   | component  | Adds a Phaser scene. Starts it when `autoStart` is set. Renders its children while it is active.     |

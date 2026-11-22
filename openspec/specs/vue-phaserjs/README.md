@@ -11,4 +11,6 @@
 
 The library is mature — there is no active roadmap. Ideas for new components or composables were evaluated and settled in [rejected](../../rejected/vue-phaserjs/) (one page per idea); most Phaser primitives that don't map to a Vue component hierarchy are intentionally left as imperative calls on the object received from `@complete`. The remaining unwrapped game-object types are [deferred](../../rejected/vue-phaserjs/remaining-gameobject-components/design.md) until a scene needs one.
 
+The pointer helpers a scene uses beside its components — the click outside behind `@clickoutside`, a slider thumb and a four-way virtual joystick — are [input](input/design.md).
+
 Every component is exercised against a real headless Phaser game rather than a mock — [testing](testing/design.md) covers how, and what that buys.

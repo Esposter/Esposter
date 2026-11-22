@@ -1,6 +1,6 @@
 # Phaser Objects in Pinia Stores
 
-Read when a store in the consuming app holds a Phaser object — a sprite, a tilemap, a key, a Rex plugin instance.
+Read when a store in the consuming app holds a Phaser object — a sprite, a tilemap, a key, the dungeons' slider or virtual joystick.
 
 The rule and its rationale live in the `pinia` skill (`references/class-instances-in-state.md`).
 
@@ -15,7 +15,7 @@ Any Phaser class that chains to `Scene → TextureManager → Texture → Frame 
 - `GameObjects.*` (Sprite, Image, PathFollower, Container, Text, etc.)
 - `Tilemaps.Tilemap`, `Tilemaps.TilemapLayer`
 - `Input.Keyboard.Key`, `Input.Keyboard.CursorKeys` (via KeyboardPlugin → Scene)
-- Rex plugin instances (Slider, VirtualJoystick, etc.)
+- The dungeons' `Slider` and `VirtualJoystick`, which hold a game object's listeners
 - Any class that holds a `scene` reference
 
 Not on the list: `Tilemaps.ObjectLayer`, the parsed Tiled object group (`name`, `id`, `opacity`, `properties`, `propertyTypes`, `type`, `visible`, `objects`). It is plain data with no scene, texture or live graph, so a store holds it as it is.

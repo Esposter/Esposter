@@ -126,7 +126,6 @@
     "parse-tmx": "workspace:*",
     "pdfjs-dist": "catalog:",
     "phaser": "catalog:",
-    "phaser4-rex-plugins": "catalog:",
     "pinia": "catalog:",
     "re2js": "catalog:",
     "read-excel-file": "catalog:",

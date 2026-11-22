@@ -180,7 +180,6 @@ catalog:
   parse5: ^8.1.1
   pdfjs-dist: ^6.5.438
   phaser: ^4.2.1
-  phaser4-rex-plugins: ^4.2.0
   pinia: ^4.1.0
   playwright: ^1.65.1
   publint: ^0.3.25
@@ -242,10 +241,6 @@ overrides:
   # own 0.140, 0.153, 0.154 or 0.155 copy, and `nuxt-nightly` split into peer variants that each declare a separate `NuxtApp`.
   # One forced copy keeps a single `nuxt-nightly`; remove once Nuxt pins `oxc-parser` so its peers stop resolving loose
   oxc-parser: "catalog:"
-  # @TODO: https://github.com/rexrainbow/phaser3-rex-notes/pull/603 — phaser4-rex-plugins 4.2.0 still declares
-  # i18next-http-backend `^3.0.5`, below the patched 4.0.2 of GHSA-xvq9-wjp8-hwqf, so this override holds it on 4.x: drop it
-  # once rexrainbow/phaser3-rex-notes declares a patched range
-  phaser4-rex-plugins>i18next-http-backend: ^4.1.0
   typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
   vite: "catalog:"
   # vp runs the catalog's tools rather than the exact copies vite-plus pins, so the lockfile holds one of each and
@@ -347,8 +342,6 @@ permissions:
   drizzle-kit:
     skills: true
   phaser:
-    skills: true
-  phaser4-rex-plugins:
     skills: true
   tsdown:
     skills: true

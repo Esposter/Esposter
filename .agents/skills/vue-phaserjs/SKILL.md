@@ -42,9 +42,9 @@ A Phaser object assigned to reactive store state is `markRaw`ed — the rule is 
 
 ## SSR / "Phaser is not defined"
 
-`phaser` and `phaser4-rex-plugins` must stay externalized, subpaths included. A bundled `phaser4-rex-plugins/plugins/*.js` reads `Phaser.Scene`/`Phaser.Game` as globals at module-eval time and throws under Node SSR. `phaser` itself reads `window` at import (its device detection runs in `init()` at module evaluation), so a page that imports it stays `ssr: false`: `import("phaser")` throws `window is not defined` in plain Node, and the route rule's comment names that import.
+`phaser` must stay externalized. It reads `window` at import (its device detection runs in `init()` at module evaluation), so a page that imports it stays `ssr: false`: `import("phaser")` throws `window is not defined` in plain Node, and the route rule's comment names that import.
 
-Nothing in this package configures that: they are its `peerDependencies`, which tsdown externalizes. Keep them peers.
+Nothing in this package configures that: it is a `peerDependency`, which tsdown externalizes. Keep it a peer.
 
 ## Reference pages
 

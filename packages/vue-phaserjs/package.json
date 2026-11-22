@@ -62,7 +62,6 @@
     "@esposter/shared": "workspace:*",
     "parse-tmx": "workspace:*",
     "phaser": "catalog:",
-    "phaser4-rex-plugins": "catalog:",
     "pinia": "catalog:",
     "vue": "catalog:"
   },

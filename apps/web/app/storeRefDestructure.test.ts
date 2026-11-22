@@ -1,7 +1,18 @@
 import { glob, readFile } from "node:fs/promises";
 import { join, relative, sep } from "node:path";
-import ts from "typescript";
-import { beforeAll, describe, expect, test } from "vitest";
+import type { Expression, Node, ObjectBindingPattern, SourceFile } from "tsrs/ast";
+import type { Project, Type } from "tsrs/sync";
+
+import {
+  isIdentifier,
+  isObjectBindingPattern,
+  isParameterDeclaration,
+  isStringLiteral,
+  isVariableDeclaration,
+} from "tsrs/ast/is";
+import { createFileSystemLayer } from "tsrs/fs";
+import { API } from "tsrs/sync";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { parse } from "vue/compiler-sfc";
 
 // A `.vue` file is checked as its script blocks, with the rest of the SFC blanked so every line keeps its number. The
@@ -31,11 +42,10 @@ describe("storeRefDestructure", () => {
   const VUE_SCAN_SUFFIX = ".scan.ts";
   const FIXTURE_PATH = join(APP_ROOT, "storeRefDestructure.fixture.ts");
   const FIXTURE_VUE_PATH = join(APP_ROOT, "storeRefDestructure.fixture.vue");
-  const BARREL_PATH = join(APP_ROOT, "storeRefDestructure.barrel.ts");
   const REF_TYPE_PATTERN = /^(?:Shallow|Removable|Writable)?(?:Computed)?Ref</u;
-  // A destructure of a store is in a file that imports or calls a `use*Store`, so only those files are made into the program
+  // A destructure of a store is in a file that imports or calls a `use*Store`, so only those files are scanned
   const STORE_USE_PATTERN = /\buse\w+Store\b/u;
-  // The fixtures are written as virtual files in the program, so the checker types them against the real stores
+  // The fixtures are written as virtual files in the project, so the checker types them against the real stores
   const FIXTURE_TEXT = `import { useEmojiPickerStore } from "#src/store/message/emojiPicker";
 import { useMonsterPartySceneStore } from "#src/store/dungeons/monsterParty/scene";
 import { useRoomEmojiStore } from "#src/store/message/room/emoji";
@@ -83,8 +93,6 @@ const { customEmojis } = useRoomEmojiStore();
   const toSourcePath = (fileName: string) =>
     fileName.endsWith(VUE_SCAN_SUFFIX) ? fileName.slice(0, -VUE_SCAN_SUFFIX.length) : fileName;
 
-  // The sources are read first, since the program is made from them synchronously: a tsgo-backed Program has a `then`
-  // That throws, so a function that returns one cannot be async
   const readStoreSources = async () => {
     const sourcePaths = (await Array.fromAsync(glob(["app/**/*.{ts,vue}"], { cwd: WEB_ROOT })))
       .map((sourcePath) => join(WEB_ROOT, sourcePath))
@@ -98,55 +106,35 @@ const { customEmojis } = useRoomEmojiStore();
     const selected = sources.filter(([, scanText]) => STORE_USE_PATTERN.test(scanText));
     return {
       scriptPaths: selected.map(([sourcePath]) => sourcePath).filter((sourcePath) => sourcePath.endsWith(".ts")),
-      selectedPaths: new Set(selected.map(([sourcePath]) => sourcePath)),
       vueScanEntries: selected
         .filter(([sourcePath]) => sourcePath.endsWith(".vue"))
         .map(([sourcePath, scanText]): [string, string] => [`${sourcePath}${VUE_SCAN_SUFFIX}`, scanText]),
     };
   };
 
-  const createStoreProgram = (scriptPaths: string[], virtualSources: Map<string, string>) => {
-    const { config } = ts.readConfigFile(join(WEB_ROOT, ".nuxt/tsconfig.app.json"), ts.sys.readFile);
-    const configuration = ts.parseJsonConfigFileContent(config, ts.sys, WEB_ROOT);
-
-    // The barrel imports every selected file. The checker leaves the syntax tree of a root file empty and fills one the
-    // Program reaches through an import, so a scan that listed the app files as roots would read nothing in them
-    const barrelText = scriptPaths
-      .map((scriptPath) => `import "./${relative(APP_ROOT, scriptPath).replaceAll(sep, "/").replace(/\.ts$/u, "")}";`)
-      .join("\n");
-    const virtualFiles = new Map([...virtualSources, [BARREL_PATH, barrelText]]);
-
-    // Nuxt's global declarations are what make `storeToRefs` and the store composables resolve without an import
-    const rootNames = [
-      ...configuration.fileNames,
-      ...ts.sys.readDirectory(join(WEB_ROOT, ".nuxt/types"), [".d.ts"]),
-      ...ts.sys.readDirectory(join(WEB_ROOT, ".nuxt"), [".d.ts"], undefined, undefined, 1),
-      ...virtualFiles.keys(),
-    ];
-
-    const host = ts.createCompilerHost(configuration.options);
-    const getSourceFile = host.getSourceFile.bind(host);
-    host.getSourceFile = (fileName, languageVersion, onError, shouldCreate) => {
-      const virtualText = virtualFiles.get(fileName);
-      if (virtualText !== undefined)
-        return ts.createSourceFile(fileName, virtualText, languageVersion, true, ts.ScriptKind.TS);
-      return getSourceFile(fileName, languageVersion, onError, shouldCreate);
-    };
-    const fileExists = host.fileExists.bind(host);
-    host.fileExists = (fileName) => virtualFiles.has(fileName) || fileExists(fileName);
-    const readFileText = host.readFile.bind(host);
-    host.readFile = (fileName) => virtualFiles.get(fileName) ?? readFileText(fileName);
-
-    return ts.createProgram({ host, options: configuration.options, rootNames: [...new Set(rootNames)] });
+  // The project is the app's own tsconfig, extended by a virtual one that adds the fixtures and the `.vue` scan texts as
+  // Files. They live in a layer over the disk, so the checker types them against the real stores and Nuxt's globals
+  const openStoreProject = (api: API, virtualSources: Map<string, string>) => {
+    const configurationPath = join(WEB_ROOT, "storeRefDestructure.tsconfig.json");
+    const configurationText = JSON.stringify({
+      extends: "./.nuxt/tsconfig.app.json",
+      files: [...virtualSources.keys()],
+    });
+    const snapshot = api.createSnapshot({
+      fileSystem: createFileSystemLayer([[configurationPath, configurationText], ...virtualSources]),
+      openProjects: [configurationPath],
+    });
+    const project = snapshot.getConfiguredProject(configurationPath);
+    if (!project) throw new Error(`No project opened for ${configurationPath}`);
+    return project;
   };
 
-  const scanStoreDestructures = (program: ts.Program, scannedPaths: Set<string>) => {
-    const checker = program.getTypeChecker();
+  const scanStoreDestructures = ({ checker, program }: Project, scannedPaths: string[]) => {
     const hits: StoreHit[] = [];
-    const isStoreType = (type: ts.Type) =>
+    const isStoreType = (type: Type) =>
       checker.getPropertyOfType(type, "$id") !== undefined && checker.getPropertyOfType(type, "$state") !== undefined;
-    const isRefLike = (type: ts.Type) => REF_TYPE_PATTERN.test(checker.typeToString(type));
-    const report = (sourceFile: ts.SourceFile, node: ts.Node, kind: string, prop: string) => {
+    const isRefLike = (type: Type) => REF_TYPE_PATTERN.test(checker.typeToString(type));
+    const report = (sourceFile: SourceFile, node: Node, kind: string, prop: string) => {
       hits.push({
         file: relative(WEB_ROOT, toSourcePath(sourceFile.fileName)),
         kind,
@@ -154,66 +142,76 @@ const { customEmojis } = useRoomEmojiStore();
         prop,
       });
     };
-    const scanPattern = (sourceFile: ts.SourceFile, pattern: ts.ObjectBindingPattern, initializer: ts.Expression) => {
+    const scanPattern = (sourceFile: SourceFile, pattern: ObjectBindingPattern, initializer: Expression) => {
       const initializerType = checker.getTypeAtLocation(initializer);
-      if (!isStoreType(initializerType)) return;
+      if (!initializerType || !isStoreType(initializerType)) return;
 
       // Pinia's `Store<Id, S, G, A>` keeps the raw member types the setup returned as its type arguments
-      const [, stateType, getterType] = initializerType.aliasTypeArguments ?? [];
+      const [, stateType, getterType] = initializerType.getAliasTypeArguments();
       for (const element of pattern.elements) {
         if (element.dotDotDotToken) {
           report(sourceFile, element, "rest", "...");
           continue;
         }
         const name = element.propertyName ?? element.name;
-        const propName = ts.isIdentifier(name) || ts.isStringLiteral(name) ? name.text : undefined;
+        const propName = isIdentifier(name) || isStringLiteral(name) ? name.text : undefined;
         if (propName === undefined) continue;
         const property = checker.getPropertyOfType(initializerType, propName);
         if (!property) {
           report(sourceFile, element, "unresolved", propName);
           continue;
         }
-        if (checker.getTypeOfSymbolAtLocation(property, element).getCallSignatures().length > 0) continue;
+        if (checker.getTypeOfSymbolAtLocation(property, element)?.getCallSignatures().length) continue;
 
         const getter = getterType && checker.getPropertyOfType(getterType, propName);
         const state = stateType && checker.getPropertyOfType(stateType, propName);
-        if (getter && isRefLike(checker.getTypeOfSymbolAtLocation(getter, element)))
-          report(sourceFile, element, "getter", propName);
-        else if (state && isRefLike(checker.getTypeOfSymbolAtLocation(state, element)))
-          report(sourceFile, element, "ref", propName);
+        const getterMemberType = getter && checker.getTypeOfSymbolAtLocation(getter, element);
+        const stateMemberType = state && checker.getTypeOfSymbolAtLocation(state, element);
+        if (getterMemberType && isRefLike(getterMemberType)) report(sourceFile, element, "getter", propName);
+        else if (stateMemberType && isRefLike(stateMemberType)) report(sourceFile, element, "ref", propName);
       }
     };
-    const visit = (sourceFile: ts.SourceFile, node: ts.Node): void => {
+    const visit = (sourceFile: SourceFile, node: Node): void => {
       if (
-        (ts.isVariableDeclaration(node) || ts.isParameter(node)) &&
-        ts.isObjectBindingPattern(node.name) &&
+        (isVariableDeclaration(node) || isParameterDeclaration(node)) &&
+        isObjectBindingPattern(node.name) &&
         node.initializer
       )
         scanPattern(sourceFile, node.name, node.initializer);
-      ts.forEachChild(node, (child) => {
+      node.forEachChild((child) => {
         visit(sourceFile, child);
       });
     };
 
-    for (const sourceFile of program.getSourceFiles())
-      if (scannedPaths.has(toSourcePath(sourceFile.fileName)) && !sourceFile.isDeclarationFile)
-        visit(sourceFile, sourceFile);
+    for (const scannedPath of scannedPaths) {
+      const sourceFile = program.getSourceFile(scannedPath);
+      if (!sourceFile) throw new Error(`${scannedPath} is not in the program`);
+      visit(sourceFile, sourceFile);
+    }
     return hits;
   };
 
   let hits: StoreHit[] = [];
 
+  const api = new API({ cwd: WEB_ROOT });
+
   beforeAll(async () => {
-    const { scriptPaths, selectedPaths, vueScanEntries } = await readStoreSources();
-    const program = createStoreProgram(
-      scriptPaths,
-      new Map([
-        ...vueScanEntries,
-        [`${FIXTURE_VUE_PATH}${VUE_SCAN_SUFFIX}`, toVueScanText(FIXTURE_VUE_TEXT)],
-        [FIXTURE_PATH, FIXTURE_TEXT],
-      ]),
+    const { scriptPaths, vueScanEntries } = await readStoreSources();
+    const fixtureVueScanPath = `${FIXTURE_VUE_PATH}${VUE_SCAN_SUFFIX}`;
+    const project = openStoreProject(
+      api,
+      new Map([...vueScanEntries, [fixtureVueScanPath, toVueScanText(FIXTURE_VUE_TEXT)], [FIXTURE_PATH, FIXTURE_TEXT]]),
     );
-    hits = scanStoreDestructures(program, new Set([...selectedPaths, FIXTURE_PATH, FIXTURE_VUE_PATH]));
+    hits = scanStoreDestructures(project, [
+      ...scriptPaths,
+      ...vueScanEntries.map(([scanPath]) => scanPath),
+      fixtureVueScanPath,
+      FIXTURE_PATH,
+    ]);
+  });
+
+  afterAll(() => {
+    api.close();
   });
 
   test("destructures no store ref or computed off a store as a snapshot", () => {

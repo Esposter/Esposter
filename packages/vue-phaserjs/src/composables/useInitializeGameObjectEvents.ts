@@ -6,8 +6,8 @@ import { GameObjectEvent } from "#src/models/emit/GameObjectEvent";
 import { checkIsEvent } from "#src/services/emit/checkIsEvent";
 import { GameObjectEventMap } from "#src/services/emit/GameObjectEventMap";
 import { getEventName } from "#src/services/emit/getEventName";
+import { onClickOutside } from "#src/services/emit/onClickOutside";
 import { takeOne } from "@esposter/shared";
-import ClickOutside from "phaser4-rex-plugins/plugins/clickoutside.js";
 
 export const useInitializeGameObjectEvents = () => {
   const currentInstance = getCurrentInstance();
@@ -31,16 +31,24 @@ export const useInitializeGameObjectEvents = () => {
     if (gameObjectEvents.some((key) => "drag" in GameObjectEventMap[key])) scene.input.setDraggable(gameObject);
 
     for (const gameObjectEvent of gameObjectEvents) {
+      // Phaser has no click-outside event of its own, so it is read from the scene's input rather than the game object
+      if (gameObjectEvent === GameObjectEvent.Clickoutside) {
+        eventStopHandles.push(
+          onClickOutside(gameObject, (pointer) => {
+            emit(gameObjectEvent, pointer);
+          }),
+        );
+        continue;
+      }
+
       const context = GameObjectEventMap[gameObjectEvent];
       const eventListener = (...args: Types.Input.EventData[]) => {
         if ("eventIndex" in context) takeOne(args).stopPropagation = takeOne(args, context.eventIndex).stopPropagation;
         emit(gameObjectEvent, ...args);
       };
-      // The rex plugin emits its event from a component of its own rather than from the game object
-      const emitter = gameObjectEvent === GameObjectEvent.Clickoutside ? new ClickOutside(gameObject) : gameObject;
-      emitter.on(gameObjectEvent, eventListener);
+      gameObject.on(gameObjectEvent, eventListener);
       eventStopHandles.push(() => {
-        emitter.off(gameObjectEvent, eventListener);
+        gameObject.off(gameObjectEvent, eventListener);
       });
     }
   };

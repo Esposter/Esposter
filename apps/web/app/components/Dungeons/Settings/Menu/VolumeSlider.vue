@@ -16,7 +16,7 @@ import {
 import { getSettingsOptionY } from "#src/services/dungeons/scene/settings/getSettingsOptionY";
 import { useVolumeStore } from "#src/store/dungeons/settings/volume";
 import { Input } from "phaser";
-import { onShutdown, Rectangle, Text } from "vue-phaserjs";
+import { createSlider, onShutdown, Rectangle, Text } from "vue-phaserjs";
 
 const volumeStore = useVolumeStore();
 const { destroyVolumeSlider, setVolume } = volumeStore;
@@ -58,16 +58,14 @@ const onSliderBarClick = ({ x }: Input.Pointer) => {
       fillColor: 0xff2222,
     }"
     :on-complete="
-      (scene, rectangle) => {
+      (_scene, rectangle) => {
         volumeSlider = markRaw(
-          scene.sliderPlugin.add(rectangle, {
-            endPoints: [
-              { x: VOLUME_SLIDER_START_X, y: baseY + VOLUME_SLIDER_OFFSET_Y },
-              { x: VOLUME_SLIDER_END_X, y: baseY + VOLUME_SLIDER_OFFSET_Y },
-            ],
+          createSlider(rectangle, {
+            start: { x: VOLUME_SLIDER_START_X, y: baseY + VOLUME_SLIDER_OFFSET_Y },
+            end: { x: VOLUME_SLIDER_END_X, y: baseY + VOLUME_SLIDER_OFFSET_Y },
             value: volumePercentage / 100,
-            // Keep cursor sliding smooth: handled by the plugin, not the store.
-            valuechangeCallback: (newValue) => setVolume(Math.floor(newValue * 100), false),
+            // The drag keeps the thumb where the pointer is, so the store follows without moving it back
+            onValueChange: (newValue) => setVolume(Math.floor(newValue * 100), false),
           }),
         );
       }
