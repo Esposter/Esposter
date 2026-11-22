@@ -36,7 +36,12 @@ export const VEIL_SYSTEM_SECTION =
 export const AGENT_TOOL = "Agent";
 // The tools that look something up, the tools that change files, and the shell whose command decides which it is
 export const LOOKUP_TOOLS = ["Read", "WebFetch"] as const;
-export const RESET_TOOLS = [AGENT_TOOL, "Edit", "NotebookEdit", "Write"] as const;
+export const RESET_TOOLS: readonly [typeof AGENT_TOOL, "Edit", "NotebookEdit", "Write"] = [
+  AGENT_TOOL,
+  "Edit",
+  "NotebookEdit",
+  "Write",
+];
 export const SHELL_TOOLS = ["Bash"] as const;
 // The `export` and `cd` a session chains ahead of its command, each stripped as one leading segment
 export const LEADING_SEGMENT_REGEX: RegExp = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;

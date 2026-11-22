@@ -2,7 +2,7 @@
 // Run in changes nothing. A secret is a known key prefix; a long run mixing letters and digits, read from the run's
 // Start alone so a long run of neither is scanned once rather than again from every position in it; or whatever
 // Follows a password's own label, however short
-export const VeilPatternMap = new Map<string, RegExp>([
+export const VeilPatternMap: Map<string, RegExp> = new Map<string, RegExp>([
   [
     "[amount]",
     /[$€£¥₹]\s?\d[\d,]*(?:\.\d+)?(?:\s?[KkMmBb]\b)?|\b(?:USD|EUR|GBP|CAD|AUD|JPY|CNY)\s?\d[\d,]*(?:\.\d+)?|\b\d[\d,]*(?:\.\d+)?\s?(?:USD|EUR|GBP|CAD|AUD|JPY|CNY)\b/gu,
