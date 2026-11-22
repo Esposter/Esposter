@@ -38,4 +38,8 @@ Notes on a tree several units share:
 grep -rnE '<(button|input|select|textarea)[ >]| title="' --include=*.vue apps/web/app/components apps/web/app/pages apps/web/app/layouts | grep -v 'components/Ui/'
 # a colour written by hand rather than a token
 grep -rnE '#[0-9a-fA-F]{3,8}\b' --include=*.vue apps/web/app/components apps/web/app/pages apps/web/app/layouts | grep -v 'components/Ui/'
+# 4. a set's own icon class in a feature: each is a candidate, a hit only where UiIconMeaning already names its glyph
+grep -rnE 'i-[a-z0-9]+:[a-z0-9-]+' --include=*.vue apps/web/app/components apps/web/app/pages apps/web/app/layouts | grep -v 'components/Ui/'
 ```
+
+Each hit of 4 is read against `UiIconMeaning`: a class with no meaning yet is written whole until one is added, which is a feature change and not a sweep fix.

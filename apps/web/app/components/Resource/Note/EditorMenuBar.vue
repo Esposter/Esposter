@@ -3,6 +3,7 @@ import type { MenuItem } from "#src/models/shared/MenuItem";
 import type { Editor } from "@tiptap/core";
 
 import { IMAGE_UPLOAD_MIME_TYPES } from "#shared/services/file/constants";
+import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getNoteBlockMenuItems } from "#src/services/resource/note/getNoteBlockMenuItems";
 import { getListMenuItems } from "#src/services/richTextEditor/getListMenuItems";
 import { getTextFormatMenuItems } from "#src/services/richTextEditor/getTextFormatMenuItems";
@@ -30,7 +31,7 @@ const items = computed<MenuItem[]>(() => [
     },
     title: "Table",
   },
-  { icon: "i-mdi:image", isSelectionFree: true, onClick: () => openImagePicker(), title: "Image" },
+  { isSelectionFree: true, meaning: UiIconMeaning.Image, onClick: () => openImagePicker(), title: "Image" },
   { isDivider: true },
   ...getTextFormatMenuItems(editor),
   { isDivider: true },
