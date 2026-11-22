@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiTextFieldType } from "#src/models/ui/UiTextFieldType";
 import { useFindReplaceStore } from "#src/store/resource/sheet/findReplace";
 
 const findReplaceStore = useFindReplaceStore();
@@ -12,6 +13,7 @@ const { findValue, isFindReplaceOpen } = storeToRefs(findReplaceStore);
     v-model="findValue"
     is-autofocus
     label="Find"
+    :type="UiTextFieldType.Search"
     @keydown="
       (event: KeyboardEvent) => {
         if (event.isComposing) return;

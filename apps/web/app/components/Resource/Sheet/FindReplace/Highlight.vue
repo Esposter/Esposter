@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getHighlightParts } from "#src/services/resource/sheet/findReplace/getHighlightParts";
+
 interface Props {
   isCurrentOccurrence: boolean;
   search: string;
@@ -7,20 +9,7 @@ interface Props {
 
 const { isCurrentOccurrence, search, text } = defineProps<Props>();
 const container = useTemplateRef("container");
-const parts = computed(() => {
-  if (!search) return [{ isMatch: false, text }];
-  const highlightParts: { isMatch: boolean; text: string }[] = [];
-  let remaining = text;
-  let index = remaining.indexOf(search);
-  while (index !== -1) {
-    if (index > 0) highlightParts.push({ isMatch: false, text: remaining.slice(0, index) });
-    highlightParts.push({ isMatch: true, text: search });
-    remaining = remaining.slice(index + search.length);
-    index = remaining.indexOf(search);
-  }
-  if (remaining) highlightParts.push({ isMatch: false, text: remaining });
-  return highlightParts;
-});
+const parts = computed(() => getHighlightParts(text, search));
 
 watch(
   () => isCurrentOccurrence,
