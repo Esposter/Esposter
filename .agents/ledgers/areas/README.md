@@ -1,6 +1,12 @@
 # Areas
 
-The areas and units that `invariants`, `quality`, `security` and `write-once` all read, one file per area. A unit is what one pass reads, and its boundaries are written once, in its area's file. Where each question stands on each unit is `pnpm ai:sweep:status <question>`, and a question keeps a file of its own for an area only for the units it holds a note on.
+The one partition of the tracked files, one file per area. Every file-based question in the [index](../README.md) reads its cells from this list through its `Scope`, and `pnpm ai:sweep:status <question>` says where each stands. A unit is what one pass reads, and its boundaries are written once, as one bullet in its area's file:
+
+- `` `path` ``, or several separated by commas: a file, or a directory's whole tree.
+- `` `dir` — `a`, `b` ``: those entries of the directory.
+- `` `dir` — the rest ``: the directory's files no other unit names.
+
+Each file belongs to the deepest path naming it, so a unit naming a directory never holds a file a deeper unit names.
 
 | Area                      | What it holds                                                                                                                                                                                                                                  |
 | :------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
