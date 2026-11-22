@@ -63,8 +63,8 @@ describe(useUserToRoomStore, () => {
   test("sends a write to a row behind an overlapping write that has not answered", async () => {
     expect.hasAssertions();
 
-    const first = "first";
-    const second = "second";
+    const first = "";
+    const second = "a";
     const sent: string[] = [];
     const { promise: isFirstAnswered, resolve: answerFirst } = Promise.withResolvers<void>();
     trpcMsw.userToRoom.updateUserToRoom.mutation(async ({ input }) => {

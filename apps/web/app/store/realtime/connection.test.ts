@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { ColumnTopic, RoomMessage, Topic, TopicRead } from "@esposter/db-schema";
+import type { ColumnTopic, RoomMessage, TopicRead } from "@esposter/db-schema";
 
 import {
   getMockPublishedTopics,
@@ -17,23 +17,30 @@ import {
   sendRealtimeFrame,
 } from "#src/services/realtime/openRealtimeSocket.test";
 import { useConnectionStore } from "#src/store/realtime/connection";
-import { CALL_ID_LENGTH, friendsInSocial, MessageType } from "@esposter/db-schema";
+import {
+  CALL_ID_LENGTH,
+  friendsInSocial,
+  getScopeTopic,
+  getTopic,
+  MessageType,
+  TopicKind,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { getFriendshipId, jsonDateParse, takeOne } from "@esposter/shared";
 import { env } from "cloudflare:workers";
+import { getTableName } from "drizzle-orm";
 import { v7 } from "uuid";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, onTestFinished, test, vi } from "vitest";
 
 // A read as a query's header names it, with the signature the server made over it for the person who read it
-const createRead = (topics: ColumnTopic[], begunAt: number): TopicRead => ({
-  readAt: begunAt,
-  signature: `signature-${begunAt}`,
-  topics,
-});
+const createRead = (topics: ColumnTopic[], begunAt: number): TopicRead => ({ readAt: begunAt, signature: "", topics });
 // The frame a read's watch sends up the user socket, carrying its time, signature and topics as they were signed
 const watchFrame = (read: TopicRead) => ({
   data: { readAt: read.readAt, signature: read.signature, topics: read.topics },
   type: "watch",
 });
+// The frames sent up the sockets so far, parsed the way the socket receives them
+const readSentFrames = () => sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame));
 
 vi.mock(
   import("#src/services/realtime/openRealtimeSocket"),
@@ -111,7 +118,7 @@ describe(useConnectionStore, () => {
     const { openUser, watchTopics } = connectionStore;
     openUser();
     const [, onFrame] = getLastOpenRealtimeSocketCall();
-    const topic: Topic = `post:${v7()}`;
+    const topic = getTopic(TopicKind.Post, v7());
     const firstRefetch = vi.fn<() => void>();
     const secondRefetch = vi.fn<() => void>();
     const read = createRead([{ topic }], readAt);
@@ -123,10 +130,7 @@ describe(useConnectionStore, () => {
 
     expect(firstRefetch).toHaveBeenCalledTimes(1);
     expect(secondRefetch).toHaveBeenCalledTimes(1);
-    expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      watchFrame(read),
-      { data: { topics: [topic] }, type: "unwatch" },
-    ]);
+    expect(readSentFrames()).toStrictEqual([watchFrame(read), { data: { topics: [topic] }, type: "unwatch" }]);
   });
 
   // A frame carries one read's topics as that read signed them, so the columns of another read are never merged into it:
@@ -137,16 +141,13 @@ describe(useConnectionStore, () => {
     const connectionStore = useConnectionStore();
     const { openUser, watchTopics } = connectionStore;
     openUser();
-    const topic: Topic = `message_usersToRooms:userId=${v7()}`;
+    const topic = getScopeTopic(getTableName(usersToRoomsInMessage), "userId", v7());
     const nameRead = createRead([{ columns: ["name"], topic }], readAt);
     const hiddenRead = createRead([{ columns: ["isHidden"], topic }], readAt);
     watchTopics(nameRead, vi.fn<() => void>());
     watchTopics(hiddenRead, vi.fn<() => void>());
 
-    expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      watchFrame(nameRead),
-      watchFrame(hiddenRead),
-    ]);
+    expect(readSentFrames()).toStrictEqual([watchFrame(nameRead), watchFrame(hiddenRead)]);
   });
 
   // A read older than the subscription a topic holds reaches back past it, since a publish between the two is one the
@@ -157,16 +158,13 @@ describe(useConnectionStore, () => {
     const connectionStore = useConnectionStore();
     const { openUser, watchTopics } = connectionStore;
     openUser();
-    const topic: Topic = `post:${v7()}`;
+    const topic = getTopic(TopicKind.Post, v7());
     const newerRead = createRead([{ topic }], newerReadAt);
     const olderRead = createRead([{ topic }], readAt);
     watchTopics(newerRead, vi.fn<() => void>());
     watchTopics(olderRead, vi.fn<() => void>());
 
-    expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      watchFrame(newerRead),
-      watchFrame(olderRead),
-    ]);
+    expect(readSentFrames()).toStrictEqual([watchFrame(newerRead), watchFrame(olderRead)]);
   });
 
   // A reconnect subscribes each watched read again from its own time, as it was signed, a frame per read
@@ -177,8 +175,8 @@ describe(useConnectionStore, () => {
     const { openUser, watchTopics } = connectionStore;
     openUser();
     const options = vi.mocked(openRealtimeSocket).mock.lastCall?.[2];
-    const newerTopic: Topic = `post:${v7()}`;
-    const olderTopic: Topic = `post:${v7()}`;
+    const newerTopic = getTopic(TopicKind.Post, v7());
+    const olderTopic = getTopic(TopicKind.Post, v7());
     const newerRead = createRead([{ topic: newerTopic }], newerReadAt);
     const olderRead = createRead([{ topic: olderTopic }], readAt);
     watchTopics(newerRead, vi.fn<() => void>());
@@ -186,10 +184,7 @@ describe(useConnectionStore, () => {
     sendRealtimeFrame.mockClear();
     options?.onOpen?.();
 
-    expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      watchFrame(newerRead),
-      watchFrame(olderRead),
-    ]);
+    expect(readSentFrames()).toStrictEqual([watchFrame(newerRead), watchFrame(olderRead)]);
   });
 
   // A new socket holds nothing the old one sent, so the first read a query makes after a reconnect is watched again even
@@ -201,16 +196,14 @@ describe(useConnectionStore, () => {
     const { openUser, watchTopics } = connectionStore;
     openUser();
     const options = vi.mocked(openRealtimeSocket).mock.lastCall?.[2];
-    const topic: Topic = `post:${v7()}`;
+    const topic = getTopic(TopicKind.Post, v7());
     watchTopics(createRead([{ topic }], readAt), vi.fn<() => void>());
     options?.onOpen?.();
     sendRealtimeFrame.mockClear();
     const refetchedRead = createRead([{ topic }], newerReadAt);
     watchTopics(refetchedRead, vi.fn<() => void>());
 
-    expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual([
-      watchFrame(refetchedRead),
-    ]);
+    expect(readSentFrames()).toStrictEqual([watchFrame(refetchedRead)]);
   });
 
   // A friend list's read names the rows it selected, and a removal by another person publishes those rows, so the topic the
@@ -219,6 +212,8 @@ describe(useConnectionStore, () => {
     expect.hasAssertions();
 
     // The write's publish reads its topic binding from the workers env, which this environment does not get from the shared setup
+    const previousTopic = env.TOPIC;
+    onTestFinished(() => Object.assign(env, { TOPIC: previousTopic }));
     Object.assign(env, { TOPIC: mockTopicNamespace });
     const context = await createMockContext();
     const reader = await createMockAuthSession(context.db);
@@ -242,9 +237,7 @@ describe(useConnectionStore, () => {
     sendRealtimeFrame.mockClear();
     for (const read of reads) watchTopics(read, refetch);
 
-    expect(sendRealtimeFrame.mock.calls.map(([frame]) => jsonDateParse(frame))).toStrictEqual(
-      reads.map((read) => watchFrame(read)),
-    );
+    expect(readSentFrames()).toStrictEqual(reads.map((read) => watchFrame(read)));
     MockPublishedTopics.length = 0;
     await createCallerFactory(friendRouter)({
       ...context,
