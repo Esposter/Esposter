@@ -9,7 +9,6 @@ import { join } from "node:path";
 // The path hash fields a row keeps as the text the dump writes them in, since a number keeps only a 64-bit hash's high
 // Bits and rounds its low bits away
 const PATH_HASH_KEYS = new Set(["combatConfigHash", "controllerPathHash", "prefabPathHash"]);
-
 // Every row of the game's monster table, its path hashes read from their source text. Not through readExcelTable, whose
 // `fillDumpDefaults` writes 0 into a row the dump leaves a hash out of, and the unnamed count would then read that 0 as a
 // Hash no path names

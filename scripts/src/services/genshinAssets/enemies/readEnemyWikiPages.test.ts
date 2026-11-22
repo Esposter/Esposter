@@ -1,4 +1,4 @@
-import { fetchEnemyWikiPages } from "#src/services/genshinAssets/enemies/fetchEnemyWikiPages";
+import { readEnemyWikiPages } from "#src/services/genshinAssets/enemies/readEnemyWikiPages";
 import { toWikiPageCachePath } from "#src/services/genshinAssets/enemies/toWikiPageCachePath";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -11,7 +11,7 @@ const createPageResponse = (title: null | string) => ({
 });
 const titleOf = (input: unknown) => new URL(String(input)).searchParams.get("titles");
 
-describe(fetchEnemyWikiPages, () => {
+describe(readEnemyWikiPages, () => {
   let cacheDirectory: string;
 
   beforeEach(async () => {
@@ -33,7 +33,7 @@ describe(fetchEnemyWikiPages, () => {
       .spyOn(globalThis, "fetch")
       .mockImplementation((input) => Promise.resolve(Response.json(createPageResponse(titleOf(input)))));
 
-    await fetchEnemyWikiPages(titles, false, cacheDirectory);
+    await readEnemyWikiPages(titles, false, cacheDirectory);
 
     expect(fetchSpy.mock.calls.map(([input]) => titleOf(input))).toStrictEqual(["Hilichurls"]);
     await expect(readFile(cachedPath, "utf8")).resolves.toBe(cachedJson);

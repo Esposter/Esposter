@@ -4,7 +4,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // A value a Lua table literal holds: a string, a number, a boolean or a table, which is an object when it names its fields
 // And an array when it lists its values
 export type LuaValue = boolean | LuaValue[] | number | string | { [field: string]: LuaValue };
-
 // One token of the literal: punctuation, a name, a number or a quoted string, each with its text. Comments and spaces
 // Are skipped
 const TOKEN_REGEX =
@@ -33,11 +32,9 @@ const tokenize = (source: string): LuaToken[] => {
   }
   return tokens;
 };
-
 // Whether a token is the punctuation the literal's syntax names at that point, so a string that spells it is not
 const checkIsPunctuation = (token: LuaToken | undefined, text: string): boolean =>
   token?.kind === LuaTokenKind.Punctuation && token.text === text;
-
 // A field's name, whether it is written as a name or as a quoted name in brackets, consumed with its `=`, or none when
 // The next value is positional
 const readFieldName = (tokens: readonly LuaToken[], index: number): undefined | { name: string; next: number } => {
@@ -53,7 +50,6 @@ const readFieldName = (tokens: readonly LuaToken[], index: number): undefined | 
     return { name: second.text, next: index + 4 };
   return undefined;
 };
-
 // Reads a Lua table literal, as the wiki's data modules write it, into the values it holds: named fields as an object,
 // Listed values as an array, and nothing else. A table that names fields and also lists values keeps each listed value
 // Under its index, as Lua stores it, so the two read together. An escape in a string, and any text after the literal's

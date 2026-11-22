@@ -7,7 +7,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // A path ID is 64 bits, past a number's exact range, so it is kept as the text the export wrote
 const readPathIdText = (key: string, value: unknown, context: { source?: string }): unknown =>
   key === "m_PathID" && typeof value === "number" && context.source !== undefined ? context.source : value;
-
 // The states of every state machine in an Animator controller's JSON export, in the order the controller lists them,
 // Each with the path IDs of the clips its blend tree nodes index. Refuses an export without `m_Controller`, which the
 // Stock CLI does not write, so a stale CLI is named rather than read as a controller with no states

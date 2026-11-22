@@ -75,7 +75,6 @@ const toDropTable = (
   ),
   mora,
 });
-
 // The drop source a kind's article gives, joined to the kind. A template's materials are read through the drops module
 const toDropSource = (
   articleSource: ArticleDropSource,
@@ -90,7 +89,6 @@ const toDropSource = (
   if (articleSource.type === "family") return { type: "family" };
   return { type: articleSource.type };
 };
-
 // Each kind's drop source, from its own wiki article, and the drop families the kinds of a family take, from the wiki's
 // Enemies table. A boss's article gives its reward or none; a kind that is no boss gives a family, template or none.
 // A kind whose article lists two Drops Tables takes the first, the one its defeat drops. Families are keyed by

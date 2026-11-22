@@ -8,12 +8,10 @@ export type ArticleDropSource =
   | { template: string; type: "template" }
   | { type: "bossReward" }
   | { type: "none" };
-
 // Each Drops Table an article lists, by the type it names, in the order the article lists them
 const DROPS_TABLE_TYPE_REGEX = /\{\{Drops Table\|type=(?<family>[^|}]+)/gu;
 // Each Drops template an article lists, by the entry of the drops module it names
 const DROPS_TEMPLATE_REGEX = /\{\{Drops\|(?<template>[^|}]+)/gu;
-
 // The one drop source an article names. An article naming two kinds of source is an Error, so a kind is never read as
 // Dropping from a source its article does not give
 export const toArticleDropSource = (articleTitle: string, content: string): ArticleDropSource => {

@@ -24,7 +24,6 @@ const dropsDataSchema = z.object({
     }),
   ),
 });
-
 // The materials a Drops template drops, read from the one entry of the drops module that names it, each set's names by
 // Tier. The wiki gives a template's materials no count, so none is read
 export const buildEnemyDropTemplate = (

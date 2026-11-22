@@ -5,8 +5,8 @@ import type { ExcelRoleCombatScheduleRow } from "#src/models/genshinAssets/imagi
 import { ANIMAL_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { checkHasBaseCurves } from "#src/services/genshinAssets/enemies/checkHasBaseCurves";
 import { MONSTER_TABLE_NAME } from "#src/services/genshinAssets/enemies/constants";
-import { fetchEnemyWikiPages } from "#src/services/genshinAssets/enemies/fetchEnemyWikiPages";
 import { findCanonicalMonsterRow } from "#src/services/genshinAssets/enemies/findCanonicalMonsterRow";
+import { readEnemyWikiPages } from "#src/services/genshinAssets/enemies/readEnemyWikiPages";
 import { readMonsterCurveRows } from "#src/services/genshinAssets/enemies/readMonsterCurveRows";
 import { readWikiPageContent } from "#src/services/genshinAssets/enemies/readWikiPageContent";
 import { toLevelCurves } from "#src/services/genshinAssets/enemies/toLevelCurves";
@@ -32,7 +32,7 @@ export const buildImaginariumStages = async (): Promise<Record<string, unknown>>
     ).map(({ beginTimeStr, scheduleId }) => [beginTimeStr.slice(0, 10), scheduleId]),
   );
   const titles = await readImaginariumSeasonTitles();
-  await fetchEnemyWikiPages(titles, false);
+  await readEnemyWikiPages(titles, false);
   const monsters = readMonsterNames();
   const monsterRows = readExcelTable<MonsterRow>(MONSTER_TABLE_NAME);
   const animalCodexRows = readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_NAME);

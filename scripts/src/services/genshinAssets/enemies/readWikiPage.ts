@@ -6,7 +6,7 @@ import { writeFileSync } from "node:fs";
 
 // Fetches one wiki page through the wiki's API into its cache file, checking that the answer is a page before it is kept:
 // A cached refusal or missing page would never be fetched again
-export const fetchWikiPage = async (title: string, cachePath: string): Promise<void> => {
+export const readWikiPage = async (title: string, cachePath: string): Promise<void> => {
   const searchParams = new URLSearchParams({
     action: "query",
     format: "json",

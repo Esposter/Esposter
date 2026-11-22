@@ -11,7 +11,7 @@ import { readFamilyLabelRedirects } from "#src/services/genshinAssets/camps/read
 import { toEnemyKindIdMember } from "#src/services/genshinAssets/camps/toEnemyKindIdMember";
 import { toFamilyLabelMapSource } from "#src/services/genshinAssets/camps/toFamilyLabelMapSource";
 import { checkWikiPageCached } from "#src/services/genshinAssets/enemies/checkWikiPageCached";
-import { fetchEnemyWikiPages } from "#src/services/genshinAssets/enemies/fetchEnemyWikiPages";
+import { readEnemyWikiPages } from "#src/services/genshinAssets/enemies/readEnemyWikiPages";
 import { readWikiPageContent } from "#src/services/genshinAssets/enemies/readWikiPageContent";
 import { WIKI_CACHE_DIRECTORY } from "#src/services/genshinAssets/kits/constants";
 import { INTERACTIVE_MAP_ENEMY_CATEGORY_ID } from "#src/services/genshinAssets/points/constants";
@@ -34,7 +34,7 @@ export const familyLabelsCommand: SubCommandsDef[string] = defineCommand({
     const enemyCategory = (await readInteractiveMapLabels()).find(({ id }) => id === INTERACTIVE_MAP_ENEMY_CATEGORY_ID);
     if (!enemyCategory)
       throw new InvalidOperationError(Operation.Read, "the enemy category", "is in no official map label tree");
-    console.log(await fetchEnemyWikiPages(ENEMY_FAMILY_PAGE_TITLES, isDryRun));
+    console.log(await readEnemyWikiPages(ENEMY_FAMILY_PAGE_TITLES, isDryRun));
     // A dry run fetches nothing, so with a family page still uncached the map cannot be built and only the listing shows
     const isEveryPageCached = ENEMY_FAMILY_PAGE_TITLES.every((title) =>
       checkWikiPageCached(WIKI_CACHE_DIRECTORY, title),
