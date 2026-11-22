@@ -8,8 +8,8 @@ describe("topicSchema", () => {
   test("a blob topic's bucket must be a binding a storage bucket names, and any other name is refused", () => {
     expect.hasAssertions();
 
-    expect(topicSchema.safeParse(`${getStorageBucketBindingName(StorageBucket.UserAssets)}:user/a`).success).toBe(true);
-    expect(topicSchema.safeParse("NOT_A_BINDING:user/a").success).toBe(false);
+    expect(topicSchema.safeParse(`${getStorageBucketBindingName(StorageBucket.UserAssets)}: `).success).toBe(true);
+    expect(topicSchema.safeParse("NOT_A_BINDING: ").success).toBe(false);
   });
 
   // A column is metadata of a watch and a publish, so a table's topic names its rows and never one of its columns
@@ -17,7 +17,7 @@ describe("topicSchema", () => {
     expect.hasAssertions();
 
     expect(topicSchema.safeParse("message_usersToRooms:*").success).toBe(true);
-    expect(topicSchema.safeParse("message_usersToRooms:roomId=room").success).toBe(true);
+    expect(topicSchema.safeParse("message_usersToRooms:roomId= ").success).toBe(true);
     expect(topicSchema.safeParse("message_usersToRooms.isHidden:*").success).toBe(false);
   });
 });
