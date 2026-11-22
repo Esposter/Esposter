@@ -63,7 +63,7 @@ const filledTo = computed(
         <button
           :="stepAttrs"
           :data-variant="UiButtonVariant.Rating"
-          class="ui-button"
+          ui-button
           px-0
           type="button"
           @pointerenter="

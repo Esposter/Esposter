@@ -78,7 +78,6 @@ watchImmediate(isOpen, async (newIsOpen) => {
     <!-- Escape asks rather than closes: the browser's own close is held back and the model decides, so a caller that
       Refuses the close — an editor with unsaved changes asking first — keeps the dialog open and in step with it -->
     <Dialog.Content
-      :="$attrs"
       class="ui-dialog"
       :class="[UiDialogPlacementClassMap[displayPlacement], sizeClass]"
       :data-placement="displayPlacement"
@@ -88,6 +87,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
       b-none
       bg-transparent
       of-visible
+      :="$attrs"
       @cancel.prevent
     >
       <section ref="frame" :class="frameClass" flex flex-col ui-lifted>

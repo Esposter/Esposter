@@ -17,8 +17,8 @@ const emit = defineEmits<{ submit: [] }>();
       }
     "
     @submit="
-      ({ valid }) => {
-        if (valid) emit('submit');
+      (event) => {
+        if (event.valid) emit('submit');
       }
     "
   >

@@ -33,16 +33,17 @@ const { isOverDropZone } = useDropZone(dropZone, {
   <div flex flex-col gap-1>
     <span :id="`${id}-label`" text-sm text-muted>{{ label }}</span>
     <div ref="dropZone" relative>
-      <button
+      <UiButton
         class="control"
         :aria-describedby="modelValue.length > 0 ? `${id}-files` : undefined"
         :aria-labelledby="`${id}-label`"
         :data-over="isOverDropZone || undefined"
+        :variant="UiButtonVariant.Field"
         type="button"
-        ui-row
         pr-10
-        cursor-pointer
-        ui-field
+        text-left
+        w-full
+        justify-start
         @click="input?.click()"
       >
         <UiIcon :meaning="UiIconMeaning.Attach" text-muted />
@@ -54,7 +55,7 @@ const { isOverDropZone } = useDropZone(dropZone, {
             {{ index > 0 ? ", " : "" }}{{ name }} <span text-muted>{{ getFileSize(size) }}</span>
           </template>
         </span>
-      </button>
+      </UiButton>
       <UiIconButton
         v-if="modelValue.length > 0"
         :label="`Clear ${label}`"

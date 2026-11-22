@@ -46,7 +46,7 @@ const id = useId();
       >
         <button :="itemAttrs" class="aria-disabled:cursor-default aria-disabled:op-disabled" type="button" ui-item>
           <span class="field-mark" p-1 flex shrink-0 size-6 ui-field ui-pill>
-            <span class="mark" :data-state="itemAttrs['data-state']" flex-1 />
+            <span class="mark" bg-accent :data-state="itemAttrs['data-state']" flex-1 />
           </span>
           <span flex flex-1 flex-col min-w-0>
             {{ title }}
@@ -62,7 +62,6 @@ const id = useId();
 <style scoped>
 /* The chosen option's mark fills from its centre with the accent, round in standard and square in voxel */
 .mark {
-  background-color: var(--ui-accent);
   border-radius: var(--ui-pill-radius);
   transform: scale(0);
   transition: transform var(--ui-motion-short);
