@@ -11,7 +11,9 @@ export const readMembersPageSort = {
   order: SortOrder.Asc,
 } as const satisfies PageSort<"id" | typeof MEMBER_DISPLAY_NAME_KEY>;
 
-export const readMembersInputSchema = z
-  .object({ ...roomIdSchema.shape, filter: selectUserInAuthSchema.pick({ name: true }).optional() })
-  .extend(createPageInputSchema(readMembersPageSort).shape);
+export const readMembersInputSchema = z.object({
+  ...roomIdSchema.shape,
+  filter: selectUserInAuthSchema.pick({ name: true }).optional(),
+  ...createPageInputSchema(readMembersPageSort).shape,
+});
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
