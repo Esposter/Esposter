@@ -1,5 +1,5 @@
 // The path-scoped forms that do the same job for the paths the session touched, named for the person's shared checkout
-export const getWholeIndexDenyReason = (form: string, peerPath: string): string =>
+export const getWholeIndexDenyReason = (form: string, peerPath: string) =>
   [
     `Refused: \`${form}\` reaches the staged and working changes of another session in this checkout, which is editing ${peerPath} now. Name the paths you touched instead:`,
     "- `git add <path>` to stage them;",

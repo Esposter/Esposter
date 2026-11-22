@@ -19,7 +19,6 @@ const WHOLE_INDEX_REFUSALS: ReadonlyMap<string, (args: string[]) => string | und
   ["restore", getRestoreRefusal],
   ["stash", getStashRefusal],
 ]);
-
 // The form refused and the folder git runs in, from the session's ("" for the session's own): the folder a `cd` before
 // It moved to, then each of its `-C` folders
 export const getGitRefusal: CommandRefusal<{ directory: string; form: string }> = (name, args, directory) => {

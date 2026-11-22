@@ -1,5 +1,5 @@
 // The folder above `folder`, undefined at a root
-export const getParentFolder = (folder: string): string | undefined => {
+export const getParentFolder = (folder: string) => {
   const parent = folder.replace(/[/\\][^/\\]*$/u, "");
-  return parent === folder || parent === "" ? undefined : parent;
+  return ["", folder].includes(parent) ? undefined : parent;
 };

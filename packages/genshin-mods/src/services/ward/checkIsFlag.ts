@@ -1,1 +1,1 @@
-export const checkIsFlag = (arg: string): boolean => arg.startsWith("-");
+export const checkIsFlag = (arg: string) => arg.startsWith("-");
