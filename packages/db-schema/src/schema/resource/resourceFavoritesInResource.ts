@@ -11,7 +11,9 @@ export const resourceFavoritesInResource = sqliteTable("resourceFavorites", crea
     primaryKey({ columns: [userId, resourceId] }),
     createTombstoneIndex("resourceFavorites", deletedAt),
   ],
+  // Scoped by the user's id, so a star's write widens its RETURNING and its row version reaches the header under its key
   schema: resourceSchema,
+  scope: { columns: ["userId"] },
 });
 
 export type ResourceFavoriteInResource = typeof resourceFavoritesInResource.$inferSelect;

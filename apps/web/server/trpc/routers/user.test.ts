@@ -719,9 +719,9 @@ describe("userRouter", () => {
     );
   });
 
-  // Each settings and status write's optimistic entry shows every row its answer names. Neither table is tracked by the header,
-  // So the answer names no row and the entry is confirmed by the row the answer holds
-  test("the settings update's entry covers every row its answer names", async () => {
+  // Each settings and status write names its row by the user's id, the primary key, so the entry the store issues is the
+  // Row the header names and the wake check covers it
+  test("the settings update's entry covers the settings row its header names", async () => {
     expect.hasAssertions();
 
     const input = { isMuteOnJoin: true };
@@ -733,11 +733,13 @@ describe("userRouter", () => {
       tables: [userSettingsTable],
     });
 
-    expect(named).toHaveLength(0);
+    expect(named).toHaveLength(1);
     expect(uncovered).toStrictEqual([]);
   });
 
-  test("the status write's entry covers every row its answer names", async () => {
+  // The status write is a static procedure: the user object pushes each change to its sockets as a typed event, so the
+  // Header carries no row for it, and its entry is confirmed by the row its answer holds
+  test("the status write's entry covers the status row its answer holds, since its header names none", async () => {
     expect.hasAssertions();
 
     const input = { status: UserStatus.DoNotDisturb };

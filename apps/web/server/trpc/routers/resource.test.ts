@@ -49,11 +49,12 @@ import {
 } from "#shared/services/pageBuilder/critique/constants.test";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { publicationTable, resourceTable } from "#src/services/resource/overlay/constants";
+import { favoriteTable, publicationTable, resourceTable } from "#src/services/resource/overlay/constants";
 import { getDeleteResourcesEntry } from "#src/services/resource/overlay/getDeleteResourcesEntry";
 import { getPublicationPatchEntry } from "#src/services/resource/overlay/getPublicationPatchEntry";
 import { getResourcePatchEntry } from "#src/services/resource/overlay/getResourcePatchEntry";
 import { getRestoreResourcesEntry } from "#src/services/resource/overlay/getRestoreResourcesEntry";
+import { getToggleFavoriteEntry } from "#src/services/resource/overlay/getToggleFavoriteEntry";
 import { getContentBlobName, listBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
@@ -1717,6 +1718,40 @@ describe("resourceRouter", () => {
       entry: getResourcePatchEntry(dashboardResource.id, { name: updatedName }),
       path: "updateResource",
       tables: [resourceTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  // A star is a row keyed by its member and its resource, so the header names it by those, and the entry touches that key
+  test("the star's entry covers the favorite row its header names", async () => {
+    expect.hasAssertions();
+
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(resourceRouter)(context).toggleFavorite({ id: dashboardResource.id }),
+      context: mockContext,
+      entry: getToggleFavoriteEntry(dashboardResource.userId, dashboardResource.id, new Date(0)),
+      path: "toggleFavorite",
+      tables: [favoriteTable],
+    });
+
+    expect(named).toHaveLength(1);
+    expect(uncovered).toStrictEqual([]);
+  });
+
+  test("the unstar's entry covers the favorite row its header names", async () => {
+    expect.hasAssertions();
+
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    await caller.toggleFavorite({ id: dashboardResource.id });
+    const { named, uncovered } = await getUncoveredWrites({
+      call: (context) => createCallerFactory(resourceRouter)(context).toggleFavorite({ id: dashboardResource.id }),
+      context: mockContext,
+      entry: getToggleFavoriteEntry(dashboardResource.userId, dashboardResource.id, new Date(0)),
+      path: "toggleFavorite",
+      tables: [favoriteTable],
     });
 
     expect(named).toHaveLength(1);
