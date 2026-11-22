@@ -131,6 +131,9 @@ grep -rnE '(\{\{|:[a-z-]+=")[^"}]*\.(filter|map|toSorted|sort|reduce|flatMap|joi
 # Every call in a render position, so the pass judges each callee's body rather than a guessed list of names
 grep -rnoE '(\{\{[^}]*|:[a-z-]+="[^"]*)\b[a-z][a-zA-Z0-9]*\(' --include=*.vue apps/web/app |
   grep -oE '\b[a-z][a-zA-Z0-9]*\($' | sort -u
+
+# A watch on a bare source, the child's side of a prop a parent binds to a new object for the same value
+git grep -n -E '(^|[^A-Za-z_.])watch\([[:space:]]*[A-Za-z_][A-Za-z0-9_.]*[[:space:]]*,' -- apps/web/app/components apps/web/app/pages apps/web/app/layouts packages/genshin-world/src/components packages/genshin-interface/src/components | grep '\.vue:'
 ```
 
 The third command is the one that matters and the easy one to skip. It deliberately matches **any** callee, not
@@ -150,6 +153,11 @@ They also **under-report**, which is the direction that ends a sweep early. The 
 time, so an attribute wrapped across lines by the formatter is invisible to them; the third finds the call but
 never the callee's cost, and a helper reached through a store or a slot prop reads like a bare identifier. A
 clean grep is the start of the pass, not its result.
+
+The fourth is the watching side of the same shape, and the third is its parent side: a template call that allocates a
+new object per render meets a watch on that prop, which reads each new object as a change. A watch on a store, a
+composable or a template ref is not bound by a parent, so it is not the shape; a watch on a prop or model whose parent
+binds a call or a literal is.
 
 ## Exclusions — computed extraction
 
