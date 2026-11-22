@@ -1,6 +1,5 @@
-/* oxlint-disable typescript/no-floating-promises -- cull is typed void, so the promise cannot be returned for the caller to await, and genshin-engine's package.json (packages/genshin-engine/package.json) lists no @esposter/shared dependency, only @esposter/shared-node as a dev dependency, so the engine cannot import a shared helper to wrap it; cull is typed void and the engine imports no shared promise helper, so the second compute is not awaited either */
 import type { InstanceCulling } from "#src/models/culling/InstanceCulling";
-import type { Node, Renderer } from "three/webgpu";
+import type { ComputeNode, Node, Renderer } from "three/webgpu";
 
 import {
   CULLING_INDEX_COUNT_INDEX,
@@ -19,6 +18,15 @@ interface InstanceCullingOptions {
   // Whether an instance is drawn, one for yes and zero for no, read from the instance's own index
   isVisible: (instance: Node<"float">) => Node<"float">;
 }
+
+// Three types a compute as answering a promise, which it does only before the backend has initialised. A pass runs from a
+// Render, and a render throws before that, so a promise here is a broken invariant that is raised, not left unawaited
+const dispatch = (renderer: Renderer, node: ComputeNode): void => {
+  if (renderer.compute(node) !== undefined)
+    throw new RangeError(
+      "A compute answered a promise, so the renderer's backend had not initialised for a culling pass",
+    );
+};
 
 // A per-instance culling pass. Each frame it clears a count, tests every instance in a compute dispatch and appends each
 // Visible one's index to a list, counting them in the indirect draw's own instance count, so the draw covers the
@@ -42,8 +50,8 @@ export const createInstanceCulling = ({ count, indexCount, isVisible }: Instance
   })().compute(count);
   return {
     cull: (renderer: Renderer) => {
-      renderer.compute(resetCount);
-      renderer.compute(cullInstances);
+      dispatch(renderer, resetCount);
+      dispatch(renderer, cullInstances);
     },
     dispose: () => {
       indirect.dispose();
