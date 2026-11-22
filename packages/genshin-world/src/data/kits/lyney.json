@@ -3,6 +3,7 @@
   "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 10, "proudSkillGroupId": 8431 } },
   "frames.propArrowPyrotechnicStrikeHitmark": { "cause": "Unsourced", "value": 387 },
   "frames.miracleParadePyrotechnicStrikeHitmark": { "cause": "Unsourced", "value": 563 },
+  "frames.constellation4Duration": { "file": "cons.go", "line": 126, "source": "Gcsim", "value": 360 },
   "hitFields.pyrotechnicStrike.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
@@ -11,6 +12,10 @@
   "hitFields.pyrotechnicStrike.gauge": { "cause": "Unsourced", "value": 1 },
   "hitFields.pyrotechnicStrike.multiplier": { "source": "Gcsim", "value": { "index": 14, "proudSkillGroupId": 8431 } },
   "hitFields.pyrotechnicStrike.poiseDamage": { "file": "grinmalkinhat.go", "line": 92, "source": "Gcsim", "value": 90 },
+  "parameters.ascension4DamageBonus": { "cause": "Unsourced", "value": 0.6 },
+  "parameters.ascension4DamageBonusCap": { "file": "asc.go", "line": 58, "source": "Gcsim", "value": 1 },
+  "parameters.ascension4DamageBonusPerOtherPyro": { "cause": "Unsourced", "value": 0.2 },
+  "parameters.constellation4PyroResistanceReduction": { "cause": "Unsourced", "value": 0.2 },
   "normalAttacks.2.hits.1.multiplier": { "source": "Tables" },
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 8432 } }
 }

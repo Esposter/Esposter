@@ -14,27 +14,26 @@ import { countDeployedElements } from "#src/services/party/countDeployedElements
 export const LYNEY_CHARACTER_ID = 10_000_084;
 
 const CONSTELLATION_4 = 4;
-const CONSTELLATION_4_PYRO_RESISTANCE_REDUCTION = 0.2;
-const CONSTELLATION_4_SECONDS = 6;
 const CONSTELLATION_4_STATUS_ID = "lyney-c4-pyro-resistance";
-// Measured: gcsim v2.47.2 (MIT) lyney/asc.go, Ascension 4's DMG bonus on an enemy affected by Pyro: 60%, and 20% more for each
-// Other Pyro member of the team, up to 100%
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lyney/asc.go
 const ASCENSION_4 = 4;
-const ASCENSION_4_DAMAGE_BONUS = 0.6;
-const ASCENSION_4_DAMAGE_BONUS_PER_OTHER_PYRO = 0.2;
-const ASCENSION_4_DAMAGE_BONUS_CAP = 1;
 
-// The DMG bonus Ascension 4 adds to a strike of his that lands on an enemy affected by Pyro, a Burning enemy included
-const getAscension4DamageBonus = (combatant: Combatant, enemy: Enemy): number => {
+// The DMG bonus Ascension 4 adds to a strike of his that lands on an enemy affected by Pyro, a Burning enemy included, as
+// gcsim v2.47.2 (MIT) lyney/asc.go gives it: the record's base, and its per-other-Pyro amount up to its cap
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lyney/asc.go
+const getAscension4DamageBonus = (
+  combatant: Combatant,
+  enemy: Enemy,
+  {
+    damageBonus,
+    damageBonusCap,
+    damageBonusPerOtherPyro,
+  }: { damageBonus: number; damageBonusCap: number; damageBonusPerOtherPyro: number },
+): number => {
   if (combatant.ascension < ASCENSION_4) return 0;
   const { auras } = enemy.elementalState;
   if (!auras.has(AuraType.Pyro) && !auras.has(AuraType.Burning)) return 0;
   const otherPyroCount = Math.max(countDeployedElements(combatant.deployedElements, [Element.Pyro]) - 1, 0);
-  return Math.min(
-    ASCENSION_4_DAMAGE_BONUS + otherPyroCount * ASCENSION_4_DAMAGE_BONUS_PER_OTHER_PYRO,
-    ASCENSION_4_DAMAGE_BONUS_CAP,
-  );
+  return Math.min(damageBonus + otherPyroCount * damageBonusPerOtherPyro, damageBonusCap);
 };
 
 // Lyney's behaviour: the Prop Arrow, the charged attack a full hold takes, and Wondrous Trick: Miracle Parade each cast a
@@ -44,14 +43,23 @@ const getAscension4DamageBonus = (combatant: Combatant, enemy: Enemy): number =>
 // Constellation 1 needs Prop Surplus stacks, which the kit does not build, and the hat Prop Arrows add
 // Constellation 6 needs the Reprised Pyrotechnic Strike's own hitmark, which the kit does not read
 // Constellation 2 needs Crisp Focus's stack every 2 seconds on the field, which the kit's timers do not build
-export const createLyneyKitBehaviour = ({ readHitFields, readSeconds }: KitRecordReader): KitBehaviour => {
+export const createLyneyKitBehaviour = ({
+  readHitFields,
+  readParameter,
+  readSeconds,
+}: KitRecordReader): KitBehaviour => {
   const pyrotechnicStrikeFields = readHitFields("pyrotechnicStrike", ["hitmarkSeconds"]);
+  const ascension4DamageBonus = {
+    damageBonus: readParameter("ascension4DamageBonus"),
+    damageBonusCap: readParameter("ascension4DamageBonusCap"),
+    damageBonusPerOtherPyro: readParameter("ascension4DamageBonusPerOtherPyro"),
+  };
   // The Pyro RES the Prop Arrow's strike cuts from the enemy it hits, from Constellation 4, for its seconds
   const pyroResistanceReduction: EnemyStatus = {
     damageTakenBonus: 0,
     id: CONSTELLATION_4_STATUS_ID,
-    resistanceReduction: { [Element.Pyro]: CONSTELLATION_4_PYRO_RESISTANCE_REDUCTION },
-    secondsRemaining: CONSTELLATION_4_SECONDS,
+    resistanceReduction: { [Element.Pyro]: readParameter("constellation4PyroResistanceReduction") },
+    secondsRemaining: readSeconds("constellation4Duration"),
   };
   const propArrowPyrotechnicStrike: KitHit = {
     ...pyrotechnicStrikeFields,
@@ -77,6 +85,6 @@ export const createLyneyKitBehaviour = ({ readHitFields, readSeconds }: KitRecor
         });
       },
     },
-    getStrikeDamageBonus: ({ combatant }, enemy) => getAscension4DamageBonus(combatant, enemy),
+    getStrikeDamageBonus: ({ combatant }, enemy) => getAscension4DamageBonus(combatant, enemy, ascension4DamageBonus),
   };
 };
