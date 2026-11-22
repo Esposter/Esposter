@@ -19,10 +19,9 @@ import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 
 export const MIZUKI_CHARACTER_ID = 10_000_109;
 
-// The Dreamdrifter state her press starts lasts five seconds, as gcsim (MIT) mizuki/skill.go's dreamDrifterBaseDuration
-// Gives it, and its id is gcsim's dreamDrifterStateKey
+// The Dreamdrifter state her press starts lasts the seconds its record's dreamDrifterBaseDuration gives, as gcsim (MIT)
+// Mizuki/skill.go gives it, and its id is gcsim's dreamDrifterStateKey
 export const DREAMDRIFTER_STATUS_ID = "dreamdrifter-state";
-const DREAMDRIFTER_SECONDS = 5;
 // The summon her press casts for its clouds, the name it is found by among the team's effects
 const DREAMDRIFTER_CLOUDS_ID = "dreamdrifter-clouds";
 // Constellation 2's DMG Bonus, for each point of her Elemental Mastery, on a party member's Pyro, Hydro, Cryo or Electro strike
@@ -77,11 +76,12 @@ export const createMizukiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
   const cloudFirstHitSeconds = readSeconds("cloudFirstHit");
   const cloudHitIntervalSeconds = readSeconds("cloudHitInterval");
   const cloudTravelSeconds = readSeconds("cloudTravelTime");
+  const dreamdrifterSeconds = readSeconds("dreamDrifterBaseDuration");
   // Each cloud the state launches while it lasts, its hit landing the travel after its launch
   const cloudHitmarkSeconds: number[] = [];
   for (
     let launchSeconds = cloudFirstHitSeconds;
-    launchSeconds < DREAMDRIFTER_SECONDS;
+    launchSeconds < dreamdrifterSeconds;
     launchSeconds += cloudHitIntervalSeconds
   )
     cloudHitmarkSeconds.push(launchSeconds + cloudTravelSeconds);
@@ -129,7 +129,7 @@ export const createMizukiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
         else {
           addKitStatus(kitEffectState, characterId, {
             id: DREAMDRIFTER_STATUS_ID,
-            secondsRemaining: DREAMDRIFTER_SECONDS,
+            secondsRemaining: dreamdrifterSeconds,
           });
           const clouds: KitHit[] = [];
           for (const hitmarkSeconds of cloudHitmarkSeconds)

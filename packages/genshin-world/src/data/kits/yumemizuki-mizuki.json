@@ -1,5 +1,6 @@
 {
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 10939 } },
+  "frames.dreamDrifterBaseDuration": { "file": "skill.go", "line": 37, "source": "Gcsim" },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 5 },
   "plunges.high.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
   "plunges.low.hits.0.poiseDamage": { "source": "Wiki", "value": 50 },
