@@ -11,7 +11,7 @@ import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 export const createEditFormData = <
   TItem extends ToData<AItemEntity>,
   // The id keys are also keys of TItem, which EntityIdKeys alone does not say for a generic TItem, since it stays a deferred conditional
-  TIdKeys extends EntityIdKeys<TItem> & (keyof TItem & string)[],
+  TIdKeys extends (keyof TItem & string)[] & EntityIdKeys<TItem>,
 >(
   items: ComputedRef<TItem[]>,
   idKeys: [...TIdKeys],

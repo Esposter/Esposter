@@ -32,8 +32,8 @@ const friendItems = computed(() =>
 );
 // The single/multiple split is the component's generic, which the template cannot narrow — so the two shapes of
 // The model are read and written here, in one place, rather than cast at every binding
-const readModelValue = () => modelValue.value as string[] | string | undefined;
-const writeModelValue = (value: string[] | string | undefined) => {
+const readModelValue = () => modelValue.value as string | string[] | undefined;
+const writeModelValue = (value: string | string[] | undefined) => {
   modelValue.value = value as FriendPickerModelValue<TMultiple>;
 };
 const selectedUserIds = computed(() => {

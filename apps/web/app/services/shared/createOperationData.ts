@@ -10,7 +10,7 @@ export const createOperationData = <
   TItem extends object,
   // The id keys are also keys of TItem, which EntityIdKeys alone does not say for a generic TItem, since it stays a deferred conditional
   // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- inferred from `idKeys`, so a caller's tuple keeps its literal keys
-  TIdKeys extends EntityIdKeys<TItem> & (keyof TItem & string)[],
+  TIdKeys extends (keyof TItem & string)[] & EntityIdKeys<TItem>,
   TEntityTypeKey extends EntityTypeKey,
 >(
   items: Ref<TItem[]>,

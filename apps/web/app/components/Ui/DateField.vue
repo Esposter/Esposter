@@ -82,7 +82,7 @@ defineExpose({ element });
     :is-required
     :label
     :placeholder
-    @clear="clear"
+    @clear="clear()"
   >
     <template #value>
       <NuxtTime v-if="modelValue" :datetime="modelValue" date-style="medium" :="isTime ? { timeStyle: 'short' } : {}" />
