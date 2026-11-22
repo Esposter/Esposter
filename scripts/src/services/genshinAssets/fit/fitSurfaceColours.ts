@@ -112,6 +112,7 @@ export const fitSurfaceColours = async <Family extends string>(
   };
   return Object.fromEntries(
     await Promise.all(
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Object.entries types each key as a string, and the record's keys are its families, which the compiler cannot relate to the record's type
       (Object.entries(meshRegexMap) as [Family, RegExp][]).map(
         async ([family, regex]): Promise<[Family, FittedFamily]> => {
           const reads = await readFamilySurfaces(regex);

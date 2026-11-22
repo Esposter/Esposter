@@ -1,5 +1,5 @@
 /* oxlint-disable no-await-in-loop -- Committed prefix: a failure stops the folders behind it, and each folder swapped before it stays swapped */
-import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, noop, typedFromEntries, withFinalizerAsync } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { mkdir, mkdtemp, rename, rm } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
@@ -12,6 +12,7 @@ export const withStagedFolders = <K extends string, R>(
   folders: Record<K, string>,
   run: (staged: Record<K, string>) => Promise<R>,
 ): Promise<R> => {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Object.keys types each key as a string, and the folders' keys are the record's own K, which the compiler cannot relate to its type
   const keys = Object.keys(folders) as K[];
   const staged = new Map<K, string>();
   // Made at once, and the finalizer waits for every one to settle, so a copy still being made when another fails is
@@ -24,7 +25,7 @@ export const withStagedFolders = <K extends string, R>(
   return withFinalizerAsync(
     async () => {
       await Promise.all(copies);
-      const result = await run(Object.fromEntries<string>(staged) as Record<K, string>);
+      const result = await run(typedFromEntries<Record<K, string>>(staged));
       for (const [key, path] of staged) {
         const folder = folders[key];
         const retired = `${path}-retired`;

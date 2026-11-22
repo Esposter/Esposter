@@ -15,7 +15,7 @@ import { readSolvedSetting } from "#src/services/genshinParity/sky/readSolvedSet
 import { toSkyReadings } from "#src/services/genshinParity/sky/toSkyReadings";
 import { writeCloudSheet } from "#src/services/genshinParity/sky/writeCloudSheet";
 import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
-import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
+import { InvalidOperationError, Operation, typedFromEntries, withFinalizerAsync } from "@esposter/shared";
 import { Color } from "three";
 
 declare global {
@@ -101,12 +101,12 @@ export const solveReferenceCloudLayer = async (
             ),
           ),
         };
-        const colors = Object.fromEntries(
+        const colors = typedFromEntries<Parameters<SetCloudColors>[0]>(
           COLOR_SETTINGS.flatMap((name) => {
             const color = drawn[name];
-            return Array.isArray(color) ? [[name, color]] : [];
+            return Array.isArray(color) ? [[name, color] as const] : [];
           }),
-        ) as Parameters<SetCloudColors>[0];
+        );
         await page.evaluate(
           async ([pageLayer, pageCovers, pageColors]) => {
             await window.setSceneCloudLayer(pageLayer);

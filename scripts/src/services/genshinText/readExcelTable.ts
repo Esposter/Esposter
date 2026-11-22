@@ -11,5 +11,6 @@ import { join } from "node:path";
 export const readExcelTable = <TRow>(name: string, keyMap?: Record<keyof TRow, string>): TRow[] => {
   const rows = parseMachineJson<Record<string, unknown>[]>(readFileSync(join(EXCEL_DIRECTORY, `${name}.json`), "utf8"));
   fillDumpDefaults(rows);
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- without a key map the dump's rows are the table's own fields, which the parse types as records of unknowns the compiler cannot relate to TRow
   return keyMap ? renameDumpKeys(rows, keyMap) : (rows as TRow[]);
 };

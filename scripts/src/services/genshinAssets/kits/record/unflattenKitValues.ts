@@ -24,6 +24,7 @@ export const unflattenKitValues = (valueMap: ReadonlyMap<string, unknown>): Reco
       const isArray =
         INDEX_REGEX.test(segments[index + 1] ?? "") || lengthMap.has(segments.slice(0, index + 1).join("."));
       container[segment] ??= isArray ? [] : {};
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the container written at this segment is a record, or an array where an index names it, and an array is a record too
       container = container[segment] as Record<string, unknown>;
     }
     return container;

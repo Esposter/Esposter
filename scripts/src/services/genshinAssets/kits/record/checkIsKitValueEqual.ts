@@ -18,6 +18,6 @@ export const checkIsKitValueEqual = (left: unknown, right: unknown): boolean => 
   const leftEntries = Object.entries(left);
   return (
     leftEntries.length === Object.keys(right).length &&
-    leftEntries.every(([key, value]) => (right as Record<string, unknown>)[key] === value)
+    leftEntries.every(([key, value]) => Reflect.get(right, key) === value)
   );
 };
