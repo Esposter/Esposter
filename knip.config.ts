@@ -110,8 +110,6 @@ const knipConfiguration: KnipConfig = {
     "packages/tresjs-nuxt": {
       // The components are registered by path, so nothing imports them
       entry: ["src/runtime/TresCanvas.*.ts"],
-      // The module imports its optional peer by the name held in GLSL_PACKAGE_NAME when the glsl option is enabled
-      ignoreDependencies: ["vite-plugin-glsl"],
     },
     "packages/trpc-nuxt-module": { entry: ["test/fixture/nuxt.config.ts"] },
     "packages/unplugin-pwa-nuxt": {
