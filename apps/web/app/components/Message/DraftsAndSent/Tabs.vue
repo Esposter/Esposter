@@ -11,7 +11,7 @@ const draftItems = useDraftItems();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
 const items = computed<UiTabItem<DraftsAndSentTab>[]>(() => {
-  // The server no longer counts sent messages, so the Sent tab shows no count
+  // The server does not count sent messages, so the Sent tab shows no count
   const counts: Partial<Record<DraftsAndSentTab, number>> = {
     [DraftsAndSentTab.Drafts]: draftItems.value.length,
     [DraftsAndSentTab.Scheduled]: scheduledMessageJobCount.value,

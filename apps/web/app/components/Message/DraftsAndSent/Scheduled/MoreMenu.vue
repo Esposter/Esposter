@@ -6,7 +6,8 @@ import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getScheduledMessageJobText } from "#src/services/message/draftsAndSent/getScheduledMessageJobText";
 import { useDraftsAndSentScheduleDialogStore } from "#src/store/message/draftsAndSent/scheduleDialog";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
-import { getSynchronizedFunction, RoutePath } from "@esposter/shared";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
+import { getResultAsync, getSynchronizedFunction, noop, RoutePath } from "@esposter/shared";
 
 interface Props {
   scheduledMessageJob: ScheduledMessageJobWithRoom;
@@ -19,7 +20,7 @@ const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = draftsAndSentScheduleDialogStore;
 // Leaving for the room is at once, beside the cancel rather than after it
 const navigateToRoom = getSynchronizedFunction(async () => {
-  await navigateTo(RoutePath.Messages(scheduledMessageJob.roomId));
+  await getResultAsync(() => navigateTo(RoutePath.Messages(scheduledMessageJob.roomId))).match(noop, createErrorAlert);
 });
 // Only a scheduled message reschedules, and it keeps the thread it was scheduled into. A reminder posts no message to
 // Move, so it is set again instead

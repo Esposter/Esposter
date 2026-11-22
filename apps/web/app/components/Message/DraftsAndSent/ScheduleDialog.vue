@@ -13,8 +13,9 @@ const inputStore = useInputStore();
 const { clearComposer } = inputStore;
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
 const displayText = computed(() => (target.value ? parse(target.value.content).textContent : ""));
-// The dialog stays open until the server keeps the schedule, so a refused one leaves its message and time to send again.
-// A kept new schedule empties the composer it was written in, and the job list is read again once the server has the job
+// The dialog stays open until the server keeps the schedule, so a refused one leaves its message and time to send
+// Again. A kept new schedule empties the composer it was written in, and the job list is read again once the
+// Server has the job
 const scheduleMessage = async () => {
   const targetValue = target.value;
   if (!targetValue) return false;
@@ -38,8 +39,8 @@ const scheduleMessage = async () => {
     async () => {
       if (!targetValue.scheduledMessageJobId)
         clearComposer({ roomId: targetValue.roomId, threadRootId: targetValue.threadRootId });
-      // The refresh reports its own failure rather than throwing, so a read that fails once the schedule has landed is an
-      // Alert and not a rejection of the write
+      // The refresh reports its own failure rather than throwing, so a read that fails once the schedule has landed is
+      // An Alert and not a rejection of the write
       await getResultAsync(readScheduledMessageJobs).match(noop, createErrorAlert);
       return true;
     },
@@ -62,7 +63,7 @@ const scheduleMessage = async () => {
   >
     <UiDateField v-model="scheduledAt" is-time label="Run at" :min="minScheduledAt" />
     <section flex flex-col gap-1>
-      <h3 text-sm text-muted>Message</h3>
+      <h3 ui-heading text-muted>Message</h3>
       <p px-3 py-2 ws-pre-wrap break-anywhere ui-field>{{ displayText }}</p>
     </section>
   </StyledFormDialog>

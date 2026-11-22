@@ -17,8 +17,9 @@ describe("messageDraftsAndSentScheduleDialog", () => {
   const composerTarget = { roomId: room.id, threadRootId: 0 };
 
   // The dialog stays open on the draft it was sent with when the server refuses the schedule, so the message and its
-  // Time are there to send again, and the composer keeps the message it was scheduled from. The dialog is opened through
-  // Its store the way a drafts row opens it, and the refusal is awaited through the write before the state is read
+  // Time are there to send again, and the composer keeps the message it was scheduled from. The dialog is opened
+  // Through its store the way a drafts row opens it, and the refusal is awaited through the write before the state
+  // Is read
   test("a refused schedule leaves the dialog open with its draft", async () => {
     expect.hasAssertions();
 

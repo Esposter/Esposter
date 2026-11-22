@@ -30,7 +30,8 @@ const getDate = ({ runAt }: ScheduledMessageJobWithRoom) => runAt;
 </script>
 
 <template>
-  <div v-if="items.length > 0" flex flex-col>
+  <!-- A page can come back empty with more behind it when every job it named is cancelled, so the waypoint reads on -->
+  <div v-if="items.length > 0 || hasMore" flex flex-col>
     <MessageDraftsAndSentTimelineList :get-date :get-row :items label="Scheduled messages">
       <template #actions="{ item }">
         <MessageDraftsAndSentScheduledSendButton :scheduled-message-job="item" />

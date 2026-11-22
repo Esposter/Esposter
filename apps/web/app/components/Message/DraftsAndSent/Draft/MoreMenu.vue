@@ -4,7 +4,9 @@ import type { Item } from "#src/models/shared/Item";
 
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { getDraftItemRoute } from "#src/services/message/draftsAndSent/getDraftItemRoute";
+import { createErrorAlert } from "#src/services/trpc/createErrorAlert";
 import { useDraftsAndSentScheduleDialogStore } from "#src/store/message/draftsAndSent/scheduleDialog";
+import { getResultAsync, noop } from "@esposter/shared";
 
 interface Props {
   draftItem: DraftItem;
@@ -15,7 +17,7 @@ const emit = defineEmits<{ delete: [] }>();
 const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = draftsAndSentScheduleDialogStore;
 const editDraft = async () => {
-  await navigateTo(getDraftItemRoute(draftItem));
+  await getResultAsync(() => navigateTo(getDraftItemRoute(draftItem))).match(noop, createErrorAlert);
 };
 const items = computed<Item[]>(() => [
   {

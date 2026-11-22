@@ -34,7 +34,6 @@ const rows = computed(() =>
         :datetime="getDate(takeOne(itemRecord, item.value))"
         hour="numeric"
         minute="2-digit"
-        text-sm
         text-muted
         shrink-0
       />
