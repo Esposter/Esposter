@@ -1,7 +1,8 @@
 import type { SinScore } from "../../models/SinScore";
 
 import { SinNames } from "../../models/SinName";
-import { getPosterior, getPosteriorTrail } from "./getPosteriorTrail";
+import { getPosterior } from "./getPosterior";
+import { getPosteriorTrail } from "./getPosteriorTrail";
 import { getScoreAndSpread } from "./getScoreAndSpread";
 import { getTrend } from "./getTrend";
 
