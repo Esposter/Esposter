@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax -- the non-optional input is the fixture this utility transforms */
 import type { DeepOptionalUndefined } from "#src/util/types/DeepOptionalUndefined";
 import type { Primitive } from "type-fest";
 
@@ -24,14 +23,18 @@ describe("deepOptionalUndefined type", () => {
   test("optionalizes property", () => {
     expect.hasAssertions();
 
+    /* eslint-disable no-restricted-syntax -- the non-optional input is the fixture this utility transforms */
     expectTypeOf<DeepOptionalUndefined<{ "": undefined | unknown }>>().toEqualTypeOf<{ ""?: unknown }>();
+    /* eslint-enable no-restricted-syntax */
   });
 
   test("optionalizes nested property", () => {
     expect.hasAssertions();
 
+    /* eslint-disable no-restricted-syntax -- the non-optional input is the fixture this utility transforms */
     expectTypeOf<DeepOptionalUndefined<{ "": { "": undefined | unknown } }>>().toEqualTypeOf<{
       "": { ""?: unknown };
     }>();
+    /* eslint-enable no-restricted-syntax */
   });
 });

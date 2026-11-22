@@ -14,7 +14,6 @@ export type DeepOmit<T, TKey extends PropertyKey> = T extends DeepOmitKeptValue
             [P in keyof T as P extends symbol ? never : P extends TKey ? never : P]: DeepOmit<T[P], TKey>;
           }
       : T;
-
 // The built-ins `omitDeep` keeps by reference, since each has internal slots a key walk would destroy
 type DeepOmitKeptValue =
   | ArrayBufferView

@@ -1,5 +1,6 @@
 import type { FunctionLike } from "#src/util/types/FunctionLike";
 import type { GetProperties } from "#src/util/types/GetProperties";
+import type { GetPropertyPath } from "#src/util/types/GetPropertyPath";
 import type { OmitIndexSignature } from "type-fest";
 
 export type GetObjectProps<T, P extends string, D extends unknown[], R extends boolean> = {
@@ -7,8 +8,6 @@ export type GetObjectProps<T, P extends string, D extends unknown[], R extends b
     ? never
     : NonNullable<T[K]> extends FunctionLike
       ? never
-      : | (D extends [unknown, ...infer Rest]
-            ? GetProperties<T[K], R extends true ? `${K}` : `${P}.${K}`, Rest, false>
-            : never)
-        | { path: R extends true ? `${K}` : `${P}.${K}`; value: T[K] };
+      : | (D extends [unknown, ...infer Rest] ? GetProperties<T[K], GetPropertyPath<P, `${K}`, R>, Rest, false> : never)
+        | { path: GetPropertyPath<P, `${K}`, R>; value: T[K] };
 }[keyof OmitIndexSignature<T> & (number | string)];
