@@ -12,7 +12,7 @@
 
 - [ ] 1.8 Every file-based ledger reads the area list, and each area-split question is one ledger: `pnpm ai:sweep:status` derives a question's cells from the area units holding a file in its `Scope`, maps an old `<question>/<area>` trailer onto the cell its unit names, and the ledgers drop their own unit tables, keeping only rules and notes. Verified by `pnpm ai:sweep:status` listing one row per question, and the status tool's test holding a scoped question to the area units that hold its files.
 - [ ] 1.9 Carry the current state onto the cells in one trailer-only record commit, dating a cell only where every old row of its question covering its in-scope files was dated, with the oldest date. Verified by the swept count per question never exceeding the old one, and a spot read of five carried cells against the old rows.
-- [ ] 1.10 `pnpm ai:sweep:sample` prints the next sample: the units to read, rarest question first, each with the questions it is judged for. Verified by its test drawing at least thirty cells per question that has thirty.
+- [x] 1.10 `pnpm ai:sweep:sample` prints the next sample: the units to read, rarest question first, each with the questions it is judged for. Verified by its test drawing at least thirty cells per question that has thirty.
 
 ## 2. Resweep
 
