@@ -17,8 +17,8 @@ const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_STATUS_ID = "lyney-c4-pyro-resistance";
 const ASCENSION_4 = 4;
 
-// The DMG bonus Ascension 4 adds to a strike of his that lands on an enemy affected by Pyro, a Burning enemy included, as
-// gcsim v2.47.2 (MIT) lyney/asc.go gives it: the record's base, and its per-other-Pyro amount up to its cap
+// The DMG bonus Ascension 4 adds to a strike of his that lands on an enemy affected by Pyro, a Burning enemy included,
+// As gcsim v2.47.2 (MIT) lyney/asc.go gives it: the record's base, and its per-other-Pyro amount up to its cap
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lyney/asc.go
 const getAscension4DamageBonus = (
   combatant: Combatant,

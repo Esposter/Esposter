@@ -19,8 +19,9 @@ const CONSTELLATION_1 = 1;
 // Constellation 2 needs its Nightsoul effect, which the kit does not build
 // Constellation 4 needs her Ascension talent Kiongozi, which is not built
 // Constellation 6 needs the All-Fire Armaments of The Named Moment, which the kit does not build
-// Her Nightsoul points are held at the record's maximum, 80, or 120 from Constellation 1, as gcsim (MIT) mavuika/cons.go's
-// c1Init sets them, and her blessing drains them at the record's rate, as gcsim mavuika/skill.go does
+// Her Nightsoul points are held at the record's maximum, 80, or 120 from Constellation 1,
+// As gcsim (MIT) mavuika/cons.go's c1Init
+// Sets them, and her blessing drains them at the record's rate, as gcsim mavuika/skill.go does
 export const createMavuikaKitBehaviour = ({ readParameter }: KitRecordReader): KitBehaviour => {
   const nightsoulPoints = readParameter("nightsoulPoints");
   const nightsoulPointsWithC1 = readParameter("nightsoulPointsWithC1");
