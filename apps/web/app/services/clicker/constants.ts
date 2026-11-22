@@ -1,4 +1,3 @@
-export const AUTOSAVE_INTERVAL_MS = Temporal.Duration.from({ seconds: 60 }).total("milliseconds");
 export const BUY_QUANTITIES = [1, 10, 100] as const;
 export const FPS = 60;
 export const GAME_TICK_INTERVAL_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds") / FPS;

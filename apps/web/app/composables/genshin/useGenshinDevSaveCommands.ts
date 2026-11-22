@@ -1,7 +1,7 @@
 import type { GenshinDevSaveCommandsOptions } from "#src/models/genshin/dev/GenshinDevSaveCommandsOptions";
 import type { DevCommand, DevOutcome, DevSaveOutcome, DevSaveTables } from "genshin-world";
 
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import {
   giveItem,
   giveItemArgs,
@@ -26,7 +26,8 @@ export const useGenshinDevSaveCommands = ({
   language,
   regionDataBaseUrl,
 }: GenshinDevSaveCommandsOptions) => {
-  let isActive = true;
+  // The read is a run of this scope, so one that lands after the page is left commits nothing
+  const runScope = useRunScope();
   let unregister: (() => void) | undefined;
 
   const takeOutcome = (outcome: DevSaveOutcome): DevOutcome => {
@@ -67,17 +68,16 @@ export const useGenshinDevSaveCommands = ({
 
   // The read settles every failure itself, logging it, so the chain it returns cannot reject
   onMounted(async () => {
-    await getResultAsync(() => readDevSaveTables(gameDataBaseUrl, regionDataBaseUrl, language, gameText)).match(
-      (tables) => {
-        if (!isActive) return;
-
-        unregister = devRegistry.register({ commands: createCommands(tables), variables: [] });
-      },
-      console.error,
-    );
+    await getResultAsync(() =>
+      runScope.run(
+        () => readDevSaveTables(gameDataBaseUrl, regionDataBaseUrl, language, gameText),
+        (tables) => {
+          unregister = devRegistry.register({ commands: createCommands(tables), variables: [] });
+        },
+      ),
+    ).match(noop, console.error);
   });
   onUnmounted(() => {
-    isActive = false;
     unregister?.();
   });
 };

@@ -47,7 +47,7 @@ const { start: startStallWarning } = useTimeoutFn(
 watch(isDoorOpened, () => startStallWarning(), { once: true });
 const gameText = await useGameText();
 // The account the page reads, whose hosted game data the opening reads its title logo and its login screen from
-const assetsBaseUrl = usePublicAssetsBaseUrl();
+const assetsBaseUrl = useRuntimeConfig().public.publicAssets.baseUrl;
 // The player's save, which the world starts from once it is loaded, and the lease the page holds for it. A start that
 // Fails is retried until it takes, the page waiting on its save meanwhile
 const {

@@ -12,7 +12,14 @@ import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { v7 } from "uuid";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+// The autosave runs on the timer worker, which the test environment has no equivalent for, so its stand-in runs the same
+// Intervals on window's timers
+vi.mock(
+  import("#src/services/shared/getWorkerTimers"),
+  () => import("#src/services/shared/getWorkerTimersStandIn.test"),
+);
 
 describe(useGenshinSave, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -110,6 +117,23 @@ describe(useGenshinSave, () => {
     await saveSent;
 
     expect(genshinSave.initialSave.value).toStrictEqual(journalSave);
+  });
+
+  // A browser that blocks its storage throws on the journal's read, which reads as no journal, so the save still loads
+  test("loads the account's save though the browser blocks reading its journal", async () => {
+    expect.hasAssertions();
+
+    const getItem = localStorage.getItem.bind(localStorage);
+    const getItemSpy = vi.spyOn(localStorage, "getItem").mockImplementation((key) => {
+      if (key === LocalStorageKey.GenshinPending(userId)) throw new DOMException("blocked");
+      return getItem(key);
+    });
+    trpcMsw.genshin.startGenshin.mutation(() => startResult());
+    const genshinSave = await mountGenshinSave();
+    await until(genshinSave.isSaveLoaded).toBe(true);
+
+    expect(genshinSave.initialSave.value).toStrictEqual(EMPTY_GENSHIN_SAVE);
+    getItemSpy.mockRestore();
   });
 
   // A save is journaled before it is sent, so a page that dies mid-send leaves the save the account may already hold

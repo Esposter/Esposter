@@ -4,6 +4,8 @@ export const BLANK_VALUE = "-";
 
 export const AUTO_SEARCH_THROTTLE_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 
+export const AUTOSAVE_INTERVAL_MS = Temporal.Duration.from({ seconds: 60 }).total("milliseconds");
+
 export const COUNTDOWN_INTERVAL_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 // The pace of a failed read's retry, owned by the batched refresh rather than borrowed from another read's constants
 export const BATCHED_REFRESH_BASE_DELAY_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");

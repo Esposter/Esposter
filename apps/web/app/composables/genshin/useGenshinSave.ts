@@ -1,31 +1,26 @@
-/* oxlint-disable no-await-in-loop -- Retry: each attempt runs only because the one before it failed, and the wait between them is its backoff */
-/* eslint-disable no-restricted-syntax -- the offline save system's writer half, kept beside the reader above; the journal is the offline save system's, read imperatively the way `readGuestSave` reads the guest's copy */
-/* oxlint-disable typescript/no-floating-promises -- loadAccountSave retries until the save loads and settles every failure itself, so the promise it returns cannot reject and nothing waits on it; persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it */
+/* oxlint-disable typescript/no-floating-promises -- loadAccountSave settles every failure itself, so nothing waits on the run it returns, and persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it */
 import type { GenshinSave } from "genshin-world/save";
 
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
 import { MutationStatus } from "#src/models/shared/MutationStatus";
-import { AUTOSAVE_INTERVAL_MS } from "#src/services/clicker/constants";
+import { clearGuestSave } from "#src/services/genshin/clearGuestSave";
+import { START_GENSHIN_MUTATION_KEY } from "#src/services/genshin/constants";
 import { genshinLocalSave } from "#src/services/genshin/genshinLocalSave";
 import { getGenshinStartRetryDelayMs } from "#src/services/genshin/getGenshinStartRetryDelayMs";
 import { parseGenshinJournal } from "#src/services/genshin/parseGenshinJournal";
 import { readGuestSave } from "#src/services/genshin/readGuestSave";
+import { AUTOSAVE_INTERVAL_MS } from "#src/services/shared/constants";
 import { createSingleFlight } from "#src/services/shared/createSingleFlight";
 import { LocalStorageKey } from "#src/services/shared/LocalStorageKey";
 import { checkIsTRPCConflict } from "#src/services/trpc/checkIsTRPCConflict";
 import { useAlertStore } from "#src/store/alert";
 import { useConnectionStore } from "#src/store/realtime/connection";
-import { checkIsServer, getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
+import { checkIsServer, getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { StorageSerializers } from "@vueuse/core";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, mergeGenshinSave } from "genshin-world/save";
 import { v7 } from "uuid";
 import { z } from "zod";
 
-const clearGuestSave = () => {
-  getResult(() => {
-    window.localStorage.removeItem(genshinLocalSave.key);
-  }).match(noop, console.error);
-};
 // The save the Genshin page plays, loaded before the world is made. Signed in, it is the account's blob under the lease
 // The start took, and the page waits on its loading screen until that start takes; signed out, it is this browser's copy.
 // A change is saved on the clock's autosave cadence, at once after a grant, and when the page is left. The server's clock
@@ -36,6 +31,8 @@ export const useGenshinSave = async () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   const saveToLocalStorage = useSaveToLocalStorage();
+  // The account's load is a run of this scope, so leaving the page aborts a start still being retried
+  const runScope = useRunScope();
   const initialSave = shallowRef<GenshinSave>(EMPTY_GENSHIN_SAVE);
   const isReplaced = ref(false);
   const isSaveLoaded = ref(false);
@@ -54,13 +51,12 @@ export const useGenshinSave = async () => {
   let sessionId = "";
   let etag: string | undefined;
   // The save the page holds, and the JSON of the save the account or the browser last stored, so an unchanged save is
-  // Never sent again
+  // Never sent again. This is not `useSave`'s skip: its baseline is the state it was handed, while this one is the
+  // Account's save as the start read it, which the journal and the lease's ETag are kept against, sent through a single flight
   let latestSave: GenshinSave = EMPTY_GENSHIN_SAVE;
   let persistedJson = "";
-  // Resolves the wait between two start attempts early, when the page's retry asks for it, and set once the page is left,
-  // So a start still being retried never takes the lease for a page nobody is on
+  // Resolves the wait between two start attempts early, when the page's retry asks for it
   let retryStartNow: (() => void) | undefined;
-  let isLeft = false;
   // The server's now is read between the call's send and its answer, so the offset is taken from their midpoint
   const setServerClockOffset = (serverNow: string, sentAt: number, receivedAt: number) => {
     serverClockOffsetMs.value = Math.round(
@@ -72,7 +68,7 @@ export const useGenshinSave = async () => {
     const outcome = await executeMutation(() => $trpc.genshin.startGenshin.mutate({ sessionId: startSessionId }), {
       // The session, its etag and the clock are the server's, and the page holds its loading screen until the start takes
       awaitedBecause: AwaitedReason.ServerIssuedValue,
-      key: "startGenshin",
+      key: START_GENSHIN_MUTATION_KEY,
     });
     if (outcome.status === MutationStatus.Failed) console.error(outcome.error);
     if (outcome.status !== MutationStatus.Succeeded) return undefined;
@@ -83,12 +79,20 @@ export const useGenshinSave = async () => {
     return outcome.result;
   };
   // A start that fails is retried with backoff until it takes, the page's loading screen held meanwhile, and the wait is
-  // Cut short by the page's retry. No copy of the browser's save stands in for the account's while it waits
-  const waitForStartRetry = (delayMs: number) => {
+  // Cut short by the page's retry or by the run's abort once the page is left. No copy of the browser's save stands in
+  // For the account's while it waits
+  const waitForStartRetry = (delayMs: number, signal: AbortSignal) => {
     const { promise, resolve } = Promise.withResolvers<void>();
     retryStartNow = () => {
       resolve();
     };
+    signal.addEventListener(
+      "abort",
+      () => {
+        resolve();
+      },
+      { once: true },
+    );
     window.setTimeout(() => {
       resolve();
     }, delayMs);
@@ -96,9 +100,10 @@ export const useGenshinSave = async () => {
   };
   // Every attempt sends the page's one session id, so an attempt whose write landed and whose response was lost is retried
   // As the same start, which the server answers without taking the lease again
-  const startUntilStarted = async (startSessionId: string) => {
+  // oxlint-disable no-await-in-loop -- Retry: each attempt runs only because the one before it failed, and the wait between them is its backoff
+  const startUntilStarted = async (startSessionId: string, signal: AbortSignal) => {
     for (let attempt = 0; ; attempt++) {
-      if (isLeft) return undefined;
+      if (signal.aborted) return undefined;
 
       const start = await startLease(startSessionId);
       if (start) {
@@ -108,9 +113,10 @@ export const useGenshinSave = async () => {
 
       isStartRetrying.value = true;
       const genshinStartRetryDelayMs = getGenshinStartRetryDelayMs(attempt);
-      await waitForStartRetry(genshinStartRetryDelayMs);
+      await waitForStartRetry(genshinStartRetryDelayMs, signal);
     }
   };
+  // oxlint-enable no-await-in-loop
   const retryStart = () => {
     retryStartNow?.();
   };
@@ -189,27 +195,40 @@ export const useGenshinSave = async () => {
     persistedJson = JSON.stringify(latestSave);
     isSaveLoaded.value = true;
   };
-  const loadAccountSave = async (accountUserId: string) => {
+  // The load settles every failure itself, so the run it starts cannot reject and nothing waits on it
+  const loadAccountSave = (accountUserId: string) => {
     const guestSave = readGuestSave();
-    const start = await startUntilStarted(v7());
-    if (!start) return;
-    // The journal is read from the browser as it stands now, not from the copy this page cached when it was keyed, since
-    // Another window of the browser may have written it since. It is adopted only by the start that replaced the session
-    // Which wrote it, since only then is the save it holds the one the account would have kept. Any other journal is out
-    // Of date, so it is discarded
-    const journal = parseGenshinJournal(window.localStorage.getItem(LocalStorageKey.GenshinPending(accountUserId)));
-    const adoptedJournal = journal && journal.sessionId === start.previousSessionId ? journal : undefined;
-    if (journal && !adoptedJournal) journalJson.value = null;
+    return runScope.run(
+      (signal) => startUntilStarted(v7(), signal),
+      async (start) => {
+        if (!start) return;
+        // The journal is read from the browser as it stands now, not from the copy this page cached when it was keyed,
+        // Since another window of the browser may have written it since. It is adopted only by the start that replaced
+        // The session which wrote it, since only then is the save it holds the one the account would have kept. Any other
+        // Journal is out of date, so it is discarded. A browser that blocks its storage throws on this read, which is
+        // Logged and read as no journal, so the load still lands
+        const journal = parseGenshinJournal(
+          getResult(
+            // eslint-disable-next-line no-restricted-syntax -- the journal is the offline save system's, read imperatively the way `readGuestSave` reads the guest's copy
+            () => window.localStorage.getItem(LocalStorageKey.GenshinPending(accountUserId)),
+          )
+            .orTee(console.error)
+            .unwrapOr(null),
+        );
+        const adoptedJournal = journal && journal.sessionId === start.previousSessionId ? journal : undefined;
+        if (journal && !adoptedJournal) journalJson.value = null;
 
-    const baseSave = adoptedJournal?.save ?? start.save;
-    const loadedSave = guestSave ? (start.isNew ? guestSave : mergeGenshinSave(baseSave, guestSave)) : baseSave;
-    initialSave.value = loadedSave;
-    latestSave = loadedSave;
-    persistedJson = JSON.stringify(start.save);
-    isSaveLoaded.value = true;
-    await persist();
-    syncJournal();
-    if (guestSave && JSON.stringify(latestSave) === persistedJson) clearGuestSave();
+        const baseSave = adoptedJournal?.save ?? start.save;
+        const loadedSave = guestSave ? (start.isNew ? guestSave : mergeGenshinSave(baseSave, guestSave)) : baseSave;
+        initialSave.value = loadedSave;
+        latestSave = loadedSave;
+        persistedJson = JSON.stringify(start.save);
+        isSaveLoaded.value = true;
+        await persist();
+        syncJournal();
+        if (guestSave && JSON.stringify(latestSave) === persistedJson) clearGuestSave();
+      },
+    );
   };
   // The account's save loads in the background, so the page is not held in setup while a start is retried. Its loading
   // Screen waits on isSaveLoaded, and a failed start on isStartRetrying. The account is the one useReadData's session
@@ -236,11 +255,9 @@ export const useGenshinSave = async () => {
       persist();
     };
     onScopeDispose(() => {
-      isLeft = true;
-      retryStart();
       leave();
     });
-    useIntervalFn(() => {
+    useWorkerInterval(() => {
       persist();
     }, AUTOSAVE_INTERVAL_MS);
     useEventListener(
@@ -269,7 +286,7 @@ export const useGenshinSave = async () => {
     const outcome = await executeMutation(() => $trpc.genshin.startGenshin.mutate({ sessionId: v7() }), {
       // The reload resumes the save the new start holds, and a reload cannot be taken back once it is sent
       awaitedBecause: AwaitedReason.IrreversibleStep,
-      key: "startGenshin",
+      key: START_GENSHIN_MUTATION_KEY,
     });
     if (outcome.status === MutationStatus.Succeeded) window.location.reload();
     else if (outcome.status === MutationStatus.Failed) console.error(outcome.error);

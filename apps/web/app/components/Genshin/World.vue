@@ -28,7 +28,7 @@ interface Props {
 
 const { save } = defineProps<Props>();
 const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinSave] }>();
-const assetsBaseUrl = usePublicAssetsBaseUrl();
+const assetsBaseUrl = useRuntimeConfig().public.publicAssets.baseUrl;
 const gameDataBaseUrl = getGenshinGameDataBaseUrl(assetsBaseUrl);
 // The signed-in player's picture and name, which the world's profile card shows
 const session = authClient.useSession();
