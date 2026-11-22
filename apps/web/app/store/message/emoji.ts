@@ -1,5 +1,4 @@
-import type { AddReactionInput } from "#shared/models/db/message/reaction/AddReactionInput";
-import type { RemoveReactionInput } from "#shared/models/db/message/reaction/RemoveReactionInput";
+import type { ReactionIdentityInput } from "#shared/models/db/message/reaction/ReactionIdentityInput";
 import type { RoomReaction } from "@esposter/db-schema";
 
 import { AwaitedReason } from "#src/models/shared/AwaitedReason";
@@ -12,7 +11,7 @@ import { getOrCreate, ID_SEPARATOR, Operation } from "@esposter/shared";
 
 // A reaction is one emoji on one message, so its identity is the room, the message and the emoji, and a press on it is
 // Held while its write is out. A message's id is numbered within its room, so the room is part of the key
-const getEmojiKey = ({ emojiTag, messageId, roomId }: AddReactionInput) =>
+const getEmojiKey = ({ emojiTag, messageId, roomId }: ReactionIdentityInput) =>
   `${roomId}${ID_SEPARATOR}${messageId}${ID_SEPARATOR}${emojiTag}`;
 
 export const useEmojiStore = defineStore("message/emoji", () => {
@@ -47,7 +46,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   // A press on a reaction is not sent while the one before it is out, since the room has not yet answered what that one
   // Did. The reaction shows what the room holds until the answer lands, as an awaited write has no entry to show it
   const { executeMutation } = useMutation();
-  const awaitEmojiAnswer = async (input: AddReactionInput, write: () => Promise<RoomReaction>) => {
+  const awaitEmojiAnswer = async (input: ReactionIdentityInput, write: () => Promise<RoomReaction>) => {
     if (!session.value.data) return;
 
     await executeMutation(write, {
@@ -61,9 +60,9 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     });
   };
   // Each resolves once the room has answered, so a caller that needs the write to have landed can await it
-  const createEmoji = (input: AddReactionInput) =>
+  const createEmoji = (input: ReactionIdentityInput) =>
     awaitEmojiAnswer(input, () => $trpc.message.emoji.addReaction.mutate(input));
-  const deleteEmoji = (input: RemoveReactionInput) =>
+  const deleteEmoji = (input: ReactionIdentityInput) =>
     awaitEmojiAnswer(input, () => $trpc.message.emoji.removeReaction.mutate(input));
   // Reacting again removes this user's own reaction; the last one to leave leaves the reaction with no reactor
   const toggleEmoji = async (roomId: string, emoji: RoomReaction) => {

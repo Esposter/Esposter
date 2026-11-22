@@ -10,8 +10,7 @@ import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { router } from "#server/trpc/index";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { createScheduledMessageInputSchema } from "#shared/models/db/message/scheduledMessage/CreateScheduledMessageInput";
-import { deleteScheduledMessageInputSchema } from "#shared/models/db/message/scheduledMessage/DeleteScheduledMessageInput";
-import { sendScheduledMessageNowInputSchema } from "#shared/models/db/message/scheduledMessage/SendScheduledMessageNowInput";
+import { scheduledMessageIdentityInputSchema } from "#shared/models/db/message/scheduledMessage/ScheduledMessageIdentityInput";
 import { updateScheduledMessageInputSchema } from "#shared/models/db/message/scheduledMessage/UpdateScheduledMessageInput";
 import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -31,7 +30,7 @@ export const scheduledMessageRouter = router({
       getRoomActor(ctx),
     );
   }),
-  deleteScheduledMessage: getMemberProcedure(deleteScheduledMessageInputSchema, "roomId").mutation<void>(
+  deleteScheduledMessage: getMemberProcedure(scheduledMessageIdentityInputSchema, "roomId").mutation<void>(
     async ({ ctx, input }) => {
       const deletedScheduledMessage = await useRoomObject(input.roomId).deleteScheduledMessage(
         input.id,
@@ -44,7 +43,7 @@ export const scheduledMessageRouter = router({
   // Every guard createUserMessage would reject runs before the claim, because a claim the guards then refuse would burn
   // The scheduled message without ever sending it
   sendScheduledMessageNow: getMemberProcedure(
-    sendScheduledMessageNowInputSchema,
+    scheduledMessageIdentityInputSchema,
     "roomId",
   ).mutation<ScheduledRoomMessage>(async ({ ctx, input }) => {
     const actor = getRoomActor(ctx);

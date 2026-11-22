@@ -8,8 +8,7 @@ import { getMockSession } from "#server/trpc/context.test";
 import { createCallerFactory } from "#server/trpc/index";
 import { emojiRouter } from "#server/trpc/routers/message/emoji";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
-import { addReactionInputSchema } from "#shared/models/db/message/reaction/AddReactionInput";
-import { removeReactionInputSchema } from "#shared/models/db/message/reaction/RemoveReactionInput";
+import { reactionIdentityInputSchema } from "#shared/models/db/message/reaction/ReactionIdentityInput";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -64,7 +63,7 @@ describe("emojiRouter", () => {
     roomObject.addReaction.mockResolvedValue(null);
 
     await expect(emojiCaller.addReaction(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify(addReactionInputSchema.parse(input))).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify(reactionIdentityInputSchema.parse(input))).message}]`,
     );
   });
 
@@ -90,7 +89,7 @@ describe("emojiRouter", () => {
     roomObject.removeReaction.mockResolvedValue(null);
 
     await expect(emojiCaller.removeReaction(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Reaction, JSON.stringify(removeReactionInputSchema.parse(input))).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Reaction, JSON.stringify(reactionIdentityInputSchema.parse(input))).message}]`,
     );
   });
 
