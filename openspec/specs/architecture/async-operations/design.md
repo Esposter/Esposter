@@ -38,7 +38,7 @@ Touches are found by running the entry, not by naming a key, so the writer canno
 
 **An awaited overlay write takes no key.** A write whose result the screen waits for has no entry, so nothing on screen is ordered against it and no key can be inferred. Its answer's rows arrive through the version gate, which orders two answers for one row by their versions, so the higher version holds whatever order the answers arrive in.
 
-**A key queues only within one `useMutation()` instance.** The writers that have not moved onto the overlay still queue on a key, and that queue is state on the instance, not on the key. Two instances keyed on the same target therefore run concurrently while their call sites read as if they serialised. The failure mode is silent, because the key is right and the ordering it promises never existed. Writes that end the same row should therefore share one instance, held where every call site reaches it, and writes that own different fields of one entity keep their own. The test for sharing is whether one write's rollback could undo another write's landed change. The overlay has no such rollback, so its writes need no shared instance.
+**A key queues only within one `useMutation()` instance.** The background writers that have not moved onto the overlay still queue on a key, and that queue is state on the instance, not on the key. Two instances keyed on the same target therefore run concurrently while their call sites read as if they serialised. The failure mode is silent, because the key is right and the ordering it promises never existed. Writes that end the same row should therefore share one instance, held where every call site reaches it, and writes that own different fields of one entity keep their own. The test for sharing is whether two writes to one row must run in the order they were issued. The overlay's writes need no shared instance, since the version gate orders their answers.
 
 ## The state an operation writes back is bound where the key is
 
@@ -69,9 +69,9 @@ Two things `isExclusive` deliberately does **not** do:
 
 ## Writes — the overlay and `executeMutation`
 
-The overlay writes described above are the path for every store that has moved. `executeMutation(mutate, { applyOptimistic, isExclusive, key, onError, reconcile })` is the path of the writers that have not moved yet, and its rules are these.
+The overlay writes described above are the path for every store that has moved. `executeMutation(mutate, { isExclusive, key, onError, reconcile })` without an `awaitedBecause` is the background form: the path of the writers that have not moved yet, and of the writes no screen waits on. Its rules are these.
 
-`executeMutation` queues per key, and returns nothing: its promise floats through `getSynchronizedFunction`, so `waitForSynchronizedFunctions()` drains it with every other fire-and-forget. The awaited form takes `awaitedBecause` and `onSuccess` in place of `reconcile`, and resolves to its outcome ([client data](../client-data/design.md#optimistic-by-default)). `applyOptimistic` runs when the write is **sent**, not when it was issued, so its snapshot reflects whatever the write ahead of it stored. For the same reason, a write that reads a version token or resolves a create-or-update branch does that **inside** `mutate`, not before the call.
+`executeMutation` queues per key, and returns nothing: its promise floats through `getSynchronizedFunction`, so `waitForSynchronizedFunctions()` drains it with every other fire-and-forget. The awaited form takes `awaitedBecause` and `onSuccess` in place of `reconcile`, and resolves to its outcome ([client data](../client-data/design.md#optimistic-by-default)). A background write's `mutate` runs when the write is **sent**, not when it was issued, so a write that reads a version token or resolves a create-or-update branch does that **inside** `mutate`, not before the call.
 
 One opt-in narrows this, and nothing else does:
 
@@ -95,9 +95,9 @@ The bell is the case. A delivered push reads the first page again and toasts eac
 
 ## Outcomes
 
-The operation's own rejection never escapes: a read and an awaited write resolve to an outcome discriminated on `MutationStatus`, which is the only signal a call did not land. An optimistic write hands its caller nothing, so its outcome is the alert's alone.
+The operation's own rejection never escapes: a read and an awaited write resolve to an outcome discriminated on `MutationStatus`, which is the only signal a call did not land. A background write hands its caller nothing, so its outcome is `onError` or the alert's alone.
 
-A **callback** is the exception. A throw from `applyOptimistic`, from the rollback it returns, or from `onSuccess`/`reconcile`/`onError` on `executeMutation` rejects the promise the entry point returned, and nothing catches it — the pending bookkeeping still unwinds, but the caller gets a rejection instead of an outcome, and a caller that stored the promise without a rejection handler gets an unhandled rejection. A callback body that can fail therefore produces its own result rather than throwing.
+A **callback** is the exception. A throw from `onSuccess`, `reconcile` or `onError` on `executeMutation` rejects the promise the entry point returned, and nothing catches it — the pending bookkeeping still unwinds, but the caller gets a rejection instead of an outcome, and a caller that stored the promise without a rejection handler gets an unhandled rejection. A callback body that can fail therefore produces its own result rather than throwing.
 
 | Status      | For a read                                                                                                                       | For a write                                                                                  |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |

@@ -10,11 +10,11 @@ Every delete confirms, the ones the app can undo included (`restrictedDeleteSynt
 person made — dismissing a toast, clearing a filter — is named `dismiss*` or `clear*` rather than excused from the
 rule. How the confirm closes follows from the mutation, so a call site states it rather than choosing it:
 
-| The write                                                       | What the reader sees                                                                                           |
-| :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
-| Optimistic (`applyOptimistic`), the default                     | A confirm or form that closes the moment it is answered. A rejection rolls back and toasts                     |
-| Waits for a reason (`awaited-because`)                          | A confirm or form pending until the write lands. It closes on success and stays open with the draft on `false` |
-| Either, when the app can undo it — the bin, the sheet's history | The same confirm, then the undo on screen once it lands: a toast's Restore, the toolbar's Undo                 |
+| The write                                                                   | What the reader sees                                                                                           |
+| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| Optimistic, the default (an overlay entry, or a dialog that closes on send) | A confirm or form that closes the moment it is answered. A refused write drops its entry and toasts            |
+| Waits for a reason (`awaited-because`)                                      | A confirm or form pending until the write lands. It closes on success and stays open with the draft on `false` |
+| Either, when the app can undo it — the bin, the sheet's history             | The same confirm, then the undo on screen once it lands: a toast's Restore, the toolbar's Undo                 |
 
 - **One rule for every delete, the undo as the second guard**, since a reader cannot tell from a Delete button whether
   the app can reverse it (`openspec/rejected/architecture/no-confirm-for-undoable-deletes/design.md`).

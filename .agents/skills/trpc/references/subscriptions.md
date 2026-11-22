@@ -12,10 +12,10 @@ A client receives a frame through a handler registered on `useConnectionStore` (
 
 A write's event goes to every socket its object holds except the socket of the device or session that made the write: a room write names its device, a call write its session, and `excludeTag` skips that socket (`getSendOptions` in `apps/realtime/src/durableObjects/RoomObject.ts`). A person's `UserEvent` reaches every session the person holds, unless the object names one to skip.
 
-| Does the write's own socket hear the event?       | Store update after the mutation                                                               |
-| ------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| No: a room or call write skips the sender         | Required: the store updates from the mutation's own result (`applyOptimistic` or `onSuccess`) |
-| Yes: a person's `UserEvent` reaches every session | Not called: the handler is the single source of truth                                         |
+| Does the write's own socket hear the event?       | Store update after the mutation                                                                  |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| No: a room or call write skips the sender         | Required: the store updates from the mutation's own result (`onSuccess`, or the overlay's entry) |
+| Yes: a person's `UserEvent` reaches every session | Not called: the handler is the single source of truth                                            |
 
 Decide the side once for each event, then keep to it: the same row is never updated both by the mutation and by its handler.
 

@@ -38,7 +38,7 @@ server answers?** If not, and the button is not a dialog's answer, it binds `is-
 rg -n -A12 '<Ui(Icon)?Button\b' apps/web/app/components apps/web/app/pages -g '*.vue' | rg -i '@click="(async|.*(save|delete|remove|create|update|submit|send|revoke|publish|upload|import|generate|restore|leave|join|accept|decline))' | rg -v 'is-pending|isOpen = |Open = true|open[A-Z]\w*\('
 ```
 
-Each hit is a question, not a finding: read the write it calls for an `applyOptimistic` or a local-only change.
+Each hit is a question, not a finding: read the write it calls for an optimistic entry or a local-only change.
 
 ## Coverage
 
