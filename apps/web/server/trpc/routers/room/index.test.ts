@@ -679,7 +679,7 @@ describe("roomRouter", () => {
     });
   });
 
-  test("fails delete with wrong user", async () => {
+  test("fails delete for a user who does not own the room", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -1021,10 +1021,9 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
 
-    await expect(roomCaller.joinRoom(newInvite.id)).rejects.toMatchObject({
-      code: "BAD_REQUEST",
-      message: expect.stringContaining("Invalid operation: Create, name: UserToRoom"),
-    });
+    await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, JSON.stringify({ roomId: newRoom.id, userId: getMockSession().user.id })).message}]`,
+    );
   });
 
   test("announces a join to the joiner and to the room's online members", async () => {
@@ -1054,6 +1053,7 @@ describe("roomRouter", () => {
       },
       type: "joinRoom",
     };
+
     expect(userObjectCalls).toContainEqual({ args: [joinEvent], method: "broadcastEvent", userId: session.user.id });
     expect(roomObjectCalls).toContainEqual({ args: [joinEvent], method: "notifyOnlineMembers", roomId: newRoom.id });
   });
@@ -1122,6 +1122,7 @@ describe("roomRouter", () => {
       },
       type: "leaveRoom",
     };
+
     expect(roomObjectCalls).toContainEqual({ args: [member.id], method: "removeMember", roomId: newRoom.id });
     expect(roomObjectCalls).toContainEqual({ args: [leaveEvent], method: "notifyOnlineMembers", roomId: newRoom.id });
     expect(userObjectCalls).toContainEqual({ args: [leaveEvent], method: "broadcastEvent", userId: member.id });
@@ -1357,7 +1358,7 @@ describe("roomRouter", () => {
     expect(takeOne(users).isMember).toBe(false);
   });
 
-  test("fails read users by ids with wrong user", async () => {
+  test("fails read users by ids for a user who is not a member of the room", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
