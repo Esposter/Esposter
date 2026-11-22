@@ -16,13 +16,12 @@ definePageMeta({
 });
 
 const route = useRoute();
-const { data: session } = await useAuthSession();
+const { id } = route.params;
+const [{ data: session }, callSession] = await Promise.all([useAuthSession(), useCallIdSubscribables(id)]);
 const callStore = useCallStore();
 const { activeCallSessionId } = storeToRefs(callStore);
 const knockerStore = useKnockerStore();
 const { knockingCallSessionId } = storeToRefs(knockerStore);
-const { id } = route.params;
-const callSession = await useCallIdSubscribables(id);
 if (!callSession) throw createEntityNotFoundError(DatabaseEntityType.CallSession, id);
 
 watch(activeCallSessionId, async (newActiveCallSessionId) => {

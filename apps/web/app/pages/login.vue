@@ -13,7 +13,7 @@ definePageMeta({ middleware: "guest" });
           <AppLogo width="3rem" aria-hidden="true" />
           <div text-center flex flex-col gap-1>
             <h1 ui-title>Sign in</h1>
-            <p text-muted>to continue to {{ SITE_NAME }}</p>
+            <p text-muted ui-lede>to continue to {{ SITE_NAME }}</p>
           </div>
         </header>
         <div flex flex-col gap-3>

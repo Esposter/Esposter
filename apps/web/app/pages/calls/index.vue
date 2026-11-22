@@ -15,7 +15,7 @@ definePageMeta({ middleware: "auth" });
         <AppLogo width="4rem" />
         <div flex flex-col gap-2>
           <h1 ui-display>Video calls for everyone</h1>
-          <p text-muted>Connect and share with Esposter Calls.</p>
+          <p text-muted ui-lede>Connect and share with Esposter Calls.</p>
         </div>
         <div flex flex-col gap-3 sm:flex-row sm:items-end>
           <MessageContentCallStartButton />
