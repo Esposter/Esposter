@@ -7,7 +7,7 @@ description: Apply when writing or reviewing any Pinia store, or deciding whethe
 
 ## Settled — do not re-propose
 
-- **A rule for a ref destructured off a store without `storeToRefs`** — `const { rooms } = roomStore` and `const { createRoom } = roomStore` are the same syntax, and which loses reactivity is a fact about the field's type (`packages/configuration/eslint/restrictedStoreSyntaxes.js`); the dot read a consumer makes is the decidable half and is banned.
+- **A rule for a ref destructured off a store without `storeToRefs`** — `const { rooms } = roomStore` and `const { createRoom } = roomStore` are the same syntax, and which loses reactivity is a fact about the member's type. The lint decides the dot read a consumer makes (`packages/configuration/eslint/restrictedStoreSyntaxes.js`). The destructure half is `apps/web/app/storeRefDestructure.test.ts`, a type-aware scan, because the repo has no typed ESLint path: no ESLint config sets `projectService` or `parserOptions.project`, so a custom rule would have no types, and oxlint's `typeAware` runs only its built-in rules (`oxlint.config.ts`).
 - **A rollback closure that restores the value a write replaced** — a refused write drops its entry and changes no held state, since a restore drops every arrival that landed meanwhile (the overlay design's Decisions).
 
 ## Consuming a Store
