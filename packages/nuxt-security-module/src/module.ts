@@ -14,6 +14,7 @@ import {
 import { MODULE_NAME } from "#src/runtime/constants";
 import { checkIsRecord } from "#src/runtime/services/checkIsRecord";
 import { computeSubresourceIntegrityHashes } from "#src/services/computeSubresourceIntegrityHashes";
+import { SERVER_MIDDLEWARE_OPTIONS } from "#src/services/constants";
 import { getDefaultModuleOptions } from "#src/services/getDefaultModuleOptions";
 import { getPluginTemplate } from "#src/services/getPluginTemplate";
 import { getRemoveLoggersViteConfig } from "#src/services/getRemoveLoggersViteConfig";
@@ -118,26 +119,9 @@ const securityModule: NuxtModule<Partial<ModuleOptions>> = defineNuxtModule<Part
     if (options.headers) addNitroPlugin(resolver.resolve("./runtime/nitro/plugins/securityHeaders"));
     if (options.hidePoweredBy) addNitroPlugin(resolver.resolve("./runtime/nitro/plugins/hidePoweredBy"));
 
-    if (options.csrf)
-      addServerHandler({ handler: resolver.resolve("./runtime/server/middleware/csrf"), middleware: true });
-
-    if (options.rateLimiter)
-      addServerHandler({ handler: resolver.resolve("./runtime/server/middleware/rateLimiter"), middleware: true });
-
-    if (options.requestSizeLimiter)
-      addServerHandler({
-        handler: resolver.resolve("./runtime/server/middleware/requestSizeLimiter"),
-        middleware: true,
-      });
-
-    if (options.corsHandler)
-      addServerHandler({ handler: resolver.resolve("./runtime/server/middleware/corsHandler"), middleware: true });
-
-    if (options.allowedMethodsRestricter)
-      addServerHandler({
-        handler: resolver.resolve("./runtime/server/middleware/allowedMethodsRestricter"),
-        middleware: true,
-      });
+    for (const option of SERVER_MIDDLEWARE_OPTIONS)
+      if (options[option])
+        addServerHandler({ handler: resolver.resolve(`./runtime/server/middleware/${option}`), middleware: true });
 
     if (basicAuth)
       addServerHandler({ handler: resolver.resolve("./runtime/server/middleware/basicAuth"), middleware: true });

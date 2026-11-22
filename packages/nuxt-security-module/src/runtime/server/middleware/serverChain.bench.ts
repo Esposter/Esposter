@@ -8,6 +8,7 @@ import rateLimiter from "#src/runtime/server/middleware/rateLimiter";
 import requestSizeLimiter from "#src/runtime/server/middleware/requestSizeLimiter";
 import { APP_SECURITY_OPTIONS, MINIMAL_SECURITY_OPTIONS } from "#src/runtime/server/middleware/serverChain.fixture";
 import { setSecurityRouteMatcher } from "#src/runtime/services/securityRouteMatcher";
+import { SERVER_MIDDLEWARE_OPTIONS } from "#src/services/constants";
 import { getDefaultModuleOptions } from "#src/services/getDefaultModuleOptions";
 import { mergeModuleOptions } from "#src/services/mergeModuleOptions";
 import { parseModuleOptions } from "#src/services/parseModuleOptions";
@@ -19,16 +20,19 @@ const DEV_SERVER_URL = "http://localhost:3000";
 const REQUEST_URL = `${DEV_SERVER_URL}/docs/section-1`;
 const RUN_OPTIONS = { ...BENCHMARK_RUN_OPTIONS, iterations: 2000, warmupIterations: 200 };
 
-// The handlers module.ts registers for these options, in its order. Each sits behind the option that enables it, so a
-// Disabled feature adds nothing to the chain. Basic auth is left out: it is registered only with credentials, which
-// Neither configuration sets
-const getServerChain = (options: ModuleOptions): Middleware[] => [
-  ...(options.csrf ? [csrf] : []),
-  ...(options.rateLimiter ? [rateLimiter] : []),
-  ...(options.requestSizeLimiter ? [requestSizeLimiter] : []),
-  ...(options.corsHandler ? [corsHandler] : []),
-  ...(options.allowedMethodsRestricter ? [allowedMethodsRestricter] : []),
-];
+const SERVER_MIDDLEWARE: Record<(typeof SERVER_MIDDLEWARE_OPTIONS)[number], Middleware> = {
+  allowedMethodsRestricter,
+  corsHandler,
+  csrf,
+  rateLimiter,
+  requestSizeLimiter,
+};
+
+// The handlers module.ts registers for these options, in the order it registers them. Each sits behind the option that
+// Enables it, so a disabled feature adds nothing to the chain. Basic auth is left out: it is registered only with
+// Credentials, which neither configuration sets
+const getServerChain = (options: ModuleOptions): Middleware[] =>
+  SERVER_MIDDLEWARE_OPTIONS.filter((option) => options[option]).map((option) => SERVER_MIDDLEWARE[option]);
 
 const runServerChain = async (chain: Middleware[]): Promise<void> => {
   const event = new H3Event(new Request(REQUEST_URL));
