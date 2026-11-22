@@ -56,8 +56,19 @@ const contextMenuProps = getContextMenuGestureProps((point) => {
   if (message.isLoading || isUpdateMode.value || isDeleting.value) return;
   contextMenuRequest.value = { ...point, messageId: message.id };
 });
+// The row is a tab stop, so focus mounts its options bar as a hover does. Focus that moves into the bar stays in the row,
+// which keeps the bar mounted for the keys that reach it
+const isFocused = ref(false);
+const onFocusout = (event: FocusEvent) => {
+  isFocused.value =
+    event.currentTarget instanceof Node &&
+    event.relatedTarget instanceof Node &&
+    event.currentTarget.contains(event.relatedTarget);
+};
 const isActive = computed(
-  () => !isDisabled.value && (isHovered.value || isOptionsMenuOpen.value || isMenuTarget.value || isUpdateMode.value),
+  () =>
+    !isDisabled.value &&
+    (isHovered.value || isFocused.value || isOptionsMenuOpen.value || isMenuTarget.value || isUpdateMode.value),
 );
 // Mounting on demand keeps the heavy options menu tree to a single instance across the whole list
 const isOptionsMenuVisible = computed(
@@ -69,10 +80,17 @@ const optionsMenuTop = computed(() => (isSameBatch.value ? -9 : -2));
 <template>
   <!-- display: contents keeps both children as direct flex items of the column-reversed list
        while hover tracking spans the message and its overlapping options menu as one region -->
-  <div contents @mouseenter="isHovered = true" @mouseleave="isHovered = false">
+  <div
+    contents
+    @mouseenter="isHovered = true"
+    @mouseleave="isHovered = false"
+    @focusin="isFocused = true"
+    @focusout="onFocusout($event)"
+  >
     <component
       :is="MessageComponentMap[message.type]"
       :id="message.id"
+      tabindex="0"
       :mt="isSameBatch ? undefined : isCompact ? 2 : 4"
       :py="isCompact ? 0.5 : 1"
       :class="message.isLoading ? 'op-loading' : undefined"

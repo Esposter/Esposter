@@ -1,10 +1,12 @@
 // @vitest-environment nuxt
 import MessageModelMessageListItem from "#src/components/Message/Model/Message/List/Item.vue";
 import MessageModelMessageListItemContainer from "#src/components/Message/Model/Message/List/ItemContainer.vue";
+import MessageModelMessageOptionsMenu from "#src/components/Message/Model/Message/OptionsMenu/Index.vue";
 import { createOptimisticMessage } from "#src/services/message/createOptimisticMessage";
 import { MessageType } from "@esposter/db-schema";
 import { getZonedDateTime } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -33,5 +35,19 @@ describe("messageModelMessageListItemContainer", () => {
 
     expect(component.findComponent(MessageModelMessageListItem).exists()).toBe(true);
     expect(component.text()).toMatchInlineSnapshot(`"UUnknown user0:00messageToday"`);
+  });
+
+  // A keyboard reader reaches the options bar by focusing the row, which mounts the bar as a hover does
+  test("mounts the options bar when the row takes focus", async () => {
+    expect.hasAssertions();
+
+    vi.setSystemTime(createdAt);
+    const clientMessage = createOptimisticMessage({ message: "message", roomId, type: MessageType.Message }, v7());
+    const component = await mountSuspended(MessageModelMessageListItemContainer, { props: { message: clientMessage } });
+
+    await component.get('[tabindex="0"]').trigger("focusin");
+    await flushPromises();
+
+    expect(component.findComponent(MessageModelMessageOptionsMenu).exists()).toBe(true);
   });
 });
