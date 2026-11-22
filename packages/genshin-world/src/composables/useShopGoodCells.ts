@@ -59,7 +59,7 @@ export const useShopGoodCells = ({
             ? ""
             : fillGameTextValues(
                 gameText[GameTextKey.ShopRefresh],
-                formatShopRefreshCountdown(now.until(nextRefreshTime)),
+                formatShopRefreshCountdown(gameText, now.until(nextRefreshTime)),
               ),
       };
     });
