@@ -20,10 +20,7 @@ export const usePopupStore = defineStore("clicker/popup", () => {
       points: mouseStore.mousePower,
       top: event.pageY,
     });
-    // The id is closed over rather than taken as a parameter: `useTimeoutFn` forwards the arguments its own
-    // `start()` is called with, and this one runs on the immediate start it does for itself — so a parameter
-    // Arrives undefined, matches no popup, and every popup stays in the array behind its finished animation
-    useTimeoutFn(() => {
+    window.setTimeout(() => {
       popups.value = popups.value.filter((popup) => popup.id !== id);
     }, POPUP_DURATION_MS);
   };
