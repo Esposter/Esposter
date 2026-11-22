@@ -28,7 +28,7 @@ import { assert, describe, expect, test, vi } from "vitest";
 
 // The team's effects the gated passive is given, a non-empty list so only that list itself passes the gate
 const { GATED_EFFECTS } = vi.hoisted(() => ({
-  GATED_EFFECTS: [{ characterId: 1, id: "test", kind: "status", secondsRemaining: 1 }] satisfies KitEffect[],
+  GATED_EFFECTS: [{ characterId: 1, id: "id", kind: "status", secondsRemaining: 1 }] satisfies KitEffect[],
 }));
 
 // Adds a passive whose strike damage bonus is gated on the team's effects being the list the test passes, keeping the
@@ -57,6 +57,16 @@ const readWeaponData = (id: number): WeaponData => {
 // One value of a weapon's passive at a refinement rank, as its record in the stats table gives it
 const readPassiveParam = (weaponData: WeaponData, refinement: number, index: number): number =>
   takeOne(takeOne(weaponData.passiveRankParams, refinement - 1), index);
+// The wielder every passive test is given: a level 90 traveler with no attributes or resonances, holding the kit under test
+const createCombatant = (kit: Kit): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([]),
+  characterId: TRAVELER_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit,
+  level: 90,
+});
 
 describe(getWeaponPassiveKit, () => {
   // Full HP Critic Up's weapon, as its record in the stats table gives it
@@ -69,15 +79,7 @@ describe(getWeaponPassiveKit, () => {
       { ascension: 0, experience: 0, id: 11302, level: 1, refinement },
       WEAPON_DATA,
     );
-    const combatant: Combatant = {
-      ascension: 0,
-      attributes: computeCharacterAttributes([]),
-      characterId: TRAVELER_CHARACTER_ID,
-      constellationCount: 0,
-      elementalResonances: [],
-      kit: weaponKit,
-      level: 90,
-    };
+    const combatant = createCombatant(weaponKit);
     return (weaponKit.getPassiveBonuses?.(combatant, 1, [], []) ?? []).filter(
       ({ attribute }) => attribute === Attribute.CriticalRate,
     );
@@ -109,15 +111,7 @@ describe(getWeaponPassiveKit, () => {
       { ascension: 0, experience: 0, id: 11301, level: 1, refinement: 1 },
       baneWeaponData,
     );
-    const combatant: Combatant = {
-      ascension: 0,
-      attributes: computeCharacterAttributes([]),
-      characterId: TRAVELER_CHARACTER_ID,
-      constellationCount: 0,
-      elementalResonances: [],
-      kit: weaponKit,
-      level: 90,
-    };
+    const combatant = createCombatant(weaponKit);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     enemy.elementalState.auras.set(AuraType.Hydro, { decayRate: 0, gauge: 1, isImmutable: false });
 
@@ -151,15 +145,7 @@ describe(getWeaponPassiveKit, () => {
       WEAPON_DATA,
     );
     const OTHER_CHARACTER_ID = 1;
-    const combatant: Combatant = {
-      ascension: 0,
-      attributes: computeCharacterAttributes([]),
-      characterId: TRAVELER_CHARACTER_ID,
-      constellationCount: 0,
-      elementalResonances: [],
-      kit: weaponKit,
-      level: 90,
-    };
+    const combatant = createCombatant(weaponKit);
     const characterIdCombatantMap = new Map([
       [OTHER_CHARACTER_ID, { ...combatant, characterId: OTHER_CHARACTER_ID, kit: KIT }],
       [TRAVELER_CHARACTER_ID, combatant],
@@ -189,18 +175,10 @@ describe(getWeaponPassiveKit, () => {
       { ascension: 0, experience: 0, id: 11302, level: 1, refinement: 1 },
       WEAPON_DATA,
     );
-    const combatant: Combatant = {
-      ascension: 0,
-      attributes: computeCharacterAttributes([]),
-      characterId: TRAVELER_CHARACTER_ID,
-      constellationCount: 0,
-      elementalResonances: [],
-      kit: weaponKit,
-      level: 90,
-    };
+    const combatant = createCombatant(weaponKit);
     const context = createKitTestContext(combatant);
     addKitHold(context.kitEffectState, TRAVELER_CHARACTER_ID, {
-      id: "test",
+      id: "id",
       maximum: 1,
       seconds: Number.POSITIVE_INFINITY,
     });
@@ -218,15 +196,7 @@ describe(getWeaponPassiveKit, () => {
       { ascension: 0, experience: 0, id: 11302, level: 1, refinement: 1 },
       { ...WEAPON_DATA, passiveNameTextId: "GATED", passiveRankParams: [[]] },
     );
-    const combatant: Combatant = {
-      ascension: 0,
-      attributes: computeCharacterAttributes([]),
-      characterId: TRAVELER_CHARACTER_ID,
-      constellationCount: 0,
-      elementalResonances: [],
-      kit: weaponKit,
-      level: 90,
-    };
+    const combatant = createCombatant(weaponKit);
 
     expect(
       weaponKit.getStrikeDamageBonus?.(
@@ -252,15 +222,7 @@ describe(getWeaponPassiveKit, () => {
       { ascension: 0, experience: 0, id: 12414, level: 1, refinement: 1 },
       samuraiWeaponData,
     );
-    const combatant: Combatant = {
-      ascension: 0,
-      attributes: computeCharacterAttributes([]),
-      characterId: TRAVELER_CHARACTER_ID,
-      constellationCount: 0,
-      elementalResonances: [],
-      kit: weaponKit,
-      level: 90,
-    };
+    const combatant = createCombatant(weaponKit);
 
     expect(
       weaponKit.getStrikeDamageBonus?.(
