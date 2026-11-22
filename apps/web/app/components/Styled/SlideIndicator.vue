@@ -35,7 +35,7 @@ const measure = (isTracking = false) => {
   indicatorStyle.value = {
     height: `${bottom - top}px`,
     transform: `translateY(${top}px)`,
-    transitionDuration: isTracking ? "0s" : undefined,
+    transitionDuration: isTracking ? "var(--ui-motion-instant)" : undefined,
   };
 };
 

@@ -3,7 +3,7 @@ interface Props {
   isActive: boolean;
 }
 
-defineSlots<{ default: () => VNode }>();
+defineSlots<{ default?: () => VNode }>();
 const { isActive } = defineProps<Props>();
 const emit = defineEmits<{ change: [onComplete: () => void] }>();
 const isLoading = ref(false);

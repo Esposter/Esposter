@@ -79,7 +79,7 @@ const onGridKeydown = useGridKeyboard({
     role="grid"
     tabindex="-1"
     flex-1
-    gap-0.5
+    gap-1
     grid
     min-h-0
     content-start

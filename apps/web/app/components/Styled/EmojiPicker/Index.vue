@@ -32,7 +32,7 @@ watch(isOpen, (newIsOpen) => {
      Hover bar, its reactions — so the panel opens above it toward the row's start, flipping below only where the top
      Has no room -->
 <template>
-  <UiPopover v-model:is-open="isOpen" :="$attrs" :label position-area="top span-left" :variant px-0>
+  <UiPopover v-model:is-open="isOpen" :label position-area="top span-left" :variant px-0 :="$attrs">
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Emoji" />
     </template>

@@ -23,9 +23,11 @@
   --dock-inset-inline-start: 0rem;
   /* Motion, eased rather than stepped: a duration is a whole number of units on one decelerating curve, so a change */
   /* Moves at once and settles into place. Short for a small thing popping out of what it hangs off, medium for a */
-  /* Panel and for anything leaving, long for a dialog or a toast arriving */
+  /* Panel and for anything leaving, long for a dialog or a toast arriving. Instant is the one zero, for a layout move */
+  /* That has to follow its target exactly and never slide toward it */
   --ui-motion-unit: 50ms;
   --ui-motion-easing: cubic-bezier(0.2, 0, 0, 1);
+  --ui-motion-instant: 0s;
   --ui-motion-short: calc(var(--ui-motion-unit) * 3) var(--ui-motion-easing);
   --ui-motion-medium: calc(var(--ui-motion-unit) * 4) var(--ui-motion-easing);
   --ui-motion-long: calc(var(--ui-motion-unit) * 6) var(--ui-motion-easing);
