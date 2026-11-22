@@ -6,14 +6,15 @@ Read when a type is awkward: reaching for a cast, re-declaring fields a source t
 
 `as unknown as T` launders a value past every check the compiler would have run, which is the same hole `no-explicit-any` exists to close. In source it is a `no-restricted-syntax` error, so every one that stays carries a disable stating **the reason the type cannot be modelled**; the default answer is that it was simply never modelled:
 
-| Instead of asserting                            | Model it                                                                                                                              |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| External/boundary data into a type              | Parse it with Zod — the `zod` skill owns this (`references/boundary-payloads.md`), and it is the one case where the cast is a **bug** |
-| A generic seam (a client, a db, a search index) | Pass the type parameter (`Library<TDocument>`), or return the driver-agnostic supertype both sides satisfy                            |
-| A prototype you are extending                   | `Object.assign(Proto, { method() {} })` — a runtime lookup needs no static claim, so nothing has to be lied to                        |
-| An untyped third-party package                  | An ambient `declare module "pkg"` — one `.d.ts` beats a suppression per import site                                                   |
-| Two shapes that "are really the same"           | One discriminated union, or a `satisfies`-checked adapter at the seam                                                                 |
-| Several helpers repeating one generic header    | A type alias that states the generics once (`PageBuilderHelper<TResult, TArgs>`), so each helper names only its result and arguments  |
+| Instead of asserting                            | Model it                                                                                                                                                                                                                                |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| External/boundary data into a type              | Parse it with Zod — the `zod` skill owns this (`references/boundary-payloads.md`), and it is the one case where the cast is a **bug**                                                                                                   |
+| A generic seam (a client, a db, a search index) | Pass the type parameter (`Library<TDocument>`), or return the driver-agnostic supertype both sides satisfy                                                                                                                              |
+| A prototype you are extending                   | `Object.assign(Proto, { method() {} })` — a runtime lookup needs no static claim, so nothing has to be lied to                                                                                                                          |
+| An untyped third-party package                  | An ambient `declare module "pkg"` — one `.d.ts` beats a suppression per import site                                                                                                                                                     |
+| Two shapes that "are really the same"           | One discriminated union, or a `satisfies`-checked adapter at the seam                                                                                                                                                                   |
+| Several helpers repeating one generic header    | A type alias that states the generics once (`PageBuilderHelper<TResult, TArgs>`), so each helper names only its result and arguments                                                                                                    |
+| A generic read off a map by a generic key       | A `function` overload that names the entry the key picks, over an implementation that reads the map (`getContentSchema` in `createResourceProcedures.ts`, `function-signatures.md`'s "Overloads with no cast") — no cast, no annotation |
 
 What survives is **seams the type system genuinely cannot express**. Most live in a mock or a `.test.ts`:
 
@@ -25,7 +26,6 @@ A few are unavoidable in production source, and every known kind shares a tell �
 
 - **A library result type that cannot express what it carries** — e.g. a search hit that declares its stored fields behind an `any` index signature, which satisfies no required property. There is nothing to annotate against and no overlap to cast through.
 - **A transform whose key mapping is runtime-only** — `Object.fromEntries` over renamed keys types as a bare `Record`, which overlaps no class. Restate the shape only where something else already pins it (the source's own document type).
-- **A generic read off a map by a generic key** — `z.object({ content: DefinitionMap[type].contentSchema })` infers the union of every entry's schema, not the one `TType` names, and the union reaches every consumer as a shape none of them can index. The annotation restates what the key already pins.
 
 Prefer a single `as T` whenever TS accepts it, and comment **what the compiler cannot see** — never "this is safe". Adding one to production source earns the same scrutiny as reaching for `any`: if the shape is worth asserting, it is worth declaring.
 

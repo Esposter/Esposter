@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax -- an unresolved generic's conditional tuple, which no single `as` narrows; the union zod infers from a generic map key overlaps no one type's schema */
 import type { PublishableResourceProcedureOptions } from "#server/models/resource/PublishableResourceProcedureOptions";
 import type { Context } from "#server/trpc/context";
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
@@ -111,54 +110,45 @@ export const PUBLISH_PROCEDURE_NAMES = [
   "unpublishResource",
 ] as const;
 
-export const createResourceProcedures = <TType extends ResourceType>(
+// A generic key reads the union of every type's content schema, so the schema a type's procedures read and save through
+// Would not type against that type's content. The overload names the schema of the one type asked for, and the
+// Implementation reads the map those schemas sit in: `ResourceContent` is inferred from the same entry, so they agree
+function getContentSchema<TType extends ResourceType>(
   type: TType,
-  ...args: TType extends PublishableResourceType
-    ? [options?: PublishableResourceProcedureOptions<ResourceContent<TType>>]
-    : []
+): z.ZodType<ResourceContent<TType>, z.input<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>>;
+function getContentSchema(type: ResourceType) {
+  return ResourceDefinitionMap[type].contentSchema;
+}
+// The procedures of one resource type, each group built from that type's own content schema, so their content, input
+// And read types are the type's rather than the union of every type's
+const createProcedureGroups = <TType extends ResourceType>(
+  type: TType,
+  options?: PublishableResourceProcedureOptions<ResourceContent<TType>>,
 ) => {
-  const { contentSchema } = ResourceDefinitionMap[type];
-  // `args` comes from an unresolved-generic conditional tuple, so the hook params collapse to the
-  // Intersection of every content type; pin them back to this TType's concrete content shape.
-  const { transformPublishedContent } = (args[0] ?? {}) as unknown as PublishableResourceProcedureOptions<
-    ResourceContent<TType>
-  >;
-  // Annotated so the generic content schema resolves to a concrete type for destructuring: `contentSchema` is
-  // Read off the map by a generic key, so zod infers the union of every type's content, and the procedure's
-  // Input then reaches the stores as a union none of them can index. Both the output and input sides are
-  // Declared — leaving the input side defaulted to unknown would erase the procedure's input type for
-  // Consumers like achievement condition paths.
-  const saveResourceContentInputSchema = createSaveResourceContentInputSchema(contentSchema) as unknown as z.ZodType<
-    {
-      content: ResourceContent<TType>;
-      contentVersion: ResourceInResource["contentVersion"];
-      id: ResourceInResource["id"];
-    },
-    {
-      content: z.input<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>;
-      contentVersion: ResourceInResource["contentVersion"];
-      id: ResourceInResource["id"];
-    }
-  >;
-  const readContent = async (id: ResourceInResource["id"]): Promise<ResourceContent<TType> | undefined> =>
-    (await readResourceContent(contentSchema, id)) as ResourceContent<TType> | undefined;
+  const contentSchema = getContentSchema(type);
+  const transformPublishedContent = options?.transformPublishedContent;
+  // The input side is the accessor's declared input rather than zod's default, since defaulting it to unknown would erase
+  // The procedure's input type for consumers like achievement condition paths
+  const saveResourceContentInputSchema = createSaveResourceContentInputSchema(contentSchema);
+  const readContent = (id: ResourceInResource["id"]): Promise<ResourceContent<TType> | undefined> =>
+    readResourceContent(contentSchema, id);
   // A version whose row an unpublish removed between the listing and the click reads as no content, and must
-  // Reach the visitor as the 404 page rather than as an internal error. The generic contentSchema parses to the
-  // Union of all content types, which the concrete caller's TType pins back down to its own content shape
+  // Reach the visitor as the 404 page rather than as an internal error
   const readPublishedContent = async (
     db: Context["db"],
     resource: ResourceInResource,
     publishVersion: ResourcePublicationInResource["publishVersion"],
   ): Promise<ResourceContent<TType>> => {
-    const content = (await readSnapshotVersionContent(db, resource, {
-      channel: SnapshotChannel.Published,
-      version: publishVersion,
-    })) as ResourceContent<TType> | undefined;
+    const content = await readSnapshotVersionContent(
+      db,
+      { id: resource.id, type },
+      { channel: SnapshotChannel.Published, version: publishVersion },
+    );
     if (content === undefined) throw getNotFoundError(DatabaseEntityType.Resource, resource.id);
     // Reconstitution, not a plain read: a snapshot's frozen copy of what the type declares live is replaced
     // Here, so the public read and the owner's version preview answer the same content — and so does the
     // Restore, which reconstitutes through the same declaration
-    return (await reapplyLiveResourceContent(resource, content)) as ResourceContent<TType>;
+    return reapplyLiveResourceContent<TType>(resource, content);
   };
   const baseProcedures = {
     createResource: standardAuthedProcedure
@@ -268,6 +258,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
   // Through the /api/resource-assets endpoint (content embeds only stable urls, never a signature). An asset is never
   // Deleted here: the file's hash is handed to the release path, which deletes it only once no stored version names it
   const fileAssetsProcedures = {
+    // Deleting a file publishes the resource's topics, as does the save that writes an uploaded file's address, so an open
+    // Listing of the files reads the set again
     deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation<void>(
       async ({ ctx, input: { blobPath, id } }) => {
         // The path is the file's hash (ASSET_HASH_REGEX), so the release sees exactly the address that was removed
@@ -289,7 +281,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
 
         return generateReservedResourceAssetPresignedUrlEntities(ctx.db, ctx.user.id, id, files);
       }),
-    // A file deleted, and the save that writes an uploaded file's address, publish the resource's topics, so an open listing reads the set again
     readResourceFiles: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceFile[]>(({ input: { id } }) =>
       readResourceFiles(getBucket(StorageBucket.ResourceAssets), id),
     ),
@@ -503,11 +494,27 @@ export const createResourceProcedures = <TType extends ResourceType>(
       return tombstone;
     }),
   } satisfies Record<(typeof PUBLISH_PROCEDURE_NAMES)[number], unknown>;
+  return { baseProcedures, fileAssetsProcedures, publishProcedures };
+};
+type ProcedureGroups<TType extends ResourceType> = ReturnType<typeof createProcedureGroups<TType>>;
+// The base group rides on every type, and each capability group rides only on the types that declare its capability
+type ResourceProcedures<TType extends ResourceType> = ProcedureGroups<TType>["baseProcedures"] &
+  (TType extends FileAssetsResourceType ? ProcedureGroups<TType>["fileAssetsProcedures"] : unknown) &
+  (TType extends PublishableResourceType ? ProcedureGroups<TType>["publishProcedures"] : unknown);
+
+export function createResourceProcedures<TType extends PublishableResourceType>(
+  type: TType,
+  options?: PublishableResourceProcedureOptions<ResourceContent<TType>>,
+): ResourceProcedures<TType>;
+export function createResourceProcedures<TType extends ResourceType>(type: TType): ResourceProcedures<TType>;
+export function createResourceProcedures<TType extends ResourceType>(
+  type: TType,
+  options?: PublishableResourceProcedureOptions<ResourceContent<TType>>,
+) {
+  const { baseProcedures, fileAssetsProcedures, publishProcedures } = createProcedureGroups(type, options);
   return {
     ...baseProcedures,
     ...(checkHasCapability(type, "fileAssets") ? fileAssetsProcedures : {}),
     ...(checkHasCapability(type, "publishable") ? publishProcedures : {}),
-  } as (TType extends FileAssetsResourceType ? typeof fileAssetsProcedures : unknown) &
-    (TType extends PublishableResourceType ? typeof publishProcedures : unknown) &
-    typeof baseProcedures;
-};
+  };
+}
