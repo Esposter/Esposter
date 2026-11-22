@@ -7,10 +7,17 @@ import { useConnectionStore } from "#src/store/realtime/connection";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useUserSocket, () => {
   let wrapper: undefined | VueWrapper;
+
+  beforeEach(() => {
+    const userId = v7();
+    useSession.mockImplementation((fetcher?: unknown) =>
+      fetcher ? { data: ref({ user: { id: userId } }) } : ref({ data: { user: { id: userId } }, isPending: false }),
+    );
+  });
 
   afterEach(() => {
     wrapper?.unmount();
@@ -23,10 +30,6 @@ describe(useUserSocket, () => {
   test("opens the user socket on a signed-in load", async () => {
     expect.hasAssertions();
 
-    const userId = v7();
-    useSession.mockImplementation((fetcher?: unknown) =>
-      fetcher ? { data: ref({ user: { id: userId } }) } : ref({ data: { user: { id: userId } }, isPending: false }),
-    );
     const connectionStore = useConnectionStore();
     const openUser = vi.spyOn(connectionStore, "openUser").mockReturnValue(undefined);
     vi.spyOn(connectionStore, "closeUser").mockReturnValue(undefined);

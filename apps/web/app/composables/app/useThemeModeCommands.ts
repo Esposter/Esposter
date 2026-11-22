@@ -2,6 +2,7 @@ import type { UiCommand } from "#src/models/ui/UiCommand";
 
 import { ThemeModes } from "#src/models/ui/ThemeMode";
 import { THEME_COMMAND_GROUP } from "#src/services/app/constants";
+import { getChoiceCommands } from "#src/services/ui/getChoiceCommands";
 import { ThemeModeIconMeaningMap } from "#src/services/ui/ThemeModeIconMeaningMap";
 import { ThemeModeTitleMap } from "#src/services/ui/ThemeModeTitleMap";
 import { useThemeModeStore } from "#src/store/ui/themeMode";
@@ -12,15 +13,15 @@ export const useThemeModeCommands = () => {
   const themeModeStore = useThemeModeStore();
   const { themeMode } = storeToRefs(themeModeStore);
   return computed<UiCommand[]>(() =>
-    ThemeModes.map((mode) => ({
+    getChoiceCommands({
+      getMeaning: (mode) => ThemeModeIconMeaningMap[mode],
+      getTitle: (mode) => ThemeModeTitleMap[mode],
       group: THEME_COMMAND_GROUP,
-      id: `${THEME_COMMAND_GROUP}${mode}`,
-      isSelected: mode === themeMode.value,
-      meaning: ThemeModeIconMeaningMap[mode],
-      run: () => {
+      selectedValue: themeMode.value,
+      setValue: (mode) => {
         themeMode.value = mode;
       },
-      title: ThemeModeTitleMap[mode],
-    })),
+      values: ThemeModes,
+    }),
   );
 };

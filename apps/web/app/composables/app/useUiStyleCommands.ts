@@ -3,6 +3,7 @@ import type { UiCommand } from "#src/models/ui/UiCommand";
 import { UiIconMeaning } from "#src/models/ui/UiIconMeaning";
 import { UiStyle, UiStyles } from "#src/models/ui/UiStyle";
 import { STYLE_COMMAND_GROUP } from "#src/services/app/constants";
+import { getChoiceCommands } from "#src/services/ui/getChoiceCommands";
 import { UiStyleIconMeaningMap } from "#src/services/ui/UiStyleIconMeaningMap";
 import { useReadableTextStore } from "#src/store/ui/readableText";
 import { useUiStyleStore } from "#src/store/ui/style";
@@ -17,16 +18,16 @@ export const useUiStyleCommands = () => {
   const uiStyleStore = useUiStyleStore();
   const { uiStyle } = storeToRefs(uiStyleStore);
   return computed<UiCommand[]>(() => [
-    ...UiStyles.map((style) => ({
+    ...getChoiceCommands({
+      getMeaning: (style) => UiStyleIconMeaningMap[style],
+      getTitle: (style) => capitalize(style),
       group: STYLE_COMMAND_GROUP,
-      id: `${STYLE_COMMAND_GROUP}${style}`,
-      isSelected: style === uiStyle.value,
-      meaning: UiStyleIconMeaningMap[style],
-      run: () => {
+      selectedValue: uiStyle.value,
+      setValue: (style) => {
         uiStyle.value = style;
       },
-      title: capitalize(style),
-    })),
+      values: UiStyles,
+    }),
     // Only the voxel style's body face is a pixel one, so the setting is offered only while it is drawn; its cookie
     // Stays, so switching back restores it
     ...(uiStyle.value === UiStyle.Voxel

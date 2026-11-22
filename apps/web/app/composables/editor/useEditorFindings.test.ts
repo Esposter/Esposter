@@ -4,7 +4,7 @@ import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useEditorFindings, () => {
-  const message = v7();
+  const message = "message";
   const nodeId = v7();
   const clash = { message, nodeId, severity: EditorFindingSeverity.Error };
   // Two equal names are one clash, which the check lists against the second question
@@ -12,7 +12,7 @@ describe(useEditorFindings, () => {
     firstName === secondName ? [clash] : [];
 
   beforeEach(() => {
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ toFake: ["setTimeout"] });
   });
 
   afterEach(() => {
