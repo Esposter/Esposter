@@ -134,9 +134,13 @@ const choose = (date: Temporal.PlainDate) => {
   } else to.value = date;
 };
 
-watch(modelValue, (newModelValue) => {
-  if (newModelValue) focusedDate.value = clamp(newModelValue);
-});
+// Keyed by the day rather than the object, since a parent that re-renders hands in a new object for the same day
+watch(
+  () => modelValue.value?.toString(),
+  () => {
+    if (modelValue.value) focusedDate.value = clamp(modelValue.value);
+  },
+);
 // A range's start set from outside — a preset, the field around it — turns the months to hold it, as a press does
 watch(from, (newFrom) => {
   if (newFrom) setFocusedDate(newFrom);

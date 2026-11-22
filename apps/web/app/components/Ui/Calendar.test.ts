@@ -68,6 +68,18 @@ describe("uiCalendar", () => {
       ).toStrictEqual([nextDay.toString()]);
     });
 
+    test("keeps the month a reader paged to when its day is set again as a new value", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiCalendar, { props: { label, modelValue: epoch } });
+      await component.get('[aria-label="Next month"]').trigger("click");
+      await component.setProps({ modelValue: Temporal.PlainDate.from(epoch.toString()) });
+
+      expect(component.findAll('[data-date][tabindex="0"]').map((day) => day.attributes("data-date"))).toStrictEqual([
+        epoch.add({ months: 1 }).toString(),
+      ]);
+    });
+
     test("reports a range through aria-selected on every day from its start to its end", async () => {
       expect.hasAssertions();
 
