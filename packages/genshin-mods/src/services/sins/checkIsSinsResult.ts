@@ -1,6 +1,6 @@
 import type { SinsResult } from "../../models/SinsResult";
 
-import { SIN_NAMES } from "../../models/SinName";
+import { SinNames } from "../../models/SinName";
 import { SinStatusKind } from "../../models/SinStatusKind";
 import { checkIsObject } from "../checkIsObject";
 import { checkIsAnswer } from "./checkIsAnswer";
@@ -20,6 +20,6 @@ export const checkIsSinsResult = (value: unknown): value is SinsResult => {
   return (
     value.result === SinStatusKind.Answered &&
     checkIsObject(answers) &&
-    SIN_NAMES.every((name) => checkIsAnswer(answers[name]))
+    SinNames.every((name) => checkIsAnswer(answers[name]))
   );
 };

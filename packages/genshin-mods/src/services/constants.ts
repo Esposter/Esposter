@@ -21,6 +21,8 @@ export const MINUTE_FORMATTER: Intl.NumberFormat = new Intl.NumberFormat("en", {
   unit: "minute",
   unitDisplay: "narrow",
 });
+// The share of a commission's tasks done, `75%`
+export const PERCENT_FORMATTER: Intl.NumberFormat = new Intl.NumberFormat("en", { style: "percent" });
 export const WARD_WINDOW_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
 export const NO_WAYPOINTS_ANSWER = "NONE";
 export const WAYPOINTS_QUESTION: string = `Leave the conversation as it is and answer one side question. List the next steps worth taking from here, at most ${MAX_WAYPOINTS}, most useful first: each one short imperative line the person could send you as their next prompt, with no numbering, no markup and nothing else. When the work is finished or waits on the person, answer ${NO_WAYPOINTS_ANSWER}.`;

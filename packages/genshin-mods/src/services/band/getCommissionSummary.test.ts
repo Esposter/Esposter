@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 
+import { TaskStatus } from "../../models/TaskStatus";
 import { getCommissionSummary } from "./getCommissionSummary";
 
 describe(getCommissionSummary, () => {
@@ -11,8 +12,8 @@ describe(getCommissionSummary, () => {
       goal: "a",
       openedAt: 0,
       tasks: [
-        { id: "0", status: "completed", subject: "" },
-        { id: "1", status: "pending", subject: "" },
+        { id: "0", status: TaskStatus.Completed, subject: "" },
+        { id: "1", status: TaskStatus.Pending, subject: "" },
       ],
     } as const;
 

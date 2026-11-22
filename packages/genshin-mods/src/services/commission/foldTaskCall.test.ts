@@ -1,12 +1,13 @@
 import { describe, expect, test } from "vitest";
 
+import { TaskStatus } from "../../models/TaskStatus";
 import { TaskTool } from "../../models/TaskTool";
 import { foldTaskCall } from "./foldTaskCall";
 
 describe(foldTaskCall, () => {
   const id = "0";
   const subject = "a";
-  const pending = { id, status: "pending", subject } as const;
+  const pending = { id, status: TaskStatus.Pending, subject } as const;
 
   test("adds a created task as pending", () => {
     expect.hasAssertions();
@@ -17,8 +18,8 @@ describe(foldTaskCall, () => {
   test("updates only the fields an update names", () => {
     expect.hasAssertions();
 
-    expect(foldTaskCall([pending], { id, status: "completed", tool: TaskTool.TaskUpdate })).toStrictEqual([
-      { ...pending, status: "completed" },
+    expect(foldTaskCall([pending], { id, status: TaskStatus.Completed, tool: TaskTool.TaskUpdate })).toStrictEqual([
+      { ...pending, status: TaskStatus.Completed },
     ]);
   });
 
@@ -32,7 +33,7 @@ describe(foldTaskCall, () => {
     expect.hasAssertions();
 
     expect(
-      foldTaskCall([pending], { todos: [{ content: subject, status: "pending" }], tool: TaskTool.TodoWrite }),
+      foldTaskCall([pending], { todos: [{ content: subject, status: TaskStatus.Pending }], tool: TaskTool.TodoWrite }),
     ).toStrictEqual([pending]);
   });
 });

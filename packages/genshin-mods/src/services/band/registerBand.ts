@@ -33,14 +33,18 @@ const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialSta
 const sinHistoryAtom = atom({ key: "sinHistory", plugin: "genshin-mods" } as const, InitialState.sinHistory);
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
 
-// The engine's press slot takes no promise; every action here resolves each of its outcomes itself
-const press = (action: () => Promise<unknown>) => () => {
-  // oxlint-disable-next-line typescript/no-floating-promises -- The press slot is the engine's and returns nothing
-  action();
+// The engine's press slot takes no promise, so a press settles its action here: a rejection is a toast, never a lost error
+const settlePress = async ($: EngineInterface, action: () => Promise<unknown>) => {
+  const [outcome] = await Promise.allSettled([action()]);
+  if (outcome.status === "rejected") $.ui.toast(`The action failed: ${String(outcome.reason)}.`);
+};
+
+const press = ($: EngineInterface, action: () => Promise<unknown>) => () => {
+  // oxlint-disable-next-line typescript/no-floating-promises -- The press slot is the engine's and returns nothing, and settlePress settles every outcome itself
+  settlePress($, action);
 };
 
 const StatusMarkMap = { [TaskStatus.Completed]: "✓", [TaskStatus.InProgress]: "▸", [TaskStatus.Pending]: "·" } as const;
-
 // A fork re-sends the conversation's prefix, which renews the cache from the moment it is sent, and adds no row to the
 // Transcript
 const warmCache = async ($: EngineInterface) => {
@@ -54,7 +58,6 @@ const warmCache = async ($: EngineInterface) => {
   await update($, lastCacheRequestAtAtom, () => requestedAt);
   await update($, nowAtom, () => requestedAt);
 };
-
 // The whole relay in one press: the clear waits for the handoff text, so a fork that fails clears nothing
 const relay = async ($: EngineInterface) => {
   const answer = await $.model.fork({ prompt: HANDOFF_QUESTION });
@@ -63,7 +66,6 @@ const relay = async ($: EngineInterface) => {
     await $.prompt.submit({ text: answer.text });
   } else $.ui.toast(`The handoff was not written: ${answer.isAnswered ? "it came back empty" : answer.reason}.`);
 };
-
 // The relay is settled rather than awaited, so a clear or submit that rejects still brings the buttons back
 const handOff = async ($: EngineInterface) => {
   await update($, isHandingOffAtom, () => true);
@@ -71,7 +73,6 @@ const handOff = async ($: EngineInterface) => {
   await update($, isHandingOffAtom, () => false);
   if (outcome.status === "rejected") $.ui.toast(`The handoff failed: ${String(outcome.reason)}.`);
 };
-
 // The session character's colour, which the persona publishes, else the game's interface gold
 const readAccent = async ($: EngineInterface) =>
   (await read($, { key: "character", plugin: "genshin-persona" } as const))?.color || ACCENT_COLOR;
@@ -98,18 +99,18 @@ const drawResinRow = async (
         ? Text({ children: "writing the handoff…", dimColor: true })
         : Box({
             children: [
-              Button({ hotkey: "w", key: "resin-warm", label: "Warm", onPress: press(() => warmCache($)) }),
+              Button({ hotkey: "w", key: "resin-warm", label: "Warm", onPress: press($, () => warmCache($)) }),
               Button({
                 hotkey: "c",
                 key: "resin-compact",
                 label: "Compact",
-                onPress: press(() => $.session.compact()),
+                onPress: press($, () => $.session.compact()),
               }),
               Button({
                 hotkey: "h",
                 key: "resin-handoff",
                 label: "Handoff",
-                onPress: press(() => handOff($)),
+                onPress: press($, () => handOff($)),
                 variant: "primary",
               }),
             ],
@@ -145,7 +146,7 @@ const drawCommissionRow = async (
             hotkey: "g",
             key: "commission-expand",
             label: isExpanded ? "Fewer" : "All tasks",
-            onPress: press(() => update($, isCommissionExpandedAtom, (value) => !value)),
+            onPress: press($, () => update($, isCommissionExpandedAtom, (value) => !value)),
             plain: true,
           }),
         ],
@@ -181,14 +182,14 @@ const drawWaypointsRow = async (
           hotkey: `${index + 1}`,
           key: `waypoint-${index}`,
           label: waypoint,
-          onPress: press(() => $.prompt.submit({ text: waypoint })),
+          onPress: press($, () => $.prompt.submit({ text: waypoint })),
           plain: true,
         }),
       ),
       Button({
         key: "waypoints-dismiss",
         label: "Dismiss",
-        onPress: press(() => update($, waypointsAtom, () => InitialState.waypoints)),
+        onPress: press($, () => update($, waypointsAtom, () => InitialState.waypoints)),
         plain: true,
         role: "dismiss",
       }),
@@ -196,7 +197,6 @@ const drawWaypointsRow = async (
     flexDirection: "column",
   });
 };
-
 // The sins as one line, each in its colour, with the pane's own button; the pane holds the bars and the trends
 const drawSinsRow = async (
   $: EngineInterface,
@@ -226,7 +226,7 @@ const drawSinsRow = async (
         hotkey: "p",
         key: "sins-panel",
         label: "Panel",
-        onPress: press(() => $.ui.open({ id: SINS_PANE_ID, title: "Seven sins" })),
+        onPress: press($, () => $.ui.open({ id: SINS_PANE_ID, title: "Seven sins" })),
         plain: true,
       }),
     ],
@@ -234,7 +234,6 @@ const drawSinsRow = async (
     flexWrap: "wrap",
   });
 };
-
 // The veil's marker first, so a recording never runs with it off unnoticed, and the engine's own band whenever no
 // Mod has anything to say
 export const registerBand = (on: On, typeSafeKey: string): void => {

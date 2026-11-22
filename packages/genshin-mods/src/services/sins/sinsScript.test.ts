@@ -11,7 +11,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-import { SIN_NAMES } from "../../models/SinName";
+import { SinNames } from "../../models/SinName";
 import { getSinQuestions } from "./getSinQuestions";
 import { SINS_SCRIPT } from "./sinsScript";
 
@@ -39,7 +39,7 @@ describe("sinsScript", () => {
   beforeEach(async () => {
     requests = 0;
     storePath = join(mkdtempSync(join(tmpdir(), "sins-")), "sins.sqlite");
-    const answers = Object.fromEntries(SIN_NAMES.map((name) => [name, { confidence: 0.5, score: 2, type: "score" }]));
+    const answers = Object.fromEntries(SinNames.map((name) => [name, { confidence: 0.5, score: 2, type: "score" }]));
     server = createServer((_request, response) => {
       requests += 1;
       response.writeHead(status, { "Content-Type": "application/json" });
@@ -83,12 +83,12 @@ describe("sinsScript", () => {
 
     const result = JSON.parse(await runScript(getPayload(), "test-key"));
     expect(result.result).toBe("answered");
-    expect(Object.keys(result.answers)).toStrictEqual([...SIN_NAMES]);
+    expect(Object.keys(result.answers)).toStrictEqual([...SinNames]);
 
     const database = new DatabaseSync(storePath);
     const rows = database.prepare("SELECT answers FROM evidence").all();
     expect(rows).toHaveLength(1);
-    expect(Object.keys(JSON.parse(String(rows[0]?.answers)))).toStrictEqual([...SIN_NAMES]);
+    expect(Object.keys(JSON.parse(String(rows[0]?.answers)))).toStrictEqual([...SinNames]);
     database.close();
   });
 

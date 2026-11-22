@@ -1,23 +1,23 @@
 import { describe, expect, test } from "vitest";
 
-import { SIN_NAMES } from "../../models/SinName";
+import { SinNames } from "../../models/SinName";
 import { appendSinEvidence } from "./appendSinEvidence";
 import { SIN_HISTORY_LENGTH } from "./constants";
 
 describe(appendSinEvidence, () => {
-  const answers = Object.fromEntries(SIN_NAMES.map((name) => [name, { confidence: 1, score: 2 }]));
+  const answers = Object.fromEntries(SinNames.map((name) => [name, { confidence: 1, score: 2 }]));
 
   test("appends each sin's score as its share of the top level", () => {
     expect.hasAssertions();
 
-    expect(appendSinEvidence({}, answers)).toStrictEqual(Object.fromEntries(SIN_NAMES.map((name) => [name, [0.5]])));
+    expect(appendSinEvidence({}, answers)).toStrictEqual(Object.fromEntries(SinNames.map((name) => [name, [0.5]])));
   });
 
   test("keeps only the newest history length of each sin", () => {
     expect.hasAssertions();
 
     const full = Object.fromEntries(
-      SIN_NAMES.map((name) => [name, Array.from({ length: SIN_HISTORY_LENGTH }, () => 0)]),
+      SinNames.map((name) => [name, Array.from({ length: SIN_HISTORY_LENGTH }, () => 0)]),
     );
     expect(appendSinEvidence(full, answers).pride).toHaveLength(SIN_HISTORY_LENGTH);
   });

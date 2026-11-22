@@ -1,4 +1,4 @@
-import { SIN_NAMES } from "../../models/SinName";
+import { SinNames } from "../../models/SinName";
 import { SIN_CRITERIA } from "./constants";
 import { SinQuestionMap } from "./SinQuestionMap";
 
@@ -8,5 +8,5 @@ export const getSinQuestions = (): Record<
   { criteria: typeof SIN_CRITERIA; instructions: string; type: "score" }
 > =>
   Object.fromEntries(
-    SIN_NAMES.map((name) => [name, { criteria: SIN_CRITERIA, instructions: SinQuestionMap[name], type: "score" }]),
+    SinNames.map((name) => [name, { criteria: SIN_CRITERIA, instructions: SinQuestionMap[name], type: "score" }]),
   );

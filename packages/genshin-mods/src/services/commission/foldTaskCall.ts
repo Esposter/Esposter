@@ -22,6 +22,8 @@ export const foldTaskCall = (tasks: CommissionTask[], call: TaskCall): Commissio
     case TaskTool.TodoWrite:
       return call.todos.map(({ content, status }, index) => ({ id: `${index}`, status, subject: content }));
     default:
+      // A call no case handles is a type error on this line, since the call is not `never` until every tool has one
+      call satisfies never;
       return tasks;
   }
 };

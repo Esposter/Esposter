@@ -1,11 +1,9 @@
 import type { Commission } from "../../../types";
 
 import { TaskStatus } from "../../models/TaskStatus";
-import { MINUTE_FORMATTER } from "../constants";
+import { MINUTE_FORMATTER, PERCENT_FORMATTER } from "../constants";
 
-const PERCENT_FORMATTER = new Intl.NumberFormat("en", { style: "percent" });
-
-// `goal · 3 of 4 · 75% · 12m`, the clock counting whole minutes from the commission's opening
+// The goal, the tasks done of the total, their share as a percentage and the whole minutes since the commission opened
 export const getCommissionSummary = ({ goal, openedAt, tasks }: Commission, now: number): string => {
   const done = tasks.filter(({ status }) => status === TaskStatus.Completed).length;
   const elapsedMinutes = Math.floor(
