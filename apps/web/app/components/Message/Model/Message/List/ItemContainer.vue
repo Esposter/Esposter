@@ -11,6 +11,6 @@ const creator = useCreator(() => message);
 </script>
 
 <template>
-  <MessageModelMessageListItem :creator :message :next-message />
+  <MessageModelMessageListItem v-if="creator" :creator :message :next-message />
   <MessageModelMessageTimeline :message-date="message.createdAt" :next-message-date="nextMessage?.createdAt" />
 </template>

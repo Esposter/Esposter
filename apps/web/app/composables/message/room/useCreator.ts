@@ -5,10 +5,8 @@ import { UNKNOWN_CREATOR } from "#src/services/message/constants";
 import { useAppUserStore } from "#src/store/message/user/appUser";
 import { useUserStore } from "#src/store/message/user/index";
 
-// A message with no creator to name is undefined, and one with a message always has a creator, placeholder or not
-export function useCreator(message: MaybeRefOrGetter<ClientMessage>): ComputedRef<Creator>;
-export function useCreator(message: MaybeRefOrGetter<ClientMessage | undefined>): ComputedRef<Creator | undefined>;
-export function useCreator(message: MaybeRefOrGetter<ClientMessage | undefined>) {
+// A message that names no author, neither a member nor an app user, has no creator to name, so the result is undefined
+export const useCreator = (message: MaybeRefOrGetter<ClientMessage | undefined>): ComputedRef<Creator | undefined> => {
   const userStore = useUserStore();
   const { userMap } = storeToRefs(userStore);
   const { getRoomMemberName } = userStore;
@@ -42,4 +40,4 @@ export function useCreator(message: MaybeRefOrGetter<ClientMessage | undefined>)
     // An author nobody can resolve is drawn under the placeholder, so a message is never dropped for want of its author
     else return { ...UNKNOWN_CREATOR, id: userId };
   });
-}
+};
