@@ -6,7 +6,7 @@ import { getRemovalConditions } from "#src/services/realtime/getRemovalCondition
 import { getScopeKeys } from "#src/services/realtime/getScopeKeys";
 import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
 import { getWriteTable } from "#src/services/realtime/getWriteTable";
-import { checkIsRecord } from "#src/util/object/checkIsRecord";
+import { checkIsRecord } from "@esposter/shared";
 import { getTableColumns, is, SQL } from "drizzle-orm";
 import { SQLiteDeleteBase, SQLiteUpdateBase } from "drizzle-orm/sqlite-core";
 

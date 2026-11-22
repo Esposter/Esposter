@@ -8,8 +8,8 @@ import { JsonArrayParam } from "#src/models/shared/JsonArrayParam";
 import { getOccurrenceKey } from "#src/services/realtime/getOccurrenceKey";
 import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
 import { tableMap } from "#src/services/realtime/tableMap";
-import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getTableScope } from "@esposter/db-schema";
+import { checkIsRecord } from "@esposter/shared";
 import {
   chunkKindOf,
   chunkKinds,

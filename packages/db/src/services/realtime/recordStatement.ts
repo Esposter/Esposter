@@ -14,8 +14,7 @@ import {
   widenReturning,
   widenUnreturnedWrite,
 } from "#src/services/realtime/widenReturning";
-import { checkIsRecord } from "#src/util/object/checkIsRecord";
-import { getResultAsync } from "@esposter/shared";
+import { checkIsRecord, getResultAsync } from "@esposter/shared";
 
 // A write that asks for no RETURNING is widened to name its rows, and it runs through `run`, the method its caller awaited.
 // Whatever holds that method holds the write too. D1's `run` answers the rows a RETURNING statement names as `results`

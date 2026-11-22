@@ -3,8 +3,8 @@ import type { Table } from "drizzle-orm";
 
 import { getRowScopeValues } from "#src/services/realtime/getRowScopeValues";
 import { getScopeTopics } from "#src/services/realtime/getScopeTopics";
-import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getColumnTopic } from "@esposter/db-schema";
+import { checkIsRecord } from "@esposter/shared";
 
 // The scope topic of each scope value each row holds, one per scope column a row has a value for, each naming the columns
 // The write changed (`undefined` for a row-set change). A null value names no row, so it is left out

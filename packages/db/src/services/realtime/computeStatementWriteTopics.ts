@@ -6,8 +6,8 @@ import { getRowTopics } from "#src/services/realtime/getRowTopics";
 import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
 import { getWriteTable } from "#src/services/realtime/getWriteTable";
 import { walkCascade } from "#src/services/realtime/walkCascade";
-import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getColumnTopic, getTableTopic } from "@esposter/db-schema";
+import { checkIsRecord } from "@esposter/shared";
 import { getTableColumns, getTableName, is } from "drizzle-orm";
 import { SQLiteDeleteBase, SQLiteUpdateBase } from "drizzle-orm/sqlite-core";
 

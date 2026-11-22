@@ -5,8 +5,8 @@ import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 import { checkIsSecretColumn } from "#src/services/realtime/checkIsSecretColumn";
 import { getScopeKeys } from "#src/services/realtime/getScopeKeys";
 import { getWriteTable } from "#src/services/realtime/getWriteTable";
-import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { listKeyFieldNames } from "@esposter/db-schema";
+import { checkIsRecord } from "@esposter/shared";
 import { getTableName } from "drizzle-orm";
 
 // One row a write returned, named by its primary key's fields, the fields the overlay holds the row by, and at the version the

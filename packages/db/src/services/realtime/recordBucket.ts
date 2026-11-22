@@ -3,8 +3,8 @@ import type { R2Bucket, R2MultipartUpload } from "@cloudflare/workers-types";
 
 import { getBlobListTopic } from "#src/services/realtime/getBlobListTopic";
 import { recordBlobWrite } from "#src/services/realtime/recordBlobWrite";
-import { checkIsRecord } from "#src/util/object/checkIsRecord";
 import { getBlobTopic } from "@esposter/db-schema";
+import { checkIsRecord } from "@esposter/shared";
 
 // The keys a delete names, which R2 takes as one key or a list of them
 const getDeletedKeys = (keys: unknown): string[] => {

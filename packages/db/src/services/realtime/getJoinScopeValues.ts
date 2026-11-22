@@ -6,7 +6,7 @@ import { JoinKind } from "#src/models/realtime/JoinKind";
 import { getOccurrenceKey } from "#src/services/realtime/getOccurrenceKey";
 import { getScopeKeys } from "#src/services/realtime/getScopeKeys";
 import { tableMap } from "#src/services/realtime/tableMap";
-import { checkIsRecord } from "#src/util/object/checkIsRecord";
+import { checkIsRecord } from "@esposter/shared";
 
 // The scope values one side of a join takes in the rows a read returned. The side must be a scope column of a table the
 // Read names, and the other side's key must be one the read selects, so each row carries the value the join matches on

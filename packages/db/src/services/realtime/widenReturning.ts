@@ -5,7 +5,7 @@ import { checkIsStatement } from "#src/services/realtime/checkIsStatement";
 import { getStatementConfig } from "#src/services/realtime/getStatementConfig";
 import { getWidenedKeys } from "#src/services/realtime/getWidenedKeys";
 import { getWriteTable } from "#src/services/realtime/getWriteTable";
-import { checkIsRecord } from "#src/util/object/checkIsRecord";
+import { checkIsRecord } from "@esposter/shared";
 import { getTableColumns } from "drizzle-orm";
 
 // How a recorded write answers its caller for the projection the caller asked for, keyed by the recorded statement the caller holds
