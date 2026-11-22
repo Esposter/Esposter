@@ -8,6 +8,8 @@ A ledger that only moves when someone sits down to work it moves at the rate som
 
 Scope it to the files the change touches, not the unit around them; widening it there is how a one-line fix turns into an afternoon.
 
+A file the change creates has nothing to sweep: it is written to the current rules and read by the review, so only the files the change edits that already existed owe the pass.
+
 **The cell stays `—` until the whole unit is swept.** There is no partially-swept state, and inventing one — a fraction, a file list, a third symbol — puts progress state at file granularity in a table that exists to track units, where it drifts the moment anyone touches those files again. The opportunistic pass shortens the eventual unit pass; it never reports it.
 
 This is what keeps a standing ledger moving. The scheduled pass stops being the only thing that drains it and becomes the sweep-up for whatever ordinary work never happened to reach.
