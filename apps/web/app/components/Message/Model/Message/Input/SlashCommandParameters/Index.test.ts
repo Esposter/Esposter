@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
 import MessageModelMessageInputSlashCommandParameters from "#src/components/Message/Model/Message/Input/SlashCommandParameters/Index.vue";
 import { SlashCommandType } from "#src/models/message/slashCommands/SlashCommandType";
-import { setRouteId } from "#src/util/router/setRouteId.test";
 import { COMMAND_INPUT_INDEX } from "#src/services/message/slashCommands/constants";
 import { SlashCommandDefinitionMap } from "#src/services/message/slashCommands/SlashCommandDefinitionMap";
 import { useInputStore } from "#src/store/message/input/index";
 import { useSlashCommandStore } from "#src/store/message/input/slashCommand";
+import { setRouteId } from "#src/util/router/setRouteId.test";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
