@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/terrain/computeTerrainIndices.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.009270800000007285,
+              "name": "allocate",
+              "p99": 0.016475750000032575,
+              "rme": 28.250390990826567,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.031637499999987995,
+              "name": "computeTerrainIndices",
+              "p99": 0.10758677999998725,
+              "rme": 66.8877618608956,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeTerrainIndices > 32 cells a side"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.006091699999990396,
+              "name": "allocate",
+              "p99": 0.014203589999954148,
+              "rme": 54.33826975643123,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.0923499999999933,
+              "name": "computeTerrainIndices",
+              "p99": 1.7108049999999468,
+              "rme": 17.458525934986678,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeTerrainIndices > 256 cells a side"
+        }
+      ]
+    }
+  ]
+}

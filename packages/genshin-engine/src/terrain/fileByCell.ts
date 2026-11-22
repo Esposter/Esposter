@@ -1,17 +1,19 @@
 import type { TerrainBounds } from "#src/models/terrain/TerrainBounds";
 
 import { TERRAIN_CELL_SIZE } from "#src/terrain/constants";
+import { getTerrainTileKey } from "#src/terrain/getTerrainTileKey";
 
 const NO_ITEMS: never[] = [];
 
-const toCellKey = (column: number, row: number): string => `${column},${row}`;
+// A cell is keyed by the packed tile key of level zero, so the map is keyed by a number and a query builds no string
+const toCellKey = (column: number, row: number): number => getTerrainTileKey(0, column, row);
 // Files each item under every cell its bounds cover, and returns the items filed under the cell a point stands in, so
 // A point reads one cell's list rather than every item
 export const fileByCell = <T>(
   items: readonly T[],
   getBounds: (item: T) => TerrainBounds,
 ): ((x: number, z: number) => readonly T[]) => {
-  const cellItemsMap = new Map<string, T[]>();
+  const cellItemsMap = new Map<number, T[]>();
   for (const item of items) {
     const { maxX, maxZ, minX, minZ } = getBounds(item);
     for (let column = Math.floor(minX / TERRAIN_CELL_SIZE); column <= Math.floor(maxX / TERRAIN_CELL_SIZE); column++)
