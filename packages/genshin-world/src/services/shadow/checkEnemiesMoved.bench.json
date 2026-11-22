@@ -1,0 +1,33 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/shadow/checkEnemiesMoved.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.09064169999999194,
+              "name": "check",
+              "p99": 0.3174424699999577,
+              "rme": 75.09582192899758,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "checkEnemiesMoved > 345 enemies"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.9956247999999503,
+              "name": "check",
+              "p99": 3.3758024399998434,
+              "rme": 69.05387855804402,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "checkEnemiesMoved > 3450 enemies"
+        }
+      ]
+    }
+  ]
+}
