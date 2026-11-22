@@ -8,7 +8,7 @@ interface Props {
   knocker: CallParticipant;
 }
 
-const { knocker } = defineProps<Props>();
+defineProps<Props>();
 const callStore = useCallStore();
 const { callRoomId } = storeToRefs(callStore);
 const userStore = useUserStore();

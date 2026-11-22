@@ -8,7 +8,9 @@ describe(useReadItemsSearch, () => {
 
     const searchQuery = ref("");
     const isReadError = ref(true);
-    const readItemsSearch = vi.fn(() => Promise.resolve({ isError: isReadError }));
+    const readItemsSearch = vi.fn<(newSearchQuery: string, signal?: AbortSignal) => Promise<{ isError: Ref<boolean> }>>(
+      () => Promise.resolve({ isError: isReadError }),
+    );
     const { isError, retry } = useReadItemsSearch(searchQuery, readItemsSearch);
     await flushPromises();
     expect(isError.value).toBe(true);

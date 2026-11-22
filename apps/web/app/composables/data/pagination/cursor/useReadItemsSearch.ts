@@ -1,9 +1,9 @@
 import { useAutoSearch } from "#src/composables/useAutoSearch";
 import { noop, normalizeString } from "@esposter/shared";
 
-// A search-as-you-type over a readItems read. readItems records a failed read rather than throwing it, so useAutoSearch
-// never sees one: the search takes its outcome from the read it issued, and retry reads again. A search that was aborted
-// leaves its outcome to the newer search that aborted it
+// A search-as-you-type over a readItems read. A failed read is recorded by readItems rather than thrown, so the auto
+// Search never sees one: the search takes its outcome from the read it issued, and retry reads again. A search that was
+// Aborted leaves its outcome to the newer search that aborted it
 export const useReadItemsSearch = (
   searchQuery: Ref<string>,
   readItemsSearch: (newSearchQuery: string, signal?: AbortSignal) => Promise<{ isError: Ref<boolean> }>,

@@ -144,7 +144,8 @@ describe(useThreadStore, () => {
       input.threadRootId === threadRootId ? earlierRead.promise : laterRead.promise,
     );
     await mountThreadDrawer();
-    const { isReadThreadPending } = storeToRefs(useThreadStore());
+    const threadStore = useThreadStore();
+    const { isReadThreadPending } = storeToRefs(threadStore);
     const openThread = useOpenThread();
     const earlierOpen = openThread(roomId, threadRootId);
     const laterOpen = openThread(roomId, laterThreadRootId);
