@@ -80,7 +80,7 @@ const removeRow = (rowIndex: number) => {
             :columns="node.props.columns"
             :get-header-id
             :invalid
-            :is-disabled="isDisabled"
+            :is-disabled
             :is-remove-disabled="isDisabled || rows.length <= node.props.minRowCount"
             :remove-label="node.props.removeRowText || 'Remove row'"
             :row

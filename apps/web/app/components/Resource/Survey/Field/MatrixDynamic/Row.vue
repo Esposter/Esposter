@@ -21,7 +21,7 @@ interface Props {
   choiceItemsMap: Record<string, UiMenuItem<string>[]>;
   columns: SurveyMatrixColumn[];
   getHeaderId: (columnIndex: number) => string;
-  invalid: true | undefined;
+  invalid?: true | undefined;
   isDisabled: boolean;
   isRemoveDisabled: boolean;
   removeLabel: string;
