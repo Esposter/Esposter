@@ -49,10 +49,10 @@ const createDeletingBucket = (deleteNames: (names: string | string[]) => Promise
   ({ delete: deleteNames }) as R2Bucket;
 
 describe(processBlobDeletionHandler, () => {
-  const blobName = " ";
-  const secondBlobName = "  ";
-  const prefix = "a";
-  const prefixedBlobName = `${prefix}/${blobName}`;
+  const roomId = v7();
+  const blobName = `${roomId}/${v7()}`;
+  const secondBlobName = `${roomId}/${v7()}`;
+  const prefix = roomId;
   const userId = v7();
   const countedBytes = 1;
   // A blob storage has already reported, so the counter is carrying its bytes and a release gives them back
@@ -167,7 +167,7 @@ describe(processBlobDeletionHandler, () => {
   test("deletes every blob under the prefix", async () => {
     expect.hasAssertions();
 
-    await seedBlob(StorageBucket.MessageAssets, prefixedBlobName);
+    await seedBlob(StorageBucket.MessageAssets, blobName);
     await processBlobDeletionHandler(
       createPrefixEvent(prefix, new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds"))),
     );
@@ -180,10 +180,10 @@ describe(processBlobDeletionHandler, () => {
   test("keeps a blob written after the prefix deletion was published", async () => {
     expect.hasAssertions();
 
-    await seedBlob(StorageBucket.MessageAssets, prefixedBlobName);
+    await seedBlob(StorageBucket.MessageAssets, blobName);
     await processBlobDeletionHandler(createPrefixEvent(prefix, new Date(0)));
 
-    await expect(readContainer()).resolves.toStrictEqual([prefixedBlobName]);
+    await expect(readContainer()).resolves.toStrictEqual([blobName]);
   });
 
   test("rethrows a failing delete so the queue redelivers the batch", async () => {
