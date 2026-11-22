@@ -39,6 +39,7 @@
     "#vite/*": "./vite/*.ts"
   },
   "scripts": {
+    "ai:ci:distinct-errors": "pnpm -C scripts ai:ci:distinct-errors",
     "ai:ci:watch": "pnpm -C scripts ai:ci:watch",
     "ai:citations:sync": "pnpm -C scripts ai:citations:sync",
     "ai:dependencies:score": "pnpm -C scripts ai:dependencies:score",

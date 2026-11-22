@@ -15,7 +15,7 @@ gh pr list --state open --search "head:renovate/" --json number,title,headRefNam
 
 # The distinct errors of one branch's failed run, with the job and step columns stripped
 gh run list --branch <renovate-branch> --workflow CI.yaml --limit 3 --json databaseId,conclusion,createdAt
-gh run view <run-id> --log-failed | sed 's/^[^\t]*\t[^\t]*\t//' | grep -E "error TS|error:|FAIL|×" | cut -c1-260 | sort | uniq -c | sort -rn | head -30
+pnpm ai:ci:distinct-errors <run-id>
 ```
 
 The same error repeated per package is one error; count the distinct ones. Then sort the red by what it asks of the repo:

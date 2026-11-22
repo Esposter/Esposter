@@ -18,6 +18,7 @@
     "#src/*": "./src/*.ts"
   },
   "scripts": {
+    "ai:ci:distinct-errors": "node src/ci/distinctErrors/index.ts",
     "ai:ci:watch": "node src/ci/watch/index.ts",
     "ai:citations:sync": "node src/citations/sync/index.ts",
     "ai:dependencies:score": "node src/dependencies/score/index.ts",
