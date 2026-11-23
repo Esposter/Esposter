@@ -1,14 +1,6 @@
 import type { SortingNode } from "#src/models/oxlint/sorting/SortingNode";
 
-// Each node's edges: every node binding a name it reads, itself included when it reads a name it binds
-const computeDependencyEdges = (nodes: SortingNode[]): Map<SortingNode, SortingNode[]> => {
-  const nameBindersMap = new Map<string, SortingNode[]>();
-  for (const node of nodes)
-    for (const name of node.dependencyNames) nameBindersMap.set(name, [...(nameBindersMap.get(name) ?? []), node]);
-  return new Map(
-    nodes.map((node) => [node, node.dependencies.flatMap((name) => nameBindersMap.get(name) ?? [])] as const),
-  );
-};
+import { computeDependencyEdges } from "#src/services/oxlint/sorting/computeNodesInCircularDependencies/computeDependencyEdges";
 
 // The nodes on a cycle of dependencies, which no order can satisfy, so they keep their place in the sort. These are the
 // Members of every strongly connected component of more than one node, and of a node that reads its own binding

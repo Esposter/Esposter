@@ -3,6 +3,7 @@ import type { Context, ESTree, Reference } from "@oxlint/plugins";
 import { findNodeContaining } from "#src/services/oxlint/sorting/findNodeContaining";
 import { getItemRange } from "#src/services/oxlint/sorting/getItemRange";
 import { getReferencesWithin } from "#src/services/oxlint/sorting/getReferencesWithin";
+import { getOrCreate } from "@esposter/shared";
 
 // The names each item reads, gathered over the references the file's scopes make inside the items. `readNames` is given
 // The item a reference sits in, the reference, and the item its declaration sits in when that is one of the items
@@ -20,9 +21,8 @@ export const collectReadNames = <T extends { node: ESTree.Node }>(
     if (referencingItem === undefined) continue;
     const [declaration] = resolved.identifiers;
     const referencedItem = declaration ? findNodeContaining(itemRanges, declaration.range) : undefined;
-    const names = itemNamesMap.get(referencingItem) ?? [];
+    const names = getOrCreate(itemNamesMap, referencingItem, () => []);
     names.push(...readNames(referencingItem, reference, referencedItem));
-    itemNamesMap.set(referencingItem, names);
   }
   return itemNamesMap;
 };

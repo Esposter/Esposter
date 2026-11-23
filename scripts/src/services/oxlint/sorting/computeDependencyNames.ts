@@ -1,6 +1,6 @@
 import type { ESTree } from "@oxlint/plugins";
 
-// The names a binding pattern binds, which a property of an object pattern is known by to the properties that read it
+// The names a binding pattern binds, which the properties of an object pattern that read them depend on
 export const computeDependencyNames = (pattern: ESTree.Node): string[] => {
   let current = pattern;
   while (current.type === "AssignmentPattern") current = current.left;
