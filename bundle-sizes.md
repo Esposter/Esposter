@@ -60,7 +60,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | vue-phaserjs               | index.js                  |   14743 |   14.4 |
 | mjml-blocks                | index.d.ts                |   14642 |   14.3 |
 | grid-engine-headless       | **/*.js                   |   14219 |   13.9 |
-| @esposter/shared-node      | **/*.js                   |   13441 |   13.1 |
+| @esposter/shared-node      | **/*.js                   |   13469 |   13.2 |
 | survey-expression          | index.js                  |   13119 |   12.8 |
 | nuxt-security-module       | **/*.d.ts                 |   13021 |   12.7 |
 | @esposter/db-mock          | **/*.js                   |   13007 |   12.7 |
@@ -96,7 +96,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | vue-editor-layout-headless | index.js                  |    2743 |    2.7 |
 | trpc-nuxt-module           | index.js                  |    2633 |    2.6 |
 | keyframe-store             | **/*.d.ts                 |    2496 |    2.4 |
-| @esposter/shared-node      | **/*.d.ts                 |    2476 |    2.4 |
+| @esposter/shared-node      | **/*.d.ts                 |    2483 |    2.4 |
 | unplugin-pwa-nuxt          | index.js                  |    2328 |    2.3 |
 | hosted-assets              | index.d.ts                |    2300 |    2.2 |
 | vue-pdfjs-headless         | index.js                  |    2284 |    2.2 |
@@ -128,8 +128,8 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | vue-canvas-frame-headless  | **/*.d.ts                 |     753 |    0.7 |
 | @esposter/db-mock          | createMockBuckets.js      |     729 |    0.7 |
 | @esposter/db-schema        | createMetadataSchema.js   |     717 |    0.7 |
-| @esposter/shared-node      | cache.js                  |     610 |    0.6 |
-| @esposter/shared-node      | cache.d.ts                |     609 |    0.6 |
+| @esposter/shared-node      | cache.js                  |     624 |    0.6 |
+| @esposter/shared-node      | cache.d.ts                |     623 |    0.6 |
 | genshin-world              | sceneExport.js            |     606 |    0.6 |
 | @esposter/db-mock          | createMockDb.js           |     600 |    0.6 |
 | @esposter/db-schema        | sqliteTable.js            |     574 |    0.6 |
@@ -174,4 +174,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts            |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts    |       9 |    0.0 |
 
-**Total:** 169 files, 12982159 bytes, 12677.9 KiB, 12.38 MiB
+**Total:** 169 files, 12982222 bytes, 12678.0 KiB, 12.38 MiB
