@@ -230,7 +230,7 @@
 - `scripts/src/services/hostedAssets` — `pruneHostedAssets.ts`, `publishHostedAssets.test.ts`, `publishHostedAssets.ts`, `publishHostedAssetsToBucket.ts`, `readHostedAssetReachableObjects.ts`, `readLiveHostedAssetLocks.ts`, `readLockAt.ts`, `toHostedAssetLockObject.ts`, `toHostedAssetPaths.ts`, `toLockHashes.ts`, `verifyHostedAssets.test.ts`, `verifyHostedAssets.ts`, `verifyHostedAssetObject.ts`, `writeHostedAssetLock.ts`, `verifyHostedAssetProduct.ts`
 - `scripts/src/services/hostedAssets` — `getHostedAssetFileKey.ts`, `getHostedAssetFilesSource.ts`, `getHostedAssetLockKey.ts`, `planHostedAssetFiles.ts`, `publishHostedAssetFiles.test.ts`, `publishHostedAssetFiles.ts`, `pullHostedAssetFiles.test.ts`, `pullHostedAssetFiles.ts`, `readHostedAssetBytes.test.ts`, `readHostedAssetBytes.ts`, `readHostedAssetSourceFolder.test.ts`, `readHostedAssetSourceFolder.ts`, `readMirroredHostedAsset.ts`, `toHostedAssetFileKey.test.ts`, `toHostedAssetFileKey.ts`, `toHostedAssetNames.ts`, `toUniqueHostedAssetNames.ts`
 - `scripts/src/services/gameData/commands`
-- `scripts/src/services/dungeons` — `constants.ts`
+- `scripts/src/services/dungeons` — `constants.ts`, `dungeonsKeysModule.ts`, `scope.ts`, `toDungeonsKeyName.ts`
 - `scripts/src/services/gameVersion` — `commands`, `constants.ts`, `createStamp.test.ts`, `findCommandHeading.ts`, `formatStaleRow.ts`, `groupStaleOutputs.ts`, `listStampPaths.ts`, `planStaleRows.test.ts`, `planStaleRows.ts`, `readInstallStaleRows.ts`, `readLockGameVersion.ts`, `readStaleRows.test.ts`, `readStaleRows.ts`, `readStampedOutput.ts`
 - `scripts/src/services/genshinAssets` — `achievements`, `adventureRank`, `archive`
 - `scripts/src/services/genshinAssets` — `avatar`, `bounds`
