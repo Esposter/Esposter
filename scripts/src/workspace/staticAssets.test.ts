@@ -21,14 +21,21 @@ describe("staticAssets", () => {
 
   const ENGINE_LOADER_PATHSPECS = ["apps/web/app/services/dungeons/loader"];
   // A loader names a file in a static import, a dynamic import or an import.meta.glob.
-  // The string that names it is the first one in each form.
-  const LOADED_SPECIFIER_REGEX = /(?:\bfrom |\bimport\(\s*|\bimport\.meta\.glob\(\s*)"(?<specifier>[^"]+)"/gu;
+  // A glob names its files in one string or in an array of them, so every string in its argument is read
+  const LOADED_SPECIFIER_REGEX =
+    /(?:\bfrom |\bimport\(\s*)"(?<specifier>[^"]+)"|\bimport\.meta\.glob\(\s*(?<argument>\[[^\]]*\]|"[^"]+")/gu;
+  const QUOTED_REGEX = /"(?<quoted>[^"]+)"/gu;
   const HOSTED_MEDIA_REGEX = /\.(?:mp3|ogg|png|tmx|tsx|webp|woff2)(?:\?|$)|tilemap\.json(?:\?|$)/u;
 
-  const getHostedSpecifiers = (source: string): string[] =>
-    Array.from(source.matchAll(LOADED_SPECIFIER_REGEX), ({ groups }) => groups?.specifier ?? "").filter((specifier) =>
-      HOSTED_MEDIA_REGEX.test(specifier),
+  const getLoadedSpecifiers = (source: string): string[] =>
+    [...source.matchAll(LOADED_SPECIFIER_REGEX)].flatMap(({ groups }) =>
+      groups?.specifier === undefined
+        ? Array.from((groups?.argument ?? "").matchAll(QUOTED_REGEX), ({ groups: quoted }) => quoted?.quoted ?? "")
+        : [groups.specifier ?? ""],
     );
+
+  const getHostedSpecifiers = (source: string): string[] =>
+    getLoadedSpecifiers(source).filter((specifier) => HOSTED_MEDIA_REGEX.test(specifier));
 
   const checkIsOversizedOrUncompressed = (path: string): boolean =>
     statSync(join(REPOSITORY_ROOT, path)).size > SIZE_LIMIT_BYTES || UNCOMPRESSED_AUDIO_EXTENSIONS.has(extname(path));
@@ -70,12 +77,14 @@ describe("staticAssets", () => {
           'import tileset from "#src/assets/dungeons/tilesets/Dungeon.tsx";',
           'const frames = import.meta.glob("#src/assets/dungeons/scene/**/*.png", { eager: true });',
           'const sheet = await import("#src/assets/dungeons/sheet.webp");',
+          'const tiles = import.meta.glob(["#src/assets/dungeons/tiles/*.png", "./local.ts"]);',
         ].join("\n"),
       ),
     ).toStrictEqual([
       "#src/assets/dungeons/tilesets/Dungeon.tsx",
       "#src/assets/dungeons/scene/**/*.png",
       "#src/assets/dungeons/sheet.webp",
+      "#src/assets/dungeons/tiles/*.png",
     ]);
   });
 });
