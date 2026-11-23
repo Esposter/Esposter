@@ -207,7 +207,7 @@ catalog:
   vite-plus: ^1.7.0
   vitest: ^5.1.1
   vitest-browser-vue: ^3.1.0
-  vize: ^0.789.0
+  vize: ^0.790.0
   vue: ^3.5.46
   vue-eslint-parser: ^10.4.2
   vue-router: ^5.5.1

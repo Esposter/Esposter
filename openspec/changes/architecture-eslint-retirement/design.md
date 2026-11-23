@@ -35,6 +35,8 @@ oxlint parses only the script blocks of a `.vue` file, and its JS plugins see th
 
 So the phase opens with a gate. A planted violation in a script-first component, and another in a component with no script block, must both be reported on their template lines. The gate is run against vize's oxlint plugin first, since a pass inside oxlint keeps the lint one command and one walk of the tree. If the plugin misses the script-less component, vize's own lint, which parses the whole component, runs as a step beside oxlint instead. Giving those components an empty script block to reach the plugin is rejected: it is a file shape that exists only for the linter. Either way the rest of the phase is the same, since only the host differs.
 
+The gate chose vize's own lint. The plugin inside oxlint reported the script-first finding on a script line, with the template position only in its message, and missed the script-less component entirely. The plugin's `oxlint-vize` wrapper reported both on their template lines, but it runs a second oxlint over temporary copies, cannot carry the type-aware backend or the timing flag the root lint passes, and took an order of magnitude longer than vize's own lint over every component. vize's own lint reported both on their template lines in a few seconds for the whole tree. So the template pass is the root `lint:vue` task, vize reads its options off the `vue` key of `vite.config.ts`, and `oxlint-plugin-vize` is not installed. The incremental preset runs only the rules those options name, so a rule is on because the options say so, never because vize's defaults changed.
+
 ```mermaid
 flowchart TD
   PLANT["planted template violations: script-first, and no script block"] --> PLUGIN{"the vize oxlint plugin reports both on their template lines?"}
@@ -94,6 +96,8 @@ The phase opens with its own gate: a planted violation for a selector of each sh
 | File                                                          | Role                                                                                     |
 | :------------------------------------------------------------ | :--------------------------------------------------------------------------------------- |
 | `oxlint.config.ts`                                            | gains the script selector bans by path, the JS plugins and the template pass's wiring    |
+| `vite/vueOptions.ts`                                          | the template pass's options: the incremental preset and the rules it runs                |
+| `vite/checkTasks.ts`                                          | the `lint:vue` and `lint:packages:vue` leaves of the root lint                           |
 | `oxlint/jsPlugins.ts`                                         | lists the JS plugins oxlint loads; the third-party ESLint plugins join it                |
 | `scripts/src/oxlint/`                                         | the local JS plugins; the selector-ban plugin joins them                                 |
 | `packages/configuration/eslint/index.vue.js`                  | the per-path selector composition that moves to `oxlint.config.ts`, then is deleted      |
@@ -110,6 +114,7 @@ The phase opens with its own gate: a planted violation for a selector of each sh
 
 ## Notes
 
+- The baseline each phase is measured against is CI's Lint step before any rule moved, a few minutes on the hosted runner, nearly all of it the per-package ESLint passes. The template pass adds seconds to it.
 - The ESLint directives in the tree mostly name `no-restricted-syntax`, `perfectionist/sort-objects` and `vue/no-restricted-syntax`. Each is rewritten for its rule's new host in the phase that moves the rule, so a directive never names a rule nothing runs. The `vue/no-v-html` directives already name a rule that is off, and they are deleted rather than rewritten.
 - vize describes itself as experimental and pre-1.0. The template pass is pinned by the catalog like every other dependency, and a vize bump is read against the gate's planted violations, which stay as tests.
 

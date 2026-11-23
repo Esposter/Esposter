@@ -26,6 +26,8 @@ Read when choosing which root script runs a build, the suite, a bench, a depende
 listed in `ignoreDependencies`, never kept by an import that exists to satisfy it; a component nothing renders is
 not something knip can see, and `apps/web`'s unrendered-component test is.
 
+`vp run lint:vue` is vize's own lint over every component's template, and part of `lint`; `lint:packages:vue` is the same pass over `packages/` for the release gate. oxlint reads only a component's script, so the template rules live here, in `vite/vueOptions.ts`, which runs exactly the rules it names (`openspec/changes/architecture-eslint-retirement/design.md`, "The template pass").
+
 `vp run lint:workflows` is actionlint over `.github/workflows`, and part of `lint`: the fork published as
 `@kjanat/actionlint`, run with ShellCheck and pyflakes off so no host's `PATH` changes the verdict. Why each of
 those, and why a broken workflow is this check's to catch, is

@@ -131,6 +131,8 @@ export default {
   // Again for any rule the config deactivates — it only switches off the twins of rules oxlint actually runs.
   // So dropping this half as redundant turns the rule back on in ESLint alone, on a tree oxlint passes clean.
   "vue/require-default-prop": "off",
+  // Run by vize's template pass, configured in `vite/vueOptions.ts`
+  "vue/require-v-for-key": "off",
   "vue/v-bind-style": ["error", "shorthand", { sameNameShorthand: "always" }],
   "vue/v-slot-style": ["error", { atComponent: "shorthand" }],
   "vue/valid-template-root": "off",
