@@ -8,11 +8,12 @@ import { describe, expect, test } from "vitest";
 /**
  * A spec, skill, ledger or README cites a code name in backticks, and nothing resolves it: `ai:citations:sync`
  * follows a file's rename, but a function, constant or component renamed in place leaves every sentence that
- * named it reading as it did. A backticked name is a claim that the tree or an installed package holds it, so
+ * named it reading as it did. A backticked name is a claim that the code or an installed package holds it, so
  * one neither holds is stale — the `openspec` skill's rule ("Mechanical follow-through"), which is what leaves a name
  * only an external system declares written in quotes and a rule's invented example on a placeholder stem, so
- * that every hit here is a rename the prose missed. A source file's comments make the same claim, and are judged
- * against the code alone, since a comment's own words would otherwise vouch for the name it cites.
+ * that every hit here is a rename the prose missed. A source file's comments make the same claim, and a page's
+ * citation is judged against the code alone as well, since a comment's own words would otherwise vouch for the name
+ * it cites.
  */
 describe("staleNames", () => {
   // A cold read of the store's declarations, before its cache under `node_modules/.cache` exists
@@ -25,7 +26,7 @@ describe("staleNames", () => {
       expect.hasAssertions();
 
       expect(
-        getStaleNames(readCitingPages(), readSourceNames().all.union(readDependencyNames())).map(
+        getStaleNames(readCitingPages(), readSourceNames().union(readDependencyNames())).map(
           ({ name, path }) => `${path} → ${name}`,
         ),
       ).toStrictEqual([]);
@@ -39,7 +40,7 @@ describe("staleNames", () => {
       expect.hasAssertions();
 
       expect(
-        getStaleNames(readSourceComments(), readSourceNames().code.union(readDependencyNames())).map(
+        getStaleNames(readSourceComments(), readSourceNames().union(readDependencyNames())).map(
           ({ name, path }) => `${path} → ${name}`,
         ),
       ).toStrictEqual([]);

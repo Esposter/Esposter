@@ -80,7 +80,7 @@ Enforceable next. What is already enforced sits with what it guards: every relat
 `scripts/src/workspace/diagrams.test.ts`, every open change's model in `scripts/src/workspace/changeModel.test.ts`,
 every backticked repo path — a Key files row's included — and every ``the `x` skill`` name across all of this
 ledger's trees in `scripts/src/workspace/citations.test.ts`, every backticked code name in the same trees against
-the tree and the installed packages in `scripts/src/workspace/staleNames.test.ts` (the rename greps 2 and 3 find
+the code and the installed packages in `scripts/src/workspace/staleNames.test.ts` (the rename greps 2 and 3 find
 only where the prose admits to it), grep 8's decided subset in `scripts/src/workspace/restatedPointers.test.ts`,
 and prose restating a node or pnpm version in `scripts/src/workspace/toolchainVersionRestatements.test.ts`. Greps
 4, 5 and 6 are exact and decide themselves — but each can only land once every row is swept, since an unswept

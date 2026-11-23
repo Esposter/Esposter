@@ -1,4 +1,3 @@
-import type { SourceNames } from "#src/models/sweeps/staleNames/SourceNames";
 import type { SourceWordEntry } from "#src/models/sweeps/staleNames/SourceWordEntry";
 
 import { APP_DIRECTORY, REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -23,13 +22,13 @@ const COMPONENT_PATH_REGEX = /\/components\/(?<componentPath>.+\.vue)$/u;
 // Prepared yet
 const NUXT_DECLARATIONS_DIRECTORY = join(REPOSITORY_ROOT, APP_DIRECTORY, ".nuxt");
 
-// Every name the tracked tree holds: each word of every source file, every path segment (a directory a ledger
-// Row names, a file name whole and by its dot-split parts, so `Foo.test.ts` vouches for `Foo`), the registered
-// Name of every Nuxt component, which no file writes, and every word of the declarations Nuxt generates. A file's
-// Words are read twice, once whole and once with its comments blanked, so `code` holds what the code names alone.
-// A source file whose modification time and size still match the cache is not read again, and a tree none of whose
-// Files changed takes its words from the cache's unions rather than from every entry
-export const readSourceNames = (): SourceNames => {
+// Every name the code holds: each word of every source file with its comments blanked, every path segment (a directory
+// A ledger row names, a file name whole and by its dot-split parts, so `Foo.test.ts` vouches for `Foo`), the registered
+// Name of every Nuxt component, which no file writes, and every word of the declarations Nuxt generates. A comment's
+// Own words vouch for nothing, so a name only a comment holds is not here. A source file whose modification time and
+// Size still match the cache is not read again, and a tree none of whose files changed takes its words from the cache
+// Rather than from every entry
+export const readSourceNames = (): Set<string> => {
   const names = new Set<string>();
   const generatedPatterns = readGeneratedPatterns();
   const cache = readSourceWordCache(generatedPatterns);
@@ -59,7 +58,6 @@ export const readSourceNames = (): SourceNames => {
 
   // A file read again, or a file gone since the last scan, changes the unions the cache holds
   const isCacheUnchanged = !isEntryChanged && Object.keys(cache.entries).length === Object.keys(entries).length;
-  const words = isCacheUnchanged ? cache.words : [...new Set(Object.values(entries).flatMap((entry) => entry.words))];
   const codeWords = isCacheUnchanged
     ? cache.codeWords
     : [...new Set(Object.values(entries).flatMap((entry) => entry.codeWords))];
@@ -70,9 +68,8 @@ export const readSourceNames = (): SourceNames => {
   if (!isCacheUnchanged)
     writeFileAtomically(
       SOURCE_WORD_CACHE_PATH,
-      JSON.stringify({ codeWords, entries, generatedPatterns, version: SOURCE_WORD_CACHE_VERSION, words }),
+      JSON.stringify({ codeWords, entries, generatedPatterns, version: SOURCE_WORD_CACHE_VERSION }),
     );
 
-  const code = names.union(new Set(codeWords));
-  return { all: code.union(new Set(words)), code };
+  return names.union(new Set(codeWords));
 };

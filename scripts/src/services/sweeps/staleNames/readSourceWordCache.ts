@@ -12,7 +12,6 @@ export const readSourceWordCache = (generatedPatterns: string[]): SourceWordCach
     entries: {},
     generatedPatterns,
     version: SOURCE_WORD_CACHE_VERSION,
-    words: [],
   };
   if (!existsSync(SOURCE_WORD_CACHE_PATH)) return emptyCache;
 
