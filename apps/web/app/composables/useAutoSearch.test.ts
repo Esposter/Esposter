@@ -8,8 +8,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/trpc/createErrorAlert"), () => ({ createErrorAlert: vi.fn<typeof createErrorAlert>() }));
 
-const setupAutoSearch = () => {
-  const searchQuery = ref("");
+const setupAutoSearch = (initialSearchQuery = "") => {
+  const searchQuery = ref(initialSearchQuery);
   const searchedQueries: string[] = [];
   const reset = vi.fn<() => void>();
   useAutoSearch(searchQuery, {
@@ -40,6 +40,16 @@ describe(useAutoSearch, () => {
 
     const { searchedQueries, searchQuery } = setupAutoSearch();
     searchQuery.value = searchQueryValue;
+    await flushPromises();
+
+    expect(searchedQueries).toStrictEqual([searchQueryValue]);
+  });
+
+  // Nothing edits a box that starts with text, so the search it is owed is scheduled at mount rather than on an edit
+  test("searches the query the box starts with", async () => {
+    expect.hasAssertions();
+
+    const { searchedQueries } = setupAutoSearch(searchQueryValue);
     await flushPromises();
 
     expect(searchedQueries).toStrictEqual([searchQueryValue]);
