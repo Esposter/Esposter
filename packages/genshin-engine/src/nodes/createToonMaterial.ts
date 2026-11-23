@@ -12,10 +12,10 @@ import { createWetSheenNode } from "#src/nodes/createWetSheenNode";
 import { Color } from "three";
 import { normalGeometry, positionGeometry, transformNormal, transformNormalToView, uniform, vec4 } from "three/tsl";
 
-// The colour as a uniform of the material's own, not `materialColor`, which reads the colour of whichever material is drawn.
-// A witness target drawn with its own material read white where the stone's colour stands, so no family's colour was ever measured.
-// White is the default colour a material without one draws. A detail's amplitudes and texel size are uniforms too, so
-// Every detail draws in one program
+// The colour as a uniform of the material's own, not `materialColor`, which reads the colour of whichever material is
+// Drawn. A witness target drawn with its own material read white where the stone's colour stands, so no family's colour
+// Was ever measured. White is the default colour a material without one draws. A detail's amplitudes and texel size are
+// Uniforms too, so Every detail draws in one program
 const createMaterialSurfaceNode = (
   color?: ColorRepresentation,
   detail?: SurfaceDetail,

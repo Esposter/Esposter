@@ -19,11 +19,11 @@ const waitForIdle = (): Promise<void> =>
       { timeout: IDLE_TIMEOUT_MS },
     );
   });
-// A sky's cloud layer's textures (`createCloudLayerTextures`) written in place from their statistics (`CloudLayerTextureProfiles`,
-// `synthesizeSpectralNoise`), none taken from the game's: its density's four channels, its curl's two, its wisps' strip
-// In the alpha over white, and its normal map, each texel the height's slope by central differences, wrapping, off the
-// Direction it leans in, encoded from -1 to 1 into 0 to 1. Each is drawn in an idle moment of its own, a
-// Few tenths of a second of work in all that would otherwise hold the scene's mount
+// A sky's cloud layer's textures (`createCloudLayerTextures`) written in place from their statistics
+// (`CloudLayerTextureProfiles`, `synthesizeSpectralNoise`), none taken from the game's: its density's four channels,
+// Its curl's two, its wisps' strip In the alpha over white, and its normal map, each texel the height's slope by
+// Central differences, wrapping, off the Direction it leans in, encoded from -1 to 1 into 0 to 1. Each is drawn in an
+// Idle moment of its own, a Few tenths of a second of work in all that would otherwise hold the scene's mount
 export const synthesizeCloudLayerTextures = async (
   { curl, density, normal, wisps }: CloudLayerTextureProfiles,
   textures: Record<"curl" | "density" | "normal" | "wisps", DataTexture>,

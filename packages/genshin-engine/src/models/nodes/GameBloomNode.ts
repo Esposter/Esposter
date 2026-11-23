@@ -16,7 +16,8 @@ import { Node, NodeMaterial, NodeUpdateType, QuadMesh, RendererUtils, RenderTarg
 
 declare module "three/webgpu" {
   interface NodeBuilder {
-    // The runtime builder has this method, which three's declarations leave out, so the bloom's materials can share its context
+    // The runtime builder has this method, which three's declarations leave out, so the bloom's materials can share its
+    // Context
     getSharedContext: () => Record<string, unknown>;
   }
 }
@@ -60,7 +61,8 @@ const createTapMean = (source: TextureNode, inverseSize: UniformNode<"vec2", Vec
     .reduce((sum, tap) => sum.add(tap))
     .mul(float(1 / taps.length));
 
-// One blur pass of every level: its taps are read from its source texture, which is set each frame with the source's inverse size
+// One blur pass of every level: its taps are read from its source texture, which is set each frame with the source's
+// Inverse size
 interface GameBloomBlurPass {
   inverseSize: UniformNode<"vec2", Vector2>;
   material: NodeMaterial;
@@ -78,11 +80,12 @@ interface GameBloomLevel {
   weight: number;
 }
 
-// The game's bloom over a scene colour, drawn as the game's own programs draw it (`Login/Scene/Display.reference.ts`): the
-// Prefilter takes max(0, colour - threshold) times the scaler of each channel, or of the mean of four taps for the four-tap
-// Form, the chain box-downsamples the prefiltered frame by four taps a level and blurs each level, and the compose sums the
-// Four levels by their weights and scales the sum by the intensity. The output is the bloom alone, added onto the scene by
-// The caller as three's BloomNode's is. The structure's choices are the game's own shapes, GENSHIN_BLOOM_STRUCTURE the default
+// The game's bloom over a scene colour, drawn as the game's own programs draw it (`Login/Scene/Display.reference.ts`):
+// The Prefilter takes max(0, colour - threshold) times the scaler of each channel, or of the mean of four taps for the
+// `four-tap` Form, the chain box-downsamples the prefiltered frame by four taps a level and blurs each level, and the
+// Compose sums the Four levels by their weights and scales the sum by the intensity. The output is the bloom alone,
+// Added onto the scene by The caller as three's BloomNode's is. The structure's choices are the game's own shapes,
+// GENSHIN_BLOOM_STRUCTURE the default
 export class GameBloomNode extends Node<"vec4"> {
   readonly #blurPasses: GameBloomBlurPass[];
   readonly #composeMaterial = new NodeMaterial();
@@ -228,7 +231,8 @@ export class GameBloomNode extends Node<"vec4"> {
     this.#quad.render(renderer);
   }
 
-  // Each level is half the one above, and the prefilter, the input copy and the compose sit at the drawing buffer's full size
+  // Each level is half the one above, and the prefilter, the input copy and the compose sit at the drawing buffer's
+  // Full size
   #setSize(width: number, height: number): void {
     this.#prefilterTarget.setSize(width, height);
     this.#inputTarget.setSize(width, height);

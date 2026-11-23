@@ -5,8 +5,8 @@ import { MeshToonNodeMaterial } from "three/webgpu";
 
 // Three's toon material, whose emissive node the rim is written into so it lights on top of the ramp. Three's outline
 // Pass outlines a material by its toon flag alone, so ground that is not outlined, as the game draws none around its
-// Terrain, clears the flag while keeping the toon lighting. A material outlined with its own edge is drawn in that edge's
-// Colour and width, and its sphere map is held here so its image is released with the material
+// Terrain, clears the flag while keeping the toon lighting. A material outlined with its own edge is drawn in that
+// Edge's Colour and width, and its sphere map is held here so its image is released with the material
 export class ToonNodeMaterial extends MeshToonNodeMaterial {
   edge?: ToonEdge | undefined;
   // The matrix a placed copy is drawn by, read by its outline as by its fill, so the two stay in one place

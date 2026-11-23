@@ -5,9 +5,9 @@ import { applyPrecipitationSettings } from "#src/atmosphere/applyPrecipitationSe
 import { PRECIPITATION_SETTINGS_MAP } from "#src/atmosphere/constants";
 import { PrecipitationKind } from "#src/models/atmosphere/PrecipitationKind";
 
-// The weather as it stands written into what it moves: the clouds and the haze raised over the region's own clear values
-// And never below them, the ground's wetness, and the particles of the kind falling at their share, rain's splashes
-// With them. The haze's colour is the sky's, written every frame, so the weather's tint over it is laid apart
+// The weather as it stands written into what it moves: the clouds and the haze raised over the region's own clear
+// Values And never below them, the ground's wetness, and the particles of the kind falling at their share, rain's
+// Splashes With them. The haze's colour is the sky's, written every frame, so the weather's tint over it is laid apart
 export const applyWeatherState = (
   { cloudCoverage, fogDensity, precipitationDensity, precipitationKind, wetness }: WeatherState,
   { fogUniforms, lightUniforms, precipitationUniforms, skyUniforms }: WeatherTargets,

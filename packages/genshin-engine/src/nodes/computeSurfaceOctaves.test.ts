@@ -5,8 +5,8 @@ import { describe, expect, test } from "vitest";
 describe(computeSurfaceOctaves, () => {
   // A base map's texel spans 2 metres where the ground draws it, 512 texels over a 1,024-metre tile
   const BASE_MAP_METRES_PER_TEXEL = 2;
-  // The ground's texture spans 2.3 metres a texel over Windrise's tiles, whose slopes add area, and the plant domes draw
-  // The ground's detail at that scale
+  // The ground's texture spans 2.3 metres a texel over Windrise's tiles, whose slopes add area, and the plant domes
+  // Draw The ground's detail at that scale
   const PLANT_DOME_METRES_PER_TEXEL = 2.3;
 
   test("gives a flat surface no detail", () => {

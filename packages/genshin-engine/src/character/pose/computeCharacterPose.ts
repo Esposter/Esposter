@@ -18,7 +18,8 @@ const AXIS_X = new Vector3(1, 0, 0);
 const AXIS_Z = new Vector3(0, 0, 1);
 const armZRotation = new Quaternion();
 const armXRotation = new Quaternion();
-// Sets a bone's rotation as its X turn after its Z turn, so the arm is lowered from the T and then swung forward or back
+// Sets a bone's rotation as its X turn after its Z turn, so the arm is lowered from the T and then swung forward or
+// Back
 const setBoneRotation = (rotation: Quaternion, xAngle: number, zAngle: number): void => {
   armZRotation.setFromAxisAngle(AXIS_Z, zAngle);
   armXRotation.setFromAxisAngle(AXIS_X, xAngle);
@@ -26,8 +27,8 @@ const setBoneRotation = (rotation: Quaternion, xAngle: number, zAngle: number): 
 };
 // Writes each standard bone's rotation for the body's state: the arms lowered from the T, the chest and shoulders
 // Breathing in every state, and a gait's legs, knees, arms and elbows swinging opposite, with the air's fixed stances
-// For the jump, the fall, the plunge and the glide. The PMX places 左 at +x, so a left arm's rest turns it down the other
-// Way from a right one's. A state with no pose of its own stands idle
+// For the jump, the fall, the plunge and the glide. The PMX places 左 at +x, so a left arm's rest turns it down the
+// Other Way from a right one's. A state with no pose of its own stands idle
 export const computeCharacterPose = (
   { elapsed, state, stridePhase }: CharacterPoseInput,
   rotations: CharacterPoseRotations,
@@ -40,8 +41,8 @@ export const computeCharacterPose = (
   const armBend = gait?.armBendRadians ?? POSE_ARM_BEND_RADIANS;
   const sinPhase = Math.sin(stridePhase);
   const cosPhase = Math.cos(stridePhase);
-  // The left leg swings forward as the stride's sine rises, the right leg half a stride behind it, and each arm opposite
-  // Its own leg
+  // The left leg swings forward as the stride's sine rises, the right leg half a stride behind it, and each arm
+  // Opposite Its own leg
   const legSwing = gait?.legSwingRadians ?? 0;
   const armSwing = gait?.armSwingRadians ?? 0;
   const kneeBend = gait?.kneeBendRadians ?? air?.kneeBendRadians ?? 0;

@@ -36,8 +36,8 @@ const REFLECTION_STRENGTH = 0.55;
 // Genshin's water as one unlit material over the scene behind it. How much water lies between the surface and the
 // Floor, read from the scene's depth along the view ray, grades its colour from the shallow tint to the deep one and
 // Lets the floor show through the shallows, bent by the ripples. Where that depth is small, at every shore, rock or
-// Pillar, animated foam lines gather with no mesh authored. The sun breaks on the ripples into hard glints stepped
-// Out of a narrow highlight, and the sky's colours are reflected toward the horizon. A flow carries the ripples and foam
+// Pillar, animated foam lines gather with no mesh authored. The sun breaks on the ripples into hard glints stepped Out
+// Of a narrow highlight, and the sky's colours are reflected toward the horizon. A flow carries the ripples and foam
 // Downstream, so a river's surface reads as moving, and a river's ribbon passes its bend foam (`createRiverGeometry`),
 // Which gathers foam along a bend's outer bank as a shore does; still water gathers none there
 export const createWaterMaterial = (
@@ -48,7 +48,8 @@ export const createWaterMaterial = (
   bendFoam: Node<"float"> = float(0),
 ): MeshBasicNodeMaterial => {
   const waterMaterial = new MeshBasicNodeMaterial({ side: DoubleSide, transparent: true });
-  // The pattern is sampled upstream of each point, so it is carried downstream; still water has no flow and samples in place
+  // The pattern is sampled upstream of each point, so it is carried downstream; still water has no flow and samples in
+  // Place
   const flowedPosition = positionWorld.xz.sub(direction.mul(speed).mul(time));
   const normal = createWaterRippleNormal(flowedPosition);
   const refractedUV = screenUV.add(normal.xz.mul(REFRACTION_STRENGTH));

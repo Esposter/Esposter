@@ -21,8 +21,8 @@ const createSelection = (keys: number[]): TerrainSelection => {
   return selection;
 };
 
-// Each scale's streamer is built once and its frame repeated: a frame that holds or still waits on the same tiles leaves
-// The streamer as it found it, so every iteration is the same frame
+// Each scale's streamer is built once and its frame repeated: a frame that holds or still waits on the same tiles
+// Leaves The streamer as it found it, so every iteration is the same frame
 describe(createTileStreamer, () => {
   test.for(BENCH_TILE_COUNTS)("%i tiles a frame", async (count, { bench }) => {
     const wanted = createSelection(createKeys(0, count));

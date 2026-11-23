@@ -8,8 +8,8 @@ import type { ShadingRegionToggles } from "#src/models/character/ShadingRegionTo
 import type { OutlineWidthKnots } from "#src/models/nodes/OutlineWidthKnots";
 import type { Texture, Vector3Tuple } from "three";
 
-// The inputs the character shading reads, in the shape of the Inputs table on the shading page. Every one takes its default
-// Where nothing supplies it, as the table sets out, so a material draws whatever its file holds
+// The inputs the character shading reads, in the shape of the Inputs table on the shading page. Every one takes its
+// Default Where nothing supplies it, as the table sets out, so a material draws whatever its file holds
 export interface CharacterShadingInputs {
   // The brightness of the main light, "_ES_CharacterMainLightBrightness"
   brightness: number;
@@ -17,7 +17,8 @@ export interface CharacterShadingInputs {
   color: Vector3Tuple;
   // The contrast and desaturation of the output tone, "_ContrastScale" and "_DesaturateScale"
   contrastScale: number;
-  // Each region's cool shadow colour, "_CoolShadowMultColor" and its later regions, mixed in where the cool shadow is on
+  // Each region's cool shadow colour, "_CoolShadowMultColor" and its later regions, mixed in where the cool shadow is
+  // On
   coolShadowMultiplyColors: ShadingRegionColours;
   // The shadow ramp is read as its cool row too, mixed in by the cool tone, where the cool shadow is on
   coolShadowTone: number;
@@ -25,8 +26,8 @@ export interface CharacterShadingInputs {
   // The emission's colour and scale, "_EmissionColor_MHY" and "_EmissionScaler"
   emissionColor: Vector3Tuple;
   emissionScaler: number;
-  // The face's draw, its threshold and flip set each frame from the light, and the face map, read by the face kind, with
-  // Its softness "_FaceMapSoftness"
+  // The face's draw, its threshold and flip set each frame from the light, and the face map, read by the face kind,
+  // With Its softness "_FaceMapSoftness"
   faceDraw: FaceDraw;
   faceMap?: Texture | undefined;
   faceSoftness: number;
@@ -45,8 +46,8 @@ export interface CharacterShadingInputs {
   kind: CharacterMaterialKind;
   // The ramp's light area and band width, "_LightArea" and "_ShadowRampWidth"
   lightArea: number;
-  // The lightmap "_LightMapTex", whose red is the metal mask and the specular weight, green the shadow threshold, blue the
-  // Specular gate and alpha the region
+  // The lightmap "_LightMapTex", whose red is the metal mask and the specular weight, green the shadow threshold, blue
+  // The Specular gate and alpha the region
   lightMapTexture?: Texture | undefined;
   // The main texture "_MainTex"
   mainTexture?: Texture | undefined;
@@ -75,8 +76,9 @@ export interface CharacterShadingInputs {
   specularColor: Vector3Tuple;
   specularInShadow: number;
   specularMultiplier: number;
-  // A PMX material's sphere map, laid over its diffuse as MMD lays it, multiplied or added, before the lit colour. It is not
-  // The metal map: a PMX file has no lightmap for the metal gate to read, so the sphere never reaches that branch
+  // A PMX material's sphere map, laid over its diffuse as MMD lays it, multiplied or added, before the lit colour. It
+  // Is not The metal map: a PMX file has no lightmap for the metal gate to read, so the sphere never reaches that
+  // Branch
   sphere?: { mode: typeof PmxSphereMode.Add | typeof PmxSphereMode.Multiply; texture: Texture } | undefined;
   vertexAo: number;
   vertexRampWidth: number;

@@ -3,16 +3,17 @@ import type { LandmarkCollider } from "#src/models/collision/LandmarkCollider";
 import type { Stamina } from "#src/models/locomotion/Stamina";
 import type { Vector3 } from "three";
 
-// The ground and the landmarks a body moves against, read in one frame of coordinates, and where its feet start in it. Its
-// Stamina is one of two: the party's pool, which the pool's owner builds with the maximum and the consumption multiplier
-// It holds and which a kit restores to too, or a pool of the body's own, built full at a maximum with the multiplier. The
-// Two never mix, so the pool a body spends from is never given a multiplier it ignores
+// The ground and the landmarks a body moves against, read in one frame of coordinates, and where its feet start in it.
+// Its Stamina is one of two: the party's pool, which the pool's owner builds with the maximum and the consumption
+// Multiplier It holds and which a kit restores to too, or a pool of the body's own, built full at a maximum with the
+// Multiplier. The Two never mix, so the pool a body spends from is never given a multiplier it ignores
 export type CharacterControllerOptions = (
   | {
       // The factor every stamina spend is multiplied by, read at each spend, and 1 when none is given
       getStaminaConsumptionMultiplier?: () => number;
       stamina?: never;
-      // The most stamina the body starts with and holds, which the Statues of The Seven raise as their levels are reached
+      // The most stamina the body starts with and holds, which the Statues of The Seven raise as their levels are
+      // Reached
       staminaMaximum: number;
     }
   | { getStaminaConsumptionMultiplier?: never; stamina: Stamina; staminaMaximum?: never }

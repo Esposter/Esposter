@@ -17,12 +17,12 @@ const checkIsSelected = (selection: TerrainSelection, key: number): boolean => {
 };
 
 // Which tiles are held, which are generating, and which to ask for next. The coarsest missing tiles are asked for
-// First, since one of them covers the ground a finer tile will later refine, and at most a few generate at once.
-// Past the cache's size, the tile wanted longest ago is freed, never one wanted or drawn this frame, and a tile
-// Arrives as recently wanted as the last frame that wanted it, so one the view moved on from is freed first. The
-// Generating itself is the caller's, through `requestTile` and `receive`, so the streamer runs the same in a test as
-// Over a worker pool. A refresh marks each tile held or generating that it names stale, so each is asked for again as if
-// Missing while the held one is still drawn
+// First, since one of them covers the ground a finer tile will later refine, and at most a few generate at once. Past
+// The cache's size, the tile wanted longest ago is freed, never one wanted or drawn this frame, and a tile Arrives as
+// Recently wanted as the last frame that wanted it, so one the view moved on from is freed first. The Generating itself
+// Is the caller's, through `requestTile` and `receive`, so the streamer runs the same in a test as Over a worker pool.
+// A refresh marks each tile held or generating that it names stale, so each is asked for again as if Missing while the
+// Held one is still drawn
 export const createTileStreamer = <TTile>({
   disposeTile,
   maxCachedCount,
@@ -148,9 +148,9 @@ export const createTileStreamer = <TTile>({
       // Slowing the view's own
       requestSelectionMissing(wanted);
       requestSelectionMissing(surrounding);
-      // A failed key the loop above re-requested is counted as generating instead, and one that no slot took stays counted
-      // While an update still asks for it and it is neither held nor generating. One no update asks for any longer, such
-      // As a drawn ancestor no longer wanted, is dropped
+      // A failed key the loop above re-requested is counted as generating instead, and one that no slot took stays
+      // Counted While an update still asks for it and it is neither held nor generating. One no update asks for any
+      // Longer, such As a drawn ancestor no longer wanted, is dropped
       for (const key of takenRetryKeys) {
         const isAskedFor = checkIsSelected(wanted, key) || checkIsSelected(surrounding, key);
         if (isAskedFor && !checkIsSettled(key) && !pendingWantedFrameMap.has(key)) retryKeySet.add(key);

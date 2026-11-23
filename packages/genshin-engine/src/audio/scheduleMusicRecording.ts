@@ -6,11 +6,11 @@ import { getMusicRecordingGain } from "#src/audio/getMusicRecordingGain";
 import { getMusicRecordingRate } from "#src/audio/getMusicRecordingRate";
 import { selectMusicSample } from "#src/audio/selectMusicSample";
 
-// One note's recording played at a time on the audio clock, over its synthesized note: the recording `selectMusicSample`
-// Picks, from its decoded buffer by file, read at the rate that shifts it to the note's pitch as the instrument tunes
-// It, at the voice's recording level and the note's velocity, held to the note's end and then faded with the
-// Instrument's release, until its buffer runs out. A voice with no recordings, or one whose buffer has not been
-// Decoded, plays nothing here
+// One note's recording played at a time on the audio clock, over its synthesized note: the recording
+// `selectMusicSample` Picks, from its decoded buffer by file, read at the rate that shifts it to the note's pitch as
+// The instrument tunes It, at the voice's recording level and the note's velocity, held to the note's end and then
+// Faded with the Instrument's release, until its buffer runs out. A voice with no recordings, or one whose buffer has
+// Not been Decoded, plays nothing here
 export const scheduleMusicRecording = (
   context: BaseAudioContext,
   destination: AudioNode,

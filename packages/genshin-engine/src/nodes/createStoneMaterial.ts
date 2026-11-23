@@ -9,9 +9,9 @@ import { color, vec3 } from "three/tsl";
 
 // A stone lit as the game's deferred pass lights its towers, bridges, walkway and door, from the scene's shared stone
 // Light (`StoneLightingModel`): its albedo through the sun's toon ramp and the sky's harmonics, and a glow along its
-// Edges (`createStoneGlowNode`). It draws no outline, as the game's stone draws none. Its smoothness and specular colour
-// Wait on the pass's highlight, which the light's solve does not yet hold. A light of the stone's own, such as a door
-// Opening, adds to its glow
+// Edges (`createStoneGlowNode`). It draws no outline, as the game's stone draws none. Its smoothness and specular
+// Colour Wait on the pass's highlight, which the light's solve does not yet hold. A light of the stone's own, such as a
+// Door Opening, adds to its glow
 export const createStoneMaterial = (
   options: StoneMaterialOptions,
   stoneLight: StoneLightUniforms,

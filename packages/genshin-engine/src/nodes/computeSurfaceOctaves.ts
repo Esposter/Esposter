@@ -7,12 +7,14 @@ interface SurfaceOctave {
   frequency: number;
 }
 
-// The iterations a fit's amplitudes are solved over, each multiplying every amplitude by how far the model is from its target
+// The iterations a fit's amplitudes are solved over, each multiplying every amplitude by how far the model is from its
+// Target
 const SOLVE_ITERATIONS = 300;
 // Where the amplitudes start, a little above zero, since a multiplicative update cannot leave zero
 const SOLVE_START_ENERGY = 1e-6;
-// Each octave's response in every band of the detail and in its variance, the measured rows of `SURFACE_OCTAVE_RESPONSES`,
-// Relative to the target a row holds, so a band of little energy weighs as much as the variance
+// Each octave's response in every band of the detail and in its variance, the measured rows of
+// `SURFACE_OCTAVE_RESPONSES`, Relative to the target a row holds, so a band of little energy weighs as much as the
+// Variance
 const computeResponses = (targets: number[]): number[][] =>
   SURFACE_OCTAVE_RESPONSES.map((responses) =>
     responses.map((response, row) => (targets[row] ? response / targets[row] : 0)),

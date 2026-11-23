@@ -37,8 +37,8 @@ export const PRECIPITATION_COUNT = 2048;
 export const PRECIPITATION_VOLUME_SIZE = 60;
 export const PRECIPITATION_VOLUME_HEIGHT = 30;
 export const PRECIPITATION_SWAY_SPEED = 1.3;
-// Each kind's look, as starting values to be fitted to the game's recordings: rain's streaks fall fast and lean with the
-// Wind a little, snow's flakes drift down slowly and sway, and sand is carried along the wind
+// Each kind's look, as starting values to be fitted to the game's recordings: rain's streaks fall fast and lean with
+// The Wind a little, snow's flakes drift down slowly and sway, and sand is carried along the wind
 export const PRECIPITATION_SETTINGS_MAP: Readonly<Record<PrecipitationKind, PrecipitationSettings>> = {
   [PrecipitationKind.Rain]: { fallSpeed: 14, length: 0.9, opacity: 0.35, sway: 0, width: 0.03, windDrift: 0.2 },
   [PrecipitationKind.Sand]: { fallSpeed: 1.5, length: 2.5, opacity: 0.3, sway: 0.2, width: 0.05, windDrift: 1 },
@@ -54,8 +54,8 @@ const SNOW_WEATHER_SETTINGS: WeatherSettings = {
 // Each weather's sky, fog, wetness, particles and lightning, as starting values to be fitted to the game's own weather
 // Settings. Clear keeps the region's own sky and haze; the others raise them over it. Provisional: the sandstorm's sand
 // Haze is measured off a recording of the Desert of Hadramaveth's storm. The thunderstorm's strikes a minute are its
-// Flashes over Yashiori Island's perpetual storm, 50 seconds on a fixed camera at 60 stills a second, scaled to a minute:
-// 23 runs of stills whose sky's darkness falls 40 or more under its median
+// Flashes over Yashiori Island's perpetual storm, 50 seconds on a fixed camera at 60 stills a second, scaled to a
+// Minute: 23 runs of stills whose sky's darkness falls 40 or more under its median
 export const WEATHER_SETTINGS_MAP: Readonly<Record<WeatherKind, WeatherSettings>> = {
   [WeatherKind.Clear]: { cloudCoverage: 0, fogDensity: 0, wetness: 0 },
   [WeatherKind.Cloudy]: { cloudCoverage: 0.6, fogDensity: 0, wetness: 0 },
@@ -75,8 +75,8 @@ export const WEATHER_SETTINGS_MAP: Readonly<Record<WeatherKind, WeatherSettings>
     wetness: 0,
   },
   [WeatherKind.Snow]: SNOW_WEATHER_SETTINGS,
-  // Provisional: the snowstorm's sky and snow are unmeasured, so it starts at the snow's settings. No area lists it yet,
-  // So nothing draws these until a recording of a snowstorm is fitted
+  // Provisional: the snowstorm's sky and snow are unmeasured, so it starts at the snow's settings. No area lists it
+  // Yet, So nothing draws these until a recording of a snowstorm is fitted
   [WeatherKind.Snowstorm]: { ...SNOW_WEATHER_SETTINGS },
   [WeatherKind.Thunderstorm]: {
     cloudCoverage: 1,

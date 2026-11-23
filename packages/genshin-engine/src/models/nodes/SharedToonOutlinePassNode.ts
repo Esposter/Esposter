@@ -26,8 +26,8 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   #outlineMaterial?: NodeMaterial;
   readonly #pixelEdgeOutlineMaterials = new WeakMap<Node<"vec4">, Map<string, NodeMaterial>>();
 
-  // A placed copy is outlined through the matrix its fill reads, a material with its own edge in that edge, and every other
-  // Toon material by the one shared material
+  // A placed copy is outlined through the matrix its fill reads, a material with its own edge in that edge, and every
+  // Other Toon material by the one shared material
   _getOutlineMaterial(originalMaterial: Material): NodeMaterial {
     if (originalMaterial instanceof ToonNodeMaterial) {
       if (originalMaterial.instanceMatrix) return this.#getInstancedOutlineMaterial(originalMaterial.instanceMatrix);
@@ -36,11 +36,11 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     return this.#getSharedOutlineMaterial();
   }
 
-  // Waits for the next frame to draw the view, then for the GPU to finish it: each node material, program and pipeline the
-  // View shows is then built where the frame draws it, so the frame that first shows it builds none. What the view does
-  // Not show builds as it is first drawn. Three's own compile cannot stand in: it keys what it builds by a render's
-  // Nesting, which it always takes as the outermost, and builds after its first await, by when the renderer's MRT a
-  // Frame set is no longer the pass's
+  // Waits for the next frame to draw the view, then for the GPU to finish it: each node material, program and pipeline
+  // The View shows is then built where the frame draws it, so the frame that first shows it builds none. What the view
+  // Does Not show builds as it is first drawn. Three's own compile cannot stand in: it keys what it builds by a
+  // Render's Nesting, which it always takes as the outermost, and builds after its first await, by when the renderer's
+  // MRT a Frame set is no longer the pass's
   override async compileAsync(renderer: Renderer): Promise<void> {
     this.#drawn ??= Promise.withResolvers<void>();
     await this.#drawn.promise;
@@ -57,9 +57,9 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     return undefined;
   }
 
-  // The game's offset is the size, scaled by the vertex's blue less a half where the block-B flag is below a half, and by
-  // One where it is not, as the program's form reads it. This is the TSL form of getGameOutlineOffset, the rule's reference,
-  // And the two hold one rule
+  // The game's offset is the size, scaled by the vertex's blue less a half where the block-B flag is below a half, and
+  // By One where it is not, as the program's form reads it. This is the TSL form of getGameOutlineOffset, the rule's
+  // Reference, And the two hold one rule
   #createGameOffsetNode(offset: ToonEdge["offset"]): Node<"float"> {
     if (offset === undefined) return float(0);
     const scale = offset.blockBChannel < 0.5 ? vertexColor().b.sub(0.5) : float(1);
@@ -79,8 +79,8 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     if (edgeOutlineMaterial === undefined) {
       const scale = createOutlineScaleNode(widthKnots.depths, widthKnots.scales);
       const edgeColour = Array.isArray(color) ? vec4(...color) : color;
-      // A game edge is pushed as the game's program pushes it: its own width, weighted by the vertex colour's alpha, and
-      // Its offset along the ray from the vertex's blue, which the program reads per vertex
+      // A game edge is pushed as the game's program pushes it: its own width, weighted by the vertex colour's alpha,
+      // And Its offset along the ray from the vertex's blue, which the program reads per vertex
       edgeOutlineMaterial = isVertexWeighted
         ? createGameOutlineMaterial(
             edgeColour,
@@ -93,8 +93,8 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     return edgeOutlineMaterial;
   }
 
-  // One outline material per matrix, which every copy the matrix places shares: it reads the very node its fill reads, so the
-  // Outline and the fill take their place from one read
+  // One outline material per matrix, which every copy the matrix places shares: it reads the very node its fill reads,
+  // So the Outline and the fill take their place from one read
   #getInstancedOutlineMaterial(instanceMatrix: Node<"mat4">): NodeMaterial {
     let instancedOutlineMaterial = this.#instancedOutlineMaterials.get(instanceMatrix);
     if (instancedOutlineMaterial === undefined) {

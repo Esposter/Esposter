@@ -46,12 +46,13 @@ export class AnchoredCascadeShadowNode extends CSMShadowNode {
       const frustum = this.frustums[index];
       if (shadow === undefined || frustum === undefined) continue;
       const shadowCamera = shadow.camera;
-      // The sphere grows by the snap, which moves the anchor by up to half a step on each axis, so the map still holds it
+      // The sphere grows by the snap, which moves the anchor by up to half a step on each axis, so the map still holds
+      // It
       const reach = FOLLOW_CAMERA_MAX_DISTANCE + this.#getFrustumExtent(frustum);
       const radius = reach / (1 - ANCHOR_STEP_TEXELS / shadow.mapSize.width);
       const step = (ANCHOR_STEP_TEXELS * 2 * radius) / shadow.mapSize.width;
-      // The origin snaps to a step of the map's texels, and the depth is pushed past the sphere by the light margin, so a
-      // Move within a step leaves the map's contents, and so the map, as they were
+      // The origin snaps to a step of the map's texels, and the depth is pushed past the sphere by the light margin, so
+      // A Move within a step leaves the map's contents, and so the map, as they were
       this.#center.set(
         Math.round(this.#anchorLight.x / step) * step,
         Math.round(this.#anchorLight.y / step) * step,

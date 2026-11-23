@@ -13,10 +13,10 @@ export const createPmxTexture = async (blob: Blob): Promise<Texture> => {
   return texture;
 };
 
-// A PMX model's toon ramp from its file's bytes. A ramp is a lookup of how much light a texel takes rather than a colour,
-// So it is read as it is stored, not decoded from sRGB, and sampled nearest so each step of shade stays a step. A toon is
-// One column, lit at its first row, and the shading reads it up the column, lit at the top, so it is flipped to put its
-// First row there
+// A PMX model's toon ramp from its file's bytes. A ramp is a lookup of how much light a texel takes rather than a
+// Colour, So it is read as it is stored, not decoded from sRGB, and sampled nearest so each step of shade stays a step.
+// A toon is One column, lit at its first row, and the shading reads it up the column, lit at the top, so it is flipped
+// To put its First row there
 export const createPmxToonTexture = async (blob: Blob): Promise<Texture> => {
   const texture = await createPmxTexture(blob);
   texture.colorSpace = NoColorSpace;

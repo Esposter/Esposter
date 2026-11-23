@@ -5,8 +5,8 @@ import { TerrainFeatureKind } from "#src/models/terrain/TerrainFeatureKind";
 import { GAUSSIAN_REACH_WIDTHS } from "#src/terrain/constants";
 
 // A ground laid over another stands on its own base, so it is lifted by its base over the other's: a plateau of that
-// Height on the disc round the box its hills stand in, falling to none across its widest hill's reach past it, where its
-// Hills fall to none too. A ground with no hills has no level and stands on the base under it
+// Height on the disc round the box its hills stand in, falling to none across its widest hill's reach past it, where
+// Its Hills fall to none too. A ground with no hills has no level and stands on the base under it
 export const getTerrainShapeLevel = ({ base, hills }: GaussianHills, baseUnder: number): PlateauFeature | undefined => {
   if (hills.length === 0) return undefined;
   let minX = Infinity;

@@ -3,8 +3,8 @@ import type { Node } from "three/webgpu";
 
 import { float, step, texture, vec2 } from "three/tsl";
 
-// The ground's colour and height at a point of the world, read from the capture, and whether the point stands inside the
-// Capture at all, since the capture covers only a square round the camera
+// The ground's colour and height at a point of the world, read from the capture, and whether the point stands inside
+// The Capture at all, since the capture covers only a square round the camera
 export const sampleGroundCapture = (
   groundCapture: GroundCapture,
   ground: Node<"vec2">,

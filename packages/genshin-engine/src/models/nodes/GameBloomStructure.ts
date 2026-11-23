@@ -9,7 +9,8 @@ export interface GameBloomStructure {
   blurForm: GameBloomBlurForm;
   // How many times a level's blur is applied, a separable application being its row and then its column
   blurPasses: 1 | 2;
-  // The prefilter: one tap thresholds each pixel (`00002`), or four taps average and the threshold is taken after (`00004`)
+  // The prefilter: one tap thresholds each pixel (`00002`), or four taps average and the threshold is taken after
+  // (`00004`)
   prefilter: GameBloomPrefilter;
   // How far a downsample's taps, and a four-tap prefilter's, stand from their pixel in the source's texels: the game's
   // Programs read one texel (`00011`), where a bilinear tap spans the four texels of a level's pixel, and half a texel

@@ -40,7 +40,8 @@ const getThreshold = (turn: number, rotateOffset: number): number => {
   return MathUtils.clamp(ramp * ramp * (3 - 2 * ramp), MINIMUM_FACE_THRESHOLD, MAXIMUM_FACE_THRESHOLD);
 };
 
-// Whether the face map's u is mirrored: where the angle turns positive, unless the material's flip factor forces it either way
+// Whether the face map's u is mirrored: where the angle turns positive, unless the material's flip factor forces it
+// Either way
 const checkIsFlipped = (angle: number, flipFactor: number): boolean => {
   if (flipFactor > 0.5) return true;
   if (flipFactor < -0.5) return false;

@@ -12,7 +12,7 @@ const POLE_OUTLINE: PropOutline = {
 };
 const BLOCK_OUTLINE: PropOutline = { boxes: [[-0.5, 0, -0.5, 0.5, 1, 0.5]] };
 
-// A fishing-area prop's stand-in, generated from its name rather than fitted from the game's mesh. A name holding "Pole"
-// Is a fishing pole, a round kind; every other name, a prop or a fish stand, is a solid kind
+// A fishing-area prop's stand-in, generated from its name rather than fitted from the game's mesh. A name holding
+// "Pole" Is a fishing pole, a round kind; every other name, a prop or a fish stand, is a solid kind
 export const createPropStandInGeometry = (name: string): BufferGeometry =>
   createPropGeometry(name.includes("Pole") ? POLE_OUTLINE : BLOCK_OUTLINE);

@@ -8,8 +8,8 @@ import { Color } from "three";
 
 // A ground's colour at a vertex, painted by its layers' weights there (`createGroundLayerWeights`): each layer's colour
 // Turns toward its patch colour across seeded patches of the paint's scale, and the layers are summed by their weights.
-// The weights are solved per vertex, as the game holds its own per texel, so the coarse colour a vertex morphs toward is
-// Painted the same way at the next level's vertex. Each colour is converted to the linear working space once
+// The weights are solved per vertex, as the game holds its own per texel, so the coarse colour a vertex morphs toward
+// Is Painted the same way at the next level's vertex. Each colour is converted to the linear working space once
 export const createGroundPaintColor = (groundPaint: GroundPaint, seed: number): TerrainTileOptions["writeColor"] => {
   const { layerColors, patchScale } = groundPaint;
   const getWeights = createGroundLayerWeights(groundPaint);

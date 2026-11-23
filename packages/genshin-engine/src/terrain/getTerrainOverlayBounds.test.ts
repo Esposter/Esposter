@@ -14,8 +14,8 @@ describe(getTerrainOverlayBounds, () => {
     hills: [{ height: 6, width: 40, x: 220, z: -20 }],
     residual: { amplitude: 1.5, octaves: 3, scale: 24, seed: 7 },
   };
-  // A ground with every layer one can lay: hills, a ridge, a cliff, a plateau, and a residual within a fade reaching past
-  // Them all
+  // A ground with every layer one can lay: hills, a ridge, a cliff, a plateau, and a residual within a fade reaching
+  // Past Them all
   const overlay: TerrainShape = {
     base: 9,
     features: [

@@ -4,9 +4,9 @@ import type { Node, UniformNode } from "three/webgpu";
 import { CULLING_FRUSTUM_MARGIN } from "#src/culling/constants";
 import { step, vec4 } from "three/tsl";
 
-// Whether a point of the model stands in the view, one for in and zero for out. The point is taken in the clip space the
-// Model-to-clip matrix gives it: in front of the near plane, within the sides and between the planes, each widened by
-// The margin
+// Whether a point of the model stands in the view, one for in and zero for out. The point is taken in the clip space
+// The Model-to-clip matrix gives it: in front of the near plane, within the sides and between the planes, each widened
+// By The margin
 export const createFrustumVisibility = (
   clipFromModel: UniformNode<"mat4", Matrix4>,
   point: Node<"vec3">,

@@ -14,7 +14,8 @@ const checkIsSample = (node: Node, texture: Texture): boolean =>
   (node instanceof TextureNode && node.value === texture) ||
   [...node.getChildren()].some((child) => child instanceof TextureNode && child.value === texture);
 
-// The operators that take the texture's sample as a direct operand, each named once, read off the graph the output draws
+// The operators that take the texture's sample as a direct operand, each named once, read off the graph the output
+// Draws
 const getSampleOperators = (root: Node | null, texture: Texture): string[] => {
   const operators = new Set<string>();
   const visited = new Set<Node>();

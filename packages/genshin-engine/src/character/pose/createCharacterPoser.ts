@@ -39,7 +39,8 @@ const getRestWorldRotation = (bone: Bone, armRaises: ReadonlyMap<Bone, Quaternio
   }
   return raise ? rotation.premultiply(raise) : rotation;
 };
-// A bone's rest position in the skeleton's frame, carried up its fathers as each one's scale, rotation and offset place it
+// A bone's rest position in the skeleton's frame, carried up its fathers as each one's scale, rotation and offset place
+// It
 const getRestPosition = (bone: Bone): Vector3 => {
   const position = bone.position.clone();
   for (let father = bone.parent; father instanceof Bone; father = father.parent)
@@ -47,7 +48,8 @@ const getRestPosition = (bone: Bone): Vector3 => {
   return position;
 };
 
-// The state's speed the stride is matched to, from the body's own locomotion, so a stride's feet keep pace with the ground
+// The state's speed the stride is matched to, from the body's own locomotion, so a stride's feet keep pace with the
+// Ground
 const getGaitSpeed = (state: LocomotionState, { dashSpeed, runSpeed, sprintSpeed, walkSpeed }: Locomotion): number => {
   if (state === LocomotionState.Walk) return walkSpeed;
   else if (state === LocomotionState.Run) return runSpeed;
@@ -61,11 +63,11 @@ const getCrossfadeWeight = (stateSeconds: number): number => {
 };
 
 // Drives a model's standard bones from its body's state, once per frame. The pose is written in each bone's rest frame,
-// So a model whose bones rest turned, as the game's do, holds the same pose as a PMX model whose rests are the identity,
-// And each arm's rest is taken raised to the T, so a model resting in an A-pose holds the same pose as one in the T.
-// The name map gives each standard bone its model's own bone, and a bone the model lacks is skipped. A state's pose
-// Cross-fades from the pose the bones held when the state began. The rotations and the targets are allocated once, and
-// The frame writes the bones in place, so no frame allocates a quaternion
+// So a model whose bones rest turned, as the game's do, holds the same pose as a PMX model whose rests are the
+// Identity, And each arm's rest is taken raised to the T, so a model resting in an A-pose holds the same pose as one in
+// The T. The name map gives each standard bone its model's own bone, and a bone the model lacks is skipped. A state's
+// Pose Cross-fades from the pose the bones held when the state began. The rotations and the targets are allocated once,
+// And The frame writes the bones in place, so no frame allocates a quaternion
 export const createCharacterPoser = (
   skinnedMesh: SkinnedMesh,
   boneNameMap: CharacterBoneNameMap = MMD_BONE_NAME_MAP,

@@ -41,8 +41,8 @@ export class StoneLightingModel extends LightingModel {
     return exp(this.stoneLight.heightDarkening.negate().mul(positionWorld.y.clamp(0, STONE_DARKENING_TOP)));
   }
 
-  // The light's direction and the reflected light's terms are nodes of no type in three's typings, so each is read through
-  // `readVec3Node`, which checks it is the vec3 it is read as
+  // The light's direction and the reflected light's terms are nodes of no type in three's typings, so each is read
+  // Through `readVec3Node`, which checks it is the vec3 it is read as
   override direct(
     { lightColor, lightDirection, reflectedLight }: LightingModelDirectInput,
     builder: NodeBuilder,
@@ -78,9 +78,10 @@ export class StoneLightingModel extends LightingModel {
       .add(harmonics.element(7).mul(x.mul(x).sub(z.mul(z))))
       .add(harmonics.element(8).mul(y.mul(y).mul(3).sub(1)))
       .add(heightFade.mul(positionWorld.y.mul(-STONE_HEIGHT_FALLOFF).exp()));
-    // Three types the builder's context as `unknown`, so it is the one cast left here: the lighting context it holds has
-    // The reflected light, and three's typings offer no narrower type to check it against
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- @types/three declares the builder's `context` as `unknown`, so the lighting context it holds is asserted to the reflected light it carries
+    // Three types the builder's context as `unknown`, so it is the one cast left here: the lighting context it holds
+    // Has The reflected light, and three's typings offer no narrower type to check it against
+    // @types/three declares the builder's `context` as `unknown`, so the lighting context it holds
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- is asserted to the reflected light it carries
     const { reflectedLight } = builder.context as { reflectedLight: LightingModelReflectedLight };
     readVec3Node(reflectedLight.indirectDiffuse, builder).addAssign(
       ambient.mul(diffuseColor.rgb).mul(this.createDarkeningNode()),

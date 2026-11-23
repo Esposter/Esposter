@@ -35,8 +35,8 @@ const countRings = (tube: TreeTube): number => {
 // How many sides a tube's rings have, so no side round its widest ring runs past the side length
 const countSides = (tube: TreeTube): number =>
   Math.max(MIN_TUBE_SIDES, Math.ceil((FULL_TURN * Math.max(...tube.map(({ radius }) => radius))) / TUBE_SIDE_LENGTH));
-// Writes the centre at a share of the way along one span of the spline, Barry and Goldman's pyramid over the span's four
-// Points and their centripetal knots
+// Writes the centre at a share of the way along one span of the spline, Barry and Goldman's pyramid over the span's
+// Four Points and their centripetal knots
 const writeSpanCentre = (centres: Float32Array, ring: number, tube: TreeTube, span: number, share: number): void => {
   const knot1 = Math.max(readControlDistance(tube, span - 1, span) ** CATMULL_ROM_ALPHA, MIN_KNOT_INTERVAL);
   const knot2 = knot1 + Math.max(readControlDistance(tube, span, span + 1) ** CATMULL_ROM_ALPHA, MIN_KNOT_INTERVAL);

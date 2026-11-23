@@ -3,8 +3,8 @@ import type { Node } from "three/webgpu";
 
 import { float, max, mix, pow } from "three/tsl";
 
-// A cloud's lit and shade colours toward the sun, by how far toward it the ray looks, cubed. The back of the cloud takes
-// Its own colours, from the sun behind it
+// A cloud's lit and shade colours toward the sun, by how far toward it the ray looks, cubed. The back of the cloud
+// Takes Its own colours, from the sun behind it
 export const getCloudSunColors = (
   {
     cloudFrontBackBlend,

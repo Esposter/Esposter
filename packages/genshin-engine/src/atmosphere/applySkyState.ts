@@ -16,11 +16,11 @@ const writeShownColor = (displayColor: Color, sceneColor: Color): Color =>
 // A term a sky has none of (a halo, a glow) adds nothing, rather than the curve's black taken back to its floor
 const writeTermColor = (displayColor: Color | undefined, sceneColor: Color): Color =>
   displayColor ? writeShownColor(displayColor, sceneColor) : sceneColor.setRGB(0, 0, 0);
-// The sky state written into everything it lights: the light and the materials take the light's direction and
-// Colour, the rim and the fog the horizon's, and the hemisphere its sky and ground. The colours the screen shows as
-// They are, the sky's, its clouds' and the fog's, are measured off the references, so each is written as the scene
-// Colour the white balance and the tone mapping show as it, the balance the state's own or none. Every write is to an existing value, so an hour passing rebuilds nothing and
-// Allocates nothing
+// The sky state written into everything it lights: the light and the materials take the light's direction and Colour,
+// The rim and the fog the horizon's, and the hemisphere its sky and ground. The colours the screen shows as They are,
+// The sky's, its clouds' and the fog's, are measured off the references, so each is written as the scene Colour the
+// White balance and the tone mapping show as it, the balance the state's own or none. Every write is to an existing
+// Value, so an hour passing rebuilds nothing and Allocates nothing
 export const applySkyState = (
   skyState: SkyState,
   { fogUniforms, godraysLight, hemisphere, light, lightDistance, lightUniforms, postUniforms, skyUniforms }: SkyTargets,

@@ -11,8 +11,9 @@ export const POSE_SHOULDER_BREATH_RADIANS = 0.02;
 // How far the arms come down from the T, in radians from horizontal: the relaxed idle, with the arms out a little
 // Provisional: read off the same wiki frame, since neither reference holds the Traveler's relaxed stance cleanly
 export const POSE_ARM_LOWER_RADIANS = 1.2;
-// Each arm the pose lowers from the T, with its elbow and the direction the elbow lies from the shoulder in the T, +x for
-// The left arm as the PMX places 左. The poser raises an arm resting lowered, as an A-pose model's does, to the T first
+// Each arm the pose lowers from the T, with its elbow and the direction the elbow lies from the shoulder in the T, +x
+// For The left arm as the PMX places 左. The poser raises an arm resting lowered, as an A-pose model's does, to the T
+// First
 export const POSE_ARM_CHAINS: readonly { arm: MmdBoneName; elbow: MmdBoneName; tDirection: Vector3Tuple }[] = [
   { arm: MmdBoneName.LeftArm, elbow: MmdBoneName.LeftElbow, tDirection: [1, 0, 0] },
   { arm: MmdBoneName.RightArm, elbow: MmdBoneName.RightElbow, tDirection: [-1, 0, 0] },

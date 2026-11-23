@@ -19,8 +19,8 @@ interface InstanceCullingOptions {
   isVisible: (instance: Node<"float">) => Node<"float">;
 }
 
-// Three types a compute as answering a promise, which it does only before the backend has initialised. A pass runs from a
-// Render, and a render throws before that, so a promise here is a broken invariant that is raised, not left unawaited
+// Three types a compute as answering a promise, which it does only before the backend has initialised. A pass runs from
+// A Render, and a render throws before that, so a promise here is a broken invariant that is raised, not left unawaited
 const dispatch = (renderer: Renderer, node: ComputeNode): void => {
   if (renderer.compute(node) !== undefined)
     throw new RangeError(
@@ -28,8 +28,8 @@ const dispatch = (renderer: Renderer, node: ComputeNode): void => {
     );
 };
 
-// A per-instance culling pass. Each frame it clears a count, tests every instance in a compute dispatch and appends each
-// Visible one's index to a list, counting them in the indirect draw's own instance count, so the draw covers the
+// A per-instance culling pass. Each frame it clears a count, tests every instance in a compute dispatch and appends
+// Each Visible one's index to a list, counting them in the indirect draw's own instance count, so the draw covers the
 // Survivors and nothing more and never passes through the CPU
 export const createInstanceCulling = ({ count, indexCount, isVisible }: InstanceCullingOptions): InstanceCulling => {
   const indirectArray = new Uint32Array(CULLING_INDIRECT_ARGUMENT_COUNT);

@@ -5,9 +5,9 @@ import { checkIsPmxValue } from "#src/character/checkIsPmxValue";
 import { PmxMorphKind } from "#src/models/character/PmxMorphKind";
 
 // The bytes each offset of a morph passed over takes, by its kind: a bone morph's bone, translation and rotation, a
-// Texture coordinate morph's vertex and four floats, a material morph's material, operation byte and twenty-eight floats
-// Of colours and tints, a flip morph's morph and influence, and an impulse morph's rigid body, local flag, velocity and
-// Torque
+// Texture coordinate morph's vertex and four floats, a material morph's material, operation byte and twenty-eight
+// Floats Of colours and tints, a flip morph's morph and influence, and an impulse morph's rigid body, local flag,
+// Velocity and Torque
 const PmxMorphKindOffsetSizeMap: Record<
   Exclude<PmxMorphKind, typeof PmxMorphKind.Group | typeof PmxMorphKind.Vertex>,
   (reader: PmxReader) => number

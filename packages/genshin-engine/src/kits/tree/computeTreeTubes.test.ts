@@ -12,7 +12,8 @@ describe(computeTreeTubes, () => {
     { radius: 0.5, x: 1, y: 0, z: 0 },
     { radius: 0, x: 1, y: 0, z: 1 },
   ];
-  // A ring's vertices, its seven sides keeping each within a metre round its widest ring, its first repeated at its seam
+  // A ring's vertices, its seven sides keeping each within a metre round its widest ring, its first repeated at its
+  // Seam
   const ringVertexCount = 8;
   // Positions and normals are each rounded to single precision on their own, so they agree to that precision
   const precision = 1e-6;

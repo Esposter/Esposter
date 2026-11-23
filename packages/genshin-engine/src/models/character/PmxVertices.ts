@@ -1,5 +1,5 @@
-// A PMX model's vertices as the typed arrays three's skinned geometry reads: three floats a position and a normal, two a
-// Texture coordinate, and the four bones each is bound to with their weights, a slot left unused bound to the first
+// A PMX model's vertices as the typed arrays three's skinned geometry reads: three floats a position and a normal, two
+// A Texture coordinate, and the four bones each is bound to with their weights, a slot left unused bound to the first
 // Bone at no weight
 export interface PmxVertices {
   normals: Float32Array;

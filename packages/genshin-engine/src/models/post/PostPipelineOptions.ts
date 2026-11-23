@@ -25,8 +25,9 @@ export interface PostPipelineOptions {
   qualityTierSettings: QualityTierSettings;
   renderer: Renderer;
   scene: Scene;
-  // The sight, where a scene lights what it can act on: the things drawn into `litScene` in the colours they are lit in,
-  // Which the scene draws beside itself, and the uniforms the sight spreads by. It is drawn after the fog, before bloom
+  // The sight, where a scene lights what it can act on: the things drawn into `litScene` in the colours they are lit
+  // In, Which the scene draws beside itself, and the uniforms the sight spreads by. It is drawn after the fog, before
+  // Bloom
   sight?: { litScene: Scene; uniforms: SightUniforms };
   // The stone's light, where a scene hazes its stone in colours of its own: the scene pass then writes the stone's mask
   // And the haze draws the stone under the light's haze colours in place of the rest of the scene's

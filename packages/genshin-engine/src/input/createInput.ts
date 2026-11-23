@@ -30,8 +30,8 @@ import { InputActions } from "#src/models/input/InputAction";
 // Buttons, all read through the target handed in, once a frame. The look is what the pointer moved since the last read,
 // The zoom the wheel's notches since then, and the move is the keys and the stick combined, a pair of opposite keys
 // Cancelling. An action is held while every code of one of its chords is, and pressed when a chord's last code was
-// Pressed since the last read with the rest held, the longest chord pressed by a code winning, so a gamepad's bumper and
-// A face button are the bumper's shortcut alone. A bound key's browser default is prevented, but for the keys focus
+// Pressed since the last read with the rest held, the longest chord pressed by a code winning, so a gamepad's bumper
+// And A face button are the bumper's shortcut alone. A bound key's browser default is prevented, but for the keys focus
 // Moves with, and a key typed into a field is the field's. A window that loses focus hears no key's release, so a blur
 // Lets go of every key. The touch controls drawn over the world press a code through its on-screen button, push an
 // On-screen stick read with the gamepad's, and turn the look as a drag across the screen does
@@ -46,7 +46,8 @@ export const createInput = (target: InputTarget): Input => {
   let pendingLookYaw = 0;
   let pendingLookPitch = 0;
   let pendingZoomSteps = 0;
-  // Whether the next pointer move is the first since the pointer was locked, which Chromium reports as one spurious jump
+  // Whether the next pointer move is the first since the pointer was locked, which Chromium reports as one spurious
+  // Jump
   let isFirstMoveSinceLock = false;
   // The touch controls' on-screen stick, read with the gamepad's left stick
   let touchStickX = 0;

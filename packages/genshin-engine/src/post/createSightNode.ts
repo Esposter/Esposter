@@ -7,14 +7,16 @@ import { abs, dot, float, Fn, getViewPosition, If, mix, smoothstep, uniform, uv,
 // Provisional: how much of its luminance a muted thing keeps, the colour gone with it, until a recording of the sight
 // Toggled on the game's street measures the game's dark
 const SIGHT_MUTE_BRIGHTNESS = 0.25;
-// Provisional: how far a lit thing's own colour takes its pixel from the scene's, until a recording measures the highlight
+// Provisional: how far a lit thing's own colour takes its pixel from the scene's, until a recording measures the
+// Highlight
 const SIGHT_HIGHLIGHT_STRENGTH = 0.85;
 // Provisional: the ring's width in metres, until a recording of its spread measures it
 const SIGHT_RING_WIDTH = 0.6;
-// How near in depth a lit thing must lie to the scene's pixel to be the thing shown, so a thing behind a wall stays muted
+// How near in depth a lit thing must lie to the scene's pixel to be the thing shown, so a thing behind a wall stays
+// Muted
 const SIGHT_DEPTH_TOLERANCE = 0.0001;
-// The sight over the scene, a pass after the fog. Inside its reach a thing that is lit keeps the colour it is lit in and
-// Anything else is muted to a dark of its own luminance, and a white ring is drawn at the reach's edge. Outside the
+// The sight over the scene, a pass after the fog. Inside its reach a thing that is lit keeps the colour it is lit in
+// And Anything else is muted to a dark of its own luminance, and a white ring is drawn at the reach's edge. Outside the
 // Reach the scene is what it was. Its strength is 0 while the sight is off, which leaves every pixel as it was
 export const createSightNode = (
   colorNode: Node<"vec4">,

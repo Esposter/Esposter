@@ -1,4 +1,5 @@
-// Writes a quad's two triangles into the indices from the given start, the quad's four vertices running on from its first
+// Writes a quad's two triangles into the indices from the given start, the quad's four vertices running on from its
+// First
 export const writeQuadIndices = (indices: Uint32Array, indexStart: number, vertexStart: number): void => {
   indices[indexStart] = vertexStart;
   indices[indexStart + 1] = vertexStart + 1;

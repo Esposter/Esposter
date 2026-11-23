@@ -28,7 +28,8 @@ export const parsePmxVertices = (reader: PmxReader): PmxVertices => {
     reader.readMirroredVector3Into(normals, vertex * 3);
     uvs[vertex * 2] = reader.readFloat32();
     uvs[vertex * 2 + 1] = reader.readFloat32();
-    // Its extra vectors, four floats each, of which the first is the sub-texture's coordinates and the rest are passed over
+    // Its extra vectors, four floats each, of which the first is the sub-texture's coordinates and the rest are passed
+    // Over
     if (reader.additionalVectorCount > 0) {
       subUvs[vertex * 2] = reader.readFloat32();
       subUvs[vertex * 2 + 1] = reader.readFloat32();
