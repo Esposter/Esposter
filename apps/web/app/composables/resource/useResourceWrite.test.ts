@@ -28,12 +28,13 @@ describe(useResourceWrite, () => {
   test.each([
     ["kept", false],
     ["refused", true],
-  ])("ends a %s write by invalidating the Resources tag and re-reading the list", async (_, isRefused) => {
+  ])("ends a %s write by invalidating the Resources tag and re-reading the list", async (_label, isRefused) => {
     expect.hasAssertions();
 
     const invalidation = createAnnouncer();
     const cacheStore = useCacheStore();
-    cacheStore.registerCache([CacheTag.Resources], invalidation.announce);
+    const { registerCache } = cacheStore;
+    registerCache([CacheTag.Resources], invalidation.announce);
     const refresh = createAnnouncer();
     const write = () =>
       isRefused ? Promise.reject(new Error(errorMessage)) : Promise.resolve({ arrivals: [], confirmed: [] });
