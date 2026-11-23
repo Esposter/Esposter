@@ -16,7 +16,7 @@ An inferred type the declaration would have to name through a module the package
 
 **A preset sets only what differs from TypeScript's own default.** Since TypeScript 6, `strict` (and the checks it implies), `esModuleInterop`, `allowSyntheticDefaultImports`, `forceConsistentCasingInFileNames`, an empty `types`, `allowJs: false`, and `useDefineForClassFields` under an ESNext target are the defaults, so no preset restates them; `strict` is never set to `false`, which type-fest and the codebase both require. `exactOptionalPropertyTypes` is not implied by `strict` and is set explicitly.
 
-These are `**/*.json` under a strict `json/json` ESLint language — **no comments**. Rationale goes in the spec, not the file.
+These are `**/*.json`, checked as strict JSON by `scripts/src/workspace/jsonFiles.test.ts` — **no comments**. Rationale goes in the spec, not the file.
 
 ## The bootstrap package
 

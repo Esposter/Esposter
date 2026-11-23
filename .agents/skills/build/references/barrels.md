@@ -25,7 +25,7 @@ A package opts out when nothing prunes its output: the infrastructure program is
 What makes it work looks redundant until it is gone:
 
 - **`entry` is stated even though it is tsdown's own default.** Left unset, tsdown checks that `src/index.ts` exists _while resolving the config_, before any hook runs — so a package whose barrel is not on disk dies with `No input files`, which is every fresh clone. A literal entry reaches rolldown, which reads it after `build:prepare`.
-- **The generator runs from `packages/configuration`'s built `dist`, so that build must be current.** The order `generateExports` writes is the one perfectionist's `sort-exports` checks, case-insensitively. A checkout whose configuration build predates that order (a git worktree's, say) writes every package's barrel in the old order on its next build. Build the configuration package once there (`pnpm -C packages/configuration build`).
+- **The generator runs from `packages/configuration`'s built `dist`, so that build must be current.** The order `generateExports` writes is the one `sorting/sort-exports` checks, case-insensitively. A checkout whose configuration build predates that order (a git worktree's, say) writes every package's barrel in the old order on its next build. Build the configuration package once there (`pnpm -C packages/configuration build`).
 
 ## A name exported twice is a type error, never a silent drop
 

@@ -1,41 +1,25 @@
 ## Purpose
 
-Oxlint as the one repo-wide pass with ESLint behind it for what oxlint cannot parse, the config that keeps the two from double-linting, where the type-aware pass spends its time, and the blocker table a bump is read against.
+Oxlint over every script, vize over every component template and the workspace tests over what no linter reads, with the rules that keep each file in one pass, where a ban is written, and the type-aware behaviour lint depends on.
 
 ## Requirements
 
-### Requirement: Lint runs as one fast pass with a second pass for what it cannot parse
+### Requirement: Each file is checked by the pass that reads it, and each rule by one pass only
 
-The repository's lint SHALL run as one fast pass over every package, with a second pass used only for the files the fast pass cannot parse.
+Every file SHALL be checked by the pass that can read it, and no rule SHALL run in more than one pass.
 
-#### Scenario: Linting the whole repository
+#### Scenario: A component's script and template
 
-- **GIVEN** a checkout of the whole repository
-- **WHEN** lint runs over everything
-- **THEN** the fast pass covers every package
-- **AND** it finishes in under a minute
-
-#### Scenario: A file the fast pass cannot parse
-
-- **GIVEN** a single-file component or a JSON file
+- **GIVEN** a single-file component
 - **WHEN** lint runs
-- **THEN** the second pass checks the file
+- **THEN** oxlint checks its script block
+- **AND** vize checks its template
 
-### Requirement: Each rule is run by one pass only
+#### Scenario: A file no linter reads
 
-Each rule SHALL be run by exactly one pass, so that no file is checked twice for the same rule.
-
-#### Scenario: A rule category run by the fast pass
-
-- **GIVEN** a rule category the fast pass runs
-- **WHEN** lint runs
-- **THEN** the second pass does not run its copies of those rules
-
-#### Scenario: A ban moved to the fast pass
-
-- **GIVEN** a ban previously written in the second pass
-- **WHEN** the ban is moved into the fast pass's configuration
-- **THEN** the second pass's copy of the rule is disabled
+- **GIVEN** a JSON file or a template directive comment
+- **WHEN** the repository is checked
+- **THEN** a workspace test checks the file
 
 ### Requirement: A ban is written in the first mechanism a planted violation proves
 
@@ -48,22 +32,25 @@ A ban SHALL be written in the first mechanism that a planted violation shows can
 - **THEN** the mechanism reports the violation
 - **AND** that mechanism is chosen
 
-#### Scenario: A ban that exists only in the second pass
+### Requirement: A ban no linter will ever express is recorded as permanent
 
-- **GIVEN** a ban written only in the second pass's configuration
-- **WHEN** the fast pass ships a rule with the same name
-- **THEN** the ban goes silent
-- **AND** the ban must be written in the fast pass's configuration to stay in force
+A ban that no linter can express SHALL be recorded as permanent, so that no audit re-derives it.
 
-### Requirement: The five costliest type-aware rules run in routine lint
+#### Scenario: A ban no linter will ever express
 
-The five costliest type-aware rules SHALL run in routine lint, and what they report SHALL fail it.
+- **GIVEN** a ban that no linter will ever ship a rule for
+- **WHEN** the ban is recorded
+- **THEN** it is noted as permanent
+
+### Requirement: The type-aware rules run in routine lint
+
+The type-aware rules SHALL run in routine lint, and what they report SHALL fail it.
 
 #### Scenario: Routine lint
 
 - **GIVEN** a change to lint
 - **WHEN** routine lint runs
-- **THEN** the five costliest type-aware rules run
+- **THEN** the type-aware rules run
 - **AND** each one reports at `error`
 
 #### Scenario: An unhandled promise
@@ -82,42 +69,16 @@ A call to an API its library has marked deprecated SHALL fail lint on every run.
 - **WHEN** lint runs
 - **THEN** the call is reported before it is committed
 
-### Requirement: Plugin mod folders are linted without the rules that query their overloads
+### Requirement: Plugin mod folders are linted without the rule that queries their overloads
 
-The plugin mod folders SHALL be linted without the two type-aware rules that query their overloads, while every other rule still runs there.
+The plugin mod folders SHALL be linted without the type-aware rule that queries their overloads, while every other rule still runs there.
 
 #### Scenario: Linting a plugin mod folder
 
 - **GIVEN** a plugin mod folder with async hooks
 - **WHEN** lint runs over it
-- **THEN** lint completes in about a second
+- **THEN** the overload rule does not run there
 - **AND** every other rule still applies
-
-### Requirement: A rule left in the second pass names its trigger or is recorded as permanent
-
-A rule that stays in the second pass SHALL name the upstream trigger that would move it, or be recorded as permanent.
-
-#### Scenario: A rule waiting on an upstream gap
-
-- **GIVEN** a rule the fast pass does not yet implement
-- **WHEN** the toolchain is bumped
-- **THEN** the blocker table names the trigger to check for that rule
-
-#### Scenario: A ban no linter will ever express
-
-- **GIVEN** a ban that no linter will ever ship a rule for
-- **WHEN** the ban is recorded
-- **THEN** it is noted as permanent so that no audit re-derives it
-
-### Requirement: A toolchain bump moves rules it newly covers out of the second pass
-
-A toolchain bump SHALL move each rule it newly covers out of the second pass without an edit to the repository's configuration.
-
-#### Scenario: A bump adds coverage for a rule
-
-- **GIVEN** a toolchain bump that adds coverage for a rule
-- **WHEN** lint runs after the bump
-- **THEN** the second pass no longer runs that rule
 
 ### Requirement: Bundled HTML element data records the standard it was crawled from
 

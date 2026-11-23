@@ -11,5 +11,4 @@ The same applies to a function that **moves into a shared package**: consumers i
 directly, never through a local file whose whole body re-exports it — one function with two importable paths means
 a grep for its call sites finds the wrong half. A file re-exports only where a tool demands a file at that path: a package
 barrel — the generated `index.ts`, or a hand-written subpath entry (the `build` skill, `references/barrels.md`) —
-since publishing the package is its entire job, and a package's `eslint.config.js`, which is how ESLint reaches the
-shared config.
+since publishing the package is its entire job.

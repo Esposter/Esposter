@@ -34,7 +34,7 @@ The engine's slots are typed by the engine, and a few of the repository's rules 
 - **`JSON.parse`:** the shared reviver is in a package a mod cannot import, so a mod's own record of numbers and ids parses plainly, with the reason on the disable.
 - **A script's output that may not parse:** `try` is banned and a mod imports no Result helper, so the parse is a `Promise.try` inside a `Promise.allSettled`, and a failed read keeps the state it had, as `genshin-persona`'s `mod/register.ts` does.
 - **An interpolated string constant:** `isolatedDeclarations` asks for a type and `no-inferrable-types` refuses one, so the constant is annotated `: string` and the lint disable names the declaration emit that demands it.
-- **A literal's order:** perfectionist sorts object and `Map` literals, so nothing in a mod lets a literal's order carry meaning. A list whose order matters is an array, and a pass over a map is written so the order it runs in changes nothing.
+- **A literal's order:** the `sorting` lint plugin sorts object and `Map` literals, so nothing in a mod lets a literal's order carry meaning. A list whose order matters is an array, and a pass over a map is written so the order it runs in changes nothing.
 
 ## The authoring loop
 
@@ -46,7 +46,7 @@ flowchart TD
   Read --> Wire
   Validate -->|passes| Types{tsc with the engine's declarations laid}
   Types -->|errors| Wire
-  Types --> Lint{oxlint and ESLint}
+  Types --> Lint{oxlint}
   Lint -->|a seam| Seam[The seam's one answer, with its reason]
   Seam --> Lint
   Lint --> Test[Vitest over the pure modules]

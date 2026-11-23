@@ -37,7 +37,7 @@ To see what Renovate would do with the working tree, run it against the checkout
 PNPM_CONFIG_STRICT_DEP_BUILDS=false RENOVATE_PLATFORM=local RENOVATE_DRY_RUN=full LOG_LEVEL=debug pnpm dlx renovate
 ```
 
-The env var is what lets the install run Renovate's own native build scripts, which pnpm blocks by default. The `packageFiles with updates` block of the log is the answer — every dep with the `updates` it earned, or the "skipReason" that emptied it (`disabled` is a rule, `is-pinned` a pin the config declines, `github-token-required` is the local run having no token and means nothing about the bot). `renovate-config-validator` checks the schema only, so a rule that parses and still does nothing shows up here and nowhere else — a `matchPackageNames` that names the alias where Renovate matches the resolved package (`typescript` vs `typescript-native-bridge`) is exactly that case.
+The env var is what lets the install run Renovate's own native build scripts, which pnpm blocks by default. The `packageFiles with updates` block of the log is the answer — every dep with the `updates` it earned, or the "skipReason" that emptied it (`disabled` is a rule, `is-pinned` a pin the config declines, `github-token-required` is the local run having no token and means nothing about the bot). `renovate-config-validator` checks the schema only, so a rule that parses and still does nothing shows up here and nowhere else — a `matchPackageNames` that names an npm alias where Renovate matches the resolved package is exactly that case.
 
 ## Release age (`minimumReleaseAge: 0`)
 

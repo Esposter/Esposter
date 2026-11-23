@@ -1,6 +1,6 @@
 # `ignorePatterns`
 
-Read when editing `oxlint.config.ts`'s `ignorePatterns`, when the oxlint step hangs, or when a linter walks an agent worktree.
+Read when editing `oxlint.config.ts`'s `ignorePatterns`, when the oxlint step hangs, or when oxlint walks an agent worktree.
 
 ## `ignorePatterns` — a source file is excluded only for a hang
 
@@ -10,10 +10,10 @@ The CI symptom is not what it looks like: a hung Lint job runs until its `timeou
 
 oxlint has no per-file type-aware toggle — `overrides` cannot set `options.typeAware` — so for a hang, `ignorePatterns` is the only lever. A file that finishes but makes one rule expensive takes a per-rule override instead (`references/type-aware-cost.md`). Recheck a hang after a `tsrs` bump before adding an exclusion for it.
 
-## `ignorePatterns` — the tileset glob is one value for both linters
+## `ignorePatterns` — the tileset glob has one definition
 
-The Tiled tileset glob is the named export `TILESET_IGNORE_PATTERN` in `oxlint.config.ts`. Its `ignorePatterns` spreads it, and `packages/configuration/eslint/ignores.js` imports it, so a tileset folder that moves is edited in that one line and both passes follow. Never write the glob a second time in either file.
+The Tiled tileset glob is the named export `TILESET_IGNORE_PATTERN` in `oxlint.config.ts`, which its `ignorePatterns` spreads. A tileset folder that moves is edited in that one line.
 
 ## `ignorePatterns` — `.agents/worktrees` is load-bearing
 
-Agent worktrees are full parallel checkouts of this monorepo nested at `.agents/worktrees/<name>/`, so without that entry both linters walk a second copy of the whole repo per live worktree and report every diagnostic at another branch's path. It has to be stated here rather than left to git: the only thing hiding those paths from git is the agent harness's machine-local `.git/info/exclude`, which no clone or CI runner has. This one entry covers ESLint too — `eslint-plugin-oxlint`'s `buildFromOxlintConfig` turns `ignorePatterns` into flat-config `ignores`. The path itself is owned by `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` (which carries the full rationale) and pinned to this file by `scripts/src/workspace/agentDirectories.test.ts`.
+Agent worktrees are full parallel checkouts of this monorepo nested at `.agents/worktrees/<name>/`, so without that entry oxlint walks a second copy of the whole repo per live worktree and reports every diagnostic at another branch's path. It has to be stated here rather than left to git: the only thing hiding those paths from git is the agent harness's machine-local `.git/info/exclude`, which no clone or CI runner has. The path itself is owned by `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` (which carries the full rationale) and pinned to this file by `scripts/src/workspace/agentDirectories.test.ts`.

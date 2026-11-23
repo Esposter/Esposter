@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-It provides shared build and lint configuration for all Esposter packages. It provides ESLint configs, TSConfig bases and the tsdown build configurations that each package's `tsdown.config.ts` composes.
+It provides shared build configuration for all Esposter packages: TSConfig bases, the oxfmt formatter settings and the tsdown build configurations that each package's `tsdown.config.ts` composes.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -22,21 +22,12 @@ import { getTsdownConfiguration } from "@esposter/configuration";
 export default getTsdownConfiguration();
 ```
 
-```js
-// eslint.config.js — flat config, one composed export
-import eslintConfiguration from "@esposter/configuration/eslint/index.typescript.js";
-
-export default eslintConfiguration.append({ ignores: ["dist"] });
-```
-
 ```ts
 // oxfmt.config.ts — the formatter's settings, which a generator formatting its own output reads too
 import oxfmtConfiguration from "@esposter/configuration/oxfmt";
 
 export default oxfmtConfiguration;
 ```
-
-Inside this monorepo, a package composes the pieces itself instead, because each configuration extends the Nuxt-generated configuration that the app emits. Copy `packages/db/eslint.config.js`. Do not write this wiring from scratch.
 
 ## <a name="license">⚖️ License</a>
 

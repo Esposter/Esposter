@@ -1,154 +1,91 @@
 # Lint Toolchain
 
-Two linters, one direction: a rule moves from ESLint to oxlint whenever oxlint gains coverage, prioritized by what actually costs time in the ESLint pass. The move is gated on upstream — each rule still in ESLint waits on a trigger the table below names — so this page is the mechanism as it stands and the blocker table a bump is read against, never a schedule. Oxlint clears the whole repo in under a minute, nearly all of it the type-aware rules; ESLint is the slower half, and its cost is concentrated in a handful of rules rather than spread across the set. With no type-aware rule left in ESLint (`neverthrow/must-use-result` is deleted, `typescript-eslint` is not installed), the remaining pass is short enough to run on every change — `lint` is not near CI's critical path, which belongs to `build app`.
-
-## What works today
-
-- One root `oxlint.config.ts` runs oxlint repo-wide with `typeAware: true` — the type-aware backend, `tsrs-lint`, executes the type-aware `typescript/*` rules (`no-floating-promises`, `await-thenable`, `no-duplicate-type-constituents`, …) natively. Its data and helpers live in `oxlint/`, beside it. Its `jsPlugins` list is read off `scripts/src/oxlint`, so a new plugin needs no registration.
-- `eslint-plugin-oxlint` (`packages/configuration/eslint/oxlint.js`) imports the same `oxlint.config.ts` and passes it to `buildFromOxlintConfig`, which appends `"off"` entries for every ESLint rule oxlint already covers. It is appended after the base rule sets in both flat configs, so its disables win over them; the per-path blocks appended after it keep the rules they set.
-- **Every category oxlint runs must be listed explicitly in `oxlint.config.ts`, `correctness` included.** Oxlint keeps `correctness` on by default even when other categories are configured, but `eslint-plugin-oxlint` **replaces** its defaults with whatever the file names — so a category left implicit reads to the plugin as off, and it leaves the ESLint twin of every rule in that category enabled. ESLint then re-runs the type-aware rules oxlint already checked, which is where most of its time goes.
-- The strict and stylistic type-checked rule sets `typescript-eslint` ships are covered by oxlint's `typescript/*` rules, so the `typescript-eslint` package is not installed. The AST-selector bans that `no-restricted-syntax` carried are oxlint's `selector-ban/no-restricted-syntax`, whose lists live in `scripts/src/services/oxlint/selectorBan/syntaxes/`. `prefer-optional-chain`, `no-restricted-imports` (the `randomUUID` ban), `no-restricted-types` (the `Omit` → `Except` ban), and `no-unused-expressions` live in `oxlint.config.ts`.
-- **A migrated ban must be _configured_ in oxlint, not merely un-deleted from ESLint.** `eslint-plugin-oxlint` disables the ESLint twin of any rule oxlint _runs_ (e.g. `no-restricted-imports`, `no-restricted-types`, `no-unused-expressions`) — every rule in an enabled category, whether or not the repo configures it. The one exception is a rule the repo sets to `"off"`: the plugin drops that rule's disable again, so an ESLint-side `"off"` beside it is load-bearing rather than redundant. So an ESLint-side ban for such a rule is silently dead the moment oxlint ships the rule name — the ban only lives if it is written into `oxlint.config.ts`. Verify with `eslint --print-config <file>` (the rule should read `[0]`/off) plus a planted violation run through oxlint.
+Lint is a set of passes, each reading the files it can parse and no other, so a rule runs in one pass only. Oxlint checks every script in the repository in one native pass, its type-aware rules included. Vize checks each component's template, which oxlint does not read. The workspace tests check what no linter reads: JSON files, banned dependencies, the reasons on template directives and the template text rules. Knip finds unused files, exports and dependencies, and actionlint checks the workflows. Oxfmt formats and sorts imports, and lints nothing.
 
 ```mermaid
 flowchart LR
-  config["oxlint.config.ts"]
-  oxlint["oxlint + tsrs-lint (type-aware)"]
-  plugin["eslint-plugin-oxlint (buildFromOxlintConfig)"]
-  eslint["ESLint"]
-  config -->|"categories + rules + typeAware"| oxlint
-  config -->|"same file"| plugin
-  plugin -->|"appends off for every covered rule"| eslint
+  lint["vp run lint"] --> oxlint["oxlint: every script"]
+  lint --> vize["vize: every component template"]
+  lint --> knip["knip: unused files, exports, dependencies"]
+  lint --> actionlint["actionlint: workflows"]
+  fix["vp run lint:fix"] --> oxlint
+  fix --> vize
 ```
 
-## What the type-aware pass costs
+The root `lint` task depends on the four checks above. `lint:fix` runs the two that rewrite files, oxlint's and vize's; knip and actionlint only report.
 
-The root oxlint scripts report their rule timings on every run: each passes `--debug=timings`, which prints a table at the end of the log naming each rule's time, its share and whether it is native, a JS plugin or type-aware. ESLint reports its own only where `TIMING` is set — the app's ESLint scripts set `TIMING=1`, but the root and package ESLint scripts do not, so their timings take `TIMING=1` set by hand. A slow or memory-hungry oxlint pass or app ESLint pass is therefore diagnosed from the log CI already has.
+## The passes
 
-The type-aware share is billed unevenly. The backend computes each type lazily and caches it, so the first rule that forces an expensive type is charged for all of it, and switching that rule off moves the charge to the next rule that asks. Reading the table, the top rule is a lead, not a verdict: the expensive files are found by timing oxlint per package and then per file, and the fix is scoped to them. The backend and its one switch are decided under [Decisions](#decisions).
+- **Oxlint** runs once over the repository from `oxlint.config.ts`. Every category is listed explicitly at `error`, and `typeAware` runs the type-aware rules natively (see [The type-aware pass](#the-type-aware-pass)). Its rules are the native ones, the `selector-ban/no-restricted-syntax` lists, the local JS plugins and the preset of the third-party `eslint-plugin-pinia`. The local plugins are one entrypoint each under `scripts/src/oxlint/` (`selector-ban`, `sorting`, `props-interface`, `vue-type-imports` and the rest), and `oxlint/jsPlugins.ts` loads them by file, so a new one needs no entry.
+- **Vize** runs each component's whole template from `vite/vueOptions.ts`. Its `incremental` preset runs only the rules that file names. Entries scope a rule set by path: the packages styled by scoped CSS alone take the template bans and the scoped-style bans, and the app takes its UnoCSS blocklist. The template ban lists are in `vite/services/`.
+- **Knip** reads `knip.config.ts`. Its entries include the oxlint plugins, since oxlint loads them by path.
+- **Actionlint** checks the workflows, with its shellcheck and pyflakes passes off.
+- **Workspace tests** are Vitest suites under `scripts/src/workspace/`, for what no linter reads: JSON and JSONC files (`jsonFiles.test.ts`), banned dependencies (`bannedDependencies.test.ts`), the reasons on template directives (`templateDirectiveReasons.test.ts`) and the template text rules vize cannot yet run (`templateTextRules.test.ts`).
+- **Oxfmt** formats with `oxfmt.config.ts` at the root, whose settings live in `packages/configuration/oxfmt/`. Its `sortImports` puts type imports first and values after, with packages and `#` subpaths ahead of relative ones.
 
-A few rules cost most of the type-aware pass on their own, `no-unsafe-enum-assignment` and `no-floating-promises` the largest. They run on every lint, each at `"error"` as its category sets it in `oxlint.config.ts`, so a finding on one fails the lint and a floating promise is reported when it lands. The routine lint pays their cost for that.
+## Directives and reasons
 
-`no-deprecated` runs on every lint, and its share of the pass is small. The trade is worth it. An engine or a library marks a call `@deprecated` a release before it removes it, and code written from memory of an older API lands the deprecated call first — a Vite 8 config spelling `rollupOptions` for `rolldownOptions`, an h3 2 handler reaching for `getRequestHeader`. The rule catches those calls before they are committed.
+Each pass has its own spelling, and both require a reason.
 
-The Claude Code mod trees (`packages/genshin-mods` and `packages/genshin-persona/mod`) are the standing case. Their hooks register through the engine's `On` type, a pair of generic overloads whose callback parameter is computed from a large union of event patterns. The engine writes those declarations, and the repo cannot reshape them. `tsc` checks the same program quickly. But `strict-void-return` asks, for every async hook, whether it is assignable to a void-returning callback, and over those overloads its query costs orders of magnitude more per file than the same rule costs across the rest of the repo. An `overrides` entry in `oxlint.config.ts` turns that one rule off for the mod trees alone, so every other type-aware rule still runs there, `no-misused-promises` included, whose same question costs a fraction of a second on the tsrs backend, and the mod trees lint in about a second. Turned on for those trees, `strict-void-return` finds nothing today and adds tens of seconds of CPU to the repo-wide pass, which is why the entry stays.
-
-```mermaid
-flowchart LR
-  log["--debug=timings table"] --> top{"top rule's cost spread across the repo?"}
-  top -->|"no — a few files"| bisect["time oxlint per package, then per file"]
-  bisect --> tsc{"tsc fast on the same program?"}
-  tsc -->|"yes — the rule's queries"| override["overrides entry: the asking rules off in that scope"]
-  tsc -->|"no — the types themselves"| types["fix the types, or ignorePatterns for a tsgo hang"]
-  top -->|"yes"| repo["weigh the rule repo-wide"]
-```
-
-## What remains in ESLint and why
-
-The remaining expensive rules, in descending cost order, and the trigger for migrating each:
-
-| Rule                   | Share of rule time | Blocker                                | Migrate when                                                                               |
-| ---------------------- | ------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `vue/no-child-content` | ~two thirds        | Not implemented in oxlint's vue plugin | upstream implements it (check `eslint-plugin-oxlint`'s generated rule maps after upgrades) |
-| `perfectionist/sort-*` | ~a sixth, combined | oxlint has no sorting rules            | upstream implements sorting                                                                |
-
-With the type-aware rules out, `vue/no-child-content` is the pass — it alone is worth more than everything else combined, so it is the only migration here that would move the number.
-
-**`neverthrow/must-use-result` is deleted, not migrated:** it is the single most expensive rule (~a third of rule time) because it is the only one that needs `parserOptions.projectService`, and type-aware parsing dominates the whole ESLint pass rather than just that rule's share. Deleting it — plugin file, config entry and `@ninoseki/eslint-plugin-neverthrow` dependency — is what makes `pnpm lint` fast enough to run on every change. The cost is real and accepted: an unterminated `Result` chain is caught only by review, with `pnpm ai:sweep:unterminated-results` listing the candidates, and it fails silently (the call still runs, but the `Err` it returns is never read, so no error surfaces). Re-adding any type-aware ESLint plugin gives back the same multiplier, so the answer to "this convention needs types" is a review rule or a runtime assertion, never a rule here.
-
-Everything else in the ESLint pass is either Nuxt/Vue-specific (`vue/*` SFC rules, `nuxt/*`) or a plugin oxlint has not implemented (`perfectionist/*`, `pinia/*`, `unocss/*`, `jsonc/*`, `link-checker/*` — oxlint reads no JSON at all); apart from the `perfectionist/sort-*` family none of them individually costs meaningful time, and the whole tail together is worth a fraction of `vue/no-child-content`. `typescript/naming-convention` is parked in `oxlint.config.ts` — it is too expensive under typescript-eslint to ship, and is waiting on oxlint to support it.
-
-## Ongoing process
-
-A catalog bump is read against the rule table above and the runbook in the `oxlint` skill (`.agents/skills/oxlint/references/lint-configuration.md`, "Bumping oxlint and its ESLint plugin").
+- A script directive is `// oxlint-disable-next-line <rule> -- <reason>`, or `/* oxlint-disable <rule> -- <reason> */` on a file's first line. A local plugin's rule is named by its `meta.name`, as `selector-ban/no-restricted-syntax`. `comments/require-directive-reason` reports a directive without a reason.
+- A template directive is the HTML comment `<!-- eslint-disable-next-line <rule> -- <reason> -->`. Vize reads that spelling in templates, so it is written as is. Vize's tree carries no comment for a linter to read, so `scripts/src/workspace/templateDirectiveReasons.test.ts` checks the reason.
 
 ## Where a ban is written
 
-A ban goes to the first of these that can express it, and the step is chosen by running a planted violation
-through `oxlint -c` with the candidate rule configured — never by reading a rule list. `oxlint --rules` prints
-nothing in the shipped binary, and `id-denylist` was already shipping when a selector and then a JS plugin were
-written for the same ban, which is what this order exists to stop happening again.
+A ban goes to the first mechanism that can express it. The step is chosen by running a planted violation through the candidate, never by reading a rule list.
 
 ```mermaid
 flowchart TD
-  BAN["a ban to write"] --> OX{"an oxlint rule expresses it?"}
-  OX -->|"yes"| OXLINT["oxlint.config.ts — done"]
-  OX -->|"no"| ES{"an ESLint rule expresses it?"}
-  ES -->|"yes"| ESLINT["ESLint — and say which kind"]
-  ES -->|"no"| PLUGIN["an oxlint JS plugin under scripts/src/oxlint/"]
-  ESLINT --> KIND{"will oxlint ship this rule?"}
-  KIND -->|"yes — upstream gap"| TABLE["a row in the table above, with its trigger"]
-  KIND -->|"no — nothing upstream to wait for"| PARK["stays, and says so"]
+  BAN["a ban to write"] --> READ{"does a linter read the file?"}
+  READ -->|"no: JSON, manifests, template comments"| TEST["a workspace test in scripts/src/workspace/"]
+  READ -->|yes| TPL{"a template?"}
+  TPL -->|yes| VIZE["vize: a rule or a selector list in vite/"]
+  TPL -->|no| NATIVE{"an oxlint rule expresses it?"}
+  NATIVE -->|yes| OXLINT["oxlint.config.ts"]
+  NATIVE -->|no| SELECTOR{"an AST selector expresses it?"}
+  SELECTOR -->|yes| LIST["a list under scripts/src/services/oxlint/selectorBan/syntaxes/"]
+  SELECTOR -->|no| PLUGIN["a JS plugin under scripts/src/oxlint/"]
 ```
 
-**An ESLint entry has to say which of the two it is**, because they age in opposite directions. One waiting on an
-upstream gap — a rule oxlint will plausibly ship, or a context it will plausibly reach — is temporary, and earns
-a row in the table above so a bump is read against it. One expressing something no linter will ever ship a rule
-for is permanent, and a note saying so is what stops the next audit re-deriving it. A JS plugin is the last step
-rather than the second: it is surface this repo then owns, tests and maintains, so it is only right when nothing
-else can express the ban at all.
+A JS plugin is the last linter step: it is surface this repo owns, tests and maintains. A few bans stay selector entries rather than native rules: `window.localStorage`, `stopImmediatePropagation` and `splice`, since oxlint reads a component's script and not its template; the `.then`/`.catch`/`.finally` chain, since `promise/prefer-await-to-then` is off (the `oxlint` skill's `references/plugin-rules.md`); and the naming bans, since oxlint does not implement the naming rules. The TypeScript `private` keyword ban has no linter that ships it, so it is permanent. A catalog bump is checked by planting a violation for each local plugin and selector list; the `oxlint` skill's `references/lint-configuration.md`, "Bumping oxlint", is the runbook.
 
-**Where each ban is configured.** `expect.any`, the polling ban, `JSON.parse` and `useRoute` are
-`no-restricted-properties` and `no-restricted-globals` in `oxlint.config.ts`; the sites that disable them spell the
-directive `oxlint-disable-next-line` with the reporting rule's name. `useRoute` also takes a
-`no-restricted-imports` entry, because `no-restricted-globals` sees the auto-imported form and not an explicit
-`vue-router` import — and the pages' `useRouter` ban takes one for `vue-router` and `#imports` for the same reason.
-The same holds for every name a tool auto-imports: `oxlint.config.ts` reads them off the declarations that tool writes
-and bans each from its module. Under `apps/web/app` those are Nuxt's, written on `nuxt prepare`
-(`apps/web/.nuxt/types/imports.d.ts`, the install's postinstall). In the `.vue` files of a package that builds with the
-shared Vue plugin they are the plugin's, in the `auto-imports.d.ts` committed beside its manifest, and a package is
-covered by having one. A name a tool starts auto-importing is banned with no list kept in the repository. A file the
-tool wrote that the reader finds no name in aborts the configuration load, so a format change cannot leave the ban empty;
-a tree that has not run `nuxt prepare` has no Nuxt file yet and loads without that ban, CI's install having written it. A package's
-`.ts` files are left out, because a unit suite runs under the plain Vitest configuration, which applies no plugin.
+## The type-aware pass
 
-What stays a selector ban rather than a native rule, and why:
+The type-aware rules run on `tsrs-lint`, which oxlint launches with no flags. The switches the typecheck scripts pass `tsrs` are therefore set in `oxlint.config.ts`, through the environment the backend inherits.
 
-| Ban                                                                                                                                                         | Why it stays                                                                                                                                                                          | Kind         |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| `window.localStorage`, `stopImmediatePropagation`, `splice`                                                                                                 | `no-restricted-properties` expresses all three, but oxlint reads an SFC's `<script>` and not its template, where these also apply through `vue/no-restricted-syntax`                  | upstream gap |
-| `.then`/`.catch`/`.finally`                                                                                                                                 | `promise/prefer-await-to-then` is off for the reasons the `oxlint` skill's `references/plugin-rules.md` states                                                                        | upstream gap |
-| `try`/`catch`, the `A`-prefix interface, the lookup-name and `can`/`should` bans, `field: T \| undefined`, the `*Store` member read, the template-only bans | each needs a syntax predicate; `typescript/naming-convention` and `camelcase` are not implemented in oxlint, and `id-match` is one repo-wide regex rather than a per-construct format | upstream gap |
-| the TypeScript `private` keyword ban                                                                                                                        | no linter ships it; it is this repo's own preference for `#`                                                                                                                          | permanent    |
+Every root oxlint script passes `--debug=timings`, so each run ends with a table of rule times. The top rule is a lead, not a verdict: the backend computes each type once and caches it, so the first rule to force an expensive type is charged for it. A slow file is found by timing per package, then per file.
+
+`no-deprecated` runs on every lint. An engine marks a call `@deprecated` a release before removing it, and the rule catches the call before it is committed.
+
+`packages/genshin-mods` and `packages/genshin-persona/mod` turn `typescript/strict-void-return` off through an `overrides` entry. Asking whether an async hook fits the engine's generic `On` overloads costs far more there than anywhere else in the repository. Every other type-aware rule still runs in those trees.
 
 ## Decisions
 
-**The type-aware backend is `tsrs-lint`, and `oxlint-tsgolint` leaves the workspace.** `tsrs-lint` is tsrs's own type-aware linter, a Rust port of tsgolint that runs the same type-aware rules, and it runs about twice as fast on the packages tree. vite-plus bundles tsrs and points oxlint at its `tsrs-lint` launcher, and vite-plus 1.7 no longer resolves `oxlint-tsgolint` on every run, so the package leaves the root manifest, the catalog and the `vite-plus` override. The catalog pins tsrs to its `7.1.0-beta` prerelease, the line vite-plus 1.7 depends on, as a caret range until npm's `latest` names that line, a `@TODO` the catalog carries. Rejected: keeping `oxlint-tsgolint` beside the new backend, which leaves two type-aware backends and a dependency nothing runs.
+**The type-aware backend is `tsrs-lint`.** It is the Rust port of the type-aware linter, bundled by vite-plus, which points oxlint at it. Rejected: running a second type-aware backend beside it, which leaves two backends for one set of rules.
 
-**The backend's switches are set in `oxlint.config.ts`.** oxlint launches `tsrs-lint` with no flags, and `vp lint` has no setting that passes it any, so the switches the typecheck scripts give `tsrs` as flags reach the lint through the environment the backend inherits. `tsrs-lint` refuses a tsconfig that names a content mapper, Nuxt's generated one and the Vue packages' `tsconfig.vue.json`, unless it may run the mapper, so `oxlint.config.ts` sets `TSRS_LINT_RUN_EXTERNAL_CODE` before the backend starts, and every `vp lint` run carries it, the editor's included. Rejected: a launcher script, or a wrapper that "OXLINT_TSGOLINT_PATH" points at, to add the flag. The backend reads the variable itself, so a line in the config reaches it and no file has to be kept beside the bundled path. Rejected too: setting the variables in the root lint scripts and in CI, which the editor's lint never runs. Revisit when the lint configuration can pass the backend its options: [vite-plus 3476](https://github.com/voidzero-dev/vite-plus/issues/3476), the `@TODO` on the switches.
+**The lint sets the typecheck's switches itself.** `oxlint.config.ts` sets the content-mapper switch and the fast preset in the environment before oxlint starts the backend, so a lint run and the typecheck scripts share one checker setting by statement rather than by default. Rejected: a launcher script or a wrapper that adds the flag, since the backend reads the variables itself. Rejected too: setting them in the root scripts and in CI, which the editor's lint never runs. The `@TODO` in `oxlint.config.ts` names the upstream change that would let the lint configuration pass the backend its options directly.
 
-**The lint asks for the fast preset, as the typecheck does.** `oxlint.config.ts` sets "TSRS_FAST" beside the content-mapper switch, so the lint and the typecheck scripts' `--fast` run the same checker settings by statement rather than by default. `tsrs-lint` already turns the preset on unless "TSRS_FAST=0" ([oxc-project/tsrs 989](https://github.com/oxc-project/tsrs/pull/989)), and the repo-wide pass measures the same either way; what the line buys is that a change of that default upstream cannot change the lint unseen. Rejected: leaning on the default, which states one of the two settings the lint and the typecheck share and leaves the other to a release note.
+**A convention that needs types is enforced by review, not by a local rule.** The backend runs no JS rules, so a local rule has no types, and a type-aware JS plugin would need the parser to read a project for every file, which multiplies the pass. Rejected: a type-aware local plugin.
 
-**A consequence of the mapper: a generic component's props are typed.** `tsrs` types a generic `.vue` component's test-utils `props()` through the vize mapper, so the type-aware rules can see a type that tsgolint read as `any`. An assertion through an optional chain over such a component, `(wrapper?.props() as undefined | Props)`, is then reported by `typescript/no-unnecessary-type-assertion`, since the rule reads `{} | undefined` and the asserted union as the same type, and tsgolint reports the same shape once it sees a type rather than `any`. The fix is to narrow the wrapper with `assert.exists` first and assert on the narrowed value, never to disable the rule.
+**A consequence of the content mapper: a generic component's props are typed.** The mapper types a generic `.vue` component's test-utils `props()`, so a type-aware rule can report an assertion over an optional wrapper as unnecessary. The fix narrows the wrapper first, never a disable.
 
 ## Key files
 
-| File                                                                           | Role                                                                                                                                     |
-| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `oxlint.config.ts`                                                             | Single source of truth: categories (list `correctness` explicitly), per-rule overrides, `typeAware`                                      |
-| `package.json`                                                                 | The root oxlint scripts, each run with `--debug=timings`                                                                                 |
-| `packages/configuration/eslint/oxlint.js`                                      | Builds the ESLint disable config from `oxlint.config.ts`                                                                                 |
-| `packages/configuration/eslint/index.typescript.js`, `index.vue.js`            | Append the oxlint disables after the base rules, so they win                                                                             |
-| `packages/configuration/eslint/index.vueScopedStyles.js`                       | The Vue config for a package styled by scoped CSS alone, every UnoCSS rule off                                                           |
-| `vite/services/scopedStyleSyntaxes.ts`                                         | Such a package's ban on an attribute HTML does not define on a native element, which no utility styles here                              |
-| `vite/services/htmlTagNames.ts`                                                | The HTML standard's tag names that ban reads, with the upstream release it was copied from                                               |
-| `vite/services/htmlElementAttributes.ts`                                       | The attributes each HTML element accepts, that ban's other half, with the same provenance                                                |
-| `packages/configuration/eslint/ignores.js`                                     | ESLint's shared ignores; the tileset glob is the one `oxlint.config.ts` exports                                                          |
-| `scripts/src/workspace/templateTextRules.test.ts`                              | The template rules vize cannot run yet — the bare `@click.stop` ban, same-name bind shorthand and block padding — each under its `@TODO` |
-| `vite/services/componentCasingSyntaxes.ts`, `vite/services/foreignTagNames.ts` | The PascalCase component-tag check as a vize selector ban, with the SVG and MathML names it exempts                                      |
+| File                                                | Role                                                                                  |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `oxlint.config.ts`                                  | Categories, rules, `overrides`, `ignorePatterns` and the type-aware switches          |
+| `oxlint/`                                           | The lists `oxlint.config.ts` reads, and `jsPlugins.ts`, which loads the local plugins |
+| `scripts/src/oxlint/`                               | The local JS plugins, one entrypoint each                                             |
+| `scripts/src/services/oxlint/selectorBan/syntaxes/` | The selector-ban lists behind `selector-ban/no-restricted-syntax`                     |
+| `vite/vueOptions.ts`                                | Vize's rules and its per-path entries                                                 |
+| `vite/services/`                                    | Vize's template ban lists, and the HTML data behind the scoped-styles ban             |
+| `vite/checkTasks.ts`                                | The `lint`, `lint:fix` and per-pass tasks                                             |
+| `knip.config.ts`                                    | Knip's entries, which include the oxlint plugins                                      |
+| `scripts/src/workspace/`                            | The tests for what no linter reads                                                    |
+| `oxfmt.config.ts`, `packages/configuration/oxfmt/`  | The formatter and its import order                                                    |
 
 ## The HTML data behind the scoped-styles ban
 
-`scopedStyleSyntaxes.ts` reads two static tables of the HTML standard: the tag names, in `htmlTagNames.ts`, and each element's attributes, in `htmlElementAttributes.ts`. Both are our own typed constants, copied from the upstream `html-tag-names` and `html-element-attributes` packages under their MIT notice, and each file's header names the upstream release it was copied from. A refresh re-crawls the standard and re-checks those headers.
+`scopedStyleSyntaxes.ts` reads two static tables of the HTML standard: the tag names in `htmlTagNames.ts` and each element's attributes in `htmlElementAttributes.ts`. Both are typed constants copied from the upstream `html-tag-names` and `html-element-attributes` packages under their MIT notice, and each file's header names the upstream release it came from. A refresh re-crawls the standard and re-checks those headers.
 
-The other eight items are counted here and stay on the [tracker](https://github.com/wooorm/html-element-attributes/issues?q=is%3Aissue): out of scope 5, false positive 2, rejected 1. The in-scope item is listed below.
-
-| Upstream issue or pull request                                                                                              | Verdict                                                                                                                       | Where it is proven                                                         |
-| :-------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
-| `html-element-attributes` [12](https://github.com/wooorm/html-element-attributes/issues/12) — `part`, `exportparts` missing | In scope, fixed upstream by [pull request 13](https://github.com/wooorm/html-element-attributes/pull/13); the data carries it | `scripts/src/workspace/scopedStyles.test.ts`, `shadowPartGlobalAttributes` |
-
-The tag names predate the standard's `selectedcontent` element, which the standard now defines and the rule therefore does not check. A refresh adds it.
-
-## Notes
-
-- The tileset ignore glob has one definition: a named export of `oxlint.config.ts`, which its `ignorePatterns` lists and `packages/configuration/eslint/ignores.js` imports. ESLint already loads that file through `eslint/oxlint.js`, so the import adds no dependency edge and no file. A third data module would be one more place to edit when the tilesets move. ESLint's ignores are not derived from all of oxlint's `ignorePatterns`, because that would widen what ESLint skips (`.agents/worktrees`, `.claude`, `auto-imports.d.ts`) without a review of each entry.
+The tag names do not yet include `selectedcontent`, which the standard defines, so the ban does not check it until a refresh adds it.

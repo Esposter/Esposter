@@ -4,7 +4,7 @@ Read when laying out a `<script setup>` block — the macros, then the declarati
 
 ## Macros
 
-`defineOptions` (only where a component needs one) → `defineSlots` → `defineModel` → `defineProps` → `defineEmits`, at the top of the script after the imports and the types they read, then all `const` assignments, then `defineExpose` last (preceded by a blank line, before any `watch`/lifecycle hooks). `vue/define-macros-order` enforces the first part and fixes it (`packages/configuration/eslint/overrides/vueRules.js`); `defineExpose` is not in it, since the rule's own option would put it after the watches and hooks.
+`defineOptions` (only where a component needs one) → `defineSlots` → `defineModel` → `defineProps` → `defineEmits`, at the top of the script after the imports and the types they read, then all `const` assignments, then `defineExpose` last (preceded by a blank line, before any `watch`/lifecycle hooks). vize's `script/define-macros-order` enforces the first part and fixes it (`vite/vueOptions.ts`); `defineExpose` is not in it, since the rule's own option would put it after the watches and hooks.
 
 - **`defineModel`**: always type explicitly, and for booleans pass `{ default: false }` so the type excludes `undefined`. Never declare one unless the value is used in script (`watch`, `computed`, or passed) — otherwise use `:prop` + `@event`. An **unnamed** model's variable is `modelValue`, never `model` or another alias; a **named** model's variable matches the name (`const title = defineModel<string>("title")`).
 - **`defineSlots`**: only assign to `const slots` when `slots` is referenced in script. Otherwise call `defineSlots<...>()` without assignment.

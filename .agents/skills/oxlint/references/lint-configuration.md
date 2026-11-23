@@ -1,20 +1,12 @@
 # Maintaining `oxlint.config.ts` and Disable Directives
 
-Read when turning a rule on or off, loosening its options, probing what one would report, or writing a
-disable directive. The two linters and which script runs each are in `SKILL.md`; this page is the file and
-the directive.
+Read when turning a rule on or off, loosening its options, probing what one would report, or writing or deleting a disable directive. Which pass runs each rule is in `SKILL.md`; this page is the file and the directive.
 
 ## Changing a rule is a check-only exercise — never run `lint:fix`
 
 Turning a rule on, loosening its options, or probing what one would report all mean running the linter against code that has not agreed to the rule yet, and a fix variant then **rewrites the repo to satisfy a decision nobody has made**. An autofixable rule lands across the whole tree in one pass, so the diff is too large to read, and the fixes for a rule you go on to reject have to be picked back out of a commit carrying the ones you kept. Some of them do not come back by re-running either: `require-await` strips a keyword the signature needed (`references/rule-notes.md`).
 
 So while `oxlint.config.ts` is being edited, run the **check-only** `vp run lint` (or `oxlint -c <probe>`), never `vp run lint:fix`/`vp run lint:fix:packages`. The probe-config audit under "Configure a plugin rule under its prefixed name only" is the same rule in practice: it reads diagnostics off a copy of the config and touches no source at all. A fix pass earns its run once the rule is settled and committed, not before.
-
-## Categories — always list `correctness` explicitly
-
-Oxlint keeps the `correctness` category enabled by default even when the config specifies other categories — but `eslint-plugin-oxlint` **replaces** its default categories with whatever the config lists. If `correctness` is missing from the explicit `categories` map, the plugin assumes the category is off and leaves every correctness rule's ESLint twin enabled — ESLint then re-runs the expensive type-aware rules (`no-floating-promises`, `await-thenable`, …) that oxlint's type-aware backend already checks. Symptom: a rule shows up in ESLint `TIMING` output even though oxlint covers it. See `openspec/specs/architecture/lint-toolchain/design.md` for the ongoing migration process.
-
-**A manual ESLint disable is dead weight only for a rule oxlint actually _runs_.** `eslint-plugin-oxlint` is appended last in every flat config, so its `"off"` entries win — but it generates one per rule in an enabled **category** and then deletes that entry again for every rule `oxlint.config.ts` deactivates, because a rule turned off is a rule not covered. An oxlint-side `"off"` and an ESLint-side `"off"` for the same rule are therefore a **pair**, not a duplicate: drop the ESLint half as redundant and the rule comes back on in ESLint alone, reporting across a tree oxlint passes clean. Check the root map for an `"off"` before deleting any ESLint disable. Notable exception: the repo's `vue-svelte-astro-exceptions` config deliberately keeps `no-unused-vars`, `@typescript-eslint/no-unused-vars`, and `@typescript-eslint/consistent-type-imports` **enabled on `.vue` files**, so vue-side offs for those are load-bearing. Verify with `eslint --print-config <file>` on both a `.ts` and a `.vue` file before deleting a manual disable.
 
 ## A bump can enable a rule that contradicts the repo's own style
 
@@ -42,11 +34,11 @@ Verify substitution empirically rather than by reading — plant a file in the s
 
 **A scoped glob is stale until it is counted.** Two failure shapes, both of which read as passing: a glob matching **no files at all** (a tree that holds no TS), and a glob **stopping short of a tree that already follows the rule** (`packages/*/src/**` alone leaves `apps/infra`, `apps/jobs` and `apps/realtime` uncovered even though all three declare `#src/*` and none has a `paths` block, and a dead `oxlint-disable-next-line` for the ban then sits in the tree it never reached). `apps/web` has no `src/`, so `apps/*/src/**` is exactly the three non-Nuxt apps and reads as the twin of the packages glob. Count the files a glob matches before trusting it, and treat a disable directive found outside a ban's scope as evidence the scope is wrong rather than that the directive is.
 
-## Bumping oxlint and its ESLint plugin
+## Bumping oxlint
 
-On every oxlint / `eslint-plugin-oxlint` catalog bump:
+On every oxlint catalog bump:
 
-1. Re-measure with `TIMING=10` on the app ESLint run to see which rules now dominate.
-2. Check whether the top ESLint rules appear in `eslint-plugin-oxlint`'s generated rule maps (`dist/generated/rules-by-category.*` — including the `*TypeAwareRules` sets). If a rule is newly covered, it disappears from ESLint automatically via the appended config — verify with `eslint --print-config` on a sample file rather than editing anything.
-3. A selector ban runs in oxlint's `selector-ban/no-restricted-syntax` plugin, and it retires when a **plugin** rule turns out to express the same ban — so read a bump's new plugin rules against the selector list too, and confirm the two agree against planted cases before deleting the entry.
-4. Remove ESLint-side manual `"off"` entries that only existed to duplicate oxlint coverage (they are dead weight once `eslint-plugin-oxlint` disables the rule).
+1. Read the timings table on the next root oxlint run (`references/type-aware-cost.md`). A rule that rises to the top is a lead, not a verdict.
+2. Read a bump's new plugin rules against the selector lists too. A selector ban retires when a **plugin** rule turns out to express the same ban, so confirm the two agree against planted cases before deleting the selector entry.
+3. Plant a violation for each local plugin rule and confirm it still fires. The JS plugin API is alpha, so a contract change silently drops a rule while CI stays green (`references/custom-js-plugins.md`, "Writing one").
+4. A rule a bump newly covers is handled by the section above, "A bump can enable a rule that contradicts the repo's own style".
