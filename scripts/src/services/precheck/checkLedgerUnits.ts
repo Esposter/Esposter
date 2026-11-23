@@ -7,6 +7,7 @@ import { getUnitFiles } from "#src/services/sweeps/ledgerCoverage/getUnitFiles";
 import { LedgerUnitsMap } from "#src/services/sweeps/ledgerCoverage/LedgerUnitsMap";
 import { readFileSize } from "#src/services/sweeps/ledgerCoverage/readFileSize";
 import { readLedgerAreas } from "#src/services/sweeps/ledgerCoverage/readLedgerAreas";
+import { readOpenspecFolderUnits } from "#src/services/sweeps/ledgerCoverage/readOpenspecFolderUnits";
 import { readAreaFileUnits } from "#src/services/sweeps/ledgerCoverage/readPartitionUnits";
 import { readQuestionUnits } from "#src/services/sweeps/ledgerCoverage/readQuestionUnits";
 import { readTrackedFiles } from "#src/services/sweeps/ledgerCoverage/readTrackedFiles";
@@ -16,11 +17,12 @@ import { join } from "node:path";
 
 // Every notes table against the tree in this checkout, read as the working tree holds them: a derived ledger's against
 // Its listing, and a question's own file and each of its `<question>/<area>.md` files against the question's cells. Each
-// Area unit is held to the tracked files too, so a path a rename or a removal left behind is named as it stands, and to
-// The cap a pass reads it in full under
+// Area unit is held to the tracked files too, so a path a rename or a removal left behind is named as it stands, and every
+// Unit of the partition, the derived openspec folders included, to the cap a pass reads it in full under
 export const checkLedgerUnits = (): string[] => {
   const areas = readLedgerAreas();
   const unitsByArea = Object.fromEntries(areas.map((area) => [area, readAreaFileUnits(area)]));
+  const partitionUnits = [...Object.values(unitsByArea).flat(), ...readOpenspecFolderUnits()];
   const trackedFiles = readTrackedFiles(readVendoredSkillNames());
   const questionUnitsByFile = Object.fromEntries(
     Object.entries(readQuestionUnits()).flatMap(([question, units]) =>
@@ -39,10 +41,6 @@ export const checkLedgerUnits = (): string[] => {
       { ...questionUnitsByFile, ...LedgerUnitsMap },
     ),
     ...getAreaUnitFindings(unitsByArea, trackedFiles),
-    ...getAreaUnitSizeFindings(
-      unitsByArea,
-      getUnitFiles(Object.values(unitsByArea).flat(), trackedFiles),
-      readFileSize,
-    ),
+    ...getAreaUnitSizeFindings(partitionUnits, getUnitFiles(partitionUnits, trackedFiles), readFileSize),
   ];
 };
