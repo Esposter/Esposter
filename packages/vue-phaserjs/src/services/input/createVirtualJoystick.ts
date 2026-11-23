@@ -13,8 +13,8 @@ interface VirtualJoystickOptions {
 }
 // A thumb held within the radius of its base, read as one of four arrow keys as a directional pad would be: the axis
 // The thumb is further along wins, so a diagonal never presses two. One pointer holds it at a time and every other
-// Pointer stays free for the buttons. Positions are compared in the camera's world, so a zoomed or scrolled camera and a
-// Scaled base image are read where they are drawn
+// Pointer stays free for the buttons. Positions are compared in the camera's world, so a zoomed or scrolled camera and
+// A Scaled base image are read where they are drawn
 export const createVirtualJoystick = (
   scene: Scene,
   { base, deadZone, radius, thumb }: VirtualJoystickOptions,

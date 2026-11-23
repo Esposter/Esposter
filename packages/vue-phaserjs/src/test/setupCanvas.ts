@@ -1,15 +1,17 @@
 import { noop } from "@esposter/shared";
 import { vi } from "vitest";
 
-/* oxlint-disable selector-ban/no-restricted-syntax -- module scope is where a vitest setup file runs, and the environment it
-   runs in is the one its config names rather than one SSR decides. The ban this suspends is about a browser
-   global read before any phase could have chosen a branch, which is not a question a setup file has */
+/* oxlint-disable selector-ban/no-restricted-syntax -- module scope is where a vitest setup file runs, and the
+   environment it runs in is the one its config names rather than one SSR decides. The ban this suspends is about a
+   browser global read before any phase could have chosen a branch, which is not a question a setup file has */
 // There is no canvas in happy-dom, and a prototype spy on `getContext` is bypassed by its instance
 // Method resolution, so the original createElement is stored and each canvas gets its own `getContext` instead.
-// oxlint-disable-next-line typescript/no-deprecated -- `bind` resolves to the string-tag overload marked deprecated; the copy only forwards the call
+// `bind` resolves to the string-tag
+// oxlint-disable-next-line typescript/no-deprecated -- overload marked deprecated; the copy only forwards the call
 const createElement = window.document.createElement.bind(window.document);
 // The cast is needed: tsrs requires `lang` on the context, and TypeScript's DOM lib lacks it, so no literal fits both.
-// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a fake context: the DOM lib's type has no `lang`, which tsrs requires, so the literal fits neither the lib's type nor tsrs's
+// A fake context: the DOM lib's type has no `lang`, which tsrs requires,
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- so the literal fits neither the lib's type nor tsrs's
 const mockCanvasContext = {
   arc: noop,
   arcTo: noop,

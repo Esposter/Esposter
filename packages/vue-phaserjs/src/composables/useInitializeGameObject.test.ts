@@ -213,8 +213,8 @@ describe(useInitializeGameObject, () => {
     }).not.toThrow();
   });
 
-  // A create listener runs from the list it was dispatched with, so a listener that unmounts the component ahead of this
-  // One does not stop this one from running. The completion then makes a game object nothing would ever destroy
+  // A create listener runs from the list it was dispatched with, so a listener that unmounts the component ahead of
+  // This One does not stop this one from running. The completion then makes a game object nothing would ever destroy
   test("creates no game object when the component unmounts during the scene's create, ahead of its own completion", () => {
     expect.hasAssertions();
 

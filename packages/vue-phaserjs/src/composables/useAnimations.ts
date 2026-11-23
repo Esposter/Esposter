@@ -18,7 +18,8 @@ export const useAnimations = (
     animationScene = scene;
     animations.value = createConfigurations(scene);
   };
-  // The scene's animation manager keeps the frames, so they are removed on shutdown or on unmount, whichever comes first
+  // The scene's animation manager keeps the frames, so they are removed on shutdown or on unmount, whichever comes
+  // First
   const removeAnimations = () => {
     if (!animationScene) return;
 

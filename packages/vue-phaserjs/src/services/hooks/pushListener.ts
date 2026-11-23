@@ -7,8 +7,8 @@ import { ExternalSceneStore } from "#src/store/ExternalSceneStore";
 import { getOrCreate } from "@esposter/shared";
 
 // Returns the function that removes the listener early. A listener pushed from a component's setup is removed when the
-// Component unmounts, so it cannot reach a destroyed component. A shutdown is the exception: it is the scene's teardown,
-// And what a component set up in it (a slider's destroy, a map's camera bounds) outlives that component
+// Component unmounts, so it cannot reach a destroyed component. A shutdown is the exception: it is the scene's
+// Teardown, And what a component set up in it (a slider's destroy, a map's camera bounds) outlives that component
 export const pushListener = (lifecycle: Lifecycle, listener: (scene: SceneWithPlugins) => void, key?: string) => {
   const sceneKey = key ?? useInjectSceneKey();
   const listenersMap: ListenersMap = getOrCreate(ExternalSceneStore.lifecycleListenersMap, lifecycle, () => new Map());
