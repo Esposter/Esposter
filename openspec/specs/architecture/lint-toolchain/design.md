@@ -57,6 +57,8 @@ Every root oxlint script passes `--debug=timings`, so each run ends with a table
 
 `no-deprecated` runs on every lint. An engine marks a call `@deprecated` a release before removing it, and the rule catches the call before it is committed.
 
+The type-aware rules read the `.ts` files of the program and never a component's `<script>` block, so no type-aware finding is reported in a `.vue` file. A cast there keeps its reason as a plain comment, since a directive for it would suppress nothing.
+
 `packages/genshin-mods` and `packages/genshin-persona/mod` turn `typescript/strict-void-return` off through an `overrides` entry. Asking whether an async hook fits the engine's generic `On` overloads costs far more there than anywhere else in the repository. Every other type-aware rule still runs in those trees.
 
 ## Decisions
@@ -66,6 +68,10 @@ Every root oxlint script passes `--debug=timings`, so each run ends with a table
 **The lint sets the typecheck's switches itself.** `oxlint.config.ts` sets the content-mapper switch and the fast preset in the environment before oxlint starts the backend, so a lint run and the typecheck scripts share one checker setting by statement rather than by default. Rejected: a launcher script or a wrapper that adds the flag, since the backend reads the variables itself. Rejected too: setting them in the root scripts and in CI, which the editor's lint never runs. The `@TODO` in `oxlint.config.ts` names the upstream change that would let the lint configuration pass the backend its options directly.
 
 **A type-aware rule the backend lacks is `"off"` until the backend ships it.** Categories are on wholesale, so an oxlint release can enable a type-aware rule `tsrs-lint` does not implement, and the backend then fails the whole type-aware pass on "unknown rule" rather than skipping that rule. The rule is set `"off"` with the upstream request as its `@TODO` (`oxc-project/tsgolint` #1371 for `typescript/no-unsafe-class-instance-assignment`), and it is turned on again once the backend ships it. Rejected: holding oxlint at the release before, which freezes every other rule with it.
+
+**An unused disable directive fails the lint.** `reportUnusedDisableDirectives` is `"error"` in `oxlint.config.ts`, so a directive a change leaves with nothing to suppress is reported where it sits, and `lint:fix` deletes it. Rejected: the hunt by hand, which let stale directives collect between runs; and the CLI flag, which would add a switch to every lint script.
+
+**`typescript/no-unsafe-enum-assignment` is off.** The repository declares no `enum`, since `erasableSyntaxOnly` refuses one, so the rule asks the checker for types it cannot report on, and it was the costliest rule of the type-aware pass.
 
 **A convention that needs types is enforced by review, not by a local rule.** The backend runs no JS rules, so a local rule has no types, and a type-aware JS plugin would need the parser to read a project for every file, which multiplies the pass. Rejected: a type-aware local plugin.
 

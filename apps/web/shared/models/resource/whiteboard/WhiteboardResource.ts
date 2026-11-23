@@ -10,9 +10,6 @@ import { z } from "zod";
 export interface WhiteboardResource {
   elements: PositionedElement[];
 }
-// PositionedElementType is the same declaration on both sides (whiteboardElementSchema names it through the core's
-// Element schemas); the rule flags a zod object
-// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- nested in an array even on an exact enum match
 export const whiteboardResourceSchema = z
   .object({ elements: createUniqueArraySchema(whiteboardElementSchema, "id").max(MAX_RESOURCE_CONTENT_SIZE) })
   .superRefine(checkPositionedDocument, {

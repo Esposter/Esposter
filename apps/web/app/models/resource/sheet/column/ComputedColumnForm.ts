@@ -8,9 +8,6 @@ import { z } from "zod";
 
 export interface ComputedColumnForm
   extends BaseColumnForm<typeof ColumnType.Computed>, Pick<ComputedColumn, "transformation"> {}
-// ColumnType (ColumnType.ts) and ColumnTransformationType (transformation/ColumnTransformationType.ts:1) are the same
-// Declarations on both sides; zod types each enum inside the schema as typeof, so the rule cannot see the member type
-// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- the satisfies z.ZodType<ComputedColumnForm> checks
 export const computedColumnFormSchema = z
   .object({
     ...createBaseColumnFormSchema(z.literal(ColumnType.Computed)).shape,

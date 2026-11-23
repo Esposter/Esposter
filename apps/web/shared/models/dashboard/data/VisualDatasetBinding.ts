@@ -14,9 +14,6 @@ export interface VisualDatasetBinding {
   snapshot?: Dataset | undefined;
 }
 
-// DatasetAggregationType and DatasetProviderType are the same declarations on both sides (DatasetQuerySeries.ts:1,
-// DatasetReference.ts:1); the rule
-// oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- flags a nested zod shape even on an exact enum match
 export const visualDatasetBindingSchema = z.object({
   query: datasetQuerySchema,
   reference: datasetReferenceSchema,

@@ -30,7 +30,6 @@ export const writeIndexedDb = async <
   await Promise.all(
     itemsToCache.map((item) =>
       // The stored record is data, not an entity — `put` structured-clones away the prototype regardless
-      // oxlint-disable-next-line typescript/no-misused-spread -- `put` stores the fields alone
       objects.put({ ...toRawDeep(item), [indexName]: partitionKey }),
     ),
   );

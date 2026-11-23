@@ -16,8 +16,9 @@ export const readEnemyWikiPages = async (
     else if (isDryRun) lines.push(`${title}: not cached`);
     else {
       mkdirSync(cacheDirectory, { recursive: true });
-      // Asked for no more than one at once
-      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one page is fetched at a time, so the wiki is
+      // @TODO: no upstream issue — oxc-project/oxc: no-await-in-loop skips an await under a loop body that is a bare `if` or
+      // `switch`; the reason below turns back into the rule's directive once it reports here
+      // Bounded concurrency: one page is fetched at a time, so the wiki is asked for no more than one at once
       await readWikiPage(cacheDirectory, title);
       lines.push(`${title}: fetched`);
     }

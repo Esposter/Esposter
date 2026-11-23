@@ -46,7 +46,9 @@ export const buildWeaponRoots = async (): Promise<{ notes: string[]; publication
   const absentBlocks: string[] = [];
   for (const block of blocks)
     if (existsSync(join(INSTALLED_BLOCKS_DIRECTORY, block)))
-      // oxlint-disable-next-line no-await-in-loop -- One device: AnimeStudio reads one block at a time
+      // @TODO: no upstream issue — oxc-project/oxc: no-await-in-loop skips an await under a loop body that is a bare `if` or
+      // `switch`; the reason below turns back into the rule's directive once it reports here
+      // One device: AnimeStudio reads one block at a time
       await exportBlockBySource(block, LAYOUT_ASSET_TYPES, AnimeStudioExportType.Json, layout);
     else absentBlocks.push(block);
   const sceneLayout = await readSceneLayout(layout);

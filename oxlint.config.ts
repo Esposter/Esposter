@@ -51,7 +51,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   },
   ignorePatterns: ["public", TILESET_IGNORE_PATTERN, ".agents/worktrees", ".claude", "**/auto-imports.d.ts"],
   jsPlugins: JS_PLUGINS,
-  options: { typeAware: true },
+  options: { reportUnusedDisableDirectives: "error", typeAware: true },
   overrides: [
     // The app's own trees each narrow this further below
     {
@@ -489,6 +489,9 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     // And `restriction` categories above, and the type-aware backend does not implement it, so every type-aware run
     // Fails on "unknown rule". Drop the `off` once the backend ships the rule
     "typescript/no-unsafe-class-instance-assignment": "off",
+    // The repository declares no `enum` (`erasableSyntaxOnly` refuses one), so this rule only asks the checker for types
+    // It can never report on, and it is the costliest rule of the type-aware pass
+    "typescript/no-unsafe-enum-assignment": "off",
     "typescript/no-unsafe-enum-comparison": "off",
     "typescript/no-unsafe-member-access": "off",
     "typescript/no-unsafe-return": "off",

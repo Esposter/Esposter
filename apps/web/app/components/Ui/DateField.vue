@@ -43,12 +43,10 @@ const time = computed({
   },
 });
 // A picked moment is a Date and clearing writes undefined, and the caller's generic model holds a Date, or undefined
-// Too when
-// oxlint-disable typescript/no-unsafe-type-assertion -- it is clearable, which the compiler cannot relate to TModel
+// Too when it is clearable, which the compiler cannot relate to TModel
 const writeModelValue = (value: Date | undefined) => {
   modelValue.value = value as TModel;
 };
-// oxlint-enable typescript/no-unsafe-type-assertion
 // A moment before the earliest or after the latest is moved onto it, so a day picked on the earliest one's own day
 // Still lands after its time
 const choose = (newZonedDateTime: Temporal.ZonedDateTime) => {

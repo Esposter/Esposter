@@ -1,5 +1,3 @@
-/* oxlint-disable sorting/sort-objects -- shortest first, the order the select lists */
-
 export const TimeoutDurationMap = {
   "1 minute": Temporal.Duration.from({ minutes: 1 }).total("milliseconds"),
   "5 minutes": Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),

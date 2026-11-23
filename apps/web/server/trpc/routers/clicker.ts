@@ -16,8 +16,5 @@ export const clickerRouter = router({
   readUpgradeMap: standardRateLimitedProcedure
     .meta({ staticReason: "The upgrade table is static data in the code, which no save changes" })
     .query<typeof UpgradeMap>(() => UpgradeMap),
-  // BuildingId, ClickerType, CursorUpgradeId and GrandmaUpgradeId are the same declarations the ClickerSave schema
-  // Names (ClickerSave.ts:7); the rule flags
-  // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- a nested zod shape even on an exact enum match
   saveClicker: createSaveBlobStateProcedure(StorageBucket.ClickerAssets, saveClickerInputSchema),
 });

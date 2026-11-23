@@ -10,8 +10,6 @@ const { state: roughnessMap } = useTexture(roughnessUrl);
 // The gem is the scene's first child, a mesh whose material the asset was authored with. The glTF loader types the
 // Scene As a plain Object3D tree, so the compiler cannot see the mesh or the material it carries
 const gem = computed(
-  // The glTF loader types the scene as a plain Object3D tree, which
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- carries no mesh type the compiler can narrow to
   () => gltf.value?.scene.children[0] as Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined,
 );
 const { onRender } = useLoop();

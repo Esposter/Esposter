@@ -1,4 +1,3 @@
-// oxlint-disable no-restricted-imports -- a suite runs under Vitest, never in `nuxt prepare`
 import { typescript } from "#configuration/typescript";
 import { SOURCE_CONDITION } from "@esposter/configuration/constants";
 import { describe, expect, test } from "vitest";

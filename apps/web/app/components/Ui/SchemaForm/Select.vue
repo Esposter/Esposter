@@ -28,9 +28,6 @@ const items = computed<UiSelectItem<string>[]>(() => {
   // A context is the dialog's own interface, whose keys the schema names as strings
   if (layout.value.itemsKey)
     return (
-      // The dialog's context is an object whose keys the schema names as strings, so the value read by one is what the
-      // Dialog put
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- under that key, which the compiler cannot type
       (Reflect.get(uiSchemaFormConfiguration.value.context, layout.value.itemsKey) as
         | UiSelectItem<string>[]
         | undefined) ?? []

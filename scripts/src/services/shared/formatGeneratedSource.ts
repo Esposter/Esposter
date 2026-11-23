@@ -1,4 +1,3 @@
-/* oxlint-disable no-restricted-imports -- the formatter's own API, which the apps/web phaser generator uses too */
 import formatterConfiguration from "@esposter/configuration/oxfmt";
 import { format } from "oxfmt";
 

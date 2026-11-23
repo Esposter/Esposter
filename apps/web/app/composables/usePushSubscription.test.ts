@@ -49,7 +49,6 @@ describe(usePushSubscription, () => {
     });
     trpcMsw.pushSubscription.subscribe.mutation(({ input }) => {
       subscribedEndpoints.push(input.endpoint);
-      // oxlint-disable-next-line no-restricted-syntax -- the response is not read by the composable
       return {} as never;
     });
     await mountSuspended(

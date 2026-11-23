@@ -1,5 +1,3 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: createPreset and createWebhook need the app id
-   createApp returned, and the app id reaches ESC before the next step reads it */
 import type { CloudflareCredentials } from "#src/models/realtimeKit/CloudflareCredentials";
 import type { RealtimeKitAction } from "#src/models/realtimeKit/RealtimeKitAction";
 import type { RealtimeKitDesired } from "#src/models/realtimeKit/RealtimeKitDesired";
@@ -32,6 +30,10 @@ export const applyRealtimeKitActions = async (
     return appId;
   };
 
+  // @TODO: no upstream issue — oxc-project/oxc: no-await-in-loop skips an await under a loop body that is a bare `if` or
+  // `switch`; the reason below turns back into the rule's directive once it reports here
+  // Each step reads the last: createPreset and createWebhook need the app id createApp returned, and the app id
+  // Reaches ESC before the next step reads it
   for (const action of actions)
     switch (action.kind) {
       case "createApp": {

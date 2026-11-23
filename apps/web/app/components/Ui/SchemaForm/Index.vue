@@ -33,8 +33,6 @@ const uiSchemaFormConfiguration = computed<UiSchemaFormConfiguration>(() => {
 });
 // Zod types what it generates as draft 2020-12 JSON Schema, and JSON Forms types what it reads as draft 7; the keywords
 // A form schema holds — types, properties, required, enum, const, oneOf, items, titles — mean the same in both
-// The two drafts' keywords are the same JSON Schema, but the compiler types each draft's
-// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- object as its own, and JSON Forms' is the one read
 const jsonFormsSchema = computed(() => zodToJsonSchema(schema) as JsonSchema);
 const uischema = computed(() => Generate.uiSchema(jsonFormsSchema.value, undefined, undefined, jsonFormsSchema.value));
 const options = { validationMode: "NoValidation" } as const;

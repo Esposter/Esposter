@@ -73,9 +73,6 @@ export const priceEnemyReactions = (
       applySimultaneousReactionInternalCooldown(enemy.internalCooldownMap, reactionType, reactionElement, seconds) > 0
     ) {
       if (TransformativeReactionReachRadiusMap[reactionType] !== undefined)
-        // The spread brings Reaction's reactionType (the wider ReactionType union), which this literal overrides with
-        // The narrowed TransformativeReactionType of the condition above; the literal's reactionType
-        // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- is exactly TransformativeReaction's
         reachingReactions.push({ ...reaction, reactionType });
       const reactionPoise = context.enemyTables.reactionPoiseMap.get(reactionType);
       poiseDamage += reactionPoise?.poiseDamage ?? 0;

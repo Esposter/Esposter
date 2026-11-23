@@ -23,8 +23,6 @@ const { building, heightOffset, position, rotation } = landmark;
 const groundHeight = getGroundHeight(position.x, position.z);
 // The building's region kit decides its parts, each drawn in its own colour, from its own kit's palette, which arrived
 // With the building's region
-// The palette record of the building's own region is in reach with it, which
-// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- a Partial over every region cannot tie to its kit
 const buildingMeshes = createBuildingParts(building, regionPalettes as RegionPaletteMap).map(({ color, geometry }) => {
   const mesh = new Mesh(geometry, partMaterial);
   mesh.castShadow = true;
