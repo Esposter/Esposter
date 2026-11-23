@@ -45,9 +45,11 @@ flowchart TD
 
 **Outputs over copies.** Each value a person or a workflow needs is a stack output in "apps/infra/src/cloudflare/outputs/", and the write to ESC is one `pulumi env set` per key, which is why no script is added for it.
 
+**Backfill's D1 credential, open.** The Deploy token's value goes only to the GitHub secret `CLOUDFLARE_API_TOKEN`, which no session can read back, and no ESC key holds a D1 token. A backfill that writes D1 therefore has no credential it can load under this design, and `.agents/skills/backfills/references/the-run.md` step 3 names none. The one-token-per-consumer rule points to a new `AccountToken` for the backfill consumer, holding the D1 group it calls and nothing else, with its value in ESC under a name the run can load. Until that token exists and is wired, no backfill runs against D1. The decision is recorded as task 1.10.
+
 ## Inventory and verdicts
 
-Read with the bootstrap: the account holds `bootstrap`, `tok-esposter-infra`, `tok-esposter-r2`, `dev-tok-esposter-realtimekit` and `prod-tok-esposter-realtimekit`, none of which expire. Every credential the repository or ESC refers to is listed here with a verdict.
+Read with the bootstrap: the account holds `bootstrap`, `tok-esposter-infra`, `tok-esposter-r2`, `dev-tok-esposter-realtimekit` and `prod-tok-esposter-realtimekit`. `bootstrap` expires, so its owner renews it when it does; the other four do not expire. Every credential the repository or ESC refers to is listed here with a verdict.
 
 | Credential                                                                                         | Where it is held                                                            | Verdict                                                                                                                                |
 | :------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
