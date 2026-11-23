@@ -18,6 +18,7 @@ const POOL_TEMPLATE_START = "{{Wish Pool\n";
 // Rather than reading as a banner without it
 export const parseWishPage = (title: string, wikitext: string): undefined | WishEventPage => {
   const template = sliceWikiTemplate(wikitext, TEMPLATE_START);
+  // eslint-disable-next-line no-restricted-syntax -- a template the page holds, empty when the page has none
   if (template === "") throw new InvalidOperationError(Operation.Read, TEMPLATE_START, "is not on the page");
 
   const parameters = readParameters(template);

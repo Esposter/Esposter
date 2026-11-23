@@ -7,6 +7,7 @@ export const formatResumeRows = (rows: readonly ResumeRow[]): string[] =>
   formatFleetTable(
     ["check", "state", "action"],
     rows.flatMap(({ error, items, name }) => {
+      // eslint-disable-next-line no-restricted-syntax -- an error the resume reports, empty when none
       if (error !== "") return [[name, `error: ${error}`, ""]];
       if (items.length === 0) return [[name, "ok", ""]];
       return items.map(({ action, text }, index) => [

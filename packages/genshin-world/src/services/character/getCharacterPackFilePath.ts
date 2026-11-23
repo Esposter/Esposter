@@ -5,6 +5,7 @@
 export const getCharacterPackFilePath = (path: string): string => {
   const parts: string[] = [];
   for (const part of path.split(/[/\\]/u))
+    // eslint-disable-next-line no-restricted-syntax -- a path part, empty only between separators
     if (part === "" || part === ".") continue;
     else if (part === ".." && parts.length > 0 && parts.at(-1) !== "..") parts.pop();
     else parts.push(part);

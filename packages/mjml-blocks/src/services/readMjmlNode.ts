@@ -22,6 +22,7 @@ export const readMjmlNode = <TContext, TContent extends MjmlRichText>(
   const type = element.rawTagName;
   const definition = getBlockTypeDefinition(registry, type);
   const { alt, id: idAttribute, ...attributes } = element.attributes;
+  // eslint-disable-next-line no-restricted-syntax -- an alt attribute as the document holds it, where empty marks an image decorative
   const isDecorative = definition?.hasAlternativeText === true && alt === "";
   const slotNames = Object.keys(definition?.slots ?? {});
   // A source attribute named after a prop the node writes itself is refused under its name, so it cannot overwrite that prop

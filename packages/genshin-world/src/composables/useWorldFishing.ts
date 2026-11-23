@@ -134,6 +134,7 @@ export const useWorldFishing = ({
   const pointId = shallowRef("");
   const cast = shallowRef<FishingCast>();
   const fishingRegion = computed(() =>
+    // eslint-disable-next-line no-restricted-syntax -- a point id the world holds, never typed
     pointId.value === "" ? undefined : fishingPointRegionMap.value.get(pointId.value),
   );
   const startCast = (region: string): FishingCast | undefined => {

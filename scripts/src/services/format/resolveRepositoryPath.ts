@@ -14,6 +14,7 @@ export const resolveRepositoryPath = (
 ): { checkoutRoot: string; repositoryPath: string } => {
   const absolutePath = resolve(invocationDirectory, path);
   const mainPath = relative(mainCheckoutRoot, absolutePath).replaceAll("\\", "/");
+  // eslint-disable-next-line no-restricted-syntax -- a path, empty when unset
   if (mainPath === "" || isAbsolute(mainPath) || OUTSIDE_CHECKOUT_REGEX.test(mainPath))
     throw new InvalidOperationError(Operation.Read, path, "it is not a file in this repository");
   const checkoutRoot = resolveCheckoutRoot(absolutePath, mainCheckoutRoot);

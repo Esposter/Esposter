@@ -9,6 +9,7 @@ export const checkIsOneOwner = (firstPath: string, secondPath: string): boolean 
   const skillName = getSkillName(firstPath);
   const secondOwners = getOpenSpecOwners(secondPath);
   return (
+    // eslint-disable-next-line no-restricted-syntax -- a skill name, empty when none
     (skillName !== "" &&
       skillName === getSkillName(secondPath) &&
       (firstPath.endsWith("/SKILL.md") || secondPath.endsWith("/SKILL.md"))) ||

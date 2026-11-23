@@ -5,5 +5,6 @@ import { win32 } from "node:path";
 // Every host judges it alike
 export const checkIsContainedPath = (path: string): boolean => {
   const normalized = win32.normalize(path);
+  // eslint-disable-next-line no-restricted-syntax -- a parsed Windows root, empty when there is none
   return win32.parse(path).root === "" && normalized !== ".." && !normalized.startsWith(`..${win32.sep}`);
 };

@@ -5,6 +5,7 @@ import { createInterface } from "node:readline";
 export const readStdinLines = async (): Promise<string[]> => {
   const lines: string[] = [];
   for await (const line of createInterface({ crlfDelay: Infinity, input: process.stdin }))
+    // eslint-disable-next-line no-restricted-syntax -- a stdin line passed whole, since blank lines are the caller's to drop
     if (line !== "") lines.push(line);
   return lines;
 };

@@ -13,12 +13,15 @@ const readScenarioTitles = (changeDirectory: string): string[] => {
   if (!existsSync(specsDirectory)) return [];
 
   // `readdir` answers with the platform's separator, which `OPENSPEC_SPEC_FILE` does not carry
-  return readdirSync(specsDirectory, { encoding: "utf8", recursive: true })
-    .map((path) => path.replaceAll(sep, "/"))
-    .filter((path) => path.endsWith(OPENSPEC_SPEC_FILE))
-    .flatMap((path) => readFileSync(join(specsDirectory, path), "utf8").split(/\r?\n/u))
-    .map((line) => getScenarioTitle(line))
-    .filter((title) => title !== "");
+  return (
+    readdirSync(specsDirectory, { encoding: "utf8", recursive: true })
+      .map((path) => path.replaceAll(sep, "/"))
+      .filter((path) => path.endsWith(OPENSPEC_SPEC_FILE))
+      .flatMap((path) => readFileSync(join(specsDirectory, path), "utf8").split(/\r?\n/u))
+      .map((line) => getScenarioTitle(line))
+      // eslint-disable-next-line no-restricted-syntax -- a change title from its folder, empty between separators
+      .filter((title) => title !== "")
+  );
 };
 
 // Every change under `openspec/changes/` short of the archive, whose shipped changes are history and open nothing

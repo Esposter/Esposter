@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- a path segment, where empty joins nothing */
 const ROOT_REGEX = /^(?:[a-zA-Z]:)?[/\\]/u;
 const SEPARATOR_REGEX = /[/\\]/u;
 

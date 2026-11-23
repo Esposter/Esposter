@@ -14,6 +14,7 @@ export const readSceneBuildingPoints = async (): Promise<Record<string, SceneBui
       const name = point[SCENE_BUILDING_NAME_FIELD];
       const position = point[SCENE_BUILDING_POINT.position];
       const rotation = point[SCENE_BUILDING_POINT.rotation];
+      // eslint-disable-next-line no-restricted-syntax -- a building point name the file holds, empty when absent
       if (typeof name !== "string" || name === "" || typeof position !== "object") return [];
       const { x = 0, y = 0, z = 0 } = toDumpedVector(position);
       // A turn the dump leaves out is none, as it leaves out a vector's zero fields

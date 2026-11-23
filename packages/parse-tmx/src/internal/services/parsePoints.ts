@@ -1,5 +1,6 @@
 // The `points` of a polygon or polyline: pairs written `x,y` and separated by spaces, and none when there are none to read
 export const parsePoints = (points: string): [number, number][] =>
+  // eslint-disable-next-line no-restricted-syntax -- a points attribute the TMX file holds, empty when absent
   points === ""
     ? []
     : points.split(" ").map((point) => {

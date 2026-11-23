@@ -11,5 +11,6 @@ export const readFieldValue = (value: string): string | string[] => {
     : items
         .split(",")
         .map((item) => unquote(item.trim()))
+        // eslint-disable-next-line no-restricted-syntax -- a list item the record writes, empty between separators
         .filter((item) => item !== "");
 };

@@ -12,6 +12,7 @@ export const checkIsHeldByLiveRun = (
   currentRunId: string,
   getRunJobs: (runId: string) => ReviewRunJob[],
 ): boolean =>
+  // eslint-disable-next-line no-restricted-syntax -- a run id, empty when none
   issueRunId !== "" &&
   issueRunId !== currentRunId &&
   getRunJobs(issueRunId).some(

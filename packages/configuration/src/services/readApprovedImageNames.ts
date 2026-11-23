@@ -18,6 +18,7 @@ export const readApprovedImageNames = (screenshotPath: string): string[] => {
       if (!name.startsWith(`${stem}.`) || !name.endsWith(extension)) return false;
 
       const segment = name.slice(stem.length + 1, -extension.length);
+      // eslint-disable-next-line no-restricted-syntax -- a path segment, empty only between two separators
       return segment !== "" && !segment.includes(".");
     })
     .toSorted();

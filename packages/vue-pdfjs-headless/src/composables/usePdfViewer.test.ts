@@ -130,6 +130,7 @@ describe(usePdfViewer, () => {
     eventBus.on("find", (event: unknown) => {
       stubs.findEvents.push(event);
       // The renderer finds nothing for an empty query, so a cleared search has no matches
+      // eslint-disable-next-line no-restricted-syntax -- a fake event's query, built by the test rather than typed
       const total = (event as { query: string }).query === "" ? 0 : matches;
       const matchesCount = { current: total > 0 ? 1 : 0, total };
       eventBus.dispatch("updatefindcontrolstate", { matchesCount, state: total > 0 ? 0 : FIND_STATE_NOT_FOUND });

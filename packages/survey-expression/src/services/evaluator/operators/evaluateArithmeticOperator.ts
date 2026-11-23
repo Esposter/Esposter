@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- an answer's empty operand in the expression language, compared as the answer holds it */
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { SurveyExpressionBinaryOperator } from "#src/models/SurveyExpressionBinaryOperator";

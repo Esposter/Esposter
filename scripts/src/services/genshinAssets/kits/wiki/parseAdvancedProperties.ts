@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- a row group the pattern captured, empty when absent; a cooldown tag the wiki holds, empty when absent */
 import type { WikiAdvancedProperty } from "#src/models/genshinAssets/kits/wiki/WikiAdvancedProperty";
 
 import { readTemplateBody } from "#src/services/genshinAssets/kits/wiki/readTemplateBody";

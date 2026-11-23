@@ -8,4 +8,5 @@ export const filterFleetEntries = (
   lane: string,
   kind: FleetEntryKind | undefined,
 ): FleetEntry[] =>
+  // eslint-disable-next-line no-restricted-syntax -- a lane filter argument, empty when none is asked
   entries.filter((entry) => (lane === "" || entry.lane === lane) && (kind === undefined || entry.kind === kind));

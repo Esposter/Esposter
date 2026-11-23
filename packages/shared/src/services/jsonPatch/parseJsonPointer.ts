@@ -5,6 +5,7 @@ import { JSON_POINTER_REGEX } from "#src/services/jsonPatch/constants";
 // RFC 6901: the root is the empty pointer, every other one starts with a slash, and a segment unescapes "~1" before
 // "~0", so an escaped "~01" reads as "~1" rather than "/"
 export const parseJsonPointer = (pointer: string): string[] => {
+  // eslint-disable-next-line no-restricted-syntax -- the root pointer, which RFC 6901 writes as the empty string
   if (pointer === "") return [];
   else if (!JSON_POINTER_REGEX.test(pointer))
     throw new InvalidOperationError(Operation.Read, pointer, "not a JSON Pointer");

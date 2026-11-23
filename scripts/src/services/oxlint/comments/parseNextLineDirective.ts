@@ -11,6 +11,7 @@ export const parseNextLineDirective = (comment: Comment): NextLineDirective | un
   const rules = (groups.rules ?? "")
     .split(",")
     .map((rule) => rule.trim())
+    // eslint-disable-next-line no-restricted-syntax -- a rule name, empty between separators
     .filter((rule) => rule !== "");
   if (rules.length === 0) return undefined;
 

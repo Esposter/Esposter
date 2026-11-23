@@ -11,6 +11,7 @@ export const getComponentName = (componentPath: string): string => {
   const prefixParts = posix
     .dirname(componentPath)
     .split(CASE_BOUNDARY_REGEX)
+    // eslint-disable-next-line no-restricted-syntax -- a path part, empty between separators
     .filter((part) => part !== "." && part !== "");
   const fileName = posix.basename(componentPath, ".vue");
   // An index file takes its folder's name, so it adds no part of its own

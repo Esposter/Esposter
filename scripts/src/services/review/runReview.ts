@@ -133,6 +133,7 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
       (opened) => {
         for (const issue of opened) {
           issueNumbers.push(issue.issue);
+          // eslint-disable-next-line no-restricted-syntax -- a directory the option names, empty when unset
           if (findingsDirectory !== "") writeReviewIssueFindings(findingsDirectory, issue);
         }
         return true;

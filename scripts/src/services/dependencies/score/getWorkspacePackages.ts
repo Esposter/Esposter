@@ -10,6 +10,7 @@ export const getWorkspacePackages = (manifestFiles: ManifestFile[]): WorkspacePa
 
   for (const { manifest, path } of manifestFiles) {
     const directory = relative(REPOSITORY_ROOT, dirname(path)).replaceAll("\\", "/");
+    // eslint-disable-next-line no-restricted-syntax -- a workspace path, empty at the root
     if (manifest.name === undefined || directory === "" || directory === APP_DIRECTORY) continue;
 
     workspacePackages.push({ directory, packageName: manifest.name });

@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- a ref, empty when unset */
 import { ReviewMode } from "#src/models/review/ReviewMode";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 

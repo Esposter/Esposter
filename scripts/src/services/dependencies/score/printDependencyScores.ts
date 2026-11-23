@@ -46,6 +46,7 @@ export const printDependencyScores = (
       String(score.manifestCount),
       String(score.shimCount),
       score.isDeprecated ? YES : "",
+      // eslint-disable-next-line no-restricted-syntax -- a skip reason the score records, empty when none
       score.bundleSkipReason === "" ? formatBytes(score.bundleBytes) : score.bundleSkipReason,
       score.installBytes === 0 ? "" : `${formatBytes(score.installBytes)}${score.isInstallShared ? " shared" : ""}`,
       score.verdict,

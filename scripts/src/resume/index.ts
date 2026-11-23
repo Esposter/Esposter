@@ -43,6 +43,7 @@ await runCommand(
         readResumeRow("watcher", readWatcherItems),
       ]);
       for (const line of formatResumeRows(rows)) console.info(line);
+      // eslint-disable-next-line no-restricted-syntax -- a row's error or action the resume reports, empty when none
       if (rows.some(({ error, items }) => error !== "" || items.some(({ action }) => action !== "")))
         process.exitCode = 1;
     },
