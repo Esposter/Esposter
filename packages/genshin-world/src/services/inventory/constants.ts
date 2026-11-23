@@ -83,7 +83,8 @@ export const CurrencyItemIdMap: Record<Currency, number> = {
 // Every item id the wallet takes in: each currency's, and Adventure EXP, which the Adventure Rank takes
 export const WALLET_ITEM_IDS: readonly number[] = [ADVENTURE_EXP_ITEM_ID, ...Object.values(CurrencyItemIdMap)];
 // How many kinds of item the bag holds beside the weapons, artifacts and furnishings it counts on their own. The wiki's
-// Inventory page gives this limit on unique items, counted by kind and not by quantity, which the other tabs share
+// Inventory page gives 2,300, counted by kind and not by quantity, which the other tabs share. The dump's tables hold
+// No such limit by name, so it stays a constant cited to the wiki rather than read from a record
 export const INVENTORY_KIND_LIMIT = 2300;
 // The most of any one stack the save holds, the ceiling every stack is bounded by. It is the largest stack limit a
 // Published item has, and the items builder refuses an item past it. Most items stack lower, at their own limit,
