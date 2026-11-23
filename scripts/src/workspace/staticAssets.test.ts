@@ -11,26 +11,23 @@ import { describe, expect, test } from "vitest";
  */
 describe("staticAssets", () => {
   const SERVED_PATHSPECS = ["apps/web/app/assets", "apps/web/public"];
-  // The service worker precaches a file only up to this size, so a larger one is left out of the list and fetched when
-  // The page needs it (`apps/web/configuration/pwa.ts`)
+  // The service worker precaches a build's js, css and html only up to this size, and leaves a larger one out of the list
+  // (`apps/web/configuration/pwa.ts`). The test holds every served file to it, since the one limit is the budget.
   const PRECACHE_LIMIT_BYTES = 2 * MEBIBYTE;
   const UNCOMPRESSED_AUDIO_EXTENSIONS = new Set([".aiff", ".flac", ".wav"]);
+  const servedPaths = readSweepFilePaths(...SERVED_PATHSPECS);
 
   test("no served file is over the precache limit", () => {
     expect.hasAssertions();
 
     expect(
-      readSweepFilePaths(...SERVED_PATHSPECS).filter(
-        (path) => statSync(join(REPOSITORY_ROOT, path)).size > PRECACHE_LIMIT_BYTES,
-      ),
+      servedPaths.filter((path) => statSync(join(REPOSITORY_ROOT, path)).size > PRECACHE_LIMIT_BYTES),
     ).toStrictEqual([]);
   });
 
   test("no served file is uncompressed audio", () => {
     expect.hasAssertions();
 
-    expect(
-      readSweepFilePaths(...SERVED_PATHSPECS).filter((path) => UNCOMPRESSED_AUDIO_EXTENSIONS.has(extname(path))),
-    ).toStrictEqual([]);
+    expect(servedPaths.filter((path) => UNCOMPRESSED_AUDIO_EXTENSIONS.has(extname(path)))).toStrictEqual([]);
   });
 });

@@ -54,7 +54,7 @@ A file under `shared/` is parsed by the server and read by the Nuxt config in No
 Two rules hold for every tracked file under `apps/web/app/assets/` and `apps/web/public/`, and `scripts/src/workspace/staticAssets.test.ts` enforces both over the files git lists:
 
 - **Audio is compressed.** No `.wav`, `.aiff` or `.flac` file is tracked there. A sound is an MP3, the format the dungeons' other music and sound effects already use. An uncompressed two-minute track runs toward the per-file limit that Workers static assets set, and its MP3 is a small fraction of its size.
-- **No bundled file is over the precache limit.** The service worker leaves a file past the limit out of its precache list (`apps/web/configuration/pwa.ts`), so the page fetches it when it needs it. An image past the limit is converted to lossless WebP, which keeps its pixels exact and which Phaser's `load.image` reads. The test names the limit once, in its `PRECACHE_LIMIT_BYTES`.
+- **No bundled file is over the precache limit.** The service worker precaches only the build's js, css and html, and leaves one of those past the limit out of its list with a warning (`apps/web/configuration/pwa.ts`). A bundled image or audio file is not a precache candidate at all, so the page fetches it when it needs it; the test holds every served file to the limit regardless. An image past the limit is converted to lossless WebP, which keeps its pixels exact and which Phaser's `load.image` reads. The test names the limit once, in its `PRECACHE_LIMIT_BYTES`.
 
 ## Rejected
 
