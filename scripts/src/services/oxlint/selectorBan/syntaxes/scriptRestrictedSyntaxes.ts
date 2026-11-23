@@ -11,6 +11,23 @@ const MAP_TYPE_NAME_REGEX = "/^(Map|ReadonlyMap|Record)$/";
 // That makes it a boolean-returning one are each written once.
 const CALLABLE_NAME_REGEX = "/^(is|has)[A-Z]/";
 const BOOLEAN_RETURN_TYPE = ":matches(TSBooleanKeyword, TSTypePredicate)";
+// Every TypeScript keyword type, by node type. A selector that matches them by a `[type=…]` attribute has no node type,
+// So oxlint runs it on every node of the repository; naming each keyword keeps the selector typed to its own nodes.
+const TYPE_KEYWORD_NODE_TYPES = [
+  "TSAnyKeyword",
+  "TSBigIntKeyword",
+  "TSBooleanKeyword",
+  "TSIntrinsicKeyword",
+  "TSNeverKeyword",
+  "TSNullKeyword",
+  "TSNumberKeyword",
+  "TSObjectKeyword",
+  "TSStringKeyword",
+  "TSSymbolKeyword",
+  "TSUndefinedKeyword",
+  "TSUnknownKeyword",
+  "TSVoidKeyword",
+];
 // An unannotated function answers with the boolean its body shows: a comparison, a negation or a literal true/false.
 // Only that syntax is read here, since a boolean that comes from a call or a variable is the checker's to know.
 const BOOLEAN_OPERATOR_REGEX = "/^(===|!==|==|!=|<|<=|>|>=|instanceof|in)$/";
@@ -159,8 +176,7 @@ export const SCRIPT_RESTRICTED_SYNTAXES: SelectorBanList = {
       // Something its name does not repeat, and a `typeof` query is not a second name for a type.
       message:
         "No type aliases — `type X = Y` is a second name for `Y`, a duplicate. Write `Y` at each use and name its meaning on the type that owns it. See the typescript skill.",
-      selector:
-        "TSTypeAliasDeclaration > :matches(TSTypeReference:not([typeArguments]), [type=/^TS[A-Za-z]+Keyword$/])",
+      selector: `TSTypeAliasDeclaration > :matches(TSTypeReference:not([typeArguments]), ${TYPE_KEYWORD_NODE_TYPES.join(", ")})`,
     },
     {
       // The child combinators are load-bearing — they match only the property's own annotation, so
