@@ -1,6 +1,7 @@
 import type { SortingClassMember } from "#src/models/oxlint/sorting/SortingClassMember";
 import type { ESTree, Rule, SourceCode } from "@oxlint/plugins";
 
+import { buildSortingNode } from "#src/services/oxlint/sorting/buildSortingNode";
 import { checkIsFunctionProperty } from "#src/services/oxlint/sorting/checkIsFunctionProperty";
 import { CLASS_MEMBER_GROUPS } from "#src/services/oxlint/sorting/classMemberGroups";
 import { computeClassMemberGroup } from "#src/services/oxlint/sorting/computeClassMemberGroup";
@@ -25,15 +26,11 @@ const KNOWN_ELEMENT_TYPES = new Set([
 const computeKeyName = (
   sourceCode: SourceCode,
   key: ESTree.PropertyDefinition["key"],
-): { bareName: string; hasPrivateHash: boolean; name: string } => {
-  if (key.type === "PrivateIdentifier") return { bareName: key.name, hasPrivateHash: true, name: `#${key.name}` };
-  if (key.type === "Identifier") return { bareName: key.name, hasPrivateHash: false, name: key.name };
-  if (key.type === "Literal") {
-    const name = String(key.value);
-    return { bareName: name, hasPrivateHash: false, name };
-  }
-  const name = sourceCode.getText(key);
-  return { bareName: name, hasPrivateHash: false, name };
+): { hasPrivateHash: boolean; name: string } => {
+  if (key.type === "PrivateIdentifier") return { hasPrivateHash: true, name: `#${key.name}` };
+  if (key.type === "Identifier") return { hasPrivateHash: false, name: key.name };
+  if (key.type === "Literal") return { hasPrivateHash: false, name: String(key.value) };
+  return { hasPrivateHash: false, name: sourceCode.getText(key) };
 };
 
 const computeMethodSelectors = (kind: ESTree.MethodDefinition["kind"]): string[] => {
@@ -94,16 +91,10 @@ const toSortingClassMember = ({
 }): SortingClassMember => {
   const group = computeClassMemberGroup(selectors, modifiers);
   return {
-    dependencies: [],
-    dependencyNames,
-    ...withEvaluated(...evaluated),
+    ...buildSortingNode(name, element, { dependencyNames, ...withEvaluated(...evaluated) }),
     group,
     groupIndex: CLASS_MEMBER_GROUPS.findIndex((entry) => [entry].flat().includes(group)),
-    isOxlintDisabled: false,
     isStatic,
-    name,
-    node: element,
-    value: "",
   };
 };
 
@@ -127,7 +118,7 @@ const buildMember = (sourceCode: SourceCode, element: ESTree.ClassElement): Sort
       name: sourceCode.text.slice(element.range[0], element.typeAnnotation.range[0]),
       selectors: ["index-signature"],
     });
-  const { bareName, hasPrivateHash, name } = computeKeyName(sourceCode, element.key);
+  const { hasPrivateHash, name } = computeKeyName(sourceCode, element.key);
   const isStatic = element.static;
   // A property and an accessor are the members other members read, a method is not
   const isReadable =
@@ -136,7 +127,7 @@ const buildMember = (sourceCode: SourceCode, element: ESTree.ClassElement): Sort
     element.type === "AccessorProperty" ||
     element.type === "TSAbstractAccessorProperty";
   return toSortingClassMember({
-    dependencyNames: isReadable ? [`${isStatic ? "static " : ""}${hasPrivateHash ? "#" : ""}${bareName}`] : [],
+    dependencyNames: isReadable ? [`${isStatic ? "static " : ""}${name}`] : [],
     element,
     // A computed key runs when the class is defined, and a field's value runs as the field is initialised
     evaluated: [
