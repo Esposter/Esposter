@@ -29,6 +29,9 @@ describe(checkIsPureExpression, () => {
     ["values[key]", false],
     ["{ [run()]: 1 }", false],
     ["class { static field = run() }", false],
+    ["class { [run()] = 1 }", false],
+    ["class { [run()]() {} }", false],
+    ["class extends run() {}", false],
     ["`total ${run()}`", false],
   ])("%s is pure: %s", (source, expected) => {
     expect.hasAssertions();

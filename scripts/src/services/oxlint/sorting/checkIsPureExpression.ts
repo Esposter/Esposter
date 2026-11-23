@@ -1,10 +1,12 @@
 import type { ESTree } from "@oxlint/plugins";
 
-// Whether a class's static members run no code when the class is defined: a static block does, a static field does
-// Through its initialiser
-const checkHasPureStaticMembers = (node: ESTree.Class): boolean =>
+// Whether a class's definition runs no code: its heritage clause and the computed key of each member run when the class
+// Is defined, a static block does, and a static field does through its initialiser
+const checkHasPureMembers = (node: ESTree.Class): boolean =>
+  (!node.superClass || checkIsPureExpression(node.superClass)) &&
   node.body.body.every((element) => {
     if (element.type === "StaticBlock") return false;
+    if ("computed" in element && element.computed && !checkIsPureExpression(element.key)) return false;
     if (element.type !== "PropertyDefinition" || !element.static || !element.value) return true;
     return checkIsPureExpression(element.value);
   });
@@ -26,7 +28,7 @@ export const checkIsPureExpression = (node: ESTree.Node): boolean => {
     case "LogicalExpression":
       return checkIsPureExpression(node.left) && checkIsPureExpression(node.right);
     case "ClassExpression":
-      return checkHasPureStaticMembers(node);
+      return checkHasPureMembers(node);
     case "ConditionalExpression":
       return (
         checkIsPureExpression(node.test) &&
