@@ -7,10 +7,10 @@ import { z } from "zod";
 
 const runJobsSchema: z.ZodType<{ jobs: ReviewRunJob[] }> = z.object({ jobs: z.array(reviewRunJobSchema) });
 
-// A workflow run's jobs as GitHub reports them. A run that cannot be read reports none, so a deleted run holds nothing.
+// A workflow run's jobs as GitHub reports them
 export const getRunJobs = (runId: string): ReviewRunJob[] =>
   getResult(() => runJobsSchema.parse(jsonDateParse(runGh(["run", "view", runId, "--json", "jobs"])))).match(
     ({ jobs }) => jobs,
-    // A run that cannot be read, a deleted one, holds no jobs, as the header above says
+    // A run that cannot be read, a deleted one among them, holds no jobs
     () => [],
   );
