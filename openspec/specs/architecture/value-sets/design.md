@@ -56,7 +56,7 @@ flowchart LR
 
 ### A set mirroring outside data is generated, not merged
 
-The dungeons' texture and sound keys are merges of a dozen hand-written sets restating the names of files in a bucket. Where a set mirrors data the repository does not author, the generator that reads the data writes the one set: `DungeonsKeys` from the dungeons' committed lock (`packages/hosted-assets/src/internal/module.ts`), the Tiled property types from the Tiled project. The generators write the `as const` form (`createValueSetString`). The dungeons' asset merges go when the `migrate-assets` branch lands.
+The dungeons' texture and sound keys are merges of a dozen hand-written sets restating the names of files in a bucket. Where a set mirrors data the repository does not author, the generator that reads the data writes the one set: `DungeonsKeys` from the dungeons' committed lock (`apps/web/shared/generated/hostedAssets/dungeonsLock.json`, read by the Nuxt module in `packages/hosted-assets/src/internal/module.ts`), the Tiled property types from the Tiled project. The generators write the `as const` form (`createValueSetString`). The dungeons' asset merges go when the `migrate-assets` branch lands.
 
 ## Migration
 
