@@ -57,17 +57,20 @@ export abstract class RealtimeObject<
     return new Response(null, { status: 101, webSocket: client });
   }
 
-  // The one entry a caller reaches the object's RPC methods through. The method runs in an invocation scope, so the statements
-  // It awaits are recorded: its reads come back as the read set its result watches, and its writes come back as the write set
-  // They are published as, best-effort once it settles, whether it succeeded or not, since a write that landed before a failure
-  // Still changed rows
+  // The one entry a caller reaches the object's RPC methods through. The method runs in an invocation scope, so the
+  // Statements It awaits are recorded: its reads come back as the read set its result watches, and its writes come back
+  // As the write set They are published as, best-effort once it settles, whether it succeeded or not, since a write
+  // That landed before a failure Still changed rows
   async invoke<TMethod extends keyof TRpc & string>(
     method: TMethod,
     args: MethodArgs<TRpc, TMethod>,
   ): Promise<ObjectInvocation<MethodResult<TRpc, TMethod>>> {
-    // The method is named by a string at run time, so the object is read by name here, and TRpc types the arguments each name takes
-    // oxlint-disable typescript/no-unsafe-type-assertion -- a dispatch by a string name, which the type system cannot express: TRpc types each name's arguments
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- a dispatch by a string name, which the type system cannot express: TRpc types each name's arguments
+    // The method is named by a string at run time, so the object is read by name here, and TRpc types the arguments
+    // Each name takes
+    // A dispatch by a string name, which the type
+    // oxlint-disable typescript/no-unsafe-type-assertion -- system cannot express: TRpc types each name's arguments
+    // A dispatch by a string name, which the type system
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- cannot express: TRpc types each name's arguments
     const target = this as unknown as Record<
       TMethod,
       (...args: MethodArgs<TRpc, TMethod>) => MethodResult<TRpc, TMethod>
@@ -120,9 +123,9 @@ export abstract class RealtimeObject<
   // The synchronous work here is never interleaved with another event on the object
   protected onSocketAccepted(_server: WebSocket, _request: Request): void {}
 
-  // Runs one invocation of the object, its entry or its alarm, under the scope its handles record into. Its reads come back as
-  // The read set and its writes as the write set, which is published best-effort once the invocation settles, whether it
-  // Succeeded or not
+  // Runs one invocation of the object, its entry or its alarm, under the scope its handles record into. Its reads come
+  // Back as The read set and its writes as the write set, which is published best-effort once the invocation settles,
+  // Whether it Succeeded or not
   protected runInvocation<TResult>(label: string, run: () => TResult): Promise<ObjectInvocation<Awaited<TResult>>> {
     const handles: ObjectInvocationHandles = new Map();
     let writeSet: Promise<ColumnTopic[]> | undefined;
@@ -145,8 +148,8 @@ export abstract class RealtimeObject<
     socket.send(JSON.stringify(event));
   }
 
-  // A socket outlives its session when it sits idle past the session's expiry, since no read deletes the row to close it.
-  // Every write checks the expiry the upgrade carried, so nothing reaches a socket its session no longer covers
+  // A socket outlives its session when it sits idle past the session's expiry, since no read deletes the row to close
+  // It. Every write checks the expiry the upgrade carried, so nothing reaches a socket its session no longer covers
   #closeIfSessionExpired(ws: WebSocket): boolean {
     const expiryTag = this.ctx.getTags(ws).find((tag) => tag.startsWith(SESSION_EXPIRES_AT_TAG_PREFIX));
     if (expiryTag === undefined || Number(expiryTag.slice(SESSION_EXPIRES_AT_TAG_PREFIX.length)) > Date.now())
@@ -155,10 +158,11 @@ export abstract class RealtimeObject<
     return true;
   }
 
-  // The topics of an invocation's statements. The object's own tables name the object, since each object holds its own rows,
-  // So a write in one object reaches no watch of another. The core's tables are shared, so they are named as they are. A write
-  // Also publishes each table-wide topic of its own tables under the kind, `<kind>/*:<table>:*`, which every object of the kind
-  // Publishes beside its own, so a read that the budget collapses across many objects' tables is woken by a write in any of them
+  // The topics of an invocation's statements. The object's own tables name the object, since each object holds its own
+  // Rows, So a write in one object reaches no watch of another. The core's tables are shared, so they are named as they
+  // Are. A write Also publishes each table-wide topic of its own tables under the kind, `<kind>/*:<table>:*`, which
+  // Every object of the kind Publishes beside its own, so a read that the budget collapses across many objects' tables
+  // Is woken by a write in any of them
   async #getTopics(
     handles: ObjectInvocationHandles,
     computeStatementTopics: typeof computeReadTopics,

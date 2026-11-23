@@ -168,9 +168,9 @@ describe(CallObject, () => {
     expect(JSON.stringify(init?.body)).not.toContain(joiner.sessionId);
   });
 
-  // Two joins by one session that overlap on RealtimeKit's answers both read the session before either records it, so each
-  // Would mint its own participant id and the second record would clash with the first on the session. The session has
-  // One participant, so both joins name it and neither fails
+  // Two joins by one session that overlap on RealtimeKit's answers both read the session before either records it, so
+  // Each Would mint its own participant id and the second record would clash with the first on the session. The session
+  // Has One participant, so both joins name it and neither fails
   test("two overlapping joins by one session name it one participant", async () => {
     expect.hasAssertions();
 
@@ -311,7 +311,8 @@ describe(CallObject, () => {
     );
   });
 
-  // A flag change answers with the row it wrote, at the version the database left it, and carries that row to the others
+  // A flag change answers with the row it wrote, at the version the database left it, and carries that row to the
+  // Others
   test("a flag change answers with its row at the version it left, and carries that row to the others", async () => {
     expect.hasAssertions();
 
@@ -519,8 +520,8 @@ describe(CallObject, () => {
     ]);
   });
 
-  // The admission answers the knocker's row as a tombstone at the version its removal raised it to, so a lobby applies the
-  // Removal by version. A second admission of the same knocker answers the same tombstone and admits nothing more
+  // The admission answers the knocker's row as a tombstone at the version its removal raised it to, so a lobby applies
+  // The Removal by version. A second admission of the same knocker answers the same tombstone and admits nothing more
   test("an admission answers the knocker's tombstone, and a second admission answers it without admitting again", async () => {
     expect.hasAssertions();
 

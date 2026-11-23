@@ -404,8 +404,8 @@ describe(UserObject, () => {
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(laterRunAt.getTime());
   });
 
-  // A cancel leaves the reminder as a tombstone no read returns and the alarm never sends, and the alarm is then armed for the
-  // Tombstone's expiry, so the purge runs when it has passed
+  // A cancel leaves the reminder as a tombstone no read returns and the alarm never sends, and the alarm is then armed
+  // For the Tombstone's expiry, so the purge runs when it has passed
   test("cancelling a reminder leaves a tombstone the alarm never sends, armed for the tombstone's expiry", async () => {
     expect.hasAssertions();
 
@@ -431,8 +431,8 @@ describe(UserObject, () => {
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(TOMBSTONE_RETENTION_MS);
   });
 
-  // A reminder added again under its id revives its tombstone at a higher version, so a client that holds the tombstone takes
-  // The revival as newer than it
+  // A reminder added again under its id revives its tombstone at a higher version, so a client that holds the tombstone
+  // Takes The revival as newer than it
   test("a reminder added again under its id after a cancel revives its tombstone at a higher version", async () => {
     expect.hasAssertions();
 
@@ -452,8 +452,8 @@ describe(UserObject, () => {
     ]);
   });
 
-  // The alarm removes a reminder's tombstone once the tombstone retention has passed, so a reminder added under its id after
-  // That is a new row at version zero, as the forgotten-tombstone rule on the client already assumes
+  // The alarm removes a reminder's tombstone once the tombstone retention has passed, so a reminder added under its id
+  // After That is a new row at version zero, as the forgotten-tombstone rule on the client already assumes
   test("the alarm purges a reminder's tombstone past the tombstone retention", async () => {
     expect.hasAssertions();
 
@@ -476,8 +476,8 @@ describe(UserObject, () => {
     ]);
   });
 
-  // A scheduled message the room sends or cancels leaves its index entry a tombstone, and that cancel or send arms the alarm for
-  // The tombstone's purge, as a reminder's cancel does, even when no reminder is left to wake the alarm
+  // A scheduled message the room sends or cancels leaves its index entry a tombstone, and that cancel or send arms the
+  // Alarm for The tombstone's purge, as a reminder's cancel does, even when no reminder is left to wake the alarm
   test("a scheduled message's tombstone arms the alarm for its purge", async () => {
     expect.hasAssertions();
 
@@ -493,8 +493,8 @@ describe(UserObject, () => {
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(TOMBSTONE_RETENTION_MS);
   });
 
-  // A person who leaves a room takes its reminders and scheduled messages with them, so the one due first in it never fires,
-  // While a reminder in another room is still sent when it is due
+  // A person who leaves a room takes its reminders and scheduled messages with them, so the one due first in it never
+  // Fires, While a reminder in another room is still sent when it is due
   test("removing a room's scheduled items drops its reminders and index entries, so none of them fires after the person leaves", async () => {
     expect.hasAssertions();
 
@@ -550,7 +550,8 @@ describe(UserObject, () => {
     await sendFrame(object, secondSocket, signedWatch([{ topic }]));
     await sendFrame(object, firstSocket, { data: { topics: [topic] }, type: "unwatch" });
 
-    // Each watch subscribes the person again, which the topic holds once, and the topic is let go of only by the last tab
+    // Each watch subscribes the person again, which the topic holds once, and the topic is let go of only by the last
+    // Tab
     expect(getTopicStub(topic).subscribe).toHaveBeenCalledWith(userId, readAt, undefined);
     expect(getTopicStub(topic).unsubscribe).not.toHaveBeenCalled();
 
@@ -559,8 +560,8 @@ describe(UserObject, () => {
     expect(getTopicStub(topic).unsubscribe).toHaveBeenCalledExactlyOnceWith(userId);
   });
 
-  // A watch names the columns its read references in the topic, and the topic's object is told them, so it can tell which
-  // Publishes reach the watch
+  // A watch names the columns its read references in the topic, and the topic's object is told them, so it can tell
+  // Which Publishes reach the watch
   test("a watch hands the columns it reads of a topic to the topic's subscribe", async () => {
     expect.hasAssertions();
 
@@ -572,8 +573,8 @@ describe(UserObject, () => {
     expect(getTopicStub(topic).subscribe).toHaveBeenCalledExactlyOnceWith(userId, readAt, ["isHidden"]);
   });
 
-  // A signed read names the topics it was given, so a frame that adds a topic the read did not name is refused whole: the
-  // Signature covers the topics it was made over and no others, so neither topic is subscribed or held
+  // A signed read names the topics it was given, so a frame that adds a topic the read did not name is refused whole:
+  // The Signature covers the topics it was made over and no others, so neither topic is subscribed or held
   test("a watch frame naming a topic its signed read did not name subscribes nothing", async () => {
     expect.hasAssertions();
 
@@ -594,7 +595,8 @@ describe(UserObject, () => {
     expect(readFrames(socket)).toStrictEqual([]);
   });
 
-  // A signature the server made for another person, or one with its first character changed, covers no watch of this person
+  // A signature the server made for another person, or one with its first character changed, covers no watch of this
+  // Person
   test("a watch whose signature is tampered is refused, and so is one signed for another person", async () => {
     expect.hasAssertions();
 
@@ -615,8 +617,8 @@ describe(UserObject, () => {
     expect(readFrames(socket)).toStrictEqual([]);
   });
 
-  // A signed watch subscribes each of its topics with the columns its read names, a count's empty list told apart from a
-  // Topic that names every column
+  // A signed watch subscribes each of its topics with the columns its read names, a count's empty list told apart from
+  // A Topic that names every column
   test("a signed watch subscribes each of its topics with the columns its read names", async () => {
     expect.hasAssertions();
 
@@ -637,8 +639,8 @@ describe(UserObject, () => {
     expect(getTopicStub(columnTopic).subscribe).toHaveBeenCalledExactlyOnceWith(userId, readAt, ["isHidden"]);
   });
 
-  // A signature holds for an hour after its read began, so a stored one cannot re-open a topic for good: a read past the
-  // Bound is refused, whatever the signature says
+  // A signature holds for an hour after its read began, so a stored one cannot re-open a topic for good: a read past
+  // The Bound is refused, whatever the signature says
   test("a watch whose read began past the bound is refused", async () => {
     expect.hasAssertions();
 
@@ -651,8 +653,8 @@ describe(UserObject, () => {
     expect(getTopicStub(topic).subscribe).not.toHaveBeenCalled();
   });
 
-  // A tab still running the client from before signatures sends its watch with no signature, which the frame refuses whatever
-  // The secret is: the stale tab is dropped unanswered, and a reload picks up a signed watch
+  // A tab still running the client from before signatures sends its watch with no signature, which the frame refuses
+  // Whatever The secret is: the stale tab is dropped unanswered, and a reload picks up a signed watch
   test("a watch with no signature is refused even with the secret set", async () => {
     expect.hasAssertions();
 
@@ -681,7 +683,8 @@ describe(UserObject, () => {
     expect(readFrames(otherSocket)).toStrictEqual([]);
   });
 
-  // A subscribe that failed on a watch is retried by the next watch of the topic, from any tab, rather than left unsubscribed
+  // A subscribe that failed on a watch is retried by the next watch of the topic, from any tab, rather than left
+  // Unsubscribed
   test("a watch whose subscribe failed is subscribed again by the next watch of its topic", async () => {
     expect.hasAssertions();
 
@@ -699,8 +702,8 @@ describe(UserObject, () => {
     expect(getTopicStub(topic).subscribe).toHaveBeenLastCalledWith(userId, readAt, undefined);
   });
 
-  // The account's erase empties every store its object holds, the watches of its tabs and its alarm, so nothing is left for
-  // Its rooms' indexes to name
+  // The account's erase empties every store its object holds, the watches of its tabs and its alarm, so nothing is left
+  // For Its rooms' indexes to name
   test("erasing the person's object empties its reminders, joined calls, indexes and watches, and clears its alarm", async () => {
     expect.hasAssertions();
 

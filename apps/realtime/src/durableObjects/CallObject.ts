@@ -85,11 +85,12 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   readonly #core = createObjectHandle(drizzle(this.env.CORE, { relations }));
   // The meeting being made, shared by every join that arrives while the first one is still creating it
   #meetingCreation?: Promise<string> | undefined;
-  // The work in flight for each key, a session's join or a connection's preset update, so the next for that key starts after it
+  // The work in flight for each key, a session's join or a connection's preset update, so the next for that key starts
+  // After it
   readonly #serialized = new Map<string, Promise<unknown>>();
 
-  // Answers the knocker's row as a tombstone, at the version the removal raised it to. A knocker already let in or dismissed
-  // Answers its tombstone and is not admitted again, and a knocker the call never held answers nothing
+  // Answers the knocker's row as a tombstone, at the version the removal raised it to. A knocker already let in or
+  // Dismissed Answers its tombstone and is not admitted again, and a knocker the call never held answers nothing
   admitKnocker({ callSessionId, knockerId }: { callSessionId: string; knockerId: string }): CallParticipantRow | null {
     return this.#answerKnockerRemoval(knockerId, (sessionId) => {
       this.db.insert(admittedSessions).values({ sessionId }).onConflictDoNothing().run();
@@ -110,7 +111,8 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return leave;
   }
 
-  // Answers the knocker's row as a tombstone, as an admission does. Only the removal that takes the live row tells the knocker
+  // Answers the knocker's row as a tombstone, as an admission does. Only the removal that takes the live row tells the
+  // Knocker
   dismissKnocker({
     callSessionId,
     knockerId,
@@ -133,7 +135,8 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return leaves;
   }
 
-  // A socket is accepted only for a connection that is in the call or knocking on it, so the call's events reach no one else
+  // A socket is accepted only for a connection that is in the call or knocking on it, so the call's events reach no one
+  // Else
   override async fetch(request: Request): Promise<Response> {
     const identity = readSocketIdentity(request.headers);
     if (identity && !this.#checkIsConnected(identity.sessionId))
@@ -170,8 +173,9 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     sessionId: string;
   }): void {
     this.#purgeTombstones();
-    // A session knocks under one live id however often it knocks, so the doorkeeper's lobby holds it once. A session whose
-    // Knock was let in or dismissed gets a new id, and its row is the one its session names, revived above its tombstone
+    // A session knocks under one live id however often it knocks, so the doorkeeper's lobby holds it once. A session
+    // Whose Knock was let in or dismissed gets a new id, and its row is the one its session names, revived above its
+    // Tombstone
     const id = this.#readKnockerBySession(sessionId)?.id ?? v7();
     const row = takeOne(
       this.db
@@ -194,9 +198,9 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return participant ? this.#removeParticipant(callSessionId, participant) : null;
   }
 
-  // A connection a revoke is replacing is kicked by that revoke, and the kick is not its user leaving.
-  // The replacement is added under the same participant, so the participant stays in the call. The kick's webhook can land
-  // After the replacement is added, so a leave from before the current connection was added is the kicked one's too
+  // A connection a revoke is replacing is kicked by that revoke, and the kick is not its user leaving. The replacement
+  // Is added under the same participant, so the participant stays in the call. The kick's webhook can land After the
+  // Replacement is added, so a leave from before the current connection was added is the kicked one's too
   participantLeft({
     callSessionId,
     leftAt,
@@ -236,8 +240,8 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     );
   }
 
-  // The user a participant is a connection of, read for the webhook that checks its admission. Empty when the call holds no
-  // Such participant, which is a connection the call no longer admits
+  // The user a participant is a connection of, read for the webhook that checks its admission. Empty when the call
+  // Holds no Such participant, which is a connection the call no longer admits
   readParticipantUserId({ participantId }: { participantId: string }): string {
     return this.#readParticipant(participantId)?.userId ?? "";
   }
@@ -370,8 +374,8 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
   }
 
   // Adds a connection as a participant and announces it. Returns whether it started the call. A session that left is
-  // Revived under the id this join minted: its row is the one the session's unique column names, so the upsert keys on that
-  // Column and its conflict branch clears the tombstone at the version the row continues from
+  // Revived under the id this join minted: its row is the one the session's unique column names, so the upsert keys on
+  // That Column and its conflict branch clears the tombstone at the version the row continues from
   #addParticipant(callSessionId: string, sessionId: string, participant: CallParticipant): boolean {
     this.#purgeTombstones();
     const joinedParticipant = { ...participant, deletedAt: null, isCameraEnabled: false, sessionId };
@@ -393,8 +397,8 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     return isFirstJoiner;
   }
 
-  // Takes a live knocker out and hands its session to `announce`, which says what the removal sends. A knocker the call no
-  // Longer holds answers its row as it stands, and announces nothing
+  // Takes a live knocker out and hands its session to `announce`, which says what the removal sends. A knocker the call
+  // No Longer holds answers its row as it stands, and announces nothing
   #answerKnockerRemoval(knockerId: string, announce: (sessionId: string) => void): CallParticipantRow | null {
     this.#purgeTombstones();
     const removed = this.#removeKnocker(knockerId);
@@ -471,7 +475,8 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     // A connection that is already in the call keeps its participant id, and a join after a leave is named afresh
     const participant: CallParticipant = { ...profile, id: this.#readParticipantBySession(sessionId)?.id ?? v7() };
     const credentials = getRealtimeKitCredentials();
-    // A deployment without RealtimeKit joins the call with no media server, as it did before any media server was set up
+    // A deployment without RealtimeKit joins the call with no media server, as it did before any media server was set
+    // Up
     if (!credentials)
       return this.#addJoinedParticipant(callSessionId, sessionId, participant, { authToken: "", meetingId: "" });
 
@@ -520,7 +525,8 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
       .all();
   }
 
-  // A knocker's row as it stands, a tombstone included, for the answer to a let-in or a dismissal of a knock already left
+  // A knocker's row as it stands, a tombstone included, for the answer to a let-in or a dismissal of a knock already
+  // Left
   #readKnocker(knockerId: string) {
     return this.db.select(knockerColumns).from(knockers).where(eq(knockers.id, knockerId)).get();
   }
@@ -717,7 +723,8 @@ export class CallObject extends RealtimeObject<CallEvent, CallObjectRpc> impleme
     }
   }
 
-  // Writes one of a participant's flags, and broadcasts the row it left for the event only when a live participant was updated
+  // Writes one of a participant's flags, and broadcasts the row it left for the event only when a live participant was
+  // Updated
   #updateFlag(
     where: SQL,
     values: ParticipantFlags,

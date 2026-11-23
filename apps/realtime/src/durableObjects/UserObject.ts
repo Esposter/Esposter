@@ -130,8 +130,9 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     return (reminderCount?.count ?? 0) + (scheduledMessageCount?.count ?? 0);
   }
 
-  // Every store the person's object holds is emptied, and its alarm cleared, when the account is erased. The sweep runs this
-  // Once the rooms its indexes name are swept, so a replay finds nothing left and the topics its tabs watched are let go of
+  // Every store the person's object holds is emptied, and its alarm cleared, when the account is erased. The sweep runs
+  // This Once the rooms its indexes name are swept, so a replay finds nothing left and the topics its tabs watched are
+  // Let go of
   async erase(): Promise<void> {
     const watches = [...(await this.ctx.storage.list<TopicWatch>({ prefix: WATCHED_TOPIC_KEY_PREFIX })).values()];
     await this.db.delete(remindersInUser);
@@ -185,8 +186,8 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
       .limit(limit);
   }
 
-  // The scheduled messages the person's index names, soonest first by their id, from the cursor, at most `limit` of them.
-  // Each is named by its id and its room, and its body is read from the room
+  // The scheduled messages the person's index names, soonest first by their id, from the cursor, at most `limit` of
+  // Them. Each is named by its id and its room, and its body is read from the room
   async readScheduledMessages({
     cursor,
     limit,
@@ -251,8 +252,8 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     await this.db.delete(joinedCallsInUser).where(eq(joinedCallsInUser.callSessionId, callSessionId));
   }
 
-  // A cancel leaves the reminder as a tombstone and answers with it, then re-arms the alarm for what is left, so a reminder
-  // That was next due no longer wakes it
+  // A cancel leaves the reminder as a tombstone and answers with it, then re-arms the alarm for what is left, so a
+  // Reminder That was next due no longer wakes it
   async removeReminder(id: string): Promise<ScheduledReminder | undefined> {
     const [tombstone] = await this.db
       .update(remindersInUser)
@@ -265,8 +266,9 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     return tombstone;
   }
 
-  // A person who leaves a room, or whom the room removes or deletes, takes what they held for it: the reminders set there
-  // And the index entries of the messages scheduled there. The alarm is re-armed for what is left, as a cancel does
+  // A person who leaves a room, or whom the room removes or deletes, takes what they held for it: the reminders set
+  // There And the index entries of the messages scheduled there. The alarm is re-armed for what is left, as a cancel
+  // Does
   async removeRoomScheduledItems(roomId: string): Promise<void> {
     const deletedAt = new Date();
     await this.db
@@ -280,8 +282,8 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     await this.#armAlarm();
   }
 
-  // The index entry of a scheduled message is a tombstone once the room sends or cancels it, and the list stops naming it.
-  // The alarm is re-armed so the tombstone's purge is scheduled, as a reminder's cancel does
+  // The index entry of a scheduled message is a tombstone once the room sends or cancels it, and the list stops naming
+  // It. The alarm is re-armed so the tombstone's purge is scheduled, as a reminder's cancel does
   async removeScheduledMessage(scheduledId: string): Promise<void> {
     await this.db
       .update(scheduledMessagesInUser)
@@ -340,11 +342,11 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     await this.#unsubscribeTopics(getWatchedTopics(watchesBefore), getWatchedTopics(await this.#readTopicWatches()));
   }
 
-  // A tab watches or unwatches the topics of its mounted queries.
-  // A watch subscribes its topics on every frame, since a subscribe is idempotent and one that failed on an earlier watch is
-  // Then retried. An unwatch unsubscribes the topics no other tab of the person's still watches.
-  // So a topic holds each person once, however many tabs they have. A watch is taken only when its signature covers it, so a
-  // Frame naming a topic its read did not name is refused whole, before anything is stored or subscribed
+  // A tab watches or unwatches the topics of its mounted queries. A watch subscribes its topics on every frame, since a
+  // Subscribe is idempotent and one that failed on an earlier watch is Then retried. An unwatch unsubscribes the topics
+  // No other tab of the person's still watches. So a topic holds each person once, however many tabs they have. A watch
+  // Is taken only when its signature covers it, so a Frame naming a topic its read did not name is refused whole,
+  // Before anything is stored or subscribed
   override async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
     if (typeof message !== "string") return;
     // A frame that is not JSON reads as undefined, which the schema below refuses, so a garbled frame is dropped
@@ -413,7 +415,8 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     else await this.ctx.storage.deleteAlarm();
   }
 
-  // A tab's watches are keyed by an id its socket carries from its first watch, so the socket names them after hibernation
+  // A tab's watches are keyed by an id its socket carries from its first watch, so the socket names them after
+  // Hibernation
   #attachWatchId(ws: WebSocket): string {
     const watchId = v7();
     ws.serializeAttachment({ watchId });
@@ -422,13 +425,14 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
 
   // A topic is named to its Topic object, which takes subscriptions, not invocations, so no object's invoke answers it
   #getTopicObject(topic: Topic) {
-    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- the one place a Topic object is named in this object; its subscriptions are not invocations
+    // The one place a Topic object is named in
+    // oxlint-disable-next-line selector-ban/no-restricted-syntax -- this object; its subscriptions are not invocations
     return this.env.TOPIC.get(this.env.TOPIC.idFromName(topic));
   }
 
-  // The object's tables are not D1, so the nightly D1 purge does not reach them: the alarm removes each tombstone once the
-  // Tombstone retention has passed, the age a client forgets its own copy at. A tombstone is hidden from every read, so its
-  // Removal changes no view and wakes no read
+  // The object's tables are not D1, so the nightly D1 purge does not reach them: the alarm removes each tombstone once
+  // The Tombstone retention has passed, the age a client forgets its own copy at. A tombstone is hidden from every
+  // Read, so its Removal changes no view and wakes no read
   async #purgeExpiredTombstones(now: Date): Promise<void> {
     const cutoff = new Date(now.getTime() - TOMBSTONE_RETENTION_MS);
     await this.db.delete(remindersInUser).where(lte(remindersInUser.deletedAt, cutoff));
@@ -508,8 +512,9 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     );
   }
 
-  // Each TodoList reminder is removed only once its notification is queued, so a failed send is retried rather than dropped.
-  // The delete holds only for the due time the alarm read, so a row a save re-dated while the send was in flight stays armed
+  // Each TodoList reminder is removed only once its notification is queued, so a failed send is retried rather than
+  // Dropped. The delete holds only for the due time the alarm read, so a row a save re-dated while the send was in
+  // Flight stays armed
   async #sendDueTodoReminders(now: Date): Promise<void> {
     const dueReminders = await this.db
       .select()
@@ -539,8 +544,8 @@ export class UserObject extends RealtimeObject<UserEvent, UserObjectRpc> impleme
     );
   }
 
-  // The topics a watch asked for, subscribed to on their Topic objects from the time its read began, with the columns the
-  // Watch reads of each. A subscribe is a write of the person's id, so repeating it is harmless
+  // The topics a watch asked for, subscribed to on their Topic objects from the time its read began, with the columns
+  // The Watch reads of each. A subscribe is a write of the person's id, so repeating it is harmless
   async #subscribeTopics(topics: ColumnTopic[], readAt: number): Promise<void> {
     await Promise.all(
       topics.map(({ columns, topic }) => this.#getTopicObject(topic).subscribe(this.#userId, readAt, columns)),

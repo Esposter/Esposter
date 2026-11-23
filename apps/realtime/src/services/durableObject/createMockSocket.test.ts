@@ -2,10 +2,12 @@ import { RESERVED_CLOSE_CODES } from "#src/services/durableObject/constants";
 import { getUtf8ByteLength, jsonDateParse } from "@esposter/shared";
 import { describe, vi } from "vitest";
 
-// A socket the runtime accepted: the close and send calls the object makes are the ones a test reads, and its attachment is
-// Held as the runtime holds it across hibernation. A close reports to the state that holds the socket, so the registry drops it
+// A socket the runtime accepted: the close and send calls the object makes are the ones a test reads, and its
+// Attachment is Held as the runtime holds it across hibernation. A close reports to the state that holds the socket, so
+// The registry drops it
 export const createSocket = () => {
-  // The largest attachment the runtime keeps, which it measures serialized: 16 KiB in the workerd build the tests run on
+  // The largest attachment the runtime keeps, which it measures serialized: 16 KiB in the workerd build the tests run
+  // On
   const attachmentMaxBytes = 16_384;
   let attachment: unknown;
   const closeListeners: (() => void)[] = [];

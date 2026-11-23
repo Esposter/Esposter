@@ -20,7 +20,8 @@ describe(TopicObject, () => {
     userIdInvalidateMap.set(userId, invalidate);
     return invalidate;
   };
-  // A subscriber's object answers its invoke, and the one method a topic calls on it is `invalidate`, so the call lands on the mock
+  // A subscriber's object answers its invoke, and the one method a topic calls on it is `invalidate`, so the call lands
+  // On the mock
   const createUserStub = (userId: string): ObjectInvoker => ({
     invoke: async (_method, args) => {
       await getInvalidate(userId)(...args);
@@ -129,8 +130,8 @@ describe(TopicObject, () => {
     expect(getInvalidate(userId)).not.toHaveBeenCalled();
   });
 
-  // A read that began before the topic's last publish may hold a state the publish changed, so the subscriber is told now.
-  // Waiting for the publish's alarm would leave the subscriber stale for the length of the window
+  // A read that began before the topic's last publish may hold a state the publish changed, so the subscriber is told
+  // Now. Waiting for the publish's alarm would leave the subscriber stale for the length of the window
   test("a subscription that arrives after a newer publish is notified at once", async () => {
     expect.hasAssertions();
 

@@ -98,7 +98,8 @@ const readSearchIds = async (
   let encodedCursor = "";
   do {
     const cursor = createPageInputSchema(sort).parse({ cursor: encodedCursor, limit }).cursor;
-    // oxlint-disable-next-line no-await-in-loop -- Pagination: each page answers the cursor the one before it left, so the pages are read in turn
+    // The pages are read in turn
+    // oxlint-disable-next-line no-await-in-loop -- Pagination: each page answers the cursor the one before it left, so
     const page = await readSearchPage(rooms, query, cursor, limit);
     matches.push(...page.items.map(({ id, roomId: matchRoomId }) => ({ id, roomId: matchRoomId })));
     encodedCursor = page.nextCursor;
@@ -141,8 +142,8 @@ describe(RoomObject, () => {
       roomActivity: vi.fn<UserObjectRpc["roomActivity"]>(),
       updateUserToRoom: vi.fn<UserObjectRpc["updateUserToRoom"]>(),
     };
-    // The person's object answers each RPC through its invoke, so a call reaches the method's mock through it, with no write
-    // Set or read set of its own, since the mocks keep no rows
+    // The person's object answers each RPC through its invoke, so a call reaches the method's mock through it, with no
+    // Write Set or read set of its own, since the mocks keep no rows
     const stub: UserStub = {
       ...methods,
       invoke: vi.fn<ObjectInvoker["invoke"]>((method, args) => {
@@ -248,8 +249,9 @@ describe(RoomObject, () => {
     expect(readSet).toStrictEqual([{ topic: `room/${roomId}:messages:*` }]);
   });
 
-  // A write's topics are published from the entry, once the write has run. An insert changes which rows the table holds, so
-  // It publishes no columns, and every watch of the topic hears it. Its tables are also published under the kind, for every room
+  // A write's topics are published from the entry, once the write has run. An insert changes which rows the table
+  // Holds, so It publishes no columns, and every watch of the topic hears it. Its tables are also published under the
+  // Kind, for every room
   test("invoke publishes the topics its insert names, with no columns, since it changes which rows exist", async () => {
     expect.hasAssertions();
 
@@ -264,7 +266,8 @@ describe(RoomObject, () => {
     ]);
   });
 
-  // A room's tables are its own, so its topics name its id: a message written in one room reaches no watch of another room
+  // A room's tables are its own, so its topics name its id: a message written in one room reaches no watch of another
+  // Room
   test("a message written in one room wakes no watch of another room", async () => {
     expect.hasAssertions();
 
@@ -284,8 +287,8 @@ describe(RoomObject, () => {
     expect(getWokenTopics(ownReadSet, topicPublishes)).toStrictEqual([`room/${roomId}:messages:*`]);
   });
 
-  // A read over many rooms collapses to the room kind's table topic, so a write in a room no read names must still reach it: every
-  // Room's write publishes that topic beside its own
+  // A read over many rooms collapses to the room kind's table topic, so a write in a room no read names must still
+  // Reach it: every Room's write publishes that topic beside its own
   test("a write in a room no read names wakes a read collapsed to the room kind's table topic", async () => {
     expect.hasAssertions();
 
@@ -662,8 +665,8 @@ describe(RoomObject, () => {
     await expect(state.ctx.storage.getAlarm()).resolves.toBe(later.runAt.getTime());
   });
 
-  // The send deletes the due row and writes its message in one transaction. The delete runs on the transaction's own handle,
-  // So it is recorded there, and the scheduled messages it removed wake the reads that watch them
+  // The send deletes the due row and writes its message in one transaction. The delete runs on the transaction's own
+  // Handle, So it is recorded there, and the scheduled messages it removed wake the reads that watch them
   test("sending a due scheduled message wakes a read of the scheduled messages it removed", async () => {
     expect.hasAssertions();
 
@@ -681,9 +684,10 @@ describe(RoomObject, () => {
     expect(getWokenTopics(readSet, topicPublishes)).toStrictEqual([`room/${roomId}:scheduledMessages:*`]);
   });
 
-  // A cancel leaves its row as a tombstone that no read returns. A reschedule names a live row, so it cannot bring back a
-  // Cancelled one, since a sent message leaves the same tombstone and a revival would send it again. Putting the row back
-  // Under its id, as a failed send does, revives it at a higher version, so a client holding the tombstone takes it as newer
+  // A cancel leaves its row as a tombstone that no read returns. A reschedule names a live row, so it cannot bring back
+  // A Cancelled one, since a sent message leaves the same tombstone and a revival would send it again. Putting the row
+  // Back Under its id, as a failed send does, revives it at a higher version, so a client holding the tombstone takes
+  // It as newer
   test("a cancelled scheduled message is a tombstone that a reschedule cannot revive, and putting it back revives it", async () => {
     expect.hasAssertions();
 
@@ -712,8 +716,8 @@ describe(RoomObject, () => {
     });
   });
 
-  // The due-send reads only live rows, so a cancelled scheduled message is never sent when it comes due, and its sender's
-  // Index is told of the cancel once, not again by the alarm
+  // The due-send reads only live rows, so a cancelled scheduled message is never sent when it comes due, and its
+  // Sender's Index is told of the cancel once, not again by the alarm
   test("the due-send skips a cancelled scheduled message", async () => {
     expect.hasAssertions();
 
@@ -731,8 +735,8 @@ describe(RoomObject, () => {
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(cancelled.id);
   });
 
-  // The alarm removes a tombstone once the tombstone retention has passed, the age a client forgets its copy at. A newer
-  // Tombstone is kept, so a reschedule of it still revives the row, and the alarm is armed for its expiry
+  // The alarm removes a tombstone once the tombstone retention has passed, the age a client forgets its copy at. A
+  // Newer Tombstone is kept, so a reschedule of it still revives the row, and the alarm is armed for its expiry
   test("the alarm purges a scheduled message's tombstone past the tombstone retention, and keeps a newer one", async () => {
     expect.hasAssertions();
 
@@ -767,8 +771,9 @@ describe(RoomObject, () => {
     });
   });
 
-  // A member who leaves takes what they scheduled in the room with them, and their object drops its items for the room, so
-  // Nothing of theirs is sent there after they have left. The other members' scheduled messages are left as they were
+  // A member who leaves takes what they scheduled in the room with them, and their object drops its items for the room,
+  // So Nothing of theirs is sent there after they have left. The other members' scheduled messages are left as they
+  // Were
   test("a member who leaves the room takes their scheduled messages in it, and another member's stay", async () => {
     expect.hasAssertions();
 
@@ -985,8 +990,8 @@ describe(RoomObject, () => {
         },
       }),
     };
-    // The wave and the send are held in flight on purpose, and the check reads each write back before the write returns, which a
-    // Held write cannot allow, so this test's room is not observed
+    // The wave and the send are held in flight on purpose, and the check reads each write back before the write
+    // Returns, which a Held write cannot allow, so this test's room is not observed
     const object = new RoomObject(createMockObjectState(roomId).ctx as unknown as DurableObjectState, environment);
     object.attachMember(userId, createStatus(userId, true));
     const first = await sendMessage(object, "first");
@@ -1308,7 +1313,8 @@ describe(RoomObject, () => {
     });
   });
 
-  // The sender of a pending message is a member, so the room's removal from the member's index takes the message out with the reminders
+  // The sender of a pending message is a member, so the room's removal from the member's index takes the message out
+  // With the reminders
   test("deleting the room takes each pending scheduled message out of its sender's index", async () => {
     expect.hasAssertions();
 

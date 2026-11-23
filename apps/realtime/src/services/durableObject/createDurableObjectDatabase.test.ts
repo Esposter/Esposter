@@ -8,8 +8,9 @@ import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(createDurableObjectDatabase, () => {
-  // An object's table carries the version the database raises on each change, as a D1 table does: an insert starts it at
-  // Zero, an update raises it, and an upsert that updates the existing row raises it too, all inside the statement itself
+  // An object's table carries the version the database raises on each change, as a D1 table does: an insert starts it
+  // At Zero, an update raises it, and an upsert that updates the existing row raises it too, all inside the statement
+  // Itself
   test("raises a row's version on each update of an object's table, from zero on insert and through an upsert's update branch", () => {
     expect.hasAssertions();
 

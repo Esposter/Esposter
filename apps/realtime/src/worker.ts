@@ -1,8 +1,10 @@
-// The Workers runtime has no Temporal yet, and modules read it as they load, so the polyfill installs it before any other import
+// The Workers runtime has no Temporal yet, and modules read it as they load, so the polyfill installs it before any
+// Other import
 import "temporal-polyfill/global";
 
-// The realtime objects, one per room, call, person and live-query topic. The web Worker reaches each through its binding, and so does the jobs Worker.
-// Deploying this Worker restarts them, so this Worker changes only when they do (openspec/specs/architecture/cloudflare-services/design.md)
+// The realtime objects, one per room, call, person and live-query topic. The web Worker reaches each through its
+// Binding, and so does the jobs Worker. Deploying this Worker restarts them, so this Worker changes only when they do
+// (openspec/specs/architecture/cloudflare-services/design.md)
 export { CallObject } from "#src/durableObjects/CallObject";
 export { RoomObject } from "#src/durableObjects/RoomObject";
 export { TopicObject } from "#src/durableObjects/TopicObject";
