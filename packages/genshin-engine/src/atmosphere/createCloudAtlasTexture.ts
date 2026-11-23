@@ -36,8 +36,8 @@ export const createCloudAtlasTexture = (
           loop.map((point) => toCanvas(point)),
         );
       context.fillStyle = style;
-      // A canvas's
-      // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- fill takes a path, not an array's value
+      // A canvas's fill takes a path, not an array's value
+      // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a path, not an array, is passed
       context.fill(path, "evenodd");
     };
     for (const [index, { lit, outline }] of sprites.entries()) {
