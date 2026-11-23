@@ -28,6 +28,10 @@ const readScripts = (path: string): string[] => {
     : [text];
 };
 
+// The names a package's two lists hold, which a consumer resolves: a peer is installed beside the package by the consumer
+const readHeldNames = (manifest: PackageManifest) =>
+  new Set([...Object.keys(manifest.dependencies ?? {}), ...Object.keys(manifest.peerDependencies ?? {})]);
+
 // The workspace packages the filter keeps, each with the directory its sources sit under
 const readPackages = (checkIsKept: (manifest: PackageManifest) => boolean) =>
   readWorkspacePackages(REPOSITORY_ROOT)
@@ -143,11 +147,7 @@ describe("typeOnlyDependencies", () => {
         const augmentedNames = new Set<string>();
         for (const path of sourcePaths.filter((sourcePath) => sourcePath.startsWith(`${packagePath}/`)))
           for (const script of readScripts(path)) collectAugmentedNames(script, augmentedNames);
-        // A peer is installed by the consumer beside the package, so a name either list holds is one a consumer resolves
-        const held = new Set([
-          ...Object.keys(manifest.dependencies ?? {}),
-          ...Object.keys(manifest.peerDependencies ?? {}),
-        ]);
+        const held = readHeldNames(manifest);
         return [...augmentedNames].filter((name) => !held.has(name)).map((name) => `${manifest.name} -> ${name}`);
       });
 
@@ -176,10 +176,7 @@ describe("typeOnlyDependencies", () => {
         for (const path of sourcePaths.filter((sourcePath) => sourcePath.startsWith(`${packagePath}/src/`)))
           for (const script of readScripts(path)) collectScriptUsage(script, valueNames, typeNames);
         const loadedNames = manifest.private === true ? valueNames : new Set([...valueNames, ...typeNames]);
-        const externalNames = new Set([
-          ...Object.keys(manifest.dependencies ?? {}),
-          ...Object.keys(manifest.peerDependencies ?? {}),
-        ]);
+        const externalNames = readHeldNames(manifest);
         return [...loadedNames]
           .filter((name) => siblingNames.has(name) && !externalNames.has(name))
           .map((name) => `${manifest.name} -> ${name}`);
