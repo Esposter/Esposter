@@ -59,6 +59,10 @@ The same reproduction run in the dev server shows three causes of the dev server
 
 Turning the pre-compile off with `scanPatterns: []` is no remedy. The plugin then compiles each component on request, one at a time and outside the native batches, at about a tenth of a second each against a few milliseconds for `@vitejs/plugin-vue`. The build came out as long as with the pre-compile, which is the measurement that moved Vize's Nuxt module from on-demand compiles to the pre-compile ([Vize issue 9900](https://github.com/ubugeeei-prod/vize/issues/9900)). The pre-compile also feeds the production `components.css` from every scanned component.
 
+The two hook costs that stayed upstream are closed: [Vize issue 12151](https://github.com/ubugeeei-prod/vize/issues/12151), where the client pass's transform hook compiled every component again on Windows, and [Vize issue 12153](https://github.com/ubugeeei-prod/vize/issues/12153), where the server environment's hook did the same. The hooks now reuse the pre-compile, so only the realpath fan-out and the per-pass compile remain.
+
+With `typescript` removed from `apps/web`, the module still compiled every component with none failing, and its client, server and Nitro outputs matched the baseline's sizes to within a percent. So the app's Vue compiler needs `typescript` and the module does not. The app keeps `@vitejs/plugin-vue`, and `@vue/compiler-sfc` resolves a props type imported from another file through `typescript`, which is why `apps/web` keeps it as a dev dependency.
+
 `@nuxt/vite-builder` depends on `@vitejs/plugin-vue` unconditionally and no Nuxt option turns it off, so the package stays in the lockfile whichever compiler the app uses.
 
 ## What a return to the module owes
@@ -69,6 +73,8 @@ The module was checked against the baseline without it before it left, and a ret
 - **Server HTML.** The parsed HTML of every public route equal after attribute order, nonces, integrity hashes, hashed asset names, scope ids and the page's own origin are normalised. `/about` renders the canvas's own `<span>`, which needs the server registration of a component registered for both client and server ([Vize issue 11757](https://github.com/ubugeeei-prod/vize/issues/11757)).
 - **Production client.** Every public route mounts in Chromium with the baseline's console and page errors, `/about` included, where an inline template's `new` on an imported binding must compile to a call the constructor can run. The `/clicker` cocktail counts a click in both.
 - **Compilation.** Every `.vue` file compiles with none failing, and props types imported from `@esposter/db-schema`, a private package that emits no declarations, resolve.
+
+A return also waits for a condition the checks cannot show: [Vize issue 13557](https://github.com/ubugeeei-prod/vize/issues/13557) has shipped, and the native compile each pass makes is shared across the passes. Until both hold, the module compiles every component natively once in each of its three passes, and the figures above stand.
 
 ## Checking a bump
 

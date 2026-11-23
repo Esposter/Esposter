@@ -130,7 +130,7 @@ A ban SHALL be written in the first mechanism that a planted violation shows can
 
 ### Requirement: Lint runs without the classic TypeScript compiler
 
-The lint SHALL run every rule without loading the classic TypeScript compiler. The one manifest that declares it SHALL be the app's, whose Vue compiler resolves a props type imported from another file through it, and no lint tool SHALL resolve it from the repository root.
+The lint SHALL run every rule without loading the classic TypeScript compiler. The one manifest that declares it SHALL be the app's, because the app's Vue compiler resolves a props type imported from another file through it, as [the Vize compiler design](../vize-compiler/design.md) sets out, and no lint tool SHALL resolve it from the repository root.
 
 #### Scenario: The classic compiler installed only for the app's Vue compiler
 
