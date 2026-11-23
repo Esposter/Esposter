@@ -11,7 +11,8 @@ import { defineRule } from "@oxlint/plugins";
 
 // A switch's cases in three checks: the tests within each run of fallthrough cases, the default kept last in its run,
 // And the case blocks (cases sharing one body) in order. A block that ends without a break or return stays last. A
-// Switch with a test that runs code keeps its default and its blocks as written, since moving either moves that test
+// Switch with a test that runs code keeps its default and its blocks as written, since moving either moves that test,
+// And so does one whose labels are not all literals, since two of them can name the same value
 const sortSwitchCase: Rule = defineRule({
   create(context) {
     return {
@@ -25,7 +26,9 @@ const sortSwitchCase: Rule = defineRule({
         const hasUnsortedTests = reportCaseTests(context, node.cases);
         if (node.cases.some((caseNode) => caseNode.test && !checkIsPureExpression(caseNode.test))) return;
         reportDefaultPlacement(context, node.cases);
-        reportCaseBlocks(context, node.cases, hasUnsortedTests);
+        // Two identifiers or calls can name one value, and the first matching block runs, so only literal labels reorder
+        if (node.cases.every((caseNode) => !caseNode.test || caseNode.test.type === "Literal"))
+          reportCaseBlocks(context, node.cases, hasUnsortedTests);
       },
     };
   },

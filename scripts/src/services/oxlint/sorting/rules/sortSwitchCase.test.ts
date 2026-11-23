@@ -110,6 +110,11 @@ describe("sortSwitchCase", () => {
 };`,
         violations: 0,
       },
+      {
+        name: "identifierLabelsKeepBlocksAsWritten",
+        source: `export const A = 1;\nexport const B = 1;\nexport const f = (k: number) => {\n  switch (k) {\n    case B: return 1;\n    case A: return 0;\n  }\n};`,
+        violations: 0,
+      },
     ],
     plugin: "sorting",
     rules: ["sorting/sort-switch-case"],

@@ -31,6 +31,12 @@ describe("sortHeritageClauses", () => {
         source: `export interface B<T> { value: T }\nexport interface A<T> { value: T }\nexport class C implements B<number>, A<number> {}`,
         violations: 1,
       },
+      {
+        fixed: `export interface A {}\nexport interface B {}\nexport const C = class implements A, B {};`,
+        name: "unsortedClassExpressionImplements",
+        source: `export interface A {}\nexport interface B {}\nexport const C = class implements B, A {};`,
+        violations: 1,
+      },
     ],
     plugin: "sorting",
     rules: ["sorting/sort-heritage-clauses"],

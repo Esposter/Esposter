@@ -13,10 +13,12 @@ const sortHeritageClauses: Rule = defineRule({
         clauses.map((clause) => ({ name: computeHeritageName(context, clause.expression), node: clause })),
       );
     };
+    const reportClass = (node: ESTree.Class): void => {
+      reportHeritageClauses(node.implements ?? []);
+    };
     return {
-      ClassDeclaration(node) {
-        reportHeritageClauses(node.implements ?? []);
-      },
+      ClassDeclaration: reportClass,
+      ClassExpression: reportClass,
       TSInterfaceDeclaration(node) {
         reportHeritageClauses(node.extends);
       },
